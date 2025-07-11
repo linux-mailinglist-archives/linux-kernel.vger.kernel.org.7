@@ -1,117 +1,63 @@
-Return-Path: <linux-kernel+bounces-726883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06D93B0125C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:40:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4289DB01254
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E86645C4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 04:40:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F4CD7BF738
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 04:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109A01ADC90;
-	Fri, 11 Jul 2025 04:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0307A1E5018;
+	Fri, 11 Jul 2025 04:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K85h6idU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPMc6wqM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969AA2110E;
-	Fri, 11 Jul 2025 04:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130641C4A20;
+	Fri, 11 Jul 2025 04:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752208841; cv=none; b=ES5wgPZkTvs+DRWCf3wTlfZWLPGIbQ3sj0O4O3nB6Fenv/RjK9+rw88NFSfutr/70Bojp12o6UsiaZni/6TwoMWRt+ZSeHUnDIb/ui2CV8BKLqzNn+wW1XR9XXLfM209tyElNOxRI/Y3Z+SEx8mfc62krwMQs0QpGFt5lS9jx38=
+	t=1752208401; cv=none; b=TmmALwdcxlZScuuETaDyJFcgu5BDM1flpG244tiS95XZpyBSiVYZUJydVQI+ae/SRTbRL3+Gjfhf8bQnSwOXG1Sqz4CEW8J2+KmKb/AQLlxvbtIB3ThOcIL7WDDdN0njvHQYb6IEXwoWIIBTo8AiUCCBAnX4rW3nCPcHBpcTqrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752208841; c=relaxed/simple;
-	bh=R0JRR0jPdWQFsnHeDQicLF6rapHJfa6O3V7xWIsXrEc=;
+	s=arc-20240116; t=1752208401; c=relaxed/simple;
+	bh=ADUlxN5vRAMoH+bUBIPnCkxN+wm8oydTF3zMTV6RCPE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Udax6gMvKaOzPyFZyNq+FKz86YXA/mlsrlStnbExoffT7z3ccjfYbbe1n9sVpeU+jRzw5q96WVPbuDCQgUTPDt5wo75tqWyJxqiib7LYKdN16iB78rgvCQf1hEWMzN77shzuiVC7ik7YQErTCbwQSUhVF3q6z669rYS23+pH0ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K85h6idU; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752208839; x=1783744839;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=R0JRR0jPdWQFsnHeDQicLF6rapHJfa6O3V7xWIsXrEc=;
-  b=K85h6idUoBtLsGi5lSWunJa0dJvcpH9JYg+dKP8+tBTdpb8h2tpTFxPz
-   +snXLecMl10+glYDwvnba07lRSnoWl+SF8YFIqJbRGZotKwgOoR2a8fVl
-   IzXAMJl3z2VfaFpKLkMb7/QKyR2lByrXJBLPEM6UMtM6ajf1F60xdMdSG
-   Wc9Kr0WIbxjZglYvIBbG8WYGu7w7yBmdWWLJ9drHWJF9UGGVt8UFdGP4h
-   FyvwAsB1qhtVYWVejZT/FcwNPreSiaPQqaahsKm28i3MxPYncwI4lHuR5
-   SeYBBiYn8K3VvECw1s/frY2NoPj/C1+1mg6MHG/Br+58bXmzv/c0LV2tg
-   w==;
-X-CSE-ConnectionGUID: m9Fs2OH/S5a2uC2hAIa5wg==
-X-CSE-MsgGUID: //vb/Z5rR0GOLIrBNVKXRA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="79934940"
-X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
-   d="scan'208";a="79934940"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 21:40:38 -0700
-X-CSE-ConnectionGUID: klaS2TZATH+2blf4tv6DUQ==
-X-CSE-MsgGUID: uYwPD74pRiG2cr/33/gDWQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
-   d="scan'208";a="155685771"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa010.jf.intel.com with ESMTP; 10 Jul 2025 21:40:19 -0700
-Date: Fri, 11 Jul 2025 12:31:56 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Vishal Annapurve <vannapurve@google.com>,
-	Yan Zhao <yan.y.zhao@intel.com>, Alexey Kardashevskiy <aik@amd.com>,
-	Fuad Tabba <tabba@google.com>,
-	Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-fsdevel@vger.kernel.org, ajones@ventanamicro.com,
-	akpm@linux-foundation.org, amoorthy@google.com,
-	anthony.yznaga@oracle.com, anup@brainfault.org,
-	aou@eecs.berkeley.edu, bfoster@redhat.com,
-	binbin.wu@linux.intel.com, brauner@kernel.org,
-	catalin.marinas@arm.com, chao.p.peng@intel.com,
-	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
-	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
-	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
-	james.morse@arm.com, jarkko@kernel.org, jgowans@amazon.com,
-	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
-	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
-	kent.overstreet@linux.dev, kirill.shutemov@intel.com,
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
-	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
-	michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
-	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
-	palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
-	pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
-	pgonda@google.com, pvorel@suse.cz, qperret@google.com,
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
-	quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com,
-	quic_tsoni@quicinc.com, richard.weiyang@gmail.com,
-	rick.p.edgecombe@intel.com, rientjes@google.com,
-	roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com,
-	shuah@kernel.org, steven.price@arm.com, steven.sistare@oracle.com,
-	suzuki.poulose@arm.com, thomas.lendacky@amd.com,
-	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
-	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
-	willy@infradead.org, xiaoyao.li@intel.com, yilun.xu@intel.com,
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
- KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
-Message-ID: <aHCTvAAtvE4Mofy2@yilunxu-OptiPlex-7050>
-References: <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
- <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com>
- <20250624130811.GB72557@ziepe.ca>
- <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com>
- <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com>
- <CAGtprH9-njcgQjGZvGbbVX+i8D-qPUOkKFHbOWA20962niLTcw@mail.gmail.com>
- <20250702141321.GC904431@ziepe.ca>
- <CAGtprH948W=5fHSB1UnE_DbB0L=C7LTC+a7P=g-uP0nZwY6fxg@mail.gmail.com>
- <aG+a4XRRc2fMrEZc@yilunxu-OptiPlex-7050>
- <20250710175449.GA1870174@ziepe.ca>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mgElQpdl3O+JDLZnyoo5W+CQ0mq07eCsDDCgWL/mHIlQpqOVeT2gs47HpIBriAvMONSZbZzOWLC9+xaHBvQLJVHuPQI/urP87ZPbKToY2EG3TmvG3NsVGTJPASggu82ONGlQwtTtHDd/695/520rGfWAkHf8hKIv9MUtcDm7Iro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nPMc6wqM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC6A1C4CEEF;
+	Fri, 11 Jul 2025 04:33:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752208400;
+	bh=ADUlxN5vRAMoH+bUBIPnCkxN+wm8oydTF3zMTV6RCPE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nPMc6wqMegydFdHC/efGONuSfXTyZbe5tsXbIroa82StpgKDbEvJPuj48tapBwPyf
+	 EtVHrya8nElzNy0urWzuc6uc3+P/BhYhyllSsJwAlWh7lYs5nCg3PCVMoSGtmE4eHa
+	 IMX942N7HcpHaEDvKk/pcHyxWkS1lUIozmVu6pPPyubGupM4QuWOeg3fVzOPXb5Z4h
+	 SrGb9KgLIy6SLPmYDVt0CEvM6cQ1M97xX5zkwXVewuH3ePmqmSFbhBCz4+5V2E/5j0
+	 ZGDphlx7xrl9wUIVzNALWHUi/AasvWNt1O4R7Oz1o3rxk3Gy07+Zd4C10f5VgqL7ur
+	 LWVdCR8rbYDhQ==
+Date: Fri, 11 Jul 2025 10:03:08 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, 
+	Jeff Johnson <jjohnson@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Jingoo Han <jingoohan1@gmail.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	mhi@lists.linux.dev, linux-wireless@vger.kernel.org, ath11k@lists.infradead.org, 
+	qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com, quic_vpernami@quicinc.com, 
+	quic_mrana@quicinc.com
+Subject: Re: [PATCH v4 04/11] bus: mhi: host: Add support for Bandwidth scale
+Message-ID: <eg2v3kctnztxcaulffu7tvysljimmyhnramyjj5gpa4vrv3yxu@g3pgwpwx37iq>
+References: <20250609-mhi_bw_up-v4-0-3faa8fe92b05@qti.qualcomm.com>
+ <20250609-mhi_bw_up-v4-4-3faa8fe92b05@qti.qualcomm.com>
+ <j24c2ii33yivc7rb3vwbwljxwvhdpqwbfgt3gid2njma6t47i4@uhykehw23h2q>
+ <31c192f7-cd69-46ad-9443-5d57ae2aa86e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -121,104 +67,212 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250710175449.GA1870174@ziepe.ca>
+In-Reply-To: <31c192f7-cd69-46ad-9443-5d57ae2aa86e@oss.qualcomm.com>
 
-On Thu, Jul 10, 2025 at 02:54:49PM -0300, Jason Gunthorpe wrote:
-> On Thu, Jul 10, 2025 at 06:50:09PM +0800, Xu Yilun wrote:
-> > On Wed, Jul 02, 2025 at 07:32:36AM -0700, Vishal Annapurve wrote:
-> > > On Wed, Jul 2, 2025 at 7:13 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > > >
-> > > > On Wed, Jul 02, 2025 at 06:54:10AM -0700, Vishal Annapurve wrote:
-> > > > > On Wed, Jul 2, 2025 at 1:38 AM Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > > > > >
-> > > > > > On Tue, Jun 24, 2025 at 07:10:38AM -0700, Vishal Annapurve wrote:
-> > > > > > > On Tue, Jun 24, 2025 at 6:08 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > > > > > > >
-> > > > > > > > On Tue, Jun 24, 2025 at 06:23:54PM +1000, Alexey Kardashevskiy wrote:
-> > > > > > > >
-> > > > > > > > > Now, I am rebasing my RFC on top of this patchset and it fails in
-> > > > > > > > > kvm_gmem_has_safe_refcount() as IOMMU holds references to all these
-> > > > > > > > > folios in my RFC.
-> > > > > > > > >
-> > > > > > > > > So what is the expected sequence here? The userspace unmaps a DMA
-> > > > > > > > > page and maps it back right away, all from the userspace? The end
-> > > > > > > > > result will be the exactly same which seems useless. And IOMMU TLB
-> > > > > > >
-> > > > > > >  As Jason described, ideally IOMMU just like KVM, should just:
-> > > > > > > 1) Directly rely on guest_memfd for pinning -> no page refcounts taken
-> > > > > > > by IOMMU stack
-> > > > > > In TDX connect, TDX module and TDs do not trust VMM. So, it's the TDs to inform
-> > > > > > TDX module about which pages are used by it for DMAs purposes.
-> > > > > > So, if a page is regarded as pinned by TDs for DMA, the TDX module will fail the
-> > > > > > unmap of the pages from S-EPT.
-> > > >
-> > > > I don't see this as having much to do with iommufd.
-> > > >
-> > > > iommufd will somehow support the T=1 iommu inside the TDX module but
-> > > > it won't have an IOAS for it since the VMM does not control the
-> > > > translation.
+On Wed, Jul 09, 2025 at 05:51:34PM GMT, Krishna Chaitanya Chundru wrote:
+> 
+> 
+> On 7/8/2025 10:36 PM, Manivannan Sadhasivam wrote:
+> > On Mon, Jun 09, 2025 at 04:21:25PM GMT, Krishna Chaitanya Chundru wrote:
+> > > As per MHI spec v1.2, sec 14, MHI supports bandwidth scaling to reduce
+> > > power consumption. MHI bandwidth scaling is advertised by devices that
+> > > contain the bandwidth scaling capability registers. If enabled, the device
+> > > aggregates bandwidth requirements and sends them to the host through
+> > > dedicated mhi event ring. After the host performs the bandwidth switch,
+> > > it sends an acknowledgment by ringing a doorbell.
+> > > 
+> > > if the host supports bandwidth scaling events, then it must set
+> > > BW_CFG.ENABLED bit, set BW_CFG.DB_CHAN_ID to the channel ID to the
+> > > doorbell that will be used by the host to communicate the bandwidth
+> > > scaling status and BW_CFG.ER_INDEX to the index for the event ring
+> > > to which the device should send bandwidth scaling request in the
+> > > bandwidth scaling capability register.
+> > > 
+> > > As part of mmio init check if the bw scale capability is present or not,
+> > > if present advertise host supports bw scale by setting all the required
+> > > fields.
+> > > 
+> > > MHI layer will only forward the bw scaling request to the controller
+> > > driver since MHI doesn't have any idea about transport layer used by
+> > > the controller, it is responsibility of the controller driver to do actual
+> > > bw scaling and then pass status to the MHI. MHI will response back to the
+> > > device based up on the status of the bw scale received.
+> > > 
+> > > Add a new get_misc_doorbell() to get doorbell for misc capabilities to
+> > > use the doorbell with mhi events like MHI BW scale etc.
+> > > 
+> > > Use workqueue & mutex for the bw scale events as the pci_set_target_speed()
+> > > which will called by the mhi controller driver can sleep.
+> > > 
+> > > Co-developed-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> > > Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> > > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> > > ---
+> > >   drivers/bus/mhi/common.h        | 13 ++++++
+> > >   drivers/bus/mhi/host/init.c     | 63 +++++++++++++++++++++++++-
+> > >   drivers/bus/mhi/host/internal.h |  7 ++-
+> > >   drivers/bus/mhi/host/main.c     | 98 ++++++++++++++++++++++++++++++++++++++++-
+> > >   drivers/bus/mhi/host/pm.c       | 10 ++++-
+> > >   include/linux/mhi.h             | 13 ++++++
+> > >   6 files changed, 198 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/drivers/bus/mhi/common.h b/drivers/bus/mhi/common.h
+> > > index 58f27c6ba63e3e6fa28ca48d6d1065684ed6e1dd..6e342519d80b7725e9ef5390a3eb2a06ac69ceac 100644
+> > > --- a/drivers/bus/mhi/common.h
+> > > +++ b/drivers/bus/mhi/common.h
+> > > @@ -217,6 +217,19 @@ enum mhi_capability_type {
+> > >   	MHI_CAP_ID_MAX,
+> > >   };
+> > > +/* MHI Bandwidth scaling offsets */
+> > > +#define MHI_BW_SCALE_CFG_OFFSET		0x4
+> > > +#define MHI_BW_SCALE_CAP_ID		(3)
+> > > +#define MHI_BW_SCALE_DB_CHAN_ID		GENMASK(31, 25)
+> > > +#define MHI_BW_SCALE_ENABLED		BIT(24)
+> > > +#define MHI_BW_SCALE_ER_INDEX		GENMASK(23, 19)
+> > > +
+> > > +#define MHI_TRE_GET_EV_BW_REQ_SEQ(tre)	FIELD_GET(GENMASK(15, 8), (MHI_TRE_GET_DWORD(tre, 0)))
+> > > +
+> > > +#define MHI_BW_SCALE_RESULT(status, seq)	cpu_to_le32(FIELD_PREP(GENMASK(11, 8), status) | \
+> > > +						FIELD_PREP(GENMASK(7, 0), seq))
+> > > +#define MHI_BW_SCALE_NACK			0xF
+> > > +
+> > >   enum mhi_pkt_type {
+> > >   	MHI_PKT_TYPE_INVALID = 0x0,
+> > >   	MHI_PKT_TYPE_NOOP_CMD = 0x1,
+> > > diff --git a/drivers/bus/mhi/host/init.c b/drivers/bus/mhi/host/init.c
+> > > index 9102ce13a2059f599b46d25ef631f643142642be..26703fea6272de7fd19c6ee76be067f0ff0fd309 100644
+> > > --- a/drivers/bus/mhi/host/init.c
+> > > +++ b/drivers/bus/mhi/host/init.c
+> > > @@ -501,10 +501,55 @@ static int mhi_find_capability(struct mhi_controller *mhi_cntrl, u32 capability,
+> > >   	return -ENXIO;
+> > >   }
+> > > +static int mhi_get_er_index(struct mhi_controller *mhi_cntrl,
+> > > +			    enum mhi_er_data_type type)
+> > > +{
+> > > +	struct mhi_event *mhi_event = mhi_cntrl->mhi_event;
+> > > +	int i;
+> > > +
+> > > +	/* Find event ring for requested type */
+> > > +	for (i = 0; i < mhi_cntrl->total_ev_rings; i++, mhi_event++) {
+> > > +		if (mhi_event->data_type == type)
+> > > +			return mhi_event->er_index;
+> > > +	}
+> > > +
+> > > +	return -ENOENT;
+> > > +}
+> > > +
+> > > +static int mhi_init_bw_scale(struct mhi_controller *mhi_cntrl,
+> > > +			     int bw_scale_db)
+> > > +{
+> > > +	struct device *dev = &mhi_cntrl->mhi_dev->dev;
+> > > +	u32 bw_cfg_offset, val;
+> > > +	int ret, er_index;
+> > > +
+> > > +	ret = mhi_find_capability(mhi_cntrl, MHI_BW_SCALE_CAP_ID, &bw_cfg_offset);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	er_index = mhi_get_er_index(mhi_cntrl, MHI_ER_BW_SCALE);
+> > > +	if (er_index < 0)
+> > > +		return er_index;
+> > > +
+> > > +	bw_cfg_offset += MHI_BW_SCALE_CFG_OFFSET;
+> > > +
+> > > +	/* Advertise host support */
+> > > +	val = (__force u32)cpu_to_le32(FIELD_PREP(MHI_BW_SCALE_DB_CHAN_ID, bw_scale_db) |
+> > > +				       FIELD_PREP(MHI_BW_SCALE_ER_INDEX, er_index) |
+> > > +				       MHI_BW_SCALE_ENABLED);
+> > > +
 > > 
-> > I partially agree with this.
+> > It is wrong to store the value of cpu_to_le32() in a non-le32 variable.
+> > mhi_write_reg() accepts the 'val' in native endian. writel used in the
+> > controller drivers should take care of converting to LE before writing to the
+> > device.
 > > 
-> > This is still the DMA Silent drop issue for security.  The HW (Also
-> > applicable to AMD/ARM) screams out if the trusted DMA path (IOMMU
-> > mapping, or access control table like RMP) is changed out of TD's
-> > expectation. So from HW POV, it is the iommu problem.
+> ok then I will revert to u32.
 > 
-> I thought the basic idea was that the secure world would sanity check
-> what the insecure is doing and if it is not OK then it blows up. So if
+> I think we need a patch in the controller drivers seperately to handle
+> this.
 
-Yes. The secure world checks. But it let alone the unexpected change on
-CPU path cause CPU is synchronous and VM just pends on the fault, no
-security concern. While DMA is asynchronous and the secure world must
-blow up.
+Why?
 
-> the DMA fails because the untrusted world revoked sharability when it
-> should not have then this is correct and expected?
-
-OK. From secure world POV the failing is correct & expected.
-
-> 
-> > For SW, if we don't blame iommu, maybe we rephrase as gmemfd can't
-> > invalidate private pages unless TD agrees.
-> 
-> I think you mean guestmemfd in the kernel cannot autonomously change
-> 'something' unless instructed to explicitly by userspace.
-> 
-> The expectation is the userspace will only give such instructions
-> based on the VM telling it to do a shared/private change.
-> 
-> If userspace gives an instruction that was not agreed with the guest
-> then the secure world can police the error and blow up.
-
-Yes.
-
->  
-> > Just to be clear. With In-place conversion, it is not KVM gives pages
-> > to become secure, it is gmemfd. Or maybe you mean gmemfd is part of KVM.
-> 
-> Yeah, I mean part of.
-> 
-> > > > Obviously in a mode where there is a vPCI device we will need all the
-> > > > pages to be pinned in the guestmemfd to prevent any kind of
-> > > > migrations. Only shared/private conversions should change the page
-> > > > around.
+> > > +	mhi_write_reg(mhi_cntrl, mhi_cntrl->regs, bw_cfg_offset, val);
+> > > +
+> > > +	dev_dbg(dev, "Bandwidth scaling setup complete with event ring: %d\n",
+> > > +		er_index);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > >   int mhi_init_mmio(struct mhi_controller *mhi_cntrl)
+> > >   {
+> > >   	u32 val;
+> > > -	int i, ret;
+> > > +	int i, ret, doorbell = 0;
+> > >   	struct mhi_chan *mhi_chan;
+> > >   	struct mhi_event *mhi_event;
+> > >   	void __iomem *base = mhi_cntrl->regs;
+> > > @@ -638,6 +683,16 @@ int mhi_init_mmio(struct mhi_controller *mhi_cntrl)
+> > >   		return ret;
+> > >   	}
+> > > +	if (mhi_cntrl->get_misc_doorbell)
+> > > +		doorbell = mhi_cntrl->get_misc_doorbell(mhi_cntrl, MHI_ER_BW_SCALE);
+> > > +
+> > > +	if (doorbell > 0) {
+> > > +		ret = mhi_init_bw_scale(mhi_cntrl, doorbell);
+> > > +		if (!ret)
+> > > +			mhi_cntrl->bw_scale_db = base + val + (8 * doorbell);
+> > > +		else
+> > > +			dev_warn(dev, "Failed to setup bandwidth scaling: %d\n", ret);
 > > 
-> > Only *guest permitted* conversion should change the page. I.e only when
-> > VMM is dealing with the KVM_HC_MAP_GPA_RANGE hypercall. Not sure if we
-> > could just let QEMU ensure this or KVM/guestmemfd should ensure this.
+> > That's it? And you would continue to setup doorbell setup later?
+> > 
+> event ring for BW scale and capability are exposed during bootup only,
+> if those are not present at bootup no need to retry later.
+
+I'm not asking you to retry. I was asking why would you continue to initialize
+bw_scale resources (like workqueue) even if mhi_init_bw_scale() fails.
+
+> > > +	}
+> > 
+> > nit: newline
+> > 
+> > >   	return 0;
+> > >   }
+
+[...]
+
+> > > +		goto exit_bw_scale;
+> > > +	}
+> > > +
+> > > +	link_info.target_link_speed = MHI_TRE_GET_EV_LINKSPEED(dev_rp);
+> > > +	link_info.target_link_width = MHI_TRE_GET_EV_LINKWIDTH(dev_rp);
+> > > +	link_info.sequence_num = MHI_TRE_GET_EV_BW_REQ_SEQ(dev_rp);
+> > > +
+> > > +	dev_dbg(dev, "Received BW_REQ with seq:%d link speed:0x%x width:0x%x\n",
+> > > +		link_info.sequence_num,
+> > > +		link_info.target_link_speed,
+> > > +		link_info.target_link_width);
+> > > +
+> > > +	/* Bring host and device out of suspended states */
+> > > +	ret = mhi_device_get_sync(mhi_cntrl->mhi_dev);
+> > 
+> > Looks like mhi_device_get_sync() is going runtime_get()/runtime_put() inside
+> > mhi_trigger_resume(). I'm wondering why that is necessary.
+> > 
+> Before mhi_trigger_resume we are doing wake_get, which will make sure
+> device will not transition to the low power modes while servicing this
+> event. And also make sure mhi state is in M0 only.
 > 
-> I think it should not be part of the kernel, no need. From a kernel
-> perspective userspace has requested a shared/private conversion and if
-> it wasn't agreed with the VM then it will explode.
-
-I'm OK with it now. It's simple if we don't try to recover from the
-explosion. Although I see the after explosion processing in kernel is
-complex and not sure how it will advance.
-
-Thanks,
-Yilun
-
+> As we are in workqueue this can be scheduled at some later time and by
+> that time mhi can go to m1 or m2 state.
 > 
-> Jason
+
+My comment was more about the behavior of mhi_trigger_resume(). Why does it call
+get() and put()? Sorry if I was not clear.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
