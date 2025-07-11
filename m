@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-728122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1217CB023DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:38:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCF1AB023DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:38:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C0CEB46A74
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:36:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B015D3BA615
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDE52F3649;
-	Fri, 11 Jul 2025 18:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59202F4330;
+	Fri, 11 Jul 2025 18:37:22 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E50199FAB
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09942F431F
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752259038; cv=none; b=mt4lksCATr65DLbQszuuhJ5mvFuGD9ySYDSFce5/FQOCD1Wr7pqEQgtnasyvFLEH2L++9xaaMQetYbK4tMMaTNdkd/IdmSroqY8tjpl2D3Gq04uhLoH+g4bV+0YyZQycloktajVxBEUVSr6erkhG0G3+yeMZdBEKhlrZ0ASK4iM=
+	t=1752259042; cv=none; b=P7tLNbaA/xHKc7T5Hkk7/2bANsaboelUrklDh/yFtfIag6WSRWOXlRpU2nNxZi/ZoYjxUGezWNSZNOJpI6DBv/mP9OHF7r+DHGJs2tzbERNR1Vx1b7Et4N6N7a0FcKTaFvgraT8EJAClKDoklAJQlGsPgeHzWjTtr+KHSmXorTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752259038; c=relaxed/simple;
-	bh=q18nYXAm4vunGVzbFsAjhYiP6o38u7Kc4hIJmurnU2A=;
+	s=arc-20240116; t=1752259042; c=relaxed/simple;
+	bh=byBTToJ0BsaPjrV/9pkJiU5XwhAX0fOCxVukgFpIrrg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MD/+B8ccd0lPJeFAGpecSzcJss/oH/3Nep5jUg2DNmfzZigS9YrxuW/vXYHqNUFeZthl5x+yZP9Yr/Z8/Do6Hz/bayYUyFpklttrOvL26MXqU/HqIhzIA3sVQY3KgH71fAVaf7Yv/hc9I1l3LsZZbQ+sX0AOVsaTTKUq1YbqXpI=
+	 MIME-Version; b=rxn6XEzwCGyWf1IrRVsX0BXQdXIZkzm9xLUpZZnAzuiBIoB2M8vdtqf39034VxekIEQM/vdtHEIvpipeP+TBHy+1vCojildfYGPG/V42XxlUG/A87pX3hz6yZhRGMwZ+EuDiL66sGw0ChSC/6NYOpZuQhl7XXvdOEe6aDn1LSzU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4ACDA16F8;
-	Fri, 11 Jul 2025 11:37:06 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9BC3E2247;
+	Fri, 11 Jul 2025 11:37:09 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D57183F694;
-	Fri, 11 Jul 2025 11:37:13 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 184733F694;
+	Fri, 11 Jul 2025 11:37:16 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
@@ -57,10 +57,11 @@ Cc: Rob Herring <robh@kernel.org>,
 	Rex Nie <rex.nie@jaguarmicro.com>,
 	Dave Martin <dave.martin@arm.com>,
 	Koba Ko <kobak@nvidia.com>,
-	James Morse <james.morse@arm.com>
-Subject: [RFC PATCH 04/36] cacheinfo: Expose the code to generate a cache-id from a device_node
-Date: Fri, 11 Jul 2025 18:36:16 +0000
-Message-Id: <20250711183648.30766-5-james.morse@arm.com>
+	James Morse <james.morse@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>
+Subject: [RFC PATCH 05/36] ACPI / PPTT: Add a helper to fill a cpumask from a processor container
+Date: Fri, 11 Jul 2025 18:36:17 +0000
+Message-Id: <20250711183648.30766-6-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20250711183648.30766-1-james.morse@arm.com>
 References: <20250711183648.30766-1-james.morse@arm.com>
@@ -72,76 +73,150 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The MPAM driver identifies caches by id for use with resctrl. It
-needs to know the cache-id when probe-ing, but the value isn't set
-in cacheinfo until device_initcall().
+The PPTT describes CPUs and caches, as well as processor containers.
+The ACPI table for MPAM describes the set of CPUs that can access an MSC
+with the UID of a processor container.
 
-Expose the code that generates the cache-id. The parts of the MPAM
-driver that run early can use this to set up the resctrl structures
-before cacheinfo is ready in device_initcall().
+Add a helper to find the processor container by its id, then walk
+the possible CPUs to fill a cpumask with the CPUs that have this
+processor container as a parent.
 
+CC: Dave Martin <dave.martin@arm.com>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 Signed-off-by: James Morse <james.morse@arm.com>
 ---
-Changes since v1:
- * Renamed cache_of_get_id() cache_of_calculate_id().
----
- drivers/base/cacheinfo.c  | 17 ++++++++++++-----
- include/linux/cacheinfo.h |  1 +
- 2 files changed, 13 insertions(+), 5 deletions(-)
+ drivers/acpi/pptt.c  | 93 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/acpi.h |  6 +++
+ 2 files changed, 99 insertions(+)
 
-diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-index 613410705a47..0fdd6358ee73 100644
---- a/drivers/base/cacheinfo.c
-+++ b/drivers/base/cacheinfo.c
-@@ -207,8 +207,7 @@ static bool match_cache_node(struct device_node *cpu,
- #define arch_compact_of_hwid(_x)	(_x)
- #endif
+diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+index 54676e3d82dd..13619b1b821b 100644
+--- a/drivers/acpi/pptt.c
++++ b/drivers/acpi/pptt.c
+@@ -298,6 +298,99 @@ static struct acpi_pptt_processor *acpi_find_processor_node(struct acpi_table_he
+ 	return NULL;
+ }
  
--static void cache_of_set_id(struct cacheinfo *this_leaf,
--			    struct device_node *cache_node)
-+unsigned long cache_of_calculate_id(struct device_node *cache_node)
- {
- 	struct device_node *cpu;
- 	u32 min_id = ~0;
-@@ -219,15 +218,23 @@ static void cache_of_set_id(struct cacheinfo *this_leaf,
- 		id = arch_compact_of_hwid(id);
- 		if (FIELD_GET(GENMASK_ULL(63, 32), id)) {
- 			of_node_put(cpu);
--			return;
-+			return ~0UL;
- 		}
- 
- 		if (match_cache_node(cpu, cache_node))
- 			min_id = min(min_id, id);
- 	}
- 
--	if (min_id != ~0) {
--		this_leaf->id = min_id;
-+	return min_id;
++/**
++ * acpi_pptt_get_child_cpus() - Find all the CPUs below a PPTT processor node
++ * @table_hdr:		A reference to the PPTT table.
++ * @parent_node:	A pointer to the processor node in the @table_hdr.
++ * @cpus:		A cpumask to fill with the CPUs below @parent_node.
++ *
++ * Walks up the PPTT from every possible CPU to find if the provided
++ * @parent_node is a parent of this CPU.
++ */
++static void acpi_pptt_get_child_cpus(struct acpi_table_header *table_hdr,
++				     struct acpi_pptt_processor *parent_node,
++				     cpumask_t *cpus)
++{
++	struct acpi_pptt_processor *cpu_node;
++	u32 acpi_id;
++	int cpu;
++
++	cpumask_clear(cpus);
++
++	for_each_possible_cpu(cpu) {
++		acpi_id = get_acpi_id_for_cpu(cpu);
++		cpu_node = acpi_find_processor_node(table_hdr, acpi_id);
++
++		while (cpu_node) {
++			if (cpu_node == parent_node) {
++				cpumask_set_cpu(cpu, cpus);
++				break;
++			}
++			cpu_node = fetch_pptt_node(table_hdr, cpu_node->parent);
++		}
++	}
 +}
 +
-+static void cache_of_set_id(struct cacheinfo *this_leaf,
-+			    struct device_node *cache_node)
++/**
++ * acpi_pptt_get_cpus_from_container() - Populate a cpumask with all CPUs in a
++ *                                       processor containers
++ * @acpi_cpu_id:	The UID of the processor container.
++ * @cpus		The resulting CPU mask.
++ *
++ * Find the specified Processor Container, and fill @cpus with all the cpus
++ * below it.
++ *
++ * Not all 'Processor' entries in the PPTT are either a CPU or a Processor
++ * Container, they may exist purely to describe a Private resource. CPUs
++ * have to be leaves, so a Processor Container is a non-leaf that has the
++ * 'ACPI Processor ID valid' flag set.
++ *
++ * Return: 0 for a complete walk, or an error if the mask is incomplete.
++ */
++int acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
 +{
-+	unsigned long id = cache_of_calculate_id(cache_node);
++	struct acpi_pptt_processor *cpu_node;
++	struct acpi_table_header *table_hdr;
++	struct acpi_subtable_header *entry;
++	bool leaf_flag, has_leaf_flag = false;
++	unsigned long table_end;
++	acpi_status status;
++	u32 proc_sz;
++	int ret = 0;
 +
-+	if (id != ~0UL) {
-+		this_leaf->id = id;
- 		this_leaf->attributes |= CACHE_ID;
- 	}
++	cpumask_clear(cpus);
++
++	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table_hdr);
++	if (ACPI_FAILURE(status))
++		return 0;
++
++	if (table_hdr->revision > 1)
++		has_leaf_flag = true;
++
++	table_end = (unsigned long)table_hdr + table_hdr->length;
++	entry = ACPI_ADD_PTR(struct acpi_subtable_header, table_hdr,
++			     sizeof(struct acpi_table_pptt));
++	proc_sz = sizeof(struct acpi_pptt_processor);
++	while ((unsigned long)entry + proc_sz <= table_end) {
++		cpu_node = (struct acpi_pptt_processor *)entry;
++		if (entry->type == ACPI_PPTT_TYPE_PROCESSOR &&
++		    cpu_node->flags & ACPI_PPTT_ACPI_PROCESSOR_ID_VALID) {
++			leaf_flag = cpu_node->flags & ACPI_PPTT_ACPI_LEAF_NODE;
++			if ((has_leaf_flag && !leaf_flag) ||
++			    (!has_leaf_flag && !acpi_pptt_leaf_node(table_hdr, cpu_node))) {
++				if (cpu_node->acpi_processor_id == acpi_cpu_id)
++					acpi_pptt_get_child_cpus(table_hdr, cpu_node, cpus);
++			}
++		}
++		entry = ACPI_ADD_PTR(struct acpi_subtable_header, entry,
++				     entry->length);
++	}
++
++	acpi_put_table(table_hdr);
++
++	return ret;
++}
++
+ static u8 acpi_cache_type(enum cache_type type)
+ {
+ 	switch (type) {
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index f102c0fe3431..8c3165c2b083 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -1541,6 +1541,7 @@ int find_acpi_cpu_topology(unsigned int cpu, int level);
+ int find_acpi_cpu_topology_cluster(unsigned int cpu);
+ int find_acpi_cpu_topology_package(unsigned int cpu);
+ int find_acpi_cpu_topology_hetero_id(unsigned int cpu);
++int acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus);
+ #else
+ static inline int acpi_pptt_cpu_is_thread(unsigned int cpu)
+ {
+@@ -1562,6 +1563,11 @@ static inline int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
+ {
+ 	return -EINVAL;
  }
-diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
-index c8f4f0a0b874..2dcbb69139e9 100644
---- a/include/linux/cacheinfo.h
-+++ b/include/linux/cacheinfo.h
-@@ -112,6 +112,7 @@ int acpi_get_cache_info(unsigned int cpu,
++static inline int acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id,
++						    cpumask_t *cpus)
++{
++	return -EINVAL;
++}
  #endif
  
- const struct attribute_group *cache_get_priv_group(struct cacheinfo *this_leaf);
-+unsigned long cache_of_calculate_id(struct device_node *np);
- 
- /*
-  * Get the cacheinfo structure for the cache associated with @cpu at
+ void acpi_arch_init(void);
 -- 
 2.39.5
 
