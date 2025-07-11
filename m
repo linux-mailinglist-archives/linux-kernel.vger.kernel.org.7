@@ -1,172 +1,200 @@
-Return-Path: <linux-kernel+bounces-727742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72764B01EFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:21:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 626A7B01EFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81EE41897628
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:21:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 203C81899AF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A582E54D5;
-	Fri, 11 Jul 2025 14:21:31 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1392E62D5;
+	Fri, 11 Jul 2025 14:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LNl5IEFV"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F3A2E499A
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 14:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B8E2E499A;
+	Fri, 11 Jul 2025 14:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752243691; cv=none; b=SxalghWT7qSIdeJl30C5BKxq+0Gvl8fVYzIxNobG3dyiy/AHL5slGrd8I7pDCMHZbzUhwOKaQAILXmzI0plUwI8dyzP4cSkWmlfxH2D2S1qWBnRnScMq96n509cbRaXZvhP3mbYE82QTSOSSDWh6XM7kZmEBHLUCaJ4s3dEEIdY=
+	t=1752243698; cv=none; b=lcYA91RPxFvfTd0PcyjraCygW98CkM2Mk3969hx0kr4bVT/ZofBCF4c458+Vs1mxwy9Fp2Eu5oHqkUqw7sHaRy9YhCb6mro2no7TIjVRay4DmVSdNhSt8PEDlvkkuUIcphaXmlXg1hfdjUzHfxskCifhP7X0tnJQoz48qQmhs5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752243691; c=relaxed/simple;
-	bh=jAxICgxAKU72VhtadAurLR5kQDgH+znKn/i5qyNAZzI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LjBsC10bHN9vPBZiSAwq4ZNQ4Gy1Fd+AwBSTLDCp/rmX8XxiLYpy/Dw4v3E23rqCIzJDEwGq9DhL/ydp6KrDuPAFqxHDMEnOejeW+hRHkI66rIsu9e3nzRllh3iN0zi2AwO7CeqM3sKG+BAR1jteja4dh4Bj2Shlz+Z9MroUUEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bdv273Qt7z6L55H;
-	Fri, 11 Jul 2025 22:18:07 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id BABF81402EF;
-	Fri, 11 Jul 2025 22:21:25 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Jul
- 2025 16:21:25 +0200
-Date: Fri, 11 Jul 2025 15:21:23 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Ben Horgan <ben.horgan@arm.com>
-CC: James Morse <james.morse@arm.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
-	<sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>, Catalin Marinas
-	<catalin.marinas@arm.com>, <WillDeaconwill@kernel.org>
-Subject: Re: [PATCH v2 1/3] cacheinfo: Set cache 'id' based on DT data
-Message-ID: <20250711152123.00002153@huawei.com>
-In-Reply-To: <9a1ae272-3128-425b-828d-50b2289a6cb8@arm.com>
-References: <20250704173826.13025-1-james.morse@arm.com>
-	<20250704173826.13025-2-james.morse@arm.com>
-	<9495df36-053e-49a3-8046-1e6aed63b4af@arm.com>
-	<20250707133207.00001b88@huawei.com>
-	<89c6f2a2-e084-4899-a6d6-819917eb6324@arm.com>
-	<9a1ae272-3128-425b-828d-50b2289a6cb8@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1752243698; c=relaxed/simple;
+	bh=xDO9ZI+VgzovdGPw5qIhe3Di7MzRpMahQn0BuIPnKrI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=k4SaeNdSOiW82hkrFePztsv7LHakoBbtlUTZoD+/ieXChIvTCtp0JuhmBh6yOY9kBuKuGPDfpDOg4S8BIdti0Vtzr30yDDb8FL98i5vSabVdxpu2j+ugTNfHfOg6XMKBhyfrkan/9gy1jD+PazNDvNCD6dJBmQZA0DVtNqG+Yr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LNl5IEFV; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B4F0E442D4;
+	Fri, 11 Jul 2025 14:21:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1752243693;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PQfujfpr4jBi7kFmzTG5mVX3fJtqhias2MfqjlRkMKg=;
+	b=LNl5IEFV0YRD4Rr3CnV78iMnRoOJXWGWbA++Yl/IC2JmemyaNTuO7FlM3wgQ8rSLKdrfHu
+	kDJSgpjqiSOPXw+77DRSSlSDUsTfPRSKA4pwu9p1hArwmB9wev6RwI9A4AkG4N17Bnist6
+	u1Fcp80LJcYNgz8u3dihsbXw8FAGvKLi4X9o0jKrWRHT1Xj5RVW+8C7xn6UYoNzGHaagDb
+	StX58aiQnjMZ1hRLOMmcjrBuFoOGUPRkClemi3FAE0trnVniPN/pNBRDIBZDB9yL5L206S
+	Ed4XsIN/aW5uTWkMwUeZbx+N9U4Mrae0VyJHoM1gIfp/HLTLBsSMnbUJI15yaQ==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: =?utf-8?Q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>, Thomas
+ Bogendoerfer
+ <tsbogend@alpha.franken.de>, Vladimir Kondratiev
+ <vladimir.kondratiev@mobileye.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk
+ <tawfik.bayouk@mobileye.com>, linux-mips@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, =?utf-8?Q?Th?=
+ =?utf-8?Q?=C3=A9o?= Lebrun
+ <theo.lebrun@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, Andi
+ Shyti <andi.shyti@kernel.org>
+Subject: Re: [PATCH 2/6] MIPS: mobileye: eyeq5: add 5 I2C controller nodes
+In-Reply-To: <20250704-of-commits-v1-2-dc2006bf2846@bootlin.com>
+References: <20250704-of-commits-v1-0-dc2006bf2846@bootlin.com>
+ <20250704-of-commits-v1-2-dc2006bf2846@bootlin.com>
+Date: Fri, 11 Jul 2025 16:21:32 +0200
+Message-ID: <87ikjyzu37.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegfeehgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffffkgggtgfesthhqredttddtjeenucfhrhhomhepifhrvghgohhrhicuvefngffogffpvfcuoehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefghfegvdehgfdtjedvtefhvdeikefgteeuhfeukeettefgvdeuueettddtkeegveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeegtgejkeemvdektggvmeeftgejgeemfeeggegtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeegtgejkeemvdektggvmeeftgejgeemfeeggegtpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgtphhtthhopehvlhgru
+ ghimhhirhdrkhhonhgurhgrthhivghvsehmohgsihhlvgihvgdrtghomhdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehtrgiffhhikhdrsggrhihouhhksehmohgsihhlvgihvgdrtghomh
+X-GND-Sasl: gregory.clement@bootlin.com
 
-On Thu, 10 Jul 2025 12:24:01 +0100
-Ben Horgan <ben.horgan@arm.com> wrote:
+Th=C3=A9o Lebrun <theo.lebrun@bootlin.com> writes:
 
-> Hi James and Jonathan,
-> 
-> On 7/10/25 12:15, James Morse wrote:
-> > Hi Ben, Jonathan,
-> > 
-> > On 07/07/2025 13:32, Jonathan Cameron wrote:  
-> >> On Mon, 7 Jul 2025 11:27:06 +0100
-> >> Ben Horgan <ben.horgan@arm.com> wrote:  
-> >>> On 7/4/25 18:38, James Morse wrote:  
-> >>>> From: Rob Herring <robh@kernel.org>
-> >>>> Use the minimum CPU h/w id of the CPUs associated with the cache for the
-> >>>> cache 'id'. This will provide a stable id value for a given system. As
-> >>>> we need to check all possible CPUs, we can't use the shared_cpu_map
-> >>>> which is just online CPUs. As there's not a cache to CPUs mapping in DT,
-> >>>> we have to walk all CPU nodes and then walk cache levels.
-> >>>>
-> >>>> The cache_id exposed to user-space has historically been 32 bits, and
-> >>>> is too late to change. This value is parsed into a u32 by user-space
-> >>>> libraries such as libvirt:
-> >>>> https://github.com/libvirt/libvirt/blob/master/src/util/virresctrl.c#L1588
-> >>>>
-> >>>> Give up on assigning cache-id's if a CPU h/w id greater than 32 bits
-> >>>> is found.  
-> >   
-> >>>> diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-> >>>> index cf0d455209d7..df593da0d5f7 100644
-> >>>> --- a/drivers/base/cacheinfo.c
-> >>>> +++ b/drivers/base/cacheinfo.c
-> >>>> @@ -183,6 +184,42 @@ static bool cache_node_is_unified(struct cacheinfo *this_leaf,
-> >>>>    	return of_property_read_bool(np, "cache-unified");
-> >>>>    }
-> >>>>    
-> >>>> +static bool match_cache_node(struct device_node *cpu,
-> >>>> +			     const struct device_node *cache_node)
-> >>>> +{
-> >>>> +	for (struct device_node *cache __free(device_node) = of_find_next_cache_node(cpu);  
-> >>> Looks like the creation of this helper function has upset the
-> >>> device_node reference counting. This first __free(device_node) will only
-> >>> cause of_node_put() to be called in the case of the early return from
-> >>> the loop. You've dropped the second __free(device_node) which accounts
-> >>> for 'cache' changing on each iteration.  
-> > 
-> > Heh, I just took this hunk verbatim. Fixing this up with the __free() magic is tricky as
-> > the existing patterns all drop the reference to cpu, which we don't want to do here. I
-> > think at this point the __free() magic is just making this harder to understand. How about
-> > the old fashioned way:
-> > 
-> > | static bool match_cache_node(struct device_node *cpu,
-> > |                              const struct device_node *cache_node)
-> > | {
-> > |         struct device_node *prev, *cache = of_find_next_cache_node(cpu);
-> > |
-> > |         while (cache) {
-> > |                 if (cache == cache_node) {
-> > |                         of_node_put(cache);
-> > |                         return true;
-> > |                 }
-> > |
-> > |                 prev = cache;
-> > |                 cache = of_find_next_cache_node(cache);
-> > |                 of_node_put(prev);
-> > |         }
-> > |
-> > |         return false;
-> > | }  
-> Ok with me.
-Agreed. 
+> Add the SoC I2C controller nodes to the platform devicetree. Use a
+> default bus frequency of 400kHz. They are AMBA devices that are matched
+> on PeriphID.
+>
+> Set transfer timeout to 10ms instead of Linux's default of 200ms.
+>
 
-> > 
-> >   
-> >> Good catch - this behaves differently from many of the of_get_next* type
-> >> helpers in that it doesn't drop the reference to the previous iteration
-> >> within the call.
-> >>
-> >> Maybe it should?
-> >>
-> >> I checked a few of the call sites and some would be simplified if it did
-> >> others would need some more complex restructuring but might benefit as
-> >> well.  
-> > 
-> > If it did, we'd end up dropping the reference to cpu on the way in, which
-> > of_get_next_cpu_node() in for_each_of_cpu_node() was expecting to do.  
-> 
-> Yes, I think the blurring of the lines between a cpu node and cache node 
-> is at least partially to blame for the confusion here.
-Yes.  That is more than a little ugly!
+Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 
-> > 
-> > 
-> > Thanks,
-> > 
-> > James  
-> 
-> Thanks,
-> 
-> Ben
-> 
-> 
+Thanks,
 
+Gregory
+
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Acked-by: Andi Shyti <andi.shyti@kernel.org>
+> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  arch/mips/boot/dts/mobileye/eyeq5.dtsi | 75 ++++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 75 insertions(+)
+>
+> diff --git a/arch/mips/boot/dts/mobileye/eyeq5.dtsi b/arch/mips/boot/dts/=
+mobileye/eyeq5.dtsi
+> index a84e6e720619ef99e1405ae6296d8bad1aa3fa23..b9b6f2684e675020d0377147a=
+04d7ad5bfc272c1 100644
+> --- a/arch/mips/boot/dts/mobileye/eyeq5.dtsi
+> +++ b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
+> @@ -110,6 +110,81 @@ soc: soc {
+>  		ranges;
+>  		compatible =3D "simple-bus";
+>=20=20
+> +		i2c0: i2c@300000 {
+> +			compatible =3D "mobileye,eyeq5-i2c", "arm,primecell";
+> +			reg =3D <0 0x300000 0x0 0x1000>;
+> +			interrupt-parent =3D <&gic>;
+> +			interrupts =3D <GIC_SHARED 1 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-frequency =3D <400000>; /* Fast mode */
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +			clocks =3D <&olb 35>, <&olb EQ5C_PER_I2C>;
+> +			clock-names =3D "i2cclk", "apb_pclk";
+> +			resets =3D <&olb 0 13>;
+> +			i2c-transfer-timeout-us =3D <10000>;
+> +			mobileye,olb =3D <&olb 0>;
+> +		};
+> +
+> +		i2c1: i2c@400000 {
+> +			compatible =3D "mobileye,eyeq5-i2c", "arm,primecell";
+> +			reg =3D <0 0x400000 0x0 0x1000>;
+> +			interrupt-parent =3D <&gic>;
+> +			interrupts =3D <GIC_SHARED 2 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-frequency =3D <400000>; /* Fast mode */
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +			clocks =3D <&olb 35>, <&olb EQ5C_PER_I2C>;
+> +			clock-names =3D "i2cclk", "apb_pclk";
+> +			resets =3D <&olb 0 14>;
+> +			i2c-transfer-timeout-us =3D <10000>;
+> +			mobileye,olb =3D <&olb 1>;
+> +		};
+> +
+> +		i2c2: i2c@500000 {
+> +			compatible =3D "mobileye,eyeq5-i2c", "arm,primecell";
+> +			reg =3D <0 0x500000 0x0 0x1000>;
+> +			interrupt-parent =3D <&gic>;
+> +			interrupts =3D <GIC_SHARED 3 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-frequency =3D <400000>; /* Fast mode */
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +			clocks =3D <&olb 35>, <&olb EQ5C_PER_I2C>;
+> +			clock-names =3D "i2cclk", "apb_pclk";
+> +			resets =3D <&olb 0 15>;
+> +			i2c-transfer-timeout-us =3D <10000>;
+> +			mobileye,olb =3D <&olb 2>;
+> +		};
+> +
+> +		i2c3: i2c@600000 {
+> +			compatible =3D "mobileye,eyeq5-i2c", "arm,primecell";
+> +			reg =3D <0 0x600000 0x0 0x1000>;
+> +			interrupt-parent =3D <&gic>;
+> +			interrupts =3D <GIC_SHARED 4 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-frequency =3D <400000>; /* Fast mode */
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +			clocks =3D <&olb 35>, <&olb EQ5C_PER_I2C>;
+> +			clock-names =3D "i2cclk", "apb_pclk";
+> +			resets =3D <&olb 0 16>;
+> +			i2c-transfer-timeout-us =3D <10000>;
+> +			mobileye,olb =3D <&olb 3>;
+> +		};
+> +
+> +		i2c4: i2c@700000 {
+> +			compatible =3D "mobileye,eyeq5-i2c", "arm,primecell";
+> +			reg =3D <0 0x700000 0x0 0x1000>;
+> +			interrupt-parent =3D <&gic>;
+> +			interrupts =3D <GIC_SHARED 5 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-frequency =3D <400000>; /* Fast mode */
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +			clocks =3D <&olb 35>, <&olb EQ5C_PER_I2C>;
+> +			clock-names =3D "i2cclk", "apb_pclk";
+> +			resets =3D <&olb 0 17>;
+> +			i2c-transfer-timeout-us =3D <10000>;
+> +			mobileye,olb =3D <&olb 4>;
+> +		};
+> +
+>  		uart0: serial@800000 {
+>  			compatible =3D "arm,pl011", "arm,primecell";
+>  			reg =3D <0 0x800000 0x0 0x1000>;
+>
+> --=20
+> 2.50.0
+>
+
+--=20
+Gr=C3=A9gory CLEMENT, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
