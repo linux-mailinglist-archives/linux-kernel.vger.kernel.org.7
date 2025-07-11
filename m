@@ -1,277 +1,114 @@
-Return-Path: <linux-kernel+bounces-728039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED333B022E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:43:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB59B022ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABB567BD704
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:41:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D68BC5A0DF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4783D2F0E59;
-	Fri, 11 Jul 2025 17:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5732EA480;
+	Fri, 11 Jul 2025 17:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="E4M0UZpo"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P5sALd14"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE07F1B4242
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D4C2EF678
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752255795; cv=none; b=rc1NucqfaKoL5mp7H35apSgBiQrxwuZ1Qr0gR9Jcq4l4uWvukoPup7ygrDhqL+gOnur3nqFWOAFtGuMqdwOJxJpvgOLDBR10sMmqKB9IOybhCwdG98qNFumJu1ybs+CefeLNbi5NtQYJzJuhr7tK/oX59LZ8fT6bgPr5GhRIvDE=
+	t=1752255809; cv=none; b=mKDS5C/jbEL2w7tSrrVi3uVkt9hvUSzLO5BIw0g5+vM/1naOfddyttRwA9Pa908rD4uHrgGst0yPweuSy/vaD6UPMvf0G180MFaPadC6tVID7QMuNMyiaV992YCg6FTC7aNsiBqsOLPurMKghmfI+nem+ESYNygDjl9MCJy3YEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752255795; c=relaxed/simple;
-	bh=NIjb6tJpXFO1Aa3nUsMHCLQBnlEa9zmtYz/P5JEAarw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=SBRAmtyUo+Diu7R013kVFOyRE2kUtOybwWT/rxJiFDWZsn19bbBQFhP3OHYdtmyEEWGhG1GK5UB2OS/FlNknOW5Q37v4htNCpKBHmEo/KTVBQ3gWu4cM6mncOfPtKJeyqdz0YyMQ5QY+4G6dJem1VHexkpaXJjqDK/JqLSqLewY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=E4M0UZpo; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-73a5c3e1b7aso1288745a34.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:43:12 -0700 (PDT)
+	s=arc-20240116; t=1752255809; c=relaxed/simple;
+	bh=hBYyXUMBd+7KXf34imR2vb3TQVXmdkbzzqR23++a0to=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kvOej42u5eSBGj6BHY0AQcTwDlyqcJzTvzqikNvvu4MArtFf4/NC6crPiDjEXrbun+gwv7CT1Jo+1Swn8v3RFfg3eJndOBfsRrTsq+xQ1PaHzheORmF0uoK4C9IyAt8lqlCsJFjZzGZ7QZ5b5+ncFRTjrJsGCIEXci6q2mIqQbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P5sALd14; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32b7cf56cacso23582971fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:43:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1752255792; x=1752860592; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=y77pZNFKGFm2u5BmE2Xthvf2yTb17YeJ0EDuvg4ntVI=;
-        b=E4M0UZpowCaGUlSzEiY0gXdbB4nRL1W+mScBst+bPcTYM8pl2AwsLFGJsWHQhwAh2v
-         s2TZ51cOtOKuqfM3ZwY3/okoT+Z0lQMGFo1cjr314EX9RzLrxjxAOZk11hukepfRIv77
-         lQ2jOxODeGBpfKZCRBKu0r+Pw+0NWe96ojFheYpT7am3qQs/MObrwch9MMkxH05LLN+r
-         d+mXIbIbBmGEb8qfqnwtwpCHFYKLqHLOZJd/NGNQl6LtWk7JSgDhYtN88bA1y8V2Ak9a
-         CuzAs8v1e2SUU6CGilZ2R+nmNvTf+NBftcDpg+KJyvua/cUFa0WKzKQGktYqeRbbUScn
-         RDDA==
+        d=linaro.org; s=google; t=1752255806; x=1752860606; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hBYyXUMBd+7KXf34imR2vb3TQVXmdkbzzqR23++a0to=;
+        b=P5sALd14XNbfOraaZippyyvvJXpbWOlAU5nO+afk7s7yLYJw24kSzsYAiuTPKvzQC8
+         CBFmcM2RViUJbWO+LfxuJJTBgv/smsARjb4LSVbpMgnXAoJxaL7mzmB4lXDpFj4l7CBG
+         0selz+dpObX6k5NV7Kljs7QrP9yPaalyHLvHIuKJ8mTbaGNKbGrOzNVGpcb3F11gG2KF
+         A3b66LGQae8DqaQltjlee5iqvYvuUXWqOSxQ3bc//btiHsVXTrXNIM05aoDBH16Lk6Ur
+         U97IQRhVw1W3i/gYXZM++gvKBYYfhIKwl8ybOmXcfbNIJXKSEB2nfBlgREXUJBBPzCWI
+         vZYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752255792; x=1752860592;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y77pZNFKGFm2u5BmE2Xthvf2yTb17YeJ0EDuvg4ntVI=;
-        b=kcScLaF+T5d6DN7gMTsUKxJ8Sh5FUN3kEvsNwBf7WEmnRA/MqwBd088de/xdodmjan
-         K3PGw8q0xAaakm2p/o9yudc2ee3amqbI83/huCt0S7KEtZBpvhkZyDrTTkFjSsCENs/7
-         hkBycjD2lwZuxJ2Qbw3hNIM0x/dJzI1onatGJJPOeyI58AU2y0zib64t4Gh3BXXWmcRq
-         6VleJ9pxitCYYZfc3/hf5Ho4BYjStMWITLALWbRhvro7FxShXR9avi+iRmWshf3VaY2I
-         vYzKmIqM/6R5lc80hrExVIgHM2Op1idTeGFI/e72R8ILYkhRgvewZdG3eyGoYz1sy0z5
-         f5Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/I5QZeLV6PvNYrOfJG/i5+438wiCr9By4HieRGEYM3sSzIsQVkgfmzRzOt9RaTx5VepbYLBuxaayBXtU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzfEVE00qZQ8nx6NEhoc76qs78kKduW1fTBBHYCLCD3E6694qb
-	ze8TVb1jz0ojBPsBDXPtmGWlG93SElCJBRZ1jl//Q05ddhyHe+oxj7WWVifQ36HeaJs=
-X-Gm-Gg: ASbGncuk44KNHRHjZUXkU2wHdezynC8toD+5PUUTg5GEOQulQpr8FKG9YN3wmeohpKQ
-	DjbwSl7BCz/AO/Trp0duA65Ije8bG0/yhkBbUc2wDosUaicHXogmX01UMvP1rI6H9yGU38Ipy8H
-	7I5oVIrrDspitjSeJBrmdLpVkc+yUuLUCCtfyKtuBCboiLyWw1t7s3TqQMCYfboIk8nsFJwHwig
-	nv63F7Nooak0/0ef/JuFx4v6lBtR7/nzmDDa70tl2r0noAZaWXkGR2GLlXo3pvQe3EeYYZNKR+d
-	n22PPEIyJm4wG7OhQHEv3LHyDOd5WLizV2+SIozu0HvwAKyn1mAsAEHHjJyDRY6+ZhYkJcWfLIg
-	/OkOoIVSTkzD20MraXH0WAKeWN7w0o7SaLloX8dCR5+hc4jwz8wNi9uJvKGdNEPJMjtTrURwM0b
-	M7KoY3c52TPA==
-X-Google-Smtp-Source: AGHT+IFYS1v6tuSBK8OmhxDArr5WN3nXOdB5LApDggJHKO7FO+cvcmVvVevvp0AiP9vbdF/fdux2SQ==
-X-Received: by 2002:a05:6830:4c98:b0:727:876:c849 with SMTP id 46e09a7af769-73cfb256be1mr1763663a34.27.1752255791686;
-        Fri, 11 Jul 2025 10:43:11 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:4601:15f9:b923:d487? ([2600:8803:e7e4:1d00:4601:15f9:b923:d487])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73cf1064d8esm637760a34.12.2025.07.11.10.43.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 10:43:10 -0700 (PDT)
-Message-ID: <3de10398-6521-4c8a-9af1-e8d15421b963@baylibre.com>
-Date: Fri, 11 Jul 2025 12:43:09 -0500
+        d=1e100.net; s=20230601; t=1752255806; x=1752860606;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hBYyXUMBd+7KXf34imR2vb3TQVXmdkbzzqR23++a0to=;
+        b=UmOt+ztrCSb7qha/U0+YYXA7mu2qaa/WGelg4wBweSIPJ1MTjL9QGp60+pP3z55Mpt
+         pb6Wi2Yuc4jGafHhKxwkRKD1kIkSc3TpMg8wJZwJ4EPzu9X8zFjmeS/8pgYbbJhMH7+r
+         hAfpDxVn5cOPAfQJttHD8wtun6fWSW1CAveDIhMF8KN7VZsDJmhuCZ+RuuiW5kJtc/RR
+         QyXcuvH/YgCzeV3es35dm6UkfK447+WPTmCfIHcT51DozWN//p4kiUKUKT1wCNb+xCEd
+         f0E+WtEeYsHzATze4WIbsBd+/msSpvS4bashoIq/dxK6csL2ZYJHOXpiM7DMfN5/NqOk
+         KYPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0iqmGBVYS5YvnaG6K6qL0bW6kgjcNw6jQxOJbdQGkPKs1qTZpruZ2YTeFnZX667HxVQfmNO/kVi7CyZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3aHzdjr6z95pl6UK1KQaqm8Cnrpq6usVxeI0C5oHtwfmjbGeU
+	/ZjKHErnxkU3QZGqonc9RcRPp0YACIHjtTIi/cyG6XBf01X7rhDYcbIIrbSbRHj1v3r1tUa5kW4
+	APXYjAId0Z0NfnXMneZAXo1UOTzex5Rw644mLggMdcg==
+X-Gm-Gg: ASbGncvGCt1iCYTCEJFMZsRFdXLP53lLJAcMakD/RtsG36mU523wLUpsVDw25BdqY+f
+	nk2AbC6pLC9RTAXLB3HeCqyMZhA7bF4iFf3eHN1mrNuPkgOVcTh3+QIj/RdHNjFr6hpYW3lbGU6
+	U4tXoVjZGEkMIcNGPUL4VAxrEsFUV8b88JvWpaT2OkaXcm/Qe+UrU6GtUncXYbKwPxmW6yamJBJ
+	dJTGTg=
+X-Google-Smtp-Source: AGHT+IFf2G+BjhVwnAaVKOD3baeNQou99YqKL5bnStqK1N6hwpimUlctewJeISypbJUHXx97EBEN1zE4x7sNQYPxkrQ=
+X-Received: by 2002:a05:651c:b24:b0:32b:82bf:cc53 with SMTP id
+ 38308e7fff4ca-33055085f43mr14251531fa.31.1752255805688; Fri, 11 Jul 2025
+ 10:43:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: iio: adc: add ade9000
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
- robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250711130241.159143-1-antoniu.miclaus@analog.com>
- <20250711130241.159143-3-antoniu.miclaus@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250711130241.159143-3-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250709112658.1987608-1-ioana.ciornei@nxp.com>
+ <20250709112658.1987608-5-ioana.ciornei@nxp.com> <0d0e9cee-2aaa-402d-a811-8c4704aadd74@lunn.ch>
+In-Reply-To: <0d0e9cee-2aaa-402d-a811-8c4704aadd74@lunn.ch>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 11 Jul 2025 19:43:13 +0200
+X-Gm-Features: Ac12FXy8ncwT9MizP5dA-KS5LUC-_phaq4FRA0TbkNqcyhAAKnTK7Oh5Ed2WmSo
+Message-ID: <CACRpkdYDTXA7+YN2zRCsQxu2AKEAwbDVq8-m27ah5XTw9iRNPw@mail.gmail.com>
+Subject: Re: [PATCH 4/9] gpio: regmap: add the .get_direction() callback
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Ioana Ciornei <ioana.ciornei@nxp.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Frank Li <Frank.Li@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/11/25 8:02 AM, Antoniu Miclaus wrote:
-> Add devicetree bindings support for ade9000.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
->  .../bindings/iio/adc/adi,ade9000.yaml         | 157 ++++++++++++++++++
->  1 file changed, 157 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
-> new file mode 100644
-> index 000000000000..660dca4ea9b5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
-> @@ -0,0 +1,157 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +# Copyright 2025 Analog Devices Inc.
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/bindings/iio/adc/adi,ade9000.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices ADE9000 High Performance, Polyphase Energy Metering driver
-> +
-> +maintainers:
-> +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
-> +
-> +description: |
-> +  The ADE9000 s a highly accurate, fully integrated, multiphase energy and power
-> +  quality monitoring device. Superior analog performance and a digital signal
-> +  processing (DSP) core enable accurate energy monitoring over a wide dynamic
-> +  range. An integrated high end reference ensures low drift over temperature
-> +  with a combined drift of less than ±25 ppm/°C maximum for the entire channel
-> +  including a programmable gain amplifier (PGA) and an analog-to- digital
-> +  converter (ADC).
-> +
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ADE9000.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,ade9000
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +  spi-max-frequency:
-> +    maximum: 20000000
-> +
-> +  interrupts:
-> +    maxItems: 2
+On Wed, Jul 9, 2025 at 5:09=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
 
-Let's keep this together with interrupt-names.
+> This is not my area, so i will deffer to the GPIO
+> Maintainers. However, it is not clear to me what get_direction()
+> should return.
 
-> +
-> +  reset-gpios:
-> +    description: |
-> +      Must be the device tree identifier of the RESET pin. As the line is
-> +      active low, it should be marked GPIO_ACTIVE_LOW.
-> +    maxItems: 1
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: irq0
-> +      - const: irq1
+This callback should return the current direction as set up
+in the hardware.
 
-The C4/EVENT/DREADY pins can also be an output and would make sense
-as a 3rd interrupt.
+A major usecase is that this is called when the gpiochip is
+registered to read out all the current directions of the GPIO
+lines, so the kernel has a clear idea of the state of the
+hardware.
 
-> +
-> +  adi,wf-cap-en:
-> +    description: Enable fixed data rate for waveform buffer instead of resampled data
-> +    type: boolean
+Calling this should ideally result in a read of the status from
+a hardware register.
 
-This one sounds like a runtime setting depending on how you want to
-configure sampling.
-
-> +
-> +  adi,wf-mode:
-> +    description: |
-> +      Waveform buffer filling and trigger mode.
-> +      0 - Stop when waveform buffer is full
-> +      1 - Continuous fill, stop only on enabled trigger events
-> +      2 - Continuous filling, center capture around enabled trigger events
-> +      3 - Streaming mode
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2, 3]
-
-This one sounds like something that would be determined by how
-a buffered read is setup in the IIO driver, not something that
-should be in the devicetree.
-
-> +
-> +  adi,wf-src:
-> +    description: |
-> +      Waveform buffer data source selection.
-> +      0 - Sinc4 output, at 16 kSPS
-> +      1 - Reserved
-> +      2 - Sinc4 + IIR LPF output, at 4 kSPS
-> +      3 - Current and voltage channel waveform samples, processed by the DSP at 4 kSPS
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 2, 3]
-
-There is a standard filter_type attribute that should be used
-for selecting the filter type rather than hard-coding it in the
-devicetree.
-
-> +
-> +  adi,wf-in-en:
-> +    description: Enable IN waveform samples readout from waveform buffer
-> +    type: boolean
-
-This one also sounds like something that would be configured based
-on how a scan is setup at runtime.
-
-> +
-> +  adi,egy-time:
-> +    description: Energy accumulation time setting for energy registers
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-
-And another one that sounds like it would be more of a runtime
-setting based on what type of data capture you are setting up.
-
-> +
-
-Power and reference voltage supplies are missing.
-
-ref-supply, vdd-supply
-
-And there is a clock input and a clock output that we could
-add trivial bindings for.
-
-
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reset-gpios
-> +  - interrupts
-> +  - interrupt-names
-> +  - adi,wf-mode
-> +  - adi,wf-src
-> +
-> +additionalProperties: false
-> +
-> +patternProperties:
-> +  "^phase@[0-2]$":
-> +    type: object
-> +    description: |
-> +      Represents the external phases which are externally connected. Each phase
-> +      has a current, voltage and power component
-> +
-> +    properties:
-> +      reg:
-> +        description: |
-> +          The phase represented by a number
-> +          0 - Phase A
-> +          1 - Phase B
-> +          2 - Phase C
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [0, 1, 2]
-
-If we are calling this an ADC, we should be using adc.yaml and
-calling these channel@ rather than phase@. There could be a custom
-adi,phase property for each channel if needed. But I'm guessing
-IAP/IAN is always going to be phase A, IBP/IBN is always going to
-be phase B, etc. so I'm not sure we actually need any special channel
-properties at this point.
-
-> +
-> +    required:
-> +      - reg
-> +
-> +    additionalProperties: false
-> +
+Yours,
+Linus Walleij
 
