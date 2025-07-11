@@ -1,85 +1,106 @@
-Return-Path: <linux-kernel+bounces-728375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EAF4B02799
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:20:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77DE2B0279D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F237B40F22
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:19:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F7CA1CA7E8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0643223323;
-	Fri, 11 Jul 2025 23:20:19 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E3EB665;
-	Fri, 11 Jul 2025 23:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6663E2236FB;
+	Fri, 11 Jul 2025 23:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W58MlX5q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B887278F29;
+	Fri, 11 Jul 2025 23:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752276019; cv=none; b=kJyDyTQQbCtyRqOegYQ2qRxFaUAO8jY7v3gwFPENdXug3Ka5IDWJI56aVjW08w1pmLRV9hmROuN3SN6n483oRpSRmuJxgO/GBtJrhFxsOpiv+zqiYqE02Hg42qf2s74m0LWxTFRkxRG+WQVAQ6ejcOVUBwUBvC3p9au7jvZS2d4=
+	t=1752276305; cv=none; b=i6LBPq2TtUmQiVO2Gpayexo8UdYNVwxGT6yX+hxjCnVv2RoAMQhvFj4Qn7wqT+MbsP3SnhHHA3pAeQNMP3gPxS6lBPHwb1bo8fof/mH8/P1az1fa2Ru9wKvhAdX1ckmZUpir2RAbjD02ZWJwkGlLtosKLcGNQ9541N/x+1NP6QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752276019; c=relaxed/simple;
-	bh=pNsFVG/FLnwtKUkOiwlrea6wLLnXFQVnlBGzsZkNWpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G1/UDjbXOqMYoA7j2yH02ROC7lawquNrrXwsmRzV4RiTyV78dPn0GQuLICBOVLZa/ZslL3GNR2f97UV1ULHfftKE+yYWHukK8qeOieo9SHT1siEX81TI8xrgCxy/ZW3mLI4OtuqrVT8yXqOZCl+8nq82KJqYXfV3koSMs+c/IaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
-Received: from gate.crashing.org (localhost [127.0.0.1])
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 56BNJptK624605;
-	Fri, 11 Jul 2025 18:19:51 -0500
-Received: (from segher@localhost)
-	by gate.crashing.org (8.18.1/8.18.1/Submit) id 56BNJjtJ624601;
-	Fri, 11 Jul 2025 18:19:45 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date: Fri, 11 Jul 2025 18:19:45 -0500
-From: Segher Boessenkool <segher@kernel.crashing.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Huth <thuth@redhat.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-spdx@vger.kernel.org
-Subject: Re: [PATCH v2] powerpc: Replace the obsolete address of the FSF
-Message-ID: <aHGcEdTmhlsfx7Tz@gate>
-References: <20250711053509.194751-1-thuth@redhat.com>
- <2025071125-talon-clammy-4971@gregkh>
- <9f7242e8-1082-4a5d-bb6e-a80106d1b1f9@redhat.com>
- <2025071152-name-spoon-88e8@gregkh>
- <aHC-Ke2oLri_m7p6@infradead.org>
+	s=arc-20240116; t=1752276305; c=relaxed/simple;
+	bh=vMLtFCdICfTN1Condfc7E9QY9mFJNQlI7K/JFEES5j8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M/bm/nLjyRCAnjq6S4dig7MrNwrEbH70vdQvMAnuThSdsaoJwYz0rM0gU5EE24YkIW44jnCyBWn7SDezAtkEQ4e8X6tT3bCw51XeqogsnZycXs2YU5LkT9//CGGAvOdT17QQegNmy2TgyywGzpJHynxeD0OzVg48FiZt20GM+jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W58MlX5q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE7FC4CEED;
+	Fri, 11 Jul 2025 23:25:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752276305;
+	bh=vMLtFCdICfTN1Condfc7E9QY9mFJNQlI7K/JFEES5j8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=W58MlX5qy+ArhVhSCE6NBm7fHsoetPtCc+/n5OsuWUbu8uSmy+VjAPy4SLDi3FbZG
+	 MD/Brbtg0UgbkxZexLCCBQ/fWgdAzVBGq+e3zGJd2Pyobr1ATTd4IMpMDi8SYFlEmk
+	 1D4Ozx8kCZ7zLu/dJ/J/xRA8NhApguYmpjsrGkzeck0Q/hI0t+tVu2gx/DsTfuCJd4
+	 uCZkNJOACKdJ728jVmh7idCx6Q90aDN1fCXiKmj847a7XECJ8RqmgBLzGg3TmsEGzG
+	 D70khIFVozNoMRbrWyOvBWVb87QEilm56Hn0GPtzwgLcII+KkE7/zbMxTbkNL2c425
+	 Anjogk0IzQuZA==
+Date: Fri, 11 Jul 2025 16:25:04 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Saeed Mahameed <saeed@kernel.org>, Gal Pressman
+ <gal@nvidia.com>, "Leon Romanovsky" <leon@kernel.org>, Saeed Mahameed
+ <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Jonathan Corbet
+ <corbet@lwn.net>, <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Dragos Tatulea
+ <dtatulea@nvidia.com>
+Subject: Re: [PATCH net-next V2 2/3] net/mlx5e: Add device PCIe congestion
+ ethtool stats
+Message-ID: <20250711162504.2c0b365d@kernel.org>
+In-Reply-To: <1752130292-22249-3-git-send-email-tariqt@nvidia.com>
+References: <1752130292-22249-1-git-send-email-tariqt@nvidia.com>
+	<1752130292-22249-3-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHC-Ke2oLri_m7p6@infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 11, 2025 at 12:32:57AM -0700, Christoph Hellwig wrote:
-> On Fri, Jul 11, 2025 at 09:30:31AM +0200, Greg Kroah-Hartman wrote:
-> > That's a crazy exception, and one that should probably be talked about
-> > with the FSF to determine exactly what the SPDX lines should be.
-> 
-> It is called the libgcc exception and has been around forever for the
-> files in libgcc.a that a lot of these low-level kernel helpers were
-> copied from as the kernel doesn't link libgcc.
+On Thu, 10 Jul 2025 09:51:31 +0300 Tariq Toukan wrote:
+> +   * - `pci_bw_inbound_high`
+> +     - The number of times the device crossed the high inbound pcie bandwidth
+> +       threshold. To be compared to pci_bw_inbound_low to check if the device
+> +       is in a congested state.
+> +       If pci_bw_inbound_high == pci_bw_inbound_low then the device is not congested.
+> +       If pci_bw_inbound_high > pci_bw_inbound_low then the device is congested.
+> +     - Tnformative
 
-Almost.  It is called the "GCC Runtime Library Exception", and it is
-about a lot more than libgcc, although that of course is one of the most
-important things it covers :-)
+The metrics make sense, but utilization has to be averaged over some
+period of time to be meaningful. Can you shad any light on what the
+measurement period or algorithm is?
 
-Not linking to libgcc is a foolish thing btw.  The main reason for it
-originally is to not have long divisions in the kernel (for x86
-anyway!), but not using libgcc is neither sufficient nor necessary for
-that goal.
+> +	changes = cong_event->state ^ new_cong_state;
+> +	if (!changes)
+> +		return;
 
+no risk of the high / low events coming so quickly we'll miss both?
+Should there be a counter for "mis-firing" of that sort?
+You'd be surprised how long the scheduling latency for a kernel worker
+can be on a busy server :(
 
-Segher
+> +	cong_event->state = new_cong_state;
+> +
+> +	if (changes & MLX5E_INBOUND_CONG) {
+> +		if (new_cong_state & MLX5E_INBOUND_CONG)
+> +			cong_event->stats.pci_bw_inbound_high++;
+> +		else
+> +			cong_event->stats.pci_bw_inbound_low++;
+> +	}
+> +
+> +	if (changes & MLX5E_OUTBOUND_CONG) {
+> +		if (new_cong_state & MLX5E_OUTBOUND_CONG)
+> +			cong_event->stats.pci_bw_outbound_high++;
+> +		else
+> +			cong_event->stats.pci_bw_outbound_low++;
+> +	}
 
