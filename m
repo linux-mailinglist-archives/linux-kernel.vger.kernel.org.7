@@ -1,450 +1,178 @@
-Return-Path: <linux-kernel+bounces-728323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38D2BB0269A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:59:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A64E2B026C5
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 00:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC634A615FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:59:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 524285426F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A699A21FF35;
-	Fri, 11 Jul 2025 21:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D102921421A;
+	Fri, 11 Jul 2025 22:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipgmrISQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lZ0zxW79"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2061.outbound.protection.outlook.com [40.107.95.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63E4149DFF;
-	Fri, 11 Jul 2025 21:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752271190; cv=none; b=HBSXS2m3S1HfNNruDUgf6lv3yScGHR+HYaVGO3HFkdSR9vZ3t5gx9M6GXpC+qfeFnIVtf63wlNdaOmkFdmkdZexSdDmWulizIRnPjX0ynh97iev5TkPJkwIuT4d7pgOBI2A4vKSJvTrieJyBYP2ZJf8Fbj0XAMee+1Lo7yeG5rc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752271190; c=relaxed/simple;
-	bh=P+NrzV64R93ihdDTrISa4E1zC2wMH4QfHH1ONZf15oA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S5AwlLSflAt9SNpqZ0SfTMPCSFyRi7nn3AqHyvwUrT8pRY4knJu5uxBvcr0rqE+evljh88Bp53OO9gBrZvTkV64hftVKMNTkvUH5IDUEzl5PwU7kAEDOkAdVw4btX/u6JmjJJ1g0UKVL2ZMPy5FgbX4jD40uYWL4nuw+FuNFv7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipgmrISQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF5F4C4CEED;
-	Fri, 11 Jul 2025 21:59:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752271190;
-	bh=P+NrzV64R93ihdDTrISa4E1zC2wMH4QfHH1ONZf15oA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ipgmrISQpMAmrKllS7MX5cdv/iOMdc/NFK2UCiOdROIc+8g/ZwtEkjlnaToVPOyFt
-	 Ab+4c0BvuxzvhY1N4moMlTozbXz/nobazdZfwDl6Eq4l2XvM68t55syT5/YwxWq8d/
-	 jc0P5oXCYgKmt52Ww34fwslFzfhfr9r4mwndTfPWSDLlvETxc0xLhDdLiPMy/IG0hr
-	 RvX8e1eFeLctzBA4xZBgh7rBsHpkF4q5CbM3cYiP/1ktcss/gyJjMAjqoAVNyzNryB
-	 otCKhwnUCux+NkNJPAiVQikDJnZxI53I4ev8TYdwpaxMQqh+AqPn+k1upoVJ8/b7LM
-	 Mv7GGUmwU+wqg==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH] lib/crypto: sha2: Add hmac_sha*_init_usingrawkey()
-Date: Fri, 11 Jul 2025 14:58:43 -0700
-Message-ID: <20250711215844.41715-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D17128395
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 22:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752271492; cv=fail; b=FbR1Exd3NfwZCYkt2hsKF9mtGuFsBv82nYsNPjzXmx0YxTjoGCjMQApEZxVJvsoTuWm/PunO3mxEuYbVHzFMpdwinvoFWLu5HTqBmggrNzdxTmw84WUeG3y+pqBTnkG9AnXFFvYgEmzpJRhJ24x5gJCgCK0CDmUTD/5sIq2Br5A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752271492; c=relaxed/simple;
+	bh=L2iDUkebJQx/EKIxhwC7XM338kq84k7Dkq+RO9z3Nyg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pZXDVR3ixwHiy4eR8fjB+Jehpe21fjXPuTfmdKFFBq6Vr+kPgRpbeBmz2I975G13ZG0xBEo3mGXh8iL/OXXDwibFeQFFoshbpdwAKWxiDIMjENeJit0icDqgZbLK1OgHHYCtNwZMWw/AUnnh/nyTRZE/EJi+roSzyk8SLl4FpdY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lZ0zxW79; arc=fail smtp.client-ip=40.107.95.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gtan/hOiYLwmrrZpaVR76A3tgkjb3NjIm+XHRqZSyKqZOhQvOdEpPUpnAeocYCJdso61TDBCDXiEPccCoRTGx8sVp0tt2/+2WTfkAsyGOSLGW3XCK2a8k/lIIuLQ6OQYRbAQPKEAzg5C46gNoHFO1vATKmU5V1YygdgqilCxT3vHazvN36zrJKciBTftJpmTvXWCoieV5pAVTBW3IjCdAzJ9mMGDP5V1P0P0qwTF15LcG4D+B7C4Oh2oq7yaaK/UpJxVP723LtvLIZQddAJxTT7SZWGtgUSPNDQqna4V+cj/wPau5WHn/J5PRRwYiKU3vuBbg8/iijrnDtlXmrJz9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eUZBCCbZZ3GumoyqZp/xL6rmv3Bvm4s/4O0mGvxaQj4=;
+ b=zVnFPnKgwxXpR8uRGvw0wVYaMUgOxkYoYuqTaqzdNMkNQro8/LkjMofGTZRma+ZcWWGsBm7hd1+IgrUpkvVPQSyDIxRNemfelEunVyLUs61RvN/j/jNiw1YPCgWQqDqvW/Lri0whOOXCJOrNdeY8AnHv/EPpEzTXBpFG+kXFVo1n9X9rS/l1Xu4AfPnnn56BNJFbn64WP4JJbyRr4Fe/3OKVuVjikRrBNtKcsBO4f3zHcjPG9yl8WmCaF58aiSDeE1OU32OS//f4x+LMNwzkJeEiHIV5InUbuPSOdgsriLfEi9s+KZGzEddPLzlcXkiyVlacVCJc1+Z2tDmc0YsNRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eUZBCCbZZ3GumoyqZp/xL6rmv3Bvm4s/4O0mGvxaQj4=;
+ b=lZ0zxW793NhMZGCNMrS0+DvKGG9X+HtyL/PVUCUY7SsgztLfKWWe8FsvqZgL5HzDhdvHkvZayRGJxPCNAOxXZd23bDER/jnBVDonBoza4CgHsdpTO7zCT77EL+xkjk2NolV3YCDrN92YcnC3O6/NkyapTKP659pqhOGj7n3IBgb9a2PqaAgUfGSt38U8XE2BMfBga7OX3Dnyk+zZSSXP7zmYgBbLaYNQFelb/OaTGFUCAuk4DYCq1A8BpeEeMSeyTPNmuniTCOwd0cppkIqBHh0QTGxUu4K0sjDHRSzNFGXh4tV+uYJMwi76FnAtJuZj53yI+vWJT3CFvL3KObxoIw==
+Received: from SJ0PR03CA0239.namprd03.prod.outlook.com (2603:10b6:a03:39f::34)
+ by SN7PR12MB7979.namprd12.prod.outlook.com (2603:10b6:806:32a::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.29; Fri, 11 Jul
+ 2025 22:04:48 +0000
+Received: from SJ1PEPF000023D9.namprd21.prod.outlook.com
+ (2603:10b6:a03:39f:cafe::5a) by SJ0PR03CA0239.outlook.office365.com
+ (2603:10b6:a03:39f::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.25 via Frontend Transport; Fri,
+ 11 Jul 2025 22:04:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF000023D9.mail.protection.outlook.com (10.167.244.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8964.1 via Frontend Transport; Fri, 11 Jul 2025 22:04:46 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 11 Jul
+ 2025 15:04:39 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 11 Jul
+ 2025 15:04:38 -0700
+Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Fri, 11 Jul 2025 15:04:37 -0700
+Date: Fri, 11 Jul 2025 15:04:36 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: Xu Yilun <yilun.xu@linux.intel.com>, <kevin.tian@intel.com>,
+	<will@kernel.org>, <aneesh.kumar@kernel.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <joro@8bytes.org>, <robin.murphy@arm.com>,
+	<shuah@kernel.org>, <aik@amd.com>, <dan.j.williams@intel.com>,
+	<baolu.lu@linux.intel.com>, <yilun.xu@intel.com>
+Subject: Re: [PATCH v4 2/7] iommufd: Add iommufd_object_tombstone_user()
+ helper
+Message-ID: <aHGKdEr8CQwHsuB0@Asurada-Nvidia>
+References: <20250709040234.1773573-1-yilun.xu@linux.intel.com>
+ <20250709040234.1773573-3-yilun.xu@linux.intel.com>
+ <aHAPqdZKfdeEMDs2@Asurada-Nvidia>
+ <aHEnnesvLL5te5rf@yilunxu-OptiPlex-7050>
+ <20250711213323.GH1951027@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250711213323.GH1951027@nvidia.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D9:EE_|SN7PR12MB7979:EE_
+X-MS-Office365-Filtering-Correlation-Id: b251c8c8-c309-4165-056e-08ddc0c6f2f0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9lc3qhkdYreISd07jWqJEm0HVIZBi0bBwFW9hyNl3RZ9NzQLxtCuuZRgtKK/?=
+ =?us-ascii?Q?qWxcaf19zm635Q22Bdj8rjhsIi9MlTgNDPRd806ZdAgh/c0Ed9h+GzClDLvz?=
+ =?us-ascii?Q?SqFe7yOPBJfIdU6FirgBapDXU29tw5XhG/zGK1dK1rSqE1Nm3dgDZC8bUqrQ?=
+ =?us-ascii?Q?/AC3EO/CplTKloLWq4Z7hJIO4AQE/Hx1zwJEJlb8+g533ZOQCZR3CD6PZqvy?=
+ =?us-ascii?Q?Itj2/Tn7XgPVdzrCaBSmLX+zqUpB6VbLA6YpnGIJKQpDK1sjywOEgOMOYH7v?=
+ =?us-ascii?Q?bxf+58FmrczgcJMHwLSqe3aAsDclx2m5Gv9ZrfxCOMwMCNA8BKEAG5w3Srge?=
+ =?us-ascii?Q?LSSqmwPQ6COUgLPpdfEmlNOT329krWPC1ag7yfohlUUjK5KEkdGTqGQxoBh4?=
+ =?us-ascii?Q?mjEFyfpIjqFbUgCWBSAUAa9y34kd2rWb4liVv05zejAKbUIDPpRgEgLkfqEs?=
+ =?us-ascii?Q?pK3tppq6DDnCJuBXZaVHS38v/w5oUCIwBUx4a7PobQgbB3pS/T7Nj3FsTVeV?=
+ =?us-ascii?Q?ppDu7hcF2ZDBGYkr8Iown8tzqskzsXZ3aU2ZqqdgJYos2NlAqAJR3Xf/hWcP?=
+ =?us-ascii?Q?AZZgOjZdNSDK5oawh6XMHSNX1/7cu0ShOca5juXKPRMbiqI21mRDt3dCAbYh?=
+ =?us-ascii?Q?jvS1+pAdo0+gZ+xq0xFfJDqtnh72DT2yAPplGvdYIop/HdjZxKJLV8kS1960?=
+ =?us-ascii?Q?JqTJPD/aLNjjfzy85uq5Yy2zrPB/aFqrNUXg/Z5mQcP7PvcUF3UjOTWL0zcb?=
+ =?us-ascii?Q?G3NVZHfGuy/BfICMlp3aOPnjsNXJYkQWeJ9JnwY+nw0N9ervALK3g/2tWLWZ?=
+ =?us-ascii?Q?JK5d9ntzpUcJKj7XSAuA8sFYHkfBAOPTIXUGjVi8eHDAmGuuB2h9LXuP2jLh?=
+ =?us-ascii?Q?04Rnw44nCJpB/NjJW57aA+nqAWRM27A04RZ0y8lidkpsvVqV6Dzswm0p2S4N?=
+ =?us-ascii?Q?9z3adYA740JtcdBGWfIJYEecjh4bMHrFK8F0kLqFMbu3IXdgIcL/mcym/IHp?=
+ =?us-ascii?Q?tcsZ3fdzNa9ubjqhgt5PGvCfy6WsQXTJThoP608B3NoRjwI+7584z7Q9zXMO?=
+ =?us-ascii?Q?Ju/jGcfLX0XfZhm+5HUd+ViQs0Qs5jClzxwkqmNusr4Med8rABeUfTc8cfKv?=
+ =?us-ascii?Q?UMGjxak6X3bCI06ofSwJ+rwvhwOCoTKUzEnFjbZwnxbPtOEFAONGd5QKqQ1g?=
+ =?us-ascii?Q?O7ggOimdBz/GcXU1fdWxDO0nZsYYPHj6JuiG8ihyLv+NM9sl/ch+/W8Ytzc7?=
+ =?us-ascii?Q?243VISjbkSBg5cwNVi0OZU472pTnD4WCF3gjEwW+XLnXUlNuKy83N+GlmnAp?=
+ =?us-ascii?Q?dadzxHbKhbzSBA/5zR2hLobpykIl1vy2pjaUt68+aLQn2uI1fsDiSHCVQgJE?=
+ =?us-ascii?Q?fppZ2gscU9WRD3r1uFPTvh2Uwr7Jr9q7+lhZ8B/P4tmigt33NIYmG14JP8Dl?=
+ =?us-ascii?Q?rXJNV+IM608spyOBgsMBhncXiNePokVSXRFlg1JjgCOwvBqaGUmsOw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 22:04:46.7907
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b251c8c8-c309-4165-056e-08ddc0c6f2f0
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023D9.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7979
 
-While the HMAC library functions support both incremental and one-shot
-computation and both prepared and raw keys, the combination of raw key
-+ incremental was missing.  It turns out that several potential users of
-the HMAC library functions (tpm2-sessions.c, smb2transport.c,
-trusted_tpm1.c) want exactly that.
+On Fri, Jul 11, 2025 at 06:33:23PM -0300, Jason Gunthorpe wrote:
+> On Fri, Jul 11, 2025 at 11:02:53PM +0800, Xu Yilun wrote:
+> > > let's write something like this (correcting typos too):
+> > > 
+> > > 		/*
+> > > 		 * We can't use xa_empty(), as a tombstone (NULLed entry) would
+> >                                                             ^
+> > > 		 * prevent it returning true, unlike xa_for_each() ignoring the
+> > > 		 * NULLed entries. So use an empty flag instead of xa_empty() to
+> >                    ^
+> > s/NULLed/zeroed, are they?
+> 
+> Maybe:
+> 
+>  We can't use xa_empty() to end the loop as the tombstones are stored
+>  as XA_ZERO_ENTRY in the xarray. However xa_for_each() automatically
+>  converts them to NULL and skips them causing xa_empty() to be kept
+>  false. Thus once xa_for_each() finds no further !NULL entries the
+>  loop is done.
+> 
+> ?
 
-Therefore, add the missing functions hmac_sha*_init_usingrawkey().
-
-Implement them in an optimized way that directly initializes the HMAC
-context without a separate key preparation step.
-
-Reimplement the one-shot raw key functions hmac_sha*_usingrawkey() on
-top of the new functions, which makes them a bit more efficient.
-
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- include/crypto/sha2.h | 60 +++++++++++++++++++++++++++++++++++++++++++
- lib/crypto/sha256.c   | 53 ++++++++++++++++++++++++++------------
- lib/crypto/sha512.c   | 55 +++++++++++++++++++++++++++------------
- 3 files changed, 134 insertions(+), 34 deletions(-)
-
-diff --git a/include/crypto/sha2.h b/include/crypto/sha2.h
-index e0a08f6addd00..15e461e568cca 100644
---- a/include/crypto/sha2.h
-+++ b/include/crypto/sha2.h
-@@ -245,10 +245,25 @@ static inline void hmac_sha224_init(struct hmac_sha224_ctx *ctx,
- 				    const struct hmac_sha224_key *key)
- {
- 	__hmac_sha256_init(&ctx->ctx, &key->key);
- }
- 
-+/**
-+ * hmac_sha224_init_usingrawkey() - Initialize an HMAC-SHA224 context for a new
-+ *				    message, using a raw key
-+ * @ctx: (output) the HMAC context to initialize
-+ * @raw_key: the raw HMAC-SHA224 key
-+ * @raw_key_len: the key length in bytes.  All key lengths are supported.
-+ *
-+ * If you don't need incremental computation, consider hmac_sha224_usingrawkey()
-+ * instead.
-+ *
-+ * Context: Any context.
-+ */
-+void hmac_sha224_init_usingrawkey(struct hmac_sha224_ctx *ctx,
-+				  const u8 *raw_key, size_t raw_key_len);
-+
- /**
-  * hmac_sha224_update() - Update an HMAC-SHA224 context with message data
-  * @ctx: the HMAC context to update; must have been initialized
-  * @data: the message data
-  * @data_len: the data length in bytes
-@@ -403,10 +418,25 @@ static inline void hmac_sha256_init(struct hmac_sha256_ctx *ctx,
- 				    const struct hmac_sha256_key *key)
- {
- 	__hmac_sha256_init(&ctx->ctx, &key->key);
- }
- 
-+/**
-+ * hmac_sha256_init_usingrawkey() - Initialize an HMAC-SHA256 context for a new
-+ *				    message, using a raw key
-+ * @ctx: (output) the HMAC context to initialize
-+ * @raw_key: the raw HMAC-SHA256 key
-+ * @raw_key_len: the key length in bytes.  All key lengths are supported.
-+ *
-+ * If you don't need incremental computation, consider hmac_sha256_usingrawkey()
-+ * instead.
-+ *
-+ * Context: Any context.
-+ */
-+void hmac_sha256_init_usingrawkey(struct hmac_sha256_ctx *ctx,
-+				  const u8 *raw_key, size_t raw_key_len);
-+
- /**
-  * hmac_sha256_update() - Update an HMAC-SHA256 context with message data
-  * @ctx: the HMAC context to update; must have been initialized
-  * @data: the message data
-  * @data_len: the data length in bytes
-@@ -595,10 +625,25 @@ static inline void hmac_sha384_init(struct hmac_sha384_ctx *ctx,
- 				    const struct hmac_sha384_key *key)
- {
- 	__hmac_sha512_init(&ctx->ctx, &key->key);
- }
- 
-+/**
-+ * hmac_sha384_init_usingrawkey() - Initialize an HMAC-SHA384 context for a new
-+ *				    message, using a raw key
-+ * @ctx: (output) the HMAC context to initialize
-+ * @raw_key: the raw HMAC-SHA384 key
-+ * @raw_key_len: the key length in bytes.  All key lengths are supported.
-+ *
-+ * If you don't need incremental computation, consider hmac_sha384_usingrawkey()
-+ * instead.
-+ *
-+ * Context: Any context.
-+ */
-+void hmac_sha384_init_usingrawkey(struct hmac_sha384_ctx *ctx,
-+				  const u8 *raw_key, size_t raw_key_len);
-+
- /**
-  * hmac_sha384_update() - Update an HMAC-SHA384 context with message data
-  * @ctx: the HMAC context to update; must have been initialized
-  * @data: the message data
-  * @data_len: the data length in bytes
-@@ -753,10 +798,25 @@ static inline void hmac_sha512_init(struct hmac_sha512_ctx *ctx,
- 				    const struct hmac_sha512_key *key)
- {
- 	__hmac_sha512_init(&ctx->ctx, &key->key);
- }
- 
-+/**
-+ * hmac_sha512_init_usingrawkey() - Initialize an HMAC-SHA512 context for a new
-+ *				    message, using a raw key
-+ * @ctx: (output) the HMAC context to initialize
-+ * @raw_key: the raw HMAC-SHA512 key
-+ * @raw_key_len: the key length in bytes.  All key lengths are supported.
-+ *
-+ * If you don't need incremental computation, consider hmac_sha512_usingrawkey()
-+ * instead.
-+ *
-+ * Context: Any context.
-+ */
-+void hmac_sha512_init_usingrawkey(struct hmac_sha512_ctx *ctx,
-+				  const u8 *raw_key, size_t raw_key_len);
-+
- /**
-  * hmac_sha512_update() - Update an HMAC-SHA512 context with message data
-  * @ctx: the HMAC context to update; must have been initialized
-  * @data: the message data
-  * @data_len: the data length in bytes
-diff --git a/lib/crypto/sha256.c b/lib/crypto/sha256.c
-index 808438d4f4278..8fa15165d23e8 100644
---- a/lib/crypto/sha256.c
-+++ b/lib/crypto/sha256.c
-@@ -261,11 +261,12 @@ void sha256(const u8 *data, size_t len, u8 out[SHA256_DIGEST_SIZE])
- }
- EXPORT_SYMBOL(sha256);
- 
- /* pre-boot environment (as indicated by __DISABLE_EXPORTS) doesn't need HMAC */
- #ifndef __DISABLE_EXPORTS
--static void __hmac_sha256_preparekey(struct __hmac_sha256_key *key,
-+static void __hmac_sha256_preparekey(struct sha256_block_state *istate,
-+				     struct sha256_block_state *ostate,
- 				     const u8 *raw_key, size_t raw_key_len,
- 				     const struct sha256_block_state *iv)
- {
- 	union {
- 		u8 b[SHA256_BLOCK_SIZE];
-@@ -281,33 +282,35 @@ static void __hmac_sha256_preparekey(struct __hmac_sha256_key *key,
- 		memcpy(derived_key.b, raw_key, raw_key_len);
- 	}
- 
- 	for (size_t i = 0; i < ARRAY_SIZE(derived_key.w); i++)
- 		derived_key.w[i] ^= REPEAT_BYTE(HMAC_IPAD_VALUE);
--	key->istate = *iv;
--	sha256_blocks(&key->istate, derived_key.b, 1);
-+	*istate = *iv;
-+	sha256_blocks(istate, derived_key.b, 1);
- 
- 	for (size_t i = 0; i < ARRAY_SIZE(derived_key.w); i++)
- 		derived_key.w[i] ^= REPEAT_BYTE(HMAC_OPAD_VALUE ^
- 						HMAC_IPAD_VALUE);
--	key->ostate = *iv;
--	sha256_blocks(&key->ostate, derived_key.b, 1);
-+	*ostate = *iv;
-+	sha256_blocks(ostate, derived_key.b, 1);
- 
- 	memzero_explicit(&derived_key, sizeof(derived_key));
- }
- 
- void hmac_sha224_preparekey(struct hmac_sha224_key *key,
- 			    const u8 *raw_key, size_t raw_key_len)
- {
--	__hmac_sha256_preparekey(&key->key, raw_key, raw_key_len, &sha224_iv);
-+	__hmac_sha256_preparekey(&key->key.istate, &key->key.ostate,
-+				 raw_key, raw_key_len, &sha224_iv);
- }
- EXPORT_SYMBOL_GPL(hmac_sha224_preparekey);
- 
- void hmac_sha256_preparekey(struct hmac_sha256_key *key,
- 			    const u8 *raw_key, size_t raw_key_len)
- {
--	__hmac_sha256_preparekey(&key->key, raw_key, raw_key_len, &sha256_iv);
-+	__hmac_sha256_preparekey(&key->key.istate, &key->key.ostate,
-+				 raw_key, raw_key_len, &sha256_iv);
- }
- EXPORT_SYMBOL_GPL(hmac_sha256_preparekey);
- 
- void __hmac_sha256_init(struct __hmac_sha256_ctx *ctx,
- 			const struct __hmac_sha256_key *key)
-@@ -315,10 +318,28 @@ void __hmac_sha256_init(struct __hmac_sha256_ctx *ctx,
- 	__sha256_init(&ctx->sha_ctx, &key->istate, SHA256_BLOCK_SIZE);
- 	ctx->ostate = key->ostate;
- }
- EXPORT_SYMBOL_GPL(__hmac_sha256_init);
- 
-+void hmac_sha224_init_usingrawkey(struct hmac_sha224_ctx *ctx,
-+				  const u8 *raw_key, size_t raw_key_len)
-+{
-+	__hmac_sha256_preparekey(&ctx->ctx.sha_ctx.state, &ctx->ctx.ostate,
-+				 raw_key, raw_key_len, &sha224_iv);
-+	ctx->ctx.sha_ctx.bytecount = SHA256_BLOCK_SIZE;
-+}
-+EXPORT_SYMBOL_GPL(hmac_sha224_init_usingrawkey);
-+
-+void hmac_sha256_init_usingrawkey(struct hmac_sha256_ctx *ctx,
-+				  const u8 *raw_key, size_t raw_key_len)
-+{
-+	__hmac_sha256_preparekey(&ctx->ctx.sha_ctx.state, &ctx->ctx.ostate,
-+				 raw_key, raw_key_len, &sha256_iv);
-+	ctx->ctx.sha_ctx.bytecount = SHA256_BLOCK_SIZE;
-+}
-+EXPORT_SYMBOL_GPL(hmac_sha256_init_usingrawkey);
-+
- static void __hmac_sha256_final(struct __hmac_sha256_ctx *ctx,
- 				u8 *out, size_t digest_size)
- {
- 	/* Generate the padded input for the outer hash in ctx->sha_ctx.buf. */
- 	__sha256_final(&ctx->sha_ctx, ctx->sha_ctx.buf, digest_size);
-@@ -374,29 +395,27 @@ EXPORT_SYMBOL_GPL(hmac_sha256);
- 
- void hmac_sha224_usingrawkey(const u8 *raw_key, size_t raw_key_len,
- 			     const u8 *data, size_t data_len,
- 			     u8 out[SHA224_DIGEST_SIZE])
- {
--	struct hmac_sha224_key key;
--
--	hmac_sha224_preparekey(&key, raw_key, raw_key_len);
--	hmac_sha224(&key, data, data_len, out);
-+	struct hmac_sha224_ctx ctx;
- 
--	memzero_explicit(&key, sizeof(key));
-+	hmac_sha224_init_usingrawkey(&ctx, raw_key, raw_key_len);
-+	hmac_sha224_update(&ctx, data, data_len);
-+	hmac_sha224_final(&ctx, out);
- }
- EXPORT_SYMBOL_GPL(hmac_sha224_usingrawkey);
- 
- void hmac_sha256_usingrawkey(const u8 *raw_key, size_t raw_key_len,
- 			     const u8 *data, size_t data_len,
- 			     u8 out[SHA256_DIGEST_SIZE])
- {
--	struct hmac_sha256_key key;
--
--	hmac_sha256_preparekey(&key, raw_key, raw_key_len);
--	hmac_sha256(&key, data, data_len, out);
-+	struct hmac_sha256_ctx ctx;
- 
--	memzero_explicit(&key, sizeof(key));
-+	hmac_sha256_init_usingrawkey(&ctx, raw_key, raw_key_len);
-+	hmac_sha256_update(&ctx, data, data_len);
-+	hmac_sha256_final(&ctx, out);
- }
- EXPORT_SYMBOL_GPL(hmac_sha256_usingrawkey);
- #endif /* !__DISABLE_EXPORTS */
- 
- #ifdef sha256_mod_init_arch
-diff --git a/lib/crypto/sha512.c b/lib/crypto/sha512.c
-index d514721491ca0..d8062188be98a 100644
---- a/lib/crypto/sha512.c
-+++ b/lib/crypto/sha512.c
-@@ -247,11 +247,12 @@ void sha512(const u8 *data, size_t len, u8 out[SHA512_DIGEST_SIZE])
- 	sha512_update(&ctx, data, len);
- 	sha512_final(&ctx, out);
- }
- EXPORT_SYMBOL_GPL(sha512);
- 
--static void __hmac_sha512_preparekey(struct __hmac_sha512_key *key,
-+static void __hmac_sha512_preparekey(struct sha512_block_state *istate,
-+				     struct sha512_block_state *ostate,
- 				     const u8 *raw_key, size_t raw_key_len,
- 				     const struct sha512_block_state *iv)
- {
- 	union {
- 		u8 b[SHA512_BLOCK_SIZE];
-@@ -267,33 +268,35 @@ static void __hmac_sha512_preparekey(struct __hmac_sha512_key *key,
- 		memcpy(derived_key.b, raw_key, raw_key_len);
- 	}
- 
- 	for (size_t i = 0; i < ARRAY_SIZE(derived_key.w); i++)
- 		derived_key.w[i] ^= REPEAT_BYTE(HMAC_IPAD_VALUE);
--	key->istate = *iv;
--	sha512_blocks(&key->istate, derived_key.b, 1);
-+	*istate = *iv;
-+	sha512_blocks(istate, derived_key.b, 1);
- 
- 	for (size_t i = 0; i < ARRAY_SIZE(derived_key.w); i++)
- 		derived_key.w[i] ^= REPEAT_BYTE(HMAC_OPAD_VALUE ^
- 						HMAC_IPAD_VALUE);
--	key->ostate = *iv;
--	sha512_blocks(&key->ostate, derived_key.b, 1);
-+	*ostate = *iv;
-+	sha512_blocks(ostate, derived_key.b, 1);
- 
- 	memzero_explicit(&derived_key, sizeof(derived_key));
- }
- 
- void hmac_sha384_preparekey(struct hmac_sha384_key *key,
- 			    const u8 *raw_key, size_t raw_key_len)
- {
--	__hmac_sha512_preparekey(&key->key, raw_key, raw_key_len, &sha384_iv);
-+	__hmac_sha512_preparekey(&key->key.istate, &key->key.ostate,
-+				 raw_key, raw_key_len, &sha384_iv);
- }
- EXPORT_SYMBOL_GPL(hmac_sha384_preparekey);
- 
- void hmac_sha512_preparekey(struct hmac_sha512_key *key,
- 			    const u8 *raw_key, size_t raw_key_len)
- {
--	__hmac_sha512_preparekey(&key->key, raw_key, raw_key_len, &sha512_iv);
-+	__hmac_sha512_preparekey(&key->key.istate, &key->key.ostate,
-+				 raw_key, raw_key_len, &sha512_iv);
- }
- EXPORT_SYMBOL_GPL(hmac_sha512_preparekey);
- 
- void __hmac_sha512_init(struct __hmac_sha512_ctx *ctx,
- 			const struct __hmac_sha512_key *key)
-@@ -301,10 +304,30 @@ void __hmac_sha512_init(struct __hmac_sha512_ctx *ctx,
- 	__sha512_init(&ctx->sha_ctx, &key->istate, SHA512_BLOCK_SIZE);
- 	ctx->ostate = key->ostate;
- }
- EXPORT_SYMBOL_GPL(__hmac_sha512_init);
- 
-+void hmac_sha384_init_usingrawkey(struct hmac_sha384_ctx *ctx,
-+				  const u8 *raw_key, size_t raw_key_len)
-+{
-+	__hmac_sha512_preparekey(&ctx->ctx.sha_ctx.state, &ctx->ctx.ostate,
-+				 raw_key, raw_key_len, &sha384_iv);
-+	ctx->ctx.sha_ctx.bytecount_lo = SHA512_BLOCK_SIZE;
-+	ctx->ctx.sha_ctx.bytecount_hi = 0;
-+}
-+EXPORT_SYMBOL_GPL(hmac_sha384_init_usingrawkey);
-+
-+void hmac_sha512_init_usingrawkey(struct hmac_sha512_ctx *ctx,
-+				  const u8 *raw_key, size_t raw_key_len)
-+{
-+	__hmac_sha512_preparekey(&ctx->ctx.sha_ctx.state, &ctx->ctx.ostate,
-+				 raw_key, raw_key_len, &sha512_iv);
-+	ctx->ctx.sha_ctx.bytecount_lo = SHA512_BLOCK_SIZE;
-+	ctx->ctx.sha_ctx.bytecount_hi = 0;
-+}
-+EXPORT_SYMBOL_GPL(hmac_sha512_init_usingrawkey);
-+
- static void __hmac_sha512_final(struct __hmac_sha512_ctx *ctx,
- 				u8 *out, size_t digest_size)
- {
- 	/* Generate the padded input for the outer hash in ctx->sha_ctx.buf. */
- 	__sha512_final(&ctx->sha_ctx, ctx->sha_ctx.buf, digest_size);
-@@ -360,29 +383,27 @@ EXPORT_SYMBOL_GPL(hmac_sha512);
- 
- void hmac_sha384_usingrawkey(const u8 *raw_key, size_t raw_key_len,
- 			     const u8 *data, size_t data_len,
- 			     u8 out[SHA384_DIGEST_SIZE])
- {
--	struct hmac_sha384_key key;
--
--	hmac_sha384_preparekey(&key, raw_key, raw_key_len);
--	hmac_sha384(&key, data, data_len, out);
-+	struct hmac_sha384_ctx ctx;
- 
--	memzero_explicit(&key, sizeof(key));
-+	hmac_sha384_init_usingrawkey(&ctx, raw_key, raw_key_len);
-+	hmac_sha384_update(&ctx, data, data_len);
-+	hmac_sha384_final(&ctx, out);
- }
- EXPORT_SYMBOL_GPL(hmac_sha384_usingrawkey);
- 
- void hmac_sha512_usingrawkey(const u8 *raw_key, size_t raw_key_len,
- 			     const u8 *data, size_t data_len,
- 			     u8 out[SHA512_DIGEST_SIZE])
- {
--	struct hmac_sha512_key key;
--
--	hmac_sha512_preparekey(&key, raw_key, raw_key_len);
--	hmac_sha512(&key, data, data_len, out);
-+	struct hmac_sha512_ctx ctx;
- 
--	memzero_explicit(&key, sizeof(key));
-+	hmac_sha512_init_usingrawkey(&ctx, raw_key, raw_key_len);
-+	hmac_sha512_update(&ctx, data, data_len);
-+	hmac_sha512_final(&ctx, out);
- }
- EXPORT_SYMBOL_GPL(hmac_sha512_usingrawkey);
- 
- #ifdef sha512_mod_init_arch
- static int __init sha512_mod_init(void)
-
-base-commit: e14ada7ed2e1dda5161051be1d2131b606c8ab96
--- 
-2.50.1
-
++1
 
