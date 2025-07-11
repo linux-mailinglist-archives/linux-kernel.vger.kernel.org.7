@@ -1,145 +1,242 @@
-Return-Path: <linux-kernel+bounces-727654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E06B01D94
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:32:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C737B01D85
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6277CA45683
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:31:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 252CF7BE4B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C562DC352;
-	Fri, 11 Jul 2025 13:31:36 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06707298997
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3075C2D3EDD;
+	Fri, 11 Jul 2025 13:30:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874832D46C1
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752240695; cv=none; b=nai9IL4MrTgaXROQXlTSv4HBmn5OLmdtdK2jA0wSvyyPGGdFBU9XgfMFdfsb24nZKSfqX9ZZXdf4fzLBTuiVwihPeTnWMwp8SNruRtvWwgKU3voxd0Z1en9hhbYD2+qjHkr41URZDxkRbWk/yhKNnu8ezz8DK992HoBKxHi7Ld0=
+	t=1752240630; cv=none; b=fSnu5Mty3OBTMv5nT/l6cV6qzDDlPJMowSka6JfOgeuAeL8Ekd1k/6U41MuUYWQnu0Pkpmw3gpi6bFzsMu1cuqQfWu8zfPtEfrGhZEGjTfA8VHAjkcu+M6/jyl5+gFyKRWznwYfQK6uGLdUK2KhJfNb39wAdLdJpLwY6UzcpH2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752240695; c=relaxed/simple;
-	bh=gM3m9gQmTB2jzmhUd+teIX6Iygf3dzcTGIX5li5KFzA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iCWPv/NJTdDZwbYBi01B9EipSjSjFzI3pjt2jjyKZAz/3AZDOuf6UMPEUb1P9DpWZ+KFjMSE0P2m+2ZWBcZwGDvqWK46PA16Ctmfx7THUkN1OQYA4R0gInKyvOh8/u3JykiPDs7uUXae0TCSM12g/Tw9XQfwqCgrUYwSJkjbuSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
-	by Atcsqr.andestech.com with ESMTPS id 56BDUepZ014252
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Jul 2025 21:30:40 +0800 (+08)
-	(envelope-from ben717@andestech.com)
-Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS31.andestech.com
- (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Fri, 11 Jul 2025
- 21:30:40 +0800
-From: Ben Zong-You Xie <ben717@andestech.com>
-To:
-CC: <arnd@arndb.de>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
-        <aou@eecs.berkeley.edu>, <alex@ghiti.fr>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <tglx@linutronix.de>,
-        <daniel.lezcano@linaro.org>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <soc@lists.linux.dev>,
-        <tim609@andestech.com>, Ben Zong-You Xie <ben717@andestech.com>,
-        Conor Dooley
-	<conor.dooley@microchip.com>
-Subject: [PATCH v2 5/9] dt-bindings: timer: add Andes machine timer
-Date: Fri, 11 Jul 2025 21:30:21 +0800
-Message-ID: <20250711133025.2192404-6-ben717@andestech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250711133025.2192404-1-ben717@andestech.com>
-References: <20250711133025.2192404-1-ben717@andestech.com>
+	s=arc-20240116; t=1752240630; c=relaxed/simple;
+	bh=OWq/B46bvHzJuSIugLEfaxgLXbeYVEteNBl7nRsZ8IE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ieK1Z4gQC22KC2a3dROY4bUhleptjG/GgAS9xyQ211+HAGBM67Gm4/DciysIBvZaxx1s/sxh4uziTW8b3cRHEI12c9WXM96o3T35QtDK0gUDdPXK+LaXCHtgNpbS9NJHQdGBnU6WVYGqG/c2NmJEfwEmMbfZWx8C+IVbRw4GDuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 33A7F106F;
+	Fri, 11 Jul 2025 06:30:17 -0700 (PDT)
+Received: from [10.1.33.14] (e122027.cambridge.arm.com [10.1.33.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D2E323F6A8;
+	Fri, 11 Jul 2025 06:30:23 -0700 (PDT)
+Message-ID: <d4a6208b-a4a4-451f-9799-7b9f5fb20c37@arm.com>
+Date: Fri, 11 Jul 2025 14:30:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 56BDUepZ014252
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/7] drm/panthor: Add support for atomic page table
+ updates
+To: Caterina Shablia <caterina.shablia@collabora.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,
+ Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>, Lucas De Marchi
+ <lucas.demarchi@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ nouveau@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ asahi@lists.linux.dev, Asahi Lina <lina@asahilina.net>
+References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
+ <20250707170442.1437009-2-caterina.shablia@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250707170442.1437009-2-caterina.shablia@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add the DT binding documentation for Andes machine timer.
+On 07/07/2025 18:04, Caterina Shablia wrote:
+> From: Boris Brezillon <boris.brezillon@collabora.com>
+> 
+> Move the lock/flush_mem operations around the gpuvm_sm_map() calls so
+> we can implement true atomic page updates, where any access in the
+> locked range done by the GPU has to wait for the page table updates
+> to land before proceeding.
+> 
+> This is needed for vkQueueBindSparse(), so we can replace the dummy
+> page mapped over the entire object by actual BO backed pages in an atomic
+> way.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Signed-off-by: Caterina Shablia <caterina.shablia@collabora.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_mmu.c | 65 +++++++++++++++++++++++++--
+>  1 file changed, 62 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index b39ea6acc6a9..9caaba03c5eb 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -387,6 +387,15 @@ struct panthor_vm {
+>  	 * flagged as faulty as a result.
+>  	 */
+>  	bool unhandled_fault;
+> +
+> +	/** @locked_region: Information about the currently locked region currently. */
+> +	struct {
+> +		/** @locked_region.start: Start of the locked region. */
+> +		u64 start;
+> +
+> +		/** @locked_region.size: Size of the locked region. */
+> +		u64 size;
+> +	} locked_region;
+>  };
+>  
+>  /**
+> @@ -775,6 +784,10 @@ int panthor_vm_active(struct panthor_vm *vm)
+>  	}
+>  
+>  	ret = panthor_mmu_as_enable(vm->ptdev, vm->as.id, transtab, transcfg, vm->memattr);
+> +	if (!ret && vm->locked_region.size) {
+> +		lock_region(ptdev, vm->as.id, vm->locked_region.start, vm->locked_region.size);
+> +		ret = wait_ready(ptdev, vm->as.id);
+> +	}
 
-The RISC-V architecture defines a machine timer that provides a real-time
-counter and generates timer interrupts. Andes machiner timer (PLMT0) is
-the implementation of the machine timer, and it contains memory-mapped
-registers (mtime and mtimecmp). This device supports up to 32 cores.
+Do we need to do this? It seems odd to restore a MMU context and
+immediately set a lock region. Is there a good reason we can't just
+WARN_ON if there's a lock region set in panthor_vm_idle()?
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
----
- .../bindings/timer/andestech,plmt0.yaml       | 53 +++++++++++++++++++
- 1 file changed, 53 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/andestech,plmt0.yaml
+I think we need to briefly take vm->op_lock to ensure synchronisation
+but that doesn't seem a big issue. Or perhaps there's a good reason that
+I'm missing?
 
-diff --git a/Documentation/devicetree/bindings/timer/andestech,plmt0.yaml b/Documentation/devicetree/bindings/timer/andestech,plmt0.yaml
-new file mode 100644
-index 000000000000..90b612096004
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/andestech,plmt0.yaml
-@@ -0,0 +1,53 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/timer/andestech,plmt0.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Andes machine-level timer
-+
-+description:
-+  The Andes machine-level timer device (PLMT0) provides machine-level timer
-+  functionality for a set of HARTs on a RISC-V platform. It has a single
-+  fixed-frequency monotonic time counter (MTIME) register and a time compare
-+  register (MTIMECMP) for each HART connected to the PLMT0. A timer interrupt is
-+  generated if MTIME >= MTIMECMP.
-+
-+maintainers:
-+  - Ben Zong-You Xie <ben717@andestech.com>
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - andestech,qilai-plmt
-+      - const: andestech,plmt0
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts-extended:
-+    minItems: 1
-+    maxItems: 32
-+    description:
-+      Specifies which harts are connected to the PLMT0. Each item must points
-+      to a riscv,cpu-intc node, which has a riscv cpu node as parent. The
-+      PLMT0 supports 1 hart up to 32 harts.
-+
-+additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts-extended
-+
-+examples:
-+  - |
-+    interrupt-controller@100000 {
-+      compatible = "andestech,qilai-plmt", "andestech,plmt0";
-+      reg = <0x100000 0x100000>;
-+      interrupts-extended = <&cpu0intc 7>,
-+                            <&cpu1intc 7>,
-+                            <&cpu2intc 7>,
-+                            <&cpu3intc 7>;
-+    };
--- 
-2.34.1
+>  
+>  out_make_active:
+>  	if (!ret) {
+> @@ -902,6 +915,9 @@ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
+>  	struct io_pgtable_ops *ops = vm->pgtbl_ops;
+>  	u64 offset = 0;
+>  
+> +	drm_WARN_ON(&ptdev->base,
+> +		    (iova < vm->locked_region.start) ||
+> +		    (iova + size > vm->locked_region.start + vm->locked_region.size));
+>  	drm_dbg(&ptdev->base, "unmap: as=%d, iova=%llx, len=%llx", vm->as.id, iova, size);
+>  
+>  	while (offset < size) {
+> @@ -915,13 +931,12 @@ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
+>  				iova + offset + unmapped_sz,
+>  				iova + offset + pgsize * pgcount,
+>  				iova, iova + size);
+> -			panthor_vm_flush_range(vm, iova, offset + unmapped_sz);
+>  			return  -EINVAL;
+>  		}
+>  		offset += unmapped_sz;
+>  	}
+>  
+> -	return panthor_vm_flush_range(vm, iova, size);
+> +	return 0;
+>  }
+>  
+>  static int
+> @@ -938,6 +953,10 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
+>  	if (!size)
+>  		return 0;
+>  
+> +	drm_WARN_ON(&ptdev->base,
+> +		    (iova < vm->locked_region.start) ||
+> +		    (iova + size > vm->locked_region.start + vm->locked_region.size));
+> +
+>  	for_each_sgtable_dma_sg(sgt, sgl, count) {
+>  		dma_addr_t paddr = sg_dma_address(sgl);
+>  		size_t len = sg_dma_len(sgl);
+> @@ -985,7 +1004,7 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
+>  		offset = 0;
+>  	}
+>  
+> -	return panthor_vm_flush_range(vm, start_iova, iova - start_iova);
+> +	return 0;
+>  }
+>  
+>  static int flags_to_prot(u32 flags)
+> @@ -1654,6 +1673,38 @@ static const char *access_type_name(struct panthor_device *ptdev,
+>  	}
+>  }
+>  
+> +static int panthor_vm_lock_region(struct panthor_vm *vm, u64 start, u64 size)
+> +{
+> +	struct panthor_device *ptdev = vm->ptdev;
+> +	int ret = 0;
+> +
+> +	mutex_lock(&ptdev->mmu->as.slots_lock);
+> +	drm_WARN_ON(&ptdev->base, vm->locked_region.start || vm->locked_region.size);
+> +	vm->locked_region.start = start;
+> +	vm->locked_region.size = size;
+> +	if (vm->as.id >= 0) {
+> +		lock_region(ptdev, vm->as.id, start, size);
+> +		ret = wait_ready(ptdev, vm->as.id);
+> +	}
+> +	mutex_unlock(&ptdev->mmu->as.slots_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static void panthor_vm_unlock_region(struct panthor_vm *vm)
+> +{
+> +	struct panthor_device *ptdev = vm->ptdev;
+> +
+> +	mutex_lock(&ptdev->mmu->as.slots_lock);
+> +	if (vm->as.id >= 0) {
+> +		write_cmd(ptdev, vm->as.id, AS_COMMAND_FLUSH_MEM);
+> +		drm_WARN_ON(&ptdev->base, wait_ready(ptdev, vm->as.id));
+> +	}
+> +	vm->locked_region.start = 0;
+> +	vm->locked_region.size = 0;
+> +	mutex_unlock(&ptdev->mmu->as.slots_lock);
+> +}
+
+Do we need to include a drm_dev_enter() somewhere here? I note that
+panthor_vm_flush_range() has one and you've effectively replaced that
+code with the above.
+
+Thanks,
+Steve
+
+> +
+>  static void panthor_mmu_irq_handler(struct panthor_device *ptdev, u32 status)
+>  {
+>  	bool has_unhandled_faults = false;
+> @@ -2179,6 +2230,11 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct panthor_vm_op_ctx *op,
+>  
+>  	mutex_lock(&vm->op_lock);
+>  	vm->op_ctx = op;
+> +
+> +	ret = panthor_vm_lock_region(vm, op->va.addr, op->va.range);
+> +	if (ret)
+> +		goto out;
+> +
+>  	switch (op_type) {
+>  	case DRM_PANTHOR_VM_BIND_OP_TYPE_MAP:
+>  		if (vm->unusable) {
+> @@ -2199,6 +2255,9 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct panthor_vm_op_ctx *op,
+>  		break;
+>  	}
+>  
+> +	panthor_vm_unlock_region(vm);
+> +
+> +out:
+>  	if (ret && flag_vm_unusable_on_failure)
+>  		vm->unusable = true;
+>  
 
 
