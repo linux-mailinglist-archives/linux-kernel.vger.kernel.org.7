@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-728256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F65FB02581
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:59:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8327BB02587
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8440583686
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:59:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ACD418967C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169661F2B90;
-	Fri, 11 Jul 2025 19:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9F51EFF9B;
+	Fri, 11 Jul 2025 20:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="hJJpuz9Z"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="s7ElN+sr"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C941DF270
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F341DE3AB
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 20:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752263948; cv=none; b=rvk2uiZKYWhfWoExp6QFw0qW3bdgpjcvu4C0iojxMozlynL1lUNPGGaLlLypBNF14ktye8vxYg0CkKGtl1Eo/ZJcj+cCPmB8LfmhxNNV2FZDqn4cxVrKORDWyq+M/Lhb7Q9VPqophpezqOspqOIp0qV5+Q1lMDMOfF+IebCoQMI=
+	t=1752264045; cv=none; b=n7pL+IxVSd6xtEy17jkV8jWnLQTQXoH8Wr9KsbLbTim20MvBirOlBChoXdAU5+naTQNNl4bKpP9hID0Dqd8CPaVHbpXr3XE12IfZ6a+oZa7PefPHoscDK1uNZMcHoLAF2q/xV6GwkhPJdbbcGiITuxDRzlDP/ry+zqvV6MwGqvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752263948; c=relaxed/simple;
-	bh=fNFTzgqdHk1FTXy3FdlifGdIkM/F9F6z1PqgTNcZdmM=;
+	s=arc-20240116; t=1752264045; c=relaxed/simple;
+	bh=rZi2rCdl13Itq2FYc/am7oHPt2a+dpwp2iEDHnh9MtI=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Y2YpKy4nOCycE0rCjaFWYWwNSifyEghviQQZpNs+YhWcv6H1r6XxM3uZHTrAYHM7UQeNfGVKI31HsYG46rfa7GJmfonOSVP3nn1P0Cqwa30iEyFsXkR/5yyZAs+Cqp2nymn0v+nqiZrwHvzA4seYO+Ttaja5U8vRMcuhfaLoVHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=hJJpuz9Z; arc=none smtp.client-ip=209.85.222.172
+	 Content-Type:MIME-Version; b=Lxsl6v9T7fMkKiZ2+8wuqVBIwHuU+/yTVOwDP/XhXmPVzfhyQpNKtkm7OyElzMAYW7AJ9Iw82xNIeA6yL0U0l8JSw7PDdgsGQ5A17/RsjpKizDwzBJRvr5WauN2NMZfGrNpzs6okS1XOJFNePcA/7CmoEpRdyeb8CGYqFoYVm4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=s7ElN+sr; arc=none smtp.client-ip=209.85.219.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7e0bb4a2c04so7580285a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:59:05 -0700 (PDT)
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6face367320so24126806d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:00:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1752263945; x=1752868745; darn=vger.kernel.org;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1752264042; x=1752868842; darn=vger.kernel.org;
         h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
          :from:subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=KggEA/YDHTi+B94iHR0d5HwR3sGfFH/eH/dYBbqHvU0=;
-        b=hJJpuz9ZKNqG1gsbWUiVri5XavO69fnewt0hXwCWgeMZ4FQutGfH4XjtmEaZlp0vot
-         ruplIge60Npw0dsVGzECKQcmhD81C3ehplLfpEwDkgbXs6z9kzPbv/G7ZV0NVABxUpbL
-         DN5JH2MzifTOgHXrrvsKYGWMe5HJFB2Egv2ry4YG9ySZQfOuho/vQ33/8gKR4M1xTeml
-         jW7Re3cNJZzxgXVW1NQRsQDcoTGzXVaFx/Odm0q0KukAK0de3WgsitD+nvD+f/VPGtBp
-         u7YGgSau7k+JtGRO2OT3HDbsjTq+oXPGzkwJc4SusYvdvGyGHmOnx7MTXl73kZgTBYDi
-         Odwg==
+        bh=rZi2rCdl13Itq2FYc/am7oHPt2a+dpwp2iEDHnh9MtI=;
+        b=s7ElN+sreRJNoyiNTLESTLZc1tL6zO1KXaQfWAgTq52i5LLEu9v0p94aZSmK7xeikO
+         7gtjemhxzhRo68LIoa4IilSjtaj8OzZKtwPp0pUCcDVaTfTMB1dEB38ftVuoLB14U+Ze
+         /KNGd/f4yyA7+Ky0WVouOSODiAM5RbuMIGjywl6Y8C2lK5CItBJz43uQWmRwT8QZIWpC
+         /3z3jGsayTocuoFZSz2G5E4Oi534pq/vUS3akQ4mSWnxMji6a17XrtIWsALvd9TIMU5G
+         lElNUS8maI1MVpufwH7/3w4Iu+25FIalrmRjB6wuBIYY163E3bxJHIt86h7jbMSM4W56
+         lRwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752263945; x=1752868745;
+        d=1e100.net; s=20230601; t=1752264042; x=1752868842;
         h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
          :from:subject:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KggEA/YDHTi+B94iHR0d5HwR3sGfFH/eH/dYBbqHvU0=;
-        b=Bh2+Z9BAIMAhO7Y9BfbCAwyc43MYB7Jl8CqOmhcSpXlcVf16XRexe97dkC6cGKy7dJ
-         UIsjgA0GpqFxFZIDvo68Mow3/xMNoToDj7mPQ2ZuJfF6H0YlrMksUWcvePT/g5kxNvrf
-         437fRlWLgNX54RO8kUb7Sd1DTBK5a6vGSGHP/j637cfpohbpihlx/f2ziEW551v+4x5G
-         2N0FoY1e6grIhzYAul/i3z9Ny0GgYf8iQnWMAX4LYHLogyxErxPmOCgpUQBfcgEktjD4
-         y3O5ne/CZ2AyKfc2JL6lGpLQfKpinb0IChKB8VwBDNwv+g4oeuzORAQqKaJcKZPi7h96
-         u0LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHvuC3I5WqWLt1XBF8nUSvk2UpfkAd0yzlgi7ZRfCPIFDPI3Id8wJBiLKJHfN8zujO/5K7EvLELvUup7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLk0V4Kmmj16pmT/79qnCFHjfmLFHSlYuRvNAZs1q3LgnFi266
-	zSrVk09NaVp9ygdidK349o0+qJ7wQrRu7uXlNpfMcoRJja/+JrPhWIhzyxcgyLdpsgOwND9uWOB
-	zpw0naMPkaQ==
-X-Gm-Gg: ASbGncuz1ZJODXSgj0DK80GD7iu9CMJYmCFergTNL1LXoFnCvtls7BqGl8NHtBniLmO
-	YMr9JGAWAooDnls8Y7/zI8X0lEv6DZ4Kdz2l9tywWz+GeXHqEDGsUcnoWOI9cmUI2MZNlXeI1qX
-	XjD+IomGrnBxs3O+xd+UJrnJU4VmHaJsI/Ji+QHBu6pBOp7/tRIfiNn+tS7ymhfJwxoc+AOsoBQ
-	lWzAySXZz5BEM7Tct/aF/jW2YA+z7kL1XwRsVyQS8DvXFW4oxp4A4RxnvlYjU1L/KSS2iOfExXt
-	Eu8Uw/gXVW1w+pLepE1ZM9Cg+xtQBsusS1oF0DdhFbyfNrLKpSM6+o6LmCKCk0pLMeW8wM1nSt4
-	r2pRrgGuPn4BDQjgu81Ux1N3EgrI=
-X-Google-Smtp-Source: AGHT+IEMN28GIL2fj0mSdcwNMNRsi58DvX91WQKhdFH3bBY+HPq8y10Ik8GGOtDgnbxn+L/FmEEnxg==
-X-Received: by 2002:a05:620a:6590:b0:7e0:892b:e447 with SMTP id af79cd13be357-7e0892bec92mr129076085a.22.1752263944593;
-        Fri, 11 Jul 2025 12:59:04 -0700 (PDT)
+        bh=rZi2rCdl13Itq2FYc/am7oHPt2a+dpwp2iEDHnh9MtI=;
+        b=ldEIX97FrY+g+27KCudTN/qh+m3VFX5eKv9BqA9euvsHwIX6lUx8J6EqNic/HDo2tw
+         9KzopLt1WOD/T7paP9plCbGcwZxBWHyRNhbdX1iyXJbjkI1g+vvc9/hf07aacmWeDsao
+         86vp0o/ck0kg6evKKHx59oyvja5yF4eIc0DkJjn0gHt5LQIS4FrZ5cDVit6pUKXGwoVG
+         d8nl5TZw2AfEJV94shK4UTf4SrtCC7YiNeJ0jemFRB48Le53/yGlTkxc8ppjh3JufqbK
+         iZG9NZOe9eXicQMfglqSvmv1YKahwWSESiFzUqhMfRpmzYet1DV4Yay6Axhuu8l4Wagu
+         BL4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVVZFXYhuOFiYX0937jlOo1P/bzSNLyx7NUQEAUgFaOHYaz2acKuMXwUqEBZrhRK+pRUTg4SuOPdExkbyk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6p1vBaG/xczu9i24B5P4irLC0pPt7mKGxwXAlqWYXtTY07ybl
+	ftFudB3xCKY0j385Rqh06gZ59wBlpVERyGJ7u5nFrlbEbg6SwFaj99PU2Pk45YEbHtGSCQ9PGwO
+	E/zaUzFhCrA==
+X-Gm-Gg: ASbGncsjxKf86sG5LlpQGJQ++w3mrffdytFmzItgUIf2Tbx6WsHk4E1ro6LVHEffphP
+	naUAAXlossYhfmlAn8dqRzMzvVAxFMyxQ1M2oslJIz+PLVOqA+muG4JqoXaHXSEBLVTXGjgTo3j
+	v1FeUlgL2jmCHE49umEoO+nVn0lrWUd6Z4UxvktwTQvigTXumopVtqEnqQW0aDUIREgUdFxiVua
+	JQm0L9BuxL9rIaLMiNzACfBLXa7QcUFvhpg/93HU5gnRaVm6ccBDWef+7IGxxOfBqkJ7ZIWepTf
+	M/Rl3ypwnl6cnqu19SsU6smIiiFscEJgQNdtDXFIUMGirc+MVxyZaeGAFkjyeMoD6V3SQ5rAJBQ
+	icSwHIzO0qtDxkIudu/qN2xuAPi4=
+X-Google-Smtp-Source: AGHT+IGM+1hSBakMhrLaq9WY4U9uml++QAtwf0AFvIykTUocyfI+3+molPmoYEJFzOkqT6FmQrqWMw==
+X-Received: by 2002:a05:6214:2e92:b0:704:a592:490b with SMTP id 6a1803df08f44-704a592491emr63860896d6.37.1752264042280;
+        Fri, 11 Jul 2025 13:00:42 -0700 (PDT)
 Received: from ?IPv6:2606:6d00:17:b699::5ac? ([2606:6d00:17:b699::5ac])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcde80650asm252765185a.90.2025.07.11.12.59.02
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7049799e874sm23334306d6.18.2025.07.11.13.00.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 12:59:03 -0700 (PDT)
-Message-ID: <9f4a00b3a0b6491b1f50c878cb18569009a4441e.camel@ndufresne.ca>
-Subject: Re: [PATCH 5/8] media: uapi: HEVC: Add v4l2_ctrl_hevc_ext_sps_rps
- control
+        Fri, 11 Jul 2025 13:00:41 -0700 (PDT)
+Message-ID: <1f36e0e642a1554f4661f122f7d525d5677ce1df.camel@ndufresne.ca>
+Subject: Re: [PATCH 7/8] media: rkvdec: Remove TODO file
 From: Nicolas Dufresne <nicolas@ndufresne.ca>
 To: Detlev Casanova <detlev.casanova@collabora.com>, 
 	linux-kernel@vger.kernel.org
@@ -92,10 +91,10 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  <mchehab@kernel.org>,  Hans Verkuil <hverkuil@xs4all.nl>, Ricardo Ribalda
  <ribalda@chromium.org>, Hans de Goede <hansg@kernel.org>,  Yunke Cao
  <yunkec@google.com>, linux-media@vger.kernel.org, kernel@collabora.com
-Date: Fri, 11 Jul 2025 15:59:01 -0400
-In-Reply-To: <20250623160722.55938-6-detlev.casanova@collabora.com>
+Date: Fri, 11 Jul 2025 16:00:39 -0400
+In-Reply-To: <20250623160722.55938-8-detlev.casanova@collabora.com>
 References: <20250623160722.55938-1-detlev.casanova@collabora.com>
-	 <20250623160722.55938-6-detlev.casanova@collabora.com>
+	 <20250623160722.55938-8-detlev.casanova@collabora.com>
 Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
  keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
  /e0MU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAY29sbGFib3JhLmNvbT6ImQQTFg
@@ -106,7 +105,7 @@ Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
  TvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyy+AUJCWX3dQAKCRDZQZRRKWBy9FJ5AQCNy8SX8DpHbLa
  cy58vgDwyIpB89mok9eWGGejY9mqpRwEAhHzs+/n5xlVlM3bqy1yHnAzJqVwqBE1D0jG0a9V6VQI=
 Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-QFZNUyCQD9CH6UQ+5gcH"
+	protocol="application/pgp-signature"; boundary="=-KQw6nRLQn0EVg5xyIuZ/"
 User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -116,205 +115,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 
---=-QFZNUyCQD9CH6UQ+5gcH
+--=-KQw6nRLQn0EVg5xyIuZ/
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
 Le lundi 23 juin 2025 =C3=A0 12:07 -0400, Detlev Casanova a =C3=A9crit=C2=
 =A0:
-> Some hardware (e.g.: Rockchip's rk3588 hevc decoder) need the parsed
-> long and short term reference information for HEVC decoding.
+> 2 items are present in the TODO file:
+> =C2=A0- HEVC support
+> =C2=A0- Evaluate adding helper for rkvdec_request_validate
+>=20
+> Missing HEVC support is not a reason for a driver to be in staging,
+> support for different features of the hardware can be added in drivers
+> in the main tree.
+>=20
+> The rkvdec_request_validate function was simplified in
+> commit 54676d5f5630 ("media: rkvdec: Do not require all controls to be pr=
+esent
+> in every request")
+> by not setting controls that have not changed.
+> As it now basically just calls vb2_request_validate(), there is no need
+> for a helper.
 >=20
 > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+
 > ---
-> =C2=A0.../media/v4l/ext-ctrls-codec-stateless.rst=C2=A0=C2=A0 | 73 ++++++=
-+++++++++++++
-> =C2=A0.../media/v4l/vidioc-queryctrl.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 6 ++
-> =C2=A02 files changed, 79 insertions(+)
+> =C2=A0drivers/staging/media/rkvdec/TODO | 11 -----------
+> =C2=A01 file changed, 11 deletions(-)
+> =C2=A0delete mode 100644 drivers/staging/media/rkvdec/TODO
 >=20
-> diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-codec-statel=
-ess.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.r=
-st
-> index 0da635691fdcb..745f38a8fe69c 100644
-> --- a/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
-> +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
-> @@ -2958,6 +2958,79 @@ This structure contains all loop filter related pa=
-rameters. See sections
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 0x00000004
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -
-> =C2=A0
-> +.. c:type:: v4l2_ctrl_hevc_ext_sps_rps
-> +
-> +.. cssclass:: longtable
-> +
-> +.. flat-table:: struct v4l2_ctrl_hevc_ext_sps_rps
-> +=C2=A0=C2=A0=C2=A0 :header-rows:=C2=A0 0
-> +=C2=A0=C2=A0=C2=A0 :stub-columns: 0
-> +=C2=A0=C2=A0=C2=A0 :widths:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1 1 2
+> diff --git a/drivers/staging/media/rkvdec/TODO
+> b/drivers/staging/media/rkvdec/TODO
+> deleted file mode 100644
+> index 2c0779383276e..0000000000000
+> --- a/drivers/staging/media/rkvdec/TODO
+> +++ /dev/null
+> @@ -1,11 +0,0 @@
+> -* Support for HEVC is planned for this driver.
+> -
+> -=C2=A0 Given the V4L controls for that CODEC will be part of
+> -=C2=A0 the uABI, it will be required to have the driver in staging.
+> -
+> -=C2=A0 For this reason, we are keeping this driver in staging for now.
+> -
+> -* Evaluate introducing a helper to consolidate duplicated
+> -=C2=A0 code in rkvdec_request_validate and cedrus_request_validate.
+> -=C2=A0 The helper needs to the driver private data associated with
+> -=C2=A0 the videobuf2 queue, from a media request.
 
-
-Something, somewhere should say this is an array.
-
-> +
-> +=C2=A0=C2=A0=C2=A0 * - __u16
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``lt_ref_pic_poc_lsb_sps``
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Long term reference picture order count=
- as described in section 7.4.3.2.1
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "General sequence parameter s=
-et RBSP semantics" of the specification.
-
-Each LONG term reference have one of these.
-
-> +=C2=A0=C2=A0=C2=A0 * - __u8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``delta_idx_minus1``
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Specifies the delta compare to the inde=
-x. See details in section 7.4.8 "Short-term
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reference picture set semanti=
-cs" of the specification.
-
-
-And each SHORT term have one of these. How can both be int he same control =
-? For
-me this could make a bit more sense with two structures:
-
-	v4l2_ctrl_hevc_ext_sps_st_rps[]
-	v4l2_ctrl_hevc_ext_sps_lt_rps[]
-
-Did I miss something ?
-
-> +=C2=A0=C2=A0=C2=A0 * - __u8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``delta_rps_sign``
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Sign of the delta as specified in secti=
-on 7.4.8 "Short-term reference picture set
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 semantics" of the specificati=
-on.
-> +=C2=A0=C2=A0=C2=A0 * - __u16
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``abs_delta_rps_minus1``
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Absolute delta RPS as specified in sect=
-ion 7.4.8 "Short-term reference picture set
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 semantics" of the specificati=
-on.
-> +=C2=A0=C2=A0=C2=A0 * - __u8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``num_negative_pics``
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Number of short-term RPS entries that h=
-ave picture order count values less than the
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 picture order count value of =
-the current picture.
-> +=C2=A0=C2=A0=C2=A0 * - __u8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``num_positive_pics``
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Number of short-term RPS entries that h=
-ave picture order count values greater than the
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 picture order count value of =
-the current picture.
-> +=C2=A0=C2=A0=C2=A0 * - __u8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``used_by_curr_pic_s0[16]``
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Specifies if short-term RPS i (that has=
- a negative POC) is used by the current picture.
-
-Use bit field for that, a __u16 works, and one per ST.
-
->=20
-> +=C2=A0=C2=A0=C2=A0 * - __u8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``used_by_curr_pic_s1[16]``
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Specifies if short-term RPS i (that has=
- a positive POC) is used by the current picture.
->=20
-
-Same.
-
-> +=C2=A0=C2=A0=C2=A0 * - __s32
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``delta_poc_s0[16]``
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Specifies the negative picture order co=
-unt delta for the i-th entry in the short-term RPS.
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 See details in section 7.4.8 =
-"Short-term reference picture set semantics" of the
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 specification.
-
-Keep it delta_poc_s0_minus1 like int he spec, and then you can go back so u=
-16.
-
-> +=C2=A0=C2=A0=C2=A0 * - __s32
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``delta_poc_s1[16]``
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Specifies the positive picture order co=
-unt delta for the i-th entry in the short-term RPS.
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 See details in section 7.4.8 =
-"Short-term reference picture set semantics" of the
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 specification.
-
-Same.
-
-
-regards,
-Nicolas
-
-> +=C2=A0=C2=A0=C2=A0 * - __u8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``flags``
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - See :ref:`Extended RPS Flags <hevc_ext_=
-sps_rps_flags>`
-> +
-> +.. _hevc_ext_sps_rps_flags:
-> +
-> +``Extended SPS RPS Flags``
-> +
-> +.. cssclass:: longtable
-> +
-> +.. flat-table::
-> +=C2=A0=C2=A0=C2=A0 :header-rows:=C2=A0 0
-> +=C2=A0=C2=A0=C2=A0 :stub-columns: 0
-> +=C2=A0=C2=A0=C2=A0 :widths:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1 1 2
-> +
-> +=C2=A0=C2=A0=C2=A0 * - ``V4L2_HEVC_EXT_SPS_RPS_FLAG_USED_LT``
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 0x00000001
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Specifies if the long-term reference pi=
-cture is used 7.4.3.2.1 "General sequence parameter
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set RBSP semantics" of the sp=
-ecification.
-> +=C2=A0=C2=A0=C2=A0 * - ``V4L2_HEVC_EXT_SPS_RPS_FLAG_INTER_REF_PIC_SET_PR=
-ED``
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 0x00000002
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Specifies if the short-term RPS is pred=
-icted from another short term RPS. See details in
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 section 7.4.8 "Short-term ref=
-erence picture set semantics" of the specification.
-> +
-> =C2=A0.. _v4l2-codec-stateless-av1:
-> =C2=A0
-> =C2=A0``V4L2_CID_STATELESS_AV1_SEQUENCE (struct)``
-> diff --git a/Documentation/userspace-api/media/v4l/vidioc-queryctrl.rst b=
-/Documentation/userspace-api/media/v4l/vidioc-queryctrl.rst
-> index 3549417c7febb..dc7caf4bf6208 100644
-> --- a/Documentation/userspace-api/media/v4l/vidioc-queryctrl.rst
-> +++ b/Documentation/userspace-api/media/v4l/vidioc-queryctrl.rst
-> @@ -523,6 +523,12 @@ See also the examples in :ref:`control`.
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - n/a
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - A struct :c:type:`v4l2_ctrl_hevc_d=
-ecode_params`, containing HEVC
-> =C2=A0	decoding parameters for stateless video decoders.
-> +=C2=A0=C2=A0=C2=A0 * - ``V4L2_CTRL_TYPE_HEVC_EXT_SPS_RPS``
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - n/a
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - n/a
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - n/a
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - A struct :c:type:`v4l2_ctrl_hevc_ext_sp=
-s_rps`, containing HEVC
-> +	extended RPS for stateless video decoders.
-> =C2=A0=C2=A0=C2=A0=C2=A0 * - ``V4L2_CTRL_TYPE_VP9_COMPRESSED_HDR``
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - n/a
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - n/a
-
---=-QFZNUyCQD9CH6UQ+5gcH
+--=-KQw6nRLQn0EVg5xyIuZ/
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iHQEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaHFtBQAKCRDZQZRRKWBy
-9ISzAPidxCwdhetQDnozQ9rkv6zHmwuNG2/63/iuwoWBzkyQAQD7SLIPvi5xterW
-wf+MjUZIrzLCUQ4C8voHcQLpGbHPCA==
-=sK20
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaHFtaAAKCRDZQZRRKWBy
+9F41AP99Ssroc2Ugv8H1VwcSMEFKHPQNBb3wYyF+ksoPrbKbdAD/RUUvTpWPsDfz
+ldKo4ficYUoAy5UZisMdhE0ngURfwg4=
+=tW+S
 -----END PGP SIGNATURE-----
 
---=-QFZNUyCQD9CH6UQ+5gcH--
+--=-KQw6nRLQn0EVg5xyIuZ/--
 
