@@ -1,266 +1,103 @@
-Return-Path: <linux-kernel+bounces-727965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C41F2B021E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:34:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA9DB021E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21B777B3DC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:32:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 252EA17513C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418AD2EF2BE;
-	Fri, 11 Jul 2025 16:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696132EF2B2;
+	Fri, 11 Jul 2025 16:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Udp8Vect"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Popdtsq9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8232AE66
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 16:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEF8167DB7
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 16:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752251634; cv=none; b=fdKDOkznVCw9sH94cx2cOdrCQgWeyhXukGn9FjOb+2VAZcnjw/2AuhbkTj5x2Kq4IVfFp+908NLep+mx7ZMn1aKO9l4SPKehgjAXKYiTxp8LvTq13b5iS5bXfRCcc/jb9cYRvu+zttoDnaZpZ3gx0LNWXlSkMfJQrePtVPDGJhw=
+	t=1752251670; cv=none; b=l7qq2lI20eB64NYu5is5EoPm1FihHXs7LZFKIpNYqNHVlChiIC61P1KvKMB5CQ8MMop2Zw7OgSS8Mu7yJohgvIJcjElKFlBW2kUxnaw58at04BLC8RPK/mdl+bQKvCxpew7IbSUcl9gyI1q+yx3n1StC7laXskXb/puyaHpRIno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752251634; c=relaxed/simple;
-	bh=Gj/LC7Y73pNk2yrhSS0d/CdEEoi8N1MsToT41z6JG60=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HMtYN30n2Lvxoc/W7YJNErniKBWKfbP6yoP41emTWlnUIL4PqZUIki6sQFp0GBX66P22bYsg7wjdiR/CFQdAXtiD4AvHdtd977QBwfZ2mJRNk+3AleGJnYqps/XLRXVckelg40Kynk+Xy7/UGENjJ9af7ZQ/7k7jBmcRKm89V34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Udp8Vect; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-455b63bfa52so215e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:33:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752251630; x=1752856430; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nGENYBU/D6swaXzru57Ha4Q1C2TEhr/fKQxS2FRJvrc=;
-        b=Udp8VectODpCzbGR6/ZpPBoAOqzbl0yhn3FWu4N4t7ias1oYOjb3Xyh4+U3QS2UQ4b
-         9Psb8QEJWgqOwNdzcsuGtD+4kh193WkTJ5nJ9DRAKK8PVA2d3M9MiZ9j/4i6REhICs7P
-         0oqjWCe0i3yzb9pTj/0tE3M0zMXSRdi7oyQUqixU+/RljK495PH/1HPasOT7TEczn5yC
-         8Z0k4R/jZGru+lrVGWZN6wxa9pwZHcRYJDYtSFv1Tz6lFavOyB79qIJGHP3paHL0NU2H
-         +GRF2en9onn6hwtuFp9MAGNGlNIjrZRVYFG+wG5BTQvXu1EYDYa8LRtzb8hK2u/DaKhg
-         tlqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752251630; x=1752856430;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nGENYBU/D6swaXzru57Ha4Q1C2TEhr/fKQxS2FRJvrc=;
-        b=CUMHE/1yvx2K1UkcJ3twp6oCgkq8VqMa3HwmgFlMn874xUD6iRQ/UfmmFcpn2/bObd
-         ufuklXnNUFfp0owGdTRQBFG+GiVMLqZrqukocZVzsTAT1MPMwJDVzWpbbcRuXN01aWFt
-         Ln3cE5LDjfZTCIyUZRxkdjrU88H7o5+lxiVqq1OVfgeStGDsI2t6vV0Vjcp23KjjWL9g
-         ExVoSqsrGIgdymHL1jDjYMPBQA5Nk/E8mlOXZNL/TqsgF/MTu48UCrylRLuS/tsq3VQ1
-         kVBrUK6EryaXcF6wXrJAjoAqQ15nn9zNWf6S0sploLO1NMF6vS7JO0lYP5TuhTu70rnL
-         svFA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7UcYrfEe09O0sztV4Hhqnkd2dORGP6DF1SyP5awjNhYybqWUszr2DO7BReihA2JtEe+2SAxpc0ZLtGgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM6nTLgSE3WVSPlmOJADRHYLe6IqEaBTno9eXVKwpI8qg1foLA
-	PgRQuwKvoEV39rcnhWyAb9o5QyfWxptD2RpAbkvzI4mc6DIJmZdl8Qs5ZmY5ZVDVtw==
-X-Gm-Gg: ASbGncsoyxT8tz9lTSLrCW5BRhIMAXz+JY2lR9XfwaTSVKTk6hShsL0Mv6YJkT8L3mf
-	qVnA/JZEdQpXDMKzw3Vo+Z9i6kxsvfnOymD+lLp1Yl5KovMoA1ozwqXNscR3yA3KbqJNuAYq22W
-	VQE6Kzm+lxhFWNXPyIN0r+RaE0edyRFnUTWQCI1cVCuszfQJa6ByU91k5rDrJYxB2b+ZjUSqiIS
-	FkrfSA3rhvXo3VKvvgm5p9HZvr2XWYrwZTh7NakzFteBYEo/zRJtDDtUGtc7a2PjGaEO0MrFDg0
-	vuXxHcCCi9mPzBPuKmwRN0v11jjFgWdBvimDRiC4aK59QOG9ObHo6QV1AexItQ54rGlHN7j08UU
-	2gBi6iUyOew==
-X-Google-Smtp-Source: AGHT+IFGb8En+0/LEnhrCsPlcQ7eoqZm8bWiCIIc6A88wBl+AkcTJuwgUTtb5+h7cGxeEVSy+ITdaA==
-X-Received: by 2002:a05:600c:4854:b0:453:7d31:2f8c with SMTP id 5b1f17b1804b1-4551744f242mr1132995e9.3.1752251630094;
-        Fri, 11 Jul 2025 09:33:50 -0700 (PDT)
-Received: from localhost ([2a00:79e0:9d:4:1405:a0ff:fc1b:5b2])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454dd537cd9sm52103105e9.26.2025.07.11.09.33.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 09:33:49 -0700 (PDT)
-From: Jann Horn <jannh@google.com>
-Date: Fri, 11 Jul 2025 18:33:36 +0200
-Subject: [PATCH] eventpoll: Fix semi-unbounded recursion
+	s=arc-20240116; t=1752251670; c=relaxed/simple;
+	bh=RZjyckc3Wj2pK2ZJFVLOxwpUUXvPzZ0oGSNiWN0h8Pw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jG4ffu6MBqBuzP4yTJnoWAOfv3dBafekMl5ZWhB2/Zd9GYBHlCp2cedBYd0oTRZnJOXv/s0FO1WzO29aVFTwT/AtZP3l1d2uxL09Iz4Ze5Wj7TwMBJSHsFrpPBohZPTya0walypKpLVJVT+JjRTsTDpz892FT2ZbopDoVhtu5Qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Popdtsq9; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752251670; x=1783787670;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RZjyckc3Wj2pK2ZJFVLOxwpUUXvPzZ0oGSNiWN0h8Pw=;
+  b=Popdtsq9ohsS26N3RB97LZqOo2tIzwxTvEb5FYIbqQ+6i38HbNJTDswI
+   1sOKhB8GSz3YCoPDyyYgRFk3z1g4pEtt+ITWiZ5GPlNE8OHrV6s1xEEQQ
+   +3YPYu4XC6zT+MA/SoDT53OoshXF4U9IKJrrSVd9C18wt5iAjsj4hj5yc
+   bVqdrwhhUsspNMHO7tqB1kk1Cd4KThylGiBAg+83rvD1/q1LIZ/dNPkAl
+   kC8i3a9TaV4dTWnhVKUteY+sCJB4Ex0+i7sncC54wDQB9idCQKGj56rRz
+   139DQfQr8NvQqb2aYEnBSsbtc6UVrsI9Y8F76EY0zZGCyQGr8OeqpJLzF
+   Q==;
+X-CSE-ConnectionGUID: 2ZECliwKQ3WXKBzSoHbD8w==
+X-CSE-MsgGUID: rw51KWqiT4GcXkYBvCNfHQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54711514"
+X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
+   d="scan'208";a="54711514"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 09:34:29 -0700
+X-CSE-ConnectionGUID: r9p+XPAhRaeLHYHoz/pByw==
+X-CSE-MsgGUID: eDyA4amkSGGiTkw17Mq7ww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
+   d="scan'208";a="156189405"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 09:34:27 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uaGhc-0000000EaEH-1hqz;
+	Fri, 11 Jul 2025 19:34:24 +0300
+Date: Fri, 11 Jul 2025 19:34:24 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Feng Tang <feng.tang@linux.alibaba.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH v1 7/7] panic: sys_info: Factor out read and write
+ handlers
+Message-ID: <aHE9EEbsCuDOfD3J@smile.fi.intel.com>
+References: <20250711095413.1472448-1-andriy.shevchenko@linux.intel.com>
+ <20250711095413.1472448-8-andriy.shevchenko@linux.intel.com>
+ <aHEpHEtnPms2LUi-@U-2FWC9VHC-2323.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250711-epoll-recursion-fix-v1-1-fb2457c33292@google.com>
-X-B4-Tracking: v=1; b=H4sIAOA8cWgC/x2M2wpAQBRFf0Xn2am5hPIr8mDYOCV0JlLy74bHt
- Vt73RShgkh1dpPilCjbmsDmGfVzt05gGRKTM64wlbWMfVsWVvSHfi6PcvEYDLwvg+sQKD13RZr
- /atM+zwu8p67qZQAAAA==
-X-Change-ID: 20250711-epoll-recursion-fix-fb0e336b2aeb
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752251626; l=5822;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=Gj/LC7Y73pNk2yrhSS0d/CdEEoi8N1MsToT41z6JG60=;
- b=gPwfqluly2lPkZmTS83b0HCDec4L8Zbjlerf0nzDKtOGnWotL1uJjPIurVYfDrRDBDVdr/MPk
- SV8w59fSDRUCSjOjthW6yvGFSUSWTS5uGDKUKibeBpMTgHhjLbEjDYr
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHEpHEtnPms2LUi-@U-2FWC9VHC-2323.local>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Ensure that epoll instances can never form a graph deeper than
-EP_MAX_NESTS+1 links.
+On Fri, Jul 11, 2025 at 11:09:16PM +0800, Feng Tang wrote:
+> On Fri, Jul 11, 2025 at 12:51:13PM +0300, Andy Shevchenko wrote:
+> > For the sake of the code readability and easier maintenance
+> > factor out read and write sys_info handlers.
+> 
+> IIRC, I did implement separate 'write' handler, but chose not
+> to do that to save some common definition. I guess it's personal
+> preference, and I'm fine with either one. 
 
-Currently, ep_loop_check_proc() ensures that the graph is loop-free and
-does some recursion depth checks, but those recursion depth checks don't
-limit the depth of the resulting tree for two reasons:
-
- - They don't look upwards in the tree.
- - If there are multiple downwards paths of different lengths, only one of
-   the paths is actually considered for the depth check since commit
-   28d82dc1c4ed ("epoll: limit paths").
-
-Essentially, the current recursion depth check in ep_loop_check_proc() just
-serves to prevent it from recursing too deeply while checking for loops.
-
-A more thorough check is done in reverse_path_check() after the new graph
-edge has already been created; this checks, among other things, that no
-paths going upwards from any non-epoll file with a length of more than 5
-edges exist. However, this check does not apply to non-epoll files.
-
-As a result, it is possible to recurse to a depth of at least roughly 500,
-tested on v6.15. (I am unsure if deeper recursion is possible; and this may
-have changed with commit 8c44dac8add7 ("eventpoll: Fix priority inversion
-problem").)
-
-To fix it:
-
-1. In ep_loop_check_proc(), note the subtree depth of each visited node,
-and use subtree depths for the total depth calculation even when a subtree
-has already been visited.
-2. Add ep_get_upwards_depth_proc() for similarly determining the maximum
-depth of an upwards walk.
-3. In ep_loop_check(), use these values to limit the total path length
-between epoll nodes to EP_MAX_NESTS edges.
-
-Fixes: 22bacca48a17 ("epoll: prevent creating circular epoll structures")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
----
- fs/eventpoll.c | 60 ++++++++++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 46 insertions(+), 14 deletions(-)
-
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index d4dbffdedd08..44648cc09250 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -218,6 +218,7 @@ struct eventpoll {
- 	/* used to optimize loop detection check */
- 	u64 gen;
- 	struct hlist_head refs;
-+	u8 loop_check_depth;
- 
- 	/*
- 	 * usage count, used together with epitem->dying to
-@@ -2142,23 +2143,24 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
- }
- 
- /**
-- * ep_loop_check_proc - verify that adding an epoll file inside another
-- *                      epoll structure does not violate the constraints, in
-- *                      terms of closed loops, or too deep chains (which can
-- *                      result in excessive stack usage).
-+ * ep_loop_check_proc - verify that adding an epoll file @ep inside another
-+ *                      epoll file does not create closed loops, and
-+ *                      determine the depth of the subtree starting at @ep
-  *
-  * @ep: the &struct eventpoll to be currently checked.
-  * @depth: Current depth of the path being checked.
-  *
-- * Return: %zero if adding the epoll @file inside current epoll
-- *          structure @ep does not violate the constraints, or %-1 otherwise.
-+ * Return: depth of the subtree, or INT_MAX if we found a loop or went too deep.
-  */
- static int ep_loop_check_proc(struct eventpoll *ep, int depth)
- {
--	int error = 0;
-+	int result = 0;
- 	struct rb_node *rbp;
- 	struct epitem *epi;
- 
-+	if (ep->gen == loop_check_gen)
-+		return ep->loop_check_depth;
-+
- 	mutex_lock_nested(&ep->mtx, depth + 1);
- 	ep->gen = loop_check_gen;
- 	for (rbp = rb_first_cached(&ep->rbr); rbp; rbp = rb_next(rbp)) {
-@@ -2166,13 +2168,11 @@ static int ep_loop_check_proc(struct eventpoll *ep, int depth)
- 		if (unlikely(is_file_epoll(epi->ffd.file))) {
- 			struct eventpoll *ep_tovisit;
- 			ep_tovisit = epi->ffd.file->private_data;
--			if (ep_tovisit->gen == loop_check_gen)
--				continue;
- 			if (ep_tovisit == inserting_into || depth > EP_MAX_NESTS)
--				error = -1;
-+				result = INT_MAX;
- 			else
--				error = ep_loop_check_proc(ep_tovisit, depth + 1);
--			if (error != 0)
-+				result = max(result, ep_loop_check_proc(ep_tovisit, depth + 1) + 1);
-+			if (result > EP_MAX_NESTS)
- 				break;
- 		} else {
- 			/*
-@@ -2186,9 +2186,27 @@ static int ep_loop_check_proc(struct eventpoll *ep, int depth)
- 			list_file(epi->ffd.file);
- 		}
- 	}
-+	ep->loop_check_depth = result;
- 	mutex_unlock(&ep->mtx);
- 
--	return error;
-+	return result;
-+}
-+
-+/**
-+ * ep_get_upwards_depth_proc - determine depth of @ep when traversed upwards
-+ */
-+static int ep_get_upwards_depth_proc(struct eventpoll *ep, int depth)
-+{
-+	int result = 0;
-+	struct epitem *epi;
-+
-+	if (ep->gen == loop_check_gen)
-+		return ep->loop_check_depth;
-+	hlist_for_each_entry_rcu(epi, &ep->refs, fllink)
-+		result = max(result, ep_get_upwards_depth_proc(epi->ep, depth + 1) + 1);
-+	ep->gen = loop_check_gen;
-+	ep->loop_check_depth = result;
-+	return result;
- }
- 
- /**
-@@ -2204,8 +2222,22 @@ static int ep_loop_check_proc(struct eventpoll *ep, int depth)
-  */
- static int ep_loop_check(struct eventpoll *ep, struct eventpoll *to)
- {
-+	int depth, upwards_depth;
-+
- 	inserting_into = ep;
--	return ep_loop_check_proc(to, 0);
-+	/*
-+	 * Check how deep down we can get from @to, and whether it is possible
-+	 * to loop up to @ep.
-+	 */
-+	depth = ep_loop_check_proc(to, 0);
-+	if (depth > EP_MAX_NESTS)
-+		return -1;
-+	/* Check how far up we can go from @ep. */
-+	rcu_read_lock();
-+	upwards_depth = ep_get_upwards_depth_proc(ep, 0);
-+	rcu_read_unlock();
-+
-+	return (depth+1+upwards_depth > EP_MAX_NESTS) ? -1 : 0;
- }
- 
- static void clear_tfile_check_list(void)
-
----
-base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
-change-id: 20250711-epoll-recursion-fix-fb0e336b2aeb
+It looks better, in my opinion, to be three functions.
 
 -- 
-Jann Horn <jannh@google.com>
+With Best Regards,
+Andy Shevchenko
+
 
 
