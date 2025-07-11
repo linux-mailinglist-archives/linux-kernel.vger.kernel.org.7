@@ -1,243 +1,184 @@
-Return-Path: <linux-kernel+bounces-726806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E026DB01179
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:02:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 479F7B0116E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E7E04845A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:01:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8910A5678F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2387F195808;
-	Fri, 11 Jul 2025 03:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6DBA95C;
+	Fri, 11 Jul 2025 03:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LVWMtFvn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b1f7YijG"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74007494;
-	Fri, 11 Jul 2025 03:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677C12AE8B
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 03:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752202915; cv=none; b=meEv2ULmsIj0xFZUBp8xQyjhN8fA0KghP7ZeJQJMwy690FqP2J8pMq6Ag9t32QCC4o4BFepxkvIJHBLiyWrfm9o62dybWULsGwK8UEOcJrMu6yPgtC+qKcF+KeK7gt3vjZOhLVqE5qG4iKM6ImdwDNW5dhrlMaUYuyV/YMyh7FY=
+	t=1752202818; cv=none; b=iCVVBk7zhruE+gRH3kKeeAvOMwNhFfujLpFRup3B6xe5AHbF9R78oYA8CFSER26GnRoVheKXoX/F4Y0vhmV+QAMeLeg+T2ho/00s5BIuqBruHJM98k6hE165hXRQf4UJNmNjFk00uUCv+2dBBCnWZBOvzanwwZvInLfUiBTx2I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752202915; c=relaxed/simple;
-	bh=cQORkvVOWfik0xqc/SpNS7djvhmAHsvAeJNcKseBWsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f/M2icIowZYPn+8w4L5sl1gMJSugYUAGZiYNqSZAzVrCqiyWMrl6QjK/LtG0lMBHF6x4AB8PzaW+Nl4FqqB7GcwMtt18pq3scllB83nN+HpxtFDJ4fEniL2tttrIzS0JrdwoR+nLyMztzOkdQZ6bhbZAsN5H3TJcdwyxTED8ZfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LVWMtFvn; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752202913; x=1783738913;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=cQORkvVOWfik0xqc/SpNS7djvhmAHsvAeJNcKseBWsM=;
-  b=LVWMtFvn8CRZ0fc1xgVWnxc7In+aHKp3V0z5CCodqns3+WEErknYpaR4
-   FNUvXE2YrLIPaagFmv3CCugJ9Rwfdvm/lXbbM2m2cp9IX09PNs8yR20jP
-   Ry4Xg2pkpC9knmhdrl5Nxln898F4kG5sgL6SsOnwwMKA/GB2pOWiajV07
-   I7hdBkJFV38okBG1PvL6usTjuN2jt7Ex7H9uBs/EimhStQpr3HZrLvL1p
-   IO3nZ8CuWeKiw1NAEiMCPQMYQW2u3ynpUTLTCLSIbgi+5EQKqPKDKnG/L
-   qr81gj8Y0fdI5XVM+/dkCTftMOv8IrJ5H4b/HA+LDMrm4ayikIzjnAsxA
-   g==;
-X-CSE-ConnectionGUID: 9B+Kb0XVRpeiWloymTd1dg==
-X-CSE-MsgGUID: tymWF7RtQn+LaaR7wv6ffw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="71945049"
-X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
-   d="scan'208";a="71945049"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 20:01:53 -0700
-X-CSE-ConnectionGUID: 4hrVOA+NQTu93mS7jPRSCQ==
-X-CSE-MsgGUID: Z6e0dr+oRNSB+yaEyWr7Pw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
-   d="scan'208";a="156981240"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 20:01:48 -0700
-Message-ID: <094fdad4-297b-44e9-a81c-0fe4da07e63f@linux.intel.com>
-Date: Fri, 11 Jul 2025 11:00:06 +0800
+	s=arc-20240116; t=1752202818; c=relaxed/simple;
+	bh=Yn7aK+Gtg5vwN2OrZxJqZteeXqHgSbdBnyyQjvw/fCQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KeqOt1soF+e4pA/dfkrR+YV7uFRiviq49b6WxgXRCncdrhtZuthfO8bomR8/9l22iQF0yjFYNGujqKYGpMyUCqQqpRAUg13G4h2ndJ9UCeSRVmBRyXJ1iqMUzoAKp2lnZhBVNrK8bwy2ws24vBYRbDOCTDXy9fpgHsuR+TvswXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b1f7YijG; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-453398e90e9so12237045e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 20:00:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752202815; x=1752807615; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=S9fO9S6Ip3l6OJZpBg21f9D1VRI+E3BXOK5zK8Ozazs=;
+        b=b1f7YijGnkeQMb/SbLyQmbcc+GbdxnqAHu6gElkGLjJs2q6qN1+WTEBPD5k03+Pm4m
+         gdXpgRnY0v0GXLx2R4Do2pIj53Rgt0syOiVzY6c/rs1P4AFYsxZ2UiRWY5segtu5Khej
+         CeO1AwMjMEG1pfpJ2JZgnJkT/lqfRaR8StErd9qIZzRwTL1bHjrd68qay/b9IK2UMhRm
+         Qwx0YXQr75dA7JtTKIGi/GkJYsKmkZrxYAE07D6yYXL+cw7ZUSv/S5vAtQ2cA17xoWsV
+         n4DeyeWRqhC5cJGpLcVcTqj0BullTWlRNrYzA53X8aebsKzKlec1sbOXcvUcV9KpE2vS
+         Z1pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752202815; x=1752807615;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S9fO9S6Ip3l6OJZpBg21f9D1VRI+E3BXOK5zK8Ozazs=;
+        b=UKADNgpigiscE8OT6XnR/qKptZ3AEXpsfkdvVN2H5IWaW0CFSxeuoCMlK7Yk2fhi0e
+         EiaEyOeMc+0WpYoc0PujOFw/I1oJAVBT5Bj6zi/CD88vPm8xhaTa+mA7GibD55hrNbU7
+         mRV2bYMOYdBtbK7xM155fyy+c6EFT34dYynB2ZoeI6+3jGJK4IqRUHhFIxP4RzTCm8Ik
+         LDaNL0aLWSbw4fqf1haYcb+Sq+EpPlnYty5r7gbPwC4o2bFKXhiPJ0jP/53GPRtPJ2d0
+         e2imtLJ4rO2/wwkK/PbBzxY51Y6oXY/3zdAA16ln+e+daWMr0o2gpvs6PvUAT5lEN95G
+         NgLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6jk+CntaX1Ck98T0rXTjhoXaYW4xcPeQeet8fxKxKDF05ZrVCuj9gOoQNqdWboz2pmLQjNPSUmgHS9SA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhF0LNZPRzwROWj4eQZbBH0qCdX9OisxpHcw3FmRLlcxGYCkge
+	zejt+TUkh5xmQt6vlPS8N/6mCBxJajexkL4K5E4wrCUwqOeICb+RbHyZ3KGfBEWabsI=
+X-Gm-Gg: ASbGncu/E4M5hajW6caiMy/qu13O6yYvNFrNpxqtrh3wpPYq+Qy3OBHMZYfuamZx3o9
+	FQZmaJIGgSvKFzvulz6jUrd5DtIXKVAI2hN79MtAci3Jp1EG/GgudfJ3PR6X4lQ6D4rsceAjHmd
+	mHcqcgwZ4tGTb7GMm5m6CUC0fs2SsAZiMvxb1eijvOKHqBWYuzOn5JaezrmK0c0SNLlwY3UkKLO
+	PAz329SUBpose3vDh9d9poJHEh5opNxC6+DlCKtRLvNpHK/Uk4gznkj86X3WwGDipMoyB8OS5Q6
+	YBcyuTLV/gFDPNkWUCrjcwRxR6aZoHhOYPRIW/K/FpEkpgy9RSSS3Tb2YzZHvScUC5s4v/NPkb5
+	QZMlJ2rbRXAXxluXbAn4ycuNyMzgbLg==
+X-Google-Smtp-Source: AGHT+IH4CmNtUhkTrPRG8gJIFlT89/SoRuA9SyoLr/hOCP51o6IZKBdDkgR+lzOVlTMC+QOF7LL07A==
+X-Received: by 2002:a05:600c:6297:b0:43c:f6c6:578c with SMTP id 5b1f17b1804b1-454ec26a7aemr10802535e9.15.1752202814695;
+        Thu, 10 Jul 2025 20:00:14 -0700 (PDT)
+Received: from orion.home ([2a02:c7c:7213:c700:e4ad:f2d9:9dd9:cbf2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d50fa9b4sm75424355e9.27.2025.07.10.20.00.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 20:00:14 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+Subject: [PATCH v2 0/3] Add PM4125 audio codec driver
+Date: Fri, 11 Jul 2025 04:00:09 +0100
+Message-Id: <20250711-pm4125_audio_codec_v1-v2-0-13e6f835677a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
- Jason Gunthorpe <jgg@nvidia.com>, Jann Horn <jannh@google.com>,
- Vasant Hegde <vasant.hegde@amd.com>, Dave Hansen <dave.hansen@intel.com>,
- Alistair Popple <apopple@nvidia.com>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, "Tested-by : Yi Lai" <yi1.lai@intel.com>,
- iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
- <20250710135432.GO1613376@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250710135432.GO1613376@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADp+cGgC/4WNQQqDMBBFryKzbkqcGItdeY8iISRTHWgTSVppE
+ e/e6AW6fA/++ytkSkwZrtUKiRbOHEMBPFXgJhtGEuwLA0rUssVWzM+mRm3s23M0LnpyZqmFRGc
+ vVknpvYOynRPd+XN0b0PhifMrpu9xs9S7/Vfco4I0dkq5Bjsr+wcHm+I5phGGbdt+IrmLeLsAA
+ AA=
+X-Change-ID: 20250626-pm4125_audio_codec_v1-02ca7a300ddc
+To: Srinivas Kandagatla <srini@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, linux-arm-msm@vger.kernel.org, 
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>, 
+ Alexey Klimov <alexey.klimov@linaro.org>
+X-Mailer: b4 0.14.2
 
-Hi Peter Z,
+PMICs like PM4125 have in-built audio codec IC. The series here
+adds support for this codec driver: DT bindings and codec driver
+itself that consists mainly of two parts: soundwire devices and
+codec part itself.
 
-On 7/10/25 21:54, Peter Zijlstra wrote:
-> On Wed, Jul 09, 2025 at 02:28:00PM +0800, Lu Baolu wrote:
->> The vmalloc() and vfree() functions manage virtually contiguous, but not
->> necessarily physically contiguous, kernel memory regions. When vfree()
->> unmaps such a region, it tears down the associated kernel page table
->> entries and frees the physical pages.
->>
->> In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU hardware
->> shares and walks the CPU's page tables. Architectures like x86 share
->> static kernel address mappings across all user page tables, allowing the
->> IOMMU to access the kernel portion of these tables.
->>
->> Modern IOMMUs often cache page table entries to optimize walk performance,
->> even for intermediate page table levels. If kernel page table mappings are
->> changed (e.g., by vfree()), but the IOMMU's internal caches retain stale
->> entries, Use-After-Free (UAF) vulnerability condition arises. If these
->> freed page table pages are reallocated for a different purpose, potentially
->> by an attacker, the IOMMU could misinterpret the new data as valid page
->> table entries. This allows the IOMMU to walk into attacker-controlled
->> memory, leading to arbitrary physical memory DMA access or privilege
->> escalation.
->>
->> To mitigate this, introduce a new iommu interface to flush IOMMU caches
->> and fence pending page table walks when kernel page mappings are updated.
->> This interface should be invoked from architecture-specific code that
->> manages combined user and kernel page tables.
-> 
-> I must say I liked the kPTI based idea better. Having to iterate and
-> invalidate an unspecified number of IOMMUs from non-preemptible context
-> seems 'unfortunate'.
+This audio codec can be found on platforms like QCM2290 and
+on Qualcomm QRB2210 RB1 board.
 
-The cache invalidation path in IOMMU drivers is already critical and
-operates within a non-preemptible context. This approach is, in fact,
-already utilized for user-space page table updates since the beginning
-of SVA support.
+We are working on this together with Srini
+(srinivas.kandagatla@oss.qualcomm.com or srini@kernel.org).
 
-> 
-> Why was this approach chosen over the kPTI one, where we keep a
-> page-table root that simply does not include the kernel bits, and
-> therefore the IOMMU will never see them (change) and we'll never have to
-> invalidate?
+This driver also has a bit limited support for concurrent playback,
+since line out path is connected to left input channel.
 
-The IOMMU subsystem started supporting the SVA feature in 2019, and it
-has been broadly adopted in various production kernels. The issue
-described here is fundamentally a software bug related to not
-maintaining IOMMU cache coherence. Therefore, we need a quick and simple
-fix to address it, and this patch can be easily backported to production
-kernels.
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+---
+Changes in v2:
 
-While a kPTI-based approach might appear more attractive, I believe some
-extra work is still required to properly integrate it into the IOMMU
-subsystem. For instance, kPTI is currently an optional mitigation,
-enabled via CONFIG_MITIGATION_PAGE_TABLE_ISOLATION and bypassable with
-the "nopti" kernel parameter. This optionality is not suitable for the
-IOMMU subsystem, as software must always guarantee IOMMU cache coherence
-for functional correctness and security.
+-- added rxclk dapm widget, fixed/changed RX1/RX2 widgets;
+-- added comment for pm4125_wd_handle_irq();
+-- registers access permission routines have been reworked;
+-- changed pm4125_sdw_* functions to static inline;
+-- cleaned a bit pm4125_{rx,tx}_sdw_channels;
+-- got rid of most of hardcoded magic numbers (for the remaining regs+values I don't have documentation);
+-- updated commit messages;
+-- pm4125_tx_sdw_ports has been updated;
+-- removed of_match_ptr() and OF ifdef;
+-- removed couple of pm_runtime_mark_last_busy() calls;
+-- removed swap_gnd_mic;
+-- removed __pm4125_codec_enable_micbias_pullup();
+-- reordered sequence of calls in pm4125_probe() to make it a bit more logical;
+-- removed excessive regulator_bulk_free() and in error path in _probe();
+-- re-aligned for 100-chars length;
+-- removed of_node_get(), replaced with of_node_put();
+-- corrected some dev_err() messages;
+-- corrected some comments;
+-- removed legacy "WCD" from stream_name, replaced with "PM4125";
+-- removed null callbacks from struct wcd_mbhc_cb;
+-- removed "HPH Type" and "HPH{L,R} Impedance";
+-- pm4125_codec_enable_micbias() has been updated;
+-- pm4125_micbias_control() and pm4125_codec_enable_adc have been implemented;
+-- pm4125_codec_enable_dmic() has been updated;
+-- cleaned struct pm4125_priv;
+-- some rework to pm4125_handle_post_irq() and pm4125_regmap_irq_chip;
+-- updated Kconfig+Makefile (to make things be in sorting order);
+-- new patch: adding new files to MAINTAINERS file;
 
-So, in the short term, let's proceed with a straightforward solution to
-resolve this issue and ensure the SVA feature functions correctly. For
-the long term, we can explore optimizations and deeper integration
-aligned with features like kPTI.
+For dt bindings:
+-- I think all requested comments from Krzysztof were implemented;
+-- squashed qcom,spmi-pmic change into previous patch to avoid warnings on dtbs check;
 
-> 
->> @@ -132,8 +136,15 @@ struct iommu_sva *iommu_sva_bind_device(struct device *dev, struct mm_struct *mm
->>   	if (ret)
->>   		goto out_free_domain;
->>   	domain->users = 1;
->> -	list_add(&domain->next, &mm->iommu_mm->sva_domains);
->>   
->> +	if (list_empty(&iommu_mm->sva_domains)) {
->> +		scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
->> +			if (list_empty(&iommu_sva_mms))
->> +				static_branch_enable(&iommu_sva_present);
->> +			list_add(&iommu_mm->mm_list_elm, &iommu_sva_mms);
->> +		}
->> +	}
->> +	list_add(&domain->next, &iommu_mm->sva_domains);
->>   out:
->>   	refcount_set(&handle->users, 1);
->>   	mutex_unlock(&iommu_sva_lock);
->> @@ -175,6 +186,15 @@ void iommu_sva_unbind_device(struct iommu_sva *handle)
->>   		list_del(&domain->next);
->>   		iommu_domain_free(domain);
->>   	}
->> +
->> +	if (list_empty(&iommu_mm->sva_domains)) {
->> +		scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
->> +			list_del(&iommu_mm->mm_list_elm);
->> +			if (list_empty(&iommu_sva_mms))
->> +				static_branch_disable(&iommu_sva_present);
->> +		}
->> +	}
->> +
->>   	mutex_unlock(&iommu_sva_lock);
->>   	kfree(handle);
->>   }
-> 
-> This seems an odd coding style choice; why the extra unneeded
-> indentation? That is, what's wrong with:
-> 
-> 	if (list_empty()) {
-> 		guard(spinlock_irqsave)(&iommu_mms_lock);
-> 		list_del();
-> 		if (list_empty()
-> 			static_branch_disable();
-> 	}
+Not done:
+-- Mark suggested to look at reimplementing this as a child mfd device from
+MFD PMIC without device tree description.
 
-Perhaps I overlooked or misunderstood something, but my understanding
-is,
+- Link to v1: https://lore.kernel.org/r/20250626-pm4125_audio_codec_v1-v1-0-e52933c429a0@linaro.org
 
-The lock order in this function is:
+---
+Alexey Klimov (3):
+      dt-bindings: sound: add bindings for pm4125 audio codec
+      ASoC: codecs: add new pm4125 audio codec driver
+      MAINTAINERS: add Qualcomm PM4125 audio codec to drivers list
 
-	mutex_lock(&iommu_sva_lock);
-	spin_lock(&iommu_mms_lock);
-	spin_unlock(&iommu_mms_lock);
-	mutex_unlock(&iommu_sva_lock);
+ .../devicetree/bindings/mfd/qcom,spmi-pmic.yaml    |    4 +-
+ .../bindings/sound/qcom,pm4125-codec.yaml          |  134 ++
+ .../devicetree/bindings/sound/qcom,pm4125-sdw.yaml |   79 +
+ MAINTAINERS                                        |    2 +
+ sound/soc/codecs/Kconfig                           |   18 +
+ sound/soc/codecs/Makefile                          |    8 +
+ sound/soc/codecs/pm4125-sdw.c                      |  546 ++++++
+ sound/soc/codecs/pm4125.c                          | 1767 ++++++++++++++++++++
+ sound/soc/codecs/pm4125.h                          |  314 ++++
+ 9 files changed, 2871 insertions(+), 1 deletion(-)
+---
+base-commit: 2ae2aaafb21454f4781c30734959cf223ab486ef
+change-id: 20250626-pm4125_audio_codec_v1-02ca7a300ddc
 
-With above change, it is changed to:
+Best regards,
+-- 
+Alexey Klimov <alexey.klimov@linaro.org>
 
-	mutex_lock(&iommu_sva_lock);
-	spin_lock(&iommu_mms_lock);
-	mutex_unlock(&iommu_sva_lock);
-	spin_unlock(&iommu_mms_lock);
-
-> 
->> @@ -312,3 +332,15 @@ static struct iommu_domain *iommu_sva_domain_alloc(struct device *dev,
->>   
->>   	return domain;
->>   }
->> +
->> +void iommu_sva_invalidate_kva_range(unsigned long start, unsigned long end)
->> +{
->> +	struct iommu_mm_data *iommu_mm;
->> +
->> +	if (!static_branch_unlikely(&iommu_sva_present))
->> +		return;
->> +
->> +	guard(spinlock_irqsave)(&iommu_mms_lock);
->> +	list_for_each_entry(iommu_mm, &iommu_sva_mms, mm_list_elm)
->> +		mmu_notifier_arch_invalidate_secondary_tlbs(iommu_mm->mm, start, end);
->> +}
-> 
-> This is absolutely the wrong way to use static_branch. You want them in
-> inline functions guarding the function call, not inside the function
-> call.
-
-I don't think a static branch is desirable here, as we have no idea how
-often the condition will switch in real-world scenarios. I will remove
-it in the next version if there are no objections.
-
-Thanks,
-baolu
 
