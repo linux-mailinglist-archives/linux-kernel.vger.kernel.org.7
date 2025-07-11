@@ -1,204 +1,179 @@
-Return-Path: <linux-kernel+bounces-728178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 557EAB02439
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:03:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2F2B0243C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0BB6542733
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:02:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DA9C16E482
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5992D3ED6;
-	Fri, 11 Jul 2025 19:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B372F1FF4;
+	Fri, 11 Jul 2025 19:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NmDt2XwK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IzADCheh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3651D8E07
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F9A1D6DB9;
+	Fri, 11 Jul 2025 19:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752260599; cv=none; b=l9ppEk1q3EFlKvqFMqUMtaaJcow+lfr3Eom0NK8P1zIKhkpBLfUHNWYOrJJJhjXzREXDGbNpjazVsSFkryOa5fq1okNYMkq+L0L4GJ0DBbRs+o1jrLV9/HSBs/CLTrxBFvaYa9LnMB2Km1lNFaA2Ol9Jk1on25gkCuZiAZNptDM=
+	t=1752260710; cv=none; b=RiCQOITWVc1clivNQSn58PT4pI5cMvo45DPiE+wj4pUU+06B9NzoDB1o55Px4NP9luFVtegZHsn74p0h+hKPbq79PrzGjYbBknvDCvoN878mWbdNJAxawsvcng2/8WuyFBn8+fJvcyydN/airUHAYv2jYMN5UO1sp6r9FbRUwmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752260599; c=relaxed/simple;
-	bh=YtPJBSuNF/CMPLCRd5CVGiFXARpGpAf/wlPIPPEqRNo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LTVaua+z9zd4kdoMzyXoxwpCGBFIR/P3MEef3Xdf6ZCowV335oBqdWyqqr/PYn8i9HpUE8AeXm+mYKy7Ld4EEQXY/bidPZ3HVHxTsA4R9pizWDduUhaHD6DQcObtNpkVywn0i6DwDCBxXbUd1c7+rMl35oQpnF0E6yardBPndRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NmDt2XwK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752260596;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/lngge7cM1MpsUh2i1RV/CXO4O0gq48AADt8QP7yiyA=;
-	b=NmDt2XwK3tJj4isivStG1DvbXOXdQHzudZ/saMXPRoVDsUv+akOKUPTGgOfBJAoIj5NKB5
-	Nqv3ItHC8xzZ9yg2joi/mVjylj9EPkqYvUzBEHC3P2HeFfkzOjH6YKmDyjynpkGyqankkg
-	gozWUtQwXCOsRoNg7CUinRXHbPmCB5A=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-64-gEyiVtBvPdyJBZuEuCBeHg-1; Fri, 11 Jul 2025 15:03:15 -0400
-X-MC-Unique: gEyiVtBvPdyJBZuEuCBeHg-1
-X-Mimecast-MFC-AGG-ID: gEyiVtBvPdyJBZuEuCBeHg_1752260594
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b5f97cb8fbso22984f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:03:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752260594; x=1752865394;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/lngge7cM1MpsUh2i1RV/CXO4O0gq48AADt8QP7yiyA=;
-        b=Tv+lkbeDivnRpfMOzRohEJDTM8AQa5/tMV4pBY1fo/DqoHmfDe4TNI5g+SYL/qQ3/s
-         EKnvfufSp7vfw3vrmL5sZy7HzGgxb4Soz/PsvNmrQ/gVP+AjKnNrL0RddBRNed5voCqg
-         agLySzvzH4QupGpd4ao16GPLQe17IcXkvXMdBPii+CwKtb9ZQKV4FJE9aaxNtb6BPiNH
-         xMD8gr8jMKRjofcjZBnQV+Vhx2hxtNhNO2CzGinJhLrNZYvfL/ME7nMPpinktK2gqMDq
-         DBY33jVnjIRVDfFsC0HaECJBRYtsKtRu2cutmFsPRG+aWA5iiKR/ZLhC76inWo2pzrRe
-         RvNw==
-X-Gm-Message-State: AOJu0Yx20aR2Qh4kRL3ABaF2wnjDDWYkje6WFUrXHkiyMECzQraUqYUX
-	w5JAp1FuKqIBPv2vLSmDc1OZFg8Q7wwBIUrETLy1a+acqeQm0w3b5nY6JMhmWIxkxrnlCm2hux/
-	VwngVphTb6DxJ7g7crBwp6rgUsuY8eTTnvE1a4Q9Vd7N9OVOs/QyGnnaPHHJt81hGYQ==
-X-Gm-Gg: ASbGnct22jJCY234iBW/HzVEQdILCXUTha5xm7CjEcPwq8lrnyatOij7quQhf36sT27
-	mUzMPq3HkaDjOpfGAF4S3mlv4LvY5Fc4HHQxANomt52XCRYWyRFoKHr3FukdkFBocEAZa7w+qUM
-	Ex2khHm3eAm36lqU7oN2g5nfdScAh5DQXP3gnzAanbmPL3koDQstjhOe3lGRQpzx7SH7kSfeTN4
-	cjZZ1I0R6+KQt9ArShHVRuX5DXlcrnHrmTT/ETyMNyrXj/UgQ2eGNSmZ3iodBOeVaLl2MY1etyn
-	2x8dPJU6QwyJrQg0jhuejcVLyxGllHaKyUbEQS0xbsTLNe1jdY3RRed1Zl7AqhjI+ykCkjOp8fF
-	BpnQ4fKHp5h9y16kracPUftr4hjzwVKXKW87nQcYDCIh2ky/QbdgRtmHvL4AneHcERBQ=
-X-Received: by 2002:a05:6000:4402:b0:3b5:dafc:1525 with SMTP id ffacd0b85a97d-3b5f18dc96emr3257692f8f.33.1752260593785;
-        Fri, 11 Jul 2025 12:03:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF3xDIEgx30kkknBrLV2LVIr52Wad/TmaqKJIxkhU6edDETOEFTCXyz+a0/g6zni08RX/ga6w==
-X-Received: by 2002:a05:6000:4402:b0:3b5:dafc:1525 with SMTP id ffacd0b85a97d-3b5f18dc96emr3257648f8f.33.1752260593340;
-        Fri, 11 Jul 2025 12:03:13 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f0a:2e00:89cb:c7f0:82f2:e43c? (p200300d82f0a2e0089cbc7f082f2e43c.dip0.t-ipconnect.de. [2003:d8:2f0a:2e00:89cb:c7f0:82f2:e43c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e1f4edsm5112095f8f.83.2025.07.11.12.03.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 12:03:12 -0700 (PDT)
-Message-ID: <d258c487-29c5-4e1b-b5ec-911def6c850c@redhat.com>
-Date: Fri, 11 Jul 2025 21:03:11 +0200
+	s=arc-20240116; t=1752260710; c=relaxed/simple;
+	bh=cKTQJqlbK5jLF7JDcnv5IFN2c5RvEhAGNKXwRnCLtUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YhG11VGXREi/Zlb+gXtdJiGUD3SmlGrkAHrJuFuRYUjVFb09LzqnDntO6A7XcD9pZ0KhETW92yxMu6upQhz6wu7q/4AwSOGvs9b60jAh8Pv1fAcJI98BbwKNCKvtvhRmAgsXGPceMjyQhvNeENpJwc+ZbYQG7wd7d0NEhBNEHD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IzADCheh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12F2AC4CEED;
+	Fri, 11 Jul 2025 19:05:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752260709;
+	bh=cKTQJqlbK5jLF7JDcnv5IFN2c5RvEhAGNKXwRnCLtUI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IzADChehhf6poYpejX3ebepi6BgHYHJDNqRW+uDGiZAgCyr5LI2u4tpV72V7/xkHT
+	 KH2/n47bhU3f5eVKxngxhr8zzn/IuWRU7xfpDN2V6Dc2UShQYOj/Oad1UCqOvJkg+p
+	 RnLGxFhXBJZAYNusTWChtF4walRxFFHTrsNGnSPfg/IkHQQKkYU6Zo/77hZkX6OdC/
+	 NkqBK+EBnYoHARdpIzMZ0GjexvwhoZtcUo1eAu3LYTSDs1h1FVh3kzhiBWhSFasMTW
+	 txVgKvfLXBEoYSnWM3R0TrGuOfUIOwQeoUBHQs2Oy8hmWEy08OXaAFTomZ8V9SitW4
+	 gSU42qL/Am8Tg==
+Date: Fri, 11 Jul 2025 14:05:07 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Prahlad Valluru <venkata.valluru@oss.qualcomm.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Shashank Maurya <quic_ssmaurya@quicinc.com>
+Subject: Re: [PATCH] arm64: dts: qcom: qcs9075-iq-9075-evk: Enable Display
+ Port
+Message-ID: <iayioqm3tqutbjswt24p65o4demfdaqcakfbwohnaqueuuqtng@azhxjno4ofia>
+References: <20250711-enable-iq9-dp-v1-1-6d381e105473@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 10/14] x86/mm: Simplify clear_page_*
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
- akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
- hpa@zytor.com, mingo@redhat.com, mjguzik@gmail.com, luto@kernel.org,
- peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
- tglx@linutronix.de, willy@infradead.org, raghavendra.kt@amd.com,
- boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-References: <20250710005926.1159009-1-ankur.a.arora@oracle.com>
- <20250710005926.1159009-11-ankur.a.arora@oracle.com>
- <377d74d6-a7f9-4e94-9276-168a26d49210@redhat.com> <874iviprkf.fsf@oracle.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <874iviprkf.fsf@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711-enable-iq9-dp-v1-1-6d381e105473@oss.qualcomm.com>
 
-On 11.07.25 19:26, Ankur Arora wrote:
+On Fri, Jul 11, 2025 at 09:13:47PM +0530, Prahlad Valluru wrote:
+> From: Shashank Maurya <quic_ssmaurya@quicinc.com>
 > 
-> David Hildenbrand <david@redhat.com> writes:
+> Enable DPTX0 and DPTX1 along with their corresponding PHYs for
+> qcs9075-iq-9075-evk platform.
+
+I prefer that you actually describe what these are connected to. I
+presume there will be more DPTX instances enabled for this board? If
+that's the case, let's mention here that this is just a subset.
+
 > 
->> On 10.07.25 02:59, Ankur Arora wrote:
->>> clear_page_rep() and clear_page_erms() are wrappers around "REP; STOS"
->>> variations. Inlining gets rid of an unnecessary CALL/RET (which isn't
->>> free when using RETHUNK speculative execution mitigations.)
->>> Fixup and rename clear_page_orig() to adapt to the changed calling
->>> convention.
->>> And, add a comment from Dave Hansen detailing various clearing mechanisms
->>> used in clear_page().
->>> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
->>> ---
->>>    arch/x86/include/asm/page_32.h |  6 +++++
->>>    arch/x86/include/asm/page_64.h | 42 ++++++++++++++++++++++++++--------
->>>    arch/x86/lib/clear_page_64.S   | 39 +++++++------------------------
->>>    3 files changed, 46 insertions(+), 41 deletions(-)
->>> diff --git a/arch/x86/include/asm/page_32.h b/arch/x86/include/asm/page_32.h
->>> index 0c623706cb7e..a8ff43bb9652 100644
->>> --- a/arch/x86/include/asm/page_32.h
->>> +++ b/arch/x86/include/asm/page_32.h
->>> @@ -17,6 +17,12 @@ extern unsigned long __phys_addr(unsigned long);
->>>      #include <linux/string.h>
->>>    +/*
->>
->> /** if this was supposed to be kernel doc (which it looks like it is)
->>
->>> + * clear_page() - clear kernel page.
->>
->> "clear a kernel page"
->>
->> Although I am not sure what a "kernel page" is.
->>
->> Did you mean "clear a page using a kernel virtual address" ?
+> Signed-off-by: Shashank Maurya <quic_ssmaurya@quicinc.com>
+> Signed-off-by: Prahlad Valluru <venkata.valluru@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts | 52 ++++++++++++++++++++++++
+
+Please wait with resubmitting this patch until the base dtsi has landed
+(with its new name).
+
+>  1 file changed, 52 insertions(+)
 > 
-> Thanks. Yes, this makes way more sense.
+> diff --git a/arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts b/arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts
+> index ab161180d1d5a670a68c0903e85f24a91faa2b71..110e08db3ad82e3aa88aa4c4ed4b2beb607385ad 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts
+> @@ -252,6 +252,44 @@ vreg_l8e: ldo8 {
+>  	};
+>  };
+>  
+> +&mdss0 {
+> +	status = "okay";
+> +};
+> +
+> +&mdss0_dp0 {
+> +	status = "okay";
 
-FWIW, most clear_user_page() will just call clear_page(). The ones that 
-don't, have to deal with the dcache flushing, as the page might have 
-cache alias from another (mm) address space.
+status last please.
 
-So clear_page() is just about clearing page content using a kernel 
-virtual address, and clear_user_page() is additionally taking care of 
-any dcache aliases.
+> +	pinctrl-0 = <&dp0_hot_plug_det>;
+> +	pinctrl-names = "default";
 
--- 
-Cheers,
+I prefer that you actually describe the connectors, like I did on
+sa8295p-adp. In particular if there's a bunch of connectors on this
+board.
 
-David / dhildenb
+Regards,
+Bjorn
 
+> +};
+> +
+> +&mdss0_dp0_out {
+> +	data-lanes = <0 1 2 3>;
+> +	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
+> +};
+> +
+> +&mdss0_dp0_phy {
+> +	status = "okay";
+> +	vdda-phy-supply = <&vreg_l1c>;
+> +	vdda-pll-supply = <&vreg_l4a>;
+> +};
+> +
+> +&mdss0_dp1 {
+> +	status = "okay";
+> +	pinctrl-0 = <&dp1_hot_plug_det>;
+> +	pinctrl-names = "default";
+> +};
+> +
+> +&mdss0_dp1_out {
+> +	data-lanes = <0 1 2 3>;
+> +	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
+> +};
+> +
+> +&mdss0_dp1_phy {
+> +	status = "okay";
+> +	vdda-phy-supply = <&vreg_l1c>;
+> +	vdda-pll-supply = <&vreg_l4a>;
+> +};
+> +
+>  &qupv3_id_1 {
+>  	status = "okay";
+>  };
+> @@ -260,6 +298,20 @@ &sleep_clk {
+>  	clock-frequency = <32768>;
+>  };
+>  
+> +&tlmm {
+> +	dp0_hot_plug_det: dp0-hot-plug-det-state {
+> +		pins = "gpio101";
+> +		function = "edp0_hot";
+> +		bias-disable;
+> +	};
+> +
+> +	dp1_hot_plug_det: dp1-hot-plug-det-state {
+> +		pins = "gpio102";
+> +		function = "edp1_hot";
+> +		bias-disable;
+> +	};
+> +};
+> +
+>  &uart10 {
+>  	compatible = "qcom,geni-debug-uart";
+>  	pinctrl-0 = <&qup_uart10_default>;
+> 
+> ---
+> base-commit: 7f3a635117b377cb90b67757cb46de12ce8aa24e
+> change-id: 20250711-enable-iq9-dp-addc9c7195c9
+> prerequisite-message-id: <20250612155437.146925-1-quic_wasimn@quicinc.com>
+> prerequisite-patch-id: 22eee78c5507c3105e0c74d1128b3db803879d7a
+> prerequisite-patch-id: cf52fc82e606ab87458339f71596ca31253e91ee
+> prerequisite-patch-id: 3617ce3b1790bc5b8e50dca6c3ae482759dcc684
+> 
+> Best regards,
+> -- 
+> Prahlad Valluru <venkata.valluru@oss.qualcomm.com>
+> 
 
