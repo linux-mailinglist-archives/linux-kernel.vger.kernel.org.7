@@ -1,382 +1,434 @@
-Return-Path: <linux-kernel+bounces-727033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EF07B0143A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:17:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A222B01448
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 532E77BB4E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:15:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D8ED3B7683
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDBD1E9915;
-	Fri, 11 Jul 2025 07:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237301EC01D;
+	Fri, 11 Jul 2025 07:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eITtjLHc"
-Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LxXEZau9"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499FA1E521F
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 07:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F146B1EB5E1
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 07:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752218216; cv=none; b=kYkPcaNOB6d9sRxA5JteHROG7tzXiASRfotfb7UOelePGqLCtGNK6eDuDCCTEwNYFUswAVlzMCAxRyVBFja8FmLU8cbShko9/bpyAe+URI3YdUM1cWtcKvYuq5ONhMUJRxAX3cgyEJbgq0qmNdoZJTI+Ec9pJlH+839aooF6VE8=
+	t=1752218267; cv=none; b=Lb3Q5daH1QEvrkSzvSb2Skn+E9D1lAjI0CjxOFVQ+fE7DLarGgvW/nJyx11pSskA3QsI4Jl7FrNcmzOUNp/xkCZV0wDwG08XZ0O+HMLke2ss8XQTfJNl51VQRn5GWJTnFGf9HC4ULbJKYl2Cm45esOUuegH8GXEGGf6gX1g4CYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752218216; c=relaxed/simple;
-	bh=8c07lq3Kk9BYKYCRee33D6YitV4anarQ7sDXyRLxQKE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j968SIf1Sn3rTouRZiSbprj50XpRMYvtFBortUsT3shknQT6PV9ZCWOn9hQFxcwnc2QR9VUQwQ9OfmSWTiMQVl4c90kb9bptlK1GaHpRrN0gyZ8Q+0y4yLSmn2gIzXim9JOOTJ5qCXPZ5qiq4GqyIs/EOY1mlEjgLMyWuPQ8yJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eITtjLHc; arc=none smtp.client-ip=209.85.128.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-454aaade1fbso18480725e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 00:16:53 -0700 (PDT)
+	s=arc-20240116; t=1752218267; c=relaxed/simple;
+	bh=dU4Vxam6tmkoZD8X1nSniMjs5bLfpB3d6bX1PPf30bA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PF3bpsQO+siRF40iskd9qjhy/aRSryZIkl6YUEsnABeFVfMUC0FWxWSWPsY+UwtvQzzgPU7Qpw3wfNxrDXzM18dEKmyEgCDLtDI1p9B/la0dgI9lxN70DomYbtc3lxRP9egJUyesaom6fjWOoLTRqjQ+Jjb/mnQbmFO3wezk30s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LxXEZau9; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae6f8d3bcd4so162970266b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 00:17:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1752218212; x=1752823012; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8c07lq3Kk9BYKYCRee33D6YitV4anarQ7sDXyRLxQKE=;
-        b=eITtjLHcGUCrNqWVexBPO+FjEKD11bDCTR7vas9HLiVkvjCkff+5GJLd13Iz/eNIZe
-         6o7u/pPiLK0MoJhmfU1O9ZqTLKRBWPBvJxuEooG5P9QI2KHjfZSRBLZUrrSeoDi7/X0E
-         FxfB9uGFKpvwxRtj0AKsaboJMPMJeWqWirwj+w8QtK0arjnNsG4TsY5tTF+UR4NZ6hj5
-         OVQ/HCpDz7nOR/oR8LDvJ4gBC2ZF9W6JLzh0/1UPF1y1qjky7C8TsxTiL6+kbhHH3czV
-         2Ejv85AxKV11B/VecfYYsPut/dZR+nnJFfeOrxh61fgfeMQ/QHh2fB5v63pDazZSYwSR
-         djLA==
+        d=gmail.com; s=20230601; t=1752218263; x=1752823063; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IWRc5pUaNh1O18bIqLW+j9CFRqzEifECzt47ktcRodQ=;
+        b=LxXEZau996wQGc7uG0ABHsoh6QGuE0zzFMDhXbLwRphl+2We81BbwCRZejlIpbP2Lr
+         MrBe4aCo7uSf7oO3cVCis++OnpnaYTTlYTLNHzYuThODXHTpK/FCW0/5fxPjvQ8RuQlB
+         7Hkajoh72bwuKeyBwlntW2KhE4y4yM1VpD6uBZCW0Z8tbwCfLN0hgEL9ND37OcgNbjC3
+         TAg6S4b/BZn7+klwpwFNoj/9QUSNMFjiDpnQu3/MNIY38Qy5+ILuVUYfl1spNyqjJg7w
+         v1IyyEfTnTBlgtVCZdKLrGaGGavjREN0ZXptpfZWjjAfWKTLVexazt+hdCBOD0dj0SpC
+         BKVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752218212; x=1752823012;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8c07lq3Kk9BYKYCRee33D6YitV4anarQ7sDXyRLxQKE=;
-        b=Nli8lsTRiO0+Fm4xyWS6BjKfPmjm6JWylGKISfRxuPszfKbNH7whY6JUS1kYhjeLGM
-         Y5CiFTkMkyFYpcwVmKFzpmFPfDwRKwnaP6xNa3ee24BWslP64ejFSWa62i1Cu9Dh1Z84
-         ZIcRXPzxfLCA5LCh9K5vOvy441QHYXsYUsn0++mWVv00aHelHmMi/WjfRH6m4YnlATT4
-         iuV3JHUMFZqfm9lQi/243qdQwxZSxIKKpwg4ZYyI6lqqow5Aea22depiSg5CpACxXUny
-         /yhPOKz1/miY6vVePu6TwhVEO95N1TyWFsVQ7LiIMEGVMY+rNskXhTwJjK2xZcG+cXv0
-         Ce5Q==
-X-Gm-Message-State: AOJu0Yxy3AIaYz71NZVwf8Uf9/K9CEM8ML0SXDrIs5SyBpwG+NYBecj7
-	DtjMMkP7Wg/YILU5ZDNzZR8Eec/PrJIwXcHs3dcL1nrOTmOZ+IY/JCunxPAOsQjZplg=
-X-Gm-Gg: ASbGncu0EjRc3D/xTIT2KiDF1OGf91SZO07N/IPZMUtMauxsH2oWrxwKkiI7xm2ClTa
-	YLbglu3PCwyLpHhi4YES4ZRZ4nMGf6iBjYaA+fT2HjmZXYRAvFpCANJWZeomdzQeLncRXtFeCl/
-	AzDODRVrm8p/KWh8Ko6lQUoVdMsUpqs8iMwiN3TM7I/sPfYBGOoo71HxW0qonYW1JjqiOshXu/t
-	AajE/TxalNU7JXsk/UztLlA5olspid+D+7EuoyHe3yTLu9ar0jz3xmtSI3B7RfWI9Qa44JQM2B1
-	xC0dNDX8rp2mWE8peSWLaHkqFEWd2vRP0dQZw0UftgYYXfv2aOLfUPoN3mobxnfVD37t/yVPnE7
-	vq9qe54c47YC9PFh4VgYNuD0TnN1oczuAPoDC0QC5e/IrEa7tx1je81xw8nH8qsTmE8aedN9uO/
-	ZP+DAoWboidAWyBT3OGBbLSlId/maWuj/Pf+ITr6BxNFo+fL5LU9DZGu4=
-X-Google-Smtp-Source: AGHT+IGvyqW92yMuM81wRhL2tPIozt8RuU5MoEtd4s4IcyuqItpHde2tuEb560iV+xbpeb186JeUVw==
-X-Received: by 2002:a05:600c:8b64:b0:453:6146:1172 with SMTP id 5b1f17b1804b1-454ec14deccmr16712575e9.3.1752218212289;
-        Fri, 11 Jul 2025 00:16:52 -0700 (PDT)
-Received: from ?IPV6:2003:e5:8709:f00:6357:915b:11f9:6d20? (p200300e587090f006357915b11f96d20.dip0.t-ipconnect.de. [2003:e5:8709:f00:6357:915b:11f9:6d20])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc22a8sm3814372f8f.34.2025.07.11.00.16.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 00:16:51 -0700 (PDT)
-Message-ID: <1a82dcb5-2ccf-4c8b-b0a4-fd055cfe99f1@suse.com>
-Date: Fri, 11 Jul 2025 09:16:50 +0200
+        d=1e100.net; s=20230601; t=1752218263; x=1752823063;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IWRc5pUaNh1O18bIqLW+j9CFRqzEifECzt47ktcRodQ=;
+        b=VRzHCRmMNxmsJON+08aMe8wTbi+pVqRUohB2ZDZZXOw4F8simwS+nux1dUg9Zje0OG
+         i6uQZF99SC+G4bxPBDJOpb0yrcqOAXPjXdqoPqWFx0bpTD6RpQAbHjy8kWcfUWeF6+wM
+         lUJIzCQVS4QMyjT7qP7aN0lht6jG1gBzeFlXuF/9tce8boZYCLwqDzlOGNgSxqJF656k
+         mlr+K2Hd3W/ZYLk5t8TYMhVD2hWDYVJtT9rhwWxxNLprMkKr6TyENNxCLlUXbpF7vZi/
+         6ppFdbKpjekTtrEmWaKj6t+BCcFvGIQnXWFPKgkDf9VmnAN7VRPmwz5MdnBJVtRoFmjF
+         rvVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeQIr56DeyiV3H3tBAD39WGj3eP1Nq+buno3hW+vMI5I6AWU1MMsZnpDO7U0I8UOcHJnNrpyCfhsi+9CQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSvUAVGLUA7hGuNfChEKfNmSULJFWof5fThYti46ZVWrSQ5Eo7
+	rsQPF/vr55wzrYHm2VrWYQUZ/bMDzrWXQmjWQAazoQ9vOks7MqCEQk+hLBj1B/jDO6Jmmxpz8U5
+	fBehIP/jMDc3n8H4KXhZERMptXeTurFU=
+X-Gm-Gg: ASbGnctgGtTn4bd7JRg56ODdTjUJi3FCdYWXKQLeKk7b3sguDQnLSQxg/vpQCahjlnE
+	gp35LvWv3aJaUnnlSyN6vSu14elDSvrlVpIQX5J4Vt9d969a5Vi5uEbSm+kd+DxSX+I/do2zQob
+	pSCvA9uhITbcz5kBR38VgyVJCGYb0MB5QYUaptImScPx2qnGvhXjMevrydtaPYwUTd24Jg40LBZ
+	7ZERA==
+X-Google-Smtp-Source: AGHT+IHpIX9V+TL1u6+R9yWg+ZCeKBpZavHgn72lKb+rrxX31vfCXHH6f7B8zJ2+gniGek6+ENa85LfXb8mZT1E9/nI=
+X-Received: by 2002:a17:907:7b85:b0:ad5:5210:749c with SMTP id
+ a640c23a62f3a-ae70114a7d3mr144281366b.22.1752218262693; Fri, 11 Jul 2025
+ 00:17:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xen/gntdev: remove struct gntdev_copy_batch from stack
-To: Stefano Stabellini <sstabellini@kernel.org>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- xen-devel@lists.xenproject.org, Abinash Singh <abinashsinghlalotra@gmail.com>
-References: <20250703073259.17356-1-jgross@suse.com>
- <alpine.DEB.2.22.394.2507081150230.605088@ubuntu-linux-20-04-desktop>
- <287f6b7e-069e-4a79-b72a-ae11be4c235f@suse.com>
- <alpine.DEB.2.22.394.2507101802220.605088@ubuntu-linux-20-04-desktop>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <alpine.DEB.2.22.394.2507101802220.605088@ubuntu-linux-20-04-desktop>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------FEN1ck1FJL6iTUzUfYz00J5y"
-
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------FEN1ck1FJL6iTUzUfYz00J5y
-Content-Type: multipart/mixed; boundary="------------rxYdYISBKm0VEERw7LRxLsK4";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: Stefano Stabellini <sstabellini@kernel.org>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- xen-devel@lists.xenproject.org, Abinash Singh <abinashsinghlalotra@gmail.com>
-Message-ID: <1a82dcb5-2ccf-4c8b-b0a4-fd055cfe99f1@suse.com>
-Subject: Re: [PATCH] xen/gntdev: remove struct gntdev_copy_batch from stack
-References: <20250703073259.17356-1-jgross@suse.com>
- <alpine.DEB.2.22.394.2507081150230.605088@ubuntu-linux-20-04-desktop>
- <287f6b7e-069e-4a79-b72a-ae11be4c235f@suse.com>
- <alpine.DEB.2.22.394.2507101802220.605088@ubuntu-linux-20-04-desktop>
-In-Reply-To: <alpine.DEB.2.22.394.2507101802220.605088@ubuntu-linux-20-04-desktop>
-
---------------rxYdYISBKm0VEERw7LRxLsK4
-Content-Type: multipart/mixed; boundary="------------1s7eef5IB8O5tFuS77ajesT6"
-
---------------1s7eef5IB8O5tFuS77ajesT6
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-
-T24gMTEuMDcuMjUgMDM6MDMsIFN0ZWZhbm8gU3RhYmVsbGluaSB3cm90ZToNCj4gT24gV2Vk
-LCA5IEp1bCAyMDI1LCBKw7xyZ2VuIEdyb8OfIHdyb3RlOg0KPj4gT24gMDguMDcuMjUgMjE6
-MDEsIFN0ZWZhbm8gU3RhYmVsbGluaSB3cm90ZToNCj4+PiBPbiBUaHUsIDMgSnVsIDIwMjUs
-IEp1ZXJnZW4gR3Jvc3Mgd3JvdGU6DQo+Pj4+IFdoZW4gY29tcGlsaW5nIHRoZSBrZXJuZWwg
-d2l0aCBMTFZNLCB0aGUgZm9sbG93aW5nIHdhcm5pbmcgd2FzIGlzc3VlZDoNCj4+Pj4NCj4+
-Pj4gICAgIGRyaXZlcnMveGVuL2dudGRldi5jOjk5MTogd2FybmluZzogc3RhY2sgZnJhbWUg
-c2l6ZSAoMTE2MCkgZXhjZWVkcw0KPj4+PiAgICAgbGltaXQgKDEwMjQpIGluIGZ1bmN0aW9u
-ICdnbnRkZXZfaW9jdGwnDQo+Pj4+DQo+Pj4+IFRoZSBtYWluIHJlYXNvbiBpcyBzdHJ1Y3Qg
-Z250ZGV2X2NvcHlfYmF0Y2ggd2hpY2ggaXMgbG9jYXRlZCBvbiB0aGUNCj4+Pj4gc3RhY2sg
-YW5kIGhhcyBhIHNpemUgb2YgbmVhcmx5IDFrYi4NCj4+Pj4NCj4+Pj4gRm9yIHBlcmZvcm1h
-bmNlIHJlYXNvbnMgaXQgc2hvdWxkbid0IGJ5IGp1c3QgZHluYW1pY2FsbHkgYWxsb2NhdGVk
-DQo+Pj4+IGluc3RlYWQsIHNvIGFsbG9jYXRlIGEgbmV3IGluc3RhbmNlIHdoZW4gbmVlZGVk
-IGFuZCBpbnN0ZWFkIG9mIGZyZWVpbmcNCj4+Pj4gaXQgcHV0IGl0IGludG8gYSBsaXN0IG9m
-IGZyZWUgc3RydWN0cyBhbmNob3JlZCBpbiBzdHJ1Y3QgZ250ZGV2X3ByaXYuDQo+Pj4+DQo+
-Pj4+IEZpeGVzOiBhNGNkYjU1NmNhZTAgKCJ4ZW4vZ250ZGV2OiBhZGQgaW9jdGwgZm9yIGdy
-YW50IGNvcHkiKQ0KPj4+PiBSZXBvcnRlZC1ieTogQWJpbmFzaCBTaW5naCA8YWJpbmFzaHNp
-bmdobGFsb3RyYUBnbWFpbC5jb20+DQo+Pj4+IFNpZ25lZC1vZmYtYnk6IEp1ZXJnZW4gR3Jv
-c3MgPGpncm9zc0BzdXNlLmNvbT4NCj4+Pj4gLS0tDQo+Pj4+ICAgIGRyaXZlcnMveGVuL2du
-dGRldi1jb21tb24uaCB8ICA0ICsrKw0KPj4+PiAgICBkcml2ZXJzL3hlbi9nbnRkZXYuYyAg
-ICAgICAgfCA3MSArKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tDQo+Pj4+
-ICAgIDIgZmlsZXMgY2hhbmdlZCwgNTQgaW5zZXJ0aW9ucygrKSwgMjEgZGVsZXRpb25zKC0p
-DQo+Pj4+DQo+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3hlbi9nbnRkZXYtY29tbW9uLmgg
-Yi9kcml2ZXJzL3hlbi9nbnRkZXYtY29tbW9uLmgNCj4+Pj4gaW5kZXggOWMyODZiMmExOTAw
-Li5hYzhjZTMxNzliYTIgMTAwNjQ0DQo+Pj4+IC0tLSBhL2RyaXZlcnMveGVuL2dudGRldi1j
-b21tb24uaA0KPj4+PiArKysgYi9kcml2ZXJzL3hlbi9nbnRkZXYtY29tbW9uLmgNCj4+Pj4g
-QEAgLTI2LDYgKzI2LDEwIEBAIHN0cnVjdCBnbnRkZXZfcHJpdiB7DQo+Pj4+ICAgIAkvKiBs
-b2NrIHByb3RlY3RzIG1hcHMgYW5kIGZyZWVhYmxlX21hcHMuICovDQo+Pj4+ICAgIAlzdHJ1
-Y3QgbXV0ZXggbG9jazsNCj4+Pj4gICAgKwkvKiBGcmVlIGluc3RhbmNlcyBvZiBzdHJ1Y3Qg
-Z250ZGV2X2NvcHlfYmF0Y2guICovDQo+Pj4+ICsJc3RydWN0IGdudGRldl9jb3B5X2JhdGNo
-ICpiYXRjaDsNCj4+Pj4gKwlzdHJ1Y3QgbXV0ZXggYmF0Y2hfbG9jazsNCj4+Pj4gKw0KPj4+
-PiAgICAjaWZkZWYgQ09ORklHX1hFTl9HUkFOVF9ETUFfQUxMT0MNCj4+Pj4gICAgCS8qIERl
-dmljZSBmb3Igd2hpY2ggRE1BIG1lbW9yeSBpcyBhbGxvY2F0ZWQuICovDQo+Pj4+ICAgIAlz
-dHJ1Y3QgZGV2aWNlICpkbWFfZGV2Ow0KPj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy94ZW4v
-Z250ZGV2LmMgYi9kcml2ZXJzL3hlbi9nbnRkZXYuYw0KPj4+PiBpbmRleCA2MWZhZWExZjA2
-NjMuLjFmMjE2MDc2NTYxOCAxMDA2NDQNCj4+Pj4gLS0tIGEvZHJpdmVycy94ZW4vZ250ZGV2
-LmMNCj4+Pj4gKysrIGIvZHJpdmVycy94ZW4vZ250ZGV2LmMNCj4+Pj4gQEAgLTU2LDYgKzU2
-LDE4IEBAIE1PRFVMRV9BVVRIT1IoIkRlcmVrIEcuIE11cnJheQ0KPj4+PiA8RGVyZWsuTXVy
-cmF5QGNsLmNhbS5hYy51az4sICINCj4+Pj4gICAgCSAgICAgICJHZXJkIEhvZmZtYW5uIDxr
-cmF4ZWxAcmVkaGF0LmNvbT4iKTsNCj4+Pj4gICAgTU9EVUxFX0RFU0NSSVBUSU9OKCJVc2Vy
-LXNwYWNlIGdyYW50ZWQgcGFnZSBhY2Nlc3MgZHJpdmVyIik7DQo+Pj4+ICAgICsjZGVmaW5l
-IEdOVERFVl9DT1BZX0JBVENIIDE2DQo+Pj4+ICsNCj4+Pj4gK3N0cnVjdCBnbnRkZXZfY29w
-eV9iYXRjaCB7DQo+Pj4+ICsJc3RydWN0IGdudHRhYl9jb3B5IG9wc1tHTlRERVZfQ09QWV9C
-QVRDSF07DQo+Pj4+ICsJc3RydWN0IHBhZ2UgKnBhZ2VzW0dOVERFVl9DT1BZX0JBVENIXTsN
-Cj4+Pj4gKwlzMTYgX191c2VyICpzdGF0dXNbR05UREVWX0NPUFlfQkFUQ0hdOw0KPj4+PiAr
-CXVuc2lnbmVkIGludCBucl9vcHM7DQo+Pj4+ICsJdW5zaWduZWQgaW50IG5yX3BhZ2VzOw0K
-Pj4+PiArCWJvb2wgd3JpdGVhYmxlOw0KPj4+PiArCXN0cnVjdCBnbnRkZXZfY29weV9iYXRj
-aCAqbmV4dDsNCj4+Pj4gK307DQo+Pj4+ICsNCj4+Pj4gICAgc3RhdGljIHVuc2lnbmVkIGlu
-dCBsaW1pdCA9IDY0KjEwMjQ7DQo+Pj4+ICAgIG1vZHVsZV9wYXJhbShsaW1pdCwgdWludCwg
-MDY0NCk7DQo+Pj4+ICAgIE1PRFVMRV9QQVJNX0RFU0MobGltaXQsDQo+Pj4+IEBAIC01ODQs
-NiArNTk2LDggQEAgc3RhdGljIGludCBnbnRkZXZfb3BlbihzdHJ1Y3QgaW5vZGUgKmlub2Rl
-LCBzdHJ1Y3QNCj4+Pj4gZmlsZSAqZmxpcCkNCj4+Pj4gICAgCUlOSVRfTElTVF9IRUFEKCZw
-cml2LT5tYXBzKTsNCj4+Pj4gICAgCW11dGV4X2luaXQoJnByaXYtPmxvY2spOw0KPj4+PiAg
-ICArCW11dGV4X2luaXQoJnByaXYtPmJhdGNoX2xvY2spOw0KPj4+PiArDQo+Pj4+ICAgICNp
-ZmRlZiBDT05GSUdfWEVOX0dOVERFVl9ETUFCVUYNCj4+Pj4gICAgCXByaXYtPmRtYWJ1Zl9w
-cml2ID0gZ250ZGV2X2RtYWJ1Zl9pbml0KGZsaXApOw0KPj4+PiAgICAJaWYgKElTX0VSUihw
-cml2LT5kbWFidWZfcHJpdikpIHsNCj4+Pj4gQEAgLTYwOCw2ICs2MjIsNyBAQCBzdGF0aWMg
-aW50IGdudGRldl9yZWxlYXNlKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdA0KPj4+PiBm
-aWxlICpmbGlwKQ0KPj4+PiAgICB7DQo+Pj4+ICAgIAlzdHJ1Y3QgZ250ZGV2X3ByaXYgKnBy
-aXYgPSBmbGlwLT5wcml2YXRlX2RhdGE7DQo+Pj4+ICAgIAlzdHJ1Y3QgZ250ZGV2X2dyYW50
-X21hcCAqbWFwOw0KPj4+PiArCXN0cnVjdCBnbnRkZXZfY29weV9iYXRjaCAqYmF0Y2g7DQo+
-Pj4+ICAgICAgCXByX2RlYnVnKCJwcml2ICVwXG4iLCBwcml2KTsNCj4+Pj4gICAgQEAgLTYy
-MCw2ICs2MzUsMTQgQEAgc3RhdGljIGludCBnbnRkZXZfcmVsZWFzZShzdHJ1Y3QgaW5vZGUg
-Kmlub2RlLA0KPj4+PiBzdHJ1Y3QgZmlsZSAqZmxpcCkNCj4+Pj4gICAgCX0NCj4+Pj4gICAg
-CW11dGV4X3VubG9jaygmcHJpdi0+bG9jayk7DQo+Pj4+ICAgICsJbXV0ZXhfbG9jaygmcHJp
-di0+YmF0Y2hfbG9jayk7DQo+Pj4+ICsJd2hpbGUgKHByaXYtPmJhdGNoKSB7DQo+Pj4+ICsJ
-CWJhdGNoID0gcHJpdi0+YmF0Y2g7DQo+Pj4+ICsJCXByaXYtPmJhdGNoID0gYmF0Y2gtPm5l
-eHQ7DQo+Pj4+ICsJCWtmcmVlKGJhdGNoKTsNCj4+Pj4gKwl9DQo+Pj4+ICsJbXV0ZXhfdW5s
-b2NrKCZwcml2LT5iYXRjaF9sb2NrKTsNCj4+Pj4gKw0KPj4+PiAgICAjaWZkZWYgQ09ORklH
-X1hFTl9HTlRERVZfRE1BQlVGDQo+Pj4+ICAgIAlnbnRkZXZfZG1hYnVmX2ZpbmkocHJpdi0+
-ZG1hYnVmX3ByaXYpOw0KPj4+PiAgICAjZW5kaWYNCj4+Pj4gQEAgLTc4NSwxNyArODA4LDYg
-QEAgc3RhdGljIGxvbmcgZ250ZGV2X2lvY3RsX25vdGlmeShzdHJ1Y3QgZ250ZGV2X3ByaXYN
-Cj4+Pj4gKnByaXYsIHZvaWQgX191c2VyICp1KQ0KPj4+PiAgICAJcmV0dXJuIHJjOw0KPj4+
-PiAgICB9DQo+Pj4+ICAgIC0jZGVmaW5lIEdOVERFVl9DT1BZX0JBVENIIDE2DQo+Pj4+IC0N
-Cj4+Pj4gLXN0cnVjdCBnbnRkZXZfY29weV9iYXRjaCB7DQo+Pj4+IC0Jc3RydWN0IGdudHRh
-Yl9jb3B5IG9wc1tHTlRERVZfQ09QWV9CQVRDSF07DQo+Pj4+IC0Jc3RydWN0IHBhZ2UgKnBh
-Z2VzW0dOVERFVl9DT1BZX0JBVENIXTsNCj4+Pj4gLQlzMTYgX191c2VyICpzdGF0dXNbR05U
-REVWX0NPUFlfQkFUQ0hdOw0KPj4+PiAtCXVuc2lnbmVkIGludCBucl9vcHM7DQo+Pj4+IC0J
-dW5zaWduZWQgaW50IG5yX3BhZ2VzOw0KPj4+PiAtCWJvb2wgd3JpdGVhYmxlOw0KPj4+PiAt
-fTsNCj4+Pj4gLQ0KPj4+PiAgICBzdGF0aWMgaW50IGdudGRldl9nZXRfcGFnZShzdHJ1Y3Qg
-Z250ZGV2X2NvcHlfYmF0Y2ggKmJhdGNoLCB2b2lkIF9fdXNlcg0KPj4+PiAqdmlydCwNCj4+
-Pj4gICAgCQkJCXVuc2lnbmVkIGxvbmcgKmdmbikNCj4+Pj4gICAgew0KPj4+PiBAQCAtOTUz
-LDM2ICs5NjUsNTMgQEAgc3RhdGljIGludCBnbnRkZXZfZ3JhbnRfY29weV9zZWcoc3RydWN0
-DQo+Pj4+IGdudGRldl9jb3B5X2JhdGNoICpiYXRjaCwNCj4+Pj4gICAgc3RhdGljIGxvbmcg
-Z250ZGV2X2lvY3RsX2dyYW50X2NvcHkoc3RydWN0IGdudGRldl9wcml2ICpwcml2LCB2b2lk
-DQo+Pj4+IF9fdXNlciAqdSkNCj4+Pj4gICAgew0KPj4+PiAgICAJc3RydWN0IGlvY3RsX2du
-dGRldl9ncmFudF9jb3B5IGNvcHk7DQo+Pj4+IC0Jc3RydWN0IGdudGRldl9jb3B5X2JhdGNo
-IGJhdGNoOw0KPj4+PiArCXN0cnVjdCBnbnRkZXZfY29weV9iYXRjaCAqYmF0Y2g7DQo+Pj4+
-ICAgIAl1bnNpZ25lZCBpbnQgaTsNCj4+Pj4gICAgCWludCByZXQgPSAwOw0KPj4+PiAgICAg
-IAlpZiAoY29weV9mcm9tX3VzZXIoJmNvcHksIHUsIHNpemVvZihjb3B5KSkpDQo+Pj4+ICAg
-IAkJcmV0dXJuIC1FRkFVTFQ7DQo+Pj4+ICAgIC0JYmF0Y2gubnJfb3BzID0gMDsNCj4+Pj4g
-LQliYXRjaC5ucl9wYWdlcyA9IDA7DQo+Pj4+ICsJbXV0ZXhfbG9jaygmcHJpdi0+YmF0Y2hf
-bG9jayk7DQo+Pj4+ICsJaWYgKCFwcml2LT5iYXRjaCkgew0KPj4+PiArCQliYXRjaCA9IGtt
-YWxsb2Moc2l6ZW9mKCpiYXRjaCksIEdGUF9LRVJORUwpOw0KPj4+PiArCX0gZWxzZSB7DQo+
-Pj4+ICsJCWJhdGNoID0gcHJpdi0+YmF0Y2g7DQo+Pj4+ICsJCXByaXYtPmJhdGNoID0gYmF0
-Y2gtPm5leHQ7DQo+Pj4+ICsJfQ0KPj4+PiArCW11dGV4X3VubG9jaygmcHJpdi0+YmF0Y2hf
-bG9jayk7DQo+Pj4NCj4+PiBJIGFtIGNvbmNlcm5lZCBhYm91dCB0aGUgcG90ZW50aWFsbHkg
-dW5ib3VuZGVkIGFtb3VudCBvZiBtZW1vcnkgdGhhdA0KPj4+IGNvdWxkIGJlIGFsbG9jYXRl
-ZCB0aGlzIHdheS4NCj4+DQo+PiBVbmJvdW5kZWQ/IEl0IGNhbiBiZSBhdCBtb3N0IHRoZSBu
-dW1iZXIgb2YgdGhyZWFkcyB1c2luZyB0aGUgaW50ZXJmYWNlDQo+PiBjb25jdXJyZW50bHku
-DQo+IA0KPiBUaGF0J3Mgd2hhdCBJIG1lYW50DQoNCjEga0IgYWRkaXRpb25hbCBtZW1vcnkg
-cGVyIHRocmVhZCB3b24ndCBiZSB0aGUgZW5kIG9mIHRoZSB3b3JsZC4NCkVhY2ggdGhyZWFk
-IHdpbGwgY29uc3VtZSBtdWNoIG1vcmUgbWVtb3J5IGZvciBvdGhlciBwdXJwb3NlcyBhbnl3
-YXkuDQoNCj4+PiBUaGUgbXV0ZXggaXMgYWxyZWFkeSBhIHBvdGVudGlhbGx5IHZlcnkgc2xv
-dyBvcGVyYXRpb24uIENvdWxkIHdlIGluc3RlYWQNCj4+PiBhbGxvY2F0ZSBhIHNpbmdsZSBi
-YXRjaCwgYW5kIGlmIGl0IGlzIGN1cnJlbnRseSBpbiB1c2UsIHVzZSB0aGUgbXV0ZXggdG8N
-Cj4+PiB3YWl0IHVudGlsIGl0IGJlY29tZXMgYXZhaWxhYmxlPw0KPj4NCj4+IEFzIHRoaXMg
-aW50ZXJmYWNlIGlzIGUuZy4gdXNlZCBieSB0aGUgcWVtdSBiYXNlZCBxZGlzayBiYWNrZW5k
-LCB0aGUgY2hhbmNlcw0KPj4gYXJlIHZlcnkgaGlnaCB0aGF0IHRoZXJlIGFyZSBjb25jdXJy
-ZW50IHVzZXJzLiBUaGlzIHdvdWxkIGh1cnQgbXVsdGktcmluZw0KPj4gcWRpc2sgcXVpdGUg
-YmFkbHkhDQo+Pg0KPj4gSXQgd291bGQgYmUgcG9zc2libGUgdG8gcmVwbGFjZSB0aGUgbXV0
-ZXggd2l0aCBhIHNwaW5sb2NrIGFuZCBkbyB0aGUga21hbGxvYygpDQo+PiBvdXRzaWRlIHRo
-ZSBsb2NrZWQgcmVnaW9uLg0KPj4NCj4+Pg0KPj4+IEkgYW0gYWxzbyBPSyB3aXRoIHRoZSBj
-dXJyZW50IGFwcHJvYWNoIGJ1dCBJIHRob3VnaHQgSSB3b3VsZCBhc2suDQo+Pj4NCj4+Pg0K
-Pj4+DQo+Pj4NCj4+Pj4gKwlpZiAoIWJhdGNoKQ0KPj4+PiArCQlyZXR1cm4gLUVOT01FTTsN
-Cj4+Pj4gKw0KPj4+PiArCWJhdGNoLT5ucl9vcHMgPSAwOw0KPj4+PiArCWJhdGNoLT5ucl9w
-YWdlcyA9IDA7DQo+Pj4+ICAgICAgCWZvciAoaSA9IDA7IGkgPCBjb3B5LmNvdW50OyBpKysp
-IHsNCj4+Pj4gICAgCQlzdHJ1Y3QgZ250ZGV2X2dyYW50X2NvcHlfc2VnbWVudCBzZWc7DQo+
-Pj4+ICAgICAgCQlpZiAoY29weV9mcm9tX3VzZXIoJnNlZywgJmNvcHkuc2VnbWVudHNbaV0s
-DQo+Pj4+IHNpemVvZihzZWcpKSkgew0KPj4+PiAgICAJCQlyZXQgPSAtRUZBVUxUOw0KPj4+
-PiArCQkJZ250ZGV2X3B1dF9wYWdlcyhiYXRjaCk7DQo+Pj4+ICAgIAkJCWdvdG8gb3V0Ow0K
-Pj4+PiAgICAJCX0NCj4+Pj4gICAgLQkJcmV0ID0gZ250ZGV2X2dyYW50X2NvcHlfc2VnKCZi
-YXRjaCwgJnNlZywNCj4+Pj4gJmNvcHkuc2VnbWVudHNbaV0uc3RhdHVzKTsNCj4+Pj4gLQkJ
-aWYgKHJldCA8IDApDQo+Pj4+ICsJCXJldCA9IGdudGRldl9ncmFudF9jb3B5X3NlZyhiYXRj
-aCwgJnNlZywNCj4+Pj4gJmNvcHkuc2VnbWVudHNbaV0uc3RhdHVzKTsNCj4+Pj4gKwkJaWYg
-KHJldCA8IDApIHsNCj4+Pj4gKwkJCWdudGRldl9wdXRfcGFnZXMoYmF0Y2gpOw0KPj4+PiAg
-ICAJCQlnb3RvIG91dDsNCj4+Pj4gKwkJfQ0KPj4+PiAgICAgIAkJY29uZF9yZXNjaGVkKCk7
-DQo+Pj4+ICAgIAl9DQo+Pj4+IC0JaWYgKGJhdGNoLm5yX29wcykNCj4+Pj4gLQkJcmV0ID0g
-Z250ZGV2X2NvcHkoJmJhdGNoKTsNCj4+Pj4gLQlyZXR1cm4gcmV0Ow0KPj4+PiArCWlmIChi
-YXRjaC0+bnJfb3BzKQ0KPj4+PiArCQlyZXQgPSBnbnRkZXZfY29weShiYXRjaCk7DQo+Pj4+
-ICsNCj4+Pj4gKyBvdXQ6DQo+Pj4+ICsJbXV0ZXhfbG9jaygmcHJpdi0+YmF0Y2hfbG9jayk7
-DQo+Pj4+ICsJYmF0Y2gtPm5leHQgPSBwcml2LT5iYXRjaDsNCj4+Pj4gKwlwcml2LT5iYXRj
-aCA9IGJhdGNoOw0KPj4+PiArCW11dGV4X3VubG9jaygmcHJpdi0+YmF0Y2hfbG9jayk7DQo+
-Pj4+ICAgIC0gIG91dDoNCj4+Pj4gLQlnbnRkZXZfcHV0X3BhZ2VzKCZiYXRjaCk7DQo+Pj4N
-Cj4+PiBPbmUgY2hhbmdlIGZyb20gYmVmb3JlIGlzIHRoYXQgaW4gY2FzZSBvZiBubyBlcnJv
-cnMsIGdudGRldl9wdXRfcGFnZXMgaXMNCj4+PiBub3QgY2FsbGVkIGFueW1vcmUuIERvIHdl
-IHdhbnQgdGhhdD8gU3BlY2lmaWNhbGx5LCB3ZSBhcmUgbWlzc2luZyB0aGUNCj4+PiBjYWxs
-IHRvIHVucGluX3VzZXJfcGFnZXNfZGlydHlfbG9jaw0KPj4NCj4+IEkgZG9uJ3QgdGhpbmsg
-eW91IGFyZSByaWdodC4gVGhlcmUgd2FzIGEgInJldHVybiByZXQiIGJlZm9yZSB0aGUgIm91
-dDoiDQo+PiBsYWJlbCBiZWZvcmUgbXkgcGF0Y2guDQo+IA0KPiBZb3UgYXJlIHJpZ2h0LCBJ
-IG1pc3NlZCBpdC4NCj4gDQo+IFJldmlld2VkLWJ5OiBTdGVmYW5vIFN0YWJlbGxpbmkgPHNz
-dGFiZWxsaW5pQGtlcm5lbC5vcmc+DQoNClRoYW5rcywNCg0KDQpKdWVyZ2VuDQo=
---------------1s7eef5IB8O5tFuS77ajesT6
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
+References: <cover.1751617911.git.zhoubinbin@loongson.cn> <2252dbc3970264371278182ebaf7669fe77d33a2.1751617911.git.zhoubinbin@loongson.cn>
+ <20250710095629.GH1431498@google.com>
+In-Reply-To: <20250710095629.GH1431498@google.com>
+From: Binbin Zhou <zhoubb.aaron@gmail.com>
+Date: Fri, 11 Jul 2025 15:17:29 +0800
+X-Gm-Features: Ac12FXyIj0PwTUdVcCo8GXPss6ZgMJPK6x5QPnR5rXAlwgg3Tj8tn_RVWkZ4FUQ
+Message-ID: <CAMpQs4JccEmMAguB92jQriwD65Ra+hQKMZnjAsWhNOKhN_Om7A@mail.gmail.com>
+Subject: Re: [PATCH v7 1/3] mfd: ls2kbmc: Introduce Loongson-2K BMC core driver
+To: Lee Jones <lee@kernel.org>
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>, Huacai Chen <chenhuacai@loongson.cn>, 
+	Corey Minyard <minyard@acm.org>, Huacai Chen <chenhuacai@kernel.org>, Xuerui Wang <kernel@xen0n.name>, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	openipmi-developer@lists.sourceforge.net, jeffbai@aosc.io, 
+	kexybiscuit@aosc.io, wangyao@lemote.com, Chong Qiao <qiaochong@loongson.cn>, 
+	Corey Minyard <corey@minyard.net>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+Hi Lee:
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+Thanks for your review.
 
---------------1s7eef5IB8O5tFuS77ajesT6--
+On Thu, Jul 10, 2025 at 5:56=E2=80=AFPM Lee Jones <lee@kernel.org> wrote:
+>
+> On Fri, 04 Jul 2025, Binbin Zhou wrote:
+>
+> > The Loongson-2K Board Management Controller provides an PCIe interface
+> > to the host to access the feature implemented in the BMC.
+> >
+> > The BMC is assembled on a server similar to the server machine with
+> > Loongson-3 CPU. It supports multiple sub-devices like DRM and IPMI.
+> >
+> > Co-developed-by: Chong Qiao <qiaochong@loongson.cn>
+> > Signed-off-by: Chong Qiao <qiaochong@loongson.cn>
+> > Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+> > Acked-by: Corey Minyard <corey@minyard.net>
+> > Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
+> > ---
+> >  MAINTAINERS                 |   6 ++
+> >  drivers/mfd/Kconfig         |  13 +++
+> >  drivers/mfd/Makefile        |   2 +
+> >  drivers/mfd/ls2k-bmc-core.c | 156 ++++++++++++++++++++++++++++++++++++
+> >  4 files changed, 177 insertions(+)
+> >  create mode 100644 drivers/mfd/ls2k-bmc-core.c
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 0d053c45f7f9..4eb0f7b69d35 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -14199,6 +14199,12 @@ S:   Maintained
+> >  F:   Documentation/devicetree/bindings/thermal/loongson,ls2k-thermal.y=
+aml
+> >  F:   drivers/thermal/loongson2_thermal.c
+> >
+> > +LOONGSON-2K Board Management Controller (BMC) DRIVER
+> > +M:   Binbin Zhou <zhoubinbin@loongson.cn>
+> > +M:   Chong Qiao <qiaochong@loongson.cn>
+> > +S:   Maintained
+> > +F:   drivers/mfd/ls2k-bmc-core.c
+> > +
+> >  LOONGSON EDAC DRIVER
+> >  M:   Zhao Qunqin <zhaoqunqin@loongson.cn>
+> >  L:   linux-edac@vger.kernel.org
+> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > index c635790afa75..47cc8ea9d2ef 100644
+> > --- a/drivers/mfd/Kconfig
+> > +++ b/drivers/mfd/Kconfig
+> > @@ -2400,6 +2400,19 @@ config MFD_INTEL_M10_BMC_PMCI
+> >         additional drivers must be enabled in order to use the function=
+ality
+> >         of the device.
+> >
+> > +config MFD_LS2K_BMC_CORE
+> > +     bool "Loongson-2K Board Management Controller Support"
+> > +     depends on PCI && ACPI_GENERIC_GSI
+> > +     select MFD_CORE
+> > +     help
+> > +       Say yes here to add support for the Loongson-2K BMC which is a =
+Board
+> > +       Management Controller connected to the PCIe bus. The device sup=
+ports
+> > +       multiple sub-devices like display and IPMI. This driver provide=
+s common
+> > +       support for accessing the devices.
+> > +
+> > +       The display is enabled by default in the driver, while the IPMI=
+ interface
+> > +       is enabled independently through the IPMI_LS2K option in the IP=
+MI section.
+> > +
+> >  config MFD_QNAP_MCU
+> >       tristate "QNAP microcontroller unit core driver"
+> >       depends on SERIAL_DEV_BUS
+> > diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> > index ca351cb0ddcc..675b4ec6ef4c 100644
+> > --- a/drivers/mfd/Makefile
+> > +++ b/drivers/mfd/Makefile
+> > @@ -284,6 +284,8 @@ obj-$(CONFIG_MFD_INTEL_M10_BMC_CORE)   +=3D intel-m=
+10-bmc-core.o
+> >  obj-$(CONFIG_MFD_INTEL_M10_BMC_SPI)    +=3D intel-m10-bmc-spi.o
+> >  obj-$(CONFIG_MFD_INTEL_M10_BMC_PMCI)   +=3D intel-m10-bmc-pmci.o
+> >
+> > +obj-$(CONFIG_MFD_LS2K_BMC_CORE)              +=3D ls2k-bmc-core.o
+> > +
+> >  obj-$(CONFIG_MFD_ATC260X)    +=3D atc260x-core.o
+> >  obj-$(CONFIG_MFD_ATC260X_I2C)        +=3D atc260x-i2c.o
+> >
+> > diff --git a/drivers/mfd/ls2k-bmc-core.c b/drivers/mfd/ls2k-bmc-core.c
+> > new file mode 100644
+> > index 000000000000..50d560a4611c
+> > --- /dev/null
+> > +++ b/drivers/mfd/ls2k-bmc-core.c
+> > @@ -0,0 +1,156 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Loongson-2K Board Management Controller (BMC) Core Driver.
+> > + *
+> > + * Copyright (C) 2024-2025 Loongson Technology Corporation Limited.
+> > + *
+> > + * Authors:
+> > + *   Chong Qiao <qiaochong@loongson.cn>
+> > + *   Binbin Zhou <zhoubinbin@loongson.cn>
+> > + */
+> > +
+> > +#include <linux/aperture.h>
+> > +#include <linux/errno.h>
+> > +#include <linux/init.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/mfd/core.h>
+> > +#include <linux/module.h>
+> > +#include <linux/pci.h>
+> > +#include <linux/pci_ids.h>
+> > +#include <linux/platform_data/simplefb.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +/* LS2K BMC resources */
+> > +#define LS2K_DISPLAY_RES_START               (SZ_16M + SZ_2M)
+> > +#define LS2K_IPMI_RES_SIZE           0x1C
+> > +#define LS2K_IPMI0_RES_START         (SZ_16M + 0xF00000)
+> > +#define LS2K_IPMI1_RES_START         (LS2K_IPMI0_RES_START + LS2K_IPMI=
+_RES_SIZE)
+> > +#define LS2K_IPMI2_RES_START         (LS2K_IPMI1_RES_START + LS2K_IPMI=
+_RES_SIZE)
+> > +#define LS2K_IPMI3_RES_START         (LS2K_IPMI2_RES_START + LS2K_IPMI=
+_RES_SIZE)
+> > +#define LS2K_IPMI4_RES_START         (LS2K_IPMI3_RES_START + LS2K_IPMI=
+_RES_SIZE)
+> > +
+> > +static struct resource ls2k_display_resources[] =3D {
+> > +     DEFINE_RES_MEM_NAMED(LS2K_DISPLAY_RES_START, SZ_4M, "simpledrm-re=
+s"),
+> > +};
+> > +
+> > +static struct resource ls2k_ipmi0_resources[] =3D {
+> > +     DEFINE_RES_MEM_NAMED(LS2K_IPMI0_RES_START, LS2K_IPMI_RES_SIZE, "i=
+pmi0-res"),
+> > +};
+> > +
+> > +static struct resource ls2k_ipmi1_resources[] =3D {
+> > +     DEFINE_RES_MEM_NAMED(LS2K_IPMI1_RES_START, LS2K_IPMI_RES_SIZE, "i=
+pmi1-res"),
+> > +};
+> > +
+> > +static struct resource ls2k_ipmi2_resources[] =3D {
+> > +     DEFINE_RES_MEM_NAMED(LS2K_IPMI2_RES_START, LS2K_IPMI_RES_SIZE, "i=
+pmi2-res"),
+> > +};
+> > +
+> > +static struct resource ls2k_ipmi3_resources[] =3D {
+> > +     DEFINE_RES_MEM_NAMED(LS2K_IPMI3_RES_START, LS2K_IPMI_RES_SIZE, "i=
+pmi3-res"),
+> > +};
+> > +
+> > +static struct resource ls2k_ipmi4_resources[] =3D {
+> > +     DEFINE_RES_MEM_NAMED(LS2K_IPMI4_RES_START, LS2K_IPMI_RES_SIZE, "i=
+pmi4-res"),
+> > +};
+> > +
+> > +static struct mfd_cell ls2k_bmc_cells[] =3D {
+> > +     MFD_CELL_RES("simple-framebuffer", ls2k_display_resources),
+> > +     MFD_CELL_RES("ls2k-ipmi-si", ls2k_ipmi0_resources),
+> > +     MFD_CELL_RES("ls2k-ipmi-si", ls2k_ipmi1_resources),
+> > +     MFD_CELL_RES("ls2k-ipmi-si", ls2k_ipmi2_resources),
+> > +     MFD_CELL_RES("ls2k-ipmi-si", ls2k_ipmi3_resources),
+> > +     MFD_CELL_RES("ls2k-ipmi-si", ls2k_ipmi4_resources),
+> > +};
+> > +
+> > +/*
+> > + * Currently the Loongson-2K BMC hardware does not have an I2C interfa=
+ce to adapt to the
+> > + * resolution. We set the resolution by presetting "video=3D1280x1024-=
+16@2M" to the BMC memory.
+> > + */
+> > +static int ls2k_bmc_parse_mode(struct pci_dev *pdev, struct simplefb_p=
+latform_data *pd)
+> > +{
+> > +     char *mode;
+> > +     int depth, ret;
+> > +
+> > +     /* The last 16M of PCI BAR0 is used to store the resolution strin=
+g. */
+> > +     mode =3D devm_ioremap(&pdev->dev, pci_resource_start(pdev, 0) + S=
+Z_16M, SZ_16M);
+> > +     if (!mode)
+> > +             return -ENOMEM;
+> > +
+> > +     /* The resolution field starts with the flag "video=3D". */
+> > +     if (!strncmp(mode, "video=3D", 6))
+> > +             mode =3D mode + 6;
+> > +
+> > +     ret =3D kstrtoint(strsep(&mode, "x"), 10, &pd->width);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D kstrtoint(strsep(&mode, "-"), 10, &pd->height);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D kstrtoint(strsep(&mode, "@"), 10, &depth);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     pd->stride =3D pd->width * depth / 8;
+> > +     pd->format =3D depth =3D=3D 32 ? "a8r8g8b8" : "r5g6b5";
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int ls2k_bmc_probe(struct pci_dev *dev, const struct pci_device=
+_id *id)
+> > +{
+> > +     struct simplefb_platform_data pd;
+> > +     resource_size_t base;
+> > +     int ret;
+> > +
+> > +     ret =3D pci_enable_device(dev);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D ls2k_bmc_parse_mode(dev, &pd);
+> > +     if (ret)
+> > +             goto disable_pci;
+> > +
+> > +     ls2k_bmc_cells[0].platform_data =3D &pd;
+> > +     ls2k_bmc_cells[0].pdata_size =3D sizeof(pd);
+>
+> This is fragile.
+>
+> Please identify the elements in ls2k_bmc_cells and use it to index here.
+>
+> See: `static struct mfd_cell as3711_subdevs`
 
---------------rxYdYISBKm0VEERw7LRxLsK4--
+How about this:
 
---------------FEN1ck1FJL6iTUzUfYz00J5y
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+enum {
+        LS2K_BMC_DISPLAY,
+        LS2k_BMC_IPMI0,
+        LS2k_BMC_IPMI1,
+        LS2k_BMC_IPMI2,
+        LS2k_BMC_IPMI3,
+        LS2k_BMC_IPMI4,
+};
 
------BEGIN PGP SIGNATURE-----
+static struct mfd_cell ls2k_bmc_cells[] =3D {
+        [LS2K_BMC_DISPLAY] =3D {
+                .name =3D "simple-framebuffer",
+                .num_resources =3D ARRAY_SIZE(ls2k_display_resources),
+                .resources =3D ls2k_display_resources
+        },
+        [LS2k_BMC_IPMI0] =3D {
+                .name =3D "ls2k-ipmi-si",
+                .num_resources =3D ARRAY_SIZE(ls2k_ipmi0_resources),
+                .resources =3D ls2k_ipmi0_resources
+        },
+        [LS2k_BMC_IPMI1] =3D {
+                .name =3D "ls2k-ipmi-si",
+                .num_resources =3D ARRAY_SIZE(ls2k_ipmi1_resources),
+                .resources =3D ls2k_ipmi1_resources
+        },
+        [LS2k_BMC_IPMI2] =3D {
+                .name =3D "ls2k-ipmi-si",
+                .num_resources =3D ARRAY_SIZE(ls2k_ipmi2_resources),
+                .resources =3D ls2k_ipmi2_resources
+        },
+        [LS2k_BMC_IPMI3] =3D {
+                .name =3D "ls2k-ipmi-si",
+                .num_resources =3D ARRAY_SIZE(ls2k_ipmi3_resources),
+                .resources =3D ls2k_ipmi3_resources
+        },
+        [LS2k_BMC_IPMI4] =3D {
+                .name =3D "ls2k-ipmi-si",
+                .num_resources =3D ARRAY_SIZE(ls2k_ipmi4_resources),
+                .resources =3D ls2k_ipmi4_resources
+        },
+};
 
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmhwumIFAwAAAAAACgkQsN6d1ii/Ey84
-Gwf8C57SBtnQq6URDcPMQeS+M6I/FNhW3LEYsx1XhSoenMISxCQggZxqcC/+2JV3gx2JOLt4PBE4
-uby1gVdYBDiZzu0Xz9jO5R90GezGIGil0aCOomrJqJG8zwhvr4C+PtwnucHKk/MkxZeQ8xT16Zid
-lTvDq8KyH8kqispYvSeUAQqDSxvBJSKOsKSmB6D7Vml2NjBCgxtj4eBashsCQBs948ZColP/vnen
-vQ5lyADEtzubrrT1+6UOyOvmVhG246dy4GaFJro6mlr3u8sMvhVksJKI4G4dxBPSEMDHrcgpjXpe
-g7AZzg1Vak7zfp3CgDHaVFOHIzLPiltPMJlYcPSWgQ==
-=whff
------END PGP SIGNATURE-----
+and
 
---------------FEN1ck1FJL6iTUzUfYz00J5y--
+        ls2k_bmc_cells[LS2K_BMC_DISPLAY].platform_data =3D &pd;
+        ls2k_bmc_cells[LS2K_BMC_DISPLAY].pdata_size =3D sizeof(pd);
+
+>
+> > +     base =3D dev->resource[0].start + LS2K_DISPLAY_RES_START;
+> > +
+> > +     /* Remove conflicting efifb device */
+> > +     ret =3D aperture_remove_conflicting_devices(base, SZ_4M, "simple-=
+framebuffer");
+> > +     if (ret) {
+> > +             dev_err(&dev->dev, "Failed to removed firmware framebuffe=
+rs: %d\n", ret);
+> > +             goto disable_pci;
+> > +     }
+> > +
+> > +     return devm_mfd_add_devices(&dev->dev, PLATFORM_DEVID_AUTO,
+> > +                                 ls2k_bmc_cells, ARRAY_SIZE(ls2k_bmc_c=
+ells),
+> > +                                 &dev->resource[0], 0, NULL);
+> > +
+> > +disable_pci:
+> > +     pci_disable_device(dev);
+> > +     return ret;
+> > +}
+> > +
+> > +static void ls2k_bmc_remove(struct pci_dev *dev)
+> > +{
+> > +     pci_disable_device(dev);
+> > +}
+> > +
+> > +static struct pci_device_id ls2k_bmc_devices[] =3D {
+> > +     { PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, 0x1a05) },
+> > +     { }
+> > +};
+> > +MODULE_DEVICE_TABLE(pci, ls2k_bmc_devices);
+> > +
+> > +static struct pci_driver ls2k_bmc_driver =3D {
+> > +     .name =3D "ls2k-bmc",
+> > +     .id_table =3D ls2k_bmc_devices,
+> > +     .probe =3D ls2k_bmc_probe,
+> > +     .remove =3D ls2k_bmc_remove,
+> > +};
+> > +module_pci_driver(ls2k_bmc_driver);
+> > +
+> > +MODULE_DESCRIPTION("Loongson-2K Board Management Controller (BMC) Core=
+ driver");
+> > +MODULE_AUTHOR("Loongson Technology Corporation Limited");
+> > +MODULE_LICENSE("GPL");
+> > --
+> > 2.47.1
+> >
+>
+> --
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+
+
+--
+Thanks.
+Binbin
 
