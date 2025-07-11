@@ -1,140 +1,126 @@
-Return-Path: <linux-kernel+bounces-727672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D366FB01DCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:37:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7908FB01DD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3118017739B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:37:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4A8017292E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2492D9798;
-	Fri, 11 Jul 2025 13:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA8F2D8779;
+	Fri, 11 Jul 2025 13:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AkHEEI+Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J6kt7N6D"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FDE298997;
-	Fri, 11 Jul 2025 13:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682C02D3729;
+	Fri, 11 Jul 2025 13:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752240900; cv=none; b=G2T26ZLsfDZR5CEuuEGLHrcboMhwGer18SIQJ/0+sBzRAmWNNy2SWDcyZtnDbo6525WJhbnooZDDeRWCkflSEnurGfhdkVMy+atoizanT56rjsxaMVTC0jqq10p5XgDAJzKu7dXQLpmMg568GThERvDTWREHku8ou/JHgAirjsc=
+	t=1752240941; cv=none; b=Qm2fRDzZ/5rS3wJOO4GFdkTtiTV+hJAhxw65jROEZWUNzp8AiQJ/jWC75IAayOdjg5gKWTFGVXdb3RuX6Sq+dv4qWv6b7kHMtOiMA2V/aoFT+HlR0swoRuCaSVhepcea1UGMpfD/gd5Xpw5/X+8Rh8dX/KIbuxVeZaCCSYI4fz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752240900; c=relaxed/simple;
-	bh=W1eSNvE6RoFcjXOe8d9knnF4KP1s1kX/QKTAsJ6mLp0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=r5K04DQnXjtjvibEzajo7BeT8v7qcjINPm0ojYdM3g/HzZHyW/GUEZnb+N7pk6nQRrIpDIJQCWyrN4Hi1PurzoAnVp2qy17wSkxTq3xP90h4ayMRRr3ijSeo6UJs38iUtOntCK01xxevMryGUw5co19eP5VTbACq2oaV/ooy0gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AkHEEI+Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2A96C4CEED;
-	Fri, 11 Jul 2025 13:34:49 +0000 (UTC)
+	s=arc-20240116; t=1752240941; c=relaxed/simple;
+	bh=toq/INt3cRfbCunvma7W/7KSnSn2Yrt9K2+A1K6bBnk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q2ZIA8TTw0l6hagulK10t5vsF2OMD6FmYAE/ziy3ufatpTbUyLfWTG5L6wmaQS6ILoINQdN91KxMhBgIhl0zNf3Wabgk73IijgHo64bIbTQ/bBkaiGqxBDgYJeFvAQzLCDdXU6bByYlGEmed5jAag5RGhVhFuvqPs1fsAR1jDVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J6kt7N6D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89806C4CEED;
+	Fri, 11 Jul 2025 13:35:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752240899;
-	bh=W1eSNvE6RoFcjXOe8d9knnF4KP1s1kX/QKTAsJ6mLp0=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=AkHEEI+YGznfm1eRU0RzYVRZQSoUwYV4cTCUDc2ixsxdo5eb4LTL3iaG7/Xz1ZqnE
-	 fSASFeExYuPi2+qEDtB5DMr1x4YYsnwpvlQxtiSHICBN1OfazCT+Pb+dbMPfe6hKdj
-	 TKT5pF2vs6Wuxe0I8m4EBzALxTLLJqNHxI988+2arFa2hFwCkcWwzV0kOAtyDJasqw
-	 JoIzTf47ZXEDeHwqmSLy7vAxyyUnFGCGhZjbelYogc1mqSOSp7mr0oLWGbaa9MqKay
-	 VtVpZHaIYtl/PgR2eiqOOlQDLAAxZ6sd7vVWv3vafJJbN6xcJY+ywhU1vLsB44bfaj
-	 FaSZfl68Rzchg==
+	s=k20201202; t=1752240940;
+	bh=toq/INt3cRfbCunvma7W/7KSnSn2Yrt9K2+A1K6bBnk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=J6kt7N6DnlpmKuDrQBv65iE/cdMpZtCm+6MIt0D0aF3MQbhbrvq81mg5nnZQaXrop
+	 P9Gf42DZTInbWOYkxD5OxbppuIaA4vmcZ1J5t9Gij1CXqZwlwcSiEXRswrz0OYSPCN
+	 KJavmS0YoxtaROUkDn2bW8mJri+Dl4ogoKwFlg+SXZLyf5XxmHk5hHNQfIYnKKZOoG
+	 seWs9c3rc5mt/UQglerRD+O1m6/pDF+F1D17qmp4n7gtydBfaz3qnWBqg1ZQ5o5JE8
+	 frpit3KzYy5iVUao+1BVXAD916DnVyZOVFT14LNBLTCTCzbtxfgOXpph2WV1Igsb1i
+	 5ecpOdBQkNCAg==
+Message-ID: <ae8d2356-8445-4c05-a023-0f08560dd356@kernel.org>
+Date: Fri, 11 Jul 2025 15:35:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] arm64: dts: qcom: qcs8300: Add support for camss
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250711131134.215382-1-quic_vikramsa@quicinc.com>
+ <20250711131134.215382-3-quic_vikramsa@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250711131134.215382-3-quic_vikramsa@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Fri, 11 Jul 2025 15:34:47 +0200
-Message-Id: <DB99JZ3XMHZS.3N0GLG94JJSA9@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
- <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
- "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
- "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
- <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Alan Stern" <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v6 4/9] rust: sync: atomic: Add generic atomics
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <20250710060052.11955-1-boqun.feng@gmail.com>
- <20250710060052.11955-5-boqun.feng@gmail.com>
- <DB92I10114UN.33MAFJVWIX4AB@kernel.org> <aHEQKBT68xvqIIjW@Mac.home>
-In-Reply-To: <aHEQKBT68xvqIIjW@Mac.home>
+Content-Transfer-Encoding: 7bit
 
-On Fri Jul 11, 2025 at 3:22 PM CEST, Boqun Feng wrote:
-> On Fri, Jul 11, 2025 at 10:03:07AM +0200, Benno Lossin wrote:
-> [...]
->> > +
->> > +    /// Returns a pointer to the underlying atomic variable.
->> > +    ///
->> > +    /// Extra safety requirement on using the return pointer: the ope=
-rations done via the pointer
->> > +    /// cannot cause data races defined by [`LKMM`].
->>=20
->> I don't think this is correct. I could create an atomic and then share
->> it with the C side via this function, since I have exclusive access, the
->> writes to this pointer don't need to be atomic.
->>=20
->
-> that's why it says "the operations done via the pointer cannot cause
-> data races .." instead of saying "it must be atomic".
+On 11/07/2025 15:11, Vikram Sharma wrote:
+> Add changes to support the camera subsystem on the QCS8300.
+> 
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 171 ++++++++++++++++++++++++++
 
-Ah right I misread... But then the safety requirement is redundant? Data
-races are already UB...
+Don't place your DTS changes in the middle of the patchset. I don't get
+why did you decide to move it to this patchset, but since you did, place
+it AS ALWAYS at the end. See soc maintainer profile and your internal
+guideline
 
->> We also don't document additional postconditions like this... If you
->
-> Please see how Rust std document their `as_ptr()`:
->
-> 	https://doc.rust-lang.org/std/sync/atomic/struct.AtomicI32.html#method.a=
-s_ptr
->
-> It mentions that "Doing non-atomic reads and writes on the resulting
-> integer can be a data race." (although the document is a bit out of
-> date, since non-atomic read and atomic read are no longer data race now,
-> see [1])
-
-That's very different from the comment you wrote though. It's not an
-additional safety requirement, but rather a note to users of the API
-that they should be careful with the returned pointer.
-
-> I think we can use the similar document structure here: providing more
-> safety requirement on the returning pointers, and...
->
->> really would have to do it like this (which you shouldn't given the
->> example above), you would have to make this function `unsafe`, otherwise
->> there is no way to ensure that people adhere to it (since it isn't part
->> of the safety docs).
->>=20
->
-> ...since dereferencing pointers is always `unsafe`, users need to avoid
-> data races anyway, hence this is just additional information that helps
-> reasoning.
-
-I disagree.
-
-As mentioned above, data races are already forbidden for raw pointers.
-We should indeed add a note that says that non-atomic operations might
-result in data races. But that's very different from adding an
-additional safety requirement for using the pointer.
-
-And I don't think that we can add additional safety requirements to
-dereferencing a raw pointer without an additional `unsafe` block.
-
----
-Cheers,
-Benno
+Best regards,
+Krzysztof
 
