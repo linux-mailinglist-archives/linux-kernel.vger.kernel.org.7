@@ -1,104 +1,110 @@
-Return-Path: <linux-kernel+bounces-727726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A006B01EA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:06:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E23D5B01EB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE3B53AB04A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:06:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0003AB425D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B742E11B3;
-	Fri, 11 Jul 2025 14:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5232E2F18;
+	Fri, 11 Jul 2025 14:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V8NIyHqh"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLdx/4Ht"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134CB2DE70D
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 14:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF442E5B2A;
+	Fri, 11 Jul 2025 14:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752242785; cv=none; b=ZmmRHPo97d6gq17gqfSs2tY01HV4AdFjQPIV0LOMixIMzbPr9jnFDW9lV2gYms8+J99cC+3WC+3rddSrYztGC/+FiIM9vpd4jkp2nwXTl1V/ov7XKsA9Kk3UcylLsPRxLtPkKf/gAi/UONiVTAx8cAnnLVatjFmrlmHyraiUiYo=
+	t=1752242787; cv=none; b=FCd7h0tOhzgNAZCNi3Ay32absyeSK8gdQni331aepCfz2LaboSyVmM+uBntRnZq+uHSRYGuONtA+fC320/vfA5jdmxpuX7tACmodIuLTypGxfjaz3qneUF8UW388uMEyP6mKuwRRhJELdUhX/OShJwNNEvsy6kzyaEJlhWja6vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752242785; c=relaxed/simple;
-	bh=HWvaEhuXDSYgLYWRHKSUTXBSay+No1KBht70inNpu30=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mMs55gpDX9BsAB49hn5eRV3U74qSHnO25k9IGvsDCuUS/fknyd/t2Fi9tJSlxMqDeCfIOAkiRHJVwpmpAJZ+edplhLZBTU+6Q0HzDw193gLO11eNpXkvnVRVI1V7Z+Li6C33fKnmvJvpiKDvhgz8461l1KQF6e2dF3dgxZ51Qsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V8NIyHqh; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-313ff01d2a6so2491102a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 07:06:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752242783; x=1752847583; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jnCZqhs2jpFslJPdY5U6nIr7Bo2uyg2ScFEtRB8bErs=;
-        b=V8NIyHqhkwflo38lGXEpPehkh+MKOwqTpeN3dgsODmh1EClnypxYrWeIyAgRC05yrk
-         8QDu2SsrOVH0qOXxoPrN6Qemf2nBduq73J+FbeQOKWXXEpO6tEPpFw88uLROvVYdEpDa
-         pS07Czj5b4mAaMuxb3qYuNn4124FxkTz+T++4LxY6t9eKC8jGK7ZBHtTnYJaFR1Yauzv
-         0MV9RMyIkyet9YVGz1qrsdISDmlbthMfMX13sjzVodAWZzl0vs3GI1ZCZvO59QXBAqVO
-         Fmk8I7lAsFPfeqNmg//GUdPJOUsLErvwpUtOF7zXKe7i/SvmxezscWWv9bt3E8QSSDAp
-         YdKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752242783; x=1752847583;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jnCZqhs2jpFslJPdY5U6nIr7Bo2uyg2ScFEtRB8bErs=;
-        b=HuMAzpngKuRQyvt3RqVuUmx1CQwhMdXIVn7Xc8C1VKeNldqFOhb9jCjJtXQkG4FYWa
-         zlUCQipnpJQpKF0h7HJ+oGjvT6JRABBwETXybbS5/H2FSoxZ2cygxrKrUxDcoJv6o1ae
-         j0YJHvJrZSjya2J/6YAsrBk9GVtWfFdJkeXEdNnWbUpbn+Q1oPntVP4QvIany0KGppkW
-         jrBsa56BXWXpJ+l8rwniTf4BXth6KKZd7vu4sxMMu9GJVSn9PW4q/mlJ8q/0YmhGb3W+
-         0rbM/u6vD47d/L4EPy2oDJUvoWK4lhc7IxV3OSOxLKZ4zHXMWHKGXB2LqROPtXg/Ebkh
-         tMsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfN2As0b6/5R+CRxD+OzR5wd3eg/aAQIKJIZnpUnR9HOgH6qSpqFyZYFTSqDfymsQftPGG9lLI3yzyuqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjxNgSEesKeEe3LG1zrFZdBLEn6tE70qYhrZjgYAZwGZdmGthE
-	wV8SSMB2bBmGGNqmRhelvEe7Ic4aQ7KiPnu+rT1RDUUEn7BMR97k3IW/mcRP4cUZ3G96JMnpLSz
-	xUfIajQ==
-X-Google-Smtp-Source: AGHT+IFP1G+BwI9fgjlF9li/vRzlrSC4JG0EC5WsLxaZfXdd6Ao/Nfb+aDJQsUkaL0KTxYCII+FkDDc445A=
-X-Received: from pjee11.prod.google.com ([2002:a17:90b:578b:b0:31c:2fe4:33b9])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:37cf:b0:31c:15d9:8aa
- with SMTP id 98e67ed59e1d1-31c4cdb64b8mr4842398a91.34.1752242783439; Fri, 11
- Jul 2025 07:06:23 -0700 (PDT)
-Date: Fri, 11 Jul 2025 07:06:21 -0700
-In-Reply-To: <aHDFoIvB5+33blGp@intel.com>
+	s=arc-20240116; t=1752242787; c=relaxed/simple;
+	bh=rha5rNd/+/z1arNhONh6XrU13+BFec0/iI8Uq17rXic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kSB18/UlmKJNCjOepyc9Sw5piBbSOVDpyfnZeH9Vro/UoHQi9fdlhWe4HeAOqJY1h3MhfxuiJvYRBqmmfSRcHXKGG/Q/kt1dWvS9c8UdHdPL2zv3DG+sdZfWB/z1lWPbmfl+4IMZUGgfKyUnmnIJ+/Aq/i5gT4gWXPRw76/x4qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLdx/4Ht; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0512CC4CEED;
+	Fri, 11 Jul 2025 14:06:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752242787;
+	bh=rha5rNd/+/z1arNhONh6XrU13+BFec0/iI8Uq17rXic=;
+	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PLdx/4Htfxna1tnlXVPnyLI6Z2pQUJAyWz4Scj3eP5P9+viOIwVQE4MdVt8ru9HUY
+	 Nzbb6CTVVGOe4H1J7jcn+g/wwHV+KTb9yJdRZ4AYnyj4qXPHN2YpMuY31+ytxJqt3A
+	 Bxgasc+mCTAO3y3mkapu2hj+/dLedbir4aaFbBrmh3bOTWiBA5WkmSI1ocJR73PSOB
+	 Ua52gJAWd/9R3Z1drRHFs2yGfs+GCU3AUPnOzzVTcDXYP5Gqqtc7xSY55EbTJItjHk
+	 +lf3VUS5zYNc6nuTX9pw07E9i3v5K1Ok015iENHrfevGwNbVSpYhZ0jlo5UCrX7kdX
+	 btO+hAWBsz6Ig==
+Message-ID: <2acf7211-e481-4320-b6dd-08b3fa2e48c6@kernel.org>
+Date: Fri, 11 Jul 2025 16:06:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250523095322.88774-1-chao.gao@intel.com> <aHDFoIvB5+33blGp@intel.com>
-Message-ID: <aHEaXYmeolKNCqgk@google.com>
-Subject: Re: [RFC PATCH 00/20] TD-Preserving updates
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: linux-coco@lists.linux.dev, x86@kernel.org, kvm@vger.kernel.org, 
-	paulmck@kernel.org, pbonzini@redhat.com, eddie.dong@intel.com, 
-	kirill.shutemov@intel.com, dave.hansen@intel.com, dan.j.williams@intel.com, 
-	kai.huang@intel.com, isaku.yamahata@intel.com, elena.reshetova@intel.com, 
-	rick.p.edgecombe@intel.com, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Reply-To: Daniel Gomez <da.gomez@kernel.org>
+Subject: Re: [PATCH v2 0/3] module: make structure definitions always visible
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Daniel Gomez <da.gomez@samsung.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>,
+ Brendan Higgins <brendan.higgins@linux.dev>, David Gow
+ <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+ linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+References: <20250711-kunit-ifdef-modules-v2-0-39443decb1f8@linutronix.de>
+ <175224114462.57001.15162198119283395382.b4-ty@samsung.com>
+ <20250711155016-f403d5b2-478d-4666-913d-45318cdaa3cf@linutronix.de>
+Content-Language: en-US
+From: Daniel Gomez <da.gomez@kernel.org>
+Organization: kernel.org
+In-Reply-To: <20250711155016-f403d5b2-478d-4666-913d-45318cdaa3cf@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 11, 2025, Chao Gao wrote:
-> >2. P-SEAMLDR seamcalls (specificially SEAMRET from P-SEAMLDR) clear current
-> >   VMCS pointers, which may disrupt KVM. To prevent VMX instructions in IRQ
-> >   context from encountering NULL current-VMCS pointers, P-SEAMLDR
-> >   seamcalls are called with IRQ disabled. I'm uncertain if NMIs could
-> >   cause a problem, but I believe they won't. See more information in patch 3.
+On 11/07/2025 15.51, Thomas WeiÃschuh wrote:
+> On Fri, Jul 11, 2025 at 03:39:04PM +0200, Daniel Gomez wrote:
+>>
+>> On Fri, 11 Jul 2025 15:31:35 +0200, Thomas Weißschuh wrote:
+>>> Code using IS_ENABLED(CONFIG_MODULES) as a C expression may need access
+>>> to the module structure definitions to compile.
+>>> Make sure these structure definitions are always visible.
+>>>
+>>> This will conflict with commit 6bb37af62634 ("module: Move modprobe_path
+>>> and modules_disabled ctl_tables into the module subsys") from the sysctl
+>>> tree, but the resolution is trivial.
+>>>
+>>> [...]
+>>
+>> Applied, thanks!
+>>
+>> [1/3] module: move 'struct module_use' to internal.h
+>>       commit: bb02f22eaabc4d878577e2b8c46ed7b6be5f5459
+>> [2/3] module: make structure definitions always visible
+>>       commit: 02281b559cd1fdfdc8f7eb05bbbe3ab7b35246f0
+>> [3/3] kunit: test: Drop CONFIG_MODULE ifdeffery
+>>       commit: dffcba8acea3a80b3478750ac32f17bd5345b68e
+> 
+> Thanks!
+> 
+> FYI If you apply a patch you need to add yourself to the Signed-off-by chain.
+> And Link tags are nice. For example:
+> 
+> b4 shazam --add-my-sob --add-link
 
-NMIs shouldn't be a problem.  KVM does access the current VMCS in NMI context
-(to do VMREAD(GUEST_RIP) in response to a perf NMI), but only when KVM knows the
-NMI occurred in KVM's run loop.  So in effect, only in KVM_RUN context, which I
-gotta image is mutually exclusive with tdx_fw_write().
+You're correct. I had a lapse there. Branch updated. Thanks!
 
-It'd be nice if we could make the P-SEAMLDR calls completely NMI safe, but
-practically speaking, if KVM (or any other hypervisor) is playing with the VMCS
-in arbitrary NMI handlers, then we've probably got bigger issues.
+[1/3] module: move 'struct module_use' to internal.h
+      commit: 6633d3a45a8c075193304d12ba10a1771d1dbf10
+[2/3] module: make structure definitions always visible
+      commit: a55842991352a8b512f40d1424b65c911ffbf6fa
+[3/3] kunit: test: Drop CONFIG_MODULE ifdeffery
+      commit: 699657e8e50ae967ae26f704f6fbfa598fcb0cef
 
