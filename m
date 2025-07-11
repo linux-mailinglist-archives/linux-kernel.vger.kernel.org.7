@@ -1,153 +1,115 @@
-Return-Path: <linux-kernel+bounces-727687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E31B01E14
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:43:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28AC8B01E1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2E6C164122
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:43:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996381CA5CCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CD52DCF49;
-	Fri, 11 Jul 2025 13:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25232D7800;
+	Fri, 11 Jul 2025 13:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kfKB8JDD"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q9+YTxJ0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B12D2D0C82;
-	Fri, 11 Jul 2025 13:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5854A24;
+	Fri, 11 Jul 2025 13:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752241359; cv=none; b=JC/qe2ajXlv3CvSFO09ljpG3ombv7Ov1F/puORMWy4RulNyMQLla/G3nlNcLWuxpxO1f5LmuJgpRrjqKBU/Xxh4bGgpK9vT5BY1KfJYbLJ4ilRgE96VvaPnQDzrVH2Npil2Qv8gJ3Bd8vTLsiQ06hAgJzyB34wg4Z3gzlWNGbl4=
+	t=1752241504; cv=none; b=sipPDbuC2KXbTdJ3CAe4ocezKmHw26CiSmII91z6xhPjeErgdtcaVSooIPDfQLNsitFiwvpt/YwuzeiQD5VrILNP/3Z1H30RqaEsMarkwRDSWiv5UGwdTgEBwzIqTyiJv8FpGeuEu1GddL4kRQQYA+88J4yqSoqQa3LjysYJLEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752241359; c=relaxed/simple;
-	bh=oROE2Ps45qAjTMX5vLh9GPq6k9n0b7mp9Nu8qZt33tU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OGyw2MkTkpUCl8q7CTKuS/9ZxL6UMTFTSF20bG53XHU+Cw9w3jpBRwDtOmdZaDVy+TNPKoXoGs6DLuf4kj1uNjm6rnykJdYSyE12LnkOdg8OL11+dBaidUpD/ZtLAIzG+Cot627cxpF+eGUztkJLz7lO6TKY2W+Li3c2VV96elI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kfKB8JDD; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b7f41d3e6so26798071fa.1;
-        Fri, 11 Jul 2025 06:42:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752241355; x=1752846155; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=39EoorCQWAQoQFijm8lMtfRFrqL7nR8KMeohvrKmerY=;
-        b=kfKB8JDDGABglRRuBYj5yCRm8aZ17bxOVBLYXGl+f+MI/VA92L/j6G1r81NPIaD3cT
-         HXja7fNCuebW7Oq8Qczb8KTP0zb8dDmYeffyzqMf2w7a00C294kvKDptRi2UtuoMw6rx
-         a2YInlNk72SA58ZRNocpJB5xgkvYAakS/7s/HYXBDBxeApRiDGq4keSQjysgsH5VV+65
-         hVlUXi5ooTLnsNAJYawuulR4krzVR1WjsO4GQGvhaZWgcjvlLIZ6NHsTSbxt54el7lbN
-         SUKrbpZgu74A3ym9E0cXeW4sLa7xv8UtaSx3VoY/18z3RMUrtniZBZ3Hc33ICSVO4M6Y
-         WsmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752241355; x=1752846155;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=39EoorCQWAQoQFijm8lMtfRFrqL7nR8KMeohvrKmerY=;
-        b=xVVfZ29W/Du+WvhCXL7xf9WGwBLA3VuEnklCyEIjZnF090EgE9ovpG3FCyN4utssMH
-         fJNuPD7XfdH+fF5FkZSARrou/jvvoP2KnlONn0zCXtnPQWCT+UqGSkswRaivNlJdcN1j
-         o/fcxNeaYFZdE3Y/Qkm/vmTecBSrQga2h3e+QP9hclcd1zGbt1aCKgdnVgksfXtQw6ij
-         l5JxeL1mFdYy6DymErvFU1Q0x1Spg4/o6bNnIR5DmDgKqwzd31pNiEzMdbHZOytZQdF0
-         2P2QKDEF0ZabsSiuuSmlFwqAPYjuboNrYtUOYcwv7rlJ53rc8qf5nR8LKlaoQHJO78Am
-         sczA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKO0+p5fjXQk1tLCZ2wZUw0PR3RNRKewAjFj36aXDi0u1TTwc6A6PLm3Ri80hth3ws1Rjfh6SqI9EItx1j@vger.kernel.org, AJvYcCUm1+TuCNeCO61huMPm/mvp/dugUiHZ0RnF7WGg966oNqD5s6e5/I4aY4/dLKX4B8avdaIyll0nJEh8HAz/RFjn@vger.kernel.org, AJvYcCV7mpiAAg0rDFXcbPFvTnicZBqhA4jy+vfLdap2U3QU/qNciRKLOJnhP4/ioRiqplom5XNazXOu1fHZVkKu@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCbFawew0/Kl/2UwBuYFBUKFnVEDOWK81bbOt7jutpLnsthoAU
-	VRHZFXeGTJt+zQRpFbydWfOA1ZaMmA9P5QGnJ7msT8KWypVfvipsl+qJ3GPaPb8AwHpU5lO9p/X
-	ExNdWA3yWNleKR/4AQ8+xk1cM5NsLxo8ZTaj/
-X-Gm-Gg: ASbGnctZyuo5Pvi2sRygt0T9NOkSLMOGhGhs7AihXpPNB2KjjDn5EPAbt378vSCc3sp
-	qYohx7YsqOQtzLTl81i6/Esf4tLecsF/By1369vLNtx6Bh9co4a+dpdwciTNHFflmNRZT/PegxX
-	vImOiR/p4K0hINWKA7a7I1RrRo6/jvjap74wrFe6t5eRXPYhppo29AK+AnS+iB2SZ7tgkYOKvVQ
-	++yWBnMfYRFLpyI
-X-Google-Smtp-Source: AGHT+IET3tChwRNmUwM9hHVguZQq8p8eI58/zOz0l+xdRxUmz5WK7rH/mwNHDzxM4utV5gWoBUaRNo/tCTeqtKNnO1M=
-X-Received: by 2002:a2e:8e27:0:b0:329:136e:300f with SMTP id
- 38308e7fff4ca-32f50fe171emr18095851fa.13.1752241354222; Fri, 11 Jul 2025
- 06:42:34 -0700 (PDT)
+	s=arc-20240116; t=1752241504; c=relaxed/simple;
+	bh=f3rQynSOZUFNU+NuqbfPpRtj0evYLsR/NIIH6sWBbgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ArGJ3ZoRr7u3qwxN8xSkPFbVp/D5mpe7t5bzPLYCHjr1HpttRLEX71QRy1cjI7ZHhXRLUHsZQc1cefhRS2zPvQEygT/I7/PfH4DOjjeZq+zUj9gXWwIvBsUAoB6f/koDK82rHqviYbHwRe60GYfwuD5cQAcWQIahs5UMoTqKWLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q9+YTxJ0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3DBAC4CEED;
+	Fri, 11 Jul 2025 13:45:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752241503;
+	bh=f3rQynSOZUFNU+NuqbfPpRtj0evYLsR/NIIH6sWBbgs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q9+YTxJ0nh8uwNC6GfWTky0LFWXlJ7YGo4Qj+iur4hP29L9AX1sFUobfUynxxNJr9
+	 4NP4lpWB8lic8on6GHkoXvkjbIXnu55ompKxO/dekRVwARa6RTZLu5GA+BKSAXe6KP
+	 a6v2BUfIZIa6A/k4Fdd0iGUSnyCyUe981csB8LtGzpO0mxtRjd90F/F88v2NWFPjJD
+	 99Pbc0jWgsjZMg3lASe+do4/pEv8HibrfkCSCuEqW+HcimS1o0xSAgBGE91jqW7Gcy
+	 CjCoWltugp/Ts0NksjqKWIOHPN7KF1035HYdnvA0B1QBWn51p4g7/BXwZWmv1HUfog
+	 HaipDb0yXeWDg==
+Date: Fri, 11 Jul 2025 14:44:58 +0100
+From: Will Deacon <will@kernel.org>
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [RFC PATCH 0/7] arm64: Make EFI calls preemptible
+Message-ID: <aHEVWjyr7fxA3v93@willie-the-truck>
+References: <20250514174339.1834871-9-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709144728.43313-1-brgl@bgdev.pl> <141abf1f-2739-4ccf-8a2b-3451c299ef49@oss.qualcomm.com>
- <CAMRc=McYqNm4gVgDir=Er_TdOCFUknapFx8a7q4cdyY63sb-0A@mail.gmail.com>
-In-Reply-To: <CAMRc=McYqNm4gVgDir=Er_TdOCFUknapFx8a7q4cdyY63sb-0A@mail.gmail.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Fri, 11 Jul 2025 09:42:21 -0400
-X-Gm-Features: Ac12FXwohiTsCZROcI6K5kmmLycoMCK7116-tdsQW2O4iTGVevZHLq6FbkCuz4U
-Message-ID: <CABBYNZJQrHEWGBaNy77NqTbNn8jU=iRi0wsnvPqDb6rA9E5-7g@mail.gmail.com>
-Subject: Re: [PATCH v2] MAINTAINERS: add a sub-entry for the Qualcomm
- bluetooth driver
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>, 
-	Shuai Zhang <quic_shuaz@quicinc.com>, Stephan Gerhold <stephan.gerhold@linaro.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, linux-bluetooth@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250514174339.1834871-9-ardb+git@google.com>
 
-Hi Bartosz,
+Hey Ard,
 
-On Thu, Jul 10, 2025 at 10:22=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
->
-> On Wed, Jul 9, 2025 at 7:06=E2=80=AFPM Konrad Dybcio
-> <konrad.dybcio@oss.qualcomm.com> wrote:
-> >
-> > On 7/9/25 4:47 PM, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >
-> > > Patches modifying drivers/bluetooth/hci_qca.c should be Cc'ed to the
-> > > linux-arm-msm mailing list so that Qualcomm maintainers and reviewers
-> > > can get notified about proposed changes to it. Add a sub-entry that a=
-dds
-> > > the mailing list to the list of addresses returned by get_maintainer.=
-pl.
+On Wed, May 14, 2025 at 07:43:40PM +0200, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
+> 
+> The arm64 port permits the use of the baseline FP/SIMD register file in
+> kernel mode, and no longer requires preemption to be disabled. Now that
+> the EFI spec is being clarified to state that EFI runtime services may
+> only use baseline FP/SIMD, the fact that EFI may code may use FP/SIMD
+> registers (while executing at the same privilege level as the kernel) is
+> no longer a reason to disable preemption when invoking them.
+> 
+> This means that the only remaining reason for disabling preemption is
+> the fact that the active mm is swapped out and replaced with efi_mm in a
+> way that is hidden from the scheduler, and so scheduling is not
+> supported currently. However, given that virtually all (*) EFI runtime
+> calls are made from the efi_rts_wq workqueue, the efi_mm can simply be
+> loaded into the workqueue worker kthread while the call is in progress,
+> and this does not require preemption to be disabled.
+> 
+> Note that this is only a partial solution in terms of RT guarantees,
+> given that the runtime services execute at the same privilege level as
+> the kernel, and can therefore disable interrupts (and therefore
+> preemption) directly. But it should prevent scheduling latency spikes
+> for EFI calls that simply take a long time to run to completion.
+> 
+> (*) only efi_reset_system() and EFI pstore invoke EFI runtime services
+>     without going through the workqueue, and the latter only when saving
+>     a kernel oops log to the EFI varstore
+> 
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> 
+> Ard Biesheuvel (7):
+>   efi: Add missing static initializer for efi_mm::cpus_allowed_lock
+>   efi/runtime: Return success/failure from arch_efi_call_virt_setup()
+>   efi/runtime: Deal with arch_efi_call_virt_setup() returning failure
+>   arm64/fpsimd: Don't warn when EFI execution context is preemptible
+>   arm64/efi: Use a semaphore to protect the EFI stack and FP/SIMD state
+>   arm64/efi: Move uaccess en/disable out of efi_set_pgd()
+>   arm64/efi: Call EFI runtime services without disabling preemption
 
-Should this go via bluetooth-next or arm-msm has its own dedicated
-tree? If we continue using bluetooth-next let's agree to have someone
-from linux-arm-msm signing-off the patches for these drivers before we
-merge them in bluetooth-next, including this change.
+I quite like the idea of this from the arm64 side (modulo a small comment
+I've left on one of the later patches), however it would be great to hear
+from one of the -rt folk to confirm that this actually solves a problem
+for them.
 
-> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > ---
-> > > Changes in v2:
-> > > - add remaining QCA files (Dmitry)
-> > >
-> > >  MAINTAINERS | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
-> > >
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index efba8922744a3..d018923ddd3eb 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -20464,6 +20464,13 @@ S:   Maintained
-> > >  F:   Documentation/devicetree/bindings/net/qcom,bam-dmux.yaml
-> > >  F:   drivers/net/wwan/qcom_bam_dmux.c
-> > >
-> > > +QUALCOMM BLUETOOTH DRIVER
-> > > +L:   linux-arm-msm@vger.kernel.org
-> > > +S:   Maintained
-> > > +F:   drivers/bluetooth/btqca.[ch]
-> > > +F:   drivers/bluetooth/btqcomsmd.c
-> > > +F:   drivers/bluetooth/hci_qca.c
-> >
-> > + Jeff, maybe you/ath would like to be included there too?
-> >
->
-> I suppose this is material for a separate patch and MAINTAINERS entry?
->
-> Bart
->
-
-
---=20
-Luiz Augusto von Dentz
+Will
 
