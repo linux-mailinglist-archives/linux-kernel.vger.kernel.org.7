@@ -1,105 +1,99 @@
-Return-Path: <linux-kernel+bounces-727703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19818B01E59
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:52:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C3CB01E5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E964F1CA85FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:52:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 711D65A5FB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99A92DE70D;
-	Fri, 11 Jul 2025 13:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054522DAFD7;
+	Fri, 11 Jul 2025 13:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UYERQJLk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="fsIEixqa"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215F72D97A2;
-	Fri, 11 Jul 2025 13:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D622C1591;
+	Fri, 11 Jul 2025 13:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752241918; cv=none; b=cr1Z5jRaKXwJmNo0pGxZ1i+6TH20ukTSxSC+jeEBbrJJp5XU4jUXnR5ZxjpZJxyfPeKtqUlzwSY8vzBr7rWD4YOf/F7b66IsgoO9WdgBQpn4C5zHxcwwA9B5dMqYybaElUUsTfqkugKod/yOlyPXblY5YB0Hot4U82Sp7DxCpU0=
+	t=1752241954; cv=none; b=Y4m/PxGctd+xkQYVZIPyPdcPf56GPu2o4BJEDrKcSwYZ8b6LLSTt2/zduUQODWNWMAPycldlrCAyGlaArEV/6Y67jB3eoRfZ65A/gW1W7aUeRvtunSp/tn+ukaXunGILIJ3LKJDhcQnA2ccCehIoeQtMHkwj14HdotG+92soYUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752241918; c=relaxed/simple;
-	bh=gRYeWY8Ue9r1jN9YT5ewnploOKjK9ri5RO9mKqQvmVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y02/07Lj4QV7jO33fb/Vq0eU0JwaMvRIg2Til+k7jVdPxc9PJ4L5jIt1klN6hj7Z+bzJOoE5+KZN4oAm7sUEn7w/QBFfC1+ML5veyiRekxI4t3iTmi13jRzqAE49nzngV/0iASUGZlqeHnO4YP1h9BhN+vydWzR/sn+igFmZ+KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UYERQJLk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1684FC4CEF9;
-	Fri, 11 Jul 2025 13:51:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752241917;
-	bh=gRYeWY8Ue9r1jN9YT5ewnploOKjK9ri5RO9mKqQvmVo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UYERQJLkSJKOTk5V7QJ/3A+QDttYxwbWTbb/D3nGl4j2G2ydS2cqmdvjcE/XOqJk5
-	 TCsCTR7TwYbP06k7ifflZTo0EJWFRRPJOz2x1lD0xunGK/Y3jYO4EOx9YNOHDFiXIT
-	 K750YtN2FULM+apYWbs1duI6j9XlpKJyRv5MCqiFepksD5N7QGu8sUiHm4LniI5Jp9
-	 yapUlRKZtIRQtAE7zd7p3QkHxlB+9o9O72wLv+bVwbmc/5a4OOrRvlLki7E2P15PM3
-	 gLFU7vloO0Ma+2qWXzh0Ly/cf5jEesDHJOieuLGUyGIGRz3rjhyKOkb796T3tG29Lu
-	 JDYPgjHaY1g0Q==
-Date: Fri, 11 Jul 2025 06:51:56 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Parav Pandit <parav@nvidia.com>
-Cc: Dragos Tatulea <dtatulea@nvidia.com>, "almasrymina@google.com"
- <almasrymina@google.com>, "asml.silence@gmail.com"
- <asml.silence@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Saeed Mahameed
- <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, Cosmin Ratiu
- <cratiu@nvidia.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC net-next 1/4] net: Allow non parent devices to be used for
- ZC DMA
-Message-ID: <20250711065156.0d51199e@kernel.org>
-In-Reply-To: <CY8PR12MB71956FF1D74C1EAE3401891CDC4BA@CY8PR12MB7195.namprd12.prod.outlook.com>
-References: <20250702172433.1738947-1-dtatulea@nvidia.com>
-	<20250702172433.1738947-2-dtatulea@nvidia.com>
-	<20250702113208.5adafe79@kernel.org>
-	<c5pxc7ppuizhvgasy57llo2domksote5uvo54q65shch3sqmkm@bgcnojnxt4hh>
-	<20250702135329.76dbd878@kernel.org>
-	<CY8PR12MB7195361C14592016B8D2217DDC43A@CY8PR12MB7195.namprd12.prod.outlook.com>
-	<20250710165851.7c86ba84@kernel.org>
-	<CY8PR12MB71956FF1D74C1EAE3401891CDC4BA@CY8PR12MB7195.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1752241954; c=relaxed/simple;
+	bh=A1NvIf/cMI2/G4TKe3ep1TdVHeGeSrv+LOvqtuE0iXM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sivHEbu/1IGGQOva6k+YmKuVdf7bKMFPYxpK1F2kVIuk6/AHIpO+TX4q3zucYA6MmJYdNnSpk9MYUa7z2R9xkb4/CNEmzVuhjfMO82H/uemTsV2oOcgjE7Vn8/BH3hjk29/1HCKlzaOfTL6tt3KGgWDRlH2bCa94WBTHcYgyVdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=fsIEixqa; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=NKqIfuyJtyGfR0SZJka2+dpyfUI6TQBVPgy996gWC+c=; b=fsIEixqa0w/XhKgEDC/043kktZ
+	Rsir7dCoHDJRddE2cen9wi1FWgKWOs7rFRlKrUQJFG+9//6yvvpPw2z8spwsSRnXtNhzFyaqgnzql
+	TU4LqW0GKCOmO9E49qHr1yeFhxPWW05b6wldcXs8Xn42rC566RrGo1evIF7QQz9waXHQWRls3Bk8Z
+	xVsB+sEj9g3L5hvGp+lKHLun4MAYGNV07t6sVoOhLYy63QFMMUQUUDd7Mz97Aw8KQG6QKVgAv9Cbo
+	g6PzhJkuoL4ZfssgUNMWA0Mh0eTNnxitGLiCGNROVSz2iOxFvnTVm7V1rw0u4SlvH7e3yJuniRygW
+	/pu93vpA==;
+Received: from [179.118.186.174] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uaEAk-00FOet-V4; Fri, 11 Jul 2025 15:52:19 +0200
+Message-ID: <018a61b2-a5d9-422e-b0a6-890d584d83dd@igalia.com>
+Date: Fri, 11 Jul 2025 10:52:14 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] drm/doc: Fix title underline for "Task
+ information"
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>, airlied@gmail.com,
+ simona@ffwll.ch, Krzysztof Karas <krzysztof.karas@intel.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel-dev@igalia.com
+References: <20250704190724.1159416-1-andrealmeid@igalia.com>
+ <08de556b-e63c-420e-8ab4-c03712be9709@igalia.com>
+ <aHA33ispT8V6GUhn@black.fi.intel.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <aHA33ispT8V6GUhn@black.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 11 Jul 2025 02:52:23 +0000 Parav Pandit wrote:
-> > On Thu, 3 Jul 2025 11:58:50 +0000 Parav Pandit wrote:  
-> > > > In my head subfunctions are a way of configuring a PCIe PASID ergo
-> > > > they _only_ make sense in context of DMA.  
-> > > SF DMA is on the parent PCI device.
-> > >
-> > > SIOV_R2 will have its own PCI RID which is ratified or getting ratified.
-> > > When its done, SF (as SIOV_R2 device) instantiation can be extended
-> > > with its own PCI RID. At that point they can be mapped to a VM.  
-> > 
-> > AFAIU every PCIe transaction for a queue with a PASID assigned should have a
-> > PASID prefix. Why is a different RID necessary?
-> > CPUs can't select IOMMU context based on RID+PASID?  
-> It can, however,
-> PASID is meant to be used for process isolation and not expected to
-> be abused for identify the device. Doing so, would also prohibits
-> using PASID inside the VM. It requires another complex vPASID to
-> pPASID translation.
+Em 10/07/2025 18:59, Raag Jadav escreveu:
+> On Thu, Jul 10, 2025 at 06:27:45PM -0300, André Almeida wrote:
+>> Em 04/07/2025 16:07, André Almeida escreveu:
+>>> Fix the following warning:
+>>>
+>>> Documentation/gpu/drm-uapi.rst:450: WARNING: Title underline too short.
+>>>
+>>> Task information
+>>> --------------- [docutils]
+>>>
+>>
+>> This series is now merged at drm-misc-next, thanks!
 > 
-> Tagging MSI-X interrupts with PASID is another challenge.
-> For CC defining isolation boundary with RID+PASID was yet another
-> hack.
+> Shouldn't this be drm-misc-fixes?
 > 
-> There were other issues in splitting PASID for device scaling vs
-> process scaling for dual use.
-> 
-> So it was concluded to opt to avoid that abuse and use the standard
-> RID construct for device identification.
 
-I see, that explains it. Thanks Parav!
+The commits that those patches fixes can't be found on drm-misc-fixes as 
+it's now, so I thought I should merge it at drm-misc-next.
+
+> Also, this series continues to not land in my inbox. This is why I use raw
+> emails in my sendmail automation.
+> 
+> Raag
+
 
