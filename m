@@ -1,117 +1,138 @@
-Return-Path: <linux-kernel+bounces-727337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686A9B018C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:51:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8B21B018B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:49:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9386BB47109
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:47:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F16776615C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C941E27D782;
-	Fri, 11 Jul 2025 09:48:51 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5DD27F009;
+	Fri, 11 Jul 2025 09:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="khfDsRpS"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1866925B2FE
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E5827CCEE;
+	Fri, 11 Jul 2025 09:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752227331; cv=none; b=pSUu7sWspSYFa16Vll1aYymIlVU8NGhdN/DkdfgRTkxZEWt/EkuF1tIKpOPBBzzgaifnktNzLg1CoM68WS7/02AnuLtl6cQUx+HLzJwbIPag2pv0ZMG9sEFeZHb63xKFkaMxr9bSFj4fq7RxPOyHFdGHkzt3Qqq1qf+XYFNDHWo=
+	t=1752227361; cv=none; b=BzjxpKLvmMV0sz9GBLmm457skwRUoCGFvsq74K8kOG9iqx+lyM/msUNJhA+6yKy7KQdyyXoifINKQtDaQsE1n+3l4GktYn4xYCIrtU+7mFU8Cjk8quSKVnwWUWbHuhhZVe3qdl+MinOn/IsrC/7NuPkJUBotnDKRM/QUF30o4Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752227331; c=relaxed/simple;
-	bh=XE04xjW8Ih8MjJqQrwcHCMZEgNqRZvl5cOT9qaT/7HI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qRpDB0L1bfptW1CZGAYPpOCp63qy9mQ4q+qojimouw4b5/7whUCh8R0fIcBsSEMkMyfncoPyKsPGpKdilF+YYY95lloSmB1QzMAPE5mxUeP2dR0PKrZC23YqK9860/IA5IshwXZk6pGfO7cgtdryBhgpQEDGxpHBQRQiVsNqK8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uaAMx-0007Hr-RZ; Fri, 11 Jul 2025 11:48:39 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uaAMw-007tqA-0z;
-	Fri, 11 Jul 2025 11:48:38 +0200
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	s=arc-20240116; t=1752227361; c=relaxed/simple;
+	bh=OFqeW5JZMl9wQNRy6aXIuRDpt7LacH3LfdXBhsVYWcE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=q8lNZ75WRbiTkhS+E0tZs+IumQWeu1wioMYqYeJc1H81+AKrh7qwGdYx55TxURdMW64HQtR4enfTk1kD/v87VA+rarfVBymHfi6xHcpgl2dGjRke3RhxEF0nRY+K6BfEQAnLUeppBENaA8ABqZq00lMe/4i91J4k3bwbaTsKBd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=khfDsRpS; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1752227351;
+	bh=gZBQkqjNAPMPDfAyWwddtLFuhgnMCaqiylfHI707JNs=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=khfDsRpSX1FhjrvbPEY/FfqEdlSApy8cs2OjDQSV3kDf4fPG5k6WoUFn62OOGIIe6
+	 D3LzfEyzAX19CHj9QQX+IzkK02ckal6fOrhW94JsPnQieYjwVKWX4uStK0n9IGV6ru
+	 qQbJMZhdMLpzej+trRXvbro1lRrRnTGb45vnF4RY=
+Received: from [IPv6:110::1f] (unknown [IPv6:2409:874d:200:3037::3])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
 	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id EFAD343C77D;
-	Fri, 11 Jul 2025 09:48:37 +0000 (UTC)
-Date: Fri, 11 Jul 2025 11:48:37 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, linux-can@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
-Subject: Re: [PATCH v2] can: rcar_canfd: Drop unused macros
-Message-ID: <20250711-expert-vengeful-urchin-9419f5-mkl@pengutronix.de>
-References: <20250702120539.98490-1-biju.das.jz@bp.renesas.com>
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id D941A65F62;
+	Fri, 11 Jul 2025 05:49:03 -0400 (EDT)
+Message-ID: <6856a981f0505233726af0301a1fb1331acdce1c.camel@xry111.site>
+Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
+From: Xi Ruoyao <xry111@xry111.site>
+To: Christian Brauner <brauner@kernel.org>, Nam Cao <namcao@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>, Valentin Schneider	
+ <vschneid@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara	
+ <jack@suse.cz>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, John
+ Ogness	 <john.ogness@linutronix.de>, Clark Williams <clrkwllms@kernel.org>,
+ Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-rt-devel@lists.linux.dev,
+ linux-rt-users@vger.kernel.org, Joe Damato	 <jdamato@fastly.com>, Martin
+ Karsten <mkarsten@uwaterloo.ca>, Jens Axboe	 <axboe@kernel.dk>
+Date: Fri, 11 Jul 2025 17:48:56 +0800
+In-Reply-To: <20250711-ermangelung-darmentleerung-394cebde2708@brauner>
+References: <20250701-wochen-bespannt-33e745d23ff6@brauner>
+	 <cda3b07998b39b7d46f10394c232b01a778d07a9.camel@xry111.site>
+	 <20250710034805.4FtG7AHC@linutronix.de>
+	 <20250710040607.GdzUE7A0@linutronix.de>
+	 <6f99476daa23858dc0536ca182038c8e80be53a2.camel@xry111.site>
+	 <20250710062127.QnaeZ8c7@linutronix.de>
+	 <d14bcceddd9f59a72ef54afced204815e9dd092e.camel@xry111.site>
+	 <20250710083236.V8WA6EFF@linutronix.de>
+	 <c720efb6a806e0ffa48e35d016e513943d15e7c0.camel@xry111.site>
+	 <20250711050217.OMtx7Cz6@linutronix.de>
+	 <20250711-ermangelung-darmentleerung-394cebde2708@brauner>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ayyagcjcd6zy664r"
-Content-Disposition: inline
-In-Reply-To: <20250702120539.98490-1-biju.das.jz@bp.renesas.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+On Fri, 2025-07-11 at 11:44 +0200, Christian Brauner wrote:
+> On Fri, Jul 11, 2025 at 07:02:17AM +0200, Nam Cao wrote:
+> > On Thu, Jul 10, 2025 at 05:47:57PM +0800, Xi Ruoyao wrote:
+> > > It didn't work :(.
+> >=20
+> > Argh :(
+> >=20
+> > Another possibility is that you are running into event starvation probl=
+em.
+> >=20
+> > Can you give the below patch a try? It is not the real fix, the patch h=
+urts
+> > performance badly. But if starvation is really your problem, it should
+> > ameliorate the situation:
+> >=20
+> > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> > index 895256cd2786..0dcf8e18de0d 100644
+> > --- a/fs/eventpoll.c
+> > +++ b/fs/eventpoll.c
+> > @@ -1764,6 +1764,8 @@ static int ep_send_events(struct eventpoll *ep,
+> > =C2=A0		__llist_add(n, &txlist);
+> > =C2=A0	}
+> > =C2=A0
+> > +	struct llist_node *shuffle =3D llist_del_all(&ep->rdllist);
+> > +
+> > =C2=A0	llist_for_each_entry_safe(epi, tmp, txlist.first, rdllink) {
+> > =C2=A0		init_llist_node(&epi->rdllink);
+> > =C2=A0
+> > @@ -1778,6 +1780,13 @@ static int ep_send_events(struct eventpoll *ep,
+> > =C2=A0		}
+> > =C2=A0	}
+> > =C2=A0
+> > +	if (shuffle) {
+> > +		struct llist_node *last =3D shuffle;
+> > +		while (last->next)
+> > +			last =3D last->next;
+> > +		llist_add_batch(shuffle, last, &ep->rdllist);
+> > +	}
+> > +
 
---ayyagcjcd6zy664r
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] can: rcar_canfd: Drop unused macros
-MIME-Version: 1.0
+Sadly, still no luck.
 
-On 02.07.2025 13:05:29, Biju Das wrote:
-> Drop unused macros from the rcar_canfd.c.
+> > =C2=A0	__pm_relax(ep->ws);
+> > =C2=A0	mutex_unlock(&ep->mtx);
+> > =C2=A0
 >=20
-> Reported-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-> Closes: https://lore.kernel.org/all/7ff93ff9-f578-4be2-bdc6-5b09eab64fe6@=
-wanadoo.fr/
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> I think we should revert the fix so we have time to fix it properly
+> during v6.17+. This patch was a bit too adventurous for a fix in the
+> first place tbh.
 
-Applied to linux-can-next.
-
-Thanks,
-Marc
+I tried to understand the code but all the comments seem outdated (they
+still mention the removed rwlock).  IMO we'd at least clean them up...
+and maybe we can notice something erratic.
 
 --=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---ayyagcjcd6zy664r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmhw3fIACgkQDHRl3/mQ
-kZwxuggAk3XM8kUBt5sCB8IgNc+xXLujHbRWgpABtj7VuNTfDF/Nglp+xHh/xGHt
-62gSc85PhiDj3Bik+hYR5LnWKl0P92x3hltGuWsePGvPv4ha7rp8LDICYy2mSckY
-L+PJUNNESpiSNRIdwpdrk2U/a5PFANw1GwUdMkGSoJ5bUw0XhCyDfSSocSaKUe/J
-yf+VZ8Tq13xWZBKWcEDJ9+q71CVZsdfayVRYwFEezzDTOJ/chxI321KExUTW/xij
-5BD32NmEvEjxXCmQCgrqw3vqzCzggw8uavD7m7GoAByTCXfh4bR1OCqsMuYPmJP4
-6Lkknu6ij97AIBH8gPr9zjoNQ9eS6Q==
-=qgPY
------END PGP SIGNATURE-----
-
---ayyagcjcd6zy664r--
+Xi Ruoyao <xry111@xry111.site>
 
