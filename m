@@ -1,142 +1,263 @@
-Return-Path: <linux-kernel+bounces-728106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92158B023BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:34:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F56B023C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23BEDB4577E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:32:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B407A8014D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0172F3C36;
-	Fri, 11 Jul 2025 18:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D6A2F432C;
+	Fri, 11 Jul 2025 18:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Unc4eNq/"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AZC1LZEy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wC2dAifZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F442F3C1B
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECC02F2352;
+	Fri, 11 Jul 2025 18:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752258813; cv=none; b=GpOwBcU7viWF4PFPL2uY2thpmbGFaLvCnPLwK5j3OMB//D7XV5bkT1LIjqNGG+Fr8k/sP8CD9XezQdRcBiQYwmit37D1Zy/JgHdHfEcrxHfA3iTYgS+1aFrxtROpramRLH62TJITdtOB9o9mUOeIlw2swvG1hkgwmnJGPERAb2o=
+	t=1752258818; cv=none; b=gXFeLI6t5WPAjehXlTLD7e7koPsH0AiDydSNYIqfQD3mImpvoR8h2kcd/Tqu+3ZY1WoXYqPD+u7gzU9P4fUHrszId8+r0p3pIDm6m3cpuofRY6ol1Ds23XeYjza8oEs6q2WCQJmFQgwUNcAP616r2LZ9MLMnuOzDQLOKS26Ry+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752258813; c=relaxed/simple;
-	bh=bWCC4ZoPLffqwFBCGshYKFXjSxX0H1BlPT8PIH3CjDI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GygF2wpto+CbQqy6NcXBzhlgrDKggdz/yBHkr46mNbP0sxX/36SXyR3eaGb83DMXHveSmnkJ+UmWRFfJIcxgK/ExlYiY/QxfoLq7JCKYaBhWyE9Tqh7YDPb6Fq4b4H8u0z3zX6eAjDf893gbUUagLNOrP99Zjfkiu6YK4aowOGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Unc4eNq/; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ae0dffaa8b2so471419666b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:33:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1752258809; x=1752863609; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fkiMZ2J4WWxAe30Yz9eXRKes27bISK6iOQFaa/jG/i8=;
-        b=Unc4eNq/ltpEup6WB13kLDMZh+EEbnYwSNKiPtqjd4cAi/lKD59yzh+eCMBbTW4A0D
-         hn0RBaiBadQ9bVyq/fvK8rAYhSEw+bZlhFC9aV+ZD1pgv1teJeElN8isRdLAWauXkoxm
-         YFOISZynAlU1mLzXycae6AY4Ci+rN0qFcMxtk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752258809; x=1752863609;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fkiMZ2J4WWxAe30Yz9eXRKes27bISK6iOQFaa/jG/i8=;
-        b=ryMMJrt7cZ+dz4GmhvJmMA1pqZcN5o4WjRH+SOlPQCA2xgOrmLyMTGJtc/8nhOq+Qd
-         zn4Zw2y0sHSIFHGdkIc+jCmpvwJcZNudWt7slQw3ldd3jKFu3vUtX1/QmyhJdf0G51sj
-         mB/D1ySDXDqVpeqO0tu9hUaMxelHwhx9T75vEI0Bk7m50KmDHHrV/+POPtMi+WuhfrBt
-         qUwTFFzpjSuKcDxVRTGysTeGwrdOvtKR14xkiH/lYyOk9be4yRJ/pKu8rJuYZ+TpzZo0
-         Dy8c5LDeWaH+Ifa2bNU4KZsIQ7b1kGBe82jmlaa3dPE2wt8hDtHNdHrTb6FNVXwLfbK7
-         7+pg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4FV3qoi4QuyYrGt6DLMB387pqFkaT8NIlefny9Zwdeai6Mku052rNQMD2WW9AlrG6vT8YcH7nThjBPIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNlOYUo+QOGXmwgIcmApP+dNFocElCo+lsoSUaX9TEMBx+sirQ
-	fnO0Gxup4+kc+o2KR/uCXqbUQSQkiSEILqJ/BcA1eMaUgobHw3VM6mRMHVd4/ZiIyPBLlYKv5Ih
-	VQ96gsRtJsg==
-X-Gm-Gg: ASbGncuA8QAd3GZQKwhSdv0Sv2B1qoniKDcsaxtVGGlEOZ2Ons/x9qPmHDRCnwwk1Yd
-	smODzTyxgpkUOC5t5d1eBKdLWQFokvCztrDaH9kplU9y6VTak5DwwKLTSYhx6xqNHVM5P5ux8Vt
-	nPMLc0NljJ76AFFWnxZsQ/0vOBfhdHgR/NrR8b4j2idOuyWWeZoZxeG/paJ/brwUPIH8n9Fb21F
-	H1Zz6MSvGuVv8U6CGgAUeLjA0nWfxu2JB9FktyrtjzCblDubMotDzh3sR4DrBLY+ts6vE1ohcwL
-	nYKPVb0nuYBXn6Mx2rJHoSYH7hFs9gbOM23lJOXm2QzVrb+3jDWdoSrkxgT8MkQybZdl5tOHBJ7
-	BmnNV24GNlNS/WeSefobPJK/62jjjae4vfuyFVNymuxtv0QcDA7z1vIPRm7YfPzzmsYe47TDy
-X-Google-Smtp-Source: AGHT+IEsG8smEDJjGW8sqLcXvOn38QtGKoJMpF93dQWfzU2EThoHkVIQxP9DtGiuVfJIPCM9u/KZDA==
-X-Received: by 2002:a17:907:1c1e:b0:ae6:f163:5d75 with SMTP id a640c23a62f3a-ae6fbc13d77mr427603366b.11.1752258808828;
-        Fri, 11 Jul 2025 11:33:28 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8264613sm340569566b.91.2025.07.11.11.33.27
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 11:33:27 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ae0e0271d82so434832066b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:33:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVYYTgjYh11vPcUGsTwg8XBQ/CkB/uUM6aTWDm4kiDtoOT1qOk2BRBTXb18vzxnSIaocs9jPtlXS+gKfXw=@vger.kernel.org
-X-Received: by 2002:a17:907:3e95:b0:ae0:c6fa:ef45 with SMTP id
- a640c23a62f3a-ae6fbf96592mr483791366b.41.1752258807150; Fri, 11 Jul 2025
- 11:33:27 -0700 (PDT)
+	s=arc-20240116; t=1752258818; c=relaxed/simple;
+	bh=5I/kMNywkNnQWt/bvrHmxB5n1jC/mEoiOIo/Fv5jrUI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=aYaVLv3GlgNJjLGuC4AX+jQdzk1lzOmrlPcA4/vdrIzmUcwIWzfqlZIKkpDQGGvPfLuZYZQj8hFlxlqQNUHS4i7QeJkyOuDwCfbi/+UvqOfWh5tSTQa3CAsIgcaKH2CT3CQqFxSVnOqgSt191mE8LDc8DASCZ82NyIwPyQCdQnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AZC1LZEy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wC2dAifZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 11 Jul 2025 18:33:32 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752258814;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MRDxd/Y0TcWpRtX6xEZlReXGHfvk8BI3RIcGSWJBFQA=;
+	b=AZC1LZEymDN+dvVr0RdBVsGVl6OlhKq1BFcjVKtOpE/AOvcVLBdqrq7IfLdGCrzNBITt4b
+	Rr3DwV1f8ym08dWNQChR4PEnf27bnu4ljmHdTgAFepWwegFexC5YoJIBCaGwQFLMMiseRz
+	0dNTDCm4UmgnyXXUvhcQww522llOFgbRUr5tPZ00Otad7k8W05mzBD+79IJuIFWywmJG+Z
+	dq3XH0+HG5TgKFGgHFBd6vQHBFLwQpRBl+WOp0LINOpmbK7P7c1Kew5neToU+u/NGOpSCf
+	n2bcrbwI/kceF91g3HXRgLSeEnxbrqnMGGmK/CEY40L/dt6+cIW6QHXoNS4vjQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752258814;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MRDxd/Y0TcWpRtX6xEZlReXGHfvk8BI3RIcGSWJBFQA=;
+	b=wC2dAifZwrR8g2MZVKcLKyURf49MdUgszIrjdqpDgEusg/nW5ay1Pz90JjiWidRXDtWOn+
+	E0W6umxu3wYT1fDQ==
+From: "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/futex] perf bench futex: Remove support for IMMUTABLE
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250710110011.384614-7-bigeasy@linutronix.de>
+References: <20250710110011.384614-7-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711151002.3228710-1-kuba@kernel.org>
-In-Reply-To: <20250711151002.3228710-1-kuba@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 11 Jul 2025 11:33:10 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj1Y3LfREoHvT4baucVJ5jvy0cMydcPVQNXhprdhuE2AA@mail.gmail.com>
-X-Gm-Features: Ac12FXykIL-Mz_Bqw9_dzJEakCBd9Y2pyk80DOugpUKw15R_JJAEpkwfYZHB3M4
-Message-ID: <CAHk-=wj1Y3LfREoHvT4baucVJ5jvy0cMydcPVQNXhprdhuE2AA@mail.gmail.com>
-Subject: Re: [GIT PULL] Networking for v6.16-rc6 (follow up)
-To: Jakub Kicinski <kuba@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Simona Vetter <simona@ffwll.ch>, Dave Airlie <airlied@gmail.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	pabeni@redhat.com, dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <175225881281.406.10995341488572183084.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-[ Added in some drm people too, just to give a heads-up that it isn't
-all their fault ]
+The following commit has been merged into the locking/futex branch of tip:
 
-On Fri, 11 Jul 2025 at 08:10, Jakub Kicinski <kuba@kernel.org> wrote:
->
->  The Netlink fixes (on top of the tree) restore
-> operation of iw (WiFi CLI) which uses sillily small recv buffer,
-> and is the reason for this "emergency PR".
+Commit-ID:     7497e947bc1d3f761b46c2105c8ae37af98add54
+Gitweb:        https://git.kernel.org/tip/7497e947bc1d3f761b46c2105c8ae37af98add54
+Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate:    Thu, 10 Jul 2025 13:00:11 +02:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Fri, 11 Jul 2025 16:02:01 +02:00
 
-So this was "useful" in the sense that it seems to have taken my
-"random long delays at initial graphical login" and made them
-"reliable hangs at early boot time" instead.
+perf bench futex: Remove support for IMMUTABLE
 
-I originally blamed the drm tree, because there were some other issues
-in there with reference counting - and because the hang happened at
-that "start graphical environment", but now it really looks like two
-independent issues, where the netlink issues cause the delay, and the
-drm object refcounting issues were entirely separate and coincidental.
+It has been decided to remove the support IMMUTABLE futex.
+perf bench was one of the eary users for testing purposes. Now that the
+API is removed before it could be used in an official release, remove
+the bits from perf, too.
 
-I suspect that there is bootup code that needs more than that "just
-one skb", and that all the recent issues with netlink sk_rmem_alloc
-are broken and need reverting.
+Remove Remove support for IMMUTABLE futex.
 
-Because this "emergency PR" does seem to have turned my "annoying
-problem with timeouts at initial login" into "now it doesn't boot at
-all".
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20250710110011.384614-7-bigeasy@linutronix.de
+---
+ tools/include/uapi/linux/prctl.h                   |  2 +-
+ tools/perf/bench/futex-hash.c                      |  1 +-
+ tools/perf/bench/futex-lock-pi.c                   |  1 +-
+ tools/perf/bench/futex-requeue.c                   |  1 +-
+ tools/perf/bench/futex-wake-parallel.c             |  1 +-
+ tools/perf/bench/futex-wake.c                      |  1 +-
+ tools/perf/bench/futex.c                           | 21 +++----------
+ tools/perf/bench/futex.h                           |  1 +-
+ tools/perf/trace/beauty/include/uapi/linux/prctl.h |  2 +-
+ 9 files changed, 5 insertions(+), 26 deletions(-)
 
-Which is good in that the random timeouts and delays were looking like
-a nightmare to bisect, and now it looks like at least the cause of
-them is more clear.
-
-But it's certainly not good in the sense of "we're at almost rc6, we
-shouldn't be having these kinds of issues".
-
-The machine I see this on doesn't actually use WiFi at all, but there
-*is* a WiFi chip in it, I just turn off that interface in favor of the
-wired ports.
-
-But obviously there might also be various other netlink users that are
-unhappy with the accounting changes, so the WiFi angle may be a red
-herring.
-
-            Linus
+diff --git a/tools/include/uapi/linux/prctl.h b/tools/include/uapi/linux/prctl.h
+index 43dec6e..3b93fb9 100644
+--- a/tools/include/uapi/linux/prctl.h
++++ b/tools/include/uapi/linux/prctl.h
+@@ -367,8 +367,6 @@ struct prctl_mm_map {
+ /* FUTEX hash management */
+ #define PR_FUTEX_HASH			78
+ # define PR_FUTEX_HASH_SET_SLOTS	1
+-# define FH_FLAG_IMMUTABLE		(1ULL << 0)
+ # define PR_FUTEX_HASH_GET_SLOTS	2
+-# define PR_FUTEX_HASH_GET_IMMUTABLE	3
+ 
+ #endif /* _LINUX_PRCTL_H */
+diff --git a/tools/perf/bench/futex-hash.c b/tools/perf/bench/futex-hash.c
+index d2d6d7f..7e29f04 100644
+--- a/tools/perf/bench/futex-hash.c
++++ b/tools/perf/bench/futex-hash.c
+@@ -56,7 +56,6 @@ static struct bench_futex_parameters params = {
+ 
+ static const struct option options[] = {
+ 	OPT_INTEGER( 'b', "buckets", &params.nbuckets, "Specify amount of hash buckets"),
+-	OPT_BOOLEAN( 'I', "immutable", &params.buckets_immutable, "Make the hash buckets immutable"),
+ 	OPT_UINTEGER('t', "threads", &params.nthreads, "Specify amount of threads"),
+ 	OPT_UINTEGER('r', "runtime", &params.runtime, "Specify runtime (in seconds)"),
+ 	OPT_UINTEGER('f', "futexes", &params.nfutexes, "Specify amount of futexes per threads"),
+diff --git a/tools/perf/bench/futex-lock-pi.c b/tools/perf/bench/futex-lock-pi.c
+index 5144a15..40640b6 100644
+--- a/tools/perf/bench/futex-lock-pi.c
++++ b/tools/perf/bench/futex-lock-pi.c
+@@ -47,7 +47,6 @@ static struct bench_futex_parameters params = {
+ 
+ static const struct option options[] = {
+ 	OPT_INTEGER( 'b', "buckets", &params.nbuckets, "Specify amount of hash buckets"),
+-	OPT_BOOLEAN( 'I', "immutable", &params.buckets_immutable, "Make the hash buckets immutable"),
+ 	OPT_UINTEGER('t', "threads", &params.nthreads, "Specify amount of threads"),
+ 	OPT_UINTEGER('r', "runtime", &params.runtime, "Specify runtime (in seconds)"),
+ 	OPT_BOOLEAN( 'M', "multi",   &params.multi, "Use multiple futexes"),
+diff --git a/tools/perf/bench/futex-requeue.c b/tools/perf/bench/futex-requeue.c
+index a2f91ee..0748b0f 100644
+--- a/tools/perf/bench/futex-requeue.c
++++ b/tools/perf/bench/futex-requeue.c
+@@ -52,7 +52,6 @@ static struct bench_futex_parameters params = {
+ 
+ static const struct option options[] = {
+ 	OPT_INTEGER( 'b', "buckets", &params.nbuckets, "Specify amount of hash buckets"),
+-	OPT_BOOLEAN( 'I', "immutable", &params.buckets_immutable, "Make the hash buckets immutable"),
+ 	OPT_UINTEGER('t', "threads",  &params.nthreads, "Specify amount of threads"),
+ 	OPT_UINTEGER('q', "nrequeue", &params.nrequeue, "Specify amount of threads to requeue at once"),
+ 	OPT_BOOLEAN( 's', "silent",   &params.silent, "Silent mode: do not display data/details"),
+diff --git a/tools/perf/bench/futex-wake-parallel.c b/tools/perf/bench/futex-wake-parallel.c
+index ee66482..6aede7c 100644
+--- a/tools/perf/bench/futex-wake-parallel.c
++++ b/tools/perf/bench/futex-wake-parallel.c
+@@ -63,7 +63,6 @@ static struct bench_futex_parameters params = {
+ 
+ static const struct option options[] = {
+ 	OPT_INTEGER( 'b', "buckets", &params.nbuckets, "Specify amount of hash buckets"),
+-	OPT_BOOLEAN( 'I', "immutable", &params.buckets_immutable, "Make the hash buckets immutable"),
+ 	OPT_UINTEGER('t', "threads", &params.nthreads, "Specify amount of threads"),
+ 	OPT_UINTEGER('w', "nwakers", &params.nwakes, "Specify amount of waking threads"),
+ 	OPT_BOOLEAN( 's', "silent",  &params.silent, "Silent mode: do not display data/details"),
+diff --git a/tools/perf/bench/futex-wake.c b/tools/perf/bench/futex-wake.c
+index 8d6107f..a31fc15 100644
+--- a/tools/perf/bench/futex-wake.c
++++ b/tools/perf/bench/futex-wake.c
+@@ -52,7 +52,6 @@ static struct bench_futex_parameters params = {
+ 
+ static const struct option options[] = {
+ 	OPT_INTEGER( 'b', "buckets", &params.nbuckets, "Specify amount of hash buckets"),
+-	OPT_BOOLEAN( 'I', "immutable", &params.buckets_immutable, "Make the hash buckets immutable"),
+ 	OPT_UINTEGER('t', "threads", &params.nthreads, "Specify amount of threads"),
+ 	OPT_UINTEGER('w', "nwakes",  &params.nwakes, "Specify amount of threads to wake at once"),
+ 	OPT_BOOLEAN( 's', "silent",  &params.silent, "Silent mode: do not display data/details"),
+diff --git a/tools/perf/bench/futex.c b/tools/perf/bench/futex.c
+index 4c4fee1..1481196 100644
+--- a/tools/perf/bench/futex.c
++++ b/tools/perf/bench/futex.c
+@@ -9,21 +9,17 @@
+ #ifndef PR_FUTEX_HASH
+ #define PR_FUTEX_HASH                   78
+ # define PR_FUTEX_HASH_SET_SLOTS        1
+-# define FH_FLAG_IMMUTABLE              (1ULL << 0)
+ # define PR_FUTEX_HASH_GET_SLOTS        2
+-# define PR_FUTEX_HASH_GET_IMMUTABLE    3
+ #endif // PR_FUTEX_HASH
+ 
+ void futex_set_nbuckets_param(struct bench_futex_parameters *params)
+ {
+-	unsigned long flags;
+ 	int ret;
+ 
+ 	if (params->nbuckets < 0)
+ 		return;
+ 
+-	flags = params->buckets_immutable ? FH_FLAG_IMMUTABLE : 0;
+-	ret = prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_SET_SLOTS, params->nbuckets, flags);
++	ret = prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_SET_SLOTS, params->nbuckets, 0);
+ 	if (ret) {
+ 		printf("Requesting %d hash buckets failed: %d/%m\n",
+ 		       params->nbuckets, ret);
+@@ -47,18 +43,11 @@ void futex_print_nbuckets(struct bench_futex_parameters *params)
+ 			printf("Requested: %d in usage: %d\n", params->nbuckets, ret);
+ 			err(EXIT_FAILURE, "prctl(PR_FUTEX_HASH)");
+ 		}
+-		if (params->nbuckets == 0) {
++		if (params->nbuckets == 0)
+ 			ret = asprintf(&futex_hash_mode, "Futex hashing: global hash");
+-		} else {
+-			ret = prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_GET_IMMUTABLE);
+-			if (ret < 0) {
+-				printf("Can't check if the hash is immutable: %m\n");
+-				err(EXIT_FAILURE, "prctl(PR_FUTEX_HASH)");
+-			}
+-			ret = asprintf(&futex_hash_mode, "Futex hashing: %d hash buckets %s",
+-				       params->nbuckets,
+-				       ret == 1 ? "(immutable)" : "");
+-		}
++		else
++			ret = asprintf(&futex_hash_mode, "Futex hashing: %d hash buckets",
++				       params->nbuckets);
+ 	} else {
+ 		if (ret <= 0) {
+ 			ret = asprintf(&futex_hash_mode, "Futex hashing: global hash");
+diff --git a/tools/perf/bench/futex.h b/tools/perf/bench/futex.h
+index 9c9a73f..dd295d2 100644
+--- a/tools/perf/bench/futex.h
++++ b/tools/perf/bench/futex.h
+@@ -26,7 +26,6 @@ struct bench_futex_parameters {
+ 	unsigned int nwakes;
+ 	unsigned int nrequeue;
+ 	int nbuckets;
+-	bool buckets_immutable;
+ };
+ 
+ /**
+diff --git a/tools/perf/trace/beauty/include/uapi/linux/prctl.h b/tools/perf/trace/beauty/include/uapi/linux/prctl.h
+index 43dec6e..3b93fb9 100644
+--- a/tools/perf/trace/beauty/include/uapi/linux/prctl.h
++++ b/tools/perf/trace/beauty/include/uapi/linux/prctl.h
+@@ -367,8 +367,6 @@ struct prctl_mm_map {
+ /* FUTEX hash management */
+ #define PR_FUTEX_HASH			78
+ # define PR_FUTEX_HASH_SET_SLOTS	1
+-# define FH_FLAG_IMMUTABLE		(1ULL << 0)
+ # define PR_FUTEX_HASH_GET_SLOTS	2
+-# define PR_FUTEX_HASH_GET_IMMUTABLE	3
+ 
+ #endif /* _LINUX_PRCTL_H */
 
