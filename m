@@ -1,95 +1,282 @@
-Return-Path: <linux-kernel+bounces-728097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD0DB0239F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:29:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F231B023A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E906818884A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:29:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABC3317A8A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D682F2C4A;
-	Fri, 11 Jul 2025 18:28:50 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977682F2C79;
+	Fri, 11 Jul 2025 18:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vuup7Qoh"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7452F2C5C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C0F2ED842;
+	Fri, 11 Jul 2025 18:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752258530; cv=none; b=HhyT8btJ1NWYUpEAB4BnQgbac06WxqbALUgaUm/6jNrgouSf0HFheN1wjk2vv47YZbggOgXO9totyDWK/dgFTG3+YaI+3HiZFdKifGWRPZPu2rhkI/NBc8WzSdh7nnM6gQ8UJ4iWMc5FtPzxNl+mZyzxpQzI5lvOdUayvy/rHQk=
+	t=1752258634; cv=none; b=uHyvJ5p/CArBARqJBwCH4PALPLxXh6udnvpvBjM8hiqOH0JHAqXsBXRIg5L9OVOnjcSe5fcFrPwuFB3KsSioc6eSVAC0gwrInUeJ5iTySuRZS2v8+l6j+AV3pUhTqkJZh5RDkQeyAvGCTfE/DZjPVFT7S7BpIEqEbptvZguCsRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752258530; c=relaxed/simple;
-	bh=outJhnfIPj3CtWBSGlrgZTEfaH9N0Vkd8cGgr9/YQTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OJPPGBs0lnQ1rCjiAzKHEkezL0fmMOk9v3QcPsPpRJ1v5deRnjarssHjMNif8LiRKvi5Ynutg94Edn9z/OSTwVHpIisi5WItelAtoqOX0Zft7JaXTyqs36Hko61otJxH+zgddxB3gz9O6YZkBaX6i33aeKD/SGBZKg2KUZ8AZZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id 02A1D16037E;
-	Fri, 11 Jul 2025 18:28:39 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id ED04280013;
-	Fri, 11 Jul 2025 18:28:35 +0000 (UTC)
-Date: Fri, 11 Jul 2025 14:28:34 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, Josh
- Poimboeuf <jpoimboe@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu
- Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
- Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, tech-board-discuss@lists.linuxfoundation.org
-Subject: Re: [RFC PATCH 2/5] unwind: Export unwind_user symbol to GPL
- modules
-Message-ID: <20250711142834.73b2864c@batman.local.home>
-In-Reply-To: <2025071104-amnesty-flashback-b883@gregkh>
-References: <20250709212556.32777-1-mathieu.desnoyers@efficios.com>
-	<20250709212556.32777-3-mathieu.desnoyers@efficios.com>
-	<aHC-_HWR2L5kTYU5@infradead.org>
-	<20250711065742.00d6668b@gandalf.local.home>
-	<2025071124-cola-slouching-9dd2@gregkh>
-	<20250711091734.5632dcf7@gandalf.local.home>
-	<2025071127-reunion-residence-c0f2@gregkh>
-	<20250711133240.0d5b6de8@batman.local.home>
-	<2025071104-amnesty-flashback-b883@gregkh>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752258634; c=relaxed/simple;
+	bh=sJW/1fGSw11zYgLi/9LWnszpW7KHJj2dr0zHLZ1lreM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oDoaHLC1L1JZyrTCuUkJlg7KToNgScwSiDMgkHx7eyigjDA52Y9th8AqNdGCaV4Pz9VM7fsoWs347gGqDLSoBAM4B2IiWULzuGlNCKC3/Kwrmg5MYS2uNUWtOTg4DpWKKCR3cYyTZ5ZOOsLzVjryeTXesty6BTW/wAqjvHWr46I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vuup7Qoh; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae3b37207easo476663966b.2;
+        Fri, 11 Jul 2025 11:30:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752258631; x=1752863431; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TOP6MH4LWDkkQWWYHqizxUdoYZyd4qiL1+SiqsnJqbg=;
+        b=Vuup7QoheIhuJaez74kbhN7UMiCYqCRmNOBinsEzXg6VRdHOeM6JT/JdBPbZj6JvgC
+         2/A4ONf59mrRnoP1mGx8CutVA+6Hru+rI6Ph7xrYmb6VMjozkBMAetOTFl+g+ZrVOmBx
+         cRx6nttPdMGF29yJHU3ltRpTU+HQ/rx+OK9TM6Px1VCFmkHLMSH6TR84FZ95R5Q7If3/
+         FG5RATZ0RgNWPEuno+u0gP8aIaQsyB/03L8LiL/PB1xsCKkIRAnzTA35py55zP3Gw1iv
+         h9t4cTucci2Qa7V4xlQ+quxrxSGQYRPEpFLGjVFAaZdSz5wMxTAZuBAtsApk+OKBtwMT
+         j46Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752258631; x=1752863431;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TOP6MH4LWDkkQWWYHqizxUdoYZyd4qiL1+SiqsnJqbg=;
+        b=fl+TMAmxwBnSS0l7Ffk6u4Xq85X49Ny2bYxXQkpfxNo5ulxbjDeAi0MFbjLcK/2Lkf
+         N7k0BTVbGQ42woEVeI6njxJmMF4g36FukeZBGNVVp9kEenXiWoWVpHNcijCc0N7qAfuI
+         eRnciEjGZS/h/hko2QtAebBSRo1EwmQpX6c9QiKBWThvIaASK2i7I8mEM8atd9LpUu5Z
+         f+jNdOa/ebom7oMab0NJ6n0JeyWl+nn2Toz1yjHddbOkVfgO5oI5MdHnYFDY/nmBQwnh
+         5LS9+3UwOlGXbhiX2X7IfiDHUA6sq+XXrA5T4nbC6WrEOcldDAiyTwgzj8HOOZqbKGbB
+         MMMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVW4rCs4AWuBtKDiTsv6AHP4c5eNob6NMG8Uh/AM0IOVL6i20oOMriKOIuITAHndVgrsIo4nokpze/XjBaZ@vger.kernel.org, AJvYcCXKnuowE5kXjrKqJG8nRP6u+91ZP2rGKY55P1BQgVqOx50xYpCeroAeECd6Io2CwpuXW/Jf/DC+WbNV5w==@vger.kernel.org, AJvYcCXozlrkXwVAugYR+8TfIVONLqN2N2SRBnjfhFop3izqPstPkIHCJyFQUHsE2PxD70Sc57133tCP8zQTRdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6PD/cnzjGpfovBMqAAoukJP3984yhbFv/4JE+cuW8lAgUeiFM
+	jjsOPMafuzwLbWHonazdja5zhZJKhzxgura23TYthe7uWHm49RrfXfKtlY5uyA==
+X-Gm-Gg: ASbGncvukN56CygkMFq+r3UlnNAa0Tx0c9YMz6COQdLYMHo8oGGtLQa10MbJyuJenPI
+	zhOIigr2ub7xbfYxasdCky+z4O909yxw9z3rcLByOUhaUh3TQeLrZDe8cZ1KyHhvLuLJRfo6zBS
+	6iNlQD1Fw07cQep9WpIR5s0hHIkfIyW3xHvXZUOmPPToEpLf2OuLrlHzjvQe7fLoa3VRS2Lx5et
+	eZywV5E78Z9scIQEe0qojVnJSP/OmjBH2x6Tz8qH+garsy/8bN58//GBsQykgGrrVmx/IFh3mns
+	QPk3jepEKllCcRg2d+aTzDpP2teoNaipIk13HC6kCkwyyhjDogKrQSYlUAt2ZU0CS/C80BFLw4s
+	gjb8Ty/wa0u7UHfEUCKly67uGcUwLXrpfUxs=
+X-Google-Smtp-Source: AGHT+IFZ+CT7VU8SXE2R9rYpWGqwI+x5YqfZKcBNQpoWiXBRCuYmYkFXigYic9U/s5bCPICsGUlhJA==
+X-Received: by 2002:a17:907:805:b0:ae6:d3dc:4f47 with SMTP id a640c23a62f3a-ae6fbf98a08mr496827266b.43.1752258630915;
+        Fri, 11 Jul 2025 11:30:30 -0700 (PDT)
+Received: from ws-linux01 ([2a02:2f07:6009:b200:8bc2:7901:5231:7913])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee569asm334750066b.44.2025.07.11.11.30.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 11:30:29 -0700 (PDT)
+From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+To: herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ovidiu Panait <ovidiu.panait.oss@gmail.com>,
+	freude@linux.ibm.com,
+	dengler@linux.ibm.com,
+	linux-s390@vger.kernel.org,
+	horia.geanta@nxp.com,
+	pankaj.gupta@nxp.com,
+	gaurav.jain@nxp.com,
+	arei.gonglei@huawei.com,
+	virtualization@lists.linux.dev
+Subject: [PATCH 1/2] crypto: engine: remove request batching support
+Date: Fri, 11 Jul 2025 21:29:31 +0300
+Message-ID: <20250711182932.918257-1-ovidiu.panait.oss@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: ED04280013
-X-Stat-Signature: i3z4faxtrmkozuk5qxyz18e7fzsyk5r8
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19pg25gEp69pG4NS/hQ9JTRR813gkb9KVA=
-X-HE-Tag: 1752258515-552660
-X-HE-Meta: U2FsdGVkX1/7CrFkhCQXB5of5GMFPGqL6fg8KBhpdO53QEOz+7ZrVoyC1gU8cld4BJu4xCBhEXBiNfRj7IN67Z4M3w/zUD07BhfvkERxYFJfeDlExeCMbhIqok2NQTf2ezuwzCEQLj46yhQSJlDijRZl+cT9EeVHucBuIibkbMn6FGMPrlhuVREug1yUcc7iFZ9OPIs2cEO5+/F56V8N4W4V4vvzJYOdC/qkfv11TAYjp1ABGyO0a7Sgs4MgM/krUQGK1tsVkuAHHQgfqx9th3dxZQAFz4gzGZp6/Ij2OUhgYSVPUFLQXEIspEIZWSNg/d5nzal3y15tKwyHudKUEmI+K8JjJaYD730nkHnmxBH0rviLvDgTbvVSYAPb5M2N
+Content-Transfer-Encoding: 8bit
 
-On Fri, 11 Jul 2025 20:24:37 +0200
-Greg KH <gregkh@linuxfoundation.org> wrote:
+Remove request batching support from crypto_engine, as there are no
+drivers using this feature and it doesn't really work that well.
 
-> On Fri, Jul 11, 2025 at 01:32:40PM -0400, Steven Rostedt wrote:
-> > > So get the lttng code merged into the tree please, it seems that you are
-> > > the one objecting to the merge, not me :)  
-> > 
-> > It was actually others, and it was years ago. Perhaps we could just
-> > accept the LTTng kernel module as is, as a module, and leave it at that?  
-> 
-> That's up to the maintainers of the subsystem where it would be, not me.
+Instead of doing batching based on backlog, a more optimal approach
+would be for the user to handle the batching (similar to how IPsec
+can hook into GSO to get 64K of data each time or how block encryption
+can use unit sizes much greater than 4K).
 
-It would likely be its own subsystem (under kernel/lttng?), so I guess
-it would be Linus's decision.
+Suggested-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+---
+Cc: freude@linux.ibm.com
+Cc: dengler@linux.ibm.com
+Cc: linux-s390@vger.kernel.org
+Cc: horia.geanta@nxp.com
+Cc: pankaj.gupta@nxp.com
+Cc: gaurav.jain@nxp.com
+Cc: arei.gonglei@huawei.com
+Cc: virtualization@lists.linux.dev
 
--- Steve
+ arch/s390/crypto/paes_s390.c               |  2 +-
+ arch/s390/crypto/phmac_s390.c              |  2 +-
+ crypto/crypto_engine.c                     | 25 +---------------------
+ drivers/crypto/caam/jr.c                   |  3 +--
+ drivers/crypto/virtio/virtio_crypto_core.c |  2 +-
+ include/crypto/engine.h                    |  1 -
+ include/crypto/internal/engine.h           |  4 ----
+ 7 files changed, 5 insertions(+), 34 deletions(-)
+
+diff --git a/arch/s390/crypto/paes_s390.c b/arch/s390/crypto/paes_s390.c
+index 8a340c16acb4..a624a43a2b54 100644
+--- a/arch/s390/crypto/paes_s390.c
++++ b/arch/s390/crypto/paes_s390.c
+@@ -1633,7 +1633,7 @@ static int __init paes_s390_init(void)
+ 	/* with this pseudo devie alloc and start a crypto engine */
+ 	paes_crypto_engine =
+ 		crypto_engine_alloc_init_and_set(paes_dev.this_device,
+-						 true, NULL, false, MAX_QLEN);
++						 true, false, MAX_QLEN);
+ 	if (!paes_crypto_engine) {
+ 		rc = -ENOMEM;
+ 		goto out_err;
+diff --git a/arch/s390/crypto/phmac_s390.c b/arch/s390/crypto/phmac_s390.c
+index 90602f72108f..7ecfdc4fba2d 100644
+--- a/arch/s390/crypto/phmac_s390.c
++++ b/arch/s390/crypto/phmac_s390.c
+@@ -1006,7 +1006,7 @@ static int __init s390_phmac_init(void)
+ 	/* with this pseudo device alloc and start a crypto engine */
+ 	phmac_crypto_engine =
+ 		crypto_engine_alloc_init_and_set(phmac_dev.this_device,
+-						 true, NULL, false, MAX_QLEN);
++						 true, false, MAX_QLEN);
+ 	if (!phmac_crypto_engine) {
+ 		rc = -ENOMEM;
+ 		goto out_err;
+diff --git a/crypto/crypto_engine.c b/crypto/crypto_engine.c
+index 445d3c113ee1..8a2400f240d4 100644
+--- a/crypto/crypto_engine.c
++++ b/crypto/crypto_engine.c
+@@ -195,17 +195,6 @@ static void crypto_pump_requests(struct crypto_engine *engine,
+ out:
+ 	spin_unlock_irqrestore(&engine->queue_lock, flags);
+ 
+-	/*
+-	 * Batch requests is possible only if
+-	 * hardware can enqueue multiple requests
+-	 */
+-	if (engine->do_batch_requests) {
+-		ret = engine->do_batch_requests(engine);
+-		if (ret)
+-			dev_err(engine->dev, "failed to do batch requests: %d\n",
+-				ret);
+-	}
+-
+ 	return;
+ }
+ 
+@@ -462,12 +451,6 @@ EXPORT_SYMBOL_GPL(crypto_engine_stop);
+  * crypto-engine queue.
+  * @dev: the device attached with one hardware engine
+  * @retry_support: whether hardware has support for retry mechanism
+- * @cbk_do_batch: pointer to a callback function to be invoked when executing
+- *                a batch of requests.
+- *                This has the form:
+- *                callback(struct crypto_engine *engine)
+- *                where:
+- *                engine: the crypto engine structure.
+  * @rt: whether this queue is set to run as a realtime task
+  * @qlen: maximum size of the crypto-engine queue
+  *
+@@ -476,7 +459,6 @@ EXPORT_SYMBOL_GPL(crypto_engine_stop);
+  */
+ struct crypto_engine *crypto_engine_alloc_init_and_set(struct device *dev,
+ 						       bool retry_support,
+-						       int (*cbk_do_batch)(struct crypto_engine *engine),
+ 						       bool rt, int qlen)
+ {
+ 	struct crypto_engine *engine;
+@@ -495,11 +477,6 @@ struct crypto_engine *crypto_engine_alloc_init_and_set(struct device *dev,
+ 	engine->idling = false;
+ 	engine->retry_support = retry_support;
+ 	engine->priv_data = dev;
+-	/*
+-	 * Batch requests is possible only if
+-	 * hardware has support for retry mechanism.
+-	 */
+-	engine->do_batch_requests = retry_support ? cbk_do_batch : NULL;
+ 
+ 	snprintf(engine->name, sizeof(engine->name),
+ 		 "%s-engine", dev_name(dev));
+@@ -534,7 +511,7 @@ EXPORT_SYMBOL_GPL(crypto_engine_alloc_init_and_set);
+  */
+ struct crypto_engine *crypto_engine_alloc_init(struct device *dev, bool rt)
+ {
+-	return crypto_engine_alloc_init_and_set(dev, false, NULL, rt,
++	return crypto_engine_alloc_init_and_set(dev, false, rt,
+ 						CRYPTO_ENGINE_MAX_QLEN);
+ }
+ EXPORT_SYMBOL_GPL(crypto_engine_alloc_init);
+diff --git a/drivers/crypto/caam/jr.c b/drivers/crypto/caam/jr.c
+index 9fcdb64084ac..0ef00df9730e 100644
+--- a/drivers/crypto/caam/jr.c
++++ b/drivers/crypto/caam/jr.c
+@@ -629,8 +629,7 @@ static int caam_jr_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* Initialize crypto engine */
+-	jrpriv->engine = crypto_engine_alloc_init_and_set(jrdev, true, NULL,
+-							  false,
++	jrpriv->engine = crypto_engine_alloc_init_and_set(jrdev, true, false,
+ 							  CRYPTO_ENGINE_MAX_QLEN);
+ 	if (!jrpriv->engine) {
+ 		dev_err(jrdev, "Could not init crypto-engine\n");
+diff --git a/drivers/crypto/virtio/virtio_crypto_core.c b/drivers/crypto/virtio/virtio_crypto_core.c
+index 0d522049f595..3d241446099c 100644
+--- a/drivers/crypto/virtio/virtio_crypto_core.c
++++ b/drivers/crypto/virtio/virtio_crypto_core.c
+@@ -139,7 +139,7 @@ static int virtcrypto_find_vqs(struct virtio_crypto *vi)
+ 		spin_lock_init(&vi->data_vq[i].lock);
+ 		vi->data_vq[i].vq = vqs[i];
+ 		/* Initialize crypto engine */
+-		vi->data_vq[i].engine = crypto_engine_alloc_init_and_set(dev, true, NULL, true,
++		vi->data_vq[i].engine = crypto_engine_alloc_init_and_set(dev, true, true,
+ 						virtqueue_get_vring_size(vqs[i]));
+ 		if (!vi->data_vq[i].engine) {
+ 			ret = -ENOMEM;
+diff --git a/include/crypto/engine.h b/include/crypto/engine.h
+index 545dbefe3e13..2e60344437da 100644
+--- a/include/crypto/engine.h
++++ b/include/crypto/engine.h
+@@ -76,7 +76,6 @@ int crypto_engine_stop(struct crypto_engine *engine);
+ struct crypto_engine *crypto_engine_alloc_init(struct device *dev, bool rt);
+ struct crypto_engine *crypto_engine_alloc_init_and_set(struct device *dev,
+ 						       bool retry_support,
+-						       int (*cbk_do_batch)(struct crypto_engine *engine),
+ 						       bool rt, int qlen);
+ void crypto_engine_exit(struct crypto_engine *engine);
+ 
+diff --git a/include/crypto/internal/engine.h b/include/crypto/internal/engine.h
+index b6a4ea2240fc..8da1a13619c9 100644
+--- a/include/crypto/internal/engine.h
++++ b/include/crypto/internal/engine.h
+@@ -37,8 +37,6 @@ struct device;
+  * @unprepare_crypt_hardware: there are currently no more requests on the
+  * queue so the subsystem notifies the driver that it may relax the
+  * hardware by issuing this call
+- * @do_batch_requests: execute a batch of requests. Depends on multiple
+- * requests support.
+  * @kworker: kthread worker struct for request pump
+  * @pump_requests: work struct for scheduling work to the request pump
+  * @priv_data: the engine private data
+@@ -60,8 +58,6 @@ struct crypto_engine {
+ 
+ 	int (*prepare_crypt_hardware)(struct crypto_engine *engine);
+ 	int (*unprepare_crypt_hardware)(struct crypto_engine *engine);
+-	int (*do_batch_requests)(struct crypto_engine *engine);
+-
+ 
+ 	struct kthread_worker           *kworker;
+ 	struct kthread_work             pump_requests;
+-- 
+2.50.0
+
 
