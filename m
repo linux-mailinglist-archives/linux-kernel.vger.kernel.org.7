@@ -1,105 +1,105 @@
-Return-Path: <linux-kernel+bounces-727702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72332B01E57
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:52:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19818B01E59
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58BAF1CA8598
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:52:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E964F1CA85FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408FD2DCF7A;
-	Fri, 11 Jul 2025 13:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99A92DE70D;
+	Fri, 11 Jul 2025 13:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Tub4Oe9N";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="66i0xz+F"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UYERQJLk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201C12D838C;
-	Fri, 11 Jul 2025 13:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215F72D97A2;
+	Fri, 11 Jul 2025 13:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752241905; cv=none; b=bQ+9mV9/dwyVa0gws4TsRWMx6p4pHsZTN9z0E8lzui49X0HGfNUSSgqeZZNL8O/XGL3qvo0/XKDHwYywr9Tj7J3FZwmuMSHIxMRTkn6NxPMLABAEXZHS+PLQ/N02dRIRmqsC1AirwXUB+4SgdpKHWfSe9VDRJSUQxzBmEb1N7+E=
+	t=1752241918; cv=none; b=cr1Z5jRaKXwJmNo0pGxZ1i+6TH20ukTSxSC+jeEBbrJJp5XU4jUXnR5ZxjpZJxyfPeKtqUlzwSY8vzBr7rWD4YOf/F7b66IsgoO9WdgBQpn4C5zHxcwwA9B5dMqYybaElUUsTfqkugKod/yOlyPXblY5YB0Hot4U82Sp7DxCpU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752241905; c=relaxed/simple;
-	bh=P3jJvx7kkJzGYrGr7kYLYTxDV9iv4WkdaAW5T7pDdlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G5p2GyOr0gxcgJQEUEgYPcsejLspccqaXphTMuwI3CutdcKk5R2KGBQxNKic5YmjNui4dH0VkH6R7UCBK2mkgXps4PTXSfwy1XBVujXDU2pUyatxQ62Vrilt3B580gbAcmIeu2uaCEFuDy+tjyJeTB33Lm2gtwqQDc1205kXHHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Tub4Oe9N; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=66i0xz+F; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 11 Jul 2025 15:51:40 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752241901;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IfBc84rpX+rOpaSC3ax0AwjFfciBGxk0wD+STiI9Dhw=;
-	b=Tub4Oe9N6OeAZHfDfzT57/OVRehm4h5JjiWVYI9Nmg4iHM54zcgmWR4vwT3+bvxwB3K44z
-	Bx53zieDYDz800TKU4W3bchfxjSZ2bsGMK2fMSof0twPiIPkgM8OBe2ny2CMGH5cv0Fh8o
-	fx4nevvjuXqxarozLZifK+2jSGCzjRWzgdnDZwutG2VOQVFp4gEQSdjs7gqJ8ojVLqjFew
-	AMItV6q6GJ+8X9JDzWPUWoSc8tfvdT1DN57zAQ1y+MAWbVMzP7frnFL0JTE44WtwtDP+C3
-	CszgmrNT0SK5DsWGnDlU7sNPv150lMkZ35RF4Hc0IqMw/RcvCIGKR6dofkY7ew==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752241901;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IfBc84rpX+rOpaSC3ax0AwjFfciBGxk0wD+STiI9Dhw=;
-	b=66i0xz+F/0L36sY+PBuF3ts1Cw8VONS1Cn6DG3glGrey3RKJSaaHK+psKNbqd7s5HYSE4w
-	TYr5/XIDhakl5FCQ==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Daniel Gomez <da.gomez@samsung.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, linux-modules@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-Subject: Re: [PATCH v2 0/3] module: make structure definitions always visible
-Message-ID: <20250711155016-f403d5b2-478d-4666-913d-45318cdaa3cf@linutronix.de>
-References: <20250711-kunit-ifdef-modules-v2-0-39443decb1f8@linutronix.de>
- <175224114462.57001.15162198119283395382.b4-ty@samsung.com>
+	s=arc-20240116; t=1752241918; c=relaxed/simple;
+	bh=gRYeWY8Ue9r1jN9YT5ewnploOKjK9ri5RO9mKqQvmVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y02/07Lj4QV7jO33fb/Vq0eU0JwaMvRIg2Til+k7jVdPxc9PJ4L5jIt1klN6hj7Z+bzJOoE5+KZN4oAm7sUEn7w/QBFfC1+ML5veyiRekxI4t3iTmi13jRzqAE49nzngV/0iASUGZlqeHnO4YP1h9BhN+vydWzR/sn+igFmZ+KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UYERQJLk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1684FC4CEF9;
+	Fri, 11 Jul 2025 13:51:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752241917;
+	bh=gRYeWY8Ue9r1jN9YT5ewnploOKjK9ri5RO9mKqQvmVo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UYERQJLkSJKOTk5V7QJ/3A+QDttYxwbWTbb/D3nGl4j2G2ydS2cqmdvjcE/XOqJk5
+	 TCsCTR7TwYbP06k7ifflZTo0EJWFRRPJOz2x1lD0xunGK/Y3jYO4EOx9YNOHDFiXIT
+	 K750YtN2FULM+apYWbs1duI6j9XlpKJyRv5MCqiFepksD5N7QGu8sUiHm4LniI5Jp9
+	 yapUlRKZtIRQtAE7zd7p3QkHxlB+9o9O72wLv+bVwbmc/5a4OOrRvlLki7E2P15PM3
+	 gLFU7vloO0Ma+2qWXzh0Ly/cf5jEesDHJOieuLGUyGIGRz3rjhyKOkb796T3tG29Lu
+	 JDYPgjHaY1g0Q==
+Date: Fri, 11 Jul 2025 06:51:56 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Parav Pandit <parav@nvidia.com>
+Cc: Dragos Tatulea <dtatulea@nvidia.com>, "almasrymina@google.com"
+ <almasrymina@google.com>, "asml.silence@gmail.com"
+ <asml.silence@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Saeed Mahameed
+ <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, Cosmin Ratiu
+ <cratiu@nvidia.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next 1/4] net: Allow non parent devices to be used for
+ ZC DMA
+Message-ID: <20250711065156.0d51199e@kernel.org>
+In-Reply-To: <CY8PR12MB71956FF1D74C1EAE3401891CDC4BA@CY8PR12MB7195.namprd12.prod.outlook.com>
+References: <20250702172433.1738947-1-dtatulea@nvidia.com>
+	<20250702172433.1738947-2-dtatulea@nvidia.com>
+	<20250702113208.5adafe79@kernel.org>
+	<c5pxc7ppuizhvgasy57llo2domksote5uvo54q65shch3sqmkm@bgcnojnxt4hh>
+	<20250702135329.76dbd878@kernel.org>
+	<CY8PR12MB7195361C14592016B8D2217DDC43A@CY8PR12MB7195.namprd12.prod.outlook.com>
+	<20250710165851.7c86ba84@kernel.org>
+	<CY8PR12MB71956FF1D74C1EAE3401891CDC4BA@CY8PR12MB7195.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <175224114462.57001.15162198119283395382.b4-ty@samsung.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 11, 2025 at 03:39:04PM +0200, Daniel Gomez wrote:
-> 
-> On Fri, 11 Jul 2025 15:31:35 +0200, Thomas Weißschuh wrote:
-> > Code using IS_ENABLED(CONFIG_MODULES) as a C expression may need access
-> > to the module structure definitions to compile.
-> > Make sure these structure definitions are always visible.
+On Fri, 11 Jul 2025 02:52:23 +0000 Parav Pandit wrote:
+> > On Thu, 3 Jul 2025 11:58:50 +0000 Parav Pandit wrote:  
+> > > > In my head subfunctions are a way of configuring a PCIe PASID ergo
+> > > > they _only_ make sense in context of DMA.  
+> > > SF DMA is on the parent PCI device.
+> > >
+> > > SIOV_R2 will have its own PCI RID which is ratified or getting ratified.
+> > > When its done, SF (as SIOV_R2 device) instantiation can be extended
+> > > with its own PCI RID. At that point they can be mapped to a VM.  
 > > 
-> > This will conflict with commit 6bb37af62634 ("module: Move modprobe_path
-> > and modules_disabled ctl_tables into the module subsys") from the sysctl
-> > tree, but the resolution is trivial.
-> > 
-> > [...]
+> > AFAIU every PCIe transaction for a queue with a PASID assigned should have a
+> > PASID prefix. Why is a different RID necessary?
+> > CPUs can't select IOMMU context based on RID+PASID?  
+> It can, however,
+> PASID is meant to be used for process isolation and not expected to
+> be abused for identify the device. Doing so, would also prohibits
+> using PASID inside the VM. It requires another complex vPASID to
+> pPASID translation.
 > 
-> Applied, thanks!
+> Tagging MSI-X interrupts with PASID is another challenge.
+> For CC defining isolation boundary with RID+PASID was yet another
+> hack.
 > 
-> [1/3] module: move 'struct module_use' to internal.h
->       commit: bb02f22eaabc4d878577e2b8c46ed7b6be5f5459
-> [2/3] module: make structure definitions always visible
->       commit: 02281b559cd1fdfdc8f7eb05bbbe3ab7b35246f0
-> [3/3] kunit: test: Drop CONFIG_MODULE ifdeffery
->       commit: dffcba8acea3a80b3478750ac32f17bd5345b68e
+> There were other issues in splitting PASID for device scaling vs
+> process scaling for dual use.
+> 
+> So it was concluded to opt to avoid that abuse and use the standard
+> RID construct for device identification.
 
-Thanks!
-
-FYI If you apply a patch you need to add yourself to the Signed-off-by chain.
-And Link tags are nice. For example:
-
-b4 shazam --add-my-sob --add-link
+I see, that explains it. Thanks Parav!
 
