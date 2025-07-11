@@ -1,122 +1,103 @@
-Return-Path: <linux-kernel+bounces-727008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2234FB013DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:48:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE42B013E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 666DA7AC906
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:47:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA8821C80009
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B3A1DDA15;
-	Fri, 11 Jul 2025 06:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682061C6FFE;
+	Fri, 11 Jul 2025 06:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="E8UFCHTF";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TffFvQGI"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="lOIUw6wi"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1652110E;
-	Fri, 11 Jul 2025 06:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522682110E;
+	Fri, 11 Jul 2025 06:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752216506; cv=none; b=Ri5KV1Z+mM4EyfDOsfXZ7+DOHwQxWXebNRHwTCYt6E4mQuURCsWDvlDNHL+VoVhim09L/pi6jPqONvuypSLS663l/V8H8RNb28tpZWmMRExGtkurPqRULhGmIY5ljz/+RwGOMIrM6Z7ItZPEftPzDSJds4zOvtVwK4Zgc3IlWtQ=
+	t=1752216560; cv=none; b=aBi7iTSMi0SLZCjPn/vuKNNrjBi0GK08BHyQ1RBlqvbdectnJbEyZmx/iKG05CuOoCawpOPld/u8N/VLL9HrY96Mxa2FgNmcd5Plji+JLWbjpAtlWLNiGmaRIhyEom6WKunnXSgLHG8tXoJU6QcXlFuW6XGIvxLGdnToyvp1BuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752216506; c=relaxed/simple;
-	bh=+T1qgXU8Lpqp3Sq0RDij+V21PVLm2PU9091SOQs8nxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cqykuPgCcp2g/xHGywTFEyoFyO1WAA3kAvT9t7v25+QT0uYcMcKXRUeKlAOY0F5K7elaB+1o0CdCnt9CuIw8JRK2qlyDQbBkLWexH/Ll27kl7VRfYFcG0YtDoiNdvsfO0wz+vCWx9ki7uZAYlboSIh15+wSwmcn6MNvXDg8ixZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=E8UFCHTF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TffFvQGI; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 25C80EC028E;
-	Fri, 11 Jul 2025 02:48:23 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Fri, 11 Jul 2025 02:48:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1752216503; x=1752302903; bh=9tmvMKfs2+
-	3P9yH1HQ57n/mvCAkJiWreb0ZaeXNaMWg=; b=E8UFCHTFY29s2zySfXrJ/AVgoD
-	LqtRW/pSQSbSbsVdDrQUKfucJcKg8QiLk4HbO62ddzYkPj1m8auUVsWvg5EfPIf7
-	sN60NRq7/EmqDmfGMIKfdiJJfEy01nSo8zcUOe1wnigm65Id1U46GRNdQXLn1GmS
-	hMfjhR73bJBY6gYn4RNHfyrbZWirbf7XaEiwuePRCDmeaTqiXHPvvp96cNH6rRAd
-	VT4yS8J1V9feTKCDFfZow1xhkoCW5491npu/JOb4P9BycD8lBp65X5ldSj9RF7Hy
-	hQLq+976UTMJX0xLAxtL8zE+QNn5wkaHXQZnH63Y+GCZYjQ20oMt3ZPqkTuA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1752216503; x=1752302903; bh=9tmvMKfs2+3P9yH1HQ57n/mvCAkJiWreb0Z
-	aeXNaMWg=; b=TffFvQGIO4LO6axuzxPk0wEaTqtiDSHlVHGHoRDDapPZ3B0mDHA
-	byfBC3Z80EueynXCUIcMMMUR6c0/UzW/v6xqqXNai6QXz+mtl2R49R3UJuYwbQ3j
-	7OPvNVLQz9lwFxFqkfsKcKlGfZ5w7Tu5D4P1HYemSSzVZpxtOGygV+Tz8c+YMGhJ
-	cFlOsBVBmSc+IyPDZ8fBdoTOCD1aX+s3W36qUZ7QPaCRyr5ez/k/7yl0lEVPlh87
-	wPjIXCAVT/7R2vZK/KWAmg3+R0kbH6Mo9TNnGFLqNOkRn7crAJjvOV8YBpM0ql2j
-	W/DQId6uq76tnjsrHZl9LKGBrZNqVgOcsjA==
-X-ME-Sender: <xms:trNwaHA7dHHmrwJMMiVvYzSzJQhjHHsf55z2e9Acq5bpporVMqK-0Q>
-    <xme:trNwaK7GQQNxRVcONIGcBysofj09gxH4gdZHFPaCVRPtLNU5D68WbjZeEvQ-FQ0-W
-    1L1T4phtglgsQ>
-X-ME-Received: <xmr:trNwaJ5j7GBjax5kRI5cCHJSvDdueJagZer7BlqfyIX_z1Z3GiXYDRQNfDARuYZ0eEq6vbT9Qrg7A_96mFCqYijWlu9KtWg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegvdeifecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcumffj
-    uceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehgedvvedvle
-    ejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhushhtvghr
-    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtg
-    homhdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
-    shhfrhestggrnhgsrdgruhhughdrohhrghdrrghupdhrtghpthhtohepsghrohhonhhivg
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgv
-    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrh
-    drkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:trNwaETHjhNdWMCx6EI1-Yw-iZuPUbMKZXGROwwEYSPyr9EPy9eeHA>
-    <xmx:trNwaJ8A9AcEOYX7RGvlgAQutH_tIS-oV_o4PVtdeWod05aYXDppXA>
-    <xmx:trNwaNbfgZlXMiUrpuLztvCggJDdtURjElHMbfHdeM1A-M87a602Jw>
-    <xmx:trNwaCoYJ1vHYdJawmOle9q5rLjz6DKirsdPNgd8T_WXC1HHQE27lA>
-    <xmx:t7NwaHl6LvzZ4ZZuAm0yvTOr6zl307fWlWUgh12bAYwN4ccHLbcbyCLz>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 11 Jul 2025 02:48:22 -0400 (EDT)
-Date: Fri, 11 Jul 2025 08:48:20 +0200
-From: Greg KH <greg@kroah.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the driver-core tree
-Message-ID: <2025071106-mustang-encrypt-d307@gregkh>
-References: <20250711162945.078138dc@canb.auug.org.au>
+	s=arc-20240116; t=1752216560; c=relaxed/simple;
+	bh=44pCLGpLaIC4GmvuWhJV0PyvAaAXyESqQI2KW62Nrvo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JygIDoqpTXnrO0ZnsoeZyWFExGludXz/Mjs8U7ohN3gzxS7HlPoOwvpwnSn4Vr0atbaj2/racbfTwZPAhHcmGXwMuvN6o72Uky1OnKLs9vpYlqrhnVBf8YmoLLLMfqLEPb1xSWArMiFtWfkIaSQQB2qesjM86P9wzPJCgbruEog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=lOIUw6wi; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=44pCLGpLaIC4GmvuWhJV0PyvAaAXyESqQI2KW62Nrvo=;
+	t=1752216559; x=1753426159; b=lOIUw6wimgs3mdats3vc/iM60lBMJQl8IIA0XLRVcN/9yVv
+	Chf8ViZJqX3ycQ6ZL7YtRHmDEzPTWnyCA3P4J9RUVQrHJ22JnVB29QVV0SfEBWNg+RRzFg7O/Ly3S
+	hg+o29z8CIn9yAUF1OrYKuRT8RgYsAR45HD68p1qdQaw8MwrBAy9vir2wAgM1uYu1ZBs14ktSe15k
+	ZoTTZUJ+ijW2OtIDxQRSS/QR+u76tEAa/vsgAf4Cz9PdaJ6Fi9E91CIp3qInZDCEdW0QCbk8ZQZR/
+	GdbW3zIJwQfhteRMpY4UEbegd37NsaSA5XkSpoXLIIJ9P4r8vkxD8hIrSc0dylkA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1ua7Z1-0000000FwWs-2LAn;
+	Fri, 11 Jul 2025 08:48:57 +0200
+Message-ID: <d88d15047569b57c7e7cd751670f56ffb4d5c1a8.camel@sipsolutions.net>
+Subject: Re: [PATCH] kunit: Enable PCI on UML without triggering WARN()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>, 
+ Brendan Higgins <brendan.higgins@linux.dev>, David Gow
+ <davidgow@google.com>, Rae Moar <rmoar@google.com>,  Richard Weinberger	
+ <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-um@lists.infradead.org
+Date: Fri, 11 Jul 2025 08:48:45 +0200
+In-Reply-To: <20250627-kunit-uml-pci-v1-1-a622fa445e58@linutronix.de>
+References: <20250627-kunit-uml-pci-v1-1-a622fa445e58@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711162945.078138dc@canb.auug.org.au>
+X-malware-bazaar: not-scanned
 
-On Fri, Jul 11, 2025 at 04:29:45PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> The following commit is also in the regmap tree as a different commit
-> (but the same patch):
-> 
->   8009fb751d2c ("regmap: get rid of redundant debugfs_file_{get,put}()")
-> 
-> This is commit
-> 
->   9f711c9321cf ("regmap: get rid of redundant debugfs_file_{get,put}()")
-> 
-> in the regmap tree.
+On Fri, 2025-06-27 at 17:21 +0200, Thomas Wei=C3=9Fschuh wrote:
+> Various KUnit tests require PCI infrastructure to work.
+> All normal platforms enable PCI by default, but UML does not.
+> Enabling PCI from .kunitconfig files is problematic as it would not be
+> portable. So in commit 6fc3a8636a7b ("kunit: tool: Enable virtio/PCI by d=
+efault on UML")
+> PCI was enabled by way of CONFIG_UML_PCI_OVER_VIRTIO=3Dy.
+> However CONFIG_UML_PCI_OVER_VIRTIO requires additional configuration of
+> CONFIG_UML_PCI_OVER_VIRTIO_DEVICE_ID or will otherwise trigger a WARN() i=
+n
+> virtio_pcidev_init(). However there is no one correct value for
+> UML_PCI_OVER_VIRTIO_DEVICE_ID which could be used by default.
+>=20
+> This warning is confusing when debugging test failures.
+>=20
+> On the other hand, the functionality of CONFIG_UML_PCI_OVER_VIRTIO is not
+> used at all, given that it is completely non-functional as indicated by
+> the WARN() in question. Instead it is only used as a way to enable
+> CONFIG_UML_PCI which itself is not directly configurable.
+>=20
+> Instead of going through CONFIG_UML_PCI_OVER_VIRTIO, introduce a custom
+> configuration option which enables CONFIG_UML_PCI without triggering
+> warnings or building dead code.
 
-Ah, sorry about that, I took the whole series.  All should be fine when
-they are merged together.
+Alright, so looked like Thomas wanted this to not be merged via the UML
+tree, which does make sense, so I've dropped it.
 
-greg k-h
+For the kunit tree then you can add:
+
+Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
+
+johannes
 
