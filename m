@@ -1,78 +1,149 @@
-Return-Path: <linux-kernel+bounces-727869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBDF5B020D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:48:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA3BB020DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6086B563F68
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:48:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC672A48508
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA6A2ED844;
-	Fri, 11 Jul 2025 15:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5AA2ED177;
+	Fri, 11 Jul 2025 15:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="EotjUhZF"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dSXC5dMJ"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515DF2AE6D;
-	Fri, 11 Jul 2025 15:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5AB17A2EB
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752248927; cv=none; b=hn/9SkgUItskE96YEZeW0iVC3CAjTCKuchxrNV8zvAC0N6ymon9annon4dHTuXBRolbim0UMmJtpQ7o48qCp2ZK2lBxHzNv1EEZVNNPBfHvEkMMHd2Ji3sDq8EHXwhESRwFOu62IJ0hY1D31yCWGPttYf4tE/N7YPywzquST17c=
+	t=1752248993; cv=none; b=iUlm8per4dSzQcynTnYcBmt6juRnK9ZdRhxE0XraCSBcMMjmpz3pvCxe1Kw3RAmHv/0w8W3hE2tTW4LDkJv5l6utEGIKT1wlcrnfkFdxfK7JuebmZqOuoUtoL721y5t3KjA7Lq6KMI4mgEHw8IrAvKnoU9oyC5SY7TtaLwPa8pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752248927; c=relaxed/simple;
-	bh=iC/lTa9y4hlsRpGD7UKEiTf0o/RlEJlF7tlPi5jNFlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mz7JBMgvyZpIU1jJuqzMoawoYY0cfwLwwneALNcBTIqZhh5oe2lNF2ZYbNy0EPLggkPC909U3lcnliObPsrStgmWbfKHOKAtUny+voyoxVwBtwSOeW88VezKOHaffSaDefxLZWy8abBPtBEVhHReiUNygKPkOA+JCmgz8n8nHAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=EotjUhZF; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=K1Qv6uL2mr9yRM61qozPLoLnLb41zm/L4dsWSYDNTh4=; b=EotjUhZFiQqHqAqg+4yiKECfce
-	J7dLy54bFH/y11MoA6y/EweKIRh7PxYo6G+tCEt9UjB0092OhPolRiu81ox7WIQ3ckt6FtAM0wUg7
-	Bh+rk9ygUZd+EIKk19t5ygF7OvMOBIH+wqCTBfL4qCl1AMtK52lMynM4ZnWZPM6y0dJs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uaFzL-001FOZ-62; Fri, 11 Jul 2025 17:48:39 +0200
-Date: Fri, 11 Jul 2025 17:48:39 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Marek Vasut <marex@denx.de>, Lukasz Majewski <lukma@denx.de>,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] Revert "leds: trigger: netdev: Configure LED blink
- interval for HW offload"
-Message-ID: <aa3aa13d-f04b-4251-ac85-ba3e6828b1ce@lunn.ch>
-References: <c28c2a71489b34fe595d694c809f553978069653.1752248354.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1752248993; c=relaxed/simple;
+	bh=MsFHUVPklolt2MNco1FGwnCw+YjUi5Piu0whohjo1RU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tX9cjbwMnA/ElG0kgPJJFmeEEfSPf001pWYaPr7GGmUdoNaqAnN2E6cVlSpNXGCBhNIf0fJAd5QWR6/MDHmnRmtMOAVCT7a5+Qd/x6vuGSFsej+7Nql6PBsE+TKBJlZI/TT1OpB947Gzsv9YCblIQAZRKvnL4S8+v6ovazELSb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dSXC5dMJ; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-611a7c617a7so621721eaf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:49:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752248990; x=1752853790; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kpWDwlYEFZONP4nYRAFW848J3k8ajKrSnxZeLFk6ATw=;
+        b=dSXC5dMJKTkDCKDR3hxL6KnHhdvSuCc8ZtK63/byHWSqVlmLyZ2B276QXZQxXyy8Sp
+         N9DKuDipaiAMvkafrTo8vo5x/4TTkXE3KY1EaUY+Fcscp4ftFQQZLBwYgnGjqTZpIN3L
+         Xdl1Duzw2Wjazr13EXaxZlk+/yuusZX5bgxgCzsTq9SNCCzEtFEba7wYajKj47jaFMom
+         WaAZYr6ihIc05qfq8RwuVmn+HRW/HRhOSUmD3zy1xFVyGHHXmPf/TtUR9TvIbunry0IS
+         d1RJPZZHgYtZ5mFEhJ0qGroisgk1rtprsRTHuUv5tqS6s1VTHTTtGI86bWvSpHJkMTD0
+         MKVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752248990; x=1752853790;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kpWDwlYEFZONP4nYRAFW848J3k8ajKrSnxZeLFk6ATw=;
+        b=NA75sYRXMzol0vd+bWVjmurNXmv6ek8QjKYHIyADC9oVIX5K6RkI4Z6kMFhopE+JGL
+         caZ8aJfU8FD0lg5VCA0XYHAgKv2PlwgP1/WIjirbSRcv4utt+3x4CbTaAfyyy5yKXpYb
+         cK3ZZ2TGxAJ/nDxqsTEC5oOah1N/uesj3YpEGOpLE4qTmsiNdwzDHJP/12ejfQ1uLaBH
+         rpccWdWj+2v1HS6kfAMeumCC9NKnI37EPirdir/cAEuVwk+UGhKnjDN0wsMfGgDuiEKJ
+         uAPchxtALOMmqRgHT/K0wpezNEfBzMbijTb6/UHKIaKx+sXUB1HcoLaAu7keQtvVJ+Zn
+         Ub6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWjwHFO7XJE2940ZD0uasixhGuTmGFI94cOSYVAwtbOwxoOw3kjmzyIBx1Zo3p1jYYcFZ0T1W5oHiWGwZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1qrfWdQS4k7HWFkIsDVA6kS4fQplTHAltdz7wViunDk2wrAGS
+	jWiKfyHrJB3jcnABrFQZ4AAm5WGC5ijyz636VrgzxHdWYBzf8kxWpXbxpcN7A9uFyi7IUZof/uN
+	R89VT/SU+B5WlmcSzHhlwYe+iBv0CKdaPlRKwq6WBDw==
+X-Gm-Gg: ASbGncs2Dwmovsrqzz9XL+Ey5UDUqdTsK97aCW5Wdi8J3rqozsfCOdvDX3Oc7knl83v
+	3Rmq1YSIRNjihAnVzpuOe8m/g7NO1vb5g7/rBtWrKR4ELYHHUI+WyKowialZW4JG4N3NSXOhGyw
+	KlxgpLx+zbqyArq3OoeIZoTwm2JnbIAUyyxCT05luf95tO8W4Vq5rnCIBm9w/Y5MFFnQ0nf/Ee9
+	Io9uhs=
+X-Google-Smtp-Source: AGHT+IHv1hWw2pZQOckg98iZ5DP8H18RgsI97u/wmdJaWiqskQQPUlSUM7hA7IGFfKLNfKIFCIMEQTMIDL5dj9i09a8=
+X-Received: by 2002:a05:6808:1a14:b0:406:5a47:a081 with SMTP id
+ 5614622812f47-4150dc288e1mr3095704b6e.13.1752248990474; Fri, 11 Jul 2025
+ 08:49:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c28c2a71489b34fe595d694c809f553978069653.1752248354.git.daniel@makrotopia.org>
+References: <20250711-gs101-cpuidle-v6-1-503ec55fc2f9@linaro.org>
+ <aHElXbj4-T--QqKk@bogus> <aHEmB-K7Pf7WOswk@bogus>
+In-Reply-To: <aHEmB-K7Pf7WOswk@bogus>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 11 Jul 2025 16:49:39 +0100
+X-Gm-Features: Ac12FXyPP2ayGhZhRKT9piHwpXNM8Cjgh20ByzhOS5Y4tdqk1oaHtAN9grK3Fzg
+Message-ID: <CADrjBPrRbSYXVg5KyNB8Z9qLkZ2sGzEUcP+nf2UP2rVm2T7bSQ@mail.gmail.com>
+Subject: Re: [PATCH v6] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, William Mcvicker <willmcvicker@google.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 11, 2025 at 04:40:29PM +0100, Daniel Golle wrote:
-> This reverts commit c629c972b310af41e9e072febb6dae9a299edde6.
+Hi Sudeep,
 
-I can see that from reading the patch. What is missing from the commit
-message is the answer to the question: Why?
+On Fri, 11 Jul 2025 at 15:56, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+> On Fri, Jul 11, 2025 at 03:53:17PM +0100, Sudeep Holla wrote:
+> > On Fri, Jul 11, 2025 at 02:50:26PM +0100, Peter Griffin wrote:
+> > > Register cpu pm notifiers for gs101 which call the
+> > > gs101_cpu_pmu_online/offline callbacks which in turn program the ACPM
+> > > C2 hint. This hint is required to actually enter the C2 idle state in
+> > > addition to the PSCI calls due to limitations in the firmare.
+> > >
+> > > A couple of corner cases are handled, namely when the system is rebooting
+> > > or suspending we ignore the request. Additionally the request is ignored if
+> > > the CPU is in CPU hot plug. Some common code is refactored so that it can
+> > > be called from both the CPU hot plug callbacks and CPU PM notifier taking
+> > > into account that CPU PM notifiers are called with IRQs disabled whereas
+> > > CPU hotplug callbacks are not.
+> > >
+> > > Additionally due to CPU PM notifiers using raw_spinlock the locking is
+> > > updated to use raw_spinlock variants, this includes updating the pmu_regs
+> > > regmap to use .use_raw_spinlock = true and additionally creating and
+> > > registering a custom  pmu-intr-gen regmap instead of using the regmap
+> > > provided by syscon.
+> > >
+> > > Note: this patch has a runtime dependency on adding 'local-timer-stop' dt
+> > > property to the CPU nodes. This informs the time framework to switch to a
+> > > broadcast timer as the local timer will be shutdown. Without that DT
+> > > property specified the system hangs in early boot with this patch applied.
+> > >
+> > > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > > ---
+> > > Hi folks,
+> > >
+> > > This patch adds support for CPU Idle on gs101. In particular it achieves
+> > > this by registerring a cpu pm notifier and programming a ACPM hint. This is
+> > > required in addition to the PSCI calls to enter the c2 idle state due to
+> > > limitations in the el3mon/ACPM firmware.
+> > >
+> >
+> > I would rather keep the above note as part of the commit message or the
+> > code comment as this will get lost when the patch is applied which is not
+> > something we want. I clearly want to loudly shout or shame the broken
+> > firmware for not getting this right.
+> >
+>
+> I did see the comment but still thought it is worth adding the note in the
+> commit log too. Sorry for referring code comment above which is wrong as it
+> is already taken care.
 
-Please include a short description of the regression this caused, and
-link to the discussion.
+I mentioned it in the commit log, a comment in the code and also the
+cover letter so I think we should be all good? In the commit log it is
+part of the first paragraph.
 
-    Andrew
+Thanks,
 
----
-pw-bot: cr
+Peter
 
