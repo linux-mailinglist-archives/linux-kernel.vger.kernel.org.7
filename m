@@ -1,225 +1,123 @@
-Return-Path: <linux-kernel+bounces-726811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C85B01188
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:10:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C2AB0118B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17E1016E3AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:10:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 892253AD0BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC29770814;
-	Fri, 11 Jul 2025 03:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8FB199237;
+	Fri, 11 Jul 2025 03:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="B0/4L3o0"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="dysiy+LB"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD5B13C8EA
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 03:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752203441; cv=none; b=g9R68hoZvlFXn8cEF0x5Gnao8wrUBWQnsls742xVp6BzCKceh+J2deWgojICFfUwJcVjWkNOpqG9YO7yTudJE3RrjoAJ31gLJse/8bwFxKJwsg6SyzhY5C77dJAbpU6VYLrVA/Wa5jbVJtrNWlr9jU2LW6PDR0xb1CwmyqyGtdk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752203441; c=relaxed/simple;
-	bh=/m17edC0OXP7hMTmCRLK1oCb0lUyP4ccJ96sraTED0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QHxovLyM9451qGfKkwypZHyZGLMYnd3kjwKxmeM75IXMIE6V+mawE37Wft3MzYWK1+w6sREH5pKy7R9WhEsbgVKd9QeD6Bgtj61P7LnBA07YW0jmf148uL7Rn/B4IJZ0JlsGwjjIHOIJYOnc7UmUZFpN8i2vGqPssRbFqmgUvQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=B0/4L3o0; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2f8c792e-9675-4385-b1cb-10266c72bd45@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752203437;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x715/q+udRUTDW1yuo6mapYClglFmqiiqnYPKulS+Uk=;
-	b=B0/4L3o0Y6gI127BGVHuDHtJFgF+AxSK2e2eboTSclO75hweb+vut+vpNNJR0+esORmOPb
-	iEzHQKXsRD4WUJxU4FoQIvmtDPHMlD0rDq/RBXuITDuBKj14rkWE+7GqABcvUk9dgiFL3j
-	zgN0h/yLXpvQgYFr0YdjzuOlCZMA2PI=
-Date: Thu, 10 Jul 2025 20:10:29 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA81570814;
+	Fri, 11 Jul 2025 03:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752203495; cv=pass; b=ikVHlszBYLDDyU1PWD5qrua4IdN++f1Bfg0pUM3ZCpEyDL07xs+odNh7PMr5ZezIVujp/9AvtnWDTnNqhB88y2gC4Qdai6H4G1e0KTxk9N+SbxoTmQ5/UJv27LjMMojVEdzRatX3W9tMVRyNySmY3mcnl1C6wyN2WXM/vTtkduk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752203495; c=relaxed/simple;
+	bh=9lA6AsDSIKoY0lUH2t1x8CvthtWRQbyzxeeFVTUETPE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tTVUI2g8Dxtnu9w4iCmAmF/Un1KTQYYJEOfleUsZh5e4gzqhsDdeoNgPJpQuDmpJ3KA/tSnc780v50iQZbQCAilDXBK9NDJp5PqJ44xXuzES2XKMl+W+8JhXOCenm3j+Lnv8e6F7xiKYnN1krDtN/ve76Z2b7JKUk6kPt5VCa9M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=dysiy+LB; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752203481; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TUmw7DUiH37TUzbJZUND3bPrFx+b6TtqdDCRdTJVxvJOQQH2PiNGjVHr5jAHoVGdq/eAV+K3eUQWo//D0TnuvYgIaOX6KMhPsSHkTHwMWS0F0QBofhdfHQWuJJi9FgDNONRbuZk7IubUixfgJLgKxSmqBNBqz1XkaeMXH8Odgb4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752203481; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Zmlfr2FfNR3ElW19AW0PAO2HPIGKZykTu782CJfTIAI=; 
+	b=KItq8jej1R/usMNPYIKnuxozw6E8zBzNlbGqZiajvPB6H+L8zU4L8cVhKx3OhZoPt21IHEbRUNUi4B1z9HZYHs+/91BU2rxCqTKpmFb0P47RJfbL9OtrrWj7jn5NEfsN4PECypN8j3yVlih0PQv/kq5dOJJ9qpoq+phJmgWYZWI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752203481;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
+	bh=Zmlfr2FfNR3ElW19AW0PAO2HPIGKZykTu782CJfTIAI=;
+	b=dysiy+LBR+Jn9y262JjqTeCKB15IYs7H/iEmYPh7Zx8rObI5xXtWETIhJZAankuj
+	EAoyNDFSWxHIlqvMcMg1FuvXgajTN6IKYO+ZS+zJ5yH5ATH2BLUBaw3zBYQ2FiII7KL
+	vKND5qINUueQZILMIUkx83h+2F0d9Ze3x41ddrX0=
+Received: by mx.zohomail.com with SMTPS id 1752203480377746.5900346950284;
+	Thu, 10 Jul 2025 20:11:20 -0700 (PDT)
+From: Li Ming <ming.li@zohomail.com>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com,
+	shiju.jose@huawei.com
+Cc: andriy.shevchenko@linux.intel.com,
+	linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Li Ming <ming.li@zohomail.com>
+Subject: [PATCH v5 0/3] Fix wrong dpa checking in PPR operation
+Date: Fri, 11 Jul 2025 11:10:58 +0800
+Message-Id: <20250711031101.126990-1-ming.li@zohomail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v3] bpf: make the attach target more accurate
-Content-Language: en-GB
-To: Menglong Dong <menglong8.dong@gmail.com>, ast@kernel.org,
- daniel@iogearbox.net
-Cc: john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
- eddyz87@gmail.com, song@kernel.org, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, Menglong Dong <dongml2@chinatelecom.cn>
-References: <20250710070835.260831-1-dongml2@chinatelecom.cn>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20250710070835.260831-1-dongml2@chinatelecom.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Feedback-ID: rr08011227c8c1f03f40a52119ceb8d9b4000003826e9c5c8b77023a5662a40023ce6ea3dcd6a747ac4487a9:zu0801122744dd0033f514a92266e07ea7000039188ea2cf23c809780a2a2e3ecb56e7d75afa06f4902f7e6e:rf0801122d8a10e8271e3c55d0bd048ec60000a0c6565678dac7ffe55d0b59cca69f6300adfd3384ce7bd98f24e324c63da3:ZohoMail
+X-ZohoMailClient: External
 
+In cxl_do_ppr(), there is a checking to check if a DPA is valid, the
+implementation of the checking is check if the DPA is 0, if yes,
+consider that DPA is valid. the checking is not right, the correct
+implementation is checking if the DPA is in the CXL device DPA range, if
+yes, it is valid.
 
+The patchset also includes another part implementing a general helper
+function cxl_resource_contains_addr() in cxl core so that cxl drivers
+can use it for all DPA/HPA/SPA availability checking.
 
-On 7/10/25 12:08 AM, Menglong Dong wrote:
-> For now, we lookup the address of the attach target in
-> bpf_check_attach_target() with find_kallsyms_symbol_value or
-> kallsyms_lookup_name, which is not accurate in some cases.
->
-> For example, we want to attach to the target "t_next", but there are
-> multiple symbols with the name "t_next" exist in the kallsyms, which makes
-> the attach target ambiguous, and the attach should fail.
->
-> Introduce the function bpf_lookup_attach_addr() to do the address lookup,
-> which will return -EADDRNOTAVAIL when the symbol is not unique.
->
-> We can do the testing with following shell:
->
-> for s in $(cat /proc/kallsyms | awk '{print $3}' | sort | uniq -d)
-> do
->    if grep -q "^$s\$" /sys/kernel/debug/tracing/available_filter_functions
->    then
->      bpftrace -e "fentry:$s {printf(\"1\");}" -v
->    fi
-> done
->
-> The script will find all the duplicated symbols in /proc/kallsyms, which
-> is also in /sys/kernel/debug/tracing/available_filter_functions, and
-> attach them with bpftrace.
->
-> After this patch, all the attaching fail with the error:
->
-> The address of function xxx cannot be found
-> or
-> No BTF found for xxx
->
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+v5:
+- Reverse checkings order in cxl_do_ppr(). (Alison)
 
-Maybe we should prevent vmlinux BTF generation for such symbols
-which are static and have more than one instances? This can
-be done in pahole and downstream libbpf/kernel do not
-need to do anything. This can avoid libbpf/kernel runtime overhead
-since bpf_lookup_attach_addr() could be expensive as it needs
-to go through ALL symbols, even for unique symbols.
+v4:
+- Add cxl_ prefix to resource_contains_addr().	(Andy & Alison)
+- Add impact statement to the commit log of Patch #2. (Alison)
+- Add review tags.
 
+v3:
+- Move resource_contains_addr() from include/linux/ioport.h to
+cxl/core/hdm.c. (Andy)
 
-> ---
-> v3:
-> - reject all the duplicated symbols
-> v2:
-> - Lookup both vmlinux and modules symbols when mod is NULL, just like
->    kallsyms_lookup_name().
->
->    If the btf is not a modules, shouldn't we lookup on the vmlinux only?
->    I'm not sure if we should keep the same logic with
->    kallsyms_lookup_name().
->
-> - Return the kernel symbol that don't have ftrace location if the symbols
->    with ftrace location are not available
-> ---
->   kernel/bpf/verifier.c | 71 ++++++++++++++++++++++++++++++++++++++++---
->   1 file changed, 66 insertions(+), 5 deletions(-)
->
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 53007182b46b..bf4951154605 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -23476,6 +23476,67 @@ static int check_non_sleepable_error_inject(u32 btf_id)
->   	return btf_id_set_contains(&btf_non_sleepable_error_inject, btf_id);
->   }
->   
-> +struct symbol_lookup_ctx {
-> +	const char *name;
-> +	unsigned long addr;
-> +};
-> +
-> +static int symbol_callback(void *data, unsigned long addr)
-> +{
-> +	struct symbol_lookup_ctx *ctx = data;
-> +
-> +	if (ctx->addr)
-> +		return -EADDRNOTAVAIL;
-> +	ctx->addr = addr;
-> +
-> +	return 0;
-> +}
-> +
-> +static int symbol_mod_callback(void *data, const char *name, unsigned long addr)
-> +{
-> +	if (strcmp(((struct symbol_lookup_ctx *)data)->name, name) != 0)
-> +		return 0;
-> +
-> +	return symbol_callback(data, addr);
-> +}
-> +
-> +/**
-> + * bpf_lookup_attach_addr: Lookup address for a symbol
-> + *
-> + * @mod: kernel module to lookup the symbol, NULL means to lookup both vmlinux
-> + * and modules symbols
-> + * @sym: the symbol to resolve
-> + * @addr: pointer to store the result
-> + *
-> + * Lookup the address of the symbol @sym. If multiple symbols with the name
-> + * @sym exist, -EADDRNOTAVAIL will be returned.
-> + *
-> + * Returns: 0 on success, -errno otherwise.
-> + */
-> +static int bpf_lookup_attach_addr(const struct module *mod, const char *sym,
-> +				  unsigned long *addr)
-> +{
-> +	struct symbol_lookup_ctx ctx = { .addr = 0, .name = sym };
-> +	const char *mod_name = NULL;
-> +	int err = 0;
-> +
-> +#ifdef CONFIG_MODULES
-> +	mod_name = mod ? mod->name : NULL;
-> +#endif
-> +	if (!mod_name)
-> +		err = kallsyms_on_each_match_symbol(symbol_callback, sym, &ctx);
-> +
-> +	if (!err && !ctx.addr)
-> +		err = module_kallsyms_on_each_symbol(mod_name, symbol_mod_callback,
-> +						     &ctx);
-> +
-> +	if (!ctx.addr)
-> +		err = -ENOENT;
-> +	*addr = err ? 0 : ctx.addr;
-> +
-> +	return err;
-> +}
-> +
->   int bpf_check_attach_target(struct bpf_verifier_log *log,
->   			    const struct bpf_prog *prog,
->   			    const struct bpf_prog *tgt_prog,
-> @@ -23729,18 +23790,18 @@ int bpf_check_attach_target(struct bpf_verifier_log *log,
->   			if (btf_is_module(btf)) {
->   				mod = btf_try_get_module(btf);
->   				if (mod)
-> -					addr = find_kallsyms_symbol_value(mod, tname);
-> +					ret = bpf_lookup_attach_addr(mod, tname, &addr);
->   				else
-> -					addr = 0;
-> +					ret = -ENOENT;
->   			} else {
-> -				addr = kallsyms_lookup_name(tname);
-> +				ret = bpf_lookup_attach_addr(NULL, tname, &addr);
->   			}
-> -			if (!addr) {
-> +			if (ret) {
->   				module_put(mod);
->   				bpf_log(log,
->   					"The address of function %s cannot be found\n",
->   					tname);
-> -				return -ENOENT;
-> +				return ret;
->   			}
->   		}
->   
+v2:
+- Implement a general helper resource_contains_addr() for DPA/HPA
+resource. (Alison)
+
+base-commit: d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af cxl/fixes
+
+Li Ming (3):
+  cxl/core: Introduce a new helper cxl_resource_contains_addr()
+  cxl/edac: Fix wrong dpa checking for PPR operation
+  cxl/core: Using cxl_resource_contains_addr() to check address
+    availability
+
+ drivers/cxl/core/core.h   | 1 +
+ drivers/cxl/core/edac.c   | 9 ++++++---
+ drivers/cxl/core/hdm.c    | 7 +++++++
+ drivers/cxl/core/memdev.c | 2 +-
+ drivers/cxl/core/region.c | 6 +++---
+ 5 files changed, 18 insertions(+), 7 deletions(-)
+
+-- 
+2.34.1
 
 
