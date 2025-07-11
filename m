@@ -1,125 +1,108 @@
-Return-Path: <linux-kernel+bounces-727093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABF30B014E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:42:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48039B0149A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6756548796C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:42:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBAC91884A9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C68D1F1534;
-	Fri, 11 Jul 2025 07:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4AE1F03C9;
+	Fri, 11 Jul 2025 07:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="MVDBP+Ml"
-Received: from mail-m3289.qiye.163.com (mail-m3289.qiye.163.com [220.197.32.89])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="onJDwMIP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12731F0E24;
-	Fri, 11 Jul 2025 07:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEAA1EE7A1;
+	Fri, 11 Jul 2025 07:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752219753; cv=none; b=o+kSjR9XdKRd4uPqL42QH0d9UG7IwZevh4EQu02XOkAvPBZ2jJydiJjui2A7hr540HjqZMHZXLEj5bXZthstMo/HylPyis1xSq7w+DJP00dE0sZa7Z3fDerUDYWShv3cKH8GbTrr7JO4RNAb38EXiEzC8QJK9gcPD5NR2LsEzhs=
+	t=1752218837; cv=none; b=QoyD1Q8tbch44NwZco0Mmnf86XVHWy53pAZvIlJh71r+WM0gTjpI3Y41n/3UEH96ji3tJO0rE06vbgFnqeZR8ZVjTSVTxv6IquAkv1ZyhEyzdg3LsHv+Tq5KJ1L5D9i75esJ9w1iVa7J0UPSm9z1qyhRzPOzszelviyvoAGtE18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752219753; c=relaxed/simple;
-	bh=zSY5SfpIxP5bW4/J02CzHcFnbyzwnF76bsOcMPBvMAM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LT0aihJmlEbOswMNwKVF3fU+iiJzZWteC9trBBx/VprfDS9KAFxN/aOspqFCv2d4fk6lWuob73iAuVYD8koTW07ICy0Q7Uo9InGW98u7OSmsJPPwtvZ3U4Ki2R6Zq+3wDeBRyENPBDXdiGEMqoek7dw4zQHJGtxWKuK/tkoadzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=MVDBP+Ml; arc=none smtp.client-ip=220.197.32.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1bae50b4c;
-	Fri, 11 Jul 2025 15:26:58 +0800 (GMT+08:00)
-Message-ID: <ec271884-87a1-4117-a7f7-45e423b9de8a@rock-chips.com>
-Date: Fri, 11 Jul 2025 15:26:57 +0800
+	s=arc-20240116; t=1752218837; c=relaxed/simple;
+	bh=eVTLcMK7oKgBVI6TDwgs1/kzz/4Jkz57v7A2+Jm5cPQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cON3DQ1towwTFu0SSjlEkY6JAaW+Kzhb3j1LNIz21zzif41aclBQpm1K44zBoJha35jNfkphQsLdj0qmgn3urflY40qX67g08Mb6mgGODWPtwVtv7+5k4IYaKfLOu0lf0iQX1JlHROvLXOhN0rCSQKqhb/CEcUqv3SxdWjZOjIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=onJDwMIP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B39C3C4AF09;
+	Fri, 11 Jul 2025 07:27:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752218836;
+	bh=eVTLcMK7oKgBVI6TDwgs1/kzz/4Jkz57v7A2+Jm5cPQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=onJDwMIPE2FjhQn4a//t+Ukrip+5u1HeCwnaphNhgElu2hJ73ZQryHaKF9jW55xzS
+	 Y/9YkzYYZFYLsuQADrotcPreKFteikCk1l3JwM24rYooraU2sH6pNec9RhO7sQF++/
+	 2ZjFp9VVUPqwls6ctPL2lJRq+gw65g9pee+/vHTxdh76jARubqhUzSzs1+sHDyugDi
+	 osdnVqQu1GO6EGC921/spYm6CGfQfRxpU5RCBW2iwAzXL390FNkYtmu0WzEZibJ/PJ
+	 BC7lpxNCGs6oVhgRjIUWkYGGjsQrjPt9uTCDpkxK1ogmIWZwKunOU3ozXvVy+sbtfp
+	 ikSfKTPhoygIg==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1ua8A6-0000000FSSo-3HIr;
+	Fri, 11 Jul 2025 09:27:14 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Akira Yokosawa <akiyks@gmail.com>
+Subject: [PATCH 0/2] Restore kernel-doc support for Python 3.6
+Date: Fri, 11 Jul 2025 09:27:07 +0200
+Message-ID: <cover.1752218291.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/12] drm/exynos: exynos_dp: Remove redundant
- &analogix_dp_plat_data.skip_connector
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- hjc@rock-chips.com, andy.yan@rock-chips.com,
- dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
- dianders@chromium.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20250709070139.3130635-1-damon.ding@rock-chips.com>
- <20250709070139.3130635-6-damon.ding@rock-chips.com>
- <6306541.2iPT33SAM4@diego>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <6306541.2iPT33SAM4@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0saQ1ZPTxhIHh8aQx1OS0NWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a97f86155fa03a3kunm5a905d91f32139
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MC46TRw5ATE0Qh8eE1ZDGTwX
-	PEIKCy9VSlVKTE5JSUpDQ0lLSUpNVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJQk5INwY+
-DKIM-Signature:a=rsa-sha256;
-	b=MVDBP+MlXmQIBids0j03Vrslb0E7yHyCGuZ7vavVT9bPeByoPFrna+SYZtUEzpKc162OMDNeixdHM2x4Lyi7dBzfmK8GzfH9YcN70K/4VBtbxnDPFtyKHshIarOPguVv7/6s15pne+vD4nRZd1JOoUilcMrtPA7VZP8FsUR2+wQ=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=3f/SyxPB0VfACu7tJD6T5FVMoYuITfLiK8Gntfmm160=;
-	h=date:mime-version:subject:message-id:from;
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Hi Heiko,
+Hi Jon,
 
-On 2025/7/10 3:58, Heiko Stübner wrote:
-> Hi Damon,
-> 
-> Am Mittwoch, 9. Juli 2025, 09:01:32 Mitteleuropäische Sommerzeit schrieb Damon Ding:
->> The &analogix_dp_plat_data.skip_connector related check can be replaced
->> by &analogix_dp_plat_data.bridge.
->>
->> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->> ---
->>   drivers/gpu/drm/exynos/exynos_dp.c | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
->> index 9d7d3f009e58..9e1313fdecad 100644
->> --- a/drivers/gpu/drm/exynos/exynos_dp.c
->> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
->> @@ -237,7 +237,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
->>   	dp->plat_data.power_off = exynos_dp_poweroff;
->>   	dp->plat_data.attach = exynos_dp_bridge_attach;
->>   	dp->plat_data.get_modes = exynos_dp_get_modes;
->> -	dp->plat_data.skip_connector = !!bridge;
->>   
->>   out:
->>   	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
->>
-> 
-> I think you might want to merge
-> - drm/exynos: exynos_dp: Remove redundant &analogix_dp_plat_data.skip_connector
-> - drm/bridge: analogix_dp: Remove redundant &analogix_dp_plat_data.skip_connector
-> 
-> Because when separate this creates a bisection issue.
-> Like when a bisect happens to land directly on this commit, you already have
-> removed the exynos assignment, but the updated check from the following patch
-> is not yet in place.
-> 
-> 
+While discussing patch v2 12/12 from your kdoc series, I realized
+that kernel-doc command line should not crash with Python 3.6,
+nor cause compilation breakages with older versions.
 
-Oh, I see. Squashing related commits together would be better.
+The problem mainly affect builds with CONFIG_DRM enabled, due to:
 
-Best regards,
-Damon
+drivers/gpu/drm/Makefile:                PYTHONDONTWRITEBYTECODE=1 $(KERNELDOC) -none $(if $(CONFIG_WERROR)$(CONFIG_DRM_WERROR),-Werror) $<; \
+drivers/gpu/drm/i915/Makefile:    cmd_checkdoc = PYTHONDONTWRITEBYTECODE=1 $(KERNELDOC) -none -Werror $<
+include/drm/Makefile:           PYTHONDONTWRITEBYTECODE=1 $(KERNELDOC) -none $(if $(CONFIG_WERROR)$(CONFIG_DRM_WERROR),-Werror) $<; \
+
+This small series prevent Kernel build breakages on such case,
+and it is meant to be merged after your kdoc patches.
+
+Patch 1 emits a warning wih Python 3.7 siilar to kdoc class,
+but on an early stage. More importantly, it emits a warning
+and exits the script for versions <= 3.6. 
+
+We still need the kdoc warning, as it detect troubles when
+calling kernel-doc as a class.
+
+Patch 2 fix a backward-compatibility issue that otherwise
+would require Python 3.9.
+
+With that, building the Kernel with older versions won't break.
+
+Regards,
+Mauro
+
+Mauro Carvalho Chehab (2):
+  docs: kernel-doc: emit warnings for ancient versions of Python
+  scripts: kdoc: make it backward-compatible with Python 3.7
+
+ scripts/kernel-doc.py           | 10 ++++++++++
+ scripts/lib/kdoc/kdoc_parser.py |  4 +++-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+-- 
+2.50.0
+
 
 
