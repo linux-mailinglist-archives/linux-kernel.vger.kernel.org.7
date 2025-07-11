@@ -1,89 +1,124 @@
-Return-Path: <linux-kernel+bounces-727894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7F4B0213B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:08:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C45C3B0213F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85B92A44F84
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:07:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6843C561F45
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A9C2EF288;
-	Fri, 11 Jul 2025 16:08:14 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89082ED149;
+	Fri, 11 Jul 2025 16:08:47 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1D22ED149;
-	Fri, 11 Jul 2025 16:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AB82ED859;
+	Fri, 11 Jul 2025 16:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752250093; cv=none; b=G8ZS2pgYJvc41AOfgCvpT+HN0pJz0zZTB4jSgzaM8sGQybfgQH9oF2y7yqS4TXodIBaSW+GKMgvMV0y8wLkHtIe5vRvJKsIeOnk5U0sf8LRPBhfPvqy6TRGPdeiYPokz+U7hbwBjxs0v8yP8RetDe0nDYUEovgwP4wRBi8ADQ58=
+	t=1752250127; cv=none; b=ppOq+igogLqvU4Z8zTAFMXwZ8odA0q++m5kR9D9T9GU0hh4hqYvLLg0rRDxCLb04AD0VqTTdoZBLNDUsWXvsxoI4jS41GqWwmDTeltiRl1Q9onadG8O6HLp7B2iFB+doRWomIqO4jCVoDdBPmINJlAfNNH5Y/WGI5WjwzFXx/ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752250093; c=relaxed/simple;
-	bh=Uy4Zxm8qEhAQy0/hG84LOWQs66Csqb8gSMvRyqPJ0ck=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B3NVnCbXdXyjhMkVZmFx20kVNaeHZHDJCgqzvFyvObjHj4RrJPNuF/sjdJB7Ox/QkkyDBe4bnh7IEQsXeTMZ2Pw4vR3HNjDg23sPYGRnWL3SrqPwQFamzUAuvm/vRQ0zKCrb/4rNWDw7yJRGPV9nJewmgHyeT1jROlflSgAuaX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 2663C80A3C;
-	Fri, 11 Jul 2025 16:08:02 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id E8EB620024;
-	Fri, 11 Jul 2025 16:07:59 +0000 (UTC)
-Date: Fri, 11 Jul 2025 12:07:58 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Nam Cao <namcao@linutronix.de>, Gabriele Monaco <gmonaco@redhat.com>,
- John Ogness <john.ogness@linutronix.de>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: Remove pointless memory barriers
-Message-ID: <20250711120758.3f6904e9@batman.local.home>
-In-Reply-To: <20250711092946.1bbd58ef@pumpkin>
-References: <20250626151940.1756398-1-namcao@linutronix.de>
-	<20250626113520.315db641@gandalf.local.home>
-	<20250626160459.soHxOROG@linutronix.de>
-	<20250626123445.5b01849d@gandalf.local.home>
-	<84o6uatn6i.fsf@jogness.linutronix.de>
-	<564f10574f11bd7ca42fcc5fb4d6c5625dc17205.camel@redhat.com>
-	<20250708074219.K7BthlGg@linutronix.de>
-	<20250709110827.0dce4012@batman.local.home>
-	<20250711092946.1bbd58ef@pumpkin>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752250127; c=relaxed/simple;
+	bh=6tEO9X1L4/fS17NKECopBhl3MciyVNfnGz1gRoGwBmg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gD07VgO6EOccp3cvwmlcWJFtrR64LdbnHsy6tTD/OydC0Vt0H5YnWshqYkWtsJdAaJ+FyHhkGfGL0ELVHlDDwyrsE5+d9w3QwEjGPIOMPNH888ImiDk1zSfmsnyOi/aX0HfUd/lQeKTLDQRRA44jSZusc6QVwTXLQr2QkcZLMvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bdxPt6dkMz6L56p;
+	Sat, 12 Jul 2025 00:05:22 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 670101400D3;
+	Sat, 12 Jul 2025 00:08:41 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Jul
+ 2025 18:08:40 +0200
+Date: Fri, 11 Jul 2025 17:08:39 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Mike Leach <mike.leach@linaro.org>
+CC: Alireza Sanaee <alireza.sanaee@huawei.com>, <krzk@kernel.org>,
+	<robh@kernel.org>, <coresight@lists.linaro.org>,
+	<devicetree@vger.kernel.org>, <dianders@chromium.org>,
+	<james.clark@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
+	<linuxarm@huawei.com>, <mark.rutland@arm.com>, <ruanjinjie@huawei.com>,
+	<saravanak@google.com>, <shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH v2 3/5] coresight: cti: Use of_cpu_phandle_to_id for
+ grabbing CPU id
+Message-ID: <20250711170839.0000688c@huawei.com>
+In-Reply-To: <CAJ9a7VhfW2RYXv6ZO28m65C75iyJUqTYos1tFXs8gAG5gx9yDA@mail.gmail.com>
+References: <20250708151502.561-1-alireza.sanaee@huawei.com>
+	<20250708151502.561-4-alireza.sanaee@huawei.com>
+	<CAJ9a7VhfW2RYXv6ZO28m65C75iyJUqTYos1tFXs8gAG5gx9yDA@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: n75e47kzdasjzuxp45e7bn6wjorpqtek
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: E8EB620024
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/fdHFSxGdHkrgqj6zrC1ejyafkaGQjA4Q=
-X-HE-Tag: 1752250079-604324
-X-HE-Meta: U2FsdGVkX1+uNop2+UGknTnVPsmahA7Y1zkbmQ32Nq/YDGwvYOKI3ZvYEdhKqA/YxGcxDSaPHyxsZgWvPXNRKIft1yY8eE1zUmEae56Zlbap2j/dv19WZr+5bD5RaMqg1A04U3wHF7yJpP8Jz+N9JVhdQQv+Idy101nAo1CTl5lJjUW5a4XcbqFysAnSFj7l0YMHsLqngfrRjLAmiIk4uQjLLsKjZcrtZWJKCUu6px80gCJSKGlhf1h8ol9qFWTRL07UBcYPG7IBNiUej5RlTz3y9LQcB6Z/BCl7dw6/E3sVk6rzNxJ6Ws4Q2LgAcw79EwIKqwSYG2kNnJCthdPZkN/4lLny/3qs
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, 11 Jul 2025 09:29:46 +0100
-David Laight <david.laight.linux@gmail.com> wrote:
+On Fri, 11 Jul 2025 16:55:15 +0100
+Mike Leach <mike.leach@linaro.org> wrote:
 
-> > Doesn't atomic make sure the values are seen when they are changed?  
+> Hi,
 > 
-> No.
-> It normally just ensures the read/write aren't 'torn'.
-> Atomics are used for read-modify-writes to ensure two cpu don't
-> do read-read-modify-modify-write-write losing one of the changes.
-> (They can need special instructions for read and write - but normally don't.)
-> So here just the same as the volatile accesses READ_ONCE() and WRITE_ONCE().
+> On Tue, 8 Jul 2025 at 16:16, Alireza Sanaee <alireza.sanaee@huawei.com> wrote:
+> >
+> > Use the newly created API to grab CPU id.
+> >
+> > Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
+> > ---
+> >  .../hwtracing/coresight/coresight-cti-platform.c   | 14 +-------------
+> >  1 file changed, 1 insertion(+), 13 deletions(-)
+> >
+> > diff --git a/drivers/hwtracing/coresight/coresight-cti-platform.c b/drivers/hwtracing/coresight/coresight-cti-platform.c
+> > index d0ae10bf6128..e1dc559d54aa 100644
+> > --- a/drivers/hwtracing/coresight/coresight-cti-platform.c
+> > +++ b/drivers/hwtracing/coresight/coresight-cti-platform.c
+> > @@ -41,20 +41,8 @@
+> >   */
+> >  static int of_cti_get_cpu_at_node(const struct device_node *node)
+> >  {
+> > -       int cpu;
+> > -       struct device_node *dn;
+> > +       int cpu = of_cpu_phandle_to_id(node, NULL, 0);
+> >
+> > -       if (node == NULL)
+> > -               return -1;
+> > -
+> > -       dn = of_parse_phandle(node, "cpu", 0);
+> > -       /* CTI affinity defaults to no cpu */
+> > -       if (!dn)
+> > -               return -1;
+> > -       cpu = of_cpu_node_to_id(dn);
+> > -       of_node_put(dn);
+> > -
+> > -       /* No Affinity  if no cpu nodes are found */  
+> 
+> Leave the above comment in place.
+> 
+> >         return (cpu < 0) ? -1 : cpu;
+> >  }
+> >
+> > --
+> > 2.43.0
+> >  
+> 
+> With that
+> 
+> Reviewed-by: Mike Leach <mike.leach@linro.org>
+Just in case Ali doesn't notice - typo in your address Mike!
+(usually it is me who manages that ;)
 
-At first I was about to say "But wait! I rely on this to work in other
-parts of my code", but then realized I use atomic_inc_return() and
-similar that actually do make the update atomic across CPUs.
 
--- Steve
 
