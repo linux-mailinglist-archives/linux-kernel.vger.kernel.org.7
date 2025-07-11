@@ -1,114 +1,273 @@
-Return-Path: <linux-kernel+bounces-728041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB59B022ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:43:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC8AB022EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D68BC5A0DF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:43:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 273DA189CD76
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5732EA480;
-	Fri, 11 Jul 2025 17:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E6E2F1FE3;
+	Fri, 11 Jul 2025 17:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P5sALd14"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IDeUHQb6"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D4C2EF678
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605752EA480;
+	Fri, 11 Jul 2025 17:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752255809; cv=none; b=mKDS5C/jbEL2w7tSrrVi3uVkt9hvUSzLO5BIw0g5+vM/1naOfddyttRwA9Pa908rD4uHrgGst0yPweuSy/vaD6UPMvf0G180MFaPadC6tVID7QMuNMyiaV992YCg6FTC7aNsiBqsOLPurMKghmfI+nem+ESYNygDjl9MCJy3YEc=
+	t=1752255829; cv=none; b=pGUiJoFY+H/Qf4LdeuYpAtASTAhJoTIH7bUb0uAkyyaOApusAFi7MIUv9qtW/fDL29HWKjMmiE9AMxhLoiw3meamoH0Pp8vPatVBvw2ov4baMb8ExttRLXMZsVbIq6YKlpP79eva6imnef4Lf/OwMDCEWJ631tjdwMHq/Fettiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752255809; c=relaxed/simple;
-	bh=hBYyXUMBd+7KXf34imR2vb3TQVXmdkbzzqR23++a0to=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kvOej42u5eSBGj6BHY0AQcTwDlyqcJzTvzqikNvvu4MArtFf4/NC6crPiDjEXrbun+gwv7CT1Jo+1Swn8v3RFfg3eJndOBfsRrTsq+xQ1PaHzheORmF0uoK4C9IyAt8lqlCsJFjZzGZ7QZ5b5+ncFRTjrJsGCIEXci6q2mIqQbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P5sALd14; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32b7cf56cacso23582971fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:43:27 -0700 (PDT)
+	s=arc-20240116; t=1752255829; c=relaxed/simple;
+	bh=35BcY/6Q80oE3lxSzcJnrlGt2obqeaKDof8caRPjbBA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pmUEcTdvBPoRu02GXasMlIHI1c3REe8nMx1bo7U32O7hzYE6FcfmIR+wMnPfFrZ2LvSmKkuzsg8VYZ7IPWqoz42RztKeMiEpRco3OVKoqgjknkXODJieSUF3c8n9Wr9Vf6xSL2bfQUgrb5ioUecRMsTEep8xiGGeTTlp3L2I29k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IDeUHQb6; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so2229283f8f.1;
+        Fri, 11 Jul 2025 10:43:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752255806; x=1752860606; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1752255825; x=1752860625; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hBYyXUMBd+7KXf34imR2vb3TQVXmdkbzzqR23++a0to=;
-        b=P5sALd14XNbfOraaZippyyvvJXpbWOlAU5nO+afk7s7yLYJw24kSzsYAiuTPKvzQC8
-         CBFmcM2RViUJbWO+LfxuJJTBgv/smsARjb4LSVbpMgnXAoJxaL7mzmB4lXDpFj4l7CBG
-         0selz+dpObX6k5NV7Kljs7QrP9yPaalyHLvHIuKJ8mTbaGNKbGrOzNVGpcb3F11gG2KF
-         A3b66LGQae8DqaQltjlee5iqvYvuUXWqOSxQ3bc//btiHsVXTrXNIM05aoDBH16Lk6Ur
-         U97IQRhVw1W3i/gYXZM++gvKBYYfhIKwl8ybOmXcfbNIJXKSEB2nfBlgREXUJBBPzCWI
-         vZYQ==
+        bh=VknUmgzMCiBefIq6vhslDBLHtoemuumEdTr+qyL4BSs=;
+        b=IDeUHQb63YGJ5ZhvVMU9+YzZsGO7XcjjMQCwWWholCEcaAAk6hDydqxYTBLWt8AH3K
+         jTavBd8DVFSg4dokL822VOl6T9dJnUNv/eQBJvyTEa4IARV6EEj4g19mFJf805HryzCK
+         9LAdG69pmuTreXX5t35w87wLTWR7O1sDUPey/xdHQH5QXV1+UXvmUC3/OjhG5dCCOIaY
+         IeHjunMJLq5pTUOSJxCrmNULKy6IoahyXmZqcv7Itv+WvDzlZkkCzpe3Hx2JZNR6CbHI
+         o7X8AQzW2HQBfknUn4XPh9pmTkGbU2BYTQnbP+uKun1/ov6CkqJ4MH+N6xozm4yS41At
+         Q3Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752255806; x=1752860606;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1752255825; x=1752860625;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hBYyXUMBd+7KXf34imR2vb3TQVXmdkbzzqR23++a0to=;
-        b=UmOt+ztrCSb7qha/U0+YYXA7mu2qaa/WGelg4wBweSIPJ1MTjL9QGp60+pP3z55Mpt
-         pb6Wi2Yuc4jGafHhKxwkRKD1kIkSc3TpMg8wJZwJ4EPzu9X8zFjmeS/8pgYbbJhMH7+r
-         hAfpDxVn5cOPAfQJttHD8wtun6fWSW1CAveDIhMF8KN7VZsDJmhuCZ+RuuiW5kJtc/RR
-         QyXcuvH/YgCzeV3es35dm6UkfK447+WPTmCfIHcT51DozWN//p4kiUKUKT1wCNb+xCEd
-         f0E+WtEeYsHzATze4WIbsBd+/msSpvS4bashoIq/dxK6csL2ZYJHOXpiM7DMfN5/NqOk
-         KYPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0iqmGBVYS5YvnaG6K6qL0bW6kgjcNw6jQxOJbdQGkPKs1qTZpruZ2YTeFnZX667HxVQfmNO/kVi7CyZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3aHzdjr6z95pl6UK1KQaqm8Cnrpq6usVxeI0C5oHtwfmjbGeU
-	/ZjKHErnxkU3QZGqonc9RcRPp0YACIHjtTIi/cyG6XBf01X7rhDYcbIIrbSbRHj1v3r1tUa5kW4
-	APXYjAId0Z0NfnXMneZAXo1UOTzex5Rw644mLggMdcg==
-X-Gm-Gg: ASbGncvGCt1iCYTCEJFMZsRFdXLP53lLJAcMakD/RtsG36mU523wLUpsVDw25BdqY+f
-	nk2AbC6pLC9RTAXLB3HeCqyMZhA7bF4iFf3eHN1mrNuPkgOVcTh3+QIj/RdHNjFr6hpYW3lbGU6
-	U4tXoVjZGEkMIcNGPUL4VAxrEsFUV8b88JvWpaT2OkaXcm/Qe+UrU6GtUncXYbKwPxmW6yamJBJ
-	dJTGTg=
-X-Google-Smtp-Source: AGHT+IFf2G+BjhVwnAaVKOD3baeNQou99YqKL5bnStqK1N6hwpimUlctewJeISypbJUHXx97EBEN1zE4x7sNQYPxkrQ=
-X-Received: by 2002:a05:651c:b24:b0:32b:82bf:cc53 with SMTP id
- 38308e7fff4ca-33055085f43mr14251531fa.31.1752255805688; Fri, 11 Jul 2025
- 10:43:25 -0700 (PDT)
+        bh=VknUmgzMCiBefIq6vhslDBLHtoemuumEdTr+qyL4BSs=;
+        b=m/O9i8hZs75zfdzcw0M8nv010QjtoyRP5k2lY+fFrck5BchwG/LZFyhPscUbxwducv
+         Uaf05tsk2HlarjEAuhhKTWhQI5Rr/471kh7QaTkUKZ8u3kCong3nVNWC0cjFWieN+jKT
+         1+D1SLB4Qo3C4XXQrGlm3BS27wrcGDOvHyXxvRvYvpuLmwx512Z9/CuMNu7+CRiXGeRh
+         LwtlITvFGdqoICdvKrhztelmFNESsTxfYTPW9yZ5i4uOnM/mNgpUgJBq/Y/A+pNAspWO
+         NGX1HAPDT82PvYPTf7jAIWs57UhC4xtz2bZt3bnHhzNI1qLIBsf/CEZjamCozH2yBIDX
+         X4tA==
+X-Forwarded-Encrypted: i=1; AJvYcCXALCsUwTuPFrkRWYM916Y+dXxL8g4wH9TgfEwxzfHnM1IOoDqaHbzJ96cZqHkCinilN0Z0MTFzG6IO384u@vger.kernel.org, AJvYcCXFyoMzljP9AlNapymsdSYd4jaH4VlZPIkzQaLXId26wh2Ptoudacw6+cYBD+u9wXv7slKQRwemEZqccFviiew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQgCTyx8+fMkzkg/ChXbgEJBbEn1SOzYURm06hguDyFCj1SpMt
+	4e6pZTiVqUzkdq4J28uG4gDrnTh5qC3jvfry0e9fzilPC77F0c2ejIZC
+X-Gm-Gg: ASbGncuIhyXbvpQcEX0SWAhnCNhOf4u6Z2U3HwslAjugaF1sVexKlsEsyXthsGlDLkA
+	h2Nog/CDnwBXMLs7+xoC/xsN0tQSe5rU/o+zZ3xabaYYMt6jPVuRCtyft1K3WbKRTZm7Nw47dyS
+	WJ7CyuB8/jg6FMh9FYSaZ0McbdmgTFMX1EWGVCEu8dwzGu7tx0NMf9vqgyKDmbFlLwzgnHoxAiW
+	x2zmOFBnrO1BvkdJLOAfcNjMIJuWtQeoDviZE2F5TRstcV2UtsDl6Ro/Kqqf4gcbI8SeuTsZ7Ci
+	2yQvLmwEg7Venl1tb0ufkKndfytHPbz0RSUrsgGQLabJm9KjwmF7fTglrxKLRKClqx+8knDEAwb
+	e0kPrwhNVF/wQLAX6aFNbyBo6u+wLaUsVRINvJz1g7JTwCTvF4A7I4g==
+X-Google-Smtp-Source: AGHT+IF2FUJm50SIImAtnkLfjpZxfOQ0V8XNcp8oj0UXtEvNIKIo/bW01pizDxqtXrEQGSaKXvDafw==
+X-Received: by 2002:a05:6000:2f86:b0:3a0:b565:a2cb with SMTP id ffacd0b85a97d-3b5f1c67becmr3586044f8f.1.1752255825300;
+        Fri, 11 Jul 2025 10:43:45 -0700 (PDT)
+Received: from pumpkin (host-92-21-58-28.as13285.net. [92.21.58.28])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e1e1a5sm4954576f8f.74.2025.07.11.10.43.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 10:43:45 -0700 (PDT)
+Date: Fri, 11 Jul 2025 18:43:43 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+ linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>, Christopher
+ Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, Alexander
+ Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph
+ Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Vlastimil
+ Babka <vbabka@suse.cz>, Roman Gushchin <roman.gushchin@linux.dev>, Harry
+ Yoo <harry.yoo@oracle.com>, Andrew Clayton <andrew@digital-domain.net>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, Michal Hocko
+ <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>, Martin Uecker
+ <uecker@tugraz.at>, Sam James <sam@gentoo.org>, Andrew Pinski
+ <pinskia@gmail.com>
+Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
+Message-ID: <20250711184343.5eabd457@pumpkin>
+In-Reply-To: <krmt6a25gio6ing5mgahl72nvw36jc7u3zyyb5dzbk4nfjnuy4@fex2h7lqmfwt>
+References: <cover.1751823326.git.alx@kernel.org>
+	<cover.1752182685.git.alx@kernel.org>
+	<04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
+	<CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
+	<krmt6a25gio6ing5mgahl72nvw36jc7u3zyyb5dzbk4nfjnuy4@fex2h7lqmfwt>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709112658.1987608-1-ioana.ciornei@nxp.com>
- <20250709112658.1987608-5-ioana.ciornei@nxp.com> <0d0e9cee-2aaa-402d-a811-8c4704aadd74@lunn.ch>
-In-Reply-To: <0d0e9cee-2aaa-402d-a811-8c4704aadd74@lunn.ch>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 11 Jul 2025 19:43:13 +0200
-X-Gm-Features: Ac12FXy8ncwT9MizP5dA-KS5LUC-_phaq4FRA0TbkNqcyhAAKnTK7Oh5Ed2WmSo
-Message-ID: <CACRpkdYDTXA7+YN2zRCsQxu2AKEAwbDVq8-m27ah5XTw9iRNPw@mail.gmail.com>
-Subject: Re: [PATCH 4/9] gpio: regmap: add the .get_direction() callback
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Ioana Ciornei <ioana.ciornei@nxp.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Frank Li <Frank.Li@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 9, 2025 at 5:09=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+On Fri, 11 Jul 2025 01:23:49 +0200
+Alejandro Colomar <alx@kernel.org> wrote:
 
-> This is not my area, so i will deffer to the GPIO
-> Maintainers. However, it is not clear to me what get_direction()
-> should return.
+> Hi Linus,
+> 
+> [I'll reply to both of your emails at once]
+> 
+> On Thu, Jul 10, 2025 at 02:58:24PM -0700, Linus Torvalds wrote:
+> > You took my suggestion, and then you messed it up.
+> > 
+> > Your version of sprintf_array() is broken. It evaluates 'a' twice.
+> > Because unlike ARRAY_SIZE(), your broken ENDOF() macro evaluates the
+> > argument.  
+> 
+> An array has no issue being evaluated twice (unless it's a VLA).  On the
+> other hand, I agree it's better to not do that in the first place.
+> My bad for forgetting about it.  Sorry.
 
-This callback should return the current direction as set up
-in the hardware.
+Or a function that returns an array...
 
-A major usecase is that this is called when the gpiochip is
-registered to read out all the current directions of the GPIO
-lines, so the kernel has a clear idea of the state of the
-hardware.
+	David
 
-Calling this should ideally result in a read of the status from
-a hardware register.
+> 
+> On Thu, Jul 10, 2025 at 03:08:29PM -0700, Linus Torvalds wrote:
+> > If you want to return an error on truncation, do it right.  Not by
+> > returning NULL, but by actually returning an error.  
+> 
+> Okay.
+> 
+> > For example, in the kernel, we finally fixed 'strcpy()'. After about a
+> > million different versions of 'copy a string' where every single
+> > version was complete garbage, we ended up with 'strscpy()'. Yeah, the
+> > name isn't lovely, but the *use* of it is:  
+> 
+> I have implemented the same thing in shadow, called strtcpy() (T for
+> truncation).  (With the difference that we read the string twice, since
+> we don't care about threads.)
+> 
+> I also plan to propose standardization of that one in ISO C.
+> 
+> >  - it returns the length of the result for people who want it - which
+> > is by far the most common thing people want  
+> 
+> Agree.
+> 
+> >  - it returns an actual honest-to-goodness error code if something
+> > overflowed, instead of the absoilutely horrible "source length" of the
+> > string that strlcpy() does and which is fundamentally broken (because
+> > it requires that you walk *past* the end of the source,
+> > Christ-on-a-stick what a broken interface)  
+> 
+> Agree.
+> 
+> >  - it can take an array as an argument (without the need for another
+> > name - see my earlier argument about not making up new names by just
+> > having generics)  
+> 
+> We can't make the same thing with sprintf() variants because they're
+> variadic, so you can't count the number of arguments.  And since the
+> 'end' argument is of the same type as the formatted string, we can't
+> do it with _Generic reliably either.
+> 
+> > Now, it has nasty naming (exactly the kind of 'add random character'
+> > naming that I was arguing against), and that comes from so many
+> > different broken versions until we hit on something that works.
+> > 
+> > strncpy is horrible garbage. strlcpy is even worse. strscpy actually
+> > works and so far hasn't caused issues (there's a 'pad' version for the
+> > very rare situation where you want 'strncpy-like' padding, but it
+> > still guarantees NUL-termination, and still has a good return value).  
+> 
+> Agree.
+> 
+> > Let's agree to *not* make horrible garbage when making up new versions
+> > of sprintf.  
+> 
+> Agree.  I indeed introduced the mistake accidentally in v4, after you
+> complained of having too many functions, as I was introducing not one
+> but two APIs: seprintf() and stprintf(), where seprintf() is what now
+> we're calling sprintf_end(), and stprintf() we could call it
+> sprintf_trunc().  So I did the mistake by trying to reduce the number of
+> functions to just one, which is wrong.
+> 
+> So, maybe I should go back to those functions, and just give them good
+> names.
+> 
+> What do you think of the following?
+> 
+> 	#define sprintf_array(a, ...)  sprintf_trunc(a, ARRAY_SIZE(a), __VA_ARGS__)
+> 	#define vsprintf_array(a, ap)  vsprintf_trunc(a, ARRAY_SIZE(a), ap)
+> 
+> 	char *sprintf_end(char *p, const char end[0], const char *fmt, ...);
+> 	char *vsprintf_end(char *p, const char end[0], const char *fmt, va_list args);
+> 	int sprintf_trunc(char *buf, size_t size, const char *fmt, ...);
+> 	int vsprintf_trunc(char *buf, size_t size, const char *fmt, va_list args);
+> 
+> 	char *sprintf_end(char *p, const char end[0], const char *fmt, ...)
+> 	{
+> 		va_list args;
+> 
+> 		va_start(args, fmt);
+> 		p = vseprintf(p, end, fmt, args);
+> 		va_end(args);
+> 
+> 		return p;
+> 	}
+> 
+> 	char *vsprintf_end(char *p, const char end[0], const char *fmt, va_list args)
+> 	{
+> 		int len;
+> 
+> 		if (unlikely(p == NULL))
+> 			return NULL;
+> 
+> 		len = vsprintf_trunc(p, end - p, fmt, args);
+> 		if (unlikely(len < 0))
+> 			return NULL;
+> 
+> 		return p + len;
+> 	}
+> 
+> 	int sprintf_trunc(char *buf, size_t size, const char *fmt, ...)
+> 	{
+> 		va_list args;
+> 		int len;
+> 
+> 		va_start(args, fmt);
+> 		len = vstprintf(buf, size, fmt, args);
+> 		va_end(args);
+> 
+> 		return len;
+> 	}
+> 
+> 	int vsprintf_trunc(char *buf, size_t size, const char *fmt, va_list args)
+> 	{
+> 		int len;
+> 
+> 		if (WARN_ON_ONCE(size == 0 || size > INT_MAX))
+> 			return -EOVERFLOW;
+> 
+> 		len = vsnprintf(buf, size, fmt, args);
+> 		if (unlikely(len >= size))
+> 			return -E2BIG;
+> 
+> 		return len;
+> 	}
+> 
+> sprintf_trunc() is like strscpy(), but with a formatted string.  It
+> could replace uses of s[c]nprintf() where there's a single call (no
+> chained calls).
+> 
+> sprintf_array() is like the 2-argument version of strscpy().  It could
+> replace s[c]nprintf() calls where there's no chained calls, where the
+> input is an array.
+> 
+> sprintf_end() would replace the chained calls.
+> 
+> Does this sound good to you?
+> 
+> 
+> Cheers,
+> Alex
+> 
 
-Yours,
-Linus Walleij
 
