@@ -1,59 +1,78 @@
-Return-Path: <linux-kernel+bounces-727962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B2EAB021D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:30:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357A4B021DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F16A1A65609
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:30:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF39717A3FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB54E2EF29D;
-	Fri, 11 Jul 2025 16:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C172EF2B9;
+	Fri, 11 Jul 2025 16:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QvY8zaq9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JxuNmqG4"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3A5167DB7;
-	Fri, 11 Jul 2025 16:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2F415A858;
+	Fri, 11 Jul 2025 16:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752251446; cv=none; b=L09WHT/tIT3d9ZIpjxlgY9tJXmJ7Bwn7cykVmQziovTQx0Wa7NIuWbfzWctBYaSeyDIQuIunF+cth5nWtzmjCRrbi/m/z8d+YO/4pPMpm51tItwtCeY+aW/lzbJmA/+cGqgB8i+jnkAKq6zf3eM/lNgTY36Il687JyjFXtaOr7w=
+	t=1752251597; cv=none; b=tNhIqQ8NtOrsosTO3Gy/SrxjRF+NmkAPO7obKo36eyuDAA0iC+H3z7kkYS8q4TiC33mVDb2wv0tIq7nm0RZ5Tj0a3K1WNZ1z2sNjhohz7BZf0gp4k7oGerM7a6t9X5asVkPLzcmDjVMyUSAjOyE8lCMpmYQ/mXfY4lmM6PYFyuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752251446; c=relaxed/simple;
-	bh=RTEJVfqsliHcfLirkYxlG9p1Pmh0QT6gF3+ptlk8e6Q=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=peLmN6/ugflftPU1Eu2rMQYxqXJi2Y63kAZMtbHx7AZX4LeXnL3he28MBUm00w5zVWz3ag/NjcIDpeiddPRKbe70UOLn7C1YXyjItR9jNgxcrcrh6/B/QyMun44l6ifu0q3WnmOKhwYRtevSQ3X5ZE90XAUwgPX1O/hS4uCWbA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QvY8zaq9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5937C4CEED;
-	Fri, 11 Jul 2025 16:30:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752251446;
-	bh=RTEJVfqsliHcfLirkYxlG9p1Pmh0QT6gF3+ptlk8e6Q=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=QvY8zaq9DsENMfYjqHArKsKNyhfKiIPgl7gpGhXQm6GljFCgk9PJSSiT+N5bOnd89
-	 i0v9HIhSgD8OYSIc2rSTo3jdlfGOOii+Rucy3S6/8wIXtG4jJE8s4btYyzN70hP/86
-	 CDUVwFJ+BLF3IBhApXXa5noWTmiwI9Nclyb7swbakRYkBzrAbw4by3d4xHm2Il1ZWz
-	 tdRBRyU7/WHl9koVVzyaMRSCrJnYMCXWNXJHc2gnJZtDEL+KsIerrLCo0CVbKKLrDe
-	 N2s1p6lrd9uemDT7067swjDG+vIKiIwhDGSka2LF4I6ybFkdff2mNzNReDnKOQHTzN
-	 2vxUGR4f8+5og==
-From: Srinivas Kandagatla <srini@kernel.org>
-To: =?utf-8?q?Steffen_B=C3=A4tz?= <steffen@innosonix.de>
-Cc: stable@vger.kernel.org, 
- Alexander Stein <alexander.stein@ew.tq-group.com>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250708101206.70793-1-steffen@innosonix.de>
-References: <20250708101206.70793-1-steffen@innosonix.de>
-Subject: Re: [PATCH v4] nvmem: imx-ocotp: fix MAC address byte length
-Message-Id: <175225144346.5072.8813469254272254047.b4-ty@kernel.org>
-Date: Fri, 11 Jul 2025 17:30:43 +0100
+	s=arc-20240116; t=1752251597; c=relaxed/simple;
+	bh=7USLu/Tu8CmztTr3/24FOEB2Dn4f9FhVd2eqi2tHmfg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Jour0LG8gvhre60CylhTVb31Uluh0eOQwvm7CFYL5qmxsyJxp4TWO+IjHsZDDXv858IatUi+Q7wT2Dwb0eQA1Ji9OHX3j4z3LhPmq2JKnYzcj+U6TVMOIkwL7uxMIa8YNUxj9cuho0n40UcBFtZVVIe9t0rBaR4ZSgOlZ/ogHdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JxuNmqG4; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a5257748e1so1768067f8f.2;
+        Fri, 11 Jul 2025 09:33:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752251594; x=1752856394; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A1r7lOXR2bkUYaFtDJ7CylYLTgBc/fYyMcmc/+yJZ30=;
+        b=JxuNmqG41HuQKVkjTEOY+LF6c2txrkJ1F2XAYOj6i5DEUz27lQvRFhUvB5lf2zs90f
+         P5CDeqaOmIlQ1yHHopiNpaB58KLRwgQMa/ka8N2ntSXD+mhM073OLLik7YHNaRus68CS
+         hyhP6U914C8btN8CB8OLo9MuRn4HcI96Lgn8/G2lJxYV6s7qTIuFk6InLwgmqr2NxWyu
+         G8xOWLW+XVYNKa13MoQpumsH22OIexp9sB865EHl4pG4iFtGE0t74U6l5XARKO/f06Hd
+         7snFoBjT2IhQQD73k/rd7dtD+09qnSQWWUz4qx3SexRDiF3gQGvZ04TNVwbMjZ3IvkFC
+         YsNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752251594; x=1752856394;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A1r7lOXR2bkUYaFtDJ7CylYLTgBc/fYyMcmc/+yJZ30=;
+        b=vJjHXV0VFkR2jeFvHQOmmb60SBi/aPbaNgaOS44THlrQ9hwq50yseKvcpo/irABhDY
+         oEWeMg4rEvLCz9M7FFdyW/0m4IpYJaebUNlhKFGSMGyv6lZfvN6VbM2wUU0dWAXkLq/z
+         80sgKr6uAU8rJkldvvyXSOXmroHIJeEav3g1OgaO/3rulFIIT4jcfApY19CkptJ8GOdj
+         9PgrcZdLYnIpf9vb8qiMWS2ozXGj1Q45X6vwSJljs2dL5VEFgTkwuWPDl+gRUG+SQHXW
+         u7H38HjwyddQ0mZFnys5ppwwKnMdh+z1lcgcJTDUsVOiKjbeH1we1gN7PZriHYkAqa1X
+         i6OA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/osZ/qKWzy7zqZwW+ItaQosDcy5yTp5owQllEtDJ504Bn8I3gTfaJ1gCEpBRFTqTx1QsYDrSphkgDwfiS@vger.kernel.org, AJvYcCVZAGIJAQKNah6UBfFuEUb8pOow+41pKxKqwVHTwMbRMeIRuuxN1mITOR1yHL2MMQBK85IMI8U1sugENWMg@vger.kernel.org, AJvYcCXMdGMO2k2hzeyDj7UHvk67wkt/vcbVJIUjNZbMH/7l7MmbPCUSHkBKYlD04bOQnF4Fy/OJxLx9u8rV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQeQP+FYJ0hDhJ/IAE66l8QINMgqc0IjcqCTrVHrKHay+hqSIC
+	eVelkQjr0QVMHm9vylkRYRnHadVBPfsM8vgrlQbce1pDfETHeHU6CXar
+X-Gm-Gg: ASbGncsERVa2T3uuvebC6vdD0WFUyQV8t+TWUgFILMce7Zg9UZ9AKNalkaxpeIB/dcj
+	xEp5aU8Vdn3jY7FOA1nZYxaMSTSMEJaMDmLLMs0OcoBcbYWlqW7tzOz9q2Gnr2vjKUw+5Xs66A/
+	ws4Xzw9L5wRkQrJGVxONe9pOhefHGLESYd55oIU0Ee04NeYjECHMFuTvNo40qB2w3s/8wZQJTOh
+	F4ZwPRyoQdA/0D7jT2k/lCveqhvyMzKRuRj0gSN8WZ+tm4Rs7ZO8QP7G9sIYCX/7OV84sCayUTS
+	Cmi+OWsYsJPD8FoS8i8HPi8Tcgqj7xudkIX1kbY1hfGOa/WWUiop58cHxAuK8VERfAEX5y8l24l
+	WfOtFR3CEQDPwBzUJB71gcY/Qj4+hsb8ltpjQAo2buJ3eLOvVkb0=
+X-Google-Smtp-Source: AGHT+IEZlhPktMwwW0Jbf3RqoTX/NKhZqR5TJTdFaddNSu4Crn0tbA5n062K8UspEDbchBqtVVg+fw==
+X-Received: by 2002:a05:6000:40ca:b0:3a4:f786:4fa1 with SMTP id ffacd0b85a97d-3b5f2db14eamr3033408f8f.2.1752251593613;
+        Fri, 11 Jul 2025 09:33:13 -0700 (PDT)
+Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d4b5sm4969860f8f.53.2025.07.11.09.33.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 09:33:13 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Date: Fri, 11 Jul 2025 18:32:52 +0200
+Subject: [PATCH] spi: spi-qpic-snand: simplify bad block marker duplication
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,28 +80,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250711-qpic-snand-simplify-bbm-copy-v1-1-dd2608325f72@gmail.com>
+X-B4-Tracking: v=1; b=H4sIALM8cWgC/x3MwQqDMAwA0F+RnBeIAXHsV4YHjVEDa60NDEX67
+ ys7vsu7wTWbOryaG7J+zW2PFe2jAdnGuCraXA1M3FHfEh7JBD2OcUa3kD62XDhNAWVPFz5ZhJS
+ IWXqoRcq62Pnv30MpP0IL7B1uAAAA
+X-Change-ID: 20250710-qpic-snand-simplify-bbm-copy-82cc0e0022c7
+To: Mark Brown <broonie@kernel.org>
+Cc: Varadarajan Narayanan <quic_varada@quicinc.com>, 
+ Md Sadre Alam <quic_mdalam@quicinc.com>, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
+ linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.14.2
 
+Due to the expectations of the SPINAND code, the driver duplicates
+the bad block markers during raw OOB reads.
 
-On Tue, 08 Jul 2025 12:12:00 +0200, Steffen Bätz wrote:
-> The commit "13bcd440f2ff nvmem: core: verify cell's raw_len" caused an
-> extension of the "mac-address" cell from 6 to 8 bytes due to word_size
-> of 4 bytes. This led to a required byte swap of the full buffer length,
-> which caused truncation of the mac-address when read.
-> 
-> Previously, the mac-address was incorrectly truncated from
-> 70:B3:D5:14:E9:0E to 00:00:70:B3:D5:14.
-> 
-> [...]
+It has been implemented by using two if statements, and due to the
+opposite conditions one of conditional codepaths always runs. Since
+the effect of both codepaths is the same, remove the if statements
+and use a single line solution instead.
 
-Applied, thanks!
+Also add a note about why the duplication is required.
 
-[1/1] nvmem: imx-ocotp: fix MAC address byte length
-      commit: d102a7924f4459770d1f30212d600d1f16d79f3b
+No functional changes intended.
+
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+---
+ drivers/spi/spi-qpic-snand.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/spi/spi-qpic-snand.c b/drivers/spi/spi-qpic-snand.c
+index b711c8be42c1f76029497b0c17d00cd8e52f5aa2..94c4d76cee34420d1dc3894aadad0086c6f22d96 100644
+--- a/drivers/spi/spi-qpic-snand.c
++++ b/drivers/spi/spi-qpic-snand.c
+@@ -597,10 +597,16 @@ static int qcom_spi_read_last_cw(struct qcom_nand_controller *snandc,
+ 
+ 	bbpos = mtd->writesize - ecc_cfg->cw_size * (num_cw - 1);
+ 
+-	if (snandc->data_buffer[bbpos] == 0xff)
+-		snandc->data_buffer[bbpos + 1] = 0xff;
+-	if (snandc->data_buffer[bbpos] != 0xff)
+-		snandc->data_buffer[bbpos + 1] = snandc->data_buffer[bbpos];
++	/*
++	 * TODO: The SPINAND code expects two bad block marker bytes
++	 * at the beginning of the OOB area, but the OOB layout used by
++	 * the driver has only one. Duplicate that for now in order to
++	 * avoid certain blocks to be marked as bad.
++	 *
++	 * This can be removed once single-byte bad block marker support
++	 * gets implemented in the SPINAND code.
++	 */
++	snandc->data_buffer[bbpos + 1] = snandc->data_buffer[bbpos];
+ 
+ 	memcpy(op->data.buf.in, snandc->data_buffer + bbpos, op->data.nbytes);
+ 
+
+---
+base-commit: 7d61715c58a39edc5f74fc7366487726fc223530
+change-id: 20250710-qpic-snand-simplify-bbm-copy-82cc0e0022c7
 
 Best regards,
 -- 
-Srinivas Kandagatla <srini@kernel.org>
+Gabor Juhos <j4g8y7@gmail.com>
 
 
