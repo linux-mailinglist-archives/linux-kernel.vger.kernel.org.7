@@ -1,139 +1,103 @@
-Return-Path: <linux-kernel+bounces-727175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F0EB01604
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:29:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08262B01605
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94C941887B0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:29:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FD741721EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520DA20E71C;
-	Fri, 11 Jul 2025 08:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D6D21ABA3;
+	Fri, 11 Jul 2025 08:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A/Whj7Gs"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Rc8BvegM"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB24F1FE470;
-	Fri, 11 Jul 2025 08:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A941FE470;
+	Fri, 11 Jul 2025 08:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752222479; cv=none; b=a+FTTIeQ3vad5bj2oPacHmT/8K4CPbrkWS2Oy150vQs2bcbqnGZGw+0E8JRSw9erYhi5pE9HFEZklOqw1bJeKq2BNcP1isw4zSpH5j+b+3Q1p0jvkE8P94CAfLP3+eH57J3ZBk90qBytPqdfhCT39dislDzLRmwPYTXVWLE/4do=
+	t=1752222488; cv=none; b=hprR0M52KR46DvyuWJyCERW+j++q4SHQ5ATWwWyr4GOTBxHq82YELxA0txgHLXCLmct4IxT2xabIZ0EfA7r/QF/e4W0pGRFQ4eOTcjjS5lGMV2HNAivJJpOnQ8RiRyj4U8uZ1ug0dlHkMdq8uXxJgrLjXrHz8XtrDs9Hf1FumDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752222479; c=relaxed/simple;
-	bh=RRdsqdC1y2DalFWiED+DTOQVdsPj1GGQ/CMLDGZlysU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fpxqYfiQLhOciejky0Iz1dBfoDmApkvlHEjbPDs9xwjW412rU2I2y4wn1RLdFl5NP6PqQhWI6o79SiWp+ghY/g3V11N7dXB4U10z4tGDsVSu54Odu5mGdl7YkdTaeGFxj5Dz8QeEXQTBPJyPvGvIQ0ICSYzUD3BaVp0y77kbOtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=A/Whj7Gs; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=J62mNrOujt+BmROjTiUeIdLj3EuDVmgaDfceNzUrnVc=; b=A/Whj7GsjX3G85qcHzAvDBE4Ge
-	XGDCjf1uAg8yPZtnlKTn9J1B1rBqAAlgZkAynhooEmFoFWCez2lWysiGFfmmt43+2NNFlxCsfTsg9
-	jcvIKEaIF/zSn51/9BvzZGftL9MN4O1Mzj9nxplkGsgRYApDn96Wvp67Xw2xjaVG9KUB1GT3OxMsK
-	iFnQ8C5do9Qny4NLMNwH+Z2I5UFaF6rrvK/hFZMB+klTfeMDsa4R3OAXR17S4V9JDsYcYy0mn5wuG
-	rABXS4uwVy8CT/Mls7A89dLfbuO3FgZMagznKBDeu6rySp5NoMDcZurdUDsuDdSWepoQ0l0TKmq+d
-	w6IuUPlQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ua96j-00000009E2r-0Mpj;
-	Fri, 11 Jul 2025 08:27:49 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B67B23001AA; Fri, 11 Jul 2025 10:27:47 +0200 (CEST)
-Date: Fri, 11 Jul 2025 10:27:47 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
-	Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	"Tested-by : Yi Lai" <yi1.lai@intel.com>, iommu@lists.linux.dev,
-	security@kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-Message-ID: <20250711082747.GD1099709@noisy.programming.kicks-ass.net>
-References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
- <20250710135432.GO1613376@noisy.programming.kicks-ass.net>
- <20250710155319.GK1613633@noisy.programming.kicks-ass.net>
- <e00587f2-ebfa-436b-a17a-198ff9c02f4a@linux.intel.com>
+	s=arc-20240116; t=1752222488; c=relaxed/simple;
+	bh=tmO2GvLN4K+qWGLAJtJSP1Gq7Eoozr+LLpJBPFgOil8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=T8teZWSFXtgxvVkNL99JSdATeS/7hXtLAdPHx+bq8pettvelvZ4Pg5URe6LGLcKc2vE8ebKnVHuBkiq7BiNRqY3QZZEevQY+SFDECsIcdhe2ibeYdQvhyAYp0zDOlHWvyJ/jPf6ahnyv/LInSwbobnA9pIUzY+zctZdQISGSry0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Rc8BvegM; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752222404;
+	bh=iz4ZVrlgcFBgnlVxHYlbJssb4O8/3eQGjpHhnIgOIUE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Rc8BvegMysKt26umcRDv2QowIlAz1sRKpDvwcx5bzVq/pDCpA6qlFA5TNAoF1WYy9
+	 WGYW8Oo6+NpjrGR/gNbarq0UFJqx+n/2myYs/2gddG3NFTyz0RCbpG69eX/VPAgyRJ
+	 q2ZPKoy+7le0hNnQCv04svKYW8iQlZDr6SKvTomWi6VI9JVBND5SFiHST/yb6uboLc
+	 fFB52v/Sjre6cMGeMIBMixyXbzeBKKfoV2HfvaOYv4k4XfTHfXPFvWyKIZWEZ7sX+b
+	 xs2a2to2xUrZ9kLoPixoVKezHXtt+XMzug5GPrUpCaefmzXdklViowOlyE8/nZEeNn
+	 Atzt7oorjRHdA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bdlDh1pZyz4wb0;
+	Fri, 11 Jul 2025 18:26:44 +1000 (AEST)
+Date: Fri, 11 Jul 2025 18:28:03 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Xu Yang
+ <xu.yang_2@nxp.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the usb tree
+Message-ID: <20250711182803.1d548467@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e00587f2-ebfa-436b-a17a-198ff9c02f4a@linux.intel.com>
+Content-Type: multipart/signed; boundary="Sig_/=1Z4MhsZ5B+7SY7VFkw29Xq";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Fri, Jul 11, 2025 at 11:09:00AM +0800, Baolu Lu wrote:
-> On 7/10/25 23:53, Peter Zijlstra wrote:
-> > On Thu, Jul 10, 2025 at 03:54:32PM +0200, Peter Zijlstra wrote:
-> > 
-> > > > @@ -132,8 +136,15 @@ struct iommu_sva *iommu_sva_bind_device(struct device *dev, struct mm_struct *mm
-> > > >   	if (ret)
-> > > >   		goto out_free_domain;
-> > > >   	domain->users = 1;
-> > > > -	list_add(&domain->next, &mm->iommu_mm->sva_domains);
-> > > > +	if (list_empty(&iommu_mm->sva_domains)) {
-> > > > +		scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
-> > > > +			if (list_empty(&iommu_sva_mms))
-> > > > +				static_branch_enable(&iommu_sva_present);
-> > > > +			list_add(&iommu_mm->mm_list_elm, &iommu_sva_mms);
-> > > > +		}
-> > > > +	}
-> > > > +	list_add(&domain->next, &iommu_mm->sva_domains);
-> > > >   out:
-> > > >   	refcount_set(&handle->users, 1);
-> > > >   	mutex_unlock(&iommu_sva_lock);
-> > > > @@ -175,6 +186,15 @@ void iommu_sva_unbind_device(struct iommu_sva *handle)
-> > > >   		list_del(&domain->next);
-> > > >   		iommu_domain_free(domain);
-> > > >   	}
-> > > > +
-> > > > +	if (list_empty(&iommu_mm->sva_domains)) {
-> > > > +		scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
-> > > > +			list_del(&iommu_mm->mm_list_elm);
-> > > > +			if (list_empty(&iommu_sva_mms))
-> > > > +				static_branch_disable(&iommu_sva_present);
-> > > > +		}
-> > > > +	}
-> > > > +
-> > > >   	mutex_unlock(&iommu_sva_lock);
-> > > >   	kfree(handle);
-> > > >   }
-> > > 
-> > > This seems an odd coding style choice; why the extra unneeded
-> > > indentation? That is, what's wrong with:
-> > > 
-> > > 	if (list_empty()) {
-> > > 		guard(spinlock_irqsave)(&iommu_mms_lock);
-> > > 		list_del();
-> > > 		if (list_empty()
-> > > 			static_branch_disable();
-> > > 	}
-> > 
-> > Well, for one, you can't do static_branch_{en,dis}able() from atomic
-> > context...
-> > 
-> > Was this ever tested?
-> 
-> I conducted unit tests for vmalloc()/vfree() scenarios, and Yi performed
-> fuzzing tests. We have not observed any warning messages. Perhaps
-> static_branch_disable() is not triggered in the test cases?
+--Sig_/=1Z4MhsZ5B+7SY7VFkw29Xq
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Same with static_branch_enable(). These functions start with
-cpus_read_lock(), which is percpu_down_read(), which has might_sleep().
+Hi all,
+
+After merging the usb tree, today's linux-next build (htmldocs) produced
+this warning:
+
+include/linux/usb.h:1640: warning: Function parameter or struct member 'sgt=
+' not described in 'urb'
+
+Introduced by commit
+
+  488e6eaab88c ("usb: core: add dma-noncoherent buffer alloc and free API")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/=1Z4MhsZ5B+7SY7VFkw29Xq
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhwyxMACgkQAVBC80lX
+0GyCOQf/ZaL18dqac/mKYv1vvX9Y8DXFf3HzXA+Sr1A/FeQuPLWtDTDCe9DHFEVS
+Q/fVF7oIc5voZ2BROOogV5bvpXJi2g4Mjd9auVY/1/vScHGjKibg+Ylo7bKUiJ8a
+qW/ZE6C09dVPNiAx/jMCaUY7Fht4NNqWakiiqEXz/PxK/ojlu7HswQ16ypjMTfd/
+o/qG02jiCN2Mt14FlAhi5yT6/lb5yo4s/pHM+lMrwraT5JV5jEKDj8nyMdB8UQ4F
+oQt7ZaOCMWege6LNv1h3qJ/4Cc/tg0Snjgmn1VWsDXtPLgno8THJyYp42MPCYauv
+cZl1v4SENdi/XiW01DgVXrKc+Fbhfg==
+=aVAn
+-----END PGP SIGNATURE-----
+
+--Sig_/=1Z4MhsZ5B+7SY7VFkw29Xq--
 
