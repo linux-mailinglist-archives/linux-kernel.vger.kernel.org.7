@@ -1,106 +1,134 @@
-Return-Path: <linux-kernel+bounces-728376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77DE2B0279D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:25:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37C04B027A1
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F7CA1CA7E8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:25:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5799D1CA7E73
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6663E2236FB;
-	Fri, 11 Jul 2025 23:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68D1223714;
+	Fri, 11 Jul 2025 23:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W58MlX5q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FsglWUwf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B887278F29;
-	Fri, 11 Jul 2025 23:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE86322259D
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 23:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752276305; cv=none; b=i6LBPq2TtUmQiVO2Gpayexo8UdYNVwxGT6yX+hxjCnVv2RoAMQhvFj4Qn7wqT+MbsP3SnhHHA3pAeQNMP3gPxS6lBPHwb1bo8fof/mH8/P1az1fa2Ru9wKvhAdX1ckmZUpir2RAbjD02ZWJwkGlLtosKLcGNQ9541N/x+1NP6QE=
+	t=1752276361; cv=none; b=DpJ4+IQaD5jY6SSdvl3DtYDLQt8TMcRqf85ndcoytlGYx1YtlMh158tPxpiwBkxJj9KoTXmw2MobCJOSuOGGzQO1SPZKfT/9aoy1wK3123mCrlP1dLAUL8fg+9Cy/47IMh6HNwvu6z9ZTITxxUXxQxWGIp5NfzlF5A0I2/IAKAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752276305; c=relaxed/simple;
-	bh=vMLtFCdICfTN1Condfc7E9QY9mFJNQlI7K/JFEES5j8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M/bm/nLjyRCAnjq6S4dig7MrNwrEbH70vdQvMAnuThSdsaoJwYz0rM0gU5EE24YkIW44jnCyBWn7SDezAtkEQ4e8X6tT3bCw51XeqogsnZycXs2YU5LkT9//CGGAvOdT17QQegNmy2TgyywGzpJHynxeD0OzVg48FiZt20GM+jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W58MlX5q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE7FC4CEED;
-	Fri, 11 Jul 2025 23:25:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752276305;
-	bh=vMLtFCdICfTN1Condfc7E9QY9mFJNQlI7K/JFEES5j8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=W58MlX5qy+ArhVhSCE6NBm7fHsoetPtCc+/n5OsuWUbu8uSmy+VjAPy4SLDi3FbZG
-	 MD/Brbtg0UgbkxZexLCCBQ/fWgdAzVBGq+e3zGJd2Pyobr1ATTd4IMpMDi8SYFlEmk
-	 1D4Ozx8kCZ7zLu/dJ/J/xRA8NhApguYmpjsrGkzeck0Q/hI0t+tVu2gx/DsTfuCJd4
-	 uCZkNJOACKdJ728jVmh7idCx6Q90aDN1fCXiKmj847a7XECJ8RqmgBLzGg3TmsEGzG
-	 D70khIFVozNoMRbrWyOvBWVb87QEilm56Hn0GPtzwgLcII+KkE7/zbMxTbkNL2c425
-	 Anjogk0IzQuZA==
-Date: Fri, 11 Jul 2025 16:25:04 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Saeed Mahameed <saeed@kernel.org>, Gal Pressman
- <gal@nvidia.com>, "Leon Romanovsky" <leon@kernel.org>, Saeed Mahameed
- <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Jonathan Corbet
- <corbet@lwn.net>, <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Dragos Tatulea
- <dtatulea@nvidia.com>
-Subject: Re: [PATCH net-next V2 2/3] net/mlx5e: Add device PCIe congestion
- ethtool stats
-Message-ID: <20250711162504.2c0b365d@kernel.org>
-In-Reply-To: <1752130292-22249-3-git-send-email-tariqt@nvidia.com>
-References: <1752130292-22249-1-git-send-email-tariqt@nvidia.com>
-	<1752130292-22249-3-git-send-email-tariqt@nvidia.com>
+	s=arc-20240116; t=1752276361; c=relaxed/simple;
+	bh=FTjm64xHe0mUQGe0gmdkpS1UKnLUFTMDb4s/LwJnZHA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TQVz+Waz2Lp1s2BaQyqIy5hsU2FEclKHSbVPeeAUr/GWoUbYi+3Efku1qIJxOyjDimumGKtU7YCyS1QYKKwfcJw/xEvzw0dgbGHbz96CojrFRmoAtODH0DZRrUM84cFZEfvMSoxmAQGWhYWe3na9R7KPR1MQCKVt3yQx/tHzAHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FsglWUwf; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752276357;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KNnitWUyVMmZ677TXjq4fGNMFjZQx7zQ4oPAZSNDf8g=;
+	b=FsglWUwfjIUydNUMn1fICrCrdhCQgcxfhBv6QlhPq/oSvtEyjFxePso0I7r7Ft1h13eArv
+	EEXNu+BFXTQpWcYaBCwDrYzabSgKBDAYgQMyvj093hz1DpUh0raJy/qagULI10nKOXSlRR
+	AdZAOFtsFqWkT1iMsArpp7kPnIfRw20=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-576-XWAvxp4RPOCabqu9HV25Lw-1; Fri, 11 Jul 2025 19:25:56 -0400
+X-MC-Unique: XWAvxp4RPOCabqu9HV25Lw-1
+X-Mimecast-MFC-AGG-ID: XWAvxp4RPOCabqu9HV25Lw_1752276355
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ae0d76b4f84so211781766b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 16:25:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752276355; x=1752881155;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KNnitWUyVMmZ677TXjq4fGNMFjZQx7zQ4oPAZSNDf8g=;
+        b=eQqcJccou6sGFeigFQOO9VjA5VZhqbRfA7s8z9vOR+9H7XwARtvN0GX4OM42xY3fcz
+         BhSFZaPGKB6I6/A6dGLXX+k820WEvkSMWRx9nr99cf23Gnk1XwrXAaqVoTYhgON3BCVy
+         fXyDVefcOYm0B2esnVCdO79KDuBEC38vPwl5IrTLGb2sadMyPla7cBXp/KBvWg7lPWOt
+         Xpu5rf8y5+l5uvscTa9dXXkx+CbJozkFNjCDP47UC3FhM/N8YfreNURXNzlsZWyDRE5K
+         Wg5iRi+81pxo75Qe8TwhCFaHU6IhZzQDHw95Bxsu3+xaFAQKZGXWfwxe1k7vT9SP5+R2
+         fFFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBf5dPY8f11XOqzYLmh+V8p+iMESd9WRyBX4ebJvkm57eVIhQXyOD3dTRqh03LNutHZLhAshYumPb2B6k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjnAD/vs5UnATKq5doo8w1jOx8ZaFC07nv/6Ep5XbeNoSGmrAW
+	KK5NbKX0cEg/oJ0Z2WTeLf/DfZ6pIR5Ft5nNQX7vjwc8rzI/QG8hyoNyLY6TDaMB3rTh6dBdeAW
+	Z0mHDA6Eo+mv8SCLVq2k3OB01S6IuaGCDGZ+kpjoQ13DWrrDBQPvxA73lnAOvAXBqzC0Z+I38y3
+	MgiQs1XX/ZvJm5Yo9ymT/C3SthtxhOxXq1tT6B6ViJ
+X-Gm-Gg: ASbGncusmBc79DkYWP/jVphOD8GatNOXy4I0gFcw5bNhmAe96qAEzMMqUZUm5yD77Gm
+	BSlMN/5eU0CLKg+9H7JB9Z7kS31tt6ORd7UQcm/FxDEPiuhmCbCjcNVK3ZwLhp6Gr84TwAIOzDl
+	ih34PUh0KteuAtJpFGjkqcrw==
+X-Received: by 2002:a17:907:1b05:b0:ad9:f54f:70a2 with SMTP id a640c23a62f3a-ae6fbdc90f4mr531763666b.22.1752276355376;
+        Fri, 11 Jul 2025 16:25:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFt+iJFpZ7hKPJdxIrpDsRa3jGHWrIka/5oKF32jekBQp3esoTQv/Phk6pp434QyDFneeZCLDCHJ81+4M08gnA=
+X-Received: by 2002:a17:907:1b05:b0:ad9:f54f:70a2 with SMTP id
+ a640c23a62f3a-ae6fbdc90f4mr531761466b.22.1752276355051; Fri, 11 Jul 2025
+ 16:25:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250711053509.194751-1-thuth@redhat.com> <2025071125-talon-clammy-4971@gregkh>
+ <9f7242e8-1082-4a5d-bb6e-a80106d1b1f9@redhat.com> <2025071152-name-spoon-88e8@gregkh>
+ <aHC-Ke2oLri_m7p6@infradead.org> <2025071119-important-convene-ab85@gregkh>
+ <CAC1cPGx0Chmz3s+rd5AJAPNCuoyZX-AGC=hfp9JPAG_-H_J6vw@mail.gmail.com> <aHGafTZTcdlpw1gN@gate>
+In-Reply-To: <aHGafTZTcdlpw1gN@gate>
+From: Richard Fontana <rfontana@redhat.com>
+Date: Fri, 11 Jul 2025 19:25:44 -0400
+X-Gm-Features: Ac12FXznuBL3348HIkyZK48dfJrdmjVLqm_3FxI1CyeUB1LpyaZRNLgOhXRZp_o
+Message-ID: <CAC1cPGzLK8w2e=vz3rgPwWBkqs_2estcbPJgXD-RRx4GjdcB+A@mail.gmail.com>
+Subject: Re: [PATCH v2] powerpc: Replace the obsolete address of the FSF
+To: Segher Boessenkool <segher@kernel.crashing.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christoph Hellwig <hch@infradead.org>, 
+	Thomas Huth <thuth@redhat.com>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Thomas Gleixner <tglx@linutronix.de>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-spdx@vger.kernel.org, 
+	J Lovejoy <opensource@jilayne.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 10 Jul 2025 09:51:31 +0300 Tariq Toukan wrote:
-> +   * - `pci_bw_inbound_high`
-> +     - The number of times the device crossed the high inbound pcie bandwidth
-> +       threshold. To be compared to pci_bw_inbound_low to check if the device
-> +       is in a congested state.
-> +       If pci_bw_inbound_high == pci_bw_inbound_low then the device is not congested.
-> +       If pci_bw_inbound_high > pci_bw_inbound_low then the device is congested.
-> +     - Tnformative
+On Fri, Jul 11, 2025 at 7:14=E2=80=AFPM Segher Boessenkool
+<segher@kernel.crashing.org> wrote:
+>
+> On Fri, Jul 11, 2025 at 05:02:18PM -0400, Richard Fontana wrote:
 
-The metrics make sense, but utilization has to be averaged over some
-period of time to be meaningful. Can you shad any light on what the
-measurement period or algorithm is?
+> > while this one:
+> >
+> >  *    As a special exception, if you link this library with files
+> >  *    compiled with GCC to produce an executable, this does not cause
+> >  *    the resulting executable to be covered by the GNU General Public =
+License.
+> >  *    This exception does not however invalidate any other reasons why
+> >  *    the executable file might be covered by the GNU General Public Li=
+cense.
+> >
+> > does not seem to be in the SPDX exception list. It is very similar to
+> > `GNU-compiler-exception` except it specifically mentions GCC instead
+> > of saying "a GNU compiler".
+>
+> https://spdx.org/licenses/GNU-compiler-exception.html
+>
+> is exactly this.
 
-> +	changes = cong_event->state ^ new_cong_state;
-> +	if (!changes)
-> +		return;
+No, because `GNU-compiler-exception` as defined here
+https://github.com/spdx/license-list-XML/blob/main/src/exceptions/GNU-compi=
+ler-exception.xml
+assumes use of the term "GCC" rather than "a GNU compiler".
 
-no risk of the high / low events coming so quickly we'll miss both?
-Should there be a counter for "mis-firing" of that sort?
-You'd be surprised how long the scheduling latency for a kernel worker
-can be on a busy server :(
+Richard
 
-> +	cong_event->state = new_cong_state;
-> +
-> +	if (changes & MLX5E_INBOUND_CONG) {
-> +		if (new_cong_state & MLX5E_INBOUND_CONG)
-> +			cong_event->stats.pci_bw_inbound_high++;
-> +		else
-> +			cong_event->stats.pci_bw_inbound_low++;
-> +	}
-> +
-> +	if (changes & MLX5E_OUTBOUND_CONG) {
-> +		if (new_cong_state & MLX5E_OUTBOUND_CONG)
-> +			cong_event->stats.pci_bw_outbound_high++;
-> +		else
-> +			cong_event->stats.pci_bw_outbound_low++;
-> +	}
 
