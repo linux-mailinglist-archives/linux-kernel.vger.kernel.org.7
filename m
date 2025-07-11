@@ -1,80 +1,167 @@
-Return-Path: <linux-kernel+bounces-727682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 424C9B01DF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:40:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67371B01E02
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:41:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F034F3A5F95
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3690A3A4551
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB6F2E6104;
-	Fri, 11 Jul 2025 13:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536302D949C;
+	Fri, 11 Jul 2025 13:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fY1bE8Nv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D522E54BB;
-	Fri, 11 Jul 2025 13:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10042C17A8;
+	Fri, 11 Jul 2025 13:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752241147; cv=none; b=H0RmAYLF3DUEP3sZaGaLdDlIXjUFuKRg7AWH/apUCvYpt2uV+Xs2DKo4k2KwNbjf8SvuinTOgMJ79tL0+Atg2p6kLjIUmUGJBudVBkRbOBGQ3V4dCqkyIBoBfuzOBYou/8yHcIjx9qVF2AjGiu58huDk7NnLdSetVQeAK5sku80=
+	t=1752241234; cv=none; b=N9gugotSaMoqOY5XaHMNFzu+VfcTxLViZz0RCl/FbvqtOde0Tg3sniSQ6mZRu7vY58JagD4C+WgfsdmlZhYJcgC+X6CahUuaqT+edYAaJ3rXsXOzV21iA5y7vDaD7JUABoXdaxyqVU30eDjOO8R+rUNa7GTCIwLnW3DOe3NXrHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752241147; c=relaxed/simple;
-	bh=UU5k80l2ei5TRgoTq9iRmJnyQtYBDHXCfdvXSG9D+4w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=N7IjB8IcUN00GTiXafBLGgG0LLiyfE8Hs8JNyM+/KX7brxFWmBDtIGBEub9BU6E6QKpoFO27m1gm3sZfZ0DPEKvJmAPCzT4opqU9tB0+DEGqwZ5WESwYu/95NappLEDSOTacYfCfKs2iffyuoC1S/itEqrcK2az1b/iJPX3I5hI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4290C4CEF0;
-	Fri, 11 Jul 2025 13:39:04 +0000 (UTC)
-From: Daniel Gomez <da.gomez@samsung.com>
-To: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
- Sami Tolvanen <samitolvanen@google.com>, 
- Brendan Higgins <brendan.higgins@linux.dev>, 
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-In-Reply-To: <20250711-kunit-ifdef-modules-v2-0-39443decb1f8@linutronix.de>
-References: <20250711-kunit-ifdef-modules-v2-0-39443decb1f8@linutronix.de>
-Subject: Re: [PATCH v2 0/3] module: make structure definitions always
- visible
-Message-Id: <175224114462.57001.15162198119283395382.b4-ty@samsung.com>
-Date: Fri, 11 Jul 2025 15:39:04 +0200
+	s=arc-20240116; t=1752241234; c=relaxed/simple;
+	bh=kHW409c2TBaU4M7cj18B4wU4/Ok8QufCBhSsllw1mk8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VxaFuTKlX4rU1BtNuZsls4+KksWuZ/eabuJD68C/7b63ncxYDkqVQq2oEyZ7Jl9EJmQXyFAkIINHW9hpbQT8CuX0yjA8G3Qp3McpGsgpym/JSO51i4OzsCsByVCmRyMdQIPpZl+myinc/mCjvQ5fY6R85HwEx2lkEFMvUk9v4iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fY1bE8Nv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 104D3C4CEED;
+	Fri, 11 Jul 2025 13:40:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752241234;
+	bh=kHW409c2TBaU4M7cj18B4wU4/Ok8QufCBhSsllw1mk8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fY1bE8NvnLL5UtjPBZhAdg3r0S8sKIQ3rgm9YDUo6lG65fE8GoJJlTof54/LMPkj4
+	 c1lebIDA1Ht2DL1JJgUC+A4xSa4jywU/nEDJKhTPAZsksWU2pymVqIberRWI9GzDL8
+	 jFV8zraxRIOjY/J2YNANAhECfNEHOM1XtgBveXW4AUVpyIvEwbBOWBHc9ZyaMZpaMo
+	 Pym38AUYs5UQgUI2MVEccpAz4ECI9i/MDhyhreSHwQnblzoBJl2mXf1acNbwqcftPI
+	 eJi1Y8kNAwojyCi9QnJI2o4ytSPnZoXRhZjSa15oS+pA6P6RBlkvfp2j8pWsq77seP
+	 w0jdvGrkGzHVA==
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-61208b548e8so572580eaf.3;
+        Fri, 11 Jul 2025 06:40:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVHQJwKwPTeq4XL/ipJnMk6W2Gc5zc8VgGBZejt656SdNMxb73q49X75lROJbH4Ff2iGrbsw0luIWg=@vger.kernel.org, AJvYcCXFeLAG8j99EmF/Yu1zqXQpBTWUe+Yzos/Km/ZcZNc3o3hcBqKVugoaaO2LMa0mZEyCH+pV+VzoTBY=@vger.kernel.org, AJvYcCXp6TokOlTji9z/xUOenSueqfTv03nb9GC7B+YjabFdwAtfISRU+V0um1uR30CQoCdtFuYlixJnQYqtN9aI@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi9m5TJcmTkbZLxJG1jevcwtfJxfchALGCc0F+eQqgfWZIhnyb
+	XIaWgE8ADq3AaNbbS+VknB1SNqLvKKIKaYcp4HtZJZqj1R9OM0dOwr87vDLyuNc98eLKaxqkBvF
+	yuedWnAY/9ztZIicL/6mU+22vceLUQGE=
+X-Google-Smtp-Source: AGHT+IHYWUrT5/T8j5mPbE9LSBXdxoqRH1k/FXMiOLTMeg6kls7Rig+ps7//jB2hu/AhIcv3YM+yywrmdImt64YZ0L4=
+X-Received: by 2002:a05:6820:2913:b0:613:cd27:2fe0 with SMTP id
+ 006d021491bc7-613e5efcb97mr2478213eaf.1.1752241233380; Fri, 11 Jul 2025
+ 06:40:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev
+References: <20250709-pm-async-off-v3-1-cb69a6fc8d04@linaro.org> <b3de1e2b-973f-4b4a-83f3-6015808b3772@linaro.org>
+In-Reply-To: <b3de1e2b-973f-4b4a-83f3-6015808b3772@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 11 Jul 2025 15:40:21 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hJjbp0qBZh1Jj3hVHrZV1CLeCgrOVseSGS+7=1r7onYA@mail.gmail.com>
+X-Gm-Features: Ac12FXzDgl_lWOpU6WHqno1wGO4QZHusIJZc9tKNWFd40y80OKUoGkHCmJLRyUA
+Message-ID: <CAJZ5v0hJjbp0qBZh1Jj3hVHrZV1CLeCgrOVseSGS+7=1r7onYA@mail.gmail.com>
+Subject: Re: [PATCH v3] PM: add kernel parameter to disable asynchronous suspend/resume
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Len Brown <len.brown@intel.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	peter.griffin@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com, 
+	kernel-team@android.com, rdunlap@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Jul 11, 2025 at 3:21=E2=80=AFPM Tudor Ambarus <tudor.ambarus@linaro=
+.org> wrote:
+>
+>
+>
+> On 7/9/25 1:31 PM, Tudor Ambarus wrote:
+> > On some platforms, device dependencies are not properly represented by
+> > device links, which can cause issues when asynchronous power management
+> > is enabled. While it is possible to disable this via sysfs, doing so
+> > at runtime can race with the first system suspend event.
+> >
+> > This patch introduces a kernel command-line parameter, "pm_async", whic=
+h
+> > can be set to "off" to globally disable asynchronous suspend and resume
+> > operations from early boot. It effectively provides a way to set the
+> > initial value of the existing pm_async sysfs knob at boot time. This
+> > offers a robust method to fall back to synchronous (sequential) operati=
+on,
+> > which can stabilize platforms with problematic dependencies and also
+> > serve as a useful debugging tool.
+> >
+> > The default behavior remains unchanged (asynchronous enabled). To disab=
+le
+> > it, boot the kernel with the "pm_async=3Doff" parameter.
+> >
+> > Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> > ---
+> > Dealing with the pixel6 downstream drivers to cope with the changes fro=
+m
+> > https://lore.kernel.org/linux-pm/10629535.nUPlyArG6x@rjwysocki.net/.
+> >
+> > Similar to what people already reported it seems pixel6 lacks proper
+> > device links dependencies downstream causing i2c and spi client drivers
+> > to fail to suspend. Add kernel param to disable async suspend/resume.
+> > ---
+> > Changes in v3:
+> > - update documentation with "pm_async=3D" and "Format: off" (Randy)
+> > - reword documentation to make it clear "on" isn't a selectable option
+> >   for pm_async because it's the default behavior.
+> > - Link to v2: https://lore.kernel.org/r/20250708-pm-async-off-v2-1-7fad=
+a54f01c0@linaro.org
+> >
+> > Changes in v2:
+> > - update the documentation and the commit message to describe that the
+> >   "pm_async" kernel parameter provides a way to change the initial valu=
+e
+> >   of the existing /sys/power/pm_async sysfs knob.
+> > - Link to v1: https://lore.kernel.org/r/20250708-pm-async-off-v1-1-1b20=
+0cc03d9c@linaro.org
+> > ---
+> >  Documentation/admin-guide/kernel-parameters.txt | 12 ++++++++++++
+> >  kernel/power/main.c                             |  9 +++++++++
+> >  2 files changed, 21 insertions(+)
+> >
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Document=
+ation/admin-guide/kernel-parameters.txt
+> > index f1f2c0874da9ddfc95058c464fdf5dabaf0de713..06beacf208de3242a3b4bb2=
+413ab6cd3e0083f15 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -5000,6 +5000,18 @@
+> >                       that number, otherwise (e.g., 'pmu_override=3Don'=
+), MMCR1
+> >                       remains 0.
+> >
+> > +     pm_async=3D       [PM]
+> > +                     Format: off
+> > +                     This parameter sets the initial value of the
+> > +                     /sys/power/pm_async sysfs knob at boot time.
+> > +                     If set to "off", disables asynchronous suspend an=
+d
+> > +                     resume of devices during system-wide power transi=
+tions.
+> > +                     This can be useful on platforms where device
+> > +                     dependencies are not well-defined, or for debuggi=
+ng
+> > +                     power management issues. Asynchronous operations =
+are
+> > +                     enabled by default.
+> > +
+> > +
+>
+> I just noticed an extra new line here, that checkpatch didn't catch.
+> Please let me know if I have to resubmit, or it can be amended
+> when/if applied.
 
-On Fri, 11 Jul 2025 15:31:35 +0200, Thomas Weißschuh wrote:
-> Code using IS_ENABLED(CONFIG_MODULES) as a C expression may need access
-> to the module structure definitions to compile.
-> Make sure these structure definitions are always visible.
-> 
-> This will conflict with commit 6bb37af62634 ("module: Move modprobe_path
-> and modules_disabled ctl_tables into the module subsys") from the sysctl
-> tree, but the resolution is trivial.
-> 
-> [...]
+No worries, I've already applied the patch.
 
-Applied, thanks!
+The extra new line can be removed separately.
 
-[1/3] module: move 'struct module_use' to internal.h
-      commit: bb02f22eaabc4d878577e2b8c46ed7b6be5f5459
-[2/3] module: make structure definitions always visible
-      commit: 02281b559cd1fdfdc8f7eb05bbbe3ab7b35246f0
-[3/3] kunit: test: Drop CONFIG_MODULE ifdeffery
-      commit: dffcba8acea3a80b3478750ac32f17bd5345b68e
-
-Best regards,
--- 
-Daniel Gomez <da.gomez@samsung.com>
-
+Thanks!
 
