@@ -1,127 +1,119 @@
-Return-Path: <linux-kernel+bounces-727243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF9EBB016FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:56:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE84B016FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E30F3A31B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:56:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E21833ADE31
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E682153CB;
-	Fri, 11 Jul 2025 08:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13493217666;
+	Fri, 11 Jul 2025 08:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k4hCb+zu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fWvrRbEM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B610207E1D;
-	Fri, 11 Jul 2025 08:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF7F1F239B;
+	Fri, 11 Jul 2025 08:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752224189; cv=none; b=cqNgxmql788dDnn5bUUK58GAxr6MFOuCQR2GuCpNkByPw93KauJi6kXLHKSLjoSH22bNrsZXZ4qr9TsTij39QuiXxmjWycx7aH9tk4kcpgEkxC12UuowI8C99m703Vaqpi9fOmyON2ja3nTUvl5MQtQinoPUj3ZF2F731nrEOxw=
+	t=1752224223; cv=none; b=Ho5KEb7Eyb55xSS5d1iGdw4hg/WTvPsCTZHmPcFprxSwHdZChxzMY7QvXRBdcehHSufVvzvSPzo8+gx8ZSOZ+S/gQQYoWfvZLxkHuf/4L7swDTztCOCA0WieQ72fKasPL9RCMh9qOeJIJ8ySKE2S6JF9EifdHLhb3C0gpucDXns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752224189; c=relaxed/simple;
-	bh=NOkAhwytJRal2+sqXEue+X1Q+ohIpJDK3JfNVjzG7jI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dr9dzzR5lO1D76kPYuLj4/fxp5Prs1b7lMnXcN4uiDt5VFXR7mJKZ+OMb2YXP6uWsfWU4taTSUbaceDCCD4U7yz/D0R9FVmV5y8saF2PLCVdJRCeZMYAtq6/FS4V9A6mMGBBwjNb2JUnwt30bVRYuCPMnJ9yzHxhqUHnnUuKco4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k4hCb+zu; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1752224223; c=relaxed/simple;
+	bh=zbfjWmjznnLXYocXOSEYiAaGJmiOgBuKAm4AEmaWrqU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rSc++YWc6Hg5M6avONvmqXoItHWaGnThE7p8YfMYto8jUrI5mPeP6YiaOuhpQ/OLEAhYfxkl1pzGdneFajWTlGQOHku6img+cjyPVMd23p0/bezGhetNHEAvNRx3j+rnW8YZoiCmsgS/x460fYIEYUZ3BWbE5G+jZZDJXmTM3Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fWvrRbEM; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752224187; x=1783760187;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=NOkAhwytJRal2+sqXEue+X1Q+ohIpJDK3JfNVjzG7jI=;
-  b=k4hCb+zurMg0w4n7wK/2pvtWuydwN8cWNbgDt61jOyLaowqFrdIjA3J5
-   M+Qmch90hXAPHxBloZ2b0b2Dd5XxzMvcrnDsyx9RkTp2GjlYsi9oGsshr
-   P+uKzyKqOBPwxd1wQH50fd8KZYem7ZgtC688kzdFAPvtmIF37XoxfP5U8
-   MDcXaZVh1COxlyVMqBtumuoYF7A9kv4yzYV/ln2EQ/2uW8Ufjo+/j6GJR
-   J/t2BKFUNmwTWPKT/PsiGDByTMpwsTN7A2vCVvSuZfGPsZgDCpU5mMzI3
-   iZTn5WR7WbgzAz2xrCQdGD80eKurYwW2Ehyn0Xa/3lBkbsxXUR0ZZBBnE
+  t=1752224221; x=1783760221;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=zbfjWmjznnLXYocXOSEYiAaGJmiOgBuKAm4AEmaWrqU=;
+  b=fWvrRbEMKWjiG5jUrfy3tCudMyZDg8U+8nvsE2zO6k/8taVTQsqE7Fn8
+   kclu7E+ZuG3yKmZ+H8bKxSoB8bwySHLbrTm2HSguKRsBof92TYsxdfVxo
+   ss/pOokh0LEbUq+SkU69melfaZ8h+xn8id552jLbUdtFVxkTlhcnVCeeu
+   MuqIs/DGy390mDkzKmpos8Q+S2dPg240T0CKtX3Qm6WP/BvOCecB8VSol
+   +TKzlh79lDEWHr/P1AQxc9yFMTXcZCDzmJcrVDr2WyOvaKUIjGgi45AJ6
+   oQdMnprQtZ5NaHaOzsKko/Um0Rzu+BTa6bnZhRs7oDb5piC8FjYTw7l1/
    Q==;
-X-CSE-ConnectionGUID: 02h2BMgvTomMgTjNnek++w==
-X-CSE-MsgGUID: u+LwOgXyS82XRjkCH3vtMA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="54393360"
+X-CSE-ConnectionGUID: N0Z2+0mMTQWPHfHLfFLwXw==
+X-CSE-MsgGUID: p0rNkwmtTuyL1lH/CzNegA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="54373633"
 X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="54393360"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 01:55:19 -0700
-X-CSE-ConnectionGUID: wL+lODa3RpS43LnRs6M9ag==
-X-CSE-MsgGUID: Zlw1iqPHTi2vzwbfNNV5Yg==
+   d="scan'208";a="54373633"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 01:55:53 -0700
+X-CSE-ConnectionGUID: 0693nmyjRsWVDkocPJvbKA==
+X-CSE-MsgGUID: muzAU0w6R1OFtDXsjkeJfw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="187303314"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa001.fm.intel.com with ESMTP; 11 Jul 2025 01:55:18 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 301CB1A1; Fri, 11 Jul 2025 11:55:16 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Kees Cook <kees@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] string: Group str_has_prefix() and strstarts()
-Date: Fri, 11 Jul 2025 11:55:14 +0300
-Message-ID: <20250711085514.1294428-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+   d="scan'208";a="155737088"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 01:55:50 -0700
+Message-ID: <7103b312-b02d-440e-9fa6-ba219a510c2d@intel.com>
+Date: Fri, 11 Jul 2025 16:55:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 0/1] KVM: TDX: Decrease TDX VM shutdown time
+To: Sean Christopherson <seanjc@google.com>, pbonzini@redhat.com,
+ Adrian Hunter <adrian.hunter@intel.com>
+Cc: kvm@vger.kernel.org, rick.p.edgecombe@intel.com,
+ kirill.shutemov@linux.intel.com, kai.huang@intel.com,
+ reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
+ binbin.wu@linux.intel.com, isaku.yamahata@intel.com,
+ linux-kernel@vger.kernel.org, yan.y.zhao@intel.com, chao.gao@intel.com
+References: <20250611095158.19398-1-adrian.hunter@intel.com>
+ <175088949072.720373.4112758062004721516.b4-ty@google.com>
+ <aF1uNonhK1rQ8ViZ@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <aF1uNonhK1rQ8ViZ@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The two str_has_prefix() and strstarts() are about the same
-with a slight difference on what they return. Group them in
-the header.
+On 6/26/2025 11:58 PM, Sean Christopherson wrote:
+> On Wed, Jun 25, 2025, Sean Christopherson wrote:
+>> On Wed, 11 Jun 2025 12:51:57 +0300, Adrian Hunter wrote:
+>>> Changes in V4:
+>>>
+>>> 	Drop TDX_FLUSHVP_NOT_DONE change.  It will be done separately.
+>>> 	Use KVM_BUG_ON() instead of WARN_ON().
+>>> 	Correct kvm_trylock_all_vcpus() return value.
+>>>
+>>> Changes in V3:
+>>> 	Refer:
+>>>              https://lore.kernel.org/r/aAL4dT1pWG5dDDeo@google.com
+>>>
+>>> [...]
+>>
+>> Applied to kvm-x86 vmx, thanks!
+>>
+>> [1/1] KVM: TDX: Add sub-ioctl KVM_TDX_TERMINATE_VM
+>>        https://github.com/kvm-x86/linux/commit/111a7311a016
+> 
+> Fixed up to address a docs goof[*], new hash:
+> 
+>        https://github.com/kvm-x86/linux/commit/e4775f57ad51
+> 
+> [*] https://lore.kernel.org/all/20250626171004.7a1a024b@canb.auug.org.au
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- include/linux/string.h | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+Hi Sean,
 
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 01621ad0f598..fdd3442c6bcb 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -345,16 +345,6 @@ extern ssize_t memory_read_from_buffer(void *to, size_t count, loff_t *ppos,
- 
- int ptr_to_hashval(const void *ptr, unsigned long *hashval_out);
- 
--/**
-- * strstarts - does @str start with @prefix?
-- * @str: string to examine
-- * @prefix: prefix to look for.
-- */
--static inline bool strstarts(const char *str, const char *prefix)
--{
--	return strncmp(str, prefix, strlen(prefix)) == 0;
--}
--
- size_t memweight(const void *ptr, size_t bytes);
- 
- /**
-@@ -562,4 +552,14 @@ static __always_inline size_t str_has_prefix(const char *str, const char *prefix
- 	return strncmp(str, prefix, len) == 0 ? len : 0;
- }
- 
-+/**
-+ * strstarts - does @str start with @prefix?
-+ * @str: string to examine
-+ * @prefix: prefix to look for.
-+ */
-+static inline bool strstarts(const char *str, const char *prefix)
-+{
-+	return strncmp(str, prefix, strlen(prefix)) == 0;
-+}
-+
- #endif /* _LINUX_STRING_H_ */
--- 
-2.47.2
+I think it's targeted for v6.17, right?
 
+If so, do we need the enumeration for the new TDX ioctl? Yes, the 
+userspace could always try and ignore the failure. But since the ship 
+has not sailed, I would like to report it and hear your opinion.
 
