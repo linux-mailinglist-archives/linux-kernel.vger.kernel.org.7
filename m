@@ -1,169 +1,119 @@
-Return-Path: <linux-kernel+bounces-727076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A1AB014B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:30:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B549FB014B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E40D1C2177D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:30:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF9DE1AA73C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6666B1EFF9B;
-	Fri, 11 Jul 2025 07:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D7A1EEA54;
+	Fri, 11 Jul 2025 07:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sr2JNfMH"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lGEJEelw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DA01E9B08;
-	Fri, 11 Jul 2025 07:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFDD8A933;
+	Fri, 11 Jul 2025 07:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752218962; cv=none; b=UVA/qTcfKJvQ0wQp6ETMTwQP1PdkCvA12E6pgMNJsilxuNMI+7OsFGiaE+2bTsR8IGzPb/bmAzAOTReC43scNR0HUExNANR5VM1gK9iJpa1wmcFmMIi+IyNFUtB7Puf8eOHHhB1LGCvAEorYy7ZAfrSdXzaWKv2Y5DDIrKBM1T4=
+	t=1752219035; cv=none; b=aLhFeozM+JymHAIa3gsg6CyE2w8zubWkWZB9R6aga1m7BJUvs7+8tZcVw4Ut59b4K+OQDFdFW1DPk1q7apkqSaJTvUG9BcU06rD96y9Om0cRtw3fUj+fpqWALZsWH/1VjlRY2GmE+kVpo2YqnSZ/cgjHOzgZ21ohEZSQPtHsvg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752218962; c=relaxed/simple;
-	bh=1bYQFKIcAn0s1xDS2MgBRnt8iLRkzAExHI5zhkCBABA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C9TylIC8w8fpflOXX1sj+9/lFkcNwhTDoTuLsG+xNKwI6IqmE6m4gBg+rf7i4khyDEVeO72pZp28aujtSjjoR4k5XbO+CZkpBI5jmS+vO621wpwK5fGPaIvl9gOtM1WvNBAobotAE0L28rSm7RHj5/C0J6S5sGrw/P57rfMWhpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sr2JNfMH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44311C4CEED;
-	Fri, 11 Jul 2025 07:29:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752218961;
-	bh=1bYQFKIcAn0s1xDS2MgBRnt8iLRkzAExHI5zhkCBABA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Sr2JNfMHO8x4Zvt10+1DTJTVI3SbUWuUb8UNKm5iDpElYTN1tNSGQPewefAPXNHi1
-	 K5JFOhzSpqpUxob1nIi2iIA5iCI0+5vLhWrd6+tvXLb/+VyQ0tSUE07QPg5aUnPxJW
-	 DlfK1ta2W2pZIk5TMBb75sg5RwvkgLL7uYfbkP161tk3vAYrYLAsiIMxCjpBgg2o+b
-	 +RSev1lt1JQ4vbUIKgwFvFZcBj5rphtd3JUrFm4dnlBtajx8+aXA0uJDfBtg7liStf
-	 1L8fFKAdqYeZP1rjT5IzP0lsu+3oiVvyncReT3n0pkG5Typii/i4PbqhD0qynqgtNW
-	 duedNyJmZVgMg==
-Date: Fri, 11 Jul 2025 09:29:17 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/12] Thrash up the parser/output interface
-Message-ID: <20250711092917.229bcc89@foz.lan>
-In-Reply-To: <92ff26c0-6952-4f7e-965e-2f020adb859b@gmail.com>
-References: <20250710233142.246524-1-corbet@lwn.net>
-	<92ff26c0-6952-4f7e-965e-2f020adb859b@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1752219035; c=relaxed/simple;
+	bh=pT4xr25h93j0ZqqII9Nj3hCTFizY/oID/swt1J6vurU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tkgBxBE3dvt9yLCwNdxy/U4Jii/cTgMhHgN9EDtXvotznNa2uuAOun2Be4G6NcZEj+W6cVvj1p9aqeTqWCqp8kNIr7aVQB7/h4UO2wSvRYMy/GOgAzE8SXR73JaVuYZSPvqyJ3Q6ovPtByrMv08ANgCJktaeXwqbhbC3/tE/8gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lGEJEelw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2052C4CEED;
+	Fri, 11 Jul 2025 07:30:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752219034;
+	bh=pT4xr25h93j0ZqqII9Nj3hCTFizY/oID/swt1J6vurU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lGEJEelwUyYuRvhj82dJRzXqyXiJt/Hqq6g6H3IlCwKtFFJUvMSULkZGNjzul7iDZ
+	 E2jBAkEH3Ng4wnr4fdgouMjbHMRaGvLWDXTyunnJPFYCmOIpEIerU/fWy2tDGtXMYm
+	 lzTP9c3FngPwfbqG+YufABBmFtWdHzIeSL5fd/gU=
+Date: Fri, 11 Jul 2025 09:30:31 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Thomas Huth <thuth@redhat.com>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-spdx@vger.kernel.org
+Subject: Re: [PATCH v2] powerpc: Replace the obsolete address of the FSF
+Message-ID: <2025071152-name-spoon-88e8@gregkh>
+References: <20250711053509.194751-1-thuth@redhat.com>
+ <2025071125-talon-clammy-4971@gregkh>
+ <9f7242e8-1082-4a5d-bb6e-a80106d1b1f9@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9f7242e8-1082-4a5d-bb6e-a80106d1b1f9@redhat.com>
 
-Em Fri, 11 Jul 2025 13:29:00 +0900
-Akira Yokosawa <akiyks@gmail.com> escreveu:
-
-> On Thu, 10 Jul 2025 17:31:30 -0600, Jonathan Corbet wrote:
-> [...]
+On Fri, Jul 11, 2025 at 09:09:08AM +0200, Thomas Huth wrote:
+> On 11/07/2025 07.52, Greg Kroah-Hartman wrote:
+> > On Fri, Jul 11, 2025 at 07:35:09AM +0200, Thomas Huth wrote:
+> > > From: Thomas Huth <thuth@redhat.com>
+> > > 
+> > > The FSF does not reside in the Franklin street anymore. Let's update
+> > > the address with the link to their website, as suggested in the latest
+> > > revision of the GPL-2.0 license.
+> > > (See https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt for example)
+> > > 
+> > > Acked-by: Segher Boessenkool <segher@kernel.crashing.org>
+> > > Signed-off-by: Thomas Huth <thuth@redhat.com>
+> > > ---
+> > >   v2: Resend with CC: linux-spdx@vger.kernel.org as suggested here:
+> > >       https://lore.kernel.org/linuxppc-dev/e5de8010-5663-47f4-a2f0-87fd88230925@csgroup.eu
+> > >   arch/powerpc/boot/crtsavres.S            | 5 ++---
+> > >   arch/powerpc/include/uapi/asm/eeh.h      | 5 ++---
+> > >   arch/powerpc/include/uapi/asm/kvm.h      | 5 ++---
+> > >   arch/powerpc/include/uapi/asm/kvm_para.h | 5 ++---
+> > >   arch/powerpc/include/uapi/asm/ps3fb.h    | 3 +--
+> > >   arch/powerpc/lib/crtsavres.S             | 5 ++---
+> > >   arch/powerpc/xmon/ppc.h                  | 5 +++--
+> > >   7 files changed, 14 insertions(+), 19 deletions(-)
+> > > 
+> > > diff --git a/arch/powerpc/boot/crtsavres.S b/arch/powerpc/boot/crtsavres.S
+> > > index 085fb2b9a8b89..a710a49a5dbca 100644
+> > > --- a/arch/powerpc/boot/crtsavres.S
+> > > +++ b/arch/powerpc/boot/crtsavres.S
+> > > @@ -26,9 +26,8 @@
+> > >    * General Public License for more details.
+> > >    *
+> > >    * You should have received a copy of the GNU General Public License
+> > > - * along with this program; see the file COPYING.  If not, write to
+> > > - * the Free Software Foundation, 51 Franklin Street, Fifth Floor,
+> > > - * Boston, MA 02110-1301, USA.
+> > > + * along with this program; see the file COPYING.  If not, see
+> > > + * <https://www.gnu.org/licenses/>.
+> > >    *
+> > >    *    As a special exception, if you link this library with files
+> > >    *    compiled with GCC to produce an executable, this does not cause
+> > 
+> > Please just drop all the "boilerplate" license text from these files,
+> > and use the proper SPDX line at the top of them instead.  That is the
+> > overall goal for all kernel files.
 > 
-> > Changes since v1:
-> > - Coding-style tweaks requested by Mauro
-> > - Drop the reworking of output-text accumulation for now
-> > - Add a warning for prehistoric Python versions  
-> 
-> Serious review of python code is beyond my background, but I did a test
-> on this against opensuse/leap:15.6's python3-Sphinx_4_2_0, which comes with
-> python 3.6.15.
-> 
-> Running "./scripts/kernel-doc.py -none include/linux/rcupdate.h" emits this:
-> 
-> ------------------------------------------------------------------------
-> Traceback (most recent call last):
->   File "./scripts/kernel-doc.py", line 315, in <module>
->     main()
->   File "./scripts/kernel-doc.py", line 286, in main
->     kfiles.parse(args.files, export_file=args.export_file)
->   File "/linux/scripts/lib/kdoc/kdoc_files.py", line 222, in parse
->     self.parse_file(fname)
->   File "/linux/scripts/lib/kdoc/kdoc_files.py", line 119, in parse_file
->     doc = KernelDoc(self.config, fname)
->   File "/linux/scripts/lib/kdoc/kdoc_parser.py", line 247, in __init__
->     self.emit_message(0,
-> AttributeError: 'KernelDoc' object has no attribute 'emit_message'
-> ------------------------------------------------------------------------
-> 
-> This error appeared in 12/12.  No errors with python3 >=3.9.
+> Ok, I can do that for the header files ... not quite sure about the *.S
+> files though since they contain some additional text about exceptions.
 
-This is actually a bug. See:
+That's a crazy exception, and one that should probably be talked about
+with the FSF to determine exactly what the SPDX lines should be.
 
-	+        #
-	+        # We need Python 3.7 for its "dicts remember the insertion
-	+        # order" guarantee
-	+        #
-	+        if sys.version_info.major == 3 and sys.version_info.minor < 7:
-	+            self.emit_message(0,
-	+                              'Python 3.7 or later is required for correct results')
-	+
-	     def emit_msg(self, ln, msg, warning=True):
-	         """Emit a message"""
+thanks,
 
-The answer is just below the modified code: the function name is actually:
-	self.emit_msg()
-
-> I'm not sure but asking compatibility with python <3.9 increases
-> maintainers/testers' burden.  Obsoleting <3.9 all together would
-> make everyone's life easier, wouldn't it?
-
-I'd say that the best is to have:
-
-scripts/sphinx-pre-install:
-
-- be compatible with Python 3.6, as it is needed to detect and
-  request Python upgrades where needed.
-
-- For the doc build, based on my tests with the pre-install tool,
-  all distros on my testlist have at least Python >= 3.9 as optional
-  packages.
-
-Now, kernel-doc is a special case, as it is called during Kernel
-builds, with "-none". In the specific case of this patchset, running
-Python 3.6 would randomize the order of struct and function arguments.
-Not a problem when "-none" is used. So, compilation should not
-break.
-
-Shifting kernel-doc minimal version to Python >= 3.9, will
-require an extra logic at kerneldoc to abort early if "-none"
-is used with too old Python, as otherwise it will break kernel
-builds for RHEL8, OpenSUSE Leap, OpenMandriva Lx 4.3 and to 
-other distros (those three comes with 3.6).
-
-Jon,
-
-I sent a two-patches series addressing such issues with kernel-doc
-exec file.
-
-I would keep patch 12/12, fixing it from:
-
-	 self.emit_message -> self.emit_msg
-
-as the warning is emitted when using kdoc classes, which is now the
-default.
-
--
-
-Btw, if you use Fedora, you can easily install python 3.6 there via 
-dnf:
-
-	$ dnf search python 3.6
-	Updating and loading repositories:
-	Repositories loaded.
-	Matched fields: name, summary
-	 python3.6.i686: Version 3.6 of the Python interpreter
-	 python3.6.x86_64: Version 3.6 of the Python interpreter
-
-	(Fedora 42 also have all python versions from 3.9 to 3.14 beta also
-	 via dnf)
-
-Regards,
-Mauro
+greg k-h
 
