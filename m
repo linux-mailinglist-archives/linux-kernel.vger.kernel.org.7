@@ -1,356 +1,282 @@
-Return-Path: <linux-kernel+bounces-727886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99020B0211E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:05:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E54B9B0212F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 360F27B9D7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:03:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BD887BA788
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9F22EF28B;
-	Fri, 11 Jul 2025 16:04:24 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C2B2EF28C;
+	Fri, 11 Jul 2025 16:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="BIoo57Bs"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5926320F;
-	Fri, 11 Jul 2025 16:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1129227E054;
+	Fri, 11 Jul 2025 16:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752249863; cv=none; b=OjSNGBnlp5sE5/qmdjg5etk3/tKyRRURFSt7eYjk1J7gPaVdO7ssbqSbtYPE2Cr/kR/4mtsm7mLGqqz5qIJVYG4+EmzRH7ET3YfRKfBAMFyijgraUDpSz+89wtB2E6dBXSLQ7V4uQT27Rl22Huj1TeJKGP6i0UkZn36PshYlrg0=
+	t=1752249882; cv=none; b=jkJcLExzn6/8UiXgomF0PJ3Lhx6OxSleNQFSFySobo7SDu/ovkG0RGjUDsSDl3cyENmw0o4svPDQSdyeYG6qaI7vx0hW8lHmfLZnA0auklH/xUnK8maQqVeH7razuafBEzGJgsRVC9pX1BEk1CpfxSaVSlHDEYmilufIMh6v/6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752249863; c=relaxed/simple;
-	bh=IAq0avLztA0tQGKDBGVN9zA80D9EBuaQyMbPP2yTD0A=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GVtVRtzCXOV6KyoDYngeHTxo/YsSG9dgxFXVj3jR3i/fC6qQ5dXtmhV6fOscbK7TT6byHP+/CPicsZJbN6EMikyKasEvMPYAetzeD6Y1On9I5SRHYar+4dPYeahS3tTNGVInqLY7eZM+RVLefUitIF07D2wNyTyQQLtBvA86m9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bdxMK40mpz6M4mZ;
-	Sat, 12 Jul 2025 00:03:09 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 353E81402FE;
-	Sat, 12 Jul 2025 00:04:18 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Jul
- 2025 18:04:17 +0200
-Date: Fri, 11 Jul 2025 17:04:15 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: =?ISO-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
-CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Rob
- Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, "Gatien
- Chevallier" <gatien.chevallier@foss.st.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Gabriel
- Fernandez" <gabriel.fernandez@foss.st.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Le Goffic <legoffic.clement@gmail.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 09/16] perf: stm32: introduce DDRPERFM driver
-Message-ID: <20250711170415.00001901@huawei.com>
-In-Reply-To: <20250711-ddrperfm-upstream-v2-9-cdece720348f@foss.st.com>
-References: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
-	<20250711-ddrperfm-upstream-v2-9-cdece720348f@foss.st.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1752249882; c=relaxed/simple;
+	bh=rMPl7osvpnDKIQsHWmkHxPuALl8UmId+rqkHr1SXsII=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VsFd7+dME2DHTzONzMFeVRq55ylF33xgRy/W5z38N8Z3XqexfNXwLiZT+IT52FHBBefb5nJpAdERW3NH19bo6p7VXLcvk25q8FGCWqUO4xHEsJaaEReZ8Id+1Pl00h0zSA7Ebp68i8uj/dYGoSDcPHLFI/+kAjaiajMWy+GU3zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=BIoo57Bs; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BAdTI2028522;
+	Fri, 11 Jul 2025 09:03:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=MxiLn
+	2Dq3GFG355z0/Nng/qsnOYXFufcv0jLL3WMs8w=; b=BIoo57BsScLoD7yrIblyM
+	AmKowQ+gkkQo3lh1FtDfN6pffX50OUITQryvPsN6ktiSMpfT+hwF4gUTD5YT0yH3
+	NRnOYPeo9ykUeX/j+O+kuK0KQ95T3SrBTB3eZVZ6BsSsC+10Wek3SgyS3fDOgpBf
+	VEz7+XfMj8aKsfhK4N7ELUppj6xV/nZW405YMPgIWLhCTlRlrt2Ss5tDClRtUUJR
+	5jEa174EA82R2d+WW8wvOwujx+cmJEcSTxvPZxOJbbTNpwns8vl6lhCw3ORmVZ58
+	+rOJAUTBVpiZ0yLB3UY4+o84b4NGbz8f7q8aBKy9WfvfvKfPDvqMqRsEAVbGtQiR
+	A==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 47t67qg6mh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Jul 2025 09:03:33 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 56BD3WT3026804
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 11 Jul 2025 09:03:32 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 11 Jul
+ 2025 09:03:32 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Fri, 11 Jul 2025 09:03:32 -0400
+Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.132])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 56BD3Jqs027484;
+	Fri, 11 Jul 2025 09:03:26 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Subject: [PATCH 2/3] dt-bindings: iio: adc: add ade9000
+Date: Fri, 11 Jul 2025 16:02:36 +0300
+Message-ID: <20250711130241.159143-3-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250711130241.159143-1-antoniu.miclaus@analog.com>
+References: <20250711130241.159143-1-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA5MiBTYWx0ZWRfX8m0xBmwZPuPk
+ SAhNZcj/uHxnAX7u5xLUiSX/ZhI+doDwuJLYvwSy5hfDIUca/TVf5fyxIWB8W1BmF+9rRCi6Nj1
+ 49TeMbOlOH+F88i446pZ1MnhRKRFeP4xVCroM8YcBSTwwgslF0xb08T0+qEVWtyNBYd9VpLTzI9
+ pq/3s8lASpy89Jcbf+KRDR1zFySEfzvDvMX7SBDGGI2rdbyN7AYIofbtEAQxWvTrBmInHKWADFa
+ BzhXkBQmMwwGEeVT7Cr8cnj97x84ViMQxu2CXRneBQL8SGeAz7tLL+ha561eSU0CK6PKp3FsS6E
+ XM5Sl3hzqQaGgccBJkqdf2o2jMX1uKcPpPktSCwDJs2rczVzrC0fyYk54Sqp8Bv4ryKmMB1LIz7
+ Mly7/YYVOOL6Ac0UIHWH8t595YweECb9/B103zVDcJGbzyS8HRjoipX/E3f3a3zENbfLdhV3
+X-Proofpoint-GUID: fxzAegytvHms1fUkbp5wsjaGm3WSFtcq
+X-Authority-Analysis: v=2.4 cv=eZc9f6EH c=1 sm=1 tr=0 ts=68710ba5 cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=gEfo2CItAAAA:8 a=gAnH3GRIAAAA:8
+ a=FvKjBdGZVvLRywz4negA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-ORIG-GUID: fxzAegytvHms1fUkbp5wsjaGm3WSFtcq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
+ lowpriorityscore=4 malwarescore=0 mlxlogscore=999 phishscore=0 mlxscore=0
+ adultscore=0 bulkscore=4 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507110092
 
-On Fri, 11 Jul 2025 16:49:01 +0200
-Cl=E9ment Le Goffic <clement.legoffic@foss.st.com> wrote:
+Add devicetree bindings support for ade9000.
 
-> Introduce the driver for the DDR Performance Monitor available on
-> STM32MPU SoC.
->=20
-> On STM32MP2 platforms, the DDRPERFM allows to monitor up to 8 DDR events
-> that come from the DDR Controller such as read or write events.
->=20
-> On STM32MP1 platforms, the DDRPERFM cannot monitor any event on any
-> counter, there is a notion of set of events.
-> Events from different sets cannot be monitored at the same time.
-> The first chosen event selects the set.
-> The set is coded in the first two bytes of the config value which is on 4
-> bytes.
->=20
-> On STM32MP25x series, the DDRPERFM clock is shared with the DDR controller
-> and may be secured by bootloaders.
-> Access controllers allow to check access to a resource. Use the access
-> controller defined in the devicetree to know about the access to the
-> DDRPERFM clock.
->=20
-> Signed-off-by: Cl=E9ment Le Goffic <clement.legoffic@foss.st.com>
+Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+---
+ .../bindings/iio/adc/adi,ade9000.yaml         | 157 ++++++++++++++++++
+ 1 file changed, 157 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
 
-Hi Cl=E9ment,
-
-A quick drive by review as it's Friday afternoon and I was curious..
-
-Mostly superficial stuff. I didn't look closely at the perf logic.
-
-Jonathan
-
-> diff --git a/drivers/perf/stm32_ddr_pmu.c b/drivers/perf/stm32_ddr_pmu.c
-> new file mode 100644
-> index 000000000000..1be5bbe12978
-> --- /dev/null
-> +++ b/drivers/perf/stm32_ddr_pmu.c
-> @@ -0,0 +1,910 @@
-
-> +#define EVENT_NUMBER(group, index)	(((group) << 8) | (index))
-> +#define GROUP_VALUE(event_number)		((event_number) >> 8)
-> +#define EVENT_INDEX(event_number)	((event_number) & 0xFF)
-
-Prefix these macro names with something driver specific.  They are
-very likely to clash with something in a header in future otherwise.
-
-> +
-> +enum stm32_ddr_pmu_memory_type {
-> +	STM32_DDR_PMU_LPDDR4,
-> +	STM32_DDR_PMU_LPDDR3,
-> +	STM32_DDR_PMU_DDR4,
-> +	STM32_DDR_PMU_DDR3
-
-This should have a trailing comma as might well be more
-added in future if this IP gets used in more devices.
-
-> +};
->
-
-
-> +
-> +static const struct attribute_group *stm32_ddr_pmu_attr_groups_mp2[] =3D=
- {
-> +	&stm32_ddr_pmu_events_attrs_group_mp2,
-> +	&stm32_ddr_pmu_format_attr_group,
-> +	NULL,
-
-No comma needed on terminating entries.
-
-> +};
-> +
-> +static int stm32_ddr_pmu_device_probe(struct platform_device *pdev)
-> +{
-> +	struct stm32_firewall firewall;
-> +	struct stm32_ddr_pmu *pmu;
-> +	struct reset_control *rst;
-> +	struct resource *res;
-> +	int ret;
-> +
-> +	pmu =3D devm_kzalloc(&pdev->dev, struct_size(pmu, counters, MP2_CNT_NB)=
-, GFP_KERNEL);
-> +	if (!pmu)
-> +		return -ENOMEM;
-> +
-> +	platform_set_drvdata(pdev, pmu);
-> +	pmu->dev =3D &pdev->dev;
-> +
-> +	pmu->cfg =3D device_get_match_data(&pdev->dev);
-> +
-> +	pmu->membase =3D devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-> +	if (IS_ERR(pmu->membase))
-> +		return PTR_ERR(pmu->membase);
-> +
-> +	if (of_property_present(pmu->dev->of_node, "access-controllers")) {
-> +		ret =3D stm32_firewall_get_firewall(pmu->dev->of_node, &firewall, 1);
-> +		if (ret)
-> +			return dev_err_probe(pmu->dev, ret, "Failed to get firewall\n");
-> +		ret =3D stm32_firewall_grant_access_by_id(&firewall, firewall.firewall=
-_id);
-> +		if (ret)
-> +			return dev_err_probe(pmu->dev, ret, "Failed to grant access\n");
-> +	}
-> +
-> +	pmu->clk =3D devm_clk_get_optional_prepared(pmu->dev, NULL);
-
-Given there are quite a few uses of pmu->dev, maybe worth a local
-struct device *dev =3D &pdev->dev; at the top and use dev to replace all th=
-ese.
-
-> +	if (IS_ERR(pmu->clk))
-> +		return dev_err_probe(pmu->dev, PTR_ERR(pmu->clk), "Failed to get prepa=
-re clock\n");
-> +
-> +	clk_enable(pmu->clk);
-> +
-> +	rst =3D devm_reset_control_get_optional_exclusive(&pdev->dev, NULL);
-
-You mix and match between pdev->dev, and pmu->dev. Good to pick one or use =
-local
-variable as suggested above.
-
-> +	if (IS_ERR(rst)) {
-> +		clk_disable_unprepare(pmu->clk);
-Given use of _prepared() get above. This doesn't look right - the unprepare
-should be handled by devm unwinding. clk_disable()=20
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(rst), "Failed to get reset\n"=
-);
-> +	}
-> +
-> +	reset_control_assert(rst);
-> +	reset_control_deassert(rst);
-> +
-> +	pmu->poll_period =3D ms_to_ktime(POLL_MS);
-> +	hrtimer_setup(&pmu->hrtimer, stm32_ddr_pmu_poll, CLOCK_MONOTONIC, HRTIM=
-ER_MODE_REL);
-> +
-> +	for (int i =3D 0; i < MP2_CNT_NB; i++)
-> +		INIT_LIST_HEAD(&pmu->counters[i]);
-> +
-> +	pmu->selected_set =3D -1;
-> +
-> +	pmu->pmu =3D (struct pmu) {
-> +		.task_ctx_nr =3D perf_invalid_context,
-> +		.start =3D stm32_ddr_pmu_event_start,
-> +		.stop =3D stm32_ddr_pmu_event_stop,
-> +		.add =3D stm32_ddr_pmu_event_add,
-> +		.del =3D stm32_ddr_pmu_event_del,
-> +		.read =3D stm32_ddr_pmu_event_read,
-> +		.event_init =3D stm32_ddr_pmu_event_init,
-> +		.attr_groups =3D pmu->cfg->attribute,
-> +		.module =3D THIS_MODULE,
-> +	};
-> +
-> +	ret =3D perf_pmu_register(&pmu->pmu, DRIVER_NAME, -1);
-
-Calling this exposes user interfaces etc.  Does it really make sense to
-do that and then write another register?  I'd normally expect this
-last in probe.
-
-> +	if (ret) {
-> +		clk_disable_unprepare(pmu->clk);
-
-As above.
-
-> +		return dev_err_probe(&pdev->dev, ret,
-> +				     "Couldn't register DDRPERFM driver as a PMU\n");
-> +	}
-> +
-> +	if (pmu->cfg->regs->dram_inf.reg) {
-> +		ret =3D stm32_ddr_pmu_get_memory_type(pmu);
-> +		if (ret) {
-> +			perf_pmu_unregister(&pmu->pmu);
-> +			clk_disable_unprepare(pmu->clk);
-> +			return dev_err_probe(&pdev->dev, ret, "Failed to get memory type\n");
-> +		}
-> +
-> +		writel_relaxed(pmu->dram_type, pmu->membase + pmu->cfg->regs->dram_inf=
-.reg);
-> +	}
-> +
-> +	clk_disable(pmu->clk);
-> +
-> +	return 0;
-> +}
-
-> +static const struct stm32_ddr_pmu_regspec stm32_ddr_pmu_regspec_mp2 =3D {
-> +	.stop =3D		{ DDRPERFM_CTRL, CTRL_STOP },
-> +	.start =3D	{ DDRPERFM_CTRL, CTRL_START },
-> +	.status =3D	{ DDRPERFM_MP2_STATUS, MP2_STATUS_BUSY },
-> +	.clear_cnt =3D	{ DDRPERFM_CLR, MP2_CLR_CNT},
-> +	.clear_time =3D	{ DDRPERFM_CLR, MP2_CLR_TIME},
-
-Spaces before } are missing
-There are a few others above that I'll not mention directly.
-
-
-> +	.cfg0 =3D		{ DDRPERFM_MP2_CFG0 },
-> +	.cfg1 =3D		{ DDRPERFM_MP2_CFG1 },
-> +	.enable =3D	{ DDRPERFM_MP2_CFG5 },
-> +	.dram_inf =3D	{ DDRPERFM_MP2_DRAMINF },
-> +	.counter_time =3D	{ DDRPERFM_MP2_TCNT },
-> +	.counter_evt =3D	{
-> +				{ DDRPERFM_MP2_EVCNT(0) },
-Somewhat unusual formatting though neat I guess so fine if you
-really like it!.
-	.counter_evt =3D	{
-		{ DDRPERFM_MP2_EVCNT(0) },
-
-would be what I'd normally expect.
-> +				{ DDRPERFM_MP2_EVCNT(1) },
-> +				{ DDRPERFM_MP2_EVCNT(2) },
-> +				{ DDRPERFM_MP2_EVCNT(3) },
-> +				{ DDRPERFM_MP2_EVCNT(4) },
-> +				{ DDRPERFM_MP2_EVCNT(5) },
-> +				{ DDRPERFM_MP2_EVCNT(6) },
-> +				{ DDRPERFM_MP2_EVCNT(7) },
-> +	},
-> +};
-> +
-> +static const struct stm32_ddr_pmu_cfg stm32_ddr_pmu_cfg_mp1 =3D {
-> +	.regs =3D &stm32_ddr_pmu_regspec_mp1,
-> +	.attribute =3D stm32_ddr_pmu_attr_groups_mp1,
-> +	.counters_nb =3D MP1_CNT_NB,
-> +	.evt_counters_nb =3D MP1_CNT_NB - 1, /* Time counter is not an event co=
-unter */
-> +	.time_cnt_idx =3D MP1_TIME_CNT_IDX,
-> +	.get_counter =3D stm32_ddr_pmu_get_event_counter_mp1,
-> +};
-> +
-> +static const struct stm32_ddr_pmu_cfg stm32_ddr_pmu_cfg_mp2 =3D {
-> +	.regs =3D &stm32_ddr_pmu_regspec_mp2,
-> +	.attribute =3D stm32_ddr_pmu_attr_groups_mp2,
-> +	.counters_nb =3D MP2_CNT_NB,
-> +	.evt_counters_nb =3D MP2_CNT_NB - 1, /* Time counter is an event counte=
-r */
-> +	.time_cnt_idx =3D MP2_TIME_CNT_IDX,
-> +	.get_counter =3D stm32_ddr_pmu_get_event_counter_mp2,
-> +};
-> +
-> +static const struct dev_pm_ops stm32_ddr_pmu_pm_ops =3D {
-> +	SET_SYSTEM_SLEEP_PM_OPS(NULL, stm32_ddr_pmu_device_resume)
-> +};
-
-static DEFINE_SIMPLE_DEV_PM_OPS() looks appropriate here.
-
-
-> +
-> +static const struct of_device_id stm32_ddr_pmu_of_match[] =3D {
-> +	{
-> +		.compatible =3D "st,stm32mp131-ddr-pmu",
-> +		.data =3D &stm32_ddr_pmu_cfg_mp1
-> +	},
-> +	{
-> +		.compatible =3D "st,stm32mp251-ddr-pmu",
-> +		.data =3D &stm32_ddr_pmu_cfg_mp2
-> +	},
-> +	{ },
-
-No comma need after terminating entry.  Nice to make it hard
-to accidentally add entries after one of these!
-
-> +};
-> +MODULE_DEVICE_TABLE(of, stm32_ddr_pmu_of_match);
-> +
-> +static struct platform_driver stm32_ddr_pmu_driver =3D {
-> +	.driver =3D {
-> +		.name =3D DRIVER_NAME,
-> +		.pm =3D pm_sleep_ptr(&stm32_ddr_pmu_pm_ops),
-> +		.of_match_table =3D stm32_ddr_pmu_of_match,
-> +	},
-> +	.probe =3D stm32_ddr_pmu_device_probe,
-> +	.remove =3D stm32_ddr_pmu_device_remove,
-> +};
-> +
-> +module_platform_driver(stm32_ddr_pmu_driver);
-> +
-> +MODULE_AUTHOR("Cl=E9ment Le Goffic");
-> +MODULE_DESCRIPTION("STMicroelectronics STM32 DDR performance monitor dri=
-ver");
-> +MODULE_LICENSE("GPL");
->=20
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
+new file mode 100644
+index 000000000000..660dca4ea9b5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
+@@ -0,0 +1,157 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++# Copyright 2025 Analog Devices Inc.
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/bindings/iio/adc/adi,ade9000.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Analog Devices ADE9000 High Performance, Polyphase Energy Metering driver
++
++maintainers:
++  - Antoniu Miclaus <antoniu.miclaus@analog.com>
++
++description: |
++  The ADE9000 s a highly accurate, fully integrated, multiphase energy and power
++  quality monitoring device. Superior analog performance and a digital signal
++  processing (DSP) core enable accurate energy monitoring over a wide dynamic
++  range. An integrated high end reference ensures low drift over temperature
++  with a combined drift of less than ±25 ppm/°C maximum for the entire channel
++  including a programmable gain amplifier (PGA) and an analog-to- digital
++  converter (ADC).
++
++  https://www.analog.com/media/en/technical-documentation/data-sheets/ADE9000.pdf
++
++properties:
++  compatible:
++    enum:
++      - adi,ade9000
++
++  reg:
++    maxItems: 1
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  spi-max-frequency:
++    maximum: 20000000
++
++  interrupts:
++    maxItems: 2
++
++  reset-gpios:
++    description: |
++      Must be the device tree identifier of the RESET pin. As the line is
++      active low, it should be marked GPIO_ACTIVE_LOW.
++    maxItems: 1
++
++  interrupt-names:
++    items:
++      - const: irq0
++      - const: irq1
++
++  adi,wf-cap-en:
++    description: Enable fixed data rate for waveform buffer instead of resampled data
++    type: boolean
++
++  adi,wf-mode:
++    description: |
++      Waveform buffer filling and trigger mode.
++      0 - Stop when waveform buffer is full
++      1 - Continuous fill, stop only on enabled trigger events
++      2 - Continuous filling, center capture around enabled trigger events
++      3 - Streaming mode
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [0, 1, 2, 3]
++
++  adi,wf-src:
++    description: |
++      Waveform buffer data source selection.
++      0 - Sinc4 output, at 16 kSPS
++      1 - Reserved
++      2 - Sinc4 + IIR LPF output, at 4 kSPS
++      3 - Current and voltage channel waveform samples, processed by the DSP at 4 kSPS
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [0, 2, 3]
++
++  adi,wf-in-en:
++    description: Enable IN waveform samples readout from waveform buffer
++    type: boolean
++
++  adi,egy-time:
++    description: Energy accumulation time setting for energy registers
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++required:
++  - compatible
++  - reg
++  - reset-gpios
++  - interrupts
++  - interrupt-names
++  - adi,wf-mode
++  - adi,wf-src
++
++additionalProperties: false
++
++patternProperties:
++  "^phase@[0-2]$":
++    type: object
++    description: |
++      Represents the external phases which are externally connected. Each phase
++      has a current, voltage and power component
++
++    properties:
++      reg:
++        description: |
++          The phase represented by a number
++          0 - Phase A
++          1 - Phase B
++          2 - Phase C
++        $ref: /schemas/types.yaml#/definitions/uint32
++        enum: [0, 1, 2]
++
++    required:
++      - reg
++
++    additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        adc@0 {
++            compatible = "adi,ade9000";
++            reg = <0>;
++            spi-max-frequency = <7000000>;
++
++            #address-cells = <1>;
++            #size-cells = <0>;
++            reset-gpios = <&gpio 4 GPIO_ACTIVE_LOW>;
++            interrupts = <2 IRQ_TYPE_EDGE_FALLING>, <3 IRQ_TYPE_EDGE_FALLING>;
++            interrupt-names = "irq0", "irq1";
++            interrupt-parent = <&gpio>;
++
++            adi,wf-cap-en;
++            adi,wf-mode = <3>;
++            adi,wf-src = <3>;
++            adi,wf-in-en;
++
++            phase@0 {
++                reg = <0>;
++            };
++            phase@1 {
++                reg = <1>;
++            };
++            phase@2 {
++                reg = <2>;
++            };
++        };
++    };
++...
+-- 
+2.49.0
 
 
