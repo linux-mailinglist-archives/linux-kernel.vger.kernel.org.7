@@ -1,113 +1,87 @@
-Return-Path: <linux-kernel+bounces-727133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59528B01573
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:06:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D4B4B01577
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B07E95A4F42
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:06:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BA645A5269
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8B61FC7C5;
-	Fri, 11 Jul 2025 08:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B141FECB4;
+	Fri, 11 Jul 2025 08:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AwJOwzS/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="YGRijOPN"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A495A1E9B08;
-	Fri, 11 Jul 2025 08:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656C21F8690;
+	Fri, 11 Jul 2025 08:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752221171; cv=none; b=PIJYXr0PmVp6+bNChEBiWYCx5zX4JLJ9y6dopSLpeUxVqIvuA0xYQvoQMUJVJjVkrJh519qPc00tp8UhqN3nKkH1r8F2daetvQGoBNWn5xozV51bZUgUTPnAjh/F67uOmc9VNeLNRDGTEHMb/bF9M9Rl3MCidCeb82ZZWxu9Q8k=
+	t=1752221205; cv=none; b=F1ng2Gxiu6ztpOR4f8F3QxPIfDd3mdy1domdn45nss9rIFYxOBxsPmIAZNvzZhnbWg3kHJ7JpZ2xeMcTnO6HVZS0l2pjOSCa9z9yHmjvVnOrSJ6NeDxXMtFcRS+iMFtjybMvAqOqjInwnbrLmZnUBnJSM5opSBH2YVIG/jaOPBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752221171; c=relaxed/simple;
-	bh=4oK+FupIPs9DGyTuogCpD0d3ZzgXAznS+zlOc49bvSw=;
+	s=arc-20240116; t=1752221205; c=relaxed/simple;
+	bh=ZwY8hUAjzJDwY+ccRv673BoBqFV3812/3VWzODBWC90=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fZXi+0d9/gHib0+iA/SOrnO38UJzW2Pr2dJL7J1JkGRBy6qIjrKXBIjUTIu5NcNuLYTo5GUBfbWUPefWt/zbTZGGvSPNACjWeX44AKTmb4c41LU3k16lEhCShrRlH7GqAVb3jSJf1M3jR+rnoHOkTzmYp/gbUcdiLo7v2ahxn6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AwJOwzS/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CBA8C4CEF6;
-	Fri, 11 Jul 2025 08:06:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752221169;
-	bh=4oK+FupIPs9DGyTuogCpD0d3ZzgXAznS+zlOc49bvSw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AwJOwzS/hTagv8jwRy+p+h4wgxBi2XtcQ8I/MOyvUpbA443xKZelGC2Z13JtbZeam
-	 aoaTcBGix9sN1yvpjqB1nns29S0qORUwQBPsJ+5qoHq/pjtj+mTVnuIaXWsLQp4OQu
-	 VAzC4vQS3aEDaDpV8M8oSBI5LZ17QNl7FBMSSwCNg2a2fW1GneBhsV4q4no63cyo/o
-	 SbKW8allNCYoWLGyUWykcSlDU5sBjLFwo6JkaAE3p54v3O5HWGiyGQv2tYfhkRjZTJ
-	 dW0dBo1wbeifttRMSezXhpFalxcb63vUX26/je2jumYE5+vtfQ45crWo1Ky1v+ivX5
-	 fBn1sEtjZ8ULg==
-Date: Fri, 11 Jul 2025 09:05:33 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Zi Yan <ziy@nvidia.com>
-Cc: wang lian <lianux.mm@gmail.com>, akpm@linux-foundation.org,
-	lorenzo.stoakes@oracle.com, david@redhat.com, sj@kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, shuah@kernel.org,
-	Liam.Howlett@oracle.com, brauner@kernel.org, gkwang@linx-info.com,
-	jannh@google.com, p1ucky0923@gmail.com, ryncsn@gmail.com,
-	vbabka@suse.cz, zijing.zhang@proton.me
-Subject: Re: [PATCH v4] selftests/mm: add process_madvise() tests
-Message-ID: <aHDFzeSJlh8caDQX@finisterre.sirena.org.uk>
-References: <20250710112249.58722-1-lianux.mm@gmail.com>
- <aG_DPLhtZ5qDuWHY@finisterre.sirena.org.uk>
- <1C943CB7-D63C-41F9-B676-90261E26F049@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mAQ4PtF+ffhOzqVHpzRhBKBLH/v/3PVD4Q0ZaeLlyRXA/8oKDNV86aypw0ejHxUo77AkeWxD/0IiMMbf4iZ2r2vJtLn+/GqAtHmwLdap/vIh/AqvYjBXWFHZapi2/+Loez+VKqE7xb/zCHXKsO/X///TQCLF9z8KDMRIjvmzpO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=YGRijOPN; arc=none smtp.client-ip=1.95.21.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=f//MRChZFcP5XIL4mb8oxZ7K1cGhRbiRX/pH6Xavkpc=;
+	b=YGRijOPNm8XEsZj90dG3t/VTs87/yllFVhcTeBganDd6/72iDbj50NEATPTt4C
+	55PejR7yfL8NSSoImyX892vzk5o/qklxbAMXyYs44qRQdsnZ5haQWhjfgOxPY2qV
+	hpRunqyPjjIxC6hT2C5o8xPIKpCUVHM0/l5uvtPyNdFgQ=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDXv_jZxXBoUV9TAA--.19772S3;
+	Fri, 11 Jul 2025 16:05:47 +0800 (CST)
+Date: Fri, 11 Jul 2025 16:05:45 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frieder Schrempf <frieder@fris.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Fabio Estevam <festevam@gmail.com>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>, imx@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Annette Kobou <annette.kobou@kontron.de>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH] ARM: dts: imx6ul-kontron-bl-common: Fix RTS polarity for
+ RS485 interface
+Message-ID: <aHDF2VPGraI5ceXZ@dragon>
+References: <20250708122442.53829-1-frieder@fris.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="j8ge6CSSxSA88wDS"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1C943CB7-D63C-41F9-B676-90261E26F049@nvidia.com>
-X-Cookie: Do not cut switchbacks.
+In-Reply-To: <20250708122442.53829-1-frieder@fris.de>
+X-CM-TRANSID:Ms8vCgDXv_jZxXBoUV9TAA--.19772S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU0g4SUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCwGHZWhwilDNbwAAsI
 
+On Tue, Jul 08, 2025 at 02:24:41PM +0200, Frieder Schrempf wrote:
+> From: Annette Kobou <annette.kobou@kontron.de>
+> 
+> The polarity of the DE signal of the transceiver is active-high for
+> sending. Therefore rs485-rts-active-low is wrong and needs to be
+> removed to make RS485 transmissions work.
+> 
+> Signed-off-by: Annette Kobou <annette.kobou@kontron.de>
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> Fixes: 1ea4b76cdfde ("ARM: dts: imx6ul-kontron-n6310: Add Kontron i.MX6UL N6310 SoM and boards")
 
---j8ge6CSSxSA88wDS
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied, thanks!
 
-On Thu, Jul 10, 2025 at 12:21:36PM -0400, Zi Yan wrote:
-> On 10 Jul 2025, at 9:42, Mark Brown wrote:
-> > On Thu, Jul 10, 2025 at 07:22:49PM +0800, wang lian wrote:
-
-> >> +#include <linux/pidfd.h>
-> >> +#include <linux/uio.h>
-
-> > Does this work without 'make headers_install' for the systems that were
-> > affectd by missing headers?  Lorenzo mentioned that we shouldn't depend
-> > on that for the mm tests (I'm not enthusiastic about that approach
-> > myself, but if it's what mm needs).
-
-> No. =E2=80=9Cmake headers_install=E2=80=9D is still needed. I tried to ge=
-t it compiled
-> without it but failed. It seems that a lot of files will need to be
-> copied to tools/include from =E2=80=9Cmake headers=E2=80=9D.
-
-If you're doing that it should again be a separate patch.  Another
-option if it's just a few defines or something is to copy just them into
-your program.
-
---j8ge6CSSxSA88wDS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhwxcgACgkQJNaLcl1U
-h9Badgf/a2B2bRbAFSTo23HeH3jIpwegv7pKIGbjDJbeb7H4zgaxdGDBImEAsTff
-EPKjfpx1/FbAwxBxfWTOjjWcOLjFJpKJKMkQIzeWggBHyLMgIx5PObYFkctOsbQE
-dmL+WzAgaXepsyPRnIbFGu58pBm/8MaviS6MgPkmTbaB7x6O/Et7vIj5FfaxWHcG
-kwyQoC7CceI48/WhFGkje+PIPlkWLJ587ywb6LH3Vc/6Nb0ztKBGmtfd/ZAVGdhW
-sGNwg+DoMo5W1Zcp6ddwJJCBPFx6/yJU3eRz2ko7OOz3UyYnHa073J/AIsg2QaGn
-wVCaOOnwBs9W49VhW4v2bSuN7trVmw==
-=ZwVv
------END PGP SIGNATURE-----
-
---j8ge6CSSxSA88wDS--
 
