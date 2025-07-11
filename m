@@ -1,111 +1,258 @@
-Return-Path: <linux-kernel+bounces-726708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA9BB01046
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:36:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9347B01048
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4829A3B06B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:36:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A59703BCC7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8033C8F0;
-	Fri, 11 Jul 2025 00:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005B926AFB;
+	Fri, 11 Jul 2025 00:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Yf3Y15SM"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eURQWELE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054A5B663;
-	Fri, 11 Jul 2025 00:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C41FB663;
+	Fri, 11 Jul 2025 00:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752194194; cv=none; b=V0yRjd1fwvkTcU1kStI0PndeRiP9TBscvVlCuNq9nq/5eOzJV833JbuQwmjYW1r0QS3PiRdvAM7Uu3gVETjVPiflM/xi8EsO5guIAnczSh5s9qH99T4f0vTnZOw7K8wPSu7D4/ODpOL5UzeGM2UJMajM3RwH+4W2KtsOzfjmp5U=
+	t=1752194198; cv=none; b=dEZqMm4+hkaJSnpwdYrIw3Sb8IqHWbc/mLqmbAiHbvAhxUFNyw9PcKgV4nJUHvZWC8OJ36ktQVjiW0Pxm4WhSV6VFnAszZMB25aZ4sNBafvxAXb3SjHbKCNssUUIqSLgAPZDcJ5l/fQat+7q63dANbsHJsnEX1Qd+uBG90nRuYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752194194; c=relaxed/simple;
-	bh=Po8vUnOhRBF8IeqIw0vCfKVNkWgDCOlqLqru9zQ6Mqw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GzzP4dtMR3/n6CNdZJaXVTezQuvFGb1aR5PqZwqDytyTsEkN3P9ungwxNQsMRA+D4qB7v/b5VfzW6y8fN0LeLTps2WdkrGKyBFU+lf9ElqMw/r7rWInDc/XsGjrGEx5vjYG65iB4cB3DoYDakI5xabOuYKI9MAnuAHaAtPmGrQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Yf3Y15SM; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=//Z+i2Ub0h9pscQ8a583rxZLCBDnW13N4OS2udptcIM=; b=Yf3Y15SMGfV9bf03rDdIRrH8Om
-	IPGFIM/ee/pMEe5vCAol6MY6cK+F/3GFBJzBCVPZf7lCu25iAuUSHyieyHoaySJhnYl3NZg3NLkM+
-	ZKAT0KP7s0UBodD4IDjFU5dzsq0v4a8mYJTqEWmxuk50WxrDny/n4oFhLZC5Cg5GZ6wzH+INwt0f5
-	dPnxPntHULA2h07nzESaA9EP2vTVqLlkdOj7JbjNCQbd3QtuNZfx6y2cjZsvANCPiXiTSwucLR6yO
-	j6xKClSvZQxjKQOM2Y4X7COENTXsq7FMY4qgYv1m8odTeS8WEfD4Jcar63GFSBuERkdDzOfF1VO8Z
-	ghsPzi5A==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ua1kZ-0000000AyOs-3HUQ;
-	Fri, 11 Jul 2025 00:36:28 +0000
-Message-ID: <fd96200b-dcfd-4871-80a2-add053fd70cf@infradead.org>
-Date: Thu, 10 Jul 2025 17:36:24 -0700
+	s=arc-20240116; t=1752194198; c=relaxed/simple;
+	bh=uRG3zFxu77UEZXC6qq2/JvpSQZ/oV8mQvHKh7P35t8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uxs2KHhp1cvgPqS1CPxB85h1EpEnSdSYC598udFU9r/Hhc9dpXyVGCAuYRuGsprtBgiGHe45XJCfr4VfdIxOHNOezroQklYyEu1jTVchyFrkE2/z7Mrrho0QBMagJ1wgLXXYNBl4epUhUeVkpa15UoVt3XfzyAiulQs4Y+TynZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eURQWELE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3C9EC4CEE3;
+	Fri, 11 Jul 2025 00:36:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752194197;
+	bh=uRG3zFxu77UEZXC6qq2/JvpSQZ/oV8mQvHKh7P35t8k=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=eURQWELEMTJnkLOSxdp6MXjIxwgv0uBl134q1lkVL7NqxBZLDaZN0J4ZXGSHCgvIh
+	 m+oa3km4B3YgjiPis60UU5ftefwUnabjrs9rZF2gnw8bzD51dgahFt0xpAE3cOghGd
+	 VcQD2WJU0v3A6xjZM0FWIPsXdY5riq7lNJ5NaMF0MvUSwD15sV/fJBaL34kP+stLde
+	 f+llROOJSKOk9yiUzZJTJdie558+LkVlUuyrZSET29/qV8QFRMjBi6xfWWm4bZfLp4
+	 /LlP2HVqWiKITdT4j3g6NwBSQ8dS1PujZPV55zEYNhaLyURClp1/oFtZReCi9Az3tA
+	 KtajtZrlZwvCA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 5A2EBCE0A44; Thu, 10 Jul 2025 17:36:37 -0700 (PDT)
+Date: Thu, 10 Jul 2025 17:36:37 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Breno Leitao <leitao@debian.org>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, aeh@meta.com,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	edumazet@google.com, jhs@mojatatu.com, kernel-team@meta.com,
+	Erik Lundgren <elundgren@meta.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Uladzislau Rezki <urezki@gmail.com>, rcu@vger.kernel.org
+Subject: Re: [RFC PATCH 1/8] Introduce simple hazard pointers
+Message-ID: <7ae5149a-c8aa-46de-9b8e-66b6e695eaf6@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250414060055.341516-1-boqun.feng@gmail.com>
+ <20250414060055.341516-2-boqun.feng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build warning after merge of the mm-unstable tree
-To: Andrew Morton <akpm@linux-foundation.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Hildenbrand <david@redhat.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250710175446.128c7def@canb.auug.org.au>
- <20250710153017.c17ca59f1df36eec90db8b54@linux-foundation.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250710153017.c17ca59f1df36eec90db8b54@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250414060055.341516-2-boqun.feng@gmail.com>
 
+On Sun, Apr 13, 2025 at 11:00:48PM -0700, Boqun Feng wrote:
+> As its name suggests, simple hazard pointers (shazptr) is a
+> simplification of hazard pointers [1]: it has only one hazard pointer
+> slot per-CPU and is targeted for simple use cases where the read-side
+> already has preemption disabled. It's a trade-off between full features
+> of a normal hazard pointer implementation (multiple slots, dynamic slot
+> allocation, etc.) and the simple use scenario.
+> 
+> Since there's only one slot per-CPU, so shazptr read-side critical
+> section nesting is a problem that needs to be resolved, because at very
+> least, interrupts and NMI can introduce nested shazptr read-side
+> critical sections. A SHAZPTR_WILDCARD is introduced to resolve this:
+> SHAZPTR_WILDCARD is a special address value that blocks *all* shazptr
+> waiters. In an interrupt-causing shazptr read-side critical section
+> nesting case (i.e. an interrupt happens while the per-CPU hazard pointer
+> slot being used and tries to acquire a hazard pointer itself), the inner
+> critical section will switch the value of the hazard pointer slot into
+> SHAZPTR_WILDCARD, and let the outer critical section eventually zero the
+> slot. The SHAZPTR_WILDCARD still provide the correct protection because
+> it blocks all the waiters.
+> 
+> It's true that once the wildcard mechanism is activated, shazptr
+> mechanism may be downgrade to something similar to RCU (and probably
+> with a worse implementation), which generally has longer wait time and
+> larger memory footprint compared to a typical hazard pointer
+> implementation. However, that can only happen with a lot of users using
+> hazard pointers, and then it's reasonable to introduce the
+> fully-featured hazard pointer implementation [2] and switch users to it.
+> 
+> Note that shazptr_protect() may be added later, the current potential
+> usage doesn't require it, and a shazptr_acquire(), which installs the
+> protected value to hazard pointer slot and proves the smp_mb(), is
+> enough for now.
+> 
+> [1]: M. M. Michael, "Hazard pointers: safe memory reclamation for
+>      lock-free objects," in IEEE Transactions on Parallel and
+>      Distributed Systems, vol. 15, no. 6, pp. 491-504, June 2004
+> 
+> Link: https://lore.kernel.org/lkml/20240917143402.930114-1-boqun.feng@gmail.com/ [2]
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 
+That smp_cond_load_acquire() in synchronize_hazptr() will become
+painful at some point, but when that situation arises, we will have the
+information required to adjust as appropriate.
 
-On 7/10/25 3:30 PM, Andrew Morton wrote:
-> On Thu, 10 Jul 2025 17:54:46 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+
+> ---
+>  include/linux/shazptr.h  | 73 ++++++++++++++++++++++++++++++++++++++++
+>  kernel/locking/Makefile  |  2 +-
+>  kernel/locking/shazptr.c | 29 ++++++++++++++++
+>  3 files changed, 103 insertions(+), 1 deletion(-)
+>  create mode 100644 include/linux/shazptr.h
+>  create mode 100644 kernel/locking/shazptr.c
 > 
->> Hi all,
->>
->> After merging the mm-unstable tree, today's linux-next build (htmldocs)
->> produced this warning:
->>
->> mm/migrate.c:215: warning: Function parameter or struct member 'dst' not described in 'migrate_movable_ops_page'
->> mm/migrate.c:215: warning: Function parameter or struct member 'src' not described in 'migrate_movable_ops_page'
->> mm/migrate.c:215: warning: Function parameter or struct member 'mode' not described in 'migrate_movable_ops_page'
->> mm/migrate.c:215: warning: Excess function parameter 'page' description in 'migrate_movable_ops_page'
->>
->> Introduced by commit
->>
->>   d5967fb0bf8e ("mm/migrate: factor out movable_ops page handling into migrate_movable_ops_page()")
-> 
-> How about this?
-> 
-> --- a/mm/migrate.c~mm-migrate-factor-out-movable_ops-page-handling-into-migrate_movable_ops_page-fix
-> +++ a/mm/migrate.c
-> @@ -161,7 +161,9 @@ static void putback_movable_ops_page(str
+> diff --git a/include/linux/shazptr.h b/include/linux/shazptr.h
+> new file mode 100644
+> index 000000000000..287cd04b4be9
+> --- /dev/null
+> +++ b/include/linux/shazptr.h
+> @@ -0,0 +1,73 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Simple hazard pointers
+> + *
+> + * Copyright (c) 2025, Microsoft Corporation.
+> + *
+> + * Author: Boqun Feng <boqun.feng@gmail.com>
+> + *
+> + * A simple variant of hazard pointers, the users must ensure the preemption
+> + * is already disabled when calling a shazptr_acquire() to protect an address.
+> + * If one shazptr_acquire() is called after another shazptr_acquire() has been
+> + * called without the corresponding shazptr_clear() has been called, the later
+> + * shazptr_acquire() must be cleared first.
+> + *
+> + * The most suitable usage is when only one address need to be protected in a
+> + * preemption disabled critical section.
+> + */
+> +
+> +#ifndef _LINUX_SHAZPTR_H
+> +#define _LINUX_SHAZPTR_H
+> +
+> +#include <linux/cleanup.h>
+> +#include <linux/percpu.h>
+> +
+> +/* Make ULONG_MAX the wildcard value */
+> +#define SHAZPTR_WILDCARD ((void *)(ULONG_MAX))
+> +
+> +DECLARE_PER_CPU_SHARED_ALIGNED(void *, shazptr_slots);
+> +
+> +/* Represent a held hazard pointer slot */
+> +struct shazptr_guard {
+> +	void **slot;
+> +	bool use_wildcard;
+> +};
+> +
+> +/*
+> + * Acquire a hazptr slot and begin the hazard pointer critical section.
+> + *
+> + * Must be called with preemption disabled, and preemption must remain disabled
+> + * until shazptr_clear().
+> + */
+> +static inline struct shazptr_guard shazptr_acquire(void *ptr)
+> +{
+> +	struct shazptr_guard guard = {
+> +		/* Preemption is disabled. */
+> +		.slot = this_cpu_ptr(&shazptr_slots),
+> +		.use_wildcard = false,
+> +	};
+> +
+> +	if (likely(!READ_ONCE(*guard.slot))) {
+> +		WRITE_ONCE(*guard.slot, ptr);
+> +	} else {
+> +		guard.use_wildcard = true;
+> +		WRITE_ONCE(*guard.slot, SHAZPTR_WILDCARD);
+> +	}
+> +
+> +	smp_mb(); /* Synchronize with smp_mb() at synchronize_shazptr(). */
+> +
+> +	return guard;
+> +}
+> +
+> +static inline void shazptr_clear(struct shazptr_guard guard)
+> +{
+> +	/* Only clear the slot when the outermost guard is released */
+> +	if (likely(!guard.use_wildcard))
+> +		smp_store_release(guard.slot, NULL); /* Pair with ACQUIRE at synchronize_shazptr() */
+> +}
+> +
+> +void synchronize_shazptr(void *ptr);
+> +
+> +DEFINE_CLASS(shazptr, struct shazptr_guard, shazptr_clear(_T),
+> +	     shazptr_acquire(ptr), void *ptr);
+> +#endif
+> diff --git a/kernel/locking/Makefile b/kernel/locking/Makefile
+> index a114949eeed5..1517076c98ec 100644
+> --- a/kernel/locking/Makefile
+> +++ b/kernel/locking/Makefile
+> @@ -3,7 +3,7 @@
+>  # and is generally not a function of system call inputs.
+>  KCOV_INSTRUMENT		:= n
 >  
->  /**
->   * migrate_movable_ops_page - migrate an isolated movable_ops page
-> - * @page: The isolated page.
-> + * @dst: The destination page.
-> + * @src: The source page.
-> + * @mode: The migration mode.
->   *
->   * Migrate an isolated movable_ops page.
->   *
-> _
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
--- 
-~Randy
+> -obj-y += mutex.o semaphore.o rwsem.o percpu-rwsem.o
+> +obj-y += mutex.o semaphore.o rwsem.o percpu-rwsem.o shazptr.o
+>  
+>  # Avoid recursion lockdep -> sanitizer -> ... -> lockdep & improve performance.
+>  KASAN_SANITIZE_lockdep.o := n
+> diff --git a/kernel/locking/shazptr.c b/kernel/locking/shazptr.c
+> new file mode 100644
+> index 000000000000..991fd1a05cfd
+> --- /dev/null
+> +++ b/kernel/locking/shazptr.c
+> @@ -0,0 +1,29 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Simple hazard pointers
+> + *
+> + * Copyright (c) 2025, Microsoft Corporation.
+> + *
+> + * Author: Boqun Feng <boqun.feng@gmail.com>
+> + */
+> +
+> +#include <linux/atomic.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/shazptr.h>
+> +
+> +DEFINE_PER_CPU_SHARED_ALIGNED(void *, shazptr_slots);
+> +EXPORT_PER_CPU_SYMBOL_GPL(shazptr_slots);
+> +
+> +void synchronize_shazptr(void *ptr)
+> +{
+> +	int cpu;
+> +
+> +	smp_mb(); /* Synchronize with the smp_mb() in shazptr_acquire(). */
+> +	for_each_possible_cpu(cpu) {
+> +		void **slot = per_cpu_ptr(&shazptr_slots, cpu);
+> +		/* Pair with smp_store_release() in shazptr_clear(). */
+> +		smp_cond_load_acquire(slot,
+> +				      VAL != ptr && VAL != SHAZPTR_WILDCARD);
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(synchronize_shazptr);
+> -- 
+> 2.47.1
+> 
 
