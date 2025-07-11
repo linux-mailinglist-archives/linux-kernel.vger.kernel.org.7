@@ -1,129 +1,93 @@
-Return-Path: <linux-kernel+bounces-727437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2213AB01A34
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:58:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23F24B01A37
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67446188E89C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:58:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3089A18925EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDC7288C10;
-	Fri, 11 Jul 2025 10:57:44 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2964A288C1F;
+	Fri, 11 Jul 2025 10:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fr7QcpSE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85815146585
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4E21F12F4;
+	Fri, 11 Jul 2025 10:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752231463; cv=none; b=fSpeRkpi7fAJGG7Eu9nR4+VFOA/akkxO4rUzAG9gMPjosyecB164ULIBBKkLtLb0PIWFsajBBMao5xxoRtOuLWeulDwxIeJLdj4WkmW7fRsrt0xPoSoEbHpSXQgKc+PUD9O/znOrk//FVAiM+6nRqMKCNNo2BsaWXiLWLKbRPAE=
+	t=1752231513; cv=none; b=CoLSI/K+V7p+7Ui9h/6SqEeP7wkmuSG0sQq1IDyiEqOKA31PvcslURvXfjtFaxzCkL2i5+m6fv8JDC+F3wgZemVCjjjKD5WNYJbNCiHp0r6cobCXc39NZr5X9Fu3MeSXxR+lfSYjyhw8IZ3b2GRHUsgbIjyCfGYMCL4aO0xp7fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752231463; c=relaxed/simple;
-	bh=n2v+V7Dt5M2kG11EP0+UJi01N1/LUvq1qS6h71wI9/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HNkRttZFZ7o/EQQmaVS7srWge64OSkmFvtFmOI9qdQzfpV5R01By6CcYoKhk9SBXICxTw7SMC630Pv7eBVOXsCDorouyMbocLZO2V067GMU1jxj5iS1nntvUxfugP605OsPmrsMNg1pm9yjhU/mlETCpQYN424fZhmm0g9BtU78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 0BA9610E1EB;
-	Fri, 11 Jul 2025 10:57:39 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id 5740880014;
-	Fri, 11 Jul 2025 10:57:35 +0000 (UTC)
-Date: Fri, 11 Jul 2025 06:57:42 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Christoph Hellwig <hch@infradead.org>
+	s=arc-20240116; t=1752231513; c=relaxed/simple;
+	bh=XCQDtVN9LtuP1CdLg9Wd8GX4n9nfD20nhOK6SsaQ+FQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uOuBk+x+/ptn2B/NfuRZk3bjB83ukuircc/f0luZs0oOndUIZfhtxdnaStz31HJ+ZeO33LWBOgulbhJO3Hy1MnjZe551WJ+UPJPHdAu7I0V7aH4jED+c9ODdx48Im3jbc7nGJZdtykxzEh8VwyegwYQwvxtpmCjk+NBlY7fXw+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fr7QcpSE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52F5FC4CEED;
+	Fri, 11 Jul 2025 10:58:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752231513;
+	bh=XCQDtVN9LtuP1CdLg9Wd8GX4n9nfD20nhOK6SsaQ+FQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fr7QcpSEd077FKsibhDqnwwBg5UzvBg78VYhuwpbn16J5Ucdd+WnsVejTozpQcXDl
+	 ZUWrO5+MZGsb/EOE8gKKbQ7KAbGeaQutulz3G0IiGyLT8w5nt5ccxD++BnlSEE55CW
+	 Z/BZeEwzsONWDP0YcFbykajiI71dHOnOjI2C6P9S88DLkyqdGfWQbim6uheAV3GG5c
+	 8fgkfKpHgVzK6433DT9YkrhhEAHakhkYb6oE/+aX9wMb9RCF9RlU49nmGRL6+jGfnl
+	 gVapRMU8WYaDqZXmPCFz1172A60qmMj1ZF/F1+WKfRzJfdWZURBw1z0RUnxmHw78C6
+	 H6RWJr44WbTGA==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
- <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
- Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
- E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
- Jens Remus <jremus@linux.ibm.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
- tech-board-discuss@lists.linuxfoundation.org
-Subject: Re: [RFC PATCH 2/5] unwind: Export unwind_user symbol to GPL
- modules
-Message-ID: <20250711065742.00d6668b@gandalf.local.home>
-In-Reply-To: <aHC-_HWR2L5kTYU5@infradead.org>
-References: <20250709212556.32777-1-mathieu.desnoyers@efficios.com>
-	<20250709212556.32777-3-mathieu.desnoyers@efficios.com>
-	<aHC-_HWR2L5kTYU5@infradead.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v2 0/1] tracing: Fix an event field filter issue
+Date: Fri, 11 Jul 2025 19:58:28 +0900
+Message-ID:  <175223150823.2878276.5814683250353215724.stgit@mhiramat.tok.corp.google.com>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 9xeuxq7er38yowmu6nukaz3jz8o4s8rp
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 5740880014
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18pS6T2o/rogsMPwNJqEbkqQQgCokmTmn8=
-X-HE-Tag: 1752231455-45601
-X-HE-Meta: U2FsdGVkX1+O0EXwju0hS6rR7KizxI864GA0/mDCEcd8H7demm1Caf3R/wYOP8but1VUfszLgsIMa9VrTTkiyfPA01t8GsLnl4UI74afdVn2hGjQln7QyrpQyupopvFTKtV7xxOdpmZRAdts6BPF6V0W4p/LKC1aHdkxPiBc9BxKkvWTwlulNAaR5e/HHX/PL2OwygnKHFHNTyBFdt5QnlU6zq0VQDRvN4utaTSWIT33fd3a8w8Cr97xK+7XirneATcciSHhXKNowi+LLoAHTIaCb1yOlqUETccpkBwoojBMCYF5dqXKvBv8KZG+4Z+Hd006R7Qx9gMdoL5Bx3i45Vqo3IQdEL0tJ8WB79AhE7d2k88pPuH0paZUtIeXDuHDLG37olZ8Q0gh/I3RtI+wwma1DUPfkQSE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+Hi,
+
+Here is the 2nd version of series to fix the tracing event filter
+because of __attribute__.
+
+The previous version is here;
+
+https://lore.kernel.org/all/175197567999.977073.8989204607899013923.stgit@mhiramat.tok.corp.google.com/
+
+This version merges previous [1/2] and [2/2] into [1/1] patch and
+fix memory leak if CONFIG_TRACE_EVAL_MAP_FILE=y.
+
+This removes the __attribute__ from the event format type string,
+which can cause issues with parsing (detecting the string
+type).
+
+Thank you,
 
 
-[ Adding the TAB to this as well ]
+---
 
-On Fri, 11 Jul 2025 00:36:28 -0700
-Christoph Hellwig <hch@infradead.org> wrote:
+Masami Hiramatsu (Google) (1):
+      tracing: Remove "__attribute__()" from the type field of event format
 
-> On Wed, Jul 09, 2025 at 05:25:49PM -0400, Mathieu Desnoyers wrote:
-> > Allow the unwind_user symbol to be used by GPL modules, for instance
-> > LTTng.  
-> 
-> I don't see a LTTng submission or any other user in this series.
-> So the usual prohibition against adding unused exports applies here
-> as usual.
 
-I want to bring up this discussion. I understand there's a policy not to
-add EXPORT_SYMBOL_GPL() unless there's a current user of it in the kernel
-proper. My question is, does this policy have to be draconian?
+ kernel/trace/trace.h        |    1 +
+ kernel/trace/trace_events.c |   74 ++++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 67 insertions(+), 8 deletions(-)
 
-The LTTng project and specifically its maintainer Mathieu has a long
-history of working along side of the Linux kernel and actively adding
-enhancements to the code. This is not an Nvidia or VMware situation where
-the modules add special secret sauce that they do not want to share. This
-is a long standing kernel contributor and maintainer that has proved
-himself time and time again to be an asset to the Linux kernel community.
-
-It's not even that LTTng wants to be out of tree. There's been several
-attempts to get LTTng merged. But they all failed due to disagreements in
-approaches and other aspects of the design. With perf and ftrace already in
-the kernel which focus toward helping kernel developers debug their issue,
-several maintainers do not see the point of LTTng. But LTTng focuses more
-on non kernel developers. Mathieu and I have come to a conclusion that
-LTTng and ftrace have two different audiences. And we actively work with
-each other to improve both ftrace and LTTng.
-
-LTTng was redesigned to work as a very non-intrusive external kernel module
-that could be ported to newer kernels without much pain. This approach has
-worked for both Mathieu and the kernel maintainers for several years.
-
-It is not because Mathieu doesn't want LTTng in the kernel that is keeping
-it out of the tree. He would very much like it in-tree! LTTng is not in the
-kernel because the kernel maintainers themselves have been blocking it. I
-do not feel that we should be also add the extra burden to prevent any call
-it could use from being EXPORT_SYMBOL_GPL().
-
-Mathieu has been very helpful in the work to develop this deferred unwind
-code that will help ftrace, perf and BPF. I would also like it to help
-LTTng. The only way to do so is to have an EXPORT_SYMBOL_GPL() for it.
-
-Now you can argue that we need to get LTTng into mainline before it can use
-this new work that the maintainer of LTTng has been very involved in to
-develop. But that would probably take a long time and from past
-experiences, may fail completely. So for now, I am saying that we give
-LTTng an exception to the rule that functions can not be
-EXPORT_SYMBOL_GPL() unless there's a in-tree kernel module that requires it.
-
--- Steve
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
