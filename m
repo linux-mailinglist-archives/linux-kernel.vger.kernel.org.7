@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-728257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8327BB02587
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:00:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3896AB0258C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ACD418967C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:01:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24D091C203AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9F51EFF9B;
-	Fri, 11 Jul 2025 20:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A1A1EFF9B;
+	Fri, 11 Jul 2025 20:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="s7ElN+sr"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="gPPoXjWd"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F341DE3AB
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 20:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5F1A32
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 20:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752264045; cv=none; b=n7pL+IxVSd6xtEy17jkV8jWnLQTQXoH8Wr9KsbLbTim20MvBirOlBChoXdAU5+naTQNNl4bKpP9hID0Dqd8CPaVHbpXr3XE12IfZ6a+oZa7PefPHoscDK1uNZMcHoLAF2q/xV6GwkhPJdbbcGiITuxDRzlDP/ry+zqvV6MwGqvg=
+	t=1752264139; cv=none; b=QvmkJjlk8NBR9ycn7Nbd8vitk42folybcsBzcBTl3d56kZ22+rpOvFe0ZFgmE9k7413BmHFcsF8mjMnZ4hRQ/+NSqTI/LfhYoIzEC6dZl615JNmEP/8HeOHhTgH/69K2AfwFLdTk19Wq5zq1WxHGIoUx7q5TRNMptxJ+Oi2yWVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752264045; c=relaxed/simple;
-	bh=rZi2rCdl13Itq2FYc/am7oHPt2a+dpwp2iEDHnh9MtI=;
+	s=arc-20240116; t=1752264139; c=relaxed/simple;
+	bh=zKywbrbbA5eqISP3tLnGOY+FB7tTc2FyEfuH/fp7gzo=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Lxsl6v9T7fMkKiZ2+8wuqVBIwHuU+/yTVOwDP/XhXmPVzfhyQpNKtkm7OyElzMAYW7AJ9Iw82xNIeA6yL0U0l8JSw7PDdgsGQ5A17/RsjpKizDwzBJRvr5WauN2NMZfGrNpzs6okS1XOJFNePcA/7CmoEpRdyeb8CGYqFoYVm4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=s7ElN+sr; arc=none smtp.client-ip=209.85.219.50
+	 Content-Type:MIME-Version; b=IKIYdO1jifZbhvSI6E/4SvQtlXNBV+GXzPgHyUVCwcDa6j+aMo4C0RMtUmoCaYbtsy+ywIF+OMlHG4ZBNqBQIF9rLn5XNZyIsGAeT5drKsZAJdKU099pqoDhKgY43LY5pdBMXnCGiksKxZ/PCCphlijBwBCdIuSfSxmMpHmzEiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=gPPoXjWd; arc=none smtp.client-ip=209.85.160.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6face367320so24126806d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:00:43 -0700 (PDT)
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4a58d95ea53so31203111cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:02:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1752264042; x=1752868842; darn=vger.kernel.org;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1752264135; x=1752868935; darn=vger.kernel.org;
         h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
          :from:subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=rZi2rCdl13Itq2FYc/am7oHPt2a+dpwp2iEDHnh9MtI=;
-        b=s7ElN+sreRJNoyiNTLESTLZc1tL6zO1KXaQfWAgTq52i5LLEu9v0p94aZSmK7xeikO
-         7gtjemhxzhRo68LIoa4IilSjtaj8OzZKtwPp0pUCcDVaTfTMB1dEB38ftVuoLB14U+Ze
-         /KNGd/f4yyA7+Ky0WVouOSODiAM5RbuMIGjywl6Y8C2lK5CItBJz43uQWmRwT8QZIWpC
-         /3z3jGsayTocuoFZSz2G5E4Oi534pq/vUS3akQ4mSWnxMji6a17XrtIWsALvd9TIMU5G
-         lElNUS8maI1MVpufwH7/3w4Iu+25FIalrmRjB6wuBIYY163E3bxJHIt86h7jbMSM4W56
-         lRwQ==
+        bh=CnoRRDhtGSOPAPWiKhq8LlJyfNIEUB0lnKlvZ+LO7jU=;
+        b=gPPoXjWdsztlmCjAu9eXOioV3u7z1TwU2EJ+pE7y5CRtc9t2gKm+i3QRgjzbRY0UQC
+         prm3QGdf1HxjilO7HkrZFvyWoBayDgFJY0kAmN5DJK4BuDQlQSrJwWNeQWp6ix7Dnjqy
+         IpHx/O/SuDfx22eoEnfM60PEjsZN+MalWw4DFFvQ589YSVU2c62wrlAVRvdz+Xip9Xr6
+         VpcQRwPFcSgdmxGb3wZzBC3B/5wHs1nIQc2OUKm9YbZ8UbC2xPYepe/KFMwvmPbNcG72
+         wNbAiy/MDWZ0Ko1atD2OH1qoaXoCmGI+e6NtoiwdndjIHxtgijVsQ6XODvXUwX7sJbxj
+         iWHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752264042; x=1752868842;
+        d=1e100.net; s=20230601; t=1752264135; x=1752868935;
         h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
          :from:subject:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rZi2rCdl13Itq2FYc/am7oHPt2a+dpwp2iEDHnh9MtI=;
-        b=ldEIX97FrY+g+27KCudTN/qh+m3VFX5eKv9BqA9euvsHwIX6lUx8J6EqNic/HDo2tw
-         9KzopLt1WOD/T7paP9plCbGcwZxBWHyRNhbdX1iyXJbjkI1g+vvc9/hf07aacmWeDsao
-         86vp0o/ck0kg6evKKHx59oyvja5yF4eIc0DkJjn0gHt5LQIS4FrZ5cDVit6pUKXGwoVG
-         d8nl5TZw2AfEJV94shK4UTf4SrtCC7YiNeJ0jemFRB48Le53/yGlTkxc8ppjh3JufqbK
-         iZG9NZOe9eXicQMfglqSvmv1YKahwWSESiFzUqhMfRpmzYet1DV4Yay6Axhuu8l4Wagu
-         BL4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVVZFXYhuOFiYX0937jlOo1P/bzSNLyx7NUQEAUgFaOHYaz2acKuMXwUqEBZrhRK+pRUTg4SuOPdExkbyk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6p1vBaG/xczu9i24B5P4irLC0pPt7mKGxwXAlqWYXtTY07ybl
-	ftFudB3xCKY0j385Rqh06gZ59wBlpVERyGJ7u5nFrlbEbg6SwFaj99PU2Pk45YEbHtGSCQ9PGwO
-	E/zaUzFhCrA==
-X-Gm-Gg: ASbGncsjxKf86sG5LlpQGJQ++w3mrffdytFmzItgUIf2Tbx6WsHk4E1ro6LVHEffphP
-	naUAAXlossYhfmlAn8dqRzMzvVAxFMyxQ1M2oslJIz+PLVOqA+muG4JqoXaHXSEBLVTXGjgTo3j
-	v1FeUlgL2jmCHE49umEoO+nVn0lrWUd6Z4UxvktwTQvigTXumopVtqEnqQW0aDUIREgUdFxiVua
-	JQm0L9BuxL9rIaLMiNzACfBLXa7QcUFvhpg/93HU5gnRaVm6ccBDWef+7IGxxOfBqkJ7ZIWepTf
-	M/Rl3ypwnl6cnqu19SsU6smIiiFscEJgQNdtDXFIUMGirc+MVxyZaeGAFkjyeMoD6V3SQ5rAJBQ
-	icSwHIzO0qtDxkIudu/qN2xuAPi4=
-X-Google-Smtp-Source: AGHT+IGM+1hSBakMhrLaq9WY4U9uml++QAtwf0AFvIykTUocyfI+3+molPmoYEJFzOkqT6FmQrqWMw==
-X-Received: by 2002:a05:6214:2e92:b0:704:a592:490b with SMTP id 6a1803df08f44-704a592491emr63860896d6.37.1752264042280;
-        Fri, 11 Jul 2025 13:00:42 -0700 (PDT)
+        bh=CnoRRDhtGSOPAPWiKhq8LlJyfNIEUB0lnKlvZ+LO7jU=;
+        b=hRqWXQY0ZZWsBcWpwFeBdMHtnpcwdBoHGLTYVU0TwhzpbtfFLdEsyErJeTOhbqBNWZ
+         XWWDinbJjc0mnOVP8/XtaITMTTB/NqQpbd8PPottKCwKWhtMwaQDVQQ170G0mH79KX9K
+         8yGFTHBmYOSwtmamWfk5zC2h8oiqzjVhMwt6AClAaNsKxp7u7uB3ICEgKLTyvBQxgzN+
+         WA5+FH+bMfrhaEpwecU1cEZaccA0tVSvpn5Epg+fbFGJklebvmzxQE/gBNkLW+PE+POo
+         Cj19adDduNVIS50vU+oqwDdeJn4i5EP9rmynjCbNfQNgsjMhfnKlVzctz7m4cLep53Yn
+         AK/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWxEADHEkfEv6k3d8qUdfhSL7fz++QVAbSnxtEZ2I10TDoREqWq/5Fjj/orZwDwQh74BC9bMsy5eah35Zw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt9+ipEwnXC4kkqskhHgWl7ctxImU8hpQvadC21ujKxqRtIUBR
+	qshZ5EuT05FysxT6eZg+4Ka0t5mDDxYhi82W6I7yPBJ/pei0J5UpFDv1nUVDXl8ndlM=
+X-Gm-Gg: ASbGncu1QMnvw5AvaxfT6yKZkgCo+TVQpbhQ0QvS+xfroFbASMDsOHrdrsIHcuE7Amq
+	1zRgHcB3PezrnvnAXYhG9ABmAVR9nmNT0fc/Bd1/1zxT4OtBQR8HsieGXSBOViLglUbx/yJrBSN
+	DBjdMwU73KbXlEHk7Q16nkr/JzS3QMsoklHg7u43ix3RPZ3599Bhv4ieJ3gUR+3i5vHBtD60LOb
+	Vui0hVhPWS15WEBOX9Uw1+f8jNCdVOPgzsBnHSAU5edO+RZlH/vf4aaQ5M0JnCpTcnupSvsrTS7
+	7Yr5lYR9w2cjtX0ybMCWZ14JxFjcVlABs3jStsdDgWogMkiVVumgfrQt6EDqJeFNnrgH5TH+LZy
+	yHA7+zvhCCJt2UcMsu8vp/kQHoSvSWoS1RJmRLg==
+X-Google-Smtp-Source: AGHT+IEuLOxF/UAqwKLexQXJclEkYrpc7aYrRvWVeUsA+st+Tdi3sBUDzBI9yFbWLfbip40hyoxWTg==
+X-Received: by 2002:a05:622a:a38c:b0:4ab:37d7:c3c2 with SMTP id d75a77b69052e-4ab37d7c5b1mr34888811cf.14.1752264135009;
+        Fri, 11 Jul 2025 13:02:15 -0700 (PDT)
 Received: from ?IPv6:2606:6d00:17:b699::5ac? ([2606:6d00:17:b699::5ac])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7049799e874sm23334306d6.18.2025.07.11.13.00.40
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9edefb923sm24313601cf.75.2025.07.11.13.02.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 13:00:41 -0700 (PDT)
-Message-ID: <1f36e0e642a1554f4661f122f7d525d5677ce1df.camel@ndufresne.ca>
-Subject: Re: [PATCH 7/8] media: rkvdec: Remove TODO file
+        Fri, 11 Jul 2025 13:02:13 -0700 (PDT)
+Message-ID: <447205bfe4089eb6231fa17a1fff3d58806ec7d3.camel@ndufresne.ca>
+Subject: Re: [PATCH 8/8] media: rkvdec: Unstage the driver
 From: Nicolas Dufresne <nicolas@ndufresne.ca>
 To: Detlev Casanova <detlev.casanova@collabora.com>, 
 	linux-kernel@vger.kernel.org
@@ -91,10 +90,10 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  <mchehab@kernel.org>,  Hans Verkuil <hverkuil@xs4all.nl>, Ricardo Ribalda
  <ribalda@chromium.org>, Hans de Goede <hansg@kernel.org>,  Yunke Cao
  <yunkec@google.com>, linux-media@vger.kernel.org, kernel@collabora.com
-Date: Fri, 11 Jul 2025 16:00:39 -0400
-In-Reply-To: <20250623160722.55938-8-detlev.casanova@collabora.com>
+Date: Fri, 11 Jul 2025 16:02:11 -0400
+In-Reply-To: <20250623160722.55938-9-detlev.casanova@collabora.com>
 References: <20250623160722.55938-1-detlev.casanova@collabora.com>
-	 <20250623160722.55938-8-detlev.casanova@collabora.com>
+	 <20250623160722.55938-9-detlev.casanova@collabora.com>
 Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
  keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
  /e0MU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAY29sbGFib3JhLmNvbT6ImQQTFg
@@ -105,7 +104,7 @@ Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
  TvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyy+AUJCWX3dQAKCRDZQZRRKWBy9FJ5AQCNy8SX8DpHbLa
  cy58vgDwyIpB89mok9eWGGejY9mqpRwEAhHzs+/n5xlVlM3bqy1yHnAzJqVwqBE1D0jG0a9V6VQI=
 Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-KQw6nRLQn0EVg5xyIuZ/"
+	protocol="application/pgp-signature"; boundary="=-TRLqz3hiMlUTgCc1wc3h"
 User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -115,67 +114,190 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 
---=-KQw6nRLQn0EVg5xyIuZ/
+--=-TRLqz3hiMlUTgCc1wc3h
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Le lundi 23 juin 2025 =C3=A0 12:07 -0400, Detlev Casanova a =C3=A9crit=C2=
 =A0:
-> 2 items are present in the TODO file:
-> =C2=A0- HEVC support
-> =C2=A0- Evaluate adding helper for rkvdec_request_validate
+> The TODO list for unstaging being empty, the driver can now be moved to t=
+he
+> main media folder.
 >=20
-> Missing HEVC support is not a reason for a driver to be in staging,
-> support for different features of the hardware can be added in drivers
-> in the main tree.
->=20
-> The rkvdec_request_validate function was simplified in
-> commit 54676d5f5630 ("media: rkvdec: Do not require all controls to be pr=
-esent
-> in every request")
-> by not setting controls that have not changed.
-> As it now basically just calls vb2_request_validate(), there is no need
-> for a helper.
+> Also add myself as maintainer.
 >=20
 > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
 
 Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 
 > ---
-> =C2=A0drivers/staging/media/rkvdec/TODO | 11 -----------
-> =C2=A01 file changed, 11 deletions(-)
-> =C2=A0delete mode 100644 drivers/staging/media/rkvdec/TODO
+> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | =
+8 ++++++++
+> =C2=A0drivers/media/platform/rockchip/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 1 +
+> =C2=A0drivers/media/platform/rockchip/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ | 1 +
+> =C2=A0.../media =3D> media/platform/rockchip}/rkvdec/Kconfig=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 0
+> =C2=A0.../media =3D> media/platform/rockchip}/rkvdec/Makefile=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 0
+> =C2=A0.../platform/rockchip}/rkvdec/rkvdec-h264.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 0
+> =C2=A0.../platform/rockchip}/rkvdec/rkvdec-regs.h=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 0
+> =C2=A0.../media =3D> media/platform/rockchip}/rkvdec/rkvdec-vp9.c | 0
+> =C2=A0.../media =3D> media/platform/rockchip}/rkvdec/rkvdec.c=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 0
+> =C2=A0.../media =3D> media/platform/rockchip}/rkvdec/rkvdec.h=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 0
+> =C2=A0drivers/staging/media/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 2 --
+> =C2=A0drivers/staging/media/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1 -
+> =C2=A012 files changed, 10 insertions(+), 3 deletions(-)
+> =C2=A0rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/=
+Kconfig
+> (100%)
+> =C2=A0rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/=
+Makefile
+> (100%)
+> =C2=A0rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/=
+rkvdec-
+> h264.c (100%)
+> =C2=A0rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/=
+rkvdec-
+> regs.h (100%)
+> =C2=A0rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/=
+rkvdec-vp9.c
+> (100%)
+> =C2=A0rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/=
+rkvdec.c
+> (100%)
+> =C2=A0rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/=
+rkvdec.h
+> (100%)
 >=20
-> diff --git a/drivers/staging/media/rkvdec/TODO
-> b/drivers/staging/media/rkvdec/TODO
-> deleted file mode 100644
-> index 2c0779383276e..0000000000000
-> --- a/drivers/staging/media/rkvdec/TODO
-> +++ /dev/null
-> @@ -1,11 +0,0 @@
-> -* Support for HEVC is planned for this driver.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c3f7fbd0d67af..d05a153c21526 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21466,6 +21466,14 @@ S:	Maintained
+> =C2=A0F:	Documentation/devicetree/bindings/media/rockchip-rga.yaml
+> =C2=A0F:	drivers/media/platform/rockchip/rga/
+> =C2=A0
+> +ROCKCHIP RKVDEC VIDEO DECODER DRIVER
+> +M:	Detlev Casanova <detlev.casanova@collabora.com>
+> +L:	linux-media@vger.kernel.org
+> +L:	linux-rockchip@lists.infradead.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/media/rockchip,vdec.yaml
+> +F:	drivers/media/platform/rockchip/rkvdec/
+> +
+> =C2=A0ROCKCHIP RK3308 INTERNAL AUDIO CODEC
+> =C2=A0M:	Luca Ceresoli <luca.ceresoli@bootlin.com>
+> =C2=A0S:	Maintained
+> diff --git a/drivers/media/platform/rockchip/Kconfig
+> b/drivers/media/platform/rockchip/Kconfig
+> index b41d3960c1b41..9bbeec4996aa2 100644
+> --- a/drivers/media/platform/rockchip/Kconfig
+> +++ b/drivers/media/platform/rockchip/Kconfig
+> @@ -4,3 +4,4 @@ comment "Rockchip media platform drivers"
+> =C2=A0
+> =C2=A0source "drivers/media/platform/rockchip/rga/Kconfig"
+> =C2=A0source "drivers/media/platform/rockchip/rkisp1/Kconfig"
+> +source "drivers/media/platform/rockchip/rkvdec/Kconfig"
+> diff --git a/drivers/media/platform/rockchip/Makefile
+> b/drivers/media/platform/rockchip/Makefile
+> index 4f782b876ac9b..286dc5c53f7e1 100644
+> --- a/drivers/media/platform/rockchip/Makefile
+> +++ b/drivers/media/platform/rockchip/Makefile
+> @@ -1,3 +1,4 @@
+> =C2=A0# SPDX-License-Identifier: GPL-2.0-only
+> =C2=A0obj-y +=3D rga/
+> =C2=A0obj-y +=3D rkisp1/
+> +obj-y +=3D rkvdec/
+> diff --git a/drivers/staging/media/rkvdec/Kconfig
+> b/drivers/media/platform/rockchip/rkvdec/Kconfig
+> similarity index 100%
+> rename from drivers/staging/media/rkvdec/Kconfig
+> rename to drivers/media/platform/rockchip/rkvdec/Kconfig
+> diff --git a/drivers/staging/media/rkvdec/Makefile
+> b/drivers/media/platform/rockchip/rkvdec/Makefile
+> similarity index 100%
+> rename from drivers/staging/media/rkvdec/Makefile
+> rename to drivers/media/platform/rockchip/rkvdec/Makefile
+> diff --git a/drivers/staging/media/rkvdec/rkvdec-h264.c
+> b/drivers/media/platform/rockchip/rkvdec/rkvdec-h264.c
+> similarity index 100%
+> rename from drivers/staging/media/rkvdec/rkvdec-h264.c
+> rename to drivers/media/platform/rockchip/rkvdec/rkvdec-h264.c
+> diff --git a/drivers/staging/media/rkvdec/rkvdec-regs.h
+> b/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
+> similarity index 100%
+> rename from drivers/staging/media/rkvdec/rkvdec-regs.h
+> rename to drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
+> diff --git a/drivers/staging/media/rkvdec/rkvdec-vp9.c
+> b/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
+> similarity index 100%
+> rename from drivers/staging/media/rkvdec/rkvdec-vp9.c
+> rename to drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
+> diff --git a/drivers/staging/media/rkvdec/rkvdec.c
+> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> similarity index 100%
+> rename from drivers/staging/media/rkvdec/rkvdec.c
+> rename to drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> diff --git a/drivers/staging/media/rkvdec/rkvdec.h
+> b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
+> similarity index 100%
+> rename from drivers/staging/media/rkvdec/rkvdec.h
+> rename to drivers/media/platform/rockchip/rkvdec/rkvdec.h
+> diff --git a/drivers/staging/media/Kconfig b/drivers/staging/media/Kconfi=
+g
+> index b442148543995..b9d52a51841b5 100644
+> --- a/drivers/staging/media/Kconfig
+> +++ b/drivers/staging/media/Kconfig
+> @@ -32,8 +32,6 @@ source "drivers/staging/media/max96712/Kconfig"
+> =C2=A0
+> =C2=A0source "drivers/staging/media/meson/vdec/Kconfig"
+> =C2=A0
+> -source "drivers/staging/media/rkvdec/Kconfig"
 > -
-> -=C2=A0 Given the V4L controls for that CODEC will be part of
-> -=C2=A0 the uABI, it will be required to have the driver in staging.
-> -
-> -=C2=A0 For this reason, we are keeping this driver in staging for now.
-> -
-> -* Evaluate introducing a helper to consolidate duplicated
-> -=C2=A0 code in rkvdec_request_validate and cedrus_request_validate.
-> -=C2=A0 The helper needs to the driver private data associated with
-> -=C2=A0 the videobuf2 queue, from a media request.
+> =C2=A0source "drivers/staging/media/starfive/Kconfig"
+> =C2=A0
+> =C2=A0source "drivers/staging/media/sunxi/Kconfig"
+> diff --git a/drivers/staging/media/Makefile b/drivers/staging/media/Makef=
+ile
+> index ad4e9619a9e07..102ca632ddf5c 100644
+> --- a/drivers/staging/media/Makefile
+> +++ b/drivers/staging/media/Makefile
+> @@ -4,7 +4,6 @@ obj-$(CONFIG_INTEL_ATOMISP)=C2=A0=C2=A0=C2=A0=C2=A0 +=3D =
+atomisp/
+> =C2=A0obj-$(CONFIG_VIDEO_IMX_MEDIA)	+=3D imx/
+> =C2=A0obj-$(CONFIG_VIDEO_MAX96712)	+=3D max96712/
+> =C2=A0obj-$(CONFIG_VIDEO_MESON_VDEC)	+=3D meson/vdec/
+> -obj-$(CONFIG_VIDEO_ROCKCHIP_VDEC)	+=3D rkvdec/
+> =C2=A0obj-$(CONFIG_VIDEO_STARFIVE_CAMSS)	+=3D starfive/
+> =C2=A0obj-$(CONFIG_VIDEO_SUNXI)	+=3D sunxi/
+> =C2=A0obj-$(CONFIG_VIDEO_TEGRA)	+=3D tegra-video/
 
---=-KQw6nRLQn0EVg5xyIuZ/
+--=-TRLqz3hiMlUTgCc1wc3h
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaHFtaAAKCRDZQZRRKWBy
-9F41AP99Ssroc2Ugv8H1VwcSMEFKHPQNBb3wYyF+ksoPrbKbdAD/RUUvTpWPsDfz
-ldKo4ficYUoAy5UZisMdhE0ngURfwg4=
-=tW+S
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaHFtwwAKCRDZQZRRKWBy
+9D0OAQDCzPQPG7xg4OYY8o6mQuA7YYMPvLnXfsqOsELbI81nggEAn4NKzS6Zv5SL
+gInU8ELc0LBcICoE9Vc3ZGnrhMUvzQo=
+=TPsc
 -----END PGP SIGNATURE-----
 
---=-KQw6nRLQn0EVg5xyIuZ/--
+--=-TRLqz3hiMlUTgCc1wc3h--
 
