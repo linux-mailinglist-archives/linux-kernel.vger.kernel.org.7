@@ -1,170 +1,137 @@
-Return-Path: <linux-kernel+bounces-727538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7C2B01B88
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:09:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC13B01B8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15F68766BD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:09:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 685281CA5B13
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB7F28F50F;
-	Fri, 11 Jul 2025 12:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28D51E5729;
+	Fri, 11 Jul 2025 12:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ia9o9Iau"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="f9svvUfD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFAE1F4C8C;
-	Fri, 11 Jul 2025 12:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B043228B50A
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752235790; cv=none; b=bVmw8bA+Z0bqRBmfcf3BhvR4VuS9BMpc/HwPOt8B6b81yYkIqMJAAeU7W3orBNXeO+GjXhYw1DdtFOGOQh1b88TD5pTzgZjf95lqbR8hu8XWfa5LFACI7Oa1ks8m430ySIr0X+BwtTDTAgys19JCqdg/tz7x7ZLTFTuiHAphGrQ=
+	t=1752235879; cv=none; b=Gbx/M7BUZhvhKKU9RvVJIQDcrnytbnk1lDuW5H/x9k7h7rLvFEY5+bYSdT/gyR9m7HWoZuWgdY6Klf4sIrWLmrnjxJ3r3AVN5ZT8xDA9cri3av4elhpa7RfLqxvNg/8hd68c9jzN6T4wm01Ir44i+dExhCFKj0C8JlyqFgDhcRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752235790; c=relaxed/simple;
-	bh=1mUysb+8o08SdBBmYbBUyKMVp31ubQlaOrJqMOyPPks=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D/5k38YPBSgOdD/lRfwv2S8i20zG8F179hIxIfwQmDPNULXrsg9ok2fLgaljGrSrdVRVzVlzg6mMhMfNtoNFi+6Qzheh4cx2YIkvQyEtL6k6bnN3UCrw+8bL/dMd0u+ffdZAm3PVe9phiGWLIisNPyWrmkNmXxJjrs4h81K6u4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ia9o9Iau; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-73972a54919so1811763b3a.3;
-        Fri, 11 Jul 2025 05:09:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752235788; x=1752840588; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RZh+h9FkEGoNBmFQ/fWxX9YZY8n00mTm9exBYWyxMyE=;
-        b=Ia9o9Iau06WfbNNgeNWenOCOT/YMZjrI1fBkrN8Tv6jy04w0T1oArsOvkhkJrMU8pD
-         RHEZU5u/Bo5n14oHuYoPJXOouCuQbzwMZjTDphy3OoDSKot+E5ddVZ5gdNA4FSWxJz9n
-         pl6RaRqR5owwko5ImcQE5QHZgFhb7rmRDyj9J0AIe7ZPUCA2l7sjOkENQwnDKQVupfda
-         8UGHFJZSZcCauXO5Wtrj9Ch58WCpOle+Gh20OopFfJVqqILovfkSekCYyEKHPtHCOmyS
-         laCUmkm/7gHLSU/7w0UlhYK1TdJuxqG2m+jJ5kmu/zer4Yw7ep6Zvdwu5cO0BhMakZgm
-         vSWw==
+	s=arc-20240116; t=1752235879; c=relaxed/simple;
+	bh=20yEYpgMk2k4hfbLWF68tB2yj+fPDxYnbRbzutQZA2E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z4U9WK3cGW/XGKwmfObr+RXB6k/uPRZbr2RifTi4R+2l6Vdhkdot46Pntp5Vzc1p6u4J0ay3+7oHaGYSYFTITz8aOL5Vpy5QYQ6jGFBD9NsOVo7bdfjAj1DQBiqX4eePM6dShagDht32fQYIKjNRFEq22CS99n9B6YWUuMV1OFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=f9svvUfD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BAxb02012021
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:11:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	E1hO5ND6o1S4IRbGj5wj/0aZsDaznogj0eIPmth2a0c=; b=f9svvUfDp9Jnkuro
+	/Otf52GwrL6hVPRd9W5oQmoDmEYwa21m/RQqDUHw5OGpbuwno4jCiWK/Kc8e7Isv
+	O2m2Ryc+idFGStcBUEQR5p+IWt9/VmY6oA/3PliR2cwLxoOjhHj0FkB1y6+JcX3T
+	5F8WUupJkLnggtGntEnJcwZFSrs42I0R37W00CpY6tY5L9kALE6v+IIM8yBqfQDp
+	/karLPWu4A0wufUCQ6GAliMqT5LDws45/59sOVF6+7Y7CjpXyai5khQYLGzh5XMy
+	66JtVxS0330kRMHJNeExIsRyHrWsaA9Ez7ne6yEeZEtPFBcDNMND4XOG9ECPWgp6
+	eP/lOQ==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47sm9e0ffa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:11:16 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7deca3ef277so20219785a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 05:11:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752235788; x=1752840588;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RZh+h9FkEGoNBmFQ/fWxX9YZY8n00mTm9exBYWyxMyE=;
-        b=a9p4p/FNUAgEdgLkLc4g+qxbEW22hjzOFhVvJkVcDrCWt+kiq+Qwz/xwSRuySVlIRp
-         yRZGO/mjIpUHW+9eOkjZzO/cojM+YkKerGHLR5UYBO7GWJAEkvtC2aaLvvbkQa5LU1uG
-         /foCIF8Fvz97+PXZAzyI2C76SyNgpivGMSCX+v8oAdGkOwSEkD5Sq7VemSrNiZxny7ax
-         DtHJM2tHAxECsN4PG35M1YkYw+MAtBK9feuStPdy3oUxBdYEJvzywJk2okTXXHm6kPTL
-         131RMcpQV2HGByOFYtlNIJtSynUe/UYK4y/XSXK1tnjtt56XzVFUW484z87sF568/w/B
-         iE0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUgexyf/qbqRymTez8zYuNgThhqEmtGv5mR1Tu8rNxGdQ6DEguP9lPX0Zd8Tap2oPk+hs+khKY2Vn3/tEY=@vger.kernel.org, AJvYcCXQqD62FAzGVasz6s0Te5ypqNIYtCWD/bW3LjTT6loJiSTqDEcM3gRFkXDOP+nYsLPeeX4dgt9VAtJyAb+NSDEK@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQbbwR8+iQhCbVLi5302x6wld+tQzV9P7ytp/NSBXwQMV4DbNp
-	+rtD6LmAiPPNN9vV0w3y7vWx570tZxHYvfM5k2cVui/65R1yfqpCEO/O
-X-Gm-Gg: ASbGncuIZ385z/5FADu25CYII/uc6AccIyYXCQupv+RM11GQkBaxKcmhwYmziyZI7si
-	lAaL0BxD4Lxzmtlz7ZJpwiHGopjdLGsFwqp8joNOXp3W08Tks/MHx6q/++NDvcy4E+S9QyCv6JN
-	h4PKRT/53Xj6C7UoeJ9gYDBsXk9KMa5M/mgF+mNVLk9W0OYunVpRmk3dDn82O324trp1NUKur7W
-	2a6Vz1MUWJlbJyAoxl4eeSKxvOG/0YXlTAJiFwmnx9cGclkFto7ST4F7+L3Yi/N/7xuOl2lq6sb
-	SZO6pyVKnxHHiwEc9MjCfruQTHs6eqid2gnUNe82JqeliH5CJSoWW7ItHJ77teoIbeGJWNjm8gc
-	VDijamqMnHAZyVa3yO4dPXDVypYHbbwzVFd8ud/jCLhxRVh1o
-X-Google-Smtp-Source: AGHT+IE2NZ0+J8d0OK9Iy+YWW1/9BUq73Ob8bE/TFoBEJqMyC+uapo8S3f7XGSDKa5bAQ5+00q06WA==
-X-Received: by 2002:a05:6a21:8dc7:b0:222:1802:2dd7 with SMTP id adf61e73a8af0-2313504f6f3mr4547110637.13.1752235787862;
-        Fri, 11 Jul 2025 05:09:47 -0700 (PDT)
-Received: from DESKTOP-GIED850.localdomain ([114.247.113.178])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe72913csm4944545a12.72.2025.07.11.05.09.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 05:09:47 -0700 (PDT)
-From: wang lian <lianux.mm@gmail.com>
-To: lorenzo.stoakes@oracle.com
-Cc: Liam.Howlett@oracle.com,
-	akpm@linux-foundation.org,
-	brauner@kernel.org,
-	broonie@kernel.org,
-	david@redhat.com,
-	gkwang@linx-info.com,
-	jannh@google.com,
-	lianux.mm@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org,
-	p1ucky0923@gmail.com,
-	ryncsn@gmail.com,
-	shuah@kernel.org,
-	sj@kernel.org,
-	vbabka@suse.cz,
-	zijing.zhang@proton.me,
-	ziy@nvidia.com
-Subject: Re: [PATCH v3] selftests/mm: add process_madvise() tests
-Date: Fri, 11 Jul 2025 20:09:38 +0800
-Message-ID: <20250711120938.15270-1-lianux.mm@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <e05e7e0d-02e3-435c-bb82-91200a868448@lucifer.local>
-References: <e05e7e0d-02e3-435c-bb82-91200a868448@lucifer.local>
+        d=1e100.net; s=20230601; t=1752235875; x=1752840675;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E1hO5ND6o1S4IRbGj5wj/0aZsDaznogj0eIPmth2a0c=;
+        b=PwQT5XYZB1C8tOPCDPP3+btGKDitX4cbW+NmjWgI6ugF4qmaUKptaJy25aXUbe+FB1
+         wYk03nh/6ddasVHjl03DHAA1HmRps3VueCqwmuhzGrkY2Lv2PPMs0QnRRBOtrLtwlxhO
+         uIyBQ1w7TWf6VTlJEM+0nnKGNeD3Fb3w6IVQEB6dfdkaNcHkK6xg6rH4o3fhIFSEu0IU
+         a/Bs4UoYW5Ycf7N1KjlBII4X1vJMIsPRZB8oVH+UegpDfVgviGrUSSgouGqCswwnTPjW
+         G5W7O8kdKrfXrqxEZqImbzkTqA486dAiP5QLMweaPIJCeGUTUdfdskkhT+OMo1GKS5oR
+         xomg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvkWAQK5ahxf8Ikp0+Y7Qa7SrA50mWbAmQvNdTs3ItD3geWKqGRPOrBiTSLPqHsZC9QENUvUz9/JyWqwo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCP2dcwY9qkau+j9pZW3fOre8rBg+s3oLNjcevU83u3sDC7UWE
+	6Fk+PDmUe01eD91jA/4VqrFzeB5e2/IP0gqmx5nPSv5GBaAsEm4YWWMuVCugaPz5frEvRxgJo+J
+	KzrFk7c9y5RPWzPB7zJEq21rQjpbhTKIZckIq5SJB12DqwZ8ENqfuLYRMGZWRyLXh1WA=
+X-Gm-Gg: ASbGncteegWwJkYqXrC/T+21UBnbEOfh2XgONDlIXJyPVlUAUaztRHWJbb4ZLfZ6Jux
+	WmybkJ5lysPJDVndaSCEW8l76GOAuIY7ntSxYr+FkKaDxlghQiSpB06QnS/+55vyWbwnnV6wbb1
+	eV5Wi2MCSpVH+6X6f79gca4PPrU5oh3XFqqAYkbsKCOJt3+tdt6XFTb7IwjWXyNcrn+DaNdizhP
+	W27DczfIk4FYgCPt3by/Rf6jB+dfrdDR5VLywZBsuyxCyNIgUcmJKHJO5jOqStqzRc2xmlDGjYM
+	z32Qy+MvYCxQ/7701C8fICmcVuApwG9JtXVKuF/SSNxiZZJ03cQcJn0MrljWDfH3QbtnPM5gZfM
+	bEEt7siItxkEHGKNuVPoc
+X-Received: by 2002:a05:620a:448a:b0:7d4:4372:c4aa with SMTP id af79cd13be357-7de99b58108mr141907485a.8.1752235875188;
+        Fri, 11 Jul 2025 05:11:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG75AwJO8klriW48siiGrNDo4BitXOJrFV1MfgzRcCNWaXRSKsT3osDC+MWRuxa7QZti87jFw==
+X-Received: by 2002:a05:620a:448a:b0:7d4:4372:c4aa with SMTP id af79cd13be357-7de99b58108mr141904985a.8.1752235874558;
+        Fri, 11 Jul 2025 05:11:14 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c95256d0sm2135423a12.24.2025.07.11.05.11.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 05:11:14 -0700 (PDT)
+Message-ID: <3cd5864e-e6cf-404f-94b5-b85866086d76@oss.qualcomm.com>
+Date: Fri, 11 Jul 2025 14:11:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: qcom: socinfo: Add support to retrieve APPSBL build
+ details
+To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250711-appsbl_crm_version-v1-1-48b49b1dfdcf@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250711-appsbl_crm_version-v1-1-48b49b1dfdcf@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: GN99rqwR0iPs6ULe2dGj5OVmwrlofJwS
+X-Authority-Analysis: v=2.4 cv=W7k4VQWk c=1 sm=1 tr=0 ts=6870ff64 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=GUEbe4ff609SwjsIVCAA:9
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-ORIG-GUID: GN99rqwR0iPs6ULe2dGj5OVmwrlofJwS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA4NiBTYWx0ZWRfX02KaqCD/+Ost
+ vpaFnHt7kcMPXWnZ7fveZHtNRlNarux4GbbkOxSDWRuXCFPAsFLWL0/IS3Zrc3FJ1MQ5aV+0qsY
+ m3xryQR6FT3McxuzVttMJFtgXzDAxR+ZkN+QjyBOwegsaDINbRynXvCPFchf7F9rkzP7cJHdIUe
+ pjlSIGklQB5QeDPvRJHYyqsscb35L+Gx26jzNP/O1nFT5tmKPUykitJ3eiIAhm/J7ERw9HnI2xj
+ itYU/DmanIiSk+yx4QBkD37VcWlv+KLNZgSxnN3jZTHLeBTk6GAf9QzzD2SZBh/pmqtoEl5FnSr
+ tUGRLQqh4k/WJ7lnlw9kfh76palwpZy7Ppve9iYeukPqJsy9T+cyKkWMqB4sJe0ptoww6E2IF48
+ 9bRAQgTtrZ8qQmhPtJjI6lZs1//QG3wbDYM9dzWrwY10Ab5MCxbTF/s54MvbNPKoztsk1Uwa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 phishscore=0
+ mlxlogscore=576 priorityscore=1501 impostorscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507110086
 
-Hi Lorenzo Stoakes,
+On 7/11/25 1:03 PM, Kathiravan Thirumoorthy wrote:
+> Add support to retrieve APPS (Application Processor Subsystem) Bootloader
+> image details from SMEM.
+> 
+> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+> ---
 
-> On Fri, Jul 11, 2025 at 09:34:38AM +0100, Mark Brown wrote:
-> > On Thu, Jul 10, 2025 at 12:28:13PM -0400, Zi Yan wrote:
-> > > On 10 Jul 2025, at 4:42, Mark Brown wrote:
-> > > > On Wed, Jul 09, 2025 at 10:46:07AM -0400, Zi Yan wrote:
-> > > >
-> > > > > Right. My /usr/include/sys does not have pidfd.h. IMHO selftests
-> > > > > should not rely on userspace headers, otherwise we cannot test
-> > > > > latest kernel changes.
-> > > >
-> > > > That's not realistic, we need to be able to use things like libc and for
-> > > > many areas you'd just end up copying or reimplmenenting the userspace
-> > > > libraries.  There's some concerns for sure, for example we used to have
-> > >
-> > > Sure. For libraries like libc, it is unrealistic to not rely on it.
-> > > But for header files, are we expecting to install any kernel headers
-> > > to the running system to get selftests compiled? If we are testing
-> > > RC versions and header files might change before the actual release,
-> > > that would pollute the system header files, right?
-> >
-> > Right, for the kernel's headers there's two things - we use a
-> > combination of tools/include and 'make headers_install' which populates
-> > usr/include in the kernel tree (apparently mm rejects the latter but it
-> > is widely used in the selftests, especially for architecture specifics).
-> > These install locally and used before the system headers.
-> >
-> > > > OTOH in a case like this where we can just refer directly to a kernel
-> > > > header for some constants or structs then it does make sense to use the
-> > > > kernel headers, or in other cases where we're testing things that are
-> >
-> > > That is exactly my point above.
-> >
-> > What was said was a bit stronger though, and might lead people down a
-> > wheel reinvention path.
->
-> Let's PLEASE not rehash all this again...
->
-> This patch literally just needs PIDFD_SELF, I've provided a couple of ways
-> of doing that without introducing this requirement.
->
-> We already have a test that uses this with no problems ever reported on
-> which this patch was based.
->
-> Thanks.
+Can we expand the driver with all the known IDs at once instead?
 
-You are absolutely right, and my apologies for introducing this
-unnecessary header dependency.
-
-Just to clarify, the build failure Zi Yan reported on arm64 was not
-caused by PIDFD_SELF. It was from my use of the pidfd_open() glibc
-wrapper in the test, which incorrectly pulled in the system's
-<sys/pidfd.h>.
-
-Based on our discussion and a review of other tests, I understand the
-correct approach is to avoid such dependencies. I will fix this properly
-in the next version by using a direct syscall wrapper for pidfd_open.
-Thank you for the guidance.
-
-Best regards,
-Wang Lian
+Konrad
 
