@@ -1,78 +1,102 @@
-Return-Path: <linux-kernel+bounces-727871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB18AB020E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:51:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CB89B020E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B0C97A4EF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:50:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54C885613C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830732ED867;
-	Fri, 11 Jul 2025 15:51:26 +0000 (UTC)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396F22ED877;
+	Fri, 11 Jul 2025 15:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pEueceIG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="38Jty+TG";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IQtdmBtB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XbLkk3jN"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4782617A2EB;
-	Fri, 11 Jul 2025 15:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72D82ED85F
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752249086; cv=none; b=JHVAIhtKGEqWdYYnyH/iQo9iov59lnX61bSVtMelJ0kozdXMjatLF/gqJOU9GfwlxMU8OoFvdi2cL0Gc1VDK3Wr3vitNWLRlKGaPq8PXnbiiUGYkdUWhaYy/cUWZZ79Fy+BnPJJkzuV3BCSFPV8YwLaKw6eRPZCNPtCuIIGMFJI=
+	t=1752249106; cv=none; b=gdxGIljTnAP/xR57VzePkpqGtqxCoq+MjTjtZ/2pXq/9rifWf+kaVJI2hQ5h0tnCoqtG9A4kF+E5xkZkGyPZ4SCRJtKjYverGoC/y7NfoLh/MViCcqmlHKVvZOC9TzNcRl9vbc2xJEM6Tnv6bwjEAGLNajGggXBCCfC+TnkNBtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752249086; c=relaxed/simple;
-	bh=tMvjwrUUx5JzCR1Iuf+ULRuuEz6wXdcmmxLtzBGITY0=;
+	s=arc-20240116; t=1752249106; c=relaxed/simple;
+	bh=hjdU8xGKmuo1OneDdsWZYVBI2CXht7Qf6/e4iAfdXzQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pneGcFQiJwFk3KZYZlDq6hiicWQqQPrzz7VJfmGZx0ROQlxOYvbowPWYuOeXQ9/6vezC+EYKF1546Tsx1FbMxJ9pOIIYJanqG8xbiRgXQvIxYaPU4FLyS50RxOqx4yVV8CUH1GYHU3LjwPfxwz2v8EHHr0N0aIoVD7InoX4Li7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae0b2ead33cso403714266b.0;
-        Fri, 11 Jul 2025 08:51:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752249083; x=1752853883;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EemhuuktFGN6h6gJqo1Xlj4CNK5k2utZwixQsaHrULo=;
-        b=rerlI0ugJ8fDXN1qsLjDKERH8aAaqm49m4dATqkCDYq0VdbXi3U/I4VFKrMDvVJ6un
-         mR2hDB+wqqMc/XaFRyBARBW5iZeMu15q0pczcD5eNnZHp5nsIl9DDIUITP8XvIxulDDa
-         VUm0lXMIHSUSZuSa63F3aQzbATsB0shrnmPMi1P2bClNny2lWx6U9tXC4kmf6ud/Vij2
-         rimQb6HPxdFmREKhpK3Yv2G9gxSj7l/5WuN+dugbxOFgMKIZmZRV6LrDkAwXbq6xz8Xo
-         YGusPg5OKoagshFS7qdLo3hwDc2XNyKtKG8b7iwSiDgP8x58Soj7YZHnrbrkM3/HC7S2
-         +cGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxRmfFBdycptvtCgJ5aLGJmMUAye6DT3OVwDvJwzxdJKhCRwG4Em4sxL6A0frGROYnXFzv1/CI/vWY1Pgl@vger.kernel.org, AJvYcCWdHoLCcUolE9uzgE/S2KEEllnUHAFXg5DaZBlODPVDrgvzBwgnWjRyNRayj+BL/4XRkKOG8gc+@vger.kernel.org, AJvYcCXBiVR273NbGGjsvLo40VujFwxigPrNfr5kmnqxYcR0AkeJUujM7LCLFRWgao1xtZOtVG/9RhPj3cpRsVHI0Czd@vger.kernel.org, AJvYcCXZjtadbqs8bDQNcrkGcoquTrpu+wwG49i4p8kceBgEiy/iWZD07Dxr+Sa5Z5eJJ4DydMI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP1G25sSJcMVFYYxtGne7s6wHZjCdqYCNtiJGLSh3Sl6vzSyaR
-	hG/b9Qqi7tJu3ISFnb42bahrVTpL42bNJJuRzIxyJaN9TRafDtkfovEs
-X-Gm-Gg: ASbGnctEqe0kGWYaqG4GGvG16vqzxydu1UPWCwx8PcCkIPFpsqGmcxF8/wkR+2KIMzB
-	rrPeRwCbRT5R2HYO7LZMhI7AXMvfkPUElMswrhlAN3C4m+xzOyZQS0R47lX4h8DxawoB6NoKq2a
-	ZkAFRg/tzv6Hn5vYZgjGQ2wTr8sgUhmpIxU9LOpsNPi+pJtoC9+6Rek/yEciSvim94gDXCCUoiP
-	03fELidsFJfV1XdBqBMci+56WnY32CRkhBDxTfSeHOmRQAgD7fX3PnrihY4esxkd98mnhxe50v5
-	miVfzuUcChWOifH4Jxy6i6MWE4Z3Lzr2bG+idtxKOMBX/xm+Kz8hFfmyPFc4ocCfVcpcLvTKogi
-	KIZ4M0uPUXg==
-X-Google-Smtp-Source: AGHT+IGI00rWAIpdapWnzS7FmLmfeGVsnS2ofhLVeIpT53X8jpK9GRpsZjnZVCzgQWyXqOPVcNx2SQ==
-X-Received: by 2002:a17:906:7952:b0:ad2:e08:e9e2 with SMTP id a640c23a62f3a-ae6fb90ca97mr410209066b.27.1752249082134;
-        Fri, 11 Jul 2025 08:51:22 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8294042sm313717766b.119.2025.07.11.08.51.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 08:51:21 -0700 (PDT)
-Date: Fri, 11 Jul 2025 08:51:19 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, bpf@vger.kernel.org, kernel-team@meta.com, 
-	Willem de Bruijn <willemb@google.com>
-Subject: Re: [PATCH net-next v5 3/3] selftests: net: add netpoll basic
- functionality test
-Message-ID: <k45gwtae6yx3cjy5kprctlnw4wox5fnfd5yjlczgpyu2cw5bsj@dol2der4ykat>
-References: <20250709-netpoll_test-v5-0-b3737895affe@debian.org>
- <20250709-netpoll_test-v5-3-b3737895affe@debian.org>
- <20250710184535.374a0643@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iJry048C8eZwuQmO6S12TfBNSZClKGxPWt8LcIJTPaK5T7vL4FjG8DcWjfq0UxqHQxQUxGVnKgPCIKNatd+kfhQvgeYpAIeNJbZOsN3W/1cRyqOPDcvO83MvqnD/JeI/uCn6wmfg/FT0YzIZhfWkNMC67Hx4jBMzu6D40ipPJwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pEueceIG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=38Jty+TG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IQtdmBtB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XbLkk3jN; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CABE81F46E;
+	Fri, 11 Jul 2025 15:51:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752249103; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=acjDWv/whgFgzS+zf85UQQJgYzekdYngZZ0xHb1TGMQ=;
+	b=pEueceIG+LLUmAwSxlIlS6KbZhaS67CQbYCZogV8JanGa+RYKhpT3lzlswxF9SDuC5hKaZ
+	NnEOC7aYZYJpPXdH5TSQB4agBEKZAWYPCS+SB9oTV/DlqMCwJtHzuqL93od1q1YHsZT2A7
+	bTKUtnHO2mzXVtUcuJ9YGnRgqQKb6+I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752249103;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=acjDWv/whgFgzS+zf85UQQJgYzekdYngZZ0xHb1TGMQ=;
+	b=38Jty+TG1JuYxbB2Vp6UbgTDsALnJTb6OLmrEVdCqFbsE7wUBp3ZTpwN/kf6921MTcctP2
+	S71o7BD+p3EJTfBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752249101; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=acjDWv/whgFgzS+zf85UQQJgYzekdYngZZ0xHb1TGMQ=;
+	b=IQtdmBtBpuTb8gTGIr1PEBZiRqKa68ggXQ1R0JB4iqhvBVSLstP5kBlxmF4oYLajKEOtNE
+	dVVoGRZkDDZ1pZDhW9DMuIPih9kjT+y1+hBVa6zFo7Ha2CYRnyk/gLuWKhmlESWFDAWb7u
+	JzD0FqxESsGnlTAuj2/ZioFNzETtq9U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752249101;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=acjDWv/whgFgzS+zf85UQQJgYzekdYngZZ0xHb1TGMQ=;
+	b=XbLkk3jN1smLgn+ygPtdZM1S9M+ZL3n3uA1dbOiM/shXrm4SyXjDS53vAzg0WS9QnRoD5V
+	XQOaJ9p7Hi8giiDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 937D41388B;
+	Fri, 11 Jul 2025 15:51:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vZb8Iw0zcWj0bQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 11 Jul 2025 15:51:41 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id EA490A099A; Fri, 11 Jul 2025 17:51:40 +0200 (CEST)
+Date: Fri, 11 Jul 2025 17:51:40 +0200
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+01ef7a8da81a975e1ccd@syzkaller.appspotmail.com>
+Cc: adilger.kernel@dilger.ca, anna.luese@v-bien.de, brauner@kernel.org, 
+	jack@suse.cz, jfs-discussion@lists.sourceforge.net, libaokun1@huawei.com, 
+	linkinjeon@kernel.org, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, p.raghav@samsung.com, shaggy@kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Subject: Re: [syzbot] [ext4?] WARNING in bdev_getblk
+Message-ID: <gbzywhurs75yyg2uckcbi7qp7g4cx6tybridb4spts43jxj6gw@66ab5zymisgc>
+References: <686a8143.a00a0220.c7b3.005b.GAE@google.com>
+ <68710315.a00a0220.26a83e.004a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,111 +105,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250710184535.374a0643@kernel.org>
+In-Reply-To: <68710315.a00a0220.26a83e.004a.GAE@google.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=8396fd456733c122];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	URIBL_BLOCKED(0.00)[appspotmail.com:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,syzkaller.appspot.com:url,samsung.com:email,goo.gl:url];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,appspotmail.com:email,imap1.dmz-prg2.suse.org:helo,goo.gl:url,samsung.com:email,syzkaller.appspot.com:url];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[01ef7a8da81a975e1ccd];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	REDIRECTOR_URL(0.00)[goo.gl];
+	MISSING_XM_UA(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -1.30
 
-Hello Jakub,
-
-On Thu, Jul 10, 2025 at 06:45:35PM -0700, Jakub Kicinski wrote:
-> > +MAX_WRITES: int = 40
+On Fri 11-07-25 05:27:01, syzbot wrote:
+> syzbot has bisected this issue to:
 > 
-> FWIW the test takes 25sec on our debug-heavy VMs right now.
-> I think we can crank the writes quite a bit.. ?
-
-Sure. I will increase it to 40. On my VMs I get more than 30 hits every
-single time:
-
-	2025-07-11 08:30:08,904 - DEBUG - BPFtrace output: {'hits': 30}
-	2025-07-11 08:30:08,904 - DEBUG - MAPS coming from bpftrace = {'hits': 30}
-
-> > +def ethtool_read_rx_tx_queue(interface_name: str) -> tuple[int, int]:
-> > +    """
-> > +    Read the number of RX and TX queues using ethtool. This will be used
-> > +    to restore it after the test
-> > +    """
-> > +    rx_queue = 0
-> > +    tx_queue = 0
-> > +
-> > +    try:
-> > +        ethtool_result = ethtool(f"-g {interface_name}").stdout
+> commit 77eb64439ad52d8afb57bb4dae24a2743c68f50d
+> Author: Pankaj Raghav <p.raghav@samsung.com>
+> Date:   Thu Jun 26 11:32:23 2025 +0000
 > 
-> json=True please and you'll get a dict, on CLI you can try:
+>     fs/buffer: remove the min and max limit checks in __getblk_slow()
 > 
-> ethtool --json -g eth0
-
-Sure. I was parsing manually because some options do not have --json
-format. 
-
-	ethtool --json -l eth0
-	ethtool: bad command line argument(s)
-
-I haven't checked upstream, but, if this feature is upstream, is it worth
-implementing it?
-
-> > +        ethtool(f"-G {interface_name} rx {rx_val} tx {tx_val}")
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=127d8d82580000
+> start commit:   835244aba90d Add linux-next specific files for 20250709
+> git tree:       linux-next
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=117d8d82580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=167d8d82580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8396fd456733c122
+> dashboard link: https://syzkaller.appspot.com/bug?extid=01ef7a8da81a975e1ccd
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=115c40f0580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11856a8c580000
 > 
-> This is setting _ring size_ not queue count.
-> I suppose we want both, this and queue count to 1 (with ethtool -l / -L)
-> The ring size of 1 is unlikely to work on real devices.
-> I'd try setting it to 128 and 256 and if neither sticks just carry on
-> with whatever was there.
-
-Thanks. I creating a function to do it. Something as:
-
-	def configure_network(ifname: str) -> None:
-	"""Configure ring size and queue numbers"""
-
-	# Set defined queues to 1 to force congestion
-	prev_queues = ethtool_get_queues_cnt(ifname)
-	logging.debug("RX/TX/combined queues: %s", prev_queues)
-	# Only set the queues to 1 if they exists in the device. I.e, they are > 0
-	ethtool_set_queues_cnt(ifname, tuple(1 if x > 0 else x for x in prev_queues))
-	defer(ethtool_set_queues_cnt, ifname, prev_queues)
-
-	# Try to set the ring size to some low value.
-	# Do not fail if the hardware do not accepted desired values
-	prev_ring_size = ethtool_get_ringsize(ifname)
-	for size in [(1, 1), (128, 128), (256, 256)]:
-		if ethtool_set_ringsize(ifname, size):
-		# hardware accepted the desired ringsize
-		logging.debug("Set RX/TX ringsize to: %s from %s", size, prev_ring_size)
-		break
-	defer(ethtool_set_ringsize, ifname, prev_ring_size)
-
-> > +        "remote_ip": (
-> > +            cfg.remote_addr_v["4"] if cfg.addr_ipver == "4" else cfg.remote_addr_v["6"]
-> > +        ),
+> Reported-by: syzbot+01ef7a8da81a975e1ccd@syzkaller.appspotmail.com
+> Fixes: 77eb64439ad5 ("fs/buffer: remove the min and max limit checks in __getblk_slow()")
 > 
-> this is already done for you
-> cfg.addr is either v4 or v6 depending on what was provided in the env
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Ack!
+Ah, I see what's going on here. The reproducer mounts ext4 filesystem and
+sets block size on loop0 loop device to 32k using LOOP_SET_BLOCK_SIZE. Now
+because there are multiple reproducer running using various loop devices it
+can happen that we're setting blocksize during mount which obviously
+confuses the filesystem (and makes sb mismatch the bdev block size). It is
+really not a good idea to allow setting block size (or capacity for that
+matter) underneath an exclusive opener. The ioctl should have required
+exclusive open from the start but now it's too late to change that so we
+need to perform a similar dance with bd_prepare_to_claim() as in
+loop_configure() to grab temporary exclusive access... Sigh.
 
-> > +# toggle the interface up and down, to cause some congestion
-> 
-> Let's not do this, you're missing disruptive annotation and for many
-> drivers NAPI is stopped before queues
-> https://github.com/linux-netdev/nipa/wiki/Guidance-for-test-authors#ksft_disruptive
+Anyway, the commit 77eb64439ad5 is just a victim that switched KERN_ERR
+messages in the log to WARN_ON so syzbot started to notice this breakage.
 
-Sure. This is not needed to reproduce the issue.
-I just put it in there in order to create more entropy. Anyway, removing
-it.
-
-> > +def main() -> None:
-> > +    """Main function to run the test"""
-> > +    netcons_load_module()
-> > +    test_check_dependencies()
-> > +    with NetDrvEpEnv(__file__, nsim_test=True) as cfg:
-> 
-> I think nsim_test=True will make the test run _only_ on netdevsim.
-> But there's nothing netdevsim specific here right?
-> You can remove the argument and let's have this run against real
-> drivers, too?
-
-Sure. that is our goal, by the end of the day. Being able to run it on
-real hardware.
-
-
-Thanks of the review. I will send an updated version soon, and we can
-continue the discusion over there.
---breno
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
