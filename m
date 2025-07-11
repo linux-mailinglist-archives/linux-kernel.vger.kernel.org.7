@@ -1,108 +1,102 @@
-Return-Path: <linux-kernel+bounces-727381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79DEFB01966
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:09:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B12CB0197C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:15:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5550563A7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:09:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B247176872
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E26627EFEA;
-	Fri, 11 Jul 2025 10:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PH2JSOXL"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB5627F737;
+	Fri, 11 Jul 2025 10:15:31 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD4B1F4282;
-	Fri, 11 Jul 2025 10:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C787833993;
+	Fri, 11 Jul 2025 10:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752228550; cv=none; b=biWOQm8sGjZ35o05UckKngAtdudzSnkX5HbVDFjp27ESJS7mAXwuAd63Lii4HNk3IAcer44aS4rFOCVX6Fnl9Z8bBiMu2qYfmDoM3WpLI6m4NgqnovBT6051OtmaoWTrASuNju89G9z6riRljNmc3u42bgL4wrGQ3KVE6b6TH30=
+	t=1752228931; cv=none; b=FIjZQWvIFtvXArk+1FkknCDdG0zo8XwFF0fqjY2SiL29FGMlNQSd5mjNrIA8V4BT6Daqd64b7+qZvE5YTST0TlfJHbs3P1Y+5/eKgWMG6wst1cQS4+xpu6TsLmIq1vtZ+Uc9KoxOXhXSxKMXlMBjadJnjQB/rtB4rGZ0gDqAZVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752228550; c=relaxed/simple;
-	bh=6DPlrQTYkt+ZE8rRAAVfPF09NGI7WKsXkRoeE2olJfQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M5h9OG3rjx8A6ZjY2/4ZsANROnnDMPIL/t4Hdnp+8jivcFezqns6XsZFe15fhZvwnbH2lJlxEhX3wnj0Bd2sVX4z2rOrL1GbS8p9JmevavIasX2soeFzyQjuRPElzMbKAPvAdemnKetQDw++hkhauT321810sZXPc9Q2nZL2rX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PH2JSOXL; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-710e344bbf9so19572597b3.2;
-        Fri, 11 Jul 2025 03:09:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752228547; x=1752833347; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6DPlrQTYkt+ZE8rRAAVfPF09NGI7WKsXkRoeE2olJfQ=;
-        b=PH2JSOXLRuWrcCeddVeyMy4QByIpdlqXPNqFTaQ3nnTI6zoFqSUvKBneAZdw2HyR2M
-         830mOB3gBmBQlRQMGcWFLjZGBmwMQm+oO2UMAjYNVpmksWEjmty0o0EzBsJ6r0xiCFoB
-         u6/5a8dJFd5jpHEiMKDKQBZPIErUNl/bvDtbmPV1PwWub/lSk/0SrBL3ajpqW4xsCHDn
-         YP2GDkKmyzLlDgRubpUeR3b2LFxuVzVyncsNkTEXeLKqkG5W3Lwtl63bqMSnKx6iw336
-         ln5B8B22/KQC45FeI9GJ9fJ+uALYD4N5QvrCsRQyTMCbRp1MKWYq322c8CUIfIWTJL1z
-         xWDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752228547; x=1752833347;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6DPlrQTYkt+ZE8rRAAVfPF09NGI7WKsXkRoeE2olJfQ=;
-        b=G9zY9Heg3f8rgRO25hTHb5Ot4Vus6+9oANh1zyKnm0K+3B6BvH6UBMk/2PIUN7vgyY
-         ppxDZWT7SwqJKOB2jaMQAgUqWiIUFZz5aNvRURYYKKpmI2GsiIrJH5qZZIMyAGKUfVcn
-         69RMvy3tcpUiATMZnmBAh+lJ2lQYR6oZK21K8TVGc0bckDyCA9PRlQNfYdJQKWcQVeUt
-         YZ+U8yxrwdT+s23fuYqTsEnm7CmQYtgMTO7rxIT/paE92CuX6pF4OZRdI2JIn6slcIgL
-         aHVvSST2iw27ktyqIfdlLvSpHIT0TS1yFbWZX/hNvU+dmKgZW7aATbzVFo6atnSj2PPe
-         wa9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXueJLbDURtLu8HC3A5cq0OvLZD/zChIVAmsG1esBhXRnKScWyINrNqgusjNnWDK+Ep6Q7ZpIy++TL3Cy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz09gGSWr994/+RDu0xYG8UM4LZnKpQzErKJsz1VVcBOuj3/45S
-	dntloDxEHxdLA/u6l4CU6muD9Ko8ZmC/coa1jPynknvBzQhbJ1Tk4LWG+ZBBW90eVUdeF1UCJUP
-	4t9NC9O0s7D8Y3XsyDTdlPzv6NbPzcjk=
-X-Gm-Gg: ASbGncsFWSIvVB0NV7Sgrqo9gq4GWdK0N2GjZ+GlfxkJ41yKoXZJJWC1QvLmEgVdjLv
-	LRbUYQds3x5w7rRN3gWoyvLIcTKyGWPvLL3sYzAixfTJEUkXZGYpFmneHONRJk/OcGsfDpVC1ld
-	2Q8PMeJG5kfS1vFTAZNJbWsVuKrmr3kiGWPxBA2cffnYfugXvDm6ICeWJ+Md+JX4q8a8BhjO4cB
-	87UKA==
-X-Google-Smtp-Source: AGHT+IHQpevq+XY5yL2INS7d4S8i9FSRzaPoq0u9J3IcMyelf48WOLt+P9Cs1J1wH/z+tAIZ8PQ8eE45oNJasrMgO7Y=
-X-Received: by 2002:a05:690c:4486:b0:717:bff8:4681 with SMTP id
- 00721157ae682-717d7a0ec81mr41763067b3.24.1752228547438; Fri, 11 Jul 2025
- 03:09:07 -0700 (PDT)
+	s=arc-20240116; t=1752228931; c=relaxed/simple;
+	bh=r40kPMpsSl83aWblRJUVZTbn65KWGymHphp5La1fMAM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P4T4S1xpn0tEPOlaAP4mCm/Ye0rVcfLLc1640B9YWxxFkJmRWOU/0y68OWJvrWJiABMUq1fp0VICnqWnFOz4FeIc8uMngmJ8xcmJkxO2iMl1lHbZB1VYaU+EKQ2wf9rCyTxAqdrffQyIuIXglAn7hyPIsvBxUqAmlO8OyMQhBYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from ubt.. (unknown [210.73.43.2])
+	by APP-03 (Coremail) with SMTP id rQCowACXJ3nj4nBo8xESAw--.40582S2;
+	Fri, 11 Jul 2025 18:09:39 +0800 (CST)
+From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Song Liu <song@kernel.org>,
+	Yu Kuai <yukuai3@huawei.com>
+Cc: linux-riscv@lists.infradead.org,
+	linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V2 0/5] Add an optimization also raid6test for RISC-V support
+Date: Fri, 11 Jul 2025 18:09:25 +0800
+Message-Id: <20250711100930.3398336-1-zhangchunyan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710162737.49679-1-stefano.radaelli21@gmail.com>
- <20250710162737.49679-4-stefano.radaelli21@gmail.com> <56a860ef-7994-465c-a902-ca5ba2f90f73@ti.com>
-In-Reply-To: <56a860ef-7994-465c-a902-ca5ba2f90f73@ti.com>
-From: Stefano Radaelli <stefano.radaelli21@gmail.com>
-Date: Fri, 11 Jul 2025 12:08:51 +0200
-X-Gm-Features: Ac12FXzZlU0AU1NAJ9x1FPayIcmG2Vzc5ZawWw5m98FRFxy9HHEL6Iq3JdutXZ8
-Message-ID: <CAK+owojYvje74dZbd3_35u2SMT--Lq8mG8tQcBGdmFD4oKjPcg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] arm64: dts: ti: var-som-am62p: Add support for
- Variscite Symphony Board
-To: Andrew Davis <afd@ti.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACXJ3nj4nBo8xESAw--.40582S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xry3JrWkXrW8WrW5Aw4UXFb_yoWfCFX_KF
+	yrWF97Kw1DGF92gayayFs5AayUZrZ09ryrJ3WUGayUtr9rC392gws09w4xXF1UuFWrZF47
+	Xr1rXF1xAr9F9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb-8YjsxI4VW3JwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
+	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0
+	cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z2
+	80aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAK
+	zVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_AcC_ZcWlOx
+	8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7
+	MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8twCF04k20xvY0x0EwIxGrwCFx2IqxV
+	CFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r10
+	6r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxV
+	WUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG
+	6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
+	1UYxBIdaVFxhVjvjDU0xZFpf9x07jbxhdUUUUU=
+X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiBwwAB2hw2WUj2gAAsR
 
-On Fri, Jul 11, 2025 at 12:39=E2=80=AFAM Andrew Davis <afd@ti.com> wrote:
->
-> These mailbox nodes are now disabled by default, you'll probably want
-> to set them to "okay" here.
->
-> Also, these mailbox nodes, along with most of the remoteproc stuff can
-> go up in the SOM DT, these nodes shouldn't be carrier board specific.
->
+The 1st patch is a cleanup;
+Patch 2/4 is an optimization that takes Palmer's suggestion;
+The last two patches add raid6test support and make the raid6 RVV code buildable on user space.
 
-Thank you Andrew,
-I will fix mailbox nodes and move everything MCUs-related into the som dts.
+V2:
+* Addressed comments from v1:
+- Replaced one load with a move to speed up in _gen/xor_syndrome();
+- Added a compiler error
+- Dropped the NSIZE macro, instead of using the vector length;
+- Modified has_vector() definition for user space;
 
-Best Regards,
-Stefano
+Chunyan Zhang (5):
+  raid6: riscv: Clean up unused header file inclusion
+  raid6: riscv: replace one load with a move to speed up the caculation
+  raid6: riscv: Add a compiler error
+  raid6: riscv: Allow code to be compiled in userspace
+  raid6: test: Add support for RISC-V
+
+ lib/raid6/recov_rvv.c   |   9 +-
+ lib/raid6/rvv.c         | 362 ++++++++++++++++++++--------------------
+ lib/raid6/rvv.h         |  17 ++
+ lib/raid6/test/Makefile |   8 +
+ 4 files changed, 211 insertions(+), 185 deletions(-)
+
+-- 
+2.34.1
+
 
