@@ -1,120 +1,456 @@
-Return-Path: <linux-kernel+bounces-727356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7863B018D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:55:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48FAAB018DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1B795C0A80
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:55:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58CDA3A7366
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3330B286432;
-	Fri, 11 Jul 2025 09:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E174D27F166;
+	Fri, 11 Jul 2025 09:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cBkSdE7u"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RG2Lxltu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDADB27FB38;
-	Fri, 11 Jul 2025 09:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F301E207E1D;
+	Fri, 11 Jul 2025 09:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752227669; cv=none; b=kuFYTcFqC/ZJOoQgckJdNjpv9vKTt4fUfFM+zOWRc4hDrvZ8oM6TPjblmtkSr7g/26fMwMUcuPFOlK1fora1YefSHldgAbZ3rFdXNk8oCn9GN4+zedHRdbqhQCLZQfCDf6RmxEXwJVfI+DkI4ik0AIfUm9hJAOeZ/5qRqAEcZ9A=
+	t=1752227729; cv=none; b=k45ig14yH1vJE50q664XDLmV76tFZJBb82C1M5gQY4ywObI2zFh2h8/4tU6S8V+Nubw+1vf5XdKPgoQmJ91yi1XIf2fNjG9UCQuQNSJEsxkrDdzSSjMbGudQFqDiD5+2ciO7nOJdTvqIFvd0Y69YNflT/tBvFLqE9X231nSsJe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752227669; c=relaxed/simple;
-	bh=k492wyPg1/aSmygem0XNrsfXTcZ/jKItqYhTy3qtMs0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nnXW3w7G2XwEEy9jkhjk52NkphUos3EKep+nz5RjHqI7SQwGASZ9DAIBsr2TBhJUnVwEfCIRCfzVWB8j/8a/NvKM6DfcTTQYqU387swjTf/+irEMH3p6Ula0tpCutjmuzBBJGtnNWcUz22ci76odFylnQaMQc5xjo4TwYAIv+dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cBkSdE7u; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 86D44433D0;
-	Fri, 11 Jul 2025 09:54:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1752227665;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HRYTwmrTTEIRWgg+kkfZPmUJH6CKDeujlUlFeIiF8II=;
-	b=cBkSdE7ukb8fyBUMmszSIuoxzoSSNxdDpo/ZtLQzAC3ULJ8tlsrJ/kINaY/Vbo5qp/Xsjv
-	0Xpv7nt8LfvXEmCI/f9h4Cf7u0LPhivL6BPTHfHH/f4tIXCH0OS2FH4qpErp6RryeDtmZu
-	d/lmhKAj3ZXus7CPBCrCnaJb3lyuaqZHgOJntLrHef+dKH48VjF7z1ChSmEss3R34c2Pwk
-	2+XPID3ZgtO3SV7+jiEl0B8THTTtq/0/BgYlBLWIXtL+L6PZa+J5wihRNtpQqNgGNXFUF1
-	lNdnWhZnsvQzpjHCQXkRehpnFLe0HeDUwx/4NT84eHKZRZ9uTFxiPemHPebn+A==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-Date: Fri, 11 Jul 2025 11:54:21 +0200
-Subject: [PATCH v4 2/2] MIPS: CPS: Optimise delay CPU calibration for SMP
+	s=arc-20240116; t=1752227729; c=relaxed/simple;
+	bh=I/fnxg6YL0/c7x21uZxl7s3/GUupI9vyhvAFloUd2Y0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AB7H74iXq9/I4RgRDL6cVN/orWr+2pQUiVSQLp8+MJNm5PuAhyQCFRCG/VT4lK46KIi+WEifZo4AUUF4RZlLxW0fuMQCNiSFaxPNUQ+gOjiGCxum/m420HIfmciFA8/Y4guL2Xqp3CT4V46aeY/PNWwpUyE0s7s2iVfdEVw369w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RG2Lxltu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8522EC4CEED;
+	Fri, 11 Jul 2025 09:55:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752227728;
+	bh=I/fnxg6YL0/c7x21uZxl7s3/GUupI9vyhvAFloUd2Y0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RG2LxltuyV7Qs9Xf+kXZuhRylAabz8jOu4+7JJH4wDFDm2icvvwHYlmwWz1qP2Wd8
+	 chm4H2gScsG/nQkXKRIUWzqq3b4eidtGupF7JDTJXnXwtnT966fI6svBsQOPXglDag
+	 ZcKxEtacyvB0Mzl4P2hAfGM3chd0yMFLBoahMMBsxy8yld6T20R71xymDlexIYfgxf
+	 tNU++mjXD2pjEjKgyEvLY5+3k6mh+4UTpBOAY1q1xN6XcKZGfDZjsiS4FHWubY8MZF
+	 UOUB7It2DoXHfCcI1TsujgS7JvcZEHXReFfz1UiuLChDX0lR26Q+Ab5SzI8O1bSy/c
+	 jIyLDIwqyIMfw==
+Date: Fri, 11 Jul 2025 11:55:17 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Toan Le <toan@os.amperecomputing.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 09/13] PCI: xgene-msi: Sanitise MSI allocation and
+ affinity setting
+Message-ID: <aHDfhVRa1lhu7qPg@lpieralisi>
+References: <20250708173404.1278635-1-maz@kernel.org>
+ <20250708173404.1278635-10-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250711-smp_calib-v4-2-1e743b225bcc@bootlin.com>
-References: <20250711-smp_calib-v4-0-1e743b225bcc@bootlin.com>
-In-Reply-To: <20250711-smp_calib-v4-0-1e743b225bcc@bootlin.com>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-mips@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Gregory CLEMENT <gregory.clement@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegfedtudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpefirhgvghhorhihucevnffgoffgpffvuceoghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepfedvffevfefhieefteeuieeuleevgffhveegvdegueegjeehfeejudettdegvdffnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemgegtjeekmedvkegtvgemfegtjeegmeefgeegtgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemgegtjeekmedvkegtvgemfegtjeegmeefgeegtgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepledprhgtphhtthhopehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhot
- hhlihhnrdgtohhmpdhrtghpthhtohepvhhlrgguihhmihhrrdhkohhnughrrghtihgvvhesmhhosghilhgvhigvrdgtohhmpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtohepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhmihhpshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: gregory.clement@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708173404.1278635-10-maz@kernel.org>
 
-On MIPS architecture with CPS-based SMP support, all CPU cores in the
-same cluster run at the same frequency since they share the same L2
-cache, requiring a fixed CPU/L2 cache ratio.
+On Tue, Jul 08, 2025 at 06:34:00PM +0100, Marc Zyngier wrote:
+> Plugging a device that doesn't use managed affinity on an XGene-1
+> machine results in messages such as:
+> 
+> genirq: irq_chip PCI-MSIX-0000:01:00.0 did not update eff. affinity mask of irq 39
+> 
+> As it turns out, the driver was never updated to populate the effective
+> affinity on irq_set_affinity() call, and the core code is prickly about
+> that.
+> 
+> But upon further investigation, it appears that the driver keeps repainting
+> the hwirq field of the irq_data structure as a way to track the affinity
+> of the MSI, something that is very much frowned upon as it breaks the
+> fundamentals of an IRQ domain (an array indexed by hwirq).
+> 
+> Fixing this results more or less in a rewrite of the driver:
+> 
+> - Define how a hwirq and a cpu affinity map onto the MSI termination
+>   registers
+> 
+> - Allocate a single entry in the bitmap per MSI instead of *8*
+> 
+> - Correctly track CPU affinity
+> 
+> - Fix the documentation so that it actually means something (to me)
+> 
+> - Use standard bitmap iterators
+> 
+> - and plenty of other cleanups
+> 
+> With this, the driver behaves correctly on my vintage Mustang board.
+> 
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> ---
+>  drivers/pci/controller/pci-xgene-msi.c | 222 +++++++++++--------------
+>  1 file changed, 93 insertions(+), 129 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pci-xgene-msi.c b/drivers/pci/controller/pci-xgene-msi.c
+> index cef0488749e1d..b9f364da87f2a 100644
+> --- a/drivers/pci/controller/pci-xgene-msi.c
+> +++ b/drivers/pci/controller/pci-xgene-msi.c
+> @@ -6,6 +6,7 @@
+>   * Author: Tanmay Inamdar <tinamdar@apm.com>
+>   *	   Duc Dang <dhdang@apm.com>
+>   */
+> +#include <linux/bitfield.h>
+>  #include <linux/cpu.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/irqdomain.h>
+> @@ -22,7 +23,15 @@
+>  #define IDX_PER_GROUP		8
+>  #define IRQS_PER_IDX		16
+>  #define NR_HW_IRQS		16
+> -#define NR_MSI_VEC		(IDX_PER_GROUP * IRQS_PER_IDX * NR_HW_IRQS)
+> +#define NR_MSI_BITS		(IDX_PER_GROUP * IRQS_PER_IDX * NR_HW_IRQS)
+> +#define NR_MSI_VEC		(NR_MSI_BITS / num_possible_cpus())
+> +
+> +#define MSI_GROUP_MASK		GENMASK(22, 19)
+> +#define MSI_INDEX_MASK		GENMASK(18, 16)
+> +#define MSI_INTR_MASK		GENMASK(19, 16)
+> +
+> +#define MSInRx_HWIRQ_MASK	GENMASK(6, 4)
+> +#define DATA_HWIRQ_MASK		GENMASK(3, 0)
+>  
+>  struct xgene_msi {
+>  	struct irq_domain	*inner_domain;
+> @@ -37,8 +46,26 @@ struct xgene_msi {
+>  static struct xgene_msi *xgene_msi_ctrl;
+>  
+>  /*
+> - * X-Gene v1 has 16 groups of MSI termination registers MSInIRx, where
+> - * n is group number (0..F), x is index of registers in each group (0..7)
+> + * X-Gene v1 has 16 frames of MSI termination registers MSInIRx, where n is
+> + * frame number (0..15), x is index of registers in each frame (0..7).  Each
+> + * 32b register is at the beginning of a 64kB region, each frame occupying
+> + * 512kB (and the whole thing 8MB of PA space).
+> + *
+> + * Each register supports 16 MSI vectors (0..15) to generate interrupts. A
+> + * write to the MSInIRx from the PCI side generates an interrupt. A read
+> + * from the MSInRx on the CPU side returns a bitmap of the pending MSIs in
+> + * the lower 16 bits. A side effect of this read is that all pending
+> + * interrupts are acknowledged and cleared).
+> + *
+> + * Additionally, each MSI termination frame has 1 MSIINTn register (n is
+> + * 0..15) to indicate the MSI pending status caused by any of its 8
+> + * termination registers, reported as a bitmap in the lower 8 bits. Each 32b
+> + * register is at the beginning of a 64kB region (and overall occupying an
+> + * extra 1MB).
+> + *
+> + * There is one GIC IRQ assigned for each MSI termination frame, 16 in
+> + * total.
+> + *
+>   * The register layout is as follows:
+>   * MSI0IR0			base_addr
+>   * MSI0IR1			base_addr +  0x10000
+> @@ -59,107 +86,74 @@ static struct xgene_msi *xgene_msi_ctrl;
+>   * MSIINT1			base_addr + 0x810000
+>   * ...				...
+>   * MSIINTF			base_addr + 0x8F0000
+> - *
+> - * Each index register supports 16 MSI vectors (0..15) to generate interrupt.
+> - * There are total 16 GIC IRQs assigned for these 16 groups of MSI termination
+> - * registers.
+> - *
+> - * Each MSI termination group has 1 MSIINTn register (n is 0..15) to indicate
+> - * the MSI pending status caused by 1 of its 8 index registers.
+>   */
+>  
+>  /* MSInIRx read helper */
+> -static u32 xgene_msi_ir_read(struct xgene_msi *msi,
+> -				    u32 msi_grp, u32 msir_idx)
+> +static u32 xgene_msi_ir_read(struct xgene_msi *msi, u32 msi_grp, u32 msir_idx)
+>  {
+>  	return readl_relaxed(msi->msi_regs + MSI_IR0 +
+> -			      (msi_grp << 19) + (msir_idx << 16));
+> +			     (FIELD_PREP(MSI_GROUP_MASK, msi_grp) |
+> +			      FIELD_PREP(MSI_INDEX_MASK, msir_idx)));
+>  }
+>  
+>  /* MSIINTn read helper */
+>  static u32 xgene_msi_int_read(struct xgene_msi *msi, u32 msi_grp)
+>  {
+> -	return readl_relaxed(msi->msi_regs + MSI_INT0 + (msi_grp << 16));
+> +	return readl_relaxed(msi->msi_regs + MSI_INT0 +
+> +			     FIELD_PREP(MSI_INTR_MASK, msi_grp));
+>  }
+>  
+>  /*
+> - * With 2048 MSI vectors supported, the MSI message can be constructed using
+> - * following scheme:
+> - * - Divide into 8 256-vector groups
+> - *		Group 0: 0-255
+> - *		Group 1: 256-511
+> - *		Group 2: 512-767
+> - *		...
+> - *		Group 7: 1792-2047
+> - * - Each 256-vector group is divided into 16 16-vector groups
+> - *	As an example: 16 16-vector groups for 256-vector group 0-255 is
+> - *		Group 0: 0-15
+> - *		Group 1: 16-32
+> - *		...
+> - *		Group 15: 240-255
+> - * - The termination address of MSI vector in 256-vector group n and 16-vector
+> - *   group x is the address of MSIxIRn
+> - * - The data for MSI vector in 16-vector group x is x
+> + * In order to allow an MSI to be moved from one CPU to another without
+> + * having to repaint both the address and the data (which cannot be done
+> + * atomically), we statically partitions the MSI frames between CPUs. Given
+> + * that XGene-1 has 8 CPUs, each CPU gets two frames assigned to it
+> + *
+> + * We adopt the convention that when an MSI is moved, it is configured to
+> + * target the same register number in the congruent frame assigned to the
+> + * new target CPU. This reserves a given MSI across all CPUs, and reduces
+> + * the MSI capacity from 2048 to 256.
+> + *
+> + * Effectively, this amounts to:
+> + * - hwirq[7]::cpu[2:0] is the target frame number (n in MSInIRx)
+> + * - hwirq[6:4] is the register index in any given frame (x in MSInIRx)
+> + * - hwirq[3:0] is the MSI data
+>   */
+> -static u32 hwirq_to_reg_set(unsigned long hwirq)
+> +static irq_hw_number_t compute_hwirq(u8 frame, u8 index, u8 data)
+>  {
+> -	return (hwirq / (NR_HW_IRQS * IRQS_PER_IDX));
+> -}
+> -
+> -static u32 hwirq_to_group(unsigned long hwirq)
+> -{
+> -	return (hwirq % NR_HW_IRQS);
+> -}
+> -
+> -static u32 hwirq_to_msi_data(unsigned long hwirq)
+> -{
+> -	return ((hwirq / NR_HW_IRQS) % IRQS_PER_IDX);
+> +	return (FIELD_PREP(BIT(7), FIELD_GET(BIT(3), frame))	|
+> +		FIELD_PREP(MSInRx_HWIRQ_MASK, index)		|
+> +		FIELD_PREP(DATA_HWIRQ_MASK, data));
+>  }
+>  
+>  static void xgene_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
+>  {
+>  	struct xgene_msi *msi = irq_data_get_irq_chip_data(data);
+> -	u32 reg_set = hwirq_to_reg_set(data->hwirq);
+> -	u32 group = hwirq_to_group(data->hwirq);
+> -	u64 target_addr = msi->msi_addr + (((8 * group) + reg_set) << 16);
+> +	u64 target_addr;
+> +	u32 frame, msir;
+> +	int cpu;
+>  
+> -	msg->address_hi = upper_32_bits(target_addr);
+> -	msg->address_lo = lower_32_bits(target_addr);
+> -	msg->data = hwirq_to_msi_data(data->hwirq);
+> -}
+> +	cpu	= cpumask_first(irq_data_get_effective_affinity_mask(data));
+> +	msir	= FIELD_GET(GENMASK(6, 4), data->hwirq);
 
-This allows to implement calibrate_delay_is_known(), which will return
-0 (triggering calibration) only for the primary CPU of each
-cluster. For other CPUs, we can simply reuse the value from their
-cluster's primary CPU core.
+We could use MSInRx_HWIRQ_MASK, I can update it.
 
-With the introduction of this patch, a configuration running 32 cores
-spread across two clusters sees a significant reduction in boot time
-by approximately 600 milliseconds.
+More importantly, what code would set data->hwirq[6:4] (and
+data->hwirq[7:7] below) ?
 
-Reviewed-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
----
- arch/mips/kernel/smp-cps.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+> +	frame	= FIELD_PREP(BIT(3), FIELD_GET(BIT(7), data->hwirq)) | cpu;
+>  
+> -/*
+> - * X-Gene v1 only has 16 MSI GIC IRQs for 2048 MSI vectors.  To maintain
+> - * the expected behaviour of .set_affinity for each MSI interrupt, the 16
+> - * MSI GIC IRQs are statically allocated to 8 X-Gene v1 cores (2 GIC IRQs
+> - * for each core).  The MSI vector is moved from 1 MSI GIC IRQ to another
+> - * MSI GIC IRQ to steer its MSI interrupt to correct X-Gene v1 core.  As a
+> - * consequence, the total MSI vectors that X-Gene v1 supports will be
+> - * reduced to 256 (2048/8) vectors.
+> - */
+> -static int hwirq_to_cpu(unsigned long hwirq)
+> -{
+> -	return (hwirq % num_possible_cpus());
+> -}
+> +	target_addr = msi->msi_addr;
+> +	target_addr += (FIELD_PREP(MSI_GROUP_MASK, frame) |
+> +			FIELD_PREP(MSI_INTR_MASK, msir));
+>  
+> -static unsigned long hwirq_to_canonical_hwirq(unsigned long hwirq)
+> -{
+> -	return (hwirq - hwirq_to_cpu(hwirq));
+> +	msg->address_hi = upper_32_bits(target_addr);
+> +	msg->address_lo = lower_32_bits(target_addr);
+> +	msg->data = FIELD_GET(DATA_HWIRQ_MASK, data->hwirq);
+>  }
+>  
+>  static int xgene_msi_set_affinity(struct irq_data *irqdata,
+>  				  const struct cpumask *mask, bool force)
+>  {
+>  	int target_cpu = cpumask_first(mask);
+> -	int curr_cpu;
+> -
+> -	curr_cpu = hwirq_to_cpu(irqdata->hwirq);
+> -	if (curr_cpu == target_cpu)
+> -		return IRQ_SET_MASK_OK_DONE;
+>  
+> -	/* Update MSI number to target the new CPU */
+> -	irqdata->hwirq = hwirq_to_canonical_hwirq(irqdata->hwirq) + target_cpu;
+> +	irq_data_update_effective_affinity(irqdata, cpumask_of(target_cpu));
+>  
+> +	/* Force the core code to regenerate the message */
+>  	return IRQ_SET_MASK_OK;
+>  }
+>  
+> @@ -173,23 +167,20 @@ static int xgene_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
+>  				  unsigned int nr_irqs, void *args)
+>  {
+>  	struct xgene_msi *msi = domain->host_data;
+> -	int msi_irq;
+> +	irq_hw_number_t hwirq;
+>  
+>  	mutex_lock(&msi->bitmap_lock);
+>  
+> -	msi_irq = bitmap_find_next_zero_area(msi->bitmap, NR_MSI_VEC, 0,
+> -					     num_possible_cpus(), 0);
+> -	if (msi_irq < NR_MSI_VEC)
+> -		bitmap_set(msi->bitmap, msi_irq, num_possible_cpus());
+> -	else
+> -		msi_irq = -ENOSPC;
+> +	hwirq = find_first_zero_bit(msi->bitmap, NR_MSI_VEC);
+> +	if (hwirq < NR_MSI_VEC)
+> +		set_bit(hwirq, msi->bitmap);
+>  
+>  	mutex_unlock(&msi->bitmap_lock);
+>  
+> -	if (msi_irq < 0)
+> -		return msi_irq;
+> +	if (hwirq >= NR_MSI_VEC)
+> +		return -ENOSPC;
+>  
+> -	irq_domain_set_info(domain, virq, msi_irq,
+> +	irq_domain_set_info(domain, virq, hwirq,
+>  			    &xgene_msi_bottom_irq_chip, domain->host_data,
+>  			    handle_simple_irq, NULL, NULL);
 
-diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
-index 6c5f15293a8e58a701601b242f43ba19a6814f06..22d4f9ff3ae2671b07da5bb149154c686e07b209 100644
---- a/arch/mips/kernel/smp-cps.c
-+++ b/arch/mips/kernel/smp-cps.c
-@@ -281,6 +281,17 @@ static void __init cps_smp_setup(void)
- #endif /* CONFIG_MIPS_MT_FPAFF */
- }
- 
-+unsigned long calibrate_delay_is_known(void)
-+{
-+	int first_cpu_cluster = 0;
-+
-+	/* The calibration has to be done on the primary CPU of the cluster */
-+	if (mips_cps_first_online_in_cluster(&first_cpu_cluster))
-+		return 0;
-+
-+	return cpu_data[first_cpu_cluster].udelay_val;
-+}
-+
- static void __init cps_prepare_cpus(unsigned int max_cpus)
- {
- 	unsigned int nclusters, ncores, core_vpes, nvpe = 0, c, cl, cca;
+This is something I don't get. We alloc an MSI, set a bit in the bitmap
+and the hwirq to that value, when we handle the IRQ below in
 
--- 
-2.47.2
+xgene_msi_isr()
 
+hwirq = compute_hwirq(msi_grp, msir_idx, intr_idx);
+ret = generic_handle_domain_irq(xgene_msi->inner_domain, hwirq);
+
+imagining that we changed the affinity for the IRQ so that the computed
+HWIRQ does not have zeros in bits[7:4], how would the domain HWIRQ
+matching work ?
+
+Actually, how would an IRQ fire causing the hwirq[7:4] bits to be != 0
+in the first place ?
+
+Forgive me if I am missing something obvious, the *current* MSI handling
+is very hard to grok, it is certain I misunderstood it entirely.
+
+Thanks,
+Lorenzo
+
+> @@ -201,12 +192,10 @@ static void xgene_irq_domain_free(struct irq_domain *domain,
+>  {
+>  	struct irq_data *d = irq_domain_get_irq_data(domain, virq);
+>  	struct xgene_msi *msi = irq_data_get_irq_chip_data(d);
+> -	u32 hwirq;
+>  
+>  	mutex_lock(&msi->bitmap_lock);
+>  
+> -	hwirq = hwirq_to_canonical_hwirq(d->hwirq);
+> -	bitmap_clear(msi->bitmap, hwirq, num_possible_cpus());
+> +	clear_bit(d->hwirq, msi->bitmap);
+>  
+>  	mutex_unlock(&msi->bitmap_lock);
+>  
+> @@ -263,55 +252,30 @@ static void xgene_msi_isr(struct irq_desc *desc)
+>  	unsigned int *irqp = irq_desc_get_handler_data(desc);
+>  	struct irq_chip *chip = irq_desc_get_chip(desc);
+>  	struct xgene_msi *xgene_msi = xgene_msi_ctrl;
+> -	int msir_index, msir_val, hw_irq, ret;
+> -	u32 intr_index, grp_select, msi_grp;
+> +	unsigned long grp_pending;
+> +	int msir_idx;
+> +	u32 msi_grp;
+>  
+>  	chained_irq_enter(chip, desc);
+>  
+>  	msi_grp = irqp - xgene_msi->gic_irq;
+>  
+> -	/*
+> -	 * MSIINTn (n is 0..F) indicates if there is a pending MSI interrupt
+> -	 * If bit x of this register is set (x is 0..7), one or more interrupts
+> -	 * corresponding to MSInIRx is set.
+> -	 */
+> -	grp_select = xgene_msi_int_read(xgene_msi, msi_grp);
+> -	while (grp_select) {
+> -		msir_index = ffs(grp_select) - 1;
+> -		/*
+> -		 * Calculate MSInIRx address to read to check for interrupts
+> -		 * (refer to termination address and data assignment
+> -		 * described in xgene_compose_msi_msg() )
+> -		 */
+> -		msir_val = xgene_msi_ir_read(xgene_msi, msi_grp, msir_index);
+> -		while (msir_val) {
+> -			intr_index = ffs(msir_val) - 1;
+> -			/*
+> -			 * Calculate MSI vector number (refer to the termination
+> -			 * address and data assignment described in
+> -			 * xgene_compose_msi_msg function)
+> -			 */
+> -			hw_irq = (((msir_index * IRQS_PER_IDX) + intr_index) *
+> -				 NR_HW_IRQS) + msi_grp;
+> -			/*
+> -			 * As we have multiple hw_irq that maps to single MSI,
+> -			 * always look up the virq using the hw_irq as seen from
+> -			 * CPU0
+> -			 */
+> -			hw_irq = hwirq_to_canonical_hwirq(hw_irq);
+> -			ret = generic_handle_domain_irq(xgene_msi->inner_domain, hw_irq);
+> +	grp_pending = xgene_msi_int_read(xgene_msi, msi_grp);
+> +
+> +	for_each_set_bit(msir_idx, &grp_pending, IDX_PER_GROUP) {
+> +		unsigned long msir;
+> +		int intr_idx;
+> +
+> +		msir = xgene_msi_ir_read(xgene_msi, msi_grp, msir_idx);
+> +
+> +		for_each_set_bit(intr_idx, &msir, IRQS_PER_IDX) {
+> +			irq_hw_number_t hwirq;
+> +			int ret;
+> +
+> +			hwirq = compute_hwirq(msi_grp, msir_idx, intr_idx);
+> +			ret = generic_handle_domain_irq(xgene_msi->inner_domain,
+> +							hwirq);
+>  			WARN_ON_ONCE(ret);
+> -			msir_val &= ~(1 << intr_index);
+> -		}
+> -		grp_select &= ~(1 << msir_index);
+> -
+> -		if (!grp_select) {
+> -			/*
+> -			 * We handled all interrupts happened in this group,
+> -			 * resample this group MSI_INTx register in case
+> -			 * something else has been made pending in the meantime
+> -			 */
+> -			grp_select = xgene_msi_int_read(xgene_msi, msi_grp);
+>  		}
+>  	}
+>  
+> -- 
+> 2.39.2
+> 
 
