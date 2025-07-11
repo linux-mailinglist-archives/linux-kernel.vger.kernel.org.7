@@ -1,125 +1,146 @@
-Return-Path: <linux-kernel+bounces-727236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B37CDB016E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:53:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0C3B016E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B219C48806B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:53:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B1DC542AE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F0321B9C1;
-	Fri, 11 Jul 2025 08:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28271220687;
+	Fri, 11 Jul 2025 08:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CfqHolZk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WX5no2qW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5F2218593;
-	Fri, 11 Jul 2025 08:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CEB205E3B;
+	Fri, 11 Jul 2025 08:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752224025; cv=none; b=e95rU2Kltb7bOFnoLtuKXsHwMkUUOX/E4CWpdtqUlUkqHkKHo2cO8cm6Jj90CQ/KqWemNE7zHtGGa1by2jIQg3whH4Jfw528bl10/2c9l0SmEscX5PfoDUWFPhmJMxJBE0rNkzlesURli0kMOit7BtGVocPdYmmkQ/QXVKMzaL4=
+	t=1752224033; cv=none; b=QRGWhRH8SHJElo1weraXEiF/sFtfMzyeJ1Vw1JEg23EIicZ6z0zpgcYVWAsi0iGVSQb/KrmK40/65iFbh8DeGF77Mj8b7WLXNfo43iJQMadg0EZ8wlltOroztoob7+3JR57l/AC+RSbBXr5jJymHcuceUfKEbZxuq0YM+6G+J+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752224025; c=relaxed/simple;
-	bh=mQI53t4QPyDABHATdUC2IVmzwHPIX8ZlllLvLCz6H0M=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NQNzpUTwx+OYvBOas4Ai++ToO3AzLkRh7MkM6NB1KncWL3Rrj+5rSvBL0IjwsYEXQkKKgq47neLSsmN9y8ALstrVDDBIiLNtf/jQKn4FoEu2d8RT43sbeJImXIdzgUf+rj99sb5LpNwk98YPZBpaPNZ9OzGmcnjR22r2OaS23j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CfqHolZk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1515C4CEED;
-	Fri, 11 Jul 2025 08:53:44 +0000 (UTC)
+	s=arc-20240116; t=1752224033; c=relaxed/simple;
+	bh=2YeFLlg3dTrJf6vN7+4tbGaGhGJwbz1PMJpCW+4YicQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=NunpVu8ygz+OA6YaPAVgrEG14P5lLw+DYjcKSicgwnH4zRXW2tTOHdpz+oR0w0+vU1jxSxTv+7E87hVLxVKkrz9wbRsVfk2csTj/pS6Kcu+LMdCwwt46ilINTYPwI8l0+XX22jdgg6QV3EKItRkVfRQImzDNA4a2xiwzrqDQcHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WX5no2qW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B9D1C4CEF7;
+	Fri, 11 Jul 2025 08:53:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752224024;
-	bh=mQI53t4QPyDABHATdUC2IVmzwHPIX8ZlllLvLCz6H0M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CfqHolZkPXR+eVlblNsPmPOjAM9RltC64m0ZnuoOMrqj+lWKEXbaARAOxSZPbw5ns
-	 5/g4+z5i4lFbgKFdUs/3Tb9ndkDOBvdnVVTl1FuAxiLMA1NpJ4qNHVgwfUFuBluSGC
-	 z8bIhaTB71FZLwgJv0F8gHt+eEiPYSVEfPdKGNVlgqJ3DhNwrZNlNiPAtft3vomFuQ
-	 ZtuSf1Hzne+NGq7ZDk0WSY82BTJZ/CZFJ/FFOf7ErKXTQWjfbUHhI1q1Ov/gDGju9b
-	 QTju/goVcwGqZAFpd262je5o8e0Cefxa9ispPSmXVSULlKAE1lhGCH25Fvv5k1cztH
-	 92v2iF/HCj3xw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1ua9Vm-00EoED-Gl;
-	Fri, 11 Jul 2025 09:53:42 +0100
-Date: Fri, 11 Jul 2025 09:53:41 +0100
-Message-ID: <86frf39kh6.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Arnd Bergmann" <arnd@kernel.org>,
-	"Oliver Upton" <oliver.upton@linux.dev>,
-	"Catalin Marinas" <catalin.marinas@arm.com>,
-	"Will Deacon" <will@kernel.org>,
-	"Joey Gouly" <joey.gouly@arm.com>,
-	"Suzuki K Poulose" <suzuki.poulose@arm.com>,
-	"Zenghui Yu" <yuzenghui@huawei.com>,
-	"Mark Brown" <broonie@kernel.org>,
-	"James Morse" <james.morse@arm.com>,
-	"Sebastian Ott" <sebott@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: fix u64_replace_bits() usage
-In-Reply-To: <4befb9eb-96e6-4a7c-9746-286144564f4e@app.fastmail.com>
-References: <20250711072752.2781647-1-arnd@kernel.org>
-	<86h5zj9laj.wl-maz@kernel.org>
-	<4befb9eb-96e6-4a7c-9746-286144564f4e@app.fastmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1752224032;
+	bh=2YeFLlg3dTrJf6vN7+4tbGaGhGJwbz1PMJpCW+4YicQ=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=WX5no2qW3nwGGDe1NwWBIHlYf70MPGOToeP3ismzzbxfT5uiMIQzlq+xxKQjiE6S8
+	 gDRogjPtvOoKwjCJlxzs4XJ9S5Dxp5RSozEoH72nqOB7kgx+/gGrCPX/UvVVaftSOT
+	 DxhpwZGwF+vkInZuSUIX1X+RqDD6DrlbYZHROZK7F1z7ZQ07J6hMnul+LWmE7kEX6R
+	 PjzcQzRwYuSr//PqzHlNSpbm6nGTpYINKXM1nWeakIJGlMR3MKVU+k2FbCEpC6XxIH
+	 7ujH60RCYfRteVXbpY1WDFyhpxSWqr9i1LZjf8+u/ZAMFKfmyNom0sswHND09ax2Bf
+	 ZU7tuDXDTIjFg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: arnd@arndb.de, arnd@kernel.org, oliver.upton@linux.dev, catalin.marinas@arm.com, will@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, broonie@kernel.org, james.morse@arm.com, sebott@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 11 Jul 2025 10:53:45 +0200
+Message-Id: <DB93KSS3F3AK.3R9RFOHJ4FSAQ@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Will Deacon" <will@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, "Wedson Almeida Filho"
+ <wedsonaf@gmail.com>, "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude
+ Paul" <lyude@redhat.com>, "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
+ <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
+ <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Alan Stern" <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v6 6/9] rust: sync: atomic: Add the framework of
+ arithmetic operations
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <lkmm@lists.linux.dev>,
+ <linux-arch@vger.kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250710060052.11955-1-boqun.feng@gmail.com>
+ <20250710060052.11955-7-boqun.feng@gmail.com>
+In-Reply-To: <20250710060052.11955-7-boqun.feng@gmail.com>
 
-On Fri, 11 Jul 2025 09:44:23 +0100,
-"Arnd Bergmann" <arnd@arndb.de> wrote:
-> 
-> On Fri, Jul 11, 2025, at 10:36, Marc Zyngier wrote:
-> > On Fri, 11 Jul 2025 08:27:47 +0100, Arnd Bergmann <arnd@kernel.org> wrote:
-> >>  	if (hpmn > vcpu->kvm->arch.nr_pmu_counters) {
-> >>  		hpmn = vcpu->kvm->arch.nr_pmu_counters;
-> >> -		u64_replace_bits(val, hpmn, MDCR_EL2_HPMN);
-> >> +		val = u64_replace_bits(val, hpmn, MDCR_EL2_HPMN);
-> >>  	}
-> >>  
-> >>  	__vcpu_assign_sys_reg(vcpu, MDCR_EL2, val);
-> >
-> > This is only in -next, right? Because I have a fix for this already
-> > queued for 6.16, as per [1].
-> 
-> Yes, as far as I can tell, the warning only showed up in linux-next
-> after f66f9c3d09c1 ("bitfield: Ensure the return values of helper
-> functions are checked").
-> 
-> As far as I can tell, Ben added the check in linux/bitfield.h
-> when he sent you his version of the fix, they just ended up
-> in linux-next in the wrong order, so I ended up recreating his
-> original fix slightly differently.
+On Thu Jul 10, 2025 at 8:00 AM CEST, Boqun Feng wrote:
+> One important set of atomic operations is the arithmetic operations,
+> i.e. add(), sub(), fetch_add(), add_return(), etc. However it may not
+> make senses for all the types that `AllowAtomic` to have arithmetic
+> operations, for example a `Foo(u32)` may not have a reasonable add() or
+> sub(), plus subword types (`u8` and `u16`) currently don't have
+> atomic arithmetic operations even on C side and might not have them in
+> the future in Rust (because they are usually suboptimal on a few
+> architecures). Therefore add a subtrait of `AllowAtomic` describing
+> which types have and can do atomic arithemtic operations.
+>
+> Trait `AllowAtomicArithmetic` has an associate type `Delta` instead of
+> using `AllowAllowAtomic::Repr` because, a `Bar(u32)` (whose `Repr` is
+> `i32`) may not wants an `add(&self, i32)`, but an `add(&self, u32)`.
+>
+> Only add() and fetch_add() are added. The rest will be added in the
+> future.
+>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> ---
+>  rust/kernel/sync/atomic.rs         |  18 +++++
+>  rust/kernel/sync/atomic/generic.rs | 108 +++++++++++++++++++++++++++++
+>  2 files changed, 126 insertions(+)
 
-I don't think Ben's fix is in -next, as I queued it in the kvmarm
-fixes branch, which isn't pulled by -next.
+I think it's better to name this trait `AtomicAdd` and make it generic:
 
-Hopefully Paolo will send this to Linus shortly (pull request
-here[1]), and -next will be clean again.
+    pub unsafe trait AtomicAdd<Rhs =3D Self>: AllowAtomic {
+        fn rhs_into_repr(rhs: Rhs) -> Self::Repr;
+    }
 
-Thanks,
+`sub` and `fetch_sub` can be added using a similar trait.
 
-	M.
+The generic allows you to implement it multiple times with different
+meanings, for example:
 
-[1] https://lore.kernel.org/r/20250711084835.2411230-1-maz@kernel.org
+    pub struct Nanos(u64);
+    pub struct Micros(u64);
+    pub struct Millis(u64);
 
--- 
-Without deviation from the norm, progress is not possible.
+    impl AllowAtomic for Nanos {
+        type Repr =3D i64;
+    }
+
+    impl AtomicAdd<Millis> for Nanos {
+        fn rhs_into_repr(rhs: Millis) -> i64 {
+            transmute(rhs.0 * 1000_000)
+        }
+    }
+
+    impl AtomicAdd<Micros> for Nanos {
+        fn rhs_into_repr(rhs: Micros) -> i64 {
+            transmute(rhs.0 * 1000)
+        }
+    }
+
+    impl AtomicAdd<Nanos> for Nanos {
+        fn rhs_into_repr(rhs: Nanos) -> i64 {
+            transmute(rhs.0)
+        }
+    }
+
+For the safety requirement on the `AtomicAdd` trait, we might just
+require bi-directional transmutability... Or can you imagine a case
+where that is not guaranteed, but a weaker form is?
+
+---
+Cheers,
+Benno
 
