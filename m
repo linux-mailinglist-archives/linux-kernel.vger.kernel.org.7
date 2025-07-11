@@ -1,1056 +1,312 @@
-Return-Path: <linux-kernel+bounces-727123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E05AB01552
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:02:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E92B01561
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 083301C46671
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBDEE16E6D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C271C1F7554;
-	Fri, 11 Jul 2025 08:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECFB31FF1C4;
+	Fri, 11 Jul 2025 08:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="ah6cEsi+"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="iQ+vXmg7"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB961A0BE0;
-	Fri, 11 Jul 2025 08:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092831E9B08;
+	Fri, 11 Jul 2025 08:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752220942; cv=none; b=GUKDAsjlomqHCZzkhwBtjZtj+/bN2XmL9tLx8RO4Q257Zfd01HuMfubHdZhDMRgpkjtNQn7AtdsgE03D+e13XVk1/NmOCIY4lsD/kVYeXPU0889PMo5vU5Aw2hDV0L96XKi8n4LvjWWtflX6kNoh6NYt6u++xt/ed3WgWRcqJqc=
+	t=1752221085; cv=none; b=pErpxfizHJ01BVw008uQzLcsjStWoz77ZjMuF2ie42qug1KZ+kRbTmArBbSWPrqPPtuW+tXw7TdzwgKteN3TNsbPxN9J5ptO75g0KserWbPwAH8l+24ri7ESbMl0elwYs2zMwfdStwACNWu7XMn1aRg4X6rO1Q/lc3cYS3GLDn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752220942; c=relaxed/simple;
-	bh=VE2lCCOi6rE2fup3Q3cdfzj12ujGs4bO3FlESNoXMKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eK/1AZX2NAsejFgEyPwdhRrvi/nX3yayVkBXeJKhA0uGmeU/F3ywBu4psZr2ehhKfbz16B4Ug+5PJp6QnbugILhsEiZRUCVel1+5HQ4uXgaLm1q70H6ovpch4NXRh1jsO6XkqtznHBawgiuh5P00tqlQPF+8v9DhcuYd8Sy4WYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=ah6cEsi+; arc=none smtp.client-ip=220.197.32.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=SM7J3jSMrG/6U3kCP75eqDjxOiAC+I1mjsJl6VHyu3A=;
-	b=ah6cEsi+aIrdsgZ/ngI+GlT8nPjCiinw2d93A7qMx49N18wXz9HOdMqCI9HSeS
-	oLj8klKjSnk2j4JekK1c4Fdg7LfJU86Px/vAcCyvRr+peP44KbB1g3ex1STuWjSy
-	bP2OKPfxVJD64C5NHo+aXg1p7bSej39zS3gEUIFPisSfI=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDnDyHMxHBo8U5TAA--.57141S3;
-	Fri, 11 Jul 2025 16:01:18 +0800 (CST)
-Date: Fri, 11 Jul 2025 16:01:16 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Josua Mayer <josua@solid-run.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Yazan Shhady <yazan.shhady@solid-run.com>,
-	Mikhail Anikin <mikhail.anikin@solid-run.com>,
-	Jon Nettleton <jon@solid-run.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] arm64: dts: add description for solidrun imx8mp
- hummingboard variants
-Message-ID: <aHDEzI6ggW8PevOR@dragon>
-References: <20250707-imx8mp-sr-som-v2-0-785814ef09a9@solid-run.com>
- <20250707-imx8mp-sr-som-v2-3-785814ef09a9@solid-run.com>
+	s=arc-20240116; t=1752221085; c=relaxed/simple;
+	bh=3Tj1qrdyjH7UKtEYJ/RlBW6C8CQasHCUYPSA5X5AC58=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=K2+9cmMxCobZztz/hUZODlXglqELqiKVpe0HFHsHyO0gxUBHgtP43Ij7ssKdqzu0di4RQXfgN+a1tyig2oF1/aGM6l/HuvWUX1Dt2Qf7nMVKWVhNLReUm9y0bY9Ad8Ab7z/IRXw98/JJS70xCbeTqEyDQvLT3d5yanDdtqbWLvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=iQ+vXmg7; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56B7EBfT009407;
+	Fri, 11 Jul 2025 10:04:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	4v7wK0a8KCs9YIFamsyHyxhM2hljsn9apUJLUJvPZVI=; b=iQ+vXmg7CV396l61
+	8hIaqCMHY1kEgypyaVFQ5YMMytIz3W3vC/1rbedpMuzWZ8ELRyowYK10aBW08NwM
+	1vDYPAiHf+f7p6IxRCkSX/CyTlRm1d5bzS9EEvsIMccCrdSwSI233pU/0IQ+O0fX
+	ZjlcGmgZj76hr4Yl074Bx/gAQjCUvHFpIe9LCLWgRCfsarDE/2LT3JPeXVhEQvla
+	QrBidMnrKFcKXf8qTywabaG5LX5jpW78R4AQWmVMVMjmG/StvX6I1GwKAf5dT3V5
+	aNctU9sylw4tgEMkilIyS1wbwxhDM/QfOKQ33BFpziMox2cj/TP4PzSHF8cLmeol
+	Xjcgaw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47psfmwvjb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Jul 2025 10:04:28 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0A21840049;
+	Fri, 11 Jul 2025 10:03:03 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2B4F7B16DD7;
+	Fri, 11 Jul 2025 10:02:10 +0200 (CEST)
+Received: from [10.252.16.187] (10.252.16.187) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Jul
+ 2025 10:02:09 +0200
+Message-ID: <11a49801-d187-479b-865b-810ca5adbf00@foss.st.com>
+Date: Fri, 11 Jul 2025 10:02:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707-imx8mp-sr-som-v2-3-785814ef09a9@solid-run.com>
-X-CM-TRANSID:Ms8vCgDnDyHMxHBo8U5TAA--.57141S3
-X-Coremail-Antispam: 1Uf129KBjvAXoWftr4rZw1kAF48GF4rAw15XFb_yoW5GF45uo
-	Wavrs5GrW8K34UJ3Zxtry7Cr1UA3Z3KF47tayDJrW3Ga10qFWaywnag3yUXr48try8tFyD
-	G3yxGFyrCa12g3ykn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUFID7UUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIg6aAGhwxM5ktwAA33
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/8] dt-bindings: pinctrl: stm32: Introduce HDP
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Antonio
+ Borneo <antonio.borneo@foss.st.com>,
+        =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?=
+	<legoffic.clement@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+References: <20250711-hdp-upstream-v7-0-faeecf7aaee1@foss.st.com>
+ <20250711-hdp-upstream-v7-1-faeecf7aaee1@foss.st.com>
+Content-Language: en-US
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <20250711-hdp-upstream-v7-1-faeecf7aaee1@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-11_02,2025-07-09_01,2025-03-28_01
 
-On Mon, Jul 07, 2025 at 07:11:58PM +0300, Josua Mayer wrote:
-> Add descriptions for the SolidRun i.MX8M Plus System on Module based
-> HummingBoard product-line. They share a common designed based on the
-> "Pulse" version, defined by various assembly options.
+On 7/11/25 09:41, Clément Le Goffic wrote:
+> 'HDP' stands for Hardware Debug Port, it is an hardware block in
+> STMicrolectronics' MPUs that let the user decide which internal SoC's
+> signal to observe.
+> It provides 8 ports and for each port there is up to 16 different
+> signals that can be output.
+> Signals are different for each MPU.
 > 
-> The HummingBoard Pulse features:
-> - 2x RJ45 Ethernet
-> - 2x USB-3.0 Type A
-> - HDMI connector
-> - mini-HDMI connector
-> - microSD connector
-> - mini-PCI-E connector with SIM slot supporting USB-2.0/3.0 interfaces
-> - M.2 connector with SIM slot supporting USB-2.0/3.0 interfaces
-> - MIPI-CSI Camera Connector (not described without specific camera)
-> - 3.5mm Analog Stereo Out / Microphone In Headphone Jack
-> - RTC with backup battery
-> 
-> The variants Mate and Ripple are reduced versions of Pulse.
-> 
-> The HummingBoard Pro extends Pulse with PCI-E on M.2 connector.
-> 
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
 > ---
->  arch/arm64/boot/dts/freescale/Makefile             |   4 +
->  .../dts/freescale/imx8mp-hummingboard-mate.dts     |  31 ++
->  .../boot/dts/freescale/imx8mp-hummingboard-pro.dts |  76 ++++
->  .../freescale/imx8mp-hummingboard-pulse-codec.dtsi |  59 ++++
->  .../imx8mp-hummingboard-pulse-common.dtsi          | 384 +++++++++++++++++++++
->  .../freescale/imx8mp-hummingboard-pulse-hdmi.dtsi  |  44 +++
->  .../freescale/imx8mp-hummingboard-pulse-m2con.dtsi |  60 ++++
->  .../imx8mp-hummingboard-pulse-mini-hdmi.dtsi       |  81 +++++
->  .../dts/freescale/imx8mp-hummingboard-pulse.dts    |  84 +++++
->  .../dts/freescale/imx8mp-hummingboard-ripple.dts   |  31 ++
->  10 files changed, 854 insertions(+)
+>   .../devicetree/bindings/pinctrl/st,stm32-hdp.yaml  | 187 +++++++++++++++++++++
+>   1 file changed, 187 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> index e98c15eb949957a193eb3a7612f3f0f2b04790af..ccc1d6f98495589cb6a55b198d1933bcf076fcb8 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -203,6 +203,10 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-pdk2.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-pdk3.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-picoitx.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb
-> +dtb-$(CONFIG_ARCH_MXC) += imx8mp-hummingboard-mate.dtb
-> +dtb-$(CONFIG_ARCH_MXC) += imx8mp-hummingboard-pro.dtb
-> +dtb-$(CONFIG_ARCH_MXC) += imx8mp-hummingboard-pulse.dtb
-> +dtb-$(CONFIG_ARCH_MXC) += imx8mp-hummingboard-ripple.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-icore-mx8mp-edimm2.2.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-iota2-lumpy.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-kontron-bl-osm-s.dtb
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-mate.dts b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-mate.dts
+> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-hdp.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-hdp.yaml
 > new file mode 100644
-> index 0000000000000000000000000000000000000000..00614f5d58ea9de51aad9a5f36212dc3d4f3ecaf
+> index 000000000000..d0eaee7f52c8
 > --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-mate.dts
-> @@ -0,0 +1,31 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2025 Josua Mayer <josua@solid-run.com>
-> + */
+> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-hdp.yaml
+> @@ -0,0 +1,187 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) STMicroelectronics 2025.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/st,stm32-hdp.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +/dts-v1/;
+> +title: STM32 Hardware Debug Port Mux/Config
 > +
-> +#include "imx8mp-sr-som.dtsi"
-> +#include "imx8mp-hummingboard-pulse-common.dtsi"
-> +#include "imx8mp-hummingboard-pulse-hdmi.dtsi"
-> +
-> +/ {
-> +	model = "SolidRun i.MX8MP HummingBoard Mate";
-> +	compatible = "solidrun,imx8mp-hummingboard-mate",
-> +		     "solidrun,imx8mp-sr-som", "fsl,imx8mp";
-> +
-> +	aliases {
-> +		ethernet0 = &eqos;
-> +		/delete-property/ ethernet1;
-> +	};
-> +};
-> +
-> +&fec {
-> +	/* this board does not use second phy / ethernet on SoM */
-> +	status = "disabled";
-> +};
-> +
-> +&iomuxc {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&mikro_pwm_pins>, <&mikro_int_pins>, <&mikro_rst_pins>;
-> +};
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pro.dts b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pro.dts
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..36cd452f1583987a1e826d33798d9aecaaf21568
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pro.dts
-> @@ -0,0 +1,76 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2025 Josua Mayer <josua@solid-run.com>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include <dt-bindings/phy/phy-imx8-pcie.h>
-> +
-> +#include "imx8mp-sr-som.dtsi"
-> +#include "imx8mp-hummingboard-pulse-codec.dtsi"
-> +#include "imx8mp-hummingboard-pulse-common.dtsi"
-> +#include "imx8mp-hummingboard-pulse-hdmi.dtsi"
-> +#include "imx8mp-hummingboard-pulse-m2con.dtsi"
-> +#include "imx8mp-hummingboard-pulse-mini-hdmi.dtsi"
-> +
-> +/ {
-> +	model = "SolidRun i.MX8MP HummingBoard Pro";
-> +	compatible = "solidrun,imx8mp-hummingboard-pro",
-> +		     "solidrun,imx8mp-sr-som", "fsl,imx8mp";
-> +
-> +	aliases {
-> +		ethernet0 = &eqos;
-> +		ethernet1 = &fec;
-> +	};
-> +};
-> +
-> +&iomuxc {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&mikro_pwm_pins>, <&mikro_int_pins>, <&hdmi_pins>,
-> +		    <&m2_wwan_wake_pins>;
-> +};
-> +
-> +&pcie {
-> +	pinctrl-0 = <&m2_reset_pins>;
-> +	pinctrl-names = "default";
-> +	reset-gpio = <&gpio1 6 GPIO_ACTIVE_LOW>;
-> +	status = "okay";
-> +};
-> +
-> +&pcie_phy {
-> +	clocks = <&hsio_blk_ctrl>;
-> +	clock-names = "ref";
-> +	fsl,clkreq-unsupported;
-> +	fsl,refclk-pad-mode = <IMX8_PCIE_REFCLK_PAD_OUTPUT>;
-> +	status = "okay";
-> +};
-> +
-> +&phy0 {
-> +	leds {
-> +		/* ADIN1300 LED_0 pin */
-> +		led@0 {
-> +			reg = <0>;
-> +			color = <LED_COLOR_ID_ORANGE>;
-> +			function = LED_FUNCTION_LAN;
-> +			default-state = "keep";
-> +		};
-> +
-> +		/delete-node/ led@1;
-> +	};
-> +};
-> +
-> +&phy1 {
-> +	leds {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		/* ADIN1300 LED_0 pin */
-> +		led@0 {
-> +			reg = <0>;
-> +			color = <LED_COLOR_ID_GREEN>;
-> +			function = LED_FUNCTION_LAN;
-> +			default-state = "keep";
-> +		};
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-codec.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-codec.dtsi
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..fd16916676db4ec6f0e66d9c52355c37fe06b971
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-codec.dtsi
-> @@ -0,0 +1,59 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2025 Josua Mayer <josua@solid-run.com>
-> + */
-> +
-> +/ {
-> +	sound-wm8904 {
-> +		compatible = "fsl,imx-audio-wm8904";
-> +		model = "audio-wm8904";
-> +		audio-cpu = <&sai3>;
-> +		audio-codec = <&codec>;
-> +		audio-routing =
-> +			"Headphone Jack", "HPOUTL",
-> +			"Headphone Jack", "HPOUTR",
-> +			"AMIC", "MICBIAS",
-> +			"IN2R", "AMIC";
-> +	};
-> +};
-> +
-> +&i2c2 {
-> +	codec: codec@1a {
+> +maintainers:
+> +  - Clément LE GOFFIC <clement.legoffic@foss.st.com>
 
-audio-codec for the node name.
+Oops, need to change the mail address here too.
 
-> +		#sound-dai-cells = <0>;
-> +		compatible = "wlf,wm8904";
-> +		reg = <0x1a>;
-
-Can we move "#sound-dai-cells" here?  We usually start with "compatible"
-and "reg".
-
-> +		clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI3_MCLK1>;
-> +		clock-names = "mclk";
-> +		AVDD-supply = <&v_1_8>;
-> +		CPVDD-supply = <&v_1_8>;
-> +		DBVDD-supply = <&v_3_3>;
-> +		DCVDD-supply = <&v_1_8>;
-> +		MICVDD-supply = <&v_3_3>;
-> +	};
-> +};
 > +
-> +&iomuxc {
-> +	sai3_pins: pinctrl-sai3-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_SAI3_MCLK__AUDIOMIX_SAI3_MCLK	0xd6
-> +			MX8MP_IOMUXC_SAI3_TXFS__AUDIOMIX_SAI3_TX_SYNC	0xd6
-> +			MX8MP_IOMUXC_SAI3_TXC__AUDIOMIX_SAI3_TX_BCLK	0xd6
-> +			MX8MP_IOMUXC_SAI3_TXD__AUDIOMIX_SAI3_TX_DATA00	0xd6
-> +			MX8MP_IOMUXC_SAI3_RXD__AUDIOMIX_SAI3_RX_DATA00	0xd6
-> +		>;
-> +	};
-> +};
-> +
-> +&sai3 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sai3_pins>;
-> +	assigned-clocks = <&clk IMX8MP_CLK_SAI3>;
-> +	assigned-clock-parents = <&clk IMX8MP_AUDIO_PLL1_OUT>;
-> +	assigned-clock-rates = <12288000>;
-> +	clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI3_IPG>, <&clk IMX8MP_CLK_DUMMY>,
-> +		 <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI3_MCLK1>, <&clk IMX8MP_CLK_DUMMY>,
-> +		 <&clk IMX8MP_CLK_DUMMY>;
-> +	clock-names = "bus", "mclk0", "mclk1", "mclk2", "mclk3";
-> +	fsl,sai-mclk-direction-output;
-> +	status = "okay";
-> +};
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-common.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-common.dtsi
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..3a43cf3e2ca00741fe15cd834df0ac7c9119ad09
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-common.dtsi
-> @@ -0,0 +1,384 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2025 Josua Mayer <josua@solid-run.com>
-> + */
-> +
-> +#include <dt-bindings/leds/common.h>
-> +
-> +/ {
-> +	aliases {
-> +		rtc0 = &carrier_rtc;
-> +		rtc1 = &snvs_rtc;
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&led_pins>;
-> +
-> +		led-0 {
-> +			label = "D30";
-> +			color = <LED_COLOR_ID_GREEN>;
-> +			gpios = <&gpio5 28 GPIO_ACTIVE_LOW>;
-> +			default-state = "on";
-> +		};
-> +
-> +		led-1 {
-> +			label = "D31";
-> +			color = <LED_COLOR_ID_GREEN>;
-> +			gpios = <&gpio4 24 GPIO_ACTIVE_LOW>;
-> +			default-state = "on";
-> +		};
-> +
-> +		led-2 {
-> +			label = "D32";
-> +			color = <LED_COLOR_ID_GREEN>;
-> +			gpios = <&gpio4 23 GPIO_ACTIVE_LOW>;
-> +			default-state = "on";
-> +		};
-> +
-> +		led-3 {
-> +			label = "D33";
-> +			color = <LED_COLOR_ID_GREEN>;
-> +			gpios = <&gpio4 21 GPIO_ACTIVE_LOW>;
-> +			default-state = "on";
-> +		};
-> +
-> +		led-4 {
-> +			label = "D34";
-> +			color = <LED_COLOR_ID_GREEN>;
-> +			gpios = <&gpio4 22 GPIO_ACTIVE_LOW>;
-> +			default-state = "on";
-> +		};
-> +	};
-> +
-> +	rfkill-mpcie-wifi {
-> +		/*
-> +		 * The mpcie connector only has USB,
-> +		 * therefore this rfkill is for cellular radios only.
-> +		 */
-> +		compatible = "rfkill-gpio";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&mpcie_rfkill_pins>;
-> +		label = "mpcie radio";
-> +		radio-type = "wwan";
-> +		/* rfkill-gpio inverts internally */
-> +		shutdown-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
-> +	};
-> +
-> +	vmmc: regulator-mmc {
-> +		compatible = "regulator-fixed";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vmmc_pins>;
-> +		regulator-name = "vmmc";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		gpio = <&gpio2 19 GPIO_ACTIVE_HIGH>;
-> +		startup-delay-us = <250>;
-> +	};
-> +
-> +	vbus1: regulator-vbus-1 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vbus1";
-> +		gpio = <&gpio1 14 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vbus1_pins>;
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +	};
-> +
-> +	vbus2: regulator-vbus-2 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vbus2";
-> +		gpio = <&gpio1 15 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vbus2_pins>;
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +	};
-> +
-> +	v_1_2: regulator-1-2 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "1v2";
-> +		regulator-min-microvolt = <1200000>;
-> +		regulator-max-microvolt = <1200000>;
-> +	};
-> +
-> +	vmpcie {
-> +		/* supplies mpcie and m2 connectors */
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vmpcie";
-> +		gpio = <&gpio1 10 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vmpcie_pins>;
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-always-on;
-> +	};
-> +};
-> +
-> +/* mikrobus spi */
-> +&ecspi2 {
-> +	num-cs = <1>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&mikro_spi_pins>;
-> +	status = "okay";
-> +};
-> +
-> +&gpio1 {
-> +	pinctrl-0 = <&mpcie_reset_pins>;
-> +	pinctrl-names = "default";
-> +
-> +	mpcie-reset-hog {
-> +		gpio-hog;
-> +		gpios = <1 GPIO_ACTIVE_LOW>;
-> +		output-low;
-> +		line-name = "mpcie-reset";
-> +	};
-> +};
-> +
-> +&i2c3 {
-> +	carrier_rtc: rtc@69 {
-> +		compatible = "abracon,ab1805";
-> +		reg = <0x69>;
-> +		abracon,tc-diode = "schottky";
-> +		abracon,tc-resistor = <3>;
-> +	};
-> +
-> +	carrier_eeprom: eeprom@57{
-
-Sort I2C devices in slave address.
-
-> +		compatible = "st,24c02", "atmel,24c02";
-> +		reg = <0x57>;
-> +		pagesize = <16>;
-> +	};
-> +};
-> +
-> +&iomuxc {
-> +	csi_pins: pinctrl-csi-grp {
-> +		fsl,pins = <
-> +			/* Pin 24: STROBE */
-> +			MX8MP_IOMUXC_NAND_DATA01__GPIO3_IO07		0x0
-> +		>;
-> +	};
-> +
-> +	mikro_int_pins: pinctrl-mikro-int-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_ECSPI1_SS0__GPIO5_IO09		0x0
-> +		>;
-> +	};
-> +
-> +	mikro_pwm_pins: pinctrl-mikro-pwm-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_ECSPI1_MISO__GPIO5_IO08		0x0
-> +		>;
-> +	};
-> +
-> +	mikro_rst_pins: pinctrl-mikro-rst-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_SAI3_RXD__GPIO4_IO30		0x0
-> +		>;
-> +	};
-> +
-> +	mikro_spi_pins: pinctrl-mikro-spi-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_ECSPI2_SS0__ECSPI2_SS0		0x40000
-> +			MX8MP_IOMUXC_ECSPI2_SCLK__ECSPI2_SCLK		0x82
-> +			MX8MP_IOMUXC_ECSPI2_MISO__ECSPI2_MISO		0x82
-> +			MX8MP_IOMUXC_ECSPI2_MOSI__ECSPI2_MOSI		0x82
-> +		>;
-> +	};
-> +
-> +	mikro_uart_pins: pinctrl-mikro-uart-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_ECSPI1_SCLK__UART3_DCE_RX		0x140
-> +			MX8MP_IOMUXC_ECSPI1_MOSI__UART3_DCE_TX		0x140
-> +		>;
-> +	};
-> +
-> +	led_pins: pinctrl-led-grp {
-
-This one is out of order?
-
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_SAI2_RXC__GPIO4_IO22		0x0
-> +			MX8MP_IOMUXC_SAI2_RXFS__GPIO4_IO21		0x0
-> +			MX8MP_IOMUXC_SAI2_RXD0__GPIO4_IO23		0x0
-> +			MX8MP_IOMUXC_SAI2_TXFS__GPIO4_IO24		0x0
-> +			MX8MP_IOMUXC_UART4_RXD__GPIO5_IO28		0x0
-> +		>;
-> +	};
-> +
-> +	mpcie_reset_pins: pinctrl-mpcie-reset-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_GPIO1_IO01__GPIO1_IO01		0x0
-> +		>;
-> +	};
-> +
-> +	mpcie_rfkill_pins: pinctrl-pcie-rfkill-grp {
-> +		fsl,pins = <
-> +			/* weak i/o, open drain */
-> +			MX8MP_IOMUXC_GPIO1_IO05__GPIO1_IO05		0x20
-> +		>;
-> +	};
-> +
-> +	usb_hub_pins: pinctrl-usb-hub-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_GPIO1_IO11__GPIO1_IO11		0x0
-> +		>;
-> +	};
-> +
-> +	usdhc2_pins: pinctrl-usdhc2-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK		0x190
-> +			MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD		0x1d0
-> +			MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0		0x1d0
-> +			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1		0x1d0
-> +			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2		0x1d0
-> +			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3		0x1d0
-> +			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT		0x140
-> +			MX8MP_IOMUXC_SD2_CD_B__USDHC2_CD_B		0x140
-> +		>;
-> +	};
-> +
-> +	usdhc2_100mhz_pins: pinctrl-usdhc2-100mhz-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK		0x194
-> +			MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD		0x1d4
-> +			MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0		0x1d4
-> +			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1		0x1d4
-> +			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2		0x1d4
-> +			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3		0x1d4
-> +			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT		0x140
-> +			MX8MP_IOMUXC_SD2_CD_B__USDHC2_CD_B		0x140
-> +		>;
-> +	};
-> +
-> +	usdhc2_200mhz_pins: pinctrl-usdhc2-200mhz-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK		0x196
-> +			MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD		0x1d6
-> +			MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0		0x1d6
-> +			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1		0x1d6
-> +			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2		0x1d6
-> +			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3		0x1d6
-> +			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT		0x140
-> +			MX8MP_IOMUXC_SD2_CD_B__USDHC2_CD_B		0x140
-> +		>;
-> +	};
-> +
-> +	vbus1_pins: pinctrl-vbus-1-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_GPIO1_IO14__GPIO1_IO14		0x20
-> +		>;
-> +	};
-> +
-> +	vbus2_pins: pinctrl-vbus-2-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_GPIO1_IO15__GPIO1_IO15		0x20
-> +		>;
-> +	};
-> +
-> +	vmmc_pins: pinctrl-vmmc-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_SD2_RESET_B__GPIO2_IO19		0x41
-> +		>;
-> +	};
-> +
-> +	vmpcie_pins: pinctrl-vmpcie-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_GPIO1_IO10__GPIO1_IO10		0x0
-> +		>;
-> +	};
-> +};
-> +
-> +&phy0 {
-> +	leds {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		/* ADIN1300 LED_0 pin */
-> +		led@0 {
-> +			reg = <0>;
-> +			color = <LED_COLOR_ID_ORANGE>;
-> +			function = LED_FUNCTION_LAN;
-> +			default-state = "keep";
-> +		};
-> +
-> +		/* ADIN1300 LINK_ST pin */
-> +		led@1 {
-> +			reg = <1>;
-> +			color = <LED_COLOR_ID_GREEN>;
-> +			function = LED_FUNCTION_LAN;
-> +			default-state = "keep";
-> +		};
-> +	};
-> +};
-> +
-> +&snvs_pwrkey {
-> +	status = "okay";
-> +};
-> +
-> +/* mikrobus uart */
-> +&uart3 {
-> +	status = "okay";
-> +};
-> +
-> +&usb3_phy0 {
-> +	fsl,phy-tx-preemp-amp-tune-microamp = <1200>;
-> +	vbus-supply = <&vbus2>;
-> +	status = "okay";
-> +};
-> +
-> +&usb3_0 {
-> +	status = "okay";
-> +};
-> +
-> +&usb3_phy1 {
-> +	vbus-supply = <&vbus1>;
-> +	status = "okay";
-> +};
-> +
-> +&usb3_1 {
-> +	status = "okay";
-> +};
-> +
-> +&usb_dwc3_0 {
-> +	dr_mode = "host";
-> +};
-> +
-> +&usb_dwc3_1 {
-> +	dr_mode = "host";
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&usb_hub_pins>;
-> +
-> +	hub_2_0: hub@1 {
-> +		compatible = "usb4b4,6502", "usb4b4,6506";
-> +		reg = <1>;
-> +		peer-hub = <&hub_3_0>;
-> +		reset-gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
-> +		vdd-supply = <&v_1_2>;
-> +		vdd2-supply = <&v_3_3>;
-> +	};
-> +
-> +	hub_3_0: hub@2 {
-> +		compatible = "usb4b4,6500", "usb4b4,6504";
-> +		reg = <2>;
-> +		peer-hub = <&hub_2_0>;
-> +		reset-gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
-> +		vdd-supply = <&v_1_2>;
-> +		vdd2-supply = <&v_3_3>;
-> +	};
-> +};
-> +
-> +&usdhc2 {
-> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-> +	pinctrl-0 = <&usdhc2_pins>;
-> +	pinctrl-1 = <&usdhc2_100mhz_pins>;
-> +	pinctrl-2 = <&usdhc2_200mhz_pins>;
-> +	vmmc-supply = <&vmmc>;
-> +	bus-width = <4>;
-> +	cap-power-off-card;
-> +	full-pwr-cycle;
-> +	status = "okay";
-> +};
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-hdmi.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-hdmi.dtsi
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..d7a999c0d7e06a8c47a61632a59eb97faea9e3d4
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-hdmi.dtsi
-> @@ -0,0 +1,44 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2025 Josua Mayer <josua@solid-run.com>
-> + */
-> +
-> +/ {
-> +	sound-hdmi {
-> +		compatible = "fsl,imx-audio-hdmi";
-> +		model = "audio-hdmi";
-> +		audio-cpu = <&aud2htx>;
-> +		hdmi-out;
-> +	};
-> +};
-> +
-> +&aud2htx {
-> +	status = "okay";
-> +};
-> +
-> +&hdmi_pvi {
-> +	status = "okay";
-> +};
-> +
-> +&hdmi_tx {
-> +	status = "okay";
-> +};
-> +
-> +&hdmi_tx_phy {
-> +	status = "okay";
-> +};
-> +
-> +&iomuxc {
-> +	hdmi_pins: pinctrl-hdmi-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_HDMI_DDC_SCL__HDMIMIX_HDMI_SCL	0x400001c3
-> +			MX8MP_IOMUXC_HDMI_DDC_SDA__HDMIMIX_HDMI_SDA	0x400001c3
-> +			MX8MP_IOMUXC_HDMI_CEC__HDMIMIX_HDMI_CEC		0x154
-> +			MX8MP_IOMUXC_HDMI_HPD__HDMIMIX_HDMI_HPD		0x154
-> +		>;
-> +	};
-> +};
-> +
-> +&lcdif3 {
-> +	status = "okay";
-> +};
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-m2con.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-m2con.dtsi
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..b879ca4ed21428b8d4c6866f9a827bcfbef1caee
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-m2con.dtsi
-> @@ -0,0 +1,60 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2025 Josua Mayer <josua@solid-run.com>
-> + */
-> +
-> +/ {
-> +	rfkill-m2-gnss {
-> +		compatible = "rfkill-gpio";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&m2_gnss_rfkill_pins>;
-> +		label = "m.2 GNSS";
-> +		radio-type = "gps";
-> +		/* rfkill-gpio inverts internally */
-> +		shutdown-gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>;
-> +	};
-> +
-> +	/* M.2 is B-keyed, so w-disable is for WWAN */
-> +	rfkill-m2-wwan {
-> +		compatible = "rfkill-gpio";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&m2_wwan_rfkill_pins>;
-> +		label = "m.2 WWAN";
-> +		radio-type = "wwan";
-> +		/* rfkill-gpio inverts internally */
-> +		shutdown-gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
-> +	};
-> +};
-> +
-> +&iomuxc {
-> +	m2_gnss_rfkill_pins: pinctrl-m2-gnss-rfkill-grp {
-> +		fsl,pins = <
-> +			/* weak i/o, open drain */
-> +			MX8MP_IOMUXC_GPIO1_IO07__GPIO1_IO07		0x20
-> +		>;
-> +	};
-> +
-> +	m2_wwan_rfkill_pins: pinctrl-m2-wwan-rfkill-grp {
-> +		fsl,pins = <
-> +			/* weak i/o, open drain */
-> +			MX8MP_IOMUXC_GPIO1_IO13__GPIO1_IO13		0x20
-> +		>;
-> +	};
-> +
-> +	m2_wwan_wake_pins: pinctrl-m2-wwan-wake-grp {
-> +		fsl,pins = <
-> +			/* weak i/o, open drain */
-> +			MX8MP_IOMUXC_GPIO1_IO12__GPIO1_IO12		0x20
-> +		>;
-> +	};
-> +
-> +	m2_reset_pins: pinctrl-m2-reset-grp {
-
-This one is out of order?
-
-> +		fsl,pins = <
-> +			/*
-> +			 * 3.3V domain on SoC, set open-drain to ensure
-> +			 * 1.8V logic on connector
-> +			 */
-> +			MX8MP_IOMUXC_GPIO1_IO06__GPIO1_IO06		0x20
-> +		>;
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-mini-hdmi.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-mini-hdmi.dtsi
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..46916ddc053355b6708629898fa13e55c6493cc2
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-mini-hdmi.dtsi
-> @@ -0,0 +1,81 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2025 Josua Mayer <josua@solid-run.com>
-> + */
-> +
-> +/ {
-> +	hdmi-connector {
-> +		compatible = "hdmi-connector";
-> +		label = "hdmi";
-> +		type = "c";
-> +
-> +		port {
-> +			hdmi_connector_in: endpoint {
-> +				remote-endpoint = <&adv7535_out>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&i2c3 {
-> +	hdmi@3d {
-> +		compatible = "adi,adv7535";
-> +		reg = <0x3d>, <0x3f>, <0x3c>, <0x38>;
-> +		reg-names = "main", "edid", "cec", "packet";
-> +		adi,dsi-lanes = <4>;
-> +		avdd-supply = <&v_1_8>;
-> +		dvdd-supply = <&v_1_8>;
-> +		pvdd-supply = <&v_1_8>;
-> +		a2vdd-supply = <&v_1_8>;
-> +		v3p3-supply = <&v_3_3>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&mini_hdmi_pins>;
-> +		interrupt-parent = <&gpio4>;
-> +		interrupts = <27 IRQ_TYPE_EDGE_FALLING>;
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +
-> +				adv7535_from_dsim: endpoint {
-> +					remote-endpoint = <&dsim_to_adv7535>;
-> +				};
-> +			};
-> +
-> +			port@1 {
-> +				reg = <1>;
-> +
-> +				adv7535_out: endpoint {
-> +					remote-endpoint = <&hdmi_connector_in>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&iomuxc {
-> +	mini_hdmi_pins: pinctrl-mini-hdmi-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_SAI2_MCLK__GPIO4_IO27		0x0
-> +		>;
-> +	};
-> +};
-> +
-> +&lcdif1 {
-> +	status = "okay";
-> +};
-> +
-> +&mipi_dsi {
-> +	samsung,esc-clock-frequency = <10000000>;
-> +	status = "okay";
-> +
-> +	port@1 {
-> +		dsim_to_adv7535: endpoint {
-> +			remote-endpoint = <&adv7535_from_dsim>;
-> +			attach-bridge;
-> +		};
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse.dts b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse.dts
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..e0d6f281837f106bb0b4661d8fe54eaa2cafc3c2
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse.dts
-> @@ -0,0 +1,84 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2025 Josua Mayer <josua@solid-run.com>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include <dt-bindings/phy/phy-imx8-pcie.h>
-> +
-> +#include "imx8mp-sr-som.dtsi"
-> +#include "imx8mp-hummingboard-pulse-codec.dtsi"
-> +#include "imx8mp-hummingboard-pulse-common.dtsi"
-> +#include "imx8mp-hummingboard-pulse-hdmi.dtsi"
-> +#include "imx8mp-hummingboard-pulse-m2con.dtsi"
-> +#include "imx8mp-hummingboard-pulse-mini-hdmi.dtsi"
-> +
-> +/ {
-> +	model = "SolidRun i.MX8MP HummingBoard Pulse";
-> +	compatible = "solidrun,imx8mp-hummingboard-pulse",
-> +		     "solidrun,imx8mp-sr-som", "fsl,imx8mp";
-> +
-> +	aliases {
-> +		ethernet0 = &eqos;
-> +		ethernet1 = &pcie_eth;
-> +	};
-> +};
-> +
-> +&fec {
-> +	/* this board does not use second phy / ethernet on SoM */
-> +	status = "disabled";
-> +};
-> +
-> +&gpio1 {
-> +	pinctrl-0 = <&mpcie_reset_pins>, <&m2_reset_pins>;
-> +	pinctrl-names = "default";
-> +
-> +	m2-reset-hog {
-> +		gpio-hog;
-> +		gpios = <6 GPIO_ACTIVE_LOW>;
-> +		output-low;
-> +		line-name = "m2-reset";
-> +	};
-> +};
-> +
-> +&iomuxc {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&mikro_pwm_pins>, <&mikro_int_pins>, <&hdmi_pins>,
-> +		    <&m2_wwan_wake_pins>;
-> +
-> +	pcie_eth_pins: pinctrl-pcie-eth-grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_SAI3_RXFS__GPIO4_IO28		0x0
-> +		>;
-> +	};
-> +};
-> +
-> +&pcie {
-> +	pinctrl-0 = <&pcie_eth_pins>;
-> +	pinctrl-names = "default";
-> +	reset-gpio = <&gpio4 28 GPIO_ACTIVE_LOW>;
-> +	status = "okay";
-> +
-> +	root@0,0 {
-> +		compatible = "pci16c3,abcd";
-> +		reg = <0x00000000 0 0 0 0>;
-> +
-
-Nit: unnecessary newline
-
-Shawn
-
-> +		#address-cells = <3>;
-> +		#size-cells = <2>;
-> +
-> +		/* Intel i210 */
-> +		pcie_eth: ethernet@1,0 {
-> +			compatible = "pci8086,157b";
-> +			reg = <0x00010000 0 0 0 0>;
-> +		};
-> +	};
-> +};
-> +
-> +&pcie_phy {
-> +	clocks = <&hsio_blk_ctrl>;
-> +	clock-names = "ref";
-> +	fsl,clkreq-unsupported;
-> +	fsl,refclk-pad-mode = <IMX8_PCIE_REFCLK_PAD_OUTPUT>;
-> +	status = "okay";
-> +};
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-ripple.dts b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-ripple.dts
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..4ce5b799b6abc514ca00e2e2134d5ff1606dc87d
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-ripple.dts
-> @@ -0,0 +1,31 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2025 Josua Mayer <josua@solid-run.com>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "imx8mp-sr-som.dtsi"
-> +#include "imx8mp-hummingboard-pulse-common.dtsi"
-> +#include "imx8mp-hummingboard-pulse-mini-hdmi.dtsi"
-> +
-> +/ {
-> +	model = "SolidRun i.MX8MP HummingBoard Ripple";
-> +	compatible = "solidrun,imx8mp-hummingboard-ripple",
-> +		     "solidrun,imx8mp-sr-som", "fsl,imx8mp";
-> +
-> +	aliases {
-> +		ethernet0 = &eqos;
-> +		/delete-property/ ethernet1;
-> +	};
-> +};
-> +
-> +&fec {
-> +	/* this board does not use second phy / ethernet on SoM */
-> +	status = "disabled";
-> +};
-> +
-> +&iomuxc {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&mikro_pwm_pins>, <&mikro_int_pins>, <&mikro_rst_pins>;
-> +};
-> 
-> -- 
-> 2.43.0
+> +description:
+> +  STMicroelectronics's STM32 MPUs integrate a Hardware Debug Port (HDP).
+> +  It allows to output internal signals on SoC's GPIO.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - st,stm32mp131-hdp
+> +      - st,stm32mp151-hdp
+> +      - st,stm32mp251-hdp
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +patternProperties:
+> +  "^hdp[0-7]-pins$":
+> +    type: object
+> +    $ref: pinmux-node.yaml#
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      pins:
+> +        pattern: '^HDP[0-7]$'
+> +
+> +      function: true
+> +
+> +    required:
+> +      - function
+> +      - pins
+> +
+> +allOf:
+> +  - $ref: pinctrl.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: st,stm32mp131-hdp
+> +    then:
+> +      patternProperties:
+> +        "^hdp[0-7]-pins$":
+> +          properties:
+> +            function:
+> +              enum: [ pwr_pwrwake_sys, pwr_stop_forbidden, pwr_stdby_wakeup, pwr_encomp_vddcore,
+> +                      bsec_out_sec_niden, aiec_sys_wakeup, none, ddrctrl_lp_req,
+> +                      pwr_ddr_ret_enable_n, dts_clk_ptat, sram3ctrl_tamp_erase_act, gpoval0,
+> +                      pwr_sel_vth_vddcpu, pwr_mpu_ram_lowspeed, ca7_naxierrirq, pwr_okin_mr,
+> +                      bsec_out_sec_dbgen, aiec_c1_wakeup, rcc_pwrds_mpu, ddrctrl_dfi_ctrlupd_req,
+> +                      ddrctrl_cactive_ddrc_asr, sram3ctrl_hw_erase_act, nic400_s0_bready, gpoval1,
+> +                      pwr_pwrwake_mpu, pwr_mpu_clock_disable_ack, ca7_ndbgreset_i,
+> +                      bsec_in_rstcore_n, bsec_out_sec_bsc_dis, ddrctrl_dfi_init_complete,
+> +                      ddrctrl_perf_op_is_refresh, ddrctrl_gskp_dfi_lp_req, sram3ctrl_sw_erase_act,
+> +                      nic400_s0_bvalid, gpoval2, pwr_sel_vth_vddcore, pwr_mpu_clock_disable_req,
+> +                      ca7_npmuirq0, ca7_nfiqout0, bsec_out_sec_dftlock, bsec_out_sec_jtag_dis,
+> +                      rcc_pwrds_sys, sram3ctrl_tamp_erase_req, ddrctrl_stat_ddrc_reg_selfref_type0,
+> +                      dts_valobus1_0, dts_valobus2_0, tamp_potential_tamp_erfcfg, nic400_s0_wready,
+> +                      nic400_s0_rready, gpoval3, pwr_stop2_active, ca7_nl2reset_i,
+> +                      ca7_npreset_varm_i, bsec_out_sec_dften, bsec_out_sec_dbgswenable,
+> +                      eth1_out_pmt_intr_o, eth2_out_pmt_intr_o, ddrctrl_stat_ddrc_reg_selfref_type1,
+> +                      ddrctrl_cactive_0, dts_valobus1_1, dts_valobus2_1, tamp_nreset_sram_ercfg,
+> +                      nic400_s0_wlast, nic400_s0_rlast, gpoval4, ca7_standbywfil2,
+> +                      pwr_vth_vddcore_ack, ca7_ncorereset_i, ca7_nirqout0, bsec_in_pwrok,
+> +                      bsec_out_sec_deviceen, eth1_out_lpi_intr_o, eth2_out_lpi_intr_o,
+> +                      ddrctrl_cactive_ddrc, ddrctrl_wr_credit_cnt, dts_valobus1_2, dts_valobus2_2,
+> +                      pka_pka_itamp_out, nic400_s0_wvalid, nic400_s0_rvalid, gpoval5,
+> +                      ca7_standbywfe0, pwr_vth_vddcpu_ack, ca7_evento, bsec_in_tamper_det,
+> +                      bsec_out_sec_spniden, eth1_out_mac_speed_o1, eth2_out_mac_speed_o1,
+> +                      ddrctrl_csysack_ddrc, ddrctrl_lpr_credit_cnt, dts_valobus1_3, dts_valobus2_3,
+> +                      saes_tamper_out, nic400_s0_awready, nic400_s0_arready, gpoval6,
+> +                      ca7_standbywfi0, pwr_rcc_vcpu_rdy, ca7_eventi, ca7_dbgack0, bsec_out_fuse_ok,
+> +                      bsec_out_sec_spiden, eth1_out_mac_speed_o0, eth2_out_mac_speed_o0,
+> +                      ddrctrl_csysreq_ddrc, ddrctrl_hpr_credit_cnt, dts_valobus1_4, dts_valobus2_4,
+> +                      rng_tamper_out, nic400_s0_awavalid, nic400_s0_aravalid, gpoval7 ]
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: st,stm32mp151-hdp
+> +    then:
+> +      patternProperties:
+> +        "^hdp[0-7]-pins$":
+> +          properties:
+> +            function:
+> +              enum: [ pwr_pwrwake_sys, cm4_sleepdeep, pwr_stdby_wkup, pwr_encomp_vddcore,
+> +                      bsec_out_sec_niden, none, rcc_cm4_sleepdeep, gpu_dbg7, ddrctrl_lp_req,
+> +                      pwr_ddr_ret_enable_n, dts_clk_ptat, gpoval0, pwr_pwrwake_mcu, cm4_halted,
+> +                      ca7_naxierrirq, pwr_okin_mr, bsec_out_sec_dbgen, exti_sys_wakeup,
+> +                      rcc_pwrds_mpu, gpu_dbg6, ddrctrl_dfi_ctrlupd_req, ddrctrl_cactive_ddrc_asr,
+> +                      gpoval1, pwr_pwrwake_mpu, cm4_rxev, ca7_npmuirq1, ca7_nfiqout1,
+> +                      bsec_in_rstcore_n, exti_c2_wakeup, rcc_pwrds_mcu, gpu_dbg5,
+> +                      ddrctrl_dfi_init_complete, ddrctrl_perf_op_is_refresh,
+> +                      ddrctrl_gskp_dfi_lp_req, gpoval2, pwr_sel_vth_vddcore, cm4_txev, ca7_npmuirq0,
+> +                      ca7_nfiqout0, bsec_out_sec_dftlock, exti_c1_wakeup, rcc_pwrds_sys, gpu_dbg4,
+> +                      ddrctrl_stat_ddrc_reg_selfref_type0, ddrctrl_cactive_1, dts_valobus1_0,
+> +                      dts_valobus2_0, gpoval3, pwr_mpu_pdds_not_cstbydis, cm4_sleeping, ca7_nreset1,
+> +                      ca7_nirqout1, bsec_out_sec_dften, bsec_out_sec_dbgswenable,
+> +                      eth_out_pmt_intr_o, gpu_dbg3, ddrctrl_stat_ddrc_reg_selfref_type1,
+> +                      ddrctrl_cactive_0, dts_valobus1_1, dts_valobus2_1, gpoval4, ca7_standbywfil2,
+> +                      pwr_vth_vddcore_ack, ca7_nreset0, ca7_nirqout0, bsec_in_pwrok,
+> +                      bsec_out_sec_deviceen, eth_out_lpi_intr_o, gpu_dbg2, ddrctrl_cactive_ddrc,
+> +                      ddrctrl_wr_credit_cnt, dts_valobus1_2, dts_valobus2_2, gpoval5,
+> +                      ca7_standbywfi1, ca7_standbywfe1, ca7_evento, ca7_dbgack1,
+> +                      bsec_out_sec_spniden, eth_out_mac_speed_o1, gpu_dbg1, ddrctrl_csysack_ddrc,
+> +                      ddrctrl_lpr_credit_cnt, dts_valobus1_3, dts_valobus2_3, gpoval6,
+> +                      ca7_standbywfi0, ca7_standbywfe0, ca7_dbgack0, bsec_out_fuse_ok,
+> +                      bsec_out_sec_spiden, eth_out_mac_speed_o0, gpu_dbg0, ddrctrl_csysreq_ddrc,
+> +                      ddrctrl_hpr_credit_cnt, dts_valobus1_4, dts_valobus2_4, gpoval7 ]
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: st,stm32mp251-hdp
+> +    then:
+> +      patternProperties:
+> +        "^hdp[0-7]-pins$":
+> +          properties:
+> +            function:
+> +              enum: [ pwr_pwrwake_sys, cpu2_sleep_deep, bsec_out_tst_sdr_unlock_or_disable_scan,
+> +                      bsec_out_nidenm, bsec_out_nidena, cpu2_state_0, rcc_pwrds_sys, gpu_dbg7,
+> +                      ddrss_csysreq_ddrc, ddrss_dfi_phyupd_req, cpu3_sleep_deep,
+> +                      d2_gbl_per_clk_bus_req, pcie_usb_cxpl_debug_info_ei_0,
+> +                      pcie_usb_cxpl_debug_info_ei_8, d3_state_0, gpoval0, pwr_pwrwake_cpu2,
+> +                      cpu2_halted, cpu2_state_1, bsec_out_dbgenm, bsec_out_dbgena, exti1_sys_wakeup,
+> +                      rcc_pwrds_cpu2, gpu_dbg6, ddrss_csysack_ddrc, ddrss_dfi_phymstr_req,
+> +                      cpu3_halted, d2_gbl_per_dma_req, pcie_usb_cxpl_debug_info_ei_1,
+> +                      pcie_usb_cxpl_debug_info_ei_9, d3_state_1, gpoval1, pwr_pwrwake_cpu1,
+> +                      cpu2_rxev, cpu1_npumirq1, cpu1_nfiqout1, bsec_out_shdbgen, exti1_cpu2_wakeup,
+> +                      rcc_pwrds_cpu1, gpu_dbg5, ddrss_cactive_ddrc, ddrss_dfi_lp_req, cpu3_rxev,
+> +                      hpdma1_clk_bus_req, pcie_usb_cxpl_debug_info_ei_2,
+> +                      pcie_usb_cxpl_debug_info_ei_10, d3_state_2, gpoval2, pwr_sel_vth_vddcpu,
+> +                      cpu2_txev, cpu1_npumirq0, cpu1_nfiqout0, bsec_out_ddbgen, exti1_cpu1_wakeup,
+> +                      cpu3_state_0, gpu_dbg4, ddrss_mcdcg_en, ddrss_dfi_freq_0, cpu3_txev,
+> +                      hpdma2_clk_bus_req, pcie_usb_cxpl_debug_info_ei_3,
+> +                      pcie_usb_cxpl_debug_info_ei_11, d1_state_0, gpoval3, pwr_sel_vth_vddcore,
+> +                      cpu2_sleeping, cpu1_evento, cpu1_nirqout1, bsec_out_spnidena, exti2_d3_wakeup,
+> +                      eth1_out_pmt_intr_o, gpu_dbg3, ddrss_dphycg_en, ddrss_obsp0, cpu3_sleeping,
+> +                      hpdma3_clk_bus_req, pcie_usb_cxpl_debug_info_ei_4,
+> +                      pcie_usb_cxpl_debug_info_ei_12, d1_state_1, gpoval4, cpu1_standby_wfil2,
+> +                      none, cpu1_nirqout0, bsec_out_spidena, exti2_cpu3_wakeup, eth1_out_lpi_intr_o,
+> +                      gpu_dbg2, ddrctrl_dfi_init_start, ddrss_obsp1, cpu3_state_1,
+> +                      d3_gbl_per_clk_bus_req, pcie_usb_cxpl_debug_info_ei_5,
+> +                      pcie_usb_cxpl_debug_info_ei_13, d1_state_2, gpoval5, cpu1_standby_wfi1,
+> +                      cpu1_standby_wfe1, cpu1_halted1, cpu1_naxierrirq, bsec_out_spnidenm,
+> +                      exti2_cpu2_wakeup, eth2_out_pmt_intr_o, gpu_dbg1, ddrss_dfi_init_complete,
+> +                      ddrss_obsp2, d2_state_0, d3_gbl_per_dma_req, pcie_usb_cxpl_debug_info_ei_6,
+> +                      pcie_usb_cxpl_debug_info_ei_14, cpu1_state_0, gpoval6, cpu1_standby_wfi0,
+> +                      cpu1_standby_wfe0, cpu1_halted0, bsec_out_spidenm, exti2_cpu1__wakeup,
+> +                      eth2_out_lpi_intr_o, gpu_dbg0, ddrss_dfi_ctrlupd_req, ddrss_obsp3, d2_state_1,
+> +                      lpdma1_clk_bus_req, pcie_usb_cxpl_debug_info_ei_7,
+> +                      pcie_usb_cxpl_debug_info_ei_15, cpu1_state_1, gpoval7 ]
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/stm32mp1-clks.h>
+> +
+> +    pinctrl@54090000 {
+> +      compatible = "st,stm32mp151-hdp";
+> +      reg = <0x54090000 0x400>;
+> +      clocks = <&rcc HDP>;
+> +      pinctrl-names = "default";
+> +      pinctrl-0 = <&hdp2_gpo>;
+> +      hdp2_gpo: hdp2-pins {
+> +        function = "gpoval2";
+> +        pins = "HDP2";
+> +      };
+> +    };
 > 
 
 
