@@ -1,170 +1,166 @@
-Return-Path: <linux-kernel+bounces-727562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3D68B01C19
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:33:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2359FB01C1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3B8E544BD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:33:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04C485621EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F230329CB43;
-	Fri, 11 Jul 2025 12:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEB929CB41;
+	Fri, 11 Jul 2025 12:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="bja6yI4b"
-Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTLAhLTC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5914A24;
-	Fri, 11 Jul 2025 12:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8328C28A1C5;
+	Fri, 11 Jul 2025 12:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752237201; cv=none; b=VW8U1tPSnb+Qr9bOS/A64oHhbHOjQ/efcIkr7qSeB4WrChHR1njnpArGIQELlXcHbjejQCGu0ShWWf5rilMczNU+colRrKzxV34YZM0tW9tG9M4+02y5v58IwlFD4GXqIGUakVyRU3+eH2XNcI74T1gWOEFNw9VeZgUzQ/ynjRU=
+	t=1752237247; cv=none; b=RyNL4hW0m6TUWiXggvJf0OubyqsCxOZpFT4T1ExoN4Cbs/haz8hYKmAJ4WVEUO2DLg7LuFSX7bGuChBJyQrcBPO5+Bug5QsgmrC8BJsizrvX5VlcWQk2hDFCp6Mk3lTcWIKa5Ry2SKxmbBDIxoomkCCVUMBoq+OmBjCjeA2OHzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752237201; c=relaxed/simple;
-	bh=WYWKVt6dUPJaMiGKNZZnN/uJcyMEGDqbOYOvPwKRwbo=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=Qo4snAcKQQMhEKWce10Ct5aQSR/gxuN//5577UmKbfVcs1iN3eFgAuDNzB4E3ITyc+vl9peppeTtUs8az9fBlPq4O7dRqPBiQj0ZGlBcDAnCbrhMvlAeKxFrOZTJs9TJnBqIM3GiYkzuc/eztQABhXAeZetYcIdFGoqYwrDjydA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=bja6yI4b; arc=none smtp.client-ip=162.240.164.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=AJW9cOBCmrxXxZqHEQ8adQkukE2W2AgflGt7EU89058=; b=bja6yI4bhC5Up2flT2VGnPrBJi
-	AI9jYvgSAP3+3hJEpZz9uckqmm/D/4jscytgnNi9jXJOlZregJWSUc4jnwX3txw3D69KK6igl+Aya
-	dV0jotGglD6S4CUsOKbD0R6kbgWNNts/4dX3kfMR1kGHO5z9qc8GeyQoxqErzFirVVN5NhoovO1q1
-	4NiBqtG/0W1JNj16URhLgFOjUZsWyUUyL2ir3EQyKrbxx7tWq4WUwbIlmebiF8WtR41+QcoQ3XF87
-	yIPufMuzKE2gnaMtF9nqKb2rJHTw1NxY/nuFkZ0fJkl0LktfLSo2THBWYv+cncQsHSuAbC7orQM09
-	BOPVLmBA==;
-Received: from [122.175.9.182] (port=12257 helo=zimbra.couthit.local)
-	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1uaCwE-0000000Cl5L-2uHd;
-	Fri, 11 Jul 2025 08:33:15 -0400
-Received: from zimbra.couthit.local (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTPS id 4D7A017820AC;
-	Fri, 11 Jul 2025 18:03:09 +0530 (IST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id 2E52517820F5;
-	Fri, 11 Jul 2025 18:03:09 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
-	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id hCs-qG7o16wZ; Fri, 11 Jul 2025 18:03:09 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id DD32117820AC;
-	Fri, 11 Jul 2025 18:03:08 +0530 (IST)
-Date: Fri, 11 Jul 2025 18:03:08 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: kuba <kuba@kernel.org>
-Cc: parvathi <parvathi@couthit.com>, danishanwar <danishanwar@ti.com>, 
-	rogerq <rogerq@kernel.org>, andrew+netdev <andrew+netdev@lunn.ch>, 
-	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
-	pabeni <pabeni@redhat.com>, robh <robh@kernel.org>, 
-	krzk+dt <krzk+dt@kernel.org>, conor+dt <conor+dt@kernel.org>, 
-	ssantosh <ssantosh@kernel.org>, 
-	richardcochran <richardcochran@gmail.com>, 
-	s hauer <s.hauer@pengutronix.de>, m-karicheri2 <m-karicheri2@ti.com>, 
-	glaroque <glaroque@baylibre.com>, afd <afd@ti.com>, 
-	saikrishnag <saikrishnag@marvell.com>, m-malladi <m-malladi@ti.com>, 
-	jacob e keller <jacob.e.keller@intel.com>, 
-	diogo ivo <diogo.ivo@siemens.com>, 
-	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, 
-	horms <horms@kernel.org>, s-anna <s-anna@ti.com>, 
-	basharath <basharath@couthit.com>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	netdev <netdev@vger.kernel.org>, 
-	devicetree <devicetree@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
-	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
-	krishna <krishna@couthit.com>, pmohan <pmohan@couthit.com>, 
-	mohan <mohan@couthit.com>
-Message-ID: <723330733.1712525.1752237188810.JavaMail.zimbra@couthit.local>
-In-Reply-To: <20250708180107.7886ea41@kernel.org>
-References: <20250702140633.1612269-1-parvathi@couthit.com> <20250702151756.1656470-5-parvathi@couthit.com> <20250708180107.7886ea41@kernel.org>
-Subject: Re: [PATCH net-next v10 04/11] net: ti: prueth: Adds link
- detection, RX and TX support.
+	s=arc-20240116; t=1752237247; c=relaxed/simple;
+	bh=OaM04B/jvmRCFs9Pga6hG/UcJ4uI5yYpfmWIbmK2Zyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O3bHI4lN8RyGcCxvsxc+7tnQCPgprisi3sw32ytD8DbZUNcdH51UGhK49Ytam8YnE9i8mZ2VSKFJ/ijGjVJbEQoVMRJ4tQDBGvi2CjJyc+NzxtpaqvuPT6RHY9G146t1UrjMqtFcrWqdo5+AK0tNqUVzhs3YClzwnPiBQshYyic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dTLAhLTC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50D88C4CEED;
+	Fri, 11 Jul 2025 12:34:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752237247;
+	bh=OaM04B/jvmRCFs9Pga6hG/UcJ4uI5yYpfmWIbmK2Zyc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dTLAhLTCRZXAC4B/2QKacwHAUGAi6WddnWYmmBZEgz/U07KVHiwt0PANdevA2fmRW
+	 gWM2pmMus+RFmABeOsW5pGonIvo+KiacmI3KBi8rnrjRN94re/ZOvPYIzGBYXeRvzT
+	 3269c/hfw6YgxKqV/Awqvy4tCE9NZwhyGtcY82Ee5wUEIiRFf63Vw4UcSpGevnYBeF
+	 RuN1yBG0+m2E2XfP+2Nnf3S5jG/ZJpo0fFxVK8AIi6RgJiIbBHP41De+ubmZGo0oVx
+	 br3pXXJLxUgerpY8f1BoD4YWU63zHnTMWLq4RxQi9r2mnnkoUlVHMRRlKd/PT1wHO8
+	 sYlGlN6t2JKdQ==
+Date: Fri, 11 Jul 2025 18:04:03 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: George Verhaegen <verhaegen@google.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>, kernel-team@android.com,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com, linux-arm-msm@vger.kernel.org,
+	sound-open-firmware@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 0/4] ALSA: compress_offload: Add 64-bit safe timestamp
+ API
+Message-ID: <aHEEu1eSSGRhITmW@vaman>
+References: <20250711082441.4193295-1-verhaegen@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
-Thread-Topic: prueth: Adds link detection, RX and TX support.
-Thread-Index: frcZHpE/y/6hXxyDNRDspT8aDcWlcQ==
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.couthit.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711082441.4193295-1-verhaegen@google.com>
 
+On 11-07-25, 09:24, George Verhaegen wrote:
+> From: Joris Verhaegen <verhaegen@google.com>
+> 
+> The current compress offload timestamping API relies on
+> struct snd_compr_tstamp, whose cumulative counters like
+> copied_total are defined as __u32. On long-running high-resolution
+> audio streams, these 32-bit counters can overflow,
+> causing incorrect availability calculations.
 
-Hi,
+In your testing when did you observe the overflow condition?
 
-> On Wed,  2 Jul 2025 20:47:49 +0530 Parvathi Pudi wrote:
->> +=09=09=09if (emac->port_id) {
->> +=09=09=09=09regmap_update_bits
->> +=09=09=09=09=09(prueth->mii_rt,
->> +=09=09=09=09=09 PRUSS_MII_RT_TXCFG1,
->> +=09=09=09=09=09 PRUSS_MII_RT_TXCFG_TX_CLK_DELAY_MASK,
->> +=09=09=09=09=09 delay);
->=20
-> Instead of breaking the lines up like this you should factor the code
-> out or find some other way to reduce the indentation.
->=20
+> This patch series introduces a parallel, 64-bit safe API to solve
+> this problem while maintaining perfect backward compatibility with the
+> existing UAPI. A new pointer64 operation and corresponding ioctls
+> are added to allow the kernel to track counters using u64 and expose
+> these full-width values to user-space.
 
-Sure, we will address this in the next version.
+Please share patches for tinycompress support too, we need those to test
+this
 
->> +=09qid =3D icssm_prueth_get_tx_queue_id(emac->prueth, skb);
->> +=09ret =3D icssm_prueth_tx_enqueue(emac, skb, qid);
->> +=09if (ret) {
->> +=09=09if (ret !=3D -ENOBUFS && netif_msg_tx_err(emac) &&
->> +=09=09    net_ratelimit())
->> +=09=09=09netdev_err(ndev, "packet queue failed: %d\n", ret);
->> +=09=09goto fail_tx;
->> +=09}
->=20
->> +=09if (ret =3D=3D -ENOBUFS) {
->> +=09=09ret =3D NETDEV_TX_BUSY;
->=20
->=20
-> Something needs to stop the queue, right? Otherwise the stack will
-> send the frame right back to the driver.
->=20
+> The series is structured as follows:
+> 
+> Patch 1: Introduces the new internal pointer64 op, refactors the
+> core logic to use it, and defines the new UAPI structs.
+> 
+> Patch 2: Exposes the SNDRV_COMPRESS_TSTAMP64 ioctl.
+> 
+> Patch 3: Exposes the corresponding SNDRV_COMPRESS_AVAIL64 ioctl.
+> 
+> Patch 4: Implements the new .pointer64 operation in various ASoC
+> drivers that support compress offload.
+> 
+> This series has been tested on a Pixel 9 device. All compress offload
+> use cases, including long-running playback, were verified to work
+> correctly with the new 64-bit API, and no regressions were observed
+> when using the legacy API.
+> 
+> Thanks,
+> George (Joris) Verhaegen
+> 
+> Signed-off-by: Joris Verhaegen <verhaegen@google.com>
+> 
+> ---
+> 
+> Joris Verhaegen (4):
+>   ALSA: compress_offload: Add 64-bit safe timestamp infrastructure
+>   ALSA: compress_offload: Add SNDRV_COMPRESS_TSTAMP64 ioctl
+>   ALSA: compress_offload: Add SNDRV_COMPRESS_AVAIL64 ioctl
+>   ASoC: codecs: Implement 64-bit pointer operation
+> 
+>  include/sound/compress_driver.h               |   3 +
+>  include/sound/soc-component.h                 |   5 +
+>  include/sound/soc-dai.h                       |   6 +
+>  include/uapi/sound/compress_offload.h         |  32 +++
+>  sound/core/compress_offload.c                 | 210 ++++++++++++++----
+>  sound/soc/codecs/cs47l15.c                    |   1 +
+>  sound/soc/codecs/cs47l24.c                    |   1 +
+>  sound/soc/codecs/cs47l35.c                    |   1 +
+>  sound/soc/codecs/cs47l85.c                    |   1 +
+>  sound/soc/codecs/cs47l90.c                    |   1 +
+>  sound/soc/codecs/cs47l92.c                    |   1 +
+>  sound/soc/codecs/wm5102.c                     |   1 +
+>  sound/soc/codecs/wm5110.c                     |   1 +
+>  sound/soc/codecs/wm_adsp.c                    |  53 ++++-
+>  sound/soc/codecs/wm_adsp.h                    |   3 +
+>  .../intel/atom/sst-mfld-platform-compress.c   |  17 +-
+>  sound/soc/intel/atom/sst-mfld-platform.h      |   2 +
+>  sound/soc/intel/atom/sst/sst_drv_interface.c  |  43 +++-
+>  sound/soc/qcom/qdsp6/q6asm-dai.c              |  41 +++-
+>  sound/soc/soc-component.c                     |  20 ++
+>  sound/soc/soc-compress.c                      |  21 ++
+>  sound/soc/soc-dai.c                           |  14 ++
+>  sound/soc/sof/compress.c                      |  44 +++-
+>  sound/soc/sprd/sprd-pcm-compress.c            |  28 ++-
+>  sound/soc/sprd/sprd-pcm-dma.h                 |   2 +-
+>  sound/soc/uniphier/aio-compress.c             |  40 +++-
+>  26 files changed, 503 insertions(+), 89 deletions(-)
+> 
+> -- 
+> 2.50.0.727.gbf7dc18ff4-goog
 
-Yes, we will notify upper layer with =E2=80=9Cnetif_tx_stop_queue()=E2=80=
-=9D when returning
-=E2=80=9CNETDEV_TX_BUSY=E2=80=9D to not push again immediately.
-
->> +static inline void icssm_emac_finish_napi(struct prueth_emac *emac,
->> +=09=09=09=09=09  struct napi_struct *napi,
->> +=09=09=09=09=09  int irq)
->> +{
->> +=09napi_complete(napi);
->> +=09enable_irq(irq);
->=20
-> This helper has a single caller, just put the two lines of code directly
-> there. And use napi_complete_done(), please.
-
-We will address this in the next version.
-
-Thanks and Regards,
-Parvathi.
+-- 
+~Vinod
 
