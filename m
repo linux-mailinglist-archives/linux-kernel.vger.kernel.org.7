@@ -1,132 +1,107 @@
-Return-Path: <linux-kernel+bounces-727978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F71EB02205
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:41:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 337D4B0220A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C9361C4675A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:41:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDDFC3AF76F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676852EF647;
-	Fri, 11 Jul 2025 16:40:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8C01CDA3F;
-	Fri, 11 Jul 2025 16:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D902EF2A3;
+	Fri, 11 Jul 2025 16:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZnCh/mrq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1617017A2EB;
+	Fri, 11 Jul 2025 16:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752252043; cv=none; b=aO/hOINcddB05Vb4qT6ZoDcfP8egbjK4P3ohr59V/n+TC8IPPXj6dPmueEboLhJX+b6To9ZUoXtqAiwt0hRDXZo80J5lKLzCXNAqVZAZlGW1TgMftx0Vd83g9V7kiXPVst8QY7ROEWCwtS2dowtzvZKeYlMFqR3HxY+8FORnGuc=
+	t=1752252080; cv=none; b=Yq9gTotkqExCNvD9Skq/Nz37FhsVSh5igJ73F5KS+K5ZUFDD3Xxl5uEPwB3tviky0bOmY6ojGwzDKT8IKZrLJ6HcM46o9tEggpAJNPJD/wBYLeSWA+C/9k7w0tkIbIXYg21Uu/dGNAWnsbEgGcSWS4NLHn0KT9aBTXdoYsEejMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752252043; c=relaxed/simple;
-	bh=BDu5xBnZHEG5B/eR+hzVKbwYGVWtaFSNFGqu6NNKK94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JcYwEDOoOuT814luJmjy+2XCzRucuc2txm8BhH1Xf7bOfIP6Zx1iGL/SVDLsE+jGKJzanN4PHkcPlx3yS7skLf4KgkPoYABZMZ1HPRKYEGiDRr1+SYGcmZKBfRpYMxdTL94PLAFT7hZe68MQ3FzzjootfI77w5VlF3cRrBnA3PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B800316F8;
-	Fri, 11 Jul 2025 09:40:29 -0700 (PDT)
-Received: from [10.1.196.50] (e121345-lin.cambridge.arm.com [10.1.196.50])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2B3643F6A8;
-	Fri, 11 Jul 2025 09:40:37 -0700 (PDT)
-Message-ID: <a1a93c41-4c21-4b7a-a8b8-5d4e83d73931@arm.com>
-Date: Fri, 11 Jul 2025 17:40:35 +0100
+	s=arc-20240116; t=1752252080; c=relaxed/simple;
+	bh=8kydQt2ygMjXzniEw5vV9D8q+lxtwQSx5VEjcx4nSVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EtWjf96/1bnIZIvIb41HkXS6FEnHrM5AjfnoVG+2blDdQ6qszVTQ5eu0BKxmHWOAIoqrpeUfmeLHKNhWT6O8uIqJc+W+MEF/DibVScwDbqOLazN0rdqAYccVEzbGG/nHq/1S6XQUZy1CcmXLO+RZXZuMaEkQjoPg7vfbrJm1lJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZnCh/mrq; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752252080; x=1783788080;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8kydQt2ygMjXzniEw5vV9D8q+lxtwQSx5VEjcx4nSVY=;
+  b=ZnCh/mrqV03v2MPKRPsigl2wppajIlzmSvljg8ElLLJX+Btd/fHIK/DP
+   w9wUSxTmZHWxeQy7jbZHSV1xTm8+7OGAD1I5RWQDm86sYFbLlrmICUYaw
+   5Pfss36UbBGy3HRlkP3VzndV/2haisRkNF+eFEO+95WJ5FOjIjD8pFcLm
+   M+xRq7wtJ36Y9mDwtQRmipMaH0D9tMYF1349ca9Wqdn0I0tbFVuLNUqhz
+   lanIZpEJwnuTtPYcT1jacg6i1b8oKZc5G29k0QuK6DeniDBVnYshsOAQ7
+   iMipV7TygpE1yokPSgv6odA6h6tT2bGwckRwmzD7+iNMq1PBlTOo1b+5O
+   A==;
+X-CSE-ConnectionGUID: +OZ2Xt5eQRuEBRqK+s88TQ==
+X-CSE-MsgGUID: PfDJZGXtSyO1EpryzPL4PQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="77096042"
+X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
+   d="scan'208";a="77096042"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 09:41:13 -0700
+X-CSE-ConnectionGUID: K0dk7m6yQXqKPB0/9iXeEA==
+X-CSE-MsgGUID: CHhhCQzSTwGuSmoqvZ/Lrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
+   d="scan'208";a="161977387"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 09:41:10 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uaGo7-0000000EaJz-3roP;
+	Fri, 11 Jul 2025 19:41:07 +0300
+Date: Fri, 11 Jul 2025 19:41:07 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: temperature: maxim_thermocouple: use
+ IIO_DECLARE_DMA_BUFFER_WITH_TS()
+Message-ID: <aHE-o5_TvGtUyHoI@smile.fi.intel.com>
+References: <20250711-iio-use-more-iio_declare_buffer_with_ts-3-v1-1-f6dd3363fd85@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 04/10] accel/rocket: Add job submission IOCTL
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Oded Gabbay <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- Kever Yang <kever.yang@rock-chips.com>, Daniel Stone <daniel@fooishbar.org>,
- Da Xue <da@libre.computer>, Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-References: <20250606-6-10-rocket-v7-0-dc16cfe6fe4e@tomeuvizoso.net>
- <20250606-6-10-rocket-v7-4-dc16cfe6fe4e@tomeuvizoso.net>
- <fcb3ca23-7ebd-4f48-92d2-969b24936b9b@arm.com>
- <CAAObsKBiSX0HcxJJjTNGgE4FD4eAYW5wvY=bROtdkZ1mqf_0VQ@mail.gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <CAAObsKBiSX0HcxJJjTNGgE4FD4eAYW5wvY=bROtdkZ1mqf_0VQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711-iio-use-more-iio_declare_buffer_with_ts-3-v1-1-f6dd3363fd85@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 11/07/2025 5:00 pm, Tomeu Vizoso wrote:
-> On Tue, Jun 24, 2025 at 3:50 PM Robin Murphy <robin.murphy@arm.com> wrote:
->>
->> On 2025-06-06 7:28 am, Tomeu Vizoso wrote:
->> [...]
->>> diff --git a/drivers/accel/rocket/rocket_device.h b/drivers/accel/rocket/rocket_device.h
->>> index 10acfe8534f00a7985d40a93f4b2f7f69d43caee..50e46f0516bd1615b5f826c5002a6c0ecbf9aed4 100644
->>> --- a/drivers/accel/rocket/rocket_device.h
->>> +++ b/drivers/accel/rocket/rocket_device.h
->>> @@ -13,6 +13,8 @@
->>>    struct rocket_device {
->>>        struct drm_device ddev;
->>>
->>> +     struct mutex sched_lock;
->>> +
->>>        struct mutex iommu_lock;
->>
->> Just realised I missed this in the last patch, but iommu_lock appears to
->> be completely unnecessary now.
->>
->>>        struct rocket_core *cores;
->> [...]
->>> +static void rocket_job_hw_submit(struct rocket_core *core, struct rocket_job *job)
->>> +{
->>> +     struct rocket_task *task;
->>> +     bool task_pp_en = 1;
->>> +     bool task_count = 1;
->>> +
->>> +     /* GO ! */
->>> +
->>> +     /* Don't queue the job if a reset is in progress */
->>> +     if (atomic_read(&core->reset.pending))
->>> +             return;
->>> +
->>> +     task = &job->tasks[job->next_task_idx];
->>> +     job->next_task_idx++;
->>> +
->>> +     rocket_pc_writel(core, BASE_ADDRESS, 0x1);
->>> +
->>> +     rocket_cna_writel(core, S_POINTER, 0xe + 0x10000000 * core->index);
->>> +     rocket_core_writel(core, S_POINTER, 0xe + 0x10000000 * core->index);
->>
->> Those really look like bitfield operations rather than actual arithmetic
->> to me.
->>
->>> +
->>> +     rocket_pc_writel(core, BASE_ADDRESS, task->regcmd);
->>
->> I don't see how regcmd is created (I guess that's in userspace?), but
->> given that it's explicitly u64 all the way through - and especially
->> since you claim to support 40-bit DMA addresses - it definitely seems
->> suspicious that the upper 32 bits never seem to be consumed anywhere :/
-> 
-> Yeah, but there's no other register for BASE_ADDRESS address in the TRM.
+On Fri, Jul 11, 2025 at 10:33:55AM -0500, David Lechner wrote:
+> Use IIO_DECLARE_DMA_BUFFER_WITH_TS() to declare the buffer used for
+> scan data. There was not any documentation explaining the buffer layout
+> previously, and this makes it self-documenting. The element type is
+> also changed to __be16 to match the format of the data read from the
+> device. This way, the count argument to IIO_DECLARE_DMA_BUFFER_WITH_TS()
+> is just the number of channels rather than needing to calculate the
+> number of bytes required.
 
-That only reaffirms the question then - if this value is only ever 
-written verbatim to a 32-bit register, why is it 64-bit?
+...
 
-Thanks,
-Robin.
+> +#include <asm/byteorder.h>
+
+Hmm... I see nothing about this change in the commit message.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
