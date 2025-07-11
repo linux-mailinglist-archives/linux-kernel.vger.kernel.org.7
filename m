@@ -1,222 +1,152 @@
-Return-Path: <linux-kernel+bounces-728248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B18FB02576
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:57:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1434EB02565
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E600A80BDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:55:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BA4F17F599
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F102DCF4D;
-	Fri, 11 Jul 2025 19:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A2F2F3644;
+	Fri, 11 Jul 2025 19:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SextTZ8H"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2085.outbound.protection.outlook.com [40.107.236.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ReTJTguX"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23131EB5E5;
-	Fri, 11 Jul 2025 19:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752263412; cv=fail; b=pFB5iJnS3jR5sreiQ71Y+F7Abpy9KOWMq40LP8uk2dHC+dw9lLoVpvKw/YXHVmvkmFmD+MwRbV4+8qOtptie54Ju5pCJdZNy4X5ZpmhXLR+LVaPAtNSJh+pzTJGtjl2Pm5oTwSDPtRjpEvmlwdy7JClTAGi7iXsPp3BrC39W4ls=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752263412; c=relaxed/simple;
-	bh=cyUE6cH/CiR3pbcS/AaZAT3EFpHRVn6t8mV3DmMMnl4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F8CWamq2Ezxp3o2tONxFAYbRg4gGldAkLKwY8stv7BvHnwZMKT6F03tZHdoRd6BN6FqSsoN6Rf5Lam9lN898ZZtruPGsEygcR2HxSu4+THMei3l1fmORmtBdiYEjqug3T4G7Z0KuDwF7EqlBRa88tCaMbjEjjSbkhhgggngg/FQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SextTZ8H; arc=fail smtp.client-ip=40.107.236.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rH9W5AQgYNgxPt9sxhe75oty+ofR/Q/f/9nzialn58bV1AhXtinEJGNdJTfmpJqrf3iAYlivMPXksJy7UezdTvY0gh6jvogp+wUMKHtlvzxFTA82uSyFJhHG19IgFqJvW9lIrbco49jtmV8L+VWROzxlSUMLb73sHwo7U2VxMwmummvaf9rbsryaSge/J2qt8KOZ1wktq7i4a1MxQomFZIZCOF1KGTW5ia/wXIBQ3fMS/YnQYsh3Z1cRzzsDG5Lg/NXHRolcAGMTxYXI2wPeovvoHOgGhpY8qt3Dw12C/S5Ccojga2GLjihRpm4WhQPs0LuhUyoKZP2wxjq+JKSizQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Dghphar5QKZXwf3f/qw3kz3iODbX5A+BVZroKI8Fu/4=;
- b=yXupYqn740X+k8aOFWnPP3v2t7VXESwE/uwuSa0TP1ozHSQoFz6SeaOWasv4zyRGobSsgMxs7vB3ILW6RQsIKcYpkDN4kanAgw6xHXoeolt3Hn+KKyhMjFgELyqFwBybLa+4+U4dPX7F8dJbqyDasv7oSIQGhNL+k4R93eWErWiclnL5qtUiF0FeHg9o0mVOWhy4T1pNPlgSK/1IPMB5t9k8O/zDegGwPdaekLfpJ7bcmzudSt2EUyU96ReeULulnquQX6iVxDIqMgip0dJIaCbaIEcBe634+RJ7xaumQsjuZxQjFq+GT6aYtZM7XsfNx796llDoFjxa1ZhshGs53Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Dghphar5QKZXwf3f/qw3kz3iODbX5A+BVZroKI8Fu/4=;
- b=SextTZ8Hqdj2J/HHh8juv93WSOpaJUzDELy8kgiCVQYsZBza1bjgMxWeBvQeo0cEH/wtii1V1vq21kzo+3mnY+1tIT9mpJjfYBAOQt3srJgvrjzIW7fADZgmgxwHCaUOFrM6OlYT1RGxJU0HZ5QgTDadAkPn2xhpRArVEqCN3dI=
-Received: from SA0PR11CA0202.namprd11.prod.outlook.com (2603:10b6:806:1bc::27)
- by DS4PR12MB9793.namprd12.prod.outlook.com (2603:10b6:8:2a3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.25; Fri, 11 Jul
- 2025 19:50:08 +0000
-Received: from SN1PEPF0002636D.namprd02.prod.outlook.com
- (2603:10b6:806:1bc:cafe::af) by SA0PR11CA0202.outlook.office365.com
- (2603:10b6:806:1bc::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.27 via Frontend Transport; Fri,
- 11 Jul 2025 19:50:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF0002636D.mail.protection.outlook.com (10.167.241.138) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8922.22 via Frontend Transport; Fri, 11 Jul 2025 19:50:08 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Jul
- 2025 14:50:07 -0500
-Date: Fri, 11 Jul 2025 14:49:52 -0500
-From: Michael Roth <michael.roth@amd.com>
-To: Vishal Annapurve <vannapurve@google.com>
-CC: Sean Christopherson <seanjc@google.com>, Yan Zhao <yan.y.zhao@intel.com>,
-	<pbonzini@redhat.com>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<rick.p.edgecombe@intel.com>, <kai.huang@intel.com>,
-	<adrian.hunter@intel.com>, <reinette.chatre@intel.com>,
-	<xiaoyao.li@intel.com>, <tony.lindgren@intel.com>,
-	<binbin.wu@linux.intel.com>, <dmatlack@google.com>,
-	<isaku.yamahata@intel.com>, <ira.weiny@intel.com>, <david@redhat.com>,
-	<ackerleytng@google.com>, <tabba@google.com>, <chao.p.peng@intel.com>
-Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from
- kvm_gmem_populate()
-Message-ID: <20250711194952.ppzljx7sb6ouiwix@amd.com>
-References: <20250703062641.3247-1-yan.y.zhao@intel.com>
- <20250709232103.zwmufocd3l7sqk7y@amd.com>
- <aG_pLUlHdYIZ2luh@google.com>
- <aHCUyKJ4I4BQnfFP@yzhao56-desk>
- <20250711151719.goee7eqti4xyhsqr@amd.com>
- <aHEwT4X0RcfZzHlt@google.com>
- <20250711163440.kwjebnzd7zeb4bxt@amd.com>
- <CAGtprH9dCCxK=GwVZTUKCeERQGbYD78-t4xDzQprmwtGxDoZXw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367892F2726;
+	Fri, 11 Jul 2025 19:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752263497; cv=none; b=SRS1TzjfMWI1yATzBcoU5R6sN+ZU9eLQtdxNSgSeMbF5tBaScJ6heNIGpbt40BhDsbyrMbe+akDW7JIZn5HvVFVUosNAGz5DnZ8VE4IYXqUa60pCM/eqUcbXmq4U5/IY5ko9MOdsvYVEE5SDVH/sQvEKui+niRxwH3zOgolOmH4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752263497; c=relaxed/simple;
+	bh=QhVb3awfavrGOAP8/pfLZ+IvqDGTKuAPGBc8v/zl9so=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=EEdX47ylsYmJqeEWsiuTaud8ZwmMi8Od9MgZ6AZCOMHlEj9LdsFO2QBDWKhOpE0ZSfcKBdwQD3W4SKzO6Oi3KPbMozTnYvfXBRiNsI7rGCipWfcWdIl6FoAoMYMTlK7Am+F7x7NUw4rx8+/vUNfbFzqsvMJ0arNbYF7Vh9rPGgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ReTJTguX; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-70e1d8c2dc2so23943317b3.3;
+        Fri, 11 Jul 2025 12:51:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752263495; x=1752868295; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YhZ+HB499X8gL39AisVLojvyee+mqlvf6jpJvUlF+p8=;
+        b=ReTJTguXlv5A3rv38D+nBlEUe5WI/6NdZfM+bJHM1B503UhvdOuBzgBHcueYCzOQl+
+         L78Kxe13/51kk4w5YKWayL/daYhW87WmTjAnnW0FSH3BiIF5S3/RwA8COmdo6BaNb2cq
+         f8l4Nx9Ewi9loJkA54uhloc27o9bJtZ9Qt/u9wJfLs4yYrrr+OJz1ZnCD2b3VCC+b+PM
+         gG22ZGekt4OHW6fuPu3nmDhzz43wifsC2kEpXLGWeEzEgPJyNuBpkM2BNeWRklywyu1y
+         dMiJXk0MbMXsFjexB4OmjOeLykTHirtMVyl9zwaKIWCx8XLSrri08r+qQvd69LOt2sVu
+         lheg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752263495; x=1752868295;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YhZ+HB499X8gL39AisVLojvyee+mqlvf6jpJvUlF+p8=;
+        b=ajHobtk2W1mX4L+ZfSGDXKFCi6Bd9Qe/UX/dmhKonSdfLKUYyypmz9v4bRM/oOEaLi
+         nVHHod2dw55pijX3LMGhvDWB3YpgBDCjOuPUMjNPPnT8EsGR5VEeXRWTiiithuRAGhhy
+         HzdzaRY2rkItQi0TBqWSd+vwLpr4e9DAgn6yUAN30IONjV8tNeUhBJ5VpzCWUqgAXzeM
+         SB2eJgvWwW6oSi6+vvZbgwPnm5zGFQWzYAf9KXbboWllyGBuwnLj7BmLcjVfnfkUDAIn
+         FJetowU+CrrJL6mfbAcSlxPa7q296hvamoMbEsp/NsTz2GoxEayX/fOnv8baVDwIjS+a
+         f1FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSd6UPTvEUVeuNeUB3yd7LlI1/re96VrOysbq45ERqVzwjzhgX74XgT2MlyY1dnIEaGFnnxDg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjMBKYqvSwlD7v3XZqRcuQBQLVLh0ThTVzBbHj7Ce8XJvjJzPX
+	Wc7yWXMlxjBs3iQPBczpEK3FHUmJQ1Su/kLVt3G8BoUEdAbuOeSTLk5F
+X-Gm-Gg: ASbGnctV1o/6zCbqEH7Z+hqaHq6OpFxdjwNN4m4CZ4D5/r5mpEXB5wRiTZfhAuN+dry
+	JkJu1364lLXBdB/JNV4uAlsWdNrxdZIQ52WLZcZC5QoEv3UWzpbkZDHB4dDpevtQ1eq+RbqFJlL
+	0jUJPw3JAeN8sJBb5HObee3n6X+JHTaUM+X3Gwj+Re8S30eJBWIIbUN/o7W2rPOV2E+o7LM+MLP
+	mfvdG+TY0a91jX/GrkKtELq3OhxRCC3nOfflWhK85nkQafrh5anaaj7PmS7V2jws2h0W9PRbbnE
+	loye35JfyK9UtdfZjR1tb8TyE4glEKHSG85M5ZxrRgfcMV+8PS1JxZ7uVfdDcGWDZYy//4KrBhQ
+	KJQbKQ3miSMvShd3RP8EY2X/s0AF0ZcE/S0z3RtlOzk5+gfPINMyxHYiloUu5f+G2g5FHEdveVv
+	I=
+X-Google-Smtp-Source: AGHT+IGaRIPGbkptovhOL1sc0wpqdhiexsEWcFe2ZOkbXgAKyg0s/QTsWWPVLMKhz/WxFiVpiYpkEg==
+X-Received: by 2002:a05:690c:730a:b0:70e:7882:ea8e with SMTP id 00721157ae682-717d7a619b4mr74604077b3.31.1752263495077;
+        Fri, 11 Jul 2025 12:51:35 -0700 (PDT)
+Received: from localhost (234.207.85.34.bc.googleusercontent.com. [34.85.207.234])
+        by smtp.gmail.com with UTF8SMTPSA id 00721157ae682-717c61ea4b8sm8809557b3.105.2025.07.11.12.51.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 12:51:34 -0700 (PDT)
+Date: Fri, 11 Jul 2025 15:51:33 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Felix Fietkau <nbd@nbd.name>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ netdev@vger.kernel.org, 
+ Eric Dumazet <edumazet@google.com>, 
+ Neal Cardwell <ncardwell@google.com>, 
+ Kuniyuki Iwashima <kuniyu@google.com>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ David Ahern <dsahern@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, 
+ Willem de Bruijn <willemb@google.com>, 
+ Richard Gobert <richardbgobert@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Message-ID: <68716b45c8b0d_1682652947c@willemb.c.googlers.com.notmuch>
+In-Reply-To: <2c84bde8-5d5a-467f-a7ac-791207e7903a@nbd.name>
+References: <20250705150622.10699-1-nbd@nbd.name>
+ <686a7e07728fc_3aa654294f9@willemb.c.googlers.com.notmuch>
+ <2c84bde8-5d5a-467f-a7ac-791207e7903a@nbd.name>
+Subject: Re: [PATCH net] net: fix segmentation after TCP/UDP fraglist GRO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGtprH9dCCxK=GwVZTUKCeERQGbYD78-t4xDzQprmwtGxDoZXw@mail.gmail.com>
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002636D:EE_|DS4PR12MB9793:EE_
-X-MS-Office365-Filtering-Correlation-Id: cc16fb01-593f-45e7-6f9a-08ddc0b423d0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|36860700013|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZGNzR29kM1BHd1V4S3JhcW14d2VmK0dpeVBuVXNqMFQzb3Y0aXRmSGx5ckxt?=
- =?utf-8?B?U054b3IzUkZQbk5HVFVzekFneExvZEdKRURGamZ0dkxuWjNCNEtZMm9zWmJq?=
- =?utf-8?B?Yzl5aWJQeDFCSFNRSm5OUkdvM0x6VzJhNmppb1Vsc3RVOUJxOWwydjJUZTJX?=
- =?utf-8?B?d1hzRCtZclFORjl1VGd1ZS9OQU91enB5MkNzUmNGcnF4UForOTk3VlhJUjJJ?=
- =?utf-8?B?R1FuTnZPYkdmd3EyTndWbjZTb3VnbkF3c1ZCd0RnWCtJeXVxMjFuc2c3blFu?=
- =?utf-8?B?QUlNQytzVm9NRDE3aHZoOG5uRWxHQ3RWUlJDeXU2RUczQVlKSU1IOWZDK1NF?=
- =?utf-8?B?MW5TeU9KeEk2ZDdnalVENy9uN0M0NWZCdVd0MzlZNlNxNEVicFp6bWkyek5M?=
- =?utf-8?B?anZaTzZQczgrZzhyTURXcm5yNDVoK01JT2ZPUDV1RjlOWWlLWFBWTzJkRzNu?=
- =?utf-8?B?OUxEcTg5UnZsanlYOVJoREpLcFdTZGJvbStwR1VVekpEMGltTEpuUHJKTktJ?=
- =?utf-8?B?Qmd1ZGFwem85QzhibUZzVEs3OVJjSWRIR2RLRXQ1TW9QSGpEU2g1Q3ptbFpn?=
- =?utf-8?B?Y1lvb2Rncldwbk1lcDBzRklMb0Q1d1ZRb2tuckZCeDNFaHdBQk11NmVUZUxH?=
- =?utf-8?B?VFZkRDJNSnpkaGxSSUhMYnlRN3BUUFZQajEvRkRzb2VXd2ZRY0tYMGQramZt?=
- =?utf-8?B?Qy9oQk5TR210U2RuM3AzTWJSbThxVTVIQjhqSUdtN1lLL0lOdEZjelFkazFx?=
- =?utf-8?B?RS9SVDB4MWNST1YxYXdOdms1OXhBRlhSeXQ1aU1ObFFPakFNN1NjZ3pvTjBp?=
- =?utf-8?B?ZlBCTm9jT0lvd0NwcTBoYlpxVXM3R09OZlZZTmo0ZzF3N3JCdldZQnpxL1ZN?=
- =?utf-8?B?UUFHcDc3Z3JpNTNMS01SVkUra1dlTXZ4YkNhU2VkZGR0aVZHSDlzRFVwcWZs?=
- =?utf-8?B?RmJnbGxLa2pJdTJPMFkrWDUrUlBWb3E2NDVCeHFOTVpHZzFZUXBkSmVCZ3kr?=
- =?utf-8?B?RnF3UjVpQzZYa29HRFFNNVJXUnlVbW8yU0hWRVVVc3VOZnp0WFBGZkcxMlNY?=
- =?utf-8?B?TjJlcXJuazhKZVpuSGg2ZStVK3AxZlJXcTBZdWJvRzdOUDBGMVMxWnZ2MXQ2?=
- =?utf-8?B?RnkvSEJ0Y05MRXQvVGxtMGloVnMzU2ZpMXhrd0lMazRha0VSSzBPZUFJblB3?=
- =?utf-8?B?UVlka1dkbTEvVVFUS0llMUFqOUJoZHYwWElnaHQyeFA1K2JCQnZtQzZ1bldH?=
- =?utf-8?B?bVQ4MW1OeS9VQ3pyYTVKdVRxMjhkZnlHV1NwSmhtbVloY1RYUnkxWk5LWitT?=
- =?utf-8?B?RlRqekdjbWFIZ0ZxYUZLSmViVURJTFJSOFFPKzh0Q1dMN0dFS28vM1B3VHRq?=
- =?utf-8?B?bEFyL08ybXkrL2pReXRNUkttczVaMEo5Um9ZTnBrRS9tR3V0b29GNGtkNHdE?=
- =?utf-8?B?dFNaSTBoQzRPVEt3dHVFOGJMYW11Ti9XSnBEMTZ5bjJuZmYyUTRFVm9kS21K?=
- =?utf-8?B?OXRUQnlwUDVDSFlnTkpYU3dLTDJxNW9vZEVmdmJ3SnpTWGF0WTh3d2QxNURk?=
- =?utf-8?B?SmlVLytVeXcrVTZ2OGFxSC91RlkrcHNZcDZuK3Zkejd2d3d1K0RuNXVOZytS?=
- =?utf-8?B?c3d3SlpzaWZpM2czNTdjd1V3TmNQV0VlYjMzaHhjS1pKci9aazM4YzROMm1Z?=
- =?utf-8?B?VHFjUU1Vc1cvZXUyQXpQWElITERGWnhrS1BET2MySVlYOTlTRnlSaXc4OVlK?=
- =?utf-8?B?T2RKNmplWXpYT0hScFBlakRJNGp6SFFYYmZCVkRDWUs4a0RIRFArUTZKRUV5?=
- =?utf-8?B?dUZjdGRBbng5TDQydzFEdGFCRjNjbG5obDEwWE1SZ0dhM245TDJTeGpEbjNW?=
- =?utf-8?B?L2xKa1BoRFFzOEZITVFidFJDbm1pQ0I0TDFYTzc3TWpDVTd3ZEFXMlNxRzVl?=
- =?utf-8?B?TmJObzVDeVBtVWlvcCtEUGl2MWZ0OXhkRmRKMVZQdmVwK0ZXQkUrVGpiaytT?=
- =?utf-8?B?eUZmRjJCeCtPak9GclpGZFhGeGRmWXVBOGxwazRnT1NzSHlQdEJtYmZRbVFv?=
- =?utf-8?Q?9En0BT?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 19:50:08.3338
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc16fb01-593f-45e7-6f9a-08ddc0b423d0
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002636D.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR12MB9793
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 11, 2025 at 11:38:10AM -0700, Vishal Annapurve wrote:
-> On Fri, Jul 11, 2025 at 9:37 AM Michael Roth <michael.roth@amd.com> wrote:
-> >
-> > >
-> > > static long __kvm_gmem_populate(struct kvm *kvm, struct kvm_memory_slot *slot,
-> > >                               struct file *file, gfn_t gfn, void __user *src,
-> > >                               kvm_gmem_populate_cb post_populate, void *opaque)
-> > > {
-> > >       pgoff_t index = kvm_gmem_get_index(slot, gfn);
-> > >       struct page *src_page = NULL;
-> > >       bool is_prepared = false;
-> > >       struct folio *folio;
-> > >       int ret, max_order;
-> > >       kvm_pfn_t pfn;
-> > >
-> > >       if (src) {
-> > >               ret = get_user_pages((unsigned long)src, 1, 0, &src_page);
-> > >               if (ret < 0)
-> > >                       return ret;
-> > >               if (ret != 1)
-> > >                       return -ENOMEM;
-> > >       }
-> >
-> > One tricky part here is that the uAPI currently expects the pages to
-> > have the private attribute set prior to calling kvm_gmem_populate(),
-> > which gets enforced below.
-> >
-> > For in-place conversion: the idea is that userspace will convert
-> > private->shared to update in-place, then immediately convert back
-> > shared->private; so that approach would remain compatible with above
-> > behavior. But if we pass a 'src' parameter to kvm_gmem_populate(),
-> > and do a GUP or copy_from_user() on it at any point, regardless if
-> > it is is outside of filemap_invalidate_lock(), then
-> > kvm_gmem_fault_shared() will return -EACCES.
+Felix Fietkau wrote:
+> On 06.07.25 15:45, Willem de Bruijn wrote:
+> > Felix Fietkau wrote:
+> >> Since "net: gro: use cb instead of skb->network_header", the skb network
+> >> header is no longer set in the GRO path.
+> >> This breaks fraglist segmentation, which relies on ip_hdr()/tcp_hdr()
+> > 
+> > Only ip_hdr is in scope.
+> > 
+> > Reviewing TCP and UDP GSO, tcp_hdr/transport header is used also
+> > outside segment list. Non segment list GSO also uses ip_hdr in case
+> > pseudo checksum needs to be set.
+> Will change that in v2, thanks.
+> > The GSO code is called with skb->data at the relevant header, so L4
+> > helpers are not strictly needed. The main issue is that data will be
+> > at the L4 header, and some GSO code also needs to see the IP header
+> > (e.g., for aforementioned pseudo checksum calculation).
+> > 
+> >> to check for address/port changes.
+> > 
+> > If in GSO, then the headers are probably more correctly set at the end
+> > of GRO, in gro_complete.
 > 
-> I think that's a fine way to fail the initial memory population, this
-> simply means userspace didn't pass the right source address. Why do we
-> have to work around this error? Userspace should simply pass the
-> source buffer that is accessible to the host or pass null to indicate
-> that the target gfn already has the needed contents.
-> 
-> That is, userspace can still bring a separate source buffer even with
-> in-place conversion available.
+> Just to clarify, in inet/ipv6_gro_complete you want me to iterate over 
+> all fragment skbs, calculate the header offset based on the first skb, 
+> and set it?
 
-I thought there was some agreement that mmap() be the 'blessed'
-approach for initializing memory with in-place conversion to help
-untangle some of these paths, so it made sense to enforce that in
-kvm_gmem_populate() to make it 'official', but with Sean's suggested
-rework I suppose we could support both approaches.
+If that is the best way to fix this without causing regressions.
 
--Mike
+There may be a better solution. I just don't have a good suggestion
+off the top of my head.
 
-> 
-> > The only 2 ways I see
-> > around that are to either a) stop enforcing that pages that get
-> > processed by kvm_gmem_populate() are private for in-place conversion
-> > case, or b) enforce that 'src' is NULL for in-place conversion case.
-> >
+The blamed commit itself fixed an issue, where GRO code incorrectly
+used the network header in GRO complete when it should be using the
+inner network header.
+
+Perhaps with moving that access to the CB, it is still safe to also
+set the original network header. Perhaps Richard has an opinion.
+
+If we want to be exact, these should still be updated to the inner
+fields for encapsulated inner L4 protocols. Similar to what
+tcp_gro_complete does for the transport header.
+
+
 
