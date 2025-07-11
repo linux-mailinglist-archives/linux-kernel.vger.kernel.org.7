@@ -1,40 +1,44 @@
-Return-Path: <linux-kernel+bounces-727062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D7DB0148D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:26:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8EEB01474
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20613B44551
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:24:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C58BC761097
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2DE1EDA0F;
-	Fri, 11 Jul 2025 07:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F090D1F873B;
+	Fri, 11 Jul 2025 07:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Aa+3MMGC"
-Received: from mail-m19731117.qiye.163.com (mail-m19731117.qiye.163.com [220.197.31.117])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64E01E5B73;
-	Fri, 11 Jul 2025 07:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.117
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="mL5R8Od2"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3A31EFF9B;
+	Fri, 11 Jul 2025 07:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752218725; cv=none; b=tfDeoYpwjFxB0U4WQUDjwVdr8Kibj+5xNDnh0Ub65aHClMcyqBM2E6CBWsy5oyz4lUhD6oAeWqh5TWbY4+YDEQatwYGqrva/I3mxT1vwU5T5UWRDOwqJOxqr9k68nPg2SA0n1ArMs8FzA8tnr4T3bXRX7EmziA2v16y4VdCOQOc=
+	t=1752218458; cv=none; b=KHl8N1zhVC0s0+Ls0/xbSV/gC7m7xC2qmLMYxEne+RYcoAM4bh+ox+/UnK7m1jqXi5HSOm+AIIvkZgCRXqhmrbPNlTPan4IN1mH9ZI9Fa+81i+x+e7n5yTAfj4M4G86P29/VAEPsrenhV8UkwF8J4tx6cQ3mUMQ6Xp+jpvUmbtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752218725; c=relaxed/simple;
-	bh=EPbH64nRja7CPYX6FXOzsav2K14chsOTUkAA897dKuo=;
+	s=arc-20240116; t=1752218458; c=relaxed/simple;
+	bh=Sr42ywoQy8AyYBFRt7eUXbqxZakD2B6wyAnQRkhNU7I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ol17qkxqFvwrjSAl/WFjPQ4+C4ds1fojxA11mnNYmYY7eIQgttqQB+vdFCqKxMZgR+rRlKi9tkhAVtUBvM0Kre483qskhKQ39Z/zg9jHATNZiSqMdbKdkd65EphKDEANZoYv3Oyp6fLcddvA/q7hB2CaWaDbueXW0/bRiW21bqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Aa+3MMGC; arc=none smtp.client-ip=220.197.31.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1badf1316;
-	Fri, 11 Jul 2025 15:20:05 +0800 (GMT+08:00)
-Message-ID: <600f723d-1ec7-4e67-b6f1-316ac8c09235@rock-chips.com>
-Date: Fri, 11 Jul 2025 15:20:04 +0800
+	 In-Reply-To:Content-Type; b=nuoiEWeW76MEN0Gx0nJXMbltfnrt5qvHkn2bM0rFZ/sJN79nIs82sfLc/fyVZes9LVn0ZZvc2wxn7FTwO3P9dZ69OIcwvfFdW287y8IhFOAXxwnZ5f71hz6rMN0Ba/tJv3NWyEMG65Ka6eYvwPHBtNGxfenzgI0DrSfDIGJsPTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=mL5R8Od2; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=xhsgskadebniNmrBk5hnagfJTp/8LcUkYv/Wop6E+Qc=;
+	b=mL5R8Od2fjhgwYt0/d92XP7chHPdOGXDY/mM/47u0mrud81MpH03wWeoYxlpGV
+	vstbIDPxzzJgnuoKiB0YxfYGNyKH3SdkOZog5GdiogMWepjjJ0p/RWu+kA3evqDl
+	wrO0o1184FrCcJkZEhDrrqYjFbyh3PVo2fnvyD1qxRjpk=
+Received: from [172.21.20.151] (unknown [])
+	by gzsmtp5 (Coremail) with SMTP id QCgvCgD3Hw00u3Bo3oMJAA--.1286S2;
+	Fri, 11 Jul 2025 15:20:21 +0800 (CST)
+Message-ID: <515fc9c6-a4a2-4fdf-8d91-396e42c95767@163.com>
+Date: Fri, 11 Jul 2025 15:20:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,76 +46,188 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/12] drm/exynos: exynos_dp: Remove
- &exynos_dp_device.ptn_bridge
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- hjc@rock-chips.com, andy.yan@rock-chips.com,
- dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
- dianders@chromium.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20250709070139.3130635-1-damon.ding@rock-chips.com>
- <20250709070139.3130635-5-damon.ding@rock-chips.com>
- <4596850.bcXerOTE6V@diego>
+Subject: Re: [PATCH v4 2/3] af_packet: fix soft lockup issue caused by
+ tpacket_snd()
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250710102639.280932-1-luyun_611@163.com>
+ <20250710102639.280932-3-luyun_611@163.com>
+ <686fc5051bdb8_fd38829485@willemb.c.googlers.com.notmuch>
 Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <4596850.bcXerOTE6V@diego>
+From: luyun <luyun_611@163.com>
+In-Reply-To: <686fc5051bdb8_fd38829485@willemb.c.googlers.com.notmuch>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkxNSFYaH0NKSk8YGU9PHUJWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a97f85b090603a3kunm38f22b26f2f422
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6M0k6Ijo*FzE5HR8KEzA*Czwu
-	HwowCQtVSlVKTE5JSUpDT0tMT0tCVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJSUtPNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=Aa+3MMGCvohGN1l0oGiN9mPE9+buYJEnl7ehbJtNvS297qP4+L7vINeEZPucXb9o8A4JzLAXyJsHSJEQslBF+pchRkHo/Eum2OyZKRYcPQ6U1nEYgyo+L5wX146JCFtmGeuaa1OuwRzenz3aIxjmbCmDgLQJwoJopLf5Na7YYzg=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=47mqYoiKeZ/zqm9N6N2f/Tu0kYWZlKHaQ/Ixw2H+aSk=;
-	h=date:mime-version:subject:message-id:from;
+X-CM-TRANSID:QCgvCgD3Hw00u3Bo3oMJAA--.1286S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Xr47Zw13KrW8Jw18Kw1kGrg_yoWxGr4Dpa
+	yUKrWqka1DXr1Iyw4xJF4kJF12vws5JFs3GrZ5X34SywnxtasavFWIkrWY9Fy8uFWkt3W2
+	vF4qqr4UC34qya7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UVxRgUUUUU=
+X-CM-SenderInfo: pox130jbwriqqrwthudrp/1tbiOh6HzmhwtTbNTQAAs2
 
-Hi Heiko,
 
-On 2025/7/10 3:55, Heiko Stübner wrote:
-> Hi Damon,
-> 
-> Am Mittwoch, 9. Juli 2025, 09:01:31 Mitteleuropäische Sommerzeit schrieb Damon Ding:
->> Use &analogix_dp_plat_data.bridge instead of &exynos_dp_device.ptn_bridge
->> directly.
+在 2025/7/10 21:49, Willem de Bruijn 写道:
+> Yun Lu wrote:
+>> From: Yun Lu <luyun@kylinos.cn>
 >>
->> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-> 
->> @@ -155,7 +154,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
->>   
->>   	dp->drm_dev = drm_dev;
->>   
->> -	if (!dp->plat_data.panel && !dp->ptn_bridge) {
->> +	if (!dp->plat_data.panel && !dp->plat_data.panel) {
-> 
-> typo. The second test should be for dp->plat_data.bridge
+>> When MSG_DONTWAIT is not set, the tpacket_snd operation will wait for
+>> pending_refcnt to decrement to zero before returning. The pending_refcnt
+>> is decremented by 1 when the skb->destructor function is called,
+>> indicating that the skb has been successfully sent and needs to be
+>> destroyed.
+>>
+>> If an error occurs during this process, the tpacket_snd() function will
+>> exit and return error, but pending_refcnt may not yet have decremented to
+>> zero. Assuming the next send operation is executed immediately, but there
+>> are no available frames to be sent in tx_ring (i.e., packet_current_frame
+>> returns NULL), and skb is also NULL, the function will not execute
+>> wait_for_completion_interruptible_timeout() to yield the CPU. Instead, it
+>> will enter a do-while loop, waiting for pending_refcnt to be zero. Even
+>> if the previous skb has completed transmission, the skb->destructor
+>> function can only be invoked in the ksoftirqd thread (assuming NAPI
+>> threading is enabled). When both the ksoftirqd thread and the tpacket_snd
+>> operation happen to run on the same CPU, and the CPU trapped in the
+>> do-while loop without yielding, the ksoftirqd thread will not get
+>> scheduled to run. As a result, pending_refcnt will never be reduced to
+>> zero, and the do-while loop cannot exit, eventually leading to a CPU soft
+>> lockup issue.
+>>
+>> In fact, skb is true for all but the first iterations of that loop, and
+>> as long as pending_refcnt is not zero, even if incremented by a previous
+>> call, wait_for_completion_interruptible_timeout() should be executed to
+>> yield the CPU, allowing the ksoftirqd thread to be scheduled. Therefore,
+>> the execution condition of this function should be modified to check if
+>> pending_refcnt is not zero, instead of check skb.
+>>
+>> As a result, packet_read_pending() may be called twice in the loop. This
+>> will be optimized in the following patch.
+>>
+>> Fixes: 89ed5b519004 ("af_packet: Block execution of tasks waiting for transmit to complete in AF_PACKET")
+>> Cc: stable@kernel.org
+>> Suggested-by: LongJun Tang <tanglongjun@kylinos.cn>
+>> Signed-off-by: Yun Lu <luyun@kylinos.cn>
+>>
+>> ---
+>> Changes in v4:
+>> - Split to the fix alone. Thanks: Willem de Bruijn.
+>> - Link to v3: https://lore.kernel.org/all/20250709095653.62469-3-luyun_611@163.com/
+>>
+>> Changes in v3:
+>> - Simplify the code and reuse ph to continue. Thanks: Eric Dumazet.
+>> - Link to v2: https://lore.kernel.org/all/20250708020642.27838-1-luyun_611@163.com/
+>>
+>> Changes in v2:
+>> - Add a Fixes tag.
+>> - Link to v1: https://lore.kernel.org/all/20250707081629.10344-1-luyun_611@163.com/
+>> ---
+>> ---
+>>   net/packet/af_packet.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+>> index 7089b8c2a655..581a96ec8e1a 100644
+>> --- a/net/packet/af_packet.c
+>> +++ b/net/packet/af_packet.c
+>> @@ -2846,7 +2846,7 @@ static int tpacket_snd(struct packet_sock *po, struct msghdr *msg)
+>>   		ph = packet_current_frame(po, &po->tx_ring,
+>>   					  TP_STATUS_SEND_REQUEST);
+>>   		if (unlikely(ph == NULL)) {
+>> -			if (need_wait && skb) {
+>> +			if (need_wait && packet_read_pending(&po->tx_ring)) {
+> Unfortunately I did not immediately fully appreciate Eric's
+> suggestion.
+>
+> My comments was
+>
+>      If [..] the extra packet_read_pending() is already present, not
+>      newly introduced with the fix
+>
+> But of course that expensive call is newly introduced, so my
+> suggestion was invalid.
+>
+> It's btw also not possible to mix net and net-next patches in a single
+> series like this (see Documentation/process/maintainer-netdev.rst).
 
-That was so careless of me! I will fix it in the next version.
+Sorry, I misunderstood your comments. In the next version, I will 
+combine the second and third patches together.
 
-> 
-> 
->>   		ret = exynos_dp_dt_parse_panel(dp);
->>   		if (ret)
->>   			return ret;
-> 
-> 
-> 
-> 
-> 
+>
+> But, instead of going back entirely to v2, perhaps we can make the
+> logic a bit more obvious by just having a while (1) at the end to show
+> that the only way to exit the loop (except errors) is in the ph == NULL
+> branch. And break in that loop directly.
+>
+> There are two other ways to reach that while statement. A continue
+> on PACKET_SOCK_TP_LOSS, or by regular control flow. In both cases, ph
+> is non-zero, so the condition is true anyway.
 
-Best regards,
-Damon
+Following your suggestion, I tried modifying the code (as shown below),  
+now the loop condition is still the same as origin, but the logic is now 
+clearer and more obvious.
+
+Thanks.
+
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index 7089b8c2a655..be608f07441f 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -2846,15 +2846,21 @@ static int tpacket_snd(struct packet_sock *po, 
+struct msghdr *msg)
+                 ph = packet_current_frame(po, &po->tx_ring,
+                                           TP_STATUS_SEND_REQUEST);
+                 if (unlikely(ph == NULL)) {
+-                       if (need_wait && skb) {
++                       /* Note: packet_read_pending() might be slow if we
++                        * have to call it as it's per_cpu variable, but in
++                        * fast-path we don't have to call it, only when ph
++                        * is NULL, we need to check the pending_refcnt.
++                        */
++                       if (need_wait && 
+packet_read_pending(&po->tx_ring)) {
+                                 timeo = 
+wait_for_completion_interruptible_timeout(&po->skb_completion, timeo);
+                                 if (timeo <= 0) {
+                                         err = !timeo ? -ETIMEDOUT : 
+-ERESTARTSYS;
+                                         goto out_put;
+                                 }
+-                       }
+-                       /* check for additional frames */
+-                       continue;
++                               /* check for additional frames */
++                               continue;
++                       } else
++                               break;
+                 }
+
+                 skb = NULL;
+@@ -2943,14 +2949,7 @@ static int tpacket_snd(struct packet_sock *po, 
+struct msghdr *msg)
+                 }
+                 packet_increment_head(&po->tx_ring);
+                 len_sum += tp_len;
+-       } while (likely((ph != NULL) ||
+-               /* Note: packet_read_pending() might be slow if we have
+-                * to call it as it's per_cpu variable, but in fast-path
+-                * we already short-circuit the loop with the first
+-                * condition, and luckily don't have to go that path
+-                * anyway.
+-                */
+-                (need_wait && packet_read_pending(&po->tx_ring))));
++       } while (1);
+
+         err = len_sum;
+         goto out_put;
+
+
+
+>
+>>   				timeo = wait_for_completion_interruptible_timeout(&po->skb_completion, timeo);
+>>   				if (timeo <= 0) {
+>>   					err = !timeo ? -ETIMEDOUT : -ERESTARTSYS;
+>> -- 
+>> 2.43.0
+>>
 
 
