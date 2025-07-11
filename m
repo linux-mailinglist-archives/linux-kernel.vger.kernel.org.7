@@ -1,183 +1,144 @@
-Return-Path: <linux-kernel+bounces-727302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B825B01808
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:35:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A306B01817
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE7E21C83CDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:35:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F364B3B420A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A77F27A444;
-	Fri, 11 Jul 2025 09:35:32 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4C427A91D;
+	Fri, 11 Jul 2025 09:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OfDSUfdR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3192E2522A1;
-	Fri, 11 Jul 2025 09:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5479E253F12;
+	Fri, 11 Jul 2025 09:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752226532; cv=none; b=akNr7B26Le73oj64IhjGv4t+Q17LIpljBWGm9b5Lz5CGgTw17T6+JrEfHkaGt+GTOPK4soJrhayg2OyVg1DVsoiwYGzT0LtZAiakkGGRfPrmiYmyFM6WmXXTFCC05Aardowh1hsl/8Qt1tkPI7QWU8JU4+8zAlkIkrpfGPE/0Ks=
+	t=1752226592; cv=none; b=ORotkoGB9yoOtX+0Gc6/qElvah8/5Py/61nExpXjwcB/fN8jA7ZVHhR3hvVg15IB6HGR+zduL6xPMwGLSjZwlX5xpIvd32+DLSM2yVcp9ZnjQy8BadJkKEa+KlifqZykRToVwWLv5mhdPomETENAWZ/vFnmcTmuW6V6STOTGoDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752226532; c=relaxed/simple;
-	bh=frzcoxfMbDCxXvCnoXiUzUXMT/QJoYBRFiexwj4uF6Q=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sa1PdS+nv+tE1vc3yk6yDsjnQMSnEK3spl7j9QvrQiU/zHrlaS6KHpj4/pkRCQMb07N0Wp/5CFJZ73/wsyifhRfTHaJ2fKuFu4KAdWiazGwPlFq8VhNKK22dahwiW9FTrU6OqngeZRbYw6t2EaMNtOw5fNWWTNtkb6VKpkwO/L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bdmkx2Gdrz6GBkR;
-	Fri, 11 Jul 2025 17:34:33 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id CDD121402EB;
-	Fri, 11 Jul 2025 17:35:27 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Jul
- 2025 11:35:27 +0200
-Date: Fri, 11 Jul 2025 10:35:25 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Alireza Sanaee <alireza.sanaee@huawei.com>
-CC: <krzk@kernel.org>, <robh@kernel.org>, <coresight@lists.linaro.org>,
-	<devicetree@vger.kernel.org>, <dianders@chromium.org>,
-	<james.clark@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
-	<linuxarm@huawei.com>, <mark.rutland@arm.com>, <mike.leach@linaro.org>,
-	<ruanjinjie@huawei.com>, <saravanak@google.com>,
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH v2 1/5] of: add infra for finding CPU id from phandle
-Message-ID: <20250711103525.000022d7@huawei.com>
-In-Reply-To: <20250708151502.561-2-alireza.sanaee@huawei.com>
-References: <20250708151502.561-1-alireza.sanaee@huawei.com>
-	<20250708151502.561-2-alireza.sanaee@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1752226592; c=relaxed/simple;
+	bh=wravLw2QyrJLSNCdmXnM24JOPnV05g3lbLl4G+9JMH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qS7qBFU8pf8uQeqcRle30bMpnHcX4mqwbG5phFs8p00GwjP66+2HeVES4ooOWkUesArvJZTlFgPlGCwPDUwlNQ2AvIk6ZZfES+wqz5+JuHYaorVJelZta8xovKCYs4iWjjLIvUOW/Qbbwi5gHTOyXoZCOM1UgmaLqqkvlpwlaSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OfDSUfdR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6DFAC4CEED;
+	Fri, 11 Jul 2025 09:36:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752226591;
+	bh=wravLw2QyrJLSNCdmXnM24JOPnV05g3lbLl4G+9JMH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OfDSUfdRw476/lz/ONpYwW1LihVsJP6g0T4SmP1iy2bvr6qRewRf+NN6qbBh4loy4
+	 XRACTQsVQQKkeVgPiZ+RWxgjPwc4mFpA7ovzYbzspNEdtIOM16+PsVIznQZuGXTAjO
+	 YZepOneoK/wohc6HXIs4ZC6Dw0BMRD2fZXWkmRYafw+nYnYuohAHbnQyfuMF4JKUzo
+	 b/kZEPC8SbEEm0PHcf5sIEjBTqR4I9EN5tqD8XTVmuUcTUJyvUBSuDhq4FG32/pV4q
+	 Nk1uYNjkE5XN2AF5ImMIUTv0KevWM9wO4dVYjLt97vGrQgXCndA8TJQLrAVNEasasg
+	 H4O1AEKzCaDFg==
+Date: Fri, 11 Jul 2025 11:36:22 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <songliubraving@meta.com>
+Cc: Paul Moore <paul@paul-moore.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Song Liu <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>, 
+	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
+	"tomoyo-users_en@lists.sourceforge.net" <tomoyo-users_en@lists.sourceforge.net>, 
+	"tomoyo-users_ja@lists.sourceforge.net" <tomoyo-users_ja@lists.sourceforge.net>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
+	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
+	"martin.lau@linux.dev" <martin.lau@linux.dev>, "jack@suse.cz" <jack@suse.cz>, 
+	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
+	"amir73il@gmail.com" <amir73il@gmail.com>, "repnop@google.com" <repnop@google.com>, 
+	"jlayton@kernel.org" <jlayton@kernel.org>, "josef@toxicpanda.com" <josef@toxicpanda.com>, 
+	"mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>, 
+	"m@maowtm.org" <m@maowtm.org>, "john.johansen@canonical.com" <john.johansen@canonical.com>, 
+	"john@apparmor.net" <john@apparmor.net>, 
+	"stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>, "omosnace@redhat.com" <omosnace@redhat.com>, 
+	"takedakn@nttdata.co.jp" <takedakn@nttdata.co.jp>, 
+	"penguin-kernel@i-love.sakura.ne.jp" <penguin-kernel@i-love.sakura.ne.jp>, "enlightened@chromium.org" <enlightened@chromium.org>
+Subject: Re: [RFC] vfs: security: Parse dev_name before calling
+ security_sb_mount
+Message-ID: <20250711-pfirsich-worum-c408f9a14b13@brauner>
+References: <20250708230504.3994335-1-song@kernel.org>
+ <20250709102410.GU1880847@ZenIV>
+ <CAHC9VhSS1O+Cp7UJoJnWNbv-Towia72DitOPH0zmKCa4PBttkw@mail.gmail.com>
+ <1959367A-15AB-4332-B1BC-7BBCCA646636@meta.com>
+ <20250710-roden-hosen-ba7f215706bb@brauner>
+ <5EB3EFBC-69BA-49CC-B416-D4A7398A2B47@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5EB3EFBC-69BA-49CC-B416-D4A7398A2B47@meta.com>
 
-On Tue, 8 Jul 2025 16:14:58 +0100
-Alireza Sanaee <alireza.sanaee@huawei.com> wrote:
-
-> Get CPU id from phandle. Many drivers get do this by getting hold of CPU
-> node first through a phandle and then find the CPU ID using the relevant
-> function. This commit encapsulates cpu node finding and improves
-> readability.
+On Thu, Jul 10, 2025 at 05:00:18PM +0000, Song Liu wrote:
 > 
-> The API interface requires two parameters, 1) node, 2) pointer to
-> pointer of CPU node, 3) cpu node index. API sets the pointer to the CPU
-> node and allows the driver to play with the CPU itself, for logging
-> purposes for instance.
 > 
-> Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
-> ---
->  drivers/of/cpu.c   | 40 ++++++++++++++++++++++++++++++++++++++++
->  include/linux/of.h |  9 +++++++++
->  2 files changed, 49 insertions(+)
+> > On Jul 10, 2025, at 4:46 AM, Christian Brauner <brauner@kernel.org> wrote:
 > 
-> diff --git a/drivers/of/cpu.c b/drivers/of/cpu.c
-> index 5214dc3d05ae..494d47470f94 100644
-> --- a/drivers/of/cpu.c
-> +++ b/drivers/of/cpu.c
-> @@ -173,6 +173,46 @@ int of_cpu_node_to_id(struct device_node *cpu_node)
->  }
->  EXPORT_SYMBOL(of_cpu_node_to_id);
->  
-> +/**
-> + * of_cpu_phandle_to_id: Get the logical CPU number for a given device_node
-> + *
-> + * @node: Pointer to the device_node containing CPU phandle.
-> + * @cpu_np: Pointer to the device_node for CPU.
-> + * @cpu_idx: The index of the CPU in the list of CPUs.
-> + *
-> + * Return: The logical CPU number of the given CPU device_node or -ENODEV if
-> + * the CPU is not found, or if the node is NULL, it returns -1. On success,
-> + * cpu_np will always point to the retrieved CPU device_node with refcount
-> + * incremented, use of_node_put() on it when done.
-> + */
-> +int of_cpu_phandle_to_id(const struct device_node *node,
-> +			 struct device_node **cpu_np,
-> +			 uint8_t cpu_idx)
-> +{
-> +	struct device_node *local_cpu_node;
-> +	int cpu;
-> +
-> +	if (!node)
-> +		return -1;
-> +
-> +	local_cpu_node = of_parse_phandle(node, "cpu", 0);
+> [...]
+> 
+> >> Right now, we have security_sb_mount and security_move_mount, for 
+> >> syscall “mount” and “move_mount” respectively. This is confusing 
+> >> because we can also do move mount with syscall “mount”. How about 
+> >> we create 5 different security hooks:
+> >> 
+> >> security_bind_mount
+> >> security_new_mount
+> >> security_reconfigure_mount
+> >> security_remount
+> >> security_change_type_mount
+> >> 
+> >> and remove security_sb_mount. After this, we will have 6 hooks for
+> >> each type of mount (the 5 above plus security_move_mount).
+> > 
+> > I've multiple times pointed out that the current mount security hooks
+> > aren't working and basically everything in the new mount api is
+> > unsupervised from an LSM perspective.
+> 
+> To make sure I understand the comment. By “new mount api”, do you mean 
+> the code path under do_new_mount()? 
 
-Sorry - half asleep in earlier reviews. This is only valid if cpu_idx = 0 I think?
+fsopen()
+fsconfig()
+fsmount()
+open_tree()
+open_tree_attr()
+move_mount()
+statmount()
+listmount()
 
-	struct device_node *local_cpu_node = NULL;
+I think that's all.
 
-...
-	if (cpu_idx == 0)
-		local_cpu_node = of_parse_phandle(node, "cpu", 0);
-	if (!local_cpu_node)
-		local_cpu_node = of_parse_phandle(node, "cpus", cpu_idx);
+> 
+> > My recommendation is make a list of all the currently supported
+> > security_*() hooks in the mount code (I certainly don't have them in my
+> > head). Figure out what each of them allow to mediate effectively and how
+> > the callchains are related.
+> > 
+> > Then make a proposal how to replace them with something that a) doesn't
+> > cause regressions which is probably something that the LSMs care about
+> > and b) that covers the new mount API sufficiently to be properly
+> > mediated.
+> > 
+> > I'll happily review proposals. Fwiw, I'm pretty sure that this is
+> > something that Mickael is interested in as well.
+> 
+> So we will consider a proper redesign of LSM hooks for mount syscalls, 
+> but we do not want incremental improvements like this one. Do I get 
+> the direction right?
 
-Is probably the simplest implementation.
-Very unlikely we'd ever call it with the combination of cpu phandle and an index
-as that will be constrained by the user (currently just the DSU I think)
-but we should still make the code not doing crazy things if that happens.
-
-
-> +	if (!local_cpu_node)
-> +		local_cpu_node = of_parse_phandle(node, "cpus", cpu_idx);
-> +
-> +	if (!local_cpu_node)
-> +		return -ENODEV;
-> +
-> +	cpu = of_cpu_node_to_id(local_cpu_node);
-> +
-> +	if (cpu_np)
-> +		*cpu_np = local_cpu_node;
-> +	else
-> +		of_node_put(local_cpu_node);
-> +
-> +	return cpu;
-> +}
-> +EXPORT_SYMBOL(of_cpu_phandle_to_id);
-> +
->  /**
->   * of_get_cpu_state_node - Get CPU's idle state node at the given index
->   *
-> diff --git a/include/linux/of.h b/include/linux/of.h
-> index a62154aeda1b..717e55065d99 100644
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-> @@ -365,6 +365,8 @@ extern const void *of_get_property(const struct device_node *node,
->  extern struct device_node *of_get_cpu_node(int cpu, unsigned int *thread);
->  extern struct device_node *of_cpu_device_node_get(int cpu);
->  extern int of_cpu_node_to_id(struct device_node *np);
-> +extern int of_cpu_phandle_to_id(const struct device_node *np,
-> +				struct device_node **cpu_np, uint8_t cpu_idx);
->  extern struct device_node *of_get_next_cpu_node(struct device_node *prev);
->  extern struct device_node *of_get_cpu_state_node(const struct device_node *cpu_node,
->  						 int index);
-> @@ -680,6 +682,13 @@ static inline int of_cpu_node_to_id(struct device_node *np)
->  	return -ENODEV;
->  }
->  
-> +static inline int of_cpu_phandle_to_id(const struct device_node *np,
-> +				       struct device_node **cpu_np,
-> +				       uint8_t cpu_idx)
-> +{
-> +	return -ENODEV;
-> +}
-> +
->  static inline struct device_node *of_get_next_cpu_node(struct device_node *prev)
->  {
->  	return NULL;
-
+If incremental is workable then I think so yes. But it would be great to
+get a consistent picture of what people want/need.
 
