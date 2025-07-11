@@ -1,111 +1,246 @@
-Return-Path: <linux-kernel+bounces-728080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC5AB0237E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:21:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75652B0237C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D79C1CC286B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:21:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 297943BF372
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F9F2F1FF9;
-	Fri, 11 Jul 2025 18:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97462F2C59;
+	Fri, 11 Jul 2025 18:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NU+AYmdS"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MO8o4AuC"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5C72F2352
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8219C1D54E9;
+	Fri, 11 Jul 2025 18:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752258072; cv=none; b=MRowHjm5w/0blIFEm7yl7XBGv3VuJciAAOBjd/GEeeH9pi+PB/FZcm9NmADzunICINkfPbNzuf4V4IPb5clIE9AgNo79EF2A5+J3cC6OP69nI2WkY7MYj6nfOXTxlXbXagn1VOdOiB+yXkGEdCs4b9xgzahzRhztTmA6mYThK04=
+	t=1752258064; cv=none; b=OMq7yoFWqu/vGSgTHVPIUN3N2G5qJjPy8W7jtCpatUstSS5Dk1vjnBlCYYkJmlpsOfNO9q4o21dfXzTcDeU6hORH7nvZUq0OOzNePJddDmdzZ8DAL23ZTIMaaQTg+rfPb3q+ARL+0MTwg/VoBAfJgyFeAzBLPkfP0hM2kABZdNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752258072; c=relaxed/simple;
-	bh=9pueYuEIoRhh8Q7SXjsOxjLRBOEiyf+7/9ZBmo6ZPtc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=szDcoaTM8G7DV204nCJfB9MgqKpPG9l9CXBdFpOPW/fd6BDDVzmxFt4yXbBfJ4w2Z1uLdvfrZjmtUNVx7NzMrUGVNE2BPR2cX5Pj6CNjjgiPbpRkO0q9TIgMT0KSJcJ1wXlXu9hvQXkcUopqHg4bGa/2ZoI9bqmj3K5ZMftqCgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NU+AYmdS; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-32b553e33e6so18528611fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:21:09 -0700 (PDT)
+	s=arc-20240116; t=1752258064; c=relaxed/simple;
+	bh=5+WRseIX7sV1ABSOz3FQOgwgr+hUm9J+m6BFBIFSUKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s2B9IDwTZOhlwiK7bH3CtBdvzi3e36tjaRxF/HO8M0q7I4BJ9tsOSlkFU8kN0pOku6K+csYSOeWywmBxbf/oiYcKzacBO5vNpuEQHGCV7mU07ORmFYyqeysTDxCNz6mNk3gFNYkNEKxZ8fSa0+fInLvCxRDjQ/J6tvsBF8KyAXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MO8o4AuC; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7d9e2f85b77so369797785a.2;
+        Fri, 11 Jul 2025 11:21:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752258068; x=1752862868; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1752258061; x=1752862861; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PFonXyBEBu8bBQGRWXHhhJM0VZMeyX0O0WVctxeWjqk=;
-        b=NU+AYmdS2Ww6aEAAyX1OFL3gx8fQMdj2FV6y1Bf3NGinK9IoKNI4s/wwdWq1Trt6wM
-         Zx0EwUktzxHcXtEplUngRUWRKxGY1nDWp2u2W79DZqKn8t6zv/lUi43WssItoXrnOGrF
-         UcB5OxZBwf4sS2l3d+YxdFlf1B/hSCLWarNX6jNDVvKG/i2WPdB9k5NYgp2Z8phscFqV
-         GWnf6n8iHEa2VtI5/H9AKNPUue7gblqgGzl2CMLGJVnzABkKTpXH2PqbmX/PKrCoAsjF
-         MZBfgpLRR36M/3pczQhVQMozYmPWyRGvX9xDv1hZHHsSq9FNi7rZRK8y9LAmIk27HNqO
-         f0XA==
+        bh=ia66QNFe8vhG6RCTBKrhJqFEhohx5sDMdLUqqKQCukc=;
+        b=MO8o4AuC6Jyo2BMN/hwLZ4x3toFsnPRR4gyoc98AZjIitaIztjhZqoLKhyKWoCEHva
+         MC/F/StAh4N9MvNeXXDUc3gf1vC8LyDfo5BnZrkaZ3Nn3YwS3pF6HFLO8pJcava6y3GH
+         G7YIju7HzPfI+w9y8lr0WzC8XCC1pkcTuZTji5MvbJxDFTlMQCEiefS9unjs3qotKVGO
+         zGVNZqpjCsrhWZYNafcJyepo4VE+OXnJ5qwFN5XfYi9flPrCGqYiZ89lmJLvg109EFSn
+         LgwrF+86HBh0XI+zk9qvXrJKcG3sKZ2dPXpmtl+cJe/lG4eBMnJyWQVGhHinAUQ1AK1k
+         KIVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752258068; x=1752862868;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1752258061; x=1752862861;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PFonXyBEBu8bBQGRWXHhhJM0VZMeyX0O0WVctxeWjqk=;
-        b=p3ND4XPIdjSqDAdVALgCANeBP8xf3GSJDVMNyv9DzKWdc0sB6YrrRvtBFQFKF2UtGX
-         qq78wWsaOlfvPjuwSFzGAUHZuFk4nF4Mg2RGFrfyDSdAOsWYzTxEi48U964X+gtJ5W2E
-         z9d+6rCgVdNPg0y3aLLf8n69F7qQ9XgbjftGfYwK8ZRzd80ccfx0yAffgvCYsOjPO2SL
-         ywyQS5nJJihu8e/cac1n4BB8asBcqpJplzortuMS6SeWzxRLSHcHhC1qram5CfdEh3OH
-         lLQllV6ZL0r+o11kS8PlxIGbiYrWgjQv8C8RkAKavmPDOO5lw1YF5W49tLMiS09Y+XmL
-         uaBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpocoQjI5tuQou6qbuEr5olrtQyNwL+pXh1yhSROrFhdVjvoXsKX5kpqTCoNcgyby1OBo2lpXfm7Pm1Ag=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc9IbvjLklEc/QoiO21KU+M1a0ZyB8FBkR1kDw0BVDiNU9DuG7
-	1umzHZq2m8QUxlatHmsfGs5xprP7G/3menLFEFZwdbo270/zcLqHnXaK0S92CUKvCMFp2qBfbxs
-	Zm4dalez6YLUjtqr+iMms7OvPKB6pkEAJ7F4ptUTUwg==
-X-Gm-Gg: ASbGncu1Y4S/v+iN1NlduNUnvKxj5zobwANF96pDi+VPHFbwIfXG7gO/FI0fZHKyIBv
-	ZrCMXG/Q5bis38ogk5zwWxzanDlOfjbDoMR1wmG653nQGFMvCtO9tJgAwLnWm1d4pMjNFnYLFGq
-	g2UGTA47RQd94RllXp9kNetDRqt5Izt6U5IdGVQ5brekBNXZLBrMj+iy7D0Z9/0XliB7S91AXe7
-	fhXo+u2XiTEspASkg==
-X-Google-Smtp-Source: AGHT+IEvkwHGOLQfSLv38NyMLX/duDgiOrEo48zv9nOud2f/wZg6mazHn+ZXSSe8h4+6KW3mbg6mMV6T7HPqsPw49Lo=
-X-Received: by 2002:a2e:a007:0:b0:32a:7d61:ded0 with SMTP id
- 38308e7fff4ca-3305341307dmr10521881fa.19.1752258068303; Fri, 11 Jul 2025
- 11:21:08 -0700 (PDT)
+        bh=ia66QNFe8vhG6RCTBKrhJqFEhohx5sDMdLUqqKQCukc=;
+        b=bpz38UsrLRjafudCQ5XgDeb0G/BjbEcsEz3RGRl7cxYYbscrIahrq/8lnY707RdcJu
+         F3nRucHIEUPW2QCDTWUXH6usmXyXYcERKIMFUA2qJie+Jm5j5CxARi/fBGsNNuDpkuul
+         1FVsqbM1kMJQBEQbaJIkf3p2MdVJcTHa0sTiwY0Upo3mgUZxgTDEEkAJpjxpiulMFgea
+         YcAwKyOi+rNYM+qHOQLNUxsaaxe0OAaJYd4MZgPwrPb1I3FX5OZOabJdOHepv6V8WdSH
+         ah5LaRi2jbIK8Gy+FEDiTM7EX0Y/weFEm9PC/MhAbaZuJF0fqhGP9roDzsCMYSt8c6eL
+         oGyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVziG4Kb+e0GB0nA/HIo15YcGH9t8YGL1rJmrf5Xh3g86ZwOkDxcBo/ZgIiY2HDZDyc/N35GPhl1+B5@vger.kernel.org, AJvYcCWPTRy5l99obH/L8cK+8QTtWCz8qoPWqTd5U2nFBPSgsVJzLk6EgGTC8A6+d3nQ0vfwhzL2euQZ/sqoV91GqAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk4DhwI3liNAlaBhK6AE8+CSRBCgi9g+HVIg59KeIJ4wUwstFG
+	CgEZv1lkY7Zpv4DebsxfFh9EFlADWEzbY0c7d/wPx3oBccbXinizFmkY
+X-Gm-Gg: ASbGncv/IAUDYtRsGowO+7JAfGMhG/1L0qBGhFMn09OQ+dQAYXnOG12mZDJbu0LD6/K
+	A8koulBJVWX0HCKSQPgPym+E/jiTirEArUx9J4btKbP0nJRJCjSahcHLt2wMObHQP1XQ202vg7D
+	fwkyHawQmT9nzI9u3pZeh9AZeBo/u2FMtgbdD4sr5+qz9CK5EvFY5AuHzvR5xXukx9+keTNQYVF
+	ZGlDpfHB+78QOhvTAVoLuoxZpzE3evqYhFtuPwtVw5rwQt0EhYUMARWzezSz4PyLAyFVeIna5fH
+	Qao73fFVpwrM9Yrjjk75Tq809NPNGSHvUQGUueizc50W/Gidzl3TsfrRy6YzVgTpkpXDfDCjt4b
+	qtAPjs6uw+X4R3qnyKbQT0B7hRfgVee6aA8f2YmswRZzeZd2ZLc3sDwc+WobR+iTeVk+/GeEpCg
+	52ALoN2hW/GvDm
+X-Google-Smtp-Source: AGHT+IGvju+RNJB6luNnf7Ro13LJcoRMdK6UBQfn+z29hRMsCafaDqLiDBwyRlDvYEkOXMdNOn1hWw==
+X-Received: by 2002:a05:620a:404d:b0:7e0:5afb:596d with SMTP id af79cd13be357-7e05afb6b48mr261917285a.40.1752258061105;
+        Fri, 11 Jul 2025 11:21:01 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcde8fd235sm244492585a.92.2025.07.11.11.21.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 11:21:00 -0700 (PDT)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfauth.phl.internal (Postfix) with ESMTP id DBF48F40066;
+	Fri, 11 Jul 2025 14:20:59 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Fri, 11 Jul 2025 14:20:59 -0400
+X-ME-Sender: <xms:C1ZxaFYp1VQqnVoibjeIYVnT-PeKAsIGezO3f82lOIuwqctXuFPXcw>
+    <xme:C1ZxaNkwUY4ZDxAp6Jks-6h8FscK-JgEDL7OUiyhBo9FRzC6AIaJkU7ebjOwKqapD
+    WcACoQ6_pb4Ylw3RQ>
+X-ME-Received: <xmr:C1ZxaIasO6WXRkFRgQprYF3wYC7n87PTOVINwex3WP3g4KHdm85QrmmGgGtw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeggedtvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdortddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephfeliedvudfhgfeivdffhfektefhudehjefgveevvedvjefgvdejhfffieejuefh
+    necuffhomhgrihhnpehgohgusgholhhtrdhorhhgpdhgihhthhhusgdrtghomhenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhm
+    vghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekhe
+    ehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghm
+    vgdpnhgspghrtghpthhtohepvdekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+    hlohhsshhinheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
+    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqd
+    hlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhkmhhmsehl
+    ihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtph
+    htthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegp
+    ghhhsehprhhothhonhhmrghilhdrtghomh
+X-ME-Proxy: <xmx:C1ZxaNBcPLPqcZLuWVlBexTo4DRAMJpR4gsk4SlH7NHZ-Ul3rHIu5w>
+    <xmx:C1ZxaGbMO6hxS7eRNZf2tw4vAtdYrHpuVUL7WORhfX8BlLElUpaFoA>
+    <xmx:C1ZxaJiLKau3z5SP48LT7APwcwrigHUcn819fP49i0EMRkZgcEzn7Q>
+    <xmx:C1ZxaOxdEa-nDCzAoinLCrYahnrBYbFRnzHAIODJO4s47Sg2NA8bEg>
+    <xmx:C1ZxaM5ETPbpN0nzxWrba5eo0UZ_u9xV_E1OYOczPJVzTndGtzR_gb17>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 11 Jul 2025 14:20:59 -0400 (EDT)
+Date: Fri, 11 Jul 2025 11:20:58 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alan Stern <stern@rowland.harvard.edu>, Ralf Jung <post@ralfj.de>
+Subject: Re: [PATCH v6 8/9] rust: sync: Add memory barriers
+Message-ID: <aHFWCsOfcGLSUPAP@tardis-2.local>
+References: <20250710060052.11955-1-boqun.feng@gmail.com>
+ <20250710060052.11955-9-boqun.feng@gmail.com>
+ <DB93NWEAK46D.2YW5P9MSAWVCN@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709-sm7635-pmiv0104-v2-0-ebf18895edd6@fairphone.com>
-In-Reply-To: <20250709-sm7635-pmiv0104-v2-0-ebf18895edd6@fairphone.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 11 Jul 2025 20:20:57 +0200
-X-Gm-Features: Ac12FXwUK_6BkBTiMmf0bIqwdADNOgyJE6d12NaL0C0nqmiCzFyAn5E5nDpYZaI
-Message-ID: <CACRpkda-ssTEJqcj=vxnz91rj=qYz_rer5p5Db_b=pSdjUj9Ow@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] Add support for PMIV0104 PMIC
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB93NWEAK46D.2YW5P9MSAWVCN@kernel.org>
 
-On Wed, Jul 9, 2025 at 1:22=E2=80=AFPM Luca Weiss <luca.weiss@fairphone.com=
-> wrote:
+On Fri, Jul 11, 2025 at 10:57:48AM +0200, Benno Lossin wrote:
+> On Thu Jul 10, 2025 at 8:00 AM CEST, Boqun Feng wrote:
+> > diff --git a/rust/kernel/sync/barrier.rs b/rust/kernel/sync/barrier.rs
+> > new file mode 100644
+> > index 000000000000..df4015221503
+> > --- /dev/null
+> > +++ b/rust/kernel/sync/barrier.rs
+> > @@ -0,0 +1,65 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +//! Memory barriers.
+> > +//!
+> > +//! These primitives have the same semantics as their C counterparts: and the precise definitions
+> > +//! of semantics can be found at [`LKMM`].
+> > +//!
+> > +//! [`LKMM`]: srctree/tools/memory-model/
+> > +
+> > +/// A compiler barrier.
+> > +///
+> > +/// A barrier that prevents compiler from reordering memory accesses across the barrier.
+> > +pub(crate) fn barrier() {
+> > +    // By default, Rust inline asms are treated as being able to access any memory or flags, hence
+> > +    // it suffices as a compiler barrier.
+> 
+> I don't know about this, but it also isn't my area of expertise... I
+> think I heard Ralf talk about this at Rust Week, but I don't remember...
+> 
 
-> Luca Weiss (4):
->       dt-bindings: mfd: qcom,spmi-pmic: Document PMIV0104
->       dt-bindings: pinctrl: qcom,pmic-gpio: Add PMIV0104 support
->       pinctrl: qcom: spmi: Add PMIV0104
->       arm64: dts: qcom: Add PMIV0104 PMIC
+Easy, let's Cc Ralf ;-)
 
-Patches 2 & 3 applied to the pinctrl tree.
+Ralf, I believe the question here is:
 
-Yours,
-Linus Walleij
+In kernel C, we define a compiler barrier (barrier()), which is
+implemented as:
+
+# define barrier() __asm__ __volatile__("": : :"memory")
+
+Now we want to have a Rust version, and I think an empty `asm!()` should
+be enough as an equivalent as a barrier() in C, because an empty
+`asm!()` in Rust implies "memory" as the clobber:
+
+	https://godbolt.org/z/3z3fnWYjs
+
+?
+
+I know you have some opinions on C++ compiler_fence() [1]. But in LKMM,
+barrier() and other barriers work for all memory accesses not just
+atomics, so the problem "So, if your program contains no atomic
+accesses, but some atomic fences, those fences do nothing." doesn't
+exist for us. And our barrier() is strictly weaker than other barriers.
+
+And based on my understanding of the consensus on Rust vs LKMM, "do
+whatever kernel C does and rely on whatever kernel C relies" is the
+general suggestion, so I think an empty `asm!()` works here. Of course
+if in practice, we find an issue, I'm happy to look for solutions ;-)
+
+Thoughts?
+
+[1]: https://github.com/rust-lang/unsafe-code-guidelines/issues/347
+
+Regards,
+Boqun
+
+> > +    //
+> > +    // SAFETY: An empty asm block should be safe.
+> 
+>     // SAFETY: An empty asm block.
+> 
+> > +    unsafe {
+> > +        core::arch::asm!("");
+> > +    }
+> 
+>     unsafe { core::arch::asm!("") };
+> 
+> > +}
+> > +
+> > +/// A full memory barrier.
+> > +///
+> > +/// A barrier that prevents compiler and CPU from reordering memory accesses across the barrier.
+> > +pub fn smp_mb() {
+> > +    if cfg!(CONFIG_SMP) {
+> > +        // SAFETY: `smp_mb()` is safe to call.
+> > +        unsafe {
+> > +            bindings::smp_mb();
+> 
+> Does this really work? How does the Rust compiler know this is a memory
+> barrier?
+> 
+> ---
+> Cheers,
+> Benno
+> 
+> > +        }
+> > +    } else {
+> > +        barrier();
+> > +    }
+> > +}
 
