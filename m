@@ -1,129 +1,221 @@
-Return-Path: <linux-kernel+bounces-727845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B19BB02092
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:37:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DF1EB02097
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:40:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D71C1761980
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:36:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAD8F4A3FFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823042EA495;
-	Fri, 11 Jul 2025 15:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9777E2ED16B;
+	Fri, 11 Jul 2025 15:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="KHkJZu4z";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="V0lHAQ2s"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E/jMWBDZ"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABC32BAF4;
-	Fri, 11 Jul 2025 15:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600BB2ECE9F
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752248225; cv=none; b=up5m1mQndbbwAMsunhsi57qMkixUm0CpNnS1+k4He4rzkv/47gnDisMJhdhbiydpWV4JoJkGreWxtygFttzjSylcrhBEVUjG3OMV0G2MSrXthsc9MvKQ6pKSVKVRBU0GDTXe7djzcAwMX8FiwWaWpSpNiul2o+j9poqK2sm7OAg=
+	t=1752248403; cv=none; b=BmA/cbb1xTLRgnxGCZwMCMPddQhg8jzOEmci0KmzAMfLlgG3bhMuBlIdlAZQH/v5OlSmS5decowEEN3DkbSAOxMBrpR9TcG0915i3Duxv89HJ1ZkXHXN8foxfe7yu8blemKu2eofZp2OMmQiQKZJ39SKrfFIfy2UIFpYKoEoeSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752248225; c=relaxed/simple;
-	bh=fpWVXr/dZgI5zKMUuLYxtAo5ZnRqSqNa6Kjnysl9aTY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=kvw0WTAQIhLOJKVWdeWFnFiBuLdi4BwPsWGhVOOTXRU4Rhsrxjj3JOgs6aLME1JyTqH7xqhvj2pSyysRZ1S29hRVLeT4yYNluy3vyApR9QPRnmOoaxun8ZZ6yY2FP3MonJxhS6paVitcmbH8+h3s7C/yhJdReT7pltt/N7QM4UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=KHkJZu4z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=V0lHAQ2s; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id EE8CF7A01DF;
-	Fri, 11 Jul 2025 11:37:02 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 11 Jul 2025 11:37:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752248222;
-	 x=1752334622; bh=RjeYRg1RON0Z6P8SpPi8zDMOS6hH6xY8E4OI83ncSM4=; b=
-	KHkJZu4zHyCUCUG9i69KN215Z1CapklgQ1neIS3OfT4u55udrsCBTUNJoS4I5glk
-	KNrdwJrY+XBmr9a7RzgeNTlLiCh/MG3P07B2j1j7XBwtMGL9iZBekFBzp0SEzPfH
-	zOKNCABpfYxHO9XBg9jQfA4+Qn2PLoWYHaY7FAn3E562HL137PiVyHBdV9okRLud
-	rgASgoz9E4zLGqBJdMUUXaufW0/kcoPGE1w+B1TEdDnPIVNWHZolPiri/f34lRVs
-	U+Ah6UP6QT82fYVNLPqxl1Ag6/Gyw4v7Aa6zvY2kmHf70Mh/F+HgWqEjORAJuBpL
-	mNGN2tUZ49DNiDMbWNTnHg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752248222; x=
-	1752334622; bh=RjeYRg1RON0Z6P8SpPi8zDMOS6hH6xY8E4OI83ncSM4=; b=V
-	0lHAQ2sxBG6SnHFfd55fvwq1xG/RcLEASLGtUziLDS1stGiST/5tDepnF2Xc7fvo
-	kJG7AjN4HUKGdHbQJZ5Q44HEWD3hVgP1cZC8nC4zy2HCweqiZAd+c/7zlw8WY8i+
-	Yd/zbn7THaqtCdV65e2teKImf1VuWG+XucZwETotC6Qu+joQfZaf7aB7Sl9dXpFx
-	D8DDBS0leL6jsBrRIk05d5ywvYBaULb0ZAzK/r5T1qk8G/VW4swpj1QD2GZ9c0Sg
-	sRJZKCm9L0UgheOacokEfj9U1fFZ8CJx0aD838fCFa1ZgzPc6g/sfJ2uImwQEq1a
-	VvbKGk9n6N8sNuTh4EqqA==
-X-ME-Sender: <xms:ni9xaFAv0pZ9g3UNosTqEBKwfE1B2tboFBpdDtNcbiiCfY18fM1Qnw>
-    <xme:ni9xaDghtlOzcQCucGEYCoAHn_DcoCzdZNsilKQCQRIlkvgdxbN6e5lbnWbI-jIF4
-    dXGDBsgaUVDCrIbdI0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegfeejtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlhhlohesrghmugdrtghomhdprh
-    gtphhtthhopeguvghrvghkjhhohhhnrdgtlhgrrhhksehgmhgrihhlrdgtohhmpdhrtghp
-    thhtohepfigprghrmhhinhesghhmgidruggvpdhrtghpthhtoheprghrnhgusehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehhrghnshhgsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehilhhpohdrjhgrrhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtg
-    hpthhtoheprghlohhkrdgrrdhtihifrghrihesohhrrggtlhgvrdgtohhmpdhrtghpthht
-    ohepjhhvrghnuggvrhifrggrsehrvgguhhgrthdrtghomhdprhgtphhtthhopehmphgvrg
-    hrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggr
-X-ME-Proxy: <xmx:ni9xaOCdpxe3bgfz_yQl8-pCkDq5Bl018U_ib8W9vsMI6-Xckeme6w>
-    <xmx:ni9xaKG1Y6ehGtN7ov5UD0mL_BDsxz_4MCWdzztpM3HVYhULEoQWiA>
-    <xmx:ni9xaA2SmS9IiDjuZqx-LJcnQh56u29SHbO7YydfEMQWvfgxOR52gA>
-    <xmx:ni9xaDOvlVIk4HlSjN6tV5U6GaOzt26eD_MkKm4LKIttUM2afe_wZA>
-    <xmx:ni9xaGfdkmum6sVoN0BWutqAImtIlVMplTPjy4puBre9lFqVdHBBq-FG>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 6C1CD700068; Fri, 11 Jul 2025 11:37:02 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1752248403; c=relaxed/simple;
+	bh=awESprVhew4kSmDa2kR0oS13/qs3PDd2SwyjUZfd2x8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=bflGKm024sIke6YLR4EBexX3kS4hBYNHyJIIYRtD7mQBfw4aVRtpgirTg7pKgCx/qQE4w9kKKPzeb2kbypm21/ZEIA0ZsqEIoqN4RUYqjavdKQZVH3GqQMzoGP2NcSTb3rhFkAzGsaoLNgLqAThKVtawfFMYnrTF7HrIjNaDkKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E/jMWBDZ; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b3642ab4429so1735625a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:40:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752248401; x=1752853201; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fn40LpJUU3LdWkylyg01Pxkvo0K0KUfHBLAV1tZ0MCI=;
+        b=E/jMWBDZjwen7wg1lh7ucJ4kpFoEnjtNTILUEQECgVqKFtPJzHqUzppdOATIK8wV79
+         A0Nswm9TahTWFJol1DlFvO5BpFd9i43M4kour9H4I+EEDYPHTa3oZH3SKtDaCKpUbtj0
+         DceJUTCDolGFOu71REue2C3hTV3/QkfRnpT+dj8iP8mSowTE3NgSuJfRuUW1zUhGcqIm
+         58T5ZxW2WMaqG74L+Qb8+2RjIbaYzeWQHu3XvGRZp8o1JSeC6VTOMv1ykUurlt+1LmOJ
+         WUbdLTZ/s3R6c0ae0Y6cGTkSl+zBr/2QDwlNvSve0UpKpdE3UBubR1b/c70+bdIOI6bo
+         hprA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752248401; x=1752853201;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fn40LpJUU3LdWkylyg01Pxkvo0K0KUfHBLAV1tZ0MCI=;
+        b=YsnQYLixV0wFp55ow5TxDI5F65umCJzI+HjZkrP5Expq5UhWsBcnMOWcSmLnyhXwnV
+         n45U0pUYcjbZZDYb9NqDyYa43ReoFCsfbMcf36dLpeG9ol2eRJDeKqsdqkMSu6vQhYbp
+         wLg57yZFSTAuFs5d4Rx5iUZN9XRpl+P/f2v/iz7XlpLUGovXod0J/jt5gEUQLAHs3Z+H
+         ceTfkF1tZPWi4ntwJY/pkjEKeHXFHagveo/09fNYHWT9C6+AUmNkGAK9ordn/XjyJRHR
+         nCUpEUVIi4pSK8663cLtOxed6WedEOfzmzHk6sq/VnAW8b7MxaPMKI9ZXxn6+MzuP3xf
+         6sMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX90E5mJNiQmvJapEfm3ZAKeDRAM+53BbKlYpsvTTfHGBT2u2E0D+sf9L/1T21omIJnxT954ghN4Z9NZh4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHz/ClgL9GEgYligdbkr9HqZAONkKXV1i858thrDlRgK+/kPPt
+	De1KjLRq2FD81lg8hDhGWWQEWz/y7/ywtwH+SCQdbOPlmQLkYjLLZXkN+rE9PjY1bUjuOyGu1cV
+	CCtnTDg==
+X-Google-Smtp-Source: AGHT+IE9O4C39pAH9Ofqerpd+uPD0mxUhbBaJsCEpsGxUKxvzqB4j7sPlFcbvMQYVY35N3LkUHU7f1aXv2s=
+X-Received: from plblm6.prod.google.com ([2002:a17:903:2986:b0:236:9738:9180])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ce07:b0:238:2990:6382
+ with SMTP id d9443c01a7336-23dedbb4ademr45200695ad.0.1752248400686; Fri, 11
+ Jul 2025 08:40:00 -0700 (PDT)
+Date: Fri, 11 Jul 2025 08:39:59 -0700
+In-Reply-To: <20250711151719.goee7eqti4xyhsqr@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-ThreadId: T3ae3921a54d7a46d
-Date: Fri, 11 Jul 2025 17:36:42 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Arnd Bergmann" <arnd@kernel.org>,
- "Derek J. Clark" <derekjohn.clark@gmail.com>,
- "Mark Pearson" <mpearson-lenovo@squebb.ca>,
- "Hans de Goede" <hansg@kernel.org>, "Armin Wolf" <W_Armin@gmx.de>,
- "ALOK TIWARI" <alok.a.tiwari@oracle.com>,
- "Mario Limonciello" <mario.limonciello@amd.com>,
- "Jelle van der Waa" <jvanderwaa@redhat.com>,
- platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Message-Id: <50756008-cd04-4e73-9552-52b80677b8b4@app.fastmail.com>
-In-Reply-To: <ffd00f91-6569-714d-29dc-65c14b64d914@linux.intel.com>
-References: <20250709151734.1268435-1-arnd@kernel.org>
- <dd727ab6-a754-77fd-5876-fec076c8905a@linux.intel.com>
- <fd1f6732-e091-48e8-90c9-4bc18aface58@app.fastmail.com>
- <ffd00f91-6569-714d-29dc-65c14b64d914@linux.intel.com>
-Subject: Re: [PATCH] platform/x86: lenovo: gamezone needs "other mode"
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250703062641.3247-1-yan.y.zhao@intel.com> <20250709232103.zwmufocd3l7sqk7y@amd.com>
+ <aG_pLUlHdYIZ2luh@google.com> <aHCUyKJ4I4BQnfFP@yzhao56-desk> <20250711151719.goee7eqti4xyhsqr@amd.com>
+Message-ID: <aHEwT4X0RcfZzHlt@google.com>
+Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from kvm_gmem_populate()
+From: Sean Christopherson <seanjc@google.com>
+To: Michael Roth <michael.roth@amd.com>
+Cc: Yan Zhao <yan.y.zhao@intel.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
+	adrian.hunter@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com, 
+	tony.lindgren@intel.com, binbin.wu@linux.intel.com, dmatlack@google.com, 
+	isaku.yamahata@intel.com, ira.weiny@intel.com, vannapurve@google.com, 
+	david@redhat.com, ackerleytng@google.com, tabba@google.com, 
+	chao.p.peng@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Jul 11, 2025, at 17:34, Ilpo J=C3=A4rvinen wrote:
-> On Fri, 11 Jul 2025, Arnd Bergmann wrote:
+On Fri, Jul 11, 2025, Michael Roth wrote:
+> On Fri, Jul 11, 2025 at 12:36:24PM +0800, Yan Zhao wrote:
+> > Besides, it can't address the 2nd AB-BA lock issue as mentioned in the patch
+> > log:
+> > 
+> > Problem
+> > ===
+> > ...
+> > (2)
+> > Moreover, in step 2, get_user_pages_fast() may acquire mm->mmap_lock,
+> > resulting in the following lock sequence in tdx_vcpu_init_mem_region():
+> > - filemap invalidation lock --> mm->mmap_lock
+> > 
+> > However, in future code, the shared filemap invalidation lock will be held
+> > in kvm_gmem_fault_shared() (see [6]), leading to the lock sequence:
+> > - mm->mmap_lock --> filemap invalidation lock
+> 
+> I wouldn't expect kvm_gmem_fault_shared() to trigger for the
+> KVM_MEMSLOT_SUPPORTS_GMEM_SHARED case (or whatever we end up naming it).
 
-> I think I'll take this patch but change it to still keep the other sel=
-ects=20
-> as wmi-gamezone.c is directly using those too anyway.
+Irrespective of shared faults, I think the API could do with a bit of cleanup
+now that TDX has landed, i.e. now that we can see a bit more of the picture.
 
-Sounds good to me, thanks!
+As is, I'm pretty sure TDX is broken with respect to hugepage support, because
+kvm_gmem_populate() marks an entire folio as prepared, but TDX only ever deals
+with one page at a time.  So that needs to be changed.  I assume it's already
+address in one of the many upcoming series, but it still shows a flaw in the API.
 
-   Arnd
+Hoisting the retrieval of the source page outside of filemap_invalidate_lock()
+seems pretty straightforward, and would provide consistent ABI for all vendor
+flavors.  E.g. as is, non-struct-page memory will work for SNP, but not TDX.  The
+obvious downside is that struct-page becomes a requirement for SNP, but that
+
+The below could be tweaked to batch get_user_pages() into an array of pointers,
+but given that both SNP and TDX can only operate on one 4KiB page at a time, and
+that hugepage support doesn't yet exist, trying to super optimize the hugepage
+case straightaway doesn't seem like a pressing concern.
+
+static long __kvm_gmem_populate(struct kvm *kvm, struct kvm_memory_slot *slot,
+				struct file *file, gfn_t gfn, void __user *src,
+				kvm_gmem_populate_cb post_populate, void *opaque)
+{
+	pgoff_t index = kvm_gmem_get_index(slot, gfn);
+	struct page *src_page = NULL;
+	bool is_prepared = false;
+	struct folio *folio;
+	int ret, max_order;
+	kvm_pfn_t pfn;
+
+	if (src) {
+		ret = get_user_pages((unsigned long)src, 1, 0, &src_page);
+		if (ret < 0)
+			return ret;
+		if (ret != 1)
+			return -ENOMEM;
+	}
+
+	filemap_invalidate_lock(file->f_mapping);
+
+	if (!kvm_range_has_memory_attributes(kvm, gfn, gfn + 1,
+					     KVM_MEMORY_ATTRIBUTE_PRIVATE,
+					     KVM_MEMORY_ATTRIBUTE_PRIVATE)) {
+		ret = -EINVAL;
+		goto out_unlock;
+	}
+
+	folio = __kvm_gmem_get_pfn(file, slot, index, &pfn, &is_prepared, &max_order);
+	if (IS_ERR(folio)) {
+		ret = PTR_ERR(folio);
+		goto out_unlock;
+	}
+
+	folio_unlock(folio);
+
+	if (is_prepared) {
+		ret = -EEXIST;
+		goto out_put_folio;
+	}
+
+	ret = post_populate(kvm, gfn, pfn, src_page, opaque);
+	if (!ret)
+		kvm_gmem_mark_prepared(folio);
+
+out_put_folio:
+	folio_put(folio);
+out_unlock:
+	filemap_invalidate_unlock(file->f_mapping);
+
+	if (src_page)
+		put_page(src_page);
+	return ret;
+}
+
+long kvm_gmem_populate(struct kvm *kvm, gfn_t start_gfn, void __user *src, long npages,
+		       kvm_gmem_populate_cb post_populate, void *opaque)
+{
+	struct file *file;
+	struct kvm_memory_slot *slot;
+	void __user *p;
+	int ret = 0;
+	long i;
+
+	lockdep_assert_held(&kvm->slots_lock);
+	if (npages < 0)
+		return -EINVAL;
+
+	slot = gfn_to_memslot(kvm, start_gfn);
+	if (!kvm_slot_can_be_private(slot))
+		return -EINVAL;
+
+	file = kvm_gmem_get_file(slot);
+	if (!file)
+		return -EFAULT;
+
+	npages = min_t(ulong, slot->npages - (start_gfn - slot->base_gfn), npages);
+	for (i = 0; i < npages; i ++) {
+		if (signal_pending(current)) {
+			ret = -EINTR;
+			break;
+		}
+
+		p = src ? src + i * PAGE_SIZE : NULL;
+
+		ret = __kvm_gmem_populate(kvm, slot, file, start_gfn + i, p,
+					  post_populate, opaque);
+		if (ret)
+			break;
+	}
+
+	fput(file);
+	return ret && !i ? ret : i;
+}
 
