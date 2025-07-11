@@ -1,246 +1,257 @@
-Return-Path: <linux-kernel+bounces-728100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BCA0B023A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:31:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E6FB023AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67AC21CC0594
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:31:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DCC65C24A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3D82F3657;
-	Fri, 11 Jul 2025 18:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824BA1ADC7E;
+	Fri, 11 Jul 2025 18:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RK+U/lm6"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lMal3bcb"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B072199FAB;
-	Fri, 11 Jul 2025 18:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040B12F2C5C
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752258636; cv=none; b=IKOBE+wxExGxYi3pvs46hkkBV1EkK/y/oy2TrzJn794GR3V/kNPAi1o+EsiAPGvSy/sbQIlJ4V/5+ChzegIC7u5fxYP8NKiKicvgs9py5dho9HrjGeaxB8mUP9GLo3T4vFMUUYubn2HtACqywSgpcyZuB09+EWekz/ClkMoAVrA=
+	t=1752258658; cv=none; b=Q6yqC2+vIJqHvgx5fiiLNDz4wg6ggiO9pWpfN1xkdmmQtGswF9xlDQS11sEsRVxhXW9wDd8fWy944aFffiuxwG2621L97hXR7xw+inkL7xCGXFYpTGJjbwIL4dcRs5OuuzFcqExuMQW0TQN1j1kFISR4BvMHH9N1zhetFkr9LI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752258636; c=relaxed/simple;
-	bh=zpMA/dMCXiP1D6D+wn2rANCebAxggughyZr2DNtUrUQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lCNLlIXnwKK8jLrrmT5N4hqmcEqhGK8ZfOQXsF5nx5JMzAQdmabTcGlmEPojd3V9ne69GMw5mhQSbJ6YfxW+lavCWhrrmHxr+0gsgGOfYnc/8gHsEjVRLvt5kF5fHEqDikqc9IoMsJ+UHWmMq8KZGCdjeninfxtT9cbrvnIw7K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RK+U/lm6; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-607cc1a2bd8so3945831a12.2;
-        Fri, 11 Jul 2025 11:30:33 -0700 (PDT)
+	s=arc-20240116; t=1752258658; c=relaxed/simple;
+	bh=Nmg55UacNAt1MCkhGyguzInl29Fwjzoiq7ro0EkLYEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n8I83DTNPfksmtKaJgwhc71p3T/sFLdhwMoIF+lyTkmAku1WZBGw7zsscJc53C+pehq1+gQZxW4/DI5gPfL8DlyxKfqtNOJfhWO/oBj5igqFkjLVIX+2HmlKtwcKlhG8fQdaZMJ/c2Ylt09o8T7ACE9epgikT+J1ur6I/Xt/inc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lMal3bcb; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5315acf37b6so1006986e0c.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:30:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752258632; x=1752863432; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1752258656; x=1752863456; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=F6yiVhcxL2AzY6CvTzVfTLqG5PW0uz+KvplY6hVmTe4=;
-        b=RK+U/lm6/Si/1IAxeE0MFyK+1ALgFCirokh435+EY7mix+1RQvI5eJ6fXzqPxEEuN8
-         72L4nIVri2W/kRlyUZRdDHZX6y49FgKx4oy7vkQnnxmepXzQpx7NtH+clgpybJxQeMh7
-         eS9g/huPypcptOxLco71ojW27rItL8DamFqeeMpEIYckFlTgyp5y1O6TNU7dDoh9NeXa
-         OgDNahIR2FyFBVFglzK+eByfe+BI/YZl96CvgSFvptOxkvCsaFjgjCCCLBY/KpqJoXrw
-         gTiCulyg+bK3b9CEYChkB0beOqKjSD9rCEUohM6L+pWAsvSVhfDKbIy/V5mzm8RWLb3t
-         82iw==
+        bh=qE8nn0HHw9/47yIri3Y+l9GYg+RPDKGws82z0RKSszU=;
+        b=lMal3bcbq+rLprZNxwArt6tp/TzN1/4IowGlvfA7HufPnbLHcSQ7fDxzLIpbunfPn/
+         J4t+oPphFxwenIfm4h4c0m7lQkRNGEwOUw2ScTv8gP1C/tanzYW+B8dGwXf17yNPbZk0
+         dBhY50XtakGuQoWE2qMTLPjtHvugWJ8An7CtTZ4eJi8clNt8ZYwN6z/timb+NLXJu0cM
+         U8mo8tAnKYNrNn4nhnZ0klmFcEvXhGYkMNBinmXHxv8YkLBfvG3NEI2Zjg51X20cYM8x
+         SmArqWut18gv5pvKlDpbmQwczF8ZoZkTHa64YCfME3KAwGTQjkub3LO69negGG8z4E+b
+         Bi/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752258632; x=1752863432;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1752258656; x=1752863456;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F6yiVhcxL2AzY6CvTzVfTLqG5PW0uz+KvplY6hVmTe4=;
-        b=l7o00t6+F/zbSRVnvhbhwMGEJmEuZEJ9DCLfLKYg/gWB/CqsHAKWlHG5XOKDHWyQOy
-         YMR7o6Twkm0qIgivdJoEmTUKq7atBlPcwNEnul6SigEWANBZQsBJ6IXfIPOJC2AzJzTQ
-         woGau1ERTI/3Ah3Zi7O2TS4pKfjZ4lsfPAK3tH+i1VuMI7E5nqjSczaXnEhJb2ZJZr0A
-         ciYjuEulhp2PBhUk+aJqXE9g8VkEjaIhnbl1lTHi+CSW6nNvsYuXAaa1zpB6Q4tVZwrF
-         l2uf28PxZxYgZOTVZEamPkulaeXg44Nbc4NuWYSGWuCp7WNyNyGRLsECNh1bvg6iPhZJ
-         U9ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvwcwEEog11BdFP+ZoIrSdjV0cgATdCFCRiJduUgNr8VuhMl3uKSLDWgYU5aG3QqciBvF72xFWxFsmqUo=@vger.kernel.org, AJvYcCXDi0tlm83F1oYu+YEkkCogxEVLYR73yuPYzMO0XIUAILQM2AqUHzHQxonGtWO983RtKjosA7kQLzXoQv83@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9uDb0+9e652KVRaZgm6NM5/yXqWxpi1pQgM+/OgOPDKsnRLAt
-	pgFvFQeQRMVSHg0hY2Z+QOP58IuzTdzSbM9tjBNo0f4cbDeg/YI13bcM
-X-Gm-Gg: ASbGncsU37fEkuw+HNq1lXERQarF0pzeDQoGA7pQ+s8bkXmvQKHuPbpY9SCnp4uU5aN
-	Ah4BMupIEzAYXLKQF5sJcA4qy+mIU2QcSSZQn4ism6b301qrAeH7oZWugfg1xm/I5vCqJRq5sGf
-	P5TYm+8BXvmCrguGvjYmNHd2xxZUnaz0HtBKD0Xwimj6UBysP59rVdZ+adpvEdt9lFU/5+2oQoz
-	Nc5/4mT8iD5//u8QDat8ryEn2oDnNtoNVVwRvBwjXgptXfUJLApTv1tWTqfA1Of/caX/WLGh45B
-	7aI99VMyL4N8VXO2W1plqBEXa+tszMzMEeWl+SOhTdbcW2wou9MHm0oaEWYgRW1woyWxX22aTjb
-	afh6TffLt1AHAi3EVh7myC9Lgy/OE0W1qHCc=
-X-Google-Smtp-Source: AGHT+IHIIlShxU2Eabjl4/b7qE20xlv4fERAh27KnCiO8zgUlt7tLSxGFoKqF94aot1PKDbFjTib2A==
-X-Received: by 2002:a17:907:2684:b0:ade:36e4:ceba with SMTP id a640c23a62f3a-ae6fc3c4510mr481717466b.52.1752258632413;
-        Fri, 11 Jul 2025 11:30:32 -0700 (PDT)
-Received: from ws-linux01 ([2a02:2f07:6009:b200:8bc2:7901:5231:7913])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee569asm334750066b.44.2025.07.11.11.30.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 11:30:31 -0700 (PDT)
-From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-To: herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-Subject: [PATCH 2/2] crypto: engine: remove {prepare,unprepare}_crypt_hardware callbacks
-Date: Fri, 11 Jul 2025 21:29:32 +0300
-Message-ID: <20250711182932.918257-2-ovidiu.panait.oss@gmail.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250711182932.918257-1-ovidiu.panait.oss@gmail.com>
-References: <20250711182932.918257-1-ovidiu.panait.oss@gmail.com>
+        bh=qE8nn0HHw9/47yIri3Y+l9GYg+RPDKGws82z0RKSszU=;
+        b=lmOy2aLAsaL0ket7LP+UxIKVgCJS7v5sXoAAyXY+xpNLbPRqBgSWbcCKPaz5SOEsJI
+         /sNvGbwkh/LCYaiJ76pDJwgIcaKP2wy2Auqc43rw1WjWLRQ25RYweQAOJZWUKfCNwgTv
+         mLX0KXMg8i/pWNST6ZPK0Uu9N6g6b3tcLCGU+vxGMkVjZtaeowSdFQVTSZnoVUl9RIoQ
+         Nk3NJ+Xsq3YctkPVzp/zIvzTQIQMm/gPTp/59IoCRqF+ZnDhWZHnoUBEstJAhGjX7T79
+         fceTARQoABGTJV1BG/kKZZ+f2XK+5XaUO6X4fFifgllY+bCTXmXvxrNBaU+mrxgvbHs1
+         9afQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXqjpjhusbnHmtCW/VDOyHE/OeGfHbosAXK2l01UkvH3UDqKZcI1865+nHoNNXKr++vO9tSgo+MfeYtng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH2Yl5qhexBlKY5nYv6ctfzb1GKBzxCM1CuulUzxb0/gKfYhwJ
+	IoiSrNG6aF4QIqQDsDOAVOcJJrDgCEKnkRqc9AOvIwZuBFLWidyzopQvK1hU4lGXfeH7qlyKq1E
+	2TucovhQkflIBMJX2pxWJxcmOPC2F+BXy8J6qRjAd
+X-Gm-Gg: ASbGncvO8LdOrZuNsHp/cVI8/le0jH+UBEuWsa1y+0GLkuZEtVS9QcmrgmpilHq9Y1x
+	YX8OGV8RQgmw8p89g0WmajYVA+NthXJngY/nPOKr6T0wBBBgTi+kLszkC6uecSdDDURVHhtXd53
+	mChXsUEHAzTZ+J49KARPo/mZbuL7QKPsLZpJib+4QkMBAN/U7jsmqUZvFmdpfm9QTgHy2U5Eazu
+	5+3lg==
+X-Google-Smtp-Source: AGHT+IEnIchNt9XXYjk8FflZHLYiuvT9hoitNJFrSaxPQeTPnk+uOC5uvDHLC9XkdNS6ptSNZRj89FbPoLaz28sCihA=
+X-Received: by 2002:a05:6102:6d3:b0:4e6:d995:94f9 with SMTP id
+ ada2fe7eead31-4f64275c1f2mr4367050137.12.1752258655328; Fri, 11 Jul 2025
+ 11:30:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <10629535.nUPlyArG6x@rjwysocki.net> <22630663.EfDdHjke4D@rjwysocki.net>
+ <e13740a0-88f3-4a6f-920f-15805071a7d6@linaro.org> <CAJZ5v0hpPOHNYCSTM1bb+p-wyAZkpg+k-huf9f5df9_S8MfvEg@mail.gmail.com>
+ <CAJZ5v0jFP2njw3ic47yyh_7u7evKQKQuqGp27Vj7X-FfDLH7uQ@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jFP2njw3ic47yyh_7u7evKQKQuqGp27Vj7X-FfDLH7uQ@mail.gmail.com>
+From: Saravana Kannan <saravanak@google.com>
+Date: Fri, 11 Jul 2025 11:30:17 -0700
+X-Gm-Features: Ac12FXxPhiTgQ7Xfo8HHWb4xtysDMU6yLS13OIYnZe5bVvAlPBVJWskWEcDJ_4w
+Message-ID: <CAGETcx98iQqA_EOWjkFCkgtrt0JppMQE98OTuCXj2zZa2S1yPA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/5] PM: sleep: Resume children after resuming the parent
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Johan Hovold <johan@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, 
+	William McVicker <willmcvicker@google.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The {prepare,unprepare}_crypt_hardware callbacks were added back in 2016
-by commit 735d37b5424b ("crypto: engine - Introduce the block request
-crypto engine framework"), but they were never implemented by any driver.
-Remove them as they are unused.
+On Fri, Jul 11, 2025 at 6:54=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>
+> On Fri, Jul 11, 2025 at 3:38=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
+> >
+> > On Fri, Jul 11, 2025 at 3:08=E2=80=AFPM Tudor Ambarus <tudor.ambarus@li=
+naro.org> wrote:
+> > >
+> > >
+> > > Hi, Rafael,
+> > >
+> > > On 3/14/25 12:50 PM, Rafael J. Wysocki wrote:
+> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > >
+> > > > According to [1], the handling of device suspend and resume, and
+> > > > particularly the latter, involves unnecessary overhead related to
+> > > > starting new async work items for devices that cannot make progress
+> > > > right away because they have to wait for other devices.
+> > > >
+> > > > To reduce this problem in the resume path, use the observation that
+> > > > starting the async resume of the children of a device after resumin=
+g
+> > > > the parent is likely to produce less scheduling and memory manageme=
+nt
+> > > > noise than starting it upfront while at the same time it should not
+> > > > increase the resume duration substantially.
+> > > >
+> > > > Accordingly, modify the code to start the async resume of the devic=
+e's
+> > > > children when the processing of the parent has been completed in ea=
+ch
+> > > > stage of device resume and only start async resume upfront for devi=
+ces
+> > > > without parents.
+> > > >
+> > > > Also make it check if a given device can be resumed asynchronously
+> > > > before starting the synchronous resume of it in case it will have t=
+o
+> > > > wait for another that is already resuming asynchronously.
+> > > >
+> > > > In addition to making the async resume of devices more friendly to
+> > > > systems with relatively less computing resources, this change is al=
+so
+> > > > preliminary for analogous changes in the suspend path.
+> > > >
+> > > > On the systems where it has been tested, this change by itself does
+> > > > not affect the overall system resume duration in a measurable way.
+> > > >
+> > > > Link: https://lore.kernel.org/linux-pm/20241114220921.2529905-1-sar=
+avanak@google.com/ [1]
+> > > > Suggested-by: Saravana Kannan <saravanak@google.com>
+> > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >
+> > > I'd like to let you know of a suspend crash that I'm dealing with
+> > > when using the OOT pixel6 drivers on top of v6.16-rc4.
+> >
+> > Well, thanks, but there's not much I can do about it.
+> >
+> > It is also better to start a new thread in such cases than to reply to
+> > a patch submission.
+> >
+> > > Similar to what Jon reported, everything gets back to normal if
+> > > I disable pm_async or if I revert the following patches:
+> > > 443046d1ad66 PM: sleep: Make suspend of devices more asynchronous
+> > > aa7a9275ab81 PM: sleep: Suspend async parents after suspending childr=
+en
+> > > 0cbef962ce1f PM: sleep: Resume children after resuming the parent
+> > >
+> > > I also reverted their fixes when testing:
+> > > 8887abccf8aa PM: sleep: Add locking to dpm_async_resume_children()
+> > > d46c4c839c20 PM: sleep: Fix power.is_suspended cleanup for direct-com=
+plete devices
+> > > 079e8889ad13 PM: sleep: Fix list splicing in device suspend error pat=
+hs
+> > >
+> > > It seems that the hang happens in dpm_suspend() at
+> > > async_synchronize_full() time after a driver fails to suspend.
+> > > The phone then naturally resets with an APC watchdog.
+> > >
+> > > [  519.142279][ T7917] lwis lwis-eeprom-m24c64x: Can't suspend becaus=
+e eeprom-m24c64x is in use!
+> > > [  519.143556][ T7917] lwis-i2c eeprom@2: PM: dpm_run_callback(): pla=
+tform_pm_suspend returns -16
+> > > [  519.143872][ T7917] lwis-i2c eeprom@2: PM: platform_pm_suspend ret=
+urned -16 after 1596 usecs
+> > > [  519.144197][ T7917] lwis-i2c eeprom@2: PM: failed to suspend: erro=
+r -16
+> > > [  519.144448][ T7917] PM: tudor: dpm_suspend: after while loop, list=
+_empty(&dpm_prepared_list)? 1
+> > > [  519.144779][ T7917] PM: tudor: dpm_suspend: before async_synchroni=
+ze_full
+> > >
+> > > The extra prints are because of:
+> > > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> > > index d9d4fc58bc5a..3efe538c2ec2 100644
+> > > --- a/drivers/base/power/main.c
+> > > +++ b/drivers/base/power/main.c
+> > > @@ -1967,10 +1967,15 @@ int dpm_suspend(pm_message_t state)
+> > >                         break;
+> > >                 }
+> > >         }
+> > > +       pr_err("tudor: %s: after while loop, list_empty(&dpm_prepared=
+_list)? %d\n",
+> > > +              __func__, list_empty(&dpm_prepared_list));
+> > >
+> > >         mutex_unlock(&dpm_list_mtx);
+> > >
+> > > +       pr_err("tudor: %s: before async_synchronize_full\n", __func__=
+);
+> > >         async_synchronize_full();
+> > > +       pr_err("tudor: %s: after async_synchronize_full();\n", __func=
+__);
+> > > +
+> > >         if (!error)
+> > >                 error =3D async_error;
+> > >
+> > > The synchronous suspend works because its strict, one-by-one ordering
+> > > ensures that device dependencies are met and that no device is suspen=
+ded
+> > > while another is still using it. The asynchronous suspend fails becau=
+se
+> > > it creates a race condition where the lwis-eeprom-m24c64x is called f=
+or
+> > > suspension before the process using it has been suspended, leading to=
+ a
+> > > fatal "device busy" error. Should the failure of a device suspend be
+> > > fatal?
+> >
+> > It shouldn't in principle, but it depends on what exactly is involved a=
+nd how.
+> >
+> > It looks like something is blocking on power.completion somewhere.
+> > I'll check the code, maybe a complete() is missing in an error path or
+> > similar.
+>
+> It doesn't look like anything is missing in the core, so the suspend
+> failure seems to be triggering a deadlock of some sort.
+>
+> The remedy should be the same as usual in such cases: Find the device
+> that is marked as "async" incorrectly and make it "sync".
+>
 
-Since the 'engine->idling' and 'was_busy' flags are no longer needed,
-remove them as well.
+I'm very behind on this thread, but the patches I sent out were well
+tested on Pixel 6 OOT drivers and didn't cause any issues. So I think
+the rewrite is missing some condition my patches accounted for.
 
-Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
----
- Documentation/crypto/crypto_engine.rst |  6 ------
- crypto/crypto_engine.c                 | 30 +-------------------------
- include/crypto/internal/engine.h       | 11 ----------
- 3 files changed, 1 insertion(+), 46 deletions(-)
+Also, comment on some questions earlier in the thread, fw_devlink=3Don
+ensures none of the device links have any circular dependencies (as
+does the device_link_add()) API itself. So, there shouldn't be any
+cyclic dependencies. The only cycles that fw_devlink creates are
+SYNC_STATE_ONLY device links that are deleted as soon as a consumer
+probes.
 
-diff --git a/Documentation/crypto/crypto_engine.rst b/Documentation/crypto/crypto_engine.rst
-index d562ea17d994..7ef850e28016 100644
---- a/Documentation/crypto/crypto_engine.rst
-+++ b/Documentation/crypto/crypto_engine.rst
-@@ -36,12 +36,6 @@ engine using ``crypto_engine_stop()`` and destroy the engine with
- Before transferring any request, you have to fill the context enginectx by
- providing functions for the following:
- 
--* ``prepare_crypt_hardware``: Called once before any prepare functions are
--  called.
--
--* ``unprepare_crypt_hardware``: Called once after all unprepare functions have
--  been called.
--
- * ``prepare_cipher_request``/``prepare_hash_request``: Called before each
-   corresponding request is performed. If some processing or other preparatory
-   work is required, do it here.
-diff --git a/crypto/crypto_engine.c b/crypto/crypto_engine.c
-index 8a2400f240d4..18e1689efe12 100644
---- a/crypto/crypto_engine.c
-+++ b/crypto/crypto_engine.c
-@@ -74,7 +74,6 @@ static void crypto_pump_requests(struct crypto_engine *engine,
- 	struct crypto_engine_alg *alg;
- 	struct crypto_engine_op *op;
- 	unsigned long flags;
--	bool was_busy = false;
- 	int ret;
- 
- 	spin_lock_irqsave(&engine->queue_lock, flags);
-@@ -83,12 +82,6 @@ static void crypto_pump_requests(struct crypto_engine *engine,
- 	if (!engine->retry_support && engine->cur_req)
- 		goto out;
- 
--	/* If another context is idling then defer */
--	if (engine->idling) {
--		kthread_queue_work(engine->kworker, &engine->pump_requests);
--		goto out;
--	}
--
- 	/* Check if the engine queue is idle */
- 	if (!crypto_queue_len(&engine->queue) || !engine->running) {
- 		if (!engine->busy)
-@@ -102,15 +95,6 @@ static void crypto_pump_requests(struct crypto_engine *engine,
- 		}
- 
- 		engine->busy = false;
--		engine->idling = true;
--		spin_unlock_irqrestore(&engine->queue_lock, flags);
--
--		if (engine->unprepare_crypt_hardware &&
--		    engine->unprepare_crypt_hardware(engine))
--			dev_err(engine->dev, "failed to unprepare crypt hardware\n");
--
--		spin_lock_irqsave(&engine->queue_lock, flags);
--		engine->idling = false;
- 		goto out;
- 	}
- 
-@@ -129,22 +113,11 @@ static void crypto_pump_requests(struct crypto_engine *engine,
- 	if (!engine->retry_support)
- 		engine->cur_req = async_req;
- 
--	if (engine->busy)
--		was_busy = true;
--	else
-+	if (!engine->busy)
- 		engine->busy = true;
- 
- 	spin_unlock_irqrestore(&engine->queue_lock, flags);
- 
--	/* Until here we get the request need to be encrypted successfully */
--	if (!was_busy && engine->prepare_crypt_hardware) {
--		ret = engine->prepare_crypt_hardware(engine);
--		if (ret) {
--			dev_err(engine->dev, "failed to prepare crypt hardware\n");
--			goto req_err_1;
--		}
--	}
--
- 	alg = container_of(async_req->tfm->__crt_alg,
- 			   struct crypto_engine_alg, base);
- 	op = &alg->op;
-@@ -474,7 +447,6 @@ struct crypto_engine *crypto_engine_alloc_init_and_set(struct device *dev,
- 	engine->rt = rt;
- 	engine->running = false;
- 	engine->busy = false;
--	engine->idling = false;
- 	engine->retry_support = retry_support;
- 	engine->priv_data = dev;
- 
-diff --git a/include/crypto/internal/engine.h b/include/crypto/internal/engine.h
-index 8da1a13619c9..f19ef376833f 100644
---- a/include/crypto/internal/engine.h
-+++ b/include/crypto/internal/engine.h
-@@ -21,7 +21,6 @@ struct device;
- /*
-  * struct crypto_engine - crypto hardware engine
-  * @name: the engine name
-- * @idling: the engine is entering idle state
-  * @busy: request pump is busy
-  * @running: the engine is on working
-  * @retry_support: indication that the hardware allows re-execution
-@@ -31,12 +30,6 @@ struct device;
-  * @list: link with the global crypto engine list
-  * @queue_lock: spinlock to synchronise access to request queue
-  * @queue: the crypto queue of the engine
-- * @prepare_crypt_hardware: a request will soon arrive from the queue
-- * so the subsystem requests the driver to prepare the hardware
-- * by issuing this call
-- * @unprepare_crypt_hardware: there are currently no more requests on the
-- * queue so the subsystem notifies the driver that it may relax the
-- * hardware by issuing this call
-  * @kworker: kthread worker struct for request pump
-  * @pump_requests: work struct for scheduling work to the request pump
-  * @priv_data: the engine private data
-@@ -44,7 +37,6 @@ struct device;
-  */
- struct crypto_engine {
- 	char			name[ENGINE_NAME_LEN];
--	bool			idling;
- 	bool			busy;
- 	bool			running;
- 
-@@ -56,9 +48,6 @@ struct crypto_engine {
- 	struct crypto_queue	queue;
- 	struct device		*dev;
- 
--	int (*prepare_crypt_hardware)(struct crypto_engine *engine);
--	int (*unprepare_crypt_hardware)(struct crypto_engine *engine);
--
- 	struct kthread_worker           *kworker;
- 	struct kthread_work             pump_requests;
- 
--- 
-2.50.0
+Also, people facing cyclic dependency issues, if fw_devlink is not
+discarding the "bad" link in the cycle, you can give it extra info in
+DT if you use post-init-providers. Please try that out.
 
+-Saravana
+
+-Saravana
 
