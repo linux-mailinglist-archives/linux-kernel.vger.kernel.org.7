@@ -1,79 +1,93 @@
-Return-Path: <linux-kernel+bounces-727549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A513B01BE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:25:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8F41B01BF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:26:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63FD41C27E43
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:25:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95A017A7EB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE1E29A312;
-	Fri, 11 Jul 2025 12:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773E42989A2;
+	Fri, 11 Jul 2025 12:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WqQZXCCI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PaExWWTu"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA4E295DB5;
-	Fri, 11 Jul 2025 12:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5CB290092;
+	Fri, 11 Jul 2025 12:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752236726; cv=none; b=Dns9snn1zYcjInzLbsHUZ2fPMv+2QHr81TdcJFmGhzrlUF6+80CeAReSdvMPILOYYhY1ld+OTZTrAL0TTttqeNNuCx+HLdKdQW5T3wenOmCNipPjLSEz9/dMRMgEWdU4maCDAtGfzQE5P+Mk+wwdHSW06AqXikSLFBuPhY473ns=
+	t=1752236774; cv=none; b=jRIZYT/noWDrKWEGaDpFnqR3LurYeY7s3/VvXQq5nkYs5T3ImQKrTGFbw9Z6zVaukO2vQC/+THAQfmUSWAAYuLrtdqYSjUVmU+xeKtBvQMtKEfcpo9wowBgp2uWdzMqlgOjgvLiIUnVpxoZqd7r7WAnx1ZladUnYsl/wi4PGUmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752236726; c=relaxed/simple;
-	bh=eB1NGX9YMF6q82VnaNMoGmtrWfntd1dbl39nMtl/Jls=;
+	s=arc-20240116; t=1752236774; c=relaxed/simple;
+	bh=CBZeXdUUgFL+TPTegk8H1qs7POEc3HTSo3JRf2whjoo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t2hd8j8aPTS8QyEBN2WBE2LWJTPYGeHkVtm6KwS8bW+dplb+tUU319k7aJhvCp2oqO5MMM01qixUR86DwzN1cEyVtOhVLshysYVRmaGC8QkR2aPaijEKoPswD9WtEZc81UaxTPIXxCWFng+tWalmNh4C3kuWmJSFW7zqIqLSdoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WqQZXCCI; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752236725; x=1783772725;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eB1NGX9YMF6q82VnaNMoGmtrWfntd1dbl39nMtl/Jls=;
-  b=WqQZXCCILXV1c2m+iZIFVmGZgZMoDiO9ASZA1yllH79FDCtDuaK+euvS
-   bNjLlCdLVr3Sa27MEktbiPdp6jB83v96fL8RcL/aZonpBAG4O0XRfnsJg
-   CzUrxsVJAHp0FIMZVkjg7LW50oAF05Sp4eaasYaBrdLUbxUdAHxgy8a4N
-   R10rJSZvssJfuYK+s1cYTZYqh8ub48gpw3noDPF4/+SRDd5p0qXp1r8KB
-   0QafRNkKPS3Nd4TTxuaHFH2EqpoMsthfPu7OutfrlFpRRpqx9aommbpTq
-   htjiOXypWVNJr5mIYIrQn950wA8O99k25DRkyQBajLKS2jqEDNGviEjef
-   Q==;
-X-CSE-ConnectionGUID: YanhoC2gRLmlkCTX9QVwKg==
-X-CSE-MsgGUID: 7D8TUkulR5Wuxu1EFLRPsg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="65981328"
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="65981328"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 05:25:24 -0700
-X-CSE-ConnectionGUID: AqOnp4PnQzm3wrDurReOCw==
-X-CSE-MsgGUID: tdeiCF1ITmK0iwyQHz3h8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="161918492"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 05:25:21 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uaCoY-0000000EWMs-3uMk;
-	Fri, 11 Jul 2025 15:25:18 +0300
-Date: Fri, 11 Jul 2025 15:25:18 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: LiangCheng Wang <zaq14760@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH v9 2/3] staging: media: atomisp: fix indentation in anr
-Message-ID: <aHECrvSQCicV5nP5@smile.fi.intel.com>
-References: <20250711-new_atomisp-v9-0-a9dd62425ef6@gmail.com>
- <20250711-new_atomisp-v9-2-a9dd62425ef6@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P+VSfF4BCqXYTq17RFD6tflxa/hjAytSTtoOWzsu2ibZNyQSKy9n0MoWtqeiLvL9soD/cpx8p1TV0/1Bfn9dMeBwr3oSD5i3/upZnRmFHcrmKtAxkdWqGdPCAUMaYeLisu+6fbZ2ZQpNmaHP8usOBlL4S5PMhfKiq0GlU/Ryn2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PaExWWTu; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vGjGW/PtJqBFBruMN5J6ADYZtMINuph/UDezRVBHu1Y=; b=PaExWWTu6LCWc//YsZkBXUY3qB
+	OhRcnm1raovoM5kv8uOVijsT/tUZyQM82IAAMgZVZWwPht3FD0gePK+so8z+iLW5V24Sdat5Yx2mU
+	+vGUD2xwNKHxG9MoCvV+hUYL+u45hQBujCuTkz7HQwlB0T98xHl0AY+LGI63i+tP2F7HC2zX7xaCF
+	8cv44QWL96iNFXy2QjuzOul6m/GtUhM6S1KJV6cGHv4ATQWy5EmxxvIhYPUdyMMF5b/vbp6wreTi7
+	0p5woQ/tOGYzNNZUH0pMdgOC4iR4GlDpuNSpg7JM6Lb6wUh3lWAfmOV9IM4l0c0aRDZZhXTkigVnR
+	lnzUcaSg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uaCoj-00000009G4q-1Htk;
+	Fri, 11 Jul 2025 12:25:29 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 489EA3001AA; Fri, 11 Jul 2025 14:25:28 +0200 (CEST)
+Date: Fri, 11 Jul 2025 14:25:28 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Li Chen <me@linux.beauty>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Thomas Wei??schuh <thomas.weissschuh@linutronix.de>,
+	Li Chen <chenl311@chinatelecom.cn>,
+	Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
+	Tobias Huschle <huschle@linux.ibm.com>,
+	Mete Durlu <meted@linux.ibm.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Guo Weikang <guoweikang.kernel@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH v5 1/4] smpboot: introduce SDTL_INIT() helper to tidy
+ sched topology setup
+Message-ID: <20250711122528.GB905792@noisy.programming.kicks-ass.net>
+References: <20250710105715.66594-1-me@linux.beauty>
+ <20250710105715.66594-2-me@linux.beauty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,36 +96,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250711-new_atomisp-v9-2-a9dd62425ef6@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250710105715.66594-2-me@linux.beauty>
 
-On Fri, Jul 11, 2025 at 07:54:37PM +0800, LiangCheng Wang wrote:
-> This patch fixes tab/space indentation issues in anr
-> following kernel coding style guidelines.
+On Thu, Jul 10, 2025 at 06:57:07PM +0800, Li Chen wrote:
+> From: Li Chen <chenl311@chinatelecom.cn>
 > 
-> No functional logic changes were made.
+> Define a small SDTL_INIT(maskfn, flagsfn, name) macro and use it to build the
+> sched_domain_topology_level array. Purely a cleanup; behaviour is unchanged.
+> 
+> Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> ---
+>  arch/powerpc/kernel/smp.c      | 34 +++++++++++++---------------------
+>  arch/s390/kernel/topology.c    | 10 +++++-----
+>  arch/x86/kernel/smpboot.c      | 21 ++++++---------------
+>  include/linux/sched/topology.h |  4 ++--
+>  kernel/sched/topology.c        | 24 ++++++++----------------
+>  5 files changed, 34 insertions(+), 59 deletions(-)
+> 
+> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+> index 5ac7084eebc0b..0b7ab7d2eb142 100644
+> --- a/arch/powerpc/kernel/smp.c
+> +++ b/arch/powerpc/kernel/smp.c
+> @@ -1700,28 +1700,20 @@ static void __init build_sched_topology(void)
+>  #ifdef CONFIG_SCHED_SMT
+>  	if (has_big_cores) {
+>  		pr_info("Big cores detected but using small core scheduling\n");
+> -		powerpc_topology[i++] = (struct sched_domain_topology_level){
+> -			smallcore_smt_mask, powerpc_smt_flags, SD_INIT_NAME(SMT)
+> -		};
+> -	} else {
+> -		powerpc_topology[i++] = (struct sched_domain_topology_level){
+> -			cpu_smt_mask, powerpc_smt_flags, SD_INIT_NAME(SMT)
+> -		};
+> -	}
+> +		powerpc_topology[i++] =
+> +			SDTL_INIT(smallcore_smt_mask, powerpc_smt_flags, SMT);
+> +	} else
+> +		powerpc_topology[i++] = SDTL_INIT(cpu_smt_mask, powerpc_smt_flags, SMT);
+>  #endif
+> -	if (shared_caches) {
+> -		powerpc_topology[i++] = (struct sched_domain_topology_level){
+> -			shared_cache_mask, powerpc_shared_cache_flags, SD_INIT_NAME(CACHE)
+> -		};
+> -	}
+> -	if (has_coregroup_support()) {
+> -		powerpc_topology[i++] = (struct sched_domain_topology_level){
+> -			cpu_mc_mask, powerpc_shared_proc_flags, SD_INIT_NAME(MC)
+> -		};
+> -	}
+> -	powerpc_topology[i++] = (struct sched_domain_topology_level){
+> -		cpu_cpu_mask, powerpc_shared_proc_flags, SD_INIT_NAME(PKG)
+> -	};
+> +	if (shared_caches)
+> +		powerpc_topology[i++] =
+> +			SDTL_INIT(shared_cache_mask, powerpc_shared_cache_flags, CACHE);
+> +
+> +	if (has_coregroup_support())
+> +		powerpc_topology[i++] =
+> +			SDTL_INIT(cpu_mc_mask, powerpc_shared_proc_flags, MC);
+> +
+> +	powerpc_topology[i++] = SDTL_INIT(cpu_cpu_mask, powerpc_shared_proc_flags, PKG);
 
-Same comments about Link tags and suggestions in general.
-
-...
-
->  		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4,
->  		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4
-
-Side note, would be nice to add a trailing comma here.
-I think it's okay to do in this patch as this is not
-enough for a separate change and the driver in staging,
-the rules are slightly relaxed on it.
-
->  	},
-> -	{10, 20, 30}
-> +	{ 10, 20, 30 },
->  };
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+You wrecked coding-style here and lost a bunch of curlies. I've fixed
+that up for you.
 
