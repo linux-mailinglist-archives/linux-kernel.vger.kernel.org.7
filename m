@@ -1,155 +1,109 @@
-Return-Path: <linux-kernel+bounces-727361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7706CB018E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:57:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB50EB018CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4B63AD9E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:56:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B658588220
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DEF827E7F2;
-	Fri, 11 Jul 2025 09:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6AAE27E060;
+	Fri, 11 Jul 2025 09:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HwcmosRg"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOqSru6f"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EB627CCEE
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0107A207E1D;
+	Fri, 11 Jul 2025 09:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752227829; cv=none; b=nFVBLxAlQUchHNiHC81FlRoCaVrWatf/C14r8DiSLJFmlyoMHjhiBoY4A/6FTX7RBpBNrBs+HDI5Flj9SkrRkQ86yq8CMqehFnx2K/Tzk7GiBs0pAig8TyfP+hRKXM+YLvx2RtBQpNVH9j0Z/0LmpvicjA64zqso4bFwTmi0NUc=
+	t=1752227637; cv=none; b=VLV1cLoIJuCJpH7QnfOIi+mqWgUQr4sKNT1TtKulAenAkY+A0PdF+kOIC1sRL0Ji7L53wsMv2Yz6+VhrM7FSc63JCvABC9faSeC/004OIYM0DKJ0/SXbwXVfh+HLsxTB3n8gXcclgV/VtQnd8cpbcAlB1JVLxnwlFeaiWPnwtxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752227829; c=relaxed/simple;
-	bh=/jz62YG9XUYKioVMwcvC8pt1XPpu81We8MhowTWgq3g=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Sojne+Z1sZIFWrvSXU3wJDw3zdSxq+1oihrA+96OUiDWTML2a3m2V3v9q37QXO71HCRxlqrbeb7k1mx+5avVI9fH9lcH5kBc+rGTdpyLGQUPhZA0Y5ScG7DXKwYQA+vcoYnzA/Mmbx+SJ7UVwnYIgM/w7eD3CPhOp9jlatpY/wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HwcmosRg; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250711095659epoutp03fd2d81b2215710fa4005437105cbd4da~RKesFflsB2912729127epoutp03g
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:56:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250711095659epoutp03fd2d81b2215710fa4005437105cbd4da~RKesFflsB2912729127epoutp03g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1752227819;
-	bh=+5zHegncV70kjbqyw48Y9OdFtKw1OBm4PBQI79nv4ew=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=HwcmosRgLUGbih8+toJsjXN/4B4BZaTYNYtYADygEqPVaUrasnRy0U3HrAKqt7uOJ
-	 BBWPO4IQmJIrToH4WZnvuT2h7jv4/75w+8CkeHzw5NzYSgRHdB0aibtd7nygnq7dkb
-	 qW+gsoS3+4aGuUfUqBGoktci3qLLhlsYNp09Vu5U=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250711095658epcas5p33152e44e3698223878ac0bf294f1bf8b~RKerickMk0269002690epcas5p3Y;
-	Fri, 11 Jul 2025 09:56:58 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4bdnDm74z2z3hhTJ; Fri, 11 Jul
-	2025 09:56:56 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250711095228epcas5p11af898a023698a922eb59ddbbffaa176~RKavvWm-70063600636epcas5p1p;
-	Fri, 11 Jul 2025 09:52:28 +0000 (GMT)
-Received: from INBRO002520 (unknown [107.122.1.191]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250711095226epsmtip153e539dffb1184623f3f9ac93d4bb0dd~RKauOa9jJ2985929859epsmtip1p;
-	Fri, 11 Jul 2025 09:52:26 +0000 (GMT)
-From: "Devang Tailor" <dev.tailor@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
-Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<alim.akhtar@samsung.com>, <alexandre.belloni@bootlin.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-rtc@vger.kernel.org>, <faraz.ata@samsung.com>
-In-Reply-To: <20250711-shapeless-adorable-lobster-d2efbf@krzk-bin>
-Subject: RE: [PATCH v2 2/3] rtc: s3c: support for exynosautov9 on-chip RTC
-Date: Fri, 11 Jul 2025 15:22:25 +0530
-Message-ID: <188001dbf249$831afd00$8950f700$@samsung.com>
+	s=arc-20240116; t=1752227637; c=relaxed/simple;
+	bh=m8MYZ1wxGz3uPQ6cveXwC5uWnUUMhf+ew8hWrU5utDA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OqeOiQQzoY+6xkOY9f778SWsIYFW/98lzDjyBnON5uQxm1Co17xd3FEDAgiexNr23yPEKobXQ5JvrXJbHzHLg7vhy3nhPZr+iopfBVupD20h2eWBZqFOMGyXN98Edusaf+mBteDcT+HLDi0E2WGd6sJ76h6U/JxyiK9WQJbj3MA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BOqSru6f; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-31306794b30so318185a91.2;
+        Fri, 11 Jul 2025 02:53:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752227635; x=1752832435; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m8MYZ1wxGz3uPQ6cveXwC5uWnUUMhf+ew8hWrU5utDA=;
+        b=BOqSru6fQ06ZIzBGsboJOrnW6bBDFlgdbM/Tsuxg/VGoOpVcaH1Eiky8QnsAUqTcdc
+         N3WPzgwtVFbf1feWDm5WiciRFC2dKYyz327nCz/8D9ph0hHC1r0c7g/QbbBKB5uKRfZ6
+         UkNBVtKMlalF1MhLbrjQolbcTkEd/0zIlgpTiCmTKqJnG5Ptz14d/trxYNHoS4AkqsUR
+         TMLLpWL8uZgxqfFI7Tped/c8yHFD10Y/ItGgpbsWWXBnPjdxIhu/NA658mfVxBm/eRKJ
+         eRbS8iBWixcD53CyWSBLS2HSwFjomxM2q5y5lPr/mWJHhwadhru4q8qW7VG3WvH1vl9K
+         CH4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752227635; x=1752832435;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m8MYZ1wxGz3uPQ6cveXwC5uWnUUMhf+ew8hWrU5utDA=;
+        b=mQw7BTz0s8D5ZIDZLvAiOw1fmmMnb3tibhlPBvjTMGvS4lgGJuGDtMA4BRvpDwWvnR
+         OC/FuoszCQ5kMjiFjkikDQSjro7Ci3j7LxKH9vEZQY9IhQAO+lz/ii2eTKV8Ttz2qcfU
+         khxWMHHZM9Btwd+3Bas24zwBlnBE9zem0Auy5dc+y+uAuiNDjCglA/XIXbUwQTW2Ihr1
+         S6lkM9Z1Ay1E3k4jC+UvPptylbXcWibrcFIK1DI70q0QB8Q4W1pcaG43NKnZe25Ktqi0
+         l5vIIN9QJIjl77+Uxd5EU2ap81x6FJR+HBfgQxHNed6HTEXM+yNcI/y0F9CT2D5qk9Pu
+         nm+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU1i58ZGk2rRIod8QIMb5R7iB6fO+qDvbZSr/VAsBha1O5wqsZ7N32YAxhrmgnIAvqULNLZ0bEZ+G/OQ3FAnaI=@vger.kernel.org, AJvYcCUvxgbwI0c9OkQaiOhJb4sYx1YWn9HZ6XdG9hlfhpKjLcCAChTUVzGUPFvXmOyizV2+jqz2TFVg+2GQMlc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7be3QJO2xZBDVCn/w3OEFbp8uu0nvVHHY6m54u0VksqNC+rrA
+	P8rg2w81FSQ7334NgOQaobdgmqw85MjbvPWoWgqgmBaDkdThnAv4KdW+zKtEMRGi6fDOq73JEpM
+	KKF+pWNlaNL9b5b25JgdQrEQaYuTEIyg=
+X-Gm-Gg: ASbGncu4bnhajA2kb0YkQnxDAA6zHRvKBc+zO8LxJF+iamkYBtJ+bF/JIYsSegl8zLn
+	jTgcEUv/7u7a53lGiTrpWaffl78cuiTVnw1EQZsKnMyn1KlgcHynO5eoBsqbNjvT8c6lATO/o+u
+	JIMjGA0fRvcmCoO/h/ypJoz4mZKwhgKcK7FtQUtjBm83vWA1j6+N7Q5Gsr+T/AZ/OIYqRsz/hii
+	ABDAah/
+X-Google-Smtp-Source: AGHT+IHAs8gD7Hnw4b1Mb/GTjCgGqVuJnU9oiM7mUSzCTTWO/khmcmo5hLwVQpWXPnYqDvCfubKbf2gOfdrLrVp9JIQ=
+X-Received: by 2002:a17:90b:554f:b0:310:8d79:dfe4 with SMTP id
+ 98e67ed59e1d1-31c4f511f5amr1059138a91.4.1752227635260; Fri, 11 Jul 2025
+ 02:53:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <U1GgPfpPwSjzh5jPpFlN22bT2BSjlaH8vLHYY6hAt_vJ5w4irwIYRPV46r73Cs5Dx73Ikz5ku7_qPWrl8Tntfw==@protonmail.internalid>
+ <20250710225129.670051-1-lyude@redhat.com> <87jz4fi72a.fsf@kernel.org>
+ <Jlcb2BYQGgrQ9n7-UEbh-tmbIbJdg2ju8RIXRLNH4cdkdqloip3e8e3jbQbdpNkFDxNZD_5Oqq_uNoNySv0hXg==@protonmail.internalid>
+ <20250711.153729.1327324726276230605.fujita.tomonori@gmail.com> <87ecuni5nm.fsf@kernel.org>
+In-Reply-To: <87ecuni5nm.fsf@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 11 Jul 2025 11:53:41 +0200
+X-Gm-Features: Ac12FXzJuyEggL4BH04l_cy61e1G0kk5UqfFcZ0u9yRMdEwNOm5OagMjBYidm7A
+Message-ID: <CANiq72kanRbho6m6ps7Q4qaLkBmxLYy-cHMADZmjx3YiGuHBNg@mail.gmail.com>
+Subject: Re: [PATCH] rust: time: Pass correct timer mode ID to hrtimer_start_range_ns
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, lyude@redhat.com, 
+	rust-for-linux@vger.kernel.org, boqun.feng@gmail.com, frederic@kernel.org, 
+	tglx@linutronix.de, anna-maria@linutronix.de, jstultz@google.com, 
+	sboyd@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, aliceryhl@google.com, 
+	tmgross@umich.edu, dakr@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQMc6yo9jRPgA4nZ2IiZrgLtyBFMygKSVtdMAw5/R1ICPLNBmLFr0ApA
-Content-Language: en-in
-X-CMS-MailID: 20250711095228epcas5p11af898a023698a922eb59ddbbffaa176
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250710082536epcas5p4f9dcd50ff474066562b2cbd40199d2d9
-References: <20250710083434.1821671-1-dev.tailor@samsung.com>
-	<CGME20250710082536epcas5p4f9dcd50ff474066562b2cbd40199d2d9@epcas5p4.samsung.com>
-	<20250710083434.1821671-3-dev.tailor@samsung.com>
-	<20250711-shapeless-adorable-lobster-d2efbf@krzk-bin>
 
+On Fri, Jul 11, 2025 at 8:49=E2=80=AFAM Andreas Hindborg <a.hindborg@kernel=
+.org> wrote:
+>
+> Maybe Miguel can put the correct hash when he applies the patch.
 
-Hi Krzysztof,
+Sure:
 
+Fixes: e0c0ab04f678 ("rust: time: Make HasHrTimer generic over HrTimerMode"=
+)
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: 11 July 2025 12:51
-> To: Devang Tailor <dev.tailor=40samsung.com>
-> Cc: robh=40kernel.org; krzk+dt=40kernel.org; conor+dt=40kernel.org;
-> alim.akhtar=40samsung.com; alexandre.belloni=40bootlin.com;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-
-> rtc=40vger.kernel.org; faraz.ata=40samsung.com
-> Subject: Re: =5BPATCH v2 2/3=5D rtc: s3c: support for exynosautov9 on-chi=
-p RTC
->=20
-> On Thu, Jul 10, 2025 at 02:04:33PM +0530, Devang Tailor wrote:
-> > The on-chip RTC of this SoC is almost similar to the previous versions
-> > of SoC. Hence re-use the existing driver with platform specific change
-> > to enable RTC.
-> >
-> > This has been tested with 'hwclock' & 'date' utilities
-> >
-> > Signed-off-by: Devang Tailor <dev.tailor=40samsung.com>
-> > ---
-> >  drivers/rtc/rtc-s3c.c =7C 18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
-> >
-> > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c index
-> > 5dd575865adf..8db24b6360b8 100644
-> > --- a/drivers/rtc/rtc-s3c.c
-> > +++ b/drivers/rtc/rtc-s3c.c
-> > =40=40 -384,6 +384,15 =40=40 static void s3c6410_rtc_disable(struct s3c=
-_rtc
-> *info)
-> >  	writew(con, info->base + S3C2410_RTCCON);  =7D
-> >
-> > +static void exynosautov9_rtc_disable(struct s3c_rtc *info) =7B
-> > +	unsigned int con;
-> > +
-> > +	con =3D readb(info->base + S3C2410_RTCCON);
-> > +	con &=3D =7ES3C2410_RTCCON_RTCEN;
-> > +	writeb(con, info->base + S3C2410_RTCCON); =7D
->=20
-> Looks a lot like s3c24xx_rtc_disable()...
->=20
-> Anyway, if you keep ignoring the review, no point to provide reviews here=
-.
->=20
-
-I have removed the redundant code I had added in V1 considering your review=
- comment for asymmetry code.
-s3c24xx_rtc_disable() & s3c6410_rtc_disable() updates additional bit, which=
- is not valid for ExynosAutov9 (only RTCCON=5B4:0=5D are valid), hence I ad=
-ded this and mentioned in V2 cover letter as well.
-Please let me know if I am missing anything.
-
-> Best regards,
-> Krzysztof
-
-
+Cheers,
+Miguel
 
