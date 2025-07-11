@@ -1,266 +1,208 @@
-Return-Path: <linux-kernel+bounces-728182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C8DB02453
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:12:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E84D8B0245D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 707275A41A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:11:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4171C5A7878
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B202F1FFA;
-	Fri, 11 Jul 2025 19:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97AB2F1FFA;
+	Fri, 11 Jul 2025 19:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="YiiFkTtz"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L+U0UFbe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E854B21504E
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752261105; cv=pass; b=JDLQQ7WHLKsqkm7rYSnPdJEjUr13MTPLb3LH4q7C6r04C4d1a70iYgRpte3fLX2QMLQcPZxZrAfHI5D5hovSTvqJK7TTkTQ1kjKZSPDTptJXjsX42jDdS/OI84lt3+EOPKjhLWi8ny9iHZRNlzZW9VRa8JoSAGZdLSq3FtdryMM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752261105; c=relaxed/simple;
-	bh=V4IztQ5TCGA+zokfzPa3gTJI4GLCcX3HGI+oXGJbBQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZnTClVKHgSe4kY3XNVd5svSozUkrjlP8fZqs3vBr3ak2sT8J7kG8+TkQtgNI1BNY7a+kHh69oyLi4x7O2fjU52ypy2jaswjX/uIERtK2MN0aK21DSNOn0wTVSB/OzSRNomaZ2Yk3jBcbzyOMEw5MDeQ1TMdIO6fo14t1vVxBS9k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=YiiFkTtz; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752261080; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QQHsWfaQWduGbYVfJfhvhwCtWadu9pBFuRwzhPoUzQzi1H/WAg9fNG6VqjrJxhkuy0aI078bctii0Psg3f9hSyIhUeBs220UZZ6wPN6xQMsSSwRHRl0uWGNiox8c73ZCzXY2M3Mop9xDWjcnPjTon2M1GrMufloRRatNK3H2vwQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752261080; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Leldv3LSDYNFE4XlW4jcvrOGC0GRo6S1v6TISIZCd3k=; 
-	b=Eh/2Owu33vvx3YNkFOHHs96Ipq9VDTNJJaZxNsLh4cYMs7ky5qFTxS+Hk32JBebuvTnXDlllpY2X7e8aUQY+FBOgD0nTKAxZGl97N9aJ7gmaIVdFIr7Uq6/qIuZrkpfcvYOn126cfP8VSMQl4h8Ripp8GdBZEtL3ryB+C8qBzfI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752261080;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=Leldv3LSDYNFE4XlW4jcvrOGC0GRo6S1v6TISIZCd3k=;
-	b=YiiFkTtzwDYxaUqhXz5FEipWe7vnDTQ2Jo5fLh7xw8HhTMvodbRH6UzGbD10trFo
-	Rbb+/V/qsCxwbFRHuA0fg+2WO+i0Bm9pxQ9S9GXSqsN8FfhwtiyCn8IlLKo7QDxGFhF
-	orsRce0IsPt3vPT9ZcnCRYB7BZEEr/QhurgBvtDw=
-Received: by mx.zohomail.com with SMTPS id 1752261079263492.4174914567179;
-	Fri, 11 Jul 2025 12:11:19 -0700 (PDT)
-Date: Fri, 11 Jul 2025 20:11:15 +0100
-From: Adrian Larumbe <adrian.larumbe@collabora.com>
-To: Caterina Shablia <caterina.shablia@collabora.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
-	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] drm/panthor: Add support for atomic page table
- updates
-Message-ID: <5wxljw27mc4f2i6ag54upmpjxjj5odnd6d57fiiozpb3hjl4zi@okwx34aj56b6>
-References: <20250703152908.16702-2-caterina.shablia@collabora.com>
- <20250703152908.16702-3-caterina.shablia@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C366F2AEF1
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752261301; cv=none; b=W2jF5yRkK8F8I+XAcT5nhUJk3Gqjj6hLCVwunf9QAcm5kpu+kMdTt05m2mjmAPkmeol4Lbamu4p7OjHIQg0Hq1FX1tWls2t28RTCuIGhEbHL5m6L0np4jZy97wCduds1JYAByXCiinWNFb0DdnniPCk5dGDxsbXG7nWftZNb+SU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752261301; c=relaxed/simple;
+	bh=Uruk3H2g0XNEy6mEA/NvL/gnNZMNToLlruY4+EFrtsE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=goEoY8r2T4nNxSkOfPrxeo8o1XiGwlik4KPdsJxUbZWC+3MGpC5h0omydzSZRkhCwoNT7iQX3qwdhXGEmAy289XiXrnH/WDsGKs6sQUt6QpjoRN08dDSpNq+elfqiu8P55mM4DOodU4kzIwSzbyqgsL8YzKzcRm5duiP37TwS/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L+U0UFbe; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752261295;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=x73vDOHVFNFFFNmyXaWRn2Hqby6A/rJdxBDJ0lg/l8s=;
+	b=L+U0UFbey26p0ffk2VLN83i3bYRw21L915bRUgEgqYkyVJ2mSj493mqeT1btootdUVdG64
+	ZQxV+yQR7J58Aga3djUjzBGfIDOF/5Vku0xSUB9qM2sKOTmSA7LkBD8rZXt1goPxfryMS0
+	UfhetoUpLHoIlkkpJeuw2eUXyoT4fMw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-632-TonSsnsHMw60WlwjeGgqLQ-1; Fri, 11 Jul 2025 15:14:54 -0400
+X-MC-Unique: TonSsnsHMw60WlwjeGgqLQ-1
+X-Mimecast-MFC-AGG-ID: TonSsnsHMw60WlwjeGgqLQ_1752261293
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45359bfe631so14973625e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:14:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752261293; x=1752866093;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=x73vDOHVFNFFFNmyXaWRn2Hqby6A/rJdxBDJ0lg/l8s=;
+        b=ZYj0inl0pi4y8LZAyB0/Gyc1j/i5tKfprkbJhJ5wkTZCye0wgrrxIdNvX61Ssl4UIF
+         U+jip2jUVhah2DZWhARBjt45ijA3zQruM0+48NVxZ8hC6MdNpcF2k+xZQwzqek31ubCh
+         eQtPzpYOFIqA0SlwzmIkXE/q96jp/DEiSuWM+JK20Vh/9jk8hhQLbuU8zShfm7prRmr0
+         88rjVhuvDuPmERraNK/bXyytJZ5d/oLUEmRya1trLvNDQ7um/h3g4YyTQexnYMOwxdVj
+         ia34FFB+rFOBk9k3MvLeUexicpwt+OFjQ9wPUuWleo76AEp78SOIaU25GxJX9Fc1Sl9H
+         W+OA==
+X-Gm-Message-State: AOJu0YwAWoJF9G79V2392rlEfuk8H7IPgHP5eAsxnj6MvnEAAhCSx0Ua
+	lfRaSbMgX8HCQuy5zwsM5j0v7LQWZk4a/KOnZ84enZRfHoVkdYm++TwfP6dfwQ/SJ33WM6Z03w5
+	9lDxezR0FTkfchvqaReIJ0xyaSEVGx/fxGyybU429D27N6dNFuZKAFYEunulLTG79Pg==
+X-Gm-Gg: ASbGncuZLCUeQOm9l1MZv5jXx8WRt2UCqhpKi1tZZwtCP/nIFhr0bEKecouZf47bimJ
+	dxijUZKzAmPiXUI1q1o/kCbZJOnnrYX3azolhqD2VcMZCTXl1OZyufUPfhkphjCPV5+DwCgGNd1
+	B6Y1jaSU08REObOKqEEQ2mpJOJfD8aghkKKhWFcQ5jYjzJefHkLSKVLwQn9E8kqrCdIzF/+A+Pp
+	b+HwxVHA2qHFa3Gb5P/lzHgjMJF/wRXPm8Ob6Dq71PV2M9f6nmpY8Ff9nOgX4Ox5jfQTCtEGYNE
+	S6hZr2gLvsat3dk0mRVwaeCLyWxrwScVFTg3Kf6yyK85rG7adIS38h8YwYm8oOmQvSIB8x4NlBW
+	aEbsvkaHyrck6qYueOiQ4yGhatfxSBDP1mLLp//YIBe9P7SNr3/Hqfhm4+TC6HOoKqR0=
+X-Received: by 2002:a05:600c:6287:b0:441:d4e8:76c6 with SMTP id 5b1f17b1804b1-454fe10f108mr48366525e9.30.1752261293052;
+        Fri, 11 Jul 2025 12:14:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IET8nfY6nQTF1LjFcu5Dan27Zqi1z7O9GXMSzEjUhvggRBPghyXfAK4/VxcHkoIFe9ejiyVOg==
+X-Received: by 2002:a05:600c:6287:b0:441:d4e8:76c6 with SMTP id 5b1f17b1804b1-454fe10f108mr48366295e9.30.1752261292533;
+        Fri, 11 Jul 2025 12:14:52 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f0a:2e00:89cb:c7f0:82f2:e43c? (p200300d82f0a2e0089cbc7f082f2e43c.dip0.t-ipconnect.de. [2003:d8:2f0a:2e00:89cb:c7f0:82f2:e43c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d511bd78sm95925055e9.35.2025.07.11.12.14.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 12:14:51 -0700 (PDT)
+Message-ID: <2c6db237-3d64-43f5-8a20-168be5b248c8@redhat.com>
+Date: Fri, 11 Jul 2025 21:14:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250703152908.16702-3-caterina.shablia@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 12/14] mm: add config option for clearing page-extents
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+ akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
+ hpa@zytor.com, mingo@redhat.com, mjguzik@gmail.com, luto@kernel.org,
+ peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
+ tglx@linutronix.de, willy@infradead.org, raghavendra.kt@amd.com,
+ boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+References: <20250710005926.1159009-1-ankur.a.arora@oracle.com>
+ <20250710005926.1159009-13-ankur.a.arora@oracle.com>
+ <a1575434-77eb-4358-896a-6d0e62feef4c@redhat.com> <878qkuprku.fsf@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <878qkuprku.fsf@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Caterina,
+On 11.07.25 19:25, Ankur Arora wrote:
+> 
+> David Hildenbrand <david@redhat.com> writes:
+> 
+>> On 10.07.25 02:59, Ankur Arora wrote:
+>>> Add CONFIG_CLEAR_PAGE_EXTENT to allow clearing of page-extents
+>>> where architecturally supported.
+>>> This is only available with !CONFIG_HIGHMEM because the intent is to
+>>> use architecture support to clear contiguous extents in a single
+>>> operation (ex. via FEAT_MOPS on arm64, string instructions on x86)
+>>> which excludes any possibility of interspersing kmap()/kunmap().
+>>> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+>>> ---
+>>>    mm/Kconfig | 9 +++++++++
+>>>    1 file changed, 9 insertions(+)
+>>> diff --git a/mm/Kconfig b/mm/Kconfig
+>>> index 781be3240e21..a74a5e02de28 100644
+>>> --- a/mm/Kconfig
+>>> +++ b/mm/Kconfig
+>>> @@ -910,6 +910,15 @@ config NO_PAGE_MAPCOUNT
+>>>      endif # TRANSPARENT_HUGEPAGE
+>>>    +config CLEAR_PAGE_EXTENT
+>>> +	def_bool y
+>>> +	depends on !HIGHMEM && ARCH_HAS_CLEAR_PAGES
+>>> +	depends on TRANSPARENT_HUGEPAGE || HUGETLBFS
+>>> +
+>>> +	help
+>>> +	  Use architectural support for clear_pages() to zero page-extents.
+>>> +	  This is likely to be faster than zeroing page-at-a-time.
+>>> +
+>>
+>> IIRC, adding a help text will make this option be configurable by the user, no?
+> 
+> I tried changing the value in the generated .config by hand and that
+> reverted back to the computed value. So, I think this isn't configurable
+> by the user.
 
-On 03.07.2025 15:28, Caterina Shablia wrote:
-> From: Boris Brezillon <boris.brezillon@collabora.com>
->
-> Move the lock/flush_mem operations around the gpuvm_sm_map() calls so
-> we can implement true atomic page updates, where any access in the
-> locked range done by the GPU has to wait for the page table updates
-> to land before proceeding.
->
-> This is needed for vkQueueBindSparse(), so we can replace the dummy
-> page mapped over the entire object by actual BO backed pages in an atomic
-> way.
->
-> Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-> Signed-off-by: Caterina Shablia <caterina.shablia@collabora.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_mmu.c | 65 +++++++++++++++++++++++++--
->  1 file changed, 62 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-> index b39ea6acc6a9..1e58948587a9 100644
-> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> @@ -387,6 +387,15 @@ struct panthor_vm {
->  	 * flagged as faulty as a result.
->  	 */
->  	bool unhandled_fault;
-> +
-> +	/** @locked_region: Information about the currently locked region currently. */
+Yes, I misremembered and the help text confused me.
 
-Nit: delete second 'current'
+So yes, the help text in that case (internal entries) is uncommon (no 
+need to guide the user when there are no options :) ), but feel free to 
+keep it for documentation purposes.
 
-> +	struct {
-> +		/** @locked_region.start: Start of the locked region. */
-> +		u64 start;
-> +
-> +		/** @locked_region.size: Size of the locked region. */
-> +		u64 size;
-> +	} locked_region;
->  };
->
->  /**
-> @@ -775,6 +784,10 @@ int panthor_vm_active(struct panthor_vm *vm)
->  	}
->
->  	ret = panthor_mmu_as_enable(vm->ptdev, vm->as.id, transtab, transcfg, vm->memattr);
-> +	if (!ret && vm->locked_region.size) {
-> +		lock_region(ptdev, vm->as.id, vm->locked_region.start, vm->locked_region.size);
+(e.g., HAVE_64BIT_ALIGNED_ACCESS does that)
 
-Why do we need to lock the region after enabling a new AS?
+Maybe we should call it similarly HAVE_... to make it clearer that there 
+are really no options.
 
-> +		ret = wait_ready(ptdev, vm->as.id);
-> +	}
->
->  out_make_active:
->  	if (!ret) {
-> @@ -902,6 +915,9 @@ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
->  	struct io_pgtable_ops *ops = vm->pgtbl_ops;
->  	u64 offset = 0;
->
-> +	drm_WARN_ON(&ptdev->base,
-> +		    (iova < vm->locked_region.start) ||
-> +		    (iova + size > vm->locked_region.start + vm->locked_region.size));
->  	drm_dbg(&ptdev->base, "unmap: as=%d, iova=%llx, len=%llx", vm->as.id, iova, size);
->
->  	while (offset < size) {
-> @@ -915,13 +931,12 @@ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
->  				iova + offset + unmapped_sz,
->  				iova + offset + pgsize * pgcount,
->  				iova, iova + size);
-> -			panthor_vm_flush_range(vm, iova, offset + unmapped_sz);
+But I'm bad at #kconfig, so whatever you prefer.
 
-We've removed all calls to panthor_vm_flush_range(), but I don't see it being done in panthor_vm_exec_op()
-before the region is unlocked. It's effectively become dead code.
+-- 
+Cheers,
 
-However, even if we did 'panthor_vm_flush_range(vm, op->va.addr, op->va.range);' in panthor_vm_exec_op() right
-before we unlock the region, we wouldn't be dealing well with the case in which only a partial unmap happens,
-but maybe this isn't a big deal either.
+David / dhildenb
 
->  			return  -EINVAL;
->  		}
->  		offset += unmapped_sz;
->  	}
->
-> -	return panthor_vm_flush_range(vm, iova, size);
-> +	return 0;
->  }
->
->  static int
-> @@ -938,6 +953,10 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
->  	if (!size)
->  		return 0;
->
-> +	drm_WARN_ON(&ptdev->base,
-> +		    (iova < vm->locked_region.start) ||
-> +		    (iova + size > vm->locked_region.start + vm->locked_region.size));
-> +
->  	for_each_sgtable_dma_sg(sgt, sgl, count) {
->  		dma_addr_t paddr = sg_dma_address(sgl);
->  		size_t len = sg_dma_len(sgl);
-> @@ -985,7 +1004,7 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
->  		offset = 0;
->  	}
->
-> -	return panthor_vm_flush_range(vm, start_iova, iova - start_iova);
-
-
-> +	return 0;
->  }
->
->  static int flags_to_prot(u32 flags)
-> @@ -1654,6 +1673,38 @@ static const char *access_type_name(struct panthor_device *ptdev,
->  	}
->  }
->
-> +static int panthor_vm_lock_region(struct panthor_vm *vm, u64 start, u64 size)
-> +{
-> +	struct panthor_device *ptdev = vm->ptdev;
-> +	int ret;
-> +
-> +	mutex_lock(&ptdev->mmu->as.slots_lock);
-> +	drm_WARN_ON(&ptdev->base, vm->locked_region.start || vm->locked_region.size);
-> +	vm->locked_region.start = start;
-> +	vm->locked_region.size = size;
-> +	if (vm->as.id >= 0) {
-
-I guess VM bind operations don't increase the active_cnt of a VM, so we might try to
-be mapping addresses from UM while no active groups are submitting jobs targetting this VM?
-
-> +		lock_region(ptdev, vm->as.id, start, size);
-> +		ret = wait_ready(ptdev, vm->as.id);
-
-I've noticed in mmu_hw_do_operation_locked() we don't do wait_ready() after locking the region.
-Is it missing or else maybe waiting for the AS to be locked isn't necessary here?
-
-> +	}
-> +	mutex_unlock(&ptdev->mmu->as.slots_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static void panthor_vm_unlock_region(struct panthor_vm *vm)
-> +{
-> +	struct panthor_device *ptdev = vm->ptdev;
-> +
-> +	mutex_lock(&ptdev->mmu->as.slots_lock);
-> +	if (vm->as.id >= 0) {
-> +		write_cmd(ptdev, vm->as.id, AS_COMMAND_FLUSH_MEM);
-
-I guess this is why we no longer need to call panthor_vm_flush_range() right before this function.
-Does AS_COMMAND_FLUSH_MEM only flush the locked region? Also, why not AS_COMMAND_FLUSH_PT instead?
-
-> +		drm_WARN_ON(&ptdev->base, wait_ready(ptdev, vm->as.id));
-> +	}
-> +	vm->locked_region.start = 0;
-> +	vm->locked_region.size = 0;
-> +	mutex_unlock(&ptdev->mmu->as.slots_lock);
-> +}
-> +
->  static void panthor_mmu_irq_handler(struct panthor_device *ptdev, u32 status)
->  {
->  	bool has_unhandled_faults = false;
-> @@ -2179,6 +2230,11 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct panthor_vm_op_ctx *op,
->
->  	mutex_lock(&vm->op_lock);
->  	vm->op_ctx = op;
-> +
-> +	ret = panthor_vm_lock_region(vm, op->va.addr, op->va.range);
-> +	if (ret)
-> +		goto out;
-> +
->  	switch (op_type) {
->  	case DRM_PANTHOR_VM_BIND_OP_TYPE_MAP:
->  		if (vm->unusable) {
-> @@ -2199,6 +2255,9 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct panthor_vm_op_ctx *op,
->  		break;
->  	}
->
-> +	panthor_vm_unlock_region(vm);
-> +
-> +out:
->  	if (ret && flag_vm_unusable_on_failure)
->  		vm->unusable = true;
->
-> --
-> 2.47.2
-
-Adrian Larumbe
 
