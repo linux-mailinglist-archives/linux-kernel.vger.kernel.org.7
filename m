@@ -1,316 +1,729 @@
-Return-Path: <linux-kernel+bounces-726933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F4BB01300
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:51:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7582B0130A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 664A15C21B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:51:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CE071C838B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756B21CDA3F;
-	Fri, 11 Jul 2025 05:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41114469D;
+	Fri, 11 Jul 2025 05:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ORwrHJDa"
-Received: from mail-yb1-f195.google.com (mail-yb1-f195.google.com [209.85.219.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="qCPpecw2"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F8E17A300;
-	Fri, 11 Jul 2025 05:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8A91B87C9;
+	Fri, 11 Jul 2025 05:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752213096; cv=none; b=hcOle6Io6WSQX8uelVg9W1qGQV0SMlbBrm9YGi+j/iJY3pPSmddyZHJUliQyYb/6ziHZ5f/TiS4oOPDw13I9CdxvK3bsJwzMEIz4UfjEUk4nbvlqW9ZyznAWgYenAVuXIc3TcrXhZCujwF8Bk/SJs/qxYB1RVK54D4UKHDm7Rqw=
+	t=1752213212; cv=none; b=WQGHb9iyJ7C7J4Hq9gKivgdDbY9SJabMrwlLwEP2muVYZNhMl7j+GNHh3Xd0bKfuCQ/BU6VIH+OQX+YuLPfttrmGpSW3FIPKR0Rjkm7PxkJtXxJT8qNOE162JjUBUN+jzL74+X/YK3SGdsWnSvh/0gHFB+3XoWsgNfmPobYJRug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752213096; c=relaxed/simple;
-	bh=jNsGupoBgwkp5RDX4ibpgNUay2qHWr/Leph5FYAPlOg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HsjNINnNmvK87WkL0/xiJdiJRk2I4QZWqmbqEdiNsjiKW35sDLBOPjbilLSkMfBrKYQfY2Hb1T2CYH8i4LWRMcJQWBo91e4mO9xonG4D2BqGHtgoR/ANzt1u+JxsinAuop2gRgTUEcrenJ8+UnTRuYyHI0F87mJdNbVAsob9ZiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ORwrHJDa; arc=none smtp.client-ip=209.85.219.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f195.google.com with SMTP id 3f1490d57ef6-e740a09eb00so1417302276.0;
-        Thu, 10 Jul 2025 22:51:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752213093; x=1752817893; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s15kRBz3DosUsTKGgSKKOINpNlddbEfVm+2y2VNaNrQ=;
-        b=ORwrHJDaPcg4THpyrp/AcS4BgCUsB2yPx5qMp49eHvAqVJbM46fQOiPBJii8ThhOsn
-         c1tSITJuxTsICkEh1LDMGSPnNUZvIO0R7Xgh7NbMfq2lCNjO1Xh9KG23V8aMTDODDtXt
-         iqv7Tlg23NvcEcoZF3n4c35o6COTea59jH5SVjc6IfJAzYvIw0bV+AstO+QS7CjcHAmw
-         2QUGoH/T8G/Oks3MW3VuRuKbvBuILaT07ydOXS62bPgeRk1maFfW/RIeKzUWKqDBBjtL
-         mpMqwrBt3k2JYqxhJPnOUPDCUNWMjZGYudowzMxnRWPX+WaFgMIv2/BXitwg0BtNjnJ/
-         JdjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752213094; x=1752817894;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s15kRBz3DosUsTKGgSKKOINpNlddbEfVm+2y2VNaNrQ=;
-        b=AFBA/vNJSWYbqpFDdcae0THxt+bI7ZSiorPlcQAV7vhrYFAMwp4EDfdUhcaEdGL8Xn
-         dmG00N8CfCGu3FYf45erQcJ6n9QIEwsMiNwwLnoKjP9Myc5SnDer92Jg8365dXbPll1t
-         znqcwlbACJlblvT/UHKw/LsSNFw9noPtYc6ZaTMLHE+DvxrpTYup61IKxWQTUK+cYAZn
-         Y5Eybkj+/XRUnPn9EWgRNBN1JQLcTctSzbQIe1npRDrUD9Hz/mhpJxTdItCq+bMDoxxu
-         u9r1G3l9iowBcKFaqpzX2xshKb45jo5NI9Su9FAbGoW5uNvl6BnRiCZ5eOsFSbL4FqVC
-         Hg5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUnoDXK+ggsarb8e7Td7zH3g1xJB4qEtx6vfFgKBFFfI0JQGZ9QXL69OtPm0w/yjUvMVQM=@vger.kernel.org, AJvYcCWB7XdxpPm5Qma7VFPFvjHdGQ5dpqUgs1y7uUGiRz8QrUJrfm1BuOH2VefQzFyngETwF8s6CJ+vLBhbMbdr@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXUh/ofFBkfGaH3YUGzFglkyUFfezR2ubZaw99ZkPDGUZSHdg6
-	wn7WkG+uUZFMoyLHICDQrolbsy8tZu34D635Bb7nMK62qwXoaYhA5XJWlfkgb5k6FkmmcPTyEU1
-	3891qwqeTyiUC3Ll2O6ZPta5RYXLdjlQ=
-X-Gm-Gg: ASbGncteO/JJ4PKsE3v7/tF0cOyZe4d40xJSlgTjdbvrdh0PEVEg8nR1QCLkkV7506g
-	8uZk0IpFQVl+ayowt4Q8NnPzaHKI0hmdlDzFzrhbOZ8lcy8/CBZDbpDJMW/D6omKprvMhs7YSiG
-	zxHHrqllZRc7N5wJ1KF01fYubrbrH7FU/oGp/zQhoV/5TvMjy93V4ozCd3oAagmYQVikPrgzrI0
-	s2aO88=
-X-Google-Smtp-Source: AGHT+IERE+v0OcXSMuyOLN1LpYSWLXq88YYT0bb9OVBfX5SbgkyM/k5Ofm+PXPIZgzHh56tkluyz04fLEceA9wxZvro=
-X-Received: by 2002:a05:690c:55c3:10b0:717:d7d1:4697 with SMTP id
- 00721157ae682-717d7d15b34mr18439917b3.30.1752213093556; Thu, 10 Jul 2025
- 22:51:33 -0700 (PDT)
+	s=arc-20240116; t=1752213212; c=relaxed/simple;
+	bh=V/eNDY/qA4NHSZOwPua9X0RRlI0fpDZaOiJgemAaWc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hVcGrtCba/DjHv9ZkVM3h/MztH0R6a5TKZOPkmiRXGMCXQHhVaXHYvDSJjbCame3edKynalJmrZQ/pJNR2yfdVZ2Or2BJ7LFaUFzkjXg3/TUs3K2ZHoMq9RgLGFhcAK6Xoumgv+8FEJsHYb+p6rJd2r9B9EnkxM4mpj5uunGWrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=qCPpecw2; arc=none smtp.client-ip=220.197.32.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=gJj1g9IyHgZBa6CQJ6zOjunPT/VUHlVIwzOdgcnCtjI=;
+	b=qCPpecw27VsCqZDIYkU/al+gtN8eBNSbNWtwL+av5M6vWL8gITy6u51EzZaVFG
+	eLG9vz1EVLkWFCkVf65iKz8VNdq9bMX0DroV1pgfnkAUC28zDe44alx0KruPaeV5
+	TFQFpAYYs5PuhaUckhLHz9jvvvE4aBZD21sCD5eoLtEz8=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgB3b7qSpnBotOpQAA--.38057S3;
+	Fri, 11 Jul 2025 13:52:20 +0800 (CST)
+Date: Fri, 11 Jul 2025 13:52:18 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Robert Chiras <robert.chiras@nxp.com>,
+	"Guoniu.zhou" <guoniu.zhou@nxp.com>
+Subject: Re: [PATCH v5 11/13] arm64: dts: imx8: add capture controller for
+ i.MX8's img subsystem
+Message-ID: <aHCmkqIjrdg2_NRo@dragon>
+References: <20250522-8qxp_camera-v5-0-d4be869fdb7e@nxp.com>
+ <20250522-8qxp_camera-v5-11-d4be869fdb7e@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710070835.260831-1-dongml2@chinatelecom.cn>
- <2f8c792e-9675-4385-b1cb-10266c72bd45@linux.dev> <ffcbe060-a15d-44d7-bf5e-090e74726c31@linux.dev>
-In-Reply-To: <ffcbe060-a15d-44d7-bf5e-090e74726c31@linux.dev>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Fri, 11 Jul 2025 13:51:31 +0800
-X-Gm-Features: Ac12FXwUN2IQLfPZaothBP8FC6pjD8dQ52POIYDGAy3WNsBZX3GgBz_Cr82hdaE
-Message-ID: <CADxym3YGF6jCg=J1bQs60SePEwigh7S+7yfXAdU+yc3WX9HAGQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3] bpf: make the attach target more accurate
-To: Yonghong Song <yonghong.song@linux.dev>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
-	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Menglong Dong <dongml2@chinatelecom.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250522-8qxp_camera-v5-11-d4be869fdb7e@nxp.com>
+X-CM-TRANSID:Mc8vCgB3b7qSpnBotOpQAA--.38057S3
+X-Coremail-Antispam: 1Uf129KBjvAXoWfGF18ArW7Gw4DGr1DXr48Xrb_yoW8CryxXo
+	Wayrs3CrW5Ga47Cay7XwsrKF42kFs0qw4xJayDZr4fG3WYvrWYyw47CF4jg3y3Jry8Jas5
+	A34I9a4UGwnFvan3n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUo_-PUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEheHZWhwe3Sj+gAAsp
 
-On Fri, Jul 11, 2025 at 11:46=E2=80=AFAM Yonghong Song <yonghong.song@linux=
-.dev> wrote:
->
->
->
-> On 7/10/25 8:10 PM, Yonghong Song wrote:
-> >
-> >
-> > On 7/10/25 12:08 AM, Menglong Dong wrote:
-> >> For now, we lookup the address of the attach target in
-> >> bpf_check_attach_target() with find_kallsyms_symbol_value or
-> >> kallsyms_lookup_name, which is not accurate in some cases.
-> >>
-> >> For example, we want to attach to the target "t_next", but there are
-> >> multiple symbols with the name "t_next" exist in the kallsyms, which
-> >> makes
-> >> the attach target ambiguous, and the attach should fail.
-> >>
-> >> Introduce the function bpf_lookup_attach_addr() to do the address
-> >> lookup,
-> >> which will return -EADDRNOTAVAIL when the symbol is not unique.
-> >>
-> >> We can do the testing with following shell:
-> >>
-> >> for s in $(cat /proc/kallsyms | awk '{print $3}' | sort | uniq -d)
-> >> do
-> >>    if grep -q "^$s\$"
-> >> /sys/kernel/debug/tracing/available_filter_functions
-> >>    then
-> >>      bpftrace -e "fentry:$s {printf(\"1\");}" -v
-> >>    fi
-> >> done
-> >>
-> >> The script will find all the duplicated symbols in /proc/kallsyms, whi=
-ch
-> >> is also in /sys/kernel/debug/tracing/available_filter_functions, and
-> >> attach them with bpftrace.
-> >>
-> >> After this patch, all the attaching fail with the error:
-> >>
-> >> The address of function xxx cannot be found
-> >> or
-> >> No BTF found for xxx
-> >>
-> >> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> >
-> > Maybe we should prevent vmlinux BTF generation for such symbols
-> > which are static and have more than one instances? This can
-> > be done in pahole and downstream libbpf/kernel do not
-> > need to do anything. This can avoid libbpf/kernel runtime overhead
-> > since bpf_lookup_attach_addr() could be expensive as it needs
-> > to go through ALL symbols, even for unique symbols.
+On Thu, May 22, 2025 at 01:56:49PM -0400, Frank Li wrote:
+> Add CSI related nodes (i2c, irqsteer, csi, lpcg) for i.MX8 img subsystem.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> change from v4 to v5
+> - remove empty endpoint
+> 
+> Change from v3 to v4
+> - remove unused clock clock-img-axi
+> - add ports information for isi and csi
+> - Fix 8qxp clock, irq and power domain
+> - Fix reg size
+> 
+> Change from v2 to v3
+> - remove phy and put csr register space under mipi csi2
+> 
+> change from v1 to v2
+> - move scu reset under scu node
+> - add 8qm comaptible string for mipi csi2 and mipi csi phys.
+> ---
+>  arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi    | 362 ++++++++++++++++++++++
+>  arch/arm64/boot/dts/freescale/imx8qm-ss-img.dtsi  |  79 +++++
+>  arch/arm64/boot/dts/freescale/imx8qm.dtsi         |   5 +
+>  arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi |  83 +++++
+>  arch/arm64/boot/dts/freescale/imx8qxp.dtsi        |   5 +
+>  5 files changed, 534 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi b/arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi
+> index d39242c1b9f79..2cf0f7208350a 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi
+> @@ -10,12 +10,264 @@ img_ipg_clk: clock-img-ipg {
+>  	clock-output-names = "img_ipg_clk";
+>  };
+>  
+> +img_pxl_clk: clock-img-pxl {
+> +	compatible = "fixed-clock";
+> +	#clock-cells = <0>;
+> +	clock-frequency = <600000000>;
+> +	clock-output-names = "img_pxl_clk";
+> +};
+> +
+>  img_subsys: bus@58000000 {
+>  	compatible = "simple-bus";
+>  	#address-cells = <1>;
+>  	#size-cells = <1>;
+>  	ranges = <0x58000000 0x0 0x58000000 0x1000000>;
+>  
+> +	isi: isi@58100000 {
+> +		reg = <0x58100000 0x80000>;
+> +		interrupts = <GIC_SPI 297 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 298 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 301 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 302 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&pdma0_lpcg IMX_LPCG_CLK_0>,
+> +			 <&pdma1_lpcg IMX_LPCG_CLK_0>,
+> +			 <&pdma2_lpcg IMX_LPCG_CLK_0>,
+> +			 <&pdma3_lpcg IMX_LPCG_CLK_0>,
+> +			 <&pdma4_lpcg IMX_LPCG_CLK_0>,
+> +			 <&pdma5_lpcg IMX_LPCG_CLK_0>,
+> +			 <&pdma6_lpcg IMX_LPCG_CLK_0>,
+> +			 <&pdma7_lpcg IMX_LPCG_CLK_0>;
+> +		clock-names = "per0", "per1", "per2", "per3",
+> +			      "per4", "per5", "per6", "per7";
+> +		interrupt-parent = <&gic>;
+> +		power-domains = <&pd IMX_SC_R_ISI_CH0>,
+> +				<&pd IMX_SC_R_ISI_CH1>,
+> +				<&pd IMX_SC_R_ISI_CH2>,
+> +				<&pd IMX_SC_R_ISI_CH3>,
+> +				<&pd IMX_SC_R_ISI_CH4>,
+> +				<&pd IMX_SC_R_ISI_CH5>,
+> +				<&pd IMX_SC_R_ISI_CH6>,
+> +				<&pd IMX_SC_R_ISI_CH7>;
+> +		status = "disabled";
+> +	};
+> +
+> +	irqsteer_csi0: irqsteer@58220000 {
+> +		compatible = "fsl,imx8qm-irqsteer", "fsl,imx-irqsteer";
+> +		reg = <0x58220000 0x1000>;
+> +		#interrupt-cells = <1>;
+> +		interrupt-controller;
+> +		interrupts = <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&img_ipg_clk>;
+> +		clock-names = "ipg";
+> +		interrupt-parent = <&gic>;
+> +		power-domains = <&pd IMX_SC_R_CSI_0>;
+> +		fsl,channel = <0>;
+> +		fsl,num-irqs = <32>;
+> +		status = "disabled";
+> +	};
+> +
+> +	gpio0_mipi_csi0: gpio@58222000 {
+> +		compatible = "fsl,imx8qm-gpio", "fsl,imx35-gpio";
+> +		reg = <0x58222000 0x1000>;
+> +		#interrupt-cells = <2>;
+> +		interrupt-controller;
+> +		interrupts = <0>;
+> +		#gpio-cells = <2>;
+> +		gpio-controller;
+> +		interrupt-parent = <&irqsteer_csi0>;
+> +		power-domains = <&pd IMX_SC_R_CSI_0>;
+> +	};
+> +
+> +	csi0_core_lpcg: clock-controller@58223018 {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x58223018 0x4>;
+> +		clocks = <&clk IMX_SC_R_CSI_0 IMX_SC_PM_CLK_PER>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_4>;
+> +		clock-output-names = "csi0_lpcg_core_clk";
+> +		power-domains = <&pd IMX_SC_R_ISI_CH0>;
+> +	};
+> +
+> +	csi0_esc_lpcg: clock-controller@5822301c {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x5822301c 0x4>;
+> +		clocks = <&clk IMX_SC_R_CSI_0 IMX_SC_PM_CLK_MISC>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_4>;
+> +		clock-output-names = "csi0_lpcg_esc_clk";
+> +		power-domains = <&pd IMX_SC_R_ISI_CH0>;
+> +	};
+> +
+> +	i2c_mipi_csi0: i2c@58226000 {
+> +		compatible = "fsl,imx8qxp-lpi2c", "fsl,imx7ulp-lpi2c";
+> +		reg = <0x58226000 0x1000>;
+> +		interrupts = <8>;
+> +		clocks = <&clk IMX_SC_R_CSI_0_I2C_0 IMX_SC_PM_CLK_PER>,
+> +			 <&img_ipg_clk>;
+> +		clock-names = "per", "ipg";
+> +		assigned-clocks = <&clk IMX_SC_R_CSI_0_I2C_0 IMX_SC_PM_CLK_PER>;
+> +		assigned-clock-rates = <24000000>;
+> +		interrupt-parent = <&irqsteer_csi0>;
+> +		power-domains = <&pd IMX_SC_R_CSI_0_I2C_0>;
+> +		status = "disabled";
+> +	};
+> +
+> +	mipi_csi_0: csi@58227000 {
+> +		compatible = "fsl,imx8qxp-mipi-csi2";
+> +		reg = <0x58227000 0x1000>,
+> +		      <0x58221000 0x1000>;
+> +		clocks = <&csi0_core_lpcg IMX_LPCG_CLK_4>,
+> +			 <&csi0_esc_lpcg IMX_LPCG_CLK_4>,
+> +			 <&csi0_pxl_lpcg IMX_LPCG_CLK_0>;
+> +		clock-names = "core", "esc", "ui";
+> +		assigned-clocks = <&csi0_core_lpcg IMX_LPCG_CLK_4>,
+> +				  <&csi0_esc_lpcg IMX_LPCG_CLK_4>;
+> +		assigned-clock-rates = <360000000>, <72000000>;
+> +		power-domains = <&pd IMX_SC_R_ISI_CH0>;
+> +		resets = <&scu_reset IMX_SC_R_CSI_0>;
+> +		status = "disabled";
+> +	};
+> +
+> +	irqsteer_csi1: irqsteer@58240000 {
+> +		compatible = "fsl,imx8qm-irqsteer", "fsl,imx-irqsteer";
+> +		reg = <0x58240000 0x1000>;
+> +		#interrupt-cells = <1>;
+> +		interrupt-controller;
+> +		interrupts = <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&img_ipg_clk>;
+> +		clock-names = "ipg";
+> +		interrupt-parent = <&gic>;
+> +		power-domains = <&pd IMX_SC_R_CSI_1>;
+> +		fsl,channel = <0>;
+> +		fsl,num-irqs = <32>;
+> +		status = "disabled";
+> +	};
+> +
+> +	gpio0_mipi_csi1: gpio@58242000 {
+> +		compatible = "fsl,imx8qm-gpio", "fsl,imx35-gpio";
+> +		reg = <0x58242000 0x1000>;
+> +		#interrupt-cells = <2>;
+> +		interrupt-controller;
+> +		interrupts = <0>;
+> +		#gpio-cells = <2>;
+> +		gpio-controller;
+> +		interrupt-parent = <&irqsteer_csi1>;
+> +		power-domains = <&pd IMX_SC_R_CSI_1>;
+> +	};
+> +
+> +	csi1_core_lpcg: clock-controller@58243018 {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x58243018 0x4>;
+> +		clocks = <&clk IMX_SC_R_CSI_1 IMX_SC_PM_CLK_PER>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_4>;
+> +		clock-output-names = "csi1_lpcg_core_clk";
+> +		power-domains = <&pd IMX_SC_R_ISI_CH0>;
+> +	};
+> +
+> +	csi1_esc_lpcg: clock-controller@5824301c {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x5824301c 0x4>;
+> +		clocks = <&clk IMX_SC_R_CSI_1 IMX_SC_PM_CLK_MISC>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_4>;
+> +		clock-output-names = "csi1_lpcg_esc_clk";
+> +		power-domains = <&pd IMX_SC_R_ISI_CH0>;
+> +	};
+> +
+> +	i2c_mipi_csi1: i2c@58246000 {
+> +		compatible = "fsl,imx8qxp-lpi2c", "fsl,imx7ulp-lpi2c";
+> +		reg = <0x58246000 0x1000>;
+> +		interrupts = <8>;
+> +		clocks = <&clk IMX_SC_R_CSI_1_I2C_0 IMX_SC_PM_CLK_PER>,
+> +			 <&img_ipg_clk>;
+> +		clock-names = "per", "ipg";
+> +		assigned-clocks = <&clk IMX_SC_R_CSI_1_I2C_0 IMX_SC_PM_CLK_PER>;
+> +		assigned-clock-rates = <24000000>;
+> +		interrupt-parent = <&irqsteer_csi1>;
+> +		power-domains = <&pd IMX_SC_R_CSI_1_I2C_0>;
+> +		status = "disabled";
+> +	};
+> +
+> +	mipi_csi_1: csi@58247000 {
+> +		compatible = "fsl,imx8qxp-mipi-csi2";
+> +		reg = <0x58247000 0x1000>,
+> +		      <0x58241000 0x1000>;
+> +		clocks = <&csi1_core_lpcg IMX_LPCG_CLK_4>,
+> +			 <&csi1_esc_lpcg IMX_LPCG_CLK_4>,
+> +			 <&csi1_pxl_lpcg IMX_LPCG_CLK_0>;
+> +		clock-names = "core", "esc", "ui";
+> +		assigned-clocks = <&csi1_core_lpcg IMX_LPCG_CLK_4>,
+> +				  <&csi1_esc_lpcg IMX_LPCG_CLK_4>;
+> +		assigned-clock-rates = <360000000>, <72000000>;
+> +		power-domains = <&pd IMX_SC_R_ISI_CH0>;
+> +		resets = <&scu_reset IMX_SC_R_CSI_1>;
+> +		status = "disabled";
+> +	};
+> +
+> +	irqsteer_parallel: irqsteer@58260000 {
+> +		compatible = "fsl,imx8qm-irqsteer", "fsl,imx-irqsteer";
+> +		reg = <0x58260000 0x1000>;
+> +		#interrupt-cells = <1>;
+> +		interrupt-controller;
+> +		interrupts = <GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&clk_dummy>;
+> +		clock-names = "ipg";
+> +		interrupt-parent = <&gic>;
+> +		power-domains = <&pd IMX_SC_R_PI_0>;
+> +		fsl,channel = <0>;
+> +		fsl,num-irqs = <32>;
+> +		status = "disabled";
+> +	};
+> +
+> +	pi0_ipg_lpcg: clock-controller@58263004 {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x58263004 0x4>;
+> +		clocks = <&clk IMX_SC_R_PI_0 IMX_SC_PM_CLK_PER>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_4>;
+> +		clock-output-names = "pi0_lpcg_ipg_clk";
+> +		power-domains = <&pd IMX_SC_R_ISI_CH0>;
+> +	};
+> +
+> +	pi0_pxl_lpcg: clock-controller@58263018 {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x58263018 0x4>;
+> +		clocks = <&clk IMX_SC_R_PI_0 IMX_SC_PM_CLK_PER>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_0>;
+> +		clock-output-names = "pi0_lpcg_pxl_clk";
+> +		power-domains = <&pd IMX_SC_R_ISI_CH0>;
+> +	};
+> +
+> +	pi0_misc_lpcg: clock-controller@5826301c {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x5826301c 0x4>;
+> +		clocks = <&clk IMX_SC_R_PI_0 IMX_SC_PM_CLK_MISC0>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_0>;
+> +		clock-output-names = "pi0_lpcg_misc_clk";
+> +		power-domains = <&pd IMX_SC_R_ISI_CH0>;
+> +	};
+> +
+> +	i2c0_parallel: i2c@58266000 {
+> +		compatible = "fsl,imx8qxp-lpi2c", "fsl,imx7ulp-lpi2c";
+> +		reg = <0x58266000 0x1000>;
+> +		interrupts = <8>;
+> +		clocks = <&clk IMX_SC_R_PI_0_I2C_0 IMX_SC_PM_CLK_PER>,
+> +			 <&img_ipg_clk>;
+> +		clock-names = "per", "ipg";
+> +		assigned-clocks = <&clk IMX_SC_R_PI_0_I2C_0 IMX_SC_PM_CLK_PER>;
+> +		assigned-clock-rates = <24000000>;
+> +		interrupt-parent = <&irqsteer_parallel>;
+> +		power-domains = <&pd IMX_SC_R_PI_0_I2C_0>;
+> +		status = "disabled";
+> +	};
+> +
+>  	jpegdec: jpegdec@58400000 {
+>  		reg = <0x58400000 0x00050000>;
+>  		interrupts = <GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH>;
+> @@ -40,6 +292,116 @@ jpegenc: jpegenc@58450000 {
+>  				<&pd IMX_SC_R_MJPEG_ENC_S0>;
+>  	};
+>  
+> +	pdma0_lpcg: clock-controller@58500000 {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x58500000 0x10000>;
+> +		clocks = <&img_pxl_clk>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_0>;
+> +		clock-output-names = "pdma0_lpcg_clk";
+> +		power-domains = <&pd IMX_SC_R_ISI_CH0>;
+> +	};
+> +
+> +	pdma1_lpcg: clock-controller@58510000 {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x58510000 0x10000>;
+> +		clocks = <&img_pxl_clk>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_0>;
+> +		clock-output-names = "pdma1_lpcg_clk";
+> +		power-domains = <&pd IMX_SC_R_ISI_CH1>;
+> +	};
+> +
+> +	pdma2_lpcg: clock-controller@58520000 {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x58520000 0x10000>;
+> +		clocks = <&img_pxl_clk>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_0>;
+> +		clock-output-names = "pdma2_lpcg_clk";
+> +		power-domains = <&pd IMX_SC_R_ISI_CH2>;
+> +	};
+> +
+> +	pdma3_lpcg: clock-controller@58530000 {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x58530000 0x10000>;
+> +		clocks = <&img_pxl_clk>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_0>;
+> +		clock-output-names = "pdma3_lpcg_clk";
+> +		power-domains = <&pd IMX_SC_R_ISI_CH3>;
+> +	};
+> +
+> +	pdma4_lpcg: clock-controller@58540000 {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x58540000 0x10000>;
+> +		clocks = <&img_pxl_clk>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_0>;
+> +		clock-output-names = "pdma4_lpcg_clk";
+> +		power-domains = <&pd IMX_SC_R_ISI_CH4>;
+> +	};
+> +
+> +	pdma5_lpcg: clock-controller@58550000 {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x58550000 0x10000>;
+> +		clocks = <&img_pxl_clk>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_0>;
+> +		clock-output-names = "pdma5_lpcg_clk";
+> +		power-domains = <&pd IMX_SC_R_ISI_CH5>;
+> +	};
+> +
+> +	pdma6_lpcg: clock-controller@58560000 {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x58560000 0x10000>;
+> +		clocks = <&img_pxl_clk>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_0>;
+> +		clock-output-names = "pdma6_lpcg_clk";
+> +		power-domains = <&pd IMX_SC_R_ISI_CH6>;
+> +	};
+> +
+> +	pdma7_lpcg: clock-controller@58570000 {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x58570000 0x10000>;
+> +		clocks = <&img_pxl_clk>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_0>;
+> +		clock-output-names = "pdma7_lpcg_clk";
+> +		power-domains = <&pd IMX_SC_R_ISI_CH7>;
+> +	};
+> +
+> +	csi0_pxl_lpcg: clock-controller@58580000 {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x58580000 0x10000>;
+> +		clocks = <&img_pxl_clk>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_0>;
+> +		clock-output-names = "csi0_lpcg_pxl_clk";
+> +		power-domains = <&pd IMX_SC_R_CSI_0>;
+> +	};
+> +
+> +	csi1_pxl_lpcg: clock-controller@58590000 {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x58590000 0x10000>;
+> +		clocks = <&img_pxl_clk>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_0>;
+> +		clock-output-names = "csi1_lpcg_pxl_clk";
+> +		power-domains = <&pd IMX_SC_R_CSI_1>;
+> +	};
+> +
+> +	hdmi_rx_pxl_link_lpcg: clock-controller@585a0000 {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x585a0000 0x10000>;
+> +		clocks = <&img_pxl_clk>;
+> +		#clock-cells = <1>;
+> +		clock-indices = <IMX_LPCG_CLK_0>;
+> +		clock-output-names = "hdmi_rx_lpcg_pxl_link_clk";
+> +		power-domains = <&pd IMX_SC_R_HDMI_RX>;
+> +	};
+> +
+>  	img_jpeg_dec_lpcg: clock-controller@585d0000 {
+>  		compatible = "fsl,imx8qxp-lpcg";
+>  		reg = <0x585d0000 0x10000>;
+> diff --git a/arch/arm64/boot/dts/freescale/imx8qm-ss-img.dtsi b/arch/arm64/boot/dts/freescale/imx8qm-ss-img.dtsi
+> index 2bbdacb1313f9..4b7e685daa024 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8qm-ss-img.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8qm-ss-img.dtsi
+> @@ -3,6 +3,31 @@
+>   * Copyright 2021 NXP
+>   */
+>  
+> +&isi {
+> +	compatible = "fsl,imx8qm-isi";
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		port@2 {
+> +			reg = <2>;
+> +
+> +			isi_in_2: endpoint {
+> +				remote-endpoint = <&mipi_csi0_out>;
+> +			};
+> +		};
+> +
+> +		port@3 {
+> +			reg = <3>;
+> +
+> +			isi_in_3: endpoint {
+> +				remote-endpoint = <&mipi_csi1_out>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+>  &jpegdec {
+>  	compatible = "nxp,imx8qm-jpgdec", "nxp,imx8qxp-jpgdec";
+>  };
+> @@ -10,3 +35,57 @@ &jpegdec {
+>  &jpegenc {
+>  	compatible = "nxp,imx8qm-jpgenc", "nxp,imx8qxp-jpgenc";
+>  };
+> +
+> +&mipi_csi_0 {
+> +	compatible = "fsl,imx8qm-mipi-csi2", "fsl,imx8qxp-mipi-csi2";
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		port@0 {
+> +			reg = <0>;
+> +		};
+> +
+> +		port@1 {
+> +			reg = <1>;
+> +
+> +			mipi_csi0_out: endpoint {
+> +				remote-endpoint = <&isi_in_2>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&mipi_csi_1 {
+> +	compatible = "fsl,imx8qm-mipi-csi2", "fsl,imx8qxp-mipi-csi2";
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		port@0 {
+> +			reg = <0>;
+> +		};
+> +
+> +		port@1 {
+> +			reg = <1>;
+> +
+> +			mipi_csi1_out: endpoint {
+> +				remote-endpoint = <&isi_in_3>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&pi0_ipg_lpcg {
+> +	status = "disabled";
+> +};
+> +
+> +&pi0_misc_lpcg {
+> +	status = "disabled";
+> +};
+> +
+> +&pi0_pxl_lpcg {
+> +	status = "disabled";
+> +};
+> diff --git a/arch/arm64/boot/dts/freescale/imx8qm.dtsi b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+> index 6fa31bc9ece8f..c6a17a0d739c5 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+> @@ -333,6 +333,11 @@ iomuxc: pinctrl {
+>  			compatible = "fsl,imx8qm-iomuxc";
+>  		};
+>  
+> +		scu_reset: reset-controller {
+> +			compatible = "fsl,imx-scu-reset";
+> +			#reset-cells = <1>;
+> +		};
+> +
+>  		rtc: rtc {
+>  			compatible = "fsl,imx8qxp-sc-rtc";
+>  		};
+> diff --git a/arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi
+> index 3a087317591d8..50015f8dd4e43 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi
+> @@ -4,6 +4,85 @@
+>   *	Dong Aisheng <aisheng.dong@nxp.com>
+>   */
+>  
+> +&csi1_pxl_lpcg {
+> +	status = "disabled";
+> +};
+> +
+> +&csi1_core_lpcg {
+> +	status = "disabled";
+> +};
+> +
+> +&csi1_esc_lpcg {
+> +	status = "disabled";
+> +};
+> +
+> +&gpio0_mipi_csi1 {
+> +	status = "disabled";
+> +};
+> +
+> +&i2c_mipi_csi1 {
+> +	status = "disabled";
+> +};
+> +
+> +&irqsteer_csi1 {
+> +	status = "disabled";
+> +};
+> +
+> +&isi {
+> +	compatible = "fsl,imx8qxp-isi";
+> +	reg = <0x58100000 0x60000>;
+> +	interrupts = <GIC_SPI 297 IRQ_TYPE_LEVEL_HIGH>,
+> +		     <GIC_SPI 298 IRQ_TYPE_LEVEL_HIGH>,
+> +		     <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>,
+> +		     <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>,
+> +		     <GIC_SPI 301 IRQ_TYPE_LEVEL_HIGH>,
+> +		     <GIC_SPI 302 IRQ_TYPE_LEVEL_HIGH>;
+> +	clocks = <&pdma0_lpcg IMX_LPCG_CLK_0>,
+> +		 <&pdma1_lpcg IMX_LPCG_CLK_0>,
+> +		 <&pdma2_lpcg IMX_LPCG_CLK_0>,
+> +		 <&pdma3_lpcg IMX_LPCG_CLK_0>,
+> +		 <&pdma4_lpcg IMX_LPCG_CLK_0>,
+> +		 <&pdma5_lpcg IMX_LPCG_CLK_0>;
+> +	clock-names = "per0", "per1", "per2", "per3", "per4", "per5";
+> +	power-domains = <&pd IMX_SC_R_ISI_CH0>,
+> +			<&pd IMX_SC_R_ISI_CH1>,
+> +			<&pd IMX_SC_R_ISI_CH2>,
+> +			<&pd IMX_SC_R_ISI_CH3>,
+> +			<&pd IMX_SC_R_ISI_CH4>,
+> +			<&pd IMX_SC_R_ISI_CH5>;
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		port@2 {
+> +			reg = <2>;
+> +
+> +			isi_in_2: endpoint {
+> +				remote-endpoint = <&mipi_csi0_out>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&mipi_csi_0 {
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		port@0 {
+> +			reg = <0>;
+> +		};
+> +
+> +		port@1 {
+> +			reg = <1>;
 
-Hi, yonghong. You are right, the best solution is to solve
-this problem in the pahole, just like what Jiri said in the V2:
-  https://lore.kernel.org/bpf/aG5hzvaqXi7uI4GL@krava/
+Missing newline.  Fixed it up and applied.
 
-I wonder will we focus the users to use the latest pahole
-that supports duplicate symbols filter after we fix this problem
-in pahole? If so, this patch is useless, and just ignore it. If
-not, the only usage of this patch is for the users that build
-the kernel with an old pahole.
+Shawn
 
->
-> There is a multi-link effort:
->    https://lore.kernel.org/bpf/20250703121521.1874196-1-dongml2@chinatele=
-com.cn/
-> which tries to do similar thing for multi-kprobe. For example, for fentry=
-,
-> multi-link may pass an array of btf_id's to the kernel. For such cases,
-> this patch may cause significant performance overhead.
+> +			mipi_csi0_out: endpoint {
+> +				remote-endpoint = <&isi_in_2>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+>  &jpegdec {
+>  	compatible = "nxp,imx8qxp-jpgdec";
+>  };
+> @@ -11,3 +90,7 @@ &jpegdec {
+>  &jpegenc {
+>  	compatible = "nxp,imx8qxp-jpgenc";
+>  };
+> +
+> +&mipi_csi_1 {
+> +	status = "disabled";
+> +};
+> diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> index 05138326f0a57..c078d92f76c0e 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> @@ -241,6 +241,11 @@ scu_key: keys {
+>  			status = "disabled";
+>  		};
+>  
+> +		scu_reset: reset-controller {
+> +			compatible = "fsl,imx-scu-reset";
+> +			#reset-cells = <1>;
+> +		};
+> +
+>  		rtc: rtc {
+>  			compatible = "fsl,imx8qxp-sc-rtc";
+>  		};
+> 
+> -- 
+> 2.34.1
+> 
 
-For the symbol in the vmlinux, there will be no additional overhead,
-as the logic is the same as previous. If the symbol is in the
-modules, it does have additional overhead. Following is the
-testing that hooks all the symbols with fentry-multi.
-
-Without this patch, the time to attach all the symbols:
-kernel: 0.372660s for 48857 symbols
-modules: 0.135543s for 8631 symbols
-
-And with this patch, the time is:
-kernel: 0.380087s for 48857 symbols
-modules: 0.176904s for 8631 symbols
-
-One more thing, is there anyone to fix the problem in pahole?
-I mean, I'm not good at pahole. But if there is nobody, I still can
-do this job, but I need to learn it first :/
-
-Thanks!
-Menglong Dong
->
-> >
-> >
-> >> ---
-> >> v3:
-> >> - reject all the duplicated symbols
-> >> v2:
-> >> - Lookup both vmlinux and modules symbols when mod is NULL, just like
-> >>    kallsyms_lookup_name().
-> >>
-> >>    If the btf is not a modules, shouldn't we lookup on the vmlinux onl=
-y?
-> >>    I'm not sure if we should keep the same logic with
-> >>    kallsyms_lookup_name().
-> >>
-> >> - Return the kernel symbol that don't have ftrace location if the
-> >> symbols
-> >>    with ftrace location are not available
-> >> ---
-> >>   kernel/bpf/verifier.c | 71 ++++++++++++++++++++++++++++++++++++++++-=
---
-> >>   1 file changed, 66 insertions(+), 5 deletions(-)
-> >>
-> >> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> >> index 53007182b46b..bf4951154605 100644
-> >> --- a/kernel/bpf/verifier.c
-> >> +++ b/kernel/bpf/verifier.c
-> >> @@ -23476,6 +23476,67 @@ static int
-> >> check_non_sleepable_error_inject(u32 btf_id)
-> >>       return btf_id_set_contains(&btf_non_sleepable_error_inject,
-> >> btf_id);
-> >>   }
-> >>   +struct symbol_lookup_ctx {
-> >> +    const char *name;
-> >> +    unsigned long addr;
-> >> +};
-> >> +
-> >> +static int symbol_callback(void *data, unsigned long addr)
-> >> +{
-> >> +    struct symbol_lookup_ctx *ctx =3D data;
-> >> +
-> >> +    if (ctx->addr)
-> >> +        return -EADDRNOTAVAIL;
-> >> +    ctx->addr =3D addr;
-> >> +
-> >> +    return 0;
-> >> +}
-> >> +
-> >> +static int symbol_mod_callback(void *data, const char *name,
-> >> unsigned long addr)
-> >> +{
-> >> +    if (strcmp(((struct symbol_lookup_ctx *)data)->name, name) !=3D 0=
-)
-> >> +        return 0;
-> >> +
-> >> +    return symbol_callback(data, addr);
-> >> +}
-> >> +
-> >> +/**
-> >> + * bpf_lookup_attach_addr: Lookup address for a symbol
-> >> + *
-> >> + * @mod: kernel module to lookup the symbol, NULL means to lookup
-> >> both vmlinux
-> >> + * and modules symbols
-> >> + * @sym: the symbol to resolve
-> >> + * @addr: pointer to store the result
-> >> + *
-> >> + * Lookup the address of the symbol @sym. If multiple symbols with
-> >> the name
-> >> + * @sym exist, -EADDRNOTAVAIL will be returned.
-> >> + *
-> >> + * Returns: 0 on success, -errno otherwise.
-> >> + */
-> >> +static int bpf_lookup_attach_addr(const struct module *mod, const
-> >> char *sym,
-> >> +                  unsigned long *addr)
-> >> +{
-> >> +    struct symbol_lookup_ctx ctx =3D { .addr =3D 0, .name =3D sym };
-> >> +    const char *mod_name =3D NULL;
-> >> +    int err =3D 0;
-> >> +
-> >> +#ifdef CONFIG_MODULES
-> >> +    mod_name =3D mod ? mod->name : NULL;
-> >> +#endif
-> >> +    if (!mod_name)
-> >> +        err =3D kallsyms_on_each_match_symbol(symbol_callback, sym,
-> >> &ctx);
-> >> +
-> >> +    if (!err && !ctx.addr)
-> >> +        err =3D module_kallsyms_on_each_symbol(mod_name,
-> >> symbol_mod_callback,
-> >> +                             &ctx);
-> >> +
-> >> +    if (!ctx.addr)
-> >> +        err =3D -ENOENT;
-> >> +    *addr =3D err ? 0 : ctx.addr;
-> >> +
-> >> +    return err;
-> >> +}
-> >> +
-> >>   int bpf_check_attach_target(struct bpf_verifier_log *log,
-> >>                   const struct bpf_prog *prog,
-> >>                   const struct bpf_prog *tgt_prog,
-> >> @@ -23729,18 +23790,18 @@ int bpf_check_attach_target(struct
-> >> bpf_verifier_log *log,
-> >>               if (btf_is_module(btf)) {
-> >>                   mod =3D btf_try_get_module(btf);
-> >>                   if (mod)
-> >> -                    addr =3D find_kallsyms_symbol_value(mod, tname);
-> >> +                    ret =3D bpf_lookup_attach_addr(mod, tname, &addr)=
-;
-> >>                   else
-> >> -                    addr =3D 0;
-> >> +                    ret =3D -ENOENT;
-> >>               } else {
-> >> -                addr =3D kallsyms_lookup_name(tname);
-> >> +                ret =3D bpf_lookup_attach_addr(NULL, tname, &addr);
-> >>               }
-> >> -            if (!addr) {
-> >> +            if (ret) {
-> >>                   module_put(mod);
-> >>                   bpf_log(log,
-> >>                       "The address of function %s cannot be found\n",
-> >>                       tname);
-> >> -                return -ENOENT;
-> >> +                return ret;
-> >>               }
-> >>           }
-> >
-> >
->
 
