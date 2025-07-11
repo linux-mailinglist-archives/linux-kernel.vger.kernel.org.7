@@ -1,190 +1,144 @@
-Return-Path: <linux-kernel+bounces-727758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A219EB01F3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:35:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF812B01F47
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7B8B7668B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:35:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FA1A1CA58A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02E51FFC49;
-	Fri, 11 Jul 2025 14:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696401F583A;
+	Fri, 11 Jul 2025 14:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aq2a76hs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="itHXYWCY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A1515533F;
-	Fri, 11 Jul 2025 14:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4810E221F2F;
+	Fri, 11 Jul 2025 14:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752244526; cv=none; b=MxM4g9QoYs5MhH1jru/I/Rxx26CfMR5HUXLfhPe2K4F2nSxd54jq8dvfZsomv+hDz/csSre9wAtdgbf0lP4m58o8u4EMCaaZCDf7MsIToF1X8nqdqmL/Ys9E5ZZotzC+IRKd8JoXLiQmDbQRY2gdtEufUr1ekNCiU484v/lYV8Y=
+	t=1752244583; cv=none; b=g4+jjomgUwPXRgm6dwN6V5nbs7aibZ82oz8W04QyyW5sOyyjteYxd4O3Fr2UjvAr77YgJDl64qGUiQek9f8MLYGJcryvs2CzB7SwdAg2pX1r5KvhiBWybUM5rngwvdZ64xqP+DPbuetB5q8pau+6GM10GOWhGjGbpkyEemIks08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752244526; c=relaxed/simple;
-	bh=amm7W321RqlNSOOMK3AIvljgbJEPHpxcz13K2TgJvxM=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=JoFB4tmr/gglnxHFXvX43oXqhqD/dldHbWYUFPs3HXDmqCZbT1U+V+QKvkXciFxUbTf6J46SzMYwf16WjtC2c6Add7NZOc1+9rXydRWbEboAM6BTnO3EMViNmzY1+SWEmxGe9sMWsuv/NsBdxL7RM02hd7RDMOrp3riQ1HFSm4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aq2a76hs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55150C4CEED;
-	Fri, 11 Jul 2025 14:35:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752244525;
-	bh=amm7W321RqlNSOOMK3AIvljgbJEPHpxcz13K2TgJvxM=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=aq2a76hszvNTrH+g/4o9TZaEYFQjht1aC9/vvtwP6fPjHhhPsUlre1wcC6BnYeISw
-	 OhSQ7270f1Ei4PoJi4EcVNm/lfD3YZj+OnOpnvtzn1/HACl5YZ2wc476PE9Utze2cF
-	 La08s6X/Wv8f28v4SBNY8FMcBDvRoTKoTKrC1rd0lCtPmW+jezem/qfoaREoI3TibU
-	 OeA/0W1lSzC9G+EJ4GtCyRJTcJYVhOq99Su7J1n9yszEK8mjL6y4FmUW+iBOlN0ubh
-	 oCDDiu+i+35dkrcLzzmr0LhpelPeqlxoIUXRB9HdaEvas+up/nWuLJC+KbQc1yBO6z
-	 M25ec7cVqiU+A==
-Date: Fri, 11 Jul 2025 09:35:24 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1752244583; c=relaxed/simple;
+	bh=pbXaxdfpcEFFBTNkTnjYC0MHfayQSb9BlhGO7msxuLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k/bYXGfkKo7W6pcnn+IUZeo+9Dac+3F3oSsNU2gah2CCUhDx8Zhi7nhv7/FSa0uAW07SH/QFCg22oYO/QI2v2OhRDqEkvK98doxDNcqd0TJjwCS+yR1VIVGZl372Nx4MwQFZQJhj2nOciialC7CbdbKFosEpzVmn67jcozUmmX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=itHXYWCY; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752244583; x=1783780583;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=pbXaxdfpcEFFBTNkTnjYC0MHfayQSb9BlhGO7msxuLs=;
+  b=itHXYWCYP6nEqzC1960jH768iDmu7cb8ukVVk7DYNTW0nRcDz4JZTmsQ
+   SIs0UAQwtJA14qrfPkpnizZy/hWt4HFBu+q6rStQPmku2gHHEki0x8bii
+   g1nC5RejvO0xsVCn96ucThIEmyzPl6Uzia/bLSrta8fGNgwBiZWnCNJcv
+   I/OMCB0gqoVvXbGK/Elo9RYKDxOZBZQQk3JcJmKWcNnvAxuusVyKVoC4s
+   nX0sOzb81y5clbRR/h4sOtl6PN/jdWpmArotJfCdlWHxK7kSoK8wgpGWg
+   AaqGWY1eD5nmyd1k3EDscLKVJVyNUJ/49MDZ9X54e1eIi0wvwCnJyx2S9
+   g==;
+X-CSE-ConnectionGUID: RoyIm9wuTjqoHyDtewpi3w==
+X-CSE-MsgGUID: 6acLyu8XQoC5iKHpX2nFTQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="77086855"
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="77086855"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 07:36:22 -0700
+X-CSE-ConnectionGUID: QL6/oHz7TMuq2m4W1tbyrQ==
+X-CSE-MsgGUID: LFdbj1t3STycy2dibPC3Mg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="156499703"
+Received: from spandruv-mobl4.amr.corp.intel.com (HELO [10.125.111.20]) ([10.125.111.20])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 07:36:21 -0700
+Message-ID: <d053739d-7fbe-46d8-9dcf-88e99cc5c60a@intel.com>
+Date: Fri, 11 Jul 2025 07:36:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, 
- linux-arm-kernel@lists.infradead.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- devicetree@vger.kernel.org, Frank Li <frank.li@nxp.com>, 
- Bjorn Andersson <andersson@kernel.org>, imx@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>, 
- Shawn Guo <shawnguo@kernel.org>, Iuliana Prodan <iuliana.prodan@nxp.com>, 
- Fabio Estevam <festevam@gmail.com>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-remoteproc@vger.kernel.org, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Daniel Baluta <daniel.baluta@nxp.com>
-To: Peng Fan <peng.fan@nxp.com>
-In-Reply-To: <20250710-imx95-rproc-1-v4-0-a7123e857dfb@nxp.com>
-References: <20250710-imx95-rproc-1-v4-0-a7123e857dfb@nxp.com>
-Message-Id: <175224423523.783161.17907302929832941912.robh@kernel.org>
-Subject: Re: [PATCH v4 0/5] remoteproc: imx_rproc: Support i.MX95
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] iommu/sva: Invalidate KVA range on kernel TLB flush
+To: jacob.pan@linux.microsoft.com, Baolu Lu <baolu.lu@linux.intel.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>,
+ Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
+ Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, iommu@lists.linux.dev,
+ security@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250704133056.4023816-1-baolu.lu@linux.intel.com>
+ <20250709085158.0f050630@DESKTOP-0403QTC.>
+ <20250709162724.GE1599700@nvidia.com>
+ <20250709111527.5ba9bc31@DESKTOP-0403QTC.>
+ <2080aaea-0d6e-418e-8391-ddac9b39c109@linux.intel.com>
+ <20250710082808.52399e31@DESKTOP-0403QTC.>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250710082808.52399e31@DESKTOP-0403QTC.>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 7/10/25 08:28, Jacob Pan wrote:
+> why would IOMMU cache all the entries if the walk is not successful?
 
-On Thu, 10 Jul 2025 20:08:00 +0800, Peng Fan wrote:
-> i.MX95 features a Cortex-M33 core, six Cortex-A55 cores, and
-> one Cortex-M7 core. The System Control Management Interface(SCMI)
-> firmware runs on the M33 core. The i.MX95 SCMI firmware named System
-> Manager(SM) includes vendor extension protocols, Logical Machine
-> Management(LMM) protocol and CPU protocol and etc.
-> 
-> There are three cases for M7:
-> (1) M7 in a separate Logical Machine(LM) that Linux couldn't control it.
-> (2) M7 in a separate Logical Machine that Linux could control it using
->     LMM protocol
-> (3) M7 runs in same Logical Machine as A55, so Linux could control it
->     using CPU protocol
-> 
-> In patch 2, Use LMM and CPU protocol to manage M7. More info could be
-> found in the patch commit log
-> 
-> Current setup relies on pre-Linux software(U-Boot) to do
-> M7 TCM ECC initialization. In future, we could add the support in Linux
-> to decouple U-Boot and Linux.
-> 
-> Patchset was tested with below boot images when the patchset based on next-20250526:
-> imx-boot-variant-rpmsg-imx95-19x19-lpddr5-evk-sd.bin-flash_lpboot_sm_a55 (Use LMM protocol)
-> imx-boot-variant-alt-imx95-19x19-lpddr5-evk-sd.bin-flash_alt (Use CPU protocol)
-> imx-boot-imx95-19x19-lpddr5-evk-sd.bin-flash_a55 (M7 not under A55 control)
-> imx-boot-imx95-19x19-lpddr5-evk-sd.bin-flash_all (M7 not under A55 control)
-> 
-> Patchset was tested again with rebase on next-20250623
-> Patchset was tested again with rebase on next-20250710
-> 
-> Patchset is re-based on next-20250603.
-> 
-> Thanks for Daniel/Frank helping review the patchset before posting out to list.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> Changes in v4:
-> - Move the lmm permission check code to a separate
->   function(imx_rproc_sm_lmm_prepare) in patch 3.
-> - Check return value of scmi_imx_cpu_started in patch 3
-> - Rebased to next-20250710 and tested on i.MX95-19x19-EVK
-> - Add R-b from Frank for patch 1-4 and A-b from Krzysztof for patch 1
-> - Drop mu7 from patch 5, because mu7 status was already okay.
-> - Link to v3: https://lore.kernel.org/r/20250625-imx95-rproc-1-v3-0-699031f5926d@nxp.com
-> 
-> Changes in v3:
-> - Drop fsl,lmm-id and fsl,cpu-id for binding in patch 1
-> - Add lmid and cpuid in driver patch 2.
-> - Add i.MX95 lmid and cpuid in patch 3
-> - Rebased to linux-next-6-23 and tested with this new rebased version
-> - Add dtsi/dts patch 4,5 to give people a view on how it is used per Krzysztof
-> - Daniel's R-b are still kept after talk with Daniel
-> - Link to v2: https://lore.kernel.org/r/20250606-imx95-rproc-1-v2-0-a2bd64438be9@nxp.com
-> 
-> Changes in v2:
-> - Typo fix in patch 2 commit message
-> - Move the m7 address mapping array from patch 2 to patch 3
-> - Add R-b from Daniel to patch 3
-> - Link to v1: https://lore.kernel.org/r/20250604-imx95-rproc-1-v1-0-a6e5f512731c@nxp.com
-> 
-> ---
-> Peng Fan (5):
->       dt-bindings: remoteproc: fsl,imx-rproc: Add support for i.MX95
->       remoteproc: imx_rproc: Add support for System Manager API
->       remoteproc: imx_rproc: Add support for i.MX95
->       arm64: dts: imx95: Add SCMI LMM/CPU nodes
->       arm64: dts: imx95-19x19-evk: Add CM7 nodes and vdev related memory regions
-> 
->  .../bindings/remoteproc/fsl,imx-rproc.yaml         |   1 +
->  arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts  |  41 ++++++
->  arch/arm64/boot/dts/freescale/imx95.dtsi           |   8 ++
->  drivers/remoteproc/imx_rproc.c                     | 147 ++++++++++++++++++++-
->  drivers/remoteproc/imx_rproc.h                     |   5 +
->  5 files changed, 199 insertions(+), 3 deletions(-)
-> ---
-> base-commit: 78863a3617803fcc11f7f7432efc9f74d4ca3105
-> change-id: 20250525-imx95-rproc-1-20bb74ddc8af
-> 
-> Best regards,
-> --
-> Peng Fan <peng.fan@nxp.com>
-> 
-> 
-> 
+This was one of those things which the IOMMU folks could have gone
+either direction on. But, they generally choose to mirror the CPU
+behavior when they can.
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: base-commit 78863a3617803fcc11f7f7432efc9f74d4ca3105 not known, ignoring
- Base: attempting to guess base-commit...
- Base: tags/next-20250710 (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20250710-imx95-rproc-1-v4-0-a7123e857dfb@nxp.com:
-
-arch/arm64/boot/dts/freescale/imx95-tqma9596sa-mb-smarc-2.dtb: scmi (arm,scmi): Unevaluated properties are not allowed ('protocol@80', 'protocol@81', 'protocol@82', 'protocol@84' were unexpected)
-	from schema $id: http://devicetree.org/schemas/firmware/arm,scmi.yaml#
-
-
-
-
-
+The CPU does page walks the same way. It probably requires less logic
+because the caches can be filled while walking down the tree and don't
+have to be evicted if the walk is ultimately unsuccessful.
 
