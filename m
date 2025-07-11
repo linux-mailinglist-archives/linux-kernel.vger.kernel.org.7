@@ -1,154 +1,143 @@
-Return-Path: <linux-kernel+bounces-727843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB8AB0207F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:34:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BAE4B02080
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 310C47B6655
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:32:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED57B3A5D79
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010BF2ED154;
-	Fri, 11 Jul 2025 15:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B2B2ED160;
+	Fri, 11 Jul 2025 15:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iYJTytre"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PUNTLEV8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07782E2EE7
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E8F2E7BD4;
+	Fri, 11 Jul 2025 15:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752248050; cv=none; b=Xy3v2HDRHym3YcSZBTCthL+pnvsINuUjGWwf64WbHUSV3y8pVt/gPzJzd1R5A4WxOQkr9QF+Sy5O8E8+Qiv/EpViNlabJsItdCiqB4/tPYQ4zufUMyy9HNKX8s7LsJ13pqqFsGvsn6gtmygBc4maxQEXDqanOx2KU9/IQRFiHZg=
+	t=1752248071; cv=none; b=bd9mAx46vV1tJdf8vh6rilPK9lldI5SMvM4VRR9Uxi+6yWC0omr5v++UGQAoFjJKXGjEZupYrkRsLYyPVBIA3foIe7ADDlnhkdIMXje1TSnhR6zzJ0c5iA2GI2sjSIcIv1O6sBwiMdNDLB/8mehQVUUtKaS+XDtwS9nNJGSpzQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752248050; c=relaxed/simple;
-	bh=ebT2s7nXALqt6/yObzMeAm/ZCc1oP9CJhn5ID/ByeoY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RK4L/j0tsVGIooBtRoukhEHKCFJQl9CAXmQs82RbYxVFYDuDCEoZzMAF4t7txzV9hPpwjzrclxIMaJLKdd1EWVIcyQty8zDFAmSPAy71cCWZxVsexmRM+Cq7lWz1r8inSs0nP9SUrjY3HW38pYkjYaHGZna1EvBDCMzf4wBEARA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iYJTytre; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2ff1ed124deso665562fac.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:34:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1752248046; x=1752852846; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7hi2TXY2tfoPRf/N/ueDW56lwyKoXrTU9bENTT3dZYo=;
-        b=iYJTytreA0rCoV8SP3UalOtwOjJxzlXcTqUxoyGGIVZV0zJHXj5lshblYroLL7KcaN
-         bNTCDRWoB7J1UQQX41s2FUOgpirpFFjM2Md344GfNRBgAFyHVy1VZeFymdl19XSj7edF
-         MxUCf4MmJEu5gB4GkZIUoSNroKRhLWX+vjp68856i7K3CJx7pG477tfOZ582qZx5Hjfr
-         uG/xBjJbCcs/U/9tnZsYN6GUV2wL2DZYB/CbIJ6HwJQSPfv57/ueP2OZmcoBWnMceeRz
-         kdiwmHYzsT8H2k9XGwqK0qtEh9PXxX52RwhWUWRd/WyRmBVpb6oAjaPITgff1cIAIleD
-         GgHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752248046; x=1752852846;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7hi2TXY2tfoPRf/N/ueDW56lwyKoXrTU9bENTT3dZYo=;
-        b=N0A4o7ceyR6h1Yx9IdW9kukIWJntiEzNQXBLKNqxZnSt24vuTSij44hGdig6x5ESF1
-         gS+lbw5gcL7J3LFIyCAZLNDsKV2v9fuZwcwFv/3k+cRRL3LXoPjoi3xkQGYcPJQPRVIe
-         ZL+Nq5DoWcQJCqLviTsFm/Hz9ZskwjyZCjSz/gJRJv8nddCAd8aixa3oFHSyKtHbN3AA
-         WD/b0rKHze07E6/I03sAp2FPYhKBE/C/19jjUfDLGTb+e9sc5a1t1mwMXWMJt4VNs2bA
-         +L4ztvj1qUVDYPCbVFRsvvst1588wk+Y0MRiux2DHCvlt6RfrcRG3g966QS0UDm4Dp4i
-         DSXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXie06CadpN3+EJvUwn3Au2iEVNq3mGxBMK7TViU2YAcc/Iw85cnx17dEp389iBtyFlQWsAMswH0CsMAZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoC8NOCJvZ0kLw5GnJGRjhIDOmJjiYpO4leb/BYPzvTHCZChgN
-	GaK+lmBas8paORp/KV10I4Bw7r4bLpK4JFEtM8EOHFMycgg8KNmwhrihqVvJ7u1tJwc=
-X-Gm-Gg: ASbGncsSCgY8ebmdQNQxCSPglOeuqoOfxEoF2boyxtbnA5LmK6sWdPDkwUkxWgBFzc1
-	IE46xs1Gnk5/sEAXUusmhGyhN9kYRwqTCXOzDBsO3VDBHpo+BhIYNtmZJYJQp6PPXJ7TeyWRpfB
-	dR9/94XkKDpkneb6B3mQSOH/7OCz4SuaQrk1ahiTYBI8jy5r/CWYzx03d4XOVgb7b+91cA6OGTK
-	vG191LQmBYvrFzU887ZB5l4Le0S98GCp3sWRdewVxdQ8hu1sTkfPe0IG/PrK0cwA2Eurz3VnsN4
-	kQjlDGDo/BzJ+mn736SNEvOFILmo5fJLEi/V0dZVKSdsVYc2T7xitJP/L3id0WBmOdQsLTdNQ62
-	TzxuZUgxgDB8GzOP+JNHMuB6gR25/
-X-Google-Smtp-Source: AGHT+IGXbaybHyhrMurjq2yGraWSmf6jCZve3G5yKDCAGdsvXXoxzSSFfEyknCjd809K9bkPjCWepA==
-X-Received: by 2002:a05:6870:3e09:b0:2e9:8ed9:16fc with SMTP id 586e51a60fabf-2ff26eac21emr2616277fac.11.1752248046558;
-        Fri, 11 Jul 2025 08:34:06 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:4601:15f9:b923:d487])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ff111c36a0sm762348fac.2.2025.07.11.08.34.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 08:34:06 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 11 Jul 2025 10:33:55 -0500
-Subject: [PATCH] iio: temperature: maxim_thermocouple: use
- IIO_DECLARE_DMA_BUFFER_WITH_TS()
+	s=arc-20240116; t=1752248071; c=relaxed/simple;
+	bh=ojsCePNq/X8gf7m07hkU+sqPZUt+ziDxVzUMSsGV7Os=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Mo4AjtucyvAF/AAQX2By0+F5Xc6mSGWU47en7/HMZascUBb6I6fnnjl12q/xuBqhxhXu4jK85YVyg7C5KrT7cSdO+0QRklFHc++B5D0x8ey3aXh+ww5TZNvqrKmUI9FysjKqgLEUmbovKdIxs0ybD7nW344rfiiNfdolzL+Vd/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PUNTLEV8; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752248069; x=1783784069;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=ojsCePNq/X8gf7m07hkU+sqPZUt+ziDxVzUMSsGV7Os=;
+  b=PUNTLEV8HHMYsQaWr5A1kGEF7bmDQ3RmMh9StwVjGUhFN3jjcOdv6GmS
+   RGun+PkCkyR9ku4HAJIiTSpnatqx09PfsbB3QeUQfPpm/aWc0VYqfT/eZ
+   KpJ490mzGb10bHpP+k0hacR4G9yFgJ11ec1Ntf/6e6C2ehX7NrClCpXBl
+   aN/AqLgaWKa9nnWUBPrJJIW9mq/zwSYcku9Sjh5XTMupiqDR7EqROYvQD
+   R/bqFWtwxdslQrJflVYGIQnSmDEzdPwOovTB5SAyAUvBTtP8ELD1hvhK7
+   HohVMegl0DZ9GGYODdL/sQIDjZje9YFr7haqzTH5tJI5nAzdwrqc3D16E
+   A==;
+X-CSE-ConnectionGUID: GpyJ6jmyRe61xLBQYlwOaQ==
+X-CSE-MsgGUID: n8dRyFSuTRyncv+4CtNygA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="79982856"
+X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
+   d="scan'208";a="79982856"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 08:34:28 -0700
+X-CSE-ConnectionGUID: Gb3zMplmT1WQomsGOwm0pg==
+X-CSE-MsgGUID: WXMHAZLRQZCqjbmBfjaHIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
+   d="scan'208";a="156179376"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.249])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 08:34:25 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 11 Jul 2025 18:34:21 +0300 (EEST)
+To: Arnd Bergmann <arnd@arndb.de>
+cc: Arnd Bergmann <arnd@kernel.org>, 
+    "Derek J. Clark" <derekjohn.clark@gmail.com>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, Hans de Goede <hansg@kernel.org>, 
+    Armin Wolf <W_Armin@gmx.de>, ALOK TIWARI <alok.a.tiwari@oracle.com>, 
+    Mario Limonciello <mario.limonciello@amd.com>, 
+    Jelle van der Waa <jvanderwaa@redhat.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: lenovo: gamezone needs "other mode"
+In-Reply-To: <fd1f6732-e091-48e8-90c9-4bc18aface58@app.fastmail.com>
+Message-ID: <ffd00f91-6569-714d-29dc-65c14b64d914@linux.intel.com>
+References: <20250709151734.1268435-1-arnd@kernel.org> <dd727ab6-a754-77fd-5876-fec076c8905a@linux.intel.com> <fd1f6732-e091-48e8-90c9-4bc18aface58@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250711-iio-use-more-iio_declare_buffer_with_ts-3-v1-1-f6dd3363fd85@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAOIucWgC/x3N0QrCMAxA0V8ZeTawdriJvyJSujR1AV0l2VQY+
- 3erj+fl3g2MVdjg3Gyg/BKTMle4QwM0xfnGKKkafOuP7eAcihRcjfFRlH8IiekelcO45swa3rJ
- MYTHs0BN1pyH2/ZgIau+pnOXzf12u+/4FEksheHsAAAA=
-X-Change-ID: 20250711-iio-use-more-iio_declare_buffer_with_ts-3-2cc387a66bdc
-To: Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1723; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=ebT2s7nXALqt6/yObzMeAm/ZCc1oP9CJhn5ID/ByeoY=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBocS7msivCC30zn1X+Gu/q9gRTPYZ7F35T4whGE
- IXSZg011mmJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaHEu5gAKCRDCzCAB/wGP
- wEktB/49NdsstQvtK9AX+6VglLicdjumTe23CFtB7TSZO/kAQ5HQv0wtejfGPga0imk9oydYhKl
- IEh7HTAXtU2IkhV+Diu4D4whrsnHfrz+cdx2q1NRsKwa7nPiv4zZ++IUWLeo7AoV+gzLJdPRZRt
- bzIGL9CJ0oimZ6kH4lfCEUHAcv5d754CkK5oaJHldDxmE18yUkApEYKioU2/s6wlmSDJ75V0wbu
- lj/CfzjQ2V4Or2GAW76KauC0wumD54BEFrdciW/AhLINtjzyyLrdc/9arZ3+Uq8YiEugCkZNSH2
- na/Zx2CCmu67rxDeJFejDoSVZA9dtFuKb8+6W/ApZseI5XcM
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+Content-Type: multipart/mixed; boundary="8323328-1037290638-1752248061=:933"
 
-Use IIO_DECLARE_DMA_BUFFER_WITH_TS() to declare the buffer used for
-scan data. There was not any documentation explaining the buffer layout
-previously, and this makes it self-documenting. The element type is
-also changed to __be16 to match the format of the data read from the
-device. This way, the count argument to IIO_DECLARE_DMA_BUFFER_WITH_TS()
-is just the number of channels rather than needing to calculate the
-number of bytes required.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/iio/temperature/maxim_thermocouple.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+--8323328-1037290638-1752248061=:933
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-diff --git a/drivers/iio/temperature/maxim_thermocouple.c b/drivers/iio/temperature/maxim_thermocouple.c
-index cae8e84821d7fd521d59432580d51def939fa4d1..60eaa8140d3e98e10c073c8d18cf01524b1c1816 100644
---- a/drivers/iio/temperature/maxim_thermocouple.c
-+++ b/drivers/iio/temperature/maxim_thermocouple.c
-@@ -18,6 +18,8 @@
- #include <linux/iio/triggered_buffer.h>
- #include <linux/iio/trigger_consumer.h>
- 
-+#include <asm/byteorder.h>
-+
- #define MAXIM_THERMOCOUPLE_DRV_NAME	"maxim_thermocouple"
- 
- enum {
-@@ -121,8 +123,8 @@ struct maxim_thermocouple_data {
- 	struct spi_device *spi;
- 	const struct maxim_thermocouple_chip *chip;
- 	char tc_type;
--
--	u8 buffer[16] __aligned(IIO_DMA_MINALIGN);
-+	/* Buffer for reading up to 2 hardware channels. */
-+	IIO_DECLARE_DMA_BUFFER_WITH_TS(__be16, buffer, 2);
- };
- 
- static int maxim_thermocouple_read(struct maxim_thermocouple_data *data,
+On Fri, 11 Jul 2025, Arnd Bergmann wrote:
 
----
-base-commit: f8f559752d573a051a984adda8d2d1464f92f954
-change-id: 20250711-iio-use-more-iio_declare_buffer_with_ts-3-2cc387a66bdc
+> On Fri, Jul 11, 2025, at 16:55, Ilpo J=C3=A4rvinen wrote:
+> > On Wed, 9 Jul 2025, Arnd Bergmann wrote:
+> >> index b76157b35296..e9e1c3268373 100644
+> >> --- a/drivers/platform/x86/lenovo/Kconfig
+> >> +++ b/drivers/platform/x86/lenovo/Kconfig
+> >> @@ -250,8 +250,7 @@ config LENOVO_WMI_GAMEZONE
+> >>  =09depends on ACPI_WMI
+> >>  =09depends on DMI
+> >>  =09select ACPI_PLATFORM_PROFILE
+> >> -=09select LENOVO_WMI_EVENTS
+> >> -=09select LENOVO_WMI_HELPERS
+> >> +=09select LENOVO_WMI_TUNING
+> >
+> > Why did you remove the other two?
+> >
+> > Do select propagate properly these days across another select?
+>=20
+> Yes, as far as I know it has always done this, with the one
+> exception that it does not propagate when trying to select
+> another symbol that has missing dependencies
+>=20
+> > I was under impression they don't which is one of the reasons
+> > use of select is discouraged.
+>=20
+> I have seen that mentioned before in commit logs, but I
+> think this was a misunderstanding. Using 'select' is still
+> discouraged, but for other reasons:
+>=20
+> - complexity quickly gets out of hand when selecting something
+>   that has other dependencies, as the driver selecting them
+>   must duplicate all those dependencies and keep them in sync
 
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
+Okay, thanks for these clarifications.
 
+I think I'll take this patch but change it to still keep the other selects=
+=20
+as wmi-gamezone.c is directly using those too anyway.
+
+> - mixing 'depends on' and 'select' for the same dependency
+>   in different drivers tends to cause dependency loops
+>=20
+> - selecting user-visible symbols has side-effects if another
+>   symbol depends on that, e.g. the "select I2C" in some subsystems
+>   causes the I2C submenu to appear.
+>=20
+>     Arnd
+>=20
+
+--=20
+ i.
+
+--8323328-1037290638-1752248061=:933--
 
