@@ -1,191 +1,85 @@
-Return-Path: <linux-kernel+bounces-728009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B388B02264
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:14:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D0AB02269
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F75D586A74
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:14:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 546C11899AAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BC42F0C75;
-	Fri, 11 Jul 2025 17:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F512F0C78;
+	Fri, 11 Jul 2025 17:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dEa/dwq+"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QUPxNd0u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEFA2F003B
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC4A1DDA1E;
+	Fri, 11 Jul 2025 17:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752254044; cv=none; b=WqwyLav/7tabbL2b6GYuLXSzsWeprFUpmpsleCyIoPDbB4j/HPSxCrvGjHgmiwbTHiLEaGM7WkU4yyoxYOgpeP/Vb9t6SGmQet9tHJnq0Rh9YL0Rl8oTEqQ7TDMbOvXAXQQuKz8Z730WXDjCyHkhXwbhvwr7ElggRYxbK1hwRiI=
+	t=1752254057; cv=none; b=EUuSs/7+45LruA8tqDOM8d318CHmwPD+/rxLJaOrVDIPVY50GKmd4DOJQ5W2tAZZoshDWhACtVxJqtGGp31Ty19+nMOTAKfjP09XNFvuOFvF6wh5T7PrCs+wGdkVd5jU6xiO37gtYOV6FvVzWg5cXsCSc+GJHf9LKv5wyy4NtiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752254044; c=relaxed/simple;
-	bh=IfkgkvwrICiY1PpPvpmdoJ/Llw9dqsyr42ryaHPpX6I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m2bobZSST4Sgzf9IOvr+jV/Sk/xL0KBGeu8HMbiQRngGXJedj/UKxDa6GHt+n3k7Sw0PfnfZ7o+5JFEXqNNnDd0nTh6ha3klMCALmzMfFvPjmkcT1PUuxNYNJxoufD3iQIq7eYgtaS8/2iEWIFtq3qZMqk6vWsxR81StgzCAUKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dEa/dwq+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BAefJh016260
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:14:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+yUxiWOGlCs35rCfqD4oAy1uFpwrIW5gk0AdeeQDOzs=; b=dEa/dwq+qpYCp9ov
-	IwRHGfEsQXTn43yLpCT4+xX/3a7ltSkZSMokDMIE38v3evpbApnArv+9rfpFfgv+
-	sE8M3YGTtI0B0kJnQ4glXiPL0ahgiGk2cyyzjmpWf7U//T312lcmwB0uANxwwqAm
-	Y/g7DfZWTHTbPgzXBsnwKI3tFzsWH3uVx7Ve2i1N66S4qY0wA4WBV+vSIKFEaBbj
-	SE93RvPCIUB4+go9Kd3WeUOSWupWlAiXk6YPp20rUFRTrbo+DkG9Bl0a4r3rLJ6W
-	CHTF5zkuY7PP4Mbcx8HQ+ccxeHvsKOefhJkmsimVzEOQ4cjo//lOTj3+pajpdLda
-	6PzSHg==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47t83u5nq8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:14:01 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-315af08594fso2615936a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:14:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752254041; x=1752858841;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+yUxiWOGlCs35rCfqD4oAy1uFpwrIW5gk0AdeeQDOzs=;
-        b=dznScfSyRVIO53C7g8w3MhKG9NWi2LTvzRNz+Q3gjLqR7/t0//lYQLUJCTmO3T4cZj
-         9KzzGA4NDqQSqwyQH5KLLKvYwvBGItsguQTqyU3UnukmnE8nfCO63O6TMbOJaze9JvQx
-         H4wFq7mpPIPTDzuYdnzZtNPXjzjXtovgFm5SoqRIUrmvtdkMDL7m2q9fNCgbmm7tBpHz
-         epEzvke0AHDp7eYHdt6ww9WmC8y7BOuv+MZjD5zUKoez6eh4xChfil/c/rUFmhA5/np/
-         bbCQGrKMfhk7cQPGGI311a0hd5do8JAYJnmkKphleRK1atwbRfTn0Y/AiBsnlSqqtToQ
-         1tHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyHH6HbXa6/N83PHgpXj6PfGdbQVJeQM4/kX/uAY8juA0n3eLawIkdLh7o4REJJ19umCq36f8xWHl0eo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2Q+XtQdFWQmPSIimWR+iBh5q29BCAMrX2bQLACkvcPxgnSKwH
-	MpTyvepSSmyhfG8Ge3nG0cpZI78JeHOgsNVy+72v3Ie8gLd94vL1mbtlmAfK6shCzagOoatrZ4j
-	S2Z3oveQfgaTO4P6rv1M0ngplVDdwiTSjH7m/S8P9E7KRzT4Nak3iT+eA3I/MZ/v2fws=
-X-Gm-Gg: ASbGncs4xqcX83ESrU/ZXJ3DbItwhsND2lCmYRKPJSdmqJMoah0BqQj+nVmul13mUYD
-	YROiK/xRgAGMfq+r5ExNNS0kd1UWbQtC1g7It79lq+plxMRY46aZqIJu9LiCBnBMXo3OpQKXDRQ
-	xa0awBw9kVIJB3b55MLArXghUPD95AZHyfAJEAiknwJXTeI5GiHxJ4yQNhA05FCE/GU9Wy7N8sS
-	8w+lUM1JRCzNVYB1IdOYGXOIL6YE4XfFcQ6hpwhp3VjQaE4XhXU68Y85GC2e+hUqBcdJtfl3L9z
-	cR6CISo6qP5IEvjhIwNQmNQwfDagO6MP3SGXxBlkFpOY+/7JSl10xCtj1WYAyiKE3ADrSgYsqg=
-	=
-X-Received: by 2002:a17:90b:2287:b0:31a:9004:8d36 with SMTP id 98e67ed59e1d1-31c4f512a2emr3401835a91.20.1752254040911;
-        Fri, 11 Jul 2025 10:14:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE8jwEw4xKzZ2Gauazi95OMMWknYXW3kdStTOkWdXT5CV0YXjXLaabiJCMU/29GPhFaCVApJA==
-X-Received: by 2002:a17:90b:2287:b0:31a:9004:8d36 with SMTP id 98e67ed59e1d1-31c4f512a2emr3401777a91.20.1752254040270;
-        Fri, 11 Jul 2025 10:14:00 -0700 (PDT)
-Received: from [192.168.29.115] ([49.43.229.152])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3e973e80sm5633493a91.15.2025.07.11.10.13.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 10:13:59 -0700 (PDT)
-Message-ID: <b6f4819e-462d-7a59-eb19-bfb65ec27229@oss.qualcomm.com>
-Date: Fri, 11 Jul 2025 22:43:45 +0530
+	s=arc-20240116; t=1752254057; c=relaxed/simple;
+	bh=Z8t4v9GE3HmVQ5IrHhzssCSA8tAjT2bLy2KFBbGN2aM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JeZ8MyVVZu/k48W8POP6QmxaSH4GVP19SBYrLayE8PxwHEWA5mCNFy4R6DPNQ/Q+GSSxaSdVhyX1+9QpQdXEPCx8fD9eeBjMalSAaxbIuiJJqOyLMLbxo98I1ZSkN7gtHRfBInx33ew0M7EFANPCQE/Pjzh1tFyXOpXuhu0mkAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QUPxNd0u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7364AC4CEED;
+	Fri, 11 Jul 2025 17:14:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752254057;
+	bh=Z8t4v9GE3HmVQ5IrHhzssCSA8tAjT2bLy2KFBbGN2aM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QUPxNd0uDD6sEJHPCqCIjAjD6BxgmI1NR/JRGeJ3elXWo/TaNS3BfX1HQzLDo1gUy
+	 G6JADPJ9ZgI7weP8hqK8vB8ciA2Bb+nnlQSADuqS2oObezgopBLVJjT/SdGrYGulr2
+	 m670SUlWOloJwny43iY/So9IxJnXDkvC7ephxT/aFZ0sySV8tzjIQxpG/+7iYTlJNb
+	 PMdtDljWgWv8N9hR+XVyVyFCIzyKHa1pyc+UwEpM1Kx0CpeI9beakEDow8wMddUDjQ
+	 RYGwkCM46aAQmKVL4g4n57tkLH55nRlR4jAl4svvRcAVNRgBAO8n1suITkknkEnRue
+	 vExZS2UCzQNmg==
+Date: Fri, 11 Jul 2025 10:14:15 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, Simon Horman
+ <horms@kernel.org>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Willem de Bruijn
+ <willemdebruijn.kernel@gmail.com>, bpf@vger.kernel.org,
+ kernel-team@meta.com, Willem de Bruijn <willemb@google.com>
+Subject: Re: [PATCH net-next v6 3/3] selftests: net: add netpoll basic
+ functionality test
+Message-ID: <20250711101415.6ae42daf@kernel.org>
+In-Reply-To: <20250711-netpoll_test-v6-3-130465f286a8@debian.org>
+References: <20250711-netpoll_test-v6-0-130465f286a8@debian.org>
+	<20250711-netpoll_test-v6-3-130465f286a8@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v10 04/10] dt-bindings: arm: Document reboot mode magic
-Content-Language: en-US
-To: Arnd Bergmann <arnd@arndb.de>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Elliot Berman <elliotb317@gmail.com>
-Cc: Stephen Boyd <swboyd@chromium.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        =?UTF-8?Q?Andr=c3=a9_Draszik?= <andre.draszik@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, Wei Xu <xuwei5@hisilicon.com>,
-        linux-rockchip@lists.infradead.org,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
-        Macpaul Lin <macpaul.lin@mediatek.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Elliot Berman <elliot.berman@oss.qualcomm.com>
-References: <20250710-arm-psci-system_reset2-vendor-reboots-v10-0-b2d3b882be85@oss.qualcomm.com>
- <20250710-arm-psci-system_reset2-vendor-reboots-v10-4-b2d3b882be85@oss.qualcomm.com>
- <2d8e17ad-6bd6-47a9-b5ab-0a91689684ee@app.fastmail.com>
- <9bd63c0b-cf14-d00b-c600-9582061e3afc@oss.qualcomm.com>
- <23e0f0d5-c0f6-4fc5-9775-c0ae73681d31@app.fastmail.com>
-From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-In-Reply-To: <23e0f0d5-c0f6-4fc5-9775-c0ae73681d31@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: fcLtoazAksmCnoUMPaLjM4aAgvp1Xv9U
-X-Authority-Analysis: v=2.4 cv=OotPyz/t c=1 sm=1 tr=0 ts=68714659 cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=8g6h00HoWaIZ3EdQG8aEvw==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=rM0-y_1GYM4-gDGtagQA:9
- a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDEyNiBTYWx0ZWRfXxf61bxG+H1N1
- PPZCARjUzkQF9abXUFxfSCttS0PSXBtCzXQK65VBAMkmRHbHGweGVTotgm3cmCZpKzYLu5Dvuna
- Qfe2G5nh4Kf4hg0uwJdawGVSF20RfwFb7kJfsuhQr4DtEPiY3SZXsJ1NFyrOPbFqfY5vgl7NRyX
- yVzsLNeKr1WtpcvUOBBMlZN1XaqSTPswCldNe82WaE65hgm1y3+rNnzM+nCanMcUbotsC11VDdH
- urwD0kUw6R+ylud3w5uohQUuJloJkzsqy1InZ8TfiXcX7WsfInqGG/FP3bkHxfpoV+1TQB4PruW
- 9rd7luOQba0NIH4Dn8EzcAPu+VpW7yZqk2QC5Xd7p4eUIq8OLJqpjJqf9DOAQmVTGtbXkjVBh2L
- UDKTlAOg35Pufcqx+GJx2vMZ5g3utrRmDv830aWuaJX7PKd8A4n8MaUEsUnSSk6gSzk4ik4J
-X-Proofpoint-GUID: fcLtoazAksmCnoUMPaLjM4aAgvp1Xv9U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-11_04,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 mlxscore=0 adultscore=0 spamscore=0
- malwarescore=0 mlxlogscore=874 clxscore=1015 suspectscore=0 bulkscore=0
- lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507110126
+
+On Fri, 11 Jul 2025 09:05:11 -0700 Breno Leitao wrote:
+> +        rxq = ethtool_result["rx"]
+> +        txq = ethtool_result["tx"]
+
+Most HW NICs will actually use the "combined" channels (which have both
+rx and tx ring on one NAPI).
+
+> +    logging.debug("calling: ethtool %s", cmdline)
+
+ksft_pr() ? 
+We had a plan to add a verbose() helper which would still be
+TAP-compatible, but never finished the patches.
 
 
-
-On 7/11/2025 11:10 AM, Arnd Bergmann wrote:
-> On Thu, Jul 10, 2025, at 18:53, Shivendra Pratap wrote:
->> On 7/10/2025 9:00 PM, Arnd Bergmann wrote:
->>> On Thu, Jul 10, 2025, at 11:15, Shivendra Pratap wrote:
->>>
->>>> +  reset-types:
->>>> +    type: object
->>>> +    $ref: /schemas/power/reset/reboot-mode.yaml#
->>>
->>> The other users of the reboot-mode.yaml binding all call this
->>> node 'reboot-mode' instead of 'reset-types', can you change that
->>> here for consistency?
->> nvmem-reboot-mode and syscon-reboot-mode use reboot-mode in the
->> device tree node name.
->> qcom-pon does not uses reboot-mode at its device tree node name, it
->> uses pon.
->> Kept it reset-types as this patch was already reviewed earlier and
->> the name makes it closer to vendor-specific reset-type.
->> Should we make it reboot-mode? Please suggest.
-> 
-> Yes, I would still change that. At least all the platform-independent
-> drivers are consistent that way.
-Ack. will change this to reboot-mode.
-> 
->       Arnd
+Either way, would you mind respinning the series (without the 24h wait)?
+It conflicts with another series which adds a bpftool() helper.
+I applied that patch so you should see a trivial conflict when rebasing.
 
