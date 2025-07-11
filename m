@@ -1,128 +1,124 @@
-Return-Path: <linux-kernel+bounces-726891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89841B01275
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:02:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32569B01278
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF97C5A0F63
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:02:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDCFB4A72DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9416C1B3939;
-	Fri, 11 Jul 2025 05:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F721B2186;
+	Fri, 11 Jul 2025 05:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="02M1NCoI";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EwYVL3Dw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rU+dHQTL"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B78B660;
-	Fri, 11 Jul 2025 05:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB32A59;
+	Fri, 11 Jul 2025 05:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752210145; cv=none; b=K8W15JUfEKH6SmpLYKsPpCxnOuwHRevsUDb8RIdwvSA45eXiZNiC63lucJqJPFjVYWbYNOj0Nj+MQG+RCSWHBXlmvqkYkO8srOHPS8EHrTE6jHFUDXzpZgftT3jgI3DS38MTgdzKM/VtPfdbqjceqGqRvQkPnM7LHBbs5K1Wwdw=
+	t=1752210218; cv=none; b=n798i9klO8Mz9GLPEs6XhKMgaSBLIZyab6TBdsTTbww4jqLordcTpNgw/f0CC+maPp1HNcdoDFOBJX2Ej729+fkMjSkRey8Xe0mypMnsZKh5mnZbIfMWL7WJoJzPBrRzPkKfMeLs0USgSMIEjdvGeNdoSZZ6nqZ9glyBDLag0I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752210145; c=relaxed/simple;
-	bh=2QSoiblwx9XXddcQYzdxBSa861AciILCjKcc0UKEJWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uK2boKXlrSmsdet4uTtWFM/no26RnblY9vD3LFbLlUm+llgNhF+r16PE57zD3bzmZ6NCTAvlMpipLUF3bwBNQutXduuF73d+A5Ndt5pk5JVdw7k8g8Q19pDqaLEQa/BwE03sFrt44jT35qCNvYF4JWFFFDuoQXvqJuERZcq3DzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=02M1NCoI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EwYVL3Dw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 11 Jul 2025 07:02:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752210141;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j59WDD2gzvtudEauuDI9ce9YLhlsFVKD79WIDcOOSs8=;
-	b=02M1NCoIj98kR14JGLLJCmJunjqalyyp5w1aBhNpNyZEkBXB3qEIbHFPkDTWG3xqaXJhxN
-	Q/cqnEI6pkT8rJh9/2z3DFadzSmnnIROhkboDAeDR9qtsJdVWkc+1SthIcCy/+4TVshoSO
-	7eKD1bXnkksyiiYfKFoE8ukym+O2aYGQN/qcPF+wuXGAjaJtZUY6/7oHIgoRl2hcgrdLWO
-	ZsB0g+i9IhenPPrXt/nDZ2l5ojrs+g1SWMoCP8RUmDVoJvF5ueFE7c61JZpWtdMTpiRtzq
-	FaqptMLai1sGpNBH0U1mprMmLFYBrSvahfy22APApvKAN98MHFJkp/cQygE7TQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752210141;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j59WDD2gzvtudEauuDI9ce9YLhlsFVKD79WIDcOOSs8=;
-	b=EwYVL3DwHtOVB+v4a+urbtpc1WXH1/pTVPYxd5AOoIkqidGHSkm0D6hBmHgQMIx0g9KC8K
-	Lctr6nJR+E/yAxDw==
-From: Nam Cao <namcao@linutronix.de>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
-Message-ID: <20250711050217.OMtx7Cz6@linutronix.de>
-References: <20250527090836.1290532-1-namcao@linutronix.de>
- <20250701-wochen-bespannt-33e745d23ff6@brauner>
- <cda3b07998b39b7d46f10394c232b01a778d07a9.camel@xry111.site>
- <20250710034805.4FtG7AHC@linutronix.de>
- <20250710040607.GdzUE7A0@linutronix.de>
- <6f99476daa23858dc0536ca182038c8e80be53a2.camel@xry111.site>
- <20250710062127.QnaeZ8c7@linutronix.de>
- <d14bcceddd9f59a72ef54afced204815e9dd092e.camel@xry111.site>
- <20250710083236.V8WA6EFF@linutronix.de>
- <c720efb6a806e0ffa48e35d016e513943d15e7c0.camel@xry111.site>
+	s=arc-20240116; t=1752210218; c=relaxed/simple;
+	bh=hMviNszBFzONEB+pdZ2P/mSfVb/44rNj78t76l8agUo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CfSWVCUIFwtwEt21My8Ts9bWhGMtO0Zptgcdpz4ToqYJjji8LO9L7NRMYjkpEo11mf5YPDCuV1VXVJBMeihnDmZHxlpwAxOGWm7Hy5QaLpFFXhwdqz/3+j1pV6W9qXT1ptz83oKBCDGGLZcE+W/o2TLmXi6BUg+oafJQ0JE1IrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rU+dHQTL; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56B53UUW1963572;
+	Fri, 11 Jul 2025 00:03:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752210210;
+	bh=afDXnXc6wPd7UCJYFn9Xue4JEjVIxkwuEGrES44MIP0=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=rU+dHQTLkKY7DDdxF5lzfAxravsh7JtOGT0DJgAZHAWzx3p6e6cmmgzjohm7Gq/5n
+	 gclBgheBo6xH+3E+tTVni7WfYtpxPCBpOcxMQWEVQUpXfyhS2fwdwZ5hYWlZ0FfsK3
+	 hYbe6CbqyDsUMhxl3YHwKZtfxmfMvHxQRZJxk2ow=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56B53Ulu822551
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 11 Jul 2025 00:03:30 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 11
+ Jul 2025 00:03:29 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 11 Jul 2025 00:03:29 -0500
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.245])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56B53PxW2576359;
+	Fri, 11 Jul 2025 00:03:26 -0500
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Bryan Brattlof <bb@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Hong Guan <hguan@ti.com>,
+        <stable@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am62a7-sk: fix pinmux for main_uart1
+Date: Fri, 11 Jul 2025 10:33:11 +0530
+Message-ID: <175205725857.918402.13683830653184738148.b4-ty@ti.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250707-uart-fixes-v1-1-8164147218b0@ti.com>
+References: <20250707-uart-fixes-v1-1-8164147218b0@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c720efb6a806e0ffa48e35d016e513943d15e7c0.camel@xry111.site>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Jul 10, 2025 at 05:47:57PM +0800, Xi Ruoyao wrote:
-> It didn't work :(.
+Hi Bryan Brattlof,
 
-Argh :(
+On Mon, 07 Jul 2025 11:55:13 -0500, Bryan Brattlof wrote:
+> The &main_uart1, which is reserved for TIFS firmware traces, is routed
+> to the onboard FT4232 via a FET swich which is connected to pin A21 and
 
-Another possibility is that you are running into event starvation problem.
+Reword this bit locally along with s/swich/switch.
 
-Can you give the below patch a try? It is not the real fix, the patch hurts
-performance badly. But if starvation is really your problem, it should
-ameliorate the situation:
+>
+> B21 of the SoC and not E17 and C17. Fix it.
+> 
+> 
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 895256cd2786..0dcf8e18de0d 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -1764,6 +1764,8 @@ static int ep_send_events(struct eventpoll *ep,
- 		__llist_add(n, &txlist);
- 	}
- 
-+	struct llist_node *shuffle = llist_del_all(&ep->rdllist);
-+
- 	llist_for_each_entry_safe(epi, tmp, txlist.first, rdllink) {
- 		init_llist_node(&epi->rdllink);
- 
-@@ -1778,6 +1780,13 @@ static int ep_send_events(struct eventpoll *ep,
- 		}
- 	}
- 
-+	if (shuffle) {
-+		struct llist_node *last = shuffle;
-+		while (last->next)
-+			last = last->next;
-+		llist_add_batch(shuffle, last, &ep->rdllist);
-+	}
-+
- 	__pm_relax(ep->ws);
- 	mutex_unlock(&ep->mtx);
- 
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
+
+[1/1] arm64: dts: ti: k3-am62a7-sk: fix pinmux for main_uart1
+      commit: 8e44ac61abaae56fc6eb537a04ed78b458c5b984
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
+
 
