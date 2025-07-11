@@ -1,166 +1,157 @@
-Return-Path: <linux-kernel+bounces-727563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2359FB01C1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:34:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA826B01C20
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04C485621EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:34:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BB6776237C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEB929CB41;
-	Fri, 11 Jul 2025 12:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C9B29B8E2;
+	Fri, 11 Jul 2025 12:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTLAhLTC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EFMWAsX0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8328C28A1C5;
-	Fri, 11 Jul 2025 12:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D3F4A24;
+	Fri, 11 Jul 2025 12:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752237247; cv=none; b=RyNL4hW0m6TUWiXggvJf0OubyqsCxOZpFT4T1ExoN4Cbs/haz8hYKmAJ4WVEUO2DLg7LuFSX7bGuChBJyQrcBPO5+Bug5QsgmrC8BJsizrvX5VlcWQk2hDFCp6Mk3lTcWIKa5Ry2SKxmbBDIxoomkCCVUMBoq+OmBjCjeA2OHzU=
+	t=1752237280; cv=none; b=RgadvAbo0jfSBSDnjT0WQ6i6ufN0Us+tiAw12h5iq6+uIdpm/UUCTsXbDJBym0u+1OjeAWKOEQJudIJAvF+ypNg9nbTYNAf5fxqUGHoyKUUibQhQNoTr/QUvbp3h6L8tY9EeJex346WUMQWk6/NMoOTmbD6rBHvMdpJmXInCphw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752237247; c=relaxed/simple;
-	bh=OaM04B/jvmRCFs9Pga6hG/UcJ4uI5yYpfmWIbmK2Zyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O3bHI4lN8RyGcCxvsxc+7tnQCPgprisi3sw32ytD8DbZUNcdH51UGhK49Ytam8YnE9i8mZ2VSKFJ/ijGjVJbEQoVMRJ4tQDBGvi2CjJyc+NzxtpaqvuPT6RHY9G146t1UrjMqtFcrWqdo5+AK0tNqUVzhs3YClzwnPiBQshYyic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dTLAhLTC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50D88C4CEED;
-	Fri, 11 Jul 2025 12:34:06 +0000 (UTC)
+	s=arc-20240116; t=1752237280; c=relaxed/simple;
+	bh=iPzBUak9frIQPxX1OSSUONLfOETT41XmEQPiZTZmh90=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XlF46Y6RNdENqOOxnucMe8wg4gk2ySMHeYwd3tEPRRMRdJ36+UA3nKYj16lsAx13VrI+inxQnf6CHY4guJaPALzNvzd0OhXoqKTR0rfqhUO1lN6IyaM760UXNOq5+Fm92ggsmP0mHEIePBrMNZlGonUy5UnSTOcU+RH6oBoATH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EFMWAsX0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31CB4C4CEF8;
+	Fri, 11 Jul 2025 12:34:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752237247;
-	bh=OaM04B/jvmRCFs9Pga6hG/UcJ4uI5yYpfmWIbmK2Zyc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dTLAhLTCRZXAC4B/2QKacwHAUGAi6WddnWYmmBZEgz/U07KVHiwt0PANdevA2fmRW
-	 gWM2pmMus+RFmABeOsW5pGonIvo+KiacmI3KBi8rnrjRN94re/ZOvPYIzGBYXeRvzT
-	 3269c/hfw6YgxKqV/Awqvy4tCE9NZwhyGtcY82Ee5wUEIiRFf63Vw4UcSpGevnYBeF
-	 RuN1yBG0+m2E2XfP+2Nnf3S5jG/ZJpo0fFxVK8AIi6RgJiIbBHP41De+ubmZGo0oVx
-	 br3pXXJLxUgerpY8f1BoD4YWU63zHnTMWLq4RxQi9r2mnnkoUlVHMRRlKd/PT1wHO8
-	 sYlGlN6t2JKdQ==
-Date: Fri, 11 Jul 2025 18:04:03 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: George Verhaegen <verhaegen@google.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Cezary Rojewski <cezary.rojewski@intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>, kernel-team@android.com,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com, linux-arm-msm@vger.kernel.org,
-	sound-open-firmware@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 0/4] ALSA: compress_offload: Add 64-bit safe timestamp
- API
-Message-ID: <aHEEu1eSSGRhITmW@vaman>
-References: <20250711082441.4193295-1-verhaegen@google.com>
+	s=k20201202; t=1752237280;
+	bh=iPzBUak9frIQPxX1OSSUONLfOETT41XmEQPiZTZmh90=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EFMWAsX0WDIhXrSqySOFTtd74au8J70vA2APRHzPRgkGeOKVAf7UP/cYx/ndgq86e
+	 9QmhwR2dEuSegz7my3puu2hUendHXmgBukaue/oMYFibCQP54iVLGPMvyyFSbt2iFM
+	 cuVcNHfaiL66rhJMLw3GoNLglnaEEGnf3cFQiWvKGkPoHPyS+G6iNlkOAscu8STCp9
+	 eX59TUAzVP0DgZPyRPIWl14+wxtJ56NtV8rY0MPPiRKP0Do6EAJ6UnW4C1GLamKY2S
+	 BS0ZKl6WJnRVjFSvzD8AYspsFlBi6d1Ibyu8ObFoiLHEe9Mo4eXC1crjxhgfNQQN1F
+	 WkVty5MGtoIyw==
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-60c4f796446so3159929a12.1;
+        Fri, 11 Jul 2025 05:34:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV/EiORnDVAne5h3dxzO8SJOUEKoalsf+u3QhS9hftZyZ9of9meBpC+b1tbpIhDjxu8IkB5102/@vger.kernel.org, AJvYcCW0R0hZ9570G5AvALUHRelcNLPZzyR00GzZ5x2do73K+65Zp2XfLRzUs4L2RekxoKRp4zWhOfkK+qb2OZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY5RVJxvE1Jb0BAIFc0qtYjR2zpggycyNqDrHE3uOME27ZHtDS
+	Pxsum+CJRHX4fzSr2pNl9262J+7aUaJc099/yuSAR/Y2H9G8Iu8tFijqKsQSdgNs7ZKTqLvY2bc
+	VvcrIHmIcqIYL4ig+bfh5iO+5aBjVgPo=
+X-Google-Smtp-Source: AGHT+IEluutpYJhPNDQCqi/aWbbEENSWhbRoj7AH++W2t36i/1/OdG3p5utN3ZMcp6elFijTRbgenLzeZgoi4oOtBwo=
+X-Received: by 2002:a05:6402:1e92:b0:607:32e8:652 with SMTP id
+ 4fb4d7f45d1cf-611e84997a1mr2486337a12.19.1752237278630; Fri, 11 Jul 2025
+ 05:34:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711082441.4193295-1-verhaegen@google.com>
+References: <20250711102455.3673865-1-chenhuacai@loongson.cn> <2025071130-mangle-ramrod-38ff@gregkh>
+In-Reply-To: <2025071130-mangle-ramrod-38ff@gregkh>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 11 Jul 2025 20:34:25 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7oEv5jPufY+J-0wOax=m1pszck1__Ptapz5pmzYU5KHg@mail.gmail.com>
+X-Gm-Features: Ac12FXwdjQ3g5zxmjsCe_SAgVWzfc3x861r0WM0FTkTcHpT0fUNhHKvncL8LWXI
+Message-ID: <CAAhV-H7oEv5jPufY+J-0wOax=m1pszck1__Ptapz5pmzYU5KHg@mail.gmail.com>
+Subject: Re: [PATCH] init: Handle bootloader head in kernel parameters
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11-07-25, 09:24, George Verhaegen wrote:
-> From: Joris Verhaegen <verhaegen@google.com>
-> 
-> The current compress offload timestamping API relies on
-> struct snd_compr_tstamp, whose cumulative counters like
-> copied_total are defined as __u32. On long-running high-resolution
-> audio streams, these 32-bit counters can overflow,
-> causing incorrect availability calculations.
+Hi, Greg,
 
-In your testing when did you observe the overflow condition?
+On Fri, Jul 11, 2025 at 7:06=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> On Fri, Jul 11, 2025 at 06:24:55PM +0800, Huacai Chen wrote:
+> > BootLoader may pass a head such as "BOOT_IMAGE=3D/boot/vmlinuz-x.y.z" t=
+o
+> > kernel parameters. But this head is not recognized by the kernel so wil=
+l
+> > be passed to user space. However, user space init program also doesn't
+> > recognized it.
+>
+> Then why is it on the kernel command line if it is not recognized?
+UEFI put it at the beginning of the command line, you can see it from
+/proc/cmdline, both on x86 and LoongArch.
 
-> This patch series introduces a parallel, 64-bit safe API to solve
-> this problem while maintaining perfect backward compatibility with the
-> existing UAPI. A new pointer64 operation and corresponding ioctls
-> are added to allow the kernel to track counters using u64 and expose
-> these full-width values to user-space.
+>
+> > KEXEC may also pass a head such as "kexec" on some architectures.
+>
+> That's fine, kexec needs this.
+>
+> > So the the best way is handle it by the kernel itself, which can avoid
+> > such boot warnings:
+> >
+> > Kernel command line: BOOT_IMAGE=3D(hd0,1)/vmlinuz-6.x root=3D/dev/sda3 =
+ro console=3Dtty
+> > Unknown kernel command line parameters "BOOT_IMAGE=3D(hd0,1)/vmlinuz-6.=
+x", will be passed to user space.
+>
+> Why is this a problem?  Don't put stuff that is not needed on the kernel
+> command line :)
+Both kernel and user space don't need it, and if it is passed to user
+space then may cause some problems. For example, if there is
+init=3D/bin/bash, then bash will crash with this parameter.
 
-Please share patches for tinycompress support too, we need those to test
-this
+>
+> >
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> > ---
+> >  init/main.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/init/main.c b/init/main.c
+> > index 225a58279acd..9e0a7e8913c0 100644
+> > --- a/init/main.c
+> > +++ b/init/main.c
+> > @@ -545,6 +545,7 @@ static int __init unknown_bootoption(char *param, c=
+har *val,
+> >                                    const char *unused, void *arg)
+> >  {
+> >       size_t len =3D strlen(param);
+> > +     const char *bootloader[] =3D { "BOOT_IMAGE", "kexec", NULL };
+>
+> You need to document why these are ok to "swallow" and not warn for.
+Because they are bootloader heads, not really a wrong parameter. We
+only need a warning if there is a wrong parameter.
 
-> The series is structured as follows:
-> 
-> Patch 1: Introduces the new internal pointer64 op, refactors the
-> core logic to use it, and defines the new UAPI structs.
-> 
-> Patch 2: Exposes the SNDRV_COMPRESS_TSTAMP64 ioctl.
-> 
-> Patch 3: Exposes the corresponding SNDRV_COMPRESS_AVAIL64 ioctl.
-> 
-> Patch 4: Implements the new .pointer64 operation in various ASoC
-> drivers that support compress offload.
-> 
-> This series has been tested on a Pixel 9 device. All compress offload
-> use cases, including long-running playback, were verified to work
-> correctly with the new 64-bit API, and no regressions were observed
-> when using the legacy API.
-> 
-> Thanks,
-> George (Joris) Verhaegen
-> 
-> Signed-off-by: Joris Verhaegen <verhaegen@google.com>
-> 
-> ---
-> 
-> Joris Verhaegen (4):
->   ALSA: compress_offload: Add 64-bit safe timestamp infrastructure
->   ALSA: compress_offload: Add SNDRV_COMPRESS_TSTAMP64 ioctl
->   ALSA: compress_offload: Add SNDRV_COMPRESS_AVAIL64 ioctl
->   ASoC: codecs: Implement 64-bit pointer operation
-> 
->  include/sound/compress_driver.h               |   3 +
->  include/sound/soc-component.h                 |   5 +
->  include/sound/soc-dai.h                       |   6 +
->  include/uapi/sound/compress_offload.h         |  32 +++
->  sound/core/compress_offload.c                 | 210 ++++++++++++++----
->  sound/soc/codecs/cs47l15.c                    |   1 +
->  sound/soc/codecs/cs47l24.c                    |   1 +
->  sound/soc/codecs/cs47l35.c                    |   1 +
->  sound/soc/codecs/cs47l85.c                    |   1 +
->  sound/soc/codecs/cs47l90.c                    |   1 +
->  sound/soc/codecs/cs47l92.c                    |   1 +
->  sound/soc/codecs/wm5102.c                     |   1 +
->  sound/soc/codecs/wm5110.c                     |   1 +
->  sound/soc/codecs/wm_adsp.c                    |  53 ++++-
->  sound/soc/codecs/wm_adsp.h                    |   3 +
->  .../intel/atom/sst-mfld-platform-compress.c   |  17 +-
->  sound/soc/intel/atom/sst-mfld-platform.h      |   2 +
->  sound/soc/intel/atom/sst/sst_drv_interface.c  |  43 +++-
->  sound/soc/qcom/qdsp6/q6asm-dai.c              |  41 +++-
->  sound/soc/soc-component.c                     |  20 ++
->  sound/soc/soc-compress.c                      |  21 ++
->  sound/soc/soc-dai.c                           |  14 ++
->  sound/soc/sof/compress.c                      |  44 +++-
->  sound/soc/sprd/sprd-pcm-compress.c            |  28 ++-
->  sound/soc/sprd/sprd-pcm-dma.h                 |   2 +-
->  sound/soc/uniphier/aio-compress.c             |  40 +++-
->  26 files changed, 503 insertions(+), 89 deletions(-)
-> 
-> -- 
-> 2.50.0.727.gbf7dc18ff4-goog
+>
+>
+> >
+> >       /* Handle params aliased to sysctls */
+> >       if (sysctl_is_alias(param))
+> > @@ -552,6 +553,12 @@ static int __init unknown_bootoption(char *param, =
+char *val,
+> >
+> >       repair_env_string(param, val);
+> >
+> > +     /* Handle bootloader head */
+>
+> Handle it how?
+argv_init and envp_init arrays will be passed to userspace, so just
+return early (before argv_init and envp_init handling) can avoid it
+being passed.
 
--- 
-~Vinod
+Huacai
+
+>
+> confused,
+>
+> greg k-h
 
