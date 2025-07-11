@@ -1,162 +1,141 @@
-Return-Path: <linux-kernel+bounces-727732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BBD7B01EBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:12:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A9EFB01EF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71DC01CA2D1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:13:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72F0C1899455
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6012DE70D;
-	Fri, 11 Jul 2025 14:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MvXkYTKZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3B82E54D5;
+	Fri, 11 Jul 2025 14:20:06 +0000 (UTC)
+Received: from mail.avm.de (mail.avm.de [212.42.244.120])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA4F27EC98;
-	Fri, 11 Jul 2025 14:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B132E4981;
+	Fri, 11 Jul 2025 14:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752243163; cv=none; b=H+KHIAYTgN4ELA+mBbjJihiMSLRgHSBnw9UXnZfz512vlCPYIQErIQJlmXfiwF6Nkqn6zCBaZ066gSXHfXMtequxrU4Zd+wrMMMuRI4b1BFgfwlt1PNFVqHIQzjYKAXD6D5Znhaj6Lvr12GNGm1N8GerMO4os9KCscL75W1RSxM=
+	t=1752243605; cv=none; b=FyAALrhLhO8MynQR1SG1Idu+3OJDgnQow4XwNkixM2mwR1ap2XLjnh12itlyEmKX5P+Eo0UGuLc9fgYpUD0/JJKygcxUYoH2k4OUoO1NKxCAoQg9ZZ9hmjgaZ4gwce+GECzcKbfVyja++yCLT34nD95aCl+Oz736DPKQDwl2Mq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752243163; c=relaxed/simple;
-	bh=U6cxtSHyOQ9QCaoBodqp6zYZ+8VXJFakc92XcJD5XCw=;
+	s=arc-20240116; t=1752243605; c=relaxed/simple;
+	bh=g0FY8KEhs3+5ZwzMuOJoxWtCZ12e+cotRCpz7ImwO0s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iy2RlXxKFK1QaVQXo9xRTgRafMGRGffy/7DSyeZRb8ixEgX39+voQTSKmEPtO6CO11MxrDUUczY3P8od2zGLZ1JZTcjC8jzww3hHrUT9YtRIcIwZ1rveHlevXD16wi1TPVEtdVmRRoYLbsb2EvIeLhFJv/hPWsfBYArR+Kt0wxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MvXkYTKZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E8C3C4CEED;
-	Fri, 11 Jul 2025 14:12:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752243162;
-	bh=U6cxtSHyOQ9QCaoBodqp6zYZ+8VXJFakc92XcJD5XCw=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=MvXkYTKZnshtOXEpmgxG1eAYZ5T4ybDEiM8la83RFl3X+yCJN6HV0lvD4KaKaaCHd
-	 4d2/LIbSOq8ePdaTsubspT7Oshhw4WUFejE8+6pqlIczEoE0RU8zohMrMFNLNVGgHG
-	 euIHEET071Fy4tEbTspOjxtty7WYLcj23SAUheVcZCOiMucBljX4nGKhj06jkGWGSQ
-	 TacqM+6FhnMnSi5N7eNFuS51bSy56ZRTAnE2VJ/Xw45FLGVkhQDfFWp0INvrOs4Bbo
-	 1s48fVLYxJr8FQAEpb/FDOyW+na2nnMbg/S0o21vn1jtKmMmDET8Ax1SkUJ/gE/SUo
-	 tWZpDtL25alRg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id EF5C1CE0841; Fri, 11 Jul 2025 07:12:41 -0700 (PDT)
-Date: Fri, 11 Jul 2025 07:12:41 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Maarten Lankhorst <dev@lankhorst.se>,
-	Natalie Vock <natalie.vock@gmx.de>, linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org, cgroups@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang@linux.dev>, Maxime Ripard <mripard@kernel.org>,
-	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Subject: Re: [PATCH v1 1/1] rculist: move list_for_each_rcu() to where it
- belongs
-Message-ID: <a90c8ad5-e016-40bc-873b-8bb6e7b8b441@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250710121528.780875-1-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=scAleIAMIWHSpCO298T0zmcuNRDTuRYdlzk64KwFtOH66yhU5XKV9bfxvhFteXkNsnNjFXyTWRJCzWbA5vpndT8rpchDNwmZ54PUkeBZlZ+8vjSj3TTwtCGqmKuhsbHAW/VyziHcLplTaxtNvVbXDwRfSo6M5tRhAxHPpfI0uPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=avm.de; arc=none smtp.client-ip=212.42.244.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
+Received: from [2001:bf0:244:244::71] (helo=mail.avm.de)
+	by mail.avm.de with ESMTP (eXpurgate 4.53.4)
+	(envelope-from <n.schier@avm.de>)
+	id 68711c0d-037b-7f0000032729-7f000001a796-1
+	for <multiple-recipients>; Fri, 11 Jul 2025 16:13:33 +0200
+Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [IPv6:2001:bf0:244:244::71])
+	by mail.avm.de (Postfix) with ESMTPS;
+	Fri, 11 Jul 2025 16:13:33 +0200 (CEST)
+Received: from buildd.core.avm.de (buildd-sv-01.avm.de [172.16.0.225])
+	by mail-auth.avm.de (Postfix) with ESMTPA id 5F78280666;
+	Fri, 11 Jul 2025 16:13:34 +0200 (CEST)
+Received: from l-nschier-aarch64.ads.avm.de (unknown [IPv6:fde4:4c1b:acd5:6472::1])
+	by buildd.core.avm.de (Postfix) with ESMTPS id 07985182D09;
+	Fri, 11 Jul 2025 16:13:32 +0200 (CEST)
+Date: Fri, 11 Jul 2025 16:13:29 +0200
+From: Nicolas Schier <nicolas.schier@linux.dev>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Matthias Maennich <maennich@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@infradead.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Shivank Garg <shivankg@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
+ EXPORT_SYMBOL_FOR_MODULES
+Message-ID: <20250711-fascinating-dramatic-mongrel-06bb3d@l-nschier-aarch64>
+References: <20250711-export_modules-v2-1-b59b6fad413a@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="vsByBMB2KLXp1vNx"
 Content-Disposition: inline
-In-Reply-To: <20250710121528.780875-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20250711-export_modules-v2-1-b59b6fad413a@suse.cz>
+Organization: AVM GmbH
+X-purgate-ID: 149429::1752243213-8E7B2EE7-5F8E945F/0/0
+X-purgate-type: clean
+X-purgate-size: 2145
+X-purgate-Ad: Categorized by eleven eXpurgate (R) https://www.eleven.de
+X-purgate: This mail is considered clean (visit https://www.eleven.de for further information)
+X-purgate: clean
 
-On Thu, Jul 10, 2025 at 03:15:28PM +0300, Andy Shevchenko wrote:
-> The list_for_each_rcu() relies on the rcu_dereference() API which is not
-> provided by the list.h. At the same time list.h is a low-level basic header
-> that must not have dependencies like RCU, besides the fact of the potential
-> circular dependencies in some cases. With all that said, move RCU related
-> API to the rculist.h where it belongs.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-I cannot see why this would not work, and it does pass testing, but I
-am adding David Howells in case there is some subtle reason why this
-must remain in include/linux/list.h.
+--vsByBMB2KLXp1vNx
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-ad25f5cb3987 ("rxrpc: Fix locking issue")
+On Fri, Jul 11, 2025 at 04:05:16PM +0200, Vlastimil Babka wrote:
+> Christoph suggested that the explicit _GPL_ can be dropped from the
+> module namespace export macro, as it's intended for in-tree modules
+> only. It would be possible to resrict it technically, but it was pointed
 
-In the absence of such a reason, from an RCU viewpoint:
+s/resrict/restrict/
 
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-
+> out [2] that some cases of using an out-of-tree build of an in-tree
+> module with the same name are legitimate. But in that case those also
+> have to be GPL anyway so it's unnecessary to spell it out.
+>=20
+> Link: https://lore.kernel.org/all/aFleJN_fE-RbSoFD@infradead.org/ [1]
+> Link: https://lore.kernel.org/all/CAK7LNATRkZHwJGpojCnvdiaoDnP%2BaeUXgdey=
+5sb_8muzdWTMkA@mail.gmail.com/ [2]
+> Suggested-by: Christoph Hellwig <hch@infradead.org>
+> Reviewed-by: Shivank Garg <shivankg@amd.com>
+> Acked-by: Christian Brauner <brauner@kernel.org>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 > ---
->  include/linux/list.h    | 10 ----------
->  include/linux/rculist.h | 10 ++++++++++
->  kernel/cgroup/dmem.c    |  1 +
->  3 files changed, 11 insertions(+), 10 deletions(-)
-> 
-> diff --git a/include/linux/list.h b/include/linux/list.h
-> index e7e28afd28f8..e7bdad9b8618 100644
-> --- a/include/linux/list.h
-> +++ b/include/linux/list.h
-> @@ -686,16 +686,6 @@ static inline void list_splice_tail_init(struct list_head *list,
->  #define list_for_each(pos, head) \
->  	for (pos = (head)->next; !list_is_head(pos, (head)); pos = pos->next)
->  
-> -/**
-> - * list_for_each_rcu - Iterate over a list in an RCU-safe fashion
-> - * @pos:	the &struct list_head to use as a loop cursor.
-> - * @head:	the head for your list.
-> - */
-> -#define list_for_each_rcu(pos, head)		  \
-> -	for (pos = rcu_dereference((head)->next); \
-> -	     !list_is_head(pos, (head)); \
-> -	     pos = rcu_dereference(pos->next))
-> -
->  /**
->   * list_for_each_continue - continue iteration over a list
->   * @pos:	the &struct list_head to use as a loop cursor.
-> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
-> index 1b11926ddd47..2abba7552605 100644
-> --- a/include/linux/rculist.h
-> +++ b/include/linux/rculist.h
-> @@ -42,6 +42,16 @@ static inline void INIT_LIST_HEAD_RCU(struct list_head *list)
->   */
->  #define list_bidir_prev_rcu(list) (*((struct list_head __rcu **)(&(list)->prev)))
->  
-> +/**
-> + * list_for_each_rcu - Iterate over a list in an RCU-safe fashion
-> + * @pos:	the &struct list_head to use as a loop cursor.
-> + * @head:	the head for your list.
-> + */
-> +#define list_for_each_rcu(pos, head)		  \
-> +	for (pos = rcu_dereference((head)->next); \
-> +	     !list_is_head(pos, (head)); \
-> +	     pos = rcu_dereference(pos->next))
-> +
->  /**
->   * list_tail_rcu - returns the prev pointer of the head of the list
->   * @head: the head of the list
-> diff --git a/kernel/cgroup/dmem.c b/kernel/cgroup/dmem.c
-> index 10b63433f057..e12b946278b6 100644
-> --- a/kernel/cgroup/dmem.c
-> +++ b/kernel/cgroup/dmem.c
-> @@ -14,6 +14,7 @@
->  #include <linux/mutex.h>
->  #include <linux/page_counter.h>
->  #include <linux/parser.h>
-> +#include <linux/rculist.h>
->  #include <linux/slab.h>
->  
->  struct dmem_cgroup_region {
-> -- 
-> 2.47.2
-> 
+
+Looks good to me, thanks!
+
+Acked-by: Nicolas Schier <n.schier@avm.de>
+
+--vsByBMB2KLXp1vNx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEDv+Fiet06YHnC6RpiMa8nIiabbgFAmhxHAMACgkQiMa8nIia
+bbhOGw/6A9j10gjqoU3cU58K0DP3tXeBiNGfbAwaAYMhKF5qqCTZoVXYZnXlkoqx
+aonsaV+KHjIcgOP3NchS4R290Y+VexSvnltxjlAPSYn4hJXlkLrkozxkGEs6ptE2
+HKyrlo0JPTF5O2XWwVJAcC9bgwdL5N1xxVZPUrOtkjwCt5CP5S6cQVn9F+8E8j24
+u3ZdBTVBzUDzvpdWijFja3eJInjGv5dTS7njg66q/xcfn7flOu9Fka0yvwmwV4aG
+ClESQCXzKBUohjG+02n1j0x/QJqSn7RVnq+sjG75al9T0ggFKH0FRxpiTbbGMRf/
+VTzicAeBesZy+6YdYL5uDUpBdzSUS2xUihzey/xpovKgmbuG9RRx0TK87XAqr/X+
++4R6q4LwREMB7+dezzlh73DY0NJyROWsocmCcyewbDP7BhXmgVy/8bbWrItVmeyG
+GoBwZn1jI3jw00fRtxXV1JwwD4i9vAnhP4w3w/HfGB7bTMVUaGLwcUfFzOQ083lu
+A41+qAhk71ET9JYF3P6KI5SuINeTX/XzD93F+D5sB//bi4yhVnbjHcWTDgF2n2xT
+kfUZ+7i0xs6OUbFwZdHoy2B92zrShyHNeXkKYRnlPvzt9XBiUMKRfJpnlRUX9/H1
+ij2ZskGClUCirLzrNp3hSfC4vnBmNAopyo8xPSHYyd7/W5lx+XM=
+=XfC4
+-----END PGP SIGNATURE-----
+
+--vsByBMB2KLXp1vNx--
 
