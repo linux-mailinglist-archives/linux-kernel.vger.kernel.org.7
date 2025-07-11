@@ -1,107 +1,124 @@
-Return-Path: <linux-kernel+bounces-727535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D696B01B7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:06:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 913E0B01B7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30CA554241B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:06:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D36A51CA577D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BF028E571;
-	Fri, 11 Jul 2025 12:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37C728F50F;
+	Fri, 11 Jul 2025 12:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nZsOSKfE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="QDF36VfX"
+Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75081F4C8C;
-	Fri, 11 Jul 2025 12:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C930E1F4C8C;
+	Fri, 11 Jul 2025 12:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752235606; cv=none; b=bXNiWbBsCA95k4saEU21hSOBDHkO+wj18BHz1/SCmk5ckF4dyXeHHZ9rmu2SYuDgBVP93ZhTU3OMFqBWuvGsQ6OzxgyLtRUvkonY2q9V4Au0c1GWmZZVzkKhVfKLcMIoNWuCFbwU1Jug/JqRUoQ+indaO22kgKf1wxLbryCRDuA=
+	t=1752235639; cv=none; b=cVpuZXq1qLI+iv4o9rQw+oEqsmTOMivQJUaEL8vi3I2I0xqPZj/Qhs3Z2VZv8yrNKqfSBcKlZtmlq4dmiZRIaHBlRXCxNHMVwP/CYTGtBLh4zLT5HxvMjP/Uh68OC7kBUlCgJHpYtfvuYHnLIqhBD3GcDxuoEFHiuyWJ2wfPpKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752235606; c=relaxed/simple;
-	bh=73v4Bf8TnQ9yXXT9YnpP+P6hsSsUhaMVhsvbAtr3caM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W8FbHXCfAxi6oCwEEyGjwECjI04djkzkFR7drR2kfa1MSq+wXRzMXxjRSkR1DubP1b+n/DEp0FXuUNwWOteMK1+ufOK3nS/kbYUjuokhm94I9KtD7lzqIhDFdnAmDrTz2Hrcwje3dmqUdIV20s0mW0XGpDOXgktPOCrKW+ryxH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nZsOSKfE; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752235605; x=1783771605;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=73v4Bf8TnQ9yXXT9YnpP+P6hsSsUhaMVhsvbAtr3caM=;
-  b=nZsOSKfE/Ey5OoVDEYxloufJ5DKidrafw5yYZABZkLzC9yFL7yNcosyP
-   uHHV9yGeMuk9iFwTnL6rEUJzzP961DMrgoczWtko5VJhgui2MMmcakiY3
-   OBsR9O8JHaM9fVmSXUAWRYA1Np78tfdW7sdEhjNZi8ws2yFQ4x/TlIcqy
-   wGvoEC98TDm+s2BVGEBppmSxrX3+E71OVb2RxnHYcns3+CkU84pLDHznO
-   O0XjQK4C5dr5tklto/yToonoA+iVxJy+pAFfUUCCglGkCqNoBRw4ADYX0
-   dCKUmk7BdUKgGlUKbNPIEBYWBlApWbXXswlLhAHJ8kXYSdeQFkztfUQc8
-   w==;
-X-CSE-ConnectionGUID: JQNC7lACQwKAzQpgYMxmVA==
-X-CSE-MsgGUID: 1kGsElRTQYyx9CKG9yWv+Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54470395"
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="54470395"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 05:06:44 -0700
-X-CSE-ConnectionGUID: npBLzSw0QA+o0aV7WIqGWA==
-X-CSE-MsgGUID: FyNsipgBQ9eoYSukALiNKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="156472372"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 11 Jul 2025 05:06:42 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 7DDAB1A1; Fri, 11 Jul 2025 15:06:40 +0300 (EEST)
-Date: Fri, 11 Jul 2025 15:06:40 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Marcos Del Sol Vives <marcos@orca.pet>,
-	William Breathitt Gray <wbg@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2] gpio: vortex: add new GPIO device driver
-Message-ID: <aHD-UH2PsnzJrvQ1@black.fi.intel.com>
-References: <20250709091542.968968-1-marcos@orca.pet>
- <aHD40TD8MLug0C6b@black.fi.intel.com>
- <CAMRc=MeNo8sBToDu_P7SahMQcW1xGARgOyQdgJBf7LdtvoYduQ@mail.gmail.com>
+	s=arc-20240116; t=1752235639; c=relaxed/simple;
+	bh=AerIy58F2mKyZGTVixF+HdoXIruvmQT/irkGVWnAmBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pMMbhB9ibE5CrPKTqYp9fbDzfyhiXrYF/dny/lsPERe1oA+9iQtHaATug0cNZumZ4dxt8jVCPpCfOZrOYAmvze3TXqJLct5qAOxsROYpRDUgVLcw7mzxZAdu0vh0dPK2wMQHiTb798zXO1kMuvTR5VPpXoO6l9ki1pXHN/tvaCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=QDF36VfX; arc=none smtp.client-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=JAPLs4JTtm6yZPE6BGHezf271ecxd012iwqsakCpiu0=; b=QDF36VfXLn68siDmzoKGYjRbwC
+	aprINtr/fDqge/PGDeR+Tbq1cZytAN5BC9slNXBAU2a0VzVf8+oWHmhiOJcyWHsoNhJcJ5nFQEMcp
+	YMpZkjqAl7QcU5QGOPXTFD2/2w+nFMZxTI7TbQoiDa5h5Ekh6YbrCWYKCJJOe6taUHd8=;
+Received: from p5b2062ed.dip0.t-ipconnect.de ([91.32.98.237] helo=nf.local)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <nbd@nbd.name>)
+	id 1uaCWo-00A2pQ-0W;
+	Fri, 11 Jul 2025 14:06:58 +0200
+Message-ID: <2c84bde8-5d5a-467f-a7ac-791207e7903a@nbd.name>
+Date: Fri, 11 Jul 2025 14:06:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MeNo8sBToDu_P7SahMQcW1xGARgOyQdgJBf7LdtvoYduQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: fix segmentation after TCP/UDP fraglist GRO
+Content-Language: en-US
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>,
+ "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Willem de Bruijn <willemb@google.com>,
+ Richard Gobert <richardbgobert@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+References: <20250705150622.10699-1-nbd@nbd.name>
+ <686a7e07728fc_3aa654294f9@willemb.c.googlers.com.notmuch>
+From: Felix Fietkau <nbd@nbd.name>
+Autocrypt: addr=nbd@nbd.name; keydata=
+ xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
+ ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
+ Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
+ AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
+ vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
+ wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
+ TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
+ l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
+ dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
+ HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
+ VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
+ CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
+ VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
+ Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
+ DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
+ wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
+ f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
+ aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
+ FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
+ TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
+ GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
+ cL98efvrjdstUfTCP2pfetyN
+In-Reply-To: <686a7e07728fc_3aa654294f9@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 11, 2025 at 01:56:26PM +0200, Bartosz Golaszewski wrote:
-> On Fri, Jul 11, 2025 at 1:43 PM Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
-> >
-> > +Cc: William,
-> > who is an expert in embedded industrial x86 platforms and might help with this.
-> >
-> > Bart, thanks for Cc'ing me. I have tons of questions and comments regarding this.
+On 06.07.25 15:45, Willem de Bruijn wrote:
+> Felix Fietkau wrote:
+>> Since "net: gro: use cb instead of skb->network_header", the skb network
+>> header is no longer set in the GRO path.
+>> This breaks fraglist segmentation, which relies on ip_hdr()/tcp_hdr()
 > 
-> FYI: I haven't given it a thorough review yet as I wanted to clarify
-> the way the driver is registered first so thanks for looking into it.
+> Only ip_hdr is in scope.
+> 
+> Reviewing TCP and UDP GSO, tcp_hdr/transport header is used also
+> outside segment list. Non segment list GSO also uses ip_hdr in case
+> pseudo checksum needs to be set.
+Will change that in v2, thanks.
+> The GSO code is called with skb->data at the relevant header, so L4
+> helpers are not strictly needed. The main issue is that data will be
+> at the L4 header, and some GSO code also needs to see the IP header
+> (e.g., for aforementioned pseudo checksum calculation).
+> 
+>> to check for address/port changes.
+> 
+> If in GSO, then the headers are probably more correctly set at the end
+> of GRO, in gro_complete.
 
-Here is even more. There are drivers for 0x6030 chipset (rdc321x-southbridge.c),
-this one is unclear to what chipset it is. Is it compatible with gpio-rdc321x.c?
+Just to clarify, in inet/ipv6_gro_complete you want me to iterate over 
+all fragment skbs, calculate the header offset based on the first skb, 
+and set it?
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+- Felix
 
