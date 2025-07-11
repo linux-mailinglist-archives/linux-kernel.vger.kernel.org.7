@@ -1,119 +1,78 @@
-Return-Path: <linux-kernel+bounces-728048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24DCCB022FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:45:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF70AB022F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E2CB7AB078
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:44:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 219735624C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7550E2F2372;
-	Fri, 11 Jul 2025 17:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40792F1FED;
+	Fri, 11 Jul 2025 17:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RUUd4SId"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gbkCsfhx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35DD82F19A9
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33157219A91;
+	Fri, 11 Jul 2025 17:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752255872; cv=none; b=MSqXyRl/+RDLIwsILem6qfKCf4ydTGzaUTCtH2Tu/VmonIcS9sVDVBLgmRvZhnBTH0bu2KJZ6Riq1cDV2mdT6X4RmEHipW+mpt+5o93N4vZdbSJx4oOzKAImqymi3RyWK8qkwBP6SsQUER3vrt/SYCoKQwDHmu6lQyAGYgC3r3s=
+	t=1752255839; cv=none; b=NMIEVg3zGVKQEaGGs4/1eM2pynAVs2F77yKt+llb72N1hdeO0hpVfYbUKoIO29+fWYI/VyA74zUHpErEn8jQNow3CCYqAEK5PnjkIyy33ila0JXuGqUXXne4GaoBecEDsLeYc91QrAcUiWx3xAZHhBXKKNpNfF7DCfDluI4fcQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752255872; c=relaxed/simple;
-	bh=u+ZM5SO8L4rZ2xYIS3dtWrMrDyHsyXlquIkrSDaXE+w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y87NKmv+/iq+iuHsnrrLfYbD18S3TEHJPShfKAHHNI0nlGZqrWRsk1A12Gft5eanEwx3YsNjkcms5zURrv2n1ooPjssWocnEyqK6J/O2aH1qhpmD7u6nXeFDcL79bbyVLbnqvli0QJzc2AMF8pSUOcHKMCW58EO/R9Qi2EUJuRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RUUd4SId; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32b78b5aa39so21804641fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:44:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752255868; x=1752860668; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u+ZM5SO8L4rZ2xYIS3dtWrMrDyHsyXlquIkrSDaXE+w=;
-        b=RUUd4SIdJbvakysuyj53v/ouHK9sZMKllZGJ2C8yMk44LRa+g3eH02ZWskxW10QwJ0
-         RFfRpIlkxTlPVK4mN11YJWSQEebePr71rOabZTT6uaDoUC9rKzzuMRZp3yA/LbiMfW6l
-         FCd4t3Kci1fx43bhYAFtq97wWLQgBBve/BAn6K09JXfcrSgKyttrpyWl9jYpL3nwljAI
-         4863pNLzhlBm1lDUIv9W3t+5HiLoWquy4kxLVaGdkoeuNczFNKZbv+VnjkcacoZv9vu5
-         /Gi4M7Ei5GBWU3sm/l9bfCmwWY9wnEKVFEAnXP51eGwBY5T5+RRbnCUtDb4GwtWFIr9s
-         BDyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752255868; x=1752860668;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u+ZM5SO8L4rZ2xYIS3dtWrMrDyHsyXlquIkrSDaXE+w=;
-        b=l6aomWsH3VC8cisXpeV+69azWDXxmec7qO58gGE6okkSWPkBfgRdN0eM3BCq45cEtA
-         ze4XJkxxCBhotiej+G6RCaNisKUgO9oUiFhcrZ011uyMNVH6EjX8bcL30XWVDXgCg8M0
-         Nd2tkxGl3DHoQltju64yr/vJjjxc1S+0BwinRLXIZHd1Mnu2dssxmSFJBrf2um+oWfcM
-         2ikpayrWrvXa78m+USbkulskpN5RaYXLSFQktIVBelkJplJ6PIL+43HWAC9GdZfCJSRF
-         gD4kHxbk7W5ajbTZILv7d3gfk5Pqx4lxpUjjqjYZyuliBi9Tz9qJg0Hk3lO3wNQG9Gn3
-         WcGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxg0kdxkpolLw4XieoAqzVX7H3QLuQfCkHfsLPPNapYnFCu0PY28oT+Mb1xlpbO6d7AEJkkZ2N/65z68I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT+H7c6+sDOlUFHVFo/ozbNJ6hB5o2qPAgZIOZEv1CxFLj6sUH
-	eOmwpXwug79IkNe+KcN9zuSiWq8nJjSzfAlPSaAwpj45OjLKAdJxfOdeVKnMcVYsbAltM+a4Lxs
-	1+76ssyw5NVzMza/dzaJbNsM6YuhkPiXLZyzkQQ9ByA==
-X-Gm-Gg: ASbGnctxYte3LMrkETHxhYvFiJ1Ce0f3A96DqlIFk4+6uIaeiyeoDLKZXK6oQx2Z0gr
-	Bkc+X9ZxEJPL39w1Fovs+DuDt67VntIBINtJLbE82vXWSUbqzL/rxEr7Tp6RBTwwHJuCsE+P6Sq
-	b5eV7+JhiURaLcs7B4jPkBcfGMkdhDLwx+tTXvf4V8+UBZk6mLt46Wycze8PaIwW3UbK84nXh9X
-	iSP34A=
-X-Google-Smtp-Source: AGHT+IHCwFbr6hM4SofCoKFNuaGsZexul62ZHJaP09xPkxTc5K3eZJNMRyy9Lqm+DJrLEpWrNm0Dt8rNW5UZHZ3ILnk=
-X-Received: by 2002:a05:651c:111b:b0:32a:6b23:d3cc with SMTP id
- 38308e7fff4ca-3305341163emr16031911fa.25.1752255868348; Fri, 11 Jul 2025
- 10:44:28 -0700 (PDT)
+	s=arc-20240116; t=1752255839; c=relaxed/simple;
+	bh=6cMw1EYAweCj433gLU7lID7q7ifiGcWotpm4W0Ln2j0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FVnaAu9lvAmZxBmTai0i5YlIVJs3kfgt5MB5ksrcLVuExBNB35B1/uXuJc7oxye/0+BiXlUUbtb6UQeEGVXsWJ0MkBwaC+NqCBtE5+MEF9M1TWVjCOwZGc7WjzM1CdngZ94/gB/eIG7NV1nzYEp7svtyHwm9ktTbGaV6u6dyjGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gbkCsfhx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4107C4CEED;
+	Fri, 11 Jul 2025 17:43:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752255838;
+	bh=6cMw1EYAweCj433gLU7lID7q7ifiGcWotpm4W0Ln2j0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=gbkCsfhxQod1ONTD1+AkoIRbpO0Up6ipDvSBgjPERC221+kGpDDaadmd+bNRr8GUM
+	 ULG/pmvnBd9x2vps+64psxJy7Zkp1AE8bziOw9nTrKIYnblFVodEeTPcWKZBAoleOL
+	 mufDHXvSwEuVjvACeU7vvzyyyG4eqFX4CtF9rTUZstpr24OAQq8c+TKCtpg1Idj4fu
+	 5rUIcK6Xs9HLdBLpx1OXOmVpwTCLjnCOInE+yzpp19UGRoGRn0XLIBHPYX0gH3Gvhp
+	 tL5bZsgTBtWHFPQ0ZaNq7WOf4jYpkdcdgzm4BybDY6Lnujvtb497hAMop2qwBFrptw
+	 DUiQPF9tgJdvw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB74D383B275;
+	Fri, 11 Jul 2025 17:44:21 +0000 (UTC)
+Subject: Re: [GIT PULL] dma-mapping fix for Linux 6.16
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250711070102.4071882-1-m.szyprowski@samsung.com>
+References: <CGME20250711070117eucas1p2788fee3599caf71ac5f0a5f811f6c6bb@eucas1p2.samsung.com> <20250711070102.4071882-1-m.szyprowski@samsung.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250711070102.4071882-1-m.szyprowski@samsung.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mszyprowski/linux.git tags/dma-mapping-6.16-2025-07-11
+X-PR-Tracked-Commit-Id: aa807b9f22df2eee28593cbbabba0f93f4aa26c1
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a0f8361c3ce4cf706608edb81c4334783cb093cf
+Message-Id: <175225586053.2350666.7682054107347295245.pr-tracker-bot@kernel.org>
+Date: Fri, 11 Jul 2025 17:44:20 +0000
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, iommu@lists.linux.dev, Marek Szyprowski <m.szyprowski@samsung.com>, Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>, Feng Tang <feng.tang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250710-drm-clk-round-rate-v1-0-601b9ea384c3@redhat.com> <20250710-drm-clk-round-rate-v1-2-601b9ea384c3@redhat.com>
-In-Reply-To: <20250710-drm-clk-round-rate-v1-2-601b9ea384c3@redhat.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 11 Jul 2025 19:44:17 +0200
-X-Gm-Features: Ac12FXy5w5LZfYTJ16GWumg6iWoXPYqfrbZ0euf79O43X2SKG618Bj4k3h1lAGY
-Message-ID: <CACRpkdZus86rP1BiSw2j24eaSuMrCEorZU9Rc4ouWmmz8iaqhA@mail.gmail.com>
-Subject: Re: [PATCH 2/9] drm/mcde/mcde_clk_div: convert from round_rate() to determine_rate()
-To: Brian Masney <bmasney@redhat.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Yannick Fertre <yannick.fertre@foss.st.com>, 
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
-	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Stephen Boyd <sboyd@kernel.org>, dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-sunxi@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 10, 2025 at 7:43=E2=80=AFPM Brian Masney <bmasney@redhat.com> w=
-rote:
+The pull request you sent on Fri, 11 Jul 2025 09:01:02 +0200:
 
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
->
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> https://git.kernel.org/pub/scm/linux/kernel/git/mszyprowski/linux.git tags/dma-mapping-6.16-2025-07-11
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a0f8361c3ce4cf706608edb81c4334783cb093cf
 
-Yours,
-Linus Walleij
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
