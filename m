@@ -1,158 +1,161 @@
-Return-Path: <linux-kernel+bounces-726828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BA3DB011A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:37:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1CFB011AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55C8F567F07
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:37:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D81FD76178E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D243319DF9A;
-	Fri, 11 Jul 2025 03:37:24 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19091A08A3;
+	Fri, 11 Jul 2025 03:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7ktKKn6"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E9D16F265;
-	Fri, 11 Jul 2025 03:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F7216F265;
+	Fri, 11 Jul 2025 03:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752205044; cv=none; b=ZyB5q53hOHmoz4AjiTMFV1pR7SQHL6E+kyNSPh6ajTzRruZoYV3sCynu6EUjhYXQ1wp1U85EcV2e8CMZWxsw8qbK3k5nABP2s47+UQXXQOJ8CWXjkDe1HCRh6j2qIYt1iW+lvP9vp/Zslm81MdIalCAGr6wRYGuvZXaIciQz0QU=
+	t=1752205104; cv=none; b=lVg/8Lv0rWCfeYk2EAT6Gp/0dqIiAVLLLIqK0w5kJlryni2Pi50sTEUhdWK/GgGp7dW2ens1lW5mphPEf4k9dnQzRipHUoVkx53O/lprAF8eLPFaXu8u2v6l4j/Kwyka122vOX+/ZQoo28BsOORtX7PJ+ubX6aG9wWUx3aGkK2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752205044; c=relaxed/simple;
-	bh=Due+ZsEVsVqHWbezajRnc6wVUa4NOCwIiPko78BclaM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OfXpzFNZYG47QeVHnkHxJ2gUhCvUGF7rqu/Ge+6UyzldP6CU/GLy2VC8dRTY5SRl8dh5FXdeJjL+Er/l8WIerBjfqEb9VP0EqKhAobJHN27+TnwKmJixRxT2KxBSOMIjvbrYPvnJ9cqXx7qw4vaZNV4V04AAEbSI7uOrJmsNr8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bdcpl0sr4zYQtt8;
-	Fri, 11 Jul 2025 11:37:19 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id E4BC11A18F3;
-	Fri, 11 Jul 2025 11:37:17 +0800 (CST)
-Received: from [10.67.110.36] (unknown [10.67.110.36])
-	by APP1 (Coremail) with SMTP id cCh0CgBHDTLqhnBokcFWBQ--.9098S2;
-	Fri, 11 Jul 2025 11:37:15 +0800 (CST)
-Message-ID: <6fc6cf98-516a-4121-b593-57bc4f7f36cf@huaweicloud.com>
-Date: Fri, 11 Jul 2025 11:37:14 +0800
+	s=arc-20240116; t=1752205104; c=relaxed/simple;
+	bh=H0Hm8kyQZ6n/N/KRsdcxE9qHNEhDDCeTojZ8XUtvPZc=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=BMGltRBT+QqTbON4oEo4Mrt0ZYGxpJ5Kw7G1UtyX4JWFV4Wuw4EorrNhQIlnWSqXok5g5QxvM6qw7s7aoDPrY07qjiVDEw3uHLSInOrFNUHFI3AODUZ2K+ig5CqHyh7hHgm3vj3S8ra43eG0u/IkzKzwqDZJvIeabsJ42H+Axl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h7ktKKn6; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2349f096605so21517815ad.3;
+        Thu, 10 Jul 2025 20:38:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752205102; x=1752809902; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q/Qj70+Qw1ZA0kyE48WMaDv1mNZmCeBb3mdlEQxC1dk=;
+        b=h7ktKKn6yo5z7tz1eZ773Oq5HAjS/gAyGJnQi7QOml8Sa3vuWQi8iHsK+ueRcQe5x/
+         aeJjSdzgGIBf/wassO+Vhh0y7r5BR/2mFSBIVuJ9cX8Iv4NgHrQ8erpbYKayedp749ph
+         ZKsdaUAYtGl+3k7ulfGarIIGzUHWwr4B58jeq7cT1oNJYEcXA77T851SL7c8ssI8/glC
+         /xLrjff88jF6KJCzoz1iFdTLytthGinGonLjE7PC8LRC5IgW3hAgHFXYBwJWNU/GzlhU
+         SANmzSJHVA1GJ24BHX0G/MvHgnPc/crmSI5PZmWEIdi1Fu6eyqlgGrSCwcQcfiiWmonG
+         J5ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752205102; x=1752809902;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Q/Qj70+Qw1ZA0kyE48WMaDv1mNZmCeBb3mdlEQxC1dk=;
+        b=Q1eh68n4gUIvOxvOPg2VBJEEcbyMFrw+oJxoaq7qPHs4lDE0Z8371iEmlkkwcy7iGv
+         3YRpERHmCSYHH2JrHG4xUSEzUYu+vSJ8GkuYzxTwB4i/aFc2jwpLKp9jI1cKB32H69Dc
+         3grepaOpYQCSfXDfrkBR+eGwb4gX506dFvOTyQ/TpfnrxjvEqkAcB8eIcgUeubtl4dgb
+         6uqsTEZsHBK7Xnjt4YChmlT2vYRv3cpH0PYwNc192KW49mQd2WkN9bUKvVYmGeJBeQf2
+         x9KH2IU1d79/HCqeXTdwDf+5seQ7KZ86n5kyMpiMvi5RUdubcJtcGvXVhMxyQTq0dRWp
+         Wnxw==
+X-Forwarded-Encrypted: i=1; AJvYcCURFaw0LwptBj4NL2nXFgxThFZ5oBdiBFMWyUhnRWXJ0durIKvYb/ica22DcpYzSNgHX8Sj2sCw1yge1Iy4@vger.kernel.org, AJvYcCVbcWH8OYh06npX/bp00MB8YOsKB7+/lBPNeW7SRDNLzoarvfUy4awRwWuQnENODk9OUE5jf8YI@vger.kernel.org, AJvYcCWXE0rJ2TMS6E56moHRx6j2JDR4XKOGeOeyjXIAML2taFAUlc1SetGZGvWjiwmrYWm1QEnXIDMZyBik@vger.kernel.org, AJvYcCXrayQ/KLgpKfIN8FBuR7Go4Qrq9dFVJWEW7zQ1n1gNnFIZyNuHS8+hUvGnY9Oig5LBH0rTDPVT5VAYjsqYoTw=@vger.kernel.org, AJvYcCXvSfl2fRbcWQBiNfzsvz/NLU9wrQP/8Ph9a+WlLnHG3n1oMm/y8dxcOfOR2DJ9+1+IXuj8oGX1zIwf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy232ZctqxEcDoAcvoJzz2fHsKh1yGr3U3T8BU1FSUc45qtWlnI
+	rCnnMEBkTwE6abfVXv/AwktO6m17nfbVlMhOoKSjjXw/6Ln72C9HQn52
+X-Gm-Gg: ASbGnctZ9GcnRo5SJUhEd5zoHUcEB/AyiMR/koRKP/TSTEEPqqXPZiBKJe7cYZDJuhs
+	TGpnCCSex85HA27Ci431U3blPTDYQlYHHrUR4+ZCijLtmfvkfD+N9wRH1P6sFowYltwGuUH4It+
+	DvcLj7FaeAQWLoCkKSAlicAUOPGuSx1DCzgDtAbtRNA7wbwfVQVyYQbmOuK+1vzGTg1oyTHw91q
+	56LGR9jfgihEhzu/+dqAdWfmH1AhgXwTK3Uq8wcB/Wg+ETv6vZHRmJtktNVkjefnWbtvAdqBovy
+	JOImHybjOFmI69c1RPCF55w2OdA2Q/k9P1/FhUVCfdgZdzNno1eyVhN2Yfwj40ogIyKJBknI7bN
+	ymh3lPH/tAOSf3vdre2xJ/MMYY2bFQ+vPwdg530ln6g5ViPjn5iUnAVvlp1Kal3ehy8+ydj7zAe
+	5qfImOH8MkvKc=
+X-Google-Smtp-Source: AGHT+IFbi/G/K3dsTgG+PrTxboWCsavDU00apeau7wJJn4YJz0wFVUIjBVHaMM+adNeGlqGczuEsEQ==
+X-Received: by 2002:a17:902:ce06:b0:234:e7aa:5d9b with SMTP id d9443c01a7336-23dee1ae93amr18370575ad.23.1752205101907;
+        Thu, 10 Jul 2025 20:38:21 -0700 (PDT)
+Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de43318e5sm41033895ad.147.2025.07.10.20.38.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 20:38:21 -0700 (PDT)
+Date: Fri, 11 Jul 2025 12:38:05 +0900 (JST)
+Message-Id: <20250711.123805.1564352128148532368.fujita.tomonori@gmail.com>
+To: tmgross@umich.edu
+Cc: fujita.tomonori@gmail.com, alex.gaynor@gmail.com, dakr@kernel.org,
+ gregkh@linuxfoundation.org, ojeda@kernel.org, rafael@kernel.org,
+ robh@kernel.org, saravanak@google.com, a.hindborg@kernel.org,
+ aliceryhl@google.com, bhelgaas@google.com, bjorn3_gh@protonmail.com,
+ boqun.feng@gmail.com, david.m.ertman@intel.com,
+ devicetree@vger.kernel.org, gary@garyguo.net, ira.weiny@intel.com,
+ kwilczynski@kernel.org, leon@kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, lossin@kernel.org, netdev@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] rust: net::phy represent DeviceId as
+ transparent wrapper over mdio_device_id
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <DB77AQ53YOFK.VBSAP1H7FFB9@umich.edu>
+References: <20250704041003.734033-1-fujita.tomonori@gmail.com>
+	<20250704041003.734033-3-fujita.tomonori@gmail.com>
+	<DB77AQ53YOFK.VBSAP1H7FFB9@umich.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] selftests/ftrace: Prevent potential failure in
- subsystem-enable test case
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Shuah Khan <shuah@kernel.org>, Yuanhe Shu <xiangzao@linux.alibaba.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20250710130134.591066-1-wutengda@huaweicloud.com>
- <20250710153409.3135fb17@batman.local.home>
- <2bf277fb-a1b8-47f8-9133-e3ca27327eda@huaweicloud.com>
- <17189AF8-34DC-4E5C-9233-ECADAECBBD26@goodmis.org>
-Content-Language: en-US
-From: Tengda Wu <wutengda@huaweicloud.com>
-In-Reply-To: <17189AF8-34DC-4E5C-9233-ECADAECBBD26@goodmis.org>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgBHDTLqhnBokcFWBQ--.9098S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tr47Ar13uF18JFW8Jry7ZFb_yoW8Ar4rpa
-	y7JFnxKF4kAr4ft3Z2gw4DAryUtrWktryUCws8tw1ruFs0vw13tFyUArWUuFZrZF4Du3y2
-	vwn0q3ZF9ryq9aDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxG
-	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
-	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
-	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
-	wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UK2NtUUUUU=
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
+On Tue, 08 Jul 2025 23:23:20 -0400
+"Trevor Gross" <tmgross@umich.edu> wrote:
 
+> On Fri Jul 4, 2025 at 12:10 AM EDT, FUJITA Tomonori wrote:
+>> Refactor the DeviceId struct to be a #[repr(transparent)] wrapper
+>> around the C struct bindings::mdio_device_id.
+>>
+>> This refactoring is a preparation for enabling the PHY abstractions to
+>> use device_id trait.
+> 
+> Should this say "the `DeviceId` trait" (different case)?
 
-On 2025/7/11 11:22, Steven Rostedt wrote:
-> 
-> 
-> On July 10, 2025 10:48:54 PM EDT, Tengda Wu <wutengda@huaweicloud.com> wrote:
->>
-> 
->> The patch works well - after ~50 test iterations, we haven't observed any
->> recurrence of the test case failures.
->>
->> However, I'm concerned that using 'cat trace_pipe' (like the original
->> 'cat trace' method) could bring back the stopping problem [1] on slower
->> systems.
->>
->> Could a slow trace_pipe reader (slower than sched event generation rate)
->> reintroduce the original race condition?
->>
-> 
-> Only if it doesn't find three different events, in which case the test would fail regardless.
-> 
-> The awk script exits out as soon as it finds 3: unique events. It won't go forever, even on slower machines.
-> 
-> -- Steve
+Ah, I changed it to the RawDeviceId trait.
 
-Got it, thank you for explaining this. I have no further questions.
-
--- Tengda
-
-> 
->> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=1a4ea83a6e67f1415a1f17c1af5e9c814c882bb5
+>> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+>> ---
+>>  rust/kernel/net/phy.rs | 53 +++++++++++++++++++++---------------------
+>>  1 file changed, 27 insertions(+), 26 deletions(-)
 >>
->> Some test details:
->>
->> $ ./ftracetest -vvv subsystem-enable.tc
+>> diff --git a/rust/kernel/net/phy.rs b/rust/kernel/net/phy.rs
+>> index 65ac4d59ad77..940972ffadae 100644
+>> --- a/rust/kernel/net/phy.rs
+>> +++ b/rust/kernel/net/phy.rs
 >> [...]
->> + echo sched:*
->> + yield
->> + ping 127.0.0.1 -c 1
->> PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
->> 64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.538 ms
->>
->> --- 127.0.0.1 ping statistics ---
->> 1 packets transmitted, 1 received, 0% packet loss, time 1ms
->> rtt min/avg/max/mdev = 0.538/0.538/0.538/0.000 ms
->> + check_unique
->> + cat trace_pipe
->> + grep -v ^#
->> + awk 
->>        BEGIN { cnt = 0; }
->>        {
->>            for (i = 0; i < cnt; i++) {
->>                if (event[i] == $5) {
->>                    break;
->>                }
->>            }
->>            if (i == cnt) {
->>                event[cnt++] = $5;
->>                if (cnt > 2) {
->>                    exit;
->>                }
->>            }
->>        }
->>        END {
->>            printf "%d", cnt;
->>        }
->> + count=3
->> + [ 3 -lt 3 ]
->> + do_reset
->> [...]
->>
->> Regards,
->> Tengda
+>> @@ -734,18 +733,20 @@ pub const fn new_with_driver<T: Driver>() -> Self {
+>>          T::PHY_DEVICE_ID
+>>      }
+>>  
+>> +    /// Get a `phy_id` as u32.
+>> +    pub const fn id(&self) -> u32 {
+>> +        self.0.phy_id
+>> +    }
+> 
+> For the docs maybe just:
+> 
+>     /// Get the MDIO device's phy ID.
+> 
+> Since `as u32` is slightly redundant (it's in the return type, and that
+> is how it is stored anyway).
 
+Yeah, fixed. I used "PHY" for consistency with other comments.
+
+>>      /// Get a `mask` as u32.
+>>      pub const fn mask_as_int(&self) -> u32 {
+>> -        self.mask.as_int()
+>> +        self.0.phy_id_mask
+>>      }
+
+I also updated the above comment
+
+/// Get the MDIO device's match mask.
+
+> One optional nit then:
+> 
+> Reviewed-by: Trevor Gross <tmgross@umich.edu>
+
+Thanks!
 
