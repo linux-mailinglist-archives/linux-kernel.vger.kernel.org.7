@@ -1,111 +1,202 @@
-Return-Path: <linux-kernel+bounces-728062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38EBAB0233F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:00:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC3DB02345
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFF5DA660C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:59:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79696A661FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA76F2F2360;
-	Fri, 11 Jul 2025 17:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BC22F1FEB;
+	Fri, 11 Jul 2025 18:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGCXV47h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f3oWdpLw"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27702F19B1;
-	Fri, 11 Jul 2025 17:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C209B2AEF1;
+	Fri, 11 Jul 2025 18:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752256794; cv=none; b=nXM55IugeienCJRtyK98pkrTzF+Ymf+RunQXdkAu0aTYRx2I4pLYJYnDB8ulug54ChwUsVg+oeZ37t4wOIUtAY9ekUHDWpk5XuGJwMc4X0mZEc4GBhOVoaVuic7Jou/h/2j2FuCWMjCXLiYi46zrQ85Nci/3pg3hDavsnoTj7RM=
+	t=1752256868; cv=none; b=NOtFKLjHxlMQWlpJML8c35gPJx++ik5j+OxDMM++R4ynzmtCZ9JQvqyNT4m0qbElde9oT9pKJmA5sGI5VCJqC2A7AefSPBTFIHaidQTXR0de9gW8DwYqBiHMVfsKK0RTaAtxwz5px/qKzlDueTX/37+8KDU4YFrVKToXzksjx4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752256794; c=relaxed/simple;
-	bh=AKpW72VC+1HOMYg6B0t+mzIDn2Tzs/VVIAhuZ2bpIQU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=CipqR4of7+YQzayz8X0UXbQau+ln1aERtmdOl4PS5LIyhdFdPEbYzXK8Fq8CvNLYg92gXB7ukEKjJ/XXf8THET0NwNAhFHQt/l2SfqhPalLh72FkhRVcnorg7W9SqwS73cWCfxNfACyTogkkJkxtcCUK5v4WivO1/LNhgGzG7rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LGCXV47h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95FBBC4CEED;
-	Fri, 11 Jul 2025 17:59:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752256793;
-	bh=AKpW72VC+1HOMYg6B0t+mzIDn2Tzs/VVIAhuZ2bpIQU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=LGCXV47hplNjKNNtfxkpYShpJrK1VY2QNanrzvUJ5enWnyEGrJATEcjXlLcyCkM0j
-	 MaF8K9RNAZYeIm63IIpfCtGy8U0+OIad6u5fGRPPJ+VFP09z78l/MlHzQZH6th5K8R
-	 AMJT2nRDxRXm3VbGymENADxOGF0teuWuNgsmFfzzs2VWs/OAIboGLX3Tls3bDC8NGf
-	 JQEEdYLBetuvGmKNkAcVX9CGloop9MMSg6pkYMj+hHPWjOileui90osc/acQkBh6Dj
-	 uLExsKfgwdeoDWnHappV7uhpPHt7SK8Jeg/KOR3CmAHh8Ildeda8m+dgmpkOPSOFvW
-	 +bWvA9o+5IuXg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF4B383B275;
-	Fri, 11 Jul 2025 18:00:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1752256868; c=relaxed/simple;
+	bh=yAWOwOWD6Mn6N6e78rVFNtfiGD9viVjvLy0ZsakBvDQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DZIWMU6ye3Nz9P8+yKNNUgUYF/prdQ5Zz2RvjcD2Fw1wQ0Gh4MbMGbKrAps5dq9VeOHEoncq6nGTzRsWbVOFH3d75TdOJcPtWcBJ4VGx/41czj1IjeBBROerIUCDo1dNzpI7/pWZ0DhL60GTiBafKK/v0jDpTBvJk9pR2++hY9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f3oWdpLw; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-604bff84741so4517517a12.2;
+        Fri, 11 Jul 2025 11:01:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752256865; x=1752861665; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FXNOWT6MTv3Dyhe38G7xRW7KYU7suaaUF5CZ16ccYh4=;
+        b=f3oWdpLwChr8qqomG4ld98FYNeRzDAAezYdLCyF8guF0wOVAntZG8Qf+TIRRWVSCbB
+         sQ25iOdIBFPO20h04GIbP3fVJCVaCZ5Xa0d/deGJ6R2PXzkin4cMtOWaq6eeLZksljDK
+         ogSOVYL6RGCrgWuWSyjuxCXVXWLpVzIr/xhna4vTqYbjvH3m6MNw+tJts0iZUHpmz16/
+         fpdrYEyaVIdUYsRFB0sVPk9yGcrtTZBO66H/MgH7N5iBE75QtBs0H5qfPtfvymxzgv1P
+         Zkb68njgaEGaUEkUwTOmZOSz/rUgb+X7cULb5i7dihvkTxsopno3Z3v218+dl/fWQqch
+         VYbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752256865; x=1752861665;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FXNOWT6MTv3Dyhe38G7xRW7KYU7suaaUF5CZ16ccYh4=;
+        b=lO2jqoHMvE3IdXCa/HqiPcYLw1ViJwG+2pEa4qCNTFk59/LDwnu0bEs/2Qw3lYXukB
+         +xUAbv4l3CLA7Do9cKMqMywNijbxM9SFIpAGEU/NSx3eOFyJYsRucJZuUMonlhaBtwyI
+         E6nytAMzMa8ZNg83IZQHaFiuydIuf97K6vFNbpz14FxRFJgr5mznzrOTgnNfymB+3vA5
+         aKVllCx2qmIKPYYsD00LXUcTtNtuD5qHkXAB3/0D6sM60UGCgwbVdQ2GQhzlbqbHzeTq
+         XaIfTDtbkwqagEud2KL8t6+LEpMm6VThu/eezcMCbGOtzESgkWeb1puqgzeLCPVXdEmy
+         KjaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWw3pS6Mm8Sy28322qRoJGCI6lVOpzSbAytSaR/oz2jdUEJC720ICQMG/lDusmqFlpbcfAvVbNBaNk4IHRyoIE=@vger.kernel.org, AJvYcCXaqeffsvkLPbstRgtNznjJUiaBw/GuboSrAMRoUFVzbMo4BT5cF8RviI3/8DDNF3ylA4c4jlQdis9LHMqv@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWsemMu0469NAvt6uvhFKyt67G+CQbBAnjtljuwGkoYPswAJEl
+	Fv/Jg6XS9/55j7rQUSV9QG2RkkiFHu5trlMHEhee7uF8HmDmSkVYwnbT
+X-Gm-Gg: ASbGncsZMIzi4w6TRiOkVsONkqWG877Ago/0B75FSSlRQgbw4TNSBmBNmiXqWJ+yLrk
+	A5UEFZpMRRKpPBroMtD3f+dUwDgPapkP+GNo52ylUHi6IS4OkTZL0LrHyqnycqSsoi+EwMvt6FB
+	oUlh3+LLFWvlUcSYYslEz1Hg/RNEyRqs2O+cEWIZ+f6gCagbbqcWz402fMnt8tWxAaU/rDPKO1u
+	eiRffYA1yb6QtXc2iY8EEBKqvBVU+uzbuKyd4QPg7lxNP71lgZglNov02Hl/9cvHsXrK5E8D1U+
+	PftwBhf50MZhGxKnZSv3Pjl2G1RAU79ulPaKVN1C6d807/wc4U3ltW3mY8J0HgX1XsTmoU+CW9m
+	5sBWQG7pOQNSIbAOKZvhkAJmqKOIPPfXJsKQ0zHEUIOqRRk1HCX0bA5CCEp637lwn3cvCersmeN
+	eaeGc05w7ZSkRJAwPJhQ1ieKS2o1ixPtOaJ6kLZJ51RfBfIBA4gXlKVSzgybCVV3rkuw/Vdjbf8
+	PEJ5hzv7Foc+lJyKTlLYaauBYanuvHAEihCoe5opA==
+X-Google-Smtp-Source: AGHT+IGcUXOQL27BoWlYQg1iU+Z/FJ5iU0XT8uYIRTsmnYUn0qBz2IUxxAJ1wnfWaogLaUnbGHNcDg==
+X-Received: by 2002:a05:6402:40c7:b0:60e:404:a931 with SMTP id 4fb4d7f45d1cf-611e7c0ab1dmr3697521a12.15.1752256864591;
+        Fri, 11 Jul 2025 11:01:04 -0700 (PDT)
+Received: from 2a02-8388-e6bb-e300-2ae5-f1e1-5796-cbba.cable.dynamic.v6.surfer.at (2a02-8388-e6bb-e300-2ae5-f1e1-5796-cbba.cable.dynamic.v6.surfer.at. [2a02:8388:e6bb:e300:2ae5:f1e1:5796:cbba])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c952b753sm2472335a12.31.2025.07.11.11.01.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 11:01:04 -0700 (PDT)
+Message-ID: <7deb2ddcf0f3e6cd196b7520ad19e0d2ce07c639.camel@gmail.com>
+Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
+From: Martin Uecker <ma.uecker@gmail.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Alejandro Colomar
+ <alx@kernel.org>, linux-mm@kvack.org, linux-hardening@vger.kernel.org, Kees
+ Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>,
+ shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, Andrew
+ Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry
+ Vyukov <dvyukov@google.com>, Alexander Potapenko <glider@google.com>, Marco
+ Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, David Rientjes
+ <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin
+ <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, Andrew
+ Clayton <andrew@digital-domain.net>, Rasmus Villemoes
+ <linux@rasmusvillemoes.dk>,  Michal Hocko <mhocko@suse.com>, Al Viro
+ <viro@zeniv.linux.org.uk>, Sam James <sam@gentoo.org>, Andrew Pinski
+ <pinskia@gmail.com>
+Date: Fri, 11 Jul 2025 20:01:01 +0200
+In-Reply-To: <20250711184541.68d770b9@pumpkin>
+References: <cover.1751823326.git.alx@kernel.org>
+	 <cover.1752182685.git.alx@kernel.org>
+	 <04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
+	 <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
+	 <28c8689c7976b4755c0b5c2937326b0a3627ebf6.camel@gmail.com>
+	 <20250711184541.68d770b9@pumpkin>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v4 0/7] Move attach_type into bpf_link
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175225681552.2356840.5924088851532659615.git-patchwork-notify@kernel.org>
-Date: Fri, 11 Jul 2025 18:00:15 +0000
-References: <20250710032038.888700-1-chen.dylane@linux.dev>
-In-Reply-To: <20250710032038.888700-1-chen.dylane@linux.dev>
-To: Tao Chen <chen.dylane@linux.dev>
-Cc: daniel@iogearbox.net, razor@blackwall.org, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- ast@kernel.org, andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
- song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
- kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- mattbobrowski@google.com, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, horms@kernel.org, willemb@google.com,
- jakub@cloudflare.com, pablo@netfilter.org, kadlec@netfilter.org,
- hawk@kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org
 
-Hello:
+Am Freitag, dem 11.07.2025 um 18:45 +0100 schrieb David Laight:
+> On Fri, 11 Jul 2025 08:05:38 +0200
+> Martin Uecker <ma.uecker@gmail.com> wrote:
+>=20
+> > Am Donnerstag, dem 10.07.2025 um 14:58 -0700 schrieb Linus Torvalds:
+> > > On Thu, 10 Jul 2025 at 14:31, Alejandro Colomar <alx@kernel.org> wrot=
+e: =20
+> > > >=20
+> > > > These macros are essentially the same as the 2-argument version of
+> > > > strscpy(), but with a formatted string, and returning a pointer to =
+the
+> > > > terminating '\0' (or NULL, on error). =20
+> > >=20
+> > > No.
+> > >=20
+> > > Stop this garbage.
+> > >=20
+> > > You took my suggestion, and then you messed it up.
+> > >=20
+> > > Your version of sprintf_array() is broken. It evaluates 'a' twice.
+> > > Because unlike ARRAY_SIZE(), your broken ENDOF() macro evaluates the
+> > > argument.
+> > >=20
+> > > And you did it for no reason I can see. You said that you wanted to
+> > > return the end of the resulting string, but the fact is, not a single
+> > > user seems to care, and honestly, I think it would be wrong to care.
+> > > The size of the result is likely the more useful thing, or you could
+> > > even make these 'void' or something.
+> > >=20
+> > > But instead you made the macro be dangerous to use.
+> > >=20
+> > > This kind of churn is WRONG. It _looks_ like a cleanup that doesn't
+> > > change anything, but then it has subtle bugs that will come and bite
+> > > us later because you did things wrong.
+> > >=20
+> > > I'm NAK'ing all of this. This is BAD. Cleanup patches had better be
+> > > fundamentally correct, not introduce broken "helpers" that will make
+> > > for really subtle bugs.
+> > >=20
+> > > Maybe nobody ever ends up having that first argument with a side
+> > > effect. MAYBE. It's still very very wrong.
+> > >=20
+> > >                 Linus =20
+> >=20
+> > What I am puzzled about is that - if you revise your string APIs -,
+> > you do not directly go for a safe abstraction that combines length
+> > and pointer and instead keep using these fragile 80s-style string
+> > functions and open-coded pointer and size computations that everybody
+> > gets wrong all the time.
+> >=20
+> > String handling could also look like this:
+>=20
+> What does that actually look like behind all the #defines and generics?
+> It it continually doing malloc/free it is pretty much inappropriate
+> for a lot of system/kernel code.
 
-This series was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
+The example I linked would allocate behind your back and would clearly
+not be useful for the kernel also because it would abort() on
+allocation failure (as I pointed out below). =C2=A0
 
-On Thu, 10 Jul 2025 11:20:31 +0800 you wrote:
-> Andrii suggested moving the attach_type into bpf_link, the previous discussion
-> is as follows:
-> https://lore.kernel.org/bpf/CAEf4BzY7TZRjxpCJM-+LYgEqe23YFj5Uv3isb7gat2-HU4OSng@mail.gmail.com
-> 
-> patch1 add attach_type in bpf_link, and pass it to bpf_link_init, which
-> will init the attach_type field.
-> 
-> [...]
+Still, I do not see why similar functions could not work for the
+kernel.  The main point is to keep pointer and length together in a
+single struct.  But it is certainly more difficult to define APIs
+which make sense for the kernel.
 
-Here is the summary with links:
-  - [bpf-next,v4,1/7] bpf: Add attach_type in bpf_link
-    (no matching commit)
-  - [bpf-next,v4,2/7] bpf: Remove attach_type in bpf_cgroup_link
-    https://git.kernel.org/bpf/bpf-next/c/9b8d543dc2bb
-  - [bpf-next,v4,3/7] bpf: Remove attach_type in sockmap_link
-    https://git.kernel.org/bpf/bpf-next/c/33f69f736570
-  - [bpf-next,v4,4/7] bpf: Remove location field in tcx_link
-    https://git.kernel.org/bpf/bpf-next/c/5d93e091911c
-  - [bpf-next,v4,5/7] bpf: Remove attach_type in bpf_netns_link
-    https://git.kernel.org/bpf/bpf-next/c/146ecb1e5cf7
-  - [bpf-next,v4,6/7] bpf: Remove attach_type in bpf_tracing_link
-    https://git.kernel.org/bpf/bpf-next/c/6b3c64b371da
-  - [bpf-next,v4,7/7] netkit: Remove location field in netkit_link
-    https://git.kernel.org/bpf/bpf-next/c/4254873c58bf
+I explain a bit how such types work here:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+https://uecker.codeberg.page/2025-07-02.html
+https://uecker.codeberg.page/2025-07-09.html
 
+Martin
+>=20
+
+> >=20
+> > https://godbolt.org/z/dqGz9b4sM
+> >=20
+> > and be completely bounds safe.
+> >=20
+> > (Note that those function abort() on allocation failure, but this
+> > is an unfinished demo and also not for kernel use. Also I need to
+> > rewrite this using string views.)
+> >=20
+> >=20
+> > Martin
+> >=20
+> >=20
+> >=20
+> >=20
+>=20
 
 
