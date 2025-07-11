@@ -1,182 +1,266 @@
-Return-Path: <linux-kernel+bounces-728181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45296B02441
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:08:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C8DB02453
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:12:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBC91A60396
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:07:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 707275A41A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BB32F198D;
-	Fri, 11 Jul 2025 19:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B202F1FFA;
+	Fri, 11 Jul 2025 19:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="djdm+9iE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="YiiFkTtz"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5579A5FDA7;
-	Fri, 11 Jul 2025 19:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752260893; cv=none; b=CN0fx/9hCbuZzjlUSO1/MJAW4c81uki4uDaAUFq0LzpqaZ/GD6rPIrptrYRR5k94aEnbk/RKuEJgxWp8R7jCmrqlP0iKoOmJZ3Td7K24OkWCa0Oj30dZ1KHnFMSI8+yvV5YGTVQcmBRt2MHawu//OyJelkFyS24NLxeXdIC3IFE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752260893; c=relaxed/simple;
-	bh=0s7VJf+TVitAdyUjPCU9a8WPEAfAzRJf511iXXIdi68=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=dZGslIZhP6gq2UTrgbcBGgSgRrnDUkWRBsU9PCgKmRBdXN4+6M/ka7xLZZLZD2r1lWpx1GVr4yy5rdnSI1wQq6cgfg+twfhOpRMh+CCtQJKGSykx+IQ+r2NGmNt9u+HRILByI8V/xxRCVHrq4ZeSDtqX07PBRDyxLXUDgDqdsQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=djdm+9iE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7F74C4CEED;
-	Fri, 11 Jul 2025 19:08:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752260892;
-	bh=0s7VJf+TVitAdyUjPCU9a8WPEAfAzRJf511iXXIdi68=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=djdm+9iEBCik9vSS3i4x0wplQTA4YslSO977pHx6rIZELGqrsysQ2LDqah8Q3DMCj
-	 tVyhfcqCiZn1jwtd4Gr7GHVEzR1Ce2r/7EOXIZTBWyTNH+03t8dpMnUeBpOPylrUJx
-	 421xwnO0GeCGx/aCLWX8TQhF49Y6UHbdUBrF7hWTFw5F4bjLHE3d8DSgOfm1Up7Ml2
-	 H/G6YE5DJJoFuVIf+tI+8eGptgJgCczH33o273Tmz+pXvCeLUmVxu/jE2vbG0eqY7B
-	 jiqXp0GORVFW+rIOlGsZP2S/0Hponi+fN/kQP529BkZXYGlK3ae37y3X7F1Vtb3aCw
-	 rLy6Bzm/Pplig==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E854B21504E
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752261105; cv=pass; b=JDLQQ7WHLKsqkm7rYSnPdJEjUr13MTPLb3LH4q7C6r04C4d1a70iYgRpte3fLX2QMLQcPZxZrAfHI5D5hovSTvqJK7TTkTQ1kjKZSPDTptJXjsX42jDdS/OI84lt3+EOPKjhLWi8ny9iHZRNlzZW9VRa8JoSAGZdLSq3FtdryMM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752261105; c=relaxed/simple;
+	bh=V4IztQ5TCGA+zokfzPa3gTJI4GLCcX3HGI+oXGJbBQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZnTClVKHgSe4kY3XNVd5svSozUkrjlP8fZqs3vBr3ak2sT8J7kG8+TkQtgNI1BNY7a+kHh69oyLi4x7O2fjU52ypy2jaswjX/uIERtK2MN0aK21DSNOn0wTVSB/OzSRNomaZ2Yk3jBcbzyOMEw5MDeQ1TMdIO6fo14t1vVxBS9k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=YiiFkTtz; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752261080; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QQHsWfaQWduGbYVfJfhvhwCtWadu9pBFuRwzhPoUzQzi1H/WAg9fNG6VqjrJxhkuy0aI078bctii0Psg3f9hSyIhUeBs220UZZ6wPN6xQMsSSwRHRl0uWGNiox8c73ZCzXY2M3Mop9xDWjcnPjTon2M1GrMufloRRatNK3H2vwQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752261080; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Leldv3LSDYNFE4XlW4jcvrOGC0GRo6S1v6TISIZCd3k=; 
+	b=Eh/2Owu33vvx3YNkFOHHs96Ipq9VDTNJJaZxNsLh4cYMs7ky5qFTxS+Hk32JBebuvTnXDlllpY2X7e8aUQY+FBOgD0nTKAxZGl97N9aJ7gmaIVdFIr7Uq6/qIuZrkpfcvYOn126cfP8VSMQl4h8Ripp8GdBZEtL3ryB+C8qBzfI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752261080;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=Leldv3LSDYNFE4XlW4jcvrOGC0GRo6S1v6TISIZCd3k=;
+	b=YiiFkTtzwDYxaUqhXz5FEipWe7vnDTQ2Jo5fLh7xw8HhTMvodbRH6UzGbD10trFo
+	Rbb+/V/qsCxwbFRHuA0fg+2WO+i0Bm9pxQ9S9GXSqsN8FfhwtiyCn8IlLKo7QDxGFhF
+	orsRce0IsPt3vPT9ZcnCRYB7BZEEr/QhurgBvtDw=
+Received: by mx.zohomail.com with SMTPS id 1752261079263492.4174914567179;
+	Fri, 11 Jul 2025 12:11:19 -0700 (PDT)
+Date: Fri, 11 Jul 2025 20:11:15 +0100
+From: Adrian Larumbe <adrian.larumbe@collabora.com>
+To: Caterina Shablia <caterina.shablia@collabora.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
+	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] drm/panthor: Add support for atomic page table
+ updates
+Message-ID: <5wxljw27mc4f2i6ag54upmpjxjj5odnd6d57fiiozpb3hjl4zi@okwx34aj56b6>
+References: <20250703152908.16702-2-caterina.shablia@collabora.com>
+ <20250703152908.16702-3-caterina.shablia@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 11 Jul 2025 21:07:57 +0200
-Message-Id: <DB9GN29XXLPS.3L31JLBDSSDXS@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
- <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
- "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
- "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
- <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Alan Stern" <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v6 6/9] rust: sync: atomic: Add the framework of
- arithmetic operations
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <20250710060052.11955-1-boqun.feng@gmail.com>
- <20250710060052.11955-7-boqun.feng@gmail.com>
- <DB93KSS3F3AK.3R9RFOHJ4FSAQ@kernel.org> <aHEiE0OoA3w1FmCp@Mac.home>
- <aHFMwB-aL7Lj_twN@tardis-2.local>
-In-Reply-To: <aHFMwB-aL7Lj_twN@tardis-2.local>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250703152908.16702-3-caterina.shablia@collabora.com>
 
-On Fri Jul 11, 2025 at 7:41 PM CEST, Boqun Feng wrote:
-> On Fri, Jul 11, 2025 at 07:39:15AM -0700, Boqun Feng wrote:
-> [...]
->> > > ---
->> > >  rust/kernel/sync/atomic.rs         |  18 +++++
->> > >  rust/kernel/sync/atomic/generic.rs | 108 ++++++++++++++++++++++++++=
-+++
->> > >  2 files changed, 126 insertions(+)
->> >=20
->> > I think it's better to name this trait `AtomicAdd` and make it generic=
-:
->> >=20
->> >     pub unsafe trait AtomicAdd<Rhs =3D Self>: AllowAtomic {
->> >         fn rhs_into_repr(rhs: Rhs) -> Self::Repr;
->> >     }
->> >=20
->> > `sub` and `fetch_sub` can be added using a similar trait.
->> >=20
->>=20
->> Seems a good idea, I will see what I can do. Thanks!
->>=20
->> > The generic allows you to implement it multiple times with different
->> > meanings, for example:
->> >=20
->> >     pub struct Nanos(u64);
->> >     pub struct Micros(u64);
->> >     pub struct Millis(u64);
->> >=20
->> >     impl AllowAtomic for Nanos {
->> >         type Repr =3D i64;
->> >     }
->> >=20
->> >     impl AtomicAdd<Millis> for Nanos {
->> >         fn rhs_into_repr(rhs: Millis) -> i64 {
->> >             transmute(rhs.0 * 1000_000)
->>=20
->> We probably want to use `as` in real code?
->>=20
->> >         }
->> >     }
->> >=20
->> >     impl AtomicAdd<Micros> for Nanos {
->> >         fn rhs_into_repr(rhs: Micros) -> i64 {
->> >             transmute(rhs.0 * 1000)
->> >         }
->> >     }
->> >=20
->> >     impl AtomicAdd<Nanos> for Nanos {
->> >         fn rhs_into_repr(rhs: Nanos) -> i64 {
->> >             transmute(rhs.0)
->> >         }
->> >     }
->> >=20
->> > For the safety requirement on the `AtomicAdd` trait, we might just
->> > require bi-directional transmutability... Or can you imagine a case
->> > where that is not guaranteed, but a weaker form is?
->>=20
->> I have a case that I don't think it's that useful, but it's similar to
->> the `Micros` and `Millis` above, an `Even<T>` where `Even<i32>` is a
->
-> Oh I mis-read, it's not similar to `Micros` or `Millis`, but still,
-> `Even<i32>` itself should have the point.
->
->> `i32` but it's always an even number ;-) So transmute<i32, Even<i32>>()
->> is not always sound. Maybe we could add a "TODO" in the safety section
->> of `AtomicAdd`, and revisit this later? Like:
->>=20
->> /// (in # Safety)
->> /// TODO: The safety requirement may be tightened to bi-directional
->> /// transmutability.=20
->>=20
->> And maybe also add the `Even` example there?
->>=20
->> Thoughts?
->>=20
->
-> Or since we are going to use fine-grained traits, it's actually easy to
-> define the safety requirement of `AtomicAdd` (instead of
-> `AllowAtomicArithmetic) now:
->
->     /// # Safety
->     ///
->     /// For a `T: AtomicAdd<Rhs>`, the addition result of a valid bit
->     /// pattern of `T` and a `T::Repr` convert from `rhs_into_repr()` sho=
-uld
->     /// be a valid bit pattern of `T`.
+Hi Caterina,
 
-Let's combine our two safety requirement ideas (I forgot about my Rhs
-change).
-
----
-Cheers,
-Benno
-
->     pub unsafe trait AtomicAdd<Rhs =3D Self>: AllowAtomic {
->        fn rhs_into_repr(rhs: Rhs) -> Self::Repr;
->     }
+On 03.07.2025 15:28, Caterina Shablia wrote:
+> From: Boris Brezillon <boris.brezillon@collabora.com>
 >
-> Thoughts?
+> Move the lock/flush_mem operations around the gpuvm_sm_map() calls so
+> we can implement true atomic page updates, where any access in the
+> locked range done by the GPU has to wait for the page table updates
+> to land before proceeding.
 >
-> Regards,
-> Boqun
+> This is needed for vkQueueBindSparse(), so we can replace the dummy
+> page mapped over the entire object by actual BO backed pages in an atomic
+> way.
+>
+> Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Signed-off-by: Caterina Shablia <caterina.shablia@collabora.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_mmu.c | 65 +++++++++++++++++++++++++--
+>  1 file changed, 62 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index b39ea6acc6a9..1e58948587a9 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -387,6 +387,15 @@ struct panthor_vm {
+>  	 * flagged as faulty as a result.
+>  	 */
+>  	bool unhandled_fault;
+> +
+> +	/** @locked_region: Information about the currently locked region currently. */
 
+Nit: delete second 'current'
+
+> +	struct {
+> +		/** @locked_region.start: Start of the locked region. */
+> +		u64 start;
+> +
+> +		/** @locked_region.size: Size of the locked region. */
+> +		u64 size;
+> +	} locked_region;
+>  };
+>
+>  /**
+> @@ -775,6 +784,10 @@ int panthor_vm_active(struct panthor_vm *vm)
+>  	}
+>
+>  	ret = panthor_mmu_as_enable(vm->ptdev, vm->as.id, transtab, transcfg, vm->memattr);
+> +	if (!ret && vm->locked_region.size) {
+> +		lock_region(ptdev, vm->as.id, vm->locked_region.start, vm->locked_region.size);
+
+Why do we need to lock the region after enabling a new AS?
+
+> +		ret = wait_ready(ptdev, vm->as.id);
+> +	}
+>
+>  out_make_active:
+>  	if (!ret) {
+> @@ -902,6 +915,9 @@ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
+>  	struct io_pgtable_ops *ops = vm->pgtbl_ops;
+>  	u64 offset = 0;
+>
+> +	drm_WARN_ON(&ptdev->base,
+> +		    (iova < vm->locked_region.start) ||
+> +		    (iova + size > vm->locked_region.start + vm->locked_region.size));
+>  	drm_dbg(&ptdev->base, "unmap: as=%d, iova=%llx, len=%llx", vm->as.id, iova, size);
+>
+>  	while (offset < size) {
+> @@ -915,13 +931,12 @@ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
+>  				iova + offset + unmapped_sz,
+>  				iova + offset + pgsize * pgcount,
+>  				iova, iova + size);
+> -			panthor_vm_flush_range(vm, iova, offset + unmapped_sz);
+
+We've removed all calls to panthor_vm_flush_range(), but I don't see it being done in panthor_vm_exec_op()
+before the region is unlocked. It's effectively become dead code.
+
+However, even if we did 'panthor_vm_flush_range(vm, op->va.addr, op->va.range);' in panthor_vm_exec_op() right
+before we unlock the region, we wouldn't be dealing well with the case in which only a partial unmap happens,
+but maybe this isn't a big deal either.
+
+>  			return  -EINVAL;
+>  		}
+>  		offset += unmapped_sz;
+>  	}
+>
+> -	return panthor_vm_flush_range(vm, iova, size);
+> +	return 0;
+>  }
+>
+>  static int
+> @@ -938,6 +953,10 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
+>  	if (!size)
+>  		return 0;
+>
+> +	drm_WARN_ON(&ptdev->base,
+> +		    (iova < vm->locked_region.start) ||
+> +		    (iova + size > vm->locked_region.start + vm->locked_region.size));
+> +
+>  	for_each_sgtable_dma_sg(sgt, sgl, count) {
+>  		dma_addr_t paddr = sg_dma_address(sgl);
+>  		size_t len = sg_dma_len(sgl);
+> @@ -985,7 +1004,7 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
+>  		offset = 0;
+>  	}
+>
+> -	return panthor_vm_flush_range(vm, start_iova, iova - start_iova);
+
+
+> +	return 0;
+>  }
+>
+>  static int flags_to_prot(u32 flags)
+> @@ -1654,6 +1673,38 @@ static const char *access_type_name(struct panthor_device *ptdev,
+>  	}
+>  }
+>
+> +static int panthor_vm_lock_region(struct panthor_vm *vm, u64 start, u64 size)
+> +{
+> +	struct panthor_device *ptdev = vm->ptdev;
+> +	int ret;
+> +
+> +	mutex_lock(&ptdev->mmu->as.slots_lock);
+> +	drm_WARN_ON(&ptdev->base, vm->locked_region.start || vm->locked_region.size);
+> +	vm->locked_region.start = start;
+> +	vm->locked_region.size = size;
+> +	if (vm->as.id >= 0) {
+
+I guess VM bind operations don't increase the active_cnt of a VM, so we might try to
+be mapping addresses from UM while no active groups are submitting jobs targetting this VM?
+
+> +		lock_region(ptdev, vm->as.id, start, size);
+> +		ret = wait_ready(ptdev, vm->as.id);
+
+I've noticed in mmu_hw_do_operation_locked() we don't do wait_ready() after locking the region.
+Is it missing or else maybe waiting for the AS to be locked isn't necessary here?
+
+> +	}
+> +	mutex_unlock(&ptdev->mmu->as.slots_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static void panthor_vm_unlock_region(struct panthor_vm *vm)
+> +{
+> +	struct panthor_device *ptdev = vm->ptdev;
+> +
+> +	mutex_lock(&ptdev->mmu->as.slots_lock);
+> +	if (vm->as.id >= 0) {
+> +		write_cmd(ptdev, vm->as.id, AS_COMMAND_FLUSH_MEM);
+
+I guess this is why we no longer need to call panthor_vm_flush_range() right before this function.
+Does AS_COMMAND_FLUSH_MEM only flush the locked region? Also, why not AS_COMMAND_FLUSH_PT instead?
+
+> +		drm_WARN_ON(&ptdev->base, wait_ready(ptdev, vm->as.id));
+> +	}
+> +	vm->locked_region.start = 0;
+> +	vm->locked_region.size = 0;
+> +	mutex_unlock(&ptdev->mmu->as.slots_lock);
+> +}
+> +
+>  static void panthor_mmu_irq_handler(struct panthor_device *ptdev, u32 status)
+>  {
+>  	bool has_unhandled_faults = false;
+> @@ -2179,6 +2230,11 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct panthor_vm_op_ctx *op,
+>
+>  	mutex_lock(&vm->op_lock);
+>  	vm->op_ctx = op;
+> +
+> +	ret = panthor_vm_lock_region(vm, op->va.addr, op->va.range);
+> +	if (ret)
+> +		goto out;
+> +
+>  	switch (op_type) {
+>  	case DRM_PANTHOR_VM_BIND_OP_TYPE_MAP:
+>  		if (vm->unusable) {
+> @@ -2199,6 +2255,9 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct panthor_vm_op_ctx *op,
+>  		break;
+>  	}
+>
+> +	panthor_vm_unlock_region(vm);
+> +
+> +out:
+>  	if (ret && flag_vm_unusable_on_failure)
+>  		vm->unusable = true;
+>
+> --
+> 2.47.2
+
+Adrian Larumbe
 
