@@ -1,253 +1,117 @@
-Return-Path: <linux-kernel+bounces-726776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8840B01110
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:58:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 389F6B01119
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 04:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B024765885
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86DC2643534
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A3F149C64;
-	Fri, 11 Jul 2025 01:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BC914F121;
+	Fri, 11 Jul 2025 02:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmQHu3Fm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b0o1sq+f"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E362288CC;
-	Fri, 11 Jul 2025 01:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB75347DD;
+	Fri, 11 Jul 2025 02:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752199052; cv=none; b=nq4atulPwFH/mHLjAFMl74tBfpO1nZ/pJ/u+/WXEkXJbCUNHNVJkmAK0pyxQa7AGyH0phyDJ4huyHQL4oEjdEfS6GDGsBiPofBk4d+0AX3kTdfcloqaakKInO8+iscmNFvs2DIxjgwBc8GLh2ILzoSfcjOvYt6+9LoJkVyVB7xU=
+	t=1752199652; cv=none; b=G9RN1TDJkTsBN3N4fbDV0asVYt5URBZL/ivVJvG8ZAaynGV4nMQjsvIJrA8OVRFSF+0rqzwa1rt5NrKF8jvYSbk9glItGO9H7wEntrJuxdxRjmRoJEpPA8nq+d2PHkMRFzHHwXOz+wdYYK3hIhskXuEHlrL7Zmp8x8pnOufkWU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752199052; c=relaxed/simple;
-	bh=VJYVfYb5aKbK4eQQkUA5lmVUT/3A2ehIMDd21vB14NU=;
+	s=arc-20240116; t=1752199652; c=relaxed/simple;
+	bh=PvjSKPyD0gXbh2bB6YpiAqsa881j4RTXn+Ts3T8ihPM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VDitLjZZ53RbN1uX1qJ3hUvit+8c50t5R+DY7ggrbL/paLcohm6TXrao9Lgp32YENhPQEOxXdpB6z8a88WotRwsqsP9Hk1WXoim06vM2/4YchjKKXdprMvApDTtezRpovnas27IHDtoNv93NMnBaotqVLJlNqzQ8t7NLLra0e4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmQHu3Fm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A25DC4CEE3;
-	Fri, 11 Jul 2025 01:57:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752199051;
-	bh=VJYVfYb5aKbK4eQQkUA5lmVUT/3A2ehIMDd21vB14NU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AmQHu3FmSKNE0tW16KCLyS8PJ9u6i78loWUZWX6+tH+CUGh4xEzytl97R4ZQpudFK
-	 BrdiZKCqo+h8P1sBvWX5rVtOFes4MXbSKzp9Kn/DVBNAQVW/hByQhmwtso4NBaUJRF
-	 LjjQIdOxVuXrdr5qARCLtddx5TbJfIGpbN4OlKK7AYuuhcL24ILD05MUwFly7Hkgg0
-	 Z8mVmdu2tAMjeHqOnFhnS+nnSTpH+Grgp4h60slJPRmHHO5GJGbHwh21zrMr6LBrwW
-	 JwHXpV18Bu/u7hdCNe6C0kAA5VWZW7mKF5H4R2mJUSnrcnxULXhcw6FAfOeqA0qx4U
-	 gFl9a2897/KEw==
-Date: Fri, 11 Jul 2025 03:57:25 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-mm@kvack.org, linux-hardening@vger.kernel.org
-Cc: Alejandro Colomar <alx@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>, 
-	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Michal Hocko <mhocko@suse.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Martin Uecker <uecker@tugraz.at>, Sam James <sam@gentoo.org>, 
-	Andrew Pinski <pinskia@gmail.com>
-Subject: [RFC v6 8/8] mm: Use [v]sprintf_array() to avoid specifying the
- array size
-Message-ID: <aa6323cbea649950487ea4c0518a4b8d2e0aa68f.1752193588.git.alx@kernel.org>
-X-Mailer: git-send-email 2.50.0
-References: <cover.1751823326.git.alx@kernel.org>
- <cover.1752193588.git.alx@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xte4W+9m/6bPNl3PQAdmGl1l6KofGvP6aC909kGj2aIkH9Yhq3USBVjufNuZSR3TfQkR5gsyn/Rh93oth9pS1PHGmAPevpFvclCQla/psQNDcGiKDa3Hjd9czMY1ccKGu5eEEQV/nfG3cNkdt42CyRTTupOQjLrIY/mtX8TUDPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b0o1sq+f; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752199649; x=1783735649;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PvjSKPyD0gXbh2bB6YpiAqsa881j4RTXn+Ts3T8ihPM=;
+  b=b0o1sq+fiQ9oUkAwWKvaPFjoh6Jgx9TcAEHn0kT3jiUI0W4le81yjwCs
+   WBUSZR5VqUVu2a14xyQN/JQbwBRrutUBPGFRzwVoVpi83Dv0pwqWXUhgK
+   wmsjmlR1DLsmxJHqT4QrYfvjM5gmucyQ0LMk/5qilbqmHBMrVNZbtxGvT
+   jTqkFQWnGw97I0kP+szuYdmP7IdPuzD9XcdkJ+M2VSjyyJdvNQ8CnDrr2
+   cJmJ1aoKC9jBaIfqiXnJtoyhdThpsBzfjKHOIamyF8fPKzZJHDDnd5sDb
+   6BZMfAV0u/Cw7pX4Nm5OkwfcuPFLUitxXymm395cFfwA3kH64/RHkp4un
+   g==;
+X-CSE-ConnectionGUID: SxJy35KLRX+crdHurMv2CA==
+X-CSE-MsgGUID: UR7Y/F2TSGG2EcY+mgmv9Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="77040273"
+X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
+   d="scan'208";a="77040273"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 19:07:29 -0700
+X-CSE-ConnectionGUID: ezwbokgsSPCaJxheSsnC4A==
+X-CSE-MsgGUID: 56D/N/8bSouThmQuhjJlFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
+   d="scan'208";a="160583219"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 10 Jul 2025 19:07:24 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ua3AY-0005jj-1k;
+	Fri, 11 Jul 2025 02:07:22 +0000
+Date: Fri, 11 Jul 2025 10:06:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, Saeed Mahameed <saeed@kernel.org>,
+	Gal Pressman <gal@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-rdma@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dragos Tatulea <dtatulea@nvidia.com>
+Subject: Re: [PATCH net-next V2 2/3] net/mlx5e: Add device PCIe congestion
+ ethtool stats
+Message-ID: <202507110932.iOkSE74e-lkp@intel.com>
+References: <1752130292-22249-3-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1752193588.git.alx@kernel.org>
+In-Reply-To: <1752130292-22249-3-git-send-email-tariqt@nvidia.com>
 
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Marco Elver <elver@google.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Alejandro Colomar <alx@kernel.org>
----
- mm/backing-dev.c    | 2 +-
- mm/cma.c            | 4 ++--
- mm/cma_debug.c      | 2 +-
- mm/hugetlb.c        | 3 +--
- mm/hugetlb_cgroup.c | 2 +-
- mm/hugetlb_cma.c    | 2 +-
- mm/kasan/report.c   | 3 +--
- mm/memblock.c       | 4 ++--
- mm/percpu.c         | 2 +-
- mm/shrinker_debug.c | 2 +-
- mm/zswap.c          | 2 +-
- 11 files changed, 13 insertions(+), 15 deletions(-)
+Hi Tariq,
 
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index 783904d8c5ef..c4e588135aea 100644
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -1090,7 +1090,7 @@ int bdi_register_va(struct backing_dev_info *bdi, const char *fmt, va_list args)
- 	if (bdi->dev)	/* The driver needs to use separate queues per device */
- 		return 0;
- 
--	vsnprintf(bdi->dev_name, sizeof(bdi->dev_name), fmt, args);
-+	vsprintf_array(bdi->dev_name, fmt, args);
- 	dev = device_create(&bdi_class, NULL, MKDEV(0, 0), bdi, bdi->dev_name);
- 	if (IS_ERR(dev))
- 		return PTR_ERR(dev);
-diff --git a/mm/cma.c b/mm/cma.c
-index c04be488b099..61d97a387670 100644
---- a/mm/cma.c
-+++ b/mm/cma.c
-@@ -237,9 +237,9 @@ static int __init cma_new_area(const char *name, phys_addr_t size,
- 	cma_area_count++;
- 
- 	if (name)
--		snprintf(cma->name, CMA_MAX_NAME, "%s", name);
-+		sprintf_array(cma->name, "%s", name);
- 	else
--		snprintf(cma->name, CMA_MAX_NAME,  "cma%d\n", cma_area_count);
-+		sprintf_array(cma->name, "cma%d\n", cma_area_count);
- 
- 	cma->available_count = cma->count = size >> PAGE_SHIFT;
- 	cma->order_per_bit = order_per_bit;
-diff --git a/mm/cma_debug.c b/mm/cma_debug.c
-index fdf899532ca0..751eae9f6364 100644
---- a/mm/cma_debug.c
-+++ b/mm/cma_debug.c
-@@ -186,7 +186,7 @@ static void cma_debugfs_add_one(struct cma *cma, struct dentry *root_dentry)
- 	rangedir = debugfs_create_dir("ranges", tmp);
- 	for (r = 0; r < cma->nranges; r++) {
- 		cmr = &cma->ranges[r];
--		snprintf(rdirname, sizeof(rdirname), "%d", r);
-+		sprintf_array(rdirname, "%d", r);
- 		dir = debugfs_create_dir(rdirname, rangedir);
- 		debugfs_create_file("base_pfn", 0444, dir,
- 			    &cmr->base_pfn, &cma_debugfs_fops);
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 6a3cf7935c14..70acc8b3cbb8 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4780,8 +4780,7 @@ void __init hugetlb_add_hstate(unsigned int order)
- 	for (i = 0; i < MAX_NUMNODES; ++i)
- 		INIT_LIST_HEAD(&h->hugepage_freelists[i]);
- 	INIT_LIST_HEAD(&h->hugepage_activelist);
--	snprintf(h->name, HSTATE_NAME_LEN, "hugepages-%lukB",
--					huge_page_size(h)/SZ_1K);
-+	sprintf_array(h->name, "hugepages-%lukB", huge_page_size(h)/SZ_1K);
- 
- 	parsed_hstate = h;
- }
-diff --git a/mm/hugetlb_cgroup.c b/mm/hugetlb_cgroup.c
-index 58e895f3899a..0953cea93759 100644
---- a/mm/hugetlb_cgroup.c
-+++ b/mm/hugetlb_cgroup.c
-@@ -822,7 +822,7 @@ hugetlb_cgroup_cfttypes_init(struct hstate *h, struct cftype *cft,
- 	for (i = 0; i < tmpl_size; cft++, tmpl++, i++) {
- 		*cft = *tmpl;
- 		/* rebuild the name */
--		snprintf(cft->name, MAX_CFTYPE_NAME, "%s.%s", buf, tmpl->name);
-+		sprintf_array(cft->name, "%s.%s", buf, tmpl->name);
- 		/* rebuild the private */
- 		cft->private = MEMFILE_PRIVATE(idx, tmpl->private);
- 		/* rebuild the file_offset */
-diff --git a/mm/hugetlb_cma.c b/mm/hugetlb_cma.c
-index e0f2d5c3a84c..bae82a97a43c 100644
---- a/mm/hugetlb_cma.c
-+++ b/mm/hugetlb_cma.c
-@@ -211,7 +211,7 @@ void __init hugetlb_cma_reserve(int order)
- 
- 		size = round_up(size, PAGE_SIZE << order);
- 
--		snprintf(name, sizeof(name), "hugetlb%d", nid);
-+		sprintf_array(name, "hugetlb%d", nid);
- 		/*
- 		 * Note that 'order per bit' is based on smallest size that
- 		 * may be returned to CMA allocator in the case of
-diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-index 8357e1a33699..3b40225e7873 100644
---- a/mm/kasan/report.c
-+++ b/mm/kasan/report.c
-@@ -486,8 +486,7 @@ static void print_memory_metadata(const void *addr)
- 		char buffer[4 + (BITS_PER_LONG / 8) * 2];
- 		char metadata[META_BYTES_PER_ROW];
- 
--		snprintf(buffer, sizeof(buffer),
--				(i == 0) ? ">%px: " : " %px: ", row);
-+		sprintf_array(buffer, (i == 0) ? ">%px: " : " %px: ", row);
- 
- 		/*
- 		 * We should not pass a shadow pointer to generic
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 0e9ebb8aa7fe..3eea7a177330 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -2021,7 +2021,7 @@ static void __init_memblock memblock_dump(struct memblock_type *type)
- 		flags = rgn->flags;
- #ifdef CONFIG_NUMA
- 		if (numa_valid_node(memblock_get_region_node(rgn)))
--			snprintf(nid_buf, sizeof(nid_buf), " on node %d",
-+			sprintf_array(nid_buf, " on node %d",
- 				 memblock_get_region_node(rgn));
- #endif
- 		pr_info(" %s[%#x]\t[%pa-%pa], %pa bytes%s flags: %#x\n",
-@@ -2379,7 +2379,7 @@ int reserve_mem_release_by_name(const char *name)
- 
- 	start = phys_to_virt(map->start);
- 	end = start + map->size - 1;
--	snprintf(buf, sizeof(buf), "reserve_mem:%s", name);
-+	sprintf_array(buf, "reserve_mem:%s", name);
- 	free_reserved_area(start, end, 0, buf);
- 	map->size = 0;
- 
-diff --git a/mm/percpu.c b/mm/percpu.c
-index b35494c8ede2..a467102c2405 100644
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -3186,7 +3186,7 @@ int __init pcpu_page_first_chunk(size_t reserved_size, pcpu_fc_cpu_to_node_fn_t
- 	int upa;
- 	int nr_g0_units;
- 
--	snprintf(psize_str, sizeof(psize_str), "%luK", PAGE_SIZE >> 10);
-+	sprintf_array(psize_str, "%luK", PAGE_SIZE >> 10);
- 
- 	ai = pcpu_build_alloc_info(reserved_size, 0, PAGE_SIZE, NULL);
- 	if (IS_ERR(ai))
-diff --git a/mm/shrinker_debug.c b/mm/shrinker_debug.c
-index 20eaee3e97f7..f529ac29557c 100644
---- a/mm/shrinker_debug.c
-+++ b/mm/shrinker_debug.c
-@@ -176,7 +176,7 @@ int shrinker_debugfs_add(struct shrinker *shrinker)
- 		return id;
- 	shrinker->debugfs_id = id;
- 
--	snprintf(buf, sizeof(buf), "%s-%d", shrinker->name, id);
-+	sprintf_array(buf, "%s-%d", shrinker->name, id);
- 
- 	/* create debugfs entry */
- 	entry = debugfs_create_dir(buf, shrinker_debugfs_root);
-diff --git a/mm/zswap.c b/mm/zswap.c
-index 204fb59da33c..e66b5c5b1ecf 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -271,7 +271,7 @@ static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
- 		return NULL;
- 
- 	/* unique name for each pool specifically required by zsmalloc */
--	snprintf(name, 38, "zswap%x", atomic_inc_return(&zswap_pools_count));
-+	sprintf_array(name, "zswap%x", atomic_inc_return(&zswap_pools_count));
- 	pool->zpool = zpool_create_pool(type, name, gfp);
- 	if (!pool->zpool) {
- 		pr_err("%s zpool not available\n", type);
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on c65d34296b2252897e37835d6007bbd01b255742]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Tariq-Toukan/net-mlx5e-Create-destroy-PCIe-Congestion-Event-object/20250710-145940
+base:   c65d34296b2252897e37835d6007bbd01b255742
+patch link:    https://lore.kernel.org/r/1752130292-22249-3-git-send-email-tariqt%40nvidia.com
+patch subject: [PATCH net-next V2 2/3] net/mlx5e: Add device PCIe congestion ethtool stats
+config: powerpc-randconfig-003-20250711 (https://download.01.org/0day-ci/archive/20250711/202507110932.iOkSE74e-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 01c97b4953e87ae455bd4c41e3de3f0f0f29c61c)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250711/202507110932.iOkSE74e-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507110932.iOkSE74e-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "mlx5e_pcie_cong_event_supported" [drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.ko] undefined!
+
 -- 
-2.50.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
