@@ -1,143 +1,137 @@
-Return-Path: <linux-kernel+bounces-728263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0238EB02595
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:07:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3274AB02598
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31BBF5A15B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:07:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65D707B0A6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494541EFF96;
-	Fri, 11 Jul 2025 20:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73371F03C9;
+	Fri, 11 Jul 2025 20:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EZX5VuK/"
-Received: from mail-qv1-f73.google.com (mail-qv1-f73.google.com [209.85.219.73])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XjtI82QI"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E7B1DE2CC
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 20:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587E61DE2CC
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 20:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752264456; cv=none; b=f71e/ohlSoRdLdI0PgRhrPcoJyZH8AkX/HH98H7WD+0QjzNTyO8AFkZP3cciJFCID7ONtjGux3yaBzJ2qAbxP/YSdL0gYYaCg9scpDYynbqNizywl9eycpTE25Q5fG3KkH4TavLIYqz031OyREskxIEuC8FqIzPE0Et4d5cM2iM=
+	t=1752264492; cv=none; b=URnfXcoL21mAMSJHFV5WaSwSpPOSDQrza52IlPP3C8+BAe7P9dM9jOW8Xv4ApO2EyRRVSjerA2zCgK9j6C7JNveQ+cLkO3OH2BqYOsj9C/tNgTbfhUtFJ50GJsDqSm1S36Yv/VfXyN8tADJjfvPl4uPbZ4uMjaItXvLU5jOGK8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752264456; c=relaxed/simple;
-	bh=8OmiKAixvVd1qUodpWB5lP5+cBj7n2qE/sWCnAHwWYc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=VTXKh+bl2e7zKaoU3ZptIqfdE8v9eFKvrTMKDEWW3CaUBucnXZ+owBTXeLbcgo0PS7+sntBx72IrfKot/9m+8oCftQ4SZSm3dCZqEEYXus+OJY9usHdjz5lMQJaBIek3gu4O3HOFgc5e2BNKFioFJkVJE9X6lUsDIVvEetTD78Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EZX5VuK/; arc=none smtp.client-ip=209.85.219.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com
-Received: by mail-qv1-f73.google.com with SMTP id 6a1803df08f44-6fb520a74c8so43369406d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:07:33 -0700 (PDT)
+	s=arc-20240116; t=1752264492; c=relaxed/simple;
+	bh=s/f/z31jtKFrsm8Df9/DtKEOKiK/hSRygdBu/ovSdkc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SUTRSdRYKbEFFpYvzFwOP+77rl2bTkbczkI8AoQ2fgNe2oMZpnkcrVASGmA9+9MHXaJoKeNjuRmTlxhZWDfSa/uxffnTv7RQ9qnkIMF84xvUPo5YOz8Uuyu37DFT3yxMtIfMNnET1dZtoZVy7G6Vkx1Z211AXSyyYjva4N2brDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XjtI82QI; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ae0dad3a179so408156966b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:08:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752264453; x=1752869253; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PyWhAnCYCt4u7XeibLhzzMMy2HX/pV/921yEKYQT3nc=;
-        b=EZX5VuK/u7S5M+aWGimT7F/hqXXdlXnl81r/teW4bP0JmqLJpQ85Qq7jbb80N//C8X
-         KE9W+ji1Sy96Xfjg+Jm4cH+KXGVaAMxXvagu0dYR9JFgQCLEMEnPjc+5kZ9y93XxD5RO
-         joUEKkhRAhRLqtsP8Op4GglVHV6AVMXajL9G7ftYPBEcstYGCsPlqBw0PmMtM/s03odB
-         gi/fw5vkeXwyYB3FJw6Nim8eKUbj7SJDaMzxkvTQOEbqJVTA+3ktfGKiMaUVklwm2mTE
-         diodX5RVp7Wc1eQ5UNfhULR2nvLBm1Nit8xGGjwCXTxTCyy1wbwIoWIdgAA3kApMQH5d
-         JRTA==
+        d=linux-foundation.org; s=google; t=1752264488; x=1752869288; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3PEIy8sr1TZluoxMMwYFZHAXfdHvp21bOGwTcdKyt5g=;
+        b=XjtI82QIGJIhLNDk3Ox7o9LvjVezmZy01p6rGsgyVfm6hHFwIuC4+E9JVrOMdAISk0
+         bACdrbmDD0pSoxgBLwEr/1WzpmRLmmQxEQSTVf6jxXeyZi906lc3GZua5ZQcb746P1bF
+         keuEa5OAU0pCJ8exqMJPdJW/Gl10FU4oX1U9U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752264453; x=1752869253;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PyWhAnCYCt4u7XeibLhzzMMy2HX/pV/921yEKYQT3nc=;
-        b=ctkes/XJjNXE9fwBLslII+cbHUrKGxRlgluqLVhHbaWy6jDxV0zGU14XbJ6Usnkexe
-         J/Bh9EMzZqP01CxYikhuo3OtgOMLoHi9WWYTMCNnFCsp3mcHOjpIXqR2nrXRNeFjYGs0
-         /T1ZORXQqhFZ9W17Y+WbBJ0ZvBPot9m3XDJDbsE4TLs0zWG6STocyHuef2pSxsp1Y9Ww
-         wiKqKqbxjD0G8tg0pUgUUxJqDiM20ABqynKNeqefgE5dWHvd6A2i8rZcUdl2non2cEPH
-         sYxn27+KYCdyvXfF2Q8CicCZP6fnO85hYaP0fHcLTeO9j0GuzwcBj2zXSeV2JkckguPB
-         A3UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNhRXtixaSYmYD3xm/3y5bA01inRogxHs0HwSY5EGIcnks1mDUIJkFgJh/TDjBSWyKJVfdfQ56q/pT4m4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJLtov+dk1r8wz+xGlFTmVqb6wI1JUslOaR94kJZkDV20X2vBh
-	X+Ho4msXpcn42hx5Nh+2FYwrtIZIK2n6VRHhreIyOok4Z+3PjDjf0s7BkcQ17HCaQHPZGYy4X4M
-	clx+aty2cAexjqHq3qujCggFxIo8RdQ==
-X-Google-Smtp-Source: AGHT+IG3Murba99pf2Nruu8809aM7LvUkJqNwkECR/wtGoS6MccCGJJni4eGnXrjYnl4jQo30klzBClcQ70IO8if9b4=
-X-Received: from qvvv14.prod.google.com ([2002:a05:6214:808e:b0:6fa:e85f:14f9])
- (user=mattgilbride job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6214:2304:b0:704:8f24:f044 with SMTP id 6a1803df08f44-704a39c6951mr90664806d6.34.1752264452777;
- Fri, 11 Jul 2025 13:07:32 -0700 (PDT)
-Date: Fri, 11 Jul 2025 20:07:05 +0000
+        d=1e100.net; s=20230601; t=1752264488; x=1752869288;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3PEIy8sr1TZluoxMMwYFZHAXfdHvp21bOGwTcdKyt5g=;
+        b=gTUa8zym5orEvRF5pk+fakYHS1uA3HIT5wG8PPl/awiePVIM+yS5qdoIgVvgwRtCRQ
+         eL3Zj8ozZUEOKeOVNnj4DiGZW4laGl342vjnaOX67tHeZq5gDwbqJ9b9rIBLVdpBqQtc
+         cY8uwtWDgcFcbWP7RIThk9WEqKWOKyYEvSbnhDVstmROlJNsd8NqT/ix/J8RGMDjzhKZ
+         bMLWgtushNTHJJaOdFYuWCYoer+cWuw6d602oIOPYpELAkYHn8yLIoI094ud31MML+LZ
+         ypiVAKAf0MKfc847wNpV69jNSWbvgaivykYpyswTFQGMF63C/gnCtMq+sbZ1SWAqP/Y7
+         EB4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVvTxc2LNiFSRIvJjEibu/s/Za+e68+PxBrGg5KQzCeGvakN569Jp+nhBrj84WWhnng1WEbYkXARHFL0RE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNjLiLC68Mfns2I3k9l+hcx6cQPDz0Q29wf1R2uQp3xPTOIBFd
+	8ek02oVYCFx+n/2opxau/V42w8e+a9cqTaP8ezlSgmljpPWC0d5bRIEK65dJvr63vxlbzRTuG/k
+	PwDtHB2leRQ==
+X-Gm-Gg: ASbGncsNPyApYtguaJVmDc+B/Okt0EahCZIg52w8vJqpNqTHtoGPJB31ojrQz1tsyEL
+	UiCeDGw56Af6Y90z+m64yw1X9A27n6EagZdZ5pJ/i/k0DgXd1vD7UN+z5Jc959KPVaYPMNcQryW
+	JESDDdN49r8QS1enxGkyTpMZCaBZzpDeNioe5ED2qePcCufNBvKD5uSpzx40an5uVKQClBbEHfq
+	Qq14WCHohl2Ah2tQfv+aP+sSKGGlGGC5nDsz6594IZHOVRH1n4kHsYsqc5IfKloo3BXedSHCciq
+	CetochobSSKEZNUdZZ9bobPwo1HHOvS5S78tzrdKAIvmgSP7BYLy3ItcTQui5+mUOYYnOJ60jWL
+	OsaLmXMbC8A3FEv8YeiGfx/wfGHuOGMrsJ9BNwPG7pZ7gsxnuvafwh0cFJbnExfT+a07DyrHC0t
+	toLV/93gY=
+X-Google-Smtp-Source: AGHT+IHFRC394/4/uJwAQSfGIsAv4SBwsaRInigGKPRqWnRP1iKxJFVPxNH2KMRzEd4xx5USe/j2Qw==
+X-Received: by 2002:a17:907:6d0f:b0:ade:1863:6ff2 with SMTP id a640c23a62f3a-ae6fc0eb3d0mr483442966b.52.1752264488278;
+        Fri, 11 Jul 2025 13:08:08 -0700 (PDT)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82964f5sm353246566b.143.2025.07.11.13.08.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 13:08:07 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-607ec30df2bso4868419a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:08:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWVWBUbYRW23IEcuTzG2C2+gfOLuRHJ1e9WqvWluN8XA831MYG7sMXzLzpmyuYxp/ZkVz9h190AkEiwnk8=@vger.kernel.org
+X-Received: by 2002:a05:6402:518d:b0:60c:4521:aa54 with SMTP id
+ 4fb4d7f45d1cf-611e8490749mr4202220a12.17.1752264486410; Fri, 11 Jul 2025
+ 13:08:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250711200705.1545447-1-mattgilbride@google.com>
-Subject: [PATCH 1/1] uprobes: relax valid_vma check for VM_MAYSHARE
-From: Matt Gilbride <mattgilbride@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andrii Nakryiko <andrii@kernel.org>, David Hildenbrand <david@redhat.com>, 
-	Matt Gilbride <mattgilbride@google.com>
+MIME-Version: 1.0
+References: <20250711151002.3228710-1-kuba@kernel.org> <CAHk-=wj1Y3LfREoHvT4baucVJ5jvy0cMydcPVQNXhprdhuE2AA@mail.gmail.com>
+ <20250711114642.2664f28a@kernel.org> <CAHk-=wjb_8B85uKhr1xuQSei_85u=UzejphRGk2QFiByP+8Brw@mail.gmail.com>
+ <CAHk-=wiwVkGyDngsNR1Hv5ZUqvmc-x0NUD9aRTOcK3=8fTUO=Q@mail.gmail.com>
+ <CAHk-=whMyX44=Ga_nK-XUffhFH47cgVd2M_Buhi_b+Lz1jV5oQ@mail.gmail.com>
+ <CAHk-=whxjOfjufO8hS27NGnRhfkZfXWTXp1ki=xZz3VPWikMgQ@mail.gmail.com> <20250711125349.0ccc4ac0@kernel.org>
+In-Reply-To: <20250711125349.0ccc4ac0@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 11 Jul 2025 13:07:48 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjp9vnw46tJ_7r-+Q73EWABHsO0EBvBM2ww8ibK9XfSZg@mail.gmail.com>
+X-Gm-Features: Ac12FXzjp4AGZ7WX6h51mZw8s-h9Pt8Rdamdc2UExJ4zq0chj2Qhdb4f4rcsT30
+Message-ID: <CAHk-=wjp9vnw46tJ_7r-+Q73EWABHsO0EBvBM2ww8ibK9XfSZg@mail.gmail.com>
+Subject: Re: [GIT PULL] Networking for v6.16-rc6 (follow up)
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter <simona@ffwll.ch>, 
+	Dave Airlie <airlied@gmail.com>, davem@davemloft.net, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pabeni@redhat.com, 
+	dri-devel <dri-devel@lists.freedesktop.org>
 Content-Type: text/plain; charset="UTF-8"
 
-`valid_vma` returns false when registering a uprobe if the provided VMA
-is writable (`VM_WRITE`) or sharable (`VM_MAYSHARE`). This causes
-`perf_event_open` [1] sys calls to fail silently. A successful return
-code is delivered to the caller even though the uprobe wasn't actually
-attached [2][3].
+On Fri, 11 Jul 2025 at 12:53, Jakub Kicinski <kuba@kernel.org> wrote:
+>
+> Let me keep digging but other than the netlink stuff the rest doesn't
+> stand out..
 
-Remove the latter restriction (`VM_MAYSHARE`) from this check to allow
-registering uprobes on code that has been "dual mapped" into a
-process' memory space. This is helpful when instrumenting just-in-time
-compiled code such as that of Android Runtime (ART) [4]. ART maps a
-memfd twice, once as RW and once as RX, to uphold W^X for security
-(defense in depth), and also to provide better performance (no need to
-call `mprotect` before and after writing) [5].
+Oh well. I think I'll just have to go back to bisecting this thing.
+I've tried to do that several times, and it has failed due to being
+too flaky, but I think I've learnt the signs to look out for better
+too.
 
-uprobes already work for code that is ahead-of-time (AOT) compiled by
-the Android Runtime (ART), as it resides in a static ELF file [6]. In
-order to attach to just-in-time (JIT) compiled code, the Android OS itself
-can coordinate with ART to isolate to-be-instrumented code in a separate
-memfd, which will be left untouched for the duration of a uprobe being
-attached. Thus, while the VMAs inside the memfd will *technically* have
-the `VM_MAYSHARE` flag, the system will ensure that they will not be
-written to again until after any uprobe as been detached.
+For example, the first few times I was just looking for "not able to
+log in", because I hadn't caught on to the fact that sometimes the
+failures simply didn't hit something very important.
 
-Link: https://man7.org/linux/man-pages/man2/perf_event_open.2.html [1]
-Link: https://github.com/torvalds/linux/blob/088d13246a4672bc03aec664675138e3f5bff68c/kernel/events/uprobes.c#L1197-L1199 [2]
-Link: https://github.com/torvalds/linux/blob/088d13246a4672bc03aec664675138e3f5bff68c/kernel/events/uprobes.c#L1256-L1268 [3]
-Link: https://source.android.com/docs/core/runtime/jit-compiler [4]
-Link: http://cs.android.com/android/platform/superproject/main/+/main:art/runtime/jit/jit_memory_region.cc;l=111-137?q=jit_memory_region.cc [5]
-Link: https://source.android.com/docs/core/runtime#AOT_compilation [6]
-Signed-off-by: Matt Gilbride <mattgilbride@google.com>
----
-We've created a working proof-of-concept in Android that demonstrates
-what is described in the last paragraph of the commit message. Thus, we
-introduce this patch to understand the reasoning behind the original
-`VM_SHARED` (later converted to `VM_MAYSHARE`) restriction, and the risks
-that may be associated with relaxing it. It's not clear to me why the
-restriction is there, and we'd like to get feedback on why it is or is
-not still relevant.
+This clearly is timing-sensitive, and it's presumably hardware-dependent too.
 
- kernel/events/uprobes.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+And it could easily be that some bootup process gets stuck on
+something entirely unrelated. Some random driver change - sound, pin
+control, whatever - might then just end up having odd interactions.
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index a8caaea07ac37..1ecb3fdb853b9 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -123,7 +123,7 @@ struct xol_area {
-  */
- static bool valid_vma(struct vm_area_struct *vma, bool is_register)
- {
--	vm_flags_t flags = VM_HUGETLB | VM_MAYEXEC | VM_MAYSHARE;
-+	vm_flags_t flags = VM_HUGETLB | VM_MAYEXEC;
- 
- 	if (is_register)
- 		flags |= VM_WRITE;
--- 
-2.50.0.727.gbf7dc18ff4-goog
+I don't see any issues on my laptop. And considering how random the
+behavior problems are, it could have been going on for a while without
+me ever realizing it (plus I was running a distro kernel for at least
+a few days without even noticing that I wasn't running my own build
+any more).
 
+I was hoping it was some known problem, because I'm not sure how
+successful a bisect will be.
+
+I guess I had nothing better to do this weekend anyway....
+
+                  Linus
 
