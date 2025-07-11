@@ -1,249 +1,118 @@
-Return-Path: <linux-kernel+bounces-726833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9204AB011B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:46:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC005B011BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC2945A621D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:46:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 845734807DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0750719C540;
-	Fri, 11 Jul 2025 03:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2345619F121;
+	Fri, 11 Jul 2025 03:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Htx2lfgE"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="uXYmJqft"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A80C1474DA
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 03:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464DC72624;
+	Fri, 11 Jul 2025 03:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752205593; cv=none; b=E2sCbpxu0PW74H24pb3BvDXJQgTj2CrMf6u7iSLIUXX9EQhCFpWOBQN0CRLbex42qi/h9px7PI8F3Sn+3fq3aTA2wgTX62Koe8op1tRihvMF7dRgubn/T2lnZoopHe8BfDAS90P3wMzF3y8OEbqq0h9Afqdubkhj6ElbFNLcPaU=
+	t=1752205640; cv=none; b=M48SovoT+Qn1b/3tql8zccwKTVnEdr1UW3d1xo0LLqi4APbfbzcmMGoGvbJWzPxjoj+va3wVcHBzQkNw9W1YhLyWPJeaFbYqmeiOmqrhB9stHizMzcfzqzX7UHAxctu+QlRgsYqt5W6QlUyn9BHaN87XGmrbH3b4M7L8WYw9U0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752205593; c=relaxed/simple;
-	bh=dAK18Z/M1Hp5wkRCSWQwhqDaPFZfk6E0afJUIJTtq1E=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=C6dVxL8u+1vgarW9u+QYabfVKmyOhAWfwJ4Cl3qlXqpSpfeFumGWkZsmOu3fBLLkFYG929TOjMRvIHmM/uPjZ/jq32bxFAg7QaFQf46QBTtKEFOYdXInkjKzmmAVcYgOE1bPpMICW3x0u/fJ5msIr2yl0684fJ+8nCixfV8/4kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Htx2lfgE; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ffcbe060-a15d-44d7-bf5e-090e74726c31@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752205586;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LrXT55bORs0fsD8GQ1AosNWcbgIrC5NreNiYDhdXhZ0=;
-	b=Htx2lfgEVRkDhvtiEdRx6w2YQ5BSlehVUMrC+ObYc+GNq+/KM4sltj1eR5+fyf4Iayv7/J
-	o8exqS5+apdKrwaevDQDn6/JKm0nySuKlVbY6rILGqEBBUjiKxjG1zirZ3wXMByuk60Yd4
-	2K83tvwJK9lA1fwTEw/kiIufyFE3T3c=
-Date: Thu, 10 Jul 2025 20:46:18 -0700
+	s=arc-20240116; t=1752205640; c=relaxed/simple;
+	bh=Y6oFKZoPOQ2bGJApnJ1Bap8JVv1ttDvRZ05OZN8hiNY=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=YVCAEo20i7WGePJbcI/enV4NvxgjxuWLfT0SM1i6b9xHbbuidXb7iaiP02qEKE2puYfMsIAAEn/57f8m1RBEEhYIPdxU/A4gNc319Y1gpIeGi+pZ44jQvfeIyOGnwAUd4M6WbD4dkmzTWAdhBiTkQuVrtf8hp/euL1Up2uB3vhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=uXYmJqft; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1752205602; bh=s7Dbt4pfsqy/SPhJnAXDCha4RAALW+oIC1PJfdRhBTU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=uXYmJqftJyFQz/ng4hRNayfjhXCzQsOSIn8TKo/cqhQfgFR3ucfXEXCXonBWDwW8O
+	 dOg4p8hoYnKecVxpa7yHTrytJzkB6i+Be0fzAn6CZppBI2P0PsAeBRL0H/kUZT2hC7
+	 QOTN4Y/PpDE3SlL0IajtpujZNYmM8PUK2Qt+GDY8=
+Received: from VM-222-126-tencentos.localdomain ([14.116.239.37])
+	by newxmesmtplogicsvrszc13-1.qq.com (NewEsmtp) with SMTP
+	id BA904E56; Fri, 11 Jul 2025 11:46:41 +0800
+X-QQ-mid: xmsmtpt1752205601tl8mdbuzy
+Message-ID: <tencent_19AE390D05232D1C97E336C05F35A9F1BD05@qq.com>
+X-QQ-XMAILINFO: MR/iVh5QLeieMtsBwB1FhwpuHNLvSLjowgQUiVdZ9Vh2W5UefhDYqW5zGpKXbq
+	 XmJp4h6FNzkAP+VmWah61YM444QVeGt0b+Vb+2MLZS/V4Bdl5Pz95lNM7k9rIZ+0fjkDCmy6ff79
+	 sKMQGGvj9HdAzUbSHp+YWEZmvwlZioRfVIafJ0vN6dElzWksXH0Swy9EmarSGysGW4vQor7gx+dr
+	 SoM1kcHFsJr3NtI5cC5XnzVVeatJEW3CtjSwNTEOtsAJLdZ0e8mf6ikPe8S7e/m3TIdeMWG9y4QZ
+	 /LTrANDaH/eTzNp4fIDlS7RtxsQUCEzwJ0b8HMTU2SqQEMfOb4pfX/pRhF2SI12HNWPK3W0AqAjF
+	 l5u6jPSs4UZTjnp2wkWgF5ma6ItuR3H8ARKvGUKfFdqvztV74PJ0EnBAyd60SVEP/rn4yh9umf0T
+	 ba6PhktJzeshLTgDo4QcrX7+bXIEQLDEQB5Uw6V8xrd1l/7hExyKo4IP9eDAhTjuR7PprqwbMlb9
+	 YxVx7HPfG6zVAHHLyhihxhKlTm7xmuB1Kd07LNN6JQMLd3oL3tafcM1joJFlK4qkCBwDr9LaQesi
+	 AKPmHVwXNSuLb6NDhx2MBqIwuEJXXq2hvbW7ERkmJxXNMf1iX77DRJBvW3Xm2FnLqAlcq7pxWhMA
+	 lo1nV/02houjy0d+E0USlo5hSaRZtAW+1KrspBlRZfnMafnWVJnGpRvkJa2VSq0VTgrg9jrJ55zG
+	 0K3BJnUxUUKmYx00xR5DM2Cz6PrX8/Q+ZIXbcGxI07jvOVTO+21T7GRgoL600MgAWH5xmpUcEksi
+	 7vQC6ngmEzx0fuuMPt9xZm1OxQmEbp7/7j4ykbQdyfdHYYaGToAymMa86oxxqcgRXPHcUMtOmSFj
+	 f3lBR/0pQGB2ihKlWl1RxfmqZeoH8aPPxW/LPpaf7MYGsaoEqVAFr3XvSIuV1OBZP2fhtHnjqua/
+	 5WK+ix4njdJnC46MuNtaY5g6vuj8X2j87ai28PhcxDBaCrjps2dGaCi2zIDGUtPTG6vFf8g8/+J8
+	 LtP/3ojJm4JOq50R3E1c0+3+nU+mT4HAWw6a+nwE6k/xaK44kTLXjm/6+4pFw=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: jackysliu <1972843537@qq.com>
+To: gregkh@linuxfoundation.org
+Cc: 1972843537@qq.com,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v2] usb: gadget: functioni: Fix a oob problem in rndis
+Date: Fri, 11 Jul 2025 11:46:35 +0800
+X-OQ-MSGID: <20250711034635.3097961-1-1972843537@qq.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <2025071010-outlet-stencil-663d@gregkh>
+References: <2025071010-outlet-stencil-663d@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v3] bpf: make the attach target more accurate
-Content-Language: en-GB
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-To: Menglong Dong <menglong8.dong@gmail.com>, ast@kernel.org,
- daniel@iogearbox.net
-Cc: john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
- eddyz87@gmail.com, song@kernel.org, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, Menglong Dong <dongml2@chinatelecom.cn>
-References: <20250710070835.260831-1-dongml2@chinatelecom.cn>
- <2f8c792e-9675-4385-b1cb-10266c72bd45@linux.dev>
-In-Reply-To: <2f8c792e-9675-4385-b1cb-10266c72bd45@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
+On Thu, 10 Jul 2025 14:19:47 +0200, greg k-h wrote
 
+>In digging in this further, I don't see how this actually changes
+>anything.  BufLength is used for nothing that I can determine, except in
+>some debugging code that is always compiled out (i.e. you can NOT enable
+>it unless you modify the kernel source.)
+>
+>So what exactly is this check checking?
+>
+>I can see that we really should be checking if the buffer is too small,
+>but that's not what you are doing here at all.
+>
+>And all this buffer is used for is to read a 32bit value out of, so
+>verifying that the buffer really is big enough to hold that value SHOULD
+>be what we do here, not check to see if the buffer is too big.
+>
+>Also, you can't trust that BufLength is even correct as it comes from
+>the other side, right?  Because of that, we should just be ignoring it
+>entirely and verifying that the message size really is as big as the
+>structure is supposed to be.  But that means passing down the message
+>size to the lower layers here, which gets into the issues that I have
+>raised before many years ago about this protocol, and this
+>implementation of this protocol.  I.e, it is COMPLETELY INSECURE and
+>should ONLY be used on systems where you trust both sides of the wire.
+>
+>Again, how was this change tested?  And what exactly does it fix?  I'm
+>missing how this change is going to actually catch anything, can you
+>spell it out in detail for me?
 
-On 7/10/25 8:10 PM, Yonghong Song wrote:
->
->
-> On 7/10/25 12:08 AM, Menglong Dong wrote:
->> For now, we lookup the address of the attach target in
->> bpf_check_attach_target() with find_kallsyms_symbol_value or
->> kallsyms_lookup_name, which is not accurate in some cases.
->>
->> For example, we want to attach to the target "t_next", but there are
->> multiple symbols with the name "t_next" exist in the kallsyms, which 
->> makes
->> the attach target ambiguous, and the attach should fail.
->>
->> Introduce the function bpf_lookup_attach_addr() to do the address 
->> lookup,
->> which will return -EADDRNOTAVAIL when the symbol is not unique.
->>
->> We can do the testing with following shell:
->>
->> for s in $(cat /proc/kallsyms | awk '{print $3}' | sort | uniq -d)
->> do
->>    if grep -q "^$s\$" 
->> /sys/kernel/debug/tracing/available_filter_functions
->>    then
->>      bpftrace -e "fentry:$s {printf(\"1\");}" -v
->>    fi
->> done
->>
->> The script will find all the duplicated symbols in /proc/kallsyms, which
->> is also in /sys/kernel/debug/tracing/available_filter_functions, and
->> attach them with bpftrace.
->>
->> After this patch, all the attaching fail with the error:
->>
->> The address of function xxx cannot be found
->> or
->> No BTF found for xxx
->>
->> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
->
-> Maybe we should prevent vmlinux BTF generation for such symbols
-> which are static and have more than one instances? This can
-> be done in pahole and downstream libbpf/kernel do not
-> need to do anything. This can avoid libbpf/kernel runtime overhead
-> since bpf_lookup_attach_addr() could be expensive as it needs
-> to go through ALL symbols, even for unique symbols.
+BufOffset + BufLength can exceed buffer size even if each is < RNDIS_MAX_TOTAL_SIZE
+oob is triggered by a function call to gen_ndis_set_resp.
+I supposed to add an additional boundry check to avoid this issue.But That 
+doesn't seem to be enough to fix the bug.I'll try to figure it out.
 
-There is a multi-link effort:
-   https://lore.kernel.org/bpf/20250703121521.1874196-1-dongml2@chinatelecom.cn/
-which tries to do similar thing for multi-kprobe. For example, for fentry,
-multi-link may pass an array of btf_id's to the kernel. For such cases,
-this patch may cause significant performance overhead.
+Thanks
 
->
->
->> ---
->> v3:
->> - reject all the duplicated symbols
->> v2:
->> - Lookup both vmlinux and modules symbols when mod is NULL, just like
->>    kallsyms_lookup_name().
->>
->>    If the btf is not a modules, shouldn't we lookup on the vmlinux only?
->>    I'm not sure if we should keep the same logic with
->>    kallsyms_lookup_name().
->>
->> - Return the kernel symbol that don't have ftrace location if the 
->> symbols
->>    with ftrace location are not available
->> ---
->>   kernel/bpf/verifier.c | 71 ++++++++++++++++++++++++++++++++++++++++---
->>   1 file changed, 66 insertions(+), 5 deletions(-)
->>
->> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
->> index 53007182b46b..bf4951154605 100644
->> --- a/kernel/bpf/verifier.c
->> +++ b/kernel/bpf/verifier.c
->> @@ -23476,6 +23476,67 @@ static int 
->> check_non_sleepable_error_inject(u32 btf_id)
->>       return btf_id_set_contains(&btf_non_sleepable_error_inject, 
->> btf_id);
->>   }
->>   +struct symbol_lookup_ctx {
->> +    const char *name;
->> +    unsigned long addr;
->> +};
->> +
->> +static int symbol_callback(void *data, unsigned long addr)
->> +{
->> +    struct symbol_lookup_ctx *ctx = data;
->> +
->> +    if (ctx->addr)
->> +        return -EADDRNOTAVAIL;
->> +    ctx->addr = addr;
->> +
->> +    return 0;
->> +}
->> +
->> +static int symbol_mod_callback(void *data, const char *name, 
->> unsigned long addr)
->> +{
->> +    if (strcmp(((struct symbol_lookup_ctx *)data)->name, name) != 0)
->> +        return 0;
->> +
->> +    return symbol_callback(data, addr);
->> +}
->> +
->> +/**
->> + * bpf_lookup_attach_addr: Lookup address for a symbol
->> + *
->> + * @mod: kernel module to lookup the symbol, NULL means to lookup 
->> both vmlinux
->> + * and modules symbols
->> + * @sym: the symbol to resolve
->> + * @addr: pointer to store the result
->> + *
->> + * Lookup the address of the symbol @sym. If multiple symbols with 
->> the name
->> + * @sym exist, -EADDRNOTAVAIL will be returned.
->> + *
->> + * Returns: 0 on success, -errno otherwise.
->> + */
->> +static int bpf_lookup_attach_addr(const struct module *mod, const 
->> char *sym,
->> +                  unsigned long *addr)
->> +{
->> +    struct symbol_lookup_ctx ctx = { .addr = 0, .name = sym };
->> +    const char *mod_name = NULL;
->> +    int err = 0;
->> +
->> +#ifdef CONFIG_MODULES
->> +    mod_name = mod ? mod->name : NULL;
->> +#endif
->> +    if (!mod_name)
->> +        err = kallsyms_on_each_match_symbol(symbol_callback, sym, 
->> &ctx);
->> +
->> +    if (!err && !ctx.addr)
->> +        err = module_kallsyms_on_each_symbol(mod_name, 
->> symbol_mod_callback,
->> +                             &ctx);
->> +
->> +    if (!ctx.addr)
->> +        err = -ENOENT;
->> +    *addr = err ? 0 : ctx.addr;
->> +
->> +    return err;
->> +}
->> +
->>   int bpf_check_attach_target(struct bpf_verifier_log *log,
->>                   const struct bpf_prog *prog,
->>                   const struct bpf_prog *tgt_prog,
->> @@ -23729,18 +23790,18 @@ int bpf_check_attach_target(struct 
->> bpf_verifier_log *log,
->>               if (btf_is_module(btf)) {
->>                   mod = btf_try_get_module(btf);
->>                   if (mod)
->> -                    addr = find_kallsyms_symbol_value(mod, tname);
->> +                    ret = bpf_lookup_attach_addr(mod, tname, &addr);
->>                   else
->> -                    addr = 0;
->> +                    ret = -ENOENT;
->>               } else {
->> -                addr = kallsyms_lookup_name(tname);
->> +                ret = bpf_lookup_attach_addr(NULL, tname, &addr);
->>               }
->> -            if (!addr) {
->> +            if (ret) {
->>                   module_put(mod);
->>                   bpf_log(log,
->>                       "The address of function %s cannot be found\n",
->>                       tname);
->> -                return -ENOENT;
->> +                return ret;
->>               }
->>           }
->
->
+Siyang Liu
 
 
