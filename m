@@ -1,75 +1,118 @@
-Return-Path: <linux-kernel+bounces-727082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B33B014C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:35:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33744B014C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96CD41AA771A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:35:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CA515A11D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B6F1EF397;
-	Fri, 11 Jul 2025 07:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="StSQw2gM"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7AE197A6C;
-	Fri, 11 Jul 2025 07:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B281EFF8E;
+	Fri, 11 Jul 2025 07:35:57 +0000 (UTC)
+Received: from hrbeu.edu.cn (mx1.hrbeu.edu.cn [202.118.176.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE0B1DDC15;
+	Fri, 11 Jul 2025 07:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.118.176.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752219312; cv=none; b=RHuw8xzL4PeJCaloZuEHeR3l43x4IePWNd/kmsLSG3aY9kKo20YgPMb1BhcoEUEC6ppBQU7zWtERaENYiuj09H/t3YyB9pf9aJTDyWA3DoseiOBcc5uzScnCqE+Ydav2I4AidQoFQcrMRjsb69/p8B9yGkb6Kp+IODPGWi960dY=
+	t=1752219357; cv=none; b=r7II7ARdCmJUCns///5AdGCEzx/tdIKuIo2cZaoybS2V5o4ChBIjiMJxOJDMCzQN4ZHyxwIf/EJvk88NwDpXTTxaHJEXMJ7qdkrY+6JrCrfhxZ2NdHEFnA9BU2b9U26fFuDdj6Lv82EML4tSFUVq5uNZ1F4zSXhYAhGGnozOEJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752219312; c=relaxed/simple;
-	bh=IDr+uCskBBsYHok+zDrGdCvQqY8RroogVxQVJtuysK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gPieAMk+IVreQnwlKcLEb71vIGMFL32VQIrATeVng1RfWv9LbjoguV/hOIDLK/lIJ2NVgCmcjFqw1xzQL4n71Y2EspCYw2Qczuc9bAvminDGqwX4d3/kQrbl6FQMsN2iFQ5v1YiXTDh7nUHks6b/PmTvez0EQbqPSo3pDjAO7yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=StSQw2gM; arc=none smtp.client-ip=1.95.21.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=JCOrXCKgge6QOZkLglkzmUiuLURITUpakbtlFPV6PUU=;
-	b=StSQw2gMDVcKBlj/kC6pXaz74v2b/6RJZmQOmPuvZ5U9poIWWbaLWyKnIREPGs
-	9xtId/de7VmDDL2cJ9fxdZQfq8pcFnrZjc09LVg5WMz0Mn86efAX/DE7uYulYou7
-	jb7d2wY0AP+uwA1AWfKZSQTrWHtK/v0smcIMAFAzUk+ZA=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDnzyKKvnBopsxSAA--.57501S3;
-	Fri, 11 Jul 2025 15:34:36 +0800 (CST)
-Date: Fri, 11 Jul 2025 15:34:34 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	s=arc-20240116; t=1752219357; c=relaxed/simple;
+	bh=Yy1mVXFzQmF0kiCuVhjoriLDCe+jcZk9ADznh1+dB60=;
+	h=Date:From:To:Cc:Subject:Content-Type:MIME-Version:Message-ID; b=EIhGVFssE8OTx+y1DSiTpczq5peCUJWeyKwLx7tNqA23bX2SQMlAfF5E/WT0yZ2EJIGpz+L7iwLiAX+chndCe/w6I1ShOBmTY1vWew6khIVeZOHH7SMB40EA4fHkHZdGODUG1qQpoQTNZcgsukPN31Z1y6h2FD57PWyIu4DFfaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hrbeu.edu.cn; spf=pass smtp.mailfrom=hrbeu.edu.cn; arc=none smtp.client-ip=202.118.176.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hrbeu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hrbeu.edu.cn
+Received: from baishuoran$hrbeu.edu.cn ( [60.223.239.76] ) by
+ ajax-webmail-Front (Coremail) ; Fri, 11 Jul 2025 15:35:34 +0800 (GMT+08:00)
+Date: Fri, 11 Jul 2025 15:35:34 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>
+To: "Chris Mason" <clm@fb.com>, "Josef Bacik" <josef@toxicpanda.com>,
+	"David Sterba" <dsterba@suse.com>
+Cc: "Kun Hu" <huk23@m.fudan.edu.cn>, "Jiaji Qin" <jjtan24@m.fudan.edu.cn>,
+	syzkaller@googlegroups.com, linux-btrfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: lx2160a-qds: add the two on-board RGMII PHYs
-Message-ID: <aHC-ir_1X0RO6MJF@dragon>
-References: <20250707153331.1372606-1-ioana.ciornei@nxp.com>
+Subject: WARNING in btrfs_remove_chunk
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT5 build
+ 20241202(ebbd5d74) Copyright (c) 2002-2025 www.mailtech.cn hrbeu.edu.cn
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707153331.1372606-1-ioana.ciornei@nxp.com>
-X-CM-TRANSID:Ms8vCgDnzyKKvnBopsxSAA--.57501S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUrwZ2UUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIQwJbmhwvoxSOQAA3L
+Message-ID: <88961a5.13de8.197f869374b.Coremail.baishuoran@hrbeu.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:CbB2ygAnIWjGvnBoybUmAA--.6339W
+X-CM-SenderInfo: pedl2xpxrut0w6kuuvvxohv3gofq/1tbiAQIACmhvj2YGvAAAsd
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VW3Jw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-On Mon, Jul 07, 2025 at 06:33:31PM +0300, Ioana Ciornei wrote:
-> Describe the two LX2160AQDS on-board RGMII PHYs on their respective MDIO
-> buses behind the MDIO multiplexer.
-> 
-> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-
-Applied, thanks!
-
+RGVhciBNYWludGFpbmVycywKCldoZW4gdXNpbmcgb3VyIGN1c3RvbWl6ZWQgU3l6a2FsbGVyIHRv
+IGZ1enogdGhlIGxhdGVzdCBMaW51eCBrZXJuZWwsIHRoZSBmb2xsb3dpbmcgY3Jhc2ggKDEyMHRo
+KXdhcyB0cmlnZ2VyZWQuCgoKSEVBRCBjb21taXQ6IDY1MzdjZmIzOTVmMzUyNzgyOTE4ZDhlZTdi
+N2YxMGJhMmNjM2NiZjIKZ2l0IHRyZWU6IHVwc3RyZWFtCk91dHB1dDpodHRwczovL2dpdGh1Yi5j
+b20vcGdoazEzL0tlcm5lbC1CdWcvYmxvYi9tYWluLzA3MDJfNi4xNC9XQVJOSU5HJTIwaW4lMjBi
+dHJmc19yZW1vdmVfY2h1bmsvMTIwcmVwb3J0LnR4dApLZXJuZWwgY29uZmlnOmh0dHBzOi8vZ2l0
+aHViLmNvbS9wZ2hrMTMvS2VybmVsLUJ1Zy9ibG9iL21haW4vMDcwMl82LjE0L2NvbmZpZy50eHQg
+CkMgcmVwcm9kdWNlcjpodHRwczovL2dpdGh1Yi5jb20vcGdoazEzL0tlcm5lbC1CdWcvYmxvYi9t
+YWluLzA3MDJfNi4xNC9XQVJOSU5HJTIwaW4lMjBidHJmc19yZW1vdmVfY2h1bmsvMTIwcmVwcm8u
+YwpTeXpsYW5nIHJlcHJvZHVjZXI6aHR0cHM6Ly9naXRodWIuY29tL3BnaGsxMy9LZXJuZWwtQnVn
+L2Jsb2IvbWFpbi8wNzAyXzYuMTQvV0FSTklORyUyMGluJTIwYnRyZnNfcmVtb3ZlX2NodW5rLzEy
+MHJlcHJvLnR4dAoKT3VyIHJlcHJvZHVjZXIgdXNlcyBtb3VudHMgYSBjb25zdHJ1Y3RlZCBmaWxl
+c3lzdGVtIGltYWdlLgogCiAKVGhlIGVycm9yIG9jY3VycmVkIGluIGxpbmUgMzQyNiBvZiB2b2x1
+bWVzLiBjLCBpbiB0aGUgZXJyb3IgaGFuZGxpbmcgcGF0aCBvZiB0aGUgYnRyZnNfcmVtb3ZlX2No
+dW5rIGZ1bmN0aW9uLiBUaGlzIG1heSBiZSBiZWNhdXNlIGluIHRoZSBwcm9jZXNzIG9mIGNhbGxp
+bmcgYnRyZnNfcmVtb3ZlX2NodW5rIHRvIHJlbW92ZSBjaHVua3MgZHVyaW5nIHRoZSBiYWxhbmNl
+IG9wZXJhdGlvbiwgdGhlIGZpcnN0IGNhbGwgdG8gcmVtb3ZlX2NodW5rX2l0ZW0gZmFpbHMsIHJl
+dHVybnMgLSBFTk9TUEMsIGFuZCB0aGVuIGVudGVycyB0aGUgRU5PU1BDIGVycm9yIHJlY292ZXJ5
+IGxvZ2ljIHRvIHRyeSB0byBhbGxvY2F0ZSBhIG5ldyBzeXN0ZW0gY2h1bmsuIEFuZCB0aGUgc3lz
+dGVtIGNodW5rIHNwYWNlIGlzIGV4aGF1c3RlZCwgYW5kIHRoZSBjcmVhdGlvbiBvZiBhIG5ldyBz
+eXN0ZW0gY2h1bmsgZmFpbHMuCgoKCklmIHlvdSBmaXggdGhpcyBpc3N1ZSwgcGxlYXNlIGFkZCB0
+aGUgZm9sbG93aW5nIHRhZyB0byB0aGUgY29tbWl0OgpSZXBvcnRlZC1ieTogS3VuIEh1IDxodWsy
+M0BtLmZ1ZGFuLmVkdS5jbj4sIEppYWppIFFpbiA8amp0YW4yNEBtLmZ1ZGFuLmVkdS5jbj4sIFNo
+dW9yYW4gQmFpIDxiYWlzaHVvcmFuQGhyYmV1LmVkdS5jbj4KCgoKLS0tLS0tLS0tLS0tWyBjdXQg
+aGVyZSBdLS0tLS0tLS0tLS0tCkJUUkZTOiBUcmFuc2FjdGlvbiBhYm9ydGVkIChlcnJvciAtMjgp
+CldBUk5JTkc6IENQVTogMiBQSUQ6IDE0MDQ4IGF0IGZzL2J0cmZzL3ZvbHVtZXMuYzozNDI2IGJ0
+cmZzX3JlbW92ZV9jaHVuaysweDE2NjcvMHgxYTIwCk1vZHVsZXMgbGlua2VkIGluOgpDUFU6IDIg
+VUlEOiAwIFBJRDogMTQwNDggQ29tbTogc3l6LjEuMTAgTm90IHRhaW50ZWQgNi4xNC4wICMxCkhh
+cmR3YXJlIG5hbWU6IFFFTVUgU3RhbmRhcmQgUEMgKGk0NDBGWCArIFBJSVgsIDE5OTYpLCBCSU9T
+IDEuMTMuMC0xdWJ1bnR1MS4xIDA0LzAxLzIwMTQKUklQOiAwMDEwOmJ0cmZzX3JlbW92ZV9jaHVu
+aysweDE2NjcvMHgxYTIwCkNvZGU6IDgzIGY5IDE5IDc3IDBmIGI4IDAxIDAwIDAwIDAwIDQ4IGQz
+IGUwIGE5IDAxIDAwIDA0IDAyIDc1IDQ5IGU4IGNhIDcxIGU0IGZkIDkwIDQ4IGM3IGM3IDIwIDVh
+IGJhIDhiIDQ0IDg5IGU2IGU4IGNhIDZiIGE0IGZkIDkwIDwwZj4gMGIgOTAgOTAgYmIgMDEgMDAg
+MDAgMDAgZTggYWIgNzEgZTQgZmQgNDggOGIgN2MgMjQgMDggNDEgODkgZDgKUlNQOiAwMDE4OmZm
+ZmZjOTAwMDJkYTc4MzAgRUZMQUdTOiAwMDAxMDI4MgpSQVg6IDAwMDAwMDAwMDAwMDAwMDAgUkJY
+OiAwMDAwMDAwMDAwMDAwMDAwIFJDWDogMDAwMDAwMDAwMDA4MDAwMApSRFg6IGZmZmZjOTAwMDMx
+NjkwMDAgUlNJOiBmZmZmODg4MDIzNGUyNDgwIFJESTogMDAwMDAwMDAwMDAwMDAwMgpSQlA6IGZm
+ZmY4ODgwNDQ3N2NkMDAgUjA4OiBmZmZmZmJmZmYxYzBiOTAxIFIwOTogZmZmZmVkMTAwNTcyNTE4
+MgpSMTA6IGZmZmZlZDEwMDU3MjUxODEgUjExOiBmZmZmODg4MDJiOTI4YzBiIFIxMjogZmZmZmZm
+ZmZmZmZmZmZlNApSMTM6IDAwMDAwMDAwZmZmZmZmZTQgUjE0OiBmZmZmODg4MDc4MzBhYmVjIFIx
+NTogZmZmZjg4ODA3OGM0ODg3OApGUzogIDAwMDA3ZjA5MDk5YWE3MDAoMDAwMCkgR1M6ZmZmZjg4
+ODAyYjkwMDAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwCkNTOiAgMDAxMCBEUzogMDAw
+MCBFUzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMKQ1IyOiAwMDAwMDAxYjJkNjEwZmY4IENS
+MzogMDAwMDAwMDA1MzA4MjAwMCBDUjQ6IDAwMDAwMDAwMDA3NTBlZjAKUEtSVTogODAwMDAwMDAK
+Q2FsbCBUcmFjZToKIDxUQVNLPgogYnRyZnNfcmVsb2NhdGVfY2h1bmsrMHgyYmIvMHg0NDAKIGJ0
+cmZzX2JhbGFuY2UrMHgyMDFhLzB4M2Y4MAogYnRyZnNfaW9jdGxfYmFsYW5jZSsweDQzZi8weDZm
+MAogYnRyZnNfaW9jdGwrMHgyYzU3LzB4NjIzMAogX194NjRfc3lzX2lvY3RsKzB4MTllLzB4MjEw
+CiBkb19zeXNjYWxsXzY0KzB4Y2YvMHgyNTAKIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFt
+ZSsweDc3LzB4N2YKUklQOiAwMDMzOjB4N2YwOTA4YmFjYWRkCkNvZGU6IDAyIGI4IGZmIGZmIGZm
+IGZmIGMzIDY2IDBmIDFmIDQ0IDAwIDAwIGYzIDBmIDFlIGZhIDQ4IDg5IGY4IDQ4IDg5IGY3IDQ4
+IDg5IGQ2IDQ4IDg5IGNhIDRkIDg5IGMyIDRkIDg5IGM4IDRjIDhiIDRjIDI0IDA4IDBmIDA1IDw0
+OD4gM2QgMDEgZjAgZmYgZmYgNzMgMDEgYzMgNDggYzcgYzEgYjAgZmYgZmYgZmYgZjcgZDggNjQg
+ODkgMDEgNDgKUlNQOiAwMDJiOjAwMDA3ZjA5MDk5YTliYTggRUZMQUdTOiAwMDAwMDI0NiBPUklH
+X1JBWDogMDAwMDAwMDAwMDAwMDAxMApSQVg6IGZmZmZmZmZmZmZmZmZmZGEgUkJYOiAwMDAwN2Yw
+OTA4ZGE1ZmEwIFJDWDogMDAwMDdmMDkwOGJhY2FkZApSRFg6IDAwMDAwMDAwMjAwMDA0ODAgUlNJ
+OiAwMDAwMDAwMGM0MDA5NDIwIFJESTogMDAwMDAwMDAwMDAwMDAwNApSQlA6IDAwMDA3ZjA5MDhj
+MmFiOGYgUjA4OiAwMDAwMDAwMDAwMDAwMDAwIFIwOTogMDAwMDAwMDAwMDAwMDAwMApSMTA6IDAw
+MDAwMDAwMDAwMDAwMDAgUjExOiAwMDAwMDAwMDAwMDAwMjQ2IFIxMjogMDAwMDAwMDAwMDAwMDAw
+MApSMTM6IDAwMDA3ZjA5MDhkYTVmYWMgUjE0OiAwMDAwN2YwOTA4ZGE2MDM4IFIxNTogMDAwMDdm
+MDkwOTlhOWQ0MAogPC9UQVNLPgoKCgoKCgp0aGFua3MsCkt1biBIdQo=
 
