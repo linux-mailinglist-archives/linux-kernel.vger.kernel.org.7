@@ -1,171 +1,136 @@
-Return-Path: <linux-kernel+bounces-726694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB2ECB01016
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:11:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 315E0B0101A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90C153AF46C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:11:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 011CA541E3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B764E139B;
-	Fri, 11 Jul 2025 00:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F050D8F77;
+	Fri, 11 Jul 2025 00:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="SZ/CMihG"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C9LpqlqV"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEEA376;
-	Fri, 11 Jul 2025 00:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101534A1A
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 00:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752192708; cv=none; b=BeEM0MRsmZlD+tlQnxmj/aWK53xNS4VC97mlez4YqxqfLmN0Rqhukr5tEuB4+byY6fwXrgYVyV94SnRakrJ96SdYMijlyFCLxbelY1TWIIYuF3QTfboJeIbvZFCIN4FH6takn2/4Ck4qXR3SXmNEztniUwl5NElpPej5Z5OsvZ4=
+	t=1752193066; cv=none; b=CQi8dzC79YR3x8e5UDOnlAt9F4l6asF5cWTGY8eJbNzHjyVT2FvTlHBiu9qOFGKbo3ubvWq3lv7LCAGLdZHRoXWzOJQZWRT3eclIOknKYz5eaTF/U3EO5kbAV1lrUSL0T4TmvaD2z+yBsGKumftOcPCRFtgVbTfS3Qv2IWzWgck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752192708; c=relaxed/simple;
-	bh=TQIIfmNqxEhvyQXhWM7U1p5Dnqt020Pcf3TSAkgN6z4=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=g7+Lx7bPSwHRW65t5gsO12uvc8gDD9n0DypS7XBXy5OR/zlK4/t9eRgA8kmf0eQFLHScaYXSBp1f4sVAl0vrQLaklkcKCHogKI9Z1MuFWIsQPny1PJuqdEGqbOukLtBoIDLD3bHsnTRYGlbjk7p3YQ3Bou1NMespgQWnGJh9vSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=SZ/CMihG; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56B0BLsL43966558, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1752192681; bh=JGO2QeMwptWkrM8L6r9tZyPNhODydfWglgaJITahPPA=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=SZ/CMihGmOMSbHsFEsDHJiLdIV1/WYNoDuaBBsvd7CwlWqqtdLA78NG8UBZ653bJg
-	 UYZ++mquV77LyNINs/dTevy9vDDr1Dkc7zpdFVsfqXq+FKasNUuIQFBqjPsb8bpiEq
-	 K6Nw7KU2EoXW/7JzQPe/EIyD0xGO28gma0wuZ6oZYrGxtxVe2PvEjo1cVSpik5yM5U
-	 g7RboMEhA/vTesBflPA8n2kKusW591SasWxawhAWQna7jggJHLCttfG6wEXfrk2d6u
-	 sBfd7to0ScOh75DXCezn5NbYJbT3XoIYAlcGIxWdJLWaCJRB7vwXSpdvGEL6zworLm
-	 JJ3QR/U0NTbow==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56B0BLsL43966558
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Jul 2025 08:11:21 +0800
-Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 11 Jul 2025 08:11:22 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 11 Jul 2025 08:11:21 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
- RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
- 15.01.2507.035; Fri, 11 Jul 2025 08:11:21 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
-        Kalle Valo
-	<kvalo@kernel.org>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        Bitterblue Smith <rtl8821cerfe2@gmail.com>,
-        Fiona Klute <fiona.klute@gmx.de>
-Subject: RE: [PATCH v3] wifi: rtw88: enable TX reports for the management queue
-Thread-Topic: [PATCH v3] wifi: rtw88: enable TX reports for the management
- queue
-Thread-Index: AQHb8enPOUIDreW220yczxSl7U1tKbQsC/OA
-Date: Fri, 11 Jul 2025 00:11:21 +0000
-Message-ID: <7e7a3532816b48ef94c18e735a0f7a3f@realtek.com>
-References: <20250710222432.3088622-1-andrej.skvortzov@gmail.com>
-In-Reply-To: <20250710222432.3088622-1-andrej.skvortzov@gmail.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXMBS01.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1752193066; c=relaxed/simple;
+	bh=gzuJyy5LPOLZLpUEIrwAAEyUavZJ21RHRnkuzHpL1Ww=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Rsze23urSlb9A2SSnpII6jC/TWJnvNlI8mH35JwE5SlzlF+585s61NcbCmhSmn05qTfGSgdvyiUxPaOezWTLjlaEy5XAE3RffxNmNVSgWlQAT0lQ9AZ4kfucvyb6psir7g+OMCVh14txRbHWio21h0q2qHMxM/GM6YAMCoohCtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C9LpqlqV; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-234a102faa3so11310525ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 17:17:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752193064; x=1752797864; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KTm8ocd8HMxz4+WBaGOnNEf1mS7UKR80R4y8U9u2Fb4=;
+        b=C9LpqlqVdDo3aOuF9kd0Kptap2iX93uJ8r/sIvhuG7ILpy2FYoL4TDrfkz49STjIVD
+         OvhuxbEMHYeKiayMRppYqtRSlolwJ+ruO+eB3XtxBdLKPUjpeojrdB96BNR1v9FVrh4J
+         OwvAfx94Il/mL61w01m2wiOkbHBZxplEyTPuE5lso/35L6t9cnaHRlIFRprLBh7TlbGs
+         o2uHtDJKuMdpXXsjpL3PZNcAsYa8cqVfxL8u1G1W4N9dvyUawh7+5TMQm5FR72s9ANpu
+         02IkFEHPPY/LW/jiGdOvODuuH9SZIYPoVeMHiNxLn64ix69AwpLU9/keOAKMzI2kQwJ0
+         kapA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752193064; x=1752797864;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KTm8ocd8HMxz4+WBaGOnNEf1mS7UKR80R4y8U9u2Fb4=;
+        b=aeDDMBFIzlJplHfGuzDy5bPMj5vx5Wv/cdtKxMfYo/hCfpGxdOZoOEAawFAZF2NFiK
+         FcBSFU9r+5Mvj/QaYDHG1MyWjvoya35p2p98ZnHuvUrFaAIPqZg/kxSLHoKk+PBMIAQY
+         8ldHDsHrtr7BCn8U8Wz5UXssL4LRQSyVo/f3/luOyXLlMGGJ8q3KeTNwlbeQc+SNwSvA
+         Y04WhzPzJ+LP3HcdtlEWQroHdg+4DmhN3TTqGOZFEw+45e8JV9Km/4TfBGgHWSGLJiEA
+         0rngfBsSlin7lcISKSkDiVg6MyIHkGp7e+a5eseX1n3B2lQtb1SWNMkVtcCbY3aTgohF
+         MvDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSQgiGzioBad69h/djmG4LVN+uVqpBFW3p1E6V1bpzfGzqW1fC2G+7DGueE23LA/E7QcRm9Iyo3FcCS1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZBK8jgliD6q+nZ+F3vMdUweq3YTrhGFG6jD3WMzhOZXo6DJk1
+	gTVFT9lMNE1pOEODqAV1YB5BHw+Yo9YPasnK01F7SIfYkxdvVQWr50yzdmJMvUA8daZ4VKM2pbc
+	4f8LnX0LlcvA8QwPSpEFG9g==
+X-Google-Smtp-Source: AGHT+IEIEyMnGAkXk3IBWC3l9C1RTrV75MlmJIaaSbleQAMN8HR1ryUd9jJFTByosBEiTXMioDNXiQEzUSGyv05h
+X-Received: from pjbss13.prod.google.com ([2002:a17:90b:2ecd:b0:313:285a:5547])
+ (user=jthoughton job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:ebc9:b0:226:38ff:1d6a with SMTP id d9443c01a7336-23dede2d365mr13878775ad.7.1752193064378;
+ Thu, 10 Jul 2025 17:17:44 -0700 (PDT)
+Date: Fri, 11 Jul 2025 00:17:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250711001742.1965347-1-jthoughton@google.com>
+Subject: [PATCH] KVM: selftests: Fix signedness issue with vCPU mmap size check
+From: James Houghton <jthoughton@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
+Cc: James Houghton <jthoughton@google.com>, Venkatesh Srinivas <venkateshs@google.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Andrey Skvortsov <andrej.skvortzov@gmail.com> wrote:
-> This is needed for AP mode. Otherwise client sees the network, but
-> can't connect to it.
->=20
-> REG_FWHW_TXQ_CTRL+1 is set to WLAN_TXQ_RPT_EN (0x1F) in common mac
-> init function (__rtw8723x_mac_init), but the value was overwritten
-> from mac table later.
->=20
-> Tables with register values for phy parameters initialization are
-> copied from vendor driver usually. When table will be regenerated,
-> manual modifications to it may be lost. To avoid regressions in this
-> case new callback mac_postinit is introduced, that is called after
-> parameters from table are set.
->=20
-> Tested on rtl8723cs, that reuses rtw8703b driver.
->=20
-> Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-> ---
->=20
-> Changes in v2:
->  - introduce mac_postinit callback to avoid changing register tables
->=20
-> Changes in v3:
->  - merge two patches back together
->  - remove unused initialization in rtw_mac_postinit
->  - init unused .mac_postinit fields in drivers with NULL
->=20
->  drivers/net/wireless/realtek/rtw88/mac.c      | 11 +++++++++++
->  drivers/net/wireless/realtek/rtw88/mac.h      |  1 +
->  drivers/net/wireless/realtek/rtw88/main.c     |  6 ++++++
->  drivers/net/wireless/realtek/rtw88/main.h     |  1 +
->  drivers/net/wireless/realtek/rtw88/rtw8703b.c |  1 +
->  drivers/net/wireless/realtek/rtw88/rtw8723d.c |  1 +
->  drivers/net/wireless/realtek/rtw88/rtw8723x.c |  9 ++++++++-
->  drivers/net/wireless/realtek/rtw88/rtw8723x.h |  6 ++++++
->  drivers/net/wireless/realtek/rtw88/rtw8812a.c |  1 +
->  drivers/net/wireless/realtek/rtw88/rtw8814a.c |  1 +
->  drivers/net/wireless/realtek/rtw88/rtw8821a.c |  1 +
->  drivers/net/wireless/realtek/rtw88/rtw8821c.c |  1 +
->  drivers/net/wireless/realtek/rtw88/rtw8822b.c |  1 +
->  drivers/net/wireless/realtek/rtw88/rtw8822c.c |  1 +
->  14 files changed, 41 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/wireless/realtek/rtw88/mac.c b/drivers/net/wirel=
-ess/realtek/rtw88/mac.c
-> index 011b81c82f3ba..e1ec9aa401fa0 100644
-> --- a/drivers/net/wireless/realtek/rtw88/mac.c
-> +++ b/drivers/net/wireless/realtek/rtw88/mac.c
-> @@ -1409,3 +1409,14 @@ int rtw_mac_init(struct rtw_dev *rtwdev)
->=20
->         return 0;
->  }
-> +
-> +int rtw_mac_postinit(struct rtw_dev *rtwdev)
-> +{
-> +       const struct rtw_chip_info *chip =3D rtwdev->chip;
-> +       int ret;
-> +
-> +       if (chip->ops->mac_postinit)
-> +               ret =3D chip->ops->mac_postinit(rtwdev);
-> +
+Check that the return value of KVM_GET_VCPU_MMAP_SIZE is non-negative
+before comparing with sizeof(vcpu_run). If KVM_GET_VCPU_MMAP_SIZE fails,
+it will return -1, and `-1 > sizeof(vcpu_run)` is true, so the ASSERT
+passes.
 
-'ret' is not used [1].
+There are no other locations in tools/testing/selftests/kvm that make
+the same mistake.
 
-Prefer:
+Signed-off-by: James Houghton <jthoughton@google.com>
+---
+ tools/testing/selftests/kvm/lib/kvm_util.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-if (!chip->ops->mac_postinit)
-    return 0;
-
-return chip->ops->mac_postinit(rtwdev);
-
-[1] http://wifibot.sipsolutions.net/results/981272/14152513/build_clang/std=
-err
-
-> +       return 0;
-> +}
-
-[...]
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+index a055343a7bf75..7f870c99e64e0 100644
+--- a/tools/testing/selftests/kvm/lib/kvm_util.c
++++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+@@ -24,7 +24,7 @@ uint32_t guest_random_seed;
+ struct guest_random_state guest_rng;
+ static uint32_t last_guest_seed;
+ 
+-static int vcpu_mmap_sz(void);
++static size_t vcpu_mmap_sz(void);
+ 
+ int open_path_or_exit(const char *path, int flags)
+ {
+@@ -1307,14 +1307,14 @@ void vm_guest_mem_fallocate(struct kvm_vm *vm, uint64_t base, uint64_t size,
+ }
+ 
+ /* Returns the size of a vCPU's kvm_run structure. */
+-static int vcpu_mmap_sz(void)
++static size_t vcpu_mmap_sz(void)
+ {
+ 	int dev_fd, ret;
+ 
+ 	dev_fd = open_kvm_dev_path_or_exit();
+ 
+ 	ret = ioctl(dev_fd, KVM_GET_VCPU_MMAP_SIZE, NULL);
+-	TEST_ASSERT(ret >= sizeof(struct kvm_run),
++	TEST_ASSERT(ret >= 0 && ret >= sizeof(struct kvm_run),
+ 		    KVM_IOCTL_ERROR(KVM_GET_VCPU_MMAP_SIZE, ret));
+ 
+ 	close(dev_fd);
+@@ -1355,7 +1355,7 @@ struct kvm_vcpu *__vm_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
+ 	TEST_ASSERT_VM_VCPU_IOCTL(vcpu->fd >= 0, KVM_CREATE_VCPU, vcpu->fd, vm);
+ 
+ 	TEST_ASSERT(vcpu_mmap_sz() >= sizeof(*vcpu->run), "vcpu mmap size "
+-		"smaller than expected, vcpu_mmap_sz: %i expected_min: %zi",
++		"smaller than expected, vcpu_mmap_sz: %zi expected_min: %zi",
+ 		vcpu_mmap_sz(), sizeof(*vcpu->run));
+ 	vcpu->run = (struct kvm_run *) mmap(NULL, vcpu_mmap_sz(),
+ 		PROT_READ | PROT_WRITE, MAP_SHARED, vcpu->fd, 0);
+-- 
+2.50.0.727.gbf7dc18ff4-goog
 
 
