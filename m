@@ -1,118 +1,86 @@
-Return-Path: <linux-kernel+bounces-727083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33744B014C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:36:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F29BB014CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CA515A11D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:36:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BD6F1C208B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B281EFF8E;
-	Fri, 11 Jul 2025 07:35:57 +0000 (UTC)
-Received: from hrbeu.edu.cn (mx1.hrbeu.edu.cn [202.118.176.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE0B1DDC15;
-	Fri, 11 Jul 2025 07:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.118.176.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5C81EF397;
+	Fri, 11 Jul 2025 07:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lWb/wlhc"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6043C1DDC15
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 07:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752219357; cv=none; b=r7II7ARdCmJUCns///5AdGCEzx/tdIKuIo2cZaoybS2V5o4ChBIjiMJxOJDMCzQN4ZHyxwIf/EJvk88NwDpXTTxaHJEXMJ7qdkrY+6JrCrfhxZ2NdHEFnA9BU2b9U26fFuDdj6Lv82EML4tSFUVq5uNZ1F4zSXhYAhGGnozOEJU=
+	t=1752219391; cv=none; b=Ey+6FL0AO4pst8yyBSR4fwnczFLAM6RQXfir+1AOlQ61z4rSd8piyjtfGCLAhW9FtLhVWgHTNNRHCp4hSxVWd63KZk+zboPg1rBgHk/BfXHw//9O1X4XExEKBUHaxa6re3zgSU3cExstPWVqiArqwZFkTPkdVOCJNTaCCYG9/wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752219357; c=relaxed/simple;
-	bh=Yy1mVXFzQmF0kiCuVhjoriLDCe+jcZk9ADznh1+dB60=;
-	h=Date:From:To:Cc:Subject:Content-Type:MIME-Version:Message-ID; b=EIhGVFssE8OTx+y1DSiTpczq5peCUJWeyKwLx7tNqA23bX2SQMlAfF5E/WT0yZ2EJIGpz+L7iwLiAX+chndCe/w6I1ShOBmTY1vWew6khIVeZOHH7SMB40EA4fHkHZdGODUG1qQpoQTNZcgsukPN31Z1y6h2FD57PWyIu4DFfaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hrbeu.edu.cn; spf=pass smtp.mailfrom=hrbeu.edu.cn; arc=none smtp.client-ip=202.118.176.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hrbeu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hrbeu.edu.cn
-Received: from baishuoran$hrbeu.edu.cn ( [60.223.239.76] ) by
- ajax-webmail-Front (Coremail) ; Fri, 11 Jul 2025 15:35:34 +0800 (GMT+08:00)
-Date: Fri, 11 Jul 2025 15:35:34 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>
-To: "Chris Mason" <clm@fb.com>, "Josef Bacik" <josef@toxicpanda.com>,
-	"David Sterba" <dsterba@suse.com>
-Cc: "Kun Hu" <huk23@m.fudan.edu.cn>, "Jiaji Qin" <jjtan24@m.fudan.edu.cn>,
-	syzkaller@googlegroups.com, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: WARNING in btrfs_remove_chunk
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT5 build
- 20241202(ebbd5d74) Copyright (c) 2002-2025 www.mailtech.cn hrbeu.edu.cn
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1752219391; c=relaxed/simple;
+	bh=DK3E25LOT1I8kE2BN5rTaX4nmSkOnCyxbWuZlf1AcqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dtpuStZtueh5uNs9Q+7ECktig+acTKzfGHKKu9JyG1SZSg9byFiIHgr6PnvjXTGjkM0ienJC0ovrVlmwCIzRLlC9GL1qqvdFrlmb+Hmugy9RiISGxAQxSI8K2HZDJvdLJROYk4z2x+96LSh+PsbCJo5h+AN8xnfx9KXX9IJ1Wc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lWb/wlhc; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DK3E25LOT1I8kE2BN5rTaX4nmSkOnCyxbWuZlf1AcqM=; b=lWb/wlhcL9odqxj3S70XlJ/Mw4
+	3ZeUPzrreWXbI4P9klhNiNL8e8DY1S62/B2dQQ8h7wzPmeRBi6I1wo0udMx45qTLVghVOA/lpGSt/
+	BM3RCBRLJzFsCHiGP/drhb+3qewAMgCCn3y4dhWSUAabG7cqLPsW6/hC+IlEXGCkSbYBHj5RDNUko
+	OXppRdweMM0getK5nUG+iAYWa+zth+0xdGAmfkQqog0CAIRkkrP1/ifg098zRM0j4y1cM4xN7PBNI
+	MLmYXao847inWmMpHBf8TR8oh+VyVZy8eD0P6mw21+bSVeg6VvATmerOy8FzPU0mN8XdLdRXg/5sn
+	ENaPE1KQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ua8J2-0000000Dzle-3W52;
+	Fri, 11 Jul 2025 07:36:28 +0000
+Date: Fri, 11 Jul 2025 00:36:28 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [RFC PATCH 2/5] unwind: Export unwind_user symbol to GPL modules
+Message-ID: <aHC-_HWR2L5kTYU5@infradead.org>
+References: <20250709212556.32777-1-mathieu.desnoyers@efficios.com>
+ <20250709212556.32777-3-mathieu.desnoyers@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <88961a5.13de8.197f869374b.Coremail.baishuoran@hrbeu.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:CbB2ygAnIWjGvnBoybUmAA--.6339W
-X-CM-SenderInfo: pedl2xpxrut0w6kuuvvxohv3gofq/1tbiAQIACmhvj2YGvAAAsd
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VW3Jw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709212556.32777-3-mathieu.desnoyers@efficios.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-RGVhciBNYWludGFpbmVycywKCldoZW4gdXNpbmcgb3VyIGN1c3RvbWl6ZWQgU3l6a2FsbGVyIHRv
-IGZ1enogdGhlIGxhdGVzdCBMaW51eCBrZXJuZWwsIHRoZSBmb2xsb3dpbmcgY3Jhc2ggKDEyMHRo
-KXdhcyB0cmlnZ2VyZWQuCgoKSEVBRCBjb21taXQ6IDY1MzdjZmIzOTVmMzUyNzgyOTE4ZDhlZTdi
-N2YxMGJhMmNjM2NiZjIKZ2l0IHRyZWU6IHVwc3RyZWFtCk91dHB1dDpodHRwczovL2dpdGh1Yi5j
-b20vcGdoazEzL0tlcm5lbC1CdWcvYmxvYi9tYWluLzA3MDJfNi4xNC9XQVJOSU5HJTIwaW4lMjBi
-dHJmc19yZW1vdmVfY2h1bmsvMTIwcmVwb3J0LnR4dApLZXJuZWwgY29uZmlnOmh0dHBzOi8vZ2l0
-aHViLmNvbS9wZ2hrMTMvS2VybmVsLUJ1Zy9ibG9iL21haW4vMDcwMl82LjE0L2NvbmZpZy50eHQg
-CkMgcmVwcm9kdWNlcjpodHRwczovL2dpdGh1Yi5jb20vcGdoazEzL0tlcm5lbC1CdWcvYmxvYi9t
-YWluLzA3MDJfNi4xNC9XQVJOSU5HJTIwaW4lMjBidHJmc19yZW1vdmVfY2h1bmsvMTIwcmVwcm8u
-YwpTeXpsYW5nIHJlcHJvZHVjZXI6aHR0cHM6Ly9naXRodWIuY29tL3BnaGsxMy9LZXJuZWwtQnVn
-L2Jsb2IvbWFpbi8wNzAyXzYuMTQvV0FSTklORyUyMGluJTIwYnRyZnNfcmVtb3ZlX2NodW5rLzEy
-MHJlcHJvLnR4dAoKT3VyIHJlcHJvZHVjZXIgdXNlcyBtb3VudHMgYSBjb25zdHJ1Y3RlZCBmaWxl
-c3lzdGVtIGltYWdlLgogCiAKVGhlIGVycm9yIG9jY3VycmVkIGluIGxpbmUgMzQyNiBvZiB2b2x1
-bWVzLiBjLCBpbiB0aGUgZXJyb3IgaGFuZGxpbmcgcGF0aCBvZiB0aGUgYnRyZnNfcmVtb3ZlX2No
-dW5rIGZ1bmN0aW9uLiBUaGlzIG1heSBiZSBiZWNhdXNlIGluIHRoZSBwcm9jZXNzIG9mIGNhbGxp
-bmcgYnRyZnNfcmVtb3ZlX2NodW5rIHRvIHJlbW92ZSBjaHVua3MgZHVyaW5nIHRoZSBiYWxhbmNl
-IG9wZXJhdGlvbiwgdGhlIGZpcnN0IGNhbGwgdG8gcmVtb3ZlX2NodW5rX2l0ZW0gZmFpbHMsIHJl
-dHVybnMgLSBFTk9TUEMsIGFuZCB0aGVuIGVudGVycyB0aGUgRU5PU1BDIGVycm9yIHJlY292ZXJ5
-IGxvZ2ljIHRvIHRyeSB0byBhbGxvY2F0ZSBhIG5ldyBzeXN0ZW0gY2h1bmsuIEFuZCB0aGUgc3lz
-dGVtIGNodW5rIHNwYWNlIGlzIGV4aGF1c3RlZCwgYW5kIHRoZSBjcmVhdGlvbiBvZiBhIG5ldyBz
-eXN0ZW0gY2h1bmsgZmFpbHMuCgoKCklmIHlvdSBmaXggdGhpcyBpc3N1ZSwgcGxlYXNlIGFkZCB0
-aGUgZm9sbG93aW5nIHRhZyB0byB0aGUgY29tbWl0OgpSZXBvcnRlZC1ieTogS3VuIEh1IDxodWsy
-M0BtLmZ1ZGFuLmVkdS5jbj4sIEppYWppIFFpbiA8amp0YW4yNEBtLmZ1ZGFuLmVkdS5jbj4sIFNo
-dW9yYW4gQmFpIDxiYWlzaHVvcmFuQGhyYmV1LmVkdS5jbj4KCgoKLS0tLS0tLS0tLS0tWyBjdXQg
-aGVyZSBdLS0tLS0tLS0tLS0tCkJUUkZTOiBUcmFuc2FjdGlvbiBhYm9ydGVkIChlcnJvciAtMjgp
-CldBUk5JTkc6IENQVTogMiBQSUQ6IDE0MDQ4IGF0IGZzL2J0cmZzL3ZvbHVtZXMuYzozNDI2IGJ0
-cmZzX3JlbW92ZV9jaHVuaysweDE2NjcvMHgxYTIwCk1vZHVsZXMgbGlua2VkIGluOgpDUFU6IDIg
-VUlEOiAwIFBJRDogMTQwNDggQ29tbTogc3l6LjEuMTAgTm90IHRhaW50ZWQgNi4xNC4wICMxCkhh
-cmR3YXJlIG5hbWU6IFFFTVUgU3RhbmRhcmQgUEMgKGk0NDBGWCArIFBJSVgsIDE5OTYpLCBCSU9T
-IDEuMTMuMC0xdWJ1bnR1MS4xIDA0LzAxLzIwMTQKUklQOiAwMDEwOmJ0cmZzX3JlbW92ZV9jaHVu
-aysweDE2NjcvMHgxYTIwCkNvZGU6IDgzIGY5IDE5IDc3IDBmIGI4IDAxIDAwIDAwIDAwIDQ4IGQz
-IGUwIGE5IDAxIDAwIDA0IDAyIDc1IDQ5IGU4IGNhIDcxIGU0IGZkIDkwIDQ4IGM3IGM3IDIwIDVh
-IGJhIDhiIDQ0IDg5IGU2IGU4IGNhIDZiIGE0IGZkIDkwIDwwZj4gMGIgOTAgOTAgYmIgMDEgMDAg
-MDAgMDAgZTggYWIgNzEgZTQgZmQgNDggOGIgN2MgMjQgMDggNDEgODkgZDgKUlNQOiAwMDE4OmZm
-ZmZjOTAwMDJkYTc4MzAgRUZMQUdTOiAwMDAxMDI4MgpSQVg6IDAwMDAwMDAwMDAwMDAwMDAgUkJY
-OiAwMDAwMDAwMDAwMDAwMDAwIFJDWDogMDAwMDAwMDAwMDA4MDAwMApSRFg6IGZmZmZjOTAwMDMx
-NjkwMDAgUlNJOiBmZmZmODg4MDIzNGUyNDgwIFJESTogMDAwMDAwMDAwMDAwMDAwMgpSQlA6IGZm
-ZmY4ODgwNDQ3N2NkMDAgUjA4OiBmZmZmZmJmZmYxYzBiOTAxIFIwOTogZmZmZmVkMTAwNTcyNTE4
-MgpSMTA6IGZmZmZlZDEwMDU3MjUxODEgUjExOiBmZmZmODg4MDJiOTI4YzBiIFIxMjogZmZmZmZm
-ZmZmZmZmZmZlNApSMTM6IDAwMDAwMDAwZmZmZmZmZTQgUjE0OiBmZmZmODg4MDc4MzBhYmVjIFIx
-NTogZmZmZjg4ODA3OGM0ODg3OApGUzogIDAwMDA3ZjA5MDk5YWE3MDAoMDAwMCkgR1M6ZmZmZjg4
-ODAyYjkwMDAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwCkNTOiAgMDAxMCBEUzogMDAw
-MCBFUzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMKQ1IyOiAwMDAwMDAxYjJkNjEwZmY4IENS
-MzogMDAwMDAwMDA1MzA4MjAwMCBDUjQ6IDAwMDAwMDAwMDA3NTBlZjAKUEtSVTogODAwMDAwMDAK
-Q2FsbCBUcmFjZToKIDxUQVNLPgogYnRyZnNfcmVsb2NhdGVfY2h1bmsrMHgyYmIvMHg0NDAKIGJ0
-cmZzX2JhbGFuY2UrMHgyMDFhLzB4M2Y4MAogYnRyZnNfaW9jdGxfYmFsYW5jZSsweDQzZi8weDZm
-MAogYnRyZnNfaW9jdGwrMHgyYzU3LzB4NjIzMAogX194NjRfc3lzX2lvY3RsKzB4MTllLzB4MjEw
-CiBkb19zeXNjYWxsXzY0KzB4Y2YvMHgyNTAKIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFt
-ZSsweDc3LzB4N2YKUklQOiAwMDMzOjB4N2YwOTA4YmFjYWRkCkNvZGU6IDAyIGI4IGZmIGZmIGZm
-IGZmIGMzIDY2IDBmIDFmIDQ0IDAwIDAwIGYzIDBmIDFlIGZhIDQ4IDg5IGY4IDQ4IDg5IGY3IDQ4
-IDg5IGQ2IDQ4IDg5IGNhIDRkIDg5IGMyIDRkIDg5IGM4IDRjIDhiIDRjIDI0IDA4IDBmIDA1IDw0
-OD4gM2QgMDEgZjAgZmYgZmYgNzMgMDEgYzMgNDggYzcgYzEgYjAgZmYgZmYgZmYgZjcgZDggNjQg
-ODkgMDEgNDgKUlNQOiAwMDJiOjAwMDA3ZjA5MDk5YTliYTggRUZMQUdTOiAwMDAwMDI0NiBPUklH
-X1JBWDogMDAwMDAwMDAwMDAwMDAxMApSQVg6IGZmZmZmZmZmZmZmZmZmZGEgUkJYOiAwMDAwN2Yw
-OTA4ZGE1ZmEwIFJDWDogMDAwMDdmMDkwOGJhY2FkZApSRFg6IDAwMDAwMDAwMjAwMDA0ODAgUlNJ
-OiAwMDAwMDAwMGM0MDA5NDIwIFJESTogMDAwMDAwMDAwMDAwMDAwNApSQlA6IDAwMDA3ZjA5MDhj
-MmFiOGYgUjA4OiAwMDAwMDAwMDAwMDAwMDAwIFIwOTogMDAwMDAwMDAwMDAwMDAwMApSMTA6IDAw
-MDAwMDAwMDAwMDAwMDAgUjExOiAwMDAwMDAwMDAwMDAwMjQ2IFIxMjogMDAwMDAwMDAwMDAwMDAw
-MApSMTM6IDAwMDA3ZjA5MDhkYTVmYWMgUjE0OiAwMDAwN2YwOTA4ZGE2MDM4IFIxNTogMDAwMDdm
-MDkwOTlhOWQ0MAogPC9UQVNLPgoKCgoKCgp0aGFua3MsCkt1biBIdQo=
+On Wed, Jul 09, 2025 at 05:25:49PM -0400, Mathieu Desnoyers wrote:
+> Allow the unwind_user symbol to be used by GPL modules, for instance
+> LTTng.
+
+I don't see a LTTng submission or any other user in this series.
+So the usual prohibition against adding unused exports applies here
+as usual.
+
 
