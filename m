@@ -1,164 +1,181 @@
-Return-Path: <linux-kernel+bounces-728012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65087B02272
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:18:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D72B02273
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10C0CA45430
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:17:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B20B3A46593
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7662EF64A;
-	Fri, 11 Jul 2025 17:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22C223B0;
+	Fri, 11 Jul 2025 17:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G1J2UNJg"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYe9uuOR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4241223B0;
-	Fri, 11 Jul 2025 17:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7201AF0AF;
+	Fri, 11 Jul 2025 17:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752254286; cv=none; b=AQRLHA6Xdgk/XroyqSRE5f9ZD7m9aS5oVCY7Os5ooqUeIJg1tltVHzBX2ot6+TEH0K35rOIaHUXqwesSElaRYt83Ax2sbRL1ReedSHESV3YN60DI3sFnKnOaW8f+7nADJDssy9gbpaSWByDjpoweOcFpJIyal3drfFlCcVPpLZA=
+	t=1752254309; cv=none; b=fHfpCamcGKTc2BF9f8khDEqRprX2mgf/J/Nklfz6RAbPFHX+4VbdiJ9MwptKSt1rBHUDWV8QLsYoGvviLGn0sc3NGs8nK/q2ZL8KOd8Y9vfjbkV2E5xXCly31wYSD+RNortuArqUXqVN5P0BkZMZxyjh4GkjCeyBGRLBpXESm40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752254286; c=relaxed/simple;
-	bh=tRRgm1TCKRIxxicc390nlYIrkP0eQctG04d74RMi8ss=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QvV+eMNnJFLR/EbRn4t39EqY/SDf9gL1Ubm+sv2KV8U3cQcAZoOCjZINsuhZM+i0zUoMXZumQNZ1gfTCrhJYCrnfW7PS7Z7ANi3Q3ATXPfwVScZv/HI+Dsv+UkuTOkwWD/r0c+RsCtLdtu4CG8tPt9k5iYBw1wA9iXnqriPKK40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G1J2UNJg; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-313a188174fso2937614a91.1;
-        Fri, 11 Jul 2025 10:18:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752254284; x=1752859084; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YN8JhcJPAFmyUnXWefNQx1CdU4pcrbO6LEejen5i4nE=;
-        b=G1J2UNJgP9OJBV7LocXmtw3V84CE+marCAGcU2aXinE01ajJWygXaAygQ2zMHzjLNB
-         DIY1j/eABWkiUzwngJBRSh1SB/3JhQ6TGjbINTIPX+7wODiS4sDQI3eKHQ/TOfvNnxHK
-         /Wvy02LApCWkLNzbWWQ1h+QCJvKoZ94crl6ApfLkTFaMGOWniyVviGJJrZSY+iB3z5MS
-         miRSKHnKLk/dxheFXX20LhuF/fM/e8uXXRu4G4m0ZdFwpHJ9w0CX3u7iWLFaHlPehBVu
-         W2rqsR5GBz4+mNReSOBYvZXOPUAxL1KuNFLUOs0Oq7mpakelXvkDWzt9475uqCCxq0Bf
-         Q8rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752254284; x=1752859084;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YN8JhcJPAFmyUnXWefNQx1CdU4pcrbO6LEejen5i4nE=;
-        b=Y3+fKAdFDEb3F52wnEPbJt84RVX6CrkDlnhkeLEn+r7OI7QYjQLu37+EFepa/slLUN
-         wCU3BXG/h33l67mN4Hm2BewB1KJC5zaYYeKI4oEbqM2tbgR0D7btnZbKUCYyIOjxHB3v
-         ESCC1cgp0UMK+cnOtfIjUn4VdyoBANmStftCNjwjh4dy0sJd/kahdj6FsH5ZLsvkrgXW
-         ayFkfxIRhcPmo0V1jwWIIH4ONWw6HalFV49vf9tKNDtg6Vn7G0SM0MNmpX4mWV+c8x4o
-         DiAUsUECSJLXPWp9ldiP3MfcewBW7kil/+zc0TE+F8AyxIUl+cTntzSrFzENdmdOZDD5
-         3R8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUfuW9Pa54IQ/MCcpjIcpvkCdKmQd8T4JbIhfH0qQVeIQjryfQXd8okZXVw+iIREGWYCNIoqKsXwfHJxFAn@vger.kernel.org, AJvYcCWGWe/+/quA3OtKfF87dm6zzVrPReFlFQtfPRflZZCjvjObtkaldbiFEx7DFQDfs1B/eoY=@vger.kernel.org, AJvYcCXoQv62EXJM8liP4erz98gul92bioaa9+IjALIA0nyenpkbCSX2NxLom0+8HNVK9M74FXCizvryPsskdDgBzbdItqwP@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFIHGSouM4sVhJg0bi1ehoP40jGiSe8axHa+iNwlpSx7iCnImq
-	Bv6l6CovPOY9tevFiGxVlr53iY2bCJunAATTf28OiLewnFSeeAG9sMh458RDyn2LkKbVqp4Cwwu
-	CPtRYRNsBrf/4M08LgueMe632GfjOd50=
-X-Gm-Gg: ASbGncucGMLZwBNUr1a1RjeM2nNA353niAELt6hDaTh3nbmxddiO73zWUGK6NiyC43i
-	1/s7fZRvtINyyY11xq/Xoho6JjS/CxMdkm/MujtTzXXd2Q+8iynlhsUecORH9EPHRkWFDX3jV7C
-	fDkzsM+NxKOL1Y8/tOC9Is13FfS3w/A1JMcbChpqktkUEFdKvhfiHPFdN5I+4eYYxoqwEnWIwb9
-	VLqehf96otlB7SMEwKykio=
-X-Google-Smtp-Source: AGHT+IFAYCkRpVVEg0QdLRvRVHmC8QaVJXMfi9fmJHYomD6pCx7wxiWWUcIXcZjMo1+KVeUZKV95FSYT0bwK6iyXmYg=
-X-Received: by 2002:a17:90b:56ce:b0:315:f6d6:d29c with SMTP id
- 98e67ed59e1d1-31c3d0c3803mr13249177a91.15.1752254283864; Fri, 11 Jul 2025
- 10:18:03 -0700 (PDT)
+	s=arc-20240116; t=1752254309; c=relaxed/simple;
+	bh=nVLLPVIWbGUSgKsKv9vPKZDnyjXBKWiQbjkOiqpZTIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V4/IiW2eSwcn+tYK9AFQdWeg1o+R0ZR6Pym5g/7tL44srIhzSfus/KyUi75SbCsIYqxM4ScaEeUFe5Wi6gdZGqRNWkrRLKjBP4ssnOpbYpUwy6gNjMND/+Uj8neScua7U1NOZiFYpqDHWuJ6Lbdma1xEoGW7HPmSZn99jl1qVt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYe9uuOR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78A6BC4CEED;
+	Fri, 11 Jul 2025 17:18:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752254308;
+	bh=nVLLPVIWbGUSgKsKv9vPKZDnyjXBKWiQbjkOiqpZTIk=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=BYe9uuORtR0YWPHBE05GkoLiBsyfbIv/+6NgHG++QzJsBbc2vtC65UeJwCoxI08UN
+	 4f44mmpRSqHTHctaxtLdFr+Uh1OAiorMKwLH2NOJdx7+YDxuXwo+tE7+H9655WC88/
+	 4Yok+WMf7tomzhzoWIRTzrq7j7xrphRJlVuDJawMP0Vbqhg/PJF/SJ1BC7yYLUKQ3G
+	 WDeL8AQSAYb6wEjy+3NWtxM+vxO7cMriNFtQNsDOJVT0eV4dXlwdbV183RP55EI9Cj
+	 eciPWmljN00JX2ONdrs+t6rVIn9syqNFl/cC5oWagjr21IDwzbkD+5MMo2u+JGUHcb
+	 Z/ZPLpgmzsXBg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 133D9CE0C16; Fri, 11 Jul 2025 10:18:28 -0700 (PDT)
+Date: Fri, 11 Jul 2025 10:18:28 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang@linux.dev>, rcu@vger.kernel.org
+Subject: Re: [PATCH -rcu -next 4/7] rcu: Remove redundant check for irq state
+ during unlock
+Message-ID: <c25c1084-ef70-409b-b38f-84c69e08e562@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250708142224.3940851-1-joelagnelf@nvidia.com>
+ <20250708142224.3940851-4-joelagnelf@nvidia.com>
+ <9b67bbca-dfdc-470e-9a32-486300efa586@paulmck-laptop>
+ <ebfa8f35-8ede-46c3-a865-384d12d11e90@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711082931.3398027-1-jolsa@kernel.org>
-In-Reply-To: <20250711082931.3398027-1-jolsa@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 11 Jul 2025 10:17:50 -0700
-X-Gm-Features: Ac12FXyY6qtXVwPUhYw-o64HRgW0NuQb1LV0LQ1wJ9aG7f6XWtpN8LrQvHGnlSA
-Message-ID: <CAEf4Bzbg2ROstG5+1XUoZre403n-B3CHuW9E0UECNY364giDcw@mail.gmail.com>
-Subject: Re: [PATCHv5 perf/core 00/22] uprobes: Add support to optimize usdt
- probes on x86_64
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Alejandro Colomar <alx@kernel.org>, Eyal Birger <eyal.birger@gmail.com>, 
-	kees@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
-	Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ebfa8f35-8ede-46c3-a865-384d12d11e90@nvidia.com>
 
-On Fri, Jul 11, 2025 at 1:29=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
->
-> hi,
-> this patchset adds support to optimize usdt probes on top of 5-byte
-> nop instruction.
->
-> The generic approach (optimize all uprobes) is hard due to emulating
-> possible multiple original instructions and its related issues. The
-> usdt case, which stores 5-byte nop seems much easier, so starting
-> with that.
->
-> The basic idea is to replace breakpoint exception with syscall which
-> is faster on x86_64. For more details please see changelog of patch 8.
->
-> The run_bench_uprobes.sh benchmark triggers uprobe (on top of different
-> original instructions) in a loop and counts how many of those happened
-> per second (the unit below is million loops).
->
-> There's big speed up if you consider current usdt implementation
-> (uprobe-nop) compared to proposed usdt (uprobe-nop5):
->
-> current:
->         usermode-count :  152.501 =C2=B1 0.012M/s
->         syscall-count  :   14.463 =C2=B1 0.062M/s
-> -->     uprobe-nop     :    3.160 =C2=B1 0.005M/s
->         uprobe-push    :    3.003 =C2=B1 0.003M/s
->         uprobe-ret     :    1.100 =C2=B1 0.003M/s
->         uprobe-nop5    :    3.132 =C2=B1 0.012M/s
->         uretprobe-nop  :    2.103 =C2=B1 0.002M/s
->         uretprobe-push :    2.027 =C2=B1 0.004M/s
->         uretprobe-ret  :    0.914 =C2=B1 0.002M/s
->         uretprobe-nop5 :    2.115 =C2=B1 0.002M/s
->
-> after the change:
->         usermode-count :  152.343 =C2=B1 0.400M/s
->         syscall-count  :   14.851 =C2=B1 0.033M/s
->         uprobe-nop     :    3.204 =C2=B1 0.005M/s
->         uprobe-push    :    3.040 =C2=B1 0.005M/s
->         uprobe-ret     :    1.098 =C2=B1 0.003M/s
-> -->     uprobe-nop5    :    7.286 =C2=B1 0.017M/s
->         uretprobe-nop  :    2.144 =C2=B1 0.001M/s
->         uretprobe-push :    2.069 =C2=B1 0.002M/s
->         uretprobe-ret  :    0.922 =C2=B1 0.000M/s
->         uretprobe-nop5 :    3.487 =C2=B1 0.001M/s
->
-> I see bit more speed up on Intel (above) compared to AMD. The big nop5
-> speed up is partly due to emulating nop5 and partly due to optimization.
->
-> The key speed up we do this for is the USDT switch from nop to nop5:
->         uprobe-nop     :    3.160 =C2=B1 0.005M/s
->         uprobe-nop5    :    7.286 =C2=B1 0.017M/s
->
+On Fri, Jul 11, 2025 at 12:30:08PM -0400, Joel Fernandes wrote:
+> 
+> 
+> On 7/10/2025 8:00 PM, Paul E. McKenney wrote:
+> > On Tue, Jul 08, 2025 at 10:22:21AM -0400, Joel Fernandes wrote:
+> >> The check for irqs_were_disabled is redundant in
+> >> rcu_unlock_needs_exp_handling() as the caller already checks for this.
+> >> This includes the boost case as well. Just remove the redundant check.
+> > 
+> > But in the very last "if" statement in the context of the last hunk of
+> > this patch, isn't it instead checking for !irqs_were_disabled?
+> > 
+> > Or is there something that I am missing that makes this work out OK?
+> 
+> You are right, after going over all the cases I introduced a behavioral change.
+> 
+> Say, irqs_were_disabled was false. And say we are RCU-boosted. needs_exp might
+> return true now, but previously it was returning false. Further say, we are not
+> in hardirq.
+> 
+> New code will raise softirq, old code would go to the ELSE and just set:
+>                 set_tsk_need_resched(current);
+> set_preempt_need_resched();
+> 
+> But preempt_bh_were_disabled that's why we're here.
+> 
+> So we need to only set resched and not raise softirq, because the preempt enable
+> would reschedule.
+> 
+> Sorry I missed this, but unless this behavior is correct or needs further work,
+> lets drop this patch. Thanks and kudos on the catch!
 
-We've been waiting for this to land for so long, I hope this gets
-applied soon...
+Not a problem!
 
-Once this lands, we can finally start implementing USDT support that
-can take advantage of this transparently and with no performance
-regression on old kernel.
+You can use cbmc to check these sorts of transformations, as described
+here: https://paulmck.livejournal.com/38997.html
 
-For the series:
+							Thanx, Paul
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-
-[...]
+>  - Joel
+> 
+> > 
+> > 							Thanx, Paul
+> > 
+> >> This is a first win for the refactor of the needs_exp (formerly
+> >> expboost) condition into a new rcu_unlock_needs_exp_handling() function,
+> >> as the conditions became more easier to read.
+> >>
+> >> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+> >> ---
+> >>  kernel/rcu/tree_plugin.h | 16 +++++++---------
+> >>  1 file changed, 7 insertions(+), 9 deletions(-)
+> >>
+> >> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> >> index e20c17163c13..7d03d81e45f6 100644
+> >> --- a/kernel/rcu/tree_plugin.h
+> >> +++ b/kernel/rcu/tree_plugin.h
+> >> @@ -659,14 +659,12 @@ static void rcu_preempt_deferred_qs_handler(struct irq_work *iwp)
+> >>   * @t: The task being checked
+> >>   * @rdp: The per-CPU RCU data
+> >>   * @rnp: The RCU node for this CPU
+> >> - * @irqs_were_disabled: Whether interrupts were disabled before rcu_read_unlock()
+> >>   *
+> >>   * Returns true if expedited processing of the rcu_read_unlock() is needed.
+> >>   */
+> >>  static bool rcu_unlock_needs_exp_handling(struct task_struct *t,
+> >>  				      struct rcu_data *rdp,
+> >> -				      struct rcu_node *rnp,
+> >> -				      bool irqs_were_disabled)
+> >> +				      struct rcu_node *rnp)
+> >>  {
+> >>  	/*
+> >>  	 * Check if this task is blocking an expedited grace period. If the
+> >> @@ -702,14 +700,14 @@ static bool rcu_unlock_needs_exp_handling(struct task_struct *t,
+> >>  
+> >>  	/*
+> >>  	 * RCU priority boosting case: If a task is subject to RCU priority
+> >> -	 * boosting and exits an RCU read-side critical section with interrupts
+> >> -	 * disabled, we need expedited handling to ensure timely deboosting.
+> >> -	 * Without this, a low-priority task could incorrectly run at high
+> >> -	 * real-time priority for an extended period degrading real-time
+> >> +	 * boosting and exits an RCU read-side critical section, we need
+> >> +	 * expedited handling to ensure timely deboosting. Without this,
+> >> +	 * a low-priority task could incorrectly run at high real-time
+> >> +	 * priority for an extended period degrading real-time
+> >>  	 * responsiveness. This applies to all CONFIG_RCU_BOOST=y kernels,
+> >>  	 * not just to PREEMPT_RT.
+> >>  	 */
+> >> -	if (IS_ENABLED(CONFIG_RCU_BOOST) && irqs_were_disabled && t->rcu_blocked_node)
+> >> +	if (IS_ENABLED(CONFIG_RCU_BOOST) && t->rcu_blocked_node)
+> >>  		return true;
+> >>  
+> >>  	return false;
+> >> @@ -738,7 +736,7 @@ static void rcu_read_unlock_special(struct task_struct *t)
+> >>  		struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
+> >>  		struct rcu_node *rnp = rdp->mynode;
+> >>  
+> >> -		needs_exp = rcu_unlock_needs_exp_handling(t, rdp, rnp, irqs_were_disabled);
+> >> +		needs_exp = rcu_unlock_needs_exp_handling(t, rdp, rnp);
+> >>  	
+> >>  		// Need to defer quiescent state until everything is enabled.
+> >>  		if (use_softirq && (in_hardirq() || (needs_exp && !irqs_were_disabled))) {
+> >> -- 
+> >> 2.34.1
+> >>
+> 
 
