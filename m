@@ -1,178 +1,122 @@
-Return-Path: <linux-kernel+bounces-727011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E6F3B013E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:49:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2234FB013DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:48:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8C595A48B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:49:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 666DA7AC906
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5321B1DE8AE;
-	Fri, 11 Jul 2025 06:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B3A1DDA15;
+	Fri, 11 Jul 2025 06:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eVwHIZcs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="E8UFCHTF";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TffFvQGI"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7695E2110E
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1652110E;
+	Fri, 11 Jul 2025 06:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752216571; cv=none; b=FTF4Zs5fbj49XM5ptSlH4QjUmo30ZYekLbBApcx7I9UL3NBUH35aD/2lONC2SfOQmiDNgBL/7w6h3UYxvv7vwva3LrkPtO7Z0j0kCdgxv3gKLsmGi0aVuZtk+DlLbEzsRymS0lojuATuHb3IDwdWj3HBTrXwECQn5mdIyOowFas=
+	t=1752216506; cv=none; b=Ri5KV1Z+mM4EyfDOsfXZ7+DOHwQxWXebNRHwTCYt6E4mQuURCsWDvlDNHL+VoVhim09L/pi6jPqONvuypSLS663l/V8H8RNb28tpZWmMRExGtkurPqRULhGmIY5ljz/+RwGOMIrM6Z7ItZPEftPzDSJds4zOvtVwK4Zgc3IlWtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752216571; c=relaxed/simple;
-	bh=8WjKZo/Tzc+89ScV1HU0cXSdTevhkck7mFPn4y7/ZAA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iAvhEEHxHHlQSUW/G+W0GFhA1dJLaH7Xmzkhe0hmSbVx1bKolbASiUdY0c4BjOPv0hGen4isV+NrVoCb/Bb8yEJGxIzIMluNfW1mOAiOhjf8NxWHpCNXnbQCCnjzvnhZtjVOplTHw/cx3c3CHzYuOph4750U6IhdsZwCVYbYRx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eVwHIZcs; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752216568;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BxbG4JFSAtZVQEjQXI+wWXnxQA/cXn+OA4Z+OMpKyu4=;
-	b=eVwHIZcs41r3nSKwXtY2urVZWC32sMykNziXDwhZMqgd62IfG57Gb7yDAfaVUdu015kJG2
-	uizJr+mQMhlJ24nlXXDQduN2RspglplpGWmLV9CkRmPy37xnQl3DXwz+ka9rlm/SYaLUdY
-	/wd3xHGwIkkGLSvbPg/jYmBpmuhLym8=
-Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com
- [209.85.221.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-178-qpEdgc2UMkOg8IzPscbNVA-1; Fri, 11 Jul 2025 02:49:27 -0400
-X-MC-Unique: qpEdgc2UMkOg8IzPscbNVA-1
-X-Mimecast-MFC-AGG-ID: qpEdgc2UMkOg8IzPscbNVA_1752216566
-Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-53159085185so645167e0c.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 23:49:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752216566; x=1752821366;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BxbG4JFSAtZVQEjQXI+wWXnxQA/cXn+OA4Z+OMpKyu4=;
-        b=gqUmjAmsstjXoAfnqs7VPxWNz/Y5fOOTu1rMaRvA2W7Aua4nHfnngsyeSveCYsWrdD
-         EHJYsiJjYEQaU4P8YoH6trJg5RSo9B6cmrNWsb83A649F7sybBX9pKSFSvCwcy/NcPpe
-         +fBsGdU7zN3D0+JImMi7MyfZMHcKN+gOKX+T/AH7s8ygLGM9tFAIUNwKSjlTMT4uSe5u
-         oKSquKOJPQxNZjlHAFJDcR4wspPgcQNXecWlYxYfcylZLYHpz0EDwyuC2HiC000FrhQj
-         jSxpoPtZh5ifQ8O+sURUN26uTxiQfMZF5FxBjci+0Uq5yemZDimXqvrAYSvSV8OKgRLA
-         QByw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWzrvovWsROAaC/Y1NGL2sTjD+AjbIcnfR9DhPejRCMbdvWeGNlEuUvIUHb7KcoY8c/uUadwR+05kREMs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh6HSzwIwye/8P9X5wu9Eo+RrQ5GfxQ3IiyGLEafeVK5g1KQyN
-	10YDpQZROkmshhb161RS25gTPHWDYVrsS5L74a6Cj7Ou259fB+VKsPPW6+zlJLqBDnuJVSaos9y
-	Yzxqsf5DDyIEtk9yG6sr6Z7YBxwQ54FwoBZ12f0nCl+WJkbmpfEnzvTHmUXH7BATe1k4RCRIZwR
-	w0iFhlQDp085+km0QBEpDrQt+icsn2frxRynVyAiyw
-X-Gm-Gg: ASbGncs/abVlZhFtZn3i/CSVMew7PcaBtxCT+2QYak567WW7BjdXwLAdOTzJmlobrVQ
-	My1Z1X+HIVaMlKjliU+XdxtyLKF8X3pvWJnZzlC2iPynNet82RwPFRczj7SZrKQkiNgN6u6Q/zd
-	rD7HMW7ZGbBr/EYrX6NikBBw==
-X-Received: by 2002:a05:6102:dca:b0:4e9:c773:dca1 with SMTP id ada2fe7eead31-4f6411e36c2mr1621595137.11.1752216566342;
-        Thu, 10 Jul 2025 23:49:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH8pdr64dQhCGFiGndp3QqJ4OXoQVOVXjcmO3HV7h3AAPJDmNsRuoLhWIcxZByOZsvaufxvkGWZod21F8kL+T8=
-X-Received: by 2002:a05:6102:dca:b0:4e9:c773:dca1 with SMTP id
- ada2fe7eead31-4f6411e36c2mr1621586137.11.1752216565960; Thu, 10 Jul 2025
- 23:49:25 -0700 (PDT)
+	s=arc-20240116; t=1752216506; c=relaxed/simple;
+	bh=+T1qgXU8Lpqp3Sq0RDij+V21PVLm2PU9091SOQs8nxM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cqykuPgCcp2g/xHGywTFEyoFyO1WAA3kAvT9t7v25+QT0uYcMcKXRUeKlAOY0F5K7elaB+1o0CdCnt9CuIw8JRK2qlyDQbBkLWexH/Ll27kl7VRfYFcG0YtDoiNdvsfO0wz+vCWx9ki7uZAYlboSIh15+wSwmcn6MNvXDg8ixZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=E8UFCHTF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TffFvQGI; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 25C80EC028E;
+	Fri, 11 Jul 2025 02:48:23 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Fri, 11 Jul 2025 02:48:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1752216503; x=1752302903; bh=9tmvMKfs2+
+	3P9yH1HQ57n/mvCAkJiWreb0ZaeXNaMWg=; b=E8UFCHTFY29s2zySfXrJ/AVgoD
+	LqtRW/pSQSbSbsVdDrQUKfucJcKg8QiLk4HbO62ddzYkPj1m8auUVsWvg5EfPIf7
+	sN60NRq7/EmqDmfGMIKfdiJJfEy01nSo8zcUOe1wnigm65Id1U46GRNdQXLn1GmS
+	hMfjhR73bJBY6gYn4RNHfyrbZWirbf7XaEiwuePRCDmeaTqiXHPvvp96cNH6rRAd
+	VT4yS8J1V9feTKCDFfZow1xhkoCW5491npu/JOb4P9BycD8lBp65X5ldSj9RF7Hy
+	hQLq+976UTMJX0xLAxtL8zE+QNn5wkaHXQZnH63Y+GCZYjQ20oMt3ZPqkTuA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1752216503; x=1752302903; bh=9tmvMKfs2+3P9yH1HQ57n/mvCAkJiWreb0Z
+	aeXNaMWg=; b=TffFvQGIO4LO6axuzxPk0wEaTqtiDSHlVHGHoRDDapPZ3B0mDHA
+	byfBC3Z80EueynXCUIcMMMUR6c0/UzW/v6xqqXNai6QXz+mtl2R49R3UJuYwbQ3j
+	7OPvNVLQz9lwFxFqkfsKcKlGfZ5w7Tu5D4P1HYemSSzVZpxtOGygV+Tz8c+YMGhJ
+	cFlOsBVBmSc+IyPDZ8fBdoTOCD1aX+s3W36qUZ7QPaCRyr5ez/k/7yl0lEVPlh87
+	wPjIXCAVT/7R2vZK/KWAmg3+R0kbH6Mo9TNnGFLqNOkRn7crAJjvOV8YBpM0ql2j
+	W/DQId6uq76tnjsrHZl9LKGBrZNqVgOcsjA==
+X-ME-Sender: <xms:trNwaHA7dHHmrwJMMiVvYzSzJQhjHHsf55z2e9Acq5bpporVMqK-0Q>
+    <xme:trNwaK7GQQNxRVcONIGcBysofj09gxH4gdZHFPaCVRPtLNU5D68WbjZeEvQ-FQ0-W
+    1L1T4phtglgsQ>
+X-ME-Received: <xmr:trNwaJ5j7GBjax5kRI5cCHJSvDdueJagZer7BlqfyIX_z1Z3GiXYDRQNfDARuYZ0eEq6vbT9Qrg7A_96mFCqYijWlu9KtWg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegvdeifecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcumffj
+    uceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehgedvvedvle
+    ejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhushhtvghr
+    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtg
+    homhdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
+    shhfrhestggrnhgsrdgruhhughdrohhrghdrrghupdhrtghpthhtohepsghrohhonhhivg
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgv
+    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrh
+    drkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:trNwaETHjhNdWMCx6EI1-Yw-iZuPUbMKZXGROwwEYSPyr9EPy9eeHA>
+    <xmx:trNwaJ8A9AcEOYX7RGvlgAQutH_tIS-oV_o4PVtdeWod05aYXDppXA>
+    <xmx:trNwaNbfgZlXMiUrpuLztvCggJDdtURjElHMbfHdeM1A-M87a602Jw>
+    <xmx:trNwaCoYJ1vHYdJawmOle9q5rLjz6DKirsdPNgd8T_WXC1HHQE27lA>
+    <xmx:t7NwaHl6LvzZ4ZZuAm0yvTOr6zl307fWlWUgh12bAYwN4ccHLbcbyCLz>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 11 Jul 2025 02:48:22 -0400 (EDT)
+Date: Fri, 11 Jul 2025 08:48:20 +0200
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mark Brown <broonie@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the driver-core tree
+Message-ID: <2025071106-mustang-encrypt-d307@gregkh>
+References: <20250711162945.078138dc@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616062922.682558-1-lulu@redhat.com> <20250616062922.682558-2-lulu@redhat.com>
- <6107dcb2-51a3-42f8-b856-f443c0e2a60d@6wind.com> <CACGkMEsJdfeNuHdKu0OH=sT4RYhN3d_VOnDcu4_-FquRXo24Xw@mail.gmail.com>
-In-Reply-To: <CACGkMEsJdfeNuHdKu0OH=sT4RYhN3d_VOnDcu4_-FquRXo24Xw@mail.gmail.com>
-From: Cindy Lu <lulu@redhat.com>
-Date: Fri, 11 Jul 2025 14:48:12 +0800
-X-Gm-Features: Ac12FXxIsX9kCA8tu7rmOHAy5cYEuocqulMU9XdacIEoFSZMPVCORVJXY4Z54Eo
-Message-ID: <CACLfguWqF62MMY3Y45GCRnh=5J75q6ebAqhFgOmhsAAsoyYXew@mail.gmail.com>
-Subject: Re: [PATCH v12 1/1] vhost: Reintroduces support of kthread API and
- adds mode selection
-To: Jason Wang <jasowang@redhat.com>
-Cc: nicolas.dichtel@6wind.com, mst@redhat.com, michael.christie@oracle.com, 
-	sgarzare@redhat.com, linux-kernel@vger.kernel.org, 
-	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711162945.078138dc@canb.auug.org.au>
 
-On Thu, Jun 19, 2025 at 9:02=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
-ote:
->
-> On Wed, Jun 18, 2025 at 8:06=E2=80=AFPM Nicolas Dichtel
-> <nicolas.dichtel@6wind.com> wrote:
-> >
-> > Le 16/06/2025 =C3=A0 08:28, Cindy Lu a =C3=A9crit :
-> > > This patch reintroduces kthread mode for vhost workers and provides
-> > > configuration to select between kthread and task worker.
-> > >
-> > > - Add 'fork_owner' parameter to vhost_dev to let users select kthread
-> > >   or task mode. Default mode is task mode(VHOST_FORK_OWNER_TASK).
-> > >
-> > > - Reintroduce kthread mode support:
-> > >   * Bring back the original vhost_worker() implementation,
-> > >     and renamed to vhost_run_work_kthread_list().
-> > >   * Add cgroup support for the kthread
-> > >   * Introduce struct vhost_worker_ops:
-> > >     - Encapsulates create / stop / wake=E2=80=91up callbacks.
-> > >     - vhost_worker_create() selects the proper ops according to
-> > >       inherit_owner.
-> > >
-> > > - Userspace configuration interface:
-> > >   * New IOCTLs:
-> > >       - VHOST_SET_FORK_FROM_OWNER lets userspace select task mode
-> > >         (VHOST_FORK_OWNER_TASK) or kthread mode (VHOST_FORK_OWNER_KTH=
-READ)
-> > >       - VHOST_GET_FORK_FROM_OWNER reads the current worker mode
-> > >   * Expose module parameter 'fork_from_owner_default' to allow system
-> > >     administrators to configure the default mode for vhost workers
-> > >   * Kconfig option CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL controls wh=
-ether
-> > >     these IOCTLs and the parameter are available (for distros that ma=
-y
-> > >     want to disable them)
-> > >
-> > > - The VHOST_NEW_WORKER functionality requires fork_owner to be set
-> > >   to true, with validation added to ensure proper configuration
-> > >
-> > > This partially reverts or improves upon:
-> > >   commit 6e890c5d5021 ("vhost: use vhost_tasks for worker threads")
-> > >   commit 1cdaafa1b8b4 ("vhost: replace single worker pointer with xar=
-ray")
-> > >
-> > > Signed-off-by: Cindy Lu <lulu@redhat.com>
-> > > ---
-> > >  drivers/vhost/Kconfig      |  17 +++
-> > >  drivers/vhost/vhost.c      | 244 ++++++++++++++++++++++++++++++++++-=
---
-> > >  drivers/vhost/vhost.h      |  22 ++++
-> > >  include/uapi/linux/vhost.h |  29 +++++
-> > >  4 files changed, 294 insertions(+), 18 deletions(-)
-> > >
-> > > diff --git a/drivers/vhost/Kconfig b/drivers/vhost/Kconfig
-> > > index 020d4fbb947c..1b3602b1f8e2 100644
-> > > --- a/drivers/vhost/Kconfig
-> > > +++ b/drivers/vhost/Kconfig
-> > > @@ -95,4 +95,21 @@ config VHOST_CROSS_ENDIAN_LEGACY
-> > >
-> > >         If unsure, say "N".
-> > >
-> > > +config VHOST_ENABLE_FORK_OWNER_CONTROL
-> > > +     bool "Enable VHOST_ENABLE_FORK_OWNER_CONTROL"
-> > > +     default n
-> > Why disabling this option by default?
->
-> I think we should enable this by default.
->
-> Thanks
->
-Thanks jason,  I will send  a new version
-Thanks
-cindy
-> >
-> > Regards,
-> > Nicolas
-> >
->
+On Fri, Jul 11, 2025 at 04:29:45PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> The following commit is also in the regmap tree as a different commit
+> (but the same patch):
+> 
+>   8009fb751d2c ("regmap: get rid of redundant debugfs_file_{get,put}()")
+> 
+> This is commit
+> 
+>   9f711c9321cf ("regmap: get rid of redundant debugfs_file_{get,put}()")
+> 
+> in the regmap tree.
 
+Ah, sorry about that, I took the whole series.  All should be fine when
+they are merged together.
+
+greg k-h
 
