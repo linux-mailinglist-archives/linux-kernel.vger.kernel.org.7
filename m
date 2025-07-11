@@ -1,133 +1,110 @@
-Return-Path: <linux-kernel+bounces-728083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F27CB02386
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:22:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A60B0238F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6999F5C0ABE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:22:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8CC11C432EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A9E2F273A;
-	Fri, 11 Jul 2025 18:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF9A5383;
+	Fri, 11 Jul 2025 18:24:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1bRN4l6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WoHqdOg7"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357D828DF27;
-	Fri, 11 Jul 2025 18:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480FD27A915
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752258138; cv=none; b=B+Dct8eutducT7+KUyNfY9EGppqRfz53B86lFzRkzoGZj773HXnrlAAjskQeYuUtarwPU6SzWdll5D69EUl1J+ZpSELICJeoZ9uqLhcIPkpE6ZnUlio8jeC98ALY49uHCf5+MIPNzxo53cBaRw7Q9Fr6lq/Yisb6uZgHDoetHp4=
+	t=1752258241; cv=none; b=lFsIs1+DT8yRNI5QpsD08T8jVJedM6nEqszQePB5pk7RV2US+NMh4rVREVrPGmJtwbLehxzOnGGPBfwCza56OkQNDpqZ00YaGbhph6oiH7ng+zPtLk4+12hFhar+7DlL6bJziMWNoBSDbFPTyD6ykYyRnQ8tWXVWbcApE1w9dBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752258138; c=relaxed/simple;
-	bh=JMFnro4S2+uEJbPEf6pcuOfTY8pUVut/obbX3jU5bFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mDMOrGxnLZD6m0xXb+iMN/saJGFGYk6myz+JepXLs7Du9vc+0TiOdSKjA47IQW++bSIaeoL0D6ofM5fjhIZL1CqBz+XDv/yfYOHZ+VOekqUGTuGy5PV51qORC79T4vAd+AuzrBTQue5E/JWIs4UddV5apDrLCLTWKANB0SytdLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1bRN4l6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C4B8C4CEED;
-	Fri, 11 Jul 2025 18:22:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752258137;
-	bh=JMFnro4S2+uEJbPEf6pcuOfTY8pUVut/obbX3jU5bFQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U1bRN4l6oxak+tvbW/yxX+FqOgjyiKYybGjPH9RETgzNivv6t4vCm0aYCObGBpOLV
-	 yOBZ7M/1/JOiF5yeCGFg2CjoP+y6ZkJ+xQg1cwnNUR1bpq9kPsQbJdZMb/gT4NQyp8
-	 iuoiwqXJiQfdurOLEmFfMBoea4bsPVFirWMIDpRiR7sV0geMA0Fz2iwfWN5ytynPqN
-	 vWELjNQDA8uwg2pFMbK03L3aM6KWuAV/DSwDOEC8Tk6EkgytoNig7rSz5GISKgs6Zg
-	 ikVbIa6FjrtHu6gFZxjAa0hcmGFklOj7qNQfcfmtjF5GEngs05joFqhi0nq8cbdRMA
-	 TNpBN/12eHt1g==
-Date: Fri, 11 Jul 2025 13:22:16 -0500
-From: Rob Herring <robh@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: document the Milos Top
- Level Mode Multiplexer
-Message-ID: <20250711182216.GA974600-robh@kernel.org>
-References: <20250702-sm7635-pinctrl-v2-0-c138624b9924@fairphone.com>
- <20250702-sm7635-pinctrl-v2-1-c138624b9924@fairphone.com>
+	s=arc-20240116; t=1752258241; c=relaxed/simple;
+	bh=oqnpzafFV0ZoAjP9+YkXIuQgzQ7Z2BnDR3jdUDfSn1E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qXohOD9s9JN/FSrmbYi8EeeQzKIUyiSSUxxrVPDaNN0ur0FAtGd4glK9Cf7vQ5dQi5tzjQ2NCS1QZhZoPoDOVYiR+MLh8jVR24MfVDRHXHvg5HBCiAVUlJdPynokOOyVtnQmKuiKZiziiHCy87DQqKbbPIBIp3BRz+Gm3F+fAhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WoHqdOg7; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-32b7123edb9so26774921fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:24:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752258238; x=1752863038; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jn9f3mToefJGhAX3nWeu5w3wYZCnJamomvhjD+Ab1ts=;
+        b=WoHqdOg76g00mtNGc9b6mI0r8aUJGHSi/kYqVz3FrcupjrccaiUA5E81IOhiSNG1DS
+         DLOLJj05TSt77p1GeeTXxr9G7XXwsKmTy8wbas1cYl1PxEnhR9TqSpAORx054LeQCvMq
+         cquUu8MAw2D1CblyKwDcaeKBzE8tIsYqLUQht4J51PuY5L14IDVKK/hD2Gg2JaIQcqtT
+         QmM2XQ5/HFiU8G91SFF1z93mV/IaHcalFlT1hEJhIilbL4rgm1eVPW+JrmTFvCZWJW/N
+         gDs4Yn0ISsIdz8vEo5U3PqeflH3xamUoMoW4snzw6NTBR38aeOGU+bArfbAw7WbZ0zPr
+         HF/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752258238; x=1752863038;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Jn9f3mToefJGhAX3nWeu5w3wYZCnJamomvhjD+Ab1ts=;
+        b=XNG6iPZrRCE3PBocCBYKaaj2ptyTaomi5IDctsCi3+Qy1A/WvA5/Y870pbxrMsPTbG
+         nZyTMAGPu+Y0ukNQzS4AAtal8o2l6XcF77xl41bJ+9toMIHeDcx1WvyBX67qCDau0MPA
+         OwDjCAmIjK7gQyNfXAaWuDNLDooW5ANdMNlW/QtEbW0+A9iwQI7iZU3j97FZ1qvQ6mNj
+         hs02ohLItw0tgUk5B0ujLwFUJoFLegXjr0JZNuQq/6mvJcO6VYylyTbHVZFLQVgcxj9b
+         gsZf3Tvuk3C0JgGWgwJndUj3Pcn1sV0LifaXpx5MRp4qidZEGa5GHUyzT86hx+CeSyEU
+         7I3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXQqgli3uCktMZrEaRrrFsvcWrzmJXQs77ha/QZ6nAkOMJC05tcr/2/4VRMRCtJvbgToPSfhtreKR403q8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdT2QZ0d2EZLeIylBfsz6I/GRZt7m/GNkkUHXQ16+mqoHDOYl1
+	Ct0sbNoEGw8gls98fOTEwvG64sn2mGTABRz+K5sN2K03fyVViTzH7dsGEOQNgQQ3n9e1rL7uUoP
+	skdmLCwX8wjmeBUNN0om68+oFuIVo8hvtAaygC/1B1w==
+X-Gm-Gg: ASbGncvS2TIs0KAqp8e2pCFcug6eqGtU614tYNksCqi5uHn4nA9sN2FRcLW6/z3HJ9H
+	/yUdQK+94i6dgGYNj43YB6CGp+JsjAwExcUxZ5fiolfi2y1lg95yZO6I9ue1UCtzkKfFdoai2aW
+	PHBy2+S2/yfK3lpZps316QY5bfQmHeb6C85zpPaYY+LsD282i8wFVtkz3xLgBvso+1JcZTfZ2mM
+	SQcP3M=
+X-Google-Smtp-Source: AGHT+IGtCjuAm6H1PqMHwvBz6rzeqlA0wEu1fJowmdiyHYt3WhUGaKpgqvny6J1SrAMvLEx6RSED9oPi9oqyZbgq9O4=
+X-Received: by 2002:a05:651c:1118:10b0:32b:47be:e1a5 with SMTP id
+ 38308e7fff4ca-3305359ff3emr9390161fa.39.1752258238428; Fri, 11 Jul 2025
+ 11:23:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702-sm7635-pinctrl-v2-1-c138624b9924@fairphone.com>
+References: <20250709-sm7635-pmxr2230-v2-0-09777dab0a95@fairphone.com>
+In-Reply-To: <20250709-sm7635-pmxr2230-v2-0-09777dab0a95@fairphone.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 11 Jul 2025 20:23:46 +0200
+X-Gm-Features: Ac12FXyyCEbHvtTkJzK2mrQiawaykksuUjl6fIr0994V2EB5IcqiLGuqcPuxELA
+Message-ID: <CACRpkdbUo21S-GPPrTpwhExVqm=XbE+juQfVo=VddOks79La2Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] Add support for PM7550 PMIC
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Fenglin Wu <quic_fenglinw@quicinc.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 02, 2025 at 05:56:16PM +0200, Luca Weiss wrote:
-> Document the Top Level Mode Multiplexer on the Milos Platform.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  .../bindings/pinctrl/qcom,milos-tlmm.yaml          | 133 +++++++++++++++++++++
->  1 file changed, 133 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,milos-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,milos-tlmm.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..0091204df20a0eca7d0d0e766afcb8d08042b015
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,milos-tlmm.yaml
-> @@ -0,0 +1,133 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/qcom,milos-tlmm.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Technologies, Inc. Milos TLMM block
-> +
-> +maintainers:
-> +  - Luca Weiss <luca.weiss@fairphone.com>
-> +
-> +description:
-> +  Top Level Mode Multiplexer pin controller in Qualcomm Milos SoC.
-> +
-> +allOf:
-> +  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,milos-tlmm
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  gpio-reserved-ranges:
-> +    minItems: 1
-> +    maxItems: 84
-> +
-> +  gpio-line-names:
-> +    maxItems: 167
-> +
-> +patternProperties:
-> +  "-state$":
+On Wed, Jul 9, 2025 at 1:46=E2=80=AFPM Luca Weiss <luca.weiss@fairphone.com=
+> wrote:
 
-       type: object
+> Luca Weiss (5):
+>       dt-bindings: leds: qcom,spmi-flash-led: Add PM7550
+>       dt-bindings: mfd: qcom-spmi-pmic: Document PM7550 PMIC
+>       dt-bindings: pinctrl: qcom,pmic-gpio: Add PM7550 support
+>       pinctrl: qcom: spmi: Add PM7550
+>       arm64: dts: qcom: Add PM7550 PMIC
 
-Because a boolean "foo-state;" would actually pass without.
+Patches 3 & 4 applied to the pinctrl tree.
 
-With that,
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
-> +    oneOf:
-> +      - $ref: "#/$defs/qcom-milos-tlmm-state"
-> +      - patternProperties:
-> +          "-pins$":
-> +            $ref: "#/$defs/qcom-milos-tlmm-state"
-> +        additionalProperties: false
+Yours,
+Linus Walleij
 
