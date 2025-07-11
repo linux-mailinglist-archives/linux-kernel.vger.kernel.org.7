@@ -1,157 +1,126 @@
-Return-Path: <linux-kernel+bounces-727368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB97AB01923
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:01:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A0A9B01900
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 288BE7BCA88
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:57:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D2D3189B711
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9594027EFF3;
-	Fri, 11 Jul 2025 09:58:55 +0000 (UTC)
-Received: from hrbeu.edu.cn (mx1.hrbeu.edu.cn [202.118.176.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B16E27D782
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.118.176.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C5A239E80;
+	Fri, 11 Jul 2025 09:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="lmFS5kwL"
+Received: from mail-4323.protonmail.ch (mail-4323.protonmail.ch [185.70.43.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E786827E1AC;
+	Fri, 11 Jul 2025 09:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752227935; cv=none; b=imK28bjptsBR+0SOYdsT72vsDd51prEAB6K6JSiZntmjmx08sxXYcyV8Q21pi78OhqPuBlgOB1zR7vAipvXEfOskVaN6qOFMVCTUCo3ruc2GBHCWVM8sDipKrflCIb86R6qAcI5PHQ8+ZsGb20OgXY1C2CGQzxBp3Mh26tyMOwo=
+	t=1752227954; cv=none; b=mJHPxWGDpbM4OdLD59laEHZ/FbSjxWkJW2sOdVPwcSNLs5us24gtkBTHySn/Gi+YwmdXm+UREM26EG/EJpDSN3ytrVPchfzo4/ufIOr7FW7/g2OhiYDU95JcD1EmN7HWJX+0F8DQYgh8LDx200a6XIBDT2qOCq6o1gyRyYggzB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752227935; c=relaxed/simple;
-	bh=cVZjBS+UFXADyROOSGKctvsIbTQIS6I4KmAULRFMPvc=;
-	h=Date:From:To:Cc:Subject:Content-Type:MIME-Version:Message-ID; b=SHnyTlP2aiB7etjxkzGB8ds+mS0N8O6RcYyoJol/ZuHufEv9mM5WxLKouCpuZsiVhl8YyXkI79Rgl8CO7oW/O7Lweh/qUYlTVIEdDOu5C0m3+92ow0k8sl1Q/XXDxVUoeDGT/UCgYuGxKFRPLF20Aq9r9bu3ajX1tYEUHFHsCuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hrbeu.edu.cn; spf=pass smtp.mailfrom=hrbeu.edu.cn; arc=none smtp.client-ip=202.118.176.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hrbeu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hrbeu.edu.cn
-Received: from baishuoran$hrbeu.edu.cn ( [60.223.239.76] ) by
- ajax-webmail-Front (Coremail) ; Fri, 11 Jul 2025 17:58:46 +0800 (GMT+08:00)
-Date: Fri, 11 Jul 2025 17:58:46 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>
-To: "Andrew Morton" <akpm@linux-foundation.org>
-Cc: "Kun Hu" <huk23@m.fudan.edu.cn>, "Jiaji Qin" <jjtan24@m.fudan.edu.cn>,
-	syzkaller@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: BUG: unable to handle kernel paging request in const_folio_flags
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT5 build
- 20241202(ebbd5d74) Copyright (c) 2002-2025 www.mailtech.cn hrbeu.edu.cn
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1752227954; c=relaxed/simple;
+	bh=mRpDbLmUE4UhOYnKEFMxZgDfRVRQj7DSkhbNrT4V1pI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G6PNra1lUS1pTbYIcwv95A6Py6KNsMlJHVzXnzeDXLPk+dS7p/aXT4I1Vm9wIN3TK6mGiPCJk0++/KADd92Mon8p3iltRw85CkFO3OZNMdkgYz5ydGb+uDQIQQR3+OpXiOescMja1ZdPLjb3nOMbn6jHh25onEHQMRAN1QSH6L8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=lmFS5kwL; arc=none smtp.client-ip=185.70.43.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail; t=1752227939; x=1752487139;
+	bh=xvF2aSWSqqBO05cN0sTOxCgtVge8RdAFdTQlScpH9Eg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=lmFS5kwL2YtEeOsG+rdTD7E6jSLYUe+N62vYY8y5Daw+3PoHfqAIFee6tK0SNfBah
+	 oyA9zqgp4+mU6ToH+rmpWPahOQOOmQgXyX511SnoFVzVW66n/luX8kdLdT3oBL4XdZ
+	 vQv5r/fWFimNW63YIRYBsBXzv9Wlzy4AWgAM/NUZMyjAwV/JFhWuCFZGLSe13KpL/a
+	 OizFUJWdYPfhBmGwCRmmSUhTYziqWa/a5hqDK565pMmXJJFc52zJvF2W49N/alCPsO
+	 WyY3Q3jCsgxpVPeZjSMfb5ltEFBRIwmqdsP9SpWgvrOCyddaG1OhOaQvblQnpjIu3n
+	 Nl7M8e6TYEjrw==
+Date: Fri, 11 Jul 2025 09:58:53 +0000
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+From: Sean Nyekjaer <sean@geanix.com>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Fengguang Wu <fengguang.wu@intel.com>, Varka Bhadram <varkabhadram@gmail.com>, Dong Aisheng <b29396@freescale.com>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] can: m_can: apply rate-limiting to lost msg in rx
+Message-ID: <ku5336aidq5j24dswy5egbuse6a6jpfmf5j7ochenifxzy7he7@lth6f55c4nz4>
+In-Reply-To: <20250711-astonishing-tentacled-tench-9fe229-mkl@pengutronix.de>
+References: <20250630-mcan_ratelimit-v2-1-6b7a01341ea9@geanix.com> <20250711-astonishing-tentacled-tench-9fe229-mkl@pengutronix.de>
+Feedback-ID: 134068486:user:proton
+X-Pm-Message-ID: 7840f87d63de82f4d7eb80479cc4dae2a8f33d4b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <45a4da17.13ec7.197f8ec50fb.Coremail.baishuoran@hrbeu.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:CbB2ygD38WhW4HBoz2AnAA--.6558W
-X-CM-SenderInfo: pedl2xpxrut0w6kuuvvxohv3gofq/1tbiAQIACmhvj2YIVwAAs4
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VW3Jw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-RGVhciBNYWludGFpbmVycywKCgpXaGVuIHVzaW5nIG91ciBjdXN0b21pemVkIFN5emthbGxlciB0
-byBmdXp6IHRoZSBsYXRlc3QgTGludXgga2VybmVsLCB0aGUgZm9sbG93aW5nIGNyYXNoICgxMjF0
-aCl3YXMgdHJpZ2dlcmVkLgoKCgoKSEVBRCBjb21taXQ6IDY1MzdjZmIzOTVmMzUyNzgyOTE4ZDhl
-ZTdiN2YxMGJhMmNjM2NiZjIKZ2l0IHRyZWU6IHVwc3RyZWFtCk91dHB1dDogaHR0cHM6Ly9naXRo
-dWIuY29tL3BnaGsxMy9LZXJuZWwtQnVnL2Jsb2IvbWFpbi8wNzAyXzYuMTQvQlVHJTNBJTIwdW5h
-YmxlJTIwdG8lMjBoYW5kbGUlMjBrZXJuZWwlMjBwYWdpbmclMjByZXF1ZXN0JTIwaW4lMjBjb25z
-dF9mb2xpb19mbGFncy8xMjFyZXBvcnQudHh0Cktlcm5lbCBjb25maWc6aHR0cHM6Ly9naXRodWIu
-Y29tL3BnaGsxMy9LZXJuZWwtQnVnL2Jsb2IvbWFpbi8wNzAyXzYuMTQvY29uZmlnLnR4dApDIHJl
-cHJvZHVjZXI6aHR0cHM6Ly9naXRodWIuY29tL3BnaGsxMy9LZXJuZWwtQnVnL2Jsb2IvbWFpbi8w
-NzAyXzYuMTQvQlVHJTNBJTIwdW5hYmxlJTIwdG8lMjBoYW5kbGUlMjBrZXJuZWwlMjBwYWdpbmcl
-MjByZXF1ZXN0JTIwaW4lMjBjb25zdF9mb2xpb19mbGFncy8xMjFyZXByby5jClN5emxhbmcgcmVw
-cm9kdWNlcjpodHRwczovL2dpdGh1Yi5jb20vcGdoazEzL0tlcm5lbC1CdWcvYmxvYi9tYWluLzA3
-MDJfNi4xNC9CVUclM0ElMjB1bmFibGUlMjB0byUyMGhhbmRsZSUyMGtlcm5lbCUyMHBhZ2luZyUy
-MHJlcXVlc3QlMjBpbiUyMGNvbnN0X2ZvbGlvX2ZsYWdzLzEyMXJlcHJvLnR4dAoKT3VyIHJlcHJv
-ZHVjZXIgdXNlcyBtb3VudHMgYSBjb25zdHJ1Y3RlZCBmaWxlc3lzdGVtIGltYWdlLgogCiBUaGlz
-IG1heSBiZSBhbiBlcnJvciBjb2RlIG1pc3Rha2VubHkgdXNlZCBhcyBhIHBvaW50ZXIgYnVnLCBv
-Y2N1cnJpbmcgYXJvdW5kIGxpbmUgMzA4IG9mIHRoZSBjb2RlOiAxLiBPQ0ZTMiBlcnJvciBoYW5k
-bGluZyBpc3N1ZTogb2NmczJfd3JpdGVfYmVnaW5fbm9sb2NrIHJldHVybnMgLUVOT01FTSAoLTEy
-KSB3aGVuIGl0IGVuY291bnRlcnMgYSBtZW1vcnkgYWxsb2NhdGlvbiBmYWlsdXJlLiAyLiBJbmNv
-cnJlY3QgZXJyb3IgaGFuZGxpbmc6IEluIHRoZSBlcnJvciBoYW5kbGluZyBwYXRoLCBhIGNlcnRh
-aW4gZnVuY3Rpb24gKG1vc3QgbGlrZWx5IG9jZnMyX3VubG9ja19hbmRfZnJlZV9mb2xpb3MpIGlu
-Y29ycmVjdGx5IHBhc3NlZCB0aGUgZXJyb3IgY29kZSAtMTIgYXMgYSB2YWxpZCBmb2xpbyBwb2lu
-dGVyIHRvIGZvbGlvX3VubG9jay4KCldlIGhhdmUgcmVwcm9kdWNlZCB0aGlzIGlzc3VlIHNldmVy
-YWwgdGltZXMgb24gNi4xNCBhZ2Fpbi4KCgoKCgoKSWYgeW91IGZpeCB0aGlzIGlzc3VlLCBwbGVh
-c2UgYWRkIHRoZSBmb2xsb3dpbmcgdGFnIHRvIHRoZSBjb21taXQ6ClJlcG9ydGVkLWJ5OiBLdW4g
-SHUgPGh1azIzQG0uZnVkYW4uZWR1LmNuPiwgSmlhamkgUWluIDxqanRhbjI0QG0uZnVkYW4uZWR1
-LmNuPiwgU2h1b3JhbiBCYWkgPGJhaXNodW9yYW5AaHJiZXUuZWR1LmNuPgoKKHN5ei41LjE1NjAs
-MzExMjQsMik6b2NmczJfd3JpdGVfYmVnaW5fbm9sb2NrOjE3OTggRVJST1I6IHN0YXR1cyA9IC0x
-MgpCVUc6IHVuYWJsZSB0byBoYW5kbGUgcGFnZSBmYXVsdCBmb3IgYWRkcmVzczogZmZmZmZmZmZm
-ZmZmZmZmYwojUEY6IHN1cGVydmlzb3IgcmVhZCBhY2Nlc3MgaW4ga2VybmVsIG1vZGUKI1BGOiBl
-cnJvcl9jb2RlKDB4MDAwMCkgLSBub3QtcHJlc2VudCBwYWdlClBHRCBkZjg0MDY3IFA0RCBkZjg0
-MDY3IFBVRCBkZjg2MDY3IApQTUQgMCAKT29wczogT29wczogMDAwMCBbIzFdIFBSRUVNUFQgU01Q
-IEtBU0FOIE5PUFRJCkNQVTogMiBVSUQ6IDAgUElEOiAzMTEyNCBDb21tOiBzeXouNS4xNTYwIE5v
-dCB0YWludGVkIDYuMTQuMCAjMQpIYXJkd2FyZSBuYW1lOiBRRU1VIFN0YW5kYXJkIFBDIChpNDQw
-RlggKyBQSUlYLCAxOTk2KSwgQklPUyAxLjEzLjAtMXVidW50dTEuMSAwNC8wMS8yMDE0ClJJUDog
-MDAxMDpjb25zdF9mb2xpb19mbGFncy5jb25zdHByb3AuMCsweDI3LzB4NzAKQ29kZTogOTAgOTAg
-OTAgNDEgNTQgNDkgODkgZmMgNTMgZTggNjUgYzMgY2EgZmYgNDkgOGQgN2MgMjQgMDggNDggYjgg
-MDAgMDAgMDAgMDAgMDAgZmMgZmYgZGYgNDggODkgZmEgNDggYzEgZWEgMDMgODAgM2MgMDIgMDAg
-NzUgM2UgPDQ5PiA4YiA1YyAyNCAwOCAzMSBmZiA4MyBlMyAwMSA0OCA4OSBkZSBlOCA3NyBjNSBj
-YSBmZiA0OCA4NSBkYiA3NQpSU1A6IDAwMTg6ZmZmZmM5MDAxMWVlZjY3OCBFRkxBR1M6IDAwMDEw
-MjQ2ClJBWDogZGZmZmZjMDAwMDAwMDAwMCBSQlg6IGZmZmY4ODgwNzlmNTQwMzAgUkNYOiBmZmZm
-ZmZmZjgzOWMwNmY3ClJEWDogMWZmZmZmZmZmZmZmZmZmZiBSU0k6IGZmZmY4ODgwNTliMmE0ODAg
-UkRJOiBmZmZmZmZmZmZmZmZmZmZjClJCUDogZmZmZmZmZmZmZmZmZmZmNCBSMDg6IDAwMDAwMDAw
-MDAwMDAwMDAgUjA5OiBmZmZmZmJmZmYyMGMyZmEzClIxMDogZmZmZmZiZmZmMjBjMmZhMiBSMTE6
-IGZmZmZmZmZmOTA2MTdkMTcgUjEyOiBmZmZmZmZmZmZmZmZmZmY0ClIxMzogMDAwMDAwMDAwMDAw
-MDAwZSBSMTQ6IGRmZmZmYzAwMDAwMDAwMDAgUjE1OiAwMDAwMDAwMDAwMDAwMDAxCkZTOiAgMDAw
-MDdmMmQ4MDVmNjcwMCgwMDAwKSBHUzpmZmZmODg4MDJiOTAwMDAwKDAwMDApIGtubEdTOjAwMDAw
-MDAwMDAwMDAwMDAKQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1
-MDAzMwpDUjI6IGZmZmZmZmZmZmZmZmZmZmMgQ1IzOiAwMDAwMDAwMDQwMzllMDAwIENSNDogMDAw
-MDAwMDAwMDc1MGVmMApQS1JVOiA4MDAwMDAwMApDYWxsIFRyYWNlOgogPFRBU0s+CiBmb2xpb191
-bmxvY2srMHgxNi8weGQwCiBvY2ZzMl91bmxvY2tfYW5kX2ZyZWVfZm9saW9zKzB4OGMvMHgxYjAK
-IG9jZnMyX3dyaXRlX2JlZ2luX25vbG9jaysweDExNWQvMHg0ZjYwCiBvY2ZzMl93cml0ZV9iZWdp
-bisweDFkOS8weDM1MAogZ2VuZXJpY19wZXJmb3JtX3dyaXRlKzB4M2UwLzB4OGMwCiBfX2dlbmVy
-aWNfZmlsZV93cml0ZV9pdGVyKzB4MWY2LzB4MjQwCiBvY2ZzMl9maWxlX3dyaXRlX2l0ZXIrMHhj
-NDQvMHgyMzgwCiB2ZnNfd3JpdGUrMHhiYTIvMHgxMTAwCiBrc3lzX3dyaXRlKzB4MTIyLzB4MjQw
-CiBkb19zeXNjYWxsXzY0KzB4Y2YvMHgyNTAKIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFt
-ZSsweDc3LzB4N2YKUklQOiAwMDMzOjB4N2YyZDgyN2FjYWRkCkNvZGU6IDAyIGI4IGZmIGZmIGZm
-IGZmIGMzIDY2IDBmIDFmIDQ0IDAwIDAwIGYzIDBmIDFlIGZhIDQ4IDg5IGY4IDQ4IDg5IGY3IDQ4
-IDg5IGQ2IDQ4IDg5IGNhIDRkIDg5IGMyIDRkIDg5IGM4IDRjIDhiIDRjIDI0IDA4IDBmIDA1IDw0
-OD4gM2QgMDEgZjAgZmYgZmYgNzMgMDEgYzMgNDggYzcgYzEgYjAgZmYgZmYgZmYgZjcgZDggNjQg
-ODkgMDEgNDgKUlNQOiAwMDJiOjAwMDA3ZjJkODA1ZjViYTggRUZMQUdTOiAwMDAwMDI0NiBPUklH
-X1JBWDogMDAwMDAwMDAwMDAwMDAwMQpSQVg6IGZmZmZmZmZmZmZmZmZmZGEgUkJYOiAwMDAwN2Yy
-ZDgyOWE1ZmEwIFJDWDogMDAwMDdmMmQ4MjdhY2FkZApSRFg6IDAwMDAwMDAwMDAwMDA0NWMgUlNJ
-OiAwMDAwMDAwMDIwMDAwNDAwIFJESTogMDAwMDAwMDAwMDAwMDAwNQpSQlA6IDAwMDA3ZjJkODA1
-ZjVjMDAgUjA4OiAwMDAwMDAwMDAwMDAwMDAwIFIwOTogMDAwMDAwMDAwMDAwMDAwMApSMTA6IDAw
-MDAwMDAwMDAwMDAwMDAgUjExOiAwMDAwMDAwMDAwMDAwMjQ2IFIxMjogMDAwMDAwMDAwMDAwMDAw
-NApSMTM6IDAwMDA3ZjJkODI5YTVmYWMgUjE0OiAwMDAwN2YyZDgyOWE2MDM4IFIxNTogMDAwMDdm
-MmQ4MDVmNWQ0MAogPC9UQVNLPgpNb2R1bGVzIGxpbmtlZCBpbjoKQ1IyOiBmZmZmZmZmZmZmZmZm
-ZmZjCi0tLVsgZW5kIHRyYWNlIDAwMDAwMDAwMDAwMDAwMDAgXS0tLQpSSVA6IDAwMTA6Y29uc3Rf
-Zm9saW9fZmxhZ3MuY29uc3Rwcm9wLjArMHgyNy8weDcwCkNvZGU6IDkwIDkwIDkwIDQxIDU0IDQ5
-IDg5IGZjIDUzIGU4IDY1IGMzIGNhIGZmIDQ5IDhkIDdjIDI0IDA4IDQ4IGI4IDAwIDAwIDAwIDAw
-IDAwIGZjIGZmIGRmIDQ4IDg5IGZhIDQ4IGMxIGVhIDAzIDgwIDNjIDAyIDAwIDc1IDNlIDw0OT4g
-OGIgNWMgMjQgMDggMzEgZmYgODMgZTMgMDEgNDggODkgZGUgZTggNzcgYzUgY2EgZmYgNDggODUg
-ZGIgNzUKUlNQOiAwMDE4OmZmZmZjOTAwMTFlZWY2NzggRUZMQUdTOiAwMDAxMDI0NgpSQVg6IGRm
-ZmZmYzAwMDAwMDAwMDAgUkJYOiBmZmZmODg4MDc5ZjU0MDMwIFJDWDogZmZmZmZmZmY4MzljMDZm
-NwpSRFg6IDFmZmZmZmZmZmZmZmZmZmYgUlNJOiBmZmZmODg4MDU5YjJhNDgwIFJESTogZmZmZmZm
-ZmZmZmZmZmZmYwpSQlA6IGZmZmZmZmZmZmZmZmZmZjQgUjA4OiAwMDAwMDAwMDAwMDAwMDAwIFIw
-OTogZmZmZmZiZmZmMjBjMmZhMwpSMTA6IGZmZmZmYmZmZjIwYzJmYTIgUjExOiBmZmZmZmZmZjkw
-NjE3ZDE3IFIxMjogZmZmZmZmZmZmZmZmZmZmNApSMTM6IDAwMDAwMDAwMDAwMDAwMGUgUjE0OiBk
-ZmZmZmMwMDAwMDAwMDAwIFIxNTogMDAwMDAwMDAwMDAwMDAwMQpGUzogIDAwMDA3ZjJkODA1ZjY3
-MDAoMDAwMCkgR1M6ZmZmZjg4ODAyYjkwMDAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAw
-CkNTOiAgMDAxMCBEUzogMDAwMCBFUzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMKQ1IyOiBm
-ZmZmZmZmZmZmZmZmZmZjIENSMzogMDAwMDAwMDA0MDM5ZTAwMCBDUjQ6IDAwMDAwMDAwMDA3NTBl
-ZjAKUEtSVTogODAwMDAwMDAKLS0tLS0tLS0tLS0tLS0tLQpDb2RlIGRpc2Fzc2VtYmx5IChiZXN0
-IGd1ZXNzKToKICAgMDogOTAgICAgICAgICAgICAgICAgICAgIG5vcAogICAxOiA5MCAgICAgICAg
-ICAgICAgICAgICAgbm9wCiAgIDI6IDkwICAgICAgICAgICAgICAgICAgICBub3AKICAgMzogNDEg
-NTQgICAgICAgICAgICAgICAgcHVzaCAgICVyMTIKICAgNTogNDkgODkgZmMgICAgICAgICAgICAg
-IG1vdiAgICAlcmRpLCVyMTIKICAgODogNTMgICAgICAgICAgICAgICAgICAgIHB1c2ggICAlcmJ4
-CiAgIDk6IGU4IDY1IGMzIGNhIGZmICAgICAgICBjYWxscSAgMHhmZmNhYzM3MwogICBlOiA0OSA4
-ZCA3YyAyNCAwOCAgICAgICAgbGVhICAgIDB4OCglcjEyKSwlcmRpCiAgMTM6IDQ4IGI4IDAwIDAw
-IDAwIDAwIDAwIG1vdmFicyAkMHhkZmZmZmMwMDAwMDAwMDAwLCVyYXgKICAxYTogZmMgZmYgZGYK
-ICAxZDogNDggODkgZmEgICAgICAgICAgICAgIG1vdiAgICAlcmRpLCVyZHgKICAyMDogNDggYzEg
-ZWEgMDMgICAgICAgICAgc2hyICAgICQweDMsJXJkeAogIDI0OiA4MCAzYyAwMiAwMCAgICAgICAg
-ICBjbXBiICAgJDB4MCwoJXJkeCwlcmF4LDEpCiAgMjg6IDc1IDNlICAgICAgICAgICAgICAgIGpu
-ZSAgICAweDY4CiogMmE6IDQ5IDhiIDVjIDI0IDA4ICAgICAgICBtb3YgICAgMHg4KCVyMTIpLCVy
-YnggPC0tIHRyYXBwaW5nIGluc3RydWN0aW9uCiAgMmY6IDMxIGZmICAgICAgICAgICAgICAgIHhv
-ciAgICAlZWRpLCVlZGkKICAzMTogODMgZTMgMDEgICAgICAgICAgICAgIGFuZCAgICAkMHgxLCVl
-YngKICAzNDogNDggODkgZGUgICAgICAgICAgICAgIG1vdiAgICAlcmJ4LCVyc2kKICAzNzogZTgg
-NzcgYzUgY2EgZmYgICAgICAgIGNhbGxxICAweGZmY2FjNWIzCiAgM2M6IDQ4IDg1IGRiICAgICAg
-ICAgICAgICB0ZXN0ICAgJXJieCwlcmJ4CiAgM2Y6IDc1ICAgICAgICAgICAgICAgICAgICAuYnl0
-ZSAweDc1CgoKCnRoYW5rcywKS3VuIEh1Cg==
+Hi,
+
+On Fri, Jul 11, 2025 at 11:33:35AM +0100, Marc Kleine-Budde wrote:
+> On 30.06.2025 09:52:44, Sean Nyekjaer wrote:
+> > Wrap the "msg lost in rxf0" error in m_can_handle_lost_msg() with
+> > a call to net_ratelimit() to prevent flooding the kernel log
+> > with repeated debug messages.
+> >
+> > Fixes: e0d1f4816f2a ("can: m_can: add Bosch M_CAN controller support")
+> > Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> > ---
+> > Changes in v2:
+> > - Changed to dbg msg
+> > - Link to v1: https://lore.kernel.org/r/20250620-mcan_ratelimit-v1-1-e7=
+47ee30f71f@geanix.com
+> > ---
+> >  drivers/net/can/m_can/m_can.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_ca=
+n.c
+> > index 6c656bfdb3235e1f5d6405c49b07b821ddacc1b9..9f43111609d364c01c6df10=
+489fc4708deab9fbb 100644
+> > --- a/drivers/net/can/m_can/m_can.c
+> > +++ b/drivers/net/can/m_can/m_can.c
+> > @@ -665,7 +665,8 @@ static int m_can_handle_lost_msg(struct net_device =
+*dev)
+> >  =09struct can_frame *frame;
+> >  =09u32 timestamp =3D 0;
+> >
+> > -=09netdev_err(dev, "msg lost in rxf0\n");
+> > +=09if (net_ratelimit())
+> > +=09=09netdev_dbg(dev, "msg lost in rxf0\n");
+>=20
+> This has some subtle side effects. Even if debugging is not enabled, you
+> will still get the "... output lines suppressed due to ratelimiting"
+> message, which is IMHO very confusing :)
+
+Indeed yes :)
+
+>=20
+> What about replacing the netdev_err() by netdev_dbg()?
+>=20
+> --- a/drivers/net/can/m_can/m_can.c
+> +++ b/drivers/net/can/m_can/m_can.c
+> @@ -665,7 +665,7 @@ static int m_can_handle_lost_msg(struct net_device *d=
+ev)
+>         struct can_frame *frame;
+>         u32 timestamp =3D 0;
+>=20
+> -       netdev_err(dev, "msg lost in rxf0\n");
+> +       netdev_dbg(dev, "msg lost in rxf0\n");
+>=20
+>         stats->rx_errors++;
+>         stats->rx_over_errors++;
+>=20
+
+Yeah that will do. V3 or?
+
+/Sean
+
 
