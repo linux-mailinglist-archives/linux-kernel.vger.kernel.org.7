@@ -1,682 +1,274 @@
-Return-Path: <linux-kernel+bounces-726698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A94DB01023
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:23:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A524B01027
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65C8D48140A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:23:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BC715A2EC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122DC946F;
-	Fri, 11 Jul 2025 00:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00C6BA50;
+	Fri, 11 Jul 2025 00:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="D9Z+absR"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="friyDxUS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B584A28
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 00:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752193426; cv=none; b=IOp+rBXLe5S8j/O56qEUiHFL+FSnEaDltrCgWb7lFFw4iCaKD+zUKmMU+YL5j0Lv5IF9/VdiHWRR8Nv8CpY4rHiI4yB4aqrMQuGtM7mwz8WoisN1V7KU7oQ83RhaprlVreNUynb7SKPk0NMbRzI3vh88AkXawks4G4VjZsPA/dI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752193426; c=relaxed/simple;
-	bh=n8H4a1S5PnlnPNlgs3zqAFYwZbnlypbXL9Hiei6TzZ4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C4iNzFYIptg15XLz0moHpNzKEHVgnMWy4RM8J4y16KG2UWcGVQflpB9bPTqm2qb13+70YQmYoSqB8gn6Ok50HZfN5CyMGmUDXLFKtF6KeraucoT+fTRJ1kfdF2ACHRP7iJyr/Sjco/J9+9wEZM3qbwAZxa1yJChDOJYxi1xV+WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=D9Z+absR; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-235ef29524fso1864955ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 17:23:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1752193422; x=1752798222; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VpKL4Lr9lJYqhz/bcIZyuWD+5Yiwyuqv6Dq41oGuJ5w=;
-        b=D9Z+absR2hAIRz9HuYsJsOntt9nxrmoKwR1q9lkYnssc8e0XpwbYnJr6pv4lxZDbiF
-         febgA4pkUXiBfvEeMoxqHlavMCeQXor9r52BJiZ0fRRDy/dROea+dFnq+hYjy7n/XWTo
-         l6JeM/9QUwBRbR0ONrLUWK7NVguCkavPl9gJDFwyAWT6FVjcbs71xtx3aT1estblQZaw
-         5/QqOOveCazP18I+xzHu5Zp1OIoPAdNBdJu4k05FCTDSdbVCmO69x+jMwdN6itBsdDJF
-         fSgpzJ2BDTDvm3gP4ox8PR3b0KxvI57+OYPpZrSZLGulKQWfKySeH55SJB5HWuG2adHX
-         kNAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752193422; x=1752798222;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VpKL4Lr9lJYqhz/bcIZyuWD+5Yiwyuqv6Dq41oGuJ5w=;
-        b=IabZbw2xaXYsYSLxFBvws5Jv/G3yghDl3YJaaftc1MxB+EWxO7WAUxDSTeC8jRURnG
-         GlBZQRHi69ap9bdUk4pNM0/SgSIH0JSj5cQBiFJvdSWjcPT6/bedMGsAHcj/5tatxrS2
-         5+epKzwyWL6KImQLLNXtZmeiMtnRE+tRPdrDoVgLmzDFXE1Ypv9s4Otw4FobjyB69aTG
-         E5P4zPrPfujY+6lJyHxcO9xGbIcYMsaRUUknsGGVkmbNYIMKsZe/PdslLIFNUd57oSOd
-         4ZGmOzoWGWxh7OTdE41+8r8DcuzT8r2+oWKMa1vbuJg3GW4Yuj6968SAEK0y9Mvn9HqZ
-         b6Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtA8LNFJLsbNqleaqy890o9urTFaRe5vHGKWISLnWDCzADIKSCA9E4Mpw5bernuxEG9lka61WnBxhQ7QY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg60sGwKt54ygq7YFLNqgPPvdXh6xVTbNgd3gcdENYtLMMFpt6
-	BFCBHd82rcEmIPlQxbeg3IzoqGluI68nNr7kGAeH6TVVk9e00cl7yirRy6d1YcKp95M=
-X-Gm-Gg: ASbGncuqe7F255k15fBmysJtPxzFzzsQ+0ZPYXjPvlllTvqAVbBu1WHf/nynMhJWYpq
-	s559P+ABja9jlZlDikb4BZZOF8W/IxTIRDTElURyj8iDcdBpt4bFTmk9Csw833OHFb1rZ56ck/q
-	7193I23mdUzyNoBrLftwZT8i1ekGcgl3NL9ul2uG1S944seJ3EkunJ1H8JYIjNstbLudLwntkSX
-	3BQE7kqwDy+7TrTHQ/fnl+MnfYazpPh1+FYelpppU1oA/usfl/Ak98paf04rNVk3unZ02Q6tmdu
-	G5oFOvJG1LgOaTakNb76pZ5ypykGnN2y2njfrXnijSx8yczOhA62FZEMc3e7XF+NkxZ+oP0m+dp
-	FJhIld2q8LRnB5UrT0lVuFNxA7acJklZ9L5HT7dH3lg==
-X-Google-Smtp-Source: AGHT+IGe7tsbgRE+IJwc7kAz6u5dCKZoWA5wX6lbInccD12yyxOY+GM8OVHbAP/fh3Q6DuYbjuJ5mQ==
-X-Received: by 2002:a17:903:41c4:b0:235:f1e4:3381 with SMTP id d9443c01a7336-23dede4e7b5mr5325275ad.8.1752193422279;
-        Thu, 10 Jul 2025 17:23:42 -0700 (PDT)
-Received: from dev-cachen2.dev.purestorage.com ([2620:125:9007:640:ffff::5458])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-23de4284898sm33601555ad.24.2025.07.10.17.23.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 17:23:41 -0700 (PDT)
-From: Casey Chen <cachen@purestorage.com>
-To: akpm@linux-foundation.org,
-	surenb@google.com
-Cc: kent.overstreet@linux.dev,
-	corbet@lwn.net,
-	dennis@kernel.org,
-	tj@kernel.org,
-	cl@gentwo.org,
-	vbabka@suse.cz,
-	mhocko@suse.com,
-	jackmanb@google.com,
-	hannes@cmpxchg.org,
-	ziy@nvidia.com,
-	rientjes@google.com,
-	roman.gushchin@linux.dev,
-	harry.yoo@oracle.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	yzhong@purestorage.com,
-	souravpanda@google.com,
-	00107082@163.com,
-	Casey Chen <cachen@purestorage.com>
-Subject: [PATCH v3] alloc_tag: add per-NUMA node stats
-Date: Thu, 10 Jul 2025 18:23:22 -0600
-Message-Id: <20250711002322.1303421-1-cachen@purestorage.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A6638B;
+	Fri, 11 Jul 2025 00:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752193515; cv=fail; b=e9sSAEeN8orzyLw01DfjQN5NaW4f17tC2lyUkAmr7wI9HJTxip2fnKsECBloKXQtd008lw/p/Qfcz25e3LdpVRTOLCMs2nGE2NPviyBLM4cyB4OHmvWPQMW/IzFJlS1oFFmZJ/MkCUoVJjVf84B8DGVUuUTPGqIONjVXAOcFtVM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752193515; c=relaxed/simple;
+	bh=Z9egoU5PSqkeI2cJHzgLcJr98ZkL3tjkZauVbVYC/TY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ljDKfNpD+pJ2U/LXGM3aENLm8AKsN0+2bQYVznQlL5AxoGsKB1bj+TjYNZbBXVDP+PytnJNZO5o9mUAD5EWhRjKceXXiq6uBynwU3DfDr6kKZhfWLa6hi/zVBW00gtjs9U3gRObSDcMF2OJP7OHi2tU4HFMjnBKq1ryIpbILJiI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=friyDxUS; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752193513; x=1783729513;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=Z9egoU5PSqkeI2cJHzgLcJr98ZkL3tjkZauVbVYC/TY=;
+  b=friyDxUSOYewaVTvpCcQNtnXLp1WMYMiiMi9fIIx0xCo3mrNNrzQQgIz
+   F7AHKiW/hXAO9P7XazZJxUC8B4B9VKBPHZhta7xZ2HLMo9VMKQdc1yMbt
+   sEXa9O6iuCCRk2n0pqOwLqshDZ+3mPtWrWZMtsEhmhneNvxqyBEnA10B4
+   D2fzlvwHXu/8rIpQE1OcjpYlyCGufmTwy9oJJgvQJCW4LXxE1uwEwsbpw
+   u80hxl7ILnpVtgLeDFYMECPJPYj5BVRfNmbsmN2Ed0JGCgjF7l2TM+agy
+   yQyUPI1AO11R0Q26s3A7//OGqjRxyW7My41IUozhjUSar1T35bZKtPBwj
+   A==;
+X-CSE-ConnectionGUID: 2cpEOcfqQy+jBhjk0OIq5A==
+X-CSE-MsgGUID: 7xa4vAl1TbOqEgWnlb5IpA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="53707599"
+X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
+   d="scan'208";a="53707599"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 17:25:13 -0700
+X-CSE-ConnectionGUID: BsVaFc/dSlKjVPtl32rTHA==
+X-CSE-MsgGUID: L/EPQX7ySPCW2lJ42wP1ow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
+   d="scan'208";a="156953121"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 17:25:12 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 10 Jul 2025 17:25:11 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Thu, 10 Jul 2025 17:25:11 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (40.107.96.81) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 10 Jul 2025 17:25:10 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WBI87qlIm9MsREgtJB9t1jg4sbJ9x9aH/NhBcDeiTISfGq4QiWlz69WQxAgxVSJFSBv9+2/GhMD0GiC96d29zd2uhpftsnmUhmwfZtIYzv3U+4wc7AMCmqgPdfpacTZbZ6S9o8zS6fIduojaGpqEH6oM01MZlSkumWUcEMAMrv2g+G9YmhFqc86lKGPZDtjzw/JxatEozmqneKXSWaYU9Jhtojq5Y4Am8kgrzwnc+Ud9uAzdjUVa2ZsXLd6vWWP1CtEf/ZeFEXSKNtRUFLusXB1R14PWUHiNuYr4BazIQx/cnuimv3M0IH7ctErpWch69asbIqK6Ipljwxx+qcglDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Z9egoU5PSqkeI2cJHzgLcJr98ZkL3tjkZauVbVYC/TY=;
+ b=orJ6Olniy0tIk0NSEfm/EWJs+taanqX4w5ji58H8/ZwGFoVcFEpyuhn8fBlKBJFU9V4AbPUtFnQHOZYHgUhfQ8s5SbTlA7zkTZuJs8lsRsUXdMZ/Jq5RkEb212QpB0fRhZ5qU+i1JQM7lxWKM8ri0uMOfNDnf2s/Ubt/LfSKZM6kI1Zow956W/KTWLLrgKUGb7DPIavxaojgnykzJ69RlbWvNIQZ9y0TwykNfBEXqLh/edbb8HWHLR1S5irSimyk1zwLS9dtiNgFSr3QUAsNqALXjHVnF1kbJ2jk9D3f89wuo7wOvk7nKBjse6pOanAtsZ06pzHq8AT8zbqHpCocyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5525.namprd11.prod.outlook.com (2603:10b6:208:31f::10)
+ by CH3PR11MB7723.namprd11.prod.outlook.com (2603:10b6:610:127::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.29; Fri, 11 Jul
+ 2025 00:24:26 +0000
+Received: from BL1PR11MB5525.namprd11.prod.outlook.com
+ ([fe80::1a2f:c489:24a5:da66]) by BL1PR11MB5525.namprd11.prod.outlook.com
+ ([fe80::1a2f:c489:24a5:da66%5]) with mapi id 15.20.8901.023; Fri, 11 Jul 2025
+ 00:24:26 +0000
+From: "Huang, Kai" <kai.huang@intel.com>
+To: "seanjc@google.com" <seanjc@google.com>, "Gao, Chao" <chao.gao@intel.com>
+CC: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "bp@alien8.de"
+	<bp@alien8.de>, "Li, Xiaoyao" <xiaoyao.li@intel.com>, "nikunj@amd.com"
+	<nikunj@amd.com>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] KVM: x86: Reject KVM_SET_TSC_KHZ VM ioctl when vCPU
+ has been created
+Thread-Topic: [PATCH 2/2] KVM: x86: Reject KVM_SET_TSC_KHZ VM ioctl when vCPU
+ has been created
+Thread-Index: AQHb8JJNsvqII3I3Gk2c0fgebVez6LQpd12AgABZx4CAAiiBAIAAGYIA
+Date: Fri, 11 Jul 2025 00:24:26 +0000
+Message-ID: <2fa327b84b56c1abe00c4f713412bace722de44c.camel@intel.com>
+References: <cover.1752038725.git.kai.huang@intel.com>
+		 <1eaa9ba08d383a7db785491a9bdf667e780a76cc.1752038726.git.kai.huang@intel.com>
+		 <aG4ph7gNK4o3+04i@intel.com> <aG501qKTDjmcLEyV@google.com>
+	 <78614df5fad7b1deb291501c9b6db7be81b0a157.camel@intel.com>
+In-Reply-To: <78614df5fad7b1deb291501c9b6db7be81b0a157.camel@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5525:EE_|CH3PR11MB7723:EE_
+x-ms-office365-filtering-correlation-id: 0ee57486-1cb7-4801-b0a3-08ddc0114b19
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?SXovQU9VOUp4ZldrTmlzTlpmSXYxNE83Y3RTczhEMDY2V2Vndlp4ajR5Yzkv?=
+ =?utf-8?B?VHlYamk0a0ErenJEK2xlbSt3OElCSVk0dE1YTlU5bTdHd3lZRmhTZFBTT1JJ?=
+ =?utf-8?B?NjRVbHlBYmJ6TDRFMXR5dkZQcHVnVW12TjZPSy8xZ3NBd3AzbXEvdEtWTlJS?=
+ =?utf-8?B?Mk9yN0FHTXZJdVZpOWExT1p3aVh3RmNhaXBUQUhJVFp6akFlam16dVlFaUZX?=
+ =?utf-8?B?cytmVWd0RDFqN1M1MUkxOGkyWnh6N2t5UFBERzJtQkFaQ2d5dkR0YzhwZUVV?=
+ =?utf-8?B?K3N4ZUtscFNyMitjZTNLNTJWcEczcC9xbzZqdkcwekl4R0tqcTVlMVROQlI2?=
+ =?utf-8?B?MEE3OXpPMVNibk51d2tEM3EwaWZMWVJxWGRMWDkwWjhmRzEwenpsVWVQeTIy?=
+ =?utf-8?B?NWJDTXBvTG4raW1VUEwrMnpZU0Vrd09yaEVMQXJHcy9HZVA3YjJUS3dnbHdM?=
+ =?utf-8?B?NTQrSXh1dlUrMkJaeUhsc2tMME0vbFJuVFRZVHBpaGNFQ1NmaTluVm1qalNa?=
+ =?utf-8?B?TnJXZDRaREc0cHNYY1ZudVZpTWJHQ3FwcCtnMHdBa3V2eS85dU85a0M1TFJ0?=
+ =?utf-8?B?RW1tSzQ4K0d0MVZBRUZ4eWxCa2pIYTh1N2FhZno4NzZVQUwveVBxNDRKRlJV?=
+ =?utf-8?B?ak1yRWM1MVhYQWtyOVpnVklqU2pheTRjZXJhSWFZbCtCL08rNENkTnYvVTAy?=
+ =?utf-8?B?VlRsMGZ0WjQ1WE9abm9hSFVXSndkNnRpaGR4eVREUE8yUGh6bTdEU0NEQzZL?=
+ =?utf-8?B?d3I4akcxeTFkNk9yb2R5OXRVQmhsdTh5dHlGVFRuVm4rWDBIeHQzMHRlOGxs?=
+ =?utf-8?B?L2hsdHd3czhhekY3eGpOclJJa1VDaUlvYWxIOHRDT1NsMDRQU3Q4SVcva3hw?=
+ =?utf-8?B?amFzQU4wYzJIMXZSdUNCVU9OcWc1YzZvRWdHdXBtd2UxUm9Wcm5QR2NHaFFm?=
+ =?utf-8?B?OXlRekxycmozTXBwUXphcFpoa1RlUFFHejUwRVZsVWF1T2pOZlBzc3RReGpP?=
+ =?utf-8?B?TlJMbU5zTmFnKzFWTitJa0lvWVdxMVVucmEwYmhEU3pIeWtxUXhZaVpRVVlJ?=
+ =?utf-8?B?Mmd4cjdjQzBKUjhJdkhWK1Juc2RFNmt4aW5oN2dORXhuTUhpNkVVdVRUWkpS?=
+ =?utf-8?B?OWtkYjJITXI4T1pybHZsb1lMVWVSdFJqcWx0T3BUZHBNY2JiK1dlWEtEbEhi?=
+ =?utf-8?B?dFVtV0Zid2NYbG5TZk81U2txd3VGaGhqd3V0Z25QcGFCbE0yaVhhNHI1SVdS?=
+ =?utf-8?B?NThtOHlOVHYza2tHZURJb1NLWDRqRzk5Y05PWFZyVmxiMkJJTk9CbitSd0g1?=
+ =?utf-8?B?Y1pRMHNYTDljenc3bjgvMWRoSExDd0tGTHN1dlJkTnRuVmFLZzJ2YVJkSElo?=
+ =?utf-8?B?VW5LeUZBbjQzZzJGN3V4aEJpNGxjTDZEREMxMVlSTzZjZndEbXd3VWNCcGRn?=
+ =?utf-8?B?blJYT2JOR2ovcHdoeWIvbk9ZdEh2VWpkWHJ0Yk02RUpYaEhDQXpZeVZnTXdW?=
+ =?utf-8?B?Z2l2NGsvaVdLaUJ0NnN2ZFpsV244bW4zRjlaODhPSWRKMkljVUJFVXBTT0hz?=
+ =?utf-8?B?QjIzOWNVbzYvZ2ZDbVphZ0dMajZEenVlS3ZDRkZKRXpGM2hYQ1JINkxWZ25Z?=
+ =?utf-8?B?QkFFamliMi9FdFNrSWJZRDV6ZHlGUUVvc2FITDNpbVd1cGJmZ09wOFk4SjFM?=
+ =?utf-8?B?eG9vTXVoRlFwZXcvSys2M3FJUU51NGpFYXZOYWpGeUppVHdoaFVKWHZCNG5B?=
+ =?utf-8?B?a20vUVJsRUJFc1dvVFIzS3dxcFIwVTN6ajJ5UGFsNGZLZW9qakREazYwelFG?=
+ =?utf-8?B?bWtWZ0MxclZpTHBJSWR4L0t1VmYwV2lzYkxndlNKZXo1bjcwMUFZNDd3T1pR?=
+ =?utf-8?B?SmdQL3p5ZzBMa1piaW9QVU9Rb0RHc2hZMUpESGJaLzlvQVNoSmt4QVJwcUxM?=
+ =?utf-8?B?NTlVUjZyeFlvZUdIZlU2SHJGRlc0SmtGMHNkMnVidi8wWUV2QzRqa0J5Z2Vj?=
+ =?utf-8?Q?0dBwk1vq1oPbIQQ0QhcPK3PfIYfrTo=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5525.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NmVvSmZQNmFYNHRmRzljb21MRnRxenFwS3dQcjB6TzZUancrWWp0OG05VFJz?=
+ =?utf-8?B?RjJYUk1VNzBPVlVGYk1rdDdLMXVCV0xBQU5QSC84bVRQZHVCSVFhZ3VEVEFI?=
+ =?utf-8?B?djg4aVhBSXJad0RZczlwZUxseHkyWVZjUk1TNEYzYnI0OU9kNExVTVI1Kzcz?=
+ =?utf-8?B?bk4wSXcycWI0bmpPdlZhTkJ3ZG10MFc0aTg5OE1GTlQyL0txa1RBOTZDTGp3?=
+ =?utf-8?B?LzNhZUdEcEh1SVJsNnBHUEtRWjdSaFQwclBxOHoxZWhkMjR0S3piVUtKWUxB?=
+ =?utf-8?B?Q2V6RFJWUDQ5Y0NkNFVGaExkVVlNR1ViaUZCT1hhSnFUQXdsVUpENzdkVy9t?=
+ =?utf-8?B?UTNvblZEeEE2cTVUS2NQdy9YSlNqcndJUkQvVU9QalUwZzdyZ0NKejZsOWhU?=
+ =?utf-8?B?WkJ1TjkzVE1xNGUwUldqc2tQZzJpU09JeXBaZ05jUUFTTTZwM1ZIR1J3VTFS?=
+ =?utf-8?B?TWJBU0JUejViSngwUVNOYks4RGxPWGRJQVpBZTgyT1UvaHExbVM0Uklkd1lV?=
+ =?utf-8?B?V0ZxaXNJd281ZFlEWC9vcjdFNlpPY1FPZlVScnpOYXpNOG1tT3JpbXhubzIx?=
+ =?utf-8?B?SlBXbURyNzNULy9TK2x1dGdJbXNOZUUvTmsrR09OK0pncElMZUhtNUdHYXlM?=
+ =?utf-8?B?WFV0ZTA5WktSYW10SHMxdk13L0Y1QzNvTC96WmlnL1pyQ0NnazFNcU13OEgx?=
+ =?utf-8?B?QXJ5Y01tTlhWRzBCYW02SGZjYVRGYXR5aHJ6d2c1cUpoT3NkOGJZS1FEbjZW?=
+ =?utf-8?B?ckhINmhwSklQOEc1UjVFSnNHVTBSWjF4TEhTSFBiNW5PcXlmbWFUL2FJdFhh?=
+ =?utf-8?B?aGhVYk9IQjlkSHVlMjRVekU5NlNUODJQMGFLZytnb05vWXR3cFFNWmRtc2x0?=
+ =?utf-8?B?YzFBMTlBT1pibGVCU0lpUnBMWTdjalRmWHQ1ZytiWHFXN3pXbXgzQkl6d2Zh?=
+ =?utf-8?B?VEg3TXl5aEdFcFY4YzVPMmwzcEpxc1kxWDRmZEpnY0VBQzVRb3k4S3hybkRx?=
+ =?utf-8?B?T3lHQjNtbTFaeFlyekhCTnVJUHBkSTYwTllsOTFTL0EvWGtZUmlKYWh4RXJ6?=
+ =?utf-8?B?NzhINVFodG16NUs5clprT2tsdlJoOSt1WFVTeWg3RjZkRjZ6UXV0VldrOXY3?=
+ =?utf-8?B?OWFmYkdPcXFyUTVxMGRvdzB3N055cVJVdXhsYk51MnVKNjJGM2xQMjVNdTJk?=
+ =?utf-8?B?K1VvNHJiVnIzeXMyKzhmNXdSY0lxbitLR3ZZSjF1blRjQzFFdTNWZkJSV2oy?=
+ =?utf-8?B?bmpicXIvZDBUOGtuTjJOYVc1RzhQV2VYYW5Ublh1dit0RjNTWGk5bmVFUmY2?=
+ =?utf-8?B?bkV1SHo1bnE3Z0tSWHpEQUFLUlNJS0RRbWJsN3U0VDdjSzMzQzJsS3h0NXlH?=
+ =?utf-8?B?RHp2MjZqNFdNL25GclNrQU4yclFvSEFaZFdFbTZ6TDc2dTROblR5L0NBZ0hM?=
+ =?utf-8?B?L1lJM1JzdG41N2VoM3NHZit6MVFxc1hTRnp4MndYTGk1Nm5GZmZpMWtPNFpo?=
+ =?utf-8?B?UzE4bnJmVUVib3J6K0cxR0VNSzErT2xoTStpR3N6Um0wanV1WkkyQXZ3WHdM?=
+ =?utf-8?B?bVEzSUhxN1NBQllPcjQzR0dPemVoVFhHVVp2elppc251VmkwSmpLWG8xSCtv?=
+ =?utf-8?B?bmJCV24wTy9GVEdkRUpRYTFuZ1hBNTRCcWE4TXlrVUtmL0NCUmJUcXJGY2o4?=
+ =?utf-8?B?Sm80am02a1NKWTBhWlhYOW80TTNGeHdTSEU4blU2SWpla2dqcXVmaVplQVJP?=
+ =?utf-8?B?ZFIvNzhuSkNxTWVKZll2ZFR6dTNxQ0VpK0Fsa1dsWExYdjB1QkVjY1Bzenc1?=
+ =?utf-8?B?Um96di9ZN3d2UWNxZ3h5cmVlOEtXWXZpcXVnR1RQcTA5NHVleElzbVhYVTg4?=
+ =?utf-8?B?ZFZqU2ZSRzZHZXVKRjdPdWd6MzNzSXhuaUZhYzdYVERDZFlScHdQbzk2TDRw?=
+ =?utf-8?B?ZDhNRWlBS2xEZG9kbVZmK2dhNW5NSi9oOUFkZ1M4Q3NIbU9DUWV4YXhxNlp4?=
+ =?utf-8?B?dDBGM1RGVjhCN1UrY1F6QnZPQ25kRmpCVThvY2FTU055dTg4b21ZdzlMY0sv?=
+ =?utf-8?B?VXdGYkR1QlpOSnEvelJ5M09pR3dKM3pTMFp4TU1jRnFkeFpWVE8wZi8zSkIz?=
+ =?utf-8?Q?2pVsXhBVMAxaYP/OAf/79HCRE?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2023E5C81A28EC4FA625DA3CDB9A39EE@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5525.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ee57486-1cb7-4801-b0a3-08ddc0114b19
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jul 2025 00:24:26.2808
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: y7TkPLPCh3aKiotTXqypwUhZDYJFoVmTIuUB8CYz0PZmRU87hsJxIDLKVj6mEeIxy3A5pNVYf9BL8ifY3HMHpA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7723
+X-OriginatorOrg: intel.com
 
-This patch adds per-NUMA node breakdown of memory allocation,
-enabling more precise visibility into memory usage patterns across nodes.
-It is particularly valuable in cloud environments,
-where tracking asymmetric memory usage and identifying NUMA imbalances
-down to the allocation caller helps optimize memory efficiency, avoid
-CPU stranding, and improve system responsiveness under memory pressure.
-
-As implementation, it adds per-NUMA node statistics in /proc/allocinfo.
-Previously, each alloc_tag had a single set of counters (bytes and
-calls), aggregated across all CPUs. With this change, each CPU can
-maintain separate counters for each NUMA node, allowing finer-grained
-memory allocation profiling.
-
-This feature is controlled by the new
-CONFIG_MEM_ALLOC_PROFILING_PER_NUMA_STATS option:
-
-* When enabled (=y), the output includes per-node statistics following
-  the total bytes/calls:
-
-<size> <calls> <tag info>
-...
-315456       9858     mm/dmapool.c:338 func:pool_alloc_page
-        nid0     94912        2966
-        nid1     220544       6892
-7680         60       mm/dmapool.c:254 func:dma_pool_create
-        nid0     4224         33
-        nid1     3456         27
-
-* When disabled (=n), the output remains unchanged:
-<size> <calls> <tag info>
-...
-315456       9858     mm/dmapool.c:338 func:pool_alloc_page
-7680         60       mm/dmapool.c:254 func:dma_pool_create
-
-To minimize memory overhead, per-NUMA stats counters are dynamically
-allocated using the percpu allocator. PERCPU_DYNAMIC_RESERVE has been
-increased to ensure sufficient space for in-kernel alloc_tag counters.
-
-For in-kernel alloc_tag instances, pcpu_alloc_noprof() is used to
-allocate counters. These allocations are excluded from the profiling
-statistics themselves.
-
-Link: https://lore.kernel.org/all/20250610233053.973796-1-cachen@purestorage.com
-Link: https://lore.kernel.org/all/20250530003944.2929392-1-cachen@purestorage.com
-Signed-off-by: Casey Chen <cachen@purestorage.com>
-Reviewed-by: Yuanyuan Zhong <yzhong@purestorage.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Sourav Panda <souravpanda@google.com>
----
- Documentation/mm/allocation-profiling.rst |  3 ++
- include/linux/alloc_tag.h                 | 52 ++++++++++++++++------
- include/linux/codetag.h                   |  4 ++
- include/linux/percpu.h                    |  2 +-
- lib/Kconfig.debug                         |  7 +++
- lib/alloc_tag.c                           | 54 ++++++++++++++++++++---
- mm/page_alloc.c                           | 35 ++++++++-------
- mm/percpu.c                               |  8 +++-
- mm/show_mem.c                             | 25 ++++++++---
- mm/slub.c                                 | 11 +++--
- 10 files changed, 150 insertions(+), 51 deletions(-)
-
-diff --git a/Documentation/mm/allocation-profiling.rst b/Documentation/mm/allocation-profiling.rst
-index 316311240e6a..13d1d0cb91bf 100644
---- a/Documentation/mm/allocation-profiling.rst
-+++ b/Documentation/mm/allocation-profiling.rst
-@@ -17,6 +17,9 @@ kconfig options:
-   adds warnings for allocations that weren't accounted because of a
-   missing annotation
- 
-+- CONFIG_MEM_ALLOC_PROFILING_PER_NUMA_STATS
-+  adds memory allocation profiling stats for each numa node, off by default.
-+
- Boot parameter:
-   sysctl.vm.mem_profiling={0|1|never}[,compressed]
- 
-diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
-index 9ef2633e2c08..f714f1a436ec 100644
---- a/include/linux/alloc_tag.h
-+++ b/include/linux/alloc_tag.h
-@@ -15,6 +15,12 @@
- #include <linux/static_key.h>
- #include <linux/irqflags.h>
- 
-+#ifdef CONFIG_MEM_ALLOC_PROFILING_PER_NUMA_STATS
-+#define ALLOC_TAG_NUM_NODES num_possible_nodes()
-+#else
-+#define ALLOC_TAG_NUM_NODES 1
-+#endif
-+
- struct alloc_tag_counters {
- 	u64 bytes;
- 	u64 calls;
-@@ -134,16 +140,33 @@ static inline bool mem_alloc_profiling_enabled(void)
- 				   &mem_alloc_profiling_key);
- }
- 
-+static inline struct alloc_tag_counters alloc_tag_read_nid(struct alloc_tag *tag, int nid)
-+{
-+	struct alloc_tag_counters v = { 0, 0 };
-+	struct alloc_tag_counters *counters;
-+	int cpu;
-+
-+	for_each_possible_cpu(cpu) {
-+		counters = per_cpu_ptr(tag->counters, cpu);
-+		v.bytes += counters[nid].bytes;
-+		v.calls += counters[nid].calls;
-+	}
-+
-+	return v;
-+}
-+
- static inline struct alloc_tag_counters alloc_tag_read(struct alloc_tag *tag)
- {
- 	struct alloc_tag_counters v = { 0, 0 };
--	struct alloc_tag_counters *counter;
-+	struct alloc_tag_counters *counters;
- 	int cpu;
- 
- 	for_each_possible_cpu(cpu) {
--		counter = per_cpu_ptr(tag->counters, cpu);
--		v.bytes += counter->bytes;
--		v.calls += counter->calls;
-+		counters = per_cpu_ptr(tag->counters, cpu);
-+		for (int nid = 0; nid < ALLOC_TAG_NUM_NODES; nid++) {
-+			v.bytes += counters[nid].bytes;
-+			v.calls += counters[nid].calls;
-+		}
- 	}
- 
- 	return v;
-@@ -179,7 +202,7 @@ static inline bool __alloc_tag_ref_set(union codetag_ref *ref, struct alloc_tag
- 	return true;
- }
- 
--static inline bool alloc_tag_ref_set(union codetag_ref *ref, struct alloc_tag *tag)
-+static inline bool alloc_tag_ref_set(union codetag_ref *ref, struct alloc_tag *tag, int nid)
- {
- 	if (unlikely(!__alloc_tag_ref_set(ref, tag)))
- 		return false;
-@@ -190,17 +213,18 @@ static inline bool alloc_tag_ref_set(union codetag_ref *ref, struct alloc_tag *t
- 	 * Each new reference for every sub-allocation needs to increment call
- 	 * counter because when we free each part the counter will be decremented.
- 	 */
--	this_cpu_inc(tag->counters->calls);
-+	this_cpu_inc(tag->counters[nid].calls);
- 	return true;
- }
- 
--static inline void alloc_tag_add(union codetag_ref *ref, struct alloc_tag *tag, size_t bytes)
-+static inline void alloc_tag_add(union codetag_ref *ref, struct alloc_tag *tag,
-+				 int nid, size_t bytes)
- {
--	if (likely(alloc_tag_ref_set(ref, tag)))
--		this_cpu_add(tag->counters->bytes, bytes);
-+	if (likely(alloc_tag_ref_set(ref, tag, nid)))
-+		this_cpu_add(tag->counters[nid].bytes, bytes);
- }
- 
--static inline void alloc_tag_sub(union codetag_ref *ref, size_t bytes)
-+static inline void alloc_tag_sub(union codetag_ref *ref, int nid, size_t bytes)
- {
- 	struct alloc_tag *tag;
- 
-@@ -215,8 +239,8 @@ static inline void alloc_tag_sub(union codetag_ref *ref, size_t bytes)
- 
- 	tag = ct_to_alloc_tag(ref->ct);
- 
--	this_cpu_sub(tag->counters->bytes, bytes);
--	this_cpu_dec(tag->counters->calls);
-+	this_cpu_sub(tag->counters[nid].bytes, bytes);
-+	this_cpu_dec(tag->counters[nid].calls);
- 
- 	ref->ct = NULL;
- }
-@@ -228,8 +252,8 @@ static inline void alloc_tag_sub(union codetag_ref *ref, size_t bytes)
- #define DEFINE_ALLOC_TAG(_alloc_tag)
- static inline bool mem_alloc_profiling_enabled(void) { return false; }
- static inline void alloc_tag_add(union codetag_ref *ref, struct alloc_tag *tag,
--				 size_t bytes) {}
--static inline void alloc_tag_sub(union codetag_ref *ref, size_t bytes) {}
-+				 int nid, size_t bytes) {}
-+static inline void alloc_tag_sub(union codetag_ref *ref, int nid, size_t bytes) {}
- #define alloc_tag_record(p)	do {} while (0)
- 
- #endif /* CONFIG_MEM_ALLOC_PROFILING */
-diff --git a/include/linux/codetag.h b/include/linux/codetag.h
-index 457ed8fd3214..35b314b36633 100644
---- a/include/linux/codetag.h
-+++ b/include/linux/codetag.h
-@@ -16,6 +16,10 @@ struct module;
- #define CODETAG_SECTION_START_PREFIX	"__start_"
- #define CODETAG_SECTION_STOP_PREFIX	"__stop_"
- 
-+enum codetag_flags {
-+	CODETAG_PERCPU_ALLOC	= (1 << 0), /* codetag tracking percpu allocation */
-+};
-+
- /*
-  * An instance of this structure is created in a special ELF section at every
-  * code location being tagged.  At runtime, the special section is treated as
-diff --git a/include/linux/percpu.h b/include/linux/percpu.h
-index 85bf8dd9f087..d92c27fbcd0d 100644
---- a/include/linux/percpu.h
-+++ b/include/linux/percpu.h
-@@ -43,7 +43,7 @@
- # define PERCPU_DYNAMIC_SIZE_SHIFT      12
- #endif /* LOCKDEP and PAGE_SIZE > 4KiB */
- #else
--#define PERCPU_DYNAMIC_SIZE_SHIFT      10
-+#define PERCPU_DYNAMIC_SIZE_SHIFT      13
- #endif
- 
- /*
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index ebe33181b6e6..b2a35cc78635 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1037,6 +1037,13 @@ config MEM_ALLOC_PROFILING_DEBUG
- 	  Adds warnings with helpful error messages for memory allocation
- 	  profiling.
- 
-+config MEM_ALLOC_PROFILING_PER_NUMA_STATS
-+	bool "Memory allocation profiling per-NUMA stats"
-+	default n
-+	depends on MEM_ALLOC_PROFILING
-+	help
-+	  Display allocation stats on every NUMA node.
-+
- source "lib/Kconfig.kasan"
- source "lib/Kconfig.kfence"
- source "lib/Kconfig.kmsan"
-diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-index e9b33848700a..3b170847f547 100644
---- a/lib/alloc_tag.c
-+++ b/lib/alloc_tag.c
-@@ -40,6 +40,9 @@ struct alloc_tag_kernel_section kernel_tags = { NULL, 0 };
- unsigned long alloc_tag_ref_mask;
- int alloc_tag_ref_offs;
- 
-+/* Total size of all alloc_tag_counters of each CPU */
-+static unsigned long pcpu_counters_size;
-+
- struct allocinfo_private {
- 	struct codetag_iterator iter;
- 	bool print_header;
-@@ -81,7 +84,7 @@ static void print_allocinfo_header(struct seq_buf *buf)
- {
- 	/* Output format version, so we can change it. */
- 	seq_buf_printf(buf, "allocinfo - version: 1.0\n");
--	seq_buf_printf(buf, "#     <size>  <calls> <tag info>\n");
-+	seq_buf_printf(buf, "<size> <calls> <tag info>\n");
- }
- 
- static void alloc_tag_to_text(struct seq_buf *out, struct codetag *ct)
-@@ -90,12 +93,32 @@ static void alloc_tag_to_text(struct seq_buf *out, struct codetag *ct)
- 	struct alloc_tag_counters counter = alloc_tag_read(tag);
- 	s64 bytes = counter.bytes;
- 
--	seq_buf_printf(out, "%12lli %8llu ", bytes, counter.calls);
-+	seq_buf_printf(out, "%-12lli %-8llu ", bytes, counter.calls);
- 	codetag_to_text(out, ct);
- 	seq_buf_putc(out, ' ');
- 	seq_buf_putc(out, '\n');
- }
- 
-+#ifdef CONFIG_MEM_ALLOC_PROFILING_PER_NUMA_STATS
-+static void alloc_tag_to_text_all_nids(struct seq_buf *out, struct codetag *ct)
-+{
-+	struct alloc_tag *tag = ct_to_alloc_tag(ct);
-+	struct alloc_tag_counters counter;
-+	s64 bytes;
-+
-+	for (int nid = 0; nid < ALLOC_TAG_NUM_NODES; nid++) {
-+		counter = alloc_tag_read_nid(tag, nid);
-+		bytes = counter.bytes;
-+		seq_buf_printf(out, "        nid%-5u %-12lli %-8llu\n",
-+				nid, bytes, counter.calls);
-+	}
-+}
-+#else
-+static void alloc_tag_to_text_all_nids(struct seq_buf *out, struct codetag *ct)
-+{
-+}
-+#endif
-+
- static int allocinfo_show(struct seq_file *m, void *arg)
- {
- 	struct allocinfo_private *priv = (struct allocinfo_private *)arg;
-@@ -109,6 +132,7 @@ static int allocinfo_show(struct seq_file *m, void *arg)
- 		priv->print_header = false;
- 	}
- 	alloc_tag_to_text(&buf, priv->iter.ct);
-+	alloc_tag_to_text_all_nids(&buf, priv->iter.ct);
- 	seq_commit(m, seq_buf_used(&buf));
- 	return 0;
- }
-@@ -180,7 +204,7 @@ void pgalloc_tag_split(struct folio *folio, int old_order, int new_order)
- 
- 		if (get_page_tag_ref(folio_page(folio, i), &ref, &handle)) {
- 			/* Set new reference to point to the original tag */
--			alloc_tag_ref_set(&ref, tag);
-+			alloc_tag_ref_set(&ref, tag, folio_nid(folio));
- 			update_page_tag_ref(handle, &ref);
- 			put_page_tag_ref(handle);
- 		}
-@@ -247,15 +271,29 @@ void __init alloc_tag_sec_init(void)
- 	if (!mem_profiling_support)
- 		return;
- 
--	if (!static_key_enabled(&mem_profiling_compressed))
--		return;
--
- 	kernel_tags.first_tag = (struct alloc_tag *)kallsyms_lookup_name(
- 					SECTION_START(ALLOC_TAG_SECTION_NAME));
- 	last_codetag = (struct alloc_tag *)kallsyms_lookup_name(
- 					SECTION_STOP(ALLOC_TAG_SECTION_NAME));
- 	kernel_tags.count = last_codetag - kernel_tags.first_tag;
- 
-+	pcpu_counters_size = ALLOC_TAG_NUM_NODES * sizeof(struct alloc_tag_counters);
-+	for (int i = 0; i < kernel_tags.count; i++) {
-+		/* Each CPU has one alloc_tag_counters per numa node */
-+		kernel_tags.first_tag[i].counters =
-+			pcpu_alloc_noprof(pcpu_counters_size,
-+					  sizeof(struct alloc_tag_counters),
-+					  false, GFP_KERNEL | __GFP_ZERO);
-+		if (!kernel_tags.first_tag[i].counters) {
-+			while (--i >= 0)
-+				free_percpu(kernel_tags.first_tag[i].counters);
-+			panic("Failed to allocate per-cpu alloc_tag counters\n");
-+		}
-+	}
-+
-+	if (!static_key_enabled(&mem_profiling_compressed))
-+		return;
-+
- 	/* Check if kernel tags fit into page flags */
- 	if (kernel_tags.count > (1UL << NR_UNUSED_PAGEFLAG_BITS)) {
- 		shutdown_mem_profiling(false); /* allocinfo file does not exist yet */
-@@ -618,7 +656,9 @@ static int load_module(struct module *mod, struct codetag *start, struct codetag
- 	stop_tag = ct_to_alloc_tag(stop);
- 	for (tag = start_tag; tag < stop_tag; tag++) {
- 		WARN_ON(tag->counters);
--		tag->counters = alloc_percpu(struct alloc_tag_counters);
-+		tag->counters = __alloc_percpu_gfp(pcpu_counters_size,
-+						   sizeof(struct alloc_tag_counters),
-+						   GFP_KERNEL | __GFP_ZERO);
- 		if (!tag->counters) {
- 			while (--tag >= start_tag) {
- 				free_percpu(tag->counters);
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 78ddf1d43c6c..7c4d10f6873c 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1247,58 +1247,59 @@ void __clear_page_tag_ref(struct page *page)
- /* Should be called only if mem_alloc_profiling_enabled() */
- static noinline
- void __pgalloc_tag_add(struct page *page, struct task_struct *task,
--		       unsigned int nr)
-+		       int nid, unsigned int nr)
- {
- 	union pgtag_ref_handle handle;
- 	union codetag_ref ref;
- 
- 	if (get_page_tag_ref(page, &ref, &handle)) {
--		alloc_tag_add(&ref, task->alloc_tag, PAGE_SIZE * nr);
-+		alloc_tag_add(&ref, task->alloc_tag, nid, PAGE_SIZE * nr);
- 		update_page_tag_ref(handle, &ref);
- 		put_page_tag_ref(handle);
- 	}
- }
- 
- static inline void pgalloc_tag_add(struct page *page, struct task_struct *task,
--				   unsigned int nr)
-+				   int nid, unsigned int nr)
- {
- 	if (mem_alloc_profiling_enabled())
--		__pgalloc_tag_add(page, task, nr);
-+		__pgalloc_tag_add(page, task, nid, nr);
- }
- 
- /* Should be called only if mem_alloc_profiling_enabled() */
- static noinline
--void __pgalloc_tag_sub(struct page *page, unsigned int nr)
-+void __pgalloc_tag_sub(struct page *page, int nid, unsigned int nr)
- {
- 	union pgtag_ref_handle handle;
- 	union codetag_ref ref;
- 
- 	if (get_page_tag_ref(page, &ref, &handle)) {
--		alloc_tag_sub(&ref, PAGE_SIZE * nr);
-+		alloc_tag_sub(&ref, nid, PAGE_SIZE * nr);
- 		update_page_tag_ref(handle, &ref);
- 		put_page_tag_ref(handle);
- 	}
- }
- 
--static inline void pgalloc_tag_sub(struct page *page, unsigned int nr)
-+static inline void pgalloc_tag_sub(struct page *page, int nid, unsigned int nr)
- {
- 	if (mem_alloc_profiling_enabled())
--		__pgalloc_tag_sub(page, nr);
-+		__pgalloc_tag_sub(page, nid, nr);
- }
- 
- /* When tag is not NULL, assuming mem_alloc_profiling_enabled */
--static inline void pgalloc_tag_sub_pages(struct alloc_tag *tag, unsigned int nr)
-+static inline void pgalloc_tag_sub_pages(struct alloc_tag *tag,
-+					 int nid, unsigned int nr)
- {
- 	if (tag)
--		this_cpu_sub(tag->counters->bytes, PAGE_SIZE * nr);
-+		this_cpu_sub(tag->counters[nid].bytes, PAGE_SIZE * nr);
- }
- 
- #else /* CONFIG_MEM_ALLOC_PROFILING */
- 
- static inline void pgalloc_tag_add(struct page *page, struct task_struct *task,
--				   unsigned int nr) {}
--static inline void pgalloc_tag_sub(struct page *page, unsigned int nr) {}
--static inline void pgalloc_tag_sub_pages(struct alloc_tag *tag, unsigned int nr) {}
-+				   int nid, unsigned int nr) {}
-+static inline void pgalloc_tag_sub(struct page *page, int nid, unsigned int nr) {}
-+static inline void pgalloc_tag_sub_pages(struct alloc_tag *tag, int nid, unsigned int nr) {}
- 
- #endif /* CONFIG_MEM_ALLOC_PROFILING */
- 
-@@ -1337,7 +1338,7 @@ __always_inline bool free_pages_prepare(struct page *page,
- 		/* Do not let hwpoison pages hit pcplists/buddy */
- 		reset_page_owner(page, order);
- 		page_table_check_free(page, order);
--		pgalloc_tag_sub(page, 1 << order);
-+		pgalloc_tag_sub(page, page_to_nid(page), 1 << order);
- 
- 		/*
- 		 * The page is isolated and accounted for.
-@@ -1394,7 +1395,7 @@ __always_inline bool free_pages_prepare(struct page *page,
- 	page->flags &= ~PAGE_FLAGS_CHECK_AT_PREP;
- 	reset_page_owner(page, order);
- 	page_table_check_free(page, order);
--	pgalloc_tag_sub(page, 1 << order);
-+	pgalloc_tag_sub(page, page_to_nid(page), 1 << order);
- 
- 	if (!PageHighMem(page)) {
- 		debug_check_no_locks_freed(page_address(page),
-@@ -1850,7 +1851,7 @@ inline void post_alloc_hook(struct page *page, unsigned int order,
- 
- 	set_page_owner(page, order, gfp_flags);
- 	page_table_check_alloc(page, order);
--	pgalloc_tag_add(page, current, 1 << order);
-+	pgalloc_tag_add(page, current, page_to_nid(page), 1 << order);
- }
- 
- static void prep_new_page(struct page *page, unsigned int order, gfp_t gfp_flags,
-@@ -5228,7 +5229,7 @@ static void ___free_pages(struct page *page, unsigned int order,
- 	if (put_page_testzero(page))
- 		__free_frozen_pages(page, order, fpi_flags);
- 	else if (!head) {
--		pgalloc_tag_sub_pages(tag, (1 << order) - 1);
-+		pgalloc_tag_sub_pages(tag, page_to_nid(page), (1 << order) - 1);
- 		while (order-- > 0)
- 			__free_frozen_pages(page + (1 << order), order,
- 					    fpi_flags);
-diff --git a/mm/percpu.c b/mm/percpu.c
-index 782cc148b39c..4c5369a40323 100644
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -1691,15 +1691,19 @@ static void pcpu_alloc_tag_alloc_hook(struct pcpu_chunk *chunk, int off,
- 				      size_t size)
- {
- 	if (mem_alloc_profiling_enabled() && likely(chunk->obj_exts)) {
-+		/* For percpu allocation, store all alloc_tag stats on numa node 0 */
- 		alloc_tag_add(&chunk->obj_exts[off >> PCPU_MIN_ALLOC_SHIFT].tag,
--			      current->alloc_tag, size);
-+			      current->alloc_tag, 0, size);
-+		if (current->alloc_tag)
-+			current->alloc_tag->ct.flags |= CODETAG_PERCPU_ALLOC;
- 	}
- }
- 
- static void pcpu_alloc_tag_free_hook(struct pcpu_chunk *chunk, int off, size_t size)
- {
-+	/* percpu alloc_tag stats is stored on numa node 0 so subtract from node 0 */
- 	if (mem_alloc_profiling_enabled() && likely(chunk->obj_exts))
--		alloc_tag_sub(&chunk->obj_exts[off >> PCPU_MIN_ALLOC_SHIFT].tag, size);
-+		alloc_tag_sub(&chunk->obj_exts[off >> PCPU_MIN_ALLOC_SHIFT].tag, 0, size);
- }
- #else
- static void pcpu_alloc_tag_alloc_hook(struct pcpu_chunk *chunk, int off,
-diff --git a/mm/show_mem.c b/mm/show_mem.c
-index 41999e94a56d..3939c58e55c4 100644
---- a/mm/show_mem.c
-+++ b/mm/show_mem.c
-@@ -5,6 +5,7 @@
-  * Copyright (C) 2008 Johannes Weiner <hannes@saeurebad.de>
-  */
- 
-+#include <linux/alloc_tag.h>
- #include <linux/blkdev.h>
- #include <linux/cma.h>
- #include <linux/cpuset.h>
-@@ -426,6 +427,7 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
- 		nr = alloc_tag_top_users(tags, ARRAY_SIZE(tags), false);
- 		if (nr) {
- 			pr_notice("Memory allocations:\n");
-+			pr_notice("<size> <calls> <tag info>\n");
- 			for (i = 0; i < nr; i++) {
- 				struct codetag *ct = tags[i].ct;
- 				struct alloc_tag *tag = ct_to_alloc_tag(ct);
-@@ -433,16 +435,25 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
- 				char bytes[10];
- 
- 				string_get_size(counter.bytes, 1, STRING_UNITS_2, bytes, sizeof(bytes));
--
- 				/* Same as alloc_tag_to_text() but w/o intermediate buffer */
- 				if (ct->modname)
--					pr_notice("%12s %8llu %s:%u [%s] func:%s\n",
--						  bytes, counter.calls, ct->filename,
--						  ct->lineno, ct->modname, ct->function);
-+					pr_notice("%-12s %-8llu %s:%u [%s] func:%s\n",
-+						bytes, counter.calls, ct->filename,
-+						ct->lineno, ct->modname, ct->function);
- 				else
--					pr_notice("%12s %8llu %s:%u func:%s\n",
--						  bytes, counter.calls, ct->filename,
--						  ct->lineno, ct->function);
-+					pr_notice("%-12s %-8llu %s:%u func:%s\n",
-+						bytes, counter.calls,
-+						ct->filename, ct->lineno, ct->function);
-+
-+#ifdef CONFIG_MEM_ALLOC_PROFILING_PER_NUMA_STATS
-+				for (int nid = 0; nid < ALLOC_TAG_NUM_NODES; nid++) {
-+					counter = alloc_tag_read_nid(tag, nid);
-+					string_get_size(counter.bytes, 1, STRING_UNITS_2,
-+							bytes, sizeof(bytes));
-+					pr_notice("        nid%-5u %-12s %-8llu\n",
-+						  nid, bytes, counter.calls);
-+				}
-+#endif
- 			}
- 		}
- 	}
-diff --git a/mm/slub.c b/mm/slub.c
-index c4b64821e680..1c7b10befa7c 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2106,8 +2106,12 @@ __alloc_tagging_slab_alloc_hook(struct kmem_cache *s, void *object, gfp_t flags)
- 	 * If other users appear then mem_alloc_profiling_enabled()
- 	 * check should be added before alloc_tag_add().
- 	 */
--	if (likely(obj_exts))
--		alloc_tag_add(&obj_exts->ref, current->alloc_tag, s->size);
-+	if (likely(obj_exts)) {
-+		struct page *page = virt_to_page(object);
-+
-+		alloc_tag_add(&obj_exts->ref, current->alloc_tag,
-+				page_to_nid(page), s->size);
-+	}
- }
- 
- static inline void
-@@ -2135,8 +2139,9 @@ __alloc_tagging_slab_free_hook(struct kmem_cache *s, struct slab *slab, void **p
- 
- 	for (i = 0; i < objects; i++) {
- 		unsigned int off = obj_to_index(s, slab, p[i]);
-+		struct page *page = virt_to_page(p[i]);
- 
--		alloc_tag_sub(&obj_exts[off].ref, s->size);
-+		alloc_tag_sub(&obj_exts[off].ref, page_to_nid(page), s->size);
- 	}
- }
- 
--- 
-2.34.1
-
+T24gVGh1LCAyMDI1LTA3LTEwIGF0IDIyOjUzICswMDAwLCBIdWFuZywgS2FpIHdyb3RlOg0KPiBP
+biBXZWQsIDIwMjUtMDctMDkgYXQgMDY6NTUgLTA3MDAsIFNlYW4gQ2hyaXN0b3BoZXJzb24gd3Jv
+dGU6DQo+ID4gT24gV2VkLCBKdWwgMDksIDIwMjUsIENoYW8gR2FvIHdyb3RlOg0KPiA+ID4gT24g
+V2VkLCBKdWwgMDksIDIwMjUgYXQgMDU6Mzg6MDBQTSArMTIwMCwgS2FpIEh1YW5nIHdyb3RlOg0K
+PiA+ID4gPiBSZWplY3QgdGhlIEtWTV9TRVRfVFNDX0tIWiBWTSBpb2N0bCB3aGVuIHRoZXJlJ3Mg
+dkNQVSBoYXMgYWxyZWFkeSBiZWVuDQo+ID4gPiA+IGNyZWF0ZWQuDQo+ID4gPiA+IA0KPiA+ID4g
+PiBUaGUgVk0gc2NvcGUgS1ZNX1NFVF9UU0NfS0haIGlvY3RsIGlzIHVzZWQgdG8gc2V0IHVwIHRo
+ZSBkZWZhdWx0IFRTQw0KPiA+ID4gPiBmcmVxdWVuY3kgdGhhdCBhbGwgc3Vic2VxdWVudCBjcmVh
+dGVkIHZDUFVzIHVzZS4gIEl0IGlzIG9ubHkgaW50ZW5kZWQgdG8NCj4gPiA+ID4gYmUgY2FsbGVk
+IGJlZm9yZSBhbnkgdkNQVSBpcyBjcmVhdGVkLiAgQWxsb3dpbmcgaXQgdG8gYmUgY2FsbGVkIGFm
+dGVyDQo+ID4gPiA+IHRoYXQgb25seSByZXN1bHRzIGluIGNvbmZ1c2lvbiBidXQgbm90aGluZyBn
+b29kLg0KPiA+ID4gPiANCj4gPiA+ID4gTm90ZSB0aGlzIGlzIGFuIEFCSSBjaGFuZ2UuICBCdXQg
+Y3VycmVudGx5IGluIFFlbXUgKHRoZSBkZSBmYWN0bw0KPiA+ID4gPiB1c2Vyc3BhY2UgVk1NKSBv
+bmx5IFREWCB1c2VzIHRoaXMgVk0gaW9jdGwsIGFuZCBpdCBpcyBvbmx5IGNhbGxlZCBvbmNlDQo+
+ID4gPiA+IGJlZm9yZSBjcmVhdGluZyBhbnkgdkNQVSwgdGhlcmVmb3JlIHRoZSByaXNrIG9mIGJy
+ZWFraW5nIHVzZXJzcGFjZSBpcw0KPiA+ID4gPiBwcmV0dHkgbG93Lg0KPiA+ID4gPiANCj4gPiA+
+ID4gU3VnZ2VzdGVkLWJ5OiBTZWFuIENocmlzdG9waGVyc29uIDxzZWFuamNAZ29vZ2xlLmNvbT4N
+Cj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogS2FpIEh1YW5nIDxrYWkuaHVhbmdAaW50ZWwuY29tPg0K
+PiA+ID4gPiAtLS0NCj4gPiA+ID4gYXJjaC94ODYva3ZtL3g4Ni5jIHwgNCArKysrDQo+ID4gPiA+
+IDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKykNCj4gPiA+ID4gDQo+ID4gPiA+IGRpZmYg
+LS1naXQgYS9hcmNoL3g4Ni9rdm0veDg2LmMgYi9hcmNoL3g4Ni9rdm0veDg2LmMNCj4gPiA+ID4g
+aW5kZXggNjk5Y2E1ZTc0YmJhLi5lNWU1NWQ1NDk0NjggMTAwNjQ0DQo+ID4gPiA+IC0tLSBhL2Fy
+Y2gveDg2L2t2bS94ODYuYw0KPiA+ID4gPiArKysgYi9hcmNoL3g4Ni9rdm0veDg2LmMNCj4gPiA+
+ID4gQEAgLTcxOTQsNiArNzE5NCwxMCBAQCBpbnQga3ZtX2FyY2hfdm1faW9jdGwoc3RydWN0IGZp
+bGUgKmZpbHAsIHVuc2lnbmVkIGludCBpb2N0bCwgdW5zaWduZWQgbG9uZyBhcmcpDQo+ID4gPiA+
+IAkJdTMyIHVzZXJfdHNjX2toejsNCj4gPiA+ID4gDQo+ID4gPiA+IAkJciA9IC1FSU5WQUw7DQo+
+ID4gPiA+ICsNCj4gPiA+ID4gKwkJaWYgKGt2bS0+Y3JlYXRlZF92Y3B1cykNCj4gPiA+ID4gKwkJ
+CWdvdG8gb3V0Ow0KPiA+ID4gPiArDQo+ID4gPiANCj4gPiA+IHNob3VsZG4ndCBrdm0tPmxvY2sg
+YmUgaGVsZD8NCj4gPiANCj4gPiBZZXAuDQo+IA0KPiBNeSBiYWQuICBJJ2xsIGZpeHVwIGFuZCBz
+ZW5kIG91dCB2MiBzb29uLCAgdG9nZXRoZXIgd2l0aCB0aGUgZG9jIHVwZGF0ZS4NCg0KU29ycnkg
+Zm9yIG11bHRpcGxlIGVtYWlscywgYnV0IEkgZW5kZWQgdXAgd2l0aCBiZWxvdy4NCg0KQUZBSUNU
+IHRoZSBhY3R1YWwgdXBkYXRpbmcgb2Yga3ZtLT5hcmNoLmRlZmF1bHRfdHNjX2toeiBuZWVkcyB0
+byBiZSBpbiB0aGUNCmt2bS0+bG9jayBtdXRleCB0b28uICBQbGVhc2UgbGV0IG1lIGtub3cgaWYg
+eW91IGZvdW5kIGFueSBpc3N1ZT8NCg0KZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vdmlydC9r
+dm0vYXBpLnJzdA0KYi9Eb2N1bWVudGF0aW9uL3ZpcnQva3ZtL2FwaS5yc3QNCmluZGV4IDQzZWQ1
+N2UwNDhhOC4uODZlYTFlMmIyNzM3IDEwMDY0NA0KLS0tIGEvRG9jdW1lbnRhdGlvbi92aXJ0L2t2
+bS9hcGkucnN0DQorKysgYi9Eb2N1bWVudGF0aW9uL3ZpcnQva3ZtL2FwaS5yc3QNCkBAIC0yMDA2
+LDcgKzIwMDYsNyBAQCBmcmVxdWVuY3kgaXMgS0h6Lg0KDQogSWYgdGhlIEtWTV9DQVBfVk1fVFND
+X0NPTlRST0wgY2FwYWJpbGl0eSBpcyBhZHZlcnRpc2VkLCB0aGlzIGNhbiBhbHNvDQogYmUgdXNl
+ZCBhcyBhIHZtIGlvY3RsIHRvIHNldCB0aGUgaW5pdGlhbCB0c2MgZnJlcXVlbmN5IG9mIHN1YnNl
+cXVlbnRseQ0KLWNyZWF0ZWQgdkNQVXMuDQorY3JlYXRlZCB2Q1BVcy4gIEl0IG11c3QgYmUgY2Fs
+bGVkIGJlZm9yZSBhbnkgdkNQVSBpcyBjcmVhdGVkLg0KDQogNC41NiBLVk1fR0VUX1RTQ19LSFoN
+CiAtLS0tLS0tLS0tLS0tLS0tLS0tLQ0KZGlmZiAtLWdpdCBhL2FyY2gveDg2L2t2bS94ODYuYyBi
+L2FyY2gveDg2L2t2bS94ODYuYw0KaW5kZXggMjgwNmY3MTA0Mjk1Li40MDUxYzBjYWNiOTIgMTAw
+NjQ0DQotLS0gYS9hcmNoL3g4Ni9rdm0veDg2LmMNCisrKyBiL2FyY2gveDg2L2t2bS94ODYuYw0K
+QEAgLTcxOTksOSArNzE5OSwxMiBAQCBpbnQga3ZtX2FyY2hfdm1faW9jdGwoc3RydWN0IGZpbGUg
+KmZpbHAsIHVuc2lnbmVkDQppbnQgaW9jdGwsIHVuc2lnbmVkIGxvbmcgYXJnKQ0KICAgICAgICAg
+ICAgICAgIGlmICh1c2VyX3RzY19raHogPT0gMCkNCiAgICAgICAgICAgICAgICAgICAgICAgIHVz
+ZXJfdHNjX2toeiA9IHRzY19raHo7DQoNCi0gICAgICAgICAgICAgICBXUklURV9PTkNFKGt2bS0+
+YXJjaC5kZWZhdWx0X3RzY19raHosIHVzZXJfdHNjX2toeik7DQotICAgICAgICAgICAgICAgciA9
+IDA7DQotDQorICAgICAgICAgICAgICAgbXV0ZXhfbG9jaygma3ZtLT5sb2NrKTsNCisgICAgICAg
+ICAgICAgICBpZiAoIWt2bS0+Y3JlYXRlZF92Y3B1cykgew0KKyAgICAgICAgICAgICAgICAgICAg
+ICAgV1JJVEVfT05DRShrdm0tPmFyY2guZGVmYXVsdF90c2Nfa2h6LA0KdXNlcl90c2Nfa2h6KTsN
+CisgICAgICAgICAgICAgICAgICAgICAgIHIgPSAwOw0KKyAgICAgICAgICAgICAgIH0NCisgICAg
+ICAgICAgICAgICBtdXRleF91bmxvY2soJmt2bS0+bG9jayk7DQogICAgICAgICAgICAgICAgZ290
+byBvdXQ7DQogICAgICAgIH0NCiAgICAgICAgY2FzZSBLVk1fR0VUX1RTQ19LSFo6IHsNCg==
 
