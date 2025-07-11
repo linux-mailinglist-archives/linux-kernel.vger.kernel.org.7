@@ -1,230 +1,261 @@
-Return-Path: <linux-kernel+bounces-728066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F177B0234E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:03:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84A4AB02389
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F35141CC1CEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:04:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70D1F1CC298A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643422F2348;
-	Fri, 11 Jul 2025 18:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F355B28DF27;
+	Fri, 11 Jul 2025 18:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Coe8D4oC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="hlaTYecE"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385922AEF1;
-	Fri, 11 Jul 2025 18:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752257022; cv=fail; b=qUVp1+A3qqrDVfTkefhT8jdPVZs5gdy1xvPWzQns4bPwbrRk6UOx6mv2lSgyz2zwD/vVI9na8F1nAjgwZUXvUEer5hGYNVutP6BJgnUSSdJ0121nksFt+kmTMQZmBuTUe7RBcZsqXL72Deq9tp4Qiecon8o+yg7aMCoNAVonEno=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752257022; c=relaxed/simple;
-	bh=KtKsdpyIXmkes8y3xqDeltxi0/7jGSij16hLco11wio=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=h5yDjQtH2nKimNK7bcErhyG4pS+muoDisjv/axQGeg8Lbug/9RnehS0P5gvNiX73ogVTAVFG5p8mE0QHq0f1I8MSONbZXoWIotYS8KPyC7yCNQvuLOx72paIqxW7dyX9QRm4AbZI4r6zslh8TFHXNWwZpjqP4OuNfUZLforlAh8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Coe8D4oC; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752257021; x=1783793021;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=KtKsdpyIXmkes8y3xqDeltxi0/7jGSij16hLco11wio=;
-  b=Coe8D4oCRVjYOa56vEOke/4ps53WZuURc/DucV+MnJu24NcJieAAO791
-   E+wn9H1eXRtrVzPEYUDrzUMF2hR7PAlb2PX+SOGt2S2tiB7MDFdZ6mkGl
-   1kdIfxn1ZyAJLJ7OBS3zSdkm/OqsRp/pd4YjgV26F2YKomjkEzGIxMgb2
-   p1+518R9VJo+at3lQf97el0f9rPeIKL4D/h0bpD4ukONmqX7kY2eD3uZ0
-   bDm8+RJ4SxzvxZh9worqqayz12caHh1vSQXAM8HJAt8kEQaGLdsIxYCeV
-   CD6Kivw2YxFizEZTtUwQJWtHZy9HFoe+4hZ7YS3IBRKIsyBUkIMC0hmi8
-   A==;
-X-CSE-ConnectionGUID: hfimontkQIyZzw7wNTfdmA==
-X-CSE-MsgGUID: vM2i2GVrRC+OS1R/5h8lqA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54417745"
-X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
-   d="scan'208";a="54417745"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 11:03:40 -0700
-X-CSE-ConnectionGUID: jZiCejXsTMO/Dx93kQ+q2w==
-X-CSE-MsgGUID: fEindKBlTV6f0CEOtE7asQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
-   d="scan'208";a="156763018"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 11:03:40 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 11 Jul 2025 11:03:37 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Fri, 11 Jul 2025 11:03:37 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.77)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 11 Jul 2025 11:03:35 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JV7is07T/OaUxihz+TbImDqBxcX41jxB3ewctJQArpHZWrmbcnyD1MWUzNepcNFQRelCldu/9LxzG1ep85en6alM9NvFaOlRNRYsbm0WEUtICVi8U4pBuVMYwDJRpj7+mM+/IIzTPTxUoX6HoVjFT6B8j4+N6Q5ftHSZCTHspo5ehLZQJZow/5BnXGNLqTQxBKBXO3n+ubR+yV/XhXdDlxkRjlvlIPjfeZ1G5CsyVfjsXj0Fqya1sWMGf+njKuBpXQkHeNdP5EGAHFidz21qNpemBOwePga3ziklAOC4fptv5rQD2JmcMI7ShoNqTxqLVEk2TMvu5mies6KG78vmpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KtKsdpyIXmkes8y3xqDeltxi0/7jGSij16hLco11wio=;
- b=BLuoWrHW6QYJ4oakl2uJWAAFFIW5Q5HBsgV3Ao6WvoCIRrgL7wcbb1yqge8TpT/29osyG+2pC0uleqF9zasCP/UKOoL3YsiSVoxCugMyob6WyudeT2n/u8Gtk0j7P/ls7T6kYfX3J/YDYURtO0/rzD2alzCrxNrtbMHNnDMoq2O+Iuaz120QUTMTUcpjTzxQWIyzqQWDQnn2O0IY40kcjGQP3DfhBcmyhQ4F0EfiJZbTtJZfFamMVInOIYFFSy5z1LTTA5t+zi770IiolaoI9VNZecPg2qd64lhtUBHU9z7p0p0QjPKLITGwVRP/J/oQdFX/uWoHZnhUEll04tVu4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by DM4PR11MB6214.namprd11.prod.outlook.com (2603:10b6:8:ac::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.26; Fri, 11 Jul 2025 18:03:33 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%4]) with mapi id 15.20.8901.028; Fri, 11 Jul 2025
- 18:03:33 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "Li, Xiaoyao" <xiaoyao.li@intel.com>, "kirill.shutemov@linux.intel.com"
-	<kirill.shutemov@linux.intel.com>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "seanjc@google.com" <seanjc@google.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
-CC: "Lindgren, Tony" <tony.lindgren@intel.com>, "Hunter, Adrian"
-	<adrian.hunter@intel.com>, "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org"
-	<x86@kernel.org>, "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>,
-	"hpa@zytor.com" <hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "Huang, Kai"
-	<kai.huang@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "Chatre, Reinette"
-	<reinette.chatre@intel.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Zhao, Yan Y" <yan.y.zhao@intel.com>,
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>
-Subject: Re: [PATCH v2 3/3] KVM: TDX: Rename KVM_SUPPORTED_TD_ATTRS to
- KVM_SUPPORTED_TDX_TD_ATTRS
-Thread-Topic: [PATCH v2 3/3] KVM: TDX: Rename KVM_SUPPORTED_TD_ATTRS to
- KVM_SUPPORTED_TDX_TD_ATTRS
-Thread-Index: AQHb8milQ6nQ1+wixUGI/cY8GkTumLQtN2UA
-Date: Fri, 11 Jul 2025 18:03:33 +0000
-Message-ID: <f14461f0f51d52c28c7be5decdc2e6a3e54db7bb.camel@intel.com>
-References: <20250711132620.262334-1-xiaoyao.li@intel.com>
-	 <20250711132620.262334-4-xiaoyao.li@intel.com>
-In-Reply-To: <20250711132620.262334-4-xiaoyao.li@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|DM4PR11MB6214:EE_
-x-ms-office365-filtering-correlation-id: 5b1374fe-15ce-41e6-8c97-08ddc0a54003
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?Y3VJcm0vZGc2c0ZybGhPUlp2Ulc0ZURJM3NVTTF6TmFnWWUvdWZpc0luZ09K?=
- =?utf-8?B?MWd4YnBhcEhrci8vVEhVY1BzcWtGUVdrTlBIMWNEeDNCSXNQa1JMWXV3VTgx?=
- =?utf-8?B?Rk5aYUtTMHMvcS9NajFyU0I5Nnl6TmxxWlJySUdxbXZtN1Z4dXlNdmZFUmVu?=
- =?utf-8?B?UGhEdXFXdXp5Zlk2WkJIaWEzdEhIbnZJU2FnMElQT1BHNkhTMFAxYWlvZ1hQ?=
- =?utf-8?B?TEkwR0ZoT1VYSm1MaHFqKzlNRzJvUzhTUUJjZlJTMEpuSlo5T243TTlyKzJK?=
- =?utf-8?B?cmFnTy84NWhLTkQ5czc2Uk1PNEpveXNBaE1Da1dOOGIwSmVCZlV4T3JCdXEw?=
- =?utf-8?B?LzlyYTl1c2MzSEpFM04xOWY0Z1l5ZjVqMXE5NGNjZ1c4K2djY0l5TitxN2JZ?=
- =?utf-8?B?SGZJNlQvMlBicGhHZndIN1ZEUzJPdEdQNjcrak5pbEtZbENhMFJqWXJQZ3Jt?=
- =?utf-8?B?RzhMQkMzUTRZWmUxVmFMOUdINHU1MEIybnBNV1ZqWHg0V0pnMGVRWTVja1Nz?=
- =?utf-8?B?aFE5dVhuZTF2TUhSU1FXV081eE9hUDhTdjQzKzBPNTBzTm1HVnhlUjFiVVNP?=
- =?utf-8?B?bzcxNWNxTzAveUFmR2xrZnBaeHRPRHRRZklZZWxnUC9FR25wc1FxWUl6bHJB?=
- =?utf-8?B?K09rWERwYUFJNTIrdURNT3hSeHNnLzl3M2pSMTNEV296T0hGRGx3MHNVcUor?=
- =?utf-8?B?Nk15SEFyRUF5Y1NKeWZrZWlESWU3cWdJU2hjVHlxdE1zTHd1a1ZWYWtLcVY2?=
- =?utf-8?B?Ykl3ZTBUZTBOdlRKSXZmODMzUFVHeW92VlYzaWtNbmlwTDRmWFZhT1ZWU3g0?=
- =?utf-8?B?ejNEZGxPSk5DTXFRTkJqbm9HcEtsL3BoSlFjV0cwdGplY1NkaUp2NTJacHJ0?=
- =?utf-8?B?SkhveUw3YjlCQkptUXoxTWZrMEowNDZHQUFvSDdaVVZwampQc09WbU9qeWRG?=
- =?utf-8?B?bUdaNXljSVkxd2NrMHhjRVJhL1JsT25LcUNSWUFoS3I2b0ZTQUEwRjdocnRI?=
- =?utf-8?B?UTErcXE5S3RqNGlFbVpiU2VSWnljOUF5bkhNU0szR0VIUFJiTmVhQ1hCWG5G?=
- =?utf-8?B?SndQTmxTTWRsNkE2OFRrQXlsUW1hbk95VHdnYThUTklOdnBBeTlaNWROR2k4?=
- =?utf-8?B?UXAxdXhlNVlEaGl2dGpmRjBveFk5WDdjREd0WElja0dOZ0w1aGxLdmhuVmNV?=
- =?utf-8?B?ekNYN0M0MTFwZk56NW9FU1dxRUIvNEtlZWFITldOVFRWREZlbUErR3d0SEJr?=
- =?utf-8?B?c3pEZHJYS2tIVjdPRldMQ2lYRUFzUFB0VGMrMGJiaEI5cXFnT1ZhSHV5NElY?=
- =?utf-8?B?K0xSQWlOZ1dPbnNhZmNVOGVLL0ZRTzF4amJ6WnNPWVQrSDhPWnZnUUJmd0FS?=
- =?utf-8?B?R2ZNbVJqd3g3am5OLzdWVTFEYUd1K25TTndVVkVIN1dVVFF6ekU3czJjbHZN?=
- =?utf-8?B?RnJiRGVVeFNWK1hnUXpHUEpmSUM3RldFUk1FRlF1OWhqVWxJUlRDU1VoRXlR?=
- =?utf-8?B?Mis4N0p0bXNhOGZLYUpadERVeHN0QTJqUWp4VnhuQ29vWVpWaW56SzZaWmg2?=
- =?utf-8?B?Q0FZazNDam1PS2lVTGRrVXZZT1dHcCtZVHRjdEdKOTNDMTlkL0ltY1NEdzNt?=
- =?utf-8?B?dDh3aGZUM0REVXBTRlYyRmRlend1R2tKc3JPOU5NUjVGandCQnZUYU9kUWxB?=
- =?utf-8?B?L2Z3WjNCSkdkYk9WYlFvNXZreTVkemUyRE9NaU5VekFhMW9JMXUwUkRwUmNN?=
- =?utf-8?B?Q1g3UUlUZjFLeEVDMFpMT0NRYVlkMGl5R1E3T2xmZDlWREhzWlJNOENvUk1L?=
- =?utf-8?B?dVUxcHJDNktQZWw0RmhKS2RNTG9rK0RDZUVuZWU1S3ovTUtQT2xDUVNjeTB1?=
- =?utf-8?B?SDhRV2J4WldqYjNpWDZYZFpNalZHTFlFaG14cHFEZmM1NTFva2d3bnRMNWNF?=
- =?utf-8?B?bVNyWXhnVDIzZDJseDAzYXBDQldYbDlIVUtWaW5WbUFqQWlzRkFUcUw1WE54?=
- =?utf-8?B?emV4YWFvdUp3PT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MFhUTkszMEVSSVBwSXZVZmxGalRncUM4UFlHd2xsTWZ0ZnBoazZ1bG9PdHpM?=
- =?utf-8?B?M1M1K3RqNERPenhrSkwrbC9KMElzZjc4OSs3c29INXhzSzIyd1N1RE5JbjMy?=
- =?utf-8?B?TzdOSXF4K3RUNDQ1N2RGWUx0cHE3S2hkUG1LYXl3TXpEVm9wUEFwdTVUeFFH?=
- =?utf-8?B?alJWUENJcWFDN2hkMFBiVktXQWV1L3JocVVhTmxMWklJLzNrL0FLMGwvRk1p?=
- =?utf-8?B?dHdpd29RbktPOGpydXF6cVFzLy9vUE84VWg5dFk4TlUzenRXcWo0Tlk2M21B?=
- =?utf-8?B?aFc2VUVDYkh0Zm5zdWY0b0xQMUwxQXcwYVNoNEhtTWI5eWo2ZTYzTklPYU5S?=
- =?utf-8?B?aXBpOEtIRktqb3ptREhlcHhya05UOXJNbTNsL252VkVoTkp0NWZXREFWU21s?=
- =?utf-8?B?WURmQll3TndUM21aYUZwZkh2N3RTNzFYU3ZEK2d6dlhDWFN4MG1udFc5L1dW?=
- =?utf-8?B?czIwcktURldZOUg5Slp0RlpCdzFub1BCT2xLNUhhaThsUTdHME1nZ012UUR0?=
- =?utf-8?B?UGd6ckYxeDZaWkY3OHREelZOS2dXZFczdEFjTWZRanFVQzM3ZUEwbmpYMzM3?=
- =?utf-8?B?RGluOUxzKzhvWCtENklEcnVnZnBmSFBXcmFaczRxTXBzVzlnb0wrcytSbGho?=
- =?utf-8?B?WFdwcHkwR2hOdDFMendkRHRyYXNWdmF2ekJiVUVoRDlwcTR2bmVnTk84bHpF?=
- =?utf-8?B?MkNJSm4vVWR2MDVCVnRlQWh5OENuZkQ1ZDRZa09ibmE4c0YyaFVwR1d5Q0xl?=
- =?utf-8?B?S3pHVDdTZXlNMDR5MjhoRUpKR3FOQTVPdC80VXFYTzRCZVRZb2NXa1VGVzEy?=
- =?utf-8?B?NlI2UUlEVUw4UlhnamN6NGlKYjd5bm90R1JoY2gyYTU2dkZvS1hqeXpHM245?=
- =?utf-8?B?VmtaMnlGVE5vZGVURGdkRG9CMFY3QnJMb1lkU2RCMmVxWVZXeWR2cVQzTUpT?=
- =?utf-8?B?dVhWYXhoc3pSRXdTVXM5M2NKekhyMC8vVzB6KzYrK2VwYzNCVjYvZ05vMXBz?=
- =?utf-8?B?RTd3RUR2WTdRbjdYSG0vSHMwTzRNZnJWVEt2ZXRFaytEdGFuaFpuL2xPOGY4?=
- =?utf-8?B?cmpYUGQyTzkxa0FWOEZyZlVSNGozVW5VNk55UGROTDJyVkFodmlTemVwMGNw?=
- =?utf-8?B?UGFIUXFQaVFZK1JBb1hyTUFZblpRZnNhN0oyejVhZkJnZFFZUW5GbFQxdCtD?=
- =?utf-8?B?UWlQQjFFakNHdUVoNmFMdCtCSEN1L1hOQnNnN0dOalIyaDFwakpxY2Ewcitx?=
- =?utf-8?B?R3NXWDZXeWRzdk5CMTlRMU5qUWtuNlpuRXhFbFZqck8wa3E3c3hRQ2Z5dmpn?=
- =?utf-8?B?TGt6YlovZHBOZkplbmpHZjhHbnJWRzZIK29NU1VqM1dWbGs3dXpmRVBPTUhz?=
- =?utf-8?B?aFFsL3hYaU9YaXIvYm4wTkZ5WUFnVGhaYklmbmtKc2U4WDZLR1lkZ0R6MUxs?=
- =?utf-8?B?UmpUeDdobWtBYnJySGFUZFNyK3pseityaENZKy9CbTNJWmdUN3RCUW4zb1Bp?=
- =?utf-8?B?UE1WcnE4MmkrU2VuS0dqN3lIaGs4d2Z2bnEzWTE1dDhQZGt0b1VvSmtYNUo1?=
- =?utf-8?B?R1V4ZEhhTGxmUlVKME5lWDhLNmJ3N1IwYXd0WGNSc1lOcjdMMU4xVUo4YzN3?=
- =?utf-8?B?VDFqOWdJdHVJWnpBVVhiamphYXBDSTZoRS81czhnUUVWMlJhYnVGNlB2V1FF?=
- =?utf-8?B?eDJqUW1FTlRrL3VjNFFVMzBJT2hqZm1SZ0IveXJXUFlEc2dMY2paWkhXMUho?=
- =?utf-8?B?VFRWYXFDSVRhY0Y3b0RQcmVoWUg2bnZyTHBtenZFaDU5RWxsdzJNTHJSNTl2?=
- =?utf-8?B?NkFiT3c2OG9SdEFNa2VPcGVqaVgwN1pibjY4VUhEakVhdC8vdTdZcmhYTG1h?=
- =?utf-8?B?SFNuMlVuWkJsNzUvaE1xVUZvamJWQkRmeGl3WHNOeFQ3YUt1elM4c0YzSE5M?=
- =?utf-8?B?NUhWTHNHN1NoUitaeXFiaGhmQ1V1TnRwS2VJb1hxaUk0Vm4zQXJ3TEg3ckVO?=
- =?utf-8?B?K0JuNU80Z1dObnAwd2tXVDJzQlZtRFZsNXc0Nm5XTE9sWnZGYldvb0xPTHZq?=
- =?utf-8?B?bVdMaGpEc3JjazZCL0hSZG5IMjNIOXE2Y29hME85UEhVbXI0YmkvNWxGT3FK?=
- =?utf-8?B?Si85dFk4TWJyejhRa2NKNHNxUnFXUEhvcFBqMkxCMVFLMFdrMUlBcU5ncU1h?=
- =?utf-8?B?UkE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B1F93B93EB2B5743A6337A1E911FE7DC@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D30D2F271F;
+	Fri, 11 Jul 2025 18:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752258147; cv=none; b=H8xQkIV1aL/tgylz0VYv3aZdhIDAm3+xbD9w3u7hJdonz9qFFZcIfhl/SgGW6UOfZsI81T4yv9YFUjTGpD7SphNsuAybajwunofqRoKLJ0ahynw3jC770bMGQKv8MTlEOg38h4wWRnGDFOjlJCZ+dhokV+a5ATojsV/3t9QhzeI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752258147; c=relaxed/simple;
+	bh=WPxqsgcHN69KaegDws1laEv2TC95EIzTRBlTXIBMEk0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CSBTqDY4LAnOYfvywkga0iZT8JyPjTsMksahni3TJ61qn86fKuaRO3r2y+G80Cpbdw4vEsAD210+7+82oUnRyXkuAWk7Dwd0b7KzZUts2xLxbbutIUTaI+J1g9IwkjlUyGtveV1jHodfycB+Xy2eAPoIx8ILOw+azAtJxUUQ1+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=hlaTYecE; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BCIuaq004484;
+	Fri, 11 Jul 2025 09:03:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=fHYy0
+	eF/BH0+65Ui4ZSNiV1Q5cmY+r6R+4TLj4EVbm0=; b=hlaTYecEs1fBY8tYCqVMZ
+	I5Yj998UKdSw36nG6ma4OSlRmU180tfkSl8vcPoiDfhtDBz2eCRnoQI11QWdyUSh
+	x645FoqLQim0D1eRviCIlgk83Ol3F0avRVME2TB7F8/YMEnQ/GpnXBU0PVq2HLvF
+	LOsm3qF7E93xvhpenvTBTQ6E1zV67Iq109JoRHlmQqYW62v3qRZS93wHK5x0808I
+	BQULgfugig2oJ9RVAaK7Fdto06ASCYxAT1ZMaNA9nuQdkeGDXnLPhfXqqGKoF7gn
+	k3+C/FstDBln7XgE2+r/Wdp0OP8lrC7Luc7iTou99KHAOLCjNkH5VoiJroodZTJA
+	A==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 47pwwa7ccd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Jul 2025 09:03:30 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 56BD3TxB026792
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 11 Jul 2025 09:03:29 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 11 Jul
+ 2025 09:03:29 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Fri, 11 Jul 2025 09:03:29 -0400
+Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.132])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 56BD3Jqr027484;
+	Fri, 11 Jul 2025 09:03:25 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Subject: [PATCH 1/3] iio: add power and energy measurement modifiers
+Date: Fri, 11 Jul 2025 16:02:35 +0300
+Message-ID: <20250711130241.159143-2-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250711130241.159143-1-antoniu.miclaus@analog.com>
+References: <20250711130241.159143-1-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b1374fe-15ce-41e6-8c97-08ddc0a54003
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jul 2025 18:03:33.1997
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: wFhbcSyaS6RPZ+TNUFfo9D7YYxFwbVjdwbpdmgVZ3RhiwxmHPkEhLxJpjF1ZxcgEiLePyyvQQwYBg2RUqEvsZ8M2xCer360oYKH8fNec5gs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6214
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA5MiBTYWx0ZWRfX6ziA7SP9mnk+
+ 4gw2f53Ai/9sD3sErqM3lVr9/86zc9QDdE58mbKM2CqQxm2/a6Oh57JvyfERfbRnDl/IoQ/Jy/x
+ MgqurWUDThvqlCmLxzO59rtcQaXoY2Ch+vZJFNnE8uOcr9vq+QKtnJFl0eFgJGf4EHkaxqbxW0Z
+ jietsKQzz67VTgDBxTiDGbgVWcf4NSLHXISg94zNurl/sZkcWMkD38rBdpn7fKyEvFMHRfs/Ppn
+ c6n4u7Zoo9bbD4uuJOG2FbKDakCFaS4YM2/drYWjCEHa4s6CFixMEQCWB07U1PupXuULKUQGaX0
+ g+GXj1ESX69O4Ywv96Mb6VhoXMv/ObGsV56csbPb07OuYbtoyq3aW5degAO30b02ihOGicXsed9
+ WZic52CSe9wnKrfhQLxHGSTwjYMKmacrg6QRTPIRSc08xkQH4+iwzEk96nEGqjtmu6qSqx3t
+X-Authority-Analysis: v=2.4 cv=E+DNpbdl c=1 sm=1 tr=0 ts=68710ba2 cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=Wb1JkmetP80A:10 a=gAnH3GRIAAAA:8 a=VwQbUJbxAAAA:8 a=une20UNuun7GP44vQxEA:9
+X-Proofpoint-GUID: B0ZDiaWG1YBaXsEPVSnMrXb5RmERYgmV
+X-Proofpoint-ORIG-GUID: B0ZDiaWG1YBaXsEPVSnMrXb5RmERYgmV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 mlxscore=0 mlxlogscore=999 clxscore=1015
+ malwarescore=0 adultscore=0 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 phishscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507110092
 
-T24gRnJpLCAyMDI1LTA3LTExIGF0IDIxOjI2ICswODAwLCBYaWFveWFvIExpIHdyb3RlOg0KPiBS
-ZW5hbWUgS1ZNX1NVUFBPUlRFRF9URF9BVFRSUyB0byBLVk1fU1VQUE9SVEVEX1REWF9URF9BVFRS
-UyB0byBpbmNsdWRlDQo+ICJURFgiIGluIHRoZSBuYW1lLCBtYWtpbmcgaXQgY2xlYXIgdGhhdCBp
-dCBwZXJ0YWlucyB0byBURFguDQo+IA0KPiBTdWdnZXN0ZWQtYnk6IFNlYW4gQ2hyaXN0b3BoZXJz
-b24gPHNlYW5qY0Bnb29nbGUuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBYaWFveWFvIExpIDx4aWFv
-eWFvLmxpQGludGVsLmNvbT4NCj4gDQoNClJldmlld2VkLWJ5OiBSaWNrIEVkZ2Vjb21iZSA8cmlj
-ay5wLmVkZ2Vjb21iZUBpbnRlbC5jb20+DQo=
+Add new IIO modifiers to support power and energy measurement devices:
+
+Power modifiers:
+- IIO_MOD_ACTIVE: Real power consumed by the load
+- IIO_MOD_REACTIVE: Power that oscillates between source and load
+- IIO_MOD_APPARENT: Magnitude of complex power
+- IIO_MOD_FUND_REACTIVE: Reactive power at fundamental frequency
+- IIO_MOD_FACTOR: Power factor (ratio of active to apparent power)
+
+Energy modifiers:
+- IIO_MOD_ACTIVE_ACCUM: Accumulated active energy
+- IIO_MOD_APPARENT_ACCUM: Accumulated apparent energy
+- IIO_MOD_REACTIVE_ACCUM: Accumulated reactive energy
+
+Signal quality modifiers:
+- IIO_MOD_RMS: Root Mean Square value
+- IIO_MOD_SWELL: Voltage swell detection
+- IIO_MOD_DIP: Voltage dip (sag) detection
+
+These modifiers enable proper representation of power measurement
+devices like energy meters and power analyzers.
+
+Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+---
+ Documentation/ABI/testing/sysfs-bus-iio | 19 +++++++++++++++++++
+ drivers/iio/industrialio-core.c         | 11 +++++++++++
+ include/uapi/linux/iio/types.h          | 11 +++++++++++
+ 3 files changed, 41 insertions(+)
+
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+index 3bc386995fb6..d5c227c03589 100644
+--- a/Documentation/ABI/testing/sysfs-bus-iio
++++ b/Documentation/ABI/testing/sysfs-bus-iio
+@@ -143,6 +143,9 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_raw
+ What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_supply_raw
+ What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_i_raw
+ What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_q_raw
++What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_rms_raw
++What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_swell_raw
++What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_dip_raw
+ KernelVersion:	2.6.35
+ Contact:	linux-iio@vger.kernel.org
+ Description:
+@@ -158,6 +161,7 @@ Description:
+ 		component of the signal while the 'q' channel contains the quadrature
+ 		component.
+ 
++
+ What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY-voltageZ_raw
+ KernelVersion:	2.6.35
+ Contact:	linux-iio@vger.kernel.org
+@@ -170,6 +174,11 @@ Description:
+ 		of scale and offset are millivolts.
+ 
+ What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_raw
++What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_active_raw
++What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_reactive_raw
++What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_apparent_raw
++What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_fund_reactive_raw
++What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_factor_raw
+ KernelVersion:	4.5
+ Contact:	linux-iio@vger.kernel.org
+ Description:
+@@ -178,6 +187,7 @@ Description:
+ 		unique to allow association with event codes. Units after
+ 		application of scale and offset are milliwatts.
+ 
++
+ What:		/sys/bus/iio/devices/iio:deviceX/in_capacitanceY_raw
+ KernelVersion:	3.2
+ Contact:	linux-iio@vger.kernel.org
+@@ -1593,6 +1603,12 @@ Description:
+ 
+ What:		/sys/.../iio:deviceX/in_energy_input
+ What:		/sys/.../iio:deviceX/in_energy_raw
++What:		/sys/.../iio:deviceX/in_energyY_active_raw
++What:		/sys/.../iio:deviceX/in_energyY_reactive_raw
++What:		/sys/.../iio:deviceX/in_energyY_apparent_raw
++What:		/sys/.../iio:deviceX/in_energyY_active_accum_raw
++What:		/sys/.../iio:deviceX/in_energyY_reactive_accum_raw
++What:		/sys/.../iio:deviceX/in_energyY_apparent_accum_raw
+ KernelVersion:	4.0
+ Contact:	linux-iio@vger.kernel.org
+ Description:
+@@ -1600,6 +1616,7 @@ Description:
+ 		device (e.g.: human activity sensors report energy burnt by the
+ 		user). Units after application of scale are Joules.
+ 
++
+ What:		/sys/.../iio:deviceX/in_distance_input
+ What:		/sys/.../iio:deviceX/in_distance_raw
+ KernelVersion:	4.0
+@@ -1718,6 +1735,7 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_raw
+ What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_supply_raw
+ What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_i_raw
+ What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_q_raw
++What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_rms_raw
+ KernelVersion:	3.17
+ Contact:	linux-iio@vger.kernel.org
+ Description:
+@@ -1733,6 +1751,7 @@ Description:
+ 		component of the signal while the 'q' channel contains the quadrature
+ 		component.
+ 
++
+ What:		/sys/.../iio:deviceX/in_energy_en
+ What:		/sys/.../iio:deviceX/in_distance_en
+ What:		/sys/.../iio:deviceX/in_velocity_sqrt(x^2+y^2+z^2)_en
+diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+index f13c3aa470d7..daf486cbe0bd 100644
+--- a/drivers/iio/industrialio-core.c
++++ b/drivers/iio/industrialio-core.c
+@@ -152,6 +152,17 @@ static const char * const iio_modifier_names[] = {
+ 	[IIO_MOD_PITCH] = "pitch",
+ 	[IIO_MOD_YAW] = "yaw",
+ 	[IIO_MOD_ROLL] = "roll",
++	[IIO_MOD_RMS] = "rms",
++	[IIO_MOD_ACTIVE] = "active",
++	[IIO_MOD_REACTIVE] = "reactive",
++	[IIO_MOD_APPARENT] = "apparent",
++	[IIO_MOD_FUND_REACTIVE] = "fund_reactive",
++	[IIO_MOD_FACTOR] = "factor",
++	[IIO_MOD_ACTIVE_ACCUM] = "active_accum",
++	[IIO_MOD_APPARENT_ACCUM] = "apparent_accum",
++	[IIO_MOD_REACTIVE_ACCUM] = "reactive_accum",
++	[IIO_MOD_SWELL] = "swell",
++	[IIO_MOD_DIP] = "dip",
+ };
+ 
+ /* relies on pairs of these shared then separate */
+diff --git a/include/uapi/linux/iio/types.h b/include/uapi/linux/iio/types.h
+index 3eb0821af7a4..9e05bbddcbe2 100644
+--- a/include/uapi/linux/iio/types.h
++++ b/include/uapi/linux/iio/types.h
+@@ -108,6 +108,17 @@ enum iio_modifier {
+ 	IIO_MOD_ROLL,
+ 	IIO_MOD_LIGHT_UVA,
+ 	IIO_MOD_LIGHT_UVB,
++	IIO_MOD_RMS,
++	IIO_MOD_ACTIVE,
++	IIO_MOD_REACTIVE,
++	IIO_MOD_APPARENT,
++	IIO_MOD_FUND_REACTIVE,
++	IIO_MOD_FACTOR,
++	IIO_MOD_ACTIVE_ACCUM,
++	IIO_MOD_APPARENT_ACCUM,
++	IIO_MOD_REACTIVE_ACCUM,
++	IIO_MOD_SWELL,
++	IIO_MOD_DIP,
+ };
+ 
+ enum iio_event_type {
+-- 
+2.49.0
+
 
