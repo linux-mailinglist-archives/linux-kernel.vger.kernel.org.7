@@ -1,145 +1,179 @@
-Return-Path: <linux-kernel+bounces-727765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC7BB01F5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:43:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4955CB01F65
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9533476850D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:43:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D933581D86
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D442D29DD;
-	Fri, 11 Jul 2025 14:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78352E612B;
+	Fri, 11 Jul 2025 14:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sz8Vykjg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="WDGJzIpw";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Kf5ZIUcC"
+Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270196ADD;
-	Fri, 11 Jul 2025 14:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552B36ADD;
+	Fri, 11 Jul 2025 14:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752245010; cv=none; b=NG7vuYGYyDRxmgQNYL6rfv6+9TGlTfaxwhHM7URtvcGL+ZNztrAiATquNl+TBdOxqclcjCrgznXsdn9NjW4Stg2oJsmw7RG9fgZ1t2Wxo7c8Gn0kwntWXCzpTUypi6nDCMZ88tDV7jzctleKB8haFX/oxf6Eq3IisMOs7NFlhGc=
+	t=1752245097; cv=none; b=FtDhBpfcmCeE3SZTiex3QKGjUlDSY7LhOIUIIJ+EHjhzQbUiXJwlLroQZG0Ef3ZPvmFh4FFGsoUevIZGU6uIoQkQE3H6BapWrz8zdsy8LoJYf9QHPIdjkzNZbeFCh0tovOs3yR5hDGqoDwJzNKp1zXUsaRHKfrONWiSgtocpTlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752245010; c=relaxed/simple;
-	bh=UEqcf9BWe9KSrJPz14kGQMwOPOmc8OadmITUFSWpuEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pYlZYy6kvun/kb3ol/RHwtemwdizOWCrhnrgHMFRN6bQz8gPbIWqRdWr1OyqDHGYVI83DOlhcULwXGi//7XWZQNdv9SPQ0eoMr+D+ILnIqI9MAigTgBOn+dcskhend46wLbZhx8XOeF5MHJZBXGOh0bDLxHX8Jc/+bBJKmLCIIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sz8Vykjg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B982C4CEF0;
-	Fri, 11 Jul 2025 14:43:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752245009;
-	bh=UEqcf9BWe9KSrJPz14kGQMwOPOmc8OadmITUFSWpuEg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Sz8VykjguiAuVoV0hyJ3PDMgg7yAmfztLYWKJncQAujXcfRYc+kNt3brvzbT9mrQr
-	 AoTZ61ZcWxsrcWUchqUjn1BbWSSCdumE55cPlAKNS+v6Tv2xkexyoowYoafUKd3DzI
-	 U1F+2HQ0Bm2e2HBXXSQo811niX5aGl72URCbAQ/YeQ0Tf9oKI+auExS2hxYU65V/dZ
-	 bI4XZPP2obDEOwXc9NE+EssbLNyejXj0hMmoLwL/JhJzrURHLD85K0KQjInQw0w3hS
-	 viMtmI6ksFRptGf0lg7tnPBCNcN7wfkS+qDlnapO3FZlVmUFZ4DwQvG/PwzBY4HwfJ
-	 5CdWWhQa0J0/g==
-Date: Fri, 11 Jul 2025 15:43:23 +0100
-From: Simon Horman <horms@kernel.org>
-To: Himanshu Mittal <h-mittal1@ti.com>
-Cc: pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
-	davem@davemloft.net, andrew+netdev@lunn.ch,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, srk@ti.com,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Roger Quadros <rogerq@kernel.org>, danishanwar@ti.com,
-	m-malladi@ti.com, pratheesh@ti.com, prajith@ti.com
-Subject: Re: [PATCH net v2] net: ti: icssg-prueth: Fix buffer allocation for
- ICSSG
-Message-ID: <20250711144323.GV721198@horms.kernel.org>
-References: <20250710131250.1294278-1-h-mittal1@ti.com>
+	s=arc-20240116; t=1752245097; c=relaxed/simple;
+	bh=tE17wqTp5bia7rZXKcjZwP/QLaLxvidWPP68VRIypG0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=TXDCKHbB5ExbRT3gk5UQ9Mvkw4ffktaFIlWVsxHgTZYARrN10+zYuPwHtBx9A/yhAsJ20M2KHtMsuAfIB/zKHSZJqrI8/Qs7e1+VXx6+m1CP5U+02nAq18zh5zHtTm4eoZcC4EfwiyutNuMzsZwcYVJB2b29i/tJMr49CKES+jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=WDGJzIpw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Kf5ZIUcC; arc=none smtp.client-ip=202.12.124.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailflow.stl.internal (Postfix) with ESMTP id ECDA41300588;
+	Fri, 11 Jul 2025 10:44:51 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Fri, 11 Jul 2025 10:44:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1752245091;
+	 x=1752252291; bh=hkFSXr7AU4WvmRzO82oca+vfaj/I9fJ285U+GlYMs4Y=; b=
+	WDGJzIpwx45Q6sqhljeaGH2cOTdluGUt24Ot4wUGxawP4eTO1H9k4pflkdGWEvB3
+	VWNVb6H3IA5D6yP6J6o65PYmbVtj0XG7bDroUx5Mrfo8u5atRVyv5+krwpkb0XI0
+	W8VMgEB2O1WYBsRFlOhqPv9wSsp3SlUP9hzhulqdKbUQxKHSZ6XPNcQffiekdA2E
+	ewOAoROdJ68hKcSmbBg147lb7m1RY446qKkssUPRLSbgOfdNZg8CgasIxYV/tLs3
+	81S8lriNz7Ybj+/QTXe7Ib4sdjo3Ox77REKYHRXCyi8fqkqTq9Fp9tBEGv7Vi2rA
+	u0ozRr7nQSZ982SS69XSQw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752245091; x=
+	1752252291; bh=hkFSXr7AU4WvmRzO82oca+vfaj/I9fJ285U+GlYMs4Y=; b=K
+	f5ZIUcClhfndy6bg0ErwfbauVr1PYBBIIEkkX0qMxOE6m9/I9BqyEg7lDZQIbaJD
+	24DJw98ecPKnEZZZ+4J04iSq1mbYn75GAA8dntf2p6cQMTsh1wNi+vycdNRRFcJm
+	GxECjfikZJFsfksv3qHQDNLyiVk4o4GWqc3BRk+W8t65kPasbxP358C5naNbYe68
+	GmAiAuYtwlGIKqiVPtsiV/JhgByRsgLtIlrpIvDftAfQSYGX2Jh5f9OhpoFx0Gwd
+	Kubx5EeitgcW7c54xY4XVUAzFvUyKCFZVgZim8Gh7u7ipCeB+LSVdZk+mNcdGBTe
+	nufnpqtsC6TbjwU3pn2XQ==
+X-ME-Sender: <xms:YCNxaFZClDNB8V8d2nAY_Ew4n9dxS66oEtyoWWiM3qBWaC9jhuGo0A>
+    <xme:YCNxaMae9yxxOrDU5MguHRWe4ID5My4nit7k0UfizUfavF3zgEwVdu61IxG90rZTG
+    mjD0D4KKsWAaNWMm0M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegfeeitdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeegfedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepshhouhhvihhkrdgthhgrkhhrrghvrghrthihsegrrhhmrdgtohhmpd
+    hrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphht
+    thhopehmrghrkhdrrhhuthhlrghnugesrghrmhdrtghomhdprhgtphhtthhopehsuhguvg
+    gvphdrhhholhhlrgesrghrmhdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgs
+    vghllhhonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepsggtmhdqkhgvrhhnvg
+    hlqdhfvggvuggsrggtkhdqlhhishhtsegsrhhorggutghomhdrtghomhdprhgtphhtthho
+    pehflhhorhhirghnrdhfrghinhgvlhhlihessghrohgruggtohhmrdgtohhmpdhrtghpth
+    htoheprhhjuhhisegsrhhorggutghomhdrtghomhdprhgtphhtthhopehssghrrghnuggv
+    nhessghrohgruggtohhmrdgtohhm
+X-ME-Proxy: <xmx:YSNxaF0GQ2fa_1SuFfOdOhuhu0Zy36UfpH2r-1ugIAx3Raw8Lckepw>
+    <xmx:YSNxaHx6LIEqH4Y9FZ15zgykV3RRQn0SymX0zo76bvrZzyGy6X62gw>
+    <xmx:YSNxaN6C-9gfSyFHrY25SMmGx_DUe4WBzIiGs4pI1tGLmBcVJAj_Tw>
+    <xmx:YSNxaA-8DMjc745DJxU5J0QF345BoWMq-R8duUpQzgRO49VjxMVCaQ>
+    <xmx:YyNxaHIvxWMwaZjAcDljwq14_YEVEBsGlu7kFX79ffc30VsP2_yKMSEg>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id DC056700065; Fri, 11 Jul 2025 10:44:48 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710131250.1294278-1-h-mittal1@ti.com>
+X-ThreadId: T7b8765a73c29189d
+Date: Fri, 11 Jul 2025 16:44:28 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Shivendra Pratap" <shivendra.pratap@oss.qualcomm.com>,
+ "Rob Herring" <robh@kernel.org>
+Cc: "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
+ "Bjorn Andersson" <andersson@kernel.org>,
+ "Sebastian Reichel" <sre@kernel.org>,
+ "Sudeep Holla" <sudeep.holla@arm.com>,
+ "Souvik Chakravarty" <Souvik.Chakravarty@arm.com>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Andy Yan" <andy.yan@rock-chips.com>,
+ "Mark Rutland" <mark.rutland@arm.com>,
+ "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
+ "Olof Johansson" <olof@lixom.net>,
+ "Konrad Dybcio" <konradybcio@kernel.org>,
+ cros-qcom-dts-watchers@chromium.org, "Vinod Koul" <vkoul@kernel.org>,
+ "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Will Deacon" <will@kernel.org>,
+ "Florian Fainelli" <florian.fainelli@broadcom.com>,
+ "Elliot Berman" <elliotb317@gmail.com>,
+ "Stephen Boyd" <swboyd@chromium.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, "Wei Xu" <xuwei5@hisilicon.com>,
+ linux-rockchip@lists.infradead.org,
+ "Baolin Wang" <baolin.wang@linux.alibaba.com>,
+ "Sen Chu" <sen.chu@mediatek.com>, "Sean Wang" <sean.wang@mediatek.com>,
+ "Macpaul Lin" <macpaul.lin@mediatek.com>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Ray Jui" <rjui@broadcom.com>, "Scott Branden" <sbranden@broadcom.com>,
+ bcm-kernel-feedback-list@broadcom.com,
+ "Nicolas Ferre" <nicolas.ferre@microchip.com>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Elliot Berman" <quic_eberman@quicinc.com>,
+ "Srinivas Kandagatla" <srini@kernel.org>
+Message-Id: <454c8361-151e-42b3-adfc-d82d2af62299@app.fastmail.com>
+In-Reply-To: <cdadd6cf-18c9-15c7-c58a-b5d56b53452a@oss.qualcomm.com>
+References: 
+ <20250710-arm-psci-system_reset2-vendor-reboots-v10-0-b2d3b882be85@oss.qualcomm.com>
+ <20250710-arm-psci-system_reset2-vendor-reboots-v10-2-b2d3b882be85@oss.qualcomm.com>
+ <20250710224740.GA15385-robh@kernel.org>
+ <cdadd6cf-18c9-15c7-c58a-b5d56b53452a@oss.qualcomm.com>
+Subject: Re: [PATCH v10 02/10] dt-bindings: power: reset: Document reboot-mode cookie
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 10, 2025 at 06:42:50PM +0530, Himanshu Mittal wrote:
-> Fixes overlapping buffer allocation for ICSSG peripheral
-> used for storing packets to be received/transmitted.
-> There are 3 buffers:
-> 1. Buffer for Locally Injected Packets
-> 2. Buffer for Forwarding Packets
-> 3. Buffer for Host Egress Packets
-> 
-> In existing allocation buffers for 2. and 3. are overlapping causing packet
-> corruption.
-> 
-> Packet corruption observations:
-> During tcp iperf testing, due to overlapping buffers the received ack
-> packet overwrites the packet to be transmitted. So, we see packets on wire
-> with the ack packet content inside the content of next TCP packet from
-> sender device.
-> 
-> Details for AM64x switch mode:
-> -> Allocation by existing driver:
-> +---------+-------------------------------------------------------------+
-> |         |          SLICE 0             |          SLICE 1             |
-> |         +------+--------------+--------+------+--------------+--------+
-> |         | Slot | Base Address | Size   | Slot | Base Address | Size   |
-> |---------+------+--------------+--------+------+--------------+--------+
-> |         | 0    | 70000000     | 0x2000 | 0    | 70010000     | 0x2000 |
-> |         | 1    | 70002000     | 0x2000 | 1    | 70012000     | 0x2000 |
-> |         | 2    | 70004000     | 0x2000 | 2    | 70014000     | 0x2000 |
-> | FWD     | 3    | 70006000     | 0x2000 | 3    | 70016000     | 0x2000 |
-> | Buffers | 4    | 70008000     | 0x2000 | 4    | 70018000     | 0x2000 |
-> |         | 5    | 7000A000     | 0x2000 | 5    | 7001A000     | 0x2000 |
-> |         | 6    | 7000C000     | 0x2000 | 6    | 7001C000     | 0x2000 |
-> |         | 7    | 7000E000     | 0x2000 | 7    | 7001E000     | 0x2000 |
-> +---------+------+--------------+--------+------+--------------+--------+
-> |         | 8    | 70020000     | 0x1000 | 8    | 70028000     | 0x1000 |
-> |         | 9    | 70021000     | 0x1000 | 9    | 70029000     | 0x1000 |
-> |         | 10   | 70022000     | 0x1000 | 10   | 7002A000     | 0x1000 |
-> | Our     | 11   | 70023000     | 0x1000 | 11   | 7002B000     | 0x1000 |
-> | LI      | 12   | 00000000     | 0x0    | 12   | 00000000     | 0x0    |
-> | Buffers | 13   | 00000000     | 0x0    | 13   | 00000000     | 0x0    |
-> |         | 14   | 00000000     | 0x0    | 14   | 00000000     | 0x0    |
-> |         | 15   | 00000000     | 0x0    | 15   | 00000000     | 0x0    |
-> +---------+------+--------------+--------+------+--------------+--------+
-> |         | 16   | 70024000     | 0x1000 | 16   | 7002C000     | 0x1000 |
-> |         | 17   | 70025000     | 0x1000 | 17   | 7002D000     | 0x1000 |
-> |         | 18   | 70026000     | 0x1000 | 18   | 7002E000     | 0x1000 |
-> | Their   | 19   | 70027000     | 0x1000 | 19   | 7002F000     | 0x1000 |
-> | LI      | 20   | 00000000     | 0x0    | 20   | 00000000     | 0x0    |
-> | Buffers | 21   | 00000000     | 0x0    | 21   | 00000000     | 0x0    |
-> |         | 22   | 00000000     | 0x0    | 22   | 00000000     | 0x0    |
-> |         | 23   | 00000000     | 0x0    | 23   | 00000000     | 0x0    |
-> +---------+------+--------------+--------+------+--------------+--------+
-> --> here 16, 17, 18, 19 overlapping with below express buffer
-> 
-> +-----+-----------------------------------------------+
-> |     |       SLICE 0       |        SLICE 1          |
-> |     +------------+----------+------------+----------+
-> |     | Start addr | End addr | Start addr | End addr |
-> +-----+------------+----------+------------+----------+
-> | EXP | 70024000   | 70028000 | 7002C000   | 70030000 | <-- Overlapping
+On Fri, Jul 11, 2025, at 14:32, Shivendra Pratap wrote:
+> On 7/11/2025 4:17 AM, Rob Herring wrote:
+>> On Thu, Jul 10, 2025 at 02:45:44PM +0530, Shivendra Pratap wrote:
+>>>    All mode properties are vendor specific, it is a indication to tell
+>>>    the bootloader what to do when the system reboots, and should be named
+>>> -  as mode-xxx = <magic> (xxx is mode name, magic should be a non-zero value).
+>>> +  as mode-xxx = <magic cookie> (xxx is mode name, magic should be a
+>>> +  non-zero value, cookie is optional).
+>> 
+>> I don't understand the distinction between magic and cookie... Isn't all 
+>> just magic values and some platform needs more than 32-bits of it?
+> Need two different arguments. Will try to clarify a bit below.
+> PSCI defines SYSTEM_RESET2 vendor-specific resets which takes two
+> parameters - reset_type and cookie. Both parameters are independent and
+> used by firmware to define different types of resets or shutdown.
+> As per spec:
+> reset_type: Values in the range 0x80000000-0xFFFFFFFF of the reset_type 
+> parameter
+> can be used to request vendor-specific resets or shutdowns.
+> cookie: the cookie parameter can be used to pass additional data to the 
+> implementation.
 
-Thanks for the detailed explanation with these tables.
-It is very helpful. I follow both the existing and new mappings
-with their help. Except for one thing.
+I don't see any distinction here either. As Rob says, you have to
+get both 32-bit numbers from DT in order to get the desired reboot-mode,
+and you have to pass them both to the firmware when rebooting.
 
-It's not clear how EXP was set to the values on the line above.
-Probably I'm missing something very obvious.
-Could you help me out here?
+The distinction between cookie and magic value may be relevant in the
+context of the psci specification, but for the Linux driver, this is
+really just a 64-bit magic number.
 
-> | PRE | 70030000   | 70033800 | 70034000   | 70037800 |
-> +-----+------------+----------+------------+----------+
-> 
-> +---------------------+----------+----------+
-> |                     | SLICE 0  |  SLICE 1 |
-> +---------------------+----------+----------+
-> | Default Drop Offset | 00000000 | 00000000 |     <-- Field not configured
-> +---------------------+----------+----------+
-
-...
+     Arnd
 
