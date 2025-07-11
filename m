@@ -1,220 +1,209 @@
-Return-Path: <linux-kernel+bounces-727251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4B4B0171E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:02:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F989B01729
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FE3C3A6017
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:02:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3FFB4827BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773F021883C;
-	Fri, 11 Jul 2025 09:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699F721B9E5;
+	Fri, 11 Jul 2025 09:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="pvYjKxg+"
-Received: from mail-10627.protonmail.ch (mail-10627.protonmail.ch [79.135.106.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="gg55oUGs"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EF81B87F2
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF4D1F239B
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752224559; cv=none; b=P/PM96uOeCEJSGQPvo1LBLmCHHgKJTsxPHTm3uYKerioLSGdhDy2ntth2NJP+g0pMasB0uEWQMra7OJxMLiVaDlK4N1KtZYWal+bIwjgvHMDQcPzgdmGcdnfeG7NDoTSWMbL4t/4peSoRONg09jaAgN8pgnRy6ksgm/tZrIcuUI=
+	t=1752224678; cv=none; b=hpuo2C6LgZ1jw4h0ar9/R7iGeXtjAWrmyMeDkSyaZmgQcUyq8SZfcA3mBLr78KMq0baUABsgm02sjR4lSuYsJNZnCb2c0em6/TgMs3B0Y76GRVYt5rqSI637T0nJoQ1LtnNx3gmBTc9eD56Fc4CSjzQkkTKH6saku8nMTLZhRXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752224559; c=relaxed/simple;
-	bh=5hfsErzK8U6eSfuwK4siKcG5sl3MlW6guRBomqwJNSk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FSXsB+schLRifNFgQBHYGK7RBkQkU0jbvU8BttDPfQ2yi/3ec5AgN7Qiwv+34al736OsdqFZtW99T83Qkf9Z8WYCXPXO440WWSZ7Bv3C+pHjwpfAZkDWSeCACJuDN/fwyVGemoOPyXySDVGdk7rxfEU9cYD/cAdsASeJahBut2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=pvYjKxg+; arc=none smtp.client-ip=79.135.106.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
-	s=protonmail; t=1752224545; x=1752483745;
-	bh=Tg8aOMQgSF6YM5PlWDpcJQLYft5zXTyVat8RUlVrpKw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=pvYjKxg+twOgyt8Gd11RZkN46LUq/vcNdz+VJNLdIhPNUk8jW8rLrZ9elL9Jk5tVr
-	 gJZOIwc3mWNqT1BXJCbD3WeF97oGiLwK0wSFpPQCbDgeMDp5i+AcGDqWsMy+ciFy2B
-	 hqBRwRtRCtfjq6sTBpQv8oILCY9PPRcHkgFKV8WtgxlijSyUiyqW4HZjDcotJ87mKm
-	 8NlwtLVFXpsmwR6xXkvCzEMYunKbwXTwo0Eoc3dMAQG98JQB8fPcaaon3ChmsPQaTC
-	 Iqk2EnOSjzHY9rVAFqxb2Mfsh8wr3LHX+9PXUpo4a34hMUOvSQybCDn2QWadpL8Z/t
-	 9rxiueNtV4oAQ==
-Date: Fri, 11 Jul 2025 09:02:18 +0000
-To: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
-From: Sean Nyekjaer <sean@geanix.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sebastian Reichel <sre@kernel.org>, Frank Li <Frank.li@nxp.com>, imx@lists.linux.dev, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>, Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>, Robin Gong <yibin.gong@nxp.com>, Enric Balletbo i Serra <eballetbo@gmail.com>
-Subject: Re: [PATCH v8 5/6] power: supply: pf1550: add battery charger support
-Message-ID: <e2veigexln4ma5meguxqh6jh2r2fhj2d47pv4exjzwrhlazn7d@raknfsiucqls>
-In-Reply-To: <20250707-pf1550-v8-5-6b6eb67c03a0@savoirfairelinux.com>
-References: <20250707-pf1550-v8-0-6b6eb67c03a0@savoirfairelinux.com> <20250707-pf1550-v8-5-6b6eb67c03a0@savoirfairelinux.com>
-Feedback-ID: 134068486:user:proton
-X-Pm-Message-ID: e22eee3c66a526c8ffff06f5cd1ab1c871b3bad9
+	s=arc-20240116; t=1752224678; c=relaxed/simple;
+	bh=04wwIYzCyIt0hPLEgF4ULkMM62+IXa+xFlcJ6oiE+cE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TvjruzS1VDSXUTe+5VcQIQAqBFeUqGXmdX1LHUEdnJPFpydVlvBtGrEH+SMyuGHj05yMNFG6lcJ9bxp3wXjjNsl32Ey4EclZ4JF+QIrNiDr/ABoDhhjzTdO+xEib3M6/Kg93AFLH8urUaIke2gMDq8vtMKkBLoPm26stApuur/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=gg55oUGs; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-455b00283a5so1835945e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 02:04:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1752224674; x=1752829474; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=azkWYqIfD0IX3c6trMXIH2mHQXBlbPclhfsws1MJpdM=;
+        b=gg55oUGs7irbUWBzIK7uVqa3q6GCgjQB80JZQpOJ8VJVKu16QCn/DNCSwGR8Gh9rTt
+         tV1zX9x1ljoEKhveL1K3P42TbOo0j58IiAXheMSp/AN6+uQnhx2SekEGQmESDirvUHyJ
+         tOXACWD78hml+QulsKN4kaVaDWZ32dvMWPBgw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752224674; x=1752829474;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=azkWYqIfD0IX3c6trMXIH2mHQXBlbPclhfsws1MJpdM=;
+        b=qAAoKU+fTDnwMjQu6328ouMr6iQTAS/6IW1+tRZUuJwdvXv6CSXzNqpDe6lul9ZSA1
+         /FaQPB2VaBI1Zdr3M2YwEQDMrInVzWn06aGhDD0sn/NyWCbn8Wd+dH5kR/QhNp7upzIv
+         c6G6b+bhismeixeEjl7T/g9OG2Gj6vvpp9HjWtYc6YrW7nok4e/Q5ZgVe+o+XwxLPP+k
+         kTDVGG1Yq3DSaLPfdVZsPsZ8ZLlYVZRJNJ6upkZcA7T6cu7lsICgw0YQW5Is2OhcPUd4
+         H8A1vmtdimfOj9n2ld93fU9gy4mW0/4MdbJ5nUZktc9YobItxOMpxhMM6Ih1D1ZZpxDL
+         wc+w==
+X-Forwarded-Encrypted: i=1; AJvYcCV+kwQDlQqFuCYULGE0GXsVO40O6fDwJnPwH8WqM6+KgTqaSHoWFyhWgtzESsk69q1JXJ7IOLCjJqST6Kw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0YhX2uCzhHIJkJic0mKyxrRy0E5bLFanxWGZkIcRfzVC/nbOZ
+	NU1UkMe0rnDHtGw2lCXtwzw/yVpr/Qut83kmc8WNTNPy1fGVaxeA+MSGC+3v/HS8Z4E=
+X-Gm-Gg: ASbGnctPH2X3+BTJvp7E6vOYWh0miEIEb7z369h5pMghMszBUydP+aWfbXVpsrNDg+I
+	QsRd2z0SgSz/r0RuygVEgjUOFlTTc0PJzu+o+I/G6mjZmn9cIlD9+CoJJFJYHAlJHmlhrSFVlrf
+	mwldKo9esEB1ABgLBMYVeDjjeunOShM738XrwKFhIxxjAeijHWdMqDx0gdUc+A2nimsp/QFL0zL
+	awJJQdBMGJBOUsdlEoWtXMTN2DPgJEANG7KK6fcfv0ao00CDZ0LRnF2saiVI16Ti5XWty1x4+VK
+	t539T1FA60McYi8t/D7IQ9b4G2bv6w+DYw446+TP0R6VatJPdb4IxxbDc3QiLDtFerCXwN3QMdK
+	ZGIVUwwE3/zTDpmFu92DGarUWIEpE5nAd4w==
+X-Google-Smtp-Source: AGHT+IFGUXwZZxphgJZiWA8T7e58NqagXtzk90hoNDnBiUkxa4v1W5VvgPBRSAu+F+hnZton6PqeNA==
+X-Received: by 2002:a05:600c:6095:b0:453:c39:d0a7 with SMTP id 5b1f17b1804b1-454ec15a9fcmr17912895e9.5.1752224674202;
+        Fri, 11 Jul 2025 02:04:34 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd55b1absm41564565e9.40.2025.07.11.02.04.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 02:04:33 -0700 (PDT)
+Date: Fri, 11 Jul 2025 11:04:31 +0200
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Maarten Lankhorst <dev@lankhorst.se>,
+	Natalie Vock <natalie.vock@gmx.de>, linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org, cgroups@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang@linux.dev>, Maxime Ripard <mripard@kernel.org>,
+	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Subject: Re: [PATCH v1 1/1] rculist: move list_for_each_rcu() to where it
+ belongs
+Message-ID: <aHDTn5JgXOpiG_zd@phenom.ffwll.local>
+Mail-Followup-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Christian Brauner <brauner@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Maarten Lankhorst <dev@lankhorst.se>,
+	Natalie Vock <natalie.vock@gmx.de>, linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org, cgroups@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang@linux.dev>, Maxime Ripard <mripard@kernel.org>,
+	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+References: <20250710121528.780875-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710121528.780875-1-andriy.shevchenko@linux.intel.com>
+X-Operating-System: Linux phenom 6.12.30-amd64 
 
-Hi,
+On Thu, Jul 10, 2025 at 03:15:28PM +0300, Andy Shevchenko wrote:
+> The list_for_each_rcu() relies on the rcu_dereference() API which is not
+> provided by the list.h. At the same time list.h is a low-level basic header
+> that must not have dependencies like RCU, besides the fact of the potential
+> circular dependencies in some cases. With all that said, move RCU related
+> API to the rculist.h where it belongs.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Mon, Jul 07, 2025 at 05:37:24PM +0100, Samuel Kayode wrote:
-> Add support for the battery charger for pf1550 PMIC.
->=20
-> Signed-off-by: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+Reviewed-by: Simona Vetter <simona.vetter@ffwll.ch>
+
+Also ack for the dmem part for merging through your tree.
+-Sima
+
 > ---
-
-[...]
-
-> diff --git a/drivers/power/supply/pf1550-charger.c b/drivers/power/supply=
-/pf1550-charger.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..7a6bd9c30d60280f1e1c50d4e=
-1ddaf0a4998b9f0
-> --- /dev/null
-> +++ b/drivers/power/supply/pf1550-charger.c
-> @@ -0,0 +1,632 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * charger driver for the PF1550
-> + *
-> + * Copyright (C) 2016 Freescale Semiconductor, Inc.
-> + * Robin Gong <yibin.gong@freescale.com>
-> + *
-> + * Portions Copyright (c) 2025 Savoir-faire Linux Inc.
-> + * Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+>  include/linux/list.h    | 10 ----------
+>  include/linux/rculist.h | 10 ++++++++++
+>  kernel/cgroup/dmem.c    |  1 +
+>  3 files changed, 11 insertions(+), 10 deletions(-)
+> 
+> diff --git a/include/linux/list.h b/include/linux/list.h
+> index e7e28afd28f8..e7bdad9b8618 100644
+> --- a/include/linux/list.h
+> +++ b/include/linux/list.h
+> @@ -686,16 +686,6 @@ static inline void list_splice_tail_init(struct list_head *list,
+>  #define list_for_each(pos, head) \
+>  	for (pos = (head)->next; !list_is_head(pos, (head)); pos = pos->next)
+>  
+> -/**
+> - * list_for_each_rcu - Iterate over a list in an RCU-safe fashion
+> - * @pos:	the &struct list_head to use as a loop cursor.
+> - * @head:	the head for your list.
+> - */
+> -#define list_for_each_rcu(pos, head)		  \
+> -	for (pos = rcu_dereference((head)->next); \
+> -	     !list_is_head(pos, (head)); \
+> -	     pos = rcu_dereference(pos->next))
+> -
+>  /**
+>   * list_for_each_continue - continue iteration over a list
+>   * @pos:	the &struct list_head to use as a loop cursor.
+> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
+> index 1b11926ddd47..2abba7552605 100644
+> --- a/include/linux/rculist.h
+> +++ b/include/linux/rculist.h
+> @@ -42,6 +42,16 @@ static inline void INIT_LIST_HEAD_RCU(struct list_head *list)
+>   */
+>  #define list_bidir_prev_rcu(list) (*((struct list_head __rcu **)(&(list)->prev)))
+>  
+> +/**
+> + * list_for_each_rcu - Iterate over a list in an RCU-safe fashion
+> + * @pos:	the &struct list_head to use as a loop cursor.
+> + * @head:	the head for your list.
 > + */
+> +#define list_for_each_rcu(pos, head)		  \
+> +	for (pos = rcu_dereference((head)->next); \
+> +	     !list_is_head(pos, (head)); \
+> +	     pos = rcu_dereference(pos->next))
 > +
-> +#include <linux/devm-helpers.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/mfd/pf1550.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/power_supply.h>
-> +
-> +#define PF1550_DEFAULT_CONSTANT_VOLT=094200000
-> +#define PF1550_DEFAULT_MIN_SYSTEM_VOLT=093500000
-> +#define PF1550_DEFAULT_THERMAL_TEMP=0975
+>  /**
+>   * list_tail_rcu - returns the prev pointer of the head of the list
+>   * @head: the head of the list
+> diff --git a/kernel/cgroup/dmem.c b/kernel/cgroup/dmem.c
+> index 10b63433f057..e12b946278b6 100644
+> --- a/kernel/cgroup/dmem.c
+> +++ b/kernel/cgroup/dmem.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/mutex.h>
+>  #include <linux/page_counter.h>
+>  #include <linux/parser.h>
+> +#include <linux/rculist.h>
+>  #include <linux/slab.h>
+>  
+>  struct dmem_cgroup_region {
+> -- 
+> 2.47.2
+> 
 
-Default is 95
-
-> +#define PF1550_CHARGER_IRQ_NR=09=095
-> +
-> +struct pf1550_charger {
-> +=09struct device *dev;
-> +=09const struct pf1550_ddata *pf1550;
-> +=09struct power_supply *charger;
-> +=09struct power_supply *battery;
-> +=09struct delayed_work vbus_sense_work;
-> +=09struct delayed_work chg_sense_work;
-> +=09struct delayed_work bat_sense_work;
-> +=09int virqs[PF1550_CHARGER_IRQ_NR];
-> +
-
-[...]
-
-> +
-> +static int pf1550_set_thermal_regulation_temp(struct pf1550_charger *chg=
-,
-> +=09=09=09=09=09      unsigned int cells)
-> +{
-> +=09unsigned int data;
-> +
-> +=09switch (cells) {
-> +=09case 60:
-> +=09=09data =3D 0x0;
-> +=09=09break;
-> +=09case 75:
-> +=09=09data =3D 0x1;
-> +=09=09break;
-> +=09case 90:
-> +=09=09data =3D 0x2;
-> +=09=09break;
-> +=09case 105:
-> +=09=09data =3D 0x3;
-> +=09=09break;
-
-From the datasheet 80, 95, 110 and 125c is supported
-
-> +=09default:
-> +=09=09return dev_err_probe(chg->dev, -EINVAL,
-> +=09=09=09=09     "Wrong value for thermal temperature\n");
-> +=09}
-> +
-> +=09data <<=3D PF1550_CHARG_REG_THM_REG_CNFG_REGTEMP_SHIFT;
-> +
-> +=09dev_dbg(chg->dev, "Thermal regulation loop temperature: %u (0x%x)\n",
-> +=09=09cells, data);
-> +
-> +=09return regmap_update_bits(chg->pf1550->regmap,
-> +=09=09=09=09  PF1550_CHARG_REG_THM_REG_CNFG,
-> +=09=09=09=09  PF1550_CHARG_REG_THM_REG_CNFG_REGTEMP_MASK,
-> +=09=09=09=09  data);
-> +}
-> +
-> +/*
-> + * Sets charger registers to proper and safe default values.
-> + */
-> +static int pf1550_reg_init(struct pf1550_charger *chg)
-> +{
-> +=09struct device *dev =3D chg->dev;
-> +=09unsigned int data;
-> +=09int ret;
-> +
-> +=09/* Unmask charger interrupt, mask DPMI and reserved bit */
-> +=09ret =3D  regmap_write(chg->pf1550->regmap, PF1550_CHARG_REG_CHG_INT_M=
-ASK,
-> +=09=09=09    PF1550_CHG_INT_MASK);
-> +=09if (ret)
-> +=09=09return dev_err_probe(dev, ret,
-> +=09=09=09=09     "Error unmask charger interrupt\n");
-> +
-> +=09ret =3D regmap_read(chg->pf1550->regmap, PF1550_CHARG_REG_VBUS_SNS,
-> +=09=09=09  &data);
-> +=09if (ret)
-> +=09=09return dev_err_probe(dev, ret, "Read charg vbus_sns error\n");
-
-data is unused here :/
-
-> +
-> +=09ret =3D pf1550_set_constant_volt(chg, chg->constant_volt);
-> +=09if (ret)
-> +=09=09return ret;
-> +
-> +=09ret =3D pf1550_set_min_system_volt(chg, chg->min_system_volt);
-> +=09if (ret)
-> +=09=09return ret;
-> +
-> +=09ret =3D pf1550_set_thermal_regulation_temp(chg,
-> +=09=09=09=09=09=09 chg->thermal_regulation_temp);
-> +=09if (ret)
-> +=09=09return ret;
-> +
-> +=09/* Turn on charger */
-> +=09ret =3D regmap_write(chg->pf1550->regmap, PF1550_CHARG_REG_CHG_OPER,
-> +=09=09=09   PF1550_CHG_TURNON);
-> +=09if (ret)
-> +=09=09return dev_err_probe(dev, ret, "Error turn on charger\n");
-
-There are 3 modes for the charger operation:
-0: charger =3D off, linear =3D off
-1: charger =3D off, linear =3D on
-2: charger =3D on, linear =3D on
-
-The driver is hardcoded to use no. 2.
-
-We are using the mode 1, and setting it to 2 causes my system to boot loop.
-
-I don't know how we should select mode, maybe it could be an option from
-the devicetree or use power_supply_get_battery_info() to look for a
-battery and the only select between 1 or 2, but 0 would also be a valid
-option.
-
-/Sean
-
+-- 
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
