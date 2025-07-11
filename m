@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-727065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A4FB0149E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:28:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F718B0149F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 269FE3AC316
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:27:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F5A6188210B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1AE1EFF8B;
-	Fri, 11 Jul 2025 07:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68AE1EE7C6;
+	Fri, 11 Jul 2025 07:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6wWHyBL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0OLdVU4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66AE1E9B08;
-	Fri, 11 Jul 2025 07:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6E31EA7CE;
+	Fri, 11 Jul 2025 07:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752218836; cv=none; b=gx3S7gMgnaXUwrXPNYU1Fx65NIHmxOPfed0R9jkZ6bXJYxJe34WcYii9Mt5A9Td0kXb8J8r7w+RcvO8VTT6DR+eeAei6eG6tv030/bAyXldIB0WUW4LsdS2JZgnzVKBsJhzxSXbf2LTYwLOKndCLGJdaRvjvv9Cduz3rucAzZvA=
+	t=1752218879; cv=none; b=YdAXktf2GZ08jOmEizWz1hWvFuteV7gqifGkct/MWiomNjSQT38Huv31XTRQcMA98BDZ8JdZ57FCpX2KVQXg5EB7o63lIwzFv8maGGHRXiClfw4kez7yddF4KmPrIj0Bh4JO/jR6WUeOXCnrDoNP69JOlm/6Zj8b9W6hiBA/0gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752218836; c=relaxed/simple;
-	bh=nBkQTkDhZsnzFFW82qYBM0kzGOHtVEnCtN29bE/ppyI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DmbM9JGDHfSG393C3nBPJ6tXsgv7cisbfQmgFbd6/wjDGfaj2ayv10twtly/OcBrgvPMm68OGLYQY7Cl2O4FRX4o2LsobUoh0iZIZZnG8llslP1CfDq6epdBc3g/osaxVPvI3z0HDYoARj1Relo6AcnlKFv+KF1HXIS8I6KWP3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6wWHyBL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE67BC4CEED;
-	Fri, 11 Jul 2025 07:27:16 +0000 (UTC)
+	s=arc-20240116; t=1752218879; c=relaxed/simple;
+	bh=1j6zpFS1DVxWS1hxIV2/OdRNBhbPf+kJqE3FRm4cKC4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rvpvbsq1DapEPCK/2UH3aIEHCKXFplVaM+WxwjdSdd+TP2UxYZqv6mLNW3JLyAe+JUZ1LkLe4mD36Vq4useAErbDg0FGTyChe9geU4W6jEzN9BdAPffjQDSdeGwRDJys0UMXG1hWBk61CTAhPh5heisYpJKwqQ3dCtPyEjWrvKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d0OLdVU4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0814C4CEED;
+	Fri, 11 Jul 2025 07:27:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752218836;
-	bh=nBkQTkDhZsnzFFW82qYBM0kzGOHtVEnCtN29bE/ppyI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=l6wWHyBLm879opsQjQhj5oTUoT5nOVp0YySKdjwu4XfL4JshB7+BRDo3+4xUPxmlX
-	 OIBGhrT/MCXfhddusElEhYm+1onc0J03TPNenBMTraHAgPtfCnVqSHVbgJlgTV3BI3
-	 r6LUnP3Ev0r2iZUTd4XkAMcLBZRC9zjAxt1VdFhrPjUsrzjxgY8gWWnT1NaqeJlzsY
-	 /t2/hZv8GNZ2HAXiuwsWccQ8KZplxMkONlp4tqXsC1Odk44/++8x7x3MrJ5cgoZ4at
-	 tjXkDwZ5xwCXzwX1PQNtT/YusCtOHegk2oAZhiKu2GSgUpxVObxoSrRqWChQlccAQe
-	 F9PUVF4hhnVSA==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1ua8A6-0000000FSSv-3VEV;
-	Fri, 11 Jul 2025 09:27:14 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Akira Yokosawa" <akiyks@gmail.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+	s=k20201202; t=1752218877;
+	bh=1j6zpFS1DVxWS1hxIV2/OdRNBhbPf+kJqE3FRm4cKC4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=d0OLdVU4WW5AyI7Qx0K6WV7vTsCe8RYod5bHaEglGd68ShyZuQBsiCZKJbvDq8fG5
+	 /3rgIEMyKy/WVzx8LSE8c6JPNA9uwUr0p6mu7IKoGE7CalIEjtnquG9JmrjiXlGJde
+	 4kGmdSSbclD4AHFyAjRqLLHVDZI35/MEDvivwPaDcZo16v1dqpKqcBLNYnuz+iU8Gz
+	 W1JiLAd+rki6nEXs4bOzc1J8ppdazvdGKhfan6USczkBV8AqEMm4ETus9uh1Uihc7n
+	 O4xSnlwpG6n9H64HA3voGAMTgvH1zLlPva4hY+BUuS/jcbsaT+Lkq0lUN2GlxzfQJg
+	 WigyTZS+XaRaQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Mark Brown <broonie@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Sebastian Ott <sebott@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] scripts: kdoc: make it backward-compatible with Python 3.7
-Date: Fri, 11 Jul 2025 09:27:09 +0200
-Message-ID: <d13058d285838ac2bc04c492e60531c013a8a919.1752218291.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <cover.1752218291.git.mchehab+huawei@kernel.org>
-References: <cover.1752218291.git.mchehab+huawei@kernel.org>
+Subject: [PATCH] KVM: arm64: fix u64_replace_bits() usage
+Date: Fri, 11 Jul 2025 09:27:47 +0200
+Message-Id: <20250711072752.2781647-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,38 +65,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-There was a change at kdoc that ended breaking compatibility
-with Python 3.7: str.removesuffix() was introduced on version
-3.9.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Restore backward compatibility.
+u64_replace_bits() returns a modified word but does not actually modify
+its argument, as pointed out by this new warning:
 
-Reported-by: Akira Yokosawa <akiyks@gmail.com>
-Closes: https://lore.kernel.org/linux-doc/57be9f77-9a94-4cde-aacb-184cae111506@gmail.com/
-Fixes: 27ad33b6b349 ("kernel-doc: Fix symbol matching for dropped suffixes")
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+arch/arm64/kvm/sys_regs.c: In function 'access_mdcr':
+arch/arm64/kvm/sys_regs.c:2654:17: error: ignoring return value of 'u64_replace_bits' declared with attribute 'warn_unused_result' [-Werror=unused-result]
+ 2654 |                 u64_replace_bits(val, hpmn, MDCR_EL2_HPMN);
+
+The intention here must have been to update 'val', so do that instead.
+
+Fixes: efff9dd2fee7 ("KVM: arm64: Handle out-of-bound write to MDCR_EL2.HPMN")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- scripts/lib/kdoc/kdoc_parser.py | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm64/kvm/sys_regs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-index 831f061f61b8..6273141033a8 100644
---- a/scripts/lib/kdoc/kdoc_parser.py
-+++ b/scripts/lib/kdoc/kdoc_parser.py
-@@ -1214,7 +1214,9 @@ class KernelDoc:
-         # Found an export, trim out any special suffixes
-         #
-         for suffix in suffixes:
--            symbol = symbol.removesuffix(suffix)
-+            # Be backward compatible with Python < 3.9
-+            if symbol.endswith(suffix):
-+                symbol = symbol[:-len(suffix)]
-         function_set.add(symbol)
-         return True
+diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+index 33aa4f5071b8..793fb19bebd6 100644
+--- a/arch/arm64/kvm/sys_regs.c
++++ b/arch/arm64/kvm/sys_regs.c
+@@ -2651,7 +2651,7 @@ static bool access_mdcr(struct kvm_vcpu *vcpu,
+ 	 */
+ 	if (hpmn > vcpu->kvm->arch.nr_pmu_counters) {
+ 		hpmn = vcpu->kvm->arch.nr_pmu_counters;
+-		u64_replace_bits(val, hpmn, MDCR_EL2_HPMN);
++		val = u64_replace_bits(val, hpmn, MDCR_EL2_HPMN);
+ 	}
  
+ 	__vcpu_assign_sys_reg(vcpu, MDCR_EL2, val);
 -- 
-2.50.0
+2.39.5
 
 
