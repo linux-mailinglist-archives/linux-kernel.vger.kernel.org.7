@@ -1,150 +1,217 @@
-Return-Path: <linux-kernel+bounces-727568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98349B01C2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:41:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F7CAB01C31
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9DD658090E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:41:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA9CC5807C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85392BEFF1;
-	Fri, 11 Jul 2025 12:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388BD3C26;
+	Fri, 11 Jul 2025 12:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uVow4T2a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mvvfA2Gj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OyyJRv9S";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="i+T+nIxW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ijim6fxu"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70723C26;
-	Fri, 11 Jul 2025 12:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A5F2BE65A
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752237663; cv=none; b=VV1/jdq81I5PeuFbAAdC6vf0VTefUuRUq9GVrfzFlXZUGXq4hs+v60yDH0e5afqwwKEx+QAnP/m5MUMz+WayYmyptXTLNwV/1T7BF98rMQYK1afUtqo8Qu3t80K00xChR6XJSUJKaTtr1W7EPIL7ne0YsFmgQ5vcG++Bwvg14I0=
+	t=1752237671; cv=none; b=QSgXv08DDaivHjRWXXElzAImf58mTCdz1jNlWm+P3iffLBwONY1+WUkMy6g42f6sONFKB07D2gQ52fu6Ca+wWo2Orl4Eyix3U6C+7Tl+a4ysHTQXmgj15+CmPnWeRTubRhi3t8L38hbUQGDwnHs64ma4cOOOrk42GEIbi2y/6jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752237663; c=relaxed/simple;
-	bh=ZY/3jhhQdoYpMzj9GfQknWGqsGqw2sazOyOKr5CRDvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NlfapTNaGUAOM1LpjS0WgZWuJQggiEmukrIelleRzsZlb+bW5GdsoXMVMLyvVzeaFbfGxWzNZWV3vZd+TYoseADBuhqbG/z1dlwix1KRSVkll5r4UPeIO/aAZ8HeCpd5jhQEno5MFVWD38K33Q1BrKQE4bI1MRdgs65fS7qwx2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=uVow4T2a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFBDBC4CEED;
-	Fri, 11 Jul 2025 12:41:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752237662;
-	bh=ZY/3jhhQdoYpMzj9GfQknWGqsGqw2sazOyOKr5CRDvA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uVow4T2adzLEVIod2EBHm1qDxHBcgYCw8wBhok7q3V/qPxwbsc7IXI/pQ1rkTErXy
-	 HBU5MbXB+cpcCSlrFdVHC6bL6EdbJDBtDKqD0RdLIspNWGfdk1z0RASrTk7CInnBd4
-	 oRuPdbViCeT6AcdxS6AIUziaAeWg25pIaX8QlVZg=
-Date: Fri, 11 Jul 2025 14:40:54 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Huacai Chen <chenhuacai@loongson.cn>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] init: Handle bootloader head in kernel parameters
-Message-ID: <2025071116-pushchair-happening-a4cf@gregkh>
-References: <20250711102455.3673865-1-chenhuacai@loongson.cn>
- <2025071130-mangle-ramrod-38ff@gregkh>
- <CAAhV-H7oEv5jPufY+J-0wOax=m1pszck1__Ptapz5pmzYU5KHg@mail.gmail.com>
+	s=arc-20240116; t=1752237671; c=relaxed/simple;
+	bh=DXWkRDZnfNAPWBTgta9/chuCA5DEdyqeL7jssvuQzIU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uETWYWcVDIjQUPm4tfaZF40qR1hBBJl/EfcQ/ttMtrboBOk/wAkt9twSvsu1wsi5Yt3x4EL/wdRVeu1hYWMZXQLkABk3mlTRJ6ZsARxkm42pUn5YbPyOIwubf3MgsGRrAk/yy20U3kuEuXBDhoLuOkuEABg/ai1FBuhrhEqRpZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mvvfA2Gj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OyyJRv9S; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=i+T+nIxW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ijim6fxu; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 12995211D0;
+	Fri, 11 Jul 2025 12:41:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752237668; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xSm+1q6uhZZEdjKVMT8Uenl84wjsiNI8TM2FeGexcvg=;
+	b=mvvfA2GjUK9B5BoVIq0LkOjcQ66Q8ndM3eE5q9FhZERXsNh+uBeAR3egTRXJaLCCrYgZud
+	CDQ+iW59hpZD4yk6rJILnbPxXbK6Y/ZmQTCFqmlcxTxvKPvB4MJGNMqQzJmCvjy567vYZw
+	AKx+hcJ+PqZu4YlDCrTuGRY+qiqBG8Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752237668;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xSm+1q6uhZZEdjKVMT8Uenl84wjsiNI8TM2FeGexcvg=;
+	b=OyyJRv9SNDM3TMyOwzYIV9u5M66jR7evWwzoL7zLsOSFsdxPeJFP9yoGRE/R8iPVmYSp7y
+	uH/z6Zmq2vlxDHBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752237667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xSm+1q6uhZZEdjKVMT8Uenl84wjsiNI8TM2FeGexcvg=;
+	b=i+T+nIxWWlwfEqZ1zj/27kzojyXmRkFkc5UzKFURsZf3ZfV2jaHfoSw2n8SLTAAkmWB9yj
+	YuKAoXj9d4jy3O+A3kJ6ELVOMBBUuKHvav5GFfVvMJR1hwBU/IJxEQgPbrVMZ91ywhi9QV
+	5kNcq3gRNH/PlqRfA+fEHMQsEzSK7nI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752237667;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xSm+1q6uhZZEdjKVMT8Uenl84wjsiNI8TM2FeGexcvg=;
+	b=ijim6fxusABPnaEAUSVIPHXj/xFyeRSa0F5mqZStfhhSLPFzektelsyjUANZkrAvu6xgiw
+	5haTlLR5mfeImrCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4ADB9138A5;
+	Fri, 11 Jul 2025 12:41:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Ku3rEGIGcWh4MAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 11 Jul 2025 12:41:06 +0000
+Date: Fri, 11 Jul 2025 14:41:05 +0200
+Message-ID: <8734b2hpcu.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Joris Verhaegen <verhaegen@google.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	kernel-team@android.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	linux-arm-msm@vger.kernel.org,
+	sound-open-firmware@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 0/4] ALSA: compress_offload: Add 64-bit safe timestamp API
+In-Reply-To: <aHD7/9MZbcOmn+08@opensource.cirrus.com>
+References: <20250711093636.28204-1-verhaegen@google.com>
+	<aHD7/9MZbcOmn+08@opensource.cirrus.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhV-H7oEv5jPufY+J-0wOax=m1pszck1__Ptapz5pmzYU5KHg@mail.gmail.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[29];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[google.com,kernel.org,perex.cz,suse.com,gmail.com,opensource.cirrus.com,cirrus.com,intel.com,linux.intel.com,linux.dev,nxp.com,linux.alibaba.com,socionext.com,android.com,vger.kernel.org,alsa-project.org,lists.infradead.org];
+	R_RATELIMIT(0.00)[to_ip_from(RLtwg9tyn6faipwn1aqsxq4m86)];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -1.80
 
-On Fri, Jul 11, 2025 at 08:34:25PM +0800, Huacai Chen wrote:
-> Hi, Greg,
+On Fri, 11 Jul 2025 13:56:47 +0200,
+Charles Keepax wrote:
 > 
-> On Fri, Jul 11, 2025 at 7:06 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Fri, Jul 11, 2025 at 06:24:55PM +0800, Huacai Chen wrote:
-> > > BootLoader may pass a head such as "BOOT_IMAGE=/boot/vmlinuz-x.y.z" to
-> > > kernel parameters. But this head is not recognized by the kernel so will
-> > > be passed to user space. However, user space init program also doesn't
-> > > recognized it.
-> >
-> > Then why is it on the kernel command line if it is not recognized?
-> UEFI put it at the beginning of the command line, you can see it from
-> /proc/cmdline, both on x86 and LoongArch.
+> On Fri, Jul 11, 2025 at 10:36:26AM +0100, Joris Verhaegen wrote:
+> > The current compress offload timestamping API relies on
+> > struct snd_compr_tstamp, whose cumulative counters like
+> > copied_total are defined as __u32. On long-running high-resolution
+> > audio streams, these 32-bit counters can overflow,
+> > causing incorrect availability calculations.
+> > 
+> > This patch series introduces a parallel, 64-bit safe API to solve
+> > this problem while maintaining perfect backward compatibility with the
+> > existing UAPI. A new pointer64 operation and corresponding ioctls
+> > are added to allow the kernel to track counters using u64 and expose
+> > these full-width values to user-space.
+> > 
+> > The series is structured as follows:
+> > 
+> > Patch 1: Introduces the new internal pointer64 op, refactors the
+> > core logic to use it, and defines the new UAPI structs.
+> > 
+> > Patch 2: Exposes the SNDRV_COMPRESS_TSTAMP64 ioctl.
+> > 
+> > Patch 3: Exposes the corresponding SNDRV_COMPRESS_AVAIL64 ioctl.
+> > 
+> > Patch 4: Implements the new .pointer64 operation in various ASoC
+> > drivers that support compress offload.
+> > 
+> > This series has been tested on a Pixel 9 device. All compress offload
+> > use cases, including long-running playback, were verified to work
+> > correctly with the new 64-bit API, and no regressions were observed
+> > when using the legacy API.
+> > 
+> > Thanks,
+> > Joris (George) Verhaegen
+> > 
+> > Signed-off-by: Joris Verhaegen <verhaegen@google.com>
+> > 
+> > ---
+> 
+> Would it not be slightly simpler to just update all the in kernel
+> bits to use 64-bit and then only convert to 32-bit for the
+> existing 32-bit IOCTLs? Why do we need 32-bit callbacks into the
+> drivers for example?
 
-Then fix UEFI :)
+Right, it's a usual pattern to have only the 64bit ops in the kernel
+driver side while providing the 32bit stuff converted in the core
+layer.  Having two different ops are rather confusing and
+superfluous after conversions.
 
-My boot command line doesn't have that on x86, perhaps you need to fix
-your bootloader?
+If there are tons of users for this API, it'd be needed to convert
+gradually, and eventually drop the 32bit ops at the end.  But in this
+case, there doesn't seem so many relevant drivers, hence the
+conversion can be done in a shot as done in your patch 4.
 
-> > > KEXEC may also pass a head such as "kexec" on some architectures.
-> >
-> > That's fine, kexec needs this.
-> >
-> > > So the the best way is handle it by the kernel itself, which can avoid
-> > > such boot warnings:
-> > >
-> > > Kernel command line: BOOT_IMAGE=(hd0,1)/vmlinuz-6.x root=/dev/sda3 ro console=tty
-> > > Unknown kernel command line parameters "BOOT_IMAGE=(hd0,1)/vmlinuz-6.x", will be passed to user space.
-> >
-> > Why is this a problem?  Don't put stuff that is not needed on the kernel
-> > command line :)
-> Both kernel and user space don't need it, and if it is passed to user
-> space then may cause some problems. For example, if there is
-> init=/bin/bash, then bash will crash with this parameter.
-
-Again, fix the bootloader to not do this, why is the kernel responsible
-for this?
-
-What has suddenly changed to now require this when we never have needed
-it before?
-
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> > > ---
-> > >  init/main.c | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
-> > >
-> > > diff --git a/init/main.c b/init/main.c
-> > > index 225a58279acd..9e0a7e8913c0 100644
-> > > --- a/init/main.c
-> > > +++ b/init/main.c
-> > > @@ -545,6 +545,7 @@ static int __init unknown_bootoption(char *param, char *val,
-> > >                                    const char *unused, void *arg)
-> > >  {
-> > >       size_t len = strlen(param);
-> > > +     const char *bootloader[] = { "BOOT_IMAGE", "kexec", NULL };
-> >
-> > You need to document why these are ok to "swallow" and not warn for.
-> Because they are bootloader heads, not really a wrong parameter. We
-> only need a warning if there is a wrong parameter.
-
-Again, fix the bootloader.
-
-> > >
-> > >       /* Handle params aliased to sysctls */
-> > >       if (sysctl_is_alias(param))
-> > > @@ -552,6 +553,12 @@ static int __init unknown_bootoption(char *param, char *val,
-> > >
-> > >       repair_env_string(param, val);
-> > >
-> > > +     /* Handle bootloader head */
-> >
-> > Handle it how?
-> argv_init and envp_init arrays will be passed to userspace, so just
-> return early (before argv_init and envp_init handling) can avoid it
-> being passed.
-
-You need to document this way better.
-
-But again, please just fix your bootloader to not pass on lines to the
-kernel that it can not parse.
 
 thanks,
 
-greg k-h
+Takashi
 
