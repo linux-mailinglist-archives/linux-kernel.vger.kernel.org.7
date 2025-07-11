@@ -1,176 +1,194 @@
-Return-Path: <linux-kernel+bounces-728378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 397C0B027A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:28:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A829BB027AB
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 288551CA7EFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:28:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54A96A462D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A732236FA;
-	Fri, 11 Jul 2025 23:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F9B222562;
+	Fri, 11 Jul 2025 23:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="Kw+WCuTV"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7mgt5VZ"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1A178F29;
-	Fri, 11 Jul 2025 23:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3362978F29
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 23:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752276492; cv=none; b=aHSc1WeRphaaT/mY4hJug0P4RRcPEtfd3wW9TtIUREKsiYSSdx1ZL/Aca6TXEVS2Aw6y/Qr9c2DkQOrRGnEOCQfOQvAFIC2UEFQgJStm/8S2WQPBjdfFYYtWIz5NUxA+VV+iHb1OD/Ep1rFGUR+6gS80QqZ5P0vZc35RAHxne08=
+	t=1752276508; cv=none; b=rjIrY0KAw7I/RkSUs7gayxBwZcnU+LCdt7JrmTLkqikIxKlNITiyxHgzZzj+E0FvTWoKuxCUvYK2pJAx1hbHAW5OizkBRZsKPeEdhK4DU6Sny0lA0SAiSVStIB5xzsd+qBxfU2VVGVrImk0uej1nwNCKgKKxNdMQMtm2ElFQbsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752276492; c=relaxed/simple;
-	bh=ezv84HK6NwO+u9ivLBOk9dRiooUBXGb+56H/5bkmEDM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XtJYRCBO1Kwda6oKXxWhPEYmONLe0aqJhcf056pVFq1AqbmdvsU8nroVNWA2I+UpZiIpIHXmgLRryJXxfwyJhU4JsBFcBq/VHeDc6W4OFRuDl2cOh3mqV6A6XIUKOVEtww/9nRjo8oKj9uBhd1c937Mwz+xtG5EoYgUenHOSl48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=Kw+WCuTV; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1752276462; x=1752881262; i=spasswolf@web.de;
-	bh=o6SaQoxZAgBhUi62Dz5rXp6jQE7b6I7cozEGJEeUERo=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Kw+WCuTVBKCtzCreG2rRhycUtRRjX9C0/HjhhTrzQ9EUR7R0ZCshv/1PeMX9LKVp
-	 nECCw9YGjQji4jjw/tq6vEcaZQ2/o7eb7bA3Ob4buFHV0SGf+4pDKOfel9vPBO6nI
-	 hs8qw5PJMr54ym6PB+lDba13B8KsOI/CarmifW/0RnsDbTVznsPBVac6S4ux5LBVa
-	 TTWi8MMrv/p2l78uO4Oh1Qua/d3/lgF48Bl6bVv1wstbF3Nt8nYF3l6v+HHTlhz+c
-	 Tv4Ht6T/FACpxhyYkrOfLPqWWaWSiniaI1XYgWCvWiqB9/gE9y+4HeiomxvtuSZtT
-	 fG0RmtR2+W6l82M75A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.0.101] ([95.223.134.88]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MFayq-1uR1sp2aa6-006Kru; Sat, 12
- Jul 2025 01:27:41 +0200
-Message-ID: <21da96d766d92735e5fe022f54d686df8bdfc32d.camel@web.de>
-Subject: Re: commit 3284e4adca9b causes hang on boot with CONFIG_PREEMPT_RT=y
-From: Bert Karwatzki <spasswolf@web.de>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	linux-rt-devel@lists.linux.dev, ankur.a.arora@oracle.com, 
-	bobo.shaobowang@huawei.com, boqun.feng@gmail.com, frederic@kernel.org, 
-	joel@joelfernandes.org, neeraj.upadhyay@kernel.org, paulmck@kernel.org, 
-	rcu@vger.kernel.org, urezki@gmail.com, wangxiongfeng2@huawei.com, 
-	xiexiuqi@huawei.com, xiqi2@huawei.com, spasswolf@web.de
-Date: Sat, 12 Jul 2025 01:27:37 +0200
-In-Reply-To: <862fa11d-0f9a-4193-91d1-ea930d2d334f@nvidia.com>
-References: <20250711230042.3468-1-spasswolf@web.de>
-	 <862fa11d-0f9a-4193-91d1-ea930d2d334f@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1752276508; c=relaxed/simple;
+	bh=cK4Fdk+yP+BTF/rMC/gSTkLbOLYtkeYIHfxo7B+GCmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=phETe+FmJCAjr2B17MbIThZ8CsiddjVPuxCNFZ2DdgCKTJLDKxEteEYsqTwAPkdCuEdXn0DI/8PcI5Y8S2GIwnChesZl/siMdwd0Ca+ryWYcwL5T9cqrFX7LkwYIvd2LcRcJ2CezAgeOozEDuOw6c/MCcGx3IIuODnE1Fj8XIgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7mgt5VZ; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4ab380b8851so9180451cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 16:28:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752276506; x=1752881306; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=abYDJaPXQNoISIuynhsBnhk8NWJ6fYOSfTVWiFEpAEY=;
+        b=X7mgt5VZAuNzUvKDq1MjQc7WodkxRDpcTNrX+FhfQIlT0N/FhszqttTcaUDF8l+Hhc
+         h4ed/05rZhYZ6Kvb/LHQCm6Y7rCCVMMEEvsKCfgrtvaTt75/JXMVCsZlI75gKmCZg8Gv
+         W2onkvi5M2yx+K4bk07ZoJSsBTHZcphqeW6xsZ8vti/uEpOLVgEZO+hF3iQ6ceYfhjr2
+         YETkddL15YrmSzeJ3DqWIeFz1dvI827IqlNUjAlQNO/olMuRkX5VnNuKl+qQCRszAmQc
+         /pXbIndYODG4wPytsMB2zJgy6N5hTCfIxTzT9o/rlJC8mPCEoA4NfqIzuZm1eMTu7dkP
+         bvMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752276506; x=1752881306;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=abYDJaPXQNoISIuynhsBnhk8NWJ6fYOSfTVWiFEpAEY=;
+        b=jVEKrJ8byH2OHJJXe+21gi5WLVQXnmQRNw2nNU90acj18rv4DWur6O1xIyf0TW65/8
+         FUD0rKfhnesHniiJRigwaxYvPJ78ZRbBKTFKxMauxsRSZord8A0u6nCFkA7VtzlqN/OP
+         kGV3kPbH4pK/B00OHHZSIYv4Zf91DddjJ1a5HzQWpaFSTAIuzyQnA60SYu1c/CSfkhvS
+         XwrEV/6+bNPQqrpIKsUCaYSEurR4xb9ODuikw2hd4kjyvm62EscTxCdohKlZ0XXTNd1s
+         WaPraO90spytBXCh8JnymruCMWTI3LgmmUsoYzELTqrswgbDQWHOL9UvyRlRNjyf1uaW
+         oLgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBHhL35af3NRXTpAMS6PHJC+Z+Fr6j+nNSltDQni92L+FnH+rrM6+GWvADsWTrwra7dnEWfGiLhTCSCnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy4r/WJVWNNy8ePCsP0ektPBY8BHcKZ7vl9EgSl53pzwDua+6K
+	nAwMqP6KgRjP6OtyvMR7g7mFAzULBAGGN5C3BxnEwab6oDF53b9mxAQK
+X-Gm-Gg: ASbGncuYq7OeiOl85dpqJrCsuEZIB0DDskSE4t/tbjfiN3vsZceXRKYBsqVbmE3VerT
+	lSh9rBbna24uliruPP7pjZnbNQDUYgacgLMYr3ZjvN4AHiw5ZA5VkWZnhmCuSKy/O0KHCkplGH0
+	8OByUEMBbGaajncrVBTz2DyuriJI50O+HCKeqxVLuMabeLjIp2xhzGyyNi8C5zySC8nIFPuu9+v
+	/zg7+nZxhjfqzW+dgf0ksDKTZxmclhj1tZMY+aqpJaM1gpPk/LDMNf6XLh0KQ6Rlj5JPg+RCf5W
+	G9C3yn/cToWZovvqbu3RC5M5oESNASDK03eLIyTCb0hvUHeuXcMiX+f1tPrY/+vfz7w/uWhI0cC
+	4JTDICIRjjQR6OTCS4wBjrdwzDV19CILdB/xqfkhw35PPg2ZmlCn+pPEtZdgJ6p5ODr7NAH/YJ/
+	/iGyk9NEYCIk/q
+X-Google-Smtp-Source: AGHT+IHTUIbrI5+zd26ehFkhAGb6xm7EWCQSOLcb4FPjHxKvJx+PKBuwJm7CVbrDx6Qnz2F3pH2jlg==
+X-Received: by 2002:a05:622a:1f13:b0:4a7:2f49:37d6 with SMTP id d75a77b69052e-4aa35e7fecemr66134651cf.5.1752276505877;
+        Fri, 11 Jul 2025 16:28:25 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9ede7657asm26579291cf.46.2025.07.11.16.28.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 16:28:25 -0700 (PDT)
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 0469AF40066;
+	Fri, 11 Jul 2025 19:28:25 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Fri, 11 Jul 2025 19:28:25 -0400
+X-ME-Sender: <xms:GJ5xaO_Dth14oHzbnGVT9_aHJhuMOqAC0naw3BNKIlYU9m0GqXUYQQ>
+    <xme:GJ5xaLrkulCAafFGE36RtZJFDae5SV57-BLf8OxZENkr-2n26uw-UbhbZ2Ysh4GRT
+    qKQTfLqymZvt0gc4w>
+X-ME-Received: <xmr:GJ5xaPqcc-W__AA51gsqDbAXdUiYTGtKklXo-g3sBh6g4HSB1FDqT1rZ6YyF>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeggeeigecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
+    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
+    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
+    drnhgrmhgvpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtg
+    hpthhtoheplhhonhhgmhgrnhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepphgvthgv
+    rhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepmhhinhhgohesrhgvughhrg
+    htrdgtohhmpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehjrghnnhhhsehgohhoghhlvgdrtghomhdprhgtphhtthhopegsohhquhhnsehfihig
+    mhgvrdhnrghmvg
+X-ME-Proxy: <xmx:GJ5xaO0A-TtAHVpZ1BJICBIuDf-xc8SNK4gTL-OuZ-IB0bwI0VOefQ>
+    <xmx:GJ5xaNFQDoHiIW9FcHg2-7owNBtawdfwDtBsDLhoh8a-HCicj7G6BQ>
+    <xmx:GJ5xaJF_IxHijKFNvBFNEpBzeXLiylcmsispu-O0NW3fuOAH4xueeg>
+    <xmx:GJ5xaA53GbsEJtC0g5k3d1c98PNnmjBIudZK-3QNcNmq9nwShFyrrA>
+    <xmx:GJ5xaOwZ1Pbcq8L6S1P8VPqTXhbZHQyBffS9rnNBom01A-nqtBi7gLhn>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 11 Jul 2025 19:28:24 -0400 (EDT)
+Date: Fri, 11 Jul 2025 16:28:23 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH] locking/mutex: Add debug code to help catching violation
+ of mutex lifetime rule
+Message-ID: <aHGeF7ko_4uXHUgl@tardis-2.local>
+References: <20250709193910.151497-1-longman@redhat.com>
+ <aHGONjuRiA3KfH1q@tardis-2.local>
+ <CAHk-=wj4gifTA94-11JXKj5Q5TSieu2LXgOauNDC9gbOQRcZeg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jMEAIvEfKA672rFQgzl/sIUIuuh2lXuZ5UEY6cBH4Up/2RywE1y
- 3cEynfg/GMRmknGgugvVqJV7FXNRzeHYj7kr+79FwLGamVoSR23dCbS2zaona6oSTgpPg01
- jO7u6Gd8US/X7dDNyEA9SCDhLUEG2SMRe5row8cTKEL4fx0Dx/9DVhEOvZd99TpGiURwiSG
- R3uMcx+qBJPAnRWxTlXVQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:EnwNCCe803U=;g/8XPT4CbVP8Da0tAiw1LUyPlOi
- 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
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wj4gifTA94-11JXKj5Q5TSieu2LXgOauNDC9gbOQRcZeg@mail.gmail.com>
 
-Am Freitag, dem 11.07.2025 um 19:06 -0400 schrieb Joel Fernandes:
->=20
-> On 7/11/2025 7:00 PM, Bert Karwatzki wrote:
-> > When booting linux next-20250711 (with CONFIG_PREEMPT_RT=3Dy) on my MS=
-I Alpha 15=20
-> > Laptop running debian sid amd64 the boot process hangs with the last=
-=20
-> > messages displayed on screen being:
-> >=20
-> > fbcon: amdgpudrmfb (fb0) is primary device
-> > Console: switching to colour frame buffer device
-> > amdgpu: 0000:08:00.0: [drm]fb0: admgpudrmfb frame buffer device
-> >=20
-> > after some time (about 60s) this error messages appears (hand copied
-> > from screen, not entirely accurate)
-> >=20
-> > rcu_preempt self detected stall
-> >=20
-> > with call trace
-> > run_irq_workd
-> > smpboot_thread_fn
-> > kthread
-> > ? kthreads_online_cpu
-> > ? kthreads_online_cpu
-> > ret_from_fork
-> > ? kthreads_online_cpu
-> > ret_from_fork
-> >=20
-> > This only occurs when compiling with CONFIG_PREEMPT_RT=3Dy.
-> > I bisected this and found the first bad commit to be
-> >=20
-> > 3284e4adca9b ("rcu: Fix rcu_read_unlock() deadloop due to IRQ work")
->=20
-> This commit is still using old code which was fixed in the last day.
->=20
-> Here is the new commit:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/rcu/linux.git/commit=
-/?h=3Dnext&id=3D2e154d164418e1eaadbf5dc58cbf19e7be8fdc67
->=20
-> Thanks!
->=20
->  - Joel
+On Fri, Jul 11, 2025 at 03:30:05PM -0700, Linus Torvalds wrote:
+> On Fri, 11 Jul 2025 at 15:20, Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > Meta question: are we able to construct a case that shows this can help
+> > detect the issue?
+> 
+> Well, the thing that triggered this was hopefully fixed by
+> 8c2e52ebbe88 ("eventpoll: don't decrement ep refcount while still
+> holding the ep mutex"), but I think Jann figured that one out by code
+> inspection.
+> 
+> I doubt it can be triggered in real life without something like
+> Waiman's patch, but *with* Waiman's patch, and commit 8c2e52ebbe88
+> reverted (and obviously with CONFIG_KASAN and CONFIG_DEBUG_MUTEXES
+> enabled), doing lots of concurrent epoll closes would hopefully then
+> trigger the warning.
+> 
+> Of course, to then find *other* potential bugs would be the whole
+> point, and some of these kinds of bugs are definitely of the kind
+> where the race condition doesn't actually trigger in any real load,
+> because it's unlikely that real loads end up doing that kind of
+> "release all these objects concurrently".
+> 
+> But it might be interesting to try that "can you even recreate the bug
+> fixed by 8c2e52ebbe88" with this. Because if that one *known* bug
+> can't be found by this, then it's obviously unlikely to help find
+> others.
+> 
 
-I already found the new commit, it works!
+Yeah, I guess I asked the question because there is no clear link from
+the bug scenario to an extra context switch, that is, even if the
+context switch didn't happen, the bug would trigger if
+__mutex_unlock_slowpath() took too long after giving the ownership to
+someone else. So my instinct was: would cond_resched() be slow enough
+;-)
 
-Bert Karwatzki
+But I agree it's a trivel thing to do, and I think another thing we can
+do is adding a kasan_check_byte(lock) at the end of
+__mutex_unlock_slowpath(), because conceptually the mutex should be
+valid throughout the whole __mutex_unlock_slowpath() function, i.e.
+
+	void __mutex_unlock_slowpath(...)
+	{
+		...
+		raw_spin_unlock_irqrestore_wake(&lock->wait_lock, flags, &wake_q);
+		// <- conceptually "lock" should still be valid here.
+		// so if anyone free the memory of the mutex, it's going
+		// to be a problem.
+		kasan_check_byte(lock);
+	}
+
+I think this may also give us a good chance of finding more bugs, one of
+the reasons is that raw_spin_unlock_irqrestore_wake() has a
+preempt_enable() at last, which may trigger a context switch.
+
+Regards,
+Boqun
+
+> That said, it does seem like an obvious trivial thing to stress, which
+> is why that patch by Waiman has my suggested-by...
+> 
+>           Linus
 
