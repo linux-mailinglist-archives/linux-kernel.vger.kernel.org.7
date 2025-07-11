@@ -1,237 +1,246 @@
-Return-Path: <linux-kernel+bounces-727426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AB8B01A03
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:53:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86ACBB01A13
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBA5A580C52
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:53:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAB817AE18E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515B8288C1F;
-	Fri, 11 Jul 2025 10:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC27D28C2C1;
+	Fri, 11 Jul 2025 10:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iQUdT5o2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="X2+C1eFO";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="rWEmxSMW"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C452877CB;
-	Fri, 11 Jul 2025 10:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752231208; cv=none; b=rCL/X1icK3Q41t0XiXeFB4A67mmzMI/A+h6OXXfpsjrh1MK3g+w8cALuw+e1/H4gkLYknhctJ6eG3ukXS/Lw2pgn7EKYuNJj/SC7dHxVCp/vP6FXTBrpq64/HV6dbH8x1TVQZsFZW4nkeIOJAvMgM12xH/r6Gr8ffr9QO5dwfOw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752231208; c=relaxed/simple;
-	bh=NKjZXYzGtEShTrNsUOMFTyUQto5qPC0hnUCpk+UVNUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cuy1jLiC4nxwlJYZ3HiXPwo+rzzEPyaGRs4GNJf06yklgRRGulZ9Xl+VanzpX3ubP7Du5sKC0mBL3UTS7QK0+G7HJG84LyksHiDl7vY0d7SttVhraZx91CEJjhCAcZNIX9fT/TSzzqG/3MfdSkH+Uufne5HXHtn82Juxh7V7czc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iQUdT5o2; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752231207; x=1783767207;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NKjZXYzGtEShTrNsUOMFTyUQto5qPC0hnUCpk+UVNUM=;
-  b=iQUdT5o2Ukri/F7Xrbot3Nbzi3lvI4gRbPWi1rej/gzwcNMmLwTfQzsd
-   pcSG7crgkUhIusRSw+b62fTWSr+GNKeEl1kEl8B1GULqVQE3kwWKlxghh
-   492PVo4Ju0GAQXFomNUkG3E8xj2+gOwqiQ+pSwDHQz7HaVE9O06YadNy0
-   CLhWrIlmo7zNefleZyIriPB59CMB5We/fRPudhMMd2m3scVAWaXqDx9p7
-   zxHLhbH9pQ79MUpy6t1rZxm6ZrjqZV8Jujt3Y+WioOPKDDRn6vGh8+IGf
-   NKj+eYnbEul/KxSfNezcIiGtTRvgXKgOLRh2+4EzaJgrjgzWL71bsjoY4
-   A==;
-X-CSE-ConnectionGUID: uH7Bh7i5QD27arbYvaXhVQ==
-X-CSE-MsgGUID: MOqXYoGeTXmUJodIReTYRQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="65878121"
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="65878121"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 03:53:26 -0700
-X-CSE-ConnectionGUID: uDkLSuGCQA2GbayCqIqCZg==
-X-CSE-MsgGUID: hiHa3BqjQUOBkOIVrGFYfA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="180040729"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 11 Jul 2025 03:53:19 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uaBNU-0006HL-32;
-	Fri, 11 Jul 2025 10:53:16 +0000
-Date: Fri, 11 Jul 2025 18:52:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
-	linus.walleij@linaro.org, brgl@bgdev.pl, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, chester62515@gmail.com,
-	mbrugger@suse.com, Ghennadi.Procopciuc@nxp.com,
-	larisa.grigore@nxp.com, lee@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
-	ping.bai@nxp.com, gregkh@linuxfoundation.org, rafael@kernel.org,
-	srini@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, s32@nxp.com,
-	clizzi@redhat.com, aruizrui@redhat.com, eballetb@redhat.com,
-	echanude@redhat.com, kernel@pengutronix.de, imx@lists.linux.dev,
-	vincent.guittot@linaro.org
-Subject: Re: [PATCH v7 07/12] pinctrl: s32g2: change the driver to also be
- probed as an MFD cell
-Message-ID: <202507111841.QdQ2DVpT-lkp@intel.com>
-References: <20250710142038.1986052-8-andrei.stefanescu@oss.nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FF42877E8;
+	Fri, 11 Jul 2025 10:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752231236; cv=fail; b=LEHGFrxWGO9tDPSEgw6pMskhdwtOuvAgbQJazfoe0K819WHdGLBhYGvZU0O5aXPTZOZeA+D7+i52Hks9ET9Jc+7XiKTOtilyrlvhwhT1z94+PTKCl+ZZrY/pb6SSQYH7pWBh9Tte8flFaGSSmZaSSk5C30xCgAmL6FPFscyEJn0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752231236; c=relaxed/simple;
+	bh=VDu+d6nf6kU3/Ab3GicpeoTeUXROud4ZQ9pImqQt7sA=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=afn04btmcNHSXOkbM/eDz4+d9W3PwzKSp9CHHec2wB4NqyOFKW9tp6kuINEo9faSfTh1wsfhFpnU37WtmcV8bSdzCd7cnjkw8N2TOyI5lZiLHmKG939BtBIF7OeBMjFfuS11jXWJa1GtAEAlD3U6YXjSKa3HwUcba0u0O2606sc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=X2+C1eFO; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=rWEmxSMW; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BAMM8E009861;
+	Fri, 11 Jul 2025 10:53:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=T1sj3KtSTL2fhMnz
+	PQrF2dgW/rH7nTiu7hVE+zqK1Cc=; b=X2+C1eFOeHCC92+mm/e0v9O24PKFjxcd
+	0uUMduVYIBHEfdQoTLPIwQCb1q3nZzki3f3B2+ArFfNHFG8Y31CxMax1OflmL/T5
+	2neWWcfPSWCEZuNv32ZR2UWJdceOUOerVsLBy1H9jp2HrEI8+/PfAEfAcq4QQjhY
+	kY31XrVnsaV4LExcZLMLRvB3KwaGEjdqKjom+N7Ys4D5fF7yY0SeT3vvQ3aexQVC
+	CXXIjJ6sli7EyrMehJJSsef3keQ2Kfvbs0rLYVBg0P6e4oFrWpEmsU3mMTvNld1U
+	S+/3/VkVkmY6qHD2PL98sA9a//OAKGzSqBHMwQ2O9byVRisEKAPp3A==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47u0svr1n2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Jul 2025 10:53:36 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56BAok6a021358;
+	Fri, 11 Jul 2025 10:53:35 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11on2087.outbound.protection.outlook.com [40.107.236.87])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47ptgdd1bv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Jul 2025 10:53:35 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tMeNz94suO3EhgoRIsopOF3Zi8MZssWguAdkbEwDESQ/1om0PVoGLJAJzzDFIAy7Z6eLipNMAAHVM5OgUjRo++ALG13AdWmwmphOkuUl2XTZqHx5lRHb9c3Ol7v5P1rwzUhmjIuNsj8vEAVcdsVs2t77Y7ILFeR7nv19YqtVrmoGXbyb+Mx/FLIhPNt0XJN+ZMIb6PCGnLBJQzMiLM8YoZcYZ4Wnxcwsi3rY9ArZgah7Frj3KvLHOgpRbB9SaHY3138Lmx+X9qjQK+0GxuOYYzKa7I2Jh7pUWzZ3IR+/4+O5TrRv24syg3vuwGQtwVbPRPvEC0yZItu/TrakUsIMfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=T1sj3KtSTL2fhMnzPQrF2dgW/rH7nTiu7hVE+zqK1Cc=;
+ b=esR+HJJzm5vS+hHSpVV+iGOGLsFJh5eXlxl4GTvmXmpFInUkitpGq3l77arxFzh5+Y0tHYYnAC52tev26AFOhqeYTNNNC+sBxokNVsNnCksd6Rmpbkjr4CyRdjb9ILeFd1tQrMmqgULc6uHAn12PxQWTA3qQ5XPapAzPXfZDe3YFtOOQQPGY1klNfyhxGgDHSpSC+K04XQrqyGxLecoO+VJ+KUsDLINXaJyQuTWwO37kX0SpWzymBryZEHReImF0x9iB3JPBsLy7HmXLJ3BsDkjGisc9tbBk2At4ZPVK2IpfCrya/9GW59evj6p5mSjecuOszyk1dLQ1NZx0eZg4fQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T1sj3KtSTL2fhMnzPQrF2dgW/rH7nTiu7hVE+zqK1Cc=;
+ b=rWEmxSMW1HpSwXBLfJGQryHW/gAVGoorv7UMx3vASa65zUXMmwEuJn6nLIgwO0IBmLuMRTw0dmxjmwGI0nEsJ84gVyrztHI3tFkMhSfZfiWCcZlE0czEOYmvlkwLx4w5FNvgW+TSCRXabBNwsa0Of4aDQOgY2BTTMrrbXMHgm34=
+Received: from MN2PR10MB4320.namprd10.prod.outlook.com (2603:10b6:208:1d5::16)
+ by PH3PPF079E800A3.namprd10.prod.outlook.com (2603:10b6:518:1::786) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.24; Fri, 11 Jul
+ 2025 10:53:03 +0000
+Received: from MN2PR10MB4320.namprd10.prod.outlook.com
+ ([fe80::42ec:1d58:8ba8:800c]) by MN2PR10MB4320.namprd10.prod.outlook.com
+ ([fe80::42ec:1d58:8ba8:800c%3]) with mapi id 15.20.8922.023; Fri, 11 Jul 2025
+ 10:53:03 +0000
+From: John Garry <john.g.garry@oracle.com>
+To: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
+        yukuai3@huawei.com, hch@lst.de, nilay@linux.ibm.com, axboe@kernel.dk,
+        cem@kernel.org
+Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-block@vger.kernel.org,
+        ojaswin@linux.ibm.com, martin.petersen@oracle.com,
+        akpm@linux-foundation.org, linux-xfs@vger.kernel.org,
+        djwong@kernel.org, dlemoal@kernel.org,
+        John Garry <john.g.garry@oracle.com>
+Subject: [PATCH v7 0/6] block/md/dm: set chunk_sectors from stacked dev stripe size
+Date: Fri, 11 Jul 2025 10:52:52 +0000
+Message-ID: <20250711105258.3135198-1-john.g.garry@oracle.com>
+X-Mailer: git-send-email 2.43.5
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR05CA0118.namprd05.prod.outlook.com
+ (2603:10b6:a03:334::33) To MN2PR10MB4320.namprd10.prod.outlook.com
+ (2603:10b6:208:1d5::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710142038.1986052-8-andrei.stefanescu@oss.nxp.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR10MB4320:EE_|PH3PPF079E800A3:EE_
+X-MS-Office365-Filtering-Correlation-Id: d8b6145c-32e9-4857-b012-08ddc0691c3c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3gHF/bPvNdyAkz8c4gRv87+tiJkz/wjk0L/O06Is9zdeILv0mdEVzO3+HAKb?=
+ =?us-ascii?Q?Uxa/l8rZthJVwaDUzOd8uaVfTAIMey+zZLTyFr0MxuLRV54rqYsB+1qvSXm5?=
+ =?us-ascii?Q?pmRuO2RJRkxBt8KR3TtHGQlSaxbWpuFeAERnargp9YTP73VQg0n2bGmlm9bi?=
+ =?us-ascii?Q?p92DIZaXi25dX06d/MjydzZsqK+yYvuGDL9BVMHix9w+Recz+tNhIymemMUj?=
+ =?us-ascii?Q?JH45hoXUacZahHJxbyD5FY0RKsOaRSpXI9c6lEaCrUkV6XC1BtLslG1/cKCk?=
+ =?us-ascii?Q?33fWyRMZMgkwcFIEPDYpdvFa9z30nVGi5D4lBM00unB6EKVDWfcLPqeNF87c?=
+ =?us-ascii?Q?0qvhWvIK6N1JtwE5NzhV+pxYmq/vFV0iUqLtzbqJ2wErvxwlwfQNaEcNezAl?=
+ =?us-ascii?Q?dAub65HIH1I/j0kJOQJCNIgaVLq0CHOd8oM80KjYsG8kk6Kygo0TlGyZE69e?=
+ =?us-ascii?Q?tZ0tz9AaHEozXh9j7NITezCr1clGXg7T0MsSCHBQStvTGCSX61sNue/vv37S?=
+ =?us-ascii?Q?iwVHmKJHnj1oJ2E8RQBg0s+kkyS7VHexrq4j6+CI0fOh/KzzB1VG0FFZxSrW?=
+ =?us-ascii?Q?7KjsUsGKJob9weP1pv16WZIVPGwpPZCewU6ay7LBtio5GYQPgVJC7wKPQ4/E?=
+ =?us-ascii?Q?OnCmCAIiTefVE8KMNrpQoxgU9SFzapjxEwxtu1nv+ZtA5hf43HtxndJvFPCe?=
+ =?us-ascii?Q?LTGsd+4iYuiVS/K4py2KqnN56ySj0XA0ij6tu2ihTGFh/hRX6DePTSj2RDjV?=
+ =?us-ascii?Q?16S5CKPlyQ5NV1XSR0mJIe1LoLwmwN2/WYQ9077kvNCRvMogywsHqclRAawi?=
+ =?us-ascii?Q?HXAF5JPOvI2iWHVdAUIwQuMBScZ5COzcH+kJs5UceceRU5/2HlMC07Ebvatl?=
+ =?us-ascii?Q?2R2J3AQ2nZLGBEJ1VTnTm44zfDfDV0d2nKtE5GD8v78A4PMo53Er3qwn6G71?=
+ =?us-ascii?Q?0XZVjU28NMo21OZbML0XDQjKZW4gE9QD+S3EJZA9AhDMorEXenbLAq+8VLeY?=
+ =?us-ascii?Q?1qFyHsKsNP1B+DIvkIRRRl7kHSSlksOJ8WpxOhsnJbwvPT8cvw7eHWhWo5UP?=
+ =?us-ascii?Q?bioBo9bb+UKME0fS6k40ccEZi/XV2ocz0dfPcFNQJnjysslNvuzX/rs2SM6m?=
+ =?us-ascii?Q?zXcpdGKqs4exjsZWzpqv2OOOL4kmrwb+G0KDE0qfOwPOWTPRBIh2aMv6Xy5y?=
+ =?us-ascii?Q?5A6IlhwKz3BAF2Rd8nnsTl61M7RQVU3TbSb3PC5iL3IeXSEHlr3uaMJs7rHk?=
+ =?us-ascii?Q?MnBJMyHVtsado/JvoNa6Y1+K6Di98O3+7ohf1dHsh9k/MophOe5nAEa5a8IV?=
+ =?us-ascii?Q?TLngeakm5PLkcdxQbJUu96W8/MkHg4i8FVtGCREG62KKVb8SYdTpiGwo5ueA?=
+ =?us-ascii?Q?oL7EpFRt24BA+Cs3JB9CTtzddvBS?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4320.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?R2JuMm7hdvRiA1UyLGZltaxcKUrG3QGFY80j1oL1UwHI5vGJ9nuX2o6oArG9?=
+ =?us-ascii?Q?Eqt55q1h9QxdIUY4f37xJUJhDn8hhcLS47/D3PDOdYiBIgahQ0U5vAqiPc4N?=
+ =?us-ascii?Q?cX/518anbwlIesh7Zv8nM8O+yFLmV/t/9tRBoe2LoqD09C2vdpqQYjhSJF13?=
+ =?us-ascii?Q?8AjO8ayoBkXMaLQVNztU652jThulzojj8oc1lQmKRAWxj/Mmu/6EDw2cfNoG?=
+ =?us-ascii?Q?fdbOcax5kSJod6E/ce3WG4yaeqlLpLFFXjkijwo1+UBnB58nGe/fZhAlm59J?=
+ =?us-ascii?Q?sOnZtkLfCvNrT3uKBsv+4tiBN1Jq/rLvO5JZrS1KoxitdrIRlCXOdFIU15Yn?=
+ =?us-ascii?Q?emp/u99wVIUWZ2ugynjhijWEt9AzZYNrLKhfmFJ7otHL8HmrAgWL4st+mGH0?=
+ =?us-ascii?Q?Z5x79vlUY1t/GVLFtiwzTh+aFWn7F93z3ojymE9TsX8QYU/mG3F4XfiBDf/p?=
+ =?us-ascii?Q?RURdhyoF+4/9bFxGLKWjx1Po+Srftvvep5JIjl+MOvorzMqZ7sOlgj0NhcNh?=
+ =?us-ascii?Q?Jh14nbCYRnMeLtPNYT2lD1nZt3vttMKc1tcsut61zLDkubh/NaS4AhgacDAT?=
+ =?us-ascii?Q?i8APZ6bohRN0PuQPdDiv+w6FYF1HzIcdf0NvtriF6JW1j9QUGTU9dgP5KSKk?=
+ =?us-ascii?Q?h3FQ0oebMNJV4mhoqnRTrK2MUZUQe7n7eEEJdFLD2rtrnilY/1S0GhXZKmiB?=
+ =?us-ascii?Q?yaNJ78zEO8hKPxTPzrqZoXQiKb/cXBEJg69UOI3bqaSjt2dJmdqc3vlnVDni?=
+ =?us-ascii?Q?rt3eUTU2vkyztJAlDxx3geqN4UEDGauuunyRQ1DyC2CXBytZA4xIByQMEaZ1?=
+ =?us-ascii?Q?iHAIkqBvPb/Besugv96KssltZMZZFei86jc8cmCgbruwTAOMhqwe2h7phhBd?=
+ =?us-ascii?Q?L8kJ9JyUx6yeSHRMMg7ErZjR9ungVKtJUu20DMEmg1Yqr9WrmLxaJw3NnRi3?=
+ =?us-ascii?Q?fNoKYVNq8LDSykb0PkpXYVqS3hMZWT/wUXexPTlF0jstDgcasp3MZmKjW8GE?=
+ =?us-ascii?Q?ZtGf3wOuUZtCLmddEwne1WhL4MXToDU4bcjWGUUHiCktmwjS3abZCi5ra+Ml?=
+ =?us-ascii?Q?HF/ZLcT251AIqeb/+MfQ2O0ymtKUSgicwp9K6D9g+G5E5NJqt+h4+wo/uvA5?=
+ =?us-ascii?Q?QToRFe6QNEjEok8BNPD8bT/tp84BWVnDVDXJsN/6UrO07FUZ2O2IbfRXn+gH?=
+ =?us-ascii?Q?wJkHlWCXGYty70Uk2TKhMMx8zLdxoG0I3XN/WRkrngWEIjaXzWVNpVypy3dR?=
+ =?us-ascii?Q?Kw16+ViUjBMXNc2YDOKnmc0KZZuPnqAnPfcNVNyycQLdg4KP2jIJrdJuZuyq?=
+ =?us-ascii?Q?dfV2pqZjNWZpEbFH6RbRoAnFKwJRcdNU8joARuL3vF/GXHeeC1CQSmhL2Tgp?=
+ =?us-ascii?Q?53JRbYvQx8rjwMJrhVga2UkTY5lH2SZDBKQaJC+0pWY2pgzq5JHz8+rryMcA?=
+ =?us-ascii?Q?b6+9hUFCZxZaGCBCRJxI89s7JZnzQY6yOd9kA2XthKOFi7xyV6u21J9nUAWw?=
+ =?us-ascii?Q?ExGnvoeRJ4huXJTyQQpUudZldh/u7XKZBk0HD0Oie0Kg+XBiV7TceN6GPRBg?=
+ =?us-ascii?Q?BwEmpx1f+AiTQt8g0Y5KbFrmyv7vWCqdNvTEst+7+XvtN4YpZf7idmOombTy?=
+ =?us-ascii?Q?cg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	8xZ4iC1pWgMs0p/oOtr7pCwc79E/JfNtLaG/ammjllbEjm9ikuk9wNWPy9fpZjvZF6Bw1wUhtafz1G/izh26Kh+j6Y5j6SNRZeQsfjxwc0vlHfYwZwSbCSPtU6rAyjoYvCra7eDyd+hFdAHm39/+Eu18Scpt57fH3Mu+Z7NGpV4G7gN/ZnhN6Z/9vgOICVz+NBCb9w3ojOwgZFVug9Yh2Ro1PY82ymyS5czrzfvnKnw6mhlBCMFyOOA5bMRWnJQ2QCWo4qzfxLexETGRr9yIwfjgxe7ftczEc/8u4m2nOiG4J6YWxD44HN9bZA6ehnMd91f1e+YoUg4PfXqI+g68SceYGiKzpvalGSsQc1d33NR8XAPmvVKAh+3DHhEYgGhYpg8Q4XL8i2sgfnKkM5P3VjuWCH+laxXF0Rp4VLZq8W+5NFprgLhBPJEZ9DBzEH2pC7uGunPHQpyY8cbMHC126K2EU0pjhnATyM14EdaI5qfisHi3Zyg1QK7jiJmUiWk0rzIwXOyVvX/4a9Qa7kg/T6w1guTP0c5rQJ7FXoGFEpi1uGWY5eoKpuLAG9KI9OoHDrrX4B/uldhcumj9XNvrSJwIv9pfGRrdLkavSUpqNuw=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d8b6145c-32e9-4857-b012-08ddc0691c3c
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4320.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 10:53:03.5694
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JBpcNuIdsgoEOmH9J/In0GC3pDo1t/daF65uZskfLK1dNGlk8GluAv6P142/m5BFy7UjuW9kialVwFpZ8PsQLA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPF079E800A3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 suspectscore=0
+ mlxlogscore=999 phishscore=0 malwarescore=0 mlxscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507110077
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA3NiBTYWx0ZWRfX2f0M6FNbPe4/ SYg32nG1B5PSmmS8lMZAZ9V8u96LyMzI1Sp08oHfcffYThVXKf9Jod+lEKLqeqs1SGQDO6xDFQr TpQ8vU9k1XiG3d0MdS5qpt6KpkIfUnDYjUGCSA7ROvm4rmcFg9GfWSEKKvN6qEddcofXqLXvui5
+ 8vbjufX0HlX+k2vRklWULXIt/tOHZ26fsjbJUpyHOq0P3tEdK58/hFSK3JGF/2Er4IU4fT+ELxw P7H7G1VQ+DQKubckC+/LXyzEBm49UG0H4RnibRujvxQd0F2Hs5WWl79gV7huxJogYPP7H1gJHzh 6u6Dg8I8niHl8eGHALe4shNxMKKs86SOQ7K7f8qOwExy/pA92IY1Lehn9M9ErLKVZW6YbcsYSCR
+ RC+rDKODJYeVPPeRhYl3yEhU0+RQOxYbWnigrNcH7CCQJP2TYzvYliX6LbXE5hlYvmdW3r14
+X-Proofpoint-GUID: 7YO9oG8vsGEYlUo0McTDVOh-SMS3yH-O
+X-Proofpoint-ORIG-GUID: 7YO9oG8vsGEYlUo0McTDVOh-SMS3yH-O
+X-Authority-Analysis: v=2.4 cv=PpyTbxM3 c=1 sm=1 tr=0 ts=6870ed30 cx=c_pps a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=loq-tJhv0IFIE_0Y8b4A:9
 
-Hi Andrei,
+This value in io_min is used to configure any atomic write limit for the
+stacked device. The idea is that the atomic write unit max is a
+power-of-2 factor of the stripe size, and the stripe size is available
+in io_min.
 
-kernel test robot noticed the following build warnings:
+Using io_min causes issues, as:
+a. it may be mutated
+b. the check for io_min being set for determining if we are dealing with
+a striped device is hard to get right, as reported in [0].
 
-[auto build test WARNING on linusw-pinctrl/devel]
-[also build test WARNING on linusw-pinctrl/for-next lee-mfd/for-mfd-next lee-mfd/for-mfd-fixes linus/master v6.16-rc5]
-[cannot apply to shawnguo/for-next next-20250710]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This series now sets chunk_sectors limit to share stripe size.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrei-Stefanescu/dt-bindings-mfd-add-support-for-the-NXP-SIUL2-module/20250710-222538
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/20250710142038.1986052-8-andrei.stefanescu%40oss.nxp.com
-patch subject: [PATCH v7 07/12] pinctrl: s32g2: change the driver to also be probed as an MFD cell
-config: arm64-randconfig-003-20250711 (https://download.01.org/0day-ci/archive/20250711/202507111841.QdQ2DVpT-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 12.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250711/202507111841.QdQ2DVpT-lkp@intel.com/reproduce)
+[0] https://lore.kernel.org/linux-block/888f3b1d-7817-4007-b3b3-1a2ea04df771@linux.ibm.com/T/#mecca17129f72811137d3c2f1e477634e77f06781
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507111841.QdQ2DVpT-lkp@intel.com/
+Based on 8b428f42f3edf nbd: fix lockdep deadlock warning
 
-All warnings (new ones prefixed by >>):
+This series fixes issues for v6.16, but it's prob better to have this in
+v6.17 .
 
-   In file included from include/linux/bits.h:32,
-                    from include/linux/bitops.h:6,
-                    from drivers/pinctrl/nxp/pinctrl-s32cc.c:10:
-   drivers/pinctrl/nxp/pinctrl-s32cc.c: In function 'to_s32_pinctrl':
-   include/linux/container_of.h:20:54: error: 'struct s32_pinctrl' has no member named 'gc'
-      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
-         |                                                      ^~
-   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
-      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
-         |         ^~~~~~~~~~~~~
-   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
-      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
-         |                       ^~~~~~~~~~~
-   drivers/pinctrl/nxp/pinctrl-s32cc.c:706:16: note: in expansion of macro 'container_of'
-     706 |         return container_of(chip, struct s32_pinctrl, gc);
-         |                ^~~~~~~~~~~~
-   include/linux/compiler_types.h:503:27: error: expression in static assertion is not an integer
-     503 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
-         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
-      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
-         |         ^~~~~~~~~~~~~
-   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
-      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
-         |                       ^~~~~~~~~~~
-   drivers/pinctrl/nxp/pinctrl-s32cc.c:706:16: note: in expansion of macro 'container_of'
-     706 |         return container_of(chip, struct s32_pinctrl, gc);
-         |                ^~~~~~~~~~~~
-   In file included from include/uapi/linux/posix_types.h:5,
-                    from include/uapi/linux/types.h:14,
-                    from include/linux/types.h:6,
-                    from include/linux/kasan-checks.h:5,
-                    from include/asm-generic/rwonce.h:26,
-                    from arch/arm64/include/asm/rwonce.h:67,
-                    from include/linux/compiler.h:390,
-                    from include/linux/build_bug.h:5:
-   include/linux/stddef.h:16:33: error: 'struct s32_pinctrl' has no member named 'gc'
-      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
-         |                                 ^~~~~~~~~~~~~~~~~~
-   include/linux/container_of.h:23:28: note: in expansion of macro 'offsetof'
-      23 |         ((type *)(__mptr - offsetof(type, member))); })
-         |                            ^~~~~~~~
-   drivers/pinctrl/nxp/pinctrl-s32cc.c:706:16: note: in expansion of macro 'container_of'
-     706 |         return container_of(chip, struct s32_pinctrl, gc);
-         |                ^~~~~~~~~~~~
-   drivers/pinctrl/nxp/pinctrl-s32cc.c: In function 'legacy_s32_pinctrl_regmap_init':
->> drivers/pinctrl/nxp/pinctrl-s32cc.c:873:44: warning: variable 'soc_data' set but not used [-Wunused-but-set-variable]
-     873 |         const struct s32_pinctrl_soc_data *soc_data;
-         |                                            ^~~~~~~~
-   drivers/pinctrl/nxp/pinctrl-s32cc.c: In function 's32_pinctrl_mfd_regmap_init':
-   drivers/pinctrl/nxp/pinctrl-s32cc.c:920:44: warning: variable 'soc_data' set but not used [-Wunused-but-set-variable]
-     920 |         const struct s32_pinctrl_soc_data *soc_data;
-         |                                            ^~~~~~~~
-   drivers/pinctrl/nxp/pinctrl-s32cc.c: At top level:
-   drivers/pinctrl/nxp/pinctrl-s32cc.c:704:28: warning: 'to_s32_pinctrl' defined but not used [-Wunused-function]
-     704 | static struct s32_pinctrl *to_s32_pinctrl(struct gpio_chip *chip)
-         |                            ^~~~~~~~~~~~~~
+Difference to v6:
+- do comparison in sectors in 2/6
 
+Differences to v5:
+- Neaten code in blk_validate_atomic_write_limits() (Jens)
 
-vim +/soc_data +873 drivers/pinctrl/nxp/pinctrl-s32cc.c
+Differences to v4:
+- Use check_shl_overflow() (Nilay)
+- Use long long in for chunk bytes in 2/6
+- Add tags from Nilay (thanks!)
 
-   868	
-   869	static int legacy_s32_pinctrl_regmap_init(struct platform_device *pdev,
-   870						  struct s32_pinctrl *ipctl)
-   871	{
-   872		struct s32_pinctrl_soc_info *info = ipctl->info;
- > 873		const struct s32_pinctrl_soc_data *soc_data;
-   874		unsigned int mem_regions;
-   875		struct resource *res;
-   876		struct regmap *map;
-   877		void __iomem *base;
-   878		u32 i = 0;
-   879	
-   880		soc_data = info->soc_data;
-   881	
-   882		mem_regions = info->soc_data->mem_regions;
-   883		if (mem_regions == 0 || mem_regions >= 10000)
-   884			return dev_err_probe(&pdev->dev, -EINVAL,
-   885					     "mem_regions is invalid: %u\n",
-   886					     mem_regions);
-   887	
-   888		for (i = 0; i < mem_regions; i++) {
-   889			base = devm_platform_get_and_ioremap_resource(pdev, i, &res);
-   890			if (IS_ERR(base))
-   891				return PTR_ERR(base);
-   892	
-   893			snprintf(ipctl->regions[i].name,
-   894				 sizeof(ipctl->regions[i].name), "map%u", i);
-   895	
-   896			s32_regmap_config.name = ipctl->regions[i].name;
-   897			s32_regmap_config.max_register = resource_size(res) -
-   898							 s32_regmap_config.reg_stride;
-   899	
-   900			map = devm_regmap_init_mmio(&pdev->dev, base,
-   901						    &s32_regmap_config);
-   902			if (IS_ERR(map)) {
-   903				dev_err(&pdev->dev, "Failed to init regmap[%u]\n", i);
-   904				return PTR_ERR(map);
-   905			}
-   906	
-   907			ipctl->regions[i].map = map;
-   908			ipctl->regions[i].pin_range = &info->soc_data->mem_pin_ranges[i];
-   909		}
-   910	
-   911		return 0;
-   912	}
-   913	
+John Garry (6):
+  ilog2: add max_pow_of_two_factor()
+  block: sanitize chunk_sectors for atomic write limits
+  md/raid0: set chunk_sectors limit
+  md/raid10: set chunk_sectors limit
+  dm-stripe: limit chunk_sectors to the stripe size
+  block: use chunk_sectors when evaluating stacked atomic write limits
+
+ block/blk-settings.c   | 62 ++++++++++++++++++++++++++----------------
+ drivers/md/dm-stripe.c |  1 +
+ drivers/md/raid0.c     |  1 +
+ drivers/md/raid10.c    |  1 +
+ fs/xfs/xfs_mount.c     |  5 ----
+ include/linux/log2.h   | 14 ++++++++++
+ 6 files changed, 56 insertions(+), 28 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.5
+
 
