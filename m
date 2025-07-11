@@ -1,123 +1,143 @@
-Return-Path: <linux-kernel+bounces-728162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD79AB02409
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:47:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06A41B0240A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB7C61CC5428
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:47:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 187DF1CC5379
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1538B2F2C79;
-	Fri, 11 Jul 2025 18:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1711ADC7E;
+	Fri, 11 Jul 2025 18:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pQdIpoRa"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnDhrpue"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0473C1ADC7E
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E1F2F2C6C;
+	Fri, 11 Jul 2025 18:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752259252; cv=none; b=tS3MOKl7QQ7pDvPQRwLN7PMD1ZnkhRHEKdeiBHe9izDWFBunAy0dVrEUqUY3npl2iHj67xT7dptHkVO9yiUm6Vo8pMwbQ8rdlPGskvys3pQt6qpu0PNlNX9wAOomRzOAnRxtvUGHE64YnzbusC7IQfy0VVkTuKQWQD7NOIxxD0Q=
+	t=1752259273; cv=none; b=OzCBhtbZwBuyvgoAeZDip175YMTsQ83BEX//yl55PkJAioO+0GWzm8fLOfMKD6KpCk1fN9Ac8VjfNqugAEbODRdverXBITnjjwRJRv2lYrCepPfHM2bqOTqTWkwkUEd33OU3A/9XE9eBawXZymRazjN0xdq8PfwjseaDqHoUwXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752259252; c=relaxed/simple;
-	bh=7qM19moXBFLwh1UWakDLt4rVgduUMKIuptCr+mdAR5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fObZy6cNxGTl+rFigsSEyd6qBUEEKR9l41liq26Ee+pckQzGo2CehDpA7EfA93abfj9cBdhTvw1RoJGGqTDCMHyDYjPkkQO4oKubgy4qv0PO3P4ERIFs8PFbXmUvomVhPSoHjo8iEGBL/9iEZ3CxDvgzVvm6puuPt9FhOGdLt0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pQdIpoRa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BAkHUA031126;
-	Fri, 11 Jul 2025 18:40:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7qM19moXBFLwh1UWakDLt4rVgduUMKIuptCr+mdAR5E=; b=pQdIpoRaUsn3Gf+9
-	zgNq0taweD0g7vU1qvLBDxnZUcnXMUV0NJSpaU2Y6CNroR6aHIJ6+XBLG/QXl1LV
-	vvT6C5YQJ2OdFfff8BO+KqsCu3Ro6fijpf3Qtxqie3iSLO7PD+DQfZ9QAEac6dGi
-	AvjY6kawC9aQPFFjBy2H8o04AbgCks8PBAt8pCUrIPdWnvfvnDmygQDm5fi7jBGT
-	TplGUVrY9yMHuNIqBEbfqzBlLU31trcf/t49yEMrsUU5s65E8tu1d+PDXQRAPH4r
-	lfZ8gjHF8dEM3BeOR6nATLvJzFyf9LdjGTEFyg/RL/DozDTjh5ieLIR6voJeqtsJ
-	Fq6uHA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47u15as9ms-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Jul 2025 18:40:47 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56BIekmN014946
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Jul 2025 18:40:46 GMT
-Received: from [10.110.63.141] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 11 Jul
- 2025 11:40:45 -0700
-Message-ID: <0e35ed72-d231-4294-9272-8439c249c8b5@quicinc.com>
-Date: Sat, 12 Jul 2025 00:10:33 +0530
+	s=arc-20240116; t=1752259273; c=relaxed/simple;
+	bh=WXHDkLxeBuUVPCGJg8eX8a1HjZWeMU13tn+M9FkD3eo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MqesMcfPcBackJfbHS3+v1kKLMG3CJLexSViA+Z+4hvYFwjDu2hdVvH1VVBbFS7vEVUOg2N9eVPvM+IAfGOsZilfPX8q4sKFm/rWSUL8MctQRl23uLnesDMZFHVOJ5fdRA4znRT/UUMehzv8W+A5Jn+IQf6VhOcDa4BlMFkhxss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnDhrpue; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0A0EC4CEED;
+	Fri, 11 Jul 2025 18:41:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752259272;
+	bh=WXHDkLxeBuUVPCGJg8eX8a1HjZWeMU13tn+M9FkD3eo=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=gnDhrpuemNSedot6Jm1hktyNQyYCoq++bcczEbVwwp9HaGp/+XqbLTimn1p1Rkfzs
+	 iRVXvl+HCtvokDTjW7H5poutg07x9VKAkGxVkPc/xX/11OalLxgQFrDlfmoBD1Coeg
+	 Qq3U9LLsX3D98y/t5SSifrnrCZLOY6+mE8Xyx64/ByGduR2IC9v4WJSWiaIlwvwbaq
+	 +Eb3vyAabcpcLxR32I1DHulQi/qv2K1zCOn7y6220zwfUrJmUCfWdaD8QFEe+ANtWx
+	 BI4i49mu5luqZfknDIU65Qi7cacXJzEe3OR+FJTpOIRJXAIUm6szDizMYUanu7xS5W
+	 iYcqG0Y7ZglSQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 59982CE0CB7; Fri, 11 Jul 2025 11:41:12 -0700 (PDT)
+Date: Fri, 11 Jul 2025 11:41:12 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang@linux.dev>, rcu@vger.kernel.org
+Subject: Re: [PATCH -rcu -next 4/7] rcu: Remove redundant check for irq state
+ during unlock
+Message-ID: <6400b843-33b7-44fe-97dc-7a8c737ac6cc@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250708142224.3940851-1-joelagnelf@nvidia.com>
+ <20250708142224.3940851-4-joelagnelf@nvidia.com>
+ <9b67bbca-dfdc-470e-9a32-486300efa586@paulmck-laptop>
+ <ebfa8f35-8ede-46c3-a865-384d12d11e90@nvidia.com>
+ <c25c1084-ef70-409b-b38f-84c69e08e562@paulmck-laptop>
+ <3d1217a9-2d22-4808-adca-0fdf78278a36@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] tracing/perf: Prevent double unregister of perf
- probes
-To: Steven Rostedt <rostedt@goodmis.org>
-CC: Ingo Molnar <mingo@redhat.com>, <linux-kernel@vger.kernel.org>
-References: <20250709-fix-double-perf-probe-unregister-v1-0-2b588b3c0140@quicinc.com>
- <20250709-fix-double-perf-probe-unregister-v1-1-2b588b3c0140@quicinc.com>
- <20250709102329.7a5430fd@batman.local.home>
- <db613bd2-c78e-44ea-9aad-9f99996731bc@quicinc.com>
- <20250709131854.5eccda2b@batman.local.home>
-Content-Language: en-US
-From: Aditya Chillara <quic_achillar@quicinc.com>
-In-Reply-To: <20250709131854.5eccda2b@batman.local.home>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: seXB4U2-MQYTDzrexsMBs4_NjwhfyoOc
-X-Proofpoint-ORIG-GUID: seXB4U2-MQYTDzrexsMBs4_NjwhfyoOc
-X-Authority-Analysis: v=2.4 cv=RtzFLDmK c=1 sm=1 tr=0 ts=68715aaf cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=NEAV23lmAAAA:8
- a=FXfphgXLjaAvwqFekLEA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDEzOCBTYWx0ZWRfXx4wE+ZIn2F7T
- gQpfHsGGzeYmCWrLUzBcKPJ3uhtfGPPeKCWrER+c4u4QudT4RTOlA+G9/MPELgrxgH4u5O3NrXf
- aUHm2reIvrOJ7K08ENl854gc6r98wS8Xmkbh6qLBacoW7lRJbfwK+C7FVHC02u4THyFfx6ejsM5
- N5voLPpxtqoVEmPOqkVT4SXobMBdbqhKEPiYACj+l3sYHWYB8EKarE6/bU3ggbmPUka5R04176T
- V3IS5BeBDmv4CNS6jysJItYoCWMBELOXjMauTU+Eaewvfb+2TjhNOfPLijRmDJEg4e99IVvHgcf
- JkN2bAZ3TgD9jby0r8ZI6rEtLsAPq5SES9E+GceMyqJTNKxnURbVdU/vPkBE0mEB+vLkHViu7Nn
- cLzY2W4gFO6t2IGtJzmMJqP4NgLgD1z094N7zHkRLdx9Y4YjQSI+c8HlAP9ggr6YH+1rzKZe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-11_05,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 mlxlogscore=789 suspectscore=0 adultscore=0 bulkscore=0
- clxscore=1015 malwarescore=0 mlxscore=0 impostorscore=0 phishscore=0
- spamscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507110138
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3d1217a9-2d22-4808-adca-0fdf78278a36@nvidia.com>
 
-On 7/9/2025 10:48 PM, Steven Rostedt wrote:
->> The exact problem was introduced by:
->> https://github.com/torvalds/linux/commit/7ef5aa081f989ecfecc1df02068a80aebbd3ec31
->> (perf/core: Simplify the perf_event_alloc() error path)
->> where __free_event was calling event->destroy() even though it would
->> have been called by perf_try_init_event in case it failed.
-> Then I rather have it trigger a WARN_ON() and disable that event
-> permanently until reboot. It's a bug, no need to continue using the
-> event when it's in an a bad state.
+On Fri, Jul 11, 2025 at 02:19:47PM -0400, Joel Fernandes wrote:
+> 
+> 
+> On 7/11/2025 1:18 PM, Paul E. McKenney wrote:
+> > On Fri, Jul 11, 2025 at 12:30:08PM -0400, Joel Fernandes wrote:
+> >>
+> >>
+> >> On 7/10/2025 8:00 PM, Paul E. McKenney wrote:
+> >>> On Tue, Jul 08, 2025 at 10:22:21AM -0400, Joel Fernandes wrote:
+> >>>> The check for irqs_were_disabled is redundant in
+> >>>> rcu_unlock_needs_exp_handling() as the caller already checks for this.
+> >>>> This includes the boost case as well. Just remove the redundant check.
+> >>>
+> >>> But in the very last "if" statement in the context of the last hunk of
+> >>> this patch, isn't it instead checking for !irqs_were_disabled?
+> >>>
+> >>> Or is there something that I am missing that makes this work out OK?
+> >>
+> >> You are right, after going over all the cases I introduced a behavioral change.
+> >>
+> >> Say, irqs_were_disabled was false. And say we are RCU-boosted. needs_exp might
+> >> return true now, but previously it was returning false. Further say, we are not
+> >> in hardirq.
+> >>
+> >> New code will raise softirq, old code would go to the ELSE and just set:
+> >>                 set_tsk_need_resched(current);
+> >> set_preempt_need_resched();
+> >>
+> >> But preempt_bh_were_disabled that's why we're here.
+> >>
+> >> So we need to only set resched and not raise softirq, because the preempt enable
+> >> would reschedule.
+> >>
+> >> Sorry I missed this, but unless this behavior is correct or needs further work,
+> >> lets drop this patch. Thanks and kudos on the catch!
+> > 
+> > Not a problem!
+> > 
+> > You can use cbmc to check these sorts of transformations, as described
+> > here: https://paulmck.livejournal.com/38997.html
+> 
+> Much appreciated! Does the tool automatically create stubs for dependent
+> structures or is that upto the CBMC user? I see in your example in the blog you
+> did create an rcu_node :). I wonder if for large number of dependencies on the
+> code base, how it does in terms of overhead for the user.
 
-Acknowledged, will update in v3.
+You do need to create the stubs.  But you also have the option of
+simplifying the code, for example, by removing structure fields that
+you are not using and providing static instances of the needed structures.
 
-Best Regards,
-Aditya
+> But perhaps for simpler examples (such as perhaps the above), manually mocking
+> data structures and dependent code is reasonable?
 
+That is what I do.  ;-)
+
+> We'd have to stub irq_work and raise_softirq and functions too and also the
+> CONFIG option values.
+
+Agreed.  But in this case, we only need to know whether or not they
+were called, so a very simple stub suffices.
+
+You can also speed things up by replacing the Kconfig options with
+variables, thus allowing full exploration in one run.  And dispensing
+with the dazzling implementation of IS_ENABLED().  ;-)
+
+							Thanx, Paul
 
