@@ -1,153 +1,104 @@
-Return-Path: <linux-kernel+bounces-727728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B232B01EAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:07:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A006B01EA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2EBC3B84EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:06:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE3B53AB04A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2009A2E6D12;
-	Fri, 11 Jul 2025 14:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B742E11B3;
+	Fri, 11 Jul 2025 14:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="edh4/NK1"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V8NIyHqh"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26B42DE6E6;
-	Fri, 11 Jul 2025 14:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134CB2DE70D
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 14:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752242795; cv=none; b=g80tCrGt4W37Lufaluual2RK/RJ0poeAJwnbxo9Yyn4wCrqGvs64CDVbya1ER7S7ysTIVizIKolKubZZjTzjSRUxaQI/3ajm4T9SkgS1GnZVLvtaxYeIOuCNGdzJT1WebxH1rm6dt3dErMDFQkhH4qY2Hesbzka29w3lfRtWDTA=
+	t=1752242785; cv=none; b=ZmmRHPo97d6gq17gqfSs2tY01HV4AdFjQPIV0LOMixIMzbPr9jnFDW9lV2gYms8+J99cC+3WC+3rddSrYztGC/+FiIM9vpd4jkp2nwXTl1V/ov7XKsA9Kk3UcylLsPRxLtPkKf/gAi/UONiVTAx8cAnnLVatjFmrlmHyraiUiYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752242795; c=relaxed/simple;
-	bh=+hOpGDR958pfeCJ341dbAXFobwN1RVoXZXOh+QzDIbU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZUMU2F9rqotbSFUvmuvGnonNf/ml7lWYqWUqXbH81JzA48ooge6BRuc0Xd2dkOfCB2f6AEDKHrKcbGZFEXKCkXf+Fb+xsK0RNIWg2cm2Fb+gAnXNWz9rvbRGHG/KtZdV5GOMFvB16tIc/lMsrN/pZYLi9UFYp88xY7hTrTq1qwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=edh4/NK1; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BDgiiX007804;
-	Fri, 11 Jul 2025 14:06:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2025-04-25; bh=Nu+HKnOEwgShghEL
-	a7WQcOASZjIV4FEdtBpsIJxTXv8=; b=edh4/NK1FwGDNvN1eSm9yaGdcor5IebR
-	vc+jfiY8HM14gFlYi6vbGMmY+s8GnZgdEF6JY0564CCv7TDa8619Is6zLvsEp6b6
-	ChZR0NGcoIGa1HA3Tb29vxwXR7lpEHgaixHvVS7Q9BHiYQziMoJOFbLDRC+wWLY3
-	y4wmDsOQucCIibIGqquJ/9cuBCrxIYVAaSMKluQfVOtfUaikpaFpcKp3uE5fg/G4
-	q1i07Zpu4aOjOSOVisE0JGxURU1oqOhfWUIdL+wf1gzaeMeGB5SWzd9lBzahl4RA
-	aUiaq5GJdiTaUCJG5qtQ7s6qJ4tkGfhjzvhrM3t9YaFXI9XPr3HQUw==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47u3qpg1ng-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Jul 2025 14:06:17 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56BC5aOP027448;
-	Fri, 11 Jul 2025 14:06:16 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ptgdkk32-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Jul 2025 14:06:16 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56BE6Frj032682;
-	Fri, 11 Jul 2025 14:06:15 GMT
-Received: from ca-dev110.us.oracle.com (ca-dev110.us.oracle.com [10.129.136.45])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 47ptgdkjxe-1;
-	Fri, 11 Jul 2025 14:06:15 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: sgoutham@marvell.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        horms@kernel.org, netdev@vger.kernel.org
-Cc: alok.a.tiwari@oracle.com, linux-arm-kernel@lists.infradead.org,
-        darren.kenny@oracle.com, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v3] net: thunderx: Fix format-truncation warning in bgx_acpi_match_id()
-Date: Fri, 11 Jul 2025 07:05:30 -0700
-Message-ID: <20250711140532.2463602-1-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1752242785; c=relaxed/simple;
+	bh=HWvaEhuXDSYgLYWRHKSUTXBSay+No1KBht70inNpu30=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mMs55gpDX9BsAB49hn5eRV3U74qSHnO25k9IGvsDCuUS/fknyd/t2Fi9tJSlxMqDeCfIOAkiRHJVwpmpAJZ+edplhLZBTU+6Q0HzDw193gLO11eNpXkvnVRVI1V7Z+Li6C33fKnmvJvpiKDvhgz8461l1KQF6e2dF3dgxZ51Qsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V8NIyHqh; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-313ff01d2a6so2491102a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 07:06:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752242783; x=1752847583; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jnCZqhs2jpFslJPdY5U6nIr7Bo2uyg2ScFEtRB8bErs=;
+        b=V8NIyHqhkwflo38lGXEpPehkh+MKOwqTpeN3dgsODmh1EClnypxYrWeIyAgRC05yrk
+         8QDu2SsrOVH0qOXxoPrN6Qemf2nBduq73J+FbeQOKWXXEpO6tEPpFw88uLROvVYdEpDa
+         pS07Czj5b4mAaMuxb3qYuNn4124FxkTz+T++4LxY6t9eKC8jGK7ZBHtTnYJaFR1Yauzv
+         0MV9RMyIkyet9YVGz1qrsdISDmlbthMfMX13sjzVodAWZzl0vs3GI1ZCZvO59QXBAqVO
+         Fmk8I7lAsFPfeqNmg//GUdPJOUsLErvwpUtOF7zXKe7i/SvmxezscWWv9bt3E8QSSDAp
+         YdKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752242783; x=1752847583;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jnCZqhs2jpFslJPdY5U6nIr7Bo2uyg2ScFEtRB8bErs=;
+        b=HuMAzpngKuRQyvt3RqVuUmx1CQwhMdXIVn7Xc8C1VKeNldqFOhb9jCjJtXQkG4FYWa
+         zlUCQipnpJQpKF0h7HJ+oGjvT6JRABBwETXybbS5/H2FSoxZ2cygxrKrUxDcoJv6o1ae
+         j0YJHvJrZSjya2J/6YAsrBk9GVtWfFdJkeXEdNnWbUpbn+Q1oPntVP4QvIany0KGppkW
+         jrBsa56BXWXpJ+l8rwniTf4BXth6KKZd7vu4sxMMu9GJVSn9PW4q/mlJ8q/0YmhGb3W+
+         0rbM/u6vD47d/L4EPy2oDJUvoWK4lhc7IxV3OSOxLKZ4zHXMWHKGXB2LqROPtXg/Ebkh
+         tMsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfN2As0b6/5R+CRxD+OzR5wd3eg/aAQIKJIZnpUnR9HOgH6qSpqFyZYFTSqDfymsQftPGG9lLI3yzyuqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjxNgSEesKeEe3LG1zrFZdBLEn6tE70qYhrZjgYAZwGZdmGthE
+	wV8SSMB2bBmGGNqmRhelvEe7Ic4aQ7KiPnu+rT1RDUUEn7BMR97k3IW/mcRP4cUZ3G96JMnpLSz
+	xUfIajQ==
+X-Google-Smtp-Source: AGHT+IFP1G+BwI9fgjlF9li/vRzlrSC4JG0EC5WsLxaZfXdd6Ao/Nfb+aDJQsUkaL0KTxYCII+FkDDc445A=
+X-Received: from pjee11.prod.google.com ([2002:a17:90b:578b:b0:31c:2fe4:33b9])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:37cf:b0:31c:15d9:8aa
+ with SMTP id 98e67ed59e1d1-31c4cdb64b8mr4842398a91.34.1752242783439; Fri, 11
+ Jul 2025 07:06:23 -0700 (PDT)
+Date: Fri, 11 Jul 2025 07:06:21 -0700
+In-Reply-To: <aHDFoIvB5+33blGp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 adultscore=0
- suspectscore=0 phishscore=0 mlxlogscore=999 bulkscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507110100
-X-Proofpoint-ORIG-GUID: cFBORv1YaTLN0JjpskotdNEKFt1USsBN
-X-Authority-Analysis: v=2.4 cv=L4AdQ/T8 c=1 sm=1 tr=0 ts=68711a59 b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=xO2tqtdlJwZuTTCz-PAA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 cc=ntf awl=host:12061
-X-Proofpoint-GUID: cFBORv1YaTLN0JjpskotdNEKFt1USsBN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDEwMCBTYWx0ZWRfXwi8UV4ufyjvg 06j0/3Ill/N8+mJTi6eO9wWPNcMdcnyc9vMcKGohdwEAMRdbOipIesE9+qvZq7cZ1PzvjcWIpBp 3jpZEfyRymxz/pb6C2pwY4NngCFZXq6LjwrcNqtCMf9eiQNwfp+Jfc1y7q9J1CrH0tTipzqMfN6
- DuRkc9RThOeWeLvAEndHWCiPhSK0XqlWNPdb95gddNGdb/921IRkliPEJsJvc/81c99mO3S7eVn S4+zsisofXk+uSeNIRY616JTNzehAd6o7AcEX7C+e9EWiaXP32cAMxHUCAAinxdpXtH4ucW8/zP ETH8h5PKz22Tz08tjPyfyIY7CoUJUaZOTyTuGEcR0Ibz2jSNoZTZM8lxtcx6Aer6j8BL3c737Q4
- fcUfJdDyIitRzZRkn6sUTYILpF/W0ZKKfl2nBOpV4haJr3gLgL3fiR0QdXl5ZJKnciI0A+DM
+Mime-Version: 1.0
+References: <20250523095322.88774-1-chao.gao@intel.com> <aHDFoIvB5+33blGp@intel.com>
+Message-ID: <aHEaXYmeolKNCqgk@google.com>
+Subject: Re: [RFC PATCH 00/20] TD-Preserving updates
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: linux-coco@lists.linux.dev, x86@kernel.org, kvm@vger.kernel.org, 
+	paulmck@kernel.org, pbonzini@redhat.com, eddie.dong@intel.com, 
+	kirill.shutemov@intel.com, dave.hansen@intel.com, dan.j.williams@intel.com, 
+	kai.huang@intel.com, isaku.yamahata@intel.com, elena.reshetova@intel.com, 
+	rick.p.edgecombe@intel.com, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="us-ascii"
 
-The buffer bgx_sel used in snprintf() was too small to safely hold
-the formatted string "BGX%d" for all valid bgx_id values. This caused
-a -Wformat-truncation warning with `Werror` enabled during build.
+On Fri, Jul 11, 2025, Chao Gao wrote:
+> >2. P-SEAMLDR seamcalls (specificially SEAMRET from P-SEAMLDR) clear current
+> >   VMCS pointers, which may disrupt KVM. To prevent VMX instructions in IRQ
+> >   context from encountering NULL current-VMCS pointers, P-SEAMLDR
+> >   seamcalls are called with IRQ disabled. I'm uncertain if NMIs could
+> >   cause a problem, but I believe they won't. See more information in patch 3.
 
-Increase the buffer size from 5 to 7 and use `sizeof(bgx_sel)` in
-snprintf() to ensure safety and suppress the warning.
+NMIs shouldn't be a problem.  KVM does access the current VMCS in NMI context
+(to do VMREAD(GUEST_RIP) in response to a perf NMI), but only when KVM knows the
+NMI occurred in KVM's run loop.  So in effect, only in KVM_RUN context, which I
+gotta image is mutually exclusive with tdx_fw_write().
 
-Build warning:
-  CC      drivers/net/ethernet/cavium/thunder/thunder_bgx.o
-  drivers/net/ethernet/cavium/thunder/thunder_bgx.c: In function
-‘bgx_acpi_match_id’:
-  drivers/net/ethernet/cavium/thunder/thunder_bgx.c:1434:27: error: ‘%d’
-directive output may be truncated writing between 1 and 3 bytes into a
-region of size 2 [-Werror=format-truncation=]
-    snprintf(bgx_sel, 5, "BGX%d", bgx->bgx_id);
-                             ^~
-  drivers/net/ethernet/cavium/thunder/thunder_bgx.c:1434:23: note:
-directive argument in the range [0, 255]
-    snprintf(bgx_sel, 5, "BGX%d", bgx->bgx_id);
-                         ^~~~~~~
-  drivers/net/ethernet/cavium/thunder/thunder_bgx.c:1434:2: note:
-‘snprintf’ output between 5 and 7 bytes into a destination of size 5
-    snprintf(bgx_sel, 5, "BGX%d", bgx->bgx_id);
-
-compiler warning due to insufficient snprintf buffer size.
-
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
-v2->v3
-added Reviewed-by: Simon
-used bgx_sel[7] as suggested by Jakub Kicinski
-https://lore.kernel.org/all/20250710153422.6adae255@kernel.org/
-v1->v2
-No changes. Targeting for net-next.
-https://lore.kernel.org/all/20250708160957.GQ452973@horms.kernel.org/
----
- drivers/net/ethernet/cavium/thunder/thunder_bgx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-index 3b7ad744b2dd6..21495b5dce254 100644
---- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-+++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-@@ -1429,9 +1429,9 @@ static acpi_status bgx_acpi_match_id(acpi_handle handle, u32 lvl,
- {
- 	struct acpi_buffer string = { ACPI_ALLOCATE_BUFFER, NULL };
- 	struct bgx *bgx = context;
--	char bgx_sel[5];
-+	char bgx_sel[7];
- 
--	snprintf(bgx_sel, 5, "BGX%d", bgx->bgx_id);
-+	snprintf(bgx_sel, sizeof(bgx_sel), "BGX%d", bgx->bgx_id);
- 	if (ACPI_FAILURE(acpi_get_name(handle, ACPI_SINGLE_NAME, &string))) {
- 		pr_warn("Invalid link device\n");
- 		return AE_OK;
--- 
-2.46.0
-
+It'd be nice if we could make the P-SEAMLDR calls completely NMI safe, but
+practically speaking, if KVM (or any other hypervisor) is playing with the VMCS
+in arbitrary NMI handlers, then we've probably got bigger issues.
 
