@@ -1,82 +1,81 @@
-Return-Path: <linux-kernel+bounces-727324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73902B01886
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:44:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B14AFB01889
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38F7776662E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:43:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71A738E0642
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0A627A139;
-	Fri, 11 Jul 2025 09:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54B027AC25;
+	Fri, 11 Jul 2025 09:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AaroPAis"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K3opS3PK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00D51DDC18;
-	Fri, 11 Jul 2025 09:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4DB263F47;
+	Fri, 11 Jul 2025 09:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752227047; cv=none; b=juZ5cbm2vz/mM2t8C2mZmK0gPG/1FOSAzZ+mVMEHKGEyQ8uzK5pGRRtOnpUFbPsB9ANQWlQJBxYxWg63w3fZcCwx0iLw5hyAflX800gF4x1MLrTTHFclisWatvqK/eu/HQz86JEyppb6duWYt0WxL9duuuSHiUhAD4hmwQAUvZE=
+	t=1752227063; cv=none; b=ceoBDZZORN6HbVyX4hNwamxn6YocKTOR4LdUbVpj/nfpXBLd2sQfIiRadl8ZSMhjO0kIQbTrmKKhCiwQs+n1LtEMoTQDq/3BHk/WvLZcm9JjFNnGvDek9cL9op+hXhXdi7/isvG2d4KYelLM0Twgkfa3glKb548HJ5VvKTti8AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752227047; c=relaxed/simple;
-	bh=ZgNIlljq0sSLNGHixZnKcOag5Jo/KJvWOyFFtE0BHWc=;
+	s=arc-20240116; t=1752227063; c=relaxed/simple;
+	bh=GKKmdOgnJh4Ado9EmPiRgR7KQVoIOMeQ1qdpk8GPHNU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eG0xx2+Mhf9Iyn7VJTmO1mdN/46RKZSMfxFavqDrm9Lo3muo6Jwqztuvb0h6DZIHAsw5sjAsVH8IB7RqQneRF0N98zliYdW8zTvN/Dtmwgz8QRaKl1ezqnivx9XbV1OK5xe1G9HrA8aSZdqGl1iGudwiT/mOjpoqvPVUbLoVFO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AaroPAis; arc=none smtp.client-ip=198.175.65.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lb/6h9dLc2uGPBDMsiHZis8eJC9da6an0K0+SwBDhedjLXCmWQKasFrPKRbrstJj6J3TAeJqBJCERHEQPtlq9+MLvGDLMVqMFIAngU1/HUE3+KFeolJmyeLCWkU8mRzhhxECnk9jq1Z3NEY4bvTxG9xiXDcwCmtpbV4LdOb7Sp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K3opS3PK; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752227046; x=1783763046;
+  t=1752227061; x=1783763061;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=ZgNIlljq0sSLNGHixZnKcOag5Jo/KJvWOyFFtE0BHWc=;
-  b=AaroPAis7apnLVmcvxoeUlK91IIO3z8LGVkcm+VKyLVYqNzobGCstsfR
-   hvMOFOjrmzGBsMR6QVAdDGY+59ufkXEhBYN3Tav9G1fOfYwl+/DGkWrlR
-   MQ0D+T2njhZMOjPBti/QmYJNMtqYckSN6t/9FGjiYyc+T5YpXzEMpMmV+
-   U3Z1HxEqgP7lA2RVydgDuwVwq+1O0lGR4oa8CdTDSAwMHXXiNDz+kXnKI
-   tFDqk2WGjco2t6/3p8fN8vrhyt0k/rf+SOvuV310yp3rl5ryA9RJR03X6
-   2trKSH9wzX5TtNkpRTA0MZspeEDK0a0n+0Bbc5/8y/LJgWHRIiwjhgqXJ
-   g==;
-X-CSE-ConnectionGUID: zBF2ksF/Q3qz5bJ167UjkQ==
-X-CSE-MsgGUID: 8eAkQfy+QVKypK4LEk7hxA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="54650218"
+  bh=GKKmdOgnJh4Ado9EmPiRgR7KQVoIOMeQ1qdpk8GPHNU=;
+  b=K3opS3PK6QUFj3XYDJp+evlJJ/dna3NaoThCK4s8yYdFCCJbMJuxI2nD
+   ObwbkNIJrYDZ3Rrk+u8NMWuqS2l1G5btXv26xUEx48+H9vQl5C2tfVZ34
+   0b7GTSbFGpd6cwVklTRO2UQHI/ry7TmXgH1gkcw4Up+BoFoOnZZ7Xlfvm
+   aloO768d7Va9t8QsfPIY48rem0kH1jnob3tdIu+JRreKB36XrB6/J3QwD
+   ZZP+/Y8jBtnAhjhAQakF965w/f/lq4DGh+zOfL1JwVH1aIEl6c/fEF8bI
+   VPBblVdB6QPb3Zn7ueAi1W5UwALaeYARUr1si1f7mbDr/YcWsO5eqwAo0
+   w==;
+X-CSE-ConnectionGUID: jYmOfYJbTXeDmxQ8ZRICzQ==
+X-CSE-MsgGUID: dDbTGyjYRzKblwaN1/b66w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="54609643"
 X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="54650218"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 02:42:56 -0700
-X-CSE-ConnectionGUID: K7RkNTEORcWzr2noqFbcgQ==
-X-CSE-MsgGUID: 0qIwAEkMQuSVzGaqzVaE9w==
+   d="scan'208";a="54609643"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 02:44:20 -0700
+X-CSE-ConnectionGUID: YQRDBvTIQL66JQwetVKbRg==
+X-CSE-MsgGUID: 1gc3XEwuQW2VX85AjuwZpw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="155745914"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 02:42:55 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uaAHM-0000000ETrI-0glr;
-	Fri, 11 Jul 2025 12:42:52 +0300
-Date: Fri, 11 Jul 2025 12:42:51 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v1 1/1] MIPS: Alchemy: Remove unused forward declaration
-Message-ID: <aHDcmweOoZ9njDsS@smile.fi.intel.com>
-References: <20250531194346.3630898-1-andriy.shevchenko@linux.intel.com>
- <aEv_y5Lfe3Dul48I@smile.fi.intel.com>
- <aEwMFVSPzc-mV1ve@alpha.franken.de>
- <aEweZReuPzQ_hq8L@smile.fi.intel.com>
- <aEwy2Ud08nHHAdED@alpha.franken.de>
- <aEydkh4EkKu6w2NJ@surfacebook.localdomain>
- <aFqvuIzH2zo5X76q@smile.fi.intel.com>
+   d="scan'208";a="157052337"
+Received: from ettammin-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.248])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 02:44:18 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 299E11206A0;
+	Fri, 11 Jul 2025 12:44:15 +0300 (EEST)
+Date: Fri, 11 Jul 2025 09:44:15 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Arnd Bergmann <arnd@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>, Arnd Bergmann <arnd@arndb.de>,
+	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: staging/ipu7: avoid division by 64-bit value
+Message-ID: <aHDc72x6HxGhYDys@kekkonen.localdomain>
+References: <20250709145710.102669-1-arnd@kernel.org>
+ <20250711092329.74e52573@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,39 +84,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aFqvuIzH2zo5X76q@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250711092329.74e52573@pumpkin>
 
-On Tue, Jun 24, 2025 at 05:01:28PM +0300, Andy Shevchenko wrote:
-> On Sat, Jun 14, 2025 at 12:52:18AM +0300, Andy Shevchenko wrote:
-> > Fri, Jun 13, 2025 at 04:16:57PM +0200, Thomas Bogendoerfer kirjoitti:
-> > > On Fri, Jun 13, 2025 at 03:49:41PM +0300, Andy Shevchenko wrote:
-> > > > On Fri, Jun 13, 2025 at 01:31:33PM +0200, Thomas Bogendoerfer wrote:
-> > > > > On Fri, Jun 13, 2025 at 01:39:07PM +0300, Andy Shevchenko wrote:
-> > > > > > On Sat, May 31, 2025 at 10:43:46PM +0300, Andy Shevchenko wrote:
+Hi David,
 
-...
-
-> > > > > > I think we can take it via GPIO tree if there is no reply.
-> > > > > 
-> > > > > please do
-> > > > 
-> > > > Acked-by?
-> > > 
-> > > Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> > 
-> > Thank you! Bart, seems we are all set to route this via GPIO tree. Do you have
-> > any objections?
+On Fri, Jul 11, 2025 at 09:23:29AM +0100, David Laight wrote:
+> On Wed,  9 Jul 2025 16:56:56 +0200
+> Arnd Bergmann <arnd@kernel.org> wrote:
 > 
-> Bart, can you apply this one, please? Or do you have objections?
+> > From: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > On 32-bit targets, this causes a link failure:
+> > 
+> > x86_64-linux-ld: drivers/staging/media/ipu7/ipu7-isys-csi-phy.o: in function `ipu7_isys_phy_config':
+> > ipu7-isys-csi-phy.c:(.text+0x1509): undefined reference to `__udivdi3'
+> > 
+> > Note that this does not divide a 64-bit number by a 32-bit one as usual,
+> > but the other way round, which is something that the compiler should
+> > really be able to figure out but does not (as of gcc-15).
+> > 
+> > A few lines higher, a similar division is done using the incorrect div_u64()
+> > that truncates the 64-bit divisor to 32 bits.
+> > 
+> > Change both to use the safe but slow div64_u64() helper.
+> > 
+> > Fixes: a516d36bdc3d ("media: staging/ipu7: add IPU7 input system device driver")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > ---
+> >  drivers/staging/media/ipu7/ipu7-isys-csi-phy.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/staging/media/ipu7/ipu7-isys-csi-phy.c b/drivers/staging/media/ipu7/ipu7-isys-csi-phy.c
+> > index 4407750c7f40..b8c5db7ae300 100644
+> > --- a/drivers/staging/media/ipu7/ipu7-isys-csi-phy.c
+> > +++ b/drivers/staging/media/ipu7/ipu7-isys-csi-phy.c
+> > @@ -734,6 +734,7 @@ static void ipu7_isys_cphy_config(struct ipu7_isys *isys, u8 id, u8 lanes,
+> >  	u16 reg;
+> >  	u16 val;
+> >  	u32 i;
+> > +	u64 r64;
+> >  	u32 r;
+> >  
+> >  	if (is_ipu7p5(isys->adev->isp->hw_ver))
+> > @@ -806,8 +807,8 @@ static void ipu7_isys_cphy_config(struct ipu7_isys *isys, u8 id, u8 lanes,
+> >  		dwc_phy_write_mask(isys, id, reg, 2, 0, 2);
+> >  	}
+> >  
+> > -	deass_thresh = (u16)div_u64_rem(7 * 1000 * 6, mbps * 5U, &r) + 1;
+> > -	if (r != 0)
+> > +	deass_thresh = (u16)div64_u64_rem(7 * 1000 * 6, mbps * 5U, &r64) + 1;
+> > +	if (r64 != 0)
+> >  		deass_thresh++;
+> 
+> While 'mbps' is presumably u64, it can't be big.
+> So this can just be:
+> 	deass_threas = roundup(7 * 1000 * 6 / 5, (u32)mbps) + 1;
+> 
+> 
+> >  
+> >  	reg = CORE_DIG_RW_TRIO0_2;
+> > @@ -815,8 +816,7 @@ static void ipu7_isys_cphy_config(struct ipu7_isys *isys, u8 id, u8 lanes,
+> >  		dwc_phy_write_mask(isys, id, reg + 0x400 * i,
+> >  				   deass_thresh, 0, 7);
+> >  
+> > -	delay_thresh =
+> > -		((224U - (9U * 7U)) * 1000U) / (5U * mbps) - 7U;
+> > +	delay_thresh = div64_u64((224U - (9U * 7U)) * 1000U, 5U * mbps) - 7u;
+> 
+> That one just needs a (u32) cast, although the 5 can be moved.
 
-Bart, you are pretty much active in the mailing list, but ignoring this thread.
-Can you, please, shed a light on what's going on or what should I do?
+I agree in principle but this should be done separately from fixing the bug
+which is what this patch does. mbps is u64 elsewhere, too, and there
+doesn't seem to be a need for that.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards,
 
-
+Sakari Ailus
 
