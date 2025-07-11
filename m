@@ -1,99 +1,306 @@
-Return-Path: <linux-kernel+bounces-726764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4ECBB010E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:44:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E25AAB010EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B44B0764803
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:44:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE6911C8173E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A80E146593;
-	Fri, 11 Jul 2025 01:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03BC1442F4;
+	Fri, 11 Jul 2025 01:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BfVsw37Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gh+OgkQ3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DE71A29A;
-	Fri, 11 Jul 2025 01:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDAA8F77;
+	Fri, 11 Jul 2025 01:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752198282; cv=none; b=bhMdMFysXQAYPvnrw3nrdKF6KTTJk6hSbXs7sH4rz/y8eRr4H2gxmDIRfazFdPeMViaAmP6RhIOPgOXNXb0vqrEsSF3BwwEfpWTlMEiIinwCsOsLFw/OP18lNtMLM+qS4WoVFCyyAXJKsUeyGEQyt7ZCgZ6AmqQma57p1QRAdQw=
+	t=1752198338; cv=none; b=dIw3lzMgMmwgk2ThZq5h+pdekEsqf0an/TLEvuulF7QLC5Wpi+rlacmABn6agVAkQUq+g4x8ICRh0JvTY5yoSm4w2YqN/CBxCUbLRplAo1cMo/Dp/ZoDq6YGvPLsKbDgjCd1EBUpUkusPIaO0EDRVWN4mXCjsoTRs1u1ub67rQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752198282; c=relaxed/simple;
-	bh=rpYWhR2CcuKDyjqvIZQHIeXBHouYEsSg8k1FGs3gZPE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=XxIGBw4RlITLacol6ghnU9YJ/ZTsJKVLiqUelV6+8MntghrUvLsB2vLTCeZ9HarDIxOxwcpbj73+WNo4gmdcQRv0loJm06hDodb0sIplpzsrUHsVMatrmOY/I4n3EIwQxyXDB2EP7uzufHDpHpUahFHDu3Ns3tXBTo0zohfdv3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BfVsw37Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9894BC4CEE3;
-	Fri, 11 Jul 2025 01:44:39 +0000 (UTC)
+	s=arc-20240116; t=1752198338; c=relaxed/simple;
+	bh=gx8hEFVZ/aa1ORPcFqXp9sS5IQxNVLTFVczaBpglYsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u/XRwU16RgKWhb+8Fk49puuyCYnTvJP6ri2SKdAfxJeyboeR8h1HZhYO7ZO2+tEGqoiRRT9Xo+EZrg55n/XlKZ3MRTx0bNDXf+TBU4+RtANJAIKz6qLfixAV6KoKHXoAoOxKG52to60LhiwiEPsv86gVMNfsfVUTR79gNpJfrBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gh+OgkQ3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D279CC4CEE3;
+	Fri, 11 Jul 2025 01:45:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752198281;
-	bh=rpYWhR2CcuKDyjqvIZQHIeXBHouYEsSg8k1FGs3gZPE=;
+	s=k20201202; t=1752198337;
+	bh=gx8hEFVZ/aa1ORPcFqXp9sS5IQxNVLTFVczaBpglYsU=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BfVsw37YLgWl4j1bj9gqriTIcCDVmezpAmkqb9vMwLmhMDHJp7jtGV2hjbK64BMAG
-	 4V1a+LSBIEUXaE5RZ15G8xx8Rloc6o6gDZj9/JMbOneUaOspgfpxzYVWh2ETw0dYjA
-	 L114WwUsSZ4jhxJj+fvFCIs9YN9oaY9oyBsoBmtS/MgWHU9mOY92SOfs+asnt8msV0
-	 y4uGVCo0EhTvvFyXl1Y6qcap5axNn4pDeGkNWoyZ8bSplV+Kz/VS2cwtDGRzKQaZGj
-	 cAN+dakCkKTsWbINIJcjTzU9U9+W2Trv3+i8SHeqiBBFmTT+uY25zgWqIUleZOuLGg
-	 G+U3cP+Rg+J2w==
-Date: Fri, 11 Jul 2025 10:44:36 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] tracing: Remove "__attribute__()" from the type
- field of event format
-Message-Id: <20250711104436.df72f612ad78f06ec96e63f7@kernel.org>
-In-Reply-To: <20250710095327.69144489@batman.local.home>
-References: <175197567999.977073.8989204607899013923.stgit@mhiramat.tok.corp.google.com>
-	<175197568917.977073.2201559708302320631.stgit@mhiramat.tok.corp.google.com>
-	<20250709131107.397a3278@batman.local.home>
-	<20250710224520.4eaf514db761ecaaee9bc1e1@kernel.org>
-	<20250710095327.69144489@batman.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=Gh+OgkQ3BuemAnHv8zGCGZtsoFS95BSEA4GGuzcADG/mMvhWuwJkzZCEDKl9iTm1P
+	 hJgzyJWS2Z/8k0AUEDGr1x0GXw2Kn6/tUQLvLY1CWlOdjmArCgf3JBAaAlYK1w19mu
+	 wuZ8u3iZRHw00y/A0aAAAOHEm5vyr900LA4xGXwgBs2SuBl67tJ/IzHkTR7pGXRaUt
+	 lYKLOHmpucBpMXrNInjuWAKK7gHZ7sYUFla5qAWv+WWipAIMzNKOAvc5WPD3XMTdl7
+	 rdzWb3lHwJhN2BWiu03gu9E6X4zt+gfeXA2T5Aew0Rwbn0Wn3yci4GyIEgXdbMj7CV
+	 itUSbQJXD26yw==
+Date: Thu, 10 Jul 2025 18:45:35 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, Simon Horman
+ <horms@kernel.org>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Willem de Bruijn
+ <willemdebruijn.kernel@gmail.com>, bpf@vger.kernel.org,
+ kernel-team@meta.com, Willem de Bruijn <willemb@google.com>
+Subject: Re: [PATCH net-next v5 3/3] selftests: net: add netpoll basic
+ functionality test
+Message-ID: <20250710184535.374a0643@kernel.org>
+In-Reply-To: <20250709-netpoll_test-v5-3-b3737895affe@debian.org>
+References: <20250709-netpoll_test-v5-0-b3737895affe@debian.org>
+	<20250709-netpoll_test-v5-3-b3737895affe@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 10 Jul 2025 09:53:27 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> On Thu, 10 Jul 2025 22:45:20 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+On Wed, 09 Jul 2025 02:08:17 -0700 Breno Leitao wrote:
+> Add a basic selftest for the netpoll polling mechanism, specifically
+> targeting the netpoll poll() side.
 > 
-> > > And it doesn't free after allocation because it only does the
-> > > allocation for events that will never be freed. For modules, it
-> > > registers the allocated string so it will be freed on unload.  
-> > 
-> > What happen if the tracepoint in module has the __attribute__?
-> > (or enum etc?)
+> The test creates a scenario where network transmission is running at
+> maximum speed, and netpoll needs to poll the NIC. This is achieved by:
 > 
-> It adds the string to a linked list via add_str_to_module(). When the
-> module is unloaded, it searches the link list "module_strings" for all
-> the strings registered under that module and frees it.
-
-OK, thanks for the clarification!
-
+>   1. Configuring a single RX/TX queue to create contention
+>   2. Generating background traffic to saturate the interface
+>   3. Sending netconsole messages to trigger netpoll polling
+>   4. Using dynamic netconsole targets via configfs
+>   5. Delete and create new netconsole targets after some messages
+>   6. Start a bpftrace in parallel to make sure netpoll_poll_dev() is
+>      called
+>   7. If bpftrace exists and netpoll_poll_dev() was called, stop.
 > 
-> See trace_module_remove_events().
+> The test validates a critical netpoll code path by monitoring traffic
+> flow and ensuring netpoll_poll_dev() is called when the normal TX path
+> is blocked.
 
-Let me check it.
+> +# Max number of netcons messages to send. Each iteration will setup
+> +# netconsole and send MAX_WRITES messages
+> +ITERATIONS: int = 20
+> +# Number of writes to /dev/kmsg per iteration
+> +MAX_WRITES: int = 40
 
-Thanks!
+FWIW the test takes 25sec on our debug-heavy VMs right now.
+I think we can crank the writes quite a bit.. ?
 
-> 
-> -- Steve
+> +def ethtool_read_rx_tx_queue(interface_name: str) -> tuple[int, int]:
+> +    """
+> +    Read the number of RX and TX queues using ethtool. This will be used
+> +    to restore it after the test
+> +    """
+> +    rx_queue = 0
+> +    tx_queue = 0
+> +
+> +    try:
+> +        ethtool_result = ethtool(f"-g {interface_name}").stdout
+
+json=True please and you'll get a dict, on CLI you can try:
+
+ethtool --json -g eth0
+
+> +        for line in ethtool_result.splitlines():
+> +            if line.startswith("RX:"):
+> +                rx_queue = int(line.split()[1])
+> +            if line.startswith("TX:"):
+> +                tx_queue = int(line.split()[1])
+> +    except IndexError as exception:
+> +        raise KsftSkipEx(
+> +            f"Failed to read RX/TX queues numbers: {exception}. Not going to mess with them."
+> +        ) from exception
+> +
+> +    if not rx_queue or not tx_queue:
+> +        raise KsftSkipEx(
+> +            "Failed to read RX/TX queues numbers. Not going to mess with them."
+> +        )
+> +    return rx_queue, tx_queue
+> +
+> +
+> +def ethtool_set_rx_tx_queue(interface_name: str, rx_val: int, tx_val: int) -> None:
+> +    """Set the number of RX and TX queues to 1 using ethtool"""
+> +    try:
+> +        # This don't need to be reverted, since interfaces will be deleted after test
+
+Well. But that's easily fixed;
+
+	defer(ethtool, f"-G {interface_name} rx {prev_rx} tx {prev_tx}")
+
+> +        ethtool(f"-G {interface_name} rx {rx_val} tx {tx_val}")
+
+This is setting _ring size_ not queue count.
+I suppose we want both, this and queue count to 1 (with ethtool -l / -L)
+The ring size of 1 is unlikely to work on real devices.
+I'd try setting it to 128 and 256 and if neither sticks just carry on
+with whatever was there.
+
+> +    except Exception as exception:
+> +        raise KsftSkipEx(
+> +            f"Failed to configure RX/TX queues: {exception}. Ethtool not available?"
+> +        ) from exception
+> +
+> +
+> +def netcons_generate_random_target_name() -> str:
+> +    """Generate a random target name starting with 'netcons'"""
+> +    random_suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
+> +    return f"netcons_{random_suffix}"
+> +
+> +
+> +def netcons_create_target(
+> +    config_data: dict[str, str],
+> +    target_name: str,
+> +) -> None:
+> +    """Create a netconsole dynamic target against the interfaces"""
+> +    logging.debug("Using netconsole name: %s", target_name)
+> +    try:
+> +        os.makedirs(f"{NETCONSOLE_CONFIGFS_PATH}/{target_name}", exist_ok=True)
+> +        logging.debug(
+> +            "Created target directory: %s/%s", NETCONSOLE_CONFIGFS_PATH, target_name
+> +        )
+> +    except OSError as exception:
+> +        if exception.errno != errno.EEXIST:
+> +            raise KsftFailEx(
+> +                f"Failed to create netconsole target directory: {exception}"
+> +            ) from exception
+> +
+> +    try:
+> +        for key, value in config_data.items():
+> +            path = f"{NETCONSOLE_CONFIGFS_PATH}/{target_name}/{key}"
+> +            logging.debug("Writing %s to %s", key, path)
+> +            with open(path, "w", encoding="utf-8") as file:
+> +                # Always convert to string to write to file
+> +                file.write(str(value))
+> +
+> +        # Read all configuration values for debugging purposes
+> +        for debug_key in config_data.keys():
+> +            with open(
+> +                f"{NETCONSOLE_CONFIGFS_PATH}/{target_name}/{debug_key}",
+> +                "r",
+> +                encoding="utf-8",
+> +            ) as file:
+> +                content = file.read()
+> +                logging.debug(
+> +                    "%s/%s/%s : %s",
+> +                    NETCONSOLE_CONFIGFS_PATH,
+> +                    target_name,
+> +                    debug_key,
+> +                    content.strip(),
+> +                )
+> +
+> +    except Exception as exception:
+> +        raise KsftFailEx(
+> +            f"Failed to configure netconsole target: {exception}"
+> +        ) from exception
+> +
+> +
+> +def netcons_configure_target(
+> +    cfg: NetDrvEpEnv, interface_name: str, target_name: str
+> +) -> None:
+> +    """Configure netconsole on the interface with the given target name"""
+> +    config_data = {
+> +        "extended": "1",
+> +        "dev_name": interface_name,
+> +        "local_port": NETCONS_LOCAL_PORT,
+> +        "remote_port": NETCONS_REMOTE_PORT,
+> +        "local_ip": cfg.addr_v["4"] if cfg.addr_ipver == "4" else cfg.addr_v["6"],
+> +        "remote_ip": (
+> +            cfg.remote_addr_v["4"] if cfg.addr_ipver == "4" else cfg.remote_addr_v["6"]
+> +        ),
+
+this is already done for you
+cfg.addr is either v4 or v6 depending on what was provided in the env
+
+> +        "remote_mac": "00:00:00:00:00:00",  # Not important for this test
+> +        "enabled": "1",
+> +    }
+> +
+> +    netcons_create_target(config_data, target_name)
+> +    logging.debug(
+> +        "Created netconsole target: %s on interface %s", target_name, interface_name
+> +    )
+> +
+> +
+> +def netcons_delete_target(name: str) -> None:
+> +    """Delete a netconsole dynamic target"""
+> +    target_path = f"{NETCONSOLE_CONFIGFS_PATH}/{name}"
+> +    try:
+> +        if os.path.exists(target_path):
+> +            os.rmdir(target_path)
+> +    except OSError as exception:
+> +        raise KsftFailEx(
+> +            f"Failed to delete netconsole target: {exception}"
+> +        ) from exception
+
+> +# toggle the interface up and down, to cause some congestion
+
+Let's not do this, you're missing disruptive annotation and for many
+drivers NAPI is stopped before queues
+https://github.com/linux-netdev/nipa/wiki/Guidance-for-test-authors#ksft_disruptive
+
+> +def toggle_interface(ifname: str) -> None:
+> +    """Toggle the interface up and down"""
+> +    logging.debug("Toggling interface %s", ifname)
+> +    try:
+> +        ip(f"link set dev {ifname} down")
+> +        # Send a message while the interface is down, just to
+> +        # cause more test scenarios. Netconsole should be
+> +        # going down here as well, giving the link was lost
+> +        with open("/dev/kmsg", "w", encoding="utf-8") as kmsg:
+> +            kmsg.write("netcons test while interface down\n")
+> +
+> +        ip(f"link set dev {ifname} up")
+> +    except Exception as exception:
+> +        raise KsftFailEx(f"Failed to toggle interface: {exception}") from exception
+> +
+
+> +def test_netpoll(cfg: NetDrvEpEnv) -> None:
+> +    """
+> +    Test netpoll by sending traffic to the interface and then sending
+> +    netconsole messages to trigger a poll
+> +    """
+> +
+> +    target_name = netcons_generate_random_target_name()
+> +    ifname = cfg.dev["ifname"]
+
+cfg.ifname 
+
+> +    traffic = None
+> +    original_queues = ethtool_read_rx_tx_queue(ifname)
+> +
+> +    try:
+> +        # Set RX/TX queues to 1 to force congestion
+> +        ethtool_set_rx_tx_queue(ifname, 1, 1)
+> +
+> +        traffic = GenerateTraffic(cfg)
+> +        do_netpoll_flush_monitored(cfg, ifname, target_name)
+> +    finally:
+> +        if traffic:
+> +            traffic.stop()
+> +
+> +        # Revert RX/TX queues
+> +        ethtool_set_rx_tx_queue(ifname, original_queues[0], original_queues[1])
+> +        netcons_delete_target(target_name)
 
 
+> +def main() -> None:
+> +    """Main function to run the test"""
+> +    netcons_load_module()
+> +    test_check_dependencies()
+> +    with NetDrvEpEnv(__file__, nsim_test=True) as cfg:
+
+I think nsim_test=True will make the test run _only_ on netdevsim.
+But there's nothing netdevsim specific here right?
+You can remove the argument and let's have this run against real
+drivers, too?
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+pw-bot: cr
 
