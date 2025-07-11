@@ -1,158 +1,101 @@
-Return-Path: <linux-kernel+bounces-727320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 762A6B0186E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:41:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C8D1B018AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5698F3BCDA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:41:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 681D37657E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C15A27F72D;
-	Fri, 11 Jul 2025 09:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABD627E040;
+	Fri, 11 Jul 2025 09:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TmKS7jS3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gd+Egk1u"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F5327C879;
-	Fri, 11 Jul 2025 09:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96A327C854
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752226862; cv=none; b=r5DQskeu4bjmDznH1u2Og+2EYZ8mi8AZTVlyo6ZD97OfiT0GlqNekKF+3wAlsIf46WbkhwYe/7B4NI+h2GCFTXNtcLm3s2BdNqJk9l1QR0RmjAOUiRjY6xJoLZFsjI2I1QfombwKwGupHJltj8cYt5cW+7gZutaHwPe16qcHvaM=
+	t=1752227352; cv=none; b=tir9dx6aBb6kc/1jEN0xRQK13XJTZqQyM2gG9Ybb+sV1Qj7CYZariKU6EswHLc/RIbgyBjU9PdNYTDhAXu+q6SdZEtE0KytbzK37Kt2s/vnKGtlTN/0sVbhQLqkLvPslFKB26y3o3mstZMXGPYkcXz+YsBhJ+ZUyRKko+cPPhbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752226862; c=relaxed/simple;
-	bh=8HLNUJ+ODJOFkjp3T8ePMB3YHb45vLPbDzd28lgjf28=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kBgyfN6u9Xzh5eqmHITtT8/mQBjiBLD5sFJJcnhEnQmIPcbg8tJpL3Pa+iVBZ8zXVS1vsaELGpZ5h+zACrlC1qEN6XfkLnpkPf8E+pNy+BvdzDLxn0pBHcpUPNisy6H3f0742nO7Kt5Y9o2ZDebrBgonf8BC8UP13woJ6n6tB5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TmKS7jS3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56B1XBeU016803;
-	Fri, 11 Jul 2025 09:40:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gjYjOpQG6wXtXCJvIxEpwaFMEpUUZrOepO0zheiglxU=; b=TmKS7jS3ffiRu3CT
-	h7xpKc4teaRpZPBqCITcysWiwphbFdbRx6xASaQub1K8AMP6cgcF/TCWi7dvZbG7
-	hZrPy8SVfxLjigo77Wya9JYi0bXQg35SkbEcXOE0TeEtNjQLSMj/UQ+zqw1hAI1a
-	OAIfc5tz3GOIah8BtjZNVnYdTGWZFJXnOzMaZvPa5IKGrx8uwAsh894qgtn4BsLc
-	djhHfg4wKbdW4ohUtwYuoLihAkmhXECSLAMvUrQfwarADNjx4jgAf6PZyaM1s6NT
-	wo92Bavy70I4Q4U3j13fq+D4o7fA3wMKNy29vE+xgolSVBDRCxCVQGrl577P5pmb
-	spwQ0A==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smap82xh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Jul 2025 09:40:49 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56B9emvw032125
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Jul 2025 09:40:48 GMT
-Received: from hu-jinlmao-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 11 Jul 2025 02:40:47 -0700
-From: Mao Jinlong <quic_jinlmao@quicinc.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Mao Jinlong <quic_jinlmao@quicinc.com>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 5/5] arm64: dts: qcom: msm8996: Add coresight qmi node
-Date: Fri, 11 Jul 2025 02:40:31 -0700
-Message-ID: <20250711094031.4171091-6-quic_jinlmao@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250711094031.4171091-1-quic_jinlmao@quicinc.com>
-References: <20250711094031.4171091-1-quic_jinlmao@quicinc.com>
+	s=arc-20240116; t=1752227352; c=relaxed/simple;
+	bh=bfDxiBbq/wl0R7HnNhrw3eFrYQQe4oLZ879RziUd09Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lP8lpev2qDrE/n8Qh9chmD8Y19rh7Fq7TH/+5I0iQGlauBBLkudm8aBlNu+h44kG+UTBr2qtVejB1fQYI05dFoqqqxMdgnvL2+mXciM8UCZRljlvnIvHWJ2tgzoF3SrozKRJg9D2+NQFHtnYDIhzjiJd6Io9cTmN6m+n5JHkFbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gd+Egk1u; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752227351; x=1783763351;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bfDxiBbq/wl0R7HnNhrw3eFrYQQe4oLZ879RziUd09Q=;
+  b=gd+Egk1uMcD46putfF5yvW4P+pA/50MmWDPDQ4LmGpJ5CP7HlO5QnDi+
+   /Y9M4pZrCI2dndHjKxNVn+vnhbXH3z0lNg0lQI84Ii6C/oHi6bgobX3ac
+   +5r/TfIlbcWt8wwGOjhoxZF0orRhBsvQrHtOwnWiOxRKdExAwHvHLQZHU
+   ayKM8qwha/7SxsDl7tQZRppGRx0T5HvjAWLgSw6bZUJKbQ1pRQtMlAfxt
+   Hm5B3b/X7b6REkbwYTmsGEBLgyZUTaYfEilnTcfPyxut3YT6W16txvnyo
+   T83mqr1sbGVxgj1N7qnjljG0eKibcFaReNUf4vVJJW5TFmHBKb1HC3vAW
+   g==;
+X-CSE-ConnectionGUID: ZXadgh63SAGSynBlDEq39g==
+X-CSE-MsgGUID: oTGaowGGRmaumSxuf/oYHg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="54682467"
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="54682467"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 02:49:10 -0700
+X-CSE-ConnectionGUID: iE2fHVm4SKadmNWmXf13KQ==
+X-CSE-MsgGUID: B5xqumkpQgWM9LklW1YRRA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="156448419"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa007.jf.intel.com with ESMTP; 11 Jul 2025 02:49:09 -0700
+Date: Fri, 11 Jul 2025 17:40:45 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iommufd: Do not allow _iommufd_object_alloc_ucmd if
+ abort op is set
+Message-ID: <aHDcHeZRTwtUNyhY@yilunxu-OptiPlex-7050>
+References: <20250710202354.1658511-1-nicolinc@nvidia.com>
+ <BN9PR11MB5276E1CE6E46DFC61B982D3F8C4BA@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Ar7u3P9P c=1 sm=1 tr=0 ts=6870dc21 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=3H110R4YSZwA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=_vcsFIMFqyRQzRopD1IA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: FCtgReMf5prrPSWRqhkXqtcyb93TWRBf
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA2OCBTYWx0ZWRfX1OxN1i0sK0v8
- CtwqUnNdknqS/7Bu+Dtyyb4ZPEwZ+Jgywdcemf1pAk31QC9MGtyWHaWzzCdQHYP4M/FQHXpNl+m
- 1UIyLEtDyDPSDIT0xq2HNsPkHApol7wwACn7oS7gcbTN4TxN0jNL9uMrxswTTF55cxrCm0Pbqiy
- NfHMoKry91uaOjAVR+VcETJeEAca3k2BB6QJis8gxL950/qbX7I1ikJMVTsf1qlDTJ+5EK+eeEV
- OztKLWhqqAbvABw06tyjU5zRJ4sFiyYbdxHjTOH1VwdtAnSN8kV0RU725CJx/aqRAnOjWS03VLY
- yTJMeH3PPVjsUvlGLnxZNNLeUu/fv9AXUDKBMJoWjIEaqyjS6Ej4Tg9bl/HHJwT2yfYhXIsupni
- j1NmeUpvPDLOJjH+Lj3Rl5OfuQ1ySLSg4D2Lc/4Hh6plH99y9U+p2A4NtMETXpcth0Fs5Le+
-X-Proofpoint-GUID: FCtgReMf5prrPSWRqhkXqtcyb93TWRBf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015 adultscore=0
- phishscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507110068
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BN9PR11MB5276E1CE6E46DFC61B982D3F8C4BA@BN9PR11MB5276.namprd11.prod.outlook.com>
 
-coresight qmi nodes is to init the qmi connection to remote subsystem.
-qcom,qmi-id is used by remote etm driver to get the remote subsystem
-connection and send the request.
+On Fri, Jul 11, 2025 at 03:18:53AM +0000, Tian, Kevin wrote:
+> > From: Nicolin Chen <nicolinc@nvidia.com>
+> > Sent: Friday, July 11, 2025 4:24 AM
+> > 
+> > An abort op was introduced to allow its caller to invoke it within a lock
+> > in the caller's function. On the other hand, _iommufd_object_alloc_ucmd()
+> > would invoke the abort op in iommufd_object_abort_and_destroy() that
+> > must
+> > be outside the caller's lock. So, these two cannot work together.
+> > 
+> > Add a validation in the _iommufd_object_alloc_ucmd(). Pick -EOPNOTSUPP
+> > to
+> > reject the function call, indicating that the object allocator is buggy.
+> > 
+> > Suggested-by: Xu Yilun <yilun.xu@linux.intel.com>
+> > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> 
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 
-Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index ede851fbf628..0032817825f2 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -40,6 +40,15 @@ sleep_clk: sleep-clk {
- 		};
- 	};
- 
-+	coresight-qmi {
-+		compatible = "qcom,coresight-qmi";
-+
-+		conns-0 {
-+			qmi-id = <0x2>;
-+			service-id = <0x33>;
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <2>;
- 		#size-cells = <0>;
-@@ -448,6 +457,8 @@ memory@80000000 {
- 	etm {
- 		compatible = "qcom,coresight-remote-etm";
- 
-+		qcom,qmi-instance-id = <0x2>;
-+
- 		out-ports {
- 			port {
- 				modem_etm_out_funnel_in2: endpoint {
--- 
-2.25.1
-
+Reviewed-by: Xu Yilun <yilun.xu@linux.intel.com>
 
