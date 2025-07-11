@@ -1,164 +1,119 @@
-Return-Path: <linux-kernel+bounces-727325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B14AFB01889
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:44:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB7CB0188A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71A738E0642
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:44:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B26A28E071E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54B027AC25;
-	Fri, 11 Jul 2025 09:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EAC27AC24;
+	Fri, 11 Jul 2025 09:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K3opS3PK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gt9U/94y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4DB263F47;
-	Fri, 11 Jul 2025 09:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C49235355;
+	Fri, 11 Jul 2025 09:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752227063; cv=none; b=ceoBDZZORN6HbVyX4hNwamxn6YocKTOR4LdUbVpj/nfpXBLd2sQfIiRadl8ZSMhjO0kIQbTrmKKhCiwQs+n1LtEMoTQDq/3BHk/WvLZcm9JjFNnGvDek9cL9op+hXhXdi7/isvG2d4KYelLM0Twgkfa3glKb548HJ5VvKTti8AU=
+	t=1752227075; cv=none; b=tZUv1syT8ZB6K+86KyGCWghY7Bl6paLB5O5NFcINjbpeuD7IwoN0DtG7DAVIRjXwKi1lvxvN8XXyIg7SxRetEA/lA802CoZSAq82xrpSG7K4/xQaC94bfyaMJ+H6gIdBdgTTBv6niyJB8GMesiURoYGdWJWdABrP+QDzK9BuBzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752227063; c=relaxed/simple;
-	bh=GKKmdOgnJh4Ado9EmPiRgR7KQVoIOMeQ1qdpk8GPHNU=;
+	s=arc-20240116; t=1752227075; c=relaxed/simple;
+	bh=dDLsw2QWBJMqk3U+NXhrdQfOWLfZ0NvzXCSorxrMkWY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lb/6h9dLc2uGPBDMsiHZis8eJC9da6an0K0+SwBDhedjLXCmWQKasFrPKRbrstJj6J3TAeJqBJCERHEQPtlq9+MLvGDLMVqMFIAngU1/HUE3+KFeolJmyeLCWkU8mRzhhxECnk9jq1Z3NEY4bvTxG9xiXDcwCmtpbV4LdOb7Sp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K3opS3PK; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752227061; x=1783763061;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GKKmdOgnJh4Ado9EmPiRgR7KQVoIOMeQ1qdpk8GPHNU=;
-  b=K3opS3PK6QUFj3XYDJp+evlJJ/dna3NaoThCK4s8yYdFCCJbMJuxI2nD
-   ObwbkNIJrYDZ3Rrk+u8NMWuqS2l1G5btXv26xUEx48+H9vQl5C2tfVZ34
-   0b7GTSbFGpd6cwVklTRO2UQHI/ry7TmXgH1gkcw4Up+BoFoOnZZ7Xlfvm
-   aloO768d7Va9t8QsfPIY48rem0kH1jnob3tdIu+JRreKB36XrB6/J3QwD
-   ZZP+/Y8jBtnAhjhAQakF965w/f/lq4DGh+zOfL1JwVH1aIEl6c/fEF8bI
-   VPBblVdB6QPb3Zn7ueAi1W5UwALaeYARUr1si1f7mbDr/YcWsO5eqwAo0
-   w==;
-X-CSE-ConnectionGUID: jYmOfYJbTXeDmxQ8ZRICzQ==
-X-CSE-MsgGUID: dDbTGyjYRzKblwaN1/b66w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="54609643"
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="54609643"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 02:44:20 -0700
-X-CSE-ConnectionGUID: YQRDBvTIQL66JQwetVKbRg==
-X-CSE-MsgGUID: 1gc3XEwuQW2VX85AjuwZpw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="157052337"
-Received: from ettammin-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.248])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 02:44:18 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 299E11206A0;
-	Fri, 11 Jul 2025 12:44:15 +0300 (EEST)
-Date: Fri, 11 Jul 2025 09:44:15 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Arnd Bergmann <arnd@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>, Arnd Bergmann <arnd@arndb.de>,
-	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: staging/ipu7: avoid division by 64-bit value
-Message-ID: <aHDc72x6HxGhYDys@kekkonen.localdomain>
-References: <20250709145710.102669-1-arnd@kernel.org>
- <20250711092329.74e52573@pumpkin>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YFROXKJ/NGhH2CGQODjbbx7aZX56DHeTAehIbsWu75e+RHGbvXC6mJMTas/tbjvSUQ6jKnQqhCAE/yWhUJiXSz7EhK//5P5wK9OfIARLwOCypcCcGy2hSK372TBtFue3bKpjErwfwtIKSCxYxgGdhBRDdyjyrc05mR2sOqnUdj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gt9U/94y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF4A3C4CEED;
+	Fri, 11 Jul 2025 09:44:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752227074;
+	bh=dDLsw2QWBJMqk3U+NXhrdQfOWLfZ0NvzXCSorxrMkWY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Gt9U/94y3LYlQ0Eh5PRqpE7c4ypYCc94a3ARqLdePcdDycdpe9tlZJgFledWnMal4
+	 kTMxOv/qTj8SDAkGa0oT9kRtbN0MO8h9yCnYuE9EpwcfDli9mgF0qYF5QPF1ayQyEn
+	 otizuj4120vubhUVyZF5KgNsv8Zw49mNc4oZ2ipYz6kD5kofrlt81dMey02R+bGqGR
+	 4F9XVZH69gMgIY1oXa+/qeMhnsBpUSEacfU4L8uf3ceBT8P8Vi22rs7B9jvRSN42gf
+	 QPyOq6MDXYa6OAvBkwsq5miUFj5hMZLbaYxsDoL2h62EJxDJuTxEWo75CZwBzVgRq0
+	 YZN7oufDGjHrA==
+Date: Fri, 11 Jul 2025 11:44:28 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Xi Ruoyao <xry111@xry111.site>, 
+	Frederic Weisbecker <frederic@kernel.org>, Valentin Schneider <vschneid@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, John Ogness <john.ogness@linutronix.de>, 
+	Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
+	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>, 
+	Martin Karsten <mkarsten@uwaterloo.ca>, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
+Message-ID: <20250711-ermangelung-darmentleerung-394cebde2708@brauner>
+References: <20250701-wochen-bespannt-33e745d23ff6@brauner>
+ <cda3b07998b39b7d46f10394c232b01a778d07a9.camel@xry111.site>
+ <20250710034805.4FtG7AHC@linutronix.de>
+ <20250710040607.GdzUE7A0@linutronix.de>
+ <6f99476daa23858dc0536ca182038c8e80be53a2.camel@xry111.site>
+ <20250710062127.QnaeZ8c7@linutronix.de>
+ <d14bcceddd9f59a72ef54afced204815e9dd092e.camel@xry111.site>
+ <20250710083236.V8WA6EFF@linutronix.de>
+ <c720efb6a806e0ffa48e35d016e513943d15e7c0.camel@xry111.site>
+ <20250711050217.OMtx7Cz6@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250711092329.74e52573@pumpkin>
+In-Reply-To: <20250711050217.OMtx7Cz6@linutronix.de>
 
-Hi David,
+On Fri, Jul 11, 2025 at 07:02:17AM +0200, Nam Cao wrote:
+> On Thu, Jul 10, 2025 at 05:47:57PM +0800, Xi Ruoyao wrote:
+> > It didn't work :(.
+> 
+> Argh :(
+> 
+> Another possibility is that you are running into event starvation problem.
+> 
+> Can you give the below patch a try? It is not the real fix, the patch hurts
+> performance badly. But if starvation is really your problem, it should
+> ameliorate the situation:
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index 895256cd2786..0dcf8e18de0d 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -1764,6 +1764,8 @@ static int ep_send_events(struct eventpoll *ep,
+>  		__llist_add(n, &txlist);
+>  	}
+>  
+> +	struct llist_node *shuffle = llist_del_all(&ep->rdllist);
+> +
+>  	llist_for_each_entry_safe(epi, tmp, txlist.first, rdllink) {
+>  		init_llist_node(&epi->rdllink);
+>  
+> @@ -1778,6 +1780,13 @@ static int ep_send_events(struct eventpoll *ep,
+>  		}
+>  	}
+>  
+> +	if (shuffle) {
+> +		struct llist_node *last = shuffle;
+> +		while (last->next)
+> +			last = last->next;
+> +		llist_add_batch(shuffle, last, &ep->rdllist);
+> +	}
+> +
+>  	__pm_relax(ep->ws);
+>  	mutex_unlock(&ep->mtx);
+>  
 
-On Fri, Jul 11, 2025 at 09:23:29AM +0100, David Laight wrote:
-> On Wed,  9 Jul 2025 16:56:56 +0200
-> Arnd Bergmann <arnd@kernel.org> wrote:
-> 
-> > From: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > On 32-bit targets, this causes a link failure:
-> > 
-> > x86_64-linux-ld: drivers/staging/media/ipu7/ipu7-isys-csi-phy.o: in function `ipu7_isys_phy_config':
-> > ipu7-isys-csi-phy.c:(.text+0x1509): undefined reference to `__udivdi3'
-> > 
-> > Note that this does not divide a 64-bit number by a 32-bit one as usual,
-> > but the other way round, which is something that the compiler should
-> > really be able to figure out but does not (as of gcc-15).
-> > 
-> > A few lines higher, a similar division is done using the incorrect div_u64()
-> > that truncates the 64-bit divisor to 32 bits.
-> > 
-> > Change both to use the safe but slow div64_u64() helper.
-> > 
-> > Fixes: a516d36bdc3d ("media: staging/ipu7: add IPU7 input system device driver")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> >  drivers/staging/media/ipu7/ipu7-isys-csi-phy.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/staging/media/ipu7/ipu7-isys-csi-phy.c b/drivers/staging/media/ipu7/ipu7-isys-csi-phy.c
-> > index 4407750c7f40..b8c5db7ae300 100644
-> > --- a/drivers/staging/media/ipu7/ipu7-isys-csi-phy.c
-> > +++ b/drivers/staging/media/ipu7/ipu7-isys-csi-phy.c
-> > @@ -734,6 +734,7 @@ static void ipu7_isys_cphy_config(struct ipu7_isys *isys, u8 id, u8 lanes,
-> >  	u16 reg;
-> >  	u16 val;
-> >  	u32 i;
-> > +	u64 r64;
-> >  	u32 r;
-> >  
-> >  	if (is_ipu7p5(isys->adev->isp->hw_ver))
-> > @@ -806,8 +807,8 @@ static void ipu7_isys_cphy_config(struct ipu7_isys *isys, u8 id, u8 lanes,
-> >  		dwc_phy_write_mask(isys, id, reg, 2, 0, 2);
-> >  	}
-> >  
-> > -	deass_thresh = (u16)div_u64_rem(7 * 1000 * 6, mbps * 5U, &r) + 1;
-> > -	if (r != 0)
-> > +	deass_thresh = (u16)div64_u64_rem(7 * 1000 * 6, mbps * 5U, &r64) + 1;
-> > +	if (r64 != 0)
-> >  		deass_thresh++;
-> 
-> While 'mbps' is presumably u64, it can't be big.
-> So this can just be:
-> 	deass_threas = roundup(7 * 1000 * 6 / 5, (u32)mbps) + 1;
-> 
-> 
-> >  
-> >  	reg = CORE_DIG_RW_TRIO0_2;
-> > @@ -815,8 +816,7 @@ static void ipu7_isys_cphy_config(struct ipu7_isys *isys, u8 id, u8 lanes,
-> >  		dwc_phy_write_mask(isys, id, reg + 0x400 * i,
-> >  				   deass_thresh, 0, 7);
-> >  
-> > -	delay_thresh =
-> > -		((224U - (9U * 7U)) * 1000U) / (5U * mbps) - 7U;
-> > +	delay_thresh = div64_u64((224U - (9U * 7U)) * 1000U, 5U * mbps) - 7u;
-> 
-> That one just needs a (u32) cast, although the 5 can be moved.
-
-I agree in principle but this should be done separately from fixing the bug
-which is what this patch does. mbps is u64 elsewhere, too, and there
-doesn't seem to be a need for that.
-
--- 
-Regards,
-
-Sakari Ailus
+I think we should revert the fix so we have time to fix it properly
+during v6.17+. This patch was a bit too adventurous for a fix in the
+first place tbh.
 
