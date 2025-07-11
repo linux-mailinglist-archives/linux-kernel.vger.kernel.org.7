@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-728130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE76B023E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:39:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64CC9B023E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 289E4544BE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:39:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93516B47A84
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41F02F3629;
-	Fri, 11 Jul 2025 18:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173CB2F3C2E;
+	Fri, 11 Jul 2025 18:37:46 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF96C2F50B8
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20852F3C2A
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752259062; cv=none; b=MSg8yGVpIm4cyn1SqPKjLaknCunE8I06nKBhDMmQSLWKesXGAddZygnyzY6X7svxeV62Py06JCOa1ABQ5/RIAaFABqSrz3AokAhJj73HxL8TqU1EMPu4I1hy+vtl+JknO5LokUTw6hkeLxDQzkL5PxsYVrCWiM2lFXEdayD3iKQ=
+	t=1752259065; cv=none; b=BPIYM6TsX7L6z9w4zmbr6oDPZvOQ8p3uRd4jjEcmPjb2cR0BF7OiVeeraIrkU1Z2/3MTvwXVAnGyrHf4MnHjI53MessJfgw06AFfLX3yX/sL06sNYxyK+ESGtCF2rHG8M+SqMY7TQWFmC6SXiAR/a1ISKHzGAuMoyjsE8OIdQ80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752259062; c=relaxed/simple;
-	bh=OMRvewwMJMYwsyYU9JHyHJdF6zPulhOsmbssid/5oJk=;
+	s=arc-20240116; t=1752259065; c=relaxed/simple;
+	bh=xemdn49t+gXUB+2MCdDHAeLCEwOy9d0A43NR+n10jDE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pDdRwvqBRVy5Mu88PuKKnyV8cwd29/+GpMvRqkA1M+RBlW0UpbTN/v6EqY0pNTFGKd0t8ZLuLpDtOX8clOl2w701ab1vc+Zt54ftSoR/Srg2/1w4J8z4eXcGAj42xF3G5Kc9mDNi69TnGafUJXqOnmygogsBtnHf/NY5esNRROA=
+	 MIME-Version:Content-Type; b=Ee8qX0du9mAsmL4c1jJzjNJVDDy6aQmZvI2Kw+jin8PEw8WPgQGuFN5CTgS/tA4Pn3za9PpC6BRNHf/330KxgKS41hNm1SXiBRo/l6zO53B9Eyz8fC1fNHcAruJLAGzQrGyMYHXBaAlDsb9LWVuIKbt+uaCxL2PDNjPG3oalu8g=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE6902682;
-	Fri, 11 Jul 2025 11:37:29 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C2B182247;
+	Fri, 11 Jul 2025 11:37:32 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25DE83F694;
-	Fri, 11 Jul 2025 11:37:37 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5BB083F778;
+	Fri, 11 Jul 2025 11:37:40 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
@@ -58,9 +58,9 @@ Cc: Rob Herring <robh@kernel.org>,
 	Dave Martin <dave.martin@arm.com>,
 	Koba Ko <kobak@nvidia.com>,
 	James Morse <james.morse@arm.com>
-Subject: [RFC PATCH 11/36] dt-bindings: arm: Add MPAM MSC binding
-Date: Fri, 11 Jul 2025 18:36:23 +0000
-Message-Id: <20250711183648.30766-12-james.morse@arm.com>
+Subject: [RFC PATCH 12/36] platform: arm64: Move ec devices to an ec subdirectory
+Date: Fri, 11 Jul 2025 18:36:24 +0000
+Message-Id: <20250711183648.30766-13-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20250711183648.30766-1-james.morse@arm.com>
 References: <20250711183648.30766-1-james.morse@arm.com>
@@ -70,262 +70,267 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Rob Herring <robh@kernel.org>
+commit 363c8aea257 "platform: Add ARM64 platform directory" added a
+subdirectory for arm64 platform devices, but claims that all such
+devices must be 'EC like'.
 
-The binding is designed around the assumption that an MSC will be a
-sub-block of something else such as a memory controller, cache controller,
-or IOMMU. However, it's certainly possible a design does not have that
-association or has a mixture of both, so the binding illustrates how we can
-support that with RIS child nodes.
+The arm64 MPAM driver manages an MMIO interface that appears in memory
+controllers, caches, IOMMU and connection points on the interconnect.
+It doesn't fit into any existing subsystem.
 
-A key part of MPAM is we need to know about all of the MSCs in the system
-before it can be enabled. This drives the need for the genericish
-'arm,mpam-msc' compatible. Though we can't assume an MSC is accessible
-until a h/w specific driver potentially enables the h/w.
+It would be convenient to use this subdirectory for drivers for other
+arm64 platform devices which aren't closely coupled to the architecture
+code and don't fit into any existing subsystem.
 
-Cc: James Morse <james.morse@arm.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Move the existing code and maintainer entries to be under
+drivers/platform/arm64/ec. The MPAM driver will be added under
+drivers/platform/arm64/mpam.
+
 Signed-off-by: James Morse <james.morse@arm.com>
 ---
- .../devicetree/bindings/arm/arm,mpam-msc.yaml | 227 ++++++++++++++++++
- 1 file changed, 227 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/arm,mpam-msc.yaml
+ MAINTAINERS                                   |  6 +-
+ drivers/platform/arm64/Kconfig                | 72 +-----------------
+ drivers/platform/arm64/Makefile               |  9 +--
+ drivers/platform/arm64/ec/Kconfig             | 73 +++++++++++++++++++
+ drivers/platform/arm64/ec/Makefile            | 10 +++
+ .../platform/arm64/{ => ec}/acer-aspire1-ec.c |  0
+ .../arm64/{ => ec}/huawei-gaokun-ec.c         |  0
+ .../arm64/{ => ec}/lenovo-yoga-c630.c         |  0
+ 8 files changed, 88 insertions(+), 82 deletions(-)
+ create mode 100644 drivers/platform/arm64/ec/Kconfig
+ create mode 100644 drivers/platform/arm64/ec/Makefile
+ rename drivers/platform/arm64/{ => ec}/acer-aspire1-ec.c (100%)
+ rename drivers/platform/arm64/{ => ec}/huawei-gaokun-ec.c (100%)
+ rename drivers/platform/arm64/{ => ec}/lenovo-yoga-c630.c (100%)
 
-diff --git a/Documentation/devicetree/bindings/arm/arm,mpam-msc.yaml b/Documentation/devicetree/bindings/arm/arm,mpam-msc.yaml
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4bac4ea21b64..bea01d413666 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3549,15 +3549,15 @@ S:	Maintained
+ F:	arch/arm64/boot/Makefile
+ F:	scripts/make_fit.py
+ 
+-ARM64 PLATFORM DRIVERS
+-M:	Hans de Goede <hansg@kernel.org>
++ARM64 EC PLATFORM DRIVERS
++M:	Hans de Goede <hdegoede@redhat.com>
+ M:	Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+ R:	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+ L:	platform-driver-x86@vger.kernel.org
+ S:	Maintained
+ Q:	https://patchwork.kernel.org/project/platform-driver-x86/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git
+-F:	drivers/platform/arm64/
++F:	drivers/platform/arm64/ec
+ 
+ ARM64 PORT (AARCH64 ARCHITECTURE)
+ M:	Catalin Marinas <catalin.marinas@arm.com>
+diff --git a/drivers/platform/arm64/Kconfig b/drivers/platform/arm64/Kconfig
+index 06288aebc559..1eb8ab0855e5 100644
+--- a/drivers/platform/arm64/Kconfig
++++ b/drivers/platform/arm64/Kconfig
+@@ -1,73 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-#
+-# EC-like Drivers for aarch64 based devices.
+-#
+ 
+-menuconfig ARM64_PLATFORM_DEVICES
+-	bool "ARM64 Platform-Specific Device Drivers"
+-	depends on ARM64 || COMPILE_TEST
+-	default ARM64
+-	help
+-	  Say Y here to get to see options for platform-specific device drivers
+-	  for arm64 based devices, primarily EC-like device drivers.
+-	  This option alone does not add any kernel code.
+-
+-	  If you say N, all options in this submenu will be skipped and disabled.
+-
+-if ARM64_PLATFORM_DEVICES
+-
+-config EC_ACER_ASPIRE1
+-	tristate "Acer Aspire 1 Embedded Controller driver"
+-	depends on ARCH_QCOM || COMPILE_TEST
+-	depends on I2C
+-	depends on DRM
+-	depends on POWER_SUPPLY
+-	depends on INPUT
+-	help
+-	  Say Y here to enable the EC driver for the (Snapdragon-based)
+-	  Acer Aspire 1 laptop. The EC handles battery and charging
+-	  monitoring as well as some misc functions like the lid sensor
+-	  and USB Type-C DP HPD events.
+-
+-	  This driver provides battery and AC status support for the mentioned
+-	  laptop where this information is not properly exposed via the
+-	  standard ACPI devices.
+-
+-config EC_HUAWEI_GAOKUN
+-	tristate "Huawei Matebook E Go Embedded Controller driver"
+-	depends on ARCH_QCOM || COMPILE_TEST
+-	depends on I2C
+-	depends on INPUT
+-	depends on HWMON
+-	select AUXILIARY_BUS
+-
+-	help
+-	  Say Y here to enable the EC driver for the Huawei Matebook E Go
+-	  which is a sc8280xp-based 2-in-1 tablet. The driver handles battery
+-	  (information, charge control) and USB Type-C DP HPD events as well
+-	  as some misc functions like the lid sensor and temperature sensors,
+-	  etc.
+-
+-	  This driver provides battery and AC status support for the mentioned
+-	  laptop where this information is not properly exposed via the
+-	  standard ACPI devices.
+-
+-	  Say M or Y here to include this support.
+-
+-config EC_LENOVO_YOGA_C630
+-	tristate "Lenovo Yoga C630 Embedded Controller driver"
+-	depends on ARCH_QCOM || COMPILE_TEST
+-	depends on I2C
+-	select AUXILIARY_BUS
+-	help
+-	  Driver for the Embedded Controller in the Qualcomm Snapdragon-based
+-	  Lenovo Yoga C630, which provides battery and power adapter
+-	  information.
+-
+-	  This driver provides battery and AC status support for the mentioned
+-	  laptop where this information is not properly exposed via the
+-	  standard ACPI devices.
+-
+-	  Say M or Y here to include this support.
+-
+-endif # ARM64_PLATFORM_DEVICES
++source "drivers/platform/arm64/ec/Kconfig"
+diff --git a/drivers/platform/arm64/Makefile b/drivers/platform/arm64/Makefile
+index 46a99eba3264..ce840a8cf8cc 100644
+--- a/drivers/platform/arm64/Makefile
++++ b/drivers/platform/arm64/Makefile
+@@ -1,10 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-#
+-# Makefile for linux/drivers/platform/arm64
+-#
+-# This dir should only include drivers for EC-like devices.
+-#
+ 
+-obj-$(CONFIG_EC_ACER_ASPIRE1)	+= acer-aspire1-ec.o
+-obj-$(CONFIG_EC_HUAWEI_GAOKUN)	+= huawei-gaokun-ec.o
+-obj-$(CONFIG_EC_LENOVO_YOGA_C630) += lenovo-yoga-c630.o
++obj-y             += ec/
+diff --git a/drivers/platform/arm64/ec/Kconfig b/drivers/platform/arm64/ec/Kconfig
 new file mode 100644
-index 000000000000..9d542ecb1a7d
+index 000000000000..06288aebc559
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/arm,mpam-msc.yaml
-@@ -0,0 +1,227 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/arm,mpam-msc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/platform/arm64/ec/Kconfig
+@@ -0,0 +1,73 @@
++# SPDX-License-Identifier: GPL-2.0-only
++#
++# EC-like Drivers for aarch64 based devices.
++#
 +
-+title: Arm Memory System Resource Partitioning and Monitoring (MPAM)
++menuconfig ARM64_PLATFORM_DEVICES
++	bool "ARM64 Platform-Specific Device Drivers"
++	depends on ARM64 || COMPILE_TEST
++	default ARM64
++	help
++	  Say Y here to get to see options for platform-specific device drivers
++	  for arm64 based devices, primarily EC-like device drivers.
++	  This option alone does not add any kernel code.
 +
-+description: |
-+  The Arm MPAM specification can be found here:
++	  If you say N, all options in this submenu will be skipped and disabled.
 +
-+  https://developer.arm.com/documentation/ddi0598/latest
++if ARM64_PLATFORM_DEVICES
 +
-+maintainers:
-+  - Rob Herring <robh@kernel.org>
++config EC_ACER_ASPIRE1
++	tristate "Acer Aspire 1 Embedded Controller driver"
++	depends on ARCH_QCOM || COMPILE_TEST
++	depends on I2C
++	depends on DRM
++	depends on POWER_SUPPLY
++	depends on INPUT
++	help
++	  Say Y here to enable the EC driver for the (Snapdragon-based)
++	  Acer Aspire 1 laptop. The EC handles battery and charging
++	  monitoring as well as some misc functions like the lid sensor
++	  and USB Type-C DP HPD events.
 +
-+properties:
-+  compatible:
-+    items:
-+      - const: arm,mpam-msc                   # Further details are discoverable
-+      - const: arm,mpam-memory-controller-msc
++	  This driver provides battery and AC status support for the mentioned
++	  laptop where this information is not properly exposed via the
++	  standard ACPI devices.
 +
-+  reg:
-+    maxItems: 1
-+    description: A memory region containing registers as defined in the MPAM
-+      specification.
++config EC_HUAWEI_GAOKUN
++	tristate "Huawei Matebook E Go Embedded Controller driver"
++	depends on ARCH_QCOM || COMPILE_TEST
++	depends on I2C
++	depends on INPUT
++	depends on HWMON
++	select AUXILIARY_BUS
 +
-+  interrupts:
-+    minItems: 1
-+    items:
-+      - description: error (optional)
-+      - description: overflow (optional, only for monitoring)
++	help
++	  Say Y here to enable the EC driver for the Huawei Matebook E Go
++	  which is a sc8280xp-based 2-in-1 tablet. The driver handles battery
++	  (information, charge control) and USB Type-C DP HPD events as well
++	  as some misc functions like the lid sensor and temperature sensors,
++	  etc.
 +
-+  interrupt-names:
-+    oneOf:
-+      - items:
-+          - enum: [ error, overflow ]
-+      - items:
-+          - const: error
-+          - const: overflow
++	  This driver provides battery and AC status support for the mentioned
++	  laptop where this information is not properly exposed via the
++	  standard ACPI devices.
 +
-+  arm,not-ready-us:
-+    description: The maximum time in microseconds for monitoring data to be
-+      accurate after a settings change. For more information, see the
-+      Not-Ready (NRDY) bit description in the MPAM specification.
++	  Say M or Y here to include this support.
 +
-+  numa-node-id: true # see NUMA binding
++config EC_LENOVO_YOGA_C630
++	tristate "Lenovo Yoga C630 Embedded Controller driver"
++	depends on ARCH_QCOM || COMPILE_TEST
++	depends on I2C
++	select AUXILIARY_BUS
++	help
++	  Driver for the Embedded Controller in the Qualcomm Snapdragon-based
++	  Lenovo Yoga C630, which provides battery and power adapter
++	  information.
 +
-+  '#address-cells':
-+    const: 1
++	  This driver provides battery and AC status support for the mentioned
++	  laptop where this information is not properly exposed via the
++	  standard ACPI devices.
 +
-+  '#size-cells':
-+    const: 0
++	  Say M or Y here to include this support.
 +
-+patternProperties:
-+  '^ris@[0-9a-f]$':
-+    type: object
-+    additionalProperties: false
-+    description: |
-+      RIS nodes for each RIS in an MSC. These nodes are required for each RIS
-+      implementing known MPAM controls
++endif # ARM64_PLATFORM_DEVICES
+diff --git a/drivers/platform/arm64/ec/Makefile b/drivers/platform/arm64/ec/Makefile
+new file mode 100644
+index 000000000000..b3a7c4096f08
+--- /dev/null
++++ b/drivers/platform/arm64/ec/Makefile
+@@ -0,0 +1,10 @@
++# SPDX-License-Identifier: GPL-2.0-only
++#
++# Makefile for linux/drivers/platform/arm64/ec
++#
++# This dir should only include drivers for EC-like devices.
++#
 +
-+    properties:
-+      compatible:
-+        enum:
-+            # Bulk storage for cache
-+          - arm,mpam-cache
-+            # Memory bandwidth
-+          - arm,mpam-memory
-+
-+      reg:
-+        minimum: 0
-+        maximum: 0xf
-+
-+      cpus:
-+        $ref: '/schemas/types.yaml#/definitions/phandle-array'
-+        description:
-+          Phandle(s) to the CPU node(s) this RIS belongs to. By default, the parent
-+          device's affinity is used.
-+
-+      arm,mpam-device:
-+        $ref: '/schemas/types.yaml#/definitions/phandle'
-+        description:
-+          By default, the MPAM enabled device associated with a RIS is the MSC's
-+          parent node. It is possible for each RIS to be associated with different
-+          devices in which case 'arm,mpam-device' should be used.
-+
-+    required:
-+      - compatible
-+      - reg
-+
-+required:
-+  - compatible
-+  - reg
-+
-+dependencies:
-+  interrupts: [ interrupt-names ]
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    /*
-+    cpus {
-+        cpu@0 {
-+            next-level-cache = <&L2_0>;
-+        };
-+        cpu@100 {
-+            next-level-cache = <&L2_1>;
-+        };
-+    };
-+    */
-+    L2_0: cache-controller-0 {
-+        compatible = "cache";
-+        cache-level = <2>;
-+        cache-unified;
-+        next-level-cache = <&L3>;
-+
-+    };
-+
-+    L2_1: cache-controller-1 {
-+        compatible = "cache";
-+        cache-level = <2>;
-+        cache-unified;
-+        next-level-cache = <&L3>;
-+
-+    };
-+
-+    L3: cache-controller@30000000 {
-+        compatible = "arm,dsu-l3-cache", "cache";
-+        cache-level = <3>;
-+        cache-unified;
-+
-+        ranges = <0x0 0x30000000 0x800000>;
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+
-+        msc@10000 {
-+            compatible = "arm,mpam-msc";
-+
-+            /* CPU affinity implied by parent cache node's  */
-+            reg = <0x10000 0x2000>;
-+            interrupts = <1>, <2>;
-+            interrupt-names = "error", "overflow";
-+            arm,not-ready-us = <1>;
-+        };
-+    };
-+
-+    mem: memory-controller@20000 {
-+        compatible = "foo,a-memory-controller";
-+        reg = <0x20000 0x1000>;
-+
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+        ranges;
-+
-+        msc@21000 {
-+            compatible = "arm,mpam-memory-controller-msc", "arm,mpam-msc";
-+            reg = <0x21000 0x1000>;
-+            interrupts = <3>;
-+            interrupt-names = "error";
-+            arm,not-ready-us = <1>;
-+            numa-node-id = <1>;
-+        };
-+    };
-+
-+    iommu@40000 {
-+        reg = <0x40000 0x1000>;
-+
-+        ranges;
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+
-+        msc@41000 {
-+            compatible = "arm,mpam-msc";
-+            reg = <0 0x1000>;
-+            interrupts = <5>, <6>;
-+            interrupt-names = "error", "overflow";
-+            arm,not-ready-us = <1>;
-+
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            ris@2 {
-+                compatible = "arm,mpam-cache";
-+                reg = <0>;
-+                // TODO: How to map to device(s)?
-+            };
-+        };
-+    };
-+
-+    msc@80000 {
-+        compatible = "foo,a-standalone-msc";
-+        reg = <0x80000 0x1000>;
-+
-+        clocks = <&clks 123>;
-+
-+        ranges;
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+
-+        msc@10000 {
-+            compatible = "arm,mpam-msc";
-+
-+            reg = <0x10000 0x2000>;
-+            interrupts = <7>;
-+            interrupt-names = "overflow";
-+            arm,not-ready-us = <1>;
-+
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            ris@0 {
-+                compatible = "arm,mpam-cache";
-+                reg = <0>;
-+                arm,mpam-device = <&L2_0>;
-+            };
-+
-+            ris@1 {
-+                compatible = "arm,mpam-memory";
-+                reg = <1>;
-+                arm,mpam-device = <&mem>;
-+            };
-+        };
-+    };
-+
-+...
++obj-$(CONFIG_EC_ACER_ASPIRE1)	+= acer-aspire1-ec.o
++obj-$(CONFIG_EC_HUAWEI_GAOKUN)	+= huawei-gaokun-ec.o
++obj-$(CONFIG_EC_LENOVO_YOGA_C630) += lenovo-yoga-c630.o
+diff --git a/drivers/platform/arm64/acer-aspire1-ec.c b/drivers/platform/arm64/ec/acer-aspire1-ec.c
+similarity index 100%
+rename from drivers/platform/arm64/acer-aspire1-ec.c
+rename to drivers/platform/arm64/ec/acer-aspire1-ec.c
+diff --git a/drivers/platform/arm64/huawei-gaokun-ec.c b/drivers/platform/arm64/ec/huawei-gaokun-ec.c
+similarity index 100%
+rename from drivers/platform/arm64/huawei-gaokun-ec.c
+rename to drivers/platform/arm64/ec/huawei-gaokun-ec.c
+diff --git a/drivers/platform/arm64/lenovo-yoga-c630.c b/drivers/platform/arm64/ec/lenovo-yoga-c630.c
+similarity index 100%
+rename from drivers/platform/arm64/lenovo-yoga-c630.c
+rename to drivers/platform/arm64/ec/lenovo-yoga-c630.c
 -- 
 2.39.5
 
