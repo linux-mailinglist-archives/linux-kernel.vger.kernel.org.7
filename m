@@ -1,134 +1,127 @@
-Return-Path: <linux-kernel+bounces-727558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D879AB01C09
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:30:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94220B01BDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 494AD567DC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:30:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 473163AE6CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEF22BD589;
-	Fri, 11 Jul 2025 12:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59A22980CD;
+	Fri, 11 Jul 2025 12:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="29TjSso5"
-Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sGKV+wBO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rKv0b5SH"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5803299A82;
-	Fri, 11 Jul 2025 12:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B362123ED6F;
+	Fri, 11 Jul 2025 12:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752237007; cv=none; b=R6yKJqVTYs2nL2GImC4ycSdjbeSra+8M4/UVu+l1+YwiQ3l/il5rWJG6EPbzcIUx13gIypPhlI3xa1iMKQ9wr7Tsj1BMBd/r0rzB4l8uP1rO5sbJI5HVd/7ro9u5JBoSCTYPG9ESi1qX+IaDC0Iv1NjAErXzsVkgbu9JQ2XkPtk=
+	t=1752236488; cv=none; b=G5tkLWXerBn19aPivs7twzK2psMU+DltdQrEZpR06BvLTd+BmpE5X1rbdOIWz6Ic35gRKuqOUHbEUcUrB2+LD+zegA6w2s/275n8LJX2xXTGRxu6xFw+ZUNqIBmHtKYf3H3M8oXNIdxQ4Can1FmfvIwYr9jT0KaofiR6Rar3KqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752237007; c=relaxed/simple;
-	bh=0dxJOqsvNf9YI6ttikFKyQFzL+BZ/9qDNKVRZ9z1T0U=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=ZBgWbtqEYSDqYnbwRqr9WhZ/du+zSD5D7Ai5VGScKyOEOHzfi5WyQSH+ZjDOKNHYPxUNqElwNA60R7ISjWPB6va7aK7UMJ4+oJnpIsAg7xHQJUq64AvT1dmgRTLc/EePnsY2bMUkYQUMusEpUKDDo3F5i+EVtBG8Cs9dMPJ0TYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=29TjSso5; arc=none smtp.client-ip=162.240.164.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=+mZwtOnORz1zUe5SEHz2Hy5URcUgxMWga++pbIoA72M=; b=29TjSso5NUVzpIbIMeTLBFozU8
-	a/49n3lqFqyPoZFcLVNitCd+/vq9uiOFbubAN8iDwg5m4e+cxvhtom09NZ1q9eHbjMFqOHLaTDCPz
-	KSAbXgDlI7CkLrVI13E0HXOn77ZOEZok5wQW7DnsipF9UrzVtxEwHMvmhv7ll6ztrtXPatwUxUeoo
-	EvjgQ9ztRyOUQIywqKTkqO+8gMOyfsPN4VGqlJMyhpz7Q2XT6exugj/pOT91A89sKCrPCFXQDln4G
-	PbDkmZ4kbPo1TMW0kQMakfLJSBi50+6tUSm2BmZrQirU1XLAdCidVB/rOXnckLCrgmii3Jy5QhBfp
-	DZScMP5g==;
-Received: from [122.175.9.182] (port=57395 helo=zimbra.couthit.local)
-	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1uaCjj-0000000CkrI-2Xqr;
-	Fri, 11 Jul 2025 08:20:19 -0400
-Received: from zimbra.couthit.local (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTPS id 998741781A71;
-	Fri, 11 Jul 2025 17:50:11 +0530 (IST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id 7262017820AC;
-	Fri, 11 Jul 2025 17:50:11 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
-	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 4htU6JcfYILf; Fri, 11 Jul 2025 17:50:11 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id 3020C1781A71;
-	Fri, 11 Jul 2025 17:50:11 +0530 (IST)
-Date: Fri, 11 Jul 2025 17:50:10 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: kuba <kuba@kernel.org>
-Cc: parvathi <parvathi@couthit.com>, danishanwar <danishanwar@ti.com>, 
-	rogerq <rogerq@kernel.org>, andrew+netdev <andrew+netdev@lunn.ch>, 
-	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
-	pabeni <pabeni@redhat.com>, robh <robh@kernel.org>, 
-	krzk+dt <krzk+dt@kernel.org>, conor+dt <conor+dt@kernel.org>, 
-	ssantosh <ssantosh@kernel.org>, 
-	richardcochran <richardcochran@gmail.com>, 
-	s hauer <s.hauer@pengutronix.de>, m-karicheri2 <m-karicheri2@ti.com>, 
-	glaroque <glaroque@baylibre.com>, afd <afd@ti.com>, 
-	saikrishnag <saikrishnag@marvell.com>, m-malladi <m-malladi@ti.com>, 
-	jacob e keller <jacob.e.keller@intel.com>, 
-	diogo ivo <diogo.ivo@siemens.com>, 
-	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, 
-	horms <horms@kernel.org>, s-anna <s-anna@ti.com>, 
-	basharath <basharath@couthit.com>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	netdev <netdev@vger.kernel.org>, 
-	devicetree <devicetree@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
-	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
-	krishna <krishna@couthit.com>, pmohan <pmohan@couthit.com>, 
-	mohan <mohan@couthit.com>
-Message-ID: <1001900168.1712445.1752236410964.JavaMail.zimbra@couthit.local>
-In-Reply-To: <20250708173310.5415b635@kernel.org>
-References: <20250702140633.1612269-1-parvathi@couthit.com> <20250708173310.5415b635@kernel.org>
-Subject: Re: [PATCH net-next v10 00/11] PRU-ICSSM Ethernet Driver
+	s=arc-20240116; t=1752236488; c=relaxed/simple;
+	bh=hiGIhRKiTOmNcvBHyDkXssmWtLPbnb5hDySW7wqiltI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GsmlEemhGg/0ulvITzEZvRywhGhta3xIVfHTsH+teyRn4s68UJSANzcyIZOFCuEo1eldiI+1NXmfXq4pBeD1L5CE16g4JQPFwQ982T+MWRxRpXQUIwhkO/DWuIP46pOR83Nis8SFXzzeTaxu5Qtc9ehMhJiXzjV5GejJaAzh5go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sGKV+wBO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rKv0b5SH; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 11 Jul 2025 14:21:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752236484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=on+h7+JPsOaseXxmTBL9Mtf7ti/qneEhfl3yBpXQJ5s=;
+	b=sGKV+wBOwX9Xv6F+6+3W4ePgkqqryfMap4ENuXI1zvkYOtof8knG2RqcR8lXsVKDWWPL0a
+	jBnuNXqXROX22aAtbqLjIr5lEIYQeHvjnPS4lQoZ0iP4Nx2KIvCHj0SIgljsA8xrgFaPk3
+	N/suyvtvIGiF8OmICs4J4uJrK5U51Y4jwZllgoS8RKGU1oj6Rj17AiHCJZ+6rvbO7D23ja
+	7I89Yi3Ff9Z/0fYooupiIg0DH9Bqo7bnCpddKgQz3RHWGCR2VzfiC0w2gZpzjvlXHdlxad
+	P+dB2pGjSY2YxJKD7pKoQrrlggtnPjVUSPMesoXT7fJyfYgQPFd3n37UjIIcyw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752236484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=on+h7+JPsOaseXxmTBL9Mtf7ti/qneEhfl3yBpXQJ5s=;
+	b=rKv0b5SH3ytvcxYzwPp4wxZ980VhtFdQ/LC6EeAhwsLGrooaOYaEvJa0vKVnOV42UHDOgl
+	FG0olKwBw8wsYLCQ==
+From: Nam Cao <namcao@linutronix.de>
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
+Message-ID: <20250711122123.qXVK-EkF@linutronix.de>
+References: <6f99476daa23858dc0536ca182038c8e80be53a2.camel@xry111.site>
+ <20250710062127.QnaeZ8c7@linutronix.de>
+ <d14bcceddd9f59a72ef54afced204815e9dd092e.camel@xry111.site>
+ <20250710083236.V8WA6EFF@linutronix.de>
+ <c720efb6a806e0ffa48e35d016e513943d15e7c0.camel@xry111.site>
+ <20250711050217.OMtx7Cz6@linutronix.de>
+ <20250711-ermangelung-darmentleerung-394cebde2708@brauner>
+ <6856a981f0505233726af0301a1fb1331acdce1c.camel@xry111.site>
+ <20250711095830.048P551B@linutronix.de>
+ <7a50fd8af9d21aade901fe4d32e14e698378c82f.camel@xry111.site>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
-Thread-Topic: PRU-ICSSM Ethernet Driver
-Thread-Index: TXP7pHbOvWv5H2YAdaWH+8TjmJE3lA==
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.couthit.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7a50fd8af9d21aade901fe4d32e14e698378c82f.camel@xry111.site>
 
-Hi,
-
-> On Wed,  2 Jul 2025 19:36:22 +0530 Parvathi Pudi wrote:
->>  17 files changed, 4957 insertions(+), 4 deletions(-)
+On Fri, Jul 11, 2025 at 08:09:12PM +0800, Xi Ruoyao wrote:
+> On Fri, 2025-07-11 at 11:58 +0200, Nam Cao wrote:
+> > On Fri, Jul 11, 2025 at 05:48:56PM +0800, Xi Ruoyao wrote:
+> > > Sadly, still no luck.
+> > 
+> > That's unfortunate.
+> > 
+> > I'm still unable to reproduce the issue, so all I can do is staring at the
+> > code and guessing. But I'm out of idea for now.
 > 
-> Please try to remove some features from the series.
-> The chances that a maintainer will have time to look thru 5kLoC
-> in one sitting are quite low.
+> Same as I.  I tried to reproduce in a VM running Fedora Rawhide but
+> failed.
+> 
+> > This one is going to be hard to figure out..
+> 
+> And I'm afraid this may be a bug in my userspace...
 
-We are refactoring and limiting features without affecting
-fundamental functionality for AM33x, AM43x and AM57x platforms.
+Yeah I expect the same thing. In the log you sent me, there are some
+strange-looking event masks that look like a userspace bug.
 
-We will post the updated patch series shortly.
+I tried those strange looking event masks, but epoll_ctl() correctly
+rejects them with EINVAL. So those masks probably aren't the reason, but
+they still suggest that userspace may also be broken somewhere else and
+triggers hard-to-reproduce problems in kernel's epoll.
 
+> Then I'd feel guilty if this is reverted because of an invalid bug report
+> from I :(.
 
-Thanks and Regards,
-Parvathi.
+But even when userspace is broken, if the kernel patch makes userspace
+non-functional, I would still call it a kernel bug. So it's a valid bug
+report alright, don't worry about it.
+
+Until we know exactly the root cause, I think revert is the right thing to
+do.
+
+Best regards,
+Nam
 
