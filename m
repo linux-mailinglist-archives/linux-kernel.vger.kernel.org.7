@@ -1,145 +1,164 @@
-Return-Path: <linux-kernel+bounces-728011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDDF1B0226F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:16:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65087B02272
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 388DA1716B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10C0CA45430
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BF72EF64A;
-	Fri, 11 Jul 2025 17:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7662EF64A;
+	Fri, 11 Jul 2025 17:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gkBlRWob"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G1J2UNJg"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440411547CC;
-	Fri, 11 Jul 2025 17:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4241223B0;
+	Fri, 11 Jul 2025 17:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752254165; cv=none; b=h9T9UN1uJ6VLqboqne0sRxtgvCYKTIFRlSdfD1qFXKxff52rDOcCdidduwAqy9VwZAlXoTDiRgsWb2Pg2mBUrxV9L3dOB80De8UUXcuBEXDpT7CPreA+Wwi24es9GjbgjcTU0zeSi/W7YJ+eXG4lJasYe7z5QHaYpxWP1+e45DQ=
+	t=1752254286; cv=none; b=AQRLHA6Xdgk/XroyqSRE5f9ZD7m9aS5oVCY7Os5ooqUeIJg1tltVHzBX2ot6+TEH0K35rOIaHUXqwesSElaRYt83Ax2sbRL1ReedSHESV3YN60DI3sFnKnOaW8f+7nADJDssy9gbpaSWByDjpoweOcFpJIyal3drfFlCcVPpLZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752254165; c=relaxed/simple;
-	bh=punT/qboQi6RwL4rhScmANJJEIkXEYqHxfa0D+uO4Lo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W15EhCpr2T1VsyJPEgANnVDZ6xNnILVV9r5kycK0sBCRW03KgU8GwieYgeLNugBhzwT9/9rudbTgbtK8m4t+1pyTR2RDou3So5WQKeMEmAzZyz5bSDvomfytF3r7kACyrxoRRqqmayPsjNhy57CPksnIrTY9BwZ4xcxJ7vn8HxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gkBlRWob; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1752254286; c=relaxed/simple;
+	bh=tRRgm1TCKRIxxicc390nlYIrkP0eQctG04d74RMi8ss=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QvV+eMNnJFLR/EbRn4t39EqY/SDf9gL1Ubm+sv2KV8U3cQcAZoOCjZINsuhZM+i0zUoMXZumQNZ1gfTCrhJYCrnfW7PS7Z7ANi3Q3ATXPfwVScZv/HI+Dsv+UkuTOkwWD/r0c+RsCtLdtu4CG8tPt9k5iYBw1wA9iXnqriPKK40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G1J2UNJg; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4537fdec33bso13775145e9.1;
-        Fri, 11 Jul 2025 10:16:04 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-313a188174fso2937614a91.1;
+        Fri, 11 Jul 2025 10:18:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752254163; x=1752858963; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1752254284; x=1752859084; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XgDIVlF1DvYfUM2yQqqKFY/jQV517y2whN5qoc38Vxc=;
-        b=gkBlRWob7+1RCeHVZLecQ9Lde3df+2x301kewbb8FRdDZ6DLzkqUjj09TYlYKonWGT
-         ayjwe5RWc2wJzf75IsEKzTZKNyXH0JTzyJo7DZKco7nLvWlJY6uY8hA0q9n7FSYbUTvh
-         bOOnMn0qj5PrxgwXWu3NDGJdC1HHqAHx9FqgGHzknRyp53XTDCONdSJzHSbs6aE3xG2g
-         i4J8AcHWlbpWZaHqpJ8rt6Jgdz1HVUAoulrtpbhYncf299TYqYKeFbRpJ0DCjhDNmMgc
-         luTe14btUuwn4+j0j9C4XyhsakaKp3qQGNs39FC0Z2wVzKZHq3AU+MC/b9W7CVQuEAc2
-         hY/Q==
+        bh=YN8JhcJPAFmyUnXWefNQx1CdU4pcrbO6LEejen5i4nE=;
+        b=G1J2UNJgP9OJBV7LocXmtw3V84CE+marCAGcU2aXinE01ajJWygXaAygQ2zMHzjLNB
+         DIY1j/eABWkiUzwngJBRSh1SB/3JhQ6TGjbINTIPX+7wODiS4sDQI3eKHQ/TOfvNnxHK
+         /Wvy02LApCWkLNzbWWQ1h+QCJvKoZ94crl6ApfLkTFaMGOWniyVviGJJrZSY+iB3z5MS
+         miRSKHnKLk/dxheFXX20LhuF/fM/e8uXXRu4G4m0ZdFwpHJ9w0CX3u7iWLFaHlPehBVu
+         W2rqsR5GBz4+mNReSOBYvZXOPUAxL1KuNFLUOs0Oq7mpakelXvkDWzt9475uqCCxq0Bf
+         Q8rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752254163; x=1752858963;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1752254284; x=1752859084;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XgDIVlF1DvYfUM2yQqqKFY/jQV517y2whN5qoc38Vxc=;
-        b=EvmF7hpGxumDSLGr9mBv8OLJuW7Qsf/mypertDr5VoNb9k+9iMGkFbDp6XmUEwNMMn
-         Na8kw0MxNXZ4jYpMu+sumsOfd/GEND198XT92R2Fv64k5B0iN64sv7rYmzNexLSprntR
-         RIjVIrOB6Trg1VBWZ4nVx5ox4tf/tzbQ33c2eo1Imae09UuYm3yNc9HxyMPdw6RA0nvT
-         rUhEn9UZv4pHu76nYjOw9AS+rWIvmaqDDFSgDPwyq2ruIsvSgHCLAylUmd0NpWWROzBE
-         NtW1MhUWBVFTiOVt2O+d+Q1uTGIfsnWJSmAPjzerH5WMKyZjDXHBlAShHGV2gXIp63NN
-         ExwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3IzkWd0iE0qFHGfSBWZ3bzrYV5b8c/MrINNauGmZMt7AfzFPvXsGtyVszX19v5oN56nxSDpdNPMRcIMKU3w==@vger.kernel.org, AJvYcCW7PbMVUusxk088m0LygdZkHOvxIhAvq49ih6epvz7RDb9TB5R6OObQBaQcWU6UGVJmyaOhpp0KvVWer6TtIg==@vger.kernel.org, AJvYcCWP4tMlHiXKNPi+Yx7p84vJjgxi2xLJcKqNn0L4pKLdlGk19M9WawdRNM4X7TOXmpD0KIstW6JFfd0=@vger.kernel.org, AJvYcCXZhE8vH4SvRrGn9MvgQT3ATBqLpNMsehTjsnFpJ/qyaFezCZFZrPW4+Ku4/nEt0ootdHZx2pBMYQI1T1BH@vger.kernel.org, AJvYcCXj6Epwpp3aQiZlFyZt+nUZqicfmicXRIU4n88gNL4YTvWUa1xfwVU4HvilARd2UA6jP2fQYKj3nITRO4P0@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqwyhAg7M8MXxLvwRri7gdZC/4N3MZ0G3zKXNE1ERsGksgBEj1
-	PFbKtJn2jf/cJKgVEduScde4wLrptU9itRD31IvsextjKvc2FhsCp/EJ
-X-Gm-Gg: ASbGnctw+wbHFPL5/Ei6g4WeH3RiUNAwAH3uYjfexNP/VJmlLJ44I1kCLhFlV2maJcZ
-	OuatrvbsqnVDzpP/2ByWHLJXlhyqcd9vOasr+NWYXzRqG2APSosTL/eqfndQjHwco5S222wOku3
-	vmNCEulL7QpNtSy1LGePuvw6WB5DHQKOqRwZKYHIkYVIzTjpH2J9EnqflgM9ffoObamv8UTMMdm
-	eEOUE6HUIodm/WP2n39TpIPFyRjGaD99PXbL1VlZ6MIG+0GhZyABeSskswBee6p4Tk8U98Gu0YY
-	cW1m9YRirRWo76G0fsD59zwuN7AukC7qwsTZGfM9yox1xwvGxFygcE0zbWpktLRb+2+RPWJpWjv
-	2QX/YoRUsLRB0cmfNHT/e7Ddnd/ChmD/sjSQQ1xgwGuFI6mrfTRirIg==
-X-Google-Smtp-Source: AGHT+IELepidXrimYt+aX1iyNVRfD3WkoM6qJxSS6lwzOVMRvsBDCdDvOitxBrAgoPpT5TSjelS97g==
-X-Received: by 2002:a05:600c:540f:b0:453:9bf:6f7c with SMTP id 5b1f17b1804b1-454ec1274demr41997825e9.9.1752254162453;
-        Fri, 11 Jul 2025 10:16:02 -0700 (PDT)
-Received: from pumpkin (host-92-21-58-28.as13285.net. [92.21.58.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e14e82sm5003521f8f.71.2025.07.11.10.16.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 10:16:02 -0700 (PDT)
-Date: Fri, 11 Jul 2025 18:16:00 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Matthias Maennich
- <maennich@google.com>, Jonathan Corbet <corbet@lwn.net>, Luis Chamberlain
- <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen
- <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, Masahiro
- Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas.schier@linux.dev>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Christoph Hellwig
- <hch@infradead.org>, Peter Zijlstra <peterz@infradead.org>, David
- Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>, "Jiri
- Slaby (SUSE)" <jirislaby@kernel.org>, Stephen Rothwell
- <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/2] Restrict module namespace to in-tree modules and
- rename macro
-Message-ID: <20250711181600.36fac178@pumpkin>
-In-Reply-To: <20250708-merkmal-erhitzen-23e7e9daa150@brauner>
-References: <20250708-export_modules-v1-0-fbf7a282d23f@suse.cz>
-	<20250708-merkmal-erhitzen-23e7e9daa150@brauner>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        bh=YN8JhcJPAFmyUnXWefNQx1CdU4pcrbO6LEejen5i4nE=;
+        b=Y3+fKAdFDEb3F52wnEPbJt84RVX6CrkDlnhkeLEn+r7OI7QYjQLu37+EFepa/slLUN
+         wCU3BXG/h33l67mN4Hm2BewB1KJC5zaYYeKI4oEbqM2tbgR0D7btnZbKUCYyIOjxHB3v
+         ESCC1cgp0UMK+cnOtfIjUn4VdyoBANmStftCNjwjh4dy0sJd/kahdj6FsH5ZLsvkrgXW
+         ayFkfxIRhcPmo0V1jwWIIH4ONWw6HalFV49vf9tKNDtg6Vn7G0SM0MNmpX4mWV+c8x4o
+         DiAUsUECSJLXPWp9ldiP3MfcewBW7kil/+zc0TE+F8AyxIUl+cTntzSrFzENdmdOZDD5
+         3R8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUfuW9Pa54IQ/MCcpjIcpvkCdKmQd8T4JbIhfH0qQVeIQjryfQXd8okZXVw+iIREGWYCNIoqKsXwfHJxFAn@vger.kernel.org, AJvYcCWGWe/+/quA3OtKfF87dm6zzVrPReFlFQtfPRflZZCjvjObtkaldbiFEx7DFQDfs1B/eoY=@vger.kernel.org, AJvYcCXoQv62EXJM8liP4erz98gul92bioaa9+IjALIA0nyenpkbCSX2NxLom0+8HNVK9M74FXCizvryPsskdDgBzbdItqwP@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFIHGSouM4sVhJg0bi1ehoP40jGiSe8axHa+iNwlpSx7iCnImq
+	Bv6l6CovPOY9tevFiGxVlr53iY2bCJunAATTf28OiLewnFSeeAG9sMh458RDyn2LkKbVqp4Cwwu
+	CPtRYRNsBrf/4M08LgueMe632GfjOd50=
+X-Gm-Gg: ASbGncucGMLZwBNUr1a1RjeM2nNA353niAELt6hDaTh3nbmxddiO73zWUGK6NiyC43i
+	1/s7fZRvtINyyY11xq/Xoho6JjS/CxMdkm/MujtTzXXd2Q+8iynlhsUecORH9EPHRkWFDX3jV7C
+	fDkzsM+NxKOL1Y8/tOC9Is13FfS3w/A1JMcbChpqktkUEFdKvhfiHPFdN5I+4eYYxoqwEnWIwb9
+	VLqehf96otlB7SMEwKykio=
+X-Google-Smtp-Source: AGHT+IFAYCkRpVVEg0QdLRvRVHmC8QaVJXMfi9fmJHYomD6pCx7wxiWWUcIXcZjMo1+KVeUZKV95FSYT0bwK6iyXmYg=
+X-Received: by 2002:a17:90b:56ce:b0:315:f6d6:d29c with SMTP id
+ 98e67ed59e1d1-31c3d0c3803mr13249177a91.15.1752254283864; Fri, 11 Jul 2025
+ 10:18:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250711082931.3398027-1-jolsa@kernel.org>
+In-Reply-To: <20250711082931.3398027-1-jolsa@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 11 Jul 2025 10:17:50 -0700
+X-Gm-Features: Ac12FXyY6qtXVwPUhYw-o64HRgW0NuQb1LV0LQ1wJ9aG7f6XWtpN8LrQvHGnlSA
+Message-ID: <CAEf4Bzbg2ROstG5+1XUoZre403n-B3CHuW9E0UECNY364giDcw@mail.gmail.com>
+Subject: Re: [PATCHv5 perf/core 00/22] uprobes: Add support to optimize usdt
+ probes on x86_64
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Alejandro Colomar <alx@kernel.org>, Eyal Birger <eyal.birger@gmail.com>, 
+	kees@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
+	Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 8 Jul 2025 09:40:37 +0200
-Christian Brauner <brauner@kernel.org> wrote:
+On Fri, Jul 11, 2025 at 1:29=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
+>
+> hi,
+> this patchset adds support to optimize usdt probes on top of 5-byte
+> nop instruction.
+>
+> The generic approach (optimize all uprobes) is hard due to emulating
+> possible multiple original instructions and its related issues. The
+> usdt case, which stores 5-byte nop seems much easier, so starting
+> with that.
+>
+> The basic idea is to replace breakpoint exception with syscall which
+> is faster on x86_64. For more details please see changelog of patch 8.
+>
+> The run_bench_uprobes.sh benchmark triggers uprobe (on top of different
+> original instructions) in a loop and counts how many of those happened
+> per second (the unit below is million loops).
+>
+> There's big speed up if you consider current usdt implementation
+> (uprobe-nop) compared to proposed usdt (uprobe-nop5):
+>
+> current:
+>         usermode-count :  152.501 =C2=B1 0.012M/s
+>         syscall-count  :   14.463 =C2=B1 0.062M/s
+> -->     uprobe-nop     :    3.160 =C2=B1 0.005M/s
+>         uprobe-push    :    3.003 =C2=B1 0.003M/s
+>         uprobe-ret     :    1.100 =C2=B1 0.003M/s
+>         uprobe-nop5    :    3.132 =C2=B1 0.012M/s
+>         uretprobe-nop  :    2.103 =C2=B1 0.002M/s
+>         uretprobe-push :    2.027 =C2=B1 0.004M/s
+>         uretprobe-ret  :    0.914 =C2=B1 0.002M/s
+>         uretprobe-nop5 :    2.115 =C2=B1 0.002M/s
+>
+> after the change:
+>         usermode-count :  152.343 =C2=B1 0.400M/s
+>         syscall-count  :   14.851 =C2=B1 0.033M/s
+>         uprobe-nop     :    3.204 =C2=B1 0.005M/s
+>         uprobe-push    :    3.040 =C2=B1 0.005M/s
+>         uprobe-ret     :    1.098 =C2=B1 0.003M/s
+> -->     uprobe-nop5    :    7.286 =C2=B1 0.017M/s
+>         uretprobe-nop  :    2.144 =C2=B1 0.001M/s
+>         uretprobe-push :    2.069 =C2=B1 0.002M/s
+>         uretprobe-ret  :    0.922 =C2=B1 0.000M/s
+>         uretprobe-nop5 :    3.487 =C2=B1 0.001M/s
+>
+> I see bit more speed up on Intel (above) compared to AMD. The big nop5
+> speed up is partly due to emulating nop5 and partly due to optimization.
+>
+> The key speed up we do this for is the USDT switch from nop to nop5:
+>         uprobe-nop     :    3.160 =C2=B1 0.005M/s
+>         uprobe-nop5    :    7.286 =C2=B1 0.017M/s
+>
 
-> On Tue, Jul 08, 2025 at 09:28:56AM +0200, Vlastimil Babka wrote:
-> > Christian asked [1] for EXPORT_SYMBOL_FOR_MODULES() without the _GPL_
-> > part to avoid controversy converting selected existing EXPORT_SYMBOL().
-> > Christoph argued [2] that the _FOR_MODULES() export is intended for
-> > in-tree modules and thus GPL is implied anyway and can be simply dropped
-> > from the export macro name. Peter agreed [3] about the intention for
-> > in-tree modules only, although nothing currently enforces it.
-> > 
-> > It seems straightforward to add this enforcement, so patch 1 does that.
-> > Patch 2 then drops the _GPL_ from the name and so we're left with
-> > EXPORT_SYMBOL_FOR_MODULES() restricted to in-tree modules only.
+We've been waiting for this to land for so long, I hope this gets
+applied soon...
 
-Bikeshedding somewhat, isn't that a silly name.
-All EXPORT_SYMBOL are 'for modules'.
-Wouldn't something like EXPORT_SYMBOL_IN_TREE be more descriptive.
+Once this lands, we can finally start implementing USDT support that
+can take advantage of this transparently and with no performance
+regression on old kernel.
 
-	David
+For the series:
 
-> > 
-> > Current -next has some new instances of EXPORT_SYMBOL_GPL_FOR_MODULES()
-> > in drivers/tty/serial/8250/8250_rsa.c by commit b20d6576cdb3 ("serial:
-> > 8250: export RSA functions"). Hopefully it's resolvable by a merge
-> > commit fixup and we don't need to provide a temporary alias.
-> > 
-> > [1] https://lore.kernel.org/all/20250623-warmwasser-giftig-ff656fce89ad@brauner/
-> > [2] https://lore.kernel.org/all/aFleJN_fE-RbSoFD@infradead.org/
-> > [3] https://lore.kernel.org/all/20250623142836.GT1613200@noisy.programming.kicks-ass.net/
-> > 
-> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> > ---  
-> 
-> Love this. It'd be great to get this in as a bugfix,
-> Acked-by: Christian Brauner <brauner@kernel.org>
-> 
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
+[...]
 
