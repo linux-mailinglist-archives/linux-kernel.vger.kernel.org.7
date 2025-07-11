@@ -1,60 +1,72 @@
-Return-Path: <linux-kernel+bounces-727202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E8B5B0165E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:36:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3736DB01652
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4DFF766CC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:35:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F04076429B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8293E218EB7;
-	Fri, 11 Jul 2025 08:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEF4223DF1;
+	Fri, 11 Jul 2025 08:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="mKdXnCiZ"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s6dRZeGx"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3455C2E371A
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA8D20D4FC;
+	Fri, 11 Jul 2025 08:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752222807; cv=none; b=COSegxYHT643RnDJEIEL56QhK7iEMwUH8b/SEgy21vg8KZl+uywS7fagmStIFQXs8xvK8gooLK66jgFoBGkkYvdUU2QPeAWLEVLeGolaVmox8ewbpYartpwz3MAy1MqDgn0Kj6kg2pka77KlNVumzSUTosGSlE20vaoBKpXxyOM=
+	t=1752222784; cv=none; b=A3FmNuUWsfPhdAdEBtw4+K3dAFiL6A0AcJRa8ll2MZ8wLoQ7JxFkQXi4Lnk+V9qJ4GbOSV5+Rnuksk1F5Ei+dD2f8RjxcSuE2yIlcvLG6UDoNOUmPBKO86Js1U/U39QHtPTmGx+Nagxo+ZG4qPAwN7l1U9jS5WDIic7497OQ3IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752222807; c=relaxed/simple;
-	bh=uHGMJA07ypF8Yz/ePKoO231Z6ORtct0fOPIuQmrfRBo=;
+	s=arc-20240116; t=1752222784; c=relaxed/simple;
+	bh=mj2leEJsdnBov27pu1W5NvFREYzhMUPQFy8+KOSCW5M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bCiWs7dkRiz25p3+DAUdmrLNH8q3SL2dcxTvKyQRS9rITRlIOzJuF+WWkjWxjNB4g5EHGpHvmLaPFyxNdOFCqoogeHd+9nuOqZn0NzLQ9wRuAnEN5jXcfPsK1jS20QuRL3e6pTw417NxpECcckwH+dzjY7ZX6WHltoyG5ndOtj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=mKdXnCiZ; arc=none smtp.client-ip=220.197.32.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=8Y8yX5xQMywwx2BGoeeybXxG1RrCPIPIZg9LEWNi+Ro=;
-	b=mKdXnCiZUf47xRIbDuBBOxjfsin0f++eakr7LNJiHSWmspHUYDLbebDA0qS/kL
-	RbCf5oo/221nhX+1BHS8NfcT0SFBIuLno0YnufWl1otMcqUaXj6lSblWPEkqCdNs
-	RhgMy6gZfj1MA3zVputyRAp2JE4ylScqYni8SogkboY04=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDXTwYnzHBog9pTAA--.57224S3;
-	Fri, 11 Jul 2025 16:32:41 +0800 (CST)
-Date: Fri, 11 Jul 2025 16:32:39 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Mark Brown <broonie@kernel.org>, Fabio Estevam <festevam@gmail.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH 1/2] bus: imx-aipstz: allow creating pdevs for child buses
-Message-ID: <aHDMJ2U6H88uN6ow@dragon>
-References: <20250707234628.164151-1-laurentiumihalcea111@gmail.com>
- <20250707234628.164151-2-laurentiumihalcea111@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BNNqD3OzG5uzJA/lbDgjK/QOFs6v3xGYxbrd3sG1b02rVqtTaTVnml1MTkGFa6YObgZj/WsRK/0zm16jS0NmjqGa7H5GwLYbKiWVeQeQ56g+0czaQnyq4ktSpciYOxV5jX4NyomyUvfYB/Opgf3xlQhXS8Y4G1MYhRFdZO2UlCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=s6dRZeGx; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4/Bq2Rllu0khw/SdqVkhcg5i0SEM7P5c0IGwdRs7+Kc=; b=s6dRZeGxvc03/giN5YcBv+j0fL
+	5EitGZ73E9qXlMoE1HZPsMWYAHa9qlWehM3EALzZZHDUmIENbE4Wxz19b0113z2k3R4Ra7re5LXEh
+	1VmOMrfKoQkp25HuUDqKUCKmewqsRMgCl04dIL4uPuwDlYVcQxC9bjdEjVLU6wNB/pIBMqSiW/Dbv
+	2l1SSlNHZOfPtt7H9pg/8Objsb9eG2xcO7ZmDuX2yLEfcjcT2ewvFntpUKDynf7WSyNy1t13C0yrc
+	EEhlPbNEWhd1yQQOXMkI5f1R67r/kRdQjhG/2xdQzkRTVtI9/9FMHmIMR2hQxhpTE6aRGla9UvYxc
+	fJag+bcQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ua9Be-0000000CExt-3Wwv;
+	Fri, 11 Jul 2025 08:32:54 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B1C443005E5; Fri, 11 Jul 2025 10:32:52 +0200 (CEST)
+Date: Fri, 11 Jul 2025 10:32:52 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+	Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	"Tested-by : Yi Lai" <yi1.lai@intel.com>, iommu@lists.linux.dev,
+	security@kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+Message-ID: <20250711083252.GE1099709@noisy.programming.kicks-ass.net>
+References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
+ <20250710135432.GO1613376@noisy.programming.kicks-ass.net>
+ <094fdad4-297b-44e9-a81c-0fe4da07e63f@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,36 +75,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250707234628.164151-2-laurentiumihalcea111@gmail.com>
-X-CM-TRANSID:Ms8vCgDXTwYnzHBog9pTAA--.57224S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XFWfur4xXF13Gr48GF4xXrb_yoWkurgE9r
-	10qFWkCr1rKwn3K3Zayr13urW093yUZFZ8Jr4vqrZIqa43tr9rJrs09r93ZF1UuFs7ZryU
-	Jwnrtw4Y9r45ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8HUDJUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBBmHZWhwjvrM-wAAsg
+In-Reply-To: <094fdad4-297b-44e9-a81c-0fe4da07e63f@linux.intel.com>
 
-On Mon, Jul 07, 2025 at 07:46:27PM -0400, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Fri, Jul 11, 2025 at 11:00:06AM +0800, Baolu Lu wrote:
+> Hi Peter Z,
 > 
-> devm_of_platform_populate() passes a NULL as the bus OF match table
-> to the underlying of_platform_populate(), meaning child bus devices
-> of the AIPSTZ bridge will not have its children devices created. Since
-> some SoCs (e.g. i.MX8MP) use this particular setup (e.g. SPBA bus, which
-> is a child of AIPSTZ5 and has multiple child nodes), the driver needs to
-> support it.
+> On 7/10/25 21:54, Peter Zijlstra wrote:
+> > On Wed, Jul 09, 2025 at 02:28:00PM +0800, Lu Baolu wrote:
+> > > The vmalloc() and vfree() functions manage virtually contiguous, but not
+> > > necessarily physically contiguous, kernel memory regions. When vfree()
+> > > unmaps such a region, it tears down the associated kernel page table
+> > > entries and frees the physical pages.
+> > > 
+> > > In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU hardware
+> > > shares and walks the CPU's page tables. Architectures like x86 share
+> > > static kernel address mappings across all user page tables, allowing the
+> > > IOMMU to access the kernel portion of these tables.
+> > > 
+> > > Modern IOMMUs often cache page table entries to optimize walk performance,
+> > > even for intermediate page table levels. If kernel page table mappings are
+> > > changed (e.g., by vfree()), but the IOMMU's internal caches retain stale
+> > > entries, Use-After-Free (UAF) vulnerability condition arises. If these
+> > > freed page table pages are reallocated for a different purpose, potentially
+> > > by an attacker, the IOMMU could misinterpret the new data as valid page
+> > > table entries. This allows the IOMMU to walk into attacker-controlled
+> > > memory, leading to arbitrary physical memory DMA access or privilege
+> > > escalation.
+> > > 
+> > > To mitigate this, introduce a new iommu interface to flush IOMMU caches
+> > > and fence pending page table walks when kernel page mappings are updated.
+> > > This interface should be invoked from architecture-specific code that
+> > > manages combined user and kernel page tables.
+> > 
+> > I must say I liked the kPTI based idea better. Having to iterate and
+> > invalidate an unspecified number of IOMMUs from non-preemptible context
+> > seems 'unfortunate'.
 > 
-> Therefore, replace devm_of_platform_populate() with of_platform_populate()
-> and pass a reference to the bus OF match table to it. For now, the only
-> possible child buses are simple buses.
-> 
-> Since the usage of devres is dropped, the complementary operation of
-> of_platform_populate() needs to be called during the driver's removal.
-> 
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> Fixes: 796cba2dd4d9 ("bus: add driver for IMX AIPSTZ bridge")
-> Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> Closes: https://lore.kernel.org/lkml/5029548.31r3eYUQgx@steina-w/#t
+> The cache invalidation path in IOMMU drivers is already critical and
+> operates within a non-preemptible context. This approach is, in fact,
+> already utilized for user-space page table updates since the beginning
+> of SVA support.
 
-Applied this one, thanks!
+OK, fair enough I suppose. What kind of delays are we talking about
+here? The fact that you basically have a unbounded list of IOMMUs
+(although in practise I suppose it is limited by the amount of GPUs and
+other fancy stuff you can stick in your machine) does slightly worry me.
 
+At some point the low latency folks are going to come hunting you down.
+Do you have a plan on how to deal with this; or are we throwing up our
+hands an say, the hardware sucks, deal with it?
 
