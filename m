@@ -1,145 +1,126 @@
-Return-Path: <linux-kernel+bounces-728294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E70AB0261A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:04:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 450CFB0261D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC19D5C3C24
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:04:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F94DB420F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F7F220F51;
-	Fri, 11 Jul 2025 21:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E0621A457;
+	Fri, 11 Jul 2025 21:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqMV6ahU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Va0teick"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185A9288CC;
-	Fri, 11 Jul 2025 21:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEA0288CC;
+	Fri, 11 Jul 2025 21:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752267857; cv=none; b=fw7+yQo+x+wofVv2iq7ZejfmdBSZD1ixYCtQSp0tsKBRt0Z6DpKD9JX5YV8v8fxb/Jq6ib2qfR4waJcoMnR73Sw7bi9fVjuNojlR/hoYzX1wVQd60oh7w/51F1iaEvBZucDCoULYpyJTbnPX2RjCuFqYBX/rD2JxhPh8xdDo2Pk=
+	t=1752267912; cv=none; b=PnxbmCGyZyLIRJMjvsbn1QTjIOmAORzOCiin62P9x/YG+OqFMIIiTr3NTre7kgjHoj5e4Ln/BYsP1w5gHidknocJ1Ni/kV4NsXRT5uRbL0HlviGFCTNY40ksHdCL5apKmSMiIepOAN6pkZrNg2lYALAadjei1tBhaq/M9HK4Wjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752267857; c=relaxed/simple;
-	bh=rn16cvdN403qOcjWimJ2fVcoqyZNuixWbvbKS5/G03w=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=j0ccV7HnT4OnKaRPVAm4SB82xgWvKlBZ2na7//Qj+Vhdor5Sv3EKSnAE7CXwi6EnCwJg96hn1I749nXJx3HVxgFPf3bPzqaFb9EEWxiTHIG6jhAgyJED7GYRMPVMjFPQOVY70QCspPgdNe+dpNEbcdzjK6rlGQ31IYOxyxzPOpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqMV6ahU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B50CC4CEED;
-	Fri, 11 Jul 2025 21:04:11 +0000 (UTC)
+	s=arc-20240116; t=1752267912; c=relaxed/simple;
+	bh=uHv2HgJnKbhKwjNP1Z1NjX9olIzNk5naCNk8EoEhros=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=p4TPlL37yd63LWyJD4sLMZqlzSX0qDQdGdz0DKLtrS0vQSP6iEEfNUTdgS3mSG3gjTwpk3nwQKkr6axEocC4mT9Qztnwrru8h2BKtanhwNFau5l0/8WE/irleh0thKat2BXWFea1mmfdrpeiN7MTTI+6mJl//zfDuZQABrjF1Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Va0teick; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 920A3C4CEED;
+	Fri, 11 Jul 2025 21:05:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752267856;
-	bh=rn16cvdN403qOcjWimJ2fVcoqyZNuixWbvbKS5/G03w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EqMV6ahUAm6mfMakxAisU+hvQ952AxcgO5Gm3DyyLtOPkFjbioIMRR+zHMF5SA2KX
-	 lMF6YgLMvXRevWnDXid97D4DD5gfTzsARJ4/2L7pMeEix3YeuAlxF3vWQ+SQmmCIfR
-	 13cl3dNh+GILL/73/qjLZ9bqVimpE9hxik8lDIpsY2CO/3b7BAfEKPuU7GdliNG8N6
-	 ENBEfSES6aGOOonhlZYu/h2QKu9nZRZQz3vRWZVTAzTdrk3otKyckhOFWBLuqD39rQ
-	 w9E2AdHcFU5yDcSpS8HKZCmJNBdkQrPuQJXdbBVz7cGKECaoGGu6bfULwKIZ/ffQcP
-	 SWeGo/TXuRlzA==
+	s=k20201202; t=1752267911;
+	bh=uHv2HgJnKbhKwjNP1Z1NjX9olIzNk5naCNk8EoEhros=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Va0teickhjzFgErQ9hAONAf8bZW3XPHI+c2FMG/SBppey4C0hi8xjsm9cRdTGb40B
+	 jOPCgyQctdfLGL7M222hOeqgsM4EbSAqw+LBCKn3fyxvmJjaLS/WNEnBTUyvsRrE4o
+	 LsKkIJyBEsP+WU9HgK46sKvy25tW1GXPIr50/PHfUwwN0TpdSVARlEd6ppl9DbcsJ+
+	 rTdqH+svHAVaP+UQb6eWTQCP6Z4+wr1cNjJtEC1UtoSxGXvKdJOLSEeRXueJMpGIFZ
+	 f8OtNzEDIDhsZ0IQh/uX5CtIsFf/juPLpxwmdpjSiJFUX2HXP0v11wI2CKNWlYne7H
+	 R8s0Kt9soYEhw==
+Date: Fri, 11 Jul 2025 16:05:10 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Timothy Pearson <tpearson@raptorengineering.com>
+Cc: Krishna Kumar <krishnak@linux.ibm.com>,
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-pci <linux-pci@vger.kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	christophe leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Anastasio <sanastasio@raptorengineering.com>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v2 6/6] pci/hotplug/pnv_php: Enable third attention
+ indicator
+Message-ID: <20250711210510.GA2306333@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 11 Jul 2025 23:04:09 +0200
-Message-Id: <DB9J417F3XRT.1XGPA6VLF9T8K@kernel.org>
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
- <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
- "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
- "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
- <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Alan Stern" <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v6 8/9] rust: sync: Add memory barriers
-X-Mailer: aerc 0.20.1
-References: <20250710060052.11955-1-boqun.feng@gmail.com>
- <20250710060052.11955-9-boqun.feng@gmail.com>
- <DB93NWEAK46D.2YW5P9MSAWVCN@kernel.org> <aHESYzVOTCwADqpP@Mac.home>
- <DB9GF0U3JJWL.3FQFMRTBO52C1@kernel.org> <aHFlS96FTRgS0dH_@tardis-2.local>
-In-Reply-To: <aHFlS96FTRgS0dH_@tardis-2.local>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1841754281.1353162.1752257887865.JavaMail.zimbra@raptorengineeringinc.com>
 
-On Fri Jul 11, 2025 at 9:26 PM CEST, Boqun Feng wrote:
-> On Fri, Jul 11, 2025 at 08:57:27PM +0200, Benno Lossin wrote:
->> On Fri Jul 11, 2025 at 3:32 PM CEST, Boqun Feng wrote:
->> > On Fri, Jul 11, 2025 at 10:57:48AM +0200, Benno Lossin wrote:
->> > [...]
->> >> > +}
->> >> > +
->> >> > +/// A full memory barrier.
->> >> > +///
->> >> > +/// A barrier that prevents compiler and CPU from reordering memor=
-y accesses across the barrier.
->> >> > +pub fn smp_mb() {
->> >> > +    if cfg!(CONFIG_SMP) {
->> >> > +        // SAFETY: `smp_mb()` is safe to call.
->> >> > +        unsafe {
->> >> > +            bindings::smp_mb();
->> >>=20
->> >> Does this really work? How does the Rust compiler know this is a memo=
-ry
->> >> barrier?
->> >>=20
->> >
->> > - Without INLINE_HELPER, this is an FFI call, it's safe to assume that
->> >   Rust compiler would treat it as a compiler barrier and in smp_mb() a
->> >   real memory barrier instruction will be executed.=20
->> >
->> > - With INLINE_HELPER, this will be inlined as an asm block with "memor=
-y"
->> >   as clobber, and LLVM will know it's a compiler memory barrier, and t=
-he
->> >   real memory barrier instruction guarantees it's a memory barrier at
->> >   CPU reordering level as well.
->> >
->> > Think about this, SpinLock and Mutex need memory barriers for critical
->> > section, if this doesn't work, then SpinLock and Mutex don't work
->> > either, then we have a bigger problem ;-)
->>=20
->> By "this not working" I meant that he barrier would be too strong :)
->>=20
->> So essentially without INLINE_HELPER, all barriers in this file are the
->> same, but with it, we get less strict ones?
->
-> Not the same, each barrier function may generate a different hardware
-> instruction ;-)
->
-> I would say for a Rust function (e.g. smp_mb()), the difference between
-> with and without INLINE_HELPER is:
->
-> - with INLINE_HELPER enabled, they behave exactly like a C function
->   calling a C smp_mb().
->
-> - without INLINE_HELPER enabled, they behave like a C function calling=20
->   a function that never inlined:
->
->   void outofline_smp_mb(void)
->   {
->     smp_mb();
->   }
->
->   It might be stronger than the "with INLINE_HELPER" case but both are
->   correct regarding memory ordering.
+On Fri, Jul 11, 2025 at 01:18:07PM -0500, Timothy Pearson wrote:
+> ----- Original Message -----
+> > From: "Krishna Kumar" <krishnak@linux.ibm.com>
+> > To: "Bjorn Helgaas" <helgaas@kernel.org>, "Timothy Pearson" <tpearson@raptorengineering.com>
+> > Cc: "linuxppc-dev" <linuxppc-dev@lists.ozlabs.org>, "linux-kernel" <linux-kernel@vger.kernel.org>, "linux-pci"
+> > <linux-pci@vger.kernel.org>, "Madhavan Srinivasan" <maddy@linux.ibm.com>, "Michael Ellerman" <mpe@ellerman.id.au>,
+> > "christophe leroy" <christophe.leroy@csgroup.eu>, "Naveen N Rao" <naveen@kernel.org>, "Bjorn Helgaas"
+> > <bhelgaas@google.com>, "Shawn Anastasio" <sanastasio@raptorengineering.com>, "Lukas Wunner" <lukas@wunner.de>
+> > Sent: Monday, July 7, 2025 3:01:00 AM
+> > Subject: Re: [PATCH v2 6/6] pci/hotplug/pnv_php: Enable third attention indicator
+> 
+> > Thanks all for the review and Thanks a bunch to Timothy for fixing the PE Freeze
+> > issue. The hotplug issues are like you fix N issue and N+1 th issue will come
+> > with new HW.
+> > 
+> > We had a meeting of around 1.5 -2.0 hr with demo, code review and log review and
+> > we decided to let these fixes go ahead. I am consolidating what we discussed -
+> > 
+> > 
+> > 1. Let these fixes go ahead as it solves wider and much needed customer issue
+> > and its urgently needed for time being. We have verified in live demo that
+> > nothing is broken from legacy flow and
+> > 
+> > PE/PHB freeze, race condition, hung, oops etc has been solved correctly.
+> > Basically it fixes below issues -
+> > 
+> > root-port(phb) -> switch(having4 port)--> 2 nvme devices
+> > 
+> > 1st case - only removal of EP-nvme device (surprise hotplug disables msi at root
+> > port), soft removal may work
+> > 2nd case  - If we remove switch itself (surprise hotplug disable msi at root
+> > port) .
+> 
+> Just a quick follow up to see if anything else is needed from my end
+> before this merge can occur?
 
-Yes, this is exactly what I meant with "not working" :)
+I was waiting for a v3 to fix at least these:
 
----
-Cheers,
-Benno
+  - Subject line style matching history in drivers/pci/hotplug/ (use
+    "git log --oneline" to see it)
+
+  - Broken subject line wrapping into commit log
+
+  - Spelling fixes
+
+  - Comment reformat to match prevailing style
+
+  - Note attention indicator behavior changes in commit log
+
+  - Some minor refactoring
+
+Basically everything mentioned in the responses to the original
+posting.  Or was there a v3 that I missed?
+
+Bjorn
 
