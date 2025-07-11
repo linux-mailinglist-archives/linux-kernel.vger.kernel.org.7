@@ -1,117 +1,101 @@
-Return-Path: <linux-kernel+bounces-727409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D1A3B019CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:29:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79221B019CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:30:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C8BB1C479C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:30:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5D0F1CC0114
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EA2283CBF;
-	Fri, 11 Jul 2025 10:29:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92481C84D9;
-	Fri, 11 Jul 2025 10:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817B327EC78;
+	Fri, 11 Jul 2025 10:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="c3q3XBJM"
+Received: from mail-4317.protonmail.ch (mail-4317.protonmail.ch [185.70.43.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA865283FD8;
+	Fri, 11 Jul 2025 10:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752229785; cv=none; b=NgjVVvsTXreOPF68R0oovFEYFU6dFZ03z5Kv80sGowtFRTg3hTk6mVsxV9F9DKJR1Ejr3pU5DQ7Pdff4W9pB1ll16CWIPlN6458WGPDq6JvKUNKujiwDhTmULesK+H22cLM3Tc83+vpwjBEetKp7cF0wkN61+7Q7QtHIlCHzDww=
+	t=1752229806; cv=none; b=fgEK5fsteoNZTmxEgErFZNNQxQAuYyTA8yOl7O5aRHT/VyvmBkTdno/gsnCDjJGjBcGqJW3We4uO2kf9zSQgQ/XGwKRQDkuBJtpVKFiO2i7n/Bmo+lTMpfAEgIBx0uN7oEGx4aG1jhWYptYU70Vw+EUO+bQNKnkDzbTF5SozJWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752229785; c=relaxed/simple;
-	bh=nzBByqRPRCsMsrvtXex+8bHjnmxE6PYCfebpjrSUVg0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EG3xly/D6UmGiB1C1HR2t02/pQ5NrHcYhjmiFBOeL26Sa5EPVF45cK5P2FDVuEuuNep11bQv8qH52n3PCAP2xYf3a97BK96zCnO4zbOY5J9LsCsTcbPRE5+ULmKvjDBevfkLCpRJFxRX4H8q5i9X7k18Yao44kxUrXKzhlbpHNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4ED8616F2;
-	Fri, 11 Jul 2025 03:29:32 -0700 (PDT)
-Received: from a076716.blr.arm.com (a076716.blr.arm.com [10.164.21.47])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E8BD73F738;
-	Fri, 11 Jul 2025 03:29:39 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-mm@kvack.org,
-	akpm@linux-foundation.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	x86@kernel.org,
-	sparclinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs/Kconfig: Enable HUGETLBFS only if ARCH_SUPPORTS_HUGETLBFS
-Date: Fri, 11 Jul 2025 15:59:34 +0530
-Message-Id: <20250711102934.2399533-1-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1752229806; c=relaxed/simple;
+	bh=BlZYGeLVk6sKZh/Cirv9qZuN+C8hZCxVFfQI+hk+eAk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KHx37jREezjbjM0xaNPf4zj9Dhc3ONqZAiTC8pPyGEiZc7teQkGFnfUBbXasXpOnbjE76rpDkdVlsM7HeY3jYP5e4CPQ+RN8D3M1TZz0Jrg6TllnJivq8dDUC+0d3BXp/UWtSguGIuZdQPBnIBKu3z5BxGeARq3YjxtOz5R3ErM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=c3q3XBJM; arc=none smtp.client-ip=185.70.43.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail; t=1752229800; x=1752489000;
+	bh=drFRM/G04HIxCGh+rRvAHzr+XceHmwxYmN2UfeW7nY0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=c3q3XBJM1keQo1n12nbNO1um3iFv2g3RXN8Y/MTH+qfFdPowVIVCjBeeejq7/fxL6
+	 uz47R0YX9KGRNJ//4S7+C70G9hUjv2iAPdl6iO1xdMERBL7qnrjhpDwnsCoSACxNRd
+	 Xjh+Ai/2yP6xZE1jz+MjxONQaC93WxOTe/WX9lnJdISlC16CyksWFPRp5nc0Ely6o5
+	 FiKBM3sBE3Fnqev14euFnKm/uP36GcGDBmucVPQUVfvpXYaY8w4iJm3oZ41MzaJ3J/
+	 Zr9FFhS2tQ6qxAWwQnzMJmeRkMEPcEjXyggRHXDP8iFTUTBbewiaCqCFusWUSZD0mT
+	 ngDF90DzOpT1g==
+Date: Fri, 11 Jul 2025 10:29:59 +0000
+To: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+From: Sean Nyekjaer <sean@geanix.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sebastian Reichel <sre@kernel.org>, Frank Li <Frank.li@nxp.com>, imx@lists.linux.dev, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>, Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>, Robin Gong <yibin.gong@nxp.com>, Enric Balletbo i Serra <eballetbo@gmail.com>
+Subject: Re: [PATCH v8 4/6] input: pf1550: add onkey support
+Message-ID: <wlbsl36wju4kehhqtoprrcdaqlgkrmapp5ecw44jcnfv4fy7wk@m3wrnbl7yoqq>
+In-Reply-To: <20250707-pf1550-v8-4-6b6eb67c03a0@savoirfairelinux.com>
+References: <20250707-pf1550-v8-0-6b6eb67c03a0@savoirfairelinux.com> <20250707-pf1550-v8-4-6b6eb67c03a0@savoirfairelinux.com>
+Feedback-ID: 134068486:user:proton
+X-Pm-Message-ID: 3c555c7164f1d3f06d86bcc31b47c53ec776aca3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Enable HUGETLBFS only when platform subscrbes via ARCH_SUPPORTS_HUGETLBFS.
-Hence select ARCH_SUPPORTS_HUGETLBFS on existing x86 and sparc for their
-continuing HUGETLBFS support. While here also just drop existing 'BROKEN'
-dependency.
+On Mon, Jul 07, 2025 at 05:37:23PM +0100, Samuel Kayode wrote:
+> Add support for the onkey of the pf1550 PMIC.
+>=20
+> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+> ---
 
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: x86@kernel.org
-Cc: sparclinux@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-mm@kvack.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- arch/sparc/Kconfig | 1 +
- arch/x86/Kconfig   | 1 +
- fs/Kconfig         | 2 +-
- 3 files changed, 3 insertions(+), 1 deletion(-)
+[...]
 
-diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-index 0f88123925a4..68549eedfe6d 100644
---- a/arch/sparc/Kconfig
-+++ b/arch/sparc/Kconfig
-@@ -97,6 +97,7 @@ config SPARC64
- 	select HAVE_ARCH_AUDITSYSCALL
- 	select ARCH_SUPPORTS_ATOMIC_RMW
- 	select ARCH_SUPPORTS_DEBUG_PAGEALLOC
-+	select ARCH_SUPPORTS_HUGETLBFS
- 	select HAVE_NMI
- 	select HAVE_REGS_AND_STACK_ACCESS_API
- 	select ARCH_USE_QUEUED_RWLOCKS
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 71019b3b54ea..9630e5e1336b 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -126,6 +126,7 @@ config X86
- 	select ARCH_SUPPORTS_ACPI
- 	select ARCH_SUPPORTS_ATOMIC_RMW
- 	select ARCH_SUPPORTS_DEBUG_PAGEALLOC
-+	select ARCH_SUPPORTS_HUGETLBFS
- 	select ARCH_SUPPORTS_PAGE_TABLE_CHECK	if X86_64
- 	select ARCH_SUPPORTS_NUMA_BALANCING	if X86_64
- 	select ARCH_SUPPORTS_KMAP_LOCAL_FORCE_MAP	if NR_CPUS <= 4096
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 44b6cdd36dc1..86a00a972442 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -256,7 +256,7 @@ config ARCH_SUPPORTS_HUGETLBFS
- 
- menuconfig HUGETLBFS
- 	bool "HugeTLB file system support"
--	depends on X86 || SPARC64 || ARCH_SUPPORTS_HUGETLBFS || BROKEN
-+	depends on ARCH_SUPPORTS_HUGETLBFS
- 	depends on (SYSFS || SYSCTL)
- 	select MEMFD_CREATE
- 	select PADATA if SMP
--- 
-2.25.1
+> +
+> +static int pf1550_onkey_probe(struct platform_device *pdev)
+> +{
+> +=09struct onkey_drv_data *onkey;
+> +=09struct input_dev *input;
+> +=09int i, irq, error;
+> +
+> +=09onkey =3D devm_kzalloc(&pdev->dev, sizeof(*onkey), GFP_KERNEL);
+> +=09if (!onkey)
+> +=09=09return -ENOMEM;
+> +
+> +=09onkey->dev =3D &pdev->dev;
+> +
+> +=09onkey->pf1550 =3D dev_get_drvdata(pdev->dev.parent);
+> +=09if (!onkey->pf1550->regmap)
+> +=09=09return dev_err_probe(&pdev->dev, -ENODEV,
+> +=09=09=09=09     "failed to get regmap\n");
+> +
+> +=09onkey->wakeup =3D device_property_read_bool(pdev->dev.parent,
+> +=09=09=09=09=09=09  "wakeup-source");
+> +
+
+I would like support for ONKEY_RST_EN enable or disable via a
+devicetree option.
+
+/Sean
 
 
