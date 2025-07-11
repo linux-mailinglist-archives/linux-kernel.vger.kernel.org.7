@@ -1,262 +1,183 @@
-Return-Path: <linux-kernel+bounces-728015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05104B0227B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:21:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC64B0227F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 524045C2189
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:21:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E39F83B21C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36422F0C67;
-	Fri, 11 Jul 2025 17:21:09 +0000 (UTC)
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2098.outbound.protection.outlook.com [40.107.236.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534CA2F19B6;
+	Fri, 11 Jul 2025 17:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b="WaQhzIeE"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406081AF0AF;
-	Fri, 11 Jul 2025 17:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.98
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752254469; cv=fail; b=Za7LgZKIPqFEtIHVhp0xw9r4J4xWwiNt2hd0JOrLR7ubXqrHnq2mfEY/lCTTsmVt5kGcvoHWNEfopbvTILsM6R41Evf/kOw5OfPR1c7mEJ3GZaKruhluljofY/35GUCHRNxb4A0SY4wBKQWUI6HBVLXetCcWshbM3MjOgG0LrsA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752254469; c=relaxed/simple;
-	bh=dfa8UV9KhX4MVvQ+KlGURAz1bcy20tUAOs02SPyJxrM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=U3T1WgdToVPxSSiLLf+pmlBDZTYWa9Jhf3G6cEh8JBrjG/ZSC1/gu+8KBcyyFzWETeIlKfWeU+iTAT0qqfWqcSVJvw9CaALytFEj8RAxptoWcsxtjJf20tM8WZPVTt9oQTycYciRt1Zu/9XDx1y262fxvevRrkRQJ5HIqQm4Y/c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com; spf=pass smtp.mailfrom=talpey.com; arc=fail smtp.client-ip=40.107.236.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=talpey.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JJIm6Ee9v/r5xptdRbylQkoJunIStyXPgcKw8nn7wZ6j82xw0I78F4sInc0MDH0Um4jhFviwbp0R0dQaNv1T2VO3AeMrLLkFr/Llq7Yt8oSNhO1vOZwOtzoChwog1l1gnRaTrLhtJl8v2SEPERW441/kuG0TYt4Xi37o01c7tN4KRDySwF0Cw+Tz7R3Ib9ndxRwljdiS3jETjeWcc5MzvKxpCOp7A9z4ZmoiV7lbu2d/iFaZFlMFCwfYFSZw15SJePIXSzQ3H4BZjr8b2YcmLeX+m3aX+n8phZpb7eiqUmRk0DKLPmvxGR71LldEYZSNjYFXGIHr5wVMcHAziIhsdg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+bgUxSBcIyhnty6MLvCoUEXJTOjdh4kuKK+5TBOSFp4=;
- b=tDkCvkfeosxcqq9wX4PcyBG07kBzdObkKFx8CCK7H285Q1Dn+blxmty33t3SJd6NXanrK+LFgjh/zqCyr2KSAfNl+w4+m7eq2sKR4uKt0/Tl7XLql0z4w1XeUXKvp7hzzsNqPd7LX4pbEW66vKKy/M/vGhT7HI0tvu6ggPmAhBvBXZ3hJ7OvIQ7k+HxWqxSG0kRNyeApGLJyEY9CBGs26at7jkA77odUJU3Rv6Cu/pdArW5YFYrPs+ZIXOphsi4M2Uksh3iq7pwUMz34aT1+CqNKvRqKYvgAPiqwjsprHkzMIB8SS19nEJyjr+9sKw1aZvJIZGV0A8ZJIRDIKK7loQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=talpey.com; dmarc=pass action=none header.from=talpey.com;
- dkim=pass header.d=talpey.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=talpey.com;
-Received: from BL3PR01MB7099.prod.exchangelabs.com (2603:10b6:208:33a::10) by
- DS4PR01MB9434.prod.exchangelabs.com (2603:10b6:8:29b::18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8922.25; Fri, 11 Jul 2025 17:21:02 +0000
-Received: from BL3PR01MB7099.prod.exchangelabs.com
- ([fe80::e81a:4618:5784:7106]) by BL3PR01MB7099.prod.exchangelabs.com
- ([fe80::e81a:4618:5784:7106%5]) with mapi id 15.20.8901.024; Fri, 11 Jul 2025
- 17:21:02 +0000
-Message-ID: <ea472081-a522-4c5a-8658-909793f460c8@talpey.com>
-Date: Fri, 11 Jul 2025 13:20:56 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nfsd: Using guard() to simplify nfsd_cache_lookup()
-To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>
-Cc: Su Hui <suhui@nfschina.com>, jlayton@kernel.org, okorniev@redhat.com,
- Dai.Ngo@oracle.com, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <> <cecf4793-d737-4501-a306-0c5a74daaf30@oracle.com>
- <175080335129.2280845.12285110458405652015@noble.neil.brown.name>
- <39ef1522-9fad-45f8-9c73-ffba7b1f04d0@oracle.com>
-Content-Language: en-US
-From: Tom Talpey <tom@talpey.com>
-In-Reply-To: <39ef1522-9fad-45f8-9c73-ffba7b1f04d0@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL0PR02CA0008.namprd02.prod.outlook.com
- (2603:10b6:207:3c::21) To BL3PR01MB7099.prod.exchangelabs.com
- (2603:10b6:208:33a::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C922EE271
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752254477; cv=none; b=sRdC49ibLlNe3jdAaO4raDY+ul7hRk5I2btLadwPZzY5B3hKvEqyS0fWVnj2XThtbwFamXjILujiMl+MewtGLHBjcnWnJGa21po5fT27yRqblWaVILFtLHwFyZbYNV3gTOTb2i8y3jo+n9GpwphYyrUHQDLzSvgsc34AuMVjl5Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752254477; c=relaxed/simple;
+	bh=5OcUmVtiEjxnZTw3Itjx3/5kv9ubOpczFhYnXszj+Ik=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=X+IG40yX2ocrM2AgFuvgpvecn5Q3Xd2OP/4HGXWaRJQ52mpFxHeBXALlTpzaCdyMf3SR6oPHESHYACyZV7lluI8M660Q3wKK3pbiXggrrINrQRu3Vs3Ud50hZFzmc40brDk8YJnKPjxKd9j1k7Cf8nfYAAXL7hTSb8zQE/zy3pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b=WaQhzIeE; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id 2012B240105
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:21:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net;
+	s=1984.ea087b; t=1752254468;
+	bh=LuSXOyWGP7McQ7VKfYPZafZMxFTE7ZQePqFfS4hjYB4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 From;
+	b=WaQhzIeE8B1xG2evj5IpmYdNDs3GaYF7qE7YqTh1V2dJWAly14kZLVT6yc+R+sYl9
+	 Kwru2AQRCiNAkqqK5HlmnPp7IzcY2pEEaNzw2rY3eCD82ywOweEtrfW0AG2h7qU4cX
+	 UA+MFx05LwCq8HKUZ0a5A1oPdDbG8OgddDm/3G4dVKp+TC7wGMaUbVgPKpPQOjTiCc
+	 0JEr9XwYHg56Uc9T91uVbO/w9C34HNvrU38lUlrP1nF0W9nVWLnEJVjeY7Xto7JxKc
+	 FdrN8caXTwW5tpUtCyo5kHp1OfgQs4UCc+M6gEcg7W6V5SBjckrj+TjHbDuz2BYtKq
+	 2xTcEOI8CfdqI83fojHyVr/wsudAuUhfKL9IahfjzjWzAegHu8WgtQPoj/xm5Papu9
+	 z6lnNYNQOKVLObVucG67GgH0jo843me4M3YdKags1BzPr/euo3TxH+dW+S3dVcpAe6
+	 rIWhZKiEFghHCNuZg2XBZ5mHP52C10QghsZDfgthhYqalOJCRq7
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4bdz5F0r8Rz9rxD;
+	Fri, 11 Jul 2025 19:21:05 +0200 (CEST)
+From: Charalampos Mitrodimas <charmitro@posteo.net>
+To: syzbot <syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net,  dsahern@kernel.org,  edumazet@google.com,
+  herbert@gondor.apana.org.au,  horms@kernel.org,  kuba@kernel.org,
+  linux-kernel@vger.kernel.org,  netdev@vger.kernel.org,
+  pabeni@redhat.com,  steffen.klassert@secunet.com,
+  syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] WARNING in ah6_output
+In-Reply-To: <683265d3.a70a0220.253bc2.0079.GAE@google.com>
+References: <683265d3.a70a0220.253bc2.0079.GAE@google.com>
+Date: Fri, 11 Jul 2025 17:21:07 +0000
+Message-ID: <87sej2ve2n.fsf@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR01MB7099:EE_|DS4PR01MB9434:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3bb45df9-4d69-466e-7c58-08ddc09f4f69
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MXgwb2Z2bnVadkh3Z05sakVQUmswQnoyc1RjWUJydUZoNkU4RmNIRURVdHFy?=
- =?utf-8?B?STYxRGVyYVppMG1SZEs2b0FIRzd0bnpvQlJLL1RJWmFEaUR0a0FHTmhGOFFB?=
- =?utf-8?B?aW5vRWo5M3M2b05WcmxIcU5yaksrbXM0dUhUYUI5RVFYOThvQ3VBZVZvcWEx?=
- =?utf-8?B?T3lCTStuSGgraGVlZXZkcytCSFA4SjNESjA5NWlzS3c5ZmRCajIxeFRiS016?=
- =?utf-8?B?TWZ1T2tKWGpPMDdXYmhhMTg4YTBxQnBIQnk3a3BwNE1jV3cwOHRBbjBsb2RF?=
- =?utf-8?B?RGltaHRJTXdjV0tvT1U3ZGpWOHFVTW9WWjNJTGtyUjMrUmM1Ky9lZmtFTmx1?=
- =?utf-8?B?dTJ1YzFmbHNDTlNKTU1uM1FzeU9udXVaQzJ0bnRYWHZueUoxc1U5aEMwMDZD?=
- =?utf-8?B?QVdpaEpJT1dYaER3STgybFdkUlNMUC9rbTdPN0VnREkyV2hzcEZnUm1SOEgx?=
- =?utf-8?B?YndrazB2Q1NuVHFJdDNsSGZ3VXZ3RWZLRy9ralhTdG9tb2NzbE9za1ZWSTAy?=
- =?utf-8?B?UlFnVFVVdU42R0hCbnNJb1doR2JRMUlBTTZyNnhwQUlsMWdYUXJRL2ZQRXk3?=
- =?utf-8?B?Q0RHdzRya2RQZnhHTXNQVURKRFc5cGR1Sk4zL0tad21pM2J3TlNmeEZaRkRt?=
- =?utf-8?B?SU1oNHNsa1JhclJCYVAzYTNMQjNlaVlEaUVhWkhKSzc2dms0SVQvdUNBWjEv?=
- =?utf-8?B?ZVNSZGIwNFNwcmpuR1cxRWl4WkZWSjJ2eHczVHVnSXQ3VTBud0tPSUdxZytj?=
- =?utf-8?B?a3ZCVytmclNXa0lFUGtRc3Y1QjF4aUhuOXQ3SHZ1RkhzWm80R1lZc0ZZdDdh?=
- =?utf-8?B?TGdILzhJMUtyVnNEWm5JZnFUd0FjYVA0THM5R2NVK3B6YllMWU4wamxkazNR?=
- =?utf-8?B?aW9pbU4zdlg5Wkp2OXkwbVg1L1cvQ0o1TDdITWZSZ243S0o5ckcyZkpFZWxx?=
- =?utf-8?B?dkVJNlgrRGVtRUNBZ2l0UXhuU2U2UFhYTGpDa1czQjlPUFRKUnhyYnpzTjho?=
- =?utf-8?B?SUxLRHhaYkNVY0RvamxqU1ZnYTVKQlZjSlhac3pwNTg4d05ERmtEWVBrM29P?=
- =?utf-8?B?TzEycVpqZWJpY1VMODk2SEd2bXdtSmdUcWxyUEY5Nk1DNlp0eXhlcUpzWklj?=
- =?utf-8?B?S1pRdTF0NWJLNElHK2s4ekViQWRzdGd2RFA0UllUN0xZOUhDUmJBMk5EV1NM?=
- =?utf-8?B?UXFGSklUWEtYWnpjSTQ3b3J3bkNVNDVFRm5WVHlPbVVWbU4wNGZ5TEhXTVFK?=
- =?utf-8?B?L1kvNDBaS0VLU2tMZmxkSWprRUVYd25vR09WRDBFVTFDSndiUVloTUZrWmF1?=
- =?utf-8?B?ZTRZcVJsU3NpSUw0bDNlQlVwa1ZHVnhTRjJxNXRsaE0yN0dtQTV4MXdiWm41?=
- =?utf-8?B?ditQN2lpUE52Nkg3b0ROa3k2WG5rMTBUMFV5TXFqQUFuaHRFaFRFdFgyMWRE?=
- =?utf-8?B?OW5IR0V4Z2t0aGdyWVExNG1DTFJrckJNbXBNQjZiTzB4Y0ZyYXppUm5pMkht?=
- =?utf-8?B?VnpqVjBRWGs5bzdJTTV4cCtvUUljZzllMUk3LzQ3RTJwK3QrbW9ZNG4yZnFU?=
- =?utf-8?B?OTd2QmhHeVg3WFIyYUdhOGcrZ1JQUGYvWHpmWWkzWWpYVloyUm5zMzBqNk1U?=
- =?utf-8?B?NDBTeS9PcGZtREVBK0IrTTd6VDFBTU9kbXB5WDFWQ2dvb2xSM3JnVldpQVMz?=
- =?utf-8?B?amo3K0UxQlhrTkJ5NE9xdHpDci96RWhUaFFUaHNWVGxMamw0QjhBSkNUZjZN?=
- =?utf-8?B?ek9DNmxZcHlHcUt6dFFLRjRlUlBHSVluWDY4Nm5iVS82ME5ocmkvYkZYc2hm?=
- =?utf-8?B?K0ZIVUs4eDdrckI4MjhhaXZLYXRyVkV0OG9KeU8wNmxpa0hiRE9BOHZncGw2?=
- =?utf-8?B?aW52cXBpWFo5VHh3cXpFY2Z4b2tNZnlpbGVqMFFqTENIVlRzMDlkTXhDb05U?=
- =?utf-8?Q?vNGU4RXvwl4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR01MB7099.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WmdndlYyRjJLUk96RUZTeHhZZVU2NXpWNDdFcEY4TGFqbDNZdUlHSEtSdVRs?=
- =?utf-8?B?QUZXbkVEalBTczRlL2tzV0ZjV0ZBM2ZWemRHZXRjc1BFWDBYd3JtZFRXMWc0?=
- =?utf-8?B?M0srVUMzbERkblBiWlpWakpuazNxS0J0cFMrdkpselZsSGE3bEVOS0dDRFU5?=
- =?utf-8?B?cy8wUVFoaXAwakczT3JwSWpVMExTUGxrZmQzQi9zZDlnbkxXRU40YS9LekVC?=
- =?utf-8?B?VzVvZmlQektTOWl6YnZKaGlmZ0Z1UVFWeUttNkRZa1BRbFpSY1pxT1FxMDNZ?=
- =?utf-8?B?amUzbm8yUFUrNnhYRWM5bHkzU052T2x4WXEydFJ6NGhVYUxWZEhnZGFNcG85?=
- =?utf-8?B?aWNlRzJjb29yT2lWY1dLMnQ1RzNKUGdtNGo5Z0Uxd2xKMnphR291Q1NVTi9r?=
- =?utf-8?B?aFFqdmpZTndaM0FkVHJ1bDh1V3g4SzMzWXVzVytrbGNQYkR3N29tUzRyaXdF?=
- =?utf-8?B?ZzJFTVpxVVRFbmx6RkdmZmlxZm4rZ1AySUdWdEJPS3F3TnppWEdGTkF5L05C?=
- =?utf-8?B?c3o1SGM3WHoxdTdoNFdOaHMvcFVzMWpuODE5NjBnWElmYk95RFNyQ3F0NXgr?=
- =?utf-8?B?b2QyT29yRlpLc3BBK1MvdHFJQlNmbkJqdUpQVjRVOVVUbEwwSVI0aHhJaXd2?=
- =?utf-8?B?MTlNcUNYaFZJaW9Gc0VYYmNpTVpORDl5MzlHY1dsOTJ2VDZnMlBlLzVSVUZz?=
- =?utf-8?B?bGxOeUszMnNZeTdMS0RFTnA3V0RSWUtIcDk3cUk0alptdGpqYlBNV1ZzcE5J?=
- =?utf-8?B?MHQxRDNwZStsNUpaREVqQ0JLUmpKdWRhTWdjTk54VmorVUovQkpXYytvZS8r?=
- =?utf-8?B?cmo0T2FOL0dkZEQ1WERSNXc2THZxOVV5SDROTFFGcitxTi9oQTRKVUdiYysy?=
- =?utf-8?B?SGhZRjNxTERoV0xaSTlMUGh6V0hYV3ZXY2p4OGFaUHpGNWdLemV5YzdNYlg4?=
- =?utf-8?B?RmJZOE1xWEI2Qks2U2Z0NysvRkxodStwbkNnSmJtS255YXdVZFcvQTcvVWRv?=
- =?utf-8?B?WDhGaHJhNEtMcVRzNkp5cUtMM3VOQmpEbktzRFE3VFZFNmtrdWljTDFwZnVE?=
- =?utf-8?B?TmtTdDZXNU1JVmFRV2dud0RxQW1DVERRVGJjcE84ajd0a2VHWVQyUXZuLzBB?=
- =?utf-8?B?Yi9uSGQ2RFpoazlwYm40WmNmcXEyN1lyTVpGZnVhcjZPdWx0Q1AvekNmd0dJ?=
- =?utf-8?B?aVd0bENMV1NNL0lEWTgvVlBBZHVHLzdVRG5VWW0vWFZzcFBkMm0zK3VDM2hK?=
- =?utf-8?B?bnhrVkNteGF1cllBbGxQanNKaHdBL2JBNXpnRFJmUWFwbjltUFFPMVNFSDls?=
- =?utf-8?B?T3lwSlN3OFRuN25zYld4WGVpTmNQQWtjdFFRUk55bWZ0YzZENitOQTJOZXll?=
- =?utf-8?B?RFkybWhWVXlOaG5ZK2VTcXlGR2xjUjc3MWJMMzdMYmxPaU1EcERNNFRGeTRr?=
- =?utf-8?B?bXk3eUpkNWlBREEwUnpZL05OOG9nQzQwN2M2WWJMWWFRVndiUmpER0dsVm0w?=
- =?utf-8?B?Y1NjRzFLdy9HeC9pU0kwL0Q2MWlDdDlsL1NLQzBRWWh4bFhxaUJ2Nm1RU01r?=
- =?utf-8?B?Y0o4V1lYbklRN1lkMGhoYmdHUXVQaGhodFBsZXBOMlJxV0ZMbTN6d2ZtaWoz?=
- =?utf-8?B?a0Z1MW4vRlVmSUR3WmpzYTd6U3hRdDA4LzZ6QWdLSUVtcGJIMU5lTmlPQy81?=
- =?utf-8?B?RE1hblorcFRoZUFPVW0xaWVvbkd5YnN1Y01nb0RQalNxRUZiVUExRndkQ0R5?=
- =?utf-8?B?dkJZdUp0Z2I3b1M3RWJRUWhqQ0tsZlNXOGdPNGhtaWpodG1RcktNTUZTTm9W?=
- =?utf-8?B?ZXVBc0xFTEhaU1BKV3hiZnJSb1JYZCsvQ2NJbENwTTJTUzc5RWRYRTZiSGMr?=
- =?utf-8?B?dlpRWDgyY1lHQUszQUl1d1BwM0tCWHhzT3VHVVU0eUJMYno0M3FabzdzQWlU?=
- =?utf-8?B?STMxcGVUN3JyU3IvUC9Bckg5NlF3WTg0bWE0WCsxYnJHMEg2WGUrblVMR1gv?=
- =?utf-8?B?a251N3VGK1lRam5LdnlRcGFna3Z3bmFzS3dBdUtPSFBhZ05HV2VSUlNtakRV?=
- =?utf-8?B?U1h6ZUtpeXhRYlVTbEJSLzBNUmM4N3l6Z0ZYR2w1MllYeXVhQXJwZnQrWXUr?=
- =?utf-8?Q?ieZw3thI6rqXVJDs2EDzOaQf3?=
-X-OriginatorOrg: talpey.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3bb45df9-4d69-466e-7c58-08ddc09f4f69
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR01MB7099.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 17:21:02.2539
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 2b2dcae7-2555-4add-bc80-48756da031d5
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: R10RasaFaXx4bMpvCfeYtYPE2r5mzHK5xO8JrOhfLzE/y7UbJ5h3ooOyOOpKTQ8/
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR01MB9434
+Content-Type: text/plain
 
-On 7/11/2025 10:22 AM, Chuck Lever wrote:
-> On 6/24/25 6:15 PM, NeilBrown wrote:
->> On Wed, 25 Jun 2025, Chuck Lever wrote:
-> 
->>> What is more interesting to me is trying out more sophisticated abstract
->>> data types for the DRC hashtable. rhashtable is one alternative; so is
->>> Maple tree, which is supposed to handle lookups with more memory
->>> bandwidth efficiency than walking a linked list.
->>>
->>
->> While I generally like rhashtable there is an awkwardness.  It doesn't
->> guarantee that an insert will always succeed.  If you get lots of new
->> records that hash to the same value, it will start failing insert
->> requests until is hash re-hashed the table with a new seed.
-> 
-> Hm. I hadn't thought of that.
-> 
-> 
->> This is
->> intended to defeat collision attacks.  That means we would need to drop
->> requests sometimes.  Maybe that is OK.  The DRC could be the target of
->> collision attacks so maybe we really do want to drop requests if
->> rhashtable refuses to store them.
-> 
-> Well I can imagine, in a large cohort of clients, there is a pretty good
-> probability of non-malicious XID collisions due to the birthday paradox.
-> 
-> 
->> I think the other area that could use improvement is pruning old entries.
->> I would not include RC_INPROG entries in the lru at all - they are
->> always ignored, and will be added when they are switched to RCU_DONE.
-> 
-> That sounds intriguing.
-> 
-> 
->> I'd generally like to prune less often in larger batches, but removing
->> each of the batch from the rbtree could hold the lock for longer than we
->> would like.
-> 
-> Have a look at 8847ecc9274a ("NFSD: Optimize DRC bucket pruning").
-> Pruning frequently by small amounts seems to have the greatest benefit.
-> 
-> It certainly does keep request latency jitter down, since NFSD prunes
-> while the client is waiting. If we can move some management of the cache
-> until after the reply is sent, that might offer opportunities to prune
-> more aggressively without impacting server responsiveness.
-> 
-> 
->> I wonder if we could have an 'old' and a 'new' rbtree and
->> when the 'old' gets too old or the 'new' get too full, we extract 'old',
->> move 'new' to 'old', and outside the spinlock we free all of the moved
->> 'old'.
-> 
-> One observation I've had is that nearly every DRC lookup will fail to
-> find an entry that matches the XID, because when things are operating
-> smoothly, every incoming RPC contains an XID that hasn't been seen
-> before.
-> 
-> That means DRC lookups are walking the entire bucket in the common
-> case. Pointer chasing of any kind is a well-known ADT performance
-> killer. My experience with the kernel's r-b tree is that is does not
-> perform well due to the number of memory accesses needed for lookups.
-> 
-> This is why I suggested using rhashtable -- it makes an effort to keep
-> bucket sizes small by widening the table frequently. The downside is
-> that this will definitely introduce some latency when an insertion
-> triggers a table-size change.
-> 
-> What might be helpful is a per-bucket Bloom filter that would make
-> checking if an XID is in the hashed bucket an O(1) operation -- and
-> in particular, would require few, if any, pointer dereferences.
-> 
-> 
->> But if we switched to rhashtable, we probably wouldn't need an lru -
->> just walk the entire table occasionally - there would be little conflict
->> with concurrent lookups.
-> When the DRC is at capacity, pruning needs to find something to evict
-> on every insertion. My thought is that a pruning walk would need to be
-> done quite frequently to ensure clients don't overrun the cache. Thus
-> attention needs to be paid to keep pruning efficient (although perhaps
-> an LRU isn't the only choice here).
+syzbot <syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com> writes:
 
-As a matter of fact, LRU is a *bad* choice for DRC eviction. It will
-evict the very entries that are most important! The newest ones are
-coming from clients that are working properly. The oldest ones were
-from the ones still attempting to retry.
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    9e89db3d847f Merge tag 'linux-can-fixes-for-6.15-20250520'..
+> git tree:       net
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1476d1f4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c3f0e807ec5d1268
+> dashboard link: https://syzkaller.appspot.com/bug?extid=01b0667934cdceb4451c
+> compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/8b09322b598e/disk-9e89db3d.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/23ed08e707b5/vmlinux-9e89db3d.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/be78b62450e7/bzImage-9e89db3d.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com
+>
+> ------------[ cut here ]------------
+> memcpy: detected field-spanning write (size 40) of single field "&top_iph->saddr" at net/ipv6/ah6.c:439 (size 16)
 
-This is pretty subtle, and it may not be a simple thing to implement.
-But at a high level, evicting entries from a client that is regularly
-issuing new requests is a much safer strategy. Looking at the age of
-the requests themselves, without considering their source, is much more
-risky.
+This could be happening because
 
-Tom.
+     memcpy(&top_iph->saddr, iph_ext, extlen)
+
+tries to copy extension headers (40 bytes) into the IPv6 saddr field (16
+bytes), when extension headers should be at
+
+      (u8*)top_iph + sizeof(*top_iph)
+
+if I'm not mistaken.
+
+C. Mitrodimas
+
+> WARNING: CPU: 0 PID: 8838 at net/ipv6/ah6.c:439 ah6_output+0xe7e/0x14e0 net/ipv6/ah6.c:439
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 8838 Comm: syz.1.814 Not tainted 6.15.0-rc6-syzkaller-00173-g9e89db3d847f #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+> RIP: 0010:ah6_output+0xe7e/0x14e0 net/ipv6/ah6.c:439
+> Code: ff e8 36 80 9f f7 c6 05 bb 97 48 05 01 90 b9 10 00 00 00 48 c7
+> c7 a0 56 7e 8c 4c 89 fe 48 c7 c2 00 59 7e 8c e8 a3 dc 63 f7 90 <0f> 0b
+> 90 90 e9 b5 fe ff ff e8 74 e4 35 01 48 8b 4c 24 10 80 e1 07
+> RSP: 0018:ffffc900049f70e0 EFLAGS: 00010246
+> RAX: 3fffcb5d3bcc7c00 RBX: 0000000000000028 RCX: 0000000000080000
+> RDX: ffffc9000ece1000 RSI: 00000000000052e8 RDI: 00000000000052e9
+> RBP: ffffc900049f7250 R08: 0000000000000003 R09: 0000000000000004
+> R10: dffffc0000000000 R11: fffffbfff1bba944 R12: dffffc0000000000
+> R13: 1ffff9200093ee38 R14: ffff8881452e8800 R15: 0000000000000028
+> FS:  00007fc3a1d2c6c0(0000) GS:ffff8881260c7000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000555569628808 CR3: 000000005cf4e000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  xfrm_output_one net/xfrm/xfrm_output.c:555 [inline]
+>  xfrm_output_resume+0x2c55/0x6170 net/xfrm/xfrm_output.c:590
+>  __xfrm6_output+0x2eb/0x1070 net/ipv6/xfrm6_output.c:103
+>  NF_HOOK_COND include/linux/netfilter.h:303 [inline]
+>  xfrm6_output+0x1c6/0x4f0 net/ipv6/xfrm6_output.c:108
+>  ip6_send_skb+0x1d5/0x390 net/ipv6/ip6_output.c:1981
+>  l2tp_ip6_sendmsg+0x1378/0x1870 net/l2tp/l2tp_ip6.c:661
+>  sock_sendmsg_nosec net/socket.c:712 [inline]
+>  __sock_sendmsg+0x19c/0x270 net/socket.c:727
+>  ____sys_sendmsg+0x505/0x830 net/socket.c:2566
+>  ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+>  __sys_sendmsg net/socket.c:2652 [inline]
+>  __do_sys_sendmsg net/socket.c:2657 [inline]
+>  __se_sys_sendmsg net/socket.c:2655 [inline]
+>  __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fc3a0f8e969
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48
+> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+> 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fc3a1d2c038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 00007fc3a11b6080 RCX: 00007fc3a0f8e969
+> RDX: 0000000000000800 RSI: 0000200000000540 RDI: 0000000000000004
+> RBP: 00007fc3a1010ab1 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007fc3a11b6080 R15: 00007ffc18a80a58
+>  </TASK>
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
 
