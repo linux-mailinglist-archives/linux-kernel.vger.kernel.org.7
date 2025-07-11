@@ -1,157 +1,92 @@
-Return-Path: <linux-kernel+bounces-727564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA826B01C20
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:34:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56F76B01C23
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BB6776237C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:34:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F1AB3AB230
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C9B29B8E2;
-	Fri, 11 Jul 2025 12:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A87F299923;
+	Fri, 11 Jul 2025 12:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EFMWAsX0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GTGBrRL3"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D3F4A24;
-	Fri, 11 Jul 2025 12:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE0E4A24
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752237280; cv=none; b=RgadvAbo0jfSBSDnjT0WQ6i6ufN0Us+tiAw12h5iq6+uIdpm/UUCTsXbDJBym0u+1OjeAWKOEQJudIJAvF+ypNg9nbTYNAf5fxqUGHoyKUUibQhQNoTr/QUvbp3h6L8tY9EeJex346WUMQWk6/NMoOTmbD6rBHvMdpJmXInCphw=
+	t=1752237335; cv=none; b=NDFVtXAi1M4HD0mI7QzRegZpG+sgtIqE0loGU+hFRNkiELM+zDUjlL+zkB6Y1j6ZRGRPe2CKK1XS5f8sfq0335HFC99OqtYA75YQ171hPtQg+wNbUKoBnBe1oJPf101YEcwtHl//oJnzF9t+fJ/0FUpXiJt2qQkHjdtXxjHUlxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752237280; c=relaxed/simple;
-	bh=iPzBUak9frIQPxX1OSSUONLfOETT41XmEQPiZTZmh90=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XlF46Y6RNdENqOOxnucMe8wg4gk2ySMHeYwd3tEPRRMRdJ36+UA3nKYj16lsAx13VrI+inxQnf6CHY4guJaPALzNvzd0OhXoqKTR0rfqhUO1lN6IyaM760UXNOq5+Fm92ggsmP0mHEIePBrMNZlGonUy5UnSTOcU+RH6oBoATH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EFMWAsX0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31CB4C4CEF8;
-	Fri, 11 Jul 2025 12:34:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752237280;
-	bh=iPzBUak9frIQPxX1OSSUONLfOETT41XmEQPiZTZmh90=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=EFMWAsX0WDIhXrSqySOFTtd74au8J70vA2APRHzPRgkGeOKVAf7UP/cYx/ndgq86e
-	 9QmhwR2dEuSegz7my3puu2hUendHXmgBukaue/oMYFibCQP54iVLGPMvyyFSbt2iFM
-	 cuVcNHfaiL66rhJMLw3GoNLglnaEEGnf3cFQiWvKGkPoHPyS+G6iNlkOAscu8STCp9
-	 eX59TUAzVP0DgZPyRPIWl14+wxtJ56NtV8rY0MPPiRKP0Do6EAJ6UnW4C1GLamKY2S
-	 BS0ZKl6WJnRVjFSvzD8AYspsFlBi6d1Ibyu8ObFoiLHEe9Mo4eXC1crjxhgfNQQN1F
-	 WkVty5MGtoIyw==
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-60c4f796446so3159929a12.1;
-        Fri, 11 Jul 2025 05:34:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV/EiORnDVAne5h3dxzO8SJOUEKoalsf+u3QhS9hftZyZ9of9meBpC+b1tbpIhDjxu8IkB5102/@vger.kernel.org, AJvYcCW0R0hZ9570G5AvALUHRelcNLPZzyR00GzZ5x2do73K+65Zp2XfLRzUs4L2RekxoKRp4zWhOfkK+qb2OZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY5RVJxvE1Jb0BAIFc0qtYjR2zpggycyNqDrHE3uOME27ZHtDS
-	Pxsum+CJRHX4fzSr2pNl9262J+7aUaJc099/yuSAR/Y2H9G8Iu8tFijqKsQSdgNs7ZKTqLvY2bc
-	VvcrIHmIcqIYL4ig+bfh5iO+5aBjVgPo=
-X-Google-Smtp-Source: AGHT+IEluutpYJhPNDQCqi/aWbbEENSWhbRoj7AH++W2t36i/1/OdG3p5utN3ZMcp6elFijTRbgenLzeZgoi4oOtBwo=
-X-Received: by 2002:a05:6402:1e92:b0:607:32e8:652 with SMTP id
- 4fb4d7f45d1cf-611e84997a1mr2486337a12.19.1752237278630; Fri, 11 Jul 2025
- 05:34:38 -0700 (PDT)
+	s=arc-20240116; t=1752237335; c=relaxed/simple;
+	bh=jmRJ33IE2Qv/GH/hve7cV/8UXJj8qwfKyo/rT5fCKfs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J4j6clG4FLGP2dIkhLTZxZEBZHVhK1BSubMAoK3dtZ2dHh0FqYLcnnDR3tr1IeeKRz0Lvc0T8bvkzvH93lS80LrgFCqWkOaNyRv7QQIRxquAyMPPwx9aK6VSN4+6GqzCeFHYIf/JMiQ3DoDIsJjIL71yaaOt18neomV9tUXOC/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GTGBrRL3; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6tBgnPJMJcxvlxrAraEdhRqVQKdzKwAYFq/XnOvTPsU=; b=GTGBrRL3WmUGLlpDI2o0STCtRc
+	apLQKxy6CLVMzJNP+M3OtE4zbIWeszGhv1nPG+LRIBhNngMa6UtictVBNe4nIl2CW0PdNoKFuv+QY
+	iWiJIZRXK1EIO/mHbzfEPXulDBH73W7LNau6usMHMiUiQIcfLhH9ZbYkqJyS/qxgElmFCSk7zIBAA
+	e5Tt2pYQNtLvFHFm657fY9FBN9a0vniWVf4S/vG2VrP5LXHJSlZVRwtYjI3BfQg1aiUYK+ydC68QW
+	Jr75LxKieMbNcLLSWfsEpqPvO5vliqciZdja2iCsMzWcFymIkAZNc+XSMjnXOPEt9siAt/FokKp3p
+	GoQ8CysA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uaCyJ-00000009G9O-3veH;
+	Fri, 11 Jul 2025 12:35:24 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 76A373001AA; Fri, 11 Jul 2025 14:35:23 +0200 (CEST)
+Date: Fri, 11 Jul 2025 14:35:23 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Li Chen <me@linux.beauty>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+	linux-kernel@vger.kernel.org, Li Chen <chenl311@chinatelecom.cn>,
+	K Prateek Nayak <kprateek.nayak@amd.com>
+Subject: Re: [PATCH v5 3/4] x86/smpboot: moves x86_topology to static
+ initialize and truncate
+Message-ID: <20250711123523.GC905792@noisy.programming.kicks-ass.net>
+References: <20250710105715.66594-1-me@linux.beauty>
+ <20250710105715.66594-4-me@linux.beauty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711102455.3673865-1-chenhuacai@loongson.cn> <2025071130-mangle-ramrod-38ff@gregkh>
-In-Reply-To: <2025071130-mangle-ramrod-38ff@gregkh>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 11 Jul 2025 20:34:25 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7oEv5jPufY+J-0wOax=m1pszck1__Ptapz5pmzYU5KHg@mail.gmail.com>
-X-Gm-Features: Ac12FXwdjQ3g5zxmjsCe_SAgVWzfc3x861r0WM0FTkTcHpT0fUNhHKvncL8LWXI
-Message-ID: <CAAhV-H7oEv5jPufY+J-0wOax=m1pszck1__Ptapz5pmzYU5KHg@mail.gmail.com>
-Subject: Re: [PATCH] init: Handle bootloader head in kernel parameters
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710105715.66594-4-me@linux.beauty>
 
-Hi, Greg,
+On Thu, Jul 10, 2025 at 06:57:09PM +0800, Li Chen wrote:
 
-On Fri, Jul 11, 2025 at 7:06=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Fri, Jul 11, 2025 at 06:24:55PM +0800, Huacai Chen wrote:
-> > BootLoader may pass a head such as "BOOT_IMAGE=3D/boot/vmlinuz-x.y.z" t=
-o
-> > kernel parameters. But this head is not recognized by the kernel so wil=
-l
-> > be passed to user space. However, user space init program also doesn't
-> > recognized it.
->
-> Then why is it on the kernel command line if it is not recognized?
-UEFI put it at the beginning of the command line, you can see it from
-/proc/cmdline, both on x86 and LoongArch.
+> +		memset(&x86_topology[pkgdom], 0, sizeof(x86_topology[pkgdom]));
 
->
-> > KEXEC may also pass a head such as "kexec" on some architectures.
->
-> That's fine, kexec needs this.
->
-> > So the the best way is handle it by the kernel itself, which can avoid
-> > such boot warnings:
-> >
-> > Kernel command line: BOOT_IMAGE=3D(hd0,1)/vmlinuz-6.x root=3D/dev/sda3 =
-ro console=3Dtty
-> > Unknown kernel command line parameters "BOOT_IMAGE=3D(hd0,1)/vmlinuz-6.=
-x", will be passed to user space.
->
-> Why is this a problem?  Don't put stuff that is not needed on the kernel
-> command line :)
-Both kernel and user space don't need it, and if it is passed to user
-space then may cause some problems. For example, if there is
-init=3D/bin/bash, then bash will crash with this parameter.
+$ git grep "memset(&\([^,]*\), 0, sizeof(\1))" | wc -l
+6439
+$ git grep "memset(\([^,]*\), 0, sizeof(\*\1))" | wc -l
+3319
 
->
-> >
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> > ---
-> >  init/main.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/init/main.c b/init/main.c
-> > index 225a58279acd..9e0a7e8913c0 100644
-> > --- a/init/main.c
-> > +++ b/init/main.c
-> > @@ -545,6 +545,7 @@ static int __init unknown_bootoption(char *param, c=
-har *val,
-> >                                    const char *unused, void *arg)
-> >  {
-> >       size_t len =3D strlen(param);
-> > +     const char *bootloader[] =3D { "BOOT_IMAGE", "kexec", NULL };
->
-> You need to document why these are ok to "swallow" and not warn for.
-Because they are bootloader heads, not really a wrong parameter. We
-only need a warning if there is a wrong parameter.
+But we don't have anything like:
 
->
->
-> >
-> >       /* Handle params aliased to sysctls */
-> >       if (sysctl_is_alias(param))
-> > @@ -552,6 +553,12 @@ static int __init unknown_bootoption(char *param, =
-char *val,
-> >
-> >       repair_env_string(param, val);
-> >
-> > +     /* Handle bootloader head */
->
-> Handle it how?
-argv_init and envp_init arrays will be passed to userspace, so just
-return early (before argv_init and envp_init handling) can avoid it
-being passed.
+#define zero_ref(var) memset(&(var), 0, sizeof(var))
+#define zero_ptr(ptr) memset((ptr), 0, sizeof(*(ptr)))
 
-Huacai
-
->
-> confused,
->
-> greg k-h
+Oh well..
 
