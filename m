@@ -1,196 +1,125 @@
-Return-Path: <linux-kernel+bounces-727064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15008B01494
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:27:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABF30B014E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0B8176151F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:25:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6756548796C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C661EE019;
-	Fri, 11 Jul 2025 07:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C68D1F1534;
+	Fri, 11 Jul 2025 07:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lz/JZlO5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="MVDBP+Ml"
+Received: from mail-m3289.qiye.163.com (mail-m3289.qiye.163.com [220.197.32.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85ED21EFFB4
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 07:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12731F0E24;
+	Fri, 11 Jul 2025 07:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752218770; cv=none; b=nAPCaP7uLCJFBzDvWcIyStK6pDz1MAAmtwmtA7KYcIHtcUUKXjr4do52VoQXJ0a6nCVUoum38MWFE0FTT86T8XXdd57UeOlOBFjCUYb0Oa0aerFdTmeSuggcjkpcWfqVwqxLbbyOzfcFTb4xF9IgOCaNEuzLddraUcSCzXkNMRc=
+	t=1752219753; cv=none; b=o+kSjR9XdKRd4uPqL42QH0d9UG7IwZevh4EQu02XOkAvPBZ2jJydiJjui2A7hr540HjqZMHZXLEj5bXZthstMo/HylPyis1xSq7w+DJP00dE0sZa7Z3fDerUDYWShv3cKH8GbTrr7JO4RNAb38EXiEzC8QJK9gcPD5NR2LsEzhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752218770; c=relaxed/simple;
-	bh=hMsl64gby8Q0twdUtCV+g0c/6bX4OupItL/pvuQ6z/E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K788aQtLcqTgsoOo4eZh1jgR02H4VBzSXBTWC08VgecUFgT5yBZumHeUh+EoH7H+han3/z4w/F6ZkUz+7tSfSmt8yOpsQ2rpI8aUPpqzetV2x46BL/KBIgsWw6mPHcIz+Rzp5iFmUvUjc4JXljI7Jr4c5o6C2DzrO5v5HxFoJEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lz/JZlO5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752218767;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=QSPK6pFRzoDLrBX1H6YdlGjEz0PyKwAT8n2cjPzr4Lo=;
-	b=Lz/JZlO5l4u4UJuV4Oayzdfv4zTLwx1SYA1n8cVkHmeTmRTduuF5NVWHOXNG+XHY7NX87I
-	G5rxIMkoNCsrbR4LF+G8YNniRfg21YfP8zRJIwny2D6PZVkqY0pZ87qNmLT6wfGvNX2T8G
-	ZlNMxCBgCQHhqDDNzZwiK3jsR+gahRc=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-619-WWcPSqBrOKO-WQ_t2gZxcg-1; Fri,
- 11 Jul 2025 03:26:03 -0400
-X-MC-Unique: WWcPSqBrOKO-WQ_t2gZxcg-1
-X-Mimecast-MFC-AGG-ID: WWcPSqBrOKO-WQ_t2gZxcg_1752218762
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 13FEA180034E;
-	Fri, 11 Jul 2025 07:26:02 +0000 (UTC)
-Received: from thuth-p1g4.redhat.com (unknown [10.45.224.54])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5EE0E30001A1;
-	Fri, 11 Jul 2025 07:25:54 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-spdx@vger.kernel.org
-Subject: [PATCH v3] powerpc: Drop GPL boilerplate text with obsolete FSF address
-Date: Fri, 11 Jul 2025 09:25:53 +0200
-Message-ID: <20250711072553.198777-1-thuth@redhat.com>
+	s=arc-20240116; t=1752219753; c=relaxed/simple;
+	bh=zSY5SfpIxP5bW4/J02CzHcFnbyzwnF76bsOcMPBvMAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LT0aihJmlEbOswMNwKVF3fU+iiJzZWteC9trBBx/VprfDS9KAFxN/aOspqFCv2d4fk6lWuob73iAuVYD8koTW07ICy0Q7Uo9InGW98u7OSmsJPPwtvZ3U4Ki2R6Zq+3wDeBRyENPBDXdiGEMqoek7dw4zQHJGtxWKuK/tkoadzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=MVDBP+Ml; arc=none smtp.client-ip=220.197.32.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1bae50b4c;
+	Fri, 11 Jul 2025 15:26:58 +0800 (GMT+08:00)
+Message-ID: <ec271884-87a1-4117-a7f7-45e423b9de8a@rock-chips.com>
+Date: Fri, 11 Jul 2025 15:26:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/12] drm/exynos: exynos_dp: Remove redundant
+ &analogix_dp_plat_data.skip_connector
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ hjc@rock-chips.com, andy.yan@rock-chips.com,
+ dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+ dianders@chromium.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20250709070139.3130635-1-damon.ding@rock-chips.com>
+ <20250709070139.3130635-6-damon.ding@rock-chips.com>
+ <6306541.2iPT33SAM4@diego>
+Content-Language: en-US
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <6306541.2iPT33SAM4@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0saQ1ZPTxhIHh8aQx1OS0NWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a97f86155fa03a3kunm5a905d91f32139
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MC46TRw5ATE0Qh8eE1ZDGTwX
+	PEIKCy9VSlVKTE5JSUpDQ0lLSUpNVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJQk5INwY+
+DKIM-Signature:a=rsa-sha256;
+	b=MVDBP+MlXmQIBids0j03Vrslb0E7yHyCGuZ7vavVT9bPeByoPFrna+SYZtUEzpKc162OMDNeixdHM2x4Lyi7dBzfmK8GzfH9YcN70K/4VBtbxnDPFtyKHshIarOPguVv7/6s15pne+vD4nRZd1JOoUilcMrtPA7VZP8FsUR2+wQ=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=3f/SyxPB0VfACu7tJD6T5FVMoYuITfLiK8Gntfmm160=;
+	h=date:mime-version:subject:message-id:from;
 
-From: Thomas Huth <thuth@redhat.com>
+Hi Heiko,
 
-The FSF does not reside in the Franklin street anymore, so we should not
-request the people to write to this address. Fortunately, these header
-files already contain a proper SPDX license identifier, so it should be
-fine to simply drop all of this license boilerplate code here.
+On 2025/7/10 3:58, Heiko Stübner wrote:
+> Hi Damon,
+> 
+> Am Mittwoch, 9. Juli 2025, 09:01:32 Mitteleuropäische Sommerzeit schrieb Damon Ding:
+>> The &analogix_dp_plat_data.skip_connector related check can be replaced
+>> by &analogix_dp_plat_data.bridge.
+>>
+>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+>> ---
+>>   drivers/gpu/drm/exynos/exynos_dp.c | 1 -
+>>   1 file changed, 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+>> index 9d7d3f009e58..9e1313fdecad 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_dp.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
+>> @@ -237,7 +237,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
+>>   	dp->plat_data.power_off = exynos_dp_poweroff;
+>>   	dp->plat_data.attach = exynos_dp_bridge_attach;
+>>   	dp->plat_data.get_modes = exynos_dp_get_modes;
+>> -	dp->plat_data.skip_connector = !!bridge;
+>>   
+>>   out:
+>>   	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
+>>
+> 
+> I think you might want to merge
+> - drm/exynos: exynos_dp: Remove redundant &analogix_dp_plat_data.skip_connector
+> - drm/bridge: analogix_dp: Remove redundant &analogix_dp_plat_data.skip_connector
+> 
+> Because when separate this creates a bisection issue.
+> Like when a bisect happens to land directly on this commit, you already have
+> removed the exynos assignment, but the updated check from the following patch
+> is not yet in place.
+> 
+> 
 
-Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Thomas Huth <thuth@redhat.com>
----
- v3: Renamed the patch from "powerpc: Replace the obsolete address of
-     the FSF" and drop the boilerplate text instead of replacing the
-     address.
+Oh, I see. Squashing related commits together would be better.
 
- arch/powerpc/include/uapi/asm/eeh.h      | 13 -------------
- arch/powerpc/include/uapi/asm/kvm.h      | 13 -------------
- arch/powerpc/include/uapi/asm/kvm_para.h | 13 -------------
- arch/powerpc/include/uapi/asm/ps3fb.h    | 13 -------------
- 4 files changed, 52 deletions(-)
-
-diff --git a/arch/powerpc/include/uapi/asm/eeh.h b/arch/powerpc/include/uapi/asm/eeh.h
-index 28186071fafc4..3b5c47ff3fc4b 100644
---- a/arch/powerpc/include/uapi/asm/eeh.h
-+++ b/arch/powerpc/include/uapi/asm/eeh.h
-@@ -1,18 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
- /*
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License, version 2, as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-- *
-  * Copyright IBM Corp. 2015
-  *
-  * Authors: Gavin Shan <gwshan@linux.vnet.ibm.com>
-diff --git a/arch/powerpc/include/uapi/asm/kvm.h b/arch/powerpc/include/uapi/asm/kvm.h
-index eaeda001784eb..077c5437f5219 100644
---- a/arch/powerpc/include/uapi/asm/kvm.h
-+++ b/arch/powerpc/include/uapi/asm/kvm.h
-@@ -1,18 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
- /*
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License, version 2, as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-- *
-  * Copyright IBM Corp. 2007
-  *
-  * Authors: Hollis Blanchard <hollisb@us.ibm.com>
-diff --git a/arch/powerpc/include/uapi/asm/kvm_para.h b/arch/powerpc/include/uapi/asm/kvm_para.h
-index a809b1b44ddfe..ac596064d4c76 100644
---- a/arch/powerpc/include/uapi/asm/kvm_para.h
-+++ b/arch/powerpc/include/uapi/asm/kvm_para.h
-@@ -1,18 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
- /*
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License, version 2, as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-- *
-  * Copyright IBM Corp. 2008
-  *
-  * Authors: Hollis Blanchard <hollisb@us.ibm.com>
-diff --git a/arch/powerpc/include/uapi/asm/ps3fb.h b/arch/powerpc/include/uapi/asm/ps3fb.h
-index fd7e3a0d35d57..b1c6b0cd9e802 100644
---- a/arch/powerpc/include/uapi/asm/ps3fb.h
-+++ b/arch/powerpc/include/uapi/asm/ps3fb.h
-@@ -2,19 +2,6 @@
- /*
-  * Copyright (C) 2006 Sony Computer Entertainment Inc.
-  * Copyright 2006, 2007 Sony Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License as published
-- * by the Free Software Foundation; version 2 of the License.
-- *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License along
-- * with this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-  */
- 
- #ifndef _ASM_POWERPC_PS3FB_H_
--- 
-2.50.0
+Best regards,
+Damon
 
 
