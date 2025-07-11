@@ -1,153 +1,160 @@
-Return-Path: <linux-kernel+bounces-727220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB945B016A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:43:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1EF6B016A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9DB53A2E2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:42:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA1B73B3A42
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41AE20B21F;
-	Fri, 11 Jul 2025 08:43:07 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A982147E5;
+	Fri, 11 Jul 2025 08:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HanP6k6B"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A931148FE6
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37F61F4289;
+	Fri, 11 Jul 2025 08:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752223387; cv=none; b=MbHtVO1YqvEOOxEcJ7Eh7Uxizyzt1FNCcvZ3sikE/kPMeKRQOBTjhx9GopGiwXJTyRDV4L61UBhEtwNAIKvSbcByf/UVGShlc58BEXRRd9q/RyNVXZkeLs+g3P/mCRsYsSmDg8AwElGft50FsVaDNRavgZB7/M/NSDvKeeiDaz8=
+	t=1752223407; cv=none; b=h7xiOeRK71asSYh2qzL3mBytiL6jmNYZgOYDlRJXoIfmUT10o5g1YWrNIGvSagUf8m72AsFRcnh/7JL097/GXYRIBUIP+moFMlR8CW2kuHzoIREXYBhVwj3mqNyl/9UYSjC0BZ3gXMoxBC9HuFmeBA/VaugDoAT2UDoymNCnMLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752223387; c=relaxed/simple;
-	bh=GLKg4hxHIQOYQz1RKZDca+U4/t5Jxsm+KDsKRpJstT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bIzzHHUz73BjuFSu08rpm4oxTWH10ZT5y5wSESrnZZDtwHYZ5CNJnVUcBqDeS9/w0kDiV8hFEtq2iz4iqIa5ZgKfYb8P/Pr3HbHmJJw53xQHNRqoHOfClLkMQd1YbtoW4DJQgLi43RCNO/4l0s8mQZ+A5CkcnKSkr+wQKqrrNvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1ua9LM-0003aQ-1b; Fri, 11 Jul 2025 10:42:56 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1ua9LJ-007tKb-23;
-	Fri, 11 Jul 2025 10:42:53 +0200
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 415B443C6CF;
-	Fri, 11 Jul 2025 08:42:53 +0000 (UTC)
-Date: Fri, 11 Jul 2025 10:42:52 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, kernel@pengutronix.de, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Maxime Chevallier <maxime.chevallier@bootlin.com>, lst@pengutronix.de
-Subject: Re: [PATCH net-next v4 0/4] net: selftest: improve test string
- formatting and checksum handling
-Message-ID: <20250711-copper-dragonfly-of-realization-f92247-mkl@pengutronix.de>
-References: <20250515083100.2653102-1-o.rempel@pengutronix.de>
- <20250516184510.2b84fab4@kernel.org>
- <aFU9o5F4RG3QVygb@pengutronix.de>
- <20250621064600.035b83b3@kernel.org>
- <aFk-Za778Bk38Dxn@pengutronix.de>
- <20250623101920.69d5c731@kernel.org>
- <aFphGj_57XnwyhW1@pengutronix.de>
- <20250624090953.1b6d28e6@kernel.org>
+	s=arc-20240116; t=1752223407; c=relaxed/simple;
+	bh=pgLc4wdfen2ah7+WJsoZa+9SCjUBa8JFoERrQ9cbwQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UqnSeEc4GCm734KhiaQ/HI6CioeEpeDkhazeIC1wNyY5cqsRZPNNCr1cg7IquqzVTlc5iUp9MdMdITAkO3JoPSpUxeAYH6IWpokcF35C4M3aZZu6hugrsjbFTr7LBW2WL/DBIbHbMS02t5Z2eIWm1/lixt9HWgDECAJmuiAvgZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HanP6k6B; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a4ef2c2ef3so1440913f8f.2;
+        Fri, 11 Jul 2025 01:43:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752223404; x=1752828204; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sr1JCZTZXretouNuvu9bNpVv7/Bdj2RVZfHckc6B8wg=;
+        b=HanP6k6B61lYGSDU7P3Id/TZFqh0icz9mHP/j4dlnlgIhYeqt43Kr+Wzn5vFpb2p5k
+         QISH4ybeEnoGaJSUBI/9BeUf39vwAcjdXOErs9tR000c4bWm5LwPhZkNa2amAcJNWKTu
+         mdEtVdV8eMuxD/YeAoCxq8XidykzyDUPJMqoZra/nnUkce3kqiUzPnzNqunWgUM7nyNc
+         uNc52MSZzl1l8WD4ad0LfvvDCgTh1EWP/HaZApuBGfhwrbc1je+dCuyUCO9X5v4mZSCs
+         KRUCDhWWr33Yms5Fbex7KrWJ973wCtuk89/MUSHKJGNQCUxoDkl5htHADT4zirjlXDif
+         0RKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752223404; x=1752828204;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sr1JCZTZXretouNuvu9bNpVv7/Bdj2RVZfHckc6B8wg=;
+        b=xUm00ZIODZglu7LEUiSFV7OPk4bRREiosAhhQzvcPIaSylDDeSKEdZFE8uW5KPdVgy
+         ZPSKE17bnXwsxHA9/DZ35JMBD8Z6s2Hrl03XUghWPc7BlfNj8OiXiJsqu20AfNkLQwB8
+         Ye/QVljpmax52NLV62nFwWnSla/SscLfohSVtNwT0577hrjZfB+GHploP9kGV6eGRRTS
+         bfaeBuUP/2B0mYCO18GvRWLokrXlCNjoxG7jhGBvVV+s5AelLhR2chsH6qevsavZtA6U
+         semru1cmBV0e5Tkq1pqs/PmuJyFhyi9U+lOEwnSUDg2NwbBt/y4ju4fYD2uSw1n7W9dw
+         lrJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxV59ryvJV6wtIw93QvBewFDAKj6nzwKDKJ9rnSFN2o6TeDhtJ2hkgEcaWlUJAFbBea2I=@vger.kernel.org, AJvYcCX3BLKkOTpvFb6Kb9CW0Iu/DP/8KFtY1NZ3cog+aRoQHdpet42DEp7COf3sWL8XtRaiQUO8Fa3aTRJH6O7ffP0eyQ6B@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmJn88emTJlyVYGSR/GG9kSjw670y/tcpor4qqvDeVouI8CmeU
+	VsHFXD9p6kpkSa0t9474ywUfTNRW3wrNT0zYSHVtoePk2ZMrXNkjKOnM
+X-Gm-Gg: ASbGncvEIpmbXNOxMQ8Aa9W3tNucnqkJs5WGsCahKVzBqhqJzrUue9Mbo0kCzg1Cuf3
+	MFyHrKNw5j+rv8+9aowUNAzTxv4fwm5V7G6oudKJL6v058hWHWUsyNzKFsmcHHOVTLzvuQNF4Bg
+	SBl/24A7JLyaLeaTW20BWRdOfa8H4aPam82F2WtvE04IZKGb+ECJwlLVszldiUMNXr0+Kh/uwbr
+	xjagIotAEcq/bUS3q5DI80iZnv6CG3T+9SNyrQCCeTzVz3zsNheZzFeLkZcjNCFTLjp9+wPzKkG
+	WO9jf8v6EIhvmjrTpVAc50BH8gI29Cc83oUe0axzThtGRp1hHEXKFC7syGCloInGbyos+IufrZP
+	kGtQx4+4bjxcv6dVkdzVYgxAlT2Eb2soCaSUMcAvl2KqowcoaAvaCEg==
+X-Google-Smtp-Source: AGHT+IHIphwZ1YVO+sebpVREmkoXuUKb+l9PeruYveFtfD2yh9R3hj879HGuu3i2hFdm6B6ADcVk1Q==
+X-Received: by 2002:a05:6000:26d0:b0:3a5:26fd:d450 with SMTP id ffacd0b85a97d-3b5f2e281c9mr1640317f8f.47.1752223404124;
+        Fri, 11 Jul 2025 01:43:24 -0700 (PDT)
+Received: from pumpkin (host-92-21-58-28.as13285.net. [92.21.58.28])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e14d12sm3891457f8f.70.2025.07.11.01.43.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 01:43:23 -0700 (PDT)
+Date: Fri, 11 Jul 2025 09:43:21 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat
+ <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
+ <fweimer@redhat.com>, Sam James <sam@gentoo.org>
+Subject: Re: [PATCH v13 13/14] unwind_user/x86: Enable frame pointer
+ unwinding on x86
+Message-ID: <20250711094321.3c64757c@pumpkin>
+In-Reply-To: <20250708012359.853818537@kernel.org>
+References: <20250708012239.268642741@kernel.org>
+	<20250708012359.853818537@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="n6h2cplsjmr3qres"
-Content-Disposition: inline
-In-Reply-To: <20250624090953.1b6d28e6@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Mon, 07 Jul 2025 21:22:52 -0400
+Steven Rostedt <rostedt@kernel.org> wrote:
 
---n6h2cplsjmr3qres
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH net-next v4 0/4] net: selftest: improve test string
- formatting and checksum handling
-MIME-Version: 1.0
+> From: Josh Poimboeuf <jpoimboe@kernel.org>
+> 
+> Use ARCH_INIT_USER_FP_FRAME to describe how frame pointers are unwound
+> on x86, and enable CONFIG_HAVE_UNWIND_USER_FP accordingly so the
+> unwind_user interfaces can be used.
 
-On 24.06.2025 09:09:53, Jakub Kicinski wrote:
-> > Receive Path Checksum Scenarios
+How is that going to work?
+Pretty much all x86 userspace is compiled with bp as a general
+purpose register not a frame pointer.
 
-[...]
+	David
 
-> > * Hardware Verifies and Reports All Frames (Ideal Linux Behavior)
-> >     * The hardware is configured not to drop packets with bad checksums.
-> >       It verifies the checksum of each packet and reports the result (g=
-ood
-> >       or bad) in a status field on the DMA descriptor.
-> >     * Expected driver behavior: The driver must read the status for eve=
-ry
-> >       packet.
-> >         * If the hardware reports the checksum is good, the driver shou=
-ld set
-> >           the packet's state to `CHECKSUM_UNNECESSARY`.
-> >         * If the hardware reports the checksum is bad, the driver shoul=
-d set
-> >           the packet's state to `CHECKSUM_NONE` and still pass it to the
-> >           kernel.
+> 
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  arch/x86/Kconfig                   |  1 +
+>  arch/x86/include/asm/unwind_user.h | 11 +++++++++++
+>  2 files changed, 12 insertions(+)
+>  create mode 100644 arch/x86/include/asm/unwind_user.h
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 71019b3b54ea..5862433c81e1 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -302,6 +302,7 @@ config X86
+>  	select HAVE_SYSCALL_TRACEPOINTS
+>  	select HAVE_UACCESS_VALIDATION		if HAVE_OBJTOOL
+>  	select HAVE_UNSTABLE_SCHED_CLOCK
+> +	select HAVE_UNWIND_USER_FP		if X86_64
+>  	select HAVE_USER_RETURN_NOTIFIER
+>  	select HAVE_GENERIC_VDSO
+>  	select VDSO_GETRANDOM			if X86_64
+> diff --git a/arch/x86/include/asm/unwind_user.h b/arch/x86/include/asm/unwind_user.h
+> new file mode 100644
+> index 000000000000..8597857bf896
+> --- /dev/null
+> +++ b/arch/x86/include/asm/unwind_user.h
+> @@ -0,0 +1,11 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _ASM_X86_UNWIND_USER_H
+> +#define _ASM_X86_UNWIND_USER_H
+> +
+> +#define ARCH_INIT_USER_FP_FRAME							\
+> +	.cfa_off	= (s32)sizeof(long) *  2,				\
+> +	.ra_off		= (s32)sizeof(long) * -1,				\
+> +	.fp_off		= (s32)sizeof(long) * -2,				\
+> +	.use_fp		= true,
+> +
+> +#endif /* _ASM_X86_UNWIND_USER_H */
 
-While discussing things internally, one question came up:
-
-Is passing packets with known bad checksums to the networking stack with
-CHECKSUM_NONE, so that the checksum is recalculated in software a
-potential DoS vector?
-
-Our reasoning is as follows: Consider a system that is designed for a
-certain bandwidth of network traffic and relies on the hardware to do
-the checksum calculation. How much does the CPU load rise if all
-checksum calculation can be force to take place on the CPU by sending
-packets with broken checksums?
-
-Is there a way to tell the network stack that the hardware/driver has
-already performed the checksum calculation and that it is incorrect?
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---n6h2cplsjmr3qres
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmhwzokACgkQDHRl3/mQ
-kZz2UggArcu/3uexYM3D+dRqZeqVaOXbGS98e0ZbuQh5KQbMxO/dp7VSXvNXUfJ6
-lJii1xvWoGQS/NQG1FlYyAASPgvDqLHdzyuTWf508qlOPV0GjVQKlNCgxX188ZvW
-V6sNez0oAdEq/sCSSCXRy5U0h6Xuvq8lTD3Mo2JRXXBJGJvMN3N5/q67tfuEssei
-F67dSdL4qQBAeLSpIEDNv6TXKK0mHbE+S4+iyZ4Hqz07fPkRCb1YJZcud4NwSnn3
-j+Cd23kmLrq8n39E4ktbpU22osewaiyaHm4iASzuySqMOEnY7XGguAYGW5GZmHYt
-qNrthUA2pThU7fmoneGDAnjI8AFkkg==
-=XtMB
------END PGP SIGNATURE-----
-
---n6h2cplsjmr3qres--
 
