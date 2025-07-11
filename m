@@ -1,95 +1,159 @@
-Return-Path: <linux-kernel+bounces-728252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD883B02572
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:57:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40218B02575
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:57:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39BEC1CC311A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:56:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 953251CC44C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AF02F3C1B;
-	Fri, 11 Jul 2025 19:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2DB2F5092;
+	Fri, 11 Jul 2025 19:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HT4ThKpf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWlGpwZC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B531F2382;
-	Fri, 11 Jul 2025 19:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F041F03C5;
+	Fri, 11 Jul 2025 19:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752263631; cv=none; b=P2L6C59KQPW5gSa9OuYjswySS9VDby8n1E+V/CbbL64hBcuHt+3/tvPhQHKJLY4EAyGe/vzl4g8J7sThduYrXQHYSuaYfXkYg/GS2+x1Ng4R1zH5lupEl2cmQRTDMwIpaOrVY6T/crbjlKZD+tAw3hVdUHn82VFRu8qsfCkF/ak=
+	t=1752263669; cv=none; b=Meu9dC1eSpiqsh+Am2+KSgWyFcEJggT37jNTrj46MKpJ+cFIY36dLtNczcVvUwYBtsR7VjgMJowTS9wZ6A+toYDwdvcMXLIVNCf3PRAOQNkvf04YaFKwWuuj7vXyAutkuS6VqKSVAZxJBffb6Aiyk+04j72PY/nxXLunBY3ykYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752263631; c=relaxed/simple;
-	bh=WYXRyS4t9dECZkBVNQum/0iQ/pFkMEhtJosW4euJws8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z/iwpuPi8Bo8td1fU8gbRbxFMbUZsFuHncOvuIoPMVnBWqM8PzFTe34yUcfmxMMbT3+1KOgywFo0jJW6Nqmg6IZaAT9lDVSGJm3e3Dy8Yx4nywI6gb3c8ozIYsRWp3AWL1T4XLFt7HqtT7ojSXLMSevsrebqtJ7yi7yCjZUnCXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HT4ThKpf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D027C4CEF0;
-	Fri, 11 Jul 2025 19:53:50 +0000 (UTC)
+	s=arc-20240116; t=1752263669; c=relaxed/simple;
+	bh=PqDZ52E91jh6aD9+8vsMna/zDDeoowu+ExCjFmSk7wc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=fENekiODRHq9XtwVoCoqvpxcjxO8qG/fyEKLr/6qEEOygHnCRKZIUzRgvr3O7Vsy/ouCU4lhmLowOR/l0/TZno6e4FB1uWn3lPdqXOPX47WDtTPFL0B34aOFVeD05ttuN1h12jhi65+K2FI/d8fMlDH3KFEujFzjbplP/BZK3RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YWlGpwZC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C7A4C4CEED;
+	Fri, 11 Jul 2025 19:54:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752263630;
-	bh=WYXRyS4t9dECZkBVNQum/0iQ/pFkMEhtJosW4euJws8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HT4ThKpftRIH9FHRwTJoW1isukBW3G2nSZ0IxKIIk+IRuZh4Tm2knlnKlfAONc0qC
-	 uGhUOEt72FOFm4qBgQKJ1bDfXWQjjPSZrjigiYS6hT3fsdDyNTol9xk2VmXFNHw2ue
-	 82Ye8tjx80ZjzB/0kkT1gC/Rf2ZPffH0/a+lULxbKzFY6FeDq+jqxpzMU9aqRT5ww/
-	 AEsC+39cfQbAK6xNh8UZ9XuI5UbNQKeA/2wcWPMafgX3W9SUIIuawhP978QnebGaFD
-	 qT5Z/qojNXqNm77mwg5ppNPgLotRUdvgfMLGaGrkSg1xUbR8OVZG87/hb7GygbiSmu
-	 ewjnV3WTvlTiQ==
-Date: Fri, 11 Jul 2025 12:53:49 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter
- <simona@ffwll.ch>, Dave Airlie <airlied@gmail.com>, davem@davemloft.net,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com,
- dri-devel <dri-devel@lists.freedesktop.org>
-Subject: Re: [GIT PULL] Networking for v6.16-rc6 (follow up)
-Message-ID: <20250711125349.0ccc4ac0@kernel.org>
-In-Reply-To: <CAHk-=whxjOfjufO8hS27NGnRhfkZfXWTXp1ki=xZz3VPWikMgQ@mail.gmail.com>
-References: <20250711151002.3228710-1-kuba@kernel.org>
-	<CAHk-=wj1Y3LfREoHvT4baucVJ5jvy0cMydcPVQNXhprdhuE2AA@mail.gmail.com>
-	<20250711114642.2664f28a@kernel.org>
-	<CAHk-=wjb_8B85uKhr1xuQSei_85u=UzejphRGk2QFiByP+8Brw@mail.gmail.com>
-	<CAHk-=wiwVkGyDngsNR1Hv5ZUqvmc-x0NUD9aRTOcK3=8fTUO=Q@mail.gmail.com>
-	<CAHk-=whMyX44=Ga_nK-XUffhFH47cgVd2M_Buhi_b+Lz1jV5oQ@mail.gmail.com>
-	<CAHk-=whxjOfjufO8hS27NGnRhfkZfXWTXp1ki=xZz3VPWikMgQ@mail.gmail.com>
+	s=k20201202; t=1752263669;
+	bh=PqDZ52E91jh6aD9+8vsMna/zDDeoowu+ExCjFmSk7wc=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=YWlGpwZClBvzJvVaJCw7YzJ+MYWL5zdZcqqLskM+hhJbt0OBqNoAAJIVK1vpEguDa
+	 UHUDLCBDZ1Ee63MGGjRfE4CPhytedPavAJSOj/fj4w9//csXWpGkBur/UAScUP+shN
+	 JV8x/VeqpyUuIL0tAWB37oL0ogigSsxVU9TwVlXFuoSWxbUrLfggA6dwPneGwnubIo
+	 3fVVff19lykeddMD2JlejKy9TKTQflc+QqlcJhaArx4lZEVuIcf3Hy7iyTD4b+22ui
+	 S4DKipScHhxlwPtbyJlDE1CbfbYnAPA9c8Bh/KZK/lRpqUXOPbnHvTY3mETyzI5PAA
+	 xl3tu6Gz9dB9A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 11 Jul 2025 21:54:23 +0200
+Message-Id: <DB9HMM5M24FE.1VR5ZE5YJ66CK@kernel.org>
+Subject: Re: [PATCH 2/5] rust: dma: add DMA addressing capabilities
+Cc: <abdiel.janulgue@gmail.com>, <daniel.almeida@collabora.com>,
+ <robin.murphy@arm.com>, <a.hindborg@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <aliceryhl@google.com>,
+ <tmgross@umich.edu>, <bhelgaas@google.com>, <kwilczynski@kernel.org>,
+ <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250710194556.62605-1-dakr@kernel.org>
+ <20250710194556.62605-3-dakr@kernel.org> <20250711193537.GA935333@joelbox2>
+In-Reply-To: <20250711193537.GA935333@joelbox2>
 
-On Fri, 11 Jul 2025 12:42:54 -0700 Linus Torvalds wrote:
-> Were there any other socket changes perhaps?
-> 
-> I just looked, and gsd-screensaver-proxy seems to use a regular Unix
-> domain stream socket. Maybe not related to netlink, did unix domain
-> sockets end up with some similar changes?
+On Fri Jul 11, 2025 at 9:35 PM CEST, Joel Fernandes wrote:
+> It looks good to me. A few high-level comments:
+>
+> 1. If we don't expect the concurrency issue for this in C code, why do we
+> expect it to happen in rust?=20
 
-Humpf. Not that I can see, here's a list of commits since rc5 we sent
-minus all the driver and wifi and data center stuff:
+The race can happen in C as well, but people would probably argue that no o=
+ne
+ever calls the mask setter function concurrently to DMA allocation and mapp=
+ing
+primitives.
 
-a3c4a125ec72 ("netlink: Fix rmem check in netlink_broadcast_deliver().")
-a215b5723922 ("netlink: make sure we allow at least one dump skb")
-ae8f160e7eb2 ("netlink: Fix wraparounds of sk->sk_rmem_alloc.")
+> 2. Since the Rust code is wrapping around the C code, the data race is
+> happening entirely on the C side right? So can we just rely on KCSAN to c=
+atch
+> concurrency issues instead of marking the callers as unsafe? I feel the
+> unsafe { } really might make the driver code ugly.
 
-ef9675b0ef03 ("Bluetooth: hci_sync: Fix not disabling advertising instance")
-59710a26a289 ("Bluetooth: hci_core: Remove check of BDADDR_ANY in hci_conn_hash_lookup_big_state")
-314d30b15086 ("Bluetooth: hci_sync: Fix attempting to send HCI_Disconnect to BIS handle")
-c7349772c268 ("Bluetooth: hci_event: Fix not marking Broadcast Sink BIS as connected")
+If the function is declared safe in Rust it means that we have to guarantee=
+ that
+any possible use won't lead to undefined behavior. This isn't the case here
+unfortunately.
 
-d3a5f2871adc ("tcp: Correct signedness in skb remaining space calculation")
-1a03edeb84e6 ("tcp: refine sk_rcvbuf increase for ooo packets")
+> 3. Maybe we could document this issue than enforce it via unsafe? My conc=
+ern
+> is wrapping unsafe { } makes the calling code ugly.
 
-ffdde7bf5a43 ("net/sched: Abort __tc_modify_qdisc if parent class does not exist")
+Not possible, that's exactly what unsafe is for. We can't violate the "safe
+functions can't cause UB" guarantee.
 
-Let me keep digging but other than the netlink stuff the rest doesn't
-stand out..
+> 4. Are there other kernel APIs where Rust wraps potentially racy C code a=
+s
+> unsafe?
+
+Sure, but we usually don't expose those to drivers. We always try to make t=
+hings
+safe for drivers.
+
+This case is a bit special though. There is a way to avoid unsafe for the D=
+MA
+mask setter methods, but it would involve at least three new type states fo=
+r
+device structures and duplicated API interfaces for types that expect certa=
+in
+type states.
+
+The conclusion was to go with unsafe for now, since introducing this kind o=
+f
+complexity is not worth for something that is (not entirely, but more of) a
+formal problem.
+
+In the long term I'd like to get those setters safe, e.g. by making the DMA=
+ mask
+fields atomics.
+
+> 5. In theory, all rust bindings wrappers are unsafe and we do mark it aro=
+und
+> the bindings call, right? But in this case, we're also making the calling
+> code of the unsafe caller as unsafe. C code is 'unsafe' obviously from Ru=
+st
+> PoV but I am not sure we worry about the internal implementation-unsafety=
+ of
+> the C code because then maybe most bindings wrappers would need to be uns=
+afe,
+> not only these DMA ones.
+
+No, the key is to design Rust APIs in a way that the abstraction can't call=
+ C
+functions in a way that potentially causes undefined behavor.
+
+As an example, let's have a look at a PCI device function:
+
+	/// Enable bus-mastering for this device.
+	pub fn set_master(&self) {
+	    // SAFETY: `self.as_raw` is guaranteed to be a pointer to a valid `str=
+uct pci_dev`.
+	    unsafe { bindings::pci_set_master(self.as_raw()) };
+	}
+
+pci_set_master() is unsafe because it takes a pointer value, so the caller =
+can
+easily cause UB by passing an invalid pointer.
+
+pci::Device::set_master() is safe, because once you have a pci::Device inst=
+ance, there is no way
+(other than due to a bug) that you obtain an invalid pointer from it to
+subsequently call pci_set_master().
+
+This means for the caller there is no way to call pci::Device::set_master()=
+ such
+that it can cause UB.
 
