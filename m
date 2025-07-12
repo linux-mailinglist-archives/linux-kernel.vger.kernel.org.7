@@ -1,92 +1,98 @@
-Return-Path: <linux-kernel+bounces-728651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA3CB02B6B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:33:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0357B02B71
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88DC37B55BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 14:32:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A28FA61FA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 14:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA331281368;
-	Sat, 12 Jul 2025 14:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="jHeE+cRw"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B25C8BEC;
-	Sat, 12 Jul 2025 14:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51D2285062;
+	Sat, 12 Jul 2025 14:37:42 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFECA27E7C8;
+	Sat, 12 Jul 2025 14:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752330812; cv=none; b=cElU6PjQQNSbzQApKDG2LvxghVlqNnkRaosgYPXAN9MgPnoRR4DhgVBjfLqGVguF1C/bNw0mrHVsK9DfTOU21Mxsbo2T8u3QQPOgOyr64i70xtsCBPI16M6Qb6beJhjD1on5tJqNYmuOLCLTfTO3utDwMJOFx0VPgr3UM6yMtFQ=
+	t=1752331062; cv=none; b=PQ/hUSHTAQ2orxDfHtVSzNEtrsH39CNLhDPwSLSJpqZuGhn4mOUqA+yoi8905namwxIsvFgjteFAr45RbtKR2juUqJA7dQTfeqJqIg5r0TTcZM4AvHm+dioAXlcfz7toIV1JXfmBkqcqLColqpiYzd+tJq6KxktwDqmJe+e7Z5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752330812; c=relaxed/simple;
-	bh=sIOKAD2MTUbXtcoW87WJAGTcHShe/qrRmPh438Vntwk=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=tpmNtFB9Ib0GEGOY63+OM6DECWqYQMrAFf5RTpyN1rCnzr0l5ZTckgKGESK3HYQTdi+Oz8UrpP/f/tpjSW0FtjbN/QsUro8DFCJiSineayzN4f9NBXjZb7JENhYtDz6D9yTq/xTZ4EXlAhLQWZxAmKKgrwM4Y8eSWR+48iKL0RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jHeE+cRw; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id; bh=Zx/3aqFbue8q2T0
-	EElnkI1Xd/UhLG7XGArEZaqXXprU=; b=jHeE+cRwj23BTwz/fEJGvEKncvYxpqz
-	Oq3yWPq5uzgVpYETRVNBBsXb57qWAwk40vgQ96jjVUuqpnfFbfENFU98TxwXto+8
-	Vkvrqsa62gU3jOrpFqcnwT9+sxdp4m4v9gMFf4Z6JwsygU3kow7JUH3QbyBd5Ts9
-	FIn8tP5ihsME=
-Received: from 163.com (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgBnuGXycXJooq1tCA--.53904S2;
-	Sat, 12 Jul 2025 22:32:19 +0800 (CST)
-From: Beibei Yang <13738176232@163.com>
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	13738176232@163.com,
-	root <root@192.168.220.227>
-Subject: [PATCH trivial] init: Fix comment typo in do_mounts_initrd.c
-Date: Sat, 12 Jul 2025 07:32:14 -0700
-Message-Id: <1752330734-85833-1-git-send-email-13738176232@163.com>
-X-Mailer: git-send-email 1.8.3.1
-X-CM-TRANSID:PygvCgBnuGXycXJooq1tCA--.53904S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XrWDJw48tF1kCr45Cw4kJFb_yoWfKwbEga
-	18XFs7JrsI93Wjyw47Cryrt3WDWrWFvF4rCF1rCryUta4kJr90kr92qr97G39F9r4j9FZx
-	Ww4DX3yayr12kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRWyxiJUUUUU==
-X-CM-SenderInfo: zprtljayrxljits6il2tof0z/1tbiYA+Ia2hya46JpwAAsd
+	s=arc-20240116; t=1752331062; c=relaxed/simple;
+	bh=PFQv1MiKwPHjCbE3SkmZSPRK8MgN7zNlyxripA+FjFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X6khXT6Yi/ysOW+7oofObr8RHXEWXDtCKgvG+haFHcj1f7xMR2ntpFlBktGirAKgpDnI+vDiDUfKRcbDTLACCzTC0P3DMCnVCuAGAekehXU+229pueCZ78JwgC7/oRy74f1VnN6EYzIUdQvxHsR9+o7RqV0rOsAtDs7AR6gYgMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id 5A52316013F;
+	Sat, 12 Jul 2025 14:37:33 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id B056E20025;
+	Sat, 12 Jul 2025 14:37:31 +0000 (UTC)
+Date: Sat, 12 Jul 2025 10:37:32 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] tracing: Remove "__attribute__()" from the type
+ field of event format
+Message-ID: <20250712103732.79c7b9e1@batman.local.home>
+In-Reply-To: <20250712204524.13ece418f90ea66d4bd0e598@kernel.org>
+References: <175197567999.977073.8989204607899013923.stgit@mhiramat.tok.corp.google.com>
+	<175197568917.977073.2201559708302320631.stgit@mhiramat.tok.corp.google.com>
+	<20250709131107.397a3278@batman.local.home>
+	<20250711143703.60a1a9a9f31a45f2000eec9d@kernel.org>
+	<20250711120322.4ddb9b39@batman.local.home>
+	<20250712204524.13ece418f90ea66d4bd0e598@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: f1rei356ssetnsu795jz3xcer5gyhgi8
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: B056E20025
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+hQ6GS8OZgON/sLVGwYmpUtRbcIiBkgMQ=
+X-HE-Tag: 1752331051-649973
+X-HE-Meta: U2FsdGVkX1/hBdxgzFDNgX9buPFxsa0V/rMcqEPnhJKZif5/dc3xmV8oP/4FK6lLfXCkexGeWX7sXo4OJsFH3kcFv7XCXWyDSU/K7UxfBRzsBpSW+PNP9oEObbMfM0QNeDMD3pe5r+MDu7rqzVp3t4LcYI+uFBaHPWH7b/RhZnN9uqr/Itd3cyIM/UN2BbG2lRRBxgwoNFEVbr0SuYN66vhKdLtcrcEiU95jk4TmErQmxjpKEX7c81pFs4+daZ1j54MgcHwa66q5aCK3R40gqWMqYFRUig2a8OSHLLBdisp5hYIdWyPNMUOqzWhglZgaCQ1GS8qFpdev41UZZdYJBxdfChm22eFC
 
-From: root <root@192.168.220.227>
+On Sat, 12 Jul 2025 20:45:24 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-The original comment incorrectly used "cwd" (current working directory)
-when referring to the root change operation. The correct term should be
-"pwd" (present working directory) as per process context semantics.
+> Hmm, Ok. But when I sanitized the field->type in
+> update_event_fields(), it did not work. So something
+> we missed.
 
-This is a pure comment correction with no functional impact.
+Ah, it's because we test to see if the event has enums or not before
+calling update_event_fields. We need something like this:
 
-Signed-off-by: Beibei Yang <13738176232@163.com>
----
- init/do_mounts_initrd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
-index f6867ba..173b569 100644
---- a/init/do_mounts_initrd.c
-+++ b/init/do_mounts_initrd.c
-@@ -107,7 +107,7 @@ static void __init handle_initrd(char *root_device_name)
- 
- 	/* move initrd to rootfs' /old */
- 	init_mount("..", ".", NULL, MS_MOVE, NULL);
--	/* switch root and cwd back to / of rootfs */
-+	/* switch root and pwd back to / of rootfs */
- 	init_chroot("..");
- 
- 	if (new_decode_dev(real_root_dev) == Root_RAM0) {
--- 
-1.8.3.1
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 120531268abf..52829b950022 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -3349,6 +3349,8 @@ void trace_event_eval_update(struct trace_eval_map **map, int len)
+ 				}
+ 				update_event_printk(call, map[i]);
+ 				update_event_fields(call, map[i]);
++			} else if (need_sanitize_field_type(__type)) {
++				sanitize_fields(call);
+ 			}
+ 		}
+ 		cond_resched();
 
+
+And have the attribute fixed in both update_event_fields() and have
+your own sanitize_fields() that just does the attribute update.
+
+-- Steve
 
