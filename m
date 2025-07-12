@@ -1,118 +1,110 @@
-Return-Path: <linux-kernel+bounces-728625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56FA3B02AF5
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:36:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FBD6B02AF8
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E857CA420A9
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:35:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E042DA42D91
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8CA276049;
-	Sat, 12 Jul 2025 13:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R5yLnv8t"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A16E275110;
+	Sat, 12 Jul 2025 13:39:26 +0000 (UTC)
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988621E489;
-	Sat, 12 Jul 2025 13:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484B51D432D;
+	Sat, 12 Jul 2025 13:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752327376; cv=none; b=KxIgxXGqcMQBU2/T2qSZV8a5XDmV8L+Drx9wrv3D+PSbJid3L+zXoOizbFP4P0ZB1SkyMn9aj/jDfTyTy/2vu/Lz7Rz7wFc9MxiNsPDLhgvqAqdpY8q/4psIepEt2W0yX47ZkUyer2ArFLNQwa+ZD1G8U4WpnsaR1mVe1uGai38=
+	t=1752327566; cv=none; b=WEQFn+eaDsywJro8phi1hKjsIrEEE8gCqYqqUeS6qJDAT2tXCixPIEmZHG/fqG92zGcSYzGZXvSbYtwQE40GN173ngSlx1bPFzfPwyYhjlAAFWRZ2yhP1qqHcaJhpzN6kz9n1TFpaSE+mnoj+KHpxQu3H6yHGxVuBlg4Q4/mCSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752327376; c=relaxed/simple;
-	bh=fI+EHGaEFFccDbypWav4Dk55fmRU1wtd6n3cxWUVsGs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U439KiG4rknwww6n2M9go1h8wn3reehqk3fyAPGErOy4K7oAk6IPcl2fZxwf0ojIejrMZHV7lfHyk2JD/2ZB+Igxtnm92XbsHsVPp2ZsyogysNu3BS0vvduI3dR7vEvJePic7PEnB+IJvBEe2AN2qJz7Hfh6Ocb09dBCM1Tl6zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R5yLnv8t; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1752327566; c=relaxed/simple;
+	bh=M5hXdZsaeetKfYAp1XDJARNbi69VSQ+NmQ8EhXHh3RI=;
+	h=From:To:Cc:Date:Message-Id:Subject; b=KI3hny9e0lR7lB6/vGtY0wFXDloCp+qTa5xJte5UIDbdBJjyq5lf6vE8ceZoovZlvG6a/2smBMP+3q0Yrdjn+E90DO3XpD8GgrgjONg6zOOVXlTUNEgDBk2GKkhufEUdQ/rGC5kkdJ7xB62DxQybn/JlcueJO9VgrCfHuvnEQOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=opensource.se; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=opensource.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45348bff79fso36926715e9.2;
-        Sat, 12 Jul 2025 06:36:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752327373; x=1752932173; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8pUZ0sv18MpoDhK/ify1e8p2zlKRVv2EfUxVJ1Ymfrg=;
-        b=R5yLnv8tw+8eOuyOsm6GIghqgbIXaqK+q4D76x+bFsLQKrAX1H9ZU0wTcc1j3/tsIh
-         5s2Uf22F2+L8t9hTc0UGKRIQ3SPav0n4vgn1GuqP1OA4JjjTi0y4Hs6JsZRZ5OgMc1L4
-         EWCg9Z46F2FvCHABugB5/qwLDpiSXJIhKLKSAYtPU7kA0XrBl1m3h+DMqXZwdFoYZLUg
-         u8FCmgeQDpCuxGWiWrns3HavC4HMhwv2dTYnG85IdgTJI3wKJPiK0uYpTtY/D1WHhvQm
-         hSvHcCfkF4b+Xifz9tV4bmL6gOM+l/bdDbKPyg0nS1s1SVfAzmn+TUNZ9uJhwJvwoeQi
-         qzzA==
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-7048c49f1f1so24738176d6.0;
+        Sat, 12 Jul 2025 06:39:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752327373; x=1752932173;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8pUZ0sv18MpoDhK/ify1e8p2zlKRVv2EfUxVJ1Ymfrg=;
-        b=W7a4zdMUSoeH6mCilwXBQyRN+LU9i2JRIxGILcEJfQplXQJXEln/ZUVw8ohhsMOIA/
-         2+jthgiP+yejJqNNi6wZjPdrvHnGku3ZRaehkODBCu1hnWb+zdoHCbLWnrhZ7S2p2m4J
-         kiqk3fqHuYwIfHcZ3PeomwkMgPjbJDd6yS/6SYTKpnl4d3RXcb5auZeFhFkHI+VZZT6O
-         1KwL6phSW7266eOQ3tnpAjkTcDZubhjfAdlaueEyJw7/0kYQNWQ6rWMVXBlbzj4oTE+X
-         2mqTvtN47qEU3mzIAdKkrXvvWyyof8DrvDlDOj0BuY+NcLgZmIf+SidjtjLu+SIn4HIP
-         mJNw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1yDX2LAN1fQvDWebHgdxMWJXEiJ6dLBg11OgxqWR+b5G7r7hag54KMUG0NM8yo7tqXSp8IrCtcQQ=@vger.kernel.org, AJvYcCXjpkzgJ2vqK6Oc/yFW7RV1clANM8q4MAhXiBlfJ88VRevR2Ko3zwzDY7wCHVOKmJj7rIpMCkcLT39YKS7i@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHkZ35Z8HTd74yOwEUerbloJZcGp/yNSxVtza/nzp/P30jWR4t
-	1n0bB0g6cLkj+DjFgvJWTj9ytEo8XHlT107lEP6sNz/VOLALLNVQGGIm
-X-Gm-Gg: ASbGncuTmhAvw3lYUj1gvz71kweqytpdmmfBglNYuqyTkrt+7A+wb3a9qcD+znfSy52
-	Q9IrWCeaRFClrOiOUajWxZYISAt/lLUOvB9Hv667aopJMH5dOG8IL/8p6m57bKYoxWlbTP75oiH
-	2Or15trMfxcvDY2YESMkpjYSnnOFN3CcTVqev8qzV6H9l/19hL6RjQ+jTYOCHwOzj31zHhNrHxT
-	KPXapKX7rivkLOe1cyQ6ZL+dYFNOOqffLQ3BHnLh0MZcdinu1yAReCU9qCAa7baQAnybddkGkLd
-	UvefIG9S5bGQfwFwB37FQ+T6Lbd44NL8bIBnhW3vLXfEExESHPPs8yyLiqqo5HqFrJu1+K67OAm
-	XaIIPK9XNkxmZ14ze4LwVUD5tShq2B76gQd1mVpkAG83pmyA=
-X-Google-Smtp-Source: AGHT+IG3HASTYf7cc5krk95istZ2ht/IcmtfyDDIqZ4We3a9kVh2QzYvzU9kqhCv8kKwdXp7OVDDlw==
-X-Received: by 2002:a05:600c:8483:b0:440:6a1a:d89f with SMTP id 5b1f17b1804b1-455bd87a4a2mr54822445e9.4.1752327372582;
-        Sat, 12 Jul 2025 06:36:12 -0700 (PDT)
-Received: from localhost.localdomain ([154.183.63.38])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc201asm7241267f8f.22.2025.07.12.06.36.11
+        d=1e100.net; s=20230601; t=1752327563; x=1752932363;
+        h=subject:message-id:date:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4SZndGvUIt7DDXRADXtu3mZLDJeHdxPsKl8EmZDOSHs=;
+        b=avCr43mqB5kuoYb8GkoLAL7n7oFfQ7if5dFqBcJMWpURg1w5TBaJkm0Uze4m41MtbK
+         /tkp+OIhIbN+7PwLb0dpH32G79gtczDjhcW9aN3jUm5GD7OF3IOHsDAPyBTdQ528CnWu
+         u+v2liZsCJq7Wy6K/0vF+r8erFjyqk4uVWhykesSQwnbZKsyZdVq+Vr9Vmohyh5WRUNg
+         6/dxY6s0iaxb9jb7h2BEMODXNdpdRxTaW5GIff8ZOh71ogL50G5RscAiB/wuPxcjdcng
+         bKn5ZULSGZufEm3KKjJDroyraAs1F6K8/CiA3okIFdFj7okDCTHlIk7gOY7y+vYXR3SM
+         ATMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRaLce8E6XK4SZTEWurrTeqtq9gnO6l2Hwekceq4L9ieyu1pyHaynkriqXEy2L7k4ARNvBwUa1QxvdfEUn@vger.kernel.org, AJvYcCWUqIqCNytag2KWFVEcRLggajAXUwVd9UiQ6YjPaLEpNcOuKUDjFC0clMFkOjgzifnsFFF4o7qRVWza@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxn3nPq6g0AJDmW2LzgOEsE2FM1/eMCDrCYz89fztS5TLr0QW1i
+	S4oaVNlvCSX+OY/V0YarLM1mpZzWKpB0EUBNt1tZ+Ge9i18Ps3xbOXWhpU2WZk/x
+X-Gm-Gg: ASbGnctNHFKLLVrqgOC/vK84NQ62x/VT4rLAE0zchlaGKAcYOcMsUVcROjSsYcCdjr7
+	6PC18fWsM3Dj/JeViIsGM28aczm5RIEccmPom1lcp+7ZDE03CueQOx0pRLGqOnQcfcJy3zBtdVn
+	R6B7VNTiDeElCmI9i/RdhRbw9xwSEHLeZt6EkXpRdZ4sh9cmNcWcLrhDGwvrYSI4NReMyIuiF7A
+	7MEvqYfkL291PmClf9G7P4CbPvQ/+pRSocO4WSV6TfiSHhnUKP2iy1OudfRZVgL8EKripeFnSVd
+	pPeSY/9KCEu+qyMgELzQj6+tQALAOwBllUoqXRo3j3dBXhhJ5aoLtjtP94SpbcnCrbIoy6XbgZE
+	4BxGBzPdVpSKPl0BBC0XVp4h40UlSlCp6ZRduv7ISIcU=
+X-Google-Smtp-Source: AGHT+IGkbBEwGq2qLBGHwHO2t0nzxcq5VVfnRjSsIiJN3bTfGveARjN7hFqIzPalJ2ym9OzevmoWOg==
+X-Received: by 2002:ad4:5f0c:0:b0:704:7d2e:dd1c with SMTP id 6a1803df08f44-704a3518d25mr116039096d6.3.1752327562897;
+        Sat, 12 Jul 2025 06:39:22 -0700 (PDT)
+Received: from 1.0.0.127.in-addr.arpa ([167.99.4.198])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7049799ef69sm29506716d6.20.2025.07.12.06.39.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Jul 2025 06:36:12 -0700 (PDT)
-From: Khaled Elnaggar <khaledelnaggarlinux@gmail.com>
-To: mkl@pengutronix.de,
-	mailhol.vincent@wanadoo.fr
-Cc: Khaled Elnaggar <khaledelnaggarlinux@gmail.com>,
-	linux-kernel-mentees@lists.linux.dev,
-	shuah@kernel.org,
-	linux-can@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] can: janz-ican3: use sysfs_emit() in fwinfo_show()
-Date: Sat, 12 Jul 2025 16:36:07 +0300
-Message-ID: <20250712133609.331904-1-khaledelnaggarlinux@gmail.com>
-X-Mailer: git-send-email 2.47.2
+        Sat, 12 Jul 2025 06:39:22 -0700 (PDT)
+From: Magnus Damm <damm@opensource.se>
+To: linux-renesas-soc@vger.kernel.org
+Cc: robh@kernel.org,Magnus Damm <damm@opensource.se>,geert+renesas@glider.be,devicetree@vger.kernel.org,conor+dt@kernel.org,krzk@kernel.org,linux-kernel@vger.kernel.org,wsa+renesas@sang-engineering.com,sergei.shtylyov@gmail.com,p.zabel@pengutronix.de
+Date: Sat, 12 Jul 2025 15:39:19 +0200
+Message-Id: <175232755943.19062.8739774784256290646.sendpatchset@1.0.0.127.in-addr.arpa>
+Subject: [PATCH v2 0/4] Add RZ/A1 and RZ/A2 support to the rpc-if driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-As recommended in Documentation/filesystems/sysfs.rst, show() callbacks
-should use sysfs_emit() or sysfs_emit_at() to format values returned to
-userspace. Replace scnprintf() with sysfs_emit() in fwinfo_show().
+Add RZ/A1 and RZ/A2 support to the rpc-if driver (v2)
 
-Signed-off-by: Khaled Elnaggar <khaledelnaggarlinux@gmail.com>
+[PATCH v2 1/4] dt-bindings: memory-controllers: renesas,rpc-if: Add RZ/A1 and RZ/A2 compat strings
+[PATCH v2 2/4] ARM: dts: renesas: r7s72100: add rpc-if nodes
+[PATCH v2 3/4] ARM: dts: renesas: r7s9210: add rpc-if node
+[PATCH v2 3/4] memory: renesas-rpc-if: Add RZ/A1 and RZ/A2 support
+
+Document new rpc-if compat strings for RZ/A1 and RZ/A2, add rpc-if nodes
+to RZ/A1 and RZ/A2 DT files and add support to the driver. The reset
+controller is made optional since RZ/A1 hardware comes without reset bits.
+
+These DT bindings and SoC DT files are also used by U-Boot. The patches
+have been checked against checkpatch.pl and the CC list is taken from the
+get_maintainers.pl script. I have not run any scripts to check on
+the validity of the DT binding documentation change or new DT nodes.
+
+The patches have no ordering requirements, feel free to pick up part
+of this series and/or ask me to rework and resend.
+
+Signed-off-by: Magnus Damm <damm@opensource.se>
 ---
- drivers/net/can/janz-ican3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/can/janz-ican3.c b/drivers/net/can/janz-ican3.c
-index 60c7b83b4539..bfa5cbe88017 100644
---- a/drivers/net/can/janz-ican3.c
-+++ b/drivers/net/can/janz-ican3.c
-@@ -1867,7 +1867,7 @@ static ssize_t fwinfo_show(struct device *dev,
- {
- 	struct ican3_dev *mod = netdev_priv(to_net_dev(dev));
- 
--	return scnprintf(buf, PAGE_SIZE, "%s\n", mod->fwinfo);
-+	return sysfs_emit(buf, "%s\n", mod->fwinfo);
- }
- 
- static DEVICE_ATTR_RW(termination);
--- 
-2.47.2
+ Previous verison posted as:
+  [PATCH 0/6] Add rpc-if to RZ/A1, RZ/A2 and update/add board support
+
+ Changes since v1:
+ - Added reg-names to the rpc-if nodes in r7s72100.dtsi and r7s9210.dtsi
+ - Moved the compat strings to keep sort order in the DT binding doc
+ - Added driver code that makes use of the new bindings
+ - Dropped board code
+
+ Applies to next-20250710
+
+ Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml |    5 ++
+ arch/arm/boot/dts/renesas/r7s72100.dtsi                                  |   24 ++++++++++
+ arch/arm/boot/dts/renesas/r7s9210.dtsi                                   |   13 +++++
+ drivers/memory/renesas-rpc-if.c                                          |   15 +++++-
+ include/memory/renesas-rpc-if.h                                          |    1 
 
 
