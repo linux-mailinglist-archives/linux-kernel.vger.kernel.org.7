@@ -1,271 +1,162 @@
-Return-Path: <linux-kernel+bounces-728561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70283B02A00
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:18:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC9EB02A01
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEC037B57FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:17:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 689B1177766
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B8026B768;
-	Sat, 12 Jul 2025 08:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8709B26B76B;
+	Sat, 12 Jul 2025 08:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dUe/skNM"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eU+7ZhVI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79AC4A11;
-	Sat, 12 Jul 2025 08:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A371C4A11
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 08:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752308313; cv=none; b=VTkcuFxUmG+onQR1i5wa7Edz25pTX5y1ZTHSuPPYKK7Ge2de3W+ZjOTtIjJ8BAvpT7spm1VsA1LmSPX9M9EEJjg85zSDQ81xGo1wtzVBnUo+ALcrSUfNpnw5000DEOty64iSlxvq5q3cDikd0mS9udsRFJtwoAD9btpU4XYNHFk=
+	t=1752308359; cv=none; b=i6szLlzY5r21DJrh+Y3HhMKs1/3WjWDc40E14wqjN7P9tpX6klmiX5LPCOWzr2PmRhsnh/Axmnkpdiji0LKsVR7Yvmp/2RrxB9kayIZIMnStNYeVHW6+xb4EwqVGx6e18nE0G8EijYPG4xjFwArNuMuYqduVMnkNDzOHDi+b2J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752308313; c=relaxed/simple;
-	bh=5QmlZdq9lk3oD+l/SlfTydozUqEL/49FswAFukZBz1Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FpX5Q3cL4aeoazbl9jyZbZWee9xVBtUpsUTD/+LZ0/F/YBoWv+kaHVAEHM1NzBQHDUWJnGHSqwEUj4Q79+MaHaPLNIgcGt/AjpQRjvfSdswPpMvVv8BT2f0ORVj37cJimUVKxaPiCKFPwXsWnSAohnkqdnl0xyAPxzqQKtPYNAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dUe/skNM; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56C8I37x2213549;
-	Sat, 12 Jul 2025 03:18:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752308283;
-	bh=nhjS0HucAZWDT2G9PZFl8rKVFR+c+E/KvSR61Qe4jNg=;
-	h=From:To:CC:Subject:Date;
-	b=dUe/skNMVztVVwCshv/M2DFqAXUTwUNcElrWVN6HQTmuNUvWl93QlxvrWlsxp/eD5
-	 mkRQdjA+eWpf26sufU1U27YTBwT6+wZWDQHaHiZhtYE0a5XXxccGX3d730OLfVmLXl
-	 yk8546WzXLhbtptKX6ZyAa/GY6WSjKh0e4dBK2Vc=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56C8I2wl2036460
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Sat, 12 Jul 2025 03:18:02 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sat, 12
- Jul 2025 03:18:02 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Sat, 12 Jul 2025 03:18:02 -0500
-Received: from lelvem-mr06.itg.ti.com ([10.250.165.138])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56C8Hvt1557207;
-	Sat, 12 Jul 2025 03:17:58 -0500
-From: Baojun Xu <baojun.xu@ti.com>
-To: <tiwai@suse.de>
-CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
-        <alsa-devel@alsa-project.org>, <shenghao-ding@ti.com>, <navada@ti.com>,
-        <13916275206@139.com>, <v-hampiholi@ti.com>, <v-po@ti.com>,
-        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <baojun.xu@ti.com>
-Subject: [PATCH v1] ALSA: hda/tas2781: Add TAS2770 support
-Date: Sat, 12 Jul 2025 16:17:33 +0800
-Message-ID: <20250712081733.12881-1-baojun.xu@ti.com>
-X-Mailer: git-send-email 2.43.0.windows.1
+	s=arc-20240116; t=1752308359; c=relaxed/simple;
+	bh=eB+ThotSsopGkHavSJDY+uYX/rQcwLk88dMHc6rUuHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Pn5KqunTECmy9liH71iBvM2tykiX5fZxJfl341T7YtFaLh9lrpSoSegAt4swtnTZg98Icoblav/ywRr0gjVrf7SbQGeoYxLEVy/SGDaRpouQEbsIx/uGyikVxF27Lr7f7F6HSti8sJngphRvGElqrFcxfERJVI+cEjje84vAka0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eU+7ZhVI; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752308358; x=1783844358;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=eB+ThotSsopGkHavSJDY+uYX/rQcwLk88dMHc6rUuHY=;
+  b=eU+7ZhVIiDFeyeuVnIu50vxbwEGqwYUMoKuiX5FXNueurNG/y62IsCO4
+   KR7vt7cdp88llgnderjxxQGOI0utElMNwv67+LueGe+8JnSsD8Vn1IHrW
+   AMyBsBxMILK86qsyJz2RhD05j0F1iOb6RqyH2c4FFsGBnv/Z+iW9muUSw
+   t7ACEEzqS1PKWdoxiloPBhEptotVpnwYkklITyiDsUjb8oK+cVNTRSfk0
+   ZfCFByjxWarsgSSkW1bWw9rc65wuX09duktwtCHqMLJq/0eNFenhmGc/e
+   s6wee2qSHJ3tFfHprsTkd2U9sLbJcvL+0wIKdRY2lO89SWI/wMR493/wO
+   g==;
+X-CSE-ConnectionGUID: XQvOT00kQAOxhHVnyhONLQ==
+X-CSE-MsgGUID: YwlfNggITTG+xPKvVx5s4Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54717572"
+X-IronPort-AV: E=Sophos;i="6.16,306,1744095600"; 
+   d="scan'208";a="54717572"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2025 01:19:17 -0700
+X-CSE-ConnectionGUID: WaCQ6rAZRxWceQbBQ/i4Dg==
+X-CSE-MsgGUID: xkTF5SDLS/q98Fs9vp2mwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,306,1744095600"; 
+   d="scan'208";a="156156584"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 12 Jul 2025 01:19:15 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uaVRx-0007B1-0N;
+	Sat, 12 Jul 2025 08:19:13 +0000
+Date: Sat, 12 Jul 2025 16:18:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andi Shyti <andi@smida.it>
+Subject: drivers/i2c/busses/i2c-xgene-slimpro.c:183:18: sparse: sparse:
+ dereference of noderef expression
+Message-ID: <202507121605.dG75O5HN-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add TAS2770 support in HDA.
-Create a header file include/sound/tas2770-tlv.h,
-Set chip_id in i2c probe, check it while sound control is created,
-and the DSP firmware binary file parser.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   379f604cc3dc2c865dc2b13d81faa166b6df59ec
+commit: 7b174126124560f15e392fe5767face99e61ddb1 i2c: xgene-slimpro: Simplify PCC shared memory region handling
+date:   8 weeks ago
+config: arm64-randconfig-r123-20250712 (https://download.01.org/0day-ci/archive/20250712/202507121605.dG75O5HN-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 01c97b4953e87ae455bd4c41e3de3f0f0f29c61c)
+reproduce: (https://download.01.org/0day-ci/archive/20250712/202507121605.dG75O5HN-lkp@intel.com/reproduce)
 
-Signed-off-by: Baojun Xu <baojun.xu@ti.com>
----
- include/sound/tas2770-tlv.h     | 20 ++++++++++++
- include/sound/tas2781.h         |  4 +++
- sound/pci/hda/tas2781_hda_i2c.c | 58 +++++++++++++++++++++++++--------
- 3 files changed, 69 insertions(+), 13 deletions(-)
- create mode 100644 include/sound/tas2770-tlv.h
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507121605.dG75O5HN-lkp@intel.com/
 
-diff --git a/include/sound/tas2770-tlv.h b/include/sound/tas2770-tlv.h
-new file mode 100644
-index 000000000000..2a2a74372366
---- /dev/null
-+++ b/include/sound/tas2770-tlv.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+//
-+// ALSA SoC Texas Instruments TAS2770 Audio Smart Amplifier
-+//
-+// Copyright (C) 2025 Texas Instruments Incorporated
-+// https://www.ti.com
-+//
-+// The TAS2770 hda driver implements for one, two, or even multiple
-+// TAS2770 chips.
-+//
-+// Author: Baojun Xu <baojun.xu@ti.com>
-+//
-+
-+#ifndef __TAS2770_TLV_H__
-+#define __TAS2770_TLV_H__
-+
-+static const __maybe_unused DECLARE_TLV_DB_SCALE(tas2770_dvc_tlv, 1650, 50, 0);
-+static const __maybe_unused DECLARE_TLV_DB_SCALE(tas2770_amp_tlv, 1100, 50, 0);
-+
-+#endif
-diff --git a/include/sound/tas2781.h b/include/sound/tas2781.h
-index 3875e92f1ec5..f3d9c80fad36 100644
---- a/include/sound/tas2781.h
-+++ b/include/sound/tas2781.h
-@@ -63,6 +63,9 @@
- 
- /* Volume control */
- #define TAS2563_DVC_LVL			TASDEVICE_REG(0x00, 0x02, 0x0c)
-+#define TAS2770_DVC_LVL			TASDEVICE_REG(0x0, 0x0, 0x17)
-+#define TAS2770_AMP_LEVEL		TASDEVICE_REG(0x0, 0x0, 0x03)
-+
- #define TAS2781_DVC_LVL			TASDEVICE_REG(0x0, 0x0, 0x1a)
- #define TAS2781_AMP_LEVEL		TASDEVICE_REG(0x0, 0x0, 0x03)
- #define TAS2781_AMP_LEVEL_MASK		GENMASK(5, 1)
-@@ -111,6 +114,7 @@
- 
- enum audio_device {
- 	TAS2563,
-+	TAS2770,
- 	TAS2781,
- };
- 
-diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
-index b7ee22840d78..39f00e33e49d 100644
---- a/sound/pci/hda/tas2781_hda_i2c.c
-+++ b/sound/pci/hda/tas2781_hda_i2c.c
-@@ -24,6 +24,7 @@
- #include <sound/tas2781.h>
- #include <sound/tas2781-comlib-i2c.h>
- #include <sound/tlv.h>
-+#include <sound/tas2770-tlv.h>
- #include <sound/tas2781-tlv.h>
- 
- #include "hda_local.h"
-@@ -245,6 +246,12 @@ static int tas2781_force_fwload_put(struct snd_kcontrol *kcontrol,
- 	return change;
- }
- 
-+static const struct snd_kcontrol_new tas2770_snd_controls[] = {
-+	ACARD_SINGLE_RANGE_EXT_TLV("Speaker Analog Volume", TAS2770_AMP_LEVEL,
-+		0, 0, 20, 0, tas2781_amp_getvol,
-+		tas2781_amp_putvol, tas2770_amp_tlv),
-+};
-+
- static const struct snd_kcontrol_new tas2781_snd_controls[] = {
- 	ACARD_SINGLE_RANGE_EXT_TLV("Speaker Analog Gain", TAS2781_AMP_LEVEL,
- 		1, 0, 20, 0, tas2781_amp_getvol,
-@@ -253,7 +260,7 @@ static const struct snd_kcontrol_new tas2781_snd_controls[] = {
- 		tas2781_force_fwload_get, tas2781_force_fwload_put),
- };
- 
--static const struct snd_kcontrol_new tas2781_prof_ctrl = {
-+static const struct snd_kcontrol_new tas27xx_prof_ctrl = {
- 	.name = "Speaker Profile Id",
- 	.iface = SNDRV_CTL_ELEM_IFACE_CARD,
- 	.info = tasdevice_info_profile,
-@@ -393,26 +400,45 @@ static void tasdev_fw_ready(const struct firmware *fmw, void *context)
- 	if (ret)
- 		goto out;
- 
--	tas_hda->prof_ctl = snd_ctl_new1(&tas2781_prof_ctrl, tas_priv);
-+	tas_hda->prof_ctl = snd_ctl_new1(&tas27xx_prof_ctrl, tas_priv);
- 	ret = snd_ctl_add(codec->card, tas_hda->prof_ctl);
- 	if (ret) {
- 		dev_err(tas_priv->dev,
- 			"Failed to add KControl %s = %d\n",
--			tas2781_prof_ctrl.name, ret);
-+			tas27xx_prof_ctrl.name, ret);
- 		goto out;
- 	}
- 
--	for (i = 0; i < ARRAY_SIZE(tas2781_snd_controls); i++) {
--		hda_priv->snd_ctls[i] = snd_ctl_new1(&tas2781_snd_controls[i],
--			tas_priv);
--		ret = snd_ctl_add(codec->card, hda_priv->snd_ctls[i]);
--		if (ret) {
--			dev_err(tas_priv->dev,
--				"Failed to add KControl %s = %d\n",
--				tas2781_snd_controls[i].name, ret);
--			goto out;
-+	if (tas_priv->chip_id == TAS2770) {
-+		for (i = 0; i < ARRAY_SIZE(tas2770_snd_controls); i++) {
-+			hda_priv->snd_ctls[i] = snd_ctl_new1(
-+				&tas2770_snd_controls[i], tas_priv);
-+			ret = snd_ctl_add(codec->card, hda_priv->snd_ctls[i]);
-+			if (ret) {
-+				dev_err(tas_priv->dev,
-+					"Failed to add KControl %s = %d\n",
-+					tas2770_snd_controls[i].name, ret);
-+				goto out;
-+			}
-+		}
-+	} else if (tas_priv->chip_id == TAS2781) {
-+		for (i = 0; i < ARRAY_SIZE(tas2781_snd_controls); i++) {
-+			hda_priv->snd_ctls[i] = snd_ctl_new1(
-+				&tas2781_snd_controls[i], tas_priv);
-+			ret = snd_ctl_add(codec->card, hda_priv->snd_ctls[i]);
-+			if (ret) {
-+				dev_err(tas_priv->dev,
-+					"Failed to add KControl %s = %d\n",
-+					tas2781_snd_controls[i].name, ret);
-+				goto out;
-+			}
- 		}
- 	}
-+	// No dsp supported in TAS2770.
-+	if (tas_priv->chip_id == TAS2770) {
-+		tas_hda->priv->playback_started = true;
-+		goto out;
-+	}
- 
- 	tasdevice_dsp_remove(tas_priv);
- 
-@@ -453,7 +479,6 @@ static void tasdev_fw_ready(const struct firmware *fmw, void *context)
- 			tas2781_dsp_prog_ctrl.name, ret);
- 		goto out;
- 	}
--
- 	tas_hda->dsp_conf_ctl = snd_ctl_new1(&tas2781_dsp_conf_ctrl,
- 		tas_priv);
- 	ret = snd_ctl_add(codec->card, tas_hda->dsp_conf_ctl);
-@@ -582,15 +607,21 @@ static int tas2781_hda_i2c_probe(struct i2c_client *clt)
- 
- 	if (strstr(dev_name(&clt->dev), "TIAS2781")) {
- 		device_name = "TIAS2781";
-+		tas_hda->priv->chip_id = TAS2781;
- 		hda_priv->save_calibration = tas2781_save_calibration;
- 		tas_hda->priv->global_addr = TAS2781_GLOBAL_ADDR;
-+	} else if (strstarts(dev_name(&clt->dev), "i2c-TXNW2770")) {
-+		device_name = "TXNW2770";
-+		tas_hda->priv->chip_id = TAS2770;
- 	} else if (strstarts(dev_name(&clt->dev),
- 			     "i2c-TXNW2781:00-tas2781-hda.0")) {
- 		device_name = "TXNW2781";
-+		tas_hda->priv->chip_id = TAS2781;
- 		hda_priv->save_calibration = tas2781_save_calibration;
- 		tas_hda->priv->global_addr = TAS2781_GLOBAL_ADDR;
- 	} else if (strstr(dev_name(&clt->dev), "INT8866")) {
- 		device_name = "INT8866";
-+		tas_hda->priv->chip_id = TAS2563;
- 		hda_priv->save_calibration = tas2563_save_calibration;
- 		tas_hda->priv->global_addr = TAS2563_GLOBAL_ADDR;
- 	} else {
-@@ -727,6 +758,7 @@ static const struct i2c_device_id tas2781_hda_i2c_id[] = {
- static const struct acpi_device_id tas2781_acpi_hda_match[] = {
- 	{"INT8866", 0 },
- 	{"TIAS2781", 0 },
-+	{"TXNW2770", 0 },
- 	{"TXNW2781", 0 },
- 	{}
- };
+sparse warnings: (new ones prefixed by >>)
+   drivers/i2c/busses/i2c-xgene-slimpro.c:121:15: sparse: sparse: cast to restricted __le16
+   drivers/i2c/busses/i2c-xgene-slimpro.c:124:9: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned short volatile @@     got restricted __le16 [usertype] @@
+   drivers/i2c/busses/i2c-xgene-slimpro.c:124:9: sparse:     expected unsigned short volatile
+   drivers/i2c/busses/i2c-xgene-slimpro.c:124:9: sparse:     got restricted __le16 [usertype]
+   drivers/i2c/busses/i2c-xgene-slimpro.c:153:38: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short [usertype] *addr @@     got unsigned short [noderef] __iomem * @@
+   drivers/i2c/busses/i2c-xgene-slimpro.c:153:38: sparse:     expected unsigned short [usertype] *addr
+   drivers/i2c/busses/i2c-xgene-slimpro.c:153:38: sparse:     got unsigned short [noderef] __iomem *
+   drivers/i2c/busses/i2c-xgene-slimpro.c:157:37: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short [usertype] *addr @@     got unsigned short [noderef] __iomem * @@
+   drivers/i2c/busses/i2c-xgene-slimpro.c:157:37: sparse:     expected unsigned short [usertype] *addr
+   drivers/i2c/busses/i2c-xgene-slimpro.c:157:37: sparse:     got unsigned short [noderef] __iomem *
+   drivers/i2c/busses/i2c-xgene-slimpro.c:159:21: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *msg @@     got struct acpi_pcct_shared_memory [noderef] __iomem * @@
+   drivers/i2c/busses/i2c-xgene-slimpro.c:159:21: sparse:     expected void *msg
+   drivers/i2c/busses/i2c-xgene-slimpro.c:159:21: sparse:     got struct acpi_pcct_shared_memory [noderef] __iomem *
+   drivers/i2c/busses/i2c-xgene-slimpro.c:173:21: sparse: sparse: cast removes address space '__iomem' of expression
+   drivers/i2c/busses/i2c-xgene-slimpro.c:177:9: sparse: sparse: cast removes address space '__iomem' of expression
+   drivers/i2c/busses/i2c-xgene-slimpro.c:177:9: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int volatile @@     got restricted __le32 [usertype] @@
+   drivers/i2c/busses/i2c-xgene-slimpro.c:177:9: sparse:     expected unsigned int volatile
+   drivers/i2c/busses/i2c-xgene-slimpro.c:177:9: sparse:     got restricted __le32 [usertype]
+   drivers/i2c/busses/i2c-xgene-slimpro.c:180:9: sparse: sparse: cast removes address space '__iomem' of expression
+   drivers/i2c/busses/i2c-xgene-slimpro.c:180:9: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned short volatile @@     got restricted __le16 [usertype] @@
+   drivers/i2c/busses/i2c-xgene-slimpro.c:180:9: sparse:     expected unsigned short volatile
+   drivers/i2c/busses/i2c-xgene-slimpro.c:180:9: sparse:     got restricted __le16 [usertype]
+   drivers/i2c/busses/i2c-xgene-slimpro.c:183:18: sparse: sparse: cast to restricted __le16
+   drivers/i2c/busses/i2c-xgene-slimpro.c:185:9: sparse: sparse: cast removes address space '__iomem' of expression
+   drivers/i2c/busses/i2c-xgene-slimpro.c:185:9: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned short volatile @@     got restricted __le16 [usertype] @@
+   drivers/i2c/busses/i2c-xgene-slimpro.c:185:9: sparse:     expected unsigned short volatile
+   drivers/i2c/busses/i2c-xgene-slimpro.c:185:9: sparse:     got restricted __le16 [usertype]
+   drivers/i2c/busses/i2c-xgene-slimpro.c:189:17: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int volatile @@     got restricted __le32 [usertype] @@
+   drivers/i2c/busses/i2c-xgene-slimpro.c:189:17: sparse:     expected unsigned int volatile
+   drivers/i2c/busses/i2c-xgene-slimpro.c:189:17: sparse:     got restricted __le32 [usertype]
+>> drivers/i2c/busses/i2c-xgene-slimpro.c:183:18: sparse: sparse: dereference of noderef expression
+
+vim +183 drivers/i2c/busses/i2c-xgene-slimpro.c
+
+df5da47fe722e3 Hoan Tran    2017-04-24  168  
+df5da47fe722e3 Hoan Tran    2017-04-24  169  static void slimpro_i2c_pcc_tx_prepare(struct slimpro_i2c_dev *ctx, u32 *msg)
+df5da47fe722e3 Hoan Tran    2017-04-24  170  {
+7b174126124560 Sudeep Holla 2025-04-11  171  	struct acpi_pcct_shared_memory __iomem *generic_comm_base =
+7b174126124560 Sudeep Holla 2025-04-11  172  							ctx->pcc_chan->shmem;
+df5da47fe722e3 Hoan Tran    2017-04-24  173  	u32 *ptr = (void *)(generic_comm_base + 1);
+df5da47fe722e3 Hoan Tran    2017-04-24  174  	u16 status;
+df5da47fe722e3 Hoan Tran    2017-04-24  175  	int i;
+df5da47fe722e3 Hoan Tran    2017-04-24  176  
+df5da47fe722e3 Hoan Tran    2017-04-24  177  	WRITE_ONCE(generic_comm_base->signature,
+df5da47fe722e3 Hoan Tran    2017-04-24  178  		   cpu_to_le32(PCC_SIGNATURE | ctx->mbox_idx));
+df5da47fe722e3 Hoan Tran    2017-04-24  179  
+df5da47fe722e3 Hoan Tran    2017-04-24  180  	WRITE_ONCE(generic_comm_base->command,
+89a4ad1f437c04 Sudeep Holla 2023-09-27  181  		   cpu_to_le16(SLIMPRO_MSG_TYPE(msg[0]) | PCC_CMD_GENERATE_DB_INTR));
+df5da47fe722e3 Hoan Tran    2017-04-24  182  
+df5da47fe722e3 Hoan Tran    2017-04-24 @183  	status = le16_to_cpu(READ_ONCE(generic_comm_base->status));
+89a4ad1f437c04 Sudeep Holla 2023-09-27  184  	status &= ~PCC_STATUS_CMD_COMPLETE;
+df5da47fe722e3 Hoan Tran    2017-04-24  185  	WRITE_ONCE(generic_comm_base->status, cpu_to_le16(status));
+df5da47fe722e3 Hoan Tran    2017-04-24  186  
+df5da47fe722e3 Hoan Tran    2017-04-24  187  	/* Copy the message to the PCC comm space */
+df5da47fe722e3 Hoan Tran    2017-04-24  188  	for (i = 0; i < SLIMPRO_IIC_MSG_DWORD_COUNT; i++)
+df5da47fe722e3 Hoan Tran    2017-04-24  189  		WRITE_ONCE(ptr[i], cpu_to_le32(msg[i]));
+df5da47fe722e3 Hoan Tran    2017-04-24  190  }
+df5da47fe722e3 Hoan Tran    2017-04-24  191  
+
+:::::: The code at line 183 was first introduced by commit
+:::::: df5da47fe722e36055b97134e6bb9df58c12495c i2c: xgene-slimpro: Add ACPI support by using PCC mailbox
+
+:::::: TO: Hoan Tran <hotran@apm.com>
+:::::: CC: Wolfram Sang <wsa@the-dreams.de>
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
