@@ -1,122 +1,126 @@
-Return-Path: <linux-kernel+bounces-728591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC54B02A74
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 12:40:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C3CB02A78
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 12:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F8291BC1206
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:40:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EADC14A01C2
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B08327510A;
-	Sat, 12 Jul 2025 10:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0710C274FDB;
+	Sat, 12 Jul 2025 10:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="yv0ZYtfY"
-Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="awhjzOiK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB08273D9D
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 10:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55509273D9D;
+	Sat, 12 Jul 2025 10:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752316811; cv=none; b=UzPsWB6gIflxFW7KTL6ErXuO2zZ2oHpYzLIlZTqQHgkvER2crCspFg7NBPGAHa7/o/qLrwKe1byD2qj6sNRdbMtkKxf6ypO1PRjvCHC0dWti9HxXDCC5pqiKv92OXMb4uSFpeSAuCBtjBY5SqdsWIoqVtZ60sPl4NJ6cBH3xgVI=
+	t=1752316911; cv=none; b=lG0W8/cIknm6y7j8Z9jQb7TFGwxLCLtd0g+plzav0ESdT4QhafjWxO0GVQKN8ARyhiGwI7x2NY9G0sYwfPX1NMjzyx5Ed03oMMugktKK4TC/CtsGOaAaPs6dJCRam4uWEi6gQKbkINQo2obtpFA87mXr779SYRfc+Ob/C8qgBqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752316811; c=relaxed/simple;
-	bh=XZsKN/Tbj775B4v+W6nKZzTEyimEd6fd2fZmGpYuJj4=;
+	s=arc-20240116; t=1752316911; c=relaxed/simple;
+	bh=uhkko6lxzqS4fMuttaVaa4hYcvfET1Jjb/aEOaNG8qU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ceN6n4Tb6SR6d3rI89mv6bjHl3JclM5uER8EdEYnVvcLL71l08XIF+F76ShzmFGD2PXaGi2M2A2AYCRBoWRadQ+SAovb7l4lFSe5vQ9Uap8vu7vYi4oPjdGTdXtQFGm7Eycp+T6pM43BPQhT8NmzNxmPL8AkFcBv+ogiPZS106o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=yv0ZYtfY; arc=none smtp.client-ip=212.77.101.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 42019 invoked from network); 12 Jul 2025 12:40:07 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1752316807; bh=qTgJpmSd6LhUXQuIB22IcfoJEWSMVfDYaSNR4+UA678=;
-          h=From:To:Cc:Subject;
-          b=yv0ZYtfYVIyUtWCPL0JQMBhSr+6rYxg/gu36uJsHkR9DG+bwk4cRSrZ+HM4sRq85R
-           oCgJNh/5S5u+D3P2NjBIRNurak3N3BAk6Jfa8zrsVFv+abBriFKs1giWDJHePdnTn8
-           awhIFsMi/PKXJqSUusvyXjpptxLNdVQvqlLmdv0dmWScKu80wFw6BwsyzYhid3V9zI
-           pxKcDiiBlJHQGVc5Z10eaAuuMAlbd3Z4fzLBHSaSKiDTdeH6+Zk+ngsuyku6PkmItS
-           Om36QpxAKISBedjxPiyfqVH+FU0ySxOhUu85Bjeuw4Zllr5EEPt9bG3yNSHvRU6xnN
-           tNRKX1G04TYFg==
-Received: from 89-64-3-180.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.3.180])
-          (envelope-sender <stf_xl@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <krzk@kernel.org>; 12 Jul 2025 12:40:07 +0200
-Date: Sat, 12 Jul 2025 12:40:06 +0200
-From: Stanislaw Gruszka <stf_xl@wp.pl>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:MIPS" <linux-mips@vger.kernel.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCHv3 wireless-next 7/7] dt-bindings: net: wireless: rt2800:
- add
-Message-ID: <20250712104006.GA13512@wp.pl>
-References: <20250710200820.262295-1-rosenp@gmail.com>
- <20250710200820.262295-8-rosenp@gmail.com>
- <d8b0abb2-1a12-42bf-aafd-4cd1e21babd6@kernel.org>
- <CAKxU2N-c2tHBYWBM+FJGqdSaqzw9u0O8e0G7AVqk6b0QdRnPTw@mail.gmail.com>
- <20250711-invisible-dainty-jackrabbit-acbf8f@krzk-bin>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qXuAIMKm1WO8RQZ5p54JpHQpenUobDjclgT5mcL408iuDbuBmOMf1NUs7NDmmwo7dH+Lwo3RRKm9/aFcYb7K/sOSSEOxBX6KURFXtt7LqbQHXlsRgFyiMRG8w37M+u8LsmHttIVkj86IXpTiiAKX0xh4APVs/8L79dthsCeCq+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=awhjzOiK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C175EC4CEEF;
+	Sat, 12 Jul 2025 10:41:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752316910;
+	bh=uhkko6lxzqS4fMuttaVaa4hYcvfET1Jjb/aEOaNG8qU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=awhjzOiKN9yS82/DPfNPKEZBLSnG5fAeiYvYyxQpZ5Qnp379MywJtNnCU2EpXhpQj
+	 HSyPbhi+X/el+Vyqy4tlgLHm2NnJYwsqFfv34zxieb5PkawZQAz8/vHf5YaNwTv59U
+	 H7jT/6PVDGiwT/zKASqWLKkquco9DEWyjwUMtzQnzY6tU2852LA+Th/rxuRiODnoAd
+	 d+qjtzAGaVCQg1oGgK3Us9MGFN8hEJk7GRCCZhTk4xPnLMGiy/bz407jNeuGxMjvTb
+	 O5Gq9ZRNHw2P1Mj7C7dOM3+oWa5RILXuXWrHFApdBBOi0OJ0nPvpTT46tcN/uawJ3k
+	 ttnwEaGIequtg==
+Date: Sat, 12 Jul 2025 13:41:40 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Daniel Gomez <da.gomez@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Yann Ylavic <ylavic.dev@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-modules@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v2 2/8] execmem: introduce execmem_alloc_rw()
+Message-ID: <aHI75JXSDodh6iSx@kernel.org>
+References: <20250709134933.3848895-1-rppt@kernel.org>
+ <20250709134933.3848895-3-rppt@kernel.org>
+ <784081fa-0fee-4df6-b8d5-6435eead877f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250711-invisible-dainty-jackrabbit-acbf8f@krzk-bin>
-X-WP-MailID: c2d83bddf527eb597eb6cc17933b5770
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000000 [EbNB]                               
+In-Reply-To: <784081fa-0fee-4df6-b8d5-6435eead877f@kernel.org>
 
-Hi Krzysztof,
-
-On Fri, Jul 11, 2025 at 09:48:49AM +0200, Krzysztof Kozlowski wrote:
-> On Thu, Jul 10, 2025 at 03:40:30PM -0700, Rosen Penev wrote:
-> > On Thu, Jul 10, 2025 at 2:40 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >
-> > > On 10/07/2025 22:08, Rosen Penev wrote:
-> > > > Add device-tree bindings for the RT2800 SOC wifi device found in older
-> > > > Ralink/Mediatek devices.
-> > > >
-> > > > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > > > ---
-> > > >  .../bindings/net/wireless/ralink,rt2800.yaml  | 47 +++++++++++++++++++
-> > > >  1 file changed, 47 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml b/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..8c13b25bd8b4
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
-> > >
-> > > Filename should match compatible. You were already changing something
-> > > here...
-> > hrm? that makes no sense. Various drivers have multiple compatible lines.
+On Fri, Jul 11, 2025 at 04:29:48PM +0200, Daniel Gomez wrote:
+> On 09/07/2025 15.49, Mike Rapoport wrote:
+> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> > 
+> > Some callers of execmem_alloc() require the memory to be temporarily
+> > writable even when it is allocated from ROX cache. These callers use
+> > execemem_make_temp_rw() right after the call to execmem_alloc().
+> > 
+> > Wrap this sequence in execmem_alloc_rw() API.
+> > 
+> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 > 
-> Luckily we do not speak about drivers here. Anyway, follow standard
-> review practices, you don't get special rules.
+> Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
+> 
+> > ---
+> > diff --git a/mm/execmem.c b/mm/execmem.c
+> > index 0712ebb4eb77..6b040fbc5f4f 100644
+> > --- a/mm/execmem.c
+> > +++ b/mm/execmem.c
+> 
+> {...}
+> 
+> > @@ -387,6 +397,21 @@ void *execmem_alloc(enum execmem_type type, size_t size)
+> >  	return kasan_reset_tag(p);
+> >  }
+> >  
+> > +void *execmem_alloc_rw(enum execmem_type type, size_t size)
+> > +{
+> > +	void *p __free(execmem) = execmem_alloc(type, size);
+> > +	int err;
+> > +
+> > +	if (!p)
+> > +		return NULL;
+> > +
+> > +	err = execmem_force_rw(p, size);
+> > +	if (err)
+> > +		return NULL;
+> 
+> You don't need to save the error here. That, allows err declaration to be
+> dropped.
 
-Could you please elaborate what you mean ?
+I prefer to keep err = ... It's more explicit and clear this way.
 
-I greped through Documentation/devicetree/bindings/*/*.yaml and plenty
-of "compatible:" items do not match the filename. So hard to tell
-what rule you are referencing, as it seems it's not really applied.
-
-Regards
-Stanislaw
+-- 
+Sincerely yours,
+Mike.
 
