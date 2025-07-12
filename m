@@ -1,120 +1,118 @@
-Return-Path: <linux-kernel+bounces-728624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3EFDB02AF1
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:19:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56FA3B02AF5
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:36:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1314E264E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:18:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E857CA420A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD88A275B12;
-	Sat, 12 Jul 2025 13:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8CA276049;
+	Sat, 12 Jul 2025 13:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DY3UQa3S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R5yLnv8t"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D431D52B;
-	Sat, 12 Jul 2025 13:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988621E489;
+	Sat, 12 Jul 2025 13:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752326333; cv=none; b=Wxg5rIPOz1/xhJDYzpYj6Zhg1+WempPze45E6kFR4g46QdWcz+5xx1pkxH5GaQg3Byv4xxmACWZUXseiQUiARTzbUCZaLcmq/+aj0wqjemG/ygfhg8r+FxDQzLGUjjlsTHUpdh4+Pa96ZLwmPjVbI+5zwEweBSI2F1AKUFBkCnA=
+	t=1752327376; cv=none; b=KxIgxXGqcMQBU2/T2qSZV8a5XDmV8L+Drx9wrv3D+PSbJid3L+zXoOizbFP4P0ZB1SkyMn9aj/jDfTyTy/2vu/Lz7Rz7wFc9MxiNsPDLhgvqAqdpY8q/4psIepEt2W0yX47ZkUyer2ArFLNQwa+ZD1G8U4WpnsaR1mVe1uGai38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752326333; c=relaxed/simple;
-	bh=mKTHm1hQRN4ZvXxHa3xaWZ+l39orS72rx0zHnePaZ/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pkgwLyedlQomWdLdzJbS0gTS10c0Jc/i10N+WENjtdjOSgMaos3TEMRxm3ohEwv8sNMsIK9LjVdYmDFnsTakkXvY7TMtaUgRWNuyYUKYbfxVl9MrvR+JbDQXgM61LBw9oJ9l6MAa1qLbSXqcjK0Hl5oVlrUBfdYIWA0H3L6bWys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DY3UQa3S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1552DC4CEEF;
-	Sat, 12 Jul 2025 13:18:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752326332;
-	bh=mKTHm1hQRN4ZvXxHa3xaWZ+l39orS72rx0zHnePaZ/4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DY3UQa3Sr2IDRJNj9FWRGhtrxbNV05QQrFGoSgw/ECpGDscPTqL2mtUrmpEbN0pHN
-	 n2CKgL+jAZrpgC7XASOPWFIRHsINBWew7OmoMTX5TdVUzF8Kz+HyC0BtArtvutOcW1
-	 DZ/iWJatebxUZHARd00CP7NGLvPAk1Q24nW4xvnANdyMfIJdJ6DPnmx0tpNsnZXV2p
-	 ePeejOU9JK6BUNdE9W2N8f6Xy8Ie+kaAARs9sg4tCPl4oHSC6Zm7lOe4Qbz5ZYwetj
-	 aUDOGxgbWYBKibc3KXDN0n8FUllR/HNibAoy7TTEE43u0jhRzCfAhd4mCVpMDyTY4n
-	 6zuvpuJf2JhEA==
-Date: Sat, 12 Jul 2025 14:18:48 +0100
-From: Simon Horman <horms@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	Andre Edich <andre.edich@microchip.com>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH net v3 2/3] net: phy: allow drivers to disable polling
- via get_next_update_time()
-Message-ID: <20250712131848.GA721198@horms.kernel.org>
-References: <20250711094909.1086417-1-o.rempel@pengutronix.de>
- <20250711094909.1086417-3-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1752327376; c=relaxed/simple;
+	bh=fI+EHGaEFFccDbypWav4Dk55fmRU1wtd6n3cxWUVsGs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U439KiG4rknwww6n2M9go1h8wn3reehqk3fyAPGErOy4K7oAk6IPcl2fZxwf0ojIejrMZHV7lfHyk2JD/2ZB+Igxtnm92XbsHsVPp2ZsyogysNu3BS0vvduI3dR7vEvJePic7PEnB+IJvBEe2AN2qJz7Hfh6Ocb09dBCM1Tl6zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R5yLnv8t; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45348bff79fso36926715e9.2;
+        Sat, 12 Jul 2025 06:36:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752327373; x=1752932173; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8pUZ0sv18MpoDhK/ify1e8p2zlKRVv2EfUxVJ1Ymfrg=;
+        b=R5yLnv8tw+8eOuyOsm6GIghqgbIXaqK+q4D76x+bFsLQKrAX1H9ZU0wTcc1j3/tsIh
+         5s2Uf22F2+L8t9hTc0UGKRIQ3SPav0n4vgn1GuqP1OA4JjjTi0y4Hs6JsZRZ5OgMc1L4
+         EWCg9Z46F2FvCHABugB5/qwLDpiSXJIhKLKSAYtPU7kA0XrBl1m3h+DMqXZwdFoYZLUg
+         u8FCmgeQDpCuxGWiWrns3HavC4HMhwv2dTYnG85IdgTJI3wKJPiK0uYpTtY/D1WHhvQm
+         hSvHcCfkF4b+Xifz9tV4bmL6gOM+l/bdDbKPyg0nS1s1SVfAzmn+TUNZ9uJhwJvwoeQi
+         qzzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752327373; x=1752932173;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8pUZ0sv18MpoDhK/ify1e8p2zlKRVv2EfUxVJ1Ymfrg=;
+        b=W7a4zdMUSoeH6mCilwXBQyRN+LU9i2JRIxGILcEJfQplXQJXEln/ZUVw8ohhsMOIA/
+         2+jthgiP+yejJqNNi6wZjPdrvHnGku3ZRaehkODBCu1hnWb+zdoHCbLWnrhZ7S2p2m4J
+         kiqk3fqHuYwIfHcZ3PeomwkMgPjbJDd6yS/6SYTKpnl4d3RXcb5auZeFhFkHI+VZZT6O
+         1KwL6phSW7266eOQ3tnpAjkTcDZubhjfAdlaueEyJw7/0kYQNWQ6rWMVXBlbzj4oTE+X
+         2mqTvtN47qEU3mzIAdKkrXvvWyyof8DrvDlDOj0BuY+NcLgZmIf+SidjtjLu+SIn4HIP
+         mJNw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1yDX2LAN1fQvDWebHgdxMWJXEiJ6dLBg11OgxqWR+b5G7r7hag54KMUG0NM8yo7tqXSp8IrCtcQQ=@vger.kernel.org, AJvYcCXjpkzgJ2vqK6Oc/yFW7RV1clANM8q4MAhXiBlfJ88VRevR2Ko3zwzDY7wCHVOKmJj7rIpMCkcLT39YKS7i@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHkZ35Z8HTd74yOwEUerbloJZcGp/yNSxVtza/nzp/P30jWR4t
+	1n0bB0g6cLkj+DjFgvJWTj9ytEo8XHlT107lEP6sNz/VOLALLNVQGGIm
+X-Gm-Gg: ASbGncuTmhAvw3lYUj1gvz71kweqytpdmmfBglNYuqyTkrt+7A+wb3a9qcD+znfSy52
+	Q9IrWCeaRFClrOiOUajWxZYISAt/lLUOvB9Hv667aopJMH5dOG8IL/8p6m57bKYoxWlbTP75oiH
+	2Or15trMfxcvDY2YESMkpjYSnnOFN3CcTVqev8qzV6H9l/19hL6RjQ+jTYOCHwOzj31zHhNrHxT
+	KPXapKX7rivkLOe1cyQ6ZL+dYFNOOqffLQ3BHnLh0MZcdinu1yAReCU9qCAa7baQAnybddkGkLd
+	UvefIG9S5bGQfwFwB37FQ+T6Lbd44NL8bIBnhW3vLXfEExESHPPs8yyLiqqo5HqFrJu1+K67OAm
+	XaIIPK9XNkxmZ14ze4LwVUD5tShq2B76gQd1mVpkAG83pmyA=
+X-Google-Smtp-Source: AGHT+IG3HASTYf7cc5krk95istZ2ht/IcmtfyDDIqZ4We3a9kVh2QzYvzU9kqhCv8kKwdXp7OVDDlw==
+X-Received: by 2002:a05:600c:8483:b0:440:6a1a:d89f with SMTP id 5b1f17b1804b1-455bd87a4a2mr54822445e9.4.1752327372582;
+        Sat, 12 Jul 2025 06:36:12 -0700 (PDT)
+Received: from localhost.localdomain ([154.183.63.38])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc201asm7241267f8f.22.2025.07.12.06.36.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Jul 2025 06:36:12 -0700 (PDT)
+From: Khaled Elnaggar <khaledelnaggarlinux@gmail.com>
+To: mkl@pengutronix.de,
+	mailhol.vincent@wanadoo.fr
+Cc: Khaled Elnaggar <khaledelnaggarlinux@gmail.com>,
+	linux-kernel-mentees@lists.linux.dev,
+	shuah@kernel.org,
+	linux-can@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] can: janz-ican3: use sysfs_emit() in fwinfo_show()
+Date: Sat, 12 Jul 2025 16:36:07 +0300
+Message-ID: <20250712133609.331904-1-khaledelnaggarlinux@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711094909.1086417-3-o.rempel@pengutronix.de>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 11, 2025 at 11:49:08AM +0200, Oleksij Rempel wrote:
+As recommended in Documentation/filesystems/sysfs.rst, show() callbacks
+should use sysfs_emit() or sysfs_emit_at() to format values returned to
+userspace. Replace scnprintf() with sysfs_emit() in fwinfo_show().
 
-...
+Signed-off-by: Khaled Elnaggar <khaledelnaggarlinux@gmail.com>
+---
+ drivers/net/can/janz-ican3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> @@ -1575,16 +1573,31 @@ static enum phy_state_work _phy_state_machine(struct phy_device *phydev)
->  	phy_process_state_change(phydev, old_state);
->  
->  	/* Only re-schedule a PHY state machine change if we are polling the
-> -	 * PHY, if PHY_MAC_INTERRUPT is set, then we will be moving
-> -	 * between states from phy_mac_interrupt().
-> +	 * PHY. If PHY_MAC_INTERRUPT is set or get_next_update_time() returns
-> +	 * PHY_STATE_IRQ, then we rely on interrupts for state changes.
->  	 *
->  	 * In state PHY_HALTED the PHY gets suspended, so rescheduling the
->  	 * state machine would be pointless and possibly error prone when
->  	 * called from phy_disconnect() synchronously.
->  	 */
-> -	if (phy_polling_mode(phydev) && phy_is_started(phydev))
-> -		phy_queue_state_machine(phydev,
-> -					phy_get_next_update_time(phydev));
-> +	if (phy_polling_mode(phydev) && phy_is_started(phydev)) {
-> +		unsigned int next_time = phy_get_next_update_time(phydev);
-> +
-> +		if (next_time == PHY_STATE_IRQ) {
-> +			/* A driver requesting IRQ mode while also needing
-> +			 * polling for stats has a conflicting configuration.
-> +			 * Warn about this buggy driver and fall back to
-> +			 * polling to ensure stats are updated.
-> +			 */
-> +			if (phydev->drv->update_stats) {
-> +				WARN_ONCE("phy: %s: driver requested IRQ mode but needs polling for stats\n",
-> +					  phydev_name(phydev));
-
-The first argument to WARN_ONCE() should be a condition, not a format string.
-
-Flagged by GCC and Clang builds with KCFLAGS=-Wformat-security
-
-> +				phy_queue_state_machine(phydev, PHY_STATE_TIME);
-> +			}
-> +		} else {
-> +			phy_queue_state_machine(phydev, next_time);
-> +		}
-> +	}
->  
->  	return state_work;
->  }
-
-...
-
+diff --git a/drivers/net/can/janz-ican3.c b/drivers/net/can/janz-ican3.c
+index 60c7b83b4539..bfa5cbe88017 100644
+--- a/drivers/net/can/janz-ican3.c
++++ b/drivers/net/can/janz-ican3.c
+@@ -1867,7 +1867,7 @@ static ssize_t fwinfo_show(struct device *dev,
+ {
+ 	struct ican3_dev *mod = netdev_priv(to_net_dev(dev));
+ 
+-	return scnprintf(buf, PAGE_SIZE, "%s\n", mod->fwinfo);
++	return sysfs_emit(buf, "%s\n", mod->fwinfo);
+ }
+ 
+ static DEVICE_ATTR_RW(termination);
 -- 
-pw-bot: changes-requested
+2.47.2
+
 
