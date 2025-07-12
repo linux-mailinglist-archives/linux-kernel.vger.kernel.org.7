@@ -1,209 +1,126 @@
-Return-Path: <linux-kernel+bounces-728670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BF8B02BB3
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 17:25:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB4AB02BB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 17:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C964A1AA1D79
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:26:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 143C9A603B9
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7192877CB;
-	Sat, 12 Jul 2025 15:25:46 +0000 (UTC)
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3207D2882B2;
+	Sat, 12 Jul 2025 15:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s2RwqASX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5097A17548;
-	Sat, 12 Jul 2025 15:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBAB4A24;
+	Sat, 12 Jul 2025 15:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752333945; cv=none; b=C9wx9IPUu6CsLQZtzpqVj9UL9/OhwBeKKonyzg0V9cY9/pv61Z+GOqgz84FXZkN/AppiJ/IdjbSvNochwDFA+R2JdXCXpvdS7MqC8J/smsGoqTQBcFPaeXsZGD4+Ge0ImTyXFT15h1eNbv2p+EDphyxqaohOx56RQ2a2/Kl1Jq0=
+	t=1752334257; cv=none; b=qZzd7VIAaDf/I7+bVjDdX5iKdckMBX6V5cChrtum27SCmuthi4iBIuB4DODiL++M7v5mlCN40dR2fsmGN0rZx7ouQP6Hck3V6d4/X20MXjnuu55N3ErWW/H1mYgddlT7w3eDPUWNu95NjH62ZI+yNhBF+RCZuQm7GlbKQkwXkd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752333945; c=relaxed/simple;
-	bh=dVCJf2k1OWqbqdPrRoNsq+l8ijSLfkITsUaUape0i5k=;
-	h=From:To:Cc:Date:Message-Id:Subject; b=Hj57pnU8cBvFQ13SQXVvI0rp1TXJAWdZAIbD34zTrkvwENCBGxxrk3DaVpYmzPPRuz5J2TIdNVUokmDwlmJ61iXoumA6mfEpYwVcY0V1fUVRS4QBFgkuCn/zPnhcbBmhGYml99hAWdoOBe92r4K2OGvT4gKzN8T0D2wvt6axc5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=opensource.se; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=opensource.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7d467a1d9e4so365605085a.0;
-        Sat, 12 Jul 2025 08:25:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752333942; x=1752938742;
-        h=subject:message-id:date:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T+N5KD6QaMsdoeJ3b0BLrO/WgyuCz2gEah52R6qWS/Q=;
-        b=pU8bZD/Cc2sb6V9DLQ6+dU37W3fAdmEmFVkHov5gWau07tyFStn1RBhNSGN8rdFL8g
-         ibN7EhRnzhHM032fX8YLBhyexOxp2Q/biXMp4+E7u9VK7tvufTQE+ko1VmlP5ALg1r0S
-         COKKSqQ3V7FK6qDHx79PPB8CfL0ZxCf/aLNiBlNDDdl8kgKo1scv+IuCYv+EVvCE7mSd
-         HcyYFIacRWKom35cFisPQX+CGrI9glAAzQIP+zrM6z5wq6VKGuoI2nozHEmXRUA2kR3z
-         4XNfQjp0E87HjmSp62QqYFIB6yNtyEwpXfUPsaT2Nr8goUn7vZU09cM+tdEmilK6JK3e
-         MC5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUemL0TPdMY/epzh2+bYO46tKM4peL1D1bdXOzM3FycMEsFk8wemkt1o9FsDV0Ni6sgAUoMyeeezNKj@vger.kernel.org, AJvYcCXSYm3oO+sZSzZOTZ/ulALh+BKU9jJNQsu3VC7oNh4+zpuONYm9jEgTgGzao0LyuDAGFj0lF1hyqJSx2MlI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWdihw0l9RvSIbd99jIofVcqviI6gLkxnvQU/fp2z6yYTqpLgR
-	6Ld1ofl+sS/k1vV4y+jDgQqNZASsRBs5oAqJ8nZyRmVY9ocETaItbpjqyIbxdNy7
-X-Gm-Gg: ASbGncvLiX78uvAUzOQtlcKuwQv+Ae2oElsIJtuNF77OYI/eUXAorxtumsF3Ma7Bbja
-	vdsREQbI7IfBZJnI15f1hnmo1YJ1NYVBnjdUBnQD8Zl4XOavpzuKkf0bqf2UFw5+fkBvocQiNqm
-	HanDmoDC95Q/juem6rvtz2qKdQwo5Vgkn6LZBpjGQAwYapE9xOFueAroptRslREXBlcsMA0jgVs
-	1eOOPB6/QvFnwLyoOFJeNECrcXLp3aZiVim8AMO2vzmqUDkCxcdbLxBFgLwfwX9HhUiOhh7dOCQ
-	KN7QEFJ7g9tJFB6C3DryyIIXZfwgXePp8uY7WIlzvDxhKXs9O9RjkdNobvcSTYP3jAAq3a2FrDy
-	KbcJDOMEz24yqtjw7uYnmEcpQCvmFs+7hRjAvSahggt6Uo4TSkkHQXNbg
-X-Google-Smtp-Source: AGHT+IHdE5MYH3wYQll8797nHXVKbS8a1g4vZDFCSVd85ewT/EWohjE4SOpqHO46LVPiylee35kfjA==
-X-Received: by 2002:a05:620a:ac14:b0:7e0:136f:db91 with SMTP id af79cd13be357-7e0136fdfccmr622808485a.19.1752333941843;
-        Sat, 12 Jul 2025 08:25:41 -0700 (PDT)
-Received: from Bjoern-Magnuss-MacBook-Pro.local ([167.99.4.198])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcdc000d6esm328240685a.27.2025.07.12.08.25.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Jul 2025 08:25:41 -0700 (PDT)
-From: Magnus Damm <damm@opensource.se>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <damm@opensource.se>,geert+renesas@glider.be,linux-gpio@vger.kernel.org,linus.walleij@linaro.org,linux-kernel@vger.kernel.org,wsa+renesas@sang-engineering.com
-Date: Sat, 12 Jul 2025 17:25:38 +0200
-Message-Id: <175233393885.19419.10468322450742766513.sendpatchset@Bjoern-Magnuss-MacBook-Pro.local>
-Subject: [PATCH] pinctrl: renesas: rza1: Check pin state before configuring
+	s=arc-20240116; t=1752334257; c=relaxed/simple;
+	bh=265ml+LkyhdXVhTmnhknr5HyO7Ge+6RVUWnrYFIdREw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nKOAXTCUIIfhfn83KV2CTfZS/GWsta7iuWTIUa+OapfO2HjR477veDrvlnfbwcJ5kfP8m5frhgsgyU31+KT3d3PLGFhZXSYTjy0I8/rXfvMsR4VIipXEdRmX4dgiBiC6e1CCaNTOypBpTmnDDudvgIiU9pabT8vfxopdvkje/lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s2RwqASX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1479C4CEEF;
+	Sat, 12 Jul 2025 15:30:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752334256;
+	bh=265ml+LkyhdXVhTmnhknr5HyO7Ge+6RVUWnrYFIdREw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s2RwqASXqSx8Oh6JU7k89Go16dcL/GrUjUOPGS6FmwOXL2qyP6dmzZwOZ8/ffMqQ9
+	 NcsOdGAPykesDGA/uF5PGUagCx1P5vb7UNs+BzxkLQ7J5rb+ELHrmM6PbNaoBu6VAh
+	 5fupI6aDCfQiJ8hwvz5GPrROM8SOtRg37+BMxyTfxnlv5U83uDu9oF9ryBC+Rl4Wth
+	 wo2TxnEt4soQsEGHDYW0tu+cNj6mYqWEekeUSJvW9fzaltbAl4mCKJ2V96SYPEHx4m
+	 ril//CNglu6QZ5KrdRBdAzmtcf1PKAtWWyLlVM9dNQ/rBpNP2Av+Jg+qPaApoTT6Nf
+	 KXRCWeNBmEq9Q==
+Date: Sat, 12 Jul 2025 16:30:52 +0100
+From: Simon Horman <horms@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Jiawen Wu <jiawenwu@trustnetic.com>,
+	Mengyuan Lou <mengyuanlou@net-swift.com>, netdev@vger.kernel.org,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Arnd Bergmann <arnd@kernel.org>
+Subject: Re: [PATCH v2 net-next] net: wangxun: fix VF drivers Kconfig
+ dependencies and help text
+Message-ID: <20250712153052.GF721198@horms.kernel.org>
+References: <20250712055856.1732094-1-rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250712055856.1732094-1-rdunlap@infradead.org>
 
-From: Magnus Damm <damm@opensource.se>
++ Arnd
 
-Add code to the RZ/A1 pinctrl driver to check the state of the pin before
-writing any registers. As it is without this patch, resetting the pin state
-for every pin regardless of preious state might negatively be affecting
-certain shared pins like for instance address and data bus pins.
+On Fri, Jul 11, 2025 at 10:58:56PM -0700, Randy Dunlap wrote:
+> On x86_64, when CONFIG_PTP_1588_CLOCK_OPTIONAL=m,
+> CONFIG_LIBWX can be set to 'y' by either of TXGBEVF=y or NGBEVF=y,
+> causing kconfig unmet direct dependencies warning messages:
+> 
+> WARNING: unmet direct dependencies detected for LIBWX
+>   Depends on [m]: NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PTP_1588_CLOCK_OPTIONAL [=m]
+>   Selected by [y]:
+>   - TXGBEVF [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI [=y] && PCI_MSI [=y]
+>   - NGBEVF [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI_MSI [=y]
+> 
+> and subsequent build errors:
+> 
+> ld: vmlinux.o: in function `wx_clean_tx_irq':
+> drivers/net/ethernet/wangxun/libwx/wx_lib.c:757:(.text+0xa48f18): undefined reference to `ptp_schedule_worker'
+> ld: vmlinux.o: in function `wx_get_ts_info':
+> drivers/net/ethernet/wangxun/libwx/wx_ethtool.c:509:(.text+0xa4a58c): undefined reference to `ptp_clock_index'
+> ld: vmlinux.o: in function `wx_ptp_stop':
+> drivers/net/ethernet/wangxun/libwx/wx_ptp.c:838:(.text+0xa4b3dc): undefined reference to `ptp_clock_unregister'
+> ld: vmlinux.o: in function `wx_ptp_reset':
+> drivers/net/ethernet/wangxun/libwx/wx_ptp.c:769:(.text+0xa4b80c): undefined reference to `ptp_schedule_worker'
+> ld: vmlinux.o: in function `wx_ptp_create_clock':
+> drivers/net/ethernet/wangxun/libwx/wx_ptp.c:532:(.text+0xa4b9d1): undefined reference to `ptp_clock_register'
+> 
+> Add dependency to PTP_1588_CLOCK_OPTIONAL for both txgbevf and ngbevf.
+> This is needed since both of them select LIBWX and it depends on
+> PTP_1588_CLOCK_OPTIONAL.
+> 
+> Drop "depends on PCI" for TXGBEVF since PCI_MSI implies that.
+> Drop "select PHYLINK" for TXGBEVF since the driver does not use phylink.
+> 
+> Move the driver name help text to the module name help text for
+> both drivers.
+> 
+> Fixes: 377d180bd71c ("net: wangxun: add txgbevf build")
+> Fixes: a0008a3658a3 ("net: wangxun: add ngbevf build")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Jiawen Wu <jiawenwu@trustnetic.com>
+> Cc: Mengyuan Lou <mengyuanlou@net-swift.com>
+> Cc: netdev@vger.kernel.org
+> Cc: Andrew Lunn <andrew+netdev@lunn.ch>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> ---
+> v2: also drop PHYLINK for TXGBEVF, suggested by Jiawen Wu
 
-Signed-off-by: Magnus Damm <damm@opensource.se>
----
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-  This makes the following patch work with Linux:
-  [PATCH] Update r7s72100 Genmai DTS to include NOR Flash pinctrl
+Arnd (CCed) has also posted a patch [1] for the unmet dependencies / build
+errors portion of this patch. My 2c worth would be to take Arnd's patch and
+for Randy then follow-up with an updated version of his patch with the
+extra bits in it. But I don't feel strongly about this.
 
-  In U-Boot the above DTS change works without any changes most likely
-  because the external SDRAM is not in use and on-chip RAM is used instead.
-
-  For the Linux case the SDRAM has been setup and reconfiguring shared
-  pins will mess with the memory bus pins and cause the system to lock up.
-
-  Did I get the MUX_FLAGS_SWIO_INPUT | MUX_FLAGS_SWIO_OUTPUT handling right?
-
-  After enabling DEBUG and checking the "Genmai DTS NOR Flash pinctrl" patch
-  above it becomes obvious that most pins are skipped however the following
-  pins still seem to get configured:
-  
-   pinctrl-rza1 fcfe3000.pinctrl: Configuring pinmux port pin 8 8
-   pinctrl-rza1 fcfe3000.pinctrl: Configuring pinmux port pin 8 9
-   pinctrl-rza1 fcfe3000.pinctrl: Configuring pinmux port pin 8 10
-   pinctrl-rza1 fcfe3000.pinctrl: Configuring pinmux port pin 8 11
-   pinctrl-rza1 fcfe3000.pinctrl: Configuring pinmux port pin 8 12
-   pinctrl-rza1 fcfe3000.pinctrl: Configuring pinmux port pin 7 8
-   pinctrl-rza1 fcfe3000.pinctrl: Configuring pinmux port pin 7 0
-
- That translates to A16, A17, A18, A19, A20, RD and CS0.
- The CFI detection is still working on both CS0 and CS1 NOR flash banks.
-
- drivers/pinctrl/renesas/pinctrl-rza1.c |   83 ++++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
-
---- 0001/drivers/pinctrl/renesas/pinctrl-rza1.c
-+++ work/drivers/pinctrl/renesas/pinctrl-rza1.c	2025-07-12 23:51:15.000275500 +0900
-@@ -663,6 +663,75 @@ static inline int rza1_pin_get(struct rz
- }
- 
- /**
-+ * rza1_pin_mux_needs_update() - check pin multiplexing on a single pin
-+ *
-+ * @rza1_pctl: RZ/A1 pin controller device
-+ * @mux_conf: pin multiplexing descriptor
-+ */
-+static int rza1_pin_mux_needs_update(struct rza1_pinctrl *rza1_pctl,
-+				     struct rza1_mux_conf *mux_conf)
-+{
-+	struct rza1_port *port = &rza1_pctl->ports[mux_conf->port];
-+	unsigned int pin = mux_conf->pin;
-+	u8 mux_func = mux_conf->mux_func;
-+	u8 mux_flags = mux_conf->mux_flags;
-+	u8 mux_flags_from_table;
-+
-+	/* follow register write logic from rza1_pin_mux_single()
-+	 * but instead of programming the hardware check if the
-+	 * pin actually needs to be configured or not
-+	 *
-+	 * we read the register settings and in case it does not
-+	 * match the expected value we return 1 right away
-+	 *
-+	 * return value 0 means all registers are matching
-+	 * and no need to perform any register update
-+	 */
-+
-+	/* SWIO pinmux flags coming from DT are high precedence */
-+	mux_flags_from_table = rza1_pinmux_get_flags(port->id, pin, mux_func,
-+						     rza1_pctl);
-+	if (mux_flags)
-+		mux_flags |= (mux_flags_from_table & MUX_FLAGS_BIDIR);
-+	else
-+		mux_flags = mux_flags_from_table;
-+
-+	mux_func -= 1;
-+
-+	/* return 1 in case register bit does not match MUX_FLAGS/FUNC */
-+
-+	if (!!(mux_flags & MUX_FLAGS_BIDIR) !=
-+	  !!rza1_get_bit(port, RZA1_PBDC_REG, pin))
-+		return 1;
-+
-+	if (!!(mux_func & MUX_FUNC_PFC_MASK) !=
-+	    !!rza1_get_bit(port, RZA1_PFC_REG, pin))
-+		return 1;
-+
-+	if (!!(mux_func & MUX_FUNC_PFCE_MASK) !=
-+	    !!rza1_get_bit(port, RZA1_PFCE_REG, pin))
-+		return 1;
-+
-+	if (!!(mux_func & MUX_FUNC_PFCEA_MASK) !=
-+	    !!rza1_get_bit(port, RZA1_PFCEA_REG, pin))
-+		return 1;
-+
-+	if (mux_flags & (MUX_FLAGS_SWIO_INPUT | MUX_FLAGS_SWIO_OUTPUT)) {
-+		if (!!(mux_func & MUX_FLAGS_SWIO_INPUT) !=
-+		    !!rza1_get_bit(port, RZA1_PM_REG, pin))
-+			return 1;
-+	} else {
-+		if (!rza1_get_bit(port, RZA1_PIPC_REG, pin))
-+			return 1;
-+	}
-+
-+	if (!rza1_get_bit(port, RZA1_PMC_REG, pin))
-+		return 1;
-+
-+	return 0;
-+}
-+
-+/**
-  * rza1_pin_mux_single() - configure pin multiplexing on a single pin
-  *
-  * @rza1_pctl: RZ/A1 pin controller device
-@@ -677,6 +746,20 @@ static int rza1_pin_mux_single(struct rz
- 	u8 mux_flags = mux_conf->mux_flags;
- 	u8 mux_flags_from_table;
- 
-+	/* Before touching the hardware check if it is actually needed.
-+	 * The reason for doing this is that some pins may be used
-+	 * already while the driver operates, for instance address bus
-+	 * for a NOR flash might be shared with SDRAM or similar.
-+	 * Reconfiguring such a pin might cause the system to lock up.
-+	 */
-+	if (!rza1_pin_mux_needs_update(rza1_pctl, mux_conf)) {
-+		dev_dbg(rza1_pctl->dev, "Skipping pinmux port pin %d %d\n",
-+			mux_conf->port, pin);
-+		return 0;
-+	}
-+	dev_dbg(rza1_pctl->dev, "Configuring pinmux port pin %d %d\n",
-+		mux_conf->port, pin);
-+
- 	rza1_pin_reset(port, pin);
- 
- 	/* SWIO pinmux flags coming from DT are high precedence */
+1. [PATCH] net: wangxun: fix LIBWX dependencies again
+   https://lore.kernel.org/all/20250711082339.1372821-1-arnd@kernel.org/
 
