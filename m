@@ -1,127 +1,164 @@
-Return-Path: <linux-kernel+bounces-728725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BC0BB02C4A
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 19:57:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B50AB02C4E
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5775D7AB633
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 17:55:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4707A450A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAC628AB07;
-	Sat, 12 Jul 2025 17:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C047289E33;
+	Sat, 12 Jul 2025 18:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iHcMpoUX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q4encWvo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51882236FB;
-	Sat, 12 Jul 2025 17:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583DF13B284;
+	Sat, 12 Jul 2025 18:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752343031; cv=none; b=DOFJTGSlya4sBmqvZv8oD6hpjWXhx/Evh1Y4vBiSWyi27ph6Kp/FGxzh8fBqLzORIaofh2OaK7Zf/66YT3kwTcm91pLK/Ttrc35SBd803aTfyLcLh+zZaGXdCyFCZ+w4kWoRMd3FpWWG6HU0S24ztAsVzBCvhvx3tnIBfgot0rw=
+	t=1752343494; cv=none; b=l729u1KskcLwSMC6MKhg4Fa1MVGrjgxbMvccF89QxWEOan3XCgbA1Gf/kDvt6CfQAhS6cecJ9pSyHIzbtNa4b7Xl4KZNdb3f1FQ54tCSVP76ZXvgjGGBM2UWA7/leLbjJPABNBq/mIDipDjxlwXCMtkPD4I0CLSm2oUE0/tYklw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752343031; c=relaxed/simple;
-	bh=H/rypz2Qr+SfNGH2PuCCBQtkvX2TjfFGf7Dh9YJ871w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R2ef2QfBJy1QKTl7tyvPEiJcF7u8buw9xSp/CW8VT3lO1ikw17aIRkwD4ZzeiRknK5c10u57JK30wg2aY7RU3UKRQLuAaxVt6KPbNDEjt+WYxz4p88PPqbFMTkVg+Oq8kaQMuP1/IQ5ldDuMdz1ItVknaHa3nlPbvwnOUyodLBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iHcMpoUX; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752343030; x=1783879030;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=H/rypz2Qr+SfNGH2PuCCBQtkvX2TjfFGf7Dh9YJ871w=;
-  b=iHcMpoUXXu+DlefYuzSb5xvyRI7yknaDVHcVlalKrWX011qMDz+FXuTm
-   fqdcoHSZAte0spZYxNpMuED3Xy/fM7EPoW6hINeXtqTTNW1OLNYiLQeJT
-   P+PB0RuND1qFj62gh1Rm7sf44oeyZaDBMV8qO48NFQRAYsMppZVsMrIU6
-   YHVcWQuvTFoA/UclrdGRSi7NPzmCyIQc+0SDDILszN+Jx0SvNtWC6U5we
-   A2an874qBa0cJ1CV5GCIOyEIsv/Vh6iQI3aue3cpkK+wH8Vd85T0y7apn
-   0587CHAw6f8lndYb7CreC2Bc4+rMWkWPosEmyYaCdTgcCI6SIh08+q9vl
-   Q==;
-X-CSE-ConnectionGUID: e7rMig1jRYaJ3MSDYn/o5g==
-X-CSE-MsgGUID: 60elRmavSl6FXNc29Fn3KA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="80041346"
-X-IronPort-AV: E=Sophos;i="6.16,306,1744095600"; 
-   d="scan'208";a="80041346"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2025 10:57:09 -0700
-X-CSE-ConnectionGUID: oi8yhvzwTVqN/u+no0FtcA==
-X-CSE-MsgGUID: wYSE6Lg7QC24EtHbyLqjcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,306,1744095600"; 
-   d="scan'208";a="162177159"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 12 Jul 2025 10:57:07 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uaeTB-0007ZP-0d;
-	Sat, 12 Jul 2025 17:57:05 +0000
-Date: Sun, 13 Jul 2025 01:56:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
-	robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>
-Subject: Re: [PATCH 3/3] iio: adc: add ade9000 support
-Message-ID: <202507130110.J1mOxDr1-lkp@intel.com>
-References: <20250711130241.159143-4-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1752343494; c=relaxed/simple;
+	bh=qhXkoyHjTIqBuIjJ4a9EJ6EqyerxsPahaWb2KYK8qyk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=V2pJqH9N3KYzLcFi2hXtVtHc6U5Gmnszn/RpDE8/oEhaWTFBvBeoBGrQswhyHD17ZBR6UWe2qdOIEAlAajXgC36hkFfDXmXfWw4So9KnDadUpx7NFrrQ3R6Ou2OdRKyNVuWarNXSpQw8K16UIOrP7dFusssY9tnKnXBV3LLi2HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q4encWvo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E51CAC4CEEF;
+	Sat, 12 Jul 2025 18:04:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752343493;
+	bh=qhXkoyHjTIqBuIjJ4a9EJ6EqyerxsPahaWb2KYK8qyk=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=q4encWvoHB9ISf+RUY702PzOWs79L6eapmZckWNCyrDCcIVBG4daLk+o6gHCZ7cjB
+	 Eht5RZYBNLmRhu15wE1dw4Ek0xNr1E8equ2Fi+L9VnlQsz5aP+K06Sgq9u872vVblB
+	 O1MoSu3pG2/a3v6kw8td2AclawscpLtukdtQeYw+OTZV3yt7khVs+yUsGrqjMrIbWT
+	 rV/kYrz/GOYfrL+gQrPWyRVhOi1sFsqv99sRXn8L+vaqktrkyXSVPncz8MFaIuFrK4
+	 MW+oVkmURdTm8ctD9Oj1RixYm9uHULf13qC9zWfedKFtkh/0NA1a87xkxcApBqXFbM
+	 pH1CNCfn/1hUA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711130241.159143-4-antoniu.miclaus@analog.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 12 Jul 2025 20:04:48 +0200
+Message-Id: <DBA9X9FU5M9A.14RBXD887DKB1@kernel.org>
+Cc: <stable@vger.kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
+ Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <patches@lists.linux.dev>
+Subject: Re: [PATCH 6.12.y] rust: init: allow `dead_code` warnings for Rust
+ >= 1.89.0
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Miguel Ojeda" <ojeda@kernel.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Sasha Levin" <sashal@kernel.org>, "Alex
+ Gaynor" <alex.gaynor@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250712171038.1287789-1-ojeda@kernel.org>
+In-Reply-To: <20250712171038.1287789-1-ojeda@kernel.org>
 
-Hi Antoniu,
+On Sat Jul 12, 2025 at 7:10 PM CEST, Miguel Ojeda wrote:
+> Starting with Rust 1.89.0 (expected 2025-08-07), the Rust compiler
+> may warn:
+>
+>     error: trait `MustNotImplDrop` is never used
+>        --> rust/kernel/init/macros.rs:927:15
+>         |
+>     927 |         trait MustNotImplDrop {}
+>         |               ^^^^^^^^^^^^^^^
+>         |
+>        ::: rust/kernel/sync/arc.rs:133:1
+>         |
+>     133 | #[pin_data]
+>         | ----------- in this procedural macro expansion
+>         |
+>         =3D note: `-D dead-code` implied by `-D warnings`
+>         =3D help: to override `-D warnings` add `#[allow(dead_code)]`
+>         =3D note: this error originates in the macro `$crate::__pin_data`
+>                 which comes from the expansion of the attribute macro
+>                 `pin_data` (in Nightly builds, run with
+>                 -Z macro-backtrace for more info)
+>
+> Thus `allow` it to clean it up.
 
-kernel test robot noticed the following build warnings:
+This is a bit strange, I can't directly reproduce the issue... I already
+get this warning in 1.88:
 
-[auto build test WARNING on jic23-iio/togreg]
-[also build test WARNING on robh/for-next linus/master v6.16-rc5 next-20250711]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+    https://play.rust-lang.org/?version=3Dstable&mode=3Ddebug&edition=3D202=
+4&gist=3D465f71a848e77ac3f7a96a0af6bc9e2a
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Antoniu-Miclaus/iio-add-power-and-energy-measurement-modifiers/20250712-022300
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20250711130241.159143-4-antoniu.miclaus%40analog.com
-patch subject: [PATCH 3/3] iio: adc: add ade9000 support
-config: nios2-randconfig-002-20250713 (https://download.01.org/0day-ci/archive/20250713/202507130110.J1mOxDr1-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250713/202507130110.J1mOxDr1-lkp@intel.com/reproduce)
+> This does not happen in mainline nor 6.15.y, because there the macro was
+> moved out of the `kernel` crate, and `dead_code` warnings are not
+> emitted if the macro is foreign to the crate. Thus this patch is
+> directly sent to stable and intended for 6.12.y only.
+>
+> Similarly, it is not needed in previous LTSs, because there the Rust
+> version is pinned.
+>
+> Cc: Benno Lossin <lossin@kernel.org>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507130110.J1mOxDr1-lkp@intel.com/
+Anyways the patch itself looks fine, nobody should care about the
+dead-code warning (since it is in fact used to prevent `Drop` being
+implemented).
 
-All warnings (new ones prefixed by >>):
+Acked-by: Benno Lossin <lossin@kernel.org>
 
->> drivers/iio/adc/ade9000.c:2170:34: warning: 'ade9000_of_match' defined but not used [-Wunused-const-variable=]
-    2170 | static const struct of_device_id ade9000_of_match[] = {
-         |                                  ^~~~~~~~~~~~~~~~
+---
+Cheers,
+Benno
 
+> ---
+> Greg, Sasha: please note that an equivalent patch is _not_ in mainline.
+>
+> We could put these `allow`s in mainline (they wouldn't hurt), but it
+> isn't a good idea to add things in mainline for the only reason of
+> backporting them, thus I am sending this directly to stable.
+>
+> The patch is pretty safe -- there is no actual code change.
+>
+>  rust/kernel/init/macros.rs | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/rust/kernel/init/macros.rs b/rust/kernel/init/macros.rs
+> index b7213962a6a5..e530028bb9ed 100644
+> --- a/rust/kernel/init/macros.rs
+> +++ b/rust/kernel/init/macros.rs
+> @@ -924,6 +924,7 @@ impl<'__pin, $($impl_generics)*> ::core::marker::Unpi=
+n for $name<$($ty_generics)
+>          // We prevent this by creating a trait that will be implemented =
+for all types implementing
+>          // `Drop`. Additionally we will implement this trait for the str=
+uct leading to a conflict,
+>          // if it also implements `Drop`
+> +        #[allow(dead_code)]
+>          trait MustNotImplDrop {}
+>          #[expect(drop_bounds)]
+>          impl<T: ::core::ops::Drop> MustNotImplDrop for T {}
+> @@ -932,6 +933,7 @@ impl<$($impl_generics)*> MustNotImplDrop for $name<$(=
+$ty_generics)*>
+>          // We also take care to prevent users from writing a useless `Pi=
+nnedDrop` implementation.
+>          // They might implement `PinnedDrop` correctly for the struct, b=
+ut forget to give
+>          // `PinnedDrop` as the parameter to `#[pin_data]`.
+> +        #[allow(dead_code)]
+>          #[expect(non_camel_case_types)]
+>          trait UselessPinnedDropImpl_you_need_to_specify_PinnedDrop {}
+>          impl<T: $crate::init::PinnedDrop>
+>
+> base-commit: fbad404f04d758c52bae79ca20d0e7fe5fef91d3
+> --
+> 2.50.1
 
-vim +/ade9000_of_match +2170 drivers/iio/adc/ade9000.c
-
-  2169	
-> 2170	static const struct of_device_id ade9000_of_match[] = {
-  2171		{ .compatible = "adi,ade9000" },
-  2172		{}
-  2173	};
-  2174	MODULE_DEVICE_TABLE(of, ade9000_of_match);
-  2175	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
