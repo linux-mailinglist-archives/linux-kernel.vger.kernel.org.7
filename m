@@ -1,118 +1,145 @@
-Return-Path: <linux-kernel+bounces-728588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E7FB02A5B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 12:07:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806D4B02A64
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 12:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682C61C214E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:07:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9523A41219
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C009274B58;
-	Sat, 12 Jul 2025 10:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55540274FE3;
+	Sat, 12 Jul 2025 10:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZoQ0V1zX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="a36fHUXO"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81459213E9F
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 10:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8737E274B2A
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 10:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752314851; cv=none; b=Qz+pd5ompufi9QuJ8cf409kZSsHPpba94ZmNLV2bpNQ1UKKWyFCGVInS6J+lvC+ncTzLkNPK4V1KrA7QkSGgZSAIaz8GGImxhoSWcNrHI88BwGhWVSNtKjeJzUhImSmw9Vcy/3fJAo4EZ9PEfyb2X1qIOaXunRbcrhPZTW4jWg0=
+	t=1752315264; cv=none; b=HH+/3mwDPQoMJLweTqsuJjTYm5tS68DPE9TZD+bTBPzk/lAFqeXGj2Gkox4Oaw5qjG4ARLhATelimEASsRWMNt8mKADaR+yw+mWDA/sk767gNq8y2zTvhzbStwyUEp+82ikCK9faqJFYEaP3vDZWDLBowNQwPJygPUdFCx9JM+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752314851; c=relaxed/simple;
-	bh=TSgntFvzr417mI13H6PTNr1hCaOX+YBqsxPHSlM77Ko=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gI8CsXo56DIrWHnyQDL3VRpXT/TyW5ywNW2BMjl9/MP8x5BKE7agRkvopfNq/r/bhSG3cD/cd7sEFolJmih/8/658l5J2tc5TDVC/VRfu8avJAI6wIpD0c3x3Bx9ri0EHqlmAh8i0lWQS+/LmE/498H63ZIrYcDhX7Kx2uzeCZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZoQ0V1zX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752314848;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1JlNlY2tra3Y/oEZeo/U+AdvcEDBVVOybPTu1N4/msQ=;
-	b=ZoQ0V1zXFZ0fKJpzoM31vJ004tfSDSEdd0PU5x1Rg5OyeEDba5UUA9UFyOrtcT4b66Ev5p
-	enJSkaRW7hbhS/oeNIzY369fCYm670m6qc0zj8j/+CvlCn0jp4Xx49pnIznvNGt6mUQNat
-	ofFF3jOKbGPR+FuhG18clfjL3ryn1rg=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-82-3-4kF6wINMOowt8-iPjmsw-1; Sat,
- 12 Jul 2025 06:07:25 -0400
-X-MC-Unique: 3-4kF6wINMOowt8-iPjmsw-1
-X-Mimecast-MFC-AGG-ID: 3-4kF6wINMOowt8-iPjmsw_1752314844
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D6A211956086;
-	Sat, 12 Jul 2025 10:07:23 +0000 (UTC)
-Received: from laptop.redhat.com (unknown [10.72.116.11])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 75F1D1956094;
-	Sat, 12 Jul 2025 10:07:18 +0000 (UTC)
-From: Li Tian <litian@redhat.com>
-To: netdev@vger.kernel.org,
-	linux-hyperv@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Dexuan Cui <decui@microsoft.com>,
-	Stephen Hemminger <stephen@networkplumber.org>,
-	Long Li <longli@microsoft.com>
-Subject: [PATCH net v3] hv_netvsc: Set VF priv_flags to IFF_NO_ADDRCONF before open to prevent IPv6 addrconf
-Date: Sat, 12 Jul 2025 18:07:08 +0800
-Message-ID: <20250712100716.3991-1-litian@redhat.com>
+	s=arc-20240116; t=1752315264; c=relaxed/simple;
+	bh=N6gqSrwpU3YJUqSkFSWbqKkZODHn0WVNd3fQsNo4eIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SrlsYmErIXebzE95zEQH8fcpd3xznCfGFFr/Hd1nWEWlSLHqw6FKyEJqhwn/FOiTVXC3OzhUnS3kBJY6ZgKmE1fAJ4LT8bzS4OXIOICW6kcNCPiW1BFCKv1azaNSGS/eBGeyG65NDmU5C6r8krlGr0AzjT4z913drALJjB86SGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=a36fHUXO; arc=none smtp.client-ip=212.77.101.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 15256 invoked from network); 12 Jul 2025 12:14:18 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1752315258; bh=mzg8lO5KIWEU08V15rBSRsSDmVdIeTgHnB50TvY1vOQ=;
+          h=From:To:Cc:Subject;
+          b=a36fHUXOcNPRuUSP7ZQrGd2Vf6g1xWubJpz4W2LR9PcwCuFR7cK6+UhiSmrCE6hJ9
+           N5pGQJlvvec5Vwwxsh9agFmMe4kPrBSZoIf/1x0Dk/7wl5+Yvp5fxb8z4pDVG23293
+           Vzs9R8ELkvaWQii0UVwYkY++9+T1u8SS7pqqiNdVUOqr+y4iJ6PL6J8q5DIWp4SOZm
+           qKoZru5BVAbp2SCrosRxKtUPNPMTtEWGfzz5tLyOAf/TGj7B3Xjf9juc/YO3ajCfwY
+           kYQkhwP6EQFZXDvEZAreMfrsSKS0MlJ+mLw4r2hkiJlFG6J3Z3qKBOcGP9UAjur5Ds
+           6+j5ixi+Pws6w==
+Received: from 89-64-3-180.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.3.180])
+          (envelope-sender <stf_xl@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <rosenp@gmail.com>; 12 Jul 2025 12:14:18 +0200
+Date: Sat, 12 Jul 2025 12:14:18 +0200
+From: Stanislaw Gruszka <stf_xl@wp.pl>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-wireless@vger.kernel.org,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:MIPS" <linux-mips@vger.kernel.org>,
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCHv3 wireless-next 3/7] wifi: rt2800soc: allow loading from
+ OF
+Message-ID: <20250712101418.GD9845@wp.pl>
+References: <20250710200820.262295-1-rosenp@gmail.com>
+ <20250710200820.262295-4-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710200820.262295-4-rosenp@gmail.com>
+X-WP-MailID: d2a620c7c6ee0186a70cc98c7227ea22
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000000 [YQOR]                               
 
-Set an additional flag IFF_NO_ADDRCONF to prevent ipv6 addrconf.
+On Thu, Jul 10, 2025 at 01:08:16PM -0700, Rosen Penev wrote:
+> Add a single binding to help the already present dts files load the
+> driver. More are possible but there doesn't seem to be a significant
+> difference between them to justify this.
+> 
+> Use wifi name per dtschema requirements.
+> 
+> The data field will be used to remove the custom non static probe
+> function and use of_device_get_match_data.
+> 
+> Added OF dependency to SOC CONFIG as adding of_match_table without OF
+> being present makes no sense.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> ---
+>  drivers/net/wireless/ralink/rt2x00/Kconfig     | 2 +-
+>  drivers/net/wireless/ralink/rt2x00/rt2800soc.c | 7 +++++++
+>  2 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/ralink/rt2x00/Kconfig b/drivers/net/wireless/ralink/rt2x00/Kconfig
+> index 3a32ceead54f..a0dc9a751234 100644
+> --- a/drivers/net/wireless/ralink/rt2x00/Kconfig
+> +++ b/drivers/net/wireless/ralink/rt2x00/Kconfig
+> @@ -202,7 +202,7 @@ endif
+>  
+>  config RT2800SOC
+>  	tristate "Ralink WiSoC support"
+> -	depends on SOC_RT288X || SOC_RT305X || SOC_MT7620 || COMPILE_TEST
+> +	depends on OF && (SOC_RT288X || SOC_RT305X || SOC_MT7620 || COMPILE_TEST)
+>  	select RT2X00_LIB_SOC
+>  	select RT2X00_LIB_MMIO
+>  	select RT2X00_LIB_CRYPTO
+> diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800soc.c b/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
+> index e73394cf6ea6..db8d01f0cdc3 100644
+> --- a/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
+> +++ b/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
+> @@ -243,9 +243,16 @@ static int rt2800soc_probe(struct platform_device *pdev)
+>  	return rt2x00soc_probe(pdev, &rt2800soc_ops);
+>  }
+>  
+> +static const struct of_device_id rt2880_wmac_match[] = {
+> +	{ .compatible = "ralink,rt2880-wifi", .data = &rt2800soc_ops },
 
-Commit 8a321cf7becc
-("net: add IFF_NO_ADDRCONF and use it in bonding to prevent ipv6 addrconf")
+Why do .data = rt2800soc_ops here and use it via of_device_get_match_data()
+in patch 5, insead of just use rt2800soc_ops directly in rt2800soc_probe ? 
 
-This new flag change was not made to hv_netvsc resulting in the VF being
-assinged an IPv6.
+Regards
+Stanislaw
 
-Fixes: 8a321cf7becc ("net: add IFF_NO_ADDRCONF and use it in bonding to prevent ipv6 addrconf")
-Suggested-by: Cathy Avery <cavery@redhat.com>
-Signed-off-by: Li Tian <litian@redhat.com>
----
-v3:
-  - only fix commit message.
-v2: https://lore.kernel.org/netdev/20250710024603.10162-1-litian@redhat.com/
-  - instead of replacing flag, add it.
-v1: https://lore.kernel.org/netdev/20250710024603.10162-1-litian@redhat.com/
----
- drivers/net/hyperv/netvsc_drv.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-index c41a025c66f0..8be9bce66a4e 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -2317,8 +2317,11 @@ static int netvsc_prepare_bonding(struct net_device *vf_netdev)
- 	if (!ndev)
- 		return NOTIFY_DONE;
- 
--	/* set slave flag before open to prevent IPv6 addrconf */
-+	/* Set slave flag and no addrconf flag before open
-+	 * to prevent IPv6 addrconf.
-+	 */
- 	vf_netdev->flags |= IFF_SLAVE;
-+	vf_netdev->priv_flags |= IFF_NO_ADDRCONF;
- 	return NOTIFY_DONE;
- }
- 
--- 
-2.50.0
-
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, rt2880_wmac_match);
+> +
+>  static struct platform_driver rt2800soc_driver = {
+>  	.driver		= {
+>  		.name		= "rt2800_wmac",
+> +		.of_match_table = rt2880_wmac_match,
+>  	},
+>  	.probe		= rt2800soc_probe,
+>  	.remove		= rt2x00soc_remove,
+> -- 
+> 2.50.0
+> 
 
