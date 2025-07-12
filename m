@@ -1,116 +1,232 @@
-Return-Path: <linux-kernel+bounces-728522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D72DB02979
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 07:25:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A3C6B0297C
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 07:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C48C9544622
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 05:25:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D9274A7C40
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 05:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2BC1FAC54;
-	Sat, 12 Jul 2025 05:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8101FE451;
+	Sat, 12 Jul 2025 05:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="h8pme+2c"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="K2pP79Kn"
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21221F09A3
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 05:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5D123BE;
+	Sat, 12 Jul 2025 05:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752297923; cv=none; b=qG00DoZtzQhmFB1tlCdPYbcQaSmlbFO5/Jd5oUPk2MtYRgoC+19NlQpi+H+h0zK0axpU5sk2w5ywLLEIjOCeh9ihUpylk0dP5TURZ8DNYxKRdXP1YW+bpLAGnXZdyFXnul0CwYJ3v8rfRhbHYXdLCHhkwdZug9SOPWx3KIohcZk=
+	t=1752298601; cv=none; b=bq03O3iuWGFdI1XRd9pTFGVMKDHAQ2cgOnQ2a1crmA5Zu2VR+xe7ktBTcJtJAaqtrOLAtRZ7KFEXfLPVUOFrOdLrgKlG/H3Ztb/TOAVS3EU2Xrb2oC0gp0aOUaCbTheuqF7ttR0CzRrdENFjSEiFyigOxEdP9JPlsIZ3Y6hz40Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752297923; c=relaxed/simple;
-	bh=OzWsfRdh2rEvxUhB0pK+C5jZ3YphBuaX/nfPDWir2oc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Upxog+7axXkf+ZPXmNeh0supo3JCTXmI+8OgdVmSEr/K1KrPdqXxTyp3FKNRDwpBB85WHxtrDn8Y987ukimK/YbsYiyo50jsDKBKd/o4C3A3Rz5nrtrIX74lGg+WrlbougEy39tJAZHMiP/Ip8zDf6Ic5hXNF52U6FCdbbNhLrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=h8pme+2c; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ae04d3d63e6so518182966b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 22:25:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1752297919; x=1752902719; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=boc987p5GRc2CF/iPi0/+tIlnyX8mVA51H3ddLq0Reo=;
-        b=h8pme+2czoxn377wcsYImLfiK0tyLMEzxmutBmuVmkDk8qJ7SiJRAq5ev1OYIgo7p/
-         wNpqumQQL2Asw/5KPuBwSITlG9t+kLHi8D5NS7VhTXZZig9/k+8WYDLGQOAgqc9hc/FX
-         g43lM0/CMvVn7qq/PZu98O2cSpDASMdUf4Fk83z9KjSrqbEKrPjcXXuIMk+Nr/WBsGhI
-         AogW7Nk+6sf7tOCC/TfCd8P7ocZDbnuyg9Tc/+sTvddHGLrtDmotXV58g9uwOMWTuaAE
-         4eqrPAsDNcK5CxhTzzmiWXVOGiDgkYxncNQ2uX45Q87k0rS56AicNaeu21nIFjzREgc6
-         rQAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752297919; x=1752902719;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=boc987p5GRc2CF/iPi0/+tIlnyX8mVA51H3ddLq0Reo=;
-        b=NPAGqUIGMe99e3VLSaYH3CTqzc5Gxc23+mifXaan1emu7szLEmsgE5BJkeyIeW/LzE
-         jIGfSvkoOP4N7mM2W+c7rAVoUshwuJrCztCjQe2r81WUBJMRx3SB4XlO3SV2QycPKwxI
-         NdcFrHH7Av430I4G4mtbl4qyuvg6C8TDNh1hsqhw/3Y1LVyqw/spkqQ1JpIpxEVMaFzJ
-         muNME8xVkIiTmdww7krAO5122qdnQWMIXYVtHsxxoBloKTL9VRdP93/Uyh8V4ZiMbsvh
-         JE5kfGdJQAjy4jnSSKlp3I/4t92oF9B4aG8lXteblMwFjrw2K1/RP9G09MuLps+amamH
-         dg0w==
-X-Forwarded-Encrypted: i=1; AJvYcCV/NhvLKN2VM0RyT9lYekPnNHMDpTnnym/2msIhFl89MK/XJe4zGKNe3RHMqcuB0yO9OyDaYsGkmID4P5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj5PLNKg6kmZgPGnUegC5t+fFWTL6V++lHgIHpjFT3kK1mS16x
-	eiE/Eg4JlKckbjZUGonKPTPLx/FijQT1/qnhLLYZFYtspXCjM+WI6GLqd0AwMc4jqKARJd137kv
-	oBDiQKxVeQ7qerzVk3VEnbtSBnY9sAumFf03DZ5NYJw==
-X-Gm-Gg: ASbGnctsHXJGhPY6vi2cH+xQ4U6IU3PP387eAhWIxa73nNX2aS1Mcha0Va1C8tNw5Th
-	X7pv3hT23txwaxPsVXEHHi+tw1AclbddF3GF9G4Mqoc3lihR1PLi6z2z5cnXtw7xWyCqRQfQ9Be
-	T8pe6+t1yux3SXsVXgv16ao+D3lxOCRhkXZKKlp4DU2kqa6qkjL9X64u/gY1UYzHPBREUY4FiBo
-	jYc7mCwZSM64/4l+PD6ddqHv5fVOJ9IOD4=
-X-Google-Smtp-Source: AGHT+IHRqhss1VHoNOeBE3dSH85TBdQyutMEzLaeevjSPISD0eb6jad4c18gV5T9kZxrzRKcHgf2BSQwMPB2TaBTj0c=
-X-Received: by 2002:a17:906:fe05:b0:ade:4339:9358 with SMTP id
- a640c23a62f3a-ae6fbc9275emr580496666b.22.1752297919256; Fri, 11 Jul 2025
- 22:25:19 -0700 (PDT)
+	s=arc-20240116; t=1752298601; c=relaxed/simple;
+	bh=g91zeobSlfEhybMtWBiNg7pwEzyEkIKObP3K0tWGE74=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qXvTvtpXEKOiaWhdOAFJhTLRgNx3QdGA/CATK+mFEQQBk+9ZzNAX17hXnOdORKtlEG5wvvuLv6+W8sEfxvzyBmS4UHqBBSRmK9o1ztxuaZAQ4UEGojSNNIhmwhkN+mypfxQcn439UNVcMfLf1+HzpgJWlr2+FU7rZH/zO+GzWz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=K2pP79Kn; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56C5X7Vb003295;
+	Fri, 11 Jul 2025 22:36:21 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=LtV+jlRpZYjgCbtV3ulUUj1Z2
+	BVtybyCOqqE+XDUxf4=; b=K2pP79KnUcv4g5YmReNPYd+WCYa/qgfIypUzMDh1O
+	lfHQ54LAEpcqYDko6CF45HFgQQEOlV5Glxd/1ifAdExZHzeYZe2L/INJinF/GTAO
+	IkMAeaT/5qSPvm251uonz5/rED9odEaynl9yZdNilqvG7VM1A4QuNyL0iYCTgA7c
+	RUhBqb3CZFAlR7thpPYwijkChHQcaJ7YODPc4I0nl9p+Rok7ZZjkPnk8YWrqQ6pt
+	o0a8Cv1w7dutlkxJLREn3p8nDl4s8zW3izVnZO5oF6MQehgKKzHoe+i9ULG9lBni
+	agtwoJhVH1N/cM9LJ/fapea3Si0aH42jgrmhQy07ZO3pQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47ug75r396-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Jul 2025 22:36:21 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 11 Jul 2025 22:36:18 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 11 Jul 2025 22:36:18 -0700
+Received: from 94363b911d3e (unknown [10.193.79.61])
+	by maili.marvell.com (Postfix) with SMTP id 90CD03F708D;
+	Fri, 11 Jul 2025 22:36:16 -0700 (PDT)
+Date: Sat, 12 Jul 2025 05:36:12 +0000
+From: Subbaraya Sundeep <sbhatta@marvell.com>
+To: "Gupta, Suraj" <Suraj.Gupta2@amd.com>
+CC: "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+        "davem@davemloft.net"
+	<davem@davemloft.net>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "Simek, Michal"
+	<michal.simek@amd.com>,
+        "vkoul@kernel.org" <vkoul@kernel.org>,
+        "Pandey,
+ Radhey Shyam" <radhey.shyam.pandey@amd.com>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "dmaengine@vger.kernel.org"
+	<dmaengine@vger.kernel.org>,
+        "Katakam, Harini" <harini.katakam@amd.com>
+Subject: Re: [PATCH V2 2/4] dmaengine: xilinx_dma: Fix irq handler and start
+ transfer path for AXI DMA
+Message-ID: <aHH0TPFQmhGYZm21@94363b911d3e>
+References: <20250710101229.804183-1-suraj.gupta2@amd.com>
+ <20250710101229.804183-3-suraj.gupta2@amd.com>
+ <aHE7II-tL6zAzNYB@ff87d1e86a04>
+ <BL3PR12MB657159BD5F7C2161D6B9A5AAC94BA@BL3PR12MB6571.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711151005.2956810-1-dhowells@redhat.com> <20250711151005.2956810-2-dhowells@redhat.com>
-In-Reply-To: <20250711151005.2956810-2-dhowells@redhat.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Sat, 12 Jul 2025 07:25:08 +0200
-X-Gm-Features: Ac12FXwI74XFtOm4i3YUfybrD81gXwe_XUMrlDA403K5FZ8k3_E2nvLf9lzB7zA
-Message-ID: <CAKPOu+-Qsy0cr7XH1FsJbBxQpjmsK2swz-ptexaRvEM+oMGknA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] netfs: Fix copy-to-cache so that it performs
- collection with ceph+fscache
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>, Paulo Alcantara <pc@manguebit.com>, 
-	Viacheslav Dubeyko <slava@dubeyko.com>, Alex Markuze <amarkuze@redhat.com>, 
-	Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev, linux-nfs@vger.kernel.org, 
-	ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Paulo Alcantara <pc@manguebit.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <BL3PR12MB657159BD5F7C2161D6B9A5AAC94BA@BL3PR12MB6571.namprd12.prod.outlook.com>
+X-Proofpoint-GUID: y48TYXdzl2S-WoqMLgHdJMNuGcrULm4G
+X-Proofpoint-ORIG-GUID: y48TYXdzl2S-WoqMLgHdJMNuGcrULm4G
+X-Authority-Analysis: v=2.4 cv=Mdxsu4/f c=1 sm=1 tr=0 ts=6871f455 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=zd2uoN0lAAAA:8 a=M5GUcnROAAAA:8 a=J1Y8HTJGAAAA:8 a=20KFwNOVAAAA:8
+ a=JfrnYn6hAAAA:8 a=BPLeHpbfgctcYvNycb8A:9 a=CjuIK1q_8ugA:10 a=OBjm3rFKGHvpk9ecZwUJ:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=1CNFftbPRP8L7MoqJWF3:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEyMDA0MiBTYWx0ZWRfXwcIFlUaWBe8j QmmTGCb1r8MnLvxEyOa9+G6VPIwgGOMzhBT/faODkkPuk4Eijsx6iRfPKTW4d5ViKdWTSMo69PN Wa2bTJDXtNMbUlQtGbQZnqnC2c4aMqob8wBz2tM9OS9Gqw9/UHCsE8LiLVc3yQ2wmxYNZEmOsP5
+ lz6K6X9KT2EluWTKWoHWvy+8I8jWTJiNAwGyJFCYUUIz1Lc19Rdj126obzP+hKy38iKDlezM1P/ WY0vY46ty2eso/XRW0SD/64PTqZDYnBslVhbGwuWCSVKQDwaV21ZGjmUu+TydIQsI5Mkp9YFFFp t9qAn7zQ2GbwFxL6oroF9scSuuBK2/LHtOZXxcW58FdiTrgTdUkhHqGfFBG8/o3yRT+BrRx1Oqr
+ puCXInbGYwlqyp2D1c6UPST40c5ctZLEHcYDwrDjRFDVWJhT5/c5IKfRAeIcHIPs+Yn1c1vO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-12_01,2025-07-09_01,2025-03-28_01
 
-On Fri, Jul 11, 2025 at 5:10=E2=80=AFPM David Howells <dhowells@redhat.com>=
- wrote:
->
-> The netfs copy-to-cache that is used by Ceph with local caching sets up a
-> new request to write data just read to the cache.  The request is started
-> and then left to look after itself whilst the app continues.  The request
-> gets notified by the backing fs upon completion of the async DIO write, b=
-ut
-> then tries to wake up the app because NETFS_RREQ_OFFLOAD_COLLECTION isn't
-> set - but the app isn't waiting there, and so the request just hangs.
->
-> Fix this by setting NETFS_RREQ_OFFLOAD_COLLECTION which causes the
-> notification from the backing filesystem to put the collection onto a wor=
-k
-> queue instead.
+On 2025-07-11 at 20:13:40, Gupta, Suraj (Suraj.Gupta2@amd.com) wrote:
+> [Public]
+> 
+> > -----Original Message-----
+> > From: Subbaraya Sundeep <sbhatta@marvell.com>
+> > Sent: Friday, July 11, 2025 9:56 PM
+> > To: Gupta, Suraj <Suraj.Gupta2@amd.com>
+> > Cc: andrew+netdev@lunn.ch; davem@davemloft.net; kuba@kernel.org;
+> > pabeni@redhat.com; Simek, Michal <michal.simek@amd.com>; vkoul@kernel.org;
+> > Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>;
+> > netdev@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> > kernel@vger.kernel.org; dmaengine@vger.kernel.org; Katakam, Harini
+> > <harini.katakam@amd.com>
+> > Subject: Re: [PATCH V2 2/4] dmaengine: xilinx_dma: Fix irq handler and start transfer
+> > path for AXI DMA
+> >
+> > Caution: This message originated from an External Source. Use proper caution when
+> > opening attachments, clicking links, or responding.
+> >
+> >
+> > On 2025-07-10 at 10:12:27, Suraj Gupta (suraj.gupta2@amd.com) wrote:
+> > > AXI DMA driver incorrectly assumes complete transfer completion upon
+> > > IRQ reception, particularly problematic when IRQ coalescing is active.
+> > > Updating the tail pointer dynamically fixes it.
+> > > Remove existing idle state validation in the beginning of
+> > > xilinx_dma_start_transfer() as it blocks valid transfer initiation on
+> > > busy channels with queued descriptors.
+> > > Additionally, refactor xilinx_dma_start_transfer() to consolidate
+> > > coalesce and delay configurations while conditionally starting
+> > > channels only when idle.
+> > >
+> > > Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
+> > > Fixes: Fixes: c0bba3a99f07 ("dmaengine: vdma: Add Support for Xilinx
+> > > AXI Direct Memory Access Engine")
+> >
+> > You series looks like net-next material and this one is fixing some existing bug. Send
+> > this one patch seperately to net.
+> > Also include net or net-next in subject.
+> >
+> > Thanks,
+> > Sundeep
+> 
+> This series is more of DMAengine as we're enabling coalesce parameters configuration via DMAengine framework. AXI ethernet is just an example client using AXI DMA.
+> 
+> I sent V1 as separate patches for net-next and dmaengine mailing list and got suggestion[1] to send them as single series for better review, so I didn't used net specific subject prefix.
+> [1]: https://lore.kernel.org/all/d5be7218-8ec1-4208-ac24-94d4831bfdb6@linux.dev/
 
-Thanks David, you can add me as Tested-by if you want.
+My bad I forgot AXI ethernet and DMA are different IPs.
 
-I can't test the other patch for the next two weeks (vacation). When
-I'm back, I'll install both fixes on some heavily loaded production
-machines - our clusters always shake out the worst in every piece of
-code they run!
+Thanks,
+Sundeep
+> 
+> Regards,
+> Suraj
+> 
+> > > ---
+> > >  drivers/dma/xilinx/xilinx_dma.c | 20 ++++++++++----------
+> > >  1 file changed, 10 insertions(+), 10 deletions(-)
+> > >
+> > > diff --git a/drivers/dma/xilinx/xilinx_dma.c
+> > > b/drivers/dma/xilinx/xilinx_dma.c index a34d8f0ceed8..187749b7b8a6
+> > > 100644
+> > > --- a/drivers/dma/xilinx/xilinx_dma.c
+> > > +++ b/drivers/dma/xilinx/xilinx_dma.c
+> > > @@ -1548,9 +1548,6 @@ static void xilinx_dma_start_transfer(struct
+> > xilinx_dma_chan *chan)
+> > >       if (list_empty(&chan->pending_list))
+> > >               return;
+> > >
+> > > -     if (!chan->idle)
+> > > -             return;
+> > > -
+> > >       head_desc = list_first_entry(&chan->pending_list,
+> > >                                    struct xilinx_dma_tx_descriptor, node);
+> > >       tail_desc = list_last_entry(&chan->pending_list,
+> > > @@ -1558,23 +1555,24 @@ static void xilinx_dma_start_transfer(struct
+> > xilinx_dma_chan *chan)
+> > >       tail_segment = list_last_entry(&tail_desc->segments,
+> > >                                      struct xilinx_axidma_tx_segment,
+> > > node);
+> > >
+> > > +     if (chan->has_sg && list_empty(&chan->active_list))
+> > > +             xilinx_write(chan, XILINX_DMA_REG_CURDESC,
+> > > +                          head_desc->async_tx.phys);
+> > > +
+> > >       reg = dma_ctrl_read(chan, XILINX_DMA_REG_DMACR);
+> > >
+> > >       if (chan->desc_pendingcount <= XILINX_DMA_COALESCE_MAX) {
+> > >               reg &= ~XILINX_DMA_CR_COALESCE_MAX;
+> > >               reg |= chan->desc_pendingcount <<
+> > >                                 XILINX_DMA_CR_COALESCE_SHIFT;
+> > > -             dma_ctrl_write(chan, XILINX_DMA_REG_DMACR, reg);
+> > >       }
+> > >
+> > > -     if (chan->has_sg)
+> > > -             xilinx_write(chan, XILINX_DMA_REG_CURDESC,
+> > > -                          head_desc->async_tx.phys);
+> > >       reg  &= ~XILINX_DMA_CR_DELAY_MAX;
+> > >       reg  |= chan->irq_delay << XILINX_DMA_CR_DELAY_SHIFT;
+> > >       dma_ctrl_write(chan, XILINX_DMA_REG_DMACR, reg);
+> > >
+> > > -     xilinx_dma_start(chan);
+> > > +     if (chan->idle)
+> > > +             xilinx_dma_start(chan);
+> > >
+> > >       if (chan->err)
+> > >               return;
+> > > @@ -1914,8 +1912,10 @@ static irqreturn_t xilinx_dma_irq_handler(int irq, void
+> > *data)
+> > >                     XILINX_DMA_DMASR_DLY_CNT_IRQ)) {
+> > >               spin_lock(&chan->lock);
+> > >               xilinx_dma_complete_descriptor(chan);
+> > > -             chan->idle = true;
+> > > -             chan->start_transfer(chan);
+> > > +             if (list_empty(&chan->active_list)) {
+> > > +                     chan->idle = true;
+> > > +                     chan->start_transfer(chan);
+> > > +             }
+> > >               spin_unlock(&chan->lock);
+> > >       }
+> > >
+> > > --
+> > > 2.25.1
+> > >
 
