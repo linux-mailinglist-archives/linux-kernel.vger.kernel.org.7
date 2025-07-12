@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-728817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C477B02D3C
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 23:33:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DFFCB02D3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 23:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C81E34E0B63
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:32:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25FC04E0A9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18309232785;
-	Sat, 12 Jul 2025 21:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EF8231A32;
+	Sat, 12 Jul 2025 21:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWV9vpek"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iJJXpIHC"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BFF22F16C;
-	Sat, 12 Jul 2025 21:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7287A22F389;
+	Sat, 12 Jul 2025 21:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752355932; cv=none; b=T2cSUgVVqGAAmyQOb7GV5riRQ1tvPHHRa7kmbdff8WSA4QAXsD5vtZ0otY2EujizZq+WBDJxP2pjPI8kN8MTEiVVjAh1lYoC/VLpvXn21mzZKKCU5uekirdmzHaH0TJARLTPWs2xUAz/6jS5a4LPC8Ydx0JJ5HYTNj8KxGHcqHQ=
+	t=1752355932; cv=none; b=AXpy5pXffQc3gO3l7yHrkK3Y1CHcuGOOb7S4ZPW4Uuljo9U6WUge8lYbof6TwOhlhHnKabmMc2KYQL19oxyeF9a8uCuIYLWkHnuRIxHS6cF5qjxhcczxoclGkelhxCl9VorgxsGoUhnoapL0UnQOD8J02CAw6omQpDs8tH/l2Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752355932; c=relaxed/simple;
-	bh=Yhc2AZNWstxq/JmR6oLcJC1JQH1zZ60L+8ZJ13d/Yes=;
+	bh=e1kjOZMlHir0QAwDPK2Mh6knOwIrBRKVgMEnFQ0sips=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sWku+16VaYVSVJZq6zVS+8e0Wo9Atmbz97Zt+p0lX7rn8l/eyUyi3kogmbnkfgCTq8AbQTQqX+O404ItmAdXwjbqlSqifcAx/JA5AdbyGi3uQDQqotmObARIbckcHBTlgT3ja2LTdKjxzD8/dX5xTQafawPjl6uieehC9MXNouo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iWV9vpek; arc=none smtp.client-ip=209.85.216.51
+	 In-Reply-To:To:Cc; b=POPEYJMVg2K9nqoyYVtjuL+yMF9QvBplzgBZm52xIWbGayTV8Muk5pGRu4khaGz0Bt9r9rcqmaVxRQb4DaEHiU3qo25JuItZs4y91gw6wyr8GFLMk8pErQBkSyQz3VXalq3A4q2JPEz2r1xx6dnePOMZqJBDiVoNEELrbCPk9VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iJJXpIHC; arc=none smtp.client-ip=209.85.216.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-313eeb77b1fso2719187a91.1;
-        Sat, 12 Jul 2025 14:32:09 -0700 (PDT)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-311e46d38ddso2890512a91.0;
+        Sat, 12 Jul 2025 14:32:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752355929; x=1752960729; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752355930; x=1752960730; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7j+nFClWMYu+z4RxyaBNy1i8eSeqUJQPpZ3XTZUjlQs=;
-        b=iWV9vpekQ6CHjffOM4MnleRPqDyO/F6tvsuWh146EKFndw+rjulJKmoGdpW4lAft+E
-         QvQqT8F+GgxxYWx5lguD5Lcn7JDJ6i8yphB+yf55f0lusHbitPtHxCm313Skb8WtGhgL
-         vymKSzMPSYQ2LM2TsI3QWHvBYDt4kBAQGOLisONu/X7Ikfydpd3i4lukzZGzO+58Gtn9
-         tKrh4xE+f17Cue2IBLztHhl1B4Iek7Pe4Z9Te5Z4TzAqigEQ0a4vz8uyacJz6Ieh5h4g
-         rGpGtTAneRQ6jRRbXuzybvjK3vpJFQ6zvJT8g95UKkQ0Z8gemb0VNl/syh3bl1X9p1Dp
-         aZ+Q==
+        bh=HtRQST6oRjj0LgYjY2mtVgF/hjywiLbC7jwSxYoLgQA=;
+        b=iJJXpIHC1G9ehA6QxYVCLu+GdWjiEm848O7eXnlgoFg5e8uqrANwyi7yZVb0bkTT/n
+         Y1DgK21+BLZXF80o6+a4nZkMhUrhnefFyAjo1IED8Ri+GXVI6foPdo4kKM5PwVBTLYnz
+         fyCx6sanjb+19aO8RKDo4l7L+E9L7QUsvHHV0Ve7zUlZebMu8zyNY5ZP25YXBpwCrrxP
+         0EL0xzc7sGDsVSY+esvGjrK2ZI5n6O/7588UnzdIUkzkTPZZo8NdwXNUas+gE9MuLimR
+         Azf79HwD5SJCLqKzhu40DOcX3byTTwLKWxmp7H1/yagcBJk4JzTs7IVkEQF438yVexX1
+         JO0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752355929; x=1752960729;
+        d=1e100.net; s=20230601; t=1752355930; x=1752960730;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7j+nFClWMYu+z4RxyaBNy1i8eSeqUJQPpZ3XTZUjlQs=;
-        b=QhX1svdStuOoA1Ne5/7L7Sq39rQfRggNErAE2HnOIZgZGhVPxcR3hN4ekBDiOnBx8y
-         G8S7/HQ2QKoDt81+jy8thI2AsS9y9gS6HOjF0ee9qRDIgIypiFiWzafMWxPjZCOdhqNT
-         rKJJ5NSpKPM+JwnnNJwIEQFXzjz6OLmE44cbf+VYX5EGfIsX2BShuWH3USc86AjJWAc9
-         eBptKgC45qf+rz47PtY6K8A8USnB0z9pq4nHCBakuvLJACPWLC5Tiid+6mYkRgHI91SJ
-         AnV+T1YyUMWYhrbBcZurRHlPVNCnacTgUPvaZlnsD5xhB0WQ52B7QTOpKCZMhOfMzwKk
-         8bPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWgtOBCA/b8UNicE/zmQDVFI/lqixx54oqB3WJyBog6WAD4QNTCsvnnYWCPhUeQXf3R1TePeGiCL5J9kNg6/Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQtIUNczzDmZwLN8SOv228eZmsgrl8vbIS6kvty8OWVhIuZtGM
-	F8anLJZL0A3pM9g3N1RVqMVUk6ppdYcoE2BD2CWoB/sUW+DFYK0l9GY7MyHA53xeT50=
-X-Gm-Gg: ASbGncvtZ6JEV/PCeW1fMldKY5Ww8mKyGGCQdY1goO2NeRWuQC8/5y98cx7d/lSgadv
-	zaetkJnjslPoFCJtjOuwuqnEOjATLo09z4YLIm7hwlgqOl07flxPfNg+AJpqz+oDZjjdKPA4So+
-	0PBj5XJ5xLrU3Q0K1yYSnlq/peVrO8JxbUeiWFs/sZxbcAyk+6G2m9Kc9vq3bk9WMshfRTp9oBi
-	rCXoBR7WCc6oiJUnFXDApFSbi1S2NbwuT8FDiZCpxSsBY0HCpPAp9HmSeF78w+iSOdrL/2fN1PV
-	TH8CU4i5oNqr5qMK9zB4AAwVTufg40Cm70aYzUJaArJfXgK4OjHi0HLE/XEHPvjUDAVtbaMxgMZ
-	Rp2+1XODv5aMPCXQvmXdtVqR0bSyicwRAAvOWPt53zWGcVg==
-X-Google-Smtp-Source: AGHT+IE4OVGv0ZHONTY8jo3BV9GHDYUu3GtoFhSxfwHUuz7H8XXTW3Jjoc+7pdproO8lCLYVAmLqDw==
-X-Received: by 2002:a17:90b:3503:b0:31c:260e:5603 with SMTP id 98e67ed59e1d1-31c4f562f15mr11707603a91.24.1752355928711;
-        Sat, 12 Jul 2025 14:32:08 -0700 (PDT)
+        bh=HtRQST6oRjj0LgYjY2mtVgF/hjywiLbC7jwSxYoLgQA=;
+        b=f3GgA8YYjDl+8q9PFcd0f/MVaC4qvVIiZi9t4XYYc2d5tmZU4/T7XVbp63tygMBXny
+         /ni6OMaVCqYWxsUvbw2pVdFHOe239QovzYjZihEPvBHWmpbJrE9NM8rnTX+oM5xRv4Yf
+         jjPGfE+9P6KdUO/bjIpZ+AlMqEMFAJwKpnQLsw3mnJfhR/2lR78zGKCV8gzw/nzvmIPS
+         xuUcK3AjCaHONGZH0zqwzDAMXviw+GSO+NztXihm95CxdDRg4IqtsZvyun8J4s6aD0+K
+         wibDyl8HtCirq+le89aNc9UNadudRreiQ15Gznfhfz9HHmGn00rdQwXpz6dSaBLMDZXA
+         MogQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgSyd4bRh56TvMpd/20E+iV2e/9nvUGXuPtTBla+nCrdshwxmZvs2ayfcmDpek0LtdstypT8Gf+6JM3uKwBg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz85E5Wt9psBwYTmFrpg5WG1ODokZ108gC8kZlmb67Z4Rd6h+b9
+	IozcdNYKgM6dZYy71MLC/QGwtpXojygDROrFNCt44twxMOeiJtYZ4112
+X-Gm-Gg: ASbGncvYU0xS6GjZe5MQQVJNzcvrFquCgi2XsRUaKCxHa3PKxMckviiF79w+o6bb63n
+	KWhx86YK230knZhaOF3yFV0oxjh4OXtmx7ITRFF5JGpm94HjK4YSduLv/FIupvwc2qTdx0yitkE
+	Q1+eZDwFGyJsCXlGZggEneBP6J/bni8tR+18TT+2+gMUAnq/Txlbu9ukdDha8G5uGfjaKZ0aY5l
+	TwMZqQQFNScZobTZwQdEBZe1Bj2kR56nhSHsPoa2D1I/F2//O3Agx3jE9TB0iLFIJXKfrAx9YSg
+	Jdanr4cFqF43Hul3I5v20cStYiDaTXFIK9Bwslb7ZywKm8xdc6eShTYnpi5bpX0PhTsp4hGwsWv
+	ccZOawXrPpopi7oZo2Vy2uVcjbCr74gHlPRyRJukoumM/5A==
+X-Google-Smtp-Source: AGHT+IH4o4Ul3dJAPkL8Zf1bVxHe/F3eh4QfvlGGzhfBDOyFuZ6X4iobwmvAQbZVaFZoUk34LWX8BA==
+X-Received: by 2002:a17:90b:2f03:b0:312:e90b:419e with SMTP id 98e67ed59e1d1-31c50d7b487mr11598155a91.12.1752355929612;
+        Sat, 12 Jul 2025 14:32:09 -0700 (PDT)
 Received: from mitchelllevy.localdomain ([174.127.224.194])
         by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3eb65aa2sm8003935a91.40.2025.07.12.14.32.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Jul 2025 14:32:08 -0700 (PDT)
+        Sat, 12 Jul 2025 14:32:09 -0700 (PDT)
 From: Mitchell Levy <levymitchell0@gmail.com>
-Date: Sat, 12 Jul 2025 14:31:15 -0700
-Subject: [PATCH v2 4/5] rust: percpu: Add pin-hole optimizations for
- numerics
+Date: Sat, 12 Jul 2025 14:31:16 -0700
+Subject: [PATCH v2 5/5] rust: percpu: cache per-CPU pointers in the dynamic
+ case
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250712-rust-percpu-v2-4-826f2567521b@gmail.com>
+Message-Id: <20250712-rust-percpu-v2-5-826f2567521b@gmail.com>
 References: <20250712-rust-percpu-v2-0-826f2567521b@gmail.com>
 In-Reply-To: <20250712-rust-percpu-v2-0-826f2567521b@gmail.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
@@ -98,228 +98,97 @@ To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
 Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
  linux-mm@kvack.org, Mitchell Levy <levymitchell0@gmail.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752355923; l=8164;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752355923; l=3148;
  i=levymitchell0@gmail.com; s=20240719; h=from:subject:message-id;
- bh=Yhc2AZNWstxq/JmR6oLcJC1JQH1zZ60L+8ZJ13d/Yes=;
- b=7PlUlkr00EGSTFBjGecI5Y1jCbBQRf4K+CpEu8vYyLOv26zqXz/i9wBlJRC3sha4iMw1CGAtR
- dmDSdeDAdtXCDQ1FfikH92Lsn9VQUB/B0uiLGstCcKlAmie94nNufey
+ bh=e1kjOZMlHir0QAwDPK2Mh6knOwIrBRKVgMEnFQ0sips=;
+ b=SNmvATz+HCHFQwUB26nikspj2mxM7yzHBgPaqP8iLy3oOOIsHr2Ff3x4m6cZ0iwMHZviz/pI0
+ 7ZWaguSukFNCvS4HxAy06fKXvmysfDraT3Dh5NuKZoVezP+qab4M0nC
 X-Developer-Key: i=levymitchell0@gmail.com; a=ed25519;
  pk=n6kBmUnb+UNmjVkTnDwrLwTJAEKUfs2e8E+MFPZI93E=
 
-The C implementations of `this_cpu_add`, `this_cpu_sub`, etc., are
-optimized to save an instruction by avoiding having to compute
-`this_cpu_ptr(&x)` for some per-CPU variable `x`. For example, rather
-than
+Currently, the creation of a `PerCpuNumeric` requires a memory read via
+the `Arc` managing the dynamic allocation. While the compiler might be
+clever enough to consolidate these reads in some cases, the read must
+happen *somewhere*, which, when we're concerning ourselves with
+individual instructions, is a very high burden.
 
-    u64 *x_ptr = this_cpu_ptr(&x);
-    *x_ptr += 5;
-
-the implementation of `this_cpu_add` is clever enough to make use of the
-fact that per-CPU variables are implemented on x86 via segment
-registers, and so we can use only a single instruction (where we assume
-`&x` is already in `rax`)
-
-    add gs:[rax], 5
-
-Add this optimization via a `PerCpuNumeric` type to enable code-reuse
-between `DynamicPerCpu` and `StaticPerCpu`.
+Instead, cache the `PerCpuPointer` inside the `DynamicPerCpu` structure;
+then, the `Arc` is used solely to manage the allocation.
 
 Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
 ---
- lib/percpu_test_rust.rs       |  36 +++++++++++++
- rust/kernel/percpu.rs         |   1 +
- rust/kernel/percpu/numeric.rs | 117 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 154 insertions(+)
+ rust/kernel/percpu.rs         | 12 +++++++++---
+ rust/kernel/percpu/numeric.rs |  2 +-
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/lib/percpu_test_rust.rs b/lib/percpu_test_rust.rs
-index a9652e6ece08..114015435a85 100644
---- a/lib/percpu_test_rust.rs
-+++ b/lib/percpu_test_rust.rs
-@@ -25,6 +25,26 @@
- define_per_cpu!(PERCPU: i64 = 0);
- define_per_cpu!(UPERCPU: u64 = 0);
- 
-+macro_rules! make_optimization_test {
-+    ($ty:ty) => {
-+        let mut test: DynamicPerCpu<$ty> = DynamicPerCpu::new(GFP_KERNEL).unwrap();
-+        {
-+            let _ = CpuGuard::new();
-+            // SAFETY: No other usage of `test`
-+            unsafe { test.get(CpuGuard::new()) }.with(|val: &mut $ty| *val = 10);
-+            test.num().add(1);
-+            // SAFETY: No other usage of `test`
-+            unsafe { test.get(CpuGuard::new()) }.with(|val: &mut $ty| assert_eq!(*val, 11));
-+            test.num().add(10);
-+            // SAFETY: No other usage of `test`
-+            unsafe { test.get(CpuGuard::new()) }.with(|val: &mut $ty| assert_eq!(*val, 21));
-+            test.num().sub(5);
-+            // SAFETY: No other usage of `test`
-+            unsafe { test.get(CpuGuard::new()) }.with(|val: &mut $ty| assert_eq!(*val, 16));
-+        }
-+    };
-+}
-+
- impl kernel::Module for PerCpuTestModule {
-     fn init(_module: &'static ThisModule) -> Result<Self, Error> {
-         pr_info!("rust percpu test start\n");
-@@ -94,6 +114,22 @@ fn init(_module: &'static ThisModule) -> Result<Self, Error> {
- 
-         pr_info!("rust dynamic percpu test done\n");
- 
-+        pr_info!("rust numeric optimizations test start\n");
-+
-+        make_optimization_test!(u8);
-+        make_optimization_test!(u16);
-+        make_optimization_test!(u32);
-+        make_optimization_test!(u64);
-+        make_optimization_test!(usize);
-+
-+        make_optimization_test!(i8);
-+        make_optimization_test!(i16);
-+        make_optimization_test!(i32);
-+        make_optimization_test!(i64);
-+        make_optimization_test!(isize);
-+
-+        pr_info!("rust numeric optimizations test done\n");
-+
-         // Return Err to unload the module
-         Result::Err(EINVAL)
-     }
 diff --git a/rust/kernel/percpu.rs b/rust/kernel/percpu.rs
-index 7dfceb6aefd7..b97d1d07a614 100644
+index b97d1d07a614..7458fe413f25 100644
 --- a/rust/kernel/percpu.rs
 +++ b/rust/kernel/percpu.rs
-@@ -2,6 +2,7 @@
- //! This module contains abstractions for creating and using per-CPU variables from Rust.
- //! See the define_per_cpu! macro and the DynamicPerCpu<T> type, as well as the PerCpu<T> trait.
- pub mod cpu_guard;
-+pub mod numeric;
+@@ -26,7 +26,10 @@
  
- use bindings::{alloc_percpu, free_percpu};
+ /// Holds a dynamically-allocated per-CPU variable.
+ pub struct DynamicPerCpu<T> {
++    // INVARIANT: `ptr` is managed by `alloc` and the value of `ptr` does not change for the
++    // lifetime of `self`.
+     alloc: Arc<PerCpuAllocation<T>>,
++    ptr: PerCpuPtr<T>,
+ }
  
+ /// Holds a statically-allocated per-CPU variable.
+@@ -204,9 +207,10 @@ impl<T: Zeroable> DynamicPerCpu<T> {
+     pub fn new(flags: Flags) -> Option<Self> {
+         let alloc: PerCpuAllocation<T> = PerCpuAllocation::new()?;
+ 
++        let ptr = alloc.0;
+         let arc = Arc::new(alloc, flags).ok()?;
+ 
+-        Some(Self { alloc: arc })
++        Some(Self { alloc: arc, ptr })
+     }
+ }
+ 
+@@ -217,8 +221,9 @@ impl<T> DynamicPerCpu<T> {
+     /// * `alloc` - The allocation to use
+     /// * `flags` - The flags used to allocate an `Arc` that keeps track of the `PerCpuAllocation`.
+     pub fn new_from_allocation(alloc: PerCpuAllocation<T>, flags: Flags) -> Option<Self> {
++        let ptr = alloc.0;
+         let arc = Arc::new(alloc, flags).ok()?;
+-        Some(Self { alloc: arc })
++        Some(Self { alloc: arc, ptr })
+     }
+ }
+ 
+@@ -226,7 +231,7 @@ pub fn new_from_allocation(alloc: PerCpuAllocation<T>, flags: Flags) -> Option<S
+ // don't deallocate the underlying `PerCpuAllocation` until `self` is dropped.
+ unsafe impl<T> PerCpu<T> for DynamicPerCpu<T> {
+     unsafe fn ptr(&mut self) -> &PerCpuPtr<T> {
+-        &self.alloc.0
++        &self.ptr
+     }
+ }
+ 
+@@ -234,6 +239,7 @@ impl<T> Clone for DynamicPerCpu<T> {
+     fn clone(&self) -> Self {
+         Self {
+             alloc: self.alloc.clone(),
++            ptr: self.ptr,
+         }
+     }
+ }
 diff --git a/rust/kernel/percpu/numeric.rs b/rust/kernel/percpu/numeric.rs
-new file mode 100644
-index 000000000000..e4008f872af1
---- /dev/null
+index e4008f872af1..1b37cc7e5c19 100644
+--- a/rust/kernel/percpu/numeric.rs
 +++ b/rust/kernel/percpu/numeric.rs
-@@ -0,0 +1,117 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//! Pin-hole optimizations for PerCpu<T> where T is a numeric type.
-+
-+use crate::percpu::*;
-+use core::arch::asm;
-+
-+/// Represents a per-CPU variable that can be manipulated with machine-intrinsic numeric
-+/// operations.
-+pub struct PerCpuNumeric<'a, T> {
-+    ptr: &'a PerCpuPtr<T>,
-+}
-+
-+macro_rules! impl_ops {
-+    ($ty:ty, $reg:tt) => {
-+        impl DynamicPerCpu<$ty> {
-+            /// Returns a `PerCpuNumeric` that can be used to manipulate the underlying per-CPU variable.
-+            pub fn num(&self) -> PerCpuNumeric<'_, $ty> {
-+                PerCpuNumeric { ptr: &self.alloc.0 }
-+            }
-+        }
-+        impl StaticPerCpu<$ty> {
-+            /// Returns a `PerCpuNumeric` that can be used to manipulate the underlying per-CPU variable.
-+            pub fn num(&self) -> PerCpuNumeric<'_, $ty> {
-+                PerCpuNumeric { ptr: &self.0 }
-+            }
-+        }
-+
-+        impl PerCpuNumeric<'_, $ty> {
-+            /// Adds `rhs` to the per-CPU variable.
-+            pub fn add(&mut self, rhs: $ty) {
-+                // SAFETY: `self.ptr.0` is a valid offset into the per-CPU area (i.e., valid as a
-+                // pointer relative to the `gs` segment register) by the invariants of PerCpu.
-+                unsafe {
-+                    asm!(
-+                        concat!("add gs:[{off}], {val:", $reg, "}"),
-+                        off = in(reg) self.ptr.0 as *mut $ty,
-+                        val = in(reg) rhs,
-+                    );
-+                }
-+            }
-+        }
-+        impl PerCpuNumeric<'_, $ty> {
-+            /// Subtracts `rhs` from the per-CPU variable.
-+            pub fn sub(&mut self, rhs: $ty) {
-+                // SAFETY: `self.ptr.0` is a valid offset into the per-CPU area (i.e., valid as a
-+                // pointer relative to the `gs` segment register) by the invariants of PerCpu.
-+                unsafe {
-+                    asm!(
-+                        concat!("sub gs:[{off}], {val:", $reg, "}"),
-+                        off = in(reg) self.ptr.0 as *mut $ty,
-+                        val = in(reg) rhs,
-+                    );
-+                }
-+            }
-+        }
-+    };
-+}
-+
-+macro_rules! impl_ops_byte {
-+    ($ty:ty) => {
-+        impl DynamicPerCpu<$ty> {
-+            /// Returns a `PerCpuNumeric` that can be used to manipulate the underlying per-CPU
-+            /// variable.
-+            pub fn num(&self) -> PerCpuNumeric<'_, $ty> {
-+                PerCpuNumeric { ptr: &self.alloc.0 }
-+            }
-+        }
-+        impl StaticPerCpu<$ty> {
-+            /// Returns a `PerCpuNumeric` that can be used to manipulate the underlying per-CPU
-+            /// variable.
-+            pub fn num(&self) -> PerCpuNumeric<'_, $ty> {
-+                PerCpuNumeric { ptr: &self.0 }
-+            }
-+        }
-+
-+        impl PerCpuNumeric<'_, $ty> {
-+            /// Adds `rhs` to the per-CPU variable.
-+            pub fn add(&mut self, rhs: $ty) {
-+                // SAFETY: `self.ptr.0` is a valid offset into the per-CPU area (i.e., valid as a
-+                // pointer relative to the `gs` segment register) by the invariants of PerCpu.
-+                unsafe {
-+                    asm!(
-+                        concat!("add gs:[{off}], {val}"),
-+                        off = in(reg) self.ptr.0 as *mut $ty,
-+                        val = in(reg_byte) rhs,
-+                    );
-+                }
-+            }
-+        }
-+        impl PerCpuNumeric<'_, $ty> {
-+            /// Subtracts `rhs` from the per-CPU variable.
-+            pub fn sub(&mut self, rhs: $ty) {
-+                // SAFETY: `self.ptr.0` is a valid offset into the per-CPU area (i.e., valid as a
-+                // pointer relative to the `gs` segment register) by the invariants of PerCpu.
-+                unsafe {
-+                    asm!(
-+                        concat!("sub gs:[{off}], {val}"),
-+                        off = in(reg) self.ptr.0 as *mut $ty,
-+                        val = in(reg_byte) rhs,
-+                    );
-+                }
-+            }
-+        }
-+    };
-+}
-+
-+impl_ops_byte!(i8);
-+impl_ops!(i16, "x");
-+impl_ops!(i32, "e");
-+impl_ops!(i64, "r");
-+impl_ops!(isize, "r");
-+
-+impl_ops_byte!(u8);
-+impl_ops!(u16, "x");
-+impl_ops!(u32, "e");
-+impl_ops!(u64, "r");
-+impl_ops!(usize, "r");
+@@ -62,7 +62,7 @@ impl DynamicPerCpu<$ty> {
+             /// Returns a `PerCpuNumeric` that can be used to manipulate the underlying per-CPU
+             /// variable.
+             pub fn num(&self) -> PerCpuNumeric<'_, $ty> {
+-                PerCpuNumeric { ptr: &self.alloc.0 }
++                PerCpuNumeric { ptr: &self.ptr }
+             }
+         }
+         impl StaticPerCpu<$ty> {
 
 -- 
 2.34.1
