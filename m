@@ -1,78 +1,90 @@
-Return-Path: <linux-kernel+bounces-728731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4436EB02C5A
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:15:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E378B02C5C
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E010A1AA3F78
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:15:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCA903B1BFD
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547D3154BF5;
-	Sat, 12 Jul 2025 18:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E795183CB0;
+	Sat, 12 Jul 2025 18:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jP0MfRdA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B3IEEwWk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24FA28DEF9;
-	Sat, 12 Jul 2025 18:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5361531C8
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 18:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752344102; cv=none; b=trn8HYRMDc2OGSEsgjVJ/P2yn81hT+W9A790ycUY+Ggtz+1brClJ0GKaUMKsSwUkwtNBUEXEQqbFKhAmCcPIOZ5Yl0RLlrG23y7WGsjY8fD+GgBc99lsdTYptASEWuZaqrO0FMy03CJT1Vc2hmeROO1wkj+m3AECSR27enxiCAQ=
+	t=1752344260; cv=none; b=PI+yXJFrDeRmEStrMSxAFBHQMGNgypozE8kgXWlQR/6ps2v0Qo+jOujPVCN89hMJwFG/tBjnKmbRaqpvDviEqx17U850YaNNtZi7U/0To5+FHcHY7T+nxGZ4NnlvR0O/G8wM5uJ+cNDtzaCsH/WDPagD4ecGWwjK9YeGP6FVdxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752344102; c=relaxed/simple;
-	bh=egDcbf57dEKvG3c6oq0Igd27xsa71dlhLzuggU6pcDU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=cizrNbfKAqIDmc0kaPGx14nrmwB+/fAFoBiSvRrRkDKQE3oZj4u5Bqpou/vgl5gzUOXj69maAsYpAOueSPv6vsCxRGeTzqWfRuVlzBBHWZ2zhYxz17u4n8wtUlcyaG34fFqu/9x3TdTASb7R4SxaDVBJxf63/QobPdaH9WNWD3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jP0MfRdA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90C5DC4CEEF;
-	Sat, 12 Jul 2025 18:15:02 +0000 (UTC)
+	s=arc-20240116; t=1752344260; c=relaxed/simple;
+	bh=kIliXIGbbOAwz7c7KDqlBexZvwRzkL5Gek8IUWY3F5E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Yj2EXUyBSkY6pvIlhRtJfwunnteLpWloz253cJ0NDGUtO2SGgL9huYH0+6p5Kx4EpM909ZBYI1GoCWmSloviT8UQg3OOyl2a/O1/dFcDym4PappxYCOUAp3udiyN0h/kxFzjp/8gFt7OOFKdtNohMPmWl231ecuD4MNKO+WCyyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B3IEEwWk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 272BBC4CEEF;
+	Sat, 12 Jul 2025 18:17:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752344102;
-	bh=egDcbf57dEKvG3c6oq0Igd27xsa71dlhLzuggU6pcDU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=jP0MfRdAHtOmQ9k8uBBVjQzlOqpC6fJ3lXRX/nz7i+PZ8w6eBWwxDA4I6B1yWoar6
-	 2vF51BG6jUozs3D7kgoQEYqGePTY5yy9p6Ovffz2BY+38orTyYGHMfLg513IAIeQSy
-	 f0t9/IW5s1sVuRb5KSALolWmMlhUPp0WSVHv4kcLufjv8rH63GoY2YTRO2+84VmPnn
-	 cJq2KczChoJ/LkhLjjFlo5f9JV0U9e/1MbTDSdQDgtomDvdgWMbuXTlmUOORQjTzHn
-	 1QPyXcdhcQuQJYOjgdFwM0j02y+m/swYP+TLz+4ffw+09IQklonerSHk4Wu2p15YLO
-	 s/mutXrT3xy/g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C7E383B276;
-	Sat, 12 Jul 2025 18:15:25 +0000 (UTC)
-Subject: Re: [GIT PULL] ksmbd server fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAH2r5mvKVofnEbFwtqAMcA=R6Q3Prp9hzqzBPEoAdyvJGgL06Q@mail.gmail.com>
-References: <CAH2r5mvKVofnEbFwtqAMcA=R6Q3Prp9hzqzBPEoAdyvJGgL06Q@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAH2r5mvKVofnEbFwtqAMcA=R6Q3Prp9hzqzBPEoAdyvJGgL06Q@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.samba.org/ksmbd.git tags/v6.16-rc5-ksmbd-server-fixes
-X-PR-Tracked-Commit-Id: 50f930db22365738d9387c974416f38a06e8057e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2632d81f5a02b65e6131cd57ba092bd321446e91
-Message-Id: <175234412400.2616006.8098294838324972766.pr-tracker-bot@kernel.org>
-Date: Sat, 12 Jul 2025 18:15:24 +0000
-To: Steve French <smfrench@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, Namjae Jeon <linkinjeon@kernel.org>
+	s=k20201202; t=1752344259;
+	bh=kIliXIGbbOAwz7c7KDqlBexZvwRzkL5Gek8IUWY3F5E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=B3IEEwWkAO/MqxRvtFzpBneYPj4IOp9K6DNMzitg3RfOyujifXFdoEgSw+t/1XKa9
+	 rCVzKaD+v90teHiXoVqMk1UbdyBPaM4XCFE9sdbt0UdJGg+cJNEKZHAQVhdNSgUvD2
+	 blkHVlQYW9gyaNB2f0qDVnnes/XVlvzzR3nVJPcGSNU+C80eBYr4YgmIjadhx64r+a
+	 KBOpRVCXM6f11PARp9rB4YGQ8Xz6GsgQ9CkccY2tFsQJ3FQO/INMB1vd5dZNhD61u1
+	 Xva5ohdPnTElxjaDLtFBJUDLNaQyKVxh/TVztqQLCuA/hjN/w1Wa6O+iG6I+c3K16r
+	 h/rG3GSzZO81w==
+From: srini@kernel.org
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Srinivas Kandagatla <srini@kernel.org>
+Subject: [PATCH 0/2] nvmem: fixes for 6.16
+Date: Sat, 12 Jul 2025 19:17:25 +0100
+Message-ID: <20250712181729.6495-1-srini@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Fri, 11 Jul 2025 08:21:27 -0500:
+From: Srinivas Kandagatla <srini@kernel.org>
 
-> git://git.samba.org/ksmbd.git tags/v6.16-rc5-ksmbd-server-fixes
+Hi Greg, 
+Here are two nvmem fixes for 6.16, Could you queue
+these for 6.16
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2632d81f5a02b65e6131cd57ba092bd321446e91
+Fixes include:
+	- crc32 endianness conversion in u-boot-env
+	- fix the mac address length in imx-ocotp provider
 
-Thank you!
+thanks,
+Srini
+.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Michael C. Pratt (1):
+  nvmem: layouts: u-boot-env: remove crc32 endianness conversion
+
+Steffen Bätz (1):
+  nvmem: imx-ocotp: fix MAC address byte length
+
+ drivers/nvmem/imx-ocotp-ele.c      | 5 ++++-
+ drivers/nvmem/imx-ocotp.c          | 5 ++++-
+ drivers/nvmem/layouts/u-boot-env.c | 6 +++---
+ 3 files changed, 11 insertions(+), 5 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.43.0
+
 
