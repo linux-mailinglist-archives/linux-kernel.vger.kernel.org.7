@@ -1,169 +1,135 @@
-Return-Path: <linux-kernel+bounces-728808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0DECB02D28
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 23:07:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EBD7B02D2D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 23:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A96073B32C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:06:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55B4E1AA1A2B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048322376F2;
-	Sat, 12 Jul 2025 21:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3658A21B9F4;
+	Sat, 12 Jul 2025 21:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lIrX18QM"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="QNoetQzs"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9BA1FF1C7;
-	Sat, 12 Jul 2025 21:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752354301; cv=none; b=go8KChcByN9CFAynk7bEMOXE8/o6pMhnWev6QpMqRqcOw3ZJUt18htbnFYTyxg4K2ChSR+qvAzqd7lVNvBb71Ot94yHAq1d7VQ6TH/szP9NOlx61aV6gLjCT4BAk6Sve6hRWxbfVVoczPMPOzJbfCfYlDynmWwA0r9buaPshYf4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752354301; c=relaxed/simple;
-	bh=oR7MXeK2kNeHBJiihl3hom/RSoggd1b4/7OVwsS+/io=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=clVFNcWt5H0dY6YrMfV5L0bc5nPZK9Yt1kjuJ0ql24tLPz10EpK1elxKXSdWZuE3ONuZkD+WGsiTFr8DwmSPF6C2a51W5qnXfjFm4ePSrU6HPB4uuOdEd3sEq2a/YroNFNPm8X/ArE+qBW/MI4s2sGFLUIuZR1KxuC+iuRid47g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lIrX18QM; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-74b54af901bso2035938b3a.2;
-        Sat, 12 Jul 2025 14:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752354299; x=1752959099; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ejYbSlwrvFkbrHBW6bffd77Xp+VgExQz5WmoZWm5X3A=;
-        b=lIrX18QMw0gNxbEk9andzez5R2viTfRXahWa2nLtKHXDDZnPa08KfxI/hw/fW4R28h
-         k2jfsbL7B/V8yK/BFi/jugQ7wyMu7Zr/wDFKejInn+PQJJ9jem1hNcMMYgeexqzmvHmP
-         2pMcKwDXlG4H9wd+o6XNyCU8WbIjawO+wNwUxsQURhYPXnNyA2CDYpPQssdljpkoinNh
-         +CRoOYOUbOV4tnQNU9xSJjRL0WRvM8XSWCG7VBYNPsiyHVc36T9mtnD6dEFHTqmiqnxl
-         ES6QUjubnPEbEQiTUPZjHhiB/K8GQWpCnIAfVWAgAqVaXGQrFxrVOET6Km0HmTKmNi76
-         SB4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752354299; x=1752959099;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ejYbSlwrvFkbrHBW6bffd77Xp+VgExQz5WmoZWm5X3A=;
-        b=UiqoxY5XAgVQCvjrl+rsC2yVyjqGKzQvkIGc3rT5BoUu4ElXUgsieRGIsWHQgnGWQ1
-         ezzEU61tnfAJ9tysA8j0MoDFAbiRKYtXRwo79vh3Xb40fGs9z7G14LDK+4uP3vhUj1Eu
-         7VL1RO4XgE+GdSAB93SfzdBgHqC7+lqnZHRe0jyGCv1+mCUUZhCOFPkOvmiY1bdpFQQe
-         0syPnAvGtG5Lc2uHkIOUpChbe7w9x6Go7JRdTzXPysZm+xpEfDNY7PvAw27J5jFaGrV5
-         W6/Z7HDnxeLt8UeUObK97DPAam4axbdXHWH9afQuAqI92EU5zAbcG5SNKmD1oQFrM4WN
-         GPSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUeCD4oHT554XkrRBgjWKjGWZzvzneMsOo4Ic13oJxYGL+mZrmiikMDiQ8WxZjiyy5KYrH7rME1iB/tKA==@vger.kernel.org, AJvYcCWYfAfz6Xkp2MyppcUFNE8mQrr+MkCJsvqWzG4DZ+cin2mz9fcHuSkK20iDxNdgqqQEb2eWf5z9g7G7@vger.kernel.org, AJvYcCWsUs1PLadSsdpn7tZ+/GoTkJhtkf7Bg3G2tUn5iIamY3B1s6CeM06vgX9mOfO7TlCcR9UPW5bDXdma1Imi@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWplD+lBBTYDui4SUYYntWZf97lgieqSQAjiKxu3NCJwpBYz3z
-	pqlCWoctZmtSkoxcW66OvaVSVA+01Djyp7pFvoWH05zJkozXJYWzboPZrubtwmZ0
-X-Gm-Gg: ASbGncu/vQgB253vKvCQbMEcjJdRzU9w6k1DeqI3XVUPUrdxBjP7yU83reI502KYpYF
-	DsinDvnpWzs19E2nHPT4eltU+rk66/UyHFpvcWdXPCYwBUQrNH/EWQ2hARazP2t5HOsA7yyJTn7
-	xCmHT9VnkHUS7bWjXinBYUDq9e8l5Z9jCH5vq6L6xBWI/pmkpX6PNqmTJ/lgxgCdJSgEJ2KG5db
-	E7X10Oh8LTzi7Xe13EmVFJam/XJH6zihuih2+n0iCtVhY3yhWOWwmvHQZ729JjpxSWrySBodvcj
-	vKBi6mGN5IGN+eQ9zIPs79V/N1XdImCxaa8sekjNXqVBOlwatdc/W5cWJD8SWhFjPA+wwZu+uXc
-	YaJU=
-X-Google-Smtp-Source: AGHT+IH+1if3RW5zQDx5NFLjOzn1Iy9WzIcJAUTGZjLlAWikIuAA6K+2n56KMZrocse6CCNK9iTVig==
-X-Received: by 2002:a05:6a20:c709:b0:215:efed:acfc with SMTP id adf61e73a8af0-2311dd59489mr17727971637.7.1752354299008;
-        Sat, 12 Jul 2025 14:04:59 -0700 (PDT)
-Received: from archlinux.lan ([2601:644:8200:dab8::1f6])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd5d30sm7988645b3a.5.2025.07.12.14.04.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Jul 2025 14:04:58 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-wireless@vger.kernel.org
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Stanislaw Gruszka <stf_xl@wp.pl>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-mips@vger.kernel.org (open list:MIPS),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
-	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support)
-Subject: [PATCHv4 wireless-next 7/7] dt-bindings: net: wireless: rt2800: add
-Date: Sat, 12 Jul 2025 14:04:48 -0700
-Message-ID: <20250712210448.429318-8-rosenp@gmail.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250712210448.429318-1-rosenp@gmail.com>
-References: <20250712210448.429318-1-rosenp@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A02BE4E;
+	Sat, 12 Jul 2025 21:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752354918; cv=pass; b=gY/2RMMdrBiDrM17R6lryoSDKnIuxj74xo4Dd0qtpb0zTVOOc2od8LkGEVsbxa2k5OHmtfooywt+1N7M3E9R1riZSq5Ov3idzKkSuljAEcc0Qx8/A3wYoN2UbtjAIprYNJ0S7F5PqGF42bXHRWScj/dFck4uUTlfr/NzpMIavIs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752354918; c=relaxed/simple;
+	bh=pAWwdXVs7ZXsCxQbV5vg5e5/B6leWiXzTnTU4Ye8vRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VoM4nT/UWKT4LOWBUCU+kqD5QtD0gyJ9BVwIZGXdNxuhoU37zqYrWm6PBWORPqiJFDHgTpJwA1JXFZBIMfWkKdqHLvFOzopeazZo/c4F3UqkgnSUHX4vAJf8vz42o7a2g1dQ/9ETvRIsyx6XWes11/ZV4tas0DB4gJqaNWY2RK8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=QNoetQzs; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752354910; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=H2CbjYs8GO3Ae+KC2rRWPafh5M3VOsKocKv10pBI7RAnGj2wo6NQGsw9VU2hM6yRhmnqGBtxN7945hkEdATI0BdJ2YD5MS9pKYQSF6Diw1W2yxFTYIXRE9FKvQXoIQcEeKyHWgQ2+JdFTw81I41TPaR5CBeVvnVrTTxt0d1+3qs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752354910; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=bX6Q7B11PstjYpe2uRcjVISnIPFiyT9REbHORxLHdXM=; 
+	b=Bw4Gfit3OX3//LXPgBxcBtGLLlveL5hbYSQMy4Wr76uJAju2rwcuccrf92j84j/HFhSPlFWhZPFLw129i+7lVkoTiJYCjZkgdOGB2rZ3ci8vydG6F7i4FPWqBcWq00hgLvSw4xI+mv/jxcoBLIv00qqUZzIFJy3Jv2zbNg/6orI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752354910;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=bX6Q7B11PstjYpe2uRcjVISnIPFiyT9REbHORxLHdXM=;
+	b=QNoetQzsZyegw8QFjIR2Sib+uf5tMjPcHVFk2/s7Yq6P2ucTOPj5jdffqBDc1gyG
+	pMYxopoa/uZbgzkuVE+/TJPWzyOcpzX3b124BuxfQVbPGzpOQVRzEg8iR7vb9b2rWOT
+	raKg2KiWR3E5AHpWoWjrLoMClj/DTNhCZcsyhSYs=
+Received: by mx.zohomail.com with SMTPS id 1752354908788353.79323311851226;
+	Sat, 12 Jul 2025 14:15:08 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 3F05E180F0F; Sat, 12 Jul 2025 23:15:06 +0200 (CEST)
+Date: Sat, 12 Jul 2025 23:15:06 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Ian Ray <ian.ray@gehealthcare.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: remove bouncing address for Nandor Han
+Message-ID: <5offogdzedixircmncso7wzswgh3ancblpydnelbbqw3pjxdpw@qcgnpip4g4xd>
+References: <20250709071825.16212-1-brgl@bgdev.pl>
+ <se5ok3bzlej4gecaep3albatkigcczsj4ailmulqebd737qe7a@ly3vlkqhgm3q>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <se5ok3bzlej4gecaep3albatkigcczsj4ailmulqebd737qe7a@ly3vlkqhgm3q>
+X-ZohoMailClient: External
 
-Add device-tree bindings for the RT2800 SOC wifi device found in older
-Ralink/Mediatek devices.
+Hi,
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- .../bindings/net/wireless/ralink,rt2880.yaml  | 47 +++++++++++++++++++
- 1 file changed, 47 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/wireless/ralink,rt2880.yaml
+On Sat, Jul 12, 2025 at 10:28:26PM +0200, Sebastian Reichel wrote:
+> On Wed, Jul 09, 2025 at 09:18:24AM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >=20
+> > Nandor's address has been bouncing for some time now. Remove it from
+> > MAINTAINERS.
+>=20
+> +Cc: Ian Ray, just in case somebody from GEHC wants to be notified
+> for this.
 
-diff --git a/Documentation/devicetree/bindings/net/wireless/ralink,rt2880.yaml b/Documentation/devicetree/bindings/net/wireless/ralink,rt2880.yaml
-new file mode 100644
-index 000000000000..a92aedf6ba01
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/wireless/ralink,rt2880.yaml
-@@ -0,0 +1,47 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/wireless/ralink,rt2880.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Ralink RT2880 wireless device
-+
-+maintainers:
-+  - Stanislaw Gruszka <stf_xl@wp.pl>
-+
-+description: |
-+  This node provides properties for configuring RT2880 SOC wifi devices.
-+  The node is expected to be specified as a root node of the device.
-+
-+allOf:
-+  - $ref: ieee80211.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ralink,rt2880-wifi
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    wifi@110180000 {
-+      compatible = "ralink,rt2880-wifi";
-+      reg = <0x10180000 0x40000>;
-+      clocks = <&sysc 16>;
-+      interrupt-parent = <&cpuintc>;
-+      interrupts = <6>;
-+    };
--- 
-2.50.0
+Apparently his entry in MAINTAINERS is also wrong and it needs to
+be @gehealthcare.com now (at least that is what U-Boot switched to
+[0]). Let's try again :)
 
+Ian, you should update your linux MAINTAINERS entry in MEGACHIPS
+STDPXXXX-GE-B850V3-FW LVDS/DP++ BRIDGES [1].
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/MAINTAINERS#n15490
+[0] https://lore.kernel.org/all/20241211083136.66-1-ian.ray@gehealthcare.co=
+m/
+
+Greetings,
+
+-- Sebastian
+
+>=20
+> Greetings,
+>=20
+> -- Sebastian
+>=20
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > ---
+> >  MAINTAINERS | 7 -------
+> >  1 file changed, 7 deletions(-)
+> >=20
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index efba8922744a3..c780cbd11ffb9 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -27466,13 +27466,6 @@ S:	Supported
+> >  W:	http://www.marvell.com
+> >  F:	drivers/i2c/busses/i2c-xlp9xx.c
+> > =20
+> > -XRA1403 GPIO EXPANDER
+> > -M:	Nandor Han <nandor.han@ge.com>
+> > -L:	linux-gpio@vger.kernel.org
+> > -S:	Maintained
+> > -F:	Documentation/devicetree/bindings/gpio/gpio-xra1403.txt
+> > -F:	drivers/gpio/gpio-xra1403.c
+> > -
+> >  XTENSA XTFPGA PLATFORM SUPPORT
+> >  M:	Max Filippov <jcmvbkbc@gmail.com>
+> >  S:	Maintained
+> > --=20
+> > 2.48.1
+> >=20
+> >=20
 
