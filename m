@@ -1,91 +1,130 @@
-Return-Path: <linux-kernel+bounces-728722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A65B02C43
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 19:46:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34AD1B02C47
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 19:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3CDF1C212E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 17:46:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0F797A418C
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 17:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE01289E33;
-	Sat, 12 Jul 2025 17:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF9C28A3F5;
+	Sat, 12 Jul 2025 17:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XtxDZtsV"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="McJeiGM1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21776F073
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 17:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38933D994
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 17:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752342357; cv=none; b=L/DgkQrQswDNgtrw39mgPCs6+54creXPapIHZTETUkjdyyiGv1/+brhqk/WnszuVig++twbOPrT0WYgf8MuQFKwB7z6JgQgJBEfgAgL+j4KGxjmdlQCskgTJbM3wa96TME6bwqhdyQ5PcGoFIr98t9gi1vpYIKhZTdydKiBqq88=
+	t=1752342978; cv=none; b=QZZKrUYBtaCGDIpBmF4DRRjmnFWE7M2scA5kgVYXDnJtD5SVGeF7A+vlybycqoyfH/OK9kzclPh5/8sbyFJrWvEpv6pX4e3bB2BuM86yVHo3M8CvyfXQ2XI4Dxfy+09ZNYmLaGouaJkhhsSVJ7HGJPuCQdZA9hOU0jcHSZqPl5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752342357; c=relaxed/simple;
-	bh=n8HUZzo1OJLdG4wq6ZqJWTJ/71erpcZChgFuWnLNhKk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f81eqvbC3gCiA1lZo7wfIhWitrNnYNUWwXEr8An1Q3SvR1+5iArrJNE5REb88nGsvGV7U0RYu268GQCNagU+iTq9KfeVYcxq2CZ6rcbrSuMtm7cNQkcHYvLSU7iBG59ofQt19uHx1abXl2VKH4BNEQaumXVE2w4llOUq+UW4s/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XtxDZtsV; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752342352;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gkr8r0QuwQ/K0o6snVmFv/O7s4jysL7xreXy+VW3z1A=;
-	b=XtxDZtsVXnvz5WUP2s/t71iis/PCcaW6DQE+JzdQ6NTnx1y7bJie9RBWd6DAYwYLi488LU
-	Ot7+aGJyUKHWtuvspZodYuY9GFyMTB+eZXpOx8wqBoymk7PtiMXAJOAGyaJDoNUU9mUj69
-	qX4DnAZBsy6uiGUL4+0UV0Av7v7UkX0=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/memfd: Replace deprecated strcpy() with memcpy() in alloc_name()
-Date: Sat, 12 Jul 2025 19:45:17 +0200
-Message-ID: <20250712174516.64243-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1752342978; c=relaxed/simple;
+	bh=O7150iv3cjqnWvZNJGwC3U69P0vBAIhio+CRzpLyvP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tn5ysIzwL7Xsbt0vYuUQ8mopiiGJPx3YFBzewJbRVUKsqTNMaRgjhqe1keNX2xpuTIXNI+2avXJnUC3g/2F0oP9JI2Q6cINTQ1XJ+vEKoJ2+VyCkelGuVe1EnRysSB6+Pal0/WEUOu2cdItWNvexPsEPGwgea/sVo7J6skFzsEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=McJeiGM1; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752342977; x=1783878977;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=O7150iv3cjqnWvZNJGwC3U69P0vBAIhio+CRzpLyvP8=;
+  b=McJeiGM1y478U33KFdw4v9LwBLfPoVKEmupblCC10XkKWqF3CjA/Cdiv
+   UakbXg1mfOuhEir1J0ytifZlmaBhGUhyX1EZTcjjWgxIry6KY3it8OEhp
+   h80DP0DP4m1I0MuAjjFYDPGKPjSGVET0/WSrYu1J5s0ZUkR1ygM/helyh
+   Z1Ki+7W/iE6NgUXfz44e9klmq/TdOaAHxLmzU3UsjzS87TcuJOFeYS9P+
+   fq0ZCoB4CLvs6erOLujbXO2dBtnrU4Qo5IXL8jC00j6GrYP/ZsdGzTnay
+   Vsq6soUup3d74vIm7O7bFZISHkvF1xHMNDL3SbLPnCW/ASqsS/0zwakz8
+   g==;
+X-CSE-ConnectionGUID: HYUJNLuxTTimQsSenDK0uA==
+X-CSE-MsgGUID: ADipxOIXRciHe4x0RTH33A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="65303197"
+X-IronPort-AV: E=Sophos;i="6.16,306,1744095600"; 
+   d="scan'208";a="65303197"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2025 10:56:16 -0700
+X-CSE-ConnectionGUID: F0yfcoVHT+CHhX1oIQIjbg==
+X-CSE-MsgGUID: gblIoa7UQAibaB+7T36KXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,306,1744095600"; 
+   d="scan'208";a="156405705"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa009.jf.intel.com with ESMTP; 12 Jul 2025 10:56:13 -0700
+Date: Sun, 13 Jul 2025 01:47:45 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, jgg@ziepe.ca, kevin.tian@intel.com, will@kernel.org,
+	aneesh.kumar@kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, joro@8bytes.org, robin.murphy@arm.com,
+	shuah@kernel.org, aik@amd.com, dan.j.williams@intel.com,
+	baolu.lu@linux.intel.com, yilun.xu@intel.com
+Subject: Re: [PATCH v4 4/7] iommufd: Destroy vdevice on idevice destroy
+Message-ID: <aHKfwQ41x28bNWAL@yilunxu-OptiPlex-7050>
+References: <20250709040234.1773573-1-yilun.xu@linux.intel.com>
+ <20250709040234.1773573-5-yilun.xu@linux.intel.com>
+ <aHHG/H6IT9lvYy8x@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHHG/H6IT9lvYy8x@Asurada-Nvidia>
 
-strcpy() is deprecated; use memcpy() instead.
+> [..]
+> 
+> >  out_put_idev:
+> > -	iommufd_put_object(ucmd->ictx, &idev->obj);
+> > +	if (rc)
+> > +		iommufd_put_object(ucmd->ictx, &idev->obj);
+> 
+> So, this actually holds both the short term user and (covertly)
+> the regular user too.
+> 
+> Though it doesn't hurt to do that, holding the regular one seems
+> to be useless, because its refcount check is way behind this new
+> pre_destroy op:
+> 
+> 183         if (flags & REMOVE_WAIT_SHORTTERM) {                                                                                                                                                                                                                                                                                                             
+> 184                 ret = iommufd_object_dec_wait_shortterm(ictx, to_destroy);
+> ==>			/* pre_destroy op */
+> ...
+> 214         if (!refcount_dec_if_one(&obj->users)) {
+> 215                 ret = -EBUSY;
+> 216                 goto err_xa;
+> 217         }
+> 
+> So, I think we could just do, exactly reflecting the comments:
+> +	vdev->idev = idev;
+> +	refcount_inc(&idev->obj.shortterm_users);
 
-Not copying the NUL terminator is safe because strncpy_from_user() would
-overwrite it anyway by appending uname to the destination buffer at
-index MFD_NAME_PREFIX_LEN.
+I think this makes things more clear, we have 3 types of refcounts:
 
-No functional changes intended.
+1. shortterm_users + 1, users + 1, temporary refcount, can't be
+   revoked by referenced object.
+2. users + 1, long term refcount, can't be revoked either.
+3. shortterm_users + 1, can be revoked by referenced object.
 
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- mm/memfd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Then, keep the exit patch unchanged.
+> out_put_idev:
+> 	iommufd_put_object(ucmd->ictx, &idev->obj);
 
-diff --git a/mm/memfd.c b/mm/memfd.c
-index ab367e61553d..6f4db997b955 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -401,7 +401,7 @@ static char *alloc_name(const char __user *uname)
- 	if (!name)
- 		return ERR_PTR(-ENOMEM);
- 
--	strcpy(name, MFD_NAME_PREFIX);
-+	memcpy(name, MFD_NAME_PREFIX, MFD_NAME_PREFIX_LEN);
- 	/* returned length does not include terminating zero */
- 	len = strncpy_from_user(&name[MFD_NAME_PREFIX_LEN], uname, MFD_NAME_MAX_LEN + 1);
- 	if (len < 0) {
--- 
-2.50.0
+Yeah, this is the part I like the most.
 
+Thanks,
+Yilun
+
+> 
+> Thanks
+> Nicolin
 
