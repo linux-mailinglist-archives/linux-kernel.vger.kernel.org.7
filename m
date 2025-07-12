@@ -1,216 +1,110 @@
-Return-Path: <linux-kernel+bounces-728570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9284B02A1F
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:32:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D3DB02A21
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:33:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62CD4A45FC4
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:32:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 633F8A438D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EF626B94E;
-	Sat, 12 Jul 2025 08:32:33 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E3826B975;
+	Sat, 12 Jul 2025 08:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BLrBtGJW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC3B15D5B6
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 08:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD772FB2;
+	Sat, 12 Jul 2025 08:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752309152; cv=none; b=Xe/OyqMsFVR11kE3wFQi7sfEcpEvJbI1E8G39iTGlmp+jW6upAmYUuIpviPyllYYU2TryyLWpAv311QuPy/S+AlRnT0vZnlgO3LDsLDG4oailJVyMgewIzWYXtxsKISWdIbQi8Lsd9mDsFIYuhoFDj5xkmm2bSYUnIRchMgaIrY=
+	t=1752309218; cv=none; b=d3Zoto/Nz5Pr/VlBE/g9ehSiHxNfT772qPHMAnJGPiwMJKfcI7pGGSFNVrVsgaR62d3X8jXdfrcVFcUtbRDEfihS9i1ITuvLp6WPStAlCgodOlEYBhRMeZ6tc//iJ+87KzYe6+rhmo5+YJ4yIrbPkkVNXxaLqdSAuuZoV3ow4CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752309152; c=relaxed/simple;
-	bh=1BMrpmFdHjxYvBZWRHiWBAs19iXWAZqA4RwsPBGRGbQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ilGHmdnspIJwzwVQtjTIRpUo9vagP+v8f9H+aezJEGI5be5iSOcs91rWPMPZK190zJ9Icq7PBbrj08ZFXYokxR0nu2AvBsiG6b/aCCLnbVuscH4LCJBnkOZOM2zYMJfzh0Ti5R5LIniuSZ1FZdH+TV9Fg2TJA5mnUV6Wa33J6tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-86d126265baso265936339f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 01:32:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752309150; x=1752913950;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PK7o6tuhLHNmuXB47Vn/hafZzoY6Fbu0p9VJnGIhps8=;
-        b=Ht75aFH91eypHbCdcZ5Q21iND004F2PuYrda6POzxug/shVB1WfpBPFWAGIEoKv4Zo
-         DLofPdb3q4wpuRjm3FJ5bPT7d1fYmZWQec+dDjbwBsZ/eo8NTsiV0hCm3JpOj43laSeg
-         VWjYMCGxKJKJw+X0qszxKIcEsUMx5eelyqAtmgxj2c5nGdvMgpc712t4xWF1FxiRP8zq
-         yu4bzzOBWiaVIDIK2CVuFi1HIhwv2FXFvh/M72t6bwUs+1+AH8ASoQoCcp6UXkVS9yme
-         m5fdPpaJ5FujOAxqrAxR7kiHchPpvB7vnJJV6BDloAXwNh+VXD9MWzDbG89LJrNRvAT5
-         W5pw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3DJVV65afiyejY2kPiTWKNnyKSr5oxhuVnP1dsMxbvI+Lbm6VhIaXrgA1Dk8DnOYCiFE6Q67OH4bT+Fw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhXhdUwtOdb1ieS9q16jnNjVpHKXRRA92NDWV9Il0gJ/3D3zGv
-	z4wOj6/qPfSLhas2NUrqqRNkelxkalSuB0sACQs8rzIvOEN2bt/BzrVMVOF2AFxU8aJU3s4lnzU
-	/6mGQyRFdpR4zhSAUX6IGsu+QmpOKS8udFr51CQdoEmHa/W2Agvd5idtvIj0=
-X-Google-Smtp-Source: AGHT+IEXUwwoKihv5Fd8i79lfBREs3VbRueyY8mj/8AsS79tesQlhjpw2cG8LGKYrvKXtPvP06ZuH2ZZEYbFqytgsOI4yTLkppR2
+	s=arc-20240116; t=1752309218; c=relaxed/simple;
+	bh=6VWw+bBtOU9U2/e33hN+xWFLVR6yatLAPxZzl7SbJNQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tVM7y7we2Qs/twPdAd/fH5CJwUVANzS8FIu8HbjyoRTrrIKDEhhi9/lb5YOgBB6Fz+9LmK4JWUsPpiwYYCZ4CVK6FIDOKydV1tH/MH9uIVI3l11PgfofB1jj2YXzqrY2/t7aYX9khuiH9UGvlBa9qjwQe6aejlnTvQLoOlgSCAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BLrBtGJW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 681C1C4CEEF;
+	Sat, 12 Jul 2025 08:33:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752309217;
+	bh=6VWw+bBtOU9U2/e33hN+xWFLVR6yatLAPxZzl7SbJNQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=BLrBtGJWr8t8EuUuF1KitSwtsdhjcVkm7yA3/9/v0SPnsfWTGsgArG0c37KqNC5FZ
+	 Z37V4hCTuE2wtvT5T+1lKkmEWide4h7GDLgNjmYmZGscJgAPABaYhvWKq8fs8dGG68
+	 hCNpNVmeFhYdndohsRc8K1MDbvyXuxyd4JuN6z+QWhxVTH1EI9cKdCTeBPzViN+dy1
+	 Wf7EhAxuECXW4VY00z2WWJtOB4yLLOH86VsdFfZZGEE2Kxjh72zulx41D1Ey5THtmp
+	 NRAuSk5U6nVqcUZ6FcbAX4k9NePoy4l0WMLB8nUrypDr0OqhZzWYcmYJ9EVs/Jbh0g
+	 y9zTO6eQRTGTQ==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1uaVfr-0000000GsSz-1qLn;
+	Sat, 12 Jul 2025 10:33:35 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Jonathan Corbet" <corbet@lwn.net>,
+	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	workflows@vger.kernel.org,
+	Akira Yokosawa <akiyks@gmail.com>
+Subject: [PATCH v2 3/2] docs: changes: better document Python needs
+Date: Sat, 12 Jul 2025 10:32:38 +0200
+Message-ID: <58c0cfb40e600af697b1665ffbc8e5bb3d859bb5.1752309145.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <cover.1752307866.git.mchehab+huawei@kernel.org>
+References: <cover.1752307866.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:378e:b0:879:66fe:8d1e with SMTP id
- ca18e2360f4ac-87977f940fcmr772348839f.8.1752309150227; Sat, 12 Jul 2025
- 01:32:30 -0700 (PDT)
-Date: Sat, 12 Jul 2025 01:32:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68721d9e.a00a0220.26a83e.0074.GAE@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in __bch2_trans_commit (3)
-From: syzbot <syzbot+b6ef9edaba01d5b4e43f@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Hello,
+Python is listed as an optional dependency, but this is not
+true, as kernel-doc is called during compilation when DRM is
+enabled. Better document that.
 
-syzbot found the following issue on:
-
-HEAD commit:    40f92e79b0aa Merge tag 'block-6.16-20250710' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=169a7bd4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b309c907eaab29da
-dashboard link: https://syzkaller.appspot.com/bug?extid=b6ef9edaba01d5b4e43f
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-40f92e79.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8022f6fa9a48/vmlinux-40f92e79.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/565fa9fa3299/bzImage-40f92e79.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b6ef9edaba01d5b4e43f@syzkaller.appspotmail.com
-
-bcachefs (loop0): btree ptr not marked in member info btree allocated bitmap
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq c0bef60d07ceb940 written 16 min_key POS_MIN durability: 1 ptr: 0:35:0 gen 0, fixing
-bcachefs (loop0): bucket 0:35 data type btree ptr gen 0 missing in alloc btree
-  while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq c0bef60d07ceb940 written 16 min_key POS_MIN durability: 1 ptr: 0:35:0 gen 0, fixing
-bcachefs (loop0): btree ptr not marked in member info btree allocated bitmap
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq ebb8d5a9e3463bdb written 16 min_key POS_MIN durability: 1 ptr: 0:32:0 gen 0, fixing
-bcachefs (loop0): btree ptr not marked in member info btree allocated bitmap
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq e81e1ed936acf3df written 32 min_key POS_MIN durability: 1 ptr: 0:29:0 gen 0, fixing
-bcachefs (loop0): bucket 0:29 data type btree ptr gen 0 missing in alloc btree
-  while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq e81e1ed936acf3df written 32 min_key POS_MIN durability: 1 ptr: 0:29:0 gen 0, fixing
-bcachefs (loop0): bucket 0:1 gen 0 has wrong data_type: got free, should be sb, fixing
-bcachefs (loop0): bucket 0:1 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:2 gen 0 has wrong data_type: got free, should be sb, fixing
-bcachefs (loop0): bucket 0:2 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:3 gen 0 has wrong data_type: got free, should be sb, fixing
-bcachefs (loop0): bucket 0:3 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:4 gen 0 has wrong data_type: got free, should be sb, fixing
-bcachefs (loop0): bucket 0:4 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:5 gen 0 has wrong data_type: got free, should be sb, fixing
-bcachefs (loop0): bucket 0:5 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:6 gen 0 has wrong data_type: got free, should be sb, fixing
-bcachefs (loop0): bucket 0:6 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:7 gen 0 has wrong data_type: got free, should be sb, fixing
-bcachefs (loop0): bucket 0:7 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:8 gen 0 has wrong data_type: got free, should be sb, fixing
-bcachefs (loop0): bucket 0:8 gen 0 data type sb has wrong dirty_sectors: got 0, should be 8, fixing
-bcachefs (loop0): bucket 0:9 gen 0 has wrong data_type: got free, should be journal, fixing
-bcachefs (loop0): bucket 0:9 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:10 gen 0 has wrong data_type: got free, should be journal, fixing
-bcachefs (loop0): bucket 0:10 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:11 gen 0 has wrong data_type: got free, should be journal, fixing
-  Ratelimiting new instances of previous error
-bcachefs (loop0): bucket 0:11 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
-  Ratelimiting new instances of previous error
- done
-bcachefs (loop0): going read-write
-bcachefs (loop0): journal_replay... done
-bcachefs (loop0): check_extents_to_backpointers...
-bcachefs (loop0): scanning for missing backpointers in 4/128 buckets
- done
-bcachefs (loop0): check_inodes... done
-bcachefs (loop0): resume_logged_ops... done
-bcachefs (loop0): delete_dead_inodes... done
-bcachefs (loop0): done starting filesystem
-=======================================================
-WARNING: The mand mount option has been deprecated and
-         and is ignored by this kernel. Remove the mand
-         option from the mount to silence this warning.
-=======================================================
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/btree_trans_commit.c:348!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5344 Comm: syz.0.0 Not tainted 6.16.0-rc5-syzkaller-00193-g40f92e79b0aa #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:btree_insert_entry_checks fs/bcachefs/btree_trans_commit.c:343 [inline]
-RIP: 0010:bch2_trans_commit_write_locked fs/bcachefs/btree_trans_commit.c:725 [inline]
-RIP: 0010:do_bch2_trans_commit fs/bcachefs/btree_trans_commit.c:854 [inline]
-RIP: 0010:__bch2_trans_commit+0x86e5/0x8870 fs/bcachefs/btree_trans_commit.c:1085
-Code: 97 fd eb 0c e8 2c 78 97 fd eb 05 e8 25 78 97 fd 49 bd 00 00 00 00 00 fc ff df 4c 8b 64 24 48 e9 e1 af ff ff e8 0c 78 97 fd 90 <0f> 0b e8 04 78 97 fd 90 0f 0b e8 fc 77 97 fd 90 0f 0b e8 f4 77 97
-RSP: 0018:ffffc9000d357780 EFLAGS: 00010287
-RAX: ffffffff8428be64 RBX: ffffffff84288035 RCX: 0000000000100000
-RDX: ffffc9000df42000 RSI: 0000000000004ab7 RDI: 0000000000004ab8
-RBP: ffffc9000d357a70 R08: 0000000000000000 R09: ffffffff84288035
-R10: dffffc0000000000 R11: ffffed100a6a9309 R12: ffff8880525b4020
-R13: dffffc0000000000 R14: ffff8880525b64d8 R15: 0000000000000001
-FS:  00007fe567cac6c0(0000) GS:ffff88808d21b000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f10bffd2000 CR3: 000000003f923000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- bch2_trans_commit fs/bcachefs/btree_update.h:241 [inline]
- __bch2_unlink+0x2b9/0x530 fs/bcachefs/fs.c:827
- bch2_unlink+0xb1/0xf0 fs/bcachefs/fs.c:864
- vfs_unlink+0x391/0x650 fs/namei.c:4595
- do_unlinkat+0x350/0x560 fs/namei.c:4659
- __do_sys_unlink fs/namei.c:4705 [inline]
- __se_sys_unlink fs/namei.c:4703 [inline]
- __x64_sys_unlink+0x47/0x50 fs/namei.c:4703
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe566d8e929
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fe567cac038 EFLAGS: 00000246 ORIG_RAX: 0000000000000057
-RAX: ffffffffffffffda RBX: 00007fe566fb5fa0 RCX: 00007fe566d8e929
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000200000000180
-RBP: 00007fe566e10b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fe566fb5fa0 R15: 00007fff2f8fbd98
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:btree_insert_entry_checks fs/bcachefs/btree_trans_commit.c:343 [inline]
-RIP: 0010:bch2_trans_commit_write_locked fs/bcachefs/btree_trans_commit.c:725 [inline]
-RIP: 0010:do_bch2_trans_commit fs/bcachefs/btree_trans_commit.c:854 [inline]
-RIP: 0010:__bch2_trans_commit+0x86e5/0x8870 fs/bcachefs/btree_trans_commit.c:1085
-Code: 97 fd eb 0c e8 2c 78 97 fd eb 05 e8 25 78 97 fd 49 bd 00 00 00 00 00 fc ff df 4c 8b 64 24 48 e9 e1 af ff ff e8 0c 78 97 fd 90 <0f> 0b e8 04 78 97 fd 90 0f 0b e8 fc 77 97 fd 90 0f 0b e8 f4 77 97
-RSP: 0018:ffffc9000d357780 EFLAGS: 00010287
-RAX: ffffffff8428be64 RBX: ffffffff84288035 RCX: 0000000000100000
-RDX: ffffc9000df42000 RSI: 0000000000004ab7 RDI: 0000000000004ab8
-RBP: ffffc9000d357a70 R08: 0000000000000000 R09: ffffffff84288035
-R10: dffffc0000000000 R11: ffffed100a6a9309 R12: ffff8880525b4020
-R13: dffffc0000000000 R14: ffff8880525b64d8 R15: 0000000000000001
-FS:  00007fe567cac6c0(0000) GS:ffff88808d21b000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe567c8afc8 CR3: 000000003f923000 CR4: 0000000000352ef0
-
-
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ Documentation/process/changes.rst | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
+index bccfa19b45df..6a7d7c1ee274 100644
+--- a/Documentation/process/changes.rst
++++ b/Documentation/process/changes.rst
+@@ -61,7 +61,7 @@ Sphinx\ [#f1]_         3.4.3            sphinx-build --version
+ GNU tar                1.28             tar --version
+ gtags (optional)       6.6.5            gtags --version
+ mkimage (optional)     2017.01          mkimage --version
+-Python (optional)      3.9.x            python3 --version
++Python                 3.9.x            python3 --version
+ GNU AWK (optional)     5.1.0            gawk --version
+ ====================== ===============  ========================================
+ 
+@@ -154,6 +154,13 @@ Perl
+ You will need perl 5 and the following modules: ``Getopt::Long``,
+ ``Getopt::Std``, ``File::Basename``, and ``File::Find`` to build the kernel.
+ 
++Python
++------
++
++At least Python 2.7 or 3.4 is required if CONFIG_DRM is selected to avoid
++breaking compilation. Documentation build and kernel-doc won't produce
++valid results if version is below 3.7.
++
+ BC
+ --
+ 
+-- 
+2.50.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
