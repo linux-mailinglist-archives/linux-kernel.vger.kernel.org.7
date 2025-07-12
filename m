@@ -1,174 +1,97 @@
-Return-Path: <linux-kernel+bounces-728701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B10B02C05
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:53:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A13AEB02C08
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 562A71C27345
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:54:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AD744A235B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C0F289357;
-	Sat, 12 Jul 2025 16:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1457289357;
+	Sat, 12 Jul 2025 16:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkUJztUb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="corG6KK+"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB5219DF60;
-	Sat, 12 Jul 2025 16:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFE619DF60;
+	Sat, 12 Jul 2025 16:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752339224; cv=none; b=ptitdO6EqugP44rmx1OlVHOpvT+jpg/lLwf6GQiBPAe2MZdCRFQ+V35Mmp1vfMB3bZD/EEzN7NQFbRTpBKSwAGhBhEKSHDBR8g9vzsfSdAgj7596R13xUktkQ8I8bccqqW4cNcyAzkc+PZ5GKj8mm3TKo5r5m4uJWb/0ASDtaUo=
+	t=1752339293; cv=none; b=ScQj0ummtjCOaY0k2VfFvTWTnaYr8NYbgptdGNV+WxkbcutrvUsWXkQ+O2EL3rIlpcRl5zAGW3R17my934ytHWHmGn2qxXRISkgiQBMidTYaWri+bTRCID22igP/VHbp/u7f6Xm81N1gI8Tf0yKHOdFmXMUcEU+bLW32mLkwtnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752339224; c=relaxed/simple;
-	bh=tW1N0tkK1B6gjOAFUX2iqzAUwiIyvzfA0KIAbOuUz7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IY7DiI5CLGayoMn5JjetOGM6E2fTJHUzit6g1Qtc0xvD0jY28ny3Gmiark9w7OxXFifpR1H+78z+UnAGGVv4wVo10ve6X2tT+G57rWaiHPJ5ls+5902UOqPh/9DqgMZubLTY3zItXZYZpVc/GgbUaj6RVT7R8fnTCTj7wOcP0lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PkUJztUb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FB3AC4CEEF;
-	Sat, 12 Jul 2025 16:53:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752339223;
-	bh=tW1N0tkK1B6gjOAFUX2iqzAUwiIyvzfA0KIAbOuUz7k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PkUJztUb2b/iaBuKzmxVtkpmImoyRyvLufwYqlIPkTG2oDvfT0JBskTgl/IztJMPt
-	 2PZJE93XUIxpKPTam67rvmpwj5AFhx3KZxR4Q6Gi2mm0ijskK69nutoJZqXmd/Ce1k
-	 STDSlU7ZVTnIPNQfuoSkyNgvPiL594BuOeYIC/Yty7wGKEhLwxqnECJIp8nLJjiniF
-	 TGaNQAAg9IMgIWrgT+CESbnIMAmiuSNMUSUX1r5LmDxQMYFfCvy74i0U4TkWV5TNNJ
-	 mFEfIiXb5DlV3qyYVWywPDrWB0kTI5JxLjrFlu5eT9jHQJZVbCy/nEAjGLFwQDXecV
-	 2n83HJFDYaoCA==
-Message-ID: <e435a765-fb91-408f-81dd-01a73fc43b6b@kernel.org>
-Date: Sat, 12 Jul 2025 18:53:38 +0200
+	s=arc-20240116; t=1752339293; c=relaxed/simple;
+	bh=7ulItuDfjo0fn2spkVsfqLm+frVP3gh8Mp2EkflyQ+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wn9X7SorsiYu5EpwvKoNUlG5Egene5Sg1IEPiCe+Q0IptuUkf6NOcac8xGfNQBx2VenMbkc3bLdErMrYcKsmgC+R8sJu5GQKEu/qy+SjJFerlx2qb6VGXH374KR/IeC8ZwDv3YMs0Uec2vXBHn7u5f4Z1Nxl1nc2kMsaM+oyof8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=corG6KK+; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=u7JZxNPnwYbwyAWArXhk9IJzZ+TGZ4/LK+Ux1qSIQMQ=; b=corG6KK+bALYtQfb4jLjqXA+J+
+	/KMHP1asfC5K1q/Rod527h1tEiV1a8m4/MMK2s+S/u/9fbk1Tu+PnV03YhDT/6jMSgmZiUXjlTpKz
+	EuB2b4QfdORml3EeArXyJlUL7PWdrW6LF8BAzu4UGMXFM6loNUW5oRgqYfdRfEOgPww8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uadUk-001JnS-SD; Sat, 12 Jul 2025 18:54:38 +0200
+Date: Sat, 12 Jul 2025 18:54:38 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v3 1/3] net: netdevsim: Add PHY support in
+ netdevsim
+Message-ID: <560e7969-b859-45ed-b368-350a62cec678@lunn.ch>
+References: <20250710062248.378459-1-maxime.chevallier@bootlin.com>
+ <20250710062248.378459-2-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv3 wireless-next 7/7] dt-bindings: net: wireless: rt2800:
- add
-To: Stanislaw Gruszka <stf_xl@wp.pl>
-Cc: Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org,
- Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:MIPS" <linux-mips@vger.kernel.org>,
- "moderated list:ARM/Mediatek SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- "moderated list:ARM/Mediatek SoC support"
- <linux-mediatek@lists.infradead.org>
-References: <20250710200820.262295-1-rosenp@gmail.com>
- <20250710200820.262295-8-rosenp@gmail.com>
- <d8b0abb2-1a12-42bf-aafd-4cd1e21babd6@kernel.org>
- <CAKxU2N-c2tHBYWBM+FJGqdSaqzw9u0O8e0G7AVqk6b0QdRnPTw@mail.gmail.com>
- <20250711-invisible-dainty-jackrabbit-acbf8f@krzk-bin>
- <20250712104006.GA13512@wp.pl>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250712104006.GA13512@wp.pl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710062248.378459-2-maxime.chevallier@bootlin.com>
 
-On 12/07/2025 12:40, Stanislaw Gruszka wrote:
-> Hi Krzysztof,
-> 
-> On Fri, Jul 11, 2025 at 09:48:49AM +0200, Krzysztof Kozlowski wrote:
->> On Thu, Jul 10, 2025 at 03:40:30PM -0700, Rosen Penev wrote:
->>> On Thu, Jul 10, 2025 at 2:40 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>
->>>> On 10/07/2025 22:08, Rosen Penev wrote:
->>>>> Add device-tree bindings for the RT2800 SOC wifi device found in older
->>>>> Ralink/Mediatek devices.
->>>>>
->>>>> Signed-off-by: Rosen Penev <rosenp@gmail.com>
->>>>> ---
->>>>>  .../bindings/net/wireless/ralink,rt2800.yaml  | 47 +++++++++++++++++++
->>>>>  1 file changed, 47 insertions(+)
->>>>>  create mode 100644 Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml b/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
->>>>> new file mode 100644
->>>>> index 000000000000..8c13b25bd8b4
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
->>>>
->>>> Filename should match compatible. You were already changing something
->>>> here...
->>> hrm? that makes no sense. Various drivers have multiple compatible lines.
->>
->> Luckily we do not speak about drivers here. Anyway, follow standard
->> review practices, you don't get special rules.
-> 
-> Could you please elaborate what you mean ?
+> +static int nsim_mdio_read(struct mii_bus *bus, int phy_addr, int reg_num)
+> +{
+> +	return 0;
+> +}
+> +
+> +static int nsim_mdio_write(struct mii_bus *bus, int phy_addr, int reg_num,
+> +			   u16 val)
+> +{
+> +	return 0;
+> +}
 
-Rosen replied in abrasive way, so I am not going to dig this.
+If i'm reading the code correctly, each PHY has its own MDIO bus? And
+the PHY is always at address 0?
 
-> 
-> I greped through Documentation/devicetree/bindings/*/*.yaml and plenty
+Maybe for address != 0, these should return -ENODEV?
 
-I assume you refer to last 2 years bindings, not something older, right?
-It is really poor argument to find old files and use them as example
-"they did like that".
+I'm guessing the PHY core is going to perform reads/writes for things
+like EEE? And if the MAC driver has an IOCTL handler, it could also do
+reads/writes. So something is needed here, but i do wounder if hard
+coded 0 is going to work out O.K? Have you looked at what accesses the
+core actually does?
 
-> of "compatible:" items do not match the filename. So hard to tell
-
-I did not ask for compatible to match filename.
-
-> what rule you are referencing, as it seems it's not really applied.
-Check reviews on the lists. It is pretty standard review. Everyone gets
-it for this case here - single device, single compatible.
-
-Best regards,
-Krzysztof
+     Andrew
 
