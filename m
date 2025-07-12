@@ -1,75 +1,148 @@
-Return-Path: <linux-kernel+bounces-728751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A809BB02C7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:47:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A565B02C7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03CF54A6CB7
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:47:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D64D1C22533
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FDE28A3ED;
-	Sat, 12 Jul 2025 18:47:27 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA212192EF;
-	Sat, 12 Jul 2025 18:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC9328AB07;
+	Sat, 12 Jul 2025 18:50:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCFFB672;
+	Sat, 12 Jul 2025 18:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752346046; cv=none; b=LYn4lyV2o7mLPN9WQ5pa3I+VPIx3SCOEMhG9KX+eFZ989iBv+6ITIDFhP27rVdpA8xT5GidgedtUPJjlQGtwlC1qGObwb1o5rqNSkuptojMzWfAi3Apr3T06DPkzCunB/Iax7doHzmUoCz9Sjto9HskkxwMJBSSuOCCORNjne5A=
+	t=1752346227; cv=none; b=SfUDccH9ShbBNYNqiqKONkb8PrCJxj628qodyEDp7DfVI8tomt2AFqABXvdEz5h+OQ2+Zxwfcj5QTHX15ZamOnnWtBOuaG60BUXOQTY8cNnYPtcDXOLMBc8lPSclHAt3J4tWe72vMKWplThBaem3/IOB121TLomO2DnQ6Wjuwdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752346046; c=relaxed/simple;
-	bh=zYuW7D4e67xKTdzr1vAEXh5gNK6yBoZSLxozbBytjjk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nEtdfg8lhPBO2BTk7PoU3sysb6DwfVbWpQQ8/84u9aCYfldiSHgkYcH6o7CA3EhD4aCeucBounc7S79YShp5tK0p2wRW4d9SfO2YrAJEWnVJ2MEkssPT/Ghzm/zjf1gm4RSXaLeqX0JJ33xY3km12rgz9opnlgx8MJTWyu6QOSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AFC4C4CEEF;
-	Sat, 12 Jul 2025 18:47:26 +0000 (UTC)
-Received: by venus (Postfix, from userid 1000)
-	id E3777180F11; Sat, 12 Jul 2025 20:47:22 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Hans de Goede <hansg@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel@collabora.com
-In-Reply-To: <20250707-fix-psy-static-checker-warning-v1-1-42d555c2b68a@collabora.com>
-References: <20250707-fix-psy-static-checker-warning-v1-1-42d555c2b68a@collabora.com>
-Subject: Re: [PATCH] power: supply: core: fix static checker warning
-Message-Id: <175234604290.745954.15228307419539590803.b4-ty@collabora.com>
-Date: Sat, 12 Jul 2025 20:47:22 +0200
+	s=arc-20240116; t=1752346227; c=relaxed/simple;
+	bh=wX6BK2CyDpMPWioTbpzKfrkSxmuGErecAaERxhdAYyU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AW17/fzB+VglCgWxjnNx1ws3O15Eug7GkdJW1BzoGS/MBNQkCthGmwxe7C7dDbqJHOfMNO0cw1FwkZypZSzFV4jDjO4wAZ+s3wtKk6Yr8C2Dqoe6grr9foNzUtVvmoIhpxZf/Hndsury0+GUvPsC4qfnJVg08IAgYVfzPCohkQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27AC41424;
+	Sat, 12 Jul 2025 11:50:08 -0700 (PDT)
+Received: from [192.168.20.57] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A265F3F6A8;
+	Sat, 12 Jul 2025 11:50:16 -0700 (PDT)
+Message-ID: <bef8875c-a7c1-4ae2-abc4-ce279e9d4778@arm.com>
+Date: Sat, 12 Jul 2025 13:49:59 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] scripts: add zboot support to extract-vmlinux
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, nathan@kernel.org,
+ nicolas.schier@linux.dev, linux-kernel@vger.kernel.org
+References: <20250711162605.545514-1-jeremy.linton@arm.com>
+ <20250711162605.545514-2-jeremy.linton@arm.com>
+ <CAK7LNAQM02RBd4M5QgNTNKNaAYKGaPUSgJRXwq=Pq3OA5dYMRQ@mail.gmail.com>
+Content-Language: en-US
+From: Jeremy Linton <jeremy.linton@arm.com>
+In-Reply-To: <CAK7LNAQM02RBd4M5QgNTNKNaAYKGaPUSgJRXwq=Pq3OA5dYMRQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
-On Mon, 07 Jul 2025 01:26:58 +0200, Sebastian Reichel wrote:
-> static checker complains, that the block already breaks if IS_ERR(np)
-> and thus the extra !IS_ERR(np) check in the while condition is
-> superfluous. Avoid the extra check by using while(true) instead. This
-> should not change the runtime behavior at all and I expect the binary
-> to be more or less the same for an optimizing compiler.
+On 7/12/25 10:47 AM, Masahiro Yamada wrote:
+> On Sat, Jul 12, 2025 at 1:26 AM Jeremy Linton <jeremy.linton@arm.com> wrote:
+>>
+>> Zboot compressed kernel images are used for arm64 kernels on various
+>> distros.
+>>
+>> extract-vmlinux fails with those kernels because the wrapped image is
+>> another PE. While this could be a bit confusing, the tools primary
+>> purpose of unwrapping and decompressing the contained kernel image
+>> makes it the obvious place for this functionality.
+>>
+>> Add a 'file' check in check_vmlinux() that detects a contained PE
+>> image before trying readelf. Recent (FILES_39, Jun/2020) file
+>> implementations output something like:
+>>
+>> "Linux kernel ARM64 boot executable Image, little-endian, 4K pages"
+>>
+>> Which is also a stronger statement than readelf provides so drop that
+>> part of the comment. At the same time this means that kernel images
+>> which don't appear to contain a compressed image will be returned
+>> rather than reporting an error. Which matches the behavior for
+>> existing ELF files.
+>>
+>> The extracted PE image can then be inspected, or used as would any
+>> other kernel PE.
+>>
+>> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+>> ---
+>>   scripts/extract-vmlinux | 13 ++++++-------
+>>   1 file changed, 6 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/scripts/extract-vmlinux b/scripts/extract-vmlinux
+>> index 8995cd304e6e..049bab337f0e 100755
+>> --- a/scripts/extract-vmlinux
+>> +++ b/scripts/extract-vmlinux
+>> @@ -12,13 +12,12 @@
+>>
+>>   check_vmlinux()
+>>   {
+>> -       # Use readelf to check if it's a valid ELF
+>> -       # TODO: find a better to way to check that it's really vmlinux
+>> -       #       and not just an elf
+>> -       readelf -h $1 > /dev/null 2>&1 || return 1
+>> -
+>> -       cat $1
+>> -       exit 0
+>> +       if file "$1" | grep -q 'Linux kernel.*boot executable' \
+> 
+> Sorry for my nit-picking, but I'd like to get rid of this back-slash
+> by breaking the line _after_ the OR operator, not before.
+> 
+> That is,
 > 
 > 
-> [...]
+>      if command1 ||
+>             command2
+>      then
+>           ...
+>      fi
+> 
+> 
+> rather than
+> 
+>      if command1 \
+>            || command2
+>      then
+>            ...
+>      fi
 
-Applied, thanks!
+Moving the || is no problem, but I am/was under the impression that 
+implicit line continuation is a posix shell gray area? Particularly when 
+its outside of an explicit compound statement. This AFAIK was one of the 
+things bash clarifed.
 
-[1/1] power: supply: core: fix static checker warning
-      commit: 7b41a2341fa62babda5d5c7a32c632e9eba2ee11
-
-Best regards,
--- 
-Sebastian Reichel <sebastian.reichel@collabora.com>
+> 
+>> +               || readelf -h "$1" > /dev/null 2>&1
+>> +       then
+>> +               cat "$1"
+>> +               exit 0
+>> +       fi
+>>   }
+>>
+>>   try_decompress()
+>> --
+>> 2.50.1
+>>
+> 
+> 
 
 
