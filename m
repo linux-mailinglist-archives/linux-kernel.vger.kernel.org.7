@@ -1,107 +1,85 @@
-Return-Path: <linux-kernel+bounces-728575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E8EDB02A31
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 11:00:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43F4BB02A37
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 11:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E67084E1A10
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:59:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F5531C2395C
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 09:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096E1273D78;
-	Sat, 12 Jul 2025 08:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA83273D7F;
+	Sat, 12 Jul 2025 09:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="d0rXqUdY"
-Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.12])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="W5Ren0Y6"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98A3273815
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 08:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE4A1FBE8A;
+	Sat, 12 Jul 2025 09:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752310791; cv=none; b=tRgd9KC/1ZnI6IUtWVsY13z2b9VXFfw8wh6+DnkuJF0HbxwV4I4I9wiTwia0mDj4h7z1Ne6+pwRgXvPikEjUe5E+hENluy+UHT51+WLNPgvfpSWPDSWj1GeEA2jXA8pXAB1CprSyPuTmv1vI/AVVVXJPY3v0HXRVzcnwdeWnBT8=
+	t=1752310870; cv=none; b=RFyTV5lIg+kxGAm18fbLwcLCYMvgx0hScbmlp3bF/oSX9Xmo2fhEemR5nsviI+rlkwywnYTYMB9O8skMYIW5MPKy1v2MtszUTYrIcKbhatp4yQMsnQb7z4d2f6NphqZhwNAFgXC9wKzq7PDKXPDohp2QaHe+wfvfv4803c5pENM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752310791; c=relaxed/simple;
-	bh=4Y8ARVgt7Yk3InHf3Nkv9y0+W7JipJUKyhk5X/wdssA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KN3ZPxhBg073CXahcD0izbUDaOZxdHAquXCdP2hBBYPCgjxcglRBtWTt/VDWtsnSWNqKjJiwF1dueGia0qWeRY6af+ou8ZPxAlsHL56zBB2eMLFNIQEInpBaUH82XlrkMjDrKx/YJHbZURKDAAxz35ShcNOmMam1qSfil5uDAqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=d0rXqUdY; arc=none smtp.client-ip=212.77.101.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 2408 invoked from network); 12 Jul 2025 10:59:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1752310781; bh=Bs7C3OuDjp8spBtZUebXmMmqp+JNJ8zM38bJKoNTVC8=;
-          h=From:To:Cc:Subject;
-          b=d0rXqUdYYP7ojvHs/CPxFw/4wkiV3jgKjUvitOGmuGyTOVXo3TgNlAvsjIKDj4vJ/
-           wLz5GCCHYkDeoi1cDltI232JmOSal/H1F1pkTpv3zc7NJykmyUzNupX24ZVLwVLAyJ
-           rDj9EfYv6iExMx3c9U6tBUuXXFZEYLfZbk4L7TrAsE6JtTA2oqQdJUB6g5OjMEDep0
-           0+zl5eWAA2YJhSJJbRbtUUSdM+Yu0qZl2DBeAgVbr1HU5Mf/NS7xDvn/cBDg1tqqUR
-           EHZGUJYEcMR7zCAxQkGPjUsS6qFvoz9pDJS6sII2cZnwZ60ZttrG/q1dtu7xqTogBF
-           XNwtDKxW+fbfg==
-Received: from 89-64-3-180.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.3.180])
-          (envelope-sender <stf_xl@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <rosenp@gmail.com>; 12 Jul 2025 10:59:41 +0200
-Date: Sat, 12 Jul 2025 10:59:40 +0200
-From: Stanislaw Gruszka <stf_xl@wp.pl>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-wireless@vger.kernel.org,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:MIPS" <linux-mips@vger.kernel.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCHv3 wireless-next 2/7] wifi: rt2x00: remove mod_name from
- platform_driver
-Message-ID: <20250712085940.GB9845@wp.pl>
-References: <20250710200820.262295-1-rosenp@gmail.com>
- <20250710200820.262295-3-rosenp@gmail.com>
+	s=arc-20240116; t=1752310870; c=relaxed/simple;
+	bh=bZbsZaW1RtEYpjmxAB66vQDOUyyHL1dJMCFt9MrEjhk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QO2pD5bnZ6VxBoJI1H2CihXIYlu9uC3tDFQXNVcrOBVplfUD7uJS4N3Jhdq5yXdMqcESBGwhWNdcjWlzXTssBRd+wxS/h8a6dhXZiT9bgM8Wgl+ZNfLlcdHfAxgVIjQHM371TKusHyr2mrdzd0FcxOQhEba7jaBk5/DBZoVOAmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=W5Ren0Y6; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1752310860;
+	bh=bZbsZaW1RtEYpjmxAB66vQDOUyyHL1dJMCFt9MrEjhk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=W5Ren0Y6UB1GhfmyVunh+wEWcgT/Io9qWXZOI07xMP9LLy8+fvk4dUr4jAEwF6pUV
+	 VOSZcCZvYMaX/SC3HUc8ddud5gYqgxUt/4bFNuwjnlGnKcn9Aez+/HpjUnJEqkoo7V
+	 yhNHRvu6zWxHcO7RradLsEsoT7yjrOVJml+fYxSY=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH 0/2] tools/nolibc: add x32 support
+Date: Sat, 12 Jul 2025 11:00:54 +0200
+Message-Id: <20250712-nolibc-x32-v1-0-6d81cb798710@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710200820.262295-3-rosenp@gmail.com>
-X-WP-MailID: 78faf179404bc1cccf11415900ca8dfc
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000001 [4eIB]                               
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAEYkcmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDc0Mj3bz8nMykZN0KYyNdc0uzRMuURJNky9QUJaCGgqLUtMwKsGHRsbW
+ 1AM0gv4lcAAAA
+X-Change-ID: 20250712-nolibc-x32-796a9da4c9ed
+To: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752310859; l=616;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=bZbsZaW1RtEYpjmxAB66vQDOUyyHL1dJMCFt9MrEjhk=;
+ b=IXy2zvBRwoDfvGECwa4LiJ9zCfogvE1bze9V3TuBUoWdvTNKNY8D/yCZNKUjbDvX3kAZoorFz
+ 1Htgxh7meI5AdNzfYffJT5ugdBMwVS5v0s7ceMYHkeN+EJP7bzIo7F7
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Thu, Jul 10, 2025 at 01:08:15PM -0700, Rosen Penev wrote:
-> mod_name is a legacy debugging feature with no real modern use. An
-> analysis of the underlying MIPS setup code reveals it to also be unused.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
-> ---
->  drivers/net/wireless/ralink/rt2x00/rt2800soc.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800soc.c b/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
-> index 701ba54bf3e5..e73394cf6ea6 100644
-> --- a/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
-> +++ b/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
-> @@ -246,7 +246,6 @@ static int rt2800soc_probe(struct platform_device *pdev)
->  static struct platform_driver rt2800soc_driver = {
->  	.driver		= {
->  		.name		= "rt2800_wmac",
-> -		.mod_name	= KBUILD_MODNAME,
->  	},
->  	.probe		= rt2800soc_probe,
->  	.remove		= rt2x00soc_remove,
-> -- 
-> 2.50.0
-> 
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Thomas Weißschuh (2):
+      tools/nolibc: define time_t in terms of __kernel_old_time_t
+      selftests/nolibc: add x32 test configuration
+
+ tools/include/nolibc/std.h                     |  4 +++-
+ tools/testing/selftests/nolibc/Makefile.nolibc | 12 ++++++++++++
+ tools/testing/selftests/nolibc/run-tests.sh    |  7 ++++++-
+ 3 files changed, 21 insertions(+), 2 deletions(-)
+---
+base-commit: 750aef513c610a37a13732ec64902428b839715e
+change-id: 20250712-nolibc-x32-796a9da4c9ed
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
