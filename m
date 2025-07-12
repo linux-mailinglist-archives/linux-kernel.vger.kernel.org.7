@@ -1,151 +1,161 @@
-Return-Path: <linux-kernel+bounces-728493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C0A3B028F8
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 04:26:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D4CB028FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 04:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B414016ECDB
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 02:26:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E14037BD3EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 02:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FA018859B;
-	Sat, 12 Jul 2025 02:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B185217FAC2;
+	Sat, 12 Jul 2025 02:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="B+WmxjOa"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C0E13A3F7;
-	Sat, 12 Jul 2025 02:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.6
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752287191; cv=none; b=INr+ZA5gTFuO7DQ+MDEcry54IfkqQen6/b5z2PGNuZiNjQWOzmosLm1fXL/oIIxRpc5cak7c74VDRLjiN+k3+2X67sF9WP8P3PaTKKJ+deeLN3h98E+8NH3c2NW+l/vyUJfVd8iv49FsE0sM3oK6Miki3Q+4TG2HALEYfXNUUTY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752287191; c=relaxed/simple;
-	bh=7iV8CCsAIC/s1vnMxsCKKzncROQ/ca9bHARuKb1XwvY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W5NC8b/3Zb498c9TpWITzFKisLzjy0EtQhCyoxN+tIdUurEIrUu5kMk8cZen1UjnIA6s71xaW01W9X71seu86ZY9/Iw6WuXGii6cU8C2uZKNiVjT+5jHjy04PLOM/Lp6wMJVC05E7c0o26552JknV6/BQb5QJIbz3xAkmS//SKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=B+WmxjOa; arc=none smtp.client-ip=117.135.210.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=L7ha/pLISZdmDAMWnB/kNNjY6qrcIPRfa0Z8sVzjRiQ=;
-	b=B+WmxjOaxiiw8Ksx6NXuVnjFOmZUo6gpdnDwsB+VHlYv+Dj5Ps5js9EatqcyDR
-	fzAoxDjEBajXmoTzxsMO96yawSjU4WAmiQdCbKhb9Jv3xX7+TBhhJPs2GTfXzHdN
-	i6Xe/mCO9IhF4Pmw8sAx/wKg52wbevoIWkSamlPcRVxdU=
-Received: from [172.19.20.199] (unknown [])
-	by gzsmtp5 (Coremail) with SMTP id QCkvCgC3v_9xx3Fotc+SAA--.29575S2;
-	Sat, 12 Jul 2025 10:24:49 +0800 (CST)
-Message-ID: <9b67baf0-79ee-4156-bb64-1b8ccf073ae9@126.com>
-Date: Sat, 12 Jul 2025 10:24:49 +0800
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="F7jndW4v"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2075.outbound.protection.outlook.com [40.107.92.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9919D12CD96
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 02:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752287218; cv=fail; b=UtuMQ/8A9q4P3V0WWatkXkdwoGWdz5RHf5hVR43ChdLvDXGtjlthyHCRLgL5RyAlLiIZYm5j4/iyfcWL6XhWGepyl4te11HBkd3ZnvpDgXY+ebieTeuGtP8fc2HyaUIeDpZSL7ffofvFYABdbEVVCWp4Xu+KhmuY9Otkal+eL50=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752287218; c=relaxed/simple;
+	bh=m1z0c+cZRdFoBE9lqWKdBvWi2GMCXos90ikHOCXCJJI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iZSIBGjlff98oWebdFmVJrUDQsjJtDoR8pocNx2Kzr82Bj0ZCAQ7V/0la5N518hsfxurUE/E1axy9bx/5AWel2PnsiLTb/JdGqNQNxHzakNcSsAe3A8c756SHOt/YliwKXyTEpUk4XqGJKsM2KDgpmXXBIiwcopQepxnN+dYA7Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=F7jndW4v; arc=fail smtp.client-ip=40.107.92.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bVGm5BSi84dQIt8YOpNXYdEIzoRyE+4wTj3sUy/L+bEIel41UK5XIFcAVRi4KhFqYxTG9MifXHr+5TVpEvE42LC8CYM3q89XGAER7KaA8/b2xaS/9rvyxdCB7owqu1paOmLL+5zsTG51WWyPYrBbJEHlbcsSm2oUVB2FcxLHcBmsaw6E3eKBJdiSFZ0FJMLCYkd4nq7KmdrjwowgdHldXAITz/NwnzOhmho7AGrSTmQFPhPnp7rWlrAbtX2QRQjUCzHm44z4koD3zJw4Nni+8ibIkCfteVI2SR27eJCEX2x9r5CXZswtS1+o4EzuAnRzxM9RkwANRbxJZs4n6/i7WQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Kh4uNxWUktFpzhugPknhC9aWEZbq9682p43rL+QsaTM=;
+ b=K6Ka3/WHRQ8SL5CIPkpsybgZ1P6Th6iR3DrUObGcHfeOeGC3JOhh8QOYDdzjvbogqIK3cDL+TBlPVDVPpnUHJqwCaEIA7P3Y6UMHr1MXZviAaywxUNxXIkFzEzwbY0QcLH2WOZqTh4X7WxSNzn7VTATNZ9zyvZDwl09Q6990TCmksnPEC9VdDqGIXsK+tv4UIGBjGpBqo4nCdBBsx03rWpV0VZ3nVzXmljIvlfz0GNO7+Ag2v4/DYTFLS51pBOmWqKd8kCjMDhxcCoYJgG/JgVjFsgb5fAYQlOu5RI8mx68CMbV98A4obipuC4kQQzS5mbX0VSksEhinb66MXWzZEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
+ is 216.228.118.233) smtp.rcpttodomain=linux.intel.com
+ smtp.mailfrom=nvidia.com; dmarc=temperror action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Kh4uNxWUktFpzhugPknhC9aWEZbq9682p43rL+QsaTM=;
+ b=F7jndW4vY0PIfG98B79URmOXqt/h5HH2wFhUqSPtf2WD4oVwgqJKYwY6XHb3TgI6X7k3hdFRcBeTNMOSgmtz2HO2/K8GgT/LbAM/1OVYj3vfWBSqk+ZU4M/nlI7eKpndb9ugcLS7nSE73UM6Q0DsFxQZGb4/DtGt31rjDmFnhBfW6J6PKF5bQhcEGvPU+JrnHUAAwb3JLSyO3PZcg+ThOxBaMclPK5HTYKK657ALDWHS5WVbXCIq4FdcwK9T56GDZTdlGvYO59MA9eKzr92bXJmYdXsCDk/VqdSPhiEQK9TnhatvYzkq2GLHoJ8Yb5dEq5j73miVNjn16XtmD8zqrA==
+Received: from SJ0PR03CA0185.namprd03.prod.outlook.com (2603:10b6:a03:2ef::10)
+ by SA1PR12MB7150.namprd12.prod.outlook.com (2603:10b6:806:2b4::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Sat, 12 Jul
+ 2025 02:26:52 +0000
+Received: from CY4PEPF0000EE30.namprd05.prod.outlook.com
+ (2603:10b6:a03:2ef:cafe::d2) by SJ0PR03CA0185.outlook.office365.com
+ (2603:10b6:a03:2ef::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.26 via Frontend Transport; Sat,
+ 12 Jul 2025 02:26:52 +0000
+X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
+ 216.228.118.233) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=temperror action=none header.from=nvidia.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of nvidia.com: DNS Timeout)
+Received: from mail.nvidia.com (216.228.118.233) by
+ CY4PEPF0000EE30.mail.protection.outlook.com (10.167.242.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8922.22 via Frontend Transport; Sat, 12 Jul 2025 02:26:50 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 11 Jul
+ 2025 19:26:45 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 11 Jul 2025 19:26:44 -0700
+Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Fri, 11 Jul 2025 19:26:44 -0700
+Date: Fri, 11 Jul 2025 19:26:42 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>
+CC: <jgg@nvidia.com>, <jgg@ziepe.ca>, <kevin.tian@intel.com>,
+	<will@kernel.org>, <aneesh.kumar@kernel.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <joro@8bytes.org>, <robin.murphy@arm.com>,
+	<shuah@kernel.org>, <aik@amd.com>, <dan.j.williams@intel.com>,
+	<baolu.lu@linux.intel.com>, <yilun.xu@intel.com>
+Subject: Re: [PATCH v4 4/7] iommufd: Destroy vdevice on idevice destroy
+Message-ID: <aHHH4sOeQnR7xSK8@Asurada-Nvidia>
+References: <20250709040234.1773573-1-yilun.xu@linux.intel.com>
+ <20250709040234.1773573-5-yilun.xu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4] efi/tpm: Fix the issue where the CC platforms event
- log header can't be correctly identified
-To: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
- James Bottomley <James.Bottomley@HansenPartnership.com>, ardb@kernel.org
-Cc: jarkko@kernel.org, ilias.apalodimas@linaro.org, jgg@ziepe.ca,
- linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, liuzixing@hygon.cn
-References: <1751961289-29673-1-git-send-email-yangge1116@126.com>
- <757cd21fb4eaebf0f89af1a5290c6f6665f66bae.camel@HansenPartnership.com>
- <df4ccaf7-005d-4cbe-acef-20878421ce20@linux.intel.com>
-From: Ge Yang <yangge1116@126.com>
-In-Reply-To: <df4ccaf7-005d-4cbe-acef-20878421ce20@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCkvCgC3v_9xx3Fotc+SAA--.29575S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGFW3uw43ZrWrKw1xCr4xCrg_yoW5ArykpF
-	Z7K3WYy3s5GFyIvrnaq3WUu3Wjyw4rAa98XF95J3W0yr909F1vqFW2k3W5GasxWFs7ua4Y
-	vFWjqr17Aas8ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jbdbbUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiWByHG2hw-41n0wADsF
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250709040234.1773573-5-yilun.xu@linux.intel.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE30:EE_|SA1PR12MB7150:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4297572a-112f-456f-2d93-08ddc0eb8f22
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?sV8eUJlfkT5kS4CvapVfNGGosHNoXJTjkVxuA9KXoM8RiqFY6XlpaHkuGmf4?=
+ =?us-ascii?Q?QZfJRfo//9EpRwavTDfaKlWJERd6D99rW3tJ9QLesd6zeppl+lBvv2kPlBFp?=
+ =?us-ascii?Q?u2d5iKMLxscG5FrEkZC0lDSHAblEYKr0mARu8nbpv+hqkvH2fOwq/0ht9UJP?=
+ =?us-ascii?Q?3/3C76bj6yA3mgWwPNhiXnIVQKYuWxtT7niHAwdx6lCbEPVWlRhQVP99Ejgb?=
+ =?us-ascii?Q?6ErkP/Mzm1RW4dXsYj+AIMSIB7RplVOYQjypG8nh3ud0Oa9s9dNWOV88f05X?=
+ =?us-ascii?Q?mdrArCmNvAr2W5mKFcO5Wu58SbcmHV6xlTpDwnQd1h+r6jTcaLIFLAzQo4CF?=
+ =?us-ascii?Q?sjYajiMtAsouhGyyOhEfnATLzilxlkQvj9BWpBDKEAwJwokFL39Cni5afKRm?=
+ =?us-ascii?Q?4TCWABR2a690ofRPT2Tf2qghMceKcfpUHqBDpXPuHjT7xtp5CaH1tOvrlEbe?=
+ =?us-ascii?Q?GJ37R7WnfO4EHFgF6+kB0E5Y/gym+oUyPlcUO+mz2AM0JgudG4qsRZ7amw8H?=
+ =?us-ascii?Q?fvnq9kbSvCnjEgxKMFa62KZfR3rybhPeP45LoPPuYwhM/E1AyFBwIdqJq5Gg?=
+ =?us-ascii?Q?R0o/fvZLHpKSY+pnKftLsfjJgEWWeEv8OoJa/3k92A0DseoyvpsGd8tPOl1a?=
+ =?us-ascii?Q?BUeTZsE4waPJwkZAsu7zhJeOnv0tVLcIQdACEYh6p+/OAB1uXCBuIqwqg+R4?=
+ =?us-ascii?Q?MXEFVMsPjn/cQ+Iy9WVNMAxzjXXh10SP5L8ARrlavr2+TUFnWUgq3caARRYk?=
+ =?us-ascii?Q?/8UnOGmOHMe+XGWxZNYnpwZ2SXSJJ18GoZCleJ/Z65QDn8n7mZhrlk1z+Nza?=
+ =?us-ascii?Q?ip8qRddF3NBIxK3lezSIKbuS2jQ7e+461LMtwAyfhG5FG83jZ0/BsZfEr+bB?=
+ =?us-ascii?Q?AhAW3/pPrCOmkJH4owO4OnK6O/tUMVgKI1P4+zjwYFChDPcZrcTqL5Z8/hQn?=
+ =?us-ascii?Q?MOqZIyS6Vkihd3treK6stO77uwdQPs7PQFfodDMGPFPyBXtF9r9LZfN/u6kr?=
+ =?us-ascii?Q?4mx3to3LHGGQen4FQRn3PzVQFgghAADBPHe5Ck0PMd6SQFN4yw8TwKpzYtwN?=
+ =?us-ascii?Q?WvCIAKsqV6J81byl4xJMmIMWbtoDaeAHPvM7NBcGZVf6kX/6qsVLzaTfs0ge?=
+ =?us-ascii?Q?upUXqfCDSACMmRdl4EvDl+t80BgRnUOVG9Ksy6FHmgMt49qzT3crvpDUXaFr?=
+ =?us-ascii?Q?5T87vWWXZE37bMsJwa+aF7Md6MMGhwOOXgJNQ8Zq8CBhTZoKPhQYeRpzLDws?=
+ =?us-ascii?Q?OoiZqXyZDOa3UfUVRq1C/G3FlV+VMtxIrmWvNbc6UeB3a5GC0GFhl0IgXb05?=
+ =?us-ascii?Q?y4VC2bAHulUsOtp5g/ZNrr4f8VBNUf9HvWMTvx+MiePBwvekd7LNwNt1FvZW?=
+ =?us-ascii?Q?9Sm7UHAA9Fk9OmI/Ibq99iIbh7S7tvS35UnnLIJzDdOyDT8iMCU1ciBQBpyh?=
+ =?us-ascii?Q?tfwAdLgGFBcJLUz2VUxlAwCTSZThSC+kBmGxgGm2BM6E56UrcixEIBMMnnq3?=
+ =?us-ascii?Q?QuBB3aaOxuks+DFvuXiUDoQZYZN9EmIEFjMR?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2025 02:26:50.6594
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4297572a-112f-456f-2d93-08ddc0eb8f22
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE30.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7150
 
+On Wed, Jul 09, 2025 at 12:02:31PM +0800, Xu Yilun wrote:
+>  struct iommufd_vdevice {
+>  	struct iommufd_object obj;
+>  	struct iommufd_viommu *viommu;
+>  	struct device *dev;
+>  	u64 id; /* per-vIOMMU virtual ID */
+> +	struct iommufd_device *idev;
+>  };
 
-
-在 2025/7/12 1:01, Sathyanarayanan Kuppuswamy 写道:
-> 
-> On 7/11/25 7:00 AM, James Bottomley wrote:
->> On Tue, 2025-07-08 at 15:54 +0800, yangge1116@126.com wrote:
->>> From: Ge Yang <yangge1116@126.com>
->>>
->>> Since commit d228814b1913 ("efi/libstub: Add get_event_log() support
->>> for CC platforms") reuses TPM2 support code for the CC platforms,
->>> when launching a TDX virtual machine with coco measurement enabled,
->>> the following error log is generated:
->>>
->>> [Firmware Bug]: Failed to parse event in TPM Final Events Log
->>>
->>> Call Trace:
->>> efi_config_parse_tables()
->>>    efi_tpm_eventlog_init()
->>>      tpm2_calc_event_log_size()
->>>        __calc_tpm2_event_size()
->>>
->>> The pcr_idx value in the Intel TDX log header is 1, causing the
->>> function __calc_tpm2_event_size() to fail to recognize the log
->>> header, ultimately leading to the "Failed to parse event in TPM Final
->>> Events Log" error.
->>>
->>> According to UEFI Specification 2.10, Section 38.4.1: For TDX, TPM
->>> PCR 0 maps to MRTD, so the log header uses TPM PCR 1 instead. To
->>> successfully parse the TDX event log header, the check for a pcr_idx
->>> value of 0 must be skipped.
->>>
->>> According to Table 6 in Section 10.2.1 of the TCG PC Client
->>> Specification, the index field does not require the PCR index to be
->>> fixed at zero. Therefore, skipping the check for a pcr_idx value of
->>> 0 for CC platforms is safe.
->> This is wrong: the spec does not allow a header EV_ACTION to be
->> recorded with anything other than pcrIndex == 0.
->>
->> However, the fact that Intel, who practically wrote the TPM spec, can
->> get this wrong shows that others can too.  So the best way to fix this
->> is to remove the pcrIndex check for the first event.  There's no danger
->> of this causing problems because we check for the TCG_SPECID_SIG
->> signature as the next thing.  That means you don't need to thread
->> knowledge of whether this is a CC environment and we're pre-emptively
->> ready for any other spec violators who misread the spec in the same way
->> Intel did.
-> 
-> 
-> I agree with James Bottomley's suggestion to remove the pcr_index check
-> without adding any replacement checks.
-> 
-> This check was originally introduced in the following commit to handle a
-> case where certain Dell platforms provided an event log without a valid
-> header:
-> 
-> commit 7dfc06a0f25b593a9f51992f540c0f80a57f3629
-> Author: Fabian Vogt <fvogt@suse.de>
-> Date:   Mon Jun 15 09:16:36 2020 +0200
-> 
->      efi/tpm: Verify event log header before parsing
-> 
-> At first, I was concerned that the pcr_index check might still be 
-> important for
-> this fix. However, after re-reading the commit and reviewing the intent, 
-> it appears
-> that relying on the event_type and digest checks should be sufficient 
-> for validating
-> the event log header.
-> 
-> 
-> 
-
-Thanks to the suggestions from Bottomley and Sathyanarayanan. Now, I'll 
-submit another version of the patch.
-
-> 
->> Regards,
->>
->> James
->>
-
+And move this next to viommu, please.
 
