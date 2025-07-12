@@ -1,243 +1,109 @@
-Return-Path: <linux-kernel+bounces-728668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C1BBB02BAD
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 17:19:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A6AB02BAE
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 17:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAFA3188C5F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:19:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79E3D16C330
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EA1288CB4;
-	Sat, 12 Jul 2025 15:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C06287247;
+	Sat, 12 Jul 2025 15:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkJJ39Gl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="G5428cvg"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC27288C2C;
-	Sat, 12 Jul 2025 15:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010FD78F36;
+	Sat, 12 Jul 2025 15:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752333538; cv=none; b=Bx983FhaLi7BDVABFq8YLZTZXpkZfNVZpPTICmqHZ88auZCD6LGyw5/YJMjAIX9goHNA4m+BykXLr1cHcA4shxyoULo0sQgeEQ95OofgngthEEoZv0cgYEYG3KCu5LIDiqB5IZZD1uU95SysAlq40lHAVeYriM75W6TviDDcH3Q=
+	t=1752333718; cv=none; b=hUPZ4PB/7eODA0ULk4V4qgBmrtcVszJyXyBVUDLhvsWtFgFX0zc6fK4TbisvI6SFnfGj2+Tun21JIJ+n8KPcWNsQUi4UBY8ir7m6vPhpGgM5HWQG4n3A2l1Ffc1Ul9SnbjAeJBGuIvxIYL94t75KlGbBtk/ln2Zow4tvJWi4nQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752333538; c=relaxed/simple;
-	bh=oBuInK/Er1FzxA1L8e6FwS1J0+Ud/HnGx2Yd/U2ONAI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mAEJ9UiU1GJCILfF+iPpzPInSBFKhTlARHE7/4iLTbJ47C7EA3a/vAlu0YHOz7QJlSta+cgZytng8qWfL2NvOt4CeLxIXx/JnxuDPB+RXPSXWb/bcxr2v+WxcEVJbN/ZOqXPdHLue5NKQTtjNDgq1ELsfSX09DOKgNqcpQP8pyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tkJJ39Gl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3461BC4CEF9;
-	Sat, 12 Jul 2025 15:18:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752333538;
-	bh=oBuInK/Er1FzxA1L8e6FwS1J0+Ud/HnGx2Yd/U2ONAI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tkJJ39GlvkgSbwm68I7ha4Vn08nRXL4aMAdBQOuPNMVRAA90HpjfAO6q6a3WAcbir
-	 BQh7BN28+rV38rwU89D6AOZYUU7rVe8aj9KFjPK3jSpsWcTLSoCAZe8H38srsxgZDg
-	 8/o3IBbLw9nCDu76HmBvxy7Xv45vpHeHRR/qGTat8YgOI15Zi+fdsa9KGSjpNwbszM
-	 ghQbpKD9JzbKZqhESYr/MRSzZ088/nuCSazUuSPIde1jSKauMI2Tsof1c/GB3AJXmu
-	 qThTq51OQvSA2Ue3o8JUzySPvfO/Zq8siYZieoLQYgioqrGcsS/i65pXPy4StllEuR
-	 GTTbZW1YEhF7A==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-60789b450ceso5725908a12.2;
-        Sat, 12 Jul 2025 08:18:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVh7Kk0WLWsB7KUOSXeVnBNXKWM9ASLlN4cp7lctkGlsoTawSY9FS620QBFzP1n9N//HX1oIAZk@vger.kernel.org, AJvYcCWc2JQI2iS2LrGorfjtIvAyycFhCqX1lFbA7PX/eSNA7vAXp1qyA2KvGIB4WfJb/81o6jVh1//+yX7pYfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUzry7KxYYntL2SxWCcuZXms2FxJCxpyn9QsQPQ8BLHybLNx7W
-	+lEOhD6K+9n7s4e6n1A7dGCHHNOeO8tdwbVTfEX/aqix8KL5NDZBjhQbnLmtAJGftCEGymu0Gz5
-	4kN/pju00ua4Kzf6SOgZaaeba2yRnkrM=
-X-Google-Smtp-Source: AGHT+IFrzSZLNInWS+8kFPoqYt/MMfdTYQoSCkNyar2BMbLSJNWC8sQxzSzjG5tUH1/1HNQ6F/ZaEFU5n43ZNhmmJwI=
-X-Received: by 2002:a05:6402:34c7:b0:5fe:7b09:9e27 with SMTP id
- 4fb4d7f45d1cf-611e7c21fb6mr6228271a12.12.1752333536713; Sat, 12 Jul 2025
- 08:18:56 -0700 (PDT)
+	s=arc-20240116; t=1752333718; c=relaxed/simple;
+	bh=BburY2L8ZXzBfK/RO3aDc73YGJurbJb78aMaf9aLfr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SAiO6W7LY+kzi312DQlY7qXZU+v9++7qwuHQClAGWRIGYUHCCvsWa4uSh4N1m1K44/cbWQ+GJfwZohd0+aFuGmm+i2Opv/F0YFay93r2/c3bNiHKk2pqF62+dcsliRQbdOSMkLtYOH5t5MIizjKXzuGUE02bfs9TZAt/1VNyCL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=G5428cvg; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B46DC40E00CE;
+	Sat, 12 Jul 2025 15:21:53 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id FvE9YNmnZBKQ; Sat, 12 Jul 2025 15:21:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1752333710; bh=breZNHGQ4dFqW1rW+APlexa7xzeFdCSgGuxUZypteJw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G5428cvgfHR+826+IGSJqy3Pn/a/+u/tIpc9B1K4/pijVEVCposBHYBivhz8XNgK0
+	 vjMXQatqp7tPsgSo1suus7ibVCgfOtkjES96bLI537IVZZ/1naSWOhXyn1HT9W7dFV
+	 LfMvoy9QOO90QnA+6fJQKsYwvyVy9XiAk3h4Hs/UYkhDOIU/MdX9cxiVbX3h4auYvc
+	 YGMqrCzD9eAZAR12dKKW5bhU/CqkyhtBDj6/rFFAOfqA1bgO+oxaCaO+qa+4F84FBq
+	 bwGVqqTbF4iafrpSg8D87JcA9AJZbqrVlY76Dq9Dknc85eO5/LQEnq9GzHpnmOqJLU
+	 uvv00f+mXoWgdXSf8L0NYBIyWPiY7+9FpCk/Hl1FlH9FilDyVgJV4DZse3EPJz6QdI
+	 4NRyQvmesOAl9lY4SCrylnPXFJy5YZusoRkUm37LZH+IcplK2OIKz9O7m5Eu031MLP
+	 55FT5yzrd8H9bK8i8QnoFdn0hIT0AtA6QkhhbKfv8IDJyPPpLDb1zi4GTp6Mcb61xZ
+	 Uogs98RTW1pIUIRjPSs8riWtKZaFSNP/WXqv7MJu+QNhZF5g9KY+6Udb0ufkUjJ9be
+	 qCXs3HcwyDjLzkSyY2Zr4D/IEvKc7TF3tsP7DZVbTBIQs2PWZZffisS69ogwajnfiY
+	 Guz8dMEUmqkX2EhscwFr4848=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 244A940E0198;
+	Sat, 12 Jul 2025 15:21:29 +0000 (UTC)
+Date: Sat, 12 Jul 2025 17:21:23 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Sean Christopherson <seanjc@google.com>, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
+	Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com,
+	David.Kaplan@amd.com, x86@kernel.org, hpa@zytor.com,
+	peterz@infradead.org, pbonzini@redhat.com, kvm@vger.kernel.org,
+	kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
+	naveen.rao@amd.com, kai.huang@intel.com
+Subject: Re: [RFC PATCH v8 15/35] x86/apic: Unionize apic regs for
+ 32bit/64bit access w/o type casting
+Message-ID: <20250712152123.GEaHJ9c16GcM5AGaNq@fat_crate.local>
+References: <20250709033242.267892-1-Neeraj.Upadhyay@amd.com>
+ <20250709033242.267892-16-Neeraj.Upadhyay@amd.com>
+ <aG59lcEc3ZBq8aHZ@google.com>
+ <be596f16-3a03-4ad0-b3d0-c6737174534a@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711102455.3673865-1-chenhuacai@loongson.cn>
- <2025071130-mangle-ramrod-38ff@gregkh> <CAAhV-H7oEv5jPufY+J-0wOax=m1pszck1__Ptapz5pmzYU5KHg@mail.gmail.com>
- <2025071116-pushchair-happening-a4cf@gregkh> <CAAhV-H69oz-Rmz4Q2Gad-x5AR0C2cxtK7Mgsc5iJHALP_NcEhw@mail.gmail.com>
- <2025071150-oasis-chewy-4137@gregkh>
-In-Reply-To: <2025071150-oasis-chewy-4137@gregkh>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sat, 12 Jul 2025 23:18:44 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4kzxR9e762r+ZzCyPrUemDtwqXvp_BJY3R1O1MPV9hrw@mail.gmail.com>
-X-Gm-Features: Ac12FXwsrOLHm2zwCsbZIeklHFbvZsw2Idkz2eK6IwezSFPRuRdFcX288N4584o
-Message-ID: <CAAhV-H4kzxR9e762r+ZzCyPrUemDtwqXvp_BJY3R1O1MPV9hrw@mail.gmail.com>
-Subject: Re: [PATCH] init: Handle bootloader head in kernel parameters
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <be596f16-3a03-4ad0-b3d0-c6737174534a@amd.com>
 
-On Fri, Jul 11, 2025 at 9:04=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Fri, Jul 11, 2025 at 08:51:28PM +0800, Huacai Chen wrote:
-> > On Fri, Jul 11, 2025 at 8:41=E2=80=AFPM Greg KH <gregkh@linuxfoundation=
-.org> wrote:
-> > >
-> > > On Fri, Jul 11, 2025 at 08:34:25PM +0800, Huacai Chen wrote:
-> > > > Hi, Greg,
-> > > >
-> > > > On Fri, Jul 11, 2025 at 7:06=E2=80=AFPM Greg KH <gregkh@linuxfounda=
-tion.org> wrote:
-> > > > >
-> > > > > On Fri, Jul 11, 2025 at 06:24:55PM +0800, Huacai Chen wrote:
-> > > > > > BootLoader may pass a head such as "BOOT_IMAGE=3D/boot/vmlinuz-=
-x.y.z" to
-> > > > > > kernel parameters. But this head is not recognized by the kerne=
-l so will
-> > > > > > be passed to user space. However, user space init program also =
-doesn't
-> > > > > > recognized it.
-> > > > >
-> > > > > Then why is it on the kernel command line if it is not recognized=
-?
-> > > > UEFI put it at the beginning of the command line, you can see it fr=
-om
-> > > > /proc/cmdline, both on x86 and LoongArch.
-> > >
-> > > Then fix UEFI :)
-> > >
-> > > My boot command line doesn't have that on x86, perhaps you need to fi=
-x
-> > > your bootloader?
-> > Not only UEFI, Grub also do this, for many years, not now. I don't
-> > know why they do this, but I think at least it is not a bug. For
-> > example, maybe it just tells user the path of kernel image via
-> > /proc/cmdline.
-> >
-> > [chenhuacai@kernelserver linux-official.git]$ uname -a
-> > Linux kernelserver 6.12.0-84.el10.x86_64 #1 SMP PREEMPT_DYNAMIC Tue
-> > May 13 13:39:02 UTC 2025 x86_64 GNU/Linux
-> > [chenhuacai@kernelserver linux-official.git]$ cat /proc/cmdline
-> > BOOT_IMAGE=3D(hd0,gpt2)/vmlinuz-6.12.0-84.el10.x86_64
-> > root=3DUUID=3Dc8fcb11a-0f2f-48e5-a067-4cec1d18a721 ro
-> > crashkernel=3D2G-64G:256M,64G-:512M
-> > resume=3DUUID=3D1c320fec-3274-4b5b-9adf-a06
-> > 42e7943c0 rhgb quiet
->
-> Sounds like a bootloader bug:
->
-> $ cat /proc/cmdline
-> root=3D/dev/sda2 rw
->
-> I suggest fixing the issue there, at the root please.
-Grub pass BOOT_IMAGE for all EFI-based implementations, related commits of =
-Grub:
-https://cgit.git.savannah.gnu.org/cgit/grub.git/commit/?id=3D16ccb8b138218d=
-56875051d547af84410d18f9aa
-https://cgit.git.savannah.gnu.org/cgit/grub.git/commit/?id=3D25953e10553dad=
-2e378541a68686fc094603ec54
+On Thu, Jul 10, 2025 at 09:13:11AM +0530, Neeraj Upadhyay wrote:
+>     struct secure_apic_page {
+> 	u8 *regs[PAGE_SIZE];
+>     } __aligned(PAGE_SIZE);
+> 
+> 
+> to
+> 
+>     struct secure_apic_page {
 
-Linux kernel treats BOOT_IMAGE as an "offender" of unknown command
-line parameters, related commits of kernel:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3D86d1919a4fb0d9c115dd1d3b969f5d1650e45408
+secure_apic_page or secure_aVic_page?
 
-There are user space projects that search BOOT_IMAGE from /proc/cmdline:
-https://github.com/linuxdeepin/deepin-ab-recovery/blob/master/util.go
-(search getBootOptions)
-https://github.com/linuxdeepin/deepin-ab-recovery/blob/master/main.go
-(search getKernelReleaseWithBootOption)
+I mean, what is a secure APIC?
 
-So, we can say Grub pass BOOT_IMAGE is reasonable and there are user
-space programs that hope it be in /proc/cmdline.
+-- 
+Regards/Gruss,
+    Boris.
 
-But BOOT_IMAGE should not be passed to the init program. Strings in
-cmdline contain 4 types: BootLoader head (BOOT_IMAGE, kexec, etc.),
-kernel parameters, init parameters, wrong parameters.
-
-The first type is handled (ignored) by this patch, the second type is
-handled (consumed) by the kernel, and the last two types are passed to
-user space.
-
-If the first type is also passed to user space, there are meaningless
-warnings, and (maybe) cause problems with the init program.
-
-
-Huacai
-
->
-> > > > > > KEXEC may also pass a head such as "kexec" on some architecture=
-s.
-> > > > >
-> > > > > That's fine, kexec needs this.
-> > > > >
-> > > > > > So the the best way is handle it by the kernel itself, which ca=
-n avoid
-> > > > > > such boot warnings:
-> > > > > >
-> > > > > > Kernel command line: BOOT_IMAGE=3D(hd0,1)/vmlinuz-6.x root=3D/d=
-ev/sda3 ro console=3Dtty
-> > > > > > Unknown kernel command line parameters "BOOT_IMAGE=3D(hd0,1)/vm=
-linuz-6.x", will be passed to user space.
-> > > > >
-> > > > > Why is this a problem?  Don't put stuff that is not needed on the=
- kernel
-> > > > > command line :)
-> > > > Both kernel and user space don't need it, and if it is passed to us=
-er
-> > > > space then may cause some problems. For example, if there is
-> > > > init=3D/bin/bash, then bash will crash with this parameter.
-> > >
-> > > Again, fix the bootloader to not do this, why is the kernel responsib=
-le
-> > > for this?
-> > >
-> > > What has suddenly changed to now require this when we never have need=
-ed
-> > > it before?
-> > Because init=3D/bin/bash is not a usual use case, so in most cases it i=
-s
-> > just a warning in dmesg. But once we see it, we need to fix it.
->
-> Why is this the kernel's fault?
->
-> Again, what changed in the kernel to cause this to happen?  I think you
-> are seeing bugs in bootloaders, NOT in the kernel.  Fix the issue at the
-> root, don't paper over the problem in the kernel for something that is
-> NOT the kernel's fault.
->
-> > > > > > Cc: stable@vger.kernel.org
-> > > > > > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> > > > > > ---
-> > > > > >  init/main.c | 7 +++++++
-> > > > > >  1 file changed, 7 insertions(+)
-> > > > > >
-> > > > > > diff --git a/init/main.c b/init/main.c
-> > > > > > index 225a58279acd..9e0a7e8913c0 100644
-> > > > > > --- a/init/main.c
-> > > > > > +++ b/init/main.c
-> > > > > > @@ -545,6 +545,7 @@ static int __init unknown_bootoption(char *=
-param, char *val,
-> > > > > >                                    const char *unused, void *ar=
-g)
-> > > > > >  {
-> > > > > >       size_t len =3D strlen(param);
-> > > > > > +     const char *bootloader[] =3D { "BOOT_IMAGE", "kexec", NUL=
-L };
-> > > > >
-> > > > > You need to document why these are ok to "swallow" and not warn f=
-or.
-> > > > Because they are bootloader heads, not really a wrong parameter. We
-> > > > only need a warning if there is a wrong parameter.
-> > >
-> > > Again, fix the bootloader.
-> > But I don't think this is a bootloader bug.
->
-> Seems like it is if nothing changed in the kernel and this just started
-> showing up now :)
->
-> Unless you can find a kernel commit that caused this issue?
->
-> thanks,
->
-> greg k-h
+https://people.kernel.org/tglx/notes-about-netiquette
 
