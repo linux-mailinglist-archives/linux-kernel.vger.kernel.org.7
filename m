@@ -1,608 +1,891 @@
-Return-Path: <linux-kernel+bounces-728552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09854B029DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 09:59:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC2B2B029E9
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 486A416A305
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 07:59:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37317582B7A
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F701222596;
-	Sat, 12 Jul 2025 07:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41218225779;
+	Sat, 12 Jul 2025 08:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="CHNcMGEG"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b="R8N2dcvh"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EA518D656
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 07:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FE0222587
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 08:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752307149; cv=none; b=N1JNaKRVOfCIluFdZ2WeNXE1TDtwhat/h6l/Fu7A+U2YKjVmLqMSe3oi9cgB9mQ2Zoy7Sg7VPBBlBObR7EGPgNIk02DHtBq5XPjhhFNQa6+pCCT+EHZICefM6o9wdy+YqDb5U5OrrN0httQ5GcvC3B0ne0TwXbI7UUXIHhwKtrc=
+	t=1752307865; cv=none; b=YxSAr8qoHgzGx1Xt0vNGLuQotj+PFG1e3bRuGfSgRe2HCHZZtJWra3jXjIF5CbQtYJYF0tF4eXtd5ygHSukqTWh8fD1XuhEO7cThehSgmdpd61I1k1qGMQaN1o22fv2CVo0scoAT7YWpt1bqXi6HcAlBwQ7ofrZk71oNJJ6Ukeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752307149; c=relaxed/simple;
-	bh=FN0PQxfHuK3EdDCCrIxhlOUw64BdT+oDgcKFmxSohTo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=p4IEYlCIPGLQKqWABTJifSaUVKnzwXNA0FgTV87cgRQ1eqfseyLEs8mB+s90Y/VedyFo+ZPlqvKeWSrUtNb4mcPB0jImSmaCapSWaIB/7yZdjK1xpF6M0VRhtRwuEKiZ6ih8RiErmm0eP7u7DRw2SBZe26ib04IwKCL2964aiI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=CHNcMGEG; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=MWm8gtta77OhCZYJzBCjZU15jwOIKmAxZkU5DSMCQSc=;
-	t=1752307146; x=1753516746; b=CHNcMGEGrxE7N0BRtsB2znlCLSH4qx1VRuh+wPezj3l3RgN
-	Wv4laIzLxWmfjbXNuv7WVlLPeyIf+mlp7G9V6e8FIHD9XaxrXwHNu1OfS6XsdHT0Giwiw6swtSmI8
-	YS82nCVjG9MYG4V+hOGuTNPGf3MzpAbnyrs1YBa5lwl8h+H5dDcO3hAldgEy2bRlodmcf9rMDZSOU
-	bbz3BlA/g/cFicbl3StrCIC9OHKbXv/4nuLC/i7/2vGpvYiMmdWYhhdWSUF26E8NoJgojjLg1YBXq
-	88BE49EziNO+z/l/rAPvkXF7ly5NF8mDsL+OZodWgfsyNPBDRpVC7D4SCMxvubKA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <benjamin@sipsolutions.net>)
-	id 1uaV83-000000005Gk-3KZz;
-	Sat, 12 Jul 2025 09:58:40 +0200
-Message-ID: <4e0ce353fe0a24b767226ecb9a8cca9382e2f7e4.camel@sipsolutions.net>
-Subject: Re: [PATCH v10 09/13] x86/um: nommu: signal handling
-From: Benjamin Berg <benjamin@sipsolutions.net>
-To: Hajime Tazaki <thehajime@gmail.com>
-Cc: linux-um@lists.infradead.org, ricarkol@google.com,
- Liam.Howlett@oracle.com, 	linux-kernel@vger.kernel.org
-Date: Sat, 12 Jul 2025 09:58:38 +0200
-In-Reply-To: <m2y0su2oq2.wl-thehajime@gmail.com> (sfid-20250712_031615_221818_4D6FB371)
-References: <cover.1750594487.git.thehajime@gmail.com>
-		<548dcef198b79a4f8eb166481e39abe6e13ed2e3.1750594487.git.thehajime@gmail.com>
-		<3b407ed711c5d7e1819da7513c3e320699473b2d.camel@sipsolutions.net>
-		<m2sejl47ke.wl-thehajime@gmail.com>
-		<734965ac85b2c4cf481cc98ac53052fd5064d30e.camel@sipsolutions.net>
-		<m2plem3urj.wl-thehajime@gmail.com>
-		<a9133d9a69843948078f590a102bad9302f3f554.camel@sipsolutions.net>
-		<m2jz4r438h.wl-thehajime@gmail.com>	<m2zfdb38cn.wl-thehajime@gmail.com>
-		<0ce9c6ed00f1f1800196786b231ead8d025dc796.camel@sipsolutions.net>
-		<275554830167b1463257621e6d6555e7d30d67bd.camel@sipsolutions.net>
-	 <m2y0su2oq2.wl-thehajime@gmail.com> (sfid-20250712_031615_221818_4D6FB371)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1752307865; c=relaxed/simple;
+	bh=/QELbeP+aTJ8m5soEfzmlVwnnAEzjZsOcEP5sfKh2zI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eAVxcpcIcSO7dOOl5FeGG3X7YArtMeZvj1qTAdGEiDdMRd8dwz4fxJ7o2BC7RB4AyFFpJyK4tLsex9U8rund2Gh5b9dMRAn9NzRaAxdHhjGAxCCvAioBMcNAhm7BkgB798p/Wb7MG8Fef49Jm188JxfNED/uyJLeggOx3e2Vuw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=tomeuvizoso.net; dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b=R8N2dcvh; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tomeuvizoso.net
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e898de36cfbso2359405276.1
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 01:11:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tomeuvizoso-net.20230601.gappssmtp.com; s=20230601; t=1752307862; x=1752912662; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/qP7E7/w2KURgqg1WXFB1L+O8r74uCulM1NNekV+pGU=;
+        b=R8N2dcvhQFPenvbAcsVjkKLJaMvzmWYBexq0MFFhCwYvLYNlOQjkyJZm8ZYCFccwKa
+         k5pyjJFSEhlA9V68p9Giea8A4v96ISgO2svs1sosduRL2Z+jgrj/39sgD2Hpbu6NbX9l
+         o632b5bo4Mdphpmf/9d/UN6J5qPlhQXOg7UeEkwshqptCaX2cahz8Rfgo7tEp0yZt2Ur
+         8DVRFNlF1Wp9scJIEcDb1TVUMkClomYoGp0nHmCR2qLQKPRrR1B/IBvjFL6vTtad4n0i
+         nMd34X+gD/FbZswN3v4J+z9+0mibgJk5tEwELnLnmeFkSqZ6gUeM0G9VcsBnTLOfJGjc
+         Ztvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752307862; x=1752912662;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/qP7E7/w2KURgqg1WXFB1L+O8r74uCulM1NNekV+pGU=;
+        b=AqBqYehWNkQeTYV2smxmV/DkpEX3Oz+D5bWJgvHmbEU4oKGyNegum7InDCfdVlyf7c
+         iEZy/Ol0z/P1ZXgrHAoDJX/YbilivFtZMYNuahS5k8BCD6/seXD2bkfNTTt8uad29uZD
+         7yqKHh2DiuBbHuI21QFHcEw/tZ3jSPivqTwnkuy+r7aoUjImSMaB7R6UW19qjoqIi5al
+         BmkiDzk2uTUVwUXRUhItpX4CPvEFTYYwPp69cLayBiRa3L34SQzCabJVQkOJHURc5zXo
+         a0T/vFPM9g28bohpB32V8x2svJEaN+ilc8sh4DeIiqmWjkfZxw7LZFZnF65Rrc97iPOk
+         mFvg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4oDYPGOJ7rdUG365JjlV74tC2sAr3DV+ta+Mu8fs5hi7hW/UqoEZqNgdpAsGq8LdQmcvA2ek9kmRLTP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGl8tYRW8LfHZmmu7A9sst9ecrvRYJ4B3j/cRzkpakf/fCrWbn
+	hv5vttnKiI17Fv2HQmzdkeN6+nkcgp6U+WhBHSHSj1PcBOFVyMHOMyBQcjXLxRWum+0=
+X-Gm-Gg: ASbGncsQVC50v9ISSvNeO4IPGS3W3G7curyK5O7bRbvR53ck+VNdgpr5Q4Xmy6NtnS/
+	oUhTB18e0k99tEP6beA9qQxthJdsb9HuvD7QB2nzn2HRhvGbwWN6MhIjxHoaVpfwWFADrrbD5k1
+	xeoNqZmsR1yi1wz1dkqVWVCuPxGfWYzYxw2ikJDYSp3cfPPkwurH32rZIGDCb8b4Lg0lJbXkdhB
+	36N3rwB32AAcZiyShWzhU/Of+UecViAMyrPb4HOFW6Q2LlULyUDnlOW9LFbOC+0vH9fCueE7z+0
+	kFijm6/SXGIxGTGJvsiIyeS2Ovlec7YRVbXmoZl8UmVB6a3ERlfNLyXnYHqI10g6Og+wA42clcP
+	NlQBlDhGgJJO4P8fSvDbBebG0kvysXQm+9VeezvWusEAj18tLzDs/IDdL0p0uMs2V0g==
+X-Google-Smtp-Source: AGHT+IFY3U3VMAB2zJC5Yupvfu3VUdWRVaTy961VopuL5KyuzDbBMe0zjJbd+bKXbA1W4H9n//MvFA==
+X-Received: by 2002:a05:690c:a1d4:b0:712:d946:788e with SMTP id 00721157ae682-717d79083demr59301457b3.14.1752307861571;
+        Sat, 12 Jul 2025 01:11:01 -0700 (PDT)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8b7aff2a4bsm1617052276.57.2025.07.12.01.11.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Jul 2025 01:11:00 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-70e1d8c2dc2so26774937b3.3;
+        Sat, 12 Jul 2025 01:11:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV2kBiO7zzHvJJINtSA+D+f5Wr+XBBiqdIR5CxoRQpoBMTAgfUyOS39skRy1Fn2G/IX/YxjddPVYLZ2@vger.kernel.org, AJvYcCVQPxeoNm6YIYo2k4kSJhUGgSAdCkxUfNUb3PAT8beVZsmWiCNt5kZPsRrC6bAvNjRL3gmQMUf9HJHj6zLJ@vger.kernel.org, AJvYcCWy0Ovb4N5Za/lPVYkoiCcDAFLfOtptYHgM79yFCM7Vm0sIqmOQNuZ83UJVniLGX53OjIlc4iGnThWm@vger.kernel.org, AJvYcCXlvQekChE9OgrucvnbOi4InhCdC6oyo/rFDiRwbLEjIfs8+J9sf3i3sZTd6KGGpdqy6Atr4v/3x0XZ+RM=@vger.kernel.org
+X-Received: by 2002:a05:690c:61c8:b0:708:6a2c:147b with SMTP id
+ 00721157ae682-717d78af809mr88739357b3.7.1752307860175; Sat, 12 Jul 2025
+ 01:11:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+References: <20250606-6-10-rocket-v7-0-dc16cfe6fe4e@tomeuvizoso.net>
+ <20250606-6-10-rocket-v7-2-dc16cfe6fe4e@tomeuvizoso.net> <d4178216-8440-4c57-bb06-867e96ca7dae@ti.com>
+In-Reply-To: <d4178216-8440-4c57-bb06-867e96ca7dae@ti.com>
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Date: Sat, 12 Jul 2025 10:10:49 +0200
+X-Gmail-Original-Message-ID: <CAAObsKA2WDx-uFWMazsrNwveG2yd+vjM5a9+naSjyDNj7D6_YQ@mail.gmail.com>
+X-Gm-Features: Ac12FXxUgpJL2rCGdEdX-Wk4Vgoof0zAcJjiBb9mvOBF1p290MiowfWqJ2HPB9A
+Message-ID: <CAAObsKA2WDx-uFWMazsrNwveG2yd+vjM5a9+naSjyDNj7D6_YQ@mail.gmail.com>
+Subject: Re: [PATCH v7 02/10] accel/rocket: Add a new driver for Rockchip's NPU
+To: Andrew Davis <afd@ti.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Oded Gabbay <ogabbay@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, 
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Kever Yang <kever.yang@rock-chips.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Daniel Stone <daniel@fooishbar.org>, Da Xue <da@libre.computer>, 
+	Jeff Hugo <jeff.hugo@oss.qualcomm.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-doc@vger.kernel.org, linux-media@vger.kernel.org, 
+	linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Jul 11, 2025 at 7:38=E2=80=AFPM Andrew Davis <afd@ti.com> wrote:
+>
+> On 6/6/25 1:28 AM, Tomeu Vizoso wrote:
+> > This initial version supports the NPU as shipped in the RK3588 SoC and
+> > described in the first part of its TRM, in Chapter 36.
+> >
+> > This NPU contains 3 independent cores that the driver can submit jobs
+> > to.
+> >
+> > This commit adds just hardware initialization and power management.
+> >
+> > v2:
+> > - Split cores and IOMMUs as independent devices (Sebastian Reichel)
+> > - Add some documentation (Jeffrey Hugo)
+> > - Be more explicit in the Kconfig documentation (Jeffrey Hugo)
+> > - Remove resets, as these haven't been found useful so far (Zenghui Yu)
+> > - Repack structs (Jeffrey Hugo)
+> > - Use DEFINE_DRM_ACCEL_FOPS (Jeffrey Hugo)
+> > - Use devm_drm_dev_alloc (Jeffrey Hugo)
+> > - Use probe log helper (Jeffrey Hugo)
+> > - Introduce UABI header in a later patch (Jeffrey Hugo)
+> >
+> > v3:
+> > - Adapt to a split of the register block in the DT bindings (Nicolas
+> >    Frattaroli)
+> > - Move registers header to its own commit (Thomas Zimmermann)
+> > - Misc. cleanups (Thomas Zimmermann and Jeff Hugo)
+> > - Make use of GPL-2.0-only for the copyright notice (Jeff Hugo)
+> > - PM improvements (Nicolas Frattaroli)
+> >
+> > v4:
+> > - Use bulk clk API (Krzysztof Kozlowski)
+> >
+> > v6:
+> > - Remove mention to NVDLA, as the hardware is only incidentally related
+> >    (Kever Yang)
+> > - Use calloc instead of GFP_ZERO (Jeff Hugo)
+> > - Explicitly include linux/container_of.h (Jeff Hugo)
+> > - pclk and npu clocks are now needed by all cores (Rob Herring)
+> >
+> > v7:
+> > - Assign its own IOMMU domain to each client, for isolation (Daniel
+> >    Stone and Robin Murphy)
+> >
+> > Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> > ---
+> >   Documentation/accel/index.rst        |   1 +
+> >   Documentation/accel/rocket/index.rst |  19 +++
+> >   MAINTAINERS                          |  10 ++
+> >   drivers/accel/Kconfig                |   1 +
+> >   drivers/accel/Makefile               |   1 +
+> >   drivers/accel/rocket/Kconfig         |  25 ++++
+> >   drivers/accel/rocket/Makefile        |   8 +
+> >   drivers/accel/rocket/rocket_core.c   |  70 +++++++++
+> >   drivers/accel/rocket/rocket_core.h   |  45 ++++++
+> >   drivers/accel/rocket/rocket_device.c |  25 ++++
+> >   drivers/accel/rocket/rocket_device.h |  26 ++++
+> >   drivers/accel/rocket/rocket_drv.c    | 279 ++++++++++++++++++++++++++=
++++++++++
+> >   drivers/accel/rocket/rocket_drv.h    |  15 ++
+> >   13 files changed, 525 insertions(+)
+> >
+> > diff --git a/Documentation/accel/index.rst b/Documentation/accel/index.=
+rst
+> > index bc85f26533d88891dde482f91e26c99991b22869..d8fa332d60a890dbb617454=
+d2a26d9b6f9b196aa 100644
+> > --- a/Documentation/accel/index.rst
+> > +++ b/Documentation/accel/index.rst
+> > @@ -10,6 +10,7 @@ Compute Accelerators
+> >      introduction
+> >      amdxdna/index
+> >      qaic/index
+> > +   rocket/index
+> >
+> >   .. only::  subproject and html
+> >
+> > diff --git a/Documentation/accel/rocket/index.rst b/Documentation/accel=
+/rocket/index.rst
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..300eb3aeab1d8c6514c65af=
+4d216b2d5a1669131
+> > --- /dev/null
+> > +++ b/Documentation/accel/rocket/index.rst
+> > @@ -0,0 +1,19 @@
+> > +.. SPDX-License-Identifier: GPL-2.0-only
+> > +
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > + accel/rocket Rockchip NPU driver
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +The accel/rocket driver supports the Neural Processing Units (NPUs) in=
+side some
+> > +Rockchip SoCs such as the RK3588. Rockchip calls it RKNN and sometimes=
+ RKNPU.
+> > +
+> > +The hardware is described in chapter 36 in the RK3588 TRM.
+> > +
+> > +This driver just powers the hardware on and off, allocates and maps bu=
+ffers to
+> > +the device and submits jobs to the frontend unit. Everything else is d=
+one in
+> > +userspace, as a Gallium driver (also called rocket) that is part of th=
+e Mesa3D
+> > +project.
+> > +
+> > +Hardware currently supported:
+> > +
+> > +* RK3588
+> > \ No newline at end of file
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 96b82704950184bd71623ff41fc4df31e4c7fe87..2d8833bf1f2db06ca624d70=
+3f19066adab2f9fde 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -7263,6 +7263,16 @@ T:     git https://gitlab.freedesktop.org/drm/mi=
+sc/kernel.git
+> >   F:  drivers/accel/ivpu/
+> >   F:  include/uapi/drm/ivpu_accel.h
+> >
+> > +DRM ACCEL DRIVER FOR ROCKCHIP NPU
+> > +M:   Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> > +L:   dri-devel@lists.freedesktop.org
+> > +S:   Supported
+> > +T:   git https://gitlab.freedesktop.org/drm/misc/kernel.git
+> > +F:   Documentation/accel/rocket/
+> > +F:   Documentation/devicetree/bindings/npu/rockchip,rknn-core.yaml
+> > +F:   drivers/accel/rocket/
+> > +F:   include/uapi/drm/rocket_accel.h
+> > +
+> >   DRM COMPUTE ACCELERATORS DRIVERS AND FRAMEWORK
+> >   M:  Oded Gabbay <ogabbay@kernel.org>
+> >   L:  dri-devel@lists.freedesktop.org
+> > diff --git a/drivers/accel/Kconfig b/drivers/accel/Kconfig
+> > index 5b9490367a39fd12d35a8d9021768aa186c09308..bb01cebc42bf16ebf02e938=
+040f339ff94869e33 100644
+> > --- a/drivers/accel/Kconfig
+> > +++ b/drivers/accel/Kconfig
+> > @@ -28,5 +28,6 @@ source "drivers/accel/amdxdna/Kconfig"
+> >   source "drivers/accel/habanalabs/Kconfig"
+> >   source "drivers/accel/ivpu/Kconfig"
+> >   source "drivers/accel/qaic/Kconfig"
+> > +source "drivers/accel/rocket/Kconfig"
+> >
+> >   endif
+> > diff --git a/drivers/accel/Makefile b/drivers/accel/Makefile
+> > index a301fb6089d4c515430175c5e2ba9190f6dc9158..ffc3fa58866616d933184a7=
+659573cd4d4780a8d 100644
+> > --- a/drivers/accel/Makefile
+> > +++ b/drivers/accel/Makefile
+> > @@ -4,3 +4,4 @@ obj-$(CONFIG_DRM_ACCEL_AMDXDNA)               +=3D amdx=
+dna/
+> >   obj-$(CONFIG_DRM_ACCEL_HABANALABS)  +=3D habanalabs/
+> >   obj-$(CONFIG_DRM_ACCEL_IVPU)                +=3D ivpu/
+> >   obj-$(CONFIG_DRM_ACCEL_QAIC)                +=3D qaic/
+> > +obj-$(CONFIG_DRM_ACCEL_ROCKET)               +=3D rocket/
+> > \ No newline at end of file
+>
+> Couple of these no newline warnings
+>
+> > diff --git a/drivers/accel/rocket/Kconfig b/drivers/accel/rocket/Kconfi=
+g
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..9a59c6c61bf4d6460d8008b=
+16331f001c97de67d
+> > --- /dev/null
+> > +++ b/drivers/accel/rocket/Kconfig
+> > @@ -0,0 +1,25 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +
+> > +config DRM_ACCEL_ROCKET
+> > +       tristate "Rocket (support for Rockchip NPUs)"
+> > +       depends on DRM
+> > +       depends on ARM64 || COMPILE_TEST
+>
+> Should this be more specific for now ARCH_ROCKCHIP?
 
-On Sat, 2025-07-12 at 10:16 +0900, Hajime Tazaki wrote:
->=20
-> Hello,
->=20
-> > Honestly, I think we need a test case to be able to move forward. The
-> > test needs to trigger an exception (FPE, segfault, whatever) and then
-> > handle the signal. In the signal handler, verify the register state in
-> > the mcontext is expected (RIP, RSP, FP regs), then update it to not
-> > raise an exception again and return. The test should obviously exit
-> > cleanly afterwards.
->=20
-> I agree to have a test case.
->=20
-> I played with your RFC patch ([RFC 0/2] Experimental kunit test for
-> signal context handling), which I guess the similar one which you gave
-> me in the past, with minor modification for nommu mode, and looks like
-> that test passed.
+Yep, already queued for v8.
 
-That test triggers the signal emission using a self-kill (i.e. SIGSYS
-and then the syscall entry point). The problems that I believe exist
-will only happen if the kernel is entered for other reasons. I was
-primarily thinking about exceptions (e.g. SIGFPE), but I suppose it
-could even be scheduling right now (SIGALRM).
+> > +       depends on MMU
+> > +       select DRM_SCHED
+> > +       select IOMMU_SUPPORT
+> > +       select IOMMU_IO_PGTABLE_LPAE
+> > +       select DRM_GEM_SHMEM_HELPER
+> > +       help
+> > +       Choose this option if you have a Rockchip SoC that contains a
+> > +       compatible Neural Processing Unit (NPU), such as the RK3588. Ca=
+lled by
+> > +       Rockchip either RKNN or RKNPU, it accelerates inference of neur=
+al
+> > +       networks.
+> > +
+> > +       The interface exposed to userspace is described in
+> > +       include/uapi/drm/rocket_accel.h and is used by the Rocket users=
+pace
+> > +       driver in Mesa3D.
+> > +
+> > +       If unsure, say N.
+> > +
+> > +       To compile this driver as a module, choose M here: the
+> > +       module will be called rocket.
+> > diff --git a/drivers/accel/rocket/Makefile b/drivers/accel/rocket/Makef=
+ile
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..abdd75f2492eaecf8bf5e78=
+a2ac150ea19ac3e96
+> > --- /dev/null
+> > +++ b/drivers/accel/rocket/Makefile
+> > @@ -0,0 +1,8 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +
+> > +obj-$(CONFIG_DRM_ACCEL_ROCKET) :=3D rocket.o
+> > +
+> > +rocket-y :=3D \
+> > +     rocket_core.o \
+> > +     rocket_device.o \
+> > +     rocket_drv.o
+> > diff --git a/drivers/accel/rocket/rocket_core.c b/drivers/accel/rocket/=
+rocket_core.c
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..3a6f25f2b41030751027395=
+88bcdad96510e2a4e
+> > --- /dev/null
+> > +++ b/drivers/accel/rocket/rocket_core.c
+> > @@ -0,0 +1,70 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/* Copyright 2024-2025 Tomeu Vizoso <tomeu@tomeuvizoso.net> */
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/dev_printk.h>
+> > +#include <linux/err.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/pm_runtime.h>
+> > +
+> > +#include "rocket_core.h"
+> > +
+> > +int rocket_core_init(struct rocket_core *core)
+> > +{
+> > +     struct device *dev =3D core->dev;
+> > +     struct platform_device *pdev =3D to_platform_device(dev);
+> > +     u32 version;
+> > +     int err =3D 0;
+> > +
+> > +     err =3D devm_clk_bulk_get(dev, ARRAY_SIZE(core->clks), core->clks=
+);
+> > +     if (err)
+> > +             return dev_err_probe(dev, err, "failed to get clocks for =
+core %d\n", core->index);
+> > +
+> > +     core->pc_iomem =3D devm_platform_ioremap_resource_byname(pdev, "p=
+c");
+> > +     if (IS_ERR(core->pc_iomem)) {
+> > +             dev_err(dev, "couldn't find PC registers %ld\n", PTR_ERR(=
+core->pc_iomem));
+> > +             return PTR_ERR(core->pc_iomem);
+> > +     }
+> > +
+> > +     core->cna_iomem =3D devm_platform_ioremap_resource_byname(pdev, "=
+cna");
+> > +     if (IS_ERR(core->cna_iomem)) {
+> > +             dev_err(dev, "couldn't find CNA registers %ld\n", PTR_ERR=
+(core->cna_iomem));
+> > +             return PTR_ERR(core->cna_iomem);
+> > +     }
+> > +
+> > +     core->core_iomem =3D devm_platform_ioremap_resource_byname(pdev, =
+"core");
+> > +     if (IS_ERR(core->core_iomem)) {
+> > +             dev_err(dev, "couldn't find CORE registers %ld\n", PTR_ER=
+R(core->core_iomem));
+> > +             return PTR_ERR(core->core_iomem);
+> > +     }
+> > +
+> > +     pm_runtime_use_autosuspend(dev);
+> > +
+> > +     /*
+> > +      * As this NPU will be most often used as part of a media pipelin=
+e that
+> > +      * ends presenting in a display, choose 50 ms (~3 frames at 60Hz)=
+ as an
+> > +      * autosuspend delay as that will keep the device powered up whil=
+e the
+> > +      * pipeline is running.
+> > +      */
+> > +     pm_runtime_set_autosuspend_delay(dev, 50);
+> > +
+> > +     pm_runtime_enable(dev);
+>
+>
+> devm_pm_runtime_enable(dev) here would take care of both functions
+> in rocket_core_fini() so you wouldn't need that and can cleanup
+> some return paths here.
 
-Benjamin
+Unfortunately, that would cause the suspend callback being called
+after devm has freed the clocks, so I need to force for the suspend to
+happen before any other cleanup.
 
+Thanks,
 
->=20
->=20
-> (none):/#=C2=A0 /root/test-fp-save-restore=20
-> TAP version 13
-> 1..1
-> # pre-signal:=C2=A0 50 / 100, 11223344 55667788 99aabbcc ddeeff00
-> # sighandler: extended_size: 2700, xstate_size: 2696
-> # post-signal: 51200 / 100, 11233345 55677789 99abbbcd ddefff01 (should c=
-hange: 1, changed: 1)
-> ok 1 mcontext
-> # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
->=20
->=20
-> I couldn't invoke this test via `kunit.py run` (which I should
-> investigate more), but this can be a good start to have the test case
-> which you proposed.
->=20
-> I will follow up the highlevel discussion on how syscall/signal
-> entry/exit code is implemented in nommu, which I think I've been
-> explained several times but why not :)
->=20
-> -- Hajime
->=20
-> On Fri, 11 Jul 2025 19:05:13 +0900,
-> Benjamin Berg wrote:
-> >=20
-> > On Fri, 2025-07-11 at 11:39 +0200, Benjamin Berg wrote:
-> > > [SNIP]
-> > >=20
-> > > That said, I would also still like to see a higher level discussion o=
-n
-> > > how userspace registers are saved and restored. We have two separate
-> > > cases--interrupts/exceptions (host signals) and the syscall path--and
-> > > both need to be well defined. My hope is still that both of these can
-> > > use the same register save/restore mechanism.
-> >=20
-> > Now syscalls are also just signals. The crucial difference is that for=
-=20
-> > syscalls you are allowed to clobber R11 and RCX. Your current syscall
-> > entry code uses that fact, but that does not work for other signals.
-> >=20
-> > Benjamin
-> >=20
-> > >=20
-> > > Benjamin
-> > >=20
-> > > >=20
-> > > > ---
-> > > > =C2=A0arch/um/include/shared/kern_util.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0=C2=A0 4 +
-> > > > =C2=A0arch/um/nommu/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=
-=A0 2 +-
-> > > > =C2=A0arch/um/nommu/os-Linux/signal.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 8 +
-> > > > =C2=A0arch/um/nommu/trap.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- | 201
-> > > > ++++++++++++++++++++++++
-> > > > =C2=A0arch/um/os-Linux/signal.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +-
-> > > > =C2=A0arch/x86/um/nommu/do_syscall_64.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0=C2=A0 6 +
-> > > > =C2=A0arch/x86/um/nommu/entry_64.S=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 14 ++
-> > > > =C2=A0arch/x86/um/nommu/os-Linux/mcontext.c=C2=A0=C2=A0 |=C2=A0=C2=
-=A0 5 +
-> > > > =C2=A0arch/x86/um/shared/sysdep/mcontext.h=C2=A0=C2=A0=C2=A0 |=C2=
-=A0=C2=A0 1 +
-> > > > =C2=A0arch/x86/um/shared/sysdep/ptrace.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0=C2=A0 2 +-
-> > > > =C2=A0arch/x86/um/shared/sysdep/syscalls_64.h |=C2=A0=C2=A0 1 +
-> > > > =C2=A011 files changed, 244 insertions(+), 3 deletions(-)
-> > > > =C2=A0create mode 100644 arch/um/nommu/trap.c
-> > > >=20
-> > > > diff --git a/arch/um/include/shared/kern_util.h
-> > > > b/arch/um/include/shared/kern_util.h
-> > > > index ec8ba1f13c58..7f55402b6385 100644
-> > > > --- a/arch/um/include/shared/kern_util.h
-> > > > +++ b/arch/um/include/shared/kern_util.h
-> > > > @@ -73,4 +73,8 @@ void um_idle_sleep(void);
-> > > > =C2=A0
-> > > > =C2=A0void kasan_map_memory(void *start, size_t len);
-> > > > =C2=A0
-> > > > +#ifndef CONFIG_MMU
-> > > > +extern void nommu_relay_signal(void *ptr);
-> > > > +#endif
-> > > > +
-> > > > =C2=A0#endif
-> > > > diff --git a/arch/um/nommu/Makefile b/arch/um/nommu/Makefile
-> > > > index baab7c2f57c2..096221590cfd 100644
-> > > > --- a/arch/um/nommu/Makefile
-> > > > +++ b/arch/um/nommu/Makefile
-> > > > @@ -1,3 +1,3 @@
-> > > > =C2=A0# SPDX-License-Identifier: GPL-2.0
-> > > > =C2=A0
-> > > > -obj-y :=3D os-Linux/
-> > > > +obj-y :=3D trap.o os-Linux/
-> > > > diff --git a/arch/um/nommu/os-Linux/signal.c b/arch/um/nommu/os-
-> > > > Linux/signal.c
-> > > > index 19043b9652e2..27b6b37744b7 100644
-> > > > --- a/arch/um/nommu/os-Linux/signal.c
-> > > > +++ b/arch/um/nommu/os-Linux/signal.c
-> > > > @@ -5,6 +5,7 @@
-> > > > =C2=A0#include <os.h>
-> > > > =C2=A0#include <sysdep/mcontext.h>
-> > > > =C2=A0#include <sys/ucontext.h>
-> > > > +#include <as-layout.h>
-> > > > =C2=A0
-> > > > =C2=A0void sigsys_handler(int sig, struct siginfo *si,
-> > > > =C2=A0		=C2=A0=C2=A0=C2=A0 struct uml_pt_regs *regs, void *ptr)
-> > > > @@ -14,3 +15,10 @@ void sigsys_handler(int sig, struct siginfo *si,
-> > > > =C2=A0	/* hook syscall via SIGSYS */
-> > > > =C2=A0	set_mc_sigsys_hook(mc);
-> > > > =C2=A0}
-> > > > +
-> > > > +void nommu_relay_signal(void *ptr)
-> > > > +{
-> > > > +	mcontext_t *mc =3D (mcontext_t *) ptr;
-> > > > +
-> > > > +	set_mc_return_address(mc);
-> > > > +}
-> > > > diff --git a/arch/um/nommu/trap.c b/arch/um/nommu/trap.c
-> > > > new file mode 100644
-> > > > index 000000000000..430297517455
-> > > > --- /dev/null
-> > > > +++ b/arch/um/nommu/trap.c
-> > > > @@ -0,0 +1,201 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > +
-> > > > +#include <linux/mm.h>
-> > > > +#include <linux/sched/signal.h>
-> > > > +#include <linux/hardirq.h>
-> > > > +#include <linux/module.h>
-> > > > +#include <linux/uaccess.h>
-> > > > +#include <linux/sched/debug.h>
-> > > > +#include <asm/current.h>
-> > > > +#include <asm/tlbflush.h>
-> > > > +#include <arch.h>
-> > > > +#include <as-layout.h>
-> > > > +#include <kern_util.h>
-> > > > +#include <os.h>
-> > > > +#include <skas.h>
-> > > > +
-> > > > +/*
-> > > > + * Note this is constrained to return 0, -EFAULT, -EACCES, -ENOMEM
-> > > > by
-> > > > + * segv().
-> > > > + */
-> > > > +int handle_page_fault(unsigned long address, unsigned long ip,
-> > > > +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int is_write, int is_user, int *c=
-ode_out)
-> > > > +{
-> > > > +	/* !MMU has no pagefault */
-> > > > +	return -EFAULT;
-> > > > +}
-> > > > +
-> > > > +static void show_segv_info(struct uml_pt_regs *regs)
-> > > > +{
-> > > > +	struct task_struct *tsk =3D current;
-> > > > +	struct faultinfo *fi =3D UPT_FAULTINFO(regs);
-> > > > +
-> > > > +	if (!unhandled_signal(tsk, SIGSEGV))
-> > > > +		return;
-> > > > +
-> > > > +	pr_warn_ratelimited("%s%s[%d]: segfault at %lx ip %p sp %p
-> > > > error %x",
-> > > > +			=C2=A0=C2=A0=C2=A0 task_pid_nr(tsk) > 1 ? KERN_INFO :
-> > > > KERN_EMERG,
-> > > > +			=C2=A0=C2=A0=C2=A0 tsk->comm, task_pid_nr(tsk),
-> > > > FAULT_ADDRESS(*fi),
-> > > > +			=C2=A0=C2=A0=C2=A0 (void *)UPT_IP(regs), (void
-> > > > *)UPT_SP(regs),
-> > > > +			=C2=A0=C2=A0=C2=A0 fi->error_code);
-> > > > +}
-> > > > +
-> > > > +static void bad_segv(struct faultinfo fi, unsigned long ip)
-> > > > +{
-> > > > +	current->thread.arch.faultinfo =3D fi;
-> > > > +	force_sig_fault(SIGSEGV, SEGV_ACCERR, (void __user *)
-> > > > FAULT_ADDRESS(fi));
-> > > > +}
-> > > > +
-> > > > +void fatal_sigsegv(void)
-> > > > +{
-> > > > +	force_fatal_sig(SIGSEGV);
-> > > > +	do_signal(&current->thread.regs);
-> > > > +	/*
-> > > > +	 * This is to tell gcc that we're not returning -
-> > > > do_signal
-> > > > +	 * can, in general, return, but in this case, it's not,
-> > > > since
-> > > > +	 * we just got a fatal SIGSEGV queued.
-> > > > +	 */
-> > > > +	os_dump_core();
-> > > > +}
-> > > > +
-> > > > +/**
-> > > > + * segv_handler() - the SIGSEGV handler
-> > > > + * @sig:	the signal number
-> > > > + * @unused_si:	the signal info struct; unused in this handler
-> > > > + * @regs:	the ptrace register information
-> > > > + *
-> > > > + * The handler first extracts the faultinfo from the UML ptrace
-> > > > regs struct.
-> > > > + * If the userfault did not happen in an UML userspace process,
-> > > > bad_segv is called.
-> > > > + * Otherwise the signal did happen in a cloned userspace process,
-> > > > handle it.
-> > > > + */
-> > > > +void segv_handler(int sig, struct siginfo *unused_si, struct
-> > > > uml_pt_regs *regs,
-> > > > +		=C2=A0 void *mc)
-> > > > +{
-> > > > +	struct faultinfo *fi =3D UPT_FAULTINFO(regs);
-> > > > +
-> > > > +	/* !MMU specific part; detection of userspace */
-> > > > +	/* mark is_user=3D1 when the IP is from userspace code. */
-> > > > +	if (UPT_IP(regs) > uml_reserved && UPT_IP(regs) <
-> > > > high_physmem)
-> > > > +		regs->is_user =3D 1;
-> > > > +
-> > > > +	if (UPT_IS_USER(regs) && !SEGV_IS_FIXABLE(fi)) {
-> > > > +		show_segv_info(regs);
-> > > > +		bad_segv(*fi, UPT_IP(regs));
-> > > > +		return;
-> > > > +	}
-> > > > +	segv(*fi, UPT_IP(regs), UPT_IS_USER(regs), regs, mc);
-> > > > +
-> > > > +	/* !MMU specific part; detection of userspace */
-> > > > +	relay_signal(sig, unused_si, regs, mc);
-> > > > +}
-> > > > +
-> > > > +/*
-> > > > + * We give a *copy* of the faultinfo in the regs to segv.
-> > > > + * This must be done, since nesting SEGVs could overwrite
-> > > > + * the info in the regs. A pointer to the info then would
-> > > > + * give us bad data!
-> > > > + */
-> > > > +unsigned long segv(struct faultinfo fi, unsigned long ip, int
-> > > > is_user,
-> > > > +		=C2=A0=C2=A0 struct uml_pt_regs *regs, void *mc)
-> > > > +{
-> > > > +	int si_code;
-> > > > +	int err;
-> > > > +	int is_write =3D FAULT_WRITE(fi);
-> > > > +	unsigned long address =3D FAULT_ADDRESS(fi);
-> > > > +
-> > > > +	if (!is_user && regs)
-> > > > +		current->thread.segv_regs =3D container_of(regs,
-> > > > struct pt_regs, regs);
-> > > > +
-> > > > +	if (current->mm =3D=3D NULL) {
-> > > > +		show_regs(container_of(regs, struct pt_regs,
-> > > > regs));
-> > > > +		panic("Segfault with no mm");
-> > > > +	} else if (!is_user && address > PAGE_SIZE && address <
-> > > > TASK_SIZE) {
-> > > > +		show_regs(container_of(regs, struct pt_regs,
-> > > > regs));
-> > > > +		panic("Kernel tried to access user memory at addr
-> > > > 0x%lx, ip 0x%lx",
-> > > > +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 address, ip);
-> > > > +	}
-> > > > +
-> > > > +	if (SEGV_IS_FIXABLE(&fi))
-> > > > +		err =3D handle_page_fault(address, ip, is_write,
-> > > > is_user,
-> > > > +					&si_code);
-> > > > +	else {
-> > > > +		err =3D -EFAULT;
-> > > > +		/*
-> > > > +		 * A thread accessed NULL, we get a fault, but CR2
-> > > > is invalid.
-> > > > +		 * This code is used in __do_copy_from_user() of
-> > > > TT mode.
-> > > > +		 * XXX tt mode is gone, so maybe this isn't needed
-> > > > any more
-> > > > +		 */
-> > > > +		address =3D 0;
-> > > > +	}
-> > > > +
-> > > > +	if (!err)
-> > > > +		goto out;
-> > > > +	else if (!is_user && arch_fixup(ip, regs))
-> > > > +		goto out;
-> > > > +
-> > > > +	if (!is_user) {
-> > > > +		show_regs(container_of(regs, struct pt_regs,
-> > > > regs));
-> > > > +		panic("Kernel mode fault at addr 0x%lx, ip 0x%lx",
-> > > > +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 address, ip);
-> > > > +	}
-> > > > +
-> > > > +	show_segv_info(regs);
-> > > > +
-> > > > +	if (err =3D=3D -EACCES) {
-> > > > +		current->thread.arch.faultinfo =3D fi;
-> > > > +		force_sig_fault(SIGBUS, BUS_ADRERR, (void __user
-> > > > *)address);
-> > > > +	} else {
-> > > > +		WARN_ON_ONCE(err !=3D -EFAULT);
-> > > > +		current->thread.arch.faultinfo =3D fi;
-> > > > +		force_sig_fault(SIGSEGV, si_code, (void __user *)
-> > > > address);
-> > > > +	}
-> > > > +
-> > > > +out:
-> > > > +	if (regs)
-> > > > +		current->thread.segv_regs =3D NULL;
-> > > > +
-> > > > +	return 0;
-> > > > +}
-> > > > +
-> > > > +void relay_signal(int sig, struct siginfo *si, struct uml_pt_regs
-> > > > *regs,
-> > > > +		=C2=A0 void *mc)
-> > > > +{
-> > > > +	int code, err;
-> > > > +
-> > > > +	/* !MMU specific part; detection of userspace */
-> > > > +	/* mark is_user=3D1 when the IP is from userspace code. */
-> > > > +	if (UPT_IP(regs) > uml_reserved && UPT_IP(regs) <
-> > > > high_physmem)
-> > > > +		regs->is_user =3D 1;
-> > > > +
-> > > > +	if (!UPT_IS_USER(regs)) {
-> > > > +		if (sig =3D=3D SIGBUS)
-> > > > +			pr_err("Bus error - the host /dev/shm or
-> > > > /tmp mount likely just ran out of space\n");
-> > > > +		panic("Kernel mode signal %d", sig);
-> > > > +	}
-> > > > +	/* if is_user=3D=3D1, set return to userspace sig handler to
-> > > > relay signal */
-> > > > +	nommu_relay_signal(mc);
-> > > > +
-> > > > +	arch_examine_signal(sig, regs);
-> > > > +
-> > > > +	/* Is the signal layout for the signal known?
-> > > > +	 * Signal data must be scrubbed to prevent information
-> > > > leaks.
-> > > > +	 */
-> > > > +	code =3D si->si_code;
-> > > > +	err =3D si->si_errno;
-> > > > +	if ((err =3D=3D 0) && (siginfo_layout(sig, code) =3D=3D
-> > > > SIL_FAULT)) {
-> > > > +		struct faultinfo *fi =3D UPT_FAULTINFO(regs);
-> > > > +
-> > > > +		current->thread.arch.faultinfo =3D *fi;
-> > > > +		force_sig_fault(sig, code, (void __user
-> > > > *)FAULT_ADDRESS(*fi));
-> > > > +	} else {
-> > > > +		pr_err("Attempted to relay unknown signal %d
-> > > > (si_code =3D %d) with errno %d\n",
-> > > > +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sig, code, err);
-> > > > +		force_sig(sig);
-> > > > +	}
-> > > > +}
-> > > > +
-> > > > +void winch(int sig, struct siginfo *unused_si, struct uml_pt_regs
-> > > > *regs,
-> > > > +	=C2=A0=C2=A0 void *mc)
-> > > > +{
-> > > > +	do_IRQ(WINCH_IRQ, regs);
-> > > > +}
-> > > > diff --git a/arch/um/os-Linux/signal.c b/arch/um/os-Linux/signal.c
-> > > > index 53e276e81b37..67dcd88b45b1 100644
-> > > > --- a/arch/um/os-Linux/signal.c
-> > > > +++ b/arch/um/os-Linux/signal.c
-> > > > @@ -40,9 +40,10 @@ static void sig_handler_common(int sig, struct
-> > > > siginfo *si, mcontext_t *mc)
-> > > > =C2=A0	int save_errno =3D errno;
-> > > > =C2=A0
-> > > > =C2=A0	r.is_user =3D 0;
-> > > > +	if (mc)
-> > > > +		get_regs_from_mc(&r, mc);
-> > > > =C2=A0	if (sig =3D=3D SIGSEGV) {
-> > > > =C2=A0		/* For segfaults, we want the data from the
-> > > > sigcontext. */
-> > > > -		get_regs_from_mc(&r, mc);
-> > > > =C2=A0		GET_FAULTINFO_FROM_MC(r.faultinfo, mc);
-> > > > =C2=A0	}
-> > > > =C2=A0
-> > > > diff --git a/arch/x86/um/nommu/do_syscall_64.c
-> > > > b/arch/x86/um/nommu/do_syscall_64.c
-> > > > index 74d5bcc4508d..d77e69e097c1 100644
-> > > > --- a/arch/x86/um/nommu/do_syscall_64.c
-> > > > +++ b/arch/x86/um/nommu/do_syscall_64.c
-> > > > @@ -44,6 +44,9 @@ __visible void do_syscall_64(struct pt_regs
-> > > > *regs)
-> > > > =C2=A0	/* set fs register to the original host one */
-> > > > =C2=A0	os_x86_arch_prctl(0, ARCH_SET_FS, (void *)host_fs);
-> > > > =C2=A0
-> > > > +	/* save fp registers */
-> > > > +	asm volatile("fxsaveq %0" : "=3Dm"(*(struct _xstate *)regs-
-> > > > > regs.fp));
-> > > > +
-> > > > =C2=A0	if (likely(syscall < NR_syscalls)) {
-> > > > =C2=A0		PT_REGS_SET_SYSCALL_RETURN(regs,
-> > > > =C2=A0				EXECUTE_SYSCALL(syscall, regs));
-> > > > @@ -54,6 +57,9 @@ __visible void do_syscall_64(struct pt_regs
-> > > > *regs)
-> > > > =C2=A0	/* handle tasks and signals at the end */
-> > > > =C2=A0	interrupt_end();
-> > > > =C2=A0
-> > > > +	/* restore fp registers */
-> > > > +	asm volatile("fxrstorq %0" : : "m"((current-
-> > > > > thread.regs.regs.fp)));
-> > > > +
-> > > > =C2=A0	/* restore back fs register to userspace configured one */
-> > > > =C2=A0	os_x86_arch_prctl(0, ARCH_SET_FS,
-> > > > =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (void *)(current-
-> > > > > thread.regs.regs.gp[FS_BASE
-> > > > diff --git a/arch/x86/um/nommu/entry_64.S
-> > > > b/arch/x86/um/nommu/entry_64.S
-> > > > index 950447dfa66b..e038bc7b53ac 100644
-> > > > --- a/arch/x86/um/nommu/entry_64.S
-> > > > +++ b/arch/x86/um/nommu/entry_64.S
-> > > > @@ -111,3 +111,17 @@ ENTRY(userspace)
-> > > > =C2=A0	jmp	*%r11
-> > > > =C2=A0
-> > > > =C2=A0END(userspace)
-> > > > +
-> > > > +/*
-> > > > + * this routine prepares the stack to return via host-generated
-> > > > + * signals (e.g., SEGV, FPE) via do_signal() from interrupt_end().
-> > > > + */
-> > > > +ENTRY(__prep_sigreturn)
-> > > > +	/*
-> > > > +	 * Switch to current top of stack, so "current->" points
-> > > > +	 * to the right task.
-> > > > +	 */
-> > > > +	movq	current_top_of_stack, %rsp
-> > > > +
-> > > > +	jmp	userspace
-> > > > +END(__prep_sigreturn)
-> > > > diff --git a/arch/x86/um/nommu/os-Linux/mcontext.c
-> > > > b/arch/x86/um/nommu/os-Linux/mcontext.c
-> > > > index c4ef877d5ea0..87fb2a35e7ff 100644
-> > > > --- a/arch/x86/um/nommu/os-Linux/mcontext.c
-> > > > +++ b/arch/x86/um/nommu/os-Linux/mcontext.c
-> > > > @@ -6,6 +6,11 @@
-> > > > =C2=A0#include <sysdep/mcontext.h>
-> > > > =C2=A0#include <sysdep/syscalls.h>
-> > > > =C2=A0
-> > > > +void set_mc_return_address(mcontext_t *mc)
-> > > > +{
-> > > > +	mc->gregs[REG_RIP] =3D (unsigned long) __prep_sigreturn;
-> > > > +}
-> > > > +
-> > > > =C2=A0void set_mc_sigsys_hook(mcontext_t *mc)
-> > > > =C2=A0{
-> > > > =C2=A0	mc->gregs[REG_RCX] =3D mc->gregs[REG_RIP];
-> > > > diff --git a/arch/x86/um/shared/sysdep/mcontext.h
-> > > > b/arch/x86/um/shared/sysdep/mcontext.h
-> > > > index 9a0d6087f357..de4041b758f3 100644
-> > > > --- a/arch/x86/um/shared/sysdep/mcontext.h
-> > > > +++ b/arch/x86/um/shared/sysdep/mcontext.h
-> > > > @@ -19,6 +19,7 @@ extern int set_stub_state(struct uml_pt_regs
-> > > > *regs, struct stub_data *data,
-> > > > =C2=A0
-> > > > =C2=A0#ifndef CONFIG_MMU
-> > > > =C2=A0extern void set_mc_sigsys_hook(mcontext_t *mc);
-> > > > +extern void set_mc_return_address(mcontext_t *mc);
-> > > > =C2=A0#endif
-> > > > =C2=A0
-> > > > =C2=A0#ifdef __i386__
-> > > > diff --git a/arch/x86/um/shared/sysdep/ptrace.h
-> > > > b/arch/x86/um/shared/sysdep/ptrace.h
-> > > > index 8f7476ff6e95..7d553d9f05be 100644
-> > > > --- a/arch/x86/um/shared/sysdep/ptrace.h
-> > > > +++ b/arch/x86/um/shared/sysdep/ptrace.h
-> > > > @@ -65,7 +65,7 @@ struct uml_pt_regs {
-> > > > =C2=A0	int is_user;
-> > > > =C2=A0
-> > > > =C2=A0	/* Dynamically sized FP registers (holds an XSTATE) */
-> > > > -	unsigned long fp[];
-> > > > +	unsigned long fp[] __attribute__((aligned(16)));
-> > > > =C2=A0};
-> > > > =C2=A0
-> > > > =C2=A0#define EMPTY_UML_PT_REGS { }
-> > > > diff --git a/arch/x86/um/shared/sysdep/syscalls_64.h
-> > > > b/arch/x86/um/shared/sysdep/syscalls_64.h
-> > > > index ffd80ee3b9dc..bd152422cdfb 100644
-> > > > --- a/arch/x86/um/shared/sysdep/syscalls_64.h
-> > > > +++ b/arch/x86/um/shared/sysdep/syscalls_64.h
-> > > > @@ -29,6 +29,7 @@ extern syscall_handler_t sys_arch_prctl;
-> > > > =C2=A0extern void do_syscall_64(struct pt_regs *regs);
-> > > > =C2=A0extern long __kernel_vsyscall(int64_t a0, int64_t a1, int64_t=
- a2,
-> > > > int64_t a3,
-> > > > =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int64_t a4, int64_t a5, int=
-64_t a6);
-> > > > +extern void __prep_sigreturn(void);
-> > > > =C2=A0#endif
-> > > > =C2=A0
-> > > > =C2=A0#endif
-> > >=20
-> >=20
->=20
+Tomeu
 
+> Andrew
+>
+> > +
+> > +     err =3D pm_runtime_get_sync(dev);
+> > +
+> > +     version =3D rocket_pc_readl(core, VERSION);
+> > +     version +=3D rocket_pc_readl(core, VERSION_NUM) & 0xffff;
+> > +
+> > +     pm_runtime_mark_last_busy(dev);
+> > +     pm_runtime_put_autosuspend(dev);
+> > +
+> > +     dev_info(dev, "Rockchip NPU core %d version: %d\n", core->index, =
+version);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +void rocket_core_fini(struct rocket_core *core)
+> > +{
+> > +     pm_runtime_dont_use_autosuspend(core->dev);
+> > +     pm_runtime_disable(core->dev);
+> > +}
+> > diff --git a/drivers/accel/rocket/rocket_core.h b/drivers/accel/rocket/=
+rocket_core.h
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..1b1beb9798f03ec2ca32549=
+6a4d894674d0b798d
+> > --- /dev/null
+> > +++ b/drivers/accel/rocket/rocket_core.h
+> > @@ -0,0 +1,45 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +/* Copyright 2024-2025 Tomeu Vizoso <tomeu@tomeuvizoso.net> */
+> > +
+> > +#ifndef __ROCKET_CORE_H__
+> > +#define __ROCKET_CORE_H__
+> > +
+> > +#include <drm/gpu_scheduler.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/io.h>
+> > +#include <linux/mutex_types.h>
+> > +
+> > +#include "rocket_registers.h"
+> > +
+> > +#define rocket_pc_readl(core, reg) \
+> > +     readl((core)->pc_iomem + (REG_PC_##reg))
+> > +#define rocket_pc_writel(core, reg, value) \
+> > +     writel(value, (core)->pc_iomem + (REG_PC_##reg))
+> > +
+> > +#define rocket_cna_readl(core, reg) \
+> > +     readl((core)->cna_iomem + (REG_CNA_##reg) - REG_CNA_S_STATUS)
+> > +#define rocket_cna_writel(core, reg, value) \
+> > +     writel(value, (core)->cna_iomem + (REG_CNA_##reg) - REG_CNA_S_STA=
+TUS)
+> > +
+> > +#define rocket_core_readl(core, reg) \
+> > +     readl((core)->core_iomem + (REG_CORE_##reg) - REG_CORE_S_STATUS)
+> > +#define rocket_core_writel(core, reg, value) \
+> > +     writel(value, (core)->core_iomem + (REG_CORE_##reg) - REG_CORE_S_=
+STATUS)
+> > +
+> > +struct rocket_core {
+> > +     struct device *dev;
+> > +     struct rocket_device *rdev;
+> > +     struct device_link *link;
+> > +     unsigned int index;
+> > +
+> > +     int irq;
+> > +     void __iomem *pc_iomem;
+> > +     void __iomem *cna_iomem;
+> > +     void __iomem *core_iomem;
+> > +     struct clk_bulk_data clks[4];
+> > +};
+> > +
+> > +int rocket_core_init(struct rocket_core *core);
+> > +void rocket_core_fini(struct rocket_core *core);
+> > +
+> > +#endif
+> > diff --git a/drivers/accel/rocket/rocket_device.c b/drivers/accel/rocke=
+t/rocket_device.c
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..a05c103e117e3eaa6439884=
+b7acb6e3483296edb
+> > --- /dev/null
+> > +++ b/drivers/accel/rocket/rocket_device.c
+> > @@ -0,0 +1,25 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/* Copyright 2024-2025 Tomeu Vizoso <tomeu@tomeuvizoso.net> */
+> > +
+> > +#include <linux/array_size.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/dev_printk.h>
+> > +
+> > +#include "rocket_device.h"
+> > +
+> > +int rocket_device_init(struct rocket_device *rdev)
+> > +{
+> > +     int err;
+> > +
+> > +     /* Initialize core 0 (top) */
+> > +     err =3D rocket_core_init(&rdev->cores[0]);
+> > +     if (err)
+> > +             return err;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +void rocket_device_fini(struct rocket_device *rdev)
+> > +{
+> > +     rocket_core_fini(&rdev->cores[0]);
+> > +}
+> > diff --git a/drivers/accel/rocket/rocket_device.h b/drivers/accel/rocke=
+t/rocket_device.h
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..b5d5f1479d56e2fde59bbca=
+d9de2b58cef9a9a4d
+> > --- /dev/null
+> > +++ b/drivers/accel/rocket/rocket_device.h
+> > @@ -0,0 +1,26 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +/* Copyright 2024-2025 Tomeu Vizoso <tomeu@tomeuvizoso.net> */
+> > +
+> > +#ifndef __ROCKET_DEVICE_H__
+> > +#define __ROCKET_DEVICE_H__
+> > +
+> > +#include <drm/drm_device.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/container_of.h>
+> > +
+> > +#include "rocket_core.h"
+> > +
+> > +struct rocket_device {
+> > +     struct drm_device ddev;
+> > +
+> > +     struct rocket_core *cores;
+> > +     unsigned int num_cores;
+> > +};
+> > +
+> > +int rocket_device_init(struct rocket_device *rdev);
+> > +void rocket_device_fini(struct rocket_device *rdev);
+> > +
+> > +#define to_rocket_device(drm_dev) \
+> > +     ((struct rocket_device *)container_of(drm_dev, struct rocket_devi=
+ce, ddev))
+> > +
+> > +#endif
+> > diff --git a/drivers/accel/rocket/rocket_drv.c b/drivers/accel/rocket/r=
+ocket_drv.c
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..b38a5c6264cb4e74d5e381a=
+daeba1426e576fa56
+> > --- /dev/null
+> > +++ b/drivers/accel/rocket/rocket_drv.c
+> > @@ -0,0 +1,279 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/* Copyright 2024-2025 Tomeu Vizoso <tomeu@tomeuvizoso.net> */
+> > +
+> > +#include <drm/drm_accel.h>
+> > +#include <drm/drm_drv.h>
+> > +#include <drm/drm_gem.h>
+> > +#include <drm/drm_ioctl.h>
+> > +#include <drm/drm_of.h>
+> > +#include <linux/array_size.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/component.h>
+> > +#include <linux/dma-mapping.h>
+> > +#include <linux/iommu.h>
+> > +#include <linux/of.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/pm_runtime.h>
+> > +
+> > +#include "rocket_drv.h"
+> > +
+> > +static int
+> > +rocket_open(struct drm_device *dev, struct drm_file *file)
+> > +{
+> > +     struct rocket_device *rdev =3D to_rocket_device(dev);
+> > +     struct rocket_file_priv *rocket_priv;
+> > +
+> > +     rocket_priv =3D kzalloc(sizeof(*rocket_priv), GFP_KERNEL);
+> > +     if (!rocket_priv)
+> > +             return -ENOMEM;
+> > +
+> > +     rocket_priv->rdev =3D rdev;
+> > +     rocket_priv->domain =3D iommu_paging_domain_alloc(dev->dev);
+> > +     file->driver_priv =3D rocket_priv;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static void
+> > +rocket_postclose(struct drm_device *dev, struct drm_file *file)
+> > +{
+> > +     struct rocket_file_priv *rocket_priv =3D file->driver_priv;
+> > +
+> > +     iommu_domain_free(rocket_priv->domain);
+> > +     kfree(rocket_priv);
+> > +}
+> > +
+> > +static const struct drm_ioctl_desc rocket_drm_driver_ioctls[] =3D {
+> > +#define ROCKET_IOCTL(n, func) \
+> > +     DRM_IOCTL_DEF_DRV(ROCKET_##n, rocket_ioctl_##func, 0)
+> > +};
+> > +
+> > +DEFINE_DRM_ACCEL_FOPS(rocket_accel_driver_fops);
+> > +
+> > +/*
+> > + * Rocket driver version:
+> > + * - 1.0 - initial interface
+> > + */
+> > +static const struct drm_driver rocket_drm_driver =3D {
+> > +     .driver_features        =3D DRIVER_COMPUTE_ACCEL,
+> > +     .open                   =3D rocket_open,
+> > +     .postclose              =3D rocket_postclose,
+> > +     .ioctls                 =3D rocket_drm_driver_ioctls,
+> > +     .num_ioctls             =3D ARRAY_SIZE(rocket_drm_driver_ioctls),
+> > +     .fops                   =3D &rocket_accel_driver_fops,
+> > +     .name                   =3D "rocket",
+> > +     .desc                   =3D "rocket DRM",
+> > +};
+> > +
+> > +static int rocket_drm_bind(struct device *dev)
+> > +{
+> > +     struct device_node *core_node;
+> > +     struct rocket_device *rdev;
+> > +     struct drm_device *ddev;
+> > +     unsigned int num_cores =3D 1;
+> > +     int err;
+> > +
+> > +     rdev =3D devm_drm_dev_alloc(dev, &rocket_drm_driver, struct rocke=
+t_device, ddev);
+> > +     if (IS_ERR(rdev))
+> > +             return PTR_ERR(rdev);
+> > +
+> > +     ddev =3D &rdev->ddev;
+> > +     dev_set_drvdata(dev, rdev);
+> > +
+> > +     for_each_compatible_node(core_node, NULL, "rockchip,rk3588-rknn-c=
+ore")
+> > +             if (of_device_is_available(core_node))
+> > +                     num_cores++;
+> > +
+> > +     rdev->cores =3D devm_kcalloc(dev, num_cores, sizeof(*rdev->cores)=
+, GFP_KERNEL);
+> > +     if (IS_ERR(rdev->cores))
+> > +             return PTR_ERR(rdev->cores);
+> > +
+> > +     /* Add core 0, any other cores will be added later when they are =
+bound */
+> > +     rdev->cores[0].rdev =3D rdev;
+> > +     rdev->cores[0].dev =3D dev;
+> > +     rdev->cores[0].index =3D 0;
+> > +     rdev->num_cores =3D 1;
+> > +
+> > +     err =3D dma_set_mask_and_coherent(dev, DMA_BIT_MASK(40));
+> > +     if (err)
+> > +             return err;
+> > +
+> > +     err =3D rocket_device_init(rdev);
+> > +     if (err) {
+> > +             dev_err_probe(dev, err, "Fatal error during NPU init\n");
+> > +             goto err_device_fini;
+> > +     }
+> > +
+> > +     err =3D component_bind_all(dev, rdev);
+> > +     if (err)
+> > +             goto err_device_fini;
+> > +
+> > +     err =3D drm_dev_register(ddev, 0);
+> > +     if (err < 0)
+> > +             goto err_unbind;
+> > +
+> > +     return 0;
+> > +
+> > +err_unbind:
+> > +     component_unbind_all(dev, rdev);
+> > +err_device_fini:
+> > +     rocket_device_fini(rdev);
+> > +     return err;
+> > +}
+> > +
+> > +static void rocket_drm_unbind(struct device *dev)
+> > +{
+> > +     struct rocket_device *rdev =3D dev_get_drvdata(dev);
+> > +     struct drm_device *ddev =3D &rdev->ddev;
+> > +
+> > +     drm_dev_unregister(ddev);
+> > +
+> > +     component_unbind_all(dev, rdev);
+> > +
+> > +     rocket_device_fini(rdev);
+> > +}
+> > +
+> > +const struct component_master_ops rocket_drm_ops =3D {
+> > +     .bind =3D rocket_drm_bind,
+> > +     .unbind =3D rocket_drm_unbind,
+> > +};
+> > +
+> > +static int rocket_core_bind(struct device *dev, struct device *master,=
+ void *data)
+> > +{
+> > +     struct rocket_device *rdev =3D data;
+> > +     unsigned int core =3D rdev->num_cores;
+> > +     int err;
+> > +
+> > +     dev_set_drvdata(dev, rdev);
+> > +
+> > +     rdev->cores[core].rdev =3D rdev;
+> > +     rdev->cores[core].dev =3D dev;
+> > +     rdev->cores[core].index =3D core;
+> > +     rdev->cores[core].link =3D device_link_add(dev, rdev->cores[0].de=
+v,
+> > +                                              DL_FLAG_STATELESS | DL_F=
+LAG_PM_RUNTIME);
+> > +
+> > +     rdev->num_cores++;
+> > +
+> > +     err =3D rocket_core_init(&rdev->cores[core]);
+> > +     if (err) {
+> > +             rocket_device_fini(rdev);
+> > +             return err;
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static void rocket_core_unbind(struct device *dev, struct device *mast=
+er, void *data)
+> > +{
+> > +     struct rocket_device *rdev =3D data;
+> > +
+> > +     for (unsigned int core =3D 1; core < rdev->num_cores; core++) {
+> > +             if (rdev->cores[core].dev =3D=3D dev) {
+> > +                     rocket_core_fini(&rdev->cores[core]);
+> > +                     device_link_del(rdev->cores[core].link);
+> > +                     break;
+> > +             }
+> > +     }
+> > +}
+> > +
+> > +const struct component_ops rocket_core_ops =3D {
+> > +     .bind =3D rocket_core_bind,
+> > +     .unbind =3D rocket_core_unbind,
+> > +};
+> > +
+> > +static int rocket_probe(struct platform_device *pdev)
+> > +{
+> > +     struct component_match *match =3D NULL;
+> > +     struct device_node *core_node;
+> > +
+> > +     if (fwnode_device_is_compatible(pdev->dev.fwnode, "rockchip,rk358=
+8-rknn-core"))
+> > +             return component_add(&pdev->dev, &rocket_core_ops);
+> > +
+> > +     for_each_compatible_node(core_node, NULL, "rockchip,rk3588-rknn-c=
+ore") {
+> > +             if (!of_device_is_available(core_node))
+> > +                     continue;
+> > +
+> > +             drm_of_component_match_add(&pdev->dev, &match,
+> > +                                        component_compare_of, core_nod=
+e);
+> > +     }
+> > +
+> > +     return component_master_add_with_match(&pdev->dev, &rocket_drm_op=
+s, match);
+> > +}
+> > +
+> > +static void rocket_remove(struct platform_device *pdev)
+> > +{
+> > +     if (fwnode_device_is_compatible(pdev->dev.fwnode, "rockchip,rk358=
+8-rknn-core-top"))
+> > +             component_master_del(&pdev->dev, &rocket_drm_ops);
+> > +     else if (fwnode_device_is_compatible(pdev->dev.fwnode, "rockchip,=
+rk3588-rknn-core"))
+> > +             component_del(&pdev->dev, &rocket_core_ops);
+> > +}
+> > +
+> > +static const struct of_device_id dt_match[] =3D {
+> > +     { .compatible =3D "rockchip,rk3588-rknn-core-top" },
+> > +     { .compatible =3D "rockchip,rk3588-rknn-core" },
+> > +     {}
+> > +};
+> > +MODULE_DEVICE_TABLE(of, dt_match);
+> > +
+> > +static int find_core_for_dev(struct device *dev)
+> > +{
+> > +     struct rocket_device *rdev =3D dev_get_drvdata(dev);
+> > +
+> > +     for (unsigned int core =3D 0; core < rdev->num_cores; core++) {
+> > +             if (dev =3D=3D rdev->cores[core].dev)
+> > +                     return core;
+> > +     }
+> > +
+> > +     return -1;
+> > +}
+> > +
+> > +static int rocket_device_runtime_resume(struct device *dev)
+> > +{
+> > +     struct rocket_device *rdev =3D dev_get_drvdata(dev);
+> > +     int core =3D find_core_for_dev(dev);
+> > +     int err =3D 0;
+> > +
+> > +     if (core < 0)
+> > +             return -ENODEV;
+> > +
+> > +     err =3D clk_bulk_prepare_enable(ARRAY_SIZE(rdev->cores[core].clks=
+), rdev->cores[core].clks);
+> > +     if (err) {
+> > +             dev_err(dev, "failed to enable (%d) clocks for core %d\n"=
+, err, core);
+> > +             return err;
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int rocket_device_runtime_suspend(struct device *dev)
+> > +{
+> > +     struct rocket_device *rdev =3D dev_get_drvdata(dev);
+> > +     int core =3D find_core_for_dev(dev);
+> > +
+> > +     if (core < 0)
+> > +             return -ENODEV;
+> > +
+> > +     clk_bulk_disable_unprepare(ARRAY_SIZE(rdev->cores[core].clks), rd=
+ev->cores[core].clks);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +EXPORT_GPL_DEV_PM_OPS(rocket_pm_ops) =3D {
+> > +     RUNTIME_PM_OPS(rocket_device_runtime_suspend, rocket_device_runti=
+me_resume, NULL)
+> > +     SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_re=
+sume)
+> > +};
+> > +
+> > +static struct platform_driver rocket_driver =3D {
+> > +     .probe =3D rocket_probe,
+> > +     .remove =3D rocket_remove,
+> > +     .driver  =3D {
+> > +             .name =3D "rocket",
+> > +             .pm =3D pm_ptr(&rocket_pm_ops),
+> > +             .of_match_table =3D dt_match,
+> > +     },
+> > +};
+> > +module_platform_driver(rocket_driver);
+> > +
+> > +MODULE_LICENSE("GPL");
+> > +MODULE_DESCRIPTION("DRM driver for the Rockchip NPU IP");
+> > +MODULE_AUTHOR("Tomeu Vizoso");
+> > diff --git a/drivers/accel/rocket/rocket_drv.h b/drivers/accel/rocket/r=
+ocket_drv.h
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..3219621afb72acdfa915c11=
+0e2ec3aacb66bd940
+> > --- /dev/null
+> > +++ b/drivers/accel/rocket/rocket_drv.h
+> > @@ -0,0 +1,15 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +/* Copyright 2024-2025 Tomeu Vizoso <tomeu@tomeuvizoso.net> */
+> > +
+> > +#ifndef __ROCKET_DRV_H__
+> > +#define __ROCKET_DRV_H__
+> > +
+> > +#include "rocket_device.h"
+> > +
+> > +struct rocket_file_priv {
+> > +     struct rocket_device *rdev;
+> > +
+> > +     struct iommu_domain *domain;
+> > +};
+> > +
+> > +#endif
+> >
 
