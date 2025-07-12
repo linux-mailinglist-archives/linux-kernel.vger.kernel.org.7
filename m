@@ -1,117 +1,77 @@
-Return-Path: <linux-kernel+bounces-728695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 158E0B02BEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:32:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E242CB02BED
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 146303BAF09
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:32:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DC517AEDBF
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DFA289E0E;
-	Sat, 12 Jul 2025 16:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D21289E03;
+	Sat, 12 Jul 2025 16:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ikcPqpuE"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="AxA+nFnG"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3C0283C93;
-	Sat, 12 Jul 2025 16:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F541AB6F1;
+	Sat, 12 Jul 2025 16:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752337955; cv=none; b=ta8BcWYIdgeVRpqnblf9qXhlsvTINMQMjGVabPxAiFr/WD5CrP6hD3tIqLDVrpJ3eBxnSVQEfFpv8TWno/tHOBSKkDaZt3TTPw2iD1g4DpssB8OBypuRRwl9+mAYfBBYOfo7Y8CSkA/U8tt7jYt/TB03svPPMhq7oRpvTJEiNk4=
+	t=1752337946; cv=none; b=ocw/4oUHh1l5kgIFErwE6klUvCBlQazm3XUrXz9JSfdjCHAsVdF1sFX+cMziTl7z5rzNkUCW7wlkKCel831ZT74ZMvDT1ibYwW8el2HsZjzvA8NhJTdZHv9LnBjU7omBYThpsmHmQqP/+j1Tg5yPaZS8GRbCRekfwwECtvky4R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752337955; c=relaxed/simple;
-	bh=bHZT+o+zslXuF3GIjfBilkmBnK1lcCmainWJp9sUfbQ=;
+	s=arc-20240116; t=1752337946; c=relaxed/simple;
+	bh=2OeTGhXF6BQGAi9CBq27Z9TE1vSK5cZSL2nTo/JBNTA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nrBUxgsNfl1SkXtD456+LDL7iY3ZKLirr20ThN7iGtOAZZTJ7f9a/LcB1Ac9wsMqZ6Yykq8WTX1zQCdaf5uTROM9tUaGegrSxcgVdwf/tAZ7b2cLSP0WoEGAlAS7YALiaMFK1xAOn7o5DH0q1r88F2NlZwoYae1gSSIlO1HAszQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ikcPqpuE; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id B9EF01306;
-	Sat, 12 Jul 2025 18:31:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752337915;
-	bh=bHZT+o+zslXuF3GIjfBilkmBnK1lcCmainWJp9sUfbQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ikcPqpuEkrVeOLNnbgykrCBNlo9aKgl6QtTRWfjiXXzJm6Mrr6wj8EDwiuElooZhe
-	 Uu2aKRkxKBz44CGBnGCmAzSzJfkD2XqxMGEkuQIvZqnV8rdo1yb9Ga701quxDh1WOH
-	 w5nA7kdCD6A1FxnyBCm88gkyxgvkDKWiSObiyqkU=
-Date: Sat, 12 Jul 2025 19:31:55 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-	workflows@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH v2 3/2] docs: changes: better document Python needs
-Message-ID: <20250712163155.GA22640@pendragon.ideasonboard.com>
-References: <cover.1752307866.git.mchehab+huawei@kernel.org>
- <58c0cfb40e600af697b1665ffbc8e5bb3d859bb5.1752309145.git.mchehab+huawei@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cbQhBmX5Rawg/kP6OnGq452TuMu1LZHKezQnI1xryEQwRF7QVLYmThxOlzxEXQ6IdCZxeGOA4swEA364MFDv0bXrkoRkjyYWsi+/BAttVOKxgQsvOMX2NE6gf415S9oo2NCeZRa5uCs3scoH7/NgnYXc+QAvQFPwk8OnuYsTpcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=AxA+nFnG; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=1CWNvcxeqqvuIE8fZRowqcdIOV8TwkXNqais4wIPVO8=; b=AxA+nFnGJVYShl56Enz2ZS5ad6
+	P3+xZgv9E/maYYztYjdf7EE8jgGoIGq5TUyZbJhz9UFJY5/gScIUwv65EAIvOhaYNdqtG604fQ6Ob
+	xaRkLYEwr9AgcbE1iwUawSPlZ+oVK6p1hotzdJ2eA+E3fw2vUdI8hIbSkEXZyLfjCvA8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uad92-001Jjk-Ta; Sat, 12 Jul 2025 18:32:12 +0200
+Date: Sat, 12 Jul 2025 18:32:12 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: shenwei.wang@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, maxime.chevallier@bootlin.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v2 net-next 3/3] net: fec: add fec_set_hw_mac_addr()
+ helper function
+Message-ID: <2eaa25f5-231a-4a94-badd-fbf90946adad@lunn.ch>
+References: <20250711091639.1374411-1-wei.fang@nxp.com>
+ <20250711091639.1374411-4-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <58c0cfb40e600af697b1665ffbc8e5bb3d859bb5.1752309145.git.mchehab+huawei@kernel.org>
+In-Reply-To: <20250711091639.1374411-4-wei.fang@nxp.com>
 
-Hi Mauro,
-
-Thank you for the patch.
-
-On Sat, Jul 12, 2025 at 10:32:38AM +0200, Mauro Carvalho Chehab wrote:
-> Python is listed as an optional dependency, but this is not
-> true, as kernel-doc is called during compilation when DRM is
-> enabled. Better document that.
+On Fri, Jul 11, 2025 at 05:16:39PM +0800, Wei Fang wrote:
+> In the current driver, the MAC address is set in both fec_restart() and
+> fec_set_mac_address(), so a generic helper function fec_set_hw_mac_addr()
+> is added to set the hardware MAC address to make the code more compact.
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
 
-Isn't it only when CONFIG_DRM_HEADER_TEST is enabled ? That option
-depends on EXPERT && BROKEN, so I wouldn't expect it to be widely
-enabled. A quick grep shows that CONFIG_DRM_I915_WERROR does the same
-(with a dependency on EXPERT but not BROKEN though).
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Is there something else in DRM that invokes kernel-doc ?
-
-> ---
->  Documentation/process/changes.rst | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-> index bccfa19b45df..6a7d7c1ee274 100644
-> --- a/Documentation/process/changes.rst
-> +++ b/Documentation/process/changes.rst
-> @@ -61,7 +61,7 @@ Sphinx\ [#f1]_         3.4.3            sphinx-build --version
->  GNU tar                1.28             tar --version
->  gtags (optional)       6.6.5            gtags --version
->  mkimage (optional)     2017.01          mkimage --version
-> -Python (optional)      3.9.x            python3 --version
-> +Python                 3.9.x            python3 --version
->  GNU AWK (optional)     5.1.0            gawk --version
->  ====================== ===============  ========================================
->  
-> @@ -154,6 +154,13 @@ Perl
->  You will need perl 5 and the following modules: ``Getopt::Long``,
->  ``Getopt::Std``, ``File::Basename``, and ``File::Find`` to build the kernel.
->  
-> +Python
-> +------
-> +
-> +At least Python 2.7 or 3.4 is required if CONFIG_DRM is selected to avoid
-> +breaking compilation. Documentation build and kernel-doc won't produce
-> +valid results if version is below 3.7.
-> +
->  BC
->  --
->  
-
--- 
-Regards,
-
-Laurent Pinchart
+    Andrew
 
