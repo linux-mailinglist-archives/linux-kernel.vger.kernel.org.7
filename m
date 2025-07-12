@@ -1,174 +1,194 @@
-Return-Path: <linux-kernel+bounces-728488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C8C9B028DA
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 03:55:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5882B028EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 04:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D19B81C40B78
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:55:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 745F6A46206
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 02:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242BB155389;
-	Sat, 12 Jul 2025 01:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0083D16F841;
+	Sat, 12 Jul 2025 02:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="OF7CZM8Q"
-Received: from smtp153-141.sina.com.cn (smtp153-141.sina.com.cn [61.135.153.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vsELPdBf"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440B32AE6A
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 01:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845D935948
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 02:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752285324; cv=none; b=AhzASNvVYemFRdFYTcLhcG6avVAxhsjyeis+4k+E0mZOPaqPioVaMYaqCs/kLX7qYTlqzKWNgcSu1QE1TcP2DD+2lZzDazPZ0mCre18rggxo3BEWxzMaeRtI+veCUs6pFpqMynfGjGsi/hbwFWLqRVk0nnIhvZVa4Zs1kAsOJ44=
+	t=1752286768; cv=none; b=Evo7z5INgol0drA+qyVcAVkOGoquBK6d5un+xu0PvbXfBQKI/3dg3mrSgSxKylEta4KiSo6KlK7FMVsB8MNfilxaWAWMSQ6nIBSSzvRs5HRkKQppsa5q4J5E4l2SaETV9qY3vQvIDkKB+0eV8bY2zTiVgJI6IdAOAjDY4Umw/pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752285324; c=relaxed/simple;
-	bh=asm6o7Q/8NUr3ItmqAUcOm8bw+IKGW+ZElEb7wPwKLc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IP2/bEUlTdtpBWjwZB6tyxpNkUj4emEQ5ByvVzr2ha5pMmoH0FbPgNxZVAST/4XMSs+4NkzNkXIczdzA8kmjxn+HJSx6j2fVoZQUkmKMHDdKU2n5PZB8EMkb0fRUTsf7DZ15XbrMEcWhztstTP60JRsdl0BSdKZjXykpH1Bhwq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=OF7CZM8Q; arc=none smtp.client-ip=61.135.153.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752285315;
-	bh=gNqaHLhfvOjbVIXd+fUqoQ9cSOmgg3zsF6lN/Gv0y9U=;
-	h=From:Subject:Date:Message-ID;
-	b=OF7CZM8Q0Mc0AeJf5x0TJfYG8mL8CtPPj3Sj/UatsBa+a/zBuSFNbS94jU/dpnrLg
-	 BGp/Jp0PPg9yfU4/MmPNrj0zmmXLAratv9E98Hs8jX31ncOa3RhsYgr3GfqmZB9uYy
-	 zsQoJkEUyk9nnHNMXo/ySGOFpVxZOcF7Sd/9bFzk=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.31) with ESMTP
-	id 6871C07800007186; Sat, 12 Jul 2025 09:55:05 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 8969516816231
-X-SMAIL-UIID: F39B097E887647A9904A6DCF4EA56214-20250712-095505-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [lsm?] [net?] WARNING in kvfree_call_rcu
-Date: Sat, 12 Jul 2025 09:54:54 +0800
-Message-ID: <20250712015455.3638-1-hdanton@sina.com>
-In-Reply-To: <686d9b50.050a0220.1ffab7.0020.GAE@google.com>
-References: 
+	s=arc-20240116; t=1752286768; c=relaxed/simple;
+	bh=MvNLqhKnm9tWE58Gy7d2l/AjmUMR9CdzU5l3kGcW4VM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZgsKRs4ZzpI18nE2qRVjbcWYoSjVxPod7ZrPPmZVv+wxMNFQA/gTBaAT0ydc3+32+2VVM+yruzOYRKI6ZRHSNtWBqYHejbGEGdS0YNVoN25+X4u2pSZEp4T+tKQ8q6toXiLO7+DgG26K6g6K6tK6j4yqTjNI6+GLKhl3VGOERhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vsELPdBf; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55502821bd2so2854270e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752286765; x=1752891565; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BGsy4dRD4YlqKx46rnboov0LsZI/I/Oxbnuh0sVluT0=;
+        b=vsELPdBfL+r+fyIogiUbUwiQZ9t6ts2mFpvob02wqj7mUZ+Xij4axBtPSbAi1dpAUx
+         0Otb0cHlgTqRgeAYt6IV6HmKIdUB5nXEgXEsxlCksExOqpBAw/HNxHFGv0b1mzroixbW
+         Rl5KwvM5pAIxG8Q6Fls3BAJ1KeJddCvEIE76J/mLvge2wuqcZZpG/P1jCZJ0I+EzbujW
+         RT7vvzsnqzPZ4nlyE/mUiK61jxLR9jfnMxbvX8UflHCp9MKeO2BYqAjBuybU5nHlhsRA
+         IdIFeXcQK2WTWzF7+gy+035UWy95EiNlPsIlGm0ZeYmnXyi5VkOfLo8Lak5d6VZI+Y0w
+         CXWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752286765; x=1752891565;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BGsy4dRD4YlqKx46rnboov0LsZI/I/Oxbnuh0sVluT0=;
+        b=Upi3s4oImZH6C9Mw5sVpC2syGxdmQqrXTfR4yYHtYcPzv/NOehTDNGpAzbteTZ8oLB
+         SCrZ7iQMBf4l4cbWdiItbXnt2HJ+1/p+fz/zCcBt2NFicqM4VAAoV4XD9FovXAnzUGFS
+         hlBaEatXyQNExkconJguQFUR5doS3l8IlBO+TVbBO3urdFjpiCRu4FhNcgtkWqVKCy2A
+         NhW3+lj9DTErd73/MyUnTfw9pHz+dz0r1+f+UDaSJ3uTHZy75wqGwgA2gd7qnvSJY6HG
+         xT2Bgk+XCH44Ln4W2rvEyrj9iv16UUE5SFwKMyHXtXhSfOIH1Iig9UrjarsBF0oxG/1w
+         hbWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZgURAhFfDn/7lbIAda+1FMKchOl0lVgQJkjd5ph2yRkPFU0jneVXUBm/znLBCbWzEbvX55PtHsNdLjGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrakZ9u8voNHVeaSw2+uITgHUo7C5dTcPKEFEiaK94yLEdd/6g
+	6IwWdhxuEJwazClYrDz8/YcNAdrepYBhtE5/1HkpR+QbFsCtLrcHNbBmalyucwzCjppnJWoOcn3
+	WupBs8h8GvOsXkQrZl3Z7y+wqGm+uiYNmftsii8w=
+X-Gm-Gg: ASbGncsHAzYW97R/xX632/u93cCZvLVJNZVCAkfImzvBV6N0MkazZBfcEmXwUbQ9/Ot
+	+De9g0RU4doK0fT7BRuRkN0Mzx0XDU9T6Bm4aYaLd5fjoozbBEjgf7QThGbCfzRqKpcFfY5rvih
+	6fRFkhsq/tBmivwCN7dr/iHws/UOUzuIM9bPfBtdQxeR0mWrNXLK71Uy88ckMiCLYzlCNS90RtW
+	zb5QERHmBM5oLKiAWDUD20ibe0swtuiUkby
+X-Google-Smtp-Source: AGHT+IERGSMZprnmjmswl+nIzfWcSM0tYb29xmZk/NuCanGaERTLD7955zRy3xM1RQTP+jgABlNVrDjD85FH1QjzX90=
+X-Received: by 2002:ac2:4e01:0:b0:553:358e:72a8 with SMTP id
+ 2adb3069b0e04-55a046001d9mr1640746e87.38.1752286764221; Fri, 11 Jul 2025
+ 19:19:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <3cbd9533b091576a62f597691ced375850d7464a.camel@decadent.org.uk>
+ <CANDhNCoYPX_5m-v_sR4TJ3Xj5TVtrMLP8Bswo_-_+BMXwWUkjg@mail.gmail.com>
+ <CANDhNCqK26S7p0nypKOytgvzKUL8CMMr4-JbN-8PkNc=Em6VYA@mail.gmail.com> <CAJZ5v0j+s35bwjcRf3R7T6Om0CGd6HsYqC_S4b7a7Mj4HNwJQA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0j+s35bwjcRf3R7T6Om0CGd6HsYqC_S4b7a7Mj4HNwJQA@mail.gmail.com>
+From: John Stultz <jstultz@google.com>
+Date: Fri, 11 Jul 2025 19:19:12 -0700
+X-Gm-Features: Ac12FXyI8kBc43hsn-fbzDpUZgjJ_pZte22xX3JWMIyKf8tOb-mAeqxBRTRIy8c
+Message-ID: <CANDhNCr+7=1W9Oiq3AupXRVasU8FgLorzOnf3_RhYp-WK4qbyg@mail.gmail.com>
+Subject: Re: User-space watchdog timers vs suspend-to-idle
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Ben Hutchings <ben@decadent.org.uk>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, 
+	Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-pm@vger.kernel.org, 1107785@bugs.debian.org, 
+	Tiffany Yang <ynaffit@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Date: Tue, 08 Jul 2025 15:27:28 -0700	[thread overview]
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    7482bb149b9f Merge branch 'for-next/core' into for-kernelci
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=130c528c580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3c06e3e2454512b3
-> dashboard link: https://syzkaller.appspot.com/bug?extid=40bf00346c3fe40f90f2
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1257428c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15fe9582580000
+On Fri, Jul 11, 2025 at 1:55=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+> On Fri, Jul 11, 2025 at 12:34=E2=80=AFAM John Stultz <jstultz@google.com>=
+ wrote:
+> > On Thu, Jul 10, 2025 at 2:59=E2=80=AFPM John Stultz <jstultz@google.com=
+> wrote:
+> > > On Thu, Jul 10, 2025 at 12:52=E2=80=AFPM Ben Hutchings <ben@decadent.=
+org.uk> wrote:
+> > > > There seems to be a longstanding issue with the combination of user=
+-
+> > > > space watchdog timers (using CLOCK_MONOTONIC) and suspend-to-idle. =
+ This
+> > > > was reported at <https://bugzilla.kernel.org/show_bug.cgi?id=3D2005=
+95> and
+> > > > more recently at <https://bugs.debian.org/1107785>.
+> > > >
+> > > > During suspend-to-idle the system may be woken by interrupts and th=
+e
+> > > > CLOCK_MONOTONIC clock may tick while that happens, but no user-spac=
+e
+> > > > tasks are allowed to run.  So when the system finally exits suspend=
+, a
+> > > > watchdog timer based on CLOCK_MONOTONIC may expire immediately with=
+out
+> > > > the task being supervised ever having an opportunity to pet the
+> > > > watchdog.
+> > >
+> > > So I don't know much about suspend-to-idle, but I'm surprised it's no=
+t
+> > > suspending timekeeping! That definitely seems problematic.
+> >
+> > Hrm. The docs here seem to call out that timekeeping is supposed to be
+> > suspended in s2idle:
+> >   https://docs.kernel.org/admin-guide/pm/sleep-states.html#suspend-to-i=
+dle
+> >
+> > Looking at enter_s2idle_proper():
+> > https://elixir.bootlin.com/linux/v6.16-rc5/source/drivers/cpuidle/cpuid=
+le.c#L154
+> >
+> > We call tick_freeze():
+> > https://elixir.bootlin.com/linux/v6.16-rc5/source/kernel/time/tick-comm=
+on.c#L524
+> >
+> > Which calls timekeeping_suspend() when the last cpu's tick has been fro=
+zen.
+> >
+> > So it seems like the problem might be somehow all the cpus maybe
+> > aren't entering s2idle, causing time to keep running?
+>
+> Well, there is a suspend-to-idle path in which timekeeping is not suspend=
+ed.
+>
+> It is the one in which cpuidle_enter_s2idle() returns 0 (or less)
+> causing cpuidle_idle_call() to fall back to call_cpuidle() after
+> selecting the deepest available idle state.
+>
+> This happens when the cpuidle driver in use doesn't implement
+> ->enter_s2idle() callbacks for any of its states and the most
+> straightforward remedy is to implement those callbacks in the given
+> cpuidle driver (they must guarantee that interrupts will not be
+> enabled, however).
 
-#syz test
+It seems like in this case maybe would it be better to abort the
+suspend if the hardware doesn't really support it?
 
---- x/net/ipv4/cipso_ipv4.c
-+++ y/net/ipv4/cipso_ipv4.c
-@@ -1848,6 +1848,7 @@ static int cipso_v4_get_actual_opt_len(c
-  * values on failure.
-  *
-  */
-+DEFINE_SPINLOCK(setattr_spinlock);
- int cipso_v4_sock_setattr(struct sock *sk,
- 			  const struct cipso_v4_doi *doi_def,
- 			  const struct netlbl_lsm_secattr *secattr,
-@@ -1899,6 +1900,7 @@ int cipso_v4_sock_setattr(struct sock *s
- 	kfree(buf);
- 	buf = NULL;
- 
-+	spin_lock(&setattr_spinlock);
- 	sk_inet = inet_sk(sk);
- 
- 	old = rcu_dereference_protected(sk_inet->inet_opt, sk_locked);
-@@ -1912,6 +1914,7 @@ int cipso_v4_sock_setattr(struct sock *s
- 	rcu_assign_pointer(sk_inet->inet_opt, opt);
- 	if (old)
- 		kfree_rcu(old, rcu);
-+	spin_unlock(&setattr_spinlock);
- 
- 	return 0;
- 
-@@ -1975,10 +1978,12 @@ int cipso_v4_req_setattr(struct request_
- 	kfree(buf);
- 	buf = NULL;
- 
-+	spin_lock(&setattr_spinlock);
- 	req_inet = inet_rsk(req);
- 	opt = unrcu_pointer(xchg(&req_inet->ireq_opt, RCU_INITIALIZER(opt)));
- 	if (opt)
- 		kfree_rcu(opt, rcu);
-+	spin_unlock(&setattr_spinlock);
- 
- 	return 0;
- 
-@@ -2057,9 +2062,11 @@ void cipso_v4_sock_delattr(struct sock *
- 	struct inet_sock *sk_inet;
- 	int hdr_delta;
- 
-+	spin_lock(&setattr_spinlock);
- 	sk_inet = inet_sk(sk);
- 
- 	hdr_delta = cipso_v4_delopt(&sk_inet->inet_opt);
-+	spin_unlock(&setattr_spinlock);
- 	if (inet_test_bit(IS_ICSK, sk) && hdr_delta > 0) {
- 		struct inet_connection_sock *sk_conn = inet_csk(sk);
- 		sk_conn->icsk_ext_hdr_len -= hdr_delta;
-@@ -2077,7 +2084,9 @@ void cipso_v4_sock_delattr(struct sock *
-  */
- void cipso_v4_req_delattr(struct request_sock *req)
- {
-+	spin_lock(&setattr_spinlock);
- 	cipso_v4_delopt(&inet_rsk(req)->ireq_opt);
-+	spin_unlock(&setattr_spinlock);
- }
- 
- /**
---- x/include/net/sock.h
-+++ y/include/net/sock.h
-@@ -2922,6 +2922,7 @@ extern __u32 sysctl_rmem_max;
- 
- extern __u32 sysctl_wmem_default;
- extern __u32 sysctl_rmem_default;
-+extern spinlock_t setattr_spinlock;
- 
- #define SKB_FRAG_PAGE_ORDER	get_order(32768)
- DECLARE_STATIC_KEY_FALSE(net_high_order_alloc_disable_key);
---- x/net/ipv4/ip_sockglue.c
-+++ y/net/ipv4/ip_sockglue.c
-@@ -1087,6 +1087,7 @@ int do_ip_setsockopt(struct sock *sk, in
- 		err = ip_options_get(sock_net(sk), &opt, optval, optlen);
- 		if (err)
- 			break;
-+		spin_lock(&setattr_spinlock);
- 		old = rcu_dereference_protected(inet->inet_opt,
- 						lockdep_sock_is_held(sk));
- 		if (inet_test_bit(IS_ICSK, sk)) {
-@@ -1109,6 +1110,7 @@ int do_ip_setsockopt(struct sock *sk, in
- 		rcu_assign_pointer(inet->inet_opt, opt);
- 		if (old)
- 			kfree_rcu(old, rcu);
-+		spin_unlock(&setattr_spinlock);
- 		break;
- 	}
- 	case IP_CHECKSUM:
---
+> There are also cases in which suspending timekeeping is delayed for
+> various reasons.  For instance, on some systems, if the temperature is
+> too high, the platform will refuse to enter its deepest power state
+> (ask platform designers which they thought that this would be a good
+> idea), so the kernel waits for the temperature to drop before it
+> attempts to go for proper suspend-to-idle.
+
+Hrm. Practically how long would this thermal delay for s2idle be?
+
+> Moreover, if there are wakeup events while suspended that do not cause
+> the system to resume (you may regard them as "spurious"), timekeeping
+> is resumed and suspended again every time this happens.
+
+Ok,  I'd expect it to be resumed and suspended (though I'm wondering
+if that should be rethought)
+
+> So in general time may keep running at least somewhat in the
+> suspend-to-idle flow, but this also happens during any system
+> suspend-resume flow (timekeeping is only suspended after all devices
+> have been suspended and it takes time to suspend them all and
+> analogously for resume).
+
+Yeah, for small amounts of time, I do expect that the suspend time
+will be slightly shorter than the time that applications are frozen -
+obviously to your point about the suprious irq case, that delta might
+grow with suspend time, but I'm hoping we're still dealing with
+relatively small amounts that won't confuse applications.
+
+But from the bug report it sounds like timekeeping is just never
+getting suspended at all, which is unexpected.
+
+thanks
+-john
 
