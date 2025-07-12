@@ -1,298 +1,259 @@
-Return-Path: <linux-kernel+bounces-728633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99DBB02B16
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:57:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A0EB02B2D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BF925624AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:57:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0087B563C4D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 14:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8665D278E7C;
-	Sat, 12 Jul 2025 13:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BB027A90E;
+	Sat, 12 Jul 2025 14:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jjUfHVYN"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="KMBltCIf"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B37278750;
-	Sat, 12 Jul 2025 13:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEE01F5823;
+	Sat, 12 Jul 2025 14:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752328621; cv=none; b=KDM8wtj9dY+wTxj4DiTZWDlWDnvpWhcHNnYo9XHESro/W4wZWGbGxl8qVtXzMHTqQakEAqefXk5tsbkSuVkPl/DoC9fztC08R7ndLC3MbcqY+FbN4mwu+hw+anU+TA7MAz86nIQ8jVYm4sNTBOqdImLqDBNhuJBN0Gm3CDHGseQ=
+	t=1752328960; cv=none; b=XVEOreMH9Wwg6fYmw+jOOUeL+kP6l0Nc+RW+2slyxWMjF5tBajXGh+hePoTqENCiw7uGi3V2BkP9DvblsPsTjTkaiec2l9V9dqm3CnDpaGa6oN/LF1QMGQp2PVRAN4upwc0KVXuGPRFLT4a+nHpga9E9uOKt06X6PZ9bJ1449mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752328621; c=relaxed/simple;
-	bh=mgsx5jC7xnI3Zxh5tPhOMQw9jgbuPq6Xaw6JfhhLOKo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f71mmlDxepQC9WwbYuKEbn27yDK96zzplAtqxpneKJaB0oJbD3ydeUAkEBAC52vRF7bSXcMNXV2iMrZGMTCNXaG+sz46ggSYNtlhHARRZEZVeVVTbXgfm5iA1NoRRCfr14YSTt/YdznUiemd4VNSpTD4MwyIn5MtwZ11uFKl0s4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jjUfHVYN; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ae3cd8fdd77so607674066b.1;
-        Sat, 12 Jul 2025 06:56:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752328618; x=1752933418; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LWT0gpnYa11KRjN6//9ilbj19qNJCuSNe5kuXlg66Eg=;
-        b=jjUfHVYNG/cKdX3ZHWXgJd02BgG04780Acja2xKXPhu9MFc7/9eMavUeNfv+tZC8fv
-         ouILZoWHvikcHCKFE9iTjWkDhUGoe0AP+B8sg8utobw2ksqHtsPHRH3/fAx9zAutkuwa
-         qe/6cf0DLdHSdsbygFDlKowFyzV4gHii3ncFVQKKvSuuycP9UbHd1cDEYDYy4DLt8eSf
-         Fp0Eg25ZREqEHRDQQJuz23cloE9FCLz/+AFkWk6DnbSyOVCHmfmYwCce5Z0r1MTw5Aos
-         moC2F+TKawL4AsI9GBpOpwD7dVsx4jWpHJArsbVQTCwpg+9yBwpNl8+BzJjAg2k0cBM5
-         ZXGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752328618; x=1752933418;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LWT0gpnYa11KRjN6//9ilbj19qNJCuSNe5kuXlg66Eg=;
-        b=WxiiodYjra0yFctXDYqQZqgjIbgZ9dRqJRoZBZzY78KcCMYbJNiPhYXE/8/XpIr00J
-         p/rnIAAHkiD69CuzaOgph1xytK4/TpjzVEUoenqulsg5TAvTDi1zqsgtWb9PIvutuZnj
-         suVrf8Bf1HvnnRL74c+qfDqoWvFUEfVgBaSU7y1Jb/+UvnvbLHzDXO61SjmgRdRjdoIy
-         b4F7tPofkXY2MrWpqtZlieB4wwy6ZnUjMhjXfv/v8eNbK4ZU4iQEvoXcUk1XUNbMCV64
-         zd8t+QmBQpajS9Mc5T1mvwU8pizYcNwbU3ET4O+DnqD+C6n4YyeFSGPxzVV0Qt5suN05
-         6B1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUDbKHZ2w6OjS2S0x7FQC/HLYFXBKxc6LUZf/D5yGQHwwhlN650EF5K7VdsxgB2TPHCWxU=@vger.kernel.org, AJvYcCUqgWaoziNVDYUxaGGsm/tNNN0t/TbG93caBl3/RQ91btA1327v6MM8S25Hdm+5Vv71KRAZQoXoylylsaBO@vger.kernel.org, AJvYcCW9nyray9g6w3am4oNhiKoFce7SSPs6eU2gYN+f1yLiXYoMq+FibrHxGILQzxUOlLcCLlI+5n1rONr/tQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzupAwSmtApd5/pSk2gs5y7O/Zezct7M56/92XEUstwH+y49gZO
-	54iTMdINOcIFfXIeYhUPK3melOJM5Q2IDFLd0rdAQ2IuHy85tvSEY8vY
-X-Gm-Gg: ASbGnctroJncDZOfH+LnGIo8DSKaxcmtU3daKjXpvRcVEC/hHnU3O6Y/jXQ+vWTvqNH
-	cSgCE7amjE1V9P54cOI2chWkO5n5IGw00XlJZfgAGGpC/7I0AlkFL7QVo3QbQjOBNW9NsUZ3UfU
-	9pDcLhXfZotZXcK24BhtUwqgvWMMLBXOwvqLPp8+bQh3t23gvnxqVxPQdlLhMeVr5SpFQFyUuHe
-	+agaFYzO+7Sh0PdUvhUQmYFjlsSfUKRsWqmxvnB3E2BZlbz/PzPvdHIL9tDACsE2HStZr5o7MYn
-	kx7doRHPLEp8lyn6sAbOtiz4zBLtfaXjrkzyt93B6yzljq4oV9MKUw0YcI3vmb849x7AK9hib4J
-	ascxumROP3jNTSR4phvYmp/smyZuixAKE/hY=
-X-Google-Smtp-Source: AGHT+IHPBpXdo4+Kf06SYR/uX0tK1lNZqoC5zzneXzKAVwNs+13swe0gxWXk5ow4jkTd10LBb7qjpA==
-X-Received: by 2002:a17:907:94c8:b0:ae3:74e1:81a3 with SMTP id a640c23a62f3a-ae6fca02479mr620885266b.8.1752328617862;
-        Sat, 12 Jul 2025 06:56:57 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:b2ad])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e826462bsm492380166b.104.2025.07.12.06.56.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 12 Jul 2025 06:56:57 -0700 (PDT)
-Message-ID: <582f41c0-2742-4400-9c81-0d46bf4e8314@gmail.com>
-Date: Sat, 12 Jul 2025 14:58:14 +0100
+	s=arc-20240116; t=1752328960; c=relaxed/simple;
+	bh=3wtYLKyS14ch+ZF6MjwOmyiGKgz25sSUqwIQqg39jSA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ix+lJsa3xt6vsaj1nnuimLZ/fdgQTG++6xZb1I/AVbq7kQdu3vLlX5hdX4pvmXR8A1CM5QnoA31FYXu68rHNDZEhG76Nr89jy7bdH4q1w9nG3uY9h1R2faOOIGmA+yyp0xxoHzttniLYnR2/HAOmkHaKe0JOn/3YKPERVg6EKe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=KMBltCIf; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1752328946; x=1752933746; i=w_armin@gmx.de;
+	bh=wWjkNGfz2QrTJCO3ffRPYeeMPs4MaL5FylSe88/LmdA=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=KMBltCIf2G3UDgYnPVNPt2bqfGz1qQ5L/4vfOwo7ST0/KmgErJp9QGPOQT5kpsiq
+	 D9zaijaTXCLJ21arRjmK2CTqrycgejpRJUmUzu7Qac8CBo9c7xOk9yfqid459SYsx
+	 0VJGqjNiBcb8DaDwKcXPGbb/929DY6WQkVrizLM8Iv9Vlrux2R79KToRY4FKcEGKq
+	 S2RnUduE8peL/PyARWyXi3T+1sYY3jVOMelPHPIamLAMO2VDXLvkeNuNInG98MnJ2
+	 VWYZ+rKXbrXy4OVqr8nBUKviLGXsZupO9ucCCYFjLh7fmiNHqLPRq4CMHSgt0l/mP
+	 FfTPYI9aAZMXMDamPw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-amd-b650.fritz.box ([87.177.78.219]) by mail.gmx.net
+ (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1MVN6j-1uAv2b0TGJ-00TzYL; Sat, 12 Jul 2025 16:02:26 +0200
+From: Armin Wolf <W_Armin@gmx.de>
+To: hansg@kernel.org,
+	ilpo.jarvinen@linux.intel.com
+Cc: Dell.Client.Kernel@dell.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: dell-smbios-wmi: Stop touching WMI device ID
+Date: Sat, 12 Jul 2025 16:02:22 +0200
+Message-Id: <20250712140222.347638-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 3/8] page_pool: access ->pp_magic through
- struct netmem_desc in page_pool_page_is_pp()
-To: Byungchul Park <byungchul@sk.com>, Mina Almasry <almasrymina@google.com>,
- David Hildenbrand <david@redhat.com>,
- "willy@infradead.org" <willy@infradead.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- kernel_team@skhynix.com, kuba@kernel.org, ilias.apalodimas@linaro.org,
- harry.yoo@oracle.com, hawk@kernel.org, akpm@linux-foundation.org,
- davem@davemloft.net, john.fastabend@gmail.com, andrew+netdev@lunn.ch,
- toke@redhat.com, tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
- saeedm@nvidia.com, leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
- linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com,
- hannes@cmpxchg.org, ziy@nvidia.com, jackmanb@google.com
-References: <20250710082807.27402-1-byungchul@sk.com>
- <20250710082807.27402-4-byungchul@sk.com>
- <CAHS8izMXkyGvYmf1u6r_kMY_QGSOoSCECkF0QJC4pdKx+DOq0A@mail.gmail.com>
- <20250711011435.GC40145@system.software.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250711011435.GC40145@system.software.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:PLJfVQNQKuJZfR8n18OEctN8QvyvV8QgfMrse0Z/elglOys/vZ9
+ Mr8N46boN/LU+gxsZ5F6djslb3V7Il77yrShL/Ig6S5ty6oD1CxCmqpXFZGR11IcYJIPFov
+ k6QWunONz2a7/wAl1/o4h6BaCktkWDgAoB7lfLNODmspREC4X+UU3SH3BY5UQz7GTQwVj/K
+ uXAK0l1lyQhCP/0CF9OLQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:DAPsPdVYskY=;kPP8c4N16c5EEk9XUOD6k8Ju21b
+ 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
+ gT+Yy2HSqu0ANQ=
 
-On 7/11/25 02:14, Byungchul Park wrote:
-...>>> +#ifdef CONFIG_PAGE_POOL
->>> +/* XXX: This would better be moved to mm, once mm gets its way to
->>> + * identify the type of page for page pool.
->>> + */
->>> +static inline bool page_pool_page_is_pp(struct page *page)
->>> +{
->>> +       struct netmem_desc *desc = page_to_nmdesc(page);
->>> +
->>> +       return (desc->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
->>> +}
->>
->> pages can be pp pages (where they have pp fields inside of them) or
->> non-pp pages (where they don't have pp fields inside them, because
->> they were never allocated from the page_pool).
->>
->> Casting a page to a netmem_desc, and then checking if the page was a
->> pp page doesn't makes sense to me on a fundamental level. The
->> netmem_desc is only valid if the page was a pp page in the first
->> place. Maybe page_to_nmdesc should reject the cast if the page is not
->> a pp page or something.
-> 
-> Right, as you already know, the current mainline code already has the
-> same problem but we've been using the werid way so far, in other words,
-> mm code is checking if it's a pp page or not by using ->pp_magic, but
-> it's ->lur, ->buddy_list, or ->pcp_list if it's not a pp page.
-> 
-> Both the mainline code and this patch can make sense *only if* it's
-> actually a pp page.  It's unevitable until mm provides a way to identify
-> the type of page for page pool.  Thoughts?
-Question to mm folks, can we add a new PGTY for page pool and use
-that to filter page pool originated pages? Like in the incomplete
-and untested diff below?
+The WMI core itself uses wdev->dev.id internally to track device IDs,
+so modifying this value will result in a resource leak.
 
+Fix this by not using the device ID for SMBIOS prioritization.
 
-commit 8fc2347fb3ff4a3fc7929c70a5a21e1128935d4a
-Author: Pavel Begunkov <asml.silence@gmail.com>
-Date:   Sat Jul 12 14:29:52 2025 +0100
+Tested on a Dell Inspiron 3505.
 
-     net/mm: use PGTY for tracking page pool pages
-     
-     Currently, we use page->pp_magic to determine whether a page belongs to
-     a page pool. It's not ideal as the field is aliased with other page
-     types, and thus needs to to rely on elaborated rules to work. Add a new
-     page type for page pool.
+Fixes: 73f0f2b52c5e ("platform/x86: wmi: Fix WMI device naming issue")
+Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+=2D--
+ drivers/platform/x86/dell/dell-smbios-base.c | 19 +++++++++----------
+ drivers/platform/x86/dell/dell-smbios-smm.c  |  3 +--
+ drivers/platform/x86/dell/dell-smbios-wmi.c  |  4 +---
+ drivers/platform/x86/dell/dell-smbios.h      |  2 +-
+ 4 files changed, 12 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0ef2ba0c667a..975a013f1f17 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -4175,7 +4175,7 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
-  #ifdef CONFIG_PAGE_POOL
-  static inline bool page_pool_page_is_pp(struct page *page)
-  {
--	return (page->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
-+	return PageNetpp(page);
-  }
-  #else
-  static inline bool page_pool_page_is_pp(struct page *page)
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 4fe5ee67535b..9bd1dfded2fc 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -957,6 +957,7 @@ enum pagetype {
-  	PGTY_zsmalloc		= 0xf6,
-  	PGTY_unaccepted		= 0xf7,
-  	PGTY_large_kmalloc	= 0xf8,
-+	PGTY_netpp		= 0xf9,
-  
-  	PGTY_mapcount_underflow = 0xff
-  };
-@@ -1101,6 +1102,11 @@ PAGE_TYPE_OPS(Zsmalloc, zsmalloc, zsmalloc)
-  PAGE_TYPE_OPS(Unaccepted, unaccepted, unaccepted)
-  FOLIO_TYPE_OPS(large_kmalloc, large_kmalloc)
-  
-+/*
-+ * Marks page_pool allocated pages
-+ */
-+PAGE_TYPE_OPS(Netpp, netpp, netpp)
-+
-  /**
-   * PageHuge - Determine if the page belongs to hugetlbfs
-   * @page: The page to test.
-diff --git a/include/net/netmem.h b/include/net/netmem.h
-index de1d95f04076..20f5dbb08149 100644
---- a/include/net/netmem.h
-+++ b/include/net/netmem.h
-@@ -113,6 +113,8 @@ static inline bool netmem_is_net_iov(const netmem_ref netmem)
-   */
-  static inline struct page *__netmem_to_page(netmem_ref netmem)
-  {
-+	DEBUG_NET_WARN_ON_ONCE(netmem_is_net_iov(netmem));
-+
-  	return (__force struct page *)netmem;
-  }
-  
-diff --git a/net/core/netmem_priv.h b/net/core/netmem_priv.h
-index cd95394399b4..e38c64da1a78 100644
---- a/net/core/netmem_priv.h
-+++ b/net/core/netmem_priv.h
-@@ -13,16 +13,11 @@ static inline void netmem_or_pp_magic(netmem_ref netmem, unsigned long pp_magic)
-  	__netmem_clear_lsb(netmem)->pp_magic |= pp_magic;
-  }
-  
--static inline void netmem_clear_pp_magic(netmem_ref netmem)
--{
--	WARN_ON_ONCE(__netmem_clear_lsb(netmem)->pp_magic & PP_DMA_INDEX_MASK);
--
--	__netmem_clear_lsb(netmem)->pp_magic = 0;
--}
--
-  static inline bool netmem_is_pp(netmem_ref netmem)
-  {
--	return (netmem_get_pp_magic(netmem) & PP_MAGIC_MASK) == PP_SIGNATURE;
-+	if (netmem_is_net_iov(netmem))
-+		return true;
-+	return page_pool_page_is_pp(netmem_to_page(netmem));
-  }
-  
-  static inline void netmem_set_pp(netmem_ref netmem, struct page_pool *pool)
-diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-index 05e2e22a8f7c..52120e2912a6 100644
---- a/net/core/page_pool.c
-+++ b/net/core/page_pool.c
-@@ -371,6 +371,13 @@ struct page_pool *page_pool_create(const struct page_pool_params *params)
-  }
-  EXPORT_SYMBOL(page_pool_create);
-  
-+static void page_pool_set_page_pp_info(struct page_pool *pool,
-+				       struct page *page)
-+{
-+	__SetPageNetpp(page);
-+	page_pool_set_pp_info(page_to_netmem(page));
-+}
-+
-  static void page_pool_return_netmem(struct page_pool *pool, netmem_ref netmem);
-  
-  static noinline netmem_ref page_pool_refill_alloc_cache(struct page_pool *pool)
-@@ -534,7 +541,7 @@ static struct page *__page_pool_alloc_page_order(struct page_pool *pool,
-  	}
-  
-  	alloc_stat_inc(pool, slow_high_order);
--	page_pool_set_pp_info(pool, page_to_netmem(page));
-+	page_pool_set_page_pp_info(pool, page);
-  
-  	/* Track how many pages are held 'in-flight' */
-  	pool->pages_state_hold_cnt++;
-@@ -579,7 +586,7 @@ static noinline netmem_ref __page_pool_alloc_netmems_slow(struct page_pool *pool
-  			continue;
-  		}
-  
--		page_pool_set_pp_info(pool, netmem);
-+		page_pool_set_page_pp_info(pool, __netmem_to_page(netmem));
-  		pool->alloc.cache[pool->alloc.count++] = netmem;
-  		/* Track how many pages are held 'in-flight' */
-  		pool->pages_state_hold_cnt++;
-@@ -654,7 +661,6 @@ s32 page_pool_inflight(const struct page_pool *pool, bool strict)
-  void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
-  {
-  	netmem_set_pp(netmem, pool);
--	netmem_or_pp_magic(netmem, PP_SIGNATURE);
-  
-  	/* Ensuring all pages have been split into one fragment initially:
-  	 * page_pool_set_pp_info() is only called once for every page when it
-@@ -669,7 +675,6 @@ void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
-  
-  void page_pool_clear_pp_info(netmem_ref netmem)
-  {
--	netmem_clear_pp_magic(netmem);
-  	netmem_set_pp(netmem, NULL);
-  }
-  
-@@ -730,8 +735,11 @@ static void page_pool_return_netmem(struct page_pool *pool, netmem_ref netmem)
-  	trace_page_pool_state_release(pool, netmem, count);
-  
-  	if (put) {
-+		struct page *page = netmem_to_page(netmem);
-+
-  		page_pool_clear_pp_info(netmem);
--		put_page(netmem_to_page(netmem));
-+		__ClearPageNetpp(page);
-+		put_page(page);
-  	}
-  	/* An optimization would be to call __free_pages(page, pool->p.order)
-  	 * knowing page is not part of page-cache (thus avoiding a
-
--- 
-Pavel Begunkov
+diff --git a/drivers/platform/x86/dell/dell-smbios-base.c b/drivers/platfo=
+rm/x86/dell/dell-smbios-base.c
+index 01c72b91a50d..444786102f02 100644
+=2D-- a/drivers/platform/x86/dell/dell-smbios-base.c
++++ b/drivers/platform/x86/dell/dell-smbios-base.c
+@@ -39,6 +39,7 @@ struct token_sysfs_data {
+ struct smbios_device {
+ 	struct list_head list;
+ 	struct device *device;
++	int priority;
+ 	int (*call_fn)(struct calling_interface_buffer *arg);
+ };
+=20
+@@ -145,7 +146,7 @@ int dell_smbios_error(int value)
+ }
+ EXPORT_SYMBOL_GPL(dell_smbios_error);
+=20
+-int dell_smbios_register_device(struct device *d, void *call_fn)
++int dell_smbios_register_device(struct device *d, int priority, void *cal=
+l_fn)
+ {
+ 	struct smbios_device *priv;
+=20
+@@ -154,6 +155,7 @@ int dell_smbios_register_device(struct device *d, void=
+ *call_fn)
+ 		return -ENOMEM;
+ 	get_device(d);
+ 	priv->device =3D d;
++	priv->priority =3D priority;
+ 	priv->call_fn =3D call_fn;
+ 	mutex_lock(&smbios_mutex);
+ 	list_add_tail(&priv->list, &smbios_device_list);
+@@ -292,28 +294,25 @@ EXPORT_SYMBOL_GPL(dell_smbios_call_filter);
+=20
+ int dell_smbios_call(struct calling_interface_buffer *buffer)
+ {
+-	int (*call_fn)(struct calling_interface_buffer *) =3D NULL;
+-	struct device *selected_dev =3D NULL;
++	struct smbios_device *selected =3D NULL;
+ 	struct smbios_device *priv;
+ 	int ret;
+=20
+ 	mutex_lock(&smbios_mutex);
+ 	list_for_each_entry(priv, &smbios_device_list, list) {
+-		if (!selected_dev || priv->device->id >=3D selected_dev->id) {
+-			dev_dbg(priv->device, "Trying device ID: %d\n",
+-				priv->device->id);
+-			call_fn =3D priv->call_fn;
+-			selected_dev =3D priv->device;
++		if (!selected || priv->priority >=3D selected->priority) {
++			dev_dbg(priv->device, "Trying device ID: %d\n", priv->priority);
++			selected =3D priv;
+ 		}
+ 	}
+=20
+-	if (!selected_dev) {
++	if (!selected) {
+ 		ret =3D -ENODEV;
+ 		pr_err("No dell-smbios drivers are loaded\n");
+ 		goto out_smbios_call;
+ 	}
+=20
+-	ret =3D call_fn(buffer);
++	ret =3D selected->call_fn(buffer);
+=20
+ out_smbios_call:
+ 	mutex_unlock(&smbios_mutex);
+diff --git a/drivers/platform/x86/dell/dell-smbios-smm.c b/drivers/platfor=
+m/x86/dell/dell-smbios-smm.c
+index 4d375985c85f..7055e2c40f34 100644
+=2D-- a/drivers/platform/x86/dell/dell-smbios-smm.c
++++ b/drivers/platform/x86/dell/dell-smbios-smm.c
+@@ -125,8 +125,7 @@ int init_dell_smbios_smm(void)
+ 	if (ret)
+ 		goto fail_platform_device_add;
+=20
+-	ret =3D dell_smbios_register_device(&platform_device->dev,
+-					  &dell_smbios_smm_call);
++	ret =3D dell_smbios_register_device(&platform_device->dev, 0, &dell_smbi=
+os_smm_call);
+ 	if (ret)
+ 		goto fail_register;
+=20
+diff --git a/drivers/platform/x86/dell/dell-smbios-wmi.c b/drivers/platfor=
+m/x86/dell/dell-smbios-wmi.c
+index ae9012549560..a7dca8c59d60 100644
+=2D-- a/drivers/platform/x86/dell/dell-smbios-wmi.c
++++ b/drivers/platform/x86/dell/dell-smbios-wmi.c
+@@ -264,9 +264,7 @@ static int dell_smbios_wmi_probe(struct wmi_device *wd=
+ev, const void *context)
+ 	if (ret)
+ 		return ret;
+=20
+-	/* ID is used by dell-smbios to set priority of drivers */
+-	wdev->dev.id =3D 1;
+-	ret =3D dell_smbios_register_device(&wdev->dev, &dell_smbios_wmi_call);
++	ret =3D dell_smbios_register_device(&wdev->dev, 1, &dell_smbios_wmi_call=
+);
+ 	if (ret)
+ 		return ret;
+=20
+diff --git a/drivers/platform/x86/dell/dell-smbios.h b/drivers/platform/x8=
+6/dell/dell-smbios.h
+index 77baa15eb523..f421b8533a9e 100644
+=2D-- a/drivers/platform/x86/dell/dell-smbios.h
++++ b/drivers/platform/x86/dell/dell-smbios.h
+@@ -64,7 +64,7 @@ struct calling_interface_structure {
+ 	struct calling_interface_token tokens[];
+ } __packed;
+=20
+-int dell_smbios_register_device(struct device *d, void *call_fn);
++int dell_smbios_register_device(struct device *d, int priority, void *cal=
+l_fn);
+ void dell_smbios_unregister_device(struct device *d);
+=20
+ int dell_smbios_error(int value);
+=2D-=20
+2.39.5
 
 
