@@ -1,256 +1,156 @@
-Return-Path: <linux-kernel+bounces-728595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75F72B02A88
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 12:58:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 603DDB02A89
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 653A51BC3941
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:59:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D749FA45F96
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 11:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5208A275862;
-	Sat, 12 Jul 2025 10:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED09C2C9D;
+	Sat, 12 Jul 2025 11:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=novek.ru header.i=@novek.ru header.b="W1qoF3sY"
-Received: from novek.ru (unknown [31.204.180.204])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CcOB1mT7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0491C3C30;
-	Sat, 12 Jul 2025 10:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=31.204.180.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E35320F;
+	Sat, 12 Jul 2025 11:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752317915; cv=none; b=qeXdB5Q5ICf5siFFnDJpVhm7BPvPmlzCFKWsCb0Kh1ApoRZefQRQyV80p3l5RMZWPwuv4y7T6kyyR6o7HSe3eKLTueqNSiqDmM9Tggj91MdlfeIXAbvhuM2qxlPFOY3gnkJEbFCmugd4IJHjukRoBqS9BjyZsByi0Mz+DSp7NGw=
+	t=1752318175; cv=none; b=PbWjwMhRFtbsSLbcA+ppkOIcU6zC8bfhYIXRUFQ0RI5/9g/cvVuerLDJLc5dttTCkrKeQ5m/GdYjex/VXhjB3lBeO2CPS0FgIJ8xTbPlGelYMDcN9XXEXY4vvI/TobjplO1jjOzMV7Pl5AzdV/ajYbYgdQx7fubgTSVUhQnmgx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752317915; c=relaxed/simple;
-	bh=kEXM2B40+oOTQxkThF9k3u9XibKzeXiZAnLjrmbOZMA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PKSMiJKjpnuoF01nnJRfxzuYWX0tOMpYTumfeNORo5TFDEaU2JvCJ9ShkCJJg3sS1olXupE3ztt5midY3ZTRhTmomn0jhFEpbrTu1PXZhgrFOoUb9wN488d68ixbHIR2oG+dPouzeqoSiX52+yEKHfjhMY1WNec3ElDZFD46pvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=novek.ru; spf=pass smtp.mailfrom=novek.ru; dkim=permerror (0-bit key) header.d=novek.ru header.i=@novek.ru header.b=W1qoF3sY; arc=none smtp.client-ip=31.204.180.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=novek.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=novek.ru
-Received: from [10.57.205.117] (unknown [154.14.208.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by novek.ru (Postfix) with ESMTPSA id B1646508CE0;
-	Sat, 12 Jul 2025 14:08:23 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru B1646508CE0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novek.ru; s=mail;
-	t=1752318507; bh=kEXM2B40+oOTQxkThF9k3u9XibKzeXiZAnLjrmbOZMA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=W1qoF3sYX/6mfRHTmA4jCtCG7kO21clq3fzOIrS6TC4RwWtQyt+m7KI1CWNrlq/qk
-	 ANyMRdbvypRzRLD3V6rKjpr+AS/hKUTcYf8p00ZCauuR1n38EGYn1Kmyn2+fQZufTp
-	 +WtrWDhF0tEmljsuznlJ7SNdb1OtMrGUicMQDfqc=
-Message-ID: <c61444a9-6ac6-4fd4-a4ff-d3815bfa40e4@novek.ru>
-Date: Sat, 12 Jul 2025 11:58:26 +0100
+	s=arc-20240116; t=1752318175; c=relaxed/simple;
+	bh=jzMQOv6iAdvYpHha5k/NLNgXonjVTEht8vlZgL3t88s=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MGOy5Kt6B87JSaEmFG41BH1ccowvRtG6jNa1Y16/HShFgISW6XUczc3SAbXpgcyQ0hLXgIUr1yZhm8LKSVe8VKLIY+mjOf2FLURdpwBGpbATMgWhqUppuD5ucTjXriIRAOKDw7qczQid4WkZSG4R/XKrXKawrYDNg9zGq8jYh/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CcOB1mT7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4064C4CEEF;
+	Sat, 12 Jul 2025 11:02:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752318173;
+	bh=jzMQOv6iAdvYpHha5k/NLNgXonjVTEht8vlZgL3t88s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CcOB1mT7v+VIyTjxEWq0QBlFYvrwN8MSsuWw87TGYM0lqVdcqqq/QEM6ZW0FO7vGU
+	 kWnc0DgrKvkKAGQ7orW/8hnyMVS4QsbEsrEVphRBnfL+wj9FGZEToxM33UQ6SWCx4k
+	 H/Kn+seJcwGE87CrR9LpzRc0XiHz5/hMKuS4GG8EaRvWFgLQquSTq/LqmzGUefvWDM
+	 JF4+OOGcirhW8Ekfe9cOFhUSOhlvmmlYA9SqJB/jjgIHae6l7/x4oIqg/oNFzHsCWJ
+	 eoDRkrdWB76z1uno8/rozEwqtDE1pH/Kldqdup2r4D0vxlk8NI8wFTwfxUowhYeSbq
+	 fstC3/DkN8Pcg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uaY0J-00F6gZ-Cg;
+	Sat, 12 Jul 2025 12:02:51 +0100
+Date: Sat, 12 Jul 2025 12:02:51 +0100
+Message-ID: <864ivhacys.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Aisheng Dong <aisheng.dong@nxp.com>,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] irqchip/imx-irqsteer: Fix irq handling if an error occurs in imx_irqsteer_irq_handler()
+In-Reply-To: <a0e9473f-81a4-4933-aa63-e66fbeaf0824@wanadoo.fr>
+References: <ad6514c771fef0ac2d1b3c050c6db5d5e0fd034d.1731842478.git.christophe.jaillet@wanadoo.fr>
+	<a0e9473f-81a4-4933-aa63-e66fbeaf0824@wanadoo.fr>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 09/12] net: enetc: Add
- enetc_update_ptp_sync_msg() to process PTP sync packet
-Content-Language: en-US
-To: Wei Fang <wei.fang@nxp.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, richardcochran@gmail.com, claudiu.manoil@nxp.com,
- vladimir.oltean@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: fushi.peng@nxp.com, devicetree@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev
-References: <20250711065748.250159-1-wei.fang@nxp.com>
- <20250711065748.250159-10-wei.fang@nxp.com>
-From: Vadim Fedorenko <vfedorenko@novek.ru>
-In-Reply-To: <20250711065748.250159-10-wei.fang@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: **
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: christophe.jaillet@wanadoo.fr, tglx@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, l.stach@pengutronix.de, aisheng.dong@nxp.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 11.07.2025 07:57, Wei Fang wrote:
-> Currently, the PTP Sync packets are processed in enetc_map_tx_buffs(),
-> which makes the function too long and not concise enough. Secondly,
-> for the upcoming ENETC v4 one-step support, some appropriate changes
-> are also needed. Therefore, enetc_update_ptp_sync_msg() is extracted
-> from enetc_map_tx_buffs() as a helper function to process the PTP Sync
-> packets.
-> 
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> ---
->   drivers/net/ethernet/freescale/enetc/enetc.c  | 129 ++++++++++--------
->   .../net/ethernet/freescale/enetc/enetc_hw.h   |   1 +
->   2 files changed, 71 insertions(+), 59 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
-> index c1373163a096..ef002ed2fdb9 100644
-> --- a/drivers/net/ethernet/freescale/enetc/enetc.c
-> +++ b/drivers/net/ethernet/freescale/enetc/enetc.c
-> @@ -221,12 +221,79 @@ static void enetc_unwind_tx_frame(struct enetc_bdr *tx_ring, int count, int i)
->   	}
->   }
->   
-> +static u32 enetc_update_ptp_sync_msg(struct enetc_ndev_priv *priv,
-> +				     struct sk_buff *skb)
-> +{
-> +	struct enetc_skb_cb *enetc_cb = ENETC_SKB_CB(skb);
-> +	u16 tstamp_off = enetc_cb->origin_tstamp_off;
-> +	u16 corr_off = enetc_cb->correction_off;
-> +	struct enetc_si *si = priv->si;
-> +	struct enetc_hw *hw = &si->hw;
-> +	__be32 new_sec_l, new_nsec;
-> +	__be16 new_sec_h;
-> +	u32 lo, hi, nsec;
-> +	u8 *data;
-> +	u64 sec;
-> +	u32 val;
-> +
-> +	lo = enetc_rd_hot(hw, ENETC_SICTR0);
-> +	hi = enetc_rd_hot(hw, ENETC_SICTR1);
-> +	sec = (u64)hi << 32 | lo;
-> +	nsec = do_div(sec, 1000000000);
-> +
-> +	/* Update originTimestamp field of Sync packet
-> +	 * - 48 bits seconds field
-> +	 * - 32 bits nanseconds field
-> +	 *
-> +	 * In addition, the UDP checksum needs to be updated
-> +	 * by software after updating originTimestamp field,
-> +	 * otherwise the hardware will calculate the wrong
-> +	 * checksum when updating the correction field and
-> +	 * update it to the packet.
-> +	 */
-> +
-> +	data = skb_mac_header(skb);
-> +	new_sec_h = htons((sec >> 32) & 0xffff);
-> +	new_sec_l = htonl(sec & 0xffffffff);
-> +	new_nsec = htonl(nsec);
-> +	if (enetc_cb->udp) {
-> +		struct udphdr *uh = udp_hdr(skb);
-> +		__be32 old_sec_l, old_nsec;
-> +		__be16 old_sec_h;
-> +
-> +		old_sec_h = *(__be16 *)(data + tstamp_off);
-> +		inet_proto_csum_replace2(&uh->check, skb, old_sec_h,
-> +					 new_sec_h, false);
-> +
-> +		old_sec_l = *(__be32 *)(data + tstamp_off + 2);
-> +		inet_proto_csum_replace4(&uh->check, skb, old_sec_l,
-> +					 new_sec_l, false);
-> +
-> +		old_nsec = *(__be32 *)(data + tstamp_off + 6);
-> +		inet_proto_csum_replace4(&uh->check, skb, old_nsec,
-> +					 new_nsec, false);
-> +	}
-> +
-> +	*(__be16 *)(data + tstamp_off) = new_sec_h;
-> +	*(__be32 *)(data + tstamp_off + 2) = new_sec_l;
-> +	*(__be32 *)(data + tstamp_off + 6) = new_nsec;
-> +
-> +	/* Configure single-step register */
-> +	val = ENETC_PM0_SINGLE_STEP_EN;
-> +	val |= ENETC_SET_SINGLE_STEP_OFFSET(corr_off);
-> +	if (enetc_cb->udp)
-> +		val |= ENETC_PM0_SINGLE_STEP_CH;
-> +
-> +	enetc_port_mac_wr(priv->si, ENETC_PM0_SINGLE_STEP, val);
-> +
-> +	return lo & ENETC_TXBD_TSTAMP;
-> +}
-> +
->   static int enetc_map_tx_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb)
->   {
->   	bool do_vlan, do_onestep_tstamp = false, do_twostep_tstamp = false;
->   	struct enetc_ndev_priv *priv = netdev_priv(tx_ring->ndev);
->   	struct enetc_skb_cb *enetc_cb = ENETC_SKB_CB(skb);
-> -	struct enetc_hw *hw = &priv->si->hw;
->   	struct enetc_tx_swbd *tx_swbd;
->   	int len = skb_headlen(skb);
->   	union enetc_tx_bd temp_bd;
-> @@ -326,67 +393,11 @@ static int enetc_map_tx_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb)
->   		}
->   
->   		if (do_onestep_tstamp) {
-> -			u16 tstamp_off = enetc_cb->origin_tstamp_off;
-> -			u16 corr_off = enetc_cb->correction_off;
-> -			__be32 new_sec_l, new_nsec;
-> -			u32 lo, hi, nsec, val;
-> -			__be16 new_sec_h;
-> -			u8 *data;
-> -			u64 sec;
-> -
-> -			lo = enetc_rd_hot(hw, ENETC_SICTR0);
-> -			hi = enetc_rd_hot(hw, ENETC_SICTR1);
-> -			sec = (u64)hi << 32 | lo;
-> -			nsec = do_div(sec, 1000000000);
-> +			u32 tstamp = enetc_update_ptp_sync_msg(priv, skb);
->   
->   			/* Configure extension BD */
-> -			temp_bd.ext.tstamp = cpu_to_le32(lo & 0x3fffffff);
-> +			temp_bd.ext.tstamp = cpu_to_le32(tstamp);
->   			e_flags |= ENETC_TXBD_E_FLAGS_ONE_STEP_PTP;
-> -
-> -			/* Update originTimestamp field of Sync packet
-> -			 * - 48 bits seconds field
-> -			 * - 32 bits nanseconds field
-> -			 *
-> -			 * In addition, the UDP checksum needs to be updated
-> -			 * by software after updating originTimestamp field,
-> -			 * otherwise the hardware will calculate the wrong
-> -			 * checksum when updating the correction field and
-> -			 * update it to the packet.
-> -			 */
-> -			data = skb_mac_header(skb);
-> -			new_sec_h = htons((sec >> 32) & 0xffff);
-> -			new_sec_l = htonl(sec & 0xffffffff);
-> -			new_nsec = htonl(nsec);
-> -			if (enetc_cb->udp) {
-> -				struct udphdr *uh = udp_hdr(skb);
-> -				__be32 old_sec_l, old_nsec;
-> -				__be16 old_sec_h;
-> -
-> -				old_sec_h = *(__be16 *)(data + tstamp_off);
-> -				inet_proto_csum_replace2(&uh->check, skb, old_sec_h,
-> -							 new_sec_h, false);
-> -
-> -				old_sec_l = *(__be32 *)(data + tstamp_off + 2);
-> -				inet_proto_csum_replace4(&uh->check, skb, old_sec_l,
-> -							 new_sec_l, false);
-> -
-> -				old_nsec = *(__be32 *)(data + tstamp_off + 6);
-> -				inet_proto_csum_replace4(&uh->check, skb, old_nsec,
-> -							 new_nsec, false);
-> -			}
-> -
-> -			*(__be16 *)(data + tstamp_off) = new_sec_h;
-> -+			*(__be32 *)(data + tstamp_off + 2) = new_sec_l;
-> -+			*(__be32 *)(data + tstamp_off + 6) = new_nsec;
+On Sat, 12 Jul 2025 10:58:35 +0100,
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+>=20
+> Le 17/11/2024 =C3=A0 12:21, Christophe JAILLET a =C3=A9crit=C2=A0:
+> > chained_irq_enter(() should be paired with a corresponding
+> > chained_irq_exit().
+> >=20
+> > Here, if (hwirq < 0), a early return occurs and chained_irq_exit() is n=
+ot
+> > called.
+>=20
+> After several month without any feedback, this is a polite ping.
+> Is this patch correct?
 
-And again some artifacts...
+An untested patch is unlikely to make a lot of forward progress, to
+be honest.
 
-> -
-> -			/* Configure single-step register */
-> -			val = ENETC_PM0_SINGLE_STEP_EN;
-> -			val |= ENETC_SET_SINGLE_STEP_OFFSET(corr_off);
-> -			if (enetc_cb->udp)
-> -				val |= ENETC_PM0_SINGLE_STEP_CH;
-> -
-> -			enetc_port_mac_wr(priv->si, ENETC_PM0_SINGLE_STEP,
-> -					  val);
->   		} else if (do_twostep_tstamp) {
->   			skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
->   			e_flags |= ENETC_TXBD_E_FLAGS_TWO_STEP_PTP;
-> diff --git a/drivers/net/ethernet/freescale/enetc/enetc_hw.h b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-> index 73763e8f4879..377c96325814 100644
-> --- a/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-> +++ b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-> @@ -614,6 +614,7 @@ enum enetc_txbd_flags {
->   #define ENETC_TXBD_STATS_WIN	BIT(7)
->   #define ENETC_TXBD_TXSTART_MASK GENMASK(24, 0)
->   #define ENETC_TXBD_FLAGS_OFFSET 24
-> +#define ENETC_TXBD_TSTAMP	GENMASK(29, 0)
->   
->   static inline __le32 enetc_txbd_set_tx_start(u64 tx_start, u8 flags)
->   {
+>=20
+> CJ
+>=20
+>=20
+> >=20
+> > Add a new label and a goto for fix it.
+> >=20
+> > Fixes: 28528fca4908 ("irqchip/imx-irqsteer: Add multi output interrupts=
+ support")
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > ---
+> > Compile tested only.
+> >=20
+> > Review with care, irq handling is sometimes tricky...
+> > ---
+> >   drivers/irqchip/irq-imx-irqsteer.c | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/irqchip/irq-imx-irqsteer.c b/drivers/irqchip/irq-i=
+mx-irqsteer.c
+> > index 75a0e980ff35..59abe5a8beb8 100644
+> > --- a/drivers/irqchip/irq-imx-irqsteer.c
+> > +++ b/drivers/irqchip/irq-imx-irqsteer.c
+> > @@ -135,7 +135,7 @@ static void imx_irqsteer_irq_handler(struct irq_des=
+c *desc)
+> >   	if (hwirq < 0) {
+> >   		pr_warn("%s: unable to get hwirq base for irq %d\n",
+> >   			__func__, irq);
+> > -		return;
+> > +		goto out;
+> >   	}
+> >     	for (i =3D 0; i < 2; i++, hwirq +=3D 32) {
+> > @@ -153,6 +153,7 @@ static void imx_irqsteer_irq_handler(struct irq_des=
+c *desc)
+> >   			generic_handle_domain_irq(data->domain, pos + hwirq);
+> >   	}
+> >   +out:
+> >   	chained_irq_exit(irq_desc_get_chip(desc), desc);
+> >   }
 
+The real question is *how* do you end-up in this situation.
+
+To trigger this case, you need a mux interrupt that is handled by
+imx_irqsteer_irq_handler(), but for which you haven't got a
+translation from DT the first place. Do you see the chicken and egg
+problem?
+
+In summary, this driver is checking for conditions that can't possibly
+happen, and this check should simply be deleted instead of being
+blindly "fixed".
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
 
