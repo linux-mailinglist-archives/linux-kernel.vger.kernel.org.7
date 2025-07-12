@@ -1,143 +1,123 @@
-Return-Path: <linux-kernel+bounces-728604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52DDFB02AAA
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:44:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5643B02AAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D21C1C245C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 11:45:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7C7D7A4AFC
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 11:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA065274B36;
-	Sat, 12 Jul 2025 11:44:42 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878081F428F;
+	Sat, 12 Jul 2025 11:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="teYBuNIF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0272A1A4;
-	Sat, 12 Jul 2025 11:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD840DDC3;
+	Sat, 12 Jul 2025 11:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752320682; cv=none; b=lnFBUx+XfA/RyKYpgbhNovnxBAvSZ8Dd91IhRTRlceCTY4vAg8fBvUdieK0FZpKTW7eLBdknr673XpKKtFgstlHOh425CTDF4+Tomq3gc9HrKaoowo4rNKVK/2D/pBKhOkmeV3GhmpMcnX4/LitmYMXG+3Pa1EeCNzJtFY+PD4U=
+	t=1752320732; cv=none; b=fyxqRB5n2iWFc7irtz8Hjv5TQQApivUUH4ZhMCKWwerJbhtz9PrZ3V4YDnGscREOgSL7TP8gNwcZicgtvihhoHry3UjkT9tRtv0F3tbQaS505rB+UOQlvuxTF0KNzMaW5PZJWXFAR10nPPZWl/dve50EpbNfEsX85uackTdVN2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752320682; c=relaxed/simple;
-	bh=jQiSSWw4zkWpd1yfceGxZU0VVeisw94LzKe1t+rg4/s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Csp+eK/kJLsUGPfy3vsfBwbRvaxIszOMYF81zDORvXyaQ2I6Lep4q0Y8spLO9id9JluJT4X39h27R+WxB8Axw1mNzISs5BX0ToS+49mSzNWvdD8zY2J4dZkpZB7e72rK2moaAyZuRePXg62SZ1KmbdLY9Itnz/DeF9xUp3PfF2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bfRTP0lDxzXf73;
-	Sat, 12 Jul 2025 19:40:09 +0800 (CST)
-Received: from kwepemk500010.china.huawei.com (unknown [7.202.194.95])
-	by mail.maildlp.com (Postfix) with ESMTPS id 40EE8180B2C;
-	Sat, 12 Jul 2025 19:44:36 +0800 (CST)
-Received: from localhost.localdomain (10.28.79.22) by
- kwepemk500010.china.huawei.com (7.202.194.95) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 12 Jul 2025 19:44:35 +0800
-From: Weili Qian <qianweili@huawei.com>
-To: <bhelgaas@google.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<liulongfang@huawei.com>, <qianweili@huawei.com>
-Subject: [PATCH] PCI: Add device-specific reset for Kunpeng virtual functions
-Date: Sat, 12 Jul 2025 19:30:28 +0800
-Message-ID: <20250712113028.15682-1-qianweili@huawei.com>
-X-Mailer: git-send-email 2.22.0
+	s=arc-20240116; t=1752320732; c=relaxed/simple;
+	bh=ddivwdzozJ2VGB4GHxJ253lZeTs7Y4i4mulioXauf0I=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=m84JwpcvSEg0EesKRIZJMQXWpH2mgddMWWKlA7C6koPZUu76UMTDvcG2EyssExLrDtvZj5XaxOPko31u/9ZivbLvUrpxiqxddrhIT/VwPOIrP9Q4lbvfbGiWe4JGxuzTLPk3msLoXkhxPxnMTANbMu6FlvzFmULwv2R1LmxX3g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=teYBuNIF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B4CBC4CEEF;
+	Sat, 12 Jul 2025 11:45:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752320731;
+	bh=ddivwdzozJ2VGB4GHxJ253lZeTs7Y4i4mulioXauf0I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=teYBuNIFXlrTpBzVBWREfiyv+AnYnmtdyCmT/m38E+5kwh7/goFcereq51OSF9BzH
+	 h3MdWULA1mROgshj0jTdOeKclzvfz8ysvse4cRaccuRnwcoC+zs8ZIus3+vadFpp2N
+	 ZdjxrLCd8JybdHQNdzCe1Zdg/e+9rxPJlILY09XHz8HgtliNpw4/WKat7AOZORcxMv
+	 X6oYBYj5Bq/gbAvoN3kucsafTZpxF2stL63VAmcRjPG3TV3umFCyalARSDGt/P8dlC
+	 Az/7MkjVnqpiylUpiGvlEMBDumGJzR00rjmK7WHI7j5P9SdcTTLBW0wHJIayiuRytt
+	 q2eMf1pW7mQPQ==
+Date: Sat, 12 Jul 2025 20:45:24 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] tracing: Remove "__attribute__()" from the type
+ field of event format
+Message-Id: <20250712204524.13ece418f90ea66d4bd0e598@kernel.org>
+In-Reply-To: <20250711120322.4ddb9b39@batman.local.home>
+References: <175197567999.977073.8989204607899013923.stgit@mhiramat.tok.corp.google.com>
+	<175197568917.977073.2201559708302320631.stgit@mhiramat.tok.corp.google.com>
+	<20250709131107.397a3278@batman.local.home>
+	<20250711143703.60a1a9a9f31a45f2000eec9d@kernel.org>
+	<20250711120322.4ddb9b39@batman.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemk500010.china.huawei.com (7.202.194.95)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Prior to commit d591f6804e7e ("PCI: Wait for device readiness with
-Configuration RRS"), pci_dev_wait() polls PCI_COMMAND register until
-its value is not ~0(i.e., PCI_ERROR_RESPONSE). After d591f6804e7e,
-if the Configuration Request Retry Status Software Visibility (RRS SV)
-is enabled, pci_dev_wait() polls PCI_VENDOR_ID register until its value
-is not the reserved Vendor ID value 0x0001.
+On Fri, 11 Jul 2025 12:03:22 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-On Kunpeng accelerator devices, RRS SV is enabled. However,
-when the virtual function's FLR (Function Level Reset) is not
-ready, the pci_dev_wait() reads the PCI_VENDOR_ID register and gets
-the value 0xffff instead of 0x0001. It then incorrectly assumes this
-is a valid Vendor ID and concludes the device is ready, returning
-successfully. In reality, the function may not be fully ready, leading
-to the device becoming unavailable.
+> On Fri, 11 Jul 2025 14:37:03 +0900
+> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> 
+> > I investigated this but it is not possible to use update_event_fields()
+> > because that function is only used if the 
+> > CONFIG_TRACE_EVAL_MAP_FILE=y.
+> 
+> That had better *not* be true, otherwise all the TRACE_DEFINE_ENUM() in
+> include/trace/events/*.h would be useless and those events would not
+> parse. Note, I usually run without that config enabled, so it would
+> most definitely break on me if this was true.
+> 
+> In the code we have:
+> 
+> ----------------------8<----------------------
+> #else /* CONFIG_TRACE_EVAL_MAP_FILE */
+> static inline void trace_create_eval_file(struct dentry *d_tracer) { }
+> static inline void trace_insert_eval_map_file(struct module *mod,
+> 			      struct trace_eval_map **start, int len) { }
+> #endif /* !CONFIG_TRACE_EVAL_MAP_FILE */
+> 
+> static void trace_insert_eval_map(struct module *mod,
+> 				  struct trace_eval_map **start, int len)
+> {
+> 	struct trace_eval_map **map;
+> 
+> 	if (len <= 0)
+> 		return;
+> 
+> 	map = start;
+> 
+> 	trace_event_eval_update(map, len);
+> 
+> 	trace_insert_eval_map_file(mod, start, len);
+> }
+> ---------------------->8----------------------
+> 
+> Notice the "#endif". The trace_insert_eval_map_file() is a nop, but the
+> trace_event_eval_update() is not. That has the call to
+> update_event_printk() and update_event_fields().
+> 
+> So it can most definitely be used when that config is not defined. That
+> config only creates a file to show you *what* was replaced. It doesn't
+> stop the replacing.
 
-A 100ms wait period is already implemented before calling pci_dev_wait().
-In most cases, FLR completes within 100ms. However, to eliminate the
-risk of function being unavailable due to an incomplete FLR, a
-device-specific reset is added. After pcie_flr(), the function continues
-to poll PCI_COMMAND register until its value is no longer ~0.
+Hmm, Ok. But when I sanitized the field->type in
+update_event_fields(), it did not work. So something
+we missed.
 
-Fixes: d591f6804e7e ("PCI: Wait for device readiness with Configuration RRS")
-Signed-off-by: Weili Qian <qianweili@huawei.com>
----
- drivers/pci/quirks.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+Thanksm
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index d7f4ee634263..1df1756257d2 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -4205,6 +4205,36 @@ static int reset_hinic_vf_dev(struct pci_dev *pdev, bool probe)
- 	return 0;
- }
- 
-+#define KUNPENG_OPERATION_WAIT_CNT	3000
-+#define KUNPENG_RESET_WAIT_TIME		20
-+
-+/* Device-specific reset method for Kunpeng accelerator virtual functions */
-+static int reset_kunpeng_acc_vf_dev(struct pci_dev *pdev, bool probe)
-+{
-+	u32 wait_cnt = 0;
-+	u32 cmd;
-+
-+	if (probe)
-+		return 0;
-+
-+	pcie_flr(pdev);
-+
-+	do {
-+		pci_read_config_dword(pdev, PCI_COMMAND, &cmd);
-+		if (!PCI_POSSIBLE_ERROR(cmd))
-+			break;
-+
-+		if (++wait_cnt > KUNPENG_OPERATION_WAIT_CNT) {
-+			pci_warn(pdev, "wait for FLR ready timeout; giving up\n");
-+			return -ENOTTY;
-+		}
-+
-+		msleep(KUNPENG_RESET_WAIT_TIME);
-+	} while (true);
-+
-+	return 0;
-+}
-+
- static const struct pci_dev_reset_methods pci_dev_reset_methods[] = {
- 	{ PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82599_SFP_VF,
- 		 reset_intel_82599_sfp_virtfn },
-@@ -4220,6 +4250,12 @@ static const struct pci_dev_reset_methods pci_dev_reset_methods[] = {
- 		reset_chelsio_generic_dev },
- 	{ PCI_VENDOR_ID_HUAWEI, PCI_DEVICE_ID_HINIC_VF,
- 		reset_hinic_vf_dev },
-+	{ PCI_VENDOR_ID_HUAWEI, PCI_DEVICE_ID_HUAWEI_ZIP_VF,
-+		reset_kunpeng_acc_vf_dev },
-+	{ PCI_VENDOR_ID_HUAWEI, PCI_DEVICE_ID_HUAWEI_SEC_VF,
-+		reset_kunpeng_acc_vf_dev },
-+	{ PCI_VENDOR_ID_HUAWEI, PCI_DEVICE_ID_HUAWEI_HPRE_VF,
-+		reset_kunpeng_acc_vf_dev },
- 	{ 0 }
- };
- 
 -- 
-2.33.0
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
