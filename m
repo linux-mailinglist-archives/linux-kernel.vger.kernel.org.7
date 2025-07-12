@@ -1,107 +1,174 @@
-Return-Path: <linux-kernel+bounces-728700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D57EB02BFE
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:52:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60B10B02C05
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F798A60336
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:51:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 562A71C27345
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1F0288C02;
-	Sat, 12 Jul 2025 16:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C0F289357;
+	Sat, 12 Jul 2025 16:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="GI0JVNek"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.53])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkUJztUb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E590283121;
-	Sat, 12 Jul 2025 16:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB5219DF60;
+	Sat, 12 Jul 2025 16:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752339128; cv=none; b=oWsHbmFjX0ecYyDSifxRNTj1cGNwzSf//Wmy7QnRnXz8S6X5a8XzjIpFCnyEiHQfetRxCCiNnn8IA9uwgbZdH28Peu4zvRKs2zLZDWeoocHj8hu3LYwfxyEz8bY/sxr9nGdoZGEAqcqj7VKHmlFgxBiqJDGrdBBLCRvc95LgSu0=
+	t=1752339224; cv=none; b=ptitdO6EqugP44rmx1OlVHOpvT+jpg/lLwf6GQiBPAe2MZdCRFQ+V35Mmp1vfMB3bZD/EEzN7NQFbRTpBKSwAGhBhEKSHDBR8g9vzsfSdAgj7596R13xUktkQ8I8bccqqW4cNcyAzkc+PZ5GKj8mm3TKo5r5m4uJWb/0ASDtaUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752339128; c=relaxed/simple;
-	bh=Q0O7HWg8AE63MEU1vWFgt8bEuGjTs9rXdujwwW+pLno=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=tfQt3XV+bvy1ftOGtcYBIWx6e/TO3R9pplBb/hXVWcc8bO7JYm9CiSUZl2Uc2jV0Un/eNkq1FVeUE1wHLFfdpfhzqvG0c3bO+nxJAFnuwApExAQle5QRR+gC1YdhrXugoSEhQqICaTyCJwUoTY98FiU9oMl/rzTzyCWtqDheTfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=GI0JVNek; arc=none smtp.client-ip=43.163.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1752339115;
-	bh=aSzg8YlR1AUMQ2In+T6QsIXueXNuaVIOpJQUm73O8/Q=;
-	h=From:To:Cc:Subject:Date;
-	b=GI0JVNekrVGbDVutx6X4aaknvEt1JPolXbSE0S9TTBczB/v+9dJNyiFqYKaByhoib
-	 4zEReczfXoqb/wMtoTu7sewOKhwvp+yz90bsbUAU3OVcaWz4eSYH/qFVy9yM9aBqI0
-	 6LQ4lCY1pZ4YP3i3oKVeZD2oo74Tlg9G5PD7qU6s=
-Received: from KernelDevBox.byted.org ([115.190.40.15])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id CF51420E; Sun, 13 Jul 2025 00:51:53 +0800
-X-QQ-mid: xmsmtpt1752339113t8vmo3pw7
-Message-ID: <tencent_891450514525826E2E6AD3B6ECC0B83C7209@qq.com>
-X-QQ-XMAILINFO: NVe3Dal9ycbTsSDqaYWgwOUbfXkskS8uGgYICxCMQR6sFNwa/kQ6ONLQybiFVJ
-	 eNeSTc1G3AMFDek2KcSZFk/qi3FJnA6FZ2qP81JJR9GBmubVkmJ8bqZu68l0TYK6BECeDsj5xCtD
-	 pREVWWmfKSMPvhVnCSlHXMbvAs5fMKH0H3p2m2Bak2X0t6QeCJbSEQ1VVoqeiS2bhZvkz/29gCMT
-	 mcv1z3XJY4fEwfhhCVWTtP3j7nI6WpK4MBQXAV4enbeG2Sypm3Qy1C6JRePKbHIRkkQ8W1HLwyWH
-	 toctIes91/AJdDGfOH8HnwkjISVa/ipKBk2+0HzkiOWJtRJCrhynEzmOYstQsFLHxcnKVrEzxMfh
-	 c/YzqQYxBs+DdJske9vBYFuspKfw8qJHYEFHZfGs5KqmrhX5WSS2ZKn+hFPqSz3cYI/j5owPUFkl
-	 RnF2g2WJN31oaVr+Gw7rm4joIP2i5XtYbQ8FuCa4AyjgV+gZFLGTcZkF+stuIixcMHwUpEULRRrF
-	 kiHKOq9Yv4Bh/OHXfRZDBkt3szGvxHS0ssKK9WX1kUyLSpUB6iFG6ITm/1YVNIpogaKDj7Wgn1m2
-	 Tx42UeEsYMdACToj6ikTryXzZlfDt76LQ+opKDD8FLqHbXSrMCvKP++HAVyrdVNn/SEEDkREV7dK
-	 pyHUs+ghkXjclAXhCqvNbtZgZTBgUPnAsrBujP87JHtX8IC6SIfJ/ZxlKsc4LNZoNNZeddy4dmMm
-	 UZNo90NRa31TCRR4SFKWvOkWWGy7B0qENv8KykQojv0VsrEOcZ7QsTmITVHOoPcc82Lb8AUikFNc
-	 WfcsfdFKzBZl0n8ZcLt4F6vNZwGw0Wc88kZtbXu+QFVoJyIMqQil7MwYahuIMVh4IzxBPkBd2fHG
-	 bwdCqKheDm4Dw0cCGARzhDXbRNmoTUrYOynbqATR2Nias79s1/B48WRmCxPRgz82V6+80hOKm11f
-	 4kl7scxj9OpjcWtfBpkFym8b4tSrblUu2P1HNnEs6Z6DfD+0C+ny2zorkQoN/Uyb9P8TuryNP+J6
-	 RLax+CKocvp1CbNGHg3rTvUDJemlicMOVCe6NAqw==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Zhang Shurong <zhang_shurong@foxmail.com>
-To: vkoul@kernel.org
-Cc: yanzhen@vivo.com,
-	u.kleine-koenig@baylibre.com,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhang Shurong <zhang_shurong@foxmail.com>
-Subject: [PATCH] dmaengine: usb-dmac: Fix PM usage counter imbalance
-Date: Sun, 13 Jul 2025 00:51:52 +0800
-X-OQ-MSGID: <20250712165152.1883037-1-zhang_shurong@foxmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1752339224; c=relaxed/simple;
+	bh=tW1N0tkK1B6gjOAFUX2iqzAUwiIyvzfA0KIAbOuUz7k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IY7DiI5CLGayoMn5JjetOGM6E2fTJHUzit6g1Qtc0xvD0jY28ny3Gmiark9w7OxXFifpR1H+78z+UnAGGVv4wVo10ve6X2tT+G57rWaiHPJ5ls+5902UOqPh/9DqgMZubLTY3zItXZYZpVc/GgbUaj6RVT7R8fnTCTj7wOcP0lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PkUJztUb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FB3AC4CEEF;
+	Sat, 12 Jul 2025 16:53:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752339223;
+	bh=tW1N0tkK1B6gjOAFUX2iqzAUwiIyvzfA0KIAbOuUz7k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PkUJztUb2b/iaBuKzmxVtkpmImoyRyvLufwYqlIPkTG2oDvfT0JBskTgl/IztJMPt
+	 2PZJE93XUIxpKPTam67rvmpwj5AFhx3KZxR4Q6Gi2mm0ijskK69nutoJZqXmd/Ce1k
+	 STDSlU7ZVTnIPNQfuoSkyNgvPiL594BuOeYIC/Yty7wGKEhLwxqnECJIp8nLJjiniF
+	 TGaNQAAg9IMgIWrgT+CESbnIMAmiuSNMUSUX1r5LmDxQMYFfCvy74i0U4TkWV5TNNJ
+	 mFEfIiXb5DlV3qyYVWywPDrWB0kTI5JxLjrFlu5eT9jHQJZVbCy/nEAjGLFwQDXecV
+	 2n83HJFDYaoCA==
+Message-ID: <e435a765-fb91-408f-81dd-01a73fc43b6b@kernel.org>
+Date: Sat, 12 Jul 2025 18:53:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv3 wireless-next 7/7] dt-bindings: net: wireless: rt2800:
+ add
+To: Stanislaw Gruszka <stf_xl@wp.pl>
+Cc: Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org,
+ Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ "open list:MIPS" <linux-mips@vger.kernel.org>,
+ "moderated list:ARM/Mediatek SoC support"
+ <linux-arm-kernel@lists.infradead.org>,
+ "moderated list:ARM/Mediatek SoC support"
+ <linux-mediatek@lists.infradead.org>
+References: <20250710200820.262295-1-rosenp@gmail.com>
+ <20250710200820.262295-8-rosenp@gmail.com>
+ <d8b0abb2-1a12-42bf-aafd-4cd1e21babd6@kernel.org>
+ <CAKxU2N-c2tHBYWBM+FJGqdSaqzw9u0O8e0G7AVqk6b0QdRnPTw@mail.gmail.com>
+ <20250711-invisible-dainty-jackrabbit-acbf8f@krzk-bin>
+ <20250712104006.GA13512@wp.pl>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250712104006.GA13512@wp.pl>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-pm_runtime_get_sync will increment pm usage counter
-even it failed. Forgetting to putting operation will
-result in reference leak here. We fix it by replacing
-it with pm_runtime_resume_and_get to keep usage counter
-balanced.
+On 12/07/2025 12:40, Stanislaw Gruszka wrote:
+> Hi Krzysztof,
+> 
+> On Fri, Jul 11, 2025 at 09:48:49AM +0200, Krzysztof Kozlowski wrote:
+>> On Thu, Jul 10, 2025 at 03:40:30PM -0700, Rosen Penev wrote:
+>>> On Thu, Jul 10, 2025 at 2:40 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>>
+>>>> On 10/07/2025 22:08, Rosen Penev wrote:
+>>>>> Add device-tree bindings for the RT2800 SOC wifi device found in older
+>>>>> Ralink/Mediatek devices.
+>>>>>
+>>>>> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+>>>>> ---
+>>>>>  .../bindings/net/wireless/ralink,rt2800.yaml  | 47 +++++++++++++++++++
+>>>>>  1 file changed, 47 insertions(+)
+>>>>>  create mode 100644 Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml b/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
+>>>>> new file mode 100644
+>>>>> index 000000000000..8c13b25bd8b4
+>>>>> --- /dev/null
+>>>>> +++ b/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
+>>>>
+>>>> Filename should match compatible. You were already changing something
+>>>> here...
+>>> hrm? that makes no sense. Various drivers have multiple compatible lines.
+>>
+>> Luckily we do not speak about drivers here. Anyway, follow standard
+>> review practices, you don't get special rules.
+> 
+> Could you please elaborate what you mean ?
 
-Fixes: 0c1c8ff32fa2 ("dmaengine: usb-dmac: Add Renesas USB DMA Controller (USB-DMAC) driver")
-Signed-off-by: Zhang Shurong <zhang_shurong@foxmail.com>
----
- drivers/dma/sh/usb-dmac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Rosen replied in abrasive way, so I am not going to dig this.
 
-diff --git a/drivers/dma/sh/usb-dmac.c b/drivers/dma/sh/usb-dmac.c
-index 7e2b6c97fa2f..6ced61c9feed 100644
---- a/drivers/dma/sh/usb-dmac.c
-+++ b/drivers/dma/sh/usb-dmac.c
-@@ -393,7 +393,7 @@ static int usb_dmac_alloc_chan_resources(struct dma_chan *chan)
- 		uchan->descs_allocated++;
- 	}
- 
--	return pm_runtime_get_sync(chan->device->dev);
-+	return pm_runtime_resume_and_get(chan->device->dev);
- }
- 
- static void usb_dmac_free_chan_resources(struct dma_chan *chan)
--- 
-2.39.5
+> 
+> I greped through Documentation/devicetree/bindings/*/*.yaml and plenty
 
+I assume you refer to last 2 years bindings, not something older, right?
+It is really poor argument to find old files and use them as example
+"they did like that".
+
+> of "compatible:" items do not match the filename. So hard to tell
+
+I did not ask for compatible to match filename.
+
+> what rule you are referencing, as it seems it's not really applied.
+Check reviews on the lists. It is pretty standard review. Everyone gets
+it for this case here - single device, single compatible.
+
+Best regards,
+Krzysztof
 
