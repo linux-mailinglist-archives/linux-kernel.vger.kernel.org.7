@@ -1,155 +1,216 @@
-Return-Path: <linux-kernel+bounces-728569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F421B02A1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:29:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9284B02A1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07C871BC37F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:30:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62CD4A45FC4
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9217326B956;
-	Sat, 12 Jul 2025 08:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OIYpowoK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EF626B94E;
+	Sat, 12 Jul 2025 08:32:33 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E753226B778;
-	Sat, 12 Jul 2025 08:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC3B15D5B6
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 08:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752308989; cv=none; b=R18ZQzNH4Iv/BaD+2OLFjQ9WyLxHzP6SthsW7Jy3FMx6WJ4dwweN/+ShZvGC5eQ8EAARu5t2TPCjlbb7afQ40LofQKQZSWHb0QNjWzBg9JT8lQIcdmq7HIbcfKdg8fJEO4BMcXIwpwDjKGEtkTyu0Zxrwc9d4jz1rzzBMXj5QU4=
+	t=1752309152; cv=none; b=Xe/OyqMsFVR11kE3wFQi7sfEcpEvJbI1E8G39iTGlmp+jW6upAmYUuIpviPyllYYU2TryyLWpAv311QuPy/S+AlRnT0vZnlgO3LDsLDG4oailJVyMgewIzWYXtxsKISWdIbQi8Lsd9mDsFIYuhoFDj5xkmm2bSYUnIRchMgaIrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752308989; c=relaxed/simple;
-	bh=p0Zjo5EZWS22IGrMdAf7IdQcfsbZb3ViCzqNIS8/cF4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RPMU22+X1HOpS9CSVkkgA2qooukHvzSgIq00WMyftbFoLXOdfiVU8+CFhL2F/WvPRLBvpm25RKFXqxk+7YMif44E4XViRD9E/HcAa3w5coYn0n7XvkBP6RHI2E2uiEPGBmd4L5n83AGjmpOxbpB+uYZmvgNWyQ1vx0Vv747nRyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OIYpowoK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45E7AC4CEEF;
-	Sat, 12 Jul 2025 08:29:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752308988;
-	bh=p0Zjo5EZWS22IGrMdAf7IdQcfsbZb3ViCzqNIS8/cF4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OIYpowoKpAjlP4sPVyrS9D1zcn64G33nweiDygcMg7flXF1Ew5PsxRvKiqM+jaCm7
-	 1w+h2v/nn8sl/yzTTjYbqt5H+a27UY5gkjAivyPRK8BTEiU8WfxD0YRn9OBkwtN2Ja
-	 x3rLSevjd/EOhEgC0P/T9BfMgg5Rd3aQde0LtGZGDSvr4NlJA6uANWNvn9smcLCre4
-	 HItTKZDg9WoLl8+8YItF2gI/WMdSDVj7k+CQvSP+xkn2uI41JFodjfknfjQL0Hd6Mr
-	 j7+uZK9D+usGryv/1ehVXWVbDcub1bDjXrRkSyXSrb06gAXx6uxw7bkUltMBNoqF7o
-	 VISuv32PSfJbQ==
-Message-ID: <93f7f1b7-8c04-4d0e-9e41-6127651bdca4@kernel.org>
-Date: Sat, 12 Jul 2025 10:29:42 +0200
+	s=arc-20240116; t=1752309152; c=relaxed/simple;
+	bh=1BMrpmFdHjxYvBZWRHiWBAs19iXWAZqA4RwsPBGRGbQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ilGHmdnspIJwzwVQtjTIRpUo9vagP+v8f9H+aezJEGI5be5iSOcs91rWPMPZK190zJ9Icq7PBbrj08ZFXYokxR0nu2AvBsiG6b/aCCLnbVuscH4LCJBnkOZOM2zYMJfzh0Ti5R5LIniuSZ1FZdH+TV9Fg2TJA5mnUV6Wa33J6tU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-86d126265baso265936339f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 01:32:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752309150; x=1752913950;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PK7o6tuhLHNmuXB47Vn/hafZzoY6Fbu0p9VJnGIhps8=;
+        b=Ht75aFH91eypHbCdcZ5Q21iND004F2PuYrda6POzxug/shVB1WfpBPFWAGIEoKv4Zo
+         DLofPdb3q4wpuRjm3FJ5bPT7d1fYmZWQec+dDjbwBsZ/eo8NTsiV0hCm3JpOj43laSeg
+         VWjYMCGxKJKJw+X0qszxKIcEsUMx5eelyqAtmgxj2c5nGdvMgpc712t4xWF1FxiRP8zq
+         yu4bzzOBWiaVIDIK2CVuFi1HIhwv2FXFvh/M72t6bwUs+1+AH8ASoQoCcp6UXkVS9yme
+         m5fdPpaJ5FujOAxqrAxR7kiHchPpvB7vnJJV6BDloAXwNh+VXD9MWzDbG89LJrNRvAT5
+         W5pw==
+X-Forwarded-Encrypted: i=1; AJvYcCW3DJVV65afiyejY2kPiTWKNnyKSr5oxhuVnP1dsMxbvI+Lbm6VhIaXrgA1Dk8DnOYCiFE6Q67OH4bT+Fw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhXhdUwtOdb1ieS9q16jnNjVpHKXRRA92NDWV9Il0gJ/3D3zGv
+	z4wOj6/qPfSLhas2NUrqqRNkelxkalSuB0sACQs8rzIvOEN2bt/BzrVMVOF2AFxU8aJU3s4lnzU
+	/6mGQyRFdpR4zhSAUX6IGsu+QmpOKS8udFr51CQdoEmHa/W2Agvd5idtvIj0=
+X-Google-Smtp-Source: AGHT+IEXUwwoKihv5Fd8i79lfBREs3VbRueyY8mj/8AsS79tesQlhjpw2cG8LGKYrvKXtPvP06ZuH2ZZEYbFqytgsOI4yTLkppR2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mmc: ti,da830-mmc: convert text based
- binding to json schema
-To: Charan Pedumuru <charan.pedumuru@gmail.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250523-davinci-mmc-v1-1-ceebd8352d9c@gmail.com>
- <1c7e9077-c213-40a9-92f4-07e813a3d151@kernel.org>
- <5d746239-83d2-4316-82e9-4e7ae4f3422e@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <5d746239-83d2-4316-82e9-4e7ae4f3422e@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:378e:b0:879:66fe:8d1e with SMTP id
+ ca18e2360f4ac-87977f940fcmr772348839f.8.1752309150227; Sat, 12 Jul 2025
+ 01:32:30 -0700 (PDT)
+Date: Sat, 12 Jul 2025 01:32:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68721d9e.a00a0220.26a83e.0074.GAE@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in __bch2_trans_commit (3)
+From: syzbot <syzbot+b6ef9edaba01d5b4e43f@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 12/07/2025 10:22, Charan Pedumuru wrote:
->>> +
->>> +allOf:
->>> +  - $ref: mmc-controller.yaml
->>> +
->>> +maintainers:
->>> +  - Rob Herring <robh@kernel.org>
->>
->> No, I really doubt Rob cares about this hardware.
-> 
-> I will remove Rob from maintainers and add Ulf under the maintainers.
+Hello,
 
-This should be someone responsible for this hardware, not subsystem
-maintainer.
+syzbot found the following issue on:
 
-> 
->>
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - ti,da830-mmc
->>> +      - ti,dm355-mmc
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  clocks:
->>> +    maxItems: 1
->>> +
->>> +  interrupts:
->>> +    maxItems: 2
->>> +
->>
->> This wasn't in original binding. You need to document this in the commit
->> msg. Also, list the items.
-> 
-> Sure, but what list of items for interrupts?
+HEAD commit:    40f92e79b0aa Merge tag 'block-6.16-20250710' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=169a7bd4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b309c907eaab29da
+dashboard link: https://syzkaller.appspot.com/bug?extid=b6ef9edaba01d5b4e43f
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-List as a verb. You need to list them.
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-40f92e79.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8022f6fa9a48/vmlinux-40f92e79.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/565fa9fa3299/bzImage-40f92e79.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b6ef9edaba01d5b4e43f@syzkaller.appspotmail.com
+
+bcachefs (loop0): btree ptr not marked in member info btree allocated bitmap
+  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq c0bef60d07ceb940 written 16 min_key POS_MIN durability: 1 ptr: 0:35:0 gen 0, fixing
+bcachefs (loop0): bucket 0:35 data type btree ptr gen 0 missing in alloc btree
+  while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq c0bef60d07ceb940 written 16 min_key POS_MIN durability: 1 ptr: 0:35:0 gen 0, fixing
+bcachefs (loop0): btree ptr not marked in member info btree allocated bitmap
+  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq ebb8d5a9e3463bdb written 16 min_key POS_MIN durability: 1 ptr: 0:32:0 gen 0, fixing
+bcachefs (loop0): btree ptr not marked in member info btree allocated bitmap
+  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq e81e1ed936acf3df written 32 min_key POS_MIN durability: 1 ptr: 0:29:0 gen 0, fixing
+bcachefs (loop0): bucket 0:29 data type btree ptr gen 0 missing in alloc btree
+  while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq e81e1ed936acf3df written 32 min_key POS_MIN durability: 1 ptr: 0:29:0 gen 0, fixing
+bcachefs (loop0): bucket 0:1 gen 0 has wrong data_type: got free, should be sb, fixing
+bcachefs (loop0): bucket 0:1 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
+bcachefs (loop0): bucket 0:2 gen 0 has wrong data_type: got free, should be sb, fixing
+bcachefs (loop0): bucket 0:2 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
+bcachefs (loop0): bucket 0:3 gen 0 has wrong data_type: got free, should be sb, fixing
+bcachefs (loop0): bucket 0:3 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
+bcachefs (loop0): bucket 0:4 gen 0 has wrong data_type: got free, should be sb, fixing
+bcachefs (loop0): bucket 0:4 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
+bcachefs (loop0): bucket 0:5 gen 0 has wrong data_type: got free, should be sb, fixing
+bcachefs (loop0): bucket 0:5 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
+bcachefs (loop0): bucket 0:6 gen 0 has wrong data_type: got free, should be sb, fixing
+bcachefs (loop0): bucket 0:6 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
+bcachefs (loop0): bucket 0:7 gen 0 has wrong data_type: got free, should be sb, fixing
+bcachefs (loop0): bucket 0:7 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
+bcachefs (loop0): bucket 0:8 gen 0 has wrong data_type: got free, should be sb, fixing
+bcachefs (loop0): bucket 0:8 gen 0 data type sb has wrong dirty_sectors: got 0, should be 8, fixing
+bcachefs (loop0): bucket 0:9 gen 0 has wrong data_type: got free, should be journal, fixing
+bcachefs (loop0): bucket 0:9 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
+bcachefs (loop0): bucket 0:10 gen 0 has wrong data_type: got free, should be journal, fixing
+bcachefs (loop0): bucket 0:10 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
+bcachefs (loop0): bucket 0:11 gen 0 has wrong data_type: got free, should be journal, fixing
+  Ratelimiting new instances of previous error
+bcachefs (loop0): bucket 0:11 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
+  Ratelimiting new instances of previous error
+ done
+bcachefs (loop0): going read-write
+bcachefs (loop0): journal_replay... done
+bcachefs (loop0): check_extents_to_backpointers...
+bcachefs (loop0): scanning for missing backpointers in 4/128 buckets
+ done
+bcachefs (loop0): check_inodes... done
+bcachefs (loop0): resume_logged_ops... done
+bcachefs (loop0): delete_dead_inodes... done
+bcachefs (loop0): done starting filesystem
+=======================================================
+WARNING: The mand mount option has been deprecated and
+         and is ignored by this kernel. Remove the mand
+         option from the mount to silence this warning.
+=======================================================
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/btree_trans_commit.c:348!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5344 Comm: syz.0.0 Not tainted 6.16.0-rc5-syzkaller-00193-g40f92e79b0aa #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:btree_insert_entry_checks fs/bcachefs/btree_trans_commit.c:343 [inline]
+RIP: 0010:bch2_trans_commit_write_locked fs/bcachefs/btree_trans_commit.c:725 [inline]
+RIP: 0010:do_bch2_trans_commit fs/bcachefs/btree_trans_commit.c:854 [inline]
+RIP: 0010:__bch2_trans_commit+0x86e5/0x8870 fs/bcachefs/btree_trans_commit.c:1085
+Code: 97 fd eb 0c e8 2c 78 97 fd eb 05 e8 25 78 97 fd 49 bd 00 00 00 00 00 fc ff df 4c 8b 64 24 48 e9 e1 af ff ff e8 0c 78 97 fd 90 <0f> 0b e8 04 78 97 fd 90 0f 0b e8 fc 77 97 fd 90 0f 0b e8 f4 77 97
+RSP: 0018:ffffc9000d357780 EFLAGS: 00010287
+RAX: ffffffff8428be64 RBX: ffffffff84288035 RCX: 0000000000100000
+RDX: ffffc9000df42000 RSI: 0000000000004ab7 RDI: 0000000000004ab8
+RBP: ffffc9000d357a70 R08: 0000000000000000 R09: ffffffff84288035
+R10: dffffc0000000000 R11: ffffed100a6a9309 R12: ffff8880525b4020
+R13: dffffc0000000000 R14: ffff8880525b64d8 R15: 0000000000000001
+FS:  00007fe567cac6c0(0000) GS:ffff88808d21b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f10bffd2000 CR3: 000000003f923000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ bch2_trans_commit fs/bcachefs/btree_update.h:241 [inline]
+ __bch2_unlink+0x2b9/0x530 fs/bcachefs/fs.c:827
+ bch2_unlink+0xb1/0xf0 fs/bcachefs/fs.c:864
+ vfs_unlink+0x391/0x650 fs/namei.c:4595
+ do_unlinkat+0x350/0x560 fs/namei.c:4659
+ __do_sys_unlink fs/namei.c:4705 [inline]
+ __se_sys_unlink fs/namei.c:4703 [inline]
+ __x64_sys_unlink+0x47/0x50 fs/namei.c:4703
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe566d8e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fe567cac038 EFLAGS: 00000246 ORIG_RAX: 0000000000000057
+RAX: ffffffffffffffda RBX: 00007fe566fb5fa0 RCX: 00007fe566d8e929
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000200000000180
+RBP: 00007fe566e10b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fe566fb5fa0 R15: 00007fff2f8fbd98
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:btree_insert_entry_checks fs/bcachefs/btree_trans_commit.c:343 [inline]
+RIP: 0010:bch2_trans_commit_write_locked fs/bcachefs/btree_trans_commit.c:725 [inline]
+RIP: 0010:do_bch2_trans_commit fs/bcachefs/btree_trans_commit.c:854 [inline]
+RIP: 0010:__bch2_trans_commit+0x86e5/0x8870 fs/bcachefs/btree_trans_commit.c:1085
+Code: 97 fd eb 0c e8 2c 78 97 fd eb 05 e8 25 78 97 fd 49 bd 00 00 00 00 00 fc ff df 4c 8b 64 24 48 e9 e1 af ff ff e8 0c 78 97 fd 90 <0f> 0b e8 04 78 97 fd 90 0f 0b e8 fc 77 97 fd 90 0f 0b e8 f4 77 97
+RSP: 0018:ffffc9000d357780 EFLAGS: 00010287
+RAX: ffffffff8428be64 RBX: ffffffff84288035 RCX: 0000000000100000
+RDX: ffffc9000df42000 RSI: 0000000000004ab7 RDI: 0000000000004ab8
+RBP: ffffc9000d357a70 R08: 0000000000000000 R09: ffffffff84288035
+R10: dffffc0000000000 R11: ffffed100a6a9309 R12: ffff8880525b4020
+R13: dffffc0000000000 R14: ffff8880525b64d8 R15: 0000000000000001
+FS:  00007fe567cac6c0(0000) GS:ffff88808d21b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fe567c8afc8 CR3: 000000003f923000 CR4: 0000000000352ef0
 
 
-Best regards,
-Krzysztof
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
