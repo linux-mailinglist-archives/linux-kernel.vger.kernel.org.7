@@ -1,100 +1,119 @@
-Return-Path: <linux-kernel+bounces-728622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E4C7B02AE7
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:00:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F37B02AEE
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:15:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70A39A63054
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:00:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D83B4A2282
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD19276058;
-	Sat, 12 Jul 2025 13:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0B927602D;
+	Sat, 12 Jul 2025 13:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qmcsRTU7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NfwBEMkR"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AEF27602E;
-	Sat, 12 Jul 2025 13:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0EC4273D7B;
+	Sat, 12 Jul 2025 13:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752325221; cv=none; b=okWAOVqWAd5qXJKyLsLzs+YRpxvQenxgAylor8WHpuRP9dVVPx9ad4EiTZEnyyvFMKZhHUO23SLcAu/p09Z4JjfjiMyTLt8T8VFnFtkM3zTgO+UGxQCVuVCBrLOdg51C7F53MiD1J3MhNAl49T1N1jciGrtGaNsBjFqJVfo7Gew=
+	t=1752326095; cv=none; b=jCDxAm7pwNFHZEVbW86eQ4OGu6QkD0kbr67lO1q6CTCy3YM7HuFobQtoA1CuNbgssHiiyQ0Winy+Gz8HpebNtoHx4Oj0A0B+zbPfyVKaAGgpf2aWScYvzV8RQbVdUs9pIZ7DNAjPQmVw69dk4JQFYj28zs5tzaXXLu5k/NFNfz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752325221; c=relaxed/simple;
-	bh=Cp5tjXCNMGFNEsHlbZX5We8HYRee7+e3mDabMoUvuLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aI3EmSaKlTRPSKauhinp9K/CumFH1i6DVCHB1+D2TXYF2lAKscwmmfPaR3kvDykjqQCBf1dzYThWF+w2Ky5KF/2NQdDI+WWaN4XPE+ITd7lUVdVy3nQklqUv5kIInt5HHtaw6g16TWpa3/Sv3CsyJxfwIPiv6a++mf9sXYPVw0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qmcsRTU7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADFF9C4CEEF;
-	Sat, 12 Jul 2025 13:00:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752325221;
-	bh=Cp5tjXCNMGFNEsHlbZX5We8HYRee7+e3mDabMoUvuLo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qmcsRTU78T3ZL52l+L3mNETLu3jiAyzq79m01tfXCHXJegTwmpGcinCfrt0FOuLSv
-	 6L4OCxlyq8kjUTGxA2j3IeeABAMCmUfkzVB9JWwVMgdYIobqo/8HNjqYKSJ1aCS04t
-	 xqKNCzFP9O7i7OJf+IWQVPhda0iT1gOwAPqWIA6tPoydrdrNEVRTNrUhHPy+33un1j
-	 Wl7yBQ5y025LE7vmioae4jfORCHZAd1ZTdNfdZgyP2PcU9Lk17t/6b+/1V1PsyX+WD
-	 yLyniulvRm8KK3CeNO+qsoe52tDyimFsuVN1HBHV+Jtui1ebt6eCU30u8UcqYq5gi/
-	 N38RFkLQx2dlg==
-Date: Sat, 12 Jul 2025 14:00:16 +0100
-From: Simon Horman <horms@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Jiawen Wu <jiawenwu@trustnetic.com>,
-	Mengyuan Lou <mengyuanlou@net-swift.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: wangxun: fix LIBWX dependencies again
-Message-ID: <20250712130016.GZ721198@horms.kernel.org>
-References: <20250711082339.1372821-1-arnd@kernel.org>
+	s=arc-20240116; t=1752326095; c=relaxed/simple;
+	bh=5dN2ZHRvnjmzaC8O0OTUDOBXpyAGk7HmJNNUYPuo3ZA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=buhpZCf1mKW1J6QY5eGRDpqvoagdYVpzM0RBx+cguLVfEplsxqsp/sfAxI1dvK1B3sqrCiE9AZX9GRGDrquIq2Vq5jywgn8avRse7hRbQcxmwV8UC/hDjHf5QTn4rsTGj2a0Nh/pjhE1MKf4sUO9sNT8PxgDY3VV1kgAz6dVZGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NfwBEMkR; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a528243636so1653089f8f.3;
+        Sat, 12 Jul 2025 06:14:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752326092; x=1752930892; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pGUt1yxOvswvTrka10m3yGzs1DAJHeoa3k02CExK/Ss=;
+        b=NfwBEMkRx/cI6i8Kr6qH26KiQ0WfeHAbFmZOakyYN2JwGP6rRTaOCgFNvjyTs3Bu/a
+         MkzowJVa2STreoJ6TMc6K4xLlxaAUMhEeXswZhSLQAIvuVlTwjTfY1ajCi54J/eKuiOT
+         n0Cd0/iMTk92HfcOaP+KcSyc0P+u1yvqKaQGQY9widSp4qiv4p0qZ1hONPltxRDdR486
+         LTcvLokz/yPAc9Edsp+RrUWcTKMdBWoKiWYtPxB9DkgA8jZLu0r3VAD62lwtzPhxWmlH
+         i1L8jsSjtl1QVVAkHzEECf1VJ7+32tgaBj1K2BYiVOgZzMTu8hr5S1Yd0K06QcBNDMnJ
+         7Zzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752326092; x=1752930892;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pGUt1yxOvswvTrka10m3yGzs1DAJHeoa3k02CExK/Ss=;
+        b=BpRnrSPRZJ2dpTVfEYRz54it1kKcgOFO0Z8FvCy06Htj/ICSnaY/5P0lDznQKFVA/6
+         4bofDW9LQCHID4FumkmUCGxsnc8ib92OT4tZtJqBB3np4ZcUz8bTJ1nxX3xSAmuKeJ9P
+         pvQIp7jVIZv7awm5r7n3PNrb0FYtwuG35RBhXCjmtBp4pFDw9gGZWNqyNE4cvbAStpMu
+         1ZcOyUeWainHp9jaIm/2dNDWGA7LTktd9JZdNXJwzLsm5B+kv1RmYquDhjS8W8ai/pPn
+         SbS+f99q9v0wA9WKk59LvkTH7Yo0lqRRG/m0TxiAbbiCQGNgFdnlNVAEDdqhJDjBNgxP
+         5ASQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFryRyJSlHUMEhjZhuxL6uC7rOfB21SEBgOF+5le7OSqNtzfgcO5Z2uSG95QKhpkfPfENmFSg55uY3flVR@vger.kernel.org, AJvYcCWLhU0rKOts1DRUF77b3+i1TLg6bgJWVXaaR+522TBES2eD50XF5Bb/LMbffNOJPYrjn2zYb1Ls3mlk9Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6ZeCnY8oxfxeJ7eVGEB9xps7V+65aVuQD/SLmJDFadTr4RQXB
+	1hdNJ4/bcDog4VxfxI/B2AuAEHiEVXGNPrIVF8A+pFWJ7GMkjWmSsnQj
+X-Gm-Gg: ASbGnctI/oqG6U7RhQORB7P5AiopUMHwUWpMYk40KnAK+iGBf/eGlek5cHONILeHPWc
+	9ebmAUp6NJysh9z8CsSoFEg7EsUeEECNGz2vQkcD1+wrUgM9DMwILPsFHK2ClRrF8NAdg3f4ykM
+	ecc2HIxtlz8qxAzTIzp+p6x0MBiKd3eLC+MIh+18/h+cTleeuGuGw1hKK4ekeG0jKizq+a/rBaP
+	CgBmuoVibI72MNecWw5eCF1fpXCiw4pxov9Lf5CuOfqOzY1WquCEBbN3oW6rmxJeXWMAkklJH3h
+	7okL2KceVlFaAE09k9AnbZgcBj/q3lSvJVySkai64nV+6eCgCBmOeDnxPVOp7HJBHnUnqloH6yV
+	s0/lZ2KODEKi56zPrpsuxyYRpaNemNmM4+GHXp4DSwlvmCNk=
+X-Google-Smtp-Source: AGHT+IFbc+H8l0qLJKrpFMeU5tqbo7r11l4LglNvrFKAb/BVWebwk1DuSjbYwLjyHDdpjQgidI2xkg==
+X-Received: by 2002:a05:6000:1446:b0:3a5:2465:c0c8 with SMTP id ffacd0b85a97d-3b5f187a4b4mr6435777f8f.7.1752326091897;
+        Sat, 12 Jul 2025 06:14:51 -0700 (PDT)
+Received: from localhost.localdomain ([154.183.63.38])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc229asm7304903f8f.35.2025.07.12.06.14.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Jul 2025 06:14:51 -0700 (PDT)
+From: Khaled Elnaggar <khaledelnaggarlinux@gmail.com>
+To: jdelvare@suse.com,
+	linux@roeck-us.net
+Cc: Khaled Elnaggar <khaledelnaggarlinux@gmail.com>,
+	linux-kernel-mentees@lists.linux.dev,
+	shuah@kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] hwmon: max31827: use sysfs_emit() in temp1_resolution_show()
+Date: Sat, 12 Jul 2025 16:14:46 +0300
+Message-ID: <20250712131447.326995-1-khaledelnaggarlinux@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711082339.1372821-1-arnd@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 11, 2025 at 10:23:34AM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Two more drivers got added that use LIBWX and cause a build warning
-> 
-> WARNING: unmet direct dependencies detected for LIBWX
->   Depends on [m]: NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PTP_1588_CLOCK_OPTIONAL [=m]
->   Selected by [y]:
->   - NGBEVF [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI_MSI [=y]
->   Selected by [m]:
->   - NGBE [=m] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI [=y] && PTP_1588_CLOCK_OPTIONAL [=m]
-> 
-> ld: drivers/net/ethernet/wangxun/libwx/wx_lib.o: in function `wx_clean_tx_irq':
-> wx_lib.c:(.text+0x5a68): undefined reference to `ptp_schedule_worker'
-> ld: drivers/net/ethernet/wangxun/libwx/wx_ethtool.o: in function `wx_nway_reset':
-> wx_ethtool.c:(.text+0x880): undefined reference to `phylink_ethtool_nway_reset'
-> 
-> Add the same dependency on PTP_1588_CLOCK_OPTIONAL to the two driver
-> using this library module, following the pattern from commit
-> 8fa19c2c69fb ("net: wangxun: fix LIBWX dependencies").
-> 
-> Fixes: 377d180bd71c ("net: wangxun: add txgbevf build")
-> Fixes: a0008a3658a3 ("net: wangxun: add ngbevf build")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Replace scnprintf() with sysfs_emit() in temp1_resolution_show(),
+as recommended in Documentation/filesystems/sysfs.rst: show() callbacks
+should use sysfs_emit() or sysfs_emit_at() to format values returned to
+userspace.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
-Tested-by: Simon Horman <horms@kernel.org> # build-tested
+Signed-off-by: Khaled Elnaggar <khaledelnaggarlinux@gmail.com>
+---
+ drivers/hwmon/max31827.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I note that by my reading these patches are for net-next as the
-commits that it "Fixes" are present there but not in net.
+diff --git a/drivers/hwmon/max31827.c b/drivers/hwmon/max31827.c
+index 48e8f8ba4d05..c423cabcb28b 100644
+--- a/drivers/hwmon/max31827.c
++++ b/drivers/hwmon/max31827.c
+@@ -445,7 +445,7 @@ static ssize_t temp1_resolution_show(struct device *dev,
+
+ 	val = FIELD_GET(MAX31827_CONFIGURATION_RESOLUTION_MASK, val);
+
+-	return scnprintf(buf, PAGE_SIZE, "%u\n", max31827_resolutions[val]);
++	return sysfs_emit(buf, "%u\n", max31827_resolutions[val]);
+ }
+
+ static ssize_t temp1_resolution_store(struct device *dev,
+--
+2.47.2
+
 
