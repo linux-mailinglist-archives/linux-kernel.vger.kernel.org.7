@@ -1,222 +1,165 @@
-Return-Path: <linux-kernel+bounces-728526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 135DBB02985
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 07:57:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E995B02987
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 07:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 038FC1BC28C4
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 05:57:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF24D7BBE45
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 05:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8E31FFC46;
-	Sat, 12 Jul 2025 05:57:35 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2B9205E3B;
+	Sat, 12 Jul 2025 05:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="x6bC5+vo"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F131624C0
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 05:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB0F6ADD;
+	Sat, 12 Jul 2025 05:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752299855; cv=none; b=VwbgQjZPqTJC4HonZLaYCYQG2kod4R4QIo3olKri24AUbrmMNTfsa9hwqqhZY+7Vre10I37oT5uvqHJGJSmLTmFSUK011eCf0HwSm7LnXw9v6fRT4J9MTKGzvQlH8bitP9Lmu85Rw+42glGe1FLBTYet/VOyoMfgfQUbuIF183Y=
+	t=1752299948; cv=none; b=rDsmVPpMZ0pZcDKjqOslvvbsn4uKV4G1L6GNB/ZKM4FAxmc61afDExrTdVHrv9f+ZOZQXUVLXwUPvMeHpX2XtKJEOJHW1ub8bFCEEyQ/oJfrK9eUjdJ30H5RiEUreIyW65lhRb9ny2G/UOYaMa3owJENy11YPNNuGUHxF8cBxDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752299855; c=relaxed/simple;
-	bh=2qy9otVmXntNHj2feBYWdoJ846zDJuFxReVcTv4d2Pk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hMMEO5gotd4zijKx49JFsQbpDKyb9q8q9DqyogD62CeJN6fMehBejSuQqxXq6FEFCuKMG5EkdnswjxNLa56UoSzU9LL1lsOnH8L4mdDK9yYZtjY7tVTSg0wnfYLBAgUA/SVn46ApTsUsA8eibdHPwPL7C7KcnmsiZSkqttAXNzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-86cf753423cso248483539f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 22:57:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752299852; x=1752904652;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cPNMrF484Dbfnhhp5tZ0FCQePgb0YtzJfoKVrOiLIJQ=;
-        b=Q3R5WQIHX9Tt806Qjn0iIZV8glr2U2Gid0762e1j1x1Zj5ltmtZO4E6AE7Mv0EW5fx
-         ecuFp2U9Kp8UF6MzrMUi4xvawGrCc5EsY2eNpEefyfx3GEKztXntjXD4GsM+5H01RruD
-         8Nu65DrvNVfLVkFLIxhI2XDxFMfkz6pA3nESwBA/XzMtrivNx4H1UXmSCEx7KhqA2Mw5
-         TiVm1wlhBS5qf++Bs0DUDM5RvtIq2/jju6tIb5Nd2bPpDZrC7TGU9Y2L/t+NJUO1+1Ec
-         UfkxjiQmZPmmydw08Rhwf0/HkrkkbcPDnVL4ptolFm2yCIvARg3Q+C5aJtsuzZQpcfAE
-         ht8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUjy+BjjZuAEVoKzKq6PgmGWdQC/Eu0yS49swHtNrZuSrtdU355/D0iNfnvAC4+t8RYB7iCELT+7gaMODc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKjJ68YCPslRqGvK1agAiof9YSXCPXJGNSIL0JGpP2S009Bc08
-	Afr0MuB568PEOaph9vJP0Q979eeKv2n25SSrG9yGP6IazfygGmmbuufRfpLe82yMWFE4onA3aRx
-	nrUC0fhcfmfOyLyV7Fj/mKO/vcdktdHCATszZHEVZjknlpOGGLi10UnpfVp4=
-X-Google-Smtp-Source: AGHT+IEhQ6Af9mYMbBsGH05ipB+JFmzOoRIUn3SWsh9RIbI5r6JbDqM8JaovKNxONp96/IxdZl/OiJT+gnDSseps0MeiuZrkxr3r
+	s=arc-20240116; t=1752299948; c=relaxed/simple;
+	bh=anC/9YHi9iN7Bq89giMEAd71gSC68fpm69srlwCVaCo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uvcuz4SWNndxdZGPxoz1qTZaC64DcI5JcOrq+SBe1X7nJhVEGYFaEBYcMDoZaqOcRLCrwtCLrcSqh1XXGah9yt6zmRz42L29Y3o+GlJ6R5HJDROxDEnJ4hu7yf1kNS1qyVrKkfk1KrqOYDXB/TdA2D45UJ0Pmu7vrVJrSKddzXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=x6bC5+vo; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=8t5sHWjfGOeS4xJWk0tqUnTlFjRBth23Ehas1zTXft8=; b=x6bC5+voErzvchvIhrsKFuoR8A
+	ngTb10kzW0wkvGyHuF1ZqnjT+Xgs1D4CC5KXjhvJeTya4b52BrjMRZMy3IXJqt+/aq1aThauC3ZNB
+	t+PjBO51U/pojJPkc9N2qBis9uU5xPYD+b+WmJy4cTpIT9VT/VU5uLiXWArWy8qzCIIZ16rEXIN09
+	tE87C40USn5/9eVE9fex/WbLzbXJxoYJlIjDu/Q3A9FWcU95Nx8kAfqcwSCoa7tZQF/ne2M0J8b7r
+	Q2mWbhs+ZjuxNm1jDkSuNNyBamwiuxQGKJG/PFNl4SvqebjYAPEGLwtdXb61LgDISETBxB60TkaPy
+	2MbPvFFQ==;
+Received: from [50.53.25.54] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uaTGD-0000000GIuX-1OKc;
+	Sat, 12 Jul 2025 05:58:57 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Jiawen Wu <jiawenwu@trustnetic.com>,
+	Mengyuan Lou <mengyuanlou@net-swift.com>,
+	netdev@vger.kernel.org,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH v2 net-next] net: wangxun: fix VF drivers Kconfig dependencies and help text
+Date: Fri, 11 Jul 2025 22:58:56 -0700
+Message-ID: <20250712055856.1732094-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6a96:b0:862:fe54:df4e with SMTP id
- ca18e2360f4ac-879787e2f72mr710785239f.7.1752299851965; Fri, 11 Jul 2025
- 22:57:31 -0700 (PDT)
-Date: Fri, 11 Jul 2025 22:57:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6871f94b.a00a0220.26a83e.0070.GAE@google.com>
-Subject: [syzbot] [mm?] possible deadlock in lock_next_vma
-From: syzbot <syzbot+159a3ef1894076a6a6e9@syzkaller.appspotmail.com>
-To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	shakeel.butt@linux.dev, surenb@google.com, syzkaller-bugs@googlegroups.com, 
-	vbabka@suse.cz
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On x86_64, when CONFIG_PTP_1588_CLOCK_OPTIONAL=m,
+CONFIG_LIBWX can be set to 'y' by either of TXGBEVF=y or NGBEVF=y,
+causing kconfig unmet direct dependencies warning messages:
 
-syzbot found the following issue on:
+WARNING: unmet direct dependencies detected for LIBWX
+  Depends on [m]: NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PTP_1588_CLOCK_OPTIONAL [=m]
+  Selected by [y]:
+  - TXGBEVF [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI [=y] && PCI_MSI [=y]
+  - NGBEVF [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI_MSI [=y]
 
-HEAD commit:    26ffb3d6f02c Add linux-next specific files for 20250704
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12d4df70580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1e4f88512ae53408
-dashboard link: https://syzkaller.appspot.com/bug?extid=159a3ef1894076a6a6e9
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+and subsequent build errors:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+ld: vmlinux.o: in function `wx_clean_tx_irq':
+drivers/net/ethernet/wangxun/libwx/wx_lib.c:757:(.text+0xa48f18): undefined reference to `ptp_schedule_worker'
+ld: vmlinux.o: in function `wx_get_ts_info':
+drivers/net/ethernet/wangxun/libwx/wx_ethtool.c:509:(.text+0xa4a58c): undefined reference to `ptp_clock_index'
+ld: vmlinux.o: in function `wx_ptp_stop':
+drivers/net/ethernet/wangxun/libwx/wx_ptp.c:838:(.text+0xa4b3dc): undefined reference to `ptp_clock_unregister'
+ld: vmlinux.o: in function `wx_ptp_reset':
+drivers/net/ethernet/wangxun/libwx/wx_ptp.c:769:(.text+0xa4b80c): undefined reference to `ptp_schedule_worker'
+ld: vmlinux.o: in function `wx_ptp_create_clock':
+drivers/net/ethernet/wangxun/libwx/wx_ptp.c:532:(.text+0xa4b9d1): undefined reference to `ptp_clock_register'
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fd5569903143/disk-26ffb3d6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1b0c9505c543/vmlinux-26ffb3d6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9d864c72bed1/bzImage-26ffb3d6.xz
+Add dependency to PTP_1588_CLOCK_OPTIONAL for both txgbevf and ngbevf.
+This is needed since both of them select LIBWX and it depends on
+PTP_1588_CLOCK_OPTIONAL.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+159a3ef1894076a6a6e9@syzkaller.appspotmail.com
+Drop "depends on PCI" for TXGBEVF since PCI_MSI implies that.
+Drop "select PHYLINK" for TXGBEVF since the driver does not use phylink.
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.16.0-rc4-next-20250704-syzkaller #0 Not tainted
-------------------------------------------------------
-syz.4.1737/14243 is trying to acquire lock:
-ffff88807634d1e0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_read_lock_killable include/linux/mmap_lock.h:432 [inline]
-ffff88807634d1e0 (&mm->mmap_lock){++++}-{4:4}, at: lock_vma_under_mmap_lock mm/mmap_lock.c:189 [inline]
-ffff88807634d1e0 (&mm->mmap_lock){++++}-{4:4}, at: lock_next_vma+0x802/0xdc0 mm/mmap_lock.c:264
+Move the driver name help text to the module name help text for
+both drivers.
 
-but task is already holding lock:
-ffff888020b36a88 (vm_lock){++++}-{0:0}, at: lock_next_vma+0x146/0xdc0 mm/mmap_lock.c:220
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (vm_lock){++++}-{0:0}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       __vma_enter_locked+0x182/0x380 mm/mmap_lock.c:63
-       __vma_start_write+0x1e/0x120 mm/mmap_lock.c:87
-       vma_start_write include/linux/mmap_lock.h:267 [inline]
-       mprotect_fixup+0x571/0x9b0 mm/mprotect.c:670
-       setup_arg_pages+0x53a/0xaa0 fs/exec.c:670
-       load_elf_binary+0xb9f/0x2730 fs/binfmt_elf.c:1013
-       search_binary_handler fs/exec.c:1670 [inline]
-       exec_binprm fs/exec.c:1702 [inline]
-       bprm_execve+0x99c/0x1450 fs/exec.c:1754
-       kernel_execve+0x8f0/0x9f0 fs/exec.c:1920
-       try_to_run_init_process+0x13/0x60 init/main.c:1397
-       kernel_init+0xad/0x1d0 init/main.c:1525
-       ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
--> #0 (&mm->mmap_lock){++++}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3168 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3287 [inline]
-       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3911
-       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       down_read_killable+0x50/0x350 kernel/locking/rwsem.c:1547
-       mmap_read_lock_killable include/linux/mmap_lock.h:432 [inline]
-       lock_vma_under_mmap_lock mm/mmap_lock.c:189 [inline]
-       lock_next_vma+0x802/0xdc0 mm/mmap_lock.c:264
-       get_next_vma fs/proc/task_mmu.c:182 [inline]
-       query_vma_find_by_addr fs/proc/task_mmu.c:516 [inline]
-       query_matching_vma+0x28f/0x4b0 fs/proc/task_mmu.c:545
-       do_procmap_query fs/proc/task_mmu.c:637 [inline]
-       procfs_procmap_ioctl+0x406/0xce0 fs/proc/task_mmu.c:748
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:598 [inline]
-       __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:584
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(vm_lock);
-                               lock(&mm->mmap_lock);
-                               lock(vm_lock);
-  rlock(&mm->mmap_lock);
-
- *** DEADLOCK ***
-
-2 locks held by syz.4.1737/14243:
- #0: ffff888020b36e48 (vm_lock){++++}-{0:0}, at: lock_next_vma+0x146/0xdc0 mm/mmap_lock.c:220
- #1: ffff888020b36a88 (vm_lock){++++}-{0:0}, at: lock_next_vma+0x146/0xdc0 mm/mmap_lock.c:220
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 14243 Comm: syz.4.1737 Not tainted 6.16.0-rc4-next-20250704-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2046
- check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2178
- check_prev_add kernel/locking/lockdep.c:3168 [inline]
- check_prevs_add kernel/locking/lockdep.c:3287 [inline]
- validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3911
- __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
- down_read_killable+0x50/0x350 kernel/locking/rwsem.c:1547
- mmap_read_lock_killable include/linux/mmap_lock.h:432 [inline]
- lock_vma_under_mmap_lock mm/mmap_lock.c:189 [inline]
- lock_next_vma+0x802/0xdc0 mm/mmap_lock.c:264
- get_next_vma fs/proc/task_mmu.c:182 [inline]
- query_vma_find_by_addr fs/proc/task_mmu.c:516 [inline]
- query_matching_vma+0x28f/0x4b0 fs/proc/task_mmu.c:545
- do_procmap_query fs/proc/task_mmu.c:637 [inline]
- procfs_procmap_ioctl+0x406/0xce0 fs/proc/task_mmu.c:748
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f79bc78e929
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f79bd5c8038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f79bc9b6080 RCX: 00007f79bc78e929
-RDX: 0000200000000180 RSI: 00000000c0686611 RDI: 0000000000000006
-RBP: 00007f79bc810b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f79bc9b6080 R15: 00007ffcdd82ae18
- </TASK>
-
-
+Fixes: 377d180bd71c ("net: wangxun: add txgbevf build")
+Fixes: a0008a3658a3 ("net: wangxun: add ngbevf build")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jiawen Wu <jiawenwu@trustnetic.com>
+Cc: Mengyuan Lou <mengyuanlou@net-swift.com>
+Cc: netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v2: also drop PHYLINK for TXGBEVF, suggested by Jiawen Wu
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ drivers/net/ethernet/wangxun/Kconfig |   18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--- linux-next-20250710.orig/drivers/net/ethernet/wangxun/Kconfig
++++ linux-next-20250710/drivers/net/ethernet/wangxun/Kconfig
+@@ -66,35 +66,33 @@ config TXGBE
+ 
+ config TXGBEVF
+ 	tristate "Wangxun(R) 10/25/40G Virtual Function Ethernet support"
+-	depends on PCI
+ 	depends on PCI_MSI
++	depends on PTP_1588_CLOCK_OPTIONAL
+ 	select LIBWX
+-	select PHYLINK
+ 	help
+ 	  This driver supports virtual functions for SP1000A, WX1820AL,
+ 	  WX5XXX, WX5XXXAL.
+ 
+-	  This driver was formerly named txgbevf.
+-
+ 	  More specific information on configuring the driver is in
+ 	  <file:Documentation/networking/device_drivers/ethernet/wangxun/txgbevf.rst>.
+ 
+-	  To compile this driver as a module, choose M here. MSI-X interrupt
+-	  support is required for this driver to work correctly.
++	  To compile this driver as a module, choose M here. The module
++	  will be called txgbevf. MSI-X interrupt support is required
++	  for this driver to work correctly.
+ 
+ config NGBEVF
+ 	tristate "Wangxun(R) GbE Virtual Function Ethernet support"
+ 	depends on PCI_MSI
++	depends on PTP_1588_CLOCK_OPTIONAL
+ 	select LIBWX
+ 	help
+ 	  This driver supports virtual functions for WX1860, WX1860AL.
+ 
+-	  This driver was formerly named ngbevf.
+-
+ 	  More specific information on configuring the driver is in
+ 	  <file:Documentation/networking/device_drivers/ethernet/wangxun/ngbevf.rst>.
+ 
+-	  To compile this driver as a module, choose M here. MSI-X interrupt
+-	  support is required for this driver to work correctly.
++	  To compile this driver as a module, choose M here. The module
++	  will be called ngbefv. MSI-X interrupt support is required for
++	  this driver to work correctly.
+ 
+ endif # NET_VENDOR_WANGXUN
 
