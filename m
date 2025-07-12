@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-728793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32967B02CEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 22:47:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43848B02CF0
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 22:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5608D189C1E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:47:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 780993BD87D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86499219A7D;
-	Sat, 12 Jul 2025 20:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC6022839A;
+	Sat, 12 Jul 2025 20:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lcEvXsaL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKXmsoFA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D231B18D;
-	Sat, 12 Jul 2025 20:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E35226533;
+	Sat, 12 Jul 2025 20:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752353214; cv=none; b=ivUlQjptQ6CViXLJK+wuY8LBNvl99s9o343GOY4qT0RSw+ut7aFcE3mZw591VEU/6XpFaM4KGwxl0me4CtEroTjKOe9q4xBZWIfMVjEnPXxKJBeMBTCrHXJJKQjCeITAGMLzS0hdbIPm87lz9ij51ikVk9wExU1McXlq+VsWvls=
+	t=1752353216; cv=none; b=XPwCiO8OIF2GOFlRh0jEiJLoi3dh7NKCGW6d2yKVv1RDEWLSc0uQLouM4UGqEDAFKLwmuMHP1yT6qm7LOTmbbrQ8drG32BHd/Np+melSQaw9ptjePO3RlF1lkwLhakmmTD/oaXntgl+6Y87GN1PHkUDHuS+OE+QytuFXb8ZsWdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752353214; c=relaxed/simple;
-	bh=VCSP/Ec4VFDo5yvROyQ5BjizeW111cyGb6Bzolcm5cE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B3FFCFthGjy4SpWNcR/n9uhvRfIL2v6MkR8V8WjudT3wL59JGS+uait7ugSXWZkwsr7iLN8ypeDxHpe0+IupwroFC+9UVQIjOYWzGwzIdgUL2cLu6BKnB5cpkQs+voGByvknUsrVzWEcZFHi7mUbgOECtjE5w8goO/xNMlqDwXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lcEvXsaL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35298C4CEEF;
-	Sat, 12 Jul 2025 20:46:54 +0000 (UTC)
+	s=arc-20240116; t=1752353216; c=relaxed/simple;
+	bh=UtykI35djlz4/u32hylRxjPmwdljWWbpzC+3yqmXBmg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=J7j7XMlKr0vkYkZzRnpJwnIxRtXqD/kBQVWxeyMVNPmkzOYz49oCSg3VL3DzexwgrvgoHXpgAl3TvN1bgw32wfZSi1K8KMGr7ckf2H12jArV321zI6wqNVl6jCzLXtpfGm+OWZMFwDPpI8trehz0kflYFPeRdi7oIG/3zH49tqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKXmsoFA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48BAEC4CEF5;
+	Sat, 12 Jul 2025 20:46:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752353214;
-	bh=VCSP/Ec4VFDo5yvROyQ5BjizeW111cyGb6Bzolcm5cE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lcEvXsaLHt3TmFr4J5lbIuCMYMZGL/LLChfMR1D3LZBmHo6+F0qwmQKuZHCaOxUIc
-	 tlO7+0ndA4S1CfzgOMgGwQEtAFY+Nn38fmaz+wB2r9X3aafMYSOzLaxm1kwYdGcg5c
-	 zYb3dRtsGCYuMHLvoO2LtsgRWtJgmVzap53/34FnNFFkMgVh/sVYEm1iQKNdCF1SXA
-	 0qOJS9yfRMqNurbPK+otCZb07tha0/PaDyEr6guDQWOqXrqGUrZi7qtM/ns6zZ9ZEh
-	 IB+lFH0Ma1OqQpY9dgcOhg+zyr942a5NLxwZohtGhW1Ss2yclfeznG1K5TO3wi1JAL
-	 2mNr134bL+YFA==
+	s=k20201202; t=1752353215;
+	bh=UtykI35djlz4/u32hylRxjPmwdljWWbpzC+3yqmXBmg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=DKXmsoFAs466IPb6TIRODKI2CQxvs86/uZM4eH3FJg/J0ByWSdYPzb8ihymdxa3jM
+	 vuYk16p5TqkYWSAI9uFiwXqxhMnQDvA3W/0YcxgbqEW/Vqq80Qf6X/clEg0dRabl44
+	 x4H21qFJI4vKA4XSFkxXscuR8AvQtc9bjOfUcTz7F/oqswZymvptTJCMd0vtKFhto/
+	 By/O4Kfayr3szeuou5hqcwtHgh8gGRDkvcA9gs1Lta9Zuu+SWWwhWDjDjXvCXooyy1
+	 CbRmrxpyTL8ac3o3G5wKy8V7rkZvn4tqJvNMWEZYAUcJoBIbvmSpCJZg+R3RqxGE3W
+	 1YJqexl5ebcRg==
 From: SeongJae Park <sj@kernel.org>
 To: 
 Cc: SeongJae Park <sj@kernel.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
 	damon@lists.linux.dev,
 	kernel-team@meta.com,
-	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [RFC PATCH 0/4] mm/damon/sysfs: support periodic and automated stats update
-Date: Sat, 12 Jul 2025 13:46:45 -0700
-Message-Id: <20250712204650.155988-1-sj@kernel.org>
+Subject: [RFC PATCH 1/4] mm/damon/sysfs: implement refresh_ms file under kdamond directory
+Date: Sat, 12 Jul 2025 13:46:46 -0700
+Message-Id: <20250712204650.155988-2-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250712204650.155988-1-sj@kernel.org>
+References: <20250712204650.155988-1-sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,52 +62,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-DAMON sysfs interface provides files for reading DAMON internal status
-including DAMOS stats.  The content of the files are not automatically
-updated, though.  Users should manually request updates of the contents
-by writing a special command to 'state' file of each kdamond directory.
-This interface is good for minimizing overhead, but causes the below
-problems.
+Implement a new DAMON sysfs file named 'refresh_ms' under each kdamond
+directory.  The file will be used as a control knob of automatic refresh
+of a few DAMON internal status files.  This commit implements only
+minimum file operations, though.  The automatic refresh feature will be
+implemented by the following commit.
 
-First, the usage is cumbersome.  This is arguably not a big problem,
-since the user-space tool (damo) can do this instead of the user.
+Signed-off-by: SeongJae Park <sj@kernel.org>
+---
+ mm/damon/sysfs.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-Second, it can be too slow.  The update request is not directly handled
-by the sysfs interface but kdamond thread.  And kdamond threads wake up
-only once per the sampling interval.  Hence if sampling interval is not
-short, each update request could take too long time.  The recommended
-sampling interval setup is asking DAMON to automatically tune it, within
-a range between 5 milliseconds and 10 seconds.  On production systems it
-is not very rare to have a few seconds sampling interval as a result of
-the auto-tuning, so this can disturb observing DAMON internal status.
-
-Finally, parallel update requests can conflict with each other.  When
-parallel update requests are received, DAMON sysfs interface simply
-returns -EBUSY to one of the requests.  DAMON user-space tool is hence
-implementing its own backoff mechanism, but this can make the operation
-even slower.
-
-Introduce a new sysfs file, namely refresh_ms, for asking DAMON sysfs
-interface to repeat the essential contents update with a user-specified
-time delay.  If non-zero value is written to the file, DAMON sysfs
-interface does the updates for essential DAMON internal status including
-auto-tuned monitoring intervals, DAMOS stats, and auto-tuned DAMOS
-quotas using the user-written value as the time delay.  If zero is
-written to the file, the automatic refresh is disabled.
-
-SeongJae Park (4):
-  mm/damon/sysfs: implement refresh_ms file under kdamond directory
-  mm/damon/sysfs: implement refresh_ms file internal work
-  Docs/admin-guide/mm/damon/usage: document refresh_ms file
-  Docs/ABI/damon: update for refresh_ms
-
- .../ABI/testing/sysfs-kernel-mm-damon         |  7 +++
- Documentation/admin-guide/mm/damon/usage.rst  | 13 ++++-
- mm/damon/sysfs.c                              | 58 +++++++++++++++++++
- 3 files changed, 75 insertions(+), 3 deletions(-)
-
-
-base-commit: 982b86e9191292ffcd0f30018981cb16f9fac5c1
+diff --git a/mm/damon/sysfs.c b/mm/damon/sysfs.c
+index cce2c8a296e2..4296dc201f4d 100644
+--- a/mm/damon/sysfs.c
++++ b/mm/damon/sysfs.c
+@@ -1155,6 +1155,7 @@ struct damon_sysfs_kdamond {
+ 	struct kobject kobj;
+ 	struct damon_sysfs_contexts *contexts;
+ 	struct damon_ctx *damon_ctx;
++	unsigned int refresh_ms;
+ };
+ 
+ static struct damon_sysfs_kdamond *damon_sysfs_kdamond_alloc(void)
+@@ -1690,6 +1691,30 @@ static ssize_t pid_show(struct kobject *kobj,
+ 	return sysfs_emit(buf, "%d\n", pid);
+ }
+ 
++static ssize_t refresh_ms_show(struct kobject *kobj,
++		struct kobj_attribute *attr, char *buf)
++{
++	struct damon_sysfs_kdamond *kdamond = container_of(kobj,
++			struct damon_sysfs_kdamond, kobj);
++
++	return sysfs_emit(buf, "%u\n", kdamond->refresh_ms);
++}
++
++static ssize_t refresh_ms_store(struct kobject *kobj,
++		struct kobj_attribute *attr, const char *buf, size_t count)
++{
++	struct damon_sysfs_kdamond *kdamond = container_of(kobj,
++			struct damon_sysfs_kdamond, kobj);
++	unsigned int nr;
++	int err = kstrtouint(buf, 0, &nr);
++
++	if (err)
++		return err;
++
++	kdamond->refresh_ms = nr;
++	return count;
++}
++
+ static void damon_sysfs_kdamond_release(struct kobject *kobj)
+ {
+ 	struct damon_sysfs_kdamond *kdamond = container_of(kobj,
+@@ -1706,9 +1731,13 @@ static struct kobj_attribute damon_sysfs_kdamond_state_attr =
+ static struct kobj_attribute damon_sysfs_kdamond_pid_attr =
+ 		__ATTR_RO_MODE(pid, 0400);
+ 
++static struct kobj_attribute damon_sysfs_kdamond_refresh_ms_attr =
++		__ATTR_RW_MODE(refresh_ms, 0600);
++
+ static struct attribute *damon_sysfs_kdamond_attrs[] = {
+ 	&damon_sysfs_kdamond_state_attr.attr,
+ 	&damon_sysfs_kdamond_pid_attr.attr,
++	&damon_sysfs_kdamond_refresh_ms_attr.attr,
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(damon_sysfs_kdamond);
 -- 
 2.39.5
 
