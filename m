@@ -1,79 +1,45 @@
-Return-Path: <linux-kernel+bounces-728653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD673B02B78
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:38:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3A05B02B79
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96491A62F43
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 14:38:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFC267A8C5E
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 14:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B9628640D;
-	Sat, 12 Jul 2025 14:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GGrn0yab"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6758728541B;
+	Sat, 12 Jul 2025 14:40:18 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8126218ADE;
-	Sat, 12 Jul 2025 14:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00B61DACA7
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 14:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752331126; cv=none; b=WJVcEZJUVdlUxRyIWkeWJhW95dw6qKwY+tdgYaYBeS9e4AT7546AkcXhDYslDTt7TXLLOoKlCEfGoe/dVItCXNMlxEFkuJuln31JtIoQJ4Do+GCy/0J1ak6VZ5eMqq3vkfw0yqmmnD8I0VVvEoAyfNqMQ5ccqGiLzo0R+baGyL4=
+	t=1752331218; cv=none; b=oN4jn/0q0vvatbH43PH8dDEHb4s3PC/V/WvLP3GiUb0FxgNAuU+GTDt0bN30WrEhvxDHNtnOUGhWimfxqpqNLnMEMNOoWtfOfMsSFb9vhx3rEzziIE+nvjtXicdHuK/aKWcYffYWGzNo5nzN+8XO85n9a8EfuwYZjZIzzICvrGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752331126; c=relaxed/simple;
-	bh=JL0yAS7YGbdfaUG0OW1m/bcaqjrSdvczB5r/M1DxKs8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gw30tKGefrRN7oI8qslwAoMUDL1HxvY2bqgOU7b8Wsc+pfM6Us96HWiY1az1J0TgZdjMBm2MfhYFBr6SBYGbr0XprbDlSLtcxRUpeXGk3gklyvoU/UqyHfj/DnlWdzCQdSno0JKySG9oxKLea1tQKnK01YOe9emejD1SpIUwUno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GGrn0yab; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60c01b983b6so5585162a12.0;
-        Sat, 12 Jul 2025 07:38:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752331123; x=1752935923; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=koT4tW7sPR7eLhyX94iUXRNXGl+r0eUfBJKco6+0BRU=;
-        b=GGrn0yaboY6Yi/ODmn5qaUtnT5tmqTH9lC7gZnSQbe4m2mKISXwbrBbNhJQl1jy/G4
-         NaUaK4dGxTfIFULBNt5HKamY9t6EUGSeSPtorGIM5KzNaS6Hx//5OC6o3SKnL6qQgH6/
-         Vj+npePqPnJUyX7xIBM1zK7KZBB6o6CZVv77fOfOGOtM9zAsODMr680pXb0QcgzKuQad
-         It91lMTAjVoELdMnzcLevsK224Q7QHFc5g4GwbCaZtjakI9KwlwuZeAgRJI55OPFWij3
-         SdwwbkhavVkgs5zgU49LxzfzZwnGcI2dc6sSEqkDN3gJYV6ieRnFiKT2XNM161eJfPtg
-         sMzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752331123; x=1752935923;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=koT4tW7sPR7eLhyX94iUXRNXGl+r0eUfBJKco6+0BRU=;
-        b=t0eze/7iMgJEPah3JrIPEV70pfR+jp3eW1YghHvA1a2MNi2wHcLjok8IgfJ225hQf1
-         qY0ZKRm5z7AYVFKfAfbXoW1/qxlKGwTPOQx/8PK/jpzUdIc6ixr/gbshsNbfZijjkmJg
-         JWp2qThvE/pXCm88WO70JT8dmldj89eAtgoRtyGBFqil/XdFJUBBFxevX5E1OBcj83nn
-         LjShnmrLu2HpykJb1EC7yyQWvBI2Blw5J/y7U47jiwAvyqx+D3uFDWdH7yMCAjZ1An5E
-         s3/NMciD6ZoCdaiFX+smsJ62i3otK2RflUXs/T1rpGYMpap9FBuc94O6I039LSuJNxjD
-         sr0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXIrx242aJ5VLt9CMgQxi2cnL6VPp1oA2i8DiOcRbSoc0wOdnf3DroyCTANXccuxqXlGUuqpP5Z1SNNHQ==@vger.kernel.org, AJvYcCXWx+StR0SkGvpDBHJDqJfASrd5o8j+4wn8Xovtv3PWgh3oIa/52oAaHPZ4Gtj4ASbKjA+JNDHd@vger.kernel.org, AJvYcCXmifwxQY6+45/EkhIRLEtG7Ot5R0VM7aglD4dN4DiJFNn3qkRMAQ6ffVskn8fRSTOVDTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwnxVNbhsnX3qz+5brFE2ytU0Ib0eclV5hgJ/qGucHJDrksPi/
-	nCxHXYZcn0GvY7qSTsrhk/4kvPQv0LJ5MyE8gnbMzu9arDnrzppsDhHM
-X-Gm-Gg: ASbGncvqdIUArJPGxSh+kN0j3of4G0L/z7ZNKHTj5fFrxJygFQ4oVd2baoyGBK4fFXz
-	Cciu3MNLAFHNaEuZMcQSKCKXC1leB83Ui7PZoN46yphy77Ki8RWLTX65cbmx2EBlQYxw3LkJAg1
-	MD+XtwtaOKNfXklmnxehxvHlu8jlnhgpEw+84zO5oVmyD56qNFWdsKDCS+9wsWXNYu8qR6XEOrE
-	Dx+ffuTMU7YGFFlmIDCWT1Ajh17DP6q6mgGVnTExR2b2GUAAzAldzME7wtHKECb56CAD00qQq3B
-	Sc+4UdrROSaMInYjEJ51PfqzjB8k6nt7v1/S0NtKasL41fr2CJp6IG7q0HfDUMRM74O/CPzhU/F
-	lCCHiG0kv1SOB94V0K8zA/YZfYQzVrsUS1u8=
-X-Google-Smtp-Source: AGHT+IFpiBx8aoo3FRRG9yCk+2I/NQ1LWZmLvjhcwcllyNUx2P6pWdBml/WUBj6Iu8ouNjwUof8qmQ==
-X-Received: by 2002:a05:6402:1941:b0:60c:5e47:3af5 with SMTP id 4fb4d7f45d1cf-611c1cb7445mr10377973a12.4.1752331122595;
-        Sat, 12 Jul 2025 07:38:42 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:b2ad])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611fa28e1c4sm1806095a12.10.2025.07.12.07.38.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 12 Jul 2025 07:38:41 -0700 (PDT)
-Message-ID: <b1f80514-3bd8-4feb-b227-43163b70d5c4@gmail.com>
-Date: Sat, 12 Jul 2025 15:39:59 +0100
+	s=arc-20240116; t=1752331218; c=relaxed/simple;
+	bh=+9tfeXzhhjBcrsYEN+l3cTjdNPRiGSpzzWx9OrDv/5w=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=q5zQNdgEWOIuvSgEhqxscavsh7gebh7qJ1htK0uCwmJQJrlAax2x0D6X8phsuSp0LZZsXvOk/3Bp/qK2YbzkTh41anjvJaW0O/bpUc4JufrnFokQLn4POOaY2r8Q4GzgS9M5jSRTGpbda4Cwztke6nG6rmK/7estd1vXS+Pj6+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56CEeA6P075853;
+	Sat, 12 Jul 2025 23:40:10 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56CEeAu5075850
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 12 Jul 2025 23:40:10 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <2ac5d313-c754-4fb9-acd3-21f3b948d653@I-love.SAKURA.ne.jp>
+Date: Sat, 12 Jul 2025 23:40:09 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,43 +47,160 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 1/8] netmem: introduce struct netmem_desc
- mirroring struct page
-To: Byungchul Park <byungchul@sk.com>, willy@infradead.org,
- netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
- ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
- akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com,
- andrew+netdev@lunn.ch, toke@redhat.com, tariqt@nvidia.com,
- edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, leon@kernel.org,
- ast@kernel.org, daniel@iogearbox.net, david@redhat.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
- linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com,
- hannes@cmpxchg.org, ziy@nvidia.com, jackmanb@google.com
-References: <20250710082807.27402-1-byungchul@sk.com>
- <20250710082807.27402-2-byungchul@sk.com>
+Subject: Re: [syzbot] [usb?] INFO: task hung in uevent_show (2)
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com,
+        LKML <linux-kernel@vger.kernel.org>
+References: <672f73a6.050a0220.138bd5.0041.GAE@google.com>
+ <c2b2b02d-2571-451c-bb1c-7dde18b45d4f@I-love.SAKURA.ne.jp>
+ <924bf5c7-9466-49dc-ad26-53939ca49825@I-love.SAKURA.ne.jp>
+ <53c07aa0-9f83-4c83-8ab5-6d8663f51b91@I-love.SAKURA.ne.jp>
+ <8be733a4-2232-4bb9-942d-f13f8766a6de@I-love.SAKURA.ne.jp>
+ <40417f2a-e0d8-4f3c-9a37-a0068b6f268a@I-love.SAKURA.ne.jp>
+ <0ad3effe-efed-4304-862f-4c8f901e79e9@I-love.SAKURA.ne.jp>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250710082807.27402-2-byungchul@sk.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <0ad3effe-efed-4304-862f-4c8f901e79e9@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav401.rs.sakura.ne.jp
 
-On 7/10/25 09:28, Byungchul Park wrote:
-> To simplify struct page, the page pool members of struct page should be
-> moved to other, allowing these members to be removed from struct page.
-> 
-> Introduce a network memory descriptor to store the members, struct
-> netmem_desc, and make it union'ed with the existing fields in struct
-> net_iov, allowing to organize the fields of struct net_iov.
+#syz test
 
-FWIW, regardless of memdesc business, I think it'd be great to have
-this patch, as it'll help with some of the netmem casting ugliness and
-shed some cycles as well. For example, we have a bunch of
-niov -> netmem -> niov casts in various places.
-
--- 
-Pavel Begunkov
+diff --git a/drivers/media/rc/imon.c b/drivers/media/rc/imon.c
+index f5221b018808..f8e3e87cf1a3 100644
+--- a/drivers/media/rc/imon.c
++++ b/drivers/media/rc/imon.c
+@@ -598,8 +598,11 @@ static int send_packet(struct imon_context *ictx)
+ 	int retval = 0;
+ 	struct usb_ctrlrequest *control_req = NULL;
+ 
++	BUG_ON(mutex_get_owner(&ictx->lock) != (unsigned long) current);
++
+ 	/* Check if we need to use control or interrupt urb */
+ 	if (!ictx->tx_control) {
++		printk(KERN_INFO "int %px %d\n", ictx, ictx->tx_endpoint->bEndpointAddress);
+ 		pipe = usb_sndintpipe(ictx->usbdev_intf0,
+ 				      ictx->tx_endpoint->bEndpointAddress);
+ 		interval = ictx->tx_endpoint->bInterval;
+@@ -623,6 +626,7 @@ static int send_packet(struct imon_context *ictx)
+ 		control_req->wIndex = cpu_to_le16(0x0001);
+ 		control_req->wLength = cpu_to_le16(0x0008);
+ 
++		printk(KERN_INFO "control %px\n", ictx);
+ 		/* control pipe is endpoint 0x00 */
+ 		pipe = usb_sndctrlpipe(ictx->usbdev_intf0, 0);
+ 
+@@ -645,12 +649,15 @@ static int send_packet(struct imon_context *ictx)
+ 		smp_rmb(); /* ensure later readers know we're not busy */
+ 		pr_err_ratelimited("error submitting urb(%d)\n", retval);
+ 	} else {
+-		/* Wait for transmission to complete (or abort) */
+-		retval = wait_for_completion_interruptible(
+-				&ictx->tx.finished);
+-		if (retval) {
++		/* Wait for transmission to complete (or abort or timeout) */
++		retval = wait_for_completion_interruptible_timeout(&ictx->tx.finished, 10 * HZ);
++		if (retval <= 0) {
+ 			usb_kill_urb(ictx->tx_urb);
+ 			pr_err_ratelimited("task interrupted\n");
++			if (retval < 0)
++				ictx->tx.status = retval;
++			else
++				ictx->tx.status = -ETIMEDOUT;
+ 		}
+ 
+ 		ictx->tx.busy = false;
+@@ -1125,6 +1132,11 @@ static int imon_ir_change_protocol(struct rc_dev *rc, u64 *rc_proto)
+ 	unsigned char ir_proto_packet[] = {
+ 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x86 };
+ 
++	if (mutex_get_owner(&ictx->lock) != (unsigned long) current) {
++		unlock = true;
++		mutex_lock(&ictx->lock);
++	}
++
+ 	if (*rc_proto && !(*rc_proto & rc->allowed_protocols))
+ 		dev_warn(dev, "Looks like you're trying to use an IR protocol this device does not support\n");
+ 
+@@ -1148,8 +1160,6 @@ static int imon_ir_change_protocol(struct rc_dev *rc, u64 *rc_proto)
+ 
+ 	memcpy(ictx->usb_tx_buf, &ir_proto_packet, sizeof(ir_proto_packet));
+ 
+-	unlock = mutex_trylock(&ictx->lock);
+-
+ 	retval = send_packet(ictx);
+ 	if (retval)
+ 		goto out;
+@@ -1744,14 +1754,17 @@ static void usb_rx_callback_intf0(struct urb *urb)
+ 	ictx = (struct imon_context *)urb->context;
+ 	if (!ictx)
+ 		return;
++	printk(KERN_INFO "%s %px\n", __func__, ictx);
+ 
+ 	/*
+ 	 * if we get a callback before we're done configuring the hardware, we
+ 	 * can't yet process the data, as there's nowhere to send it, but we
+ 	 * still need to submit a new rx URB to avoid wedging the hardware
+ 	 */
+-	if (!ictx->dev_present_intf0)
++	if (!ictx->dev_present_intf0) {
++		printk(KERN_INFO "%s %px %d\n", __func__, ictx, urb->status);
+ 		goto out;
++	}
+ 
+ 	switch (urb->status) {
+ 	case -ENOENT:		/* usbcore unlink successful! */
+@@ -1764,6 +1777,15 @@ static void usb_rx_callback_intf0(struct urb *urb)
+ 		imon_incoming_packet(ictx, urb, intfnum);
+ 		break;
+ 
++	case -ECONNRESET:
++	case -EILSEQ:
++	case -EPROTO:
++	case -EPIPE:
++		dev_warn(ictx->dev, "imon %s: status(%d)\n",
++			 __func__, urb->status);
++		usb_unlink_urb(urb);
++		return;
++
+ 	default:
+ 		dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
+ 			 __func__, urb->status);
+@@ -1785,14 +1807,17 @@ static void usb_rx_callback_intf1(struct urb *urb)
+ 	ictx = (struct imon_context *)urb->context;
+ 	if (!ictx)
+ 		return;
++	printk(KERN_INFO "%s %px\n", __func__, ictx);
+ 
+ 	/*
+ 	 * if we get a callback before we're done configuring the hardware, we
+ 	 * can't yet process the data, as there's nowhere to send it, but we
+ 	 * still need to submit a new rx URB to avoid wedging the hardware
+ 	 */
+-	if (!ictx->dev_present_intf1)
++	if (!ictx->dev_present_intf1) {
++		printk(KERN_INFO "%s %px %d\n", __func__, ictx, urb->status);
+ 		goto out;
++	}
+ 
+ 	switch (urb->status) {
+ 	case -ENOENT:		/* usbcore unlink successful! */
+@@ -1805,6 +1830,15 @@ static void usb_rx_callback_intf1(struct urb *urb)
+ 		imon_incoming_packet(ictx, urb, intfnum);
+ 		break;
+ 
++	case -ECONNRESET:
++	case -EILSEQ:
++	case -EPROTO:
++	case -EPIPE:
++		dev_warn(ictx->dev, "imon %s: status(%d)\n",
++			 __func__, urb->status);
++		usb_unlink_urb(urb);
++		return;
++
+ 	default:
+ 		dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
+ 			 __func__, urb->status);
 
 
