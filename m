@@ -1,135 +1,113 @@
-Return-Path: <linux-kernel+bounces-728809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EBD7B02D2D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 23:15:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD7BB02D31
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 23:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55B4E1AA1A2B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:15:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D5273BB67A
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3658A21B9F4;
-	Sat, 12 Jul 2025 21:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D40122488B;
+	Sat, 12 Jul 2025 21:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="QNoetQzs"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWaGBzZ3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A02BE4E;
-	Sat, 12 Jul 2025 21:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752354918; cv=pass; b=gY/2RMMdrBiDrM17R6lryoSDKnIuxj74xo4Dd0qtpb0zTVOOc2od8LkGEVsbxa2k5OHmtfooywt+1N7M3E9R1riZSq5Ov3idzKkSuljAEcc0Qx8/A3wYoN2UbtjAIprYNJ0S7F5PqGF42bXHRWScj/dFck4uUTlfr/NzpMIavIs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752354918; c=relaxed/simple;
-	bh=pAWwdXVs7ZXsCxQbV5vg5e5/B6leWiXzTnTU4Ye8vRc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VoM4nT/UWKT4LOWBUCU+kqD5QtD0gyJ9BVwIZGXdNxuhoU37zqYrWm6PBWORPqiJFDHgTpJwA1JXFZBIMfWkKdqHLvFOzopeazZo/c4F3UqkgnSUHX4vAJf8vz42o7a2g1dQ/9ETvRIsyx6XWes11/ZV4tas0DB4gJqaNWY2RK8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=QNoetQzs; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752354910; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=H2CbjYs8GO3Ae+KC2rRWPafh5M3VOsKocKv10pBI7RAnGj2wo6NQGsw9VU2hM6yRhmnqGBtxN7945hkEdATI0BdJ2YD5MS9pKYQSF6Diw1W2yxFTYIXRE9FKvQXoIQcEeKyHWgQ2+JdFTw81I41TPaR5CBeVvnVrTTxt0d1+3qs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752354910; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=bX6Q7B11PstjYpe2uRcjVISnIPFiyT9REbHORxLHdXM=; 
-	b=Bw4Gfit3OX3//LXPgBxcBtGLLlveL5hbYSQMy4Wr76uJAju2rwcuccrf92j84j/HFhSPlFWhZPFLw129i+7lVkoTiJYCjZkgdOGB2rZ3ci8vydG6F7i4FPWqBcWq00hgLvSw4xI+mv/jxcoBLIv00qqUZzIFJy3Jv2zbNg/6orI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752354910;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=bX6Q7B11PstjYpe2uRcjVISnIPFiyT9REbHORxLHdXM=;
-	b=QNoetQzsZyegw8QFjIR2Sib+uf5tMjPcHVFk2/s7Yq6P2ucTOPj5jdffqBDc1gyG
-	pMYxopoa/uZbgzkuVE+/TJPWzyOcpzX3b124BuxfQVbPGzpOQVRzEg8iR7vb9b2rWOT
-	raKg2KiWR3E5AHpWoWjrLoMClj/DTNhCZcsyhSYs=
-Received: by mx.zohomail.com with SMTPS id 1752354908788353.79323311851226;
-	Sat, 12 Jul 2025 14:15:08 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 3F05E180F0F; Sat, 12 Jul 2025 23:15:06 +0200 (CEST)
-Date: Sat, 12 Jul 2025 23:15:06 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Ian Ray <ian.ray@gehealthcare.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: remove bouncing address for Nandor Han
-Message-ID: <5offogdzedixircmncso7wzswgh3ancblpydnelbbqw3pjxdpw@qcgnpip4g4xd>
-References: <20250709071825.16212-1-brgl@bgdev.pl>
- <se5ok3bzlej4gecaep3albatkigcczsj4ailmulqebd737qe7a@ly3vlkqhgm3q>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717511EEE0;
+	Sat, 12 Jul 2025 21:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752355351; cv=none; b=ZPhZZ5ZvSkcpL0d+NQOeO7rqMRQ/OkboS76ovHn5+FQBSMBMm/TvhEbcVsCBoUAuKKeIOYAYlTRD28rpzJNEVPtdWYZzuXm21WDnjea1Ag2tWwu2aEngqiE05EKeqLh+LAICSf+yDpeJBYAKWRaGmjZ4wgjlXTzkXX0A9KX+te8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752355351; c=relaxed/simple;
+	bh=IWlxFqjEHHAd1JHz8MbkD0zzwlAMWCP1b6rXJ65fD3o=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=m7y199gPKhS8mVqmdK3JA84W2tBcWS1gEP/zfVtgeUBei5Kq/uXd8VpUmB6oOIjTgJBk6dfnOJPA2/xRw6gKyJoD576e+vUp8rlycB0t/ZiMyKkT5lHboQLOlooSFmg+qJf6x0ZOHC+jx1fQqE64ME5SleX6gonQcbRSKcsvbc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWaGBzZ3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAECBC4CEEF;
+	Sat, 12 Jul 2025 21:22:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752355350;
+	bh=IWlxFqjEHHAd1JHz8MbkD0zzwlAMWCP1b6rXJ65fD3o=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=rWaGBzZ3hcLXDj6IRLKquX33sgdrCzXj+bV/qBx5UGc69oI/YvprABJ5U5NQaEuwk
+	 /NJ5NqbzYn6SovNzR/7PfKfK0q9GOXj39Zf3umQVDfPUkh0Gx4tHcvwxaQK+HmpF/Y
+	 1tSmd3GoiwcLiyL31n4H/VKfscv8GdQ0LOVRQKOOKy7Edth5CKI8ngudKpQmLkXvh+
+	 RxCyLVjbP7bbWiWYbeGpmgesyIrEs7hNUSUwM2RM6z9Bf47SfvCdeczbXLkIIaFEvW
+	 xsVUCy1Z71qtj7eILJp5bnr+oDiP0BbBaovCgRU+gUx7F2MB65n73Gx4pGz0Pon6/r
+	 8s7fv8UvtXeTA==
+Date: Sat, 12 Jul 2025 16:22:29 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <se5ok3bzlej4gecaep3albatkigcczsj4ailmulqebd737qe7a@ly3vlkqhgm3q>
-X-ZohoMailClient: External
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Andi Shyti <andi.shyti@kernel.org>, 
+ Markus Stockhausen <markus.stockhausen@gmx.de>, devicetree@vger.kernel.org, 
+ linux-i2c@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: Jonas Jelonek <jelonek.jonas@gmail.com>
+In-Reply-To: <20250712194255.7022-3-jelonek.jonas@gmail.com>
+References: <20250712194255.7022-1-jelonek.jonas@gmail.com>
+ <20250712194255.7022-3-jelonek.jonas@gmail.com>
+Message-Id: <175235534986.1684385.2174297303057488223.robh@kernel.org>
+Subject: Re: [PATCH v2 2/3] dt-bindings: i2c: realtek,rtl9301-i2c: extend
+ for RTL9310 support
 
-Hi,
 
-On Sat, Jul 12, 2025 at 10:28:26PM +0200, Sebastian Reichel wrote:
-> On Wed, Jul 09, 2025 at 09:18:24AM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >=20
-> > Nandor's address has been bouncing for some time now. Remove it from
-> > MAINTAINERS.
->=20
-> +Cc: Ian Ray, just in case somebody from GEHC wants to be notified
-> for this.
+On Sat, 12 Jul 2025 19:42:54 +0000, Jonas Jelonek wrote:
+> Add dt-bindings for RTL9310 series I2C controller.
+> 
+> Adjust the regex for child-node address to account for the fact that
+> RTL9310 supports 12 instead of only 8 SDA lines.
+> 
+> Add a vendor-specific property to explicitly specify the
+> Realtek-internal ID of the defined I2C controller/master. This is
+> required, in particular for RTL9310, to describe the correct I2C
+> master.
+> 
+> Add compatibles for known SoC variants RTL9311, RTL9312 and RTL9313.
+> 
+> Signed-off-by: Jonas Jelonek <jelonek.jonas@gmail.com>
+> ---
+>  .../bindings/i2c/realtek,rtl9301-i2c.yaml     | 37 +++++++++++++++++--
+>  1 file changed, 33 insertions(+), 4 deletions(-)
+> 
 
-Apparently his entry in MAINTAINERS is also wrong and it needs to
-be @gehealthcare.com now (at least that is what U-Boot switched to
-[0]). Let's try again :)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Ian, you should update your linux MAINTAINERS entry in MEGACHIPS
-STDPXXXX-GE-B850V3-FW LVDS/DP++ BRIDGES [1].
+yamllint warnings/errors:
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/MAINTAINERS#n15490
-[0] https://lore.kernel.org/all/20241211083136.66-1-ian.ray@gehealthcare.co=
-m/
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/i2c/realtek,rtl9301-i2c.example.dtb: i2c@100c (realtek,rtl9310-i2c): realtek,mst-id: [0, 0, 0, 1] is not of type 'integer'
+	from schema $id: http://devicetree.org/schemas/i2c/realtek,rtl9301-i2c.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/i2c/realtek,rtl9301-i2c.example.dtb: i2c@100c (realtek,rtl9310-i2c): realtek,mst-id: size is 32, expected 8
+	from schema $id: http://devicetree.org/schemas/i2c/realtek,rtl9301-i2c.yaml#
 
-Greetings,
+doc reference errors (make refcheckdocs):
 
--- Sebastian
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250712194255.7022-3-jelonek.jonas@gmail.com
 
->=20
-> Greetings,
->=20
-> -- Sebastian
->=20
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >  MAINTAINERS | 7 -------
-> >  1 file changed, 7 deletions(-)
-> >=20
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index efba8922744a3..c780cbd11ffb9 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -27466,13 +27466,6 @@ S:	Supported
-> >  W:	http://www.marvell.com
-> >  F:	drivers/i2c/busses/i2c-xlp9xx.c
-> > =20
-> > -XRA1403 GPIO EXPANDER
-> > -M:	Nandor Han <nandor.han@ge.com>
-> > -L:	linux-gpio@vger.kernel.org
-> > -S:	Maintained
-> > -F:	Documentation/devicetree/bindings/gpio/gpio-xra1403.txt
-> > -F:	drivers/gpio/gpio-xra1403.c
-> > -
-> >  XTENSA XTFPGA PLATFORM SUPPORT
-> >  M:	Max Filippov <jcmvbkbc@gmail.com>
-> >  S:	Maintained
-> > --=20
-> > 2.48.1
-> >=20
-> >=20
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
