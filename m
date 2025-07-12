@@ -1,55 +1,79 @@
-Return-Path: <linux-kernel+bounces-728662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA3CB02BA2
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 17:16:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B040B02BA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 17:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3A7616EA5A
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:16:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD13A1AA0583
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020BD275AF7;
-	Sat, 12 Jul 2025 15:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409002222BF;
+	Sat, 12 Jul 2025 15:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="I4LlRyPs"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RcQP2LTL"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0276618D
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 15:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1943E1607A4;
+	Sat, 12 Jul 2025 15:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752333404; cv=none; b=ovQyFb2VW7BpVinLhYWfqyFG00wTSxuQhjo6HcaMyyIi0wJOmZrQE5KW8iHoNr1WStGqwFcxgdt2ODb3bL9FggctrKb2+I7YlrNQLkEEDbTkHGZz8N7tuqFHB2ytHrRVMmL1RPqSAJlc69R/FORNHg7/QPzpQeLyJ59NhzsN4m8=
+	t=1752333428; cv=none; b=F/wbOKIH3EB3xV9NKmsMwqCDgGbnzeQX0ql/dCTSFwYcPajLN46EBjFv5sHtx0PU8oQ18kTWhtFa1PwOrWeoDQFkBB7bOTRJcL57cbiHcuJV3B9rtY0Rh3bu19aJwGPX35wMWGeQOo7VZSViq4+lnTEu2lacE5kJHCCFXQxuruk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752333404; c=relaxed/simple;
-	bh=GDX7vCjMy9J+OPd2MRRWaTyOZtthmmXSESvSOqHsSH4=;
+	s=arc-20240116; t=1752333428; c=relaxed/simple;
+	bh=aMFFlD8sxb6KfI7aiKzBAgW2ILixRygjx5+/rKokabE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MrNCXwnUnL6SyhPuVSR084+O/EJQZrdGQWArB7pFZoL6eVSHppHtNH2SZRSU8kFudkeIYtQ0Y8r3KV7E31+dQk70MfPlcwDA86WwPJk/dCsOrrcKNNRkNTt8SQOdbV50VIc6YFyuS83p8QkGNdxJE5g6aAYjiuNl0fAcOlJ0vN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=I4LlRyPs; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1752333395;
- bh=lZx2NZXuKQJ5MZ9Menod0GULsbjcKgAMbN3yCF9Zij0=;
- b=I4LlRyPsrbV1u1ILcc6P5UDAn4U8BWbzZmbWqbddvJ4VAlZolwTUS8OW5zHzw0EIFvxuLXewR
- 1+L7KIdj1O2//cNwRee9D2m+/UwVYpbQfbxIT+gQK9xIvdXs3n3/GiPzQVKJOasGGORrsIGLD67
- b0nyQTlYYEzjfkzeDdz7Jcb1WpDDI3OemflkVKxOnIUMhDu3P2DrNO4ekFnuRxUqF2bJJPfF7cI
- 6di1w5Ed+AIv80xnPRo/aLLZirT039JbWz9T67zJN0zMbxC7LoLmd6ryBpcpAaEVE/8PhO2g9bM
- coiqxo0Hw8A3YXsN+jpcFnWH0gZanCvIkHvJLG58tvfA==
-X-Forward-Email-ID: 68727c4bd7dd91652d167c59
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 1.1.6
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <d4bc7bf4-bc56-4fd8-9121-379ac974b236@kwiboo.se>
-Date: Sat, 12 Jul 2025 17:16:23 +0200
+	 In-Reply-To:Content-Type; b=bH1g7lJlXH9TLuKHFz5kzDzGBd/DiFP3V/EbZ3MdE3WqNE8Ec84EXcryaZYSM7h+0HO5RislT8yfEwujgEoTTfPXl3WsBugBcBeKAOhAdZ5P89uNDaKfMm9V0qrnzVVpm8wdpEeVF+pYhbwdxi7JcBwbTTTDQtlBazRzO0QUEFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RcQP2LTL; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45600581226so7644455e9.1;
+        Sat, 12 Jul 2025 08:17:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752333425; x=1752938225; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aQYhbDjEdkH6qRbj8NEnL6UoIBqxgyMRymT7FTKAEPI=;
+        b=RcQP2LTLE5h/LpVgDkArkoxG6zOsKFzKgUl4Enz3gRAtc/HailOWiSAZGm52JY6232
+         I4ts3g5MH+yWm+LfP21HpPg7NlbypOtRhryqmBssO8X46ni/mxOGVVnX9NkeDqrubimN
+         DZjg0vJH6RMsWqwbVqRN78F2jZNpfquJOMlsFvOb3HaG8Y12DvwYGtvuZaTUSTh9Ntmb
+         zMVZuOGFlrB53ecXOpyFRDmDplN5a/SfJI8dvSqMwedRADah4/LQ2N5Bbg4maJinen/F
+         IxybFUZqNpIoJ0Yfawg/nZYO2ISi2yKYLW+aFDPyFLyvxkWOiz3Kr3ahmSlyoD8HVEYa
+         xRsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752333425; x=1752938225;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aQYhbDjEdkH6qRbj8NEnL6UoIBqxgyMRymT7FTKAEPI=;
+        b=rbDKmMm7zYp9R3Xgij9M1mXf0N4w+OQDnqlexv12+aLI7WYn4z1NyLDtCr/BAH+l7O
+         25u6NSl87z1UK55nGCfmzEr1vw6Gj5rQ8YcgRTkURGN6J1pYYvV9qBq1HtQQEgWuBxUE
+         hUJV52Wt1VQ9AdS74boMbSQ9zFBgne4LsZPtuE+bJi0bdsQtm2trklcJcsb+l+0PlxdP
+         SW0n84BJwXbYn84hr3e8/LpoRLt/U+oXP09qiCYVEk/tGdbfsKpMQb5x77AbZe8njbmM
+         RkZ13vrfg2RH1lFlS8gGv3kYTcOXxiEZLA9CEKuVIBveWcVKF+nxVgfmMwUUOzrleWKg
+         3+yg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNervhfEfICRzrnI7sBnIOnJkOBoIfzemDP/b2esT5B2G+5/X2Ky68d5tKlgmuU/NdnVDanW8G3SKRRQ==@vger.kernel.org, AJvYcCXnbvFBuJI+PFDi6dPvrTMX5PA6cvSe9Jnzh4Sv+ebdJ5zOGmlHET8q3EaQcUgxWhwsY2zFAYaZh25g3VQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOyZAPsZqatGxd6WtUxVsy3dIrRz2rI9iL908vvCUBPgd5Wo6F
+	JEMQdsmz7M0s9yAUqD3D/veYrLFXyODICQp/9ad1WzgOmVMDHJyy9D0RMR8SRw==
+X-Gm-Gg: ASbGnctCvVM9ad5q6RcgYJKsF9RA14WepAu4fFz0uEU54VJZgj/N5O6NckX7JV4xVhu
+	AWNVR0G+zEQWalxkhZyWJUdVWTveTwKpNASdFSCAnl+RewAYbj9GG51+932vj2/PxyfuskU4qa+
+	UtgcX3GiMj1qh2Uz6tS9GD/EN5SP2HozfrwG46yKYDuv360xby6mhIBIdE1hCVU/7nQ4nnUD4+p
+	Y3uP60WYdNX9mBcZKclF4/A7XUjRreKRZRimJ8ema44wciO6p8WgOYwxyY2DUPEXJQ96sUd2aHn
+	N0uKjelDjLzQp0YjxwlVAEsgHNB2TAtSf48ig81U9VZHiBX3vJW5atZeuaq/sxWOWY+Gvu9cPBY
+	F2UiL8M6aVMyPsec+VS/qxh12+L0VpugDISFJ8g==
+X-Google-Smtp-Source: AGHT+IHsKQ0zL0Ztqsc+6mKM3Sd3cljTVmePtjv8/kQwA/IJ+3LpPzNoO1eIPju7wYqam1fDK9fNbA==
+X-Received: by 2002:a05:600c:1549:b0:43d:300f:fa1d with SMTP id 5b1f17b1804b1-454f425585amr76589345e9.31.1752333425128;
+        Sat, 12 Jul 2025 08:17:05 -0700 (PDT)
+Received: from [192.168.1.13] ([154.183.63.38])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d50def1fsm117167725e9.21.2025.07.12.08.17.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Jul 2025 08:17:04 -0700 (PDT)
+Message-ID: <806f427f-2d6d-442a-b207-09cf59af642e@gmail.com>
+Date: Sat, 12 Jul 2025 18:17:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,67 +81,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] arm64: dts: rockchip: Add ArmSoM Sige1
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de,
- krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- ziyao@disroot.org
-References: <acbbf570-7a56-4d88-a631-32acd13d29c7@kwiboo.se>
- <20250712040019.165440-1-amadeus@jmu.edu.cn>
+Subject: Re: [PATCH] scsi: hisi_sas: use sysfs_emit() in v3 hw show()
+ functions
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: liyihang9@huawei.com, James.Bottomley@hansenpartnership.com,
+ martin.petersen@oracle.com, linux-kernel-mentees@lists.linux.dev,
+ shuah@kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250712142804.339241-1-khaledelnaggarlinux@gmail.com>
+ <2025071244-widely-strangely-b24c@gregkh>
 Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20250712040019.165440-1-amadeus@jmu.edu.cn>
+From: Khaled Elnaggar <khaledelnaggarlinux@gmail.com>
+In-Reply-To: <2025071244-widely-strangely-b24c@gregkh>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
+On 12/07/2025 5:43 pm, Greg KH wrote:
+> On Sat, Jul 12, 2025 at 05:28:03PM +0300, Khaled Elnaggar wrote:
+>> Replace scnprintf() with sysfs_emit() in several sysfs show()
+>> callbacks in hisi_sas_v3_hw.c. This is recommended in
+>> Documentation/filesystems/sysfs.rst for formatting values returned to
+>> userspace.
+> 
+> For new users, yes, but what's wrong with these existing calls?  They
+> still work properly, so why change them?
+> 
+> thanks,
+> 
+> greg k-h
 
-On 7/12/2025 6:00 AM, Chukun Pan wrote:
-> Hi,
-> 
->>> Should this label be named as led-0/led-1?
-> 
->> The nodes must include 'led' anywhere in their name according to schema:
->>
->> """
->> patternProperties:
->>   # The first form is preferred, but fall back to just 'led' anywhere in the
->>   # node name to at least catch some child nodes.
->>   "(^led-[0-9a-f]$|led)":
->> """
->>
->> Using the color name similar to the the pin labels in schematics made
->> most sense to me.
->>
->> Do you want me to change these to conform to the more restricted
->> ^led-[0-9a-f]$ pattern?
-> 
-> This will be better.
+Oh okay, got it. I was under the impression that older scnprintf()
+calls should be actively replaced  with sysfs_emit(). But no need if
+they just work, unless there is a bug or something.
 
-Will change the node names of the leds in a v3.
-
-> 
->> I only try to enable controllers for devices that are properly described,
->> so I ignored the pwm-fan and its required pwm6 controller. Mostly
->> because it make more sense to describe the fan once thermal support is
->> completed, work [1] currently being blocked by a rk356x otp series [2]
->> and that depends on a rk3576 thermal series [3].
-> 
-> Ok, I got it. Is usb2.0 also stuck?
-
-USB2.0 is mostly stuck due to my limited time and possible power-domain,
-will try to send the USB2.0 patches to mailing list tomorrow.
-
-Regards,
-Jonas
-
-> 
-> Thanks,
-> Chukun
-> 
-> --
-> 2.25.1
-> 
+Thanks for the clarification.
 
 
