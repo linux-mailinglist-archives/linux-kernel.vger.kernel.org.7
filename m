@@ -1,188 +1,149 @@
-Return-Path: <linux-kernel+bounces-728697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0222EB02BF5
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:43:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF17B02BF8
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 854E0171D53
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:43:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80851A470D4
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F2128A1C9;
-	Sat, 12 Jul 2025 16:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BE71E7C32;
+	Sat, 12 Jul 2025 16:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lJ8JCnwj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKM+lY2K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699C419D07A;
-	Sat, 12 Jul 2025 16:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C6D5258;
+	Sat, 12 Jul 2025 16:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752338586; cv=none; b=QLkYpHBLRtA1R7cLS7uS88QVGXNtEwzcdPdOPDE2FVMznEBxsbaltgNJSy8D3g0B1yCNTLx2jImGD25D9V/dngeBl88cZi2mQh8avzaQwy4RQ3fDzJ5eefpJ8F3VUsLYV9oDtnJXYz6f/LyWR0ZsCOoTzCN5027gKt96fdaaC44=
+	t=1752338761; cv=none; b=meU5pyeTnfFQ2iaqj3QmmgUtOq9URKbZqc1tT+5u/XH4Qq8E1MmUE7QH70I27ifvAQiOuo1HWDvO7jRee1C6Rsu5a69O+t+B9U1vQZK3Mes25FBFXPb8nI31ZCecMuamYuEMtsOq+XQE13a4xQuYrsr7lhUw5jnDSiThQq2vDtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752338586; c=relaxed/simple;
-	bh=Rri1++R5Mh+ArHcShmUW90XLxoQLjLZ/i3z5PUc7XjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oEDtok0UA7OqhdXKVSokink377uoSwmktRzNfFlG2k1dcgO02EjTDZmCUHRe9XIJfHY/6vVty8g7AtQvlbQUOuSf0TuVU7t2l9RbaH5I/kSuijRJu5WVCJunQDEwDxgQJgum0OH4oc7zmJpe9ANvGIj44pIOdnPz7WcYFEDEU1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lJ8JCnwj; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752338585; x=1783874585;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Rri1++R5Mh+ArHcShmUW90XLxoQLjLZ/i3z5PUc7XjU=;
-  b=lJ8JCnwjRulcHrcO4sSdcQoo9B2r/5PhD8P9QsDGkJ+Y6t6FPG+DBHSe
-   5LwEbcuH3+F+P1z5pkmhx0c6qFMEJS5f4guESSWzlI8/tel1FnIStirM4
-   +TxHrQ4YCsCqeRe2oPm2w2tjSeF5A5NSi0wyeDI7LgmhnOcd61/AwH8rf
-   f7u3vlwkK31UAE5d7Xv1x0J1Ts4oNk+om7YhY/SOZc2LwbgnPgjsMwUMd
-   yv/kccN+E0XWHlZYVt0k1C5a1WnzgDZ1UD8ouolTWByvOx+DPQt1B6smF
-   UmGdIF3u8YcL7fuEtxuwCPWAYodkfCs+Oo7QmCnQhnDCHixOur9AiP2V7
-   Q==;
-X-CSE-ConnectionGUID: RN4tk6KhTxyLvXcT/O6YMw==
-X-CSE-MsgGUID: cxUcSZ//S1qiQbnp17NrLQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54471794"
-X-IronPort-AV: E=Sophos;i="6.16,306,1744095600"; 
-   d="scan'208";a="54471794"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2025 09:43:04 -0700
-X-CSE-ConnectionGUID: lr4zHb6GRf+mHtRFVyPxQA==
-X-CSE-MsgGUID: 4YNDfRDTRfe3BMB5ZTxEbQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,306,1744095600"; 
-   d="scan'208";a="156931840"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 12 Jul 2025 09:42:59 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uadJR-0007Up-1L;
-	Sat, 12 Jul 2025 16:42:57 +0000
-Date: Sun, 13 Jul 2025 00:42:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wei Fang <wei.fang@nxp.com>, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, richardcochran@gmail.com,
-	claudiu.manoil@nxp.com, vladimir.oltean@nxp.com,
-	xiaoning.wang@nxp.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: oe-kbuild-all@lists.linux.dev, fushi.peng@nxp.com,
-	devicetree@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH net-next 11/12] net: enetc: add PTP synchronization
- support for ENETC v4
-Message-ID: <202507130049.KLM4A8GG-lkp@intel.com>
-References: <20250711065748.250159-12-wei.fang@nxp.com>
+	s=arc-20240116; t=1752338761; c=relaxed/simple;
+	bh=UU7UvpC2jSFAVcgB16h4bO68UOAG8NVx1pdZ2KWZcFs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f0U2k8p1BeUN1aLiYu9U6doKk/taNHcI0Ex8w6ipFicx/XuUtmMmR7P7pyIp6PFHVjojcvqI/+0PGPs5rOTYzEH4MNAiXPkCV8C1RRYNhCL/4cT2QJwG1MPwF2bG0tRjJMuX6y3+lERLOo3y8bD5l4QDUBRFwq1clw2uJCcYWHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKM+lY2K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80816C4CEEF;
+	Sat, 12 Jul 2025 16:45:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752338761;
+	bh=UU7UvpC2jSFAVcgB16h4bO68UOAG8NVx1pdZ2KWZcFs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HKM+lY2KsVFG24tnq1djn4Ud5guSECPYIQlMR6P48UF3k6zqfctmzv6cD9qYsSLMQ
+	 SJvAYWN/nv+Lc/foD15ZTacj91MgozvUY5r3QmiWlXVvJ5XCm+xTCEAZpD9LACkckH
+	 EahiF49xfCWe+yEcI7LGiQctAwkGA8lilYzqxl9AKm29Lb9D9hipflwxHQAVY3iQlz
+	 +yr7PTDogeqJHWLIthpTAXt6MjyCq2vMM5fzTQ71C97oSRiUpDXrzfTInuU43ijKp2
+	 SoexqG1mxLsTjzMb/UVxT3g6ID4uh8FEirKXpKgkAxqJ3Hv7YUrCSDr9GKRxW5Bqte
+	 R2yG15QExLAzQ==
+Message-ID: <c8a16b30-569a-4266-9e2c-86be348afa86@kernel.org>
+Date: Sat, 12 Jul 2025 18:45:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711065748.250159-12-wei.fang@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: memory-controllers: renesas,rpc-if:
+ Add RZ/A1 and RZ/A2 compat strings
+To: Magnus Damm <damm@opensource.se>, linux-renesas-soc@vger.kernel.org
+Cc: robh@kernel.org, geert+renesas@glider.be, devicetree@vger.kernel.org,
+ conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+ wsa+renesas@sang-engineering.com, sergei.shtylyov@gmail.com,
+ p.zabel@pengutronix.de
+References: <175232755943.19062.8739774784256290646.sendpatchset@1.0.0.127.in-addr.arpa>
+ <175232756792.19062.3922882730162396395.sendpatchset@1.0.0.127.in-addr.arpa>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <175232756792.19062.3922882730162396395.sendpatchset@1.0.0.127.in-addr.arpa>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Wei,
+On 12/07/2025 15:39, Magnus Damm wrote:
+> From: Magnus Damm <damm@opensource.se>
+> 
+> Add RZ/A1 and RZ/A2 compat strings for the renesas rpc-if device.
+> 
+> Signed-off-by: Magnus Damm <damm@opensource.se>
+> ---
+> 
+>  Changes since v1:
+>  - Moved RZ/A to top of RZ
+> 
+>  Applies to next-20250710
+> 
+>  Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml |    5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> --- 0001/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
+> +++ work/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml	2025-07-11 04:50:41.505855241 +0900
+> @@ -50,6 +50,11 @@ properties:
+>  
+>        - items:
+>            - enum:
+> +	      - renesas,r7s72100-rpc-if       # RZ/A1H
+> +	      - renesas,r7s9210-rpc-if        # RZ/A2M
 
-kernel test robot noticed the following build errors:
+Still not tested.
 
-[auto build test ERROR on net-next/main]
+You got extensive guideline from me last time. You just replied (in
+private!) that you are not going to install dtschema and test it.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Fang/dt-bindings-ptp-add-bindings-for-NETC-Timer/20250711-152311
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250711065748.250159-12-wei.fang%40nxp.com
-patch subject: [PATCH net-next 11/12] net: enetc: add PTP synchronization support for ENETC v4
-config: loongarch-randconfig-r062-20250712 (https://download.01.org/0day-ci/archive/20250713/202507130049.KLM4A8GG-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 01c97b4953e87ae455bd4c41e3de3f0f0f29c61c)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250713/202507130049.KLM4A8GG-lkp@intel.com/reproduce)
+Fine if you send correct code.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507130049.KLM4A8GG-lkp@intel.com/
+Not fine if you write buggy code. And this is obviously the case here as
+easily visible in the diff above - borken indentation.
 
-All errors (new ones prefixed by >>):
+Please read carefully previous instructions.
 
->> drivers/net/ethernet/freescale/enetc/enetc.c:3340:7: error: call to undeclared function 'enetc_ptp_clock_is_enabled'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    3340 |         if (!enetc_ptp_clock_is_enabled(priv->si))
-         |              ^
-   drivers/net/ethernet/freescale/enetc/enetc.c:3390:7: error: call to undeclared function 'enetc_ptp_clock_is_enabled'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    3390 |         if (!enetc_ptp_clock_is_enabled(priv->si))
-         |              ^
-   drivers/net/ethernet/freescale/enetc/enetc.c:3602:46: warning: shift count >= width of type [-Wshift-count-overflow]
-    3602 |         err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-         |                                                     ^~~~~~~~~~~~~~~~
-   include/linux/dma-mapping.h:73:54: note: expanded from macro 'DMA_BIT_MASK'
-      73 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-         |                                                      ^ ~~~
-   1 warning and 2 errors generated.
---
->> drivers/net/ethernet/freescale/enetc/enetc_ethtool.c:927:7: error: call to undeclared function 'enetc_ptp_clock_is_enabled'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     927 |         if (!enetc_ptp_clock_is_enabled(si))
-         |              ^
-   1 error generated.
-
-
-vim +/enetc_ptp_clock_is_enabled +3340 drivers/net/ethernet/freescale/enetc/enetc.c
-
-  3332	
-  3333	int enetc_hwtstamp_set(struct net_device *ndev,
-  3334			       struct kernel_hwtstamp_config *config,
-  3335			       struct netlink_ext_ack *extack)
-  3336	{
-  3337		struct enetc_ndev_priv *priv = netdev_priv(ndev);
-  3338		int err, new_offloads = priv->active_offloads;
-  3339	
-> 3340		if (!enetc_ptp_clock_is_enabled(priv->si))
-  3341			return -EOPNOTSUPP;
-  3342	
-  3343		switch (config->tx_type) {
-  3344		case HWTSTAMP_TX_OFF:
-  3345			new_offloads &= ~ENETC_F_TX_TSTAMP_MASK;
-  3346			break;
-  3347		case HWTSTAMP_TX_ON:
-  3348			new_offloads &= ~ENETC_F_TX_TSTAMP_MASK;
-  3349			new_offloads |= ENETC_F_TX_TSTAMP;
-  3350			break;
-  3351		case HWTSTAMP_TX_ONESTEP_SYNC:
-  3352			if (!enetc_si_is_pf(priv->si))
-  3353				return -EOPNOTSUPP;
-  3354	
-  3355			new_offloads &= ~ENETC_F_TX_TSTAMP_MASK;
-  3356			new_offloads |= ENETC_F_TX_ONESTEP_SYNC_TSTAMP;
-  3357			break;
-  3358		default:
-  3359			return -ERANGE;
-  3360		}
-  3361	
-  3362		switch (config->rx_filter) {
-  3363		case HWTSTAMP_FILTER_NONE:
-  3364			new_offloads &= ~ENETC_F_RX_TSTAMP;
-  3365			break;
-  3366		default:
-  3367			new_offloads |= ENETC_F_RX_TSTAMP;
-  3368			config->rx_filter = HWTSTAMP_FILTER_ALL;
-  3369		}
-  3370	
-  3371		if ((new_offloads ^ priv->active_offloads) & ENETC_F_RX_TSTAMP) {
-  3372			bool extended = !!(new_offloads & ENETC_F_RX_TSTAMP);
-  3373	
-  3374			err = enetc_reconfigure(priv, extended, NULL, NULL);
-  3375			if (err)
-  3376				return err;
-  3377		}
-  3378	
-  3379		priv->active_offloads = new_offloads;
-  3380	
-  3381		return 0;
-  3382	}
-  3383	EXPORT_SYMBOL_GPL(enetc_hwtstamp_set);
-  3384	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Krzysztof
 
