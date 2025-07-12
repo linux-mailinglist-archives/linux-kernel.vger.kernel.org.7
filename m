@@ -1,90 +1,82 @@
-Return-Path: <linux-kernel+bounces-728443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A08FEB0282F
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 02:04:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2166B02831
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 02:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 462394E26BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 00:04:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B0D24E4B48
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 00:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90DF2F2A;
-	Sat, 12 Jul 2025 00:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1510129A9;
+	Sat, 12 Jul 2025 00:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a46f38vT"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FmGrkNSy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jOu9u/bv"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BAD19A
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 00:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BFD7E1;
+	Sat, 12 Jul 2025 00:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752278682; cv=none; b=W/w/wA7jwEn8Td4CvxQvRcocHiU6liyeEBaB0Yk/pIBdqKaKHAHhqCaDoLsmgU76Dw1+YR2CaMmroRgMZsgKh62UOvFju8a4dPp1wfnzzmJ0fcQxx6Rtxt9xye/+X/zg85USpp2kGhivisQ6m9J0rt4r+O16yf2bVhC1JdHS7kg=
+	t=1752278978; cv=none; b=YDqQ7wPNAoLFrSS2QF8CvmcnClVxa23bUwVLeXDwXpCG9oKlAvvBFHJQ60HIo4PC3Nty30a7u1a4jU7/BOS/BrtnJkFIqlgO0pVAhuICXUqu+e+ioMxouWp7oDW2mpDPaoFxzzx4+E5ijhJneIBPDE2+sYfuqjUiamzcsI2ELKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752278682; c=relaxed/simple;
-	bh=jafzsM0E22IV2+JJEYJYIABQiygfJD9opNAi7jFor44=;
+	s=arc-20240116; t=1752278978; c=relaxed/simple;
+	bh=1zcWqARHBHhd9onhgWG62EpHRur3APNdJH6ch4VkW4o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UtV/S0kXTHL8tofqzz8vhqOc2WCfZHh4rTxxsZatfJRfEe7Q5P+rwVnbPLNiBNqBppxItf/bJ4yFnI9Jm8zjrFD5uhuiG8JN+0G0Fy+74rrMam4UVPJVrWy4yAqo7nbKVRF/drKgmeDOKG718fhla0fOz82BDqN4XvYsBwZY4Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=a46f38vT; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-73972a54919so2435519b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:04:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1752278681; x=1752883481; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sSDqxMQohw4PhZMvEXwWUzGgcSu1YJU0uLQAkTg86t8=;
-        b=a46f38vTFrcv+kJSKC/Da7hT4+0o2Zwnh68tPlswgEaHzU03XkVouKWBv2KQZsCuVi
-         KFHZY444lhOmj1/wQES8UYLwGExgZwEwBrLzKQmTvF6k61Xd3jQJYgwxOcD+rX2+4OQB
-         GlDTf8M8cYmEMId2/YgD+QGaqNwCPSzBqv1Zs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752278681; x=1752883481;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sSDqxMQohw4PhZMvEXwWUzGgcSu1YJU0uLQAkTg86t8=;
-        b=afQKN0hdmx6uim45uu2zIuuGm4NB4FMpMvq19bagk0t1B+Wn49M/6YAKpb9a/FUdne
-         mMBNGetmTlh0HC5as+Jq8DokjZFmHSf4eTcoeH0GeVGHUHXyWnjqZqniQCy0dWltqzLQ
-         zYctnGtK6ra3VzCyba8h82H2f2ALpvyuc2an80+Ib+2pmnhGtaaRJZE5zeApWUL5F+jD
-         DUmofi4dTNO4YkRygfXdp4CatdFDBBubZRxN5hQsBU2u3BWo5Af3u8PP78N3/D/TxkWo
-         GJ6o5kXQsqM1pmsw8wNtZWq/m19lvrnf0havMBoHe//eE1vXuMwDeGTvlt/52Aao29+J
-         2wsA==
-X-Forwarded-Encrypted: i=1; AJvYcCXlLySLjoYxyKB1qRlJOQ6bliIgOhCFf3uvkS1r7ELHCQ91ka9ib73lNvzBNoNQf8pmx0pEkStiJ5QYiP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHDmHRbFwdxPLiaSrNXsjJ4n+eLNfGHPNn2gD7OGreZAf8E3CC
-	wPS6e2ggE4YyRuaPGITPoxGNco/gjBDvXV1/7AxpYPyJKUs6R3PjxHyVNlrE/BRK9Q==
-X-Gm-Gg: ASbGnctHan2xzi3GE2h/WZzrK9QIKdXKEp5I1cJy3C284vPpBQ/Avs+W/Q8C5NSII54
-	mkvR4MDpOxbUHFOTnTZfG6Cf080SrQnc5kk+VsLMih/bcwB6v/Wel9wNQP6i7LZD9febVbLHaQW
-	AA99IzieBc2pcdaf6GYNLGBRzshQ2TnF7zmOs9QSfWlHL5uy83zaWGdzNjNedECsV8Mq3U3lQen
-	IQPLB2oTpdIxfoKIZ+Y5JkCSmmZoXLfPyr8n4sYXJEOMJ/l2HvxgM0DdU4fhSGuK8TQqlvs6bGz
-	r2GZPz/VVp02jSw42TKzWONGUmhOQLs+KohnjbAzQnhvXAmRjI/eTUKi78IwHMMbhtuyOGQXBxZ
-	3N+TW0xttq5mXuaCDCZfHRcm4pGC4FHc6J+Z+Lu/4oYalHpspQQWnhQLY2BKr
-X-Google-Smtp-Source: AGHT+IG/dqGGE3VWazBJtKvKr0ye5a/Q3FLffMSzSAQFdGDBegfdLcct6HvFFwDqAqizwgV0ZrMEuw==
-X-Received: by 2002:a05:6a00:3a10:b0:74b:4dcc:a150 with SMTP id d2e1a72fcca58-74ee06aeb03mr6270287b3a.6.1752278680487;
-        Fri, 11 Jul 2025 17:04:40 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:2386:8bd3:333b:b774])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-74eb9f8b984sm6226108b3a.150.2025.07.11.17.04.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 17:04:39 -0700 (PDT)
-Date: Fri, 11 Jul 2025 17:04:38 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Subject: Re: [PATCH RFC 0/3] PCI/pwrctrl: Allow pwrctrl framework to control
- PERST# GPIO if available
-Message-ID: <aHGmllch_efdWgsW@google.com>
-References: <20250707-pci-pwrctrl-perst-v1-0-c3c7e513e312@kernel.org>
- <aG3IWdZIhnk01t2A@google.com>
- <kj6kilhjynygioxyo7iogvgwqbr7tluryir3f7vqeowk6wd6qn@sop5ubotfcug>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MIVNDj8xHYn9UAR+gRucd2P0P30GMksbdNuV7eMmKVh2dBcHkC+2RRFgaOrG8ymQTSQKEKpGufhOzkQMhUS7xHDJ0X+HDd64VwLLp+f/aUOruHZNuZ0hAcmR6+k41fsHJ4tBnIeoCP6yZLc9zU5Auk4uu9yn8058NRQ9tYrixbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FmGrkNSy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jOu9u/bv; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 12 Jul 2025 02:09:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752278975;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1zcWqARHBHhd9onhgWG62EpHRur3APNdJH6ch4VkW4o=;
+	b=FmGrkNSyOeA49n8gt1SASTxSx2faLlzWDeQjn1jqpeO0NgP1qLW/DE1MOZNPwAawJJUDgJ
+	UP6qEYdWJtWvNUmRz6yZ3AcLFsWnYx+YMy+M1ROgEukziwjDON6p0ecGF8aqqAI5pSsmXH
+	UY0BkHophkC75xu+hO6Opmuq36Uk7hho/Yg6dMBywHnnNlfm6rI/+RCW1A0p9MRvYc+NDv
+	uc8URWywxZqZTgeoJToe+A2tpHY0imdkNfRh+WGKgJsgOveZNSKAjNQJRm671nWGgMlcC5
+	/4Zcq0KQOoP9X075OA9nES8TMraz5a2nEQszlFcs25xsksGwwA60ZC+ugfk30g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752278975;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1zcWqARHBHhd9onhgWG62EpHRur3APNdJH6ch4VkW4o=;
+	b=jOu9u/bvDc9i268ZxwwgufRBrr1A4HzFOvSFa9hxWSwpBPj+llpXXKkGGDs52eDBYnVISt
+	QGLyTdXtZEChkVBQ==
+From: Nam Cao <namcao@linutronix.de>
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
+Message-ID: <20250712000934.DwvOk7Hk@linutronix.de>
+References: <20250710062127.QnaeZ8c7@linutronix.de>
+ <d14bcceddd9f59a72ef54afced204815e9dd092e.camel@xry111.site>
+ <20250710083236.V8WA6EFF@linutronix.de>
+ <c720efb6a806e0ffa48e35d016e513943d15e7c0.camel@xry111.site>
+ <20250711050217.OMtx7Cz6@linutronix.de>
+ <20250711-ermangelung-darmentleerung-394cebde2708@brauner>
+ <6856a981f0505233726af0301a1fb1331acdce1c.camel@xry111.site>
+ <20250711095830.048P551B@linutronix.de>
+ <7a50fd8af9d21aade901fe4d32e14e698378c82f.camel@xry111.site>
+ <20250711122123.qXVK-EkF@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,134 +85,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <kj6kilhjynygioxyo7iogvgwqbr7tluryir3f7vqeowk6wd6qn@sop5ubotfcug>
+In-Reply-To: <20250711122123.qXVK-EkF@linutronix.de>
 
-Hi,
+On Fri, Jul 11, 2025 at 08:09:12PM +0800, Xi Ruoyao wrote:
+> And I'm afraid this may be a bug in my userspace... Then I'd feel guilty
+> if this is reverted because of an invalid bug report from I :(.
 
-On Wed, Jul 09, 2025 at 12:18:29PM +0530, Manivannan Sadhasivam wrote:
-> On Tue, Jul 08, 2025 at 06:39:37PM GMT, Brian Norris wrote:
-> > On Mon, Jul 07, 2025 at 11:48:37PM +0530, Manivannan Sadhasivam wrote:
-> > > Hi,
-> > > 
-> > > This series is an RFC to propose pwrctrl framework to control the PERST# GPIO
-> > > instead of letting the controller drivers to do so (which is a mistake btw).
-> > > 
-> > > Right now, the pwrctrl framework is controlling the power supplies to the
-> > > components (endpoints and such), but it is not controlling PERST#. This was
-> > > pointed out by Brian during a related conversation [1]. But we cannot just move
-> > > the PERST# control from controller drivers due to the following reasons:
-> > > 
-> > > 1. Most of the controller drivers need to assert PERST# during the controller
-> > > initialization sequence. This is mostly as per their hardware reference manual
-> > > and should not be changed.
-> > > 
-> > > 2. Controller drivers still need to toggle PERST# when pwrctrl is not used i.e.,
-> > > when the power supplies are not accurately described in PCI DT node. This can
-> > > happen on unsupported platforms and also for platforms with legacy DTs.
-> > > 
-> > > For this reason, I've kept the PERST# retrieval logic in the controller drivers
-> > > and just passed the gpio descriptors (for each slot) to the pwrctrl framework.
-> > 
-> > How sure are we that GPIOs (and *only* GPIOs) are sufficient for this
-> > feature? I've seen a few drivers that pair a GPIO with some kind of
-> > "internal" reset too, and it's not always clear that they can/should be
-> > operated separately.
-> > 
-> > For example, drivers/pci/controller/dwc/pci-imx6.c /
-> > imx_pcie_{,de}assert_core_reset(), and pcie-tegra194.c's
-> > APPL_PINMUX_PEX_RST. The tegra case especially seems pretty clear that
-> > its non-GPIO "pex_rst" is resetting an endpoint.
-> > 
-> 
-> Right. But GPIO is the most commonly used approach for implementing PERST# and
-> it is the one supported on the platform I'm testing with. So I just went with
-> that. For sure there are other methods exist and the PCIe spec itself doesn't
-> define how PERST# should be implemented in a form factor. It merely defines
-> PERST# as an 'auxiliary signal'. So yes, other form of PERST# can exist. But for
-> the sake of keeping this proposal simple, I'm considering only GPIO based
-> PERST# atm.
+FYI I just got a separate bug report. So something is definitely wrong with
+this patch.
 
-Hmm, OK. A simple start is fine, but I'm pointing out this will quickly
-show its limitations.
-
-> Also, Tegra platforms are not converted to use pwrctrl framework and I don't
-> know if the platform maintainers are interested in it or not. But if they start
-> using it, we can tackle this situation by introducing a callback that
-> asserts/deasserts PERST# (yes, callbacks are evil, but I don't know any other
-> sensible way to support vendor specific PERST# implementations).
-
-IMO, it's pretty fair game to at least account for things people are
-doing in upstream drivers today, even if they aren't wholly ready to
-adopt the new thing. It's harder to gain new users when you actively
-don't support things you know the users need.
-
-> Oh and do take a look at pcie-brcmstb driver, which I promised to move to
-> pwrctrl framework for another reason. It uses multiple callbacks per SoC
-> revisions for toggling PERST#. So for these usecases, having a callback in
-> 'struct pci_host_bridge' would be a good fit and I may introduce it after this
-> series gets in.
-
-Sure. I think there are plenty of drivers that will need it. And that's
-why I brought it up.
-
-But if that's a "phase 2" thing, so be it.
-
-> > > This will allow both the controller drivers and pwrctrl framework to share the
-> > > PERST# (which is ugly but can't be avoided). But care must be taken to ensure
-> > > that the controller drivers only assert PERST# and not deassert when pwrctrl is
-> > > used. I've added the change for the Qcom driver as a reference. The Qcom driver
-> > > is a slight mess because, it now has to support both new DT binding (PERST# and
-> > > PHY in Root Port node) and legacy (both in Host Bridge node). So I've allowed
-> > > the PERST# control only for the new binding (which is always going to use
-> > > pwrctrl framework to control the component supplies).
-> > > 
-> > > Testing
-> > > =======
-> > > 
-> > > This series is tested on Lenovo Thinkpad T14s laptop (with out-of-tree patch
-> > > enabling PCIe WLAN card) and on RB3 Gen2 with TC9563 switch (also with the not
-> > > yet merged series [2]). A big take away from this series is that, it is now
-> > > possible to get rid of the controversial {start/stop}_link() callback proposed
-> > > in the above mentioned switch pwrctrl driver [3].
-> > 
-> > This is a tiny bit tangential to the PERST# discussion, but I believe
-> > there are other controller driver features that don't fit into the
-> > sequence model of:
-> > 
-> > 1. start LTSSM (controller driver)
-> > 2. pwrctrl eventually turns on power + delay per spec
-> > 3. pwrctrl deasserts PERST#
-> > 4. pwrctrl delays a fixed amount of time, per the CEM spec
-> > 5. pwrctrl rescans bus
-> > 
-> > For example, tegra_pcie_dw_start_link() notes some cases where it needs
-> > to take action and retry when the link doesn't come up. Similarly, I've
-> > seen drivers with retry loops for cases where the link comes up, but not
-> > at the expected link rate. None of this is possible if the controller
-> > driver only gets to take care of #1, and has no involvement in between
-> > #3 and #5.
-> > 
-> 
-> Having this back and forth communication would make the pwrctrl driver a lot
-> messier. But I believe, we could teach pwrctrl driver to detect link up (similar
-> to dw_pcie_wait_for_link()) and if link didn't come up, it could do retry and
-> other steps with help from controller drivers. But these things should be
-> implemented only when platforms like Tegra start to show some love towards
-> pwrctrl.
-
-Never mind the lack of love you feel here :)
-But I'm actively looking at drivers that don't yet fit into what pwrctrl
-supports, and I'd like them to use pwrctrl someday instead of
-reinventing the wheel.
-
-You're arguing against more callbacks, and start_link()-like
-functionality, but I'm pretty sure some of these things are necessities,
-if you're trying to abstract power control away from controller drivers.
-
-Again, maybe this is a problem to be solved later. But I think you're
-kidding yourself that pwrctrl is ready as-is, and that you can avoid
-these kinds of callbacks.
-
-Regards,
-Brian
+Best regards,
+Nam
 
