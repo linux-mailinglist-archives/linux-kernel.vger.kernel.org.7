@@ -1,98 +1,123 @@
-Return-Path: <linux-kernel+bounces-728652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0357B02B71
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:37:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD673B02B78
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A28FA61FA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 14:37:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96491A62F43
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 14:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51D2285062;
-	Sat, 12 Jul 2025 14:37:42 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B9628640D;
+	Sat, 12 Jul 2025 14:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GGrn0yab"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFECA27E7C8;
-	Sat, 12 Jul 2025 14:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8126218ADE;
+	Sat, 12 Jul 2025 14:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752331062; cv=none; b=PQ/hUSHTAQ2orxDfHtVSzNEtrsH39CNLhDPwSLSJpqZuGhn4mOUqA+yoi8905namwxIsvFgjteFAr45RbtKR2juUqJA7dQTfeqJqIg5r0TTcZM4AvHm+dioAXlcfz7toIV1JXfmBkqcqLColqpiYzd+tJq6KxktwDqmJe+e7Z5g=
+	t=1752331126; cv=none; b=WJVcEZJUVdlUxRyIWkeWJhW95dw6qKwY+tdgYaYBeS9e4AT7546AkcXhDYslDTt7TXLLOoKlCEfGoe/dVItCXNMlxEFkuJuln31JtIoQJ4Do+GCy/0J1ak6VZ5eMqq3vkfw0yqmmnD8I0VVvEoAyfNqMQ5ccqGiLzo0R+baGyL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752331062; c=relaxed/simple;
-	bh=PFQv1MiKwPHjCbE3SkmZSPRK8MgN7zNlyxripA+FjFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X6khXT6Yi/ysOW+7oofObr8RHXEWXDtCKgvG+haFHcj1f7xMR2ntpFlBktGirAKgpDnI+vDiDUfKRcbDTLACCzTC0P3DMCnVCuAGAekehXU+229pueCZ78JwgC7/oRy74f1VnN6EYzIUdQvxHsR9+o7RqV0rOsAtDs7AR6gYgMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id 5A52316013F;
-	Sat, 12 Jul 2025 14:37:33 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id B056E20025;
-	Sat, 12 Jul 2025 14:37:31 +0000 (UTC)
-Date: Sat, 12 Jul 2025 10:37:32 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] tracing: Remove "__attribute__()" from the type
- field of event format
-Message-ID: <20250712103732.79c7b9e1@batman.local.home>
-In-Reply-To: <20250712204524.13ece418f90ea66d4bd0e598@kernel.org>
-References: <175197567999.977073.8989204607899013923.stgit@mhiramat.tok.corp.google.com>
-	<175197568917.977073.2201559708302320631.stgit@mhiramat.tok.corp.google.com>
-	<20250709131107.397a3278@batman.local.home>
-	<20250711143703.60a1a9a9f31a45f2000eec9d@kernel.org>
-	<20250711120322.4ddb9b39@batman.local.home>
-	<20250712204524.13ece418f90ea66d4bd0e598@kernel.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752331126; c=relaxed/simple;
+	bh=JL0yAS7YGbdfaUG0OW1m/bcaqjrSdvczB5r/M1DxKs8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gw30tKGefrRN7oI8qslwAoMUDL1HxvY2bqgOU7b8Wsc+pfM6Us96HWiY1az1J0TgZdjMBm2MfhYFBr6SBYGbr0XprbDlSLtcxRUpeXGk3gklyvoU/UqyHfj/DnlWdzCQdSno0JKySG9oxKLea1tQKnK01YOe9emejD1SpIUwUno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GGrn0yab; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60c01b983b6so5585162a12.0;
+        Sat, 12 Jul 2025 07:38:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752331123; x=1752935923; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=koT4tW7sPR7eLhyX94iUXRNXGl+r0eUfBJKco6+0BRU=;
+        b=GGrn0yaboY6Yi/ODmn5qaUtnT5tmqTH9lC7gZnSQbe4m2mKISXwbrBbNhJQl1jy/G4
+         NaUaK4dGxTfIFULBNt5HKamY9t6EUGSeSPtorGIM5KzNaS6Hx//5OC6o3SKnL6qQgH6/
+         Vj+npePqPnJUyX7xIBM1zK7KZBB6o6CZVv77fOfOGOtM9zAsODMr680pXb0QcgzKuQad
+         It91lMTAjVoELdMnzcLevsK224Q7QHFc5g4GwbCaZtjakI9KwlwuZeAgRJI55OPFWij3
+         SdwwbkhavVkgs5zgU49LxzfzZwnGcI2dc6sSEqkDN3gJYV6ieRnFiKT2XNM161eJfPtg
+         sMzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752331123; x=1752935923;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=koT4tW7sPR7eLhyX94iUXRNXGl+r0eUfBJKco6+0BRU=;
+        b=t0eze/7iMgJEPah3JrIPEV70pfR+jp3eW1YghHvA1a2MNi2wHcLjok8IgfJ225hQf1
+         qY0ZKRm5z7AYVFKfAfbXoW1/qxlKGwTPOQx/8PK/jpzUdIc6ixr/gbshsNbfZijjkmJg
+         JWp2qThvE/pXCm88WO70JT8dmldj89eAtgoRtyGBFqil/XdFJUBBFxevX5E1OBcj83nn
+         LjShnmrLu2HpykJb1EC7yyQWvBI2Blw5J/y7U47jiwAvyqx+D3uFDWdH7yMCAjZ1An5E
+         s3/NMciD6ZoCdaiFX+smsJ62i3otK2RflUXs/T1rpGYMpap9FBuc94O6I039LSuJNxjD
+         sr0A==
+X-Forwarded-Encrypted: i=1; AJvYcCXIrx242aJ5VLt9CMgQxi2cnL6VPp1oA2i8DiOcRbSoc0wOdnf3DroyCTANXccuxqXlGUuqpP5Z1SNNHQ==@vger.kernel.org, AJvYcCXWx+StR0SkGvpDBHJDqJfASrd5o8j+4wn8Xovtv3PWgh3oIa/52oAaHPZ4Gtj4ASbKjA+JNDHd@vger.kernel.org, AJvYcCXmifwxQY6+45/EkhIRLEtG7Ot5R0VM7aglD4dN4DiJFNn3qkRMAQ6ffVskn8fRSTOVDTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwnxVNbhsnX3qz+5brFE2ytU0Ib0eclV5hgJ/qGucHJDrksPi/
+	nCxHXYZcn0GvY7qSTsrhk/4kvPQv0LJ5MyE8gnbMzu9arDnrzppsDhHM
+X-Gm-Gg: ASbGncvqdIUArJPGxSh+kN0j3of4G0L/z7ZNKHTj5fFrxJygFQ4oVd2baoyGBK4fFXz
+	Cciu3MNLAFHNaEuZMcQSKCKXC1leB83Ui7PZoN46yphy77Ki8RWLTX65cbmx2EBlQYxw3LkJAg1
+	MD+XtwtaOKNfXklmnxehxvHlu8jlnhgpEw+84zO5oVmyD56qNFWdsKDCS+9wsWXNYu8qR6XEOrE
+	Dx+ffuTMU7YGFFlmIDCWT1Ajh17DP6q6mgGVnTExR2b2GUAAzAldzME7wtHKECb56CAD00qQq3B
+	Sc+4UdrROSaMInYjEJ51PfqzjB8k6nt7v1/S0NtKasL41fr2CJp6IG7q0HfDUMRM74O/CPzhU/F
+	lCCHiG0kv1SOB94V0K8zA/YZfYQzVrsUS1u8=
+X-Google-Smtp-Source: AGHT+IFpiBx8aoo3FRRG9yCk+2I/NQ1LWZmLvjhcwcllyNUx2P6pWdBml/WUBj6Iu8ouNjwUof8qmQ==
+X-Received: by 2002:a05:6402:1941:b0:60c:5e47:3af5 with SMTP id 4fb4d7f45d1cf-611c1cb7445mr10377973a12.4.1752331122595;
+        Sat, 12 Jul 2025 07:38:42 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:b2ad])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611fa28e1c4sm1806095a12.10.2025.07.12.07.38.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Jul 2025 07:38:41 -0700 (PDT)
+Message-ID: <b1f80514-3bd8-4feb-b227-43163b70d5c4@gmail.com>
+Date: Sat, 12 Jul 2025 15:39:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 1/8] netmem: introduce struct netmem_desc
+ mirroring struct page
+To: Byungchul Park <byungchul@sk.com>, willy@infradead.org,
+ netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
+ ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
+ akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com,
+ andrew+netdev@lunn.ch, toke@redhat.com, tariqt@nvidia.com,
+ edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, leon@kernel.org,
+ ast@kernel.org, daniel@iogearbox.net, david@redhat.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
+ linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com,
+ hannes@cmpxchg.org, ziy@nvidia.com, jackmanb@google.com
+References: <20250710082807.27402-1-byungchul@sk.com>
+ <20250710082807.27402-2-byungchul@sk.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250710082807.27402-2-byungchul@sk.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: f1rei356ssetnsu795jz3xcer5gyhgi8
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: B056E20025
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+hQ6GS8OZgON/sLVGwYmpUtRbcIiBkgMQ=
-X-HE-Tag: 1752331051-649973
-X-HE-Meta: U2FsdGVkX1/hBdxgzFDNgX9buPFxsa0V/rMcqEPnhJKZif5/dc3xmV8oP/4FK6lLfXCkexGeWX7sXo4OJsFH3kcFv7XCXWyDSU/K7UxfBRzsBpSW+PNP9oEObbMfM0QNeDMD3pe5r+MDu7rqzVp3t4LcYI+uFBaHPWH7b/RhZnN9uqr/Itd3cyIM/UN2BbG2lRRBxgwoNFEVbr0SuYN66vhKdLtcrcEiU95jk4TmErQmxjpKEX7c81pFs4+daZ1j54MgcHwa66q5aCK3R40gqWMqYFRUig2a8OSHLLBdisp5hYIdWyPNMUOqzWhglZgaCQ1GS8qFpdev41UZZdYJBxdfChm22eFC
 
-On Sat, 12 Jul 2025 20:45:24 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+On 7/10/25 09:28, Byungchul Park wrote:
+> To simplify struct page, the page pool members of struct page should be
+> moved to other, allowing these members to be removed from struct page.
+> 
+> Introduce a network memory descriptor to store the members, struct
+> netmem_desc, and make it union'ed with the existing fields in struct
+> net_iov, allowing to organize the fields of struct net_iov.
 
-> Hmm, Ok. But when I sanitized the field->type in
-> update_event_fields(), it did not work. So something
-> we missed.
+FWIW, regardless of memdesc business, I think it'd be great to have
+this patch, as it'll help with some of the netmem casting ugliness and
+shed some cycles as well. For example, we have a bunch of
+niov -> netmem -> niov casts in various places.
 
-Ah, it's because we test to see if the event has enums or not before
-calling update_event_fields. We need something like this:
+-- 
+Pavel Begunkov
 
-
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 120531268abf..52829b950022 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -3349,6 +3349,8 @@ void trace_event_eval_update(struct trace_eval_map **map, int len)
- 				}
- 				update_event_printk(call, map[i]);
- 				update_event_fields(call, map[i]);
-+			} else if (need_sanitize_field_type(__type)) {
-+				sanitize_fields(call);
- 			}
- 		}
- 		cond_resched();
-
-
-And have the attribute fixed in both update_event_fields() and have
-your own sanitize_fields() that just does the attribute update.
-
--- Steve
 
