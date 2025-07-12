@@ -1,125 +1,142 @@
-Return-Path: <linux-kernel+bounces-728607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92167B02AB1
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:50:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77C13B02AB4
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC8B41BC10D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 11:50:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9707C1BC1193
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 11:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A05D275864;
-	Sat, 12 Jul 2025 11:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075A9275AEA;
+	Sat, 12 Jul 2025 11:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="IAslfoZL"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R6vhnY2t"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC5721883C;
-	Sat, 12 Jul 2025 11:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC6426B752;
+	Sat, 12 Jul 2025 11:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752321003; cv=none; b=SKN8a9HvxfzrdKMVhuW3FKgWggRBnqc/kC6V7VRM/4t4432/WZwJBKuaRV5SI3scktA21L8K+HM9kNxkoLD3EkDjVp1pMefqgU+zHqkXQSZ87U5XZJ5HZXSXwT/TJp5h2PQ4xsSiDTgxEiSADGnKPhRIUohaPd6m4lfdhokpph8=
+	t=1752321220; cv=none; b=C49mWQiLYnL6FAXxLgCHdD5Zj4ebQexa+hbzw+lB0/z/4p9/38VLf6G2a8dcR3+7hdHdjB3o3odOsQS/mN7rtE3VGaEbEIqfvq53hKrGoVtqSOPQbOAYZ9/aLyaZIT/nkULZT0KDDUOon7UlAQ7QLPWj5GMJ3Qh3l19GoCbHvKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752321003; c=relaxed/simple;
-	bh=S+tYkmbasYOAVw0o6YkfoWz4FtmHaFsF4csZGWOvnmk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZrDiDm25LqY8v0V2fLhQ41qy6OK/ondyUyUfgMKCIvU5levNCfVhkXZtUkWJ3xQxQYVY4lDw23ABdUY3nT6cyX1sgEyC3lobypz6OlWru/QZ24YxuVcgfyWJce1k4waVi/txV3zO/URHgJuupv8YAs+5mWrsynQNsqSGynOzRXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=IAslfoZL; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 3C1D825D28;
-	Sat, 12 Jul 2025 13:49:58 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id UdEQUmxa2Ljx; Sat, 12 Jul 2025 13:49:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1752320997; bh=S+tYkmbasYOAVw0o6YkfoWz4FtmHaFsF4csZGWOvnmk=;
-	h=From:Date:Subject:To:Cc;
-	b=IAslfoZLT3WCtll3Oqe0CeZ14PDMLkGO+Mkzk+z9CLeJ9LNnX9w8mT+z/85MxOvya
-	 F0fBcPK6ZCCyHEZHD+skxRk0J3rrJyWj3NuBbHYp7s7OnT4IGbdq6BC3huxAGyD+Mq
-	 piYjNY+QfL6zgFBqY5zMvTBrfLXFMfWLRiSBjmhvzRM+mou1OhgdJ+8zLlDoCspGt3
-	 ZRWCSNaQUAOJuJvR7L8vmPAOJMUFuD4NJVzDamzwMLVHJV/7VINa624PryIQoq2djV
-	 6BVztx3RX2wPI5X/RJjmxaOkjNUMRCg3AEYo+viyXjckO5MMf9VZ18m2e4Nsn653i+
-	 bARP1Jm/ZwsBA==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Sat, 12 Jul 2025 17:19:30 +0530
-Subject: [PATCH] iommu/exynos: add support for reserved regions
+	s=arc-20240116; t=1752321220; c=relaxed/simple;
+	bh=KzsTalIYYytvLpWidfkVgiBrJoufgmKXbomHVfz6euM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tykt16bEKBlcutxyL3+FjThd9LGGWisWguXDJJMpWXXPl8CUVcsELBDCsuM8I09EshMgM0nCVvde5kjkzqN424ZblKw7UQDVI31n+cEOUFtzLVHEABYa0LlprBWkiOCLVT/EPm6NReLGWxVqq2EW/i+852tvrvFDDoAxm82xWkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R6vhnY2t; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752321219; x=1783857219;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KzsTalIYYytvLpWidfkVgiBrJoufgmKXbomHVfz6euM=;
+  b=R6vhnY2tzUF4tj8ASQLww7QOsxTlDHXdEC0asRme24MEB6GNxfwXoHmV
+   QGfEH1lzIw9eziq2exULttTu6c64qZruShmy4YtyUEZ/qdqxaBhZogaw5
+   X4EEuApGfgRU8C4rwrCWfplpwnLzP3ZbwMpKM2VPBlotsT+pCQatFrLDa
+   G2ekCl3gU7EcKkSopWg20IuMdBQ63pORY+IjTXaT0OOgH0XP65pC0gNZv
+   Dzi6IAu3qd6r5KwCl2EkKwxaFzlQbj2fWZ45vSxJLryCE/TJgSNKtg4nG
+   kVZ8MY+KnfuDBt53uc63WZsSwZUTy2Qszh3nyc/9mKbyj5pyrJSIbLiY8
+   w==;
+X-CSE-ConnectionGUID: vnQtR/ShRJ+QhFBHi0VSjw==
+X-CSE-MsgGUID: tx7XBnfXRZaA1cPvnnFupg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="65944981"
+X-IronPort-AV: E=Sophos;i="6.16,306,1744095600"; 
+   d="scan'208";a="65944981"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2025 04:53:38 -0700
+X-CSE-ConnectionGUID: 3L8Qi3ocQ3Gr6VUkq7GnZw==
+X-CSE-MsgGUID: snpBXbQgQbaujSSCHzNVkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,306,1744095600"; 
+   d="scan'208";a="180240413"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 12 Jul 2025 04:53:34 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uaYnM-0007It-1W;
+	Sat, 12 Jul 2025 11:53:32 +0000
+Date: Sat, 12 Jul 2025 19:53:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wei Fang <wei.fang@nxp.com>, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, richardcochran@gmail.com,
+	claudiu.manoil@nxp.com, vladimir.oltean@nxp.com,
+	xiaoning.wang@nxp.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, fushi.peng@nxp.com,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH net-next 02/12] ptp: netc: add NETC Timer PTP driver
+ support
+Message-ID: <202507121901.cz1bRBUf-lkp@intel.com>
+References: <20250711065748.250159-3-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250712-exynos-sysmmu-resv-regions-v1-1-e79681fcab1a@disroot.org>
-X-B4-Tracking: v=1; b=H4sIAMlLcmgC/x2MMQqAMAwAvyKZDWjAUv2KOIiNNYNVGhRF/LvB5
- eCGuweUs7BCVzyQ+RSVLZnUZQHTMqbIKMEcqKKmctQiX3faFPXWdT0ws56GaJWic/VM3reBQgM
- 22DPPcv3zfnjfDywU1kRsAAAA
-X-Change-ID: 20250629-exynos-sysmmu-resv-regions-661f2889d2d5
-To: Marek Szyprowski <m.szyprowski@samsung.com>, 
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752320988; l=1824;
- i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=S+tYkmbasYOAVw0o6YkfoWz4FtmHaFsF4csZGWOvnmk=;
- b=XrB80dr8a+JpILdcBo5C8ky8eoGj9SFiZjVCtse37Zu1p3PeiZQKE+VHre362XvQFhPjcTFZo
- rQBP0wI1zv3AWTuPsfcXTXWutuy7l58dImvg6ZriUEHbco9XIsfAiW1
-X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
- pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711065748.250159-3-wei.fang@nxp.com>
 
-The bootloader configures a reserved memory region for framebuffer,
-which is protected by the IOMMU. The kernel-side driver is oblivious as
-of which memory region is set up by the bootloader. In such case, the
-IOMMU tries to reference the reserved region - which is not reserved in
-the kernel anymore - and it results in an unrecoverable page fault. More
-information about it is provided in [1].
+Hi Wei,
 
-Add support for reserved regions using iommu_dma_get_resv_regions().
-For OF supported boards, this requires defining the region in the
-iommu-addresses property of the IOMMU owner's node.
+kernel test robot noticed the following build errors:
 
-Link: https://lore.kernel.org/r/544ad69cba52a9b87447e3ac1c7fa8c3@disroot.org [1]
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
- drivers/iommu/exynos-iommu.c | 2 ++
- 1 file changed, 2 insertions(+)
+[auto build test ERROR on net-next/main]
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index b62a8f35c3e8516ead6a41f92dc7c8dc057986a8..b6edd178fe25e7c258cc82c47e9170fb4db74064 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -22,6 +22,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
- 
-+#include "dma-iommu.h"
- #include "iommu-pages.h"
- 
- typedef u32 sysmmu_iova_t;
-@@ -1479,6 +1480,7 @@ static const struct iommu_ops exynos_iommu_ops = {
- 	.device_group = generic_device_group,
- 	.probe_device = exynos_iommu_probe_device,
- 	.release_device = exynos_iommu_release_device,
-+	.get_resv_regions = iommu_dma_get_resv_regions,
- 	.of_xlate = exynos_iommu_of_xlate,
- 	.default_domain_ops = &(const struct iommu_domain_ops) {
- 		.attach_dev	= exynos_iommu_attach_device,
+url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Fang/dt-bindings-ptp-add-bindings-for-NETC-Timer/20250711-152311
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250711065748.250159-3-wei.fang%40nxp.com
+patch subject: [PATCH net-next 02/12] ptp: netc: add NETC Timer PTP driver support
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20250712/202507121901.cz1bRBUf-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250712/202507121901.cz1bRBUf-lkp@intel.com/reproduce)
 
----
-base-commit: a62b7a37e6fcf4a675b1548e7c168b96ec836442
-change-id: 20250629-exynos-sysmmu-resv-regions-661f2889d2d5
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507121901.cz1bRBUf-lkp@intel.com/
 
-Best regards,
+All errors (new ones prefixed by >>):
+
+   drivers/ptp/ptp_netc.c: In function 'netc_timer_adjust_period':
+>> drivers/ptp/ptp_netc.c:161:20: error: implicit declaration of function 'u32_replace_bits' [-Wimplicit-function-declaration]
+     161 |         tmr_ctrl = u32_replace_bits(old_tmr_ctrl, integral_period,
+         |                    ^~~~~~~~~~~~~~~~
+
+
+vim +/u32_replace_bits +161 drivers/ptp/ptp_netc.c
+
+   150	
+   151	static void netc_timer_adjust_period(struct netc_timer *priv, u64 period)
+   152	{
+   153		u32 fractional_period = lower_32_bits(period);
+   154		u32 integral_period = upper_32_bits(period);
+   155		u32 tmr_ctrl, old_tmr_ctrl;
+   156		unsigned long flags;
+   157	
+   158		spin_lock_irqsave(&priv->lock, flags);
+   159	
+   160		old_tmr_ctrl = netc_timer_rd(priv, NETC_TMR_CTRL);
+ > 161		tmr_ctrl = u32_replace_bits(old_tmr_ctrl, integral_period,
+   162					    TMR_CTRL_TCLK_PERIOD);
+   163		if (tmr_ctrl != old_tmr_ctrl)
+   164			netc_timer_wr(priv, NETC_TMR_CTRL, tmr_ctrl);
+   165	
+   166		netc_timer_wr(priv, NETC_TMR_ADD, fractional_period);
+   167	
+   168		spin_unlock_irqrestore(&priv->lock, flags);
+   169	}
+   170	
+
 -- 
-Kaustabh Chakraborty <kauschluss@disroot.org>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
