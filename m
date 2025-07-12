@@ -1,151 +1,115 @@
-Return-Path: <linux-kernel+bounces-728791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 155ADB02CD6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 22:04:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C153AB02CDB
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 22:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F42C4A1581
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:04:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A699A4A3E6E
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CB728DF1F;
-	Sat, 12 Jul 2025 20:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4E5283121;
+	Sat, 12 Jul 2025 20:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4ghgFc88"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="c7P7iUQh"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225DE2741D6
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 20:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752350644; cv=none; b=cOHWH1y7mAH+2Y4q85pGyS+uciB4c4iApuMU7NifiTcsgEChntPcxRNv6tCzHHF1YhZXCmnE3zHHR5ZSGJFJpdg3mJVq3B73KnwToVvo546LfShMzR+AyTMWcAKmfl4N5dEDpvB4gv4kUbWol3ooKqmQ/qhbwl/iN6GCpM70FEY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752350644; c=relaxed/simple;
-	bh=p9a+vV8apmZ7sCsNyZChMdg6f/IVBql6r178baN5A/U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VPFO8sJbkJ4MGdovHMSlHKq2j7SSGGn5tYQkZZl5kO6MU2zGAXime0DWaAEq/VWWvDrf4aYWAWcROQpAQx9IX+85Ezr6Pos9JUyTxS+T9qI3tDD399Lo8mKr0dsttfjFFJyWtw6bXsGvFzGY7jQzq8a1B33l4myn3EC+jBdzqKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4ghgFc88; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a4f379662cso2623569f8f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 13:04:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752350641; x=1752955441; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tq3PmOGCkrfXK01U9GZwebuTRZqcIqJ0ltR+JqYn6ZM=;
-        b=4ghgFc88bjxW9nmU8YOgzVafNUTer16wV0TvEOT2OFCtl/aUjS72xC7loGSOEHTggI
-         jo8wRxWuJZjH30Lm2jnYOyrBJ8EIv7uXFXUrOfa6HI6dwKp9RM+PchSsirFueo/6DRcV
-         4VwraC4P15ZfWCnFK29df5m/DIHhmFowrWZP9ZeTeA0hufJBpBJk6OVEo0dvJVtqKdQU
-         SIdi5AtI2IT+i+egvQpKAHq4G4Yp64SHqlAsGtD3Aj032m5s7S41/Ct9Wo1fBNJfNG5y
-         MGti8SQcvPsOeXSjMkP2WNq1hlNixlac/P9rTvGDm3/uLsvTb7e2E/3q2X+PTAJ30y5u
-         Fftg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752350641; x=1752955441;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tq3PmOGCkrfXK01U9GZwebuTRZqcIqJ0ltR+JqYn6ZM=;
-        b=fNt/hT2wtE0sOh7TY6Lc1IalXzaRRZDAHNh2TgCUrsfWUT2ji+pqsHhFt+z1cF3C/I
-         OfPNaOYS9c4PyY2Bhi4nI0bSV90DZyeL8An7yuZEPUS0hUsUnqyKnQ2EjM9PVweEmUdX
-         xnlOesGe1/f+CpwLIx5G5U9mJI518fD5cv+oVy6gInx/XZSK9fydKKQWjwW4J/Pgk+uS
-         P6niXOIpSoNMTfhC2LjcUl3CEoZ1e907OvWYv/MtHyNAx/eAdz5TWq0QSENx9mIHkYju
-         AVzjUMwqa804FGMx6Jd5BFjfLJKYddQCcE3YhOYmD1FQLxzpe+Bv2HLbdb9IOAaxV6Ji
-         XqYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxda9p7W/7cbTab+7KPsljVWhGzCVv5brRRAMWsYsZPwej8kGEGVKSaGK4yfIyypfa0NIUOsnmnJMHuEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytwUE3l6WK2CBBdcgYptqTVZBrp0cfANB1GNxkCU0qFhd0f5DN
-	8BYA1IKvUnWze6ai2z2N2H41bJGn7VZWPZh6oiLHLYmy5J7x4y98RRoKLL6Nk8/gB5Qc0FyPo0h
-	FHbcZl4UwyR8NirIJduowDrbNPqHsJ7fF3D2xtIHe
-X-Gm-Gg: ASbGnctOPoDNu1uBg09v3bRbCPEr8WuaIcCIGyCM34sHP+GWPnWLT9W3R34g4hrbtNK
-	3GTNEKDhp/VeGBlmE+waZqpdpxNBV0hiP2A8pSUBkKnLt3PfquwTCefbBdvm2FC3Mks2BI7XuK3
-	dpA5eYTHBUz70CDtOSZPzGD5EO0tKv26LNGbmsY4nUyEjJljvLVSgdW9hzPcoRNGjWwPXRMIeES
-	QOxbQSI
-X-Google-Smtp-Source: AGHT+IGF89aatpumiK58uy2w2NkR0vfwl7z6BkyK6LzczLJROl19LmbktSpyeUcyETjQeM3Pn+QdA/l25mYxSvdIIho=
-X-Received: by 2002:a05:6000:290b:b0:3a4:eb92:39b6 with SMTP id
- ffacd0b85a97d-3b5f2e3a4cemr5868399f8f.54.1752350641213; Sat, 12 Jul 2025
- 13:04:01 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9196E3C3C;
+	Sat, 12 Jul 2025 20:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752352121; cv=pass; b=Eqfh16qKtdSLfGIWCZ1EkTsiN1grProkLRifXjy3XVS7Dzyp72RxLg4n585h/CSumWM4sMSVVNH5orW88Mmp6xnC5gIdp/eMli8x+fWYhKYh+utXxtrHkYTMq/DkQP672SXbaCAwsnaZsnyKwSbm/LoFdTQ1uGvA9af4eetPn24=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752352121; c=relaxed/simple;
+	bh=JNSL3luxKmboM2Q9AAdcbE8OG++EWYKAzEG7PANFsAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nSPNZAjSnRqqaiqG1KEtU3WkYYNf7JUn23a9mTF5uqxV0uIbPFOzkpXQotdt3iUiRdOQu814BpFnCYWpi8jdPli8bO3vdVDn2D9uLihjQiTeNVUVmBUF8FTThjrLbRPZQBhtFRNP63M5iRF8ycvg3ex15d21TUg7lHiJoYsLYSE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=c7P7iUQh; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752352114; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=PZDnyJH6WRjrG1YcZBjLlJ08NEyy9NEjSEYjmdIF82Df1fqS2LQ0gTSEsc0rpTj2kjBeX32GFYboTBgP3I6L4Mr1+euRWBBUd/C0s2r/IZPLRF3sDymMshUxuJlBHLkmUXzyDd3pOaMLAbr8cjCvIYCa06tvv/cqG5Y6FJ8b3nI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752352114; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=0dUr3aZvtw1d3KnkMIPP8wNMbVfAcRS+5NL5zMgTfFU=; 
+	b=D8RIYYb+/EdU9OMuAeovyaX0S9UETjKnJ/TEX/BOu3S9AQpDSGdQgEF+oRmopi3AvhJ75L1UZoTGVneO5qhuphrPiUZVgn39i3qZ1BM9U3GOV/Xrr0E6CY9/PMvh5oTu44dyP44Tywhga6BUDK+cKyPRhdpZR8kc7WdVv1xlhDM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752352114;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=0dUr3aZvtw1d3KnkMIPP8wNMbVfAcRS+5NL5zMgTfFU=;
+	b=c7P7iUQhb+piNjIXjnAFf8qqmp4ZQmpwRvY/l93179Swvdsr3vJ3z/N+kC4IjpFu
+	QDx0McDX0otTS1q79TZCXdAB6n1Nvz5VictrGRFzBJ7vfRRTgz7Yvq8cGdv39m4/oTa
+	vXkUA7+pFoQDUHdiWTT5dkYkl+SZF9pQRSNxTZRk=
+Received: by mx.zohomail.com with SMTPS id 1752352110596190.32093102983913;
+	Sat, 12 Jul 2025 13:28:30 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 3291B180F0F; Sat, 12 Jul 2025 22:28:27 +0200 (CEST)
+Date: Sat, 12 Jul 2025 22:28:26 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Ian Ray <ian.ray@ge.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: remove bouncing address for Nandor Han
+Message-ID: <se5ok3bzlej4gecaep3albatkigcczsj4ailmulqebd737qe7a@ly3vlkqhgm3q>
+References: <20250709071825.16212-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com>
- <20250703-topics-tyr-request_irq-v6-2-74103bdc7c52@collabora.com>
- <fcdae3ca-104d-4e8b-8588-2452783ed09a@sedlak.dev> <aGeF_W74OfhRbkoR@google.com>
- <49ABD63B-05C6-4FDC-B825-5AA2ED323F1C@collabora.com>
-In-Reply-To: <49ABD63B-05C6-4FDC-B825-5AA2ED323F1C@collabora.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Sat, 12 Jul 2025 22:03:48 +0200
-X-Gm-Features: Ac12FXx5YdpbrJ0gR9WkcUwidfMCVAJWSGCrV2cShwr-zHhsRabmwxCyCH_KC9I
-Message-ID: <CAH5fLgggM7ZCX7nRz7M=hkxwzcp8UA1=2BQqRFA2CgN9eEUmsA@mail.gmail.com>
-Subject: Re: [PATCH v6 2/6] rust: irq: add flags module
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Daniel Sedlak <daniel@sedlak.dev>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Benno Lossin <lossin@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709071825.16212-1-brgl@bgdev.pl>
+X-ZohoMailClient: External
 
-On Sat, Jul 12, 2025 at 6:27=E2=80=AFPM Daniel Almeida
-<daniel.almeida@collabora.com> wrote:
->
-> Hi Alice,
->
-> > On 4 Jul 2025, at 04:42, Alice Ryhl <aliceryhl@google.com> wrote:
-> >
-> > On Fri, Jul 04, 2025 at 08:14:11AM +0200, Daniel Sedlak wrote:
-> >> Hi Daniel,
-> >>
-> >> On 7/3/25 9:30 PM, Daniel Almeida wrote:
-> >>> +/// Flags to be used when registering IRQ handlers.
-> >>> +///
-> >>> +/// They can be combined with the operators `|`, `&`, and `!`.
-> >>> +#[derive(Clone, Copy, PartialEq, Eq)]
-> >>> +pub struct Flags(u64);
-> >>
-> >> Why not Flags(u32)? You may get rid of all unnecessary casts later, pl=
-us
-> >> save some extra bytes.
-> >
-> > It looks like the C methods take an `unsigned long`. In that case, I'd
-> > probably write the code to match that.
-> >
-> > pub struct Flags(c_ulong);
-> >
-> > and git rid of the cast when calling bindings::request_irq.
-> >
-> > As for all the constants in this file, maybe it would be nice with a
-> > private constructor that uses the same type as bindings to avoid the
-> > casts?
-> >
-> > impl Flags {
-> >    const fn new(value: u32) -> Flags {
-> >     ...
-> >    }
-> > }
->
->
-> Sure, but what goes here? This has to be "value as c_ulong=E2=80=9D anywa=
-ys so it
-> doesn=E2=80=99t really reduce the number of casts.
->
-> We should probably switch to Flags(u32) as Daniel Sedlak suggested. Then
-> it=E2=80=99s a matter of casting once for bindings::request_irq().
+Hi,
 
-IMO the advantage of doing it here is that we can fail compilation if
-the cast is out of bounds, whereas the other cast is at runtime so we
-can't do that.
+On Wed, Jul 09, 2025 at 09:18:24AM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Nandor's address has been bouncing for some time now. Remove it from
+> MAINTAINERS.
 
-Alice
++Cc: Ian Ray, just in case somebody from GEHC wants to be notified
+for this.
+
+Greetings,
+
+-- Sebastian
+
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  MAINTAINERS | 7 -------
+>  1 file changed, 7 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index efba8922744a3..c780cbd11ffb9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -27466,13 +27466,6 @@ S:	Supported
+>  W:	http://www.marvell.com
+>  F:	drivers/i2c/busses/i2c-xlp9xx.c
+>  
+> -XRA1403 GPIO EXPANDER
+> -M:	Nandor Han <nandor.han@ge.com>
+> -L:	linux-gpio@vger.kernel.org
+> -S:	Maintained
+> -F:	Documentation/devicetree/bindings/gpio/gpio-xra1403.txt
+> -F:	drivers/gpio/gpio-xra1403.c
+> -
+>  XTENSA XTFPGA PLATFORM SUPPORT
+>  M:	Max Filippov <jcmvbkbc@gmail.com>
+>  S:	Maintained
+> -- 
+> 2.48.1
+> 
+> 
 
