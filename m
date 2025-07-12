@@ -1,130 +1,173 @@
-Return-Path: <linux-kernel+bounces-728799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98789B02CFE
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 22:58:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB27B02D01
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 22:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A32787AD8FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:57:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBFF517B6AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E80E227EA4;
-	Sat, 12 Jul 2025 20:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0C3227EA4;
+	Sat, 12 Jul 2025 20:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="rQisFPWB"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LeFcjPOz"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6F82AE99;
-	Sat, 12 Jul 2025 20:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5EE2AE99;
+	Sat, 12 Jul 2025 20:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752353896; cv=none; b=KuhqL/c2178h3oPwZIVbstIHipM7FvJ8v4SSUI3n4E0+V/4hLh/kTztS5vTB3l7/CyZJyu5wZKxCinEMVzQcbEzLRf+ADH/Zh6HSHPpTh2PTc23bg154CLHNTrs3R2e5wCYfqXGbELrho0PgKMLz/InMWSAlL49up8jaVJcwY2Q=
+	t=1752353946; cv=none; b=dS3R1QJx5W6jxMEzR3ipNOxvFsW9qP2nuBipp8lirYRLccMFw1oPahsZuwnf6KkN/Wt4yPSBgQ3bNnQ7JxtkCb4JZZ5CWu/5jA0VBYG3Em1femhyB04VGjhWMEbYCx2QKa3dMeItuzZvg99ua2cJkkaojQdPWGkb1yu2yuUTlI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752353896; c=relaxed/simple;
-	bh=FEMsf/9UUhbO1J42GaCRa+G6cmu7M28PWoVxpXXzl9o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KSOp2gvFMGghj0+Q3cVmv8aVR2PCtKmXUF1i8zwwbyNaXUS1j/x3vOXp7OErYqx847Snxjx5plx41ES18Egqugoy7cN34zSOF8tsYl10rC8gaob1ld+zPvT5aKnLstnZMwUxIWgkil8PS6AoHfWC8I9Tke+Pev9yeIcLIoKxUCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=rQisFPWB; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=PdU3RQRc7EGqYt9TTQYBK9ze3sa2k9tRuF6p73T8Yxk=; b=rQisFPWBdpvBaJfV
-	ogaZCdtLzGt5LrlqfzQUOoj9EsRKXO0FJMHp+iwxvD4rzvo7cg7mkGCLkIV2mfCUz+Xd+uKI2Qr1G
-	ESCUltzt40WdBicQZDjzm81T0GW+1CeA6tnDn7+j2Z3oStrBNOzZrlDciocP5ojkUNS2c696BG2d2
-	M+t5G8OGStFQHMii266OoVAHbeJqyoys1lLLl2KS1H2Y36Ge6Oxryrg46ftHCANpXZftfTd7UOXoR
-	shnuzh9HBoUZICdbniL/Q8XalmMYlOuwGyiS0q3UkSmWZXHtBObhXtywWadfIqMKKch1HDjtOARaY
-	7tsBRvotMkcdyqXgtg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1uahIG-00Fjnq-20;
-	Sat, 12 Jul 2025 20:58:00 +0000
-From: linux@treblig.org
-To: ms@dev.tdt.de,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org
-Cc: linux-x25@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH net-next] net/x25: Remove unused x25_terminate_link()
-Date: Sat, 12 Jul 2025 21:57:59 +0100
-Message-ID: <20250712205759.278777-1-linux@treblig.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1752353946; c=relaxed/simple;
+	bh=ULMT2RN2xocfDvDhwK1+Ve5ay3Krg/YRfI7ZYlsX1fw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BytqPmN224KavfZneata8Ir4sqR4Iqe8q02pkSDRrLyVTWIB9uVm3xK8DHNnVeCcH8Ien/nxljSixJWHTqEpaqAAj+ntsG289tX6XbiNqTUlUOqJpfrzY1SZX894z2Q3+pTVmT6LeORvRYyIZK+q+jTulG+qgsgbfsHDxMR+tBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LeFcjPOz; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3122368d7c4so2661125a91.1;
+        Sat, 12 Jul 2025 13:59:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752353944; x=1752958744; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1ZuS0G5loQ6VTp2rtwXZCwwcpkBS4A9zfG+scNKGaJg=;
+        b=LeFcjPOzMzaq/vOfsOZsrihqhh8NrlfbOcfHFB6IhVDkuVX57aKb6dLgDhji2ky1Vc
+         tHcgc/5sqAkaG/NKBqfUdT5c4borg7iYQIYBFizJ5ykntX+GzYzSAViru+07lUfBgV6F
+         cadyrtKSLcXT4XaLB3ZjmQtDnM16GMV1PpQDFt+uwHRNtCMT/52AvWHIHAQvI06y32NH
+         nOyBXCcqd0x7iu55HxO0cEqt9A79Z2mOh0NuY/arcVESTy5AvUKdKaqSZmguGA6lZvOU
+         7BcI5YDPthhhxWKv9COZO9H3ojhi8ElbFbFWyckDIRgEp9JfqnqCLLm9v1zOXaUwVJeg
+         E+0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752353944; x=1752958744;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1ZuS0G5loQ6VTp2rtwXZCwwcpkBS4A9zfG+scNKGaJg=;
+        b=dLXhxxsYysLznqY/wtGS8OGVGyH2+tFZeZu7v08bU+St5+TGVwSPTR9XeaD6yu/xah
+         vW3l80267MxpG27jwRG/DoG1l5KP+FiFt5KM8FfXcdwjIljJE9s6Co/GLuIcu3cmBXSR
+         MQ7p8yc5SezpA8mLgfCEQYDacWa+43MS5JPv/YYlFEZ6QdzKJdC/yrwGAgMn8uNnic8D
+         Df7/RNea5qqqUtcgkZ8ghmmljsjsC0rqaYmAFEdekDaRcV09XoSwqpDKzS7PSBvMVI3y
+         /5dS1ZgXjdbAQwkiTK6EEKo36FStVb9siuKZcIRrW/F//aklhDnTuI1sl/H3AGhli0Gr
+         OYBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUm29b1KP4Dl5L1dun/gxmPtlIV6eNCJNY6uaf4u8FE+kMqY4V8vAw+tPjANdITmX4Mk75vjkwjB0HNc++1@vger.kernel.org, AJvYcCVTNqjbwoVgt/SRiEzMIrArSs6Bzl3IkSwmBUTg56zjI4T7mxExvs+uXE7dQN5Sx7JCHa1QstXeDKXkV2ZBlSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOY+XSyp7MNR167TDHBKQeR6vZVgRRPivMiUxloQm94b7It/6f
+	r+NjD4uDy3STUw0inubS5R7vq3uVVMTb9p15luSAkNmEOD9n6c1MEpOeWU+g2bgjQMLsS22TS/w
+	Nguv9ePhWPit0CPPOCsGx5tannAXoUoY=
+X-Gm-Gg: ASbGnctm85rBFS5E+M+vBaPuh5lTOQ8KV+Po2AxyEHP5fu93sO54fQ7xeE1R1LJiAbZ
+	6bW525Ejt/9qEUq5RpzwNfA6eyt6gh6GFdRNYOrZMz13Bu+8IgDMFUDHA4qUwkyyCGBLP4XBBBA
+	IT9ptnzmGJtCl+Fw3veTMc7/hz0Ng4U4U/OkyPOAo9Qtyalv7Eiu2SUaf+nARAMaHw2zuyOInPF
+	7zmgy/8Einpyo0v5EO11ZhNft/AzEnPy9q0W2WJgNZghWxq1V8=
+X-Google-Smtp-Source: AGHT+IGWc/bsSjfCk72zM+sQY+wNB8gvwjDVcV29c75JkSwrzzUlbnd+fsKQQzCW9smTm3J6SKcCBpYHBPBehSjJtRw=
+X-Received: by 2002:a17:90b:5804:b0:311:b005:93d4 with SMTP id
+ 98e67ed59e1d1-31c50e2c50dmr10076417a91.25.1752353944580; Sat, 12 Jul 2025
+ 13:59:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1751862634.git.alx@kernel.org> <033bf00f1fcf808245ae150346019aa7b997ea11.1751862634.git.alx@kernel.org>
+ <CAHk-=wh9Pqz07ne9iSt1_v0c14rkOGvF9AbEkaq1KnFhQD1SSA@mail.gmail.com>
+In-Reply-To: <CAHk-=wh9Pqz07ne9iSt1_v0c14rkOGvF9AbEkaq1KnFhQD1SSA@mail.gmail.com>
+From: Christopher Bazley <chris.bazley.wg14@gmail.com>
+Date: Sat, 12 Jul 2025 21:58:53 +0100
+X-Gm-Features: Ac12FXzabVR3CNZ1e6s3vvkMYX7Q2knC-RQiMrmuvB567KXzcfJDo2IIzUb977w
+Message-ID: <CAEHU8x9UKFWjuE2JPd99CS7wY-x_0kE0k=K3rfYUCJ29uzOSOA@mail.gmail.com>
+Subject: Re: [RFC v3 3/7] mm: Use seprintf() instead of less ergonomic APIs
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Alejandro Colomar <alx@kernel.org>, linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, shadow <~hallyn/shadow@lists.sr.ht>, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Sven Schnelle <svens@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Lee Schermerhorn <lee.schermerhorn@hp.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	Chao Yu <chao.yu@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hi Linus,
 
-x25_terminate_link() has been unused since the last use was removed
-in 2020 by:
-commit 7eed751b3b2a ("net/x25: handle additional netdev events")
+On Mon, Jul 7, 2025 at 8:17=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Sun, 6 Jul 2025 at 22:06, Alejandro Colomar <alx@kernel.org> wrote:
+> >
+> > -       p +=3D snprintf(p, ID_STR_LENGTH - (p - name), "%07u", s->size)=
+;
+> > +       p =3D seprintf(p, e, "%07u", s->size);
+>
+> I am *really* not a fan of introducing yet another random non-standard
+> string function.
+>
+> This 'seprintf' thing really seems to be a completely made-up thing.
+> Let's not go there. It just adds more confusion - it may be a simpler
+> interface, but it's another cogniitive load thing, and honestly, that
+> "beginning and end" interface is not great.
+>
+> I think we'd be better off with real "character buffer" interfaces,
+> and they should be *named* that way, not be yet another "random
+> character added to the printf family".
 
-Remove it.
+I was really interested to see this comment because I presented a
+design for a standard character buffer interface, "strb_t", to WG14 in
+summer of 2014. The latest published version of that paper is
+https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3306.pdf (very long)
+and the slides (which cover most of the important points) are
+https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3276.pdf
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- include/net/x25.h |  1 -
- net/x25/x25_dev.c | 22 ----------------------
- 2 files changed, 23 deletions(-)
+I contacted you beforehand, for permission to include kasprintf and
+kvasprintf in the 'prior art' section of my paper. At the time, you
+gave me useful information about the history of those and related
+functions. (As an aside, Alejandro has since written a proposal to
+standardise a similar function named aprintf, which I support:
+https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3630.txt )
 
-diff --git a/include/net/x25.h b/include/net/x25.h
-index 5e833cfc864e..414f3fd99345 100644
---- a/include/net/x25.h
-+++ b/include/net/x25.h
-@@ -203,7 +203,6 @@ void x25_send_frame(struct sk_buff *, struct x25_neigh *);
- int x25_lapb_receive_frame(struct sk_buff *, struct net_device *,
- 			   struct packet_type *, struct net_device *);
- void x25_establish_link(struct x25_neigh *);
--void x25_terminate_link(struct x25_neigh *);
- 
- /* x25_facilities.c */
- int x25_parse_facilities(struct sk_buff *, struct x25_facilities *,
-diff --git a/net/x25/x25_dev.c b/net/x25/x25_dev.c
-index 748d8630ab58..fb8ac1aa5826 100644
---- a/net/x25/x25_dev.c
-+++ b/net/x25/x25_dev.c
-@@ -170,28 +170,6 @@ void x25_establish_link(struct x25_neigh *nb)
- 	dev_queue_xmit(skb);
- }
- 
--void x25_terminate_link(struct x25_neigh *nb)
--{
--	struct sk_buff *skb;
--	unsigned char *ptr;
--
--	if (nb->dev->type != ARPHRD_X25)
--		return;
--
--	skb = alloc_skb(1, GFP_ATOMIC);
--	if (!skb) {
--		pr_err("x25_dev: out of memory\n");
--		return;
--	}
--
--	ptr  = skb_put(skb, 1);
--	*ptr = X25_IFACE_DISCONNECT;
--
--	skb->protocol = htons(ETH_P_X25);
--	skb->dev      = nb->dev;
--	dev_queue_xmit(skb);
--}
--
- void x25_send_frame(struct sk_buff *skb, struct x25_neigh *nb)
- {
- 	unsigned char *dptr;
--- 
-2.50.1
+Going back to "strb_t", I did not bother you about it again because I
+didn't anticipate it being used in kernel space, which has its own
+interfaces for most things. I'd be interested to hear what you think
+of it though. My intent was to make it impossible to abuse, insofar as
+that is possible. That led me to make choices (such as use of an
+incomplete struct type) that some might consider strange or
+overengineered. I didn't see the point in trying to replace one set of
+error-prone functions with another.
 
+Alejandro has put a lot of thought into his proposed seprintf
+function, but it still fundamentally relies on the programmer passing
+the right arguments and it doesn't seem to extend the functionality of
+snprintf in any way that I actually need.
+
+For example, some of my goals for the character buffer interface were:
+
+- A buffer should be specified using a single parameter.
+- Impossible to accidentally shallow-copy a buffer instead of copying
+a reference to it.
+- No aspect of character consumption delegated to character producers, e.g.=
+:
+  * whether to insert or overwrite.
+  * whether to prepend, insert or append.
+  * whether to allocate extra storage, and how to do that.
+- Minimize the effect of ignoring return values and not require
+ubiquitous error-handling.
+- Able to put strings directly into a buffer from any source.
+- Allow diverse implementations (mostly to allow tailoring to
+different platforms).
+
+This small program demonstrates some of those ideas:
+https://godbolt.org/z/66Gnre6dx
+It uses my ugly hacked-together prototype.
+
+Chris
 
