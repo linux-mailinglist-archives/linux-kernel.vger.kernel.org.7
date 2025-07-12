@@ -1,391 +1,293 @@
-Return-Path: <linux-kernel+bounces-728520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05A36B02962
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 06:43:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52DC6B0296D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 06:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B8973B71AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 04:43:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D60E1BC2370
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 04:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA691F8BA6;
-	Sat, 12 Jul 2025 04:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB19A1FDE02;
+	Sat, 12 Jul 2025 04:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBRfS+bO"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o0BMtoPg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30E41F418B;
-	Sat, 12 Jul 2025 04:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37FE1A3154;
+	Sat, 12 Jul 2025 04:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752295407; cv=none; b=BOE14wha4uucH8qNOySCAz9FeVBeCakOpOewW7Hdp9P3+PdvTBQhifVvGKrsjZj+rblPguHrRIP1NO6NWAnUFJvOFfSxp8xLDu+lOxhJNncgYrYb/mU63oIxNC/FK8pbA6MdKQeGD4YYRETxhetqEYPWBilDHhoQrctLDBES4+Q=
+	t=1752295758; cv=none; b=cZkoP04NLAEwB8f27KOyuW1YWv/qydM9V4VrdwKLeIPnP1UQ4kunuX3P4Yl9vgfP1Lxg40rlGaww4hYM4VRwYTbZap4RWKs5x2smFSa9av2d5eeqGrMRPo6Wbw9xVCPA0YwR661kP1gpfb17wqt9HowlC5PJPLMAPpk36N8ApRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752295407; c=relaxed/simple;
-	bh=YX1tTIv7h97r6dYWf4jCPFMrqE3ihA1uQrM5xBqYQqw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kI5tG23i4FJp3EI0E2uOFdKzNNkMY0B/BJSeP0SGgESdx3W5j4CJ/kYt6qLnXa4lZRsGP+MrUwqPz+q9Px12I+OPnucgq9wtoePhATnEe6B6kks6BOWDes302fe9NtPjukE/u/HwMtJmBIzpxKMSs9vt7U9KEmvdkqGkcYmHV/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBRfS+bO; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2350b1b9129so20452025ad.0;
-        Fri, 11 Jul 2025 21:43:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752295395; x=1752900195; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=389ubXDWjSsBgW6cSsbIZL+y0UMtvyOFSOtKGJNoZUg=;
-        b=TBRfS+bOLLVHmVK/kTReZhIyZQhvfe6QU038isQ+kA3ORSmbJNM1iHuFtwEzzZ8YTN
-         aBj0QMUU/XtjwlDFXtpuKHDShQqCSQQM0gDGtuuYBeOGG+n6IU+8N1n2wWbXtrzOe4rF
-         VCI8vGgN0M5PPzGq+0S14JvWsGJVNSYp+5cuB+4YjLZnUN/l1XjW1nsghhrU0iQSMvoV
-         z68COgPROwyoKE8JOabOLVXBcagom2mNQZXQ1mqul5GAK3hV58p4101WTgaonUcHqYZ9
-         PjLtIsC0K/PZc+hxmYHAd3S4BLse1LamUOSZ601ZpsSUtQt2dxpXa50F3zKI2OjBuSOP
-         44Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752295395; x=1752900195;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=389ubXDWjSsBgW6cSsbIZL+y0UMtvyOFSOtKGJNoZUg=;
-        b=lLgZHqXMHPYI+oRWNNVlpjkWW2L52buzU5wbGvP4+sQ1vaX/2kZgQmQB6hLpuHfs88
-         eAVNz5CjyIIZ7Bfil9jSi3O8MGDxDTAqE+mNf+ijwZEsv4s1J1NHmzpMLuSTnafpyt+7
-         fHAXoRZyj7FkYTiyA1HS6Ialu37MmTc0OT9U6hG9K1FrzS6/0k6RgrE5fCQMvvO2ewAc
-         QC0LtK6+dpEssRrYV9eU9As1mxW1QKE6xFxuU2fVvp5e9KSvKMygse9MvX1TnsbtH2gS
-         KZ3R3XTStgG5MC3RteCg2CC9RgXirPZ1cg1tGSI3RWCCg6jlrD8x6K71fl5E90AdckXr
-         pwMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUp69h+gBhDGvi3/jpf9MGns0CJCeiqadoLm8qxiwtJ3yrD5HatBzxAoXQvn1OAhJitDexBtdeORttlIOs=@vger.kernel.org, AJvYcCVCH42UQSUWEHrt5Vp7DvfrJ3uCaWY8YzmwuQ2zzbnzXoV6dR/2MPTwMXmGwuTCQYu1q0WVfm8s4ZcnJOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztaTv7y3fgW+6CJIrjCfXk08Y7lR/gOz43UC7p4fpXVbOGWhgO
-	WK8fcBTpOKt8XCg0YNLImtE859Y/0fH8slTFrIjHRKAEdLfnxQCfFbs+5h11pS2Q
-X-Gm-Gg: ASbGncvqIX4baMcnf//r0kqMvepCjy9CWghTNNtuZ7ipIdnLVGJxQ3bzQB/1+SM4u/3
-	6dGxIAB+Y+IB+fX5U2tfJ5YqNanBlHFvcjRbohvDaBU6LuwTrpzoTVby4/8Cn01Hxro1YpJCTBn
-	zUm3OQi8cfZmO3AzUqUvcGwsmQ0uHX34x15YyrSVRPREGcoSHJFgtcnrgLBWmU3YCrx+ZS0npdz
-	rgXHAZF/CLSmGoyjn+6FtHdSGzGZybHF3E1MQnesXNvkFHXnjfjSzMJxNb8Cbocq6OsX+TRcrDP
-	pYjc178L5pLo0PvynRmj7gvQ6uXFmvfsOkUDjy/y4EwT95MDbAnsxsgxhe70WOvBykZ2jXEYhkF
-	Pm3pem3J0PdKvjZcwcMcuK6g=
-X-Google-Smtp-Source: AGHT+IEiH8GsTJYPn3mNQMbGTw2Cokc7ryrlujn1TJFFFF0pOvrulOmd16qE0gZzSYQy54IXmzYoCg==
-X-Received: by 2002:a17:903:4511:b0:235:ed02:288b with SMTP id d9443c01a7336-23dee0b4b31mr64088955ad.30.1752295394197;
-        Fri, 11 Jul 2025 21:43:14 -0700 (PDT)
-Received: from skc-Dell-Pro-16-Plus-PB16250.. ([132.237.156.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4286b4asm62256365ad.46.2025.07.11.21.43.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 21:43:13 -0700 (PDT)
-From: Suresh K C <suresh.k.chandrappa@gmail.com>
-X-Google-Original-From: Suresh K C
-To: vkoul@kernel.org,
-	yung-chuan.liao@linux.intel.com,
-	pierre-louis.bossart@linux.dev,
-	sanyog.r.kale@intel.com
-Cc: shuah@kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Suresh K C <suresh.k.chandrappa@gmail.com>
-Subject: [PATCH] soundwire: replace scnprintf() with sysfs_emit() for sysfs consistency
-Date: Sat, 12 Jul 2025 10:13:02 +0530
-Message-ID: <20250712044302.6952-1-suresh.k.chandrappa@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752295758; c=relaxed/simple;
+	bh=QSrbaUGJjKRHtW5d5mhtB/XfLm+GVoyVMz4UYy+b9Mo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LH4xFH8kOUD9x8wc4hPkXER2+kNpgGPvKM202VRV1gu0IRlrm0D+w6DmnJIixJYpMMVAN/KVa5fs2FKtd5uavT0xtSunEn2ScHrouflYAdU0htNrTh9OnetBRuAhfGjTvSE+10PvH1H7RAI/y4MlF+duCkwvp5O6eY83cRUN5xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o0BMtoPg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84BA7C4CEEF;
+	Sat, 12 Jul 2025 04:49:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752295757;
+	bh=QSrbaUGJjKRHtW5d5mhtB/XfLm+GVoyVMz4UYy+b9Mo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o0BMtoPgPdLXtlpOahnHdpsTh5YS53WXiQe74uXwV6MwJVyIhRdO56QLioMYT5xyi
+	 2eZ84Wjy3ZUQpCwX2f+pYLZo0jp4g7/D3b6PHXI712dkbXEzZPcWvaiCiofY0HT8p1
+	 rbI/MbsclQrDAqRV5phD0bqFs7kP/lrakjTzx9/EyJEcp2ukfdIkASGAm/zyL/SaNE
+	 rEeHfW1ayr6Y3YsQYR+rU+TEsWcuQjuAWDc1ewXv6Vv4WfHBjImyTPVnBj32gwcf0W
+	 oViJg1QFnHqkTWe0S/frbmEK4R04oZ1GaRxOSrYmM5ZaGIAVQQD3zcHviqdITIuIuv
+	 rYOZe7+wKyADw==
+Date: Fri, 11 Jul 2025 21:49:16 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Groves <John@groves.net>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Bernd Schubert <bschubert@ddn.com>,
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Stefan Hajnoczi <shajnocz@redhat.com>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Aravind Ramesh <arramesh@micron.com>,
+	Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC V2 10/18] famfs_fuse: Basic fuse kernel ABI enablement for
+ famfs
+Message-ID: <20250712044916.GJ2672029@frogsfrogsfrogs>
+References: <20250703185032.46568-1-john@groves.net>
+ <20250703185032.46568-11-john@groves.net>
+ <CAOQ4uxi7fvMgYqe1M3_vD3+YXm7x1c4YjA=eKSGLuCz2Dsk0TQ@mail.gmail.com>
+ <yhso6jddzt6c7glqadrztrswpisxmuvg7yopc6lp4gn44cxd4m@my4ajaw47q7d>
+ <20250707173942.GC2672029@frogsfrogsfrogs>
+ <ueepqz3oqeqzwiidk2wlf3f7enxxte4ws27gtxhakfmdiq4t26@cvfmozym5rme>
+ <20250709015348.GD2672029@frogsfrogsfrogs>
+ <wam2qo5r7tbpf4ork5qcdqnw4olhfpkvlqpnbuqpwfhrymf3dq@hw3frnbadhk7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <wam2qo5r7tbpf4ork5qcdqnw4olhfpkvlqpnbuqpwfhrymf3dq@hw3frnbadhk7>
 
-From: Suresh K C <suresh.k.chandrappa@gmail.com>
+On Thu, Jul 10, 2025 at 08:32:13PM -0500, John Groves wrote:
+> On 25/07/08 06:53PM, Darrick J. Wong wrote:
+> > On Tue, Jul 08, 2025 at 07:02:03AM -0500, John Groves wrote:
+> > > On 25/07/07 10:39AM, Darrick J. Wong wrote:
+> > > > On Fri, Jul 04, 2025 at 08:39:59AM -0500, John Groves wrote:
+> > > > > On 25/07/04 09:54AM, Amir Goldstein wrote:
+> > > > > > On Thu, Jul 3, 2025 at 8:51 PM John Groves <John@groves.net> wrote:
+> > > > > > >
+> > > > > > > * FUSE_DAX_FMAP flag in INIT request/reply
+> > > > > > >
+> > > > > > > * fuse_conn->famfs_iomap (enable famfs-mapped files) to denote a
+> > > > > > >   famfs-enabled connection
+> > > > > > >
+> > > > > > > Signed-off-by: John Groves <john@groves.net>
+> > > > > > > ---
+> > > > > > >  fs/fuse/fuse_i.h          |  3 +++
+> > > > > > >  fs/fuse/inode.c           | 14 ++++++++++++++
+> > > > > > >  include/uapi/linux/fuse.h |  4 ++++
+> > > > > > >  3 files changed, 21 insertions(+)
+> > > > > > >
+> > > > > > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > > > > > > index 9d87ac48d724..a592c1002861 100644
+> > > > > > > --- a/fs/fuse/fuse_i.h
+> > > > > > > +++ b/fs/fuse/fuse_i.h
+> > > > > > > @@ -873,6 +873,9 @@ struct fuse_conn {
+> > > > > > >         /* Use io_uring for communication */
+> > > > > > >         unsigned int io_uring;
+> > > > > > >
+> > > > > > > +       /* dev_dax_iomap support for famfs */
+> > > > > > > +       unsigned int famfs_iomap:1;
+> > > > > > > +
+> > > > > > 
+> > > > > > pls move up to the bit fields members.
+> > > > > 
+> > > > > Oops, done, thanks.
+> > > > > 
+> > > > > > 
+> > > > > > >         /** Maximum stack depth for passthrough backing files */
+> > > > > > >         int max_stack_depth;
+> > > > > > >
+> > > > > > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > > > > > > index 29147657a99f..e48e11c3f9f3 100644
+> > > > > > > --- a/fs/fuse/inode.c
+> > > > > > > +++ b/fs/fuse/inode.c
+> > > > > > > @@ -1392,6 +1392,18 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+> > > > > > >                         }
+> > > > > > >                         if (flags & FUSE_OVER_IO_URING && fuse_uring_enabled())
+> > > > > > >                                 fc->io_uring = 1;
+> > > > > > > +                       if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX) &&
+> > > > > > > +                           flags & FUSE_DAX_FMAP) {
+> > > > > > > +                               /* XXX: Should also check that fuse server
+> > > > > > > +                                * has CAP_SYS_RAWIO and/or CAP_SYS_ADMIN,
+> > > > > > > +                                * since it is directing the kernel to access
+> > > > > > > +                                * dax memory directly - but this function
+> > > > > > > +                                * appears not to be called in fuse server
+> > > > > > > +                                * process context (b/c even if it drops
+> > > > > > > +                                * those capabilities, they are held here).
+> > > > > > > +                                */
+> > > > > > > +                               fc->famfs_iomap = 1;
+> > > > > > > +                       }
+> > > > > > 
+> > > > > > 1. As long as the mapping requests are checking capabilities we should be ok
+> > > > > >     Right?
+> > > > > 
+> > > > > It depends on the definition of "are", or maybe of "mapping requests" ;)
+> > > > > 
+> > > > > Forgive me if this *is* obvious, but the fuse server capabilities are what
+> > > > > I think need to be checked here - not the app that it accessing a file.
+> > > > > 
+> > > > > An app accessing a regular file doesn't need permission to do raw access to
+> > > > > the underlying block dev, but the fuse server does - becuase it is directing
+> > > > > the kernel to access that for apps.
+> > > > > 
+> > > > > > 2. What's the deal with capable(CAP_SYS_ADMIN) in process_init_limits then?
+> > > > > 
+> > > > > I *think* that's checking the capabilities of the app that is accessing the
+> > > > > file, and not the fuse server. But I might be wrong - I have not pulled very
+> > > > > hard on that thread yet.
+> > > > 
+> > > > The init reply should be processed in the context of the fuse server.
+> > > > At that point the kernel hasn't exposed the fs to user programs, so
+> > > > (AFAICT) there won't be any other programs accessing that fuse mount.
+> > > 
+> > > Hmm. It would be good if you're right about that. My fuse server *is* running
+> > > as root, and when I check those capabilities in process_init_reply(), I
+> > > find those capabilities. So far so good.
+> > > 
+> > > Then I added code to my fuse server to drop those capabilities prior to
+> > > starting the fuse session (prctl(PR_CAPBSET_DROP, CAP_SYS_RAWIO) and 
+> > > prctl(PR_CAPBSET_DROP, CAP_SYS_ADMIN). I expected (hoped?) to see those 
+> > > capabilities disappear in process_init_reply() - but they did not disappear.
+> > > 
+> > > I'm all ears if somebody can see a flaw in my logic here. Otherwise, the
+> > > capabilities need to be stashed away before the reply is processsed, when 
+> > > fs/fuse *is* running in fuse server context.
+> > > 
+> > > I'm somewhat surprised if that isn't already happening somewhere...
+> > 
+> > Hrm.  I *thought* that since FUSE_INIT isn't queued as a background
+> > command, it should still execute in the same process context as the fuse
+> > server.
+> > 
+> > OTOH it also occurs to me that I have this code in fuse_send_init:
+> > 
+> > 	if (has_capability_noaudit(current, CAP_SYS_RAWIO))
+> > 		flags |= FUSE_IOMAP | FUSE_IOMAP_DIRECTIO | FUSE_IOMAP_PAGECACHE;
+> > 	...
+> > 	ia->in.flags = flags;
+> > 	ia->in.flags2 = flags >> 32;
+> > 
+> > which means that we only advertise iomap support in FUSE_INIT if the
+> > process running fuse_fill_super (which you hope is the fuse server)
+> > actually has CAP_SYS_RAWIO.  Would that work for you?  Or are you
+> > dropping privileges before you even open /dev/fuse?
+> 
+> Ah - that might be the answer. I will check if dropped capabilities 
+> disappear in fuse_send_init. If so, I can work with that - not advertising 
+> the famfs capability unless the capability is present at that point looks 
+> like a perfectly good option. Thanks for that idea!
 
-Replace scnprintf() with sysfs_emit() or sysfs_emit_at() in SoundWire driver files
-to align with the guidelines outlined in Documentation/filesystems/sysfs.rst.
+I thought of another twist -- what about a fuse server that runs with no
+special privilege and is passed an open fd to a dax/block device?  Maybe
+you're right that we need no explicit capability checks -- an open fd is
+sufficient.
 
-This change improves the safety and correctness of sysfs attribute handling,
-ensures consistency across the kernel codebase, and simplifies future maintenance.
+> > Note: I might decide to relax that approach later on, since iomap
+> > requires you to have opened a block device ... which implies that the
+> > process had read/write access to start with; and maybe we're ok with
+> > unprivileged fuse2fs servers running on a chmod 666 block device?
+> > 
+> > <shrug> always easier to /relax/ the privilege checks. :)
+> 
+> My policy on security is that I'm against it...
+> 
+> > 
+> > > > > > 3. Darrick mentioned the need for a synchronic INIT variant for his work on
+> > > > > >     blockdev iomap support [1]
+> > > > > 
+> > > > > I'm not sure that's the same thing (Darrick?), but I do think Darrick's
+> > > > > use case probably needs to check capabilities for a server that is sending
+> > > > > apps (via files) off to access extents of block devices.
+> > > > 
+> > > > I don't know either, Miklos hasn't responded to my questions.  I think
+> > > > the motivation for a synchronous 
+> > > 
+> > > ?
+> > 
+> > ..."I don't know what his motivations for synchronous FUSE_INIT are."
+> > 
+> > I guess I fubard vim. :(
+> 
+> So I'm not alone...
+> 
+> > 
+> > > > As for fuse/iomap, I just only need to ask the kernel if iomap support
+> > > > is available before calling ext2fs_open2() because the iomap question
+> > > > has some implications for how we open the ext4 filesystem.
+> > > > 
+> > > > > > I also wonder how much of your patches and Darrick's patches end up
+> > > > > > being an overlap?
+> > > > > 
+> > > > > Darrick and I spent some time hashing through this, and came to the conclusion
+> > > > > that the actual overlap is slim-to-none. 
+> > > > 
+> > > > Yeah.  The neat thing about FMAPs is that you can establish repeating
+> > > > patterns, which is useful for interleaved DRAM/pmem devices.  Disk
+> > > > filesystems don't do repeating patterns, so they'd much rather manage
+> > > > non-repeating mappings.
+> > > 
+> > > Right. Interleaving is critical to how we use memory, so fmaps are designed
+> > > to support it.
+> > > 
+> > > Tangent: at some point a broader-than-just-me discussion of how block devices
+> > > have the device mapper, but memory has no such layout tools, might be good
+> > > to have. Without such a thing (which might or might not be possible/practical),
+> > > it's essential that famfs do the interleaving. Lacking a mapper layer also
+> > > means that we need dax to provide a clean "device abstraction" (meaning
+> > > a single CXL allocation [which has a uuid/tag] needs to appear as a single
+> > > dax device whether or not it's HPA-contiguous).
+> > 
+> > Well it's not as simple as device-mapper, where we can intercept struct
+> > bio and remap/split it to our heart's content.  I guess you could do
+> > that with an iovec...?  Would be sorta amusing if you could software
+> > RAID10 some DRAM. :P
+> 
+> SW RAID, and mapper in general, has a "store and forward" property (or maybe
+> "store, transmogrify, and forward") that doesn't really work for memory. 
+> It's vma's (and files) that can remap memory address regions. Layered vma's 
+> anyone? I need to think about whether that's utter nonsense, or just mostly 
+> nonsense.
 
-Tested by enabling CONFIG_DEBUG_FS and confirming that /sys/kernel/debug/soundwire is correctly populated
+Oh but the ability to transmogrify is the key benefit of store and
+forward!  Suppose you have to jack into some Klingon battle cruiser...
 
-Signed-off-by: Suresh K C <suresh.k.chandrappa@gmail.com>
----
- drivers/soundwire/cadence_master.c      | 23 +++++++++++------------
- drivers/soundwire/debugfs.c             | 22 +++++++++++-----------
- drivers/soundwire/intel.c               | 17 ++++++++---------
- drivers/soundwire/intel_ace2x_debugfs.c | 14 +++++++-------
- 4 files changed, 37 insertions(+), 39 deletions(-)
+--D
 
-diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-index 21bb491d026b..668a111c66c8 100644
---- a/drivers/soundwire/cadence_master.c
-+++ b/drivers/soundwire/cadence_master.c
-@@ -319,8 +319,7 @@ EXPORT_SYMBOL(sdw_cdns_config_update_set_wait);
- static ssize_t cdns_sprintf(struct sdw_cdns *cdns,
- 			    char *buf, size_t pos, unsigned int reg)
- {
--	return scnprintf(buf + pos, RD_BUF - pos,
--			 "%4x\t%8x\n", reg, cdns_readl(cdns, reg));
-+	return sysfs_emit_at(buf, pos,"%4x\t%8x\n", reg, cdns_readl(cdns, reg));
- }
- 
- static int cdns_reg_show(struct seq_file *s, void *data)
-@@ -334,42 +333,42 @@ static int cdns_reg_show(struct seq_file *s, void *data)
- 	if (!buf)
- 		return -ENOMEM;
- 
--	ret = scnprintf(buf, RD_BUF, "Register  Value\n");
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nMCP Registers\n");
-+	ret = sysfs_emit(buf, "Register  Value\n");
-+	ret += sysfs_emit_at(buf, ret,"\nMCP Registers\n");
- 	/* 8 MCP registers */
- 	for (i = CDNS_MCP_CONFIG; i <= CDNS_MCP_PHYCTRL; i += sizeof(u32))
- 		ret += cdns_sprintf(cdns, buf, ret, i);
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret,
-+	ret += sysfs_emit_at(buf, ret,
- 			 "\nStatus & Intr Registers\n");
- 	/* 13 Status & Intr registers (offsets 0x70 and 0x74 not defined) */
- 	for (i = CDNS_MCP_STAT; i <=  CDNS_MCP_FIFOSTAT; i += sizeof(u32))
- 		ret += cdns_sprintf(cdns, buf, ret, i);
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret,
-+	ret += sysfs_emit_at(buf, ret,
- 			 "\nSSP & Clk ctrl Registers\n");
- 	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_SSP_CTRL0);
- 	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_SSP_CTRL1);
- 	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_CLK_CTRL0);
- 	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_CLK_CTRL1);
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret,
-+	ret += sysfs_emit_at(buf, ret,
- 			 "\nDPn B0 Registers\n");
- 
- 	num_ports = cdns->num_ports;
- 
- 	for (i = 0; i < num_ports; i++) {
--		ret += scnprintf(buf + ret, RD_BUF - ret,
-+		ret += sysfs_emit_at(buf, ret,
- 				 "\nDP-%d\n", i);
- 		for (j = CDNS_DPN_B0_CONFIG(i);
- 		     j < CDNS_DPN_B0_ASYNC_CTRL(i); j += sizeof(u32))
- 			ret += cdns_sprintf(cdns, buf, ret, j);
- 	}
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret,
-+	ret += sysfs_emit_at(buf, ret,
- 			 "\nDPn B1 Registers\n");
- 	for (i = 0; i < num_ports; i++) {
--		ret += scnprintf(buf + ret, RD_BUF - ret,
-+		ret += sysfs_emit_at(buf, ret,
- 				 "\nDP-%d\n", i);
- 
- 		for (j = CDNS_DPN_B1_CONFIG(i);
-@@ -377,13 +376,13 @@ static int cdns_reg_show(struct seq_file *s, void *data)
- 			ret += cdns_sprintf(cdns, buf, ret, j);
- 	}
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret,
-+	ret += sysfs_emit_at(buf, ret,
- 			 "\nDPn Control Registers\n");
- 	for (i = 0; i < num_ports; i++)
- 		ret += cdns_sprintf(cdns, buf, ret,
- 				CDNS_PORTCTRL + i * CDNS_PORT_OFFSET);
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret,
-+	ret += sysfs_emit_at(buf, ret,
- 			 "\nPDIn Config Registers\n");
- 
- 	/* number of PDI and ports is interchangeable */
-diff --git a/drivers/soundwire/debugfs.c b/drivers/soundwire/debugfs.c
-index 3099ea074f10..ccc98f449658 100644
---- a/drivers/soundwire/debugfs.c
-+++ b/drivers/soundwire/debugfs.c
-@@ -42,9 +42,9 @@ static ssize_t sdw_sprintf(struct sdw_slave *slave,
- 	value = sdw_read_no_pm(slave, reg);
- 
- 	if (value < 0)
--		return scnprintf(buf + pos, RD_BUF - pos, "%3x\tXX\n", reg);
-+		return sysfs_emit_at(buf , pos, "%3x\tXX\n", reg);
- 	else
--		return scnprintf(buf + pos, RD_BUF - pos,
-+		return sysfs_emit_at(buf , pos,
- 				"%3x\t%2x\n", reg, value);
- }
- 
-@@ -64,21 +64,21 @@ static int sdw_slave_reg_show(struct seq_file *s_file, void *data)
- 		return ret;
- 	}
- 
--	ret = scnprintf(buf, RD_BUF, "Register  Value\n");
-+	ret = sysfs_emit(buf, "Register  Value\n");
- 
- 	/* DP0 non-banked registers */
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nDP0\n");
-+	ret += sysfs_emit_at(buf , ret, "\nDP0\n");
- 	for (i = SDW_DP0_INT; i <= SDW_DP0_PREPARECTRL; i++)
- 		ret += sdw_sprintf(slave, buf, ret, i);
- 
- 	/* DP0 Bank 0 registers */
--	ret += scnprintf(buf + ret, RD_BUF - ret, "Bank0\n");
-+	ret += sysfs_emit_at(buf, ret, "Bank0\n");
- 	ret += sdw_sprintf(slave, buf, ret, SDW_DP0_CHANNELEN);
- 	for (i = SDW_DP0_SAMPLECTRL1; i <= SDW_DP0_LANECTRL; i++)
- 		ret += sdw_sprintf(slave, buf, ret, i);
- 
- 	/* DP0 Bank 1 registers */
--	ret += scnprintf(buf + ret, RD_BUF - ret, "Bank1\n");
-+	ret += sysfs_emit_at(buf, ret, "Bank1\n");
- 	ret += sdw_sprintf(slave, buf, ret,
- 			SDW_DP0_CHANNELEN + SDW_BANK1_OFFSET);
- 	for (i = SDW_DP0_SAMPLECTRL1 + SDW_BANK1_OFFSET;
-@@ -86,7 +86,7 @@ static int sdw_slave_reg_show(struct seq_file *s_file, void *data)
- 		ret += sdw_sprintf(slave, buf, ret, i);
- 
- 	/* SCP registers */
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nSCP\n");
-+	ret += sysfs_emit_at(buf, ret, "\nSCP\n");
- 	for (i = SDW_SCP_INT1; i <= SDW_SCP_BUS_CLOCK_BASE; i++)
- 		ret += sdw_sprintf(slave, buf, ret, i);
- 	for (i = SDW_SCP_DEVID_0; i <= SDW_SCP_DEVID_5; i++)
-@@ -110,18 +110,18 @@ static int sdw_slave_reg_show(struct seq_file *s_file, void *data)
- 	for (i = 1; SDW_VALID_PORT_RANGE(i); i++) {
- 
- 		/* DPi registers */
--		ret += scnprintf(buf + ret, RD_BUF - ret, "\nDP%d\n", i);
-+		ret += sysfs_emit_at(buf , ret, "\nDP%d\n", i);
- 		for (j = SDW_DPN_INT(i); j <= SDW_DPN_PREPARECTRL(i); j++)
- 			ret += sdw_sprintf(slave, buf, ret, j);
- 
- 		/* DPi Bank0 registers */
--		ret += scnprintf(buf + ret, RD_BUF - ret, "Bank0\n");
-+		ret += sysfs_emit_at(buf , ret, "Bank0\n");
- 		for (j = SDW_DPN_CHANNELEN_B0(i);
- 		     j <= SDW_DPN_LANECTRL_B0(i); j++)
- 			ret += sdw_sprintf(slave, buf, ret, j);
- 
- 		/* DPi Bank1 registers */
--		ret += scnprintf(buf + ret, RD_BUF - ret, "Bank1\n");
-+		ret += sysfs_emit_at(buf , ret, "Bank1\n");
- 		for (j = SDW_DPN_CHANNELEN_B1(i);
- 		     j <= SDW_DPN_LANECTRL_B1(i); j++)
- 			ret += sdw_sprintf(slave, buf, ret, j);
-@@ -317,7 +317,7 @@ static int read_buffer_show(struct seq_file *s_file, void *data)
- 		return -EINVAL;
- 
- 	for (i = 0; i < num_bytes; i++) {
--		scnprintf(buf, MAX_LINE_LEN, "address %#x val 0x%02x\n",
-+		sysfs_emit(buf, "address %#x val 0x%02x\n",
- 			  start_addr + i, read_buffer[i]);
- 		seq_printf(s_file, "%s", buf);
- 	}
-diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-index 9db78f3d7615..aa7aa7126c47 100644
---- a/drivers/soundwire/intel.c
-+++ b/drivers/soundwire/intel.c
-@@ -65,8 +65,7 @@ static ssize_t intel_sprintf(void __iomem *mem, bool l,
- 		value = intel_readl(mem, reg);
- 	else
- 		value = intel_readw(mem, reg);
--
--	return scnprintf(buf + pos, RD_BUF - pos, "%4x\t%4x\n", reg, value);
-+	return sysfs_emit_at(buf, pos, "%4x\t%4x\n", reg, value);; 
- }
- 
- static int intel_reg_show(struct seq_file *s_file, void *data)
-@@ -84,8 +83,8 @@ static int intel_reg_show(struct seq_file *s_file, void *data)
- 
- 	links = intel_readl(s, SDW_SHIM_LCAP) & SDW_SHIM_LCAP_LCOUNT_MASK;
- 
--	ret = scnprintf(buf, RD_BUF, "Register  Value\n");
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nShim\n");
-+	ret = sysfs_emit(buf, "Register  Value\n");
-+	ret += sysfs_emit_at(buf, ret, "\nShim\n");
- 
- 	for (i = 0; i < links; i++) {
- 		reg = SDW_SHIM_LCAP + i * 4;
-@@ -93,7 +92,7 @@ static int intel_reg_show(struct seq_file *s_file, void *data)
- 	}
- 
- 	for (i = 0; i < links; i++) {
--		ret += scnprintf(buf + ret, RD_BUF - ret, "\nLink%d\n", i);
-+		ret += sysfs_emit_at(buf, ret, "\nLink%d\n", i);
- 		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLSCAP(i));
- 		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLS0CM(i));
- 		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLS1CM(i));
-@@ -101,7 +100,7 @@ static int intel_reg_show(struct seq_file *s_file, void *data)
- 		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLS3CM(i));
- 		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_PCMSCAP(i));
- 
--		ret += scnprintf(buf + ret, RD_BUF - ret, "\n PCMSyCH registers\n");
-+		ret += sysfs_emit_at(buf, ret, "\n PCMSyCH registers\n");
- 
- 		/*
- 		 * the value 10 is the number of PDIs. We will need a
-@@ -114,17 +113,17 @@ static int intel_reg_show(struct seq_file *s_file, void *data)
- 			ret += intel_sprintf(s, false, buf, ret,
- 					SDW_SHIM_PCMSYCHC(i, j));
- 		}
--		ret += scnprintf(buf + ret, RD_BUF - ret, "\n IOCTL, CTMCTL\n");
-+		ret += sysfs_emit_at(buf, ret, "\n IOCTL, CTMCTL\n");
- 
- 		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_IOCTL(i));
- 		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTMCTL(i));
- 	}
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nWake registers\n");
-+	ret += sysfs_emit_at(buf, ret, "\nWake registers\n");
- 	ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_WAKEEN);
- 	ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_WAKESTS);
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nALH STRMzCFG\n");
-+	ret += sysfs_emit_at(buf, ret, "\nALH STRMzCFG\n");
- 	for (i = 0; i < SDW_ALH_NUM_STREAMS; i++)
- 		ret += intel_sprintf(a, true, buf, ret, SDW_ALH_STRMZCFG(i));
- 
-diff --git a/drivers/soundwire/intel_ace2x_debugfs.c b/drivers/soundwire/intel_ace2x_debugfs.c
-index fda8f0daaa96..c733d455af6c 100644
---- a/drivers/soundwire/intel_ace2x_debugfs.c
-+++ b/drivers/soundwire/intel_ace2x_debugfs.c
-@@ -31,7 +31,7 @@ static ssize_t intel_sprintf(void __iomem *mem, bool l,
- 	else
- 		value = intel_readw(mem, reg);
- 
--	return scnprintf(buf + pos, RD_BUF - pos, "%4x\t%4x\n", reg, value);
-+	return sysfs_emit_at(buf, pos, "%4x\t%4x\n", reg, value);
- }
- 
- static int intel_reg_show(struct seq_file *s_file, void *data)
-@@ -49,8 +49,8 @@ static int intel_reg_show(struct seq_file *s_file, void *data)
- 	if (!buf)
- 		return -ENOMEM;
- 
--	ret = scnprintf(buf, RD_BUF, "Register  Value\n");
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nShim\n");
-+	ret = sysfs_emit(buf, "Register  Value\n");
-+	ret += sysfs_emit_at(buf, ret, "\nShim\n");
- 
- 	ret += intel_sprintf(s, true, buf, ret, SDW_SHIM2_LECAP);
- 	ret += intel_sprintf(s, false, buf, ret, SDW_SHIM2_PCMSCAP);
-@@ -65,19 +65,19 @@ static int intel_reg_show(struct seq_file *s_file, void *data)
- 				SDW_SHIM2_PCMSYCHC(j));
- 	}
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nVS CLK controls\n");
-+	ret += sysfs_emit_at(buf, ret, "\nVS CLK controls\n");
- 	ret += intel_sprintf(vs_s, true, buf, ret, SDW_SHIM2_INTEL_VS_LVSCTL);
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nVS Wake registers\n");
-+	ret += sysfs_emit_at(buf, ret, "\nVS Wake registers\n");
- 	ret += intel_sprintf(vs_s, false, buf, ret, SDW_SHIM2_INTEL_VS_WAKEEN);
- 	ret += intel_sprintf(vs_s, false, buf, ret, SDW_SHIM2_INTEL_VS_WAKESTS);
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nVS IOCTL, ACTMCTL\n");
-+	ret += sysfs_emit_at(buf, ret, "\nVS IOCTL, ACTMCTL\n");
- 	ret += intel_sprintf(vs_s, false, buf, ret, SDW_SHIM2_INTEL_VS_IOCTL);
- 	ret += intel_sprintf(vs_s, false, buf, ret, SDW_SHIM2_INTEL_VS_ACTMCTL);
- 
- 	if (sdw->link_res->mic_privacy) {
--		ret += scnprintf(buf + ret, RD_BUF - ret, "\nVS PVCCS\n");
-+		ret += sysfs_emit_at(buf, ret, "\nVS PVCCS\n");
- 		ret += intel_sprintf(vs_s, false, buf, ret,
- 				     SDW_SHIM2_INTEL_VS_PVCCS);
- 	}
--- 
-2.43.0
-
+> Continuing to think about this...
+> 
+> Thanks!
+> John
+> 
+> 
+> 
 
