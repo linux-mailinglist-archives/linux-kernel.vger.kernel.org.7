@@ -1,162 +1,158 @@
-Return-Path: <linux-kernel+bounces-728597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 446ACB02A8E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:16:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33A10B02A91
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E06D1662E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 11:16:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82B40562EBF
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 11:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3F8274FD3;
-	Sat, 12 Jul 2025 11:16:31 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02533275103;
+	Sat, 12 Jul 2025 11:22:52 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B20C45009
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 11:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E1322154A;
+	Sat, 12 Jul 2025 11:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752318990; cv=none; b=AsHFKwQKgObEBzntS/6tMzCT7QqIKZxORryqjfcqrnPN97TtLgKo0emL7Ec8QY3hm3VhQ3EEqYhHetj+i0XOjNnO81rf5BTx6KFkrnx79lhJrOITBdoez/GGUVS5xxz61Z6gF7ovsm1dLx6cmNCmhFtqTREcr7qgd5xvsuWcVYk=
+	t=1752319371; cv=none; b=n+g4K7L4phg8dUqHVaD8igmTp4c5YjjQcItl8i83iwrJmXGszzF6P2B9wHRRUu4M557k6awqXntald51QEPBoarQ6HtMuTjCZxDF7Sma6rIjBaC7c84Dbgc5GPZxkvpudVVYbTTCZRj2KhwJi9D9nG+evs8Zsp1Ymg27ZixchG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752318990; c=relaxed/simple;
-	bh=fkliFdOGrgyDsHA8ugNAmVaLbtENtinBLlPZsBlbK6E=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qZV4qA/4x224aln75UWSFdoJ8O1I9KXUL5oIxVZhAvZ2knsLn30sS5fx4wvq3ZDxXZrBSB32foyO0uiBkzT70pBMbCu8e/sZDJI6c6va3Z0BsvvCYvlGGkIDZZmR1zeo6eyf8QTtIPi71JwoajdAg7h1/NAF2buE5Q8Hb4aCYms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3e059add15eso33589765ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 04:16:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752318988; x=1752923788;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ln9wyZoePS6s/7ad+P5to3f3dT7ZBQFACqcfRroFUog=;
-        b=Cx7xskL8jPsfEMnQei/IwpdN5YsWwrZ+kHnpkfAJfw3am4hoFYStlfzOIc6MaTNDkC
-         TxVmQWLMWZyi3UWqm3yH3ccH7dQkKtZ7iEFTH1igvrTrf688a3kJf6WXhHJ9eMm/dfbd
-         YmMXWHdpvcrRFkEneVBQGVj5sOtXv4cvD/0Tm51r5ZaLAakxVcotKPqSI70yeZIp2tTK
-         aGunl5hGn3r+zzCT7WDVqrqqAR49zasaM1rzI5tZntZiyEGItqoT5jPXJyGrbJKgV2ie
-         t9GZb39z6hZaT1aUnx+eONjWRJjYkG07bgPQZXH0R1leID6EOvohLWrC8/Kz/TlXL07F
-         9TmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnqJvrsOV5Pl0Rq7lK7v3vGIWPKUM1qTY1CAusMjeEeI/kaFAC3co5oy30Prt7wFGIrXgrxJh+om4GGc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7vVaLvl+HAlNWpQur1KpuLJcVwlvOkIiYIEXZlTzb6vjA5P8l
-	tdy0FiBPaldUInyiikTVfADbbbVbrOd+JSkT/WDI82uwV7RFZZBmvGnUvv7CvwbjrTPf5nBQmuY
-	+TqKS9C4D2rPxjNGYdNucdWeOry9iqD4V2Wex3ha+ehfdwyU4x/iu3ZzZtTY=
-X-Google-Smtp-Source: AGHT+IGoMTTByFH/DLrj059941v3CjcDlsKl0AViY4gE/n+5+BkCz2AB227JPI0+0e4eHrllaeCSN7LT1qm93W/yELsR0CDTShrX
+	s=arc-20240116; t=1752319371; c=relaxed/simple;
+	bh=koT6WX80uO3QGziHota+YoACtGCCfZs+tuAmuCq2f8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dx+5DaJ6LgIJlDIeQuYnabg33nOg5oAJriGiQ4UWSD5fZU0EkWJAFEadGgxT4OkK3T+dWRqa9TD5LMRjGJq/QJVX/oXvpaiW3HpbAHqv0FefYf2/tDCaCr6HOAsz7zK6HA/2qknmaNS3tgrhTfbKVrLTGMcrCvYZFoxGxgVntUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56CBMLhC020769;
+	Sat, 12 Jul 2025 20:22:21 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56CBMLlU020766
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 12 Jul 2025 20:22:21 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <b6da38b0-dc7e-4fdc-b99c-f4fbd2a20168@I-love.SAKURA.ne.jp>
+Date: Sat, 12 Jul 2025 20:22:20 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:220d:b0:3dc:8b57:b76c with SMTP id
- e9e14a558f8ab-3e253287b01mr76000835ab.9.1752318988329; Sat, 12 Jul 2025
- 04:16:28 -0700 (PDT)
-Date: Sat, 12 Jul 2025 04:16:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6872440c.a00a0220.26a83e.0078.GAE@google.com>
-Subject: [syzbot] [kernel?] WARNING in static_key_dec_not_one
-From: syzbot <syzbot+0d84405982752c58ff64@syzkaller.appspotmail.com>
-To: ardb@kernel.org, jbaron@akamai.com, jpoimboe@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, peterz@infradead.org, 
-	rostedt@goodmis.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hfsplus: don't use BUG_ON() in
+ hfsplus_create_attributes_file()
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <54358ab7-4525-48ba-a1e5-595f6b107cc6@I-love.SAKURA.ne.jp>
+ <4ce5a57c7b00bbd77d7ad6c23f0dcc55f99c3d1a.camel@ibm.com>
+ <72c9d0c2-773c-4508-9d2d-e24703ff26e1@vivo.com>
+ <427a9432-95a5-47a8-ba42-1631c6238486@I-love.SAKURA.ne.jp>
+ <127b250a6bb701c631bedf562b3ee71eeb55dc2c.camel@ibm.com>
+ <dc0add8a-85fc-41dd-a4a6-6f7cb10e8350@I-love.SAKURA.ne.jp>
+ <316f8d5b06aed08bd979452c932cbce2341a8a56.camel@ibm.com>
+ <3efa3d2a-e98f-43ee-91dd-5aeefcff75e1@I-love.SAKURA.ne.jp>
+ <244c8da9-4c5e-42ed-99c7-ceee3e039a9c@I-love.SAKURA.ne.jp>
+ <ead8611697a8a95a80fb533db86c108ff5f66f6f.camel@ibm.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <ead8611697a8a95a80fb533db86c108ff5f66f6f.camel@ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav101.rs.sakura.ne.jp
 
-Hello,
+On 2025/07/12 2:21, Viacheslav Dubeyko wrote:
+> Frankly speaking, I still don't see the whole picture here. If we have created
+> the Attribute File during mount operation, then why should we try to create the
+> Attributes File during __hfsplus_setxattr() call? If we didn't create the
+> Attributes File during the mount time and HFSPLUS_SB(inode->i_sb)->attr_tree is
+> NULL, then how i_size_read(attr_file) != 0? Even if we are checking vhdr-
+>> attr_file.total_blocks, then it doesn't provide guarantee that
+> i_size_read(attr_file) is zero too. Something is wrong in this situation and
+> more stricter mount time validation cannot guarantee against the situation that
+> you are trying to solve in the issue. We are missing something here.
 
-syzbot found the following issue on:
+I still don't see what you are missing.
 
-HEAD commit:    1e3b66e32601 vsock: fix `vsock_proto` declaration
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=10f5f28c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b29b1a0d7330d4a8
-dashboard link: https://syzkaller.appspot.com/bug?extid=0d84405982752c58ff64
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+When hfsplus_iget(sb, HFSPLUS_ATTR_CNID) is called from hfsplus_create_attributes_file(sb),
+hfsplus_system_read_inode(inode) from hfsplus_iget(HFSPLUS_ATTR_CNID) calls
+hfsplus_inode_read_fork(inode, &vhdr->attr_file). Since hfsplus_inode_read_fork() calls
+inode_set_bytes(), it is natural that i_size_read(attr_file) != 0 when returning from
+hfsplus_iget(sb, HFSPLUS_ATTR_CNID).
 
-Unfortunately, I don't have any reproducer for this issue yet.
+At this point, the only question should be why hfsplus_inode_read_fork() from
+hfsplus_system_read_inode(inode) from hfsplus_iget() is not called from hfsplus_fill_super()
+when the Attributes File already exists and its size is not 0. And the reason is that
+hfsplus_iget(sb, HFSPLUS_ATTR_CNID) from hfs_btree_open(sb, HFSPLUS_ATTR_CNID) is called
+only when vhdr->attr_file.total_blocks != 0.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/11faaf1afe22/disk-1e3b66e3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ba355ce28c50/vmlinux-1e3b66e3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/018f94fd1327/bzImage-1e3b66e3.xz
+That is, when "vhdr" contains erroneous values (in the reproducer, vhdr->attr_file.total_blocks
+is 0) that do not reflect the actual state of the filesystem (in the reproducer, inode_set_bytes()
+sets non-zero value despite vhdr->attr_file.total_blocks is 0), hfsplus_fill_super() fails to call
+hfs_btree_open(sb, HFSPLUS_ATTR_CNID) at mount time.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0d84405982752c58ff64@syzkaller.appspotmail.com
+You can easily reproduce this problem by compiling and running the reproducer
+at https://syzkaller.appspot.com/text?tag=ReproC&x=15f6b9d4580000 after you run
+"losetup -f" which creates /dev/loop0 needed by the reproducer.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 12213 at kernel/jump_label.c:282 static_key_dec_not_one+0x198/0x1d0 kernel/jump_label.c:282
-Modules linked in:
-CPU: 0 UID: 0 PID: 12213 Comm: syz.1.1132 Not tainted 6.16.0-rc4-syzkaller-00114-g1e3b66e32601 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:static_key_dec_not_one+0x198/0x1d0 kernel/jump_label.c:282
-Code: aa 10 48 3b 4c 24 60 75 45 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d e9 c6 f7 7b 09 cc e8 c0 53 ca ff eb b7 e8 b9 53 ca ff 90 <0f> 0b 90 b0 01 eb ad 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c e0 fe ff
-RSP: 0018:ffffc900047c72a0 EFLAGS: 00010287
-RAX: ffffffff81f60ae7 RBX: ffffffff99fd3080 RCX: 0000000000080000
-RDX: ffffc9000bf4a000 RSI: 0000000000000216 RDI: 0000000000000217
-RBP: ffffc900047c7358 R08: ffffffff99fd3083 R09: 1ffffffff33fa610
-R10: dffffc0000000000 R11: fffffbfff33fa611 R12: ffffc900047c72e0
-R13: 1ffff920008f8e58 R14: dffffc0000000000 R15: 0000000000000000
-FS:  00007f23746486c0(0000) GS:ffff888125c1d000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000000 CR3: 0000000069232000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __static_key_slow_dec_cpuslocked+0x19/0x110 kernel/jump_label.c:297
- __static_key_slow_dec kernel/jump_label.c:321 [inline]
- static_key_slow_dec+0x45/0x90 kernel/jump_label.c:336
- ovs_dp_change+0x3c1/0x570 net/openvswitch/datapath.c:1776
- ovs_dp_cmd_set+0x1ec/0x3b0 net/openvswitch/datapath.c:2000
- genl_family_rcv_msg_doit+0x212/0x300 net/netlink/genetlink.c:1115
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0x60e/0x790 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2551
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x759/0x8e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x219/0x270 net/socket.c:727
- ____sys_sendmsg+0x505/0x830 net/socket.c:2566
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
- __sys_sendmsg net/socket.c:2652 [inline]
- __do_sys_sendmsg net/socket.c:2657 [inline]
- __se_sys_sendmsg net/socket.c:2655 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f237378e929
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f2374648038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f23739b5fa0 RCX: 00007f237378e929
-RDX: 000000000000c000 RSI: 0000200000000000 RDI: 0000000000000003
-RBP: 00007f2373810b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f23739b5fa0 R15: 00007ffe78621018
- </TASK>
+I noticed that the reason fsck.hfsplus could not detect errors is that the filesystem
+image in the reproducer was compressed. If I run fsck.hfsplus on uncompressed image,
+fsck.hfsplus generated the following messages.
 
+# fsck.hfsplus hfsplus.img
+** hfsplus.img
+   Executing fsck_hfs (version 540.1-Linux).
+** Checking non-journaled HFS Plus Volume.
+   The volume name is untitled
+** Checking extents overflow file.
+** Checking catalog file.
+   Invalid extent entry
+(4, 1)
+** Checking multi-linked files.
+** Checking catalog hierarchy.
+** Checking extended attributes file.
+** Checking volume bitmap.
+** Checking volume information.
+** Repairing volume.
+   Look for links to corrupt files in DamagedFiles directory.
+** Rechecking volume.
+** Checking non-journaled HFS Plus Volume.
+   The volume name is untitled
+** Checking extents overflow file.
+** Checking catalog file.
+** Checking multi-linked files.
+** Checking catalog hierarchy.
+** Checking extended attributes file.
+** Checking volume bitmap.
+   Volume bitmap needs minor repair for under-allocation
+** Checking volume information.
+   Invalid volume free block count
+   (It should be 179 instead of 180)
+** Repairing volume.
+** Rechecking volume.
+** Checking non-journaled HFS Plus Volume.
+   The volume name is untitled
+** Checking extents overflow file.
+** Checking catalog file.
+** Checking multi-linked files.
+** Checking catalog hierarchy.
+** Checking extended attributes file.
+** Checking volume bitmap.
+** Checking volume information.
+** The volume untitled was repaired successfully.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
