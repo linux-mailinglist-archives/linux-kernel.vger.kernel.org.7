@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-728574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4732B02A2C
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:59:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E8EDB02A31
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 11:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1767D566DBB
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:59:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E67084E1A10
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAF8273815;
-	Sat, 12 Jul 2025 08:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096E1273D78;
+	Sat, 12 Jul 2025 08:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="WKjhJ3Md"
-Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="d0rXqUdY"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF5A1F63CD
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 08:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98A3273815
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 08:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752310779; cv=none; b=cZyEbOgjRKk+dcKjXhygh+22mMcteaFpiUXqp0HzCyujzYg/Hf7P11pGAepwZ66ytekY+IPkT6DndpYdQqZKHAVh5/lTzWUEOQhpqzRSdQrWvacpJiM6zYkCg4+5m1I4bjcXNPXdpmqe2qV85EquGKF/jEI3xTJtwwwsR9EZegc=
+	t=1752310791; cv=none; b=tRgd9KC/1ZnI6IUtWVsY13z2b9VXFfw8wh6+DnkuJF0HbxwV4I4I9wiTwia0mDj4h7z1Ne6+pwRgXvPikEjUe5E+hENluy+UHT51+WLNPgvfpSWPDSWj1GeEA2jXA8pXAB1CprSyPuTmv1vI/AVVVXJPY3v0HXRVzcnwdeWnBT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752310779; c=relaxed/simple;
-	bh=6RREnLfBr6vaToFnee4iQdKCEbQ4E+5QoB/pAJOaHzg=;
+	s=arc-20240116; t=1752310791; c=relaxed/simple;
+	bh=4Y8ARVgt7Yk3InHf3Nkv9y0+W7JipJUKyhk5X/wdssA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nrPhzEnOQ2cuxMm55hWTJswo4kDlu+cc6i4dHzq7gtkXpEHdomlwpsVgYRuLGIx95/Q/ZfkaQZQ1+8sRaHt6A/lkL+YY2uBdDAW/uQHlhhzwLj30z8srTIuVh9uobOkXfdKAyu0rXXsha5z0JjaozCIHwKiq45nWKgFyiV4S+Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=WKjhJ3Md; arc=none smtp.client-ip=212.77.101.11
+	 Content-Type:Content-Disposition:In-Reply-To; b=KN3ZPxhBg073CXahcD0izbUDaOZxdHAquXCdP2hBBYPCgjxcglRBtWTt/VDWtsnSWNqKjJiwF1dueGia0qWeRY6af+ou8ZPxAlsHL56zBB2eMLFNIQEInpBaUH82XlrkMjDrKx/YJHbZURKDAAxz35ShcNOmMam1qSfil5uDAqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=d0rXqUdY; arc=none smtp.client-ip=212.77.101.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 13802 invoked from network); 12 Jul 2025 10:59:27 +0200
+Received: (wp-smtpd smtp.wp.pl 2408 invoked from network); 12 Jul 2025 10:59:41 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1752310767; bh=eSJuXP2Tn8QwaAeo4iI9YXDlY+NdjeXSDkoE+IE9RBA=;
+          t=1752310781; bh=Bs7C3OuDjp8spBtZUebXmMmqp+JNJ8zM38bJKoNTVC8=;
           h=From:To:Cc:Subject;
-          b=WKjhJ3Mdixt+XahfZtVpGIKxNl6vwCFnCrUmv1nrBUwefTsoSFzzP4njmWdxKBG/H
-           4bffCe3DN9oy8hanhud3aXVyt8L2o9/zJgSVjtZ+Wy2K0vJkYBn1cvX25Q58jiafFR
-           8k5pziuwtMYlyodb8k4SJA2EHysbLGfP6EjZtUA8B+hNcosbxLonJDC14OSgwNa8FT
-           NEWO9CosPdk7R0ibPT6gBZdd9xRGwUgQUcst0ilt6SBq/+sKBlt79iHxBDNwvu6N0F
-           WrVINziE9wyjtoNtxYpqnm5Wv+o9QAqEMkInOBskZnEe+VVYbumVWup7ki+AiFIZBs
-           kCltJzhUOGttQ==
+          b=d0rXqUdYYP7ojvHs/CPxFw/4wkiV3jgKjUvitOGmuGyTOVXo3TgNlAvsjIKDj4vJ/
+           wLz5GCCHYkDeoi1cDltI232JmOSal/H1F1pkTpv3zc7NJykmyUzNupX24ZVLwVLAyJ
+           rDj9EfYv6iExMx3c9U6tBUuXXFZEYLfZbk4L7TrAsE6JtTA2oqQdJUB6g5OjMEDep0
+           0+zl5eWAA2YJhSJJbRbtUUSdM+Yu0qZl2DBeAgVbr1HU5Mf/NS7xDvn/cBDg1tqqUR
+           EHZGUJYEcMR7zCAxQkGPjUsS6qFvoz9pDJS6sII2cZnwZ60ZttrG/q1dtu7xqTogBF
+           XNwtDKxW+fbfg==
 Received: from 89-64-3-180.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.3.180])
           (envelope-sender <stf_xl@wp.pl>)
           by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <rosenp@gmail.com>; 12 Jul 2025 10:59:27 +0200
-Date: Sat, 12 Jul 2025 10:59:27 +0200
+          for <rosenp@gmail.com>; 12 Jul 2025 10:59:41 +0200
+Date: Sat, 12 Jul 2025 10:59:40 +0200
 From: Stanislaw Gruszka <stf_xl@wp.pl>
 To: Rosen Penev <rosenp@gmail.com>
 Cc: linux-wireless@vger.kernel.org,
@@ -60,10 +60,11 @@ Cc: linux-wireless@vger.kernel.org,
 	"open list:MIPS" <linux-mips@vger.kernel.org>,
 	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
 	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCHv3 wireless-next 1/7] wifi: rt2x00: add COMPILE_TEST
-Message-ID: <20250712085927.GA9845@wp.pl>
+Subject: Re: [PATCHv3 wireless-next 2/7] wifi: rt2x00: remove mod_name from
+ platform_driver
+Message-ID: <20250712085940.GB9845@wp.pl>
 References: <20250710200820.262295-1-rosenp@gmail.com>
- <20250710200820.262295-2-rosenp@gmail.com>
+ <20250710200820.262295-3-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,37 +73,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250710200820.262295-2-rosenp@gmail.com>
-X-WP-MailID: fa94b3e93e05bf3e9316b9cc31b4a93a
+In-Reply-To: <20250710200820.262295-3-rosenp@gmail.com>
+X-WP-MailID: 78faf179404bc1cccf11415900ca8dfc
 X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000000 [wTOh]                               
+X-WP-SPAM: NO 0000001 [4eIB]                               
 
-On Thu, Jul 10, 2025 at 01:08:14PM -0700, Rosen Penev wrote:
-> While this driver is for a specific arch, there is nothing preventing it
-> from being compiled on other platforms.
-> 
-> Allows the various bots to test compilation and complain if a patch is
-> bad.
+On Thu, Jul 10, 2025 at 01:08:15PM -0700, Rosen Penev wrote:
+> mod_name is a legacy debugging feature with no real modern use. An
+> analysis of the underlying MIPS setup code reveals it to also be unused.
 > 
 > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
 > ---
->  drivers/net/wireless/ralink/rt2x00/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/net/wireless/ralink/rt2x00/rt2800soc.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> diff --git a/drivers/net/wireless/ralink/rt2x00/Kconfig b/drivers/net/wireless/ralink/rt2x00/Kconfig
-> index d1fd66d44a7e..3a32ceead54f 100644
-> --- a/drivers/net/wireless/ralink/rt2x00/Kconfig
-> +++ b/drivers/net/wireless/ralink/rt2x00/Kconfig
-> @@ -202,7 +202,7 @@ endif
->  
->  config RT2800SOC
->  	tristate "Ralink WiSoC support"
-> -	depends on SOC_RT288X || SOC_RT305X || SOC_MT7620
-> +	depends on SOC_RT288X || SOC_RT305X || SOC_MT7620 || COMPILE_TEST
->  	select RT2X00_LIB_SOC
->  	select RT2X00_LIB_MMIO
->  	select RT2X00_LIB_CRYPTO
+> diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800soc.c b/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
+> index 701ba54bf3e5..e73394cf6ea6 100644
+> --- a/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
+> +++ b/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
+> @@ -246,7 +246,6 @@ static int rt2800soc_probe(struct platform_device *pdev)
+>  static struct platform_driver rt2800soc_driver = {
+>  	.driver		= {
+>  		.name		= "rt2800_wmac",
+> -		.mod_name	= KBUILD_MODNAME,
+>  	},
+>  	.probe		= rt2800soc_probe,
+>  	.remove		= rt2x00soc_remove,
 > -- 
 > 2.50.0
 > 
