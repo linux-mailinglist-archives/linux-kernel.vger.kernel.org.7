@@ -1,199 +1,298 @@
-Return-Path: <linux-kernel+bounces-728632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 971D1B02B0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:55:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99DBB02B16
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90F3B1C21AB7
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:55:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BF925624AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A26278767;
-	Sat, 12 Jul 2025 13:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8665D278E7C;
+	Sat, 12 Jul 2025 13:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xLIuR7Xx"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jjUfHVYN"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327D527874A
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 13:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B37278750;
+	Sat, 12 Jul 2025 13:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752328499; cv=none; b=ovFE9/1962ZyAwpcAUE3eCcFzpi6odqxtdzx5UAeaYWsx9sk6e/pb+HPs5umugWg+8n1ZfCcmUzZfwCcu93rdlgYKLAldaIJwCT4JAUqAglxWWyctjWr8pMQwv9CQnlNsIlY15iiIrGlDJmzRgi947x4wCpz3jKLjMgYVgYH2w8=
+	t=1752328621; cv=none; b=KDM8wtj9dY+wTxj4DiTZWDlWDnvpWhcHNnYo9XHESro/W4wZWGbGxl8qVtXzMHTqQakEAqefXk5tsbkSuVkPl/DoC9fztC08R7ndLC3MbcqY+FbN4mwu+hw+anU+TA7MAz86nIQ8jVYm4sNTBOqdImLqDBNhuJBN0Gm3CDHGseQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752328499; c=relaxed/simple;
-	bh=3bgcB1TurwhT7L9X2KCmbojs72aEaLZWW2bUy/QsO0Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=o3p+JClYZsxnXi6Vj4L+/ixrD5uIc9Y6d2pUhM3L1JcdKvmsNYZ0GpPamgHUUvTiXc+di+5Jpw4jD/QRlRn24riug22MRpIrTVB1yRAfl+eAMgg4Dki7xAluKvjjpEKIc+nsmO/xwFzjKkXGWGCx4SOqU5khX5QZAP3YFzRN3j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xLIuR7Xx; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752328484;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=kRD9GIGPAcl9+9P+wxlR8UOcfZFBQSucv2vMLbdggbU=;
-	b=xLIuR7XxssCPgWrpAWX6KhdeLgfSZm9ysPUvboMvBIo8LQL8Ap9TdANcGPc/8jgXMKRJMj
-	nlHqr7f5qAtor9nOxYXwezNvzz812lHV+5C1xl1y9qVCiLI4mF+6sOSNsF0YLLIeMqFg2L
-	kCI3TzVhwtdOJlyNU6yq9/WlC9Rr13o=
-From: Troy Mitchell <troy.mitchell@linux.dev>
-Date: Sat, 12 Jul 2025 21:54:35 +0800
-Subject: [PATCH] ASoC: rockchip: i2s: simplify clock handling and error
- cleanup in probe
+	s=arc-20240116; t=1752328621; c=relaxed/simple;
+	bh=mgsx5jC7xnI3Zxh5tPhOMQw9jgbuPq6Xaw6JfhhLOKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f71mmlDxepQC9WwbYuKEbn27yDK96zzplAtqxpneKJaB0oJbD3ydeUAkEBAC52vRF7bSXcMNXV2iMrZGMTCNXaG+sz46ggSYNtlhHARRZEZVeVVTbXgfm5iA1NoRRCfr14YSTt/YdznUiemd4VNSpTD4MwyIn5MtwZ11uFKl0s4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jjUfHVYN; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ae3cd8fdd77so607674066b.1;
+        Sat, 12 Jul 2025 06:56:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752328618; x=1752933418; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LWT0gpnYa11KRjN6//9ilbj19qNJCuSNe5kuXlg66Eg=;
+        b=jjUfHVYNG/cKdX3ZHWXgJd02BgG04780Acja2xKXPhu9MFc7/9eMavUeNfv+tZC8fv
+         ouILZoWHvikcHCKFE9iTjWkDhUGoe0AP+B8sg8utobw2ksqHtsPHRH3/fAx9zAutkuwa
+         qe/6cf0DLdHSdsbygFDlKowFyzV4gHii3ncFVQKKvSuuycP9UbHd1cDEYDYy4DLt8eSf
+         Fp0Eg25ZREqEHRDQQJuz23cloE9FCLz/+AFkWk6DnbSyOVCHmfmYwCce5Z0r1MTw5Aos
+         moC2F+TKawL4AsI9GBpOpwD7dVsx4jWpHJArsbVQTCwpg+9yBwpNl8+BzJjAg2k0cBM5
+         ZXGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752328618; x=1752933418;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LWT0gpnYa11KRjN6//9ilbj19qNJCuSNe5kuXlg66Eg=;
+        b=WxiiodYjra0yFctXDYqQZqgjIbgZ9dRqJRoZBZzY78KcCMYbJNiPhYXE/8/XpIr00J
+         p/rnIAAHkiD69CuzaOgph1xytK4/TpjzVEUoenqulsg5TAvTDi1zqsgtWb9PIvutuZnj
+         suVrf8Bf1HvnnRL74c+qfDqoWvFUEfVgBaSU7y1Jb/+UvnvbLHzDXO61SjmgRdRjdoIy
+         b4F7tPofkXY2MrWpqtZlieB4wwy6ZnUjMhjXfv/v8eNbK4ZU4iQEvoXcUk1XUNbMCV64
+         zd8t+QmBQpajS9Mc5T1mvwU8pizYcNwbU3ET4O+DnqD+C6n4YyeFSGPxzVV0Qt5suN05
+         6B1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUDbKHZ2w6OjS2S0x7FQC/HLYFXBKxc6LUZf/D5yGQHwwhlN650EF5K7VdsxgB2TPHCWxU=@vger.kernel.org, AJvYcCUqgWaoziNVDYUxaGGsm/tNNN0t/TbG93caBl3/RQ91btA1327v6MM8S25Hdm+5Vv71KRAZQoXoylylsaBO@vger.kernel.org, AJvYcCW9nyray9g6w3am4oNhiKoFce7SSPs6eU2gYN+f1yLiXYoMq+FibrHxGILQzxUOlLcCLlI+5n1rONr/tQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzupAwSmtApd5/pSk2gs5y7O/Zezct7M56/92XEUstwH+y49gZO
+	54iTMdINOcIFfXIeYhUPK3melOJM5Q2IDFLd0rdAQ2IuHy85tvSEY8vY
+X-Gm-Gg: ASbGnctroJncDZOfH+LnGIo8DSKaxcmtU3daKjXpvRcVEC/hHnU3O6Y/jXQ+vWTvqNH
+	cSgCE7amjE1V9P54cOI2chWkO5n5IGw00XlJZfgAGGpC/7I0AlkFL7QVo3QbQjOBNW9NsUZ3UfU
+	9pDcLhXfZotZXcK24BhtUwqgvWMMLBXOwvqLPp8+bQh3t23gvnxqVxPQdlLhMeVr5SpFQFyUuHe
+	+agaFYzO+7Sh0PdUvhUQmYFjlsSfUKRsWqmxvnB3E2BZlbz/PzPvdHIL9tDACsE2HStZr5o7MYn
+	kx7doRHPLEp8lyn6sAbOtiz4zBLtfaXjrkzyt93B6yzljq4oV9MKUw0YcI3vmb849x7AK9hib4J
+	ascxumROP3jNTSR4phvYmp/smyZuixAKE/hY=
+X-Google-Smtp-Source: AGHT+IHPBpXdo4+Kf06SYR/uX0tK1lNZqoC5zzneXzKAVwNs+13swe0gxWXk5ow4jkTd10LBb7qjpA==
+X-Received: by 2002:a17:907:94c8:b0:ae3:74e1:81a3 with SMTP id a640c23a62f3a-ae6fca02479mr620885266b.8.1752328617862;
+        Sat, 12 Jul 2025 06:56:57 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:b2ad])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e826462bsm492380166b.104.2025.07.12.06.56.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Jul 2025 06:56:57 -0700 (PDT)
+Message-ID: <582f41c0-2742-4400-9c81-0d46bf4e8314@gmail.com>
+Date: Sat, 12 Jul 2025 14:58:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 3/8] page_pool: access ->pp_magic through
+ struct netmem_desc in page_pool_page_is_pp()
+To: Byungchul Park <byungchul@sk.com>, Mina Almasry <almasrymina@google.com>,
+ David Hildenbrand <david@redhat.com>,
+ "willy@infradead.org" <willy@infradead.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kernel_team@skhynix.com, kuba@kernel.org, ilias.apalodimas@linaro.org,
+ harry.yoo@oracle.com, hawk@kernel.org, akpm@linux-foundation.org,
+ davem@davemloft.net, john.fastabend@gmail.com, andrew+netdev@lunn.ch,
+ toke@redhat.com, tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
+ saeedm@nvidia.com, leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
+ linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com,
+ hannes@cmpxchg.org, ziy@nvidia.com, jackmanb@google.com
+References: <20250710082807.27402-1-byungchul@sk.com>
+ <20250710082807.27402-4-byungchul@sk.com>
+ <CAHS8izMXkyGvYmf1u6r_kMY_QGSOoSCECkF0QJC4pdKx+DOq0A@mail.gmail.com>
+ <20250711011435.GC40145@system.software.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250711011435.GC40145@system.software.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250712-rockchip-i2s-simplify-clk-v1-1-3b23fd1b3e26@linux.dev>
-X-B4-Tracking: v=1; b=H4sIABppcmgC/x3MQQqDMBBG4avIrDuQRCXQq5Qu2jjRH62GDEgle
- HeDy2/xXiGVDFF6NoWy7FBsa4V9NBSmzzoKY6gmZ1xvvHWctzCHCYnhlBW/tCAeHJaZxXjT9T4
- O39ZS7VOWiP/9fr3P8wLSOgSMawAAAA==
-X-Change-ID: 20250712-rockchip-i2s-simplify-clk-e070457fdb31
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Heiko Stuebner <heiko@sntech.de>
-Cc: linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Troy Mitchell <troy.mitchell@linux.dev>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752328479; l=4147;
- i=troy.mitchell@linux.dev; s=20250712; h=from:subject:message-id;
- bh=3bgcB1TurwhT7L9X2KCmbojs72aEaLZWW2bUy/QsO0Y=;
- b=p4ygt/SPN0WzYAquOnuf0wpNUMCA+lbmD7jSoi9sBqx1GRoMNauMF41Zbx2G6x+OmQYVZFzsi
- opM26vamUVkAZG6iJJch82NRs8/tqFdUlNa9fx84WRY72rxTvOpvL7T
-X-Developer-Key: i=troy.mitchell@linux.dev; a=ed25519;
- pk=zhRP1xE0bftrurqSWI+SzcSdJGIZ0BTTY9Id0ESzqlI=
-X-Migadu-Flow: FLOW_OUT
 
-Replace devm_clk_get + clk_prepare_enable with devm_clk_get_enabled
-to simplify clock acquisition and enabling.
+On 7/11/25 02:14, Byungchul Park wrote:
+...>>> +#ifdef CONFIG_PAGE_POOL
+>>> +/* XXX: This would better be moved to mm, once mm gets its way to
+>>> + * identify the type of page for page pool.
+>>> + */
+>>> +static inline bool page_pool_page_is_pp(struct page *page)
+>>> +{
+>>> +       struct netmem_desc *desc = page_to_nmdesc(page);
+>>> +
+>>> +       return (desc->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
+>>> +}
+>>
+>> pages can be pp pages (where they have pp fields inside of them) or
+>> non-pp pages (where they don't have pp fields inside them, because
+>> they were never allocated from the page_pool).
+>>
+>> Casting a page to a netmem_desc, and then checking if the page was a
+>> pp page doesn't makes sense to me on a fundamental level. The
+>> netmem_desc is only valid if the page was a pp page in the first
+>> place. Maybe page_to_nmdesc should reject the cast if the page is not
+>> a pp page or something.
+> 
+> Right, as you already know, the current mainline code already has the
+> same problem but we've been using the werid way so far, in other words,
+> mm code is checking if it's a pp page or not by using ->pp_magic, but
+> it's ->lur, ->buddy_list, or ->pcp_list if it's not a pp page.
+> 
+> Both the mainline code and this patch can make sense *only if* it's
+> actually a pp page.  It's unevitable until mm provides a way to identify
+> the type of page for page pool.  Thoughts?
+Question to mm folks, can we add a new PGTY for page pool and use
+that to filter page pool originated pages? Like in the incomplete
+and untested diff below?
 
-Use dev_err_probe for concise error logging and return handling,
-reducing boilerplate code and improving readability.
 
-Signed-off-by: Troy Mitchell <troy.mitchell@linux.dev>
----
- sound/soc/rockchip/rockchip_i2s.c | 51 +++++++++++----------------------------
- 1 file changed, 14 insertions(+), 37 deletions(-)
+commit 8fc2347fb3ff4a3fc7929c70a5a21e1128935d4a
+Author: Pavel Begunkov <asml.silence@gmail.com>
+Date:   Sat Jul 12 14:29:52 2025 +0100
 
-diff --git a/sound/soc/rockchip/rockchip_i2s.c b/sound/soc/rockchip/rockchip_i2s.c
-index 0a0a95b4f5204701b52ca924683d51c29992015d..bd1b5771ae7c6f91e57c0fe3579a3d9974839f8e 100644
---- a/sound/soc/rockchip/rockchip_i2s.c
-+++ b/sound/soc/rockchip/rockchip_i2s.c
-@@ -31,7 +31,6 @@ struct rk_i2s_pins {
- struct rk_i2s_dev {
- 	struct device *dev;
- 
--	struct clk *hclk;
- 	struct clk *mclk;
- 
- 	struct snd_dmaengine_dai_dma_data capture_dma_data;
-@@ -739,6 +738,7 @@ static int rockchip_i2s_probe(struct platform_device *pdev)
- 	struct snd_soc_dai_driver *dai;
- 	struct resource *res;
- 	void __iomem *regs;
-+	struct clk *clk;
- 	int ret;
- 
- 	i2s = devm_kzalloc(&pdev->dev, sizeof(*i2s), GFP_KERNEL);
-@@ -757,38 +757,23 @@ static int rockchip_i2s_probe(struct platform_device *pdev)
- 	}
- 
- 	/* try to prepare related clocks */
--	i2s->hclk = devm_clk_get(&pdev->dev, "i2s_hclk");
--	if (IS_ERR(i2s->hclk)) {
--		dev_err(&pdev->dev, "Can't retrieve i2s bus clock\n");
--		return PTR_ERR(i2s->hclk);
--	}
--	ret = clk_prepare_enable(i2s->hclk);
--	if (ret) {
--		dev_err(i2s->dev, "hclock enable failed %d\n", ret);
--		return ret;
--	}
-+	clk = devm_clk_get_enabled(&pdev->dev, "i2s_hclk");
-+	if (IS_ERR(clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(clk), "hclock enable failed");
- 
- 	i2s->mclk = devm_clk_get(&pdev->dev, "i2s_clk");
--	if (IS_ERR(i2s->mclk)) {
--		dev_err(&pdev->dev, "Can't retrieve i2s master clock\n");
--		ret = PTR_ERR(i2s->mclk);
--		goto err_clk;
--	}
-+	if (IS_ERR(i2s->mclk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(i2s->mclk),
-+				     "Can't retrieve i2s master clock");
- 
- 	regs = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
--	if (IS_ERR(regs)) {
--		ret = PTR_ERR(regs);
--		goto err_clk;
--	}
-+	if (IS_ERR(regs))
-+		dev_err_probe(&pdev->dev, PTR_ERR(regs), "Can't ioremap registers");
- 
- 	i2s->regmap = devm_regmap_init_mmio(&pdev->dev, regs,
- 					    &rockchip_i2s_regmap_config);
--	if (IS_ERR(i2s->regmap)) {
--		dev_err(&pdev->dev,
--			"Failed to initialise managed register map\n");
--		ret = PTR_ERR(i2s->regmap);
--		goto err_clk;
--	}
-+	if (IS_ERR(i2s->regmap))
-+		return dev_err_probe(&pdev->dev, ret, "Failed to initialise managed register map");
- 
- 	i2s->bclk_ratio = 64;
- 	i2s->pinctrl = devm_pinctrl_get(&pdev->dev);
-@@ -796,11 +781,9 @@ static int rockchip_i2s_probe(struct platform_device *pdev)
- 		i2s->bclk_on = pinctrl_lookup_state(i2s->pinctrl, "bclk_on");
- 		if (!IS_ERR_OR_NULL(i2s->bclk_on)) {
- 			i2s->bclk_off = pinctrl_lookup_state(i2s->pinctrl, "bclk_off");
--			if (IS_ERR_OR_NULL(i2s->bclk_off)) {
--				dev_err(&pdev->dev, "failed to find i2s bclk_off\n");
--				ret = -EINVAL;
--				goto err_clk;
--			}
-+			if (IS_ERR_OR_NULL(i2s->bclk_off))
-+				return dev_err_probe(&pdev->dev, -EINVAL,
-+						     "failed to find i2s bclk_off");
- 		}
- 	} else {
- 		dev_dbg(&pdev->dev, "failed to find i2s pinctrl\n");
-@@ -843,20 +826,14 @@ static int rockchip_i2s_probe(struct platform_device *pdev)
- 		i2s_runtime_suspend(&pdev->dev);
- err_pm_disable:
- 	pm_runtime_disable(&pdev->dev);
--err_clk:
--	clk_disable_unprepare(i2s->hclk);
- 	return ret;
- }
- 
- static void rockchip_i2s_remove(struct platform_device *pdev)
- {
--	struct rk_i2s_dev *i2s = dev_get_drvdata(&pdev->dev);
+     net/mm: use PGTY for tracking page pool pages
+     
+     Currently, we use page->pp_magic to determine whether a page belongs to
+     a page pool. It's not ideal as the field is aliased with other page
+     types, and thus needs to to rely on elaborated rules to work. Add a new
+     page type for page pool.
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 0ef2ba0c667a..975a013f1f17 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -4175,7 +4175,7 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
+  #ifdef CONFIG_PAGE_POOL
+  static inline bool page_pool_page_is_pp(struct page *page)
+  {
+-	return (page->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
++	return PageNetpp(page);
+  }
+  #else
+  static inline bool page_pool_page_is_pp(struct page *page)
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 4fe5ee67535b..9bd1dfded2fc 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -957,6 +957,7 @@ enum pagetype {
+  	PGTY_zsmalloc		= 0xf6,
+  	PGTY_unaccepted		= 0xf7,
+  	PGTY_large_kmalloc	= 0xf8,
++	PGTY_netpp		= 0xf9,
+  
+  	PGTY_mapcount_underflow = 0xff
+  };
+@@ -1101,6 +1102,11 @@ PAGE_TYPE_OPS(Zsmalloc, zsmalloc, zsmalloc)
+  PAGE_TYPE_OPS(Unaccepted, unaccepted, unaccepted)
+  FOLIO_TYPE_OPS(large_kmalloc, large_kmalloc)
+  
++/*
++ * Marks page_pool allocated pages
++ */
++PAGE_TYPE_OPS(Netpp, netpp, netpp)
++
+  /**
+   * PageHuge - Determine if the page belongs to hugetlbfs
+   * @page: The page to test.
+diff --git a/include/net/netmem.h b/include/net/netmem.h
+index de1d95f04076..20f5dbb08149 100644
+--- a/include/net/netmem.h
++++ b/include/net/netmem.h
+@@ -113,6 +113,8 @@ static inline bool netmem_is_net_iov(const netmem_ref netmem)
+   */
+  static inline struct page *__netmem_to_page(netmem_ref netmem)
+  {
++	DEBUG_NET_WARN_ON_ONCE(netmem_is_net_iov(netmem));
++
+  	return (__force struct page *)netmem;
+  }
+  
+diff --git a/net/core/netmem_priv.h b/net/core/netmem_priv.h
+index cd95394399b4..e38c64da1a78 100644
+--- a/net/core/netmem_priv.h
++++ b/net/core/netmem_priv.h
+@@ -13,16 +13,11 @@ static inline void netmem_or_pp_magic(netmem_ref netmem, unsigned long pp_magic)
+  	__netmem_clear_lsb(netmem)->pp_magic |= pp_magic;
+  }
+  
+-static inline void netmem_clear_pp_magic(netmem_ref netmem)
+-{
+-	WARN_ON_ONCE(__netmem_clear_lsb(netmem)->pp_magic & PP_DMA_INDEX_MASK);
 -
- 	pm_runtime_disable(&pdev->dev);
- 	if (!pm_runtime_status_suspended(&pdev->dev))
- 		i2s_runtime_suspend(&pdev->dev);
+-	__netmem_clear_lsb(netmem)->pp_magic = 0;
+-}
 -
--	clk_disable_unprepare(i2s->hclk);
- }
- 
- static const struct dev_pm_ops rockchip_i2s_pm_ops = {
+  static inline bool netmem_is_pp(netmem_ref netmem)
+  {
+-	return (netmem_get_pp_magic(netmem) & PP_MAGIC_MASK) == PP_SIGNATURE;
++	if (netmem_is_net_iov(netmem))
++		return true;
++	return page_pool_page_is_pp(netmem_to_page(netmem));
+  }
+  
+  static inline void netmem_set_pp(netmem_ref netmem, struct page_pool *pool)
+diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+index 05e2e22a8f7c..52120e2912a6 100644
+--- a/net/core/page_pool.c
++++ b/net/core/page_pool.c
+@@ -371,6 +371,13 @@ struct page_pool *page_pool_create(const struct page_pool_params *params)
+  }
+  EXPORT_SYMBOL(page_pool_create);
+  
++static void page_pool_set_page_pp_info(struct page_pool *pool,
++				       struct page *page)
++{
++	__SetPageNetpp(page);
++	page_pool_set_pp_info(page_to_netmem(page));
++}
++
+  static void page_pool_return_netmem(struct page_pool *pool, netmem_ref netmem);
+  
+  static noinline netmem_ref page_pool_refill_alloc_cache(struct page_pool *pool)
+@@ -534,7 +541,7 @@ static struct page *__page_pool_alloc_page_order(struct page_pool *pool,
+  	}
+  
+  	alloc_stat_inc(pool, slow_high_order);
+-	page_pool_set_pp_info(pool, page_to_netmem(page));
++	page_pool_set_page_pp_info(pool, page);
+  
+  	/* Track how many pages are held 'in-flight' */
+  	pool->pages_state_hold_cnt++;
+@@ -579,7 +586,7 @@ static noinline netmem_ref __page_pool_alloc_netmems_slow(struct page_pool *pool
+  			continue;
+  		}
+  
+-		page_pool_set_pp_info(pool, netmem);
++		page_pool_set_page_pp_info(pool, __netmem_to_page(netmem));
+  		pool->alloc.cache[pool->alloc.count++] = netmem;
+  		/* Track how many pages are held 'in-flight' */
+  		pool->pages_state_hold_cnt++;
+@@ -654,7 +661,6 @@ s32 page_pool_inflight(const struct page_pool *pool, bool strict)
+  void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
+  {
+  	netmem_set_pp(netmem, pool);
+-	netmem_or_pp_magic(netmem, PP_SIGNATURE);
+  
+  	/* Ensuring all pages have been split into one fragment initially:
+  	 * page_pool_set_pp_info() is only called once for every page when it
+@@ -669,7 +675,6 @@ void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
+  
+  void page_pool_clear_pp_info(netmem_ref netmem)
+  {
+-	netmem_clear_pp_magic(netmem);
+  	netmem_set_pp(netmem, NULL);
+  }
+  
+@@ -730,8 +735,11 @@ static void page_pool_return_netmem(struct page_pool *pool, netmem_ref netmem)
+  	trace_page_pool_state_release(pool, netmem, count);
+  
+  	if (put) {
++		struct page *page = netmem_to_page(netmem);
++
+  		page_pool_clear_pp_info(netmem);
+-		put_page(netmem_to_page(netmem));
++		__ClearPageNetpp(page);
++		put_page(page);
+  	}
+  	/* An optimization would be to call __free_pages(page, pool->p.order)
+  	 * knowing page is not part of page-cache (thus avoiding a
 
----
-base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
-change-id: 20250712-rockchip-i2s-simplify-clk-e070457fdb31
-
-Best regards,
 -- 
-Troy Mitchell <troy.mitchell@linux.dev>
+Pavel Begunkov
 
 
