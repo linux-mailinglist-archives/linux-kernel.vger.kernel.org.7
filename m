@@ -1,186 +1,246 @@
-Return-Path: <linux-kernel+bounces-728712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100E3B02C2F
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 19:38:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 915B6B02C40
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 19:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED1011AA07BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 17:38:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F3E1188269F
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 17:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF86289349;
-	Sat, 12 Jul 2025 17:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D60288CB5;
+	Sat, 12 Jul 2025 17:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fgWoQDHH"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XT62ffBK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005FD18D
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 17:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5135E19ABC3;
+	Sat, 12 Jul 2025 17:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752341897; cv=none; b=YFzRD/zfH9tGEXEycHH3u6DHxeX2A5fShfDVHIqWnZQnw7Ymdcu63zrJJDHzdFKULmlv7pFoxDr6kzraT2lkTSAnK/6PEe/QRRXVdoEh25YMOVneGIn4oOL2euY7Rfgsw43ahpTc1tC9TUh6x7thnxAuiVbYR9kQOkNgFJlDRwY=
+	t=1752342173; cv=none; b=p8xrothBixWLjXgG8rAy7qPZ5dCDVCJqs1JQysmFcdjt9MX84KH1ICPSFB3qb9dcwE5eM9clbMhDuYEcTaspKaXfAro2krdIAVCqOFMdWI0efeOEb3CJBbg337H1ceX+qWX3L+3iRZmlcFv6O4S9f8QO0aa2qj+dTIIkQS7Qq9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752341897; c=relaxed/simple;
-	bh=CIsoW6negRSHBNMbMwVYgOZOquPv5s9MF7IMD32fmDM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CEwV+7cHXRFZ9n/Wzf9pkHLfiF19H9gfrvj5BgTty4Aik6hdRKGYIXnh1uu4SYpotywLyP4YaibHnc4wElCfrc+uP9Zpahbd9zJ1cl546F2nnTchrlUgM1WvcNO/mMHpApyRaWTpxm7Ru7h5laOfWOdue8d5GCJNc8CRXiH7Zzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fgWoQDHH; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-235e389599fso143575ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 10:38:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752341895; x=1752946695; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1fuujDqaQx6OHLyap4BpfcTFKLHlqSEv1YVCxl1pX/c=;
-        b=fgWoQDHHUI6VCQ4VhKL256ng1IC2AdiQZQ0LQ86LFteAG4oS3J0Jdy3ECoZ7OoRjR8
-         dYVEDlZA5E7fQuLo21nso93jiW11g/r170Nzmrg7iy6eAczSKO/iz//N1zbWQQ7LmxHa
-         FIrFYufoK9nPoSpfNkf+RL4HaMnyn1tE4sgQ3j07eWs2Qc0OqUwTs3dXkfKe4D+RsWKl
-         5t4jZW97QI83/qpegVpclT+Txb6QMN4dF16gVNQ5IIXjY/E4vQZyAc3kn1/pLpA27P6s
-         WAcTalCJbC/CCBR7aF6k9qnFV32P7mRWDKywjd6AAaJAbdxg9Fl0IGRZU85oDaG9YmSX
-         /usQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752341895; x=1752946695;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1fuujDqaQx6OHLyap4BpfcTFKLHlqSEv1YVCxl1pX/c=;
-        b=vGknktPkLTpwxcChe0XVAfEMHZMr84B6YxzY67Ccl56QjW6THPiqWSXl69AXeADMLq
-         mYRUBQbgUCV7S1ylH/ddxmhHgjFpofTCsXyK4XFfJHeucxEwU1EbDMvfck2MPLJ1p7kT
-         +vodY9r8WmtgymJZpQ+6NETzHPm7XDrCR12eotRvUeeUqnWSipzjmvribV19NR6aU+gf
-         D5atuU+Wc5clYMsvORxTd/aWyTAlh1SD1XWXUKnE8jKX6KpS3sg3+fxGxSMveGyunqpH
-         6z6ggd0YAwqvjwTqJf9KDZCywdmBalStwVMzw3BSWErbbDxZJlNlY66ZZ8gckKsnWPdd
-         ZfIw==
-X-Forwarded-Encrypted: i=1; AJvYcCVV6XGafjGdqSwFyHIMfrf69QATYdX/IlFtSSLQEEMESuVPfHJE3pk4lu8mIhFHMNF5F3lpUycglJKJYJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ70X29XNlcWqXcoQgKL5XpmrSbg1IcDni6Jyb/V/LZ8ebGk+i
-	C5bNvmaFG3EwlMhUHy81gxrlflel8h2IdAY0w4pNQgOGjmONjnpEQ0zqGAJrWc/U4yV7FekUuLB
-	WpDqKnu0Vpj6FKYwn+CI21ZLVoyCq1Hq8XzlZiz5Y
-X-Gm-Gg: ASbGncuRQ2t5GpiJaz4i63zIYUku12QW2UuydkRic9j8/01DGPh9mvFQi393PGo2qGa
-	yAms6n5yWu+Cgo0QVrhQSGXjg8EGfVdleEp0sc4tT1KB8vhltg+9za0IqATD50cnE/ctiYLotY6
-	xd+jMkPFsydXHHrcugST/zL7o0jX71zX5++KluCpyRrw6UW40TYt2pAn4Vo23xG5ik8xJvYCQV6
-	UMQynSHfe7rJNdjulGbGdUiFzL2zo+Df0E/MNV7Wf6cxFiUTSs=
-X-Google-Smtp-Source: AGHT+IGAqWu1DGMbWjH0/2U+cZ9+ZzEcCYnI9VhTIeknxHrrYXHWqYhdWNsKIuqG2rmHdTiSyYjUDWLtmTq56SxZYE0=
-X-Received: by 2002:a17:903:fad:b0:231:ed22:e230 with SMTP id
- d9443c01a7336-23df7b2c48bmr1248235ad.15.1752341894575; Sat, 12 Jul 2025
- 10:38:14 -0700 (PDT)
+	s=arc-20240116; t=1752342173; c=relaxed/simple;
+	bh=+pGZw3FTFYX0NdM3RCCNoB5wrejY5dMIea8ed3laJNY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SLwuYKUfP+AMUtvNjSDLE30eNM4IrzHp8qbd/86onKzaYvyXUP75599W67FJOQ/PDAOcQi42vQPqrxM7vtMSMQQbZjGNt0oU5Sg3gECQHyeQ4818S7+byJbxJCBldmcouDruhMyy/BrHgXGxEyzYlRp3Mes68H1vXrFMYpPbJuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XT62ffBK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D51ECC4CEEF;
+	Sat, 12 Jul 2025 17:42:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752342172;
+	bh=+pGZw3FTFYX0NdM3RCCNoB5wrejY5dMIea8ed3laJNY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XT62ffBKtI8kHsasgFZRrTXV2FoYIF00anz3mzwIUPSg23g43di1Sbg16J69x2H8L
+	 +fdWwnE9gd5aPDM+lnyDgTH5bBUY96RVtlywez5XaEUKfbNJ31T6gNwKegnstU2gkO
+	 x2nrg6rLaZnTAUHVXXYkX3u8xxbu+dofZ+44iVA9Q3iX3csXw5WZrur+IionzMEEWC
+	 QNuQcmuIypAt8qFgDGDrp2C+4WGSb2qj18dkR+odhFwssedcyi3eCL63Zyj0hOdrEv
+	 rrSAQFCEG31MHS2Er6RmvrUNMDv+XRCyXXycFQ3XMnjhglK6nu9zvXeHgMRbAkZ5GO
+	 xS83pg4EURufA==
+Message-ID: <5597644b-267d-40d0-aa33-a8a665cebd70@kernel.org>
+Date: Sat, 12 Jul 2025 19:42:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703062641.3247-1-yan.y.zhao@intel.com> <20250709232103.zwmufocd3l7sqk7y@amd.com>
- <aG_pLUlHdYIZ2luh@google.com> <aHCUyKJ4I4BQnfFP@yzhao56-desk>
- <20250711151719.goee7eqti4xyhsqr@amd.com> <aHEwT4X0RcfZzHlt@google.com> <CAGtprH9NOdN9VZWkWLjYcTixrN1+dgWfC3rcdmv9rQBkriZrdQ@mail.gmail.com>
-In-Reply-To: <CAGtprH9NOdN9VZWkWLjYcTixrN1+dgWfC3rcdmv9rQBkriZrdQ@mail.gmail.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Sat, 12 Jul 2025 10:38:01 -0700
-X-Gm-Features: Ac12FXzcEfAGKe3hL7rXr_HBU-6nL6kTZLckW9PQ7tEbTEw-NPkHUDBcGjGyWkc
-Message-ID: <CAGtprH8+x5Z=tPz=NcrQM6Dor2AYBu3jiZdo+Lg4NqAk0pUJ3w@mail.gmail.com>
-Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from kvm_gmem_populate()
-To: Sean Christopherson <seanjc@google.com>
-Cc: Michael Roth <michael.roth@amd.com>, Yan Zhao <yan.y.zhao@intel.com>, pbonzini@redhat.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com, 
-	kai.huang@intel.com, adrian.hunter@intel.com, reinette.chatre@intel.com, 
-	xiaoyao.li@intel.com, tony.lindgren@intel.com, binbin.wu@linux.intel.com, 
-	dmatlack@google.com, isaku.yamahata@intel.com, ira.weiny@intel.com, 
-	david@redhat.com, ackerleytng@google.com, tabba@google.com, 
-	chao.p.peng@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
+To: Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: William Mcvicker <willmcvicker@google.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@android.com, sudeep.holla@arm.com
+References: <20250711-gs101-cpuidle-v6-1-503ec55fc2f9@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250711-gs101-cpuidle-v6-1-503ec55fc2f9@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 11, 2025 at 11:46=E2=80=AFAM Vishal Annapurve <vannapurve@googl=
-e.com> wrote:
->
-> On Fri, Jul 11, 2025 at 8:40=E2=80=AFAM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> >
-> > On Fri, Jul 11, 2025, Michael Roth wrote:
-> > > On Fri, Jul 11, 2025 at 12:36:24PM +0800, Yan Zhao wrote:
-> > > > Besides, it can't address the 2nd AB-BA lock issue as mentioned in =
-the patch
-> > > > log:
-> > > >
-> > > > Problem
-> > > > =3D=3D=3D
-> > > > ...
-> > > > (2)
-> > > > Moreover, in step 2, get_user_pages_fast() may acquire mm->mmap_loc=
-k,
-> > > > resulting in the following lock sequence in tdx_vcpu_init_mem_regio=
-n():
-> > > > - filemap invalidation lock --> mm->mmap_lock
-> > > >
-> > > > However, in future code, the shared filemap invalidation lock will =
-be held
-> > > > in kvm_gmem_fault_shared() (see [6]), leading to the lock sequence:
-> > > > - mm->mmap_lock --> filemap invalidation lock
-> > >
-> > > I wouldn't expect kvm_gmem_fault_shared() to trigger for the
-> > > KVM_MEMSLOT_SUPPORTS_GMEM_SHARED case (or whatever we end up naming i=
-t).
-> >
-> > Irrespective of shared faults, I think the API could do with a bit of c=
-leanup
-> > now that TDX has landed, i.e. now that we can see a bit more of the pic=
-ture.
-> >
-> > As is, I'm pretty sure TDX is broken with respect to hugepage support, =
-because
-> > kvm_gmem_populate() marks an entire folio as prepared, but TDX only eve=
-r deals
-> > with one page at a time.  So that needs to be changed.  I assume it's a=
-lready
-> > address in one of the many upcoming series, but it still shows a flaw i=
-n the API.
-> >
-> > Hoisting the retrieval of the source page outside of filemap_invalidate=
-_lock()
-> > seems pretty straightforward, and would provide consistent ABI for all =
-vendor
->
-> Will relying on standard KVM -> guest_memfd interaction i.e.
-> simulating a second stage fault to get the right target address work
-> for all vendors i.e. CCA/SNP/TDX? If so, we might not have to maintain
-> this out of band path of kvm_gmem_populate.
+On 11/07/2025 15:50, Peter Griffin wrote:
+>  
+>  #include <linux/soc/samsung/exynos-regs-pmu.h>
+> @@ -35,6 +37,14 @@ struct exynos_pmu_context {
+>  	const struct exynos_pmu_data *pmu_data;
+>  	struct regmap *pmureg;
+>  	struct regmap *pmuintrgen;
+> +	/*
+> +	 * Serialization lock for CPU hot plug and cpuidle ACPM hint
+> +	 * programming. Also protects the in_hotplug flag.
+> +	 */
+> +	raw_spinlock_t cpupm_lock;
+> +	bool *in_hotplug;
 
-I think the only different scenario is SNP, where the host must write
-initial contents to guest memory.
+This should be bitmap - more obvious code.
 
-Will this work for all cases CCA/SNP/TDX during initial memory
-population from within KVM:
-1) Simulate stage2 fault
-2) Take a KVM mmu read lock
-3) Check that the needed gpa is mapped in EPT/NPT entries
-4) For SNP, if src !=3D null, make the target pfn to be shared, copy
-contents and then make the target pfn back to private.
-5) For TDX, if src !=3D null, pass the same address for source and
-target (likely this works for CCA too)
-6) Invoke appropriate memory encryption operations
-7) measure contents
-8) release the KVM mmu read lock
-
-If this scheme works, ideally we should also not call RMP table
-population logic from guest_memfd, but from KVM NPT fault handling
-logic directly (a bit of cosmetic change). Ideally any outgoing
-interaction from guest_memfd to KVM should be only via invalidation
-notifiers.
+> +	atomic_t sys_suspended;
+> +	atomic_t sys_rebooting;
+>  };
+>  
+>  void __iomem *pmu_base_addr;
+> @@ -221,6 +231,15 @@ static const struct regmap_config regmap_smccfg = {
+>  	.reg_read = tensor_sec_reg_read,
+>  	.reg_write = tensor_sec_reg_write,
+>  	.reg_update_bits = tensor_sec_update_bits,
+> +	.use_raw_spinlock = true,
+> +};
+> +
+> +static const struct regmap_config regmap_pmu_intr = {
+> +	.name = "pmu_intr_gen",
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.use_raw_spinlock = true,
+>  };
+>  
+>  static const struct exynos_pmu_data gs101_pmu_data = {
+> @@ -330,13 +349,19 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
+>  EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
+>  
 
 
+...
+
+> +/* Called from CPU PM notifier (CPUIdle code path) with IRQs disabled */
+> +static int gs101_cpu_pmu_offline(void)
+> +{
+> +	int cpu;
+> +
+> +	raw_spin_lock(&pmu_context->cpupm_lock);
+> +	cpu = smp_processor_id();
+> +
+> +	if (pmu_context->in_hotplug[cpu]) {
+> +		raw_spin_unlock(&pmu_context->cpupm_lock);
+> +		return NOTIFY_BAD;
+> +	}
+> +
+> +	__gs101_cpu_pmu_offline(cpu);
+> +	raw_spin_unlock(&pmu_context->cpupm_lock);
+> +
+> +	return NOTIFY_OK;
+> +}
+> +
+> +/* Called from CPU hot plug callback with IRQs enabled */
+> +static int gs101_cpuhp_pmu_offline(unsigned int cpu)
+> +{
+> +	unsigned long flags;
+> +
+> +	raw_spin_lock_irqsave(&pmu_context->cpupm_lock, flags);
+> +	/*
+> +	 * Mark this CPU as entering hotplug. So as not to confuse
+> +	 * ACPM the CPU entering hotplug should not enter C2 idle state.
+> +	 */
+> +	pmu_context->in_hotplug[cpu] = true;
+> +	__gs101_cpu_pmu_offline(cpu);
+> +
+> +	raw_spin_unlock_irqrestore(&pmu_context->cpupm_lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static int gs101_cpu_pm_notify_callback(struct notifier_block *self,
+> +					unsigned long action, void *v)
+> +{
+> +	switch (action) {
+> +	case CPU_PM_ENTER:
+> +		/*
+> +		 * Ignore CPU_PM_ENTER event in reboot or
+> +		 * suspend sequence.
+> +		 */
+> +
+> +		if (atomic_read(&pmu_context->sys_suspended) ||
+> +		    atomic_read(&pmu_context->sys_rebooting))
+
+I don't get exactly why you need here atomics. You don't have here
+barriers, so ordering is not kept (non-RMW atomics are unordered), so
+maybe ordering was not the problem to be solved here. But then you don't
+use these at all as RMW and this is even explicitly described in atomic doc!
+
+"Therefore, if you find yourself only using the Non-RMW operations of
+atomic_t, you do not in fact need atomic_t at all and are doing it wrong."
+
+And it is right. READ/WRITE_ONCE gives you the same.
+
+The question is whether you need ordering or barriers in general
+(atomics don't give you these) - you have here control dependency
+if-else, however it is immediately followed with gs101_cpu_pmu_offline()
+which will use spin-lock (so memory barrier).
+
+Basically you should have here comment explaining why there is no
+barrier - you rely on barrier from spin lock in next calls.
+
+And if my reasoning is correct, then you should use just READ/WRITE_ONCE.
 
 
+> +			return NOTIFY_OK;
+> +
+> +		return gs101_cpu_pmu_offline();
+> +
+> +	case CPU_PM_EXIT:
+> +
+> +		if (atomic_read(&pmu_context->sys_rebooting))
+> +			return NOTIFY_OK;
+> +
+> +		return gs101_cpu_pmu_online();
+> +	}
+> +
+> +	return NOTIFY_OK;
+> +}
 
->
-> > flavors.  E.g. as is, non-struct-page memory will work for SNP, but not=
- TDX.  The
-> > obvious downside is that struct-page becomes a requirement for SNP, but=
- that
-> >
->
-> Maybe you had more thought here?
+The rest looked fine.
+
+
+Best regards,
+Krzysztof
 
