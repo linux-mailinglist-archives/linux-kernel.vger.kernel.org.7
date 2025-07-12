@@ -1,196 +1,175 @@
-Return-Path: <linux-kernel+bounces-728816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DFFCB02D3B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 23:33:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49A7BB02D40
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 23:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25FC04E0A9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:32:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA2E03BD488
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EF8231A32;
-	Sat, 12 Jul 2025 21:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7421EF39F;
+	Sat, 12 Jul 2025 21:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iJJXpIHC"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ppfDqpBG"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7287A22F389;
-	Sat, 12 Jul 2025 21:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05911EDA02
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 21:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752355932; cv=none; b=AXpy5pXffQc3gO3l7yHrkK3Y1CHcuGOOb7S4ZPW4Uuljo9U6WUge8lYbof6TwOhlhHnKabmMc2KYQL19oxyeF9a8uCuIYLWkHnuRIxHS6cF5qjxhcczxoclGkelhxCl9VorgxsGoUhnoapL0UnQOD8J02CAw6omQpDs8tH/l2Mw=
+	t=1752356645; cv=none; b=mED/4ZWYimu8CMiqwywhIImQDEdGfDWrNnNtyrfnL/vD3DDmPDTOGVphA6FP68lysUEjDYQfkpEsuZKiT7iW25MkR6+Jz5Vn37kSwouQkBT8ZUUO162XAQl9yXD/uGn0fV3GddzamDn1ZTY2WQstXFNqktvEgznf5im1bHTSeJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752355932; c=relaxed/simple;
-	bh=e1kjOZMlHir0QAwDPK2Mh6knOwIrBRKVgMEnFQ0sips=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=POPEYJMVg2K9nqoyYVtjuL+yMF9QvBplzgBZm52xIWbGayTV8Muk5pGRu4khaGz0Bt9r9rcqmaVxRQb4DaEHiU3qo25JuItZs4y91gw6wyr8GFLMk8pErQBkSyQz3VXalq3A4q2JPEz2r1xx6dnePOMZqJBDiVoNEELrbCPk9VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iJJXpIHC; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-311e46d38ddso2890512a91.0;
-        Sat, 12 Jul 2025 14:32:10 -0700 (PDT)
+	s=arc-20240116; t=1752356645; c=relaxed/simple;
+	bh=g3uF/zoGkId6+KY/AVt4Y2W4PFG0QlMx0+rXBUVCrns=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KWeHvqHl1ngzHEh0EDb2hBO9B/TCtSKIhM3mPq7X6kuhDNbFEofL6g9OzITGpygusTJi676dMWDB3uTWsEOXDXSH4XM5TE6fCjtRDi35Nul5HEBoIWvfB9RgqGVvDfDazfIjCdCRI+tiPckcIthy6HFF3/JrSCXP9pBftAm2vpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ppfDqpBG; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso3124150f8f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 14:44:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752355930; x=1752960730; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HtRQST6oRjj0LgYjY2mtVgF/hjywiLbC7jwSxYoLgQA=;
-        b=iJJXpIHC1G9ehA6QxYVCLu+GdWjiEm848O7eXnlgoFg5e8uqrANwyi7yZVb0bkTT/n
-         Y1DgK21+BLZXF80o6+a4nZkMhUrhnefFyAjo1IED8Ri+GXVI6foPdo4kKM5PwVBTLYnz
-         fyCx6sanjb+19aO8RKDo4l7L+E9L7QUsvHHV0Ve7zUlZebMu8zyNY5ZP25YXBpwCrrxP
-         0EL0xzc7sGDsVSY+esvGjrK2ZI5n6O/7588UnzdIUkzkTPZZo8NdwXNUas+gE9MuLimR
-         Azf79HwD5SJCLqKzhu40DOcX3byTTwLKWxmp7H1/yagcBJk4JzTs7IVkEQF438yVexX1
-         JO0g==
+        d=google.com; s=20230601; t=1752356642; x=1752961442; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wJzPr9w7Pyu1TsVJ2QolyITY32C7As+7Er3afc51O5c=;
+        b=ppfDqpBGytBSYJaSuoRAuBRgjGscX2WU9PEdEwsFSNFPySf0KdlephUTcf0H8RmPXv
+         rMpu1SHipPbrg+cRViSAJTDtYji63p3hDHZc1KxW3nrn3udE0bFbBGUK7dRR2C6rN8HK
+         nAf9TNh7ptTotkCCEalAtmbqCrYtdJZDnbeGGGAkrLsLGwz0Tn/lu5Uedcd05QJ6Deat
+         usRejxJpIxaZMPhLrZ5gxSiKLxsR69J36QAAkG7gLQB3LCfbJ2iYEe9nf2cvSUfqIU/Q
+         ILeGLWxLeuEHHaAu9fxJl9GISfviF6GuTohGD0uDvhGtSsIsXW9vezeRDfyx2By9nIh6
+         btrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752355930; x=1752960730;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1752356642; x=1752961442;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HtRQST6oRjj0LgYjY2mtVgF/hjywiLbC7jwSxYoLgQA=;
-        b=f3GgA8YYjDl+8q9PFcd0f/MVaC4qvVIiZi9t4XYYc2d5tmZU4/T7XVbp63tygMBXny
-         /ni6OMaVCqYWxsUvbw2pVdFHOe239QovzYjZihEPvBHWmpbJrE9NM8rnTX+oM5xRv4Yf
-         jjPGfE+9P6KdUO/bjIpZ+AlMqEMFAJwKpnQLsw3mnJfhR/2lR78zGKCV8gzw/nzvmIPS
-         xuUcK3AjCaHONGZH0zqwzDAMXviw+GSO+NztXihm95CxdDRg4IqtsZvyun8J4s6aD0+K
-         wibDyl8HtCirq+le89aNc9UNadudRreiQ15Gznfhfz9HHmGn00rdQwXpz6dSaBLMDZXA
-         MogQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgSyd4bRh56TvMpd/20E+iV2e/9nvUGXuPtTBla+nCrdshwxmZvs2ayfcmDpek0LtdstypT8Gf+6JM3uKwBg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz85E5Wt9psBwYTmFrpg5WG1ODokZ108gC8kZlmb67Z4Rd6h+b9
-	IozcdNYKgM6dZYy71MLC/QGwtpXojygDROrFNCt44twxMOeiJtYZ4112
-X-Gm-Gg: ASbGncvYU0xS6GjZe5MQQVJNzcvrFquCgi2XsRUaKCxHa3PKxMckviiF79w+o6bb63n
-	KWhx86YK230knZhaOF3yFV0oxjh4OXtmx7ITRFF5JGpm94HjK4YSduLv/FIupvwc2qTdx0yitkE
-	Q1+eZDwFGyJsCXlGZggEneBP6J/bni8tR+18TT+2+gMUAnq/Txlbu9ukdDha8G5uGfjaKZ0aY5l
-	TwMZqQQFNScZobTZwQdEBZe1Bj2kR56nhSHsPoa2D1I/F2//O3Agx3jE9TB0iLFIJXKfrAx9YSg
-	Jdanr4cFqF43Hul3I5v20cStYiDaTXFIK9Bwslb7ZywKm8xdc6eShTYnpi5bpX0PhTsp4hGwsWv
-	ccZOawXrPpopi7oZo2Vy2uVcjbCr74gHlPRyRJukoumM/5A==
-X-Google-Smtp-Source: AGHT+IH4o4Ul3dJAPkL8Zf1bVxHe/F3eh4QfvlGGzhfBDOyFuZ6X4iobwmvAQbZVaFZoUk34LWX8BA==
-X-Received: by 2002:a17:90b:2f03:b0:312:e90b:419e with SMTP id 98e67ed59e1d1-31c50d7b487mr11598155a91.12.1752355929612;
-        Sat, 12 Jul 2025 14:32:09 -0700 (PDT)
-Received: from mitchelllevy.localdomain ([174.127.224.194])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3eb65aa2sm8003935a91.40.2025.07.12.14.32.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Jul 2025 14:32:09 -0700 (PDT)
-From: Mitchell Levy <levymitchell0@gmail.com>
-Date: Sat, 12 Jul 2025 14:31:16 -0700
-Subject: [PATCH v2 5/5] rust: percpu: cache per-CPU pointers in the dynamic
- case
+        bh=wJzPr9w7Pyu1TsVJ2QolyITY32C7As+7Er3afc51O5c=;
+        b=sUraRJu+EmNBztA3wuPGgVA5akfJ2nrryO4wxur09IRuz1OFPBR/hTtV7Ja3Bc1yCd
+         3FcZtekwx/yb9JsvYrSOXyYgJAhWfFunWPNfsB5r+/9UqDmfKx8WePbkhpD4nWyuvpc7
+         1s/72SrO7GnjjaDBZPhQ8z8EFJXpI6ptQ+GSyEseUOVJlU/n5M4VGLjvZfhCxPk2SBKD
+         fsrhzOnvK6Yeh9obbdObRumq+Rbz/kXlmLxbX//6dvLnCfqgjKluOh5hEf+/OZPIKVVZ
+         b48vazu67awy3pSTKENuI4hsqwFA1P/72NhpXuNtKoAAs2Vas96OJjsu5CgLZHIEvGIL
+         WSkw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9UCiqgVKMGkNTamFFBvGuVPCccsH0gAcrkxLdTRTpuhkyomHZI+htU7WgavuOBp5ZZ0vUDyUF/VuiKYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpQNpgzpS/AI1peEHZvb6+fLvD5K8joBMbrefBXan085pAYrZc
+	dK+T4Br8TWtI4S2E56QtWcUeoUmicnN1oLE5E3fH6WQxEke8Q5DtSKzwpdnkSP2A8idArCWUKLj
+	CZeWUAusGAMSXDS2/4M37/1/jNUV9Ri+LQoTy6RUY
+X-Gm-Gg: ASbGncuo5V+PUdqKpFx+KSWre4FQN0gFNwGJ/Uxx+Pr2Q8E8bhaD6638V3xWzZEtlrL
+	y5bGRAyTgJ7W2Jk+uFUGx53NgYO+ejGp8CGCU4fVPCUamc9pTWE7rDyw0Meo68LWT27sJBSm61+
+	BXjQCL0DLi9Tqsov5DQ4NS6jIbrR0/2QfEvDVVCvHsJiknNYcO+fZWDvzCc/BghTm8aW+k1coPL
+	ZorPR1t
+X-Google-Smtp-Source: AGHT+IEJCZL2ARGJeEeEwvrVmP2Ub2cGteMg+w7kiF1YDvqzpB5wrAQNEs5BtROFcFTFw+/s+TKqny8W+JPLAoTfeEQ=
+X-Received: by 2002:adf:9d8d:0:b0:3a5:1241:c1a3 with SMTP id
+ ffacd0b85a97d-3b5f18a7eb2mr5744590f8f.50.1752356642103; Sat, 12 Jul 2025
+ 14:44:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250712-rust-percpu-v2-5-826f2567521b@gmail.com>
-References: <20250712-rust-percpu-v2-0-826f2567521b@gmail.com>
-In-Reply-To: <20250712-rust-percpu-v2-0-826f2567521b@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Andrew Morton <akpm@linux-foundation.org>, 
- Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
- Christoph Lameter <cl@linux.com>, Danilo Krummrich <dakr@kernel.org>, 
- Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- linux-mm@kvack.org, Mitchell Levy <levymitchell0@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752355923; l=3148;
- i=levymitchell0@gmail.com; s=20240719; h=from:subject:message-id;
- bh=e1kjOZMlHir0QAwDPK2Mh6knOwIrBRKVgMEnFQ0sips=;
- b=SNmvATz+HCHFQwUB26nikspj2mxM7yzHBgPaqP8iLy3oOOIsHr2Ff3x4m6cZ0iwMHZviz/pI0
- 7ZWaguSukFNCvS4HxAy06fKXvmysfDraT3Dh5NuKZoVezP+qab4M0nC
-X-Developer-Key: i=levymitchell0@gmail.com; a=ed25519;
- pk=n6kBmUnb+UNmjVkTnDwrLwTJAEKUfs2e8E+MFPZI93E=
+References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com>
+ <20250703-topics-tyr-request_irq-v6-2-74103bdc7c52@collabora.com>
+ <fcdae3ca-104d-4e8b-8588-2452783ed09a@sedlak.dev> <aGeF_W74OfhRbkoR@google.com>
+ <49ABD63B-05C6-4FDC-B825-5AA2ED323F1C@collabora.com> <CAH5fLgggM7ZCX7nRz7M=hkxwzcp8UA1=2BQqRFA2CgN9eEUmsA@mail.gmail.com>
+ <82EFFBBD-C6BF-444C-9209-70805E31EE9E@collabora.com>
+In-Reply-To: <82EFFBBD-C6BF-444C-9209-70805E31EE9E@collabora.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Sat, 12 Jul 2025 23:43:50 +0200
+X-Gm-Features: Ac12FXzMen0His9GRs6zooYieCyoacBxhr-tKSvLnOA_LIg59_k_fvdb-RWybi0
+Message-ID: <CAH5fLgiCVJbmYd0QC1n_ANeJoDbxW_hn-i5FnUkd5Hx6fxQ=fA@mail.gmail.com>
+Subject: Re: [PATCH v6 2/6] rust: irq: add flags module
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Daniel Sedlak <daniel@sedlak.dev>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Benno Lossin <lossin@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently, the creation of a `PerCpuNumeric` requires a memory read via
-the `Arc` managing the dynamic allocation. While the compiler might be
-clever enough to consolidate these reads in some cases, the read must
-happen *somewhere*, which, when we're concerning ourselves with
-individual instructions, is a very high burden.
+On Sat, Jul 12, 2025 at 10:49=E2=80=AFPM Daniel Almeida
+<daniel.almeida@collabora.com> wrote:
+>
+>
+>
+> > On 12 Jul 2025, at 17:03, Alice Ryhl <aliceryhl@google.com> wrote:
+> >
+> > On Sat, Jul 12, 2025 at 6:27=E2=80=AFPM Daniel Almeida
+> > <daniel.almeida@collabora.com> wrote:
+> >>
+> >> Hi Alice,
+> >>
+> >>> On 4 Jul 2025, at 04:42, Alice Ryhl <aliceryhl@google.com> wrote:
+> >>>
+> >>> On Fri, Jul 04, 2025 at 08:14:11AM +0200, Daniel Sedlak wrote:
+> >>>> Hi Daniel,
+> >>>>
+> >>>> On 7/3/25 9:30 PM, Daniel Almeida wrote:
+> >>>>> +/// Flags to be used when registering IRQ handlers.
+> >>>>> +///
+> >>>>> +/// They can be combined with the operators `|`, `&`, and `!`.
+> >>>>> +#[derive(Clone, Copy, PartialEq, Eq)]
+> >>>>> +pub struct Flags(u64);
+> >>>>
+> >>>> Why not Flags(u32)? You may get rid of all unnecessary casts later, =
+plus
+> >>>> save some extra bytes.
+> >>>
+> >>> It looks like the C methods take an `unsigned long`. In that case, I'=
+d
+> >>> probably write the code to match that.
+> >>>
+> >>> pub struct Flags(c_ulong);
+> >>>
+> >>> and git rid of the cast when calling bindings::request_irq.
+> >>>
+> >>> As for all the constants in this file, maybe it would be nice with a
+> >>> private constructor that uses the same type as bindings to avoid the
+> >>> casts?
+> >>>
+> >>> impl Flags {
+> >>>   const fn new(value: u32) -> Flags {
+> >>>    ...
+> >>>   }
+> >>> }
+> >>
+> >>
+> >> Sure, but what goes here? This has to be "value as c_ulong=E2=80=9D an=
+yways so it
+> >> doesn=E2=80=99t really reduce the number of casts.
+> >>
+> >> We should probably switch to Flags(u32) as Daniel Sedlak suggested. Th=
+en
+> >> it=E2=80=99s a matter of casting once for bindings::request_irq().
+> >
+> > IMO the advantage of doing it here is that we can fail compilation if
+> > the cast is out of bounds, whereas the other cast is at runtime so we
+> > can't do that.
+> >
+> > Alice
+>
+> I=E2=80=99m not sure I am following. How is this compile-time checked?
+>
+> >>> impl Flags {
+> >>>   const fn new(value: u32) -> Flags {
+> >>>    Self(value as c_ulong)
+> >>>   }
+>
+> Or perhaps I misunderstood you?
 
-Instead, cache the `PerCpuPointer` inside the `DynamicPerCpu` structure;
-then, the `Arc` is used solely to manage the allocation.
+Well, that particular implementation would not be. But you could
+implement it to compile-time check.
 
-Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
----
- rust/kernel/percpu.rs         | 12 +++++++++---
- rust/kernel/percpu/numeric.rs |  2 +-
- 2 files changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/rust/kernel/percpu.rs b/rust/kernel/percpu.rs
-index b97d1d07a614..7458fe413f25 100644
---- a/rust/kernel/percpu.rs
-+++ b/rust/kernel/percpu.rs
-@@ -26,7 +26,10 @@
- 
- /// Holds a dynamically-allocated per-CPU variable.
- pub struct DynamicPerCpu<T> {
-+    // INVARIANT: `ptr` is managed by `alloc` and the value of `ptr` does not change for the
-+    // lifetime of `self`.
-     alloc: Arc<PerCpuAllocation<T>>,
-+    ptr: PerCpuPtr<T>,
- }
- 
- /// Holds a statically-allocated per-CPU variable.
-@@ -204,9 +207,10 @@ impl<T: Zeroable> DynamicPerCpu<T> {
-     pub fn new(flags: Flags) -> Option<Self> {
-         let alloc: PerCpuAllocation<T> = PerCpuAllocation::new()?;
- 
-+        let ptr = alloc.0;
-         let arc = Arc::new(alloc, flags).ok()?;
- 
--        Some(Self { alloc: arc })
-+        Some(Self { alloc: arc, ptr })
-     }
- }
- 
-@@ -217,8 +221,9 @@ impl<T> DynamicPerCpu<T> {
-     /// * `alloc` - The allocation to use
-     /// * `flags` - The flags used to allocate an `Arc` that keeps track of the `PerCpuAllocation`.
-     pub fn new_from_allocation(alloc: PerCpuAllocation<T>, flags: Flags) -> Option<Self> {
-+        let ptr = alloc.0;
-         let arc = Arc::new(alloc, flags).ok()?;
--        Some(Self { alloc: arc })
-+        Some(Self { alloc: arc, ptr })
-     }
- }
- 
-@@ -226,7 +231,7 @@ pub fn new_from_allocation(alloc: PerCpuAllocation<T>, flags: Flags) -> Option<S
- // don't deallocate the underlying `PerCpuAllocation` until `self` is dropped.
- unsafe impl<T> PerCpu<T> for DynamicPerCpu<T> {
-     unsafe fn ptr(&mut self) -> &PerCpuPtr<T> {
--        &self.alloc.0
-+        &self.ptr
-     }
- }
- 
-@@ -234,6 +239,7 @@ impl<T> Clone for DynamicPerCpu<T> {
-     fn clone(&self) -> Self {
-         Self {
-             alloc: self.alloc.clone(),
-+            ptr: self.ptr,
-         }
-     }
- }
-diff --git a/rust/kernel/percpu/numeric.rs b/rust/kernel/percpu/numeric.rs
-index e4008f872af1..1b37cc7e5c19 100644
---- a/rust/kernel/percpu/numeric.rs
-+++ b/rust/kernel/percpu/numeric.rs
-@@ -62,7 +62,7 @@ impl DynamicPerCpu<$ty> {
-             /// Returns a `PerCpuNumeric` that can be used to manipulate the underlying per-CPU
-             /// variable.
-             pub fn num(&self) -> PerCpuNumeric<'_, $ty> {
--                PerCpuNumeric { ptr: &self.alloc.0 }
-+                PerCpuNumeric { ptr: &self.ptr }
-             }
-         }
-         impl StaticPerCpu<$ty> {
-
--- 
-2.34.1
-
+Alice
 
