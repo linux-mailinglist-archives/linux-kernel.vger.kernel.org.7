@@ -1,150 +1,105 @@
-Return-Path: <linux-kernel+bounces-728822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1EA9B02D75
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 00:25:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D8B4B02D77
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 00:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE5B51AA14FF
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 22:25:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 815607AB537
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 22:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091C522F74B;
-	Sat, 12 Jul 2025 22:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C998622F74B;
+	Sat, 12 Jul 2025 22:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzlsQU+e"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Rj8D72HC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB671A2632;
-	Sat, 12 Jul 2025 22:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270E01DE89A;
+	Sat, 12 Jul 2025 22:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752359122; cv=none; b=bZUU53M3KrRL/YeVN7i3gtHTupzdhsGHSC8aQmTqSHdK5v41TzHsYdy0fnvmvKWFqZdAsA08FIn9DjgjSOa7p1HaD5z3+N8hQmtzruAE5mZ+QD4vuQGDU8NjMAhuBUt/mpBJiIHE+XOjcLZUKTaFzqm+S3h07z/Y8j0TBiPrIqM=
+	t=1752359147; cv=none; b=b82E6NsqLi/3vpyHs8VqVR9nt+729PTPhlNfqVqkxLcyJIOqxotujoEsVrJe/1lZvDhwmuHiMUO5RqJitpGYo9lL/o/hQrIA3Dlh+S+T5wfS9VTE75yQ1uS8owWbJwOmU85rBXdVs3iFmE3lFHX4ObsQr2bKF2+bUKxfeOQUeZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752359122; c=relaxed/simple;
-	bh=Pb59kI0V+CsYfGf7Co6OsYTxadRWaErlQCZTbso4Y0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=auGupQBKGBoGVeHaIWSqiGp+31VKfe7NbbJRecxoCtTcSicWx66n8S14yWTop7tXnurYRCgs1bGphGTSMvYfrbJrEfktYheb2TkKwqZ618cX0wR8pedN3s7yD3DVRdNg5owgpEXqPJrwyMlWLD6/2MzbxwHwOs6iHeoFsKXzOXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzlsQU+e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F3B5C4CEEF;
-	Sat, 12 Jul 2025 22:25:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752359121;
-	bh=Pb59kI0V+CsYfGf7Co6OsYTxadRWaErlQCZTbso4Y0c=;
+	s=arc-20240116; t=1752359147; c=relaxed/simple;
+	bh=pSh3mjR//rnmlWfjJ4Z9nm0B9/qkk0CHM9jWwGNd7xM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ITbhNKPBaa1gabQST12FTEVStJ8iNxvjVf9XMKUZ4heJM6TjItyrb5uN3p562VPBd4ScwTUKo9vwDGlmD5MhZi+PdESgzOzrBf8tou6Blg5rUtpzLfLmcXhPYqbNKG9TMJRGZhQjvsM85qH75akZJZu0sMral2BQU45f+/122f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Rj8D72HC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E61AC4CEEF;
+	Sat, 12 Jul 2025 22:25:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1752359145;
+	bh=pSh3mjR//rnmlWfjJ4Z9nm0B9/qkk0CHM9jWwGNd7xM=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UzlsQU+eSL2Zytwxpn7KxvPBArBguAIJol3LHvMdEHhQGnmrzvkr92blGlFHxWlRo
-	 Uj3vY4sMEtRSS7AXkS31RGNq30nu4MGWKLCWrqAuMGOxjoOphftZ6w9b7fyenTiqmL
-	 iS0bDTAPwxa07A64cHdc3cfgYrNd9umkIWA3W6zUBs8JNyKYN/idBrVqPpVyxA+4Yi
-	 j13cunyYEKn0vXFrrB6Ql1hcWH+nt1JUuWBhg0NMFDH8NlLG1MPwQSRRc92iFDhZjm
-	 fFtLWpuOzxM0ncZj2TiSggbOShFv6uSquT1Wdlpdv+tFsmQO/QJ7Ppok05fBsRdnaQ
-	 PiIaUtqOEadBg==
-Date: Sun, 13 Jul 2025 00:25:17 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, linux-kernel@vger.kernel.org, workflows@vger.kernel.org,
- Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH v2 3/2] docs: changes: better document Python needs
-Message-ID: <20250713002517.7f52b0e9@foz.lan>
-In-Reply-To: <20250712163155.GA22640@pendragon.ideasonboard.com>
-References: <cover.1752307866.git.mchehab+huawei@kernel.org>
-	<58c0cfb40e600af697b1665ffbc8e5bb3d859bb5.1752309145.git.mchehab+huawei@kernel.org>
-	<20250712163155.GA22640@pendragon.ideasonboard.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	b=Rj8D72HCwyU0hobnlvR8EllAN81WGIaQzcA/OOUokRki5KcSppE8ZQ4zJZP8sRRCL
+	 IZqboHhtLhHRWRGAV0+HN6g2u9MK+MHF0fN9iUk1/kYu8upJ3/IKvrMQF5QJxz5EiX
+	 DzV+NN2maEYxcUNc68LkbXq2sravQEDTdudSmmTg=
+Date: Sat, 12 Jul 2025 15:25:44 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Chi Zhiling <chizhiling@163.com>
+Cc: David Hildenbrand <david@redhat.com>, willy@infradead.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Chi Zhiling <chizhiling@kylinos.cn>, Ryan
+ Roberts <ryan.roberts@arm.com>
+Subject: Re: [PATCH] readahead: Use folio_nr_pages() instead of shift
+ operation
+Message-Id: <20250712152544.07f236ec277290c70a2a862f@linux-foundation.org>
+In-Reply-To: <661ccfa4-a5ad-4370-a7f5-e17968d8a46e@163.com>
+References: <20250710060451.3535957-1-chizhiling@163.com>
+	<479b493c-92c4-424a-a5c0-1c29a4325d15@redhat.com>
+	<661ccfa4-a5ad-4370-a7f5-e17968d8a46e@163.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Em Sat, 12 Jul 2025 19:31:55 +0300
-Laurent Pinchart <laurent.pinchart@ideasonboard.com> escreveu:
+On Sat, 12 Jul 2025 10:23:32 +0800 Chi Zhiling <chizhiling@163.com> wrote:
 
-> Hi Mauro,
-> 
-> Thank you for the patch.
-> 
-> On Sat, Jul 12, 2025 at 10:32:38AM +0200, Mauro Carvalho Chehab wrote:
-> > Python is listed as an optional dependency, but this is not
-> > true, as kernel-doc is called during compilation when DRM is
-> > enabled. Better document that.
-> > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>  
-> 
-> Isn't it only when CONFIG_DRM_HEADER_TEST is enabled ? That option
-> depends on EXPERT && BROKEN, so I wouldn't expect it to be widely
-> enabled. A quick grep shows that CONFIG_DRM_I915_WERROR does the same
-> (with a dependency on EXPERT but not BROKEN though).
+> On 2025/7/12 00:15, David Hildenbrand wrote:
+> > On 10.07.25 08:04, Chi Zhiling wrote:
+> >> From: Chi Zhiling <chizhiling@kylinos.cn>
+> >>
+> >> folio_nr_pages() is faster helper function to get the number of pages
+> >> when NR_PAGES_IN_LARGE_FOLIO is enabled.
+> >>
+> >> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
+> >> ---
+> >> =A0 mm/readahead.c | 2 +-
+> >> =A0 1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/mm/readahead.c b/mm/readahead.c
+> >> index 95a24f12d1e7..406756d34309 100644
+> >> --- a/mm/readahead.c
+> >> +++ b/mm/readahead.c
+> >> @@ -649,7 +649,7 @@ void page_cache_async_ra(struct readahead_control=
+=20
+> >> *ractl,
+> >> =A0=A0=A0=A0=A0=A0 * Ramp up sizes, and push forward the readahead win=
+dow.
+> >> =A0=A0=A0=A0=A0=A0 */
+> >> =A0=A0=A0=A0=A0 expected =3D round_down(ra->start + ra->size - ra->asy=
+nc_size,
+> >> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 1UL << folio_order(folio));
+> >> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 folio_nr_pages(folio));
+> >> =A0=A0=A0=A0=A0 if (index =3D=3D expected) {
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0 ra->start +=3D ra->size;
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0 /*
+> >=20
+> > This should probably get squashed in Ryans commit?
+>=20
+> I have no objection, it's up to Ryan.
 
-Well, EXPERT is currently enabled on several distros. The three ones I have
-it handy all have it:
-
-Fedora 42:
-	$ grep CONFIG_EXPERT /boot/config*
-	/boot/config-6.14.9-300.fc42.x86_64:CONFIG_EXPERT=y
-	/boot/config-6.15.3-200.fc42.x86_64:CONFIG_EXPERT=y
-	/boot/config-6.15.4-200.fc42.x86_64:CONFIG_EXPERT=y
-
-Ubuntu 24.10:
-	$ grep CONFIG_EXPERT /boot/config*
-	/boot/config-6.11.0-26-generic:CONFIG_EXPERT=y
-	/boot/config-6.8.0-60-generic:CONFIG_EXPERT=y
-
-Debian 12:
-	$ grep CONFIG_EXPERT /boot/config*
-	/boot/config-6.1.0-34-amd64:CONFIG_EXPERT=y
-	/boot/config-6.1.0-37-amd64:CONFIG_EXPERT=y
-	/boot/config-6.1.0-37-rt-amd64:CONFIG_EXPERT=y
-
-So, expert on distros seem quite common those days.
-
-Fedora has it enabled for a long time. On Fedora 42:
-
-	$ grep CONFIG_DRM_WERROR /boot/config*
-	/boot/config-6.14.9-300.fc42.x86_64:CONFIG_DRM_WERROR=y
-	/boot/config-6.15.3-200.fc42.x86_64:CONFIG_DRM_WERROR=y
-	/boot/config-6.15.4-200.fc42.x86_64:CONFIG_DRM_WERROR=y
-
-I would expect to have it enabled on other distros as well.
-
-> Is there something else in DRM that invokes kernel-doc ?
-> 
-> > ---
-> >  Documentation/process/changes.rst | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-> > index bccfa19b45df..6a7d7c1ee274 100644
-> > --- a/Documentation/process/changes.rst
-> > +++ b/Documentation/process/changes.rst
-> > @@ -61,7 +61,7 @@ Sphinx\ [#f1]_         3.4.3            sphinx-build --version
-> >  GNU tar                1.28             tar --version
-> >  gtags (optional)       6.6.5            gtags --version
-> >  mkimage (optional)     2017.01          mkimage --version
-> > -Python (optional)      3.9.x            python3 --version
-> > +Python                 3.9.x            python3 --version
-> >  GNU AWK (optional)     5.1.0            gawk --version
-> >  ====================== ===============  ========================================
-> >  
-> > @@ -154,6 +154,13 @@ Perl
-> >  You will need perl 5 and the following modules: ``Getopt::Long``,
-> >  ``Getopt::Std``, ``File::Basename``, and ``File::Find`` to build the kernel.
-> >  
-> > +Python
-> > +------
-> > +
-> > +At least Python 2.7 or 3.4 is required if CONFIG_DRM is selected to avoid
-> > +breaking compilation. Documentation build and kernel-doc won't produce
-> > +valid results if version is below 3.7.
-
-Maybe I can place instead CONFIG_DRM_I915_WERROR.
+"Ryans commit" is now c4602f9fa77f ("mm/readahead: store folio order in
+struct file_ra_state") in mm-stable.  I'd prefer not to rebase for this!
 
 
-Thanks,
-Mauro
+
 
