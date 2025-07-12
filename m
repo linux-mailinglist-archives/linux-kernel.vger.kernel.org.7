@@ -1,173 +1,136 @@
-Return-Path: <linux-kernel+bounces-728800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB27B02D01
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 22:59:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A56B02D0C
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 23:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBFF517B6AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:59:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E61C4A0097
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0C3227EA4;
-	Sat, 12 Jul 2025 20:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A831F560B;
+	Sat, 12 Jul 2025 21:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LeFcjPOz"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cbo4sp+a"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5EE2AE99;
-	Sat, 12 Jul 2025 20:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483231F7569;
+	Sat, 12 Jul 2025 21:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752353946; cv=none; b=dS3R1QJx5W6jxMEzR3ipNOxvFsW9qP2nuBipp8lirYRLccMFw1oPahsZuwnf6KkN/Wt4yPSBgQ3bNnQ7JxtkCb4JZZ5CWu/5jA0VBYG3Em1femhyB04VGjhWMEbYCx2QKa3dMeItuzZvg99ua2cJkkaojQdPWGkb1yu2yuUTlI8=
+	t=1752354292; cv=none; b=RVRod2zaphJ1gXqC9gtoVvZwVTvZkFW8Tl7i/rMI6oP3+11lRf08nmJrBYNrniiPnoba21N7s3stR+hR+ct1g92x06rntW8kqKYQQLD0ERtLx4vCXzIZOvXRcKHY2EwCS2ysg5em2wmhea3wkL+2ur3Sa7h8ID02fsoEnGze/MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752353946; c=relaxed/simple;
-	bh=ULMT2RN2xocfDvDhwK1+Ve5ay3Krg/YRfI7ZYlsX1fw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BytqPmN224KavfZneata8Ir4sqR4Iqe8q02pkSDRrLyVTWIB9uVm3xK8DHNnVeCcH8Ien/nxljSixJWHTqEpaqAAj+ntsG289tX6XbiNqTUlUOqJpfrzY1SZX894z2Q3+pTVmT6LeORvRYyIZK+q+jTulG+qgsgbfsHDxMR+tBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LeFcjPOz; arc=none smtp.client-ip=209.85.216.45
+	s=arc-20240116; t=1752354292; c=relaxed/simple;
+	bh=JaDfFc1OkxkkhhPGJCgJpBSsFLpVROVnM9WzXAv/Dl8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c02EFmzB27eaOfHs4yW+SiyGIkNvkN7FqWwK5ZRecpC4z/YNuch99z6LHdKF3igKDZJAh8/S6NYXMoCaV/OfMbDlPy5vE8Kc1pHJWt9xmyz2RuaW7UYft/8W+7LAVpLcktdT/N9fiYUFcjUcE3XKneCEQFc/Z33EeXvyPk7eXyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cbo4sp+a; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3122368d7c4so2661125a91.1;
-        Sat, 12 Jul 2025 13:59:05 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-748f5a4a423so1968407b3a.1;
+        Sat, 12 Jul 2025 14:04:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752353944; x=1752958744; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1ZuS0G5loQ6VTp2rtwXZCwwcpkBS4A9zfG+scNKGaJg=;
-        b=LeFcjPOzMzaq/vOfsOZsrihqhh8NrlfbOcfHFB6IhVDkuVX57aKb6dLgDhji2ky1Vc
-         tHcgc/5sqAkaG/NKBqfUdT5c4borg7iYQIYBFizJ5ykntX+GzYzSAViru+07lUfBgV6F
-         cadyrtKSLcXT4XaLB3ZjmQtDnM16GMV1PpQDFt+uwHRNtCMT/52AvWHIHAQvI06y32NH
-         nOyBXCcqd0x7iu55HxO0cEqt9A79Z2mOh0NuY/arcVESTy5AvUKdKaqSZmguGA6lZvOU
-         7BcI5YDPthhhxWKv9COZO9H3ojhi8ElbFbFWyckDIRgEp9JfqnqCLLm9v1zOXaUwVJeg
-         E+0Q==
+        d=gmail.com; s=20230601; t=1752354290; x=1752959090; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qfLL9MbScUSlOSjyWm24E58Y3rU7LU4fcYrGg0K5EsA=;
+        b=Cbo4sp+auc80usjLNyWyVPb0O4NHXIOJkqy7cokqgVwPouzMWCUX5i6ZroejemW5II
+         iR+p2YiTl12ORHzUdYUs8haYs7bFKJdsbxrfarXOjkF0uE3W5qXQZ7JKl6qKbmxBT3Sf
+         C//6i9O3l1KxkLL9LVU8y4Cv9kgaekn+tqc0ldV8m6JaUntq0dVlmDfAcxSrOc3vqQUn
+         OUHnqRqS30aoG74mZgitiVxVG12lBymnC0PFYV53HJJVa5dzmZ8mcD72jj7ZuzCG+NZi
+         TyeRXeJrTxHHK8l9S93lXZPpj6z2YFRwpENOoi6tZ0MoX3FGmOtZ3nvfe3ifZJ/VTFaX
+         T00g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752353944; x=1752958744;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1ZuS0G5loQ6VTp2rtwXZCwwcpkBS4A9zfG+scNKGaJg=;
-        b=dLXhxxsYysLznqY/wtGS8OGVGyH2+tFZeZu7v08bU+St5+TGVwSPTR9XeaD6yu/xah
-         vW3l80267MxpG27jwRG/DoG1l5KP+FiFt5KM8FfXcdwjIljJE9s6Co/GLuIcu3cmBXSR
-         MQ7p8yc5SezpA8mLgfCEQYDacWa+43MS5JPv/YYlFEZ6QdzKJdC/yrwGAgMn8uNnic8D
-         Df7/RNea5qqqUtcgkZ8ghmmljsjsC0rqaYmAFEdekDaRcV09XoSwqpDKzS7PSBvMVI3y
-         /5dS1ZgXjdbAQwkiTK6EEKo36FStVb9siuKZcIRrW/F//aklhDnTuI1sl/H3AGhli0Gr
-         OYBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUm29b1KP4Dl5L1dun/gxmPtlIV6eNCJNY6uaf4u8FE+kMqY4V8vAw+tPjANdITmX4Mk75vjkwjB0HNc++1@vger.kernel.org, AJvYcCVTNqjbwoVgt/SRiEzMIrArSs6Bzl3IkSwmBUTg56zjI4T7mxExvs+uXE7dQN5Sx7JCHa1QstXeDKXkV2ZBlSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOY+XSyp7MNR167TDHBKQeR6vZVgRRPivMiUxloQm94b7It/6f
-	r+NjD4uDy3STUw0inubS5R7vq3uVVMTb9p15luSAkNmEOD9n6c1MEpOeWU+g2bgjQMLsS22TS/w
-	Nguv9ePhWPit0CPPOCsGx5tannAXoUoY=
-X-Gm-Gg: ASbGnctm85rBFS5E+M+vBaPuh5lTOQ8KV+Po2AxyEHP5fu93sO54fQ7xeE1R1LJiAbZ
-	6bW525Ejt/9qEUq5RpzwNfA6eyt6gh6GFdRNYOrZMz13Bu+8IgDMFUDHA4qUwkyyCGBLP4XBBBA
-	IT9ptnzmGJtCl+Fw3veTMc7/hz0Ng4U4U/OkyPOAo9Qtyalv7Eiu2SUaf+nARAMaHw2zuyOInPF
-	7zmgy/8Einpyo0v5EO11ZhNft/AzEnPy9q0W2WJgNZghWxq1V8=
-X-Google-Smtp-Source: AGHT+IGWc/bsSjfCk72zM+sQY+wNB8gvwjDVcV29c75JkSwrzzUlbnd+fsKQQzCW9smTm3J6SKcCBpYHBPBehSjJtRw=
-X-Received: by 2002:a17:90b:5804:b0:311:b005:93d4 with SMTP id
- 98e67ed59e1d1-31c50e2c50dmr10076417a91.25.1752353944580; Sat, 12 Jul 2025
- 13:59:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752354290; x=1752959090;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qfLL9MbScUSlOSjyWm24E58Y3rU7LU4fcYrGg0K5EsA=;
+        b=ESdS3Z82dneZE8vjKrzknL/q827vhw0v3ACZosYLAld2iC8bksTVLPWuPob5Fs4wKq
+         72OY1n+H8rLWmO3O5whcU9NAfPDjQ7ee7bWmUf7RDVIiG1bLu90HY1PaRd+fhT7FH+Nd
+         mBOwhMYnRQIPvTWW/p/5Fndky7GkQ05iTTGNDJ/yhryvBH4NgVjJiNdT65Ap1UmpAsLU
+         lI06hBcf7GiAptzUQzn/Wpj5TxAxDduCZNoeGPy4aYY1MRd+xTTJh1dRicN90zN0o1rA
+         +qNnhx6jNxlR95+kDiar9XtzhTpHAenQmuLn2KcuV9rI1ZgL2o1acY3jIeHB97+jO1A/
+         4J0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWHcZUgU/fU5HBoMB31XoHNEXZrN/rNZs5huDUsAqr5NtO24EU/4qB61A/OBU+PEVrnTqv8vJSTQjhc@vger.kernel.org, AJvYcCWRpb+rYyJePEFW4W1zcoXzoUQliifqpSurfnEZxK/OESdvvohNY/HY0bB4Zpo7AEPkw9ltODZNnTq6fkJ1@vger.kernel.org, AJvYcCXHkTjOt4R27gIWlRrEaL55Vwy/t39fbhOzVDS2ndTsmc6ZEoE3vBHIQyCwwAbHIu335vsfGI1KVafraQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhORgXQkpHeBsd5Kyy81sn7gsjyoAjLQDd6AWX+Fbhg1UmBdi8
+	N5bwMZ31RhdZhShpDhAJcu6iJ2v9IpE930A9MHaLnXRM/96ltH1YkN6SGIswGhgC
+X-Gm-Gg: ASbGncsLPjmrUspA5n/kvLwI5nEDk/vFzNlti8dfI6nv6pILRC7jmiQV2BLVGhmQc2I
+	/pSBzq6p9AfvO0O6VQ+q+nx/re/n3hkOnH2WQ+Sp/OypRYQ/fxOZJ6qgtq+ck34OgoFDw/35DZ6
+	ydmSwBkuDOz4dfMIAsy4KpG4wnrEJeMKYspI8uBUEnK0qS8A5Y+uMEy/Kw/tLe9NvgNTVSqSlgm
+	6JnJ68JW6NHD/gqHddKX81jH4MoRGQkXs9rRsSc0wKIXbCDzQo+JFz1yUiqpwS5UTaP+0fycJGw
+	M4tIUAVlYRmgF/4VOHTDoHqUjD1tvlT+l0EOVpRCHYDU8A8oGaiYcjWSGRiV4rZpgSqK1QMU9uu
+	FDr4=
+X-Google-Smtp-Source: AGHT+IEmaDL+eIW50uO1oQuIKN5GC4YkbvTHfY3hEE3Iole2C/tppuO6g6t8PhNj8q6jTNSWze+VEw==
+X-Received: by 2002:a05:6a21:9004:b0:220:2da8:325c with SMTP id adf61e73a8af0-23131b04c94mr15471348637.0.1752354290253;
+        Sat, 12 Jul 2025 14:04:50 -0700 (PDT)
+Received: from archlinux.lan ([2601:644:8200:dab8::1f6])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd5d30sm7988645b3a.5.2025.07.12.14.04.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Jul 2025 14:04:49 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-wireless@vger.kernel.org
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Stanislaw Gruszka <stf_xl@wp.pl>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-mips@vger.kernel.org (open list:MIPS),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
+	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support)
+Subject: [PATCHv4 wireless-next 0/7] wifi: rt2x00: add OF bindings + cleanup
+Date: Sat, 12 Jul 2025 14:04:41 -0700
+Message-ID: <20250712210448.429318-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1751862634.git.alx@kernel.org> <033bf00f1fcf808245ae150346019aa7b997ea11.1751862634.git.alx@kernel.org>
- <CAHk-=wh9Pqz07ne9iSt1_v0c14rkOGvF9AbEkaq1KnFhQD1SSA@mail.gmail.com>
-In-Reply-To: <CAHk-=wh9Pqz07ne9iSt1_v0c14rkOGvF9AbEkaq1KnFhQD1SSA@mail.gmail.com>
-From: Christopher Bazley <chris.bazley.wg14@gmail.com>
-Date: Sat, 12 Jul 2025 21:58:53 +0100
-X-Gm-Features: Ac12FXzabVR3CNZ1e6s3vvkMYX7Q2knC-RQiMrmuvB567KXzcfJDo2IIzUb977w
-Message-ID: <CAEHU8x9UKFWjuE2JPd99CS7wY-x_0kE0k=K3rfYUCJ29uzOSOA@mail.gmail.com>
-Subject: Re: [RFC v3 3/7] mm: Use seprintf() instead of less ergonomic APIs
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Alejandro Colomar <alx@kernel.org>, linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, shadow <~hallyn/shadow@lists.sr.ht>, 
-	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Sven Schnelle <svens@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, 
-	"Huang, Ying" <ying.huang@intel.com>, Lee Schermerhorn <lee.schermerhorn@hp.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Chao Yu <chao.yu@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+It doesn't even compile. Added OF bindings, documentation, and other
+stuff to hopefully this doesn't happen again.
 
-On Mon, Jul 7, 2025 at 8:17=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Sun, 6 Jul 2025 at 22:06, Alejandro Colomar <alx@kernel.org> wrote:
-> >
-> > -       p +=3D snprintf(p, ID_STR_LENGTH - (p - name), "%07u", s->size)=
-;
-> > +       p =3D seprintf(p, e, "%07u", s->size);
->
-> I am *really* not a fan of introducing yet another random non-standard
-> string function.
->
-> This 'seprintf' thing really seems to be a completely made-up thing.
-> Let's not go there. It just adds more confusion - it may be a simpler
-> interface, but it's another cogniitive load thing, and honestly, that
-> "beginning and end" interface is not great.
->
-> I think we'd be better off with real "character buffer" interfaces,
-> and they should be *named* that way, not be yet another "random
-> character added to the printf family".
+v2: move all of 2x00soc to 2800soc. I didn't realize only two functions
+remained for no good reason.
+Fixed typos.
+Slightly changed probe for clarity.
 
-I was really interested to see this comment because I presented a
-design for a standard character buffer interface, "strb_t", to WG14 in
-summer of 2014. The latest published version of that paper is
-https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3306.pdf (very long)
-and the slides (which cover most of the important points) are
-https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3276.pdf
+v3: fix wrong compatible in Documentation.
 
-I contacted you beforehand, for permission to include kasprintf and
-kvasprintf in the 'prior art' section of my paper. At the time, you
-gave me useful information about the history of those and related
-functions. (As an aside, Alejandro has since written a proposal to
-standardise a similar function named aprintf, which I support:
-https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3630.txt )
+v4: renamed documentation file as there's only a single compatible.
 
-Going back to "strb_t", I did not bother you about it again because I
-didn't anticipate it being used in kernel space, which has its own
-interfaces for most things. I'd be interested to hear what you think
-of it though. My intent was to make it impossible to abuse, insofar as
-that is possible. That led me to make choices (such as use of an
-incomplete struct type) that some might consider strange or
-overengineered. I didn't see the point in trying to replace one set of
-error-prone functions with another.
+Rosen Penev (7):
+  wifi: rt2x00: add COMPILE_TEST
+  wifi: rt2x00: remove mod_name from platform_driver
+  wifi: rt2800soc: allow loading from OF
+  wifi: rt2800: move 2x00soc to 2800soc
+  wifi: rt2x00: soc: modernize probe
+  MIPS: dts: ralink: mt7620a: add wifi
+  dt-bindings: net: wireless: rt2800: add
 
-Alejandro has put a lot of thought into his proposed seprintf
-function, but it still fundamentally relies on the programmer passing
-the right arguments and it doesn't seem to extend the functionality of
-snprintf in any way that I actually need.
+ .../bindings/net/wireless/ralink,rt2800.yaml  |  47 ++++++
+ arch/mips/boot/dts/ralink/mt7620a.dtsi        |  10 ++
+ drivers/net/wireless/ralink/rt2x00/Kconfig    |   7 +-
+ drivers/net/wireless/ralink/rt2x00/Makefile   |   1 -
+ .../net/wireless/ralink/rt2x00/rt2800soc.c    | 102 +++++++++++-
+ .../net/wireless/ralink/rt2x00/rt2x00soc.c    | 151 ------------------
+ .../net/wireless/ralink/rt2x00/rt2x00soc.h    |  29 ----
+ 7 files changed, 156 insertions(+), 191 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
+ delete mode 100644 drivers/net/wireless/ralink/rt2x00/rt2x00soc.c
+ delete mode 100644 drivers/net/wireless/ralink/rt2x00/rt2x00soc.h
 
-For example, some of my goals for the character buffer interface were:
+-- 
+2.50.0
 
-- A buffer should be specified using a single parameter.
-- Impossible to accidentally shallow-copy a buffer instead of copying
-a reference to it.
-- No aspect of character consumption delegated to character producers, e.g.=
-:
-  * whether to insert or overwrite.
-  * whether to prepend, insert or append.
-  * whether to allocate extra storage, and how to do that.
-- Minimize the effect of ignoring return values and not require
-ubiquitous error-handling.
-- Able to put strings directly into a buffer from any source.
-- Allow diverse implementations (mostly to allow tailoring to
-different platforms).
-
-This small program demonstrates some of those ideas:
-https://godbolt.org/z/66Gnre6dx
-It uses my ugly hacked-together prototype.
-
-Chris
 
