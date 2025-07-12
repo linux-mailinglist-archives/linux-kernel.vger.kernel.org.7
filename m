@@ -1,158 +1,222 @@
-Return-Path: <linux-kernel+bounces-728598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33A10B02A91
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:22:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0B87B02A9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 13:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82B40562EBF
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 11:22:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF2C14A708E
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 11:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02533275103;
-	Sat, 12 Jul 2025 11:22:52 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D9427585B;
+	Sat, 12 Jul 2025 11:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="G4INqhgX"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E1322154A;
-	Sat, 12 Jul 2025 11:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92969275842;
+	Sat, 12 Jul 2025 11:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752319371; cv=none; b=n+g4K7L4phg8dUqHVaD8igmTp4c5YjjQcItl8i83iwrJmXGszzF6P2B9wHRRUu4M557k6awqXntald51QEPBoarQ6HtMuTjCZxDF7Sma6rIjBaC7c84Dbgc5GPZxkvpudVVYbTTCZRj2KhwJi9D9nG+evs8Zsp1Ymg27ZixchG8=
+	t=1752319439; cv=none; b=hG3k/hyldqS7cgCsADj+a7xN03KhIc/9OqqeBNkcaPlc8PSEDp2RidUIoqm4mgKNkZWRg+lgaaSdOpx3elg+s7cw6rZbi736U03kCSubGfOwC08bE0oirZG9EqBLlveD9CBs0Lb2wWxws9jXR2SNQt8HdM+toXn0E9LAldg9Oh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752319371; c=relaxed/simple;
-	bh=koT6WX80uO3QGziHota+YoACtGCCfZs+tuAmuCq2f8Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dx+5DaJ6LgIJlDIeQuYnabg33nOg5oAJriGiQ4UWSD5fZU0EkWJAFEadGgxT4OkK3T+dWRqa9TD5LMRjGJq/QJVX/oXvpaiW3HpbAHqv0FefYf2/tDCaCr6HOAsz7zK6HA/2qknmaNS3tgrhTfbKVrLTGMcrCvYZFoxGxgVntUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56CBMLhC020769;
-	Sat, 12 Jul 2025 20:22:21 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56CBMLlU020766
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 12 Jul 2025 20:22:21 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <b6da38b0-dc7e-4fdc-b99c-f4fbd2a20168@I-love.SAKURA.ne.jp>
-Date: Sat, 12 Jul 2025 20:22:20 +0900
+	s=arc-20240116; t=1752319439; c=relaxed/simple;
+	bh=0AucxieByy6Sam3tMbn/POJFduOj6YsaeHe/43j8G0U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R4DlxaC/o3vpz2aiXKtq1mJzGLjKg9jTFNqUBnMJ02uIV6GNsTcb4comYVPe6QIt0TjC2aZvT8IH371LznVEce6aRScbbUTnEOMH2/8GFMUpytOAEylwCGbLmkZxHbUaZ6jp9NdZE27D9ilvBIvWdQr+MnFNRY3sw9WwVPiW43g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=G4INqhgX; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1752319408; x=1752924208; i=w_armin@gmx.de;
+	bh=70SuMAghUA13PefBQsucc3x/FY7T0D9JdPyGxiL704M=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=G4INqhgXfJVP04krpMJDO5e3pC0fyVpUa4/cAosniOxYhLFOBFeYj+GDrU0uN/TF
+	 uGdOnDFHGVoWydFolXIiNMJq4qfKqde0axZeuLpY1V87OUVDjRBX1FJ+BwVxc/fYd
+	 GsJuV1EVoGaTI6pJrrjr+yN4Lr69gPcdVdD/28Ltc7++wKChMx9l2t+bTwdzVQ6XP
+	 4I4Ho9Ve8FBio2Llej2wAHkT3Bnjg4nPVYtKopBgQeHSObsQz8l19uYgBDsf2vJWC
+	 35DHBgL3FUSv44GCXtD+tsYQdUb630ZHe43SBnFTR0Fy34XZ9BUU19vZhb7kXs2H6
+	 uXUsHwhUuoCx/ShZyg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-amd-b650.fritz.box ([87.177.78.219]) by mail.gmx.net
+ (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1Ml6qM-1v4QU73IUu-00jsW0; Sat, 12 Jul 2025 13:23:28 +0200
+From: Armin Wolf <W_Armin@gmx.de>
+To: ilpo.jarvinen@linux.intel.com,
+	hdegoede@redhat.com,
+	chumuzero@gmail.com,
+	corbet@lwn.net,
+	cs@tuxedo.de,
+	wse@tuxedocomputers.com,
+	ggo@tuxedocomputers.com
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	rdunlap@infradead.org,
+	alok.a.tiwari@oracle.com,
+	linux-leds@vger.kernel.org,
+	lee@kernel.org,
+	pobrn@protonmail.com
+Subject: [PATCH 0/3] platform/x86: Add support for Uniwill laptop features
+Date: Sat, 12 Jul 2025 13:23:07 +0200
+Message-Id: <20250712112310.19964-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hfsplus: don't use BUG_ON() in
- hfsplus_create_attributes_file()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <54358ab7-4525-48ba-a1e5-595f6b107cc6@I-love.SAKURA.ne.jp>
- <4ce5a57c7b00bbd77d7ad6c23f0dcc55f99c3d1a.camel@ibm.com>
- <72c9d0c2-773c-4508-9d2d-e24703ff26e1@vivo.com>
- <427a9432-95a5-47a8-ba42-1631c6238486@I-love.SAKURA.ne.jp>
- <127b250a6bb701c631bedf562b3ee71eeb55dc2c.camel@ibm.com>
- <dc0add8a-85fc-41dd-a4a6-6f7cb10e8350@I-love.SAKURA.ne.jp>
- <316f8d5b06aed08bd979452c932cbce2341a8a56.camel@ibm.com>
- <3efa3d2a-e98f-43ee-91dd-5aeefcff75e1@I-love.SAKURA.ne.jp>
- <244c8da9-4c5e-42ed-99c7-ceee3e039a9c@I-love.SAKURA.ne.jp>
- <ead8611697a8a95a80fb533db86c108ff5f66f6f.camel@ibm.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <ead8611697a8a95a80fb533db86c108ff5f66f6f.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav101.rs.sakura.ne.jp
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:bkmyQyYyTnQXNQQjEclGfRq3xo4r1pTdmXM89pTJhKcodvJiRhz
+ C2SmU6zIJUsOz3GU9gB7BZjTr5ivJp1ft1iIhmt2OfUdzyo+lft62xgW4Wi7AazvtIjdXA3
+ ULgiW6rD+/3X0rvzbBgcRlC+/bYHEqN8ZMYNTslBKgPlLI6jmUXZ489O0++PZilW9Sphd6v
+ dNooVgfocrSz76GvvtnHA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:XR5y7OfYrwc=;JCALJxLRhuhzitA4PxhTscEF3pX
+ 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
 
-On 2025/07/12 2:21, Viacheslav Dubeyko wrote:
-> Frankly speaking, I still don't see the whole picture here. If we have created
-> the Attribute File during mount operation, then why should we try to create the
-> Attributes File during __hfsplus_setxattr() call? If we didn't create the
-> Attributes File during the mount time and HFSPLUS_SB(inode->i_sb)->attr_tree is
-> NULL, then how i_size_read(attr_file) != 0? Even if we are checking vhdr-
->> attr_file.total_blocks, then it doesn't provide guarantee that
-> i_size_read(attr_file) is zero too. Something is wrong in this situation and
-> more stricter mount time validation cannot guarantee against the situation that
-> you are trying to solve in the issue. We are missing something here.
+This patch series adds support for the various features found on
+laptops manufactured by Uniwill. Those features are:
 
-I still don't see what you are missing.
+ - battery charge limiting
+ - RGB lightbar control
+ - hwmon support
+ - improved hotkey support
+ - keyboard-related settings
 
-When hfsplus_iget(sb, HFSPLUS_ATTR_CNID) is called from hfsplus_create_attributes_file(sb),
-hfsplus_system_read_inode(inode) from hfsplus_iget(HFSPLUS_ATTR_CNID) calls
-hfsplus_inode_read_fork(inode, &vhdr->attr_file). Since hfsplus_inode_read_fork() calls
-inode_set_bytes(), it is natural that i_size_read(attr_file) != 0 when returning from
-hfsplus_iget(sb, HFSPLUS_ATTR_CNID).
+This patch series is based on the following out-of-tree drivers:
 
-At this point, the only question should be why hfsplus_inode_read_fork() from
-hfsplus_system_read_inode(inode) from hfsplus_iget() is not called from hfsplus_fill_super()
-when the Attributes File already exists and its size is not 0. And the reason is that
-hfsplus_iget(sb, HFSPLUS_ATTR_CNID) from hfs_btree_open(sb, HFSPLUS_ATTR_CNID) is called
-only when vhdr->attr_file.total_blocks != 0.
+ - https://github.com/pobrn/qc71_laptop
+ - https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
 
-That is, when "vhdr" contains erroneous values (in the reproducer, vhdr->attr_file.total_blocks
-is 0) that do not reflect the actual state of the filesystem (in the reproducer, inode_set_bytes()
-sets non-zero value despite vhdr->attr_file.total_blocks is 0), hfsplus_fill_super() fails to call
-hfs_btree_open(sb, HFSPLUS_ATTR_CNID) at mount time.
+Additionally the OEM software of the Intel Nuc x15 was
+reverse-engineered to have a better understanding about the underlying
+hardware interface.
 
-You can easily reproduce this problem by compiling and running the reproducer
-at https://syzkaller.appspot.com/text?tag=ReproC&x=15f6b9d4580000 after you run
-"losetup -f" which creates /dev/loop0 needed by the reproducer.
+The first patch introduces the uniwill-wmi driver used for handling
+WMI events on Uniwill devices. Due to a grave design error inside the
+underlying WMI firmware interface (the WMI GUID was copied from the
+Windows driver samples and is thus not unique) the driver cannot be
+autoloaded. Instead drivers using this module will load it as an
+module dependency.
 
-I noticed that the reason fsck.hfsplus could not detect errors is that the filesystem
-image in the reproducer was compressed. If I run fsck.hfsplus on uncompressed image,
-fsck.hfsplus generated the following messages.
+The second patch introduces the uniwill-laptop driver that does the
+majority of the work. This driver talks to the embedded controller
+using yet another WMI interface to control the various features
+available on those devices. Sadly this WMI firmware interfaces suffers
+from the exact same issue (the WMI GUID is not unique) and thus a DMI
+whitelist has to be used for loading the driver.
 
-# fsck.hfsplus hfsplus.img
-** hfsplus.img
-   Executing fsck_hfs (version 540.1-Linux).
-** Checking non-journaled HFS Plus Volume.
-   The volume name is untitled
-** Checking extents overflow file.
-** Checking catalog file.
-   Invalid extent entry
-(4, 1)
-** Checking multi-linked files.
-** Checking catalog hierarchy.
-** Checking extended attributes file.
-** Checking volume bitmap.
-** Checking volume information.
-** Repairing volume.
-   Look for links to corrupt files in DamagedFiles directory.
-** Rechecking volume.
-** Checking non-journaled HFS Plus Volume.
-   The volume name is untitled
-** Checking extents overflow file.
-** Checking catalog file.
-** Checking multi-linked files.
-** Checking catalog hierarchy.
-** Checking extended attributes file.
-** Checking volume bitmap.
-   Volume bitmap needs minor repair for under-allocation
-** Checking volume information.
-   Invalid volume free block count
-   (It should be 179 instead of 180)
-** Repairing volume.
-** Rechecking volume.
-** Checking non-journaled HFS Plus Volume.
-   The volume name is untitled
-** Checking extents overflow file.
-** Checking catalog file.
-** Checking multi-linked files.
-** Checking catalog hierarchy.
-** Checking extended attributes file.
-** Checking volume bitmap.
-** Checking volume information.
-** The volume untitled was repaired successfully.
+The last patch finally adds some documentation for configuring and
+using both drivers.
+
+Special thanks go to:
+
+ - github user cyear for bring up this topic on the lm-sensors issue
+   tracker and being the tester for various prototype versions
+ - github user dumingqiao for testing the battery, lightbar and
+   keyboard-related features
+ - Tuxedo computers for giving advice on how to design the userspace
+   interface
+
+Please note that the whole series is based onto the pdx86/fixes branch
+as it uses the new power_supply_get_property_direct() function.
+
+Changes since the RFC series:
+- spelling fixes
+- mention the INOU0000 ACPI device inside thew documentation
+- use MILLIDEGREE_PER_DEGREE instead of 1000
+- use power_supply_get_property_direct() to prevent deadlock
+- add support for KEY_KBDILLUMDOWN and KEY_KBDILLUMUP
+
+Since the changes to the driver source code are fairly small i decided
+to keep the Tested-by tags from the RFC series.
+
+Armin Wolf (3):
+  platform/x86: Add Uniwill WMI driver
+  platform/x86: Add Uniwill laptop driver
+  Documentation: laptops: Add documentation for uniwill laptops
+
+ .../ABI/testing/sysfs-driver-uniwill-laptop   |   53 +
+ Documentation/admin-guide/laptops/index.rst   |    1 +
+ .../admin-guide/laptops/uniwill-laptop.rst    |   68 +
+ Documentation/wmi/devices/uniwill-laptop.rst  |  118 ++
+ Documentation/wmi/devices/uniwill-wmi.rst     |   52 +
+ MAINTAINERS                                   |   17 +
+ drivers/platform/x86/Kconfig                  |    2 +
+ drivers/platform/x86/Makefile                 |    3 +
+ drivers/platform/x86/uniwill/Kconfig          |   49 +
+ drivers/platform/x86/uniwill/Makefile         |    8 +
+ drivers/platform/x86/uniwill/uniwill-laptop.c | 1481 +++++++++++++++++
+ drivers/platform/x86/uniwill/uniwill-wmi.c    |  186 +++
+ drivers/platform/x86/uniwill/uniwill-wmi.h    |  122 ++
+ 13 files changed, 2160 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-uniwill-laptop
+ create mode 100644 Documentation/admin-guide/laptops/uniwill-laptop.rst
+ create mode 100644 Documentation/wmi/devices/uniwill-laptop.rst
+ create mode 100644 Documentation/wmi/devices/uniwill-wmi.rst
+ create mode 100644 drivers/platform/x86/uniwill/Kconfig
+ create mode 100644 drivers/platform/x86/uniwill/Makefile
+ create mode 100644 drivers/platform/x86/uniwill/uniwill-laptop.c
+ create mode 100644 drivers/platform/x86/uniwill/uniwill-wmi.c
+ create mode 100644 drivers/platform/x86/uniwill/uniwill-wmi.h
+
+=2D-=20
+2.39.5
 
 
