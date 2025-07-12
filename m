@@ -1,102 +1,137 @@
-Return-Path: <linux-kernel+bounces-731427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73ECFB05416
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:06:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE867B0541C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2E511C21A2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:06:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1A8D3B1B90
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BEF2741B7;
-	Tue, 15 Jul 2025 08:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51F82741BC;
+	Tue, 15 Jul 2025 08:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlfCgMPl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ISDMLG4S"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9349A27381A;
-	Tue, 15 Jul 2025 08:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE8F27381A;
+	Tue, 15 Jul 2025 08:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752566783; cv=none; b=P9/vCTKPdQFZDr5DOtqz2WcQTyM0jPXLbkjIFO12FSzmPas7hhy0bDwt051uMgFQXcKUqT2FFpl9MbeUoPcsuAigaealUy5tpR183SPgeVpIn6uk/cTTj2GXlki7O8tykovB6QWEWbjVzubvdCHGSgQz5nJ9pNjzPH+/MSVdnsk=
+	t=1752566872; cv=none; b=arMkLtWCPjwJ/rlnExpLRvArlVgLONGNuZS93GyRYCdtjK2vZflFGLmhIuXjY64fsDOVOUQ32YYI+a7nomH76WeEjiEiuURV7qfROl/rEAXaEhBcgHGt4my1uMsKeweBGWMH0Lp4keU9+5jV8gPw9rjD36xDoUfspX3jnQvm+Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752566783; c=relaxed/simple;
-	bh=IdD1fLvIqtuuHLiO8uhclVEZklj1JJ7FrDLnTE9qxs4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hUopwI5LguJ2pxLzoLRiukWK2zuGMSylQ714zErz5ajGe78fTHUyJ9U0KQc4KvnOAtegmsyjsJUUKpaNKF7yJmUIA5xfgZeXiQN7mKPuQIKulpbwZ/ig3wkRHarIjHr/47u/7gDECcK0WzCvds9uWvYGzfvvTvDKVHi+xT0mF6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlfCgMPl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B47F5C4CEE3;
-	Tue, 15 Jul 2025 08:06:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752566783;
-	bh=IdD1fLvIqtuuHLiO8uhclVEZklj1JJ7FrDLnTE9qxs4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rlfCgMPlbkLuG4W/GWe3TWZK2HD1gZCh35btsGlcMdQjvsRLuUp+S+O0gKanp+sMW
-	 MY0M1CW4FAQa8gvnFXfS/WGoE12srQ2rPtA+R9U+dnGskfxNskqD52yXnj5d3AfWuo
-	 U9aJVOhn6Oy4YVi3V5acXTzdUdL8pVA0Q7N271BZm+Yhl43mheqYT5fjeKHfHUF/dY
-	 WI1zNqRrUSPM0lDrMCXuXfKhE4w77jMLrr/9jPhIwMzh5aXXRx0/Wa4UhQ6+0tyjt6
-	 aoE5S4sAk7EFzq5eJWmgGQmYGwdWAsu8dYPqvbDW6BxoVF+D3hOQIAD4oR1w1K95Bk
-	 HgZtxQuulfHHw==
-Date: Tue, 15 Jul 2025 10:06:20 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Richard Yao <richard@scandent.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Akshay Athalye <akshay@scandent.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v3 2/3] dt-bindings: ilitek-ili9881c: Add Tianxianwei
- TWX700100S0 support
-Message-ID: <20250715-daft-armadillo-of-luxury-4f5d6d@krzk-bin>
-References: <20250714221804.25691-1-richard@scandent.com>
- <20250714221804.25691-3-richard@scandent.com>
+	s=arc-20240116; t=1752566872; c=relaxed/simple;
+	bh=aoyrrBSutaf1r36W7cylJGLxb4FhlsuFm1FNtQ3xk4M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GLRlIlnHe6g/koAkOJJA2PI6z3NtfvNs3ZDjIIWNOns6jxZMw2HV3DaCvl3nwh8Y4KzYs+UxxNjou9XoffHwHV9GeWIIBxYPzCL8JLyEqEoOPIR5awCi3UxzLbi7PPPN8cDFAdIjaf0WfF01L70PO51AgIB0DJGoMi/zQCtC4jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ISDMLG4S; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752566870; x=1784102870;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=aoyrrBSutaf1r36W7cylJGLxb4FhlsuFm1FNtQ3xk4M=;
+  b=ISDMLG4SFQBKkukCNETS9cLUjxL9IrN7otaZOsf3nlZZFHIZEXZnC1Ay
+   cvpv5jNM+e8whVSCbE5Ve6Zm5BG9YsAds0+hphH5FihCupf157e5hdRqF
+   HYSaP+wON72VSvLjyc9B7p554+W3ftKkMUOztLa9QLRPhpWVQKer7bZ12
+   8H4OSxqJ5G2yaaoB8+yKjvQl1huRcXcmdjJW44HKzsAgkiDeuASja1265
+   Q0vgPkIW1BSmYx1ot+lqPrBmdTdP2PjgDebVTj638CNAaJZzLWvJnLvkP
+   Q7Fu0Lw5FyPSDel+4OsU08kIzxp7UQZTLgyfF694reYb3MjPj7a7G1zdt
+   g==;
+X-CSE-ConnectionGUID: 5QI1bMflRZ6HKEXe10QEAQ==
+X-CSE-MsgGUID: JDcap36QSZqerMMwCo+63Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="66135075"
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="66135075"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 01:07:49 -0700
+X-CSE-ConnectionGUID: YD7zH9HVSCCIM1TpJcLlrA==
+X-CSE-MsgGUID: wr36XeqoQimOOyQrQLaU4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="161471306"
+Received: from emr.sh.intel.com ([10.112.229.56])
+  by orviesa003.jf.intel.com with ESMTP; 15 Jul 2025 01:07:46 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jim Mattson <jmattson@google.com>,
+	Mingwei Zhang <mizhang@google.com>,
+	Zide Chen <zide.chen@intel.com>,
+	Das Sandipan <Sandipan.Das@amd.com>,
+	Shukla Manali <Manali.Shukla@amd.com>,
+	Yi Lai <yi1.lai@intel.com>,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [PATCH 0/3] Fix PMU kselftests errors on SRF and CWF 
+Date: Sat, 12 Jul 2025 17:25:18 +0000
+Message-ID: <20250712172522.187414-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250714221804.25691-3-richard@scandent.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 14, 2025 at 06:18:00PM -0400, Richard Yao wrote:
-> Document the compatible value for Tianxianwei TWX700100S0 panel.
-> 
-> Signed-off-by: Richard Yao <richard@scandent.com>
-> ---
->  .../devicetree/bindings/display/panel/ilitek,ili9881c.yaml       | 1 +
->  1 file changed, 1 insertion(+)
->
+This small patchset fixes PMU kselftest errors on Sierra Forest (SRF) and
+Clearwater Forest (CWF).
 
-<form letter>
-This is a friendly reminder during the review process.
+Patch 1/3 adds validation support for newly introduced 5 architectural
+events on CWF. Without this patch, pmu_counter_test asserts failure
+ "New architectural event(s) detected; please update this test".
 
-It looks like you received a tag and forgot to add it.
+On Intel Atom platforms, the PMU events "Instruction Retired" or
+"Branch Instruction Retired" may be overcounted for some certain
+instructions, like FAR CALL/JMP, RETF, IRET, VMENTRY/VMEXIT/VMPTRLD
+and complex SGX/SMX/CSTATE instructions/flows[1].
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions of patchset, under or above your Signed-off-by tag, unless
-patch changed significantly (e.g. new properties added to the DT
-bindings). Tag is "received", when provided in a message replied to you
-on the mailing list. Tools like b4 can help here. However, there's no
-need to repost patches *only* to add the tags. The upstream maintainer
-will do that for tags received on the version they apply.
+In details, for the Atom platforms before Sierra Forest (including
+Sierra Forest), Both 2 events "Instruction Retired" and
+"Branch Instruction Retired" would be overcounted on these certain
+instructions, but for Clearwater Forest only "Instruction Retired" event
+is overcounted on these instructions.
 
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+As this overcount issue, pmu_counters_test and pmu_event_filter_test
+would fail on the precise event count validation for these 2 events on
+Atom platforms.
 
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
+To work around this Atom platform overcount issue, Patches 2-3/3 relax
+the precise event count validation if the platform is detected to have
+the overcount issue.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Tests:
+  * PMU kselftests (pmu_counters_test/pmu_event_filter_test/
+    vmx_pmu_caps_test) passed on GNR/SRF/CWF platforms.
 
-Best regards,
-Krzysztof
+Ref:
+  [1] https://edc.intel.com/content/www/us/en/design/products-and-solutions/processors-and-chipsets/sierra-forest/xeon-6700-series-processor-with-e-cores-specification-update/errata-details
+
+Dapeng Mi (2):
+  KVM: Selftests: Validate more arch-events in pmu_counters_test
+  KVM: selftests: Relax branches event count check for event_filter test
+
+dongsheng (1):
+  KVM: selftests: Relax precise event count validation as overcount
+    issue
+
+ tools/testing/selftests/kvm/include/x86/pmu.h | 19 ++++++++
+ .../selftests/kvm/include/x86/processor.h     |  7 ++-
+ tools/testing/selftests/kvm/lib/x86/pmu.c     | 43 +++++++++++++++++++
+ .../selftests/kvm/x86/pmu_counters_test.c     | 39 ++++++++++++++---
+ .../selftests/kvm/x86/pmu_event_filter_test.c |  9 +++-
+ 5 files changed, 108 insertions(+), 9 deletions(-)
+
+
+base-commit: 772d50d9b87bec08b56ecee0a880d6b2ee5c7da5
+-- 
+2.43.0
 
 
