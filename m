@@ -1,213 +1,302 @@
-Return-Path: <linux-kernel+bounces-728785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11888B02CC4
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:52:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05BA0B02CC8
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42E1E1AA024A
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 19:53:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 111D51AA02E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 19:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8684628DF46;
-	Sat, 12 Jul 2025 19:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D9928DF2B;
+	Sat, 12 Jul 2025 19:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jI3qg08J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gkwpo2EO"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B4729DB8F;
-	Sat, 12 Jul 2025 19:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA7F289E23
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 19:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752349836; cv=none; b=jdQSKdbvc21Qz/RTIUw5H1rv5rSV9faIkfA724MPiJhm75FXhgLlsyHVZ+Bqa3iqCI6tz7xrus7O4VQFa0QtqPBz2T1BN49id9qjmxtRB0irvF6fDicunhbLUYrsSN0mgg15bg+YyEVyALrBuDeNMG9Jv0J8amokYT4grTgYp0U=
+	t=1752350243; cv=none; b=Ahvt7SL3HDPIrFoKc4huyWxX+biFwobA2m5DBDCCReKeCnVgXNGkNDHy9qqJtT19Y/qrBGxrLknx4PPnPfcWi/OZ/ksFahgMO3TMIZZmUGV5T0OhSYtPbjMJ5ReQSacSOjzevw8/E9lFOPNU2PK5fBNrCYsqjMkjRwk/KJ6Y2Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752349836; c=relaxed/simple;
-	bh=N6UgM+GaU7C25cINsCnFK+jRBTnhXf4uYeOYOmlqYds=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aBQQplNgTYcJmFWyC7NlO9HzyzMHvhuazUanGkT6t2ZshltuD4PtWpETaLTNg5B2ltruqmf+u+8KLRdYQWq9KqitNXTJ/+KwaGfejhmuWhdjpf/eUTZ002usjcM7TD7o9j1hscOoLB2QvT0CV3E4MJmhD3CV/zs3QQkQjl5Hk7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jI3qg08J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23DA8C4CEF1;
-	Sat, 12 Jul 2025 19:50:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752349836;
-	bh=N6UgM+GaU7C25cINsCnFK+jRBTnhXf4uYeOYOmlqYds=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jI3qg08JH6ttnI0W7A3bfseSky7pZofrGzwYc23N1TYIhYlE50n3BH3z0aleDvYIL
-	 kVvS56Apd0e1nEiBhzPjcLz5g2vQPEdiIBivrjAU61AAWaPDBgbQt6iivdKxQvQAS3
-	 agMj7LmG+f+kKCQPh9IgGiWrBdpHy1Izu248+N8QXR+7eV4FQb2ALB3fVlKTeZtHuy
-	 7zbGBW5g82RZtaTtfczGkMs6L2ReRL5a94IIJWpjna/XZtPBBbMcV3KcFIcZfuNlGM
-	 d9K3EPVqvl6T0H2/DqgmKTg36JYgkcgOPSi3RtxuXyIEi55drBeAYkhpsV6m/TYFrL
-	 2bGhRqQG30ZsA==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH 14/14] mm/damon/core: remove damon_callback
-Date: Sat, 12 Jul 2025 12:50:16 -0700
-Message-Id: <20250712195016.151108-15-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250712195016.151108-1-sj@kernel.org>
-References: <20250712195016.151108-1-sj@kernel.org>
+	s=arc-20240116; t=1752350243; c=relaxed/simple;
+	bh=6jN5+l5I0cHef6UJuE/R6DD+UMezEAvvIu+9rpyJa4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oyIvT5PHFt8XJ6kT9GdekpbxfGVUacIwp+7k5UQYDACiGI/blLxJYm9HNaBsayYk2yP80VeLbp+lAaOEE5RiGxpEh4UZ/POIWpg9s/s3BDkNIhf2Ev3WqD1P9EUeyGaMGVqG8Tu/Hn0kTZk7GAOc74hEKUPDiTG6ovRnMQMeKCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gkwpo2EO; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 12 Jul 2025 12:57:00 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752350227;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+pCn5NGmkecFI7kg7iK/GSw/y8sj0MDaaDl/qTKpLnM=;
+	b=gkwpo2EOYiCDeoEXLJ4zYlSYl/QS8QftdcAuc1TyMKl9JOwTFE/Tfc8Arh9BUbM/1SBbmO
+	PRpFzZ0DQyjRyC+P82l45BeuP0+X+GvEXKngzM+pS5x17SDdbXr58rdFV2sHSwUOqyZT2/
+	iH4G/vd6b03weXckn3UxUrJgHqGxV3s=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Jiaqi Yan <jiaqiyan@google.com>
+Cc: maz@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org,
+	pbonzini@redhat.com, corbet@lwn.net, shuah@kernel.org,
+	kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	duenwen@google.com, rananta@google.com, jthoughton@google.com
+Subject: Re: [PATCH v2 1/6] KVM: arm64: VM exit to userspace to handle SEA
+Message-ID: <aHK-DPufhLy5Dtuk@linux.dev>
+References: <20250604050902.3944054-1-jiaqiyan@google.com>
+ <20250604050902.3944054-2-jiaqiyan@google.com>
+ <aHFohmTb9qR_JG1E@linux.dev>
+ <CACw3F509B=AHhpaTcuH9O851rrDdHh1baC8uRYy7bDa7BSMhgg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACw3F509B=AHhpaTcuH9O851rrDdHh1baC8uRYy7bDa7BSMhgg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-All damon_callback usages are replicated by damon_call() and
-damos_walk().  Time to say goodbye.  Remove damon_callback.
+On Fri, Jul 11, 2025 at 04:59:11PM -0700, Jiaqi Yan wrote:
+> >  - Add some detail about FEAT_RAS where we may still exit to userspace
+> >    for host-controlled memory, as we cannot differentiate between a
+> >    stage-1 or stage-2 TTW SEA when taken on the descriptor PA
+> 
+> Ah, IIUC, you are saying even if the FSC code tells fault is on TTW
+> (esr_fsc_is_secc_ttw or esr_fsc_is_sea_ttw), it can either be guest
+> stage-1's or stage-2's descriptor PA, and we can tell which from
+> which.
+> 
+> However, if ESR_ELx_S1PTW is set, we can tell this is a sub-case of
+> stage-2 descriptor PA, their usage is for stage-1 PTW but they are
+> stage-2 memory.
+> 
+> Is my current understanding right?
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
+Yep, that's exactly what I'm getting at. As you note, stage-2 aborts
+during a stage-1 walk are sufficiently described, but not much else.
+
+> > +/*
+> > + * Returns true if the SEA should be handled locally within KVM if the abort is
+> > + * caused by a kernel memory allocation (e.g. stage-2 table memory).
+> > + */
+> > +static bool host_owns_sea(struct kvm_vcpu *vcpu, u64 esr)
+> > +{
+> > +       /*
+> > +        * Without FEAT_RAS HCR_EL2.TEA is RES0, meaning any external abort
+> > +        * taken from a guest EL to EL2 is due to a host-imposed access (e.g.
+> > +        * stage-2 PTW).
+> > +        */
+> > +       if (!cpus_have_final_cap(ARM64_HAS_RAS_EXTN))
+> > +               return true;
+> > +
+> > +       /* KVM owns the VNCR when the vCPU isn't in a nested context. */
+> > +       if (is_hyp_ctxt(vcpu) && (esr & ESR_ELx_VNCR))
+> > +               return true;
+> > +
+> > +       /*
+> > +        * Determining if an external abort during a table walk happened at
+> > +        * stage-2 is only possible with S1PTW is set. Otherwise, since KVM
+> > +        * sets HCR_EL2.TEA, SEAs due to a stage-1 walk (i.e. accessing the PA
+> > +        * of the stage-1 descriptor) can reach here and are reported with a
+> > +        * TTW ESR value.
+> > +        */
+> > +       return esr_fsc_is_sea_ttw(esr) && (esr & ESR_ELx_S1PTW);
+> 
+> Should we include esr_fsc_is_secc_ttw? like
+>   (esr_fsc_is_sea_ttw(esr) || esr_fsc_is_secc_ttw(esr)) && (esr & ESR_ELx_S1PTW)
+
+Parity / ECC errors are not permitted if FEAT_RAS is implemented (which
+is tested for up front).
+
+> > +}
+> > +
+> >  int kvm_handle_guest_sea(struct kvm_vcpu *vcpu)
+> >  {
+> > +       u64 esr = kvm_vcpu_get_esr(vcpu);
+> > +       struct kvm_run *run = vcpu->run;
+> > +       struct kvm *kvm = vcpu->kvm;
+> > +       u64 esr_mask = ESR_ELx_EC_MASK  |
+> > +                      ESR_ELx_FnV      |
+> > +                      ESR_ELx_EA       |
+> > +                      ESR_ELx_CM       |
+> > +                      ESR_ELx_WNR      |
+> > +                      ESR_ELx_FSC;
+> 
+> Do you (and why) exclude ESR_ELx_IL on purpose?
+
+Unintended :)
+
+> BTW, if my previous statement about TTW SEA is correct, then I also
+> understand why we need to explicitly exclude ESR_ELx_S1PTW.
+
+Right, we shouldn't be exposing genuine stage-2 external aborts to userspace.
+
+> > +       u64 ipa;
+> > +
+> > +
+> >         /*
+> >          * Give APEI the opportunity to claim the abort before handling it
+> >          * within KVM. apei_claim_sea() expects to be called with IRQs
+> > @@ -1824,7 +1864,32 @@ int kvm_handle_guest_sea(struct kvm_vcpu *vcpu)
+> >         if (apei_claim_sea(NULL) == 0)
+> 
+> I assume kvm should still lockdep_assert_irqs_enabled(), right? That
+> is, a WARN_ON_ONCE is still useful in case?
+
+Ah, this is diffed against my VNCR prefix which has this context. Yes, I
+want to preserve the lockdep assertion.
+
+
+From eb63dbf07b3d1f42b059f5c94abd147d195299c8 Mon Sep 17 00:00:00 2001
+From: Oliver Upton <oliver.upton@linux.dev>
+Date: Thu, 10 Jul 2025 17:14:51 -0700
+Subject: [PATCH] KVM: arm64: nv: Handle SEAs due to VNCR redirection
+
+Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
 ---
- include/linux/damon.h | 31 +------------------------------
- mm/damon/core.c       | 26 +++++++-------------------
- 2 files changed, 8 insertions(+), 49 deletions(-)
+ arch/arm64/include/asm/kvm_mmu.h |  1 +
+ arch/arm64/include/asm/kvm_ras.h | 25 -------------------------
+ arch/arm64/kvm/mmu.c             | 30 ++++++++++++++++++------------
+ arch/arm64/kvm/nested.c          |  3 +++
+ 4 files changed, 22 insertions(+), 37 deletions(-)
+ delete mode 100644 arch/arm64/include/asm/kvm_ras.h
 
-diff --git a/include/linux/damon.h b/include/linux/damon.h
-index 27305d39f600..34fc5407f98e 100644
---- a/include/linux/damon.h
-+++ b/include/linux/damon.h
-@@ -628,34 +628,6 @@ struct damon_operations {
- 	void (*cleanup)(struct damon_ctx *context);
- };
+diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+index ae563ebd6aee..e4069f2ce642 100644
+--- a/arch/arm64/include/asm/kvm_mmu.h
++++ b/arch/arm64/include/asm/kvm_mmu.h
+@@ -180,6 +180,7 @@ void kvm_free_stage2_pgd(struct kvm_s2_mmu *mmu);
+ int kvm_phys_addr_ioremap(struct kvm *kvm, phys_addr_t guest_ipa,
+ 			  phys_addr_t pa, unsigned long size, bool writable);
  
--/**
-- * struct damon_callback - Monitoring events notification callbacks.
-- *
-- * @after_wmarks_check:	Called after each schemes' watermarks check.
-- * @after_aggregation:	Called after each aggregation.
-- * @before_terminate:	Called before terminating the monitoring.
-- *
-- * The monitoring thread (&damon_ctx.kdamond) calls @before_terminate just
-- * before finishing the monitoring.
-- *
-- * The monitoring thread calls @after_wmarks_check after each DAMON-based
-- * operation schemes' watermarks check.  If users need to make changes to the
-- * attributes of the monitoring context while it's deactivated due to the
-- * watermarks, this is the good place to do.
-- *
-- * The monitoring thread calls @after_aggregation for each of the aggregation
-- * intervals.  Therefore, users can safely access the monitoring results
-- * without additional protection.  For the reason, users are recommended to use
-- * these callback for the accesses to the results.
-- *
-- * If any callback returns non-zero, monitoring stops.
-- */
--struct damon_callback {
--	int (*after_wmarks_check)(struct damon_ctx *context);
--	int (*after_aggregation)(struct damon_ctx *context);
--	void (*before_terminate)(struct damon_ctx *context);
--};
++int kvm_handle_guest_sea(struct kvm_vcpu *vcpu);
+ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu);
+ 
+ phys_addr_t kvm_mmu_get_httbr(void);
+diff --git a/arch/arm64/include/asm/kvm_ras.h b/arch/arm64/include/asm/kvm_ras.h
+deleted file mode 100644
+index 9398ade632aa..000000000000
+--- a/arch/arm64/include/asm/kvm_ras.h
++++ /dev/null
+@@ -1,25 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-/* Copyright (C) 2018 - Arm Ltd */
 -
- /*
-  * struct damon_call_control - Control damon_call().
-  *
-@@ -726,7 +698,7 @@ struct damon_intervals_goal {
-  * ``mmap()`` calls from the application, in case of virtual memory monitoring)
-  * and applies the changes for each @ops_update_interval.  All time intervals
-  * are in micro-seconds.  Please refer to &struct damon_operations and &struct
-- * damon_callback for more detail.
-+ * damon_call_control for more detail.
+-#ifndef __ARM64_KVM_RAS_H__
+-#define __ARM64_KVM_RAS_H__
+-
+-#include <linux/acpi.h>
+-#include <linux/errno.h>
+-#include <linux/types.h>
+-
+-#include <asm/acpi.h>
+-
+-/*
+- * Was this synchronous external abort a RAS notification?
+- * Returns '0' for errors handled by some RAS subsystem, or -ENOENT.
+- */
+-static inline int kvm_handle_guest_sea(void)
+-{
+-	/* apei_claim_sea(NULL) expects to mask interrupts itself */
+-	lockdep_assert_irqs_enabled();
+-
+-	return apei_claim_sea(NULL);
+-}
+-
+-#endif /* __ARM64_KVM_RAS_H__ */
+diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+index 1c78864767c5..6934f4acdc45 100644
+--- a/arch/arm64/kvm/mmu.c
++++ b/arch/arm64/kvm/mmu.c
+@@ -4,19 +4,20 @@
+  * Author: Christoffer Dall <c.dall@virtualopensystems.com>
   */
- struct damon_attrs {
- 	unsigned long sample_interval;
-@@ -816,7 +788,6 @@ struct damon_ctx {
- 	struct mutex kdamond_lock;
  
- 	struct damon_operations ops;
--	struct damon_callback callback;
++#include <linux/acpi.h>
+ #include <linux/mman.h>
+ #include <linux/kvm_host.h>
+ #include <linux/io.h>
+ #include <linux/hugetlb.h>
+ #include <linux/sched/signal.h>
+ #include <trace/events/kvm.h>
++#include <asm/acpi.h>
+ #include <asm/pgalloc.h>
+ #include <asm/cacheflush.h>
+ #include <asm/kvm_arm.h>
+ #include <asm/kvm_mmu.h>
+ #include <asm/kvm_pgtable.h>
+ #include <asm/kvm_pkvm.h>
+-#include <asm/kvm_ras.h>
+ #include <asm/kvm_asm.h>
+ #include <asm/kvm_emulate.h>
+ #include <asm/virt.h>
+@@ -1811,6 +1812,20 @@ static void handle_access_fault(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa)
+ 	read_unlock(&vcpu->kvm->mmu_lock);
+ }
  
- 	struct list_head adaptive_targets;
- 	struct list_head schemes;
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index ffd1a061c2cb..f3ec3bd736ec 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -680,9 +680,7 @@ static bool damon_valid_intervals_goal(struct damon_attrs *attrs)
-  * @attrs:		monitoring attributes
-  *
-  * This function should be called while the kdamond is not running, an access
-- * check results aggregation is not ongoing (e.g., from &struct
-- * damon_callback->after_aggregation or &struct
-- * damon_callback->after_wmarks_check callbacks), or from damon_call().
-+ * check results aggregation is not ongoing (e.g., from damon_call().
-  *
-  * Every time interval is in micro-seconds.
-  *
-@@ -778,7 +776,7 @@ static void damos_commit_quota_goal(
-  * DAMON contexts, instead of manual in-place updates.
-  *
-  * This function should be called from parameters-update safe context, like
-- * DAMON callbacks.
-+ * damon_call().
-  */
- int damos_commit_quota_goals(struct damos_quota *dst, struct damos_quota *src)
- {
-@@ -1177,7 +1175,7 @@ static int damon_commit_targets(
-  * in-place updates.
-  *
-  * This function should be called from parameters-update safe context, like
-- * DAMON callbacks.
-+ * damon_call().
-  */
- int damon_commit_ctx(struct damon_ctx *dst, struct damon_ctx *src)
- {
-@@ -2484,9 +2482,6 @@ static int kdamond_wait_activation(struct damon_ctx *ctx)
++int kvm_handle_guest_sea(struct kvm_vcpu *vcpu)
++{
++	/*
++	 * Give APEI the opportunity to claim the abort before handling it
++	 * within KVM. apei_claim_sea() expects to be called with IRQs
++	 * enabled.
++	 */
++	lockdep_assert_irqs_enabled();
++	if (apei_claim_sea(NULL) == 0)
++		return 1;
++
++	return kvm_inject_serror(vcpu);
++}
++
+ /**
+  * kvm_handle_guest_abort - handles all 2nd stage aborts
+  * @vcpu:	the VCPU pointer
+@@ -1834,17 +1849,8 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
+ 	gfn_t gfn;
+ 	int ret, idx;
  
- 		kdamond_usleep(min_wait_time);
+-	/* Synchronous External Abort? */
+-	if (kvm_vcpu_abt_issea(vcpu)) {
+-		/*
+-		 * For RAS the host kernel may handle this abort.
+-		 * There is no need to pass the error into the guest.
+-		 */
+-		if (kvm_handle_guest_sea())
+-			return kvm_inject_serror(vcpu);
+-
+-		return 1;
+-	}
++	if (kvm_vcpu_abt_issea(vcpu))
++		return kvm_handle_guest_sea(vcpu);
  
--		if (ctx->callback.after_wmarks_check &&
--				ctx->callback.after_wmarks_check(ctx))
--			break;
- 		kdamond_call(ctx, false);
- 		damos_walk_cancel(ctx);
- 	}
-@@ -2543,10 +2538,9 @@ static int kdamond_fn(void *data)
- 	while (!kdamond_need_stop(ctx)) {
- 		/*
- 		 * ctx->attrs and ctx->next_{aggregation,ops_update}_sis could
--		 * be changed from after_wmarks_check() or after_aggregation()
--		 * callbacks.  Read the values here, and use those for this
--		 * iteration.  That is, damon_set_attrs() updated new values
--		 * are respected from next iteration.
-+		 * be changed from kdamond_call().  Read the values here, and
-+		 * use those for this iteration.  That is, damon_set_attrs()
-+		 * updated new values are respected from next iteration.
- 		 */
- 		unsigned long next_aggregation_sis = ctx->next_aggregation_sis;
- 		unsigned long next_ops_update_sis = ctx->next_ops_update_sis;
-@@ -2564,14 +2558,10 @@ static int kdamond_fn(void *data)
- 		if (ctx->ops.check_accesses)
- 			max_nr_accesses = ctx->ops.check_accesses(ctx);
+ 	esr = kvm_vcpu_get_esr(vcpu);
  
--		if (ctx->passed_sample_intervals >= next_aggregation_sis) {
-+		if (ctx->passed_sample_intervals >= next_aggregation_sis)
- 			kdamond_merge_regions(ctx,
- 					max_nr_accesses / 10,
- 					sz_limit);
--			if (ctx->callback.after_aggregation &&
--					ctx->callback.after_aggregation(ctx))
--				break;
--		}
+diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
+index 096747a61bf6..38b0e3a9a6db 100644
+--- a/arch/arm64/kvm/nested.c
++++ b/arch/arm64/kvm/nested.c
+@@ -1289,6 +1289,9 @@ int kvm_handle_vncr_abort(struct kvm_vcpu *vcpu)
  
- 		/*
- 		 * do kdamond_call() and kdamond_apply_schemes() after
-@@ -2637,8 +2627,6 @@ static int kdamond_fn(void *data)
- 			damon_destroy_region(r, t);
- 	}
+ 	BUG_ON(!(esr & ESR_ELx_VNCR_SHIFT));
  
--	if (ctx->callback.before_terminate)
--		ctx->callback.before_terminate(ctx);
- 	if (ctx->ops.cleanup)
- 		ctx->ops.cleanup(ctx);
- 	kfree(ctx->regions_score_histogram);
++	if (kvm_vcpu_abt_issea(vcpu))
++		return kvm_handle_guest_sea(vcpu);
++
+ 	if (esr_fsc_is_permission_fault(esr)) {
+ 		inject_vncr_perm(vcpu);
+ 	} else if (esr_fsc_is_translation_fault(esr)) {
 -- 
 2.39.5
+
 
