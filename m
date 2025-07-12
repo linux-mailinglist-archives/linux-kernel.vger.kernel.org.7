@@ -1,196 +1,146 @@
-Return-Path: <linux-kernel+bounces-728762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C90FB02C97
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:16:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 180F6B02CA0
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 251F418950BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 19:17:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D34D3AEA56
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 19:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E077A28BAB9;
-	Sat, 12 Jul 2025 19:16:44 +0000 (UTC)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77C628D8ED;
+	Sat, 12 Jul 2025 19:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WhaAgGSX"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919AD199920;
-	Sat, 12 Jul 2025 19:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D3828D831
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 19:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752347804; cv=none; b=eZzBee8+ftXoLcQUy/8bXO22US8VoaRr4+SFyic5/1fTKJwgzLmBDFQiVhITCtrGaRKkdxv6Mna5S+moqkn0A1FM1juDxlkdL3zB9/PJKBT/wFqV/P/+kRX/vWFEJjeQXJ30bMe2Nl5X76lDeHH62qdKjpesgTFL+DCphmM1GPo=
+	t=1752348432; cv=none; b=B3oMA8PCqrOh0562tffj8trQu9U0zSw/0/GsUZoYmr0aBUmBLp7dE1N2VBxCjfAQfWQJCX2HNN/deU6+Tm//72/4Lbzu2ix/p2ksto9+/Qa28oMFtZKqt4UT11Ej2Lqe+Cba3/bu06igWRPbR4knaE129p0ZfKyvoxGo5V2qPSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752347804; c=relaxed/simple;
-	bh=A2iwYtqlViyn1Bfa9lG8o2HlWL8f6t/AkwlnIEUPvec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F11ViNLAM8Rq8ZLR3KC37280CvZ2dK0ma6D2sRW4fZbYy/xOWQXW6PhyeQC2NzvxCfu3ihiWQUyM+sww95oXnVPVqEcxr4eSbnweP+sRdTlSyltES4M6OJQqq8BUqv8kqQidJ+RweKcauWsdwgDGcdglCB2K+1ETQFkd2CZXrH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-455b00339c8so11200945e9.3;
-        Sat, 12 Jul 2025 12:16:42 -0700 (PDT)
+	s=arc-20240116; t=1752348432; c=relaxed/simple;
+	bh=/hOKuusE5jMFtwzQjB1VDvpOrtRiFiTDNJiNJFK2Dmk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DGyQRM6tJpzXe4y7IfcmfSEh2uwvMr4O43EYOtjASRVaCW6HeQVr91uncrpJ+4AZ6QAu906o9PZ3/h/CgIXWZIErf/eDudE0YeWct2/WowsKTHLtaBgaHrKzAVqt5wlNOz3pVJZhqoVtBsKUOzbeRuwkk8/MIBC8jqjAaPT7YbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WhaAgGSX; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32b7cf56cacso30551331fa.1
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 12:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752348429; x=1752953229; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YmdrDokSvSEbkPXVz0WTUYECUUDrY3dIue4l79myHLA=;
+        b=WhaAgGSXAZ2GkhcFDEsP6qj+RKcZn8+l/TjHOEB0rc5PFabu3pbbhJKkKcGNOjN/XS
+         x58mToAJHF0fTCi79Km1iUhMdQ+WUraWoGTrV6zDdtnYEbpGEWWOFfyT6KxCX6fc0kJj
+         rX/Et2DH8vPoHqnQNHUQf8PRakWhKpNMuI0W5PH3cU4JgL5REt1UEcWVvEgPMZyS6E6n
+         Msv1LhhXTSFkn3sCAJ0GXDhVH2/g0xUEaEFG2qcVjCBhSEe1a3qQ08SrV6vv0obAIEvt
+         J9SY5jzLcS1zzrg+9ZvcX6/Vq9e5o8fJoRMTDoldYcsHjtlBjezR2yapWFfJHIc4wUtH
+         a2rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752347801; x=1752952601;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:reply-to:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m8ZsfYBHHbLmVPc2Fd9FFLMKfMGcOWFzJlUE6t1S3RI=;
-        b=RWTRI07McxBtfpL9k8PoNFJQCIYJCN51aIjWewJkZ7UA1R6T2wa+HRayI8lGHywR6n
-         n0znV1zWWLmjmliGLPI30zmBV5SWMPbUTGq4u5ajh39bxN6ijsg7NvGO0eKYYJBUybl1
-         bFALpqBX5QjGs+IuDYLPqeX/vc0ElP8D6fVW0hCCjlXqU5XEOHgykUG34lkygVRthIgb
-         mt9jrej8nP4At/Ga9mYuOr10xGnqzPJ+ZmaTOotimtUXWvw6PQuMSqzYzmvvUbjjFj9L
-         Kc2HAceYhz0miR07f6o1Uiz724alRSgZGVHWiyzA3+WOYWEVfzy1JpIVdO3sgS19te8w
-         tDwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIzFk96o5T9VcE9CKuGy0FjCTf1sPHPJixXkfma5W5q0T+HAyJEUBNCUEdBg0DjpEe5JwrHucz/zp9Hh8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyavOGjluac76uA0YBN59xq8828h7qWOm1rrjnVGj4+W26A6EIM
-	B5ASK72bKos+1d6Rspcf3c+tkyPlHhHtjVnecrlx3ZgTE6GJoeCYwKoT
-X-Gm-Gg: ASbGnctfUjah9XU8RNX/pNeZ+MEvFQVfG3LbnIZurAhpZDCpNKCwO0IxiWVgjYRyADR
-	mPo1BZ+cg47w6kUIySYvblE4AowtLySFSdOhpFNTu+yjPWOlt+eyn+sMlsiHy12qny/w2uOKR/5
-	ddY4pnYGtzJ2ENZtnQKfo7w0EVnu1iFW/D6lk8L5wps7U7dPuZl/JLQ1mBS1RwN7lOGs0j0hOUz
-	AYzTSRD6shWgt7/RIRa1G40k3/csFE0tS489GscFkyaix5mkIj22C0Qu3dzobigEu9tUI5MNXzS
-	6bAtWEs1U2DNqCNBgT9qDj4HPJIK3219zwyjPV37s6s9QjQFI2WIJf6BRUjATnaiHUAsbfV2/4E
-	97LIXwJItGN4uPpXryQOmKDys1Oyuj1md3GsEPm2moNPVRRCDOoBGUc90zGf6+/ZG2nsOC+Ixyk
-	aLtQ==
-X-Google-Smtp-Source: AGHT+IHPJNT+N4u0WQvWt7vlyYK5XibL/c1kTJHMyaYioO1wKC7ScYHW83cBjhn5GE0zbnOudTjFOA==
-X-Received: by 2002:a05:600c:1546:b0:456:58e:31af with SMTP id 5b1f17b1804b1-456058e33b9mr35829135e9.14.1752347800692;
-        Sat, 12 Jul 2025 12:16:40 -0700 (PDT)
-Received: from [10.68.32.38] (bba-92-99-24-62.alshamil.net.ae. [92.99.24.62])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc9298sm7948149f8f.44.2025.07.12.12.16.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 12 Jul 2025 12:16:40 -0700 (PDT)
-Message-ID: <1d255c16-46fb-413d-b25a-0f1fea682a33@linux.com>
-Date: Sat, 12 Jul 2025 23:16:38 +0400
+        d=1e100.net; s=20230601; t=1752348429; x=1752953229;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YmdrDokSvSEbkPXVz0WTUYECUUDrY3dIue4l79myHLA=;
+        b=p1FIq4pfabs02XUEoVBvxl/yjAeMOSHGR/6Jr43xWhkcQPAnboiWLp1cTqz/9G9Gs7
+         YEa8xeFZ9l/1fIi/wOSKo6LZALsjfk6KhrWjfKvRjXaUJkdF2YB2Hvv+ueJ9tj+SO76/
+         xctCK+GO6uDyueYJEwRx24CUJj4VvagdpbVUFMgntaD7QDIhVRyVKKu5rzxcEa4xjvil
+         xmUJujaJmksw6FbXwqQcK2H3Qnpu1Nlr/2TlOv6qGb4fNHZAf6Ohytk5BnRP8ETxyHJR
+         0m5XkABPHUF/KmAb1pC+eifaWOLkK+NvJUVfUgn+Vn7F0VZmdq8RMkDrudMA+u8wkk/u
+         cw4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWwJVFbFmSBWt2rDyibGJTVJd2ywBsh769/HyJ9a9teXdnMA5GUEnalAyaXkj4AgxXg0JbuSesiTYtIul4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze1V91c++6whlk4UXPsRRhXAu6FNTVp8/rHqUI2u0D+61Pzedm
+	YpaLhLbm0Y6C1Nzn90ClvphgL3xc/WA6890JZ4/S8PesB5Erc63mmeThYoisSr2lRpu2To2EfJC
+	bV3KRjlhL43aClc7LIExn3LH0LHzbId76noe7MtMf5g==
+X-Gm-Gg: ASbGncus6MwGWdBTiSuEl2LCE8+vYRQRp6Tr44Xvoft5/+7bWyLim67jz4YEKTZeMYE
+	hcI0KPGAXgmPdCiBhIrKA0TsBsexVPAwb2sFVQNUTy7UZcRO4r2fAamevh0QyzGa0YSA1Zy/m2L
+	H3LHVp2C/9zUoZBXzm3Kdhkcl3hwBVUDY8Vy2kz5qTagN1gvkLeoJ1ExsbdL1sAVpvRdGBVwnum
+	vsl1Zk=
+X-Google-Smtp-Source: AGHT+IEg/39vWPjh633ZUj8UqZLuNkeQ4zJb+DeEXqhdOGqkb2UzJv4loDelR2kMaTSHX23IkdKGCBQxVkP3ySeashA=
+X-Received: by 2002:a05:651c:4ca:b0:32b:755e:6cd7 with SMTP id
+ 38308e7fff4ca-3305509f9c8mr19310751fa.32.1752348428638; Sat, 12 Jul 2025
+ 12:27:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: efremov@linux.com
-Subject: Re: [PATCH] block: floppy: fix uninitialized use of outparam in
- fd_locked_ioctl
-To: Purva Yeshi <purvayeshi550@gmail.com>, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250706072213.14954-1-purvayeshi550@gmail.com>
-Content-Language: en-US
-From: Denis Efremov <efremov@linux.com>
-In-Reply-To: <20250706072213.14954-1-purvayeshi550@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250710002047.1573841-1-ksk4725@coasia.com>
+In-Reply-To: <20250710002047.1573841-1-ksk4725@coasia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 12 Jul 2025 21:26:57 +0200
+X-Gm-Features: Ac12FXwfRBs5js5oSquCaRb4DKz10a2pVgF5CqiS_5Na7OWkjOlWh-jR8X6bLJY
+Message-ID: <CACRpkdaxAr8i-AByUsxnBmoSNtEDvik3VFvxAzk525GD=pH97Q@mail.gmail.com>
+Subject: Re: [PATCH 00/16] Add support for the Axis ARTPEC-8 SoC
+To: ksk4725@coasia.com
+Cc: Jesper Nilsson <jesper.nilsson@axis.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Tomasz Figa <tomasz.figa@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, kenkim <kenkim@coasia.com>, 
+	Jongshin Park <pjsin865@coasia.com>, GunWoo Kim <gwk1013@coasia.com>, 
+	HaGyeong Kim <hgkim05@coasia.com>, GyoungBo Min <mingyoungbo@coasia.com>, 
+	SungMin Park <smn1196@coasia.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, 
+	Shradha Todi <shradha.t@samsung.com>, Ravi Patel <ravi.patel@samsung.com>, 
+	Inbaraj E <inbaraj.e@samsung.com>, Swathi K S <swathi.ks@samsung.com>, 
+	Hrishikesh <hrishikesh.d@samsung.com>, Dongjin Yang <dj76.yang@samsung.com>, 
+	Sang Min Kim <hypmean.kim@samsung.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@axis.com, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, soc@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Hakyeong,
 
-Thank you for the report!
+thanks for your patch!
 
-On 06/07/2025 11:22, Purva Yeshi wrote:
-> Fix Smatch-detected error:
-> drivers/block/floppy.c:3569 fd_locked_ioctl() error:
-> uninitialized symbol 'outparam'.
-> 
+On Thu, Jul 10, 2025 at 2:20=E2=80=AFAM <ksk4725@coasia.com> wrote:
 
-This a false-positive diagnostic. Smatch doesn't see the dependency
-between FDGET... commands and _IOC_READ.
+> Add basic support for the Axis ARTPEC-8 SoC.
+> This SoC contains four Cortex-A53 CPUs and other several IPs.
+>
+> Patches 1 to 10 provide the support for the clock controller,
+> which is similar to other Samsung SoCs.
+>
+> The remaining patches provide pinctrl support and
+> initial device tree support.
+>
+> Hakyeong Kim (9):
+>   dt-bindings: clock: Add ARTPEC-8 CMU bindings
+>   clk: samsung: Add clock PLL support for ARTPEC-8 SoC
+>   clk: samsung: artpec-8: Add initial clock support
+>   clk: samsung: artpec-8: Add clock support for CMU_CMU block
+>   clk: samsung: artpec-8: Add clock support for CMU_BUS block
+>   clk: samsung: artpec-8: Add clock support for CMU_CORE block
+>   clk: samsung: artpec-8: Add clock support for CMU_CPUCL block
+>   clk: samsung: artpec-8: Add clock support for CMU_FSYS block
+>   clk: samsung: artpec-8: Add clock support for CMU_PERI block
 
-> Use the outparam pointer only after it is explicitly initialized.
-> Previously, fd_copyout() was called unconditionally after the switch-case
-> statement, assuming outparam would always be set when _IOC_READ was active.
+Out of the 9 patches there are 7 patches related to "CMU" without
+any explanation or even expansion of this acronym.
 
-        if (_IOC_DIR(cmd) & _IOC_READ)
-                return fd_copyout((void __user *)param, outparam, size);
+Camera Management Unit? I think I'm not supposed to
+guess. Is is an Axis-custom piece of hardware? (Would make
+sense.)
 
-and all FDGET... macro are defined as _IOR(...).
+Please expand this acronym and state clearly that (if this
+is a correct assumption) that you are not supplying any
+bindings and even less a driver for the "CMU" thing, just the
+clocks. (That's fine the actual CMU can come later, but
+it should be clear *what* it is.)
 
-> However, not all paths ensured this, which led to potential use of an
-> uninitialized pointer.
-
-Not all paths, but commands that fall under _IOC_READ condition. 
-
-> 
-> Move fd_copyout() calls directly into the relevant case blocks immediately
-> after outparam is set. This ensures it is only called when safe and
-> applicable.
-
-If you want to suppress this "error" you can just initialize outparam
-to NULL.
-
-> 
-> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
-> ---
->  drivers/block/floppy.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-> index e97432032f01..34ef756bb3b7 100644
-> --- a/drivers/block/floppy.c
-> +++ b/drivers/block/floppy.c
-> @@ -3482,6 +3482,7 @@ static int fd_locked_ioctl(struct block_device *bdev, blk_mode_t mode,
->  		memcpy(&inparam.g, outparam,
->  				offsetof(struct floppy_struct, name));
->  		outparam = &inparam.g;
-> +		return fd_copyout((void __user *)param, outparam, size);
->  		break;
->  	case FDMSGON:
->  		drive_params[drive].flags |= FTD_MSG;
-> @@ -3515,6 +3516,7 @@ static int fd_locked_ioctl(struct block_device *bdev, blk_mode_t mode,
->  		return 0;
->  	case FDGETMAXERRS:
->  		outparam = &drive_params[drive].max_errors;
-> +		return fd_copyout((void __user *)param, outparam, size);
->  		break;
->  	case FDSETMAXERRS:
->  		drive_params[drive].max_errors = inparam.max_errors;
-> @@ -3522,6 +3524,7 @@ static int fd_locked_ioctl(struct block_device *bdev, blk_mode_t mode,
->  	case FDGETDRVTYP:
->  		outparam = drive_name(type, drive);
->  		SUPBOUND(size, strlen((const char *)outparam) + 1);
-> +		return fd_copyout((void __user *)param, outparam, size);
->  		break;
->  	case FDSETDRVPRM:
->  		if (!valid_floppy_drive_params(inparam.dp.autodetect,
-> @@ -3531,6 +3534,7 @@ static int fd_locked_ioctl(struct block_device *bdev, blk_mode_t mode,
->  		break;
->  	case FDGETDRVPRM:
->  		outparam = &drive_params[drive];
-> +		return fd_copyout((void __user *)param, outparam, size);
->  		break;
->  	case FDPOLLDRVSTAT:
->  		if (lock_fdc(drive))
-> @@ -3541,17 +3545,20 @@ static int fd_locked_ioctl(struct block_device *bdev, blk_mode_t mode,
->  		fallthrough;
->  	case FDGETDRVSTAT:
->  		outparam = &drive_state[drive];
-> +		return fd_copyout((void __user *)param, outparam, size);
->  		break;
->  	case FDRESET:
->  		return user_reset_fdc(drive, (int)param, true);
->  	case FDGETFDCSTAT:
->  		outparam = &fdc_state[FDC(drive)];
-> +		return fd_copyout((void __user *)param, outparam, size);
->  		break;
->  	case FDWERRORCLR:
->  		memset(&write_errors[drive], 0, sizeof(write_errors[drive]));
->  		return 0;
->  	case FDWERRORGET:
->  		outparam = &write_errors[drive];
-> +		return fd_copyout((void __user *)param, outparam, size);
->  		break;
->  	case FDRAWCMD:
->  		return floppy_raw_cmd_ioctl(type, drive, cmd, (void __user *)param);
-> @@ -3565,9 +3572,6 @@ static int fd_locked_ioctl(struct block_device *bdev, blk_mode_t mode,
->  		return -EINVAL;
->  	}
->  
-> -	if (_IOC_DIR(cmd) & _IOC_READ)
-> -		return fd_copyout((void __user *)param, outparam, size);
-> -
->  	return 0;
->  }
->  
-
-Thanks,
-Denis
-
+Yours,
+Linus Walleij
 
