@@ -1,115 +1,96 @@
-Return-Path: <linux-kernel+bounces-728677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E86BCB02BC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:01:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DDA8B02BC7
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7026C4A63C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:01:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 521193BFAB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109B6288C3E;
-	Sat, 12 Jul 2025 16:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99C22882B2;
+	Sat, 12 Jul 2025 16:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cM8yVtXo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sEjfbmOw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1366815747D;
-	Sat, 12 Jul 2025 16:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070BC15747D;
+	Sat, 12 Jul 2025 16:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752336064; cv=none; b=B9RBAtamnYKhsRISYABrN3LMHG7b7Mjt1NOsdh4ewGdVY2zrW3UpK1FXvJMZ9rf75ED1opDTxmCCIHszPSl3rToe6epxRVHIpDbHwPUyIr5qle6qVuf+E9/fBXTMzHfwBZRfBKoaQAb8NouzoXDDmJERnyiK72YdUdK2sAnlF7I=
+	t=1752336081; cv=none; b=SWD936Y0hPlZMkDJM9CBAHEG21YbdOvs5t8eNQp06N2j9uUSfPBVYovyO+KVzCW52oXdKU0I/ibwaCO4W63o5vboxpMWfqH1bqjODLapLGIWF2W/6jsd6ty8DdOMJNb0uZWug8c6Btx6eiNf0pKDqPkJ2Z0/pUYHk0KIPZIl17k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752336064; c=relaxed/simple;
-	bh=IAsLt5gJX7GimfSXXigvqI3Hksp6cZ5+YGLB7ni1MM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UZKGJi9i+0S6nXa8pFzRYC7yj2+YZcBOIqdq5qojwVxWxVYHQfVBtsU1qENRKhp5KyrRt9/QxZ6vt/jM7Vvb+fXVRkEV3LgOgLiiBd4Ey1++NKBYKmE7xEr4TIjjzcdr7a2ApaDOv32JgediZk6gwYJ8/zGBHmht6ojGtSzdyqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cM8yVtXo; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752336061; x=1783872061;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IAsLt5gJX7GimfSXXigvqI3Hksp6cZ5+YGLB7ni1MM8=;
-  b=cM8yVtXo/e9Lsihnl/GVSfGWJ8aTyR1q3PGVfZxxnb74tMfLoGOiRJCs
-   u582GI96NfKGXlUNRr5m9AD2CUFYcGmn8fWzALS62qGCa3cZzw8oUoVBy
-   A2R5tEJ1MYepRwo2zhkyzUogtRQc6Z2ROthTh1WG79kaeEnmIqDhTDIhv
-   dqdp87mobY1vjWeX6kTGiCX8qKlUOq9tBHn+DAbqOFFnnlZm+B9c+4qQP
-   QRrR5j4iSEF/wbxhgdo/4zjKue5Hk8EjQyf1URaVSPRYa82JR+aUUBQgO
-   qemhJVXKWelMA8uhnhZQ//5KWXWkSvFxjm1qsmrJGgXQsBB5z5Zeal/Aw
-   g==;
-X-CSE-ConnectionGUID: 52TAaQR5TOu38wby3o9GLQ==
-X-CSE-MsgGUID: /+M8nkkBT0GtHySxOR1dnA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="77140612"
-X-IronPort-AV: E=Sophos;i="6.16,306,1744095600"; 
-   d="scan'208";a="77140612"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2025 09:01:00 -0700
-X-CSE-ConnectionGUID: ipkAhyDGQkaPDg2NByqd5w==
-X-CSE-MsgGUID: yzHMuttuTSSa3KuXEPSYxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,306,1744095600"; 
-   d="scan'208";a="160897750"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 12 Jul 2025 09:00:55 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uacej-0007Rn-0B;
-	Sat, 12 Jul 2025 16:00:53 +0000
-Date: Sun, 13 Jul 2025 00:00:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wei Fang <wei.fang@nxp.com>, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, richardcochran@gmail.com,
-	claudiu.manoil@nxp.com, vladimir.oltean@nxp.com,
-	xiaoning.wang@nxp.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, fushi.peng@nxp.com,
-	devicetree@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH net-next 03/12] ptp: netc: add PPS support
-Message-ID: <202507122351.c9ut0TEq-lkp@intel.com>
-References: <20250711065748.250159-4-wei.fang@nxp.com>
+	s=arc-20240116; t=1752336081; c=relaxed/simple;
+	bh=6f3qpOYDQlFpv9m9e57Bcutd5dvqOERVpMkcf8P0EzU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OZfHunEUw49xwHeiQA/PtPfeM2Uajn51pZ1zHrvkFWaWQWHg8f/QxeRKXNEfJIXGyca/7mj0S+zi3INOCGpm3HF3HrobYj/lh9Vvb0n+lbOa3LPq31hz0JYc17w0zzXLrO0XSo8SgdcNQHZ6uhvGgZPUncsWuzCQeORKqhkKJ18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sEjfbmOw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 622B3C4CEEF;
+	Sat, 12 Jul 2025 16:01:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752336080;
+	bh=6f3qpOYDQlFpv9m9e57Bcutd5dvqOERVpMkcf8P0EzU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sEjfbmOwWIkTb9R9ngBOmWN99HmpQ577877gKDlqb4ensOogXVUTrOWwNb5KBqHpv
+	 m/9Z0GJjiV2DVykyhgqMGvzOZ4EiUI7CwgV4cvsCdMFvdaRyckNcu3ojkPrYDMaZ6O
+	 Z00Bw3UGWJMCNDD+D2zuDEKwWYns9I473prLqmur53T1glOtvljrUL0mKe9EkByqok
+	 zPL1HL/gmEwU+bNHoz5ynP8SJ3PIjUXFMpmSk6ed2Xs79pqXaRnKS50T4MKQ+rxWnd
+	 8R3HBbOttJftVwkF9vDLelDDJ2kDnSLX4OlN9UExlViqI3dK/kpbDZxZlT2OQrgVQr
+	 YuTwxBlM8oxrw==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH 0/2] Rust fixes for the upcoming 1.89 release
+Date: Sat, 12 Jul 2025 18:01:01 +0200
+Message-ID: <20250712160103.1244945-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711065748.250159-4-wei.fang@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Wei,
+A couple fixes for the upcoming 1.89.0 release, currently in beta.
 
-kernel test robot noticed the following build errors:
+With this, current nightly (1.90) gets also clean.
 
-[auto build test ERROR on net-next/main]
+Miguel Ojeda (2):
+  objtool/rust: add one more `noreturn` Rust function for Rust 1.89.0
+  rust: use `#[used(compiler)]` to fix build and `modpost` with Rust >=
+    1.89.0
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Fang/dt-bindings-ptp-add-bindings-for-NETC-Timer/20250711-152311
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250711065748.250159-4-wei.fang%40nxp.com
-patch subject: [PATCH net-next 03/12] ptp: netc: add PPS support
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250712/202507122351.c9ut0TEq-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250712/202507122351.c9ut0TEq-lkp@intel.com/reproduce)
+ rust/Makefile           |  1 +
+ rust/kernel/firmware.rs |  2 +-
+ rust/kernel/kunit.rs    |  2 +-
+ rust/kernel/lib.rs      |  3 +++
+ rust/macros/module.rs   | 10 +++++-----
+ scripts/Makefile.build  |  3 ++-
+ tools/objtool/check.c   |  1 +
+ 7 files changed, 14 insertions(+), 8 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507122351.c9ut0TEq-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: ptp_clock_event
-   >>> referenced by ptp_netc.c
-   >>>               drivers/ptp/ptp_netc.o:(netc_timer_isr) in archive vmlinux.a
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+base-commit: fe49aae0fcb348b656bbde2eb1d1c75d8a1a5c3c
+--
+2.50.1
 
