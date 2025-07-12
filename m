@@ -1,138 +1,159 @@
-Return-Path: <linux-kernel+bounces-728514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D495B0292E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 05:42:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EEA2B02931
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 05:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A67A81BC4482
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 03:42:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4014E3AE085
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 03:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D091EFFB4;
-	Sat, 12 Jul 2025 03:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P1YT4k87"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820D01F0E4B;
+	Sat, 12 Jul 2025 03:45:35 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FEF1B95B
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 03:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EDE3FE7
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 03:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752291715; cv=none; b=A2R6cVNTdrNALrU2IgSCNSlR6n8D6AkWT4FYiPvBQcf5SBwv9761J5lknFGkhSjY2MdKdauqw153n5JH/q4YWnN76OP9daBIO38OanvG0x3dBXUtAwCKXaJ1FHVguZG8n5K4gc5GGIrUiivX2UGF3yBA6bbj1LLgBn7Wxh3sbG0=
+	t=1752291935; cv=none; b=hjLe2yXTwUNmQ9erkKKp+ea7esKPQzxfWApYAE9un2I2ZM7/n6U74kQi8Cs3EbQ0uJpXsaaNiybHIZa88GTdk21nNT+ZU7JDXiO0/Fm4D9t5Jtl7047MrpED9Zv+3ggpyeDW3HiObXWZsPgB1yOOFVchPr1uuusgoqId0N+FA9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752291715; c=relaxed/simple;
-	bh=PYtHK6HHk2+ipZs1WMi3j98IKI4SUeUEw+9/OUCS3Ms=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Z1Pe7uCUsXlZTPqDLWzvMKMKeyiGPxhubFyzfggeETijbyKh5OweqyXtbB7rfqpp6GZK3lmALS47DYdgthqeZ1ZeDy35BTvUT+/Zw5mJIL5pQhsAxhFN9JfvUlFvJhfdWHg87hi1XbCG2llL5EmU4NfgDvzznhl0R8iI9kQdlz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P1YT4k87; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752291714; x=1783827714;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=PYtHK6HHk2+ipZs1WMi3j98IKI4SUeUEw+9/OUCS3Ms=;
-  b=P1YT4k87QhkQXuLu8+tmAz44uW9PZ3i2OxwKyrOajS1mG5rUcWSXLIHt
-   BNZa1JCNgtzSXfvEj6vr/l6creTKnU0VaWrzXqr2tqntT4ikpFAsdOs45
-   0HFF4LYvWJ3bL8sIDtJ9GvRAh3QThDzesNGk85ZW1TYZCKcbaARJG05YE
-   JLwtC+18NEa6mvqu0ttyhHN6ijFSb9Jk6oy65wRWeLalil+jIrEWID++p
-   i94XRwiWtPl0LTRps7tpKKYkieWNpdp2d/1cHhEvz5sRQQ+iqsT0Mis+a
-   +s0Er5dy2vs7BFC+tyJCSlcEwiXYLBOBGOclJbEiXpEx6ZH/TvdEedrhU
-   A==;
-X-CSE-ConnectionGUID: QkspaomjQcuDHnFL7QCkEA==
-X-CSE-MsgGUID: RBRyJHiJRqmdRJ4d7SaTvw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="65161948"
-X-IronPort-AV: E=Sophos;i="6.16,305,1744095600"; 
-   d="scan'208";a="65161948"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 20:41:53 -0700
-X-CSE-ConnectionGUID: zav6BZglReamJs4W24KpAw==
-X-CSE-MsgGUID: tquxEl8gTpqbwyqZLNgl5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,305,1744095600"; 
-   d="scan'208";a="162075301"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 11 Jul 2025 20:41:52 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uaR7V-00071z-2C;
-	Sat, 12 Jul 2025 03:41:49 +0000
-Date: Sat, 12 Jul 2025 11:41:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Petr Machata <petrm@nvidia.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>, Ido Schimmel <idosch@nvidia.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	David Ahern <dsahern@kernel.org>
-Subject: include/net/ip_fib.h:539:19: sparse: sparse: cast to non-scalar
-Message-ID: <202507121128.3JqKpsLP-lkp@intel.com>
+	s=arc-20240116; t=1752291935; c=relaxed/simple;
+	bh=3H00AmbBO3nqlxyKAjYAz8hiY2Ebejs1YAQyLRB6kVQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LQoVci0srtXvub66j4d70DrSeJAzzEYR3Q++KFOFyy6olIZ3ta+Jsubh6UYJGBxUQ240KNNvSN/xG42jBIhBUSD2T31Qp1w1VKmgKUL3B9tKtg6RdHF4vvQcGbvgWbrKYdr6/hDCZMJ/TmdUtS+ogXMlgT+PGPwYf36aBTv/0nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-86cf89ff625so259846139f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 20:45:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752291933; x=1752896733;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1CAc8THJhnd+F+AmPMsjA4UJS8W5Ilovs6mltzRCcT8=;
+        b=EnYK9zClliVmZG22z5EdtuB8UQqCko2J90mh50W+lJJj9QtyGLTvN3Y17SFaQ2fq5O
+         SksTCIu2DghJTGm2xqMaIb6ecYKLZuqpPJZ+Y69JN/mWZejU5Us8ZMuYY4ANTyopvDKp
+         +yURkj5kHQpgwdi5cFToOwgzvIbNK38EgBq4uHIF0D+uIGfO30ZREXr6j+dPp+/auoCi
+         uG+bMl2g7DmwN+s/4HZWZi8h6Yjna0R2h2O4eKkw3jVrXe3OcpdzLt35EZ0dXhn5M/CH
+         ltIJFjqAOnKMOLt/93s59o9wLKl1SlPBHALB065KV7XeWmuyvbSF7Qofe0oWCXRH+HRm
+         3Z6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVPBvFbxx3MlnE62wBn2jg2SJc0U4HUr+fMUTZW7ZEbQuE8AUSqkjf8d5g3/OKSVbUEpQHXcmyTA6JEJKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT+qJqvNeh1EU0s7u8TPO2WbM3Y69O29c50noqctixFT2LErQ7
+	meNt0Vn3j5IJbMCjOcEZKbZpvznZ4HQg+dE6/hf4gdaXQbh3K5Ieh9A+SwNj6HH4WC/7z5YSSA9
+	wj2d9Kwn6uYSHs673qjRqM1iUwenP78T5+kHo/5lPWKGZ1oTkM+cyt2sTJMg=
+X-Google-Smtp-Source: AGHT+IGbBJ6q81mzWM1CwB6OMZG4kFC4W8hjq0dwZ43gTDPnlQnsR7C/TBMLWrEG0on8MxnvqmxJV4/MCWMWOXG7fbRDdx4m5Lae
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Received: by 2002:a05:6602:4802:b0:86d:9ec4:effe with SMTP id
+ ca18e2360f4ac-879787e7038mr666135739f.8.1752291932753; Fri, 11 Jul 2025
+ 20:45:32 -0700 (PDT)
+Date: Fri, 11 Jul 2025 20:45:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6871da5c.a00a0220.26a83e.006e.GAE@google.com>
+Subject: [syzbot] [wireless?] UBSAN: array-index-out-of-bounds in
+ ieee80211_request_ibss_scan (2)
+From: syzbot <syzbot+e834e757bd9b3d3e1251@syzkaller.appspotmail.com>
+To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   379f604cc3dc2c865dc2b13d81faa166b6df59ec
-commit: 4ee2a8cace3fb9a34aea6a56426f89d26dd514f3 net: ipv4: Add a sysctl to set multipath hash seed
-date:   1 year, 1 month ago
-config: alpha-randconfig-r132-20250712 (https://download.01.org/0day-ci/archive/20250712/202507121128.3JqKpsLP-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.4.0
-reproduce: (https://download.01.org/0day-ci/archive/20250712/202507121128.3JqKpsLP-lkp@intel.com/reproduce)
+Hello,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507121128.3JqKpsLP-lkp@intel.com/
+syzbot found the following issue on:
 
-sparse warnings: (new ones prefixed by >>)
-   net/ipv6/route.c:2342:39: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int [usertype] flow_label @@     got restricted __be32 @@
-   net/ipv6/route.c:2342:39: sparse:     expected unsigned int [usertype] flow_label
-   net/ipv6/route.c:2342:39: sparse:     got restricted __be32
-   net/ipv6/route.c: note: in included file (through include/linux/mroute_base.h, include/linux/mroute6.h):
->> include/net/ip_fib.h:539:19: sparse: sparse: cast to non-scalar
->> include/net/ip_fib.h:539:19: sparse: sparse: cast from non-scalar
->> include/net/ip_fib.h:539:19: sparse: sparse: cast to non-scalar
->> include/net/ip_fib.h:539:19: sparse: sparse: cast from non-scalar
->> include/net/ip_fib.h:539:19: sparse: sparse: cast to non-scalar
->> include/net/ip_fib.h:539:19: sparse: sparse: cast from non-scalar
->> include/net/ip_fib.h:539:19: sparse: sparse: cast to non-scalar
->> include/net/ip_fib.h:539:19: sparse: sparse: cast from non-scalar
->> include/net/ip_fib.h:539:19: sparse: sparse: cast to non-scalar
->> include/net/ip_fib.h:539:19: sparse: sparse: cast from non-scalar
->> include/net/ip_fib.h:539:19: sparse: sparse: cast to non-scalar
->> include/net/ip_fib.h:539:19: sparse: sparse: cast from non-scalar
+HEAD commit:    47c84997c686 selftests: net: lib: fix shift count out of r..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=16ef60f0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b309c907eaab29da
+dashboard link: https://syzkaller.appspot.com/bug?extid=e834e757bd9b3d3e1251
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-vim +539 include/net/ip_fib.h
+Unfortunately, I don't have any reproducer for this issue yet.
 
-   532	
-   533	static inline u32 fib_multipath_hash_from_keys(const struct net *net,
-   534						       struct flow_keys *keys)
-   535	{
-   536		siphash_aligned_key_t hash_key;
-   537		u32 mp_seed;
-   538	
- > 539		mp_seed = READ_ONCE(net->ipv4.sysctl_fib_multipath_hash_seed).mp_seed;
-   540		fib_multipath_hash_construct_key(&hash_key, mp_seed);
-   541	
-   542		return flow_hash_from_keys_seed(keys, &hash_key);
-   543	}
-   544	#else
-   545	static inline u32 fib_multipath_hash_from_keys(const struct net *net,
-   546						       struct flow_keys *keys)
-   547	{
-   548		return flow_hash_from_keys(keys);
-   549	}
-   550	#endif
-   551	
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/10b34cf37026/disk-47c84997.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/953c1fdde5ac/vmlinux-47c84997.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6f870a400c55/bzImage-47c84997.xz
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e834e757bd9b3d3e1251@syzkaller.appspotmail.com
+
+wlan0: No active IBSS STAs - trying to scan for other IBSS networks with same SSID (merge)
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in net/mac80211/scan.c:1223:5
+index 11 is out of range for type 'struct ieee80211_channel *[] __counted_by(n_channels)' (aka 'struct ieee80211_channel *[]')
+CPU: 1 UID: 0 PID: 49 Comm: kworker/u8:3 Not tainted 6.16.0-rc5-syzkaller-00159-g47c84997c686 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Workqueue: events_unbound cfg80211_wiphy_work
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
+ __ubsan_handle_out_of_bounds+0xe9/0xf0 lib/ubsan.c:455
+ ieee80211_request_ibss_scan+0x600/0x8b0 net/mac80211/scan.c:1223
+ ieee80211_sta_merge_ibss net/mac80211/ibss.c:1283 [inline]
+ ieee80211_ibss_work+0xd85/0x1060 net/mac80211/ibss.c:1665
+ cfg80211_wiphy_work+0x2df/0x460 net/wireless/core.c:435
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+---[ end trace ]---
+Kernel panic - not syncing: UBSAN: panic_on_warn set ...
+CPU: 1 UID: 0 PID: 49 Comm: kworker/u8:3 Not tainted 6.16.0-rc5-syzkaller-00159-g47c84997c686 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Workqueue: events_unbound cfg80211_wiphy_work
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x99/0x250 lib/dump_stack.c:120
+ panic+0x2db/0x790 kernel/panic.c:382
+ check_panic_on_warn+0x89/0xb0 kernel/panic.c:273
+ __ubsan_handle_out_of_bounds+0xe9/0xf0 lib/ubsan.c:455
+ ieee80211_request_ibss_scan+0x600/0x8b0 net/mac80211/scan.c:1223
+ ieee80211_sta_merge_ibss net/mac80211/ibss.c:1283 [inline]
+ ieee80211_ibss_work+0xd85/0x1060 net/mac80211/ibss.c:1665
+ cfg80211_wiphy_work+0x2df/0x460 net/wireless/core.c:435
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
