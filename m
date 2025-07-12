@@ -1,222 +1,194 @@
-Return-Path: <linux-kernel+bounces-728645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC1AFB02B50
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:16:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324D5B02B61
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4D0FA4825E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 14:15:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 822863A7567
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 14:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A335E28AB15;
-	Sat, 12 Jul 2025 14:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBB627C14B;
+	Sat, 12 Jul 2025 14:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JYBcmFye"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hD5aUnbb"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401B427E1C0;
-	Sat, 12 Jul 2025 14:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FC410F9;
+	Sat, 12 Jul 2025 14:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752329626; cv=none; b=ADg0j/huNvh1/OoaSbvNpgyYM5dtPinEL601clkVq0kYWOrRKVnUUYWeUXW0FiLNKeYcoEB3WCjH6qlpkTmXQ+WekLrEPq/aWaYcsuRVHs4dWOFTzg+We6Q2mKaEaIqRUsCZwfkbQcoR4OVik6TUVWMCe+BS08Ji5KbTjxBbzWg=
+	t=1752330065; cv=none; b=AnDbc8VHCN8hZltBy08UJX+pHRSGMk15odOBNjrbXy2KuZNwihUPXvuLPBu3mge+bEHnVLW/2d0LASNnhxAkQ2WzeI2Vq9BuxmlMpi/CSpKdgOwlMGJlkvR+vTPkSdhcWfQAo/rNZBgloV6+DF3r5sT9KtD6vaKMg02lTpY+SEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752329626; c=relaxed/simple;
-	bh=EWZ5P3hK76Z6OvtYAHftlDXYHxIiGpzvT+Filq2kvaI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YPiqwyijXX4kbCiXzLBfrp3YEUkaNiA9L5tgOpqpNkDHt1squZkdAhuv96LGMEvkOV+jy4yfmEh3ArUQXAl6v0KFqO5LiboWcZPGR2/ymESboS9qW0NSV8AOJ4DVtzvdNQXQtEb6L1w4YzhWv9LfOo2B7RpXQ7MD2b/pGc+drb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JYBcmFye; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56C9wska026642;
-	Sat, 12 Jul 2025 14:13:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=0Qp+LtOx7GmPwaZCz
-	tYC+3HTAkC8Ob0pTvDIkziBgsk=; b=JYBcmFyeey5C5PVtBOB5r2LuuaXbkiYLT
-	cELvrXh86tTU1VSltORKs09K8H6zxQOKfHS/cLG+4R+QZ+DNzzMM2gsrsoOma0E1
-	KzI7DTtdnWuNez4aggiYNJ2I45DKSLdEc+CF/jdavU1FjW17eZJsFoKR+o3zF7k0
-	4cVd12psBQDgyVcNN0mFBhdzPjMAP/GiW4Hl/xNfhhcEW0FZIgQwtRqV74NAV4+P
-	tldp5ADgfxF7AZmBLKtB4zmIVT3Ax2aPjgjZEBM+f+w4+OMGU5M0leg/S7Cm/Fzq
-	QLfgSi/xuPC+5VESPJiLoeVYmDWn0/Ghl6HzaM+l8zl88kp7J8dBg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47ue4thv7q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 12 Jul 2025 14:13:37 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56CEDaGs009854;
-	Sat, 12 Jul 2025 14:13:36 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47ue4thv7b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 12 Jul 2025 14:13:36 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56CCZ2xm013555;
-	Sat, 12 Jul 2025 14:13:35 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qgkmf66u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 12 Jul 2025 14:13:35 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56CEDXoE34406746
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 12 Jul 2025 14:13:34 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D966E20043;
-	Sat, 12 Jul 2025 14:13:33 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 70FEB20040;
-	Sat, 12 Jul 2025 14:13:31 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.215.252])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sat, 12 Jul 2025 14:13:31 +0000 (GMT)
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
-        john.g.garry@oracle.com, tytso@mit.edu, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: [PATCH v3 13/13] ext4/064: Add atomic write tests for journal credit calculation
-Date: Sat, 12 Jul 2025 19:42:55 +0530
-Message-ID: <77fb2f74dfce591aed65364984803904da9c1408.1752329098.git.ojaswin@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1752329098.git.ojaswin@linux.ibm.com>
-References: <cover.1752329098.git.ojaswin@linux.ibm.com>
+	s=arc-20240116; t=1752330065; c=relaxed/simple;
+	bh=y5E3q9p8eUcj8rj4/JOP7JsMwx8O/rkbvrasvr6IxVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iT7g3Qv9EFOQcQPrL9dqEjdk/KLnC3NILJwzOpUFSSTtAPKhFJhG0RtqEeiOkamL0MEO8rQoo66KfFcsogSqIND52OK/NWmd/kxfMDBjF+E55V6piX2n4lIcBQ3JlofM3o0dxUsyWhRgM0XkBXWNsY1n6usl7sLiJafNVO8X1tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hD5aUnbb; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ae04d3d63e6so567460866b.2;
+        Sat, 12 Jul 2025 07:21:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752330062; x=1752934862; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BwthC4DCRHqmcbQJTGVY9IQZfs3Qx6vlckt2VSx6Buk=;
+        b=hD5aUnbbU7yPjF5CxddSvSz1fkJqVsHfs2DHpDwcYpKM15/TP0qOCnd8i/nbNpKe/O
+         /n9Bp0j6bKk/KjmgOO70WdYixMOY9PVM261uFdxjquju1dGsuVb5dsJxxPMA8haRqLrf
+         JVr3CZ169d5kPox+BuL5OBEcGD3trFiQ7FvQPF4U5YOamYcdOtDTsSYHCWBcElVPjlAK
+         pdi2AFwRlyf9+k05mdk3j2DvIDs3Zi2IvU6ckE3vBlduC2OHFEopEv4vdKDvfoLeRl5N
+         GrQ4aGXwf0tDEdy/uv0w3LXeGy96X9Elu66r147UAppylHnki7hAu1m4NdGemX8+7NlO
+         KKHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752330062; x=1752934862;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BwthC4DCRHqmcbQJTGVY9IQZfs3Qx6vlckt2VSx6Buk=;
+        b=gEXT11JqntpfbjFxTnQDfU+L7dBc06hl2fRghPZmv3+11FXoUKOjslv5TOe/2ntmWT
+         8eIaFNe6PmmQPCxDjax5DUk4+WAu8Wjodigf9/le5g2m3RJAMF0EkPHzeV1h0eFjWpv1
+         2PRDbMq4fRe5tdEAcn8TnmIzK8JFJyoAN2PUThg1ikwl0Ht98quTKZupzUy4wQDDST7K
+         20x+X7KNXsfL1SctXTRT9KR8iVsyN+Gd8AGe/jl73NTRXOxuf8TNIIyvTPerZUEmR/GY
+         eAiWeM8cnZbl7iMfgadKQIOIWcKZEKjpkxyWzLE2S/nd1NHhObpyGc16GwB5qGMxVIax
+         tTsA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/2rpvDQq6FQQR67BHUPfHKmVO0MeshyMS33LzLMCMTaxd6kZzzroeW9OmFA76xUbW+bE=@vger.kernel.org, AJvYcCUdU8CABIwTc2Po1nqK4cmkllQokd1ukawCWgm4hIOCHAV6IS6akoMooNiPWdZaSSvfEsFR7yvP@vger.kernel.org, AJvYcCWqUUOEWgTbOFCoPq0hDgZ0mHEiEL3EsKjV2ZfYujARG7wJ2EIIFB1X18J6TBrsWHZ5tRtFMj3pQUtfiw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxilYBjJtqYWP7R6LVhTtq2Z/YMLqZmEaS265QyK+nSdjOibC4i
+	MyxwAJPOHN6qLGoGYitzerJUfpoSRNWXiXWyT3bi+fttknb4h91Bs563
+X-Gm-Gg: ASbGncu/qZbn9Gxyt7g1oAYPzUn6keeHlOW07hDc9wvo49Op1ujOutABNm0XT+lPUYH
+	yoVstl5+wbbAByyq8O15IaLvFYIHL/OnPX4eAxfOKNzBg3nzyDfM3EEUyeV1NZnwk2DPWjgTCgg
+	scRwxLB50u0VtJNrRvw1Neq+/UVLRtOxtIIQY9l2hC7YrLc28r8ZF0+oTuguSnKHeL/Y3QORoqb
+	jDkK/L29pQeOEEQH0iDNI9wdSBVxjUSCi5q7BeidRGqGVV44h8mvzLWxrb2oschvjT9eArPnuc0
+	obI+Cfl2o284yML1ZA+gTUTfijjYMBAUtsHl2aFXFhH0iUBHLy5vghqWlGarBrTF8ysk2brptWa
+	opLNRq4RT5ICASLeu9r8vVeDjb32IEZT7j7k=
+X-Google-Smtp-Source: AGHT+IHbC/0Ser4Z6s4ZYpIrEyyuEbBFkHDfb9uN6SgKFey4bLNkJuh1kQ6Ba8KoZ3nNXGHp32sU/Q==
+X-Received: by 2002:a17:906:c10b:b0:ad2:425c:27ce with SMTP id a640c23a62f3a-ae6fbc11865mr730397766b.2.1752330061920;
+        Sat, 12 Jul 2025 07:21:01 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:b2ad])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8294bf2sm485250166b.122.2025.07.12.07.20.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Jul 2025 07:21:01 -0700 (PDT)
+Message-ID: <a21b340d-6d0f-4d39-906e-e983564605ed@gmail.com>
+Date: Sat, 12 Jul 2025 15:22:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=baBrUPPB c=1 sm=1 tr=0 ts=68726d91 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=Wb1JkmetP80A:10 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8 a=s1tx9Ns7CSuJm8OCEucA:9
-X-Proofpoint-GUID: pgtEJvlABbJuumr1DfJgI2bo07qs3x1n
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEyMDEwNyBTYWx0ZWRfXxgm8ylP+urXk qAwz5ANPLBgnCJSpfvxccV+1H64nnIpck/5EzmhHqiQTDlxxq7qyllGj4x4XTlBIVYrWJTuus/i 52ZTDpza3m65DuB+egO2aFgXmaP8zdmTURCNlrKm45qClt1Y1cJXRns5INis+/7LAWY4SHQl+e4
- 8/p1MzBIvIXHjDy122aBSpRMvrMGBIbYVvNW+T/f6m1HkF6F2/ShCJa/5HQTE3Gg4ObuGTyyyer j+YU6gJw7pgdoajEGkNKJ3UOpIYb8IEOmKuVA/2GCn+y0y3kNQdXMG9NKqE9HfSgrJiU2pGFWPB +xC7Ax8LQEqtClIhkQwRQwcXWxyQCHI5L9fnRwy4bL9x2lL9mqGxp1VBg6gSxnOI8YyInHiLVEd
- +AloaB92263am6Ru4y8mvsv7DX1u9O2tvADNn6r7bfhL2tD9PHGG6gB/ndLvmtDrMtGLcguM
-X-Proofpoint-ORIG-GUID: 1XC8Tw3vG4vd7dXU-Fghyt3WBvMrZ3-P
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-12_02,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- suspectscore=0 adultscore=0 impostorscore=0 phishscore=0
- lowpriorityscore=0 priorityscore=1501 clxscore=1015 mlxscore=0
- malwarescore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507120107
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 8/8] mt76: use netmem descriptor and APIs for
+ page pool
+To: Byungchul Park <byungchul@sk.com>, willy@infradead.org,
+ netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
+ ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
+ akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com,
+ andrew+netdev@lunn.ch, toke@redhat.com, tariqt@nvidia.com,
+ edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, leon@kernel.org,
+ ast@kernel.org, daniel@iogearbox.net, david@redhat.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
+ linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com,
+ hannes@cmpxchg.org, ziy@nvidia.com, jackmanb@google.com
+References: <20250710082807.27402-1-byungchul@sk.com>
+ <20250710082807.27402-9-byungchul@sk.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250710082807.27402-9-byungchul@sk.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Test atomic writes with journal credit calculation. We take 2 cases
-here:
+On 7/10/25 09:28, Byungchul Park wrote:
+> To simplify struct page, the effort to separate its own descriptor from
+> struct page is required and the work for page pool is on going.
+> 
+> Use netmem descriptor and APIs for page pool in mt76 code.
+> 
+> Signed-off-by: Byungchul Park <byungchul@sk.com>
+> Reviewed-by: Mina Almasry <almasrymina@google.com>
+> ---
+...>   static inline void mt76_set_tx_blocked(struct mt76_dev *dev, bool blocked)
+> diff --git a/drivers/net/wireless/mediatek/mt76/sdio_txrx.c b/drivers/net/wireless/mediatek/mt76/sdio_txrx.c
+> index 0a927a7313a6..b1d89b6f663d 100644
+> --- a/drivers/net/wireless/mediatek/mt76/sdio_txrx.c
+> +++ b/drivers/net/wireless/mediatek/mt76/sdio_txrx.c
+> @@ -68,14 +68,14 @@ mt76s_build_rx_skb(void *data, int data_len, int buf_len)
+>   
+>   	skb_put_data(skb, data, len);
+>   	if (data_len > len) {
+> -		struct page *page;
+> +		netmem_ref netmem;
+>   
+>   		data += len;
+> -		page = virt_to_head_page(data);
+> -		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
+> -				page, data - page_address(page),
+> -				data_len - len, buf_len);
+> -		get_page(page);
+> +		netmem = virt_to_head_netmem(data);
+> +		skb_add_rx_frag_netmem(skb, skb_shinfo(skb)->nr_frags,
+> +				       netmem, data - netmem_address(netmem),
+> +				       data_len - len, buf_len);
+> +		get_netmem(netmem);
+>   	}
+>   
+>   	return skb;
+> @@ -88,7 +88,7 @@ mt76s_rx_run_queue(struct mt76_dev *dev, enum mt76_rxq_id qid,
+>   	struct mt76_queue *q = &dev->q_rx[qid];
+>   	struct mt76_sdio *sdio = &dev->sdio;
+>   	int len = 0, err, i;
+> -	struct page *page;
+> +	netmem_ref netmem;
+>   	u8 *buf, *end;
+>   
+>   	for (i = 0; i < intr->rx.num[qid]; i++)
+> @@ -100,11 +100,11 @@ mt76s_rx_run_queue(struct mt76_dev *dev, enum mt76_rxq_id qid,
+>   	if (len > sdio->func->cur_blksize)
+>   		len = roundup(len, sdio->func->cur_blksize);
+>   
+> -	page = __dev_alloc_pages(GFP_KERNEL, get_order(len));
+> -	if (!page)
+> +	netmem = page_to_netmem(__dev_alloc_pages(GFP_KERNEL, get_order(len)));
+> +	if (!netmem)
+>   		return -ENOMEM;
+>   
+> -	buf = page_address(page);
+> +	buf = netmem_address(netmem);
 
-1. Atomic writes on single mapping causing tree to collapse into
-   the inode
-2. Atomic writes on mixed mapping causing tree to collapse into the
-   inode
+We shouldn't just blindly convert everything to netmem just for the purpose
+of creating a type casting hell. It's allocating a page, and continues to
+use it as a page, e.g. netmem_address() will fail otherwise. So just leave
+it to be a page, and convert it to netmem and the very last moment when
+the api expects a netmem. There are likely many chunks like that.
 
-This test is inspired by ext4/034.
-
-Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- tests/ext4/064     | 75 ++++++++++++++++++++++++++++++++++++++++++++++
- tests/ext4/064.out |  2 ++
- 2 files changed, 77 insertions(+)
- create mode 100755 tests/ext4/064
- create mode 100644 tests/ext4/064.out
-
-diff --git a/tests/ext4/064 b/tests/ext4/064
-new file mode 100755
-index 00000000..ec31f983
---- /dev/null
-+++ b/tests/ext4/064
-@@ -0,0 +1,75 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
-+#
-+# FS QA Test 034
-+#
-+# Test proper credit reservation is done when performing
-+# tree collapse during an aotmic write based allocation
-+#
-+. ./common/preamble
-+. ./common/atomicwrites
-+_begin_fstest auto quick quota fiemap prealloc atomicwrites
-+
-+# Import common functions.
-+
-+
-+# Modify as appropriate.
-+_exclude_fs ext2
-+_exclude_fs ext3
-+_require_xfs_io_command "falloc"
-+_require_xfs_io_command "fiemap"
-+_require_xfs_io_command "syncfs"
-+_require_scratch_write_atomic_multi_fsblock
-+_require_atomic_write_test_commands
-+
-+echo "----- Testing with atomic write on non-mixed mapping -----" >> $seqres.full
-+
-+echo "Format and mount" >> $seqres.full
-+_scratch_mkfs  > $seqres.full 2>&1
-+_scratch_mount > $seqres.full 2>&1
-+
-+echo "Create the original file" >> $seqres.full
-+touch $SCRATCH_MNT/foobar >> $seqres.full
-+
-+echo "Create 2 level extent tree (btree) for foobar with a unwritten extent" >> $seqres.full
-+$XFS_IO_PROG -f -c "pwrite 0 4k" -c "falloc 4k 4k" -c "pwrite 8k 4k" \
-+	     -c "pwrite 20k 4k"  -c "pwrite 28k 4k" -c "pwrite 36k 4k" \
-+	     -c "fsync" $SCRATCH_MNT/foobar >> $seqres.full
-+
-+$XFS_IO_PROG -c "fiemap -v" $SCRATCH_MNT/foobar >> $seqres.full
-+
-+echo "Convert unwritten extent to written and collapse extent tree to inode" >> $seqres.full
-+$XFS_IO_PROG -dc "pwrite -A -V1 4k 4k" $SCRATCH_MNT/foobar >> $seqres.full
-+
-+echo "Create a new file and do fsync to force a jbd2 commit" >> $seqres.full
-+$XFS_IO_PROG -f -c "pwrite 0 4k" -c "fsync" $SCRATCH_MNT/dummy >> $seqres.full
-+
-+echo "sync $SCRATCH_MNT to writeback" >> $seqres.full
-+$XFS_IO_PROG -c "syncfs" $SCRATCH_MNT >> $seqres.full
-+
-+echo "----- Testing with atomi write on mixed mapping -----" >> $seqres.full
-+
-+echo "Create the original file" >> $seqres.full
-+touch $SCRATCH_MNT/foobar2 >> $seqres.full
-+
-+echo "Create 2 level extent tree (btree) for foobar2 with a unwritten extent" >> $seqres.full
-+$XFS_IO_PROG -f -c "pwrite 0 4k" -c "falloc 4k 4k" -c "pwrite 8k 4k" \
-+	     -c "pwrite 20k 4k"  -c "pwrite 28k 4k" -c "pwrite 36k 4k" \
-+	     -c "fsync" $SCRATCH_MNT/foobar2 >> $seqres.full
-+
-+$XFS_IO_PROG -c "fiemap -v" $SCRATCH_MNT/foobar2 >> $seqres.full
-+
-+echo "Convert unwritten extent to written and collapse extent tree to inode" >> $seqres.full
-+$XFS_IO_PROG -dc "pwrite -A -V1 0k 12k" $SCRATCH_MNT/foobar2 >> $seqres.full
-+
-+echo "Create a new file and do fsync to force a jbd2 commit" >> $seqres.full
-+$XFS_IO_PROG -f -c "pwrite 0 4k" -c "fsync" $SCRATCH_MNT/dummy2 >> $seqres.full
-+
-+echo "sync $SCRATCH_MNT to writeback" >> $seqres.full
-+$XFS_IO_PROG -c "syncfs" $SCRATCH_MNT >> $seqres.full
-+
-+# success, all done
-+echo "Silence is golden"
-+status=0
-+exit
-diff --git a/tests/ext4/064.out b/tests/ext4/064.out
-new file mode 100644
-index 00000000..d9076546
---- /dev/null
-+++ b/tests/ext4/064.out
-@@ -0,0 +1,2 @@
-+QA output created by 064
-+Silence is golden
+>   
+>   	sdio_claim_host(sdio->func);
+>   	err = sdio_readsb(sdio->func, buf, MCR_WRDR(qid), len);
+> @@ -112,7 +112,7 @@ mt76s_rx_run_queue(struct mt76_dev *dev, enum mt76_rxq_id qid,
+>   
+>   	if (err < 0) {
+>   		dev_err(dev->dev, "sdio read data failed:%d\n", err);
+> -		put_page(page);
+> +		put_netmem(netmem);
+>   		return err;
+>   	}
+>   
+> @@ -140,7 +140,7 @@ mt76s_rx_run_queue(struct mt76_dev *dev, enum mt76_rxq_id qid,
+>   		}
+>   		buf += round_up(len + 4, 4);
+>   	}
+> -	put_page(page);
+> +	put_netmem(netmem);
+>   
+>   	spin_lock_bh(&q->lock);
+>   	q->head = (q->head + i) % q->ndesc;
 -- 
-2.49.0
+Pavel Begunkov
 
 
