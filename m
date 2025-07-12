@@ -1,87 +1,132 @@
-Return-Path: <linux-kernel+bounces-728499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF64EB0290F
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 05:06:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 193F8B02911
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 05:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EAEB5419FF
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 03:05:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C6BA1C40332
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 03:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F08717A31E;
-	Sat, 12 Jul 2025 03:06:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D6D1E7C19;
+	Sat, 12 Jul 2025 03:08:50 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5004D2AD0C
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 03:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FC62AD0C;
+	Sat, 12 Jul 2025 03:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752289564; cv=none; b=DFakcus+IeutbAOq5TvcJcX145WATb66a35bYjaeHQkB4ICE+m5kG+t4egrg7sFEZ7nuaM9hQh7jVqSe2VUOswnNyC/izhRNkpqtJkYwxS33puVjkLiK28lC+qjlwxXblG8WQya5IXTumzy1wCmK5sFyti+6byBLIpg7hRbB8pk=
+	t=1752289729; cv=none; b=NyexCINi5KVLwGaeml3GGdloC7uzpOV3es7TfyXXzns1XZ0LH/M90A8ETWkWFy45gUbiEjDXT0r8XW7aJalVBefQ6unIgWy6JQxm8qhrvPlozUN6J3+5qCX13vACqnNwlVvt3Y/11R5oiiJb9g8B2n/JPtnBMvEJY6rzGU8eXOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752289564; c=relaxed/simple;
-	bh=6K8Q3nUxNMXWI6u5X3ooQwJHwXSbU2/zP+mQ4ntCYrM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=IgbyvyqO+iUI1XYb7bk0o38qMt5nUSOn+gX95IlQ/us6W/F3N4cadTQNXCDodupgVjyM5zmsLFVq6bomr1eoVN42Box4f31LauPqqIrNMuUMhVvsPQWSxhPFZhq30Ww4ACTmGv5SkN3qgx6Wd0KkYsf203EebvT/TnlSrakRRKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-8730ca8143eso355960739f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 20:06:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752289562; x=1752894362;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZerS+1Rl07g/SxHtnO7Y6WMrwGicrzVB8pZyK4FA8dg=;
-        b=gmMErPmumxngwuQNtbuxnMg98LPC0/cDG/htFfnFahZeKqYwSGI7VZeKogKWRiiej6
-         5s7WMZOjUjVtZU05ZHWkwbRS9lZaPAl8LM9W1ZdTRZwSEtxS2Mef6qQF/lZ5SNUn3NBa
-         4zVS57Vwlyua7zL6BPfZ9jMMWXtb+Ay5Hvl2whVD2hbUMhkWC9fL+W6fkqUkKmrMBprR
-         9FbUPCDYgpG7Rbqo/nV9SEjFbCmOoFGscRaD0drP8AOEsD36xNI71I5wEmI4LMZcvGPo
-         yyAz1290zZm2ckXj6/db4kteQE87Py33Twzm/T+ZjsveDICYagXwW0wvJU/igq1LBROU
-         hNJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsTjoqveSgn9w5wOiHICYB9eVrKDOpRVC8w0WupVKjMV/Hlq1ziVRpa1QuCfncYXEyGF0floT2vz9tncE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxw0izuqLwZdYDS88czSouR+T5e7WduCbpmaJFRlR8WfNUDbfZ
-	QCRW//qi+Rp+I5XMLouSyjzDcyZOxRRGjhmKufLnYjPZOb08YTdFtr3FTHw2kCY+XUUNwCluMYy
-	LBO9t4u+lVfB4yVNHR2a0Ok/pabrCcuxhIhjdwl4DRpn7ujlng7KvvrSQYcI=
-X-Google-Smtp-Source: AGHT+IFmM52/FBIkY4ZxB4CF2KYP0mqGz+Tq7msl7WUZVaRP46CD9mKlaLECGJK5+lPIo9ut+blFB+tPTo78Vd0ZAbaYiAQze7lN
+	s=arc-20240116; t=1752289729; c=relaxed/simple;
+	bh=xXpsNqrIXAelX9++dafpoeliHQpwtHT+K5FEXp5y6QE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pvzp3aXpbU+UuzcJmegjw5Yi7FGmy/16RfLzqu+xJTtmwD/v1nyXBdSGMIundVnx3SppeIg04o/78Ci5qhSCGfo5tRp3FP+DUKpPE4rdQiPATvNoOC/1Q+GVk5iv13deY5EdY6jKreVGQyWnfo4HhtEDa2h33QTc0fwb5+myLyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 7c48f6a85ecd11f0b29709d653e92f7d-20250712
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:3eb91566-35af-40cd-989e-b43e6266bb63,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:cfdb6a373986939dd1356ddc48538b76,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 7c48f6a85ecd11f0b29709d653e92f7d-20250712
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1090271228; Sat, 12 Jul 2025 11:08:29 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 4D669E008FA3;
+	Sat, 12 Jul 2025 11:08:29 +0800 (CST)
+X-ns-mid: postfix-6871D1AD-10186120
+Received: from localhost.localdomain (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 08630E008FA2;
+	Sat, 12 Jul 2025 11:08:27 +0800 (CST)
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Len Brown <len.brown@intel.com>,
+	Pavel Machek <pavel@kernel.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zihuan Zhang <zhangzihuan@kylinos.cn>
+Subject: [PATCH v1] PM: suspend: clean up redundant filesystems_freeze/thaw handling
+Date: Sat, 12 Jul 2025 11:08:24 +0800
+Message-Id: <20250712030824.81474-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:dc4:b0:3d9:2992:671b with SMTP id
- e9e14a558f8ab-3e244642b0bmr73060895ab.4.1752289562288; Fri, 11 Jul 2025
- 20:06:02 -0700 (PDT)
-Date: Fri, 11 Jul 2025 20:06:02 -0700
-In-Reply-To: <20250712011856.3599-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6871d11a.a00a0220.26a83e.006b.GAE@google.com>
-Subject: Re: [syzbot] [net?] WARNING in rt_set_nexthop
-From: syzbot <syzbot+97bf275720e06ad75f63@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+The recently introduced support for freezing filesystems during system
+suspend included calls to filesystems_freeze() in both suspend_prepare()
+and enter_state(), as well as calls to filesystems_thaw() in both
+suspend_finish() and the Unlock path in enter_state(). These are
+redundant.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+- filesystems_freeze() is already called in suspend_prepare(), which is
+  the proper and consistent place to handle pre-suspend operations. The
+second call in enter_state() is unnecessary and removed.
 
-Reported-by: syzbot+97bf275720e06ad75f63@syzkaller.appspotmail.com
-Tested-by: syzbot+97bf275720e06ad75f63@syzkaller.appspotmail.com
+- filesystems_thaw() is invoked in suspend_finish(), which covers
+  successful suspend/resume paths. In the failure case , we add a call
+to filesystems_thaw() only when needed, avoiding the duplicate call in
+the general Unlock path.
 
-Tested on:
+This change simplifies the suspend code and avoids repeated freeze/thaw
+calls, while preserving correct ordering and behavior.
 
-commit:         379f604c Merge tag 'pci-v6.16-fixes-3' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12a0ae8c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b309c907eaab29da
-dashboard link: https://syzkaller.appspot.com/bug?extid=97bf275720e06ad75f63
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14db2e8c580000
+Fixes: eacfbf74196f91e4c26d9f8c78e1576c1225cd8c ("power: freeze filesyste=
+ms during suspend/resume")
+Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+---
+ kernel/power/suspend.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Note: testing is done by a robot and is best-effort only.
+diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+index bb608b68fb30..8f3e4c48d5cd 100644
+--- a/kernel/power/suspend.c
++++ b/kernel/power/suspend.c
+@@ -384,6 +384,7 @@ static int suspend_prepare(suspend_state_t state)
+ 		return 0;
+=20
+ 	dpm_save_failed_step(SUSPEND_FREEZE);
++	filesystems_thaw();
+ 	pm_notifier_call_chain(PM_POST_SUSPEND);
+  Restore:
+ 	pm_restore_console();
+@@ -593,8 +594,6 @@ static int enter_state(suspend_state_t state)
+ 		ksys_sync_helper();
+ 		trace_suspend_resume(TPS("sync_filesystems"), 0, false);
+ 	}
+-	if (filesystem_freeze_enabled)
+-		filesystems_freeze();
+=20
+ 	pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[state])=
+;
+ 	pm_suspend_clear_flags();
+@@ -614,7 +613,6 @@ static int enter_state(suspend_state_t state)
+ 	pm_pr_dbg("Finishing wakeup.\n");
+ 	suspend_finish();
+  Unlock:
+-	filesystems_thaw();
+ 	mutex_unlock(&system_transition_mutex);
+ 	return error;
+ }
+--=20
+2.25.1
+
 
