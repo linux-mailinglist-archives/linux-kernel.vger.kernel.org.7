@@ -1,129 +1,103 @@
-Return-Path: <linux-kernel+bounces-728516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B702FB02932
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 05:59:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D49B02959
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 06:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 995D41BC5718
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 03:59:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22DE51BC82F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 04:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E211F09B6;
-	Sat, 12 Jul 2025 03:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G5R2ttkF"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364B01F3BA2;
+	Sat, 12 Jul 2025 04:05:43 +0000 (UTC)
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEAB41E8338
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 03:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E441AB672;
+	Sat, 12 Jul 2025 04:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752292734; cv=none; b=A1Zgye3iJxgHTUmyJqrrIYQdLmivJiZC37fDN22EmUto1GX01XXhDnftQWnFvYsE20K7HAx8FrD35t6OJ8msUJzgQj5fOqwk1vnkMTPaZ9fCRgXY4kcwQPXIJ7e7DmFhSar5+DaoXMD22TI4YvP5LQYaxJ4pMUHoox7FDfE2s2U=
+	t=1752293142; cv=none; b=u+T3x8Bkt2dy6en/cJqRBdWuePThAjvgHmmTAHd8YZ5xFEesMDjV/U3u/NHe4w0BDBlFE75yY9Jule2+oDRxx5M+2B8fmwg/o1KOFKTJmwKehiAah8VuNC6xfma4T3Y8rV8VouTiykRz1zue17HnqTcbJBGkR4Ppt0v3l6L7qdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752292734; c=relaxed/simple;
-	bh=ktqPoh9vbiylyKtqbng9114CO3RkQhKV7giUxHpTzhc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V2uB/+70n8wDQmqF+zj+JXUx0rMq/Znzi+JhjzaBnUdudBhu9HvsEMe07g2K7vHhIME4A+omOt2Fiu6yajZFpF3lu1b+JT9N9l2TWl5EREL1dTYxOg2UNqpbLpw0ScKs//gSdOa321EqBDdsVbSxTkzqFhvuc6iunMyiWu6zWdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G5R2ttkF; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-32b78b5aa39so24898361fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 20:58:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752292731; x=1752897531; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ktqPoh9vbiylyKtqbng9114CO3RkQhKV7giUxHpTzhc=;
-        b=G5R2ttkFMEuzMqYWRInfeUbh0DPKxcaLm/C13yKWub4zGNLj5CxZN7966lFZLlLnxp
-         qmN6uC7NsYqnFC6YdRkez0pV7qEnnzg2z+4CKq8401l5qaWoOlMtd/IKrqsHz1h9531N
-         7MFoKh5FVY9ELVAJjX4HH3OHaXVRVo7dL7nFLnOqMwbAlQrgM27jhH1Q0N3b2XQrFQk4
-         suHwpuA1STTGC0G3KkMH8rjoP0FaNy89M3Ch2Tz0hnWhgRgBtN8qTxczqs9/9jDe6ck9
-         En/1cDsg4F/Yqj8C9odWScrLx75zgQ4BIso3Fk/oaK6ZLWmS9riHWBVx/8nTrhrFnusO
-         f2rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752292731; x=1752897531;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ktqPoh9vbiylyKtqbng9114CO3RkQhKV7giUxHpTzhc=;
-        b=XLlejGhoZjREWcTNUw1wxcIxn47t8runj3lVcFK3vbp0ElqgBppRnumm30pB8MZ1+K
-         tvnVbByTq1wBzrZWxJa1Sja0SkJ2IEBYWe+mVWLyMsm1jP3U0Oj0BIjM2xwoFMGGdIgi
-         o6p4U1VDRLyOAT9lAudbHyaz5CtfU4kUK093VPblUdwCsW447BiC5VeBJCvgME8j53Rj
-         xrmYoXU6V1weSWzm6ZnTYRO3TbJuUvzVVTTS56wZom8ON226pwZHip8aWnMJBQEiQg/x
-         CbGl7Mw+9NYr88eDuw5O3NM+fUrFAjPKKPEBp4/vRYkFg1mg49qLIMH9ic4kAJoGGih3
-         h04w==
-X-Gm-Message-State: AOJu0YxOoNjA8Wirrw0UfFA7XUabHSdAx7qF/3nSoCcmROXyk2vdJmeK
-	oynqNj7Qv11l4aSygG1rqF+5IqrfHulM2DmfwLY3KxTBOd37CbSDDAnE2iisF9MnEK893ede8Jm
-	UyF0rd+dEtwF2DtsL+kEQcVCOljeLMX3bmYKx6RU=
-X-Gm-Gg: ASbGnctPX5/DPhDp1CTK69u+d6TPXJTRZWb9UhvfYsqhEBLWxx9wpAZCsfcq91h6BsX
-	QKpcn6lWezk6ltGxWmHoEkYlrF4hdaaAmjRU0FTlsOOqhCSDv0kKEx+A0RynXV9QLK1hFxBdw6f
-	zIJX6jWT2HToyIw0bsihkBM1FAnrG218BoucZCvfLystQe3d+nneb56YMM0VNtUzxcwx87BpGzl
-	Np5+UX11A/6phPOwOsLVXgJsRSbeYq+5iYH
-X-Google-Smtp-Source: AGHT+IHlC/QRznIB4bHVAXsr4H4qwGFX7qdOXx041Tlx8icBtyDfcTwDPiDDqp7+lB0HZ9Dp2ew/xZrE9fB1uA47pCs=
-X-Received: by 2002:a2e:9219:0:b0:32a:7e4c:e915 with SMTP id
- 38308e7fff4ca-3305344f522mr17906851fa.29.1752292730615; Fri, 11 Jul 2025
- 20:58:50 -0700 (PDT)
+	s=arc-20240116; t=1752293142; c=relaxed/simple;
+	bh=CVKX3Mpp0w8zflaFt5fOYFiyIo4h8/FcQe9HvX+VfU8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MqDx/vWNTBiBpBgg5e/dEYPStlwx1A12qznxAOmwPQ28UVtqGIfqVHPJ7s0FUWdCBLdeSdTkU/19gqMQmMML13vtIHDieWw4N12oTU87QDIIgPk6/h9i88L8EmhJsQyjAoobHbz7HhPoXRO6bvEbvCflH+s+i4m4mOc5p2XA2N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [119.122.214.98])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1bc2c329a;
+	Sat, 12 Jul 2025 12:00:26 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: jonas@kwiboo.se
+Cc: amadeus@jmu.edu.cn,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	heiko@sntech.de,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	ziyao@disroot.org
+Subject: Re: [PATCH v2 4/6] arm64: dts: rockchip: Add ArmSoM Sige1
+Date: Sat, 12 Jul 2025 12:00:19 +0800
+Message-Id: <20250712040019.165440-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <acbbf570-7a56-4d88-a631-32acd13d29c7@kwiboo.se>
+References: <acbbf570-7a56-4d88-a631-32acd13d29c7@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707204409.1028494-1-jstultz@google.com> <20250707204409.1028494-7-jstultz@google.com>
- <20250710100206.GI1613376@noisy.programming.kicks-ass.net> <CANDhNCoMvY0s0AyePNouWqxdRpXCYJE=28E_b8RdmJ_2px_OBA@mail.gmail.com>
-In-Reply-To: <CANDhNCoMvY0s0AyePNouWqxdRpXCYJE=28E_b8RdmJ_2px_OBA@mail.gmail.com>
-From: John Stultz <jstultz@google.com>
-Date: Fri, 11 Jul 2025 20:58:38 -0700
-X-Gm-Features: Ac12FXxR8WAx0jNLrQZu4NtB2UHBRxYxxQ6o9FokCoU6-hsFZ4TYbRub1uwNQWM
-Message-ID: <CANDhNCpxU=eLSwv2ViDm7-cGjXryRDXizWm=7rDYWE28c+BjjA@mail.gmail.com>
-Subject: Re: [RESEND][PATCH v18 6/8] sched: Add an initial sketch of the
- find_proxy_task() function
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Qais Yousef <qyousef@layalina.io>, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
-	Xuewen Yan <xuewen.yan94@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Suleiman Souhlal <suleiman@google.com>, 
-	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZH0lCVk8aHRlMQh4fSk5NH1YeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKT1VCQ1lXWRYaDxIVHRRZQVlPS0hVSktJT09PS1VKS0tVS1
+	kG
+X-HM-Tid: 0a97fcca9bd403a2kunm68a720276516be
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mww6Sjo*UTE3DR1IHyMMTB4R
+	DQ8KCTRVSlVKTE5JSUJJQ0lNQk5JVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
+	QlVKSUlVSUpPVUJDWVdZCAFZQUpNQ0w3Bg++
 
-On Thu, Jul 10, 2025 at 5:43=E2=80=AFPM John Stultz <jstultz@google.com> wr=
-ote:
-> On Thu, Jul 10, 2025 at 3:02=E2=80=AFAM Peter Zijlstra <peterz@infradead.=
-org> wrote:
-> > So far what it seems to do is when true, don't block. It still does the
-> > signal thing -- but I can't tell if that is actually required or not.
-...
-> That said, I appreciate you raising the question, as looking at and
-> thinking about it some more, I do see that we should be clearing the
-> blocked_on state when we do set ourselves as runnable in that case,
-> otherwise if we are blocked_on we might get stuck waiting for a wakeup
-> (likely from the lock release).
+Hi,
+
+> > Should this label be named as led-0/led-1?
+
+> The nodes must include 'led' anywhere in their name according to schema:
 >
-> I'll fix that up here.
+> """
+> patternProperties:
+>   # The first form is preferred, but fall back to just 'led' anywhere in the
+>   # node name to at least catch some child nodes.
+>   "(^led-[0-9a-f]$|led)":
+> """
+>
+> Using the color name similar to the the pin labels in schematics made
+> most sense to me.
+>
+> Do you want me to change these to conform to the more restricted
+> ^led-[0-9a-f]$ pattern?
 
-So just FYI, I actually talked myself out of that position last night
-before finishing up and sending out v19. If we are blocked_on, we're
-not going to get back to userland to handle the signal, we're just
-going to wake up, spin through the mutex lock code and head back into
-__schedule(), so clearing the blocked_on state isn't the right answer
-there. Leaving the blocked_on task on the runqueue (even if we set it
-TASK_RUNNABLE) until the blocked_on state is cleared should be fine.
+This will be better.
 
-I did some stress testing, and never actually saw a case where we had
-signals pending and were blocked on, so it seems like a rare corner
-case, and I feel leaving the existing longer-tested behavior is right.
+> I only try to enable controllers for devices that are properly described,
+> so I ignored the pwm-fan and its required pwm6 controller. Mostly
+> because it make more sense to describe the fan once thermal support is
+> completed, work [1] currently being blocked by a rk356x otp series [2]
+> and that depends on a rk3576 thermal series [3].
 
-thanks
--john
+Ok, I got it. Is usb2.0 also stuck?
+
+Thanks,
+Chukun
+
+--
+2.25.1
+
 
