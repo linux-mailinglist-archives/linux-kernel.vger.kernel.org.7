@@ -1,254 +1,233 @@
-Return-Path: <linux-kernel+bounces-728531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48AD4B02993
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:26:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A24D2B02998
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 373121BC86C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 06:26:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFAD64A7A11
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 06:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A61021883C;
-	Sat, 12 Jul 2025 06:26:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58941F37D3;
+	Sat, 12 Jul 2025 06:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="a2SaZx/q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88723FE7
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 06:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20258C11;
+	Sat, 12 Jul 2025 06:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752301564; cv=none; b=tGkyfziOkDDAjsqk8xwsBpU9ka+RR9v1rzNpk6t668xqe9vcaWLjLHY5rFetmrqlYbxZCWO13zS+haneiN8/YCVoqxD8USLiR1wzJsYjR3LuqdwiOCIydNf5zp29SCea1EGsURUuazc3h7XuBT1pncgG2cUAs9mmNb0G21VKObo=
+	t=1752302867; cv=none; b=S+8Z4FbILgbwUzl2OxRgs1uc4s7zPbyMh/cJuBL2acDboYnWrCmSTTWypl2gN9q4KvRYM1u8fZFGvhLi/oqDLbUn0wZS7CY18p3Fu0TgboFvIY8mvjKJ8QlKJFLgEBxzTsfV8JqAqk666yK3BoDmxzgCEKzXXkTvAUZ8qtiMJOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752301564; c=relaxed/simple;
-	bh=d7PBVpiMxt+8YKfLMa8xou5vZwE3bk+hotnQGjLK+kA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gPiTyNLa0Qubw5HUNle8Yk7CU5kSXUa4ul0QMbLFeWBA65+7TNCtKk294ZyRtT44S+B03cNzUQWoqkIaIrVSS1HZziMCnp/cKUgkmzdb6N3idkv44nbIf7zqzXF9C52Vuc2BYiW+c0dUKwDKEeGxLMrP+znER/bhgZdpppPNwQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ddc5137992so28766915ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 23:26:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752301562; x=1752906362;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oUFNXkFWOMSg3KDkC9a5sWKVs4UQ6yGdY0/NlF/gnAc=;
-        b=Sw9uatV/H4fG9ETSd902XHG+BEK5RUumfYx8kltr98PcKw93CCo555fMOkVrf7S/KK
-         hB5QalU5H+vyByeREsz/23DDPu8xO8eY4YXTT9w1vn6pnvxtwDwi5RPQgH1diYgcsPwD
-         bFRZwFeGf0TBiLw5H1D4sL19qN2SvtSzjaRnit2NrXD+dcAqtsQI/0eKyg5PZhfAz2J9
-         wBi4gsHoqtACeCk/UPBaPVWmijiYfFeSb+6pV8pf9SUApQOtNRf8806SQgrqsg9otHLe
-         3WGRZMhKEvOSE2+Hh8qfrSkLgg1NC+EaQxKbeu1R6VhRbR7r1kZgRGxA2Si/6IWJ/2Iu
-         oEjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKnecbiIbYQ1VriT0iSHLsF2LAlyUP1orKJA0pSygNDeqenXMFKOgFw1wKf2NY0sCqmNK3yvY5noT0j4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN4ywOnXciu0pO1JtIv8198V4pCyL5GsNuRTebSzbC3+MQBCPg
-	uzgVUcqGOGs06aQpVVfbhk4J4MRn32Yrso1YXEWoUYhWf6+C2rECsmbPt0K0bki9MehSKuzG/7z
-	Vn5jx8X4R+VNUSGaeq8qDUpzJUXJllm/v3HCETW1kwqP6CX1uK34GjYh5huw=
-X-Google-Smtp-Source: AGHT+IHg1QUN3bjkPRPU6ma/JJ58cioXIOiGe75DcOSMdatTX15JnBAzj/p70EfgA0+wdL1CyAuFSKObR+MrHXNqtN9yd2Qgmkpg
+	s=arc-20240116; t=1752302867; c=relaxed/simple;
+	bh=1fRTenjyUuEj5+LdfZV0G/3BEZBYDJpLugg5BCBP1GA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hZGTcVjqhXt1xArtvBogDTse+IIP/S/z8uJFS5/KYEl2Fg7rrddNNK8g5/kDFIcQ0vUc7xT0oSTn049H5QBdAc5ptpyyFl57hFyuNU2Olh3jO5F3Z2v3Hb0hwUP/O7pr0py9tiY0aXyO4S6/dYYq9fzJ/yRLRVxxEEQNK9DAMWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=a2SaZx/q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6733C4CEEF;
+	Sat, 12 Jul 2025 06:47:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752302866;
+	bh=1fRTenjyUuEj5+LdfZV0G/3BEZBYDJpLugg5BCBP1GA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a2SaZx/qpQZaUVL8y6/fEGLeqaqwQMi6Q9yHKabigGn0EtWUb2P2LO4OKLvqKGnpX
+	 CSJyj6ln5gnyYY9UQuHWuPiB70SAS/2buOvfUXhEwpCp1nPoOJQMLcADIQSTzvhpAU
+	 bkfybmjeg7afBMSNymbPF/e6jbKSKlqgxKtVUb9k=
+Date: Sat, 12 Jul 2025 08:47:42 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Chaitanya Vadrevu <chaitanya.vadrevu@emerson.com>
+Cc: jirislaby@kernel.org, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>,
+	Jason Smith <jason.smith@emerson.com>,
+	Gratian Crisan <gratian.crisan@emerson.com>
+Subject: Re: [PATCH] serial: 8250_ni: Fix build warning
+Message-ID: <2025071206-grip-overblown-bf53@gregkh>
+References: <20250710223838.2657261-1-chaitanya.vadrevu@emerson.com>
+ <2025071102-zombie-disbelief-4c38@gregkh>
+ <991f5fe9-b810-4aef-825c-d0b532584730@emerson.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:154b:b0:3e0:6066:4db3 with SMTP id
- e9e14a558f8ab-3e25414aa7dmr62770485ab.4.1752301561783; Fri, 11 Jul 2025
- 23:26:01 -0700 (PDT)
-Date: Fri, 11 Jul 2025 23:26:01 -0700
-In-Reply-To: <20250712060708.3708-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6871fff9.a00a0220.26a83e.0071.GAE@google.com>
-Subject: Re: [syzbot] [lsm?] [net?] WARNING in kvfree_call_rcu
-From: syzbot <syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <991f5fe9-b810-4aef-825c-d0b532584730@emerson.com>
 
-Hello,
+On Fri, Jul 11, 2025 at 02:27:48PM -0500, Chaitanya Vadrevu wrote:
+> > > Allocate memory on heap instead of stack to fix following warning that
+> > > clang version 20.1.2 produces on W=1 build.
+> > > 
+> > > drivers/tty/serial/8250/8250_ni.c:277:12: warning: stack frame size (1072) exceeds limit (1024) in 'ni16550_probe' [-Wframe-larger-than]
+> > >   277 | static int ni16550_probe(struct platform_device *pdev)
+> > >       |            ^
+> > >   1 warning generated.
+> > > 
+> > > Also, reorder variable declarations to follow reverse Christmas tree
+> > > style.
+> > 
+> > When you say "also", that's usually a hint this should be a separate
+> > patch :(
+> 
+> Sure, I'll split this and send a v2.
+> 
+> > > 
+> > > Reported-by: kernel test robot <lkp@intel.com>
+> > > Closes: https://lore.kernel.org/oe-kbuild-all/202507030557.vIewJJQO-lkp@intel.com/
+> > > Cc: Jason Smith <jason.smith@emerson.com>
+> > > Cc: Gratian Crisan <gratian.crisan@emerson.com>
+> > > Signed-off-by: Chaitanya Vadrevu <chaitanya.vadrevu@emerson.com>
+> > > ---
+> > >  drivers/tty/serial/8250/8250_ni.c | 56 +++++++++++++++++--------------
+> > >  1 file changed, 30 insertions(+), 26 deletions(-)
+> > > 
+> > > diff --git a/drivers/tty/serial/8250/8250_ni.c b/drivers/tty/serial/8250/8250_ni.c
+> > > index b0e44fb00b3a4..cb5b42b3609c9 100644
+> > > --- a/drivers/tty/serial/8250/8250_ni.c
+> > > +++ b/drivers/tty/serial/8250/8250_ni.c
+> > > @@ -275,76 +275,80 @@ static void ni16550_set_mctrl(struct uart_port *port, unsigned int mctrl)
+> > >  
+> > >  static int ni16550_probe(struct platform_device *pdev)
+> > >  {
+> > > +	struct uart_8250_port *uart __free(kfree) = NULL;
+> > >  	const struct ni16550_device_info *info;
+> > >  	struct device *dev = &pdev->dev;
+> > > -	struct uart_8250_port uart = {};
+> > >  	unsigned int txfifosz, rxfifosz;
+> > > -	unsigned int prescaler;
+> > >  	struct ni16550_data *data;
+> > > +	unsigned int prescaler;
+> > >  	const char *portmode;
+> > >  	bool rs232_property;
+> > >  	int ret;
+> > >  
+> > > +	uart = kzalloc(sizeof(*uart), GFP_KERNEL);
+> > > +	if (!uart)
+> > > +		return -ENOMEM;
+> > > +
+> > >  	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> > >  	if (!data)
+> > >  		return -ENOMEM;
+> > >  
+> > > -	spin_lock_init(&uart.port.lock);
+> > > +	spin_lock_init(&uart->port.lock);
+> > >  
+> > > -	ret = ni16550_get_regs(pdev, &uart.port);
+> > > +	ret = ni16550_get_regs(pdev, &uart->port);
+> > >  	if (ret < 0)
+> > >  		return ret;
+> > >  
+> > >  	/* early setup so that serial_in()/serial_out() work */
+> > > -	serial8250_set_defaults(&uart);
+> > > +	serial8250_set_defaults(uart);
+> > >  
+> > >  	info = device_get_match_data(dev);
+> > >  
+> > > -	uart.port.dev		= dev;
+> > > -	uart.port.flags		= UPF_BOOT_AUTOCONF | UPF_FIXED_PORT | UPF_FIXED_TYPE;
+> > > -	uart.port.startup	= ni16550_port_startup;
+> > > -	uart.port.shutdown	= ni16550_port_shutdown;
+> > > +	uart->port.dev		= dev;
+> > > +	uart->port.flags	= UPF_BOOT_AUTOCONF | UPF_FIXED_PORT | UPF_FIXED_TYPE;
+> > > +	uart->port.startup	= ni16550_port_startup;
+> > > +	uart->port.shutdown	= ni16550_port_shutdown;
+> > >  
+> > >  	/*
+> > >  	 * Hardware instantiation of FIFO sizes are held in registers.
+> > >  	 */
+> > > -	txfifosz = ni16550_read_fifo_size(&uart, NI16550_TFS_OFFSET);
+> > > -	rxfifosz = ni16550_read_fifo_size(&uart, NI16550_RFS_OFFSET);
+> > > +	txfifosz = ni16550_read_fifo_size(uart, NI16550_TFS_OFFSET);
+> > > +	rxfifosz = ni16550_read_fifo_size(uart, NI16550_RFS_OFFSET);
+> > >  
+> > >  	dev_dbg(dev, "NI 16550 has TX FIFO size %u, RX FIFO size %u\n",
+> > >  		txfifosz, rxfifosz);
+> > >  
+> > > -	uart.port.type		= PORT_16550A;
+> > > -	uart.port.fifosize	= txfifosz;
+> > > -	uart.tx_loadsz		= txfifosz;
+> > > -	uart.fcr		= UART_FCR_ENABLE_FIFO | UART_FCR_R_TRIG_10;
+> > > -	uart.capabilities	= UART_CAP_FIFO | UART_CAP_AFE | UART_CAP_EFR;
+> > > +	uart->port.type		= PORT_16550A;
+> > > +	uart->port.fifosize	= txfifosz;
+> > > +	uart->tx_loadsz		= txfifosz;
+> > > +	uart->fcr		= UART_FCR_ENABLE_FIFO | UART_FCR_R_TRIG_10;
+> > > +	uart->capabilities	= UART_CAP_FIFO | UART_CAP_AFE | UART_CAP_EFR;
+> > >  
+> > >  	/*
+> > >  	 * Declaration of the base clock frequency can come from one of:
+> > >  	 * - static declaration in this driver (for older ACPI IDs)
+> > >  	 * - a "clock-frequency" ACPI
+> > >  	 */
+> > > -	uart.port.uartclk = info->uartclk;
+> > > +	uart->port.uartclk = info->uartclk;
+> > >  
+> > > -	ret = uart_read_port_properties(&uart.port);
+> > > +	ret = uart_read_port_properties(&uart->port);
+> > >  	if (ret)
+> > >  		return ret;
+> > >  
+> > > -	if (!uart.port.uartclk) {
+> > > +	if (!uart->port.uartclk) {
+> > >  		data->clk = devm_clk_get_enabled(dev, NULL);
+> > >  		if (!IS_ERR(data->clk))
+> > > -			uart.port.uartclk = clk_get_rate(data->clk);
+> > > +			uart->port.uartclk = clk_get_rate(data->clk);
+> > >  	}
+> > >  
+> > > -	if (!uart.port.uartclk)
+> > > +	if (!uart->port.uartclk)
+> > >  		return dev_err_probe(dev, -ENODEV, "unable to determine clock frequency!\n");
+> > >  
+> > >  	prescaler = info->prescaler;
+> > >  	device_property_read_u32(dev, "clock-prescaler", &prescaler);
+> > >  	if (prescaler) {
+> > > -		uart.port.set_mctrl = ni16550_set_mctrl;
+> > > -		ni16550_config_prescaler(&uart, (u8)prescaler);
+> > > +		uart->port.set_mctrl = ni16550_set_mctrl;
+> > > +		ni16550_config_prescaler(uart, (u8)prescaler);
+> > >  	}
+> > >  
+> > >  	/*
+> > > @@ -362,7 +366,7 @@ static int ni16550_probe(struct platform_device *pdev)
+> > >  		dev_dbg(dev, "port is in %s mode (via device property)\n",
+> > >  			rs232_property ? "RS-232" : "RS-485");
+> > >  	} else if (info->flags & NI_HAS_PMR) {
+> > > -		rs232_property = is_pmr_rs232_mode(&uart);
+> > > +		rs232_property = is_pmr_rs232_mode(uart);
+> > >  
+> > >  		dev_dbg(dev, "port is in %s mode (via PMR)\n",
+> > >  			rs232_property ? "RS-232" : "RS-485");
+> > > @@ -377,10 +381,10 @@ static int ni16550_probe(struct platform_device *pdev)
+> > >  		 * Neither the 'transceiver' property nor the PMR indicate
+> > >  		 * that this is an RS-232 port, so it must be an RS-485 one.
+> > >  		 */
+> > > -		ni16550_rs485_setup(&uart.port);
+> > > +		ni16550_rs485_setup(&uart->port);
+> > >  	}
+> > >  
+> > > -	ret = serial8250_register_8250_port(&uart);
+> > > +	ret = serial8250_register_8250_port(uart);
+> > 
+> > So uart is freed after this and that's ok?  Are you sure?
+> 
+> Before this patch, uart was defined on stack where it would also be
+> freed at the end of the function.
+> I see similar pattern being used in other 8250 drivers where they also
+> define uart_8250_port on stack. So, I don't believe this is an issue.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in kvfree_call_rcu
+Ah, you are right, sorry, I always get that one wrong.  I'll just take
+this as-is, no need to redo it.
 
-------------[ cut here ]------------
-ODEBUG: activate active (active state 1) object: 00000000ada2d914 object type: rcu_head hint: 0x0
-WARNING: CPU: 1 PID: 7447 at lib/debugobjects.c:615 debug_print_object lib/debugobjects.c:612 [inline]
-WARNING: CPU: 1 PID: 7447 at lib/debugobjects.c:615 debug_object_activate+0x344/0x460 lib/debugobjects.c:842
-Modules linked in:
-CPU: 1 UID: 0 PID: 7447 Comm: syz.0.17 Not tainted 6.16.0-rc5-syzkaller-00067-gec4801305969-dirty #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : debug_print_object lib/debugobjects.c:612 [inline]
-pc : debug_object_activate+0x344/0x460 lib/debugobjects.c:842
-lr : debug_print_object lib/debugobjects.c:612 [inline]
-lr : debug_object_activate+0x344/0x460 lib/debugobjects.c:842
-sp : ffff80009eae76d0
-x29: ffff80009eae76d0 x28: ffff8000976d8000 x27: dfff800000000000
-x26: ffff80008afc2440 x25: 0000000000000001 x24: ffff8000891ac400
-x23: 0000000000000003 x22: ffff80008b5399e0 x21: 0000000000000000
-x20: ffff80008afc2440 x19: ffff8000891ac400 x18: 00000000ffffffff
-x17: 3139643261646130 x16: ffff80008aefc4d8 x15: 0000000000000001
-x14: 1fffe000337d88e2 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff6000337d88e3 x10: 0000000000ff0100 x9 : 6fba38ddc1acd700
-x8 : 6fba38ddc1acd700 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff80009eae7018 x4 : ffff80008f766be0 x3 : ffff8000807bcfac
-x2 : 0000000000000001 x1 : 0000000100000202 x0 : 0000000000000000
-Call trace:
- debug_print_object lib/debugobjects.c:612 [inline] (P)
- debug_object_activate+0x344/0x460 lib/debugobjects.c:842 (P)
- debug_rcu_head_queue kernel/rcu/rcu.h:236 [inline]
- kvfree_call_rcu+0x4c/0x3f0 mm/slab_common.c:1953
- cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
- netlbl_sock_setattr+0x250/0x350 net/netlabel/netlabel_kapi.c:1002
- smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
- smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
- security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
- __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
- __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
- vfs_setxattr+0x158/0x2ac fs/xattr.c:321
- do_setxattr fs/xattr.c:636 [inline]
- file_setxattr+0x1b8/0x294 fs/xattr.c:646
- path_setxattrat+0x2ac/0x320 fs/xattr.c:711
- __do_sys_fsetxattr fs/xattr.c:761 [inline]
- __se_sys_fsetxattr fs/xattr.c:758 [inline]
- __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 199
-hardirqs last  enabled at (198): [<ffff800080554800>] __up_console_sem kernel/printk/printk.c:344 [inline]
-hardirqs last  enabled at (198): [<ffff800080554800>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
-hardirqs last disabled at (199): [<ffff80008aef6ea4>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
-softirqs last  enabled at (132): [<ffff800089198d40>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
-softirqs last  enabled at (132): [<ffff800089198d40>] release_sock+0x14c/0x1ac net/core/sock.c:3776
-softirqs last disabled at (170): [<ffff800082c87490>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-ODEBUG: active_state active (active state 1) object: 00000000ada2d914 object type: rcu_head hint: 0x0
-WARNING: CPU: 1 PID: 7447 at lib/debugobjects.c:615 debug_print_object lib/debugobjects.c:612 [inline]
-WARNING: CPU: 1 PID: 7447 at lib/debugobjects.c:615 debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
-Modules linked in:
-CPU: 1 UID: 0 PID: 7447 Comm: syz.0.17 Tainted: G        W           6.16.0-rc5-syzkaller-00067-gec4801305969-dirty #0 PREEMPT 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : debug_print_object lib/debugobjects.c:612 [inline]
-pc : debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
-lr : debug_print_object lib/debugobjects.c:612 [inline]
-lr : debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
-sp : ffff80009eae76c0
-x29: ffff80009eae76d0 x28: ffff80008f671000 x27: dfff800000000000
-x26: 0000000000000003 x25: 0000000000000000 x24: ffff0000d809d380
-x23: 0000000000000001 x22: ffff80008afc2440 x21: ffff80008b5399e0
-x20: 0000000000000000 x19: ffff8000891ac400 x18: 00000000ffffffff
-x17: 6164613030303030 x16: ffff80008ae63d88 x15: ffff700011ede144
-x14: 1ffff00011ede144 x13: 0000000000000004 x12: ffffffffffffffff
-x11: ffff700011ede144 x10: 0000000000ff0100 x9 : 6fba38ddc1acd700
-x8 : 6fba38ddc1acd700 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff80009eae7018 x4 : ffff80008f766be0 x3 : ffff80008054d314
-x2 : 0000000000000000 x1 : 0000000000000202 x0 : 0000000000000000
-Call trace:
- debug_print_object lib/debugobjects.c:612 [inline] (P)
- debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064 (P)
- debug_rcu_head_queue kernel/rcu/rcu.h:237 [inline]
- kvfree_call_rcu+0x64/0x3f0 mm/slab_common.c:1953
- cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
- netlbl_sock_setattr+0x250/0x350 net/netlabel/netlabel_kapi.c:1002
- smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
- smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
- security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
- __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
- __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
- vfs_setxattr+0x158/0x2ac fs/xattr.c:321
- do_setxattr fs/xattr.c:636 [inline]
- file_setxattr+0x1b8/0x294 fs/xattr.c:646
- path_setxattrat+0x2ac/0x320 fs/xattr.c:711
- __do_sys_fsetxattr fs/xattr.c:761 [inline]
- __se_sys_fsetxattr fs/xattr.c:758 [inline]
- __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 227
-hardirqs last  enabled at (226): [<ffff800080554800>] __up_console_sem kernel/printk/printk.c:344 [inline]
-hardirqs last  enabled at (226): [<ffff800080554800>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
-hardirqs last disabled at (227): [<ffff80008aef6ea4>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
-softirqs last  enabled at (132): [<ffff800089198d40>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
-softirqs last  enabled at (132): [<ffff800089198d40>] release_sock+0x14c/0x1ac net/core/sock.c:3776
-softirqs last disabled at (170): [<ffff800082c87490>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-kvfree_call_rcu(): Double-freed call. rcu_head 00000000ada2d914
-WARNING: CPU: 1 PID: 7447 at mm/slab_common.c:1956 kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
-Modules linked in:
-CPU: 1 UID: 0 PID: 7447 Comm: syz.0.17 Tainted: G        W           6.16.0-rc5-syzkaller-00067-gec4801305969-dirty #0 PREEMPT 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
-lr : kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
-sp : ffff80009eae7730
-x29: ffff80009eae7730 x28: 00000000fffffff5 x27: 1fffe00018c0cce3
-x26: dfff800000000000 x25: ffff0000c606671e x24: ffff0000c148f800
-x23: ffff8000891ac400 x22: 00000000ffffffea x21: ffff8000891ac400
-x20: ffff8000891ac400 x19: ffff80008afc2440 x18: 00000000ffffffff
-x17: 0000000000000000 x16: ffff80008ae63d88 x15: ffff700011ede144
-x14: 1ffff00011ede144 x13: 0000000000000004 x12: ffffffffffffffff
-x11: ffff700011ede144 x10: 0000000000ff0100 x9 : 6fba38ddc1acd700
-x8 : 6fba38ddc1acd700 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff80009eae7078 x4 : ffff80008f766be0 x3 : ffff80008054d314
-x2 : 0000000000000000 x1 : 0000000000000202 x0 : 0000000000000000
-Call trace:
- kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955 (P)
- cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
- netlbl_sock_setattr+0x250/0x350 net/netlabel/netlabel_kapi.c:1002
- smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
- smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
- security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
- __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
- __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
- vfs_setxattr+0x158/0x2ac fs/xattr.c:321
- do_setxattr fs/xattr.c:636 [inline]
- file_setxattr+0x1b8/0x294 fs/xattr.c:646
- path_setxattrat+0x2ac/0x320 fs/xattr.c:711
- __do_sys_fsetxattr fs/xattr.c:761 [inline]
- __se_sys_fsetxattr fs/xattr.c:758 [inline]
- __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 253
-hardirqs last  enabled at (252): [<ffff800080554800>] __up_console_sem kernel/printk/printk.c:344 [inline]
-hardirqs last  enabled at (252): [<ffff800080554800>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
-hardirqs last disabled at (253): [<ffff80008aef6ea4>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
-softirqs last  enabled at (132): [<ffff800089198d40>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
-softirqs last  enabled at (132): [<ffff800089198d40>] release_sock+0x14c/0x1ac net/core/sock.c:3776
-softirqs last disabled at (170): [<ffff800082c87490>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
+Also, if other drivers put this on the stack, they should get the same
+fixup as well.
 
+thanks,
 
-Tested on:
-
-commit:         ec480130 Merge branches 'for-next/core' and 'for-next/..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=16417bd4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9e99b6fcd403d050
-dashboard link: https://syzkaller.appspot.com/bug?extid=40bf00346c3fe40f90f2
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=120dad82580000
-
+greg k-h
 
