@@ -1,174 +1,155 @@
-Return-Path: <linux-kernel+bounces-728568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28DF8B02A1C
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:29:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F421B02A1D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 978667BC593
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:28:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07C871BC37F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91C626B77B;
-	Sat, 12 Jul 2025 08:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9217326B956;
+	Sat, 12 Jul 2025 08:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QxjBjYpX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OIYpowoK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C7826B775;
-	Sat, 12 Jul 2025 08:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E753226B778;
+	Sat, 12 Jul 2025 08:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752308975; cv=none; b=Aq08wC8Ku8guTPgDDtB22L01+ckwp66HjIhkMn/zsVZzYjHUSEtriA40fKyHX4ON5UP6NWYdzfxw2f8T3yVYb7yzoDxCvHxCQZzxpeWGQCacXoSJzpgtGp1Pnsl++r1QTgA4n1qaKEI3DjwmbQdfFLbUb7Kus/3zbERyKzmxmB8=
+	t=1752308989; cv=none; b=R18ZQzNH4Iv/BaD+2OLFjQ9WyLxHzP6SthsW7Jy3FMx6WJ4dwweN/+ShZvGC5eQ8EAARu5t2TPCjlbb7afQ40LofQKQZSWHb0QNjWzBg9JT8lQIcdmq7HIbcfKdg8fJEO4BMcXIwpwDjKGEtkTyu0Zxrwc9d4jz1rzzBMXj5QU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752308975; c=relaxed/simple;
-	bh=fY3DMvLhSnZgbH49QN8fZgcCcB8eBslJ0093fZ1HZZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hFZNJDi867qookYSxqOqlBZ2TnvKy2faJJ1zKBLTuRl66CVMNBk3LCjSCNvKt+R0huEzcfctiW0qznpqBiJ/7E87ptCf6FSg9aXF0W/gPBCRdODXhniA97CN/uSXCej+CW+KKzN5TDs0OT5/h71T8XDALP2iI6ykXsZEXlzBHw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QxjBjYpX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84636C4CEEF;
-	Sat, 12 Jul 2025 08:29:31 +0000 (UTC)
+	s=arc-20240116; t=1752308989; c=relaxed/simple;
+	bh=p0Zjo5EZWS22IGrMdAf7IdQcfsbZb3ViCzqNIS8/cF4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RPMU22+X1HOpS9CSVkkgA2qooukHvzSgIq00WMyftbFoLXOdfiVU8+CFhL2F/WvPRLBvpm25RKFXqxk+7YMif44E4XViRD9E/HcAa3w5coYn0n7XvkBP6RHI2E2uiEPGBmd4L5n83AGjmpOxbpB+uYZmvgNWyQ1vx0Vv747nRyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OIYpowoK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45E7AC4CEEF;
+	Sat, 12 Jul 2025 08:29:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752308974;
-	bh=fY3DMvLhSnZgbH49QN8fZgcCcB8eBslJ0093fZ1HZZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QxjBjYpXmIg+Q5/Y7IU5jmnEe6ZC2gf/oyR8UfDAYKFzRlq10yOpHkUyoYyMG4Rgs
-	 ae7T2cDUGj/jjxSBFT0ROmbrOoox1EJodOeQooydSod4ruC+E0ODuVaaf7W/0rSnFt
-	 vmorSbzvI1wYaMQQ7BKt5OlTP4qG6GVhJb5rFJlXKDeayGrAip15cVo/6n9paDfPkp
-	 45trZjaH71iHpUFMiJbS+w6bcX0AAXuqcngcsov34ovXtTBVIm3OdGFXTtCvbAMcwX
-	 JsS0Oj7ZcBE5lNhoXxFz1GMnDCgbC6zkDJUzhsRab1nQJp9CAETX/umH0yHqRDQ5z1
-	 W2htCUkGBiRCQ==
-Date: Sat, 12 Jul 2025 13:59:26 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Subject: Re: [PATCH RFC 2/3] PCI/pwrctrl: Allow pwrctrl core to control
- PERST# GPIO if available
-Message-ID: <k5rf5azftn4mpztcjtvdxiligngmaz7fecdryv244m726y5rfd@mobway4c4ueh>
-References: <20250707-pci-pwrctrl-perst-v1-0-c3c7e513e312@kernel.org>
- <20250707-pci-pwrctrl-perst-v1-2-c3c7e513e312@kernel.org>
- <aHGueAD70abjw8D_@google.com>
+	s=k20201202; t=1752308988;
+	bh=p0Zjo5EZWS22IGrMdAf7IdQcfsbZb3ViCzqNIS8/cF4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OIYpowoKpAjlP4sPVyrS9D1zcn64G33nweiDygcMg7flXF1Ew5PsxRvKiqM+jaCm7
+	 1w+h2v/nn8sl/yzTTjYbqt5H+a27UY5gkjAivyPRK8BTEiU8WfxD0YRn9OBkwtN2Ja
+	 x3rLSevjd/EOhEgC0P/T9BfMgg5Rd3aQde0LtGZGDSvr4NlJA6uANWNvn9smcLCre4
+	 HItTKZDg9WoLl8+8YItF2gI/WMdSDVj7k+CQvSP+xkn2uI41JFodjfknfjQL0Hd6Mr
+	 j7+uZK9D+usGryv/1ehVXWVbDcub1bDjXrRkSyXSrb06gAXx6uxw7bkUltMBNoqF7o
+	 VISuv32PSfJbQ==
+Message-ID: <93f7f1b7-8c04-4d0e-9e41-6127651bdca4@kernel.org>
+Date: Sat, 12 Jul 2025 10:29:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aHGueAD70abjw8D_@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: mmc: ti,da830-mmc: convert text based
+ binding to json schema
+To: Charan Pedumuru <charan.pedumuru@gmail.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250523-davinci-mmc-v1-1-ceebd8352d9c@gmail.com>
+ <1c7e9077-c213-40a9-92f4-07e813a3d151@kernel.org>
+ <5d746239-83d2-4316-82e9-4e7ae4f3422e@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <5d746239-83d2-4316-82e9-4e7ae4f3422e@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 11, 2025 at 05:38:16PM GMT, Brian Norris wrote:
-> Sorry for so many individual reviews, but I've passed over this a few
-> times and had new questions/comments several times:
+On 12/07/2025 10:22, Charan Pedumuru wrote:
+>>> +
+>>> +allOf:
+>>> +  - $ref: mmc-controller.yaml
+>>> +
+>>> +maintainers:
+>>> +  - Rob Herring <robh@kernel.org>
+>>
+>> No, I really doubt Rob cares about this hardware.
 > 
+> I will remove Rob from maintainers and add Ulf under the maintainers.
 
-That's fine. I'm happy to answer as someone other than me is interested in
-pwrctrl :)
+This should be someone responsible for this hardware, not subsystem
+maintainer.
 
-> On Mon, Jul 07, 2025 at 11:48:39PM +0530, Manivannan Sadhasivam wrote:
-> > PERST# is an (optional) auxiliary signal provided by the PCIe host to
-> > components for signalling 'Fundamental Reset' as per the PCIe spec r6.0,
-> > sec 6.6.1.
 > 
-> >  void pci_pwrctrl_init(struct pci_pwrctrl *pwrctrl, struct device *dev)
-> >  {
-> > +	struct pci_host_bridge *host_bridge = to_pci_host_bridge(dev->parent);
-> > +	int devfn;
-> > +
-> >  	pwrctrl->dev = dev;
-> >  	INIT_WORK(&pwrctrl->work, rescan_work_func);
-> > +
-> > +	if (!host_bridge->perst)
-> > +		return;
-> > +
-> > +	devfn = of_pci_get_devfn(dev_of_node(dev));
-> > +	if (devfn >= 0 && host_bridge->perst[PCI_SLOT(devfn)])
+>>
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - ti,da830-mmc
+>>> +      - ti,dm355-mmc
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  clocks:
+>>> +    maxItems: 1
+>>> +
+>>> +  interrupts:
+>>> +    maxItems: 2
+>>> +
+>>
+>> This wasn't in original binding. You need to document this in the commit
+>> msg. Also, list the items.
 > 
-> This seems to imply a 1:1 correlation between slots and pwrctrl devices,
-> almost as if you expect everyone is using drivers/pci/pwrctrl/slot.c.
-> But there is also endpoint-specific pwrctrl support, and there's quite
-> a bit of flexibility around what these hierarchies can look like.
-> 
-> How do you account for that?
-> 
-> For example, couldn't you have both a "port" and an "endpoint" pwrctrl? Would
-> they both grab the same PERST# GPIO here? And might that incur excessive
-> resets, possibly even clobbering each other?
-> 
+> Sure, but what list of items for interrupts?
 
-If both port and endpoint nodes are present, then only one will contain
-'reset-gpios'. Right now, the DT binding only supports PERST#, WAKE#, CLKREQ#
-properties in RP node, but that won't work if we have multiple lines per slot/
-controller. Ideally, we would want the properties to be present in endpoint node
-if available. But if we have only standard expansion slots, then it makes sense
-to define them in the port node. But doing so, we can only expect the slot to
-have only one instance of these properties as we cannot reliably map which
-property corresponds to the endpoint.
+List as a verb. You need to list them.
 
-I've opened a dtschema issue for this:
-https://github.com/devicetree-org/dt-schema/issues/168
 
-This is what I have in my mind:
-
-1) For expansion slots:
-
-pcie_port0{
-	device_type = "pci";
-	reg = <0x0 0x0 0x0 0x0 0x0>;
-	bus-range = <0x01 0xff>
-
-	reset-gpios = <>;
-	wake-gpios = <>;
-};
-
-2) For endpoint nodes:
-
-pcie_port0{
-	device_type = "pci";
-	reg = <0x0 0x0 0x0 0x0 0x0>;
-	bus-range = <0x01 0xff>
-
-	pcie@0 {
-		reg = <0x10000 0x0 0x0 0x0 0x0>;
-		reset-gpios = <>;
-		wake-gpios = <>;
-	};
-
-	pcie@1 {
-		reg = <0x10800 0x0 0x0 0x0 0x0>;
-		reset-gpios = <>;
-		wake-gpios = <>;
-	};
-
-	...
-};
-
-I don't think there is any usecase to have both slot and endpoint nodes defining
-these properties.
-
-But for your initial question on what if the platform doesn't define any supply
-and uses non-GPIO based PERST#/WAKE#/CLKREQ#, I don't know how to let PCI core
-create the pwrctrl device. This is something we need to brainstorm.
-
-> Or what if multiple slots are governed by a single GPIO? Do you expect
-> the bridge perst[] array to contain redundant GPIOs?
-> 
-
-It is common for devices within a slot/hierarchy to share these GPIOs (with some
-drawbacks), but I'm not sure how all slots can share a single GPIO. That would
-mean, if the host wants to reset one endpoint in a slot, it has to reset all the
-endpoints connected to all slots. Sounds like a bizarre design to me.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Best regards,
+Krzysztof
 
