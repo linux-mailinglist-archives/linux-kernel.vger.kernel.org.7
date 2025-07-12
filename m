@@ -1,180 +1,196 @@
-Return-Path: <linux-kernel+bounces-728827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2CB0B02D84
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 01:18:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93FADB02D89
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 01:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC2A3189EE48
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 23:18:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8BB217B35B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 23:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C162B230268;
-	Sat, 12 Jul 2025 23:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B86231825;
+	Sat, 12 Jul 2025 23:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LTgbB66i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtSyUuf/"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100BE19DF60;
-	Sat, 12 Jul 2025 23:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D1B1F560B;
+	Sat, 12 Jul 2025 23:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752362294; cv=none; b=JyVl5UbdLaGXiPhvQx/YhnpTqUog1B192PkMb+nPAkS2PUN8zADzA1h7uPExA2mG9IxAY2/7bBsClNePUMgpBZZFo3nLPbzdcgQPM5/wgL6a/05H/p9NqsjJKy+Y1enOXpjOkKYz4VLAe1hgto/wmQ5oqnkvUF0zMiUFVLmPfPE=
+	t=1752362426; cv=none; b=hGfMU9p8bsD4skAR7W+jcbNFB43m1wVOoAdOdstYcgvEilgUtUA5qAUKJyJWg0W7kAq9U7SgbyX8Q96aZFLdb1snKQsvugW8XLvA5yRSqaJz0miCllNWS5NU4p0o5G7uuaUjcoskSzKpnkKm/JzMKq2rp8jLVYSutBz5drO1R6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752362294; c=relaxed/simple;
-	bh=r1SaOoZt7FzQ6Gt3JS5iJQ6793PbUaiJfuBYkJxxFwA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=q4+wR4F2EJOB86Ib7qqrwFH5kfRzc8dmWjoKuMA3jDgN6pkXDbTlubetvucdA7BDJLH7ocd7qG672yub+mEfj3cAigM0uGHy4x8eEL7hYZ4IJJHJvzXOnUtFhDTJskFl/GsCw3M3bggblPjTAsu5kXh9ibfjOvEmHTV4GzZGjAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LTgbB66i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE2A0C4CEEF;
-	Sat, 12 Jul 2025 23:18:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752362293;
-	bh=r1SaOoZt7FzQ6Gt3JS5iJQ6793PbUaiJfuBYkJxxFwA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LTgbB66iEBsXt7LbwFWnZ5SrXdHATRRE/wAIRhpWOc7hY4A6j/AAzkXGD/iY7PeE2
-	 DpZafWDJXTdOoZYOesNQG7sbzBz0CPDtv/I7xpjDCyfIkSrVpVfaxM2DQz5JF+aGkE
-	 0LH2vBVN4c5j+MjOHGJXBHxqmYN3p8auqirYfd3s=
-Date: Sat, 12 Jul 2025 16:18:13 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: =?UTF-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>
-Cc: "Kun Hu" <huk23@m.fudan.edu.cn>, "Jiaji Qin" <jjtan24@m.fudan.edu.cn>,
- syzkaller@googlegroups.com, linux-kernel@vger.kernel.org,
- ocfs2-devel@lists.linux.dev
-Subject: Re: BUG: unable to handle kernel paging request in
- const_folio_flags
-Message-Id: <20250712161813.44b62c947535cb78a3a4c9be@linux-foundation.org>
-In-Reply-To: <45a4da17.13ec7.197f8ec50fb.Coremail.baishuoran@hrbeu.edu.cn>
-References: <45a4da17.13ec7.197f8ec50fb.Coremail.baishuoran@hrbeu.edu.cn>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752362426; c=relaxed/simple;
+	bh=9Y8Fjr7KqkE3E/uJ3c0Bp0ihg+c1iAP3vmMRnvmL9GU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sUwQGRgmI3mZmVfaYdnePla4iR5r6RSRnZ+/9NjURULJeOATnnFteWDttTGl5ytzt0qMDPIYuy+rgn6ztF++/qK49pGtbRoDmxaq6I63S/mNz10zUeOfUnHJrINONAV9PkgjiJ13J9DgOy1mQ/Xr2D0e6H5+M3wLZWQcu6pG6vQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BtSyUuf/; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6facba680a1so39346546d6.3;
+        Sat, 12 Jul 2025 16:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752362424; x=1752967224; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OJFl78XZ+XY3PQ6hqlxJcMbRGA/vaIbR4su4ePprkx4=;
+        b=BtSyUuf/VDY0diQjWosqgShnbh3m3waNqhpbAi66DH5GaeHoilHQlitmciNqXh+4Po
+         D478Z16NaWEqmteUrz6t7FH1N96kCdcRr4ExXaUgUe80gbq+y6e77zAIySeMsP7kDCmf
+         kJPV+R/xmpSEqb7HdbWODQp7HrVe7MCSJQijNlw9bCc8j2Qxjb5mQ2tyIjOBrvkXKEIj
+         0sy08ZprmgDwM6Dr3S3Gcth85adFKmZO4j2hg7ofP6Aza/sl+bI0RgRdhwpJwOQBEFXQ
+         4KZp9zmLtJGclR7k/smMD/00y0agY84fwvUftodQg0Tf9ac/+szMEw133BbA3sZLNj+g
+         TauA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752362424; x=1752967224;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OJFl78XZ+XY3PQ6hqlxJcMbRGA/vaIbR4su4ePprkx4=;
+        b=XaSF4Oeh+yVglS1JR8IxuhWFYM7ge49ZkkQLt7ELshqfPqxuy/c4gYSY2jjn4hEvSc
+         qr8FTQAkkUF46ftorQK7iulcZ/LrQcztn72Y7Rf4qLs2dodSWyv6+d9tpK2g9iN37Zhb
+         1Gt/hB6oUGI1tCCKoyBIYxdjFn0jC1zWvWPq5d3M7HvJiKI4rBBv7d4tVuiCerlugP9w
+         u6xr/vsK7/BHRHFvXyL8wbtNF6qkihbmwUffCYGfWMwrckEPb2SsvSXOyc6a7M+ReJvY
+         baBXNB6k2ElWLhHGrm5+hnDbYKNlCHRpenLjoK9xdyFjHf3GHN3uaep5zSWUCrdPNJgX
+         XLGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAJ+F9fXXmrjYmuwzz6PHb7vHoIw1OG6bbSdZaZU8/qNvbI2K2UOoB/D93FPdaDApAusvoMliRrnZ9XLTWNT0=@vger.kernel.org, AJvYcCUXm5/aMWGCWA31U4o3wmkDmmkztDQWZs6/qW9/RyE+W0kjVgg9J24LTrMKAPJLd5xrGSBeJHhnv+Aq@vger.kernel.org, AJvYcCVM8dMb2DrYJxNEFHe5SoCU/ns8tnpN56Ak6GbWveNjks5cCAwezyCln81BixEMXGVPeoWYTKlb9/uSsw==@vger.kernel.org, AJvYcCXEvhnG1uudB7fWRcgvxUz1An8qmqhb3cIhaumwrzi0Kb5m1kYkEaflHEZ2yBpcbHN8cy693sYeksjhV2F+@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyNUFciuIbGeh4BFtY98XakLoVbHWyV6x40UhgPvF8uQgapN//
+	EEJadIwI5ED+daINS3vbP8rbEScQ6xjwjVZ/22Q0Octkor+xVTj0rcvNYqXh3JangECSrR05ooF
+	SETE8VBeoivEaUneI+K0giR3mYzSmQeE=
+X-Gm-Gg: ASbGncstBhaBTpO5tizQBlHkoy3O4TXa4hw1ezby1ip35QxVkd2ZGjrLy5LXP6K2oVc
+	ESiclEGUVBrm0ha+lqM8XJAUFvKFnSshnf89XWxZjnWTJS2rLNSnAOVZ79Vq6w/jRByx1OLLbZh
+	KoA6PCvg7Nlf0i+UDnT4Z8v68Yb1gyNIcbK5m04ZkebDUJz2lUZe3gjXiQGQB/FeyFTQxO44gaO
+	S7yMoE=
+X-Google-Smtp-Source: AGHT+IFxoLdRf98+nAnGYYkZ3v8X8Zabbt4512qKXAZnA97TDHShi9FJhWzH8PYyZvNSK3yat23YgSRK0z1vNWmf/lY=
+X-Received: by 2002:a05:6214:2b86:b0:702:c939:9d9d with SMTP id
+ 6a1803df08f44-704a4220990mr161700106d6.28.1752362423744; Sat, 12 Jul 2025
+ 16:20:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+References: <20250710200820.262295-1-rosenp@gmail.com> <20250710200820.262295-8-rosenp@gmail.com>
+ <d8b0abb2-1a12-42bf-aafd-4cd1e21babd6@kernel.org> <CAKxU2N-c2tHBYWBM+FJGqdSaqzw9u0O8e0G7AVqk6b0QdRnPTw@mail.gmail.com>
+ <20250711-invisible-dainty-jackrabbit-acbf8f@krzk-bin> <20250712104006.GA13512@wp.pl>
+ <e435a765-fb91-408f-81dd-01a73fc43b6b@kernel.org> <23e629cb-0698-4a9c-aa18-9a7e71aa8b73@kernel.org>
+In-Reply-To: <23e629cb-0698-4a9c-aa18-9a7e71aa8b73@kernel.org>
+From: Julian Calaby <julian.calaby@gmail.com>
+Date: Sun, 13 Jul 2025 09:20:12 +1000
+X-Gm-Features: Ac12FXzHmWw2pTYCCUYiI4xo0Q3W3oiBA__ty2FODlbGDbYFA2NA_IcVvNhC2_U
+Message-ID: <CAGRGNgVk9__2mCE-hYSP7T0yKLjPsDkvG6+NghJMXazYXUid1w@mail.gmail.com>
+Subject: Re: [PATCHv3 wireless-next 7/7] dt-bindings: net: wireless: rt2800: add
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: Stanislaw Gruszka <stf_xl@wp.pl>, Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org, 
+	Johannes Berg <johannes@sipsolutions.net>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:MIPS" <linux-mips@vger.kernel.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-(cc ocfs2-devel)
+Hi Krzysztof and Rob,
 
-On Fri, 11 Jul 2025 17:58:46 +0800 (GMT+08:00) 白烁冉 <baishuoran@hrbeu.edu.cn> wrote:
+On Sun, Jul 13, 2025 at 2:59=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 12/07/2025 18:53, Krzysztof Kozlowski wrote:
+> > On 12/07/2025 12:40, Stanislaw Gruszka wrote:
+> >> Hi Krzysztof,
+> >>
+> >> On Fri, Jul 11, 2025 at 09:48:49AM +0200, Krzysztof Kozlowski wrote:
+> >>> On Thu, Jul 10, 2025 at 03:40:30PM -0700, Rosen Penev wrote:
+> >>>> On Thu, Jul 10, 2025 at 2:40=E2=80=AFPM Krzysztof Kozlowski <krzk@ke=
+rnel.org> wrote:
+> >>>>>
+> >>>>> On 10/07/2025 22:08, Rosen Penev wrote:
+> >>>>>> Add device-tree bindings for the RT2800 SOC wifi device found in o=
+lder
+> >>>>>> Ralink/Mediatek devices.
+> >>>>>>
+> >>>>>> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> >>>>>> ---
+> >>>>>>  .../bindings/net/wireless/ralink,rt2800.yaml  | 47 ++++++++++++++=
++++++
+> >>>>>>  1 file changed, 47 insertions(+)
+> >>>>>>  create mode 100644 Documentation/devicetree/bindings/net/wireless=
+/ralink,rt2800.yaml
+> >>>>>>
+> >>>>>> diff --git a/Documentation/devicetree/bindings/net/wireless/ralink=
+,rt2800.yaml b/Documentation/devicetree/bindings/net/wireless/ralink,rt2800=
+.yaml
+> >>>>>> new file mode 100644
+> >>>>>> index 000000000000..8c13b25bd8b4
+> >>>>>> --- /dev/null
+> >>>>>> +++ b/Documentation/devicetree/bindings/net/wireless/ralink,rt2800=
+.yaml
+> >>>>>
+> >>>>> Filename should match compatible. You were already changing somethi=
+ng
+> >>>>> here...
+> >>>> hrm? that makes no sense. Various drivers have multiple compatible l=
+ines.
+> >>>
+> >>> Luckily we do not speak about drivers here. Anyway, follow standard
+> >>> review practices, you don't get special rules.
+> >>
+> >> Could you please elaborate what you mean ?
+> >
+> > Rosen replied in abrasive way, so I am not going to dig this.
+> >
+> >>
+> >> I greped through Documentation/devicetree/bindings/*/*.yaml and plenty
+> >
+> > I assume you refer to last 2 years bindings, not something older, right=
+?
+> > It is really poor argument to find old files and use them as example
+> > "they did like that".
+> >
+> >> of "compatible:" items do not match the filename. So hard to tell
+> >
+> > I did not ask for compatible to match filename.
+> >
+> >> what rule you are referencing, as it seems it's not really applied.
+> > Check reviews on the lists. It is pretty standard review. Everyone gets
+> > it for this case here - single device, single compatible.
+>
+> BTW, it is not hiding on the lists:
+>
+> https://lore.kernel.org/linux-devicetree/?q=3Df%3Aherring+filename
+> https://lore.kernel.org/linux-devicetree/?q=3Df%3Akozlowski+filename
 
-> Dear Maintainers,
-> 
-> 
-> When using our customized Syzkaller to fuzz the latest Linux kernel, the following crash (121th)was triggered.
-> 
-> 
-> 
-> 
-> HEAD commit: 6537cfb395f352782918d8ee7b7f10ba2cc3cbf2
-> git tree: upstream
-> Output: https://github.com/pghk13/Kernel-Bug/blob/main/0702_6.14/BUG%3A%20unable%20to%20handle%20kernel%20paging%20request%20in%20const_folio_flags/121report.txt
-> Kernel config:https://github.com/pghk13/Kernel-Bug/blob/main/0702_6.14/config.txt
-> C reproducer:https://github.com/pghk13/Kernel-Bug/blob/main/0702_6.14/BUG%3A%20unable%20to%20handle%20kernel%20paging%20request%20in%20const_folio_flags/121repro.c
-> Syzlang reproducer:https://github.com/pghk13/Kernel-Bug/blob/main/0702_6.14/BUG%3A%20unable%20to%20handle%20kernel%20paging%20request%20in%20const_folio_flags/121repro.txt
-> 
-> Our reproducer uses mounts a constructed filesystem image.
->  
->  This may be an error code mistakenly used as a pointer bug, occurring around line 308 of the code: 1. OCFS2 error handling issue: ocfs2_write_begin_nolock returns -ENOMEM (-12) when it encounters a memory allocation failure. 2. Incorrect error handling: In the error handling path, a certain function (most likely ocfs2_unlock_and_free_folios) incorrectly passed the error code -12 as a valid folio pointer to folio_unlock.
-> 
-> We have reproduced this issue several times on 6.14 again.
-> 
-> 
-> 
-> 
-> 
-> 
-> If you fix this issue, please add the following tag to the commit:
-> Reported-by: Kun Hu <huk23@m.fudan.edu.cn>, Jiaji Qin <jjtan24@m.fudan.edu.cn>, Shuoran Bai <baishuoran@hrbeu.edu.cn>
-> 
-> (syz.5.1560,31124,2):ocfs2_write_begin_nolock:1798 ERROR: status = -12
-> BUG: unable to handle page fault for address: fffffffffffffffc
-> #PF: supervisor read access in kernel mode
-> #PF: error_code(0x0000) - not-present page
-> PGD df84067 P4D df84067 PUD df86067 
-> PMD 0 
-> Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
-> CPU: 2 UID: 0 PID: 31124 Comm: syz.5.1560 Not tainted 6.14.0 #1
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
-> RIP: 0010:const_folio_flags.constprop.0+0x27/0x70
-> Code: 90 90 90 41 54 49 89 fc 53 e8 65 c3 ca ff 49 8d 7c 24 08 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 3e <49> 8b 5c 24 08 31 ff 83 e3 01 48 89 de e8 77 c5 ca ff 48 85 db 75
-> RSP: 0018:ffffc90011eef678 EFLAGS: 00010246
-> RAX: dffffc0000000000 RBX: ffff888079f54030 RCX: ffffffff839c06f7
-> RDX: 1fffffffffffffff RSI: ffff888059b2a480 RDI: fffffffffffffffc
-> RBP: fffffffffffffff4 R08: 0000000000000000 R09: fffffbfff20c2fa3
-> R10: fffffbfff20c2fa2 R11: ffffffff90617d17 R12: fffffffffffffff4
-> R13: 000000000000000e R14: dffffc0000000000 R15: 0000000000000001
-> FS:  00007f2d805f6700(0000) GS:ffff88802b900000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: fffffffffffffffc CR3: 000000004039e000 CR4: 0000000000750ef0
-> PKRU: 80000000
-> Call Trace:
->  <TASK>
->  folio_unlock+0x16/0xd0
->  ocfs2_unlock_and_free_folios+0x8c/0x1b0
->  ocfs2_write_begin_nolock+0x115d/0x4f60
->  ocfs2_write_begin+0x1d9/0x350
->  generic_perform_write+0x3e0/0x8c0
->  __generic_file_write_iter+0x1f6/0x240
->  ocfs2_file_write_iter+0xc44/0x2380
->  vfs_write+0xba2/0x1100
->  ksys_write+0x122/0x240
->  do_syscall_64+0xcf/0x250
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f2d827acadd
-> Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f2d805f5ba8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 00007f2d829a5fa0 RCX: 00007f2d827acadd
-> RDX: 000000000000045c RSI: 0000000020000400 RDI: 0000000000000005
-> RBP: 00007f2d805f5c00 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
-> R13: 00007f2d829a5fac R14: 00007f2d829a6038 R15: 00007f2d805f5d40
->  </TASK>
-> Modules linked in:
-> CR2: fffffffffffffffc
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:const_folio_flags.constprop.0+0x27/0x70
-> Code: 90 90 90 41 54 49 89 fc 53 e8 65 c3 ca ff 49 8d 7c 24 08 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 3e <49> 8b 5c 24 08 31 ff 83 e3 01 48 89 de e8 77 c5 ca ff 48 85 db 75
-> RSP: 0018:ffffc90011eef678 EFLAGS: 00010246
-> RAX: dffffc0000000000 RBX: ffff888079f54030 RCX: ffffffff839c06f7
-> RDX: 1fffffffffffffff RSI: ffff888059b2a480 RDI: fffffffffffffffc
-> RBP: fffffffffffffff4 R08: 0000000000000000 R09: fffffbfff20c2fa3
-> R10: fffffbfff20c2fa2 R11: ffffffff90617d17 R12: fffffffffffffff4
-> R13: 000000000000000e R14: dffffc0000000000 R15: 0000000000000001
-> FS:  00007f2d805f6700(0000) GS:ffff88802b900000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: fffffffffffffffc CR3: 000000004039e000 CR4: 0000000000750ef0
-> PKRU: 80000000
-> ----------------
-> Code disassembly (best guess):
->    0: 90                    nop
->    1: 90                    nop
->    2: 90                    nop
->    3: 41 54                push   %r12
->    5: 49 89 fc              mov    %rdi,%r12
->    8: 53                    push   %rbx
->    9: e8 65 c3 ca ff        callq  0xffcac373
->    e: 49 8d 7c 24 08        lea    0x8(%r12),%rdi
->   13: 48 b8 00 00 00 00 00 movabs $0xdffffc0000000000,%rax
->   1a: fc ff df
->   1d: 48 89 fa              mov    %rdi,%rdx
->   20: 48 c1 ea 03          shr    $0x3,%rdx
->   24: 80 3c 02 00          cmpb   $0x0,(%rdx,%rax,1)
->   28: 75 3e                jne    0x68
-> * 2a: 49 8b 5c 24 08        mov    0x8(%r12),%rbx <-- trapping instruction
->   2f: 31 ff                xor    %edi,%edi
->   31: 83 e3 01              and    $0x1,%ebx
->   34: 48 89 de              mov    %rbx,%rsi
->   37: e8 77 c5 ca ff        callq  0xffcac5b3
->   3c: 48 85 db              test   %rbx,%rbx
->   3f: 75                    .byte 0x75
-> 
-> 
-> 
-> thanks,
-> Kun Hu
+I just had a quick look through the in-tree documentation on device
+tree bindings and can't find this rule there.
+
+It's good that you and Rob are consistent in applying this rule, but
+pointing to the mailing list archives instead of the documentation
+makes it feel like patch submissions in this space are judged by some
+arbitrary set of undocumented rules.
+
+Could you please update the documentation with the current set of
+requirements so that people who are new to this space have a
+consistent set of rules they can apply to their work?
+
+I understand that Krzysztof doesn't particularly like having
+discussions around the rules given his usual abrasive manner, so
+having the full rules documented would be a way to shift these
+conversations into something a bit more like how Greg applies stable
+rules: if you get it wrong, you get a link to the documentation, which
+should clarify most issues without any further discussion.
+
+Thanks,
+
+--=20
+Julian Calaby
+
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
 
