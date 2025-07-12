@@ -1,228 +1,224 @@
-Return-Path: <linux-kernel+bounces-728723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15669B02C45
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 19:53:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CFE0B02C4B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 19:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C34D4A03CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 17:53:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FCB07AB7D4
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 17:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77C228AB07;
-	Sat, 12 Jul 2025 17:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585F328CF40;
+	Sat, 12 Jul 2025 17:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BqRr21UL"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ny+D2KPS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC4E273D63
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 17:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5E028A1CA;
+	Sat, 12 Jul 2025 17:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752342814; cv=none; b=AT6I5FubZmWoWkYpxLaLXvefKPS8+7i81UC70ZNFKZlGG+DbK5Qzpf/8TeP1YYQ4KkidSyBUdB6Q3v+rJJ1f0SDpnyfnaZjh2fu25sWTOmVq+QXmImprYxDnOJRnf/nEAi1bsMwtkfBep7afmw4JBvvS2oVc2S19paDLuQXxDkQ=
+	t=1752343032; cv=none; b=SYL3al8YWWXh0auWWKBu4pYrzsAWrsJ8OGRBhnqS0eiEsIXLSlpSraKjpPYl3oPOvGOn+WDALX5ACUVVcB2Ob5xJEpfoUWLCNWmceNI035yuMbeGzYJmL7StPHEheK+kZkofuwz5lgI4OEf7a8JzjeE5amvOV0xmZeU0aTrh8Xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752342814; c=relaxed/simple;
-	bh=+1/Vlrp3LRvVrxvdxBs0B2p6QwaoTvL2sUXR6QBqiJY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LPU1d1boNqoO3bGek8CpGCQtbgu14JjozvwFx3dtIbUNEBCg2GHDu2BHwgt1EGU4KZ1n/7mVfapIOK9y10yMsfF5xrQD/JzMoBB0uf7y9HBz8AUyAnEqF78ldHAquP8VjEGOQyvHMCSO4ES7t4VaD/x/+HVLQaXmYlEbIT102rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BqRr21UL; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2357c61cda7so121185ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 10:53:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752342812; x=1752947612; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+1/Vlrp3LRvVrxvdxBs0B2p6QwaoTvL2sUXR6QBqiJY=;
-        b=BqRr21UL8FUpCt8g2BHwEo9wfPQrsecWgEyMdzcoQ+TFlY1I57KlbqZqYaS0HQ03IM
-         FcioCNU4/3j7OjnR4m5PiRBi7RQZubBGXYoRj+pR6R66HFQ0Ek4wguXF7hleWcMqBWpK
-         JKZnvFwNXRT3yl1bMw2p4FmGnJusNouPpsoa7gM1VD+THklId16yTsbwOf1ySq2qJnU4
-         uli4ghqoZPQUhONBhaAD6l52bE+RKu+oHAKfIMO5EwbAHfM0qFqMFtn3c4UouBjFXY6g
-         26FiDLAAXp50Vrx+xq8ObBKxvi5pcHFPtDTdXFnydW1Cx8sHleXA+r0ZWQvhx0yBZqI9
-         sJhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752342812; x=1752947612;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+1/Vlrp3LRvVrxvdxBs0B2p6QwaoTvL2sUXR6QBqiJY=;
-        b=MF0x2eTcbfC7YNLS03/gpVJlVuv/gQw6EVlY0HKXp/JXkhV4OoY7gSwtoCthlLwRyi
-         gpG2OIzSnm2j0c/MHi1m3uAzXRHWoPLUZ/aFvveLb3i4/kXu0HnEkRZIRHind2RgEwzr
-         I+WhVa7nkMjXTZ7HYB6NqdmZPaV286dAvIHXslCdPG4TV92ieDzT42Tc2drZXM7HUkh/
-         WHVLPqeYU2WpqhgKXth9HqnU7ZkbrAIooyFhcfRkBc6cgBBUq37PNXjFbJW+g4ng/3sy
-         En7TTuchMezLDKJN/HBu2ZZog82R4IgKAQvRzOdxZZC6sFmJtztcfZ+o5kMdNxD2iNeE
-         lV/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVnYapJjDx/CVohDuHiTfP65Of8GDw7whzzrgy3HW9++OM7ZWMAJwjcCB9OTxYcvuMQnrNkEuAHnvWKWUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTagsmD6NC0HfIofAwIgN+0dsQck3qs090z28RTpJ61o3tujJZ
-	LV23Pc2aSJgFvIcEknVfXC+H24gHMIXf4XqxhV8Mkxa5OS1lEzA+yVIv55YSDPAx3Y/g7BZp0Aa
-	hnmiyywJPvnTlFgnjZRV/RtZjBRPp/crAbdtp4XkI
-X-Gm-Gg: ASbGnctGSWYexRPywtfh7khQ1FXJiZG7ntIhjy7ofUNOK40S1nNZ/UHpVjNEln1wYxg
-	/0o6Fxs9LcQQ0ajyjavi46NJpmk0skHt1kTYgYyFn6SUDKRsXl6WYCQmx6NQ//jlh6OFy0oBiaW
-	cMYpIEiBz3cdhb4CxRpzOvIC3ZVMTovf5oUdPN6+WYSbC32rjxBpLknXtR90sCNHql7hf/MCpyg
-	GsscnIMb+vnNHd4SKsXyAMfrkB3XNG19kcNte8N
-X-Google-Smtp-Source: AGHT+IGXZjTxB3NipN6zL4wxoHLscGMTCymyrebDMnTbZldyzqeNacRyryboTJLi0nmJu4tdqjI5M8LT+EiWQEHNhyg=
-X-Received: by 2002:a17:903:8cb:b0:216:48d4:b3a8 with SMTP id
- d9443c01a7336-23df6985bd5mr1838155ad.16.1752342811290; Sat, 12 Jul 2025
- 10:53:31 -0700 (PDT)
+	s=arc-20240116; t=1752343032; c=relaxed/simple;
+	bh=ZqFuhsGBU+wJcNeFRHN2M3/rUmGdy3TQzFSP8z9fkRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IN955rzbgL6NZHklK5o5PX3j5iVG5A1Uh2n79bbQ64LV/lCcxb6tXXeCwdB6ITbS8gFuKNp8Z0/HF1yA1ABcGwMLKZ19HpadcY0PG67NvqeBIXfXyPe2LJq5osdbDVfKK9loC1V9URAb+uR/U1UqTJSKf/M9cffXajd4GpQQvt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ny+D2KPS; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752343031; x=1783879031;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZqFuhsGBU+wJcNeFRHN2M3/rUmGdy3TQzFSP8z9fkRE=;
+  b=Ny+D2KPSulgHAFNTsm4bSCqOjVhWY2dvDl2fQq1mCPtJdzOPCYM/wowM
+   OhJ/qHbKf1JY+W+pzw2jmcTidApDC4wwAYJpf3s3wm2s7epREx+hqlqd/
+   3JqhvOYhZFx5qik/Wr8VHKLcAP7wwsaUunsr5COGCEO3iglq/wZnlV32D
+   0X2bmCuIn2KWs1M15KHmsqE1BJcqLlhuukerqsOj8ma6/q7rbNgevSN7w
+   xWf/VpZPe3LI7lR07BgJ9rZSZ/6ogKHNFk77sDzdvcuh1fnC8nDhDHinP
+   qCvhdvfaofL6WzgxlvOGb8ezvWFRAgwvwyjVd+NRpymg2E51dc0orV6eJ
+   w==;
+X-CSE-ConnectionGUID: 6T0JOUKmQYmBbnOPcYL9+A==
+X-CSE-MsgGUID: MRzfJtuKRuiY6/PR3LM2gA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54570793"
+X-IronPort-AV: E=Sophos;i="6.16,306,1744095600"; 
+   d="scan'208";a="54570793"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2025 10:57:10 -0700
+X-CSE-ConnectionGUID: 9jkPxG5WSLiUICQXlrvIjA==
+X-CSE-MsgGUID: dApIRtUfTKCNLasfM3x7ZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,306,1744095600"; 
+   d="scan'208";a="160938198"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 12 Jul 2025 10:57:07 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uaeTB-0007ZR-0h;
+	Sat, 12 Jul 2025 17:57:05 +0000
+Date: Sun, 13 Jul 2025 01:56:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Troy Mitchell <troy.mitchell@linux.dev>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Troy Mitchell <troy.mitchell@linux.dev>
+Subject: Re: [PATCH] ASoC: rockchip: i2s: simplify clock handling and error
+ cleanup in probe
+Message-ID: <202507130140.HxI37WQ3-lkp@intel.com>
+References: <20250712-rockchip-i2s-simplify-clk-v1-1-3b23fd1b3e26@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250529054227.hh2f4jmyqf6igd3i@amd.com> <diqz1prqvted.fsf@ackerleytng-ctop.c.googlers.com>
- <20250702232517.k2nqwggxfpfp3yym@amd.com> <CAGtprH-=f1FBOS=xWciBU6KQJ9LJQ5uZoms83aSRBDsC3=tpZA@mail.gmail.com>
- <20250703041210.uc4ygp4clqw2h6yd@amd.com> <CAGtprH9sckYupyU12+nK-ySJjkTgddHmBzrq_4P1Gemck5TGOQ@mail.gmail.com>
- <20250703203944.lhpyzu7elgqmplkl@amd.com> <CAGtprH9_zS=QMW9y8krZ5Hq5jTL3Y9v0iVxxUY2+vSe9Mz83Tw@mail.gmail.com>
- <20250712001055.3in2lnjz6zljydq2@amd.com>
-In-Reply-To: <20250712001055.3in2lnjz6zljydq2@amd.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Sat, 12 Jul 2025 10:53:17 -0700
-X-Gm-Features: Ac12FXzBIe6hc0vRvgKfa9hTZJEZVmuxsY2_E0PJwlI__Cgm8PredUOA4GmiwtU
-Message-ID: <CAGtprH-fSW219J3gxD3UFLKhSvBj-kqUDezRXPFqTjj90po_xQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 02/51] KVM: guest_memfd: Introduce and use
- shareability to guard faulting
-To: Michael Roth <michael.roth@amd.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, linux-fsdevel@vger.kernel.org, 
-	aik@amd.com, ajones@ventanamicro.com, akpm@linux-foundation.org, 
-	amoorthy@google.com, anthony.yznaga@oracle.com, anup@brainfault.org, 
-	aou@eecs.berkeley.edu, bfoster@redhat.com, binbin.wu@linux.intel.com, 
-	brauner@kernel.org, catalin.marinas@arm.com, chao.p.peng@intel.com, 
-	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com, 
-	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com, 
-	fan.du@intel.com, fvdl@google.com, graf@amazon.com, haibo1.xu@intel.com, 
-	hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
-	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
-	kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, mpe@ellerman.id.au, muchun.song@linux.dev, nikunj@amd.com, 
-	nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com, 
-	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com, 
-	pdurrant@amazon.co.uk, peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, 
-	qperret@google.com, quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, vbabka@suse.cz, 
-	viro@zeniv.linux.org.uk, vkuznets@redhat.com, wei.w.wang@intel.com, 
-	will@kernel.org, willy@infradead.org, xiaoyao.li@intel.com, 
-	yan.y.zhao@intel.com, yilun.xu@intel.com, yuzenghui@huawei.com, 
-	zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250712-rockchip-i2s-simplify-clk-v1-1-3b23fd1b3e26@linux.dev>
 
-On Fri, Jul 11, 2025 at 5:11=E2=80=AFPM Michael Roth <michael.roth@amd.com>=
- wrote:
-> >
-> > Wishful thinking on my part: It would be great to figure out a way to
-> > promote these pagetable entries without relying on the guest, if
-> > possible with ABI updates, as I think the host should have some
-> > control over EPT/NPT granularities even for Confidential VMs. Along
->
-> I'm not sure how much it would buy us. For example, for a 2MB hugetlb
-> SNP guest boot with 16GB of memory I see 622 2MB hugepages getting
-> split, but only about 30 or so of those get merged back to 2MB folios
-> during guest run-time. These are presumably the set of 2MB regions we
-> could promote back up, but it's not much given that we wouldn't expect
-> that value to grow proportionally for larger guests: it's really
-> separate things like the number of vCPUs (for shared GHCB pages), number
-> of virtio buffers, etc. that end up determining the upper bound on how
-> many pages might get split due to 4K private->shared conversion, and
-> these would vary all that much from get to get outside maybe vCPU
-> count.
->
-> For 1GB hugetlb I see about 6 1GB pages get split, and only 2 get merged
-> during run-time and would be candidates for promotion.
->
+Hi Troy,
 
-Thanks for the great analysis here. I think we will need to repeat
-such analysis for other scenarios such as usage with accelerators.
+kernel test robot noticed the following build warnings:
 
-> This could be greatly improved from the guest side by using
-> higher-order allocations to create pools of shared memory that could
-> then be used to reduce the number of splits caused by doing
-> private->shared conversions on random ranges of malloc'd memory,
-> and this could be done even without special promotion support on the
-> host for pretty much the entirety of guest memory. The idea there would
-> be to just making optimized guests avoid the splits completely, rather
-> than relying on the limited subset that hardware can optimize without
-> guest cooperation.
+[auto build test WARNING on 733923397fd95405a48f165c9b1fbc8c4b0a4681]
 
-Yes, it would be great to improve the situation from the guest side,
-e.g. I tried with a rough draft [1], the conclusion there was that we
-need to set aside "enough" guest memory as CMA to cause all the DMA go
-through 2M aligned buffers. It's hard to figure out how much is
-"enough", but we could start somewhere. That being said, the host
-still has to manage memory this way by splitting/merging at runtime
-because I don't think it's possible to enforce all conversions to
-happen at 2M (or any at 1G) granularity. So it's also very likely that
-even if guests do significant chunk of conversions at hugepage
-granularity, host still needs to split pages all the way to 4K for all
-shared regions unless we can bake another restriction in the
-conversion ABI that guests can only convert the same ranges to private
-as were converted before to shared.
+url:    https://github.com/intel-lab-lkp/linux/commits/Troy-Mitchell/ASoC-rockchip-i2s-simplify-clock-handling-and-error-cleanup-in-probe/20250712-215647
+base:   733923397fd95405a48f165c9b1fbc8c4b0a4681
+patch link:    https://lore.kernel.org/r/20250712-rockchip-i2s-simplify-clk-v1-1-3b23fd1b3e26%40linux.dev
+patch subject: [PATCH] ASoC: rockchip: i2s: simplify clock handling and error cleanup in probe
+config: x86_64-buildonly-randconfig-003-20250712 (https://download.01.org/0day-ci/archive/20250713/202507130140.HxI37WQ3-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250713/202507130140.HxI37WQ3-lkp@intel.com/reproduce)
 
-[1] https://lore.kernel.org/lkml/20240112055251.36101-1-vannapurve@google.c=
-om/
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507130140.HxI37WQ3-lkp@intel.com/
 
->
-> > the similar lines, it would be great to have "page struct"-less memory
-> > working for Confidential VMs, which should greatly reduce the toil
-> > with merge/split operations and will render the conversions mostly to
-> > be pagetable manipulations.
->
-> FWIW, I did some profiling of split/merge vs. overall conversion time
-> (by that I mean all cycles spent within kvm_gmem_convert_execute_work()),
-> and while split/merge does take quite a few more cycles than your
-> average conversion operation (~100x more), the total cycles spent
-> splitting/merging ended up being about 7% of the total cycles spent
-> handling conversions (1043938460 cycles in this case).
->
-> For 1GB, a split/merge take >1000x more than a normal conversion
-> operation (46475980 cycles vs 320 in this sample), but it's probably
-> still not too bad vs the overall conversion path, and as mentioned above
-> it only happens about 6x for 16GB SNP guest so I don't think split/merge
-> overhead is a huge deal for current guests, especially if we work toward
-> optimizing guest-side usage of shared memory in the future. (There is
-> potential for this to crater performance for a very poorly-optimized
-> guest however but I think the guest should bear some burden for that
-> sort of thing: e.g. flipping the same page back-and-forth between
-> shared/private vs. caching it for continued usage as shared page in the
-> guest driver path isn't something we should put too much effort into
-> optimizing.)
->
+All warnings (new ones prefixed by >>):
 
-As per discussions in the past, guest_memfd private pages are simply
-only managed by guest_memfd. We don't need and effectively don't want
-the kernel to manage guest private memory. So effectively we can get
-rid of page structs in theory just for private pages as well and
-allocate page structs only for shared memory on conversion and
-deallocate on conversion back to private.
+>> sound/soc/rockchip/rockchip_i2s.c:776:36: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
+     776 |                 return dev_err_probe(&pdev->dev, ret, "Failed to initialise managed register map");
+         |                                                  ^~~
+   sound/soc/rockchip/rockchip_i2s.c:742:9: note: initialize the variable 'ret' to silence this warning
+     742 |         int ret;
+         |                ^
+         |                 = 0
+   1 warning generated.
 
-And when we have base core-mm allocators that hand out raw pfns to
-start with, we don't even need shared memory ranges to be backed by
-page structs.
 
-Few hurdles we need to cross:
-1) Invent a new filemap equivalent that maps guest_memfd offsets to pfns
-2) Modify TDX EPT management to work with pfns and not page structs
-3) Modify generic KVM NPT/EPT management logic to work with pfns and
-not rely on page structs
-4) Modify memory error/hwpoison handling to route all memory errors on
-such pfns to guest_memfd.
+vim +/ret +776 sound/soc/rockchip/rockchip_i2s.c
 
-I believe there are obvious benefits (reduced complexity, reduced
-memory footprint etc) if we go this route and we are very likely to go
-this route for future usecases even if we decide to live with
-conversion costs today.
+   733	
+   734	static int rockchip_i2s_probe(struct platform_device *pdev)
+   735	{
+   736		struct device_node *node = pdev->dev.of_node;
+   737		struct rk_i2s_dev *i2s;
+   738		struct snd_soc_dai_driver *dai;
+   739		struct resource *res;
+   740		void __iomem *regs;
+   741		struct clk *clk;
+   742		int ret;
+   743	
+   744		i2s = devm_kzalloc(&pdev->dev, sizeof(*i2s), GFP_KERNEL);
+   745		if (!i2s)
+   746			return -ENOMEM;
+   747	
+   748		spin_lock_init(&i2s->lock);
+   749		i2s->dev = &pdev->dev;
+   750	
+   751		i2s->grf = syscon_regmap_lookup_by_phandle(node, "rockchip,grf");
+   752		if (!IS_ERR(i2s->grf)) {
+   753			i2s->pins = device_get_match_data(&pdev->dev);
+   754			if (!i2s->pins)
+   755				return -EINVAL;
+   756	
+   757		}
+   758	
+   759		/* try to prepare related clocks */
+   760		clk = devm_clk_get_enabled(&pdev->dev, "i2s_hclk");
+   761		if (IS_ERR(clk))
+   762			return dev_err_probe(&pdev->dev, PTR_ERR(clk), "hclock enable failed");
+   763	
+   764		i2s->mclk = devm_clk_get(&pdev->dev, "i2s_clk");
+   765		if (IS_ERR(i2s->mclk))
+   766			return dev_err_probe(&pdev->dev, PTR_ERR(i2s->mclk),
+   767					     "Can't retrieve i2s master clock");
+   768	
+   769		regs = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+   770		if (IS_ERR(regs))
+   771			dev_err_probe(&pdev->dev, PTR_ERR(regs), "Can't ioremap registers");
+   772	
+   773		i2s->regmap = devm_regmap_init_mmio(&pdev->dev, regs,
+   774						    &rockchip_i2s_regmap_config);
+   775		if (IS_ERR(i2s->regmap))
+ > 776			return dev_err_probe(&pdev->dev, ret, "Failed to initialise managed register map");
+   777	
+   778		i2s->bclk_ratio = 64;
+   779		i2s->pinctrl = devm_pinctrl_get(&pdev->dev);
+   780		if (!IS_ERR(i2s->pinctrl)) {
+   781			i2s->bclk_on = pinctrl_lookup_state(i2s->pinctrl, "bclk_on");
+   782			if (!IS_ERR_OR_NULL(i2s->bclk_on)) {
+   783				i2s->bclk_off = pinctrl_lookup_state(i2s->pinctrl, "bclk_off");
+   784				if (IS_ERR_OR_NULL(i2s->bclk_off))
+   785					return dev_err_probe(&pdev->dev, -EINVAL,
+   786							     "failed to find i2s bclk_off");
+   787			}
+   788		} else {
+   789			dev_dbg(&pdev->dev, "failed to find i2s pinctrl\n");
+   790		}
+   791	
+   792		i2s_pinctrl_select_bclk_off(i2s);
+   793	
+   794		dev_set_drvdata(&pdev->dev, i2s);
+   795	
+   796		pm_runtime_enable(&pdev->dev);
+   797		if (!pm_runtime_enabled(&pdev->dev)) {
+   798			ret = i2s_runtime_resume(&pdev->dev);
+   799			if (ret)
+   800				goto err_pm_disable;
+   801		}
+   802	
+   803		ret = rockchip_i2s_init_dai(i2s, res, &dai);
+   804		if (ret)
+   805			goto err_pm_disable;
+   806	
+   807		ret = devm_snd_soc_register_component(&pdev->dev,
+   808						      &rockchip_i2s_component,
+   809						      dai, 1);
+   810	
+   811		if (ret) {
+   812			dev_err(&pdev->dev, "Could not register DAI\n");
+   813			goto err_suspend;
+   814		}
+   815	
+   816		ret = devm_snd_dmaengine_pcm_register(&pdev->dev, NULL, 0);
+   817		if (ret) {
+   818			dev_err(&pdev->dev, "Could not register PCM\n");
+   819			goto err_suspend;
+   820		}
+   821	
+   822		return 0;
+   823	
+   824	err_suspend:
+   825		if (!pm_runtime_status_suspended(&pdev->dev))
+   826			i2s_runtime_suspend(&pdev->dev);
+   827	err_pm_disable:
+   828		pm_runtime_disable(&pdev->dev);
+   829		return ret;
+   830	}
+   831	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
