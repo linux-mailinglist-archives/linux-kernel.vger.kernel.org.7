@@ -1,129 +1,111 @@
-Return-Path: <linux-kernel+bounces-728484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0517B028D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 03:19:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E35ECB028D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 03:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 202D34A34A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:19:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A17E54664D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D22C14885D;
-	Sat, 12 Jul 2025 01:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="FVquCKDt"
-Received: from mail3-165.sinamail.sina.com.cn (mail3-165.sinamail.sina.com.cn [202.108.3.165])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EFD149C64;
+	Sat, 12 Jul 2025 01:22:59 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFF24A1A
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 01:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC8A17F7
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 01:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752283160; cv=none; b=p88rA/F9KYGDb1otvVkWeXl1acZbLWA/x8J2Qg8Ub2kxO0OcSHREq+WVS/W5imRDsJLgKUxXQThmXPbaTsFELZEGZ8JPINmbNF3lmaZNKDhm72VN8F0MkwtxgGY1C9u61VrCnQxUzSQ3knIBbF2CZHrEQwKK/rLDc0Mth4qFNN4=
+	t=1752283379; cv=none; b=s3+G1o8uR9Tuj4VQsm8eOKcxghJy6ve+fLpstdEXt7pW7zKJ4wMTHXSBsMhZ/RxZX3VGZJ7/n5k9UusxcUOXYK8gDInrHIssYXBGIXBkiJUWXGJwJwIHHyKHGO9kJUc9Iv6sB+kaCXtP89zRmmI9x4AfwdldS5tSj9NtPnSlrv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752283160; c=relaxed/simple;
-	bh=8oz+C4fcRTeeuWVdSvnIB4IF8+u4wyEgMWi22xbVojM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NuvY8Y+YGvkMztBAolGWdrlqmjN2T9B5LArh85Jn7FsftApN/Kmj+D/eIogvtWNI5wZ0kEmoxokj0txfPuiiO8SglbqQKvSmD05tKM32VBh+2paxJCeg+TtFezMctDYEjpxDFDhByEvG4iZdESjz3Z3ymDfpv4YOsVNYZaGn8vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=FVquCKDt; arc=none smtp.client-ip=202.108.3.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752283155;
-	bh=3wwDztNdeU5RDe9SiY9YOcv5+D7OMF06ElF6qq9xT+A=;
-	h=From:Subject:Date:Message-ID;
-	b=FVquCKDt3vU4H36riSZ9RP3tepZeHMMCrwshIAGi9sE8ALr/jb+kCTF9R5cjpsL2t
-	 AWejY/W0oespsXbIdHXSSqPvpyPa1oEwaqSjIIxMyfUeDKUNJuiFQR4wFuLNL3kyAE
-	 cqXcA1nuEouRSXek9ABhz5BYgHawWEl3pA8NyTAc=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 6871B809000035F8; Sat, 12 Jul 2025 09:19:06 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 8923836685233
-X-SMAIL-UIID: 3E24870DCA30487EA6F2C69E2B452290-20250712-091906-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+97bf275720e06ad75f63@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] WARNING in rt_set_nexthop
-Date: Sat, 12 Jul 2025 09:18:55 +0800
-Message-ID: <20250712011856.3599-1-hdanton@sina.com>
-In-Reply-To: <6871b125.a00a0220.26a83e.0066.GAE@google.com>
-References: 
+	s=arc-20240116; t=1752283379; c=relaxed/simple;
+	bh=5I+JVArl9D6qIZ5wqwz60wr95rbiYViXQm83wLba8m0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KDGHQMig6u1zcoOyEz0/CfZrobJDbHVw0mXOqLJHpeVjxHhekyRwfqyW0+zf1pX1Q+KH4CaMAXIDY2wCC25L/WDM1H9i3Ms90mQf9RUSKcHNVY+kXm5PpPq5cf4Mhoqta2nfRSXw4PPOTTeV/qpewBwTfPiRDofwAs26uZn55BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bf9ln5zHKztSfD;
+	Sat, 12 Jul 2025 09:21:41 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id E1E18140132;
+	Sat, 12 Jul 2025 09:22:47 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 12 Jul 2025 09:22:47 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 12 Jul
+ 2025 09:22:47 +0800
+Message-ID: <3c031732-9090-454c-b52a-a5c01135f466@huawei.com>
+Date: Sat, 12 Jul 2025 09:22:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: hisilicon: kunpeng_hccs: Fix incorrect log
+ information
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>, <linuxarm@huawei.com>
+CC: <xuwei5@huawei.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <zhanjie9@hisilicon.com>
+References: <20250711063706.3121253-1-lihuisong@huawei.com>
+ <20250711113816.00003403@huawei.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <20250711113816.00003403@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-> Date: Fri, 11 Jul 2025 17:49:41 -0700	[thread overview]
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    d7b8f8e20813 Linux 6.16-rc5
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=107f9582580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f6cfc97245100778
-> dashboard link: https://syzkaller.appspot.com/bug?extid=97bf275720e06ad75f63
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17b6728c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12aac28c580000
 
-#syz test upstream  master
-
---- x/net/rxrpc/call_accept.c
-+++ y/net/rxrpc/call_accept.c
-@@ -348,7 +348,7 @@ bool rxrpc_new_incoming_call(struct rxrp
- 	if (sp->hdr.type != RXRPC_PACKET_TYPE_DATA)
- 		return rxrpc_protocol_error(skb, rxrpc_eproto_no_service_call);
- 
--	read_lock_irq(&local->services_lock);
-+	read_lock_bh(&local->services_lock);
- 
- 	/* Weed out packets to services we're not offering.  Packets that would
- 	 * begin a call are explicitly rejected and the rest are just
-@@ -405,7 +405,7 @@ bool rxrpc_new_incoming_call(struct rxrp
- 	spin_unlock(&conn->state_lock);
- 
- 	spin_unlock(&rx->incoming_lock);
--	read_unlock_irq(&local->services_lock);
-+	read_unlock_bh(&local->services_lock);
- 
- 	if (hlist_unhashed(&call->error_link)) {
- 		spin_lock_irq(&call->peer->lock);
-@@ -419,20 +419,20 @@ bool rxrpc_new_incoming_call(struct rxrp
- 	return true;
- 
- unsupported_service:
--	read_unlock_irq(&local->services_lock);
-+	read_unlock_bh(&local->services_lock);
- 	return rxrpc_direct_abort(skb, rxrpc_abort_service_not_offered,
- 				  RX_INVALID_OPERATION, -EOPNOTSUPP);
- unsupported_security:
--	read_unlock_irq(&local->services_lock);
-+	read_unlock_bh(&local->services_lock);
- 	return rxrpc_direct_abort(skb, rxrpc_abort_service_not_offered,
- 				  RX_INVALID_OPERATION, -EKEYREJECTED);
- no_call:
- 	spin_unlock(&rx->incoming_lock);
--	read_unlock_irq(&local->services_lock);
-+	read_unlock_bh(&local->services_lock);
- 	_leave(" = f [%u]", skb->mark);
- 	return false;
- discard:
--	read_unlock_irq(&local->services_lock);
-+	read_unlock_bh(&local->services_lock);
- 	return true;
- }
- 
---
+在 2025/7/11 18:38, Jonathan Cameron 写道:
+> On Fri, 11 Jul 2025 14:37:06 +0800
+> Huisong Li <lihuisong@huawei.com> wrote:
+>
+>> The hccs_get_all_spec_port_idle_sta() will tell user which port
+>> is busy when firmware doesn't allow to decrease HCCS lane number.
+>> However, the current log prints the index of die and port instead
+>> of the hardware ID user perceived.
+>>
+>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+>
+> Maybe adding an example of a wrong print and how it is fixed to this
+> patch description would make the problem even more obvious?
+Yes.
+The problem and modification are very simple, and this description is 
+also enough.
+> Not worth respin for that though!
+ok, thanks for your review.
+>
+>> ---
+>>   drivers/soc/hisilicon/kunpeng_hccs.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/soc/hisilicon/kunpeng_hccs.c b/drivers/soc/hisilicon/kunpeng_hccs.c
+>> index 7fc353732d55..65ff45fdcac7 100644
+>> --- a/drivers/soc/hisilicon/kunpeng_hccs.c
+>> +++ b/drivers/soc/hisilicon/kunpeng_hccs.c
+>> @@ -1295,11 +1295,11 @@ static int hccs_get_all_spec_port_idle_sta(struct hccs_dev *hdev, u8 port_type,
+>>   				if (ret) {
+>>   					dev_err(hdev->dev,
+>>   						"hccs%u on chip%u/die%u get idle status failed, ret = %d.\n",
+>> -						k, i, j, ret);
+>> +						port->port_id, chip->chip_id, die->die_id, ret);
+>>   					return ret;
+>>   				} else if (idle == 0) {
+>>   					dev_info(hdev->dev, "hccs%u on chip%u/die%u is busy.\n",
+>> -						k, i, j);
+>> +						 port->port_id, chip->chip_id, die->die_id);
+>>   					return 0;
+>>   				}
+>>   			}
 
