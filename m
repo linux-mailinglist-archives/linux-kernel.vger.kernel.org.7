@@ -1,165 +1,224 @@
-Return-Path: <linux-kernel+bounces-728527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E995B02987
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 07:59:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BEBBB0298B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF24D7BBE45
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 05:57:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D607F4A7D4D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 06:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2B9205E3B;
-	Sat, 12 Jul 2025 05:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369F92192EE;
+	Sat, 12 Jul 2025 06:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="x6bC5+vo"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5gyPcv4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB0F6ADD;
-	Sat, 12 Jul 2025 05:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639E92A8C1;
+	Sat, 12 Jul 2025 06:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752299948; cv=none; b=rDsmVPpMZ0pZcDKjqOslvvbsn4uKV4G1L6GNB/ZKM4FAxmc61afDExrTdVHrv9f+ZOZQXUVLXwUPvMeHpX2XtKJEOJHW1ub8bFCEEyQ/oJfrK9eUjdJ30H5RiEUreIyW65lhRb9ny2G/UOYaMa3owJENy11YPNNuGUHxF8cBxDY=
+	t=1752300410; cv=none; b=VRFdtUqcDFSYOP09tdoBsfz3W7LORE0jMaFqF8YK8DhbMaVnJ4pkMfQTV7oJmpw4siF5D7LwFUtFWtDSS7tzypajaINPWD8ifponsFY9wc5hk6B6J/WkRTocm3UObLbdGWX1H6aCvlxmpYodqiAdYTBUg3TvA31LIT6JlmAi9Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752299948; c=relaxed/simple;
-	bh=anC/9YHi9iN7Bq89giMEAd71gSC68fpm69srlwCVaCo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uvcuz4SWNndxdZGPxoz1qTZaC64DcI5JcOrq+SBe1X7nJhVEGYFaEBYcMDoZaqOcRLCrwtCLrcSqh1XXGah9yt6zmRz42L29Y3o+GlJ6R5HJDROxDEnJ4hu7yf1kNS1qyVrKkfk1KrqOYDXB/TdA2D45UJ0Pmu7vrVJrSKddzXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=x6bC5+vo; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=8t5sHWjfGOeS4xJWk0tqUnTlFjRBth23Ehas1zTXft8=; b=x6bC5+voErzvchvIhrsKFuoR8A
-	ngTb10kzW0wkvGyHuF1ZqnjT+Xgs1D4CC5KXjhvJeTya4b52BrjMRZMy3IXJqt+/aq1aThauC3ZNB
-	t+PjBO51U/pojJPkc9N2qBis9uU5xPYD+b+WmJy4cTpIT9VT/VU5uLiXWArWy8qzCIIZ16rEXIN09
-	tE87C40USn5/9eVE9fex/WbLzbXJxoYJlIjDu/Q3A9FWcU95Nx8kAfqcwSCoa7tZQF/ne2M0J8b7r
-	Q2mWbhs+ZjuxNm1jDkSuNNyBamwiuxQGKJG/PFNl4SvqebjYAPEGLwtdXb61LgDISETBxB60TkaPy
-	2MbPvFFQ==;
-Received: from [50.53.25.54] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uaTGD-0000000GIuX-1OKc;
-	Sat, 12 Jul 2025 05:58:57 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Jiawen Wu <jiawenwu@trustnetic.com>,
-	Mengyuan Lou <mengyuanlou@net-swift.com>,
-	netdev@vger.kernel.org,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH v2 net-next] net: wangxun: fix VF drivers Kconfig dependencies and help text
-Date: Fri, 11 Jul 2025 22:58:56 -0700
-Message-ID: <20250712055856.1732094-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1752300410; c=relaxed/simple;
+	bh=Pj2+Mf6ySJm9B6A0tlW9JzZnu0lIjQkDWpiuO8IR1fo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GTcl/53c316DO//YIpGql8t5EkPJcVdbB9v7pzmS8bJkSxdTwzd28UgDZ99Qz2QRD/YEmETkp533NfeRGKeRD+am7LsFKfCYKLYwJ8zDuHzndGJ/aHX9t7G8Mnm4CK7nft/9X/6FFtTpUGmCtWr0up4R+wbJFzTSrsskx1b4t/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k5gyPcv4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7BC1C4CEEF;
+	Sat, 12 Jul 2025 06:06:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752300409;
+	bh=Pj2+Mf6ySJm9B6A0tlW9JzZnu0lIjQkDWpiuO8IR1fo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k5gyPcv4D7BsHC5mVFyOp/kw3AZQ4vsfYywRBT2K0j+MJhQdhZtk4cAGkMNYX0k8z
+	 Ln+hOdGnPdB7l30BUNJqJwwdVS56o/AhEsRN88W6jxrY7L+ZtPyyJ72Lu2tMhb4eBu
+	 jkFRyZrx+pZMSbpm8QMcn42AY/lmBMnEh9lbw9M7fJvQwKZ4E+fG+xDMijr6GXXvvh
+	 RHL89kt/cIdWkgsN2AhCzaTMPR3KlO2VCnb8oYYbyjbnBGNLfXB07IWbYrbK3ZGnqg
+	 7f3Ia80ttTaKNV/kOWIFvk9vtBEn6S6c0yFE+XavHMPaqYJjo6z6SfFPDHHgWMOLGM
+	 G/U1yi3kvD95w==
+Date: Sat, 12 Jul 2025 11:36:40 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: Re: [PATCH RFC 0/3] PCI/pwrctrl: Allow pwrctrl framework to control
+ PERST# GPIO if available
+Message-ID: <ga3jrhlgjiyhbxu75ockavatday3fcmfckybqeqqxljt4pevxk@wiwyvfwh7kgc>
+References: <20250707-pci-pwrctrl-perst-v1-0-c3c7e513e312@kernel.org>
+ <aG3IWdZIhnk01t2A@google.com>
+ <kj6kilhjynygioxyo7iogvgwqbr7tluryir3f7vqeowk6wd6qn@sop5ubotfcug>
+ <aHGmllch_efdWgsW@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aHGmllch_efdWgsW@google.com>
 
-On x86_64, when CONFIG_PTP_1588_CLOCK_OPTIONAL=m,
-CONFIG_LIBWX can be set to 'y' by either of TXGBEVF=y or NGBEVF=y,
-causing kconfig unmet direct dependencies warning messages:
+On Fri, Jul 11, 2025 at 05:04:38PM GMT, Brian Norris wrote:
+> Hi,
+> 
+> On Wed, Jul 09, 2025 at 12:18:29PM +0530, Manivannan Sadhasivam wrote:
+> > On Tue, Jul 08, 2025 at 06:39:37PM GMT, Brian Norris wrote:
+> > > On Mon, Jul 07, 2025 at 11:48:37PM +0530, Manivannan Sadhasivam wrote:
+> > > > Hi,
+> > > > 
+> > > > This series is an RFC to propose pwrctrl framework to control the PERST# GPIO
+> > > > instead of letting the controller drivers to do so (which is a mistake btw).
+> > > > 
+> > > > Right now, the pwrctrl framework is controlling the power supplies to the
+> > > > components (endpoints and such), but it is not controlling PERST#. This was
+> > > > pointed out by Brian during a related conversation [1]. But we cannot just move
+> > > > the PERST# control from controller drivers due to the following reasons:
+> > > > 
+> > > > 1. Most of the controller drivers need to assert PERST# during the controller
+> > > > initialization sequence. This is mostly as per their hardware reference manual
+> > > > and should not be changed.
+> > > > 
+> > > > 2. Controller drivers still need to toggle PERST# when pwrctrl is not used i.e.,
+> > > > when the power supplies are not accurately described in PCI DT node. This can
+> > > > happen on unsupported platforms and also for platforms with legacy DTs.
+> > > > 
+> > > > For this reason, I've kept the PERST# retrieval logic in the controller drivers
+> > > > and just passed the gpio descriptors (for each slot) to the pwrctrl framework.
+> > > 
+> > > How sure are we that GPIOs (and *only* GPIOs) are sufficient for this
+> > > feature? I've seen a few drivers that pair a GPIO with some kind of
+> > > "internal" reset too, and it's not always clear that they can/should be
+> > > operated separately.
+> > > 
+> > > For example, drivers/pci/controller/dwc/pci-imx6.c /
+> > > imx_pcie_{,de}assert_core_reset(), and pcie-tegra194.c's
+> > > APPL_PINMUX_PEX_RST. The tegra case especially seems pretty clear that
+> > > its non-GPIO "pex_rst" is resetting an endpoint.
+> > > 
+> > 
+> > Right. But GPIO is the most commonly used approach for implementing PERST# and
+> > it is the one supported on the platform I'm testing with. So I just went with
+> > that. For sure there are other methods exist and the PCIe spec itself doesn't
+> > define how PERST# should be implemented in a form factor. It merely defines
+> > PERST# as an 'auxiliary signal'. So yes, other form of PERST# can exist. But for
+> > the sake of keeping this proposal simple, I'm considering only GPIO based
+> > PERST# atm.
+> 
+> Hmm, OK. A simple start is fine, but I'm pointing out this will quickly
+> show its limitations.
+> 
 
-WARNING: unmet direct dependencies detected for LIBWX
-  Depends on [m]: NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PTP_1588_CLOCK_OPTIONAL [=m]
-  Selected by [y]:
-  - TXGBEVF [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI [=y] && PCI_MSI [=y]
-  - NGBEVF [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI_MSI [=y]
+I don't disagree :)
 
-and subsequent build errors:
+> > Also, Tegra platforms are not converted to use pwrctrl framework and I don't
+> > know if the platform maintainers are interested in it or not. But if they start
+> > using it, we can tackle this situation by introducing a callback that
+> > asserts/deasserts PERST# (yes, callbacks are evil, but I don't know any other
+> > sensible way to support vendor specific PERST# implementations).
+> 
+> IMO, it's pretty fair game to at least account for things people are
+> doing in upstream drivers today, even if they aren't wholly ready to
+> adopt the new thing. It's harder to gain new users when you actively
+> don't support things you know the users need.
+> 
+> > Oh and do take a look at pcie-brcmstb driver, which I promised to move to
+> > pwrctrl framework for another reason. It uses multiple callbacks per SoC
+> > revisions for toggling PERST#. So for these usecases, having a callback in
+> > 'struct pci_host_bridge' would be a good fit and I may introduce it after this
+> > series gets in.
+> 
+> Sure. I think there are plenty of drivers that will need it. And that's
+> why I brought it up.
+> 
+> But if that's a "phase 2" thing, so be it.
+> 
+> > > > This will allow both the controller drivers and pwrctrl framework to share the
+> > > > PERST# (which is ugly but can't be avoided). But care must be taken to ensure
+> > > > that the controller drivers only assert PERST# and not deassert when pwrctrl is
+> > > > used. I've added the change for the Qcom driver as a reference. The Qcom driver
+> > > > is a slight mess because, it now has to support both new DT binding (PERST# and
+> > > > PHY in Root Port node) and legacy (both in Host Bridge node). So I've allowed
+> > > > the PERST# control only for the new binding (which is always going to use
+> > > > pwrctrl framework to control the component supplies).
+> > > > 
+> > > > Testing
+> > > > =======
+> > > > 
+> > > > This series is tested on Lenovo Thinkpad T14s laptop (with out-of-tree patch
+> > > > enabling PCIe WLAN card) and on RB3 Gen2 with TC9563 switch (also with the not
+> > > > yet merged series [2]). A big take away from this series is that, it is now
+> > > > possible to get rid of the controversial {start/stop}_link() callback proposed
+> > > > in the above mentioned switch pwrctrl driver [3].
+> > > 
+> > > This is a tiny bit tangential to the PERST# discussion, but I believe
+> > > there are other controller driver features that don't fit into the
+> > > sequence model of:
+> > > 
+> > > 1. start LTSSM (controller driver)
+> > > 2. pwrctrl eventually turns on power + delay per spec
+> > > 3. pwrctrl deasserts PERST#
+> > > 4. pwrctrl delays a fixed amount of time, per the CEM spec
+> > > 5. pwrctrl rescans bus
+> > > 
+> > > For example, tegra_pcie_dw_start_link() notes some cases where it needs
+> > > to take action and retry when the link doesn't come up. Similarly, I've
+> > > seen drivers with retry loops for cases where the link comes up, but not
+> > > at the expected link rate. None of this is possible if the controller
+> > > driver only gets to take care of #1, and has no involvement in between
+> > > #3 and #5.
+> > > 
+> > 
+> > Having this back and forth communication would make the pwrctrl driver a lot
+> > messier. But I believe, we could teach pwrctrl driver to detect link up (similar
+> > to dw_pcie_wait_for_link()) and if link didn't come up, it could do retry and
+> > other steps with help from controller drivers. But these things should be
+> > implemented only when platforms like Tegra start to show some love towards
+> > pwrctrl.
+> 
+> Never mind the lack of love you feel here :)
+> But I'm actively looking at drivers that don't yet fit into what pwrctrl
+> supports, and I'd like them to use pwrctrl someday instead of
+> reinventing the wheel.
+> 
 
-ld: vmlinux.o: in function `wx_clean_tx_irq':
-drivers/net/ethernet/wangxun/libwx/wx_lib.c:757:(.text+0xa48f18): undefined reference to `ptp_schedule_worker'
-ld: vmlinux.o: in function `wx_get_ts_info':
-drivers/net/ethernet/wangxun/libwx/wx_ethtool.c:509:(.text+0xa4a58c): undefined reference to `ptp_clock_index'
-ld: vmlinux.o: in function `wx_ptp_stop':
-drivers/net/ethernet/wangxun/libwx/wx_ptp.c:838:(.text+0xa4b3dc): undefined reference to `ptp_clock_unregister'
-ld: vmlinux.o: in function `wx_ptp_reset':
-drivers/net/ethernet/wangxun/libwx/wx_ptp.c:769:(.text+0xa4b80c): undefined reference to `ptp_schedule_worker'
-ld: vmlinux.o: in function `wx_ptp_create_clock':
-drivers/net/ethernet/wangxun/libwx/wx_ptp.c:532:(.text+0xa4b9d1): undefined reference to `ptp_clock_register'
+I'm not against supporting these controller drivers/platforms in pwrctrl. It's
+just that I do not want to implement solutions now without having users. But I'm
+glad that you are bringing these up. I'm adding these to my pwrctrl/todo list.
 
-Add dependency to PTP_1588_CLOCK_OPTIONAL for both txgbevf and ngbevf.
-This is needed since both of them select LIBWX and it depends on
-PTP_1588_CLOCK_OPTIONAL.
+> You're arguing against more callbacks, and start_link()-like
+> functionality, but I'm pretty sure some of these things are necessities,
+> if you're trying to abstract power control away from controller drivers.
+> 
 
-Drop "depends on PCI" for TXGBEVF since PCI_MSI implies that.
-Drop "select PHYLINK" for TXGBEVF since the driver does not use phylink.
+Well, that's my personal preference. These days I feel (mostly after spending my
+time as a maintainer of PCI controller drivers) that callbacks are evil and they
+pay way for 'midlayers'. But having said that, I myself implemented callbacks
+whereever I felt that no other options were possible. And here also, I'm just
+claiming that this series avoids the '{start/stop}_link' callbacks which was
+hated by many (including me) as it ties the Qcom switch driver implementing
+these callbacks to be tied to a specific platform.
 
-Move the driver name help text to the module name help text for
-both drivers.
+> Again, maybe this is a problem to be solved later. But I think you're
+> kidding yourself that pwrctrl is ready as-is, and that you can avoid
+> these kinds of callbacks.
+> 
 
-Fixes: 377d180bd71c ("net: wangxun: add txgbevf build")
-Fixes: a0008a3658a3 ("net: wangxun: add ngbevf build")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jiawen Wu <jiawenwu@trustnetic.com>
-Cc: Mengyuan Lou <mengyuanlou@net-swift.com>
-Cc: netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>
----
-v2: also drop PHYLINK for TXGBEVF, suggested by Jiawen Wu
+No, I never claimed that pwrctrl is perfect and it would solve all the PCI power
+issues. But I'm happy that it atleast solves a couple of issues and allows me to
+address the rest of them. We had been talking about a framework like this for
+several years without any upstream solution. But now we finally have one and I'm
+merely trying to make use of it to address issues.
 
- drivers/net/ethernet/wangxun/Kconfig |   18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+- Mani
 
---- linux-next-20250710.orig/drivers/net/ethernet/wangxun/Kconfig
-+++ linux-next-20250710/drivers/net/ethernet/wangxun/Kconfig
-@@ -66,35 +66,33 @@ config TXGBE
- 
- config TXGBEVF
- 	tristate "Wangxun(R) 10/25/40G Virtual Function Ethernet support"
--	depends on PCI
- 	depends on PCI_MSI
-+	depends on PTP_1588_CLOCK_OPTIONAL
- 	select LIBWX
--	select PHYLINK
- 	help
- 	  This driver supports virtual functions for SP1000A, WX1820AL,
- 	  WX5XXX, WX5XXXAL.
- 
--	  This driver was formerly named txgbevf.
--
- 	  More specific information on configuring the driver is in
- 	  <file:Documentation/networking/device_drivers/ethernet/wangxun/txgbevf.rst>.
- 
--	  To compile this driver as a module, choose M here. MSI-X interrupt
--	  support is required for this driver to work correctly.
-+	  To compile this driver as a module, choose M here. The module
-+	  will be called txgbevf. MSI-X interrupt support is required
-+	  for this driver to work correctly.
- 
- config NGBEVF
- 	tristate "Wangxun(R) GbE Virtual Function Ethernet support"
- 	depends on PCI_MSI
-+	depends on PTP_1588_CLOCK_OPTIONAL
- 	select LIBWX
- 	help
- 	  This driver supports virtual functions for WX1860, WX1860AL.
- 
--	  This driver was formerly named ngbevf.
--
- 	  More specific information on configuring the driver is in
- 	  <file:Documentation/networking/device_drivers/ethernet/wangxun/ngbevf.rst>.
- 
--	  To compile this driver as a module, choose M here. MSI-X interrupt
--	  support is required for this driver to work correctly.
-+	  To compile this driver as a module, choose M here. The module
-+	  will be called ngbefv. MSI-X interrupt support is required for
-+	  this driver to work correctly.
- 
- endif # NET_VENDOR_WANGXUN
+-- 
+மணிவண்ணன் சதாசிவம்
 
