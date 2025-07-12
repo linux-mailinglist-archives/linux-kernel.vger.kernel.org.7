@@ -1,137 +1,122 @@
-Return-Path: <linux-kernel+bounces-728524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C128EB02980
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 07:54:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3416B02984
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 07:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1A74189F96B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 05:54:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29AD07BB2C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 05:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB9E20D50B;
-	Sat, 12 Jul 2025 05:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CCC2046A6;
+	Sat, 12 Jul 2025 05:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/ctmFCp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ogUANSJf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923604C7F;
-	Sat, 12 Jul 2025 05:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC072A8C1;
+	Sat, 12 Jul 2025 05:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752299646; cv=none; b=F4NCAB5Da3Jdiqp480oNeGBwL+Byn/uhIDytILhkraMn0D12p5ScKwgXgV+lil/XV5GOSccEUDbgLH13ANL8fELksSxHSQ4XvWORZTUUW9CCcTySJcbR9CjrhqcP44AjNdEXT8aMMgT0ToO1wamrCk+amOigWZDyOnveA4j+cv4=
+	t=1752299789; cv=none; b=KTfxu2SLEJVLbUpE5usB116Rl3R++tOPqAfbXnzNHVAZQv9bOU6gPQ9Nfc+qTgLOHtkDc5AWvLY0g3ZYHasSgFLAqzAP/Zcmfwj2IZD/2GnVs6EwzwaEWd79DPjUaU6H9x4iaJN8FRZmB2z+xUDkrdEhM8hB6KMN1ihf+mQxhwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752299646; c=relaxed/simple;
-	bh=rFWl3Q13e5QPMxcRC35Ux1buXtJYF88GSwwmW4kTpLM=;
+	s=arc-20240116; t=1752299789; c=relaxed/simple;
+	bh=uapeozIqCcHcIFbe23O5ok6CMllk+sF8R82s17ZXmeg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OXMm40vW3K+A3R6/K16aq8Sh3uD1Qf0kcavKPeuV+Grpdd59ZGEUQz3KstP4S1Hq1uF4sYYkwXw8fb2iH+uY8gp0x6PkIdx4TuyAaajCoXbUBx6bLyydotXwfPX9+LIxbnYD4chJO7zCccte1OgEn1B8IKEbuM4NMoN7VJJ/yVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/ctmFCp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05B65C4CEEF;
-	Sat, 12 Jul 2025 05:54:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lf2yc8K6bRoTxKoS52G1Eh3behvi5mUFkZDMRE8RtvT/gfdo98ZF9oH4OFGthlruKw/nRumDRrONY3gfiGNYShJ/8U9aOhyzKcDp0Ub9C8M7wI6t0eS5A2t3vC5s7K+vwZuWsUW777MpAFigeYBcKymrHTOTCgq1ec5+nTYM+dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ogUANSJf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7405EC4CEEF;
+	Sat, 12 Jul 2025 05:56:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752299646;
-	bh=rFWl3Q13e5QPMxcRC35Ux1buXtJYF88GSwwmW4kTpLM=;
+	s=k20201202; t=1752299788;
+	bh=uapeozIqCcHcIFbe23O5ok6CMllk+sF8R82s17ZXmeg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F/ctmFCpHYpKeqGDCdCFR36u2S2ySZVT6jp5O5E7FlOasj+1TMXaYp4DFVJZtTncZ
-	 6JWUH0rN1ghDoNaTE4u2fZ5ZGcvPmVWHz0l6GaICRTGvoixkZ1VYpZbt4g8AyIyd+N
-	 UjfUZbLXKiuKVnnOJNLPUV+kD9ptmHy7yc1qZfIk4zdU6D9uX9xu4Iji46TiZkXUZN
-	 VqtbGkKLgKIfTLZUZGZd7d5mPawtDpQcos+QV+GyqK2zDM4J9MTZQOklAGsfMWzWME
-	 8zLVNcQhoyhmiKQJIdwJMCC1usVoMPekZxLT4sd6xIrreIOsF5QW57b93eth1Ctsvj
-	 eBeiv4uBKaMuQ==
-Date: Fri, 11 Jul 2025 22:54:05 -0700
+	b=ogUANSJfPJ7b0L2/M31bUCIHUKW5Xjb0McphK8qwrcbUwGIroVAotdKsitZdBbrfl
+	 pjRyNnKsmsPntc1HpPbCXGJTtwUBVHAv4leSLTHvCGt4LFszljOJJFBU/3gPvuEMGM
+	 uVmahhve3+2ZX/RnD8lmQiGs2IzPohuaRFGS+y82HHjLHj/ucycrEET6moLHcs0R8p
+	 oGC0W9qtPw9ndBa4DoglB2uyUaPcqG44Q/H0ZJqp+6k3wk66cVoqBEDow4p9n6Mmdf
+	 tX7IrTzY9KIjTb+Eea8D6ogP80Xr7638zJtRPQxUHeDTa35Z0y9NNp/pMg8OsNklW2
+	 eNC2J4g+dFTQA==
+Date: Fri, 11 Jul 2025 22:56:27 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Groves <John@groves.net>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Bernd Schubert <bschubert@ddn.com>,
-	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Stefan Hajnoczi <shajnocz@redhat.com>,
-	Joanne Koong <joannelkoong@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Aravind Ramesh <arramesh@micron.com>,
-	Ajay Joshi <ajayjoshi@micron.com>
-Subject: Re: [RFC V2 11/18] famfs_fuse: Basic famfs mount opts
-Message-ID: <20250712055405.GK2672029@frogsfrogsfrogs>
-References: <20250703185032.46568-1-john@groves.net>
- <20250703185032.46568-12-john@groves.net>
- <20250709035911.GE2672029@frogsfrogsfrogs>
- <ttjh3gqk3fmykwrb7dg6xaqhkpxk7g773fkvuzvbdlefimpseg@l5ermgxixeen>
+To: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, cem@kernel.org,
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH v2] fs/xfs: replace strncpy with memtostr_pad()
+Message-ID: <20250712055627.GJ2672049@frogsfrogsfrogs>
+References: <20250704101250.24629-1-pranav.tyagi03@gmail.com>
+ <CAH4c4jLCyb3kF0G25GU2JpPVkOXrgMTtMF+NTWgJpXBoEUaA5w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ttjh3gqk3fmykwrb7dg6xaqhkpxk7g773fkvuzvbdlefimpseg@l5ermgxixeen>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH4c4jLCyb3kF0G25GU2JpPVkOXrgMTtMF+NTWgJpXBoEUaA5w@mail.gmail.com>
 
-On Fri, Jul 11, 2025 at 10:28:20AM -0500, John Groves wrote:
-> On 25/07/08 08:59PM, Darrick J. Wong wrote:
-> > On Thu, Jul 03, 2025 at 01:50:25PM -0500, John Groves wrote:
-> > > * -o shadow=<shadowpath>
-> > 
-> > What is a shadow?
-> > 
-> > > * -o daxdev=<daxdev>
+On Thu, Jul 10, 2025 at 03:56:01PM +0530, Pranav Tyagi wrote:
+> On Fri, Jul 4, 2025 at 3:42 PM Pranav Tyagi <pranav.tyagi03@gmail.com> wrote:
+> >
+> > Replace the deprecated strncpy() with memtostr_pad(). This also avoids
+> > the need for separate zeroing using memset(). Mark sb_fname buffer with
+> > __nonstring as its size is XFSLABEL_MAX and so no terminating NULL for
+> > sb_fname.
+> >
+> > Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+> > ---
+> >  fs/xfs/libxfs/xfs_format.h | 2 +-
+> >  fs/xfs/xfs_ioctl.c         | 3 +--
+> >  2 files changed, 2 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
+> > index 9566a7623365..779dac59b1f3 100644
+> > --- a/fs/xfs/libxfs/xfs_format.h
+> > +++ b/fs/xfs/libxfs/xfs_format.h
+> > @@ -112,7 +112,7 @@ typedef struct xfs_sb {
+> >         uint16_t        sb_sectsize;    /* volume sector size, bytes */
+> >         uint16_t        sb_inodesize;   /* inode size, bytes */
+> >         uint16_t        sb_inopblock;   /* inodes per block */
+> > -       char            sb_fname[XFSLABEL_MAX]; /* file system name */
+> > +       char            sb_fname[XFSLABEL_MAX] __nonstring; /* file system name */
+> >         uint8_t         sb_blocklog;    /* log2 of sb_blocksize */
+> >         uint8_t         sb_sectlog;     /* log2 of sb_sectsize */
+> >         uint8_t         sb_inodelog;    /* log2 of sb_inodesize */
+> > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> > index d250f7f74e3b..c3e8c5c1084f 100644
+> > --- a/fs/xfs/xfs_ioctl.c
+> > +++ b/fs/xfs/xfs_ioctl.c
+> > @@ -990,9 +990,8 @@ xfs_ioc_getlabel(
+> >         BUILD_BUG_ON(sizeof(sbp->sb_fname) > FSLABEL_MAX);
+> >
+> >         /* 1 larger than sb_fname, so this ensures a trailing NUL char */
+> > -       memset(label, 0, sizeof(label));
+> >         spin_lock(&mp->m_sb_lock);
+> > -       strncpy(label, sbp->sb_fname, XFSLABEL_MAX);
+> > +       memtostr_pad(label, sbp->sb_fname);
+> >         spin_unlock(&mp->m_sb_lock);
+> >
+> >         if (copy_to_user(user_label, label, sizeof(label)))
+> > --
+> > 2.49.0
+> >
+> Hi,
 > 
-> Derp - OK, that's a stale commit message. Here is the one for the -next
-> version of this patch:
-> 
->     famfs_fuse: Basic famfs mount opt: -o shadow=<shadowpath>
-> 
->     The shadow path is a (usually tmpfs) file system area used by the famfs 
->     user space to commuicate with the famfs fuse server. There is a minor 
->     dilemma that the user space tools must be able to resolve from a mount 
->     point path to a shadow path. The shadow path is exposed via /proc/mounts, 
->     but otherwise not used by the kernel. User space gets the shadow path 
->     from /proc/mounts...
+> This is a gentle follow-up on this patch. I would like to
+> know if there is any update on its state.
 
-Ah.  A service directory, of sorts.
-
-> > And, uh, if there's a FUSE_GET_DAXDEV command, then what does this mount
-> > option do?  Pre-populate the first element of that set?
-> > 
-> > --D
-> > 
-> 
-> I took out -o daxdev, but had failed to update the commit msg.
-> 
-> The logic is this: The general model requires the FUSE_GET_DAXDEV message /
-> response, so passing in the primary daxdev as a -o arg creates two ways to
-> do the same thing.
-> 
-> The only initial heartburn about this was one could imagine a case where a
-> mount happens, but no I/O happens for a while so the mount could "succeed",
-> only to fail later if the primary daxdev could not be accessed.
-> 
-> But this can't happen with famfs, because the mount procedure includes 
-> creating "meta files" - .meta/.superblock and .meta/.log and accessing them
-> immediately. So it is guaranteed that FUSE_GET_DAXDEV will be sent right away,
-> and if it fails, the mount will be unwound.
-
-<nod> 
+Seems fine to me...
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
 
-> Thanks Darrick!
-> John
 > 
-> <snip>
-> 
+> Regards
+> Pranav Tyagi
 > 
 
