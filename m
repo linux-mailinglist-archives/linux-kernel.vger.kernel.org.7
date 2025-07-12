@@ -1,156 +1,271 @@
-Return-Path: <linux-kernel+bounces-728560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 490FCB029FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:16:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70283B02A00
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3CD3AE9BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:15:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEC037B57FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E65264A9D;
-	Sat, 12 Jul 2025 08:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B8026B768;
+	Sat, 12 Jul 2025 08:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4h3f0M6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dUe/skNM"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9922641F8;
-	Sat, 12 Jul 2025 08:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79AC4A11;
+	Sat, 12 Jul 2025 08:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752308180; cv=none; b=K+3Wfu7yrGPrtLYVN1utBRtC+W9JUdZTZANW1ORXGEdpodDrb4HWHivDbQz+FmZgGQ/tZGKrFju0ofzRrGd1c+jZgJSITwJNXHVAzy0tyC7FDh4phumbqJarfb58ezX/ZyCr1juaP4mJaJDm7fJn0RLqIRKDlPo+7E8b8hxIewk=
+	t=1752308313; cv=none; b=VTkcuFxUmG+onQR1i5wa7Edz25pTX5y1ZTHSuPPYKK7Ge2de3W+ZjOTtIjJ8BAvpT7spm1VsA1LmSPX9M9EEJjg85zSDQ81xGo1wtzVBnUo+ALcrSUfNpnw5000DEOty64iSlxvq5q3cDikd0mS9udsRFJtwoAD9btpU4XYNHFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752308180; c=relaxed/simple;
-	bh=fQo4K2HEVBu7amyJdMssKDsDgVHS7eWNIAwuuStgM+s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CuFmrx3bMaol6+mcs8aYFwBXlMwTzBkX8Y6NKvLIdQ24s4FYdh5ZRyop4sWWKjLLt5uDDiOYLywPJ5SeHxpXUFwDnw8w7jy61FeoEFH6KKYyH2rqZWjF4vqLG3m9yTjol6R8uGIqNOarXlBAcuz5ZXL8hd9oHWUP/KhfBGHOP5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4h3f0M6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9FC1C4CEEF;
-	Sat, 12 Jul 2025 08:16:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752308179;
-	bh=fQo4K2HEVBu7amyJdMssKDsDgVHS7eWNIAwuuStgM+s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=H4h3f0M6RL7BWmgXq6jGkkhbjLOIkn7KQ6bslA+r7BrRSju49TS6ochVYpoW/DzEG
-	 llOtm5LCN/pTrUV8sgVyjmn4Tc2eGiBI0IAsTiv0qE1gU0l4zkSaInYVxdG4knxLMy
-	 gl9GUSfmA1MVtaq5qcdhGz+udmaMeRZ/hQve36YVvB296xNjpcN1C5OPi+2zpxzolV
-	 K2hE4arC57ZmqERaKBIUWTC4T8hQW8PQdCIVS2Qw74eNNuf5u5dzK2TKGFTgT+ReCW
-	 y0y8dwywE3QjzxZAxJgF8JjPjBiX+1MHzqWvfy/SQ4pcVTBycIABrbyF9uEQxjOGkQ
-	 LhclI/sRaGO/w==
-Message-ID: <40c06385-26bc-4d5f-8fdc-fee2600afdeb@kernel.org>
-Date: Sat, 12 Jul 2025 10:16:11 +0200
+	s=arc-20240116; t=1752308313; c=relaxed/simple;
+	bh=5QmlZdq9lk3oD+l/SlfTydozUqEL/49FswAFukZBz1Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FpX5Q3cL4aeoazbl9jyZbZWee9xVBtUpsUTD/+LZ0/F/YBoWv+kaHVAEHM1NzBQHDUWJnGHSqwEUj4Q79+MaHaPLNIgcGt/AjpQRjvfSdswPpMvVv8BT2f0ORVj37cJimUVKxaPiCKFPwXsWnSAohnkqdnl0xyAPxzqQKtPYNAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dUe/skNM; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56C8I37x2213549;
+	Sat, 12 Jul 2025 03:18:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752308283;
+	bh=nhjS0HucAZWDT2G9PZFl8rKVFR+c+E/KvSR61Qe4jNg=;
+	h=From:To:CC:Subject:Date;
+	b=dUe/skNMVztVVwCshv/M2DFqAXUTwUNcElrWVN6HQTmuNUvWl93QlxvrWlsxp/eD5
+	 mkRQdjA+eWpf26sufU1U27YTBwT6+wZWDQHaHiZhtYE0a5XXxccGX3d730OLfVmLXl
+	 yk8546WzXLhbtptKX6ZyAa/GY6WSjKh0e4dBK2Vc=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56C8I2wl2036460
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Sat, 12 Jul 2025 03:18:02 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sat, 12
+ Jul 2025 03:18:02 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Sat, 12 Jul 2025 03:18:02 -0500
+Received: from lelvem-mr06.itg.ti.com ([10.250.165.138])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56C8Hvt1557207;
+	Sat, 12 Jul 2025 03:17:58 -0500
+From: Baojun Xu <baojun.xu@ti.com>
+To: <tiwai@suse.de>
+CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
+        <alsa-devel@alsa-project.org>, <shenghao-ding@ti.com>, <navada@ti.com>,
+        <13916275206@139.com>, <v-hampiholi@ti.com>, <v-po@ti.com>,
+        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <baojun.xu@ti.com>
+Subject: [PATCH v1] ALSA: hda/tas2781: Add TAS2770 support
+Date: Sat, 12 Jul 2025 16:17:33 +0800
+Message-ID: <20250712081733.12881-1-baojun.xu@ti.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/6] phy: exynos5-usbdrd: support HS phy for
- ExynosAutov920
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alim.akhtar@samsung.com, andre.draszik@linaro.org, peter.griffin@linaro.org,
- neil.armstrong@linaro.org, kauschluss@disroot.org,
- ivo.ivanov.ivanov1@gmail.com, m.szyprowski@samsung.com,
- s.nawrocki@samsung.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
- dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
- selvarasu.g@samsung.com
-References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
- <CGME20250701115959epcas5p40f28954777a620b018251301eea13873@epcas5p4.samsung.com>
- <20250701120706.2219355-3-pritam.sutar@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250701120706.2219355-3-pritam.sutar@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 01/07/2025 14:07, Pritam Manohar Sutar wrote:
-> This SoC has a single USB 3.1 DRD combo phy that supports both
-> UTMI+ (HS) and PIPE3 (SS) and three USB2.0 DRD HS phy controllers
-> those only support the UTMI+ (HS) interface.
-> 
-> Support only UTMI+ port for this SoC which is very similar to what
-> the existing Exynos850 supports.
-> 
-> This SoC shares phy isol between USBs. Bypass PHY isol when first USB
-> is powered on and enable it when all of then are powered off. Add
-> required change in phy driver to support HS phy for this SoC.
-> 
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Add TAS2770 support in HDA.
+Create a header file include/sound/tas2770-tlv.h,
+Set chip_id in i2c probe, check it while sound control is created,
+and the DSP firmware binary file parser.
 
-Drop
+Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+---
+ include/sound/tas2770-tlv.h     | 20 ++++++++++++
+ include/sound/tas2781.h         |  4 +++
+ sound/pci/hda/tas2781_hda_i2c.c | 58 +++++++++++++++++++++++++--------
+ 3 files changed, 69 insertions(+), 13 deletions(-)
+ create mode 100644 include/sound/tas2770-tlv.h
 
-You again added significant changes and claimed they were reviewed.
+diff --git a/include/sound/tas2770-tlv.h b/include/sound/tas2770-tlv.h
+new file mode 100644
+index 000000000000..2a2a74372366
+--- /dev/null
++++ b/include/sound/tas2770-tlv.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++//
++// ALSA SoC Texas Instruments TAS2770 Audio Smart Amplifier
++//
++// Copyright (C) 2025 Texas Instruments Incorporated
++// https://www.ti.com
++//
++// The TAS2770 hda driver implements for one, two, or even multiple
++// TAS2770 chips.
++//
++// Author: Baojun Xu <baojun.xu@ti.com>
++//
++
++#ifndef __TAS2770_TLV_H__
++#define __TAS2770_TLV_H__
++
++static const __maybe_unused DECLARE_TLV_DB_SCALE(tas2770_dvc_tlv, 1650, 50, 0);
++static const __maybe_unused DECLARE_TLV_DB_SCALE(tas2770_amp_tlv, 1100, 50, 0);
++
++#endif
+diff --git a/include/sound/tas2781.h b/include/sound/tas2781.h
+index 3875e92f1ec5..f3d9c80fad36 100644
+--- a/include/sound/tas2781.h
++++ b/include/sound/tas2781.h
+@@ -63,6 +63,9 @@
+ 
+ /* Volume control */
+ #define TAS2563_DVC_LVL			TASDEVICE_REG(0x00, 0x02, 0x0c)
++#define TAS2770_DVC_LVL			TASDEVICE_REG(0x0, 0x0, 0x17)
++#define TAS2770_AMP_LEVEL		TASDEVICE_REG(0x0, 0x0, 0x03)
++
+ #define TAS2781_DVC_LVL			TASDEVICE_REG(0x0, 0x0, 0x1a)
+ #define TAS2781_AMP_LEVEL		TASDEVICE_REG(0x0, 0x0, 0x03)
+ #define TAS2781_AMP_LEVEL_MASK		GENMASK(5, 1)
+@@ -111,6 +114,7 @@
+ 
+ enum audio_device {
+ 	TAS2563,
++	TAS2770,
+ 	TAS2781,
+ };
+ 
+diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
+index b7ee22840d78..39f00e33e49d 100644
+--- a/sound/pci/hda/tas2781_hda_i2c.c
++++ b/sound/pci/hda/tas2781_hda_i2c.c
+@@ -24,6 +24,7 @@
+ #include <sound/tas2781.h>
+ #include <sound/tas2781-comlib-i2c.h>
+ #include <sound/tlv.h>
++#include <sound/tas2770-tlv.h>
+ #include <sound/tas2781-tlv.h>
+ 
+ #include "hda_local.h"
+@@ -245,6 +246,12 @@ static int tas2781_force_fwload_put(struct snd_kcontrol *kcontrol,
+ 	return change;
+ }
+ 
++static const struct snd_kcontrol_new tas2770_snd_controls[] = {
++	ACARD_SINGLE_RANGE_EXT_TLV("Speaker Analog Volume", TAS2770_AMP_LEVEL,
++		0, 0, 20, 0, tas2781_amp_getvol,
++		tas2781_amp_putvol, tas2770_amp_tlv),
++};
++
+ static const struct snd_kcontrol_new tas2781_snd_controls[] = {
+ 	ACARD_SINGLE_RANGE_EXT_TLV("Speaker Analog Gain", TAS2781_AMP_LEVEL,
+ 		1, 0, 20, 0, tas2781_amp_getvol,
+@@ -253,7 +260,7 @@ static const struct snd_kcontrol_new tas2781_snd_controls[] = {
+ 		tas2781_force_fwload_get, tas2781_force_fwload_put),
+ };
+ 
+-static const struct snd_kcontrol_new tas2781_prof_ctrl = {
++static const struct snd_kcontrol_new tas27xx_prof_ctrl = {
+ 	.name = "Speaker Profile Id",
+ 	.iface = SNDRV_CTL_ELEM_IFACE_CARD,
+ 	.info = tasdevice_info_profile,
+@@ -393,26 +400,45 @@ static void tasdev_fw_ready(const struct firmware *fmw, void *context)
+ 	if (ret)
+ 		goto out;
+ 
+-	tas_hda->prof_ctl = snd_ctl_new1(&tas2781_prof_ctrl, tas_priv);
++	tas_hda->prof_ctl = snd_ctl_new1(&tas27xx_prof_ctrl, tas_priv);
+ 	ret = snd_ctl_add(codec->card, tas_hda->prof_ctl);
+ 	if (ret) {
+ 		dev_err(tas_priv->dev,
+ 			"Failed to add KControl %s = %d\n",
+-			tas2781_prof_ctrl.name, ret);
++			tas27xx_prof_ctrl.name, ret);
+ 		goto out;
+ 	}
+ 
+-	for (i = 0; i < ARRAY_SIZE(tas2781_snd_controls); i++) {
+-		hda_priv->snd_ctls[i] = snd_ctl_new1(&tas2781_snd_controls[i],
+-			tas_priv);
+-		ret = snd_ctl_add(codec->card, hda_priv->snd_ctls[i]);
+-		if (ret) {
+-			dev_err(tas_priv->dev,
+-				"Failed to add KControl %s = %d\n",
+-				tas2781_snd_controls[i].name, ret);
+-			goto out;
++	if (tas_priv->chip_id == TAS2770) {
++		for (i = 0; i < ARRAY_SIZE(tas2770_snd_controls); i++) {
++			hda_priv->snd_ctls[i] = snd_ctl_new1(
++				&tas2770_snd_controls[i], tas_priv);
++			ret = snd_ctl_add(codec->card, hda_priv->snd_ctls[i]);
++			if (ret) {
++				dev_err(tas_priv->dev,
++					"Failed to add KControl %s = %d\n",
++					tas2770_snd_controls[i].name, ret);
++				goto out;
++			}
++		}
++	} else if (tas_priv->chip_id == TAS2781) {
++		for (i = 0; i < ARRAY_SIZE(tas2781_snd_controls); i++) {
++			hda_priv->snd_ctls[i] = snd_ctl_new1(
++				&tas2781_snd_controls[i], tas_priv);
++			ret = snd_ctl_add(codec->card, hda_priv->snd_ctls[i]);
++			if (ret) {
++				dev_err(tas_priv->dev,
++					"Failed to add KControl %s = %d\n",
++					tas2781_snd_controls[i].name, ret);
++				goto out;
++			}
+ 		}
+ 	}
++	// No dsp supported in TAS2770.
++	if (tas_priv->chip_id == TAS2770) {
++		tas_hda->priv->playback_started = true;
++		goto out;
++	}
+ 
+ 	tasdevice_dsp_remove(tas_priv);
+ 
+@@ -453,7 +479,6 @@ static void tasdev_fw_ready(const struct firmware *fmw, void *context)
+ 			tas2781_dsp_prog_ctrl.name, ret);
+ 		goto out;
+ 	}
+-
+ 	tas_hda->dsp_conf_ctl = snd_ctl_new1(&tas2781_dsp_conf_ctrl,
+ 		tas_priv);
+ 	ret = snd_ctl_add(codec->card, tas_hda->dsp_conf_ctl);
+@@ -582,15 +607,21 @@ static int tas2781_hda_i2c_probe(struct i2c_client *clt)
+ 
+ 	if (strstr(dev_name(&clt->dev), "TIAS2781")) {
+ 		device_name = "TIAS2781";
++		tas_hda->priv->chip_id = TAS2781;
+ 		hda_priv->save_calibration = tas2781_save_calibration;
+ 		tas_hda->priv->global_addr = TAS2781_GLOBAL_ADDR;
++	} else if (strstarts(dev_name(&clt->dev), "i2c-TXNW2770")) {
++		device_name = "TXNW2770";
++		tas_hda->priv->chip_id = TAS2770;
+ 	} else if (strstarts(dev_name(&clt->dev),
+ 			     "i2c-TXNW2781:00-tas2781-hda.0")) {
+ 		device_name = "TXNW2781";
++		tas_hda->priv->chip_id = TAS2781;
+ 		hda_priv->save_calibration = tas2781_save_calibration;
+ 		tas_hda->priv->global_addr = TAS2781_GLOBAL_ADDR;
+ 	} else if (strstr(dev_name(&clt->dev), "INT8866")) {
+ 		device_name = "INT8866";
++		tas_hda->priv->chip_id = TAS2563;
+ 		hda_priv->save_calibration = tas2563_save_calibration;
+ 		tas_hda->priv->global_addr = TAS2563_GLOBAL_ADDR;
+ 	} else {
+@@ -727,6 +758,7 @@ static const struct i2c_device_id tas2781_hda_i2c_id[] = {
+ static const struct acpi_device_id tas2781_acpi_hda_match[] = {
+ 	{"INT8866", 0 },
+ 	{"TIAS2781", 0 },
++	{"TXNW2770", 0 },
+ 	{"TXNW2781", 0 },
+ 	{}
+ };
+-- 
+2.43.0
 
-> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-> ---
->  drivers/phy/samsung/phy-exynos5-usbdrd.c    | 131 ++++++++++++++++++++
->  include/linux/soc/samsung/exynos-regs-pmu.h |   2 +
->  2 files changed, 133 insertions(+)
-> 
-> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> index dd660ebe8045..64f3316f6ad4 100644
-> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> @@ -480,6 +480,8 @@ struct exynos5_usbdrd_phy {
->  	enum typec_orientation orientation;
->  };
->  
-> +static atomic_t usage_count = ATOMIC_INIT(0);
-
-No, you cannot have singletons. How are you going to handle two
-independent phys?
-
-Best regards,
-Krzysztof
 
