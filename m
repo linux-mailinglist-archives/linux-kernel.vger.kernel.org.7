@@ -1,263 +1,135 @@
-Return-Path: <linux-kernel+bounces-728856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8695EB02E30
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 01:33:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E541B02E32
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 01:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEF651C21C1F
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 23:33:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4556616CC77
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 23:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC20233710;
-	Sat, 12 Jul 2025 23:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F482309B5;
+	Sat, 12 Jul 2025 23:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="SZfvfBCY"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="RZnQl2yr"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C3A148827;
-	Sat, 12 Jul 2025 23:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752363024; cv=none; b=lWUW1mY4GP4gXNvMHVr8HsEMuip8Jh1pJZK57sOi+VU9il3eWzIfON+aN1ikWH7wL8syzXZ2oC9H/y3Ih7+kQ6jOV3yVX2U18ADThYqPRyxVFMrw1UBXzLBnjPgN6IG7U5oG/ufgJrDQ15GK4uVzAYiFZu2wcFA8pD674B18lu4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752363024; c=relaxed/simple;
-	bh=f1o1dx2y61GSffGtceFUq+5wsrv9fyS0SFcYQnkuCG0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Uzv2Ylw8QGYiFapbziUWFUDWKl5L7K5xkOBAx280bxtrB2YU723EPscBZMwgmA08flvdmGApiZ0NLh43z/aXNfwDfo6/LW7jlKWoilIWwjGXU1ZXHsxhYVibA+LC32UODollS9EzekfnZrSHFHgOSfyDhHAyss8Dqdd/W6/3f18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=SZfvfBCY; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=K+KSdRhs8a1sQ4i99tI4+NeVAjoNOoEOQKcClNvYkek=; b=SZfvfBCY5IuPAoMi
-	zpPdGOLPXo9ll5Es/ZroSQGDtzUlGmt5r+P2bFMq4I8jx3kNbArBBx5Zj1tA62A7DeIHbTjlVR7+g
-	Uw+9yPYH6/PVAvQKW15AWaOi4tWfi5K9Z07QVIGi9iJdUxQNBES8xLrr/nIbhSxdKp/2ilMjh+hLD
-	TNI8SuXrdP+FPXzDfO5B3ST6dH1wf2datxLbhytIl6cJ6HyQLmS1pfM+7C+weaou5y4FyXZMEisvn
-	C1uhE/ba3Ri/47sGxciPibVbF+hROvrijHk+dMalNO5rIxWUKe8fpIh2sAhcjgZY7HX2W8qOK+rch
-	j6kgEpnO9KheB0uEag==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1uajfU-00FkLl-0M;
-	Sat, 12 Jul 2025 23:30:08 +0000
-From: linux@treblig.org
-To: chuck.lever@oracle.com,
-	anna@kernel.org,
-	trondmy@kernel.org,
-	jlayton@kernel.org
-Cc: neil@brown.name,
-	okorniev@redhat.com,
-	Dai.Ngo@oracle.com,
-	tom@talpey.com,
-	linux-nfs@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] SUNRPC: Remove unused xdr functions
-Date: Sun, 13 Jul 2025 00:30:06 +0100
-Message-ID: <20250712233006.403226-1-linux@treblig.org>
-X-Mailer: git-send-email 2.50.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87120B660;
+	Sat, 12 Jul 2025 23:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752363198; cv=pass; b=Ek37A5pwXC2VUGcGMM680+4IhqOFPBFMXPHmAqC26SMXSJVPTPRTssLiIemD2giFCxD1tsJR1wjsp/qI8RncC1KEvf21GW7s/jD4oQ6GTya0OJiv/2rPno+YhoopIprn8SUgyN1WrG2KZtX/nvtqWC0yhayZC3nmdJ0QKBqW/PI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752363198; c=relaxed/simple;
+	bh=oX0KBa8QcSF1/VTlkNXaw2F1+7wL0jox5K2UeNYpLDU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=QDlDbK5t00YNDuz+2b/X7d/GtV05AlbSZ89egMwuclbcp2Tgql4hotYu6NX5+hbOwqIh1ueXqXBUSZpABRd7BqXX2OhfCpDhe5sISZGElbmRxOQrAlJzv/JN6FbnJvqpPvdHVTP9ATPc5crHoxSDPJVXbISTZwFbEMJAR2KzGow=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=RZnQl2yr; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752363175; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=AwEVmKLriLGCswzTfx8op7QW3z9rypXaizpAYWm9g8n+kpbksoQzIJigGGcENqPBnNZWit0vcloD39Qhq7vYjMDj3OfRsjIMx3rCAs5e4+EGsoCXeZ99WLsF9fQAsSFILvsSFCGbcDLa6Bja4Ver1BOl+eQ13XuUOvrtrD9UYc8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752363175; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=v1FIws8WLuejVcFHPk2kcrTklHDh2VjZnNxXoePuTq4=; 
+	b=cVUMxs3Jq7/1kUjo3kX1jhfdzlzkmwXeRa/XUyqXFXItP61qJWseQwbYdH2hQM6KtkwdJYLboJji/BvIyMckYKkMow+HI1ySEyUv6/b6XrU/lt8kZxSJ/ivFzCoYOZWVcRbg8RlUCVIcxJb6Hf2tcl5ByIQaBbCxiI108x6A96o=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752363175;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=v1FIws8WLuejVcFHPk2kcrTklHDh2VjZnNxXoePuTq4=;
+	b=RZnQl2yrl//lu6/so+NWHHGdLFR71QRZp/1+/Wq7wzd12CafWym1D+LtGvIUBKhc
+	h75w/HDEpD95YPFY6WohX7BiAmegbYGR0YvlXtXjHb3opy6RhbOEZgpZiNy2hemryNI
+	EqKhijuKJk5nEPX3RIv2dtAR9Q9Miyu8miNiGq/4=
+Received: by mx.zohomail.com with SMTPS id 1752363174056465.42889511897727;
+	Sat, 12 Jul 2025 16:32:54 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
+ handlers
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org>
+Date: Sat, 12 Jul 2025 20:32:37 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Benno Lossin <lossin@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-pci@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com>
+References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com>
+ <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com>
+ <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Remove a bunch of unused xdr_*decode* functions:
-  The last use of xdr_decode_netobj() was removed in 2021 by:
-commit 7cf96b6d0104 ("lockd: Update the NLMv4 SHARE arguments decoder to
-use struct xdr_stream")
-  The last use of xdr_decode_string_inplace() was removed in 2021 by:
-commit 3049e974a7c7 ("lockd: Update the NLMv4 FREE_ALL arguments decoder
-to use struct xdr_stream")
-  The last use of xdr_stream_decode_opaque() was removed in 2024 by:
-commit fed8a17c61ff ("xdrgen: typedefs should use the built-in string and
-opaque functions")
 
-  The functions xdr_stream_decode_string() and
-xdr_stream_decode_opaque_dup() were both added in 2018 by the
-commit 0e779aa70308 ("SUNRPC: Add helpers for decoding opaque and string
-types")
-but never used.
+> On 12 Jul 2025, at 18:24, Danilo Krummrich <dakr@kernel.org> wrote:
+>=20
+> On Thu Jul 3, 2025 at 9:30 PM CEST, Daniel Almeida wrote:
+>> +/// Callbacks for an IRQ handler.
+>> +pub trait Handler: Sync {
+>> +    /// The hard IRQ handler.
+>> +    ///
+>> +    /// This is executed in interrupt context, hence all =
+corresponding
+>> +    /// limitations do apply.
+>> +    ///
+>> +    /// All work that does not necessarily need to be executed from
+>> +    /// interrupt context, should be deferred to a threaded handler.
+>> +    /// See also [`ThreadedRegistration`].
+>> +    fn handle(&self) -> IrqReturn;
+>> +}
+>=20
+> One thing I forgot, the IRQ handlers should have a &Device<Bound> =
+argument,
+> i.e.:
+>=20
+> fn handle(&self, dev: &Device<Bound>) -> IrqReturn
+>=20
+> IRQ registrations naturally give us this guarantee, so we should take =
+advantage
+> of that.
+>=20
+> - Danilo
 
-Remove them.
+Hi Danilo,
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- include/linux/sunrpc/xdr.h |   9 ---
- net/sunrpc/xdr.c           | 110 -------------------------------------
- 2 files changed, 119 deletions(-)
+I do not immediately see a way to get a Device<Bound> from here:
 
-diff --git a/include/linux/sunrpc/xdr.h b/include/linux/sunrpc/xdr.h
-index a2ab813a9800..e370886632b0 100644
---- a/include/linux/sunrpc/xdr.h
-+++ b/include/linux/sunrpc/xdr.h
-@@ -128,10 +128,7 @@ xdr_buf_init(struct xdr_buf *buf, void *start, size_t len)
- __be32 *xdr_encode_opaque_fixed(__be32 *p, const void *ptr, unsigned int len);
- __be32 *xdr_encode_opaque(__be32 *p, const void *ptr, unsigned int len);
- __be32 *xdr_encode_string(__be32 *p, const char *s);
--__be32 *xdr_decode_string_inplace(__be32 *p, char **sp, unsigned int *lenp,
--			unsigned int maxlen);
- __be32 *xdr_encode_netobj(__be32 *p, const struct xdr_netobj *);
--__be32 *xdr_decode_netobj(__be32 *p, struct xdr_netobj *);
- 
- void	xdr_inline_pages(struct xdr_buf *, unsigned int,
- 			 struct page **, unsigned int, unsigned int);
-@@ -341,12 +338,6 @@ xdr_stream_remaining(const struct xdr_stream *xdr)
- 	return xdr->nwords << 2;
- }
- 
--ssize_t xdr_stream_decode_opaque(struct xdr_stream *xdr, void *ptr,
--		size_t size);
--ssize_t xdr_stream_decode_opaque_dup(struct xdr_stream *xdr, void **ptr,
--		size_t maxlen, gfp_t gfp_flags);
--ssize_t xdr_stream_decode_string(struct xdr_stream *xdr, char *str,
--		size_t size);
- ssize_t xdr_stream_decode_string_dup(struct xdr_stream *xdr, char **str,
- 		size_t maxlen, gfp_t gfp_flags);
- ssize_t xdr_stream_decode_opaque_auth(struct xdr_stream *xdr, u32 *flavor,
-diff --git a/net/sunrpc/xdr.c b/net/sunrpc/xdr.c
-index 2ea00e354ba6..a0aae1144212 100644
---- a/net/sunrpc/xdr.c
-+++ b/net/sunrpc/xdr.c
-@@ -37,19 +37,6 @@ xdr_encode_netobj(__be32 *p, const struct xdr_netobj *obj)
- }
- EXPORT_SYMBOL_GPL(xdr_encode_netobj);
- 
--__be32 *
--xdr_decode_netobj(__be32 *p, struct xdr_netobj *obj)
--{
--	unsigned int	len;
--
--	if ((len = be32_to_cpu(*p++)) > XDR_MAX_NETOBJ)
--		return NULL;
--	obj->len  = len;
--	obj->data = (u8 *) p;
--	return p + XDR_QUADLEN(len);
--}
--EXPORT_SYMBOL_GPL(xdr_decode_netobj);
--
- /**
-  * xdr_encode_opaque_fixed - Encode fixed length opaque data
-  * @p: pointer to current position in XDR buffer.
-@@ -102,21 +89,6 @@ xdr_encode_string(__be32 *p, const char *string)
- }
- EXPORT_SYMBOL_GPL(xdr_encode_string);
- 
--__be32 *
--xdr_decode_string_inplace(__be32 *p, char **sp,
--			  unsigned int *lenp, unsigned int maxlen)
--{
--	u32 len;
--
--	len = be32_to_cpu(*p++);
--	if (len > maxlen)
--		return NULL;
--	*lenp = len;
--	*sp = (char *) p;
--	return p + XDR_QUADLEN(len);
--}
--EXPORT_SYMBOL_GPL(xdr_decode_string_inplace);
--
- /**
-  * xdr_terminate_string - '\0'-terminate a string residing in an xdr_buf
-  * @buf: XDR buffer where string resides
-@@ -2247,88 +2219,6 @@ int xdr_process_buf(const struct xdr_buf *buf, unsigned int offset,
- }
- EXPORT_SYMBOL_GPL(xdr_process_buf);
- 
--/**
-- * xdr_stream_decode_opaque - Decode variable length opaque
-- * @xdr: pointer to xdr_stream
-- * @ptr: location to store opaque data
-- * @size: size of storage buffer @ptr
-- *
-- * Return values:
-- *   On success, returns size of object stored in *@ptr
-- *   %-EBADMSG on XDR buffer overflow
-- *   %-EMSGSIZE on overflow of storage buffer @ptr
-- */
--ssize_t xdr_stream_decode_opaque(struct xdr_stream *xdr, void *ptr, size_t size)
--{
--	ssize_t ret;
--	void *p;
--
--	ret = xdr_stream_decode_opaque_inline(xdr, &p, size);
--	if (ret <= 0)
--		return ret;
--	memcpy(ptr, p, ret);
--	return ret;
--}
--EXPORT_SYMBOL_GPL(xdr_stream_decode_opaque);
--
--/**
-- * xdr_stream_decode_opaque_dup - Decode and duplicate variable length opaque
-- * @xdr: pointer to xdr_stream
-- * @ptr: location to store pointer to opaque data
-- * @maxlen: maximum acceptable object size
-- * @gfp_flags: GFP mask to use
-- *
-- * Return values:
-- *   On success, returns size of object stored in *@ptr
-- *   %-EBADMSG on XDR buffer overflow
-- *   %-EMSGSIZE if the size of the object would exceed @maxlen
-- *   %-ENOMEM on memory allocation failure
-- */
--ssize_t xdr_stream_decode_opaque_dup(struct xdr_stream *xdr, void **ptr,
--		size_t maxlen, gfp_t gfp_flags)
--{
--	ssize_t ret;
--	void *p;
--
--	ret = xdr_stream_decode_opaque_inline(xdr, &p, maxlen);
--	if (ret > 0) {
--		*ptr = kmemdup(p, ret, gfp_flags);
--		if (*ptr != NULL)
--			return ret;
--		ret = -ENOMEM;
--	}
--	*ptr = NULL;
--	return ret;
--}
--EXPORT_SYMBOL_GPL(xdr_stream_decode_opaque_dup);
--
--/**
-- * xdr_stream_decode_string - Decode variable length string
-- * @xdr: pointer to xdr_stream
-- * @str: location to store string
-- * @size: size of storage buffer @str
-- *
-- * Return values:
-- *   On success, returns length of NUL-terminated string stored in *@str
-- *   %-EBADMSG on XDR buffer overflow
-- *   %-EMSGSIZE on overflow of storage buffer @str
-- */
--ssize_t xdr_stream_decode_string(struct xdr_stream *xdr, char *str, size_t size)
--{
--	ssize_t ret;
--	void *p;
--
--	ret = xdr_stream_decode_opaque_inline(xdr, &p, size);
--	if (ret > 0) {
--		memcpy(str, p, ret);
--		str[ret] = '\0';
--		return strlen(str);
--	}
--	*str = '\0';
--	return ret;
--}
--EXPORT_SYMBOL_GPL(xdr_stream_decode_string);
--
- /**
-  * xdr_stream_decode_string_dup - Decode and duplicate variable length string
-  * @xdr: pointer to xdr_stream
--- 
-2.50.1
+unsafe extern "C" fn handle_irq_callback<T: Handler>(_irq: i32, ptr: =
+*mut c_void) -> c_uint {
 
+Refall that we've established `ptr` to be the address of the handler. =
+This
+came after some back and forth and after the extensive discussion that =
+Benno
+and Boqun had w.r.t to pinning in request_irq().=
 
