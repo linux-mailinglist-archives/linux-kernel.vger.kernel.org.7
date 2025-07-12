@@ -1,59 +1,50 @@
-Return-Path: <linux-kernel+bounces-728671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB4AB02BB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 17:31:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B1AB02BB8
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 17:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 143C9A603B9
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:30:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F5D04A4FF1
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 15:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3207D2882B2;
-	Sat, 12 Jul 2025 15:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s2RwqASX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C4C28643F;
+	Sat, 12 Jul 2025 15:39:43 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBAB4A24;
-	Sat, 12 Jul 2025 15:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0656F278761;
+	Sat, 12 Jul 2025 15:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752334257; cv=none; b=qZzd7VIAaDf/I7+bVjDdX5iKdckMBX6V5cChrtum27SCmuthi4iBIuB4DODiL++M7v5mlCN40dR2fsmGN0rZx7ouQP6Hck3V6d4/X20MXjnuu55N3ErWW/H1mYgddlT7w3eDPUWNu95NjH62ZI+yNhBF+RCZuQm7GlbKQkwXkd8=
+	t=1752334783; cv=none; b=dPgdc32RVJaf1UtgLlomVCVM4lZ0bYE55TTOpDPDoJNvhcE3iKu295TYKHo971qDG44az0FyR/aDgM7L451KqXm8DF6rk795PwwOS76qSyGW80soE44SPNt2SlPBZjlCmpfb49HRdbYmg3GhXptS+GXRV0a9N46gr/4cJdurDS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752334257; c=relaxed/simple;
-	bh=265ml+LkyhdXVhTmnhknr5HyO7Ge+6RVUWnrYFIdREw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nKOAXTCUIIfhfn83KV2CTfZS/GWsta7iuWTIUa+OapfO2HjR477veDrvlnfbwcJ5kfP8m5frhgsgyU31+KT3d3PLGFhZXSYTjy0I8/rXfvMsR4VIipXEdRmX4dgiBiC6e1CCaNTOypBpTmnDDudvgIiU9pabT8vfxopdvkje/lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s2RwqASX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1479C4CEEF;
-	Sat, 12 Jul 2025 15:30:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752334256;
-	bh=265ml+LkyhdXVhTmnhknr5HyO7Ge+6RVUWnrYFIdREw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s2RwqASXqSx8Oh6JU7k89Go16dcL/GrUjUOPGS6FmwOXL2qyP6dmzZwOZ8/ffMqQ9
-	 NcsOdGAPykesDGA/uF5PGUagCx1P5vb7UNs+BzxkLQ7J5rb+ELHrmM6PbNaoBu6VAh
-	 5fupI6aDCfQiJ8hwvz5GPrROM8SOtRg37+BMxyTfxnlv5U83uDu9oF9ryBC+Rl4Wth
-	 wo2TxnEt4soQsEGHDYW0tu+cNj6mYqWEekeUSJvW9fzaltbAl4mCKJ2V96SYPEHx4m
-	 ril//CNglu6QZ5KrdRBdAzmtcf1PKAtWWyLlVM9dNQ/rBpNP2Av+Jg+qPaApoTT6Nf
-	 KXRCWeNBmEq9Q==
-Date: Sat, 12 Jul 2025 16:30:52 +0100
-From: Simon Horman <horms@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Jiawen Wu <jiawenwu@trustnetic.com>,
-	Mengyuan Lou <mengyuanlou@net-swift.com>, netdev@vger.kernel.org,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Arnd Bergmann <arnd@kernel.org>
-Subject: Re: [PATCH v2 net-next] net: wangxun: fix VF drivers Kconfig
- dependencies and help text
-Message-ID: <20250712153052.GF721198@horms.kernel.org>
-References: <20250712055856.1732094-1-rdunlap@infradead.org>
+	s=arc-20240116; t=1752334783; c=relaxed/simple;
+	bh=TDlk/7piRADNdlRBOAhu2fuQY5YffS22iPT+2k178Ng=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nW96Yz6pAuS5qUW5qPGyL15Iv8rnSGEHjHKC80F1DPfvTjLEj3u1X06h4j+DYDeCMLoTKUGts8e+ACi+Cao5zFnQXe+U7z13RVfHUF7YOQkviYJgPCD46MCSSwSh8SwDReMRtGXYB3hwds5uR98BqqrMiw85BojBqRqVah2Rp1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uacK0-000000007Hb-1M5R;
+	Sat, 12 Jul 2025 15:39:28 +0000
+Date: Sat, 12 Jul 2025 16:39:21 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>, Marek Vasut <marek.vasut@mailbox.org>,
+	Lukasz Majewski <lukma@denx.de>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] Revert "leds: trigger: netdev: Configure LED blink
+ interval for HW offload"
+Message-ID: <6dcc77ee1c9676891d6250d8994850f521426a0f.1752334655.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,65 +53,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250712055856.1732094-1-rdunlap@infradead.org>
 
-+ Arnd
+This reverts commit c629c972b310af41e9e072febb6dae9a299edde6.
 
-On Fri, Jul 11, 2025 at 10:58:56PM -0700, Randy Dunlap wrote:
-> On x86_64, when CONFIG_PTP_1588_CLOCK_OPTIONAL=m,
-> CONFIG_LIBWX can be set to 'y' by either of TXGBEVF=y or NGBEVF=y,
-> causing kconfig unmet direct dependencies warning messages:
-> 
-> WARNING: unmet direct dependencies detected for LIBWX
->   Depends on [m]: NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PTP_1588_CLOCK_OPTIONAL [=m]
->   Selected by [y]:
->   - TXGBEVF [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI [=y] && PCI_MSI [=y]
->   - NGBEVF [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI_MSI [=y]
-> 
-> and subsequent build errors:
-> 
-> ld: vmlinux.o: in function `wx_clean_tx_irq':
-> drivers/net/ethernet/wangxun/libwx/wx_lib.c:757:(.text+0xa48f18): undefined reference to `ptp_schedule_worker'
-> ld: vmlinux.o: in function `wx_get_ts_info':
-> drivers/net/ethernet/wangxun/libwx/wx_ethtool.c:509:(.text+0xa4a58c): undefined reference to `ptp_clock_index'
-> ld: vmlinux.o: in function `wx_ptp_stop':
-> drivers/net/ethernet/wangxun/libwx/wx_ptp.c:838:(.text+0xa4b3dc): undefined reference to `ptp_clock_unregister'
-> ld: vmlinux.o: in function `wx_ptp_reset':
-> drivers/net/ethernet/wangxun/libwx/wx_ptp.c:769:(.text+0xa4b80c): undefined reference to `ptp_schedule_worker'
-> ld: vmlinux.o: in function `wx_ptp_create_clock':
-> drivers/net/ethernet/wangxun/libwx/wx_ptp.c:532:(.text+0xa4b9d1): undefined reference to `ptp_clock_register'
-> 
-> Add dependency to PTP_1588_CLOCK_OPTIONAL for both txgbevf and ngbevf.
-> This is needed since both of them select LIBWX and it depends on
-> PTP_1588_CLOCK_OPTIONAL.
-> 
-> Drop "depends on PCI" for TXGBEVF since PCI_MSI implies that.
-> Drop "select PHYLINK" for TXGBEVF since the driver does not use phylink.
-> 
-> Move the driver name help text to the module name help text for
-> both drivers.
-> 
-> Fixes: 377d180bd71c ("net: wangxun: add txgbevf build")
-> Fixes: a0008a3658a3 ("net: wangxun: add ngbevf build")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Jiawen Wu <jiawenwu@trustnetic.com>
-> Cc: Mengyuan Lou <mengyuanlou@net-swift.com>
-> Cc: netdev@vger.kernel.org
-> Cc: Andrew Lunn <andrew+netdev@lunn.ch>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> ---
-> v2: also drop PHYLINK for TXGBEVF, suggested by Jiawen Wu
+While .led_blink_set() would previously put an LED into an unconditional
+permanently blinking state, the offending commit now uses same operation
+to (also?) set the blink timing of the netdev trigger when offloading.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+This breaks many if not all of the existing PHY drivers which offer
+offloading LED operations, as those drivers would just put the LED into
+blinking state after .led_blink_set() has been called.
 
-Arnd (CCed) has also posted a patch [1] for the unmet dependencies / build
-errors portion of this patch. My 2c worth would be to take Arnd's patch and
-for Randy then follow-up with an updated version of his patch with the
-extra bits in it. But I don't feel strongly about this.
+Unfortunately the change even made it into stable kernels for unknown
+reasons, so it should be reverted there as well.
 
-1. [PATCH] net: wangxun: fix LIBWX dependencies again
-   https://lore.kernel.org/all/20250711082339.1372821-1-arnd@kernel.org/
+Fixes: c629c972b310a ("leds: trigger: netdev: Configure LED blink interval for HW offload")
+Link: https://lore.kernel.org/linux-leds/c6134e26-2e45-4121-aa15-58aaef327201@lunn.ch/T/#m9d6fe81bbcb273e59f12bbedbd633edd32118387
+Suggested-by: Andrew Lunn <andrew@lunn.ch>
+Cc: stable@vger.kernel.org
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+---
+ drivers/leds/trigger/ledtrig-netdev.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
+index 4e048e08c4fde..c15efe3e50780 100644
+--- a/drivers/leds/trigger/ledtrig-netdev.c
++++ b/drivers/leds/trigger/ledtrig-netdev.c
+@@ -68,7 +68,6 @@ struct led_netdev_data {
+ 	unsigned int last_activity;
+ 
+ 	unsigned long mode;
+-	unsigned long blink_delay;
+ 	int link_speed;
+ 	__ETHTOOL_DECLARE_LINK_MODE_MASK(supported_link_modes);
+ 	u8 duplex;
+@@ -87,10 +86,6 @@ static void set_baseline_state(struct led_netdev_data *trigger_data)
+ 	/* Already validated, hw control is possible with the requested mode */
+ 	if (trigger_data->hw_control) {
+ 		led_cdev->hw_control_set(led_cdev, trigger_data->mode);
+-		if (led_cdev->blink_set) {
+-			led_cdev->blink_set(led_cdev, &trigger_data->blink_delay,
+-					    &trigger_data->blink_delay);
+-		}
+ 
+ 		return;
+ 	}
+@@ -459,11 +454,10 @@ static ssize_t interval_store(struct device *dev,
+ 			      size_t size)
+ {
+ 	struct led_netdev_data *trigger_data = led_trigger_get_drvdata(dev);
+-	struct led_classdev *led_cdev = trigger_data->led_cdev;
+ 	unsigned long value;
+ 	int ret;
+ 
+-	if (trigger_data->hw_control && !led_cdev->blink_set)
++	if (trigger_data->hw_control)
+ 		return -EINVAL;
+ 
+ 	ret = kstrtoul(buf, 0, &value);
+@@ -472,13 +466,9 @@ static ssize_t interval_store(struct device *dev,
+ 
+ 	/* impose some basic bounds on the timer interval */
+ 	if (value >= 5 && value <= 10000) {
+-		if (trigger_data->hw_control) {
+-			trigger_data->blink_delay = value;
+-		} else {
+-			cancel_delayed_work_sync(&trigger_data->work);
++		cancel_delayed_work_sync(&trigger_data->work);
+ 
+-			atomic_set(&trigger_data->interval, msecs_to_jiffies(value));
+-		}
++		atomic_set(&trigger_data->interval, msecs_to_jiffies(value));
+ 		set_baseline_state(trigger_data);	/* resets timer */
+ 	}
+ 
+-- 
+2.50.1
+
 
