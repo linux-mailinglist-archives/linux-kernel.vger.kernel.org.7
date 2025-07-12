@@ -1,91 +1,165 @@
-Return-Path: <linux-kernel+bounces-728564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82588B02A0B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:25:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19EE2B02A0E
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 10:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC662164FF9
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:25:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E2231686E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 08:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C417726B775;
-	Sat, 12 Jul 2025 08:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FakQ2o7u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B3C26B945;
+	Sat, 12 Jul 2025 08:26:02 +0000 (UTC)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F19B19F121;
-	Sat, 12 Jul 2025 08:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1AC26B2C4;
+	Sat, 12 Jul 2025 08:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752308719; cv=none; b=TNooQs8r+8x4VPBozEwWL9jOQ+PTY5HQRIbZ78ja3VFyEw2c19Pi/4SHm6IgKKqLhFmkUJ2d79srAT//RvBuzy8k/35xUi0RxYfyp9t2rCdoAOmvKVsHLOiYB38v2c8D4UGpbqTg+3xAAXhPonLKMqiJOK5zy5AT23HILoR0654=
+	t=1752308762; cv=none; b=HsFTuTAPOnvkLEQ6MaQDKSbCIIbFFKEl0JsiYeXSnqYnfWzbuAj/snoVBw2GwjnHfd0UAv4uxwXHmM+HQRKBpVz1hj0CQCACS+un/Hc4VQQ04UNFZFDuPMvdctr1iFqxl/b6/+2sC5jBJ3IkrVZzrtKOiyBnX3eW4XxGxEQRQFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752308719; c=relaxed/simple;
-	bh=Q1ofZlBrikKFTLPf3zhZD6ZmkOhZH8tx6juLuCyik4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hlcEMNbZhg2i3+A79l5YCJ1cRQFDQbj67/byRE/Jc8GXuQxoFrxvhrTWsvxZ64lJgoiLSP5CBNGOH/pi9Cr6dzH0KTCQ7Y5cMOsSnRzSVc9+ugeKw6UypbR3Pv6A3qopj1/4A6pebPO8PU/qYYicLuMI6tYCrYABYoEKoZ99/UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FakQ2o7u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04BE2C4CEEF;
-	Sat, 12 Jul 2025 08:25:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752308718;
-	bh=Q1ofZlBrikKFTLPf3zhZD6ZmkOhZH8tx6juLuCyik4o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FakQ2o7ur/BdRJYPS4kSdSvWmdXVqrrjYQRZrmziMl4apYkSR9r1DHztXPxAkRF45
-	 /XpjRzGet5Y/XpOdnm2u9keQ0EXUp1HV5LdIO9XbFHZ/BHEm0e8Y8fHo+gHeKWUrz1
-	 /QsZR1OEeFR2tjyAWvmKKQR+fB0fcy1YPGYUkrOX64e/sPmqGK9rvaopsaFLuEXCbL
-	 KuKaZoSYKwyb8Z7uGOTgRLtApOeotzsqdSxWh0RdGctxf6i3Be4MdzKWbC03za3pkV
-	 nbg/pwWwjhrvDnD6nyCIJ+h7dMtT1+wd7ra2qpCSpnNw4SpNCo4R80SNk6YhB1QPOv
-	 e2gasIATfftfw==
-Date: Sat, 12 Jul 2025 10:25:13 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>, 
-	wsa+renesas@sang-engineering.com, Jonathan.Cameron@huawei.com, 
-	Patrice Chotard <patrice.chotard@foss.st.com>, linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] i2c: busses: Use min() to improve code
-Message-ID: <c43lavd442fz2ah25gvxxptcx3wughgkxnpx4bvlltktqiyqo7@pfufqjlujcwk>
-References: <20250709042347.550993-1-rongqianfeng@vivo.com>
- <aHFelLqnfsuaeh2Q@black.fi.intel.com>
+	s=arc-20240116; t=1752308762; c=relaxed/simple;
+	bh=ULgQmqNv8PySGk5+xltUtgTVVyz184W244B3rlM3Zvo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sQm6IaUe3HGdutG4qv5m0Bwwg3cNJqSILBonwMk/wxNlsBqyjE0jLJvO6CZEOod0yaZunuBE5bNCF1hrk0AnXhiYYdnZuWE0PivBX6GGP51BrRHesA36qUgbpS6fGqe9MujoAwPP/EwgGPBZpyemlX/DKkxrs1hm2LoMq4xMvXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32e14cf205cso25145391fa.1;
+        Sat, 12 Jul 2025 01:25:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752308758; x=1752913558;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s8+rtQC6XpTE2vRTh9EDlBtLhS/B0Gdgn+coAVMY1wQ=;
+        b=WdVrL2utg0ZkOYLKbOJgfxO2Me/XyD6uPqdgPoE+IItM8/PdrjSmKJZ2u8PKggGFER
+         yC4KWcRrvD9HmDumFda1zluYjYdaP2MN8qJxsNsEzRYCi1dnwPV2Jj8xkeqbZvL+KjZ3
+         h82b76puya4V+W6nGrb1ctGVq0Xwr402zQTTkkvohhBOe18sqrvz2uJ0Vc2+s8o60anf
+         /S7/Ra1ACfLwe2jWQbbQiKZPayXoVCYOBN6S+sGrOnoNZAR1U6P1pVkgKYgfnSRU9ifq
+         3d0uI1AhgpfClS+EKxoYOtPqNHJyzfzRPCgxf6umYsR9tdH+9JPjeAYCYG0ilLmrVUeb
+         j5Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCUIyUdlSaVF+MqAfc1xl39htuwAoLwo53d1kfAcvk0EhgeweTsQSi5jw6yYhO5vgbgbuubX94Q/z5MZ2nrl@vger.kernel.org, AJvYcCW7vomyJDHDnE0N4iGJs5T2ku4hH7JBtzpiw9CaStmBeebqjC48xyP6u3UsOWQopJD1RDBBUSMrSsM=@vger.kernel.org, AJvYcCWvnzorh+1KQI/4u5tKrZdXVc9BVoMYrKJ8L1M5zNOkbywvUg4tGkA5iR6usgHDFI/MSjLSAvUCH+y7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5rKRvk0mMTMc26+OOgUILHIkM6HiNpRbVFo0amzoj2C910DD3
+	NpxlEFCRliyOfM+LiwuKMcp3Y7wygvMeGpJOwzI4FqDtkeadI+CF5HTeHRIHQ1R2
+X-Gm-Gg: ASbGncsGAz5jLKmFHNyeD85YBhTLSMNVnECTuoeBrVc3dOiJz9PEkHRHK3EJEZluRZe
+	vpjmVAY4MUcUHWyerCM5rwXT5XRUw7/YBun80RRo8O4OvJzvjli5dekaUGoAH9ql+yUC+lsLnGf
+	TvOn5NG8QRFV61qSUzz3cyJT3oStkc/4JKvxWlW9Tm0Lm05XsBeptYcejZW3z6xjmgz5WAP8/tv
+	Bc15NXkgD6OJ8h0AKu66v8kGGb8a2aQMKGgDd5wTP/7DOt3wrI+dAdi/ixCX6DmzoVyckgJ09Pt
+	rGq5X8VFGonFRdfkDXvcooLMXNnuYQeaEb0Bgw9i1Zf5F250zlkKLILBleO59bGUmzZi3pfq0ow
+	nA586h5ONStCWZPKNsT2G0zyhSelMVXEAHabN/z1SWAus8fD3W2seOVk=
+X-Google-Smtp-Source: AGHT+IF1532bKm7S0qIoOLx0799EOHtzIhvPq6kUzfFu9jk7x+oCr/z8o2sPe7S38TIdM/5ceOCM7A==
+X-Received: by 2002:a05:651c:553:b0:32a:8c63:a8b2 with SMTP id 38308e7fff4ca-33053293f96mr17814531fa.8.1752308757519;
+        Sat, 12 Jul 2025 01:25:57 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32fab8bd4a8sm9980581fa.65.2025.07.12.01.25.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Jul 2025 01:25:55 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-32cdc9544ceso24701841fa.0;
+        Sat, 12 Jul 2025 01:25:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWVYRbWML3JSdpFHBiDBFYZYbNVWWj5IePBC0asG1SKMG1dON5BO1/I3V57SWvqH+74yU35i7PRCck=@vger.kernel.org, AJvYcCWnrg19oaaqGtaCor3GR0mVbIg2XTrxcCuNHlIOgZHRmgcF2bEXRM7lqYlniPqM0UmsP9xEsdZ/hcx4@vger.kernel.org, AJvYcCXnVZR4Va62ncuN3UergBLLDArm2nOeOsg6XL7kSnVbT1dgPOyvS6Cw8u4aHAd7tpz+AeKrhuJDkDma0KKP@vger.kernel.org
+X-Received: by 2002:a05:651c:b1e:b0:32b:7472:c334 with SMTP id
+ 38308e7fff4ca-330532dfcf4mr20735521fa.16.1752308755571; Sat, 12 Jul 2025
+ 01:25:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHFelLqnfsuaeh2Q@black.fi.intel.com>
+References: <20250703151132.2642378-1-iuncuim@gmail.com> <20250703151132.2642378-4-iuncuim@gmail.com>
+In-Reply-To: <20250703151132.2642378-4-iuncuim@gmail.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 12 Jul 2025 16:25:42 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66CnNEw0Rhh0SLnr73b+TPJXCZ_eY3n4nH8_9LiXj2Ydw@mail.gmail.com>
+X-Gm-Features: Ac12FXymLasGX3Z5Rb9uWIApOu-xW47ktDWvJ_I7-HUhHhL0xFXKGGC-Mm7lvpI
+Message-ID: <CAGb2v66CnNEw0Rhh0SLnr73b+TPJXCZ_eY3n4nH8_9LiXj2Ydw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/8] thermal/drivers/sun8i: add gpadc clock
+To: iuncuim <iuncuim@gmail.com>
+Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Vasily Khoruzhick <anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Thu, Jul 3, 2025 at 11:13=E2=80=AFPM iuncuim <iuncuim@gmail.com> wrote:
+>
+> From: Mikhail Kalashnikov <iuncuim@gmail.com>
+>
+> Some processors (e.g. Allwinner A523) require GPADC clocking activation f=
+or
+> temperature sensors to work. So let's add support for enabling it.
+>
+> Signed-off-by: Mikhail Kalashnikov <iuncuim@gmail.com>
+> ---
+>  drivers/thermal/sun8i_thermal.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/thermal/sun8i_thermal.c b/drivers/thermal/sun8i_ther=
+mal.c
+> index 226747906..45aaf5348 100644
+> --- a/drivers/thermal/sun8i_thermal.c
+> +++ b/drivers/thermal/sun8i_thermal.c
+> @@ -66,8 +66,9 @@ struct tsensor {
+>  };
+>
+>  struct ths_thermal_chip {
+> -       bool            has_mod_clk;
+> -       bool            has_bus_clk_reset;
+> +       bool            has_gpadc_clk;
+> +       bool            has_mod_clk;
+> +       bool            has_bus_clk_reset;
 
-On Fri, Jul 11, 2025 at 09:57:24PM +0300, Andy Shevchenko wrote:
-> On Wed, Jul 09, 2025 at 12:23:46PM +0800, Qianfeng Rong wrote:
-> > Use min() to reduce the code and improve its readability.
-> > 
-> > The type of the max parameter in the st_i2c_rd_fill_tx_fifo()
-> > was changed from int to u32, because the max parameter passed
-> > in is always greater than 0.
-> 
-> ...
-> 
-> >  #include <linux/of.h>
-> >  #include <linux/pinctrl/consumer.h>
-> >  #include <linux/platform_device.h>
-> > +#include <linux/minmax.h>
-> 
-> Do not blindly add a new inclusion to the end of the list. The list as you may
-> notice even on this small context suggests that it's ordered. Please, keep
-> things in order.
-> 
-> Andi, if you don't mind, please fix this.
+What's with the random whitespace change here?
 
-Yes, I actually had this fixed but I had forgotten to push. It's
-updated now.
+>         bool            needs_sram;
+>         int             sensor_num;
+>         int             offset;
+> @@ -89,7 +90,8 @@ struct ths_device {
+>         struct regmap_field                     *sram_regmap_field;
+>         struct reset_control                    *reset;
+>         struct clk                              *bus_clk;
+> -       struct clk                              *mod_clk;
+> +       struct clk                              *mod_clk;
+> +       struct clk                              *gpadc_clk;
 
-Andi
+And here?
+
+>         struct tsensor                          sensor[MAX_SENSOR_NUM];
+>  };
+>
+> @@ -417,6 +419,12 @@ static int sun8i_ths_resource_init(struct ths_device=
+ *tmdev)
+>         if (ret)
+>                 return ret;
+>
+> +       if (tmdev->chip->has_gpadc_clk) {
+> +               tmdev->gpadc_clk =3D devm_clk_get_enabled(&pdev->dev, "gp=
+adc");
+> +               if (IS_ERR(tmdev->gpadc_clk))
+> +                       return PTR_ERR(tmdev->gpadc_clk);
+> +       }
+> +
+
+This looks correct.
+
+
+ChenYu
+
+>         if (tmdev->chip->needs_sram) {
+>                 struct regmap *regmap;
+>
+> --
+> 2.49.0
+>
 
