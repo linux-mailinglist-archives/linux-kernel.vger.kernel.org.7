@@ -1,113 +1,131 @@
-Return-Path: <linux-kernel+bounces-728753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E1FB02C82
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:02:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C599B02C89
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC457A41525
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 19:02:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 859841C23134
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 19:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132A7289357;
-	Sat, 12 Jul 2025 19:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056A628AAFB;
+	Sat, 12 Jul 2025 19:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HWjizx5l"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XiP/zIAt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAFE111BF;
-	Sat, 12 Jul 2025 19:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB04183CB0;
+	Sat, 12 Jul 2025 19:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752346961; cv=none; b=c4adAat/oBhMrBME/9Cc6RlFFJkSZtCpOwKgggjvfovVGOc7DmYPInLWsynH1+lLNr4EWaVN4V8F/xG3g1EEXr5xKH7gel1gubthfr30HJwJrNrMAZ+8qZIM6vMbZZXa20jUNHguOO1yM4JdS5Ta60sf/gG5LpOR8RFeRP//wZo=
+	t=1752347214; cv=none; b=UnZSo9VRstH4mqayXWAMKrGh5tK3C102cpONkZOlBrPNgxZEWEacfXjYlQN1P0SMDACPrFRU6oTIlClzUXYhMdOiLUKSOlNjHn7IK8fTKhBDYGX6QKXYV/Hcgw3MQ3y4G+tY5t/OxtbZVmO77zoJAgL4VDq1f6K5w2Afa/ppS2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752346961; c=relaxed/simple;
-	bh=LhsEIKj1SLsQCAk5TPT4MTfImsiSbwHmFcHOMwWmXc8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OuI37DV0HEHCgdJLe+RWLjBORbWcTqDgujSGka70k2xaTOAValP9H/SLx8RmBqtjFwGNiQ3K6g9O3UpaTOwBegWcXkhTK7pRDwqiB6Fl+eIqIOG9GWKiBY+d9M3UqpI/jrqwWqr8ZPjHn4SHRGBTAcJwPYrpB/ZOj3ZF6QpqTT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HWjizx5l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 045A7C4CEEF;
-	Sat, 12 Jul 2025 19:02:39 +0000 (UTC)
+	s=arc-20240116; t=1752347214; c=relaxed/simple;
+	bh=2cDLI+6d2t8/DuOIFZTlroviLAPEPg1elL5QTvHbT/c=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=p/1DJIikTsxXiZRMpMWAc8/bD1sWv8AEroTw1AcgYY4zQ6Qysu7C/jT2ZXJVyjk1Fi5IddDUMeq47DlflWr+MUHAAt+vNTg1TK8/ae9qZDSKA+DjacN1qrKo6xkpUpoL7Mz9O7xQj8Fy/FE23NX6M96eaubVkPqmf9wmKn+h7fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XiP/zIAt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B25B2C4CEEF;
+	Sat, 12 Jul 2025 19:06:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752346960;
-	bh=LhsEIKj1SLsQCAk5TPT4MTfImsiSbwHmFcHOMwWmXc8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HWjizx5l0FEQT25bpugRRwK1iwSRYSUMnnEfumnnbKkrN1YDIHJFkE8VgedfrpLRH
-	 dogoPSSvR5+vV2TXvrLEB3e+GRLCNQ5J+JnwTSnwYJBqhbSEYRUyhsWp25MUqYlCbp
-	 QhS8oFlveZ5w9be6sF23N78x/sru3d5CnLo+5eZ3UF3HV6Eoy55hqAJ6v3lM9Qm1fs
-	 ZULGTqqGmC3OckTk9IhfXYJ1NS25fOe0nTLMoH6ae2dEwnnL7Hx2m6cHXw9hryCOCa
-	 r3C/mHyyAsrsfVhfUEaiXn/KIkEm3dVV0XDmhEo1XjZmYqCcRqVFr5uAQzdE1yshMW
-	 H8COPV+f4FwFg==
-Message-ID: <35f0dd7e-f4c1-4042-bc85-19d277f4b1f9@kernel.org>
-Date: Sat, 12 Jul 2025 14:02:38 -0500
+	s=k20201202; t=1752347212;
+	bh=2cDLI+6d2t8/DuOIFZTlroviLAPEPg1elL5QTvHbT/c=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=XiP/zIAt91l4afZSPSKZYFzut01E3Mp6JRrMtzOdeoFB/D3AhcmbvD1XyZHTZ0pro
+	 LA8rCZrPDOuv07AP97ZD7kjCCd1BIHU3Dk5J4KaFvMlSM4+5Lpv5v3bqRl00LV8eU0
+	 S5ZrYGCHyvnwMTe/eYEHuFXDimf/gYV68dp+giuHJzsFARFDJlxHPype1cgXcc2Wxb
+	 /xoB0beLlpj7Gsk0Mgv4qPcjdlIQGw5s5wuysJp1qZ47Lj4B3OUB4AoD9RKO14pUZZ
+	 fsWv+44936WhANh0F70N44YKOzDTyk7FY6QeGKdsOcO8jS/6plCgLvrQlE/g0zGx1r
+	 YXZEPAlZoS7GQ==
+Date: Sat, 12 Jul 2025 14:06:51 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Jul 11
- [drivers/gpu/drm/amd/amdgpu/amdgpu.ko]
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Randy Dunlap <rdunlap@infradead.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux DRI Development <dri-devel@lists.freedesktop.org>,
- Samuel Zhang <guoqing.zhang@amd.com>, amd-gfx@lists.freedesktop.org
-References: <20250711191014.12a64210@canb.auug.org.au>
- <49080a96-2c7a-4eea-a64c-deac0b7a665b@infradead.org>
- <CAJZ5v0h1CX+aTu7dFy6vB-9LM6t5J4rt7Su3qVnq1xx-BFAm=Q@mail.gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <CAJZ5v0h1CX+aTu7dFy6vB-9LM6t5J4rt7Su3qVnq1xx-BFAm=Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, wsa+renesas@sang-engineering.com, 
+ devicetree@vger.kernel.org, geert+renesas@glider.be, p.zabel@pengutronix.de, 
+ krzk@kernel.org, linux-renesas-soc@vger.kernel.org, 
+ sergei.shtylyov@gmail.com, conor+dt@kernel.org
+To: Magnus Damm <damm@opensource.se>
+In-Reply-To: <175232756792.19062.3922882730162396395.sendpatchset@1.0.0.127.in-addr.arpa>
+References: <175232755943.19062.8739774784256290646.sendpatchset@1.0.0.127.in-addr.arpa>
+ <175232756792.19062.3922882730162396395.sendpatchset@1.0.0.127.in-addr.arpa>
+Message-Id: <175234721189.1426581.6723570878637323009.robh@kernel.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: memory-controllers:
+ renesas,rpc-if: Add RZ/A1 and RZ/A2 compat strings
 
 
-
-On 7/12/25 3:11 AM, Rafael J. Wysocki wrote:
-> On Fri, Jul 11, 2025 at 11:25 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->>
->>
->> On 7/11/25 2:10 AM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20250710:
->>>
->>
->> on x86_64, when
->> # CONFIG_SUSPEND is not set
->> # CONFIG_HIBERNATION is not set
->> # CONFIG_PM is not set
->>
->> ERROR: modpost: "pm_hibernate_is_recovering" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
->>
->> caused by commit
->> 530694f54dd5e ("drm/amdgpu: do not resume device in thaw for normal hibernation")
->>
->> Rafael, is a stub appropriate for this case?
+On Sat, 12 Jul 2025 15:39:27 +0200, Magnus Damm wrote:
+> From: Magnus Damm <damm@opensource.se>
 > 
-> pm_hibernate_is_recovering() is not supposed to be called by code that
-> does not depend on CONFIG_HIBERNATE_CALLBACKS, but a stub returning
-> false would work for this.
-
-Thanks, I just sent out a fix for this.
-
+> Add RZ/A1 and RZ/A2 compat strings for the renesas rpc-if device.
 > 
-> Mario, it would be good to fix this up in your tree.  Also, it would
-> be good to expose stuff to 0-day build testing before letting it go
-> into linux-next.  I use the bleeding-edge branch for this purpose.
+> Signed-off-by: Magnus Damm <damm@opensource.se>
+> ---
 > 
-Honestly; I'm surprised that 0-day didn't raise this on either dri-devel 
-or amd-gfx.  I had expected at least one of those lists to raise this 
-over the last week of patches.
+>  Changes since v1:
+>  - Moved RZ/A to top of RZ
+> 
+>  Applies to next-20250710
+> 
+>  Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml |    5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> --- 0001/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
+> +++ work/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml	2025-07-11 04:50:41.505855241 +0900
+> @@ -50,6 +50,11 @@ properties:
+> 
+>        - items:
+>            - enum:
+> +	      - renesas,r7s72100-rpc-if       # RZ/A1H
+> +	      - renesas,r7s9210-rpc-if        # RZ/A2M
+> +
+> +      - items:
+> +          - enum:
+>                - renesas,r9a07g043-rpc-if      # RZ/G2UL
+>                - renesas,r9a07g044-rpc-if      # RZ/G2{L,LC}
+>                - renesas,r9a07g054-rpc-if      # RZ/V2L
+> 
+> 
 
-Anyone know the history why neither has 0-day?
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml:53:1: [error] syntax error: found character '\t' that cannot start any token (syntax)
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml: ignoring, error parsing file
+./Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml:53:1: found character that cannot start any token
+make[2]: *** Deleting file 'Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.example.dts'
+Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml:53:1: found character that cannot start any token
+make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.example.dts] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1525: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/175232756792.19062.3922882730162396395.sendpatchset@1.0.0.127.in-addr.arpa
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
