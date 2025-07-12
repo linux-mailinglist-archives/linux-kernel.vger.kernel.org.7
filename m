@@ -1,142 +1,155 @@
-Return-Path: <linux-kernel+bounces-728765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC6EFB02CA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:42:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14622B02CA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 21:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 444FE4A5AB4
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 19:42:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 393E1189E67D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 19:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7ED028DF0B;
-	Sat, 12 Jul 2025 19:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D5128DF12;
+	Sat, 12 Jul 2025 19:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="aMHnatfJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HM+934w3"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BzaiWGNg"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935DE19CD01;
-	Sat, 12 Jul 2025 19:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF8C18D;
+	Sat, 12 Jul 2025 19:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752349364; cv=none; b=XgnNq5MjF1x6a0lsUuyN+awKlasHUWD/1/iBEeX9JZdhPU0ZwKg4H4/x9GlvAFfN8UWbMdS99Nm4hzIctD5hnmbVR/lvTghLAG6NnoDZZUDsps27xycidbLGu3VxmyTToHd8mHvGyHjuJNhVESFxBC6ibJ37MZUWrE5dXmY7uGY=
+	t=1752349404; cv=none; b=BspI4UvBQUkX7+yqvVVP5f2xQQkZyq5exQ7xQ542jIBvV+hSvvjuD9Pct51s/z1D9OaxiNhTK79AJg4nHfvNdP0JY32HtvrFTHUT4hsgDSmnJQ70FmS3yxnYFBdDZ/xpRgI34iu6MBVBEHW98gec7sreIp5MSwMXFXlR03MTV9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752349364; c=relaxed/simple;
-	bh=AFNSgcHm8fzdGVvETXtLSUJHaNjrPTnNj5w1Gf6P3YI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EcTrxhCLnlrZRjWt3xtalVa230Pjway7Sf4JjBFOJOvMwgPXFXKPTux5rLQdeY8pZtP038zz+EJq7ZiHiz5DA+7Djq7q8fkW2oo67hZCd4JkZofSJuXSQCnh4Uts+k80U9O3Ch87eYB/tlKNMT/TlS0JgxFvc5GSADk7MSJH+aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=aMHnatfJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HM+934w3; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 388C57A00A3;
-	Sat, 12 Jul 2025 15:42:41 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Sat, 12 Jul 2025 15:42:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1752349361; x=1752435761; bh=JXPGbLR2nO
-	I+XzchXqaSbWCZ3qfJoJ1LIKJbuE/u2Wc=; b=aMHnatfJxFH0baQBcnIsLjabSj
-	wKCDY7rNrBMhUk8itAd9KQl15AOxx8jcxAR8ARzy3sd6jwEhcpn1EmjOVkvbkIa2
-	FzEAEpzgBwHP7Ml4NaPhMiFHqyURMidm3ppCxeBBPp4uiP2rp3UTdikllAGDbOws
-	hIRQ8KIhI0T5KLxfwI9FOuXq5K+OmApMi2hlfD5sGPec8JxkmeiAmR9yh3tcYtbR
-	DA1EIhVdsVSOBx21EFCBq9t5M+2p7Zk+kVmBq8TLamYxwe96m5sLGMaNfPUaczqB
-	BMMmuBI4/Ov7UuS42n7mFI0zzk8jt+GCIRAc+L8RwHfeTiKFZJPDUS+1lU3A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1752349361; x=1752435761; bh=JXPGbLR2nOI+XzchXqaSbWCZ3qfJoJ1LIKJ
-	buE/u2Wc=; b=HM+934w3aUY7TzdG8N8WY9y69b1ZlkIZ8AwKqEaTakW81Q637Lj
-	aoAJM/4d67FxEuUxs4ixXAOIH2mKIc7glqTMGsnyA/Tb/n8QsttfR+ZbdD0SIXZ8
-	PooV6MuQfc2CWR0g/00eJ7BsYYO8cyCj0GVGARzct9g8dJcsp6v3L6jwqUAKUBPC
-	gIU/8b4GwchssvPMBP2HBh2GaalXAxUYX+UmREFUcbJ5I0PZGcBs7mzCRlCRmv5N
-	AkdvGxwGV9sGZlyGSAyJ4t+t+pYCXWtaCkzjJ3uywZRUOsh7oF22CVC7WVV/+GG0
-	Qji0ZQq3XmfmfkbzweTHdgoDSto3DcSszOw==
-X-ME-Sender: <xms:sLpyaM_4xP3dJyhRzsG_dTJQk7CpA9g1zVMoTCKuPyY3HoyEs8_qwg>
-    <xme:sLpyaNeFZIIik75IACGrJZYe3lEbFAIZlMqmYZITuONscKYfFIa-yqwwlgl7jEAZf
-    ahGE_3NPtJghsICHjY>
-X-ME-Received: <xmr:sLpyaAtG3_NBfyo9k1A-283R2A5ktQknVP54dq-nhM3GBS0XscfirdCMnti8K916bMU3k_lwqR4zGux9N73E7F5IdvTGLHbsFik>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegjedtjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecuhfhrohhmpeflrghnnhgvucfi
-    rhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhepgfdvff
-    evleegudejfeefheehkeehleehfefgjefffeetudegtefhuedufeehfeetnecuvehluhhs
-    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjhgrnhhnrghurd
-    hnvghtpdhnsggprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    ohepthgrmhhirhgusehgmhgrihhlrdgtohhmpdhrtghpthhtoheprgdrhhhinhgusghorh
-    hgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpth
-    htohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhih
-    sehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtoh
-    hnmhgrihhlrdgtohhmpdhrtghpthhtoheplhhoshhsihhnsehkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomh
-X-ME-Proxy: <xmx:sLpyaO1LPe2w6GH3DbYiPT53CnSUqbM-3MFZAi6daOyWWsZsOHqTOQ>
-    <xmx:sLpyaFABgzUfCuPlVZKXFAsZq-g5sWFLbvLPZvTKSDyvzyr971cbNw>
-    <xmx:sLpyaLclrBXUQhhaUo9wPsRZorbdo2VGe33m0HAGLJ0t4OeCHm-qeQ>
-    <xmx:sLpyaHyCiHDFEfSU14h3U8Xo0_WBwLsJuFGpr_YLAAC5t9vDzbyJZg>
-    <xmx:sbpyaGoQTEHXEa5g92PNCl3NUiVw--7hy-eNo0p0MQfRAg8DqYzno9Wq>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 12 Jul 2025 15:42:39 -0400 (EDT)
-Date: Sat, 12 Jul 2025 21:42:37 +0200
-From: Janne Grunau <j@jannau.net>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	Daniel Almeida <daniel.almeida@collabora.com>
-Subject: Re: [PATCH 0/3] rust: xarray: add `insert` and `reserve`
-Message-ID: <20250712194237.GA264217@robin.jannau.net>
-References: <20250701-xarray-insert-reserve-v1-0-25df2b0d706a@gmail.com>
+	s=arc-20240116; t=1752349404; c=relaxed/simple;
+	bh=qgoSlcEfHPXxIG5r6WfthbCStc0ch6nPvvHnDxAC7jA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dc9emg/eMV0BCDb3K09cTo94ba5nijLfAER0qBX0/k+gRZgbeLVWymV9yOZe0Vba/omr6dnvEn/O1E/whcHOCG8bvwuTN8aTGpdOAOC27LgBEE+529gJbvj2Ahm+I71bvofNYfZFZ60W2NkDYmlm/tlVL7lfMn9Egbhu2bQ+1xU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BzaiWGNg; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4560cdf235cso2818345e9.1;
+        Sat, 12 Jul 2025 12:43:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752349401; x=1752954201; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nJRjGT347eE5KHYXkVnH2zDF7kOBoPVWDF2wyG/7/ms=;
+        b=BzaiWGNgyH6KV3VRsEdbnr18kCrcA/ChB6LXEitWoMPg1/PoHEh1NEp+HGNFR9G3EQ
+         P7m/6qSwXkbRi/jsOnVJgZtYbj0RnuFzPxpD5ClDxAJFBat+fdSD0oN/yZF/LXH1gIRM
+         vcN+0/mh4CnLSmFjpbARSOa5MPOZnajkXr8CYKweWJPWjsx/bXAx7XazvvFKc91Tpnho
+         LqAKSPraVyxlYFRZZLFAvC9Ryt0mJ/SnAC0gTqYODtWcd9fZLonBcUy2fiOLCYuNrgYV
+         slEsuFB7UoYrHOZI5aYVZ7fS1uPEn79XmCf8r50PlaF6WaFHUmwUKveJNOwpAv01mm8B
+         z2Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752349401; x=1752954201;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nJRjGT347eE5KHYXkVnH2zDF7kOBoPVWDF2wyG/7/ms=;
+        b=lU+LSrub/witAbSp7wUZe8ISCVxH7qj+SSCOMUrifEwMVmPyHWtiQRBG9qGzYCJSLa
+         BW+iiCUlgEu4dPp1pCSOtNflydC4LC60nfEM4OKtRp6IHEiT9gSfRX8r0A3ODny6lJss
+         FPdBXwgAXeC7fhrazjA7GclP8XTzZZscXeocidBbS1JB2f8Q6CVUqlcnfTAhm0kV+vNW
+         EBENPvAWydDlFG/cqdgP/3IMVzTgWmdMN9fj39+tAOWMtqEpix2QFBwkWqVRfonR9LRk
+         lYjEz1M5Y3VQe5Wz4Y7moOjPjr7FHmVj+QUUSfOW5ct2f5JcVNyPN/TCZX6D6x9XGY4s
+         ksAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkHTOfVXZE88Xyz5SxJ2fXm2YBW5pvg2WxUlpABM8HulcAhaoueyUx+H7LcPhFd+RVDV5MxIDoGTaA@vger.kernel.org, AJvYcCXpNqhAVmCvAzGg9XchZ+ib4OaFT7xQ2vo06iWsF8Rr/OHK5N/emnOfeiMNcSgCFYn5TeRTzLEK7oL91MSM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxhr8wkd4ezPdht2BxyP1iDQZRUSUPwf0SQumzgRh3Hjufj2L2m
+	6XHFIBaUm8IvvAN12OzKYjqkYki6D7KnHVlD7+e9Y8DPyFq2qCQNp/1V0x3K8A==
+X-Gm-Gg: ASbGncvq8pHCqI//+9D3Kk08yetzNczRLW0Osh1WIpruBxPysvO0b8brvzwOJ3bKEEv
+	aCjUUImwMWzCEkKVGOXnYtKpuYV7iGy46G36IeXjbOMopOaZ0/DPlrpu5MJJQUFjMD+CnRWgBHw
+	jwl1+HeacYTqsL/NIdnBweP6RjgERvT3g4khNnTW6JyvrgYBtVo7ndyoX3a2cAGhB7qKmAaiuW5
+	KOOYZkDoY0A62TdATozt08gM9BlxEHAz8MBG/EGH8TyNZiJquNjTWHi3ljCjLiAD193LUeEW28j
+	CQUhEKvhiXlvgkIIKq1BuDVgzPwYvWdSjgk4bedUlZAdYags5GQ2G7exztzoBMTgoQ+DFLE+ONg
+	qOinLxr6VfyJKPqQ8FiCfMaXEhRu/aOs+JirxAPS8uSsUIX44zkjM
+X-Google-Smtp-Source: AGHT+IHyzB046cNg4vvzKYKydglWXcjAX67CtqrS9ojzsFlwo89yMGOaOMMMQXtJE83lj+53alBvvA==
+X-Received: by 2002:a05:600c:c116:b0:453:6424:48a2 with SMTP id 5b1f17b1804b1-45576a7e0f5mr68036745e9.10.1752349400602;
+        Sat, 12 Jul 2025 12:43:20 -0700 (PDT)
+Received: from builder.. (246-9-142-46.pool.kielnet.net. [46.142.9.246])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d5032e9esm123422335e9.3.2025.07.12.12.43.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Jul 2025 12:43:20 -0700 (PDT)
+From: Jonas Jelonek <jelonek.jonas@gmail.com>
+To: linux-i2c@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Markus Stockhausen <markus.stockhausen@gmx.de>,
+	Jonas Jelonek <jelonek.jonas@gmail.com>
+Subject: [PATCH v2 0/3] i2c: rework and extend RTL9300 I2C driver
+Date: Sat, 12 Jul 2025 19:42:52 +0000
+Message-ID: <20250712194255.7022-1-jelonek.jonas@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250701-xarray-insert-reserve-v1-0-25df2b0d706a@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 01, 2025 at 12:27:16PM -0400, Tamir Duberstein wrote:
-> Please see individual patches.
-> 
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
-> Tamir Duberstein (3):
->       rust: xarray: use the prelude
->       rust: xarray: implement Default for AllocKind
->       rust: xarray: add `insert` and `reserve`
-> 
->  include/linux/xarray.h |   2 +
->  lib/xarray.c           |  28 ++-
->  rust/helpers/xarray.c  |   5 +
->  rust/kernel/xarray.rs  | 460 +++++++++++++++++++++++++++++++++++++++++++++++--
->  4 files changed, 472 insertions(+), 23 deletions(-)
+This patch series reworks the current implementation of the driver for
+I2C controller integrated into RTL9300 SoCs to simplify support
+extension, and adds support for the RTL9310 series.
+Goal of this is to have RTL9310 support upstream in a proper
+implementation to be able to drop downstream versions of this driver.
 
-thanks, series is tested with the asahi driver and works as expected.
-Usage is limited to ::reserve_limits() and ::fill() of the reservation
-so only covering a part of the change.
+The first patch reworks the driver to use more of the regmap API.
+Instead of using macros, all registers are defined as reg_field and
+operations on these registers are performed using regmap_field and the
+corresponding API. This simplifies adding support for further chip
+families and avoids potential redundant code by just providing
+chip-specific functions for every chip family.
 
-Whole series
-Tested-by: Janne Grunau <j@jannau.net>
-Reviewed-by: Janne Grunau <j@jannau.net>
+The second patch extends the existing dt-bindings of RTL9300 for RTL9310
+support.
 
-Janne
+The third patch makes use of previous changes by adding support for the
+RTL9310 series, providing the correct register definitions and a few
+specifics. This also uses a new vendor dt-property which was added by
+the second patch to properly manage the I2C controllers. Having this
+property is necessary to properly describe the hardware and allow the
+driver to correctly work with the I2C controllers.
+
+Both has been tested successfully on RTL9302B-based Zyxel XGS1210-12
+and RTL9313-based Netgear MS510TXM.
+
+Compile-tested with Linux, run-tested as backport in OpenWrt on the
+aforementioned devices.
+
+--
+Changelog
+
+v2: - Patch 1: 
+	- adjusted commit message
+    	- retained Tested-By and Reviewed-By from Chris Packham
+    - Patch 2:
+    	- simplified check as suggested by Markus Stockhausen
+	- fixed commit message
+    - Patch 3 (all requested by Krzysztof):
+    	- use vendor property instead of generic
+	- add front compatibles to make binding complete
+	- fix commit message
+    - reordered patches, dt-bindings patch now comes before its 'user'
+    - properly add device-tree list and relevant maintainers to To/Cc
+
+--
+
+Jonas Jelonek (3):
+  i2c: rework RTL9300 I2C controller driver
+  dt-bindings: i2c: realtek,rtl9301-i2c: extend for RTL9310 support
+  i2c: add RTL9310 support to RTL9300 I2C controller driver
+
+ .../bindings/i2c/realtek,rtl9301-i2c.yaml     |  38 ++-
+ drivers/i2c/busses/i2c-rtl9300.c              | 231 +++++++++++++-----
+ 2 files changed, 199 insertions(+), 70 deletions(-)
+
+-- 
+2.48.1
+
 
