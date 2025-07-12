@@ -1,313 +1,136 @@
-Return-Path: <linux-kernel+bounces-728687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50ADFB02BDC
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:14:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA99B02BE0
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D1A54A7769
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:14:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA71D1C20ED8
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB63E289E03;
-	Sat, 12 Jul 2025 16:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3870F287265;
+	Sat, 12 Jul 2025 16:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VcssHG8j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="t/QCW3+O"
+Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174BF17A2EB;
-	Sat, 12 Jul 2025 16:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3461A2BAF4
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 16:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752336876; cv=none; b=GSy3FvKfUJ7Nfxptiw4QGJUgzYb6t9kqNcoQY3Sv+BISPhDJTPupIzVb7/rxmG+B+ZhtRlc927jK0lPg8HnK7kIatS4fdccTg7/SDgi1Y/Xh35VdOflzdG45D7dB8ThjuWtIHx/FzsdLJSeKdBk8BMZGwa0h45J1bqp41WgpeBI=
+	t=1752337071; cv=none; b=SygMFfmfDcY6Hd55idMuiiCFSRjXlAio0tYoJ88lg+V4RYBobKBBrbMhOpKFed+itm42hgdvFrVgdULRVavOPs1Qg1hW+eWSrgpczlj0nyH0y8amR3h7/4ziQRQxmLyDkSQChsA8RlXqJPXOmv7Zbjuku1jUUCt6lbEUYkm2wyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752336876; c=relaxed/simple;
-	bh=1LLRllrX+3HiXT5tKArnhOLsIFsJXctJVyCg9gE96Xo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dpgR6sjN5Slu+rSSqcqFDO4v053NQ/PVresVfFQJnZcv1ID9QMENTfCc6KRfa0Bwv3jzhvPeoDYZdolsjob/zLHkGAwgnLV38gmQHDc5fcJLYmcDq+EBmJSa5KdAA+eAhFc6ErrEkOFDDTEpvZ11GSU0KnUAhlrr7O+uDzlwuyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VcssHG8j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E22AC4CEEF;
-	Sat, 12 Jul 2025 16:14:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752336875;
-	bh=1LLRllrX+3HiXT5tKArnhOLsIFsJXctJVyCg9gE96Xo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VcssHG8jmyh8ELzvJxHGLbAXtMelwI7p93dFvwzRnuzY9KlIqhJdfVrrO05bG9T8Q
-	 fhj8/XAvf0CpadOSq8Q8J5aEsCbRsEX9teuEntPKeHn5Ygn41Cg9r0uL9PRMXke/Kd
-	 vzME+KZNFosWtFAK0MRPI3PBHm7NixiuQaVhNwglrluGs2AdKcC/rs8izsZtourMC6
-	 wdl79VAyOnUL+FDeP3WW4SpIUzUBEPGGn0199vhtPlH/do8mN0BuhdD7I1tNBUpleC
-	 UDJ0W9knKKv1iphSVvN9bX7bdfGd4Uhfm+0zy1ueEJQSN1lIzJh49OstCHVCLvnkfS
-	 bwM3v1bjA6LKA==
-Received: by pali.im (Postfix)
-	id 84E8C7E2; Sat, 12 Jul 2025 18:14:34 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] cifs: Add support for creating WSL symlinks in version 1 format
-Date: Sat, 12 Jul 2025 18:14:18 +0200
-Message-Id: <20250712161418.17696-2-pali@kernel.org>
+	s=arc-20240116; t=1752337071; c=relaxed/simple;
+	bh=skSChtEzeBlvdjOZrJD8k59Y8JnUnMGTVqOSqxe5eTA=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=UVZXVmc0+lXtFHsApRjU/liUnftKB/PUlrPwygOf1/ESvU/mAJZffPCIpdXQ9uA2ereMq0ssiinMgHIHPOT6cpQn/CJ9yrpTsM0nQjC6RgFtoziM3UFoZvzC/z9C6asaC6GHOJivIUrmxQxWbVE6JR8BS+5S0GtRlyfMtU1Gg7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=t/QCW3+O; arc=none smtp.client-ip=162.62.57.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1752337058;
+	bh=HB1hz+ricoDCLB7RNvWCnPHdSK4a0MIDQPyM96qZLrk=;
+	h=From:To:Cc:Subject:Date;
+	b=t/QCW3+O8aQr4Feqn1Imz53qKs0sCh5krBc2JXdXXPJRKQNUYV2viofvYJFkvGGjG
+	 TdvT2rNDcW9PoJFNwNjw/QJRnGEH3nkSsyl+iF+r1+gIaQqJ4rE4vqZjNQMJvmxS0t
+	 B01fokWlMA4yUzVZypIl5P/f+uLvCzdkpkAXGm8k=
+Received: from KernelDevBox.byted.org ([115.190.40.10])
+	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
+	id 419B4E38; Sun, 13 Jul 2025 00:16:25 +0800
+X-QQ-mid: xmsmtpt1752336985tmnmdg17y
+Message-ID: <tencent_22664B08ACDCE35DE10E5546C2FB26B59605@qq.com>
+X-QQ-XMAILINFO: M84Ob7gbJGBWc01xJ7vkYkFSoybpZ2krgmPfjVOYXJ91Ln8jjLUHzFW0alz+Oj
+	 X2oy1OQm8f+cdzMidft6pl81ZjcmuCSuDXpQcWuPMfG2Pi2YWF62hfR0OiwNYK1f7e2gYmxXErba
+	 OV7OBlODTowdCIiY16gYCTeGutRSKz75a2MSsjGe2GuEwNMeHPrJf6ijIQrbxB+qneOp9rPMFuDx
+	 xcdRQx1RZe+Ekc740wBdVOhxVWHe0qBhGqDIsjPpjSOLzbCyBqxKMP3gtxLSDRLSbqH8I6/TFqCo
+	 BWwrR/FKIVeOdAXRCzVNlpckbMWjW3TyePIoo+NeTLN4uFLh0LWzJPY9JihqVXqXozr8F3+kjqLQ
+	 ZS8LqGw8tsRGY2c8bQgMsWCLd11LSKtu86Us787fVGi15F06adnHgjGoqyI1eHf3w1R+eqI4yZv9
+	 oUHyhMrOvUE/YVSrRIhSD5kx0fXU/yhTjDHmCr3bv3GTgZP1xxt2pGWlzs1nFuubEX+XsdL35YWz
+	 ArVv+QR8Jd4psGTurfjNH85xlAbGM94TSc/noMf++dyXNYkJG0uqEx0EhyhziY8IqW94DRAz9WLH
+	 /9YhpQ08Zqff0uiR07UbAhSk0/7e/yhdSMx5bvn7FXO5N7lBpJ7d5CAnae6f8zSKfOQz8Tpn2bJp
+	 ik268Hs2psc9pqOYzKvZ2KXDq0jW+LADhrBC3VcObXcynvpXJULaDGFvTSGplHjgmDW+TEmlKVRQ
+	 2tyyasOsfVRwFBxTTav88lw4fARkWW7obuGmqd+ZXMXCqgDUOMcY+OVathhVzp6hZAjTqKqZnHPW
+	 14P+87DYKbw8xD5xTDA/vqRsrX5AnyCh37RnTcaRVQL75pHe76/lK79rcxcaLVY2qFpUlDbvPrgP
+	 eWImY5bNSZaiKsuvIglIVgaR9O9Cp5il0GBWmx+5SQd2wHSJfu+07Y59c/FSrT1QiAZ6k8z3Hcos
+	 7EKs10ZOvXHhB8BD2Mqiwtx6e/WACgJ+PxuA6Wwx+51uX+WPJvwl/HXTt1dSBsVChhma/vFTg/Cg
+	 MtibJS5w==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Zhang Shurong <zhang_shurong@foxmail.com>
+To: sven@kernel.org
+Cc: j@jannau.net,
+	alyssa@rosenzweig.io,
+	neal@gompa.dev,
+	joro@8bytes.org,
+	will@kernel.org,
+	robin.murphy@arm.com,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Zhang Shurong <zhang_shurong@foxmail.com>
+Subject: [PATCH] iommu/dart: add missing put_device() call in apple_dart_of_xlate
+Date: Sun, 13 Jul 2025 00:16:24 +0800
+X-OQ-MSGID: <20250712161624.1850171-1-zhang_shurong@foxmail.com>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250712161418.17696-1-pali@kernel.org>
-References: <20250712161418.17696-1-pali@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add a new mount option -o symlink=wsl1 which cause that all newly created
-symlinks would be of WSL style in layout version 1 format. This type of
-symlinks is supported by all WSL versions.
+The apple_dart_of_xlate() function obtains a platform device reference
+via of_find_device_by_node() but doesn't release it with put_device().
+This patch adds proper device reference handling to prevent memory
+leaks.
 
-Existing mount option -o symlink=wsl will be now an alias to -o
-symlink=wsl2 which creates symlinks in layour version 2 format.
-
-Signed-off-by: Pali Rohár <pali@kernel.org>
+Fixes: 46d1fb072e76 ("iommu/dart: Add DART iommu driver")
+Signed-off-by: Zhang Shurong <zhang_shurong@foxmail.com>
 ---
- fs/smb/client/cifsglob.h   |  9 +++--
- fs/smb/client/fs_context.c | 11 ++++--
- fs/smb/client/fs_context.h |  3 +-
- fs/smb/client/link.c       |  3 +-
- fs/smb/client/reparse.c    | 73 ++++++++++++++++++++++++++++++++------
- 5 files changed, 81 insertions(+), 18 deletions(-)
+ drivers/iommu/apple-dart.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
-index 6a84d5eae578..758129ab1302 100644
---- a/fs/smb/client/cifsglob.h
-+++ b/fs/smb/client/cifsglob.h
-@@ -189,7 +189,8 @@ enum cifs_symlink_type {
- 	CIFS_SYMLINK_TYPE_MFSYMLINKS,
- 	CIFS_SYMLINK_TYPE_SFU,
- 	CIFS_SYMLINK_TYPE_NFS,
--	CIFS_SYMLINK_TYPE_WSL,
-+	CIFS_SYMLINK_TYPE_WSL1,
-+	CIFS_SYMLINK_TYPE_WSL2,
- };
+diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
+index 190f28d76615..811bf5176568 100644
+--- a/drivers/iommu/apple-dart.c
++++ b/drivers/iommu/apple-dart.c
+@@ -796,8 +796,10 @@ static int apple_dart_of_xlate(struct device *dev,
  
- static inline const char *cifs_symlink_type_str(enum cifs_symlink_type type)
-@@ -207,8 +208,10 @@ static inline const char *cifs_symlink_type_str(enum cifs_symlink_type type)
- 		return "sfu";
- 	case CIFS_SYMLINK_TYPE_NFS:
- 		return "nfs";
--	case CIFS_SYMLINK_TYPE_WSL:
--		return "wsl";
-+	case CIFS_SYMLINK_TYPE_WSL1:
-+		return "wsl1";
-+	case CIFS_SYMLINK_TYPE_WSL2:
-+		return "wsl2";
- 	default:
- 		return "unknown";
- 	}
-diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
-index a634a34d4086..7808cb224d8c 100644
---- a/fs/smb/client/fs_context.c
-+++ b/fs/smb/client/fs_context.c
-@@ -377,7 +377,9 @@ static const match_table_t symlink_flavor_tokens = {
- 	{ Opt_symlink_mfsymlinks,	"mfsymlinks" },
- 	{ Opt_symlink_sfu,		"sfu" },
- 	{ Opt_symlink_nfs,		"nfs" },
--	{ Opt_symlink_wsl,		"wsl" },
-+	{ Opt_symlink_wsl1,		"wsl1" },
-+	{ Opt_symlink_wsl2,		"wsl2" },
-+	{ Opt_symlink_wsl2,		"wsl" }, /* wsl - alias for wsl2 */
- 	{ Opt_symlink_err,		NULL },
- };
- 
-@@ -408,8 +410,11 @@ static int parse_symlink_flavor(struct fs_context *fc, char *value,
- 	case Opt_symlink_nfs:
- 		ctx->symlink_type = CIFS_SYMLINK_TYPE_NFS;
- 		break;
--	case Opt_symlink_wsl:
--		ctx->symlink_type = CIFS_SYMLINK_TYPE_WSL;
-+	case Opt_symlink_wsl1:
-+		ctx->symlink_type = CIFS_SYMLINK_TYPE_WSL1;
-+		break;
-+	case Opt_symlink_wsl2:
-+		ctx->symlink_type = CIFS_SYMLINK_TYPE_WSL2;
- 		break;
- 	default:
- 		cifs_errorf(fc, "bad symlink= option: %s\n", value);
-diff --git a/fs/smb/client/fs_context.h b/fs/smb/client/fs_context.h
-index 9e83302ce4b8..0b289237cc81 100644
---- a/fs/smb/client/fs_context.h
-+++ b/fs/smb/client/fs_context.h
-@@ -72,7 +72,8 @@ enum cifs_symlink_parm {
- 	Opt_symlink_mfsymlinks,
- 	Opt_symlink_sfu,
- 	Opt_symlink_nfs,
--	Opt_symlink_wsl,
-+	Opt_symlink_wsl1,
-+	Opt_symlink_wsl2,
- 	Opt_symlink_err
- };
- 
-diff --git a/fs/smb/client/link.c b/fs/smb/client/link.c
-index 2ecd705e9e8c..c27da4a9a74c 100644
---- a/fs/smb/client/link.c
-+++ b/fs/smb/client/link.c
-@@ -641,7 +641,8 @@ cifs_symlink(struct mnt_idmap *idmap, struct inode *inode,
- 
- 	case CIFS_SYMLINK_TYPE_NATIVE:
- 	case CIFS_SYMLINK_TYPE_NFS:
--	case CIFS_SYMLINK_TYPE_WSL:
-+	case CIFS_SYMLINK_TYPE_WSL1:
-+	case CIFS_SYMLINK_TYPE_WSL2:
- 		if (le32_to_cpu(pTcon->fsAttrInfo.Attributes) & FILE_SUPPORTS_REPARSE_POINTS) {
- 			rc = create_reparse_symlink(xid, inode, direntry, pTcon,
- 						    full_path, symname);
-diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-index 51e476cd4bc9..9c78f217c037 100644
---- a/fs/smb/client/reparse.c
-+++ b/fs/smb/client/reparse.c
-@@ -22,7 +22,7 @@ static int mknod_nfs(unsigned int xid, struct inode *inode,
- static int mknod_wsl(unsigned int xid, struct inode *inode,
- 		     struct dentry *dentry, struct cifs_tcon *tcon,
- 		     const char *full_path, umode_t mode, dev_t dev,
--		     const char *symname);
-+		     const char *symname, int symver);
- 
- static int create_native_symlink(const unsigned int xid, struct inode *inode,
- 				 struct dentry *dentry, struct cifs_tcon *tcon,
-@@ -43,8 +43,10 @@ int create_reparse_symlink(const unsigned int xid, struct inode *inode,
- 		return create_native_symlink(xid, inode, dentry, tcon, full_path, symname);
- 	case CIFS_SYMLINK_TYPE_NFS:
- 		return mknod_nfs(xid, inode, dentry, tcon, full_path, S_IFLNK, 0, symname);
--	case CIFS_SYMLINK_TYPE_WSL:
--		return mknod_wsl(xid, inode, dentry, tcon, full_path, S_IFLNK, 0, symname);
-+	case CIFS_SYMLINK_TYPE_WSL1:
-+		return mknod_wsl(xid, inode, dentry, tcon, full_path, S_IFLNK, 0, symname, 1);
-+	case CIFS_SYMLINK_TYPE_WSL2:
-+		return mknod_wsl(xid, inode, dentry, tcon, full_path, S_IFLNK, 0, symname, 2);
- 	default:
- 		return -EOPNOTSUPP;
- 	}
-@@ -534,6 +536,7 @@ static int mknod_nfs(unsigned int xid, struct inode *inode,
- 
- static int wsl_set_reparse_buf(struct reparse_data_buffer **buf,
- 			       mode_t mode, const char *symname,
-+			       int symver,
- 			       struct cifs_sb_info *cifs_sb,
- 			       struct kvec *iov)
- {
-@@ -569,15 +572,20 @@ static int wsl_set_reparse_buf(struct reparse_data_buffer **buf,
- 			kfree(symname_utf16);
+ 	if (!cfg) {
+ 		cfg = kzalloc(sizeof(*cfg), GFP_KERNEL);
+-		if (!cfg)
++		if (!cfg)  {
++			put_device(&iommu_pdev->dev);
  			return -ENOMEM;
- 		}
--		/* Version field must be set to 2 (MS-FSCC 2.1.2.7) */
--		symlink_buf->Version = cpu_to_le32(2);
--		/* Target for Version 2 is in UTF-8 but without trailing null-term byte */
-+		symlink_buf->Version = cpu_to_le32(symver);
-+		/* Target is in UTF-8 but without trailing null-term byte */
- 		symname_utf8_len = utf16s_to_utf8s((wchar_t *)symname_utf16, symname_utf16_len/2,
- 						   UTF16_LITTLE_ENDIAN,
- 						   symlink_buf->Target,
- 						   symname_utf8_maxlen);
- 		*buf = (struct reparse_data_buffer *)symlink_buf;
--		buf_len = sizeof(struct reparse_wsl_symlink_data_buffer) + symname_utf8_len;
-+		buf_len = sizeof(struct reparse_wsl_symlink_data_buffer);
-+		/*
-+		 * Layout version 2 stores the symlink target in the reparse point buffer.
-+		 * Layout version 1 stores the symlink target in the data section of the file.
-+		 */
-+		if (symver == 2)
-+			buf_len += symname_utf8_len;
- 		kfree(symname_utf16);
- 		break;
- 	default:
-@@ -678,7 +686,7 @@ static int wsl_set_xattrs(struct inode *inode, umode_t _mode,
- static int mknod_wsl(unsigned int xid, struct inode *inode,
- 		     struct dentry *dentry, struct cifs_tcon *tcon,
- 		     const char *full_path, umode_t mode, dev_t dev,
--		     const char *symname)
-+		     const char *symname, int symver)
- {
- 	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
- 	struct cifs_open_info_data data;
-@@ -687,6 +695,12 @@ static int mknod_wsl(unsigned int xid, struct inode *inode,
- 	struct inode *new;
- 	unsigned int len;
- 	struct kvec reparse_iov, xattr_iov;
-+	struct cifs_open_parms oparms;
-+	struct cifs_io_parms io_parms;
-+	unsigned int bytes_written;
-+	struct kvec symv1_iov[2];
-+	struct cifs_fid fid;
-+	__u32 oplock;
- 	int rc;
- 
- 	/*
-@@ -696,7 +710,7 @@ static int mknod_wsl(unsigned int xid, struct inode *inode,
- 	if (!(le32_to_cpu(tcon->fsAttrInfo.Attributes) & FILE_SUPPORTS_EXTENDED_ATTRIBUTES))
- 		return -EOPNOTSUPP;
- 
--	rc = wsl_set_reparse_buf(&buf, mode, symname, cifs_sb, &reparse_iov);
-+	rc = wsl_set_reparse_buf(&buf, mode, symname, symver, cifs_sb, &reparse_iov);
- 	if (rc)
- 		return rc;
- 
-@@ -721,6 +735,45 @@ static int mknod_wsl(unsigned int xid, struct inode *inode,
- 				     &data, inode->i_sb,
- 				     xid, tcon, full_path, false,
- 				     &reparse_iov, &xattr_iov);
-+	if (!IS_ERR(new) && mode == S_IFLNK && symver == 1) {
-+		/*
-+		 * WSL symlink layout version 1 stores the symlink target
-+		 * location into the data section of the file.
-+		 * Store it now after the reparse point file was created.
-+		 * The target location was allocated into the buf but iov
-+		 * size filled in reparse_iov by wsl_set_reparse_buf() was
-+		 * set to smaller so the created reparse point does not
-+		 * contain it.
-+		 */
-+		oparms = CIFS_OPARMS(cifs_sb, tcon, full_path, FILE_WRITE_DATA,
-+				     FILE_OPEN, CREATE_NOT_DIR | OPEN_REPARSE_POINT,
-+				     ACL_NO_MODE);
-+		oparms.fid = &fid;
-+		oplock = tcon->ses->server->oplocks ? REQ_OPLOCK : 0;
-+		rc = tcon->ses->server->ops->open(xid, &oparms, &oplock, NULL);
-+		if (!rc) {
-+			symv1_iov[1].iov_base = ((struct reparse_wsl_symlink_data_buffer *)buf)->Target;
-+			symv1_iov[1].iov_len = strlen((const char *)symv1_iov[1].iov_base);
-+			io_parms = (struct cifs_io_parms) {
-+				.netfid = fid.netfid,
-+				.pid = current->tgid,
-+				.tcon = tcon,
-+				.offset = 0,
-+				.length = symv1_iov[1].iov_len,
-+			};
-+			rc = tcon->ses->server->ops->sync_write(xid, &fid, &io_parms,
-+								&bytes_written,
-+								symv1_iov,
-+								ARRAY_SIZE(symv1_iov)-1);
-+			if (bytes_written != symv1_iov[1].iov_len)
-+				rc = -EIO;
-+			tcon->ses->server->ops->close(xid, tcon, &fid);
 +		}
-+		if (rc) {
-+			tcon->ses->server->ops->unlink(xid, tcon, full_path, cifs_sb, NULL);
-+			new = ERR_PTR(rc);
-+		}
-+	}
- 	if (!IS_ERR(new))
- 		d_instantiate(dentry, new);
- 	else
-@@ -744,7 +797,7 @@ int mknod_reparse(unsigned int xid, struct inode *inode,
- 	case CIFS_REPARSE_TYPE_NFS:
- 		return mknod_nfs(xid, inode, dentry, tcon, full_path, mode, dev, NULL);
- 	case CIFS_REPARSE_TYPE_WSL:
--		return mknod_wsl(xid, inode, dentry, tcon, full_path, mode, dev, NULL);
-+		return mknod_wsl(xid, inode, dentry, tcon, full_path, mode, dev, NULL, 0);
- 	default:
- 		return -EOPNOTSUPP;
+ 		/* Will be ANDed with DART capabilities */
+ 		cfg->supports_bypass = true;
  	}
+@@ -805,8 +807,10 @@ static int apple_dart_of_xlate(struct device *dev,
+ 
+ 	cfg_dart = cfg->stream_maps[0].dart;
+ 	if (cfg_dart) {
+-		if (cfg_dart->pgsize != dart->pgsize)
++		if (cfg_dart->pgsize != dart->pgsize) {
++			put_device(&iommu_pdev->dev);
+ 			return -EINVAL;
++		}
+ 	}
+ 
+ 	cfg->supports_bypass &= dart->supports_bypass;
+@@ -825,6 +829,8 @@ static int apple_dart_of_xlate(struct device *dev,
+ 		}
+ 	}
+ 
++
++	put_device(&iommu_pdev->dev);
+ 	return -EINVAL;
+ }
+ 
 -- 
-2.20.1
+2.39.5
 
 
