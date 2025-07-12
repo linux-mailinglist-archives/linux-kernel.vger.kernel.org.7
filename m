@@ -1,112 +1,76 @@
-Return-Path: <linux-kernel+bounces-728825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B477B02D7D
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 00:48:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4028B02D81
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 01:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 192767B0BF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 22:47:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42C2F4A21C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 23:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645C322F14D;
-	Sat, 12 Jul 2025 22:48:28 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C064A1D;
-	Sat, 12 Jul 2025 22:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5F12309B3;
+	Sat, 12 Jul 2025 23:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QRy83B1i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C522F42;
+	Sat, 12 Jul 2025 23:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752360508; cv=none; b=qVEPi0Io/eujCWFU5t6Xh5N9qGI6qr4C/53Pjsmfvqng8u7pbx01F9wTrkt3/xV9fDJBdsREzvTHEs8uy4eCiao0rEguUoAM1VKTC0gBHr2jksEpOlBmDmLebXS3U5CZGTTRl+rT2iVX20fAxRNc9sOJOI+o2ynqm0VYYL7yFlM=
+	t=1752362150; cv=none; b=ktP8hpevimy3HgO3desJXyzg/vR1kLZuq3NKv3NcAuyGuZDZ+zsTK0zf0vI0mJzzz47s61bUteXyqZWkrRHwc3u9yfJaGq/Jajcu8WtXrUImgtOgRN3s1CRqw1tt7cklACRs2WbW5TX5QxAT4u2p0qGl4tniYMULEL9wx/NcPJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752360508; c=relaxed/simple;
-	bh=JbxKo7AIDufaUdxUBchbEMXE4FdUl7BQ7nHVx+21JhQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SHnZ+TWgzJ66qOUQLgosNtP2EZVZMsFG83/YRCRZVNv1N8ahDjMoy/G6/A0xm2wgW331WfnfELpNhT1duvV+moW81donElavmyj9Qoa5iqXmIbm+UMlbUlrMC3D8F9HP+rVcdy/wHvgZJ+joOfVReT03qx3zUm00x7yZt1wP1SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 4FCC992009C; Sun, 13 Jul 2025 00:48:16 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 4196692009B;
-	Sat, 12 Jul 2025 23:48:16 +0100 (BST)
-Date: Sat, 12 Jul 2025 23:48:16 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Richard Fontana <rfontana@redhat.com>
-cc: Segher Boessenkool <segher@kernel.crashing.org>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Christoph Hellwig <hch@infradead.org>, Thomas Huth <thuth@redhat.com>, 
-    Madhavan Srinivasan <maddy@linux.ibm.com>, 
-    Michael Ellerman <mpe@ellerman.id.au>, 
-    Thomas Gleixner <tglx@linutronix.de>, Nicholas Piggin <npiggin@gmail.com>, 
-    Christophe Leroy <christophe.leroy@csgroup.eu>, 
-    linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-    kvm@vger.kernel.org, linux-spdx@vger.kernel.org, 
-    J Lovejoy <opensource@jilayne.com>
-Subject: Re: [PATCH v2] powerpc: Replace the obsolete address of the FSF
-In-Reply-To: <CAC1cPGzLK8w2e=vz3rgPwWBkqs_2estcbPJgXD-RRx4GjdcB+A@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.2507122332310.45111@angie.orcam.me.uk>
-References: <20250711053509.194751-1-thuth@redhat.com> <2025071125-talon-clammy-4971@gregkh> <9f7242e8-1082-4a5d-bb6e-a80106d1b1f9@redhat.com> <2025071152-name-spoon-88e8@gregkh> <aHC-Ke2oLri_m7p6@infradead.org> <2025071119-important-convene-ab85@gregkh>
- <CAC1cPGx0Chmz3s+rd5AJAPNCuoyZX-AGC=hfp9JPAG_-H_J6vw@mail.gmail.com> <aHGafTZTcdlpw1gN@gate> <CAC1cPGzLK8w2e=vz3rgPwWBkqs_2estcbPJgXD-RRx4GjdcB+A@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1752362150; c=relaxed/simple;
+	bh=2MJWq3RmhQmgqXM2aU0Pq/CmLUzN9TdeDAtXB6evE4M=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Vrkj+w+HO176svDHNhnYxFck9idLnp8kyE+NL3ogcInoocERp1VhmTJUiCinddHZGWxEp6NZr7AFQJd/msEjtM4trvumtUx7skq5cn2V+R8JmzWuzR9Oxf/Ol6TkDpOIZTtFa6HhVJ5LyNmz3lTMLt2NfqimwliInMeZW65UOWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=QRy83B1i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC6D1C4CEEF;
+	Sat, 12 Jul 2025 23:15:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1752362150;
+	bh=2MJWq3RmhQmgqXM2aU0Pq/CmLUzN9TdeDAtXB6evE4M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QRy83B1iBNvfnB1WaNW66DVIyBe/2/Ic4O75Wc4Z1VVoIjLXCH0dIdQZxBlbH1aNC
+	 Cy26o4YsijoyL1UU7n5Ql971KyvCAAi9IbteQJ3rDAdWhq24qk9UwTzQHXbWdfb9mA
+	 t4baJlRCs63k8QZSkBvv/zkD9Rhla9LyDiPDFZ70=
+Date: Sat, 12 Jul 2025 16:15:49 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-mm@kvack.org, "David S. Miller" <davem@davemloft.net>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ x86@kernel.org, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs/Kconfig: Enable HUGETLBFS only if
+ ARCH_SUPPORTS_HUGETLBFS
+Message-Id: <20250712161549.499ec62de664904bd86ffa90@linux-foundation.org>
+In-Reply-To: <20250711102934.2399533-1-anshuman.khandual@arm.com>
+References: <20250711102934.2399533-1-anshuman.khandual@arm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, 11 Jul 2025, Richard Fontana wrote:
+On Fri, 11 Jul 2025 15:59:34 +0530 Anshuman Khandual <anshuman.khandual@arm.com> wrote:
 
-> > > while this one:
-> > >
-> > >  *    As a special exception, if you link this library with files
-> > >  *    compiled with GCC to produce an executable, this does not cause
-> > >  *    the resulting executable to be covered by the GNU General Public License.
-> > >  *    This exception does not however invalidate any other reasons why
-> > >  *    the executable file might be covered by the GNU General Public License.
-> > >
-> > > does not seem to be in the SPDX exception list. It is very similar to
-> > > `GNU-compiler-exception` except it specifically mentions GCC instead
-> > > of saying "a GNU compiler".
-> >
-> > https://spdx.org/licenses/GNU-compiler-exception.html
-> >
-> > is exactly this.
-> 
-> No, because `GNU-compiler-exception` as defined here
-> https://github.com/spdx/license-list-XML/blob/main/src/exceptions/GNU-compiler-exception.xml
-> assumes use of the term "GCC" rather than "a GNU compiler".
+> Enable HUGETLBFS only when platform subscrbes via ARCH_SUPPORTS_HUGETLBFS.
+> Hence select ARCH_SUPPORTS_HUGETLBFS on existing x86 and sparc for their
+> continuing HUGETLBFS support.
 
- I don't know what the legal status of the statement referred is, however 
-the original exception as published[1] by FSF says:
+Looks nice.
 
-'"GCC" means a version of the GNU Compiler Collection, with or without 
-modifications, governed by version 3 (or a specified later version) of the 
-GNU General Public License (GPL) with the option of using any subsequent 
-versions published by the FSF.'
+> While here also just drop existing 'BROKEN' dependency.
 
-which I think makes it clear that "GCC" is a collection of "GNU compilers" 
-and therefore the two terms are synonymous to each other for the purpose 
-of said exception (in the old days "GCC" stood for "GNU C Compiler", but 
-the old meaning makes no sense anymore now that we have compilers for Ada, 
-Fortran and many other languages included in GCC).
+Why?
 
- NB up to date versions of CRT code refer to the exception as published 
-rather than pasting an old version of its text:
-
-'Under Section 7 of GPL version 3, you are granted additional
-permissions described in the GCC Runtime Library Exception, version
-3.1, as published by the Free Software Foundation.'
-
-References:
-
-[1] "GCC Runtime Library Exception", version 3.1, 
-    <https://www.gnu.org/licenses/gcc-exception-3.1.html>
-
- FWIW,
-
-  Maciej
+What is BROKEN for, anyway?  I don't recall having dealt with it
+before.  It predates kernel git and we forgot to document it.
 
