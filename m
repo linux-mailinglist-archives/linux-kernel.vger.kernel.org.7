@@ -1,105 +1,75 @@
-Return-Path: <linux-kernel+bounces-728750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB931B02C77
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:47:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A809BB02C7A
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB9F24A4BC1
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:47:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03CF54A6CB7
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1F928A1F5;
-	Sat, 12 Jul 2025 18:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="X5XXcU2y"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FDE28A3ED;
+	Sat, 12 Jul 2025 18:47:27 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4E41F3B85;
-	Sat, 12 Jul 2025 18:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA212192EF;
+	Sat, 12 Jul 2025 18:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752346035; cv=none; b=GydjaX5+OIS3+SNujm55N0ho+IzvJYUe9II6wmqmPwwiqGjNEZx51J3sEN2lKN+SIjCzc3sIZe1/DXPJvOB877hom6066VBc2/Qlz4YolUBM42c9UTb4bSpno6r/9t3buhfqFZ6rWz7vIGAZfZEuG1KOnyoT0DNOXZrkzmEglMU=
+	t=1752346046; cv=none; b=LYn4lyV2o7mLPN9WQ5pa3I+VPIx3SCOEMhG9KX+eFZ989iBv+6ITIDFhP27rVdpA8xT5GidgedtUPJjlQGtwlC1qGObwb1o5rqNSkuptojMzWfAi3Apr3T06DPkzCunB/Iax7doHzmUoCz9Sjto9HskkxwMJBSSuOCCORNjne5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752346035; c=relaxed/simple;
-	bh=vZHJd/EyhCeWVcS/kNi/tekdBeWGgTbd98m97HKj8rE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BLctZE2zRQZTbuFI4/JvxpboUdlitVhKtE7XOE6o6dFZ4LKXjxKBBsPnkHrHubS0KvqzijJBJTwTSue31AqYujjeeEFYz50IR3ySpmubvwufgR4Ey2RsYHVZH+It6mtBMw/BsHetsZJ+D78E7RvkIKPFYfKPvL114EijKJ4NfYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=X5XXcU2y; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7EB1840E0198;
-	Sat, 12 Jul 2025 18:47:10 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id IiMW9QXRFUAO; Sat, 12 Jul 2025 18:47:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1752346027; bh=rIKSthC2S+D7tehs9yM7s5VVdshVZuEZur+23cX4wP0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X5XXcU2yj2sMeQ/UM0OtP7Gt4pZ5Vo0FurvDPZURWSwI4N7z9+y3zzU4JhOwISFyX
-	 geBm4UHF0s+40pmmTLMl2RvEnL0vM9m6DN+N4DhQH8GDUKkhwr+u0UUV+vBH80MUpM
-	 At04+ntGM1eZVXTLdLUeNqYYe5RIcXvTBWo/rNPSXRY00dTSbMmmh7u0F/xOlNxcaI
-	 7ddZKPCREfoHNxqtSclCBnk4aglaHuznLIfNc0QC1HDVPMGi4fhQKSSQ6Ulk7Y+z2r
-	 y9TmfZ2K535yDIf1i305HUQWeTUxvZXVQ6zqmnnFRBjRpJQd4C7zhI8iYYZIykDewR
-	 SNXM7iHVvtMxmzlwsGV5td9pzrRxWa13IjUNsj6h5ACIAW1DWeiHD1uh4twt+epsNt
-	 NTYWONHpCqZ1bl54zcp1iIQxjtWphK3eTrERh2A3NSYZ63zx8Lua7R/0gITyrPTskf
-	 D8qgaWXCTdcUl7slDaz3j/5rxuCDYCWv7EXP2czFqTzWMA2gW1It13pNpaTVCu9h6x
-	 /L7o2cF1xmIcVmGzeZL27juS+OgJaYLubPXDjFa3wC2fsh9QEZfd44arQlIq9wXvOW
-	 yqZty8TTpDpCP9HJgZQMo2cVOMXLJWmtjOZ8NAvuA5EyP0U31StZQiSlkW7WOZnDNn
-	 YX40LaZXe1LaiMXyMLP9SacA=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EDAD740E00DC;
-	Sat, 12 Jul 2025 18:46:45 +0000 (UTC)
-Date: Sat, 12 Jul 2025 20:46:39 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: Sean Christopherson <seanjc@google.com>, linux-kernel@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
-	Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com,
-	David.Kaplan@amd.com, x86@kernel.org, hpa@zytor.com,
-	peterz@infradead.org, pbonzini@redhat.com, kvm@vger.kernel.org,
-	kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
-	naveen.rao@amd.com, kai.huang@intel.com
-Subject: Re: [RFC PATCH v8 15/35] x86/apic: Unionize apic regs for
- 32bit/64bit access w/o type casting
-Message-ID: <20250712184639.GFaHKtj_Clr_Oa3SgP@fat_crate.local>
-References: <20250709033242.267892-1-Neeraj.Upadhyay@amd.com>
- <20250709033242.267892-16-Neeraj.Upadhyay@amd.com>
- <aG59lcEc3ZBq8aHZ@google.com>
- <be596f16-3a03-4ad0-b3d0-c6737174534a@amd.com>
- <20250712152123.GEaHJ9c16GcM5AGaNq@fat_crate.local>
- <e8483f20-b8ee-4369-ad00-0154ff05d10c@amd.com>
+	s=arc-20240116; t=1752346046; c=relaxed/simple;
+	bh=zYuW7D4e67xKTdzr1vAEXh5gNK6yBoZSLxozbBytjjk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nEtdfg8lhPBO2BTk7PoU3sysb6DwfVbWpQQ8/84u9aCYfldiSHgkYcH6o7CA3EhD4aCeucBounc7S79YShp5tK0p2wRW4d9SfO2YrAJEWnVJ2MEkssPT/Ghzm/zjf1gm4RSXaLeqX0JJ33xY3km12rgz9opnlgx8MJTWyu6QOSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AFC4C4CEEF;
+	Sat, 12 Jul 2025 18:47:26 +0000 (UTC)
+Received: by venus (Postfix, from userid 1000)
+	id E3777180F11; Sat, 12 Jul 2025 20:47:22 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Sebastian Reichel <sre@kernel.org>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Hans de Goede <hansg@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@collabora.com
+In-Reply-To: <20250707-fix-psy-static-checker-warning-v1-1-42d555c2b68a@collabora.com>
+References: <20250707-fix-psy-static-checker-warning-v1-1-42d555c2b68a@collabora.com>
+Subject: Re: [PATCH] power: supply: core: fix static checker warning
+Message-Id: <175234604290.745954.15228307419539590803.b4-ty@collabora.com>
+Date: Sat, 12 Jul 2025 20:47:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e8483f20-b8ee-4369-ad00-0154ff05d10c@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Sat, Jul 12, 2025 at 10:38:08PM +0530, Neeraj Upadhyay wrote:
-> It was more to imply like secure APIC-page rather than Secure-APIC page. I will change
-> it to secure_avic_page or savic_apic_page, if one of these looks cleaner. Please suggest.
 
-If the page belongs to the guest's secure AVIC machinery then it should be
-called secure_avic_page to avoid confusion. Or at least have a comment above
-it explaining what it is.
+On Mon, 07 Jul 2025 01:26:58 +0200, Sebastian Reichel wrote:
+> static checker complains, that the block already breaks if IS_ERR(np)
+> and thus the extra !IS_ERR(np) check in the while condition is
+> superfluous. Avoid the extra check by using while(true) instead. This
+> should not change the runtime behavior at all and I expect the binary
+> to be more or less the same for an optimizing compiler.
+> 
+> 
+> [...]
 
+Applied, thanks!
+
+[1/1] power: supply: core: fix static checker warning
+      commit: 7b41a2341fa62babda5d5c7a32c632e9eba2ee11
+
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+Sebastian Reichel <sebastian.reichel@collabora.com>
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
