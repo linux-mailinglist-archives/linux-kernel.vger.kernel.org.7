@@ -1,115 +1,112 @@
-Return-Path: <linux-kernel+bounces-728792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C153AB02CDB
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 22:28:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32967B02CEE
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 22:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A699A4A3E6E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:28:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5608D189C1E9
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4E5283121;
-	Sat, 12 Jul 2025 20:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86499219A7D;
+	Sat, 12 Jul 2025 20:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="c7P7iUQh"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lcEvXsaL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9196E3C3C;
-	Sat, 12 Jul 2025 20:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752352121; cv=pass; b=Eqfh16qKtdSLfGIWCZ1EkTsiN1grProkLRifXjy3XVS7Dzyp72RxLg4n585h/CSumWM4sMSVVNH5orW88Mmp6xnC5gIdp/eMli8x+fWYhKYh+utXxtrHkYTMq/DkQP672SXbaCAwsnaZsnyKwSbm/LoFdTQ1uGvA9af4eetPn24=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752352121; c=relaxed/simple;
-	bh=JNSL3luxKmboM2Q9AAdcbE8OG++EWYKAzEG7PANFsAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nSPNZAjSnRqqaiqG1KEtU3WkYYNf7JUn23a9mTF5uqxV0uIbPFOzkpXQotdt3iUiRdOQu814BpFnCYWpi8jdPli8bO3vdVDn2D9uLihjQiTeNVUVmBUF8FTThjrLbRPZQBhtFRNP63M5iRF8ycvg3ex15d21TUg7lHiJoYsLYSE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=c7P7iUQh; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752352114; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=PZDnyJH6WRjrG1YcZBjLlJ08NEyy9NEjSEYjmdIF82Df1fqS2LQ0gTSEsc0rpTj2kjBeX32GFYboTBgP3I6L4Mr1+euRWBBUd/C0s2r/IZPLRF3sDymMshUxuJlBHLkmUXzyDd3pOaMLAbr8cjCvIYCa06tvv/cqG5Y6FJ8b3nI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752352114; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=0dUr3aZvtw1d3KnkMIPP8wNMbVfAcRS+5NL5zMgTfFU=; 
-	b=D8RIYYb+/EdU9OMuAeovyaX0S9UETjKnJ/TEX/BOu3S9AQpDSGdQgEF+oRmopi3AvhJ75L1UZoTGVneO5qhuphrPiUZVgn39i3qZ1BM9U3GOV/Xrr0E6CY9/PMvh5oTu44dyP44Tywhga6BUDK+cKyPRhdpZR8kc7WdVv1xlhDM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752352114;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=0dUr3aZvtw1d3KnkMIPP8wNMbVfAcRS+5NL5zMgTfFU=;
-	b=c7P7iUQhb+piNjIXjnAFf8qqmp4ZQmpwRvY/l93179Swvdsr3vJ3z/N+kC4IjpFu
-	QDx0McDX0otTS1q79TZCXdAB6n1Nvz5VictrGRFzBJ7vfRRTgz7Yvq8cGdv39m4/oTa
-	vXkUA7+pFoQDUHdiWTT5dkYkl+SZF9pQRSNxTZRk=
-Received: by mx.zohomail.com with SMTPS id 1752352110596190.32093102983913;
-	Sat, 12 Jul 2025 13:28:30 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 3291B180F0F; Sat, 12 Jul 2025 22:28:27 +0200 (CEST)
-Date: Sat, 12 Jul 2025 22:28:26 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Ian Ray <ian.ray@ge.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: remove bouncing address for Nandor Han
-Message-ID: <se5ok3bzlej4gecaep3albatkigcczsj4ailmulqebd737qe7a@ly3vlkqhgm3q>
-References: <20250709071825.16212-1-brgl@bgdev.pl>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D231B18D;
+	Sat, 12 Jul 2025 20:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752353214; cv=none; b=ivUlQjptQ6CViXLJK+wuY8LBNvl99s9o343GOY4qT0RSw+ut7aFcE3mZw591VEU/6XpFaM4KGwxl0me4CtEroTjKOe9q4xBZWIfMVjEnPXxKJBeMBTCrHXJJKQjCeITAGMLzS0hdbIPm87lz9ij51ikVk9wExU1McXlq+VsWvls=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752353214; c=relaxed/simple;
+	bh=VCSP/Ec4VFDo5yvROyQ5BjizeW111cyGb6Bzolcm5cE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B3FFCFthGjy4SpWNcR/n9uhvRfIL2v6MkR8V8WjudT3wL59JGS+uait7ugSXWZkwsr7iLN8ypeDxHpe0+IupwroFC+9UVQIjOYWzGwzIdgUL2cLu6BKnB5cpkQs+voGByvknUsrVzWEcZFHi7mUbgOECtjE5w8goO/xNMlqDwXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lcEvXsaL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35298C4CEEF;
+	Sat, 12 Jul 2025 20:46:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752353214;
+	bh=VCSP/Ec4VFDo5yvROyQ5BjizeW111cyGb6Bzolcm5cE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lcEvXsaLHt3TmFr4J5lbIuCMYMZGL/LLChfMR1D3LZBmHo6+F0qwmQKuZHCaOxUIc
+	 tlO7+0ndA4S1CfzgOMgGwQEtAFY+Nn38fmaz+wB2r9X3aafMYSOzLaxm1kwYdGcg5c
+	 zYb3dRtsGCYuMHLvoO2LtsgRWtJgmVzap53/34FnNFFkMgVh/sVYEm1iQKNdCF1SXA
+	 0qOJS9yfRMqNurbPK+otCZb07tha0/PaDyEr6guDQWOqXrqGUrZi7qtM/ns6zZ9ZEh
+	 IB+lFH0Ma1OqQpY9dgcOhg+zyr942a5NLxwZohtGhW1Ss2yclfeznG1K5TO3wi1JAL
+	 2mNr134bL+YFA==
+From: SeongJae Park <sj@kernel.org>
+To: 
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [RFC PATCH 0/4] mm/damon/sysfs: support periodic and automated stats update
+Date: Sat, 12 Jul 2025 13:46:45 -0700
+Message-Id: <20250712204650.155988-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709071825.16212-1-brgl@bgdev.pl>
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-Hi,
+DAMON sysfs interface provides files for reading DAMON internal status
+including DAMOS stats.  The content of the files are not automatically
+updated, though.  Users should manually request updates of the contents
+by writing a special command to 'state' file of each kdamond directory.
+This interface is good for minimizing overhead, but causes the below
+problems.
 
-On Wed, Jul 09, 2025 at 09:18:24AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Nandor's address has been bouncing for some time now. Remove it from
-> MAINTAINERS.
+First, the usage is cumbersome.  This is arguably not a big problem,
+since the user-space tool (damo) can do this instead of the user.
 
-+Cc: Ian Ray, just in case somebody from GEHC wants to be notified
-for this.
+Second, it can be too slow.  The update request is not directly handled
+by the sysfs interface but kdamond thread.  And kdamond threads wake up
+only once per the sampling interval.  Hence if sampling interval is not
+short, each update request could take too long time.  The recommended
+sampling interval setup is asking DAMON to automatically tune it, within
+a range between 5 milliseconds and 10 seconds.  On production systems it
+is not very rare to have a few seconds sampling interval as a result of
+the auto-tuning, so this can disturb observing DAMON internal status.
 
-Greetings,
+Finally, parallel update requests can conflict with each other.  When
+parallel update requests are received, DAMON sysfs interface simply
+returns -EBUSY to one of the requests.  DAMON user-space tool is hence
+implementing its own backoff mechanism, but this can make the operation
+even slower.
 
--- Sebastian
+Introduce a new sysfs file, namely refresh_ms, for asking DAMON sysfs
+interface to repeat the essential contents update with a user-specified
+time delay.  If non-zero value is written to the file, DAMON sysfs
+interface does the updates for essential DAMON internal status including
+auto-tuned monitoring intervals, DAMOS stats, and auto-tuned DAMOS
+quotas using the user-written value as the time delay.  If zero is
+written to the file, the automatic refresh is disabled.
 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  MAINTAINERS | 7 -------
->  1 file changed, 7 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index efba8922744a3..c780cbd11ffb9 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -27466,13 +27466,6 @@ S:	Supported
->  W:	http://www.marvell.com
->  F:	drivers/i2c/busses/i2c-xlp9xx.c
->  
-> -XRA1403 GPIO EXPANDER
-> -M:	Nandor Han <nandor.han@ge.com>
-> -L:	linux-gpio@vger.kernel.org
-> -S:	Maintained
-> -F:	Documentation/devicetree/bindings/gpio/gpio-xra1403.txt
-> -F:	drivers/gpio/gpio-xra1403.c
-> -
->  XTENSA XTFPGA PLATFORM SUPPORT
->  M:	Max Filippov <jcmvbkbc@gmail.com>
->  S:	Maintained
-> -- 
-> 2.48.1
-> 
-> 
+SeongJae Park (4):
+  mm/damon/sysfs: implement refresh_ms file under kdamond directory
+  mm/damon/sysfs: implement refresh_ms file internal work
+  Docs/admin-guide/mm/damon/usage: document refresh_ms file
+  Docs/ABI/damon: update for refresh_ms
+
+ .../ABI/testing/sysfs-kernel-mm-damon         |  7 +++
+ Documentation/admin-guide/mm/damon/usage.rst  | 13 ++++-
+ mm/damon/sysfs.c                              | 58 +++++++++++++++++++
+ 3 files changed, 75 insertions(+), 3 deletions(-)
+
+
+base-commit: 982b86e9191292ffcd0f30018981cb16f9fac5c1
+-- 
+2.39.5
 
