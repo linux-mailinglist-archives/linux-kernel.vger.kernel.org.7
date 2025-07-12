@@ -1,141 +1,105 @@
-Return-Path: <linux-kernel+bounces-728749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B77D1B02C76
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:45:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB931B02C77
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 20:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C85DA480B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:45:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB9F24A4BC1
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC1F27604B;
-	Sat, 12 Jul 2025 18:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1F928A1F5;
+	Sat, 12 Jul 2025 18:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="R9idJTMX"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="X5XXcU2y"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7148415E5D4;
-	Sat, 12 Jul 2025 18:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4E41F3B85;
+	Sat, 12 Jul 2025 18:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752345924; cv=none; b=l4nYwBEboOIxezxAqF2Sxgow5MnKfyXDJLooLvNuFkbgrnTZAkPgLtpafI7pX9SdPjtqnNBOlQVqUdMwEk5ja3fX2pofTpDWcnZiEllxfNhQQ1FHJlxjaey7cC97U5LPP+WFSTjhr8s3UcP6DmA+IqiQ6/yIDBpwnEtozzYdiFY=
+	t=1752346035; cv=none; b=GydjaX5+OIS3+SNujm55N0ho+IzvJYUe9II6wmqmPwwiqGjNEZx51J3sEN2lKN+SIjCzc3sIZe1/DXPJvOB877hom6066VBc2/Qlz4YolUBM42c9UTb4bSpno6r/9t3buhfqFZ6rWz7vIGAZfZEuG1KOnyoT0DNOXZrkzmEglMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752345924; c=relaxed/simple;
-	bh=U3pm2J+mn/APVgKQP4vS0GxNg3pFfaVK3pN7cIUGWJQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=sXD2W821jXNe6AJ6uinK+cgCUfQ9830Ccogc4VDJUgnRfivQz4UBJ7f4TdV1JbLDNKP0B9d3H51VMiSpsO9PH7wqDACQxh6UQx1Ic6BC1pTlWFdm1HH/4s24LKn/OPsPhxr62ZQD+IxHbmgwX5EYEcjix5gkCOcajJwzDiAmAtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=R9idJTMX; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1752345910; x=1752950710; i=markus.elfring@web.de;
-	bh=U3pm2J+mn/APVgKQP4vS0GxNg3pFfaVK3pN7cIUGWJQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=R9idJTMXSl57WEa0WXjxzXzhRL2mWCKPQDAb1oIPzThuUKQUUTE79ldJjw1Q1l7z
-	 OWO9qh+b3EqAbsA7LiVYvF1GXKp2DfnBjJ/16MaboQlChBqrBI+HaquylmftjHVmL
-	 /Qs9Qvqk3K37d0qi06gVl5dETc1NwRoKf15hdDnZo9N1CVu7oJNHesWgbRS1hx7Oi
-	 Ad9tcbVhWn9k5p19S+kzHU/aswRKeiJIjegD4LBMS2NOtHEpbySF/Lnvuj7z8twKN
-	 HiBMctvzhWq89TMvWOiEGFtdzwXcSjCXv5+MCD5kejO8M7Zk9MSR45eke1Wmxgt9j
-	 mf20exQ4MzT/kq39Xg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.234]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N8Voj-1ufFh63DFp-00rONn; Sat, 12
- Jul 2025 20:45:09 +0200
-Message-ID: <33fe23d5-c76f-4f1c-bb84-c7071310ccc3@web.de>
-Date: Sat, 12 Jul 2025 20:45:08 +0200
+	s=arc-20240116; t=1752346035; c=relaxed/simple;
+	bh=vZHJd/EyhCeWVcS/kNi/tekdBeWGgTbd98m97HKj8rE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BLctZE2zRQZTbuFI4/JvxpboUdlitVhKtE7XOE6o6dFZ4LKXjxKBBsPnkHrHubS0KvqzijJBJTwTSue31AqYujjeeEFYz50IR3ySpmubvwufgR4Ey2RsYHVZH+It6mtBMw/BsHetsZJ+D78E7RvkIKPFYfKPvL114EijKJ4NfYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=X5XXcU2y; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7EB1840E0198;
+	Sat, 12 Jul 2025 18:47:10 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id IiMW9QXRFUAO; Sat, 12 Jul 2025 18:47:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1752346027; bh=rIKSthC2S+D7tehs9yM7s5VVdshVZuEZur+23cX4wP0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X5XXcU2yj2sMeQ/UM0OtP7Gt4pZ5Vo0FurvDPZURWSwI4N7z9+y3zzU4JhOwISFyX
+	 geBm4UHF0s+40pmmTLMl2RvEnL0vM9m6DN+N4DhQH8GDUKkhwr+u0UUV+vBH80MUpM
+	 At04+ntGM1eZVXTLdLUeNqYYe5RIcXvTBWo/rNPSXRY00dTSbMmmh7u0F/xOlNxcaI
+	 7ddZKPCREfoHNxqtSclCBnk4aglaHuznLIfNc0QC1HDVPMGi4fhQKSSQ6Ulk7Y+z2r
+	 y9TmfZ2K535yDIf1i305HUQWeTUxvZXVQ6zqmnnFRBjRpJQd4C7zhI8iYYZIykDewR
+	 SNXM7iHVvtMxmzlwsGV5td9pzrRxWa13IjUNsj6h5ACIAW1DWeiHD1uh4twt+epsNt
+	 NTYWONHpCqZ1bl54zcp1iIQxjtWphK3eTrERh2A3NSYZ63zx8Lua7R/0gITyrPTskf
+	 D8qgaWXCTdcUl7slDaz3j/5rxuCDYCWv7EXP2czFqTzWMA2gW1It13pNpaTVCu9h6x
+	 /L7o2cF1xmIcVmGzeZL27juS+OgJaYLubPXDjFa3wC2fsh9QEZfd44arQlIq9wXvOW
+	 yqZty8TTpDpCP9HJgZQMo2cVOMXLJWmtjOZ8NAvuA5EyP0U31StZQiSlkW7WOZnDNn
+	 YX40LaZXe1LaiMXyMLP9SacA=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EDAD740E00DC;
+	Sat, 12 Jul 2025 18:46:45 +0000 (UTC)
+Date: Sat, 12 Jul 2025 20:46:39 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Sean Christopherson <seanjc@google.com>, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
+	Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com,
+	David.Kaplan@amd.com, x86@kernel.org, hpa@zytor.com,
+	peterz@infradead.org, pbonzini@redhat.com, kvm@vger.kernel.org,
+	kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
+	naveen.rao@amd.com, kai.huang@intel.com
+Subject: Re: [RFC PATCH v8 15/35] x86/apic: Unionize apic regs for
+ 32bit/64bit access w/o type casting
+Message-ID: <20250712184639.GFaHKtj_Clr_Oa3SgP@fat_crate.local>
+References: <20250709033242.267892-1-Neeraj.Upadhyay@amd.com>
+ <20250709033242.267892-16-Neeraj.Upadhyay@amd.com>
+ <aG59lcEc3ZBq8aHZ@google.com>
+ <be596f16-3a03-4ad0-b3d0-c6737174534a@amd.com>
+ <20250712152123.GEaHJ9c16GcM5AGaNq@fat_crate.local>
+ <e8483f20-b8ee-4369-ad00-0154ff05d10c@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zhang Shurong <zhang_shurong@foxmail.com>, dmaengine@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Vinod Koul <vkoul@kernel.org>, Yan Zhen <yanzhen@vivo.com>
-References: <tencent_891450514525826E2E6AD3B6ECC0B83C7209@qq.com>
-Subject: Re: [PATCH] dmaengine: usb-dmac: Fix PM usage counter imbalance
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <tencent_891450514525826E2E6AD3B6ECC0B83C7209@qq.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:rf/FJ6YHvdfdlPTwHcGZasnhyCEtNGq+8mJ48qXsvEfJuQKrRT6
- BOqyFfOVoxEfdG5JPyrpem1BPzRSb+bj1tMKi6+uFCZhq/yMnCseeueKjwBInmGgv/vt3Rf
- QfWkPHngSwmHh9bD0zqSMQmPsGdngI8yj7owPGyuTek6Z9QuFELxIQFFE2/DS0um27wQ5rN
- ugdm4VLgXpQ3KX7Pi1GZw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ceg6tfI+eh8=;mPOvHYavKlQCmfPpjaOMY/iw65N
- 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
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <e8483f20-b8ee-4369-ad00-0154ff05d10c@amd.com>
 
-=E2=80=A6
-> result in reference leak here. We fix it by replacing
-> it with pm_runtime_resume_and_get to keep usage counter
-> balanced.
+On Sat, Jul 12, 2025 at 10:38:08PM +0530, Neeraj Upadhyay wrote:
+> It was more to imply like secure APIC-page rather than Secure-APIC page. I will change
+> it to secure_avic_page or savic_apic_page, if one of these looks cleaner. Please suggest.
 
-You may occasionally put more than 55 characters into text lines
-of such a change description.
+If the page belongs to the guest's secure AVIC machinery then it should be
+called secure_avic_page to avoid confusion. Or at least have a comment above
+it explaining what it is.
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.16-rc5#n94
+-- 
+Regards/Gruss,
+    Boris.
 
-Regards,
-Markus
+https://people.kernel.org/tglx/notes-about-netiquette
 
