@@ -1,137 +1,159 @@
-Return-Path: <linux-kernel+bounces-728690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7109B02BE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:27:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC632B02BF2
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 18:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5BE07B6524
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:26:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C31BC7AE551
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 16:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46789289806;
-	Sat, 12 Jul 2025 16:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841A928935A;
+	Sat, 12 Jul 2025 16:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="XZM72l+n"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="VbuuhThp"
+Received: from out203-205-221-191.mail.qq.com (out203-205-221-191.mail.qq.com [203.205.221.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C746277C8D;
-	Sat, 12 Jul 2025 16:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752337659; cv=pass; b=qWsZ2gOcHjYfdtXONLB+yqEPnmeQ5maRj/xwFshe0+qhORIo19Ny3SkCHIrMl5xRxlMw7/b/EeyzKsYCE/OgU0pGaSPPFRcWw+2ad5wHvhbqg1OXmJ+Qow/OkthIG0WePiJG22DAc0+M00HBtFNRNtFX+8ZABpiJFCGbvPKQpko=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752337659; c=relaxed/simple;
-	bh=cmm53DOTdwyscPEqSRjwmv4mZIvw1nYR7Ua4IWjUbX0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=QlUPdmuI8webw8xtAP0YagwqDDC+sB1sfNCtMtsXjqdYXgQ/aakAmTPgTTW6Mig8QmLFNrn3NoGuCjXq0ak6FzGbIMCc+gLEWKOufPKwD1dz4WTgx14fdAQamHAZIEcOwsbm2/BT5XxFf3Fo9Hn5B3gTzmAGWW4FqbCV7wWpES0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=XZM72l+n; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752337631; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=G0O3epiDjil38rQ87refqbx3KSoHb3qzU7/D0YexeNi+D7UzSRtHwGOlYpBI54RVOVuKvInssd+9aq0R2mORBHTgA1IsiMhSqS1dHZ/V+C8+RVtx7mNRCc8c6ao0+3SvrMubnhgB2FjaLfNoHV63Tkxx7mylq024caya+/241VY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752337631; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ahPGOugGxG/E5vYH46Dw+PAn5bPxIFk9wceQiVsZgc4=; 
-	b=kkqMLDNmGZUv4ox2qs74gJpyuSyDCSlGCWpuiNoA7WjrIJj8LmwclPzYg+BpjCYoGIh5rXbZ9rpN/tO83BllSV/bDW6+rdkcdC5lOmEJ/3/WQp/72FZApFSOQeLvTZLtFwJiZdTfT06DqaXNiqH9bw9e5hdCAn5PZjBTFDoVZiE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752337631;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=ahPGOugGxG/E5vYH46Dw+PAn5bPxIFk9wceQiVsZgc4=;
-	b=XZM72l+nNx5bBBbL+sXSR4bgxUrW94995cQTUfht63oAcIBoNPuO/l2RdbZ8f+mo
-	kkj5ipG69OOVKLZhXmGy/pT3349PoTuh4xsNjJ0mVzKr3hnSqg6Kee1K77yzg543Emb
-	MmNRl15nw5QsY8GAfECra+xi0aXVkW/4WIssrwUo=
-Received: by mx.zohomail.com with SMTPS id 1752337628723425.6395233683338;
-	Sat, 12 Jul 2025 09:27:08 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564AA1990D8;
+	Sat, 12 Jul 2025 16:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.191
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752338145; cv=none; b=A0Zmen1wrUQvn9zazKWlZiLwGDIRMrQFQGzXawXIikx14VjRcUfjbBVrUV7TyG5SHQR6lBzOSRlRBYnE0stI95+bUNgLoXkzAXsf9Wi9t5SvDjv7azunEp+jOZKRVsWJcPVC1uOXCPbGPm64QCW22P4eAjRyAQFWLnWS+rGm+uc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752338145; c=relaxed/simple;
+	bh=zShYQvLlzDshUKKlZg1x1TOtfC/ez1gpBFtv+Tsd8e8=;
+	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
+	 Date:Cc:References:To; b=t7zQu+6X4f5ByAPO0aWFD8SLFA6XsJDQobwHNUKzHeg6CnJP6S9UygL2HUSKIdm2IkH9aHzau9gnd4Zuf4ONVqOAl4i+QMVjj3vrZ3luImKsGNtOadjJnmcr9GzbwT+RWzUIlCFrICvU+J0nXMWiZc/8Od+eH7ayPjNtyX6b1pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=VbuuhThp; arc=none smtp.client-ip=203.205.221.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1752338134;
+	bh=nr1V0epckhRFNIAskc+SB3bvY8ZpoSKvj9saTw6BZ8g=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=VbuuhThpEqaKfaB/Y0rgHlNn+7Q8uuuSMj0YFYV6DFmARpZPoWHqKH5jSJxFiqMcX
+	 Ko1rjkmgJayCB4ps/yuJ+/Ta/BULd3hVJeDMwpK3c/MTS5R+qLvHAUkxRX9/JfiKAZ
+	 QTAqCMuYXu+HcQ/jEhiVbfrJNYgfDgqYc+RiVlFs=
+Received: from smtpclient.apple ([36.110.163.70])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 6CBA1414; Sun, 13 Jul 2025 00:27:11 +0800
+X-QQ-mid: xmsmtpt1752337631t25gi2nz6
+Message-ID: <tencent_46CEE34541085543C2F266B716704B068C05@qq.com>
+X-QQ-XMAILINFO: N7yy7KMU5LaP6OLJ+d0WF7yjZUW9OFJDM5HxSH22N8d4ODGPatjOe+l6morWxM
+	 A8K1fNpnsa1iOQRaNkdXi2l53UjHyS+3CRzptN9i80fuU640stP/k/Qcb2rgqKBDQC2A8dxWLEaZ
+	 1P06O0lGvui51fEppNKcyIFKm6xlTXl+14W2vnbca25dVjkQPqXqHdd96UVoAtNFB/lr0YbueiCq
+	 VqP0PiiSq0hTaSMaMlVN03vy4yfhGMr1OGmqp3QN7i0TROs7fy6sRQUq0+y3pJLZ+Uphq7BxMtjf
+	 J3PdpTF2WPlKeAQUXoN3ressS4NJmBG7RCt9dMuqUoy7eT1TdvMio6zL0qKcGQy8zhRw9lfk5wL3
+	 EYfyuF77B94LTTNSIR7WqtynbaEmFXF/VQVf8wKPFRPdtGsy7Irgw0EiuoLBhxL2jQQH2r5LzWOj
+	 6yeKffvPUdrRIChB1RzyraESV+Ae4UDxcLOw2+ublKkkKMvAPRFXB1F/Bj/ezsf50xib9J9T75tL
+	 fiFOQBFss+P2hNtqE22SPuPgEgqR05k+VCQ5Fba6b6m3liwT5wGdn3vGFX2FMItlXrnnru/WifaL
+	 egZTQWYTZwoZnkTKCuUzCru6DOLrZgjaT/7TlL82jRIgKPGpRUkzUE2S9uWAuSxg40sS4crBhs93
+	 lsh53Au96M+oeWxrqKxANbQxhZM4PJecQQh2VhnYsQsSMwGdR7xqP7+dT97KzsNqCZbnh/eTdCC9
+	 x7OtamkPz2rj8RaCRgamzU6rUToOLUqm6gz92d5PkGZXuDixmFSyEj1iOYMmN4ZRnX6jncMIRAy7
+	 R3uUvniuQPWOLJg/jFE9+Xd43ZlR0f31chtDOct6mOPZ6XYBdLUxmWSyQ+1L/sVZjFK++3XYaO+S
+	 KDE9QxE51paCys/b5/v4K+rrKcA13nGmKJ6T7FJnQfyKVTHy7ugxTObjxbl6UJ3wuRiAMKYvFUnf
+	 WX1frKYUIu9F9MRDAOPxmxzaNibVXOfyTyAwKaG+hDlUqLuaeCuFspMsbtYYmVfkQxHFHMxZMgIQ
+	 IIQkYmew==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
 Content-Type: text/plain;
-	charset=utf-8
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v6 2/6] rust: irq: add flags module
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <aGeF_W74OfhRbkoR@google.com>
-Date: Sat, 12 Jul 2025 13:26:52 -0300
-Cc: Daniel Sedlak <daniel@sedlak.dev>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Benno Lossin <lossin@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+Subject: Re: [PATCH] dmaengine: rcar-dmac: Fix PM usage counter imbalance
+From: Zhang Shurong <zhang_shurong@foxmail.com>
+In-Reply-To: <CAMuHMdUhZqLCkLWtFTaCq67=Nb0O0_XLSWeyweMiNp25XArfKA@mail.gmail.com>
+Date: Sun, 13 Jul 2025 00:27:01 +0800
+Cc: vkoul@kernel.org,
+ magnus.damm@gmail.com,
+ robin.murphy@arm.com,
+ ulf.hansson@linaro.org,
+ kuninori.morimoto.gx@renesas.com,
+ u.kleine-koenig@baylibre.com,
+ dmaengine@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org,
  linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <49ABD63B-05C6-4FDC-B825-5AA2ED323F1C@collabora.com>
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com>
- <20250703-topics-tyr-request_irq-v6-2-74103bdc7c52@collabora.com>
- <fcdae3ca-104d-4e8b-8588-2452783ed09a@sedlak.dev>
- <aGeF_W74OfhRbkoR@google.com>
-To: Alice Ryhl <aliceryhl@google.com>
+X-OQ-MSGID: <8D37010A-D3D2-42C6-868B-35AAAB5885F6@foxmail.com>
+References: <tencent_71CC9630D88A8792C2396A8844DCCD5C6D06@qq.com>
+ <CAMuHMdUhZqLCkLWtFTaCq67=Nb0O0_XLSWeyweMiNp25XArfKA@mail.gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
 
-Hi Alice,
+Hi Geert,
+Thank you for reviewing my patch and providing the Reviewed-by tag.=20
+I appreciate you pointing this out. Testing these fixes comprehensively =
+has been challenging=20
+as QEMU doesn't support the Renesas R-Car SoC, which makes it difficult =
+to verify the complete
+behavior of the driver.
+I'll continue working on addressing the memory leak issue where the =
+function doesn't free previously
+allocated memory on failure.
+Thanks again for your thorough review.
+Best regards,
+Zhang Shurong
 
-> On 4 Jul 2025, at 04:42, Alice Ryhl <aliceryhl@google.com> wrote:
+> On Jul 2, 2025, at 18:18, Geert Uytterhoeven <geert@linux-m68k.org> =
+wrote:
 >=20
-> On Fri, Jul 04, 2025 at 08:14:11AM +0200, Daniel Sedlak wrote:
->> Hi Daniel,
+> Hi Zhang,
+>=20
+> On Sun, 29 Jun 2025 at 17:57, Zhang Shurong =
+<zhang_shurong@foxmail.com> wrote:
+>> pm_runtime_get_sync will increment pm usage counter
+>> even it failed. Forgetting to putting operation will
+>> result in reference leak here. We fix it by replacing
+>> it with pm_runtime_resume_and_get to keep usage counter
+>> balanced.
 >>=20
->> On 7/3/25 9:30 PM, Daniel Almeida wrote:
->>> +/// Flags to be used when registering IRQ handlers.
->>> +///
->>> +/// They can be combined with the operators `|`, `&`, and `!`.
->>> +#[derive(Clone, Copy, PartialEq, Eq)]
->>> +pub struct Flags(u64);
+>> Fixes: 87244fe5abdf ("dmaengine: rcar-dmac: Add Renesas R-Car Gen2 =
+DMA Controller (DMAC) driver")
+>> Signed-off-by: Zhang Shurong <zhang_shurong@foxmail.com>
+>=20
+> Thanks for your patch!
+>=20
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>=20
+>> --- a/drivers/dma/sh/rcar-dmac.c
+>> +++ b/drivers/dma/sh/rcar-dmac.c
+>> @@ -1068,7 +1068,7 @@ static int =
+rcar_dmac_alloc_chan_resources(struct dma_chan *chan)
+>>        if (ret < 0)
+>>                return -ENOMEM;
 >>=20
->> Why not Flags(u32)? You may get rid of all unnecessary casts later, =
-plus
->> save some extra bytes.
+>> -       return pm_runtime_get_sync(chan->device->dev);
+>> +       return pm_runtime_resume_and_get(chan->device->dev);
 >=20
-> It looks like the C methods take an `unsigned long`. In that case, I'd
-> probably write the code to match that.
+> Note that there are other issues with this function: in case of =
+failure,
+> none of the memory allocated before is freed.  Probably the original
+> author assumed none of this can really fail.
 >=20
-> pub struct Flags(c_ulong);
+>> }
+>>=20
+>> static void rcar_dmac_free_chan_resources(struct dma_chan *chan)
 >=20
-> and git rid of the cast when calling bindings::request_irq.
+> Gr{oetje,eeting}s,
 >=20
-> As for all the constants in this file, maybe it would be nice with a
-> private constructor that uses the same type as bindings to avoid the
-> casts?
+>                        Geert
 >=20
-> impl Flags {
->    const fn new(value: u32) -> Flags {
->     ...
->    }
-> }
+> --=20
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- =
+geert@linux-m68k.org
+>=20
+> In personal conversations with technical people, I call myself a =
+hacker. But
+> when I'm talking to journalists I just say "programmer" or something =
+like that.
+>                                -- Linus Torvalds
 
 
-Sure, but what goes here? This has to be "value as c_ulong=E2=80=9D =
-anyways so it
-doesn=E2=80=99t really reduce the number of casts.
-
-We should probably switch to Flags(u32) as Daniel Sedlak suggested. Then
-it=E2=80=99s a matter of casting once for bindings::request_irq().
-
-=E2=80=94 Daniel=
 
