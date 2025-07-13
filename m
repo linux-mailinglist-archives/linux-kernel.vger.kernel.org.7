@@ -1,128 +1,143 @@
-Return-Path: <linux-kernel+bounces-729091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1CFBB0319E
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:42:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75EE3B031A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB133B6AC9
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:41:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BAAB189BB11
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77358279DA1;
-	Sun, 13 Jul 2025 14:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B9B279DD7;
+	Sun, 13 Jul 2025 14:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOc4OKOR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="JQNNuHFh"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0848836;
-	Sun, 13 Jul 2025 14:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752417731; cv=none; b=hUF07XK57uicbWE5RYkNpe3EUUA45T2k4SNbkDGeMr5awiGaHtYoWsh3y6xMWutmflBCQ7iwF6cBdTv5C/8yNCs7eUg2hGI6pZrhc85yViuhNPN++2wUumuVXhLrO4HD/fduecJ5ktBz3rjKhMTPm1ZyM2bTuK0OFUqIg5fJkiE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752417731; c=relaxed/simple;
-	bh=LDMQLC4jsaFTpUK1BZdmSDSto2ZfOdVLJVSKsQpk7uI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BxhaT1t7J7pktUiojMtsVM/qWeE8knREWcYxP92aDi0RdrW0UJiCON5Bqu2IKnNIyIIuXfAqCYp/1kC8ghiMWyfkx78Lvck8CAcIoJr9v3//K/zYizlUIo1Z+kTbR7SAK0xzW27elYo2qiu2ifpIdPzIuOTKBEvHYw0OsyDyT40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOc4OKOR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C67FC4CEE3;
-	Sun, 13 Jul 2025 14:42:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752417731;
-	bh=LDMQLC4jsaFTpUK1BZdmSDSto2ZfOdVLJVSKsQpk7uI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TOc4OKOR0ZvClWt5tQdvhvUZmviDkvelBhuFtBT8tSB/wE/tz2dw4uZe6dGq6NQoX
-	 D+Ph7kZmYxkA4/6Ng7aRUEBVDaEYghHtJ/e34GpLfuc47LerzvnI/0JpCmSJbXiNwD
-	 GanstEHyY72bUBGMFcGDGEpXJNDbqMyPbX4DgHd0XtDBJ8EamVhD6b9hdvF/EzVtGH
-	 FU4VMoCMGCnYIv7g/vpyuTygLGAw+uc0Duja2H+zwSJGcVCeiPsrh/HcSbfz6V/3sG
-	 AEUduAamcsYZ8EN0nN1H9g/J4oIdtEGCtCDz5kNf/Kewn72G5A6AT2hCb8ptA0kFk5
-	 azhr3krhm6UVA==
-Message-ID: <1517bd84-40bb-46a6-bfc6-5afa51bbcdbd@kernel.org>
-Date: Sun, 13 Jul 2025 16:42:06 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0592797B5;
+	Sun, 13 Jul 2025 14:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752418176; cv=pass; b=qO2WGJePiE1jo1W40rar6E4VXi4b5raaJg3zZeUjAjp9vZZNeOthGqEppCzxslYVfapMyqJAnLk2NulA5YJSfIRkfZv9Yt5VTM/mfFH5nK18YrafzGStYy3r5kMgyT7VXxxF6v7YUHT7UU0t78W0m5tXiNUkSyuStm5KPR2crvU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752418176; c=relaxed/simple;
+	bh=Cs1jkwPsognhRmvjOTkU3B9F1YgxJGlhwxGU4P6f/hg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=W2L/2tMREkMfJHIBWNprQ7PgMGRxjknmszdpelHc1vfBgbw3IsWtVvtSisqFy9eBlqWlYrogy4NEm1wC5Vr2L7KX9jzM+pyHI+q6EcZpD3AYHU5Mg5MtEPZr43sQde82cZmnwgrx3bG3hpD400L5bx2fDUgg/986H9DXCbwp/L8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=JQNNuHFh; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752418156; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=KRRM8YeE1/PTvQGnts8Bi+1Q13m5Vb98Zo+44iAvKo7nA5Z0HkoHoJln8smtmmuqN8DnlXuj6I8nCMhVdUDERy08ojf/gfuI0nQBFTFtABynkzBLgDD9ZfEHlmxxlago2Svy7RhIKCqZUcVJRjmzOQ0DYKTNE1hyZGRhTnHrJYw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752418156; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=8HuFwyIJWhmeawFZKh8tqUr8d7V3s0YizoLn1Uir9cQ=; 
+	b=cD3rtKzC0jPdbHo2Z9ei0KauzNKzSI1abkVq/UPXLPV1USmEXKz1FxBwzz0qJgYLXLJnS2orpdHCwjXx0W85KcaeCUxsgyEU/xPhzgjIsl4ERvD1kGpBSYHY8mUEpRt9SE7vZZCH9WaWE5f3fvdD9n0lmovy3u/TdlaXOsfrBLc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752418156;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=8HuFwyIJWhmeawFZKh8tqUr8d7V3s0YizoLn1Uir9cQ=;
+	b=JQNNuHFhKFaHN6u1zs9Y09DRmQ3x1h1nrhN7webTDJqROoBUiD9i89LTE1fGUuD/
+	kQvhsFPxJbmCJVPBe3i3jMA7sWATkedU2EsDWKk90u2ZaiL1he25N1l+A5BSws7bOfH
+	W6ONlp7Ou+U9p9HXE9IrH0k+lWlfDjmEngg+3sUk=
+Received: by mx.zohomail.com with SMTPS id 1752418152811147.7251410187963;
+	Sun, 13 Jul 2025 07:49:12 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: arm: sti: drop B2120 board support
-To: Raphael Gallais-Pou <rgallaispou@gmail.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Patrice Chotard <patrice.chotard@foss.st.com>,
- Russell King <linux@armlinux.org.uk>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250713-sti-rework-v1-0-6716a09e538d@gmail.com>
- <20250713-sti-rework-v1-1-6716a09e538d@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250713-sti-rework-v1-1-6716a09e538d@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 13/07/2025 15:27, Raphael Gallais-Pou wrote:
-> B2120 boards are internal boards which never were commercialised.
-> 
-> Remove them from bindings.
-> 
-> Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
-
-Just like remove() and probe() driver callbacks, cleanup should be
-reversed from adding, so you drop the docs in the last patch, otherwise
-your patchset is not really bisectable and at this point it reports
-warnings.
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
+ handlers
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <DBAZXDRPYWPC.14RI91KYE16RM@kernel.org>
+Date: Sun, 13 Jul 2025 11:48:53 -0300
+Cc: Benno Lossin <lossin@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-pci@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <18B23FD3-56E9-4531-A50C-F204616E7D17@collabora.com>
+References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com>
+ <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com>
+ <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org>
+ <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com>
+ <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org>
+ <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org>
+ <DBAWQG1PX5TO.6I2ARFGLX88N@kernel.org> <DBAX59YKO0FV.ANLOWRHDDS92@kernel.org>
+ <DBAXP68U809C.2G8DMB52M3UZ7@kernel.org>
+ <C4A101A7-282D-4A67-A966-CF39850952EA@collabora.com>
+ <DBAZRNHGIGL8.3L2NGPCVXLI25@kernel.org>
+ <DBAZXDRPYWPC.14RI91KYE16RM@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards,
-Krzysztof
+> On 13 Jul 2025, at 11:27, Danilo Krummrich <dakr@kernel.org> wrote:
+>=20
+> On Sun Jul 13, 2025 at 4:19 PM CEST, Danilo Krummrich wrote:
+>> On Sun Jul 13, 2025 at 4:09 PM CEST, Daniel Almeida wrote:
+>>> On a second look, I wonder how useful this will be.
+>>>=20
+>>> fn handle(&self, dev: &Device<Bound>) -> IrqReturn
+>>>=20
+>>> Sorry for borrowing this terminology, but here we offer =
+Device<Bound>, while I
+>>> suspect that most drivers will be looking for the most derived =
+Device type
+>>> instead. So for drm drivers this will be drm::Device, for example, =
+not the base
+>>> dev::Device type. I assume that this pattern will hold for other =
+subsystems as
+>>> well.
+>>>=20
+>>> Which brings me to my second point: drivers can store an =
+ARef<drm::Device> on
+>>> the handler itself, and I assume that the same will be possible in =
+other
+>>> subsystems.
+>>=20
+>> Well, the whole point is that you can use a &Device<Bound> to =
+directly access
+>> device resources without any overhead, i.e.
+>>=20
+>> fn handle(&self, dev: &Device<Bound>) -> IrqReturn {
+>>   let io =3D self.iomem.access(dev);
+>>=20
+>>   io.write32(...);
+>> }
+>=20
+> So, yes, you can store anything in your handler, but the =
+&Device<Bound> is a
+> cookie for the scope.
+
+Fine, but can=E2=80=99t you get a &Device<Bound> from a =
+ARef<drm::Device>, for example?
+Perhaps a nicer solution would be to offer this capability instead?=
 
