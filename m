@@ -1,87 +1,94 @@
-Return-Path: <linux-kernel+bounces-729083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6957FB03173
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:25:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6938BB03175
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B996A17C6C5
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:25:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D5C01896AED
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48AD279335;
-	Sun, 13 Jul 2025 14:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE86279359;
+	Sun, 13 Jul 2025 14:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TILh+Iw9"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MA3Pes4F"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806DA22F76E;
-	Sun, 13 Jul 2025 14:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955A1277C80;
+	Sun, 13 Jul 2025 14:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752416706; cv=none; b=lVjbKThKUJ9VUU3WLqSyek0huheSF2Ldl+WoXX/8E/iuD+WikOyt+ZhN3h6w+WNGcDfk/fae34g28JiNkRCIbG4YdulsKkq3FqZSL+KnWi1WBwdGJcF0xJiFjydi4Wd4ZZfF/YLVnjTVuvdz1pmAn2BelR6Wp7pUs2bDxZ98Zu4=
+	t=1752416726; cv=none; b=C3VUlrSDN3XjBJtMBA60pI0Uteofu6ChYlRYSX4JbntApMAKk8si7kDXJYBrQ1sebgtA6q+ni/LaH7I2HL2eUFdKCBeEwDABYXWLLse1d3F/A+E/BeZXHek0Bpu040Pf/USqJ4RIRsPPklDuKx906Kxdd3ro1B6AZbjRCCAnzkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752416706; c=relaxed/simple;
-	bh=ctVrSe8+tqBPZfPNjWKQjuJ1XNUtgiycE7rUXQUI7/A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uFNlQH+I0u5iuuXXshlTWzbUD2V6e3R5fgUFdhwkLThlCDvaYZkvhGWFm2dMzXM7Nl7JE/aPaKU8nfEr0unHlU8UYuu27tYev9bg6wnBjTW3smgBcu943y1MJM1tzLsty8n+sUO/9uULLaG4/QIo2X7lIryaMvokIy0T+VuPkJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TILh+Iw9; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1752416726; c=relaxed/simple;
+	bh=SA1j2q3ieIAOY0/2qbx5lSEkJGcJ4pIWW2kFypV6oHE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RjvlO/n6LoMQuOG4DRCw4UmbL7cZdSF9jp0p0EyY6suJIQymHuvbQ+PiISYfG/3y5dJBiXxizu0HdZvzkXI7aPpReTK6X1UVc5dXNaSkJG6OpBXWDMTj7CsBwrjPSQbo6BTVd8eNZfSjj5zEm2Jc/+64zXhgLgkQy0k4okjhrbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MA3Pes4F; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4530921461aso22390335e9.0;
-        Sun, 13 Jul 2025 07:25:04 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-748e60725fcso432970b3a.3;
+        Sun, 13 Jul 2025 07:25:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752416703; x=1753021503; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kEQpD8b+HNVuLM3WhWFj3Mc99doFv2oNkxwhtYpkyNA=;
-        b=TILh+Iw9nLWsS+o6P1wyxlKTRrdeRCA0OZH8WA5nXw8mrJaMGWpiTWZYczOd4VNutu
-         qQZCUMLVeElPfUSPNXU6aBvN5zLP7cjWr+bYCLZox7z/3cOkP54r47uLqN4nCv93oiHN
-         G1fI1H4PQup0qGWchF+Meqj1p86tvwGASG150g35Fozj75aSiJmQYluOqLLscIQVF55P
-         4R78l4IoMXNH1yXY5JMNbRUOG2J9USLrd69NW4j0FvplP4BXEwYMjXLg0v+HDC+l6eor
-         rsCd1kLcZs2Fr34s6FdPc76SfgU2EyXvi7Qy+uRO5B8EeP45Rx4tllXgFkwCSAvzux60
-         cNxw==
+        d=gmail.com; s=20230601; t=1752416724; x=1753021524; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mkyQWYlswEIA/awfOx7Ojl2ZOMViZ7vIFKeJUQPM2ig=;
+        b=MA3Pes4F0QRtGPgPsDNHw5NV1mDDkE+reOiudPKl6kW3I+Nm452BCn9RXUDe28sH0s
+         BETqJkQgZOCzRpkhZKWs4K2R4Yc3XaKzS3f3B7G/b/l/Yy104+KYxo0+UhQ1Bu/G2PFt
+         dlIHlsFG5BXDC6c2jsD97bspVaUZX10A0TZCqPpuO1rXGioUf2AvVY+dBJ6URPk7944U
+         LqBqg/T+qgjwOln0Pp+U0to7n2pSXMZ5VMtQLMoSJHXXXWElfJx2LAWPE2QPmdoJU7ZD
+         DCLub7ZZrTeOFcJOMgeKHEyqkOBjkRsfxXwywDlVQ00vwavChI9emKJYaHNRVDrTFuLJ
+         x4lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752416703; x=1753021503;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kEQpD8b+HNVuLM3WhWFj3Mc99doFv2oNkxwhtYpkyNA=;
-        b=tO+mzGxEVtjtVvTjLuzRWIQf3l/HB7gJzFCT8r3PwBMT9xSuWOd1mKK5YHcu472vMb
-         T334VcQynlwFazQBiroVgQXhKYIhtzzrEyw0dqgGfq2mKVK91CbuSCzwI89OikruQzsL
-         6xrjzjo6U6w3zuZlCgyMVXbQtp3s9ssNZEUttEq4bPSMyFDM/XtQVKa6rICRICvsO5S8
-         vDxdjeSIUnFlAGnOZEuLGGqcupLpi93jV5PGSTecolZKsgceIScIglutiDAXE/KezeZy
-         +l7dFGsDVJ3JU5JtpWYAAe/xW1iCJPksz/VsJ1VkvKjk+Ob7+n5++h3pGYdz2AYIdwbE
-         1qlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAGWzxIn2ectKxhDRBLcuL3FxzTWCpK1UtpzV8YjejGDOZel4D5Mn+yoULIM+7mbj/9PI3bOQ0RSSJF8TA@vger.kernel.org, AJvYcCVJnhYABab89WSLk0MiTKQ7jSrPTDUxVq8n2vWliJrqXcx4UEMjxtFMqTTo/XYLbyLAlPYwHrnIfvBv@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEmcE8anKlZ6k3qqLQM+dazw8OEBEFkYJG/mgJiwzzBasK1Xcv
-	ylAYVSdEmBjEBXmRLg83HBGj+HC9lV8cw6acRCHEBhqI0IUKGDbRMDLJ
-X-Gm-Gg: ASbGncs2nkZZtahF70iIDnguI2dt5i7xOeUbI7sTzivgCex4RurjvEj1mo/WNBW3X5U
-	TkPm/ejCxcUjSnF1xi701mzMMpvDxTs+aKP2KTzyce5+oEl1oC3J0Nwyv+brJSucR6+X37J7D44
-	+q5r/WeqHizxZlf1thfGPCGfWoQk/ODPtMgi+jLSCZTxUjF7LoYotBo3zkytUg2t6fxzSL6wVGo
-	gaVjnxxPnW2Kv10us1KLGEwvC+ZMFGFnbtYjgfGEczTawqN/CW6vgrbJD8L25eCv42VKa9501N2
-	W9aXecpeHwA9qb0gMAVfK3+WZZ514MTEloKkCbODfDGolGHRjO12+TAFZwnauOFFLyBwhHbyUEh
-	wDiekva1rM04d1d3qVxJKNw==
-X-Google-Smtp-Source: AGHT+IFrp/gF77QA5ekrhLRIDgGIcIeqfrGrvFNzk/J2w71kdPsQ+3QAHabP11bj4+Q72q5OjRK7lQ==
-X-Received: by 2002:a05:6000:144b:b0:3b2:ef53:5818 with SMTP id ffacd0b85a97d-3b5f351e561mr7575693f8f.5.1752416702720;
-        Sun, 13 Jul 2025 07:25:02 -0700 (PDT)
-Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b5e8e1e1a5sm9714490f8f.74.2025.07.13.07.25.02
+        d=1e100.net; s=20230601; t=1752416724; x=1753021524;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mkyQWYlswEIA/awfOx7Ojl2ZOMViZ7vIFKeJUQPM2ig=;
+        b=KsTxEvvazVcKWkjKOhzgGg+iiR7te7d0sEG+naztpP4Kiab9nhuN7wSe6pbesHU3uq
+         fXN3Cutn7UrVwx/bZYvzRCcQTdE4lmu0g6Ik+jjeDx2EDUrV9LJ/tzKwpKqIPnYAutT4
+         WIegSLujzNLk1SmO4vfVYfTPDLBDgrZvk2RxzCEOUx/G8GAG5KduKEweHf0s2aIdKX13
+         8gKpFuoSH06cTtCmDgpeSe8NeuE+NtwcMtWKEzHt9icT3Ez3abfKbNRe735jcRoKbtJh
+         AlvZ1FzskeXzY4D4MdSbHgFDrHJxFTIDYv2YOXdXKuhRlZspkgVqb9uxR/pG0uhuOIRG
+         xNDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBGPIXE629onQkcs7HU/7D7BMtt2BSproLyOi13WAHX0rU46Xqp8Sa1WxRQmHM4gnOXi6IDcHOrsU4hPc=@vger.kernel.org, AJvYcCVI94wQhZOzXjhMEP6Ye9sjdi5RqnEkOLqKx4/BGjqfLN+TpfrIxjulNwr72Hic+wGvFwofkckryFK1Unw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxL0XIJeZkmMLsDmHRwZNueKb2Yjb2e6cMnkjWZLwc3bai3C9vx
+	X2hkkslMqfrSAoCp7mWQBqxn9iDdfVGc8QMa2BbH2Hm1t2wHFL0qIxVE
+X-Gm-Gg: ASbGnctMmyc19iwe0CCz432VQvSh65EFK2PQu7fmpNLLpreEUkQsXfzGexA5e9waXXd
+	GKBOY3+bs346RrDy4PY0cb2yGyyqJSPWzDl2NQgxb6sZymmtvt/DzJ4gWqN8mb8GFz3YjCfM9eI
+	e732j4uqUYY8KTTyeKizR8TRJFRWvwNZj5hJ6iriVk0xYVJaPxl52ZFK+Bzuz8eDBdCIVJNIzJV
+	6rWXUX3lFuvr/PbXTEyY+EgmgrvUt4dwPqK3i4jcT5tc0pl1Q2mSMIr8jEMbnCr7zv5S1aHphKW
+	xdBGIZvhy3BNunr22UKnuG/HpQS7ItFcVColLNhxGxbDSOgKbRJoDb1RNnSDFol4j7nGQhqsvdB
+	LGYfPgO97PoHXEkPyP9yDeW/zjQLN
+X-Google-Smtp-Source: AGHT+IFe8Nke6gA7rUZjK0GXgdQSkFeo3RLnI6nP7zfSRLpGatQXNVoWZbEIqke10QCKsGdaZplJwQ==
+X-Received: by 2002:a05:6a00:b1d:b0:747:b043:41d4 with SMTP id d2e1a72fcca58-74ee3b110b4mr3471889b3a.4.1752416723683;
+        Sun, 13 Jul 2025 07:25:23 -0700 (PDT)
+Received: from rock-5b.. ([111.172.109.98])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd7140sm8810149b3a.24.2025.07.13.07.25.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jul 2025 07:25:02 -0700 (PDT)
-From: Raphael Gallais-Pou <rgallaispou@gmail.com>
-To: Patrice Chotard <patrice.chotard@foss.st.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: sti: rename SATA phy-names
-Date: Sun, 13 Jul 2025 16:24:24 +0200
-Message-ID: <20250713142424.41236-1-rgallaispou@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        Sun, 13 Jul 2025 07:25:23 -0700 (PDT)
+From: Jianfeng Liu <liujianfeng1994@gmail.com>
+To: detlev.casanova@collabora.com
+Cc: heiko@sntech.de,
+	kernel@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	mchehab@kernel.org,
+	nicolas.dufresne@collabora.com,
+	nicolas.frattaroli@collabora.com
+Subject: Re:[PATCH 00/12] media: rkvdec: Add support for VDPU381 and VDPU383
+Date: Sun, 13 Jul 2025 22:25:14 +0800
+Message-ID: <20250713142514.56742-1-liujianfeng1994@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250708151946.374349-1-detlev.casanova@collabora.com>
+References: <20250708151946.374349-1-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,37 +97,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Stick to the documentation and rename both SATA phy-names properties to
-what is expected.
+Hi,
 
-Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
----
- arch/arm/boot/dts/st/stih407-family.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Tue,  8 Jul 2025 11:19:33 -0400, Detlev Casanova wrote:
+>As there is a considerable part of the code that can be shared with the
+>already supported rkvdec decoder driver, the support for these variants
+>is added here rather than writing a new driver.
 
-diff --git a/arch/arm/boot/dts/st/stih407-family.dtsi b/arch/arm/boot/dts/st/stih407-family.dtsi
-index 35a55aef7f4b..3e6a0542e3ae 100644
---- a/arch/arm/boot/dts/st/stih407-family.dtsi
-+++ b/arch/arm/boot/dts/st/stih407-family.dtsi
-@@ -669,7 +669,7 @@ sata0: sata@9b20000 {
- 			interrupt-names = "hostc";
- 
- 			phys = <&phy_port0 PHY_TYPE_SATA>;
--			phy-names = "ahci_phy";
-+			phy-names = "sata-phy";
- 
- 			resets = <&powerdown STIH407_SATA0_POWERDOWN>,
- 				 <&softreset STIH407_SATA0_SOFTRESET>,
-@@ -692,7 +692,7 @@ sata1: sata@9b28000 {
- 			interrupt-names = "hostc";
- 
- 			phys = <&phy_port1 PHY_TYPE_SATA>;
--			phy-names = "ahci_phy";
-+			phy-names = "sata-phy";
- 
- 			resets = <&powerdown STIH407_SATA1_POWERDOWN>,
- 				 <&softreset STIH407_SATA1_SOFTRESET>,
--- 
-2.50.1
+I have tested the new series on rk3588 and rk3399 with chromium. Since the
+HEVC decoder need EXT_SPS_RPS related patches, I ony test the H264 decoder.
+There are two issues:
 
+1, The decoder max size is detected 1920x1088, which should be the fallback
+size when queryig VIDIOC_ENUM_FRAMESIZES[1].
+
+2, Playing H264 videos ends up with green screen.
+
+These above issues don't happen with the old rkvdec2 series.
+
+[1] https://github.com/chromium/chromium/blob/138.0.7204.92/media/gpu/v4l2/v4l2_utils.cc#L520-L533
+
+Best regards,
+Jianfeng
 
