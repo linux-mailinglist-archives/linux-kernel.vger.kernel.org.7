@@ -1,126 +1,186 @@
-Return-Path: <linux-kernel+bounces-729217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 085CDB03370
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:27:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52633B03374
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63A4C176B5E
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 23:27:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F32F176BBF
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 23:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841E42036FE;
-	Sun, 13 Jul 2025 23:27:51 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D171A0730
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 23:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4162620B81B;
+	Sun, 13 Jul 2025 23:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fl+jGQ90"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E0386340;
+	Sun, 13 Jul 2025 23:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752449271; cv=none; b=agwxhDqZkfQFl70uqwptEnqdr/6L5pk0eBoVkoZfqdsMwPIOBlgJ0oQv+gZR/5MP13U7hivHD/7Aa0Bc0b9Vj6xmeFEwZAdGdV+dypHFowrBPoU6ZmRsBat7MCQuup8dbLsGidQpNyFdBvX2BgQOUHzKwp5MgOVdEQcN/EOmZxI=
+	t=1752449466; cv=none; b=b07tt00cm6bEX4ZI2vsNYJg2JBNUcIEKCs/H0naKlvT/DIN5jsy+jVGjyyyXenI7Ijqe6useUql8ocKG58bfoXeaupo2CLzVCIq1kEATpkucI6C2ALNIGg6iXFpv0sAu1n8Gef0KZ70mS/CK9yrB+dG6t4Ah6gNySRb/UdZi9m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752449271; c=relaxed/simple;
-	bh=PNlpdiBlfke4hLU5sd6jQGIZ+kbIUkdFcN98yW9xMQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XnjfGvBKJzbcFLnAufmQNbLytiyFncaw+u2G/k1oZ6hBKm7/3Tw7ooE1o49fXR5fSspcHUDp+1la6GutkmZ8zDSnVXSm+Xij3/EgQb40YPpMEBH4WVdrt2s5Rvug+Lc+8oQMq7RPjEh7YkipNX10K8qGVviyNKKp+iYYDtySG44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-54-687440f1ab53
-Date: Mon, 14 Jul 2025 08:27:40 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Yeo Reum Yun <YeoReum.Yun@arm.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"glider@google.com" <glider@google.com>,
-	"dvyukov@google.com" <dvyukov@google.com>,
-	Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
-	"bigeasy@linutronix.de" <bigeasy@linutronix.de>,
-	"clrkwllms@kernel.org" <clrkwllms@kernel.org>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"max.byungchul.park@gmail.com" <max.byungchul.park@gmail.com>,
-	"ysk@kzalloc.com" <ysk@kzalloc.com>,
-	"kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-rt-devel@lists.linux.dev" <linux-rt-devel@lists.linux.dev>,
-	"kernel_team@skhynix.com" <kernel_team@skhynix.com>,
-	"urezki@gmail.com" <urezki@gmail.com>
-Subject: Re: [PATCH v2] kasan: remove kasan_find_vm_area() to prevent
- possible deadlock
-Message-ID: <20250713232740.GA18327@system.software.com>
-References: <20250703181018.580833-1-yeoreum.yun@arm.com>
- <CA+fCnZcMpi6sUW2ksd_r1D78D8qnKag41HNYCHz=HM1-DL71jg@mail.gmail.com>
- <20250711020858.GA78977@system.software.com>
- <20250711021100.GA4320@system.software.com>
- <GV1PR08MB1052126BB553BD36DA768C998FB4AA@GV1PR08MB10521.eurprd08.prod.outlook.com>
+	s=arc-20240116; t=1752449466; c=relaxed/simple;
+	bh=bJo8xxjcE1lTfLcGzMb3T/rRcaK4egKjQlWJDWN+OR0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UBehOf/BtXmj2X5tcK3So3NieOk2C7w9nF11W9VGwese4Vs3DwmqQYCte/PaKZcCTwGuRDCNzzXsMEgttaGe8Fjt2xUZU5/GXgu65Yd6yRQ4udixIcQ2pLt9Di4IkiiaqumZCxEXrSRx3BCaa9aiQpv1XsAPxJ1YxMTFxV5IYXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fl+jGQ90; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a510432236so2760642f8f.0;
+        Sun, 13 Jul 2025 16:31:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752449463; x=1753054263; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=h/GY2/dE+mO5MryruF4BoK/v2xcVkd9rBBGX0ZUv8DE=;
+        b=fl+jGQ90Yc5zN2z/aO+B+SEuPkUnYoV/kVtKkaKBHmAwlu2gbtSRJHK069fQsgP9TX
+         5cnvkb1FJcv9tByyG18GDTImFdTV+ExhhrrLp6iAvfIf6fxLOpZAzLUhHcKaj+Q1phvW
+         KMRSB61b4jiagLrqq1NpiAAJoJMIGZ/Wbb5KhhluGgoieKjzjwEgveHgFhPK16+Nhus2
+         1rr2Mc0YezT3UxvnHvUA3EhH0+g19M1nWcG7TCMj5e9rcKWjmpmJYGaJ3qavjBYOYN1d
+         XhtHfF+kptXX8+jV9m+iHu/Vh1gKZRHHNB+wUTAOtpkcNc+l57w+fVTH40MUKG1Czp8K
+         b6NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752449463; x=1753054263;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h/GY2/dE+mO5MryruF4BoK/v2xcVkd9rBBGX0ZUv8DE=;
+        b=bxS7uKw9dCkXrWAb25sv5v29Y4swD7D1TlLzHiKmQquN7iiSgc1EalA4BIKYAJQmrs
+         0PwPD3iOj2OePTgS9LO9y8Is0CcqGzeh+jtZxTtz7/3OWHpDp2h5hiYENm03Fm35JVM4
+         1qNqmBiUUaoAP2aJf/73orVTo/cHi9xpGZlepAmXrcNb3QxspyfShMM3TUxlWMywiGSC
+         qbK72J3s/VDsq/4uGYY+IvXXaCdeRm44h0VcoBnhXLztoR6/J4VkzFx7q4COoZO63wD/
+         lrh5ozhGxHup/9Wojp+knlrnPHBfxVsVYC787LYty3CtHGO4fFr3A0ZX8k76Ki1xHzb4
+         YrUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDJEHZkVQcsqzyKmU2BkwrLE+01nkjX2ZSG1r3FTthXKhLeFDXERDjBXAdqnWwmj/EMtFxC5W/@vger.kernel.org, AJvYcCW7SHohvKAEAilC8St4RzFHUtsTF2BOm74dhMLwyVPmF6viZ7HXHOWvj+WNFe+FA91PdrN+cduqCuXvKw==@vger.kernel.org, AJvYcCXjBI0TUj+TEtCyz3hz+JxD5v9Z3NkFbzeCAQyC0+J1+6VVWX6JNb5Z8L4HTBVkxcfkAqQliFUMYiY40KUV@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFaQJYl4Vz+oZPEFDpRfCMRSHvQmFUBbNzt5IOtnyoQFZR91M8
+	SyqgHNy6fgjRQF/C5uT862xnZgDQAYyoL67F82Xs9BHyVOa7Hkd3zEOT
+X-Gm-Gg: ASbGnctZgO8dU1lJQRKW+BLJHQctr+kWV3oUwqi+sClPYomLTmE1YzxZ9onp0NQXcMi
+	ngzWf73G7CuTsZ2l8O7JVxJ8vNOXiN0T4SrMuBlzh5eDNyAMTWGgtPYuAlOkko5QVvvJ5zNJUnS
+	ykbkGcZ14rnbJFh1GI0svmDziCimkZ+JbegJYHiJMuBXAhSrI6620HkCsMrfPBinvwJmzSvgpdB
+	cAY5nX2lQmxi0MrW/MjIJYO5bJMekPo531y1RrTs/jUkO8WbUgdnlNfcNapzoFH+vDXRzZCqbGW
+	vYq93RngZ8QQ/lDvxb756+lVa6qVgVsEGzbQLniNuvLHF0Poob2BwCGHePsN6LBwM2pZlrciDEH
+	PS6II54qWXib7lVBKGvGP3Q==
+X-Google-Smtp-Source: AGHT+IGCP9p4QYP5SRA9YCVbSRg9d+gvPcHbKXec0egiN+Ad0ekd4msTCPwzNoabooADvXVCdvgPbw==
+X-Received: by 2002:a05:6000:2f84:b0:3a4:f70d:a65e with SMTP id ffacd0b85a97d-3b5f2e1bb53mr7805557f8f.37.1752449462880;
+        Sun, 13 Jul 2025 16:31:02 -0700 (PDT)
+Received: from qasdev.Home ([2a02:c7c:f4f0:900:20f4:6eb9:1d8b:99cc])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc21e7sm10865512f8f.36.2025.07.13.16.31.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Jul 2025 16:31:02 -0700 (PDT)
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: gargaditya08@live.com,
+	orlandoch.dev@gmail.com,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] HID: apple: validate feature-report field count to prevent NULL pointer dereference 
+Date: Mon, 14 Jul 2025 00:30:08 +0100
+Message-Id: <20250713233008.15131-1-qasdev00@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <GV1PR08MB1052126BB553BD36DA768C998FB4AA@GV1PR08MB10521.eurprd08.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsXC9ZZnoe5Hh5IMg3f7NCzmrF/DZvF94nR2
-	i2kXJzFbLHvyj8liwsM2dov2j3uZLVY8u89kcXnXHDaLe2v+s1pcWn2BxeLCxF5Wi30dD5gs
-	Vl9ksdj77yeLxdwvhhZfVq9icxDwWDNvDaPHzll32T1a9t1i91iwqdRjz8STbB6bVnUCiU+T
-	2D0W/n7B7PHu3Dl2jxMzfrN4vNg8k9Hj8ya5AJ4oLpuU1JzMstQifbsEroz7d/vZC65wVOze
-	85e5gfEFWxcjJ4eEgInE1h9NzDD23XknmUBsFgFVia2/GsDibALqEjdu/ASzRQTUJH6uOgZW
-	wyywi03iwvtEEFtYIFKieds1sDivgIVE883ZrF2MHBxCApuYJN7aQ4QFJU7OfMIC0aolcePf
-	SyaQEmYBaYnl/zhAwpwC8RKPzk8FmyIqoCxxYNtxIJsL6LLp7BJLl25jhThTUuLgihssExgF
-	ZiEZOwvJ2FkIYxcwMq9iFMrMK8tNzMwx0cuozMus0EvOz93ECIy5ZbV/oncwfroQfIhRgINR
-	iYf3xpbiDCHWxLLiytxDjBIczEoivK/uFmUI8aYkVlalFuXHF5XmpBYfYpTmYFES5zX6Vp4i
-	JJCeWJKanZpakFoEk2Xi4JRqYIytEl/4xfodQ6X/3dmSFUerlnmd4zbh8BTNNvmZ43z613zH
-	ma2B84qXndr89JyVw0TulbseR8zglov7W9Fc8l/ha1ZLce6zdXITGYXeVK/7zKNSHH/XULpp
-	l338Wz5vZr8Tn4RrFQWSdkjPaSiPYFE10BI7mr3uRZpWV92m7y3Sv/e+Dvv5WomlOCPRUIu5
-	qDgRAOKU1i+1AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42Lh8rNu1v3oUJJhcPW2uMWc9WvYLL5PnM5u
-	Me3iJGaLZU/+MVlMeNjGbtH+cS+zxYpn95ksDs89yWpxedccNot7a/6zWlxafYHF4sLEXlaL
-	fR0PmCxWX2Sx2PvvJ4vF3C+GFl9Wr2JzEPRYM28No8fOWXfZPVr23WL3WLCp1GPPxJNsHptW
-	dQKJT5PYPRb+fsHs8e7cOXaPEzN+s3i82DyT0WPxiw9MHp83yQXwRnHZpKTmZJalFunbJXBl
-	3L/bz15whaNi956/zA2ML9i6GDk5JARMJO7OO8kEYrMIqEps/dXADGKzCahL3LjxE8wWEVCT
-	+LnqGFgNs8AuNokL7xNBbGGBSInmbdfA4rwCFhLNN2ezdjFycAgJbGKSeGsPERaUODnzCQtE
-	q5bEjX8vmUBKmAWkJZb/4wAJcwrESzw6PxVsiqiAssSBbceZJjDyzkLSPQtJ9yyE7gWMzKsY
-	RTLzynITM3NM9YqzMyrzMiv0kvNzNzECI2hZ7Z+JOxi/XHY/xCjAwajEw3tjS3GGEGtiWXFl
-	7iFGCQ5mJRHeV3eLMoR4UxIrq1KL8uOLSnNSiw8xSnOwKInzeoWnJggJpCeWpGanphakFsFk
-	mTg4pRoYVfkyX039eKwuy+l9Xuz821OtZzLIne2+pJz56Pvk+XI7YkWaJA83Jwox7svqqRXI
-	Ez+wLUt/7smqQL0Slv9z53l7hU2yPdGfodMlwHUh9ujxZ4Izua5l2n/5dfLx7D0NfxMeT1zF
-	oj3J37L+yAU+NpbcgOZJeta/5zdLvI7gEu7xCf7FF7NAiaU4I9FQi7moOBEAkEiYeZwCAAA=
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 12, 2025 at 03:46:10PM +0000, Yeo Reum Yun wrote:
-> Hi ByungChul,
-> 
-> [...]
-> > I checked the critical section by &vn->busy.lock in find_vm_area().  The
-> > time complextity looks O(log N).  I don't think an irq disabled section
-> > of O(log N) is harmful.  I still think using
-> > spin_lock_irqsave(&vn->busy.lock) can resolve this issue with no worry
-> > of significant irq delay.  Am I missing something?
-> 
-> I don't agree for this.
-> since in PREEMPT_RT case, it has the same problem.
-> 
-> In case of PREEMPT_RT, spin_lock_irqsave() becomes rt_spin_lock() which is sleepable.
-> But, KASAN calls "rt_spin_lock()" holding raw_spin_lock_irqsave() which is definitely wrong.
+A malicious HID device with quirk APPLE_MAGIC_BACKLIGHT can trigger a NULL
+pointer dereference whilst the power feature-report is toggled and sent to
+the device in apple_magic_backlight_report_set(). The power feature-report
+is expected to have two data fields, but if the descriptor declares one
+field then accessing field[1] and dereferencing it in
+apple_magic_backlight_report_set() becomes invalid
+since field[1] will be NULL.
 
-It's another issue than irq handling latency, but it's about lock usage
-correctness.  You are right.
+An example of a minimal descriptor which can cause the crash is something
+like the following where the report with ID 3 (power report) only
+references a single 1-byte field. When hid core parses the descriptor it
+will encounter the final feature tag, allocate a hid_report (all members
+of field[] will be zeroed out), create field structure and populate it,
+increasing the maxfield to 1. The subsequent field[1] access and
+dereference causes the crash.
 
-	Byungchul
+  Usage Page (Vendor Defined 0xFF00)
+  Usage (0x0F)
+  Collection (Application)
+    Report ID (1)
+    Usage (0x01)
+    Logical Minimum (0)
+    Logical Maximum (255)
+    Report Size (8)
+    Report Count (1)
+    Feature (Data,Var,Abs)
 
-> But as Uladzislau said, without reference count manage, UAF can always happen.
-> IOW, If KASAN to dump vm information, I think we need:
->     1. manage reference for vmap_area.
->     2. find_vm_area() with rcu version.
-> 
-> 
-> Thanks.
-> 
-> --
-> Sincerely,
-> Yeoreum Yun
+    Usage (0x02)
+    Logical Maximum (32767)
+    Report Size (16)
+    Report Count (1)
+    Feature (Data,Var,Abs)
+
+    Report ID (3)
+    Usage (0x03)
+    Logical Minimum (0)
+    Logical Maximum (1)
+    Report Size (8)
+    Report Count (1)
+    Feature (Data,Var,Abs)
+  End Collection
+
+Here we see the KASAN splat when the kernel dereferences the
+NULL pointer and crashes:
+
+  [   15.164723] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] SMP KASAN NOPTI
+  [   15.165691] KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
+  [   15.165691] CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.15.0 #31 PREEMPT(voluntary) 
+  [   15.165691] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+  [   15.165691] RIP: 0010:apple_magic_backlight_report_set+0xbf/0x210
+  [   15.165691] Call Trace:
+  [   15.165691]  <TASK>
+  [   15.165691]  apple_probe+0x571/0xa20
+  [   15.165691]  hid_device_probe+0x2e2/0x6f0
+  [   15.165691]  really_probe+0x1ca/0x5c0
+  [   15.165691]  __driver_probe_device+0x24f/0x310
+  [   15.165691]  driver_probe_device+0x4a/0xd0
+  [   15.165691]  __device_attach_driver+0x169/0x220
+  [   15.165691]  bus_for_each_drv+0x118/0x1b0
+  [   15.165691]  __device_attach+0x1d5/0x380
+  [   15.165691]  device_initial_probe+0x12/0x20
+  [   15.165691]  bus_probe_device+0x13d/0x180
+  [   15.165691]  device_add+0xd87/0x1510
+  [...]
+
+To fix this issue we should validate the number of fields that the
+backlight and power reports have and if they do not have the required
+number of fields then bail.
+
+Fixes: 394ba612f941 ("HID: apple: Add support for magic keyboard backlight on T2 Macs")
+Cc: stable@vger.kernel.org
+Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+---
+ drivers/hid/hid-apple.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
+index ed34f5cd5a91..183229ae5f02 100644
+--- a/drivers/hid/hid-apple.c
++++ b/drivers/hid/hid-apple.c
+@@ -890,7 +890,8 @@ static int apple_magic_backlight_init(struct hid_device *hdev)
+ 	backlight->brightness = report_enum->report_id_hash[APPLE_MAGIC_REPORT_ID_BRIGHTNESS];
+ 	backlight->power = report_enum->report_id_hash[APPLE_MAGIC_REPORT_ID_POWER];
+ 
+-	if (!backlight->brightness || !backlight->power)
++	if (!backlight->brightness || backlight->brightness->maxfield < 2 ||
++	    !backlight->power || backlight->power->maxfield < 2)
+ 		return -ENODEV;
+ 
+ 	backlight->cdev.name = ":white:" LED_FUNCTION_KBD_BACKLIGHT;
+-- 
+2.39.5
+
 
