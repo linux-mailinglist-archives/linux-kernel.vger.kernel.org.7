@@ -1,110 +1,198 @@
-Return-Path: <linux-kernel+bounces-729186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9DC5B032E7
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 22:34:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E738BB032EA
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 22:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B092116735E
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 20:34:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AB1818884E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 20:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07211285C98;
-	Sun, 13 Jul 2025 20:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DF0285C94;
+	Sun, 13 Jul 2025 20:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WrYCjA1E"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c8fjL7Y/"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2157C13AD1C;
-	Sun, 13 Jul 2025 20:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375AC2E36FA;
+	Sun, 13 Jul 2025 20:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752438837; cv=none; b=rD+gYeSvE6pGRffJPwOswFaZgcdyb+yI0wH8BkBYcsc/1D5hWTq3QztlAEp6z8QnV3oF2FxI8uBR1gOn5XIIApRzIWTZ57FmYcv9PoB/6Vv75+ZzADXmH5NjlVzHZ1mgIiAb6+H1M4/NL9vlzyjdfHLmfn4B6hfNFLGJ9yBu31M=
+	t=1752438912; cv=none; b=A+nVLbcpRw4pyUy9KgtOzBiBx8UGIwTlg5lFgncdN2fFYW+64n9Aw9J6XZFld3CZ0T9egApNIT+1xkZTSdLFj5tfj3QcXXzZSMmxiUDzGbIHt2VvYd8LXc0GyXWrxt+RkFIsRMSUPw79s0BFVSHY9s1xhVVdduhIiIxP9Mw0044=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752438837; c=relaxed/simple;
-	bh=P6uc1vFP+hnSDoQ+DeA9YI99SP+F92h3RQ3e6uHt6oM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UpN1MDgI7/ocQ/NGFh2mgOAV1VX4oBE3eIUIboenpeh9QNEgfLrtyoPpC13SWXF/dzFlgA4dC+W99s/ghWfp7/2Gkfe8h3NcwJnSpFEkovO1oGj15cG437x7pCqYIFNNe8+nobyvvDqZccpBvJHTYZT9Au2kOYlGCt0CWneM768=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WrYCjA1E; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1752438912; c=relaxed/simple;
+	bh=Oyp7ETxjQXZYtgRVAn6gElLiMnFAOy4hYoB4qOBothY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ivmt+Kg361VCS/LX86LL0yhrx8NZzFGuMircrLyAZ7rE903KQqSSP0wdsNXZFkqBr1XYn3ZQzeoCZi7D5LGXPRnkbExWilbl8N9LICgMD+XRNwmDEQZg/wiO5XAW7IDfV5Q77XiMGyqKy7R1LKb0AI2l2ik9UcjurQVE1BgiA6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c8fjL7Y/; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-234eaea2e4eso4347145ad.0;
-        Sun, 13 Jul 2025 13:33:54 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-455fdfb5d04so7889155e9.2;
+        Sun, 13 Jul 2025 13:35:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752438834; x=1753043634; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZmXBFNSCdNzdGebBofDUcBBgvM0eW9t5GlHoCUn8/mE=;
-        b=WrYCjA1EhVbrV+C7Cawz7d1Idmhbi2IZFmqhf/38dQ5vmuDD02vvNuuHzziMEPMa52
-         X4FAUhuf/7qKGoeJAv3audGHA6/3pdQ+u55h/r00QFytvRC5EG5aW+kuxLlNBMbI4hhE
-         7PK0UYCby8q4o9knDGpfljKGNcqUUUUTd9Wb2QabLZ7uDOKFM11B4bSSS0rTT/UW8Jmr
-         PzjkqV3l7mOR0XuQjMmvz6YavAbmejT7eqVCIst2QXe180G9vSJ33n4YxE5aJY7u238z
-         VdR/q0yYcZqFqSHMK/GkiZX5wVXvuRAUvwg//kh7OdFvjS4NLMXQrYOMQNiFHVaDSzyO
-         Zwyg==
+        d=gmail.com; s=20230601; t=1752438909; x=1753043709; darn=vger.kernel.org;
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RQ6idt8wXYfGLyA4P/4xIcoRSI8FZxbhnZ/aUjNlza8=;
+        b=c8fjL7Y/vT9TRAvy8h2orfXsVSUZSzLFsDeUHfXTeMaeR4ztTwhbqWWPk/2G1BRQy2
+         GiTb8qmwcjtriKi1dfqa38AQ6QpLdOg0rqofsD8BDV7G7WpSG7LbTgeXCdH+j3hM3BT0
+         4BAr9CExV6TSXFCW5OgBQYQZlL12m6nFPeWx5w9a6vpYktjAw1kKjyovvVMWGCBRFal4
+         /eXTgR2m0Ur/RR2Tvh8gRkM8syDFYePrCA3bjJap3qXgyvnVXwues4tmxd9yUO10f4JL
+         LUYb4UWjHEgS5QHRsLfcZtHwT2xDSQ2fere1ze8pFnYY+1X4VD/pn0/AaHX604asJ8fl
+         6bgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752438834; x=1753043634;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZmXBFNSCdNzdGebBofDUcBBgvM0eW9t5GlHoCUn8/mE=;
-        b=SkWYsdNPoEy/yYNYdE9WAedaasaBkpHbzDpmQmpwufNLG4PmsO3YqVzMbd6QgjKtDx
-         wAk3wly7skctYFmGf+K/qX1WpGb2krhEBI4nx5MaRGhkVxClzlUj9cLtpIWFDnIwDOfY
-         +Vint3B6B0LfN5M8kf4h/STH0+SxPKJ7f2Kugq6oq4+UwoD+FQ038e2D4dgY+hXiNrHV
-         cdAhqGSrGSBzDRs4qaqNCKL94AdjwbIXidWS7Ld0SbknzoDFGdjGP3+frt5Bg8g+RJ8B
-         1ngIi8v1ADjPQKkHHdO3UDg4ll2r1bT0xgkoaekXh2LTW882EF+JwZvCIdR8vRxmBxZ5
-         27hw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkt9jV+wVvSUZY5aBNTEPTlO9SW+tLpM2610HAdGltJzKlRnm1ctiUWQFmK/QBe09LUEj1NoEmwQ4oUAc=@vger.kernel.org, AJvYcCXHJepddDb0MjGyOZLNLaNHeR4ktCxuiE8Mz9FSWNb5PLua7LwoOSk44Vpzg+JspMZIcZsHIEuxmEzxHSpbulk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze78Bg7FbhYzAQFsbyIwjq/gJMYk2iQLtLQmMeEUfVJk3Npr8r
-	LLDrARsgBA5Ai0RMVytGg7th6XGhd+X+yB2GZKpBSXoDprXeVDx8K/6Nnd+u6X3k8RMiqBY4Exa
-	k76RYBjxXDHecqMWJG+yQiwDwqEexUGywdP50Pa8=
-X-Gm-Gg: ASbGnct9D8G1hlbdgxGXGVRjrK3Z1TmYVWgBXUx44TZzUxtArXfzzEQQ6GSjKdBbGqo
-	k7nZqJmFuwV9c8Ip2np+LHnZym64zDmfw2QBemng9tRPWidgUMu0MHW70FX89jkgXVr89qS5N4x
-	HaAZzrOMiwIhkA49ESA0l6lJsgUSmbkL7/rSfdtq64/5Jvt4pWk6YZg3F5/lTCPEAmR6nI/+x+A
-	3v292J+
-X-Google-Smtp-Source: AGHT+IHN9gHToXFx7qSAICPfNo9uTuuKOtEdftwKY3pThhr0Bi6GfZTjIAB5CeEZl4h7fH9wpPuZOb7wU2SynSXiRCQ=
-X-Received: by 2002:a17:902:e5c1:b0:235:e8da:8f4 with SMTP id
- d9443c01a7336-23dedcaa7f5mr61698505ad.0.1752438834404; Sun, 13 Jul 2025
- 13:33:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752438909; x=1753043709;
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RQ6idt8wXYfGLyA4P/4xIcoRSI8FZxbhnZ/aUjNlza8=;
+        b=rUrSJg0b3SDv1cPOvrCJSc3ePDUSOtQ7HYQMXpD+tmN2xddvmp0dfMPJZnlvPExp/2
+         uL1prtZWhLPGKPpGF1ySPmR7qEZ7JO3LsjeyR2X3etsE/8wlg4ROaeiK6VDerz9ZuhpW
+         kOSAJJf9YpamAP8A5n/Thha55ycCsFjnYlPPJ527gzBjnf+8qnb+YzTHMzlAIsRyhoN2
+         tuA0cPz/ozevGBs3uoblgQ2LBo/hqCuZyMBCs1NX544hFSEhwREpdJvwPeKoRcC6zkqg
+         P7DBetY3AOkFnLBXROkbe07dOW1b4Fbj2IyL4FsrwoKoPAGLPV5yRLw6Ez6OhQ1rNV89
+         FDYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHy9Mam+0vGTqatbRnHr+PPewKrACh3wnrFZ0z00FGDm914ZEwFMkE9u4pn2hTVDSaPASmG0wjCB7Tz4s=@vger.kernel.org, AJvYcCXD8JbSWcsfS2YvUZUX9o4TdajCFhBldYR0up9qT5zdBpt/63yQncIIIYIZZYogojbHcDhNLUB3TrPWYA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWiic6CXEtFBhz2u1cASJOVZQbd3BrXYDHhmFOT50V9MUwR1PE
+	5QYpPulQti9eHIIlJvTCtvmocg/obsRDiBvj+wkXJ3cHPT71DbLMXTAL
+X-Gm-Gg: ASbGncs6XuQWYMFkwc07ocpKysy44q3Awq2ANtQlkFG7Ec51C3l5ioj0KYg0UK1oUu/
+	NPPpFyN8oDc+McukPCmwUlewuY0KCdtgZOzUMRbFiVGRqWOoLiJotIKs2AtfhGkBGCuSLUwXVR2
+	VMpmVURXN7nzPwyQggubZXK09zVKy2Rhx0Kretj2xgYr6ET9Z3FfC996XnGfXVhxT0nZg1mZOI9
+	MTZ0bapao5wg8TUr8/PENBUxqiHcAe6Cjm6eHClXaJ4ZH/YIzQ4XIVJRrSaKo3snR/79fVC+bFL
+	6uT1HZAYFTMb5av+fTBHV8vyoYICb/JyisLKIFTR/r/1CetJckiSkmxiH3Wg8ZQeRd5H09F1Fqz
+	hXDBLE8cLGXdBNYXAQipxDtRFWF66otx6lyiAwFm/qTJRWxBz95Kb/UOOfHmGpE9JmQheF/TOT8
+	NFVkZSxMUslk0oAbfam3q1eNE=
+X-Google-Smtp-Source: AGHT+IH4AVDkH02c07HSfsSSYjsNFz8Gnpusc8AYfW7vNFYqCGsRW7lQ5eG2tpWiRi0fKTIFLEfChA==
+X-Received: by 2002:a05:600c:4ed0:b0:456:1a41:f932 with SMTP id 5b1f17b1804b1-4561a41fd79mr11636015e9.22.1752438909101;
+        Sun, 13 Jul 2025 13:35:09 -0700 (PDT)
+Received: from dell.localnet (2a01-114f-400e-9dc0-0000-0000-0000-0540.ea.ipv6.supernova.orange.pl. [2a01:114f:400e:9dc0::540])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc22a8sm10793602f8f.34.2025.07.13.13.35.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Jul 2025 13:35:08 -0700 (PDT)
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To: Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>,
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
+ Roger Quadros <rogerq@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney@redhat.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Brian Masney <bmasney@redhat.com>
+Subject:
+ Re: [PATCH 1/3] ARM: OMAP1: clock: convert from round_rate() to
+ determine_rate()
+Date: Sun, 13 Jul 2025 22:35:06 +0200
+Message-ID: <6172340.lOV4Wx5bFT@dell>
+In-Reply-To: <20250710-arm32-clk-round-rate-v1-1-a9146b77aca9@redhat.com>
+References:
+ <20250710-arm32-clk-round-rate-v1-0-a9146b77aca9@redhat.com>
+ <20250710-arm32-clk-round-rate-v1-1-a9146b77aca9@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709-init-remove-old-workaround-v1-1-a922d32338d2@gmail.com>
-In-Reply-To: <20250709-init-remove-old-workaround-v1-1-a922d32338d2@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 13 Jul 2025 22:33:42 +0200
-X-Gm-Features: Ac12FXzAOInvGmyWVwzT-OopSWzvIkNJ21Mv2hiw_SBJD06XKbosWHqvwtzqZsA
-Message-ID: <CANiq72nWZA_yb3G+E7TAcQTf431XfCEB_u8EMQg=x8EjvkxTkA@mail.gmail.com>
-Subject: Re: [PATCH] rust: init: remove old workaround
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="nextPart5023095.31r3eYUQgx";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
 
-On Thu, Jul 10, 2025 at 12:34=E2=80=AFAM Tamir Duberstein <tamird@gmail.com=
-> wrote:
->
-> `Error::from_errno` is `pub` since commit 5ed147473458 ("rust: error:
-> make conversion functions public"), thus remove this workaround which is
-> no longer needed.
->
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+--nextPart5023095.31r3eYUQgx
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Date: Sun, 13 Jul 2025 22:35:06 +0200
+Message-ID: <6172340.lOV4Wx5bFT@dell>
+MIME-Version: 1.0
 
-This seems the same as this one applied a few weeks ago:
+On Friday, 11 July 2025 01:42:16 CEST Brian Masney wrote:
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
+> 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
 
-    https://lore.kernel.org/rust-for-linux/20250526152914.2453949-2-ojeda@k=
-ernel.org/
+Acked-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-Cheers,
-Miguel
+> ---
+>  arch/arm/mach-omap1/clock.c | 19 +++++++++++++------
+>  1 file changed, 13 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/mach-omap1/clock.c b/arch/arm/mach-omap1/clock.c
+> index 83381e23fab983522ca01b8feffb861b02fee730..afc6404f62d39c4ddbac6f1ee04d889be6c47186 100644
+> --- a/arch/arm/mach-omap1/clock.c
+> +++ b/arch/arm/mach-omap1/clock.c
+> @@ -705,14 +705,21 @@ static unsigned long omap1_clk_recalc_rate(struct clk_hw *hw, unsigned long p_ra
+>  	return clk->rate;
+>  }
+>  
+> -static long omap1_clk_round_rate(struct clk_hw *hw, unsigned long rate, unsigned long *p_rate)
+> +static int omap1_clk_determine_rate(struct clk_hw *hw,
+> +				    struct clk_rate_request *req)
+>  {
+>  	struct omap1_clk *clk = to_omap1_clk(hw);
+>  
+> -	if (clk->round_rate != NULL)
+> -		return clk->round_rate(clk, rate, p_rate);
+> +	if (clk->round_rate != NULL) {
+> +		req->rate = clk->round_rate(clk, req->rate,
+> +					    &req->best_parent_rate);
+>  
+> -	return omap1_clk_recalc_rate(hw, *p_rate);
+> +		return 0;
+> +	}
+> +
+> +	req->rate = omap1_clk_recalc_rate(hw, req->best_parent_rate);
+> +
+> +	return 0;
+>  }
+>  
+>  static int omap1_clk_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long p_rate)
+> @@ -771,7 +778,7 @@ const struct clk_ops omap1_clk_gate_ops = {
+>  
+>  const struct clk_ops omap1_clk_rate_ops = {
+>  	.recalc_rate	= omap1_clk_recalc_rate,
+> -	.round_rate	= omap1_clk_round_rate,
+> +	.determine_rate = omap1_clk_determine_rate,
+>  	.set_rate	= omap1_clk_set_rate,
+>  	.init		= omap1_clk_init_op,
+>  };
+> @@ -784,7 +791,7 @@ const struct clk_ops omap1_clk_full_ops = {
+>  	.disable_unused	= omap1_clk_disable_unused,
+>  #endif
+>  	.recalc_rate	= omap1_clk_recalc_rate,
+> -	.round_rate	= omap1_clk_round_rate,
+> +	.determine_rate = omap1_clk_determine_rate,
+>  	.set_rate	= omap1_clk_set_rate,
+>  	.init		= omap1_clk_init_op,
+>  };
+> 
+> 
+
+
+--nextPart5023095.31r3eYUQgx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEnyr6IsGnTYAeAkHJ2WqSnltsjBoFAmh0GHoACgkQ2WqSnlts
+jBr2jAf/bEu29PFvQWChV00x7wXHruop7Es3gHolRxKbv8LxnEtWZm4kkGIk36p2
+FQMQZxPbpRfn3zanPLBWAsmiXy+nvWrk9zBu/OEEY8r8QsVLZwU9VV81SAI6rNrz
+Tp89RkhQV8FsCoXVKZAIdvj1WOzpxVTeYJP3ds0IzQ49+Fpg+nWLSiaNH+awHky8
+Xqms5mXh/SP9almdFvaZKmeAVTPUQpxsUmGMCSxWuEoWaDHKxpDa6FcaZMGetg2C
+M7ZW3GznaKmZt906lQdvj2YcjonHirbjX3TULqMaDc16h/7h6BUWXr4Xt06VWTm6
+LLLhsNUuQjG59V9d6+CFawQ+CzteNw==
+=7sdR
+-----END PGP SIGNATURE-----
+
+--nextPart5023095.31r3eYUQgx--
+
+
+
 
