@@ -1,160 +1,90 @@
-Return-Path: <linux-kernel+bounces-728874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7235CB02E4F
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 02:41:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA7FBB02E50
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 02:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A52571AA39EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 00:42:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FFEC1AA3A69
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 00:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B5E1078F;
-	Sun, 13 Jul 2025 00:41:40 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EB217BA6;
+	Sun, 13 Jul 2025 00:43:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D322E36E5
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 00:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7094D2E36E5
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 00:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752367300; cv=none; b=OJGCitSr9e2Nd3TgI+alPim2VqBYdwYbuCT1JN4QvH/MqqyTfdyu4xIOP6usKqkziTPzZhbcfjygFGlaTgOnmV46m0mswUokZehsH7jMFRf4AQn1RPOrRpVmaAlKByIyKNrmk9BbKXX1sXS/lhGAAvwv+4GPuUPKREn1rsEptUc=
+	t=1752367384; cv=none; b=ck3d2FfdiwPYf8Hcc7e7OxTw65zRCpGemumsgPSgkFKlDuU/70ehU+W2WNW63Ab30xjDi2eQnU50zSskVXfXVDG+yBloO29MkqQt39DrmnQZSPx4T026jzuPFpuo6X8djpCGVCU2xQzMhQtG94UzG6fuTdg8FH1U941rNEXAajo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752367300; c=relaxed/simple;
-	bh=hzPKrFUDJvtn9idhpmuxlc0TnlFCK44j+Bn/8VFfTww=;
+	s=arc-20240116; t=1752367384; c=relaxed/simple;
+	bh=fe/Qba4s+sPTmxqH807ScgXqIUcBj+hKu3wiSHNcoTQ=;
 	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Lz4jW1Z2jZrIxJECCaUAhfN5bdrmDTWRU7CwB6qFPZlBI+yMNqXW+k5uqChLGEGf4OAMFjkeR90Jd4hScd3TV2+Ndn+Q5vAh/53SMZ8mPr8Z4fNSI7C3AbBZ/nuTkQymg+gZCVMLMPfoWDsNRUx6Zf/wL38D11EgQ6XPL/uoFCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+	 Content-Type; b=GKjiuMqQXH3gkBLuuOBHg92hxXTEmPhBuj8h4s7yisgtVeAu+LpIRAIIcEk07J/btrDiq0YocFCJ7mh7M26Xc7ECAvyqNwyxRYz2xeo3bX8UIK2KUjWDPJUHgsXD3WVKcO/LeYG23m9EylE+ZlNS7pJXKwopSrwx14O9eD+MfxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-86cc7cdb86fso346956239f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 17:41:36 -0700 (PDT)
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-86cc7cdb86fso346990839f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 17:43:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752367296; x=1752972096;
+        d=1e100.net; s=20230601; t=1752367382; x=1752972182;
         h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HqofCt2fMo1CyfbFBoNlZ2LavS6lU0R8lov3qrs3EcU=;
-        b=TBS9jfivZ+Lpv4JS41UvWtxPi9qlPxPH0BU6U7hj7yvh5lPGbbqnnsOZVM4TxjUTCq
-         ZVHKDOfYNjisDv1d6QOEt9oVOp53Z6IP1DXWpNB/9/m4WMSxU8gwY906tZ2SPxSzvz2c
-         NIsaeTugy8W5JOPvmu4B77Fq+PI0t+yQoPhP3EcABEddkeda2vbxEeMGr3K+zBqSdFTg
-         XM31Hrz0tjPg+j0X+LKJNChnsHlVn1Ad51zpd4a6Vmj6/ggo9Uuy5TRnLU+SbHbipqoD
-         yAr/q9kpiJhDEY7pl1ER7FFwAQzP3UKtvAPG4fupoJJ0aui5PW1gWXzw4sKC2AodPNO3
-         WemA==
-X-Gm-Message-State: AOJu0Yw1xs5meRnHjUqur5PwC8JrJt1vbTiTPvEdDi9Q1TIss3bK4ttO
-	8zIiHdULzKXeawHHCtZH72SuofR40u+xEGQK0g3BXPT4A4iJKYR32lhTARJz7pXO2BMwExHt814
-	P0b1y5wbL4cZRivayKvFhIvDKE0PxOsV1OdBPWuBH9Er/Pdgx3rUtevqtRUQ=
-X-Google-Smtp-Source: AGHT+IEiRDasUG34CuNNpzQK7thckAvAl6aHZVpfn51JIipW0LhDevOjjj9WXoTFkLA7khHAul7HV+ytXyu/OpLIYxcnqBghFoql
+        bh=MI1fvt/QGrdXbGLCQqvrZE0a731Mc5x2hIX2WjaPahY=;
+        b=ekRSCOOZJmdDJEb97HhRm0vJiQNuVPNYT9JylOUU+aNkvbpNHg2oPs1GpeJnCsVGGV
+         MkYf/7EzhrIcD0+u6vqeI9EewgTcxoVRQGtGwxwucmgKmQ5wVvs3p9HyUVL0ss7hySBF
+         1NQj0Em1VKHnu7Ypx8TgStY2xT1iZr4wruvGYLaa/Vvjveu9rnhTpyKP2Vq4fdkfSvFU
+         IzKr/0nkrV0XdNFG5PIJoRYTFJarf4tCEmZujwxXLSvrysA955fijZm/dCHlhPcpCMTV
+         UURYIDFz9QBCqN3M3g7DfTQXfrICxsP8obZkJatCKo6k0fTpUi8AkiBqU7plOsCs3wgP
+         SRTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWOvL1/SzGyfg6tzqYa8tOINIlwCOOe2zfoJTqMu36DzaNC8+jckFFn9fTA/HPQEyq9iDNlEke3ICrKcnk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuAGTtlgKF7FU3lDtV3uLeQ8OZO5e8yFw8OVc7nxwqRVSGWOat
+	U/4FI1CBCPviaqEY77h+I8W2D9nYIt7Y11S2Gy3aO6G2hP8/5r7vo4KKDuKY0muJSxN3/APSL0s
+	TYZnwXqTeIDlclokVPgkEEjiIrCMc3MpI6JOGWEF+7pgnI72utAXV0gAXfYw=
+X-Google-Smtp-Source: AGHT+IEYrO29lQ0icQg/NGeLiJ1QsKD9q3vGMpXk8kBMJWNev/khUD6GXNHwphdIYd9/QbE+avHXd0wySkpI+A5fQJsg6J5TdW/V
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:160a:b0:867:6c90:4867 with SMTP id
- ca18e2360f4ac-87978fec056mr918208339f.14.1752367295875; Sat, 12 Jul 2025
- 17:41:35 -0700 (PDT)
-Date: Sat, 12 Jul 2025 17:41:35 -0700
-In-Reply-To: <6872f886.a70a0220.3b380f.000d.GAE@google.com>
+X-Received: by 2002:a05:6602:1343:b0:873:f22:92fb with SMTP id
+ ca18e2360f4ac-879787d3c3dmr875699439f.1.1752367382611; Sat, 12 Jul 2025
+ 17:43:02 -0700 (PDT)
+Date: Sat, 12 Jul 2025 17:43:02 -0700
+In-Reply-To: <2154988a-c4c5-4ae5-a6d7-475fdefa7576n@googlegroups.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687300bf.a70a0220.3b380f.0016.GAE@google.com>
-Subject: Forwarded: Private message regarding: [syzbot] [kvmarm?] WARNING in pend_serror_exception
+Message-ID: <68730116.a70a0220.3b380f.0017.GAE@google.com>
+Subject: Re: [syzbot] [kvmarm?] WARNING in pend_serror_exception
 From: syzbot <syzbot+1f6f096afda6f4f8f565@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+To: kapoorarnav43@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hello,
 
-***
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Subject: Private message regarding: [syzbot] [kvmarm?] WARNING in pend_serror_exception
-Author: kapoorarnav43@gmail.com
-
-#syz test 
-From: Arnav Kapoor <kapoorarnnav43@gmail.com>
-Date: Sat, 13 Jul 2025 21:00:00 +0000
-Subject: [PATCH] arm64: KVM: Fix SError ESR validation to only allow ISS 
-field
-
-The current validation in __kvm_arm_vcpu_set_events incorrectly allows
-userspace to set the ISV bit (bit 24) in the SError ESR when injecting
-a SError through KVM_SET_VCPU_EVENTS. According to the ARM ARM and the
-KVM API documentation, userspace should only be able to control the ISS
-field (bits 23:0) of the ESR, not the ISV bit which is managed by hardware.
-
-The problematic check:
-  if (!((events->exception.serror_esr) & ~ESR_ELx_ISS_MASK))
-      kvm_set_sei_esr(vcpu, events->exception.serror_esr);
-  else
-      return -EINVAL;
-
-allows the ISV bit because ESR_ELx_ISS_MASK includes bit 24 (GENMASK(24,0)).
-However, the ISV bit should be set only by KVM itself when calling 
-kvm_set_sei_esr(), and userspace should not be able to control it.
-
-Fix this by changing the validation to only allow bits 23:0 (the actual
-ISS field without the ISV bit):
-
-  if (events->exception.serror_esr & ~GENMASK(23, 0))
-      return -EINVAL;
-
-This prevents userspace from setting reserved bits and the ISV bit while
-still allowing control over the intended ISS field.
-
-Reported-by: syzbot+1f6f096afda6f4f8f565@syzkaller.appspotmail.com
-Fixes: 0e5b9065dcf3 ("KVM: arm64: Inject SError exception into guest")
-Signed-off-by: Arnav Kapoor <kapoorarnnav43@gmail.com>
----
- arch/arm64/kvm/guest.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
-index 2196979a24a3..cbe1e310f477 100644
---- a/arch/arm64/kvm/guest.c
-+++ b/arch/arm64/kvm/guest.c
-@@ -844,10 +844,10 @@ int __kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
-  if (!cpus_have_final_cap(ARM64_HAS_RAS_EXTN))
-  return -EINVAL;
- 
-- if (!((events->exception.serror_esr) & ~ESR_ELx_ISS_MASK))
-- kvm_set_sei_esr(vcpu, events->exception.serror_esr);
-- else
-+ if (events->exception.serror_esr & ~GENMASK(23, 0))
-  return -EINVAL;
-+
-+ kvm_set_sei_esr(vcpu, events->exception.serror_esr);
-  } else if (serror_pending) {
-  kvm_inject_vabt(vcpu);
-  }
--- 
-2.43.0
+failed to apply patch:
+checking file arch/arm64/kvm/guest.c
+Hunk #1 FAILED at 844.
+1 out of 1 hunk FAILED
 
 
 
-On Sunday, 13 July 2025 at 06:07:03 UTC+5:30 syzbot wrote:
+Tested on:
 
-Hello, 
-
-syzbot tried to test the proposed patch but the build/boot failed: 
-
-failed to apply patch: 
-checking file arch/arm64/kvm/guest.c 
-Hunk #1 FAILED at 844. 
-1 out of 1 hunk FAILED 
-
-
-
-Tested on: 
-
-commit: 15724a98 Merge branch 'kvm-arm64/doublefault2' into kv.. 
-git tree: git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git 
-next 
-kernel config: https://syzkaller.appspot.com/x/.config?x=82bd3cd421993314 
-dashboard link: https://syzkaller.appspot.com/bug?extid=1f6f096afda6f4f8f565 
-compiler: 
-userspace arch: arm64 
-patch: https://syzkaller.appspot.com/x/patch.diff?x=10ebfe8c580000 
+commit:         15724a98 Merge branch 'kvm-arm64/doublefault2' into kv..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=82bd3cd421993314
+dashboard link: https://syzkaller.appspot.com/bug?extid=1f6f096afda6f4f8f565
+compiler:       
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=153d90f0580000
 
 
