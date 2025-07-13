@@ -1,97 +1,216 @@
-Return-Path: <linux-kernel+bounces-729123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D00AB0320E
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 18:17:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D0EB03211
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 18:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 951D53BBD12
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:17:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E26C917A6C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570AE27AC31;
-	Sun, 13 Jul 2025 16:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF89C280024;
+	Sun, 13 Jul 2025 16:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="wSbUNT2K"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LDH6iUJa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE7135955
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 16:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083797D07D;
+	Sun, 13 Jul 2025 16:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752423458; cv=none; b=OEzR0rY937+oUKcAgHHCg9Qn425rqoGsl/fkXGANBegw/iZYnVpjlcjVUxyILdMcJ8JhLqDLKP8djqn/2QSM+b21EqFYff+L2+GuUTcwzXBqqbl55y6FHTSHJq3i6AEDUOG3Jxf39U1GE46KHPkg1vxrsR6USPCr5KJiPIfOJ0k=
+	t=1752423618; cv=none; b=HUrrBYKQ+gXT7mNDJm+i0Eb9C25YePaWo6K8uQ33YY9AnesgG03vYqiibi73NK47WlghT59tsmlJZBePDR2RuF0TIMq2NZYs6pdx1lYirYIIFe38M9mJ6OpEa/J4Rc9K8YolQnnxnEMRZtCKnRk1G3fwEOr7qmrxCjNG9REyZ+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752423458; c=relaxed/simple;
-	bh=d7UT31cxNNFRqrlz9iMYspz1t4lxiopYZnjnth2SQbk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VYjgAQVtrmGGYmb4inkxlafN4tXWc+JDK7auuh8wnUbu7hqf+MqFI2cbGNNOnUHYdun2YtjqlHEmWSCrskrk1H1cdDE129Muf1UxvwwsoP1QtG+K3A//y9RHAi0NUNoLDgefYiKeR9NCGfFCF1SZaiwacbR4kXzd+sefRUdijKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=wSbUNT2K; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1752423452;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=VBNIyz9cuBjZoJtZIql5gATNUxrtX/L4E0kfIQR1FVU=;
-	b=wSbUNT2KQf7F6owQb126AXQgG8NAE5vzWO37zgz0zVVHPYo3SjAxF9KpgjaeF9wQ0WUnzH
-	6QAF2GSmc3/3j8WqQy4heZSF2t4e1sITjnWPs/4EDqFMxPADOy0cSoFz5mQpfvl/ttjwAI
-	EML6PYD+M1MKlurhRg+9S6t+nQHh5HpsuVI3Co/gqD+JcuTlTRvPvIc7vLfpi9bKFF2i8I
-	i3izdpylYASUYmq37wbDWOSJLS9VP5NFLP3ohGm5CZVCYTUXk5W988iKMS7vT6rK9TNF5u
-	NtqkynsT42/z/YWegbfZo8fl6dS3clrLbFZkvkuJlOoDxYZG46v5JCwWHCEbWA==
-From: Diederik de Haas <didi.debian@cknow.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Dragan Simic <dsimic@manjaro.org>,
-	Peter Robinson <pbrobinson@gmail.com>,
-	Johan Jonker <jbx6244@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Diederik de Haas <didi.debian@cknow.org>
-Subject: [PATCH] arm64: dts: rockchip: Add rtc0 alias for NanoPi R5S + R5C
-Date: Sun, 13 Jul 2025 18:16:36 +0200
-Message-ID: <20250713161723.270963-1-didi.debian@cknow.org>
+	s=arc-20240116; t=1752423618; c=relaxed/simple;
+	bh=LpZKAXf6O7X0TWxog3n0y857Mu44czoqsub047lX3CI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GZ8ERwWe/6MCGiHzxPRJjYuBDEo6cC29DbYDmtuuIJipbWwQL79qWkgPJO7i402jBsKvOZgozoq9mr87g6qeuCKtEljp1H5Yeys0weZtIhCra0B4lYKtpN3C0XFhCaLItJmPqE+I5a0D1RU1Koyf6hrX9Z04gZJZVPTQyaB3Ey8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDH6iUJa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ED7BC4CEE3;
+	Sun, 13 Jul 2025 16:20:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752423617;
+	bh=LpZKAXf6O7X0TWxog3n0y857Mu44czoqsub047lX3CI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LDH6iUJajU74v1USk6bK6beSAsFS1v9DaYI3N+8qMV4KMLzVU8BsDUuFqVdvBTgNh
+	 O1OvZmE1+36legPX9n6PzC7BaORxcMBf9tvlZkc1VD0ArPwYV+MYF1K4ixVy/sozq/
+	 3UhfDQDBlg7JhWAi2PvAvGtiLl/1lum0Ih0aPyY5wfcSpPWY9/6rZnTwgk1uQ9ULb9
+	 yv1owXUeG+nywZO6iscH/kdMg2nUcLXYXnnD3cLmrqx3nsURnl4V5Bch1CPkteVcVW
+	 mIgh+KNzVy2gQsho7oFAC1ksWgoTHmoRTQoiGwfo+n3vzW/03XVjwiFiQ7yolcl3gU
+	 h1a7NGrNiuvzw==
+Date: Sun, 13 Jul 2025 17:20:10 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Waqar Hameed <waqar.hameed@axis.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, <kernel@axis.com>,
+ <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>
+Subject: Re: [PATCH v3 3/3] iio: Add driver for Nicera D3-323-AA PIR sensor
+Message-ID: <20250713171925.6a563020@jic23-huawei>
+In-Reply-To: <pnd7c0ks81a.fsf@axis.com>
+References: <cover.1751636734.git.waqar.hameed@axis.com>
+	<29f84da1431f4a3f17fdeef27297a4ab14455404.1751636734.git.waqar.hameed@axis.com>
+	<20250706121117.75665bb0@jic23-huawei>
+	<pnd7c0ks81a.fsf@axis.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The RTC_HCTOSYS_DEVICE module defaults to rtc0 and should (highly)
-preferable be assigned to a battery backed RTC module as it is used to
-(re)initialize the system clock.
+On Mon, 7 Jul 2025 10:46:09 +0200
+Waqar Hameed <waqar.hameed@axis.com> wrote:
 
-The R5S and R5C have a connector for a RTC battery which is used by
-HYM8563 RTC. Both devices also have another RTC from the rk809 PMIC.
-To make sure the HYM8563 is always assigned rtc0, add an alias for it.
+> On Sun, Jul 06, 2025 at 12:11 +0100 Jonathan Cameron <jic23@kernel.org> wrote:
+> 
+> [...]
+> 
+> > One suggestion inline on providing more information on the 'why' behind
+> > the regulator handling.
+> >
+> > I want to leave this on list anyway to give more time for other reviews,
+> > but if nothing else comes up and you are happy with my description I can
+> > tweak this whilst applying.  
+> 
+> Sure, we can let it breathe for a bit. I'm fine with you editing it
+> while applying it (maybe also the minor format comment in the
+> dt-bindings patch then?). Either way, if there is anything else you want
+> me to do do, just tell! Thanks again Jonathan!
+> 
+I decided to be lazy and only tidied up the comment. The slightly odd formatting
+in the dt binding can stay.
 
-Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
----
- arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Applied to the togreg branch of iio.git and pushed out as testing for 0-day
+to look at them.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtsi b/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtsi
-index a28b4af10d13..f4d042bdd328 100644
---- a/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtsi
-@@ -18,6 +18,7 @@ / {
- 	aliases {
- 		mmc0 = &sdmmc0;
- 		mmc1 = &sdhci;
-+		rtc0 = &hym8563;
- 	};
- 
- 	chosen: chosen {
--- 
-2.50.0
+J
+> >
+> > Jonathan
+> >  
+> >> ---
+> >>  drivers/iio/proximity/Kconfig   |   9 +
+> >>  drivers/iio/proximity/Makefile  |   1 +
+> >>  drivers/iio/proximity/d3323aa.c | 814 ++++++++++++++++++++++++++++++++
+> >>  3 files changed, 824 insertions(+)
+> >>  create mode 100644 drivers/iio/proximity/d3323aa.c
+> >> 
+> >> diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
+> >> index a562a78b7d0d..6070974c2c85 100644
+> >> --- a/drivers/iio/proximity/Kconfig
+> >> +++ b/drivers/iio/proximity/Kconfig
+> >> @@ -32,6 +32,15 @@ config CROS_EC_MKBP_PROXIMITY
+> >>  	  To compile this driver as a module, choose M here: the
+> >>  	  module will be called cros_ec_mkbp_proximity.
+> >>  
+> >> +config D3323AA
+> >> +	tristate "Nicera (Nippon Ceramic Co.) D3-323-AA PIR sensor"
+> >> +	depends on GPIOLIB
+> >> +	help
+> >> +	  Say Y here to build a driver for the Nicera D3-323-AA PIR sensor.
+> >> +
+> >> +	  To compile this driver as a module, choose M here: the module will be
+> >> +	  called d3323aa.
+> >> +
+> >>  config HX9023S
+> >>  	tristate "TYHX HX9023S SAR sensor"
+> >>  	select IIO_BUFFER
+> >> diff --git a/drivers/iio/proximity/Makefile b/drivers/iio/proximity/Makefile
+> >> index c5e76995764a..152034d38c49 100644
+> >> --- a/drivers/iio/proximity/Makefile
+> >> +++ b/drivers/iio/proximity/Makefile
+> >> @@ -6,6 +6,7 @@
+> >>  # When adding new entries keep the list in alphabetical order
+> >>  obj-$(CONFIG_AS3935)		+= as3935.o
+> >>  obj-$(CONFIG_CROS_EC_MKBP_PROXIMITY) += cros_ec_mkbp_proximity.o
+> >> +obj-$(CONFIG_D3323AA)		+= d3323aa.o
+> >>  obj-$(CONFIG_HX9023S)		+= hx9023s.o
+> >>  obj-$(CONFIG_IRSD200)		+= irsd200.o
+> >>  obj-$(CONFIG_ISL29501)		+= isl29501.o
+> >> diff --git a/drivers/iio/proximity/d3323aa.c b/drivers/iio/proximity/d3323aa.c
+> >> new file mode 100644
+> >> index 000000000000..b1bc3204c0c0
+> >> --- /dev/null
+> >> +++ b/drivers/iio/proximity/d3323aa.c
+> >> @@ -0,0 +1,814 @@  
+> >
+> >  
+> >> +static void d3323aa_disable_regulator(void *indata)
+> >> +{
+> >> +	struct d3323aa_data *data = indata;
+> >> +	int ret;
+> >> +
+> >> +	/*
+> >> +	 * During probe() the regulator may be disabled. It is enabled during
+> >> +	 * device setup (in d3323aa_reset(), where it is also briefly disabled).
+> >> +	 * The check is therefore needed in order to have balanced
+> >> +	 * regulator_enable/disable() calls.
+> >> +	 */
+> >> +	if (!regulator_is_enabled(data->regulator_vdd))
+> >> +		return;
+> >> +
+> >> +	ret = regulator_disable(data->regulator_vdd);
+> >> +	if (ret)
+> >> +		dev_err(data->dev, "Could not disable regulator (%d)\n", ret);
+> >> +}
+> >> +
+> >> +static int d3323aa_probe(struct platform_device *pdev)
+> >> +{
+> >> +	struct device *dev = &pdev->dev;
+> >> +	struct d3323aa_data *data;
+> >> +	struct iio_dev *indio_dev;
+> >> +	int ret;
+> >> +
+> >> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+> >> +	if (!indio_dev)
+> >> +		return dev_err_probe(dev, -ENOMEM,
+> >> +				     "Could not allocate iio device\n");
+> >> +
+> >> +	data = iio_priv(indio_dev);
+> >> +	data->dev = dev;
+> >> +
+> >> +	init_completion(&data->reset_completion);
+> >> +
+> >> +	ret = devm_mutex_init(dev, &data->statevar_lock);
+> >> +	if (ret)
+> >> +		return dev_err_probe(dev, ret, "Could not initialize mutex\n");
+> >> +
+> >> +	data->regulator_vdd = devm_regulator_get_exclusive(dev, "vdd");
+> >> +	if (IS_ERR(data->regulator_vdd))
+> >> +		return dev_err_probe(dev, PTR_ERR(data->regulator_vdd),
+> >> +				     "Could not get regulator\n");
+> >> +
+> >> +	/*
+> >> +	 * The regulator will be enabled during the device setup below (in
+> >> +	 * d3323aa_reset()). Note that d3323aa_disable_regulator() also checks
+> >> +	 * for the regulator state.  
+> >
+> > This comment doesn't explain why you do this here as opposed to after
+> > reset.  Key is that there are complex paths in which the regulator is disabled
+> > that are unrelated to probe()/remove()  Talk about those rather than why
+> > this 'works'.  It's the why that matters in a comment more than the how.
+> >
+> > If nothing else comes up in review, I can chagne this to something like
+> >
+> > 	* The regulator will be enabled for the first time during the
+> > 	* device setup below (in d3323aa_reset()). However parameter changes
+> > 	* from userspace can require a temporary disable of the regulator.
+> > 	* To avoid complex handling of state, use a callback that will disable
+> > 	* the regulator if it happens to be enabled at time of devm unwind.
+> > 	*/  
+> 
+> Ah, I see that I misunderstood you the first time! The comment looks
+> fine to me.
+> 
+> >  
+> >> +	ret = d3323aa_setup(indio_dev, D3323AA_LP_FILTER_FREQ_DEFAULT_IDX,
+> >> +			    D3323AA_FILTER_GAIN_DEFAULT_IDX,
+> >> +			    D3323AA_THRESH_DEFAULT_VAL);
+> >> +	if (ret)
+> >> +		return ret;  
 
 
