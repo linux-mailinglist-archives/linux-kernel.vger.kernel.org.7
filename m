@@ -1,198 +1,203 @@
-Return-Path: <linux-kernel+bounces-728987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAAE1B03037
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:43:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0E65B03036
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B11A01A61546
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 08:42:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D715C3BC56C
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 08:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5839922F757;
-	Sun, 13 Jul 2025 08:39:27 +0000 (UTC)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42855238C1B;
+	Sun, 13 Jul 2025 08:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ko5CdZTX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBA3226D00;
-	Sun, 13 Jul 2025 08:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3CD236A9F;
+	Sun, 13 Jul 2025 08:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752395966; cv=none; b=ewQsJcd81JOoBKP7W43sIaNp2ctpqdBRT2/Ss5ySG19XtAsE0InAhFsDS+fYvNmqQ5LOJ7B9bbBe2E9s9BbMY3IIWbH4QtWW1A7BCDnp7uBQluhfKrWB78mpsiLuWY+2D78oHK3hpFL7ElwxyZiAOQQsIzPlOoGVRhI09THr3Kk=
+	t=1752396008; cv=none; b=DBqq6+WeQNabEF5TjUQgMaticf3T8RtpijTIB1QIbCsfO6Vb++OIaD2qlsLmHbnKvgI9M+GYsnDXE6zLvO5SPHEQIfrJ7mJeNypjupIQuqm628BT80S4gjU4M5t/2RTgbDQThzs/1UTfno1Lce1x9oUfX7iR2N8BWvv139R+tEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752395966; c=relaxed/simple;
-	bh=IDU5g2bdtAMUN0f0RXOKiJM3pIAbXry4sN/fjHfr62o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tnLx+ERARd92e3WFa0jtge34dVC+WmkRYORHRt/PEe2uc5ILDCRGXS/lpxk/EFfPAnmZjzYmTdZ5hdeQymk7kScfbegsdN3D2PXT254dJrjBQ8PnAv3MAV4FMaOpTpFlxiDoh/QpduUM2LK5jkkDsZmcK8FX8JONU64PDw74onU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae360b6249fso582962066b.1;
-        Sun, 13 Jul 2025 01:39:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752395963; x=1753000763;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FeyMo4Jt7UfkzhL/r2KfmA979+uFc7fR7QoglkpcpSU=;
-        b=csBTriSSSvQmOrCnny/Lph4pxRSSYsWY+Gnh/DxYxwIE+YkFMs5+aGclF/jB22KM9b
-         RRLzByGy5pz7n62AgFo+wtxSwktrO75cbTJyw902mtwKQnX/WTx3IpeoxOzwMymnAOHD
-         N/rLlmXUjzD4uK8IgTl5idcMoJkuVB0XMJoye1duDbDdN0aMgVlPXPMAKQqOpouOs1MB
-         KKA45WCuSPsUedAF7Ciht+Hp5uMLNb871jnpWxbSW05Ovi/LxNNU0ahDagYGXkS0ttB5
-         YuaNSv7+kD+MvQLx7qfHpEQ1PmCJp+8TeTjulxd+URWT4HEZ1XySx/Dvyyamxixw/U8T
-         n4UA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaBSs95ck7Jl00cT50eB+NfIjJS29n+v8ZyRZDbq1kPMhUUIQgn248nBEQqQfBILocOITwbzJemTrR5RI=@vger.kernel.org, AJvYcCWeQxn+pNcu+MBqHlq4qVBxkhAjckBh9nHFmQ+JJP+a8M4nosDjWYcbSuglYc1/CvuM3qeDQRGqhxBruIKv@vger.kernel.org, AJvYcCXrw8EARcn6g/BaiiIfnS2UoJFlHSJ8oeLc96W0bEvz8C4glEmrAxWOLyzpZzUH2Nmfpw44Dp2eL8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9jtuw4U+8/yXwV7IG3q1Cn0k1bufQFEffntv+0F4AvaxrZTAE
-	7OgXOaPiyQMpz+IuyTHYN5hMvtLNFzvD54uBn/fNma16Frqr8Ivq4YNXgXNy3g4o
-X-Gm-Gg: ASbGnct/CJQ7NJlvQpUyGqseCydVCE/LOdo2qfSv/lZme/GGMwlyk6J5H/sqWieXjx3
-	Bt5u4i5bVmH3V0sdLZawtZ13uJT53TCcQJr1QBogneIF7Z6gC9JegNJ8m8Pkv/UympjWwEMCXNq
-	i0avKTwcw8BTWTN/fd1WfcS+5eiE/rj5qyOK1KlLt2Tdrruq7xZP6RsQ4DRT9Wi2VNSn5x60Ap9
-	iXbVU9aPat4BW0b4pev58unjvqQNkaKQFOpl3mNfL1Vzk9mHOyOFlqSVZ+bqDV3Rp7x34VOHmJX
-	iw7U80RNr5M2q1h7UxlXsQR0rWD7AWd24PpjWgzGSQcK21s/bs07enHVljeS1xtJD1DzQGTFgRC
-	n504AOq83Fn0hahOivBwSwr1dmsF+PXdXzUh/qOigZHvKchWasx7ywCCV
-X-Google-Smtp-Source: AGHT+IHxIHGjEkE5SiJCVQleLSfE7Ew8CiAdy3INMXoGnJecgmb8mpelQgFGDmsS+2hlzLznSM+Hlw==
-X-Received: by 2002:a17:907:803:b0:add:ede0:b9c4 with SMTP id a640c23a62f3a-ae6fc0c3696mr934268766b.42.1752395963198;
-        Sun, 13 Jul 2025 01:39:23 -0700 (PDT)
-Received: from [10.42.0.1] (cst-prg-46-162.cust.vodafone.cz. [46.135.46.162])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7e90a42sm610876266b.27.2025.07.13.01.39.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jul 2025 01:39:22 -0700 (PDT)
-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Sun, 13 Jul 2025 10:39:00 +0200
-Subject: [PATCH v8 10/10] arm64: dts: rockchip: enable NPU on ROCK 5B
+	s=arc-20240116; t=1752396008; c=relaxed/simple;
+	bh=csqe1O+tkd6nKMHUq6yiCp8apa3jwJYHrPEnFz22I4E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CkoelRn2QRB2mZl/aeehXfFIRbDm86zSJyr77aNck3mE1ENjFQVsS6Wgzp0Uj7o/Gk2K45s1ZA9hU9m3fL2QLEBY7bEjXYa60jnt8OytvrSkn5hpMX+2XxQpWAKrj0HLeJrJqiCfangjdbebM8a17x7t4iqtz/a1zjJgOsPv/Q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ko5CdZTX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 665EFC4CEF5;
+	Sun, 13 Jul 2025 08:40:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752396008;
+	bh=csqe1O+tkd6nKMHUq6yiCp8apa3jwJYHrPEnFz22I4E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ko5CdZTXIbv+CsbnsoUh31B8n8F/q2qNT+hJpHAaFfITYqM2ahTchoIhU2/xYtZB6
+	 xz/okQpWWId41TYHyNe+ubd/9iRBMjZEj7a3tIW+MVTSpD//a8dMlVsotvVG4BsEPT
+	 5B4JbwSP/8N+BNyZpL26fhWnDw+pSTRtP4npDkhuFQWvbC4sKS5Ogdo47epQC6jp1z
+	 cJLxQMqAAgTeqCXn1sgPsvkS7mwpA9gVlckajOkmaL590GKd2fJIp2F0jzwvlrUcfE
+	 h9anCEThsNqRcVcgi7JrSFmWYrUQf9lpZJHK9OLpZq6B5/55zYP0e/iwL45TUuXD7d
+	 Vb9rK+6YaVdXQ==
+Message-ID: <3bec28b9-5ac6-4d93-887d-481495d6cf95@kernel.org>
+Date: Sun, 13 Jul 2025 10:40:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] dt-bindings: mmc: add brcmstb share register and
+ hwlocks reference
+To: Kamal Dasu <kamal.dasu@broadcom.com>, andersson@kernel.org,
+ baolin.wang@linux.alibaba.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, florian.fainelli@broadcom.com, ulf.hansson@linaro.org,
+ adrian.hunter@intel.com
+Cc: bcm-kernel-feedback-list@broadcom.com, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+ Kamal Dasu <kdasu@broadcom.com>
+References: <20250711154221.928164-1-kamal.dasu@broadcom.com>
+ <20250711154221.928164-5-kamal.dasu@broadcom.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250711154221.928164-5-kamal.dasu@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250713-6-10-rocket-v8-10-64fa3115e910@tomeuvizoso.net>
-References: <20250713-6-10-rocket-v8-0-64fa3115e910@tomeuvizoso.net>
-In-Reply-To: <20250713-6-10-rocket-v8-0-64fa3115e910@tomeuvizoso.net>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Oded Gabbay <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
- Kever Yang <kever.yang@rock-chips.com>, Robin Murphy <robin.murphy@arm.com>, 
- Daniel Stone <daniel@fooishbar.org>, Da Xue <da@libre.computer>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Jeff Hugo <jeff.hugo@oss.qualcomm.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 
- Tomeu Vizoso <tomeu@tomeuvizoso.net>
-X-Mailer: b4 0.14.2
 
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+On 11/07/2025 17:42, Kamal Dasu wrote:
+> From: Kamal Dasu <kdasu@broadcom.com>
+> 
+> Adding optional controller share registers and hwspinlock reference fields
+> to be used by sdhci-brcmstb driver.
+> 
+> Signed-off-by: Kamal Dasu <kamal.dasu@broadcom.com>
+> ---
+>  .../bindings/mmc/brcm,sdhci-brcmstb.yaml      | 29 +++++++++++++++++--
+>  1 file changed, 27 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml b/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
+> index eee6be7a7867..fe9be7a7eca5 100644
+> --- a/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
+> @@ -27,15 +27,20 @@ properties:
+>            - const: brcm,sdhci-brcmstb
+>  
+>    reg:
+> -    maxItems: 2
+> +    minItems: 2
+> +    maxItems: 4
+>  
+>    reg-names:
+> +    minItems: 2
+>      items:
+>        - const: host
+>        - const: cfg
+> +      - const: share       # Optional reg
+> +      - const: flshr_ipis0 # Optional reg
 
-The NPU on the ROCK5B uses the same regulator for both the sram-supply
-and the npu's supply. Add this regulator, and enable all the NPU bits.
-Also add the regulator as a domain-supply to the pd_npu power domain.
+Drop comments. Schema says these are optional, so no need to point obvious.
 
-v8:
-- Remove notion of top core (Robin Murphy)
+>  
+>    interrupts:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 2
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
----
- arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi | 57 ++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+You need to list items with minItem: 1.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi
-index 6052787d2560978d2bae6cfbeea5fc1d419d583a..06f73f16901026485c02cecf9176d0d7dc7a021a 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi
-@@ -309,6 +309,29 @@ regulator-state-mem {
- 	};
- };
- 
-+&i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1m2_xfer>;
-+	status = "okay";
-+
-+	vdd_npu_s0: regulator@42 {
-+		compatible = "rockchip,rk8602";
-+		reg = <0x42>;
-+		fcs,suspend-voltage-selector = <1>;
-+		regulator-name = "vdd_npu_s0";
-+		regulator-boot-on;
-+		regulator-enable-ramp-delay = <500>;
-+		regulator-min-microvolt = <550000>;
-+		regulator-max-microvolt = <950000>;
-+		regulator-ramp-delay = <2300>;
-+		vin-supply = <&vcc5v0_sys>;
-+
-+		regulator-state-mem {
-+			regulator-off-in-suspend;
-+		 };
-+	};
-+};
-+
- &i2c6 {
- 	status = "okay";
- 
-@@ -433,6 +456,10 @@ &pd_gpu {
- 	domain-supply = <&vdd_gpu_s0>;
- };
- 
-+&pd_npu {
-+	domain-supply = <&vdd_npu_s0>;
-+};
-+
- &pinctrl {
- 	hdmirx {
- 		hdmirx_hpd: hdmirx-5v-detection {
-@@ -487,6 +514,36 @@ &pwm1 {
- 	status = "okay";
- };
- 
-+&rknn_core_0 {
-+	npu-supply = <&vdd_npu_s0>;
-+	sram-supply = <&vdd_npu_s0>;
-+	status = "okay";
-+};
-+
-+&rknn_core_1 {
-+	npu-supply = <&vdd_npu_s0>;
-+	sram-supply = <&vdd_npu_s0>;
-+	status = "okay";
-+};
-+
-+&rknn_core_2 {
-+	npu-supply = <&vdd_npu_s0>;
-+	sram-supply = <&vdd_npu_s0>;
-+	status = "okay";
-+};
-+
-+&rknn_mmu_top {
-+	status = "okay";
-+};
-+
-+&rknn_mmu_1 {
-+	status = "okay";
-+};
-+
-+&rknn_mmu_2 {
-+	status = "okay";
-+};
-+
- &saradc {
- 	vref-supply = <&avcc_1v8_s0>;
- 	status = "okay";
+Why all devices now got new reg and interrupts? What changed in EXISTING
+hardware? All this has to be explained in the commit msg. If not all
+devices got it, then you miss constraints.
 
--- 
-2.50.0
+>  
+>    clocks:
+>      minItems: 1
+> @@ -60,6 +65,9 @@ properties:
+>      type: boolean
+>      description: Specifies that controller should use auto CMD12
+>  
+> +  hwlocks:
+> +    maxItems: 1
+> +
+>  allOf:
+>    - $ref: mmc-controller.yaml#
+>    - if:
+> @@ -115,3 +123,20 @@ examples:
+>        clocks = <&scmi_clk 245>;
+>        clock-names = "sw_sdio";
+>      };
+> +  - |
+> +    mmc@84b1000 {
+> +      mmc-ddr-1_8v;
+> +      mmc-hs200-1_8v;
+> +      mmc-hs400-1_8v;
+> +      no-sd;
+> +      no-sdio;
+> +      non-removable;
+> +      bus-width = <0x8>;
+> +      compatible = "brcm,bcm74165b0-sdhci", "brcm,sdhci-brcmstb";
+> +      reg = <0x84b1000 0x260>, <0x84b1300 0x200>,  <0x84b1600 0x10>, <0x84a5404 0x4>;
+> +      reg-names = "host", "cfg", "share", "flshr_ipis0";
+> +      hwlocks = <&hw_lock 0x0>;
+> +      interrupts = <0x1 0x0 0x1f 0x4 0x1b 0x11>;
 
+Undecipherable.
+
+> +      clocks = <&scmi_clk 245>;
+> +      clock-names = "sw_sdio";
+
+Totally random order of properties. Please align it closely with DTS
+coding style.
+
+> +    };
+
+
+Best regards,
+Krzysztof
 
