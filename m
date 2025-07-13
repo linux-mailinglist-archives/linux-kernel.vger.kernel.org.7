@@ -1,87 +1,82 @@
-Return-Path: <linux-kernel+bounces-729181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D97F2B032DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 22:17:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 241D3B032E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 22:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24DF43B0A54
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 20:16:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EE6D1895A04
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 20:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F581F9F70;
-	Sun, 13 Jul 2025 20:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777932874E1;
+	Sun, 13 Jul 2025 20:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="h6bKbWXn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2tX286yD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kW0No6dM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60D151C5A
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 20:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6AF51C5A;
+	Sun, 13 Jul 2025 20:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752437815; cv=none; b=BLert3pm98plMLGs+LqD0EuhdyD00Tku6XGyChbqq0JyTFhabjgK/M+Cx89Se6fgVd6k2M4wMXkbzOY/bL4ibT/rBjh/JZtTSqwsCgoio5OlP8+0fJ8LnaJt8RUdrTeOkBHbAs1N3r9biYxymr8OspJMsPEkF9wi99Gwxlcxotc=
+	t=1752437896; cv=none; b=pYcYOgezu0YF/CRUwP1tHad4mqJrtED926KE1OU06WWI2XguZeu18qxHIXdh9HvM/pU0j2Fps/HL9iZ+k0CUxnKffRa1YXEQP9ZacYk2psQ6rl3XvU5KklTlZ5ftih4BQJ+JeXHWqsD6280x/pStEDp1xilHEW4gSzl8ZqoVl1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752437815; c=relaxed/simple;
-	bh=4Ate6Iaqw0pAtrScpzyIp0y2DFqThjFgxFwN3l+JIYI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WRfsTF4I7V7pjVnRUiRPOmkSdkIXME9Nlh9HBp+Fi7WnhShD0XfObHjPqKKqtQxvyujYcezSQ3DfqXnn2Qn4AeE/3KjTsu8WMUpR71kUGJ7h32oy0ErpRK0HZT1119vJjQVZS22H0xbJnUp+lnObxgLEFycNp84WiWCpRFo30A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=h6bKbWXn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2tX286yD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752437806;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4Ate6Iaqw0pAtrScpzyIp0y2DFqThjFgxFwN3l+JIYI=;
-	b=h6bKbWXnyr77glvl9ECtESpg6QcrE4KJ5GkIv1dSRedZ68Za+RK5nnuSPnyIhW53OusWVx
-	UNl3O5Q3NOurKW4OSJRPieriMFOiDgC0fPBTgoRjDQQIdDUqCpLOvbuvOp0q0AYvGh8Onw
-	FWQ8O5wOjB743j0g6fO+FRL5aqiRcPlbDG4O4glP+6vhekAo4KSX+MiDmY10eAYxxY3zdG
-	8uMPHr4s8vECIJg3th46LolYtKX5SmHtpwWnWZNA3+joJNd+ybsIJxhffpeK955j9u+thD
-	bXhHI5Gq0Obn5hBMEJjmNoWXCN7FmC7/pSOb0B4Bn/JV9AC/pU+l6VBITL/1UA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752437806;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4Ate6Iaqw0pAtrScpzyIp0y2DFqThjFgxFwN3l+JIYI=;
-	b=2tX286yDJw+xbE+CcML+gTJIlbG6qab9hkNcXmDHNmdKL8n3uYYEEWMW1iNxwlUg++/kNO
-	dcv3xuiokrak8QAg==
-To: Marcos Paulo de Souza <mpdesouza@suse.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Petr Mladek <pmladek@suse.com>, Steven
- Rostedt <rostedt@goodmis.org>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Jason Wessel <jason.wessel@windriver.com>,
- Daniel Thompson <danielt@kernel.org>, Douglas Anderson
- <dianders@chromium.org>
-Cc: linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net,
- Marcos Paulo de Souza <mpdesouza@suse.com>
-Subject: Re: [PATCH 1/2] printk: nbcon: Export console_is_usage and other
- nbcon symbols
-In-Reply-To: <20250713-nbcon-kgdboc-v1-1-51eccd9247a8@suse.com>
-References: <20250713-nbcon-kgdboc-v1-0-51eccd9247a8@suse.com>
- <20250713-nbcon-kgdboc-v1-1-51eccd9247a8@suse.com>
-Date: Sun, 13 Jul 2025 22:22:45 +0206
-Message-ID: <84o6tnx2vm.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1752437896; c=relaxed/simple;
+	bh=z7p4KwkBk4NY89HWdCsRxmsgX8iUNRQ1eqdg5NIgzk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vwv4amWT9sqbTZ6q73mUmc1FpqXeTxHwAG/8Po+sWSI356dgNuVx9opX1c7VJ+9M1wBokRjOLbWEJHu+Ian0Ai0SaZEq1nfreunRNpHVeYYQnYsJJ8mDYs+BcNUdP6Vwio8EgFnDmbzBdMKmS1xLAO0G2Zepxtu84hgFr1hZAdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kW0No6dM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4223CC4CEE3;
+	Sun, 13 Jul 2025 20:18:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752437896;
+	bh=z7p4KwkBk4NY89HWdCsRxmsgX8iUNRQ1eqdg5NIgzk8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kW0No6dMzF8fTDn+PoEaSz/eEoJWAW1AhAszDD4U1QtpkKEp+P7d5p/XH5nWxsTtc
+	 mHnW4oHCuPwQ0iAA9JXP+rPAzgLnPY9ctueiezhir5lqNCxJyZ9GmBTf8l+QYzsjbc
+	 AwC3ITLEg/gF2aje74Fe5IWQhX/7eaCe6hdYJprlU/HT8T9Mb0BuI/4CaidaRvBgp7
+	 93Ntibd/e1AbuLB+FcizJHOBFEXE5qQWTpcnO1zfmO8oC73UXj+fA7rmhcPMJ5JG0M
+	 hWrfREJvRopNEOVItshen3xODE9HCE9MEhOL7AZVcG2SARcRZ3t2RZx9gZbzXxVN9P
+	 cxKlErVMYwjbw==
+Date: Sun, 13 Jul 2025 21:18:11 +0100
+From: Will Deacon <will@kernel.org>
+To: Lei Yang <leiyang@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Keir Fraser <keirf@google.com>,
+	Steven Moreland <smoreland@google.com>,
+	Frederick Mayle <fmayle@google.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	netdev@vger.kernel.org, virtualization@lists.linux.dev
+Subject: Re: [PATCH v2 0/8] vsock/virtio: SKB allocation improvements
+Message-ID: <aHQUg5-lIXq3jAG5@willie-the-truck>
+References: <20250701164507.14883-1-will@kernel.org>
+ <CAPpAL=zBxWBTQ8s-DGG-NywoE2+rDJQ4=9XGGn-YZSFH3R_mZg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPpAL=zBxWBTQ8s-DGG-NywoE2+rDJQ4=9XGGn-YZSFH3R_mZg@mail.gmail.com>
 
-On 2025-07-13, Marcos Paulo de Souza <mpdesouza@suse.com> wrote:
-> Function nbcon_context_try_acquire, nbcon_context_relase and
-> console_is_usable are going to be used in the next patch.
+On Fri, Jul 04, 2025 at 05:50:16PM +0800, Lei Yang wrote:
+> I tested this series of patches with virtio-net regression tests,
+> everything works fine.
+> 
+> Tested-by: Lei Yang <leiyang@redhat.com>
 
-The nbcon_context is supposed is not meant to be exposed like this. I
-would prefer creating a proper interface rather than having kdb code
-directly modifying internal structures. I will provide more details in
-the response to the 2nd patch of this series.
+Thanks, but this series doesn't touch virtio-net: it's purely about
+the virtio transport for vsock. Do the virtio-net regression tests
+exercise that?
 
-John Ogness
+Cheers,
+
+Will
 
