@@ -1,213 +1,240 @@
-Return-Path: <linux-kernel+bounces-729101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B26F6B031BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 17:25:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB673B031C1
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 17:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A00DD1891ACB
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 15:26:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 286E17AA0A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 15:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDC9277CBC;
-	Sun, 13 Jul 2025 15:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE62527C162;
+	Sun, 13 Jul 2025 15:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="oAq5JOJN"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aoI1ZltM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E95E27933A
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 15:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2091627A47C;
+	Sun, 13 Jul 2025 15:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752420342; cv=none; b=J+3xCdkG5IUJJdYt3oHpxxP565l1cUHV04CYHvVkpbLl90TZzcJqSNbWDtGPldDozWKEhd0YkBlvBowKNXu+uKSy+KvtZoB2NHmK4pcPQwsrQieTYnOKrUhC07Pw1WCoAD7vcXJfm1uot1jgsAsSOtOzrV8rjuzG4s3URcLDGFA=
+	t=1752420706; cv=none; b=G0q4mK6p67gKTVBTn0xNc4K7wuvkWq6DwOuZ3edctz1syY1I6hEyYUF88OboFUg+bQkGL2XXqnin2uj/oYMSqD7TEUoRZ0CxUTwXUbzwKY5+IaOA12cBQF263bPr8qycFpypgzs8pu7boU0eo3HIke/fhcR0U+UEZVpdnAQf/oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752420342; c=relaxed/simple;
-	bh=KJK/eU3vWyI0nfIUbbfl4FnVoZQdOD8YNkbUY5g2VzA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dCVHqeNqlROo9auwCCTPN1JQPMQsPj4oKdxSLRe6iL8ZjMWWMZ05AZSVNxpu0wotcw70TrIeFT2CogAWpStng7f2dZLAnTAAi7+jgnHzdnztJXqa8M7hKSvURZVQhByh2N9sSHNDMAW20GrsDC/dgzeNTNfARd2r8FpLKWHuNHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=oAq5JOJN; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=hrUEXgHrTFqR2/M0VCKko4fRT0H3nYWu5evkl7GPZJU=; b=oAq5JOJNqcvnZEQO
-	CRHFT1z/n9pD8hLRqH/Ta5/V0QAacxQvRxKRewAP4hdLxdCBj2/CTD2NbweedqPHpAlnMF/7e4xSh
-	B2jeYar1pgD265IjjJAd1j4mHR0qJj9I08A4rSG4ayD6fHirf5jgInC0KVeek6hhlEKN4rBQr9rpS
-	1S78vHSVHxTT0UZTrsV4iGnEbmMGuIeQ2y3FyQsF0f1fq9k8M5WOYY2oj+rAwjCGuOWBub8lc51zh
-	Qs41+e00BOVXUEEOPeR2dCxBvh3FiAP11OyjPJNa4zn404eG8FJYN6q0WwqD1Utv7MMBIgsNVctLh
-	BbaqviksuN3tHM9SiA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1uaya4-00FnPv-19;
-	Sun, 13 Jul 2025 15:25:32 +0000
-From: linux@treblig.org
-To: lucas.demarchi@intel.com,
-	thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com
-Cc: airlied@gmail.com,
-	simona@ffwll.ch,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] drm/xe: Remove unused functions
-Date: Sun, 13 Jul 2025 16:25:31 +0100
-Message-ID: <20250713152531.219326-1-linux@treblig.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1752420706; c=relaxed/simple;
+	bh=YH6ovRkqwsfXl0kwUECrXekJQhmSpXS0WQwetH95HHA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=JKevyN4kAheyScuO1deYvyf0E42ps6aDxyKz7Zl7Bzhny1/vVQCchwqem/CxCbQ6NIjuKTpCTV4Rlp1GdDPIhPcA9DWWC2FgcY66QRCWSPIDP1yCbzqe9hw1ReFXTgGkxJdkGEP2aN/4ruLjkgBTW7vx5tdve1mdiMk3arjkzTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aoI1ZltM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DD12C4CEE3;
+	Sun, 13 Jul 2025 15:31:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752420705;
+	bh=YH6ovRkqwsfXl0kwUECrXekJQhmSpXS0WQwetH95HHA=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=aoI1ZltMmClZwfTLoH0LUe4XLHFK46Ny/UyUXkP6rGTbjEZC4WLL3bzBPJg0Luiys
+	 wYdVSADtOmxH5vw7BuOkfEH0miLs++D47wiaUz0npgC14k6bGpt4lQuuugI4DT2YlY
+	 L+uxXnJChipHuIbOX2yfrER6VtVFxbjZgqRZ7NOp4LEBWVbCbpIlOBESAhdBNPjr6c
+	 NLgum5A6Tw1dFr+imXln9dhdcemTC1GRFG8ofIa6KRpip7z4bT/B/a9l15wzBRdMKQ
+	 gJWT3tVukU+eeC2ojMHpaieKOWyVbupuVH0GfVvyVzecH4UlOvHujpJo5pVMUhHVWh
+	 QDX0C53pGSqrQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 13 Jul 2025 17:29:36 +0200
+Message-Id: <DBB18YX7MBDW.3C5Q5Y1O28NFL@kernel.org>
+Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn Helgaas"
+ <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
+ handlers
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Danilo Krummrich" <dakr@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com> <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org> <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com> <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org> <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org> <DBAWQG1PX5TO.6I2ARFGLX88N@kernel.org> <DBAX59YKO0FV.ANLOWRHDDS92@kernel.org> <DBAXP68U809C.2G8DMB52M3UZ7@kernel.org>
+In-Reply-To: <DBAXP68U809C.2G8DMB52M3UZ7@kernel.org>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Sun Jul 13, 2025 at 2:42 PM CEST, Danilo Krummrich wrote:
+> On Sun Jul 13, 2025 at 2:16 PM CEST, Benno Lossin wrote:
+>> On Sun Jul 13, 2025 at 1:57 PM CEST, Danilo Krummrich wrote:
+>>> On Sun Jul 13, 2025 at 1:19 PM CEST, Benno Lossin wrote:
+>>>> On Sun Jul 13, 2025 at 12:24 PM CEST, Danilo Krummrich wrote:
+>>>>> On Sun Jul 13, 2025 at 1:32 AM CEST, Daniel Almeida wrote:
+>>>>>>
+>>>>>>
+>>>>>>> On 12 Jul 2025, at 18:24, Danilo Krummrich <dakr@kernel.org> wrote:
+>>>>>>>=20
+>>>>>>> On Thu Jul 3, 2025 at 9:30 PM CEST, Daniel Almeida wrote:
+>>>>>>>> +/// Callbacks for an IRQ handler.
+>>>>>>>> +pub trait Handler: Sync {
+>>>>>>>> +    /// The hard IRQ handler.
+>>>>>>>> +    ///
+>>>>>>>> +    /// This is executed in interrupt context, hence all correspo=
+nding
+>>>>>>>> +    /// limitations do apply.
+>>>>>>>> +    ///
+>>>>>>>> +    /// All work that does not necessarily need to be executed fr=
+om
+>>>>>>>> +    /// interrupt context, should be deferred to a threaded handl=
+er.
+>>>>>>>> +    /// See also [`ThreadedRegistration`].
+>>>>>>>> +    fn handle(&self) -> IrqReturn;
+>>>>>>>> +}
+>>>>>>>=20
+>>>>>>> One thing I forgot, the IRQ handlers should have a &Device<Bound> a=
+rgument,
+>>>>>>> i.e.:
+>>>>>>>=20
+>>>>>>> fn handle(&self, dev: &Device<Bound>) -> IrqReturn
+>>>>>>>=20
+>>>>>>> IRQ registrations naturally give us this guarantee, so we should ta=
+ke advantage
+>>>>>>> of that.
+>>>>>>>=20
+>>>>>>> - Danilo
+>>>>>>
+>>>>>> Hi Danilo,
+>>>>>>
+>>>>>> I do not immediately see a way to get a Device<Bound> from here:
+>>>>>>
+>>>>>> unsafe extern "C" fn handle_irq_callback<T: Handler>(_irq: i32, ptr:=
+ *mut c_void) -> c_uint {
+>>>>>>
+>>>>>> Refall that we've established `ptr` to be the address of the handler=
+. This
+>>>>>> came after some back and forth and after the extensive discussion th=
+at Benno
+>>>>>> and Boqun had w.r.t to pinning in request_irq().
+>>>>>
+>>>>> You can just wrap the Handler in a new type and store the pointer the=
+re:
+>>>>>
+>>>>> 	#[pin_data]
+>>>>> 	struct Wrapper {
+>>>>> 	   #[pin]
+>>>>> 	   handler: T,
+>>>>> 	   dev: NonNull<Device<Bound>>,
+>>>>> 	}
+>>>>>
+>>>>> And then pass a pointer to the Wrapper field to request_irq();
+>>>>> handle_irq_callback() can construct a &T and a &Device<Bound> from th=
+is.
+>>>>>
+>>>>> Note that storing a device pointer, without its own reference count, =
+is
+>>>>> perfectly fine, since inner (Devres<RegistrationInner>) already holds=
+ a
+>>>>> reference to the device and guarantees the bound scope for the handle=
+r
+>>>>> callbacks.
+>>>>
+>>>> Can't we just add an accessor function to `Devres`?
+>>>
+>>> 	#[pin_data]
+>>> 	pub struct Registration<T: Handler + 'static> {
+>>> 	    #[pin]
+>>> 	    inner: Devres<RegistrationInner>,
+>>> =09
+>>> 	    #[pin]
+>>> 	    handler: T,
+>>> =09
+>>> 	    /// Pinned because we need address stability so that we can pass a=
+ pointer
+>>> 	    /// to the callback.
+>>> 	    #[pin]
+>>> 	    _pin: PhantomPinned,
+>>> 	}
+>>>
+>>> Currently we pass the address of handler to request_irq(), so this does=
+n't help,
+>>> hence my proposal to replace the above T with Wrapper (actually Wrapper=
+<T>).
+>>
+>> You can just use `container_of!`?
+>
+> Sure, that's possible too.
+>
+>>>> Also `Devres` only stores `Device<Normal>`, not `Device<Bound>`...
+>>>
+>>> The Devres instance itself may out-live device unbind, but it ensures t=
+hat the
+>>> encapsulated data does not, hence it holds a reference count, i.e. ARef=
+<Device>.
+>>>
+>>> Device<Bound> or ARef<Device<Bound>> *never* exists, only &'a Device<Bo=
+und>
+>>> within a corresponding scope for which we can guarantee the device is b=
+ound.
+>>>
+>>> In the proposed wrapper we can store a NonNull<Device<Bound>> though, b=
+ecause we
+>>> can safely give out a &Device<Bound> in the IRQ's handle() callback. Th=
+is is
+>>> because:
+>>>
+>>>   (1) RegistrationInner is guarded by Devres and guarantees that free_i=
+rq() is
+>>>       completed *before* the device is unbound.
+>>
+>> How does it ensure that?
+>
+> RegistrationInner calls free_irq() in it's drop() method; Devres revokes =
+it on
+> device unbind.
 
-xe_bo_create_from_data() last use was removed in 2023 by
-commit 0e1a47fcabc8 ("drm/xe: Add a helper for DRM device-lifetime BO
-create")
+Makes sense, so we probably do need the unsafe typestate change
+function in this case.
 
-xe_rtp_match_first_gslice_fused_off() last use was removed in 2023 by
-commit 4e124151fcfc ("drm/xe/dg2: Drop pre-production workarounds")
+>>>
+>>>   (2) It is guaranteed that the device pointer is valid because (1) gua=
+rantees
+>>>       it's even bound and because Devres<RegistrationInner> itself has =
+a
+>>>       reference count.
+>>
+>> Yeah but I would find it much more natural (and also useful in other
+>> circumstances) if `Devres<T>` would give you access to `Device` (at
+>> least the `Normal` type state).
+>
+> If we use container_of!() instead or just pass the address of Self (i.e.
+> Registration) to request_irq() instead,
+>
+> 	pub fn device(&self) -> &Device
+>
+> is absolutely possible to add to Devres, of course.
+>
+>> Depending on how (1) is ensured, we might just need an unsafe function
+>> that turns `Device<Normal>` into `Device<Bound>`.
+>
+> `&Device<Normal>` in `&Device<Bound>`, yes. I have such a method locally
+> already (but haven't sent it yet), because that's going to be a use-case =
+for
+> other abstractions as well. One specific example is the PWM Chip abstract=
+ion
+> [1].
+>
+> [1] https://lore.kernel.org/lkml/20250710-rust-next-pwm-working-fan-for-s=
+ending-v11-3-93824a16f9ec@samsung.com/
 
-Remove them, and xe_dss_mask_empty whose last use was by
-xe_rtp_match_first_gslice_fused_off().
+I think this solution sounds much better than storing an additional
+`NonNull<Device<Bound>>`.
 
-(Xe has a bunch ofother symbols that have been added but not used,
-given how new it is, I've left those, as opposed to these that
-had the code that used them removed).
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- drivers/gpu/drm/xe/xe_bo.c          | 15 ---------------
- drivers/gpu/drm/xe/xe_bo.h          |  3 ---
- drivers/gpu/drm/xe/xe_gt_topology.c |  5 -----
- drivers/gpu/drm/xe/xe_gt_topology.h |  2 --
- drivers/gpu/drm/xe/xe_rtp.c         | 15 ---------------
- drivers/gpu/drm/xe/xe_rtp.h         | 11 -----------
- 6 files changed, 51 deletions(-)
-
-diff --git a/drivers/gpu/drm/xe/xe_bo.c b/drivers/gpu/drm/xe/xe_bo.c
-index 7aa2c17825da..6bd1287869b4 100644
---- a/drivers/gpu/drm/xe/xe_bo.c
-+++ b/drivers/gpu/drm/xe/xe_bo.c
-@@ -2156,21 +2156,6 @@ struct xe_bo *xe_bo_create_pin_map(struct xe_device *xe, struct xe_tile *tile,
- 	return xe_bo_create_pin_map_at(xe, tile, vm, size, ~0ull, type, flags);
- }
- 
--struct xe_bo *xe_bo_create_from_data(struct xe_device *xe, struct xe_tile *tile,
--				     const void *data, size_t size,
--				     enum ttm_bo_type type, u32 flags)
--{
--	struct xe_bo *bo = xe_bo_create_pin_map(xe, tile, NULL,
--						ALIGN(size, PAGE_SIZE),
--						type, flags);
--	if (IS_ERR(bo))
--		return bo;
--
--	xe_map_memcpy_to(xe, &bo->vmap, 0, data, size);
--
--	return bo;
--}
--
- static void __xe_bo_unpin_map_no_vm(void *arg)
- {
- 	xe_bo_unpin_map_no_vm(arg);
-diff --git a/drivers/gpu/drm/xe/xe_bo.h b/drivers/gpu/drm/xe/xe_bo.h
-index 02ada1fb8a23..89b6e1487971 100644
---- a/drivers/gpu/drm/xe/xe_bo.h
-+++ b/drivers/gpu/drm/xe/xe_bo.h
-@@ -118,9 +118,6 @@ struct xe_bo *xe_bo_create_pin_map_at_aligned(struct xe_device *xe,
- 					      size_t size, u64 offset,
- 					      enum ttm_bo_type type, u32 flags,
- 					      u64 alignment);
--struct xe_bo *xe_bo_create_from_data(struct xe_device *xe, struct xe_tile *tile,
--				     const void *data, size_t size,
--				     enum ttm_bo_type type, u32 flags);
- struct xe_bo *xe_managed_bo_create_pin_map(struct xe_device *xe, struct xe_tile *tile,
- 					   size_t size, u32 flags);
- struct xe_bo *xe_managed_bo_create_from_data(struct xe_device *xe, struct xe_tile *tile,
-diff --git a/drivers/gpu/drm/xe/xe_gt_topology.c b/drivers/gpu/drm/xe/xe_gt_topology.c
-index 516c81e3b8dd..b325eb9d3890 100644
---- a/drivers/gpu/drm/xe/xe_gt_topology.c
-+++ b/drivers/gpu/drm/xe/xe_gt_topology.c
-@@ -288,11 +288,6 @@ xe_dss_mask_group_ffs(const xe_dss_mask_t mask, int groupsize, int groupnum)
- 	return find_next_bit(mask, XE_MAX_DSS_FUSE_BITS, groupnum * groupsize);
- }
- 
--bool xe_dss_mask_empty(const xe_dss_mask_t mask)
--{
--	return bitmap_empty(mask, XE_MAX_DSS_FUSE_BITS);
--}
--
- /**
-  * xe_gt_topology_has_dss_in_quadrant - check fusing of DSS in GT quadrant
-  * @gt: GT to check
-diff --git a/drivers/gpu/drm/xe/xe_gt_topology.h b/drivers/gpu/drm/xe/xe_gt_topology.h
-index a72d26ba0653..c8140704ad4c 100644
---- a/drivers/gpu/drm/xe/xe_gt_topology.h
-+++ b/drivers/gpu/drm/xe/xe_gt_topology.h
-@@ -41,8 +41,6 @@ xe_gt_topology_mask_last_dss(const xe_dss_mask_t mask)
- unsigned int
- xe_dss_mask_group_ffs(const xe_dss_mask_t mask, int groupsize, int groupnum);
- 
--bool xe_dss_mask_empty(const xe_dss_mask_t mask);
--
- bool
- xe_gt_topology_has_dss_in_quadrant(struct xe_gt *gt, int quad);
- 
-diff --git a/drivers/gpu/drm/xe/xe_rtp.c b/drivers/gpu/drm/xe/xe_rtp.c
-index 29e694bb1219..cc6636f6cd98 100644
---- a/drivers/gpu/drm/xe/xe_rtp.c
-+++ b/drivers/gpu/drm/xe/xe_rtp.c
-@@ -326,21 +326,6 @@ bool xe_rtp_match_first_render_or_compute(const struct xe_gt *gt,
- 		hwe->engine_id == __ffs(render_compute_mask);
- }
- 
--bool xe_rtp_match_first_gslice_fused_off(const struct xe_gt *gt,
--					 const struct xe_hw_engine *hwe)
--{
--	unsigned int dss_per_gslice = 4;
--	unsigned int dss;
--
--	if (drm_WARN(&gt_to_xe(gt)->drm, xe_dss_mask_empty(gt->fuse_topo.g_dss_mask),
--		     "Checking gslice for platform without geometry pipeline\n"))
--		return false;
--
--	dss = xe_dss_mask_group_ffs(gt->fuse_topo.g_dss_mask, 0, 0);
--
--	return dss >= dss_per_gslice;
--}
--
- bool xe_rtp_match_not_sriov_vf(const struct xe_gt *gt,
- 			       const struct xe_hw_engine *hwe)
- {
-diff --git a/drivers/gpu/drm/xe/xe_rtp.h b/drivers/gpu/drm/xe/xe_rtp.h
-index 4fe736a11c42..86a3f1e4b3dc 100644
---- a/drivers/gpu/drm/xe/xe_rtp.h
-+++ b/drivers/gpu/drm/xe/xe_rtp.h
-@@ -465,17 +465,6 @@ bool xe_rtp_match_even_instance(const struct xe_gt *gt,
- bool xe_rtp_match_first_render_or_compute(const struct xe_gt *gt,
- 					  const struct xe_hw_engine *hwe);
- 
--/*
-- * xe_rtp_match_first_gslice_fused_off - Match when first gslice is fused off
-- *
-- * @gt: GT structure
-- * @hwe: Engine instance
-- *
-- * Returns: true if first gslice is fused off, false otherwise.
-- */
--bool xe_rtp_match_first_gslice_fused_off(const struct xe_gt *gt,
--					 const struct xe_hw_engine *hwe);
--
- /*
-  * xe_rtp_match_not_sriov_vf - Match when not on SR-IOV VF device
-  *
--- 
-2.50.1
-
+Cheers,
+Benno
 
