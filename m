@@ -1,178 +1,114 @@
-Return-Path: <linux-kernel+bounces-729020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BC83B03096
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 12:03:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 794FFB0309F
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 12:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B03A16BCE1
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:03:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A3C91733F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A657E2777F3;
-	Sun, 13 Jul 2025 10:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B4126CE06;
+	Sun, 13 Jul 2025 10:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LKK1uQv6"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="LXFy1wCA"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A13226CF0
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 10:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E476E1E7C23
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 10:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752400992; cv=none; b=rhNvtzN9r4x2CAeLuqzobrXSECvGuPzV/hB0pwu/YRnKsXrQzhGhn5w3qmPph8QOwvnO1kAd0FS7OuGupwDbPCtBa6oIhmQjrNQuDWkMQUst/uxVISgr/pZ5TVdNuJhFmouQT8OuM9nHZcvkbxUKQXPmpRTbD+bb4PIjP57KxbU=
+	t=1752401332; cv=none; b=EFXCUl59UTxoEk8GJLwbw/sH0MY/O1txl+jJJhs0cADEFuBdcvSMyCSleG++sRYhvOe6D0JwODTyvR5ccCd8JLczQxMCQP7jHi/GaRyQgJvB738GfX+9GogVbXPnb55Bi8JXlBdQ2Ag/cODp4h9Ee+Ly32/3fZpAOfMP9tgRKPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752400992; c=relaxed/simple;
-	bh=yI4e5EU+WXdCIsSgVlMloztDlKZt34IWoZVb+f2BjIQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V0HfDejbROm6G1MunMYxXjt2GStG+Wdt3gm0QtrromIfZCoghcqnaKvy6X49o8nvvOCWLJnWg8XeisV+i5LYGwMPFKYYjipS5110KYPTKEHeyk1WWbawfCLpFqSz6Hshuc0+/nSDqZrxln5QbpUMlpkNsJL0RZM3h1YhWBsEv9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LKK1uQv6; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a4eb4dfd8eso507634f8f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 03:03:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752400988; x=1753005788; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=iSOmaij8G1VwCPJGgqqFfFMB6O4oojRVRsHHWzuhQt8=;
-        b=LKK1uQv62E5C/ShCTMVkSTl5vjw/jgugX47N/Qqx5zSlgRu3iNm4AijtD53OORL+Ka
-         QXU7kyI2hJuDGRS+uSeiDWu1wuc0OSiSc/Gl9rihM2WKEaI9RMhreo1x64Uc/v+sjsAd
-         18RVG1trZF69BGdIKLkgbhFn1vSnPSNRlWFgbFE39ByThiQlPoeMxUTK2KL81cpbEggL
-         lqOr0vQyq2PX+u7qQw8mGLVfDioSAd8DRrMFzB7dzZk+3itBWIHDBf+3vpmHiZhZLfBC
-         Yv0FhFGkgVvx2GT9NOb+WpA/FTM2H7xZtSah3QSfjO236/MfBzFiW16rq8u9u9XFltML
-         QGmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752400988; x=1753005788;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iSOmaij8G1VwCPJGgqqFfFMB6O4oojRVRsHHWzuhQt8=;
-        b=S7Dpwq3Rfrvgf5z4uUuMe6LomgbUjaFW9GTzVB4jEeXRik21oOayo+eeZhIPmNgmoz
-         HxoOCuC8WvTBj8c+SIpbmvA6rNMs8u8L9886w95CfJTpJK2WJOMpF54EX6Epd0ETBrTz
-         XMM68GiQvwROh3z82lsxxys9HDaoRrBRMOGnOMjgquDhErz1QBsHRud8IWi1rPgyATjJ
-         ElmPIBprhbLRpLWQkuLMm77le672IAA1liZSg11Td5N6ImIQ0Icy+8pADzGtcSTYY9b4
-         yHghKoW5jGldU3mSwfqLuRAt93RoBj8vJ883Jvl6/mQ+OY9tppBVmkm7ysDmrjb2Y5J0
-         HDqA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1dwe31/ZSHunlal7oB3jIWAGhsh7AaeUOhZvkxNd/WVobn1uULkV8dw0tPw7+Up66ixBuoHzyVzt34KA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUVvGiZ8drJFmMqdClDxmsCuiccQ5sHFBGom26vVbWVN1qRTh4
-	DnWlXSq8bJfrisTz30MZ3CnRCOY/DRVg+dPQvt2kCaFtGHhPorbjyEeO3qyyMUY9ufg=
-X-Gm-Gg: ASbGncvJYKXtE9zKDV0JVTiOs5Op9TdydYGKB0yCObpfazyhoSorfSnUPTBXUlVajlf
-	jQvRTHq0aD1bKDEEQI4tr636YICNqouQ+vbnYesj29LCmmvNCAPUEgDs1rqvaUFznJGUupibz6t
-	h/GYOCYXUdgNGNYv20S/vh/e+lrhPcvNBkSwAmUuh0oEwkJLO07UseRpRKPuysMmaL/KkSVxWcR
-	icTHzYxZqH670WKS3P5nwqFRDiJDIbuJPxI/BXXS7cwxBROgK6snRaGuztcUW1CoTQQNx9m3RkB
-	LvQapP/J+FgrQnzcEcN1xvqtTQhE8/U4+YfNUwrERrag5w5FgZMwztlNLqf2VXuaSfS9q/cBGAs
-	vV57RAqyl6V+Lb3STeEjDwqpqDBfSFK2TZFvl/riMjQ==
-X-Google-Smtp-Source: AGHT+IFka09qRa1+4/KM76B8yjceAq/uhTOOqvAr78eg7iv1qSyy1tU9ZOWg2Eba/IA0K3ucDbsp/w==
-X-Received: by 2002:a05:6000:2a82:b0:3a5:8abe:a265 with SMTP id ffacd0b85a97d-3b5f188d6a7mr2116798f8f.10.1752400988472;
-        Sun, 13 Jul 2025 03:03:08 -0700 (PDT)
-Received: from [192.168.1.110] ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e26c97sm9540431f8f.90.2025.07.13.03.03.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Jul 2025 03:03:07 -0700 (PDT)
-Message-ID: <87e7ede4-0f3f-4955-a3f2-d92850873cf8@linaro.org>
-Date: Sun, 13 Jul 2025 12:03:04 +0200
+	s=arc-20240116; t=1752401332; c=relaxed/simple;
+	bh=PJcKBelo8mfAeaKNjw6Er9u//bxXdfiSzWBLSanZnyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=emtqWII1Z4cFRrwkmn2NRV0maEWoxIgxn19vmpr/YT6BHo3UxhXCxxGwoSvofFTG+EPaoDHYBX3sjg/HVszpyKq1hZObji7pYazrV+WcTU787SxTd87NjqweVmuY9+QTX8Vgxg9dAhhPXb3aFZ2Rs20Hzj7cB6CaK6+xh/PI+h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=LXFy1wCA; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1E38140E019D;
+	Sun, 13 Jul 2025 10:08:45 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id TiilM658mwCA; Sun, 13 Jul 2025 10:08:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1752401321; bh=GoN9KOCVTETyIQL8qB1caxKUKUBNRXro6judFRxUxyc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=LXFy1wCAPWOVct/JiCuFimDpYdLKecwiuTBuvhGkUYGnwDFzKndpdtK3Raxh/MCQ3
+	 /tH5hEKLkPNhe1FAboqwzZKHnyr4yxh9en2fnuGPUe9OVrjIYce73OHEV+ZHDK/zY6
+	 o3RKE8frop1GPML0hWLYVkKEZx1o9bLEkbOLwRS7BM/pvPP/4p9FNyb2qOiLAjngxB
+	 O1EhsnTj5XnQQGoXFrHKoEbA8+zJFEroDK/u62sjQGbuljBURIzujLAwguhXXOUZnC
+	 4c+pgUuOR/VkVd4j0vdEMHGoa5Pe34A0yV/E2M2PVnc18xYj2fyzeXrsy/4CDiN3WM
+	 wUb+zO999V/Ai/WE8YG5/rnZa8qcxg5PDA3SCY9nfWDbUeFdL6DnDwPm/D1c2YJjcv
+	 75QE8rYlVIIufUK+3XNbt2ZSjuDXthHxFH7qLSXAZQUxUnkb/e/yK4ET8Gmz/93aCn
+	 U/nwSsgamfSpVtwTf56LWgJVOFFej0a3mJB6KpthvjHOIv+liKC0zoaQx1RwaDr8Bm
+	 Gwlx5MySr04KEiGOAcSEPNWu9mQbhottojqkP98mYiO2+zRX+9GB1K8W4hX+5zxJyG
+	 MnvMSPtEyWzZjpbSyF5+F6kinlUWYXEXNIKz5dAxj5m6GHnIzoTle3uXLSA3Vf+5oM
+	 BZMEqr8PIF2M1NMKr4t87v1Q=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 18B3940E0163;
+	Sun, 13 Jul 2025 10:08:38 +0000 (UTC)
+Date: Sun, 13 Jul 2025 12:08:31 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] perf/urgent for v6.16-rc6
+Message-ID: <20250713100831.GAaHOFn2t9qPFNlkf0@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 02/15] dt-bindings: media: qcom,x1e80100-camss: Convert
- from inline PHY definitions to PHY handles
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org
-References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
- <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-2-0bc5da82f526@linaro.org>
- <3376b0fb-f3c6-464a-9c35-30a3f589b856@linaro.org>
- <eac19ad2-78dc-44e9-bc02-517272ba737d@linaro.org>
- <3506d911-da9f-4639-9c83-aee0a637e9b4@linaro.org>
- <352421e6-f151-435b-8dce-6c02a6d0e747@linaro.org>
- <63e538bf-16ac-4f57-9578-2ae855f5727f@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <63e538bf-16ac-4f57-9578-2ae855f5727f@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On 13/07/2025 11:48, Bryan O'Donoghue wrote:
-> On 13/07/2025 10:39, Krzysztof Kozlowski wrote:
->> Lack of in-kernel DTS is a good argument in your case, but you must
->> mention ALL OTHER USERS:
->> 1. All drivers in Linux
->> 2. All other upstream projects, BSD, U-boot, everywhere upstream
->> 3. ... all possible other users of the ABI, so out of tree DTS and out
->> of tree kernel folks. This one is close to impossible to prove...
->> Luckily we assume this point does not apply here at all. No one out of
->> upstream trees uses these new bindings.
-> 
-> OK, if I get your meaning here.
-> 
-> More comprehensive commit logs and cover letter - including doing to the 
-> work to look into BSD and u-boot to make sure the change doesn't break 
-> things for them, which I'm nearly 100% sure is the case, is what you 
-> need here ?
+Hi Linus,
 
-Yes. Just say that ABI change has no known impact because of this and that.
+please pull a perf/urgent fix for v6.16-rc6.
 
-Best regards,
-Krzysztof
+Thx.
+
+---
+
+The following changes since commit d7b8f8e20813f0179d8ef519541a3527e7661d3a:
+
+  Linux 6.16-rc5 (2025-07-06 14:10:26 -0700)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/perf_urgent_for_v6.16_rc6
+
+for you to fetch changes up to 3da6bb419750f3ad834786d6ba7c9d5d062c770b:
+
+  perf/core: Fix WARN in perf_sigtrap() (2025-07-09 13:40:17 +0200)
+
+----------------------------------------------------------------
+- Prevent perf_sigtrap() from observing an exiting task and warning
+  about it
+
+----------------------------------------------------------------
+Tetsuo Handa (1):
+      perf/core: Fix WARN in perf_sigtrap()
+
+ kernel/events/core.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
