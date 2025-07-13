@@ -1,217 +1,130 @@
-Return-Path: <linux-kernel+bounces-728884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 467C2B02E73
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 04:42:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03643B02E7A
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 04:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0A263BB58F
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 02:42:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F832189CA8E
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 02:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578671531C8;
-	Sun, 13 Jul 2025 02:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E223F150997;
+	Sun, 13 Jul 2025 02:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KEllP/8V"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cxg6rflZ"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCFD13B2A4
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 02:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0025FEEB2;
+	Sun, 13 Jul 2025 02:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752374550; cv=none; b=SaEAvsuAoCJlPlxsCf78yH0ec0kgDnvlaHlEUdQ2prXbdOmc3b7H1lJ0StoUesYJc9CBZttM8PbCXvkFWlQiK7WMMVjdv1HFQwXZBpUUVHrY7KnmDTMw3JYesawJSBKlqW1Fx0VUha5GrEvaIKHdO1e6QU15lHKL9k/dtdofhas=
+	t=1752375208; cv=none; b=Ggg/OsY/9qOVQQLX0EUuLipiHEadX2+FBMc14Yf/S0uN2YKyGfI4uxqCX280W5I/omiP/0a2KAvcjbDHG5T/dekx/Z9Tq14uRqs3dlvvHXgOaivgM3K6r4MtUKTEoXlXDEuYPPg4ZgwWXcN2X1bl8ccbn+2Z14IunvHyS/nmGMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752374550; c=relaxed/simple;
-	bh=5bX1npMW4eRdsgUzazLqr3N4PDD7Cv9Oex66u7+0x44=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R6D2Me/ktHMeu2ogaZM4O8blPydZUHZ2VMfBq+5WVKamtOC5nlEW42jWemJfMGtZsWs/hurgY+xiuSUCsNtwfGmkxg9xcZ5lYiGMkCiI7uQJ5RHNA5saUYvjZcZVEIgVmg9YnRm6DbARzU0JQKMw5AuxoOlKmCnJSu6s1FXHrbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KEllP/8V; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45390dcca6dso31405e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 19:42:27 -0700 (PDT)
+	s=arc-20240116; t=1752375208; c=relaxed/simple;
+	bh=ZB9cfxxbIVyP7KXrPJ/Yfc0y2pVJ5wU7NtYTFa0gomc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QiawEUxqLB4N94br8ikiD3Ak7MOYsuG1ftoM6DHUIlE/RDiRtM39lHfngHYGLQc7Ow54U1ZmXqdURGGWwpQGjfDyuzn8EpZ04qIuiNTONtjHppSQ0Zh2rwnY+iht5t2DypQOsKNc3mFJgVF7tKvtCCPJH90CQvT0ztGhHGojHDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cxg6rflZ; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b3220c39cffso3390848a12.0;
+        Sat, 12 Jul 2025 19:53:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752374546; x=1752979346; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=30Xr3GjHx9JM48k5qZe/WnzL0VPEvAcLel6Lrxu+plE=;
-        b=KEllP/8VJ3NnCOiy3bfiB0NGEdfycr+UqBRPaebbwpKTu0hCLgJRThRzZkZOICrw0t
-         b8Blg5h6PJ+Cu0qUntI6NciOx7PKcAbnG4WodzhNLR6pVJ7qi/JKV5KGQREf0wKJK/XQ
-         iQg63lAyHMQg9TcRHuyODqljiP+n1mq0Kxzc0Ffa4ql4i6sx37NfRWNiQTa2PLOstfPr
-         6KWMCVdboZnM9d7pm1qLd5YskMWzrIPESUMDmeZt/rPgs+tU9BSnMAOckRGchl4PLV7P
-         UvLvVpPgOik9aB/pdhJIAZb4UG8bbUzDLDsUmfpf9oNs2vvT9RS9VGWY5llbmRKCDmZs
-         +7iA==
+        d=gmail.com; s=20230601; t=1752375206; x=1752980006; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=acNe71zhPgHfE83GbVhM4d777Q2BYU21y6svlMAOGRE=;
+        b=Cxg6rflZX/FypCLbjaWXZKLvf47G9l+LsDWR2PcC1LBHecvWu7NleVOLd9+99oNHO0
+         cXcysN3Aj3epFLO0AvoNVqemYb21VxqbNA5OLu/4JHCvT5uqQcZjtHAJ31EsuOrPoUnA
+         iBsLCFXSTzPJGOIbQC/HExZ33PYvspeCsooTUvHgq2A0us6KqvE14vt0QelKewrabwoU
+         tUubNV8yhtTb08lgk4ijDB1SeCKeagVO0/w+4EZL371+O4rvmnqwx6tCnwN9uQr5EMCk
+         nRDcHDywqK+nfiFfSHKaws6uESJONBj1KQH/VpIEpVCS+gX5J3YNkaDaJo4hcSrkkwRM
+         XELw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752374546; x=1752979346;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=30Xr3GjHx9JM48k5qZe/WnzL0VPEvAcLel6Lrxu+plE=;
-        b=PRaL8KlCITRTvyK9ESNPZ5OFvl+cLgGhdAQcDsLdPFjUfeGh9P/DNjAvMCUGTDf8gb
-         qtTewl+9vbXdEnIU0eg55RClEnBVzHG8BDtLlBh+Te0LTS6cZ9ePmNR6ZIWFUIlnwWFm
-         62gFUY4kaB3BN+HZ5zkYN21KL5lUP3xM5dUR3KJerB7J7/bSoWjJc0ea4huo6FSoXwH1
-         FtsQ9bwiDCckwgZXnf/GP6LiMeS0XYQpOcNe4ToYh+hDEAGxmGgNWrIWqqQMJevD4w9i
-         d2ZrGJZ3Iu6FU5mv5UHPTdEevga6uMgrPrE+Bgn4o4QXgzXZMgrCcWjJdnTuz7NLXujp
-         9FwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVF8lGfnSQl35ux7BMPcz6FoRC8fFKYwGnN3XlZbgWOvJKetfravrOZqhkhL0Bl2jta0h3bttBvo+ZUeKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvIpkqpsvLZiUK7Viq+jk71Ue/IP5APPUVvxJimd6fW3QZ8wOk
-	/FXblc+5Y7nGA7Ncko7R6jr/iZuCu6EET7fxHzYkXzExgxCYYv6XSJ8Y1dek4ZJZGlbLyc8hDGB
-	pkPTM9OjvwYbeuAOyVhZTIcsC+tsSWzsNrexO8RVK
-X-Gm-Gg: ASbGncu7UZLCb7FLIfiGTWcsb9URNjVcbBYQ1SGCzSgZfYri4r6hnWAFy9z3iDnyvFP
-	A8QVTRZsTbvjfyLO9pPor8fsOAM6OLt0Zwz+QJvPy0g3JEVRdiPfis+Q91Naa4GPakRMeLuTFse
-	HUi7HxFZQ94X9Gmi6OuykLyqZNatLVygNFwqaJS4iuaYIT1VFlbi1upxGrg7ZqjRth63SgRunoU
-	BBgVuenzyYyV09DwlGathZWqdL0KUBgWuiXrPNY
-X-Google-Smtp-Source: AGHT+IEleF8ivksR26XpmTWXy3KCMqLtp7lcXHp94NqMETszAgAyRO8FnYgynO7hXWeiXu6R0Q4pDW3VdH8z0Y3FkYk=
-X-Received: by 2002:a05:600c:5023:b0:453:79c3:91d6 with SMTP id
- 5b1f17b1804b1-45604733553mr1556035e9.1.1752374546338; Sat, 12 Jul 2025
- 19:42:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752375206; x=1752980006;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=acNe71zhPgHfE83GbVhM4d777Q2BYU21y6svlMAOGRE=;
+        b=l9laXusjHKfsj7GbpKDiq62OiYwzukIqH+TvolF1zqA8i4cEy6199V0ll1ypa4iG6n
+         FtiPJCPy2Z6kQwqcOShin9Af4tgbAC/WoselWw/cEcRf9gsfw9Knqzhs1cn/qD7Cm6Lb
+         5FsnWcmTfilKss78KOOrluoY6ZWKyoxj3fwBu52WByzYccuQr+gdrDYm10/3ZmzNitsq
+         D+VIH+LuQCoaLIaERDfH7JfqnMASF4Q0C4OXZv9a4PG7fW9s+3efPFaHVEGyrKePBd2a
+         maR4B6gVxPFGoc19OOmR83ArFgU5PT1HC6HI2YXTA4IDLyoLj168s7UQFe9AnHqgsgYC
+         tLqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmlFf89I+RYQf8KGaOI7bBD3y/MoH2QADx3Z+mM3PPLiSlGPRHxvk6jMph8OZaKk5rP6JbeSzQJiuz1Ns=@vger.kernel.org, AJvYcCWIM/jGYWS9gXRWSWsftAwm/IytJcB7hUdZk9ko0pf21hAj6QlRmmqjYaUhYdM+LKv6KL2xKZhAJ+3EwU4JClk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzrfPo9u3fdu96qXUWjUw7afC48l0l8hG3ItvEpq5SFo/w5FJT
+	FcudZfMG/+ZhpsVOZPp10NdAHyrkUhfImPFiBfmDANt/PJvqn6saBVCG
+X-Gm-Gg: ASbGncv5DGSLqOVymN1YG20ga0YhEV+YNSL+vh/4LSjNXP3JWovQF0oGY4illMoIB15
+	7lplmfOmk1RGudcM51ExHI9loV0VH1SLaQRVLq2ohoatFyuiiYPhd3EpcZHTLJnoOzmuR1H1GLq
+	75hjFN4EmXqipCZjvC5/ou8j+73uUaSVprDZyL5nZiOi/XwkUUJKgddJZ2g+xi8ttnoq01K6Dad
+	dhYtPB/ZXJf9btt7unvEs2/T/A1wkMI210ZJZN4dSkfH7QTw0QT9ZNkGIXjbP7K7OM7NaruNSQU
+	IE5MlokvHhpc0rhpRfBPqGnNrY6gA3TTdojWzuij7pzgvUoznKJzfukzgGxqOp8yQqyb2Rxw1ur
+	dNKgiCuNcovKkz7Vx4LVLjR+j
+X-Google-Smtp-Source: AGHT+IGd8q7vYPk8tC8e4wXZEeiN7rexsxjv5S+Uzeguwh00QdTa0AZAe4a4z+mwvG8FjYaTfd9Kvw==
+X-Received: by 2002:a17:90a:da8d:b0:311:b6d2:4c36 with SMTP id 98e67ed59e1d1-31c4f5ad1e1mr10884033a91.26.1752375206071;
+        Sat, 12 Jul 2025 19:53:26 -0700 (PDT)
+Received: from quat-desktop ([2001:569:514a:9100:3f23:7b0f:f6a2:1ebd])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4286da3sm76345145ad.34.2025.07.12.19.53.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Jul 2025 19:53:25 -0700 (PDT)
+From: Rhys Lloyd <krakow20@gmail.com>
+To: dakr@kernel.org,
+	acourbot@nvidia.com
+Cc: airlied@gmail.com,
+	simona@ffwll.ch,
+	nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	Rhys Lloyd <krakow20@gmail.com>
+Subject: [PATCH] gpu: nova-core: fix bounds check in PmuLookupTableEntry::new
+Date: Sat, 12 Jul 2025 19:51:08 -0700
+Message-ID: <20250713025108.9364-2-krakow20@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250604050902.3944054-1-jiaqiyan@google.com> <20250604050902.3944054-4-jiaqiyan@google.com>
- <aHFpIpIfqVCQZVgG@linux.dev> <CACw3F51xRWr5LXz4-JhK+mjizY7D7Oa+GrJ-OZHktfPzFGKeiw@mail.gmail.com>
- <aHK7w4TTEm7a1mco@linux.dev>
-In-Reply-To: <aHK7w4TTEm7a1mco@linux.dev>
-From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Sat, 12 Jul 2025 19:42:15 -0700
-X-Gm-Features: Ac12FXxcNa4e9HwM2rPqBWqAlsG9UDRsiS6fK2kefjn5JOWhY0L8gHWyQHAnvJ0
-Message-ID: <CACw3F50mTCB0h4GbdcERz4j=CcnwVCfA0Mc9OL-u0nJCJPEVnA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] KVM: arm64: Allow userspace to inject external
- instruction aborts
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: maz@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, 
-	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, 
-	pbonzini@redhat.com, corbet@lwn.net, shuah@kernel.org, kvm@vger.kernel.org, 
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, duenwen@google.com, rananta@google.com, 
-	jthoughton@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 12, 2025 at 12:47=E2=80=AFPM Oliver Upton <oliver.upton@linux.d=
-ev> wrote:
->
-> On Fri, Jul 11, 2025 at 04:58:57PM -0700, Jiaqi Yan wrote:
-> > On Fri, Jul 11, 2025 at 12:42=E2=80=AFPM Oliver Upton <oliver.upton@lin=
-ux.dev> wrote:
-> > >
-> > > On Wed, Jun 04, 2025 at 05:08:58AM +0000, Jiaqi Yan wrote:
-> > > > From: Raghavendra Rao Ananta <rananta@google.com>
-> > > >
-> > > > When KVM returns to userspace for KVM_EXIT_ARM_SEA, the userspace i=
-s
-> > > > encouraged to inject the abort into the guest via KVM_SET_VCPU_EVEN=
-TS.
-> > > >
-> > > > KVM_SET_VCPU_EVENTS currently only allows injecting external data a=
-borts.
-> > > > However, the synchronous external abort that caused KVM_EXIT_ARM_SE=
-A
-> > > > is possible to be an instruction abort. Userspace is already able t=
-o
-> > > > tell if an abort is due to data or instruction via kvm_run.arm_sea.=
-esr,
-> > > > by checking its Exception Class value.
-> > > >
-> > > > Extend the KVM_SET_VCPU_EVENTS ioctl to allow injecting instruction
-> > > > abort into the guest.
-> > > >
-> > > > Signed-off-by: Raghavendra Rao Ananta <rananta@google.com>
-> > > > Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
-> > >
-> > > Hmm. Since we expose an ESR value to userspace I get the feeling that=
- we
-> > > should allow the user to supply an ISS for the external abort, simila=
-r
-> > > to what we already do for SErrors.
-> >
-> > Oh, I will create something in v3, by extending kvm_vcpu_events to
-> > something like:
-> >
-> > struct {
-> >   __u8 serror_pending;
-> >   __u8 serror_has_esr;
-> >   __u8 ext_dabt_pending;
-> >   __u8 ext_iabt_pending;
-> >   __u8 ext_abt_has_esr;  // <=3D new
-> >   /* Align it to 8 bytes */
-> >   __u8 pad[3];
-> >   union {
-> >     __u64 serror_esr;
-> >     __u64 ext_abt_esr;  // <=3D new
->
-> This doesn't work. The ABI allows userspace to pend both an SError and
-> SEA, so we can't use the same storage for the ESR.
+data is sliced from 2..6, but the bounds check data.len() < 5
+does not satisfy those bounds.
 
-You are right, the implementation (__kvm_arm_vcpu_set_events) indeed
-continues to inject SError after injecting SEA.
+Fixes: 47c4846e4319 ("gpu: nova-core: vbios: Add support for FWSEC ucode extraction")
 
-Then we may have to extend the size of exception and meanwhile reduce
-the size of reserved, because I believe we want to place ext_abt_esr
-into kvm_vcpu_events.exception. Something like:
-struct kvm_vcpu_events {
-  struct {
-    __u8 serror_pending;
-    __u8 serror_has_esr;
-    __u8 ext_dabt_pending;
-    __u8 ext_iabt_pending;
-    __u8 ext_abt_has_esr;
-    __u8 pad[3];
-    __u64 serror_esr;
-    __u64 ext_abt_esr;  // <=3D +64 bits
-  } exception;
-  __u32 reserved[10];  // <=3D -64 bits
-};
+Signed-off-by: Rhys Lloyd <krakow20@gmail.com>
+---
+Changes in v2:
+- Ensure commit description does not spill into commit message
+- Fix author to match SoB
+- Add "Fixes:" tag
+- Add base commit
 
-The offset to kvm_vcpu_events .reserved changes; I don' think
-userspace will read/write reserved (so its offset is probably not very
-important?), but theoretically this is an ABI break.
+---
+ drivers/gpu/nova-core/vbios.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Another safer but not very readable way is to add at the end:
-struct kvm_vcpu_events {
-  struct {
-    __u8 serror_pending;
-    __u8 serror_has_esr;
-    __u8 ext_dabt_pending;
-    __u8 ext_iabt_pending;
-    __u8 ext_abt_has_esr;
-    __u8 pad[3];
-    __u64 serror_esr;
-  } exception;
-  __u32 reserved[10];  // <=3D -64 bits
-  __u64 ext_abt_esr;  // <=3D +64 bits
-};
+diff --git a/drivers/gpu/nova-core/vbios.rs b/drivers/gpu/nova-core/vbios.rs
+index 663fc50e8b66..5b5d9f38cbb3 100644
+--- a/drivers/gpu/nova-core/vbios.rs
++++ b/drivers/gpu/nova-core/vbios.rs
+@@ -901,7 +901,7 @@ struct PmuLookupTableEntry {
+ 
+ impl PmuLookupTableEntry {
+     fn new(data: &[u8]) -> Result<Self> {
+-        if data.len() < 5 {
++        if data.len() < 6 {
+             return Err(EINVAL);
+         }
+ 
 
-Any better suggestions?
+base-commit: 215a3f91713383a3c0d2da82d223a608a3c17ac1
+-- 
+2.50.1
 
->
-> >   };
-> > } exception;
-> >
-> > One question about the naming since we cannot change it once
-> > committed. Taking the existing SError injection as example, although
-> > the name in kvm_vcpu_events is serror_has_esr, it is essentially just
-> > the ISS fields of the ESR (which is also written in virt/kvm/api.rst).
-> > Why named after "esr" instead of "iss"? The only reason I can think of
-> > is, KVM wants to leave the room to accept more fields than ISS from
-> > userspace. Does this reason apply to external aborts? Asking in case
-> > if "iss" is a better name in kvm_vcpu_events, maybe for external
-> > aborts, we should use ext_abt_has_iss?
->
-> We will probably need to include more ESR fields in the future, like
-> ESR_ELx.ISS2. So let's just keep the existing naming if that's OK with
-> you.
-
-Ack to "esr", thanks Oliver!
-
->
-> Thanks,
-> Oliver
 
