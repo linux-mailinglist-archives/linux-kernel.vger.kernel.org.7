@@ -1,182 +1,149 @@
-Return-Path: <linux-kernel+bounces-729035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32BF4B030EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 13:57:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F74EB030ED
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 437213BCB47
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 11:57:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A97917D965
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 12:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92511277CAC;
-	Sun, 13 Jul 2025 11:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C54278172;
+	Sun, 13 Jul 2025 12:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdEjxIS5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAPSa+Z/"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73B61EDA3C;
-	Sun, 13 Jul 2025 11:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B492259CBC;
+	Sun, 13 Jul 2025 12:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752407846; cv=none; b=h26sXgmRpEJXnImGWmkk9jXR1OInO6HZRClStiV/o7bRUfKecoM4cFOwzxhdNBvrH7WjsNGPR1Uc00C9y/u+VBiBdizruw8DmSTRHlxh/yZU/RFFuP79yLZn6y4g6uYGlbCfPlIA3VS5rDbzR7yGT61/6zLPzf8Vr6lEQQxwCTY=
+	t=1752408371; cv=none; b=GM4NCOUgJuILCMbx+l2plreNQL59V9Yv+00vg2EksLPstlqLdvSrAPRMWI974dHW8zTKEKypdnK8l7/zVNxUioCIFIV9HvND3c+pyVP23Ovt7H2hU1fgRf/WeQst1heQdw/gwlzYn9eZTZ6VAMVdoFMXbeSQFkM2VJvalHxhxvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752407846; c=relaxed/simple;
-	bh=DnHgOevSaLWzdnZ3b82xBqk1dgNanyUNgmuaNkIp3rw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=mvW+AGo9Vjaay8qHx9MePG4+Q5zcqESQhxlXMt9JDldui+DtosbO4dJ7iM7szvkGSshDv/amFTIhkSAvrzufaz7tl/ZFpLknr4QkL52MJPNDcG3yeiznnW9IuAEQRwTtVImzjOWOXRMJCtEeKbqq7Sd79Vtt6Rxs2ctcN6Wu6E0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TdEjxIS5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C478C4CEE3;
-	Sun, 13 Jul 2025 11:57:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752407845;
-	bh=DnHgOevSaLWzdnZ3b82xBqk1dgNanyUNgmuaNkIp3rw=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=TdEjxIS5WV4cGJKWclRj5G6DaaANtRiRbCtEi93vBvbBy9+xSuaqEIy5ArfzJfdK2
-	 dvEl4BNhq7Wva73qEH+nwXU6IsPeuodbluwlaeg0zk1GC2xL+NKveZWcSKJsB2gkIC
-	 ntQdMJrDRNClb7tl4qE7zmuQqcKZnFyRcOoSIyCoowOAUlQ4Psg26ElG4t/CywsCy4
-	 XYboIMVKMTXQXIt70zq9qtOcuO80fPsK4CdS4hh1trHYks5s+W8QmO9EkxQJa46osi
-	 /usfgt2UjPHC1MjlblQG0YSEGM4eyg1oIumEvLTZEOD4uCWhhALix+iirdtitnoQ2J
-	 Xi8bKcWLGg+Eg==
+	s=arc-20240116; t=1752408371; c=relaxed/simple;
+	bh=8A2CU0aMX1NF93vpyoZnL0IilMix88STLXyIo8C2Tjk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iZGvFhgBQQsFcf/ZwJdC4HMQg02GP4qn2q8HtJJOONmkas7wsvMiSA5xscSh3SInv1eyQg83AoZFXtshxb02WlFd6rpj/TKr7by7g5TIGIhKI8X+G0leLe6clZLi1bC7DF4iS0dMlmLh74TCzlJ3jf3QLHU/wqDE0tXtgXzoEas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAPSa+Z/; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4a7a8c2b7b9so47773391cf.1;
+        Sun, 13 Jul 2025 05:06:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752408369; x=1753013169; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G5wY5DLkzyddb5MO5enn9Zdp3qtWqv34wIpy+C05jFQ=;
+        b=AAPSa+Z/VQu+/Jtxickb9oTma2bGOZFXSiQ4YBfwzbbJwcT+RbEMEYN0MFLHSbkR+o
+         3iF2l9o1pogCZv3cq0bpWq3JAQUsb6Mdicpm0wMYJMMB+PShcfPii7lYTlajy2Olamnr
+         fK0cV+K+y2jTe9vahPbhJjD3OCRjONcU3ZTwdI2mSCM1wdFD4J1ozR/HgZhq1cpdKY/8
+         09Ngv+6P2sRGMpXa2giCcoYmvQZY5G4++AjDL1PmvMHaZe75uWuENiHfnGlNJluTW5Lk
+         mRh3+C53xZ7tOlAm71H4FuSSMDA0IMvLsd0ELmhZmPiOYcIQtPO6X1d46gRIl9ksjSc/
+         WBqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752408369; x=1753013169;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G5wY5DLkzyddb5MO5enn9Zdp3qtWqv34wIpy+C05jFQ=;
+        b=ad9QfU8nkV9iPLKVAPJyYOH3Uw4sB+qgmfHhLEN18FDdndLzYM6sfrRDAmjKwZHABM
+         v3t5c/yxh3u+PrvT6PN8yDOCttKmRcdX7K6cLx0BCcoVE9oCVY/5mveM6REtZh4pVubA
+         Je589hxxOFSx1eVZ5GnzqU+rNoceRXkF9mzxVkwHQaJ93Y1VbBUfdMWDLj3vLYHCL95A
+         Hkb3QsAwUxpV377dmR67HrOLsHhH0sbEaXRyRsXc9ialOXCPeZHRceEJVVmCA8Xvuqss
+         MsYFhBSkwhg08qbp3oKhIAk3Zo0nBTB4BkueKPZ0a6dZl14bEpG5VfthrNNSDkUcpvO4
+         GMYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCFoU/SKbHddAkWKtUvdkTrSMjeNSGZYSQAbusMX2GGxRClIkpVOhilpcc6MDK6gMUEx43b4jW/goZjARI@vger.kernel.org, AJvYcCXejHoPfx7mSdA+D7LXnzM4dAdO3Z+p4uJe+O3p+Z789U8Vltjw/JM39koAMU7ONwS+QQpsRgjB/LkwTY9t@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqNEMcP2oCDv5lNQftdNEFuU1rSRSkFgjrfwdO1q4hHYY3ZWFO
+	cMeV8aAo08zZ+TnWNojjkI5tL3JluXOumsXhixaujZakuY257dqaQuVc
+X-Gm-Gg: ASbGncs97V7obDLl4ps3z+f/MOlXv76bgnd+hjyjChcfjKKXv1e5E7UE8ukWdy5fAhp
+	uwzSHzlsSyTqIV4tqCZDVOklrVKF8+sk94U7v3rrGFhpSsAhoHIW7LGTu4v7LkCzSmz+8jAJAC/
+	xpiZJCzlVEyxvcbLMXRaPFCIpnDcaeepYT2q5XISMpONB0oSZpq9oyHXZcTLMRhP9Ub0Z0f+4yA
+	ggiYAHulJ/UnWAlh02W1LYlUXTFVoGvjddMa9I/8mWoJt4KczUM4YTpqrW8lratBJq4KotvjxnT
+	uVdsl3EbW8ReUhJmA4TK1by7mhIKebxuJPa1fa1OiIaqKZVSIaT7AgvwJeyV6/h6RfEwu1U/kNI
+	iSRibBclaYbqM2jQx6vv7+U3Agt9/9DPBEg==
+X-Google-Smtp-Source: AGHT+IEyr8Bot4bW7ek0wTRHNCSY4sqQt/8tvDYlyRMheS1Dz5VYhBnyP0aHQxUJftLbaXZJYFAVJw==
+X-Received: by 2002:a05:620a:1a29:b0:7e1:9c2d:a862 with SMTP id af79cd13be357-7e19c3ceb60mr453735885a.39.1752408368922;
+        Sun, 13 Jul 2025 05:06:08 -0700 (PDT)
+Received: from [192.168.1.156] ([2600:4041:5c29:e400:78d6:5625:d350:50d1])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9edeee2desm39706261cf.72.2025.07.13.05.06.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Jul 2025 05:06:08 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+Subject: [PATCH v2 0/3] rust: xarray: add `insert` and `reserve`
+Date: Sun, 13 Jul 2025 08:05:46 -0400
+Message-Id: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 13 Jul 2025 13:57:20 +0200
-Message-Id: <DBAWQG1PX5TO.6I2ARFGLX88N@kernel.org>
-Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn Helgaas"
- <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>
-To: "Benno Lossin" <lossin@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com> <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org> <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com> <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org> <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org>
-In-Reply-To: <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABqhc2gC/4WNQQqDMBBFryKz7pQkVC1d9R7FxWhGHahaJhIUy
+ d2beoGuPu/D+/+AwCoc4FEcoBwlyDJncJcCupHmgVF8ZnDGlaY2FjdSpR1lzuKKyjkiY+vv1pK
+ /VWQ9ZPej3Mt27r6azKOEddH9vIn21/5bjBYNutL3rjW+NhU9h4nkfe2WCZqU0hf+n31kugAAA
+ A==
+X-Change-ID: 20250701-xarray-insert-reserve-bd811ad46a1d
+To: Andreas Hindborg <a.hindborg@kernel.org>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+ Matthew Wilcox <willy@infradead.org>, 
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ Tamir Duberstein <tamird@gmail.com>, Janne Grunau <j@jannau.net>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openssh-sha256; t=1752408365; l=1285;
+ i=tamird@gmail.com; h=from:subject:message-id;
+ bh=8A2CU0aMX1NF93vpyoZnL0IilMix88STLXyIo8C2Tjk=;
+ b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
+ MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
+ QCLoTgBvEHahT2dYa7MEWkkhIGj4Uc/WV9TbQJ6JuXLaIkLgXIa/FLUOskUmEMkZwWLJGTUGXNm
+ 6xcYENA76RgY=
+X-Developer-Key: i=tamird@gmail.com; a=openssh;
+ fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
-On Sun Jul 13, 2025 at 1:19 PM CEST, Benno Lossin wrote:
-> On Sun Jul 13, 2025 at 12:24 PM CEST, Danilo Krummrich wrote:
->> On Sun Jul 13, 2025 at 1:32 AM CEST, Daniel Almeida wrote:
->>>
->>>
->>>> On 12 Jul 2025, at 18:24, Danilo Krummrich <dakr@kernel.org> wrote:
->>>>=20
->>>> On Thu Jul 3, 2025 at 9:30 PM CEST, Daniel Almeida wrote:
->>>>> +/// Callbacks for an IRQ handler.
->>>>> +pub trait Handler: Sync {
->>>>> +    /// The hard IRQ handler.
->>>>> +    ///
->>>>> +    /// This is executed in interrupt context, hence all correspondi=
-ng
->>>>> +    /// limitations do apply.
->>>>> +    ///
->>>>> +    /// All work that does not necessarily need to be executed from
->>>>> +    /// interrupt context, should be deferred to a threaded handler.
->>>>> +    /// See also [`ThreadedRegistration`].
->>>>> +    fn handle(&self) -> IrqReturn;
->>>>> +}
->>>>=20
->>>> One thing I forgot, the IRQ handlers should have a &Device<Bound> argu=
-ment,
->>>> i.e.:
->>>>=20
->>>> fn handle(&self, dev: &Device<Bound>) -> IrqReturn
->>>>=20
->>>> IRQ registrations naturally give us this guarantee, so we should take =
-advantage
->>>> of that.
->>>>=20
->>>> - Danilo
->>>
->>> Hi Danilo,
->>>
->>> I do not immediately see a way to get a Device<Bound> from here:
->>>
->>> unsafe extern "C" fn handle_irq_callback<T: Handler>(_irq: i32, ptr: *m=
-ut c_void) -> c_uint {
->>>
->>> Refall that we've established `ptr` to be the address of the handler. T=
-his
->>> came after some back and forth and after the extensive discussion that =
-Benno
->>> and Boqun had w.r.t to pinning in request_irq().
->>
->> You can just wrap the Handler in a new type and store the pointer there:
->>
->> 	#[pin_data]
->> 	struct Wrapper {
->> 	   #[pin]
->> 	   handler: T,
->> 	   dev: NonNull<Device<Bound>>,
->> 	}
->>
->> And then pass a pointer to the Wrapper field to request_irq();
->> handle_irq_callback() can construct a &T and a &Device<Bound> from this.
->>
->> Note that storing a device pointer, without its own reference count, is
->> perfectly fine, since inner (Devres<RegistrationInner>) already holds a
->> reference to the device and guarantees the bound scope for the handler
->> callbacks.
->
-> Can't we just add an accessor function to `Devres`?
+The reservation API is used by asahi; currently they use their own
+abstractions but intend to use these when available.
 
-	#[pin_data]
-	pub struct Registration<T: Handler + 'static> {
-	    #[pin]
-	    inner: Devres<RegistrationInner>,
-=09
-	    #[pin]
-	    handler: T,
-=09
-	    /// Pinned because we need address stability so that we can pass a poi=
-nter
-	    /// to the callback.
-	    #[pin]
-	    _pin: PhantomPinned,
-	}
+Rust Binder intends to use the reservation API as well.
 
-Currently we pass the address of handler to request_irq(), so this doesn't =
-help,
-hence my proposal to replace the above T with Wrapper (actually Wrapper<T>)=
-.
+Daniel Almeida mentions a use case for `insert_limit`, but didn't name
+it specifically.
 
-> Also `Devres` only stores `Device<Normal>`, not `Device<Bound>`...
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+Changes in v2:
+- Explain the need to disambiguate `Iterator::chain`. (Boqun Feng)
+- Mention what `Guard::alloc` does in the doc comment. (Miguel Ojeda)
+- Include new APIs in the module-level example. (Miguel Ojeda)
+- Mention users of these APIs in the cover letter.
+- Link to v1: https://lore.kernel.org/r/20250701-xarray-insert-reserve-v1-0-25df2b0d706a@gmail.com
 
-The Devres instance itself may out-live device unbind, but it ensures that =
-the
-encapsulated data does not, hence it holds a reference count, i.e. ARef<Dev=
-ice>.
+---
+Tamir Duberstein (3):
+      rust: xarray: use the prelude
+      rust: xarray: implement Default for AllocKind
+      rust: xarray: add `insert` and `reserve`
 
-Device<Bound> or ARef<Device<Bound>> *never* exists, only &'a Device<Bound>
-within a corresponding scope for which we can guarantee the device is bound=
-.
+ include/linux/xarray.h |   2 +
+ lib/xarray.c           |  28 ++-
+ rust/helpers/xarray.c  |   5 +
+ rust/kernel/xarray.rs  | 533 ++++++++++++++++++++++++++++++++++++++++++++++---
+ 4 files changed, 536 insertions(+), 32 deletions(-)
+---
+base-commit: 2009a2d5696944d85c34d75e691a6f3884e787c0
+change-id: 20250701-xarray-insert-reserve-bd811ad46a1d
 
-In the proposed wrapper we can store a NonNull<Device<Bound>> though, becau=
-se we
-can safely give out a &Device<Bound> in the IRQ's handle() callback. This i=
-s
-because:
+Best regards,
+--  
+Tamir Duberstein <tamird@gmail.com>
 
-  (1) RegistrationInner is guarded by Devres and guarantees that free_irq()=
- is
-      completed *before* the device is unbound.
-
-  (2) It is guaranteed that the device pointer is valid because (1) guarant=
-ees
-      it's even bound and because Devres<RegistrationInner> itself has a
-      reference count.
 
