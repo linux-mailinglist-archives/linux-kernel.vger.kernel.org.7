@@ -1,132 +1,134 @@
-Return-Path: <linux-kernel+bounces-729094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4C4B031A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 17:02:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE4D9B031AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 17:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C81361791E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 15:02:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 032403BA34A
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 15:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6049A2797A1;
-	Sun, 13 Jul 2025 15:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D982797A3;
+	Sun, 13 Jul 2025 15:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bIeh/aTE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRu/mA34"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F101D52B;
-	Sun, 13 Jul 2025 15:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664901D52B;
+	Sun, 13 Jul 2025 15:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752418933; cv=none; b=cdfJpj4VSxTe+DAKM4DLGEi35ubcgnI914fx0cVQWEYbFz9ZwSfWUomgP6PcfDrTNITFps7H1IdMBF0TJUm4UHh8DUjpVHWLzoE4xcBj42ZDb5z0XhhX8t840Ou31sUIV4FXzwjacpPgr/BhYsrPYfH8qYEgNNV7y7A2++C00tE=
+	t=1752418980; cv=none; b=OHz8A0oe1MINMNk3j5Ruus069Rb8EbviLpO32c9/+T9wQ1UndDsTMkQR8zwBD3oCaSrxYPtIuA3yOINCoVssp1Qf1rBfV+9h5m2mwx5zZ0GhcjTp9RWRSQfqix7Dh+1sA7V8IG3Fn+Sqzt+VJo5MW4HxBHsiTma9M7SecgvLql0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752418933; c=relaxed/simple;
-	bh=A90dj3oV1j45yOLP7rA3zvAhG3d+NaOyZ31cVZY6Dks=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=WbmOaVE3OqYyPUFf3GLncRmymd2YZz7JmeK/OQZVQTB9iIWuGRXEq+3ua3hFDLeVc+GgV+vJ4MaSVOyGwueK7bbFVGXWHiFvC8PQNIEXVjIGOP4CJlP05ufTnsFPTTXfb/ybybzSl6Y067uqavgfKDm926c6jFgNbnmHgi2y9r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bIeh/aTE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5E1DC4CEE3;
-	Sun, 13 Jul 2025 15:02:09 +0000 (UTC)
+	s=arc-20240116; t=1752418980; c=relaxed/simple;
+	bh=j/0dmZ5J6FfiPtzDxVic7+L+BjaVfzjdrObrU3kASsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CW3fVfB4SooLc41PfP6WJqf3MiR63iHWns/eeH0v1w+C9dO8OtwrWlCJaw3gE3NZjIT5dFnuHosuMQ3Z0u/YMnntUdH6s/9PRHw2jURxQq22p2FmBknJcp4UaxGJ4GMceO4PThAxkXdyydSAvG8KlicWEZNnGjKxzc5j2cEw56g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRu/mA34; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29D22C4CEE3;
+	Sun, 13 Jul 2025 15:02:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752418933;
-	bh=A90dj3oV1j45yOLP7rA3zvAhG3d+NaOyZ31cVZY6Dks=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=bIeh/aTE0YGF6T8fxhq+aVNvdTdpMCPDwzfINdvmivl8/J+rT61XTxkY6Nw6sIk/I
-	 IDn863rEeIU5JN13wEuRJSKGdX9qBUndzcbiCLfYMecnO8H8ArDITYq6FktJSbCnC3
-	 SOak7vttoRCYAK3oK8k4lVVCKpPMBdLUqq8hrM9dRQsxzgjkYp2SqmKeva/0/Qdl5s
-	 tKc0nJs7LUOK/4ud7qDK8G1TK5bELPiIM+hem2pUGOj1mhNzSB6GTgLtyXQVj+W7Bm
-	 eSIOb7xHgQY16COFFbvKOz6/EhCgrYhIyb6DR8dQbGiB8p/T6ogXF83yg6A42HoqsO
-	 b3GXPnevzBmKA==
+	s=k20201202; t=1752418978;
+	bh=j/0dmZ5J6FfiPtzDxVic7+L+BjaVfzjdrObrU3kASsg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XRu/mA34eHN+f2azJjwRmOiDaO9ZEnXvbFqybf7em3oBrHOwbYMSn0e0Kd3+NCif/
+	 VThzq94RuGyI07eh0N+JQHVszh7pEXnAyP+zaEB2AO3wdwkvYn6LdNT7wFo54L7QGv
+	 naagZcPV40gl90P/8f0zLu6TWYWN0ZQYCZcPXMvA7Caz0NbLoitpDNMpy+xPWHPg+0
+	 0kzaQNuH7775QSrL6DmiOoYcA0ciC+STsKck7bbtWtk4GEShcqPdnD8/6NOQJgLeqd
+	 Gc/hLiwqVfkuiljn9QyaYUDh/XCXV80+DAeex8urQtgEd94G3cel8YIvbvol8NAe4H
+	 Qnejh6/EoTNWA==
+Date: Sun, 13 Jul 2025 16:02:47 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Primoz Fiser <primoz.fiser@norik.com>, Haibo Chen <haibo.chen@nxp.com>,
+ Nuno Sa <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, linux-iio@vger.kernel.org,
+ imx@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ upstream@lists.phytec.de, andrej.picej@norik.com
+Subject: Re: [PATCH 1/2] dt-bindings: iio: adc: imx93: Add calibration
+ properties
+Message-ID: <20250713160247.0f22bbfe@jic23-huawei>
+In-Reply-To: <2bcd758b-c2d0-488a-8ead-ec7fb39f93e2@baylibre.com>
+References: <20250710073905.1105417-1-primoz.fiser@norik.com>
+	<20250710073905.1105417-2-primoz.fiser@norik.com>
+	<2bcd758b-c2d0-488a-8ead-ec7fb39f93e2@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 13 Jul 2025 17:02:08 +0200
-Message-Id: <DBB0NXU86D6G.2M3WZMS2NUV10@kernel.org>
-Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-Cc: "Benno Lossin" <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn
- Helgaas" <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com> <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org> <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com> <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org> <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org> <DBAWQG1PX5TO.6I2ARFGLX88N@kernel.org> <DBAX59YKO0FV.ANLOWRHDDS92@kernel.org> <DBAXP68U809C.2G8DMB52M3UZ7@kernel.org> <C4A101A7-282D-4A67-A966-CF39850952EA@collabora.com> <DBAZRNHGIGL8.3L2NGPCVXLI25@kernel.org> <DBAZXDRPYWPC.14RI91KYE16RM@kernel.org> <18B23FD3-56E9-4531-A50C-F204616E7D17@collabora.com>
-In-Reply-To: <18B23FD3-56E9-4531-A50C-F204616E7D17@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun Jul 13, 2025 at 4:48 PM CEST, Daniel Almeida wrote:
->
->
->> On 13 Jul 2025, at 11:27, Danilo Krummrich <dakr@kernel.org> wrote:
->>=20
->> On Sun Jul 13, 2025 at 4:19 PM CEST, Danilo Krummrich wrote:
->>> On Sun Jul 13, 2025 at 4:09 PM CEST, Daniel Almeida wrote:
->>>> On a second look, I wonder how useful this will be.
->>>>=20
->>>> fn handle(&self, dev: &Device<Bound>) -> IrqReturn
->>>>=20
->>>> Sorry for borrowing this terminology, but here we offer Device<Bound>,=
- while I
->>>> suspect that most drivers will be looking for the most derived Device =
-type
->>>> instead. So for drm drivers this will be drm::Device, for example, not=
- the base
->>>> dev::Device type. I assume that this pattern will hold for other subsy=
-stems as
->>>> well.
->>>>=20
->>>> Which brings me to my second point: drivers can store an ARef<drm::Dev=
-ice> on
->>>> the handler itself, and I assume that the same will be possible in oth=
-er
->>>> subsystems.
->>>=20
->>> Well, the whole point is that you can use a &Device<Bound> to directly =
-access
->>> device resources without any overhead, i.e.
->>>=20
->>> fn handle(&self, dev: &Device<Bound>) -> IrqReturn {
->>>   let io =3D self.iomem.access(dev);
->>>=20
->>>   io.write32(...);
->>> }
->>=20
->> So, yes, you can store anything in your handler, but the &Device<Bound> =
-is a
->> cookie for the scope.
->
-> Fine, but can=E2=80=99t you get a &Device<Bound> from a ARef<drm::Device>=
-, for example?
-> Perhaps a nicer solution would be to offer this capability instead?
+On Thu, 10 Jul 2025 10:46:44 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-I think you're confusing quite some things here.
+> On 7/10/25 2:39 AM, Primoz Fiser wrote:
+> > From: Andrej Picej <andrej.picej@norik.com>
+> > 
+> > Document i.MX93 ADC calibration properties and how to set them.
+> > 
+> > Signed-off-by: Andrej Picej <andrej.picej@norik.com>
+> > Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+> > ---
+> >  .../bindings/iio/adc/nxp,imx93-adc.yaml       | 21 +++++++++++++++++++
+> >  1 file changed, 21 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml b/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
+> > index c2e5ff418920..d1c04cf85fe6 100644
+> > --- a/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
+> > +++ b/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
+> > @@ -52,6 +52,27 @@ properties:
+> >    "#io-channel-cells":
+> >      const: 1
+> >  
+> > +  nxp,calib-avg-en:
+> > +    default: 1
+> > +    description:
+> > +      Enable or disable calibration averaging function (AVGEN).
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    enum: [ 0, 1 ]
+> > +
+> > +  nxp,calib-nr-samples:
+> > +    default: 512
+> > +    description:
+> > +      Selects number of samples (NRSMPL) to be used during calibration.
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    enum: [ 16, 32, 128, 512 ]
 
-  (1) I'm talking about the bus device the IRQ is registered for (e.g. PCI,
-      platform, etc.). drm::Device represents a class device, which do not
-      have DeviceContext states, such as Bound.
+Allow 1 as a value and drop the enabled above.   Averaging over 1 sample
+is same as no averaging and gives simpler binding.
 
-  (2) Owning a reference count of a device (i.e. ARef<Device>) does *not*
-      guarantee that the device is bound. You can own a reference count to =
-the
-      device object way beyond it being bound. Instead, the guarantee comes=
- from
-      the scope.
+> > +
+> > +  nxp,calib-t-sample:
+> > +    default: 22
+> > +    description:
+> > +      Selects sample time (TSAMP) of calibration conversions in ADC clock cycles
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    enum: [ 8, 16, 22, 32 ]
+> > +
+> >  required:
+> >    - compatible
+> >    - reg  
+> 
+> This seem like things that should be set at runtime rather than
+> in the devicetree. Unless there is some justification on why
+> these values depend on how the chip is wired up?
 
-      In this case, the scope is the IRQ callback, since the irq::Registrat=
-ion
-      guarantees to call and complete free_irq() before the underlying bus
-      device is unbound.
+Further to that, I'd like to see some explanation of why we care
+to change it at all. Is it ever a bad idea to enable averaging and
+pick a large number of samples for calibration?
+
+> 
+> 
+
 
