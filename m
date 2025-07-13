@@ -1,164 +1,214 @@
-Return-Path: <linux-kernel+bounces-728880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52885B02E5D
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 03:45:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5707B02E62
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 04:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9959D17D081
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 01:45:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 399D517BB10
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 02:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F5E35947;
-	Sun, 13 Jul 2025 01:45:34 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8363F13B5A9;
+	Sun, 13 Jul 2025 02:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IBifN8jb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E30139E
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 01:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF9419BBA;
+	Sun, 13 Jul 2025 02:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752371134; cv=none; b=WKg8fqX9egIToH1/qYWIaRQUJeSAeJfiMyiafVzsTGtRUIlSuR/NneuOv+rOZ0ZdUxcOH4a/7tUNr/y5gaH2S4H+qaTHwuTqA7KgxrX5rPB2KnaU8MSxdQkilItRXTuZfKdhXobM2V1/mQvyanLsk4hCnu5kuH1P9lAYXSgnYOA=
+	t=1752372352; cv=none; b=gneofV85vFvwaalFlizXxOo+JTREKpt7PPkdIfU+3yfcahYabalYNU5eooKGzECHRrKofgYUGIgRxpm0kBWvHH4/TEEDGamLaguCTlRQQzE7/8AnQq8ff5eg0IbDpevwQ2/H37Pxs9Kf5ML+YWxK3RG5CtcSaXvUCY+uAzkgc+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752371134; c=relaxed/simple;
-	bh=eoEh3oxsADw2BAYz8I74j6iJxp7vLr+TlBGjrBmT/Fw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=n59ZfOIHj2f12pJChJNUkw/80jTQ4dKnAylbTh9pRTZFzY0pwQzx3XKG4cpVcPlFdaY6ooEhfMENaW1lH+Z9I8wZppQccYiPdsLbSBZ0l2vvoSjiRtlNLilLzJBqLScmRACJBcTW4YjVQFHt4qgCA/biYT8Wh5R7T3FN6zLgq+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-875b64cccd6so635226639f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 18:45:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752371131; x=1752975931;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5KYu7kvPbnFBl2H27Mp1FgBe7+XHwEpS35yIEIH8+q0=;
-        b=Vr9apQjVNgbeJQcecqx8jNMCgjysfWA7t63a3O2JWr+NPKt19vd5Hl9VUPN4wRnbhE
-         qrPk+lfBCvgn0eMlJho0weOekSYsKGfzTV/LJwxvgWCBkWjEk07SZbZROmWel82fa2Uf
-         KHVxHh3B4clyUXCeg/Fm75XVNKjOVPSUe3psq6DGD222sp5a1fORKHhJI021hC4u5fo/
-         x3XArjt2Q/tcPT1SVc05GGos2ICgfYurSymutHTeJT7yn3nJoor5Ci1ZXt0kWwKKxjz7
-         IWKo9vNyiyd02M61QRQNQoaDEMIzFnwEWClCN+NL8hss4PbZBjXLD0QLyVZGQkyeltRM
-         mOZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzBpcE0WgQ+rOW5pvU1dEj7J/NqWHPyKLnhhLk7FYHXAlIW9xY5p6bkBww7qtz0p/NEwQy4gseoSanU9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2VrMh1aNiZ04ULLBg8NX4D4TPDNe8fB4F7yIq+ZgPzMq7zcS5
-	XmNX3biEoL7obBz5ilmimOOKVLfmu8U7tH1xyjdV4ONx+DEOeDWcjKlRGt5LG/eGvhc6UhOre/h
-	1l3NqVuuAijIRVcW5f2VJbvsQ+oJePsPGNRTxIk/9g/Dw42qeEJL2oAcIe0A=
-X-Google-Smtp-Source: AGHT+IG9ACa4nl2F7Dncd1ZLo1PjOlBkrioceOUwRFcDhYkili36jGeqjT/qkPP9NY3LonOExrSipKOwt0a6NWSajCh84qctgzbw
+	s=arc-20240116; t=1752372352; c=relaxed/simple;
+	bh=gN7pQcGk4dzgLG/75FHG9/admseukzraWRxYA3yX/uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H8h/l2Aes1nX7RnV8K1isbUoLUfYAqjfXEV1m68R6K+ecpCp/k2pKHoPf14qORhbB1LwtA8OJ7Qf9m+IXyxs91qipJDIzeuUmtOOQo/JAAsXYHqe8IaMDDgvLaURafcbtdyBRihfF35J0KW99QNj+r4eCbEqyvmx5vgID9T7yhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IBifN8jb; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752372351; x=1783908351;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gN7pQcGk4dzgLG/75FHG9/admseukzraWRxYA3yX/uk=;
+  b=IBifN8jbjRor7d1EO9xPguNQWjRpKc1l/x3IfiBTkngU1mUmcBP/TD9j
+   /OqBycTfWQZdonLLO4pGroPjkMFgtiW1WfrTo9cZjhMKYECiUZ3owz/7t
+   LyCuZESOy9CeJFrBQb94AfBG9XcdbEAefXObUpIJdGRSpS8YODI50/5qb
+   lfxmctNQKGbIhwyshopKsSxh+4MbKNa70aZekSTHibLznYOqYLbj1YyvW
+   zWpsBaiHVpPhiv7PST8QXGGCjxl5M0WBTED2MbXfAx4/xC6+qdUCJqwWc
+   BUIeNlN9ygPynLymqv1lUu7FF2yjP5pE8kyjM6hLTHBBdK57wNFXCyAtM
+   w==;
+X-CSE-ConnectionGUID: +u0QnsutSkSjtYXAfocHAQ==
+X-CSE-MsgGUID: Al+NpKFFShaFKIy7lmxTjA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="58273024"
+X-IronPort-AV: E=Sophos;i="6.16,307,1744095600"; 
+   d="scan'208";a="58273024"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2025 19:05:51 -0700
+X-CSE-ConnectionGUID: jpv6bIpERte7ki6v+dMfAA==
+X-CSE-MsgGUID: pTVAAhtKQpOCPpV2V3CcBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,307,1744095600"; 
+   d="scan'208";a="162328738"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 12 Jul 2025 19:05:48 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uam64-0007pb-23;
+	Sun, 13 Jul 2025 02:05:44 +0000
+Date: Sun, 13 Jul 2025 10:05:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+	Shahar Shitrit <shshitrit@nvidia.com>, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Jason Gunthorpe <jgg@ziepe.ca>,
+	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH net-next v2 1/1] net/mlx5: Don't use "proxy" headers
+Message-ID: <202507130919.xwitQGtJ-lkp@intel.com>
+References: <20250709083757.181265-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:15c6:b0:875:d450:9297 with SMTP id
- ca18e2360f4ac-87977f735e1mr991684039f.5.1752371131633; Sat, 12 Jul 2025
- 18:45:31 -0700 (PDT)
-Date: Sat, 12 Jul 2025 18:45:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68730fbb.a70a0220.3b380f.001a.GAE@google.com>
-Subject: [syzbot] [kvmarm?] WARNING in pend_sync_exception
-From: syzbot <syzbot+4e09b1432de3774b86ae@syzkaller.appspotmail.com>
-To: catalin.marinas@arm.com, joey.gouly@arm.com, kvmarm@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	maz@kernel.org, oliver.upton@linux.dev, suzuki.poulose@arm.com, 
-	syzkaller-bugs@googlegroups.com, will@kernel.org, yuzenghui@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709083757.181265-1-andriy.shevchenko@linux.intel.com>
 
-Hello,
+Hi Andy,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build errors:
 
-HEAD commit:    15724a984643 Merge branch 'kvm-arm64/doublefault2' into kv..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13e26a8c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=82bd3cd421993314
-dashboard link: https://syzkaller.appspot.com/bug?extid=4e09b1432de3774b86ae
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17137582580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17e26a8c580000
+[auto build test ERROR on net-next/main]
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/fa3fbcfdac58/non_bootable_disk-15724a98.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ec0f03d375a1/vmlinux-15724a98.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a36232f8c6dd/Image-15724a98.gz.xz
+url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/net-mlx5-Don-t-use-proxy-headers/20250709-163919
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250709083757.181265-1-andriy.shevchenko%40linux.intel.com
+patch subject: [PATCH net-next v2 1/1] net/mlx5: Don't use "proxy" headers
+config: x86_64-rhel-9.4 (https://download.01.org/0day-ci/archive/20250713/202507130919.xwitQGtJ-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250713/202507130919.xwitQGtJ-lkp@intel.com/reproduce)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4e09b1432de3774b86ae@syzkaller.appspotmail.com
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507130919.xwitQGtJ-lkp@intel.com/
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 3595 at arch/arm64/kvm/inject_fault.c:63 pend_sync_exception+0x198/0x5ac arch/arm64/kvm/inject_fault.c:63
-Modules linked in:
-CPU: 0 UID: 0 PID: 3595 Comm: syz.2.16 Not tainted 6.16.0-rc3-syzkaller-g15724a984643 #0 PREEMPT 
-Hardware name: linux,dummy-virt (DT)
-pstate: 81402009 (Nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-pc : pend_sync_exception+0x198/0x5ac arch/arm64/kvm/inject_fault.c:63
-lr : pend_sync_exception+0x198/0x5ac arch/arm64/kvm/inject_fault.c:63
-sp : ffff80008e7378c0
-x29: ffff80008e7378c0 x28: 0000000000000063 x27: 63f000001d7702a8
-x26: 0000000000000063 x25: 0000000000000000 x24: 0000000000000000
-x23: 0000000000000000 x22: 0000000000000063 x21: 63f000001d770e81
-x20: 0000000000000007 x19: efff800000000000 x18: 0000000000000000
-x17: 0000000000000041 x16: ffff800080011d9c x15: 00000000200000c0
-x14: ffffffffffffffff x13: 0000000000000028 x12: 00000000000000cc
-x11: ccf000001d756de4 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ccf000001d755880 x7 : ffff800080b08704 x6 : ffff80008e737a88
-x5 : ffff80008e737a88 x4 : 0000000000000001 x3 : ffff8000801a2e80
-x2 : 0000000000000000 x1 : 0000000000000002 x0 : 0000000000000000
-Call trace:
- pend_sync_exception+0x198/0x5ac arch/arm64/kvm/inject_fault.c:63 (P)
- inject_abt64 arch/arm64/kvm/inject_fault.c:115 [inline]
- __kvm_inject_sea+0x268/0x96c arch/arm64/kvm/inject_fault.c:207
- kvm_inject_sea+0x98/0x72c arch/arm64/kvm/inject_fault.c:229
- kvm_inject_sea_dabt arch/arm64/include/asm/kvm_emulate.h:54 [inline]
- __kvm_arm_vcpu_set_events+0x134/0x238 arch/arm64/kvm/guest.c:847
- kvm_arm_vcpu_set_events arch/arm64/kvm/arm.c:1698 [inline]
- kvm_arch_vcpu_ioctl+0xed8/0x16b0 arch/arm64/kvm/arm.c:1810
- kvm_vcpu_ioctl+0x5c4/0xc2c virt/kvm/kvm_main.c:4632
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl fs/ioctl.c:893 [inline]
- __arm64_sys_ioctl+0x18c/0x244 fs/ioctl.c:893
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x90/0x2b4 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x180/0x2f4 arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x58/0x74 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x160 arch/arm64/kernel/entry-common.c:767
- el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 2626
-hardirqs last  enabled at (2625): [<ffff80008653cb88>] __raw_read_unlock_irqrestore include/linux/rwlock_api_smp.h:241 [inline]
-hardirqs last  enabled at (2625): [<ffff80008653cb88>] _raw_read_unlock_irqrestore+0x44/0xbc kernel/locking/spinlock.c:268
-hardirqs last disabled at (2626): [<ffff800086517e08>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:511
-softirqs last  enabled at (2576): [<ffff8000800c988c>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (2574): [<ffff8000800c9858>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
+All errors (new ones prefixed by >>):
+
+   drivers/net/ethernet/mellanox/mlx5/core/en_main.c: In function 'mlx5e_open_channel':
+>> drivers/net/ethernet/mellanox/mlx5/core/en_main.c:2766:23: error: implicit declaration of function 'irq_get_effective_affinity_mask'; did you mean 'irq_create_affinity_masks'? [-Werror=implicit-function-declaration]
+    2766 |         c->aff_mask = irq_get_effective_affinity_mask(irq);
+         |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                       irq_create_affinity_masks
+   drivers/net/ethernet/mellanox/mlx5/core/en_main.c:2766:21: warning: assignment to 'const struct cpumask *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+    2766 |         c->aff_mask = irq_get_effective_affinity_mask(irq);
+         |                     ^
+   cc1: some warnings being treated as errors
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+vim +2766 drivers/net/ethernet/mellanox/mlx5/core/en_main.c
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+2e642afb61b244 Maxim Mikityanskiy 2022-04-15  2714  
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2715  static int mlx5e_open_channel(struct mlx5e_priv *priv, int ix,
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2716  			      struct mlx5e_params *params,
+1742b3d528690a Magnus Karlsson    2020-08-28  2717  			      struct xsk_buff_pool *xsk_pool,
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2718  			      struct mlx5e_channel **cp)
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2719  {
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2720  	struct net_device *netdev = priv->netdev;
+31f114c3d158da Tariq Toukan       2024-12-03  2721  	struct mlx5e_channel_param *cparam;
+67936e13858699 Tariq Toukan       2024-02-14  2722  	struct mlx5_core_dev *mdev;
+db05815b36cbd4 Maxim Mikityanskiy 2019-06-26  2723  	struct mlx5e_xsk_param xsk;
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2724  	struct mlx5e_channel *c;
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2725  	unsigned int irq;
+67936e13858699 Tariq Toukan       2024-02-14  2726  	int vec_ix;
+67936e13858699 Tariq Toukan       2024-02-14  2727  	int cpu;
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2728  	int err;
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2729  
+67936e13858699 Tariq Toukan       2024-02-14  2730  	mdev = mlx5_sd_ch_ix_get_dev(priv->mdev, ix);
+67936e13858699 Tariq Toukan       2024-02-14  2731  	vec_ix = mlx5_sd_ch_ix_get_vec_ix(mdev, ix);
+67936e13858699 Tariq Toukan       2024-02-14  2732  	cpu = mlx5_comp_vector_get_cpu(mdev, vec_ix);
+67936e13858699 Tariq Toukan       2024-02-14  2733  
+67936e13858699 Tariq Toukan       2024-02-14  2734  	err = mlx5_comp_irqn_get(mdev, vec_ix, &irq);
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2735  	if (err)
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2736  		return err;
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2737  
+fa691d0c9c0812 Lama Kayal         2021-09-22  2738  	err = mlx5e_channel_stats_alloc(priv, ix, cpu);
+fa691d0c9c0812 Lama Kayal         2021-09-22  2739  	if (err)
+fa691d0c9c0812 Lama Kayal         2021-09-22  2740  		return err;
+fa691d0c9c0812 Lama Kayal         2021-09-22  2741  
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2742  	c = kvzalloc_node(sizeof(*c), GFP_KERNEL, cpu_to_node(cpu));
+31f114c3d158da Tariq Toukan       2024-12-03  2743  	cparam = kvzalloc(sizeof(*cparam), GFP_KERNEL);
+31f114c3d158da Tariq Toukan       2024-12-03  2744  	if (!c || !cparam) {
+31f114c3d158da Tariq Toukan       2024-12-03  2745  		err = -ENOMEM;
+31f114c3d158da Tariq Toukan       2024-12-03  2746  		goto err_free;
+31f114c3d158da Tariq Toukan       2024-12-03  2747  	}
+31f114c3d158da Tariq Toukan       2024-12-03  2748  
+31f114c3d158da Tariq Toukan       2024-12-03  2749  	err = mlx5e_build_channel_param(mdev, params, cparam);
+31f114c3d158da Tariq Toukan       2024-12-03  2750  	if (err)
+31f114c3d158da Tariq Toukan       2024-12-03  2751  		goto err_free;
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2752  
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2753  	c->priv     = priv;
+67936e13858699 Tariq Toukan       2024-02-14  2754  	c->mdev     = mdev;
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2755  	c->tstamp   = &priv->tstamp;
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2756  	c->ix       = ix;
+67936e13858699 Tariq Toukan       2024-02-14  2757  	c->vec_ix   = vec_ix;
+7f525acbccdf7e Tariq Toukan       2024-02-14  2758  	c->sd_ix    = mlx5_sd_ch_ix_get_dev_ix(mdev, ix);
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2759  	c->cpu      = cpu;
+67936e13858699 Tariq Toukan       2024-02-14  2760  	c->pdev     = mlx5_core_dma_dev(mdev);
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2761  	c->netdev   = priv->netdev;
+67936e13858699 Tariq Toukan       2024-02-14  2762  	c->mkey_be  = cpu_to_be32(mdev->mlx5e_res.hw_objs.mkey);
+86d747a3f9697a Tariq Toukan       2021-07-06  2763  	c->num_tc   = mlx5e_get_dcb_num_tc(params);
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2764  	c->xdp      = !!params->xdp_prog;
+be98737a4faa3a Tariq Toukan       2021-12-05  2765  	c->stats    = &priv->channel_stats[ix]->ch;
+ec7b37b6f08fac Thomas Gleixner    2020-12-10 @2766  	c->aff_mask = irq_get_effective_affinity_mask(irq);
+67936e13858699 Tariq Toukan       2024-02-14  2767  	c->lag_port = mlx5e_enumerate_lag_port(mdev, ix);
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2768  
+8f7b00307bf146 Cosmin Ratiu       2025-05-21  2769  	netif_napi_add_config_locked(netdev, &c->napi, mlx5e_napi_poll, ix);
+8f7b00307bf146 Cosmin Ratiu       2025-05-21  2770  	netif_napi_set_irq_locked(&c->napi, irq);
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2771  
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2772  	err = mlx5e_open_queues(c, params, cparam);
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2773  	if (unlikely(err))
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2774  		goto err_napi_del;
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2775  
+1742b3d528690a Magnus Karlsson    2020-08-28  2776  	if (xsk_pool) {
+1742b3d528690a Magnus Karlsson    2020-08-28  2777  		mlx5e_build_xsk_param(xsk_pool, &xsk);
+1742b3d528690a Magnus Karlsson    2020-08-28  2778  		err = mlx5e_open_xsk(priv, params, &xsk, xsk_pool, c);
+db05815b36cbd4 Maxim Mikityanskiy 2019-06-26  2779  		if (unlikely(err))
+db05815b36cbd4 Maxim Mikityanskiy 2019-06-26  2780  			goto err_close_queues;
+db05815b36cbd4 Maxim Mikityanskiy 2019-06-26  2781  	}
+db05815b36cbd4 Maxim Mikityanskiy 2019-06-26  2782  
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2783  	*cp = c;
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2784  
+31f114c3d158da Tariq Toukan       2024-12-03  2785  	kvfree(cparam);
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2786  	return 0;
+0a06382fa40601 Maxim Mikityanskiy 2019-06-26  2787  
+db05815b36cbd4 Maxim Mikityanskiy 2019-06-26  2788  err_close_queues:
+db05815b36cbd4 Maxim Mikityanskiy 2019-06-26  2789  	mlx5e_close_queues(c);
+db05815b36cbd4 Maxim Mikityanskiy 2019-06-26  2790  
+f62b8bb8f2d305 Amir Vadai         2015-05-28  2791  err_napi_del:
+8f7b00307bf146 Cosmin Ratiu       2025-05-21  2792  	netif_napi_del_locked(&c->napi);
+149e566fef8120 Moshe Shemesh      2018-10-25  2793  
+31f114c3d158da Tariq Toukan       2024-12-03  2794  err_free:
+31f114c3d158da Tariq Toukan       2024-12-03  2795  	kvfree(cparam);
+ca11b798998a62 Tariq Toukan       2018-06-05  2796  	kvfree(c);
+f62b8bb8f2d305 Amir Vadai         2015-05-28  2797  
+f62b8bb8f2d305 Amir Vadai         2015-05-28  2798  	return err;
+f62b8bb8f2d305 Amir Vadai         2015-05-28  2799  }
+f62b8bb8f2d305 Amir Vadai         2015-05-28  2800  
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
