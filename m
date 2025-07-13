@@ -1,102 +1,165 @@
-Return-Path: <linux-kernel+bounces-729065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F36B03140
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 15:46:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8916CB03139
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 15:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 187F33A78F9
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 13:46:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D832E3B5588
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 13:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45D51DD88F;
-	Sun, 13 Jul 2025 13:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27D2278E6A;
+	Sun, 13 Jul 2025 13:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="TgFdNYAU"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cdivMPP9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F64C2AD20;
-	Sun, 13 Jul 2025 13:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518C817E4;
+	Sun, 13 Jul 2025 13:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752414409; cv=none; b=gQW4wmW1tXl3PsM9IU0Gj0NftPGL3RdYkdhV4fBpMS13/JW6jCbsgbgGPz8fLwoDAq1eV9lgcYOgZB4AGX88Y27d52f2Tu4yFof+7XoMLQog6QHY+L4gJZV+c858ktFcX9abU9eXBeobrZiztfQ5KAS1bnDgsQToR2ckaiCZ7h8=
+	t=1752414142; cv=none; b=Lzs9bPbzddY4HsKfjc8DjPurF+yhmROAz9qtQcF3ahSMcTiOFXdx8QckgNEc+R9otSwQPaYcDl8raqAit3XmULeFAaB2fO8J1xPk2KnItMusq507MChVxlnOtH4WLSlMilL8JkS+xiWX+oBnQbihemsyV2pv18Kx4QSQru/04gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752414409; c=relaxed/simple;
-	bh=ipxl4zfw0YG+RKZ7tPVA6e20g09wAN/2FpTRmkI4s4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oDw1iYTBXSkK0NStah+WMTCxKaVzPVFJf9X1pXnrBh+Ph4hAaodZWeiO1MD+Ya61Dwk0vJ8iEn43/SgYl5Wz7zDfgo2bW8HvWwPp3fGrzMdnxLS98NDLbNTYc390jGcXp2Ea2C5GOOPakpzKVJQWWxMBje5mMWZdI/d0MeQlrqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=TgFdNYAU; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id C04C722C21;
-	Sun, 13 Jul 2025 15:39:19 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id ifD--ucc6E1n; Sun, 13 Jul 2025 15:39:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1752413958; bh=ipxl4zfw0YG+RKZ7tPVA6e20g09wAN/2FpTRmkI4s4k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=TgFdNYAUHEcFBuxzTSDNUnNhncmZAe6GQlUQlfQY/42yHIuSGVm9hY236iFYe41ex
-	 W4tcGSwc+o0NhGlHWGM/t9xUadlWPIw6gGXN7Kz0IVQzEen3AcYZwQyKNk4xxl2myR
-	 8qNNsnHrDsujTZkuQ7jlOHSGgtN4fduFqwUs7eYOSnwgByCmg0ddEX4xM6DK/n5i4d
-	 LSsL2cSb9G8D85nziJlJ5tr/c2ANeFekmb/9snyyy9V3ETCst5zwfutSmG2o2096DQ
-	 sYpS0B5ZVESxWbeftkAgPrStWxtgAIv81DkA9Jaig0UdVw4qMRWs/7Sq4sDHHxPZ6m
-	 fy1FKRDkrGgcA==
-Date: Sun, 13 Jul 2025 13:39:06 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Jonas Karlman <jonas@kwiboo.se>, Heiko Stuebner <heiko@sntech.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Chukun Pan <amadeus@jmu.edu.cn>, linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] arm64: dts: rockchip: Add Radxa ROCK 2A/2F
-Message-ID: <aHO2-l7MuaouBNmw@pie.lan>
-References: <20250712173805.584586-1-jonas@kwiboo.se>
- <20250712173805.584586-3-jonas@kwiboo.se>
+	s=arc-20240116; t=1752414142; c=relaxed/simple;
+	bh=FiK8zDiaUXmEFpaObLQbyvo1T/Qz+0i0aynWUyUlYpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pMF6KqA0LzRi/Ome3TSMZqVxy14EVH8Uco4T8JEdnXhS7um6tc80GOrpgdQWc50bbpWrmpkLrRHF1HyCxanFEpte/lfPsfJsPmd9GWutccFbrZhH8F0TZyP+c+i/SVicuOBU6BRLrHHGyy4A6ScnWECCJTDQqtJ0Q/UDCP8mFGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cdivMPP9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56391C4CEE3;
+	Sun, 13 Jul 2025 13:42:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752414141;
+	bh=FiK8zDiaUXmEFpaObLQbyvo1T/Qz+0i0aynWUyUlYpI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cdivMPP9gmyMal7Nz7Wbd/EGgmLpj9fDl8OwcZ4G+mx29lSB8u6s86519fxpUEi4Z
+	 XVtHYlbWjRcaS8MaQ2xI6SyDaLN0B/5fZbUXxhluZKS8R8FI/68jQpwNyk7RxjeMuX
+	 niU8g8i2Qtrkum09IYF/jhGwEErAQiDrTOkkvcBMJsu9aZhdBuKw1VS7oDNxsmpXQl
+	 rCKFxaYRrAMrI0LuC7Rhn+R9xMdevwEJr9X/fPJXzJYgSvdzAGT8K5pusYzS1MDXAz
+	 hUetqiWXI28yhZx6sDH9HYLSQDmK4wWaeh34OVmB/6R+z55qTKzG5Oxa7t+u28w+P7
+	 8tsZyQLgDNZRQ==
+Date: Sun, 13 Jul 2025 14:42:14 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
+Cc: "lars@metafoo.de" <lars@metafoo.de>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>, "dima.fedrau@gmail.com"
+ <dima.fedrau@gmail.com>, "marcelo.schmitt1@gmail.com"
+ <marcelo.schmitt1@gmail.com>, "linux-iio@vger.kernel.org"
+ <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "Lorenz Christian (ME-SE/EAD2)"
+ <Christian.Lorenz3@de.bosch.com>, "Frauendorf Ulrike (ME/PJ-SW3)"
+ <Ulrike.Frauendorf@de.bosch.com>, "Dolde Kai (ME-SE/PAE-A3)"
+ <Kai.Dolde@de.bosch.com>
+Subject: Re: [PATCH v3 2/2] iio: imu: smi330: Add driver
+Message-ID: <20250713144214.6ee02f59@jic23-huawei>
+In-Reply-To: <AM8PR10MB47217D838CA7DDACBE162D15CD49A@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
+References: <20250703153823.806073-1-Jianping.Shen@de.bosch.com>
+	<20250703153823.806073-3-Jianping.Shen@de.bosch.com>
+	<20250706175328.7207d847@jic23-huawei>
+	<AM8PR10MB47217D838CA7DDACBE162D15CD49A@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250712173805.584586-3-jonas@kwiboo.se>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Jul 12, 2025 at 05:37:44PM +0000, Jonas Karlman wrote:
-> The ROCK 2A and ROCK 2F is a high-performance single board computer
-> developed by Radxa, based on the Rockchip RK3528A SoC.
+On Wed, 9 Jul 2025 19:38:18 +0000
+"Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com> wrote:
+
+> Hi Jonathan,
 > 
-> Add initial device tree for the Radxa ROCK 2A and ROCK 2F boards.
+> "available_scan_masks" works not as expected.  We test it using kernel version v6.16. see the test result inline.
 > 
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-
-Tested on my Radxa 2A board, the SD card could be read out at 45MB/s,
-the GbE port reaches 942Mbps with iperf, and the EEPROM could be read
-out correctly. I also saw the heartbeat LED blinking,
-
-Tested-by: Yao Zi <ziyao@disroot.org>
-
-> ---
-> v3: Rename led nodes to led-0/led-1 (Chukun Pan)
-> v2: Limit sdmmc max-frequency to 100 MHz (Yao Zi)
+> Best Regards 
+> Jianping 
 > 
-> Schematics:
-> - https://dl.radxa.com/rock2/2a/v1.2/radxa_rock_2a_v1.2_schematic.pdf
-> - https://dl.radxa.com/rock2/2f/radxa_rock2f_v1.01_schematic.pdf
-> ---
->  arch/arm64/boot/dts/rockchip/Makefile         |   2 +
->  .../boot/dts/rockchip/rk3528-rock-2.dtsi      | 293 ++++++++++++++++++
->  .../boot/dts/rockchip/rk3528-rock-2a.dts      |  82 +++++
->  .../boot/dts/rockchip/rk3528-rock-2f.dts      |  10 +
->  4 files changed, 387 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2.dtsi
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2a.dts
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2f.dts
+> >> +
+> >> +static irqreturn_t smi330_trigger_handler(int irq, void *p) {
+> >> +	struct iio_poll_func *pf = p;
+> >> +	struct iio_dev *indio_dev = pf->indio_dev;
+> >> +	struct smi330_data *data = iio_priv(indio_dev);
+> >> +	int ret, chan;
+> >> +	int i = 0;
+> >> +
+> >> +	ret = regmap_bulk_read(data->regmap, SMI330_ACCEL_X_REG, data-
+> >>buf,
+> >> +			       ARRAY_SIZE(smi330_channels));
+> >> +	if (ret)
+> >> +		goto out;
+> >> +
+> >> +	if (*indio_dev->active_scan_mask != SMI330_ALL_CHAN_MSK) {
+> >> +		iio_for_each_active_channel(indio_dev, chan)
+> >> +			data->buf[i++] = data->buf[chan];  
+> >
+> >If I follow this correctly you are reading all the channels and just copying out the
+> >ones you want.  Just let the IIO core do that for you by setting iio_dev-  
+> >>available_scan_masks = {  SMI330_ALL_CHAN_MSK, 0 }; and push the whole  
+> >buffer every time.  
+> 
+> For the most frequent use cases, we define available_scan_masks = { SMI330_ALL_CHAN_MSK, SMI330_ACC_XYZ_MSK, SMI330_GYRO_XYZ_MSK, 0 }; and push the whole buffer every time.
+> From the user space we just enable 3 channels gyro_x, gyro_y, and gyro_z. Then we enable buffer and expect that only the gyro values and timestamp in iio_buffer. Nevertheless, we have 3 accelerometer values and the timestamp in iio_buffer.
+
+> It seems that the iio core does not take care which channel is enabled,  just copy the first 3 values (acc x,y,z) into iio_buffer.  Our driver code still needs to take care and just copy the enabled channel value to buffer.
+
+Look again at how it works.  If you provide ACC_XYZ_MSK, then your driver has to handle it.
+available_scan_masks is saying what your driver supports. The driver can check active_scan_mask
+to find out what is enabled.  So right option here is only
+{ SMI330_ALL_CHAN_MSK, 0, }  In that case the driver never needs to check as there is only
+one option.
+
+Then if any subset of channels is enabled the IIO core copy out just the data that
+is relevant.
+
+
+> 
+> Another side effect after using available_scan_masks is that the active_scan_masks sometimes does not reflect current channel activation status.
+> 
+> Is some step missing to properly use available_scan_masks ?  How can a user find out from user space which channel combination is defined in available_scan_masks ?
+
+Why would userspace want to?  Userspace requested a subset of channels
+and it gets that subset.  So it if asks for the channels that make up
+SMI330_ACC_XYZ_MSK, if available_scan_mask == { SMI330_ALL_CHAN_MSK, 0 } then
+the IIO core handling selects SMI330_ALL_CHAN_MSK (smallest available mask that
+is superset of what we asked for) and sets active_scan_mask to that.  The driver
+follows what active_scan_mask specifies and passes all channel data via
+the iio_push_to_buffers*() call. The demux in the IIO core than takes that
+'scan' and repacks it so that userspace receives just the data it asked for
+formatting exactly as the driver would have done it if you had handled
+each channels separately in the driver.
+
+So the aim is that userspace never knows anything about this.  Just set
+what channels you want and get that data. 
+
+Jonathan
+
+
+> 
+> >
+> >The handling the core code is reasonably sophisticated and will use bulk
+> >copying where appropriate.
+> >
+> >If there is a strong reason to not use that, add a comment here so we don't
+> >have anyone 'fix' this code in future.
+> >  
+> >> +	}
+> >> +
+> >> +	iio_push_to_buffers_with_timestamp(indio_dev, data->buf,
+> >> +pf->timestamp);
+> >> +
+> >> +out:
+> >> +	iio_trigger_notify_done(indio_dev->trig);
+> >> +
+> >> +	return IRQ_HANDLED;
+> >> +}  
+> 
+> 
+
 
