@@ -1,104 +1,119 @@
-Return-Path: <linux-kernel+bounces-729086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 769C9B0317A
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:27:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BFF1B0317C
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:28:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 556083BD6B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:27:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BB8B3BD008
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1EE2798ED;
-	Sun, 13 Jul 2025 14:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E75A2797B8;
+	Sun, 13 Jul 2025 14:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxyHEfUH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TTWb3whJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9BF27815C;
-	Sun, 13 Jul 2025 14:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCF48836;
+	Sun, 13 Jul 2025 14:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752416854; cv=none; b=qdGek709Wfq8KpFNeHfwr9eOyPuP/x8jpFX/QwYjJV5OeSHu/7xppb2d+u/GbvFyiwfU7w7ARqqLXCWLfR1V92klfvkxFQLPanQDQ63HwpL6yN3VRIg/dcUt8fA9mPS10kpiRVfFAhZhpKztAl1CFsg+hN5PouphnI9sHhpc2iU=
+	t=1752416899; cv=none; b=a7oOM48iQyscPw0U3GoXaBoxSK0yBOcjhUzdV4orLxqkq+5W5j085WTzFWofyYS3pLI0sx6ZdykSlXOGrxmuMe8FWB62wv6cTe85AQAdo/0/DSLxkMVQ92fEfV5D3TQtOXbtMiK7o3/rsIPIbgk4Ez13FB+fjIZA/G0hRCD/pHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752416854; c=relaxed/simple;
-	bh=lWlEeob8ZmQpxvcDxDzxk/MN8KbZC//aM/OVmb2B14M=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=b072ew2xq8d9m5TU9rLtMxS8Bfp6grQvBEaNOIE1sez3hRx35z+c/TAVyVlFnOVsx2RMNI70tpuCXx3BUBTT82eiyF4WS8pzEyt09aCGexw4eudECA6bm9pS5DVOlXr202x9Tj/INFpxIkZDmqJ3yIec6SVchitkNBMVvXeiC94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PxyHEfUH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D34C1C4CEE3;
-	Sun, 13 Jul 2025 14:27:28 +0000 (UTC)
+	s=arc-20240116; t=1752416899; c=relaxed/simple;
+	bh=K8oeAkKEEzFQ6RQcRKqBmBIjwD+qIuqJJMo+2zdOlck=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uPkHtUvHWFMM4rHUtOiyZJG4grSCW52zPYiW8WV8WmArMA309J0P/z5uta5Wosg6ZWTKleVbgPsOtkdHu+6ZpRzbwNlR4C+q/10cbQ8nA4LsU8XrZ2VhooaBLwlJlfCwSlTSSXBAbDg7oQBxKXgDZGRi/2mOp23N0tIZT3hdJkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TTWb3whJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A95F1C4CEE3;
+	Sun, 13 Jul 2025 14:28:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752416853;
-	bh=lWlEeob8ZmQpxvcDxDzxk/MN8KbZC//aM/OVmb2B14M=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=PxyHEfUHERBurdpbBWwWVLpsx6TrwsLcl2qzKqVCbk2vUEY8v8kpvOtavNA0Nuf2e
-	 nPW4kDZMybshqorPhkmHUhitioM4Ipdey1w0+QLUV6hvKx02hmLl0wydjiyJeslsn6
-	 /pS9MMqXStTStdPi58LWmB4+qpkhEpP98ERcu2ooQ26nr7i13BZD9OHAvw6SgEhwNh
-	 4R0RxDCNQv2ZabGcTq4YnFnUdvFrvPY4JCwgZV0AOHV2H9cp4k1NV7UXZWeqRPY0bE
-	 p/ljgZK+UzhFC2cKqDhZiWs7ebliCCOySbMfzYlPpqSiFAkclGbqsAxkxsXfrNj842
-	 TBydEFDPKH3Og==
+	s=k20201202; t=1752416897;
+	bh=K8oeAkKEEzFQ6RQcRKqBmBIjwD+qIuqJJMo+2zdOlck=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TTWb3whJOlSEp5gucmF85ApZUppQYQWa9tIEpsnLeYj4xguTvvOPpB0nMu0ZihAGX
+	 3BqWCaGujgcWn63x3LfITbY3sZj3jlXMGl/3Q8/z8MiHphIaXGlpEI22QMWBI4IS55
+	 jNekoykhopt2ZhHjZouibnsgEZblYN1CNF4r48NQj5NfW58zhxe9N5xLpdUA0AxEDh
+	 Oi4k49wUBmoVryrzuXOgOsYJu27KeejLZTKHhDC2aBAokMW/eCNIUZhnLGb0r1422K
+	 0D0xkGCe8jz2QORO3v+0g4Hg0V7IjbKZcMuk+M3iNWzRn1UU+w2DtVbiVHPhnltqqP
+	 pHgZ9yeoHJE9w==
+Date: Sun, 13 Jul 2025 15:28:10 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] iio: imu: inv_icm42600: Simplify pm_runtime setup
+Message-ID: <20250713152810.4483c786@jic23-huawei>
+In-Reply-To: <20250709-icm42pmreg-v1-4-3d0e793c99b2@geanix.com>
+References: <20250709-icm42pmreg-v1-0-3d0e793c99b2@geanix.com>
+	<20250709-icm42pmreg-v1-4-3d0e793c99b2@geanix.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 13 Jul 2025 16:27:27 +0200
-Message-Id: <DBAZXDRPYWPC.14RI91KYE16RM@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-Cc: "Benno Lossin" <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn
- Helgaas" <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com> <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org> <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com> <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org> <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org> <DBAWQG1PX5TO.6I2ARFGLX88N@kernel.org> <DBAX59YKO0FV.ANLOWRHDDS92@kernel.org> <DBAXP68U809C.2G8DMB52M3UZ7@kernel.org> <C4A101A7-282D-4A67-A966-CF39850952EA@collabora.com> <DBAZRNHGIGL8.3L2NGPCVXLI25@kernel.org>
-In-Reply-To: <DBAZRNHGIGL8.3L2NGPCVXLI25@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun Jul 13, 2025 at 4:19 PM CEST, Danilo Krummrich wrote:
-> On Sun Jul 13, 2025 at 4:09 PM CEST, Daniel Almeida wrote:
->> On a second look, I wonder how useful this will be.
->>
->>  fn handle(&self, dev: &Device<Bound>) -> IrqReturn
->>
->> Sorry for borrowing this terminology, but here we offer Device<Bound>, w=
-hile I
->> suspect that most drivers will be looking for the most derived Device ty=
-pe
->> instead. So for drm drivers this will be drm::Device, for example, not t=
-he base
->> dev::Device type. I assume that this pattern will hold for other subsyst=
-ems as
->> well.
->>
->> Which brings me to my second point: drivers can store an ARef<drm::Devic=
-e> on
->> the handler itself, and I assume that the same will be possible in other
->> subsystems.
->
-> Well, the whole point is that you can use a &Device<Bound> to directly ac=
-cess
-> device resources without any overhead, i.e.
->
-> 	fn handle(&self, dev: &Device<Bound>) -> IrqReturn {
-> 	   let io =3D self.iomem.access(dev);
->
-> 	   io.write32(...);
-> 	}
+On Wed, 09 Jul 2025 14:35:12 +0200
+Sean Nyekjaer <sean@geanix.com> wrote:
 
-So, yes, you can store anything in your handler, but the &Device<Bound> is =
-a
-cookie for the scope.
+> Remove unnecessary pm_runtime_get_noresume() and pm_runtime_put()
+> calls during probe. These are not required when the device is marked
+> active via pm_runtime_set_active() before enabling pm_runtime with
+> pm_runtime_enable().
+> 
+> Also remove the redundant pm_runtime_put_sync() call from the cleanup
+> path, since the core is not incrementing the usage count beforehand.
+> 
+> This simplifies the PM setup and avoids manipulating the usage counter
+> unnecessarily.
+
+Could we switch directly to using devm_pm_runtime_enable() for this driver?
+
+At first glance looks like this code is missing the disable of autosuspend
+that should be there (which devm_pm_runtime_enable() will also handle).
+
+
+> 
+> Fixes: 31c24c1e93c3 ("iio: imu: inv_icm42600: add core of new inv_icm42600 driver")
+> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> ---
+>  drivers/iio/imu/inv_icm42600/inv_icm42600_core.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> index 55a29b1e2b11355598b0ede7af22857aed3ae134..1072bea11c73d09a9a0e6ea9d4a5c7a72248dca7 100644
+> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> @@ -708,7 +708,6 @@ static void inv_icm42600_disable_pm(void *_data)
+>  {
+>  	struct device *dev = _data;
+>  
+> -	pm_runtime_put_sync(dev);
+>  	pm_runtime_disable(dev);
+>  }
+>  
+> @@ -806,11 +805,10 @@ int inv_icm42600_core_probe(struct regmap *regmap, int chip,
+>  	ret = pm_runtime_set_active(dev);
+>  	if (ret)
+>  		return ret;
+> -	pm_runtime_get_noresume(dev);
+> +
+>  	pm_runtime_enable(dev);
+>  	pm_runtime_set_autosuspend_delay(dev, INV_ICM42600_SUSPEND_DELAY_MS);
+>  	pm_runtime_use_autosuspend(dev);
+> -	pm_runtime_put(dev);
+>  
+>  	return devm_add_action_or_reset(dev, inv_icm42600_disable_pm, dev);
+>  }
+> 
+
 
