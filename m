@@ -1,99 +1,106 @@
-Return-Path: <linux-kernel+bounces-729081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 331E6B0316F
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:20:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3BF2B03171
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E27717C473
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:20:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82DBD7AAD37
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3539327933C;
-	Sun, 13 Jul 2025 14:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9779279335;
+	Sun, 13 Jul 2025 14:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAXLy5HM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOslMyHI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB478F4A;
-	Sun, 13 Jul 2025 14:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124311B87E9;
+	Sun, 13 Jul 2025 14:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752416403; cv=none; b=clcHAM2S/slyI+BJachUSJsz+xeBVRq+JgfrL/ma4LLVal/sceRAjdd9dqkAahvbyNRautMhhk9S6vGF2zKqBaJduzaTEmBrjXAgQW8P3+yN/5cLfeUzUqLv7Fvyrjt2f4FwlsmR39mJT7MHNM5LOd+idhR0Cf8ByWE3jPE89RE=
+	t=1752416528; cv=none; b=G4bf2OBQyz1TDAgsdIpFsMwqC71Xo7UdUSpe5EINO5U1OJp/GNDbHdqXPKF13wu4Q81KniYkZi26Nv4IaW7muEZXlEBW9OXemw2L/+pzl/TqJWnp0IRV232Ytr6d1kRlfvbVsIztODHYUwEN6zP1DMKnz4Fb8HuVXYQSGhU/B1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752416403; c=relaxed/simple;
-	bh=X+GeHH8pfuXrXmc3cWrR2M+jAONYM1dPj8QJJmReTok=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=YTDtzuqD9oL+eY0wCJC3masKH0rVckVi5zpg5KqXRimlLqRa0UQyLlvkRXPVdEOav9th8WEAolbGdBOtPov/Tejuh3QyN+9XV+zqPuV6cc3a9l8kZImn5KgHm7G+p+ascrBPqvjlfq3L726kuUWpc5EZhLS9MmldYngLi4UMYsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAXLy5HM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F06C4CEE3;
-	Sun, 13 Jul 2025 14:19:59 +0000 (UTC)
+	s=arc-20240116; t=1752416528; c=relaxed/simple;
+	bh=HP4Wp2jkXL5D123nCFwZc99bQV88QuFNsGsvtPlAcd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TDmVZA6sYJbyjkvOPvj3d2qnVIUJc189PK1/zb7FYT0x+xRGPovOsb41A+vCABmKGq1QbPY0wL2vCSjUExQWl8zUzCoAMZspi/kp8L8delGOTYtEM+3ELX+aJsOk8oviRIGJjX/A2aN79uEM6tnZFcMgdQf89b9BowxgR8B7rsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOslMyHI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 331E4C4CEE3;
+	Sun, 13 Jul 2025 14:22:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752416403;
-	bh=X+GeHH8pfuXrXmc3cWrR2M+jAONYM1dPj8QJJmReTok=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=aAXLy5HMoJAhsskfrtY9/IXAayWIorkhguUylqw8bgYt7FDVjAzX94Xpq03FY3IxX
-	 DAyNDFYQurbLYddlKN7Nhno6MbXHpKOVBRMbGrqNkmzkX9U6KQ9ufOej0mPyKD6xhU
-	 mPLtR+D6NDGOhpuRTxv8Kl8llr2a3zfcsiVpup0vh34ESZCwy0CzHGPWsgHAyeXMy9
-	 0gCBUECGilc9aFueW/YcE/CKj58eLA+d61LPYBx5t609ghjdX2YauTaZ7Qc3taRHWE
-	 25toDZTtOLXhMjFbc4h3sCnW8gDwdSvRg+GHyORXCMUciudx87waiB2wEtfAK/PLOb
-	 oECmyUwfI1gPw==
+	s=k20201202; t=1752416527;
+	bh=HP4Wp2jkXL5D123nCFwZc99bQV88QuFNsGsvtPlAcd8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JOslMyHIUF72jX2VHOvaoH+2vd99oScf3hpQev2wUOJ4IgMvG+fcA3AkjOw4EOcVt
+	 U4JYxZzCsbYfDWZYiASu3Dk+N8TTx5s3S/i2+i1ShUQbyiChi+frErrlcbjks5KVMP
+	 Mp+ATD3W3ccRrhjd5lG/LQHnBzJhpFv9Fc+FhOUHiGGQ4xIdHA0eBPcxahDySbnkeL
+	 ZRvAqyHGRAK3LW9+x3NftKL2VekS73AwhO7gFTjWEHb3u7pQFsLKZkfAGL9UoeNHpZ
+	 oPZwwg4sQz6JPa4nSfcS3qyyi60UHk6yj8JY7EjYX3Bjvd7Md6m/ACcFTuBEEESl86
+	 GPzpyHJFl5yBA==
+Date: Sun, 13 Jul 2025 15:22:00 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] iio: imu: inv_icm42600: Remove redundant error msg
+ on regulator_disable()
+Message-ID: <20250713152200.041e05dd@jic23-huawei>
+In-Reply-To: <20250709-icm42pmreg-v1-3-3d0e793c99b2@geanix.com>
+References: <20250709-icm42pmreg-v1-0-3d0e793c99b2@geanix.com>
+	<20250709-icm42pmreg-v1-3-3d0e793c99b2@geanix.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 13 Jul 2025 16:19:58 +0200
-Message-Id: <DBAZRNHGIGL8.3L2NGPCVXLI25@kernel.org>
-Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-Cc: "Benno Lossin" <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn
- Helgaas" <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com> <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org> <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com> <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org> <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org> <DBAWQG1PX5TO.6I2ARFGLX88N@kernel.org> <DBAX59YKO0FV.ANLOWRHDDS92@kernel.org> <DBAXP68U809C.2G8DMB52M3UZ7@kernel.org> <C4A101A7-282D-4A67-A966-CF39850952EA@collabora.com>
-In-Reply-To: <C4A101A7-282D-4A67-A966-CF39850952EA@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun Jul 13, 2025 at 4:09 PM CEST, Daniel Almeida wrote:
-> On a second look, I wonder how useful this will be.
->
->  fn handle(&self, dev: &Device<Bound>) -> IrqReturn
->
-> Sorry for borrowing this terminology, but here we offer Device<Bound>, wh=
-ile I
-> suspect that most drivers will be looking for the most derived Device typ=
-e
-> instead. So for drm drivers this will be drm::Device, for example, not th=
-e base
-> dev::Device type. I assume that this pattern will hold for other subsyste=
-ms as
-> well.
->
-> Which brings me to my second point: drivers can store an ARef<drm::Device=
-> on
-> the handler itself, and I assume that the same will be possible in other
-> subsystems.
+On Wed, 09 Jul 2025 14:35:11 +0200
+Sean Nyekjaer <sean@geanix.com> wrote:
 
-Well, the whole point is that you can use a &Device<Bound> to directly acce=
-ss
-device resources without any overhead, i.e.
+> The regulator framework already emits an error message when
+> regulator_disable() fails, making the local dev_err() redundant.
+> Remove the duplicate message to avoid cluttering the kernel log
+> with the same error twice.
+> 
+> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> ---
+>  drivers/iio/imu/inv_icm42600/inv_icm42600_core.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> index 35f7c66d77790829a739d2c54ba77e53903a9297..55a29b1e2b11355598b0ede7af22857aed3ae134 100644
+> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> @@ -700,12 +700,8 @@ static int inv_icm42600_enable_regulator_vddio(struct inv_icm42600_state *st)
+>  static void inv_icm42600_disable_vddio_reg(void *_data)
+>  {
+>  	struct inv_icm42600_state *st = _data;
+> -	const struct device *dev = regmap_get_device(st->map);
+> -	int ret;
+>  
+> -	ret = regulator_disable(st->vddio_supply);
+> -	if (ret)
+> -		dev_err(dev, "failed to disable vddio error %d\n", ret);
 
-	fn handle(&self, dev: &Device<Bound>) -> IrqReturn {
-	   let io =3D self.iomem.access(dev);
+Dropping this message (which is sensible) reinforces my lack of warm
+fuzzy feelings about patch 1.  I'd definitely leave those other calls
+alone and keep this as just a tight wrapper around st.  Note though that
+can just pass the regulator as the parameter to the devm_add_action_or_reset()
+and simplify this a bit more now you don't need to get to the dev.
 
-	   io.write32(...);
-	}
+> +	regulator_disable(st->vddio_supply);
+>  }
+>  
+>  static void inv_icm42600_disable_pm(void *_data)
+> 
+
 
