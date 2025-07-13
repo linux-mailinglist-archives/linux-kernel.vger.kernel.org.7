@@ -1,93 +1,97 @@
-Return-Path: <linux-kernel+bounces-729122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EEC4B0320B
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 18:13:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D00AB0320E
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 18:17:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9227D3BBB8A
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:13:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 951D53BBD12
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992B427F74C;
-	Sun, 13 Jul 2025 16:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570AE27AC31;
+	Sun, 13 Jul 2025 16:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dESv4oQK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="wSbUNT2K"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13332594;
-	Sun, 13 Jul 2025 16:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE7135955
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 16:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752423231; cv=none; b=piv6XW3s0sKmEsuAH4os9YiHYcvk0Cyb26J1tOTzZIlr90BCqudU1OWGriHbV91sE7IbbmJbWANgR9jf5HTKQ1M+fjJV12BpoeLdCI2EMRPp748oSBC4u0Xki16Hp2j6/5sFKc4APKiEUcM2/3nK6kmhr0ImeANCZbRLgQ1e8n0=
+	t=1752423458; cv=none; b=OEzR0rY937+oUKcAgHHCg9Qn425rqoGsl/fkXGANBegw/iZYnVpjlcjVUxyILdMcJ8JhLqDLKP8djqn/2QSM+b21EqFYff+L2+GuUTcwzXBqqbl55y6FHTSHJq3i6AEDUOG3Jxf39U1GE46KHPkg1vxrsR6USPCr5KJiPIfOJ0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752423231; c=relaxed/simple;
-	bh=lwqMcmb9kzS5fpq0wMbtS1pwIVY20vukUW9V5Dgl2ro=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A5Vq8dGAVmh6FAc51N4SJ9TTRzPI4e3OAxrBRFqQEONDryM8KEUrIumbbRr4R/Yujdyt178NAC4Ex8CCQXw2PNxNDEPIIG4GP8XMTsacNSEFHnguwciyJJHPSVJ6YJJW+5yRLRuLEINeq5KmT3W6iXTyWLj05QjbQNHF5ghcWD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dESv4oQK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56487C4CEE3;
-	Sun, 13 Jul 2025 16:13:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752423230;
-	bh=lwqMcmb9kzS5fpq0wMbtS1pwIVY20vukUW9V5Dgl2ro=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dESv4oQKzVX7k2PJFrp8iB9H9J0HlArhqbphhcWQZXdKPipMFCH9UnWyFu5ux/9ZG
-	 Niqz4XJipCVt7kzkPOxPvZLWnzgRVenAyJca26dILfyogbQB5HwobVOatKtl0K69Aj
-	 Dxu+9olhRx8LZfArGSxlZmwO/yx9WB/7OkW7MOPZcXpleMLe5bOdxvD2nbqFL3bg9d
-	 2Qd9VD2iGIepxuit8nbCGY75PZuF+cAhNbxcbhFogOUeTCJ+IqfJKrXC8147MVxxTF
-	 3RlAgEJnag1JBY77EvG0p0NXwOUfIrg/d4K9u1apSvq/e42fl/MpN2We8hFsh/Mj4l
-	 /OtGUCWrWlbtg==
-Date: Sun, 13 Jul 2025 17:13:43 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] iio: Few cleanups to vf610 and ti-adc12138
-Message-ID: <20250713171343.6c63ddc4@jic23-huawei>
-In-Reply-To: <20250713-iio-clk-get-enabled-v1-0-70abc1f9ce6c@linaro.org>
-References: <20250713-iio-clk-get-enabled-v1-0-70abc1f9ce6c@linaro.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752423458; c=relaxed/simple;
+	bh=d7UT31cxNNFRqrlz9iMYspz1t4lxiopYZnjnth2SQbk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VYjgAQVtrmGGYmb4inkxlafN4tXWc+JDK7auuh8wnUbu7hqf+MqFI2cbGNNOnUHYdun2YtjqlHEmWSCrskrk1H1cdDE129Muf1UxvwwsoP1QtG+K3A//y9RHAi0NUNoLDgefYiKeR9NCGfFCF1SZaiwacbR4kXzd+sefRUdijKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=wSbUNT2K; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1752423452;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VBNIyz9cuBjZoJtZIql5gATNUxrtX/L4E0kfIQR1FVU=;
+	b=wSbUNT2KQf7F6owQb126AXQgG8NAE5vzWO37zgz0zVVHPYo3SjAxF9KpgjaeF9wQ0WUnzH
+	6QAF2GSmc3/3j8WqQy4heZSF2t4e1sITjnWPs/4EDqFMxPADOy0cSoFz5mQpfvl/ttjwAI
+	EML6PYD+M1MKlurhRg+9S6t+nQHh5HpsuVI3Co/gqD+JcuTlTRvPvIc7vLfpi9bKFF2i8I
+	i3izdpylYASUYmq37wbDWOSJLS9VP5NFLP3ohGm5CZVCYTUXk5W988iKMS7vT6rK9TNF5u
+	NtqkynsT42/z/YWegbfZo8fl6dS3clrLbFZkvkuJlOoDxYZG46v5JCwWHCEbWA==
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Dragan Simic <dsimic@manjaro.org>,
+	Peter Robinson <pbrobinson@gmail.com>,
+	Johan Jonker <jbx6244@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Diederik de Haas <didi.debian@cknow.org>
+Subject: [PATCH] arm64: dts: rockchip: Add rtc0 alias for NanoPi R5S + R5C
+Date: Sun, 13 Jul 2025 18:16:36 +0200
+Message-ID: <20250713161723.270963-1-didi.debian@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, 13 Jul 2025 17:59:54 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+The RTC_HCTOSYS_DEVICE module defaults to rtc0 and should (highly)
+preferable be assigned to a battery backed RTC module as it is used to
+(re)initialize the system clock.
 
-> Just few cleanups.  Not tested on hardware.  Only the first patch could
-> have an observable effect.
-> 
-Applied 2-4.  As the 1st patch is more complex - I'll let that sit a while
-first to see if anyone had views on the ordering change.
+The R5S and R5C have a connector for a RTC battery which is used by
+HYM8563 RTC. Both devices also have another RTC from the rk809 PMIC.
+To make sure the HYM8563 is always assigned rtc0, add an alias for it.
 
-Jonathan
+Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
+---
+ arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Best regards,
-> Krzysztof
-> 
-> ---
-> Krzysztof Kozlowski (4):
->       iio: adc: ti-adc12138: Simplify with devm_clk_get_enabled()
->       iio: adc: vf610: Drop -ENOMEM error message
->       iio: adc: vf610: Simplify with dev_err_probe
->       iio: dac: vf610: Simplify with devm_clk_get_enabled()
-> 
->  drivers/iio/adc/ti-adc12138.c | 30 +++++++++++-------------------
->  drivers/iio/dac/vf610_dac.c   | 23 +++++------------------
->  2 files changed, 16 insertions(+), 37 deletions(-)
-> ---
-> base-commit: a62b7a37e6fcf4a675b1548e7c168b96ec836442
-> change-id: 20250713-iio-clk-get-enabled-4764482c8ff3
-> 
-> Best regards,
+diff --git a/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtsi b/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtsi
+index a28b4af10d13..f4d042bdd328 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtsi
+@@ -18,6 +18,7 @@ / {
+ 	aliases {
+ 		mmc0 = &sdmmc0;
+ 		mmc1 = &sdhci;
++		rtc0 = &hym8563;
+ 	};
+ 
+ 	chosen: chosen {
+-- 
+2.50.0
 
 
