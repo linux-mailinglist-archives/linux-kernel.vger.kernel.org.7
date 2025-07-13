@@ -1,158 +1,99 @@
-Return-Path: <linux-kernel+bounces-729151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D399B0328E
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 19:56:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA8EEB03290
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 19:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B894F1795C7
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 17:56:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1812D3A5D67
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 17:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81089285C98;
-	Sun, 13 Jul 2025 17:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C51B285CA9;
+	Sun, 13 Jul 2025 17:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aRL5197n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="MctySvXb"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D131B2581;
-	Sun, 13 Jul 2025 17:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE37277CB3;
+	Sun, 13 Jul 2025 17:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752429384; cv=none; b=H4iF+z0TNLNULaqSqkhDWff1eU5fvaq4lcHeGDLEXv7XchpUgAGS5eMiOlAJRNFNdfZZmQjqxxvfhWx4rp7tp3Te228qPaIXLSQdN+z3KW9s/MMjPf8FxwDrGQVgnU9iLABAxSOD5LbfhcMiARPwDVQ4pPsPj1z0DKHr97q1O5c=
+	t=1752429557; cv=none; b=E47aSd+H7PHH9++Bfdga/KVrdJjFwkLGYjAy0BQDfDYou9a2dwVuHPZ24KCBSRyFi5WRbUsppp8tcnh6SUJ8HfTEsnZC7KHiuW7A9cHw0XGYkCfkaV6oL+0dpFOcUMWYazi4l3QpFTvzE3EBX0jTOVWf/CJoPoUF0KP/k2LRe8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752429384; c=relaxed/simple;
-	bh=P+ZGpMquPfCHNe224IKptMJLR+y5tQ5d/vbWwHQvmck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DmTM12wQPWXUwWAzpuPkbVxwrpUy6r4cBFhcEl7scm97hmLMeTLhwupU0xlw39vOuhs9fBnX3Q/6qPTBcy4eOY8odcenk+uHyt38CTJICCuVSKwA48cipvXobCnb5SQrdlz1ww+J+ehKnOwAz6yisKF+cxzvn8ZyZDh8QllmkoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aRL5197n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63C3AC4CEE3;
-	Sun, 13 Jul 2025 17:56:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752429384;
-	bh=P+ZGpMquPfCHNe224IKptMJLR+y5tQ5d/vbWwHQvmck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aRL5197nqMjr05xGN5g0zw/NpBK9l35yCYREJWMyObTAyxvoeKkdbRkguviRQyWru
-	 qvE1QRGmzQ1VaF8essjumL49HXZ7Jd3v8OF7zwINCkQ0AgrJc92KRSxrY1o9bOCdLL
-	 VkLp9+/x/hMoTGF6Xcj6jz2F6PJI7OgL1JNmnF0LPTBCwnsqgNAoNNRulmzs7a2JMo
-	 L7jw0iwn/wt5L0JQLgnojswEXOudNgPt+3uOhusGR+3FkW1by9lkMz0SRd9MNYAhli
-	 G/gcpZCx+VIYKjHzKwbrv4cM0UBdtktAmhnQPB8FX/GQ6gE2tIKfgSrJy6SmVJJu0v
-	 /JXT21VQ3POhw==
-Date: Sun, 13 Jul 2025 20:56:10 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@gentwo.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Juergen Gross <jgross@suse.com>,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	Joao Martins <joao.m.martins@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Jane Chu <jane.chu@oracle.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org, stable@vger.kernel.org
-Subject: Re: [RFC V1 PATCH mm-hotfixes 1/3] mm: introduce and use
- {pgd,p4d}_populate_kernel()
-Message-ID: <aHPzOrS7ZfO-3Wf6@kernel.org>
-References: <20250709131657.5660-1-harry.yoo@oracle.com>
- <20250709131657.5660-2-harry.yoo@oracle.com>
- <02146c79-a4de-430f-8357-0608e796fa60@redhat.com>
- <aHObCemGNrGakq_b@hyeyoo>
+	s=arc-20240116; t=1752429557; c=relaxed/simple;
+	bh=j/Xc3m8aGB/bnZvzCCQKEThLet9B2MWI5sHcRHNIHjE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VnVAXL88VtpShSXiP98akAlKdHyC+wPDWsvmHvHzA9h/GEQeBN6lValhmUImApX/GcfG958LKYY1Gp7XMIhGbJJEro7hsLF/jR9j0WhL6yvjhU11oQfKVu+IF1ImVIWEUZLkcLXbfvgRJjJfJoJ3cOdQWxSzSU7PCrrEK1Ykgg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=MctySvXb; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4bgCrD73tLzlgqyj;
+	Sun, 13 Jul 2025 17:59:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1752429547; x=1755021548; bh=q5yVHxfCx9AnzU03pXoM2Ryy
+	zVpHtDMUHzmqUhqzP1M=; b=MctySvXbDpWRa++rQyiL+7fv8bxUi5E9OW5gTcbN
+	fQ/IhSzkcbQ3slWwoOhaeF/yMJQ/uyW5Zqgv0wo1KYKfenKbvjxIunZJ7ypd1lxY
+	pHeeTqzIxvLRB26P9j1vOh+XpzVVEoPWvgKC8gUdmG3iJe1jVsSExuqIQn1lxVu6
+	J0axayFiP6v+lNUp8m2oO1Bm8GeFrIQVFDaWLmPRCPG5X4mdEAm+8PrSlDZS/sbe
+	GKNSvCRr8DPUaJHZ735Xpw98XHPOhDjI9yjOX/MxON3tu6sIdvqSMM8opYQ9JT9A
+	jR7T1Av9bFboG2H9553DvsmK3PNa/FDLhWMZpXeFLKNPog==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id vXGUHYKKw_b6; Sun, 13 Jul 2025 17:59:07 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4bgCr34gprzlgqxr;
+	Sun, 13 Jul 2025 17:58:57 +0000 (UTC)
+Message-ID: <3a88109e-25e4-4873-8143-242d24f2dfe0@acm.org>
+Date: Sun, 13 Jul 2025 10:58:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHObCemGNrGakq_b@hyeyoo>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: hisi_sas: use sysfs_emit() in v3 hw show()
+ functions
+To: Greg KH <gregkh@linuxfoundation.org>,
+ Khaled Elnaggar <khaledelnaggarlinux@gmail.com>
+Cc: liyihang9@huawei.com, James.Bottomley@hansenpartnership.com,
+ martin.petersen@oracle.com, linux-kernel-mentees@lists.linux.dev,
+ shuah@kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250712142804.339241-1-khaledelnaggarlinux@gmail.com>
+ <2025071244-widely-strangely-b24c@gregkh>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <2025071244-widely-strangely-b24c@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jul 13, 2025 at 08:39:53PM +0900, Harry Yoo wrote:
-> On Fri, Jul 11, 2025 at 06:18:44PM +0200, David Hildenbrand wrote:
-> > On 09.07.25 15:16, Harry Yoo wrote:
-> > > Intrdocue and use {pgd,p4d}_pouplate_kernel() in core MM code when
-> > > populating PGD and P4D entries corresponding to the kernel address
-> > > space. The main purpose of these helpers is to ensure synchronization of
-> > > the kernel portion of the top-level page tables whenever such an entry
-> > > is populated.
-> > > 
-> > > Until now, the kernel has relied on each architecture to handle
-> > > synchronization of top-level page tables in an ad-hoc manner.
-> > > For example, see commit 9b861528a801 ("x86-64, mem: Update all PGDs for
-> > > direct mapping and vmemmap mapping changes").
-> > > 
-> > > However, this approach has proven fragile, as it's easy to forget to
-> > > perform the necessary synchronization when introducing new changes.
-> > > 
-> > > To address this, introduce _kernel() varients of the page table
-> > 
-> > s/varients/variants/
+On 7/12/25 7:43 AM, Greg KH wrote:
+> On Sat, Jul 12, 2025 at 05:28:03PM +0300, Khaled Elnaggar wrote:
+>> Replace scnprintf() with sysfs_emit() in several sysfs show()
+>> callbacks in hisi_sas_v3_hw.c. This is recommended in
+>> Documentation/filesystems/sysfs.rst for formatting values returned to
+>> userspace.
 > 
-> Will fix. Thanks.
-> 
-> > > population helpers that invoke architecture-specific hooks to properly
-> > > synchronize the page tables.
-> > 
-> > I was expecting to see the sync be done in common code -- such that it
-> > cannot be missed :)
-> 
-> You mean something like an arch-independent implementation of
-> sync_global_pgds()?
->
-> That would be a "much more robust" approach ;)
-> 
-> To do that, the kernel would need to maintain a list of page tables that
-> have kernel portion mapped and perform the sync in the common code.
-> 
-> But determining which page tables to add to the list would be highly
-> architecture-specific. For example, I think some architectures use separate
-> page tables for kernel space, unlike x86 (e.g., arm64 TTBR1, SPARC) and
-> user page tables should not be affected.
+> For new users, yes, but what's wrong with these existing calls?  They
+> still work properly, so why change them?
 
-sync_global_pgds() can be still implemented per architecture, but it can be
-called from the common code.
-We already have something like that for vmalloc that calls
-arch_sync_kernel_mappings(). It's implemented only by x86-32 and arm, other
-architectures do not define it.
+How about making this explicit in Documentation/filesystems/sysfs.rst?
+I think that would help to stop the steady stream of patches for
+converting existing sysfs show callbacks to sysfs_emit()/sysfs_emit_at().
 
-> While doing the sync in common code might be a more robust option
-> in the long term, I'm afraid that making it work correctly across
-> all architectures would be challenging, due to differences in how each
-> architecture manages the kernel address space.
-> 
-> > But it's really just rerouting to the arch code where the sync can be done,
-> > correct?
-> 
-> Yes, that's correct.
-> 
-> Thanks for taking a look!
-> 
-> -- 
-> Cheers,
-> Harry / Hyeonggon
+Thanks,
 
--- 
-Sincerely yours,
-Mike.
+Bart.
 
