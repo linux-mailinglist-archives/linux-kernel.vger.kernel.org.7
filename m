@@ -1,140 +1,136 @@
-Return-Path: <linux-kernel+bounces-728921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3F8DB02F16
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 09:16:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC1E4B02F1A
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 09:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13A5E17F566
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 07:16:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B1017F63C
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 07:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00FE71D7E35;
-	Sun, 13 Jul 2025 07:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538891D6DB5;
+	Sun, 13 Jul 2025 07:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="S05NwZfz"
-Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cj9wKHy2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C397319E96A
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 07:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7381367;
+	Sun, 13 Jul 2025 07:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752391000; cv=none; b=gj9MKGwb7trkse1W/18TAcoUPZfjG1Q2SgLVt45ja3XC1hOaqCeqzaHTP6BE8+WV8NLaCkTKAo+T4+8vr/jccZoQdAq6bAimyw/TdX7luUsZ8FZBrUODyD9rcRgruJIzyZ5YL6LAeRy3XYYpGNq140txqlDCFa6ZFgZHEPWAHlU=
+	t=1752391060; cv=none; b=D6hHvmRSw+OmJIr4/2qwQORe3f6JCvooJ573AL1cP0Jwcc2ffBhu/S+5XE4jI5GtbU354yI6haoY+EeNj2Ksx0ccptSfn+zp44kEt1KzVk7fBGcm4vXpHtQ+Q7zjyvkgeemG3KFJKP1yzsz5ZmOcLIfWZLE5d8HkuKtoeQUoiyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752391000; c=relaxed/simple;
-	bh=HfZHTLzzuEQmXMzhwy+ZqqtMIF/uB8XjosxDmlFCl4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H6JG7X5IPrEsSTHDtBsd0VWKapB7/3qK0DQ1jE1dQbL5w5rtnFYYOnOIFrz9Zzk7xWdGSG1LYwO1zNa+eGXAReKWfiV1ur8ZY7M/zgf8isoEiGgdO+UuA2WeMCb3NcIBmOPf+1IRJkSYe5dxUfwPcnvSlLtJB3YQ8BAV0UPH8c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=S05NwZfz; arc=none smtp.client-ip=212.77.101.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 33692 invoked from network); 13 Jul 2025 09:16:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1752390996; bh=XHpjxRCC9oBEtCC7LwQSVhUBCtPG0Hfe6EOtEGtBLcc=;
-          h=From:To:Cc:Subject;
-          b=S05NwZfzm8j7SBsM1S7JM9VsSaBsYDaWFzDYYA0TVR7ogGAa+BzDGSB6kmHKfCTwu
-           LCAeuNW0JWJpncdtTK+lGB2+d8+d0GgHe+9bFOkSffWV3UqDJkuWMdBAkiGqfrWpeZ
-           qOnPX06lc0VTbW7gPPDLsLmH2aiHpn7HuZOn+rxBcJ929xuCj4oNm5HyK5c7d5OC9g
-           Zf2FqDyrfZ9rFPDhsSahWQCp6uYyaDk6wSBb0RebkA8DcrQXuxBgPiOQcWkVhWvWfB
-           Br2xfuKsAZXl4owxAaoiCghP7y62+IJUfLnd1Qr/rVlA87fMzgwy/A1JnGNk0mgOAW
-           Lj1kGAgApiilA==
-Received: from 89-64-3-180.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.3.180])
-          (envelope-sender <stf_xl@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <rosenp@gmail.com>; 13 Jul 2025 09:16:36 +0200
-Date: Sun, 13 Jul 2025 09:16:35 +0200
-From: Stanislaw Gruszka <stf_xl@wp.pl>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-wireless@vger.kernel.org,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:MIPS" <linux-mips@vger.kernel.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCHv4 wireless-next 3/7] wifi: rt2800soc: allow loading from
- OF
-Message-ID: <20250713071635.GB18469@wp.pl>
-References: <20250712210448.429318-1-rosenp@gmail.com>
- <20250712210448.429318-4-rosenp@gmail.com>
+	s=arc-20240116; t=1752391060; c=relaxed/simple;
+	bh=sCEGchPk57A1a1Hap+1jxUD6UZPcz9tgIrKQpcRxyis=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WZSEnUgXIKjy2GoNvKrcFo3c9TdEfHMUjdFKIMPDKOpZCGRr2H2sCo8F9YU7HA/D7MdGZFXsxs/nHEIcs1m+ug1D/YwioysX+XIygYn0wRjT7ZwvgVc2rz3vKyBXDHfqBdNoJxjN+iUJAo7SR3B5eNifWOjLXGv/mGbzrDXrOE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cj9wKHy2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CD38C4CEE3;
+	Sun, 13 Jul 2025 07:17:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752391060;
+	bh=sCEGchPk57A1a1Hap+1jxUD6UZPcz9tgIrKQpcRxyis=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cj9wKHy2Rk4JCQgZuB6e4IvnTq8AWaZ5Wv+qxuR6VlwQZDx/jsCQJshf1KNE6q/0A
+	 xUM/vTsiWCZ7I0YPS4Z5bk4U1XOGx2oNlFKlS2ZCH/Wqa5A9svaIolJbcbAtRx8o3r
+	 E5V0MfYYueJdleQO242WfkDTZDVAD0fjyJftWT+d7SQsz055+uKD2YjArZckuBocUH
+	 3mC+KHG33IHdCqRtu96zmTulgn3n6vgKjjJG5O7QtjN9zxAkq9+ZddYDRgTn+MxkrV
+	 vnOScBdoJJ7/dYe5ed+B+a1YP4yrc9Oq+OmmLSfYuYbmwMt4+S4K8Bm1kbt9p6MQx1
+	 FAy2EghCCyEeQ==
+From: Mike Rapoport <rppt@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Yann Ylavic <ylavic.dev@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-modules@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: [PATCH v3 0/8] x86: enable EXECMEM_ROX_CACHE for ftrace and kprobes
+Date: Sun, 13 Jul 2025 10:17:22 +0300
+Message-ID: <20250713071730.4117334-1-rppt@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250712210448.429318-4-rosenp@gmail.com>
-X-WP-MailID: aea20ff63548b994e5d08e30c56a4aac
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000000 [0dNx]                               
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 12, 2025 at 02:04:44PM -0700, Rosen Penev wrote:
-> Add a single binding to help the already present dts files load the
-> driver. More are possible but there doesn't seem to be a significant
-> difference between them to justify this.
-> 
-> Use wifi name per dtschema requirements.
-> 
-> The data field will be used to remove the custom non static probe
-> function and use of_device_get_match_data.
-> 
-> Added OF dependency to SOC CONFIG as adding of_match_table without OF
-> being present makes no sense.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
+From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 
-> ---
->  drivers/net/wireless/ralink/rt2x00/Kconfig     | 2 +-
->  drivers/net/wireless/ralink/rt2x00/rt2800soc.c | 7 +++++++
->  2 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/ralink/rt2x00/Kconfig b/drivers/net/wireless/ralink/rt2x00/Kconfig
-> index 3a32ceead54f..a0dc9a751234 100644
-> --- a/drivers/net/wireless/ralink/rt2x00/Kconfig
-> +++ b/drivers/net/wireless/ralink/rt2x00/Kconfig
-> @@ -202,7 +202,7 @@ endif
->  
->  config RT2800SOC
->  	tristate "Ralink WiSoC support"
-> -	depends on SOC_RT288X || SOC_RT305X || SOC_MT7620 || COMPILE_TEST
-> +	depends on OF && (SOC_RT288X || SOC_RT305X || SOC_MT7620 || COMPILE_TEST)
->  	select RT2X00_LIB_SOC
->  	select RT2X00_LIB_MMIO
->  	select RT2X00_LIB_CRYPTO
-> diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800soc.c b/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
-> index e73394cf6ea6..db8d01f0cdc3 100644
-> --- a/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
-> +++ b/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
-> @@ -243,9 +243,16 @@ static int rt2800soc_probe(struct platform_device *pdev)
->  	return rt2x00soc_probe(pdev, &rt2800soc_ops);
->  }
->  
-> +static const struct of_device_id rt2880_wmac_match[] = {
-> +	{ .compatible = "ralink,rt2880-wifi", .data = &rt2800soc_ops },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, rt2880_wmac_match);
-> +
->  static struct platform_driver rt2800soc_driver = {
->  	.driver		= {
->  		.name		= "rt2800_wmac",
-> +		.of_match_table = rt2880_wmac_match,
->  	},
->  	.probe		= rt2800soc_probe,
->  	.remove		= rt2x00soc_remove,
-> -- 
-> 2.50.0
-> 
+Hi,
+
+These patches enable use of EXECMEM_ROX_CACHE for ftrace and kprobes
+allocations on x86.
+
+They also include some ground work in execmem.
+
+Since the execmem model for caching large ROX pages changed from the
+initial assumption that the memory that is allocated from ROX cache is
+always ROX to the current state where memory can be temporarily made RW and
+then restored to ROX, we can stop using text poking to update it. This also
+saves the hassle of trying lock text_mutex in execmem_cache_free() when
+kprobes already hold that mutex.
+
+The patches 1-6 update and cleanup execmem ROX cache management,
+patch 7 enables EXECMEM_ROX_CACHE for kprobes and
+patch 8 enables EXECMEM_ROX_CACHE for frace.
+
+The patches are also available at git:
+
+https://git.kernel.org/rppt/h/execmem/x86-rox/ftrace%2bkprobes/v3
+
+v3:
+* Fix spelling (Petr)
+* Add ack and review tags, thanks all!
+
+v2: https://lore.kernel.org/all/20250709134933.3848895-1-rppt@kernel.org
+* Fix setting and clearing pending_free for an area (Yann)
+* Reorder execmem_cache_free() to avoid error goto (Peter)
+* Add comment why mas_store_gfp() cannot fail in execmem_cache_free() (Peter)
+
+
+Mike Rapoport (Microsoft) (8):
+  execmem: drop unused execmem_update_copy()
+  execmem: introduce execmem_alloc_rw()
+  execmem: rework execmem_cache_free()
+  execmem: move execmem_force_rw() and execmem_restore_rox() before use
+  execmem: add fallback for failures in vmalloc(VM_ALLOW_HUGE_VMAP)
+  execmem: drop writable parameter from execmem_fill_trapping_insns()
+  x86/kprobes: enable EXECMEM_ROX_CACHE for kprobes allocations
+  x86/ftrace: enable EXECMEM_ROX_CACHE for ftrace allocations
+
+ arch/x86/kernel/alternative.c  |   3 +-
+ arch/x86/kernel/ftrace.c       |   2 +-
+ arch/x86/kernel/kprobes/core.c |  18 ---
+ arch/x86/mm/init.c             |  24 ++--
+ include/linux/execmem.h        |  54 ++++-----
+ kernel/module/main.c           |  13 +--
+ mm/execmem.c                   | 198 +++++++++++++++++++++++++--------
+ 7 files changed, 194 insertions(+), 118 deletions(-)
+
+
+base-commit: 86731a2a651e58953fc949573895f2fa6d456841
+--
+2.47.2
 
