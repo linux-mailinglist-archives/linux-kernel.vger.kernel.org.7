@@ -1,251 +1,215 @@
-Return-Path: <linux-kernel+bounces-728999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5CE7B03057
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 11:09:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017A3B03059
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 11:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F256D17B8EC
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 09:09:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88731189E41A
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 09:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BAC248F58;
-	Sun, 13 Jul 2025 09:09:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711D6265CC8;
+	Sun, 13 Jul 2025 09:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jeXe2OoW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDFA6FC3
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 09:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E08156677;
+	Sun, 13 Jul 2025 09:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752397744; cv=none; b=nvDdRc0W00M4SisEkFFuuMxTcxOW0LmR18uJbteAEXBYHhtdMHyfoPrRYBntx40g4UT6CPWDvmgV9lIEfII45q1Gf0nlY22h2eqSBJzG6e1Ycv8fLIyq/56WL2lcU0zyBtrNXcbNtv783B/ewvHtwzSm0bVBtjAuyWXXYMRuJzg=
+	t=1752397894; cv=none; b=uUTzoaRxrHXtamv5+eiz/S+RhC9GsEM5+TS62/Mb47fop8Sr6nQVeZL9i124ksDaThTlrxUOUbiHd86LrPe5VvPKBNDRj7DVKhgXDVwYmafQSAvwvf9j8oih0TqLJ/gpn3rfJVTOdbr1ykUg4SX4yhpSgxqSyfeUkgjeb9ohmA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752397744; c=relaxed/simple;
-	bh=vkuthEa7femFXOieEOQFvaHz784gwEOgOQHrWP/292g=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HxmiF9TnWzKe93N6IgTH5dNeYev+sl45lxvQnMKYv0LidHYAITISVvUikWtG2IXFtQm0LsUAv6Xr+5BFX02J9OOUM32ESXHBzT4MIIwvXZhEGtaGJ66qjznerva97kNTph24zSPJ/2M1AbYAcAQ89R+CnYwcVe+rHudryNugojw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-86d07944f29so742427839f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 02:09:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752397742; x=1753002542;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/cSm7cR443f6rJWXPG1SdTuh0cVV1NZ2JUgX0uh6gss=;
-        b=rR0qBYbGK2oVdfCxhA7ZNX21NmDAslwQRpcMkg18WJHsnAHdvmkQZJp2UnbJYUWaW3
-         wCmcUrJdhizT42MoZ1te3lUjiS179p5gWGQAvwchy8FqX0bua4Ow/kJ3dhsNWnVj3nup
-         MCjdqU8T4lMCI05ne/9ZbZzMuuci50OhZ05DsGabmJf2ijOsZWrMGbPB7tuFkgAxeyTo
-         tDtgKSrU2OFWvzOTBLVMfEdNhvDahZ/cyocylXGLU+/pLoKovwKlXgO/qPvzXoXDtbF5
-         JosvCpzTxPZ0LSwuSJMrYQ97sjX3f88Wp7m8MyN/33zWo7SVawm2CZ74AQDtN+1QXMIK
-         lhXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXP0sjCr1xWqm8YfzFwIAhr45CQH0iecF8a92TOY/3VM4XV43kIXhXEn/GMXnmxShiveF5op4FsJV3httI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFkKcvM4lvKagU+LWqAzTqQXo1hhBg9xpbSbXQufEhoALwRkul
-	XQ4xwQsQXy3wkVYeaAKnFXqHdKwSyPFqd54q6QjwQIauutuJRr6LLMnHMIRaekj+Uq4eqqH3NCV
-	zJOy8kNlX8gyLw7SZ7iVkZtwa9+yfl2RxE07Me5pbl/nUltK/j+oWqsiSXJQ=
-X-Google-Smtp-Source: AGHT+IES4HnRYI+C0TZYUVn5UgouvbpbdtRJMnbKibf6V8QFZwI2Oi9sVNGiJjm8h4T7M6M3XWHIWhkMay1zTI2o0Ryi3QBqbLFT
+	s=arc-20240116; t=1752397894; c=relaxed/simple;
+	bh=jYc/JBkIqI2qidnuOUAQsyRiugJlGm80lkYZ1ZsmbeA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KfuIG0ATgI7/IvRiN9PZcQ1QxsjNOhEiSAtseZNDulBuB7206VGS/P+0uBErGjn5CBcLuQOhC3WTEoA5n2RzXsBvI5Nox0eNY9jEJj4BkyK1/c+T0+hoC3Dm/hKYnl0moL3lT7wnDj1IUr7Lq1FjstoSk4X7g6KBrUAdRip+DPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jeXe2OoW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FE4FC4CEF8;
+	Sun, 13 Jul 2025 09:11:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752397894;
+	bh=jYc/JBkIqI2qidnuOUAQsyRiugJlGm80lkYZ1ZsmbeA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jeXe2OoWP6kja9kGnl3caJLASNYpaeebqKphRQ7PGaDrLjnLVXr+oJ586JN88WqhL
+	 zrbyXEdE5XimYiqROmFK0hHXKgFec7Y8EXux2XUzE/zluRU81ea4Ama36IlTdoo5tZ
+	 2l0nNL8wAGxjMdpyGVaZy5+ovTYNsqNL6cWdTxX2Auieiu9t+i9IH9QKXvM91fxu6e
+	 QPrKZlvTRfLfh2f2CUO7rNKdZ0eJVzDO1RFFRwE0h2PKmOH3POZLq4laAL1pctuvHw
+	 CqRBdiDu1KfWU0XDr+JAm6jEJM9ZBdLST36zjvhN5uEcKZzQt0v59tLTdPsRT/A3Ci
+	 AkIqHAstN1JXA==
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-60bf5a08729so6241254a12.0;
+        Sun, 13 Jul 2025 02:11:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUk0thKk/TqtuVF3QTr8dOG/Irx9WgVDnTEK5AO4PtRNhR7evGVyVSplYqmStO2fuSjXl2jztyHMzf4ulc=@vger.kernel.org, AJvYcCWNdp/EvbSNUYMPxH8Yz5hmnWSesfM2yjCvRtFPRvu9jwLDWAiCN9VM7+niAY0TgjY39VGAA1QL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtOFAx1Zzyle4KvlhGe9SB0SuWX9CiFKlJ9yutYJvCEWi98Ulx
+	tTEHM1NeHfG/fQznvnLefke59J+ySBR83shMozUY1GNvSdCqeLpAKlSGwzZvZrnNjA7ObJJsm4X
+	KOTlxotV0Wol0ik55tPvkSrrxda8xF/Q=
+X-Google-Smtp-Source: AGHT+IFGDEnDkIgL9O5BsubJZOH+0Tc4zaGFNY39k9QQWMzB7p1zAMJ5ZxPdewcj0eP+jmcUKEPKpmXm+6seUoHzW8Y=
+X-Received: by 2002:a05:6402:210c:b0:608:493a:cccf with SMTP id
+ 4fb4d7f45d1cf-611e84ff961mr8284018a12.30.1752397892987; Sun, 13 Jul 2025
+ 02:11:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3e93:b0:85b:3c49:8811 with SMTP id
- ca18e2360f4ac-879787bcf13mr990428839f.4.1752397742151; Sun, 13 Jul 2025
- 02:09:02 -0700 (PDT)
-Date: Sun, 13 Jul 2025 02:09:02 -0700
-In-Reply-To: <20250713084309.3912-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687377ae.a70a0220.3b380f.0028.GAE@google.com>
-Subject: Re: [syzbot] [lsm?] [net?] WARNING in kvfree_call_rcu
-From: syzbot <syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250711102455.3673865-1-chenhuacai@loongson.cn>
+ <2025071130-mangle-ramrod-38ff@gregkh> <CAAhV-H7oEv5jPufY+J-0wOax=m1pszck1__Ptapz5pmzYU5KHg@mail.gmail.com>
+ <2025071116-pushchair-happening-a4cf@gregkh> <CAAhV-H69oz-Rmz4Q2Gad-x5AR0C2cxtK7Mgsc5iJHALP_NcEhw@mail.gmail.com>
+ <2025071150-oasis-chewy-4137@gregkh> <CAAhV-H4kzxR9e762r+ZzCyPrUemDtwqXvp_BJY3R1O1MPV9hrw@mail.gmail.com>
+ <2025071330-alkalize-bonus-ebec@gregkh>
+In-Reply-To: <2025071330-alkalize-bonus-ebec@gregkh>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sun, 13 Jul 2025 17:11:20 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6MnutZughoES5z_vuZq3PErqMjcJrNEYO+kQLcCQd=sw@mail.gmail.com>
+X-Gm-Features: Ac12FXzu6A8q3DyUoYTiY0yMVw2eXUDho_X9QXkQwvYecpmppzfmBhUnmI2iIbE
+Message-ID: <CAAhV-H6MnutZughoES5z_vuZq3PErqMjcJrNEYO+kQLcCQd=sw@mail.gmail.com>
+Subject: Re: [PATCH] init: Handle bootloader head in kernel parameters
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sun, Jul 13, 2025 at 4:30=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> On Sat, Jul 12, 2025 at 11:18:44PM +0800, Huacai Chen wrote:
+> > On Fri, Jul 11, 2025 at 9:04=E2=80=AFPM Greg KH <gregkh@linuxfoundation=
+.org> wrote:
+> > >
+> > > On Fri, Jul 11, 2025 at 08:51:28PM +0800, Huacai Chen wrote:
+> > > > On Fri, Jul 11, 2025 at 8:41=E2=80=AFPM Greg KH <gregkh@linuxfounda=
+tion.org> wrote:
+> > > > >
+> > > > > On Fri, Jul 11, 2025 at 08:34:25PM +0800, Huacai Chen wrote:
+> > > > > > Hi, Greg,
+> > > > > >
+> > > > > > On Fri, Jul 11, 2025 at 7:06=E2=80=AFPM Greg KH <gregkh@linuxfo=
+undation.org> wrote:
+> > > > > > >
+> > > > > > > On Fri, Jul 11, 2025 at 06:24:55PM +0800, Huacai Chen wrote:
+> > > > > > > > BootLoader may pass a head such as "BOOT_IMAGE=3D/boot/vmli=
+nuz-x.y.z" to
+> > > > > > > > kernel parameters. But this head is not recognized by the k=
+ernel so will
+> > > > > > > > be passed to user space. However, user space init program a=
+lso doesn't
+> > > > > > > > recognized it.
+> > > > > > >
+> > > > > > > Then why is it on the kernel command line if it is not recogn=
+ized?
+> > > > > > UEFI put it at the beginning of the command line, you can see i=
+t from
+> > > > > > /proc/cmdline, both on x86 and LoongArch.
+> > > > >
+> > > > > Then fix UEFI :)
+> > > > >
+> > > > > My boot command line doesn't have that on x86, perhaps you need t=
+o fix
+> > > > > your bootloader?
+> > > > Not only UEFI, Grub also do this, for many years, not now. I don't
+> > > > know why they do this, but I think at least it is not a bug. For
+> > > > example, maybe it just tells user the path of kernel image via
+> > > > /proc/cmdline.
+> > > >
+> > > > [chenhuacai@kernelserver linux-official.git]$ uname -a
+> > > > Linux kernelserver 6.12.0-84.el10.x86_64 #1 SMP PREEMPT_DYNAMIC Tue
+> > > > May 13 13:39:02 UTC 2025 x86_64 GNU/Linux
+> > > > [chenhuacai@kernelserver linux-official.git]$ cat /proc/cmdline
+> > > > BOOT_IMAGE=3D(hd0,gpt2)/vmlinuz-6.12.0-84.el10.x86_64
+> > > > root=3DUUID=3Dc8fcb11a-0f2f-48e5-a067-4cec1d18a721 ro
+> > > > crashkernel=3D2G-64G:256M,64G-:512M
+> > > > resume=3DUUID=3D1c320fec-3274-4b5b-9adf-a06
+> > > > 42e7943c0 rhgb quiet
+> > >
+> > > Sounds like a bootloader bug:
+> > >
+> > > $ cat /proc/cmdline
+> > > root=3D/dev/sda2 rw
+> > >
+> > > I suggest fixing the issue there, at the root please.
+> > Grub pass BOOT_IMAGE for all EFI-based implementations, related commits=
+ of Grub:
+> > https://cgit.git.savannah.gnu.org/cgit/grub.git/commit/?id=3D16ccb8b138=
+218d56875051d547af84410d18f9aa
+> > https://cgit.git.savannah.gnu.org/cgit/grub.git/commit/?id=3D25953e1055=
+3dad2e378541a68686fc094603ec54
+>
+> From 2005 and 2011?  Why have we not had any reports of this being an
+> issue before now?  What changed in the kernel recently?
+As said before, just in some corner cases it causes problems, but
+corner case doesn't means nothing.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in kvfree_call_rcu
+>
+> > Linux kernel treats BOOT_IMAGE as an "offender" of unknown command
+> > line parameters, related commits of kernel:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
+it/?id=3D86d1919a4fb0d9c115dd1d3b969f5d1650e45408
+>
+> So in 2021 we started printing out command line arguments that were
+> "wrong", so is this when everyone noticed that grub was wrong?
+Somebody may think a warning is harmless, somebody thinks a warning
+means a problem needs to fix.
+>
+> > There are user space projects that search BOOT_IMAGE from /proc/cmdline=
+:
+> > https://github.com/linuxdeepin/deepin-ab-recovery/blob/master/util.go
+> > (search getBootOptions)
+> > https://github.com/linuxdeepin/deepin-ab-recovery/blob/master/main.go
+> > (search getKernelReleaseWithBootOption)
+>
+> What does it use these options for that it can't get from the valid ones
+> instead?
+Some projects have fallback methods, some projects don't work, but at
+least this means some user space programs depend on it already.
 
-------------[ cut here ]------------
-ODEBUG: activate active (active state 1) object: 00000000997a22ca object type: rcu_head hint: 0x0
-WARNING: CPU: 1 PID: 7463 at lib/debugobjects.c:615 debug_print_object lib/debugobjects.c:612 [inline]
-WARNING: CPU: 1 PID: 7463 at lib/debugobjects.c:615 debug_object_activate+0x344/0x460 lib/debugobjects.c:842
-Modules linked in:
-CPU: 1 UID: 0 PID: 7463 Comm: syz.0.17 Not tainted 6.16.0-rc5-syzkaller-00067-gec4801305969-dirty #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : debug_print_object lib/debugobjects.c:612 [inline]
-pc : debug_object_activate+0x344/0x460 lib/debugobjects.c:842
-lr : debug_print_object lib/debugobjects.c:612 [inline]
-lr : debug_object_activate+0x344/0x460 lib/debugobjects.c:842
-sp : ffff80009cb876d0
-x29: ffff80009cb876d0 x28: ffff8000976d8000 x27: dfff800000000000
-x26: ffff80008afc2440 x25: 0000000000000001 x24: ffff8000891ac400
-x23: 0000000000000003 x22: ffff80008b5399e0 x21: 0000000000000000
-x20: ffff80008afc2440 x19: ffff8000891ac400 x18: 00000000ffffffff
-x17: 6332326137393930 x16: ffff80008ae63d48 x15: ffff700011ede144
-x14: 1ffff00011ede144 x13: 0000000000000004 x12: ffffffffffffffff
-x11: ffff700011ede144 x10: 0000000000ff0100 x9 : b4ca56aa78726000
-x8 : b4ca56aa78726000 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff80009cb87018 x4 : ffff80008f766be0 x3 : ffff80008054d314
-x2 : 0000000000000000 x1 : 0000000100000201 x0 : 0000000000000000
-Call trace:
- debug_print_object lib/debugobjects.c:612 [inline] (P)
- debug_object_activate+0x344/0x460 lib/debugobjects.c:842 (P)
- debug_rcu_head_queue kernel/rcu/rcu.h:236 [inline]
- kvfree_call_rcu+0x4c/0x3f0 mm/slab_common.c:1953
- cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
- netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
- smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
- smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
- security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
- __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
- __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
- vfs_setxattr+0x158/0x2ac fs/xattr.c:321
- do_setxattr fs/xattr.c:636 [inline]
- file_setxattr+0x1b8/0x294 fs/xattr.c:646
- path_setxattrat+0x2ac/0x320 fs/xattr.c:711
- __do_sys_fsetxattr fs/xattr.c:761 [inline]
- __se_sys_fsetxattr fs/xattr.c:758 [inline]
- __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 203
-hardirqs last  enabled at (202): [<ffff800080554800>] __up_console_sem kernel/printk/printk.c:344 [inline]
-hardirqs last  enabled at (202): [<ffff800080554800>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
-hardirqs last disabled at (203): [<ffff80008aef6e74>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
-softirqs last  enabled at (152): [<ffff8000801fd5e4>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (176): [<ffff800082c87490>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-ODEBUG: active_state active (active state 1) object: 00000000997a22ca object type: rcu_head hint: 0x0
-WARNING: CPU: 1 PID: 7463 at lib/debugobjects.c:615 debug_print_object lib/debugobjects.c:612 [inline]
-WARNING: CPU: 1 PID: 7463 at lib/debugobjects.c:615 debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
-Modules linked in:
-CPU: 1 UID: 0 PID: 7463 Comm: syz.0.17 Tainted: G        W           6.16.0-rc5-syzkaller-00067-gec4801305969-dirty #0 PREEMPT 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : debug_print_object lib/debugobjects.c:612 [inline]
-pc : debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
-lr : debug_print_object lib/debugobjects.c:612 [inline]
-lr : debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
-sp : ffff80009cb876c0
-x29: ffff80009cb876d0 x28: ffff80008f671000 x27: dfff800000000000
-x26: 0000000000000003 x25: 0000000000000000 x24: ffff0000dbef40e0
-x23: 0000000000000001 x22: ffff80008afc2440 x21: ffff80008b5399e0
-x20: 0000000000000000 x19: ffff8000891ac400 x18: 00000000ffffffff
-x17: 3739393030303030 x16: ffff80008ae63d48 x15: ffff700011ede144
-x14: 1ffff00011ede144 x13: 0000000000000004 x12: ffffffffffffffff
-x11: ffff700011ede144 x10: 0000000000ff0100 x9 : b4ca56aa78726000
-x8 : b4ca56aa78726000 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff80009cb87018 x4 : ffff80008f766be0 x3 : ffff80008054d314
-x2 : 0000000000000000 x1 : 0000000000000201 x0 : 0000000000000000
-Call trace:
- debug_print_object lib/debugobjects.c:612 [inline] (P)
- debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064 (P)
- debug_rcu_head_queue kernel/rcu/rcu.h:237 [inline]
- kvfree_call_rcu+0x64/0x3f0 mm/slab_common.c:1953
- cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
- netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
- smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
- smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
- security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
- __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
- __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
- vfs_setxattr+0x158/0x2ac fs/xattr.c:321
- do_setxattr fs/xattr.c:636 [inline]
- file_setxattr+0x1b8/0x294 fs/xattr.c:646
- path_setxattrat+0x2ac/0x320 fs/xattr.c:711
- __do_sys_fsetxattr fs/xattr.c:761 [inline]
- __se_sys_fsetxattr fs/xattr.c:758 [inline]
- __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 233
-hardirqs last  enabled at (232): [<ffff800080554800>] __up_console_sem kernel/printk/printk.c:344 [inline]
-hardirqs last  enabled at (232): [<ffff800080554800>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
-hardirqs last disabled at (233): [<ffff80008aef6e74>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
-softirqs last  enabled at (152): [<ffff8000801fd5e4>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (176): [<ffff800082c87490>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-kvfree_call_rcu(): Double-freed call. rcu_head 00000000997a22ca
-WARNING: CPU: 1 PID: 7463 at mm/slab_common.c:1956 kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
-Modules linked in:
-CPU: 1 UID: 0 PID: 7463 Comm: syz.0.17 Tainted: G        W           6.16.0-rc5-syzkaller-00067-gec4801305969-dirty #0 PREEMPT 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
-lr : kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
-sp : ffff80009cb87730
-x29: ffff80009cb87730 x28: 00000000fffffff5 x27: 1fffe0001b3f0863
-x26: dfff800000000000 x25: ffff0000dc6b87ee x24: 0000000000000017
-x23: ffff8000891ac400 x22: 00000000ffffffea x21: ffff8000891ac400
-x20: ffff8000891ac400 x19: ffff80008afc2440 x18: 00000000ffffffff
-x17: 0000000000000000 x16: ffff80008ae63d48 x15: ffff700011ede144
-x14: 1ffff00011ede144 x13: 0000000000000004 x12: ffffffffffffffff
-x11: ffff700011ede144 x10: 0000000000ff0100 x9 : b4ca56aa78726000
-x8 : b4ca56aa78726000 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff80009cb87078 x4 : ffff80008f766be0 x3 : ffff80008054d314
-x2 : 0000000000000000 x1 : 0000000000000201 x0 : 0000000000000000
-Call trace:
- kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955 (P)
- cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
- netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
- smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
- smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
- security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
- __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
- __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
- vfs_setxattr+0x158/0x2ac fs/xattr.c:321
- do_setxattr fs/xattr.c:636 [inline]
- file_setxattr+0x1b8/0x294 fs/xattr.c:646
- path_setxattrat+0x2ac/0x320 fs/xattr.c:711
- __do_sys_fsetxattr fs/xattr.c:761 [inline]
- __se_sys_fsetxattr fs/xattr.c:758 [inline]
- __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 259
-hardirqs last  enabled at (258): [<ffff800080554800>] __up_console_sem kernel/printk/printk.c:344 [inline]
-hardirqs last  enabled at (258): [<ffff800080554800>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
-hardirqs last disabled at (259): [<ffff80008aef6e74>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
-softirqs last  enabled at (152): [<ffff8000801fd5e4>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (176): [<ffff800082c87490>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
+>
+> > So, we can say Grub pass BOOT_IMAGE is reasonable and there are user
+> > space programs that hope it be in /proc/cmdline.
+>
+> But who relies on this that never noticed the kernel complaining about
+> it for the past 4 years?
+So If I'm the first man who notices this and wants to improve
+something, then it is my mistake?
 
+>
+> > But BOOT_IMAGE should not be passed to the init program. Strings in
+> > cmdline contain 4 types: BootLoader head (BOOT_IMAGE, kexec, etc.),
+> > kernel parameters, init parameters, wrong parameters.
+>
+> Then fix grub to not do this.
+>
+> > The first type is handled (ignored) by this patch, the second type is
+> > handled (consumed) by the kernel, and the last two types are passed to
+> > user space.
+>
+> That's not obvious in this patch at all.  If you are doing different
+> things, make it separate patches.
+>
+> And again, fix grub.
+>
+> > If the first type is also passed to user space, there are meaningless
+> > warnings, and (maybe) cause problems with the init program.
+>
+> So it's been causing problems for all these years (i.e. since 2005)?
+>
+> What changed that is causing this to be an issue now, and again, why not
+> just fix grub?
+Corner cases have had problems since 2005, and just because they are
+corner cases, they are not noticed by everyone. But once they are
+noticed, they need to be fixed. We cannot change Grub (LILO do the
+same thing) now, because user space relies on it already.
 
-Tested on:
+Huacai
 
-commit:         ec480130 Merge branches 'for-next/core' and 'for-next/..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1000ce8c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9e99b6fcd403d050
-dashboard link: https://syzkaller.appspot.com/bug?extid=40bf00346c3fe40f90f2
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=156f4e8c580000
-
+>
+> thanks,
+>
+> greg k-h
 
