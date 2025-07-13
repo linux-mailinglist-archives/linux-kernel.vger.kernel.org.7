@@ -1,209 +1,135 @@
-Return-Path: <linux-kernel+bounces-729027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05ACAB030BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 12:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32EC6B030C0
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 13:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19E5417E48E
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:53:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8625117E6E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 11:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D724277CBC;
-	Sun, 13 Jul 2025 10:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D16275B1C;
+	Sun, 13 Jul 2025 11:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a95OQqgM"
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDq9/w7v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA0F24293C
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 10:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EDE4A3C;
+	Sun, 13 Jul 2025 11:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752403998; cv=none; b=Ngx8k7O8FZSGe6ZLDbk7QxumiPuG6vQXFVOhzH7PK8nkM3m8lBojB+IlQjUaMeJULMWE0rBEne684W/q8LRUZxOW2f9kTrPpsDoscp71u4E9Z+tSHJUwjuO5XiJPZ48m2morHt8y04E6EkLOrI537yWV6KJTOv8sNyjP5a9Jvbg=
+	t=1752404498; cv=none; b=gaMgPa7d1v1mfwxbpSfkMN4v4gfTM0v0/aipdEIlHZfvWPkIsUyZxmQs3emFT8MOX5jemcYZusYYGPFNEzzo4wKxngfPrSpKxb6/UDTZffcCJdrxnc8e86/T/QXUl12ggQWK8i+Au6rTPdyfaQ2ofYw8yda/SSmOITROGJ289AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752403998; c=relaxed/simple;
-	bh=sI5oW9xMB+k7I1FGqAwsz4p49FA8VjHAMy21xMpJM0c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iJyMUCYu++nP/4BhsR5bhv+a6bKf2nPWCeCfuPApUudm1cv30EDn+hQnT/TzQ+yv5rHObCbkKCjNWCz/pkjQsUqxQAITUYVrK5UR+Aptho1t3fwXoh1MOCJFu2dqAdvRDoHH7Zb0CP8CpcJu4cUt2j319e/rkTLXKU402IJgV9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a95OQqgM; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-886b2fdba07so1303863241.1
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 03:53:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752403995; x=1753008795; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nBCD89cIb4CZSAkeZzQ7C+33RF/FMrBf5lJ2sJv84Cg=;
-        b=a95OQqgML/jxv738caPWkxZsf/MJNtyL1Xc3RPT2dMPh6NYIpkg6wyxooyHGzwxfJX
-         aGaoc0dyZb9gtULMRdwSxXjxFXfwWdHCX1g+RgXupaXrP7fbwP9P9u3vO13h6EFd1gmg
-         xijgJoQtYLg8x28g9wmdHICYFC5GHFzAlK47YhARuxb8MczVNJ4Mx/ENUePvKGtX+4MK
-         PLrGgcDTOGyKgp1LY5POAqQhX9TD8i6E10mju0qXa9npeIRZyg7SY97qkhRaj7rfiExj
-         kbNsNuL1h46ZQzlX9i8K+E1kvpm+/c2k8oN45nDIW1KB+g+QMKbI5ZdEYkTyh1lBI+jE
-         GwOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752403995; x=1753008795;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nBCD89cIb4CZSAkeZzQ7C+33RF/FMrBf5lJ2sJv84Cg=;
-        b=q8O14ddu1BJ/nFE20irbz2mkxS2kGy5qPWbQi/Fm/MhLLabdJ26Tbvo/HdldXLzQ3O
-         kR0klJEQ7PJCUuMGfz7azw6C++QgXAgzTnz9Z0HuGzNWo9A/8UFp7tsWoHbgpF6nCXqW
-         yosryoV7RIr6VNSMj9T7OG1KMRSZBoyqwSDvb03TcMFLBjE2SPfoS5ZPrnRQBS2Z5dDT
-         n8vIcs+r76y1xxZ1+jYg0ulqzL0iwK9Ck1dGDOtZ41zFRCpGsax0VWaqWw07YOjOOKHJ
-         K45DgWn52Nf2ZUbGIe6uH6xFoIaiG4T7r/81JAR1TUiVesAJX5YN/hlXLqdn495KsLAm
-         40Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzHFP7pavTGCd6pg7nI8pCOCTbvPnUf5Wi8+ieRIuG7QzvhBYue1AOyjOk4a18pKi9wnZr2m3MHrzKbB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysdeSlqH3lNh5di091keHb1GoSAn0VjR+haGKq22XaDfyY38oT
-	U37dG05yM87kN/mC6OuvFkG+XJUgAfeo0zXwagIr+Xzjev2wFU+uMeOKnieKtxt/WteJIao/MI/
-	pejhc6RFgvkFlPxIdq15LfEJeV2zA7B0=
-X-Gm-Gg: ASbGncu1jm+v3QprONltusoBANr+odx7GKtjrIg3J4jSbkiSE/H3kY5ak9UP1ZWR0k9
-	1h8gqzTMyb38PGfaz1/6KnI2G0QIFgnrYVPfoXG7B8vnxpMfEcNDPdFZgg9CQF5CZ3UVAE7FB+t
-	5eMX+3csB95foOFKnz7wILXuBe8xx3Lv/UudkA7SGTmGbVLvNYV3YRkS7J9feXs8A1Ao3BP7CMg
-	xEzqn8rQw==
-X-Google-Smtp-Source: AGHT+IGO7fzgCHnwtGBmpzdI+Lcp5NPSPAdYCBcUxfRl+K7iQ4kZHrV/G3oN1woaoOc37bNJWuTdROoBl9F1t8N4pfs=
-X-Received: by 2002:a05:6102:50a6:b0:4e7:866c:5ccd with SMTP id
- ada2fe7eead31-4f64255fbccmr5899555137.8.1752403994954; Sun, 13 Jul 2025
- 03:53:14 -0700 (PDT)
+	s=arc-20240116; t=1752404498; c=relaxed/simple;
+	bh=3ppvpjpE778pR8n0IiMaZ2ojlFIf7ZdM68QSPS9hKOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KLg3Rgu1rEnPOwLVwbVbeMoKUHON85DmY3s5VQtku5BOlHbE33Of0bgCTwplPwfMY2nKbKV1yBNtdyppgdpRYdQBuen8Z39pAUj/LJK/xiZZ83wMeWsk/rFelSZ1eQlTnw03a8gTWeywNbiGpZ2hnnnxrhQYJQVP0+9M6ml7lqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDq9/w7v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CED52C4CEE3;
+	Sun, 13 Jul 2025 11:01:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752404498;
+	bh=3ppvpjpE778pR8n0IiMaZ2ojlFIf7ZdM68QSPS9hKOg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FDq9/w7vNZwogdD6T7cz6Axb3o/rs2QVeLRHOucGVkWk2DES14Rbo5xe+Yc/GWoWN
+	 G9oc+Oyd4Z6b0TMUU5S+n0t8n+auBLff7HXZChTCnRN4twX8tJj/tzwqA4UcTrp9qT
+	 D2tLWRroi1gm4uLLGOPtHJG0ncjNn3MpSKvbYtONulitHsLl4DVC28kWEKNPC6BqUm
+	 Q1zihsSgSWa1yB0Uxw12YArp2mBmWT6JsMTP6jwEPUM29tV34P/OteUmM/Kiy9hrEC
+	 9vQ8kFoV+cZjt03Ah3uQapC9aSPn2Df1AxqoVGl+AFo7dx3ALPUD+PspGhNylk99Uo
+	 VReuZKXA4wZEg==
+Date: Sun, 13 Jul 2025 12:01:30 +0100
+From: Will Deacon <will@kernel.org>
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: bpf@vger.kernel.org, Puranjay Mohan <puranjay@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Maxwell Bland <mbland@motorola.com>,
+	Puranjay Mohan <puranjay12@gmail.com>,
+	Dao Huang <huangdao1@oppo.com>
+Subject: Re: [PATCH bpf-next v9 2/2] arm64/cfi,bpf: Support kCFI + BPF on
+ arm64
+Message-ID: <aHOSCtykfYLLmy1n@willie-the-truck>
+References: <20250505223437.3722164-4-samitolvanen@google.com>
+ <20250505223437.3722164-6-samitolvanen@google.com>
+ <aHEfJZjW9dTXCgw3@willie-the-truck>
+ <CABCJKued2XsLp5+ZW1ZWQn6=CgYkhjEDyJdfTRTR1MGkvDtmXg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710033706.71042-1-ryncsn@gmail.com> <20250710033706.71042-6-ryncsn@gmail.com>
-In-Reply-To: <20250710033706.71042-6-ryncsn@gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Sun, 13 Jul 2025 18:53:02 +0800
-X-Gm-Features: Ac12FXz0wqlbK5Di05MUapxY7irnMFjMcMYO7_YxInCzB3TK7RmQggn9FxCtF8k
-Message-ID: <CAGsJ_4zhRJdC7MH+3d9KfD1n3t4HiF8-OdWrKXUO7SH_H=1ZUQ@mail.gmail.com>
-Subject: Re: [PATCH v5 5/8] mm/shmem, swap: never use swap cache and readahead
- for SWP_SYNCHRONOUS_IO
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Matthew Wilcox <willy@infradead.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Chris Li <chrisl@kernel.org>, Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABCJKued2XsLp5+ZW1ZWQn6=CgYkhjEDyJdfTRTR1MGkvDtmXg@mail.gmail.com>
 
-On Thu, Jul 10, 2025 at 11:37=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wro=
-te:
->
-> From: Kairui Song <kasong@tencent.com>
->
-> For SWP_SYNCHRONOUS_IO devices, if a cache bypassing THP swapin failed
-> due to reasons like memory pressure, partially conflicting swap cache
-> or ZSWAP enabled, shmem will fallback to cached order 0 swapin.
->
-> Right now the swap cache still has a non-trivial overhead, and readahead
-> is not helpful for SWP_SYNCHRONOUS_IO devices, so we should always skip
-> the readahead and swap cache even if the swapin falls back to order 0.
->
-> So handle the fallback logic without falling back to the cached read.
->
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> ---
->  mm/shmem.c | 41 ++++++++++++++++++++++++++++-------------
->  1 file changed, 28 insertions(+), 13 deletions(-)
->
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 97db1097f7de..847e6f128485 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1982,6 +1982,7 @@ static struct folio *shmem_swap_alloc_folio(struct =
-inode *inode,
->         struct shmem_inode_info *info =3D SHMEM_I(inode);
->         int nr_pages =3D 1 << order;
->         struct folio *new;
-> +       gfp_t alloc_gfp;
->         void *shadow;
->
->         /*
-> @@ -1989,6 +1990,7 @@ static struct folio *shmem_swap_alloc_folio(struct =
-inode *inode,
->          * limit chance of success with further cpuset and node constrain=
-ts.
->          */
->         gfp &=3D ~GFP_CONSTRAINT_MASK;
-> +       alloc_gfp =3D gfp;
->         if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
->                 if (WARN_ON_ONCE(order))
->                         return ERR_PTR(-EINVAL);
-> @@ -2003,19 +2005,22 @@ static struct folio *shmem_swap_alloc_folio(struc=
-t inode *inode,
->                 if ((vma && unlikely(userfaultfd_armed(vma))) ||
->                      !zswap_never_enabled() ||
->                      non_swapcache_batch(entry, nr_pages) !=3D nr_pages)
-> -                       return ERR_PTR(-EINVAL);
-> +                       goto fallback;
->
-> -               gfp =3D limit_gfp_mask(vma_thp_gfp_mask(vma), gfp);
-> +               alloc_gfp =3D limit_gfp_mask(vma_thp_gfp_mask(vma), gfp);
-> +       }
-> +retry:
-> +       new =3D shmem_alloc_folio(alloc_gfp, order, info, index);
-> +       if (!new) {
-> +               new =3D ERR_PTR(-ENOMEM);
-> +               goto fallback;
->         }
-> -
-> -       new =3D shmem_alloc_folio(gfp, order, info, index);
-> -       if (!new)
-> -               return ERR_PTR(-ENOMEM);
->
->         if (mem_cgroup_swapin_charge_folio(new, vma ? vma->vm_mm : NULL,
-> -                                          gfp, entry)) {
-> +                                          alloc_gfp, entry)) {
->                 folio_put(new);
-> -               return ERR_PTR(-ENOMEM);
-> +               new =3D ERR_PTR(-ENOMEM);
-> +               goto fallback;
->         }
->
->         /*
-> @@ -2030,7 +2035,9 @@ static struct folio *shmem_swap_alloc_folio(struct =
-inode *inode,
->          */
->         if (swapcache_prepare(entry, nr_pages)) {
->                 folio_put(new);
-> -               return ERR_PTR(-EEXIST);
-> +               new =3D ERR_PTR(-EEXIST);
-> +               /* Try smaller folio to avoid cache conflict */
-> +               goto fallback;
->         }
->
->         __folio_set_locked(new);
-> @@ -2044,6 +2051,15 @@ static struct folio *shmem_swap_alloc_folio(struct=
- inode *inode,
->         folio_add_lru(new);
->         swap_read_folio(new, NULL);
->         return new;
-> +fallback:
-> +       /* Order 0 swapin failed, nothing to fallback to, abort */
-> +       if (!order)
-> +               return new;
+Hey Sami,
 
+On Fri, Jul 11, 2025 at 11:49:29AM -0700, Sami Tolvanen wrote:
+> > > +#define cfi_get_offset cfi_get_offset
+> > > +extern u32 cfi_bpf_hash;
+> > > +extern u32 cfi_bpf_subprog_hash;
+> > > +extern u32 cfi_get_func_hash(void *func);
+> > > +#else
+> > > +#define cfi_bpf_hash 0U
+> > > +#define cfi_bpf_subprog_hash 0U
+> > > +static inline u32 cfi_get_func_hash(void *func)
+> > > +{
+> > > +     return 0;
+> > > +}
+> > > +#endif /* CONFIG_CFI_CLANG */
+> > > +#endif /* _ASM_ARM64_CFI_H */
+> >
+> > This looks like an awful lot of boiler plate to me. The only thing you
+> > seem to need is the CFI offset -- why isn't that just a constant that we
+> > can define (or a Kconfig symbol?).
+> 
+> The cfi_get_offset function was originally added in commit
+> 4f9087f16651 ("x86/cfi,bpf: Fix BPF JIT call") because the offset can
+> change on x86 depending on which CFI scheme is enabled at runtime.
+> Starting with commit 2cd3e3772e41 ("x86/cfi,bpf: Fix bpf_struct_ops
+> CFI") the function is also called by the generic BPF code, so we can't
+> trivially replace it with a constant. However, since this defaults to
+> `4` unless the architecture adds pre-function NOPs, I think we could
+> simply move the default implementation to include/linux/cfi.h (and
+> also drop the RISC-V version). Come to think of it, we could probably
+> move most of this boilerplate to generic code. I'll refactor this and
+> send a new version.
 
-Feels a bit odd to me. Would it be possible to handle this earlier,
-like:
+Excellent, thanks.
 
-    if (!order)
-        return ERR_PTR(-ENOMEM);
-    goto fallback;
+> > > @@ -2009,9 +2018,9 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+> > >               jit_data->ro_header = ro_header;
+> > >       }
+> > >
+> > > -     prog->bpf_func = (void *)ctx.ro_image;
+> > > +     prog->bpf_func = (void *)ctx.ro_image + cfi_get_offset();
+> > >       prog->jited = 1;
+> > > -     prog->jited_len = prog_size;
+> > > +     prog->jited_len = prog_size - cfi_get_offset();
+> >
+> > Why do we add the offset even when CONFIG_CFI_CLANG is not enabled?
+> 
+> The function returns zero if CFI is not enabled, so I believe it's
+> just to avoid extra if (IS_ENABLED(CONFIG_CFI_CLANG)) statements in
+> the code. IMO this is cleaner, but I can certainly change this if you
+> prefer.
 
-or:
+Ah, that caught me out because the !CONFIG_CFI_CLANG stub is in the
+core code (and I'm extra susceptible to being caught out on a warm
+Friday evening!).
 
-    if (order)
-        goto fallback;
-    return ERR_PTR(-ENOMEM);
+Hopefully if you're able to trim down the boilerplate then this will
+become more obvious too.
 
-Not strongly opinionated here=E2=80=94totally up to you.
+Cheers,
 
-Thanks
-Barry
+Will
 
