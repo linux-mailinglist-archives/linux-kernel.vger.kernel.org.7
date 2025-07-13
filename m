@@ -1,217 +1,251 @@
-Return-Path: <linux-kernel+bounces-728998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC3BB03056
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:53:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5CE7B03057
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 11:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4369F179B6A
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 08:53:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F256D17B8EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 09:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B38526CE0E;
-	Sun, 13 Jul 2025 08:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o/XYSv0M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BAC248F58;
+	Sun, 13 Jul 2025 09:09:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8D01F03D8;
-	Sun, 13 Jul 2025 08:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDFA6FC3
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 09:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752396821; cv=none; b=scrxYWoxIMUr2AI0voikr/sU3ousa5Etr7waoUCVh1f9AdBq0P8/y3wYNHbX4eX6aMdkDvVYb21jqqHPAXQhR1BdLuQi9yt9PGVPXgV2fTcPEM6A/eplEmpd1K93YPI/ebcu4cLDc/iunoCBKzDjsedT0H8zFf+pOlR7gIYFIsg=
+	t=1752397744; cv=none; b=nvDdRc0W00M4SisEkFFuuMxTcxOW0LmR18uJbteAEXBYHhtdMHyfoPrRYBntx40g4UT6CPWDvmgV9lIEfII45q1Gf0nlY22h2eqSBJzG6e1Ycv8fLIyq/56WL2lcU0zyBtrNXcbNtv783B/ewvHtwzSm0bVBtjAuyWXXYMRuJzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752396821; c=relaxed/simple;
-	bh=w/0Fjh9qq3s60zMIQEKZHLpivdAFsTyEqdtPrlrf5fg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iY8o4c6/BjTALOPSYpaKz2TgGxqX3rDEbKIQqNzpHEQpacoT+gZeJdp4JxeroCfoYixE7pOnG8AH1ZawDPBpgMgRsRRyN4WWSjZtPQPufLYLckKvr3umb4tC45MSXkVl2N0yFqWPCeCNQkNONV9F1ZEIZ6abfDSkI9h6vw/poO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o/XYSv0M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A084BC4CEE3;
-	Sun, 13 Jul 2025 08:53:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752396821;
-	bh=w/0Fjh9qq3s60zMIQEKZHLpivdAFsTyEqdtPrlrf5fg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=o/XYSv0MOyz+pNsABlp/uGFYUDqCWV2Rp73lUEbZ+TZhPeOVEEwXUUJoJ9qWmNpLk
-	 A4eqYL336UjzsQVsQgtQva04bnTtCLxWSPApipCscMfyOSDlBAhiibV0mmYdV4heG6
-	 lRNu11XgnOKOzayPuUJ8dh8HwsTYg7QfJD61L01R3ccKp1EcAR6b3eMx0kj/3QZ6VD
-	 RUabtzY1qZGYjEy1OP6ig3ZKUdEw0tYZ587jWBdEl2MrwUqAyZlKaSnzmTfjMn0FcC
-	 Q7Z//oikApetqk//XBCZC94YvDBw1lv611HGs7kL/fby8EyL6nN7uZ88ufqF4ybr+2
-	 RTI7nreO2OpgQ==
-Message-ID: <cf137d24-3561-4e53-8f35-70ab501afcb8@kernel.org>
-Date: Sun, 13 Jul 2025 10:53:35 +0200
+	s=arc-20240116; t=1752397744; c=relaxed/simple;
+	bh=vkuthEa7femFXOieEOQFvaHz784gwEOgOQHrWP/292g=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HxmiF9TnWzKe93N6IgTH5dNeYev+sl45lxvQnMKYv0LidHYAITISVvUikWtG2IXFtQm0LsUAv6Xr+5BFX02J9OOUM32ESXHBzT4MIIwvXZhEGtaGJ66qjznerva97kNTph24zSPJ/2M1AbYAcAQ89R+CnYwcVe+rHudryNugojw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-86d07944f29so742427839f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 02:09:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752397742; x=1753002542;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/cSm7cR443f6rJWXPG1SdTuh0cVV1NZ2JUgX0uh6gss=;
+        b=rR0qBYbGK2oVdfCxhA7ZNX21NmDAslwQRpcMkg18WJHsnAHdvmkQZJp2UnbJYUWaW3
+         wCmcUrJdhizT42MoZ1te3lUjiS179p5gWGQAvwchy8FqX0bua4Ow/kJ3dhsNWnVj3nup
+         MCjdqU8T4lMCI05ne/9ZbZzMuuci50OhZ05DsGabmJf2ijOsZWrMGbPB7tuFkgAxeyTo
+         tDtgKSrU2OFWvzOTBLVMfEdNhvDahZ/cyocylXGLU+/pLoKovwKlXgO/qPvzXoXDtbF5
+         JosvCpzTxPZ0LSwuSJMrYQ97sjX3f88Wp7m8MyN/33zWo7SVawm2CZ74AQDtN+1QXMIK
+         lhXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXP0sjCr1xWqm8YfzFwIAhr45CQH0iecF8a92TOY/3VM4XV43kIXhXEn/GMXnmxShiveF5op4FsJV3httI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFkKcvM4lvKagU+LWqAzTqQXo1hhBg9xpbSbXQufEhoALwRkul
+	XQ4xwQsQXy3wkVYeaAKnFXqHdKwSyPFqd54q6QjwQIauutuJRr6LLMnHMIRaekj+Uq4eqqH3NCV
+	zJOy8kNlX8gyLw7SZ7iVkZtwa9+yfl2RxE07Me5pbl/nUltK/j+oWqsiSXJQ=
+X-Google-Smtp-Source: AGHT+IES4HnRYI+C0TZYUVn5UgouvbpbdtRJMnbKibf6V8QFZwI2Oi9sVNGiJjm8h4T7M6M3XWHIWhkMay1zTI2o0Ryi3QBqbLFT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv3 wireless-next 7/7] dt-bindings: net: wireless: rt2800:
- add
-To: Julian Calaby <julian.calaby@gmail.com>, Rob Herring <robh@kernel.org>
-Cc: Stanislaw Gruszka <stf_xl@wp.pl>, Rosen Penev <rosenp@gmail.com>,
- linux-wireless@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:MIPS" <linux-mips@vger.kernel.org>,
- "moderated list:ARM/Mediatek SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- "moderated list:ARM/Mediatek SoC support"
- <linux-mediatek@lists.infradead.org>
-References: <20250710200820.262295-1-rosenp@gmail.com>
- <20250710200820.262295-8-rosenp@gmail.com>
- <d8b0abb2-1a12-42bf-aafd-4cd1e21babd6@kernel.org>
- <CAKxU2N-c2tHBYWBM+FJGqdSaqzw9u0O8e0G7AVqk6b0QdRnPTw@mail.gmail.com>
- <20250711-invisible-dainty-jackrabbit-acbf8f@krzk-bin>
- <20250712104006.GA13512@wp.pl>
- <e435a765-fb91-408f-81dd-01a73fc43b6b@kernel.org>
- <23e629cb-0698-4a9c-aa18-9a7e71aa8b73@kernel.org>
- <CAGRGNgVk9__2mCE-hYSP7T0yKLjPsDkvG6+NghJMXazYXUid1w@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAGRGNgVk9__2mCE-hYSP7T0yKLjPsDkvG6+NghJMXazYXUid1w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:3e93:b0:85b:3c49:8811 with SMTP id
+ ca18e2360f4ac-879787bcf13mr990428839f.4.1752397742151; Sun, 13 Jul 2025
+ 02:09:02 -0700 (PDT)
+Date: Sun, 13 Jul 2025 02:09:02 -0700
+In-Reply-To: <20250713084309.3912-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687377ae.a70a0220.3b380f.0028.GAE@google.com>
+Subject: Re: [syzbot] [lsm?] [net?] WARNING in kvfree_call_rcu
+From: syzbot <syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 13/07/2025 01:20, Julian Calaby wrote:
-> Hi Krzysztof and Rob,
-> 
-> On Sun, Jul 13, 2025 at 2:59 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 12/07/2025 18:53, Krzysztof Kozlowski wrote:
->>> On 12/07/2025 12:40, Stanislaw Gruszka wrote:
->>>> Hi Krzysztof,
->>>>
->>>> On Fri, Jul 11, 2025 at 09:48:49AM +0200, Krzysztof Kozlowski wrote:
->>>>> On Thu, Jul 10, 2025 at 03:40:30PM -0700, Rosen Penev wrote:
->>>>>> On Thu, Jul 10, 2025 at 2:40 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>>>>
->>>>>>> On 10/07/2025 22:08, Rosen Penev wrote:
->>>>>>>> Add device-tree bindings for the RT2800 SOC wifi device found in older
->>>>>>>> Ralink/Mediatek devices.
->>>>>>>>
->>>>>>>> Signed-off-by: Rosen Penev <rosenp@gmail.com>
->>>>>>>> ---
->>>>>>>>  .../bindings/net/wireless/ralink,rt2800.yaml  | 47 +++++++++++++++++++
->>>>>>>>  1 file changed, 47 insertions(+)
->>>>>>>>  create mode 100644 Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
->>>>>>>>
->>>>>>>> diff --git a/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml b/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
->>>>>>>> new file mode 100644
->>>>>>>> index 000000000000..8c13b25bd8b4
->>>>>>>> --- /dev/null
->>>>>>>> +++ b/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
->>>>>>>
->>>>>>> Filename should match compatible. You were already changing something
->>>>>>> here...
->>>>>> hrm? that makes no sense. Various drivers have multiple compatible lines.
->>>>>
->>>>> Luckily we do not speak about drivers here. Anyway, follow standard
->>>>> review practices, you don't get special rules.
->>>>
->>>> Could you please elaborate what you mean ?
->>>
->>> Rosen replied in abrasive way, so I am not going to dig this.
->>>
->>>>
->>>> I greped through Documentation/devicetree/bindings/*/*.yaml and plenty
->>>
->>> I assume you refer to last 2 years bindings, not something older, right?
->>> It is really poor argument to find old files and use them as example
->>> "they did like that".
->>>
->>>> of "compatible:" items do not match the filename. So hard to tell
->>>
->>> I did not ask for compatible to match filename.
->>>
->>>> what rule you are referencing, as it seems it's not really applied.
->>> Check reviews on the lists. It is pretty standard review. Everyone gets
->>> it for this case here - single device, single compatible.
->>
->> BTW, it is not hiding on the lists:
->>
->> https://lore.kernel.org/linux-devicetree/?q=f%3Aherring+filename
->> https://lore.kernel.org/linux-devicetree/?q=f%3Akozlowski+filename
-> 
-> I just had a quick look through the in-tree documentation on device
-> tree bindings and can't find this rule there.
-> 
-> It's good that you and Rob are consistent in applying this rule, but
-> pointing to the mailing list archives instead of the documentation
-> makes it feel like patch submissions in this space are judged by some
-> arbitrary set of undocumented rules.
-> 
-> Could you please update the documentation with the current set of
-> requirements so that people who are new to this space have a
-> consistent set of rules they can apply to their work?
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in kvfree_call_rcu
+
+------------[ cut here ]------------
+ODEBUG: activate active (active state 1) object: 00000000997a22ca object type: rcu_head hint: 0x0
+WARNING: CPU: 1 PID: 7463 at lib/debugobjects.c:615 debug_print_object lib/debugobjects.c:612 [inline]
+WARNING: CPU: 1 PID: 7463 at lib/debugobjects.c:615 debug_object_activate+0x344/0x460 lib/debugobjects.c:842
+Modules linked in:
+CPU: 1 UID: 0 PID: 7463 Comm: syz.0.17 Not tainted 6.16.0-rc5-syzkaller-00067-gec4801305969-dirty #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : debug_print_object lib/debugobjects.c:612 [inline]
+pc : debug_object_activate+0x344/0x460 lib/debugobjects.c:842
+lr : debug_print_object lib/debugobjects.c:612 [inline]
+lr : debug_object_activate+0x344/0x460 lib/debugobjects.c:842
+sp : ffff80009cb876d0
+x29: ffff80009cb876d0 x28: ffff8000976d8000 x27: dfff800000000000
+x26: ffff80008afc2440 x25: 0000000000000001 x24: ffff8000891ac400
+x23: 0000000000000003 x22: ffff80008b5399e0 x21: 0000000000000000
+x20: ffff80008afc2440 x19: ffff8000891ac400 x18: 00000000ffffffff
+x17: 6332326137393930 x16: ffff80008ae63d48 x15: ffff700011ede144
+x14: 1ffff00011ede144 x13: 0000000000000004 x12: ffffffffffffffff
+x11: ffff700011ede144 x10: 0000000000ff0100 x9 : b4ca56aa78726000
+x8 : b4ca56aa78726000 x7 : 0000000000000001 x6 : 0000000000000001
+x5 : ffff80009cb87018 x4 : ffff80008f766be0 x3 : ffff80008054d314
+x2 : 0000000000000000 x1 : 0000000100000201 x0 : 0000000000000000
+Call trace:
+ debug_print_object lib/debugobjects.c:612 [inline] (P)
+ debug_object_activate+0x344/0x460 lib/debugobjects.c:842 (P)
+ debug_rcu_head_queue kernel/rcu/rcu.h:236 [inline]
+ kvfree_call_rcu+0x4c/0x3f0 mm/slab_common.c:1953
+ cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
+ netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
+ smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
+ smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
+ security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
+ __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
+ __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
+ vfs_setxattr+0x158/0x2ac fs/xattr.c:321
+ do_setxattr fs/xattr.c:636 [inline]
+ file_setxattr+0x1b8/0x294 fs/xattr.c:646
+ path_setxattrat+0x2ac/0x320 fs/xattr.c:711
+ __do_sys_fsetxattr fs/xattr.c:761 [inline]
+ __se_sys_fsetxattr fs/xattr.c:758 [inline]
+ __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+irq event stamp: 203
+hardirqs last  enabled at (202): [<ffff800080554800>] __up_console_sem kernel/printk/printk.c:344 [inline]
+hardirqs last  enabled at (202): [<ffff800080554800>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
+hardirqs last disabled at (203): [<ffff80008aef6e74>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
+softirqs last  enabled at (152): [<ffff8000801fd5e4>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (176): [<ffff800082c87490>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+ODEBUG: active_state active (active state 1) object: 00000000997a22ca object type: rcu_head hint: 0x0
+WARNING: CPU: 1 PID: 7463 at lib/debugobjects.c:615 debug_print_object lib/debugobjects.c:612 [inline]
+WARNING: CPU: 1 PID: 7463 at lib/debugobjects.c:615 debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
+Modules linked in:
+CPU: 1 UID: 0 PID: 7463 Comm: syz.0.17 Tainted: G        W           6.16.0-rc5-syzkaller-00067-gec4801305969-dirty #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : debug_print_object lib/debugobjects.c:612 [inline]
+pc : debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
+lr : debug_print_object lib/debugobjects.c:612 [inline]
+lr : debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
+sp : ffff80009cb876c0
+x29: ffff80009cb876d0 x28: ffff80008f671000 x27: dfff800000000000
+x26: 0000000000000003 x25: 0000000000000000 x24: ffff0000dbef40e0
+x23: 0000000000000001 x22: ffff80008afc2440 x21: ffff80008b5399e0
+x20: 0000000000000000 x19: ffff8000891ac400 x18: 00000000ffffffff
+x17: 3739393030303030 x16: ffff80008ae63d48 x15: ffff700011ede144
+x14: 1ffff00011ede144 x13: 0000000000000004 x12: ffffffffffffffff
+x11: ffff700011ede144 x10: 0000000000ff0100 x9 : b4ca56aa78726000
+x8 : b4ca56aa78726000 x7 : 0000000000000001 x6 : 0000000000000001
+x5 : ffff80009cb87018 x4 : ffff80008f766be0 x3 : ffff80008054d314
+x2 : 0000000000000000 x1 : 0000000000000201 x0 : 0000000000000000
+Call trace:
+ debug_print_object lib/debugobjects.c:612 [inline] (P)
+ debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064 (P)
+ debug_rcu_head_queue kernel/rcu/rcu.h:237 [inline]
+ kvfree_call_rcu+0x64/0x3f0 mm/slab_common.c:1953
+ cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
+ netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
+ smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
+ smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
+ security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
+ __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
+ __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
+ vfs_setxattr+0x158/0x2ac fs/xattr.c:321
+ do_setxattr fs/xattr.c:636 [inline]
+ file_setxattr+0x1b8/0x294 fs/xattr.c:646
+ path_setxattrat+0x2ac/0x320 fs/xattr.c:711
+ __do_sys_fsetxattr fs/xattr.c:761 [inline]
+ __se_sys_fsetxattr fs/xattr.c:758 [inline]
+ __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+irq event stamp: 233
+hardirqs last  enabled at (232): [<ffff800080554800>] __up_console_sem kernel/printk/printk.c:344 [inline]
+hardirqs last  enabled at (232): [<ffff800080554800>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
+hardirqs last disabled at (233): [<ffff80008aef6e74>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
+softirqs last  enabled at (152): [<ffff8000801fd5e4>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (176): [<ffff800082c87490>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+kvfree_call_rcu(): Double-freed call. rcu_head 00000000997a22ca
+WARNING: CPU: 1 PID: 7463 at mm/slab_common.c:1956 kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
+Modules linked in:
+CPU: 1 UID: 0 PID: 7463 Comm: syz.0.17 Tainted: G        W           6.16.0-rc5-syzkaller-00067-gec4801305969-dirty #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
+lr : kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
+sp : ffff80009cb87730
+x29: ffff80009cb87730 x28: 00000000fffffff5 x27: 1fffe0001b3f0863
+x26: dfff800000000000 x25: ffff0000dc6b87ee x24: 0000000000000017
+x23: ffff8000891ac400 x22: 00000000ffffffea x21: ffff8000891ac400
+x20: ffff8000891ac400 x19: ffff80008afc2440 x18: 00000000ffffffff
+x17: 0000000000000000 x16: ffff80008ae63d48 x15: ffff700011ede144
+x14: 1ffff00011ede144 x13: 0000000000000004 x12: ffffffffffffffff
+x11: ffff700011ede144 x10: 0000000000ff0100 x9 : b4ca56aa78726000
+x8 : b4ca56aa78726000 x7 : 0000000000000001 x6 : 0000000000000001
+x5 : ffff80009cb87078 x4 : ffff80008f766be0 x3 : ffff80008054d314
+x2 : 0000000000000000 x1 : 0000000000000201 x0 : 0000000000000000
+Call trace:
+ kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955 (P)
+ cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
+ netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
+ smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
+ smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
+ security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
+ __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
+ __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
+ vfs_setxattr+0x158/0x2ac fs/xattr.c:321
+ do_setxattr fs/xattr.c:636 [inline]
+ file_setxattr+0x1b8/0x294 fs/xattr.c:646
+ path_setxattrat+0x2ac/0x320 fs/xattr.c:711
+ __do_sys_fsetxattr fs/xattr.c:761 [inline]
+ __se_sys_fsetxattr fs/xattr.c:758 [inline]
+ __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+irq event stamp: 259
+hardirqs last  enabled at (258): [<ffff800080554800>] __up_console_sem kernel/printk/printk.c:344 [inline]
+hardirqs last  enabled at (258): [<ffff800080554800>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
+hardirqs last disabled at (259): [<ffff80008aef6e74>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
+softirqs last  enabled at (152): [<ffff8000801fd5e4>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (176): [<ffff800082c87490>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
 
 
-I agree. I already grew the docs some time ago, then few days ago and I
-have in plan to keep growing it more. I'll document also this one,
-thanks for the pointer.
+Tested on:
 
-Regardless of the missing docs, argument "I found some old code like
-that" is almost never correct. And even if you find newest code like
-that, you still need to consider all reviews and discussions on the
-lists leading to such or some other decision. Including the most trivial
-reason: we often don't care about minor details. Filename is such minor
-detail, unused label in DTS example is another, even more frequent one
-(we complain about it but also accept many patches with it).
+commit:         ec480130 Merge branches 'for-next/core' and 'for-next/..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1000ce8c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9e99b6fcd403d050
+dashboard link: https://syzkaller.appspot.com/bug?extid=40bf00346c3fe40f90f2
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=156f4e8c580000
 
-Do I question every reviewer's comments like that on my patches, which I
-send a lot? That I found some old code which was different than what
-reviewer asked me? No.
-
-Best regards,
-Krzysztof
 
