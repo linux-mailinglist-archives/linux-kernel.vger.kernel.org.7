@@ -1,84 +1,135 @@
-Return-Path: <linux-kernel+bounces-729211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE189B0335A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:02:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C15B0335D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2347E175F11
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 23:02:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2FF6171FB3
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 23:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0408F1FDE02;
-	Sun, 13 Jul 2025 23:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776E81FBEB9;
+	Sun, 13 Jul 2025 23:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="QZUpkpAW"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DUSTJ4Po"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC5013D539;
-	Sun, 13 Jul 2025 23:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B07F211F;
+	Sun, 13 Jul 2025 23:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752447712; cv=none; b=NNQzQn31VHVkqd4Yx+TQu3vITTUxvc3Uq3xNNoWuL4Kot4s9wHv2SvoGNf/1Ry3cq2kHhjuTqZ24w0hpZMeA/rvhaRB06ONBWK7xHm0WkjAqyZy/6NX7VFct8mPamJH7PPUKJHew2NwI/VZxf4fdH5xX4ksCZGyVGUirtvReJEw=
+	t=1752447804; cv=none; b=L8OLpaUu6O7Im/MgvL/56XPCbv2FR8/iA39AzIXRH1Ezy6efJot+dmNZlGTBpiQkJAPueBhtgRlD/apXCnbkkaTdIMjYInnLg+0kq6D+eqtFSEn7rOcEGoao4LcgOG/yHxoPWexVtZ9di7QoExm2otmAAQQ9baXE8Aa/diy0N2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752447712; c=relaxed/simple;
-	bh=mRgKMN3EqJwh6hWwS/0IL319ZiNNUtK5FNW6mAAIi4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pGiwaFr7B2PUDjwBFdXJKDyS8qBiLJi1kRwO1rugqakrCfekkxDK8gxHOpu1IradZv//Y1eucVG4sBVRuirUz8CnECFoQ8t7QG5Kpnl91N8AbBx12UbIcB0snXtL0STHkd0wnB/YY+lOEkfY2uL6w5WJoBvJo0OYpI37r/bd2CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=QZUpkpAW; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 1E384735;
-	Mon, 14 Jul 2025 01:01:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752447670;
-	bh=mRgKMN3EqJwh6hWwS/0IL319ZiNNUtK5FNW6mAAIi4Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QZUpkpAWa6q1sagxlIsoR8DM3Krjj+RkUkL7aGTAvb2ET8wHiAXTuxm+wBjT8USYF
-	 knprDhkNuRWg5k5e+j1pfmuyu5oqCxkrxQ8jQCak41J8u59eLIUHw4vZSFfqEMIpTn
-	 5hQv0n99Rt+H8rPnJudCh8CtiS/0EV+PcbqP44ZY=
-Date: Mon, 14 Jul 2025 02:01:09 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-Cc: mchehab@kernel.org, michal.simek@amd.com, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: of xvip_enum_frame_size and xvip_get_format_by_code
-Message-ID: <20250713230109.GA10401@pendragon.ideasonboard.com>
-References: <aHPj_C6iGCEFDW98@gallifrey>
+	s=arc-20240116; t=1752447804; c=relaxed/simple;
+	bh=9kzrBuWIdjq+hahwO7p1ufYaiez3/2LISo/W7awimbg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b59zt748xlHh9E/rVHQocoAIXWcS1Xo6dg5MK54NVOU0fxtlEWruJqAAU2Ba0TkEXgwFX1XARlLYWbNy86ZGDCcHHoUHgTrC9pCjJd0XoDlmqB3IUMvWQzXCTagnIDnX70vrSGk8Gjg9+tFYBsjvPpoDWErT1sc4B+Ep0alf5jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DUSTJ4Po; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a52874d593so3172919f8f.0;
+        Sun, 13 Jul 2025 16:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752447801; x=1753052601; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9kzrBuWIdjq+hahwO7p1ufYaiez3/2LISo/W7awimbg=;
+        b=DUSTJ4Pojye8wSeS6P0lxLKWFR4Uy9Zbt/+abKNAzqQnDURri5GJP9gVrecDeqpNNk
+         gjLGI/x8+RZ8zYvDDXJTzVAxc1OFA9PlaJGhg8Miowrf5ZatD66rgCKVo0iSnTmpTBrR
+         b5fVIZfBOC32Wz+D90ErqjDy5jBLp4bsvHh7fA1XuS0hAXf0i1dEQq8bLCOTtbYza+MD
+         MonB/5q0Do7STIHWKqJnfIyRuJsAyBfdUQOD4pbYdemiq9A+uK9FghGDDPbEVIB5vBLX
+         oicfd0EIcMREG8tzOV+lgGjbBrfRH9M3DcvhiQOjku0G9DMD2AFRFEWKe16TurmpSEUb
+         7PWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752447801; x=1753052601;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9kzrBuWIdjq+hahwO7p1ufYaiez3/2LISo/W7awimbg=;
+        b=PMsHjoGidq8tjyX7bPXGaaFCG1kWjL7Hh2GOQ9rvjsPC6K6tj8eLeXOeBjQf2C4g1u
+         MDGfb3+/R6wWdCKqV1ApwFDHzmd3AeMSZGc/fkm95N5E7lze/uCqXjyXka75r2cqHQ+c
+         YLuI2ypdrEHKSOIF2gd9b82QgbIQ8mv1/h2IlDlFdDx52dOmRcMpYpkNHibjnf/jgWfk
+         MQ/R3EIixXc1f+KEiLsUkfdMWsCI1zFT7hwy4qKf5V8RPn6b5qmhnBGn3wjqDl1b/iip
+         biW3vYCnxklqtwD9cQd7Q1VkauZriwiJZc+c1W5RheXDF8phJW4IAr2QjcSAiLODkhGM
+         ouMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMBc7H46/Vh6KMmzYUS8BEZx2Ro7ehMaSWCgVSMrIpUumg3wn8CBjHLgY1SbuvcOWugdM=@vger.kernel.org, AJvYcCXXQO8JreQ4AOO9FdYHle88nFZGuSPkUVez4+NN2Rg6kTi3alVrcV2Cfc3qxpCjry0YeowJttQXp/ku/ng7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5Ibqp523W/8IocztxaIttV8XA5cmgVzw0ZHqJbtqBMGTNE18x
+	sD3W9Ku/iPm7NeqncNVDuYzMy1rM3kmGBUv/NEkrulXWKf+LBxCGWzRvVfoB8vOqI/lFzS5aU8v
+	pdoBYgbNKTn0WXZ0GyrMvxSeSjF5bfI4=
+X-Gm-Gg: ASbGnctiS8pdP9lu6w83dFD7UdAPHcz+RAAVXVDrKIpbzIVMCs1cFReNmxgHCECumLh
+	7ePkitLuZSBNKfFWkWLUKtX9Tm8NAji6dikxkYEsldMrFKGdrGM5iqKd5J8CdFu8AKp2I7f/SHR
+	I7wDgJ5ukb+D/OPOGIDHS0QM0BVaZtW/FJSuEJ0FUBM6ZqYw5vArov8fogBmoorBhMwzNqMMBGO
+	vvZF5DcUQlEKIZ2rcCFAwD5LKaYOSsJjOyw
+X-Google-Smtp-Source: AGHT+IF6kv1tzrjLlZieXma2s0+pFwpXKasLaf+fuAOH/Xs1QTqBgCCUt8qkNrK3Kfor1K1glVQiKZj/bvtQn2lir/E=
+X-Received: by 2002:a05:6000:26cc:b0:3a4:efbb:6df3 with SMTP id
+ ffacd0b85a97d-3b5f187d0b9mr9226282f8f.10.1752447801355; Sun, 13 Jul 2025
+ 16:03:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aHPj_C6iGCEFDW98@gallifrey>
+References: <7e6c41e47c6a8ab73945e6aac319e0dd53337e1b.1751712192.git.sam@gentoo.org>
+ <c883e328-9d08-4a6c-b02a-f33e0e287555@iogearbox.net> <87a558obgn.fsf@gentoo.org>
+ <CAADnVQJTHnOVX9uBtTS_7bfiS2SoDL4uL7wJWd0CzbXf08_dyg@mail.gmail.com> <871pqjofzn.fsf@gentoo.org>
+In-Reply-To: <871pqjofzn.fsf@gentoo.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Sun, 13 Jul 2025 16:03:09 -0700
+X-Gm-Features: Ac12FXyqmiLx9EQrPW_JuefqB-ao8VsJArBs327U_NfoibcrHUDDD-Z9NFNkYO4
+Message-ID: <CAADnVQLjjLoT6v3kPtVseVqPi09SU8n4buP-au2X-4PzQ6We_g@mail.gmail.com>
+Subject: Re: [PATCH] tools/libbpf: add WERROR option
+To: Sam James <sam@gentoo.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Quentin Monnet <qmo@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 13, 2025 at 04:51:08PM +0000, Dr. David Alan Gilbert wrote:
-> Hi,
->   I noticed in xilinx-cip.c there's xvip_enum_frame_size()
-> which was added back in 2013 but seems unused in tree, however
-> I had a dig and I found
->   https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841638/Xilinx+V4L2+TPG+driver
-> has a commit:
->   https://github.com/Xilinx/linux-xlnx/commit/1c113b4aef14004152fefc0e8b8dbbcc2314566f#diff-bb594682a92148570df8826933cf8629
->   from 2014 that uses it - but it looks like that commit never went
-> anywhere.
-> 
-> So is xvip_enum_frame_size() or not?
-> I also see xvip_get_format_by_code() looks unused, but I don't
-> see any uses of it, even digging in that wiki.
+On Sun, Jul 13, 2025 at 3:58=E2=80=AFPM Sam James <sam@gentoo.org> wrote:
+>
+> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+>
+> > On Sat, Jul 12, 2025 at 11:24=E2=80=AFPM Sam James <sam@gentoo.org> wro=
+te:
+> >>
+> >> Daniel Borkmann <daniel@iogearbox.net> writes:
+> >>
+> >> > On 7/5/25 12:43 PM, Sam James wrote:
+> >> >> Check the 'WERROR' variable and suppress adding '-Werror' if WERROR=
+=3D0.
+> >> >> This mirrors what tools/perf and other directories in tools do to
+> >> >> handle
+> >> >> -Werror rather than adding it unconditionally.
+> >> >
+> >> > Could you also add to the commit desc why you need it? Are there par=
+ticular
+> >> > warnings you specifically need to suppress when building under gento=
+o?
+> >>
+> >> Sure. In this case, it was https://bugs.gentoo.org/959293 where I thin=
+k
+> >
+> > I don't recall it was reported on bpf mailing list.
+> >
+> >> it's fixed by
+> >> https://github.com/libbpf/libbpf/commit/715808d3e2d8c54f3001ce3d7fcda0=
+844f765969
+> >
+> > and looks like it was fixed by accident, so..
+>
+> I'll note that I've sent patches that have been merged for these
+> before. It's just that they're sensitive to optimisation level and prone
+> to false positives. Especially with e.g. -Og.
 
-Those functions seem to have never been used in the mainline kernel.
-They were likely added to support drivers that have not been upstreamed.
-Both functions are used in the Xilinx BSP kernel.
-
--- 
-Regards,
-
-Laurent Pinchart
+Yeah. Compilers do produce false positives and, like any tool,
+any warning is not authoritative, but we prefer people reporting
+them instead of silencing and moving on.
 
