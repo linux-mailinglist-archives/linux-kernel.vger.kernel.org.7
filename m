@@ -1,232 +1,155 @@
-Return-Path: <linux-kernel+bounces-729173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E895B032C5
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 21:51:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56628B032CC
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 22:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B065177B89
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 19:51:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 121443AEBFB
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 19:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DE4285072;
-	Sun, 13 Jul 2025 19:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC31B2877D9;
+	Sun, 13 Jul 2025 20:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j95yf55K"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZYlOmJi"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DF01FDA;
-	Sun, 13 Jul 2025 19:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C84313B7A3;
+	Sun, 13 Jul 2025 20:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752436295; cv=none; b=JS9Ph4jVn9SwMw+qSQ/u3qsASneJ9wRyy6IPBI/IUVe96au0VHl9ziPI2SS9nwsJw6e5u9Ej6TS52UBXqiW64wzxBF5fAnoZwlN8kmZjM/abPWib/T0hGkyIlKgW7+A9rzZzF7NrQqlB4e+7KRVI6YbEtJLB4bsDYsPjZuYbnxA=
+	t=1752436809; cv=none; b=bVO4hie8bys+mmPCHxcZ9CmqpdU24toRC7rwocEFfLXsNjetJQrGo+wCy+SbmUlCtrCUbSjansHogG0Ld5UV4F2QrgVrGzv3i8jPI9Z9GyB5y2XIlHoLXn0z3SOuPnJT4y68Egk7OwLhr3uXMecV9eXZVY4EqHFgeCUq/Qz9LKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752436295; c=relaxed/simple;
-	bh=nPQlDFSW9RIxdadQENtLULpU4fV5OoVXBUZbBVLLTY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ScbbPIqCt03k2uYXQYa0hTfe+168BdEi1yan61ZYK4rJnTW3adUNC9MwoUka2wON2sXwsVeOHD92vP5cAASCDVFy1PHmpa7ZsGX//QXU/8NLCwKIyqVcJyHspsUkL9Rs/ziBSgU5kbzZp91AM8xrULHl8jmptBkR94YkeWVooro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j95yf55K; arc=none smtp.client-ip=209.85.160.179
+	s=arc-20240116; t=1752436809; c=relaxed/simple;
+	bh=3tZEHSMIe2JuKkcs+CjA58WHtgn0PycC8PnAWd1rh4k=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=rxRfxVoSOuPoxyXjiKBGjQl/FK1RxdTgq5buDVzUadI3lPKl//fyR9dXrSN92XfYu5YrFXjGhlWWb5Qy5G3iW26iaBQXMDzAKgL29ITMYXCL9yExJkh7kedu8W69lMTrmw3yOrADzHK64NXw/B7a1VnLNu2gUiLtmnoHPunA4Iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bZYlOmJi; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4a5840ec53dso40288761cf.0;
-        Sun, 13 Jul 2025 12:51:33 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-553be4d2fbfso4140630e87.0;
+        Sun, 13 Jul 2025 13:00:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752436293; x=1753041093; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IiYEGXk9WPqZkAOxoDJG4bxHhit6SmV7DwavSK2behs=;
-        b=j95yf55K8tyl0R1YU21RVe2HBn1OGUICm2GJCY6H2U7/g08HnVTABhvmvtWbv67yDI
-         C19UIfK2cKJE048DGXz/Fn1Ffir2Yeh5Bfy64GvPcm8+DcYYSQduUIrHvU/hnPWkRmuj
-         XtkOKo4pZbPRKJ+8RsKjGCPhPWmXbtj/Wh2Jlq/Dgar0n5YzVs/FZ2WnzmdwXLUOmDxb
-         mI8PO2c+9hb0G804Ueo0tsOCiuKLMH4F4r4NEK08UOUKIp6XmNOR6R6HtCewullCaF5e
-         CehPq+z2GkRPtck4pUCWDuIuDSpodSKfK2owsnQHg1jOC2gmluVZ4Oj3HkVLkKIfxibK
-         +y5g==
+        d=gmail.com; s=20230601; t=1752436805; x=1753041605; darn=vger.kernel.org;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Zgas8aX6pTElhKIx/IRpo2TOQqTHn8xnxc+EnP268I=;
+        b=bZYlOmJi69V2IE5XQeb418Ywi8XzFmGopXow4rpHcPjFQrZt89VlV8Cw3aLULn8uXP
+         DKSlciqYuZj/4qCU9nvdoTKE+MdtrX8xnXkjP9zFk5o39l9IBvc+lbzA4n90pJHZV9Vt
+         GhBk0Pr4D7g8+Ta5LrSBOFjlC+f4/MWyyolOR74qL/8zMGxxgms8OfngVssX95oUATJ9
+         lPDTIsRXOoAdRxtnO+I1Pcqf1LelFjnOdGEXC1CeRgTnqrkKQmLZKD1q7bdU7smZ03pq
+         41X1e5AxNtDhcyaALUGKPBqT0egagxxpcP0NYzIxuC2jqWUN8IC+jcDLDjL9mr3dR4YB
+         CWVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752436293; x=1753041093;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IiYEGXk9WPqZkAOxoDJG4bxHhit6SmV7DwavSK2behs=;
-        b=qNDMUq6K4uukBVds0g1HrB5SICGe8gIfjF77i8HCyD1pBez18gp2r6c4RiorNIN1OB
-         k0tvjFBW83fV3DpWQioZbL1MURmR9eN21kCyRVHQX3tirpdGuu1kfE3DuB1S0GFETgDO
-         O3UwJ07alz4t1rCCz43AmQ3TzVs8WoeUaQAlCd+OSwKzyClBHhnZZZcYG8WOCOt+SKOL
-         t9IX1kS8zZ6n/WJNcWdhL1HZJqisqxC632rb8iSmjLZVcFBwV5bMTwCpSS/+sET9qHZz
-         zGBq4ztJdifhYQ6sNROCHwXSqmp7+3xl3rd3KQRmE+ruweCHTJObiimIuMXwKjhjQEXf
-         pGwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZqp94FwyPL1QYrI3IxJ5JoXcGCL+cMb666zGz19D1WnDAfRmRXs00EcHWPWDMajZy0Dp2CZLo2KWt@vger.kernel.org, AJvYcCWtPGx+FwgyOE7qaQjEnMSdMdDgIa8FSZbzJ0Ju2OVkZmLXtmLWqY7RkXqeutaWo3MiZ4mn+onnkB0dFPJAces=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNA/QW4DB/LfJ6nYJ5xXG8Srk6PszSA+lTCAOnGJunTe11Blxm
-	Sc2YgsirRIUOzeD1HsBd3ej8eACGL6jWi1k0qrM8FbpPzmQH7RUxk1KM
-X-Gm-Gg: ASbGncstAL3uUxRPxZbYaoghWz/lrgGq/jBNzJwgY+JK2YKcwJwG2EP8e87gUDOGteI
-	BvQUZaMl1+hI3/fDxVupIGfxODzD3vxCejj/Itu4+chpu7pOXUS7oyUzmbTuaSKnCZ9gulP2nZm
-	+F1Gf5uttK5K5bL0BwCnb8Q26OA+pYhf08HpemRMNDN6ahf+hCDweLu28FYYVkxDrlZ1vm9nto/
-	JthPhHCNxyQ6FwOLif98YkBMqKbN9YVN8ZsktstAky4aJyDUovWemPT9U3oJ2xdFQ4H5Zj0JwYs
-	5bfOiUIcO0wQ8stVCiBqIjU96mTprzN7pBX8UEc3EgCkSpvQ0TO8+HBLfLN14ylv/RVQtsJ8vEv
-	QGJ1WopV8INF9oN2E8bKuMVeEzI5irDzcvsdY88mAip+v5BxnYzq+PWP0AwlYGtBO6rCaEDXJTX
-	h3EfvOrdZ+e3IbDIE9oSx8AOU=
-X-Google-Smtp-Source: AGHT+IH5xDylD/6MZCspt9o4GAG8jxcNA6PZtUrSOr3+k0K3lrw0sxOp16rSOwxUVU5CIJaT09n7Kw==
-X-Received: by 2002:a05:622a:10e:b0:4a6:f416:48b6 with SMTP id d75a77b69052e-4a9fb92e587mr186226371cf.28.1752436292525;
-        Sun, 13 Jul 2025 12:51:32 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9ededcd5fsm42418971cf.68.2025.07.13.12.51.31
+        d=1e100.net; s=20230601; t=1752436805; x=1753041605;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Zgas8aX6pTElhKIx/IRpo2TOQqTHn8xnxc+EnP268I=;
+        b=tzi5Bve/q0p8KGlhwxo/k1eFe6IhwEKpZZ6SV4Kmep9ssYdtjOwKiKFOOFOIHwlvRv
+         Ykx6tR2KwpwkHfmHzEo1FGadpReb/sfD+MOjvPh0Y/0lV6Z+9Y3067Bj3PVtP9ZG7x8K
+         e8D7RKNfsJQ0W5UTy++CVXADPwdju4FVDpNJYvT93aUScYkpEZ0Uol8qMnHLKoDHX2/8
+         fYJJP2kzOFQKvvHdElgat3QCKLpkBuoDs+EQXYX1gj4NLKM0zdp6nfLDupyzk+8BCvEF
+         gp6YCqtKNoInXO5qHFz1787YCbAdOEG28Io0lKQ0h4eptCp0TE08zHsz3nSBU7WZRic6
+         fm2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUN4DCR//gECCV+Z2YdccG5Tsm5SYVC/ylsiFZ/1C3pLHRkjvwl7MlyyNwSwqsnh3/945WtMB7/dDrgsAM=@vger.kernel.org, AJvYcCUjRD/nq7peEhdYy4et7jwXVFE7eXNXxqev7O883f5g6hVpyGFVw+aDu7+ZdwA6Ro01rtnZKBQnJHj2bz8=@vger.kernel.org, AJvYcCUyggjf6i+JBPDNz54vygU5cRnusGusCoPuQnsZV5dMeV1fdhkByiRAqogFGCi4Kfixhs0ppZG4wslnhVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL45CQk7GLduX06QVYFTOKl2/9teC8GA1oT7DatCFvuEznX3gf
+	NQdOsmBov8VcsLCrh8ZMJ7faUBQLTSYYAIP710j8LFYrfCeLkNiRxPtL4X7OhsUqjqU=
+X-Gm-Gg: ASbGncvJQyAPHAKOJc+/Y0dz7XQkyQmz3nyWbpz9s0Nf7jzPCB8m7ct5ydoPVoFY3Dr
+	4BAUTU9SsX0JiSbc6QuUgk2FPiVKWgkQ2LTmYrbBIgoCujiOHCQ/mpFY46076/69WoTs0KbuQbe
+	RpiFRuS1lB0/vGEaEdS6DGKg0MytdvflbuNzN2c4O8Vx1gSTAPIHBVNwzurz428FVZHveyTQtiF
+	2WxSgsMMBqEBvWDGFG6xLXLI+V1vq7JwcX8H3Hqohp6AshmBW5wOuhMeOldrdqU55th6n0SVaxS
+	tFpF8GyGqcStqHPDa60NHNBNZQChr0bWcb5NUymEtcOPrO69DjyAyBCgb4HFE8ScLq7JHSGwXgL
+	mLRkXV9+Syqmk4eICh20=
+X-Google-Smtp-Source: AGHT+IFxABxaGZ89qBgwZDV7CxOPxSBDB3o9rA665o+Vy3jYVVk1Wdz6wBebAWa65+qQwprfYTupWA==
+X-Received: by 2002:a05:6512:3b9e:b0:553:510d:f46b with SMTP id 2adb3069b0e04-55a046095e7mr2800438e87.32.1752436804901;
+        Sun, 13 Jul 2025 13:00:04 -0700 (PDT)
+Received: from razdolb ([185.69.124.235])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55943b60827sm1689220e87.158.2025.07.13.13.00.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jul 2025 12:51:32 -0700 (PDT)
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 39322F40066;
-	Sun, 13 Jul 2025 15:51:31 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Sun, 13 Jul 2025 15:51:31 -0400
-X-ME-Sender: <xms:Qw50aDyQsGYzFN43RjiBN1oLYKEL1H9n3OLwQ4tHNN6VZDivnKHXgw>
-    <xme:Qw50aMy65KPpd0jrB-Zrf03GOwr7o1Kw5QSdulxhr6wpYY9tTJzp4LCrO2hemwXeG
-    rODEhGtnN0hGD39LA>
-X-ME-Received: <xmr:Qw50aB4wVqiDti74aw21J6npBQJbyYRFrEU3LlpimRjZU1fP3lybfEH0cg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegleeliecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhepgfffkeduheeliefhkeehfefhueefffevleevkeffvdfhvdejgeeggeevieetjefh
-    necuffhomhgrihhnpehvrghluhgvrdhsrghfvghthienucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhp
-    vghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrd
-    hfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthht
-    ohepvdejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlohhsshhinheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvghgvrh
-    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhkmhhmsehlihhsthhsrdhlihhnuhig
-    rdguvghvpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrd
-    horhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    rghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehgrghrhiesgh
-    grrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhm
-    rghilhdrtghomh
-X-ME-Proxy: <xmx:Qw50aNAahx-9azlJQvPLFtMp7OgKC8pVTXQpcMJeeRBzRI0zno-nyw>
-    <xmx:Qw50aDCiVJ50W0sS6E_53UE-6sPPEOzX0V67DVpjhEQq-cpd4zCSww>
-    <xmx:Qw50aOpEpCGAvR9EsZpH-Ag3m23HDOBNpGXJKvDGBf9xqi4fIMHxIA>
-    <xmx:Qw50aF2dRKwWV5bRVPmNAOv3PtFef-_PfjfpjiXdMoHuTBFuWoj1dw>
-    <xmx:Qw50aNVvArT2iKsw2cWK16gvHiBWPc5sWIL_HmuqW-enS28Rsqc4vjvZ>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 13 Jul 2025 15:51:30 -0400 (EDT)
-Date: Sun, 13 Jul 2025 12:51:24 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v6 4/9] rust: sync: atomic: Add generic atomics
-Message-ID: <aHQOPPhTRI2mcEKq@tardis-2.local>
-References: <20250710060052.11955-1-boqun.feng@gmail.com>
- <20250710060052.11955-5-boqun.feng@gmail.com>
- <DB92I10114UN.33MAFJVWIX4AB@kernel.org>
+        Sun, 13 Jul 2025 13:00:03 -0700 (PDT)
+References: <aG94uNDrL1MdHJPM@duo.ucw.cz>
+User-agent: mu4e 1.10.9; emacs 30.1
+From: Mikhail Rudenko <mike.rudenko@gmail.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: kraxel@redhat.com, vivek.kasireddy@intel.com,
+ dri-devel@lists.freedesktop.org, sumit.semwal@linaro.org,
+ benjamin.gaignard@collabora.com, Brian.Starkey@arm.com,
+ jstultz@google.com, tjmercier@google.com, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org, kernel list
+ <linux-kernel@vger.kernel.org>, laurent.pinchart@ideasonboard.com,
+ l.stach@pengutronix.de, linux+etnaviv@armlinux.org.uk,
+ christian.gmeiner@gmail.com, etnaviv@lists.freedesktop.org,
+ phone-devel@vger.kernel.org
+Subject: Re: DMA-BUFs always uncached on arm64, causing poor camera
+ performance on Librem 5
+Date: Sun, 13 Jul 2025 22:54:14 +0300
+In-reply-to: <aG94uNDrL1MdHJPM@duo.ucw.cz>
+Message-ID: <87tt3fdfpg.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB92I10114UN.33MAFJVWIX4AB@kernel.org>
+Content-Type: text/plain
 
-On Fri, Jul 11, 2025 at 10:03:07AM +0200, Benno Lossin wrote:
-[...]
-> > +/// # Round-trip transmutability
-[...]
-> > +///
-> > +/// This essentially means a valid bit pattern of `T: AllowAtomic` has to be a valid bit pattern
-> > +/// of `T::Repr`. This is needed because [`Atomic<T: AllowAtomic>`] operates on `T::Repr` to
-> > +/// implement atomic operations on `T`.
-> > +///
-> > +/// Note that this is more relaxed than bidirectional transmutability (i.e. [`transmute()`] is
-> > +/// always sound between `T` and `T::Repr`) because of the support for atomic variables over
-> 
-> s/between `T` and `T::Repr`/from `T` to `T::Repr` and back/
-> 
 
-Hmm.. I'm going to keep the "between" form, because here we are talking
-about bi-directional transmutability, "from .. to .. and back" sounds
-like describing round-trip transmutability.
+Hi, Pavel,
 
-I also re-aranged the doc comment a bit:
+On 2025-07-10 at 10:24 +02, Pavel Machek <pavel@ucw.cz> wrote:
 
-/// Types that support basic atomic operations.
-///
-/// # Round-trip transmutability
-///
-/// `T` is round-trip transmutable to `U` if and only if both of these properties hold:
-///
-/// - Any valid bit pattern for `T` is also a valid bit pattern for `U`.
-/// - Transmuting (e.g. using [`transmute()`]) a value of type `T` to `U` and then to `T` again
-///   yields a value that is in all aspects equivalent to the original value.
-///
-/// # Safety
-///
-/// - [`Self`] must have the same size and alignment as [`Self::Repr`].
-/// - [`Self`] must be [round-trip transmutable] to  [`Self::Repr`].
-///
-/// Note that this is more relaxed than requiring the bi-directional transmutability (i.e.
-/// [`transmute()`] is always sound between `U` to `T`) because of the support for atomic variables
-/// over unit-only enums, see [Examples].
-///
-/// # Limitations
-///
-/// ...
-///
-/// # Examples
-///
-/// A unit-only enum that implements [`AllowAtomic`]:
-///
-/// ```
-/// use kernel::sync::atomic::{generic::AllowAtomic, Atomic, Relaxed};
-///
-/// #[derive(Clone, Copy, PartialEq, Eq)]
-/// #[repr(i32)]
-/// enum State {
-///     Uninit = 0,
-///     Working = 1,
-///     Done = 2,
-/// };
-///
-/// ...
-/// ```
-/// [`transmute()`]: core::mem::transmute
-/// [round-trip transmutable]: AllowAtomic#round-trip-transmutability
-/// [Examples]: AllowAtomic#examples
+> [[PGP Signed Part:Undecided]]
+> Hi!
+>
+> It seems that DMA-BUFs are always uncached on arm64... which is a
+> problem.
+>
+> I'm trying to get useful camera support on Librem 5, and that includes
+> recording vidos (and taking photos).
 
-Thanks!
+Earlier this year i tried to solve a similar issue on rkisp1 (Rockchip
+3399), and done some measurements, showing that non-coherent buffers +
+cache flushing for buffers is a viable approach [1]. Unfortunately, that
+effort stalled, but maybe patch "[PATCH v4 1/2] media: videobuf2: Fix
+dmabuf cache sync/flush in dma-contig" will be useful to you.
 
-Regards,
-Boqun
+[1] https://lore.kernel.org/all/20250303-b4-rkisp-noncoherent-v4-0-e32e843fb6ef@gmail.com/
 
-> > +/// unit-only enums:
-> 
-> What are "unit-only" enums? Do you mean enums that don't have associated
-> data?
-> 
-> > +///
-> > +/// ```
-> > +/// #[repr(i32)]
-> > +/// enum State { Init = 0, Working = 1, Done = 2, }
-> > +/// ```
-[...]
-> > +pub unsafe trait AllowAtomic: Sized + Send + Copy {
-[...]
+> memcpy() from normal memory is about 2msec/1MB. Unfortunately, for
+> DMA-BUFs it is 20msec/1MB, and that basically means I can't easily do
+> 760p video recording. Plus, copying full-resolution photo buffer takes
+> more than 200msec!
+>
+> There's possibility to do some processing on GPU, and its implemented here:
+>
+> https://gitlab.com/tui/tui/-/tree/master/icam?ref_type=heads
+>
+> but that hits the same problem in the end -- data is in DMA-BUF,
+> uncached, and takes way too long to copy out.
+>
+> And that's ... wrong. DMA ended seconds ago, complete cache flush
+> would be way cheaper than copying single frame out, and I still have
+> to deal with uncached frames.
+>
+> So I have two questions:
+>
+> 1) Is my analysis correct that, no matter how I get frame from v4l and
+> process it on GPU, I'll have to copy it from uncached memory in the
+> end?
+>
+> 2) Does anyone have patches / ideas / roadmap how to solve that? It
+> makes GPU unusable for computing, and camera basically unusable for
+> video.
+>
+> Best regards,
+> 								Pavel
+
+
+--
+Best regards,
+Mikhail Rudenko
 
