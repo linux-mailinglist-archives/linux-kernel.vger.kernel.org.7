@@ -1,135 +1,131 @@
-Return-Path: <linux-kernel+bounces-729023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 454A6B030A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 12:24:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79EB6B030A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 12:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38E32189FC88
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:25:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D490917ACC9
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740FF26D4D9;
-	Sun, 13 Jul 2025 10:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2060B264627;
+	Sun, 13 Jul 2025 10:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ioAK7M8I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RTiW8G9Z"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C6A4A00;
-	Sun, 13 Jul 2025 10:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E654A00
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 10:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752402274; cv=none; b=bD0aFstDeex4xj22bAErQ6Bv/O0HG+DDS7MTi4Rf0srGVv1o2U4YlB4oZhCayIyhIxaB46oKFGRsvWYI76va+9LCYrRpbH96pILAbsWRGri0qvPSUVH1d2b/8RrOFUOtM9w68HdDzg/ZvAtvPJ/4ULftQE34JRdGaHWzP9me/9k=
+	t=1752402368; cv=none; b=C8OkIfoBBaHNo389PXABJhJkPvnaVcvvqA9CejpXAbbfT2eEIuKNb9i+ByqPu/7HRm5IJOnN1J7dq5V72RESAB0d0mAllTUCpfEnTNHPspcKQOuQ4CtvkO48s1eZJH0Ohc+bl6xLWY7dJeo+5VHFXCbRorJCWfc6hUvLlydGzW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752402274; c=relaxed/simple;
-	bh=KR/f9WSoeyMeCEi914nzYR+kgzKbA9YtbzQh4WHJuOk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=XnFFww8blUulqdNjBOwS0kKwbrguM7DBAYVzhMNtAVmcKxp2463nvh3abqkImdVRNmf9IHDig2C43R0USfAVOxlbN6NDiiof/ojIgweVzbRE4mg9/BODRjc1Vy4lk7gz/Jdv7DKwuFtZNdgP7SsejFFhRkm3LiUuNCDqwgEFl8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ioAK7M8I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF02BC4CEE3;
-	Sun, 13 Jul 2025 10:24:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752402274;
-	bh=KR/f9WSoeyMeCEi914nzYR+kgzKbA9YtbzQh4WHJuOk=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=ioAK7M8IZy4y/A4fPY8yWUOm8uackE21W1Xu67AaSioq/8T8xqB6MP6bmrCbtH2dv
-	 08fccUtb+lkp+YEiIOUXq9iX2ZgCirs6Y0LpwGo5xLy4QGoVHyDqHhsT3DlV1MrLmm
-	 Y73gW00D/57e863Os5EVHi1lvWfcXoGPs+TQEwwv0CotepqVyeFMn4O8FwjXq9z0wF
-	 TUa/bRZ7ZuwTufnPfA6bPQZihY1tZMIlCo8z6VaQfuU2cTA2kt0puOUC2Uj6hnUhQE
-	 WLTQatWeoohq9BKyKQnb9y/ipXVL1VlGhN7f74+JqCLITcSWcD8TB/eC7VVTUmNkvK
-	 jr41PGDIsYSnw==
+	s=arc-20240116; t=1752402368; c=relaxed/simple;
+	bh=OXy6AS2y9c96+85hMjbbYYJwWoTSVv8e1Xu6nbvkpLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cZgJ0YDM4FaF+NNoTI+lOwNrhl49Ls+l14TyC/OqD3g6Pmwvo73XkWGY9X1aVL9gLNmIYfx/UpOJgPA2zoacMNzkEbuQDIE1s0eLD3y4Nqt8X6Ig3EI2RyqNLiwIzfpix78tAEQOoMQKmC8/ODdMYuLC5c1aLqgJCKpAnfnl2nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RTiW8G9Z; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A2E9540E01FD;
+	Sun, 13 Jul 2025 10:26:04 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 2MTOUmwBh1ks; Sun, 13 Jul 2025 10:26:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1752402361; bh=nA8XhBGbb5mkVQc6CcverNqDsDbRUVEf5kLBLQhmGVU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=RTiW8G9ZHjXSdkgL7FZM5VQMQoZ8cfH347mU+FFvPoqYkywhxVxS02uBEm+4plB1P
+	 ZkuEq+ZsZFkwC+fbuhuhcWOo89pEr7Yh3jo0gBsSVNdCsPCXD7m0BmazHXu/tLuan3
+	 BCnKm+7+70Oi7Ly7wfhjeJCDBJrNaf4l/zDvvVMwh+26IJ+T3ZjLA7TpBa5O3gQEMr
+	 DshxJu8Ds31ewFUkIk7I63GjPxIt9S9Ce2ckT8ap4oASkWLdG/mINijih9fETNKJ6A
+	 0c4vwo4BHCFkgGuy5LpqydUYCTE3ibShMxUXLzMI+bzO76X5QxBCJEjGZ8F4rCSc6e
+	 M6XCSsq8RplbYCLaez1m1lyCejP+JRtOA2JNoWILoJF+YAYL+k2ABWh3H0u7mvXUwr
+	 6pkG6hjYWjq+S3uwzG1NikWQUqlCk5HN/9iffEhBBTvAJR+en6hNYYcCkBCqz3JM0Z
+	 qy8tlHn5nva02rqyNxjCTdq5OS3G0TGLq7pO2hOtRjCdOIW3KYmwwv4TGdhb1NATX0
+	 ljopRc66Q0EXMsTw88fmNGpXa62aqQj4N1KWxLt8KUZy8ytdOoO/19Zq4ocRktZloU
+	 /2x+Zy1Ru+K22sxTMwvffK1EwL4ZGn05JrFAMHgl6ErNtdK75ghPPEsN0pyYIAcGGR
+	 1xpYSPWmc4XAIima9bpzFWlY=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4EED940E019D;
+	Sun, 13 Jul 2025 10:25:58 +0000 (UTC)
+Date: Sun, 13 Jul 2025 12:25:51 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/urgent for v6.16-rc6
+Message-ID: <20250713102551.GAaHOJr6ue89FBosE1@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 13 Jul 2025 12:24:28 +0200
-Message-Id: <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org>
-Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Benno Lossin"
- <lossin@kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-pci@vger.kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com> <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org> <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com>
-In-Reply-To: <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On Sun Jul 13, 2025 at 1:32 AM CEST, Daniel Almeida wrote:
->
->
->> On 12 Jul 2025, at 18:24, Danilo Krummrich <dakr@kernel.org> wrote:
->>=20
->> On Thu Jul 3, 2025 at 9:30 PM CEST, Daniel Almeida wrote:
->>> +/// Callbacks for an IRQ handler.
->>> +pub trait Handler: Sync {
->>> +    /// The hard IRQ handler.
->>> +    ///
->>> +    /// This is executed in interrupt context, hence all corresponding
->>> +    /// limitations do apply.
->>> +    ///
->>> +    /// All work that does not necessarily need to be executed from
->>> +    /// interrupt context, should be deferred to a threaded handler.
->>> +    /// See also [`ThreadedRegistration`].
->>> +    fn handle(&self) -> IrqReturn;
->>> +}
->>=20
->> One thing I forgot, the IRQ handlers should have a &Device<Bound> argume=
-nt,
->> i.e.:
->>=20
->> fn handle(&self, dev: &Device<Bound>) -> IrqReturn
->>=20
->> IRQ registrations naturally give us this guarantee, so we should take ad=
-vantage
->> of that.
->>=20
->> - Danilo
->
-> Hi Danilo,
->
-> I do not immediately see a way to get a Device<Bound> from here:
->
-> unsafe extern "C" fn handle_irq_callback<T: Handler>(_irq: i32, ptr: *mut=
- c_void) -> c_uint {
->
-> Refall that we've established `ptr` to be the address of the handler. Thi=
-s
-> came after some back and forth and after the extensive discussion that Be=
-nno
-> and Boqun had w.r.t to pinning in request_irq().
+Hi Linus,
 
-You can just wrap the Handler in a new type and store the pointer there:
+please pull the x86/urgent lineup for v6.16-rc6.
 
-	#[pin_data]
-	struct Wrapper {
-	   #[pin]
-	   handler: T,
-	   dev: NonNull<Device<Bound>>,
-	}
+Thx.
 
-And then pass a pointer to the Wrapper field to request_irq();
-handle_irq_callback() can construct a &T and a &Device<Bound> from this.
+---
 
-Note that storing a device pointer, without its own reference count, is
-perfectly fine, since inner (Devres<RegistrationInner>) already holds a
-reference to the device and guarantees the bound scope for the handler
-callbacks.
+The following changes since commit d7b8f8e20813f0179d8ef519541a3527e7661d3a:
 
-It makes sense to document this as an invariant of Wrapper (or whatever we =
-end
-up calling it).
+  Linux 6.16-rc5 (2025-07-06 14:10:26 -0700)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_urgent_for_v6.16_rc6
+
+for you to fetch changes up to cb73e53f7c0700285d743e7afbe37cba9f7df8f3:
+
+  MAINTAINERS: Update Kirill Shutemov's email address for TDX (2025-07-11 07:25:51 -0700)
+
+----------------------------------------------------------------
+- Update Kirill's email address
+
+- Allow hugetlb PMD sharing only on 64-bit as it doesn't make a whole lotta
+  sense on 32-bit
+
+- Add fixes for a misconfigured AMD Zen2 client which wasn't even supposed to
+  run Linux
+
+----------------------------------------------------------------
+Jann Horn (1):
+      x86/mm: Disable hugetlb page table sharing on 32-bit
+
+Kirill A. Shutemov (1):
+      MAINTAINERS: Update Kirill Shutemov's email address for TDX
+
+Mikhail Paulyshka (2):
+      x86/rdrand: Disable RDSEED on AMD Cyan Skillfish
+      x86/CPU/AMD: Disable INVLPGB on Zen2
+
+ .mailmap                               |  1 +
+ MAINTAINERS                            |  2 +-
+ arch/x86/Kconfig                       |  2 +-
+ arch/x86/include/asm/msr-index.h       |  1 +
+ arch/x86/kernel/cpu/amd.c              | 10 ++++++++++
+ tools/arch/x86/include/asm/msr-index.h |  1 +
+ 6 files changed, 15 insertions(+), 2 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
