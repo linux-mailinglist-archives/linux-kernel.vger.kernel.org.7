@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-729046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E91B03106
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:46:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA0EB03107
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59A65189E285
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 12:47:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18E2B7AD896
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 12:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CD126B098;
-	Sun, 13 Jul 2025 12:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296AB277037;
+	Sun, 13 Jul 2025 12:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WBuaHjNm"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ekAYtfPC"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B2AF9D6
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 12:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1491F94A
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 12:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752410810; cv=none; b=ZGbIYJN3sFdRiU5atVT+alVR36GCE4O/u94pmdJ9ZmKwcS4pImfcfVx7gggB8Ut83sY73Y493dQofK5PcImat6X9+/I7VviQXVk3ivpOc3cNz92c3CoerWrrQ0739yfjlsqg096NUN6rQfSwY3LCfvp4IweofIaLzYeGYdPHy3s=
+	t=1752410810; cv=none; b=kSHneI1a+GQjbCUuK8kCN0FwTit2sUshxb9OvlbibL2E07vsbbvPEDndqqVRuQTj0FTbNtzWKOB6P4ITraxUuHzWcMndVeSAKAZhlf1iFeFr6bZr1kRHX0ALSI7tl5sDYuLUshvVNkmOK2ZXoufOR+xUKUdWUMINnAHZLSi7uuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752410810; c=relaxed/simple;
-	bh=CTLQ1hf8YF/BxJ03zAJvfKWuzlRvoivCAalOztiHMkY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uV9Ga4siApBhRR4nZhbE7oSnBXOWQXEbTzBpHOJafya0GB6/neMlMxOQ82By+5Lfo09D6njRugWdy/ISlxb1HsGbZtjbFASDQDgax6KhcrDgrvuG1H09yGCQhw/xPrliM4w0uit7ofv+yipIhv8hbAxvhE6E0K01c8HcSOEtPT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WBuaHjNm; arc=none smtp.client-ip=209.85.128.48
+	bh=EFnV+IT3WMLvWKBJ+A8tOlHnCxdVYxzgQhUY+USgsKw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=sMOGZukBYU7EqD3guVeNwSl2XUA5yC8LztOI9wEe6xb0smn0gqszPqLYdeU/5CbJyXs9Clk2KnQZTckJp9P+CMOHMrus68ScsZExbNDFgRg/aesgIgi3tPpVYycupLU0gRywurXSiOfZI6SlwX8c1KxZybw2AmYx6iQTiZ+8bM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ekAYtfPC; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-456053b5b8cso650995e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 05:46:46 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a4e62619afso363538f8f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 05:46:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752410805; x=1753015605; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NNz1F+rRHg2OHfi6CTNAI0f/wy5uxaLTWsJ5ep29OW8=;
-        b=WBuaHjNmsR4l1tBV+dE5EAjkCdyv6wXOv1O55CIYG2Xe+lAqWO3bBhX4lWmvjl0E6y
-         U6JMoKf+W3wa9RpquC7QHxDT1vItobk+HFQY4joSdpiBjGRVFYq4nZt1wXxb9Yxr914o
-         2WL+h/l/TXBZUXEpTmnpqefkRT4LSe2MFmNj3baorMsYzQqA1ntfLTziGVLqwc/LY0L7
-         vBfp369pbZMNA6CSLD81YuJUBnl+7TvIrnAYkVhfTMIKWUHRcOJRbS+izfutHU6AOS7+
-         PS+esv9u9TpzcM/Mtyio50HryKDScIk16KtpC5UdVHkPa3X4AL5IKtiyb6hvm8TsUKUQ
-         8hsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752410805; x=1753015605;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1752410807; x=1753015607; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NNz1F+rRHg2OHfi6CTNAI0f/wy5uxaLTWsJ5ep29OW8=;
-        b=CLDfy1FpPJsl/T59iBt7cBNy7Zhh78uqFtlJb23JcuwnGS28yMOujVfdnNXfQHM3Qt
-         3vyUYKe++747iLhkJlmAMSQo6lM9HbmbKL1gGqKHcOJ3RIdSWs6mbOJmJbUFEfHHOhWW
-         jXnAO82fQiILML78eKLnLnTmfn8yQRUCAo+xoFoLVPV6lM3uE7HoW5NrSeNymeOidixP
-         Ne+ftBhLk2vGo76cbQlLlhXcwn1WsJi9pRCH2n6Mw7+TTYacuPmu99tacWUSUu0IPE6k
-         weidN1vkkPIvZuXGOK8QvKbnjbQH2o69ijqDWrEAKxjPYMPvy3SRN0Z67A1gOE0FNQEx
-         aWDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnRAf1nxgFwYt7Tytl1l6MSOrwt0Ed0ywntbAGXKGfZNR9Rxapei20uwWegHaREWqMdo7+63Wmln2zDow=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt9VSGnHlfmWIQXXDpRnbGUY+ds2YAJmLFv2jDDCFNLHBltYfA
-	vY/8U44QCQdjKYsw4uiEXigsEJfBE9jrbDXTG6Af/uFN9qJRpp1jAo/ikmVdFWJQa7k=
-X-Gm-Gg: ASbGnctxgVxhbd3s73v0/HYJ5041K2MROMaOYJOmqpr4gnW7B4srvCWX/rmWiqjTdx6
-	L6XA6aCCPRLWNacyrHSk9SE2n2Dm340X1VYKAIHivaqGrDYh+e5wslsqMv00W+fHI6w19HUGp5N
-	D8KfwTfDX0VekMgpt0siCU12uXVz7gm4gqJ0F4ZAzRhsn4zQKS+ZxURtBPGJIpxnnfR3fhtAeBg
-	Nxk6ciEGTi6jyQmDY/QxDcn6jJKZ5cZaGSbfocgVBLpODwhYsUqSEJC9X9Md/RyRLh9Drk879Ff
-	A3MdRw2PCacJnYJn5Yuis/fisnpJHldJCabHEbQMeqoI1BSshp+rnhn6TiwiGRnQi8iwj8SSFuu
-	GDua1NOiMhGo2WVOk8YCbnYkfXinKDKnIWaGn
-X-Google-Smtp-Source: AGHT+IGKxdR63CRDBNOLZ+xnH+bV9+GQzIi23h84ybE2zHN3tNa9bDvkPvWDqkGPtM5fd2DFwY7ztQ==
-X-Received: by 2002:a05:600c:8b21:b0:439:9a40:aa27 with SMTP id 5b1f17b1804b1-454f4283cdcmr32693535e9.5.1752410805244;
-        Sun, 13 Jul 2025 05:46:45 -0700 (PDT)
+        bh=tsHRmEegKuDd3kJrHQl3Yy7EUVWyybJ3UX6f6F6mCeQ=;
+        b=ekAYtfPCK5OPml+S/E+zJekFl92eHzRR6pbL49JSU1KCZBoUGA+Nrk23cAWQXZvK5t
+         Vm8UWVaYJCqzLsicYA24exZAK8FpMh+XpNi3vah5j3L3wSfLwggQsFSPV7k+1a8gJrZl
+         E3eRXOkP1oadlZ4Pp2WbXD0XnGNjwKfEIRT3a1xCr3sXVqTgtqVZnYU90XWknY/ddJ0W
+         UcGq8ALabXJSgOb7xKKWHDTk9LnN5Ztge+gzCxqWxeAkBmeH0zGf7YCcCKQetC5n7COI
+         GevGUDH81orG9IZjCX13WbhnFPycqveI4rerr72MHWasV5+LrEcj7fv5cyUceawl124R
+         gHAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752410807; x=1753015607;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tsHRmEegKuDd3kJrHQl3Yy7EUVWyybJ3UX6f6F6mCeQ=;
+        b=Lcpe/XBtdKbFctwtxahxh8jjV2xWVKiiOtnzns56+zszzRRPeU9onIU8YeV9y7vbwM
+         3e0YgnCyPgJG6I2XakNAtanuhEGIPGgGjeh2nS/KX5enYmwbKof75iWBpjwKvHeqfNze
+         HQJp0kBeMs8cMTXbfCbAiiyAtzqxLou3k+7WpZUzMrb/J9eBF5ckZ8PUOcNlcT6LbmrK
+         qfNgiwGZ7GsEhG9AI0K/eAc3msAIzyGTeRXk00L2+S2b035HQNwFI9aHyZy78Pf7VGYp
+         26LI9E5lAQWTkJWeHx7m1Af/mgHW2OFf8rls49rTFK+BNFFucW6YgHn/gNJJ7xzVHCRq
+         khYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7IqvICpWqUO5KkbpRUjXYzwTqo2VlOmyy2lLGdMoe7hTQrK9OuZTeKNpYfpObTVYXgf6HfFesJrNq2yI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr/cwUD7zoFlZNcP4+jy42h/IDB/wTxiIuglddIP+Nkd3oPmgR
+	/7mMZfC9HEZ4Z6j7mapBDMG3xlF5nQ7wA5VLcsV/zI/P3MKxuIHP+Ia/LVeJhpzDm0c=
+X-Gm-Gg: ASbGnctLZWhcSXScLQdiR3Pa3x/qp3SvKqFrPk1rbQAvLAm6HBCskWPASv8nfn9AL4n
+	QFreydjQeJJmkMTVV56zGCs9NBnuKXksGuxfiFpi5qqbXIq5rnlKLBdREuWb6ovjZYXnxxCDS0f
+	DES+l2Ad4bJVRM8e0jTXdPbRU2YTZSm16TEJ6MPbBP2rVGhSMr4tdr9JBONy0KoklrJrg5T8lt4
+	1mAO385m75a2gaM71lQ4sWZc16ESOc1RBorSkUkn8AhA+t7EutrrhSNvuvKkouGvGcoGhgnMeAG
+	YsOnj/L/PhqLLRYu2WlHJFmMmyJwOlN2KfEdsnSViEDEIFo5xPenEYhxfYoMftwSwouzK0uaq+3
+	veFWwuNyUWT9FDBmCpNXvqNqu21JkNZT2R/yxnDirp+pAHoM=
+X-Google-Smtp-Source: AGHT+IFTstnrjdXM4TS5/Iksr3hAwMqkve0ZmV3EsyB4JGAGxrnN82uit9Rx/A34hGD36CuTf2kvdA==
+X-Received: by 2002:a7b:ce02:0:b0:456:c48:4907 with SMTP id 5b1f17b1804b1-4560c484c3cmr10560765e9.0.1752410806902;
+        Sun, 13 Jul 2025 05:46:46 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e14d07sm9828835f8f.66.2025.07.13.05.46.44
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e14d07sm9828835f8f.66.2025.07.13.05.46.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jul 2025 05:46:44 -0700 (PDT)
+        Sun, 13 Jul 2025 05:46:46 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 0/4] docs: dt: Document established practices:
- compatible and file naming, subjects
-Date: Sun, 13 Jul 2025 14:46:35 +0200
-Message-Id: <20250713-dt-bindings-docs-v2-0-672c898054ae@linaro.org>
+Date: Sun, 13 Jul 2025 14:46:36 +0200
+Subject: [PATCH v2 1/4] docs: dt: submitting-patches: Avoid 'YAML' in the
+ subject and add an example
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,62 +84,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAKuqc2gC/x3MMQqAMAxA0atIZgO1olKvIg7VxJqlSiMiFO9uc
- XzD/xmUk7DCWGVIfIvKEQtsXcG6+xgYhYrBGtuZoWmRLlwkksSgSMeq6B211hjX9c5Byc7Emzz
- /cprf9wP6aSikYgAAAA==
-X-Change-ID: 20250713-dt-bindings-docs-a9d320095699
+Message-Id: <20250713-dt-bindings-docs-v2-1-672c898054ae@linaro.org>
+References: <20250713-dt-bindings-docs-v2-0-672c898054ae@linaro.org>
+In-Reply-To: <20250713-dt-bindings-docs-v2-0-672c898054ae@linaro.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1084;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1995;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=CTLQ1hf8YF/BxJ03zAJvfKWuzlRvoivCAalOztiHMkY=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoc6qtRczrxmk7FN9BemQXR3F7i5zodTfOPGSnB
- NAPp1gz7PWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaHOqrQAKCRDBN2bmhouD
- 1+tED/98FkNTiUjhfK7J4n1bssiiTRX2rBLPxRnm/aGb7kiXR4lgM8S844Njt+4MSwSQwm4RbYl
- hK56HfNQtDda1mxF1Hv47QwHUVLzCdrCJAomp7e/Din2CJieMeHNLvlP4nXLj/kHoGNjsK19JM0
- gIJZLrbpzhc/7EvJvFclkiLpTJD0Cv9qD1JwQgpkYHNi610/+tJkP7kwCYPhz+JBHWJGmp/lieR
- 1pCRvpQechQ6RA/jrywcpTFZi0RcJIDH1iVQeeh2IAdF83Z6wewzvdMxg/w2fh8vjdll48QQC3j
- 6yxE1HkQogGEQHsoZUG0b/7vgEBkcl3ox2sAqp1wmy03ZUgdmapSRBsUju5sYLTsAGW4dQXFzrm
- 0/+HlvqnGyc3rGd0cjbmoW56hOoSA7e5UZ1LSfDzYw1EMdhsZhucm8zA8IbNv2gtKhEB1E0qUFK
- iQO/RCrsHVT3hcwo/3s1yttzC9VXfujxEGaCAa4PdL8gZ9TzF0Gt3FxSCvb3Df5j2IIkSz3Vprm
- qNyGzU2c7GimvVT7jGlSauAxJUWCp5WCwR1lUuOrZEW6TmY6bEdrQly0faogXMvEyRa0hLFDkM0
- 06ZzCf3VDguDuJ/q2C634Mqpvql2xJigDqBOC9ynZaw4b1LkIQMfQMS4yJVUt/C/dc6bk6N5eXT
- 4VGgIk2GCJzpdnA==
+ bh=EFnV+IT3WMLvWKBJ+A8tOlHnCxdVYxzgQhUY+USgsKw=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoc6qweJaWH/TRT931L8OZ38HVdqa8pjCZqhxSK
+ /dwLKoqIzqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaHOqsAAKCRDBN2bmhouD
+ 1w/2D/95B+NllypkDLynxCCtdYG3KNi7EV7jEcL2XGFI47cF18YE1rv8vkPYdzt821JHMphrirn
+ 4E6wnuFVigP7GY+RIOL4xAOOJRmXeIr+eLy7SmOREQb+BjDwCx7afe65jcvHapznbSNgZ45xN3F
+ j1WIJou3TnUsJqoDDnI6FdNF0yv66y4LeBRa9SJjgca/KfMBwQhP417LabcHQ50CaGJEm4iVTZB
+ zPsFi6+9pbvGgdRfH15MUeS+iyZqSepuqGZTQSQLn2OwUHofwGL6UbH6/MTjzgCMC6tqdozNL49
+ yAmjRjuSdhbHv9K/oIzF0ugpMJ4OieTCOuBiJaHsppLX16vOWCW8xAVuCHYObelbUONprkaGWSL
+ riuSJ0jHv8OQ6UKlPwlXcTXTCdswYQL+rNdzMQqi3hY58GYZnea8oNzWpqhJID39ljAXytFuruE
+ xTx1/9hNF+Z7v8xU/5pDl6nyyjX16bprT/5LBIrbtZYuyUkVlWtAWy39pr3OxZwQ+caPkjiJjIV
+ 284GtX/1MYcdavKP4sVCojmhYRAcEAHEz9Vbmv3Ql8uVd2bO+70MvIdu7+aqOBC4EmcNIZvbsBG
+ 4GzWeMMGgC3MxsGILY+eZyhF2RMCvCCMN2xMEowYRrVjiLPLsKsli3YBJlbjUGdchKWhpIafWWP
+ 1BhvRlv4HYjoKHw==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-v1 was only one patch, here:
-https://lore.kernel.org/linux-devicetree/20250710085814.21810-2-krzysztof.kozlowski@linaro.org/
+Patches adding new device bindings should avoid 'YAML' keyword in the
+subject, because all bindings are supposed to be in DT schema format,
+which uses YAML.  The DT schema is welcomed only in case of patches
+doing conversion.  Effectively people get confused that subject should
+not contain anything else than device name after the prefix, so add two
+recommended examples.
+
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+---
 
 Changes in v2:
 1. Rephrase - use YAML instead of schema, add another example for
    conversion.
-
-2. Three new patches (2-4).
-
-Best regards,
-Krzysztof
-
 ---
-Krzysztof Kozlowski (4):
-      docs: dt: submitting-patches: Avoid 'YAML' in the subject and add an example
-      docs: dt: writing-bindings: Document compatible and filename naming
-      docs: dt: writing-bindings: Document discouraged instance IDs
-      docs: dt: writing-schema: Document preferred order of properties
-
  Documentation/devicetree/bindings/submitting-patches.rst | 12 ++++++++++--
- Documentation/devicetree/bindings/writing-bindings.rst   | 13 +++++++++++++
- Documentation/devicetree/bindings/writing-schema.rst     |  3 +++
- 3 files changed, 26 insertions(+), 2 deletions(-)
----
-base-commit: a62b7a37e6fcf4a675b1548e7c168b96ec836442
-change-id: 20250713-dt-bindings-docs-a9d320095699
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/submitting-patches.rst b/Documentation/devicetree/bindings/submitting-patches.rst
+index f3e23e69a6389e7e5d8db66af5060978ecff8a9d..46d0b036c97eb531dec95ef52261988d3bfa3aad 100644
+--- a/Documentation/devicetree/bindings/submitting-patches.rst
++++ b/Documentation/devicetree/bindings/submitting-patches.rst
+@@ -21,8 +21,16 @@ I. For patch submitters
+        "<binding dir>: dt-bindings: ..."
+ 
+      The 80 characters of the subject are precious. It is recommended to not
+-     use "Documentation" or "doc" because that is implied. All bindings are
+-     docs. Repeating "binding" again should also be avoided.
++     use "Documentation", "doc" or "YAML" because that is implied. All
++     bindings are docs and all new bindings are supposed to be in Devicetree
++     schema format.  Repeating "binding" again should also be avoided, so for
++     a new device it is often enough for example::
++
++       "dt-bindings: iio: adc: Add ROHM BD79100G"
++
++     Conversion of other formats to DT schema::
++
++       "dt-bindings: iio: adc: adi,ad7476: Convert to DT schema"
+ 
+   2) DT binding files are written in DT schema format using json-schema
+      vocabulary and YAML file format. The DT binding files must pass validation
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.43.0
 
 
