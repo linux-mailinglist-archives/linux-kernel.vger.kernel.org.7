@@ -1,90 +1,84 @@
-Return-Path: <linux-kernel+bounces-728867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E47F9B02E43
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 02:28:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C765B02E46
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 02:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A39E482698
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 00:27:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09126189D50E
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 00:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCE75223;
-	Sun, 13 Jul 2025 00:28:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7D6B660;
+	Sun, 13 Jul 2025 00:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AX4YgkOo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C14910F2
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 00:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60704690;
+	Sun, 13 Jul 2025 00:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752366486; cv=none; b=BLIiNXZ9YVH8yWLMsT+SLakyrW+u0DhBU7H4neMZTqoNxU0pREvc0DOrCY7AEEAQpY7xxC74S8Kv8iIbvT35Afgjd0z3qS7nRdnCL/bI7IgzTK8UHGDaIZe1nskAToN6x4VSMdThiXHuxEABRxbVSV2ev+bA9zPXZJaAiOK+z/0=
+	t=1752366595; cv=none; b=ZN578TrEsT01pSEg5yeDV3mrsnMd0TnpwKTuCv7KmserrAS5v4k3c2RjC52W1j1xoLtYjTx+ubiUzccd+aTB5cUO5JaM6l+nZH9XZfcL5VW91fRHjEg0ey6PxtSc8LbBA/AtocI/1HhRJ3LqGZBWG8PuLKphdGTQTN18qmarPTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752366486; c=relaxed/simple;
-	bh=cFICLrCXW7GLns+0qvqdNgk6QfHyagq1XOrHmxPZzCU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Zxc66KDb3Un2kOEVJwKvGsnMsT6PEfQe6tTCV2htEKA//T6I3+eN1WEM2LMqKeMCgK4C37GRuqQoLCxCyoJeuF0tkDgagrxbbwhl46qt5JXyOA33KsOP7H3cTOoX1LrL2zBewYuQZs2e9zhM254BHYRnjf8os8ohOsfjEhpeBh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-86cf89ff625so301931439f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 17:28:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752366484; x=1752971284;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=amfs6r1iNE/7LmFCJpdE+jSxSKq111Rvot20z7gdjQI=;
-        b=RUNq9C39dfRLyMr0oet1d86BoOHVvEX9z28on3aMorZTNufseQAPpCQu/t5LWV/Tmk
-         bJwxze+Q9nh5e8MDBYCpvy9BSzmsQSpcbBBb7UWCaL6E0UPjkWqtRlvfqr58iJeVycqx
-         MQtSdN3fEytRlZ03m4DWocIU4P6ExYhQdTGNj2GFlWQkeBnq/VWd9FylszqaLS3UOc0o
-         rziHwhdlrVNBqWA1nl8/JBTiu94oEoLjEo9kCwmz27HUT1jHJcfZT56doP+hQQcU0pdz
-         XJkYA638lqy6BoqWZWO01MofmyYkAM1Q1qzTf4rW+ZQkI8kICpRc0Hgfin+VRlJ3hlbj
-         ZQwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFMOIrnsxeImR7fVCrC09gwCLIPpMxgvaE8IDFtnGyET4HlP+ogr1IDDTZMtzthXYrg+C1AjzcVOqTQag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOfMCu7q4XBVsHKBJrJ8hh7sJHWvhbjBUqR/hKeQ9ftbXg0SJK
-	AYcTdNyYNN2QvSv+IH+++5wnF2cKbnLToG5YvInSV2XV8Qj0EF7arm7mUPgro9IERkHeSsqfExk
-	uXtiLbZ8NqinpTDyM7j53PklGXy9wbLj1nzDRH3II47UtN/4O6qJ5IEDwP5o=
-X-Google-Smtp-Source: AGHT+IFUJwrjoGCPBLZtF3R8nVgaYpVPeABpJ0+SyF66eXttYh0+CldG8vZrePK0TxVwwsj7cMDevEsW/Ij3t3moSkbwKP1yvRVM
+	s=arc-20240116; t=1752366595; c=relaxed/simple;
+	bh=locYf12dkmHCspnljLTujhaUmBn3PwvSWAqOEs5zZzU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=F9HmWydZsoreQwxA2zycbI/6URAIyReaAAIUNb7x+12IiVg3tWJsOxuU3ksGTQVD4bYarPM7BaZ1oC+bU65KVq6YySHIOReA5OgvJQrEcetvFW30iZGuwy8jDcGSlpmywzLY5o1wxlO4XLaAgKNYg6gDXiPfM/EllDFOG2bzm2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AX4YgkOo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61BB5C4CEF0;
+	Sun, 13 Jul 2025 00:29:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752366595;
+	bh=locYf12dkmHCspnljLTujhaUmBn3PwvSWAqOEs5zZzU=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=AX4YgkOos8V5XbTXBNnYyTpqtqvS8phNcY6ek4kPrREeoNporfryiR+UcKxNTJN1H
+	 HnIExDSbG0FVy3CKiWCNhRGNUvguXtT6ccruIGtRS/O9Q2S7eTe4M07ytBd5jEKTAz
+	 R4dbN1VA1AsTxYysIEy2FAvRnPovQtdZWZoaAS7CFbtkvE4APoWAKnoURBMfKpEWvE
+	 iz3WqYU+oxdgyN0afUh0qNankGTmONEzpiv2n897veWrrXLz3nWGP1k6+VB7BAsIZy
+	 xEOaffcN37vmU038A1gsUVJwVu5Eqppv6XiAYET3V3nEXE/fdhX4AYhyeGcIRLDTQw
+	 WaQScekS7PGhw==
+Message-ID: <0211091956f168aa2c26ffa9da83e220b91479b5.camel@kernel.org>
+Subject: Re: [PATCH] SUNRPC: Remove unused xdr functions
+From: Trond Myklebust <trondmy@kernel.org>
+To: "Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: chuck.lever@oracle.com, anna@kernel.org, jlayton@kernel.org,
+ neil@brown.name, 	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ linux-nfs@vger.kernel.org, 	netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Sat, 12 Jul 2025 17:29:51 -0700
+In-Reply-To: <aHL9HY5V95hV_Qau@gallifrey>
+References: <20250712233006.403226-1-linux@treblig.org>
+	 <1ae3c2fa194bb7708ad5a98b1fb7156b9efcb8e7.camel@kernel.org>
+	 <aHL9HY5V95hV_Qau@gallifrey>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:720c:b0:873:de29:612f with SMTP id
- ca18e2360f4ac-879787b81dfmr895202039f.3.1752366484419; Sat, 12 Jul 2025
- 17:28:04 -0700 (PDT)
-Date: Sat, 12 Jul 2025 17:28:04 -0700
-In-Reply-To: <abc0b8db-347e-41e4-9c9d-10f2d15aecd8n@googlegroups.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6872fd94.a70a0220.3b380f.0013.GAE@google.com>
-Subject: Re: [syzbot] [kvmarm?] WARNING in pend_serror_exception
-From: syzbot <syzbot+1f6f096afda6f4f8f565@syzkaller.appspotmail.com>
-To: kapoorarnav43@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Sun, 2025-07-13 at 00:26 +0000, Dr. David Alan Gilbert wrote:
+>=20
+> Any chance you could also look at this old one:
+> =C2=A0
+> https://nam10.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Flore.=
+kernel.org%2Fall%2F20250218215250.263709-1-linux%40treblig.org%2F&data=3D05=
+%7C02%7Ctrondmy%40hammerspace.com%7C9bda97d0c5c34041647e08ddc1a3e7c6%7C0d4f=
+ed5c3a7046fe9430ece41741f59e%7C0%7C0%7C638879631926208245%7CUnknown%7CTWFpb=
+GZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoi=
+TWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DuQu4kGGvj5UPPwy%2FwdWL7gLQRah=
+h6DucDGunIOwkvg0%3D&reserved=3D0
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Ack...
 
-failed to apply patch:
-checking file arch/arm64/kvm/guest.c
-Hunk #1 FAILED at 844.
-1 out of 1 hunk FAILED
-
-
-
-Tested on:
-
-commit:         15724a98 Merge branch 'kvm-arm64/doublefault2' into kv..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=82bd3cd421993314
-dashboard link: https://syzkaller.appspot.com/bug?extid=1f6f096afda6f4f8f565
-compiler:       
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10644e8c580000
-
+--=20
+Trond Myklebust
+Linux NFS client maintainer, Hammerspace
+trondmy@kernel.org, trond.myklebust@hammerspace.com
 
