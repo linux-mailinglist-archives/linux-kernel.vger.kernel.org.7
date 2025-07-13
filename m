@@ -1,111 +1,99 @@
-Return-Path: <linux-kernel+bounces-729199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778F7B0331A
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 23:39:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00BF5B0331D
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 23:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD40918964D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 21:40:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89C4E7A90F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 21:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F531F3BAC;
-	Sun, 13 Jul 2025 21:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9472B1F582C;
+	Sun, 13 Jul 2025 21:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pKKhwScQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShuzarwH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722DB8F6F;
-	Sun, 13 Jul 2025 21:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6CA8F6F;
+	Sun, 13 Jul 2025 21:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752442778; cv=none; b=cM6VoAxmDt2UWNWXwov/7MENaJeTT9uf8MBzZRDyr9OEj/eQr9ktNTosuex181CF7LJcgKmhT38VXB4oFm8KK4rWeOPRQp8yr6YomCC44pck/pjet2MEQeyAetfPCA6AXfUoHI1wH864BUO9XkajM6DvzgctUjEo7n+GODtmAp0=
+	t=1752442785; cv=none; b=j4vgr/LhEQORdPAgBFZBv485OT0/+jxIldyWjTmUbjRo7y3f0qsVZIymSR9uVRCTOqFmhTK5sVxGruVyRglnLtT2PEX9daZisXOj2P5YjrsEqdx3oDJVuJfebxQBNQerUpG945Y/ecEOFoTQUMEbI5DjUyY8Y9dJPUW2SxRUcOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752442778; c=relaxed/simple;
-	bh=YSrt0LWfWRdksY8QMUpEOHq0A5fYcLMOLZzuTkQ77EI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EyHilyas3AQuN4VmuwzFOvXw/H4S/fA4MP9hAxobndQ9a/adKb9VdCm6ZV7TflD4a9ppIzNnt/OkFHomvYVM4Uo9rnraNrRVJhBYGPMT/v9FFzgZor1cBIBAtyRCzm4hd4pNqOKvwusES5ECuBBQp+jubS6QoWpjz2wn1huo8wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pKKhwScQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33189C4CEE3;
-	Sun, 13 Jul 2025 21:39:37 +0000 (UTC)
+	s=arc-20240116; t=1752442785; c=relaxed/simple;
+	bh=l2albCRDOERfrgRCczAdSrxmVZTv8VNwn1plCuVvM3Y=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=GbZRXrY0Vsk+WYLEzKialA8XFh2LHJvrj7TQDFY+5A1RcXZcTyFFaJSRLXzcaHeZq5UqxivJD4+qqaG10+ZQJorPFFDffq6q1gP9qw7qHgYAfKK+rfvlL8oy20ALEc1rmybc93WPJ2lNRy2iverRZyWlI1rMMYk8Be8OPjMCu3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShuzarwH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC5E5C4CEE3;
+	Sun, 13 Jul 2025 21:39:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752442778;
-	bh=YSrt0LWfWRdksY8QMUpEOHq0A5fYcLMOLZzuTkQ77EI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pKKhwScQ60kZehCCzPxpD1riC37iYnjOun1IfShAVz/hMcnx9gsh+jMnEh4uNkyBY
-	 vCrEeVsMgjL+zMrGttJzaRuX2AqVTJFJgqK9iGC2ixyrlIAVz+Eb1ABKNAAw+o51JX
-	 kdH6fAWgoQjrv+9eHWHT2B25M9xI6ZFwnpNYkpTpsbcn3vYhLzBlr9TRj5n526LyhQ
-	 Esor5DNI3icOD9iw1LGAL+dmLiYpuEWhgC2zzo3PSMbAd4IeZPDMzTw2S8DWtkVpYg
-	 rp1FB3iwAi9LncymKg5ri73EoTy50Tw+anO+nDsmVuFuWeqzJtFzcv7dBGov8P1+Pu
-	 wtQKLWbmmh7mg==
-Date: Sun, 13 Jul 2025 22:39:34 +0100
-From: Mark Brown <broonie@kernel.org>
-To: =?iso-8859-1?Q?Rapha=EBl?= Gallais-Pou <rgallaispou@gmail.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: st: Switch from CONFIG_PM_SLEEP guards to
- pm_sleep_ptr()
-Message-ID: <176d79e3-753e-48a2-be9f-1994cf147cb1@sirena.org.uk>
-References: <20250609-update_pm_macro-v1-1-819a53ef0eed@gmail.com>
- <ed9e407e-22a8-49e4-b1ec-0525265351a6@gmail.com>
+	s=k20201202; t=1752442784;
+	bh=l2albCRDOERfrgRCczAdSrxmVZTv8VNwn1plCuVvM3Y=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ShuzarwHk3Fd/ohRYVCkhatKqA4VRuupYJGUvUUsECMi/QCozlyF4PS6/WqbIOMlt
+	 FfIj8NCLJii01L/GeR/B1dZqlLyJluLcXSVe7My/ZGKT25nj7uTXY/1aduEOS43K7g
+	 AIwXcFjIzj7Xo3qal371jjI8rP76tzNjyMgQSj+JdpNIRKzXTWd2RCBCzch6XKW/bw
+	 f5QtrdkGYCP005/ffIAkKRAdZI7xlXU6Gw4YE63+GO3pck+N0yxxZ+v6QiAUbcCmf1
+	 Zgte4oZwgIwK9rDUa8oKiAzxmdLih+XWE3nzTja6iYuKNK8TB8k/mbVx7f5MngFyUw
+	 PK3qOVkg09qvA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33ECA383B276;
+	Sun, 13 Jul 2025 21:40:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9LVPfmrjaXbSnfl+"
-Content-Disposition: inline
-In-Reply-To: <ed9e407e-22a8-49e4-b1ec-0525265351a6@gmail.com>
-X-Cookie: Save gas, don't eat beans.
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: dsa: mt7530: Constify struct regmap_config
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175244280602.2861491.4513725766921457476.git-patchwork-notify@kernel.org>
+Date: Sun, 13 Jul 2025 21:40:06 +0000
+References: 
+ <1b20b2e717e9ff15aa0d1e73442dde613174cfef.1752419299.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: 
+ <1b20b2e717e9ff15aa0d1e73442dde613174cfef.1752419299.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: chester.a.unal@arinc9.com, daniel@makrotopia.org, dqfext@gmail.com,
+ sean.wang@mediatek.com, andrew@lunn.ch, olteanv@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Sun, 13 Jul 2025 17:09:24 +0200 you wrote:
+> 'struct regmap_config' are not modified in these drivers. They be
+> statically defined instead of allocated and populated at run-time.
+> 
+> The main benefits are:
+>   - it saves some memory at runtime
+>   - the structures can be declared as 'const', which is always better for
+>     structures that hold some function pointers
+>   - the code is less verbose
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] net: dsa: mt7530: Constify struct regmap_config
+    https://git.kernel.org/netdev/net-next/c/9eb73f92a0b0
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---9LVPfmrjaXbSnfl+
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Jul 13, 2025 at 03:56:48PM +0200, Rapha=EBl Gallais-Pou wrote:
-> Le 09/06/2025 =E0 23:21, Raphael Gallais-Pou a =E9crit=A0:
-> > Letting the compiler remove these functions when the kernel is built
-> > without CONFIG_PM_SLEEP support is simpler and less error prone than the
-> > use of #ifdef based kernel configuration guards.
-> >=20
-> > Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
->=20
-> Hi Mark,
->=20
-> Gentle ping ! :)
-
-Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so=20
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
-
-Sending content free pings adds to the mail volume (if they are seen at
-all) which is often the problem and since they can't be reviewed
-directly if something has gone wrong you'll have to resend the patches
-anyway, so sending again is generally a better approach though there are
-some other maintainers who like them - if in doubt look at how patches
-for the subsystem are normally handled.
-
---9LVPfmrjaXbSnfl+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmh0J5UACgkQJNaLcl1U
-h9DotggAhDi8EIVY4ETjB9iZMP8Td7WZ7laeRSuWaZQDVsXBHDkW9xWoR8cH+T2H
-mb17c/GZ5+sMHsoayi0NA/ZoBl44tZJpewmQCd7NJKUkoPXDvncKIU2hpK98J3KI
-IJVTSpt1vIJ8wL5BeKHui/IialTE2HdhSK1VABY8EBvMcgdAwnRw+VzbS/ndyy3V
-9RQou7tkb5YEvdD+gjUNTS5N738aABPsi76RoVntxYpi2CteB+uNW0f6xhRc/aCV
-v557WVFRxqizBESB4Ti1h2xuOb/FxH/rh2GM8o45U6bZlhFLXfj9s+lRCm/PyceK
-+yeyClwfAaestTpsfrz0sIJqnmVlLw==
-=2mVr
------END PGP SIGNATURE-----
-
---9LVPfmrjaXbSnfl+--
 
