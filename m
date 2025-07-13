@@ -1,119 +1,135 @@
-Return-Path: <linux-kernel+bounces-729022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 456D2B030A2
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 12:12:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 454A6B030A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 12:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2322D7AD59E
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:11:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38E32189FC88
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF4026CE06;
-	Sun, 13 Jul 2025 10:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740FF26D4D9;
+	Sun, 13 Jul 2025 10:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="boMY+xsk"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ioAK7M8I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0121F4181
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 10:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C6A4A00;
+	Sun, 13 Jul 2025 10:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752401546; cv=none; b=u0XOzHC+Vb/IZi6S/dTHaJf7/aAsbuY2WcBuFGh/GqZGFj/cUT1D6/gGFlS9e2XDgjfC4Aex3sEmnmX5pOblCetTsjiwvt2MKSOh7QeibMUMCXKT+lMalL+1aJhrqb/x96Z94/24QvlnoJIUR5ul2oojT9yqLZmRe0n1ddPPRlY=
+	t=1752402274; cv=none; b=bD0aFstDeex4xj22bAErQ6Bv/O0HG+DDS7MTi4Rf0srGVv1o2U4YlB4oZhCayIyhIxaB46oKFGRsvWYI76va+9LCYrRpbH96pILAbsWRGri0qvPSUVH1d2b/8RrOFUOtM9w68HdDzg/ZvAtvPJ/4ULftQE34JRdGaHWzP9me/9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752401546; c=relaxed/simple;
-	bh=OHV/xgKN+rjFYFf8dUvKWwHVVdsbNrEKHk1qHeSN3a0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=f4dsjIA5ynZNlvvKgaFsXFR7PbcK4fXbBCE1A30HBjV2pSsNACCTw1BAk0CAKlZViqyfsqNha3BuWVROxLyjTPKFdOfnh0XMxz8Q8bl1q0RCeQA9TWpGYCOha8LfeW3qreMs1N/CxlShWYp3LqOl5SAiDm1gDm2uBXsHe7zGD8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=boMY+xsk; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B056540E01FD;
-	Sun, 13 Jul 2025 10:12:21 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id fFfUqxjcv6sn; Sun, 13 Jul 2025 10:12:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1752401538; bh=nmwx7vW50Xkq0mJfIv8autzFMqtSL2hA9+DJRT+fip0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=boMY+xsk5dtH5XM5nC2oVZDBHtY0BMfIU5Nx6QyIziU2XWll/JmaHyoK6XA/4fgpL
-	 fAQyEDpQhDbxdiwZnHx2KUex78NkUMSeM+hO/TVVvQvYjWFDq4fF+D/ta8360Rxkb3
-	 VkhlJA6RRSVhBi1v8Rd0Rh7Sx708cdgGL9DFtPP548cHTUfg3/ZbSgqBQ8IQyrVs9I
-	 7J3FiEHt2kORg26/c5LK9J4r/WxbN+Jgqm9XkNpq7MINXBXAidrj17UD4H4+9Pii8R
-	 IyVTjN6qPoQ3fu1nLxRRwBC8+faLysUP21lergyJM6H74gBXROcnweWuXW7qcV4tOZ
-	 CSXZAmT9uPw1rSsOj1/i1q/BPSzbeX/gxkVe8Hm7jp8ys8b3oZuE7MnSrHRb9fF+iL
-	 cUq8awW5nqYji9HYnOGc6hmAqpMJiaSPwMCaDmXgJz7b2hkN9hI0hsy1IRHMheitJb
-	 hpJfzyJvUxVPbRgPnyphJ7+rfYDNraOFF6t8mbOgwG9CfAc4vvcJnIHG9RJ6UWxv73
-	 GhG0ubWgLyNwcyDQfkPrJ/YVNvSIewVdAtQ/x2we6fbtNWNPjYT8uJtdNJRmQBBRVC
-	 MEYG4tfmE38idVLyD9sDASP3x21tWeXE5Bs+B/lfQvQ09K3zl/BF13sUlO2l4fe09B
-	 gv+bziVjVjMmD1ZMcgVPb0VU=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6FD1E40E019D;
-	Sun, 13 Jul 2025 10:12:15 +0000 (UTC)
-Date: Sun, 13 Jul 2025 12:12:14 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] irq/urgent for v6.16-rc6
-Message-ID: <20250713101214.GAaHOGfkN6wjED7LW-@fat_crate.local>
+	s=arc-20240116; t=1752402274; c=relaxed/simple;
+	bh=KR/f9WSoeyMeCEi914nzYR+kgzKbA9YtbzQh4WHJuOk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=XnFFww8blUulqdNjBOwS0kKwbrguM7DBAYVzhMNtAVmcKxp2463nvh3abqkImdVRNmf9IHDig2C43R0USfAVOxlbN6NDiiof/ojIgweVzbRE4mg9/BODRjc1Vy4lk7gz/Jdv7DKwuFtZNdgP7SsejFFhRkm3LiUuNCDqwgEFl8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ioAK7M8I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF02BC4CEE3;
+	Sun, 13 Jul 2025 10:24:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752402274;
+	bh=KR/f9WSoeyMeCEi914nzYR+kgzKbA9YtbzQh4WHJuOk=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=ioAK7M8IZy4y/A4fPY8yWUOm8uackE21W1Xu67AaSioq/8T8xqB6MP6bmrCbtH2dv
+	 08fccUtb+lkp+YEiIOUXq9iX2ZgCirs6Y0LpwGo5xLy4QGoVHyDqHhsT3DlV1MrLmm
+	 Y73gW00D/57e863Os5EVHi1lvWfcXoGPs+TQEwwv0CotepqVyeFMn4O8FwjXq9z0wF
+	 TUa/bRZ7ZuwTufnPfA6bPQZihY1tZMIlCo8z6VaQfuU2cTA2kt0puOUC2Uj6hnUhQE
+	 WLTQatWeoohq9BKyKQnb9y/ipXVL1VlGhN7f74+JqCLITcSWcD8TB/eC7VVTUmNkvK
+	 jr41PGDIsYSnw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 13 Jul 2025 12:24:28 +0200
+Message-Id: <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org>
+Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
+ handlers
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Benno Lossin"
+ <lossin@kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com> <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org> <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com>
+In-Reply-To: <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com>
 
-Hi Linus,
+On Sun Jul 13, 2025 at 1:32 AM CEST, Daniel Almeida wrote:
+>
+>
+>> On 12 Jul 2025, at 18:24, Danilo Krummrich <dakr@kernel.org> wrote:
+>>=20
+>> On Thu Jul 3, 2025 at 9:30 PM CEST, Daniel Almeida wrote:
+>>> +/// Callbacks for an IRQ handler.
+>>> +pub trait Handler: Sync {
+>>> +    /// The hard IRQ handler.
+>>> +    ///
+>>> +    /// This is executed in interrupt context, hence all corresponding
+>>> +    /// limitations do apply.
+>>> +    ///
+>>> +    /// All work that does not necessarily need to be executed from
+>>> +    /// interrupt context, should be deferred to a threaded handler.
+>>> +    /// See also [`ThreadedRegistration`].
+>>> +    fn handle(&self) -> IrqReturn;
+>>> +}
+>>=20
+>> One thing I forgot, the IRQ handlers should have a &Device<Bound> argume=
+nt,
+>> i.e.:
+>>=20
+>> fn handle(&self, dev: &Device<Bound>) -> IrqReturn
+>>=20
+>> IRQ registrations naturally give us this guarantee, so we should take ad=
+vantage
+>> of that.
+>>=20
+>> - Danilo
+>
+> Hi Danilo,
+>
+> I do not immediately see a way to get a Device<Bound> from here:
+>
+> unsafe extern "C" fn handle_irq_callback<T: Handler>(_irq: i32, ptr: *mut=
+ c_void) -> c_uint {
+>
+> Refall that we've established `ptr` to be the address of the handler. Thi=
+s
+> came after some back and forth and after the extensive discussion that Be=
+nno
+> and Boqun had w.r.t to pinning in request_irq().
 
-please pull the irq/urgent lineup for v6.16-rc6.
+You can just wrap the Handler in a new type and store the pointer there:
 
-Thx.
+	#[pin_data]
+	struct Wrapper {
+	   #[pin]
+	   handler: T,
+	   dev: NonNull<Device<Bound>>,
+	}
 
----
+And then pass a pointer to the Wrapper field to request_irq();
+handle_irq_callback() can construct a &T and a &Device<Bound> from this.
 
-The following changes since commit d7b8f8e20813f0179d8ef519541a3527e7661d3a:
+Note that storing a device pointer, without its own reference count, is
+perfectly fine, since inner (Devres<RegistrationInner>) already holds a
+reference to the device and guarantees the bound scope for the handler
+callbacks.
 
-  Linux 6.16-rc5 (2025-07-06 14:10:26 -0700)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/irq_urgent_for_v6.16_rc6
-
-for you to fetch changes up to a8b289f0f2dcbadd8c207ad8f33cf7ba2b4eb088:
-
-  irqchip/irq-msi-lib: Fix build with PCI disabled (2025-07-10 23:46:05 +0200)
-
-----------------------------------------------------------------
-- Fix a case of recursive locking in the MSI code
-
-- Fix a randconfig build failure in armada-370-xp irqchip
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      irqchip/irq-msi-lib: Fix build with PCI disabled
-
-Himanshu Madhani (1):
-      PCI/MSI: Prevent recursive locking in pci_msix_write_tph_tag()
-
- drivers/pci/msi/msi.c               | 4 +++-
- include/linux/irqchip/irq-msi-lib.h | 1 +
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+It makes sense to document this as an invariant of Wrapper (or whatever we =
+end
+up calling it).
 
