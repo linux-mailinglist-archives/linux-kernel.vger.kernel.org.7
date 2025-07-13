@@ -1,80 +1,84 @@
-Return-Path: <linux-kernel+bounces-728914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA27B02EEB
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 08:33:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2879DB02EF9
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 08:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE5324A241F
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 06:32:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BB17189AFA0
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 06:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD18F1ADFE4;
-	Sun, 13 Jul 2025 06:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000131B87E9;
+	Sun, 13 Jul 2025 06:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G3zn32Zg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ioVaZ02o"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7851E19E967;
-	Sun, 13 Jul 2025 06:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE881804A
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 06:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752388395; cv=none; b=S6p+CID+8JyEJ9w9DnBqO8Sp0iCpPyOoJpBgZw5zUEgBHNf0Zz6p1O2LoAo2v7yacb0w6fx9GiOoahAdYt3N960QY6GpwzXCC6PABWif3u5h8DaL9NBSU8MIiHF0E98idIJ5mYVfcZzAJRWTOBZMY0CQYDPiBWsGE0JMeCluT6c=
+	t=1752389055; cv=none; b=kGSuzA3HOnLpWJRkur+ADoEV+gtWXG212mrwRTzzZtQzI5iVQHk/7LBTKQTP9swooagqu5yqFxqLCHFbJgpcW2g8FOuwVCCJGuy7J0NEgzFuA1wcbgeNgZJkvFTNVIZVPgRNla/jDB1cwSAip106fO+lRYlnedivboWIl+lwecQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752388395; c=relaxed/simple;
-	bh=RV2fZ2M4TKY0D92MjssBZlAVgtq65IeP0WmOHlbH5hI=;
+	s=arc-20240116; t=1752389055; c=relaxed/simple;
+	bh=V7drxRajC6ozX9k3goWA4uOuO9/Qm6hwvlFiPiFyt1A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DiFsJw2dRGEym/CRg0jf/C8j6ZroDp8WII/UAXpe9jJiNQnEh5kzarlg3ESxQBTNBPARLz+LMrmY+z/bztGbmkl+ss4hwG/57hyckOT6W59hz8V8bSy3cZYbX0gvOnAQVfqZU5FLrsLzJmjApfZ0UY1WyH0+pK5wF8D74Hkw+G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G3zn32Zg; arc=none smtp.client-ip=192.198.163.9
+	 Content-Type:Content-Disposition:In-Reply-To; b=WZ+jst2q65Ldg2Og0YcZLxdhrOKU4DO863Me+ThHmNg0BDbd+ZgE02TNafLc0o/j+4iI6mv6dgtOgTeUvhsEWvJ+2CO3xtye2N5+OfeI/FE6sR2xN4UcFGq4nEJpTJZiS/vP5XtTUohD+8m4k2MUf6CPT3JOARBBFRTmBytuUvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ioVaZ02o; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752388393; x=1783924393;
+  t=1752389054; x=1783925054;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=RV2fZ2M4TKY0D92MjssBZlAVgtq65IeP0WmOHlbH5hI=;
-  b=G3zn32ZggHBfCMjiJaMVd3bwyWnksBWFAwuCTrCafold0KzMQO/U7muS
-   +VL1cMhONUSroeYfoeZuEJyYgeNmm8wyOCvwvb4sJgaLVOHOoz5Vu0ydC
-   iQRE/xNeksbHAimVVb4RTCb+GINNmiMToHi+KCZXgBZQj8lWbcWfJGVr3
-   7nF4wFCFUWgyfQIt00UUfojpkH+7NwrMImV27Q9sB9Y1UhhgXrrt6l61M
-   0XD3v7XuI8sTGqq+75l41fjjl5zsKsBJHORQrSSbdJZRJtmMTOjDLp69O
-   RZAJIUZE0L/dhL1NkOv4TBGYDfbPHJ8iivoEdo949J27oPIeT2FqMfCI5
-   g==;
-X-CSE-ConnectionGUID: QU/8y/C9R4yPEG5vnKxk6Q==
-X-CSE-MsgGUID: QVg8f5ewRzSBb8kOW4zVtg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="65319372"
+  bh=V7drxRajC6ozX9k3goWA4uOuO9/Qm6hwvlFiPiFyt1A=;
+  b=ioVaZ02orW/PlRM7AJQ5rxntB0KBbdfsgiFyZkA44PSx+c5NzOKTvTaS
+   msm6Mjz9cJQkPCqjnYIfI32/eFEEPifuSLrx1UFORFo5zk0eMiLqPWI31
+   owFIGL7GSy4N8zmnW8txYpoq33XJVQGkM66crqkbfItdN3z3FdmIzXjcc
+   /h3EwGhKdX/7jMo7bMhuAPCTcOV1OOA9A4xq19aMXWI/FKE+wSO6Uxvy6
+   L6B5GEFj3Bz0iDh0krrd8ErjTM0AzlWVUTz8qQwC/O1amwl0zvUzmUa8G
+   zbTh6gFRba+cPoiV27S7nV+yzGhkvhh6HdJEeJBhZjEkDRNCioN/VCh/O
+   w==;
+X-CSE-ConnectionGUID: 2tFw9xq1TbCXeD2AfDduyg==
+X-CSE-MsgGUID: bg5r49NWRcCCtw/uOVF1FQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="65682779"
 X-IronPort-AV: E=Sophos;i="6.16,308,1744095600"; 
-   d="scan'208";a="65319372"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2025 23:33:13 -0700
-X-CSE-ConnectionGUID: 7P1p74VrRPeSyGGK8aOmsA==
-X-CSE-MsgGUID: Gk/3Mb/kQ7yzmO6RcneGmQ==
+   d="scan'208";a="65682779"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2025 23:44:13 -0700
+X-CSE-ConnectionGUID: Q5qA7GjMTlyJWaItVFLZQQ==
+X-CSE-MsgGUID: vgPnHmhcRDCs3fcgIVIAfg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,308,1744095600"; 
-   d="scan'208";a="157018597"
+   d="scan'208";a="162353828"
 Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 12 Jul 2025 23:33:09 -0700
+  by orviesa005.jf.intel.com with ESMTP; 12 Jul 2025 23:44:10 -0700
 Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1uaqGo-0007wR-2u;
-	Sun, 13 Jul 2025 06:33:06 +0000
-Date: Sun, 13 Jul 2025 14:33:01 +0800
+	id 1uaqRT-0007wt-2L;
+	Sun, 13 Jul 2025 06:44:07 +0000
+Date: Sun, 13 Jul 2025 14:43:13 +0800
 From: kernel test robot <lkp@intel.com>
-To: Kamal Dasu <kamal.dasu@broadcom.com>, andersson@kernel.org,
-	baolin.wang@linux.alibaba.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, florian.fainelli@broadcom.com,
-	ulf.hansson@linaro.org, adrian.hunter@intel.com
-Cc: oe-kbuild-all@lists.linux.dev, bcm-kernel-feedback-list@broadcom.com,
-	kamal.dasu@broadcom.com, linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-	Kamal Dasu <kdasu@broadcom.com>
-Subject: Re: [PATCH 2/4] hwspinlock: brcmstb hardware semaphore support
-Message-ID: <202507131422.6eIuyxUJ-lkp@intel.com>
-References: <20250711154221.928164-4-kamal.dasu@broadcom.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net,
+	Marcos Paulo de Souza <mpdesouza@suse.com>
+Subject: Re: [PATCH 1/2] printk: nbcon: Export console_is_usage and other
+ nbcon symbols
+Message-ID: <202507131443.p6jEjXFw-lkp@intel.com>
+References: <20250713-nbcon-kgdboc-v1-1-51eccd9247a8@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,101 +87,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250711154221.928164-4-kamal.dasu@broadcom.com>
+In-Reply-To: <20250713-nbcon-kgdboc-v1-1-51eccd9247a8@suse.com>
 
-Hi Kamal,
+Hi Marcos,
 
 kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on linus/master v6.16-rc5 next-20250711]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[auto build test WARNING on d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kamal-Dasu/dt-bindings-brcmstb-hwspinlock-support-for-hwspinlock/20250712-034624
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250711154221.928164-4-kamal.dasu%40broadcom.com
-patch subject: [PATCH 2/4] hwspinlock: brcmstb hardware semaphore support
-config: arc-randconfig-r111-20250713 (https://download.01.org/0day-ci/archive/20250713/202507131422.6eIuyxUJ-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 12.4.0
-reproduce: (https://download.01.org/0day-ci/archive/20250713/202507131422.6eIuyxUJ-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Marcos-Paulo-de-Souza/printk-nbcon-Export-console_is_usage-and-other-nbcon-symbols/20250713-131106
+base:   d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af
+patch link:    https://lore.kernel.org/r/20250713-nbcon-kgdboc-v1-1-51eccd9247a8%40suse.com
+patch subject: [PATCH 1/2] printk: nbcon: Export console_is_usage and other nbcon symbols
+config: x86_64-buildonly-randconfig-001-20250713 (https://download.01.org/0day-ci/archive/20250713/202507131443.p6jEjXFw-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250713/202507131443.p6jEjXFw-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507131422.6eIuyxUJ-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507131443.p6jEjXFw-lkp@intel.com/
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/hwspinlock/brcmstb_hwspinlock.c:26:39: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void [noderef] __iomem *lock_addr @@     got void *priv @@
-   drivers/hwspinlock/brcmstb_hwspinlock.c:26:39: sparse:     expected void [noderef] __iomem *lock_addr
-   drivers/hwspinlock/brcmstb_hwspinlock.c:26:39: sparse:     got void *priv
-   drivers/hwspinlock/brcmstb_hwspinlock.c:35:39: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void [noderef] __iomem *lock_addr @@     got void *priv @@
-   drivers/hwspinlock/brcmstb_hwspinlock.c:35:39: sparse:     expected void [noderef] __iomem *lock_addr
-   drivers/hwspinlock/brcmstb_hwspinlock.c:35:39: sparse:     got void *priv
->> drivers/hwspinlock/brcmstb_hwspinlock.c:73:30: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *priv @@     got void [noderef] __iomem * @@
-   drivers/hwspinlock/brcmstb_hwspinlock.c:73:30: sparse:     expected void *priv
-   drivers/hwspinlock/brcmstb_hwspinlock.c:73:30: sparse:     got void [noderef] __iomem *
+All warnings (new ones prefixed by >>):
 
-vim +26 drivers/hwspinlock/brcmstb_hwspinlock.c
+   In file included from drivers/char/tpm/tpm_tis.c:21:
+   In file included from include/linux/pnp.h:16:
+>> include/linux/console.h:653:76: warning: non-void function does not return a value [-Wreturn-type]
+     653 | static inline bool nbcon_context_try_acquire(struct nbcon_context *ctxt) { }
+         |                                                                            ^
+   In file included from drivers/char/tpm/tpm_tis.c:29:
+   In file included from drivers/char/tpm/tpm.h:28:
+   include/linux/tpm_eventlog.h:167:6: warning: variable 'mapping_size' set but not used [-Wunused-but-set-variable]
+     167 |         int mapping_size;
+         |             ^
+   2 warnings generated.
 
-    23	
-    24	static int brcmstb_hwspinlock_trylock(struct hwspinlock *lock)
-    25	{
-  > 26		void __iomem *lock_addr = lock->priv;
-    27	
-    28		writel(HWSPINLOCK_VAL, lock_addr);
-    29	
-    30		return (readl(lock_addr) == HWSPINLOCK_VAL);
-    31	}
-    32	
-    33	static void brcmstb_hwspinlock_unlock(struct hwspinlock *lock)
-    34	{
-    35		void __iomem *lock_addr = lock->priv;
-    36	
-    37		/* release the lock by writing 0 to it */
-    38		writel(RESET_SEMAPHORE, lock_addr);
-    39	}
-    40	
-    41	static void brcmstb_hwspinlock_relax(struct hwspinlock *lock)
-    42	{
-    43		ndelay(50);
-    44	}
-    45	
-    46	static const struct hwspinlock_ops brcmstb_hwspinlock_ops = {
-    47		.trylock	= brcmstb_hwspinlock_trylock,
-    48		.unlock		= brcmstb_hwspinlock_unlock,
-    49		.relax		= brcmstb_hwspinlock_relax,
-    50	};
-    51	
-    52	static int brcmstb_hwspinlock_probe(struct platform_device *pdev)
-    53	{
-    54		struct hwspinlock_device *bank;
-    55		struct hwspinlock *hwlock;
-    56		void __iomem *io_base;
-    57		int i, num_locks = BRCMSTB_MAX_SEMAPHORES;
-    58	
-    59		io_base = devm_platform_ioremap_resource(pdev, 0);
-    60		if (IS_ERR(io_base)) {
-    61			dev_err(&pdev->dev, "semaphore iobase mapping error\n");
-    62			return PTR_ERR(io_base);
-    63		}
-    64	
-    65		bank = devm_kzalloc(&pdev->dev, struct_size(bank, lock, num_locks),
-    66				    GFP_KERNEL);
-    67		if (!bank)
-    68			return -ENOMEM;
-    69	
-    70		platform_set_drvdata(pdev, bank);
-    71	
-    72		for (i = 0, hwlock = &bank->lock[0]; i < num_locks; i++, hwlock++)
-  > 73			hwlock->priv = io_base + sizeof(u32) * i;
-    74	
-    75		return devm_hwspin_lock_register(&pdev->dev, bank,
-    76						 &brcmstb_hwspinlock_ops,
-    77						 0, num_locks);
-    78	}
-    79	
+
+vim +653 include/linux/console.h
+
+   651	
+   652	#else
+ > 653	static inline bool nbcon_context_try_acquire(struct nbcon_context *ctxt) { }
+   654	static inline void nbcon_context_release(struct nbcon_context *ctxt) { }
+   655	static inline void nbcon_cpu_emergency_enter(void) { }
+   656	static inline void nbcon_cpu_emergency_exit(void) { }
+   657	static inline bool nbcon_can_proceed(struct nbcon_write_context *wctxt) { return false; }
+   658	static inline bool nbcon_enter_unsafe(struct nbcon_write_context *wctxt) { return false; }
+   659	static inline bool nbcon_exit_unsafe(struct nbcon_write_context *wctxt) { return false; }
+   660	static inline void nbcon_reacquire_nobuf(struct nbcon_write_context *wctxt) { }
+   661	static inline bool console_is_usable(struct console *con, short flags,
+   662					     bool use_atomic) { return false; }
+   663	#endif
+   664	
 
 -- 
 0-DAY CI Kernel Test Service
