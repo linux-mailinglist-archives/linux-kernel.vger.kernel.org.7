@@ -1,180 +1,179 @@
-Return-Path: <linux-kernel+bounces-728886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86702B02E7B
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 04:53:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65BA8B02E7F
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 04:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C628D4A1CB9
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 02:53:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E685E4A1DE9
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 02:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E244215442A;
-	Sun, 13 Jul 2025 02:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BFC15442A;
+	Sun, 13 Jul 2025 02:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kalLnR45"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ENiO7lkT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFEE4D599;
-	Sun, 13 Jul 2025 02:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1488F35955;
+	Sun, 13 Jul 2025 02:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752375228; cv=none; b=ZcTW4lQrsunvDpDne3F+vUB3hQ5lV/JBID/FkgNSmQl7xi2Z3DKX/PdUJL2pMCHTb+DFDTD6GFlAdv/qA9o8wqcn8dSoJknG4mGrY3+lvtND8ZUthUQPAT/PvkdTZVMUTr+iGlzh5lfU3VkywWvjNlUY2nqU5YcizXQNVj+OhSU=
+	t=1752375417; cv=none; b=r3klYXjXNOQ3d7AFa/zsi9UU8b39gJzsIXshtVUC1+q+tFIpcghqXAbC7xUGsH2foOot6nqH9clTmXaVWu0ObXud88ro0h9rU0xXKgLU4YKSnZg/3aQ6fkG0AK40Sqgj5CO+D5syzWD6ME9hM54Kyy47CDI8pc0RykkM4JiO++A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752375228; c=relaxed/simple;
-	bh=00ZyH3aMujfB1olxVlERxejkAi5mSITlmaj3KArXwhQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R8qDuiW5mOWKS2wcyQ6pkXp/0LDO5yicfg+N5OFQi89+4Msr1ElKDRFWFMx5IYz5aT3/Xp2uBxzhqKD5gV9DblZ2mK8LS8hbr43phzEqriF0kx98ymvb04cLovBoFJ8+z2N5U48z4UsN0lq7cXmZun7YZbqzydKjGahz7eofVos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kalLnR45; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-313910f392dso2807568a91.2;
-        Sat, 12 Jul 2025 19:53:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752375226; x=1752980026; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6BjtA+38PaXu4R7KEWbDJSP4mSWUP1v/3PF8r8C6k8w=;
-        b=kalLnR453FEmCcJMy1q0AIFREWSQDN9YXL7caAFVi/cK1bdcW89a2BGEg2mJRVXjhU
-         vhjXMhDcVDsGN8waPlbo8yVlOkslYfIyXkHZaozvDv3QiFueNud/XGdRqsWcPRxyrVfR
-         P5/FQXZfuDfXZrivsDYqm6AJGkVa0jXpC8+ty2FlKqUk1uXO8p01U0n5SrVc5WnXCGS8
-         2fLj6aTbUwq0jBl/VCPu03UbuVuW6px2U3myiNz5pRU4HzwJEnaw+9Qp/iElxszqfFJr
-         3U3f8MNu8Mvnf1Z2NSBq/8YY21rmZNpN3SPrYMtT/GOgzViMvyW3d4lKswu+g/oH793i
-         P54A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752375226; x=1752980026;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6BjtA+38PaXu4R7KEWbDJSP4mSWUP1v/3PF8r8C6k8w=;
-        b=rBGmumj3vNT6W2791r4rjGprUwSGS6FblWhXkmlO0/JdWWbbFpajxsybceZIH7Cv5U
-         lFtCXXwK6YXg8lEvl3vgP8NB2FF5f2+tQkb7To4rDSHTSw/IpWmJAms7afXVMiTCvruz
-         RaSPke6OfFvmt/my2YRB0qqhggzvy6FCLm5dVCYqiHknyNNMf68nBQ3eFcciGPqcDTW8
-         f/2SqUh9hiZ7niy1PzVH/S9qhqki8bo61FyxucQUhebcGeauig3cZ37bVvzFKit3wqf2
-         up2K0qj8uk0YyN+zdHli/1fmdWuj5O3i5pSWn4Dq/L7DJ98Tx8unZeyi9GN8qpVuwW8f
-         uuXw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7rfurDo45P7kkRiy+szUGg2Li8ou/PDpvfbSpYX4eDM/0zF1+NSqfMvhWMKnTLQbaWFYme82h6wliHeo=@vger.kernel.org, AJvYcCXwyY/YPjhrpzEs+8Pxj8YUohp3UR7RCA7ovnBZFwo2A/9tSmnsLGlJ89R2qkc8GC1QO5nTJQKCTwZmjT2OVko=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVYFTX/5tJnlCxbl8TenFpgAE16iylCr5FKGMnTUJX24uHadvd
-	1+FwqC7qDQuzhjk5O0Zsa/sge+1owqv22LNdtp49DVhv8Z7K3v6aLyqMH8xVks+Nz/A=
-X-Gm-Gg: ASbGncvQlfaaJ4HpSAAYmEQVfC7MpHbrknScxl9Dbbmxregzf9z6pwtaeccOR6Ivwm/
-	/AqEJEWlzx/Yo536ZNizPQkW5tX/4gQhSP2snyI1AOUq30xtTECVGOkGzpYxOT5rIVowLXuxYNW
-	3UjOLqlZGgN56aBT87qAb8ghTBtjLczxmSw6fGpiQJYQxF+Ze7rqKwq84V64b3QzPdNNpI0pScW
-	O2qCR2i0jKudROI0TTw1KU6St1ef0jkJa/3+Uwb+WkJcj2/VUyAb7c6mEHlD2hl+/KSE+rqjNsC
-	eoH08n+fZlvyzoY7qXyn/1e+3mweHBfTndVe0jwIyZO1hrlAPIVDdZq7NwvHEyxGOnbTQiVqQJN
-	I9fplVe/6rJbcNDFMG2Jxt/Lz
-X-Google-Smtp-Source: AGHT+IEho1Foj4fnk6PgnQ8W8nqUpc5SNVdnaWd11d+U1bW/ogI/EC1H+8IGCCJPQ3wJ6U4piH66Dg==
-X-Received: by 2002:a17:90a:c88c:b0:31c:23f2:d2ac with SMTP id 98e67ed59e1d1-31c4f53f737mr10947368a91.19.1752375225640;
-        Sat, 12 Jul 2025 19:53:45 -0700 (PDT)
-Received: from quat-desktop ([2001:569:514a:9100:3f23:7b0f:f6a2:1ebd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4286da3sm76345145ad.34.2025.07.12.19.53.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Jul 2025 19:53:45 -0700 (PDT)
-From: Rhys Lloyd <krakow20@gmail.com>
-To: dakr@kernel.org,
-	acourbot@nvidia.com
-Cc: airlied@gmail.com,
-	simona@ffwll.ch,
-	nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	Rhys Lloyd <krakow20@gmail.com>
-Subject: [PATCH] gpu: nova-core: define named constants for magic numbers
-Date: Sat, 12 Jul 2025 19:51:10 -0700
-Message-ID: <20250713025108.9364-4-krakow20@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250713025108.9364-2-krakow20@gmail.com>
-References: <20250713025108.9364-2-krakow20@gmail.com>
+	s=arc-20240116; t=1752375417; c=relaxed/simple;
+	bh=8AUdy6h2+tSJPoNWDDMjqTgiCiyybhkNqT4U/lGwP5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KSLTAidsSQRXQHqJJoskPY9zWJKlfX178Bb8ZMdcWJAIYUM6HL4Im8szGYEFkwj+dHa/YhDiI0j+U/OO0ZS3e04Cc71ueFbqI9JkmYF8hPmGmqsRVxtwzVpAQUcY5qOzWyUvIOjOxIJRDtt2FfSOnkfoDf4sFuY9Oe9ODzrzrvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ENiO7lkT; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752375415; x=1783911415;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8AUdy6h2+tSJPoNWDDMjqTgiCiyybhkNqT4U/lGwP5k=;
+  b=ENiO7lkTAv5GuHJQHHFHCwu4WdkMQxCoKnvD9W21DvSmjz+Aq3fH20ZK
+   LXBSof1wXaBqppAuamaBQAqhV75dAekZ7kh7pMN+XTpW3qunZ/AHJPzww
+   TWRC6vk0nIeNNs5IX4ztOEzcPmFJokxzMhgoRPTkAzOSOzDy0kSfhfK3E
+   0pjaunFRPubBETTwBDausa15hUTKeOFkIC59o1OKRbKBK+4waUwjlUsLE
+   MHVdZOUfoIdyOAxqNomarLIqMSCZNcFFr1/zRklWV1n1Qe0g1SqS8WkO3
+   zLBYRd+Pig2NHBBT0fLPHwzco0Kz1RHlyb9SRvIq0Ua+iM1z/AUjCXU0f
+   Q==;
+X-CSE-ConnectionGUID: 38BYc9tZRI+nm9Zb+uOcgQ==
+X-CSE-MsgGUID: SjkSxoa+RTWNOzvvUUIQGg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54698958"
+X-IronPort-AV: E=Sophos;i="6.16,307,1744095600"; 
+   d="scan'208";a="54698958"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2025 19:56:54 -0700
+X-CSE-ConnectionGUID: OFqr8q+OQm+u78ezxoQBjQ==
+X-CSE-MsgGUID: A19bfi6uRmqU8JOuzVL4tA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,307,1744095600"; 
+   d="scan'208";a="156746292"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 12 Jul 2025 19:56:50 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uamtU-0007ql-2C;
+	Sun, 13 Jul 2025 02:56:48 +0000
+Date: Sun, 13 Jul 2025 10:56:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Armin Wolf <W_Armin@gmx.de>, ilpo.jarvinen@linux.intel.com,
+	hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net,
+	cs@tuxedo.de, wse@tuxedocomputers.com, ggo@tuxedocomputers.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	rdunlap@infradead.org, alok.a.tiwari@oracle.com,
+	linux-leds@vger.kernel.org, lee@kernel.org, pobrn@protonmail.com
+Subject: Re: [PATCH 2/3] platform/x86: Add Uniwill laptop driver
+Message-ID: <202507131049.84GJKlqK-lkp@intel.com>
+References: <20250712112310.19964-3-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250712112310.19964-3-W_Armin@gmx.de>
 
-Introduce an associated constant `MIN_LEN` for each struct that checks
-the length of the input data in its constructor against a magic number.
+Hi Armin,
 
-Signed-off-by: Rhys Lloyd <krakow20@gmail.com>
----
-Changes in v2:
-- Add commit description
-- Fix author to match SoB
-- Add base commit
+kernel test robot noticed the following build errors:
 
----
- drivers/gpu/nova-core/vbios.rs | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+[auto build test ERROR on lwn/docs-next]
+[also build test ERROR on linus/master v6.16-rc5 next-20250711]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/gpu/nova-core/vbios.rs b/drivers/gpu/nova-core/vbios.rs
-index 5b5d9f38cbb3..d456c494374d 100644
---- a/drivers/gpu/nova-core/vbios.rs
-+++ b/drivers/gpu/nova-core/vbios.rs
-@@ -364,8 +364,9 @@ struct BitHeader {
- }
- 
- impl BitHeader {
-+    const MIN_LEN: usize = 12;
-     fn new(data: &[u8]) -> Result<Self> {
--        if data.len() < 12 {
-+        if data.len() < Self::MIN_LEN {
-             return Err(EINVAL);
-         }
- 
-@@ -467,8 +468,9 @@ struct PciRomHeader {
- }
- 
- impl PciRomHeader {
-+    const MIN_LEN: usize = 26;
-     fn new(pdev: &pci::Device, data: &[u8]) -> Result<Self> {
--        if data.len() < 26 {
-+        if data.len() < Self::MIN_LEN {
-             // Need at least 26 bytes to read pciDataStrucPtr and sizeOfBlock.
-             return Err(EINVAL);
-         }
-@@ -772,10 +774,11 @@ fn into_image(self) -> Result<BiosImage> {
-         BiosImage::try_from(self)
-     }
- 
-+    const MIN_LEN: usize = 26;
-     /// Creates a new BiosImageBase from raw byte data.
-     fn new(pdev: &pci::Device, data: &[u8]) -> Result<Self> {
-         // Ensure we have enough data for the ROM header.
--        if data.len() < 26 {
-+        if data.len() < Self::MIN_LEN {
-             dev_err!(pdev.as_ref(), "Not enough data for ROM header\n");
-             return Err(EINVAL);
-         }
-@@ -900,8 +903,9 @@ struct PmuLookupTableEntry {
- }
- 
- impl PmuLookupTableEntry {
-+    const MIN_LEN: usize = 6;
-     fn new(data: &[u8]) -> Result<Self> {
--        if data.len() < 6 {
-+        if data.len() < Self::MIN_LEN {
-             return Err(EINVAL);
-         }
- 
-@@ -928,8 +932,9 @@ struct PmuLookupTable {
- }
- 
- impl PmuLookupTable {
-+    const MIN_LEN: usize = 4;
-     fn new(pdev: &pci::Device, data: &[u8]) -> Result<Self> {
--        if data.len() < 4 {
-+        if data.len() < Self::MIN_LEN {
-             return Err(EINVAL);
-         }
- 
+url:    https://github.com/intel-lab-lkp/linux/commits/Armin-Wolf/platform-x86-Add-Uniwill-WMI-driver/20250712-192556
+base:   git://git.lwn.net/linux.git docs-next
+patch link:    https://lore.kernel.org/r/20250712112310.19964-3-W_Armin%40gmx.de
+patch subject: [PATCH 2/3] platform/x86: Add Uniwill laptop driver
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20250713/202507131049.84GJKlqK-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250713/202507131049.84GJKlqK-lkp@intel.com/reproduce)
 
-base-commit: 215a3f91713383a3c0d2da82d223a608a3c17ac1
-prerequisite-patch-id: d80f92d314a0693d4c89ffb7810d9ab6990336fa
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507131049.84GJKlqK-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/platform/x86/uniwill/uniwill-laptop.c: In function 'uniwill_get_property':
+>> drivers/platform/x86/uniwill/uniwill-laptop.c:1060:23: error: implicit declaration of function 'power_supply_get_property_direct'; did you mean 'power_supply_get_property'? [-Werror=implicit-function-declaration]
+    1060 |                 ret = power_supply_get_property_direct(psy, POWER_SUPPLY_PROP_PRESENT, &prop);
+         |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                       power_supply_get_property
+   cc1: some warnings being treated as errors
+
+
+vim +1060 drivers/platform/x86/uniwill/uniwill-laptop.c
+
+  1048	
+  1049	static int uniwill_get_property(struct power_supply *psy, const struct power_supply_ext *ext,
+  1050					void *drvdata, enum power_supply_property psp,
+  1051					union power_supply_propval *val)
+  1052	{
+  1053		struct uniwill_data *data = drvdata;
+  1054		union power_supply_propval prop;
+  1055		unsigned int regval;
+  1056		int ret;
+  1057	
+  1058		switch (psp) {
+  1059		case POWER_SUPPLY_PROP_HEALTH:
+> 1060			ret = power_supply_get_property_direct(psy, POWER_SUPPLY_PROP_PRESENT, &prop);
+  1061			if (ret < 0)
+  1062				return ret;
+  1063	
+  1064			if (!prop.intval) {
+  1065				val->intval = POWER_SUPPLY_HEALTH_NO_BATTERY;
+  1066				return 0;
+  1067			}
+  1068	
+  1069			ret = power_supply_get_property_direct(psy, POWER_SUPPLY_PROP_STATUS, &prop);
+  1070			if (ret < 0)
+  1071				return ret;
+  1072	
+  1073			if (prop.intval == POWER_SUPPLY_STATUS_UNKNOWN) {
+  1074				val->intval = POWER_SUPPLY_HEALTH_UNKNOWN;
+  1075				return 0;
+  1076			}
+  1077	
+  1078			ret = regmap_read(data->regmap, EC_ADDR_BAT_ALERT, &regval);
+  1079			if (ret < 0)
+  1080				return ret;
+  1081	
+  1082			if (regval) {
+  1083				/* Charging issue */
+  1084				val->intval = POWER_SUPPLY_HEALTH_UNSPEC_FAILURE;
+  1085				return 0;
+  1086			}
+  1087	
+  1088			val->intval = POWER_SUPPLY_HEALTH_GOOD;
+  1089			return 0;
+  1090		case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
+  1091			ret = regmap_read(data->regmap, EC_ADDR_CHARGE_CTRL, &regval);
+  1092			if (ret < 0)
+  1093				return ret;
+  1094	
+  1095			val->intval = clamp_val(FIELD_GET(CHARGE_CTRL_MASK, regval), 0, 100);
+  1096			return 0;
+  1097		default:
+  1098			return -EINVAL;
+  1099		}
+  1100	}
+  1101	
+
 -- 
-2.50.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
