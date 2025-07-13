@@ -1,64 +1,57 @@
-Return-Path: <linux-kernel+bounces-729064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EE8BB0313D
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 15:44:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6539B03142
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 15:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B514C189BF44
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 13:44:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1605189BEC7
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 13:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B1F278E77;
-	Sun, 13 Jul 2025 13:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF828230BFB;
+	Sun, 13 Jul 2025 13:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/Qa+2Dy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H9NBbMhw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7093223DFA;
-	Sun, 13 Jul 2025 13:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28131839F4;
+	Sun, 13 Jul 2025 13:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752414236; cv=none; b=q7J47m6Y+kp0ngSipkOygH4mW6oKF9MBawT/ie4O+pF0lP4IkC5uRppKkQP6xXDBwZNr2Te/JUnKGYhUhfbgsUa9w7agn4b7MNqegythR52+KMsGEr4jGjokADkky0e6ftV2mEmcN+wK8AQW5rA5JgPRaZ3M+4eRAjCqAhIS+cY=
+	t=1752414475; cv=none; b=cBDJxLe9wZNTDFwrwK9maveKKW5VoGqOGyiksverchCqbelvlJTdXoFh9XyYihPcXDpJVOBgJ/3FHFveS5seQaWCscTlQSziydZ8HbYVlb+SdTEFXmjQaTUw5L/hSSIfNg8ynfhAEbRtS2/NZlnExUvpE2p4+nLzoBC9N6GREUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752414236; c=relaxed/simple;
-	bh=RZqZ3e3JCJu0Ewg8LuM3+kK2oKbWALGcY1tJA+xszJE=;
+	s=arc-20240116; t=1752414475; c=relaxed/simple;
+	bh=I4Unqd70Pah2uecg7+bI8bE+MM+Yo1QABTmHUyxoGtc=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=puC3dJOOQ8Kc9MJi7c+NiwINbIuzNIA/MZlzCi/ikwKVQe3T39mJFj2zP9XOQwKsWMvkK8wU3M28aJcGiLwaZ30cygXFdAmPwcrZVDQJ3sFNbu5eBF4A9YO2ZEVq95F18JwxPxBQL/tfL7arTN1H/+QJVhAkeG/AccLiGpX+W/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/Qa+2Dy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A6B3C4CEE3;
-	Sun, 13 Jul 2025 13:43:50 +0000 (UTC)
+	 MIME-Version:Content-Type; b=YNvMWwZT87+fTi01wLldRBCKPQvuwqTtY/nJukE1s7gHuLni25Zd/FkNNKToPOcEQfwbxMSD2P8i+8RsWcwGNU68v1uNwY+OLTOFNNthKn0CwWCE+QxJ5OyFBP6wVKUJ1PXkvwoFWCZtR57T5OF0kH9TnuvzmjcVD6TZXnLKRt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H9NBbMhw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73884C4CEE3;
+	Sun, 13 Jul 2025 13:47:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752414236;
-	bh=RZqZ3e3JCJu0Ewg8LuM3+kK2oKbWALGcY1tJA+xszJE=;
+	s=k20201202; t=1752414475;
+	bh=I4Unqd70Pah2uecg7+bI8bE+MM+Yo1QABTmHUyxoGtc=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=B/Qa+2DyxswmiMklVO3bT0NKMztF/ukUwCna4Ux+FzjF1fd3KivqTKVjudsfkBGd0
-	 izio+ZSCE6yXvKGo3W9/1hUj0qUazmTFJzzAjvsIVryKAImPDhZFO/CFQh7nP30ISu
-	 /oDHWXBvVmRnLMGGvtqNalP93owFqCZSyIS2/JlLdfNlHftR8SODncwqa03UnynoxQ
-	 7CLtsDBnC8kvaf/+ZJPuwPpswZFsk8Bb6aLSzERufSDgB8KU47JCaZX9qYLTJNjpzE
-	 4mILq7VfWtzbZhkHyJm88YErpL2aTIF+ZWHQ4p2IkkPNL+aUJygBoQGbGdau4QoASk
-	 cG0vHMancHaHA==
-Date: Sun, 13 Jul 2025 14:43:46 +0100
+	b=H9NBbMhwSn4KuYASYcIpn2AKaslA4nBbX3Zgbijff23Dt+gWCYI9/jt/UL854FNy1
+	 sLWIT4fRJv+L/J3KsrSZF2alcAaUpbzTUInH76Rho1hnEWnxnX0iEoZYVa+bM1Chsy
+	 Sjg9zeYhyHU7tqe0B6cqe6Kpwjkid6oeZE0JZIhjmOL/AVZ6jEMaNNwc3ZZfkHeCbt
+	 s+PRJFb/pfT/bwDXRRhRkb2n1RJX15Jalbj49GsCa+U5HP0dBRuqE5LLUVq3wa96dR
+	 I73lkAuaAPuRi037nwTZFYjwyMqZSYaYwXCdYhMllQwEFlB0dICgvfk27LynZhr+mH
+	 fhLclxvIzz7rw==
+Date: Sun, 13 Jul 2025 14:47:47 +0100
 From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, David Lechner
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, David Lechner
  <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Waqar Hameed <waqar.hameed@axis.com>, Julien
- Stephan <jstephan@baylibre.com>, Peter Zijlstra <peterz@infradead.org>, Bo
- Liu <liubo03@inspur.com>, Greg KH <gregkh@linuxfoundation.org>, Al Viro
- <viro@zeniv.linux.org.uk>, Sean Nyekjaer <sean@geanix.com>, Marcelo Schmitt
- <marcelo.schmitt1@gmail.com>, Rayyan Ansari <rayyan@ansari.sh>, Francisco
- Henriques <franciscolealhenriques@usp.br>, linux-iio@vger.kernel.org,
+ Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 27/80] iio: accel: Remove redundant
- pm_runtime_mark_last_busy() calls
-Message-ID: <20250713144346.6fc46252@jic23-huawei>
-In-Reply-To: <090c1c98-0f68-47d5-9e57-bd764b2856de@gmail.com>
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
-	<20250704075418.3218938-1-sakari.ailus@linux.intel.com>
-	<090c1c98-0f68-47d5-9e57-bd764b2856de@gmail.com>
+Subject: Re: [PATCH] iio: imu: inv_icm42600: fix temperature reading if
+ accel/gyro is off
+Message-ID: <20250713144747.667aac5f@jic23-huawei>
+In-Reply-To: <20250708-icm42temp-v1-1-81af60aab82a@geanix.com>
+References: <20250708-icm42temp-v1-1-81af60aab82a@geanix.com>
 X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,120 +62,53 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 10 Jul 2025 09:46:12 +0300
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+On Tue, 08 Jul 2025 14:09:17 +0200
+Sean Nyekjaer <sean@geanix.com> wrote:
 
-> On 04/07/2025 10:54, Sakari Ailus wrote:
-> > pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> > pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> > to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> > pm_runtime_mark_last_busy().
-> > 
-> > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > ---  
-> 
-> Looks good to me. Just one comment (to 4 drivers) - but I'm not 
-> insisting it to be addressed :)
-> 
-> > The cover letter of the set can be found here
-> > <URL:https://lore.kernel.org/linux-pm/20250704075225.3212486-1-sakari.ailus@linux.intel.com>.
-> > 
-> > In brief, this patch depends on PM runtime patches adding marking the last
-> > busy timestamp in autosuspend related functions. The patches are here, on
-> > rc2:
-> > 
-> >          git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
-> >                  pm-runtime-6.17-rc1
-> > 
-> >   drivers/iio/accel/bmc150-accel-core.c | 1 -
-> >   drivers/iio/accel/bmi088-accel-core.c | 3 ---
-> >   drivers/iio/accel/fxls8962af-core.c   | 1 -
-> >   drivers/iio/accel/kxcjk-1013.c        | 1 -
-> >   drivers/iio/accel/kxsd9.c             | 3 ---
-> >   drivers/iio/accel/mma8452.c           | 1 -
-> >   drivers/iio/accel/mma9551_core.c      | 1 -
-> >   drivers/iio/accel/msa311.c            | 6 ------
-> >   8 files changed, 17 deletions(-)
-> > 
-> > diff --git a/drivers/iio/accel/bmc150-accel-core.c b/drivers/iio/accel/bmc150-accel-core.c
-> > index be5fbb0c5d29..f45beae83f8b 100644
-> > --- a/drivers/iio/accel/bmc150-accel-core.c
-> > +++ b/drivers/iio/accel/bmc150-accel-core.c
-> > @@ -335,7 +335,6 @@ static int bmc150_accel_set_power_state(struct bmc150_accel_data *data, bool on)
-> >   	if (on) {
-> >   		ret = pm_runtime_resume_and_get(dev);
-> >   	} else {
-> > -		pm_runtime_mark_last_busy(dev);
-> >   		ret = pm_runtime_put_autosuspend(dev);
-> >   	}
-> >     
-> 
-> // snip
-> 
-> > diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
-> > index 6aefe8221296..44d770729186 100644
-> > --- a/drivers/iio/accel/kxcjk-1013.c
-> > +++ b/drivers/iio/accel/kxcjk-1013.c
-> > @@ -637,7 +637,6 @@ static int kxcjk1013_set_power_state(struct kxcjk1013_data *data, bool on)
-> >   	if (on)
-> >   		ret = pm_runtime_resume_and_get(&data->client->dev);
-> >   	else {
-> > -		pm_runtime_mark_last_busy(&data->client->dev);
-> >   		ret = pm_runtime_put_autosuspend(&data->client->dev);
-> >   	}
-> >   	if (ret < 0) {  
-> 
-> //snip
-> 
-> > diff --git a/drivers/iio/accel/mma8452.c b/drivers/iio/accel/mma8452.c
-> > index aba444a980d9..5863478bab62 100644
-> > --- a/drivers/iio/accel/mma8452.c
-> > +++ b/drivers/iio/accel/mma8452.c
-> > @@ -227,7 +227,6 @@ static int mma8452_set_runtime_pm_state(struct i2c_client *client, bool on)
-> >   	if (on) {
-> >   		ret = pm_runtime_resume_and_get(&client->dev);
-> >   	} else {
-> > -		pm_runtime_mark_last_busy(&client->dev);
-> >   		ret = pm_runtime_put_autosuspend(&client->dev);
-> >   	}  
-> 
-> //snip
-> 
-> >   
-> > diff --git a/drivers/iio/accel/mma9551_core.c b/drivers/iio/accel/mma9551_core.c
-> > index 3e7d9b79ed0e..22768f43fd24 100644
-> > --- a/drivers/iio/accel/mma9551_core.c
-> > +++ b/drivers/iio/accel/mma9551_core.c
-> > @@ -672,7 +672,6 @@ int mma9551_set_power_state(struct i2c_client *client, bool on)
-> >   	if (on)
-> >   		ret = pm_runtime_resume_and_get(&client->dev);
-> >   	else {
-> > -		pm_runtime_mark_last_busy(&client->dev);
-> >   		ret = pm_runtime_put_autosuspend(&client->dev);
-> >   	}
-> >     
-> 
-> Do these really warrant a function? (Especially for the mma9551 where 
-> the function is exported). I think it'd be fine to have the 
-> pm_runtime_resume_and_get() and the pm_runtime_put_autosuspend() called 
-> directly without these wrappers.
-
-Absolutely agree that they don't.  However, I think it may make
-sense to clean that up in two jumps.   This series just makes the
-specific drop of the unnecessary call, next series does the refactor.
-That keeps this series tightly focused on one topic.
-
-Jonathan
+> Avoid return invalid argument if one tries to read the temperature,.
+> if both the accelerometer and gyro are off. Power the accelerometer on
+> before reading the temperature.
+> The original state will be restored by runtine_suspend() or the next
+> reading of the accelerometer.
+I'm not sure we are going ahead with this anyway given the other thread,
+but if we did, then relying on runtime_put() in read of a different
+channel seems like a bad design. If we think someone is interested
+in reading the temperature of this sensor, are they guaranteed to
+also be reading the acceleration?
 
 > 
-> Anyways, this looks good to me - thanks!
+> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> ---
+>  drivers/iio/imu/inv_icm42600/inv_icm42600_core.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
 > 
-> Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> index a4d42e7e21807f7954def431e9cf03dffaa5bd5e..f97376bc8bb3dd225236e3f5036fd58af4af35ac 100644
+> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> @@ -399,9 +399,14 @@ int inv_icm42600_set_gyro_conf(struct inv_icm42600_state *st,
+>  int inv_icm42600_set_temp_conf(struct inv_icm42600_state *st, bool enable,
+>  			       unsigned int *sleep_ms)
+>  {
+> -	return inv_icm42600_set_pwr_mgmt0(st, st->conf.gyro.mode,
+> -					  st->conf.accel.mode, enable,
+> -					  sleep_ms);
+> +	enum inv_icm42600_sensor_mode accel = st->conf.accel.mode;
+> +
+> +	if (st->conf.gyro.mode == INV_ICM42600_SENSOR_MODE_OFF &&
+> +	    st->conf.accel.mode == INV_ICM42600_SENSOR_MODE_OFF)
+> +		accel = INV_ICM42600_SENSOR_MODE_LOW_POWER;
+> +
+> +	return inv_icm42600_set_pwr_mgmt0(st, st->conf.gyro.mode, accel,
+> +					  enable, sleep_ms);
+>  }
+>  
+>  int inv_icm42600_enable_wom(struct inv_icm42600_state *st)
 > 
-> Yours
-> 	-- Matti
+> ---
+> base-commit: 3e28fa06444e7031aba0b3552cce332b776fe267
+> change-id: 20250708-icm42temp-6292abddb6e6
 > 
-> 
-> 
+> Best regards,
 
 
