@@ -1,139 +1,161 @@
-Return-Path: <linux-kernel+bounces-729126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4220FB03214
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 18:27:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38078B03218
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 18:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787E4189D31A
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:28:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D550B7AA664
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE9C27FD6E;
-	Sun, 13 Jul 2025 16:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0762820B6;
+	Sun, 13 Jul 2025 16:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I7hUGwAQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nLMdBwCr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEC026AD9
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 16:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7376427877D;
+	Sun, 13 Jul 2025 16:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752424060; cv=none; b=qPtHZ/ceTUET47fXUtjPrDZPzohp8rOKSyQ3+6wExpY/hDLp4OtYYroOSEsgUp/5iWFfogQWn/RZa5lZccvQuXEEtQcoO4N9j1/Jb8/BrNSqGral4t4rtw/PI7jV/ut5+S3UMurdk8V+RMXxkRlkMUih03SM7IVPVjtsLyiKZFM=
+	t=1752424091; cv=none; b=ssHSyWnE+LFO5DvfTnd4N5srCaMi7NurTjiaYJ10SCRrMml4zwDLSrOPt4Hdyf9EkCy0Ms9GthNThz6NcG3CWx/ozfB/IcQbmJuD+PSDA4pA+im1od1j2wByokoWZ+qVPCFkfbMj313mETskHoZ4hV+rAjXTes9+3aM0/70S5Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752424060; c=relaxed/simple;
-	bh=os7v1CoGQxJnQ+61L30sCkA48/y+wIkRcL+WdNgUE2s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KERuE+vM3VXsMGrVQArjAC7NGD6gg6yBEvGcO5mHu1V/uAqYy4PA9s7LnTugjXPN+MmUxlREklYaR2GSkOXhk16W5wRYAJ2mTI0zkDwIeFrseeo5g0a3OEEzpw+eJaPNBSR7TUWQG6P3AaB31bjeBd6WVwcXju70JT4/Gve8uXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I7hUGwAQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95CD6C4CEE3;
-	Sun, 13 Jul 2025 16:27:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752424059;
-	bh=os7v1CoGQxJnQ+61L30sCkA48/y+wIkRcL+WdNgUE2s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=I7hUGwAQ0aw2rJZSbXsemST2c73iBGjy9KFwZLcz2MUTMNqDO83PmoEvO7Me/DsWv
-	 q+3ngqUR7q7ytHY5Ep5lKshzJKaz68BGGlr+ch0YAaGGJvI6yIrLYCn/pxG3EyS0ET
-	 tV4zRluMnf75avHqkJp69JcTh/+uWac30GeutgLhczSsoOG+CuwRip+jaBIF13xgcT
-	 KyKQ9KwWU+qZYL0xEkLkIVPCWWDXqcg1NouSEApPiYie5W/T8Knha/C9jMzlQEKS1W
-	 wYykANdPHZyn3Agn3Xzeb6ZBBMzDMwRSAJ5zvKs042xBaSTrbm5yfPfDXvi0seMyMl
-	 nTv+jFHqq0xfw==
-Date: Sun, 13 Jul 2025 17:27:32 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Yicong Yang <yangyicong@huawei.com>
-Cc: <will@kernel.org>, <mark.rutland@arm.com>, <yangyicong@hisilicon.com>,
- <hejunhao3@huawei.com>, <jonathan.cameron@huawei.com>,
- <prime.zeng@hisilicon.com>, <linuxarm@huawei.com>,
- <wangyushan12@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [RESEND PATCH v3 0/8] General updates and two new drivers for
- HiSilicon Uncore PMU
-Message-ID: <20250713172732.13100182@jic23-huawei>
-In-Reply-To: <c5a99a5a-20d9-ef07-1cc3-cb025f446619@huawei.com>
-References: <20250619125557.57372-1-yangyicong@huawei.com>
-	<c5a99a5a-20d9-ef07-1cc3-cb025f446619@huawei.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752424091; c=relaxed/simple;
+	bh=ifpdTOGwI1rhrSXr9K9a0r6Seeyr+cw10DFMmHo8Udg=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=imbcuwzITuOVUSAuoJqFe6nSdskfGZM7LGOsk/PNJsIooUGiEeHgXTiYA/rcz9IyyfmkKG5HJ0l49eGRngG/OMNy0/fgvuzuxzKGLyQ7LNwGyexjs6KdEKk1vG5KlR0PDte+7HwIc2f8Jw7bkNcsNNhBEikBdUBraO6zVwjUg6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nLMdBwCr; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752424090; x=1783960090;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=ifpdTOGwI1rhrSXr9K9a0r6Seeyr+cw10DFMmHo8Udg=;
+  b=nLMdBwCrcCyfEcUO8sh5hRgaIxVWWpNaOq4YUkyA6uScEptMyQqS43To
+   4AL3hjH2AoVteXgbGqq3WgrN/02vpYRKscl9bBtIP6JMM3joFOtDRPmHZ
+   oF30Imre+fBLwhOypqmGzWS+A9aq/78jZNNVsqJyUy9hgaBPx5C4+HcbO
+   zo8YXswuVappgTfy2DgE/OXq4CKib77yeoqCuanZ/0HgeZfy838RkTNZQ
+   cnMPPCqZ5HB6asXn7MRP6qhLDttUVbj1vGx1XvQFvvphlqzxbaCMHtAfN
+   tLaW4wpAJ9IqG4/jpH0NYPRTtcYl7M9vi7FCI2Ju87NcYn75/kdrykwnk
+   w==;
+X-CSE-ConnectionGUID: UdyUvBp3TbS4V2RkqbqTjw==
+X-CSE-MsgGUID: +aW+LTBtRnCt5Xra9lRjsA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54344672"
+X-IronPort-AV: E=Sophos;i="6.16,308,1744095600"; 
+   d="scan'208";a="54344672"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2025 09:28:09 -0700
+X-CSE-ConnectionGUID: gK+e7tQVQIOInWqljWHVmA==
+X-CSE-MsgGUID: aLHxtV24T2WZICr7KJ1bcA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,308,1744095600"; 
+   d="scan'208";a="160767417"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.175])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2025 09:28:01 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Sun, 13 Jul 2025 19:27:57 +0300 (EEST)
+To: Manivannan Sadhasivam <mani@kernel.org>
+cc: Bjorn Helgaas <helgaas@kernel.org>, 
+    Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+    Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
+    Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
+    Jeff Johnson <jjohnson@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kwilczynski@kernel.org>, 
+    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev, 
+    linux-wireless@vger.kernel.org, ath11k@lists.infradead.org, 
+    qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com, 
+    quic_vpernami@quicinc.com, quic_mrana@quicinc.com, 
+    Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Subject: Re: [PATCH v4 06/11] PCI/ASPM: Clear aspm_disable as part of
+ __pci_enable_link_state()
+In-Reply-To: <qay63njqf7z7mchizt5sm66i67rvxxxicikxmfuvllmmxfy7ek@mulnjvde5q7w>
+Message-ID: <9543b1eb-5bd2-bea1-742f-60cbc28bb365@linux.intel.com>
+References: <604ffae3-1bfc-0922-b001-f3338880eb21@linux.intel.com> <20250711230013.GA2309106@bhelgaas> <qay63njqf7z7mchizt5sm66i67rvxxxicikxmfuvllmmxfy7ek@mulnjvde5q7w>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323328-1313851053-1752424077=:951"
 
-On Tue, 1 Jul 2025 20:36:11 +0800
-Yicong Yang <yangyicong@huawei.com> wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> Hi Will and Mark,
-> 
-> just want to make sure the mail's not lost somehow, it's been skipped for the last cycle and
-> no further comment since v2.
+--8323328-1313851053-1752424077=:951
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Hi Will and Mark,
+On Sat, 12 Jul 2025, Manivannan Sadhasivam wrote:
+> On Fri, Jul 11, 2025 at 06:00:13PM GMT, Bjorn Helgaas wrote:
+> > On Fri, Jul 11, 2025 at 04:38:48PM +0300, Ilpo J=C3=A4rvinen wrote:
+> >=20
+> > > +++ b/include/linux/pci.h
+> > > @@ -1826,8 +1826,8 @@ static inline int pcie_set_target_speed(struct =
+pci_dev *port,
+> > >  #ifdef CONFIG_PCIEASPM
+> > >  int pci_disable_link_state(struct pci_dev *pdev, int state);
+> > >  int pci_disable_link_state_locked(struct pci_dev *pdev, int state);
+> > > -int pci_enable_link_state(struct pci_dev *pdev, int state);
+> >=20
+> > AFAICT there's no caller of this at all.  Why do we keep it?
+> >=20
+>=20
+> I'm just working on a series to convert the ath{10/11/12}k drivers to use=
+ this
+> API instead of modifying LNKCTL register directly:
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/d=
+rivers/net/wireless/ath/ath12k/pci.c#n961
 
-This one is still outstanding and Yicong mentioned some recent issues with
-some Huawei emails being taken out by spam filters.  As such, a quick
-ping from an account that shouldn't suffer that fate!
+Great. I assume but "this API" you meant disable/enable link state that=20
+are real pair unlike the current pci_enable_link_state()?
 
-Jonathan
+Did ath1xk need to do some hw specific register updates when changing ASPM=
+=20
+state?
 
-> 
-> thanks.
-> 
-> On 2025/6/19 20:55, Yicong Yang wrote:
-> > From: Yicong Yang <yangyicong@hisilicon.com>
-> > 
-> > Support new version of DDRC/SLLC PMU identified with updated ACPI HID and
-> > register definition. In order to support this, we do a preliminary refactor
-> > to initialize device of each version by using driver data of each HID
-> > rather than checking the version. This will also make the driver easier to
-> > maintain and extend, since only the HID specific information along
-> > with the new HID will be added to support the new version without touching
-> > the common logic.
-> > 
-> > Two new Uncore PMU drivers is also added to support the monitoring the
-> > events of the system bus (by NoC PMU) and the DVM operations (by MN PMU).
-> > 
-> > Change since v2:
-> > - Rebase on 6.15-rc1, add Jonathan's tag.
-> > Link: https://lore.kernel.org/linux-arm-kernel/20250321073846.23507-1-yangyicong@huawei.com/
-> > 
-> > Change since v1:
-> > - Fold patch which extending the struct hisi_pmu_dev_info into its user
-> > - Use bit shift rather than bit mask for SLLC PMU registers configuration
-> > - Address other comments by Jonathan, thanks
-> > Link: https://lore.kernel.org/linux-arm-kernel/20250218092000.41641-1-yangyicong@huawei.com/
-> > 
-> > Junhao He (6):
-> >   drivers/perf: hisi: Simplify the probe process for each DDRC version
-> >   drivers/perf: hisi: Add support for HiSilicon DDRC v3 PMU driver
-> >   drivers/perf: hisi: Use ACPI driver_data to retrieve SLLC PMU
-> >     information
-> >   drivers/perf: hisi: Add support for HiSilicon SLLC v3 PMU driver
-> >   drivers/perf: hisi: Relax the event number check of v2 PMUs
-> >   drivers/perf: hisi: Add support for HiSilicon MN PMU driver
-> > 
-> > Yicong Yang (2):
-> >   drivers/perf: hisi: Support PMUs with no interrupt
-> >   drivers/perf: hisi: Add support for HiSilicon NoC PMU
-> > 
-> >  Documentation/admin-guide/perf/hisi-pmu.rst   |  11 +
-> >  drivers/perf/hisilicon/Makefile               |   3 +-
-> >  drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c | 354 ++++++++--------
-> >  drivers/perf/hisilicon/hisi_uncore_hha_pmu.c  |   6 +-
-> >  drivers/perf/hisilicon/hisi_uncore_mn_pmu.c   | 355 ++++++++++++++++
-> >  drivers/perf/hisilicon/hisi_uncore_noc_pmu.c  | 392 ++++++++++++++++++
-> >  drivers/perf/hisilicon/hisi_uncore_pa_pmu.c   |   2 +-
-> >  drivers/perf/hisilicon/hisi_uncore_pmu.c      |  11 +-
-> >  drivers/perf/hisilicon/hisi_uncore_pmu.h      |   2 +
-> >  drivers/perf/hisilicon/hisi_uncore_sllc_pmu.c | 220 +++++++---
-> >  10 files changed, 1098 insertions(+), 258 deletions(-)
-> >  create mode 100644 drivers/perf/hisilicon/hisi_uncore_mn_pmu.c
-> >  create mode 100644 drivers/perf/hisilicon/hisi_uncore_noc_pmu.c
-> >   
-> 
+I tried to do similar conversion in r8169 (and actually also ath1xk too)=20
+but it was a while ago already. If I understood the code correctly, r8169=
+=20
+seems to write some HW specific registers when changing ASPM state so I=20
+would have likely need to add some ops for it to play nice with state=20
+changes not originating from the driver itself but from the ASPM driver,=20
+which is where the work then stalled.
 
+> > > -int pci_enable_link_state_locked(struct pci_dev *pdev, int state);
+> >=20
+> > We only have two callers of this (pcie-qcom.c and vmd.c, both in
+> > drivers/pci/), so it's not clear to me that it needs to be in
+> > include/linux/pci.h.
+> >=20
+> > I'm a little dubious about it in the first place since I don't think
+> > drivers should be enabling ASPM states on their own, but pcie-qcom.c
+> > and vmd.c are PCIe controller drivers, not PCI device drivers, so I
+> > guess we can live with them for now.
+> >=20
+> > IMO the "someday" goal should be that we get rid of aspm_policy and
+> > enable all the available power saving states by default.  We have
+> > sysfs knobs that administrators can use if necessary, and drivers or
+> > quirks can disable states if they need to work around hardware
+> > defects.
+>=20
+> Yeah, I think the default should be powersave and let the users disable i=
+t for
+> performance if they want.
+
+I'm certainly not against improvements in this front, but I think we need=
+=20
+to get rid off custom ASPM disable code from the drivers first.
+
+--=20
+ i.
+
+--8323328-1313851053-1752424077=:951--
 
