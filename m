@@ -1,322 +1,101 @@
-Return-Path: <linux-kernel+bounces-728935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72EF8B02F37
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 09:21:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFEDCB02F39
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 09:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13DF51898405
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 07:20:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6932E3BEB33
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 07:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06D8188734;
-	Sun, 13 Jul 2025 07:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0ED1D7E37;
+	Sun, 13 Jul 2025 07:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="EIOwdSe8"
-Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m0eG0vZ/"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C645131E2D
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 07:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291C41C07C3
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 07:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752391199; cv=none; b=QJ3htxTg/ccNcxeSiG8GHsKiZSc1M1v8+WclMCp8I9PvEkJSxMwHzgM8ezxNSf3UHnhfwanL0bilzdg3b2GmM1J322bWt3Iv3cr2PTJyL1k1nOGrzbAQah68V9jQoPkDUOe2g7OMoExVIl83PuFsoSDdFUeac+aTQr112aqLwDw=
+	t=1752391467; cv=none; b=WvOqeoisP3DE6jadv8LRx1SCJqSAWTMP/6NecJjCVYVaWK+YPQzQEH9Dx4rLI99rK0dTDLTfy75DwpelTySBSYptlslIKQqdcMSQH5oR1RUkB5k4j6xyRB/n6TRT39jvf9Ma3UOuova79EwQQWma3ChIoAWuZXKl+mBzXtVzAlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752391199; c=relaxed/simple;
-	bh=xAPC6fbC/5styTt0OlZJlpIol/DyAk67PPmC15GsbPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JUYTNX8VyVmtLxPm7ML2/jU4rZDFxB9cGMR91WSqwA724prgT/1SN5Rpaigxz8BMdmPYGbd4sA7YmDvMbzDrnHFl0eyzEmi6QOSug6MVb6aMJeJ82M3ZwN0M9ZrDZ6aTWkLKXzMgly1czQ9oSZy5WNv2eD6yW+ghJ22h7Qw6XM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=EIOwdSe8; arc=none smtp.client-ip=212.77.101.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 33678 invoked from network); 13 Jul 2025 09:19:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1752391195; bh=nXAoM234OG9rCu8jKStzLy1mS45MNQY4lFEfySEMe7E=;
-          h=From:To:Cc:Subject;
-          b=EIOwdSe8WE+jxz1heiWff6azdBX6NLAMX2gJ9+S1kxSCEugaYyeyEK0ZEpM2bdAe3
-           13MyXPguHexcqQF4BmMGD6RAuggyCwUqKN40fglRB9ppWnXxc4k/rH8ciA6oeWXEqV
-           h7ECx93x03E7Gf67P/TgylVVde01zE+lH7AKtmPdyFF/fcBnxm6123RIaP2Ztm5txo
-           +XPQukJpd8cQ1jZSuFz5I3oU6ESPLVa+EDUu5hpBpVGvJWKA+FpqP3W4ZcoHXJCVuK
-           lzpTfTl1iwVSxP67ED33mIdBshkt/rxjwUXxq1RP7ERJ5HQwmfwL7OGBoGtg1dTkta
-           /WcnjZjIwHfsw==
-Received: from 89-64-3-180.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.3.180])
-          (envelope-sender <stf_xl@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <rosenp@gmail.com>; 13 Jul 2025 09:19:55 +0200
-Date: Sun, 13 Jul 2025 09:19:54 +0200
-From: Stanislaw Gruszka <stf_xl@wp.pl>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-wireless@vger.kernel.org,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:MIPS" <linux-mips@vger.kernel.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCHv4 wireless-next 5/7] wifi: rt2x00: soc: modernize probe
-Message-ID: <20250713071954.GC18469@wp.pl>
-References: <20250712210448.429318-1-rosenp@gmail.com>
- <20250712210448.429318-6-rosenp@gmail.com>
+	s=arc-20240116; t=1752391467; c=relaxed/simple;
+	bh=NF4T7x0KqxjN1Zk8N6FsAYLGGhLudo88bi0zLj313w8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KgnfVcKg+fZ+pnIxQJpHn7ML2IgMz8UFxVhX66X+wCU+2maaZ535d1m7Lrq4t9al029AuTEzzVYuEhCCGch51vdr1d0vnBdzxEniv+bDExk6p9RuXNbIwmb7L64peisVZn8IKZYHaFh7NI2ZYXPLdxgN4XsXsqVcNaRcSPEzbOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m0eG0vZ/; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-6113e68da82so1459069eaf.1
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 00:24:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752391465; x=1752996265; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NF4T7x0KqxjN1Zk8N6FsAYLGGhLudo88bi0zLj313w8=;
+        b=m0eG0vZ/O8b7YuFh2ikSwwEqKxPjCo9UdAPt0TCzsFnYngOGZmiAhRCtNal69VvnXG
+         LjR98MSQYB3dfGpZkvdCAg7zfsUq2tV4cO3jBZS1yEsgOgRZonslLXfvwgrEktkIl0U/
+         8BTlPkIpyj8V3maCQy1bAFOavrMs1mSp1EL9yd5dEBe5Hu/z8Y+rmQsilU5yJcMHvESI
+         3zVfbBY6p6RO63jeSxVyYuWkcKmI4c7nDLD0n3yRR2MpH93Z3HOrIuFT8xpE8W6/Dpoz
+         eXTePah+k5tA2+qVuD2XtTWCGBbKV9VxIqjLs5qn2JR8zdLmMw9c39ASsfcWGsuzhIkW
+         s51A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752391465; x=1752996265;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NF4T7x0KqxjN1Zk8N6FsAYLGGhLudo88bi0zLj313w8=;
+        b=sn0G3u/douR9taY88ft3CgZ5gX0/iNFYHmga6IuCs3sc+P9pN4n+UU+GtMCekdQCNP
+         5hIlUTIyHdGeJZWR0T4W9LWoz35s3ljA1TPecYMN91pE/pIYUACXwLge5zcfQgmLv7rk
+         GiQUwzPhe7ouJmDYGwjNU00Z0xrhJH81OBHVGhqKM92qlSzeZlLFjy357TnqH1rA1Cwj
+         OQpMmNQLCOu61ZV3KRfdFL2Fu6h/6cDviO+xrNnj/er894+gOrSY23kkzb/TouzYSvvT
+         VNGAXX58z7X6p5vGhDWd5ER6Xo6O+hgL9WZ9TlYwl8k0EwmF2m9xc9ju5wskMEVDwq7/
+         cK0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUOzQtlEQG+Y5Ph8RILTXa+m9omT4EJgPuz07V15lWBGm5I7gkmb1bgf9piNs1SxF8XFTtrWCfwKnzK3E0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+UTUBgPGS206tP+hS3jBGmGJyzq2jvUJXevjJfjXyvfhSJPdE
+	RwPnHXL+sCa7qEIyJSJv0RN4Y2mA5FTujP51hILx6mD1PqLryGYB1IIvb4BKCFyzMwKLwJRDGkh
+	25UkYurQZmAaFar6FLEQi2qUX9nubFwA=
+X-Gm-Gg: ASbGnctSznntcs7dHoMEY3xX/9jF3KzHbARdwwIuGe3bIbm43JfMRIWtdxbegK4KZZh
+	mEu6/kIqwCJ8fElYGJP9YujiaPcKZWZTOEY2fmvNjdwcmypclyuP+1Ue6Ns1BQ5LOM7HO+Tdtl8
+	oDfAaedH6DbEMdlJgD/LbItspv4icGjtxeKDOq/FtTXZ/38Q1d1f4XZhNn8BndMGnFkimO36KEW
+	dXm8IGf
+X-Google-Smtp-Source: AGHT+IF4MVlkH5px2xPEDZFHk6dNlX+XsNGMYba1X0b8T0K3Xbl3WyMNlX6CvaCyE1A4AgmNNGss1OBgEQJEirl7H3w=
+X-Received: by 2002:a05:6870:348:b0:2e4:68ee:4f21 with SMTP id
+ 586e51a60fabf-2ff2691ae25mr6065869fac.20.1752391464913; Sun, 13 Jul 2025
+ 00:24:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250712210448.429318-6-rosenp@gmail.com>
-X-WP-MailID: 5d4781cd5bae9ac13802d4c5f972c281
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000000 [MYOB]                               
+References: <20250605175634.16362-1-suchitkarunakaran@gmail.com> <4448980c-d385-45ea-b8c2-b4a0bdde39c9@oracle.com>
+In-Reply-To: <4448980c-d385-45ea-b8c2-b4a0bdde39c9@oracle.com>
+From: Suchit K <suchitkarunakaran@gmail.com>
+Date: Sun, 13 Jul 2025 12:54:13 +0530
+X-Gm-Features: Ac12FXztDpOAEQp2PK_JpoFMZDvk2yr5zsd19V5JVpNovPmjyPli4RSP681BYt8
+Message-ID: <CAO9wTFimpNU+h4XvpRSS5ocKWzVF4G3W8G2NyOMt09VtVdgKSg@mail.gmail.com>
+Subject: Re: [PATCH RESEND] jfs: jfs_xtree: replace XT_GETPAGE macro with xt_getpage()
+To: Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc: jfs-discussion@lists.sourceforge.net, linux-kernel-mentees@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Jul 12, 2025 at 02:04:46PM -0700, Rosen Penev wrote:
-> Remove a bunch of static memory management functions and simplify with
-> devm.
-> 
-> Also move allocation before ieee80211_alloc_hw to get rid of goto
-> statements and clarify the error handling a bit more.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
+On Sat, 12 Jul 2025 at 01:40, Dave Kleikamp <dave.kleikamp@oracle.com> wrote:
+>
+> On 6/5/25 12:56PM, Suchit Karunakaran wrote:
+> > Replace legacy XT_GETPAGE macro with an inline function that returns a
+> > xtpage_t pointer and update all instances of XT_GETPAGE in jfs_xtree.c
+>
+> I'm picking this up, but I simplified it a bit. I dropped the size and
+> rc arguments. size is always passed in as PSIZE and I have the function
+> return ERR_PTR(-EIO) on error.
+>
 
-> ---
->  .../net/wireless/ralink/rt2x00/rt2800soc.c    | 185 ++++++++----------
->  1 file changed, 79 insertions(+), 106 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800soc.c b/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
-> index a19906c35d0a..6f148dec2469 100644
-> --- a/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
-> +++ b/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
-> @@ -18,6 +18,7 @@
->  #include <linux/init.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> +#include <linux/of.h>
->  #include <linux/platform_device.h>
->  
->  #include "rt2x00.h"
-> @@ -130,108 +131,8 @@ static int rt2800soc_write_firmware(struct rt2x00_dev *rt2x00dev,
->  	return 0;
->  }
->  
-> -static void rt2x00soc_free_reg(struct rt2x00_dev *rt2x00dev)
-> -{
-> -	kfree(rt2x00dev->rf);
-> -	rt2x00dev->rf = NULL;
-> -
-> -	kfree(rt2x00dev->eeprom);
-> -	rt2x00dev->eeprom = NULL;
-> -
-> -	iounmap(rt2x00dev->csr.base);
-> -}
-> -
-> -static int rt2x00soc_alloc_reg(struct rt2x00_dev *rt2x00dev)
-> -{
-> -	struct platform_device *pdev = to_platform_device(rt2x00dev->dev);
-> -	struct resource *res;
-> -
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (!res)
-> -		return -ENODEV;
-> -
-> -	rt2x00dev->csr.base = ioremap(res->start, resource_size(res));
-> -	if (!rt2x00dev->csr.base)
-> -		return -ENOMEM;
-> -
-> -	rt2x00dev->eeprom = kzalloc(rt2x00dev->ops->eeprom_size, GFP_KERNEL);
-> -	if (!rt2x00dev->eeprom)
-> -		goto exit;
-> -
-> -	rt2x00dev->rf = kzalloc(rt2x00dev->ops->rf_size, GFP_KERNEL);
-> -	if (!rt2x00dev->rf)
-> -		goto exit;
-> -
-> -	return 0;
-> -
-> -exit:
-> -	rt2x00_probe_err("Failed to allocate registers\n");
-> -	rt2x00soc_free_reg(rt2x00dev);
-> -
-> -	return -ENOMEM;
-> -}
-> -
-> -static int rt2x00soc_probe(struct platform_device *pdev, const struct rt2x00_ops *ops)
-> -{
-> -	struct ieee80211_hw *hw;
-> -	struct rt2x00_dev *rt2x00dev;
-> -	int retval;
-> -
-> -	hw = ieee80211_alloc_hw(sizeof(struct rt2x00_dev), ops->hw);
-> -	if (!hw) {
-> -		rt2x00_probe_err("Failed to allocate hardware\n");
-> -		return -ENOMEM;
-> -	}
-> -
-> -	platform_set_drvdata(pdev, hw);
-> -
-> -	rt2x00dev = hw->priv;
-> -	rt2x00dev->dev = &pdev->dev;
-> -	rt2x00dev->ops = ops;
-> -	rt2x00dev->hw = hw;
-> -	rt2x00dev->irq = platform_get_irq(pdev, 0);
-> -	rt2x00dev->name = pdev->dev.driver->name;
-> -
-> -	rt2x00dev->clk = clk_get(&pdev->dev, NULL);
-> -	if (IS_ERR(rt2x00dev->clk))
-> -		rt2x00dev->clk = NULL;
-> -
-> -	rt2x00_set_chip_intf(rt2x00dev, RT2X00_CHIP_INTF_SOC);
-> -
-> -	retval = rt2x00soc_alloc_reg(rt2x00dev);
-> -	if (retval)
-> -		goto exit_free_device;
-> -
-> -	retval = rt2x00lib_probe_dev(rt2x00dev);
-> -	if (retval)
-> -		goto exit_free_reg;
-> -
-> -	return 0;
-> -
-> -exit_free_reg:
-> -	rt2x00soc_free_reg(rt2x00dev);
-> -
-> -exit_free_device:
-> -	ieee80211_free_hw(hw);
-> -
-> -	return retval;
-> -}
-> -
-> -static void rt2x00soc_remove(struct platform_device *pdev)
-> -{
-> -	struct ieee80211_hw *hw = platform_get_drvdata(pdev);
-> -	struct rt2x00_dev *rt2x00dev = hw->priv;
-> -
-> -	/*
-> -	 * Free all allocated data.
-> -	 */
-> -	rt2x00lib_remove_dev(rt2x00dev);
-> -	rt2x00soc_free_reg(rt2x00dev);
-> -	ieee80211_free_hw(hw);
-> -}
-> -
->  #ifdef CONFIG_PM
-> -static int rt2x00soc_suspend(struct platform_device *pdev, pm_message_t state)
-> +static int rt2800soc_suspend(struct platform_device *pdev, pm_message_t state)
->  {
->  	struct ieee80211_hw *hw = platform_get_drvdata(pdev);
->  	struct rt2x00_dev *rt2x00dev = hw->priv;
-> @@ -239,7 +140,7 @@ static int rt2x00soc_suspend(struct platform_device *pdev, pm_message_t state)
->  	return rt2x00lib_suspend(rt2x00dev);
->  }
->  
-> -static int rt2x00soc_resume(struct platform_device *pdev)
-> +static int rt2800soc_resume(struct platform_device *pdev)
->  {
->  	struct ieee80211_hw *hw = platform_get_drvdata(pdev);
->  	struct rt2x00_dev *rt2x00dev = hw->priv;
-> @@ -357,7 +258,77 @@ static const struct rt2x00_ops rt2800soc_ops = {
->  
->  static int rt2800soc_probe(struct platform_device *pdev)
->  {
-> -	return rt2x00soc_probe(pdev, &rt2800soc_ops);
-> +	const struct rt2x00_ops *ops = of_device_get_match_data(&pdev->dev);
-> +	struct rt2x00_dev *rt2x00dev;
-> +	struct ieee80211_hw *hw;
-> +	void __iomem *mem;
-> +	struct clk *clk;
-> +	__le16 *eeprom;
-> +	int retval;
-> +	u32 *rf;
-> +	int irq;
-> +
-> +	mem = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(mem))
-> +		return PTR_ERR(mem);
-> +
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0)
-> +		return irq;
-> +
-> +	clk = devm_clk_get_optional(&pdev->dev, NULL);
-> +	if (IS_ERR(clk))
-> +		return PTR_ERR(clk);
-> +
-> +	eeprom = devm_kzalloc(&pdev->dev, ops->eeprom_size, GFP_KERNEL);
-> +	if (!eeprom)
-> +		return -ENOMEM;
-> +
-> +	rf = devm_kzalloc(&pdev->dev, ops->rf_size, GFP_KERNEL);
-> +	if (!rf)
-> +		return -ENOMEM;
-> +
-> +	hw = ieee80211_alloc_hw(sizeof(struct rt2x00_dev), ops->hw);
-> +	if (!hw)
-> +		return dev_err_probe(&pdev->dev, -ENOMEM, "Failed to allocate hardware");
-> +
-> +	platform_set_drvdata(pdev, hw);
-> +
-> +	rt2x00dev = hw->priv;
-> +	rt2x00dev->dev = &pdev->dev;
-> +	rt2x00dev->ops = ops;
-> +	rt2x00dev->hw = hw;
-> +	rt2x00dev->irq = irq;
-> +	rt2x00dev->clk = clk;
-> +	rt2x00dev->eeprom = eeprom;
-> +	rt2x00dev->rf = rf;
-> +	rt2x00dev->name = pdev->dev.driver->name;
-> +	rt2x00dev->csr.base = mem;
-> +
-> +	rt2x00_set_chip_intf(rt2x00dev, RT2X00_CHIP_INTF_SOC);
-> +
-> +	retval = rt2x00lib_probe_dev(rt2x00dev);
-> +	if (retval)
-> +		goto exit_free_device;
-> +
-> +	return 0;
-> +
-> +exit_free_device:
-> +	ieee80211_free_hw(hw);
-> +
-> +	return retval;
-> +}
-> +
-> +static void rt2800soc_remove(struct platform_device *pdev)
-> +{
-> +	struct ieee80211_hw *hw = platform_get_drvdata(pdev);
-> +	struct rt2x00_dev *rt2x00dev = hw->priv;
-> +
-> +	/*
-> +	 * Free all allocated data.
-> +	 */
-> +	rt2x00lib_remove_dev(rt2x00dev);
-> +	ieee80211_free_hw(hw);
->  }
->  
->  static const struct of_device_id rt2880_wmac_match[] = {
-> @@ -372,9 +343,11 @@ static struct platform_driver rt2800soc_driver = {
->  		.of_match_table = rt2880_wmac_match,
->  	},
->  	.probe		= rt2800soc_probe,
-> -	.remove		= rt2x00soc_remove,
-> -	.suspend	= rt2x00soc_suspend,
-> -	.resume		= rt2x00soc_resume,
-> +	.remove		= rt2800soc_remove,
-> +#ifdef CONFIG_PM
-> +	.suspend	= rt2800soc_suspend,
-> +	.resume		= rt2800soc_resume,
-> +#endif
->  };
->  
->  module_platform_driver(rt2800soc_driver);
-> -- 
-> 2.50.0
-> 
+Hi Dave. Thanks for picking this up. Is there anything that I need to
+do from my end?
 
