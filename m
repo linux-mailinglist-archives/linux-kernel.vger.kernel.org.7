@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-728975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF5B6B02FF2
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:35:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0FDB02FF7
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 730293A38C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 08:34:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87A5917B5EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 08:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136B81F2382;
-	Sun, 13 Jul 2025 08:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FEC1F12FB;
+	Sun, 13 Jul 2025 08:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o01Y+j/Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KhfAKbyq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E8081E;
-	Sun, 13 Jul 2025 08:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E681EF36E;
+	Sun, 13 Jul 2025 08:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752395693; cv=none; b=T09k8auGf5iW29fh91cVWIQbwg144M3wVOxx8DtH/w8xiJSLSge8FdnoSxftwUcyEwk2sZYO6NVfutl9LeDBgOYzmjaDgcg3TVKAY7duajy2Dzu5bA/ZlnAyhBWfBbGXk+T1OVyRhUmG7TgbwhCXrInPAcX6X+3HjTDvvqpEgAY=
+	t=1752395835; cv=none; b=BjewGSZ/+0h2PUv9GBnDXl04WqLJ+m/W6vzz1XK+pEp4y9sYvt7m57oWpH57Czbe/Qsn+wCHssxJX5/ajWHUKaRB5wL3g4wKlyLwQFszVQdTwX0MxYlWWJcF1ijpPy0w7hH+0/QsVJHytKd/BDVkkcby7/6NmYdwhgKOGljR9AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752395693; c=relaxed/simple;
-	bh=I0ovE260u/gC1Up9amFDoKnv8ENJK4Lp5nCpuguLc8I=;
+	s=arc-20240116; t=1752395835; c=relaxed/simple;
+	bh=tCn/GrV9aszlId7gS/rKno0Y7spGuGu52u2u8jFFXys=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sVNHvEWH/LXrhFg+k5eq8XMf/RiRyg4CBOduVsi2UBFUMkhtPXgji3kGx263VfCOGL1oc0fe/2tBEZ8OlseE8hz53ccccWj09Iw7W8etST/varquTgQ9OVg3sI5ulZsPIQR0tYfkCoDTWzvMTmWik7aBWjR4aJuBWFVu0wJe/sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o01Y+j/Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E8E1C4CEE3;
-	Sun, 13 Jul 2025 08:34:49 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=j+gB9yIsrL9CJWvKjnaCq5xFkuGKMArvJt8tmXw3DcotluM0tjy602OiNgv8fMNMSE6l8txgDLKftYBKQ23neTbG+rCl8Nw0mcPaCQ5oJr/rm2YFVt9fkxfNDGNteLqthiQjBtoDZLxrw0Ta5nwzCeVnX0UQYshxa5wqpNtHvMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KhfAKbyq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FFA4C4CEE3;
+	Sun, 13 Jul 2025 08:37:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752395692;
-	bh=I0ovE260u/gC1Up9amFDoKnv8ENJK4Lp5nCpuguLc8I=;
+	s=k20201202; t=1752395834;
+	bh=tCn/GrV9aszlId7gS/rKno0Y7spGuGu52u2u8jFFXys=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=o01Y+j/QO7DPCyhRI+BNpv1/fcPAnRTbIzzkdgMlxXFdD9JEWXJ2YhIYH/fwi/5cM
-	 H5Si5YOoGTPTI3WNxN/7qam/iRaskRodl0/ZBrXMQDSL7uGtm9f6yoQ3hziQTnz4DM
-	 UEPz2qDHVRbWB85ltXTCSBYZtMGT2F8doXi0YEg16/pEf+wFd0RHCGd15YaB4ILrAy
-	 4oFpWwuov1bfyX6h0k5DG9yQIjTBcsZpJxrV74KP7d6fYuggzsN5yHpdQj34etHgGl
-	 +/etx1Fa4jTJmc3jtgc1PWLpirsYbn3ZLkVQAqx6d5y5uHrkQcJuvutRjEWuVJists
-	 b8PdogeY7+9Fw==
-Message-ID: <c9887764-8085-4abe-9188-9690ea8b5191@kernel.org>
-Date: Sun, 13 Jul 2025 10:34:47 +0200
+	b=KhfAKbyqI8BmLdtOcSLrH4WbNY57A3RyKLUnP8dhWquM4/H/K/mpWFo0Q27sShGdX
+	 jxo5oRxBDebsIC4BlIfmxgfkmYC6seYt2HXNK3dgkv7APgHFplKAmo1RqButyY7MDI
+	 uBjPLvwfWxbKh0gHJqubuN5JYudHOaFQCjGgKI6YX7PEd1iUrLX6XUXzVwej7jVkDC
+	 XqN1JVW9KycsqnE0CqvF65lM5fEzvrp9quyNTAGLyvpuVItLD88CD6MilrDcxu7rju
+	 FXEtw0T+tgQm/Wodubjdu3X/d5KpiUi53DkUnwM3auS9ahetmqV/jYqliZVSZMsRez
+	 +KZeheT1dvz2A==
+Message-ID: <b6259b4c-fb65-4494-bd0c-8bb8a6bd1b86@kernel.org>
+Date: Sun, 13 Jul 2025 10:37:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 1/3] dt-bindings: interconnect: Add EPSS L3 compatible
- for QCS8300 SoC
-To: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>,
- Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Sibi Sankar
- <quic_sibis@quicinc.com>, Odelu Kukatla <quic_okukatla@quicinc.com>,
- Mike Tipton <mdtipton@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250711102540.143-1-raviteja.laggyshetty@oss.qualcomm.com>
- <20250711102540.143-2-raviteja.laggyshetty@oss.qualcomm.com>
+Subject: Re: [PATCH 1/4] dt-bindings: brcmstb-hwspinlock: support for
+ hwspinlock
+To: Kamal Dasu <kamal.dasu@broadcom.com>, andersson@kernel.org,
+ baolin.wang@linux.alibaba.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, florian.fainelli@broadcom.com, ulf.hansson@linaro.org,
+ adrian.hunter@intel.com
+Cc: bcm-kernel-feedback-list@broadcom.com, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+ Kamal Dasu <kdasu@broadcom.com>
+References: <20250711154221.928164-1-kamal.dasu@broadcom.com>
+ <20250711154221.928164-3-kamal.dasu@broadcom.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,21 +106,91 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250711102540.143-2-raviteja.laggyshetty@oss.qualcomm.com>
+In-Reply-To: <20250711154221.928164-3-kamal.dasu@broadcom.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/07/2025 12:25, Raviteja Laggyshetty wrote:
-> Add Epoch Subsystem (EPSS) L3 interconnect provider binding for
-> QCS8300 SoC. As the EPSS hardware in QCS8300 and SA8775P are same,
-> added a family-level compatible for SA877P SoC. This shared fallback
-> compatible allows grouping of SoCs with similar hardware, reducing
-> the need to explicitly list each variant in the driver match table.
+On 11/07/2025 17:42, Kamal Dasu wrote:
+> From: Kamal Dasu <kdasu@broadcom.com>
 > 
-> Signed-off-by: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
-> ---
+> Adding brcmstb_hwspinlock bindings.
+> 
+> Signed-off-by: Kamal Dasu <kamal.dasu@broadcom.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+
+missing hwlock prefix
+
+> ---
+>  .../hwlock/brcm,brcmstb-hwspinlock.yaml       | 36 +++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/hwlock/brcm,brcmstb-hwspinlock.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/hwlock/brcm,brcmstb-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/brcm,brcmstb-hwspinlock.yaml
+> new file mode 100644
+> index 000000000000..b49ead166b1e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwlock/brcm,brcmstb-hwspinlock.yaml
+> @@ -0,0 +1,36 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/hwlock/brcm,brcmstb-hwspinlock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Broadcom settop Hardware Spinlock
+> +
+> +maintainers:
+> +  - Kamal Dasu <kamal.dasu@broadcom.com>
+> +
+> +properties:
+> +  "#hwlock-cells":
+> +    const: 1
+> +
+> +  compatible:
+> +    const: brcm,brcmstb-hwspinlock
+
+Please use SoC specific compatibles. Then also filename will change.
+
+Compatible always goes first. See 99% of other bindings and DTS coding
+style.
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - "#hwlock-cells"
+> +  - compatible
+
+Same here
+
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    hwspinlock@8404038 {
+
+hwlock@
+
+> +        compatible = "brcm,brcmstb-hwspinlock";
+
+And this you got right...
+
+> +        #hwlock-cells = <1>;
+> +        reg = <0x8404038 0x40>;
+
+But this not. Use order from DTS codinh style.
+
+> +    };
+> +
+
 
 Best regards,
 Krzysztof
