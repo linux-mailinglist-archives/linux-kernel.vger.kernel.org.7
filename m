@@ -1,157 +1,92 @@
-Return-Path: <linux-kernel+bounces-728904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C929B02EAB
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 07:11:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F562B02EAD
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 07:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01AB27ABD44
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 05:09:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2ADA189BAA1
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 05:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B9E19AD8B;
-	Sun, 13 Jul 2025 05:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z7ROsNEY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EB419C54B;
+	Sun, 13 Jul 2025 05:16:04 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B05433B1
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 05:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A50179A7
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 05:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752383467; cv=none; b=UfL+kHTTzS/dCGaFAl4js80YCRHy/eAglQ07jvMoVT+v88VNxRGezJ3Y/hu/dXxgqHH8V4zjD+/lugeUfdbf9vR9ceTZ9j8FRXgcLQBajRDBjJxk4PAr8ExA3FyK8JC2pYF6o3/RkIiU2+PyMQ+xkwMdbhWgijOu/lKNgwubdTE=
+	t=1752383764; cv=none; b=aRZrMAfbUMqwEH1qpasMN4fQe9uqN27/CIZtBUpg0j+Wb9RRjD2Ibn7NZOVsbRF8/pMHLGGhZ7jccCLdZ29kumyD61IEsaMFHOjw/v5vynctI3vRfmv2cSuNu120AnEyGa2zPwItAJGWoek7y/KABdCoF316on3IWvZUXKjcets=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752383467; c=relaxed/simple;
-	bh=fzQhQxxcINMwQn7nMRVM6TE8GI5gfDJ9zcHTCJjF9jI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JmC4ftrBiT90zOelDiROUXHE/LFd05yXmvmzs9e1qpaPwHCAoPq4LCxq1mxeoPkADBOGUPN6vnknUDrYN/+TVYiItRC0EKemscfKWAGD9pbvbRYB+IuVV0IJMEC8kGa+a4DcbSOzjND6FRthviFNVbJlje9X7oPETND7Tm07e+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z7ROsNEY; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752383464; x=1783919464;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fzQhQxxcINMwQn7nMRVM6TE8GI5gfDJ9zcHTCJjF9jI=;
-  b=Z7ROsNEYzRo9IatDoKuSfQmJ0qWhut1LrG4ConU+lXzty2r4YB1BN15K
-   86ygVBIx8OwALNoDCeWqgXM3nnhtGmW9/DiEphpc9m+bMxH1iF5MEXtvY
-   VTcq+hFXspxXz4CLRtrAc+It8byKqgdH6y6ru4VUKzYK7PWdsBxGIrfk7
-   GuMVeCn/Ap4ABHWh+ydzMzfqoiE684RbzGnoYg4ruk8omL1VV2QGdNpzX
-   eKFAJSa7M+EBS/9EKy/wMKkllo7fDTqi7BOaEuxxy7JrtXFwvhv7fiyjv
-   G0zOXHvxdGElU8doN0L2s1OaT5zkXq+SpNV1KS2Lz2DE+fOjhYoFLvVqq
-   w==;
-X-CSE-ConnectionGUID: VUakJA7ISbOz2uiQ6rNNYw==
-X-CSE-MsgGUID: vBs2ThjFSFqflSaFqY2W2w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="77156594"
-X-IronPort-AV: E=Sophos;i="6.16,308,1744095600"; 
-   d="scan'208";a="77156594"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2025 22:11:04 -0700
-X-CSE-ConnectionGUID: lYgPMPK1T7u3wTMvj+zltg==
-X-CSE-MsgGUID: fC5whkkXRcKFXLcfNvvVmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,308,1744095600"; 
-   d="scan'208";a="180356311"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 12 Jul 2025 22:11:00 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uaozK-0007tf-2B;
-	Sun, 13 Jul 2025 05:10:58 +0000
-Date: Sun, 13 Jul 2025 13:10:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chia-I Wu <olvaffe@gmail.com>, Boris Brezillon <bbrezillon@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v2 2/3] panthor: save task pid and comm in panthor_group
-Message-ID: <202507131246.VXxAzjGd-lkp@intel.com>
-References: <20250713030831.3227607-3-olvaffe@gmail.com>
+	s=arc-20240116; t=1752383764; c=relaxed/simple;
+	bh=KaX8JZDBQRrknH5V1BiCsjLxPQHPtL4K/I4ePVO5df0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=snxaE7G9IUcTdJQVnIiYgAyq8LHa94el6WW1EUjgQfZQh8TJ5n0w0uqsKLlEQOb8TrpDlkEr3OCNrvmcyFKCjl0tohyxOgZgzr/ELuHktsOi1CAsSUDZoqgtbF4AQ1wKD9yA05T2NCoj3Wezt6Gh6PbOCezwHi+QhAyPUdcjpmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-876a65a7157so309289939f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 22:16:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752383762; x=1752988562;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tgpX6hD7GrjQcqjiIlbZW6vXkUDki5U8wW6v/gISqd0=;
+        b=FqteCPK+kpf327KXSdBsLkknVioZnHHfRCfZj24hhdw4PIrtfkNnz8acfhHy5zxdFD
+         7Y4EEbQKN4PfwcwHgYmBQYGQXyOwZW04Gpee7yAnb6KGMa4E/JZuLqQhr01uKIOPLmZ8
+         4jiO4PykmPWSCd1RmY08hgQG9xSQzD7ffup4D+x/wBOza8OHEfif6PDth6S3Bik0H3kK
+         9b3/vlXqixaf1vNOqzFTl0Ww8+LPsczyF27g8xCqTHMBsy2WW7uGtAp24XIWxmhhvHcM
+         ct4sY5Lw6sUwRda6+Tv+d0OUUP9wsuop+d75qO0sG8Oo5V74FN0Yaxp1jqxrdCvflynA
+         RFNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXW9mYBGBE3yu0+5YAs8AuVT/QH36qhfqRxd+FlOs1UwJ4SeT7x0N0yES4flk0f+2EZul7VG4rmhKItvQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrmipH8FhTHoOOI8wrPga9SL7X4PPGBkfLUp9w4iITHTKv9MS3
+	EwPZehbQEJ44UnX6ateyzFa0fp4mFzN2jgUbsEmEmUbRt4lf/+iGO+j22VP/yxZ8xBv49793u2n
+	s6nANd4nr7RDq3euW/5Jmz1aq5+SRG0Sgk5LbaxgfHdzyEUOYep9kYIP5iD0=
+X-Google-Smtp-Source: AGHT+IE5TAj6ixNXi3mwMFFkvM1B20dWMHYj8zdo+DgdUZ+dVVXcK6/2wL3n9BrJ2Wqj1AVmU6DrbMY60n+7W6uE/VpW/4b4J7xJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250713030831.3227607-3-olvaffe@gmail.com>
+X-Received: by 2002:a5d:8553:0:b0:86a:441:25ca with SMTP id
+ ca18e2360f4ac-87966fd24aemr1318525839f.6.1752383762008; Sat, 12 Jul 2025
+ 22:16:02 -0700 (PDT)
+Date: Sat, 12 Jul 2025 22:16:01 -0700
+In-Reply-To: <6824d556.a00a0220.104b28.0012.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68734111.a70a0220.3b380f.0020.GAE@google.com>
+Subject: Re: [syzbot] [fs?] general protection fault in do_move_mount (3)
+From: syzbot <syzbot+799d4cf78a7476483ba2@syzkaller.appspotmail.com>
+To: brauner@kernel.org, cem@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, lis@redhat.com, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Chia-I,
+syzbot suspects this issue was fixed by commit:
 
-kernel test robot noticed the following build warnings:
+commit 3b5260d12b1fe76b566fe182de8abc586b827ed0
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Fri May 23 23:20:36 2025 +0000
 
-[auto build test WARNING on next-20250711]
-[also build test WARNING on v6.16-rc5]
-[cannot apply to linus/master v6.16-rc5 v6.16-rc4 v6.16-rc3]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+    Don't propagate mounts into detached trees
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chia-I-Wu/panthor-set-owner-field-for-driver-fops/20250713-111248
-base:   next-20250711
-patch link:    https://lore.kernel.org/r/20250713030831.3227607-3-olvaffe%40gmail.com
-patch subject: [PATCH v2 2/3] panthor: save task pid and comm in panthor_group
-config: i386-buildonly-randconfig-003-20250713 (https://download.01.org/0day-ci/archive/20250713/202507131246.VXxAzjGd-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250713/202507131246.VXxAzjGd-lkp@intel.com/reproduce)
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=160a018c580000
+start commit:   bec6f00f120e Merge tag 'usb-6.15-rc6' of git://git.kernel...
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b9683d529ec1b880
+dashboard link: https://syzkaller.appspot.com/bug?extid=799d4cf78a7476483ba2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17eb1670580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17794cf4580000
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507131246.VXxAzjGd-lkp@intel.com/
+If the result looks correct, please mark the issue as fixed by replying with:
 
-All warnings (new ones prefixed by >>):
+#syz fix: Don't propagate mounts into detached trees
 
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:317 Excess struct member 'runnable' description in 'panthor_scheduler'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:317 Excess struct member 'idle' description in 'panthor_scheduler'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:317 Excess struct member 'waiting' description in 'panthor_scheduler'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:317 Excess struct member 'has_ref' description in 'panthor_scheduler'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:317 Excess struct member 'in_progress' description in 'panthor_scheduler'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:317 Excess struct member 'stopped_groups' description in 'panthor_scheduler'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'mem' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'input' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'output' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'input_fw_va' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'output_fw_va' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'gpu_va' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'ref' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'gt' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'sync64' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'bo' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'offset' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'kmap' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'lock' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'id' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'seqno' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'last_fence' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'in_flight_jobs' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'slots' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'slot_count' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:489 Excess struct member 'seqno' description in 'panthor_queue'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:707 Excess struct member 'data' description in 'panthor_group'
->> Warning: drivers/gpu/drm/panthor/panthor_sched.c:707 Excess struct member 'pid' description in 'panthor_group'
->> Warning: drivers/gpu/drm/panthor/panthor_sched.c:707 Excess struct member 'comm' description in 'panthor_group'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:843 Excess struct member 'start' description in 'panthor_job'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:843 Excess struct member 'size' description in 'panthor_job'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:843 Excess struct member 'latest_flush' description in 'panthor_job'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:843 Excess struct member 'start' description in 'panthor_job'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:843 Excess struct member 'end' description in 'panthor_job'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:843 Excess struct member 'mask' description in 'panthor_job'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:843 Excess struct member 'slot' description in 'panthor_job'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:1770 function parameter 'ptdev' not described in 'panthor_sched_report_fw_events'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:1770 function parameter 'events' not described in 'panthor_sched_report_fw_events'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:2663 function parameter 'ptdev' not described in 'panthor_sched_report_mmu_fault'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
