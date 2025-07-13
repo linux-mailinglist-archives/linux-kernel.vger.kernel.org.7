@@ -1,135 +1,89 @@
-Return-Path: <linux-kernel+bounces-729212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C15B0335D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:03:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F67B0335E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2FF6171FB3
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 23:03:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98E93171F09
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 23:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776E81FBEB9;
-	Sun, 13 Jul 2025 23:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2B31FECB4;
+	Sun, 13 Jul 2025 23:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DUSTJ4Po"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O5ynAb0o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B07F211F;
-	Sun, 13 Jul 2025 23:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8D9211F;
+	Sun, 13 Jul 2025 23:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752447804; cv=none; b=L8OLpaUu6O7Im/MgvL/56XPCbv2FR8/iA39AzIXRH1Ezy6efJot+dmNZlGTBpiQkJAPueBhtgRlD/apXCnbkkaTdIMjYInnLg+0kq6D+eqtFSEn7rOcEGoao4LcgOG/yHxoPWexVtZ9di7QoExm2otmAAQQ9baXE8Aa/diy0N2c=
+	t=1752447896; cv=none; b=h466CnN7GDlxQ0eCYpgvyrFD2fTKwCQplqosNdWPMWK/W5ao1CW0jbtsJmzAZpssHbkkSApcq+pSo6fCj7m84teTgARrxJkT8Z3HSxorK1c7oEeiV0Vd4lhsytI1psXxpadAmKb9kvJMdukA1F16jgcB6EklktfIBtJAmgzqRBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752447804; c=relaxed/simple;
-	bh=9kzrBuWIdjq+hahwO7p1ufYaiez3/2LISo/W7awimbg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b59zt748xlHh9E/rVHQocoAIXWcS1Xo6dg5MK54NVOU0fxtlEWruJqAAU2Ba0TkEXgwFX1XARlLYWbNy86ZGDCcHHoUHgTrC9pCjJd0XoDlmqB3IUMvWQzXCTagnIDnX70vrSGk8Gjg9+tFYBsjvPpoDWErT1sc4B+Ep0alf5jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DUSTJ4Po; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a52874d593so3172919f8f.0;
-        Sun, 13 Jul 2025 16:03:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752447801; x=1753052601; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9kzrBuWIdjq+hahwO7p1ufYaiez3/2LISo/W7awimbg=;
-        b=DUSTJ4Pojye8wSeS6P0lxLKWFR4Uy9Zbt/+abKNAzqQnDURri5GJP9gVrecDeqpNNk
-         gjLGI/x8+RZ8zYvDDXJTzVAxc1OFA9PlaJGhg8Miowrf5ZatD66rgCKVo0iSnTmpTBrR
-         b5fVIZfBOC32Wz+D90ErqjDy5jBLp4bsvHh7fA1XuS0hAXf0i1dEQq8bLCOTtbYza+MD
-         MonB/5q0Do7STIHWKqJnfIyRuJsAyBfdUQOD4pbYdemiq9A+uK9FghGDDPbEVIB5vBLX
-         oicfd0EIcMREG8tzOV+lgGjbBrfRH9M3DcvhiQOjku0G9DMD2AFRFEWKe16TurmpSEUb
-         7PWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752447801; x=1753052601;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9kzrBuWIdjq+hahwO7p1ufYaiez3/2LISo/W7awimbg=;
-        b=PMsHjoGidq8tjyX7bPXGaaFCG1kWjL7Hh2GOQ9rvjsPC6K6tj8eLeXOeBjQf2C4g1u
-         MDGfb3+/R6wWdCKqV1ApwFDHzmd3AeMSZGc/fkm95N5E7lze/uCqXjyXka75r2cqHQ+c
-         YLuI2ypdrEHKSOIF2gd9b82QgbIQ8mv1/h2IlDlFdDx52dOmRcMpYpkNHibjnf/jgWfk
-         MQ/R3EIixXc1f+KEiLsUkfdMWsCI1zFT7hwy4qKf5V8RPn6b5qmhnBGn3wjqDl1b/iip
-         biW3vYCnxklqtwD9cQd7Q1VkauZriwiJZc+c1W5RheXDF8phJW4IAr2QjcSAiLODkhGM
-         ouMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMBc7H46/Vh6KMmzYUS8BEZx2Ro7ehMaSWCgVSMrIpUumg3wn8CBjHLgY1SbuvcOWugdM=@vger.kernel.org, AJvYcCXXQO8JreQ4AOO9FdYHle88nFZGuSPkUVez4+NN2Rg6kTi3alVrcV2Cfc3qxpCjry0YeowJttQXp/ku/ng7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5Ibqp523W/8IocztxaIttV8XA5cmgVzw0ZHqJbtqBMGTNE18x
-	sD3W9Ku/iPm7NeqncNVDuYzMy1rM3kmGBUv/NEkrulXWKf+LBxCGWzRvVfoB8vOqI/lFzS5aU8v
-	pdoBYgbNKTn0WXZ0GyrMvxSeSjF5bfI4=
-X-Gm-Gg: ASbGnctiS8pdP9lu6w83dFD7UdAPHcz+RAAVXVDrKIpbzIVMCs1cFReNmxgHCECumLh
-	7ePkitLuZSBNKfFWkWLUKtX9Tm8NAji6dikxkYEsldMrFKGdrGM5iqKd5J8CdFu8AKp2I7f/SHR
-	I7wDgJ5ukb+D/OPOGIDHS0QM0BVaZtW/FJSuEJ0FUBM6ZqYw5vArov8fogBmoorBhMwzNqMMBGO
-	vvZF5DcUQlEKIZ2rcCFAwD5LKaYOSsJjOyw
-X-Google-Smtp-Source: AGHT+IF6kv1tzrjLlZieXma2s0+pFwpXKasLaf+fuAOH/Xs1QTqBgCCUt8qkNrK3Kfor1K1glVQiKZj/bvtQn2lir/E=
-X-Received: by 2002:a05:6000:26cc:b0:3a4:efbb:6df3 with SMTP id
- ffacd0b85a97d-3b5f187d0b9mr9226282f8f.10.1752447801355; Sun, 13 Jul 2025
- 16:03:21 -0700 (PDT)
+	s=arc-20240116; t=1752447896; c=relaxed/simple;
+	bh=Fqv0BupB3rYT98G+vYDHwAetAEXFNiBr8pDtjkgsfgw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=Zw6JJlKfmfKFpqaZ+O4+w6K5blExWExygtIkHS842MOnhIMkdGq3oVVvZN/rfN4VhOJIKqfaEvXvmAXw8yyHeZapDHAyzljtAxb8zNLU9U79ol+tbVtym3eGmu06HMnlrMXHxqbBZkINzD2+dSPMeUmafeV1eWYy03J0AniapxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O5ynAb0o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FE21C4CEE3;
+	Sun, 13 Jul 2025 23:04:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752447896;
+	bh=Fqv0BupB3rYT98G+vYDHwAetAEXFNiBr8pDtjkgsfgw=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=O5ynAb0oin4/w5zsKmM014gRASkjBtzG6QKhMr1dmJnAAfbBLy7B8M/d5ZpbpmnGn
+	 59MkeDCjpdjhFl7GnJqW8JhvltHesSwzO+Srj1uOQ1o37OTTsMKVlXoaWuUsZ6zqgG
+	 jKy/EQBnoKyBoOmoMTMipN2x2swtlLo4gSpJqt8Vzl/ofg/9A2nyeuhom04L35lPPZ
+	 JaxUefMWwr0O3SmsaOo5N+gbUvnc3TB1fW7DGgjzEAHl+tH4fGfZErjFE29oVSmISe
+	 xVcqB+NMZDOQDK+VSmaJ3VILEv8JhEft9Z6Ks7yj/wcj4BHzxeDFoRmDEEbpZsx7jD
+	 53bqSvTsIkF4A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <7e6c41e47c6a8ab73945e6aac319e0dd53337e1b.1751712192.git.sam@gentoo.org>
- <c883e328-9d08-4a6c-b02a-f33e0e287555@iogearbox.net> <87a558obgn.fsf@gentoo.org>
- <CAADnVQJTHnOVX9uBtTS_7bfiS2SoDL4uL7wJWd0CzbXf08_dyg@mail.gmail.com> <871pqjofzn.fsf@gentoo.org>
-In-Reply-To: <871pqjofzn.fsf@gentoo.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Sun, 13 Jul 2025 16:03:09 -0700
-X-Gm-Features: Ac12FXyqmiLx9EQrPW_JuefqB-ao8VsJArBs327U_NfoibcrHUDDD-Z9NFNkYO4
-Message-ID: <CAADnVQLjjLoT6v3kPtVseVqPi09SU8n4buP-au2X-4PzQ6We_g@mail.gmail.com>
-Subject: Re: [PATCH] tools/libbpf: add WERROR option
-To: Sam James <sam@gentoo.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Quentin Monnet <qmo@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 14 Jul 2025 01:04:50 +0200
+Message-Id: <DBBAXIVZPB1K.2I3V9B4WNNBPA@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>, "Tamir Duberstein"
+ <tamird@gmail.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] rust: init: remove old workaround
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250709-init-remove-old-workaround-v2-0-a3b1be8fd490@gmail.com> <20250709-init-remove-old-workaround-v2-2-a3b1be8fd490@gmail.com> <CANiq72=6n0+uLJ-2_LGKW08r-uVKGbdkofoC09xHwfbwDsRzNQ@mail.gmail.com>
+In-Reply-To: <CANiq72=6n0+uLJ-2_LGKW08r-uVKGbdkofoC09xHwfbwDsRzNQ@mail.gmail.com>
 
-On Sun, Jul 13, 2025 at 3:58=E2=80=AFPM Sam James <sam@gentoo.org> wrote:
+On Sun Jul 13, 2025 at 10:33 PM CEST, Miguel Ojeda wrote:
+> On Thu, Jul 10, 2025 at 12:49=E2=80=AFAM Tamir Duberstein <tamird@gmail.c=
+om> wrote:
+>>
+>> `Error::from_errno` is `pub` since commit 5ed147473458 ("rust: error:
+>> make conversion functions public"), thus remove this workaround which is
+>> no longer needed.
+>>
+>> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 >
-> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+> This seems the same as this one applied a few weeks ago:
 >
-> > On Sat, Jul 12, 2025 at 11:24=E2=80=AFPM Sam James <sam@gentoo.org> wro=
-te:
-> >>
-> >> Daniel Borkmann <daniel@iogearbox.net> writes:
-> >>
-> >> > On 7/5/25 12:43 PM, Sam James wrote:
-> >> >> Check the 'WERROR' variable and suppress adding '-Werror' if WERROR=
-=3D0.
-> >> >> This mirrors what tools/perf and other directories in tools do to
-> >> >> handle
-> >> >> -Werror rather than adding it unconditionally.
-> >> >
-> >> > Could you also add to the commit desc why you need it? Are there par=
-ticular
-> >> > warnings you specifically need to suppress when building under gento=
-o?
-> >>
-> >> Sure. In this case, it was https://bugs.gentoo.org/959293 where I thin=
-k
-> >
-> > I don't recall it was reported on bpf mailing list.
-> >
-> >> it's fixed by
-> >> https://github.com/libbpf/libbpf/commit/715808d3e2d8c54f3001ce3d7fcda0=
-844f765969
-> >
-> > and looks like it was fixed by accident, so..
->
-> I'll note that I've sent patches that have been merged for these
-> before. It's just that they're sensitive to optimisation level and prone
-> to false positives. Especially with e.g. -Og.
+>     https://lore.kernel.org/rust-for-linux/20250526152914.2453949-2-ojeda=
+@kernel.org/
 
-Yeah. Compilers do produce false positives and, like any tool,
-any warning is not authoritative, but we prefer people reporting
-them instead of silencing and moving on.
+Oh yeah you're right, thanks for the heads-up! (seems like I forgot the
+patches after applying them so early in the cycle :)
+
+---
+Cheers,
+Benno
 
