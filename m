@@ -1,204 +1,179 @@
-Return-Path: <linux-kernel+bounces-729041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FD0FB030F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:16:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA21B03102
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D167189A00E
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 12:17:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B547179EB1
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 12:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2793F22DFB5;
-	Sun, 13 Jul 2025 12:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D84227BB5;
+	Sun, 13 Jul 2025 12:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uo/2tBZ/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=it-klinger.de header.i=@it-klinger.de header.b="tQuPvUIO"
+Received: from www571.your-server.de (www571.your-server.de [78.46.3.230])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770FB8F4A;
-	Sun, 13 Jul 2025 12:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE3314A8E;
+	Sun, 13 Jul 2025 12:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.3.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752409008; cv=none; b=ZfzqAKiiLrrklcbBVQ8X2I5LCCujExgoCtCZrbDHsFksp8vt2EXsVAXbr82jftcGYpLKGLdgxKfP3nHklsS6+0kn98BjLLXPho2oKXThQFok2JtQ+6nOe4C7w7YssCjSLHCJbkzz2q+OJ2vnnSX1ZXr7DcYTMTS0sbSVyADP42o=
+	t=1752410713; cv=none; b=b06/t+Llww6Gx9a21kKj4HX9AzHS2mxOP5SLCCyejFcnJ6k5B8R+X2kROEdORUabo2YwJVRSgF5ZthNk0Gip7jOiERKO9gtYoR4CkX45N7bk58dzyVRT44l+H+4/oqUu8e+mSc+czRHE/CTuJpCbBlrhucjoq08Er3cie++iQXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752409008; c=relaxed/simple;
-	bh=4wACIZ7jO0V7Vo4t1TayqDDK2Ldzk66J0NbQImHwQHs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=rU4YS8WJOR9WLkOU4y+CQyzsHepwkvGiGBaR0hPtsNkxvQ/gsVZFZodCMxViVdd6H+T4VJRNaqTTH9gr+sTzugYXPq5wD6X4RuEgDfzMzp86BR2BqF54buTYFFl1zEXYLNTBVNDXsQATTQY1clD0PZcj2BmQ5KhVnZsMWFQg9v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uo/2tBZ/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86AF3C4CEE3;
-	Sun, 13 Jul 2025 12:16:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752409007;
-	bh=4wACIZ7jO0V7Vo4t1TayqDDK2Ldzk66J0NbQImHwQHs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uo/2tBZ/1li7+8/v2GolNJ5d4oH8EuD5YghDpmT8uLsR7xQkZaksxYWvH2Og4OUE7
-	 AmYSXPHJQj35ZkDF1eQb0/OrOLpO2b4/L9Idvjshlyjft8RrKD8BN050dmeQaVB2Cq
-	 IeY8iRFua66IpIVgnthMGoxV9ymirYNQdUwCbJSBPgVLLk2la+nNfawmGN1/uYfnIk
-	 6gjUk9Q1MGRl/k352VulQDKHQkoeBLSrOv/Ce1JvXFh46w30Djv+mt9+JxO1orfF9n
-	 Z7TUCRNeH7kLdNx1eik8euuCyf/kzUEijK4RBMi66lDtxKBobZ+tDb1WLpVWGwwFGe
-	 2lvAOFHoFPdjQ==
+	s=arc-20240116; t=1752410713; c=relaxed/simple;
+	bh=rZBU0y2jqmoOWM0aYmQwhYLn+mZVkvm4nsRsDyNDSDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xx825JZiZLJNGUzZ6E67s7A3Hc+dMqC9x1QcYKS3qtiXr8GeQ88Gbe7ATjC+ziccW952OlZaWGQjV6OQYt/oc8r0D2M1YgX1Mf2eDsCMlbGfysdtv90ts0mAPeqCAbBIFOgiuPdT1pj9+VoEzvt9AUEbDZiRX4f87gyki25nFCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de; spf=pass smtp.mailfrom=it-klinger.de; dkim=pass (2048-bit key) header.d=it-klinger.de header.i=@it-klinger.de header.b=tQuPvUIO; arc=none smtp.client-ip=78.46.3.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=it-klinger.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=it-klinger.de; s=default2502; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=F8eV3Cnz2Uq9dxl+U8/UhYbRCkKQscIpnZCFP+5lLkU=; b=tQuPvUIO6eXZZufHyy1NBfmPmw
+	SgopnYzRxn9D1KiGZft2/znqKB2Lb1Brhfha4GGX+iMjtLeYgznDmMI+HRPP1hmQWARqEc1yvsxUx
+	a6XgnkKU8UycGghh03ETQ9Q7pFl1pTZxIyRUlu8nWbR+11uhxH64l6YgBlp1tPQ2CaAKDBN6Ae5Ut
+	YBKgbPKvC4ImGYaziI8eOER8r3B8OQV6jzfcTsNfwrPI6YXiNFdAKCoGIP3P4VKPxa/1RHBAOnTq6
+	arsX39GHrOMkndEf4oR06FOrSWErDzorFLndyUXCNGW6fYRMtkLpt9Rqu+xaUJzPiOQXrpUlCzoYd
+	l6N+Nx3A==;
+Received: from sslproxy08.your-server.de ([78.47.166.52])
+	by www571.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <ak@it-klinger.de>)
+	id 1uavdp-0003bz-0J;
+	Sun, 13 Jul 2025 14:17:13 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy08.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ak@it-klinger.de>)
+	id 1uavdp-000B4b-1Q;
+	Sun, 13 Jul 2025 14:17:12 +0200
+Date: Sun, 13 Jul 2025 14:17:11 +0200
+From: Andreas Klinger <ak@it-klinger.de>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: proximity: srf08: use stack allocated scan buffer
+Message-ID: <aHOjxzNqW8Yf2kR7@mail.your-server.de>
+References: <20250711-iio-use-more-iio_declare_buffer_with_ts-6-v1-1-25c70b990d6c@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="SiPHZew/0PDaT8Cd"
+Content-Disposition: inline
+In-Reply-To: <20250711-iio-use-more-iio_declare_buffer_with_ts-6-v1-1-25c70b990d6c@baylibre.com>
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27698/Sun Jul 13 10:39:53 2025)
+
+
+--SiPHZew/0PDaT8Cd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 13 Jul 2025 14:16:42 +0200
-Message-Id: <DBAX59YKO0FV.ANLOWRHDDS92@kernel.org>
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Danilo Krummrich" <dakr@kernel.org>
-Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn Helgaas"
- <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-X-Mailer: aerc 0.20.1
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com> <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org> <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com> <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org> <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org> <DBAWQG1PX5TO.6I2ARFGLX88N@kernel.org>
-In-Reply-To: <DBAWQG1PX5TO.6I2ARFGLX88N@kernel.org>
 
-On Sun Jul 13, 2025 at 1:57 PM CEST, Danilo Krummrich wrote:
-> On Sun Jul 13, 2025 at 1:19 PM CEST, Benno Lossin wrote:
->> On Sun Jul 13, 2025 at 12:24 PM CEST, Danilo Krummrich wrote:
->>> On Sun Jul 13, 2025 at 1:32 AM CEST, Daniel Almeida wrote:
->>>>
->>>>
->>>>> On 12 Jul 2025, at 18:24, Danilo Krummrich <dakr@kernel.org> wrote:
->>>>>=20
->>>>> On Thu Jul 3, 2025 at 9:30 PM CEST, Daniel Almeida wrote:
->>>>>> +/// Callbacks for an IRQ handler.
->>>>>> +pub trait Handler: Sync {
->>>>>> +    /// The hard IRQ handler.
->>>>>> +    ///
->>>>>> +    /// This is executed in interrupt context, hence all correspond=
-ing
->>>>>> +    /// limitations do apply.
->>>>>> +    ///
->>>>>> +    /// All work that does not necessarily need to be executed from
->>>>>> +    /// interrupt context, should be deferred to a threaded handler=
-.
->>>>>> +    /// See also [`ThreadedRegistration`].
->>>>>> +    fn handle(&self) -> IrqReturn;
->>>>>> +}
->>>>>=20
->>>>> One thing I forgot, the IRQ handlers should have a &Device<Bound> arg=
-ument,
->>>>> i.e.:
->>>>>=20
->>>>> fn handle(&self, dev: &Device<Bound>) -> IrqReturn
->>>>>=20
->>>>> IRQ registrations naturally give us this guarantee, so we should take=
- advantage
->>>>> of that.
->>>>>=20
->>>>> - Danilo
->>>>
->>>> Hi Danilo,
->>>>
->>>> I do not immediately see a way to get a Device<Bound> from here:
->>>>
->>>> unsafe extern "C" fn handle_irq_callback<T: Handler>(_irq: i32, ptr: *=
-mut c_void) -> c_uint {
->>>>
->>>> Refall that we've established `ptr` to be the address of the handler. =
-This
->>>> came after some back and forth and after the extensive discussion that=
- Benno
->>>> and Boqun had w.r.t to pinning in request_irq().
->>>
->>> You can just wrap the Handler in a new type and store the pointer there=
-:
->>>
->>> 	#[pin_data]
->>> 	struct Wrapper {
->>> 	   #[pin]
->>> 	   handler: T,
->>> 	   dev: NonNull<Device<Bound>>,
->>> 	}
->>>
->>> And then pass a pointer to the Wrapper field to request_irq();
->>> handle_irq_callback() can construct a &T and a &Device<Bound> from this=
-.
->>>
->>> Note that storing a device pointer, without its own reference count, is
->>> perfectly fine, since inner (Devres<RegistrationInner>) already holds a
->>> reference to the device and guarantees the bound scope for the handler
->>> callbacks.
->>
->> Can't we just add an accessor function to `Devres`?
->
-> 	#[pin_data]
-> 	pub struct Registration<T: Handler + 'static> {
-> 	    #[pin]
-> 	    inner: Devres<RegistrationInner>,
-> =09
-> 	    #[pin]
-> 	    handler: T,
-> =09
-> 	    /// Pinned because we need address stability so that we can pass a p=
-ointer
-> 	    /// to the callback.
-> 	    #[pin]
-> 	    _pin: PhantomPinned,
-> 	}
->
-> Currently we pass the address of handler to request_irq(), so this doesn'=
-t help,
-> hence my proposal to replace the above T with Wrapper (actually Wrapper<T=
->).
+Reviewed-by: Andreas Klinger <ak@it-klinger.de>
 
-You can just use `container_of!`?
+David Lechner <dlechner@baylibre.com> schrieb am Fr, 11. Jul 11:07:
+> Use a stack allocated scan struct in srf08_trigger_handler(). Since the
+> scan buffer isn't used outside of this function and doesn't need to be
+> DMA-safe, it doesn't need to be in struct srf08_data. We can also
+> eliminate an extra local variable for the return value of
+> srf08_read_ranging() by using scan.chan directly.
+>=20
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+>  drivers/iio/proximity/srf08.c | 18 +++++++-----------
+>  1 file changed, 7 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/iio/proximity/srf08.c b/drivers/iio/proximity/srf08.c
+> index 6e32fdfd161b93a5624f757d5b7de579415b1055..a28efcf324a844a6dca43dff6=
+9e71ca38a2ccc68 100644
+> --- a/drivers/iio/proximity/srf08.c
+> +++ b/drivers/iio/proximity/srf08.c
+> @@ -63,12 +63,6 @@ struct srf08_data {
+>  	int			range_mm;
+>  	struct mutex		lock;
+> =20
+> -	/* Ensure timestamp is naturally aligned */
+> -	struct {
+> -		s16 chan;
+> -		aligned_s64 timestamp;
+> -	} scan;
+> -
+>  	/* Sensor-Type */
+>  	enum srf08_sensor_type	sensor_type;
+> =20
+> @@ -182,16 +176,18 @@ static irqreturn_t srf08_trigger_handler(int irq, v=
+oid *p)
+>  	struct iio_poll_func *pf =3D p;
+>  	struct iio_dev *indio_dev =3D pf->indio_dev;
+>  	struct srf08_data *data =3D iio_priv(indio_dev);
+> -	s16 sensor_data;
+> +	struct {
+> +		s16 chan;
+> +		aligned_s64 timestamp;
+> +	} scan;
+> =20
+> -	sensor_data =3D srf08_read_ranging(data);
+> -	if (sensor_data < 0)
+> +	scan.chan =3D srf08_read_ranging(data);
+> +	if (scan.chan < 0)
+>  		goto err;
+> =20
+>  	mutex_lock(&data->lock);
+> =20
+> -	data->scan.chan =3D sensor_data;
+> -	iio_push_to_buffers_with_ts(indio_dev, &data->scan, sizeof(data->scan),
+> +	iio_push_to_buffers_with_ts(indio_dev, &scan, sizeof(scan),
+>  				    pf->timestamp);
+> =20
+>  	mutex_unlock(&data->lock);
+>=20
+> ---
+> base-commit: f8f559752d573a051a984adda8d2d1464f92f954
+> change-id: 20250711-iio-use-more-iio_declare_buffer_with_ts-6-6ffc8e99552d
+>=20
+> Best regards,
+> --=20
+> David Lechner <dlechner@baylibre.com>
+>=20
 
->> Also `Devres` only stores `Device<Normal>`, not `Device<Bound>`...
->
-> The Devres instance itself may out-live device unbind, but it ensures tha=
-t the
-> encapsulated data does not, hence it holds a reference count, i.e. ARef<D=
-evice>.
->
-> Device<Bound> or ARef<Device<Bound>> *never* exists, only &'a Device<Boun=
-d>
-> within a corresponding scope for which we can guarantee the device is bou=
-nd.
->
-> In the proposed wrapper we can store a NonNull<Device<Bound>> though, bec=
-ause we
-> can safely give out a &Device<Bound> in the IRQ's handle() callback. This=
- is
-> because:
->
->   (1) RegistrationInner is guarded by Devres and guarantees that free_irq=
-() is
->       completed *before* the device is unbound.
+--=20
+Andreas Klinger
+Grabenreith 27
+84508 Burgkirchen
++49 8623 373
+ak@it-klinger.de
+www.it-klinger.de
+www.grabenreith.de
 
-How does it ensure that?
+--SiPHZew/0PDaT8Cd
+Content-Type: application/pgp-signature; name="signature.asc"
 
->
->   (2) It is guaranteed that the device pointer is valid because (1) guara=
-ntees
->       it's even bound and because Devres<RegistrationInner> itself has a
->       reference count.
+-----BEGIN PGP SIGNATURE-----
 
-Yeah but I would find it much more natural (and also useful in other
-circumstances) if `Devres<T>` would give you access to `Device` (at
-least the `Normal` type state).
+iQGzBAABCgAdFiEE7/NrAFtB/Pj7rTUyyHDM+xwPAVEFAmhzo8YACgkQyHDM+xwP
+AVFE7Qv/Y5OiXVcCdkPhYkWDUbsK+5l+fiDppXaCoD0QEX5Tofr9vxDEAooHOhfP
+2gwJlvEoXLM6tJ1qN/JtrQFMtdIoEXA9U3LLKWXRRgmWbI9UE07DcTqmC/ypcyp/
+owALndBfntvkqiF5kBjhCQ/m0Jyh3xQk+W9w6R43LGNlEHGQO0MBd3A0euh9mcHK
+1gwuFPLk34jd+h8ebiaqhViW0EQkqjOFb6MQvY8D05VMCgYoepRDe3Mknt/2qLnV
+vmq2TwLXqOQyfzSpFuvB8f3HiYgePEPjPU2ENHPruMEFwJurf/fWrkB+v5w8TNsF
+k3hlaqqDqjC2TT8Q/00y7Koik9lzcr0RZIdDPHt2a/HwfJ4Awwz4reDt5+OT2MeT
+vQkCLpDOLFPETE2VjAysb39lMJn4eqJs8sZeDGyyDhXHGozAts1dNGj+nDYwSzs7
+iYZGyNakfk6pN5z5m5I0xin/Iod20eC780oLTgNrkv2Z30cukUyUR2lnmDSmC8N0
+xQyQXBwv
+=4DJL
+-----END PGP SIGNATURE-----
 
-Depending on how (1) is ensured, we might just need an unsafe function
-that turns `Device<Normal>` into `Device<Bound>`.
-
----
-Cheers,
-Benno
+--SiPHZew/0PDaT8Cd--
 
