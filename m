@@ -1,77 +1,109 @@
-Return-Path: <linux-kernel+bounces-729139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351FEB03245
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 19:21:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC4AB0325A
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 19:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E86F17738D
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 17:21:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7603D3BB13F
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 17:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19740280318;
-	Sun, 13 Jul 2025 17:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE642857F1;
+	Sun, 13 Jul 2025 17:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQsMDstz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="e31CTjy1"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713A7A48;
-	Sun, 13 Jul 2025 17:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0E82B9CD;
+	Sun, 13 Jul 2025 17:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752427254; cv=none; b=DGRY3HHdHLEFC6op8CdLSLnL/tJ/OcD4+77UhpOuLNSFiH6rqIb1ZK0Lk9JSt/PGr23svEICtTwcJcNxfEIj8zHMif8+7m12aY91L01HSOYrF0rCD8X/me7/wIYy1WaCvqmUAvtV1iAXVb6i7EoLJZ5auDAjM0AAuLuiDUc+Xxs=
+	t=1752427990; cv=none; b=Vu9pfXjW4XRA49BnIvlLTHZVqFGv9KtsIuNSzgOf5374j/85z+O0issKyk+LSPTZPiKJnetagDYY+FDbCEGsIYCm/Pr9OGfzVsq21B3FAbHxdhY2WgMCNQoJezeIHOXTOdfUqD/Z2ob0Av61f5fKEZkwxZfB6oxtnj5Y0rTjJ1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752427254; c=relaxed/simple;
-	bh=410mqOQuQTlQxVEo0ESQ57NlWicmBuyCvTwRg65vIr0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=RUFXKi0tuZBCkmMzSVE1P1KpOpniETJAnfSCX9c0Q+w18VK9/R2Y9wZX28OPEb7uX2XGH1Qcm7fpw+BU5jbaVn4R/2Rre/OKyuUxQiGiA2vtWmfb2BCC/h2l6eRbfyEYOZm96anTOtHcqbY5UbsL1Ym9iLGCIn86w8APk/A//V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQsMDstz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A23CAC4CEE3;
-	Sun, 13 Jul 2025 17:20:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752427254;
-	bh=410mqOQuQTlQxVEo0ESQ57NlWicmBuyCvTwRg65vIr0=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=lQsMDstzqqxgww59JZIxBK6lTOWif2E9XSEp9lgnLWCk0c1fRRldLSK45HqWPwL61
-	 kQVZJLpB6y9ByDsMI1PN4xHrYnrkO3m1QHccFOXbTi3FeXjR3VCVJFEVfa4hfC+QKl
-	 yx0TsSJs6A6SKci5jvDpk332XwmK1Ns+D4eIIfDvsyqD3L/aLaq7A6gA1FyUXucyUh
-	 v+Hn1ZRZP5bgwXesEze7NqCshcoCpHxqydnS0iwv7C00n7nEj2861CI4o82k0pBuaP
-	 3vPuI6rth4fQkb2PLbUlRrYnEOuQ7grH25BCmI922LAZyK4B8E0mbgoa03BXa+hnPZ
-	 2JpACtdpW52ng==
+	s=arc-20240116; t=1752427990; c=relaxed/simple;
+	bh=ruw8MsWdjdaHoC4Ni49xb4Ca5QkM/9HpQEr2TzWhxs8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iGACnk/+9AD+mzLnXtG03heTXVcFOvnDyVCQzfCShbsAdS4+QNmMSBQqn9tv0gE36mwdF88PR5L48QNGsgqUKzxriQotbluePbVfsScCSkw2oUKKIsDiw7gYCHNuF4ctORokQkbw6ErLIAPnNISIItaKM/0KWXee8iUkThmAzKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=e31CTjy1; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=KhHj/5VYrCrDjXwAFx8MG3eFf+YqsuNGtQA1PpGFXwM=; b=e31CTjy1FSq5tSKi
+	8XO3Yn9PcjmjDwWOWW/WS9t2B++sirF+oFqpinIrqv7e3bi6EIBvjCtHFMU935gY49lwUgMtJRV6n
+	vuTvFp+zqL4dwaLrkHA9yPKXBK2S+HiyeQy5lwQJfl2AGCRi7jsZJXdTcKIgnMhY6jEOhdj27jMbE
+	pDV7F2+lNIaxFIwyxEsS2KZIfKuc3+nt00iGatPus4a7eg2HhMd2G1GynWOxV/n30GBOUJhvkA0MR
+	aKHjx6r1QhhiyHiJDVP2QyE/TTi11NPcyF/leonQltOL9i9TgS7bq5wWe1WkXH96irR6wGD6iZDn3
+	HDzYXTsup0dGJbuCdA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1ub0ZS-00Fo6P-1u;
+	Sun, 13 Jul 2025 17:33:02 +0000
+From: linux@treblig.org
+To: clabbe@baylibre.com,
+	mchehab@kernel.org
+Cc: mjpeg-users@lists.sourceforge.net,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] media: pci: zoran: Remove unused debug parameter
+Date: Sun, 13 Jul 2025 18:33:01 +0100
+Message-ID: <20250713173301.246043-1-linux@treblig.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 13 Jul 2025 19:20:48 +0200
-Message-Id: <DBB3M49I0GX0.2OZJA23EQPP8Z@kernel.org>
-Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn Helgaas"
- <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>
-To: "Benno Lossin" <lossin@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com> <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org> <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com> <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org> <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org> <DBAWQG1PX5TO.6I2ARFGLX88N@kernel.org> <DBAX59YKO0FV.ANLOWRHDDS92@kernel.org> <DBAXP68U809C.2G8DMB52M3UZ7@kernel.org> <DBB18YX7MBDW.3C5Q5Y1O28NFL@kernel.org>
-In-Reply-To: <DBB18YX7MBDW.3C5Q5Y1O28NFL@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sun Jul 13, 2025 at 5:29 PM CEST, Benno Lossin wrote:
-> I think this solution sounds much better than storing an additional
-> `NonNull<Device<Bound>>`.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-I can send two patches for that. The IRQ abstractions have to either land
-through driver-core or in the next cycle anyways.
+Nothing has checked the zr36067_debug variable since 2021 after
+commit efdd0d42e276 ("media: staging: media: zoran: remove
+detect_guest_activity")
+
+It's set as a module parameter, remove it.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/media/pci/zoran/zoran_card.c | 4 ----
+ drivers/media/pci/zoran/zoran_card.h | 2 --
+ 2 files changed, 6 deletions(-)
+
+diff --git a/drivers/media/pci/zoran/zoran_card.c b/drivers/media/pci/zoran/zoran_card.c
+index e31f9f19a48a..d81facf735d9 100644
+--- a/drivers/media/pci/zoran/zoran_card.c
++++ b/drivers/media/pci/zoran/zoran_card.c
+@@ -67,10 +67,6 @@ module_param(pass_through, int, 0644);
+ MODULE_PARM_DESC(pass_through,
+ 		 "Pass TV signal through to TV-out when idling");
+ 
+-int zr36067_debug = 1;
+-module_param_named(debug, zr36067_debug, int, 0644);
+-MODULE_PARM_DESC(debug, "Debug level (0-5)");
+-
+ #define ZORAN_VERSION "0.10.1"
+ 
+ MODULE_DESCRIPTION("Zoran-36057/36067 JPEG codec driver");
+diff --git a/drivers/media/pci/zoran/zoran_card.h b/drivers/media/pci/zoran/zoran_card.h
+index 518cb426b446..c4f81777e6ce 100644
+--- a/drivers/media/pci/zoran/zoran_card.h
++++ b/drivers/media/pci/zoran/zoran_card.h
+@@ -12,8 +12,6 @@
+ #ifndef __ZORAN_CARD_H__
+ #define __ZORAN_CARD_H__
+ 
+-extern int zr36067_debug;
+-
+ /* Anybody who uses more than four? */
+ #define BUZ_MAX 4
+ 
+-- 
+2.50.1
+
 
