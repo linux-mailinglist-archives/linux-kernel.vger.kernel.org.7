@@ -1,111 +1,117 @@
-Return-Path: <linux-kernel+bounces-729074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE8AB03156
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:04:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A27DEB0315C
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 083C83AC38B
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:04:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAF8C17BBF7
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89F0277CA8;
-	Sun, 13 Jul 2025 14:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB1727932F;
+	Sun, 13 Jul 2025 14:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPBIczLi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="HxNI347H"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221E113AA20;
-	Sun, 13 Jul 2025 14:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752415493; cv=none; b=lO+Jjhb7ySdpfQxwZ3Dr+ERSq855+GMG7kx5end14g2tCxxZ58abz4xqf63EH8W+clFTyCoO/mtbnpbyKlngYvZ5jC9uAT2EBA6r3jxP3dyCIKq0I7aUi9mi5wNl0oZ3ubQj3j4wC0h6TQCvEI0LkR8UdtGZpIv+mj0MlZ0abPY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752415493; c=relaxed/simple;
-	bh=+FYv13QyM3Qc66a/klwxzfTKs0B5TwplrY1FdwFpn+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dAWSj11xfkxyH4p9gPYhtFcb4QXqyqVVGCTFMShVQBex6tMD/xz/KMwO81Xs7/U49dwXZBJ+i3yGh0xO4c10sbFJQrsgISJpXKxISonr0cA86YvJsnUW5SjkCa6TjSU90RVLJ3WU2SlD1DRc7hYUgemxw9SQx1VnSc/XpueK/xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPBIczLi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55948C4CEE3;
-	Sun, 13 Jul 2025 14:04:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752415492;
-	bh=+FYv13QyM3Qc66a/klwxzfTKs0B5TwplrY1FdwFpn+o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uPBIczLihuHl1PbCKDG/eOKxiBo2dGDuuxa8fklhbfkhN2KYTaqTkesvF0tMlpHtJ
-	 kMLMbTDXVWUwRiQvgCIXeSz2T2+BGNt1PGcF6Eqa4011hZjxd/zs2qPr961OxQqbJx
-	 fEY3eMPTK+FN+McuD1h+Me5KJFWm8NUib/kL8o5uWukAGxRV3eBk7IiCjB12a5xdhC
-	 /FhEb9B8h1mrFD5FArtgxGGY44jdwx4l8T1R86LTt3bKPUENS/292jsZDozpHV/kxl
-	 WoItoPIA7Z/+/pmXeYiQpV3zdwHtOm3+MB8xwRFtmd0fc8QhTpTocQLTlX/6RZAVp4
-	 Mcv3QBaKvq8Vg==
-Date: Sun, 13 Jul 2025 15:04:45 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
- <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: proximity: isl29501: use scan struct instead of
- array
-Message-ID: <20250713150445.3965931c@jic23-huawei>
-In-Reply-To: <20250711-iio-use-more-iio_declare_buffer_with_ts-7-v1-1-a3f253ac2e4a@baylibre.com>
-References: <20250711-iio-use-more-iio_declare_buffer_with_ts-7-v1-1-a3f253ac2e4a@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD3915746F;
+	Sun, 13 Jul 2025 14:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752415850; cv=pass; b=I8N+/Exe7GXaHlA+t66zKgZnPeP/orAS2ZG9F4tvBscv9hdB41Te6v25rEtEjoIju4j1kVtvp3Fb4Hp5PwpeHqI4isPMzV/RbGB7mLu+UhJk5DpNnGKV9uTDbCb5GdilUdi1/Wxsy4pjJ7TTwQ5Z2QBaOEaXhvIbgbTpUr5gRsU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752415850; c=relaxed/simple;
+	bh=KLG6sVwb4CNSPksB+jwSLziTbeDmCF6by7nGtOXUjZA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=nrZhJXkCZ0eSbXQLqJ8GcdQWih5981arWypfGeq2SrkM+Te1uH4G2BeNP4+kZrAa8iPn+W8tMhXl9tGpoEHezY0Zf/+4dt94PvHNUHbgAh2xNntxkG+ol4H1KXxn3K8y0hlluxsKU63xv+F2fU7pZs0GENFsQvmbEHzuce3ildU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=HxNI347H; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752415805; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Vr3i2dDb4LmSogcIKBo0mIRp5l2WuqC3+PH+7hQqE7xuBLLqoUKVYoCKdKtQngpe0xgkJOPoNUfeya3da/2ySsQK53TdRlGWCQfiDyTsdmrRptbu1G9BSr1sYyoqwD+1Ry6Evc/zzmWLu+/DGRK/bMllrhK38PlMDwkf2n0rJ7E=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752415805; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=KLG6sVwb4CNSPksB+jwSLziTbeDmCF6by7nGtOXUjZA=; 
+	b=T2WMpFq0Y+Z+A32rumI0mohExhWbsGwUJGYL3k53DCeAo5p4iU38/Tosp5N9LLZcjtzMtMRG/Ms4UiVGboD363DzCiLSbu/joZ/c3Rf+kG/7P0wZQJ7eJxtPpJqQaCDbav94n7JdRdD5UeIgaBUdiwIHhfg59gow3/XwnEy0lq0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752415805;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=KLG6sVwb4CNSPksB+jwSLziTbeDmCF6by7nGtOXUjZA=;
+	b=HxNI347HLSdFJx5OLkG/EVUqWf8RNQ2KSwi4vqyOjY1Eba+6155kQJKE5dR29z88
+	xuM8iM6Scwa2mA1o9tWbk7W6WpTwvzOFG+jd0AjwOstMCmjk6SQZcN9AZzYqqAmzo0W
+	jUBiGDV9m0v8LFVCmf7GZI/AEZ62l3lghi/BYY4A=
+Received: by mx.zohomail.com with SMTPS id 1752415803581699.289700032508;
+	Sun, 13 Jul 2025 07:10:03 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
+ handlers
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <DBAXP68U809C.2G8DMB52M3UZ7@kernel.org>
+Date: Sun, 13 Jul 2025 11:09:47 -0300
+Cc: Benno Lossin <lossin@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-pci@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C4A101A7-282D-4A67-A966-CF39850952EA@collabora.com>
+References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com>
+ <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com>
+ <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org>
+ <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com>
+ <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org>
+ <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org>
+ <DBAWQG1PX5TO.6I2ARFGLX88N@kernel.org> <DBAX59YKO0FV.ANLOWRHDDS92@kernel.org>
+ <DBAXP68U809C.2G8DMB52M3UZ7@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Fri, 11 Jul 2025 11:18:13 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On a second look, I wonder how useful this will be.
 
-> Replace the scan buffer array with a struct that contains a single u32
-> for the data and an aligned_s64 for the timestamp. This makes it easier
-> to see the intended layout of the buffer and avoids the need to manually
-> calculate the number of extra elements needed for an aligned timestamp.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-Why are we using a u32 here?  It's a 16 bit
-read in that isl29501_register_read() call
-and storagebits = 16 in the chan spec.
+ fn handle(&self, dev: &Device<Bound>) -> IrqReturn
 
-So to me looks like you found a bug for big endian platforms.
-> ---
->  drivers/iio/proximity/isl29501.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iio/proximity/isl29501.c b/drivers/iio/proximity/isl29501.c
-> index d1510fe2405088adc0998e28aa9f36e0186fafae..0eed14f66ab700473af10414b25a56458335b381 100644
-> --- a/drivers/iio/proximity/isl29501.c
-> +++ b/drivers/iio/proximity/isl29501.c
-> @@ -938,12 +938,15 @@ static irqreturn_t isl29501_trigger_handler(int irq, void *p)
->  	struct iio_dev *indio_dev = pf->indio_dev;
->  	struct isl29501_private *isl29501 = iio_priv(indio_dev);
->  	const unsigned long *active_mask = indio_dev->active_scan_mask;
-> -	u32 buffer[4] __aligned(8) = {}; /* 1x16-bit + naturally aligned ts */
-> +	struct {
-> +		u32 data;
-> +		aligned_s64 ts;
-> +	} scan;
->  
->  	if (test_bit(ISL29501_DISTANCE_SCAN_INDEX, active_mask))
-> -		isl29501_register_read(isl29501, REG_DISTANCE, buffer);
-> +		isl29501_register_read(isl29501, REG_DISTANCE, &scan.data);
->  
-> -	iio_push_to_buffers_with_timestamp(indio_dev, buffer, pf->timestamp);
-> +	iio_push_to_buffers_with_timestamp(indio_dev, &scan, pf->timestamp);
->  	iio_trigger_notify_done(indio_dev->trig);
->  
->  	return IRQ_HANDLED;
-> 
-> ---
-> base-commit: f8f559752d573a051a984adda8d2d1464f92f954
-> change-id: 20250711-iio-use-more-iio_declare_buffer_with_ts-7-880ddf1d3070
-> 
-> Best regards,
+Sorry for borrowing this terminology, but here we offer Device<Bound>, =
+while I
+suspect that most drivers will be looking for the most derived Device =
+type
+instead. So for drm drivers this will be drm::Device, for example, not =
+the base
+dev::Device type. I assume that this pattern will hold for other =
+subsystems as
+well.
 
+Which brings me to my second point: drivers can store an =
+ARef<drm::Device> on
+the handler itself, and I assume that the same will be possible in other
+subsystems.
+
+-- Daniel=
 
