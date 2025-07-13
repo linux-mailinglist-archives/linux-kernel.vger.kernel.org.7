@@ -1,135 +1,98 @@
-Return-Path: <linux-kernel+bounces-729028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32EC6B030C0
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 13:01:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A94DBB030C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 13:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8625117E6E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 11:01:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28A933B89BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 11:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D16275B1C;
-	Sun, 13 Jul 2025 11:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3C0277C96;
+	Sun, 13 Jul 2025 11:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDq9/w7v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="wxodjXPC"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EDE4A3C;
-	Sun, 13 Jul 2025 11:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDC71E3787;
+	Sun, 13 Jul 2025 11:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752404498; cv=none; b=gaMgPa7d1v1mfwxbpSfkMN4v4gfTM0v0/aipdEIlHZfvWPkIsUyZxmQs3emFT8MOX5jemcYZusYYGPFNEzzo4wKxngfPrSpKxb6/UDTZffcCJdrxnc8e86/T/QXUl12ggQWK8i+Au6rTPdyfaQ2ofYw8yda/SSmOITROGJ289AE=
+	t=1752404815; cv=none; b=TMzpPzbl1cVZTIMNDom/qSgMwODS5bPuYmZCYopi1AI43KfSiT47+QRHTc3tLabZpj+sY127P0NVljjoQVO/Le1/0kFNzWM6p6Hn32GbivHOEBfOOxD/Rhrj7lOmFSbCyCbM+3CrGKJxwoUYReW/f5Vop6oUFYtjk9UBk+WUhSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752404498; c=relaxed/simple;
-	bh=3ppvpjpE778pR8n0IiMaZ2ojlFIf7ZdM68QSPS9hKOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KLg3Rgu1rEnPOwLVwbVbeMoKUHON85DmY3s5VQtku5BOlHbE33Of0bgCTwplPwfMY2nKbKV1yBNtdyppgdpRYdQBuen8Z39pAUj/LJK/xiZZ83wMeWsk/rFelSZ1eQlTnw03a8gTWeywNbiGpZ2hnnnxrhQYJQVP0+9M6ml7lqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDq9/w7v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CED52C4CEE3;
-	Sun, 13 Jul 2025 11:01:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752404498;
-	bh=3ppvpjpE778pR8n0IiMaZ2ojlFIf7ZdM68QSPS9hKOg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FDq9/w7vNZwogdD6T7cz6Axb3o/rs2QVeLRHOucGVkWk2DES14Rbo5xe+Yc/GWoWN
-	 G9oc+Oyd4Z6b0TMUU5S+n0t8n+auBLff7HXZChTCnRN4twX8tJj/tzwqA4UcTrp9qT
-	 D2tLWRroi1gm4uLLGOPtHJG0ncjNn3MpSKvbYtONulitHsLl4DVC28kWEKNPC6BqUm
-	 Q1zihsSgSWa1yB0Uxw12YArp2mBmWT6JsMTP6jwEPUM29tV34P/OteUmM/Kiy9hrEC
-	 9vQ8kFoV+cZjt03Ah3uQapC9aSPn2Df1AxqoVGl+AFo7dx3ALPUD+PspGhNylk99Uo
-	 VReuZKXA4wZEg==
-Date: Sun, 13 Jul 2025 12:01:30 +0100
-From: Will Deacon <will@kernel.org>
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: bpf@vger.kernel.org, Puranjay Mohan <puranjay@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Maxwell Bland <mbland@motorola.com>,
-	Puranjay Mohan <puranjay12@gmail.com>,
-	Dao Huang <huangdao1@oppo.com>
-Subject: Re: [PATCH bpf-next v9 2/2] arm64/cfi,bpf: Support kCFI + BPF on
- arm64
-Message-ID: <aHOSCtykfYLLmy1n@willie-the-truck>
-References: <20250505223437.3722164-4-samitolvanen@google.com>
- <20250505223437.3722164-6-samitolvanen@google.com>
- <aHEfJZjW9dTXCgw3@willie-the-truck>
- <CABCJKued2XsLp5+ZW1ZWQn6=CgYkhjEDyJdfTRTR1MGkvDtmXg@mail.gmail.com>
+	s=arc-20240116; t=1752404815; c=relaxed/simple;
+	bh=e+xummqgYb2Lq6yLMj4NF5pLE9s1eEAYV29V7m0JwKI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DfF9WCiHZ2fP/AijNvnbg7vdURqHpNQMBVhwueIZwnB2OxVifQpn+0xbN+ocldauufTQDaO0Ob93RU9BatwWKXxEPZG4ALS2Vz6Di5+rct30X6i0uVIJDEmgsIWfkmVOD5fMrA5KMb3rTLRdaPELnTJSxdTa4Ets8zylCt8L0y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=wxodjXPC; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=e+xummqgYb2Lq6yLMj4NF5pLE9s1eEAYV29V7m0JwKI=;
+	t=1752404813; x=1753614413; b=wxodjXPC1YbKy3bI/oUj47xWMP6J38LYWetSykbdotSCQGH
+	MK+9VSXSXRMhMntDlTframyCTN6X61sRvSyXTfEFByfbDIcM1IrtX8YQpodqUymt3DROkYsu8bZt7
+	SPZm+tuFD6F/AhfEwoWZoBV2DoiidUsXh8mfhr22AMtORFyo2xKmnKwdjfz6yjzJQom1fg5h7oRLR
+	I2tYZJhbonj6moBZF03G6EcGc10BGAlWRNjzJFqV3n+d6Ewux2KTWp7dY3rkK4iturT7DGSUpnrwP
+	E8zAV/s9e1aZRDgwvbOnCP2c4sJ93xCV4pXeBy7DvmW8geMT7oY6L1D4UdjI1DIw==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uauXh-000000020HW-1ovy;
+	Sun, 13 Jul 2025 13:06:49 +0200
+Message-ID: <1f78de8ee5fde6e3e652148c4f75878573957e50.camel@sipsolutions.net>
+Subject: Re: [PATCHv3 wireless-next 3/7] wifi: rt2800soc: allow loading from
+ OF
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Stanislaw Gruszka <stf_xl@wp.pl>, Rosen Penev <rosenp@gmail.com>
+Cc: linux-wireless@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Thomas
+ Bogendoerfer	 <tsbogend@alpha.franken.de>, Matthias Brugger
+ <matthias.bgg@gmail.com>,  AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, "open list:OPEN FIRMWARE AND
+ FLATTENED DEVICE TREE BINDINGS"	 <devicetree@vger.kernel.org>, open list
+ <linux-kernel@vger.kernel.org>,  "open list:MIPS"
+ <linux-mips@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support"	
+ <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC
+ support" <linux-mediatek@lists.infradead.org>
+Date: Sun, 13 Jul 2025 13:06:48 +0200
+In-Reply-To: <36c4cd5f263e4bae22a1779a9befd24dacd5d3bf.camel@sipsolutions.net> (sfid-20250713_105038_510459_ADA2EA39)
+References: <20250710200820.262295-1-rosenp@gmail.com>
+		 <20250710200820.262295-4-rosenp@gmail.com> <20250712101418.GD9845@wp.pl>
+		 <CAKxU2N-RXgFKYPAqEu3iZDMAisj_K-b+ZZTGFsabWz7pMK+02A@mail.gmail.com>
+		 <20250713071532.GA18469@wp.pl>
+	 <36c4cd5f263e4bae22a1779a9befd24dacd5d3bf.camel@sipsolutions.net>
+	 (sfid-20250713_105038_510459_ADA2EA39)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABCJKued2XsLp5+ZW1ZWQn6=CgYkhjEDyJdfTRTR1MGkvDtmXg@mail.gmail.com>
+X-malware-bazaar: not-scanned
 
-Hey Sami,
+On Sun, 2025-07-13 at 10:49 +0200, Johannes Berg wrote:
+> On Sun, 2025-07-13 at 09:15 +0200, Stanislaw Gruszka wrote:
+> >=20
+> > Can be done as separate patch since you already
+> > posed v4.
+>=20
+> Maybe I should point out that I've simply been dropping the patches
+> unseen because they don't even apply.
 
-On Fri, Jul 11, 2025 at 11:49:29AM -0700, Sami Tolvanen wrote:
-> > > +#define cfi_get_offset cfi_get_offset
-> > > +extern u32 cfi_bpf_hash;
-> > > +extern u32 cfi_bpf_subprog_hash;
-> > > +extern u32 cfi_get_func_hash(void *func);
-> > > +#else
-> > > +#define cfi_bpf_hash 0U
-> > > +#define cfi_bpf_subprog_hash 0U
-> > > +static inline u32 cfi_get_func_hash(void *func)
-> > > +{
-> > > +     return 0;
-> > > +}
-> > > +#endif /* CONFIG_CFI_CLANG */
-> > > +#endif /* _ASM_ARM64_CFI_H */
-> >
-> > This looks like an awful lot of boiler plate to me. The only thing you
-> > seem to need is the CFI offset -- why isn't that just a constant that we
-> > can define (or a Kconfig symbol?).
-> 
-> The cfi_get_offset function was originally added in commit
-> 4f9087f16651 ("x86/cfi,bpf: Fix BPF JIT call") because the offset can
-> change on x86 depending on which CFI scheme is enabled at runtime.
-> Starting with commit 2cd3e3772e41 ("x86/cfi,bpf: Fix bpf_struct_ops
-> CFI") the function is also called by the generic BPF code, so we can't
-> trivially replace it with a constant. However, since this defaults to
-> `4` unless the architecture adds pre-function NOPs, I think we could
-> simply move the default implementation to include/linux/cfi.h (and
-> also drop the RISC-V version). Come to think of it, we could probably
-> move most of this boilerplate to generic code. I'll refactor this and
-> send a new version.
+Ah, that's because of Felix's fix, so looks it will apply now that I've
+fast-forwarded wireless and wireless-next.
 
-Excellent, thanks.
+I'd prefer a resend though (perhaps with the small thing Stanislaw
+thought might be fixed, your call) so the bot can pick it up.
 
-> > > @@ -2009,9 +2018,9 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
-> > >               jit_data->ro_header = ro_header;
-> > >       }
-> > >
-> > > -     prog->bpf_func = (void *)ctx.ro_image;
-> > > +     prog->bpf_func = (void *)ctx.ro_image + cfi_get_offset();
-> > >       prog->jited = 1;
-> > > -     prog->jited_len = prog_size;
-> > > +     prog->jited_len = prog_size - cfi_get_offset();
-> >
-> > Why do we add the offset even when CONFIG_CFI_CLANG is not enabled?
-> 
-> The function returns zero if CFI is not enabled, so I believe it's
-> just to avoid extra if (IS_ENABLED(CONFIG_CFI_CLANG)) statements in
-> the code. IMO this is cleaner, but I can certainly change this if you
-> prefer.
-
-Ah, that caught me out because the !CONFIG_CFI_CLANG stub is in the
-core code (and I'm extra susceptible to being caught out on a warm
-Friday evening!).
-
-Hopefully if you're able to trim down the boilerplate then this will
-become more obvious too.
-
-Cheers,
-
-Will
+johannes
 
