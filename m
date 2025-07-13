@@ -1,289 +1,161 @@
-Return-Path: <linux-kernel+bounces-728860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91977B02E39
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 02:04:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9C41B02E3A
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 02:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C03821A6050A
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 00:05:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 297D94A2630
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 00:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50EE1853;
-	Sun, 13 Jul 2025 00:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G3BDNzHl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7ED2EC2;
+	Sun, 13 Jul 2025 00:06:32 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36E6A2D;
-	Sun, 13 Jul 2025 00:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E091B372
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 00:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752365074; cv=none; b=hMWuQveRcYMikrjtecWKIWxBj+FbY/iHXMC2V4kQ3uC2RT/dOCoNh6O1rMiojA1fLuKasU3wWCJ3HWSfcEmalzyZS29lUfAxaQeKXqpvIW4Btp3LNH6IgCXuHot9qzsduueJMeFL7yo6CsOnx9QYRrQmHn/fHwbjwbHLpAw9cNQ=
+	t=1752365192; cv=none; b=c2NdDh4oH6pVsoGdQooE76bvKK6M/wc/6FwCQpJq7qGdYZSW8WBpe3BCkSNH3RjluTmd+LlvZx4mnERG06R3ZF09/G8IqhpFmBkzK8glFFB/s3ru8Azveb6pKVgRgIpCIMx3GRBO9kinurbLlw74+yzSNkb/0NUHdp4gyMl18io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752365074; c=relaxed/simple;
-	bh=u/2P5Onx299dOOWEeQU/rni1CC4M39jsIsFNGOTZZ1Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lhJHvNkd3EAj3kp02w+axp7duqwA2WhRZqRoF+8JREYbc3vyTCVpbYdS1Gb0CxFXmtaM6kwes9Wha+hHciZayS7OnJJsMPIcpv5QH8k9eEMjw4+Qj2BHkBoj2UqHgnj1dOQVEPAWOGVLTisK0H5t0L0xgxyI1cb/MWo19wVi5Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G3BDNzHl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94792C4CEEF;
-	Sun, 13 Jul 2025 00:04:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752365073;
-	bh=u/2P5Onx299dOOWEeQU/rni1CC4M39jsIsFNGOTZZ1Q=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=G3BDNzHl5GZyEprno9I5xn6zt6xLWs86UozC5zKIxLcBXpBRozspW4+DF+97TEpme
-	 WJwwwin0Os88IXEB+1AbBt5DZ6M8WUwcJ6+I0qeC93pA2wNvQ+ILb7VceX6LVjA/Ve
-	 6TtEMJHUzzEwUELv6esdrftge2Z8q5dtilly/LV+a2pNycRBmHczYx5bJM8vRXVJdk
-	 jw4ZCRQJ2S30MQuaBRBFKBQtgUXPRjmgoHMShz8F8NAH+OHuWMrho3FGw32nnZzr3I
-	 rk3rYDHWZfokPDXjH602WjBeeMIBfisCjZzuEVCG1Cjq0kbBYklbkJp3rAweEzi1w4
-	 gnCsXzxNydVOQ==
-Message-ID: <1ae3c2fa194bb7708ad5a98b1fb7156b9efcb8e7.camel@kernel.org>
-Subject: Re: [PATCH] SUNRPC: Remove unused xdr functions
-From: Trond Myklebust <trondmy@kernel.org>
-To: linux@treblig.org, chuck.lever@oracle.com, anna@kernel.org, 
-	jlayton@kernel.org
-Cc: neil@brown.name, okorniev@redhat.com, Dai.Ngo@oracle.com,
- tom@talpey.com, 	linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Sat, 12 Jul 2025 17:04:30 -0700
-In-Reply-To: <20250712233006.403226-1-linux@treblig.org>
-References: <20250712233006.403226-1-linux@treblig.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1752365192; c=relaxed/simple;
+	bh=RLcc0Wj2INa2UMJvTZx9UGOp5v0TPjwea3ZG+MHYAuY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dXnMGTF57S5ddSpJPsjdr+RrMbcnsLJtE4mPxuX2q1sxbCTeiJdlvbFY1xsCuvvcqSn2mmPWmO/Mhs8LkJXpDKrdkDS8z15ccil1IdJfkgP5ln8gDrog2DyhrxNi42ri81eQ0k+Jj9dLirVrBfaByMM2xkHJ5xDbY6hxQuF1jNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-86d1218df67so344225939f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 17:06:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752365190; x=1752969990;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ea3qbdppzHtrp+OgojMx38Fd+crkA6AwPr5+Agag3ZU=;
+        b=nYzOxTh57hX44EahIRd9q8MP38T7IeSufyIv/fMKcb0fU5xYAXVs/xNmgQ7nCN7lu1
+         GDoTlRgapkTeINEJ7oz4fO3iuy7OMITaVJ/bg1EYyS0Fof7dLjE+iw2HPkLw16rqCWk+
+         uVMuxOtb6oowou49vO4zVvpbm3GxVzV4CYArLIgAbYXeuwbig1Vv60mQkF6/MZ4bDxPE
+         xMGNiSEacHwYXJgb3miSrifoqQy3e7QK2XmIx1T6uxp+RD9CPBsNCDUEl2xFgCCF5z8c
+         Zwx/EWhCwW/5fOazLNXci8DeTUg5Dc2Zlo08Nm3ufGx/jDYGh5XY6m0DfglcJncn+jdm
+         Al7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVBjeHi6Lkf+L0Xw+XGiymEMUA1ENnV5V2QmK/tqCoeGAvN05kwWVe6tidtiUns/Ud/ZaCHMItuZsigD0U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAhCxjptJitharT1d7d6YKuUgJC6iNDV5lYR+3Ip1yoGb4xnHt
+	Mf6Z5FsdPUm/dHtS64bLyG+EhQmd3+rgGMY5u74lmeqeiBbFNtVrL1qvODreMPPOgEsDXK351NY
+	UqbpfigsP34btJJZuFl8O4n+kd8JtpiY7egmXAFJ0n4Sj8+OXt2RRc96AErQ=
+X-Google-Smtp-Source: AGHT+IEn2iy03zAoER7fhAagB2X3tgSkQ4pMNqBWX0o7nANF/t35cPk7BhMK5Uk659GNlsCe1vfG1R/XR9Km2pqB+RIvXdMOiW6X
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6602:4010:b0:86d:71:d9a with SMTP id
+ ca18e2360f4ac-879787b862emr869201339f.2.1752365190087; Sat, 12 Jul 2025
+ 17:06:30 -0700 (PDT)
+Date: Sat, 12 Jul 2025 17:06:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6872f886.a70a0220.3b380f.000d.GAE@google.com>
+Subject: [syzbot] [kvmarm?] WARNING in pend_serror_exception
+From: syzbot <syzbot+1f6f096afda6f4f8f565@syzkaller.appspotmail.com>
+To: catalin.marinas@arm.com, joey.gouly@arm.com, kvmarm@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	maz@kernel.org, oliver.upton@linux.dev, suzuki.poulose@arm.com, 
+	syzkaller-bugs@googlegroups.com, will@kernel.org, yuzenghui@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 2025-07-13 at 00:30 +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->=20
-> Remove a bunch of unused xdr_*decode* functions:
-> =C2=A0 The last use of xdr_decode_netobj() was removed in 2021 by:
-> commit 7cf96b6d0104 ("lockd: Update the NLMv4 SHARE arguments decoder
-> to
-> use struct xdr_stream")
-> =C2=A0 The last use of xdr_decode_string_inplace() was removed in 2021 by=
-:
-> commit 3049e974a7c7 ("lockd: Update the NLMv4 FREE_ALL arguments
-> decoder
-> to use struct xdr_stream")
-> =C2=A0 The last use of xdr_stream_decode_opaque() was removed in 2024 by:
-> commit fed8a17c61ff ("xdrgen: typedefs should use the built-in string
-> and
-> opaque functions")
->=20
-> =C2=A0 The functions xdr_stream_decode_string() and
-> xdr_stream_decode_opaque_dup() were both added in 2018 by the
-> commit 0e779aa70308 ("SUNRPC: Add helpers for decoding opaque and
-> string
-> types")
-> but never used.
->=20
-> Remove them.
->=20
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
-> =C2=A0include/linux/sunrpc/xdr.h |=C2=A0=C2=A0 9 ---
-> =C2=A0net/sunrpc/xdr.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 110 -----------------------------------
-> --
-> =C2=A02 files changed, 119 deletions(-)
->=20
-> diff --git a/include/linux/sunrpc/xdr.h b/include/linux/sunrpc/xdr.h
-> index a2ab813a9800..e370886632b0 100644
-> --- a/include/linux/sunrpc/xdr.h
-> +++ b/include/linux/sunrpc/xdr.h
-> @@ -128,10 +128,7 @@ xdr_buf_init(struct xdr_buf *buf, void *start,
-> size_t len)
-> =C2=A0__be32 *xdr_encode_opaque_fixed(__be32 *p, const void *ptr, unsigne=
-d
-> int len);
-> =C2=A0__be32 *xdr_encode_opaque(__be32 *p, const void *ptr, unsigned int
-> len);
-> =C2=A0__be32 *xdr_encode_string(__be32 *p, const char *s);
-> -__be32 *xdr_decode_string_inplace(__be32 *p, char **sp, unsigned int
-> *lenp,
-> -			unsigned int maxlen);
-> =C2=A0__be32 *xdr_encode_netobj(__be32 *p, const struct xdr_netobj *);
-> -__be32 *xdr_decode_netobj(__be32 *p, struct xdr_netobj *);
-> =C2=A0
-> =C2=A0void	xdr_inline_pages(struct xdr_buf *, unsigned int,
-> =C2=A0			 struct page **, unsigned int, unsigned
-> int);
-> @@ -341,12 +338,6 @@ xdr_stream_remaining(const struct xdr_stream
-> *xdr)
-> =C2=A0	return xdr->nwords << 2;
-> =C2=A0}
-> =C2=A0
-> -ssize_t xdr_stream_decode_opaque(struct xdr_stream *xdr, void *ptr,
-> -		size_t size);
-> -ssize_t xdr_stream_decode_opaque_dup(struct xdr_stream *xdr, void
-> **ptr,
-> -		size_t maxlen, gfp_t gfp_flags);
-> -ssize_t xdr_stream_decode_string(struct xdr_stream *xdr, char *str,
-> -		size_t size);
-> =C2=A0ssize_t xdr_stream_decode_string_dup(struct xdr_stream *xdr, char
-> **str,
-> =C2=A0		size_t maxlen, gfp_t gfp_flags);
-> =C2=A0ssize_t xdr_stream_decode_opaque_auth(struct xdr_stream *xdr, u32
-> *flavor,
-> diff --git a/net/sunrpc/xdr.c b/net/sunrpc/xdr.c
-> index 2ea00e354ba6..a0aae1144212 100644
-> --- a/net/sunrpc/xdr.c
-> +++ b/net/sunrpc/xdr.c
-> @@ -37,19 +37,6 @@ xdr_encode_netobj(__be32 *p, const struct
-> xdr_netobj *obj)
-> =C2=A0}
-> =C2=A0EXPORT_SYMBOL_GPL(xdr_encode_netobj);
-> =C2=A0
-> -__be32 *
-> -xdr_decode_netobj(__be32 *p, struct xdr_netobj *obj)
-> -{
-> -	unsigned int	len;
-> -
-> -	if ((len =3D be32_to_cpu(*p++)) > XDR_MAX_NETOBJ)
-> -		return NULL;
-> -	obj->len=C2=A0 =3D len;
-> -	obj->data =3D (u8 *) p;
-> -	return p + XDR_QUADLEN(len);
-> -}
-> -EXPORT_SYMBOL_GPL(xdr_decode_netobj);
-> -
-> =C2=A0/**
-> =C2=A0 * xdr_encode_opaque_fixed - Encode fixed length opaque data
-> =C2=A0 * @p: pointer to current position in XDR buffer.
-> @@ -102,21 +89,6 @@ xdr_encode_string(__be32 *p, const char *string)
-> =C2=A0}
-> =C2=A0EXPORT_SYMBOL_GPL(xdr_encode_string);
-> =C2=A0
-> -__be32 *
-> -xdr_decode_string_inplace(__be32 *p, char **sp,
-> -			=C2=A0 unsigned int *lenp, unsigned int maxlen)
-> -{
-> -	u32 len;
-> -
-> -	len =3D be32_to_cpu(*p++);
-> -	if (len > maxlen)
-> -		return NULL;
-> -	*lenp =3D len;
-> -	*sp =3D (char *) p;
-> -	return p + XDR_QUADLEN(len);
-> -}
-> -EXPORT_SYMBOL_GPL(xdr_decode_string_inplace);
-> -
-> =C2=A0/**
-> =C2=A0 * xdr_terminate_string - '\0'-terminate a string residing in an
-> xdr_buf
-> =C2=A0 * @buf: XDR buffer where string resides
-> @@ -2247,88 +2219,6 @@ int xdr_process_buf(const struct xdr_buf *buf,
-> unsigned int offset,
-> =C2=A0}
-> =C2=A0EXPORT_SYMBOL_GPL(xdr_process_buf);
-> =C2=A0
-> -/**
-> - * xdr_stream_decode_opaque - Decode variable length opaque
-> - * @xdr: pointer to xdr_stream
-> - * @ptr: location to store opaque data
-> - * @size: size of storage buffer @ptr
-> - *
-> - * Return values:
-> - *=C2=A0=C2=A0 On success, returns size of object stored in *@ptr
-> - *=C2=A0=C2=A0 %-EBADMSG on XDR buffer overflow
-> - *=C2=A0=C2=A0 %-EMSGSIZE on overflow of storage buffer @ptr
-> - */
-> -ssize_t xdr_stream_decode_opaque(struct xdr_stream *xdr, void *ptr,
-> size_t size)
-> -{
-> -	ssize_t ret;
-> -	void *p;
-> -
-> -	ret =3D xdr_stream_decode_opaque_inline(xdr, &p, size);
-> -	if (ret <=3D 0)
-> -		return ret;
-> -	memcpy(ptr, p, ret);
-> -	return ret;
-> -}
-> -EXPORT_SYMBOL_GPL(xdr_stream_decode_opaque);
-> -
-> -/**
-> - * xdr_stream_decode_opaque_dup - Decode and duplicate variable
-> length opaque
-> - * @xdr: pointer to xdr_stream
-> - * @ptr: location to store pointer to opaque data
-> - * @maxlen: maximum acceptable object size
-> - * @gfp_flags: GFP mask to use
-> - *
-> - * Return values:
-> - *=C2=A0=C2=A0 On success, returns size of object stored in *@ptr
-> - *=C2=A0=C2=A0 %-EBADMSG on XDR buffer overflow
-> - *=C2=A0=C2=A0 %-EMSGSIZE if the size of the object would exceed @maxlen
-> - *=C2=A0=C2=A0 %-ENOMEM on memory allocation failure
-> - */
-> -ssize_t xdr_stream_decode_opaque_dup(struct xdr_stream *xdr, void
-> **ptr,
-> -		size_t maxlen, gfp_t gfp_flags)
-> -{
-> -	ssize_t ret;
-> -	void *p;
-> -
-> -	ret =3D xdr_stream_decode_opaque_inline(xdr, &p, maxlen);
-> -	if (ret > 0) {
-> -		*ptr =3D kmemdup(p, ret, gfp_flags);
-> -		if (*ptr !=3D NULL)
-> -			return ret;
-> -		ret =3D -ENOMEM;
-> -	}
-> -	*ptr =3D NULL;
-> -	return ret;
-> -}
-> -EXPORT_SYMBOL_GPL(xdr_stream_decode_opaque_dup);
-> -
-> -/**
-> - * xdr_stream_decode_string - Decode variable length string
-> - * @xdr: pointer to xdr_stream
-> - * @str: location to store string
-> - * @size: size of storage buffer @str
-> - *
-> - * Return values:
-> - *=C2=A0=C2=A0 On success, returns length of NUL-terminated string store=
-d in
-> *@str
-> - *=C2=A0=C2=A0 %-EBADMSG on XDR buffer overflow
-> - *=C2=A0=C2=A0 %-EMSGSIZE on overflow of storage buffer @str
-> - */
-> -ssize_t xdr_stream_decode_string(struct xdr_stream *xdr, char *str,
-> size_t size)
-> -{
-> -	ssize_t ret;
-> -	void *p;
-> -
-> -	ret =3D xdr_stream_decode_opaque_inline(xdr, &p, size);
-> -	if (ret > 0) {
-> -		memcpy(str, p, ret);
-> -		str[ret] =3D '\0';
-> -		return strlen(str);
-> -	}
-> -	*str =3D '\0';
-> -	return ret;
-> -}
-> -EXPORT_SYMBOL_GPL(xdr_stream_decode_string);
-> -
-> =C2=A0/**
-> =C2=A0 * xdr_stream_decode_string_dup - Decode and duplicate variable
-> length string
-> =C2=A0 * @xdr: pointer to xdr_stream
+Hello,
 
-I can pick these up.
+syzbot found the following issue on:
 
---=20
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trondmy@kernel.org, trond.myklebust@hammerspace.com
+HEAD commit:    15724a984643 Merge branch 'kvm-arm64/doublefault2' into kv..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git next
+console output: https://syzkaller.appspot.com/x/log.txt?x=123090f0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=82bd3cd421993314
+dashboard link: https://syzkaller.appspot.com/bug?extid=1f6f096afda6f4f8f565
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1324fe8c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1206ed82580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/fa3fbcfdac58/non_bootable_disk-15724a98.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ec0f03d375a1/vmlinux-15724a98.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a36232f8c6dd/Image-15724a98.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1f6f096afda6f4f8f565@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 3603 at arch/arm64/kvm/inject_fault.c:71 pend_serror_exception+0x19c/0x5ac arch/arm64/kvm/inject_fault.c:71
+Modules linked in:
+CPU: 0 UID: 0 PID: 3603 Comm: syz.2.16 Not tainted 6.16.0-rc3-syzkaller-g15724a984643 #0 PREEMPT 
+Hardware name: linux,dummy-virt (DT)
+pstate: 81402009 (Nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+pc : pend_serror_exception+0x19c/0x5ac arch/arm64/kvm/inject_fault.c:71
+lr : pend_serror_exception+0x19c/0x5ac arch/arm64/kvm/inject_fault.c:71
+sp : ffff80008e807930
+x29: ffff80008e807930 x28: d7f0000016ae8028 x27: 0000000000000001
+x26: 0000000000000000 x25: 0000000000000001 x24: 00000000000000d7
+x23: d7f0000016ae82a8 x22: 00000000000000d7 x21: d7f0000016ae8e81
+x20: 0000000000000007 x19: efff800000000000 x18: 0000000000000000
+x17: 000000000000005a x16: ffff800080011d9c x15: 0000000020000200
+x14: ffffffffffffffff x13: 0000000000000028 x12: 0000000000000081
+x11: 81f000001f049564 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : 81f000001f048000 x7 : ffff800080b08704 x6 : ffff80008e807a88
+x5 : ffff80008e807a88 x4 : 0000000000000001 x3 : ffff8000801a2e80
+x2 : 0000000000000000 x1 : 0000000000000002 x0 : 0000000000000000
+Call trace:
+ pend_serror_exception+0x19c/0x5ac arch/arm64/kvm/inject_fault.c:71 (P)
+ kvm_inject_serror_esr+0x274/0xe40 arch/arm64/kvm/inject_fault.c:330
+ __kvm_arm_vcpu_set_events+0x1d4/0x238 arch/arm64/kvm/guest.c:-1
+ kvm_arm_vcpu_set_events arch/arm64/kvm/arm.c:1698 [inline]
+ kvm_arch_vcpu_ioctl+0xed8/0x16b0 arch/arm64/kvm/arm.c:1810
+ kvm_vcpu_ioctl+0x5c4/0xc2c virt/kvm/kvm_main.c:4632
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __arm64_sys_ioctl+0x18c/0x244 fs/ioctl.c:893
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x90/0x2b4 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x180/0x2f4 arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x58/0x74 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x160 arch/arm64/kernel/entry-common.c:767
+ el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+irq event stamp: 2728
+hardirqs last  enabled at (2727): [<ffff80008653cb88>] __raw_read_unlock_irqrestore include/linux/rwlock_api_smp.h:241 [inline]
+hardirqs last  enabled at (2727): [<ffff80008653cb88>] _raw_read_unlock_irqrestore+0x44/0xbc kernel/locking/spinlock.c:268
+hardirqs last disabled at (2728): [<ffff800086517e08>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:511
+softirqs last  enabled at (2702): [<ffff8000800c988c>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (2700): [<ffff8000800c9858>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
