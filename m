@@ -1,976 +1,292 @@
-Return-Path: <linux-kernel+bounces-728963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC8CB02FBC
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:11:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB754B02FC4
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C15FF176685
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 08:11:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDB401887307
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 08:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2815920DD48;
-	Sun, 13 Jul 2025 08:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B8F1E2834;
+	Sun, 13 Jul 2025 08:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="uiawi0/a"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="fgeC0d1a"
+Received: from r3-22.sinamail.sina.com.cn (r3-22.sinamail.sina.com.cn [202.108.3.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4DD20E03F
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 08:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863808615A
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 08:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752394117; cv=none; b=c1hydNki/TyGJMnnmxkKFqlH1FDLQ6iWCwPj24KYq7mWuS727ErF+dv/DhtAIIIThtUV3exfYUhfZRqi/7qTyDFCdtZRTymy66IcB6lU4DAWO8QyWsxNBWvzZDXQFOAWKCL8L+RyO1x2rE4l2IQsnjw4Y2NkY4mIoUr7FiO5v/A=
+	t=1752394335; cv=none; b=ScYfA2/fjkZ4mah28oz48RWJ8M8fRqXcz/YoW88Dv/OQCNRJuaJrAgc6feI+JGUEe+E/cJK7hwnHFT5t5X5Bp8PDj4DUU6dVSrcZs9Oe77Yj+9hIH9+AriLZbesuZ9GRnQTAag+Psc9FILPfhyleRI4IzHYNQV190wTpeSOQEq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752394117; c=relaxed/simple;
-	bh=0KjwSxa72FPBPkf24xy97A7MrZMj8P2DBUJ2h92ORCE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KjFNPnrgwz2qJCMbJcrGD/VKuDEyV7I6T7sVLW0jj7ixn6z722F4Ghz5JpLOzu3vyu83UUNrKFvMKY/G6vTOyrpmWWmSu67FsU4cTNfKy4KOv+tmoWR0HxehKNpGcg+vSEmYrSIKbytM8l+KiVgtGRrKjEJenzTvlI1ElfwMdtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=uiawi0/a; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45610582d07so3283455e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 01:08:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1752394112; x=1752998912; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U2jRQDyiYWA48zC7SFF4YTscb0dZ8X09eBuE8747BuU=;
-        b=uiawi0/a1H1xlK1zl+1/VXKaFywvIr9+yFiAhH6jCV13TPoxc92uDNZD520ubyfTSO
-         sBIC2T7lYdGBJoUGXAJL1aL4CbFONo1++40llQvKY9jnE4mi5gpOJ2q0+PZFzrC5ZZCZ
-         GtBjmmhnZ53ksv2V/osatySi38LjBsLG+22xspqCOqcapZUhQKwJALiULXZaUyCB/Noi
-         rrm2dcDmw4wiGN/ZVMOraOCLmN6KL2APMKSF2Kd6WGeRELTC+aK7G6W+bC1O7BWQ6qry
-         jscylVFKlfFVxXgX7uxsAElshR4K8sUsEuSHZrIZ7ZGqqtewU0Gktp50aaWnInCZwEZ3
-         ij7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752394112; x=1752998912;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U2jRQDyiYWA48zC7SFF4YTscb0dZ8X09eBuE8747BuU=;
-        b=jbPqzvFegRXqVJwiL27w009EYyqn/wT231V+TaWgI9a7IVEiizGeFv9Dy2LRHaUTdZ
-         mJ+ym8NIUh2Q8Vh1KwqnhBBvaEFG2O2EOQa+lXF0srS6qeIhM9Y8T4nbqKwrZodHosG2
-         K+BhorM9f1j0zACACxBnYUm58GKqefgJ8912E9qJ9dgX6Z7qpLE4TRSsjfFz9K6vOOK0
-         1q8P6g4wLFPX7ycsO4sDME1lW+AUq6hYIuvX50tNuGcmHDjSVFfCRjWLco6GRWaO0lxt
-         OSvjqeYGNjhHXhNuzP5rZlBplI++AOhg9Sop+7yZ6m0Io95ledcjDK8bUNBtrmT2FtyA
-         q5mw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFFHCxq3aTcI/h696MYue7O0ko5EMt3KWoUJ1tpVSjAifNbQSAdCrqm+fjT27H+SA5AT4JFq5OSA7/cas=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxpCvaSOsiITcT3AcNvKKp17eXR9Lvtwt+aryJWnPY8ArEYW/E
-	DMe9TPxTOQ0bChLlfiyzv0gSLj7WSYk+U6Wtm90/KOrixG+WIqCJew/RcHvTVzTcYk8=
-X-Gm-Gg: ASbGncu7mqLdv9LALUmHXYjUunUozHjFfDayew9urt7o9iV+3oCHAvzOgkvH3/BkY02
-	QtfimAkLOOXC9LyVeFCKks909SzS2frQ/qsGq1e2sXzl1Et+IjAVsv6/AklZ1wS95LS3o6RMjr/
-	6GfRrsM1K7BR1pRHxJpxm0q1WbX0etMAYSYEouvWu4uEZGvetwakMwZ8zMzBJGTi+AZUt+HWUny
-	hwtywrcsXRcA/PzS5IBcVg6EykuOGXdahJBqW2FhSNtSNr11FphIssGjC0xeZjnKeKMIQWyYVYA
-	KeWvMWLRnABgVE4eg0X4TV9wrhllLRxjAzjC/ZHCG+xGThPcynCtjSbXx4t+Lxwv8pMpsd32Gre
-	VOQZc5zXYMbJc7ATaO0YirABb6KNvRSIfjhmnRR04MfkW1a8=
-X-Google-Smtp-Source: AGHT+IEJntnIxR9SIneQpdYXf6fWz6lm1ZYFTxOLkLZpPWZMvmuFoCXGGjHBFX6LZnYTVi3bUJIw8A==
-X-Received: by 2002:a05:600c:314c:b0:450:c210:a01b with SMTP id 5b1f17b1804b1-454fe0f93e3mr101630205e9.17.1752394112258;
-        Sun, 13 Jul 2025 01:08:32 -0700 (PDT)
-Received: from [192.168.224.50] ([213.208.155.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc22a8sm9386608f8f.34.2025.07.13.01.08.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jul 2025 01:08:31 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Sun, 13 Jul 2025 10:05:37 +0200
-Subject: [PATCH v2 15/15] arm64: dts: qcom: Add The Fairphone (Gen. 6)
+	s=arc-20240116; t=1752394335; c=relaxed/simple;
+	bh=q9jFi+9opq7x+z69lyBMihFfISmHxgOznhEOkI14xrI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ju6mbIaAS/WI0YXbzllLX6+vdv9MMm+3KTJl+MFKXZMiTO5Uw8M09wQzLgu85rEg/UjB+yFVbb+1yglFuMxrbVVvH2o8w4yFCsSXjqP/2GE7uf8xGyg9/iY3ZGPn/SakFiEhgi8yee1c4TnVI+gow95Eu48taJXNJkYxz6253kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=fgeC0d1a; arc=none smtp.client-ip=202.108.3.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752394329;
+	bh=L7uLsXwfUhiiWO5fOzG35YcbNBSMeR6oPEOKDLeBDmA=;
+	h=From:Subject:Date:Message-ID;
+	b=fgeC0d1a27m8/F1oQ0i3xM7iB/Tu8pjrcUiqvDGDJNs7BsSzpV5MCrcpjNkhVk0Rr
+	 I/4vCzn1VC0KC2jtD7hjfjArXkCctwi7QOJP7NmuloE9ZdtzjJPGtXaT+ndrPHGjUQ
+	 xDFXQaIf1j8B/JmLJ6PD1wk9Zn2irGPZ3kH+6UaM=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 68736A4D00007C1E; Sun, 13 Jul 2025 16:11:59 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8118786685417
+X-SMAIL-UIID: 4A9172338F2C4299BE15645C822D0C8F-20250713-161159-1
+From: Hillf Danton <hdanton@sina.com>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com,
+	LKML <linux-kernel@vger.kernel.org>,
+	Sean Young <sean@mess.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH] media: imon: make send_packet() more robust
+Date: Sun, 13 Jul 2025 16:11:47 +0800
+Message-ID: <20250713081148.3880-1-hdanton@sina.com>
+In-Reply-To: <e3dd81d7-16fe-4d04-99fa-ac81fb4b4289@I-love.SAKURA.ne.jp>
+References: <672f73a6.050a0220.138bd5.0041.GAE@google.com> <c2b2b02d-2571-451c-bb1c-7dde18b45d4f@I-love.SAKURA.ne.jp> <924bf5c7-9466-49dc-ad26-53939ca49825@I-love.SAKURA.ne.jp> <53c07aa0-9f83-4c83-8ab5-6d8663f51b91@I-love.SAKURA.ne.jp> <8be733a4-2232-4bb9-942d-f13f8766a6de@I-love.SAKURA.ne.jp> <40417f2a-e0d8-4f3c-9a37-a0068b6f268a@I-love.SAKURA.ne.jp> <0ad3effe-efed-4304-862f-4c8f901e79e9@I-love.SAKURA.ne.jp> <2ac5d313-c754-4fb9-acd3-21f3b948d653@I-love.SAKURA.ne.jp> <282345b9-9aff-43ed-b66d-76cf51cc0deb@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250713-sm7635-fp6-initial-v2-15-e8f9a789505b@fairphone.com>
-References: <20250713-sm7635-fp6-initial-v2-0-e8f9a789505b@fairphone.com>
-In-Reply-To: <20250713-sm7635-fp6-initial-v2-0-e8f9a789505b@fairphone.com>
-To: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
- Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, 
- Herbert Xu <herbert@gondor.apana.org.au>, 
- "David S. Miller" <davem@davemloft.net>, Vinod Koul <vkoul@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Robert Marko <robimarko@gmail.com>, 
- Das Srinagesh <quic_gurus@quicinc.com>, 
- Thomas Gleixner <tglx@linutronix.de>, Jassi Brar <jassisinghbrar@gmail.com>, 
- Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org, 
- linux-mmc@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752393945; l=21652;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=0KjwSxa72FPBPkf24xy97A7MrZMj8P2DBUJ2h92ORCE=;
- b=XjUO1r4nohsCQBKIblzIygz28SG95SjXvQpWvakia5Cd3w5CVqBdFkydJnuWO1FoZTLmhvM2L
- jHzybLqo1n7CXaKizuvwGdd5NL+d8MtmUGb5tHKKpj7PVPFc7dT6LyD
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+Content-Transfer-Encoding: 8bit
 
-Add a devicetree for The Fairphone (Gen. 6) smartphone, which is based
-on the Milos/SM7635 SoC.
+[loop Alan in]
+On Sun, 13 Jul 2025 16:50:08 +0900 Tetsuo Handa wrote:
+> syzbot is reporting that imon has three problems which result in hung tasks
+> due to forever holding device lock.
+> 
+> First problem is that when usb_rx_callback_intf0() once got -EPROTO error
+> after ictx->dev_present_intf0 became true, usb_rx_callback_intf0()
+> resubmits urb after printk(), and resubmitted urb causes
+> usb_rx_callback_intf0() to again get -EPROTO error. This results in
+> printk() flooding (RCU stalls).
+> 
+> Commit 92f461517d22 ("media: ir_toy: do not resubmit broken urb") changed
+> ir_toy module not to resubmit when irtoy_in_callback() got -EPROTO error.
+> We should do similar thing for imon.
+> 
+> Basically, I think that imon should refrain from resubmitting urb when
+> callback function got an error. But since I don't know which error codes
+> should retry resubmitting urb, this patch handles only union of error codes
+> chosen from modules in drivers/media/rc/ directory which handles -EPROTO
+> error (i.e. ir_toy, mceusb and igorplugusb).
+> 
+> We need to decide whether to call usb_unlink_urb() when we got -EPROTO
+> error. ir_toy and mceusb call usb_unlink_urb() but igorplugusb does not
+> due to commit 5e4029056263 ("media: igorplugusb: remove superfluous
+> usb_unlink_urb()"). This patch calls usb_unlink_urb() because description
+> of usb_unlink_urb() suggests that it is OK to call.
+> 
+> Second problem is that when usb_rx_callback_intf0() once got -EPROTO error
+> before ictx->dev_present_intf0 becomes true, usb_rx_callback_intf0() always
+> resubmits urb due to commit 8791d63af0cf ("[media] imon: don't wedge
+> hardware after early callbacks"). If some errors should stop resubmitting
+> urb regardless of whether configuring the hardware has completed or not,
+> what that commit is doing is wrong. The ictx->dev_present_intf0 test was
+> introduced by commit 6f6b90c9231a ("[media] imon: don't parse scancodes
+> until intf configured"), but that commit did not call usb_unlink_urb()
+> when usb_rx_callback_intf0() got an error. Move the ictx->dev_present_intf0
+> test to immediately before imon_incoming_packet() so that we can call
+> usb_unlink_urb() as needed, or the first problem explained above happens
+> without printk() flooding (i.e. hung task).
+> 
+> Third problem is that when usb_rx_callback_intf0() is not called for some
+> reason (e.g. flaky hardware; the reproducer for this problem sometimes
+> prevents usb_rx_callback_intf0() from being called),
+> wait_for_completion_interruptible() in send_packet() never returns (i.e.
+> hung task). As a workaround for such situation, change send_packet() to
+> wait for completion with 10 seconds of timeout.
+> 
+> Also, move mutex_trylock() in imon_ir_change_protocol() to the beginning,
+> for memcpy() which modifies ictx->usb_tx_buf should be protected by
+> ictx->lock.
+> 
+> Also, verify at the beginning of send_packet() that ictx->lock is held
+> in case send_packet() is by error called from imon_ir_change_protocol()
+> when mutex_trylock() failed due to concurrent requests.
+> 
+> Link: https://syzkaller.appspot.com/bug?extid=592e2ab8775dbe0bf09a
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> ---
+> #syz test
+> 
+>  drivers/media/rc/imon.c | 69 +++++++++++++++++++++++++----------------
+>  1 file changed, 42 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/media/rc/imon.c b/drivers/media/rc/imon.c
+> index f5221b018808..3469a401a572 100644
+> --- a/drivers/media/rc/imon.c
+> +++ b/drivers/media/rc/imon.c
+> @@ -598,6 +598,8 @@ static int send_packet(struct imon_context *ictx)
+>  	int retval = 0;
+>  	struct usb_ctrlrequest *control_req = NULL;
+>  
+> +	lockdep_assert_held(&ictx->lock);
+> +
+>  	/* Check if we need to use control or interrupt urb */
+>  	if (!ictx->tx_control) {
+>  		pipe = usb_sndintpipe(ictx->usbdev_intf0,
+> @@ -645,12 +647,15 @@ static int send_packet(struct imon_context *ictx)
+>  		smp_rmb(); /* ensure later readers know we're not busy */
+>  		pr_err_ratelimited("error submitting urb(%d)\n", retval);
+>  	} else {
+> -		/* Wait for transmission to complete (or abort) */
+> -		retval = wait_for_completion_interruptible(
+> -				&ictx->tx.finished);
+> -		if (retval) {
+> +		/* Wait for transmission to complete (or abort or timeout) */
+> +		retval = wait_for_completion_interruptible_timeout(&ictx->tx.finished, 10 * HZ);
 
-Supported functionality as of this initial submission:
-* Debug UART
-* Regulators (PM7550, PM8550VS, PMR735B, PM8008)
-* Remoteprocs (ADSP, CDSP, MPSS, WPSS)
-* Power Button, Volume Keys, Switch
-* Display (using simple-framebuffer)
-* PMIC-GLINK (Charger, Fuel gauge, USB-C mode switching)
-* Camera flash/torch LED
-* SD card
-* USB
+Is the underlying hardware is not stable if the submitted urb failed to
+complete within 10 seconds for example? In the product environment is it
+making sense to ask for change to BOM, bill of material, if 10s timedout
+could be reliably reproduced twice a month?
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- arch/arm64/boot/dts/qcom/Makefile                |   1 +
- arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts | 815 +++++++++++++++++++++++
- 2 files changed, 816 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 669b888b27a1daa93ac15f47e8b9a302bb0922c2..af9649e22c8c9bcadc39ff3179af33304ba7b8b2 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -28,6 +28,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp433.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp449.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp453.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp454.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= milos-fairphone-fp6.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8216-samsung-fortuna3g.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-acer-a1-724.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-alcatel-idol347.dtb
-diff --git a/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts b/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..edf0bd333f448d9a777648315b82761a4083365e
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts
-@@ -0,0 +1,815 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2025, Luca Weiss <luca.weiss@fairphone.com>
-+ */
-+
-+/dts-v1/;
-+
-+#define PMIV0104_SID 7
-+
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-+#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+#include "milos.dtsi"
-+#include "pm7550.dtsi"
-+#include "pm8550vs.dtsi"
-+#include "pmiv0104.dtsi" /* PMIV0108 */
-+#include "pmk8550.dtsi" /* PMK7635 */
-+#include "pmr735b.dtsi"
-+
-+/ {
-+	model = "The Fairphone (Gen. 6)";
-+	compatible = "fairphone,fp6", "qcom,milos";
-+	chassis-type = "handset";
-+
-+	aliases {
-+		serial0 = &uart5;
-+	};
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		framebuffer0: framebuffer@e3940000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0x0 0xe3940000 0x0 (2484 * 1116 * 4)>;
-+			width = <1116>;
-+			height = <2484>;
-+			stride = <(1116 * 4)>;
-+			format = "a8r8g8b8";
-+			interconnects = <&mmss_noc MASTER_MDP QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+			clocks = <&gcc GCC_DISP_HF_AXI_CLK>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&volume_up_default>;
-+		pinctrl-names = "default";
-+
-+		key-volume-up {
-+			label = "Volume Up";
-+			gpios = <&pm7550_gpios 6 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+		};
-+
-+		switch {
-+			label = "Switch";
-+			gpios = <&tlmm 107 GPIO_ACTIVE_HIGH>;
-+			linux,input-type = <EV_SW>;
-+			linux,code = <SW_MUTE_DEVICE>;
-+		};
-+	};
-+
-+	pmic-glink {
-+		compatible = "qcom,milos-pmic-glink",
-+			     "qcom,sm8550-pmic-glink",
-+			     "qcom,pmic-glink";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		orientation-gpios = <&tlmm 131 GPIO_ACTIVE_HIGH>;
-+
-+		connector@0 {
-+			compatible = "usb-c-connector";
-+			reg = <0>;
-+
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					pmic_glink_hs_in: endpoint {
-+						remote-endpoint = <&usb_1_dwc3_hs>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
-+	vreg_ff_afvdd_2p8: regulator-ff-afvdd-2p8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "ff_afvdd_2p8";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		startup-delay-us = <100>;
-+
-+		gpio = <&tlmm 93 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		vin-supply = <&vreg_bob>;
-+	};
-+
-+	vreg_uw_afvdd_2p8: regulator-uw-afvdd-2p8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "uw_afvdd_2p8";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		startup-delay-us = <100>;
-+
-+		gpio = <&tlmm 23 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		vin-supply = <&vreg_bob>;
-+	};
-+
-+	vreg_uw_dvdd: regulator-uw-dvdd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "uw_dvdd";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		startup-delay-us = <100>;
-+
-+		gpio = <&tlmm 28 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		vin-supply = <&vreg_s1b>;
-+	};
-+
-+	vreg_ois_avdd0_1p8: regulator-ois-avdd0-1p8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "ois_avdd0_1p8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		startup-delay-us = <100>;
-+
-+		gpio = <&tlmm 27 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		vin-supply = <&vreg_bob>;
-+	};
-+
-+	vreg_ois_vdd: regulator-ois-vdd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "ois_vdd";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		startup-delay-us = <100>;
-+
-+		gpio = <&tlmm 24 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		vin-supply = <&vph_pwr>;
-+	};
-+
-+	vreg_oled_dvdd_1p2: regulator-oled-dvdd-1p2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "oled_dvdd_1p2";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+
-+		gpio = <&tlmm 54 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		vin-supply = <&vreg_s2b>;
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_s1j: regulator-pm3001a-s1j {
-+		compatible = "regulator-fixed";
-+		regulator-name = "pm3001a_s1j";
-+		regulator-min-microvolt = <2200000>;
-+		regulator-max-microvolt = <2200000>;
-+		startup-delay-us = <1000>;
-+
-+		gpio = <&pmr735b_gpios 1 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		vin-supply = <&vph_pwr>;
-+
-+		pinctrl-0 = <&s1j_enable_default>;
-+		pinctrl-names = "default";
-+	};
-+
-+	vreg_vtof_ldo_3p3: regulator-vtof-ldo-3p3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vtof_ldo_3p3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		startup-delay-us = <100>;
-+
-+		gpio = <&tlmm 76 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		vin-supply = <&vph_pwr>;
-+	};
-+
-+	vph_pwr: regulator-vph-pwr {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "vph_pwr";
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	reserved-memory {
-+		/*
-+		 * ABL is powering down display and controller if this node is
-+		 * not named exactly "splash_region".
-+		 */
-+		splash_region@e3940000 {
-+			reg = <0x0 0xe3940000 0x0 0x2b00000>;
-+			no-map;
-+		};
-+	};
-+
-+	thermal-zones {
-+		pm8008-thermal {
-+			polling-delay-passive = <100>;
-+			thermal-sensors = <&pm8008>;
-+
-+			trips {
-+				trip0 {
-+					temperature = <95000>;
-+					hysteresis = <0>;
-+					type = "passive";
-+				};
-+
-+				trip1 {
-+					temperature = <115000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&apps_rsc {
-+	regulators-0 {
-+		compatible = "qcom,pm7550-rpmh-regulators";
-+
-+		vdd-l1-supply = <&vreg_s1b>;
-+		vdd-l2-l3-supply = <&vreg_s3b>;
-+		vdd-l4-l5-supply = <&vreg_s2b>;
-+		vdd-l6-supply = <&vreg_s2b>;
-+		vdd-l7-supply = <&vreg_s1b>;
-+		vdd-l8-supply = <&vreg_s1b>;
-+		vdd-l9-l10-supply = <&vreg_s1b>;
-+		vdd-l11-supply = <&vreg_s1b>;
-+		vdd-l12-l14-supply = <&vreg_bob>;
-+		vdd-l13-l16-supply = <&vreg_bob>;
-+		vdd-l15-l17-l18-l19-l20-l21-l22-l23-supply = <&vreg_bob>;
-+		vdd-s1-supply = <&vph_pwr>;
-+		vdd-s2-supply = <&vph_pwr>;
-+		vdd-s3-supply = <&vph_pwr>;
-+		vdd-s4-supply = <&vph_pwr>;
-+		vdd-s5-supply = <&vph_pwr>;
-+		vdd-s6-supply = <&vph_pwr>;
-+
-+		qcom,pmic-id = "b";
-+
-+		vreg_s1b: smps1 {
-+			regulator-name = "vreg_s1b";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <2080000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_s2b: smps2 {
-+			regulator-name = "vreg_s2b";
-+			regulator-min-microvolt = <1256000>;
-+			regulator-max-microvolt = <1408000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_s3b: smps3 {
-+			regulator-name = "vreg_s3b";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <1040000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l2b: ldo2 {
-+			regulator-name = "vreg_l2b";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <912000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l3b: ldo3 {
-+			regulator-name = "vreg_l3b";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <912000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l4b: ldo4 {
-+			regulator-name = "vreg_l4b";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l5b: ldo5 {
-+			regulator-name = "vreg_l5b";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l7b: ldo7 {
-+			regulator-name = "vreg_l7b";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l8b: ldo8 {
-+			regulator-name = "vreg_l8b";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l9b: ldo9 {
-+			regulator-name = "vreg_l9b";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l10b: ldo10 {
-+			regulator-name = "vreg_l10b";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l11b: ldo11 {
-+			regulator-name = "vreg_l11b";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l12b: ldo12 {
-+			regulator-name = "vreg_l12b";
-+			/*
-+			 * Skip voltage voting for UFS VCC.
-+			 */
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l13b: ldo13 {
-+			regulator-name = "vreg_l13b";
-+			regulator-min-microvolt = <2700000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l14b: ldo14 {
-+			regulator-name = "vreg_l14b";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3304000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l15b: ldo15 {
-+			regulator-name = "vreg_l15b";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3304000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l16b: ldo16 {
-+			regulator-name = "vreg_l16b";
-+			regulator-min-microvolt = <3008000>;
-+			regulator-max-microvolt = <3008000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l17b: ldo17 {
-+			regulator-name = "vreg_l17b";
-+			regulator-min-microvolt = <3104000>;
-+			regulator-max-microvolt = <3104000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l18b: ldo18 {
-+			regulator-name = "vreg_l18b";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l19b: ldo19 {
-+			regulator-name = "vreg_l19b";
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3000000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l20b: ldo20 {
-+			regulator-name = "vreg_l20b";
-+			regulator-min-microvolt = <1620000>;
-+			regulator-max-microvolt = <3544000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l21b: ldo21 {
-+			regulator-name = "vreg_l21b";
-+			regulator-min-microvolt = <1620000>;
-+			regulator-max-microvolt = <3544000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l22b: ldo22 {
-+			regulator-name = "vreg_l22b";
-+			regulator-min-microvolt = <3200000>;
-+			regulator-max-microvolt = <3200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l23b: ldo23 {
-+			regulator-name = "vreg_l23b";
-+			regulator-min-microvolt = <1650000>;
-+			regulator-max-microvolt = <3544000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_bob: bob {
-+			regulator-name = "vreg_bob";
-+			regulator-min-microvolt = <3008000>;
-+			regulator-max-microvolt = <3960000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-1 {
-+		compatible = "qcom,pm8550vs-rpmh-regulators";
-+
-+		vdd-l1-supply = <&vreg_s3b>;
-+		vdd-l3-supply = <&vreg_s3b>;
-+
-+		qcom,pmic-id = "c";
-+
-+		vreg_l2c: ldo2 {
-+			regulator-name = "vreg_l2c";
-+			regulator-min-microvolt = <320000>;
-+			regulator-max-microvolt = <650000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-2 {
-+		compatible = "qcom,pmr735b-rpmh-regulators";
-+
-+		vdd-l1-l2-supply= <&vreg_s3b>;
-+		vdd-l3-supply= <&vreg_s3b>;
-+		vdd-l4-supply= <&vreg_s1b>;
-+		vdd-l5-supply= <&vreg_s2b>;
-+		vdd-l6-supply= <&vreg_s2b>;
-+		vdd-l7-l8-supply= <&vreg_s2b>;
-+		vdd-l9-supply= <&vreg_s3b>;
-+		vdd-l10-supply= <&vreg_s1b>;
-+		vdd-l11-supply= <&vreg_s3b>;
-+		vdd-l12-supply= <&vreg_s3b>;
-+
-+		qcom,pmic-id = "f";
-+
-+		vreg_l1f: ldo1 {
-+			regulator-name = "vreg_l1f";
-+			regulator-min-microvolt = <852000>;
-+			regulator-max-microvolt = <950000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l2f: ldo2 {
-+			regulator-name = "vreg_l2f";
-+			regulator-min-microvolt = <751000>;
-+			regulator-max-microvolt = <824000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l3f: ldo3 {
-+			regulator-name = "vreg_l3f";
-+			regulator-min-microvolt = <650000>;
-+			regulator-max-microvolt = <880000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l4f: ldo4 {
-+			regulator-name = "vreg_l4f";
-+			regulator-min-microvolt = <1700000>;
-+			regulator-max-microvolt = <1950000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l5f: ldo5 {
-+			regulator-name = "vreg_l5f";
-+			regulator-min-microvolt = <1140000>;
-+			regulator-max-microvolt = <1260000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l6f: ldo6 {
-+			regulator-name = "vreg_l6f";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l7f: ldo7 {
-+			regulator-name = "vreg_l7f";
-+			regulator-min-microvolt = <1080000>;
-+			regulator-max-microvolt = <1350000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l8f: ldo8 {
-+			regulator-name = "vreg_l8f";
-+			regulator-min-microvolt = <1100000>;
-+			regulator-max-microvolt = <1320000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l9f: ldo9 {
-+			regulator-name = "vreg_l9f";
-+			regulator-min-microvolt = <870000>;
-+			regulator-max-microvolt = <970000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l10f: ldo10 {
-+			regulator-name = "vreg_l10f";
-+			regulator-min-microvolt = <1500000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l11f: ldo11 {
-+			regulator-name = "vreg_l11f";
-+			regulator-min-microvolt = <320000>;
-+			regulator-max-microvolt = <864000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+};
-+
-+&dispcc {
-+	/* Disable for now so simple-framebuffer continues working */
-+	status = "disabled";
-+};
-+
-+&i2c1 {
-+	/* Samsung NFC @ 0x27 */
-+
-+	status = "okay";
-+};
-+
-+&i2c3 {
-+	/* AW88261FCR amplifier (top) @ 0x34 */
-+	/* AW88261FCR amplifier (bottom) @ 0x35 */
-+
-+	status = "okay";
-+};
-+
-+&i2c7 {
-+	status = "okay";
-+
-+	pm8008: pmic@8 {
-+		compatible = "qcom,pm8008";
-+		reg = <0x8>;
-+
-+		interrupts-extended = <&tlmm 125 IRQ_TYPE_EDGE_RISING>;
-+		reset-gpios = <&pmr735b_gpios 3 GPIO_ACTIVE_LOW>;
-+
-+		vdd-l1-l2-supply = <&vreg_s2b>;
-+		vdd-l3-l4-supply = <&vreg_bob>;
-+		vdd-l5-supply = <&vreg_bob>;
-+		vdd-l6-supply = <&vreg_s1b>;
-+		vdd-l7-supply = <&vreg_bob>;
-+
-+		pinctrl-0 = <&pm8008_int_default>, <&pm8008_reset_n_default>;
-+		pinctrl-names = "default";
-+
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-ranges = <&pm8008 0 0 2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		#thermal-sensor-cells = <0>;
-+
-+		regulators {
-+			vreg_l1p: ldo1 {
-+				regulator-name = "vreg_l1p";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1200000>;
-+			};
-+
-+			vreg_l2p: ldo2 {
-+				regulator-name = "vreg_l2p";
-+				regulator-min-microvolt = <950000>;
-+				regulator-max-microvolt = <1144000>;
-+			};
-+
-+			vreg_l3p: ldo3 {
-+				regulator-name = "vreg_l3p";
-+				regulator-min-microvolt = <2700000>;
-+				regulator-max-microvolt = <3000000>;
-+			};
-+
-+			vreg_l4p: ldo4 {
-+				regulator-name = "vreg_l4p";
-+				regulator-min-microvolt = <2700000>;
-+				regulator-max-microvolt = <2900000>;
-+			};
-+
-+			vreg_l5p: ldo5 {
-+				regulator-name = "vreg_l5p";
-+				regulator-min-microvolt = <2704000>;
-+				regulator-max-microvolt = <2900000>;
-+			};
-+
-+			vreg_l6p: ldo6 {
-+				regulator-name = "vreg_l6p";
-+				regulator-min-microvolt = <1700000>;
-+				regulator-max-microvolt = <1896000>;
-+			};
-+
-+			vreg_l7p: ldo7 {
-+				regulator-name = "vreg_l7p";
-+				regulator-min-microvolt = <2700000>;
-+				regulator-max-microvolt = <3400000>;
-+			};
-+		};
-+	};
-+
-+	/* VL53L3 ToF @ 0x29 */
-+	/* AW86938FCR vibrator @ 0x5a */
-+};
-+
-+&pm8550vs_c {
-+	status = "okay";
-+};
-+
-+&pmiv0104_eusb2_repeater {
-+	vdd18-supply = <&vreg_l7b>;
-+	vdd3-supply = <&vreg_l17b>;
-+
-+	qcom,tune-res-fsdif = /bits/ 8 <0x5>;
-+	qcom,tune-usb2-amplitude = /bits/ 8 <0x8>;
-+	qcom,tune-usb2-disc-thres = /bits/ 8 <0x7>;
-+	qcom,tune-usb2-preem = /bits/ 8 <0x6>;
-+};
-+
-+&pmr735b_gpios {
-+	s1j_enable_default: s1j-enable-default-state {
-+		pins = "gpio1";
-+		function = PMIC_GPIO_FUNC_NORMAL;
-+		power-source = <0>;
-+		bias-disable;
-+		output-low;
-+	};
-+
-+	pm8008_reset_n_default: pm8008-reset-n-default-state {
-+		pins = "gpio3";
-+		function = PMIC_GPIO_FUNC_NORMAL;
-+		bias-pull-down;
-+	};
-+};
-+
-+&pm7550_gpios {
-+	volume_up_default: volume-up-default-state {
-+		pins = "gpio6";
-+		function = PMIC_GPIO_FUNC_NORMAL;
-+		power-source = <1>;
-+		bias-pull-up;
-+	};
-+};
-+
-+&pm7550_flash {
-+	status = "okay";
-+
-+	led-0 {
-+		function = LED_FUNCTION_FLASH;
-+		color = <LED_COLOR_ID_WHITE>;
-+		led-sources = <1>, <4>;
-+		led-max-microamp = <350000>;
-+		flash-max-microamp = <1500000>;
-+		flash-max-timeout-us = <400000>;
-+	};
-+};
-+
-+&pon_pwrkey {
-+	status = "okay";
-+};
-+
-+&pon_resin {
-+	linux,code = <KEY_VOLUMEDOWN>;
-+
-+	status = "okay";
-+};
-+
-+&qupv3_id_0 {
-+	status = "okay";
-+};
-+
-+&qupv3_id_1 {
-+	status = "okay";
-+};
-+
-+&remoteproc_adsp {
-+	firmware-name = "qcom/milos/fairphone/fp6/adsp.mbn",
-+			"qcom/milos/fairphone/fp6/adsp_dtb.mbn";
-+
-+	status = "okay";
-+};
-+
-+&remoteproc_cdsp {
-+	firmware-name = "qcom/milos/fairphone/fp6/cdsp.mbn",
-+			"qcom/milos/fairphone/fp6/cdsp_dtb.mbn";
-+
-+	status = "okay";
-+};
-+
-+&remoteproc_mpss {
-+	firmware-name = "qcom/milos/fairphone/fp6/modem.mbn";
-+
-+	status = "okay";
-+};
-+
-+&remoteproc_wpss {
-+	firmware-name = "qcom/milos/fairphone/fp6/wpss.mbn";
-+
-+	status = "okay";
-+};
-+
-+&sdhc_2 {
-+	cd-gpios = <&tlmm 65 GPIO_ACTIVE_HIGH>;
-+
-+	vmmc-supply = <&vreg_l13b>;
-+	vqmmc-supply = <&vreg_l23b>;
-+	no-sdio;
-+	no-mmc;
-+
-+	pinctrl-0 = <&sdc2_default>, <&sdc2_card_det_n>;
-+	pinctrl-1 = <&sdc2_sleep>, <&sdc2_card_det_n>;
-+	pinctrl-names = "default", "sleep";
-+
-+	status = "okay";
-+};
-+
-+&spi0 {
-+	/* Eswin EPH8621 touchscreen @ 0 */
-+};
-+
-+&tlmm {
-+	gpio-reserved-ranges = <8 4>, /* Fingerprint SPI */
-+			       <13 1>, /* NC */
-+			       <63 2>; /* WLAN UART */
-+
-+	sdc2_card_det_n: sdc2-card-det-state {
-+		pins = "gpio65";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-pull-up;
-+	};
-+
-+	pm8008_int_default: pm8008-int-default-state {
-+		pins = "gpio125";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+};
-+
-+&uart5 {
-+	status = "okay";
-+};
-+
-+&usb_1 {
-+	dr_mode = "otg";
-+
-+	/* USB 2.0 only, HW does not support USB 3.x */
-+	qcom,select-utmi-as-pipe-clk;
-+
-+	status = "okay";
-+};
-+
-+&usb_1_dwc3_hs {
-+	remote-endpoint = <&pmic_glink_hs_in>;
-+};
-+
-+&usb_1_hsphy {
-+	vdd-supply = <&vreg_l2b>;
-+	vdda12-supply = <&vreg_l4b>;
-+
-+	phys = <&pmiv0104_eusb2_repeater>;
-+
-+	status = "okay";
-+};
-
--- 
-2.50.1
-
+> +		if (retval <= 0) {
+>  			usb_kill_urb(ictx->tx_urb);
+>  			pr_err_ratelimited("task interrupted\n");
+> +			if (retval < 0)
+> +				ictx->tx.status = retval;
+> +			else
+> +				ictx->tx.status = -ETIMEDOUT;
+>  		}
+>  
+>  		ictx->tx.busy = false;
+> @@ -1121,7 +1126,7 @@ static int imon_ir_change_protocol(struct rc_dev *rc, u64 *rc_proto)
+>  	int retval;
+>  	struct imon_context *ictx = rc->priv;
+>  	struct device *dev = ictx->dev;
+> -	bool unlock = false;
+> +	const bool unlock = mutex_trylock(&ictx->lock);
+>  	unsigned char ir_proto_packet[] = {
+>  		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x86 };
+>  
+> @@ -1148,8 +1153,6 @@ static int imon_ir_change_protocol(struct rc_dev *rc, u64 *rc_proto)
+>  
+>  	memcpy(ictx->usb_tx_buf, &ir_proto_packet, sizeof(ir_proto_packet));
+>  
+> -	unlock = mutex_trylock(&ictx->lock);
+> -
+>  	retval = send_packet(ictx);
+>  	if (retval)
+>  		goto out;
+> @@ -1745,14 +1748,6 @@ static void usb_rx_callback_intf0(struct urb *urb)
+>  	if (!ictx)
+>  		return;
+>  
+> -	/*
+> -	 * if we get a callback before we're done configuring the hardware, we
+> -	 * can't yet process the data, as there's nowhere to send it, but we
+> -	 * still need to submit a new rx URB to avoid wedging the hardware
+> -	 */
+> -	if (!ictx->dev_present_intf0)
+> -		goto out;
+> -
+>  	switch (urb->status) {
+>  	case -ENOENT:		/* usbcore unlink successful! */
+>  		return;
+> @@ -1761,16 +1756,30 @@ static void usb_rx_callback_intf0(struct urb *urb)
+>  		break;
+>  
+>  	case 0:
+> -		imon_incoming_packet(ictx, urb, intfnum);
+> +		/*
+> +		 * if we get a callback before we're done configuring the hardware, we
+> +		 * can't yet process the data, as there's nowhere to send it, but we
+> +		 * still need to submit a new rx URB to avoid wedging the hardware
+> +		 */
+> +		if (ictx->dev_present_intf0)
+> +			imon_incoming_packet(ictx, urb, intfnum);
+>  		break;
+>  
+> +	case -ECONNRESET:
+> +	case -EILSEQ:
+> +	case -EPROTO:
+> +	case -EPIPE:
+> +		dev_warn(ictx->dev, "imon %s: status(%d)\n",
+> +			 __func__, urb->status);
+> +		usb_unlink_urb(urb);
+> +		return;
+> +
+>  	default:
+>  		dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
+>  			 __func__, urb->status);
+>  		break;
+>  	}
+>  
+> -out:
+>  	usb_submit_urb(ictx->rx_urb_intf0, GFP_ATOMIC);
+>  }
+>  
+> @@ -1786,14 +1795,6 @@ static void usb_rx_callback_intf1(struct urb *urb)
+>  	if (!ictx)
+>  		return;
+>  
+> -	/*
+> -	 * if we get a callback before we're done configuring the hardware, we
+> -	 * can't yet process the data, as there's nowhere to send it, but we
+> -	 * still need to submit a new rx URB to avoid wedging the hardware
+> -	 */
+> -	if (!ictx->dev_present_intf1)
+> -		goto out;
+> -
+>  	switch (urb->status) {
+>  	case -ENOENT:		/* usbcore unlink successful! */
+>  		return;
+> @@ -1802,16 +1803,30 @@ static void usb_rx_callback_intf1(struct urb *urb)
+>  		break;
+>  
+>  	case 0:
+> -		imon_incoming_packet(ictx, urb, intfnum);
+> +		/*
+> +		 * if we get a callback before we're done configuring the hardware, we
+> +		 * can't yet process the data, as there's nowhere to send it, but we
+> +		 * still need to submit a new rx URB to avoid wedging the hardware
+> +		 */
+> +		if (ictx->dev_present_intf1)
+> +			imon_incoming_packet(ictx, urb, intfnum);
+>  		break;
+>  
+> +	case -ECONNRESET:
+> +	case -EILSEQ:
+> +	case -EPROTO:
+> +	case -EPIPE:
+> +		dev_warn(ictx->dev, "imon %s: status(%d)\n",
+> +			 __func__, urb->status);
+> +		usb_unlink_urb(urb);
+> +		return;
+> +
+>  	default:
+>  		dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
+>  			 __func__, urb->status);
+>  		break;
+>  	}
+>  
+> -out:
+>  	usb_submit_urb(ictx->rx_urb_intf1, GFP_ATOMIC);
+>  }
+>  
+> -- 
+> 2.50.1
+> 
+> 
+> 
 
