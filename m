@@ -1,165 +1,76 @@
-Return-Path: <linux-kernel+bounces-729062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8916CB03139
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 15:42:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05241B0313B
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 15:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D832E3B5588
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 13:42:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97BC27AE10D
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 13:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27D2278E6A;
-	Sun, 13 Jul 2025 13:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cdivMPP9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518C817E4;
-	Sun, 13 Jul 2025 13:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AED7278E41;
+	Sun, 13 Jul 2025 13:42:36 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83330278772;
+	Sun, 13 Jul 2025 13:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752414142; cv=none; b=Lzs9bPbzddY4HsKfjc8DjPurF+yhmROAz9qtQcF3ahSMcTiOFXdx8QckgNEc+R9otSwQPaYcDl8raqAit3XmULeFAaB2fO8J1xPk2KnItMusq507MChVxlnOtH4WLSlMilL8JkS+xiWX+oBnQbihemsyV2pv18Kx4QSQru/04gM=
+	t=1752414156; cv=none; b=cYEBeUovQp95Xg5AYFrCRS5JZW/8RFeZ83i6txxNfz0qaBCB/htjBqnSMyW3sCNaScyJM5Ne/chDQMJ7z7qh2pdZvO6qp1VOIKXEpz3Vxm4+MJEmhMJjyF+IF222lxhRWVoq0QWr5FwPfyOZjvVCQ5597VdcWbvssw2AGHxVphE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752414142; c=relaxed/simple;
-	bh=FiK8zDiaUXmEFpaObLQbyvo1T/Qz+0i0aynWUyUlYpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pMF6KqA0LzRi/Ome3TSMZqVxy14EVH8Uco4T8JEdnXhS7um6tc80GOrpgdQWc50bbpWrmpkLrRHF1HyCxanFEpte/lfPsfJsPmd9GWutccFbrZhH8F0TZyP+c+i/SVicuOBU6BRLrHHGyy4A6ScnWECCJTDQqtJ0Q/UDCP8mFGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cdivMPP9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56391C4CEE3;
-	Sun, 13 Jul 2025 13:42:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752414141;
-	bh=FiK8zDiaUXmEFpaObLQbyvo1T/Qz+0i0aynWUyUlYpI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cdivMPP9gmyMal7Nz7Wbd/EGgmLpj9fDl8OwcZ4G+mx29lSB8u6s86519fxpUEi4Z
-	 XVtHYlbWjRcaS8MaQ2xI6SyDaLN0B/5fZbUXxhluZKS8R8FI/68jQpwNyk7RxjeMuX
-	 niU8g8i2Qtrkum09IYF/jhGwEErAQiDrTOkkvcBMJsu9aZhdBuKw1VS7oDNxsmpXQl
-	 rCKFxaYRrAMrI0LuC7Rhn+R9xMdevwEJr9X/fPJXzJYgSvdzAGT8K5pusYzS1MDXAz
-	 hUetqiWXI28yhZx6sDH9HYLSQDmK4wWaeh34OVmB/6R+z55qTKzG5Oxa7t+u28w+P7
-	 8tsZyQLgDNZRQ==
-Date: Sun, 13 Jul 2025 14:42:14 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
-Cc: "lars@metafoo.de" <lars@metafoo.de>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>, "dima.fedrau@gmail.com"
- <dima.fedrau@gmail.com>, "marcelo.schmitt1@gmail.com"
- <marcelo.schmitt1@gmail.com>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "Lorenz Christian (ME-SE/EAD2)"
- <Christian.Lorenz3@de.bosch.com>, "Frauendorf Ulrike (ME/PJ-SW3)"
- <Ulrike.Frauendorf@de.bosch.com>, "Dolde Kai (ME-SE/PAE-A3)"
- <Kai.Dolde@de.bosch.com>
-Subject: Re: [PATCH v3 2/2] iio: imu: smi330: Add driver
-Message-ID: <20250713144214.6ee02f59@jic23-huawei>
-In-Reply-To: <AM8PR10MB47217D838CA7DDACBE162D15CD49A@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-References: <20250703153823.806073-1-Jianping.Shen@de.bosch.com>
-	<20250703153823.806073-3-Jianping.Shen@de.bosch.com>
-	<20250706175328.7207d847@jic23-huawei>
-	<AM8PR10MB47217D838CA7DDACBE162D15CD49A@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752414156; c=relaxed/simple;
+	bh=A47skBCl1urS0CjnqOHX8z8xhzPgaPT/8d4JesjpOqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TSRw9I1m5HSI2CezTCnDd+cJJTIgXdKH15RZ1r5NdwWNhl02gf+6ZVYtcCBIYN961hYOIi+tNXH5gtQB2ARJJLtZtQFC19Qap63yefECkxIAoNNgDREMzIEmozLbQnqeu6Vdfb+iZ0DbpWVGVulkd5OjuwI5JSrPt7vM8LQKzAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 56DDgJtv025713;
+	Sun, 13 Jul 2025 15:42:19 +0200
+Date: Sun, 13 Jul 2025 15:42:19 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 1/2] tools/nolibc: define time_t in terms of
+ __kernel_old_time_t
+Message-ID: <20250713134219.GA25665@1wt.eu>
+References: <20250712-nolibc-x32-v1-0-6d81cb798710@weissschuh.net>
+ <20250712-nolibc-x32-v1-1-6d81cb798710@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250712-nolibc-x32-v1-1-6d81cb798710@weissschuh.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Wed, 9 Jul 2025 19:38:18 +0000
-"Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com> wrote:
-
-> Hi Jonathan,
+On Sat, Jul 12, 2025 at 11:00:55AM +0200, Thomas Weiﬂschuh wrote:
+> Nolibc assumes that the kernel ABI is using a time values that are as
+> large as a long integer. For most ABIs this holds true.
+> But for x32 this is not correct, as it uses 32bit longs but 64bit times.
 > 
-> "available_scan_masks" works not as expected.  We test it using kernel version v6.16. see the test result inline.
+> Also the 'struct stat' implementation of nolibc relies on timespec::tv_sec
+> and time_t being the same type. While timespec::tv_sec comes from the
+> kernel and is of type __kernel_old_time_t, time_t is defined within nolibc.
 > 
-> Best Regards 
-> Jianping 
+> Switch to the __kernel_old_time_t to always get the correct type.
 > 
-> >> +
-> >> +static irqreturn_t smi330_trigger_handler(int irq, void *p) {
-> >> +	struct iio_poll_func *pf = p;
-> >> +	struct iio_dev *indio_dev = pf->indio_dev;
-> >> +	struct smi330_data *data = iio_priv(indio_dev);
-> >> +	int ret, chan;
-> >> +	int i = 0;
-> >> +
-> >> +	ret = regmap_bulk_read(data->regmap, SMI330_ACCEL_X_REG, data-
-> >>buf,
-> >> +			       ARRAY_SIZE(smi330_channels));
-> >> +	if (ret)
-> >> +		goto out;
-> >> +
-> >> +	if (*indio_dev->active_scan_mask != SMI330_ALL_CHAN_MSK) {
-> >> +		iio_for_each_active_channel(indio_dev, chan)
-> >> +			data->buf[i++] = data->buf[chan];  
-> >
-> >If I follow this correctly you are reading all the channels and just copying out the
-> >ones you want.  Just let the IIO core do that for you by setting iio_dev-  
-> >>available_scan_masks = {  SMI330_ALL_CHAN_MSK, 0 }; and push the whole  
-> >buffer every time.  
-> 
-> For the most frequent use cases, we define available_scan_masks = { SMI330_ALL_CHAN_MSK, SMI330_ACC_XYZ_MSK, SMI330_GYRO_XYZ_MSK, 0 }; and push the whole buffer every time.
-> From the user space we just enable 3 channels gyro_x, gyro_y, and gyro_z. Then we enable buffer and expect that only the gyro values and timestamp in iio_buffer. Nevertheless, we have 3 accelerometer values and the timestamp in iio_buffer.
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
 
-> It seems that the iio core does not take care which channel is enabled,  just copy the first 3 values (acc x,y,z) into iio_buffer.  Our driver code still needs to take care and just copy the enabled channel value to buffer.
+Great! I didn't know we could support x32 and thought it was phased out.
+But if it works it can be convenient for those seeking smaller binaries.
 
-Look again at how it works.  If you provide ACC_XYZ_MSK, then your driver has to handle it.
-available_scan_masks is saying what your driver supports. The driver can check active_scan_mask
-to find out what is enabled.  So right option here is only
-{ SMI330_ALL_CHAN_MSK, 0, }  In that case the driver never needs to check as there is only
-one option.
+Both patches look good to me, for the whole series:
 
-Then if any subset of channels is enabled the IIO core copy out just the data that
-is relevant.
+Acked-by: Willy Tarreau <w@1wt.eu>
 
-
-> 
-> Another side effect after using available_scan_masks is that the active_scan_masks sometimes does not reflect current channel activation status.
-> 
-> Is some step missing to properly use available_scan_masks ?  How can a user find out from user space which channel combination is defined in available_scan_masks ?
-
-Why would userspace want to?  Userspace requested a subset of channels
-and it gets that subset.  So it if asks for the channels that make up
-SMI330_ACC_XYZ_MSK, if available_scan_mask == { SMI330_ALL_CHAN_MSK, 0 } then
-the IIO core handling selects SMI330_ALL_CHAN_MSK (smallest available mask that
-is superset of what we asked for) and sets active_scan_mask to that.  The driver
-follows what active_scan_mask specifies and passes all channel data via
-the iio_push_to_buffers*() call. The demux in the IIO core than takes that
-'scan' and repacks it so that userspace receives just the data it asked for
-formatting exactly as the driver would have done it if you had handled
-each channels separately in the driver.
-
-So the aim is that userspace never knows anything about this.  Just set
-what channels you want and get that data. 
-
-Jonathan
-
-
-> 
-> >
-> >The handling the core code is reasonably sophisticated and will use bulk
-> >copying where appropriate.
-> >
-> >If there is a strong reason to not use that, add a comment here so we don't
-> >have anyone 'fix' this code in future.
-> >  
-> >> +	}
-> >> +
-> >> +	iio_push_to_buffers_with_timestamp(indio_dev, data->buf,
-> >> +pf->timestamp);
-> >> +
-> >> +out:
-> >> +	iio_trigger_notify_done(indio_dev->trig);
-> >> +
-> >> +	return IRQ_HANDLED;
-> >> +}  
-> 
-> 
-
+Thanks!
+Willy
 
