@@ -1,159 +1,172 @@
-Return-Path: <linux-kernel+bounces-729167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 178CAB032AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 20:49:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E86DEB032B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 21:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B95A53B7941
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 18:49:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05DF91895640
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 19:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EAC4289346;
-	Sun, 13 Jul 2025 18:49:30 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76788289373;
+	Sun, 13 Jul 2025 19:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9+6gTCv"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55456149C51;
-	Sun, 13 Jul 2025 18:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2420522FE0A;
+	Sun, 13 Jul 2025 19:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752432569; cv=none; b=hq9ovHcFZQvVnhwkEdGD0zW4vxqYnEejHmHtZQxyzMBAmPc4vcwDPmY8+ugsFVPDwEY1rtN6A97eLGy1rz91PfpTMUznLyvAZFx/ZorQl5eq2RInM1C8N/ZcUZc/yAUH4SsVfGg/a5RBDBiyJ0Clr+Hk+BRAQ/YljVtl4jLsZRY=
+	t=1752434029; cv=none; b=OjHiv6eWIOxRRAsMS5w/s+EU4YX7j0ZjDI3Ig2L4R45wuY0AI7cUZENeOj61yoZ43ZZj42ztFGHUIq6aFWNR/39devOrsl3Jit/CbEAptWFizuQRxbF7wOQQgvJomomtAQKzeQvnGd9pOQ9cF9SmIsNsvInYTCgOhc2tC0bwOrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752432569; c=relaxed/simple;
-	bh=i3XsHWfEcdnNfIIdpBdjTzITZ4nvF2sPD8/gNhy9d4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b4wNDoj59CgMiYCiEuijP6Sjc+TLN9INaIJJlmNzPVEfLOzE8Tgod1K4esvhTr4cUG+fUGY6CEOrLgUhvOHi9JEpFpiEg8yU6RlUXkoZiHSl23RpHMWF0/kic60UbXgYzoh24mCwda7Re8xW6Z8rSVjvMG2R8HvaBpvSiDSgBB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 6D59D1F00047;
-	Sun, 13 Jul 2025 18:49:10 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id CD076B00472; Sun, 13 Jul 2025 18:49:07 +0000 (UTC)
-X-Spam-Level: 
-Received: from shepard (armstrong.paulk.fr [82.65.240.19])
-	by laika.paulk.fr (Postfix) with ESMTPSA id 97E55B000E1;
-	Sun, 13 Jul 2025 18:49:04 +0000 (UTC)
-Date: Sun, 13 Jul 2025 20:49:01 +0200
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Yong Deng <yong.deng@magewell.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v8 1/9] dt-bindings: media: sun6i-a31-csi: Add optional
- interconnect properties
-Message-ID: <aHP_nR2y5iMsCtFH@shepard>
-References: <20250704154628.3468793-1-paulk@sys-base.io>
- <20250704154628.3468793-2-paulk@sys-base.io>
- <20250709-misty-coot-of-fantasy-cfadfa@houat>
+	s=arc-20240116; t=1752434029; c=relaxed/simple;
+	bh=Pr4ssuwJ7eYc7plzhN80jbG9ao5jLX8Hv+LiySw9cag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bGi/NrkvowcYLkGPN6dIlPlLZVkL6PdPN0/5TIY3ttpnJh9dWnZD9dJu4EU83c80dcMKpDHKQ8FWaPOpt7FuoVQtkPYyghqur9IjLzZb2jhaZ6DZQ8Mz8UevOWUp7F51PX3qt5AlxuQMrCaMoWjp5mYukCThl63kKWeeCyMkeEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9+6gTCv; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a50fc7ac4dso1689466f8f.0;
+        Sun, 13 Jul 2025 12:13:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752434026; x=1753038826; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oooQh8dqRVPvirrZcwVugQF+meU4R3k+F/AmmfY0OUo=;
+        b=X9+6gTCvE3iwMIQFbB3Ca8/SFnrhz5+xSLyJCGG8u1uaBGSwcFhAFFnUH4+tG2cHHz
+         BgmjGCs7+aNVVoav9HxgVhbis7Glk7iXsTGJuux89zdldPqNrPVMBdHWHITnfmyHGxM4
+         jLQMZGYVkyAIz51T4rMIQQTIHLpOm+nCoWlhwr5/qwE6wTUzjVeJLirGvZ3jDMCblPJB
+         odReozhagg/dnrvhTuNbTaqeRtlFPKZYL0Xk/gx0SZ8HY2wnPD+nEnYvD9HC/e1DFvip
+         /JuR/tkQ520ut//wjay+wUT2pR4dTd2bBrhOU36W60bJqCLBcpHHrq0GPUbNmic3i1hJ
+         vLbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752434026; x=1753038826;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oooQh8dqRVPvirrZcwVugQF+meU4R3k+F/AmmfY0OUo=;
+        b=ezXmWN65CWct0w0073vwQb4gf5SPNGWRDha+oLPh7WRg4lDWgn0HzQSGQO1ZNIPr7t
+         AjDzVKYEIPafgJmgNKANDU+1RXXPMH1FzCB5c34FXtw+CUGYJVg3zS/P45QjXDjozQl/
+         XqDOKsEn3UFLFxYdE2kXYA+9kBjoVg8MTEH2bHplqwpr3KXa/ybFMCBxmDRO82+KGZfC
+         wfrC6rcb2Q09A/nLNoKRvPK1RfCdusPQKsOIbAb0o6zET6MElIOcGJingVWBR2DSR+HS
+         sqIf6lVRCsGXxYIyA0BUbRPf+skAYzzJ5aJ62wMoK34lsfhomu4hVoaF+X+3dv3zw3gj
+         YTbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbeHLi/0Ovvc/VljU+tiFDMFl0YiYhxwTSbGKPCiST1mtCkqhWZ/poF51Se3a2HaJeaWQSPzqAu2W3cyFw@vger.kernel.org, AJvYcCWtIsGdZWOEja7GSppEn12RP0zr/vMQtL0somsFJD8r7B/VKw6OFP5362aRLjd293A7TLTs5WjluWXh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo+ljpn9lhIeud6f68zXFTrTPi8ibNylOtuI7RppHD0I85+EYk
+	PpsnF3ObFxG2+QbknVlOtH+FmCVrbsSU3Nc9JwkDG2jKraCYP1PzAlE=
+X-Gm-Gg: ASbGncv4sX18vapjfH9828Qps48k5ad6wXEWKPth7FomrUx8pVAIPj5JMFgSPC54l+t
+	6plxxgOjzNogrbkbAD7YgSzErZKGURGM/MsUY5s1acd18Xu9vFHJ/oP4juuoMCK8iJX3i6qtYhb
+	heutmdlWXBocgJhAX7kUFddXm+pl0qMx7GRP7zCnbfjqHhDepHL5mt0iGGlvrRu/RUJmX29x15V
+	lOo3hl7iEiOnlyeH3/SCAEQac/0UeZgghzB7ZjPVbNCqWzjU726ohCyO6FL8jAjQMjb5YikiiZ+
+	pcPjzz+iiGZqwButvUQYcNQagsK/ugiNBzZt70lSi719zm1133bp9GLFNFGKwCDOPlCe7yfbTEB
+	aK38t7LtruThsYkCtkkVfMKTayYVHuADNZYK/KwEAfJCPUA8+p5WE/aNa5pUHU+owrLrbpgtZXd
+	mLvB4=
+X-Google-Smtp-Source: AGHT+IGNeHGBggvz35vdEjlIEqgBSfIcQabUpCb1c+vu131AXZr+/1qIYQWvMa0z8By/1rVOgsbfPw==
+X-Received: by 2002:a05:6000:21c8:b0:3b5:f165:14e1 with SMTP id ffacd0b85a97d-3b5f18b41b0mr6088573f8f.38.1752434025843;
+        Sun, 13 Jul 2025 12:13:45 -0700 (PDT)
+Received: from ?IPV6:2a02:810b:f13:8500:80da:6526:1e81:c18f? ([2a02:810b:f13:8500:80da:6526:1e81:c18f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45615a4551bsm23035615e9.37.2025.07.13.12.13.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 13 Jul 2025 12:13:45 -0700 (PDT)
+Message-ID: <702dc4bb-7b3c-4647-b84f-8516989b0836@gmail.com>
+Date: Sun, 13 Jul 2025 21:13:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="X9zBqThFU9k8sBj9"
-Content-Disposition: inline
-In-Reply-To: <20250709-misty-coot-of-fantasy-cfadfa@houat>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/6] arm64: dts: rockchip: Add ROCK 2A/2F, Sige1 and
+ NanoPi Zero2
+To: Jonas Karlman <jonas@kwiboo.se>, Heiko Stuebner <heiko@sntech.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Yao Zi <ziyao@disroot.org>, Chukun Pan <amadeus@jmu.edu.cn>,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250712173805.584586-1-jonas@kwiboo.se>
+Content-Language: en-US
+From: Alex Bee <knaerzche@gmail.com>
+In-Reply-To: <20250712173805.584586-1-jonas@kwiboo.se>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi list, Hi Jonas,
+
+> This series adds dt-bindings and initial device tree for the following
+> Rockchip RK3528A boards:
+> - Radxa ROCK 2A/2F
+> - ArmSoM Sige1
+> - FriendlyElec NanoPi Zero2
 
 
---X9zBqThFU9k8sBj9
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+this only sub-related to this series: Is there any particular reason, why
+we call the compatible "rockchip,rk3528" and not "rockchip,rk3528a"? From
+what I can see all boards currently supported (and those in this series)
+are having the RK3528A version of the SoC. I didn't follow the development
+here, but there are differences - I did a quick compare of the datasheets
+of those two SoC versions - it looks like RK3528 version has USB3-DRD
+controller, while RK3528A has USB3 host-only controller. Also it seems to
+have different video codec IPs and the DRAM controller additionally
+supports LPDDR4X.
+I guess it would be good to discuss this before this series is merged,
+because re-naming *.dts files after they have been in a release is somewhat
+impossible.
 
-Hi Maxime,
+Regards,
+Alex
+> 
+> The bt/wifi_reg_on pins are described in the device tree using
+> rfkill-gpio nodes.
+> 
+> Changes in v3:
+> - Rename led nodes to led-0/led-1
+> - Remove pinctrl* props from sdio0
+> - Collect a-b tags
+> 
+> Changes in v2:
+> - Limit sdmmc max-frequency to 100 MHz on ROCK 2A/2F
+> - Drop clock-output-names prop from rtc node on Sige1 and NanoPi Zero2
+> - Drop regulator-boot-on from usb 2.0 host regulators on Sige1
+> - Add bluetooth and wifi nodes on Sige1
+> - Collect t-b tag for NanoPi Zero2
+> 
+> These boards can be booted from emmc or sd-card using the U-Boot 2025.07
+> generic-rk3528 target or work-in-progress patches for these boards [1].
+> 
+> For working bluetooth on ArmSoM Sige1 the patch "arm64: dts: rockchip:
+> Fix UART DMA support for RK3528" [2] is required.
+> 
+> [1] https://source.denx.de/u-boot/contributors/kwiboo/u-boot/-/commits/rk3528
+> [2] https://lore.kernel.org/r/20250709210831.3170458-1-jonas@kwiboo.se
+> 
+> Jonas Karlman (6):
+>    dt-bindings: arm: rockchip: Add Radxa ROCK 2A/2F
+>    arm64: dts: rockchip: Add Radxa ROCK 2A/2F
+>    dt-bindings: arm: rockchip: Add ArmSoM Sige1
+>    arm64: dts: rockchip: Add ArmSoM Sige1
+>    dt-bindings: arm: rockchip: Add FriendlyElec NanoPi Zero2
+>    arm64: dts: rockchip: Add FriendlyElec NanoPi Zero2
+> 
+>   .../devicetree/bindings/arm/rockchip.yaml     |  17 +
+>   arch/arm64/boot/dts/rockchip/Makefile         |   4 +
+>   .../boot/dts/rockchip/rk3528-armsom-sige1.dts | 465 ++++++++++++++++++
+>   .../boot/dts/rockchip/rk3528-nanopi-zero2.dts | 340 +++++++++++++
+>   .../boot/dts/rockchip/rk3528-rock-2.dtsi      | 293 +++++++++++
+>   .../boot/dts/rockchip/rk3528-rock-2a.dts      |  82 +++
+>   .../boot/dts/rockchip/rk3528-rock-2f.dts      |  10 +
+>   7 files changed, 1211 insertions(+)
+>   create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-armsom-sige1.dts
+>   create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-nanopi-zero2.dts
+>   create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2.dtsi
+>   create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2a.dts
+>   create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2f.dts
+> 
 
-On Wed 09 Jul 25, 09:26, Maxime Ripard wrote:
-> On Fri, Jul 04, 2025 at 05:46:18PM +0200, Paul Kocialkowski wrote:
-> > An interconnect can be attached to the sun6i-a31-csi device, which is
-> > useful to attach the dma memory offset. Add related properties.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
-> > ---
-> >  .../devicetree/bindings/media/allwinner,sun6i-a31-csi.yaml  | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/media/allwinner,sun6i-a3=
-1-csi.yaml b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-cs=
-i.yaml
-> > index 1aa5775ba2bc..978ef2dc0ae7 100644
-> > --- a/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-csi.y=
-aml
-> > +++ b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-csi.y=
-aml
-> > @@ -40,6 +40,12 @@ properties:
-> >    resets:
-> >      maxItems: 1
-> > =20
-> > +  interconnects:
-> > +    maxItems: 1
-> > +
-> > +  interconnect-names:
-> > +    const: dma-mem
-> > +
->=20
-> Is it really optional? My experience (despite being a bit outdated by
-> now) was that it was required for some SoCs, and missing for others.
-
-My understanding of the current stituation is that devices with the
-interconnects property will get the dma offset from it while others
-will have it set via sunxi_mbus' notifier. So in practice the
-interconnects property is not required.
-
-Currently the A83T and V3s/V3/S3 have sun6i-a31-csi devices declared in
-their device-trees without the property. So I'm not sure if this still
-allows us to add a mandatory property that may not always be present.
-
-It should definitely be added (along with a mbus node) to existing users
-though.
-
-So all in all I think it makes more sense to not mark it as mandatory.
-
-All the best,
-
-Paul
-
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Expert in multimedia, graphics and embedded hardware support with Linux.
-
---X9zBqThFU9k8sBj9
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmhz/50ACgkQhP3B6o/u
-lQzxTw//ROiN0Htb48Bzab2XLYugHHGICn0T1zNUDY1N+dbp1F7DBt7zbFSKmJrQ
-KoEAcG81QXASWnIaf0NTPaBhSetnasv1VP7AGA7Bzp6J0ddaRESL3Y12C9k7VBDs
-x62h5WT9Pyu9RchfXGaRbEwQBxcFu7+a3QUkqsXhs/2kFxFrfFrFJKnfNorgKf2P
-TzKXxMPG67cmkl3+nek5hyyxftfZOpZatmFbnGV/K4SOd1F4o0hlblhAlaUfm7Nw
-oulvKgn7ObSPXB/rhxzmlvAe92WDjta6xAaK3uhC05+wphwJxuCjzo4nImERZ6at
-zqKV7r4GwQLjm4ttJ2LXs6qIrwYNGmvcnCIwm2N4i5vN+Si6GoOGMD6rsmHWKYQB
-USnaF5WKD5eiBAQL4R9szCA3XBxWa3SHlxbdJfS1sJe81PtHxaT8TsINn7zNcf16
-f7rAxcX1xd1nA6couHmXA/wungzTP65cfc01oq27XtrbKBuxvGImhSHMVMVdqHyU
-pQeOAlrbHxy1w03g3pGFNrfLdTG1ntHCaqp77+eXzxqS1kZKkDxcTft8YpZMXa60
-QeKx44JurlO4HeFJHE6uxpo5V5YHdzBqRv3gQ9eis8n5Ek4ZU9fHJwUkDd8GWGHY
-vyT7FJ0Fw6DmKxqHlN6r8bt7KpcwJzIOqZStRrvQNJX6D+peS5E=
-=u6Ul
------END PGP SIGNATURE-----
-
---X9zBqThFU9k8sBj9--
 
