@@ -1,126 +1,112 @@
-Return-Path: <linux-kernel+bounces-729183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8E2B032E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 22:22:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2841B032E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 22:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF7B73B73EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 20:21:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4957F3BB72A
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 20:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296DD286D4E;
-	Sun, 13 Jul 2025 20:22:00 +0000 (UTC)
-Received: from smtp.blochl.de (mail.blochl.de [151.80.40.192])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC54F285C94;
+	Sun, 13 Jul 2025 20:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bi6UUeh8"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B854A00;
-	Sun, 13 Jul 2025 20:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=151.80.40.192
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDEE7D3F4;
+	Sun, 13 Jul 2025 20:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752438119; cv=none; b=T3woxUizF93ityFwOn0Horu6L0tUK1oZ4fw9Br0Gghkk0EO/UK3BunixPDXB3KsiOgllWiytE0R8osu481tSEFmfJtfek6W2eXuXf4YGdchpZvK9S/IWVotaHkIk3rGYcLrVSNjVtmPxe54J47QJ/XY5hqsHa78cmVoFWw/iBVA=
+	t=1752438786; cv=none; b=crUs2NJT/GAbeMsDAj3Co6XDv0T8dKnEl3y7Fl2VVoid4Vn3eW9qL+yeZrsCahnY+5oM6ppfF8tHyZa53wZRmHVs5sTkk2ygj4JgxL1AJa3/aSMwBAxjV0fivautmz/nCPSBqXY2/A3LavtymAnMN8y/WA3XFf3cmqGU7DSZpEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752438119; c=relaxed/simple;
-	bh=th18XKX6O+o0xu2681Z5ey8GxGKru0OzWuqimCAWCSM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jJiIsRlz7MZ5+2G8bfs7jF39rvtekTJKHP4P6Azh9KJ7NEu7M5IeSD2YpXCszv9y7s4b3DEGMX0hmTTZBg3Fi0diEWs/gFJYdPqdpjMIdwXpdVjVUQNiv4wDOUNal0hXYANdoVy0DddPgyPePSMH4LY3H93KQF5oJIKUBG5710E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blochl.de; spf=pass smtp.mailfrom=blochl.de; arc=none smtp.client-ip=151.80.40.192
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blochl.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blochl.de
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.blochl.de B84804466439
-Authentication-Results: mail.blochl.de; dmarc=none (p=none dis=none) header.from=blochl.de
-Authentication-Results: mail.blochl.de; spf=fail smtp.mailfrom=blochl.de
-Received: from workknecht.fritz.box (ppp-93-104-0-143.dynamic.mnet-online.de [93.104.0.143])
-	by smtp.blochl.de (Postfix) with ESMTPSA id B84804466439;
-	Sun, 13 Jul 2025 20:21:45 +0000 (UTC)
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 1.4.2 at 472b552e6fe8
-From: =?utf-8?q?Markus_Bl=C3=B6chl?= <markus@blochl.de>
-Date: Sun, 13 Jul 2025 22:21:41 +0200
-Subject: [PATCH net] net: stmmac: intel: populate entire
- system_counterval_t in get_time_fn() callback
+	s=arc-20240116; t=1752438786; c=relaxed/simple;
+	bh=M5aeDDlsHBpOFmn0fE/68QZYXv1RlMbWaX3NW3z0MME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MxR03PK9E86/ZTbYRxGTD/QBuWStAUPFh2FpV8bs8AZSJ5xH6x3jyO2D7jLUiZjWejemerefcGM8lfJHKGnZqGfzgkLOwoan+hX1y/wVye9Qv21Kn5RSBulEfmJbBkVccPh01dPwF5KU5wEsB+30n4SiJVFPI4oSGGaxPm06WPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bi6UUeh8; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-31384c8ba66so705166a91.1;
+        Sun, 13 Jul 2025 13:33:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752438784; x=1753043584; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vTsuot6q8R2uuxbbQSPqtMa5LTOA+c6NQDO3F4IHa+U=;
+        b=bi6UUeh8tu19bJD904GIDlufgetvHS0zY7p3tS5UeYsdnqwjwJb7Cm/BSmMYIB8EGF
+         ZfK0aZxGdjZY9hIDgAOhANInqHRcm16QQ+R8FNlh0HnYxfMz0VFoj22nvUr9vxMBmYzi
+         szKBqC4pzRLynI9FQ7orfDvqhYtXSMKX9ByBaDbqDiY68/5n3o7eSttpEvL6GfgE/ECE
+         oqvpk7xdP7p0dYpgdEno5PsSkQEcijQdWbAoCLkNGGm4SA6BAnFPG4tSDOwIFNwAfwqs
+         N4ud0shLVlyfAqpX0jdD4mKet8KWIg2Wn6eEgWh1bm5S9yovLt//Dj+u+SoAzn1YXGc4
+         6Mxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752438784; x=1753043584;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vTsuot6q8R2uuxbbQSPqtMa5LTOA+c6NQDO3F4IHa+U=;
+        b=L7pgYA3+FeRf3tiOWSLYC1XDgzf/fT0PgCGHsSC0R4cth5XPMS/C0xsLbUF/9rBCS9
+         yrliU7dL9lMoA3v8tjpHruU4lMFFTLUaNvTqo/rSc7ETKcCZ2KOW/ssM5BOp9HDJfrS5
+         VR93AWqrE8pigGhYS39+bNt0d6w/Qzqt8d3groYR4l3WCTCer6s1YBh7X8RYg0BB7CCY
+         rw8OBZxlJegHObGzsmDQ6hnrmtAI/D2Ez1Ybqk0JVO/m5Liu+YlSPBXIJplr9w6OKOZm
+         h3HZiYOz2IbLC6OJGu4aK/lSNDmlrmXWQ1rvP/FpI30mKvaAzXSgviYZssMZk6pg7nLY
+         vbjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVapxp3hxbv7tSmbv2rNj9b0twpvSySKrCFAnFUq2xMz9PxZQBksT6PAh0iWI8WFHS+mAmnx1uBxf0uaJU=@vger.kernel.org, AJvYcCWQYTm8WnNe4eqxfridJljwQAUVHXqcfSdJoOImLM/uW65gECtwdp3pBxO5LrKXEX9kQWQ7K/fOvqOyGBwnhYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygmABBlY9/yAhrG7iXJM301N4ubLLDlWwmXS4mGXAiHknkFOhO
+	Du9znDAv4iLiLMVK/KSRU8Kc8YfXtMDYniwNoN/zmHf9LPUtUxHe6N/RzPQVsGwjnhVShJVmpNN
+	ARj1JK7jRTm6AdKPDfT++dDraT3sfl6A=
+X-Gm-Gg: ASbGncv2gXdNSI1G6LygbVU7THA6e6jnJrPVz2F91ww3Yp02g7eZwB4+SrE/myTZHH6
+	CaDOYqUSqK2uFKvN3ppwYc+xhdO41OQUeSAUdf87l2tWqVMis2KzL+NHdZ2TpDcJckiNPTYRovb
+	H0nZw9kIQegow5ygw3fGq2eMcgSEHRJ7/AOl9qyxBXNgJHEakvnTABIFqWWMpcwYl6DQ3UzBH4d
+	IG6yjHEuDxU5FAVYyY=
+X-Google-Smtp-Source: AGHT+IGDJeIFVEAj7ghQ0LasiFT2jQb0m0xht+EnTXhZ642ukLGS5gB55ZzqOFyHVFdSYMKAC805Cclm4WDecF/OKEw=
+X-Received: by 2002:a17:90b:3512:b0:312:e76f:520f with SMTP id
+ 98e67ed59e1d1-31c4f56e8e2mr5702680a91.8.1752438784109; Sun, 13 Jul 2025
+ 13:33:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250713-stmmac_crossts-v1-1-31bfe051b5cb@blochl.de>
-X-B4-Tracking: v=1; b=H4sIAFQVdGgC/x3MSQqAMAxA0atI1hY6KA5XEZFao2ZhK00RQby7x
- eVb/P8AYyRk6IsHIl7EFHyGKgtwu/UbClqyQUtdy0YZwek4rJtcDMyJhamW1s5t10llIUdnxJX
- ufziAxwTj+37rhsIvZQAAAA==
-X-Change-ID: 20250713-stmmac_crossts-34d8ab89901a
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Thomas Gleixner <tglx@linutronix.de>
-Cc: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>, 
- Richard Cochran <richardcochran@gmail.com>, 
- John Stultz <jstultz@google.com>, netdev@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- markus.bloechl@ipetronik.com, 
- =?utf-8?q?Markus_Bl=C3=B6chl?= <markus@blochl.de>
-X-Mailer: b4 0.14.2
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.4 (smtp.blochl.de [0.0.0.0]); Sun, 13 Jul 2025 20:21:46 +0000 (UTC)
+References: <20250709-init-remove-old-workaround-v2-0-a3b1be8fd490@gmail.com> <20250709-init-remove-old-workaround-v2-1-a3b1be8fd490@gmail.com>
+In-Reply-To: <20250709-init-remove-old-workaround-v2-1-a3b1be8fd490@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 13 Jul 2025 22:32:51 +0200
+X-Gm-Features: Ac12FXz-_MATW-oCwa_YxMCS28R44b8Bl12CrMzf5XZnFzjDNmxGp-woowaVY2I
+Message-ID: <CANiq72ngcL9CSkSTFcp+Of8PemAKbvQc1TJ5s3vCiLoHX4QfcA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] rust: init: compile examples
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-get_time_fn() callback implementations are expected to fill out the
-entire system_counterval_t struct as it may be initially uninitialized.
+On Thu, Jul 10, 2025 at 12:49=E2=80=AFAM Tamir Duberstein <tamird@gmail.com=
+> wrote:
+>
+> It's not exactly clear to me why these were `ignore`d. There are many
+> others like this in pin-init, but I'm only touching the kernel-specific
+> ones here.
+>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-This broke with the removal of convert_art_to_tsc() helper functions
-which left use_nsecs uninitialized.
+This seems essentially equivalent to this one applied a few weeks ago:
 
-Initially assign the entire struct with default values.
+    https://lore.kernel.org/rust-for-linux/20250526152914.2453949-1-ojeda@k=
+ernel.org/
 
-Fixes: f5e1d0db3f02 ("stmmac: intel: Remove convert_art_to_tsc()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Markus Blöchl <markus@blochl.de>
----
-Notes:
-    Related-To: <https://lore.kernel.org/lkml/txyrr26hxe3xpq3ebqb5ewkgvhvp7xalotaouwludjtjifnah2@7tmgczln4aoo/>
-    Related-To: <https://lore.kernel.org/lkml/20250709-e1000e_crossts-v2-1-2aae94384c59@blochl.de/>
-    Only compile tested
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+But that one uses `expect` to, which is a bit better for the future.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-index 9a47015254bbe60b806b00b80dbd5b1d8f78a7c6..ea33ae39be6bbca5dc32c73e6d02e86a9d8d6e62 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-@@ -433,6 +433,12 @@ static int intel_crosststamp(ktime_t *device,
- 		return -ETIMEDOUT;
- 	}
- 
-+	*system = (struct system_counterval_t) {
-+		.cycles = 0,
-+		.cs_id = CSID_X86_ART,
-+		.use_nsecs = false,
-+	};
-+
- 	num_snapshot = (readl(ioaddr + GMAC_TIMESTAMP_STATUS) &
- 			GMAC_TIMESTAMP_ATSNS_MASK) >>
- 			GMAC_TIMESTAMP_ATSNS_SHIFT;
-@@ -448,7 +454,7 @@ static int intel_crosststamp(ktime_t *device,
- 	}
- 
- 	system->cycles *= intel_priv->crossts_adj;
--	system->cs_id = CSID_X86_ART;
-+
- 	priv->plat->flags &= ~STMMAC_FLAG_INT_SNAPSHOT_EN;
- 
- 	return 0;
-
----
-base-commit: 3cd752194e2ec2573d0e740f4a1edbfcc28257f5
-change-id: 20250713-stmmac_crossts-34d8ab89901a
-
-Best regards,
--- 
-Markus Blöchl <markus@blochl.de>
-
+Cheers,
+Miguel
 
