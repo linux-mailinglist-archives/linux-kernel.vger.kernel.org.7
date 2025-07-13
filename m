@@ -1,131 +1,116 @@
-Return-Path: <linux-kernel+bounces-728989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 943D5B0303C
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:43:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC508B0303F
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5AD11A61EF0
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 08:43:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4FDD1883E49
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 08:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392AB242D75;
-	Sun, 13 Jul 2025 08:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4162571D4;
+	Sun, 13 Jul 2025 08:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xbxAcRYU"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="c9LOeKuy"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9162417C3
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 08:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C9A253F1A
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 08:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752396207; cv=none; b=b80BA9kLf5vwDScUUbqHUAXXXbXg46GHYbjEGw213eVNP0lmWKkfDOuWeJEhkP6JHE2F0htGtKMBdt21hWom7W+vDre4YbpkLyJ0fXQuH7xUsZVogtc2X/JYkMaBRgzy7stCncOLoAwgEq6cjbwuoYuyzES5oReHhIHEwTHKZQc=
+	t=1752396249; cv=none; b=munzWW2hQedqesvYRmBZXWz1/lAqLWzbqKmuwPMxuSj0KNiiL5A3XZmwDNJ2v0ScFdTVbj4QaGxVkEdOrJcrrRoPmnb9hF/vQ+oZuifjnC+d1qvN7OyRQiPwpo0kAQoaTXn5zRYUfgIw/CyUtQGWEEnhkx9RJYo5CYai435PRzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752396207; c=relaxed/simple;
-	bh=teFEt5VYoV+y5Dd7IIHlSpW2pgBGTG1QedDMUy1wx8U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tTJNDgpSwmrQ8WiPIvdalZevsrpUcV+e2J34B3UWk5yVqK69UtJaARzpW6Qxv0Fn1uaDBum4TkVuQCPs/7jP5xGWbuNKyBYsXG4LMmD7xb/P5Bgwp0wYcqAcLoBN0UFSvESekASMEnVh4lm2S2aVwAUk0gF+a9MR1/EQvbaEYcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xbxAcRYU; arc=none smtp.client-ip=209.85.167.43
+	s=arc-20240116; t=1752396249; c=relaxed/simple;
+	bh=VjJoXm/OtEzd6WSH8LX9mgg5zlg7VGtKg6xCGq03KOA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hKvjxsf6ruGG6hAvW/VVhW8F9rvb20Q08tlczhiDmI1bUArLaJU9mzOCY21m/qxN0c7DwvSihq0+mIV/FvGQHQ8GHVYBwMnqVPamt+MHC3d5zOtz81d3ULW+0R7+8jHHfDGs0pxIMP2Up2OMu0s3p5Y/7n7r54X+xxhHga7IUWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=c9LOeKuy; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5550dca1241so3121575e87.0
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 01:43:25 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a6d1369d4eso1922936f8f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 01:44:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1752396204; x=1753001004; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1752396247; x=1753001047; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=teFEt5VYoV+y5Dd7IIHlSpW2pgBGTG1QedDMUy1wx8U=;
-        b=xbxAcRYUidJVofzk3N9o884D0j/xmj+1Mntya2TAmL5rMyomrvxwJYe8GFF9QKNOyZ
-         aQm2gAUmEih5QTagIMA8js6hCnpRco1TlffNb8gj8FayfHQPFfTNyCjjcdys2QPf3rzU
-         vn2qkQnvFTeeR+p8NjRiWsbcItVACaTrshEo9DgFf78b/Mm1irZ11p4QoJvtnXHT7EEU
-         H+XN30jyWGbDDDfnZtlhZCjjV6OumnoxLLDHMfUOywy/A0AYdcypMslyi1WoLXqtQyvH
-         /w4BBM+XMlPz8rvOi28k43tNGgtElv7T4G+rCLF1osJbtqnjhPa6efNGPsggMiVwKATG
-         2cPg==
+        bh=3yoBxPNWdp6682YcqAmqYQy7nMoXgZ5Ir0h8JOXzX/E=;
+        b=c9LOeKuyPbPVWiD9M6nvg3aqksWP16qfV/cf778nOcIsLW98/Hp1zlLDTcBZrdRhBM
+         NNQEVnTKTvO27YqP7f+qSOYZByQ+R9FzTY5KAcLVGzBb2eL7gJM6zUWBmR9Dn0upLIrO
+         q+pyYiv0bTYdudOst4QG0iM3HX6M6RzkQE7rW9JQ1FxYZKo8nKLBUJQcCecQTLaRoM0e
+         XRl3brF+yFg4gPECZoFssVJx3XUhdSBrBcpIVSKP2xsaOQQXhbGtZvgnr/cWgZGof7zz
+         fPyPdJoOpFm68ipFaXTyCsDopYaDtNToKaa8SqdRDyvWw65FlEixDJYhIlM9WeTPiTuO
+         3auQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752396204; x=1753001004;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1752396247; x=1753001047;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=teFEt5VYoV+y5Dd7IIHlSpW2pgBGTG1QedDMUy1wx8U=;
-        b=btc48B7qulig//bqhA75Roh74WyfhlhWB5QE1Uunu9psGQCWNrs4VMgJ7Vctr+rmGv
-         YEr+kLBz2y0RqazdIURaeD1yqCNjigD3xmqxo3waclAzOHnOpFOh9kwc0AodrK7wdKeT
-         j4bVxpVa0zVK60hdpWSTUfuJi7o/VXfAK/dPSm4DltVrT95jG+s396QbwzOm+o4RqPHn
-         qZPxDdigPD5gYwdeFdOmHhIEQllhWrcjFv0PybgxESSGGyCpZEE3axX7DhBZZOdy0cWg
-         /k/r/m88Pj8prE8myV00AM0e18lXxhymv5UJIHdKtlr4ovXi4waJBtjplalorb9EFEes
-         u1JA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5TyOQwmcU7/HzLfiNnRnR7xnKAyvVLr2zIGtyT6TXdErc2dgLXilz8zJVrZYEjS0E22eltCNBGBNc/pg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTksxuqX0+f8orXSaT0BeiqywhWOy7kg0cPv5yRgZDdTnRGKJN
-	zqtXbyeJUiHgi4MyMgLtVPIFSwsz+fjgXUCMWI7y1nTsqzsBaTLx3FFPq1cbVziPVQWoZckjGy0
-	C176vV7vNxCxOc/jf/dp7snqRcH9k8yp6X/m34gXDsg==
-X-Gm-Gg: ASbGncvx38j0gwFWXhdw/R4hapJukkO0CZr+R0VRzDQK0xGNCciTNoPaAr82QIxMbQJ
-	3ieQYknzQtcqoMzwaB3JsICBxiYOhfDlOqC+EJDDwQeAeQEGT835DtCq1uh1TGWw2iWV2J2fTvH
-	LaqJOkUOTqhFdP3jjo9tPUU7Z12UVOH5eIROSt4lxyKJR2wgyeZvLwoy1jvUmOxtleiIWZoI7fN
-	KxN9f3hNlEJFNQop4xroYBtQQWD2HWyvDS2nB02W0LFzX1Lxw==
-X-Google-Smtp-Source: AGHT+IHBAbCKD5IYxg9QHbex64TGGdl/hyMZx/O9ZBosB5HyqtSevaVoy0zG6SyjrmS/Wv0vBuuPHSN0g6Rcj3+48Xc=
-X-Received: by 2002:a05:6512:1114:b0:553:d884:7922 with SMTP id
- 2adb3069b0e04-55a04668194mr2741453e87.48.1752396203838; Sun, 13 Jul 2025
- 01:43:23 -0700 (PDT)
+        bh=3yoBxPNWdp6682YcqAmqYQy7nMoXgZ5Ir0h8JOXzX/E=;
+        b=KBFiahjIu4KywZK47NgVGzE4TsFGXJGeJ9ziWGkZdA7pf+wgQFewSGcHX/+YwnYIZ3
+         jT0IbERCsEvWSYlOgy/LsLhA7iZ+LZzI3Z86cZ9282h94GD2mMAERqSmSJK1j1pbZe/9
+         mFegcIe1VOcxXj7DEIhF2T8ZT/9fB0c0IheDokuj3YOEpd88WyGvjydlW/bjyR1M3iuQ
+         le7ukAAkWJoJxBc4DMUW6Xwj+kldImiR4VSgNeh+rCwA6WWd7V2Nvh9fBhzFtMkz1agr
+         8XFJPdIISFUrxCrn+yYjyxgaC4u9H6+Rdqc157OOtxm1TmuER1+x8TEG0hv9zjXsrf7T
+         hcHw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8GnGdf+yHBVdJZpgCL9pDX6WIIdUbbex7ZaObuSmHTVJjbEwMYU+KTwz+4CCbg+o9Mi5E5V9NUDnIa7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV2FjCLy1V5NpgO1CAREKhLtNW42j2fmCepOcN44ThMIJ145Bx
+	JdqnpTAn5cfKknBVYCy/rdGTuG7VOxP2DY5i4441y+rDunwJJwmJDgu/5ZMKWoKT0Tb6NIugI7u
+	XO5f20y0=
+X-Gm-Gg: ASbGncuPt9Y69rwBMeZyFzaxlFMmScEL50J5IfsDlnrlF4KzTyPa/eSFGI2d9H5j41A
+	n6mTEqpSWDvRij60YjcPXoH2C5fFCifISw9bz95IK7xgqpr00ev82h6IozduxHoIro8fQrRWkha
+	gJl0Ter+Ww94wZf4LrjPE0E6RIhSd5EcC0DfmpzDGfT/Gx0pXfJo3alLn17Zdm1ERFF/z/b3f/v
+	sYngx4sjFuthvLBGl+vj8gK2RIvY2OjLA2rA+Ij6wB+ANT9GmB9lR3r/o6i8uImM35cj1GAunx1
+	uJb1F7A+DzANhDfejXwGpKHt4yGefb+eXA4EZUqK23rj+HvWonEDxH7TU+0+MT7+z1o6bwpKEzN
+	+3Jpqsh0v3EKtmHX9Hb3SKr4=
+X-Google-Smtp-Source: AGHT+IGyIlgk1OerLolTNkIA3PzN0cspSFYNQycDdCytpPtQS8uH98PKP9muX0TGzImEZz6zJlr4Uw==
+X-Received: by 2002:a05:6000:230f:b0:3a4:f70e:abda with SMTP id ffacd0b85a97d-3b5f351dea6mr6874812f8f.10.1752396246529;
+        Sun, 13 Jul 2025 01:44:06 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:f695:8645:1433:4418])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e26daasm9445615f8f.91.2025.07.13.01.44.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Jul 2025 01:44:06 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpiolib: don't use GPIO global numbers in debugfs output
+Date: Sun, 13 Jul 2025 10:44:04 +0200
+Message-ID: <175239624288.6032.7125676131677562075.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250707141313.73169-1-brgl@bgdev.pl>
+References: <20250707141313.73169-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709-pinctrl-gpio-pinfuncs-v2-0-b6135149c0d9@linaro.org>
- <20250709-pinctrl-gpio-pinfuncs-v2-8-b6135149c0d9@linaro.org> <CACRpkdYfRv-B=p61tVThFkjoqDGfcqOjmHxmj4wv-NYyky2-kg@mail.gmail.com>
-In-Reply-To: <CACRpkdYfRv-B=p61tVThFkjoqDGfcqOjmHxmj4wv-NYyky2-kg@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Sun, 13 Jul 2025 10:43:12 +0200
-X-Gm-Features: Ac12FXyIRZr_PZFqMr5GkGp0O9WQSutVaydnaLLulDe-fCJJJZygxCd1lTC-X0M
-Message-ID: <CAMRc=Me561DEHio+zN6oX9oqD6ue7z-y9E+cO_7_Z3L4taQd_A@mail.gmail.com>
-Subject: Re: [PATCH v2 08/12] pinctrl: qcom: use generic pin function helpers
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Alexey Klimov <alexey.klimov@linaro.org>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Paul Cercueil <paul@crapouillou.net>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mips@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 11, 2025 at 8:37=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
-.org> wrote:
->
-> On Wed, Jul 9, 2025 at 4:39=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
->
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Use the existing infrastructure for storing and looking up pin function=
-s
-> > in pinctrl core. Remove hand-crafted callbacks.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Needless to say I'm a big fan of this patch set and it seems only
-> this patch 8/12 has outstanding comments.
->
-> Do you think you can do a quick iteration of it or does it require
-> a lot of time?
->
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I don't want to rush it. Let's make it v6.18 material as I want the
-changes to spend some more time in next and not break anything. It
-affects literally all qualcomm platforms after all.
 
-> I am tempted to simply apply patches 1-7 to make your life
-> easier past v6.17, should I do this?
->
+On Mon, 07 Jul 2025 16:13:13 +0200, Bartosz Golaszewski wrote:
+> One of the users of global GPIO numbers in the kernel are the debugfs
+> callbacks in GPIO drivers. Before converting any custom .dbg_show()
+> callbacks in individual modules, let's first make GPIO core stop using
+> GPIO base in debugfs output. Use hardware offsets instead.
+> 
+> 
 
-Yes, please, they carry no functional change, it will be less baggage
-for the future.
+Applied, thanks!
 
-Bart
+[1/1] gpiolib: don't use GPIO global numbers in debugfs output
+      https://git.kernel.org/brgl/linux/c/1bec20dfa3d81be716e7ff5a6343bdec1d29b828
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
