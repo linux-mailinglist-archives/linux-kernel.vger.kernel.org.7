@@ -1,175 +1,229 @@
-Return-Path: <linux-kernel+bounces-729098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DED9B031B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 17:21:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9839B031B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 17:25:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA3697A802F
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 15:20:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 649707A49BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 15:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C353255F2B;
-	Sun, 13 Jul 2025 15:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60235228CBE;
+	Sun, 13 Jul 2025 15:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="rF1Xix6a"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ACr7eafx"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A727C27454
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 15:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BB2A920
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 15:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752420091; cv=none; b=XCsg8RnUusQk85GCXKKhPmmD1PJgzdLX6bUpz4vCjHldawNjDdrCczMjZu+Zqr0PRq/3wSTsmtsiOIb8cFiAStSXHwYMU+ircJoSZhNd/Gv1d0JRCaV7sf6hGn3MSTqd0yEhkQlgqVKy+SD6JYRyvuRX8RGbKwkKAGThwM5pw0I=
+	t=1752420292; cv=none; b=W5B83GOxzgEFockRf39z3Hx6A2XHqgytHYlfN2PkjQ9hr1DWJAju4BLeiW4Y7SNYQDAVv4BdAFt40tl4+Cw0IeszfALlipiCguradKp0TafhQVh0P2udDneoHcNeW9sYksJimZxexHsKmFMPw+gOJgRQnQfsbjrfuyHdyvk5fgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752420091; c=relaxed/simple;
-	bh=Tw3JFZF1pdgw7hI7iBbOZYEKg1+ryBSIKreIA2iNL5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KdeoMmUDqZwLDUzLMsOl4yluVlzKL7TC0bd1EZBxuSimNYoiCaQS3VkwDDSuHd44cODeiylmoPy4M21JVdZe7dAu+7p59rjKN0YiUIamkGyLXK+oA9fCrXNJ8Xd8M5ZC5jQ4KtSar+4Iz35UnrcHO2HXjzwUQUq1XKQnWFs2ufc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=rF1Xix6a; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7e11ae3f770so83685685a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 08:21:29 -0700 (PDT)
+	s=arc-20240116; t=1752420292; c=relaxed/simple;
+	bh=x6nwlnCf8EpliBB4PAXRWVJfoeL/+OwxGylEV3WROkY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KVcDCKlXKoUL67ZF5aHus9M1blw3D0PzoXkBJBRjAI6AMOy14zP6FLgghjkPnGiXCBp8rlMBmSj+wIVnD7kZKPmv+mgPX0zq62vVD3s4I92d3zHNOJejrLncHjLlFdD98y9Sz2tHlyi2qXjv/zPWa9e5BzRpuyGBb56N/fk4jIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ACr7eafx; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45611d82f2eso799995e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 08:24:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1752420088; x=1753024888; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=piaH0X2bRlfIRJmr5nAVgwiE9vL5fBMZqODFiNZ35Kk=;
-        b=rF1Xix6aIbiIr3kMutQFfCm7OznF1jtxIR+VFXtmNgsqbYfZVuGNRe6XArk22VPd93
-         r4Dko2v1lbR5xZ1UEa2Qd/5HKL7o0rP2kulETQ+hJQndeqXJjBPCWsMaxtC/X5T5aKyy
-         eO63br/At0IvRQqgzkFybmQwON1vYt5XLGiZgJIWq+9/D9Tf0aC++mECzNqfI7Kxyh1A
-         jyvLBLWn+/caKs1kJfrEAGKHccX9DT6jEldS64LWoq0eIyUpv423pnQRO/bb+ibnUmt/
-         D7KXU03pqDkoCXPTn2+5nmMQ/0NuoDKK6kEWKoTMfygtM7O1XFtFTZ4g+LF8+jt90OAB
-         lZzQ==
+        d=linaro.org; s=google; t=1752420289; x=1753025089; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=d9ZNHXnXaiutNt4q3B66spimAL1ksGORFJerkfIEhuw=;
+        b=ACr7eafx0KlrrK7wdzemM1D1Qw5Q/fV+ghXny8JeoXmkm7bjsMLmRx5+lzMjJT0SHd
+         BPgCsKZyks3pWsXklqzZR7WGaYCPYC+btuMeLX4fOTSeriyYHj/CmN9pX3st5MhjStSg
+         B+9cgmSgn5CJJDHih1y8NhneOURqXckr16gLcDXHeum6a7PbkJ4xINP/+M+XiUJyn4Ko
+         sRtutARX9bK9Ua8TTY/sJEfFFGehXpBZXOujjMq4DLoVkMSG0MPEveyDBx8O+DzOnbKQ
+         9rYXm2hWEB995rPMzHwGJbdL8SeTNDj2lyLPywCu4YfsH5gF8kYUy5qDpI7u6eQ9e94t
+         bzuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752420088; x=1753024888;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=piaH0X2bRlfIRJmr5nAVgwiE9vL5fBMZqODFiNZ35Kk=;
-        b=CJtIDyz3ZbpFKdrQ6a/Wj+WaWeiWdvIru8okX9FK4fmvbpVZ9gkFqvNL2EmMkdUFhS
-         VWlTRy8Upnl6+YkwRrVZYK54Gj9KFCBLbakPiRkQH16dSDEDLWM1IhdhFFVzBVrpELoq
-         DQRCxkkoCwtc3IoXaKIDdIj+XP8GI2hb1ytRx8ngO6ZdjHgiLgG3hh+Sc+F1+SR87TqP
-         mSoXUHd7gpM/Et8lbkr+2idrKg6qeCXbuLg4Cg2AIAuGJ2OOVY4L5SmJdg5XT3NabDL6
-         ZlkyzNuGZcdBsD9c69TRK04CQ+iTnW8NYirZ327KvsvD1sPXD8ZA6OjH33YCH0ayBIK+
-         Z8og==
-X-Forwarded-Encrypted: i=1; AJvYcCUSW0UdCDSzdQfBCRpHHiLMfjd2/I3mTg7c/REhAfA2NApiSfiK/iwiu24bcNaM+ZhSv9K4spxR0ONhe24=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxivxZ0bC4+fmGBEo06hn8vQOXCEK2YJcxmK/Fiuy1o9LmP8Ro
-	7ka+q5US0G/frSYtcaz41XDwvrlcQ1zeaKQBOh4uTZ9+N/tnTctyQWraTuY+j65by1opRJ4kdmA
-	Ca/0=
-X-Gm-Gg: ASbGnct/jn2PgVJQwIq+9UFGsZNR1PVelBuZgpfx3i0EQXU2tbwUZUFEPYvWxLoJ/I9
-	aBNKRjzbHpLQQOjYvg2MHTNFpf5faFmczdn7F3NPJJLrty5fhx8gBA+5oeeW8570wwVFX75K6H5
-	qJl86TS0WO9qZIv0KX9LTiwUax1aXyGul0qlt9AkfC6SK4jM0IrnwQA+f7DI4OyhqZjKI1OWheC
-	nnKVZG0A+MAIgUvPC3Ip3CulZ4Gys+ypZhIQYUlqQFPTYZBGDQ23OCdMFVRu2oWP0YEfVkBJWwX
-	DBVtG1WGGZ1os5IHNvQyDMpywSLtLSqR635oBA/RuJdiLc4LHmgAn7QphuGH1bo7RE3QNxq4L6D
-	qeJ0vEYPZ2v0QE/nmBb9mwoI=
-X-Google-Smtp-Source: AGHT+IGV6CGJnq7pSYbCW1DvM9dWONKqPQRE8k+2vjLtOfP8M7B9JiNwfj+bsSxFO8CNG/8zoK1v5A==
-X-Received: by 2002:a05:620a:2213:b0:7e0:4d24:5074 with SMTP id af79cd13be357-7e04d245770mr969606985a.21.1752420088499;
-        Sun, 13 Jul 2025 08:21:28 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::401d])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-704979b5639sm38493546d6.32.2025.07.13.08.21.27
+        d=1e100.net; s=20230601; t=1752420289; x=1753025089;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d9ZNHXnXaiutNt4q3B66spimAL1ksGORFJerkfIEhuw=;
+        b=M1HrUb0opQG58U/kdG7QYfSME1hAxKEGU2vy5EkbMcAGQKmVT4+v8Lvd1z0W1jgclk
+         uG/wCEDof/oiKwdMTCX9Fhm5RTsupHdNP+7SMS2rXiCh4ErF6g8oZAE9tNf6IDn2aM+/
+         ZwIqprmTJ7kZQuj0fwQT8zR6cpNoJ4SBkmMqH97JXleo4ApEHd/hBG5O0hddL7VegDfG
+         Qrl4S1INZcfr7q2AfBjELsBn0UAIAvxyLTyj89tV6hssqXZEP8mwtThU8vXll3zdf86M
+         adWLCqRSvI+QPhl4QTZRJPZLEUqbu7yWzF3U7xtFKKCbgt1Tj4lkBHi6s1KoiUGgWrSE
+         8BAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtiLYHiK5T18PAPcZPWP+s7g+7GZlD2s5okvVTQgrawGSENvx25rRkfWLMABoehnoOLkDa2dBzH1UI39w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbM4HKx1BOwvRKE32AI8SpULEsA1TY8pK+zC8XzarxpoDxO963
+	4JCg8jy1IlrqdAewx7zUXX1APvz97jXD4/mfmozBMXSZ59zmd81o8swTWbfZRA3Z3/g=
+X-Gm-Gg: ASbGncts11KgypNqYrgxqQv59jlIZDA7ucXxxn1WrHBpm3ps3AU6GaZtQ+URGSHFsFR
+	HdiGtAVIvaLuW28TR9XJvGk0rtWRkVZKkeSVElb/yj+sJ+ZIBMK0Bt4FLB3LSt6Qgu2I6PYeHS4
+	yjL0zCeJFsms2nngJ9XoZuL/IArIjzRDfi4l9Ald/aI0pLrzbpxhQg8YEly1MpUXlhG5gHCkUGc
+	rwY+87nHN+bUtS+sRBKYTTgAA/dRfACCiuj5FcfkEUs8ruLE6oCY9L4wdyiRYm/5ifcRRQ4BOku
+	y0ji7oEEClMu8giMHrs0aD17zWvGZuNZE8fzJWz1K2Fsk0FdS5JT6Q+pfkAEwUcQzkKF5XR/yaE
+	6j46hO5xXWUdKwloI7K1/Tui8nkTPEVYm8x8=
+X-Google-Smtp-Source: AGHT+IGy8JKQhFVQ7X5a09go849LYeCFdHeT6JGJ2x1jHRS/zEozOLowuvjyXYNHDSKsJPFJGcQlKQ==
+X-Received: by 2002:a05:600c:4f52:b0:441:c5ee:cdb4 with SMTP id 5b1f17b1804b1-454f42841ccmr36722635e9.4.1752420288847;
+        Sun, 13 Jul 2025 08:24:48 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.222.89])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-455fde3fb7fsm28656635e9.3.2025.07.13.08.24.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jul 2025 08:21:27 -0700 (PDT)
-Date: Sun, 13 Jul 2025 11:21:24 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Hillf Danton <hdanton@sina.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com,
-	LKML <linux-kernel@vger.kernel.org>, Sean Young <sean@mess.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH] media: imon: make send_packet() more robust
-Message-ID: <d6da6709-d799-4be3-a695-850bddd6eb24@rowland.harvard.edu>
-References: <672f73a6.050a0220.138bd5.0041.GAE@google.com>
- <c2b2b02d-2571-451c-bb1c-7dde18b45d4f@I-love.SAKURA.ne.jp>
- <924bf5c7-9466-49dc-ad26-53939ca49825@I-love.SAKURA.ne.jp>
- <53c07aa0-9f83-4c83-8ab5-6d8663f51b91@I-love.SAKURA.ne.jp>
- <8be733a4-2232-4bb9-942d-f13f8766a6de@I-love.SAKURA.ne.jp>
- <40417f2a-e0d8-4f3c-9a37-a0068b6f268a@I-love.SAKURA.ne.jp>
- <0ad3effe-efed-4304-862f-4c8f901e79e9@I-love.SAKURA.ne.jp>
- <2ac5d313-c754-4fb9-acd3-21f3b948d653@I-love.SAKURA.ne.jp>
- <282345b9-9aff-43ed-b66d-76cf51cc0deb@I-love.SAKURA.ne.jp>
- <20250713081148.3880-1-hdanton@sina.com>
+        Sun, 13 Jul 2025 08:24:48 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: =?UTF-8?q?Przemys=C5=82aw=20Gaj?= <pgaj@cadence.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] i3c: master: cdns: Simplify handling clocks in probe()
+Date: Sun, 13 Jul 2025 17:24:12 +0200
+Message-ID: <20250713152411.74917-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250713081148.3880-1-hdanton@sina.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3872; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=x6nwlnCf8EpliBB4PAXRWVJfoeL/+OwxGylEV3WROkY=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoc8+bFmvNquQAH0tSpawh2scyCoMl+9QGb7lL/
+ Znepp8IZNKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaHPPmwAKCRDBN2bmhouD
+ 169oD/9wvzMYFZ1dj/NhqOY87tzC4+5LoUi+B1aRCH+9avMB5A6eXk06jyHYzCr5b8MRToMYqz/
+ tDEyikyuka1/Nel7Sv5T54+4Q5b3mdfnbZdwcohrmnVCO1oSV9vUZsQLpgEx04SoQqp52z+IWX1
+ SASkJTpsSUY0qxk0ZBGq48+EARpWyTS/2tVGY2v6peLA2pH4PoPhLe94k0uc2S0A03LWPMSgVbo
+ z0D8HMSFWAmwMRMDneBSMBQ9kKNaCzlPm9TmZf3IWl6Mf1zJOSZhEI9UYr8z3abY847yUJkqurA
+ dK6Sw4jdf4TeUi7IgDnv9V3IKz1E/NWN/7kZDE99+8Mn3uqrhgOjyeXTcAcch82RnhIN89ER+ha
+ y14uR2ADvcUsvvYXoeDw4cSd7F/eY6Al+mI1/VHPK4pxID5kCYiV5Tgmy8Nih2LVCTc36kN5KR4
+ NNLBzIqlzzxVBsxB4qnUtNOAFOzFIEsURiXxAv2YBsXxHuFjw+KY7RoQfs60d6D2GF19Bej0/6x
+ Ami2GLyCLgFNSHR5grP/Jf7UhjUrKwfB5meBtI2TXrOTzznCQst341L69fZHKCiL9iXejW1/b7W
+ MzpJCHUYKkWD2o56BT7S0ZgrvbMIWPq0UJC5DrQEMuGju5jRmMkvjDRkl8tXoGx9Ll4b/YR0eKo BMetp0bDtSamRhQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 13, 2025 at 04:11:47PM +0800, Hillf Danton wrote:
-> [loop Alan in]
+The two clocks, driver is getting, are not being disabled/re-enabled
+during runtime of the device.  Eliminate one variable in state struct,
+all error paths and a lot of code from probe() and remove() by using
+devm_clk_get_enabled().
 
-I assume you're interested in the question of when to avoid resubmitting 
-URBs.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/i3c/master/i3c-master-cdns.c | 51 +++++++---------------------
+ 1 file changed, 12 insertions(+), 39 deletions(-)
 
-> On Sun, 13 Jul 2025 16:50:08 +0900 Tetsuo Handa wrote:
-> > syzbot is reporting that imon has three problems which result in hung tasks
-> > due to forever holding device lock.
-> > 
-> > First problem is that when usb_rx_callback_intf0() once got -EPROTO error
-> > after ictx->dev_present_intf0 became true, usb_rx_callback_intf0()
-> > resubmits urb after printk(), and resubmitted urb causes
-> > usb_rx_callback_intf0() to again get -EPROTO error. This results in
-> > printk() flooding (RCU stalls).
-> > 
-> > Commit 92f461517d22 ("media: ir_toy: do not resubmit broken urb") changed
-> > ir_toy module not to resubmit when irtoy_in_callback() got -EPROTO error.
-> > We should do similar thing for imon.
-> > 
-> > Basically, I think that imon should refrain from resubmitting urb when
-> > callback function got an error. But since I don't know which error codes
-> > should retry resubmitting urb, this patch handles only union of error codes
-> > chosen from modules in drivers/media/rc/ directory which handles -EPROTO
-> > error (i.e. ir_toy, mceusb and igorplugusb).
+diff --git a/drivers/i3c/master/i3c-master-cdns.c b/drivers/i3c/master/i3c-master-cdns.c
+index 449e85d7ba87..cc504b58013a 100644
+--- a/drivers/i3c/master/i3c-master-cdns.c
++++ b/drivers/i3c/master/i3c-master-cdns.c
+@@ -412,7 +412,6 @@ struct cdns_i3c_master {
+ 	} xferqueue;
+ 	void __iomem *regs;
+ 	struct clk *sysclk;
+-	struct clk *pclk;
+ 	struct cdns_i3c_master_caps caps;
+ 	unsigned long i3c_scl_lim;
+ 	const struct cdns_i3c_data *devdata;
+@@ -1566,6 +1565,7 @@ MODULE_DEVICE_TABLE(of, cdns_i3c_master_of_ids);
+ static int cdns_i3c_master_probe(struct platform_device *pdev)
+ {
+ 	struct cdns_i3c_master *master;
++	struct clk *pclk;
+ 	int ret, irq;
+ 	u32 val;
+ 
+@@ -1581,11 +1581,11 @@ static int cdns_i3c_master_probe(struct platform_device *pdev)
+ 	if (IS_ERR(master->regs))
+ 		return PTR_ERR(master->regs);
+ 
+-	master->pclk = devm_clk_get(&pdev->dev, "pclk");
+-	if (IS_ERR(master->pclk))
+-		return PTR_ERR(master->pclk);
++	pclk = devm_clk_get_enabled(&pdev->dev, "pclk");
++	if (IS_ERR(pclk))
++		return PTR_ERR(pclk);
+ 
+-	master->sysclk = devm_clk_get(&pdev->dev, "sysclk");
++	master->sysclk = devm_clk_get_enabled(&pdev->dev, "sysclk");
+ 	if (IS_ERR(master->sysclk))
+ 		return PTR_ERR(master->sysclk);
+ 
+@@ -1593,18 +1593,8 @@ static int cdns_i3c_master_probe(struct platform_device *pdev)
+ 	if (irq < 0)
+ 		return irq;
+ 
+-	ret = clk_prepare_enable(master->pclk);
+-	if (ret)
+-		return ret;
+-
+-	ret = clk_prepare_enable(master->sysclk);
+-	if (ret)
+-		goto err_disable_pclk;
+-
+-	if (readl(master->regs + DEV_ID) != DEV_ID_I3C_MASTER) {
+-		ret = -EINVAL;
+-		goto err_disable_sysclk;
+-	}
++	if (readl(master->regs + DEV_ID) != DEV_ID_I3C_MASTER)
++		return -EINVAL;
+ 
+ 	spin_lock_init(&master->xferqueue.lock);
+ 	INIT_LIST_HEAD(&master->xferqueue.list);
+@@ -1615,7 +1605,7 @@ static int cdns_i3c_master_probe(struct platform_device *pdev)
+ 	ret = devm_request_irq(&pdev->dev, irq, cdns_i3c_master_interrupt, 0,
+ 			       dev_name(&pdev->dev), master);
+ 	if (ret)
+-		goto err_disable_sysclk;
++		return ret;
+ 
+ 	platform_set_drvdata(pdev, master);
+ 
+@@ -1637,29 +1627,15 @@ static int cdns_i3c_master_probe(struct platform_device *pdev)
+ 	master->ibi.slots = devm_kcalloc(&pdev->dev, master->ibi.num_slots,
+ 					 sizeof(*master->ibi.slots),
+ 					 GFP_KERNEL);
+-	if (!master->ibi.slots) {
+-		ret = -ENOMEM;
+-		goto err_disable_sysclk;
+-	}
++	if (!master->ibi.slots)
++		return -ENOMEM;
+ 
+ 	writel(IBIR_THR(1), master->regs + CMD_IBI_THR_CTRL);
+ 	writel(MST_INT_IBIR_THR, master->regs + MST_IER);
+ 	writel(DEVS_CTRL_DEV_CLR_ALL, master->regs + DEVS_CTRL);
+ 
+-	ret = i3c_master_register(&master->base, &pdev->dev,
+-				  &cdns_i3c_master_ops, false);
+-	if (ret)
+-		goto err_disable_sysclk;
+-
+-	return 0;
+-
+-err_disable_sysclk:
+-	clk_disable_unprepare(master->sysclk);
+-
+-err_disable_pclk:
+-	clk_disable_unprepare(master->pclk);
+-
+-	return ret;
++	return i3c_master_register(&master->base, &pdev->dev,
++				   &cdns_i3c_master_ops, false);
+ }
+ 
+ static void cdns_i3c_master_remove(struct platform_device *pdev)
+@@ -1668,9 +1644,6 @@ static void cdns_i3c_master_remove(struct platform_device *pdev)
+ 
+ 	cancel_work_sync(&master->hj_work);
+ 	i3c_master_unregister(&master->base);
+-
+-	clk_disable_unprepare(master->sysclk);
+-	clk_disable_unprepare(master->pclk);
+ }
+ 
+ static struct platform_driver cdns_i3c_master = {
+-- 
+2.43.0
 
-In theory it's okay to resubmit _if_ the driver has a robust 
-error-recovery scheme (such as giving up after some fixed limit on the 
-number of errors or after some fixed time has elapsed, perhaps with a 
-time delay to prevent a flood of errors).  Most drivers don't bother to 
-do this; they simply give up right away.  This makes them more 
-vulnerable to short-term noise interference during USB transfers, but in 
-reality such interference is quite rare.  There's nothing really wrong 
-with giving up right away.
-
-As to which error codes drivers should pay attention to...  In most 
-cases they only look at -EPROTO.  According to 
-Documentation/driver-api/usb/error-codes.rst, -EILSEQ and -ETIME are 
-also possible errors when a device has been unplugged, so it wouldn't 
-hurt to check for them too.  But most host controller drivers don't 
-bother to issue them; -EPROTO is by far the most common error code 
-following an unplug.
-
-> > We need to decide whether to call usb_unlink_urb() when we got -EPROTO
-> > error. ir_toy and mceusb call usb_unlink_urb() but igorplugusb does not
-> > due to commit 5e4029056263 ("media: igorplugusb: remove superfluous
-> > usb_unlink_urb()"). This patch calls usb_unlink_urb() because description
-> > of usb_unlink_urb() suggests that it is OK to call.
-
-If the error occurred because the device was unplugged then unlinking 
-the outstanding URBs isn't necessary; the USB core will unlink them for 
-you after the device's parent hub reports that the unplug took place.
-
-> > Second problem is that when usb_rx_callback_intf0() once got -EPROTO error
-> > before ictx->dev_present_intf0 becomes true, usb_rx_callback_intf0() always
-> > resubmits urb due to commit 8791d63af0cf ("[media] imon: don't wedge
-> > hardware after early callbacks"). If some errors should stop resubmitting
-> > urb regardless of whether configuring the hardware has completed or not,
-> > what that commit is doing is wrong. The ictx->dev_present_intf0 test was
-> > introduced by commit 6f6b90c9231a ("[media] imon: don't parse scancodes
-> > until intf configured"), but that commit did not call usb_unlink_urb()
-> > when usb_rx_callback_intf0() got an error. Move the ictx->dev_present_intf0
-> > test to immediately before imon_incoming_packet() so that we can call
-> > usb_unlink_urb() as needed, or the first problem explained above happens
-> > without printk() flooding (i.e. hung task).
-
-It seems odd for a driver to set up normal communications with a device 
-before the device has been configured, but of course that decision is up 
-to the creators and maintainers of the driver.
-
-Alan Stern
 
