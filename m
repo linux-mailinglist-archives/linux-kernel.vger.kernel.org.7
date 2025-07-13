@@ -1,218 +1,170 @@
-Return-Path: <linux-kernel+bounces-729007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2352DB0307A
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 11:34:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC0AB0307D
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 11:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 609C217E8AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 09:34:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245B43BCEFF
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 09:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FA4253944;
-	Sun, 13 Jul 2025 09:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BB11DE4F1;
+	Sun, 13 Jul 2025 09:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fvh58qfK"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CiugZelt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996C7142E7C
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 09:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDFCF4FA;
+	Sun, 13 Jul 2025 09:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752399266; cv=none; b=C7NZCkEVohdOVelXrAnpKLTC59WG4T99J35ZLEoqG9USeih6IwS2GpsezvWPTlyxwfUEEGR9fiSGQnzpD+v7Tx4pFSH8tTOnZTmpBI8sF3hDBGYfCJ7N0e+yL36rqKCuIvD90gtzrI1eml0rhWfNlE2+LgeBMbRr/euNLZkFXms=
+	t=1752399328; cv=none; b=Z8ybPRHgiGkarhbz4QygTzh8ChVJmwIy43m9WtLzO2DTYdeHKjVMNUbhncrvQUJYoPthCDi/1BG1TOW7tA1/aqlNEoUaS2TPt9mdRLzjqfKEGaIzSa+JdNm8CHb6yosnRHHcQLwseoTDcfISUvePh3RfE+cWcnArORVdPjgBDq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752399266; c=relaxed/simple;
-	bh=nvYWDpwOyIKO8lUvECljv0v3IuZgo2JS4glB0ZiVqsc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e9dSGTig0zXWdVSiznCHRFooO2Zde6f7m26iQ7RRrAMAteJ2LeRs//+K+flGm0vJmxHC5BJlj9p7te+HyEZVqtc7LL1ztqQtF672nh7hjIoZIGfeZYhvdJw8W4rPNG3oGJUMtEvHs48pXdCkcc9ZqG4cr0CnvRo5clFjsItOhG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fvh58qfK; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b39c46e1cfso435803f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 02:34:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752399262; x=1753004062; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=45s3aw7y5fpK20LsiI9PskSV8w/X1Mx3/1QFBvNQhok=;
-        b=Fvh58qfKxje30bW2bkeaR1sTpxfp3K/m6lj2aPOjN709dQrSPe1YecU6fncsmHDA2s
-         K5BGklrb8wVArlzSJ265bIPYxz4AaBop17ddbOA/J2ygksooyzxedZ2YJYQLlE0/v0mb
-         Tr3NDjtkqSSOnchQo71DrvJCvBW9s+JSeRq89S8jwXJQnXpvc2/x2nv4Tg+NDJr8hY4V
-         QuX84UsH/8BjpS7qZD9Md6dSPa5Jgu8bXncRxdsRsYtw6f2eqBS2xc+N9Ap0cn0hZ9am
-         rtkk8oDJlAOiomKGABiEIzw3hxwEuWyGRrOWSnEC615Bp5dWS2bA0IB+MCGN7kFfhBeI
-         2sZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752399262; x=1753004062;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=45s3aw7y5fpK20LsiI9PskSV8w/X1Mx3/1QFBvNQhok=;
-        b=NJqeVrg4Y5J7d8fBXxBxwvRl0gXtYTPgMR7N7WPY0rcbR8s9gRWhmPMB047/O8cXrF
-         CpDYPAP4oGaqlJqdSIlkImnydG7t4X4IIyiUzepFzKVBbFoIDw11HRUi0xDyWnHPSOYS
-         mnh/sojSDe6Ofb87dXzDdE3Y5X2ovhKBLzQKJIibhPOKEXIAW9KodNSGBWGssWCTgR+J
-         UoXGCEhIlYnjhItdjxlbMWL9STKPyP0LZMnEpNkyFLBR1jj8ezB2z2MtYppKx0SEZUgH
-         0JWt+8LYYEnVbCvygMrJpzNeVk0oOH9y/wkXG4wwVUm/9CzEn5FnfFTzk4qQn1mc8KXm
-         X4kg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5w0nAvVhNtSbmPII3F6SkhORqUFclOGiWHqLsT2DDuY4Rw3XVBCHhmjTQRFTEgygs30o54CtZfCWCB/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZblIxI02qYP70K/CeBtNZeo2igIAQ/KDDl6vUT1Kju2I/wKDy
-	zOlBvdF+fbSYmLawge9DONN5bXjBrZI7EKd/vZKAxfGSm075jP8MU1nML8FN/WPuDIY=
-X-Gm-Gg: ASbGnctqoFPZb6hFv1GhrhUYNeqIlo3YY+MzwdX3Rhg23DRL6lG3/PgevvQ00te902N
-	ZqjZqR30n7H8pTJEu5icMqtTuT/uEsrxPvPKm7Fexig4s8/B+xbQr8FlpzNteeHJ2r9yim8CiSL
-	aXetiVObJHM5N1yhY8rXkk7/WfAydJP1cf5hiNC+4f8uqnnAzyZzboPrfeB09OSBPZ1Ahv7GwS4
-	LcaHQj+D/FEvhuCIpnpIZ2A5ml1UiNuCDR5F5pSCdrMXQV5mda3kl/4DnJ/yZJk3hj0MyaWEnW4
-	je2AcBFsJBH3M4f6goLHGYIeELCfeKMc+Il3HQ6LSdk3fZ6PJ266rbXvRZXSGD9H4Cor2WK0MhY
-	3MnDF93wxhx29L5ex0ltq2heiExanaRyX2LGJaukKvg==
-X-Google-Smtp-Source: AGHT+IHpGXWacaJnxOWB6dpQstz/rFAG1xykJjgK5RpjaY2n6Qir2rqS2Xejka+NEUqYuDBLcH9g6Q==
-X-Received: by 2002:a05:600c:3b0e:b0:439:9c0e:36e6 with SMTP id 5b1f17b1804b1-454ec169c83mr37004085e9.3.1752399261864;
-        Sun, 13 Jul 2025 02:34:21 -0700 (PDT)
-Received: from [192.168.1.110] ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d5050d34sm139469995e9.9.2025.07.13.02.34.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Jul 2025 02:34:21 -0700 (PDT)
-Message-ID: <03ba99cb-18ef-48eb-9504-cbce752c85fd@linaro.org>
-Date: Sun, 13 Jul 2025 11:34:18 +0200
+	s=arc-20240116; t=1752399328; c=relaxed/simple;
+	bh=Di228D3he1kxfcQNeDttgDNudPZC7dWeCIHqqV3j/+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j26fOuLodvVn+CdSKG1OlovfDwvkS4ljWwOIfbyP7GKMcuPoDjzWnRYGFOqEy6CZ7tt4V6beIaiOd6LodE53N2b3bApUs6tICUhT5C6OWrIXY9mhyqXr3GlhzBlk7WxPvM2UVducutLtoihbJiAGnMDxYpopTK4pglRLhooZdO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CiugZelt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDC30C4CEE3;
+	Sun, 13 Jul 2025 09:35:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752399328;
+	bh=Di228D3he1kxfcQNeDttgDNudPZC7dWeCIHqqV3j/+A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CiugZeltTFj7XoOE7eyXEHykY+ug0GRTmmZQkfFBClWEylCuUKJa+T47ord1c/+Uz
+	 UvHGZitaPcdtzs98B1sClpdsTvICmGT3ETjmXhi4jzyNaYO04gZsrYFpVUSM9ZM2F9
+	 O6d0gpQ7KFbU51hNtgufoKwnoXK9D/msksiuipYc=
+Date: Sun, 13 Jul 2025 11:35:25 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Huacai Chen <chenhuacai@loongson.cn>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] init: Handle bootloader head in kernel parameters
+Message-ID: <2025071306-barber-unbalance-53bb@gregkh>
+References: <20250711102455.3673865-1-chenhuacai@loongson.cn>
+ <2025071130-mangle-ramrod-38ff@gregkh>
+ <CAAhV-H7oEv5jPufY+J-0wOax=m1pszck1__Ptapz5pmzYU5KHg@mail.gmail.com>
+ <2025071116-pushchair-happening-a4cf@gregkh>
+ <CAAhV-H69oz-Rmz4Q2Gad-x5AR0C2cxtK7Mgsc5iJHALP_NcEhw@mail.gmail.com>
+ <2025071150-oasis-chewy-4137@gregkh>
+ <CAAhV-H4kzxR9e762r+ZzCyPrUemDtwqXvp_BJY3R1O1MPV9hrw@mail.gmail.com>
+ <2025071330-alkalize-bonus-ebec@gregkh>
+ <CAAhV-H6MnutZughoES5z_vuZq3PErqMjcJrNEYO+kQLcCQd=sw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 01/15] dt-bindings: media: qcom,x1e80100-camss: Assign
- correct main register bank to first address
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org
-References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
- <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-1-0bc5da82f526@linaro.org>
- <f4fd544b-bd5e-49eb-83d9-290f77e503ef@linaro.org>
- <6ca1b24b-5f9d-48e7-9afd-7dac47b486b1@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <6ca1b24b-5f9d-48e7-9afd-7dac47b486b1@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAhV-H6MnutZughoES5z_vuZq3PErqMjcJrNEYO+kQLcCQd=sw@mail.gmail.com>
 
-On 13/07/2025 11:12, Bryan O'Donoghue wrote:
-> On 13/07/2025 09:15, Krzysztof Kozlowski wrote:
->> On 11/07/2025 14:57, Bryan O'Donoghue wrote:
->>> The first register bank should be the 'main' register bank, in this case
->>> the CSID wrapper register is responsible for muxing PHY/TPG inputs directly
->>> to CSID or to other blocks such as the Sensor Front End.
->>>
->>> commit f4792eeaa971 ("dt-bindings: media: qcom,x1e80100-camss: Fix isp unit address")
->>
->> I have next from few days ago and I don't have this commit.
+On Sun, Jul 13, 2025 at 05:11:20PM +0800, Huacai Chen wrote:
+> On Sun, Jul 13, 2025 at 4:30 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Sat, Jul 12, 2025 at 11:18:44PM +0800, Huacai Chen wrote:
+> > > On Fri, Jul 11, 2025 at 9:04 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > On Fri, Jul 11, 2025 at 08:51:28PM +0800, Huacai Chen wrote:
+> > > > > On Fri, Jul 11, 2025 at 8:41 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > > > >
+> > > > > > On Fri, Jul 11, 2025 at 08:34:25PM +0800, Huacai Chen wrote:
+> > > > > > > Hi, Greg,
+> > > > > > >
+> > > > > > > On Fri, Jul 11, 2025 at 7:06 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > > > > > >
+> > > > > > > > On Fri, Jul 11, 2025 at 06:24:55PM +0800, Huacai Chen wrote:
+> > > > > > > > > BootLoader may pass a head such as "BOOT_IMAGE=/boot/vmlinuz-x.y.z" to
+> > > > > > > > > kernel parameters. But this head is not recognized by the kernel so will
+> > > > > > > > > be passed to user space. However, user space init program also doesn't
+> > > > > > > > > recognized it.
+> > > > > > > >
+> > > > > > > > Then why is it on the kernel command line if it is not recognized?
+> > > > > > > UEFI put it at the beginning of the command line, you can see it from
+> > > > > > > /proc/cmdline, both on x86 and LoongArch.
+> > > > > >
+> > > > > > Then fix UEFI :)
+> > > > > >
+> > > > > > My boot command line doesn't have that on x86, perhaps you need to fix
+> > > > > > your bootloader?
+> > > > > Not only UEFI, Grub also do this, for many years, not now. I don't
+> > > > > know why they do this, but I think at least it is not a bug. For
+> > > > > example, maybe it just tells user the path of kernel image via
+> > > > > /proc/cmdline.
+> > > > >
+> > > > > [chenhuacai@kernelserver linux-official.git]$ uname -a
+> > > > > Linux kernelserver 6.12.0-84.el10.x86_64 #1 SMP PREEMPT_DYNAMIC Tue
+> > > > > May 13 13:39:02 UTC 2025 x86_64 GNU/Linux
+> > > > > [chenhuacai@kernelserver linux-official.git]$ cat /proc/cmdline
+> > > > > BOOT_IMAGE=(hd0,gpt2)/vmlinuz-6.12.0-84.el10.x86_64
+> > > > > root=UUID=c8fcb11a-0f2f-48e5-a067-4cec1d18a721 ro
+> > > > > crashkernel=2G-64G:256M,64G-:512M
+> > > > > resume=UUID=1c320fec-3274-4b5b-9adf-a06
+> > > > > 42e7943c0 rhgb quiet
+> > > >
+> > > > Sounds like a bootloader bug:
+> > > >
+> > > > $ cat /proc/cmdline
+> > > > root=/dev/sda2 rw
+> > > >
+> > > > I suggest fixing the issue there, at the root please.
+> > > Grub pass BOOT_IMAGE for all EFI-based implementations, related commits of Grub:
+> > > https://cgit.git.savannah.gnu.org/cgit/grub.git/commit/?id=16ccb8b138218d56875051d547af84410d18f9aa
+> > > https://cgit.git.savannah.gnu.org/cgit/grub.git/commit/?id=25953e10553dad2e378541a68686fc094603ec54
+> >
+> > From 2005 and 2011?  Why have we not had any reports of this being an
+> > issue before now?  What changed in the kernel recently?
+> As said before, just in some corner cases it causes problems, but
+> corner case doesn't means nothing.
 > 
-> https://gitlab.freedesktop.org/linux-media/media-committers/-/commit/1da245b6b73436be0d9936bb472f8a55900193cb
+> >
+> > > Linux kernel treats BOOT_IMAGE as an "offender" of unknown command
+> > > line parameters, related commits of kernel:
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=86d1919a4fb0d9c115dd1d3b969f5d1650e45408
+> >
+> > So in 2021 we started printing out command line arguments that were
+> > "wrong", so is this when everyone noticed that grub was wrong?
+> Somebody may think a warning is harmless, somebody thinks a warning
+> means a problem needs to fix.
+
+Great, then fix it in grub to not do this :)
+
+Are we supposed to paper over the bugs in all bootloaders?  Especially
+for ones that we have the source to?
+
+> > > There are user space projects that search BOOT_IMAGE from /proc/cmdline:
+> > > https://github.com/linuxdeepin/deepin-ab-recovery/blob/master/util.go
+> > > (search getBootOptions)
+> > > https://github.com/linuxdeepin/deepin-ab-recovery/blob/master/main.go
+> > > (search getKernelReleaseWithBootOption)
+> >
+> > What does it use these options for that it can't get from the valid ones
+> > instead?
+> Some projects have fallback methods, some projects don't work, but at
+> least this means some user space programs depend on it already.
 > 
->>> assigned the address to the first register bank "csid0" whereas what we
->>> should have done is retained the unit address and moved csid_wrapper to be
->>> the first listed bank.
->>
->> This is confusing. Did that commit change entries in the binding?
-> Fixed the unit address.
-> 
-> What we _should_ have done is put csid_wrapper as the first entry.
+> >
+> > > So, we can say Grub pass BOOT_IMAGE is reasonable and there are user
+> > > space programs that hope it be in /proc/cmdline.
+> >
+> > But who relies on this that never noticed the kernel complaining about
+> > it for the past 4 years?
+> So If I'm the first man who notices this and wants to improve
+> something, then it is my mistake?
 
-That's different problem then. The commit fixed only DTC warning and it
-was perfectly fine from that point of view. I would not refer it,
-because it just makes impression that commit was not correct or even
-complete.
+No, not at all, I'm saying to fix the root problem here please.  And
+that root problem is grub adding stuff that causes warnings in Linux to
+happen.  Why is this Linux's issue to handle?
 
-> 
-> 
->>
->>>
->>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>> ---
->>>   .../devicetree/bindings/media/qcom,x1e80100-camss.yaml       | 12 ++++++------
->>>   1 file changed, 6 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
->>> index b075341caafc1612e4faa3b7c1d0766e16646f7b..2438e08b894f4a3dc577cee4ab85184a3d7232b0 100644
->>> --- a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
->>> +++ b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
->>> @@ -21,12 +21,12 @@ properties:
->>>   
->>>     reg-names:
->>>       items:
->>> +      - const: csid_wrapper
->>
->> Anyway, this is ABI break, so needs some sort of explanation in the
->> commit msg. We don't break ABI for cleanup reasons, unless it wasn't
->> released yet etc.
-> So I since we haven't added the node to a dts yet which to my 
-> understanding means no ABI break.
+thanks,
 
-In-kernel DTS is one of the users, but not the only one. The kernel
-drivers implement the ABI and for them your DTS does not matter. You
-might not have DTS at all and still break the ABI. As mentioned in
-second patch - the ABI, expressed by dt docs, once released in final
-kernel version becomes the actual explicit ABI.
-
-This is the one which you should not break.
-
-Kernel drivers can sometimes imply ABI (e.g. undocumented one) and
-that's another story.
-
-Best regards,
-Krzysztof
+greg k-h
 
