@@ -1,53 +1,73 @@
-Return-Path: <linux-kernel+bounces-729106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB71BB031DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 17:42:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62F7B031E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 17:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B730E17C1B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 15:42:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6A031899DF1
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 15:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C08527F003;
-	Sun, 13 Jul 2025 15:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7574E27E045;
+	Sun, 13 Jul 2025 15:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rdngM802"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UhEYS8a/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600BD27A93A;
-	Sun, 13 Jul 2025 15:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45F41F03DE
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 15:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752421367; cv=none; b=n05Qm5yejqWFBka4t4kyV+UZJqNqu5qszsnJmbvIaK9Fcx42onK/Brx9/0HR99rcB0ftk4nCn6tzg1SbWTXSmC1YPVOm4iHCPXD5hmMM4MpzQ0263pqFcL1fC9QBu5nhTa6odJYuLvKz63FlR9dN1x6lz/wL/6cfPIo3z/d8DQc=
+	t=1752421918; cv=none; b=un3EX88xFMERHa+zf9t6bW0bfflZHqMxZRCg//v8Wxebb/vp4Wya0QOnbzqPXpf/I+CUY7LUeTdR/GKctmhQ7CkMANVoRIJUcJVrERzs83FvCa8MfNgyqnjdX0MzGc5Xo2VVhO1NyX+4JN/T1YulOUop2MMr6kJE58NbK4pDa0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752421367; c=relaxed/simple;
-	bh=9fVhK2Qao63Mjl2DZ29F7+k43ObqsGR4PEs/d+j2wE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rMixFpz+L7HozpCYxUEgmPsBXDxq6K5dAlLntNFjMjVHxQVBmqmYPCSN5ybwUfn1+WPpvqdxksF+y0UN6yCFDUYsrJTdjRvg9xNE63iLY0+6OrmrMivFPip+qrAqVvfBdwOcnmztZ2LDO7cjRqPt8fD4bo9ls8B2ouBMfcmkg20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rdngM802; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C757C4CEE3;
-	Sun, 13 Jul 2025 15:42:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752421365;
-	bh=9fVhK2Qao63Mjl2DZ29F7+k43ObqsGR4PEs/d+j2wE0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rdngM802gkniy+dZxOTlJI6Mc25MkfsVUm567ZU00qL/JdKDVxdVPjqqZAM5EAPaT
-	 pDW/uW7OL7j9SaAnYL/GSSPupnTzIeszG/SID3TGiaGhkCwCRg7jmdiRk0CNyZWtb3
-	 p4rXSv4XiduNl4nXKgIHNMffqSnfgS/GMZ5MxQBA=
-Date: Sun, 13 Jul 2025 17:42:43 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: srini@kernel.org
-Cc: linux-kernel@vger.kernel.org, "Michael C. Pratt" <mcpratt@pm.me>,
-	INAGAKI Hiroshi <musashino.open@gmail.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] nvmem: layouts: u-boot-env: remove crc32 endianness
- conversion
-Message-ID: <2025071313-zippy-boneless-da1c@gregkh>
-References: <20250712181729.6495-1-srini@kernel.org>
- <20250712181729.6495-2-srini@kernel.org>
- <2025071308-upfront-romp-fa1e@gregkh>
+	s=arc-20240116; t=1752421918; c=relaxed/simple;
+	bh=3UpAE3/uUui7Url7V3AweJhoOTChHdBR1c98anlmbGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Y1KHDCxNQKX8wnVqddDV4NOqQRK1Pr03NLGSeiB96C7mLv/01NmMeaPqQ4brbVcoo5snTJjTf/zLYezDrlI4Q0fM1jzY0/Qvd4S/iV5ktPUZ/AH0CbyLHB/KTwsgFlA2BVFq8W4t6QlNGrgJH5dfstgkh9bYpbTWqbMYbJGciXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UhEYS8a/; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752421917; x=1783957917;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=3UpAE3/uUui7Url7V3AweJhoOTChHdBR1c98anlmbGY=;
+  b=UhEYS8a/oP3KhOhTAtRSS9U8KF83oUeoUJFkPGgi/tlfjAv96NYecopD
+   qRBYCiYRbsMQVWJylVkGQdaiEyj8Zc6uNbD9R6UFsT82DpyPCWe08DAqT
+   JvWYgGBgPpQk8pq8SQUIrOn80i4A1DOtrQF4EmBTdsbYW2uayPci961PO
+   RJmjZcHuTEJWqsVUbvdHB98KgNhWOddI/ws6qViJKZ1XNgkbeFuz8mGcJ
+   0/Ad8fd1RRsL+tEoy8Sv0LAy7HI30FjqHXlFvR6Cg60ZJfsP5H9fCPJqe
+   uP5hYz2Axr25I/QWD/JTVK4P2NxgUwhpwtRmUQ5LojMZAxnMw5DvBwm53
+   w==;
+X-CSE-ConnectionGUID: Y1bDHkepQDeAzOrihDpp4Q==
+X-CSE-MsgGUID: EKic8qn8Rm2hVJ6cIuXNlg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="42267298"
+X-IronPort-AV: E=Sophos;i="6.16,308,1744095600"; 
+   d="scan'208";a="42267298"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2025 08:51:56 -0700
+X-CSE-ConnectionGUID: J14evWjuSN2iE83M3qZnWQ==
+X-CSE-MsgGUID: MVL/Vp8rSjuxKuNN0dIuSg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,308,1744095600"; 
+   d="scan'208";a="156168636"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 13 Jul 2025 08:51:55 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uayzY-00089x-0B;
+	Sun, 13 Jul 2025 15:51:52 +0000
+Date: Sun, 13 Jul 2025 23:50:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Baochen Qiang <quic_bqiang@quicinc.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+Subject: drivers/net/wireless/ath/ath12k/mac.c:9785:2-3: Unneeded semicolon
+Message-ID: <202507132355.ljWuxxjd-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,89 +76,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025071308-upfront-romp-fa1e@gregkh>
 
-On Sun, Jul 13, 2025 at 05:41:45PM +0200, Greg KH wrote:
-> On Sat, Jul 12, 2025 at 07:17:26PM +0100, srini@kernel.org wrote:
-> > From: "Michael C. Pratt" <mcpratt@pm.me>
-> > 
-> > On 11 Oct 2022, it was reported that the crc32 verification
-> > of the u-boot environment failed only on big-endian systems
-> > for the u-boot-env nvmem layout driver with the following error.
-> > 
-> >   Invalid calculated CRC32: 0x88cd6f09 (expected: 0x096fcd88)
-> > 
-> > This problem has been present since the driver was introduced,
-> > and before it was made into a layout driver.
-> > 
-> > The suggested fix at the time was to use further endianness
-> > conversion macros in order to have both the stored and calculated
-> > crc32 values to compare always represented in the system's endianness.
-> > This was not accepted due to sparse warnings
-> > and some disagreement on how to handle the situation.
-> > Later on in a newer revision of the patch, it was proposed to use
-> > cpu_to_le32() for both values to compare instead of le32_to_cpu()
-> > and store the values as __le32 type to remove compilation errors.
-> > 
-> > The necessity of this is based on the assumption that the use of crc32()
-> > requires endianness conversion because the algorithm uses little-endian,
-> > however, this does not prove to be the case and the issue is unrelated.
-> > 
-> > Upon inspecting the current kernel code,
-> > there already is an existing use of le32_to_cpu() in this driver,
-> > which suggests there already is special handling for big-endian systems,
-> > however, it is big-endian systems that have the problem.
-> > 
-> > This, being the only functional difference between architectures
-> > in the driver combined with the fact that the suggested fix
-> > was to use the exact same endianness conversion for the values
-> > brings up the possibility that it was not necessary to begin with,
-> > as the same endianness conversion for two values expected to be the same
-> > is expected to be equivalent to no conversion at all.
-> > 
-> > After inspecting the u-boot environment of devices of both endianness
-> > and trying to remove the existing endianness conversion,
-> > the problem is resolved in an equivalent way as the other suggested fixes.
-> > 
-> > Ultimately, it seems that u-boot is agnostic to endianness
-> > at least for the purpose of environment variables.
-> > In other words, u-boot reads and writes the stored crc32 value
-> > with the same endianness that the crc32 value is calculated with
-> > in whichever endianness a certain architecture runs on.
-> > 
-> > Therefore, the u-boot-env driver does not need to convert endianness.
-> > Remove the usage of endianness macros in the u-boot-env driver,
-> > and change the type of local variables to maintain the same return type.
-> > 
-> > If there is a special situation in the case of endianness,
-> > it would be a corner case and should be handled by a unique "compatible".
-> > 
-> > Even though it is not necessary to use endianness conversion macros here,
-> > it may be useful to use them in the future for consistent error printing.
-> > 
-> > Fixes: d5542923f200 ("nvmem: add driver handling U-Boot environment variables")
-> 
-> Note, this is a 6.1 commit id, but:
-> 
-> > Reported-by: INAGAKI Hiroshi <musashino.open@gmail.com>
-> > Link: https://lore.kernel.org/all/20221011024928.1807-1-musashino.open@gmail.com
-> > Cc: stable@vger.kernel.org # 6.12.x
-> > Cc: stable@vger.kernel.org # 6.6.x: f4cf4e5: Revert "nvmem: add new config option"
-> > Cc: stable@vger.kernel.org # 6.6.x: 7f38b70: of: device: Export of_device_make_bus_id()
-> > Cc: stable@vger.kernel.org # 6.6.x: 4a1a402: nvmem: Move of_nvmem_layout_get_container() in another header
-> > Cc: stable@vger.kernel.org # 6.6.x: fc29fd8: nvmem: core: Rework layouts to become regular devices
-> > Cc: stable@vger.kernel.org # 6.6.x: 0331c61: nvmem: core: Expose cells through sysfs
-> > Cc: stable@vger.kernel.org # 6.6.x: 401df0d: nvmem: layouts: refactor .add_cells() callback arguments
-> > Cc: stable@vger.kernel.org # 6.6.x: 6d0ca4a: nvmem: layouts: store owner from modules with nvmem_layout_driver_register()
-> > Cc: stable@vger.kernel.org # 6.6.x: 5f15811: nvmem: layouts: add U-Boot env layout
-> > Cc: stable@vger.kernel.org # 6.6.x
-> 
-> That's a load of (short) git ids for just 6.6.y?  What about 6.1.y?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   3f31a806a62e44f7498e2d17719c03f816553f11
+commit: cccbb9d0dd6ab9e3353066217e9ab5b44bd761d3 wifi: ath12k: add parse of transmit power envelope element
+date:   8 weeks ago
+config: riscv-randconfig-r063-20250713 (https://download.01.org/0day-ci/archive/20250713/202507132355.ljWuxxjd-lkp@intel.com/config)
+compiler: riscv32-linux-gcc (GCC) 13.4.0
 
-And really, ALL of those commits are needed for this very tiny patch?
-Reverting a config option?  sysfs apis being added?  Huh?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507132355.ljWuxxjd-lkp@intel.com/
 
-confused,
+cocci warnings: (new ones prefixed by >>)
+>> drivers/net/wireless/ath/ath12k/mac.c:9785:2-3: Unneeded semicolon
 
-greg k-h
+vim +9785 drivers/net/wireless/ath/ath12k/mac.c
+
+  9754	
+  9755	static void ath12k_mac_parse_tx_pwr_env(struct ath12k *ar,
+  9756						struct ath12k_link_vif *arvif)
+  9757	{
+  9758		struct ieee80211_bss_conf *bss_conf = ath12k_mac_get_link_bss_conf(arvif);
+  9759		struct ath12k_reg_tpc_power_info *tpc_info = &arvif->reg_tpc_info;
+  9760		struct ieee80211_parsed_tpe_eirp *local_non_psd, *reg_non_psd;
+  9761		struct ieee80211_parsed_tpe_psd *local_psd, *reg_psd;
+  9762		struct ieee80211_parsed_tpe *tpe = &bss_conf->tpe;
+  9763		enum wmi_reg_6g_client_type client_type;
+  9764		struct ath12k_reg_info *reg_info;
+  9765		struct ath12k_base *ab = ar->ab;
+  9766		bool psd_valid, non_psd_valid;
+  9767		int i;
+  9768	
+  9769		reg_info = ab->reg_info[ar->pdev_idx];
+  9770		client_type = reg_info->client_type;
+  9771	
+  9772		local_psd = &tpe->psd_local[client_type];
+  9773		reg_psd = &tpe->psd_reg_client[client_type];
+  9774		local_non_psd = &tpe->max_local[client_type];
+  9775		reg_non_psd = &tpe->max_reg_client[client_type];
+  9776	
+  9777		psd_valid = local_psd->valid | reg_psd->valid;
+  9778		non_psd_valid = local_non_psd->valid | reg_non_psd->valid;
+  9779	
+  9780		if (!psd_valid && !non_psd_valid) {
+  9781			ath12k_warn(ab,
+  9782				    "no transmit power envelope match client power type %d\n",
+  9783				    client_type);
+  9784			return;
+> 9785		};
+  9786	
+  9787		if (psd_valid) {
+  9788			tpc_info->is_psd_power = true;
+  9789	
+  9790			tpc_info->num_pwr_levels = max(local_psd->count,
+  9791						       reg_psd->count);
+  9792			if (tpc_info->num_pwr_levels > ATH12K_NUM_PWR_LEVELS)
+  9793				tpc_info->num_pwr_levels = ATH12K_NUM_PWR_LEVELS;
+  9794	
+  9795			for (i = 0; i < tpc_info->num_pwr_levels; i++) {
+  9796				tpc_info->tpe[i] = min(local_psd->power[i],
+  9797						       reg_psd->power[i]) / 2;
+  9798				ath12k_dbg(ab, ATH12K_DBG_MAC,
+  9799					   "TPE PSD power[%d] : %d\n",
+  9800					   i, tpc_info->tpe[i]);
+  9801			}
+  9802		} else {
+  9803			tpc_info->is_psd_power = false;
+  9804			tpc_info->eirp_power = 0;
+  9805	
+  9806			tpc_info->num_pwr_levels = max(local_non_psd->count,
+  9807						       reg_non_psd->count);
+  9808			if (tpc_info->num_pwr_levels > ATH12K_NUM_PWR_LEVELS)
+  9809				tpc_info->num_pwr_levels = ATH12K_NUM_PWR_LEVELS;
+  9810	
+  9811			for (i = 0; i < tpc_info->num_pwr_levels; i++) {
+  9812				tpc_info->tpe[i] = min(local_non_psd->power[i],
+  9813						       reg_non_psd->power[i]) / 2;
+  9814				ath12k_dbg(ab, ATH12K_DBG_MAC,
+  9815					   "non PSD power[%d] : %d\n",
+  9816					   i, tpc_info->tpe[i]);
+  9817			}
+  9818		}
+  9819	}
+  9820	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
