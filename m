@@ -1,105 +1,126 @@
-Return-Path: <linux-kernel+bounces-729216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87035B0336D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:24:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 085CDB03370
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 597307A1C01
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 23:22:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63A4C176B5E
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 23:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C63C2046A9;
-	Sun, 13 Jul 2025 23:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="N5jw3Ay9"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2181C700D;
-	Sun, 13 Jul 2025 23:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841E42036FE;
+	Sun, 13 Jul 2025 23:27:51 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D171A0730
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 23:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752449030; cv=none; b=ZfaktqqzXnzZrRQros+OF07xF91cm6kf+9Yhos5rNG1P3TMXITYVQyXAglXViZbC7swTjRze+1680MhlhtloIlVXrYADUOUZ3O4l89YyPvgnMwP60MYO10iX+FmaGBPiv799ncWvepB17VbMzq1cmdIueA8IMep/wTrIlDfy8Cs=
+	t=1752449271; cv=none; b=agwxhDqZkfQFl70uqwptEnqdr/6L5pk0eBoVkoZfqdsMwPIOBlgJ0oQv+gZR/5MP13U7hivHD/7Aa0Bc0b9Vj6xmeFEwZAdGdV+dypHFowrBPoU6ZmRsBat7MCQuup8dbLsGidQpNyFdBvX2BgQOUHzKwp5MgOVdEQcN/EOmZxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752449030; c=relaxed/simple;
-	bh=cA4rX9hVcLuHkLO5DVQujs/MelYb6jKWeM75GDINJto=;
+	s=arc-20240116; t=1752449271; c=relaxed/simple;
+	bh=PNlpdiBlfke4hLU5sd6jQGIZ+kbIUkdFcN98yW9xMQA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JWdiJK4I55mdUsEGPuRm7OFRCyRqdw4zIj7FqNemOLReAh0ufSw5+ht0PGLxqVZ58GbMX6GJm7t6wixUES4aSmp+fHEkvPpuS2ZnwgkM0arYEkG+Ykx8dg7UUoLQQrddSbZhGIHfeZkEoqIvM7vfCANze/73uiD5RgnzDtAF0SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=N5jw3Ay9; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=ER8UgKQIqa0IsgF5LUsvKXvjQplxiyNLwUilByJWgfI=; b=N5jw3Ay9e485oPmz
-	eh0Gc+Fe668DHaYrWZG6CHgT5QTOhGs84OkXGcsME7psbQBPF8CJwTNus47DjTSjHE5rVlu8k7jW/
-	8F2xhoRQqk5Xy8o4H0KzPqNJzTr/7Twx/lpAiPd9D+slqr7xKa9De0r7paKVKA1gmd7YN3ardaChJ
-	z4E4gS54Kv6MAkxK07Qo2mKCRGs2oAY4cSWdDXNdFOzZzC7XQs0KWQVuXEtWE6gcXI4WHsdZ8MCwi
-	qDTYMSTXEOVBSiRiXZpk1lV5yrQLDHAIPGue2f/14fBMIhP9JuAPYMDgh5++p0cDGYeysy753yWnR
-	XZ9kgWssC9GaduwkNw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1ub62j-00Fp80-1X;
-	Sun, 13 Jul 2025 23:23:37 +0000
-Date: Sun, 13 Jul 2025 23:23:37 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: mchehab@kernel.org, michal.simek@amd.com, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: of xvip_enum_frame_size and xvip_get_format_by_code
-Message-ID: <aHQ_-TCl02_mcHHz@gallifrey>
-References: <aHPj_C6iGCEFDW98@gallifrey>
- <20250713230109.GA10401@pendragon.ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XnjfGvBKJzbcFLnAufmQNbLytiyFncaw+u2G/k1oZ6hBKm7/3Tw7ooE1o49fXR5fSspcHUDp+1la6GutkmZ8zDSnVXSm+Xij3/EgQb40YPpMEBH4WVdrt2s5Rvug+Lc+8oQMq7RPjEh7YkipNX10K8qGVviyNKKp+iYYDtySG44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-54-687440f1ab53
+Date: Mon, 14 Jul 2025 08:27:40 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Yeo Reum Yun <YeoReum.Yun@arm.com>
+Cc: Andrey Konovalov <andreyknvl@gmail.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"glider@google.com" <glider@google.com>,
+	"dvyukov@google.com" <dvyukov@google.com>,
+	Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
+	"bigeasy@linutronix.de" <bigeasy@linutronix.de>,
+	"clrkwllms@kernel.org" <clrkwllms@kernel.org>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"max.byungchul.park@gmail.com" <max.byungchul.park@gmail.com>,
+	"ysk@kzalloc.com" <ysk@kzalloc.com>,
+	"kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rt-devel@lists.linux.dev" <linux-rt-devel@lists.linux.dev>,
+	"kernel_team@skhynix.com" <kernel_team@skhynix.com>,
+	"urezki@gmail.com" <urezki@gmail.com>
+Subject: Re: [PATCH v2] kasan: remove kasan_find_vm_area() to prevent
+ possible deadlock
+Message-ID: <20250713232740.GA18327@system.software.com>
+References: <20250703181018.580833-1-yeoreum.yun@arm.com>
+ <CA+fCnZcMpi6sUW2ksd_r1D78D8qnKag41HNYCHz=HM1-DL71jg@mail.gmail.com>
+ <20250711020858.GA78977@system.software.com>
+ <20250711021100.GA4320@system.software.com>
+ <GV1PR08MB1052126BB553BD36DA768C998FB4AA@GV1PR08MB10521.eurprd08.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250713230109.GA10401@pendragon.ideasonboard.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
-X-Uptime: 23:23:18 up 77 days,  7:36,  1 user,  load average: 0.05, 0.01, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <GV1PR08MB1052126BB553BD36DA768C998FB4AA@GV1PR08MB10521.eurprd08.prod.outlook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsXC9ZZnoe5Hh5IMg3f7NCzmrF/DZvF94nR2
+	i2kXJzFbLHvyj8liwsM2dov2j3uZLVY8u89kcXnXHDaLe2v+s1pcWn2BxeLCxF5Wi30dD5gs
+	Vl9ksdj77yeLxdwvhhZfVq9icxDwWDNvDaPHzll32T1a9t1i91iwqdRjz8STbB6bVnUCiU+T
+	2D0W/n7B7PHu3Dl2jxMzfrN4vNg8k9Hj8ya5AJ4oLpuU1JzMstQifbsEroz7d/vZC65wVOze
+	85e5gfEFWxcjJ4eEgInE1h9NzDD23XknmUBsFgFVia2/GsDibALqEjdu/ASzRQTUJH6uOgZW
+	wyywi03iwvtEEFtYIFKieds1sDivgIVE883ZrF2MHBxCApuYJN7aQ4QFJU7OfMIC0aolcePf
+	SyaQEmYBaYnl/zhAwpwC8RKPzk8FmyIqoCxxYNtxIJsL6LLp7BJLl25jhThTUuLgihssExgF
+	ZiEZOwvJ2FkIYxcwMq9iFMrMK8tNzMwx0cuozMus0EvOz93ECIy5ZbV/oncwfroQfIhRgINR
+	iYf3xpbiDCHWxLLiytxDjBIczEoivK/uFmUI8aYkVlalFuXHF5XmpBYfYpTmYFES5zX6Vp4i
+	JJCeWJKanZpakFoEk2Xi4JRqYIytEl/4xfodQ6X/3dmSFUerlnmd4zbh8BTNNvmZ43z613zH
+	ma2B84qXndr89JyVw0TulbseR8zglov7W9Fc8l/ha1ZLce6zdXITGYXeVK/7zKNSHH/XULpp
+	l338Wz5vZr8Tn4RrFQWSdkjPaSiPYFE10BI7mr3uRZpWV92m7y3Sv/e+Dvv5WomlOCPRUIu5
+	qDgRAOKU1i+1AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42Lh8rNu1v3oUJJhcPW2uMWc9WvYLL5PnM5u
+	Me3iJGaLZU/+MVlMeNjGbtH+cS+zxYpn95ksDs89yWpxedccNot7a/6zWlxafYHF4sLEXlaL
+	fR0PmCxWX2Sx2PvvJ4vF3C+GFl9Wr2JzEPRYM28No8fOWXfZPVr23WL3WLCp1GPPxJNsHptW
+	dQKJT5PYPRb+fsHs8e7cOXaPEzN+s3i82DyT0WPxiw9MHp83yQXwRnHZpKTmZJalFunbJXBl
+	3L/bz15whaNi956/zA2ML9i6GDk5JARMJO7OO8kEYrMIqEps/dXADGKzCahL3LjxE8wWEVCT
+	+LnqGFgNs8AuNokL7xNBbGGBSInmbdfA4rwCFhLNN2ezdjFycAgJbGKSeGsPERaUODnzCQtE
+	q5bEjX8vmUBKmAWkJZb/4wAJcwrESzw6PxVsiqiAssSBbceZJjDyzkLSPQtJ9yyE7gWMzKsY
+	RTLzynITM3NM9YqzMyrzMiv0kvNzNzECI2hZ7Z+JOxi/XHY/xCjAwajEw3tjS3GGEGtiWXFl
+	7iFGCQ5mJRHeV3eLMoR4UxIrq1KL8uOLSnNSiw8xSnOwKInzeoWnJggJpCeWpGanphakFsFk
+	mTg4pRoYVfkyX039eKwuy+l9Xuz821OtZzLIne2+pJz56Pvk+XI7YkWaJA83Jwox7svqqRXI
+	Ez+wLUt/7smqQL0Slv9z53l7hU2yPdGfodMlwHUh9ujxZ4Izua5l2n/5dfLx7D0NfxMeT1zF
+	oj3J37L+yAU+NpbcgOZJeta/5zdLvI7gEu7xCf7FF7NAiaU4I9FQi7moOBEAkEiYeZwCAAA=
+X-CFilter-Loop: Reflected
 
-* Laurent Pinchart (laurent.pinchart@ideasonboard.com) wrote:
-> On Sun, Jul 13, 2025 at 04:51:08PM +0000, Dr. David Alan Gilbert wrote:
-> > Hi,
-> >   I noticed in xilinx-cip.c there's xvip_enum_frame_size()
-> > which was added back in 2013 but seems unused in tree, however
-> > I had a dig and I found
-> >   https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841638/Xilinx+V4L2+TPG+driver
-> > has a commit:
-> >   https://github.com/Xilinx/linux-xlnx/commit/1c113b4aef14004152fefc0e8b8dbbcc2314566f#diff-bb594682a92148570df8826933cf8629
-> >   from 2014 that uses it - but it looks like that commit never went
-> > anywhere.
-> > 
-> > So is xvip_enum_frame_size() or not?
-> > I also see xvip_get_format_by_code() looks unused, but I don't
-> > see any uses of it, even digging in that wiki.
+On Sat, Jul 12, 2025 at 03:46:10PM +0000, Yeo Reum Yun wrote:
+> Hi ByungChul,
 > 
-> Those functions seem to have never been used in the mainline kernel.
-> They were likely added to support drivers that have not been upstreamed.
-
-Ah, shame.
-
-> Both functions are used in the Xilinx BSP kernel.
-
-OK, I'll stay clear.
-
-Dave
-
-> -- 
-> Regards,
+> [...]
+> > I checked the critical section by &vn->busy.lock in find_vm_area().  The
+> > time complextity looks O(log N).  I don't think an irq disabled section
+> > of O(log N) is harmful.  I still think using
+> > spin_lock_irqsave(&vn->busy.lock) can resolve this issue with no worry
+> > of significant irq delay.  Am I missing something?
 > 
-> Laurent Pinchart
+> I don't agree for this.
+> since in PREEMPT_RT case, it has the same problem.
 > 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+> In case of PREEMPT_RT, spin_lock_irqsave() becomes rt_spin_lock() which is sleepable.
+> But, KASAN calls "rt_spin_lock()" holding raw_spin_lock_irqsave() which is definitely wrong.
+
+It's another issue than irq handling latency, but it's about lock usage
+correctness.  You are right.
+
+	Byungchul
+
+> But as Uladzislau said, without reference count manage, UAF can always happen.
+> IOW, If KASAN to dump vm information, I think we need:
+>     1. manage reference for vmap_area.
+>     2. find_vm_area() with rcu version.
+> 
+> 
+> Thanks.
+> 
+> --
+> Sincerely,
+> Yeoreum Yun
 
