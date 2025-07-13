@@ -1,169 +1,95 @@
-Return-Path: <linux-kernel+bounces-729208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17089B03352
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 00:46:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 674C3B03354
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 00:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C87A3B9DCD
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 22:45:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E7AD7A8A23
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 22:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F651FDA82;
-	Sun, 13 Jul 2025 22:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2791F91F6;
+	Sun, 13 Jul 2025 22:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z1PyQ5cS"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTjTzON5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755944A00;
-	Sun, 13 Jul 2025 22:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC8219D07A
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 22:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752446755; cv=none; b=U/DO0n2M4n3+Q71FvI/c8AIRlH0LzjvFClMj4qYoezIsVeFNmfeIMXf32QSlZuTV+kG8p5Z6Qvuru+oQ8k82+jNimnx0F6GO29dD1u70hs58hgznLai8Wk0fmu+JwjNmFgXH0eTrNn6QNAkxcv2l/h4S+1btzK+Sen5z2wiKICI=
+	t=1752446772; cv=none; b=AczNLq+fmG73IcFZa90sbEpX5i1K6AtToMaimwMlFRKfG+S9dBiEU1XxjzBFGcMNS4yAECSfe6HoxTiVmRiKMhMtN1HhEG2PjjNSEMMlQFAz+z+YdtxP1eLp2LrBOCMCgsHEgTODxhnjWQnvlJOd/rYjYdsGOzju9M/YBrkhKNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752446755; c=relaxed/simple;
-	bh=kHn54of6+lS6CQ0dDfTBt+KD1kEqjsI2dGPg2xG+0pM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=asQF32D9SC7+sM5WMKIYrLDbgnRilUYxX0yWNUO1n9b2n5o4kaLMx0RtkzPcSVH/h3KSAmcVN+JRhMq5WlHCPM7uAB2Y2TStpmBQZFMTBJWl7ETYA1ZZmrlFBNl/vkC6hneRKnc4ZHtSJyjLZq75hTw0y7e9hNv7YbiFihlYjjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z1PyQ5cS; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-455fdfb5d04so8094655e9.2;
-        Sun, 13 Jul 2025 15:45:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752446752; x=1753051552; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EOwYM/YE6DhKb/6E8m1su9Dle2Gqg0elxyjtG73mPGQ=;
-        b=Z1PyQ5cSuzteO9kuk7U0908Qa3Yx+3drW4pxSKe9mNXlJwdep2TSmcLuPJuc+HiNqT
-         6WzMnoTkx9wFuJq61Cc+iHu0zdExQJ0g9hY4WuI/im96TEdNjQ1D3ozVqkDHHp9+eGuz
-         k3beo0XuicUXRnmbZs16c9siH+7M85b7D/9iYgTkbl1VvKbQ8IumVpAPEwL4udWcvXWU
-         ObiTQAyyGaB3aUAb1nrK0/OMB8Fh/9krJ4+2/P+2zmAtSs+SU7OIJILEnepBlWNAdHzX
-         Y8SVerJLWNh9axMgv0q6QgnJcoKaQFv4ca1A+pvbKsWqWvYCb8jQSR6/geEPhYtyhlDg
-         JORw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752446752; x=1753051552;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EOwYM/YE6DhKb/6E8m1su9Dle2Gqg0elxyjtG73mPGQ=;
-        b=Xym3N60NNdBVPtAxrWMdt6oKPeqG3Ve9t8iQAynAkxR5s8gaNwD/sbOQRJJ8usTCVt
-         Z4IXEEZOTZbtASz0DoE0Yf/3YdDwer82q/ICOXxUg5pvqd8T36Hzdeu+5dIEk3Qs5DZl
-         RvV+TN5q5rZynbwC2Scq0LNOb1dNa68PnGLnjCHBF/DNGxHgVnjq7sI7HDOZ/iHw9TAu
-         Aj298r8RTp5HrRhhTKtjASr1sBdmwyeaCZWzXYCmVIadfyrZojx4hbb9BcOrxKawttg4
-         D3I1fXBRuoQgdwdt4t5KOsP5NkwSAIN1V0xDIMN70GHF5s3K3ocZGqpDjOpHft6L2tS1
-         D2YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1y99R65FKAuDQSYtZxGR54RZ6jLGl9T5aMyLzto+aJHFCKwOleEJWfS+evWeKEAgk8z4=@vger.kernel.org, AJvYcCUQqTo/eAPbwylJsuOV3PRKhK+0cLfntEzexnyZb73399/ds5QyW4q5Stubff+bceMabouuFs1v22RbHuyN@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEOqxDK0X9CSY9k4Ez23zmXt7dyrBOnMMy0qncRy4p4qt7f5Xj
-	R2YLAfYENE587yyEeDYYjELvvBPo5FPKdamfkvmHWjVTzH850RkOGfY1wWJMvHxNNlzwVkzSrmb
-	C8IhtAnvp0YtYcQKlz8p3I8i9NqwSLUQ=
-X-Gm-Gg: ASbGnctciiBdZU2/upr3TFSEOn7D5nEa2e7XOBvDM5l7lXkUjDAY6qR0zTaV89i0mmr
-	xlosfU4iGTSrxX786uZyX63pg5IGW+TloBUFpAOzcnTefxQkI50bcFIxqvbwKhJN7vHDnm8nw4l
-	69CFHbiAc8n7DMA4MpZnu8aMcUmelNbXEeYptM+ztKhATeU24uBd/1vY+0lDhfb6AD0LpHdMXgK
-	1Bxdra7eCzGZ6hVaoe/QZF6RmOq45EOt6u58EiMQl5G8NE=
-X-Google-Smtp-Source: AGHT+IGxtZk5dym5B6Nn7vqW/Cd+Tz8WgO8RtC7jJCKkX6tU1zKQiyrObQKyybLO02oUqYHx7fN4z5SzjWopY0j/S4M=
-X-Received: by 2002:a05:600c:3589:b0:456:1c7c:73df with SMTP id
- 5b1f17b1804b1-4561c7c7797mr5066875e9.27.1752446751391; Sun, 13 Jul 2025
- 15:45:51 -0700 (PDT)
+	s=arc-20240116; t=1752446772; c=relaxed/simple;
+	bh=JnUp2yg/CJKtlP4jODU9pih+4FgginRFGssMqlN1RLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VsO4J7l69Cf8+1SaF2tUQOi0rWjVijruoT0e7+Zrp+uJA+B+TGwirXNSuxBqlMF4FnpmIe8nW2jgVUyg3G1mGJFopeaQbHRYImfaYJ+celjFtFlAJrpIvTFkedwNIKYCQM1ZcAUjNhHWNtXs4aG+QIwbm2RAe4c70TGos6BoJYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTjTzON5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F4AEC4CEE3;
+	Sun, 13 Jul 2025 22:46:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752446771;
+	bh=JnUp2yg/CJKtlP4jODU9pih+4FgginRFGssMqlN1RLs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZTjTzON5a4Tk1uNO38cGBNO//z0NCoHFguYe+iRgTbJZhV8go8vunUI2GS5ATblfY
+	 bfMH+BQkV5BlKFjDOnZ8niG8WlxWAyAjhqc4ZargukHFamFu4a5tBV0qLoBrpLNAfo
+	 0YIPpfjZ8RanOter/N9CbDVA1O743qZM49h8qkHWtJnGDvgvkPQ9Ir2DCJVRSQemq+
+	 mrwdMfYdfL40qVdrufLTdLJxZcgBvuXzkejEm7b/is0mmYyQDIim5pa8uAtgTIuIXB
+	 Q1v7ibj91unzhLXdEGjOGRhaXYELUFL1gi1dYfN6YjDA7M9VXdVLiy9I2L95+8Vlxx
+	 VRU7kKQ+S97QQ==
+Date: Sun, 13 Jul 2025 23:46:06 +0100
+From: Will Deacon <will@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, osandov@fb.com, leo.yan@arm.com,
+	rmikey@meta.com
+Subject: Re: [PATCH] arm64: traps: Mark kernel as tainted on SError panic
+Message-ID: <aHQ3Lu27_mLfR8Ke@willie-the-truck>
+References: <20250710-arm_serror-v1-1-2a3def3740d7@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <7e6c41e47c6a8ab73945e6aac319e0dd53337e1b.1751712192.git.sam@gentoo.org>
- <c883e328-9d08-4a6c-b02a-f33e0e287555@iogearbox.net> <87a558obgn.fsf@gentoo.org>
-In-Reply-To: <87a558obgn.fsf@gentoo.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Sun, 13 Jul 2025 15:45:40 -0700
-X-Gm-Features: Ac12FXxO8RBBMsOn0Sw-Rgbqri2k6HE1O2cfcIv93IFywuatfBZMsmTEa54cOSY
-Message-ID: <CAADnVQJTHnOVX9uBtTS_7bfiS2SoDL4uL7wJWd0CzbXf08_dyg@mail.gmail.com>
-Subject: Re: [PATCH] tools/libbpf: add WERROR option
-To: Sam James <sam@gentoo.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Quentin Monnet <qmo@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710-arm_serror-v1-1-2a3def3740d7@debian.org>
 
-On Sat, Jul 12, 2025 at 11:24=E2=80=AFPM Sam James <sam@gentoo.org> wrote:
->
-> Daniel Borkmann <daniel@iogearbox.net> writes:
->
-> > On 7/5/25 12:43 PM, Sam James wrote:
-> >> Check the 'WERROR' variable and suppress adding '-Werror' if WERROR=3D=
-0.
-> >> This mirrors what tools/perf and other directories in tools do to
-> >> handle
-> >> -Werror rather than adding it unconditionally.
-> >
-> > Could you also add to the commit desc why you need it? Are there partic=
-ular
-> > warnings you specifically need to suppress when building under gentoo?
->
-> Sure. In this case, it was https://bugs.gentoo.org/959293 where I think
+On Thu, Jul 10, 2025 at 03:46:35AM -0700, Breno Leitao wrote:
+> Set TAINT_MACHINE_CHECK when SError interrupts trigger a panic to
+> flag potential hardware faults. This tainting mechanism aids in
+> debugging and enables correlation of hardware-related crashes in
+> large-scale deployments.
+> 
+> This change aligns with similar patches[1] that mark machine check
+> events when the system crashes due to hardware errors.
+> 
+> Link: https://lore.kernel.org/all/20250702-add_tain-v1-1-9187b10914b9@debian.org/ [1]
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> ---
+>  arch/arm64/kernel/traps.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+> index 9bfa5c944379d..7468b22585cef 100644
+> --- a/arch/arm64/kernel/traps.c
+> +++ b/arch/arm64/kernel/traps.c
+> @@ -931,6 +931,7 @@ void __noreturn panic_bad_stack(struct pt_regs *regs, unsigned long esr, unsigne
+>  
+>  void __noreturn arm64_serror_panic(struct pt_regs *regs, unsigned long esr)
+>  {
+> +	add_taint(TAINT_MACHINE_CHECK, LOCKDEP_STILL_OK);
+>  	console_verbose();
+>  
+>  	pr_crit("SError Interrupt on CPU%d, code 0x%016lx -- %s\n",
 
-I don't recall it was reported on bpf mailing list.
+If we're going to taint for SError, shouldn't we also taint for an
+unclaimed SEA?
 
-> it's fixed by
-> https://github.com/libbpf/libbpf/commit/715808d3e2d8c54f3001ce3d7fcda0844=
-f765969
-
-and looks like it was fixed by accident, so..
-
-> (and the corresponding commit in the kernel tree proper). Backporting
-> that was a bit too big for our tastes.
->
-> The real issue is just that -Werror when we have users who might be
-> testing with in-development compilers or with alternative options
-> results in a build failure when you didn't expect one.
->
-> >
-> >> Signed-off-by: Sam James <sam@gentoo.org>
-> >> ---
-> >>   tools/lib/bpf/Makefile | 7 ++++++-
-> >>   1 file changed, 6 insertions(+), 1 deletion(-)
-> >> diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
-> >> index 168140f8e646..9563d37265da 100644
-> >> --- a/tools/lib/bpf/Makefile
-> >> +++ b/tools/lib/bpf/Makefile
-> >> @@ -77,10 +77,15 @@ else
-> >>     CFLAGS :=3D -g -O2
-> >>   endif
-> >>   +# Treat warnings as errors unless directed not to
-> >> +ifneq ($(WERROR),0)
-> >> +  CFLAGS +=3D -Werror
-> >> +endif
-> >
-> > Should we also add sth similar to tools/bpf/bpftool/Makefile and by def=
-ault
-> > enforce with -Werror with the option to disable?
->
-> Yes, that sounds good to me, though I was nervous of stumbling onto a
-> philosophical debate about -Werror and wasn't sure what y'all preferred
-> :)
->
-> I can send v2 with an updated commit message and this change. I'll wait
-> a bit for further comments based on my two replies here.
-
-No.
-We want Werror to be there by default and it shouldn't be trivial to turn o=
-ff,
-so that people report and fix issues with new compilers.
-Like in this case, looks like it was a legitimate error of
-in-development gcc-16.
-If it was reported to us and turned out to be not a libbpf issue than
-gentoo should have reported it back to gcc devs to make sure they don't
-add bogus warnings to the compiler. Win-win.
-
-You're right, in many ways it is a philosophical debate.
-We cleaned up libbpf and selftests/bpf from warnings and
-we don't want them to reappear. So we don't want an easy way
-to silence them. Report issues instead.
+Will
 
