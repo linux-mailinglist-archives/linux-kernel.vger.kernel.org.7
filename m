@@ -1,344 +1,139 @@
-Return-Path: <linux-kernel+bounces-728899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42571B02EA5
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 07:08:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D55B02EA6
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 07:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69D2A177A26
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 05:08:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D90117A996
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 05:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F17C189F5C;
-	Sun, 13 Jul 2025 05:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89E01953BB;
+	Sun, 13 Jul 2025 05:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0KZFXI54"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2043.outbound.protection.outlook.com [40.107.244.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XazxUalS"
+Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0537E7F9;
-	Sun, 13 Jul 2025 05:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752383296; cv=fail; b=eSAyzZSSKOOIhNN0O7cT3GKJjSKkSbnBY9ZNxRdNvoxSU5QjPfM0PEhDamEn8yAlqk3igb3qgujgF7mHDv2hZnzaBPoqZXt6NshuEHctmjJVpKS9Fouco2deOED6sZ++G5i4SD6XHso0vBGLbUyT603ZJFNHsv17485VYFhmaCw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752383296; c=relaxed/simple;
-	bh=g4iB9RQYmDUTh9JfxrAbcdEfDwu3oOGVViwjW+/kExY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lZyK0/oS0n+Aa4PraWCSRVlNpB/Icsv9W5ELIo3a5eOau2ibERK63Xx9ZRpZcSJaw+jIexOl4mC8q44IjKTeJUGPMlfvUqQZ51ZpSCmd/tuoULIC3pT3dcZiBrsO5dnStA2b0Itla1JpeIeismO2Xu+5TfvPuf4VYzlTn03Hces=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0KZFXI54; arc=fail smtp.client-ip=40.107.244.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Aes/MEtv80OyGifOysZ0bDWxlAN8lllXEwWQRccRUdpRbUlOofvkg1QvUCqWcHZOwL0GXP3ptM6X+eChd97bHX0qOTxs0gDa+9vwvp76XdrM2dMPifU59bQsvaW8Ul2GqyrTTo8Yo3e2zy8/7/Zh3AnMHyhrVobQAu/fbq8H5RePNjLfrbd4iO5ilf1Lrm1vrNth+mZAuIzHxzsywYWZu9qDSzZYm0p+Odf6/sB+ePRgVQSno/aCsMuijt/BhNI1rmww9hEkYQrA+fYis0Bp/Pgb7i+mN9KIl2ZfR5dXz91dSAOKyST6F7FG54O3LXWacYi2KPjOwyXZS42rq9Dhdw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aB1esfw+AQn4L71LKtEI7G5IsHxU90+3ESmgRJhLOjg=;
- b=xVTk/cMA0hIYmcQCKbFI3+TBSvbq4kmrpM3RtXAU5hHyFjnBTx5VbqJ9QBxu1bOYJu/Tiic6TtLg2EPbi2+W78DHCWqw8yfVRiqgbeol7hCh2B6vd5WUgLiUNNfy0kILascHFIk/tExWyRFVMI8r5Z+3p1r0oMEv/qRg/epOSGN/nCn7WyDoEpVU8wK7IzaX/vNyrMzD+DMMkoUl4IIGXcMlRsBYNpL8Hrq/NyiSkeIhzwcZQs4kqG8S1tmcEhmrc2pFFMgEBo35M6hknRjHoNi1UEM9oCw1y68Jd93Iz0w8YL+3exurK9pSoz8jMsUMsA5NONATxs3m7tium8Cbow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aB1esfw+AQn4L71LKtEI7G5IsHxU90+3ESmgRJhLOjg=;
- b=0KZFXI54tek1nImpJ61rkxkGJ5/9/JEJ0xi/+/T6phZmrVsVulvbNyhRU5YkZeu5V8ivdzhosOmJh9e7loBKiyD83nEhYhTO/ukRiM2yA+fQXDhQtdT9TA4J12qvbn6fRy/J2O6BL3jf4ywu+ODT8AP5kwV4m+1qab/8qr/MezE=
-Received: from SJ0PR03CA0031.namprd03.prod.outlook.com (2603:10b6:a03:33e::6)
- by PH7PR12MB7113.namprd12.prod.outlook.com (2603:10b6:510:1ec::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.29; Sun, 13 Jul
- 2025 05:08:10 +0000
-Received: from MWH0EPF000971E5.namprd02.prod.outlook.com
- (2603:10b6:a03:33e:cafe::ad) by SJ0PR03CA0031.outlook.office365.com
- (2603:10b6:a03:33e::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.27 via Frontend Transport; Sun,
- 13 Jul 2025 05:08:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MWH0EPF000971E5.mail.protection.outlook.com (10.167.243.73) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8922.22 via Frontend Transport; Sun, 13 Jul 2025 05:08:09 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 13 Jul
- 2025 00:08:03 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 13 Jul
- 2025 00:08:02 -0500
-Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Sun, 13 Jul 2025 00:07:59 -0500
-From: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-To: <linux-edac@vger.kernel.org>
-CC: <git@amd.com>, <shubhrajyoti.datta@gmail.com>, Michal Simek
-	<michal.simek@amd.com>, Borislav Petkov <bp@alien8.de>, Tony Luck
-	<tony.luck@intel.com>, James Morse <james.morse@arm.com>, "Mauro Carvalho
- Chehab" <mchehab@kernel.org>, Robert Richter <rric@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] EDAC/synopsys: Clear the ECC counters at init
-Date: Sun, 13 Jul 2025 10:37:53 +0530
-Message-ID: <20250713050753.7042-1-shubhrajyoti.datta@amd.com>
-X-Mailer: git-send-email 2.17.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765627F9
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 05:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752383372; cv=none; b=aia+nLa5Ir1QQpS5C7bg7RUbwNDSukU5w2f1KDn7wUTrAn6mdo6ZY39r0Nxgh+8mImuo08HzJWYc0am+Sj4mKSPHvdorMisJhBQSB0cr+pHu+xx2DDmaR0hRUsQvIK/dWp+eMCkztDndFHQJ6+zlkfELmBMqoKlSHK1gXHbKy1I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752383372; c=relaxed/simple;
+	bh=vV6rojAChJBlu6omswjEVQ0wLA+6YPGc+qDm8ODsNw8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WkexS9XAVRyGLnQAkdblzRa3hYzISQB2AJHKJbiRfzT5oR0tJe3Lc1pg6/KZJoIMQO+LZ7NydWULhKoGPj9yj9V/cSmPSsuu0JpugLu8ZPDI05sl60bdTUXvAI+lX3lYB8nKRb79TTbIyomAvWYnjqqVWZaS3RN+jQfuOL5Gb5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XazxUalS; arc=none smtp.client-ip=209.85.221.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-3a50956e5d3so2643707f8f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 22:09:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1752383364; x=1752988164; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MVj5KwXr/8QzOp1lXz/aegzDFB4gNyhVW/14q17cfIY=;
+        b=XazxUalSbiAXeJFYUnYa6+UCtH7YJ//MY451AiqJSRd0Jr0dlmXd2KRLNgB5Gajyl5
+         +/BoE8OOEMYiogDBpIpEKqU0rxMP21PPNAgJS2HMFmDbEFYEEqsCch/EiKjQ7zgXRcIB
+         POq8w8mTnZq4QHL2DLdKmiAei3xRG0706V+8YpnSwPVUpKP8ULeBHZTB7A3/uZhwOSeO
+         GX06SzzPpBaHP2lT3uScDPcS1ghNz0P/RhMyQiMKpdlj+ytF4Msqqiw5NNcwOhVfTvRM
+         IbDXL9FkJcxpZaxPcd8sdboW+LgRaXn1SrRAyR+tmGdmZnHeBtBA4W6eB9pIUoqVkf27
+         U45A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752383364; x=1752988164;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MVj5KwXr/8QzOp1lXz/aegzDFB4gNyhVW/14q17cfIY=;
+        b=pWreGjxEvygUEMiFaMft3GHdhzQ3wbkRaDvMqKa1Vnm1bTDPn8/z0JgRCW5O35mcGP
+         Lu0zMkzm3nk/6xQ8C4d9bpSac9lhjmgXw7NW9hLygThsvdVtbm5SCxfkSLeX1HTwDXr1
+         0Y2h0j/cEL2jdtt5ZJtS/MpinIj3NvF87tHjmnqMO/3/MJX0q57owXJu+xNeO7wnVaEx
+         uEsquLekp/AD9kyUgZVrbu6Ga5KJ9WclfYBZUOsXFn2j5SinlrfNja/K5F5qwpus9Q/e
+         ggTRQU1K3L7ClOHZGrGWN+csGYEqQUZGIw6SHcU2UatRJDZiNjUrNENUpVDRcADY3rLH
+         ob8w==
+X-Gm-Message-State: AOJu0Yx0hv2az0k9fGQ9bcuVtLs4oyl3x4+vxcYnqFCGOvnvNQq8ZYQb
+	Jam67OxrCkVubB9kYweDNVhp665Vkhr30iMYWs+uJvxCJN46uz+7I4WD0WjsqgeYL8I=
+X-Gm-Gg: ASbGnctxzUYphV9A3zrr1xO8Gbo6Q/mJI16bWUZTfySZaqmp5mS/MJaAWfTnn4ZfC5w
+	R9/7Xq3GYEd3cGpOwiF3XVMUPbjKRK5d/Wui0TkCV0yhESjSu/MRCvQD2BiAKMouoyhRFVAVpNA
+	5cdHa0wWnlvnNTrTsZjDzAsYVz0dpBLKsXyxN3tXPv9uigc+5ccqg19zAT6ItM0LEl9A2i6SqGH
+	FvfH7z+9JBOsZkl8jyHb4/sp5v4QCJWQgHjWspdHK9w+ja/ndkmNjUL6Gvagp9L1UhmgM9ylBZY
+	iI6glz0O0QPtxHtg2ztMPyxAnEgHShEE3mDwUH5JXSGvYBqxxA9Li/kr6UtkrFrKk0a1y1jLOTo
+	w1ZvqaFHQ41Ycm/1lrOc=
+X-Google-Smtp-Source: AGHT+IESj9rnyOluQG/Pq4tT/wJQ3fnQYLjgN1G4PzW6cucpIcfdszyOyoxCy1jE5nbCD6s5KM8zCg==
+X-Received: by 2002:a05:6000:719:b0:3a4:d898:3e2d with SMTP id ffacd0b85a97d-3b5f186ed4bmr7748049f8f.24.1752383364583;
+        Sat, 12 Jul 2025 22:09:24 -0700 (PDT)
+Received: from [127.0.0.1] ([2804:5078:828:f400:58f2:fc97:371f:2])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f210f1sm8125879b3a.88.2025.07.12.22.09.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Jul 2025 22:09:24 -0700 (PDT)
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
+Subject: [PATCH 0/2] Handle NBCON consoles on KDB
+Date: Sun, 13 Jul 2025 02:09:17 -0300
+Message-Id: <20250713-nbcon-kgdboc-v1-0-51eccd9247a8@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: shubhrajyoti.datta@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E5:EE_|PH7PR12MB7113:EE_
-X-MS-Office365-Filtering-Correlation-Id: 58bac77e-3405-4cf6-627a-08ddc1cb4296
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cIaNAtjVIkFMYiYGILX9Z7VyI7HlGyz0jV3YqYpfIaBkiNMlyB5kobwPWder?=
- =?us-ascii?Q?QK1ibl7efG4vrJoweyGyzhpUERyvBqMUvs/awgItYvTYGsiwUs84cHsYDKSX?=
- =?us-ascii?Q?2pWp0XUvwbIOoMChYX+2QcrjLGWEwhJ+GfshbiJX3ZWpqNwYaXJFaHSzMffT?=
- =?us-ascii?Q?ALF6ad46Wt2JUCpGhMrG9+Pnqef7ki/I5GEmAUIyHm1KHxR4AqjrzxQRjcRv?=
- =?us-ascii?Q?zflkShoBWbdgFVrKZHR7f8HzS5oTaOZ26diLkCzL+I4Hiprt1dy5+Oe7YXJK?=
- =?us-ascii?Q?IP1Wnf5GbBDrCPqfS8/P6+b4Vp1aWCf5q5XqrQ5JRYSW6rnyx8g0E2hVvd2E?=
- =?us-ascii?Q?T+3WYULgshjXgaR6sUwtqDYdgv1uhAGphP8qKxC2ftpVqU/Qhhmabhc+XpTb?=
- =?us-ascii?Q?M9Bmyhz4Dglgg9YxYk/Sq1GKdP7RiL7Fgq4hIJS02oXyHBM76iN0mfR6Wk+c?=
- =?us-ascii?Q?/AurGL6ow6yKxnKqCqgJK1wHGzD7mrh6giKCPq/02e5G2CvDnYe7Q6b+z0D9?=
- =?us-ascii?Q?eZi4sK8nwUiJWwZZVIvpLC38TWUFHxgJF0vZKf9ECmU8G0HPjvlopl71P0qB?=
- =?us-ascii?Q?8c6M0/TkB2MyyOk+FDvFJCpY8TxskWw4zxVKT5kRI1OJIg4JE8nZbHMtevys?=
- =?us-ascii?Q?AD7z60YCLgFqGiMAbC9655vAzklD57iKBtBrruj63pbg/AUtHzNZxznkyJye?=
- =?us-ascii?Q?BVrpxRxexBgBHpyiWS9HWP/TRw19QzE3b7X5s8Ti2TJudeTe45bntTNZbZVV?=
- =?us-ascii?Q?nNacvKO4QH7GesIsXjxjdknHzA1GLcrpTdjycUiGjLQ1EYkwRSoXky9Q/ajg?=
- =?us-ascii?Q?yBBV3GWuH0msAnjpn5QGbJux4WpRP9QvNEPrU8gHlgQ5pgACGVueBjNphKnM?=
- =?us-ascii?Q?BHaWuSZD0BcX3IwNFrpeKGW5O0Z55Lt3XnzDtF2qNDLP/Jy/ueoLKy8p3+I5?=
- =?us-ascii?Q?RaAJj1nQSMkY2lnHAWXYoNV2dS7+HO2EligrtHe+CRPNdAm2eJj2oK8x8WM2?=
- =?us-ascii?Q?c1x6bdpoeBn5weNX5FW8bGJ/rNz0JHRRWQhv1hZuNeZDP0zXD825gjmvuMge?=
- =?us-ascii?Q?oJs7/+g4mvsxQUss97rl2mCdakwVKhDAnvTy81JhCBEa4FHloiY9vWmXWZyn?=
- =?us-ascii?Q?6biF/PSZ6bK3pCvBky50i63EjBo/+wz2nCqedvwDWNpYpTEhy2k8cu57+Jyk?=
- =?us-ascii?Q?nlZOaC5XcdjdtWV/4DhI4NDa3Fs/it8fqIO+pWuxnFUxwJ+eUyvx9Pl6hOpw?=
- =?us-ascii?Q?86cQ/ZyEafe2ByISEQugSI8CHhEglPU/cIjKkNPZqCpXI1dnfuxxOJf63gXN?=
- =?us-ascii?Q?7nL35buk31dDYENK9LmaqJ/mAWh8Km9hw/zhb1CTqndAeZg42TukAs/GgihI?=
- =?us-ascii?Q?Dd+hvAhlKwe0AEvnbKklt5QVZx7HFTATTWJQt96dnwtIXUf18NhRyjsQsjjt?=
- =?us-ascii?Q?yCTuhhCZeYj5cQpIN3Y4TQUrlN4AKljI4DbNJw16OHY/unrbot90tkFn0ZTH?=
- =?us-ascii?Q?Us2+NcuMzWen+DeJmtD1KlcZ32XVMeb5/+9G?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2025 05:08:09.4794
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 58bac77e-3405-4cf6-627a-08ddc1cb4296
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000971E5.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7113
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH0/c2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDc0Nj3byk5Pw83ez0lKT8ZN3UtOS0ZGPztJRUEzMloJaCotS0zAqwcdG
+ xtbUAWP4+wl4AAAA=
+X-Change-ID: 20250713-nbcon-kgdboc-efcfc37fde46
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+ John Ogness <john.ogness@linutronix.de>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Jason Wessel <jason.wessel@windriver.com>, 
+ Daniel Thompson <danielt@kernel.org>, 
+ Douglas Anderson <dianders@chromium.org>
+Cc: linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net, 
+ Marcos Paulo de Souza <mpdesouza@suse.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752383360; l=1400;
+ i=mpdesouza@suse.com; s=20231031; h=from:subject:message-id;
+ bh=vV6rojAChJBlu6omswjEVQ0wLA+6YPGc+qDm8ODsNw8=;
+ b=JwVzljEuIFCRSA1QpD1puYGWP0KCL5H0AfxjuzqkuPOuI200puckYZu11plckPCusjOrTcLCC
+ /drqOtjokhDCphwrGdM9w9x/5S6z1WAubAF3Pf2i5C7K+f9VfMwltyk
+X-Developer-Key: i=mpdesouza@suse.com; a=ed25519;
+ pk=/Ni/TsKkr69EOmdZXkp1Q/BlzDonbOBRsfPa18ySIwU=
 
-Clear ECC error and counter registers during initialization/ probe
-to avoid reporting stale errors that may have occurred before EDAC
-registration.
+After the proposed patches [1], it was suggested to start using
+console_is_usable instead of checking if that console is enabled. It was
+noticies that KDB was always calling con->write method, but this
+callback is not usable for NBCON consoles.
 
-Key changes
-- Introduced a unified `get_ecc_state()` function that handles ECC state detection
-  and register clearing for both Zynq and ZynqMP platforms.
-- Removed platform-specific `get_ecc_state` function pointers from the platform
-  data structures.
-- Added a new `platform` enum field to `synps_platform_data` to identify the
-  target hardware platform.
+As a first step into making console_is_usable public, I prepared these
+two patches that makes public some nbcon functions, and also fixes the
+KDB to also handle NBCON consoles.
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+Thanks to all reviewers of the patches posted on [1]! I hope this is the
+first step into implementing all the changes suggested in that patchset.
+
+[1]: https://lore.kernel.org/lkml/20250606-printk-cleanup-part2-v1-0-f427c743dda0@suse.com/
+
+Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 ---
+Marcos Paulo de Souza (2):
+      printk: nbcon: Export console_is_usage and other nbcon symbols
+      kdb: Adapt kdb_msg_write to work with NBCON consoles
 
-Changes in v2:
-- Update the commit message
-- Add the zynq reset changes
-- remove the function pointer
-- Use a plat field instead of the quirk
+ include/linux/console.h   | 48 +++++++++++++++++++++++++++++++++++++++++++++++
+ kernel/debug/kdb/kdb_io.c | 46 +++++++++++++++++++++++++++++++++++++++++----
+ kernel/printk/internal.h  | 41 ----------------------------------------
+ kernel/printk/nbcon.c     |  4 ++--
+ 4 files changed, 92 insertions(+), 47 deletions(-)
+---
+base-commit: d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af
+change-id: 20250713-nbcon-kgdboc-efcfc37fde46
 
- drivers/edac/synopsys_edac.c | 96 +++++++++++++++++-------------------
- 1 file changed, 45 insertions(+), 51 deletions(-)
-
-diff --git a/drivers/edac/synopsys_edac.c b/drivers/edac/synopsys_edac.c
-index 5ed32a3299c4..a0d101aa15f7 100644
---- a/drivers/edac/synopsys_edac.c
-+++ b/drivers/edac/synopsys_edac.c
-@@ -332,20 +332,26 @@ struct synps_edac_priv {
- #endif
- };
- 
-+enum synps_platform_type {
-+	ZYNQ,
-+	ZYNQMP,
-+	SYNPS,
-+};
-+
- /**
-  * struct synps_platform_data -  synps platform data structure.
-+ * @platform:		Identifies the target hardware platform
-  * @get_error_info:	Get EDAC error info.
-  * @get_mtype:		Get mtype.
-  * @get_dtype:		Get dtype.
-- * @get_ecc_state:	Get ECC state.
-  * @get_mem_info:	Get EDAC memory info
-  * @quirks:		To differentiate IPs.
-  */
- struct synps_platform_data {
-+	enum synps_platform_type platform;
- 	int (*get_error_info)(struct synps_edac_priv *priv);
- 	enum mem_type (*get_mtype)(const void __iomem *base);
- 	enum dev_type (*get_dtype)(const void __iomem *base);
--	bool (*get_ecc_state)(void __iomem *base);
- #ifdef CONFIG_EDAC_DEBUG
- 	u64 (*get_mem_info)(struct synps_edac_priv *priv);
- #endif
-@@ -720,51 +726,38 @@ static enum dev_type zynqmp_get_dtype(const void __iomem *base)
- 	return dt;
- }
- 
--/**
-- * zynq_get_ecc_state - Return the controller ECC enable/disable status.
-- * @base:	DDR memory controller base address.
-- *
-- * Get the ECC enable/disable status of the controller.
-- *
-- * Return: true if enabled, otherwise false.
-- */
--static bool zynq_get_ecc_state(void __iomem *base)
-+static bool get_ecc_state(struct synps_edac_priv *priv)
- {
-+	u32 ecctype, clearval;
- 	enum dev_type dt;
--	u32 ecctype;
--
--	dt = zynq_get_dtype(base);
--	if (dt == DEV_UNKNOWN)
--		return false;
- 
--	ecctype = readl(base + SCRUB_OFST) & SCRUB_MODE_MASK;
--	if ((ecctype == SCRUB_MODE_SECDED) && (dt == DEV_X2))
--		return true;
--
--	return false;
--}
--
--/**
-- * zynqmp_get_ecc_state - Return the controller ECC enable/disable status.
-- * @base:	DDR memory controller base address.
-- *
-- * Get the ECC enable/disable status for the controller.
-- *
-- * Return: a ECC status boolean i.e true/false - enabled/disabled.
-- */
--static bool zynqmp_get_ecc_state(void __iomem *base)
--{
--	enum dev_type dt;
--	u32 ecctype;
--
--	dt = zynqmp_get_dtype(base);
--	if (dt == DEV_UNKNOWN)
--		return false;
--
--	ecctype = readl(base + ECC_CFG0_OFST) & SCRUB_MODE_MASK;
--	if ((ecctype == SCRUB_MODE_SECDED) &&
--	    ((dt == DEV_X2) || (dt == DEV_X4) || (dt == DEV_X8)))
--		return true;
-+	if (priv->p_data->platform == ZYNQ) {
-+		dt = zynq_get_dtype(priv->baseaddr);
-+		if (dt == DEV_UNKNOWN)
-+			return false;
-+
-+		ecctype = readl(priv->baseaddr + SCRUB_OFST) & SCRUB_MODE_MASK;
-+		if (ecctype == SCRUB_MODE_SECDED && dt == DEV_X2) {
-+			clearval = ECC_CTRL_CLR_CE_ERR | ECC_CTRL_CLR_UE_ERR;
-+			writel(clearval, priv->baseaddr + ECC_CTRL_OFST);
-+			writel(0x0, priv->baseaddr + ECC_CTRL_OFST);
-+			return true;
-+		}
-+	} else {
-+		dt = zynqmp_get_dtype(priv->baseaddr);
-+		if (dt == DEV_UNKNOWN)
-+			return false;
-+
-+		ecctype = readl(priv->baseaddr + ECC_CFG0_OFST) & SCRUB_MODE_MASK;
-+		if (ecctype == SCRUB_MODE_SECDED &&
-+		    (dt == DEV_X2 || dt == DEV_X4 || dt == DEV_X8)) {
-+			clearval = readl(priv->baseaddr + ECC_CLR_OFST) |
-+			ECC_CTRL_CLR_CE_ERR | ECC_CTRL_CLR_CE_ERRCNT |
-+			ECC_CTRL_CLR_UE_ERR | ECC_CTRL_CLR_UE_ERRCNT;
-+			writel(clearval, priv->baseaddr + ECC_CLR_OFST);
-+			return true;
-+		}
-+	}
- 
- 	return false;
- }
-@@ -934,18 +927,18 @@ static int setup_irq(struct mem_ctl_info *mci,
- }
- 
- static const struct synps_platform_data zynq_edac_def = {
-+	.platform = ZYNQ,
- 	.get_error_info	= zynq_get_error_info,
- 	.get_mtype	= zynq_get_mtype,
- 	.get_dtype	= zynq_get_dtype,
--	.get_ecc_state	= zynq_get_ecc_state,
- 	.quirks		= 0,
- };
- 
- static const struct synps_platform_data zynqmp_edac_def = {
-+	.platform = ZYNQMP,
- 	.get_error_info	= zynqmp_get_error_info,
- 	.get_mtype	= zynqmp_get_mtype,
- 	.get_dtype	= zynqmp_get_dtype,
--	.get_ecc_state	= zynqmp_get_ecc_state,
- #ifdef CONFIG_EDAC_DEBUG
- 	.get_mem_info	= zynqmp_get_mem_info,
- #endif
-@@ -957,10 +950,10 @@ static const struct synps_platform_data zynqmp_edac_def = {
- };
- 
- static const struct synps_platform_data synopsys_edac_def = {
-+	.platform = SYNPS,
- 	.get_error_info	= zynqmp_get_error_info,
- 	.get_mtype	= zynqmp_get_mtype,
- 	.get_dtype	= zynqmp_get_dtype,
--	.get_ecc_state	= zynqmp_get_ecc_state,
- 	.quirks         = (DDR_ECC_INTR_SUPPORT | DDR_ECC_INTR_SELF_CLEAR
- #ifdef CONFIG_EDAC_DEBUG
- 			  | DDR_ECC_DATA_POISON_SUPPORT
-@@ -1390,10 +1383,6 @@ static int mc_probe(struct platform_device *pdev)
- 	if (!p_data)
- 		return -ENODEV;
- 
--	if (!p_data->get_ecc_state(baseaddr)) {
--		edac_printk(KERN_INFO, EDAC_MC, "ECC not enabled\n");
--		return -ENXIO;
--	}
- 
- 	layers[0].type = EDAC_MC_LAYER_CHIP_SELECT;
- 	layers[0].size = SYNPS_EDAC_NR_CSROWS;
-@@ -1413,6 +1402,11 @@ static int mc_probe(struct platform_device *pdev)
- 	priv = mci->pvt_info;
- 	priv->baseaddr = baseaddr;
- 	priv->p_data = p_data;
-+	if (!get_ecc_state(priv)) {
-+		edac_printk(KERN_INFO, EDAC_MC, "ECC not enabled\n");
-+		goto free_edac_mc;
-+	}
-+
- 	spin_lock_init(&priv->reglock);
- 
- 	mc_init(mci, pdev);
+Best regards,
 -- 
-2.17.1
+Marcos Paulo de Souza <mpdesouza@suse.com>
 
 
