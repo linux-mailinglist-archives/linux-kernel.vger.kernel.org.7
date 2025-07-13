@@ -1,292 +1,189 @@
-Return-Path: <linux-kernel+bounces-728964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB754B02FC4
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:12:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C7EB02FC8
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 10:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDB401887307
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 08:12:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94E003A4339
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 08:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B8F1E2834;
-	Sun, 13 Jul 2025 08:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188981E51EB;
+	Sun, 13 Jul 2025 08:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="fgeC0d1a"
-Received: from r3-22.sinamail.sina.com.cn (r3-22.sinamail.sina.com.cn [202.108.3.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="npXwOfPR"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863808615A
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 08:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75888635C
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 08:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752394335; cv=none; b=ScYfA2/fjkZ4mah28oz48RWJ8M8fRqXcz/YoW88Dv/OQCNRJuaJrAgc6feI+JGUEe+E/cJK7hwnHFT5t5X5Bp8PDj4DUU6dVSrcZs9Oe77Yj+9hIH9+AriLZbesuZ9GRnQTAag+Psc9FILPfhyleRI4IzHYNQV190wTpeSOQEq4=
+	t=1752394530; cv=none; b=OWFfawVtkaRY0wE7qhPWL6aVY2kiOUe35ot8CINyanwm6prezx+UxBnrzHRne22tDhHAMCXsnrvGYAXQlR3YMbyiEE3kc38BoRejcDO3nGEUTh+fYO2t+MwzGvCebm/pSqWTvA37ZZenu3RwAjHRJy/bAY7a+nSUbDyemSpwNyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752394335; c=relaxed/simple;
-	bh=q9jFi+9opq7x+z69lyBMihFfISmHxgOznhEOkI14xrI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ju6mbIaAS/WI0YXbzllLX6+vdv9MMm+3KTJl+MFKXZMiTO5Uw8M09wQzLgu85rEg/UjB+yFVbb+1yglFuMxrbVVvH2o8w4yFCsSXjqP/2GE7uf8xGyg9/iY3ZGPn/SakFiEhgi8yee1c4TnVI+gow95Eu48taJXNJkYxz6253kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=fgeC0d1a; arc=none smtp.client-ip=202.108.3.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752394329;
-	bh=L7uLsXwfUhiiWO5fOzG35YcbNBSMeR6oPEOKDLeBDmA=;
-	h=From:Subject:Date:Message-ID;
-	b=fgeC0d1a27m8/F1oQ0i3xM7iB/Tu8pjrcUiqvDGDJNs7BsSzpV5MCrcpjNkhVk0Rr
-	 I/4vCzn1VC0KC2jtD7hjfjArXkCctwi7QOJP7NmuloE9ZdtzjJPGtXaT+ndrPHGjUQ
-	 xDFXQaIf1j8B/JmLJ6PD1wk9Zn2irGPZ3kH+6UaM=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 68736A4D00007C1E; Sun, 13 Jul 2025 16:11:59 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 8118786685417
-X-SMAIL-UIID: 4A9172338F2C4299BE15645C822D0C8F-20250713-161159-1
-From: Hillf Danton <hdanton@sina.com>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com,
-	LKML <linux-kernel@vger.kernel.org>,
-	Sean Young <sean@mess.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH] media: imon: make send_packet() more robust
-Date: Sun, 13 Jul 2025 16:11:47 +0800
-Message-ID: <20250713081148.3880-1-hdanton@sina.com>
-In-Reply-To: <e3dd81d7-16fe-4d04-99fa-ac81fb4b4289@I-love.SAKURA.ne.jp>
-References: <672f73a6.050a0220.138bd5.0041.GAE@google.com> <c2b2b02d-2571-451c-bb1c-7dde18b45d4f@I-love.SAKURA.ne.jp> <924bf5c7-9466-49dc-ad26-53939ca49825@I-love.SAKURA.ne.jp> <53c07aa0-9f83-4c83-8ab5-6d8663f51b91@I-love.SAKURA.ne.jp> <8be733a4-2232-4bb9-942d-f13f8766a6de@I-love.SAKURA.ne.jp> <40417f2a-e0d8-4f3c-9a37-a0068b6f268a@I-love.SAKURA.ne.jp> <0ad3effe-efed-4304-862f-4c8f901e79e9@I-love.SAKURA.ne.jp> <2ac5d313-c754-4fb9-acd3-21f3b948d653@I-love.SAKURA.ne.jp> <282345b9-9aff-43ed-b66d-76cf51cc0deb@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1752394530; c=relaxed/simple;
+	bh=vttOkDs56yPTVYl/8jktfR2NbnPG7uR/DNn09oaUX28=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bAe0lCF08+lNODfMCZlSDyEURdr2ukKgM56XPQXZX8EAOJuWFi3QZI1/G065bPMxa3g+Y24M8Pua4SsOOZK4Ks6ZroVEnFGDYaxbb3ujznDFxnUSqGyuEG0fsaPREfCc3B+ktMKiqJ5jTjRvrObeLNPFhb0S208KgapGGVYM1C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=npXwOfPR; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4535fc0485dso3882095e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 01:15:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752394527; x=1752999327; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=rZqk7kl0+iqHzktYNZZ/CDyHkx8iXY+hbYXd+b6DxSA=;
+        b=npXwOfPRcqO8Zm8M65PEY3/uMjRVbopRlHJg5e7/BsHf5CborhDhPk4HZQ62x4fQwZ
+         Q+3owlKIdGmCCqhX7Yn8sx5KBSgyTILkqaUMd6+HX8BF4GVfjg42CHgIh2C999ZKQFnR
+         anzH7WJrg2lCYMBTPxFoaLZIKYLIKFUXu/QbKNe2in/XRN9HVtEoNisulZGRppvki5rS
+         Qlz2LsxFHetot8qz+NQh9JGAW10noJYfNsEt3psc35m87U5sck60x9lVqLGkILgdL8ka
+         vanF2+a0UAUYU7fvSnaOS6aCP2hXq3nqEVc9BXMmhP4Z0C+2AOCdnfqOdu2qEfiukT9Q
+         Zvqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752394527; x=1752999327;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rZqk7kl0+iqHzktYNZZ/CDyHkx8iXY+hbYXd+b6DxSA=;
+        b=hApkF4OOyrplMflMS3Y9m+vH01qcFZgh8wYrtFdNyNrbZ41rtJDIlltdHIDgS9MvQQ
+         A8ppnkwNVSrm6BKIb/43NfNuhw8vESMsbp/RwB6mZoDYVm+M3vPac/a63vI9/QdJf8bB
+         r9HWesqKNbQR68vDc3C6olE7xpYZawjUU7eX6BzALcNchIFMhXFjSz0pxzwTvW3/ab/y
+         3V59LLxozeEnuYTGrD3pyfxUorkgrp5BUVNj7LMU5N56gZO1nbiuHXcY4umLio10K9OI
+         JEdBeU72hrFpdP+u2VUgq/0vhlEOP8CvhJL6ZQ/OOlXEXp6WT86KilEXuV5WslPrFqx9
+         V8CA==
+X-Forwarded-Encrypted: i=1; AJvYcCXAQIpW0xpAoyQ88dU0/BlFoUe2AjCjbR/bcqkhq6uOwEqL5B18eGft4rRTTAhcPo65xMhl4Xn4XpfHJME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfT7tPheAOAM5aIEuhwEdUGV72xEiO3xHnuMnBeGGxmFL7Qi0a
+	gOC8wCmEADo6q8XFrCtD/fySk6dhdQkO50sclRlEB9r8RgPSZQDUDYRz+Uyt3p3kQ+g=
+X-Gm-Gg: ASbGncvFT7OsHrBQpUYNDcTDuHDwpqE2ycB6CZAbyXp80pzLtkeP60u2xKcLAE3/gm/
+	jZExAbXIr6JKPEndqTmtYNV9Xgb/meiYYr97qe7nHEOAK1D9TfypHBAuzrTE79ymwMNL+0sZ+/M
+	4h/RthGinbQ+1brn91Dac1CTFMVFB4PcMPGngR3sTec5RqmGEILwCtVmkRTIZdnndafwIeou6Cp
+	4wlMq6rq1YSmGLgJE+ZbdEqTa7HtRcior3IU8zBVHup5aJOYEV5zAfvpwWAvtFukMythmHQx7q2
+	jMJZSMYAzB8wc76NpzJtjKOZxQUvTkbcTE/MCJ9vj5NNMrA46ZVYb8SVppwt/Ie9xXzMPGFs3A0
+	Bckytd5PK8RNSa5koJmz/GhuUBgETtKbeAzXOic/5WRi/2+UfgL1/
+X-Google-Smtp-Source: AGHT+IGdUGte7uXEneQEdBIBq7W4vXJUZevCvhpIqCepwSuDSON9ol1D6QYcIdwDspBHZs33bH2Iuw==
+X-Received: by 2002:a05:6000:2006:b0:3a5:7991:fee with SMTP id ffacd0b85a97d-3b5f2e6c69amr2490271f8f.14.1752394526971;
+        Sun, 13 Jul 2025 01:15:26 -0700 (PDT)
+Received: from [192.168.1.110] ([178.197.222.89])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d571sm9335350f8f.57.2025.07.13.01.15.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 13 Jul 2025 01:15:26 -0700 (PDT)
+Message-ID: <f4fd544b-bd5e-49eb-83d9-290f77e503ef@linaro.org>
+Date: Sun, 13 Jul 2025 10:15:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 01/15] dt-bindings: media: qcom,x1e80100-camss: Assign
+ correct main register bank to first address
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org
+References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
+ <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-1-0bc5da82f526@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-1-0bc5da82f526@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-[loop Alan in]
-On Sun, 13 Jul 2025 16:50:08 +0900 Tetsuo Handa wrote:
-> syzbot is reporting that imon has three problems which result in hung tasks
-> due to forever holding device lock.
+On 11/07/2025 14:57, Bryan O'Donoghue wrote:
+> The first register bank should be the 'main' register bank, in this case
+> the CSID wrapper register is responsible for muxing PHY/TPG inputs directly
+> to CSID or to other blocks such as the Sensor Front End.
 > 
-> First problem is that when usb_rx_callback_intf0() once got -EPROTO error
-> after ictx->dev_present_intf0 became true, usb_rx_callback_intf0()
-> resubmits urb after printk(), and resubmitted urb causes
-> usb_rx_callback_intf0() to again get -EPROTO error. This results in
-> printk() flooding (RCU stalls).
+> commit f4792eeaa971 ("dt-bindings: media: qcom,x1e80100-camss: Fix isp unit address")
+
+I have next from few days ago and I don't have this commit.
+
+> assigned the address to the first register bank "csid0" whereas what we
+> should have done is retained the unit address and moved csid_wrapper to be
+> the first listed bank.
+
+This is confusing. Did that commit change entries in the binding?
+
+
 > 
-> Commit 92f461517d22 ("media: ir_toy: do not resubmit broken urb") changed
-> ir_toy module not to resubmit when irtoy_in_callback() got -EPROTO error.
-> We should do similar thing for imon.
-> 
-> Basically, I think that imon should refrain from resubmitting urb when
-> callback function got an error. But since I don't know which error codes
-> should retry resubmitting urb, this patch handles only union of error codes
-> chosen from modules in drivers/media/rc/ directory which handles -EPROTO
-> error (i.e. ir_toy, mceusb and igorplugusb).
-> 
-> We need to decide whether to call usb_unlink_urb() when we got -EPROTO
-> error. ir_toy and mceusb call usb_unlink_urb() but igorplugusb does not
-> due to commit 5e4029056263 ("media: igorplugusb: remove superfluous
-> usb_unlink_urb()"). This patch calls usb_unlink_urb() because description
-> of usb_unlink_urb() suggests that it is OK to call.
-> 
-> Second problem is that when usb_rx_callback_intf0() once got -EPROTO error
-> before ictx->dev_present_intf0 becomes true, usb_rx_callback_intf0() always
-> resubmits urb due to commit 8791d63af0cf ("[media] imon: don't wedge
-> hardware after early callbacks"). If some errors should stop resubmitting
-> urb regardless of whether configuring the hardware has completed or not,
-> what that commit is doing is wrong. The ictx->dev_present_intf0 test was
-> introduced by commit 6f6b90c9231a ("[media] imon: don't parse scancodes
-> until intf configured"), but that commit did not call usb_unlink_urb()
-> when usb_rx_callback_intf0() got an error. Move the ictx->dev_present_intf0
-> test to immediately before imon_incoming_packet() so that we can call
-> usb_unlink_urb() as needed, or the first problem explained above happens
-> without printk() flooding (i.e. hung task).
-> 
-> Third problem is that when usb_rx_callback_intf0() is not called for some
-> reason (e.g. flaky hardware; the reproducer for this problem sometimes
-> prevents usb_rx_callback_intf0() from being called),
-> wait_for_completion_interruptible() in send_packet() never returns (i.e.
-> hung task). As a workaround for such situation, change send_packet() to
-> wait for completion with 10 seconds of timeout.
-> 
-> Also, move mutex_trylock() in imon_ir_change_protocol() to the beginning,
-> for memcpy() which modifies ictx->usb_tx_buf should be protected by
-> ictx->lock.
-> 
-> Also, verify at the beginning of send_packet() that ictx->lock is held
-> in case send_packet() is by error called from imon_ir_change_protocol()
-> when mutex_trylock() failed due to concurrent requests.
-> 
-> Link: https://syzkaller.appspot.com/bug?extid=592e2ab8775dbe0bf09a
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 > ---
-> #syz test
+>  .../devicetree/bindings/media/qcom,x1e80100-camss.yaml       | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 > 
->  drivers/media/rc/imon.c | 69 +++++++++++++++++++++++++----------------
->  1 file changed, 42 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/media/rc/imon.c b/drivers/media/rc/imon.c
-> index f5221b018808..3469a401a572 100644
-> --- a/drivers/media/rc/imon.c
-> +++ b/drivers/media/rc/imon.c
-> @@ -598,6 +598,8 @@ static int send_packet(struct imon_context *ictx)
->  	int retval = 0;
->  	struct usb_ctrlrequest *control_req = NULL;
+> diff --git a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
+> index b075341caafc1612e4faa3b7c1d0766e16646f7b..2438e08b894f4a3dc577cee4ab85184a3d7232b0 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
+> +++ b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
+> @@ -21,12 +21,12 @@ properties:
 >  
-> +	lockdep_assert_held(&ictx->lock);
-> +
->  	/* Check if we need to use control or interrupt urb */
->  	if (!ictx->tx_control) {
->  		pipe = usb_sndintpipe(ictx->usbdev_intf0,
-> @@ -645,12 +647,15 @@ static int send_packet(struct imon_context *ictx)
->  		smp_rmb(); /* ensure later readers know we're not busy */
->  		pr_err_ratelimited("error submitting urb(%d)\n", retval);
->  	} else {
-> -		/* Wait for transmission to complete (or abort) */
-> -		retval = wait_for_completion_interruptible(
-> -				&ictx->tx.finished);
-> -		if (retval) {
-> +		/* Wait for transmission to complete (or abort or timeout) */
-> +		retval = wait_for_completion_interruptible_timeout(&ictx->tx.finished, 10 * HZ);
+>    reg-names:
+>      items:
+> +      - const: csid_wrapper
 
-Is the underlying hardware is not stable if the submitted urb failed to
-complete within 10 seconds for example? In the product environment is it
-making sense to ask for change to BOM, bill of material, if 10s timedout
-could be reliably reproduced twice a month?
+Anyway, this is ABI break, so needs some sort of explanation in the
+commit msg. We don't break ABI for cleanup reasons, unless it wasn't
+released yet etc.
 
-> +		if (retval <= 0) {
->  			usb_kill_urb(ictx->tx_urb);
->  			pr_err_ratelimited("task interrupted\n");
-> +			if (retval < 0)
-> +				ictx->tx.status = retval;
-> +			else
-> +				ictx->tx.status = -ETIMEDOUT;
->  		}
->  
->  		ictx->tx.busy = false;
-> @@ -1121,7 +1126,7 @@ static int imon_ir_change_protocol(struct rc_dev *rc, u64 *rc_proto)
->  	int retval;
->  	struct imon_context *ictx = rc->priv;
->  	struct device *dev = ictx->dev;
-> -	bool unlock = false;
-> +	const bool unlock = mutex_trylock(&ictx->lock);
->  	unsigned char ir_proto_packet[] = {
->  		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x86 };
->  
-> @@ -1148,8 +1153,6 @@ static int imon_ir_change_protocol(struct rc_dev *rc, u64 *rc_proto)
->  
->  	memcpy(ictx->usb_tx_buf, &ir_proto_packet, sizeof(ir_proto_packet));
->  
-> -	unlock = mutex_trylock(&ictx->lock);
-> -
->  	retval = send_packet(ictx);
->  	if (retval)
->  		goto out;
-> @@ -1745,14 +1748,6 @@ static void usb_rx_callback_intf0(struct urb *urb)
->  	if (!ictx)
->  		return;
->  
-> -	/*
-> -	 * if we get a callback before we're done configuring the hardware, we
-> -	 * can't yet process the data, as there's nowhere to send it, but we
-> -	 * still need to submit a new rx URB to avoid wedging the hardware
-> -	 */
-> -	if (!ictx->dev_present_intf0)
-> -		goto out;
-> -
->  	switch (urb->status) {
->  	case -ENOENT:		/* usbcore unlink successful! */
->  		return;
-> @@ -1761,16 +1756,30 @@ static void usb_rx_callback_intf0(struct urb *urb)
->  		break;
->  
->  	case 0:
-> -		imon_incoming_packet(ictx, urb, intfnum);
-> +		/*
-> +		 * if we get a callback before we're done configuring the hardware, we
-> +		 * can't yet process the data, as there's nowhere to send it, but we
-> +		 * still need to submit a new rx URB to avoid wedging the hardware
-> +		 */
-> +		if (ictx->dev_present_intf0)
-> +			imon_incoming_packet(ictx, urb, intfnum);
->  		break;
->  
-> +	case -ECONNRESET:
-> +	case -EILSEQ:
-> +	case -EPROTO:
-> +	case -EPIPE:
-> +		dev_warn(ictx->dev, "imon %s: status(%d)\n",
-> +			 __func__, urb->status);
-> +		usb_unlink_urb(urb);
-> +		return;
-> +
->  	default:
->  		dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
->  			 __func__, urb->status);
->  		break;
->  	}
->  
-> -out:
->  	usb_submit_urb(ictx->rx_urb_intf0, GFP_ATOMIC);
->  }
->  
-> @@ -1786,14 +1795,6 @@ static void usb_rx_callback_intf1(struct urb *urb)
->  	if (!ictx)
->  		return;
->  
-> -	/*
-> -	 * if we get a callback before we're done configuring the hardware, we
-> -	 * can't yet process the data, as there's nowhere to send it, but we
-> -	 * still need to submit a new rx URB to avoid wedging the hardware
-> -	 */
-> -	if (!ictx->dev_present_intf1)
-> -		goto out;
-> -
->  	switch (urb->status) {
->  	case -ENOENT:		/* usbcore unlink successful! */
->  		return;
-> @@ -1802,16 +1803,30 @@ static void usb_rx_callback_intf1(struct urb *urb)
->  		break;
->  
->  	case 0:
-> -		imon_incoming_packet(ictx, urb, intfnum);
-> +		/*
-> +		 * if we get a callback before we're done configuring the hardware, we
-> +		 * can't yet process the data, as there's nowhere to send it, but we
-> +		 * still need to submit a new rx URB to avoid wedging the hardware
-> +		 */
-> +		if (ictx->dev_present_intf1)
-> +			imon_incoming_packet(ictx, urb, intfnum);
->  		break;
->  
-> +	case -ECONNRESET:
-> +	case -EILSEQ:
-> +	case -EPROTO:
-> +	case -EPIPE:
-> +		dev_warn(ictx->dev, "imon %s: status(%d)\n",
-> +			 __func__, urb->status);
-> +		usb_unlink_urb(urb);
-> +		return;
-> +
->  	default:
->  		dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
->  			 __func__, urb->status);
->  		break;
->  	}
->  
-> -out:
->  	usb_submit_urb(ictx->rx_urb_intf1, GFP_ATOMIC);
->  }
->  
-> -- 
-> 2.50.1
-> 
-> 
-> 
+Best regards,
+Krzysztof
 
