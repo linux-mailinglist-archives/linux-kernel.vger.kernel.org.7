@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-728892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D0FB02E8C
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 05:09:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C30B02E8D
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 05:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BC5417F097
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 03:08:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 140037A1532
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 03:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF0917A2F7;
-	Sun, 13 Jul 2025 03:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B51197A6C;
+	Sun, 13 Jul 2025 03:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JjpOfufC"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j/59x5Bt"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64A913A41F
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 03:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBDB17A2EC
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 03:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752376127; cv=none; b=pGi1gLOguLwazMsACHrwwR9U5qXR2BtKuywnf0Wuxb58feW5dpgbF8oty9Zft7IQClVVHPm9zsDnlSmhYNRXDna0MRyGbwKYQyhHBgs9KjZYlx+AsxWSKPZ6oJ6shaHW5g2oGj/pS+F/otKtHAJedhGZYzJRbdVTDuJflDMaXTc=
+	t=1752376129; cv=none; b=ZfBFF8F9gJFrfmItcoiWEEXXLmKHFKBHxCwxy6JzZSZnddWlHnIznrfAWHq/xF31o/hQpceot2kFcJ0dfIgYKWhVYfGCHU/Y6h5XLAdGRghm0mgPELqzUIekq3faA0wQWCEABTg/lkUNQgugs/p0ZGEQBvVp3rzWsuBbeLwvAo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752376127; c=relaxed/simple;
-	bh=nR5Er56pkkyzVUf5PhF9LQ3M5NPa6FHJYE0PP9Dfq5c=;
+	s=arc-20240116; t=1752376129; c=relaxed/simple;
+	bh=bKUld+c9HOC3spoF7vkYWWhSmbQ15iaU7hKlYlFxYp4=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PVO3gpys0gYVLAAdjmKsrr5pFBvVaj36mEbCexo0gV3gZKFwx7ezl3sA1JaJuWA+X42IK2h07HiRjGDDtlOKbaRVfxF9y1yxrrMjE0s/8LBqq48uYteTtwLPogw2Z/xwkf5KMg9GYLxF+1nfx9/vq/idKrBrab0lvn6sYqhJEjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JjpOfufC; arc=none smtp.client-ip=209.85.216.54
+	 MIME-Version; b=JRluyCBv36gRZoRNV1r/emIG8eNrJseWxfuzx9atu6QnZ+Yucax8MCu8491p+Sx1bi/DXN7QwBfnoYeYizI2mm36/k46qr6zw5f0mtEe3aCKk+wNhNGaM/3xOvA4FhdhO4iMgA/S38B9jRIAQ300kA2nt7H0YO9gQSQ4aXICRPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j/59x5Bt; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3190fbe8536so3046570a91.3
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 20:08:45 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23636167afeso28932445ad.3
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jul 2025 20:08:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752376125; x=1752980925; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752376127; x=1752980927; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VXvmkRtZbf2b+Njy0K8dmXZ8wWln74jkiBHLW9XMXyE=;
-        b=JjpOfufC3h26x/rxAQUaDZ1oiACduipY+sgRzxWZwyY3XQFFKVgJ552EQEnJr/chv/
-         zfszQ8o8g3dTOO8HX28rkul3/mAaXusTGnoXjkUC0QA/s+eORQ0UEbLLfltZkRWWx7dc
-         MznTjTEkDr7c3gCZzibuxC9iUIN6+22Iws4/2gFAa32PFmUHpspGlUDfNiCbhQLIGiBq
-         xHWOWCN1OIqsObPfQPaMyR6PuCfd4XOTV68VRi4sPzipDP2GtnZW/Q1aB+qTAsMHMO/A
-         aOep4dV3+Thwgw3qW5cKo1Nlo0QUX7pPzwWwb30XLxaDpZyYqhN+Ek/o9yqzsvsOV+IQ
-         GCzQ==
+        bh=Jbn60TvpqcjemJ/r4zyupMTU5+LuSYLNJ8MkoKMnnh8=;
+        b=j/59x5BtBUquuYBtXPFN/uovqb2pc7iOcROxx+WTwlQbTR0ifot2FH/7rCvUwZOMcf
+         pePl6fqEFnyn5vEXC/OdcaFl1fFGse6nHviowJe8C3wdyriIv7qiFi6olgaQp/S1nrUR
+         g4QT4bNqfPglU5D9D4OwSypawWk4Qy5ppPu7GXqinadhZPTtmxDqbHTq/OXBFmWU2/Ok
+         JajKXt2kTEPlUswsW9+oAwkUgK+PpQD2hxn9RZ1w8OeZ8ko4bYlMTt0DcvmPOusDiW8I
+         PvXEh/7Su/99zAdoTEd3nlakYbu5+sceKLzPxgCdAgCv4mD/hZohPwB0yLcYYq2ps0Xg
+         /e+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752376125; x=1752980925;
+        d=1e100.net; s=20230601; t=1752376127; x=1752980927;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VXvmkRtZbf2b+Njy0K8dmXZ8wWln74jkiBHLW9XMXyE=;
-        b=cly2n2F0AaXE4UEsB47rRAW6zp6uQbtAGCoZ2306GiGHSlEQ67K+jgUP7MOXR+PVag
-         ZOEKys6L4s1+lILDlh+dCoIYt5EDDs1tepQ0pSH8PMRXU/iz9P+YaBCr4PE0FHN0ljLD
-         ygw7pkzs9aCDBp0QOzFiucdLNsNqmn71qHh8RI6jze7pIFNfOImFnI014E7WhDzuoMS/
-         GNLIoC7uRE8ODOjad/09dd3Xgb2HBHQISIQfSppy2WmQ18IK4Q1oLwPbyzPs8VxWFaNR
-         4Kr2jWnqIMJ8y6+uHYrgqLug65X4JeB6TUg5wawPZAm0Jh5xC/v4BFdTUREebIyqm0DX
-         eNhw==
-X-Forwarded-Encrypted: i=1; AJvYcCWd3TKmllYmyDQi9A6VOXi1C3w9Zx6dk2DQJnFKwXjDgh7q5kYhzDVrLIOR18dXjz4z9uaFeY28hesPrfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtSQaz+C1mzA4L8nmJW0CaKhSjFLWDlcmgzR7rXP1EWHd4xIUO
-	n2FdlvVA6wcOuwg9RQ8CH4HcWBJ5NjA6JgJSg09jDYeTMlXUz+F+a75F6l8EwA==
-X-Gm-Gg: ASbGnctZMk30b70gQoHZK8PpTzBwY3VIJgQCK3HnzD28AysZ2YQHvy0S6XfkkE/p4Zn
-	MoQqeNXwHgY6vc0MbT3aZ+1tN9NJMZoqg7jkYmK5KTBp47RAt/bvmDVyeGWK9QKQ114p+zWv2Ou
-	CySOQVLn7n5auFIEL53mhhKo4o+89I9CZTk8ZoHlcEt/5Lm0Kp/WAcIxKCkOKAUKZ9Agx4wNh0t
-	KNz1d5W28eqk/Bu4POcmQNRWnGFchiWKm8TxNxKmXa6LvdzKG57iNmMQnGZqmxi+CiH7PQ9x21A
-	WOAlR6eNQQd7URjZDIF0E0yJfH/CJ5wHro0t73oI0WLlXr4bLfnx2twX3GcUjbjhh/H3p/HGBHw
-	DGnWBa5CEOxn2qgjPBk8VphI7p6DeR0wzDYpa8Yt3mS4DxN0hBrntUP0s
-X-Google-Smtp-Source: AGHT+IGJn2mfV13kGWqNsFG87NUzlj6w+JlP0SqQyWoNKdedSr6NBSs8KTAdv+NjN201O4ijYH0AjQ==
-X-Received: by 2002:a17:90a:c88c:b0:31c:23f2:d2ac with SMTP id 98e67ed59e1d1-31c4f53f737mr10992295a91.19.1752376124847;
-        Sat, 12 Jul 2025 20:08:44 -0700 (PDT)
+        bh=Jbn60TvpqcjemJ/r4zyupMTU5+LuSYLNJ8MkoKMnnh8=;
+        b=EdpQPxExHXuoYz0a3/qczwY/zDU2EmtXGQAd+KINp99QPOF1oHbL15DpksMb4hIrgb
+         xRngyZNrg+ehoqO64zWVWk3ler6HsDcHPHSwVzcdKq5TjVw6xPKWzVOOwob9JR1fMOuO
+         o2QolJ8i0BONxDdzCyi4H38R2Ubw/aDbXNOhxyxYM0cgSOEMygxJDecci8AcGygoG6rj
+         gDGkocR+QG40idw30X0aJciOK0dP2QpR4cYgYFMxkgqnsT7ULtzn2xw0UKIfEpCRzLT2
+         x85JNH+/qvGXBcVUBKeNyUVEoph/e3SOK7U7+AQVvO9VHzyVZzjKu0s+Tae76bYKqdXO
+         6N9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVjBVGibLEwHPH0Vt7WC68Z6wFZCfWqqbetA5zUVhNJTGZT1a7wBd/lNTkzhJywnO8mz4W4+PGgX6XOv68=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHO1fJa1SJ/v/qPg2d1mHVoLrcO300dSduz2aynT36lW/UucKE
+	5dGLcuhSDb4GBtJ2rudlnH3wloOXQeuT+8GkWVctfXNIVpeKPe/SMFon
+X-Gm-Gg: ASbGncvgYCGSjiYUdrkZW8419jlWcvqy9OhFNO5iWrgsBGv/TQNewaHMpXi2jaqfMRq
+	2bZvBr6EBDYPepPYGHbrVLjOurrb7qZxDoeKSsHRIAU1WyHGsBezo0Oj5YJxPYAWaMSRgpgrSl9
+	/w5i/iwcUqZ0QSkeGCLzosEppf7SKNTdFeicVuy4Bts2Wuecn0o+WxW7DDNIUuCGbMZ0/o5lSmC
+	vFj15h4vzNGSUlH2CR0J7WBgnNSlGa96WWvYHfgkyI6zoZknvYLzMxcISo25ip7uvswGrYvbIMm
+	bRSwiVfm66tP3SUc2ovbfBURqsG+iIQcFUeWiHMawAtxdaYcXWOgb+hXzGOw6737/2YUR32kEPe
+	1g16NsFaacdHsJ1g2cz3V0TJxR3iuVW8JgplUQYBtevThDwoz8GtCgQrKRVN/gtnQbGQ=
+X-Google-Smtp-Source: AGHT+IGRurgG0gcgcuy8jSsUVy6ISTkI7Jpskf7HLDGGtwflEJua4uLny1RkZFF7c7d6ug6kAXwPcA==
+X-Received: by 2002:a17:902:db08:b0:234:8e78:ce8a with SMTP id d9443c01a7336-23dee3a62f4mr114608565ad.48.1752376126802;
+        Sat, 12 Jul 2025 20:08:46 -0700 (PDT)
 Received: from localhost (212.18.125.34.bc.googleusercontent.com. [34.125.18.212])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23de4283a81sm69421585ad.27.2025.07.12.20.08.44
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23de43226d9sm71023865ad.116.2025.07.12.20.08.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Jul 2025 20:08:44 -0700 (PDT)
+        Sat, 12 Jul 2025 20:08:45 -0700 (PDT)
 From: Chia-I Wu <olvaffe@gmail.com>
 To: Boris Brezillon <boris.brezillon@collabora.com>,
 	Steven Price <steven.price@arm.com>,
@@ -83,9 +83,9 @@ To: Boris Brezillon <boris.brezillon@collabora.com>,
 	Simona Vetter <simona@ffwll.ch>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] panthor: set owner field for driver fops
-Date: Sat, 12 Jul 2025 20:08:29 -0700
-Message-ID: <20250713030831.3227607-2-olvaffe@gmail.com>
+Subject: [PATCH v2 2/3] panthor: save task pid and comm in panthor_group
+Date: Sat, 12 Jul 2025 20:08:30 -0700
+Message-ID: <20250713030831.3227607-3-olvaffe@gmail.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
 In-Reply-To: <20250713030831.3227607-1-olvaffe@gmail.com>
 References: <20250713030831.3227607-1-olvaffe@gmail.com>
@@ -97,62 +97,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It allows us to get rid of manual try_module_get / module_put.
+We would like to report them on gpu errors.
+
+We choose to save the info on panthor_group_create rather than on
+panthor_open because, when the two differ, we are more interested in the
+task that created the group.
 
 Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-Reviewed-by: Steven Price <steven.price@arm.com>
----
- drivers/gpu/drm/panthor/panthor_drv.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-index 1116f2d2826ee..775a66c394544 100644
---- a/drivers/gpu/drm/panthor/panthor_drv.c
-+++ b/drivers/gpu/drm/panthor/panthor_drv.c
-@@ -1400,14 +1400,9 @@ panthor_open(struct drm_device *ddev, struct drm_file *file)
- 	struct panthor_file *pfile;
- 	int ret;
+---
+v2: save to panthor_group on panthor_group_create rather than to
+    panthor_file on panthor_open
+---
+ drivers/gpu/drm/panthor/panthor_sched.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+index a2248f692a030..823b0fe678ba6 100644
+--- a/drivers/gpu/drm/panthor/panthor_sched.c
++++ b/drivers/gpu/drm/panthor/panthor_sched.c
+@@ -641,6 +641,15 @@ struct panthor_group {
+ 		size_t kbo_sizes;
+ 	} fdinfo;
  
--	if (!try_module_get(THIS_MODULE))
--		return -EINVAL;
--
- 	pfile = kzalloc(sizeof(*pfile), GFP_KERNEL);
--	if (!pfile) {
--		ret = -ENOMEM;
--		goto err_put_mod;
--	}
-+	if (!pfile)
-+		return -ENOMEM;
++	/** @task_info: Info of current->group_leader that created the group. */
++	struct {
++		/** @pid: pid of current->group_leader */
++		pid_t pid;
++
++		/** @comm: comm of current->group_leader */
++		char comm[TASK_COMM_LEN];
++	} task_info;
++
+ 	/** @state: Group state. */
+ 	enum panthor_group_state state;
  
- 	pfile->ptdev = ptdev;
- 	pfile->user_mmio.offset = DRM_PANTHOR_USER_MMIO_OFFSET;
-@@ -1439,9 +1434,6 @@ panthor_open(struct drm_device *ddev, struct drm_file *file)
- 
- err_free_file:
- 	kfree(pfile);
--
--err_put_mod:
--	module_put(THIS_MODULE);
- 	return ret;
+@@ -3389,6 +3398,14 @@ group_create_queue(struct panthor_group *group,
+ 	return ERR_PTR(ret);
  }
  
-@@ -1454,7 +1446,6 @@ panthor_postclose(struct drm_device *ddev, struct drm_file *file)
- 	panthor_vm_pool_destroy(pfile);
++static void group_init_task_info(struct panthor_group *group)
++{
++	struct task_struct *task = current->group_leader;
++
++	group->task_info.pid = task->pid;
++	get_task_comm(group->task_info.comm, task);
++}
++
+ static void add_group_kbo_sizes(struct panthor_device *ptdev,
+ 				struct panthor_group *group)
+ {
+@@ -3540,6 +3557,8 @@ int panthor_group_create(struct panthor_file *pfile,
+ 	add_group_kbo_sizes(group->ptdev, group);
+ 	spin_lock_init(&group->fdinfo.lock);
  
- 	kfree(pfile);
--	module_put(THIS_MODULE);
- }
++	group_init_task_info(group);
++
+ 	return gid;
  
- static const struct drm_ioctl_desc panthor_drm_driver_ioctls[] = {
-@@ -1555,6 +1546,7 @@ static void panthor_show_fdinfo(struct drm_printer *p, struct drm_file *file)
- }
- 
- static const struct file_operations panthor_drm_driver_fops = {
-+	.owner = THIS_MODULE,
- 	.open = drm_open,
- 	.release = drm_release,
- 	.unlocked_ioctl = drm_ioctl,
+ err_put_group:
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
