@@ -1,281 +1,322 @@
-Return-Path: <linux-kernel+bounces-728934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EA02B02F30
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 09:20:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EF8B02F37
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 09:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2ABA16CAC8
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 07:20:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13DF51898405
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 07:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235781EF39F;
-	Sun, 13 Jul 2025 07:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06D8188734;
+	Sun, 13 Jul 2025 07:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d58BI9DE"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="EIOwdSe8"
+Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27161DE2DE;
-	Sun, 13 Jul 2025 07:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C645131E2D
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 07:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752391142; cv=none; b=SwCfy1GSd8nE5Y37up5oKjS8JS9dNJAfXKvlIQi6fMj0vi93AaarmkzYp7Wmw7j+nhSi6dvsYyCeatwy4gEQRTf1c7RWfqND1jmLIPhoaQHPUcGTc18pvMLLAN8zwLyjo1rngLbGyMFN81ElCfX4BnCDzHU8tCQYVPH94g2YSpA=
+	t=1752391199; cv=none; b=QJ3htxTg/ccNcxeSiG8GHsKiZSc1M1v8+WclMCp8I9PvEkJSxMwHzgM8ezxNSf3UHnhfwanL0bilzdg3b2GmM1J322bWt3Iv3cr2PTJyL1k1nOGrzbAQah68V9jQoPkDUOe2g7OMoExVIl83PuFsoSDdFUeac+aTQr112aqLwDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752391142; c=relaxed/simple;
-	bh=pi1nRKY48CjejoxDCAP7B6hXUe8AuXw0NVJMjVEE6fs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aE1ALx6PIbjhXZoaGqCxJvf2azGxV7jJROlYtaVQ53NYWcBNnGGrs5ZczmuM7hC/b6tIoMv9yPdK0kHOTtZr/S+ANGTUvOZKYX9Z7X/s6fnoQ297orK+tPZa+md3VMvEKKNvd8pErhxySy/8avj5VtkkSXfkOQZr80RbFZ8El+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d58BI9DE; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-23dea2e01e4so33299975ad.1;
-        Sun, 13 Jul 2025 00:19:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752391140; x=1752995940; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5F1ZO24wNNY+5sou67j5rv4c9r5fzLMbsPh7vrdpai0=;
-        b=d58BI9DEVrErvXtSCHdsuOyGrh8u6JgT18qedLvYpFNTR1BGWotLne7Tv0F4I3Kbtu
-         bxd5J9q8dTzy0pXUStbCe6lC59/351pkAWZj45hTTRdOJ7FQbP0KTxBKUFIeZie9rcUI
-         J91ivfyAUghG2hQvTVzLcCUuoWCNEAPfJfqT8/ed9rBrQJY6DWHnRG9TAFWQNGUoUAYQ
-         JenPitmtCi3nseJs82sgAAC0tpA1FYyea5WS8GQXMj3+iYYoe13GtUbHbBacvMVXo0Gt
-         8c2dNLhc49KWOtZ/wq2dVonVMJcOlKsuRSQjW4k5ex1T6IcNUF0NA2Oh+iUh4IKAitfJ
-         rRhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752391140; x=1752995940;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5F1ZO24wNNY+5sou67j5rv4c9r5fzLMbsPh7vrdpai0=;
-        b=hI2U4qjeVEJSPREo0goz70nP7rNhe/7GH6tTKFicnGtlZiWank4sv8XOpIVzUgXBtf
-         8RtVTyi9uTcZxeF2eR0HMBLhm4sjVZysamMfwtJJCjhZOwj/EosdRYgewEkKcRM5+DM3
-         rwyVaQviq1R4VzswddDHtYBaeDJQ2BiwTaEzndPPd4h7YpsltFIytnEPmU96cR2Hu5Ms
-         nmdVgUTBNhiDYLo/Y1sQ6lpE1zlrgZTk90QIk32mRqLvHpgCi+YSMMFuvJ+ijbFWPu7q
-         Hi0UVNoMJlisGHvvRzZVRkSa0/D9DDSC752ACV+ZH5cyhHFnWl9aD1JuR4B50Y2zQwLv
-         ntgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUc8v0x8OE6XvAt8LNn/IMW1N0sfDcrGpR4Faz35cwbKGG1S5AL4mpWguHC+tVQ4rE0OJr/JT25rIKh@vger.kernel.org, AJvYcCVpmQu0Oe5PNDW+jGWBUQSMVZ9SBhTtZhwdZlMFMNldS7C4TE92sLjQsxgAwSYRIjaVimrJtroGyCoRwnPP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUv3GmztrdCJ/wO5J9imrtx2QVO2zffb0cJ5Mc9fY5V/RmNth/
-	mg2sm5UQH9DOSpiz1JtDQpYxpZLo3upfEWBxUCwXZyIsXzyt73FO7pcA
-X-Gm-Gg: ASbGncvHUssiC5GVTvBmM3nVU6QZvo71q8KGswi1naOC+KuBWV7PWAo8GbFDMpG2tl7
-	s27SLTsmqGXbAuyadoNW8SZNr5rAjesXr0idn1Llgqy91aOGyPjyufCttMgmXwNKsvpYL28EwTT
-	I9TqM52xrEo14SHULNJxI236muG8EZZQMO6hXQc5NVirLGOdg1UIeKVjmcUtSz19WmaY27p858V
-	zJxxD7WJID/aBAzNm4tfLyZj9KFWD6pr+fLvjKwWxL5OyFxyjU0O53ub+yUAmErRsB+wQeem4zQ
-	uylPEEsUhS8UCF/LdAr6JXR8SOyXQiUqe2x5XeNtd0yKAzWTXARBuJUK2ADTSzut/yfxGcCB2pW
-	es8pI3X/y39CxZtCEgSC/HOpbRg==
-X-Google-Smtp-Source: AGHT+IGtfwjhV2H9OBfrlIM3+l+YVqFoInY2+1bUWH5A+M0gen9iQq7FCd1GpdQVaexjxABbsRCv0g==
-X-Received: by 2002:a17:902:ce10:b0:21f:1202:f2f5 with SMTP id d9443c01a7336-23dede2dff2mr131512825ad.8.1752391140178;
-        Sun, 13 Jul 2025 00:19:00 -0700 (PDT)
-Received: from ubu24.. ([2400:2410:dfca:c200:3d5e:f962:c950:134e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4322db2sm75239065ad.100.2025.07.13.00.18.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jul 2025 00:18:59 -0700 (PDT)
-From: Taishi Shimizu <s.taishi14142@gmail.com>
-To: Rob Herring <robh@kernel.org>,
+	s=arc-20240116; t=1752391199; c=relaxed/simple;
+	bh=xAPC6fbC/5styTt0OlZJlpIol/DyAk67PPmC15GsbPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JUYTNX8VyVmtLxPm7ML2/jU4rZDFxB9cGMR91WSqwA724prgT/1SN5Rpaigxz8BMdmPYGbd4sA7YmDvMbzDrnHFl0eyzEmi6QOSug6MVb6aMJeJ82M3ZwN0M9ZrDZ6aTWkLKXzMgly1czQ9oSZy5WNv2eD6yW+ghJ22h7Qw6XM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=EIOwdSe8; arc=none smtp.client-ip=212.77.101.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 33678 invoked from network); 13 Jul 2025 09:19:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1752391195; bh=nXAoM234OG9rCu8jKStzLy1mS45MNQY4lFEfySEMe7E=;
+          h=From:To:Cc:Subject;
+          b=EIOwdSe8WE+jxz1heiWff6azdBX6NLAMX2gJ9+S1kxSCEugaYyeyEK0ZEpM2bdAe3
+           13MyXPguHexcqQF4BmMGD6RAuggyCwUqKN40fglRB9ppWnXxc4k/rH8ciA6oeWXEqV
+           h7ECx93x03E7Gf67P/TgylVVde01zE+lH7AKtmPdyFF/fcBnxm6123RIaP2Ztm5txo
+           +XPQukJpd8cQ1jZSuFz5I3oU6ESPLVa+EDUu5hpBpVGvJWKA+FpqP3W4ZcoHXJCVuK
+           lzpTfTl1iwVSxP67ED33mIdBshkt/rxjwUXxq1RP7ERJ5HQwmfwL7OGBoGtg1dTkta
+           /WcnjZjIwHfsw==
+Received: from 89-64-3-180.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.3.180])
+          (envelope-sender <stf_xl@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <rosenp@gmail.com>; 13 Jul 2025 09:19:55 +0200
+Date: Sun, 13 Jul 2025 09:19:54 +0200
+From: Stanislaw Gruszka <stf_xl@wp.pl>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-wireless@vger.kernel.org,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Hauke Mehrtens <hauke@hauke-m.de>,
-	Rafal Milecki <zajec5@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Taishi Shimizu <s.taishi14142@gmail.com>
-Subject: [PATCH v2 2/2] ARM: dts: BCM5301X: Add support for Buffalo WXR-1750DHP
-Date: Sun, 13 Jul 2025 16:18:25 +0900
-Message-ID: <20250713071826.726682-3-s.taishi14142@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250713071826.726682-1-s.taishi14142@gmail.com>
-References: <20250713071826.726682-1-s.taishi14142@gmail.com>
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:MIPS" <linux-mips@vger.kernel.org>,
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCHv4 wireless-next 5/7] wifi: rt2x00: soc: modernize probe
+Message-ID: <20250713071954.GC18469@wp.pl>
+References: <20250712210448.429318-1-rosenp@gmail.com>
+ <20250712210448.429318-6-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250712210448.429318-6-rosenp@gmail.com>
+X-WP-MailID: 5d4781cd5bae9ac13802d4c5f972c281
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000000 [MYOB]                               
 
-Add initial device tree support for the Buffalo WXR-1750DHP, a consumer Wi-Fi
-router based on the Broadcom BCM4708A0 SoC.
+On Sat, Jul 12, 2025 at 02:04:46PM -0700, Rosen Penev wrote:
+> Remove a bunch of static memory management functions and simplify with
+> devm.
+> 
+> Also move allocation before ieee80211_alloc_hw to get rid of goto
+> statements and clarify the error handling a bit more.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
 
-Hardware specifications:
-* Processor: Broadcom BCM4708A0 dual-core @ 800 MHz
-* RAM: DDR3 256 MB
-* Ethernet Switch: Broadcom BCM53011 integrated via SRAB
-* NAND Flash: 128 MB (8-bit ECC)
-* SPI Flash: None
-* Ports: 4 LAN Ports, 1 WAN Port
-* USB: 1x USB 3.0 Type-A port
-
-Signed-off-by: Taishi Shimizu <s.taishi14142@gmail.com>
----
- arch/arm/boot/dts/broadcom/Makefile           |   1 +
- .../broadcom/bcm4708-buffalo-wxr-1750dhp.dts  | 138 ++++++++++++++++++
- 2 files changed, 139 insertions(+)
- create mode 100644 arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dts
-
-diff --git a/arch/arm/boot/dts/broadcom/Makefile b/arch/arm/boot/dts/broadcom/Makefile
-index 71062ff9adbe..2552e11b5e31 100644
---- a/arch/arm/boot/dts/broadcom/Makefile
-+++ b/arch/arm/boot/dts/broadcom/Makefile
-@@ -51,6 +51,7 @@ dtb-$(CONFIG_ARCH_BCMBCA) += \
- dtb-$(CONFIG_ARCH_BCM_5301X) += \
- 	bcm4708-asus-rt-ac56u.dtb \
- 	bcm4708-asus-rt-ac68u.dtb \
-+	bcm4708-buffalo-wxr-1750dhp.dtb \
- 	bcm4708-buffalo-wzr-1750dhp.dtb \
- 	bcm4708-buffalo-wzr-1166dhp.dtb \
- 	bcm4708-buffalo-wzr-1166dhp2.dtb \
-diff --git a/arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dts b/arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dts
-new file mode 100644
-index 000000000000..f5c95c9a712e
---- /dev/null
-+++ b/arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dts
-@@ -0,0 +1,138 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * Author: Taishi Shimizu <s.taishi14142@gmail.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include "bcm4708.dtsi"
-+#include "bcm5301x-nand-cs0-bch8.dtsi"
-+#include <dt-bindings/leds/common.h>
-+
-+/ {
-+	compatible = "buffalo,wxr-1750dhp", "brcm,bcm4708";
-+	model = "Buffalo WXR-1750DHP";
-+
-+	memory@0 {
-+		reg = <0x00000000 0x08000000>,
-+		      <0x88000000 0x08000000>;
-+		device_type = "memory";
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		button-aoss {
-+			gpios = <&chipcommon 2 GPIO_ACTIVE_LOW>;
-+			label = "AOSS";
-+			linux,code = <KEY_WPS_BUTTON>;
-+		};
-+
-+		/* GPIO 3 is a switch button with AUTO / MANUAL. */
-+		button-manual {
-+			gpios = <&chipcommon 3 GPIO_ACTIVE_HIGH>;
-+			label = "MANUAL";
-+			linux,code = <BTN_0>;
-+			linux,input-type = <EV_SW>;
-+		};
-+
-+		button-restart {
-+			gpios = <&chipcommon 11 GPIO_ACTIVE_LOW>;
-+			label = "Reset";
-+			linux,code = <KEY_RESTART>;
-+		};
-+
-+		/* GPIO 8 and 9 are a tri-state switch button with
-+		 * ROUTER / AP / WB.
-+		 */
-+		button-router {
-+			gpios = <&chipcommon 8 GPIO_ACTIVE_LOW>;
-+			label = "ROUTER";
-+			linux,code = <BTN_1>;
-+			linux,input-type = <EV_SW>;
-+		};
-+
-+		button-wb {
-+			gpios = <&chipcommon 9 GPIO_ACTIVE_LOW>;
-+			label = "WB";
-+			linux,code = <BTN_2>;
-+			linux,input-type = <EV_SW>;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-internet {
-+			color = <LED_COLOR_ID_WHITE>;
-+			function = "internet";
-+			gpios = <&chipcommon 7 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		led-power0 {
-+			color = <LED_COLOR_ID_AMBER>;
-+			function = LED_FUNCTION_POWER;
-+			gpios = <&chipcommon 6 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		led-power1 {
-+			color = <LED_COLOR_ID_WHITE>;
-+			function = LED_FUNCTION_POWER;
-+			gpios = <&chipcommon 5 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		led-router0 {
-+			color = <LED_COLOR_ID_AMBER>;
-+			function = "router";
-+			gpios = <&chipcommon 14 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		led-router1 {
-+			color = <LED_COLOR_ID_WHITE>;
-+			function = "router";
-+			gpios = <&chipcommon 15 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		led-usb {
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_USB;
-+			gpios = <&chipcommon 4 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "usbport";
-+			trigger-sources = <&xhci_port1 &ehci_port1 &ohci_port1>;
-+		};
-+	};
-+};
-+
-+&srab {
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			label = "wan";
-+		};
-+
-+		port@1 {
-+			label = "lan4";
-+		};
-+
-+		port@2 {
-+			label = "lan3";
-+		};
-+
-+		port@3 {
-+			label = "lan2";
-+		};
-+
-+		port@4 {
-+			label = "lan1";
-+		};
-+	};
-+};
-+
-+&usb3 {
-+	vcc-gpio = <&chipcommon 10 GPIO_ACTIVE_HIGH>;
-+};
-+
-+&usb3_phy {
-+	status = "okay";
-+};
--- 
-2.43.0
-
+> ---
+>  .../net/wireless/ralink/rt2x00/rt2800soc.c    | 185 ++++++++----------
+>  1 file changed, 79 insertions(+), 106 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800soc.c b/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
+> index a19906c35d0a..6f148dec2469 100644
+> --- a/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
+> +++ b/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> +#include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  
+>  #include "rt2x00.h"
+> @@ -130,108 +131,8 @@ static int rt2800soc_write_firmware(struct rt2x00_dev *rt2x00dev,
+>  	return 0;
+>  }
+>  
+> -static void rt2x00soc_free_reg(struct rt2x00_dev *rt2x00dev)
+> -{
+> -	kfree(rt2x00dev->rf);
+> -	rt2x00dev->rf = NULL;
+> -
+> -	kfree(rt2x00dev->eeprom);
+> -	rt2x00dev->eeprom = NULL;
+> -
+> -	iounmap(rt2x00dev->csr.base);
+> -}
+> -
+> -static int rt2x00soc_alloc_reg(struct rt2x00_dev *rt2x00dev)
+> -{
+> -	struct platform_device *pdev = to_platform_device(rt2x00dev->dev);
+> -	struct resource *res;
+> -
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (!res)
+> -		return -ENODEV;
+> -
+> -	rt2x00dev->csr.base = ioremap(res->start, resource_size(res));
+> -	if (!rt2x00dev->csr.base)
+> -		return -ENOMEM;
+> -
+> -	rt2x00dev->eeprom = kzalloc(rt2x00dev->ops->eeprom_size, GFP_KERNEL);
+> -	if (!rt2x00dev->eeprom)
+> -		goto exit;
+> -
+> -	rt2x00dev->rf = kzalloc(rt2x00dev->ops->rf_size, GFP_KERNEL);
+> -	if (!rt2x00dev->rf)
+> -		goto exit;
+> -
+> -	return 0;
+> -
+> -exit:
+> -	rt2x00_probe_err("Failed to allocate registers\n");
+> -	rt2x00soc_free_reg(rt2x00dev);
+> -
+> -	return -ENOMEM;
+> -}
+> -
+> -static int rt2x00soc_probe(struct platform_device *pdev, const struct rt2x00_ops *ops)
+> -{
+> -	struct ieee80211_hw *hw;
+> -	struct rt2x00_dev *rt2x00dev;
+> -	int retval;
+> -
+> -	hw = ieee80211_alloc_hw(sizeof(struct rt2x00_dev), ops->hw);
+> -	if (!hw) {
+> -		rt2x00_probe_err("Failed to allocate hardware\n");
+> -		return -ENOMEM;
+> -	}
+> -
+> -	platform_set_drvdata(pdev, hw);
+> -
+> -	rt2x00dev = hw->priv;
+> -	rt2x00dev->dev = &pdev->dev;
+> -	rt2x00dev->ops = ops;
+> -	rt2x00dev->hw = hw;
+> -	rt2x00dev->irq = platform_get_irq(pdev, 0);
+> -	rt2x00dev->name = pdev->dev.driver->name;
+> -
+> -	rt2x00dev->clk = clk_get(&pdev->dev, NULL);
+> -	if (IS_ERR(rt2x00dev->clk))
+> -		rt2x00dev->clk = NULL;
+> -
+> -	rt2x00_set_chip_intf(rt2x00dev, RT2X00_CHIP_INTF_SOC);
+> -
+> -	retval = rt2x00soc_alloc_reg(rt2x00dev);
+> -	if (retval)
+> -		goto exit_free_device;
+> -
+> -	retval = rt2x00lib_probe_dev(rt2x00dev);
+> -	if (retval)
+> -		goto exit_free_reg;
+> -
+> -	return 0;
+> -
+> -exit_free_reg:
+> -	rt2x00soc_free_reg(rt2x00dev);
+> -
+> -exit_free_device:
+> -	ieee80211_free_hw(hw);
+> -
+> -	return retval;
+> -}
+> -
+> -static void rt2x00soc_remove(struct platform_device *pdev)
+> -{
+> -	struct ieee80211_hw *hw = platform_get_drvdata(pdev);
+> -	struct rt2x00_dev *rt2x00dev = hw->priv;
+> -
+> -	/*
+> -	 * Free all allocated data.
+> -	 */
+> -	rt2x00lib_remove_dev(rt2x00dev);
+> -	rt2x00soc_free_reg(rt2x00dev);
+> -	ieee80211_free_hw(hw);
+> -}
+> -
+>  #ifdef CONFIG_PM
+> -static int rt2x00soc_suspend(struct platform_device *pdev, pm_message_t state)
+> +static int rt2800soc_suspend(struct platform_device *pdev, pm_message_t state)
+>  {
+>  	struct ieee80211_hw *hw = platform_get_drvdata(pdev);
+>  	struct rt2x00_dev *rt2x00dev = hw->priv;
+> @@ -239,7 +140,7 @@ static int rt2x00soc_suspend(struct platform_device *pdev, pm_message_t state)
+>  	return rt2x00lib_suspend(rt2x00dev);
+>  }
+>  
+> -static int rt2x00soc_resume(struct platform_device *pdev)
+> +static int rt2800soc_resume(struct platform_device *pdev)
+>  {
+>  	struct ieee80211_hw *hw = platform_get_drvdata(pdev);
+>  	struct rt2x00_dev *rt2x00dev = hw->priv;
+> @@ -357,7 +258,77 @@ static const struct rt2x00_ops rt2800soc_ops = {
+>  
+>  static int rt2800soc_probe(struct platform_device *pdev)
+>  {
+> -	return rt2x00soc_probe(pdev, &rt2800soc_ops);
+> +	const struct rt2x00_ops *ops = of_device_get_match_data(&pdev->dev);
+> +	struct rt2x00_dev *rt2x00dev;
+> +	struct ieee80211_hw *hw;
+> +	void __iomem *mem;
+> +	struct clk *clk;
+> +	__le16 *eeprom;
+> +	int retval;
+> +	u32 *rf;
+> +	int irq;
+> +
+> +	mem = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(mem))
+> +		return PTR_ERR(mem);
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq < 0)
+> +		return irq;
+> +
+> +	clk = devm_clk_get_optional(&pdev->dev, NULL);
+> +	if (IS_ERR(clk))
+> +		return PTR_ERR(clk);
+> +
+> +	eeprom = devm_kzalloc(&pdev->dev, ops->eeprom_size, GFP_KERNEL);
+> +	if (!eeprom)
+> +		return -ENOMEM;
+> +
+> +	rf = devm_kzalloc(&pdev->dev, ops->rf_size, GFP_KERNEL);
+> +	if (!rf)
+> +		return -ENOMEM;
+> +
+> +	hw = ieee80211_alloc_hw(sizeof(struct rt2x00_dev), ops->hw);
+> +	if (!hw)
+> +		return dev_err_probe(&pdev->dev, -ENOMEM, "Failed to allocate hardware");
+> +
+> +	platform_set_drvdata(pdev, hw);
+> +
+> +	rt2x00dev = hw->priv;
+> +	rt2x00dev->dev = &pdev->dev;
+> +	rt2x00dev->ops = ops;
+> +	rt2x00dev->hw = hw;
+> +	rt2x00dev->irq = irq;
+> +	rt2x00dev->clk = clk;
+> +	rt2x00dev->eeprom = eeprom;
+> +	rt2x00dev->rf = rf;
+> +	rt2x00dev->name = pdev->dev.driver->name;
+> +	rt2x00dev->csr.base = mem;
+> +
+> +	rt2x00_set_chip_intf(rt2x00dev, RT2X00_CHIP_INTF_SOC);
+> +
+> +	retval = rt2x00lib_probe_dev(rt2x00dev);
+> +	if (retval)
+> +		goto exit_free_device;
+> +
+> +	return 0;
+> +
+> +exit_free_device:
+> +	ieee80211_free_hw(hw);
+> +
+> +	return retval;
+> +}
+> +
+> +static void rt2800soc_remove(struct platform_device *pdev)
+> +{
+> +	struct ieee80211_hw *hw = platform_get_drvdata(pdev);
+> +	struct rt2x00_dev *rt2x00dev = hw->priv;
+> +
+> +	/*
+> +	 * Free all allocated data.
+> +	 */
+> +	rt2x00lib_remove_dev(rt2x00dev);
+> +	ieee80211_free_hw(hw);
+>  }
+>  
+>  static const struct of_device_id rt2880_wmac_match[] = {
+> @@ -372,9 +343,11 @@ static struct platform_driver rt2800soc_driver = {
+>  		.of_match_table = rt2880_wmac_match,
+>  	},
+>  	.probe		= rt2800soc_probe,
+> -	.remove		= rt2x00soc_remove,
+> -	.suspend	= rt2x00soc_suspend,
+> -	.resume		= rt2x00soc_resume,
+> +	.remove		= rt2800soc_remove,
+> +#ifdef CONFIG_PM
+> +	.suspend	= rt2800soc_suspend,
+> +	.resume		= rt2800soc_resume,
+> +#endif
+>  };
+>  
+>  module_platform_driver(rt2800soc_driver);
+> -- 
+> 2.50.0
+> 
 
