@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-729138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D769FB03240
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 19:06:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 351FEB03245
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 19:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0853A1899DC6
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 17:06:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E86F17738D
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 17:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8882853E0;
-	Sun, 13 Jul 2025 17:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19740280318;
+	Sun, 13 Jul 2025 17:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xKNGv00C"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQsMDstz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6041237160;
-	Sun, 13 Jul 2025 17:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713A7A48;
+	Sun, 13 Jul 2025 17:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752426375; cv=none; b=GiH0Ce7u3kW+U1ErRG5c84/h3INa8d4r6hB1ZxfBVU4+i9Kcm7iMs8v/LCmvxXnd+KOErXWnty8ugH9FW/bMJ+RiqM24msvyfh9dzxBC9t6d/BIh7tsbgeANdOUBH2S4wcp1DlVn34/CLXKQ/ZRJ9jyCKy/NP9hI/ditsmrjJgY=
+	t=1752427254; cv=none; b=DGRY3HHdHLEFC6op8CdLSLnL/tJ/OcD4+77UhpOuLNSFiH6rqIb1ZK0Lk9JSt/PGr23svEICtTwcJcNxfEIj8zHMif8+7m12aY91L01HSOYrF0rCD8X/me7/wIYy1WaCvqmUAvtV1iAXVb6i7EoLJZ5auDAjM0AAuLuiDUc+Xxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752426375; c=relaxed/simple;
-	bh=8buxFrE/ZovBFdNA8vZzICYoigzm/dgB4JRsAasaV0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sK8b980CzZltU1BBAppS18cF1cskylLbFly2jTWzitd6+RZTItsdinByjzIJecpIL0MGE2tzxMd/e3DUmtMwwwtxiA027O/J+oeMQk6y5Gu7/oZRUFA7911HenlZJueA93WSerBPKG7A5zPNnzp3tHuFJO41J0lGjLUrPIJeS/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xKNGv00C; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=95RPu8t4CUwWlmCFT2jOjTv3HPdU6j+ByKVs/cDz7fg=; b=xKNGv00CQ/QVag8uKte+lwPUiO
-	e9XP4VmEPKDgvBcF4XHnqg7+XlJkU8wHSAkWPuMpFQ6T2cuJiIzueZrD79iDs+ts6lAUb2J0nKyxj
-	xg9v1cNeOyK1Sa7X0jQBVdZpHubCOXPan8WiDjGW2L2A/RUhBydyHoQsO6qbKttdFF+s=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ub09H-001O0A-G9; Sun, 13 Jul 2025 19:05:59 +0200
-Date: Sun, 13 Jul 2025 19:05:59 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: ChunHao Lin <hau@realtek.com>
-Cc: hkallweit1@gmail.com, nic_swsd@realtek.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] r8169: add quirk for RTL8116af SerDes
-Message-ID: <9291f271-eafe-4f65-aa08-3c6cb4236f64@lunn.ch>
-References: <20250711034412.17937-1-hau@realtek.com>
+	s=arc-20240116; t=1752427254; c=relaxed/simple;
+	bh=410mqOQuQTlQxVEo0ESQ57NlWicmBuyCvTwRg65vIr0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=RUFXKi0tuZBCkmMzSVE1P1KpOpniETJAnfSCX9c0Q+w18VK9/R2Y9wZX28OPEb7uX2XGH1Qcm7fpw+BU5jbaVn4R/2Rre/OKyuUxQiGiA2vtWmfb2BCC/h2l6eRbfyEYOZm96anTOtHcqbY5UbsL1Ym9iLGCIn86w8APk/A//V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQsMDstz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A23CAC4CEE3;
+	Sun, 13 Jul 2025 17:20:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752427254;
+	bh=410mqOQuQTlQxVEo0ESQ57NlWicmBuyCvTwRg65vIr0=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=lQsMDstzqqxgww59JZIxBK6lTOWif2E9XSEp9lgnLWCk0c1fRRldLSK45HqWPwL61
+	 kQVZJLpB6y9ByDsMI1PN4xHrYnrkO3m1QHccFOXbTi3FeXjR3VCVJFEVfa4hfC+QKl
+	 yx0TsSJs6A6SKci5jvDpk332XwmK1Ns+D4eIIfDvsyqD3L/aLaq7A6gA1FyUXucyUh
+	 v+Hn1ZRZP5bgwXesEze7NqCshcoCpHxqydnS0iwv7C00n7nEj2861CI4o82k0pBuaP
+	 3vPuI6rth4fQkb2PLbUlRrYnEOuQ7grH25BCmI922LAZyK4B8E0mbgoa03BXa+hnPZ
+	 2JpACtdpW52ng==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711034412.17937-1-hau@realtek.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 13 Jul 2025 19:20:48 +0200
+Message-Id: <DBB3M49I0GX0.2OZJA23EQPP8Z@kernel.org>
+Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
+ handlers
+Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn Helgaas"
+ <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>
+To: "Benno Lossin" <lossin@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com> <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org> <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com> <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org> <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org> <DBAWQG1PX5TO.6I2ARFGLX88N@kernel.org> <DBAX59YKO0FV.ANLOWRHDDS92@kernel.org> <DBAXP68U809C.2G8DMB52M3UZ7@kernel.org> <DBB18YX7MBDW.3C5Q5Y1O28NFL@kernel.org>
+In-Reply-To: <DBB18YX7MBDW.3C5Q5Y1O28NFL@kernel.org>
 
-On Fri, Jul 11, 2025 at 11:44:12AM +0800, ChunHao Lin wrote:
-> RTL8116af is a variation of RTL8168fp. It uses SerDes instead of PHY.
-> But SerDes status will not reflect to PHY. So it needs quirk to help
-> to reflect SerDes status during PHY read.
+On Sun Jul 13, 2025 at 5:29 PM CEST, Benno Lossin wrote:
+> I think this solution sounds much better than storing an additional
+> `NonNull<Device<Bound>>`.
 
-Can you give us a few more details. What is on the other end of the
-SERDES? An SGMII PHY? An SFP cage? An Ethernet switch chip?
-
-A quick search suggests it is used with an SFP cage. How is the I2C
-bus connected? What about GPIOs? Does the RTL8116af itself have GPIOs
-and an I2C bus?
-
-	Andrew
+I can send two patches for that. The IRQ abstractions have to either land
+through driver-core or in the next cycle anyways.
 
