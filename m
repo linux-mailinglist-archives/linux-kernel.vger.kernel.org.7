@@ -1,146 +1,131 @@
-Return-Path: <linux-kernel+bounces-729031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D3B2B030D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 13:20:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C78E8B030DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 13:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7738F1731EC
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 11:20:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C2A717A43C
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 11:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8862E24BD03;
-	Sun, 13 Jul 2025 11:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14400277C83;
+	Sun, 13 Jul 2025 11:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="br4EkYAc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvg+aywe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB2414F121;
-	Sun, 13 Jul 2025 11:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3F86ADD;
+	Sun, 13 Jul 2025 11:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752405597; cv=none; b=X3qN1u3Dhq1GuRHEwjPuDDxejwK6kW5sknpGNnOTv+Y/brBZzBl/pSi+eEauksCyTG6qddGxWgNU7B3/TJzMoqQBvlznAr4Bk5hvXWdXB779IaRwYVF9Zri4hwMVZVMomHX0VFGrHGXt1vD5R44sceeBg26OB0b5prW01wg4Ffc=
+	t=1752406483; cv=none; b=qHYRAVbuYLWsZq65vnisYBcMfUz0unHPHHSVpl3ziOt/8yHpCngl4M5rFvAsDRv+0xpA0eGEZ2j8CejThrsRkEhBUsSskS+ULylcnXel9j2Zjo479wuhjR6wcZw08qnmdwueKATgqTj93XCV1mfFMLAtF1TeX1OSsknLCB1kLiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752405597; c=relaxed/simple;
-	bh=io50k6l82j+7RewCzGHhH52lZfIeTY1p+YrXiVtHZEc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=Smg42bnTZT69UEi9vDFldQ6BWToGDjyxud54py4KdvyHAz/iYbYEp+e0Uy8MDvpsJwQIncxZz8sLPh6HVhQkNucksIBWivokvRgZZ6XzQxYiezeOyalevhtQ24z/UmRT6z4fz4GaL1Blacl6Em/aUZ9+zXmTu2uf8fBGlWLStEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=br4EkYAc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13098C4CEE3;
-	Sun, 13 Jul 2025 11:19:52 +0000 (UTC)
+	s=arc-20240116; t=1752406483; c=relaxed/simple;
+	bh=3E86QT1RQXoKJncONVA3h+/7auEBcT28VLs3DwrCUJ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pljwTtqbxbWJz3pvM5BuiofijgkwZ8EorIpNBs6B/zEBNj8+8NntY40ekrlXsvA+e0KrT7C49LXupeS/fInE479kLiJWLvWuS1shuuNYbfSy2dBam2aByNdZ6INFOAoRvZ+IjmC1GHtC5aFKovMooDe8LLN0RZ7ED9Y458wx0GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvg+aywe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0828C4CEF6;
+	Sun, 13 Jul 2025 11:34:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752405596;
-	bh=io50k6l82j+7RewCzGHhH52lZfIeTY1p+YrXiVtHZEc=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=br4EkYAcPruXbjh5MQ4nD5XleVU51Jqxqe0VafFZ5VCZs6WCdXlHH7PwdVeN43bY1
-	 +365SHAcKU+Z4I/E8OlQgpMKxaSvTXpgN7SSzf11kiYfbWmh0U/K9m1F39z0Yb7JMh
-	 iGri9dSR2gdHuOiQMZUWGMjldrv+X/D/FJOpz/qyJD0G85OsYsfv5ebgQaMEvuMG72
-	 3EcORhDmoORy3cghvW0zZJ+WM2s5O4Q9NUP6z5/IxrIez0gKHo0kbDqMCIiX/L0CYK
-	 jSuOZhOOp9/JAqyn6NaHQmD7B8y/qEiO1kGPj86RftYqpkT3WwOeZZAKxLPwGOu0sE
-	 6QdHBPvXhIt3Q==
+	s=k20201202; t=1752406482;
+	bh=3E86QT1RQXoKJncONVA3h+/7auEBcT28VLs3DwrCUJ4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hvg+ayweakIDCRbAlcrFOO/jgaolzxaxaAnvpEW2awR1I5gO2q4a9io+rubRDXhx2
+	 t9lqVysGEjZJNN3LTOL5E9ZBVFbqLfyw+h/gyfWZiPj0M9qIohULdRBwKDBra1OX/b
+	 ctJuVe6YwFFPAPiRQTTPGgWxQOXOZ3q8xgveNnxunVxL+XEup/XIXB2sVXlY27dakB
+	 OrFumIR3Bpp76rsOW6h3rbWB7ye2GyD8N2T0VeB9dVe30HQDcU2j9fapmaJyr/7FZg
+	 r1jNme94CyBwNLUuLFS5BSP75iW3RbQ6h8/ztHyKiSu2RZy1VXWU6n/BpX3Grko8MM
+	 HYYsusx2FA0xw==
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-6120049f09fso1746553eaf.2;
+        Sun, 13 Jul 2025 04:34:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUvGFLofizQZH8uRTFQaH55CrZ7ZmUwCECxPwi714L9asbnLkyK3J5XLniJ/jVtqSzugteLPQiokhGLz1k=@vger.kernel.org, AJvYcCVDaaEaf37wEe/+90Vh95CllM7nFzhx373ApLSyaCDQaMrPXv/kSVrvs9Q5GoijlC+aaXwIoFRiHPNR5g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLuIM8vcOKWNiCoLPvhEeCB1l07zY8HCVPJNeOgPrponyj0ZIS
+	0JOhlcoAOf6GlHhRyGeAP2XZWcoRdoFWVSayMQuxkwJeev6x2CYtM6wtTFICeFc1i8ON1Q4NvBV
+	Jsa+lod1Bzcq+WjgGDr9v32uA/ouYlxs=
+X-Google-Smtp-Source: AGHT+IFuYADzEutbEFDy/gs33SAlKKQHOs/PwanKwOXzdQ3mwgrkBASnOMI/05PrG5u0tEDdh7iap+htCumpxf94JKI=
+X-Received: by 2002:a05:6820:4409:b0:615:7c7f:4aa6 with SMTP id
+ 006d021491bc7-6157c7f622amr526377eaf.3.1752406482201; Sun, 13 Jul 2025
+ 04:34:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250711191014.12a64210@canb.auug.org.au> <49080a96-2c7a-4eea-a64c-deac0b7a665b@infradead.org>
+ <CAJZ5v0h1CX+aTu7dFy6vB-9LM6t5J4rt7Su3qVnq1xx-BFAm=Q@mail.gmail.com> <35f0dd7e-f4c1-4042-bc85-19d277f4b1f9@kernel.org>
+In-Reply-To: <35f0dd7e-f4c1-4042-bc85-19d277f4b1f9@kernel.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sun, 13 Jul 2025 13:34:31 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jejQBii9U+69PUjqzebrdWPky93ZoJ9wKuqeGDpK--JQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwM3thsZjq3fqSeZdk6Wyvn9W-4fbkxOYzhvQlR8d53h_Oxqxin_woNNr8
+Message-ID: <CAJZ5v0jejQBii9U+69PUjqzebrdWPky93ZoJ9wKuqeGDpK--JQ@mail.gmail.com>
+Subject: Re: linux-next: Tree for Jul 11 [drivers/gpu/drm/amd/amdgpu/amdgpu.ko]
+To: Mario Limonciello <superm1@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux DRI Development <dri-devel@lists.freedesktop.org>, Samuel Zhang <guoqing.zhang@amd.com>, 
+	amd-gfx@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 13 Jul 2025 13:19:51 +0200
-Message-Id: <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org>
-To: "Danilo Krummrich" <dakr@kernel.org>, "Daniel Almeida"
- <daniel.almeida@collabora.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn
- Helgaas" <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-From: "Benno Lossin" <lossin@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com> <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org> <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com> <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org>
-In-Reply-To: <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org>
 
-On Sun Jul 13, 2025 at 12:24 PM CEST, Danilo Krummrich wrote:
-> On Sun Jul 13, 2025 at 1:32 AM CEST, Daniel Almeida wrote:
->>
->>
->>> On 12 Jul 2025, at 18:24, Danilo Krummrich <dakr@kernel.org> wrote:
->>>=20
->>> On Thu Jul 3, 2025 at 9:30 PM CEST, Daniel Almeida wrote:
->>>> +/// Callbacks for an IRQ handler.
->>>> +pub trait Handler: Sync {
->>>> +    /// The hard IRQ handler.
->>>> +    ///
->>>> +    /// This is executed in interrupt context, hence all correspondin=
-g
->>>> +    /// limitations do apply.
->>>> +    ///
->>>> +    /// All work that does not necessarily need to be executed from
->>>> +    /// interrupt context, should be deferred to a threaded handler.
->>>> +    /// See also [`ThreadedRegistration`].
->>>> +    fn handle(&self) -> IrqReturn;
->>>> +}
->>>=20
->>> One thing I forgot, the IRQ handlers should have a &Device<Bound> argum=
-ent,
->>> i.e.:
->>>=20
->>> fn handle(&self, dev: &Device<Bound>) -> IrqReturn
->>>=20
->>> IRQ registrations naturally give us this guarantee, so we should take a=
-dvantage
->>> of that.
->>>=20
->>> - Danilo
->>
->> Hi Danilo,
->>
->> I do not immediately see a way to get a Device<Bound> from here:
->>
->> unsafe extern "C" fn handle_irq_callback<T: Handler>(_irq: i32, ptr: *mu=
-t c_void) -> c_uint {
->>
->> Refall that we've established `ptr` to be the address of the handler. Th=
-is
->> came after some back and forth and after the extensive discussion that B=
-enno
->> and Boqun had w.r.t to pinning in request_irq().
+On Sat, Jul 12, 2025 at 9:02=E2=80=AFPM Mario Limonciello <superm1@kernel.o=
+rg> wrote:
 >
-> You can just wrap the Handler in a new type and store the pointer there:
 >
-> 	#[pin_data]
-> 	struct Wrapper {
-> 	   #[pin]
-> 	   handler: T,
-> 	   dev: NonNull<Device<Bound>>,
-> 	}
 >
-> And then pass a pointer to the Wrapper field to request_irq();
-> handle_irq_callback() can construct a &T and a &Device<Bound> from this.
+> On 7/12/25 3:11 AM, Rafael J. Wysocki wrote:
+> > On Fri, Jul 11, 2025 at 11:25=E2=80=AFPM Randy Dunlap <rdunlap@infradea=
+d.org> wrote:
+> >>
+> >>
+> >>
+> >> On 7/11/25 2:10 AM, Stephen Rothwell wrote:
+> >>> Hi all,
+> >>>
+> >>> Changes since 20250710:
+> >>>
+> >>
+> >> on x86_64, when
+> >> # CONFIG_SUSPEND is not set
+> >> # CONFIG_HIBERNATION is not set
+> >> # CONFIG_PM is not set
+> >>
+> >> ERROR: modpost: "pm_hibernate_is_recovering" [drivers/gpu/drm/amd/amdg=
+pu/amdgpu.ko] undefined!
+> >>
+> >> caused by commit
+> >> 530694f54dd5e ("drm/amdgpu: do not resume device in thaw for normal hi=
+bernation")
+> >>
+> >> Rafael, is a stub appropriate for this case?
+> >
+> > pm_hibernate_is_recovering() is not supposed to be called by code that
+> > does not depend on CONFIG_HIBERNATE_CALLBACKS, but a stub returning
+> > false would work for this.
 >
-> Note that storing a device pointer, without its own reference count, is
-> perfectly fine, since inner (Devres<RegistrationInner>) already holds a
-> reference to the device and guarantees the bound scope for the handler
-> callbacks.
+> Thanks, I just sent out a fix for this.
+>
+> >
+> > Mario, it would be good to fix this up in your tree.  Also, it would
+> > be good to expose stuff to 0-day build testing before letting it go
+> > into linux-next.  I use the bleeding-edge branch for this purpose.
+> >
+> Honestly; I'm surprised that 0-day didn't raise this on either dri-devel
+> or amd-gfx.  I had expected at least one of those lists to raise this
+> over the last week of patches.
+>
+> Anyone know the history why neither has 0-day?
 
-Can't we just add an accessor function to `Devres`?
+Maybe they do, but it had too little time to get to testing  them.
 
-Also `Devres` only stores `Device<Normal>`, not `Device<Bound>`...
-
----
-Cheers,
-Benno
-
-> It makes sense to document this as an invariant of Wrapper (or whatever w=
-e end
-> up calling it).
+That's why I asked 0-day to send success reports too for my
+bleeding-edge branch.  When I get a report (either failure or success)
+for it, I know that it has been tested.
 
