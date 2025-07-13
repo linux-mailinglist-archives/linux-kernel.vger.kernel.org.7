@@ -1,89 +1,172 @@
-Return-Path: <linux-kernel+bounces-729213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F67B0335E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:05:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6511CB03364
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98E93171F09
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 23:05:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7397C3B4F1A
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 23:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2B31FECB4;
-	Sun, 13 Jul 2025 23:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O5ynAb0o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8D9211F;
-	Sun, 13 Jul 2025 23:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C43E2046A9;
+	Sun, 13 Jul 2025 23:08:12 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C469211F;
+	Sun, 13 Jul 2025 23:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752447896; cv=none; b=h466CnN7GDlxQ0eCYpgvyrFD2fTKwCQplqosNdWPMWK/W5ao1CW0jbtsJmzAZpssHbkkSApcq+pSo6fCj7m84teTgARrxJkT8Z3HSxorK1c7oEeiV0Vd4lhsytI1psXxpadAmKb9kvJMdukA1F16jgcB6EklktfIBtJAmgzqRBQ=
+	t=1752448091; cv=none; b=RpIsFl+PBP2fuZYs+Ag+y++2Zsd1gSA0+TsJWVHa8QH25Er4NyE7fIWKC1znh7cglamwxcCdPRzujm7rMehcG/clGlAuIVy/nEGPdyFjie/ApXQGpVMEF4R9n31fD/hezw+wwN9RGremX0Kym6FxgzU7PGeeMNsmdglCoJRXzpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752447896; c=relaxed/simple;
-	bh=Fqv0BupB3rYT98G+vYDHwAetAEXFNiBr8pDtjkgsfgw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=Zw6JJlKfmfKFpqaZ+O4+w6K5blExWExygtIkHS842MOnhIMkdGq3oVVvZN/rfN4VhOJIKqfaEvXvmAXw8yyHeZapDHAyzljtAxb8zNLU9U79ol+tbVtym3eGmu06HMnlrMXHxqbBZkINzD2+dSPMeUmafeV1eWYy03J0AniapxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O5ynAb0o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FE21C4CEE3;
-	Sun, 13 Jul 2025 23:04:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752447896;
-	bh=Fqv0BupB3rYT98G+vYDHwAetAEXFNiBr8pDtjkgsfgw=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=O5ynAb0oin4/w5zsKmM014gRASkjBtzG6QKhMr1dmJnAAfbBLy7B8M/d5ZpbpmnGn
-	 59MkeDCjpdjhFl7GnJqW8JhvltHesSwzO+Srj1uOQ1o37OTTsMKVlXoaWuUsZ6zqgG
-	 jKy/EQBnoKyBoOmoMTMipN2x2swtlLo4gSpJqt8Vzl/ofg/9A2nyeuhom04L35lPPZ
-	 JaxUefMWwr0O3SmsaOo5N+gbUvnc3TB1fW7DGgjzEAHl+tH4fGfZErjFE29oVSmISe
-	 xVcqB+NMZDOQDK+VSmaJ3VILEv8JhEft9Z6Ks7yj/wcj4BHzxeDFoRmDEEbpZsx7jD
-	 53bqSvTsIkF4A==
+	s=arc-20240116; t=1752448091; c=relaxed/simple;
+	bh=habpyJiwj0GUAmkpmOaf0SO6WNS9JrlFk47h0mc5Dik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AHVZ26gJeR7ifftiMy3gRWTkXmdlII+BEmOd2jBMvmru4J8Hz88/TLeovq7gr0OkHeKNIgVTrrA+XgFmL0vmbYPSgfWx8bWytzzh+tzuOAbDaHqKPaj9H+0AuXC47vpBNgHsWLBAK8VYULzqN+TmgyJv/tvF7bGeoxJYrG7DKkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-1d-68743c4ddf33
+Date: Mon, 14 Jul 2025 08:07:52 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: willy@infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
+	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
+	akpm@linux-foundation.org, davem@davemloft.net,
+	john.fastabend@gmail.com, andrew+netdev@lunn.ch, toke@redhat.com,
+	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
+	saeedm@nvidia.com, leon@kernel.org, ast@kernel.org,
+	daniel@iogearbox.net, david@redhat.com, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, horms@kernel.org,
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
+	vishal.moola@gmail.com, hannes@cmpxchg.org, ziy@nvidia.com,
+	jackmanb@google.com
+Subject: Re: [PATCH net-next v9 2/8] netmem: introduce utility APIs to use
+ struct netmem_desc
+Message-ID: <20250713230752.GA7758@system.software.com>
+References: <20250710082807.27402-1-byungchul@sk.com>
+ <20250710082807.27402-3-byungchul@sk.com>
+ <4a8b0a45-b829-462c-a655-af0bda10a246@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 14 Jul 2025 01:04:50 +0200
-Message-Id: <DBBAXIVZPB1K.2I3V9B4WNNBPA@kernel.org>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>, "Tamir Duberstein"
- <tamird@gmail.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] rust: init: remove old workaround
-From: "Benno Lossin" <lossin@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250709-init-remove-old-workaround-v2-0-a3b1be8fd490@gmail.com> <20250709-init-remove-old-workaround-v2-2-a3b1be8fd490@gmail.com> <CANiq72=6n0+uLJ-2_LGKW08r-uVKGbdkofoC09xHwfbwDsRzNQ@mail.gmail.com>
-In-Reply-To: <CANiq72=6n0+uLJ-2_LGKW08r-uVKGbdkofoC09xHwfbwDsRzNQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4a8b0a45-b829-462c-a655-af0bda10a246@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH+e3e3XsdTq7L9JdCf6wkMsxSqRNpGPXHjRKioD966cpLG/li
+	803FSiWyNLMiWyuW4lucLZkzTHQuHygllnZLy0dllo9V1khnD6dE/vfhe875nPPHYQiZTuzL
+	qOKTeHW8IlZOSUjJlHtRYGRYknLTeO4W0BurKaj6mQZlwxYx6CvNCL7PDtAwY2unoPi+gwD9
+	sywSfhjnCPjQNkpDlSkShkrHSGi8WE/A6NUOCnKznAQ8np2m4YKlXAQ95jwx3JgrIaBeO0zD
+	80d6Ct5W/xHDmDWXhE5dBQlDeRHQZvAGR9ckApuxXgSOK3cpuN5roOBd1hCC3tZREu6cz0Ng
+	bBLE4Py54Ljz5C0dsZZrnbQTXF3FKxHXoHtDcwZTMvewPIDLEXoJzlR5ieJM3wpobrC/keI6
+	Cp0k12CZEXG5mdMU9/XDa5KzN/VRnLGuj+S6DTZ6v+dhSVgMH6tK4dVBO6IlyqcNPUTilE/a
+	BUezSIsKVuQgNwazobitvx/9Y1u1nXAxyfpjY8d7kYspdh0WhNnF3IvdgCdeWukcJGEItpDC
+	NSOllKuwgo3CX26ZFwek7FZcMjVCu1jG3kBY2wlLuSfuvP2edDHBBmDh96eFfmaB/XDZb8YV
+	u7HheL44e1Gzkl2Dm83tItcuzDYy+Jf2HrV06CrcUi6Q+YjVLdPqlml1/7UGRFQimSo+JU6h
+	ig3dqEyPV6VtPJkQZ0ILH1N6dv6IBX3rOWhFLIPk7lKhTqOUiRUpmvQ4K8IMIfeSfn6jVsqk
+	MYr0DF6dEKVOjuU1VuTHkHIfabAjNUbGnlIk8ad5PpFX/6uKGDdfLdq+q3xzxvGivWmw8+aY
+	suVs5vwL/0HsHE+d0AV/rIn0CEreO0z5jW7z5EekpQeCC8+EhNzs9hho/VQmWC6nDub/eHAu
+	5JjfL7uX2+r5qKL17XNl3pf0iWaxJT9mzHSw66jNeu3J7ujAQPmhPcXTvfdOBN0Nz/afcNbu
+	M3k3rRFq7XJSo1RsDiDUGsVfDUSl9S0DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTcRjG+59zds5xNDzNlX80CibdDEst64UsDIIOghFBSBewkac2UrPN
+	RLuAqRFaWpmgzRmGtHKTRmvsUma2zdrooizUWalpdte0MslLljMiv/14nvf3fHpZUjpJhbGq
+	jCxBnaFIk9NiSrxtQ0FUUnyWMvqTJwJ0pnoajD9z4Ppruwh0BiuCkbGXDHx3P6Kh9uooCbqW
+	Qgp+mMZJePuwjwGjOQl69O8oaDhjI6HvvIeGksIJEu6NfWEg336DAFe1VwSt1lIRlI9fI8GW
+	95qB53d0NHTX/xbBO2cJBV5tHQU9pQnwsGYBjD4eQOA22QgYPVdNwyVfDQ1vCnsQ+Fx9FFSd
+	KkVgavSLYOLn9EZVczeTsIR3DQyRvKWuk+Ad2i6GrzEf5W/fiOSL/T6SNxuKaN78rYzhX7U3
+	0LyncoLiHfbvBF9S8IXmv759QfFDjW00X/thmOBNljZqu3S3OD5VSFNlC+rVm/aJlc8crWTm
+	YGhO/mgTkYfKQopREIu5tdhdP0QGmOKWYJOnnwgwzS3Dfv/YTC7jVuLPHU6mGIlZkquk8c1e
+	PR0oQrgUPFxhnREk3Hp8bbCXCbCUK0c4zwt/83nYe7mfCjDJRWL/1Mfpe3aaw/H1KTYQB3Eb
+	8WTt6ZmZ+VwEbrI+Ii4giXaWrZ1la//bNYg0IJkqIztdoUqLW6U5pMzNUOWs2n843Yymf0J/
+	cvKiHY083+pEHIvkcyV+i0YpFSmyNbnpToRZUi6TfOpSK6WSVEXuMUF9OEV9NE3QOFE4S8lD
+	JYnJwj4pd1CRJRwShExB/a8l2KCwPNTSNmdn9Nj7B2uIE09rK91hRTsslvC16a+OOKnmKMfc
+	RcdlS41PhP7x2L3B8l9ou0v3+eO6RHHFlZTkFWdX9O1p7+6KOqbXDCfELh80RE90HrgfCo/j
+	dp0gR+76XOychTh+p3GzjMOZQYotMR1nKVtnMN1bvbDKHzpguOUTLY6TUxqlIiaSVGsUfwAk
+	/SylDwMAAA==
+X-CFilter-Loop: Reflected
 
-On Sun Jul 13, 2025 at 10:33 PM CEST, Miguel Ojeda wrote:
-> On Thu, Jul 10, 2025 at 12:49=E2=80=AFAM Tamir Duberstein <tamird@gmail.c=
-om> wrote:
->>
->> `Error::from_errno` is `pub` since commit 5ed147473458 ("rust: error:
->> make conversion functions public"), thus remove this workaround which is
->> no longer needed.
->>
->> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
->
-> This seems the same as this one applied a few weeks ago:
->
->     https://lore.kernel.org/rust-for-linux/20250526152914.2453949-2-ojeda=
-@kernel.org/
+On Sat, Jul 12, 2025 at 12:59:34PM +0100, Pavel Begunkov wrote:
+> On 7/10/25 09:28, Byungchul Park wrote:
+> ...> +
+> >   static inline struct net_iov *netmem_to_net_iov(netmem_ref netmem)
+> >   {
+> >       if (netmem_is_net_iov(netmem))
+> > @@ -314,6 +340,21 @@ static inline netmem_ref netmem_compound_head(netmem_ref netmem)
+> >       return page_to_netmem(compound_head(netmem_to_page(netmem)));
+> >   }
+> > 
+> > +#define nmdesc_to_page(nmdesc)               (_Generic((nmdesc),             \
+> > +     const struct netmem_desc * :    (const struct page *)(nmdesc),  \
+> > +     struct netmem_desc * :          (struct page *)(nmdesc)))
+> 
+> Considering that nmdesc is going to be separated from pages and
+> accessed through indirection, and back reference to the page is
+> not needed (at least for net/), this helper shouldn't even exist.
+> And in fact, you don't really use it ...
+> > +static inline struct netmem_desc *page_to_nmdesc(struct page *page)
+> > +{
+> > +     VM_BUG_ON_PAGE(PageTail(page), page);
+> > +     return (struct netmem_desc *)page;
+> > +}
+> > +
+> > +static inline void *nmdesc_address(struct netmem_desc *nmdesc)
+> > +{
+> > +     return page_address(nmdesc_to_page(nmdesc));
+> > +}
+> 
+> ... That's the only caller, and nmdesc_address() is not used, so
+> just nuke both of them. This helper doesn't even make sense.
+> 
+> Please avoid introducing functions that you don't use as a general
+> rule.
 
-Oh yeah you're right, thanks for the heads-up! (seems like I forgot the
-patches after applying them so early in the cycle :)
+I'm sorry about making you confused.  I should've included another patch
+using the helper like the following.
 
----
-Cheers,
-Benno
+	Byungchul
+
+---8<---
+diff --git a/drivers/net/ethernet/intel/idpf/idpf_txrx.c b/drivers/net/ethernet/intel/idpf/idpf_txrx.c
+index cef9dfb877e8..adccc7c8e68f 100644
+--- a/drivers/net/ethernet/intel/idpf/idpf_txrx.c
++++ b/drivers/net/ethernet/intel/idpf/idpf_txrx.c
+@@ -3266,7 +3266,7 @@ static u32 idpf_rx_hsplit_wa(const struct libeth_fqe *hdr,
+ 			     struct libeth_fqe *buf, u32 data_len)
+ {
+ 	u32 copy = data_len <= L1_CACHE_BYTES ? data_len : ETH_HLEN;
+-	struct page *hdr_page, *buf_page;
++	struct netmem_desc *hdr_nmdesc, *buf_nmdesc;
+ 	const void *src;
+ 	void *dst;
+ 
+@@ -3274,10 +3274,10 @@ static u32 idpf_rx_hsplit_wa(const struct libeth_fqe *hdr,
+ 	    !libeth_rx_sync_for_cpu(buf, copy))
+ 		return 0;
+ 
+-	hdr_page = __netmem_to_page(hdr->netmem);
+-	buf_page = __netmem_to_page(buf->netmem);
+-	dst = page_address(hdr_page) + hdr->offset + hdr_page->pp->p.offset;
+-	src = page_address(buf_page) + buf->offset + buf_page->pp->p.offset;
++	hdr_nmdesc = __netmem_to_nmdesc(hdr->netmem);
++	buf_nmdesc = __netmem_to_nmdesc(buf->netmem);
++	dst = nmdesc_address(hdr_nmdesc) + hdr->offset + hdr_nmdesc->pp->p.offset;
++	src = nmdesc_address(buf_nmdesc) + buf->offset + buf_nmdesc->pp->p.offset;
+ 
+ 	memcpy(dst, src, LARGEST_ALIGN(copy));
+ 	buf->offset += copy;
+--
+> > +
+> >   /**
+> >    * __netmem_address - unsafely get pointer to the memory backing @netmem
+> >    * @netmem: netmem reference to get the pointer for
+> 
+> --
+> Pavel Begunkov
 
