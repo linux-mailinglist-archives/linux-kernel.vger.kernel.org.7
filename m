@@ -1,117 +1,100 @@
-Return-Path: <linux-kernel+bounces-729076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27DEB0315C
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:10:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8CCB03159
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 16:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAF8C17BBF7
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:10:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4530B3B5146
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 14:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB1727932F;
-	Sun, 13 Jul 2025 14:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDC3278173;
+	Sun, 13 Jul 2025 14:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="HxNI347H"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lR9DVSfB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD3915746F;
-	Sun, 13 Jul 2025 14:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752415850; cv=pass; b=I8N+/Exe7GXaHlA+t66zKgZnPeP/orAS2ZG9F4tvBscv9hdB41Te6v25rEtEjoIju4j1kVtvp3Fb4Hp5PwpeHqI4isPMzV/RbGB7mLu+UhJk5DpNnGKV9uTDbCb5GdilUdi1/Wxsy4pjJ7TTwQ5Z2QBaOEaXhvIbgbTpUr5gRsU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752415850; c=relaxed/simple;
-	bh=KLG6sVwb4CNSPksB+jwSLziTbeDmCF6by7nGtOXUjZA=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=nrZhJXkCZ0eSbXQLqJ8GcdQWih5981arWypfGeq2SrkM+Te1uH4G2BeNP4+kZrAa8iPn+W8tMhXl9tGpoEHezY0Zf/+4dt94PvHNUHbgAh2xNntxkG+ol4H1KXxn3K8y0hlluxsKU63xv+F2fU7pZs0GENFsQvmbEHzuce3ildU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=HxNI347H; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752415805; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Vr3i2dDb4LmSogcIKBo0mIRp5l2WuqC3+PH+7hQqE7xuBLLqoUKVYoCKdKtQngpe0xgkJOPoNUfeya3da/2ySsQK53TdRlGWCQfiDyTsdmrRptbu1G9BSr1sYyoqwD+1Ry6Evc/zzmWLu+/DGRK/bMllrhK38PlMDwkf2n0rJ7E=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752415805; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=KLG6sVwb4CNSPksB+jwSLziTbeDmCF6by7nGtOXUjZA=; 
-	b=T2WMpFq0Y+Z+A32rumI0mohExhWbsGwUJGYL3k53DCeAo5p4iU38/Tosp5N9LLZcjtzMtMRG/Ms4UiVGboD363DzCiLSbu/joZ/c3Rf+kG/7P0wZQJ7eJxtPpJqQaCDbav94n7JdRdD5UeIgaBUdiwIHhfg59gow3/XwnEy0lq0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752415805;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=KLG6sVwb4CNSPksB+jwSLziTbeDmCF6by7nGtOXUjZA=;
-	b=HxNI347HLSdFJx5OLkG/EVUqWf8RNQ2KSwi4vqyOjY1Eba+6155kQJKE5dR29z88
-	xuM8iM6Scwa2mA1o9tWbk7W6WpTwvzOFG+jd0AjwOstMCmjk6SQZcN9AZzYqqAmzo0W
-	jUBiGDV9m0v8LFVCmf7GZI/AEZ62l3lghi/BYY4A=
-Received: by mx.zohomail.com with SMTPS id 1752415803581699.289700032508;
-	Sun, 13 Jul 2025 07:10:03 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F5A15746F;
+	Sun, 13 Jul 2025 14:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752415825; cv=none; b=HUm6gqGiP35U7WRIIQ97gAJ6k+PK4/sh0ZC5iZG98uXdtJbZmtQ5/FETMp0efn2S3S5OUgm9uJhebdeLV2JcOh4ODDaLI43Ax384LFZZe3F4nZznJ4m1u5dxeLuPOsSCGFt1O/8XBVC4CFtssRi5cOlk3ECdYbFUKld/vEnaauA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752415825; c=relaxed/simple;
+	bh=xurqLhShBn9ORVHzPNJ7as+R/dvH0EDOJ+H0NB6U/bU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h270MlEdnmNXLGNWkG36TSEPOjabB+Py6R3OtNIG54bNt7cKKM142Z8RdOvtN+Y+1XAGtuHHRhs5xxixwRfsTfYl0tWUG1Uiv4Y3iAgqd4QZ6O9euNY7b6PNClO6YmokdxjLuqUU/2xGxL4nb5AgwHkwjGxjOXVnkhOGOaOfN94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lR9DVSfB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8155BC4CEE3;
+	Sun, 13 Jul 2025 14:10:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752415825;
+	bh=xurqLhShBn9ORVHzPNJ7as+R/dvH0EDOJ+H0NB6U/bU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lR9DVSfBDgU70fjBjyXisAX/nkQsUpJHDm3NvMNGjgxv2bPTWwCH+heo6S2ZHRETj
+	 OADzImH75uJUkCA8q6JWwr8HTk5WPbrKac5MlRWI8R5nXBrY0xoQj5ILfVZrwNJ2Da
+	 gavDKr4e3KkOeIVA0CLoFVfv8ucxF0SyWdFOqzEYpsxyI/fH+/VO43Wox+N2G7Cc8p
+	 wGz6vKE5+dW5GKZbDb6TShQQMxRv0NRLXLQ/gNpFYyrdfTMhDyTfYjHNs+kjEz34+8
+	 TNCQQbbVNzU6vy3KgTlzZx5gXWjwi9jZT+P6QDfUi4GIbNIIhM8Foa5FQWAWAU6fnQ
+	 lXjAf4tX13m1g==
+Date: Sun, 13 Jul 2025 15:10:17 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: temperature: maxim_thermocouple: use
+ IIO_DECLARE_DMA_BUFFER_WITH_TS()
+Message-ID: <20250713151017.28b9d162@jic23-huawei>
+In-Reply-To: <4d41eafc-46b1-48c7-982a-1a3566f9b423@baylibre.com>
+References: <20250711-iio-use-more-iio_declare_buffer_with_ts-3-v1-1-f6dd3363fd85@baylibre.com>
+	<aHE-o5_TvGtUyHoI@smile.fi.intel.com>
+	<b564a925-1d17-43fc-86fb-8db0d845de44@baylibre.com>
+	<aHFO7LhWXOuglaoz@smile.fi.intel.com>
+	<4d41eafc-46b1-48c7-982a-1a3566f9b423@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <DBAXP68U809C.2G8DMB52M3UZ7@kernel.org>
-Date: Sun, 13 Jul 2025 11:09:47 -0300
-Cc: Benno Lossin <lossin@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C4A101A7-282D-4A67-A966-CF39850952EA@collabora.com>
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com>
- <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com>
- <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org>
- <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com>
- <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org>
- <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org>
- <DBAWQG1PX5TO.6I2ARFGLX88N@kernel.org> <DBAX59YKO0FV.ANLOWRHDDS92@kernel.org>
- <DBAXP68U809C.2G8DMB52M3UZ7@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On a second look, I wonder how useful this will be.
+On Fri, 11 Jul 2025 13:38:17 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
- fn handle(&self, dev: &Device<Bound>) -> IrqReturn
+> On 7/11/25 12:50 PM, Andy Shevchenko wrote:
+> > On Fri, Jul 11, 2025 at 12:04:03PM -0500, David Lechner wrote:  
+> >> On 7/11/25 11:41 AM, Andy Shevchenko wrote:  
+> >>> On Fri, Jul 11, 2025 at 10:33:55AM -0500, David Lechner wrote:  
+> > 
+> > ...
+> >   
+> >>>> +#include <asm/byteorder.h>  
+> >>>
+> >>> Hmm... I see nothing about this change in the commit message.  
+> >>
+> >> It is for __be16. I kind of assumed that would be obvious, but sure,
+> >> better to be explicit about it.  
+> > 
+> > Isn't it in types.h?
+> >   
+> 
+> No, only CPU-endian types are in types.h. The actual #define for
+>  __be16 is in include/uapi/linux/byteorder/big_endian.h. This is
+> included in one driver in staging, otherwise it is only included
+> in arch/*/include/uapi/asm/byteorder.h. And asm/byteorder.h is what
+> Jonathan used for similar in some of his recent IWYU patches as well,
+> so I assume that is the preferred way to do it.
+> 
+Never trust me :)  I may have been after be16_to_cpu() or similar
+though rather than the type. Can't remember. When I get back to those
+I'll take a look at the logs.
 
-Sorry for borrowing this terminology, but here we offer Device<Bound>, =
-while I
-suspect that most drivers will be looking for the most derived Device =
-type
-instead. So for drm drivers this will be drm::Device, for example, not =
-the base
-dev::Device type. I assume that this pattern will hold for other =
-subsystems as
-well.
 
-Which brings me to my second point: drivers can store an =
-ARef<drm::Device> on
-the handler itself, and I assume that the same will be possible in other
-subsystems.
-
--- Daniel=
 
