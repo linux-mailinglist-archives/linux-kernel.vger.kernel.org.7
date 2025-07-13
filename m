@@ -1,104 +1,124 @@
-Return-Path: <linux-kernel+bounces-728916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB2CB02EFF
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 08:49:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB77B02F01
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 09:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A73203BF675
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 06:49:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8876417E208
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 07:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A101C6FE5;
-	Sun, 13 Jul 2025 06:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D881C6FF5;
+	Sun, 13 Jul 2025 07:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y0LNISne"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E4Ul9sqi"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0FA2D023;
-	Sun, 13 Jul 2025 06:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06814A00;
+	Sun, 13 Jul 2025 07:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752389377; cv=none; b=fAWnVVWZCJMWWN/JJfpdeLC7pxymuplL4c5lNtzLiyzqUa4ClDcB3oCmqITbcc2I81MFi3CIZPmOaUgGXZ0rIm6LHzMITVR3Q+5N8TzB0N8yZPhuw45Y3vci3bmQmjzTjKjvmkxrmnBZTedbB85xCreWj4LDH25Ledr3/cQV+Vk=
+	t=1752390031; cv=none; b=ZmfJns+Ccv3yD79hC6WbA2H0ssD8ZMFXsqEmVksZDxwh0+Whch9IeZ98D+Gb3cD6q9ROGQiJJEfYAPfMfAnw2qZJ3cICKR8pW6TKrq08U42K5wY1UYG9d9/exBxVM4zsTXSakEDD7Jw8ikWcEg/rhSEDQMDMaK7SvIZErljdhoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752389377; c=relaxed/simple;
-	bh=ZTPEBF9Pdxm50M1QA4KJLVouLA9LbXt6HNmT9cC7PYI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GM2TRapnONtwNARGVkEpIj6CAVM9mtVpBiOIR1wYtL4I+CHjx/A2joJrnK1Srt/sB/TD2yKNlx9rWIkQ1H7xE5HkS4ezeujNZLAHMp1Y6srdbmiz1IPQlESgIOrnTbhYbUrouPYYOgIvky8QE+OP7NkP/75M3H25SBIDxqopm28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Y0LNISne; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:References:Cc:To:Subject:From:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=sLbiq/0nfCsd9v6VJPO9Ovu9FstS4u9XiQgcgz6zoEo=; b=Y0LNISne1pd2goWJ2ms/VjfQ3v
-	LI1oCZzY66HjcZ0VEEeBgp9yI0uHMk5SAYamAV1UkvbNbjLKra9z+O9+iTj7kMyXUBy5pK52ran/w
-	ODlaGL947uWAVanUNIUbf3CKbSoKrRbOTlarKT/EbavmVrONm9XSoCzu65LgC53NlNS8b/qLGV+XD
-	CYCYZOW9N/3Q+gDjI8ye/k8Q3y8d7Fcc9XDwNh5pxrgTMs5Ww9+km3Wncn7H3weHUZQdmLWmTeCZd
-	V/t0XuJwoasEm73YtwsNEctm0eD1Zl8M1zByKIrSIJNtblFsPJXt1Tbnc0yuOkTRdh2MEop42kZr5
-	IZUVNG4g==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uaqWk-0000000HPnB-2NSK;
-	Sun, 13 Jul 2025 06:49:34 +0000
-Message-ID: <e744987a-2fed-4780-a9c6-fd1175698da8@infradead.org>
-Date: Sat, 12 Jul 2025 23:49:34 -0700
+	s=arc-20240116; t=1752390031; c=relaxed/simple;
+	bh=EpzrXwEa7paTUdaZaSd+MXTCbTnQvLhGAlv1rCXSeoE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EkUPvsE6x+sWdc2qI3OYD9LxptnZMRz5v42GyXiZSGZn/FS6uznk7bib8cZtMWxZXjzynjBZ7au+42IPuH5rLiqmxqc5efJT4Eq6VUPfTLWXy61FHwPmO71YiO4sj9JKLOpMwwDyprfswpRYBjGyjvzD/2AJkEMm7cXPifmYefs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E4Ul9sqi; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-315b0050bb5so2436249a91.0;
+        Sun, 13 Jul 2025 00:00:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752390029; x=1752994829; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i0Ih0he8WVy9FU2boxxtThvW/s+yfwKvu4DYVaR+dHk=;
+        b=E4Ul9sqi95FgSLjnYV6kNFFX3uqbXt1VLeSkPvP0SLjffakjgjxhnCPY2PFmPvKOLP
+         zIU4RJFozB1JYDZtCNAYe7gw6MjHhjT314g/fqC2SwY+gLu7I/9JFUfKkfn0PgxbLCm6
+         YG/bPH1OTgr8E68KApb3YSXQlsGSaoFQNCpqTAozhU+VltaPdurRjYEfymX5xw7oRgRj
+         f9fbZxdCd/F9kRbaJniyXOMf0DYWzW+BlqHW4XQ/6166HE5R//GKfYrufZxzNTrP8cub
+         J/Zw0jragL4Co9OmGh49JZGy8LLMKnlSBKa85F+o8V2fFsoFaZb3ZbGIrJXjI4E8bRLj
+         AY+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752390029; x=1752994829;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i0Ih0he8WVy9FU2boxxtThvW/s+yfwKvu4DYVaR+dHk=;
+        b=NBEGv9V+rI5KNP6oerRBiIhmScum9A++ILSUKTvvE3/chzy0hDiOkycmJo0UP62YUZ
+         0hSrwl261IFZ1sDS3FZgPdjcmYsIObXATyoGKRC/Bo5/x7gBk/2QU7b9LnpjZUfkNHvH
+         3RoBPTplPtU0Q/TzolBouDx2EqzNTOLSu2YYezl/weJOGi8dtOYHZLuuO4Aai12NKMo/
+         97JjxtRAH3tX36iZtQn5HI9Y6grLsoP565NbuAK/ObiBDjlsYwjaqBvHDDhCI6a95UFZ
+         rcdnHtc71ocS5wh3k9mcJZSihRV+ObT+G2lwR/nqGhqdmxa57+dQwMOQgE5up627AiU0
+         t3/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVHlJGpkR3xd+JJmSKMBScf3XSGf8O3Q5jM4LZRk/EshHbfT2oVf09cI5jiwWv7JnJ1KyouA3FENEc64Tw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHG0gdyJGYqFZmHQDC4HRVlgplqHdc/zzSQmChyvYHp0iv8j2y
+	/IC4u8KX7YaA6TNj3u/eh3PaBaqfS1+5Fc0YEV/+qHuRgLCpTPjmLn47/3R9nvQN
+X-Gm-Gg: ASbGncs+RLfVsmcxi7QRlrKBeO2ET8MNSuNphRSl0KOUF2rLCSt6LHYmGTC4QMru1r5
+	DsjO2qqD1Oj+09waf8yJl6is+IE8elNEcXeerYznxvvraPVGaPTbfTv5NMpo96rQXHSBoZ1LLjk
+	99NPjwNJe4c/qQlNBoGi6C5bBiwyeNxToo1/8QDUMepCxso1Jecg4Pylcr8meEn50BBu291Y/gd
+	RtOsjFwZPCWADT+9VKY3yfQsCSaXaNMuhEWaN6tAnymSIXsQ94TEWCe3kxkGwpcSKAdQE7cPqrr
+	JN9AL2JVcAcXoKcic6ib0Ne4GWEcvkRyBwcQsTRF6ZI9a2VxQn4mkaBOnVq07O/2l3yTnkEDXOD
+	Z3zLNLnbpwNN7qchzIq2RS83KHewd8QRvfIlY4aCZt3Y=
+X-Google-Smtp-Source: AGHT+IFyckgsnZjPj6FE0B1ZTkK4hDjIP2xQ6bnXhdkWtj40+hx0qVEOCL2RcdwdTvNbf3F66RqA5A==
+X-Received: by 2002:a17:90b:2dc8:b0:311:f30b:c18 with SMTP id 98e67ed59e1d1-31c4cca23a8mr14393372a91.4.1752390028648;
+        Sun, 13 Jul 2025 00:00:28 -0700 (PDT)
+Received: from localhost.localdomain ([2409:4090:20a4:5c0c:4cc9:81e:7950:c690])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3017c622sm11340878a91.29.2025.07.13.00.00.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Jul 2025 00:00:28 -0700 (PDT)
+From: Purva Yeshi <purvayeshi550@gmail.com>
+To: efremov@linux.com,
+	axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Purva Yeshi <purvayeshi550@gmail.com>
+Subject: [PATCH v2] block: floppy: Fix uninitialized use of outparam
+Date: Sun, 13 Jul 2025 12:30:20 +0530
+Message-Id: <20250713070020.14530-1-purvayeshi550@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jul 11 (drivers/gpu/drm/msm/msm_gem.c)
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Rob Clark <robin.clark@oss.qualcomm.com>,
- Linux DRI Development <dri-devel@lists.freedesktop.org>,
- linux-arm-msm@vger.kernel.org
-References: <20250711191014.12a64210@canb.auug.org.au>
-Content-Language: en-US
-In-Reply-To: <20250711191014.12a64210@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Fix Smatch-detected error:
+drivers/block/floppy.c:3569 fd_locked_ioctl() error:
+uninitialized symbol 'outparam'.
 
+Smatch may incorrectly warn about uninitialized use of 'outparam'
+in fd_locked_ioctl(), even though all _IOC_READ commands guarantee
+its initialization. Initialize outparam to NULL to make this explicit
+and suppress the false positive.
 
-On 7/11/25 2:10 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20250710:
+Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+---
+V1 - https://lore.kernel.org/all/7dd94691-0b37-4855-be43-661f954275c8@gmail.com/T/#t
+V2 - Initialize outparam to NULL to suppress Smatch false positive.
 
-on i386, when:
+ drivers/block/floppy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-CONFIG_DRM_MSM=y
-CONFIG_DRM_MSM_GPU_STATE=y
-CONFIG_DRM_MSM_GPU_SUDO=y
-# CONFIG_DRM_MSM_VALIDATE_XML is not set
-# CONFIG_DRM_MSM_MDP4 is not set
-# CONFIG_DRM_MSM_MDP5 is not set
-# CONFIG_DRM_MSM_DPU is not set
-
-so DRM_MSM_KMS is also not set:
-
-../drivers/gpu/drm/msm/msm_gem.c: In function ‘msm_gem_vma_put’:
-../drivers/gpu/drm/msm/msm_gem.c:106:54: error: invalid use of undefined type ‘struct msm_kms’
-  106 |         msm_gem_lock_vm_and_obj(&exec, obj, priv->kms->vm);
-      |                                                      ^~
-../drivers/gpu/drm/msm/msm_gem.c:107:39: error: invalid use of undefined type ‘struct msm_kms’
-  107 |         put_iova_spaces(obj, priv->kms->vm, true, "vma_put");
-      |                                       ^~
-../drivers/gpu/drm/msm/msm_gem.c: In function ‘is_kms_vm’:
-../drivers/gpu/drm/msm/msm_gem.c:668:39: error: invalid use of undefined type ‘struct msm_kms’
-  668 |         return priv->kms && (priv->kms->vm == vm);
-      |                                       ^~
-
+diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
+index e97432032f01..24be0c2c4075 100644
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -3411,7 +3411,7 @@ static int fd_locked_ioctl(struct block_device *bdev, blk_mode_t mode,
+ 		struct floppy_max_errors max_errors;
+ 		struct floppy_drive_params dp;
+ 	} inparam;		/* parameters coming from user space */
+-	const void *outparam;	/* parameters passed back to user space */
++	const void *outparam = NULL;	/* parameters passed back to user space */
+ 
+ 	/* convert compatibility eject ioctls into floppy eject ioctl.
+ 	 * We do this in order to provide a means to eject floppy disks before
 -- 
-~Randy
+2.34.1
 
 
