@@ -1,141 +1,104 @@
-Return-Path: <linux-kernel+bounces-728878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 997C5B02E57
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 03:17:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 058AEB02E5B
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 03:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A39643B2B89
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 01:17:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E8724A3260
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 01:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0026EB79;
-	Sun, 13 Jul 2025 01:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE3686340;
+	Sun, 13 Jul 2025 01:42:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CRmi0c7D"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="E3+8DopX"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB05225D6;
-	Sun, 13 Jul 2025 01:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61B44A00;
+	Sun, 13 Jul 2025 01:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752369439; cv=none; b=H7Lj8aTIfFfOAt7LAB741++o0OJ5DvV9jV8VRoFyky1cM0/Z4RHzLrKCLEG0Z3VaRe/+/8ffmTiHKN6zLJ9T692aj4pVc7FJ+V7Babp6dJq3u3xPhlFL9xyBCcwdJht22n2/XEGXCjMgTEJgMiJhMmw2lxxeDgQwUhtwUaD5WDM=
+	t=1752370948; cv=none; b=rsJUGsR3iDuhidTRD0g8gE2IzipqYXBYKT9AmfGrwVVmhzbvrUEjVcovjRBsH9iXMW0YfzSvcMFuAS+hyV8vE/vhE/H5EobCFms34WFPUommBN0H4PkK/K5npjPoGpgIynfXtdfbm8hJMoQzDvfv+Er6xsu/rhXW8LsYYuzEeAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752369439; c=relaxed/simple;
-	bh=jkVEUKEjutwjuBXTyyTODBl5MA5+Z+1HsUGKy8rQwXg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JY1N7wgd8+UQCVCmqmuBmxTJ4+JlW6UtoyiRKsFqSa9PbjeCkUZJ8V39MmyXOokBqU80Zp9yqkUAtHBEGEjr4A+fkzKKR66G3r59SRqGXY/VVrjSkHk+FXjJallSkzAKIWMJ5QvaWK7KqyWVdHrHgNEWem9GOGzFxDu19/2HbaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CRmi0c7D; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b271f3ae786so2531367a12.3;
-        Sat, 12 Jul 2025 18:17:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752369437; x=1752974237; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AyAwl7MTAdKGbA9lEwMJ6Kwhn5OsQcN0Me/hhvfZbls=;
-        b=CRmi0c7Dv8dYBXqbXSAwUWrfrqVp7Hur470Y+7GN5xXUQgmckECKqorknQ+gRHr7o0
-         By2DIok9Sj+04yd8SNYcqDp/dqsKyxZaGSDZSRBb67o3u4pWvePAg0oZnGW6gUlQB1Ck
-         QgkD8gjhCZVZ6lwe4mLhda7bAlZYlKPYzvwxWK3MOy/JprRKt9nqHINr9ss3uk6WMgro
-         xjk+bexQyNs1hA1EMgbwvHsxI09YhK9X7fKIm3EMovz7pGnFIU114fWiKOSqFluqcgvc
-         KVgg3GQGEMe4gZRUyYBP9XmXUAzyfljhXM3SraLTcJqLX6hVG+HM32zj6BuF92hQ0wNx
-         DAEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752369437; x=1752974237;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AyAwl7MTAdKGbA9lEwMJ6Kwhn5OsQcN0Me/hhvfZbls=;
-        b=dTFkW25eklydM0ivrT5gyyNZE3XNxRRD08/0gz/ONSmtc2GIXX0fsGqeD/ZOzlsw98
-         aOIM5ibdckU+dlHtyrCMLinjnV74lnVbYE9GGrAe0pXedMOzXFKNwxv11etyQ4Cb5Jmb
-         HZeD0h6v1zNdWhjxdCFN1QBfEcKhD1W3VMas+9carm3Qqu/UHDOJTTG9XkzKDyxbZnO/
-         kvhIBUBbArojZWP9svvWKhDtL4ovL6O8JBPRk7EWjLS1Om6GTRadxQBsxAriV1mAvb4g
-         c4KD0c5KyJB+gOn+S+votaRLfhoTe0r928d0pgC3HBrWYVJuKJzWT0qgmSRdQF6EjqhA
-         PSdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWF8wM4S3R+A3ZhRWF3hPPJynhWfN4ZuhoED5Wp+Fw5CcqqETwQWcgObpUNxs7Tlzj31tr2RqHeE3lUrWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLIje8YaZ+iKsMTFSQQ+L0DcZJehiqq31jgZ8yTxNmuFCTco8B
-	kZZ5zqXo9GBF9z80z9L9B00c6XL+gO7h3N6UD1YTarZ6owhs6fimt3fRgKVVSA==
-X-Gm-Gg: ASbGnctugFVgxk+7NYsOy6YjnJNS7MkyPnOLJR4tkFYqoFqSot9AO/IoSXRmCfP9uzG
-	Ytw/BPvFx6Cy035J9U5K+NLozZgKq13O1gb06067JJQFYZIrxRgMKvbHJBIaavHvduqsMPxzZkj
-	9GdsoKzik5FB4PGTEf5YMBgmjhNkpEBrkTGUQmC30uLZtL2bKcKaj2xRuLjf0IaV2NjhCBFmwkY
-	/Bnsn0gZnoxGwWh/FDdDJFoO+3vZkOaSaeqfFLskJwdCZfUSyZlimYuiCllz9uEbzvG8vAIzy6E
-	otJbYuZXpfqDdeT/KL8J7F3I/R2V1SGtqi1Q+bIy3I+fVXZz/F2q/CPe+Qd92WB5yw9V+1CbaG/
-	sEQ7B+jt40Yk4Xcc6vC6HuOkHISSG
-X-Google-Smtp-Source: AGHT+IH96KbBlQ8fvWg/0eJ0Vz6bU6PBWGET/o2f3civACzcVCeGSqz5mURh8wQ+RmH29ml2sFhRAg==
-X-Received: by 2002:a05:6a20:914e:b0:21f:4ecc:11ab with SMTP id adf61e73a8af0-2317dbd4f1dmr10831209637.9.1752369436744;
-        Sat, 12 Jul 2025 18:17:16 -0700 (PDT)
-Received: from localhost ([2600:1700:22f5:908f:1457:7499:d258:358f])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe6bd98bsm7497765a12.45.2025.07.12.18.17.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Jul 2025 18:17:16 -0700 (PDT)
-From: Matthew Wood <thepacketgeek@gmail.com>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH pci-next v1 1/1] PCI/sysfs: Expose PCIe device serial number
-Date: Sat, 12 Jul 2025 18:17:13 -0700
-Message-ID: <20250713011714.384621-2-thepacketgeek@gmail.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250713011714.384621-1-thepacketgeek@gmail.com>
-References: <20250713011714.384621-1-thepacketgeek@gmail.com>
+	s=arc-20240116; t=1752370948; c=relaxed/simple;
+	bh=MjTgCoQdGbJfJErk2z9+A7PX2rE1LZcNmmBG5UNIxIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W2yUfpXrfKvDBjPuaqfKt82TvVvzOrwKmbxL+XwNyI0t3C09nXRcR8Vg/LdJR1G0JGhMsb3tYNwQD1HZZqqQndwp6cQ3mtplt+NKuTvWtQw+cD4Y7ih963oL/aUEGlwiJreeRij361vcjBjnTSqs7Q0JYWwmAcdeKJwOzfP2P6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=E3+8DopX; arc=none smtp.client-ip=220.197.32.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=vWLaBlCVDMaG0LM+7ESP1e8rEdQZfK6CkV/TbehX7h0=;
+	b=E3+8DopXZ90MyNE8JeJ19lNdg6CVVUoetjdwpPd9L5MZjFG3adC9dP5Hx0tY0q
+	mqSruYdstve+zKA5DZtiUVF9t2eDiElZhpvci6dwLphC5TkPnTHJrXhsCReJC5xo
+	QDmGHIDG7uCK1IDf/rmEKygDU+9V6oHsoxM/rXs1YmD/c=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgDnP6enDnNoU2t5AA--.2390S3;
+	Sun, 13 Jul 2025 09:40:58 +0800 (CST)
+Date: Sun, 13 Jul 2025 09:40:55 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Robert Chiras <robert.chiras@nxp.com>,
+	"Guoniu.zhou" <guoniu.zhou@nxp.com>
+Subject: Re: [PATCH v5 13/13] arm64: dts: imx8q: add camera ov5640 support
+ for imx8qm-mek and imx8qxp-mek
+Message-ID: <aHMOp7cjFDOrrA26@dragon>
+References: <20250522-8qxp_camera-v5-0-d4be869fdb7e@nxp.com>
+ <20250522-8qxp_camera-v5-13-d4be869fdb7e@nxp.com>
+ <aHC7wm98PlShUqWk@dragon>
+ <aHEkNZPfVw2drb4p@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHEkNZPfVw2drb4p@lizhi-Precision-Tower-5810>
+X-CM-TRANSID:M88vCgDnP6enDnNoU2t5AA--.2390S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUe5rcDUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIgqkCmhzDqpVRwAA3r
 
-Add a single sysfs read-only interface for reading PCIe device serial
-numbers from userspace in a programmatic way. This device attribute
-uses the same 2-byte dashed formatting as lspci serial number capability
-output.
+On Fri, Jul 11, 2025 at 10:48:51AM -0400, Frank Li wrote:
+> > > +	ov5640_mipi_0: camera@3c {
+> > > +		compatible = "ovti,ov5640";
+> > > +		reg = <0x3c>;
+> > > +		clocks = <&xtal24m>;
+> > > +		clock-names = "xclk";
+> > > +		pinctrl-0 = <&pinctrl_mipi_csi0>;
+> > > +		pinctrl-names = "default";
+> > > +		powerdown-gpios = <&lsio_gpio1 28 GPIO_ACTIVE_HIGH>;
+> > > +		reset-gpios = <&lsio_gpio1 27 GPIO_ACTIVE_LOW>;
+> > > +		AVDD-supply = <&reg_2v8>;
+> > > +		DVDD-supply = <&reg_1v5>;
+> > > +		DOVDD-supply = <&reg_1v8>;
+> > > +		status = "okay";
+> >
+> > Unnecessary "okay" status?
+> 
+> Yes, Do you need me to resend?
 
-Signed-off-by: Matthew Wood <thepacketgeek@gmail.com>
----
- drivers/pci/pci-sysfs.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+I fixed it up and applied.
 
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 268c69daa4d5..72bc266388d4 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -239,6 +239,22 @@ static ssize_t current_link_width_show(struct device *dev,
- }
- static DEVICE_ATTR_RO(current_link_width);
- 
-+static ssize_t device_serial_number_show(struct device *dev,
-+					 struct device_attribute *attr, char *buf)
-+{
-+	struct pci_dev *pci_dev = to_pci_dev(dev);
-+	u64 dsn;
-+
-+	dsn = pci_get_dsn(pci_dev);
-+	if (!dsn)
-+		return -EINVAL;
-+
-+	return sysfs_emit(buf, "%02llx-%02llx-%02llx-%02llx-%02llx-%02llx-%02llx-%02llx\n",
-+		dsn >> 56, (dsn >> 48) & 0xff, (dsn >> 40) & 0xff, (dsn >> 32) & 0xff,
-+		(dsn >> 24) & 0xff, (dsn >> 16) & 0xff, (dsn >> 8) & 0xff, dsn & 0xff);
-+}
-+static DEVICE_ATTR_RO(device_serial_number);
-+
- static ssize_t secondary_bus_number_show(struct device *dev,
- 					 struct device_attribute *attr,
- 					 char *buf)
-@@ -660,6 +676,7 @@ static struct attribute *pcie_dev_attrs[] = {
- 	&dev_attr_current_link_width.attr,
- 	&dev_attr_max_link_width.attr,
- 	&dev_attr_max_link_speed.attr,
-+	&dev_attr_device_serial_number.attr,
- 	NULL,
- };
- 
--- 
-2.50.0
+Shawn
 
 
