@@ -1,138 +1,125 @@
-Return-Path: <linux-kernel+bounces-729738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04C1B03AEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:36:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F232B03AF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EC633A775B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:36:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6C0317C390
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AEB2417EE;
-	Mon, 14 Jul 2025 09:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3921E04AD;
+	Mon, 14 Jul 2025 09:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEUGd856"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtM+4Utu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9415723A9BF;
-	Mon, 14 Jul 2025 09:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8242B23DEB6;
+	Mon, 14 Jul 2025 09:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752485795; cv=none; b=EhehirnqSWkaxZ+FteYIQbvA8hYBc1hsV/9oRZ2qED+7ejSoLn9HpOWVc3syVK7JUWKcyZaWgrvLP2hB4iZzi+mc2/7f+Hwnm4/kb29cjWjfd7ygzIk2/t7XeCnpUV2XhB9AnBsWXEzidwURFMWjfVRTdSZ7N+Lhbx8xbnuEfOM=
+	t=1752485820; cv=none; b=gGM3+wAk3bLrQOQ5VJBwtbQkdJw5bL5sJkKnv2vnMxvAvfNYjQGrCwtWcSsB/BLymbBDS1CBEDzQiCKbfkJXi9nxndnC66COXTXJ2PT0ZGkqkyx40zTltdo/BQoDxmxeu5DOVMXcown9VIbeQixotnQaShgTGqePzb2S2w/KjO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752485795; c=relaxed/simple;
-	bh=Vzxq/edcrTJeXzQiDeTB7+LshkLJsBhp6E8UKnKvfSM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=aST13iuBOswOUxZZjucu20RVPqIgDxsy/qEmoULYqCR0GGpKJhI+ob+q5lKIa1j9ZPMvFy79JpHIn5X+jLe2uBJzt2lLXl4opls3mlMhs4y0z1zTaKk7QQ0lli0xx0iUZv9E3Y7TUc/YBMGi5QvA+HYUBOvnp+1QqhCpxjyWjfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEUGd856; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 990D1C4CEED;
-	Mon, 14 Jul 2025 09:36:31 +0000 (UTC)
+	s=arc-20240116; t=1752485820; c=relaxed/simple;
+	bh=q3gecb1dMcXk5bvZjsbtwWdjzJ+eURwjQLKaDhIg7UY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VsvYXE7WtbaDWsthDwb3lCcbpNc7FTU+XB053zxdkVspYPq9g82u5P5IK13wxlMls8WzpEjugMkNLcF7RcucPeh3dSEyEXRRCwX52PgYaE2POtJs4aDecHlTbEabiRu3gZRcmTzvSThBufvTQeLqM9aQSs+GLVPRtRUlP8Yh8aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtM+4Utu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F07C4CEF8;
+	Mon, 14 Jul 2025 09:36:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752485795;
-	bh=Vzxq/edcrTJeXzQiDeTB7+LshkLJsBhp6E8UKnKvfSM=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=OEUGd856MPfzTVt06by6WFNAR4j7ZTfCOc3jSN3pFPIBGbLKkYeX4oz0TR/4rFjCz
-	 V091A06vmH7yuTIszh/AVdwo3exBgjAkqNFtdXsVcgLBSFxeN080BMH9NA3NPFnGdn
-	 xr3guGW5KVvlqss1gy609IiYHVyoE4IA1mBm4Nn5zHhhvl4/+ILB/UiOmVmYaiPVxJ
-	 bRv6gDACgIU3MHE7+5fv59w8i2PDkQjB9mhwrbUxngbI8eoOFicCcgffRZBXMNrwuz
-	 8LqZAtvy0vbLBvGOWWyX5UuWMATVp3kjbqNUEl8lSsq0fXkh616x2/A+27ItsJqwAu
-	 dSrkF/V6m+y9A==
+	s=k20201202; t=1752485820;
+	bh=q3gecb1dMcXk5bvZjsbtwWdjzJ+eURwjQLKaDhIg7UY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YtM+4UtuvrkSC4DopkEPxCqpam/FB0InHStxd9z79pPNOqwJEnmGVeuzfOtkeVgpW
+	 X0WxZMXV/P3jvqhKQnXgumqxpfcH1uEzsZR/PipU2RwDQExaK9jhpQPAOMWDGCWlCu
+	 sda53ercJvoquL7ai0TC9jhlT4qoJOV/kLD8gNVZEcu2HTprI/LXmjpOhGD2qhBqs0
+	 aQAHH3HUIu7kpHDIVfP7W3sFY73eheh9aTJ3j//PHEqYIc/fpULnHd3GdvPUF+QcoI
+	 iY/SfYqHtO3r4PCq4oSuG4UPcgqGOeQvg93ELyhM5lLgytsvwmeTCDKZmOTp/YKFYL
+	 rTsw4oFh8F3Mw==
+Message-ID: <a6ac728d-783a-4916-8a94-6c182f32f358@kernel.org>
+Date: Mon, 14 Jul 2025 11:36:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] dt-bindings: leds: is31fl32xx: convert the binding
+ to yaml
+To: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+ devicetree@vger.kernel.org, Lucca Fachinetti <luccafachinetti@gmail.com>
+References: <20250708-leds-is31fl3236a-v3-0-d68979b042dd@thegoodpenguin.co.uk>
+ <20250708-leds-is31fl3236a-v3-2-d68979b042dd@thegoodpenguin.co.uk>
+ <20250709-happy-gazelle-of-fascination-fe0fd4@krzk-bin>
+ <CAA6zWZKRA2Qn3ajN9f9o_oBTZAgrx22gP28A5CHgx=+0jFrOKg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CAA6zWZKRA2Qn3ajN9f9o_oBTZAgrx22gP28A5CHgx=+0jFrOKg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 14 Jul 2025 11:36:29 +0200
-Message-Id: <DBBOD5MK9FQ9.2ZOBX2ERFIE2S@kernel.org>
-Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Benno Lossin"
- <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn
- Helgaas" <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>
-To: "Dirk Behme" <dirk.behme@de.bosch.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com> <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org> <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com> <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org> <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org> <DBAWQG1PX5TO.6I2ARFGLX88N@kernel.org> <DBAX59YKO0FV.ANLOWRHDDS92@kernel.org> <DBAXP68U809C.2G8DMB52M3UZ7@kernel.org> <C4A101A7-282D-4A67-A966-CF39850952EA@collabora.com> <DBAZRNHGIGL8.3L2NGPCVXLI25@kernel.org> <d6e62068-a05a-43cf-ace3-ff7a41e9a1d7@de.bosch.com>
-In-Reply-To: <d6e62068-a05a-43cf-ace3-ff7a41e9a1d7@de.bosch.com>
+Content-Transfer-Encoding: 7bit
 
-On Mon Jul 14, 2025 at 9:57 AM CEST, Dirk Behme wrote:
-> On 13/07/2025 16:19, Danilo Krummrich wrote:
->> On Sun Jul 13, 2025 at 4:09 PM CEST, Daniel Almeida wrote:
->>> On a second look, I wonder how useful this will be.
->>>
->>>  fn handle(&self, dev: &Device<Bound>) -> IrqReturn
->>>
->>> Sorry for borrowing this terminology, but here we offer Device<Bound>, =
-while I
->>> suspect that most drivers will be looking for the most derived Device t=
-ype
->>> instead. So for drm drivers this will be drm::Device, for example, not =
-the base
->>> dev::Device type. I assume that this pattern will hold for other subsys=
-tems as
->>> well.
->>>
->>> Which brings me to my second point: drivers can store an ARef<drm::Devi=
-ce> on
->>> the handler itself, and I assume that the same will be possible in othe=
-r
->>> subsystems.
->>=20
->> Well, the whole point is that you can use a &Device<Bound> to directly a=
-ccess
->> device resources without any overhead, i.e.
->>=20
->> 	fn handle(&self, dev: &Device<Bound>) -> IrqReturn {
->> 	   let io =3D self.iomem.access(dev);
->>=20
->> 	   io.write32(...);
->
-> As this is exactly the example I was discussing privately with Daniel
-> (many thanks!), independent on the device discussion here, just for my
-> understanding:
->
-> Is it ok to do a 'self.iomem.access(dev)' at each interrupt?
+On 14/07/2025 11:16, Pawel Zalewski wrote:
+> 
+>> Pattern does not match entirely the reg constraints. 36 is 0x24.
+> 
+> Pattern allows for one or more hexadecimal values starting from 1,
+> so the second number should start from zero is the second error here.
 
-Absolutely, Devres::access() is a very cheap accessor, see also [1]. Compil=
-ed
-down, the only thing that Revocable::access() does is deriving a pointer fr=
-om
-another pointer by adding an offset.
+You cut entire context so I really do not know how the code looks like.
+Anyway, they do not match and this needs to be fixed.
 
-That's exactly why we want the &Device<Bound> cookie, to avoid more expensi=
-ve
-operations.
-
-[1] https://rust.docs.kernel.org/src/kernel/revocable.rs.html#151
-
-> Wouldn't it
-> be cheaper/faster to pass 'io' instead of 'iomem' to the interrupt handle=
-r?
-
-Well, consider the types of the example:
-
-	iomem: Devres<IoMem<SIZE>>
-	io: &IoMem<Size>
-
-You can't store a reference with a non-static lifetime in something with an
-open-ended lifetime, such as the Handler object.
-
-How would you ensure that the reference is still valid? The Devres<IoMem<SI=
-ZE>>
-object might have been dropped already, either by the user or by Devres rev=
-oking
-the inner object due to device unbind.
+Best regards,
+Krzysztof
 
