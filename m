@@ -1,87 +1,47 @@
-Return-Path: <linux-kernel+bounces-730201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A8C6B04148
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:18:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F6D4B04152
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CB627A84EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:17:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDE763AEDEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8302571C2;
-	Mon, 14 Jul 2025 14:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D603257AFE;
+	Mon, 14 Jul 2025 14:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DrSLAt8o"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="L1nXbZKV"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80FAD246787
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30282571B3;
+	Mon, 14 Jul 2025 14:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752502702; cv=none; b=eELWY21D842rjDJNApY5mUiQaeZeuiqofEi4dpsQ65raQssWjHeVUgpFrEJXqwvCfIVkxH+9nEcfkkMQA+k5AgiHMRQEUOa8Hjdu6e9ssg2za7+eLJ5z+lOmVEHkf0MYi7yLwwsF8T8E8VHcdlDFbGowsxoJA3qzc86PnuyM+uI=
+	t=1752502705; cv=none; b=cPoUF0z1GRYiccqG7txIEDv3FEa/MjVD1PFwiaBbSNp42mfPlw2r+fx6k0hVjX6Suadk8SnVTZmG9gkK6+8daGZiLnJFNIPxEbi3D3gpXu1JQLywxRyrIgN8ec7zxnpjUZrUU+ZYJuzl50aiP7tFOs4frn2nOvTlFrf3PSF8c4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752502702; c=relaxed/simple;
-	bh=R/69WRnWJQ0bSIrNALHoxXiO/EnyzE/KdbifGQnoIk0=;
+	s=arc-20240116; t=1752502705; c=relaxed/simple;
+	bh=yBrMy2ksiPpLqhGVPw/Tp0fQhjdwAiixtdOl1OdvDoI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AdH+Jq/gIwVibiMRfLg9e4+JBQ3ocFmVQTkcCrKRiOltQFQTAffv2m8jK3LxWXc0T9+NtU/Bthv5sNHUxIoALw93IiV1qsT8KtOmxER3KMiyDpwAmAVijiEB2wIkQRzgdcmMP9El5M082/0hYWO6BGwkdKv1RLDo6xHlDEk2v/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DrSLAt8o; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752502699;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eAJ3iCVhDdz6z6h3YYRgguFqsc8zl+o4S274gAq3QzQ=;
-	b=DrSLAt8odfUyitC9Ihjmm9Nf2beqQT8KPvqglg/m5Op6t0aYejHY5sXBEkq6jRtfqNBM3v
-	4t6nywHqmRDd9zFSyVqK3fQGEzlgYzkjqatekaHHglGnNpoTXica246QDU8TIHkdBcfKW0
-	+hfQmxN2K5OF03xmSSooCx1Gt45jDzw=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-541-GP3vU1zKNv-49zLZCqdeFw-1; Mon, 14 Jul 2025 10:18:18 -0400
-X-MC-Unique: GP3vU1zKNv-49zLZCqdeFw-1
-X-Mimecast-MFC-AGG-ID: GP3vU1zKNv-49zLZCqdeFw_1752502697
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-451d7de4ae3so28145335e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 07:18:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752502697; x=1753107497;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eAJ3iCVhDdz6z6h3YYRgguFqsc8zl+o4S274gAq3QzQ=;
-        b=OphL4o6vIVxEV4uCA23SCxo2Ulhxh0gJ1ImGjkln9DVocR7NK568pjID3BRvPfHW2H
-         SEyQFoEbqYN4v/ketlxcer1wr0eNDfXrRklmesWT5WY2Ef9bjhdMTFQM/864uGA3VePL
-         yyGAGC9CWtyTGjZwqXoKah+pUEgfbH4F7ij7TO51WqcSrRHSuenmajh+EOGGj8G9HpJ7
-         cUoWpbwEsE99kY8219gvdNfAO8O2ZFGlC7F9TNK+wEk1+59d1ESwMI4KdjJVud8RVYFH
-         QYOtssu4igrh4jOOeEuaGbPCGIx2PG0cclXR05PoYcWwrRccVjSFMj7yIbDUAiFjzrHf
-         Z3gA==
-X-Forwarded-Encrypted: i=1; AJvYcCVShXeM8/K5h4xhT//CQu56lsKaW2mGqNFqRIA+4b3mx0ZViaoBoc9G6xgim/7yPVAvZgGGNV0IhWh0WNg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws5xgBWdgDwINYiJxLQ6XBoc6s5fQXUaUzsKZZoOtjKpPfm6e5
-	LGhzj9MbBlOrXmhvDUDRBRV9SBeR/x0TsaOsgE9CiDedMGDYqHmMB0bgLe3eqj+HsKc5Ldz1qW4
-	Y451HvKfxyxZGegsHQNNIUjj2jLTOiFJEJLvhmyjOgY3TkJqqx/FPisLzo5OMj/OYvA==
-X-Gm-Gg: ASbGncuMaQDtoWkheZhrIWjO6HwEpVVqKcGg/wqQq7k0ASkU/gPurCLY+l4Tlw4m6TJ
-	YCsIaaOA2+64OKr9J2uoktuQJ1jxDQeiyql9wJPP9kkRpDgO3V94GYe11X4UrVRmggovZvRiMT3
-	iKUPkBitXxT2DWKxBhp/D9R/e0U0SZAFIBl8gifDfawacpCrSotbuxyXA0XaVZSmMJUkEz9Ysrz
-	e87iWgjI9GyqPmh0kl3MArnUXYeLYJLIKwxOL5TGsoIcMgmBGRu8UIAZQIijkpayN8GcfRkd2Ne
-	swvq2wX3wSD6bCX2esfPf/qUlKjMcJXxVc1Y0ifpMyC6dQE4U03bkw2GMg0DQD3VT1Tmu76Zndf
-	QxgvrvSa4KtR8qYtPxVL+4UrOqGsF8Rf3rHhz3zYe/O01KC5EEx5U6zFenVpzsq5+
-X-Received: by 2002:a05:600c:a08c:b0:456:22f0:d9ca with SMTP id 5b1f17b1804b1-45622f0de79mr13353515e9.26.1752502696734;
-        Mon, 14 Jul 2025 07:18:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEbT9ZPIoGGCqiO8MFBsH9vqN4nFX90UcX2di/BtWtN0bS6sk4srxVganZc03A1dsYc4N/AGw==
-X-Received: by 2002:a05:600c:a08c:b0:456:22f0:d9ca with SMTP id 5b1f17b1804b1-45622f0de79mr13353295e9.26.1752502696314;
-        Mon, 14 Jul 2025 07:18:16 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f38:ca00:ca3a:83da:653e:234? (p200300d82f38ca00ca3a83da653e0234.dip0.t-ipconnect.de. [2003:d8:2f38:ca00:ca3a:83da:653e:234])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-456114a417csm55711175e9.25.2025.07.14.07.18.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 07:18:14 -0700 (PDT)
-Message-ID: <ee19189f-7510-4ddd-85b0-34d6319f8fc6@redhat.com>
-Date: Mon, 14 Jul 2025 16:18:13 +0200
+	 In-Reply-To:Content-Type; b=kMBUB1zS8morjmjGQjshhelcDwP1H+F/xrhxdhlalY21OE4bnGkgW5Lz2oxm36todMdb7X3W8eF5REeFCMxk3fVyrJFxPna052UrLoKRB5R95yp09wz6fIt4O9DnSsyIMi6zHo8I/3t4dzcSuN7OUJTI2aiK4h8j8yT7ovKNMXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=L1nXbZKV; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D897F166D;
+	Mon, 14 Jul 2025 16:17:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1752502669;
+	bh=yBrMy2ksiPpLqhGVPw/Tp0fQhjdwAiixtdOl1OdvDoI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=L1nXbZKVCuAtJSYeteeQthbSIri3QRrHjm7qytFTY+uJKfrPW/YTKGuO2SqPWbJbH
+	 tdSw+uhEFwD8TSBIPWLeJlpc668RI46zvoI79pAxvpW+CMc5cxtLoQDny6/W6GJMIc
+	 rosAUdvvyji4TMJAeRvZNQGDAhDZgI6Sl4Dci4tk=
+Message-ID: <346254d7-af2d-4773-a896-2338f16a0e6d@ideasonboard.com>
+Date: Mon, 14 Jul 2025 15:18:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,103 +49,523 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/vma: refactor vma_modify_flags_name() to
- vma_modify_name()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250714135839.178032-1-lorenzo.stoakes@oracle.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v2 7/8] media: amlogic-c3: Use v4l2-params for validation
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Dafna Hirschfeld <dafna@fastmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+References: <20250710-extensible-parameters-validation-v2-0-7ec8918ec443@ideasonboard.com>
+ <20250710-extensible-parameters-validation-v2-7-7ec8918ec443@ideasonboard.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250714135839.178032-1-lorenzo.stoakes@oracle.com>
+From: Dan Scally <dan.scally@ideasonboard.com>
+Autocrypt: addr=dan.scally@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250710-extensible-parameters-validation-v2-7-7ec8918ec443@ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 14.07.25 15:58, Lorenzo Stoakes wrote:
-> The single instance in which we use this function doesn't actually need to
-> change VMA flags, so remove this parameter and update the caller
-> accordingly.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Hi Jacopo
+
+On 10/07/2025 14:52, Jacopo Mondi wrote:
+> Convert c3-ispa-params.c to use the new types fro block handlers
+> defined in v4l2-params.h and use the new helpers from v4l2-params.c
+> to remove boilerplate code from the driver.
+>
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 > ---
->   mm/madvise.c |  4 ++--
->   mm/vma.c     |  4 +---
->   mm/vma.h     | 15 +++++++--------
->   3 files changed, 10 insertions(+), 13 deletions(-)
-> 
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index 9de9b7c797c6..afa9e4db2adb 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -162,8 +162,8 @@ static int madvise_update_vma(vm_flags_t new_flags,
->   		return 0;
+>   .../media/platform/amlogic/c3/isp/c3-isp-params.c  | 263 ++++++++-------------
+>   1 file changed, 94 insertions(+), 169 deletions(-)
+>
+> diff --git a/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c b/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c
+> index c80667dd766210d2b2e1ee60c8254a5814b9d81b..259cb354ffddf4a1195422dfd9b3ba24c79607fc 100644
+> --- a/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c
+> +++ b/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c
+> @@ -9,64 +9,26 @@
 >   
->   	if (set_new_anon_name)
-> -		vma = vma_modify_flags_name(&vmi, madv_behavior->prev, vma,
-> -			range->start, range->end, new_flags, anon_name);
-> +		vma = vma_modify_name(&vmi, madv_behavior->prev, vma,
-> +			range->start, range->end, anon_name);
->   	else
+>   #include <media/v4l2-ioctl.h>
+>   #include <media/v4l2-mc.h>
+> +#include <media/v4l2-params.h>
+>   #include <media/videobuf2-vmalloc.h>
+>   
+>   #include "c3-isp-common.h"
+>   #include "c3-isp-regs.h"
+>   
+> -/*
+> - * union c3_isp_params_block - Generalisation of a parameter block
+> - *
+> - * This union allows the driver to treat a block as a generic struct to this
+> - * union and safely access the header and block-specific struct without having
+> - * to resort to casting. The header member is accessed first, and the type field
+> - * checked which allows the driver to determine which of the other members
+> - * should be used.
+> - *
+> - * @header:		The shared header struct embedded as the first member
+> - *			of all the possible other members. This member would be
+> - *			accessed first and the type field checked to determine
+> - *			which of the other members should be accessed.
+> - * @awb_gains:		For header.type == C3_ISP_PARAMS_BLOCK_AWB_GAINS
+> - * @awb_cfg:		For header.type == C3_ISP_PARAMS_BLOCK_AWB_CONFIG
+> - * @ae_cfg:		For header.type == C3_ISP_PARAMS_BLOCK_AE_CONFIG
+> - * @af_cfg:		For header.type == C3_ISP_PARAMS_BLOCK_AF_CONFIG
+> - * @pst_gamma:		For header.type == C3_ISP_PARAMS_BLOCK_PST_GAMMA
+> - * @ccm:		For header.type == C3_ISP_PARAMS_BLOCK_CCM
+> - * @csc:		For header.type == C3_ISP_PARAMS_BLOCK_CSC
+> - * @blc:		For header.type == C3_ISP_PARAMS_BLOCK_BLC
+> - */
+> -union c3_isp_params_block {
+> -	struct c3_isp_params_block_header header;
+> -	struct c3_isp_params_awb_gains awb_gains;
+> -	struct c3_isp_params_awb_config awb_cfg;
+> -	struct c3_isp_params_ae_config ae_cfg;
+> -	struct c3_isp_params_af_config af_cfg;
+> -	struct c3_isp_params_pst_gamma pst_gamma;
+> -	struct c3_isp_params_ccm ccm;
+> -	struct c3_isp_params_csc csc;
+> -	struct c3_isp_params_blc blc;
+> -};
 
-The doc of madvise_update_vma() is a bit misleading:
+Same comment as for the rkisp1, but also:
 
-"Update the vm_flags and/or anon_name"
 
-I assume it's xor? Do we want to sanity check that this will hold true?
+Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
 
-In general, LGTM.
-
--- 
-Cheers,
-
-David / dhildenb
-
+> -
+> -typedef void (*c3_isp_block_handler)(struct c3_isp_device *isp,
+> -				     const union c3_isp_params_block *block);
+> -
+> -struct c3_isp_params_handler {
+> -	size_t size;
+> -	c3_isp_block_handler handler;
+> -};
+> -
+>   #define to_c3_isp_params_buffer(vbuf) \
+>   	container_of(vbuf, struct c3_isp_params_buffer, vb)
+>   
+>   /* Hardware configuration */
+>   
+> -static void c3_isp_params_cfg_awb_gains(struct c3_isp_device *isp,
+> -					const union c3_isp_params_block *block)
+> +static void
+> +c3_isp_params_cfg_awb_gains(void *dev,
+> +			    const struct v4l2_params_block_header *block)
+>   {
+> -	const struct c3_isp_params_awb_gains *awb_gains = &block->awb_gains;
+> +	const struct c3_isp_params_awb_gains *awb_gains =
+> +		(const struct c3_isp_params_awb_gains *)block;
+> +	struct c3_isp_device *isp = dev;
+>   
+> -	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
+> +	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
+>   		c3_isp_update_bits(isp, ISP_TOP_BEO_CTRL,
+>   				   ISP_TOP_BEO_CTRL_WB_EN_MASK,
+>   				   ISP_TOP_BEO_CTRL_WB_DIS);
+> @@ -89,7 +51,7 @@ static void c3_isp_params_cfg_awb_gains(struct c3_isp_device *isp,
+>   			   ISP_LSWB_WB_GAIN2_IR_GAIN_MASK,
+>   			   ISP_LSWB_WB_GAIN2_IR_GAIN(awb_gains->gb_gain));
+>   
+> -	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
+> +	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
+>   		c3_isp_update_bits(isp, ISP_TOP_BEO_CTRL,
+>   				   ISP_TOP_BEO_CTRL_WB_EN_MASK,
+>   				   ISP_TOP_BEO_CTRL_WB_EN);
+> @@ -151,12 +113,15 @@ static void c3_isp_params_awb_cood(struct c3_isp_device *isp,
+>   			     ISP_AWB_IDX_DATA_VIDX_DATA(cfg->vert_coord[i]));
+>   }
+>   
+> -static void c3_isp_params_cfg_awb_config(struct c3_isp_device *isp,
+> -					 const union c3_isp_params_block *block)
+> +static void
+> +c3_isp_params_cfg_awb_config(void *dev,
+> +			     const struct v4l2_params_block_header *block)
+>   {
+> -	const struct c3_isp_params_awb_config *awb_cfg = &block->awb_cfg;
+> +	const struct c3_isp_params_awb_config *awb_cfg =
+> +		(const struct c3_isp_params_awb_config *)block;
+> +	struct c3_isp_device *isp = dev;
+>   
+> -	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
+> +	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
+>   		c3_isp_update_bits(isp, ISP_TOP_3A_STAT_CRTL,
+>   				   ISP_TOP_3A_STAT_CRTL_AWB_STAT_EN_MASK,
+>   				   ISP_TOP_3A_STAT_CRTL_AWB_STAT_DIS);
+> @@ -205,7 +170,7 @@ static void c3_isp_params_cfg_awb_config(struct c3_isp_device *isp,
+>   	c3_isp_params_awb_wt(isp, awb_cfg);
+>   	c3_isp_params_awb_cood(isp, awb_cfg);
+>   
+> -	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
+> +	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
+>   		c3_isp_update_bits(isp, ISP_TOP_3A_STAT_CRTL,
+>   				   ISP_TOP_3A_STAT_CRTL_AWB_STAT_EN_MASK,
+>   				   ISP_TOP_3A_STAT_CRTL_AWB_STAT_EN);
+> @@ -268,12 +233,15 @@ static void c3_isp_params_ae_cood(struct c3_isp_device *isp,
+>   			     ISP_AE_IDX_DATA_VIDX_DATA(cfg->vert_coord[i]));
+>   }
+>   
+> -static void c3_isp_params_cfg_ae_config(struct c3_isp_device *isp,
+> -					const union c3_isp_params_block *block)
+> +static void
+> +c3_isp_params_cfg_ae_config(void *dev,
+> +			    const struct v4l2_params_block_header *block)
+>   {
+> -	const struct c3_isp_params_ae_config *ae_cfg = &block->ae_cfg;
+> +	const struct c3_isp_params_ae_config *ae_cfg =
+> +		(const struct c3_isp_params_ae_config *)block;
+> +	struct c3_isp_device *isp = dev;
+>   
+> -	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
+> +	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
+>   		c3_isp_update_bits(isp, ISP_TOP_3A_STAT_CRTL,
+>   				   ISP_TOP_3A_STAT_CRTL_AE_STAT_EN_MASK,
+>   				   ISP_TOP_3A_STAT_CRTL_AE_STAT_DIS);
+> @@ -303,7 +271,7 @@ static void c3_isp_params_cfg_ae_config(struct c3_isp_device *isp,
+>   	c3_isp_params_ae_wt(isp, ae_cfg);
+>   	c3_isp_params_ae_cood(isp, ae_cfg);
+>   
+> -	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
+> +	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
+>   		c3_isp_update_bits(isp, ISP_TOP_3A_STAT_CRTL,
+>   				   ISP_TOP_3A_STAT_CRTL_AE_STAT_EN_MASK,
+>   				   ISP_TOP_3A_STAT_CRTL_AE_STAT_EN);
+> @@ -326,12 +294,15 @@ static void c3_isp_params_af_cood(struct c3_isp_device *isp,
+>   			     ISP_AF_IDX_DATA_VIDX_DATA(cfg->vert_coord[i]));
+>   }
+>   
+> -static void c3_isp_params_cfg_af_config(struct c3_isp_device *isp,
+> -					const union c3_isp_params_block *block)
+> +static void
+> +c3_isp_params_cfg_af_config(void *dev,
+> +			    const struct v4l2_params_block_header *block)
+>   {
+> -	const struct c3_isp_params_af_config *af_cfg = &block->af_cfg;
+> +	const struct c3_isp_params_af_config *af_cfg =
+> +		(const struct c3_isp_params_af_config *)block;
+> +	struct c3_isp_device *isp = dev;
+>   
+> -	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
+> +	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
+>   		c3_isp_update_bits(isp, ISP_TOP_3A_STAT_CRTL,
+>   				   ISP_TOP_3A_STAT_CRTL_AF_STAT_EN_MASK,
+>   				   ISP_TOP_3A_STAT_CRTL_AF_STAT_DIS);
+> @@ -351,20 +322,23 @@ static void c3_isp_params_cfg_af_config(struct c3_isp_device *isp,
+>   
+>   	c3_isp_params_af_cood(isp, af_cfg);
+>   
+> -	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
+> +	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
+>   		c3_isp_update_bits(isp, ISP_TOP_3A_STAT_CRTL,
+>   				   ISP_TOP_3A_STAT_CRTL_AF_STAT_EN_MASK,
+>   				   ISP_TOP_3A_STAT_CRTL_AF_STAT_EN);
+>   }
+>   
+> -static void c3_isp_params_cfg_pst_gamma(struct c3_isp_device *isp,
+> -					const union c3_isp_params_block *block)
+> +static void
+> +c3_isp_params_cfg_pst_gamma(void *dev,
+> +			    const struct v4l2_params_block_header *block)
+>   {
+> -	const struct c3_isp_params_pst_gamma *gm = &block->pst_gamma;
+> +	const struct c3_isp_params_pst_gamma *gm =
+> +		(const struct c3_isp_params_pst_gamma *)block;
+> +	struct c3_isp_device *isp = dev;
+>   	unsigned int base;
+>   	unsigned int i;
+>   
+> -	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
+> +	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
+>   		c3_isp_update_bits(isp, ISP_TOP_BED_CTRL,
+>   				   ISP_TOP_BED_CTRL_PST_GAMMA_EN_MASK,
+>   				   ISP_TOP_BED_CTRL_PST_GAMMA_DIS);
+> @@ -393,19 +367,21 @@ static void c3_isp_params_cfg_pst_gamma(struct c3_isp_device *isp,
+>   		}
+>   	}
+>   
+> -	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
+> +	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
+>   		c3_isp_update_bits(isp, ISP_TOP_BED_CTRL,
+>   				   ISP_TOP_BED_CTRL_PST_GAMMA_EN_MASK,
+>   				   ISP_TOP_BED_CTRL_PST_GAMMA_EN);
+>   }
+>   
+>   /* Configure 3 x 3 ccm matrix */
+> -static void c3_isp_params_cfg_ccm(struct c3_isp_device *isp,
+> -				  const union c3_isp_params_block *block)
+> +static void c3_isp_params_cfg_ccm(void *dev,
+> +				  const struct v4l2_params_block_header *block)
+>   {
+> -	const struct c3_isp_params_ccm *ccm = &block->ccm;
+> +	const struct c3_isp_params_ccm *ccm =
+> +		(const struct c3_isp_params_ccm *)block;
+> +	struct c3_isp_device *isp = dev;
+>   
+> -	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
+> +	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
+>   		c3_isp_update_bits(isp, ISP_TOP_BED_CTRL,
+>   				   ISP_TOP_BED_CTRL_CCM_EN_MASK,
+>   				   ISP_TOP_BED_CTRL_CCM_DIS);
+> @@ -442,19 +418,21 @@ static void c3_isp_params_cfg_ccm(struct c3_isp_device *isp,
+>   			   ISP_CCM_MTX_22_23_RS_MTX_22_MASK,
+>   			   ISP_CCM_MTX_22_23_RS_MTX_22(ccm->matrix[2][2]));
+>   
+> -	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
+> +	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
+>   		c3_isp_update_bits(isp, ISP_TOP_BED_CTRL,
+>   				   ISP_TOP_BED_CTRL_CCM_EN_MASK,
+>   				   ISP_TOP_BED_CTRL_CCM_EN);
+>   }
+>   
+>   /* Configure color space conversion matrix parameters */
+> -static void c3_isp_params_cfg_csc(struct c3_isp_device *isp,
+> -				  const union c3_isp_params_block *block)
+> +static void c3_isp_params_cfg_csc(void *dev,
+> +				  const struct v4l2_params_block_header *block)
+>   {
+> -	const struct c3_isp_params_csc *csc = &block->csc;
+> +	const struct c3_isp_params_csc *csc =
+> +		(const struct c3_isp_params_csc *)block;
+> +	struct c3_isp_device *isp = dev;
+>   
+> -	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
+> +	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
+>   		c3_isp_update_bits(isp, ISP_TOP_BED_CTRL,
+>   				   ISP_TOP_BED_CTRL_CM0_EN_MASK,
+>   				   ISP_TOP_BED_CTRL_CM0_DIS);
+> @@ -491,19 +469,21 @@ static void c3_isp_params_cfg_csc(struct c3_isp_device *isp,
+>   			   ISP_CM0_COEF22_OUP_OFST0_MTX_22_MASK,
+>   			   ISP_CM0_COEF22_OUP_OFST0_MTX_22(csc->matrix[2][2]));
+>   
+> -	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
+> +	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
+>   		c3_isp_update_bits(isp, ISP_TOP_BED_CTRL,
+>   				   ISP_TOP_BED_CTRL_CM0_EN_MASK,
+>   				   ISP_TOP_BED_CTRL_CM0_EN);
+>   }
+>   
+>   /* Set blc offset of each color channel */
+> -static void c3_isp_params_cfg_blc(struct c3_isp_device *isp,
+> -				  const union c3_isp_params_block *block)
+> +static void c3_isp_params_cfg_blc(void *dev,
+> +				  const struct v4l2_params_block_header *block)
+>   {
+> -	const struct c3_isp_params_blc *blc = &block->blc;
+> +	const struct c3_isp_params_blc *blc =
+> +		(const struct c3_isp_params_blc *)block;
+> +	struct c3_isp_device *isp = dev;
+>   
+> -	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
+> +	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
+>   		c3_isp_update_bits(isp, ISP_TOP_BEO_CTRL,
+>   				   ISP_TOP_BEO_CTRL_BLC_EN_MASK,
+>   				   ISP_TOP_BEO_CTRL_BLC_DIS);
+> @@ -517,13 +497,13 @@ static void c3_isp_params_cfg_blc(struct c3_isp_device *isp,
+>   		     ISP_LSWB_BLC_OFST1_GB_OFST(blc->gb_ofst) |
+>   		     ISP_LSWB_BLC_OFST1_B_OFST(blc->b_ofst));
+>   
+> -	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
+> +	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
+>   		c3_isp_update_bits(isp, ISP_TOP_BEO_CTRL,
+>   				   ISP_TOP_BEO_CTRL_BLC_EN_MASK,
+>   				   ISP_TOP_BEO_CTRL_BLC_EN);
+>   }
+>   
+> -static const struct c3_isp_params_handler c3_isp_params_handlers[] = {
+> +static const struct v4l2_params_handler c3_isp_params_handlers[] = {
+>   	[C3_ISP_PARAMS_BLOCK_AWB_GAINS] = {
+>   		.size = sizeof(struct c3_isp_params_awb_gains),
+>   		.handler = c3_isp_params_cfg_awb_gains,
+> @@ -568,16 +548,16 @@ static void c3_isp_params_cfg_blocks(struct c3_isp_params *params)
+>   
+>   	/* Walk the list of parameter blocks and process them */
+>   	while (block_offset < config->data_size) {
+> -		const struct c3_isp_params_handler *block_handler;
+> -		const union c3_isp_params_block *block;
+> +		const struct v4l2_params_handler *block_handler;
+> +		const struct v4l2_params_block_header *block;
+>   
+> -		block = (const union c3_isp_params_block *)
+> +		block = (const struct v4l2_params_block_header *)
+>   			 &config->data[block_offset];
+>   
+> -		block_handler = &c3_isp_params_handlers[block->header.type];
+> +		block_handler = &c3_isp_params_handlers[block->type];
+>   		block_handler->handler(params->isp, block);
+>   
+> -		block_offset += block->header.size;
+> +		block_offset += block->size;
+>   	}
+>   }
+>   
+> @@ -766,31 +746,35 @@ static void c3_isp_params_vb2_buf_queue(struct vb2_buffer *vb)
+>   	list_add_tail(&buf->list, &params->pending);
+>   }
+>   
+> +static int
+> +c3_isp_params_validate_buffer(struct device *dev,
+> +			      const struct v4l2_params_buffer *buffer)
+> +{
+> +	/* Only v0 is supported at the moment */
+> +	if (buffer->version != C3_ISP_PARAMS_BUFFER_V0) {
+> +		dev_dbg(dev, "Invalid params buffer version: %u\n",
+> +			buffer->version);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   static int c3_isp_params_vb2_buf_prepare(struct vb2_buffer *vb)
+>   {
+>   	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+>   	struct c3_isp_params_buffer *buf = to_c3_isp_params_buffer(vbuf);
+>   	struct c3_isp_params *params = vb2_get_drv_priv(vb->vb2_queue);
+> -	struct c3_isp_params_cfg *cfg = buf->cfg;
+>   	struct c3_isp_params_cfg *usr_cfg = vb2_plane_vaddr(vb, 0);
+>   	size_t payload_size = vb2_get_plane_payload(vb, 0);
+> -	size_t header_size = offsetof(struct c3_isp_params_cfg, data);
+> -	size_t block_offset = 0;
+> -	size_t cfg_size;
+> -
+> -	/* Payload size can't be greater than the destination buffer size */
+> -	if (payload_size > params->vfmt.fmt.meta.buffersize) {
+> -		dev_dbg(params->isp->dev,
+> -			"Payload size is too large: %zu\n", payload_size);
+> -		return -EINVAL;
+> -	}
+> +	struct c3_isp_params_cfg *cfg = buf->cfg;
+> +	int ret;
+>   
+> -	/* Payload size can't be smaller than the header size */
+> -	if (payload_size < header_size) {
+> -		dev_dbg(params->isp->dev,
+> -			"Payload size is too small: %zu\n", payload_size);
+> -		return -EINVAL;
+> -	}
+> +	ret = v4l2_params_buffer_validate(params->isp->dev, vb,
+> +					  params->vfmt.fmt.meta.buffersize,
+> +					  c3_isp_params_validate_buffer);
+> +	if (ret)
+> +		return ret;
+>   
+>   	/*
+>   	 * Use the internal scratch buffer to avoid userspace modifying
+> @@ -798,70 +782,11 @@ static int c3_isp_params_vb2_buf_prepare(struct vb2_buffer *vb)
+>   	 */
+>   	memcpy(cfg, usr_cfg, payload_size);
+>   
+> -	/* Only v0 is supported at the moment */
+> -	if (cfg->version != C3_ISP_PARAMS_BUFFER_V0) {
+> -		dev_dbg(params->isp->dev,
+> -			"Invalid params buffer version: %u\n", cfg->version);
+> -		return -EINVAL;
+> -	}
+> -
+> -	/* Validate the size reported in the parameter buffer header */
+> -	cfg_size = header_size + cfg->data_size;
+> -	if (cfg_size != payload_size) {
+> -		dev_dbg(params->isp->dev,
+> -			"Data size %zu and payload size %zu are different\n",
+> -			cfg_size, payload_size);
+> -		return -EINVAL;
+> -	}
+> -
+> -	/* Walk the list of parameter blocks and validate them */
+> -	cfg_size = cfg->data_size;
+> -	while (cfg_size >= sizeof(struct c3_isp_params_block_header)) {
+> -		const struct c3_isp_params_block_header *block;
+> -		const struct c3_isp_params_handler *handler;
+> -
+> -		block = (struct c3_isp_params_block_header *)
+> -			&cfg->data[block_offset];
+> -
+> -		if (block->type >= ARRAY_SIZE(c3_isp_params_handlers)) {
+> -			dev_dbg(params->isp->dev,
+> -				"Invalid params block type\n");
+> -			return -EINVAL;
+> -		}
+> -
+> -		if (block->size > cfg_size) {
+> -			dev_dbg(params->isp->dev,
+> -				"Block size is greater than cfg size\n");
+> -			return -EINVAL;
+> -		}
+> -
+> -		if ((block->flags & (C3_ISP_PARAMS_BLOCK_FL_ENABLE |
+> -				     C3_ISP_PARAMS_BLOCK_FL_DISABLE)) ==
+> -		    (C3_ISP_PARAMS_BLOCK_FL_ENABLE |
+> -		     C3_ISP_PARAMS_BLOCK_FL_DISABLE)) {
+> -			dev_dbg(params->isp->dev,
+> -				"Invalid parameters block flags\n");
+> -			return -EINVAL;
+> -		}
+> -
+> -		handler = &c3_isp_params_handlers[block->type];
+> -		if (block->size != handler->size) {
+> -			dev_dbg(params->isp->dev,
+> -				"Invalid params block size\n");
+> -			return -EINVAL;
+> -		}
+> -
+> -		block_offset += block->size;
+> -		cfg_size -= block->size;
+> -	}
+> -
+> -	if (cfg_size) {
+> -		dev_dbg(params->isp->dev,
+> -			"Unexpected data after the params buffer end\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	return 0;
+> +	return v4l2_params_blocks_validate(params->isp->dev,
+> +					   (struct v4l2_params_buffer *)cfg,
+> +					   c3_isp_params_handlers,
+> +					   ARRAY_SIZE(c3_isp_params_handlers),
+> +					   NULL);
+>   }
+>   
+>   static int c3_isp_params_vb2_buf_init(struct vb2_buffer *vb)
+>
 
