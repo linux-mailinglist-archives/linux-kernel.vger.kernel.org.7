@@ -1,225 +1,192 @@
-Return-Path: <linux-kernel+bounces-730374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C0EDB043C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:27:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C1EB043E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED6087B7BEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:24:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B62B1892AEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5FA25BEF4;
-	Mon, 14 Jul 2025 15:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB0F25F976;
+	Mon, 14 Jul 2025 15:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nxdXJQJj";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/9owpvsE";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UEp/JhV3";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8ymYQLTy"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VgoIzQ/R"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDB919F43A
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF378258CF1
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752506625; cv=none; b=mb3+cTryZRvN17yiaRB1spH0vSiiFS2xmBv2v6hgu8tkEOJqvxNKplIGFGOzsfMh721B4U/YTe1D5skfyoe92HiIcqLAT8UnlK6MZprfVPO6OS65TTfYDxH6g0HW9WY9tp6NvxTkZVeeXxnDwR1cRdZkF+JKkm4KTYsMj+/3SRA=
+	t=1752506663; cv=none; b=Ba8yrbJNB8SPtLVI/2fhCyA06ZFsy2nxDe0CDAJne5hGEMohfmNguiox/Qq6BLVlS3/9PtgrfB/e7pmMn1fnAOag/1XwDw8Q+IjJ/WldzKeo7cKFeArpyCUw6BHnpwxuQ81Q9IkcPPcV9ybeDseYd82mg7+Q99Mt4Rct+KT2yA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752506625; c=relaxed/simple;
-	bh=m9yCiSNZSmJwgUxoqijTBdCZ95opNkeTLt0JzyhQJEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M89EKjQbn/6TGJc6xOgacnkLwzkjPhtszSKmwzsq+xmSJGWOn0VPyPFTpJqY6FuOFNeMiUGIOx6td+PXVAxxQIWaY4b2aoiRi3cX4yAgkyGWf9YdgxUiUnf6K4SPJrwipIcilsDQDid0XGpkOCIEPdmVxPdEEtA0WOrnAI4rJeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nxdXJQJj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/9owpvsE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UEp/JhV3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8ymYQLTy; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2E4E021182;
-	Mon, 14 Jul 2025 15:23:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752506621; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1752506663; c=relaxed/simple;
+	bh=jiBzzr77jeGyCV4b2L7YbXGgDgVxt14PZGz5n2OykNY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OQU4pQO69KOTr9R1FHmtZhi3RPuuYSPFktxK81EIaKNPv9BWd9fMvWxJmRCWqGg/2LRY854SCnoitFwRkkdtCFD+WXtkqsrvlPscjSbNXcPm9YPrmb/igYUE0XmoxuZ1VpRBPOlP9o2citJGbgcKnTa7Cd2aFkB5x0K7+4UgnCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VgoIzQ/R; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752506660;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=igW3S1j6dab1xsXokYHODMX9e/lWyaqpQ1rt1YYZsQk=;
-	b=nxdXJQJj8Svbg2QZsy1dTnKhb/DemJqit491tiWHBzb6kpWeazsPMS9fw0m/2di9JVWTjW
-	TEzTj0KlZkNB7oRX8VLDDJUhEn3jtuix4cPMBkJmSjyMhlLvcXWX+YdNRLAdgBlrmd/lIe
-	b6su+3H37obswteLZGEqWeDZQRNUxR4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752506621;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=igW3S1j6dab1xsXokYHODMX9e/lWyaqpQ1rt1YYZsQk=;
-	b=/9owpvsEpEfkgHwgoBpGw+3Ou7+7kZPs9As4UHtQ5aTM8zfbWr05SnV6V8Xx1zHfOJ4C0A
-	UqSJqr4gfwHGmQDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="UEp/JhV3";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=8ymYQLTy
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752506620; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=igW3S1j6dab1xsXokYHODMX9e/lWyaqpQ1rt1YYZsQk=;
-	b=UEp/JhV3Eo6fnkYJquT2iPie8qpvSctmvBTHlFK5kQTd3JWh+uOLX+dhZp3ArCvtptxCZF
-	uRg1MfwG7XLIrXDomaAmd9ub4OvZZDOJjThOULOv5hENmKePYAlP3x4DgLMwboBMaQ3xdt
-	iNkKp8xMJZLeuztWaF6VHQUOo6SshKo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752506620;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=igW3S1j6dab1xsXokYHODMX9e/lWyaqpQ1rt1YYZsQk=;
-	b=8ymYQLTy+zVlB1aU9tSWWE/GbkyceqEVEfsH2itBKo6eNfdl/5+nskJwQJFOPf/Tx9S8Ml
-	VtYsU5Osi1exAPCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 775F9138A1;
-	Mon, 14 Jul 2025 15:23:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uwDeGPsgdWiKNAAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Mon, 14 Jul 2025 15:23:39 +0000
-Date: Mon, 14 Jul 2025 16:23:37 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, David Hildenbrand <david@redhat.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
-Subject: Re: [PATCH 3/5] mm/mseal: small cleanups
-Message-ID: <4ivcbimxvtojuvawrxnasgnhbepeohpix6owvm5y5scpyq45ui@3dutrp66wsgz>
-References: <cover.1752497324.git.lorenzo.stoakes@oracle.com>
- <4df6b55c407b5e6890429d4d7cc39e8f28948975.1752497324.git.lorenzo.stoakes@oracle.com>
+	bh=7hER77dU2efEPR5AO+ai2n3WJMard2PzwSK87xeF4+M=;
+	b=VgoIzQ/RScaI/UyTdNy/VkDO2Yynly09FmKSthVf6ylb2GidWo/+n7JzwOuoB6xaT3uZjl
+	6zgTlBkR8fNVsnGk6Wp0sP3ZHMNM93B5G6UGe6MZX4qIRzx53wLMKxigZGhmEVifsjhC+X
+	+3E1aavMYHsmD5up917e9VJNIrmTANA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-319-YaV5wMdBPBuorKsyO0KOLA-1; Mon, 14 Jul 2025 11:24:19 -0400
+X-MC-Unique: YaV5wMdBPBuorKsyO0KOLA-1
+X-Mimecast-MFC-AGG-ID: YaV5wMdBPBuorKsyO0KOLA_1752506658
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a5780e8137so2921692f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:24:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752506658; x=1753111458;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7hER77dU2efEPR5AO+ai2n3WJMard2PzwSK87xeF4+M=;
+        b=W0ht4KZrRp4p2VGF+kdF6NDD9Kz04OD4NmU24JWVTPUDmmrjm+LPvlmQj3OgfQhdy+
+         9OlDCjNDQKLPu0b/21ipC1KzOO00N9F5Ke4JmWc/niwZxdZsehQi90KtqCdayIPky4OE
+         jdptgmBPamnzgxWV6OlK1RSD2mVIvsl/s77K5BmyLPQvQwi2Tj+NK1qitycmTtuVf/7e
+         u0Q5bP/lN3RQBxdIVIYfTWQDQpRFAxZfzIUvAAxwfTZCQ9Noft9raCt4aZF4DMMTbsxD
+         KXmXdgJ+1XXuIlmYYoCGBl/DfS4f7c1+7r7iEbDhVG1xlYPuZwMaa1gu0ITqgg/bE1e9
+         /mug==
+X-Forwarded-Encrypted: i=1; AJvYcCVk/TOP7ej/Ctex0SsIN4adlUkhn62UcV+kPLu76WYmFaDSKP54Akd35CriD4svzQy5Y44Nx18mxbEwQoo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw41gLqlWUMqqrU4DVb1sv3pwsEPIy7mtAO5ZHiTBwlFLx2+Lc3
+	SIl3hsIH3A+hMe62lOdvFwsZT+0BveHZ+vLZS1RIkIk9mBgHyXTmN2s8lUcoWzqXMfIEngWJdJo
+	t47jw28UI0y5EmpX4G7aGmDUyMqIqU2BVhRtMmL0w7FskVYD+Us7dhgz9QpC8Js+Pyw==
+X-Gm-Gg: ASbGncuIpVL/jnSRuB0dbVBRnRmOc4OC6s6MAVf60TTFRmJEzXLB3SUJLtDqe4sjaPE
+	80p4V103f6gUdr9BnhZT+jx9vkatuSrucmoPoBv47uNi3oZ54Lf6mlompSQfdRAjIq9Kr2T57pb
+	HP0iLqhMZV/fXZYyMw9vodhhL6dX3knFfgQNTjA9OUL8nUTrJSc1vSJWOY+zgi2uXdmZY2WiazE
+	1W1enVv/T/aBikFOOK7yTUF4uhiXrnqTZ0DwAMOIaMrFLKpHbztbZEeMkdxZlgE6qAS+JsPpKPQ
+	fD3zbxfNOSrvKmNt+nRvYYeB+l/vKOJU8UgpUSz9yQvo9b1AsH79cW+w5I0yILi3OHWXjGeXlaS
+	3Vw2zjmABYuuNo2WCJWQtOQlQ3mJqi/lEdbmZTI0yMDs7Liv/YSR3S+L2qHWRWE9m
+X-Received: by 2002:a05:6000:250c:b0:3a4:cec5:b59c with SMTP id ffacd0b85a97d-3b5e7f3b047mr16777142f8f.25.1752506657904;
+        Mon, 14 Jul 2025 08:24:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEgw0twrOXJl14XHoT9KdirKpxc0GUYVGI+Vrz9PtEtgVkL77KS9gg06YqYOwBZtiRhE7VT7g==
+X-Received: by 2002:a05:6000:250c:b0:3a4:cec5:b59c with SMTP id ffacd0b85a97d-3b5e7f3b047mr16777107f8f.25.1752506657390;
+        Mon, 14 Jul 2025 08:24:17 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f38:ca00:ca3a:83da:653e:234? (p200300d82f38ca00ca3a83da653e0234.dip0.t-ipconnect.de. [2003:d8:2f38:ca00:ca3a:83da:653e:234])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0dc3esm12579651f8f.47.2025.07.14.08.24.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 08:24:16 -0700 (PDT)
+Message-ID: <0c78bc9b-8aae-47ba-9679-423d862591df@redhat.com>
+Date: Mon, 14 Jul 2025 17:24:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4df6b55c407b5e6890429d4d7cc39e8f28948975.1752497324.git.lorenzo.stoakes@oracle.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 2E4E021182
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] mm/mseal: move madvise() logic to mm/madvise.c
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
+References: <cover.1752497324.git.lorenzo.stoakes@oracle.com>
+ <5d932ec1f9d0ea115aac65067e4cb8241a06e791.1752497324.git.lorenzo.stoakes@oracle.com>
+ <5e21df9f-7f75-412b-a173-fe6da49952e5@redhat.com>
+ <b9bb8416-24a0-4bd2-97c1-055460cece23@lucifer.local>
+ <0925c64b-c721-4dc5-913a-c43a94dc64a3@redhat.com>
+ <c57a0048-17dd-445b-8d92-4c8cc6f47d17@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Organization: Red Hat
+In-Reply-To: <c57a0048-17dd-445b-8d92-4c8cc6f47d17@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 14, 2025 at 02:00:38PM +0100, Lorenzo Stoakes wrote:
-> Drop the wholly unnecessary set_vma_sealed() and vma_is_sealed() helpers
-> which are used only once, and place VMA_ITERATOR() declarations in the
-> correct place.
+On 14.07.25 17:18, Lorenzo Stoakes wrote:
+> On Mon, Jul 14, 2025 at 05:03:03PM +0200, David Hildenbrand wrote:
+>>>> or sth like that would surely clean that up further.
+>>>
+>>> Well, I plan to make this not a thing soon so I'd rather not.
+>>>
+>>> The intent is to make _all_ VMA flags work on 32-bit kernels. I have done some
+>>> preparatory work and next cycle intend to do more on this.
+>>>
+>>> So I'd rather avoid any config changes on this until I've given this a shot.
+>>
+>> Sure, if that is in sight.
 > 
-> No functional change intended.
+> Yes :)
 > 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  mm/mseal.c |  9 +--------
->  mm/vma.h   | 16 ++--------------
->  2 files changed, 3 insertions(+), 22 deletions(-)
+>>>>> + * only do so via an appropriate madvise() call.
+>>>>> + */
+>>>>> +static bool can_madvise_modify(struct madvise_behavior *madv_behavior)
+>>>>> +{
+>>>>> +	struct vm_area_struct *vma = madv_behavior->vma;
+>>>>> +
+>>>>> +	/* If the operation won't discard, we're good. */
+>>>>> +	if (!is_discard(madv_behavior->behavior))
+>>>>> +		return true;
+>>>>
+>>>>
+>>>> Conceptually, I would do this first and then handle all the discard cases /
+>>>> exceptions.
+>>>
+>>> Hm I'm confused :P we do do this first? I think the idea with this is we can
+>>> very cheaply ignore any MADV_ that isn't applicable.
+>>>
+>>> Did you mean to put this comment under line below?
+>>>
+>>> I mean it's not exactly a perf hotspot so don't mind moving them around.
+>>
+>> I was thinking of this (start with sealed, then go into details about
+>> discards):
+>>
+>> /* If the VMA isn't sealed, we're all good. */
+>> if (can_modify_vma(vma))
+>> 	return true;
+>>
+>> /* In a sealed VMA, we only care about discard operations. */
+>> if (!is_discard(madv_behavior->behavior))
+>> 	return true;
+>>
+>> /* But discards of file-backed mappings are fine. */
+>> if (!vma_is_anonymous(vma))
+>> 	return true;
 > 
-> diff --git a/mm/mseal.c b/mm/mseal.c
-> index 1308e88ab184..adbcc65e9660 100644
-> --- a/mm/mseal.c
-> +++ b/mm/mseal.c
-> @@ -15,11 +15,6 @@
->  #include <linux/sched.h>
->  #include "internal.h"
+> Right yeah.
 > 
-> -static inline void set_vma_sealed(struct vm_area_struct *vma)
-> -{
-> -	vm_flags_set(vma, VM_SEALED);
-> -}
-> -
->  static int mseal_fixup(struct vma_iterator *vmi, struct vm_area_struct *vma,
->  		struct vm_area_struct **prev, unsigned long start,
->  		unsigned long end, vm_flags_t newflags)
-> @@ -36,7 +31,7 @@ static int mseal_fixup(struct vma_iterator *vmi, struct vm_area_struct *vma,
->  		goto out;
->  	}
+>>
+>> ...
+>>
+>>
+>> But now I wonder, why is it okay to discard anon pages in a MAP_PRIVATE file
+>> mapping?
 > 
-> -	set_vma_sealed(vma);
-> +	vm_flags_set(vma, VM_SEALED);
->  out:
->  	*prev = vma;
->  	return ret;
-> @@ -53,7 +48,6 @@ static int check_mm_seal(unsigned long start, unsigned long end)
->  {
->  	struct vm_area_struct *vma;
->  	unsigned long nstart = start;
-> -
->  	VMA_ITERATOR(vmi, current->mm, start);
-> 
->  	/* going through each vma to check. */
-> @@ -78,7 +72,6 @@ static int apply_mm_seal(unsigned long start, unsigned long end)
->  {
->  	unsigned long nstart;
->  	struct vm_area_struct *vma, *prev;
-> -
->  	VMA_ITERATOR(vmi, current->mm, start);
-> 
->  	vma = vma_iter_load(&vmi);
-> diff --git a/mm/vma.h b/mm/vma.h
-> index 6515045ba342..d17f560cf53d 100644
-> --- a/mm/vma.h
-> +++ b/mm/vma.h
-> @@ -560,31 +560,19 @@ struct vm_area_struct *vma_iter_next_rewind(struct vma_iterator *vmi,
->  }
-> 
->  #ifdef CONFIG_64BIT
-> -
-> -static inline bool vma_is_sealed(struct vm_area_struct *vma)
-> -{
-> -	return (vma->vm_flags & VM_SEALED);
-> -}
+> I'm duplicating existing logic here (well updating from the vma->vm_file check
+> and a seemingly pointless !vma->vm_file && vma->vm_flags & VM_SHARED check), but
+> this is a good point...
 
-I actually don't hate this helper...
+Yeah, not blaming you, just scratching my head :)
 
-> -
-> -/*
-> - * check if a vma is sealed for modification.
-> - * return true, if modification is allowed.
-> - */
-> +/* Check if a vma is sealed for modification. */
->  static inline bool can_modify_vma(struct vm_area_struct *vma)
+> 
+> For the purposes of the refactoring I guess best to keep the logic ostensibly
+> the same given the 'no functional change intended', but we do need to fix this
+> yes.
 
-As you're in the area, vma_can_modify() maybe?
 
-In any case, LGTM.
-
-Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+Likely a fix should be pulled in early? Not sure ... but it sure sounds 
+broken.
 
 -- 
-Pedro
+Cheers,
+
+David / dhildenb
+
 
