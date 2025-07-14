@@ -1,212 +1,129 @@
-Return-Path: <linux-kernel+bounces-730737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76985B048F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:02:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27667B04918
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98A183AF19C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:02:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 186594A2182
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B822586EF;
-	Mon, 14 Jul 2025 21:02:35 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68787246BD9;
+	Mon, 14 Jul 2025 21:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="aYiEzL/X"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984C5238C07
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 21:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DD822B8AB
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 21:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752526955; cv=none; b=qSmpLkry8Cxqy6My5qk2caDizSmZMViSJicY2/2ONr7K/ehY7xCyG1cW+XHS5tOdi7qCY4XouhjFqkTx72cIqpk8dCfsqRdZ6N5BGLylay/IgqSk2ZR0pfrwsZHse+A98G5RiMz0OSRCmFxI0PRxWU4A5AZfO+YppwsJC4KjR0I=
+	t=1752527100; cv=none; b=KBn0oPGTOQ7BWny3HRxwwLD+vLO0pW+o2FiKcdJXR0/R+KmO6vFJ2n+AAeXs0VZhY8QT3ZCg8HUHB2RQhAiDbJfnaSgY9f5hcDEt6nscTitOz8+jVlAUhkXPXs4M42vUeErJfo389UJ2CgFeKTQEziP+VaqznvYVldsDvnD0pZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752526955; c=relaxed/simple;
-	bh=xH3QLy9ZM+VnbqR3ZsfNogbkwjOy1dIvl2E4ICHDUwY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cEgQJeY1LIX1jwIjgwvRzSNy5FE2Y1vvRfSLZ2nU09RJZd0w3NXpE9kWC4tzefS/dMZ+2td+IWbv9/H+ahZ8Kpg2AhGKBQXn0x9/cH7B64oJRXfqC9JRG4osK7fBNrBWBnIsx/3DsaAQWZB0582A1hlZdgyeeMmJ0623CuLfH2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-869e9667f58so1085653839f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:02:33 -0700 (PDT)
+	s=arc-20240116; t=1752527100; c=relaxed/simple;
+	bh=kKKsOnpU0NnOUJMvys4b/qS9BpZLFqkwfY0HlkzvFJo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fhJ8rrCBgmPFZPGuQtzEEz442aYDImKkllP7q885Vq187aq6gqvu/JxQ1IxMeoq5PIwgmf3CaUuZSfFUSwEtlrsFQ6O/qrz6b+yXlqf89Tkt1vVqJPUCqavdl8xi6hXQdXpIJZw2PzkwPDpTZ3wWM90q6fyG5+DmaYMDyVRQ0iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=aYiEzL/X; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ae0e0271d82so863452566b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:04:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1752527097; x=1753131897; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=o7j+tdj5C19qAgcG0fPsTn8QHzt9fJ0mLSefBxii0zs=;
+        b=aYiEzL/XPo7CuCHojLBhQsnQ0qCL/b2IYVj3DvLVtrrrCx/3S21TP6wRADfhIK5z4U
+         BTgB8yjKV0QklPf2OiABW4RF92TuP0y2fObcchyivr5mIVy+weqql8RfYSFdcgqfDObV
+         E4TFpG4xgcp/eEMmPcTo9Qtn89fIJh0Ud9Whc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752526953; x=1753131753;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C2Q1NLh7gUoTVClx27jDS/g66nSd1V24PSANTOejsys=;
-        b=R8ZuNZqrlCBDF3E9W9SizMXqpYlm7oQGPJlYkQVTDaIExhSC5BhAsSp5S77mp/mxbm
-         pmsp6YHsX7LMyofzwHMyvGoEukmW6tTLiXxi/dvYxZCU8UDkjvQO8J6P4evx4cVP/+Cu
-         e3mF9g3pdiQG/z69G+F2UuXFis41e0T1cNeXVyN6t3X7lstYhAaTH3kABQZSYlYAfdlo
-         KS68dgfX1ksYXfK1hntN7kmLdMgD0hjRgPYFvtp7sWPcAKxfoZ6UBsOBcBk/970xKVYd
-         pjha1JEEXfZVp/9AiJXlv/Nz6kgThoxzOBz8z7jVnqNzzURXt4M6T8ac4dCVG7/TOO+E
-         bjNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHsypRqdnlw3pp2y0slyVdy4MPM1o2h4XCfwebhuF8n209bHim/GmhFuRmFJNHbG672trRSB6uoOv7D/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyDIFMCjn/luwSdA4Aanb5+EGQpzOUYXACYi4Y+jUpAtJR2dvv
-	jQXVCqahZoVfvfgmUXupgybjYjYcTYpYnuAvlmbo5OdxBnliI2Vdc+K1zPth/aFFxQa1LWP1kQU
-	Ws3qOLu1gRdUPWJVX2TBS88RWLwa0mralJdPac0xar36sL4uw/yVfUn0vfhs=
-X-Google-Smtp-Source: AGHT+IH8lFGhU84Vmgqxm566NwZTQrh3zGXp2GScmXDpOp9azBaSRZ+zVJ3KiQ1WYhskdPAtHVvLeToalmaGLoapz1rMj4jaMNII
+        d=1e100.net; s=20230601; t=1752527097; x=1753131897;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o7j+tdj5C19qAgcG0fPsTn8QHzt9fJ0mLSefBxii0zs=;
+        b=FEu/5cPOkU/RQnXKWh0PXYPykVCGAXOFQ+5z8BW6lrrnEjo1fEfdWjoytfD/p9Whdo
+         lUF7xgs8DxT5XXwBXpomfxV2snW0SfAXLBsJym7RClCkHXUt/MMm9gOll/oPmY174sd5
+         Kve4+01dvhqNckyhmnYVHnhIQ8mlq/hSazrulxsSBvAVKOzclTLw15j6MNzZUZybcQxF
+         mQH5HqETizVedL3ziKjiMC0js+lOSKsxNOCcCZHxkuTCa/4gUifmYhPJU4AHjxcAFArH
+         mOFixoSR2Rpf3FYWOCT/KFVUZArRBLkSabm8PL18f6gW88AVzHHBNwaEykTM1e92Zk+H
+         EdMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkhn9TQsfg6GbporzDiFQwlLYdAOjEFZkHOKzZtdakKx23ViequipsQYwj3t3lQAr8XDedVZb7+kG6EQ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrXFqcCwKZwgySFt8+uo9/m+anqsdq153H+kS9FmqzFiOSjCLK
+	ST9Aj+ydcM1xOU0i/2urL+1RXgw4S0DJM7vVFzhOngA3Cp9IdDd8h7ONS8sHKBA68FcCtw5AFvg
+	kB0c1M8s=
+X-Gm-Gg: ASbGncvngWxk4JL7ZdnIYDbnbv+f/hbL1/od/T3+bb8UQbcV93Mc49XNcYDIzyRDhut
+	s5F7RqzHqnZMeZ8SCTMyJukT0/dx5MEVvLmOQB91DxOD/e8a1doOqBMBL0RRflxqQSRkF3G6Olb
+	ByUkoLUGej9NTxByLP7hi+cpOo7aMJdUpLtyWJiZYBMhlIq9ooCGLoqB6Vuq+Fb9nYpLv4C/8bn
+	dsCp7Ex6FAeap7J4V8eKq2CcR+hi47+nXssDTBR8ufsk/y2eAv+c5x/P9zmwUmwVnDH2pinJLzP
+	bSS3v2O8gymefUP96nkcQWCvVGSUFcL76rNESHdtSzOE9lPv3gIORsQd76l5OFipT+3RraygF3w
+	7tA3McXD5it3Fo4/z0icg6/neCZB7us3cGJstneOkP27hS47UuXkwaFgF4T3Q6Pg+BnwYOVZ1
+X-Google-Smtp-Source: AGHT+IH2LXOZuIvJSSKlKH5ovVQfOMkUggfZE183eHR0ISUsi60QLOr/DiE8/NoKSpHOd4Wb9oeE0g==
+X-Received: by 2002:a17:907:1b1b:b0:ad5:3055:a025 with SMTP id a640c23a62f3a-ae6fbc1278fmr1515899166b.6.1752527096800;
+        Mon, 14 Jul 2025 14:04:56 -0700 (PDT)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82646bcsm884494866b.76.2025.07.14.14.04.55
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 14:04:55 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae0e0271d82so863448766b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:04:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW8AiQdF5mPay9mYnafzA2hZpsAHoPxx2CG/6WFc/bFEdVmfJFn1/J/Vw1s4G2XXfujypX7QmqlhJ6R+Q8=@vger.kernel.org
+X-Received: by 2002:a17:907:9811:b0:ad5:2328:e39b with SMTP id
+ a640c23a62f3a-ae6fbf20e29mr1557082966b.31.1752527095382; Mon, 14 Jul 2025
+ 14:04:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:60ca:b0:86c:ef0b:3a52 with SMTP id
- ca18e2360f4ac-8797883ec84mr1643507939f.11.1752526952671; Mon, 14 Jul 2025
- 14:02:32 -0700 (PDT)
-Date: Mon, 14 Jul 2025 14:02:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68757068.a70a0220.18f9d4.000a.GAE@google.com>
-Subject: [syzbot] [wireless?] INFO: task hung in el1_interrupt
-From: syzbot <syzbot+6d053681b57b25d51ba9@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <b554bfa3-d710-4671-945b-5d6ec49e52cd@efficios.com>
+ <CAHk-=wiT9Cz+EbbuKozqiu7DnZQ7ftAWSmGf-xy_CdhJPCsNSg@mail.gmail.com>
+ <20250714162750.45b12314@gandalf.local.home> <20250714163755.1de132e9@gandalf.local.home>
+In-Reply-To: <20250714163755.1de132e9@gandalf.local.home>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 14 Jul 2025 14:04:38 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgZ=Ssx4qoeuaHet1vx+8M36j0a3q2aw5ePapWm=KnSfQ@mail.gmail.com>
+X-Gm-Features: Ac12FXxgxQ74p-HG2EZ3yuBIOqCHspSs0ChSswys_Pk0Zb8Ct7ymqms-niRLlxM
+Message-ID: <CAHk-=wgZ=Ssx4qoeuaHet1vx+8M36j0a3q2aw5ePapWm=KnSfQ@mail.gmail.com>
+Subject: Re: [RFC] LTTng upstreaming next steps
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Steven Rostedt <rostedt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christoph Hellwig <hch@infradead.org>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Mon, 14 Jul 2025 at 13:37, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> If LTTng were to be in tree, it would be much easier to work on a strategy
+> to merge the infrastructure as the maintainers of both would have better
+> access to each other's code.
 
-syzbot found the following issue on:
+That's not a bet I'd take.
 
-HEAD commit:    ec4801305969 Merge branches 'for-next/core' and 'for-next/..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=157c3a8c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9e99b6fcd403d050
-dashboard link: https://syzkaller.appspot.com/bug?extid=6d053681b57b25d51ba9
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=141c0d82580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=137c3a8c580000
+If people haven't unified this in the last two decades, I'm noty going
+to take the argument of "hey, merge it because *then* it will be
+unified".
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/64d8dc107d9d/disk-ec480130.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/31280b2dee28/vmlinux-ec480130.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b3f9fb3d09f8/Image-ec480130.gz.xz
+Because honestly, that sounds like a total fairy tale to me: "the
+princess came along and kissed the toad, and he turned into a
+beautiful price, and they lived happily ever after".
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6d053681b57b25d51ba9@syzkaller.appspotmail.com
+So no. I don't believe in fairy tales. Not when we have two decades of
+"that didn't happen".
 
-INFO: task kworker/u8:7:279 blocked for more than 143 seconds.
-      Not tainted 6.16.0-rc5-syzkaller-gec4801305969 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u8:7    state:D stack:0     pid:279   tgid:279   ppid:2      task_flags:0x4208060 flags:0x00000010
-Workqueue: events_power_efficient crda_timeout_work
-Call trace:
- __switch_to+0x414/0x834 arch/arm64/kernel/process.c:742 (T)
- context_switch kernel/sched/core.c:5401 [inline]
- __schedule+0x1414/0x2a28 kernel/sched/core.c:6790
- preempt_schedule_irq+0x80/0x188 kernel/sched/core.c:7113
- arm64_preempt_schedule_irq+0x44/0x58 arch/arm64/kernel/entry-common.c:305
- el1_interrupt+0x3c/0x
- __el1_irq arch/arm64/kernel/entry-common.c:656 [inline]
- el1_interrupt+0x3c/0x54 arch/arm64/kernel/entry-common.c:668
- el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:673
- el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:592
- __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline] (P)
- arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline] (P)
- put_cpu_partial+0x154/0x1c0 mm/slub.c:3258 (P)
- __slab_free+0x1b0/0x280 mm/slub.c:4513
- do_slab_free mm/slub.c:4595 [inline]
- ___cache_free+0x150/0x170 mm/slub.c:4701
- qlink_free+0x48/0x94 mm/kasan/quarantine.c:163
- qlist_free_all+0x44/0xb8 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x118/0x124 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x2c/0x88 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4148 [inline]
- slab_alloc_node mm/slub.c:4197 [inline]
- __kmalloc_cache_noprof+0x238/0x3fc mm/slub.c:4354
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- regulatory_hint_core net/wireless/reg.c:3246 [inline]
- restore_regulatory_settings+0x1664/0x2504 net/wireless/reg.c:3578
- crda_timeout_work+0x38/0x68 net/wireless/reg.c:543
- process_one_work+0x7e8/0x155c kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3321 [inline]
- worker_thread+0x958/0xed8 kernel/workqueue.c:3402
- kthread+0x5fc/0x75c kernel/kthread.c:464
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:843
+If people can unify this and merge it incrementally, that's one thing.
 
-Showing all locks held in the system:
-3 locks held by kworker/u8:0/12:
- #0: ffff0000d11ae948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work+0x63c/0x155c kernel/workqueue.c:3212
- #1: ffff800097a87bc0 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work+0x6d4/0x155c kernel/workqueue.c:3212
- #2: ffff8000928b6568 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock+0x20/0x2c net/core/rtnetlink.c:80
-2 locks held by kworker/1:0/24:
-1 lock held by khungtaskd/32:
- #0: ffff80008f8599c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48 include/linux/rcupdate.h:330
-3 locks held by kworker/u8:2/41:
- #0: ffff0000c0031948 ((wq_completion)events_power_efficient){+.+.}-{0:0}, at: process_one_work+0x63c/0x155c kernel/workqueue.c:3212
- #1: ffff8000990e7bc0 ((reg_check_chans).work){+.+.}-{0:0}, at: process_one_work+0x6d4/0x155c kernel/workqueue.c:3212
- #2: ffff8000928b6568 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock+0x20/0x2c net/core/rtnetlink.c:80
-3 locks held by kworker/u8:3/42:
-5 locks held by pr/ttyAMA0/43:
-2 locks held by kworker/u8:6/217:
-4 locks held by kworker/u8:7/279:
-3 locks held by kworker/u8:8/318:
-2 locks held by kworker/1:2/1821:
-3 locks held by kworker/u8:10/2084:
-3 locks held by kworker/u8:11/2164:
-4 locks held by kworker/0:2/2316:
-1 lock held by klogd/6132:
-4 locks held by udevd/6143:
-3 locks held by dhcpcd/6198:
-2 locks held by getty/6295:
- #0: ffff0000d25040a0 (&tty->ldisc_sem){++++}-{0:0}, at: ldsem_down_read+0x3c/0x4c drivers/tty/tty_ldsem.c:340
- #1: ffff80009ba2e2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x34c/0xfa4 drivers/tty/n_tty.c:2222
-2 locks held by kworker/1:3/6637:
-3 locks held by kworker/0:3/6642:
- #0: ffff0000c0028d48 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x63c/0x155c kernel/workqueue.c:3212
- #1: ffff80009ff67bc0 (deferred_process_work){+.+.}-{0:0}, at: process_one_work+0x6d4/0x155c kernel/workqueue.c:3212
- #2: ffff8000928b6568 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock+0x20/0x2c net/core/rtnetlink.c:80
-1 lock held by syz-executor/6650:
- #0: ffff8000928b6568 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock+0x20/0x2c net/core/rtnetlink.c:80
-3 locks held by syz-executor/6651:
- #0: ffff80009291bdb0 (cb_lock){++++}-{4:4}, at: genl_rcv+0x28/0x50 net/netlink/genetlink.c:1218
- #1: ffff80009291bbc8 (genl_mutex){+.+.}-{4:4}, at: genl_lock net/netlink/genetlink.c:35 [inline]
- #1: ffff80009291bbc8 (genl_mutex){+.+.}-{4:4}, at: genl_op_lock net/netlink/genetlink.c:60 [inline]
- #1: ffff80009291bbc8 (genl_mutex){+.+.}-{4:4}, at: genl_rcv_msg+0xf4/0x624 net/netlink/genetlink.c:1209
- #2: ffff8000928b6568 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock+0x20/0x2c net/core/rtnetlink.c:80
-2 locks held by syz-executor/6657:
- #0: ffff80009291bdb0 (cb_lock){++++}-{4:4}, at: genl_rcv+0x28/0x50 net/netlink/genetlink.c:1218
- #1: ffff8000928b6568 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock+0x20/0x2c net/core/rtnetlink.c:80
-1 lock held by syz-executor/6658:
- #0: ffff8000928b6568 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock+0x20/0x2c net/core/rtnetlink.c:80
-3 locks held by kworker/u8:12/6822:
-3 locks held by kworker/u8:13/6823:
-2 locks held by kworker/1:5/6824:
-3 locks held by kworker/u8:16/6827:
-2 locks held by kworker/u8:17/6828:
-3 locks held by syz-executor/6829:
-2 locks held by udevd/6832:
+Until then, you're just making stuff up.
 
-=============================================
+"Show me the code", in other words.
 
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+              Linus
 
