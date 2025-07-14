@@ -1,110 +1,145 @@
-Return-Path: <linux-kernel+bounces-730783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB78B049BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:50:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910BDB049C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A4B17A82B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:49:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C54293B7B22
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6328223BD0B;
-	Mon, 14 Jul 2025 21:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECBE25E816;
+	Mon, 14 Jul 2025 21:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xC6TWPEo"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=weidenauer.cc header.i=@weidenauer.cc header.b="BhHUe+35"
+Received: from taubenbroetchen.weidenauer.cc (taubenbroetchen.weidenauer.cc [37.252.242.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E06190676
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 21:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D9523A9A8;
+	Mon, 14 Jul 2025 21:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.252.242.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752529820; cv=none; b=sP5NviVar5IsPt6IuvrDvaZnFu79pOyte9gIt8S53qzJ7+cLhuUIFgpoUVfAdz5TjhP+a0a10bwHwgJQyXrDyA9yM1jVu72/Wjd/N1vv9WVv8haxybjHJQ5z2tT9H6BQGPaChVS9ZBS0U9DomiBtyfBKr/zh+OWeCHlspKFo87w=
+	t=1752530070; cv=none; b=W6m1KWu1g9khjL63J8c5IhLRQS6H178dUCfLlIMjKrgEsAUMaPQ+/+1dizksSekipMzfD/Ym+t/j5twP6tYbTxW0x7lGuGF/BR9yTihR9GhjXTY9iXwI4olN1iDC+u6VwOMhQNk6aRzQ5nME5u95V2Ao8kOFjuebh3MiKUC3yeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752529820; c=relaxed/simple;
-	bh=iM0bLDr0wjEfompnEdKiLWQmyHdzCRZYdk03xCWbjnI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rZHP+8E9elwVkJIluzjghsWfoup19qIcbdN7ZXWE0bmjXcBAbOYLD7PMQytF8a6W4IJQPHVf7nMww29rPPssiG15TrJNWaNl3mX6ozl56BY/Am4hDkDgIan2YmiKEYyqaZK7+i0ZFhBESTMNFlFljl8YQEmnUV01L/SOtBIQDxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xC6TWPEo; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <750dd5f1-a5f8-4ed2-a448-1a57cb5447dc@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752529815;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PhuocBLqA3gzBc4uu2GGr+rR7kPr/v7HEImY11Vzz0E=;
-	b=xC6TWPEoJvNnTQcLv2Qk9thEImxEEpeJqn7+RCxAi0mkv9//Ag4ZtRq8vJz0UUdBGuwd7v
-	ya6xCN5GomrCWpqJwJ/ACd97T4mTIq7jDgepOUQaraIQkLKYwBto6SRCXYlZyUKg7r6row
-	hkfLasBNcNLb2hVSMr/blgIx8JVP0oo=
-Date: Tue, 15 Jul 2025 05:50:10 +0800
+	s=arc-20240116; t=1752530070; c=relaxed/simple;
+	bh=ZdtovMNt9ZNn1pVjaqdynhY0nvuEphqZNR8E6ktlgT8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=HJJgpxrnQYCKhZZlui8ia6I/Bsm4miLvBD1FoxrZOYNDCLpsvZuIiZfzNVgnk0DRcI2ZhpOWViIIYN1KV+HqfxRtnUKvQGhAkpl48KoGd9Owl2A8WpsjtWCErNfIOP7U/k4TQ0Nc1GnCBp4MRA7XjRdWsSsYG7fsF1PtvVvj9PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=weidenauer.cc; spf=pass smtp.mailfrom=weidenauer.cc; dkim=pass (2048-bit key) header.d=weidenauer.cc header.i=@weidenauer.cc header.b=BhHUe+35; arc=none smtp.client-ip=37.252.242.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=weidenauer.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weidenauer.cc
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=weidenauer.cc;
+	s=taubenbroetchen; t=1752530066;
+	bh=ZdtovMNt9ZNn1pVjaqdynhY0nvuEphqZNR8E6ktlgT8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=BhHUe+355rjUE4rpdowABuCbkEzxXI+yQUGpR7EFr7LVEz9h026xa6jyWDMincFn/
+	 PRKMySy0qTgw60RLBQGY46dMXlSOU9mL2Zgg8mP3klTkSio8Mj1cDUSnoWAl1PQoCb
+	 0hEoRzMUo+jLlvH4TZ/+gCCWQcjsyOixidSzB6k5lPSGMZWLeUCiNLOlWS9gQjPIXV
+	 izf6AczClqwFuohEvde7yPnfk14z9MiuhJQjTlj7Lshj4tXIUmqCarp3WvHcKkYKdv
+	 yYl6jAbq30MRSAO/E4i0rF8GJthH3LEt+YbKe5mztH04++nDR1J7kQ4Z2LiO3IVON9
+	 onP29u/FGCoaA==
+Received: from [127.0.0.1] (i16-lef01-t2-212-195-167-236.ft.lns.abo.bbox.fr [212.195.167.236])
+	by taubenbroetchen.weidenauer.cc (Postfix) with ESMTPSA id 2714D64263;
+	Mon, 14 Jul 2025 23:54:26 +0200 (CEST)
+Date: Mon, 14 Jul 2025 23:54:24 +0200
+From: Martin Weidenauer <martin@weidenauer.cc>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Woohee Yang <woohee9527@gmail.com>, Jongmin Kim <jmkim@debian.org>,
+ hansg@kernel.org, mchehab@kernel.org, sakari.ailus@linux.intel.com,
+ andy@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+ ~lkcamp/patches@lists.sr.ht, koike@igalia.com
+Subject: Re: [PATCH] staging: atomisp: isp: fix open brace on new line
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAHp75VcvOaSPbrpurRAjrvwW992qiP-ffZcroQ-feg=_PAoquQ@mail.gmail.com>
+References: <20250714153409.46085-1-martin@weidenauer.cc> <CAHp75VdUNe=bn-Emv6oyHtejTMyhKaiqQfGic0Ha94Z_FAPs2A@mail.gmail.com> <4289C286-62A1-4C22-9A03-E6CD3731F3D7@weidenauer.cc> <CAHp75VcvOaSPbrpurRAjrvwW992qiP-ffZcroQ-feg=_PAoquQ@mail.gmail.com>
+Message-ID: <1D5485BE-E03F-4364-A48D-051AAECFBA9A@weidenauer.cc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v3] bpf: make the attach target more accurate
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Menglong Dong <menglong8.dong@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Menglong Dong <dongml2@chinatelecom.cn>
-References: <20250710070835.260831-1-dongml2@chinatelecom.cn>
- <CAADnVQKmUE3_5RHDFLmKzNSDkLD=Z2g3bkfT2aRsPkFiMPd-4Q@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Menglong Dong <menglong.dong@linux.dev>
-In-Reply-To: <CAADnVQKmUE3_5RHDFLmKzNSDkLD=Z2g3bkfT2aRsPkFiMPd-4Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Server: mw-taubenbroetchen01
+X-Rspamd-Queue-Id: 2714D64263
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [1.40 / 8.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_ZERO(0.00)[0];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TAGGED_RCPT(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,debian.org,kernel.org,linux.intel.com,linuxfoundation.org,vger.kernel.org,lists.linux.dev,lists.sr.ht,igalia.com];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	FROM_HAS_DN(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[]
 
-
-On 2025/7/15 03:52, Alexei Starovoitov wrote:
-> On Thu, Jul 10, 2025 at 12:10 AM Menglong Dong <menglong8.dong@gmail.com> wrote:
->>                          } else {
->> -                               addr = kallsyms_lookup_name(tname);
->> +                               ret = bpf_lookup_attach_addr(NULL, tname, &addr);
->>                          }
-> Not sure why your benchmarking doesn't show the difference,
-> but above is a big regression.
-> kallsyms_lookup_name() is a binary search whereas your
-> bpf_lookup_attach_addr() is linear.
-> You should see a massive degradation in multi-kprobe attach speeds.
-
-
-Hi, Alexei. Like I said above, the benchmarking does have
-a difference for the symbol in the modules, which makes
-the attachment time increased from 0.135543s to 0.176904s
-for 8631 symbols. As the symbols in the modules
-is not plentiful, which makes the overhead slight(or not?).
-
-But for the symbol in vmlinux, bpf_lookup_attach_addr() will
-call kallsyms_on_each_match_symbol(), which is also
-a binary search, so the benchmarking has no difference,
-which makes sense.
-
-I thought we don't need this patch after the pahole fixes this
-problem. Should I send a V4?
-
-Thanks!
-Menglong Dong
-
-
+On 14 July 2025 23:38:47 CEST, Andy Shevchenko <andy=2Eshevchenko@gmail=2Ec=
+om> wrote:
+>On Mon, Jul 14, 2025 at 10:39=E2=80=AFPM Martin Weidenauer <martin@weiden=
+auer=2Ecc> wrote:
+>> On 14 July 2025 19:47:41 CEST, Andy Shevchenko <andy=2Eshevchenko@gmail=
+=2Ecom> wrote:
 >
-> --
-> pw-bot: cr
+>> >Guys, please, coordinate and issue only one (or a few) patch(es) per
+>> >an issue=2E No need to send zillions patches for the same problem
+>> >file-by-file=2E
 >
+>> >On Mon, Jul 14, 2025 at 6:34=E2=80=AFPM Martin Weidenauer <martin@weid=
+enauer=2Ecc> wrote:
+>> >>
+>> >> Fix checkpatch error "ERROR: that open brace { should be on the prev=
+ious line"
+>> >> in ia_css_dvs=2Ehost=2Ec:277=2E
+>
+>> I deeply apologize, however this was the instruction of our workshop in=
+ DebConf by Helen Koike <koike@igalia=2Ecom>
+>
+>This may be okay for the driver that consists of let's say less than
+>10 files, AtomISP consists of dozens of files in several (nested)
+>folders=2E It's not a good example for such an approach=2E
+>
+>> Here is the link to the exact workshop:
+>> <https://debconf25=2Edebconf=2Eorg/talks/55-submit-your-first-contribut=
+ion-to-the-linux-kernel/>
+>
+>Hmm=2E=2E=2E this really needs an update to explain how to work with the
+>drivers that contain many files and literally tens of thousands lines
+>of code=2E
+>
+>In any case the problem with your contribution is not the code, the
+>absence of coordination and possibility to clash with somebody else=2E
+>Also it looks like a DDoS attack against maintainers capacity=2E The
+>smaller patches are and the more of them --- the less the usefulness
+>of all this activity as at some point that floods the maintainer's
+>mailbox=2E
+>
+>TL:DR; (always) Use common sense!
+>
+>
+
+To be honest, such a contribution also seemed to me a bit useless but I th=
+ought all of this had been discussed with you maintainers beforehand=2E
+
+As it seems this was not the case, although the workshop has shown us how =
+easy it is to make contributions and for my part I will use the knowledge t=
+o make meaningful changes=2E
+So you can scrap this commit and I'll make a few commits in the next days =
+which make more sense=2E
+
+I apologize again and it is an honor for me to start contributing to your =
+driver=2E
+Be well,
+Martin
 
