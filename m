@@ -1,114 +1,143 @@
-Return-Path: <linux-kernel+bounces-729638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B691BB0398F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:28:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE2D4B0398B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7F2E1884D9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:27:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 046013A3C4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335C620AF67;
-	Mon, 14 Jul 2025 08:26:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2795A2367AA
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8CD23AE9B;
+	Mon, 14 Jul 2025 08:27:04 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB0715B971
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752481600; cv=none; b=OHILNiu0Hm6hS68HiSQOY2RWufVGbNBY+1hiORS5cVG51KPr5o8uDUWHVW+LEP/HalmdzXvnrKuOz5rO/pUYyz/6OjPWAYT6fVsyb3uJ920A6J9cofDawcemX/1yTHZPct75uckn1JetzYhu8tut3K7bp9Ay0qtCMoWArwAuuyw=
+	t=1752481624; cv=none; b=W7yu17FjS5OYjcbd9CnX6hdbmHmCEIdHdTPqQyoGNw7M0xDtpRK0yYgn7bI1//ELpLGFZk/lQDt05ybw3GaQVBTfaSH1zCGYBlVgvE0dclTf1XYjnh4vwgSHH3TjHTRT45Egrz3hs9a6lFd8kFfhcxTcxiw6n+rl9TVM8njUj6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752481600; c=relaxed/simple;
-	bh=byPqHPJ3ildrFyKNbhHhvCUcOnpKUQJ71X9ClGdQQ3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JeMyS8ZaW2e/Utn9mT8eHb+NJ9m8r4in2G9RVd4pjXAIOk2MRdoKth6FsesyuTl+TN4Jcn/55BFcaycuf3ddPE2c01oyKUIcpBkIpHsKNimXNBrARlmA82PIXDh7obsmItcJcKUYOMTgX+AvL9kpuVBrKUA2g+DyU8WETbjdAek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 071CC1764;
-	Mon, 14 Jul 2025 01:26:26 -0700 (PDT)
-Received: from [10.57.83.2] (unknown [10.57.83.2])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C45723F66E;
-	Mon, 14 Jul 2025 01:26:33 -0700 (PDT)
-Message-ID: <65b4f0b6-3b0f-4d9b-a034-5031dc889abd@arm.com>
-Date: Mon, 14 Jul 2025 09:26:32 +0100
+	s=arc-20240116; t=1752481624; c=relaxed/simple;
+	bh=5U4kczdmd9E4mud88LfTs+tfOT2xGrsrdTs5rNZ37ow=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YXzSJ4cPNAr8LP9NZFKszsH+7AMf/8LCH1fybKAuHgV4e4CSge1fOx21Cs1dGTNNZ3C/9I16geOq3Q3v3kHB7E1U4tNzUDlH4+sTgU0WnrYuk/BvMPI71OpxVKhv35/of+o6LWg9owLRmPvp8dLoyMsXs+xyQBdBivbeDkTHIeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.pengutronix.de)
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.trumtrar@pengutronix.de>)
+	id 1ubEWT-0003P6-9X; Mon, 14 Jul 2025 10:26:53 +0200
+From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>,  Rob Herring <robh@kernel.org>,  Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,
+  Steffen Trumtrar <kernel@pengutronix.de>,  Pavel Machek
+ <pavel@kernel.org>,  linux-leds@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] leds: add support for TI LP5860 LED driver chip
+In-Reply-To: <20250523102848.GE1378991@google.com> (Lee Jones's message of
+	"Fri, 23 May 2025 11:28:48 +0100")
+References: <20250514-v6-14-topic-ti-lp5860-v2-0-72ecc8fa4ad7@pengutronix.de>
+	<20250514-v6-14-topic-ti-lp5860-v2-2-72ecc8fa4ad7@pengutronix.de>
+	<20250523102848.GE1378991@google.com>
+User-Agent: mu4e 1.12.11; emacs 30.1
+Date: Mon, 14 Jul 2025 10:26:52 +0200
+Message-ID: <877c0bqisz.fsf@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/10] arm64: mm: Introduce a C wrapper for by-range TLB
- invalidation helpers
-Content-Language: en-GB
-To: Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>
-References: <20250711161732.384-1-will@kernel.org>
- <20250711161732.384-3-will@kernel.org>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250711161732.384-3-will@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; format=flowed
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 11/07/2025 17:17, Will Deacon wrote:
-> In preparation for reducing our reliance on complex preprocessor macros
-> for TLB invalidation routines, introduce a new C wrapper for by-range
-> TLB invalidation helpers which can be used instead of the __tlbi() macro
-> and can additionally be called from C code.
+
+Hi,
+
+On 2025-05-23 at 11:28 +01, Lee Jones <lee@kernel.org> wrote:
+
+> On Wed, 14 May 2025, Steffen Trumtrar wrote:
 > 
-> Signed-off-by: Will Deacon <will@kernel.org>
-> ---
->  arch/arm64/include/asm/tlbflush.h | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
+> > Add support for the Texas Instruments LP5860 LED driver chip
+> > via SPI interfaces.
+> > 
+> > The LP5860 is an LED matrix driver for up to 196 LEDs, which supports
+> > short and open detection of the individual channel select lines.
+> > 
+> > The original driver is from an unknown author at Texas Instruments. Only
+> > the cryptic handle 'zlzx' is known.
+> > 
+> > Co-developed-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+> > Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+> > ---
+> >  Documentation/ABI/testing/sysfs-class-spi-lp5860 |  23 ++
+> >  drivers/leds/Kconfig                             |  23 ++
+> >  drivers/leds/Makefile                            |   2 +
+> >  drivers/leds/leds-lp5860-core.c                  | 276 ++++++++++++++++++++
+> >  drivers/leds/leds-lp5860-spi.c                   |  99 +++++++
 > 
-> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-> index 1c7548ec6cb7..4408aeebf4d5 100644
-> --- a/arch/arm64/include/asm/tlbflush.h
-> +++ b/arch/arm64/include/asm/tlbflush.h
-> @@ -418,6 +418,24 @@ static inline void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
->   *    operations can only span an even number of pages. We save this for last to
->   *    ensure 64KB start alignment is maintained for the LPA2 case.
->   */
-> +#define __GEN_TLBI_OP_CASE(op)						\
-> +	case op:							\
-> +		__tlbi(r ## op, arg);					\
-> +		break
-> +
-> +static __always_inline void __tlbi_range(const enum tlbi_op op, u64 arg)
+> Are you going to follow-up with another option?  Say I2C?
 
-nit: you called the level version __tlbi_level_op(). Why not call this
-__tlbi_range_op() for consistency?
+the chip also supports connection via I2C, but it's unlikely that I will add that myself.
 
-> +{
-> +	switch (op) {
-> +	__GEN_TLBI_OP_CASE(vae1is);
-> +	__GEN_TLBI_OP_CASE(vale1is);
-> +	__GEN_TLBI_OP_CASE(vaale1is);
-> +	__GEN_TLBI_OP_CASE(ipas2e1is);
-> +	default:
-> +		BUILD_BUG();
-> +	}
-> +}
-> +#undef __GEN_TLBI_OP_CASE
-> +
->  #define __flush_tlb_range_op(op, start, pages, stride,			\
->  				asid, tlb_level, tlbi_user, lpa2)	\
->  do {									\
-> @@ -445,7 +463,7 @@ do {									\
->  		if (num >= 0) {						\
->  			addr = __TLBI_VADDR_RANGE(__flush_start >> shift, asid, \
->  						scale, num, tlb_level);	\
-> -			__tlbi(r##op, addr);				\
-> +			__tlbi_range(op, addr);				\
->  			if (tlbi_user)					\
->  				__tlbi_user(r##op, addr);		\
->  			__flush_start += __TLBI_RANGE_PAGES(num, scale) << PAGE_SHIFT; \
+> >  drivers/leds/leds-lp5860.h                       | 315 +++++++++++++++++++++++
+> >  6 files changed, 738 insertions(+)
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-class-spi-lp5860 b/Documentation/ABI/testing/sysfs-class-spi-lp5860
+> 
+> This doesn't belong here.
+> 
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..d24b49d38ecae55f1a1a4e465fbe71d30eff497e
+> > --- /dev/null
+> > +++ b/Documentation/ABI/testing/sysfs-class-spi-lp5860
+> > @@ -0,0 +1,23 @@
+> > +What:           /sys/class/spi_master/spi<bus>/spi<bus>.<dev>/b_current_set
+> 
+> Why would you want to change the current of the SPI bus?
+>
 
+Where does it belong? I grepped and followed the eeprom (Documentation/ABI/testing/sysfs-class-spi-eeprom) which uses sernum in the same way. Directions welcome.
+
+> 
+> > +Date:           May 2025
+> > +KernelVersion:  6.15
+> > +Contact:        Steffen Trumtrar <kernel@pengutronix.de>
+> > +Description:
+> > +	Contains and sets the current for the B color group.
+> 
+> What does the current set?  Brightness?
+> 
+> If so, the user shouldn't be expected to know what current set in order
+> to obtain a specific brightness.  Instead, shouldn't you use
+> /sys/class/leds/<led>/multi_intensity and let the driver deal with the
+> particulars of setting that brightness?
+>
+
+The chip has a global setting for the current of the three color groups. And an indiviual setting for every LED itself. The multi_intensity is for one LED as far as I understand. And the brightness of the whole matrix can be controlled via this global current setting.
+
+
+(...)
+
+Thanks for the rest of the feedback. I already addressed all of that in my patches, but I'm not sure what is the correct way to proceed with the sysfs ABI entries.
+
+
+Thanks,
+Steffen
+
+-- 
+Pengutronix e.K.                | Dipl.-Inform. Steffen Trumtrar |
+Steuerwalder Str. 21            | https://www.pengutronix.de/    |
+31137 Hildesheim, Germany       | Phone: +49-5121-206917-0       |
+Amtsgericht Hildesheim, HRA 2686| Fax:   +49-5121-206917-5555    |
 
