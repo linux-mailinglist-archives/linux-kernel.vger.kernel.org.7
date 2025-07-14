@@ -1,145 +1,142 @@
-Return-Path: <linux-kernel+bounces-729325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42301B034FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:37:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06409B034F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C1A718968EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 03:37:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F25717393B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 03:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F6E1E9906;
-	Mon, 14 Jul 2025 03:37:10 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBD11E04AD;
+	Mon, 14 Jul 2025 03:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aqb8lVH3"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682E9CA6B;
-	Mon, 14 Jul 2025 03:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687741DF26B
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 03:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752464229; cv=none; b=NnAVzQ9zz1LqhSZqtueone0gY12biXX5kSXnVdG2Dn22bN3RLlYEi88l9XnzIzRIwpsmcYsgth2W0t7pbDbOH8N+KZAEJvLk6Dqw74fCBAQHTI9IuzvttYF1tX5BJfykmjVW1Or2ItLb7Q0NIgo7CxzJTxFd1BFxJ/RFjeOEkTA=
+	t=1752463752; cv=none; b=NILz/632t5ozPWhhQ7CyM1nt5dDoQkk3YOL66yfrt/5fkMyDxqWVIaARwfTVvFt6SItUaVIC/Ro5r+elRkzZmptM4yd3Hoh0UrrjwH53F2fX+DW5j86WFFIMSmy3SeSjaS6o14mu0+ojhEHwlTzvBhivc8pZxZIKubO9VLJ1904=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752464229; c=relaxed/simple;
-	bh=DXHCOru+M/97RL2tFgyVmxU+UDrWr8Bn+LpS9gK8fsI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dw8jjS7YOBUNPUDunLqdMpH6N5nLsL/TlVXfejk1SrS8Vn+weKxiO2bxbVQRODERDhSd7YWbCq04fWwl/wXYwY5vgsTU/LbReKznT5GwgIK5g36E678Jjs3Qb4tJqSN3bWr0Z8kTc2LBxUy3fO9LObBxOWnZlhKPMtk1N4tvGSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bgSg45dwHzKHMTK;
-	Mon, 14 Jul 2025 11:37:04 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 56A521A1062;
-	Mon, 14 Jul 2025 11:37:03 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP3 (Coremail) with SMTP id _Ch0CgCHAdxTe3Rozz_HAA--.22573S2;
-	Mon, 14 Jul 2025 11:37:03 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: longman@redhat.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com,
-	peterz@infradead.org
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com
-Subject: [PATCH next] cpuset: fix warning when attaching tasks with offline CPUs
-Date: Mon, 14 Jul 2025 03:23:11 +0000
-Message-Id: <20250714032311.3570157-1-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1752463752; c=relaxed/simple;
+	bh=cn680N+Lbe1YOLdllxDrT4jSd2RORFRplVpLq6vJcBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YQwV4uM1gMrU07JcaGkeZ48MUL5iXvwaZ+M2nabSO1dxXtl/NYbK+BRZKgiD0yJm8zXQd2AFfH0R/tnKFxMLotOn3S6yfGs75uGz1mBy7cPG498FQIeIycJx1RXSlzFVXYR4WepVWFghdPbqe0I136DXrZxwnEVSnVQfSiMWarM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aqb8lVH3; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b2c4e46a89fso3106342a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 20:29:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1752463750; x=1753068550; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AuFfMb94T1QlI5VB+hGYMUtffHMe70rkO85YQAjY0iE=;
+        b=aqb8lVH3MxA5ju5G0Ymm/qyM/EJ6vTB+J0PSUxIrfLipd0jJaLLg9QU4ruY6YztKIF
+         7gac8KyQPnXQYIPa/8qv1WEEhEVVVULw8kR5DOWzqPQiVrozsS5la87osoL3BJv3sF3a
+         S6u6EzVDZLA5fKoGh0rx32dsnxVyTAO5e7kxs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752463750; x=1753068550;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AuFfMb94T1QlI5VB+hGYMUtffHMe70rkO85YQAjY0iE=;
+        b=mcf9+lBZ6h6xfAPg9ad8o6ktf/Pui2P+8D4IkTUwgBKUntLqHjQFRrFf1/td01Q/4K
+         hdx21GlpkTOu42IEQLuLgB+0J90sHfTl/xO74QoLqwgVeN1VX2LJGlWW0kLxRjlNejEf
+         wvgP9g8/HP9jB0Hv9FBh+uTnPG+oSfurg7c4MCjrrKZcAHL4oUXVB3908FJ/pL9JIIV9
+         B6M3OpHgxOtTvxrhC+ix8PUYtYEanqOXgBfSFKfmRCT0d1DlHMJBruGlJLtWRpPdp6jp
+         zgcC/x+3y8uS876+Old2rGbhpOVXnevqjqC3b7uNeXKStmVTPFKhzj15d4CC8z3Qasw2
+         34kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJCfAgr1KIde8JZ0NWofermsA/V6EsHmnEioDhpJoMy2d38eissZDbGvGfHJMbxOCY+jLuLTpCgqGBWzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCMaeAU3T4IFN+LvLDrf9dlNLVaVVnYcS5XWR3dyssobn6z7dG
+	loUPArOXMGYz32oROFg5YJqPXV5fn6s8Yi0NjUZ8m33UwiVUYLb4RFxxq0IwaTV69A==
+X-Gm-Gg: ASbGncuROXyB/8qTqUJn6aR8xBmFvGIH5qtvqOa6Bj8cBynO576a2H2N1nMZWxDutWf
+	hoGfpmxvsbFBta6rcP24ck3vIhNbDHWz11eZVN8FnoBIjZr8FOWAH+BMYn4y91FuEJRR359LIvr
+	xf+ZgOQ3zbSBE9srXOd6rYPPLdJV7CfJUtcv6bu3pJDxIpfyLAz8kn1g6a9erb1Z0CPcJwvk5X4
+	zJFH/6ieEy04HZyOJ4fK40x1rsJdRrdL71RQpsFuu7jOYMnXncDzrgi3WlSJC34+BikLgkWMcqo
+	G5SdA3kito8KlNqajbYI15VAzFDp9ZtgNYGtrlyzGCWW74sftsH3/AYcl93dSSoFMVVytuegsSb
+	UTZvU6GOHMW/rzVAfkVXbvgDYgQ==
+X-Google-Smtp-Source: AGHT+IGFvP2mdH1afPSE7DmUb8WifMmqbuLptsjHv9YDI67dI175Nw5rSwYCLwFWOxdl9topoJcN8Q==
+X-Received: by 2002:a05:6a21:f119:b0:232:ac34:70f1 with SMTP id adf61e73a8af0-232ac3472a1mr10402898637.30.1752463749673;
+        Sun, 13 Jul 2025 20:29:09 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:d84e:323a:598d:f849])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f7fa50sm9322801b3a.145.2025.07.13.20.29.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Jul 2025 20:29:09 -0700 (PDT)
+Date: Mon, 14 Jul 2025 12:29:04 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Phillip Potter <phil@philpotter.co.uk>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>, 
+	Chris Rankin <rankincj@gmail.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: cdrom: cdrom_mrw_exit() NULL ptr deref
+Message-ID: <fcoixqhllcn4cjycwse253zeyg27bghyrsablmlw6cdz7c27xj@3tzfom227xrq>
+References: <uxgzea5ibqxygv3x7i4ojbpvcpv2wziorvb3ns5cdtyvobyn7h@y4g4l5ezv2ec>
+ <aHF4GRvXhM6TnROz@equinox>
+ <7kbmle3wlpeqcnfieelypkxzypfxoh7bqmuqn2d3hbjgbcm7mt@cze3mv7htbeg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgCHAdxTe3Rozz_HAA--.22573S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uFWkuF47Gr1xGFWDAr48Crg_yoW5Jr1DpF
-	Wak3WUtw45WF1UC39rG3y2gFy0gan5GF47J3Z3Kw1rJFWfCF1j93W7twn8XryrtrW3u3WY
-	vF90vr4jgasFy3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7kbmle3wlpeqcnfieelypkxzypfxoh7bqmuqn2d3hbjgbcm7mt@cze3mv7htbeg>
 
-From: Chen Ridong <chenridong@huawei.com>
+On (25/07/14 12:10), Sergey Senozhatsky wrote:
+> Date: Mon, 14 Jul 2025 12:10:16 +0900
+> From: Sergey Senozhatsky <senozhatsky@chromium.org>
+> To: Phillip Potter <phil@philpotter.co.uk>
+> Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,  Jens Axboe
+>  <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,  Chris Rankin
+>  <rankincj@gmail.com>, linux-kernel@vger.kernel.org,
+>  linux-block@vger.kernel.org
+> Subject: Re: cdrom: cdrom_mrw_exit() NULL ptr deref
+> Message-ID: <7kbmle3wlpeqcnfieelypkxzypfxoh7bqmuqn2d3hbjgbcm7mt@cze3mv7htbeg>
+> 
+> On (25/07/11 21:46), Phillip Potter wrote:
+> > > <1>[335443.339244] BUG: kernel NULL pointer dereference, address: 0000000000000010
+> > > <4>[335443.339301] RIP: 0010:blk_queue_enter+0x5a/0x250
+[..]
+> > > <4>[335443.339439] blk_mq_alloc_request+0x16a/0x220
+> > > <4>[335443.339450] scsi_execute_cmd+0x65/0x240
+> > > <4>[335443.339458] sr_do_ioctl+0xe3/0x210 [sr_mod (HASH:ab3e 2)]
+> > > <4>[335443.339471] sr_packet+0x3d/0x50 [sr_mod (HASH:ab3e 2)]
+> > > <4>[335443.339482] cdrom_mrw_exit+0xc1/0x240 [cdrom (HASH:9d9a 3)]
+> > > <4>[335443.339497] sr_free_disk+0x45/0x60 [sr_mod (HASH:ab3e 2)]
+> > > <4>[335443.339506] disk_release+0xc8/0xe0
+> > > <4>[335443.339515] device_release+0x39/0x90
+> > > <4>[335443.339523] kobject_release+0x49/0xb0
+> > > <4>[335443.339533] bdev_release+0x19/0x30
+> > > <4>[335443.339540] deactivate_locked_super+0x3b/0x100
+> > > <4>[335443.339548] cleanup_mnt+0xaa/0x160
+> > > <4>[335443.339557] task_work_run+0x6c/0xb0
+> > > <4>[335443.339563] exit_to_user_mode_prepare+0x102/0x120
+> > > <4>[335443.339571] syscall_exit_to_user_mode+0x1a/0x30
+> > > <4>[335443.339577] do_syscall_64+0x7e/0xa0
+> > > <4>[335443.339582] ? exit_to_user_mode_prepare+0x44/0x120
+> > > <4>[335443.339588] entry_SYSCALL_64_after_hwframe+0x55/0xbf
+> > > <4>[335443.339595] RIP: 0033:0x7d52bea41f07
+> > > 
+[..]
+> The device is detached already, I assume there isn't much that
+> cdrom_mrw_exit() can do at that point.
 
-A kernel warning was observed in the cpuset migration path:
+If I read it correctly
 
-    WARNING: CPU: 3 PID: 123 at kernel/cgroup/cpuset.c:3130
-    cgroup_migrate_execute+0x8df/0xf30
-    Call Trace:
-     cgroup_transfer_tasks+0x2f3/0x3b0
-     cpuset_migrate_tasks_workfn+0x146/0x3b0
-     process_one_work+0x5ba/0xda0
-     worker_thread+0x788/0x1220
+<4>[335443.339482] cdrom_mrw_exit+0xc1/0x240 [cdrom (HASH:9d9a 3)]
+<4>[335443.339497] sr_free_disk+0x45/0x60 [sr_mod (HASH:ab3e 2)]
+<4>[335443.339506] disk_release+0xc8/0xe0
+<4>[335443.339515] device_release+0x39/0x90
 
-The issue can be reliably reproduced with:
-
-    # Setup test cpuset
-    mkdir /sys/fs/cgroup/cpuset/test
-    echo 2-3 > /sys/fs/cgroup/cpuset/test/cpuset.cpus
-    echo 0 > /sys/fs/cgroup/cpuset/test/cpuset.mems
-
-    # Start test process
-    sleep 100 &
-    pid=$!
-    echo $pid > /sys/fs/cgroup/cpuset/test/cgroup.procs
-    taskset -p 0xC $pid  # Bind to CPUs 2-3
-
-    # Take CPUs offline
-    echo 0 > /sys/devices/system/cpu/cpu3/online
-    echo 0 > /sys/devices/system/cpu/cpu2/online
-
-Root cause analysis:
-When tasks are migrated to top_cpuset due to CPUs going offline,
-cpuset_attach_task() sets the CPU affinity using cpus_attach which
-is initialized from cpu_possible_mask. This mask may include offline
-CPUs. When __set_cpus_allowed_ptr() computes the intersection between:
-1. cpus_attach (possible CPUs, may include offline)
-2. p->user_cpus_ptr (original user-set mask)
-The resulting new_mask may contain only offline CPUs, causing the
-operation to fail.
-
-The fix changes cpus_attach initialization to use cpu_active_mask
-instead of cpu_possible_mask, ensuring we only consider online CPUs
-when setting the new affinity. This prevents the scenario where
-the intersection would result in an invalid CPU set.
-
-Fixes: da019032819a ("sched: Enforce user requested affinity")
-Reported-by: Yang Lijin <yanglijin@huawei.com>
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- kernel/cgroup/cpuset.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index f74d04429a29..5401adbdffa6 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -3121,7 +3121,7 @@ static void cpuset_attach_task(struct cpuset *cs, struct task_struct *task)
- 	if (cs != &top_cpuset)
- 		guarantee_active_cpus(task, cpus_attach);
- 	else
--		cpumask_andnot(cpus_attach, task_cpu_possible_mask(task),
-+		cpumask_andnot(cpus_attach, cpu_active_mask,
- 			       subpartitions_cpus);
- 	/*
- 	 * can_attach beforehand should guarantee that this doesn't
--- 
-2.34.1
-
+device_release() calls dev->type->release() before dev->class->dev_release().
+dev->type->release() probably should be scsi_device_dev_release() which, among
+other things, does sdev->request_queue = NULL, so dev->class->dev_release()
+is called too late to execute any scsi commands.
 
