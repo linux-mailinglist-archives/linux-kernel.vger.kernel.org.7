@@ -1,251 +1,284 @@
-Return-Path: <linux-kernel+bounces-729974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 666F5B03E7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:18:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE4DB03E7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04E68164DA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:18:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C301C7A788A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9083980B;
-	Mon, 14 Jul 2025 12:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2D51EFF96;
+	Mon, 14 Jul 2025 12:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cBxjEI8s"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AGN1Mr5q"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E506F1E9B21
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5738222129F
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752495486; cv=none; b=CxCq2oAXavCuHU7mPAZYlQDGnRpOINIsOXLEK5OyU+s8btff9nuCskOSlrBXOIhBbL2WDLnsbAqX5w7dHABUonz7eukQvAcSo1VZAVsW2Jg1/IBURdwqzkvkYJg+6iOPdEoifwaxJex5/v4gkBPXOQOd1LGUyKBJbV3dRrqFpMI=
+	t=1752495494; cv=none; b=VohYk3wju7qo3AQZ8kg2sDw7gyFxOUuTJNWDhI4HqUEXCWl/2xkMZ9RliA3eF0UHgjI24V762BxlvRwDCx8OVCdK51rdYh+JmOppdiYESG2AsQmHqrBZIKWeBKwPfAWss1ma9B8GiHuEGhLgZOpTZOLAKmC17wDH5PxQX6Q4I3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752495486; c=relaxed/simple;
-	bh=jBIoviL7c6qON5XngvxGUEMK1KwwBLhlT+iDvFuQWk4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RGmoYk2qq+lPQtieLH57bYN5+CKhAFEdtOo5Ci5GKA1cqvbkdR+0YPRQQqQwzUBt1ef7Nt93x6MMzHmdB5IcPNUlPEbhVjPFziTpdJxp9CxqVEyD8+YIHh0c4z9g82BRO+yFil7nOSZjV174bhuQfW1Vug8qfvV4/btHKXD0MOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cBxjEI8s; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4560f28b2b1so5217665e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 05:18:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752495483; x=1753100283; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hhrbngdtwLIZhz0yqQlqhovMpCwE60clz8fRz49E1Kw=;
-        b=cBxjEI8sheP1y3qYdH+5RullYK+KoBxGhdjTs1XfHbCaO7Inma/sQFrWd20I/r5Eqy
-         8+OmSxHwPOVSsaOn+hDDH17vzoWPSsxglgQEhPR0jzPWHsRFugLKaV/zkGqtepqHelg5
-         8E2D/gtGsacO+DSi+6QTlCajixwosFiXjr0CA3mnpN3Msy7hkEvs99vdHo6YbG+Enwaz
-         +GdE4jsYnPjVKb2nfPv5tocl8pFWP4YhXdktxabM+00CUoBj7dv6w7/ahN+BTWO6DUmO
-         gkycZKUGJJ18v0/amZt58h1/FWB4bS5Sta6CAUyREeGsjuxl3qGc7ArYzUgr/Q7BEIYD
-         0swQ==
+	s=arc-20240116; t=1752495494; c=relaxed/simple;
+	bh=sbTH7bpIqbBT2avO8Y/yC0htibWJIa1RkAgN4GHKga0=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kS+8RteqPiyY+N3+dmUYPUJRPs5Fynns/rPcnnavltdPczeazqfbRJ/zTJYcSSaYQD50s2jFaoAa+W1eElZjE6pjdaKfDNPWxA/qOKeB4jN0lHtGYGyFPdlTaZMW8Ol6PuVBk9oWkIDbipDnpMPJsCalUN9jhY7Itad4KlMS+L8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AGN1Mr5q; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752495491;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vF4RRl/e27zgqzxDxG5kIPXppzZTec0QHAD68B9ffyk=;
+	b=AGN1Mr5qBMNx/vWTww4+g9Je//U3iQd4Ob3kOPgdmQfRWCCHDa/kPt3Vr8aorwyXsty/qp
+	SAEvD7zbChMSeDxaQcXc7j8yIitiFB20IY0AA9N5U279+LS+dPqrcxkuEchKP5cwv3t9lt
+	qlRPIkrpX93Zm1/kyPrRU7zgcN2k0BY=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-663-5l5toJnzOgSHQcBPY_bh8A-1; Mon, 14 Jul 2025 08:18:09 -0400
+X-MC-Unique: 5l5toJnzOgSHQcBPY_bh8A-1
+X-Mimecast-MFC-AGG-ID: 5l5toJnzOgSHQcBPY_bh8A_1752495489
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4eee2398bso2073657f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 05:18:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752495483; x=1753100283;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hhrbngdtwLIZhz0yqQlqhovMpCwE60clz8fRz49E1Kw=;
-        b=TcOmW5WchRvwQcQCwU1TFY0fr1Cu3HvtP5ejHqTI9Z+A4T8bKNBWFhx8i/cK0mOGw1
-         4lcBlWOm9XdbYh4/ThiYkKwHqFNXrlX8jMvx+Ou1TM2BCk+ldcR7RXpx3XOKL4kkKAeQ
-         Sac3VJPL9eQbe7P9GQYjx81PFvcQMQnEmLtJ8qdzS7tEyAHNL3bl0jgmyACj/cr5Z3jE
-         FiC4QO3/k0QruR51U0tWCX6CRXk55zsYh5EmPBPS713CmHdjzac9sP0Wvy2hMtuA1n9E
-         w8SrLGoRSyZbs1M4/fjRrVhy7k4QZDbXyY/3nwc3K/N2VNAMXlI9+11KMvSmUVa1NwwW
-         viWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAraVq52qauvW7JR1t0D//GGe55Wc7ziPHcSk5iNLTQlVzKqoGMEAOTIbHg5d+HeH8dzUG1iyP4N9L4G4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkpEEu+a9MB/V4S1A/kcYzIl4UpiNvKINvMY0qJazyLMX+N90T
-	6fZCmPe5NnCrduODKuJZkmiw1Zy4HWp9K7rKwH/cLvupVsyUchfR34Xa1sJNUWMKUABdiAFr/x9
-	ngGaNqVm9X+14JjdtCA==
-X-Google-Smtp-Source: AGHT+IGuBf6UyD8vga60JCe+ASIW8IX5XzxF/f4ca+3Bx6VIwy7Y5Y4ucTQmymQ87F8Fh/x5SOphse9Y58mi4LI=
-X-Received: from wmbhh14.prod.google.com ([2002:a05:600c:530e:b0:456:1518:6d6e])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2f87:b0:3a4:edf5:b942 with SMTP id ffacd0b85a97d-3b5f359b131mr10006200f8f.57.1752495483047;
- Mon, 14 Jul 2025 05:18:03 -0700 (PDT)
-Date: Mon, 14 Jul 2025 12:18:02 +0000
-In-Reply-To: <87ikk1jnwi.fsf@kernel.org>
+        d=1e100.net; s=20230601; t=1752495489; x=1753100289;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vF4RRl/e27zgqzxDxG5kIPXppzZTec0QHAD68B9ffyk=;
+        b=KIS1Xden7OfFc0HGjUxeX9tUlFwG1df4W26vW65nues1QA1uL6OjFvpGxBXAGeermQ
+         HpdSNwo/fiHAPzWGyXyjGD1i/zuWRvHKkZkApGE8V0TDWzrJruAy4bKbMQkrHZ2fAwwb
+         tBfQNvqp3Dfh5YEk44yHoOTK8GA1cpFfoYQlnPpfrBDFRdy4XnUgk+7dZVDRoxPbqqJj
+         hPjtW0u9SC3LWi+TO9c5kH4ty/LOst3skLdW6A5a9OTV2d+QI2ZCFplnC5zWnLQtephh
+         T6exzLYnAvhw0tJp/iZTOBT84z3yLqraPSPiCnSHfmaqAKrbEwo7A/bSjpvPm/w2NHhB
+         LdkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVz8LPrkMut+evjdCJAt4/1B6Bw0A1ldO3gBk3XCJdT/t1F6r6oMBKnAUsiKAT6xRIIhN1mje54A0jpJ9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+cGm8RmYWvE//mMO01tu6tAIvTRlaNhgBwVtaqsmR6IF+zXye
+	RlOF/fQ5vqYeCC6N92jzomkjvZuqtNURQ40R7CreqatJ364yBL6IYNqIcQ6yXDUrKtTQDFshLgx
+	IQ1L80gA0TdlZm+zYooC2EK7Ue/rho30eu5w5eSiNzgJuu3OMrrBV2NnrdCGeK+mp/g==
+X-Gm-Gg: ASbGnculpX4WmpKwqSkZr3a1OPrQBhQ7OFtwpOS4tuIvafxlG2KC5SnydLscVSNoyE5
+	hNhaJ6FERH4usK2QqyCGuHG6lKQH54nyFYJ456rH2P3LFu+//+NT+SD5bi6Eil4W3jqm2yDh6DT
+	vnvJtJqnzlZlAK7IY6sFqui2vFDyZGJGKXOJhp5VUVemj/r94FVuSs9yUWmgS1sLqrVewyYQplx
+	iDWJhbdi1SMDrx/qN2CvppiGKwW2aAOE1GXAEM2jTApLDVIeDOJ01jnMgKWGjggmkheUhYqmhNj
+	4/ijJg9fdUhwZ9wFQUU4OUWMPuIt86XR0FuwCeTv+pqgGw7w2ivo/laddbUdmMvIoA==
+X-Received: by 2002:a05:6000:3c1:b0:3b5:e792:18ce with SMTP id ffacd0b85a97d-3b5f3535dacmr7518348f8f.22.1752495488560;
+        Mon, 14 Jul 2025 05:18:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG8Nf6WPAKZGYybLTu8M3aBAKMcW9iO8m3H/R8fR2RDf0WhuGHwniepHzcEfAGdHD7s4onvbw==
+X-Received: by 2002:a05:6000:3c1:b0:3b5:e792:18ce with SMTP id ffacd0b85a97d-3b5f3535dacmr7518329f8f.22.1752495487950;
+        Mon, 14 Jul 2025 05:18:07 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.35])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc3a54sm12452681f8f.39.2025.07.14.05.18.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 05:18:07 -0700 (PDT)
+Message-ID: <7f4409eae10023a804d24ad2a9c67d368db152cb.camel@redhat.com>
+Subject: Re: [PATCH 2/2] verification/rvgen: Support the 'next' operator
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, 
+ John Ogness <john.ogness@linutronix.de>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers	 <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org, 	linux-kernel@vger.kernel.org
+Date: Mon, 14 Jul 2025 14:18:05 +0200
+In-Reply-To: <9c32cec04dd18d2e956fddd84b0e0a2503daa75a.1752239482.git.namcao@linutronix.de>
+References: <cover.1752239482.git.namcao@linutronix.de>
+		 <9c32cec04dd18d2e956fddd84b0e0a2503daa75a.1752239482.git.namcao@linutronix.de>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250704-iov-iter-v2-0-e69aa7c1f40e@google.com>
- <U16UjMBBh1b7dLeO-Nhqw__nw_JwypctB1ze_G44BtsX0l_eVK6Sp-efbobmnuF44J0wQNgnK7b8nCmBX0KS_Q==@protonmail.internalid>
- <20250704-iov-iter-v2-1-e69aa7c1f40e@google.com> <878qkyoi6d.fsf@kernel.org>
- <0Y9Bjahrc6dbxzIFtBKXUxv-jQtuvM2UWShaaSUsjKBuC1KKeGIpBFTC4a89oNrOLBP66SXtC7kQx1gtt04CMg==@protonmail.internalid>
- <aG5NdqmUdvUHqUju@google.com> <87ecuplgqy.fsf@kernel.org> <q7QRbcFgb5yhmBOt4eLkkzqyckspc2L2g3e0pXhJxm0yBVeG2Hifi4O77gaxwpWss1Z_CUjSy1P22ppxcxo8jw==@protonmail.internalid>
- <aG5iLiUJg_cHtB8r@google.com> <87ikk1jnwi.fsf@kernel.org>
-Message-ID: <aHT1etvG0R648EB9@google.com>
-Subject: Re: [PATCH v2 1/4] rust: iov: add iov_iter abstractions for ITER_SOURCE
-From: Alice Ryhl <aliceryhl@google.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, Lee Jones <lee@kernel.org>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Benno Lossin <lossin@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 
-On Wed, Jul 09, 2025 at 07:05:01PM +0200, Andreas Hindborg wrote:
-> "Alice Ryhl" <aliceryhl@google.com> writes:
-> 
-> > On Wed, Jul 09, 2025 at 01:56:37PM +0200, Andreas Hindborg wrote:
-> >> "Alice Ryhl" <aliceryhl@google.com> writes:
-> >>
-> >> > On Tue, Jul 08, 2025 at 04:45:14PM +0200, Andreas Hindborg wrote:
-> >> >> "Alice Ryhl" <aliceryhl@google.com> writes:
-> >> >> > +/// # Invariants
-> >> >> > +///
-> >> >> > +/// Must hold a valid `struct iov_iter` with `data_source` set to `ITER_SOURCE`. For the duration
-> >> >> > +/// of `'data`, it must be safe to read the data in this IO vector.
-> >> >>
-> >> >> In my opinion, the phrasing you had in v1 was better:
-> >> >>
-> >> >>   The buffers referenced by the IO vector must be valid for reading for
-> >> >>   the duration of `'data`.
-> >> >>
-> >> >> That is, I would prefer "must be valid for reading" over "it must be
-> >> >> safe to read ...".
-> >> >
-> >> > If it's backed by userspace data, then technically there aren't any
-> >> > buffers that are valid for reading in the usual sense. We need to call
-> >> > into special assembly to read it, and a normal pointer dereference would
-> >> > be illegal.
-> >>
-> >> If you go with "safe to read" for this reason, I think you should expand
-> >> the statement along the lines you used here.
-> >>
-> >> What is the special assembly that is used to read this data? From a
-> >> quick scan it looks like that if `CONFIG_UACCESS_MEMCPY` is enabled, a
-> >> regular `memcpy` call is used.
-> >
-> > When reading from userspace, you're given an arbitrary untrusted address
-> > that could point anywhere. The memory could be swapped out and need to
-> > be loaded back from disk. The memory could correspond to an mmap region
-> > for a file on a NFS mount and reading it could involve a network call.
-> > The address could be dangling, which must be properly handled and turned
-> > into an EFAULT error instead of UB. Every architecture has its own asm
-> > for handling all of this safely so that behavior is safe no matter what
-> > pointer we are given from userspace.
-> 
-> I don't think that is relevant. My point is, you can't reference
-> "special assemby" without detailing what that means.
-> 
-> You have a safety requirement in `from_raw`:
-> 
->     /// * For the duration of `'data`, the buffers backing this IO vector must be valid for
->     ///   reading.
-> 
-> This should probably be promoted to invariant for the type, since
-> `from_raw` is the only way to construct the type?
+On Fri, 2025-07-11 at 15:17 +0200, Nam Cao wrote:
+> The 'next' operator is a unary operator. It is defined as: "next
+> time, the
+> operand must be true".
+>=20
+> Support this operator. For RV monitors, "next time" means the next
+> invocation of ltl_validate().
+>=20
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
 
-Sure, let's get the wording consistent, but that was the purpose of this
-line in the invariants:
+Hi Nam,
 
-For the duration of `'data`, it must be safe to read the data in this IO vector.
+thanks for the series, I did a very stupid test like this:
 
-> But are you saying that the referenced buffers need not be mapped and
-> readable while this type exists? The mapping happens as part of
-> `bindings::_copy_to_iter`?
+  RULE =3D always (SCHEDULING imply next SWITCH)
 
-Ultimately, it's an implementation detail.
+Despite the monitor working or not, the generator created code that
+doesn't build, specifically:
 
-In our "# Invariants" section, we tend to "expand" the underlying C
-types and describe exactly what it means for that C type to be valid,
-even if those details are implementation details that nobody outside
-that C file should think about. Usually that's fine, but in this case,
-I don't think it is feasible.
+1. It creates a variable named switch
+  - sure I could change the name, but perhaps we could prepend
+something to make sure local variables are not C keywords
 
-The iov_iter type is like a giant enum with a bunch of different
-implementations. Some implementations just read from a simple kernel
-buffer that must, of course, be mapped. Some implementations traverse
-complex data structures and stitch the data together from multiple
-buffers. Other implementations map the data into memory on-demand inside
-the copy_from_iter call, without requiring it to be mapped at other
-times. And finally, some implementations perform IO by reading from
-userspace, in which case it's valid for the userspace pointer to be
-*literally any 64-bit integer*. If the address is dangling, that's
-caught inside the call to copy_from_iter and is not a safety issue.
+2. It created unused variables in ltl_start
+  - _fill_atom_values creates all variables but _fill_start uses only
+those where the .init field is true (maybe the model is wrong though)
 
-I just want the type invariant to say that reading from it is valid, as
-long as the read happens before a certain lifetime expires, without
-elaborating on precisely what that means.
+Now, this specific model reports errors without the sched_switch_vain
+tracepoint which I'm introducing in another patch.
 
-> >> > * If the iov_iter reads from a kernel buffer, then the creator of the
-> >> >   iov_iter must provide an initialized buffer.
-> >> >
-> >> > Ultimately, if we don't know that the bytes are initialized, then it's
-> >> > impossible to use the API correctly because you can never inspect the
-> >> > bytes in any way. I.e., any implementation of copy_from_iter that
-> >> > produces uninit data is necessarily buggy.
-> >>
-> >> I would agree. How do we fix that? You are more knowledgeable than me in
-> >> this field, so you probably have a better shot than me, at finding a
-> >> solution.
-> >
-> > I think there is nothing to fix. If there exists a callsite on the C
-> > side that creates an iov_iter that reads from an uninitialized kernel
-> > buffer, then we can fix that specific call-site. I don't think anything
-> > else needs to be done.
-> 
-> If soundness of this code hinges on specific call site behavior, this
-> should be a safety requirement.
+For it to work, I have to define it in such a way that scheduling
+becomes true at schedule_entry and becomes false right after the
+switch:
 
-Yes, when we add Rust constructors for this type, they will need
-appropriate soundness checks or safety requirements to verify that the
-provided buffer is valid for the chosen iter_type.
+schedule_entry
+	SCHEDULING=3Dtrue
 
-For now, it is constructed in C and we usually don't have safety
-comments in C code.
+sched_switch
+	SWITCH=3Dtrue
 
-> >> As far as I can tell, we need to read from a place unknown to the rust
-> >> abstract machine, and we need to be able to have the abstract machine
-> >> consider the data initialized after the read.
-> >>
-> >> Is this volatile memcpy [1], or would that only solve the data race
-> >> problem, not uninitialized data problem?
-> >>
-> >> [1] https://lore.kernel.org/all/25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de
-> >
-> > Volatile memcpy deals with data races.
-> >
-> > In general, we can argue all we want about wording of these safety
-> > comments, but calling copy_from_iter is the right way to read from an
-> > iov_iter. If there is a problem, the problem is specific call-sites that
-> > construct an iov_iter with an uninit buffer. I don't know whether such
-> > call-sites exist.
-> 
-> I am not saying it is the wrong way. I am asking that we detail in the
-> safety requirements _why_ it is the right way.
-> 
-> You have a type invariant
-> 
->   For the duration of `'data`, it must be safe to read the data in this IO vector.
-> 
-> that says "safe to read" instead of "valid for read" because "special
-> assembly" is used to read the data, and that somehow makes it OK. We
-> should be more specific.
-> 
-> How about making the invariant:
-> 
->   For the duration of `'data`, it must be safe to read the data in this
->   IO vector with the C API `_copy_from_iter`.
-> 
-> And then your safety comment regarding uninit bytes can be:
-> 
->   We write `out` with `copy_from_iter_raw`, which transitively writes
->   `out` using `_copy_from_iter`. By C API contract, `_copy_from_iter`
->   does not write uninitialized bytes to `out`.
-> 
-> In this way we can defer to the implementation of `_copy_from_user`,
-> which is what I think you want?
+schedule_exit
+	SCHEDULING=3Dfalse
+	SWITCH=3Dfalse
 
-Yes, this is pretty much what I want except that _copy_from_user isn't
-the only C function you could call to read from an iov_iter.
+If I understood correctly that's intended behaviour since swapping the
+assignments in schedule_exit (or doing a pulse in sched_switch) would
+add another event when scheduling is true, which is against the next
+requirement.
 
-Alice
+Now I can't think of a way to rewrite the model to allow a pulse in
+sched_switch, that is /whenever scheduling turns to true, the next
+event is a switch/ instead of /any time scheduling is true, the next
+event is a switch/.
+
+I tried something like:
+  RULE =3D always ((not SCHEDULING and next SCHEDULING) imply next
+SWITCH)
+but the parser got the two SCHEDULING as two different atoms, so I
+guess I did something I was not supposed to do..
+
+Is the next operator only meaningful for atoms that are mutually
+exclusive (e.g. RED next GREEN, if GREEN is true RED turns to false)
+and/or when playing with ltl_atom_set without triggering validations?
+
+What am I missing here?
+
+Thanks,
+Gabriele
+
+> ---
+> =C2=A0.../trace/rv/linear_temporal_logic.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 1 +
+> =C2=A0tools/verification/rvgen/rvgen/ltl2ba.py=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 | 26
+> +++++++++++++++++++
+> =C2=A02 files changed, 27 insertions(+)
+>=20
+> diff --git a/Documentation/trace/rv/linear_temporal_logic.rst
+> b/Documentation/trace/rv/linear_temporal_logic.rst
+> index 57f107fcf6dd..9eee09d9cacf 100644
+> --- a/Documentation/trace/rv/linear_temporal_logic.rst
+> +++ b/Documentation/trace/rv/linear_temporal_logic.rst
+> @@ -41,6 +41,7 @@ Operands (opd):
+> =C2=A0Unary Operators (unop):
+> =C2=A0=C2=A0=C2=A0=C2=A0 always
+> =C2=A0=C2=A0=C2=A0=C2=A0 eventually
+> +=C2=A0=C2=A0=C2=A0 next
+> =C2=A0=C2=A0=C2=A0=C2=A0 not
+> =C2=A0
+> =C2=A0Binary Operators (binop):
+> diff --git a/tools/verification/rvgen/rvgen/ltl2ba.py
+> b/tools/verification/rvgen/rvgen/ltl2ba.py
+> index d11840af7f5f..f14e6760ac3d 100644
+> --- a/tools/verification/rvgen/rvgen/ltl2ba.py
+> +++ b/tools/verification/rvgen/rvgen/ltl2ba.py
+> @@ -19,6 +19,7 @@ from ply.yacc import yacc
+> =C2=A0# Unary Operators (unop):
+> =C2=A0#=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 always
+> =C2=A0#=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 eventually
+> +#=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 next
+> =C2=A0#=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 not
+> =C2=A0#
+> =C2=A0# Binary Operators (binop):
+> @@ -35,6 +36,7 @@ tokens =3D (
+> =C2=A0=C2=A0=C2=A0 'UNTIL',
+> =C2=A0=C2=A0=C2=A0 'ALWAYS',
+> =C2=A0=C2=A0=C2=A0 'EVENTUALLY',
+> +=C2=A0=C2=A0 'NEXT',
+> =C2=A0=C2=A0=C2=A0 'VARIABLE',
+> =C2=A0=C2=A0=C2=A0 'LITERAL',
+> =C2=A0=C2=A0=C2=A0 'NOT',
+> @@ -48,6 +50,7 @@ t_OR =3D r'or'
+> =C2=A0t_IMPLY =3D r'imply'
+> =C2=A0t_UNTIL =3D r'until'
+> =C2=A0t_ALWAYS =3D r'always'
+> +t_NEXT =3D r'next'
+> =C2=A0t_EVENTUALLY =3D r'eventually'
+> =C2=A0t_VARIABLE =3D r'[A-Z_0-9]+'
+> =C2=A0t_LITERAL =3D r'true|false'
+> @@ -327,6 +330,26 @@ class AlwaysOp(UnaryOp):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # ![]F =3D=3D <>(!F)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return EventuallyOp(self=
+.child.negate()).normalize()
+> =C2=A0
+> +class NextOp(UnaryOp):
+> +=C2=A0=C2=A0=C2=A0 def normalize(self):
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return self
+> +
+> +=C2=A0=C2=A0=C2=A0 def _is_temporal(self):
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return True
+> +
+> +=C2=A0=C2=A0=C2=A0 def negate(self):
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # not (next A) =3D=3D next (n=
+ot A)
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 self.child =3D self.child.neg=
+ate()
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return self
+> +
+> +=C2=A0=C2=A0=C2=A0 @staticmethod
+> +=C2=A0=C2=A0=C2=A0 def expand(n: ASTNode, node: GraphNode, node_set) ->
+> set[GraphNode]:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tmp =3D GraphNode(node.incomi=
+ng,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node.new=
+,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node.old=
+ | {n},
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node.nex=
+t | {n.op.child})
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return tmp.expand(node_set)
+> +
+> =C2=A0class NotOp(UnaryOp):
+> =C2=A0=C2=A0=C2=A0=C2=A0 def __str__(self):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return "!" + str(self.ch=
+ild)
+> @@ -452,12 +475,15 @@ def p_unop(p):
+> =C2=A0=C2=A0=C2=A0=C2=A0 '''
+> =C2=A0=C2=A0=C2=A0=C2=A0 unop : ALWAYS ltl
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | EVENTUALLY ltl
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | NEXT ltl
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | NOT ltl
+> =C2=A0=C2=A0=C2=A0=C2=A0 '''
+> =C2=A0=C2=A0=C2=A0=C2=A0 if p[1] =3D=3D "always":
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 op =3D AlwaysOp(p[2])
+> =C2=A0=C2=A0=C2=A0=C2=A0 elif p[1] =3D=3D "eventually":
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 op =3D EventuallyOp(p[2]=
+)
+> +=C2=A0=C2=A0=C2=A0 elif p[1] =3D=3D "next":
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 op =3D NextOp(p[2])
+> =C2=A0=C2=A0=C2=A0=C2=A0 elif p[1] =3D=3D "not":
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 op =3D NotOp(p[2])
+> =C2=A0=C2=A0=C2=A0=C2=A0 else:
+
 
