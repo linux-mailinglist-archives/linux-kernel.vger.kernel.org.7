@@ -1,136 +1,116 @@
-Return-Path: <linux-kernel+bounces-729899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC851B03D46
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:22:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5E29B03D47
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB8A7175287
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:22:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D9F03B2E68
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45ADC246778;
-	Mon, 14 Jul 2025 11:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDCE24679B;
+	Mon, 14 Jul 2025 11:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sCRc4uDG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YYIReyAs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A715B17C77
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A725D1E47A8;
+	Mon, 14 Jul 2025 11:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752492168; cv=none; b=CGzjrsEOPuwrHrqYUGFkmTP2jumtd7TZSCHCEASkGf8GT7Hpr4R4ghJZ3dVl8ZB7m7AWzZ+cw4ok1udHCJ4k1WkZt0ZunrgAPJLmdtlrtRVfBHIAFi8JnScY+SZP5shXTLNZhl6DJ6l34IkbtefLSEICVHlU8VAoqHnccy6eCYM=
+	t=1752492204; cv=none; b=ehQUWMV/TS61YZgHoHgI7kf7q1OudbEoOcBWhlODcpBCh9VCJne2qEDZsnrWheaxy0EQj7v/XxmKhX2aRXIW98eFUPdVgzkDCg9Q3OU7lfpIxUsTNXVDyJa4zcDCsnwcj43gT98XBWuwqddblEK7E/WN+ghmPUV+BvnFRWnfr/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752492168; c=relaxed/simple;
-	bh=eupN5HxOGmkNc6Cw38VhHgDtAG0xIE1iOkot5oZjUsY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dxvKrkBf3wl0fHo6yCwsdhIZNGO41E5B/WJcqZH27e/WcOJJ6COHWPgum/ZAJzJ8DPYkQ/tcSwBXy7x5JS+K3Tuab7hkyw+lq3ZHDVj+cUAnElx5Tkb9eFFkZz5PKP71xH72pOoofFSI76ijMhL8p/rOyKb5pxcm10SJO1hLi6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sCRc4uDG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31133C4CEED;
-	Mon, 14 Jul 2025 11:22:47 +0000 (UTC)
+	s=arc-20240116; t=1752492204; c=relaxed/simple;
+	bh=DY/dmG6LZNxcbok7TxYUWpoHqR8O26mknUUoN8ACEog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pund2UdI0t4fzdQS4jOS6Kh04eNIsdJef2t9pGUwLQmQaIVfHoAr0hK9yinmTUYNLmy2ZsHI5PuOlGJEcVu/3Th+iU7R0lvfPtqiHpq5O2YuzeyItyQW5Cac8//lgJ2HgJBKTti1PrjGYMcV3dybccu1fttyWwjJivraT1U9R8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YYIReyAs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 429A9C4CEF4;
+	Mon, 14 Jul 2025 11:23:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752492168;
-	bh=eupN5HxOGmkNc6Cw38VhHgDtAG0xIE1iOkot5oZjUsY=;
-	h=From:Date:Subject:To:Cc:From;
-	b=sCRc4uDGr1GQfCSwBB6l/HLI1O3njulL2xrtgZ0DGT8bPoxcqX+Bg9sc6j71ZP2Mn
-	 kX2VJ7uJPeeWREbAl/Mf2PNrJPhUjoSx+fpqpxLtoPg3NWpthbue5I4NFoaraEfVHJ
-	 Trw2hjMsNMJPLG0TO7yFxCiwuZtl5gpCchnYee8KGFj4LPVDMRNOUIhh/UTY47vy+R
-	 Ch+Sb+byjf5pgxKlMGetMO4yy3p623PBGD1+oT6WzmvWsl91ZbIzrFjuL0w+um2yl9
-	 utFEWzT7YtqSqM0lwVhfZWScF1NwEDH0ecjufF4w1fCJ2XP0W0hxv0tq1zi/kMxXjF
-	 6a+yyL3ieR0oA==
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 14 Jul 2025 12:21:27 +0100
-Subject: [PATCH v2] arm64/gcs: Don't call gcs_free() when releasing
- task_struct
+	s=k20201202; t=1752492204;
+	bh=DY/dmG6LZNxcbok7TxYUWpoHqR8O26mknUUoN8ACEog=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YYIReyAs3klRSmt6LYTsKyntQGMMST6uGgl1PMjXnRAetY7AQsoBiwJvrRzLUDJjQ
+	 9+/oIXIjiJhUZxDMMT0hOetBJm/rFzgXsyWvVGoFfG9IorBcVt6IDqTXbarJ0ymFy5
+	 cimWTCGF/JHusIBPqWcXsNf1Dtg0D91D84wCbPQrrmKBW81Tly1rxv0rbBcBMBR/xW
+	 Gdo8CS5XaNtkcQnVELn4XZe/Mvm7dITTDR3V/84LWU04Oo8y83I4h6EQpKiAnLWm5R
+	 FFZnXmqk6VgYiH19Y5vzqCYtAwD+NKa4L4ZFs7ffUDEQ8RgL2mQkrNuokVSZPW0sT+
+	 /Sf3orGKxjPFw==
+Date: Mon, 14 Jul 2025 12:23:19 +0100
+From: Will Deacon <will@kernel.org>
+To: Zhang Shurong <zhang_shurong@foxmail.com>
+Cc: sven@kernel.org, j@jannau.net, alyssa@rosenzweig.io, neal@gompa.dev,
+	joro@8bytes.org, robin.murphy@arm.com, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/dart: add missing put_device() call in
+ apple_dart_of_xlate
+Message-ID: <aHTop3m5gdS4vwvk@willie-the-truck>
+References: <tencent_22664B08ACDCE35DE10E5546C2FB26B59605@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250714-arm64-gcs-release-task-v2-1-8a83cadfc846@kernel.org>
-X-B4-Tracking: v=1; b=H4sIADfodGgC/3WNyw6CMBBFf8XM2jFtLTVx5X8YFn0M0IBgZgjRE
- P7dSty6PCe5564gxJkErocVmJYseRoLmOMBYufHljCnwmCUqZTTCj0/nMU2CjIN5IVw9tLjWV1
- ScKrxOlgo4ydTk197+F4X7rLME7/3n0V/7S9pqn/JRaPGysaQoknBanfriUcaThO3UG/b9gGil
- KfevQAAAA==
-X-Change-ID: 20250610-arm64-gcs-release-task-307db60fa1b4
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-cff91
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2024; i=broonie@kernel.org;
- h=from:subject:message-id; bh=eupN5HxOGmkNc6Cw38VhHgDtAG0xIE1iOkot5oZjUsY=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBodOiG/3RE8umgKHyexaxCTtokEiAZNAKiXsr7i
- GT4UAh59D+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaHTohgAKCRAk1otyXVSH
- 0O28B/4obCY4pUwxBTPWO9pFk0szGkgyIClyInyNfoLM3PHfgdRBCbSitvja06qJCMG99mvyARS
- L9sGhNUFiOctWMBlThdrPL3+AdqWoa5+uMo6v2ycHOWN2ymDB35ltHv5CUMk/qIWIZDkefJmt1q
- Uqp4Bmrgpit8jbHNFKNDEiWhLLUSPOlRz6dGrKvaplIq9v42/+X862XtmvbUAJnZaUS9/640m2c
- L6MijVPyx9xZm97yKd4ouyrzVei1HtvoiQN6jnZfuwNgn+rMThZORYmhn9fhaQziLSAUeVu0v15
- 891M7H9Eq7/DdtxAksZWEGd6eTChdmXQnppL6LYIcyk1d399
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_22664B08ACDCE35DE10E5546C2FB26B59605@qq.com>
 
-Currently we call gcs_free() when releasing task_struct but this is
-redundant, it attempts to deallocate any kernel managed userspace GCS
-which should no longer be relevant and resets values in the struct we're
-in the process of freeing.
+On Sun, Jul 13, 2025 at 12:16:24AM +0800, Zhang Shurong wrote:
+> The apple_dart_of_xlate() function obtains a platform device reference
+> via of_find_device_by_node() but doesn't release it with put_device().
+> This patch adds proper device reference handling to prevent memory
+> leaks.
+> 
+> Fixes: 46d1fb072e76 ("iommu/dart: Add DART iommu driver")
+> Signed-off-by: Zhang Shurong <zhang_shurong@foxmail.com>
+> ---
+>  drivers/iommu/apple-dart.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
+> index 190f28d76615..811bf5176568 100644
+> --- a/drivers/iommu/apple-dart.c
+> +++ b/drivers/iommu/apple-dart.c
+> @@ -796,8 +796,10 @@ static int apple_dart_of_xlate(struct device *dev,
+>  
+>  	if (!cfg) {
+>  		cfg = kzalloc(sizeof(*cfg), GFP_KERNEL);
+> -		if (!cfg)
+> +		if (!cfg)  {
+> +			put_device(&iommu_pdev->dev);
+>  			return -ENOMEM;
+> +		}
+>  		/* Will be ANDed with DART capabilities */
+>  		cfg->supports_bypass = true;
+>  	}
+> @@ -805,8 +807,10 @@ static int apple_dart_of_xlate(struct device *dev,
+>  
+>  	cfg_dart = cfg->stream_maps[0].dart;
+>  	if (cfg_dart) {
+> -		if (cfg_dart->pgsize != dart->pgsize)
+> +		if (cfg_dart->pgsize != dart->pgsize) {
+> +			put_device(&iommu_pdev->dev);
+>  			return -EINVAL;
+> +		}
+>  	}
+>  
+>  	cfg->supports_bypass &= dart->supports_bypass;
+> @@ -825,6 +829,8 @@ static int apple_dart_of_xlate(struct device *dev,
+>  		}
+>  	}
+>  
+> +
+> +	put_device(&iommu_pdev->dev);
+>  	return -EINVAL;
 
-By the time arch_release_task_struct() is called the mm will have been
-disassociated from the task so the check for a mm in gcs_free() will
-always be false, for threads that are exiting leaving the mm active
-deactivate_mm() will have been called previously and freed any kernel
-managed GCS.
+Why is it correct to retain the reference on the device in the cases
+where this function returns 0?
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
-Changes in v2:
-- Remove stale comment in gcs_free().
-- Link to v1: https://lore.kernel.org/r/20250625-arm64-gcs-release-task-v1-1-54cbdc2db416@kernel.org
----
- arch/arm64/kernel/process.c | 1 -
- arch/arm64/mm/gcs.c         | 6 ------
- 2 files changed, 7 deletions(-)
-
-diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-index 5954cec19660..5dcfab9ce012 100644
---- a/arch/arm64/kernel/process.c
-+++ b/arch/arm64/kernel/process.c
-@@ -341,7 +341,6 @@ void flush_thread(void)
- void arch_release_task_struct(struct task_struct *tsk)
- {
- 	fpsimd_release_task(tsk);
--	gcs_free(tsk);
- }
- 
- int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
-diff --git a/arch/arm64/mm/gcs.c b/arch/arm64/mm/gcs.c
-index 5c46ec527b1c..6e93f78de79b 100644
---- a/arch/arm64/mm/gcs.c
-+++ b/arch/arm64/mm/gcs.c
-@@ -157,12 +157,6 @@ void gcs_free(struct task_struct *task)
- 	if (!system_supports_gcs())
- 		return;
- 
--	/*
--	 * When fork() with CLONE_VM fails, the child (tsk) already
--	 * has a GCS allocated, and exit_thread() calls this function
--	 * to free it.  In this case the parent (current) and the
--	 * child share the same mm struct.
--	 */
- 	if (!task->mm || task->mm != current->mm)
- 		return;
- 
-
----
-base-commit: 86731a2a651e58953fc949573895f2fa6d456841
-change-id: 20250610-arm64-gcs-release-task-307db60fa1b4
-
-Best regards,
---  
-Mark Brown <broonie@kernel.org>
-
+Will
 
