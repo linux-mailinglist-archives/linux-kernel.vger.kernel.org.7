@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-730036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BC35B03F71
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:17:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7041CB03F6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F4D81A625B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:18:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E1491A62466
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E61A25291B;
-	Mon, 14 Jul 2025 13:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6951F24E4C3;
+	Mon, 14 Jul 2025 13:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XHH17d5x"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O3FjRptO"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BCB24DD0A
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA2B42065
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752499041; cv=none; b=uKMzjnLLRjZg+fEeNDxDOIeMvUVfK8h9AXd9TFPAQWkcuAKeo7XSZ2+Lq3GKm7eGuyOo5PsfKKkU1oE5Q9dSmKPyJRObpVrlkLY/dqpLsBFH/PtNpbZhkSJ9BjGKVhoH1egdumritmyjaCXZhIkKhejp+aGzVQWV+MkqckDd0Sk=
+	t=1752499039; cv=none; b=qUvauvUhq7eQPZeCj7zIXRZsi+ic8gYnHX6Miqe48cb9IyXbW/8XS6LZKhqfWhaqsntBnmoRhj+USgvC7E/vTcXz7gNlnY4USi61478KJ1NTZAGwPUNiC6JBN2O2EOeHlkIkJd4wfg2EK5WcV13VYWaXKNb8KJGaXiL2ZpGtZx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752499041; c=relaxed/simple;
-	bh=OU3p7ZD7Je4BWV16C8j4MBKjwcozASiSqaaRu4MZpx4=;
+	s=arc-20240116; t=1752499039; c=relaxed/simple;
+	bh=NQlEC12/PkcNog6rAzPE2sHwLIdyRd0D6p4x1t2tCAY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=orn3D+u6/tmgn4veYkDRxiJqhnFQZWvxUPpfcCDtwH6hzRx176eUhRFpyXk6J9C64pT/SX1LNA833yNFCWn+E+9x+COFlBZIXo15NwGij271lg1BQnCxMaphuvJvaISP1dsY0KGSltUllFBo2ycHg9NnDQpMg1HK6Nl637H2P20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XHH17d5x; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=WUcpNVl/lbPqI/8bxEinAqRU7VmXN6uzy3xAeJKEpzxg96m437lnuRan5Hv7C2V4aT3/4Kh6XXaGJ4etJeqg5kxp23a9eEgDXjHsXXkPGuhRhGmDb8xZZrHPtO/Elr7Xw+PoxgyqYX/CklJOSvYuF5V1XNlSGaAT1u5geVRbQaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O3FjRptO; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752499039;
+	s=mimecast20190719; t=1752499037;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ynXGS3UbV4776sA/q7fw/bdeOIQTeuFUbD3iRS8icfM=;
-	b=XHH17d5x2FQBG4TSiKRNPHmxkHfMq6o14nrSFoSKlE0wneSkNT47y2k4hVSC0N6Al4G6TK
-	3pwTOpDu4IFox7Mmvr2ajbOxVqxMDyzy0qYK6u/wkg+Sy4S1I+pGjpxvdXx/qdDxsZm8tU
-	mroFpNMriMxpphrMHm14pp6TCNyWbLY=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+	bh=FTJc9bWtRtDIBfHbDRnLppWXtJs9xo9JkdcLfIZxo/I=;
+	b=O3FjRptOftNiUEhhBdrihSHo4nfmfDTZ6xnqsYvTz7j7bIEjYEOqZvNyrBpVqPn7jmOSkU
+	q68PUgrJBvk2JNLTNbAlzMF15NN8PO9+oUbBFjiJTvhlW68Mv49fnJLbkPqdD2G95Bhrm/
+	hpm+mMO+luTp2M5lL1Qok2QyCyWa6Yg=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-296-V_U7AeCoMcyllFn2sWRvcQ-1; Mon,
- 14 Jul 2025 09:17:14 -0400
-X-MC-Unique: V_U7AeCoMcyllFn2sWRvcQ-1
-X-Mimecast-MFC-AGG-ID: V_U7AeCoMcyllFn2sWRvcQ_1752499032
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-418-Hz-OqUGIOJylB5NjZspXLQ-1; Mon,
+ 14 Jul 2025 09:17:15 -0400
+X-MC-Unique: Hz-OqUGIOJylB5NjZspXLQ-1
+X-Mimecast-MFC-AGG-ID: Hz-OqUGIOJylB5NjZspXLQ_1752499034
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2ECCE18001D6;
-	Mon, 14 Jul 2025 13:17:12 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DDF8C1800268;
+	Mon, 14 Jul 2025 13:17:13 +0000 (UTC)
 Received: from fedora.redhat.com (unknown [10.22.80.96])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 97035180035E;
-	Mon, 14 Jul 2025 13:17:10 +0000 (UTC)
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 71FCF18002B5;
+	Mon, 14 Jul 2025 13:17:12 +0000 (UTC)
 From: Luiz Capitulino <luizcap@redhat.com>
 To: david@redhat.com,
 	willy@infradead.org,
@@ -65,9 +65,9 @@ Cc: linux-kernel@vger.kernel.org,
 	shivankg@amd.com,
 	sj@kernel.org,
 	harry.yoo@oracle.com
-Subject: [PATCH v3 2/4] mm/util: introduce snapshot_page()
-Date: Mon, 14 Jul 2025 09:16:52 -0400
-Message-ID: <637a03a05cb2e3df88f84ff9e9f9642374ef813a.1752499009.git.luizcap@redhat.com>
+Subject: [PATCH v3 3/4] proc: kpagecount: use snapshot_page()
+Date: Mon, 14 Jul 2025 09:16:53 -0400
+Message-ID: <1c05cc725b90962d56323ff2e28e9cc3ae397b68.1752499009.git.luizcap@redhat.com>
 In-Reply-To: <cover.1752499009.git.luizcap@redhat.com>
 References: <cover.1752499009.git.luizcap@redhat.com>
 Precedence: bulk
@@ -79,206 +79,103 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-This commit refactors __dump_page() into snapshot_page().
+Currently, the call to folio_precise_page_mapcount() from kpage_read()
+can race with a folio split. When the race happens we trigger a
+VM_BUG_ON_FOLIO() in folio_entire_mapcount() (see splat below).
 
-snapshot_page() tries to take a faithful snapshot of a page and its
-folio representation. The snapshot is returned in the struct
-page_snapshot parameter along with additional flags that are best
-retrieved at snapshot creation time to reduce race windows.
+This commit fixes this race by using snapshot_page() so that we
+retrieve the folio mapcount using a folio snapshot.
 
-This function is intended to be used by callers that need a stable
-representation of a struct page and struct folio so that pointers
-or page information doesn't change while working on a page.
+[ 2356.558576] page: refcount:1 mapcount:1 mapping:0000000000000000 index:0xffff85200 pfn:0x6f7c00
+[ 2356.558748] memcg:ffff000651775780
+[ 2356.558763] anon flags: 0xafffff60020838(uptodate|dirty|lru|owner_2|swapbacked|node=1|zone=2|lastcpupid=0xfffff)
+[ 2356.558796] raw: 00afffff60020838 fffffdffdb5d0048 fffffdffdadf7fc8 ffff00064c1629c1
+[ 2356.558817] raw: 0000000ffff85200 0000000000000000 0000000100000000 ffff000651775780
+[ 2356.558839] page dumped because: VM_BUG_ON_FOLIO(!folio_test_large(folio))
+[ 2356.558882] ------------[ cut here ]------------
+[ 2356.558897] kernel BUG at ./include/linux/mm.h:1103!
+[ 2356.558982] Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
+[ 2356.564729] CPU: 8 UID: 0 PID: 1864 Comm: folio-split-rac Tainted: G S      W           6.15.0+ #3 PREEMPT(voluntary)
+[ 2356.566196] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[ 2356.566814] Hardware name: Red Hat KVM, BIOS edk2-20241117-3.el9 11/17/2024
+[ 2356.567684] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[ 2356.568563] pc : kpage_read.constprop.0+0x26c/0x290
+[ 2356.569605] lr : kpage_read.constprop.0+0x26c/0x290
+[ 2356.569992] sp : ffff80008fb739b0
+[ 2356.570263] x29: ffff80008fb739b0 x28: ffff00064aa69580 x27: 00000000ff000000
+[ 2356.570842] x26: 0000fffffffffff8 x25: ffff00064aa69580 x24: ffff80008fb73ae0
+[ 2356.571411] x23: 0000000000000001 x22: 0000ffff86c6e8b8 x21: 0000000000000008
+[ 2356.571978] x20: 00000000006f7c00 x19: 0000ffff86c6e8b8 x18: 0000000000000000
+[ 2356.572581] x17: 3630303066666666 x16: 0000000000000003 x15: 0000000000001000
+[ 2356.573217] x14: 00000000ffffffff x13: 0000000000000004 x12: 00aaaaaa00aaaaaa
+[ 2356.577674] x11: 0000000000000000 x10: 00aaaaaa00aaaaaa x9 : ffffbf3afca6c300
+[ 2356.578332] x8 : 0000000000000002 x7 : 0000000000000001 x6 : 0000000000000001
+[ 2356.578984] x5 : ffff000c79812408 x4 : 0000000000000000 x3 : 0000000000000000
+[ 2356.579635] x2 : 0000000000000000 x1 : ffff00064aa69580 x0 : 000000000000003e
+[ 2356.580286] Call trace:
+[ 2356.580524]  kpage_read.constprop.0+0x26c/0x290 (P)
+[ 2356.580982]  kpagecount_read+0x28/0x40
+[ 2356.581336]  proc_reg_read+0x38/0x100
+[ 2356.581681]  vfs_read+0xcc/0x320
+[ 2356.581992]  ksys_read+0x74/0x118
+[ 2356.582306]  __arm64_sys_read+0x24/0x38
+[ 2356.582668]  invoke_syscall+0x70/0x100
+[ 2356.583022]  el0_svc_common.constprop.0+0x48/0xf8
+[ 2356.583456]  do_el0_svc+0x28/0x40
+[ 2356.583930]  el0_svc+0x38/0x118
+[ 2356.584328]  el0t_64_sync_handler+0x144/0x168
+[ 2356.584883]  el0t_64_sync+0x19c/0x1a0
+[ 2356.585350] Code: aa0103e0 9003a541 91082021 97f813fc (d4210000)
+[ 2356.586130] ---[ end trace 0000000000000000 ]---
+[ 2356.587377] note: folio-split-rac[1864] exited with irqs disabled
+[ 2356.588050] note: folio-split-rac[1864] exited with preempt_count 1
 
-The idea and original implementation of snapshot_page() comes from
-Matthew Wilcox with suggestions for improvements from David Hildenbrand.
-All bugs and misconceptions are mine.
-
+Reported-by: syzbot+3d7dc5eaba6b932f8535@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/67812fbd.050a0220.d0267.0030.GAE@google.com/
 Signed-off-by: Luiz Capitulino <luizcap@redhat.com>
 ---
- include/linux/mm.h | 19 +++++++++++
- mm/debug.c         | 42 +++---------------------
- mm/util.c          | 79 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 102 insertions(+), 38 deletions(-)
+ fs/proc/page.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0ef2ba0c667a..929e2330af13 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -4184,4 +4184,23 @@ static inline bool page_pool_page_is_pp(struct page *page)
- }
+diff --git a/fs/proc/page.c b/fs/proc/page.c
+index 999af26c7298..936f8bbe5a6f 100644
+--- a/fs/proc/page.c
++++ b/fs/proc/page.c
+@@ -43,6 +43,22 @@ static inline unsigned long get_max_dump_pfn(void)
  #endif
+ }
  
-+#define PAGE_SNAPSHOT_FAITHFUL (1 << 0)
-+#define PAGE_SNAPSHOT_PG_BUDDY (1 << 1)
-+#define PAGE_SNAPSHOT_PG_IDLE  (1 << 2)
-+
-+struct page_snapshot {
-+	struct folio folio_snapshot;
-+	struct page page_snapshot;
-+	unsigned long pfn;
-+	unsigned long idx;
-+	unsigned long flags;
-+};
-+
-+static inline bool snapshot_page_is_faithful(const struct page_snapshot *ps)
++static u64 get_kpage_count(const struct page *page)
 +{
-+	return ps->flags & PAGE_SNAPSHOT_FAITHFUL;
-+}
-+
-+void snapshot_page(struct page_snapshot *ps, const struct page *page);
-+
- #endif /* _LINUX_MM_H */
-diff --git a/mm/debug.c b/mm/debug.c
-index 907382257062..7349330ea506 100644
---- a/mm/debug.c
-+++ b/mm/debug.c
-@@ -129,47 +129,13 @@ static void __dump_folio(struct folio *folio, struct page *page,
- 
- static void __dump_page(const struct page *page)
- {
--	struct folio *foliop, folio;
--	struct page precise;
--	unsigned long head;
--	unsigned long pfn = page_to_pfn(page);
--	unsigned long idx, nr_pages = 1;
--	int loops = 5;
--
--again:
--	memcpy(&precise, page, sizeof(*page));
--	head = precise.compound_head;
--	if ((head & 1) == 0) {
--		foliop = (struct folio *)&precise;
--		idx = 0;
--		if (!folio_test_large(foliop))
--			goto dump;
--		foliop = (struct folio *)page;
--	} else {
--		foliop = (struct folio *)(head - 1);
--		idx = folio_page_idx(foliop, page);
--	}
 +	struct page_snapshot ps;
- 
--	if (idx < MAX_FOLIO_NR_PAGES) {
--		memcpy(&folio, foliop, 2 * sizeof(struct page));
--		nr_pages = folio_nr_pages(&folio);
--		if (nr_pages > 1)
--			memcpy(&folio.__page_2, &foliop->__page_2,
--			       sizeof(struct page));
--		foliop = &folio;
--	}
--
--	if (idx > nr_pages) {
--		if (loops-- > 0)
--			goto again;
++	u64 ret;
++
 +	snapshot_page(&ps, page);
-+	if (!snapshot_page_is_faithful(&ps))
- 		pr_warn("page does not match folio\n");
--		precise.compound_head &= ~1UL;
--		foliop = (struct folio *)&precise;
--		idx = 0;
--	}
- 
--dump:
--	__dump_folio(foliop, &precise, pfn, idx);
-+	__dump_folio(&ps.folio_snapshot, &ps.page_snapshot, ps.pfn, ps.idx);
- }
- 
- void dump_page(const struct page *page, const char *reason)
-diff --git a/mm/util.c b/mm/util.c
-index 0b270c43d7d1..f270bf42465b 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -25,6 +25,7 @@
- #include <linux/sizes.h>
- #include <linux/compat.h>
- #include <linux/fsnotify.h>
-+#include <linux/page_idle.h>
- 
- #include <linux/uaccess.h>
- 
-@@ -1171,3 +1172,81 @@ int compat_vma_mmap_prepare(struct file *file, struct vm_area_struct *vma)
- 	return 0;
- }
- EXPORT_SYMBOL(compat_vma_mmap_prepare);
 +
-+static void set_ps_flags(struct page_snapshot *ps, const struct folio *folio,
-+			 const struct page *page)
-+{
-+	/*
-+	 * Only the first page of a high-order buddy page has PageBuddy() set.
-+	 * So we have to check manually whether this page is part of a high-
-+	 * order buddy page.
-+	 */
-+	if (PageBuddy(page))
-+		ps->flags |= PAGE_SNAPSHOT_PG_BUDDY;
-+	else if (page_count(page) == 0 && is_free_buddy_page(page))
-+		ps->flags |= PAGE_SNAPSHOT_PG_BUDDY;
++	if (IS_ENABLED(CONFIG_PAGE_MAPCOUNT))
++		ret = folio_precise_page_mapcount(&ps.folio_snapshot,
++						  &ps.page_snapshot);
++	else
++		ret = folio_average_page_mapcount(&ps.folio_snapshot);
 +
-+	if (folio_test_idle(folio))
-+		ps->flags |= PAGE_SNAPSHOT_PG_IDLE;
++	return ret;
 +}
 +
-+/**
-+ * snapshot_page() - Create a snapshot of a struct page
-+ * @ps: Pointer to a struct page_snapshot to store the page snapshot
-+ * @page: The page to snapshot
-+ *
-+ * Create a snapshot of the page and store both its struct page and struct
-+ * folio representations in @ps.
-+ *
-+ * Note that creating a faithful snapshot may fail if the compound
-+ * state of the page keeps changing (e.g., due to a folio split). In
-+ * this case, ps->faithful is set to false, and the snapshot assumes
-+ * that @page refers to a single page.
-+ */
-+void snapshot_page(struct page_snapshot *ps, const struct page *page)
-+{
-+	unsigned long head, nr_pages = 1;
-+	struct folio *foliop;
-+	int loops = 5;
-+
-+	ps->pfn = page_to_pfn(page);
-+	ps->flags = PAGE_SNAPSHOT_FAITHFUL;
-+
-+again:
-+	memset(&ps->folio_snapshot, 0, sizeof(struct folio));
-+	memcpy(&ps->page_snapshot, page, sizeof(*page));
-+	head = ps->page_snapshot.compound_head;
-+	if ((head & 1) == 0) {
-+		ps->idx = 0;
-+		foliop = (struct folio *)&ps->page_snapshot;
-+		if (!folio_test_large(foliop)) {
-+			set_ps_flags(ps, page_folio(page), page);
-+			memcpy(&ps->folio_snapshot, foliop,
-+			       sizeof(struct page));
-+			return;
-+		}
-+		foliop = (struct folio *)page;
-+	} else {
-+		foliop = (struct folio *)(head - 1);
-+		ps->idx = folio_page_idx(foliop, page);
-+	}
-+
-+	if (ps->idx < MAX_FOLIO_NR_PAGES) {
-+		memcpy(&ps->folio_snapshot, foliop, 2 * sizeof(struct page));
-+		nr_pages = folio_nr_pages(&ps->folio_snapshot);
-+		if (nr_pages > 1)
-+			memcpy(&ps->folio_snapshot.__page_2, &foliop->__page_2,
-+			       sizeof(struct page));
-+		set_ps_flags(ps, foliop, page);
-+	}
-+
-+	if (ps->idx > nr_pages) {
-+		if (loops-- > 0)
-+			goto again;
-+		clear_compound_head(&ps->page_snapshot);
-+		foliop = (struct folio *)&ps->page_snapshot;
-+		memcpy(&ps->folio_snapshot, foliop, sizeof(struct page));
-+		ps->flags = 0;
-+		ps->idx = 0;
-+	}
-+}
+ static ssize_t kpage_read(struct file *file, char __user *buf,
+ 		size_t count, loff_t *ppos,
+ 		enum kpage_operation op)
+@@ -75,10 +91,7 @@ static ssize_t kpage_read(struct file *file, char __user *buf,
+ 				info = stable_page_flags(page);
+ 				break;
+ 			case KPAGE_COUNT:
+-				if (IS_ENABLED(CONFIG_PAGE_MAPCOUNT))
+-					info = folio_precise_page_mapcount(page_folio(page), page);
+-				else
+-					info = folio_average_page_mapcount(page_folio(page));
++				info = get_kpage_count(page);
+ 				break;
+ 			case KPAGE_CGROUP:
+ 				info = page_cgroup_ino(page);
 -- 
 2.50.0
 
