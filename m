@@ -1,198 +1,236 @@
-Return-Path: <linux-kernel+bounces-730283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D44FB0424E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:57:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5859B04252
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D0BD3A7583
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:57:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F2B14A3F38
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C25E25A333;
-	Mon, 14 Jul 2025 14:57:10 +0000 (UTC)
-Received: from smtp232.sjtu.edu.cn (smtp232.sjtu.edu.cn [202.120.2.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472972580CB;
+	Mon, 14 Jul 2025 14:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="YD9rSLEc"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C570259CB0;
-	Mon, 14 Jul 2025 14:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.120.2.232
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752505029; cv=none; b=ZV/aR09l2nrX94WVE2T5saJVHal6MZoAWe3arbsYlx0SLaWE75xER8qz6gA958o0CuoLKCl9b0354ipCfOW9d1pvZPEa4CjQUUIvDyO5ssOOZlry1kXPGHLg2ALCY5bm43y1uvuT1TF3ZGkGgzHFg5uJfbgLyb6U8gRkJyQOjGI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752505029; c=relaxed/simple;
-	bh=CVaX47SHOe4vJ05VeCEEWy1KKUEuNVXFqHTL3r5qeSk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=f/DiWHBoeG/wE23/GF6zE1j3NvEtIHwEiqImvGVJFVpQ61XNXsE2lnKu1KIYo+/Unk1A+dgZbHhfRCCyGNoKNEy+t84cJJADjzbZ2bEDljjiRICsMvBuHgMAgO4fCz+Mq4D8NyHxMscp29/P7wGRlVrnPpfwKGzSqsVbQIYSRYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sjtu.edu.cn; spf=pass smtp.mailfrom=sjtu.edu.cn; arc=none smtp.client-ip=202.120.2.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sjtu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sjtu.edu.cn
-Received: from proxy188.sjtu.edu.cn (smtp188.sjtu.edu.cn [202.120.2.188])
-	by smtp232.sjtu.edu.cn (Postfix) with ESMTPS id 3318710051698;
-	Mon, 14 Jul 2025 22:57:02 +0800 (CST)
-Received: from smtpclient.apple (unknown [202.120.40.82])
-	by proxy188.sjtu.edu.cn (Postfix) with ESMTPSA id B68BC37C929;
-	Mon, 14 Jul 2025 22:56:59 +0800 (CST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD612580CA;
+	Mon, 14 Jul 2025 14:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752505049; cv=pass; b=Rg3VS4c0fME+RjtWA/YnLiGOH0arjw6ocEEzHYGK63T+XgAYh0LMfj97BRxoj7jLbGQE1j+agTKJtoyvqK88qt9C33RwYxMAgUxvn2+GPem5R8+06n5P54AvuNDoNONDTjvCu59YoX/DDiMQPzoEnDoRXiMy6+RhQlN15m0WDGg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752505049; c=relaxed/simple;
+	bh=1O6B9Iiapo6B7MOUGvZzY1bJ7VRQZ3QyjR56KyPo5zk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rb2NRU/f9j8sbjzL211+i36f+2FjNpu5k+qntQtnpfRJkuDXJTrqG1PtgI/vhMpXsUDuILGukzJm/s/vcemBRSEmD0hi0euQvuug3TeMezVg4OIMZjTG1Z5JNvbCv+GGftNuYxO9rgH8IRQcO/3GlsjM56FOQc6QDAcHV/Ocf0Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=YD9rSLEc; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752505021; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=jTzafjthuIJN+sbR9JzbeSjM2+8zqD+8kpumWfzcbI7b7qvfXEB+oGFUAudVd8EA6YDyt5u8O6eIX/R9G/L18GjaXdxxGIQscUjko/mb09N3YmjG78W2Fc+mFuSC+p92EB7E/Ii98Lxo3R8L32bmOOeoG2I/imQ4yZlC8QBAD4Y=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752505021; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ZEz0MjyPjjmaHK4rHi3lzcnI88V95Ez+JAIUJe7tNHU=; 
+	b=Akm6xFiVTE9SCFtCFddQhMkPdTzJqbg0pVQ4e03instTx2KpfgUSdCiAMnQrxiV33zJ/sOTQVthWJeGVK9VyZ/jw30lpirOUL1aCEFuWOFCOF6VivWmxyVtquP9IBBJh92lHXcRTFTzzm8RhV1uUnfR4i+6kKBz8cNkGFnbxJkI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
+	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752505021;
+	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=ZEz0MjyPjjmaHK4rHi3lzcnI88V95Ez+JAIUJe7tNHU=;
+	b=YD9rSLEc2B3JX/3+g/USbXM3omX8JSQy3SohZ8n2vQ2U3qbK5EOe3JBk7apxP9d4
+	gYUN9WgeXDXm3WGUsQqG/zpXKFam7TqgOcnD2g9iJOmc/Ef7nJ8ynlSLyVlCNoqWLnV
+	I3tkx0yC2ST9x3vqQNUeP2BwQ1tXnn5FuqU/LIhI=
+Received: by mx.zohomail.com with SMTPS id 1752505018618941.5183600008951;
+	Mon, 14 Jul 2025 07:56:58 -0700 (PDT)
+Message-ID: <baa1fcde-f167-4a1b-afca-0a2957a688cc@collabora.com>
+Date: Mon, 14 Jul 2025 16:56:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [BUG] NULL pointer dereference in sev_writeback_caches during KVM
- SEV migration kselftest on AMD platform
-From: Zheyun Shen <szy0127@sjtu.edu.cn>
-In-Reply-To: <aHUYwCNDWlsar3qk@google.com>
-Date: Mon, 14 Jul 2025 22:56:44 +0800
-Cc: Srikanth Aithal <sraithal@amd.com>,
- linux-next@vger.kernel.org,
- kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <15D0C887-E17F-4432-8716-BF62EEE61B6B@sjtu.edu.cn>
-References: <935a82e3-f7ad-47d7-aaaf-f3d2b62ed768@amd.com>
- <F7AF073C-D630-45A3-8746-DE66B15FC3E1@sjtu.edu.cn>
- <aHUYwCNDWlsar3qk@google.com>
-To: Sean Christopherson <seanjc@google.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/5] iommu: Add verisilicon IOMMU driver
+To: Will Deacon <will@kernel.org>
+Cc: joro@8bytes.org, robin.murphy@arm.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
+ nicolas.dufresne@collabora.com, jgg@ziepe.ca, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ kernel@collabora.com
+References: <20250710082450.125585-1-benjamin.gaignard@collabora.com>
+ <20250710082450.125585-4-benjamin.gaignard@collabora.com>
+ <aHTzPwTob8_5rtBS@willie-the-truck>
+Content-Language: en-US
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+In-Reply-To: <aHTzPwTob8_5rtBS@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The problem is triggered by the following codes in =
-tools/testing/selftests/kvm/x86/sev_migrate_tests.c:
-static void test_sev_migrate_from(bool es)
-{
-	struct kvm_vm *src_vm;
-	struct kvm_vm *dst_vms[NR_MIGRATE_TEST_VMS];
-	int i, ret;
 
-	src_vm =3D sev_vm_create(es);
-	for (i =3D 0; i < NR_MIGRATE_TEST_VMS; ++i)
-		dst_vms[i] =3D aux_vm_create(true);
+Le 14/07/2025 à 14:08, Will Deacon a écrit :
+> Hi,
+>
+> On Thu, Jul 10, 2025 at 10:24:44AM +0200, Benjamin Gaignard wrote:
+>> diff --git a/drivers/iommu/vsi-iommu.c b/drivers/iommu/vsi-iommu.c
+>> new file mode 100644
+>> index 000000000000..15322b9929af
+>> --- /dev/null
+>> +++ b/drivers/iommu/vsi-iommu.c
+>> @@ -0,0 +1,781 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/* Copyright (C) 2025 Collabora Ltd.
+>> + *
+>> + * IOMMU API for Verisilicon
+>> + *
+>> + * Module Authors:	Yandong Lin <yandong.lin@rock-chips.com>
+>> + *			Simon Xue <xxm@rock-chips.com>
+>> + *			Benjamin Gaignard <benjamin.gaignard@collabora.com>
+>> + */
+>> +
+>> +#include <linux/clk.h>
+>> +#include <linux/compiler.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/device.h>
+>> +#include <linux/dma-mapping.h>
+>> +#include <linux/errno.h>
+>> +#include <linux/init.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/io.h>
+>> +#include <linux/iommu.h>
+>> +#include <linux/list.h>
+>> +#include <linux/mm.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_iommu.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/pm_runtime.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/spinlock.h>
+>> +
+>> +#include "iommu-pages.h"
+>> +
+>> +struct vsi_iommu {
+>> +	struct device *dev;
+>> +	void __iomem *regs;
+>> +	struct clk_bulk_data *clocks;
+>> +	int num_clocks;
+>> +	struct iommu_device iommu;
+>> +	struct list_head node; /* entry in vsi_iommu_domain.iommus */
+>> +	struct iommu_domain *domain; /* domain to which iommu is attached */
+>> +	spinlock_t lock;
+>> +	int irq;
+>> +};
+>> +
+>> +struct vsi_iommu_domain {
+>> +	struct list_head iommus;
+>> +	struct device *dev;
+>> +	u32 *dt;
+>> +	dma_addr_t dt_dma;
+>> +	struct iommu_domain domain;
+>> +	u64 *pta;
+>> +	dma_addr_t pta_dma;
+>> +	spinlock_t lock;
+>> +};
+>> +
+>> +static struct iommu_domain vsi_identity_domain;
+>> +
+>> +#define NUM_DT_ENTRIES	1024
+>> +#define NUM_PT_ENTRIES	1024
+>> +#define PT_SIZE		(NUM_PT_ENTRIES * sizeof(u32))
+>> +
+>> +#define SPAGE_SIZE	BIT(12)
+>> +
+>> +/* vsi iommu regs address */
+>> +#define VSI_MMU_CONFIG1_BASE			0x1ac
+>> +#define VSI_MMU_AHB_EXCEPTION_BASE		0x380
+>> +#define VSI_MMU_AHB_CONTROL_BASE		0x388
+>> +#define VSI_MMU_AHB_TLB_ARRAY_BASE_L_BASE	0x38C
+>> +
+>> +/* MMU register offsets */
+>> +#define VSI_MMU_FLUSH_BASE		0x184
+>> +#define VSI_MMU_BIT_FLUSH		BIT(4)
+>> +
+>> +#define VSI_MMU_PAGE_FAULT_ADDR		0x380
+>> +#define VSI_MMU_STATUS_BASE		0x384	/* IRQ status */
+>> +
+>> +#define VSI_MMU_BIT_ENABLE		BIT(0)
+>> +
+>> +#define VSI_MMU_OUT_OF_BOUND		BIT(28)
+>> +/* Irq mask */
+>> +#define VSI_MMU_IRQ_MASK		0x7
+>> +
+>> +#define VSI_DTE_PT_ADDRESS_MASK		0xffffffc0
+>> +#define VSI_DTE_PT_VALID		BIT(0)
+>> +
+>> +#define VSI_PAGE_DESC_LO_MASK		0xfffff000
+>> +#define VSI_PAGE_DESC_HI_MASK		GENMASK_ULL(39, 32)
+>> +#define VSI_PAGE_DESC_HI_SHIFT		(32 - 4)
+> How does this page-table format relate to the one supported already by
+> rockchip-iommu.c? From a quick glance, I suspect this is a derivative
+> and so ideally we'd be able to have a common implementation of the
+> page-table code which can be used by both of the drivers.
+>
+> Similarly:
 
-	/* Initial migration from the src to the first dst. */
-	sev_migrate_from(dst_vms[0], src_vm);
+No they comes from different IP providers, this one is from Verisilicon.
+I agree they looks very similar and my first attempt was to add it into
+rockchip-iommu code but when doing it I realize that registers addresses
+where all different so I had to code all the functions twice.
 
-	for (i =3D 1; i < NR_MIGRATE_TEST_VMS; i++)
-		sev_migrate_from(dst_vms[i], dst_vms[i - 1]);
+Regards,
+Benjamin
 
-	/* Migrate the guest back to the original VM. */
-	ret =3D __sev_migrate_from(src_vm, dst_vms[NR_MIGRATE_TEST_VMS - =
-1]);
-	TEST_ASSERT(ret =3D=3D -1 && errno =3D=3D EIO,
-		    "VM that was migrated from should be dead. ret %d, =
-errno: %d", ret,
-		    errno);
-
-	kvm_vm_free(src_vm);
-	for (i =3D 0; i < NR_MIGRATE_TEST_VMS; ++i)
-		kvm_vm_free(dst_vms[i]);
-}
-
-I add some logs in kvm and following shows the result:
-[   51.618135] sev guest init kvm:ff177f272432e000                       =
-                                                          =20
-[   51.627235] kvm destory vm kvm:ff177f272432e000                       =
-                                                           =20
-[   51.628011] kvm destory vm mmu notifier unregister =
-kvm:ff177f272432e000                                                     =
-    =20
-[   51.642840] kvm destory vm arch destory vm kvm:ff177f272432e000       =
-                                                          =20
-[   51.673612] vm destory x86                                            =
-                                                          =20
-[   51.673957] svm vm destory                                            =
-                                                          =20
-[   51.674401] kvm destory vm kvm:ff177f272432c000                       =
-                                                           =20
-[   51.675152] kvm destory vm mmu notifier unregister =
-kvm:ff177f272432c000                                                     =
-    =20
-[   51.675981] kvm destory vm arch destory vm kvm:ff177f272432c000       =
-                                                          =20
-[   51.715937] vm destory x86                                            =
-                                                          =20
-[   51.716289] svm vm destory                                            =
-                                                          =20
-[   51.716754] kvm destory vm kvm:ff177f272432a000                       =
-                                                           =20
-[   51.717530] kvm destory vm mmu notifier unregister =
-kvm:ff177f272432a000                                                     =
-    =20
-[   51.718363] kvm destory vm arch destory vm kvm:ff177f272432a000       =
-                                                          =20
-[   51.746672] vm destory x86
-[   51.747018] svm vm destory
-[   51.747454] kvm destory vm kvm:ff177f2724328000
-[   51.748219] kvm destory vm mmu notifier unregister =
-kvm:ff177f2724328000
-[   51.749033] BUG: kernel NULL pointer dereference, address: =
-0000000000000000
-[   51.749885] #PF: supervisor read access in kernel mode
-[   51.750519] #PF: error_code(0x0000) - not-present page
-
-It seems that the cpumask structure is not transferred correctly from =
-ff177f272432e000 to ff177f2724328000.
-But unfortunately I=E2=80=99m not familiar with SEV migration. I need to =
-spend some time looking into how SEV=20
-migration works in order to solve this issue.
-
-Thanks,
-Zheyun Shen
-
-> 2025=E5=B9=B47=E6=9C=8814=E6=97=A5 22:48=EF=BC=8CSean Christopherson =
-<seanjc@google.com> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Mon, Jul 14, 2025, Zheyun Shen wrote:
->> Hi Aithal,
->> I can reproduce this issue in my environment, and I will try to =
-resolve it as
->> soon as possible.
->=20
-> Phew, that's good, because I can't repro this, and I don't see =
-anything obviously
-> wrong.
->=20
->>> 2025=E5=B9=B47=E6=9C=8814=E6=97=A5 13:21=EF=BC=8CAithal, Srikanth =
-<sraithal@amd.com> =E5=86=99=E9=81=93=EF=BC=9A
->>>=20
->>> Hello,
->>>=20
->>> While running the kselftest for SEV migration (sev_migrate_tes) on
->>> linux-next (6.16.0-rc5-next-20250711, commit a62b7a37e6) on an =
-AMD-based
->>> paltforms [Milan,Genoa,Turin], I encountered below kernel crash =
-while
->>> running kvm kselftests:
->>>=20
->>> [ 714.008402] BUG: kernel NULL pointer dereference, address: =
-0000000000000000
->>> [ 714.015363] #PF: supervisor read access in kernel mode
->>> [ 714.020504] #PF: error_code(0x0000) - not-present page
->>> [ 714.025643] PGD 11364b067 P4D 11364b067 PUD 12e195067 PMD 0
->>> [ 714.031303] Oops: Oops: 0000 [#1] SMP NOPTI
->>> [ 714.035487] CPU: 14 UID: 0 PID: 16663 Comm: sev_migrate_tes Not =
-tainted 6.16.0-rc5-next-20250711-a62b7a37e6-42f78243e0c #1 =
-PREEMPT(voluntary)
->>> [ 714.048253] Hardware name: Dell Inc. PowerEdge R6515/07PXPY, BIOS =
-2.17.0 12/04/2024
->>> [ 714.055905] RIP: 0010:_find_first_bit+0x1d/0x40
->=20
-> ..
->=20
->>> [ 714.148307] ? sev_writeback_caches+0x25/0x40 [kvm_amd]
->>> [ 714.153544] sev_guest_memory_reclaimed+0x34/0x40 [kvm_amd]
->>> [ 714.159115] kvm_arch_guest_memory_reclaimed+0x12/0x20 [kvm]
->>> [ 714.164817] kvm_mmu_notifier_release+0x3c/0x60 [kvm]
->>> [ 714.169896] mmu_notifier_unregister+0x53/0xf0
->>> [ 714.174343] kvm_destroy_vm+0x12d/0x2d0 [kvm]
->>> [ 714.178727] kvm_vm_stats_release+0x34/0x60 [kvm]
->>> [ 714.183459] __fput+0xf2/0x2d0
->>> [ 714.186520] fput_close_sync+0x44/0xa0
->>> [ 714.190269] __x64_sys_close+0x42/0x80
->>> [ 714.194024] x64_sys_call+0x1960/0x2180
->>> [ 714.197861] do_syscall_64+0x56/0x1e0
->>> [ 714.201530] entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
+>
+>> +static void vsi_iommu_domain_free(struct iommu_domain *domain)
+>> +{
+>> +	struct vsi_iommu_domain *vsi_domain = to_vsi_domain(domain);
+>> +	unsigned long flags;
+>> +	int i;
+>> +
+>> +	spin_lock_irqsave(&vsi_domain->lock, flags);
+>> +
+>> +	WARN_ON(!list_empty(&vsi_domain->iommus));
+>> +
+>> +	for (i = 0; i < NUM_DT_ENTRIES; i++) {
+>> +		u32 dte = vsi_domain->dt[i];
+>> +
+>> +		if (vsi_dte_is_pt_valid(dte)) {
+>> +			phys_addr_t pt_phys = vsi_dte_pt_address(dte);
+>> +			u32 *page_table = phys_to_virt(pt_phys);
+>> +
+>> +			dma_unmap_single(vsi_domain->dev, pt_phys,
+>> +					 SPAGE_SIZE, DMA_TO_DEVICE);
+>> +			iommu_free_pages(page_table);
+>> +		}
+>> +	}
+>> +
+>> +	dma_unmap_single(vsi_domain->dev, vsi_domain->dt_dma,
+>> +			 SPAGE_SIZE, DMA_TO_DEVICE);
+>> +	iommu_free_pages(vsi_domain->dt);
+>> +
+>> +	dma_unmap_single(vsi_domain->dev, vsi_domain->pta_dma,
+>> +			 SPAGE_SIZE, DMA_TO_DEVICE);
+>> +	iommu_free_pages(vsi_domain->pta);
+>> +
+>> +	spin_unlock_irqrestore(&vsi_domain->lock, flags);
+>> +
+>> +	kfree(vsi_domain);
+>> +}
+> is almost a carbon copy of rk_iommu_domain_free(), so it seems that
+> there's room for code re-use even beyond the page-table support.
+>
+> I think that also means we'll want Heiko's Ack before we merge anything.
+>
+> Will
 
