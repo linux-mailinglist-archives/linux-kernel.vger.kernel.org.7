@@ -1,397 +1,146 @@
-Return-Path: <linux-kernel+bounces-729805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFEDB03BCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:24:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1B9B03BD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ACF4179D56
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:24:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D43F1889E77
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC32824468A;
-	Mon, 14 Jul 2025 10:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DD9244661;
+	Mon, 14 Jul 2025 10:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GGiT+usd"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B33F5680
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 10:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="NDiSIoYy"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3816223A6;
+	Mon, 14 Jul 2025 10:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752488632; cv=none; b=GTm+7K5fpXVASEaXc1j/tKW4gyPWLtpefgsO5cvq5S6Swo4JvyIxagiw9Oxwh7h5erh02YME0BQSFqMbtUyEcnPXMTI2l3E/1twy5ZHujx8AdAkPrgo6diAqguYp+820h4AIn13XMNdl46sNKSq/PEGEJxB4fOD1cgYrFADwOqg=
+	t=1752488784; cv=none; b=gsWqH/kroQc1tA0MzfLWoYcQ6UF/omgP+jLnN1Yl2MGv2KuOPhzeDeq/6Y24tcKmsRnIU84mMmzckHD/bsP3wi+UIw++oykSnAt474MT4xuZYY+q2HoS755dUfCNz5xZ/FTCU9duOukIHtb7ifMNgtsVZOpyYp9u4hr8QphAVIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752488632; c=relaxed/simple;
-	bh=no35QV3vIyWeCdpJ8jJwT1KQPajrDYtHWGc2cil3q2Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WtVmrGWG+E/wSJnpC5r+jaGYE1RMqUoP8tRGfTV0EAvlkVfjDwdiRlaOfKX8Aaq/8U8URPDY8B1XCRvXhDtvnr0Wl+Coil5qvHP8PquHSLg6y/rBENpG5qhzCMqxylcJDUGs98BoAzlBNUIrK0rXyG0lKHbAT8BHD3HTihdht3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GGiT+usd; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54b10594812so4067785e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 03:23:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1752488626; x=1753093426; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DavYUHOWvKzUM5lx4uFk3JOkCwZftAUgMq2nVE2s+k0=;
-        b=GGiT+usdoUWe+/5LCF2npcFi+FUljJjgDWMy7OOxQHGllWktotshoMnV3O5LYEzK+s
-         IhYTlnQSxoFhzTajcsmLPmD0si4k1SzB23Yz3o1B8UV4mP25oz8wE/qNKor5lud3lnWE
-         mIShblwA2vf/efFRDwi4ROwKPHinnsMRHzbFk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752488626; x=1753093426;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DavYUHOWvKzUM5lx4uFk3JOkCwZftAUgMq2nVE2s+k0=;
-        b=kKBVgK+CEigwumZ8MziVXZMhNZ+SxRFrg4K1+pO5p3VfHhEwD0wK/mdeR0yH/ejlbp
-         vfQoRaT06VwHkjOY7nEWkgziN6q/aqcAAkrJe6MlmA+njKRjjggjVwMcrE4vBl3LUyqW
-         b1WBpZeYQv5BFZyJeHTjXT4tSdqVLs74C1awQ9qfHGggC9XCSXq6kYSvXTKhZf7GL5HO
-         4Tive2OGmH9ZYAvccenLuFEoUE5+OqJZQrPrbdbnpmWRLICTQ5dY5HFQlupccfrYaSmr
-         3kPwVH9ce1WnDi0NApmGCOpigBxVZjkQqZNY8ykde4R7DaIWCz4FSN29VYzM2m2vzpKA
-         HJyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXoH0GGv0/MEr79mKluThvBt9GLrCTH6bR1QQpxheHs7/aJiB53A6G+fLT+64KEmJkwYVDNszeVesbtEO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0S79cbCJVu+G7Vhj6kG2kgcAbrx3G2p32LLYit+f5knk+vkrX
-	mm+H1YmEGUoC8RCfUs/eXDP7JK8jti/eRGANzOqkkJtg7fNFeNvWwceiBChSHwimgg==
-X-Gm-Gg: ASbGncu85m0LtDg2PIay0sHu1JvOqkJ0nEpOMhPPs9KYKwwtFb1o1Yhfh2vQlcUXjxz
-	RI8SX3wJZavCqyP6f2NDE8d0CYPFmxOai7oHyfjojh3uQZx1+nTytCOeuLEYCDZcwRgMICcf79u
-	NAHBalgnWcdH/V+0CF9HAo2BKvogsVv35I5A9dWSYtAh8ZFLSJhqmF/WHkmNw0oeMJB45BQ7DIo
-	QTysfE9JaVsp100ZUYVOvRt1tGtziisN8dzSTtazvodpV/TWjrFB52oF8330Z4/SB9wt81XrYuO
-	NHtL8+iY5q1Df8W3Ms2VbnygaX6RxOOhrT2ObdddolAh2BXpbrymEfxWCt43hbz9QccXz5ozmtH
-	PwYDipfc1GVtdBCiex+4BdaZmqY6hOLSBBWFTyyjmQkoTb3oNxh06Jm3EZpryh9Kwx1gV9NLp9i
-	+GIQ==
-X-Google-Smtp-Source: AGHT+IFafPg+eFbYD4mcM+qAx7qhf8GHwHgp1n94L56Kb8GD3q/u7xCeUYTyYlkKC/sfFohQd4Zlow==
-X-Received: by 2002:a05:6512:3ca6:b0:553:2ce7:a1f3 with SMTP id 2adb3069b0e04-55a0462ce94mr3811441e87.43.1752488626360;
-        Mon, 14 Jul 2025 03:23:46 -0700 (PDT)
-Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c9d323csm1884487e87.119.2025.07.14.03.23.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 03:23:46 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 14 Jul 2025 10:23:45 +0000
-Subject: [PATCH] media: uvcvideo: Fix race condition for meta buffer list
+	s=arc-20240116; t=1752488784; c=relaxed/simple;
+	bh=amY8miq5DNd1uSY1Gi91dKGONenB0SIwk7g/xXYgy5c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=oaoV/VYAUJy4GyKUuc8B0TQwYvSRR3TnhXj3GYHlcBzHINCYhSYwnlWkJLhtK2WG45qEzTVnx4D7i7IHfh4QxD+b4JWThWk2a7vSgysAkKp4+pMxMNo7sOZJRPVbjJQbhWCtsyV5pp5TFwJtAQ8hKCTDTZD/6HtCUszp48ZxP6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=NDiSIoYy reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=4YcX0keIQboTbYZKSV0XR3R1i0pUe0jDL2SvRDl6UIc=; b=N
+	DiSIoYyGImlvVz+TChwvVevlrgVD1OcI1NnETXrgwlQf86dCoAAxnPSFrLz4efgT
+	Yw61QCDaxbhII56RbOGKxFD8v7PMtkDnUPbi17H21nZYJJph1NqV3KRYgAIPKwv8
+	NnFWv86ZQnm3y1IcTsiZkAYIyDtl1bD0mlSq2bb7KM=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-111 (Coremail) ; Mon, 14 Jul 2025 18:24:24 +0800
+ (CST)
+Date: Mon, 14 Jul 2025 18:24:24 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: dmitry.baryshkov@oss.qualcomm.com
+Cc: mripard@kernel.org, neil.armstrong@linaro.org,
+	dri-devel@lists.freedesktop.org, dianders@chromium.org,
+	jani.nikula@intel.com, lyude@redhat.com, jonathanh@nvidia.com,
+	p.zabel@pengutronix.de, simona@ffwll.ch, victor.liu@nxp.com,
+	rfoss@kernel.org, chunkuang.hu@kernel.org,
+	cristian.ciocaltea@collabora.com, Laurent.pinchart@ideasonboard.com,
+	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re:[PATCH v3 0/2] Pass down connector to drm bridge detect hook
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <20250703125027.311109-1-andyshrk@163.com>
+References: <20250703125027.311109-1-andyshrk@163.com>
+X-NTES-SC: AL_Qu2eAPiTt04t4imebOkfmkcVgOw9UcO5v/Qk3oZXOJF8jDjp6wQvYXZ6IknVysOCCzuquyGucDp88MdZTa9iWIYzFZx1L0CHdIADiHTYzr4f3w==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250714-uvc-racemeta-v1-1-360de2e15a9a@chromium.org>
-X-B4-Tracking: v=1; b=H4sIALDadGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDc0MT3dKyZN2ixOTU3NSSRN201FSjVDPLpKS05BQloJaCotS0zAqwcdG
- xtbUAtBiARl4AAAA=
-X-Change-ID: 20250714-uvc-racemeta-fee2e69bbfcd
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hansg@kernel.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
+Message-ID: <39f4cd0d.8f17.1980876df93.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:bygvCgD3twzZ2nRoFHgDAA--.27342W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0hOKXmh019Q1ogADse
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-queue->irqueue contains a list of the buffers owned by the driver. The
-list is protected by queue->irqlock. uvc_queue_get_current_buffer()
-returns a pointer to the current buffer in that list, but does not
-remove the buffer from it. This can lead to race conditions.
-
-Inspecting the code, it seems that the candidate for such race is
-uvc_queue_return_buffers(). For the capture queue, that function is
-called with the device streamoff, so no race can occur. On the other
-hand, the metadata queue, could trigger a race condition, because
-stop_streaming can be called with the device in any streaming state.
-
-We can solve this issue modifying the way the metadata buffer
-lifetime works. We can keep the queue->irqlock while the use the current
-metadata buffer.
-
-The core of this change is uvc_video_decode_meta(), it now obtains the
-buffer and holds the spinlock instead of getting the buffer as an
-argument.
-
-Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Closes: https://lore.kernel.org/linux-media/20250630141707.GG20333@pendragon.ideasonboard.com/
-Cc: stable@vger.kernel.org
-Fixes: 088ead255245 ("media: uvcvideo: Add a metadata device node")
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_isight.c |  3 +-
- drivers/media/usb/uvc/uvc_queue.c  |  4 +-
- drivers/media/usb/uvc/uvc_video.c  | 92 ++++++++++++++++++++++----------------
- drivers/media/usb/uvc/uvcvideo.h   |  8 ++--
- 4 files changed, 62 insertions(+), 45 deletions(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_isight.c b/drivers/media/usb/uvc/uvc_isight.c
-index 43cda5e760a345af56186603e2f0594b814cdbcb..f0e71744d25cab98184335b46569b31ba1346e12 100644
---- a/drivers/media/usb/uvc/uvc_isight.c
-+++ b/drivers/media/usb/uvc/uvc_isight.c
-@@ -98,8 +98,7 @@ static int isight_decode(struct uvc_video_queue *queue, struct uvc_buffer *buf,
- 	return 0;
- }
- 
--void uvc_video_decode_isight(struct uvc_urb *uvc_urb, struct uvc_buffer *buf,
--			struct uvc_buffer *meta_buf)
-+void uvc_video_decode_isight(struct uvc_urb *uvc_urb, struct uvc_buffer *buf)
- {
- 	struct urb *urb = uvc_urb->urb;
- 	struct uvc_streaming *stream = uvc_urb->stream;
-diff --git a/drivers/media/usb/uvc/uvc_queue.c b/drivers/media/usb/uvc/uvc_queue.c
-index 790184c9843d211d34fa7d66801631d5a07450bd..e184e3ae0f59f142a683263168724bca64509628 100644
---- a/drivers/media/usb/uvc/uvc_queue.c
-+++ b/drivers/media/usb/uvc/uvc_queue.c
-@@ -310,9 +310,11 @@ void uvc_queue_cancel(struct uvc_video_queue *queue, int disconnect)
-  * Buffers may span multiple packets, and even URBs, therefore the active buffer
-  * remains on the queue until the EOF marker.
-  */
--static struct uvc_buffer *
-+struct uvc_buffer *
- __uvc_queue_get_current_buffer(struct uvc_video_queue *queue)
- {
-+	lockdep_assert_held(&queue->irqlock);
-+
- 	if (list_empty(&queue->irqqueue))
- 		return NULL;
- 
-diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-index 2e377e7b9e81599aca19b800a171cc16a09c1e8a..d6777090d0f892ffe93696c915acd4ec171ca798 100644
---- a/drivers/media/usb/uvc/uvc_video.c
-+++ b/drivers/media/usb/uvc/uvc_video.c
-@@ -1428,9 +1428,11 @@ static int uvc_video_encode_data(struct uvc_streaming *stream,
-  * previous header.
-  */
- static void uvc_video_decode_meta(struct uvc_streaming *stream,
--				  struct uvc_buffer *meta_buf,
- 				  const u8 *mem, unsigned int length)
- {
-+	struct vb2_queue *vb2_qmeta = stream->meta.vdev.queue;
-+	struct uvc_video_queue *qmeta = &stream->meta.queue;
-+	struct uvc_buffer *meta_buf;
- 	struct uvc_meta_buf *meta;
- 	size_t len_std = 2;
- 	bool has_pts, has_scr;
-@@ -1439,7 +1441,13 @@ static void uvc_video_decode_meta(struct uvc_streaming *stream,
- 	ktime_t time;
- 	const u8 *scr;
- 
--	if (!meta_buf || length == 2)
-+	if (!vb2_qmeta || length <= 2)
-+		return;
-+
-+	guard(spinlock_irqsave)(&qmeta->irqlock);
-+
-+	meta_buf = __uvc_queue_get_current_buffer(qmeta);
-+	if (!meta_buf)
- 		return;
- 
- 	has_pts = mem[1] & UVC_STREAM_PTS;
-@@ -1512,30 +1520,48 @@ static void uvc_video_validate_buffer(const struct uvc_streaming *stream,
-  * Completion handler for video URBs.
-  */
- 
--static void uvc_video_next_buffers(struct uvc_streaming *stream,
--		struct uvc_buffer **video_buf, struct uvc_buffer **meta_buf)
-+static void uvc_video_next_meta(struct uvc_streaming *stream,
-+				struct uvc_buffer *video_buf)
- {
--	uvc_video_validate_buffer(stream, *video_buf);
-+	struct vb2_queue *vb2_qmeta = stream->meta.vdev.queue;
-+	struct uvc_video_queue *qmeta = &stream->meta.queue;
-+	struct uvc_buffer *meta_buf;
-+	struct vb2_v4l2_buffer *vb2_meta;
-+	const struct vb2_v4l2_buffer *vb2_video;
- 
--	if (*meta_buf) {
--		struct vb2_v4l2_buffer *vb2_meta = &(*meta_buf)->buf;
--		const struct vb2_v4l2_buffer *vb2_video = &(*video_buf)->buf;
-+	if (!vb2_qmeta)
-+		return;
- 
--		vb2_meta->sequence = vb2_video->sequence;
--		vb2_meta->field = vb2_video->field;
--		vb2_meta->vb2_buf.timestamp = vb2_video->vb2_buf.timestamp;
-+	guard(spinlock_irqsave)(&qmeta->irqlock);
- 
--		(*meta_buf)->state = UVC_BUF_STATE_READY;
--		if (!(*meta_buf)->error)
--			(*meta_buf)->error = (*video_buf)->error;
--		*meta_buf = uvc_queue_next_buffer(&stream->meta.queue,
--						  *meta_buf);
--	}
--	*video_buf = uvc_queue_next_buffer(&stream->queue, *video_buf);
-+	meta_buf = __uvc_queue_get_current_buffer(qmeta);
-+	if (!meta_buf)
-+		return;
-+	list_del(&meta_buf->queue);
-+
-+	vb2_meta = &meta_buf->buf;
-+	vb2_video = &video_buf->buf;
-+
-+	vb2_meta->sequence = vb2_video->sequence;
-+	vb2_meta->field = vb2_video->field;
-+	vb2_meta->vb2_buf.timestamp = vb2_video->vb2_buf.timestamp;
-+	meta_buf->state = UVC_BUF_STATE_READY;
-+	if (!meta_buf->error)
-+		meta_buf->error = video_buf->error;
-+
-+	uvc_queue_buffer_release(meta_buf);
-+}
-+
-+static struct uvc_buffer *uvc_video_next_buffer(struct uvc_streaming *stream,
-+						struct uvc_buffer *video_buf)
-+{
-+	uvc_video_validate_buffer(stream, video_buf);
-+	uvc_video_next_meta(stream, video_buf);
-+	return uvc_queue_next_buffer(&stream->queue, video_buf);
- }
- 
- static void uvc_video_decode_isoc(struct uvc_urb *uvc_urb,
--			struct uvc_buffer *buf, struct uvc_buffer *meta_buf)
-+				  struct uvc_buffer *buf)
- {
- 	struct urb *urb = uvc_urb->urb;
- 	struct uvc_streaming *stream = uvc_urb->stream;
-@@ -1559,13 +1585,13 @@ static void uvc_video_decode_isoc(struct uvc_urb *uvc_urb,
- 			ret = uvc_video_decode_start(stream, buf, mem,
- 				urb->iso_frame_desc[i].actual_length);
- 			if (ret == -EAGAIN)
--				uvc_video_next_buffers(stream, &buf, &meta_buf);
-+				buf = uvc_video_next_buffer(stream, buf);
- 		} while (ret == -EAGAIN);
- 
- 		if (ret < 0)
- 			continue;
- 
--		uvc_video_decode_meta(stream, meta_buf, mem, ret);
-+		uvc_video_decode_meta(stream, mem, ret);
- 
- 		/* Decode the payload data. */
- 		uvc_video_decode_data(uvc_urb, buf, mem + ret,
-@@ -1576,12 +1602,12 @@ static void uvc_video_decode_isoc(struct uvc_urb *uvc_urb,
- 			urb->iso_frame_desc[i].actual_length);
- 
- 		if (buf->state == UVC_BUF_STATE_READY)
--			uvc_video_next_buffers(stream, &buf, &meta_buf);
-+			buf = uvc_video_next_buffer(stream, buf);
- 	}
- }
- 
- static void uvc_video_decode_bulk(struct uvc_urb *uvc_urb,
--			struct uvc_buffer *buf, struct uvc_buffer *meta_buf)
-+				  struct uvc_buffer *buf)
- {
- 	struct urb *urb = uvc_urb->urb;
- 	struct uvc_streaming *stream = uvc_urb->stream;
-@@ -1607,7 +1633,7 @@ static void uvc_video_decode_bulk(struct uvc_urb *uvc_urb,
- 		do {
- 			ret = uvc_video_decode_start(stream, buf, mem, len);
- 			if (ret == -EAGAIN)
--				uvc_video_next_buffers(stream, &buf, &meta_buf);
-+				buf = uvc_video_next_buffer(stream, buf);
- 		} while (ret == -EAGAIN);
- 
- 		/* If an error occurred skip the rest of the payload. */
-@@ -1617,7 +1643,7 @@ static void uvc_video_decode_bulk(struct uvc_urb *uvc_urb,
- 			memcpy(stream->bulk.header, mem, ret);
- 			stream->bulk.header_size = ret;
- 
--			uvc_video_decode_meta(stream, meta_buf, mem, ret);
-+			uvc_video_decode_meta(stream, mem, ret);
- 
- 			mem += ret;
- 			len -= ret;
-@@ -1644,7 +1670,7 @@ static void uvc_video_decode_bulk(struct uvc_urb *uvc_urb,
- 			uvc_video_decode_end(stream, buf, stream->bulk.header,
- 				stream->bulk.payload_size);
- 			if (buf->state == UVC_BUF_STATE_READY)
--				uvc_video_next_buffers(stream, &buf, &meta_buf);
-+				buf = uvc_video_next_buffer(stream, buf);
- 		}
- 
- 		stream->bulk.header_size = 0;
-@@ -1654,7 +1680,7 @@ static void uvc_video_decode_bulk(struct uvc_urb *uvc_urb,
- }
- 
- static void uvc_video_encode_bulk(struct uvc_urb *uvc_urb,
--	struct uvc_buffer *buf, struct uvc_buffer *meta_buf)
-+				  struct uvc_buffer *buf)
- {
- 	struct urb *urb = uvc_urb->urb;
- 	struct uvc_streaming *stream = uvc_urb->stream;
-@@ -1707,8 +1733,6 @@ static void uvc_video_complete(struct urb *urb)
- 	struct uvc_video_queue *qmeta = &stream->meta.queue;
- 	struct vb2_queue *vb2_qmeta = stream->meta.vdev.queue;
- 	struct uvc_buffer *buf = NULL;
--	struct uvc_buffer *buf_meta = NULL;
--	unsigned long flags;
- 	int ret;
- 
- 	switch (urb->status) {
-@@ -1734,14 +1758,6 @@ static void uvc_video_complete(struct urb *urb)
- 
- 	buf = uvc_queue_get_current_buffer(queue);
- 
--	if (vb2_qmeta) {
--		spin_lock_irqsave(&qmeta->irqlock, flags);
--		if (!list_empty(&qmeta->irqqueue))
--			buf_meta = list_first_entry(&qmeta->irqqueue,
--						    struct uvc_buffer, queue);
--		spin_unlock_irqrestore(&qmeta->irqlock, flags);
--	}
--
- 	/* Re-initialise the URB async work. */
- 	uvc_urb->async_operations = 0;
- 
-@@ -1755,7 +1771,7 @@ static void uvc_video_complete(struct urb *urb)
- 	 * Process the URB headers, and optionally queue expensive memcpy tasks
- 	 * to be deferred to a work queue.
- 	 */
--	stream->decode(uvc_urb, buf, buf_meta);
-+	stream->decode(uvc_urb, buf);
- 
- 	/* If no async work is needed, resubmit the URB immediately. */
- 	if (!uvc_urb->async_operations) {
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index 757254fc4fe930ae61c9d0425f04d4cd074a617e..bb41477ce4ff5cdbf27bc9d830b63a60645e3fa1 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -479,8 +479,7 @@ struct uvc_streaming {
- 	unsigned int frozen : 1;
- 	struct uvc_video_queue queue;
- 	struct workqueue_struct *async_wq;
--	void (*decode)(struct uvc_urb *uvc_urb, struct uvc_buffer *buf,
--		       struct uvc_buffer *meta_buf);
-+	void (*decode)(struct uvc_urb *uvc_urb, struct uvc_buffer *buf);
- 
- 	struct {
- 		struct video_device vdev;
-@@ -694,6 +693,8 @@ int uvc_queue_init(struct uvc_video_queue *queue, enum v4l2_buf_type type);
- void uvc_queue_cancel(struct uvc_video_queue *queue, int disconnect);
- struct uvc_buffer *uvc_queue_next_buffer(struct uvc_video_queue *queue,
- 					 struct uvc_buffer *buf);
-+struct uvc_buffer *
-+__uvc_queue_get_current_buffer(struct uvc_video_queue *queue);
- struct uvc_buffer *uvc_queue_get_current_buffer(struct uvc_video_queue *queue);
- void uvc_queue_buffer_release(struct uvc_buffer *buf);
- static inline int uvc_queue_streaming(struct uvc_video_queue *queue)
-@@ -802,8 +803,7 @@ u16 uvc_endpoint_max_bpi(struct usb_device *dev, struct usb_host_endpoint *ep);
- 
- /* Quirks support */
- void uvc_video_decode_isight(struct uvc_urb *uvc_urb,
--			     struct uvc_buffer *buf,
--			     struct uvc_buffer *meta_buf);
-+			     struct uvc_buffer *buf);
- 
- /* debugfs and statistics */
- void uvc_debugfs_init(void);
-
----
-base-commit: d968e50b5c26642754492dea23cbd3592bde62d8
-change-id: 20250714-uvc-racemeta-fee2e69bbfcd
-
-Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
-
+CkhlbGxvIERtaXRyee+8jAoKCkF0IDIwMjUtMDctMDMgMjA6NDk6NTEsICJBbmR5IFlhbiIgPGFu
+ZHlzaHJrQDE2My5jb20+IHdyb3RlOgo+Cj5JbiBzb21lIGFwcGxpY2F0aW9uIHNjZW5hcmlvcywg
+d2UgaG9wZSB0byBnZXQgdGhlIGNvcnJlc3BvbmRpbmcKPmNvbm5lY3RvciB3aGVuIHRoZSBicmlk
+Z2UncyBkZXRlY3QgaG9vayBpcyBpbnZva2VkLgo+Cj5Gb3IgZXhhbXBsZSwgd2UgbWF5IHdhbnQg
+dG8gY2FsbCBkcm1fZHBfcmVhZF9zaW5rX2NvdW50X2NhcCh3aGljaCBuZWVkcwo+YSBkcm1fY29u
+bmVjdG9yKSBhdCB0aGUgZHAgZGV0ZWNrIGhvb2ssIGludGVsX2RwIGFuZCBub3V2ZWF1X2RwIGRv
+IHRoaXMKPmF0IGl0J3MgY29ubmVjdG9yJ3MgZGV0ZXRjX2N0eC9kZXRlY3QgaG9vay4KPgo+QnV0
+IGZvciBhIGJyaWRnZSBkcml2ZXIsIGl0J3MgZGV0ZWN0IGhvb2sgaXMgaW5pdGlhdGVkIGJ5IHRo
+ZSBjb25uZWN0b3IsCj50aGVyZSBpcyBubyBjb25uZWN0b3IgcGFzc2VkIGRvd24uCj4KPkluIG1v
+c3QgY2FzZXMsIHdlIGNhbiBnZXQgdGhlIGNvbm5lY3RvciBieQo+ZHJtX2F0b21pY19nZXRfY29u
+bmVjdG9yX2Zvcl9lbmNvZGVyCj5pZiB0aGUgZW5jb2RlciBhdHRhY2hlZCB0byB0aGUgYnJpZGdl
+IGlzIGVuYWJsZWQsIGhvd2V2ZXIgdGhlcmUgd2lsbAo+c3RpbGwgYmUgc29tZSBzY2VuYXJpb3Mg
+d2hlcmUgdGhlIGRldGVjdCBob29rIG9mIHRoZSBicmlkZ2UgaXMgY2FsbGVkCj5idXQgdGhlIGNv
+cnJlc3BvbmRpbmcgZW5jb2RlciBoYXMgbm90IGJlZW4gZW5hYmxlZCB5ZXQuIEZvciBpbnN0YW5j
+ZSwKPnRoaXMgb2NjdXJzIHdoZW4gdGhlIGRldmljZSBpcyBob3QgcGx1ZyBpbiBmb3IgdGhlIGZp
+cnN0IHRpbWUuCj4KPlNpbmNlIHRoZSBjYWxsIHRvIGJyaWRnZSdzIGRldGVjdCBpcyBpbml0aWF0
+ZWQgYnkgdGhlIGNvbm5lY3RvciwgcGFzc2luZwo+ZG93biB0aGUgY29ycmVzcG9uZGluZyBjb25u
+ZWN0b3IgZGlyZWN0bHkgd2lsbCBtYWtlIHRoaW5ncyBzaW1wbGVyLgo+Cj5CZWZvcmUgcHJlcGFy
+aW5nIHRoaXMgcGF0Y2gsIHdlIGhhdmUgaGFkIHNvbWUgZGlzY3Vzc2lvbnMgb24gdGhlIGRldGFp
+bHMKPmhlcmVbMF0uCj4KPlBBVENIMSBhZGp1c3QgdGhlIGRwL2hkbWlfYXVkaW9fKiBjYWxsYmFj
+ayBwYXJhbWV0ZXJzIG9yZGVyLCBtYWtlIGl0Cj5tYWludGFpbiB0aGUgc2FtZSBwYXJhbWV0ZXIg
+b3JkZXIgYXMgZ2V0X21vZGVzIGFuZCBlZGlkX3JlYWQuCj5QQVRDSDIgYWRkIGNvbm5lY3RvciB0
+byBkZXRlY3QgaG9vay4KPgo+WzBdaHR0cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0b3Aub3JnL3Bh
+dGNoLzY0MDcxMi8/c2VyaWVzPTE0MzU3MyZyZXY9NQoKCkNvdWxkIHlvdSBwbGVhc2UgdGFrZSB0
+aGlzIHNlcmllcyBvZiBwYXRjaGVzPwpJIGhvcGUgYWZ0ZXIgdGhlIHBhdGNoZXMgYXJlIG1lcmdl
+ZCwgSSB3aWxsIGJlIGFibGUgdG8gdXBkYXRlIGEgbmV3IHZlcnNpb24gb2YgdGhlIERQIGRyaXZl
+ciBiYXNlZCBvbiB0aGlzLgpNb3Jlb3ZlciwgSSdtIHdvcnJpZWQgdGhhdCBpZiB0aGlzIHdhaXQg
+dG9vIGxvbmcsIHRoZXJlIG1pZ2h0IGJlIGNvbmZsaWN0cyB3aXRoIG90aGVyIG5ldyBicmlkZ2Ug
+ZHJpdmVycy4KCj4KPkNoYW5nZXMgaW4gdjM6Cj4tIFJlbW92ZSByZWR1bmRhbnQgU29CCj4KPkNo
+YW5nZXMgaW4gdjI6Cj4tIE1ha2UgZHAvaGRtaV9hdWRpb18qIGNhbGxiYWNrIGtlZXAgdGhlIHNh
+bWUgcGFyIGdldF9tb2Rlcwo+Cj5BbmR5IFlhbiAoMik6Cj4gIGRybS9icmlkZ2U6IE1ha2UgZHAv
+aGRtaV9hdWRpb18qIGNhbGxiYWNrIGtlZXAgdGhlIHNhbWUgcGFyYW10ZXIgb3JkZXIKPiAgICB3
+aXRoIGdldF9tb2Rlcwo+ICBkcm0vYnJpZGdlOiBQYXNzIGRvd24gY29ubmVjdG9yIHRvIGRybSBi
+cmlkZ2UgZGV0ZWN0IGhvb2sKPgo+IGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYWR2NzUxMS9hZHY3
+NTExLmggICAgICB8IDE2ICsrKy0tLS0KPiAuLi4vZ3B1L2RybS9icmlkZ2UvYWR2NzUxMS9hZHY3
+NTExX2F1ZGlvLmMgICAgfCAxMiArKystLS0KPiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2Fkdjc1
+MTEvYWR2NzUxMV9jZWMuYyAgfCAgNCArLQo+IGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYWR2NzUx
+MS9hZHY3NTExX2Rydi5jICB8ICAzICstCj4gZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dp
+eC9hbng3NjI1LmMgICAgIHwgIDIgKy0KPiAuLi4vZHJtL2JyaWRnZS9jYWRlbmNlL2NkbnMtbWhk
+cDg1NDYtY29yZS5jICAgfCAgMyArLQo+IGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvY2hyb250ZWwt
+Y2g3MDMzLmMgICAgICB8ICAyICstCj4gZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9kaXNwbGF5LWNv
+bm5lY3Rvci5jICAgIHwgMTEgKysrLS0KPiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2l0ZS1pdDYy
+NjMuYyAgICAgICAgICAgfCAgMyArLQo+IGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvaXRlLWl0NjUw
+NS5jICAgICAgICAgICB8ICAyICstCj4gZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9pdGUtaXQ2NjEy
+MS5jICAgICAgICAgIHwgIDMgKy0KPiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2xvbnRpdW0tbHQ4
+OTEyYi5jICAgICAgfCAgNiArLS0KPiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2xvbnRpdW0tbHQ5
+NjExLmMgICAgICAgfCAxNSArKystLS0tCj4gZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9sb250aXVt
+LWx0OTYxMXV4Yy5jICAgIHwgIDMgKy0KPiAuLi4vYnJpZGdlL21lZ2FjaGlwcy1zdGRweHh4eC1n
+ZS1iODUwdjMtZncuYyAgfCAgMyArLQo+IGRyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2lpOTAyeC5j
+ICAgICAgICAgICAgICB8ICAzICstCj4gZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zaW1wbGUtYnJp
+ZGdlLmMgICAgICAgIHwgIDIgKy0KPiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3N5bm9wc3lzL2R3
+LWhkbWktcXAuYyAgfCAxNCArKystLS0tCj4gZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5
+cy9kdy1oZG1pLmMgICAgIHwgIDMgKy0KPiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3RjMzU4NzY3
+LmMgICAgICAgICAgICAgfCAgNSArKy0KPiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3RpLXNuNjVk
+c2k4Ni5jICAgICAgICAgfCAgMyArLQo+IGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvdGktdGZwNDEw
+LmMgICAgICAgICAgICB8ICAyICstCj4gZHJpdmVycy9ncHUvZHJtL2JyaWRnZS90aS10cGQxMnMw
+MTUuYyAgICAgICAgIHwgIDggKysrLQo+IC4uLi9ncHUvZHJtL2Rpc3BsYXkvZHJtX2JyaWRnZV9j
+b25uZWN0b3IuYyAgICB8IDIwICsrKystLS0tLQo+IGRyaXZlcnMvZ3B1L2RybS9kcm1fYnJpZGdl
+LmMgICAgICAgICAgICAgICAgICB8ICA1ICsrLQo+IGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9t
+dGtfZHAuYyAgICAgICAgICAgICB8ICAzICstCj4gZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210
+a19oZG1pLmMgICAgICAgICAgIHwgIDMgKy0KPiBkcml2ZXJzL2dwdS9kcm0vbXNtL2RwL2RwX2F1
+ZGlvLmMgICAgICAgICAgICAgfCAgOCArKy0tCj4gZHJpdmVycy9ncHUvZHJtL21zbS9kcC9kcF9h
+dWRpby5oICAgICAgICAgICAgIHwgIDggKystLQo+IGRyaXZlcnMvZ3B1L2RybS9tc20vZHAvZHBf
+ZHJtLmMgICAgICAgICAgICAgICB8ICAzICstCj4gZHJpdmVycy9ncHUvZHJtL21zbS9oZG1pL2hk
+bWkuaCAgICAgICAgICAgICAgIHwgMTAgKystLS0KPiBkcml2ZXJzL2dwdS9kcm0vbXNtL2hkbWkv
+aGRtaV9hdWRpby5jICAgICAgICAgfCAgOCArKy0tCj4gZHJpdmVycy9ncHUvZHJtL21zbS9oZG1p
+L2hkbWlfYnJpZGdlLmMgICAgICAgIHwgIDIgKy0KPiBkcml2ZXJzL2dwdS9kcm0vbXNtL2hkbWkv
+aGRtaV9ocGQuYyAgICAgICAgICAgfCAgNCArLQo+IGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9y
+azMwNjZfaGRtaS5jICAgICAgICB8ICAyICstCj4gZHJpdmVycy9ncHUvZHJtL3hsbngvenlucW1w
+X2RwLmMgICAgICAgICAgICAgIHwgIDMgKy0KPiBpbmNsdWRlL2RybS9kcm1fYnJpZGdlLmggICAg
+ICAgICAgICAgICAgICAgICAgfCA0MiArKysrKysrKysrLS0tLS0tLS0tCj4gMzcgZmlsZXMgY2hh
+bmdlZCwgMTM5IGluc2VydGlvbnMoKyksIDExMCBkZWxldGlvbnMoLSkKPgo+LS0gCj4yLjQzLjAK
+Pgo+YmFzZS1jb21taXQ6IDU2ZTUzNzViMjNmMzQyZGZhMzE3OTM5NWFhY2MxYjQ3Mzk1ZmRkZjcK
+PmJyYW5jaDogZHJtLW1pc2MtbmV4dAo=
 
