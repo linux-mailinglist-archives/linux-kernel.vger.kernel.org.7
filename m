@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-729636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57FD8B03980
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:26:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 646ECB03984
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7322E3BFDF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07ED43B0746
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1387723B631;
-	Mon, 14 Jul 2025 08:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAE923D2B5;
+	Mon, 14 Jul 2025 08:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eu1LIng5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmF7fBS8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4394223B60C;
-	Mon, 14 Jul 2025 08:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F94A23C51C;
+	Mon, 14 Jul 2025 08:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752481408; cv=none; b=mA9lyokz3H8LVod3e6rl2v1kUQYg3NEnWq+GCD2lQFwV2fL0rQQhW0B9G7ff3TVJmcyifOZWxQ5NvbdQuFtMCb7jX4GY95l4j8viur7o6FAjXCk61LsnK/1yK3IFFCqaNTyFQOcqrB4u9+rwpuaKQ3MV1JeBKWsrbX5/yXWPbtI=
+	t=1752481464; cv=none; b=usBdXNYEWg/MRa4/+18l8zCtH4Pdc38LYygoa0OQvwDA9o5cdBpMKDd4GDJEcLemHxbBP4WQofpWuiPJz9p6LPaRBc2lIUHJuhQ0Ln0gHLgdSl+Qk8BobVRrBC5P/nJcsiHlB/whJcGBFUx1hLHgckEfnZtuJLMhG3Qa31u7U6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752481408; c=relaxed/simple;
-	bh=JPu/HBzuxIQjR8TK1nxLaxAXr3+2nK/+1TEX0DprjD4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CA2DSgo90TzaJ4zQc/TyOOSpHihmbA4+7igu6ZznmatvqG36lztwBFO3ygRLM8pYhGpFK/bGIIgzgUSWkcmlk8Vojpgfb8Fl7ADdCoKwRna8UKHsqOcCahSpwSUww0eEwSnghoPbMaIre9z3DMgfMhCOk7XTBOZj7aXOWqoCHOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eu1LIng5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A979C4CEF5;
-	Mon, 14 Jul 2025 08:23:23 +0000 (UTC)
+	s=arc-20240116; t=1752481464; c=relaxed/simple;
+	bh=ZhpHrOwI+VqAhJekBmzzDzyP2/Rj/Ucwna5s222LyrA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=X8+yyquobMKc7fYALvTIQTNQXRzkTlrnO4O+W8fI9JKcjcjP5/W/PJscuEfwXtdpfWeWAmW7cTKzYZkoI3Ja3/6VM3dueFjjLsFNJ3MQTT1eX5B9TIrVdZDNS6aEqK8kwYkCgP+Xuytu3s/RRZCwK2rF9I0LvyFzznC5EttQHg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmF7fBS8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E354C4CEF5;
+	Mon, 14 Jul 2025 08:24:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752481407;
-	bh=JPu/HBzuxIQjR8TK1nxLaxAXr3+2nK/+1TEX0DprjD4=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=eu1LIng5KPcq2DVP5oQefEFAREkf8RS8peIcwgyQu9W7XSWjiO0v6nn4ithx6oX/W
-	 f9f7LIXE54MmDF1+qbFGFxel+j4qmYwHxE2K3p6VTqm5F1DTYPO29jtdS3bd04HLbU
-	 q06c0jjPCsZgnp/KbyqiTscXl8zkRSX+Kdi8vogz5FDoHY4Jz5E/rmRGKzB2v/V+Me
-	 fK0SMKanYRJDoVLIURtYWGAbho2tGewl+dWIzaIZD9Vag0qDsW7SJBZzpT9wWj+8lS
-	 EC46PBTN4oP2FuhUb/vacazXoLbEN5I1qmWSt2nq6i2B4rUJ8X6qvsQyXRSO8U0QCG
-	 caQc2bDfTViXA==
-Message-ID: <57c0d48d-1484-45df-a99d-11388b6efdb1@kernel.org>
-Date: Mon, 14 Jul 2025 10:23:21 +0200
+	s=k20201202; t=1752481464;
+	bh=ZhpHrOwI+VqAhJekBmzzDzyP2/Rj/Ucwna5s222LyrA=;
+	h=Date:Subject:From:To:References:In-Reply-To:From;
+	b=jmF7fBS8T0zzgz35v4ihqEjs6uFIcVY49Sd/PvzAVxcC+PV+L1Pes/55QIFh1p7IR
+	 YdfNkBarNHLiBhXNihPnNCQqP0HddHeXKvZZVu5NeUopv5NdMiTlJJVLfEVL3gbLjA
+	 1ev7rzvAZaeca30V81Xm/cKMLwxYhJHnC+foYr4VRJDDiXloDoWuJHrDXiY+PRpR/K
+	 h0cE82g/Y6W53ObZMYQN2yPgaQaRsYljO55XWx6hYHyd3oOOso/3JtDOecI349EfB5
+	 ++hQ0RbeVVwWhEAiKqVTlcesbaMtX0ZCzY3AxA4GespUe6IItXX0Vg90kAudfxWoN0
+	 U5z806W2n24xQ==
+Message-ID: <6685da47-748a-4d90-ba1f-d7bcf82e8677@kernel.org>
+Date: Mon, 14 Jul 2025 10:24:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,6 +51,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] dt-bindings: interrupt-controller: aspeed: Refine AST2700
  binding description and example
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Ryan Chen <ryan_chen@aspeedtech.com>, Thomas Gleixner
  <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -65,7 +66,7 @@ To: Ryan Chen <ryan_chen@aspeedtech.com>, Thomas Gleixner
 References: <20250714071753.2653620-1-ryan_chen@aspeedtech.com>
  <b500647b-31b6-40c9-be0b-1640dc271375@kernel.org>
  <OS8PR06MB7541C0330FDE855FDD360B68F254A@OS8PR06MB7541.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <57c0d48d-1484-45df-a99d-11388b6efdb1@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -110,31 +111,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <OS8PR06MB7541C0330FDE855FDD360B68F254A@OS8PR06MB7541.apcprd06.prod.outlook.com>
+In-Reply-To: <57c0d48d-1484-45df-a99d-11388b6efdb1@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/07/2025 09:36, Ryan Chen wrote:
->> Subject: Re: [PATCH] dt-bindings: interrupt-controller: aspeed: Refine AST2700
->> binding description and example
->>
->> On 14/07/2025 09:17, Ryan Chen wrote:
->>> - Update block diagram for better readability and accuracy.
->>> - Clarify the relationship and function of INTC0, INTC1, and the GIC.
->>> - Documentation and example refine.
+On 14/07/2025 10:23, Krzysztof Kozlowski wrote:
+> On 14/07/2025 09:36, Ryan Chen wrote:
+>>> Subject: Re: [PATCH] dt-bindings: interrupt-controller: aspeed: Refine AST2700
+>>> binding description and example
 >>>
->>> This enhances the documentation quality and helps developers
->>> understand the interrupt controller hierarchy and usage.
+>>> On 14/07/2025 09:17, Ryan Chen wrote:
+>>>> - Update block diagram for better readability and accuracy.
+>>>> - Clarify the relationship and function of INTC0, INTC1, and the GIC.
+>>>> - Documentation and example refine.
+>>>>
+>>>> This enhances the documentation quality and helps developers
+>>>> understand the interrupt controller hierarchy and usage.
+>>>
+>>> Changing ABI (compatibles) is not enhancing quality and is not explained here.
+>>>
+>> Sorry, I would add following in description.
+>> - add 'aspeed,ast2700-intc0' and 'aspeed,ast2700-intc1' compatible strings
+>> for parent interrupt controller nodes, in addition to the existing
+>> 'aspeed,ast2700-intc-ic' for child nodes.
 >>
->> Changing ABI (compatibles) is not enhancing quality and is not explained here.
->>
-> Sorry, I would add following in description.
-> - add 'aspeed,ast2700-intc0' and 'aspeed,ast2700-intc1' compatible strings
-> for parent interrupt controller nodes, in addition to the existing
-> 'aspeed,ast2700-intc-ic' for child nodes.
 > 
+> It does not say why is this needed in the first place...
+> 
+And also never tested :/. I won't be reviewing it.
 
-It does not say why is this needed in the first place...
 
 Best regards,
 Krzysztof
