@@ -1,209 +1,236 @@
-Return-Path: <linux-kernel+bounces-730078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95664B03FE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:30:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABF37B0400B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F04B17A5336
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:28:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B73E94A5FED
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1575724EF8B;
-	Mon, 14 Jul 2025 13:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B352528EF;
+	Mon, 14 Jul 2025 13:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QaRYtQUT"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ni27Lgie"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB3D149C51;
-	Mon, 14 Jul 2025 13:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305C72512FF
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752499799; cv=none; b=nmBYrdYGHAk4XLOezVt+jYG2TpO9VsrC0i04ZGBKslryrYnt1PiMXTtwfRBlPV7jcwdl9bBSYxs/bW8FTQ5QZtIlhgfO6gHUdGsiMJ6frv+6TM7ar96mX9CUw/pItpMMkF38iU2TL3juv82YWwOOHQd7Oz++yEUYKtkMyLkquIo=
+	t=1752499802; cv=none; b=PB/JAnBqvLi9bnj2JLJdp/OSaAqURrwt9kyNvhAkrsO7q1vFhm5a2Bl2u3EEVx9Fmtecx3QyKE+A8Zs3HQi89ltZNCa3X4qa+1+h+rtolsdeeq4e6Gap14j0iHpa+wVpeWMGrBZpfv5P+ZD6ypBfopRZn5KhTuJh468ZO/BfK4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752499799; c=relaxed/simple;
-	bh=uSDvZ7VTvhMtab969Fj7Ke5hLfJuIyLW2Vi1cGLIv8c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CGZ0HxKBeIHgFyQpjkSPss6ygE35Ick/2fCxLPuQfydJV6YAx+hbJGQQUT7XbbkWb9kfkT4FP10Xk/PrtaZsoVeHPCpQ1+oXf1HNWOGY+OwNCmhvsHesGFftNN8qXTYLJton8kxF53fPab+iGd4UK+cflst0g6tX/ysLp+rdjsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QaRYtQUT; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=pLHtmwVxblwTxA9MgozfbATAwzmb9kfhVgNP2IA4oMs=; b=QaRYtQUT8DMpCfibdprLAmU2yP
-	s6O31SaFATCU/6kXR25bnBKQDVCedhjAlRRXmVan5tWPqWOZcv7tVMfpG9exJ28l6GxzxB+uxYSNj
-	wOcJUw7oBaKIFgS6MfzlbfjHEIYJihiwqUJ3J6JbfI/Cytmb9XVIwWgBD3ExsOtvcWVmx+ehLJUeQ
-	QCO9FS7+H/RYp/PSOotRq/8iL/xAx9/nqbDNglsbFm6ejOlZAgzgRL47Low1Mkl1cMAKerFC6ZW/5
-	nOjzbrrsbBWh5gz5sQghWUoRysrTMWEJ+1w5F0v459MxIn2MDZOWQUF43xb+ATuRG7XS+H3mSAuf1
-	CzpLgnJg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubJFR-00000009llQ-3hx3;
-	Mon, 14 Jul 2025 13:29:38 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id BC1CA30039A; Mon, 14 Jul 2025 15:29:36 +0200 (CEST)
-Date: Mon, 14 Jul 2025 15:29:36 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, x86@kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-	Sam James <sam@gentoo.org>
-Subject: Re: [PATCH v13 07/14] unwind_user/deferred: Make unwind deferral
- requests NMI-safe
-Message-ID: <20250714132936.GB4105545@noisy.programming.kicks-ass.net>
-References: <20250708012239.268642741@kernel.org>
- <20250708012358.831631671@kernel.org>
+	s=arc-20240116; t=1752499802; c=relaxed/simple;
+	bh=3uKXuWP37D0CEeXXM1tywrvm2McS8VXMhZeTn28VHoI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jgjjAXIAoZuPjgdbSrnlhBD14PxjO07VSooDKMJcKjPY2r9ppc5+3LvMP2/D9Yc9aeHOFqw8pyFLg5FuiTvU6txjXOMCjnri09Mata/ngx0TjKs3SSB74Yivx4WdqkvQU3LhMyIxl+TucBe28/Q55FRA0+l7s/491tRuHK0SkIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ni27Lgie; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56E8GL12007737
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:30:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EwocCM6XUaxUM6zqzmqtMLsjRln2ZwRH5MrCIvcpmqQ=; b=ni27LgiegFlY/Rqd
+	7oocgMbfgVrGrmZLlh1wU+5fWe5lXdhnbpjBjLfspfNAvACzfPxjBDG7UJSHkVZs
+	/p8Fb2FeDKLIq/x/54voDnw7RDbpboVEDnftVbB4E4Kb2hiqXd3LMRZDFVHPRf/1
+	XZ89NbHnIfBMovimnGzgkobXxU4Pe5FRELVz6JAiTZsNY5QYRnOF+asOWCQu3v1k
+	h8MbmNIf23va0W4Zi3h7wMI48cUCLac/m+feu6lHP/SCfPeh/OmN5AM9HhDK2Sft
+	bapFm8gRZxa1kqQtkxYkffuQuyQI9G1P2cNHoF5wzhZeK3ysHiVBxOBpSy9dAbPj
+	KAOO6A==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47v56a3bq7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:30:00 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7dbce38d456so84037185a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 06:30:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752499799; x=1753104599;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EwocCM6XUaxUM6zqzmqtMLsjRln2ZwRH5MrCIvcpmqQ=;
+        b=SBWZoihZvQCuegCIGdSopZ0KZuC2sGepcWVLhc1VNawG2+zFYntfXrailhH87YVPY0
+         HyLWxfgBIhhWMVn/X9Jblvi+x8zqYt4XVB+pz3Dqn0JrrsDW6dxp5ufi7kbtwKKTiGaX
+         4BjXf9lYHarV30DhxjuZWgMz9WPEo+2uQfP4I6NfOPX0+aMutVCkoCjg88O0b20ysga8
+         lj3lkln0FPYZLKFx+qg1BBs/IT7K5jq39nOOHdf1h1hhrMCQLA2LkWBrUdjxZxxKt6AU
+         1j12yn/n2BQRuqRCMn8sIh1kujv7SKebsN8bi7KMT9JR46BAe1kSHC8edwWQfZIgUdkr
+         QEJw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0jvOQKJEqlthNhQIPl6llF5xtF5DB7Uo7VfrDVobNUD2nAuyssroDf4U65VdbylHjQqREp9T7j2EVqvs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsxM5rFsrDfp0jO5+Q+oHHilb7Qp4RVOqwARYosMzXr7j0OXvY
+	Vzx12O1SlStG3yT5N66WYXqcDrXXZmNZdObXSxvuRpbpIuhoyoIObtZKdnReGbucu2nwCJZrnPq
+	ix8F/qzYzjIJDHIF9sYv4gtEuOUZUijLCwrvXxWzge0NjSPopajZ7vGSFDddW1Gct0P8=
+X-Gm-Gg: ASbGncvvWwS57TlbvdVNJs1TKLw5WRpmrlUpiCmiQe4SluSkJtsxcnN64JMVvQ5B5jq
+	DzpMncUiXjaVbCnlkofv0kHF+sSvnnxfdI10sJmwFbss9B9bMZjknotF9Bv2A/kKfP9RZ/2Dvi9
+	DN7ymP9aKLGOjIdJQephzesYgEoYy9uKrFuCwIXXvKBya056upRZwmVm3ueLgDCKrddmXHzIhqb
+	Amnm1KlYxr0I7HyEAY9a5OPFfLwyxPUOWjIWnXpvumWhJuUC+UmPUapyiUK7XGCqV6OdqfTHIBc
+	/miQx/CGPHOF4YdRm933x/lmoAYTdGIIiJf8JfacwK+aKXE56mdlxrHCdLvx2lynMsYUgJylXwU
+	feJlqJ8TEdlycmNjL4zqB
+X-Received: by 2002:a05:620a:4712:b0:7e3:297d:ec32 with SMTP id af79cd13be357-7e3297df03dmr166521585a.10.1752499798875;
+        Mon, 14 Jul 2025 06:29:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE4pVl04wh4MC/yMhCnGpjY5MlKKeWfA0cK5VDPj8AHG8h6eRZW2+HItMHeuT0gOF1TXD/tzA==
+X-Received: by 2002:a05:620a:4712:b0:7e3:297d:ec32 with SMTP id af79cd13be357-7e3297df03dmr166519985a.10.1752499798442;
+        Mon, 14 Jul 2025 06:29:58 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7e91c81sm830369866b.37.2025.07.14.06.29.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 06:29:57 -0700 (PDT)
+Message-ID: <d35d95a9-2844-4940-bfa0-aaae58de48e1@oss.qualcomm.com>
+Date: Mon, 14 Jul 2025 15:29:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708012358.831631671@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 12/15] arm64: dts: qcom: x1e80100-t14s: Add pm8010
+ camera PMIC with voltage levels for IR and RGB camera
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+        Todor Tomov <todor.too@gmail.com>,
+        Mauro Carvalho Chehab
+ <mchehab@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org
+References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
+ <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-12-0bc5da82f526@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-12-0bc5da82f526@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: rcX6RIlLBj-ZuElnDdXUL_aPo9Nm_DOf
+X-Authority-Analysis: v=2.4 cv=X7BSKHTe c=1 sm=1 tr=0 ts=68750658 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8 a=tqOywgo3-Srlss81Y0MA:9
+ a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: rcX6RIlLBj-ZuElnDdXUL_aPo9Nm_DOf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA3OSBTYWx0ZWRfX5qOQ2A6jqtMS
+ 2DyHK0WrECDdW0FNpX6VCE/NBRuDhnXFwNxtJKojX+Ss1yOv6Z/jSBvkN0nxBPeZY/Nw3oh8e2P
+ DEeAYXkc2WlT7Yh1XP5xYfIzSQ1Fd7zB/cFtYx2uF1aH7O93B/w9iFYVJPvDuzV+n2/8Odkk3J+
+ AE0kjpqfjwoyBpZGfj6uN/NxunJJkBQwvhTNFz5wO5rnctx5FxjLHCmlqShVxkJp8Xc4aPrhtwh
+ AN1EG7g5uRHemHFVxeOZqLiPiT62rB3kgrEHZezEG+JieoYRYZlU9HL04lfq9QOsWnPiHkLZr+M
+ T6pWAWb5p1usyai0SrDC26Q7p+EYmMpevRAXCNhhyCdD6etOaRCXdpd6yERbLr7aAghfLF/Ph2x
+ IzfL6f+4pKPjCSRn8XfCZ8ZR4f5P3FcYnT7WnEq0Z47Dfc0CNYlmxuRrwuHjsFacxrehs7wQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-14_01,2025-07-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 mlxlogscore=999 suspectscore=0 phishscore=0
+ impostorscore=0 clxscore=1015 malwarescore=0 mlxscore=0 lowpriorityscore=0
+ spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507140079
 
-On Mon, Jul 07, 2025 at 09:22:46PM -0400, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
+On 7/11/25 2:58 PM, Bryan O'Donoghue wrote:
+> Add the PM8010 PMIC providing the following voltage rails:
 > 
-> Make unwind_deferred_request() NMI-safe so tracers in NMI context can
-> call it and safely request a user space stacktrace when the task exits.
+> vreg_l1m_r @ 1v2 IR sensor
+> vreg_l2m_r @ 1v2 RGB sensor
+> vreg_l3m_r @ 1v8 IR sensor
+> vreg_l4m_r @ 1v8 RGB sensor
+> vreg_l5m_r @ 2v8 IR sensor
+> vreg_l7m_r @ 2v8 RGB sensor
 > 
-> Note, this is only allowed for architectures that implement a safe
-> cmpxchg. If an architecture requests a deferred stack trace from NMI
-> context that does not support a safe NMI cmpxchg, it will get an -EINVAL.
-> For those architectures, they would need another method (perhaps an
-> irqwork), to request a deferred user space stack trace. That can be dealt
-> with later if one of theses architectures require this feature.
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>  .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    | 59 ++++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
 > 
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
+> index e19daf0f41f1f081e4b0c04be71e37f6ef492b6d..c9215c1a37cf4e7bad1512f52afdfc18ea616127 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
+> @@ -580,6 +580,13 @@ vreg_l6b_1p8: ldo6 {
+>  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>  		};
+>  
+> +		vreg_l7b_2p8: ldo7 {
+> +			regulator-name = "vreg_l7b_2p8";
+> +			regulator-min-microvolt = <2800000>;
+> +			regulator-max-microvolt = <2800000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+> +		};
+> +
+>  		vreg_l8b_3p0: ldo8 {
+>  			regulator-name = "vreg_l8b_3p0";
+>  			regulator-min-microvolt = <3072000>;
+> @@ -823,6 +830,58 @@ vreg_l3j_0p8: ldo3 {
+>  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>  		};
+>  	};
+> +
+> +	regulators-8 {
+> +		compatible = "qcom,pm8010-rpmh-regulators";
+> +		qcom,pmic-id = "m";
+> +
+> +		vdd-l1-l2-supply = <&vreg_s5j_1p2>;
+> +		vdd-l3-l4-supply = <&vreg_s4c_1p8>;
+> +		vdd-l7-supply = <&vreg_bob1>;
+> +
+> +		vreg_l1m_1p2: ldo1 {
+> +			regulator-name = "vreg_l1m_1p2";
+> +			regulator-min-microvolt = <1200000>;
+> +			regulator-max-microvolt = <1260000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+> +		};
+> +
+> +		vreg_l2m_1p2: ldo2 {
+> +			regulator-name = "vreg_l2m_1p2";
+> +			regulator-min-microvolt = <1200000>;
+> +			regulator-max-microvolt = <1260000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+> +		};
+> +
+> +		vreg_l3m_1p8: ldo3 {
+> +			regulator-name = "vreg_l3m_1p8";
+> +			regulator-min-microvolt = <1800000>;
+> +			regulator-max-microvolt = <1900000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+> +		};
+> +
+> +		vreg_l4m_1p8: ldo4 {
+> +			regulator-name = "vreg_l4m_1p8";
+> +			regulator-min-microvolt = <1800000>;
+> +			regulator-max-microvolt = <1900000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+> +		};
+> +
+> +		vreg_l5m_2p8: ldo5 {
+> +			regulator-name = "vreg_l5m_2p9";
+> +			regulator-min-microvolt = <2800000>;
+> +			regulator-max-microvolt = <3072000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+> +		};
+> +
+> +		vreg_l7m_2p8: ldo7 {
+> +			regulator-name = "vreg_l7m_2p9";
+> +			regulator-min-microvolt = <2800000>;
+> +			regulator-max-microvolt = <3072000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+> +		};
 
-How's this instead?
+Have you confirmed all these voltages on both T14s and yoga against
+schematics or similar?
 
----
---- a/kernel/unwind/deferred.c
-+++ b/kernel/unwind/deferred.c
-@@ -12,6 +12,40 @@
- #include <linux/slab.h>
- #include <linux/mm.h>
- 
-+/*
-+ * For requesting a deferred user space stack trace from NMI context
-+ * the architecture must support a safe cmpxchg in NMI context.
-+ * For those architectures that do not have that, then it cannot ask
-+ * for a deferred user space stack trace from an NMI context. If it
-+ * does, then it will get -EINVAL.
-+ */
-+#ifdef CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG
-+#define UNWIND_NMI_SAFE 1
-+static inline bool try_assign_cnt(struct unwind_task_info *info, u32 cnt)
-+{
-+	u32 zero = 0;
-+	return try_cmpxchg(&info->id.cnt, &zero, cnt);
-+}
-+static inline bool test_and_set_pending(struct unwind_task_info *info)
-+{
-+	return info->pending || cmpxchg_local(&info->pending, 0, 1);
-+}
-+#else
-+#define UNWIND_NMI_SAFE 0
-+/* When NMIs are not allowed, this always succeeds */
-+static inline bool try_assign_cnt(struct unwind_task_info *info, u32 cnt)
-+{
-+	info->id.cnt = cnt;
-+	return true;
-+}
-+static inline bool test_and_set_pending(struct unwind_task_info *info)
-+{
-+	int pending = info->pending;
-+	info->pending = 1;
-+	return pending;
-+}
-+#endif /* CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG */
-+
- /* Make the cache fit in a 4K page */
- #define UNWIND_MAX_ENTRIES					\
- 	((SZ_4K - sizeof(struct unwind_cache)) / sizeof(long))
-@@ -41,21 +75,16 @@ static DEFINE_PER_CPU(u32, unwind_ctx_ct
-  */
- static u64 get_cookie(struct unwind_task_info *info)
- {
--	u32 cpu_cnt;
--	u32 cnt;
--	u32 old = 0;
-+	u32 cnt = 1;
- 
- 	if (info->id.cpu)
- 		return info->id.id;
- 
--	cpu_cnt = __this_cpu_read(unwind_ctx_ctr);
--	cpu_cnt += 2;
--	cnt = cpu_cnt | 1; /* Always make non zero */
--
--	if (try_cmpxchg(&info->id.cnt, &old, cnt)) {
--		/* Update the per cpu counter */
--		__this_cpu_write(unwind_ctx_ctr, cpu_cnt);
--	}
-+	/* LSB it always set to ensure 0 is an invalid value. */
-+	cnt |= __this_cpu_read(unwind_ctx_ctr) + 2;
-+	if (try_assign_cnt(info, cnt))
-+		__this_cpu_write(unwind_ctx_ctr, cnt);
-+
- 	/* Interrupts are disabled, the CPU will always be same */
- 	info->id.cpu = smp_processor_id() + 1; /* Must be non zero */
- 
-@@ -174,27 +203,29 @@ int unwind_deferred_request(struct unwin
- 
- 	*cookie = 0;
- 
--	if (WARN_ON_ONCE(in_nmi()))
--		return -EINVAL;
--
- 	if ((current->flags & (PF_KTHREAD | PF_EXITING)) ||
- 	    !user_mode(task_pt_regs(current)))
- 		return -EINVAL;
- 
-+	/* NMI requires having safe cmpxchg operations */
-+	if (WARN_ON_ONCE(!UNWIND_NMI_SAFE && in_nmi()))
-+		return -EINVAL;
-+
- 	guard(irqsave)();
- 
- 	*cookie = get_cookie(info);
- 
- 	/* callback already pending? */
--	if (info->pending)
-+	if (test_and_set_pending(info))
- 		return 1;
- 
- 	/* The work has been claimed, now schedule it. */
- 	ret = task_work_add(current, &info->work, TWA_RESUME);
--	if (WARN_ON_ONCE(ret))
-+	if (WARN_ON_ONCE(ret)) {
-+		WRITE_ONCE(info->pending, 0);
- 		return ret;
-+	}
- 
--	info->pending = 1;
- 	return 0;
- }
- 
+These vregs are widely configurable, so the reference values may
+not be what the hardware expects..
+
+Konrad
 
