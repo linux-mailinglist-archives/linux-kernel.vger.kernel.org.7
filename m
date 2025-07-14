@@ -1,118 +1,160 @@
-Return-Path: <linux-kernel+bounces-730106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE7FEB0404F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:41:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAD3FB04048
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 685A5188B541
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:38:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68A781885380
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549CE25392B;
-	Mon, 14 Jul 2025 13:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0928824886A;
+	Mon, 14 Jul 2025 13:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="rGxkMDSZ"
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="R6+4lpqc"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED5A24DCE6;
-	Mon, 14 Jul 2025 13:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A696B23AB8E;
+	Mon, 14 Jul 2025 13:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752500268; cv=none; b=pTsZ2dzRojSLfo23NxorYsyhN1GHarAX8zCGd0diBxDvNxEu3b6KFMBte8BrdmlS2XZ2QDZ150t2O3PrqeD79eftf+Nl2gn70F3ePYhhPAESuQB+vD7K+/iwNvQFyYC0Yf9+4LC0HclyayjxwZb9p0vVuuGrshY28UH/kYpm9hs=
+	t=1752500261; cv=none; b=HSqPgopFv1zzZDJODRFBrb50N/b2POkgYb7n2fKk2yJWppNLt2rJJ8blOChE7RM+j5aGOGIwvgnIxIH6w5TRmKa1IGXp6k8uevDAFkxJbou2jWXJXa83O6zpdhrZo4npQSwbcEqw60yDHqvbgVgp+nDnFT23npCDv97soDniYfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752500268; c=relaxed/simple;
-	bh=im1OWWqqZJvBhYnsqL8P/JQkZigBzP64on+in2dttDM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Qq6sHcGjSp7GV2hRVaMfGoHy4EAA3pTrXD+UqND1wJPOx65L+Y8BIZc5siQfLt6s8+uy1Y2iOcj5zZm3U86dfIGjtp9TK3b/lCsfOPLNA4/W6JiOOicwVHh3cP3PR69xF1OkTvYSw2C48D88mZAkZvzw6HeticOxo1U7mguL3RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=rGxkMDSZ; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:Content-Transfer-Encoding:Content-Type
-	:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=5EZAgaYPdDTMlb0PvkTynO2V/C06jB0FE0TqBsli4nY=; b=rGxkMDSZG4rSGxUkUKdeu70S62
-	RBnpWEioXzzfesunnzA0mwDQoEXuf6tJxZNLFKGHVNRCJcK1ijsD/glFK5uswkN14IbREnHMhTjHl
-	+u3+Rq1wTdEj7Vd/EB+55O65WJUY61rQD6MbpjAd9IdFeZUMn4mlIfo1czf8vAQmfUWp7UZYGn+Xl
-	1Cjg3++yFzvzjavKe8iNmvgdDjsQPktyA7Js7KCqN4bgQHa7rlti0vqv77/pCz1x3kB1sVTbTMoMS
-	b9bwvTFnOFwTL76b4zAmJ/Gp7UqTxu7JwfS/kMvBgQAPWB0c+T09irOHRpwjoE2hmsFNTr4Z00jIr
-	KBpEeHWg==;
-Received: from authenticated user
-	by stravinsky.debian.org with utf8esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.94.2)
-	(envelope-from <roehling@debian.org>)
-	id 1ubJNA-00169y-L7; Mon, 14 Jul 2025 13:37:36 +0000
-From: =?UTF-8?q?Timo=20R=C3=B6hling?= <roehling@debian.org>
-To: linux-staging@lists.linux.dev,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>
-Cc: ~lkcamp/patches@lists.sr.ht,
-	koike@igalia.com,
-	=?UTF-8?q?Timo=20R=C3=B6hling?= <roehling@debian.org>
-Subject: [PATCH] media: atomisp: style fix for trailing statements
-Date: Mon, 14 Jul 2025 15:36:54 +0200
-Message-ID: <20250714133701.48174-1-roehling@debian.org>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1752500261; c=relaxed/simple;
+	bh=ucZkSpFfXMCWM+n/ckXWhndxhkQPKbM9AwH9fq36q2g=;
+	h=From:To:Cc:Date:Message-Id:MIME-Version:Subject; b=LWfBqDVYfQeVML1D0CSxHAJ7Wq02yEUv4GZCt+Sfpu3JxR5L0U2U4hewd2hs92kD8sxSoxa4gm/0uuni9pqiUVvBfY1X0lI156Wk80jiKkZgfmldzeJAZ1FU2otwAztwgEXWyPVaKqROeP+7jbNu+HASLYoQxpD3Ym16rZTge8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=R6+4lpqc; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
+	:From:subject:date:message-id:reply-to;
+	bh=aHNAeOZ/dbZ3uZvDxMF1/QUUJWuRA5K3D1Shf8AvzvE=; b=R6+4lpqcsFLsNZ2KVoHe2koGyT
+	UGgVMhR684enW3Y6Fomi5kagG1Ei7D+XghphqGJVuEUtBYT2ye0PaU5PQiYk6P1nTnBvSOWoQuFNP
+	XD0i67nXDupNI/+NOgCcn8c24hQkHOUkvvAFxZ7Zv3YPJLqrCbLLerfY93/Uigna+qw0=;
+Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:45674 helo=pettiford.lan)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1ubJNB-0002WY-Em; Mon, 14 Jul 2025 09:37:37 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: hugo@hugovil.com,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Date: Mon, 14 Jul 2025 09:37:30 -0400
+Message-Id: <20250714133730.6353-1-hugo@hugovil.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Debian-User: roehling
+X-SA-Exim-Connect-IP: 184.161.19.61
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+Subject: [PATCH v2] gpio: pca953x: use regmap_update_bits() to improve efficiency
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-Fix checkpatch errors "ERROR: trailing statements should be on next line"
-in drivers/staging/media/atomisp/pci/sh_css_params.c
+From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
-Signed-off-by: Timo Röhling <roehling@debian.org>
+Using regmap_update_bits() allows to reduce the number of I2C transfers
+when updating bits that haven't changed on non-volatile registers.
+
+For example on a PCAL6416, when changing a GPIO direction from input to
+output, the number of I2C transfers can be reduced from 4 to just 1 if
+the pull resistors configuration hasn't changed and the output value
+is the same as before.
+
+Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 ---
- drivers/staging/media/atomisp/pci/sh_css_params.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+V1 -> V2: rebase on gpio/for-next
+---
+ drivers/gpio/gpio-pca953x.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/staging/media/atomisp/pci/sh_css_params.c b/drivers/staging/media/atomisp/pci/sh_css_params.c
-index 0d4a936ad80f..2eeb75653392 100644
---- a/drivers/staging/media/atomisp/pci/sh_css_params.c
-+++ b/drivers/staging/media/atomisp/pci/sh_css_params.c
-@@ -875,7 +875,8 @@ ia_css_process_kernel(struct ia_css_stream *stream,
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index f5184860bd89f..169877e59da9d 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -611,9 +611,9 @@ static int pca953x_gpio_direction_input(struct gpio_chip *gc, unsigned off)
+ 	guard(mutex)(&chip->i2c_lock);
  
- 		/* update the other buffers to the pipe specific copies */
- 		for (stage = pipeline->stages; stage; stage = stage->next) {
--			if (!stage || !stage->binary) continue;
-+			if (!stage || !stage->binary)
-+				continue;
- 			process(pipeline->pipe_id, stage, params);
- 		}
- 	}
-@@ -3045,7 +3046,8 @@ process_kernel_parameters(unsigned int pipe_id,
- 	/* Call parameter process functions for all kernels */
- 	/* Skip SC, since that is called on a temp sc table */
- 	for (param_id = 0; param_id < IA_CSS_NUM_PARAMETER_IDS; param_id++) {
--		if (param_id == IA_CSS_SC_ID) continue;
-+		if (param_id == IA_CSS_SC_ID)
-+			continue;
- 		if (params->config_changed[param_id])
- 			ia_css_kernel_process_param[param_id](pipe_id, stage, params);
- 	}
-@@ -3600,7 +3602,8 @@ sh_css_params_write_to_ddr_internal(
- 						    IA_CSS_PARAM_CLASS_PARAM, mem);
- 		size_t size = isp_data->size;
+ 	if (PCA_CHIP_TYPE(chip->driver_data) == TCA6418_TYPE)
+-		return regmap_write_bits(chip->regmap, dirreg, bit, 0);
++		return regmap_update_bits(chip->regmap, dirreg, bit, 0);
  
--		if (!size) continue;
-+		if (!size)
-+			continue;
- 		buff_realloced = reallocate_buffer(&ddr_map->isp_mem_param[stage_num][mem],
- 						&ddr_map_size->isp_mem_param[stage_num][mem],
- 						size,
+-	return regmap_write_bits(chip->regmap, dirreg, bit, bit);
++	return regmap_update_bits(chip->regmap, dirreg, bit, bit);
+ }
+ 
+ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
+@@ -628,7 +628,7 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
+ 	guard(mutex)(&chip->i2c_lock);
+ 
+ 	/* set output level */
+-	ret = regmap_write_bits(chip->regmap, outreg, bit, val ? bit : 0);
++	ret = regmap_update_bits(chip->regmap, outreg, bit, val ? bit : 0);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -637,9 +637,9 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
+ 	 * (in/out logic is inverted on TCA6418)
+ 	 */
+ 	if (PCA_CHIP_TYPE(chip->driver_data) == TCA6418_TYPE)
+-		return regmap_write_bits(chip->regmap, dirreg, bit, bit);
++		return regmap_update_bits(chip->regmap, dirreg, bit, bit);
+ 
+-	return regmap_write_bits(chip->regmap, dirreg, bit, 0);
++	return regmap_update_bits(chip->regmap, dirreg, bit, 0);
+ }
+ 
+ static int pca953x_gpio_get_value(struct gpio_chip *gc, unsigned off)
+@@ -667,7 +667,7 @@ static int pca953x_gpio_set_value(struct gpio_chip *gc, unsigned int off,
+ 
+ 	guard(mutex)(&chip->i2c_lock);
+ 
+-	return regmap_write_bits(chip->regmap, outreg, bit, val ? bit : 0);
++	return regmap_update_bits(chip->regmap, outreg, bit, val ? bit : 0);
+ }
+ 
+ static int pca953x_gpio_get_direction(struct gpio_chip *gc, unsigned off)
+@@ -751,9 +751,9 @@ static int pca953x_gpio_set_pull_up_down(struct pca953x_chip *chip,
+ 
+ 	/* Configure pull-up/pull-down */
+ 	if (param == PIN_CONFIG_BIAS_PULL_UP)
+-		ret = regmap_write_bits(chip->regmap, pull_sel_reg, bit, bit);
++		ret = regmap_update_bits(chip->regmap, pull_sel_reg, bit, bit);
+ 	else if (param == PIN_CONFIG_BIAS_PULL_DOWN)
+-		ret = regmap_write_bits(chip->regmap, pull_sel_reg, bit, 0);
++		ret = regmap_update_bits(chip->regmap, pull_sel_reg, bit, 0);
+ 	else
+ 		ret = 0;
+ 	if (ret)
+@@ -761,9 +761,9 @@ static int pca953x_gpio_set_pull_up_down(struct pca953x_chip *chip,
+ 
+ 	/* Disable/Enable pull-up/pull-down */
+ 	if (param == PIN_CONFIG_BIAS_DISABLE)
+-		return regmap_write_bits(chip->regmap, pull_en_reg, bit, 0);
++		return regmap_update_bits(chip->regmap, pull_en_reg, bit, 0);
+ 	else
+-		return regmap_write_bits(chip->regmap, pull_en_reg, bit, bit);
++		return regmap_update_bits(chip->regmap, pull_en_reg, bit, bit);
+ }
+ 
+ static int pca953x_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+
+base-commit: e502df58b5e3767c00e887744b6eff43b7fde3ea
 -- 
-2.50.0
+2.39.5
 
 
