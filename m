@@ -1,143 +1,115 @@
-Return-Path: <linux-kernel+bounces-730495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A287B0458D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:36:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D546B04590
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89EB74A39AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:36:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0767C1A6354A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3614826159D;
-	Mon, 14 Jul 2025 16:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AED12627FC;
+	Mon, 14 Jul 2025 16:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rwLB0PvJ"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="zZzX7kso"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410371D5CE5
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 16:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B46C1F4CB3;
+	Mon, 14 Jul 2025 16:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752510968; cv=none; b=qpUyT3oOFbNIjYzd69g4NarF0ojZD0I44DLWS9lHX4WTv25FhA8fnIN5mJwo1neTiW5W3F+Jl3XEtg8m63IdSyRmbzfIwM2dhVur3VpOcrpYpsIYKBhFeJBOnOqSD9bx095Rd3uL+406BLHXB5NXx7FaV4hYPHp2sWBXPyySUgU=
+	t=1752511031; cv=none; b=X91WdL+qN3hGq+05+GbMDbRumMe4hvFuqPp+87Qx77y7bnQyDCa7oepvz8eTPqihTrCm6OMilSfqGo3LKU8DeJMatUSnKVUTe9HMGzb5wKAUIcAfqTeS4egOdWUPYjTSjp8ejScks2+v1Xd4Smfr77+ZKO368h+L9sUrFxy8s+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752510968; c=relaxed/simple;
-	bh=BIE6EqPtzaBB0n3DRQoPZczYKmT+vcSL0I3nilYkTgE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SxBrfZst7xB2n8A3Ooi81432QDuZ6XDEfvOfHpLuO2F3x7MobhuACe1aFBr6JyT2NNFNRxS0uuo+9/Saaopf47E7GINXgoHeZACdYdH6qK9xVmK4uIPWsu3DKNyjKEXN5Nyzh76MJzSzM7YB86dabL2bEVtUgi8Vi7baVVYRyBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rwLB0PvJ; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-747ddba7c90so3835086b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:36:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752510966; x=1753115766; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sKOGgh4A0sRsPhNTCXyT6vgu+s7GimHYJMjis7EAfA0=;
-        b=rwLB0PvJ9aZdRr7onjIHB2Zx/ucCW15PJCqRznsY8VP1OtcLgUzFYF8CeKhfMFobEB
-         /bJzYTvhC2ri9uvkGJDgmT0PlMbgTUMV8KRU6WiYZ/ZqJ4rouDJn4P2rdQ0xxzJrueGp
-         GCXRrWOL48KW34zeKJ8WRWRS6NRcMAuOkTd/o9ulo1/Mtywf32BN4JzkTudeprkQKMFL
-         Ifmq6zvTogvklzOK59/rQ2gXALX3Kwk0mlp4Os8nwbwv9WzSws5/06KC9FLd1YypS6QS
-         u5zzRKjHUDK83ws0LkvFS+H01RTuqY+tWTwMNQ7e589pO0UJ4SQT5PGaj9czubmOG6vF
-         xatA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752510966; x=1753115766;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sKOGgh4A0sRsPhNTCXyT6vgu+s7GimHYJMjis7EAfA0=;
-        b=nYMCoWeEmdfdYQFJEbEGRyM5R+vQUaHCqIU0nU4n485p+j7dgaou9RCFKhfzmg6ssj
-         mEvQ4zqGYcrSKdr6B6qNXMUawvJ1IbxmLnQhPrqtTgb6qeC1uilIh51sZG7JLdAQt4wH
-         DTMK7bwVOWlXaTWK1GEs/Gi9NImoz9aNA0wuuAZrSnb6CX28VwBqOCpCivmH7+2+DlOU
-         XM3Jka/STIGbHH0ztnRapJ7Fr+wAQqE6jftp9QlWaMLJEfWyJUPf5350fjTAJnqd7+1r
-         vYnXq4GllvLf9p3guFfolwguFdTEY7+0ayRfIjmuz2b+QcK/7SPn9gyCje1csZGIMkg7
-         d56g==
-X-Forwarded-Encrypted: i=1; AJvYcCUdJfvPI9MTD8iVMxnC5sOBFOsyTOidnixjn6+UMcMhRD6BO8NSbnNmuwoCrtiJo9g+wCqZgxiucc9KWeI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI6IAwMylC7wz9eYrP8XyWwFGBHyTBoomhLBNMPgjuRv8rV6Y5
-	HBzmlW5ve6g1MHIS0LaOUafKRCCVTB0h7MruTCVMSs2SnIS5Nt/0pQ8/XHAd0QX//EXWnPixGR/
-	ZL5n5xA==
-X-Google-Smtp-Source: AGHT+IFoF5TuFmAV8gfZjaznA3MZ9TVlWh+3SerNTx/itMzmqXT8toAj6HT9Xg+ZHr1IiVJIOZxiUJidRP4=
-X-Received: from pfbdh2.prod.google.com ([2002:a05:6a00:4782:b0:748:e72f:1148])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2d8e:b0:72d:3b2e:fef9
- with SMTP id d2e1a72fcca58-74ee352beb4mr18266664b3a.20.1752510966343; Mon, 14
- Jul 2025 09:36:06 -0700 (PDT)
-Date: Mon, 14 Jul 2025 09:36:04 -0700
-In-Reply-To: <20250714161639.GLaHUtZwleS3COfxxX@fat_crate.local>
+	s=arc-20240116; t=1752511031; c=relaxed/simple;
+	bh=tMrOtJ+kfSdVA0qrXoov8X2JtXzZ9F1mreWoWfrUzIA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MrwkaHjOYq0biVxflIym6opjmOQ+zBMyLtkkTpTEbIa6xMjdT7qOBRFA6Zl3NpkBn9zPqxUEKdTRhNu9zx2VKM1Tjb0kop8XsU22MXIJHf8nDg/qhYyzs9uz9yQiZTenboN0HpAFNsD2zr209MLv5Z6aOJmcTz5eRk6wHjiJ4bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=zZzX7kso; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1752511030; x=1784047030;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=tMrOtJ+kfSdVA0qrXoov8X2JtXzZ9F1mreWoWfrUzIA=;
+  b=zZzX7kso/xD7+fcBPkvGhcz9onTkmnn+MDC0/4KHhG3eEYiaWZ4V7VjP
+   Gf8aAVrcQOrZ08MucMVu/XCD7rHNCG8/p2RzLZish5PGG8OCGgvIN1BkM
+   P8kEU5TYCG9wQdMA3nbsaAHgOiCmnQiHBYfiP6JajwMj2yUHOoHbVUvAY
+   s7W5BIX1+l7Fw25jbD2M4yxQqv/g0Uu9/IovpwUxVHqszAT7hGk+QIYA6
+   1hvH3J15nFj/S1UyaBGyioOERy07t0GRKZa+yMG42T5AxgRYNtjj0my8h
+   9HtR3SI+HljyaYzHFBrNmDNdtVC99EYm9GrTHKQ2EUSWFCOX4m2iUqwzq
+   g==;
+X-CSE-ConnectionGUID: hBq1ljEWSkqL674rDMJkcA==
+X-CSE-MsgGUID: per8wVp3TQ2Qiv2PcIAY/A==
+X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
+   d="scan'208";a="211399318"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Jul 2025 09:37:08 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Mon, 14 Jul 2025 09:36:28 -0700
+Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Mon, 14 Jul 2025 09:36:28 -0700
+From: <Ryan.Wanner@microchip.com>
+To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, "Ryan
+ Wanner" <Ryan.Wanner@microchip.com>
+Subject: [PATCH v2 0/5] Expose REFCLK for RMII and enable RMII
+Date: Mon, 14 Jul 2025 09:36:58 -0700
+Message-ID: <cover.1752510727.git.Ryan.Wanner@microchip.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250711041200.87892-1-nikunj@amd.com> <20250714104424.GGaHTfiFxI_pf-vhRn@fat_crate.local>
- <aHUTMiEJ-nd76lxM@google.com> <76e0988d-279f-be58-51d9-621806dbb453@amd.com>
- <aHUfecs9UJPx0v_C@google.com> <20250714161639.GLaHUtZwleS3COfxxX@fat_crate.local>
-Message-ID: <aHUx9ILdUZJHefjZ@google.com>
-Subject: Re: [PATCH] x86/sev: Improve handling of writes to intercepted GUEST_TSC_FREQ
-From: Sean Christopherson <seanjc@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, Nikunj A Dadhania <nikunj@amd.com>, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de, 
-	mingo@redhat.com, dave.hansen@linux.intel.com, santosh.shukla@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Mon, Jul 14, 2025, Borislav Petkov wrote:
-> On Mon, Jul 14, 2025 at 08:17:13AM -0700, Sean Christopherson wrote:
-> > The guest cannot dictate VMM behavior.  If the guest side wants to panic, then
-> > so be it, panic.  But don't blame the VMM for taking a conservative approach.
-> > 
-> > If you want to dictate VMM behavior, then the required behavior needs to be
-> > explicitly documented in an "official" spec, e.g. the GHCB.
-> 
-> Ok, so you want to squash the #GP from an attempted write to a MSR into
-> a warning because this is how the hypervisor has been handling it already for
-> others. Ok, I guess this is established protocol or whatnot.
+From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-Or as Tom suggested, return ES_EXCEPTION and let the kernel's normal machinery
-WARN on the bad WRMSR.
+This set allows the REFCLK property to be exposed as a dt-property to
+properly reflect the correct RMII layout. RMII can take an external or
+internal provided REFCLK, since this is not SoC dependent but board
+dependent this must be exposed as a DT property for the macb driver.
 
-> Now, why should it panic when a *read* is then attempted?
+This set also enables RMII mode for the SAMA7 SoCs gigabit mac.
 
-Because as you note below, the MSR read should succeed.  __vc_handle_secure_tsc_msrs()
-is invoked if and only if secure TSC is enabled for the guest.  If RDMSR #VCs,
-then the hypervisor has decided to intercept GUEST_TSC_FREQ despite enabling and
-advertising secure TSC to the guest.  The guest kernel can either continue on
-with degraded security (potentially dangerously so) or panic/terminate.  
+V1 is here [1]
 
-> The APM says:
-> 
-> "Guests that run with Secure TSC enabled may read the GUEST_TSC_FREQ MSR
-> (C001_0134h) which returns the effective frequency in MHz of the guest view of
-> TSC. This MSR is read-only and attempting to write the MSR or read it when
-> outside of a guest with Secure TSC enabled causes a #GP(0) exception."
-> 
-> So what is the established protocol for reading non-existent MSRs?
+changes v1 -> v2:
+- Add device tree changes to use the new REFCLK property.
+- Remove USARIO_HAS_CLKEN from the sama7g54 emac node to use the exposed
+  REFCLK propterty.
+- Use property_read_bool() instead of property_present check.
+- Adjust variables to follow reverse xmas tree
 
-Looks like Linux-as-a-guest will request emulation from the hypervisor.  What
-the hypervisor does is completely unknown, at least as far as the guest is
-concerned.  E.g. the hypervisor could return an error (i.e. "inject" a #GP), or
-it could provide garbage (on RDMSR) and drop writres.
+1) https://lore.kernel.org/all/cover.1750346271.git.Ryan.Wanner@microchip.com/
 
-> Also, if secure TSC is enabled, that MSR read should succeed.
-> 
-> The original text in the patch:
-> 
-> "Only terminate the guest when reading from intercepted GUEST_TSC_FREQ MSR
-> with Secure TSC enabled, as this indicates an unexpected hypervisor
-> configuration."
-> 
-> doesn't make too much sense to me.
-> 
-> Maybe you need to explain things in detail as virt and I don't understand each
-> other too much yet.
-> 
-> :-)
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
+Ryan Wanner (5):
+  dt-bindings: net: cdns,macb: Add external REFCLK property
+  net: cadence: macb: Expose REFCLK as a device tree property
+  net: cadence: macb: Enable RMII for SAMA7 gem
+  net: cadence: macb: sama7g5_emac: Remove USARIO CLKEN flag
+  ARM: dts: microchip: sama7g5: Add RMII ext refclk flag
+
+ Documentation/devicetree/bindings/net/cdns,macb.yaml |  7 +++++++
+ arch/arm/boot/dts/microchip/at91-sama7g5ek.dts       |  1 +
+ drivers/net/ethernet/cadence/macb_main.c             | 11 +++++++++--
+ 3 files changed, 17 insertions(+), 2 deletions(-)
+
+-- 
+2.43.0
+
 
