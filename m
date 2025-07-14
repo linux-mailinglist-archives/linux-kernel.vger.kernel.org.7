@@ -1,106 +1,115 @@
-Return-Path: <linux-kernel+bounces-729607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67896B03907
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:18:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85C77B03926
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6765C167493
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:18:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F25153BE3A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1269623BCF5;
-	Mon, 14 Jul 2025 08:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA22A23B63E;
+	Mon, 14 Jul 2025 08:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GPSTHLpv"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="idyAmteb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61FD23BCEF
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951CD23BCFF;
+	Mon, 14 Jul 2025 08:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752481064; cv=none; b=V+Gb/W5LmiuiIfDE6kSuhwrB1XaSlZlT7PIeIsKuHoMbGubVbC3TAX3LkY9MNEB/8en4fhvyx7X1AMPW5xEmlUIcmWPH7Ee7304JsMZugrz/QrtqH/hjhI59AQvk0dBs3X1qSII1T33FmnG4A21BnCxi1KTo1mZ6ZPuOY4SwqtQ=
+	t=1752481108; cv=none; b=K0BzU/LvSskrvF1eloBS+u/X7zTdtXE1JLp91L46ASpqXTUhQYBeu8jo4j8QOwIlTf9BVAJp4Dgdnoyu6sfJ1j3RTwIh3ltWTMksXMb5PzFEFtubDrgmrQq/GzIiNc9ZFk5j1LSC1USP0stwsaR+qgoLbhWi05KdySLhw7wXCKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752481064; c=relaxed/simple;
-	bh=vuIneu7pM5DIf0S1GOG5o8U5Cu3F83SLWq90fihZ9gA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=W4GHvAAvbgnVdckif5JQLg87oPK/7t9wlAJhVsiDwQXde1W6TAQLWLtGstQLuitVDRLDRAkb2teZWRbVHU2P9bi+j2BtdK2USFgbtXnc2U2kyPNcvhdoBfQZfvEOc9zaJ5ta4ytlZvuZ2PwR+ex2/yU8ThcHXqKk1ayBvnWDmPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GPSTHLpv; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250714081739epoutp0353e7a861c189fd5a1344b3fc59bb6e8d~SED0esh3Z2914029140epoutp037
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:17:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250714081739epoutp0353e7a861c189fd5a1344b3fc59bb6e8d~SED0esh3Z2914029140epoutp037
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1752481059;
-	bh=vuIneu7pM5DIf0S1GOG5o8U5Cu3F83SLWq90fihZ9gA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=GPSTHLpvrIdCbHkiVrB8Uo8ZndCQxfWHLVW/ZFGV+G6QkE8ul31rhAy8YHFT4b/Bv
-	 L0n3+KUbGgpyKaYVtctzkWtujiCPruPBcrPNhNDfOJfxLsIKMJQY2YW52RtDVp2pYF
-	 phsw6gTYCtKrHXUMKbsMl6NGIw0JRnQ4ELUP9WdU=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250714081739epcas2p19bbac4165e91d7dacad9ecaeb7ece5f7~SED0G2MI91346213462epcas2p1n;
-	Mon, 14 Jul 2025 08:17:39 +0000 (GMT)
-Received: from epcas2p3.samsung.com (unknown [182.195.36.89]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4bgZtp57PYz2SSKy; Mon, 14 Jul
-	2025 08:17:38 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250714081738epcas2p224d4cc8d164531794da6ce8dfe668ffc~SEDzGQRXB1610116101epcas2p2C;
-	Mon, 14 Jul 2025 08:17:38 +0000 (GMT)
-Received: from KORCO180836 (unknown [12.36.150.245]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250714081738epsmtip207db5f8791a72e34b9535829bb5af1b7~SEDzC9ZwS1814318143epsmtip2Q;
-	Mon, 14 Jul 2025 08:17:38 +0000 (GMT)
-From: <sw617.shin@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <alim.akhtar@samsung.com>,
-	<wim@linux-watchdog.org>, <linux@roeck-us.net>
-Cc: <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <422fc81c-81d7-4473-92b6-9d112e6e247a@kernel.org>
-Subject: RE: [PATCH v3 RESEND 3/5] watchdog: s3c2410_wdt: Increase max
- timeout value of watchdog
-Date: Mon, 14 Jul 2025 17:17:37 +0900
-Message-ID: <001c01dbf497$c2b0b040$481210c0$@samsung.com>
+	s=arc-20240116; t=1752481108; c=relaxed/simple;
+	bh=DVzvCAS4WBOQ6fEg68/wYsIXVIbEcIe+ED6be7UMb3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kpbhxs/ZuACr9V8mH188m0nvFKb35ptxbbk/+TMBAHj88SHBB0J6SvqAZS2/zYKAuS8IeLigdNeN1Ta5NXftS/kqoXXWUmvFbzZhsBGBUwMJeSy2TcPv+1sZBbM8ziEwTOgACQA5M+dQE4Rn/katktJT4QpX2qHDx2kwkENDbJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=idyAmteb; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752481107; x=1784017107;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DVzvCAS4WBOQ6fEg68/wYsIXVIbEcIe+ED6be7UMb3M=;
+  b=idyAmtebe0FC7W3+Mnt0qQVHd6xyNG8SumTKQ68Pug/1RT1WooFT7Yir
+   J/tCSOExJcBuknLlCZ5ZPolbxER5nZGaFqLTRnAwiFu+AKjjB/B5JP2s9
+   FWCUfnHKe97vWInLhHOuWrNSrz0ySbZF1zKEETj7m+epFX4LcQgrN7uqG
+   vXvcxFTsQoPIJ0z4l7x6RqVDQ4cWgAlfEmC+rQEUOQ6y7PuaF5b3+S88H
+   iqWGM//OpjPfdUWAdl9SGT1uGem0IALS4dJknobtR2BKuTayq5esEBG0P
+   he8eAEpZh36ZCuBhLT/i+ZbsdBv+ZGIXHgqcXNFNoW+SesjKrWrR871kh
+   A==;
+X-CSE-ConnectionGUID: ytUgjNJBQ+SHhn9HOUPuBA==
+X-CSE-MsgGUID: MPe1KEymTVmSIIMovPk7fQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54755840"
+X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
+   d="scan'208";a="54755840"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 01:18:26 -0700
+X-CSE-ConnectionGUID: o3UBGPzPTHS/KHyUIrLLgA==
+X-CSE-MsgGUID: CXZhNxglS8GZNstwLhsaLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
+   d="scan'208";a="180553789"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 01:18:24 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ubEOD-0000000FIvl-2WUm;
+	Mon, 14 Jul 2025 11:18:21 +0300
+Date: Mon, 14 Jul 2025 11:18:21 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Lothar Rubusch <l.rubusch@gmail.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warnings after merge of the iio tree
+Message-ID: <aHS9TZWsKThHilpQ@smile.fi.intel.com>
+References: <20250714181341.1d10df2a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIEaJ+ioIR5Yp9zWAA/UcLZjjUhMgF6s7ZMAnq+8xsBNs3P4bO2+lkg
-Content-Language: ko
-X-CMS-MailID: 20250714081738epcas2p224d4cc8d164531794da6ce8dfe668ffc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,N
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250714055858epcas2p47b849c0141fdb556288333f7abe00372
-References: <20250714055440.3138135-1-sw617.shin@samsung.com>
-	<CGME20250714055858epcas2p47b849c0141fdb556288333f7abe00372@epcas2p4.samsung.com>
-	<20250714055440.3138135-4-sw617.shin@samsung.com>
-	<422fc81c-81d7-4473-92b6-9d112e6e247a@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714181341.1d10df2a@canb.auug.org.au>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, 14 Jul 2025 08:04:47 +0200, Krzysztof Kozlowski wrote:
-> I claim that this patch fixes nothing, because there is no user of
-> QUIRK_HAS_32BIT_MAXCNT.
+On Mon, Jul 14, 2025 at 06:13:41PM +1000, Stephen Rothwell wrote:
+> 
+> After merging the iio tree, today's linux-next build (htmldocs) produced
+> these warnings:
+> 
+> Documentation/iio/adxl313.rst:230: ERROR: Error in "code-block" directive:
+> maximum 1 argument(s) allowed, 11 supplied.
+> 
+> .. code-block:: bash
 
-Dear Krzysztof,
++ blank line here should fix it I think.
+Same for the rest.
 
-Thank you for your review.
-Are you suggesting that we combine the patches labeled as =5Bv3 3/5=5D and =
-=5Bv3 4/5=5D into one?
+>         root:/sys/bus/iio/devices/iio:device0> echo 1.28125 > ./events/in_accel_mag_rising_value
+>         root:/sys/bus/iio/devices/iio:device0> echo 1 > ./events/in_accel_x\|y\|z_mag_rising_en
+> 
+>         root:/sys/bus/iio/devices/iio:device0> iio_event_monitor adxl313
+>         Found IIO device with name adxl313 with device number 0
+>         <only while moving the sensor>
+>         Event: time: 1748795762298351281, type: accel(x|y|z), channel: 0, evtype: mag, direction: rising
+>         Event: time: 1748795762302653704, type: accel(x|y|z), channel: 0, evtype: mag, direction: rising
+>         Event: time: 1748795762304340726, type: accel(x|y|z), channel: 0, evtype: mag, direction: rising
 
-Best regards,
-Sangwook Shin
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
