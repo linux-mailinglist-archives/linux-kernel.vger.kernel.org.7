@@ -1,66 +1,67 @@
-Return-Path: <linux-kernel+bounces-730553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7045FB04631
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:11:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 114A8B04637
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9718E4A6527
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:10:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C85E1A6237D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB88262FFC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D11426159D;
 	Mon, 14 Jul 2025 17:10:35 +0000 (UTC)
 Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12908251791
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128A5248F74
 	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 17:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752513034; cv=none; b=nSyiL74fAy+VYaSoCW6kWuvWxLVnqlBis1YPHTUy5PV73IArI+mIZ/HtBmsY1Rc0hkLqr6gjxqfNvvdFsR9LMXkKfAazJ7KVTE+4cRzo8ew+DiAJI41ezcctYOnLKrJhCpB+A0UstTx5eJ6PGAtQ+Ji3ExTYNeD/A0oQiFWUfN8=
+	t=1752513034; cv=none; b=d2d2xX6a3whx4NPk8Rbq+cTDU7zWddksyRQ/Jy47nP9TyhxApFQHfVhEZZbX8GEujTQT0BSFUcRQiRntVQvxQ1KFEoA/HVlmHEf+JXjXf3MIr7/YZlc6uAK9pdbpDF+03ny3K1pcV1zMEvEol2ousuXohdid7IdnBVFrm3A3qa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752513034; c=relaxed/simple;
-	bh=xosleCPydwPw9RCR058KdQwnjvCAVwqnuNSaOkY/Rtc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QLvpcbP6VwILXtQ2HYYbpdDDatkJB3Qc+izvUK/h3h7JUvJnn2rCWiAD0/GubnihWe2f+U5iy7azXkTc8sGUz/guNx1e9n0WokpkFPINSzv0EImK+rgZRg96YBcj5S90XHIgb/fB0oRENeo2quzf7BncLH2S7WARQncEcMiPISI=
+	bh=0lKaue4Q/CodZJ43BE+2ERHP0tt8CkDwoKR/aeIu+bY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DP31GPKCygz/glAsXZIsS2Elcm1z2LWuMPjaztkeabVEiLa/pEO+ai31Z6LNQOPRtOYgAhGmYLnke6CAMlGpffBVAbxfNnzqhYFO0jk+NoCt0CD7PZm3tZcQ47tgRB+yydER3XqRMthYO4KKn9qC3SSPUo8JKrLQVpMx4pgwhhU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-86cfccca327so935991739f.2
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-87313ccba79so899745639f.2
         for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 10:10:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1752513032; x=1753117832;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ME68ccWQSqf6a9g6Y3F69O0j0q4dSJ8e2JfndJwfe78=;
-        b=dT9oOItGznMr29GlnUJuzjJA7tlbJlvGWNp5kNRm48OvLpsU+QEuUHPOShW/K54k6w
-         dzMRyC0gMqu2nQ7kfgJFxrhnxd4YFAKTCeJEkfuYH4WSiRpbnQYx5mf1zjbUmT923jLE
-         9pPqMFZxM8m5v1cC8e5UUGkHcGzIVb7jPHyw8tm0iiiMWTv3RyTUEpoCwBAKJUdr/08U
-         MpU/L/eRhpL+3iwCNDq3sAMPKdOrUv2GTB+C9Npno+dgaseQQmatj6uob6Kl20Emp9sV
-         DpaKD8maB4ncsoXBtVXNLZGnSo31RxYWHGqe15wnb2xrYmvpll+rHW6uu42yG/0GeAeV
-         YuIg==
-X-Forwarded-Encrypted: i=1; AJvYcCV03IimDzDJQFk2rDUgFy7aRaZ3vdWN+vvm0ICwTv+xGcwvXIzV7muhpMJJcsgOBz04n0vx1aika1FKxEQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygFYNaNQSEQBG78Y8ukRclZxCgt6PT8QqDHQjl+EjcJEHf0DCz
-	8LYp33hzk5UJAT+797DnoC4xLhsC2RRQ56mgBKDybl2aVGP2p+k7W0WmOfnzlC3U9LTPCItr7Jy
-	aATYkjGkJr2OgzttKBcivpg2YeD+n50e+Ga5XB26P8nS1BeuOGdllV/P1bqE=
-X-Google-Smtp-Source: AGHT+IG18/7Y1Y6Nj3Cp2fRJ3VxUVXub/V9E26+tmvg0lc4t/97T7y/1XgN/UaRn5K+OpKRurxa5f22laEGXq5QOYOffqIN6VxLr
+        bh=yEqYN+Sq66jPT1atBJx2sN18zNV7H4Qomhnbx5nCbYY=;
+        b=eo3EWZ+Rti7KustEqqtWTmQfL9M4v67IuWZMJdxsYB1+CnCB7P8PM1VbAI9nchoKLz
+         b61O50NVrLC4PVEGYU0VMZgu5qkFeiwHLgqZFGqfo8oxx9GXcv2n0xR+gZFMO1JeypKU
+         Fa5s1WMM2EBUVgYsIs7zVx1Qv2eWy664Q/jTKBHYD3uJdEz4vK8vQ/vmu5OQtsn3+JQE
+         uNV/BuPY4Nz64IWtTdhsu3C5sfC50IaMzlqxtUiREc2L0dfivXB1hI86XVuu+WAl8LVd
+         msAGQOQ8wyIBj8LxV9WWJ8qLCx59HRgHCFhm1S0trILtYB8LZmEhObjZUyPmYfpZq/5D
+         8wxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/M4gdAL8LyOiEFlHxvMOnFMd8GyiThqq2TLI1PVjUsm/VoUrFhZ3pnFJFLO4f6aZxcKEsDDhZMrKnzpg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRVpB+re5w75b6WVR6Z5llHPWtI+knqVuU3LQ3TJtr2mSPLeYa
+	licOoL/AXCZQqTBG0t4L4EhOVIa7vyPchMameKtbEYmKLadAac91/Wu3EH2emGZwBtdW1XiXx3a
+	tKDnzXEZ3f+e+u6XOJoMpXlAFVqBnEk9f+1Z1Z8O6G+BhpsCQJl7qpS7ECZE=
+X-Google-Smtp-Source: AGHT+IH/WRScfN7dW3JFoDVyXS3WSTkXzALNIo+J1byjOIvna/aSlspqHWDQ2OrSbTux9AVCHS9jqEqoAyd6gOYCAes20kXbW0Td
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1353:b0:876:5527:fe2a with SMTP id
- ca18e2360f4ac-87977fd0670mr1601323939f.11.1752513032004; Mon, 14 Jul 2025
+X-Received: by 2002:a05:6602:15c9:b0:86c:f9f4:6aa6 with SMTP id
+ ca18e2360f4ac-879787d8f28mr1526841439f.7.1752513032251; Mon, 14 Jul 2025
  10:10:32 -0700 (PDT)
-Date: Mon, 14 Jul 2025 10:10:31 -0700
+Date: Mon, 14 Jul 2025 10:10:32 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68753a07.050a0220.33d347.0007.GAE@google.com>
-Subject: [syzbot] [fs?] WARNING: lock held when returning to user space in query_matching_vma
-From: syzbot <syzbot+add57955be940be754a1@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+Message-ID: <68753a08.050a0220.33d347.0008.GAE@google.com>
+Subject: [syzbot] [input?] [usb?] UBSAN: shift-out-of-bounds in s32ton (2)
+From: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>
+To: bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
@@ -68,32 +69,99 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    a62b7a37e6fc Add linux-next specific files for 20250711
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11e2ce8c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7d42120e19faaef
-dashboard link: https://syzkaller.appspot.com/bug?extid=add57955be940be754a1
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=132750f0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=167507d4580000
+HEAD commit:    b4b4dbfa96de media: stk1160: use usb_alloc_noncoherent/usb..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=15a830f0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=28729dff5d03ad1
+dashboard link: https://syzkaller.appspot.com/bug?extid=b63d677d63bcac06cf90
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1614418c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1257dd82580000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/691b5f8ab5b1/disk-a62b7a37.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/47d1a209784d/vmlinux-a62b7a37.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/eb70d73c9e55/bzImage-a62b7a37.xz
+disk image: https://storage.googleapis.com/syzbot-assets/7301552ad828/disk-b4b4dbfa.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c559b38fa1b6/vmlinux-b4b4dbfa.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9c1da8b2a83f/bzImage-b4b4dbfa.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+add57955be940be754a1@syzkaller.appspotmail.com
+Reported-by: syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com
 
-================================================
-WARNING: lock held when returning to user space!
-6.16.0-rc5-next-20250711-syzkaller #0 Not tainted
-------------------------------------------------
-syz.0.22/6099 is leaving the kernel with locks still held!
-1 lock held by syz.0.22/6099:
- #0: ffff888069d41588 (vm_lock){++++}-{0:0}, at: get_next_vma fs/proc/task_mmu.c:182 [inline]
- #0: ffff888069d41588 (vm_lock){++++}-{0:0}, at: query_vma_find_by_addr fs/proc/task_mmu.c:512 [inline]
- #0: ffff888069d41588 (vm_lock){++++}-{0:0}, at: query_matching_vma+0x319/0x5c0 fs/proc/task_mmu.c:544
+usb 4-1: config 0 interface 0 altsetting 0 has 1 endpoint descriptor, different from the interface descriptor's value: 9
+usb 4-1: New USB device found, idVendor=045e, idProduct=07da, bcdDevice= 0.00
+usb 4-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 4-1: config 0 descriptor??
+microsoft 0003:045E:07DA.0001: ignoring exceeding usage max
+microsoft 0003:045E:07DA.0001: unsupported Resolution Multiplier 0
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in drivers/hid/hid-core.c:69:16
+shift exponent 4294967295 is too large for 32-bit type 'int'
+CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.16.0-rc4-syzkaller-00314-gb4b4dbfa96de #0 PREEMPT(voluntary) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:233 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x27f/0x420 lib/ubsan.c:494
+ s32ton.cold+0x37/0x9c drivers/hid/hid-core.c:69
+ hid_output_field drivers/hid/hid-core.c:1841 [inline]
+ hid_output_report+0x36f/0x4a0 drivers/hid/hid-core.c:1874
+ __hid_request+0x1e0/0x3c0 drivers/hid/hid-core.c:1987
+ hidinput_change_resolution_multipliers drivers/hid/hid-input.c:1950 [inline]
+ hidinput_connect+0x1ada/0x2bd0 drivers/hid/hid-input.c:2327
+ hid_connect+0x13f3/0x1a60 drivers/hid/hid-core.c:2239
+ hid_hw_start drivers/hid/hid-core.c:2354 [inline]
+ hid_hw_start+0xaa/0x140 drivers/hid/hid-core.c:2345
+ ms_probe+0x195/0x500 drivers/hid/hid-microsoft.c:391
+ __hid_device_probe drivers/hid/hid-core.c:2724 [inline]
+ hid_device_probe+0x363/0x720 drivers/hid/hid-core.c:2761
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:657
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:829
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:957
+ bus_for_each_drv+0x156/0x1e0 drivers/base/bus.c:462
+ __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1029
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
+ device_add+0x1148/0x1a70 drivers/base/core.c:3692
+ hid_add_device+0x373/0xa60 drivers/hid/hid-core.c:2907
+ usbhid_probe+0xd38/0x13f0 drivers/hid/usbhid/hid-core.c:1435
+ usb_probe_interface+0x303/0x9c0 drivers/usb/core/driver.c:396
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:657
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:829
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:957
+ bus_for_each_drv+0x156/0x1e0 drivers/base/bus.c:462
+ __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1029
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
+ device_add+0x1148/0x1a70 drivers/base/core.c:3692
+ usb_set_configuration+0x1187/0x1e20 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:250
+ usb_probe_device+0xef/0x3e0 drivers/usb/core/driver.c:291
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:657
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:829
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:957
+ bus_for_each_drv+0x156/0x1e0 drivers/base/bus.c:462
+ __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1029
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
+ device_add+0x1148/0x1a70 drivers/base/core.c:3692
+ usb_new_device+0xd07/0x1a20 drivers/usb/core/hub.c:2694
+ hub_port_connect drivers/usb/core/hub.c:5566 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
+ port_event drivers/usb/core/hub.c:5866 [inline]
+ hub_event+0x2f85/0x5030 drivers/usb/core/hub.c:5948
+ process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3238
+ process_scheduled_works kernel/workqueue.c:3321 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
+ kthread+0x3c2/0x780 kernel/kthread.c:464
+ ret_from_fork+0x5b3/0x6c0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+---[ end trace ]---
 
 
 ---
