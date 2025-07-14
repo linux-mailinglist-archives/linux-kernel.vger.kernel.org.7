@@ -1,159 +1,166 @@
-Return-Path: <linux-kernel+bounces-730342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED056B04361
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:19:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D151B04363
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1B531A6755F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:17:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EB194E2805
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BAF025D53C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F0625D549;
 	Mon, 14 Jul 2025 15:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p0G2je50"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VD4R/XRb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C70E25393C
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A73725C82E;
+	Mon, 14 Jul 2025 15:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752506181; cv=none; b=rueyb+RDtVzbooiDenz04uYIoN3wM5+qOEqrWSB09WmBW0DDdc5DIVjjqJgGG3XgNPjfxFHb+PRplyJoMrQJ/dgqgNTe8nzRdT/L/Qs0edfw9lFASyCLUCUzSiaTyc32qUBzBYdSeMhDjIYSGKpyo7b/y4dWY3SSLTv+ZmqRjT4=
+	t=1752506181; cv=none; b=Xdga1xbJoMvwbQDfDqpn1cLIT09D+xshkUusFK7RleaVJqXzfkcjMJicP3rZMZng1MQxewUaeEGc6IHtjE0JX5KPi5LzfCFu3ok0WX6yPzF9A1PbrS1rrIBEfj5JJGBeSjYyjQLAs2Lsm73rYqFwhPjsvlJdTJfCD3/OqxhiM1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752506181; c=relaxed/simple;
-	bh=5SEmN81j++cDBIFvkv9n2aotAYscERc+zZaDKLuEifk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HBCcbrrRG6VETL8R3DWvNA6K4dTJf6SSq17mgksRkIPl3TA0e/8c1Wpz2VEb9j8/JDozXbwlXeCIliG47d9PkAtzlEXuXPv87fwsnOco1R6Qux9lVytpHrmuWkuHMzWOQcDeHlofxGPlVfSJB0QO/FzRkHpKlMzZktYKyo89XKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p0G2je50; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a4e57d018cso644790f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:16:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752506178; x=1753110978; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k7sCtPxfaMjoFSfs4MFDmQ8NiKqG4DUPOXp+rPZHPqE=;
-        b=p0G2je50+cYBQD0Pkj3Omw7zDOKtrMxY+oUSCdma8ej/fpywNMvN34RvQlbwJcRpy5
-         REXJS4MM9pSRRHMKQowQcDjJexhYvMB2qq2b7U5uRZJzQXg8H7Ih02D+OEPjEYINbuD3
-         gwlUKLyOEWZkl2n38RbZw7cxjs/RmY5rwys8cdMfziBI9In/kju5YFSrG0CrR4CdoWw1
-         78QLLQ1fL0J4IS0GevGBxBqLxFXMC2dAwn0NDSqL6F8RXC6wOc8UlTVxX7GNPko6TJ8J
-         5uK0CEP3up5CuYuXYJEmOaHwpYw73BJlT61g9/+aXpIztgeMFlk3eJ5nkp2HPKTo3GdT
-         q0bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752506178; x=1753110978;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k7sCtPxfaMjoFSfs4MFDmQ8NiKqG4DUPOXp+rPZHPqE=;
-        b=aWo7Jf83q7EfLr5OZ1VlCZAKA8RIhy5RUQIpQMVwZjzweFNxZZdfm84K6kWDI3HZjF
-         FQYNK7SXokFMsDChER6KiODNzdCbuQdYP5/F7YMhAGmpE3SV6GbDBPTOjPmA1InOZE/J
-         UVq0vsedo5EEGqq8c/UXH05jnsViBcpmmFJq/DgpheBQPsDraOeSFm6lJUwyfqqgJGzR
-         y6imsN3dF3054LfHLAHrHF+MdlGUk/EdhkKg2CMVLpF4HZiZAQEiaKRMWOBiOuIHBK5V
-         Mc34UbEMLGTLX1oW9hX1W0Wti0ONcSfXdDeltWOJi1nnxtURKQe57H1/EWdiN9jqILx6
-         E20w==
-X-Forwarded-Encrypted: i=1; AJvYcCUQoDJ49JeiwdOGtV3r9BJlnVWoBQU7+66X//Z66d1keI8c2C5l79GGZbD9D5ay7ClXxQD7oq7CF3saQ9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx36N9+ARS3JhgCebcENAHCIESYzI7tVMQTZKx87lIMwF/IRYGN
-	hUtBQ5Rved+3xePTWWbmxlicJIQ5LvigixiiyPIMUD8dKcdsUHDitdKRRQG5B5chVjo=
-X-Gm-Gg: ASbGnctzXGUA/fVPUoO2BExK27nO+D6anZW4VLAdeM5qFIWdcd/qQv64EHNzBvjP0PO
-	pM4KqfIZiifbyidmkBsPpQAJG+NPdnF8nR6zIyI+axjRA3uWuiT7sEoQGHytNGYlDJMyWHDTt5z
-	3qqVgTfD5veSKjBkzwbK31rXkJKHG2eeXjsqcxVcNcFVw3u1kPDBKjz4eYIq6OERx7S4q7snjYC
-	f02XsiUCsH6uKJ5Vz5S95Vv+LjWPpMkI1UdCKxd+28nW3q5VTWDHvgCdPxGf5IqnGGzo6zEXuqp
-	ui6qcWcc+DY5gr7fzZSzw/LfUS7dFNfyQz6EC8aX6rAyO7jG/If5gtdb5Uw6wVKATQ8nx05Yu5Q
-	DzynOtB02lE9dsR6KxLuLaKxQa1b+oIp1hT8=
-X-Google-Smtp-Source: AGHT+IHpL4WiPXA7lF0M3FZSr+pRwaq/mQ+o86j3tdbjJ+F9gQ68S3X3x2/bhMtUi+hXfsOAWMSEsg==
-X-Received: by 2002:a05:6000:410b:b0:3a5:7875:576 with SMTP id ffacd0b85a97d-3b5f1890dc7mr3123868f8f.1.1752506177716;
-        Mon, 14 Jul 2025 08:16:17 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc2464sm12970388f8f.38.2025.07.14.08.16.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 08:16:17 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: bryan.odonoghue@linaro.org,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCH] media: iris: MAINTAINERS: Document actual maintainership by Bryan O'Donoghue
-Date: Mon, 14 Jul 2025 17:16:10 +0200
-Message-ID: <20250714151609.354267-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	bh=DYIpBX8VnAuNwWjILAB9UIK/+bNLzgpqHG3tl9P8+1k=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=dpc4ONBzzZIvyvxq4TBIjZhemLsxKVbqaxS8Ibv8S2VmPjCYwCBCeWY7eCmm8bcbyW1CNPGib6xCLly3OB4iiOBrH/e+6U//4eTKvBotHH0YJIGFYoVW7cjZ56ZzeRYwi+C8b63wasFfL12EWecBEnA1+TLTeqyH4pZmDf/Bjc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VD4R/XRb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2706AC4CEED;
+	Mon, 14 Jul 2025 15:16:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752506181;
+	bh=DYIpBX8VnAuNwWjILAB9UIK/+bNLzgpqHG3tl9P8+1k=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=VD4R/XRbF/rTA1yEsFj7eJ3McbSzO0rpmbVdXcnktjIk23plNXE4IRcKcsdxbLhqg
+	 lfM6DZeKHJYRu31zdvKN8X4ISOZbaYKNmRnkNcjRMbOYcFXXtfaEqyWDIRqRuKsr6C
+	 sOe7kaJvui72ctvHkdGV/v7n4NQLmBCs8oYXfbJtmQEGWxbKsgFzE4n5U4nRGlNG6h
+	 UXrNpQOuQB3nQ/kGMQJS1+ORO5N/NRH72uq3pBV8O2YsPQH/7xCOiTSpxBpaXK3EAV
+	 rHC9EmOKIuhy5wuPZB3j6BtsYVza0LmKA09nXRbOpL8ZlmQYvUEGIz67Qj2pOm917i
+	 8l03mb/6wBJQA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1945; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=5SEmN81j++cDBIFvkv9n2aotAYscERc+zZaDKLuEifk=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBodR85KovBs9Byw5IM3Ko1TPG7MkwoC4nasQNwZ
- S91rcu8eeGJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaHUfOQAKCRDBN2bmhouD
- 175eD/0QEl43ZipiEU/g+okr5EbElD01rJ7qQvSMis8Mzn0HeZVPm/S+WFVVLhiUE0OTyMSH1TR
- JvNkX8tLNPBQI+kuh9q5vDEEtIfhbZYF7DG7n1EWPoykST725tMcdVKdTO4ayNbGO9uD4ZOggMT
- r5567tq+S+D5it9prHYoCMVd5O7W6ScHnrpRUsUk9lEtIvdZYaG5ZOq2/iG3acmPVrifkmmeB4e
- 4eMtljOXC5fFo4H6xRSGDfXvTpVpfk3gzgwoSkmvXKGaMTC82HsEYXH//6Odwhm0tnB6vRNXnZ2
- cqs3xT7bwdOPyDho38csJuTju8d8CvM7uqQoP/T8KT+KrXdyi0DFpb3/dNgBdp09HT3Pk+QHLIq
- SCtHzRejs5v2DOm6k7ZR8WjT6Cxd0B5yIQ8/zCVYKe/SyUy2h8cuY0UQKuDfpLkUmdW6fMX7dmZ
- CRyfueVtw1CkZ4aHRgpwv3OOdDE9ZsvyRz93acmJX3rQaHB6+ecPGNlLX/Zz/oi6y12aWlJsnWK
- lbhKQaOHI4gSOEsYHlUuyXVl4w4HoALVKqeQcEJcpfSH0fN2I/+eRcTbc6w6AaxjcDwHaxmo0X6
- Aij1ssTPItb/AEQ1Xr0EiYwlWanzHEsZB3Pj+q/uHqMZbP7vVUkGkbCbbkDdCy9CBDyBy2LstEG +8Ee1VYHQcguHNA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 14 Jul 2025 17:16:14 +0200
+Message-Id: <DBBVL9ZPDU9P.3M2L8OB6SHBUE@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
+ <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
+ "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
+ "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
+ <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
+ <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Alan Stern" <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v7 3/9] rust: sync: atomic: Add ordering annotation
+ types
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250714053656.66712-1-boqun.feng@gmail.com>
+ <20250714053656.66712-4-boqun.feng@gmail.com>
+ <DBBP3E8PZ81U.2O0QHK1GQXKX2@kernel.org> <aHUbUZZ-8Z9kspds@Mac.home>
+In-Reply-To: <aHUbUZZ-8Z9kspds@Mac.home>
 
-Bryan O'Donoghue reviews and applies patches for both Iris and Venus
-Qualcomm SoC video codecs (visible in git log as his Signed-off-by and
-in pull requests like [1]), so he is de facto the maintainer responsible
-for the code.  Reflect this actual state my changing his entry from
-reviewer to maintainer and moving the entry to alphabetical position by
-first name.
+On Mon Jul 14, 2025 at 4:59 PM CEST, Boqun Feng wrote:
+> On Mon, Jul 14, 2025 at 12:10:46PM +0200, Benno Lossin wrote:
+>> On Mon Jul 14, 2025 at 7:36 AM CEST, Boqun Feng wrote:
+>> > Preparation for atomic primitives. Instead of a suffix like _acquire, =
+a
+>> > method parameter along with the corresponding generic parameter will b=
+e
+>> > used to specify the ordering of an atomic operations. For example,
+>> > atomic load() can be defined as:
+>> >
+>> > 	impl<T: ...> Atomic<T> {
+>> > 	    pub fn load<O: AcquireOrRelaxed>(&self, _o: O) -> T { ... }
+>> > 	}
+>> >
+>> > and acquire users would do:
+>> >
+>> > 	let r =3D x.load(Acquire);
+>> >
+>> > relaxed users:
+>> >
+>> > 	let r =3D x.load(Relaxed);
+>> >
+>> > doing the following:
+>> >
+>> > 	let r =3D x.load(Release);
+>> >
+>> > will cause a compiler error.
+>> >
+>> > Compared to suffixes, it's easier to tell what ordering variants an
+>> > operation has, and it also make it easier to unify the implementation =
+of
+>> > all ordering variants in one method via generic. The `TYPE` associate
+>> > const is for generic function to pick up the particular implementation
+>> > specified by an ordering annotation.
+>> >
+>> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+>> > ---
+>> > Benno, please take a good and if you want to provide your Reviewed-by
+>> > for this one. I didn't apply your Reviewed-by because I used
+>> > `ordering::Any` instead of `AnyOrdering`, I think you're Ok with it [1=
+],
+>> > but I could be wrong. Thanks!
+>> >
+>> > [1]: https://lore.kernel.org/rust-for-linux/DB8M91D7KIT4.14W69YK7108ND=
+@kernel.org/
+>>=20
+>> > +/// The trait bound for annotating operations that support any orderi=
+ng.
+>> > +pub trait Any: internal::Sealed {
+>>=20
+>> How about we just name this `Ordering`? Because that's what it is :)
+>>=20
+>
+> Seems OK to me, I then also followed Gary's suggestion:
+>
+> 	https://lore.kernel.org/rust-for-linux/20250621121842.0c3ca452.gary@gary=
+guo.net/
+>
+> and dropped `RelaxedOnly` trait.
 
-[1] https://lore.kernel.org/linux-media/20250630121704.260831-1-bod@kernel.org/T/#u
+Sounds good.
 
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Vikash Garodia <quic_vgarodia@quicinc.com>
-Cc: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Cc: Abhinav Kumar <abhinav.kumar@linux.dev>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> That sadly means you can't do
+>>=20
+>>     fn foo<Ordering: Ordering>() {}
+>>            --------  ^^^^^^^^ not a trait
+>>            |
+>>            found this type parameter
+>>=20
+>> But you can still do
+>>=20
+>>     fn foo<O: Ordering>(_: O) {}
+>>=20
+>> If we don't have the ordering module public and instead re-export from
+>
+> Keeping ordering mod public helps rustdoc readers to find the module and
+> read the module documentation (where is the best place to explain each
+> ordering), and also I made `Relaxed`, `Acquire`, `Release` and `Full`
+> refer to the module documentation in their doc, making `ordering` mod
+> private would cause rustdoc issues.
+
+You could move those docs to the `Ordering` trait :) But I think having
+an ordering module is fine.
+
 ---
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 40831ae42296..f56e40d9b3c7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20678,10 +20678,10 @@ F:	Documentation/devicetree/bindings/regulator/vqmmc-ipq4019-regulator.yaml
- F:	drivers/regulator/vqmmc-ipq4019-regulator.c
- 
- QUALCOMM IRIS VIDEO ACCELERATOR DRIVER
-+M:	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
- M:	Vikash Garodia <quic_vgarodia@quicinc.com>
- M:	Dikshita Agarwal <quic_dikshita@quicinc.com>
- R:	Abhinav Kumar <abhinav.kumar@linux.dev>
--R:	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
- L:	linux-media@vger.kernel.org
- L:	linux-arm-msm@vger.kernel.org
- S:	Maintained
-@@ -20750,9 +20750,9 @@ F:	Documentation/devicetree/bindings/usb/qcom,pmic-*.yaml
- F:	drivers/usb/typec/tcpm/qcom/
- 
- QUALCOMM VENUS VIDEO ACCELERATOR DRIVER
-+M:	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
- M:	Vikash Garodia <quic_vgarodia@quicinc.com>
- M:	Dikshita Agarwal <quic_dikshita@quicinc.com>
--R:	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
- L:	linux-media@vger.kernel.org
- L:	linux-arm-msm@vger.kernel.org
- S:	Maintained
--- 
-2.43.0
-
+Cheers,
+Benno
 
