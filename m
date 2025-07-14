@@ -1,126 +1,85 @@
-Return-Path: <linux-kernel+bounces-730018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F42B03F33
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:04:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD85B03F40
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7ED017DE5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:04:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90B423AF59D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7852A24C060;
-	Mon, 14 Jul 2025 13:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DB224C060;
+	Mon, 14 Jul 2025 13:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UArDJHtL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6yvQwnt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE9C2E36F0;
-	Mon, 14 Jul 2025 13:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F22F4315A;
+	Mon, 14 Jul 2025 13:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752498272; cv=none; b=BRhE9g5K36uoxvQkB/HAT/QqBC33XdOBviKBg7QPx3hGHBeZwAMOw8HhVfSzqJE1O1HUQ9iLsDZr1zdhJS0EmOhMZiB0kig4yzDn9h9uy3xDn2HhZRsEES4+uk10YEVTlLSma6fSBfx0eIpEbsMj+4JAmXZ00btWy8O4nq8beCY=
+	t=1752498504; cv=none; b=po8MXVKsLmXum5lhUbLxDs5U9gAGho9K0C4OfqU41bWtc6DZhS14h59dgl5/bEIrrJ7tUtt9Z91tIpHwymhiuZmE6hIoxM8LJDGI6bxqGbklBz1VG4IvgQts0I0CfZgZ3ypMnM7XUfELqY0z6+46xxLPuT3yEYmQnsu+n4uSu88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752498272; c=relaxed/simple;
-	bh=diav37jiaTDB5/BPwgT+0WGoc+iJmsDN4KmTv9KnmmY=;
+	s=arc-20240116; t=1752498504; c=relaxed/simple;
+	bh=N9Rb/WI5f4YRXmofJxUtBzVRCilhgmkH/9An4yOCdmA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k4qcvuHRZr/06W/OHSFNEfbaz7B7J0WUrc1Vuwe50KIumUraCDuyrN4dq5uN9LX4zoTRz0WeccSxy9aAqev2LVkw9Q8Y0Z0kxLhojY5ymiIADrR5NwHxQxSXxMABlsHTfwsOdd8QXnFAcpyWBrDqFWBpfbkHWvSWKEnH6bNrCz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UArDJHtL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1504C4CEF4;
-	Mon, 14 Jul 2025 13:04:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752498272;
-	bh=diav37jiaTDB5/BPwgT+0WGoc+iJmsDN4KmTv9KnmmY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vv1/REV9hwuNUn3snASKAEIC80FM2H76qG5u8WHW7bEGCllBdg8Ns3BW+mokw9uApHUAFDcfq5lggUjnrHOf4P+RzreM5iqVbHpKnmwm3pPN7RrcWMskqyLRzPN0WqGLLXEnBBwvylRHgioYIPDDy6ArMfnQvBeO36HWTPu7FjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6yvQwnt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 126D2C4CEF4;
+	Mon, 14 Jul 2025 13:08:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752498504;
+	bh=N9Rb/WI5f4YRXmofJxUtBzVRCilhgmkH/9An4yOCdmA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UArDJHtLSymi3gEKJfIyKNCFWM55EgGb+SoXY/ab2mHNsGkV5lfsJ0H65wZSe+U3k
-	 bpKZqQHmufJcqLcCA+MUUz4ruIilzH6Z+CqUqq5/pdQPGDXV9ywtbkHXsmRpX4Usyy
-	 mi0ZGmd/hTv3Mcx2l9nU8NmKZyXdb0/qwwIzmIf4=
-Date: Mon, 14 Jul 2025 15:04:29 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 6.6] thermal/of: Fix mask mismatch when no trips subnode
-Message-ID: <2025071407-fender-passcode-b53c@gregkh>
-References: <20250707-trip-point-v1-1-8f89d158eda0@chromium.org>
- <2025071012-granola-daylong-9943@gregkh>
- <CAHc4DN+kb8w+VVX0XAfN5YVo9M+RBatKkv8-nOiOTA+7yZjmfA@mail.gmail.com>
+	b=F6yvQwnt3ZqzCmmvb0LJVdD34NxHaMWuu3zk8x408nXZKtd7OCKGUZiZA68Yidx0l
+	 nAu3UeFE+x3fQYX8fpgNcXkrXjs7KMKeSrf8PPC4s1cY94RZ5+fiCb4zo/8NJ02Bh0
+	 ra2MkxQ34YDp+X0eFjRx/Y0GXFZAo0pQbzH8tVpbJf5Lcq6yR19hJkISghPeLMAWe4
+	 kqQa8ng8yWtzciIAj2Jxczi1m3BjMS2JfeqPPNZ4SDU0+V9zTI1hhef/oJYQVTdhxg
+	 fuDI7nNQGIVWWrUUvi+ihXCKBfbUiGtI5MmD7A7K/Qla4oEzZYKZoSkoEO7+t0VFJF
+	 nFGPvUDV5wnbw==
+Date: Mon, 14 Jul 2025 14:08:20 +0100
+From: Will Deacon <will@kernel.org>
+To: Vasant Hegde <vasant.hegde@amd.com>
+Cc: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>,
+	suravee.suthikulpanit@amd.com, joro@8bytes.org,
+	robin.murphy@arm.com, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: Re: [PATCH v7 0/8] Introduce debugfs support in IOMMU
+Message-ID: <aHUBRAnw1qJyv4Yy@willie-the-truck>
+References: <20250702093804.849-1-dheerajkumar.srivastava@amd.com>
+ <aHT1YeC30-ZiyS8p@willie-the-truck>
+ <a75aaf31-43e2-4a48-b323-0322f24c3b0c@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHc4DN+kb8w+VVX0XAfN5YVo9M+RBatKkv8-nOiOTA+7yZjmfA@mail.gmail.com>
+In-Reply-To: <a75aaf31-43e2-4a48-b323-0322f24c3b0c@amd.com>
 
-On Mon, Jul 14, 2025 at 08:36:29PM +0800, Hsin-Te Yuan wrote:
-> On Thu, Jul 10, 2025 at 9:33 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Mon, Jul 07, 2025 at 06:27:10PM +0800, Hsin-Te Yuan wrote:
-> > > After commit 725f31f300e3 ("thermal/of: support thermal zones w/o trips
-> > > subnode") was backported on 6.6 stable branch as commit d3304dbc2d5f
-> > > ("thermal/of: support thermal zones w/o trips subnode"), thermal zones
-> > > w/o trips subnode still fail to register since `mask` argument is not
-> > > set correctly. When number of trips subnode is 0, `mask` must be 0 to
-> > > pass the check in `thermal_zone_device_register_with_trips()`.
-> > >
-> > > Set `mask` to 0 when there's no trips subnode.
-> > >
-> > > Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
-> > > ---
-> > >  drivers/thermal/thermal_of.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
-> > > index 0f520cf923a1e684411a3077ad283551395eec11..97aeb869abf5179dfa512dd744725121ec7fd0d9 100644
-> > > --- a/drivers/thermal/thermal_of.c
-> > > +++ b/drivers/thermal/thermal_of.c
-> > > @@ -514,7 +514,7 @@ static struct thermal_zone_device *thermal_of_zone_register(struct device_node *
-> > >       of_ops->bind = thermal_of_bind;
-> > >       of_ops->unbind = thermal_of_unbind;
-> > >
-> > > -     mask = GENMASK_ULL((ntrips) - 1, 0);
-> > > +     mask = ntrips ? GENMASK_ULL((ntrips) - 1, 0) : 0;
-> >
-> > Meta-comment, I hate ? : lines in C, especially when they are not
-> > needed, like here.  Spell this out, with a real if statement please, so
-> > that we can read and easily understand what is going on.
-> >
-> I will change this in v2 if we end up going with this solution.
+On Mon, Jul 14, 2025 at 06:24:06PM +0530, Vasant Hegde wrote:
+> On 7/14/2025 5:47 PM, Will Deacon wrote:
+> > On Wed, Jul 02, 2025 at 03:07:56PM +0530, Dheeraj Kumar Srivastava wrote:
+> >> Introducing debugfs support in AMD/IOMMU driver that will allow
+> >> userspace to dump below IOMMU information
+> >> 1) MMIO and Capability register per IOMMU
+> >> 2) Command buffer
+> >> 3) Device table entry
+> >> 4) Interrupt remapping table entry
+> > 
+> > Suravee, Vasant -- are you happy with this series now? I'll be closing
+> > the IOMMU tree for 6.17 shortly and it would be a shame for this to
+> > miss the cut given that it's got to v7 and Dheeraj has been receptive to
+> > all the feedback so far.
 > 
-> > That being said, I agree with Rafael, let's do whatever is in mainline
-> > instead.  Fix it the same way it was fixed there by backporting the
-> > relevant commits.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> `mask` is removed in 83c2d444ed9d ("thermal: of: Set
-> THERMAL_TRIP_FLAG_RW_TEMP directly"), which needs 5340f7647294
-> ("thermal: core: Add flags to struct thermal_trip"). I think it's
-> beyond a fix to introduce this. Also, there were several conflicts
-> when I tried to cherry-pick 5340f7647294. Compared to a simple
-> solution like setting `mask` to 0, I don't think it's worthwhile and
-> safe to cherry-pick all the dependencies.
+> Ack. This is mostly ready. Give me a day. I will review/test this series.
 
-Remember, every patch you add to the tree that is NOT upstream, will
-almost always cause problems later on, if not immediately (we have a
-lousy track record of one-off-patches.)  Also this prevents future
-upstream changes from being able to be applied to the tree.
+Thank you, Vasant!
 
-And as you will now be responsible for maintaining this for the next 3-4
-years, do whatever possible to make it easy to keep alive properly.
-
-thanks,
-
-greg k-h
+Will
 
