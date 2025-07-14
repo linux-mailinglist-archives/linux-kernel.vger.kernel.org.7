@@ -1,138 +1,162 @@
-Return-Path: <linux-kernel+bounces-729618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA3F0B03938
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:22:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA39B03956
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:23:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 406E5189F72A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:21:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668F5188BDCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F025223B612;
-	Mon, 14 Jul 2025 08:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD6C23D285;
+	Mon, 14 Jul 2025 08:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="efMNgnF6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SZ8qf0WM"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D08239E60;
-	Mon, 14 Jul 2025 08:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC3A23AE9B;
+	Mon, 14 Jul 2025 08:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752481201; cv=none; b=ruhj8aPhDg/RsDT8L8Mg6bVjxiQoC4WJHgHBNlJ2LL+si8pczFoi0VUBGXbXopI9RMxvQghNgpNsLiF3wVrNSGwzsCS9a5pq5hU4N6a2Db/gpqCrIwxpmjDgO12byBHR3SZyTBtfpkHPlfDDc1T7jr+myxd92kXLNGA5JnIAGVw=
+	t=1752481297; cv=none; b=FBSlHHMOA4IOG6Z2NDsEldrorIdkzssEee5IGeoai8hBT/wAOzm0gqSP/xsCCtb5ZSF1oCU5X7SPjnSxVGyLbmfygvdApmT2tlciYKN8UN+4xGaADCNVahUeiTw2DMGJ0BcGuPEZ5hq9JdbGIbDCmlVvEL/Ue9dAA3F1murfk3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752481201; c=relaxed/simple;
-	bh=0WLu3kugDvQEYAJMzASy+A5S3YDpXTBXjAaVvNoadTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oJDnMyZ+SYDGtCR+T91P+g1YmsBrQk0cWNrGbE8aPptGWdXqShaDABS8zZQv9R8tfZGT999XDJtJ8pD8Rr8co/FkUB9DfRo5XZbEfGQHLa9Le08lqVXqNb/04UuVarSvwAw3pPgAXx3EPVszNyCrjmpJagy5I4/oXWov1YGBYlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=efMNgnF6; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752481200; x=1784017200;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0WLu3kugDvQEYAJMzASy+A5S3YDpXTBXjAaVvNoadTA=;
-  b=efMNgnF6dTE5KAuCBByU+ob+DgrnC18kmymeGm/6UCqa0k2n6KfYIiTJ
-   Wo0aQkL39e4mYZ7g8AuhdCRSiZI7hWLW6UayjgFzLpZ1O541ZGkHxPF3j
-   Sz0y91cLKo1JMY2fqIaIzOovTYK4Pq4LDFPPbkmHr8lhYkOAdoOKpv0iC
-   1b1W0tJuQs9XXOKWSjCyMPmYWmxjxP6zvdqjOlALczPPGFsn6ldddIJyB
-   8BD1XXVFgGlDnGZ3tG7uk2nL2xIWlx1+EL11v67ARP7GVazMu2lmRm+hV
-   NtvjoBAEKov81mYi8B/TB3FEuZzHC3WExBKDqtTiO9QeZAvHcy0cJQpqK
-   g==;
-X-CSE-ConnectionGUID: T1yx+kHIRGyUB8sda5iQGQ==
-X-CSE-MsgGUID: m9jTzL9oQq68o6ca5ZhMhQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54635679"
-X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
-   d="scan'208";a="54635679"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 01:19:59 -0700
-X-CSE-ConnectionGUID: 264lVN+dRIWcEt31tZOKBQ==
-X-CSE-MsgGUID: GzlyscvPQsSewwfa11tumw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
-   d="scan'208";a="194077901"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 01:19:55 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ubEPf-0000000FIwb-1pxJ;
-	Mon, 14 Jul 2025 11:19:51 +0300
-Date: Mon, 14 Jul 2025 11:19:51 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Akhil R <akhilrajeev@nvidia.com>
-Cc: andi.shyti@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	digetx@gmail.com, jonathanh@nvidia.com, krzk+dt@kernel.org,
-	ldewangan@nvidia.com, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	p.zabel@pengutronix.de, robh@kernel.org, thierry.reding@gmail.com
-Subject: Re: [PATCH v6 2/3] i2c: tegra: Use internal reset when reset
- property is not available
-Message-ID: <aHS9pzHA1xKXlmaJ@smile.fi.intel.com>
-References: <iqx5wzywy2x66n2y36mx4fckrr7wy4lqu3dsejcovghjtmgoz7@zwslylpivy3q>
- <20250714052226.72876-1-akhilrajeev@nvidia.com>
+	s=arc-20240116; t=1752481297; c=relaxed/simple;
+	bh=1VkO7xULK+N/nYMn+wLvdMFjsHzrdSBE2DniZetY2KI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MaJ93kXR5LUTOOPDYNkl/y8nxktvpPu8c4jMk8tNMnAs2ZjTSbuWeeP54i4JcySTSXDQmYsmTjl3Dc2/SeU7A8aeVsYgRsn3xjczTaAxoQw5A9Hq6sSArmDeUyr6t4ko0FoftYQCLT8Akq71K+ArNrQ4O7fmrtnWeH1g01m6M3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SZ8qf0WM; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56E0T1sZ025829;
+	Mon, 14 Jul 2025 08:21:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=ADf5pVrjdirG7EUXMFRiUUummBBH2qyXZTf
+	Cps0NxDQ=; b=SZ8qf0WMP4VXz4rWql3F6p9NJKe+NX9X5xtDmQbda0/2w9WNtLP
+	93EL7spO782b66kJJosZQHI3dzXzCwmvxs9/iMCUFF0RLPs6rJPRccsLjuFi/oeW
+	eLciVSy1bEwpTcCE6SxtEV52ZHoP4RxG7kCcNfNDArJnNEzfvik0qHTUy8NKH8QZ
+	pWorENI4id2uMJEnSC+hMdVDCQyIWGHZjPoTIAQpNpQqGSDWdBRqiRT1fjmCbGZW
+	M0NcRXm3CtS1KrB//xEgIvH6RfghDgX70PokfhYFQ/GTLpeb35f537tCNmT2fT0t
+	wg+JmblgF8NDeRi1uGVD191MOz4lJ5JtXAQ==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47v56a2cj0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Jul 2025 08:21:16 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 56E8Itfu023997;
+	Mon, 14 Jul 2025 08:21:13 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 47ugsm5ydr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Jul 2025 08:21:13 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56E8LDLu027022;
+	Mon, 14 Jul 2025 08:21:13 GMT
+Received: from cse-cd01-lnx.ap.qualcomm.com (cse-cd01-lnx.qualcomm.com [10.64.75.209])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 56E8LC5f027015
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Jul 2025 08:21:13 +0000
+Received: by cse-cd01-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
+	id BC89A20F21; Mon, 14 Jul 2025 16:21:11 +0800 (CST)
+From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+        kw@linux.com
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
+        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+Subject: [PATCH v4 0/3] Add Equalization Settings for 8.0 GT/s and Add PCIe Lane Equalization Preset Properties for 8.0 GT/s and 16.0 GT/s
+Date: Mon, 14 Jul 2025 16:21:07 +0800
+Message-Id: <20250714082110.3890821-1-ziyue.zhang@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714052226.72876-1-akhilrajeev@nvidia.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: rHKcPduB8Nr6Ynv9CfJ5xsdHnuECvwM-
+X-Authority-Analysis: v=2.4 cv=X7BSKHTe c=1 sm=1 tr=0 ts=6874bdfc cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=pGW_TeUqoRlRwQqC-JsA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: rHKcPduB8Nr6Ynv9CfJ5xsdHnuECvwM-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA0OCBTYWx0ZWRfXyXTo0weM1VYX
+ x9b6q8jsTg/LdItvKagy32NNy030EPFTAz7dPcWZc/BrK6/RTFrMi9h3+Xa5Kh7ubaA2Qmydtzr
+ iUFCt1VtmoudOYIHszqF+7qWRdkPDC82ywwjnMajSx44c8XAzu01IWcR57H+yND2gHe7fG5XXDL
+ B8XEX59TTIi87wM03+p54iGcvaJvHYHTjq7GjunVnBSu6L5Y3P/qd8cvmHAksU5DHoIfLmQCAXy
+ YGK+CBDgfu8nGOKGPAQA/bY5flbdwgZKuflzFrAtSb8Ufc+bUpBzTCU6AYu4QVgVaadDznZwwDm
+ NUyMkf4NH8mBKrcHWK63GOcNGUU9pLb16+b4RaOYimkwZWzFjx7d4yprlEFLHoROuET2XsLG6bJ
+ H0NgCQxlsEhVXxEKfB1ZNhVqz1201fmisJ5bc0Y5LRZHZiU1+s74Mu9ZrksFqfIPY4XQd5lS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-14_01,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 mlxlogscore=801 suspectscore=0 phishscore=0
+ impostorscore=0 clxscore=1015 malwarescore=0 mlxscore=0 lowpriorityscore=0
+ spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507140048
 
-On Mon, Jul 14, 2025 at 10:52:25AM +0530, Akhil R wrote:
-> On Fri, 11 Jul 2025 18:00:45 +0200, Andi Shyti wrote:
+This series adds add equalization settings for 8.0 GT/s, and add PCIe lane equalization
+preset properties for 8.0 GT/s and 16.0 GT/s for sa8775p ride platform, which fix AER
+errors.
 
-...
+While equalization settings for 16 GT/s have already been set, this update adds the
+required equalization settings for PCIe operating at 8.0 GT/s, including the
+configuration of shadow registers, ensuring optimal performance and stability.
 
-> >> I would perhaps expand the comment here to explain ENOENT check and what do we
-> >> do in this case. (Note, no rewriting of the existing, just adding a paragraph)
-> >> 
-> >> 	*
-> >> 	* In case ... we compare with -ENOENT ...
-> >> 	* ...
-> >> 	*/
-> >
-> > If you write it here I can expand your comment before merging.
-> >
-> > Or if you prefer sending a v7 is still fine.
-> 
-> Hi Andi,
-> 
-> I thought to update the comments as below. Please let me know if this can be
-> folded in. I can send a v7 if that is easier to merge.
-> 
-> 	/*
-> 	 * Reset the controller before initializing it.
-> 	 * In case if device_reset() returns -ENOENT, i.e. when the reset is
-> 	 * not available, the internal software reset will be used if it is
-> 	 * supported by the controller.
-> 	 */
-> 	err = device_reset(i2c_dev->dev);
-> 	if (err == -ENOENT)
-> 		err = tegra_i2c_master_reset(i2c_dev);
-> 
-> 	/*
-> 	 * The reset shouldn't ever fail in practice. The failure will be a
-> 	 * sign of a severe problem that needs to be resolved. Still we don't
-> 	 * want to fail the initialization completely because this may break
-> 	 * kernel boot up since voltage regulators use I2C. Hence, we will
-> 	 * emit a noisy warning on error, which won't stay unnoticed and
-> 	 * won't hose machine entirely.
-> 	 */
-> 	WARN_ON_ONCE(err);
+The DT change for sa8775p add PCIe lane equalization preset properties for 8 GT/s
+and 16 GT/s data rates used in lane equalization procedure.
 
-Good for me.
+Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
 
+Changes in v4:
+- Bail out early if the link speed > 16 GT/s and use pci->max_link_speed directly (Mani)
+- Fix the build warning. (Bjorn)
+- Link to v3: https://lore.kernel.org/all/8ccd3731-8dbc-4972-a79a-ba78e90ec4a8@quicinc.com/
+
+Changes in v3:
+- Delte TODO tag and warn print in pcie-qcom-common.c. (Bjorn)
+- Refined the commit message for better readability. (Bjorn)
+- Link to v2: https://lore.kernel.org/all/20250611100319.464803-1-quic_ziyuzhan@quicinc.com/
+
+Changes in v2:
+- Update code in pcie-qcom-common.c make it easier to read. (Neil)
+- Fix the compile error.
+- Link to v1: https://lore.kernel.org/all/20250604091946.1890602-1-quic_ziyuzhan@quicinc.com
+
+
+Ziyue Zhang (3):
+  PCI: qcom: Add equalization settings for 8.0 GT/s
+  PCI: qcom: fix macro typo for CURSOR
+  arm64: dts: qcom: sa8775p: Add PCIe lane equalization preset
+    properties
+
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         |  6 +++
+ drivers/pci/controller/dwc/pcie-designware.h  |  5 +-
+ drivers/pci/controller/dwc/pcie-qcom-common.c | 54 ++++++++++---------
+ drivers/pci/controller/dwc/pcie-qcom-common.h |  2 +-
+ drivers/pci/controller/dwc/pcie-qcom-ep.c     |  6 +--
+ drivers/pci/controller/dwc/pcie-qcom.c        |  6 +--
+ 6 files changed, 45 insertions(+), 34 deletions(-)
+
+
+base-commit: 58ba80c4740212c29a1cf9b48f588e60a7612209
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
