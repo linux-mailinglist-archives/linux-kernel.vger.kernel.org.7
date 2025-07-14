@@ -1,214 +1,173 @@
-Return-Path: <linux-kernel+bounces-730491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF120B0456E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:28:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F159B0457C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:31:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F41A33BBBAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:28:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FE081894CE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92DA26058B;
-	Mon, 14 Jul 2025 16:28:30 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFE0263C92;
+	Mon, 14 Jul 2025 16:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UqK26IC3"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B262260580;
-	Mon, 14 Jul 2025 16:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2C57262A;
+	Mon, 14 Jul 2025 16:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752510510; cv=none; b=Wx5/SdeXaLWIVVZNpv+gvgQcaa6uaQZQ5GNRzxtxTjtTDHp43iZAUExPGwQCk/1E2dCqxOpAJLYNSyjdbYSDFMQX6LdUjYFb46vP9NS7VkP/RvdEyEDuAPq5tETvHSvOgm3/X05dfhEfKeK3l5kqrKAkK0TVMIeyiVBiYD48U7g=
+	t=1752510636; cv=none; b=EY/cPgJ3KjUS86hq1eqxIf5swPt0XVpL1PWTosjDwVWQQ3F25Gy5/sWll3KaMFCTGyV0f4AINwvsmherIAyFE/rAsOWG0w7Z4Az1ZTkhLHZocVOwfkzD6Kml1Ilu/OzeG5Uq9kzz6OWkoCUe3QMU7+hGQnYhHcw99mPsPdpwo4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752510510; c=relaxed/simple;
-	bh=+5kEwgQzjaASRloqt5fWQWCM7O0SdzAdNy7bCPc+Q5M=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=P5Y8FQcOgGd/GiJr9UFFtzR65cOWzPuptGjPD5u9/B+qf7y1PKm2jxWFHr0mnglCmFBrxpQ2e5NGl9oroRt+z9ASbQFxxddNT680mBKOHU6mkkiz1hwaBsiNnZtUaJfOvl6AfozMNw1nL/jRcfHl8uOQYDne6Q63tYAYwRXA+ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bgnlq2R0Gz6L5Gx;
-	Tue, 15 Jul 2025 00:27:19 +0800 (CST)
-Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4F493140275;
-	Tue, 15 Jul 2025 00:28:24 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml500005.china.huawei.com (7.182.85.13) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 14 Jul 2025 18:28:23 +0200
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Mon, 14 Jul 2025 18:28:23 +0200
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Dan Williams <dan.j.williams@intel.com>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "David
- Lechner" <dlechner@baylibre.com>, Peter Zijlstra <peterz@infradead.org>,
-	"Linus Torvalds" <torvalds@linux-foundation.org>, Ingo Molnar
-	<mingo@kernel.org>, "Fabio M. De Francesco"
-	<fabio.m.de.francesco@linux.intel.com>, "Davidlohr Bueso"
-	<dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>, Dave
- Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, "Ira Weiny" <ira.weiny@intel.com>
-Subject: RE: [PATCH v3 8/8] cxl: Convert to ACQUIRE() for conditional rwsem
- locking
-Thread-Topic: [PATCH v3 8/8] cxl: Convert to ACQUIRE() for conditional rwsem
- locking
-Thread-Index: AQHb8r6Ir5Mnvswws02cjfabWtneq7QxxK1Q
-Date: Mon, 14 Jul 2025 16:28:23 +0000
-Message-ID: <a49ab85cbd70469c8d1ebb9a43db0517@huawei.com>
-References: <20250711234932.671292-1-dan.j.williams@intel.com>
- <20250711234932.671292-9-dan.j.williams@intel.com>
-In-Reply-To: <20250711234932.671292-9-dan.j.williams@intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1752510636; c=relaxed/simple;
+	bh=lpG4IZ6Ioq/EzhqQaI7oezuh5rcGhQxbRRwnUfAZ4QU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k/0GrvvP7tF4q8u2naAoTVIR85CsfWLoZHVdyOZh//LTMfv2Mdq2hLyXYu3RTmkWauQKiSaKej3rLIS4gBY87izOYOlV6vtNt4e5lSBrq5dqxMCm4NLTKww4Rd4K/ZxnLbJkds/2QLWlFG7kTYfLI2JKTylsALeIcGH3D1r5SpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=UqK26IC3; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id C7AC11127;
+	Mon, 14 Jul 2025 18:30:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1752510601;
+	bh=lpG4IZ6Ioq/EzhqQaI7oezuh5rcGhQxbRRwnUfAZ4QU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UqK26IC3nrteCaDdSqP4/6c5LRJvIFIKHrPP5hoaIEntyWXbglU0Ud7wrmyYOE09Q
+	 b52LWzlDeplUKoLkikXQ7jdTUw2wUxSueHsUV8heHEKyg0qqzuOpkW5m5S3yZnR3vs
+	 htRQ7bNTqyiHfISZ57ALngPRq/z9fJTNvQSmqMFs=
+Date: Mon, 14 Jul 2025 19:30:01 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v2 12/12] media: uvcvideo: Do not create MC entities for
+ virtual entities
+Message-ID: <20250714163001.GB20231@pendragon.ideasonboard.com>
+References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
+ <20250605-uvc-orientation-v2-12-5710f9d030aa@chromium.org>
+ <20250629180534.GN24912@pendragon.ideasonboard.com>
+ <CANiDSCvcQ9MA+WBMQTpUzSxDLNiKpvaHsb-pDHTuiUQekgXvQA@mail.gmail.com>
+ <CANiDSCtq0cr1LgFCgvdBtWcE3z1MWZEjc0e1wTH_BYPETC+s4Q@mail.gmail.com>
+ <20250714143617.GK8243@pendragon.ideasonboard.com>
+ <CANiDSCud66tcaODuVA1TreEQ3k8u4k-6ghzRQedTPFcT3j+9VQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANiDSCud66tcaODuVA1TreEQ3k8u4k-6ghzRQedTPFcT3j+9VQ@mail.gmail.com>
 
->-----Original Message-----
->From: Dan Williams <dan.j.williams@intel.com>
->Sent: 12 July 2025 00:50
->To: linux-cxl@vger.kernel.org
->Cc: linux-kernel@vger.kernel.org; David Lechner <dlechner@baylibre.com>;
->Peter Zijlstra <peterz@infradead.org>; Linus Torvalds <torvalds@linux-
->foundation.org>; Ingo Molnar <mingo@kernel.org>; Fabio M. De Francesco
-><fabio.m.de.francesco@linux.intel.com>; Davidlohr Bueso <dave@stgolabs.net=
->;
->Jonathan Cameron <jonathan.cameron@huawei.com>; Dave Jiang
-><dave.jiang@intel.com>; Alison Schofield <alison.schofield@intel.com>; Vis=
-hal
->Verma <vishal.l.verma@intel.com>; Ira Weiny <ira.weiny@intel.com>; Shiju J=
-ose
-><shiju.jose@huawei.com>
->Subject: [PATCH v3 8/8] cxl: Convert to ACQUIRE() for conditional rwsem lo=
-cking
->
->Use ACQUIRE() to cleanup conditional locking paths in the CXL driver The
->ACQUIRE() macro and its associated ACQUIRE_ERR() helpers, like
->scoped_cond_guard(), arrange for scoped-based conditional locking. Unlike
->scoped_cond_guard(), these macros arrange for an ERR_PTR() to be retrieved
->representing the state of the conditional lock.
->
->The goal of this conversion is to complete the removal of all explicit unl=
-ock calls
->in the subsystem. I.e. the methods to acquire a lock are solely via guard(=
-),
->scoped_guard() (for limited cases), or ACQUIRE(). All unlock is implicit /=
- scope-
->based. In order to make sure all lock sites are converted, the existing rw=
-sem's
->are consolidated and renamed in 'struct cxl_rwsem'. While that makes the p=
-atch
->noisier it gives a clean cut-off between old-world (explicit unlock allowe=
-d), and
->new world (explicit unlock deleted).
->
->Cc: David Lechner <dlechner@baylibre.com>
->Cc: Peter Zijlstra <peterz@infradead.org>
->Cc: Linus Torvalds <torvalds@linux-foundation.org>
->Cc: Ingo Molnar <mingo@kernel.org>
->Cc: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
->Cc: Davidlohr Bueso <dave@stgolabs.net>
->Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
->Cc: Dave Jiang <dave.jiang@intel.com>
->Cc: Alison Schofield <alison.schofield@intel.com>
->Cc: Vishal Verma <vishal.l.verma@intel.com>
->Cc: Ira Weiny <ira.weiny@intel.com>
->Cc: Shiju Jose <shiju.jose@huawei.com>
->Acked-by: "Peter Zijlstra (Intel)" <peterz@infradead.org>
->Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+On Mon, Jul 14, 2025 at 06:04:50PM +0200, Ricardo Ribalda wrote:
+> On Mon, 14 Jul 2025 at 16:36, Laurent Pinchart wrote:
+> > On Tue, Jul 08, 2025 at 08:28:21AM +0200, Ricardo Ribalda wrote:
+> > > On Tue, 1 Jul 2025 at 13:20, Ricardo Ribalda wrote:
+> > > > On Sun, 29 Jun 2025 at 20:06, Laurent Pinchart wrote:
+> > > > > Hi Ricardo,
+> > > > >
+> > > > > Thank you for the patch.
+> > > > >
+> > > > > I would use "software entities" and not "virtual entities" in the
+> > > > > subject line and everywhere else, as those entities are not virtual.
+> > > > >
+> > > > > On Thu, Jun 05, 2025 at 05:53:05PM +0000, Ricardo Ribalda wrote:
+> > > > > > Neither the GPIO nor the SWENTITY entities form part of the device
+> > > > > > pipeline. We just create them to hold emulated uvc controls.
+> > > > > >
+> > > > > > When the device initializes, a warning is thrown by the v4l2 core:
+> > > > > > uvcvideo 1-1:1.0: Entity type for entity SWENTITY was not initialized!
+> > > > > >
+> > > > > > There are no entity function that matches what we are doing here, and
+> > > > > > it does not make to much sense to create a function for entities that
+> > > > > > do not really exist.
+> > > > >
+> > > > > I don't agree with this. The purpose of reporting entities to userspace
+> > > > > through the MC API is to let application enumerate what entities a
+> > > > > device contains. Being able to enumerate software entities seems as
+> > > > > useful as being able to enumerate hardware entities.
+> > > >
+> > > > What function shall we use in this case? Nothing here seems to match a
+> > > > software entity
+> > > > https://www.kernel.org/doc/html/latest/userspace-api/media/mediactl/media-types.html
+> > > >
+> > > > Any suggestion for name?
+> > > > Shall we just live with the warning in dmesg?
+> > >
+> > >  I just realised that if/when we move to the control framework, the
+> > > software entity will be gone.... So to avoid introducing a uAPI change
+> > > that will be reverted later I think that we should keep this patch.
+> >
+> > You know my opinion about moving to the control framework, so that's not
+> > a very compelling argument :-)
+> 
+> Correct me if I am wrong, your opinion is that it will take too much
+> work, not that it can't be done or that it is a bad idea.
 
-Hi Dan,
+My opinion is that it's not worth the time needed to write patches, nor
+the time needed to review them. It would be a big change, with risks of
+regressions, for minimal gain, if any. I don't know if it can be done,
+but I think it's a bad idea. Don't fix something that isn't broken, the
+patches backlog is big enough, let's focus on useful changes.
 
-For changes in CXL EDAC (drivers/cxl/core/edac.c),
-Tested-by: Shiju Jose <shiju.jose@huawei.com>
+> Will send a patch using MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER, but
+> when/if we use the control framework, please let me drop the swentity.
+> 
+> Thanks!
+> 
+> > We could use MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER, as that's the
+> > function already used by XUs, and the SWENTITY fulfills the same role as
+> > XUs in some devices.
+> >
+> > > > > > Do not create MC entities for them and pretend nothing happened here.
+> > > > > >
+> > > > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > > > > ---
+> > > > > >  drivers/media/usb/uvc/uvc_entity.c | 10 ++++++++++
+> > > > > >  1 file changed, 10 insertions(+)
+> > > > > >
+> > > > > > diff --git a/drivers/media/usb/uvc/uvc_entity.c b/drivers/media/usb/uvc/uvc_entity.c
+> > > > > > index d1a652ef35ec34801bd39a5124b834edf838a79e..2dbeb4ab0c4c8cc763ff2dcd2d836a50f3c6a040 100644
+> > > > > > --- a/drivers/media/usb/uvc/uvc_entity.c
+> > > > > > +++ b/drivers/media/usb/uvc/uvc_entity.c
+> > > > > > @@ -72,6 +72,16 @@ static int uvc_mc_init_entity(struct uvc_video_chain *chain,
+> > > > > >  {
+> > > > > >       int ret;
+> > > > > >
+> > > > > > +     /*
+> > > > > > +      * Do not initialize virtual entities, they do not really exist
+> > > > > > +      * and are not connected to any other entities.
+> > > > > > +      */
+> > > > > > +     switch (UVC_ENTITY_TYPE(entity)) {
+> > > > > > +     case UVC_EXT_GPIO_UNIT:
+> > > > > > +     case UVC_SWENTITY_UNIT:
+> > > > > > +             return 0;
+> > > > > > +     }
+> > > > > > +
+> > > > > >       if (UVC_ENTITY_TYPE(entity) != UVC_TT_STREAMING) {
+> > > > > >               u32 function;
+> > > > > >
 
->---
-> drivers/cxl/core/cdat.c   |   6 +-
-> drivers/cxl/core/core.h   |  17 ++-
-> drivers/cxl/core/edac.c   |  44 +++---
-> drivers/cxl/core/hdm.c    |  41 +++---
-> drivers/cxl/core/mbox.c   |   6 +-
-> drivers/cxl/core/memdev.c |  50 +++----
-> drivers/cxl/core/port.c   |  18 +--
-> drivers/cxl/core/region.c | 295 ++++++++++++++++----------------------
-> drivers/cxl/cxl.h         |  13 +-
-> include/linux/rwsem.h     |   1 +
-> 10 files changed, 212 insertions(+), 279 deletions(-)
->
-[...]
->diff --git a/drivers/cxl/core/edac.c b/drivers/cxl/core/edac.c index
->2cbc664e5d62..f1ebdbe222c8 100644
->--- a/drivers/cxl/core/edac.c
->+++ b/drivers/cxl/core/edac.c
->@@ -115,10 +115,9 @@ static int cxl_scrub_get_attrbs(struct
->cxl_patrol_scrub_context *cxl_ps_ctx,
-> 						flags, min_cycle);
-> 	}
->
->-	struct rw_semaphore *region_lock __free(rwsem_read_release) =3D
->-		rwsem_read_intr_acquire(&cxl_region_rwsem);
->-	if (!region_lock)
->-		return -EINTR;
->+	ACQUIRE(rwsem_read_intr, rwsem)(&cxl_rwsem.region);
->+	if ((ret =3D ACQUIRE_ERR(rwsem_read_intr, &rwsem)))
-Checkpatch is giving error here and in other places with similar coding sty=
-le, =20
-"ERROR: do not use assignment in if condition"
+-- 
+Regards,
 
->+		return ret;
->
-[...]
-> 		p =3D &cxlr->params;
->@@ -2215,18 +2173,18 @@ int cxl_decoder_detach(struct cxl_region *cxlr,
-> 	struct cxl_region *detach;
->
-> 	/* when the decoder is being destroyed lock unconditionally */
->-	if (mode =3D=3D DETACH_INVALIDATE)
->-		down_write(&cxl_region_rwsem);
->-	else {
->-		int rc =3D down_write_killable(&cxl_region_rwsem);
->+	if (mode =3D=3D DETACH_INVALIDATE) {
->+		guard(rwsem_write)(&cxl_rwsem.region);
->+		detach =3D __cxl_decoder_detach(cxlr, cxled, pos, mode);
->+	} else {
->+		int rc;
->
->-		if (rc)
->+		ACQUIRE(rwsem_write_kill, rwsem)(&cxl_rwsem.region);
->+		if ((rc =3D ACQUIRE_ERR(rwsem_write_kill, &rwsem)))
-> 			return rc;
->+		detach =3D __cxl_decoder_detach(cxlr, cxled, pos, mode);
-> 	}
-May be detach =3D __cxl_decoder_detach(cxlr, cxled, pos, mode);
-add outside if ... else as before?
->
->-	detach =3D __cxl_decoder_detach(cxlr, cxled, pos, mode);
->-	up_write(&cxl_region_rwsem);
->-
-> 	if (detach) {
-> 		device_release_driver(&detach->dev);
-> 		put_device(&detach->dev);
->@@ -2234,29 +2192,35 @@ int cxl_decoder_detach(struct cxl_region *cxlr,
-> 	return 0;
-> }
-[...]
-> /*
->  * downgrade write lock to read lock
->--
->2.50.0
->
-
-Thanks,
-Shiju
+Laurent Pinchart
 
