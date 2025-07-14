@@ -1,240 +1,133 @@
-Return-Path: <linux-kernel+bounces-729285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B4C6B03454
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 04:04:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5846FB0345A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 04:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 578FC167873
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 02:04:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6807A18998CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 02:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BD818FDD2;
-	Mon, 14 Jul 2025 02:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E136F1C1AAA;
+	Mon, 14 Jul 2025 02:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="doMlkNsl"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5+SD9+2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292C22E630
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 02:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3601017B50A;
+	Mon, 14 Jul 2025 02:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752458669; cv=none; b=Xb47KfHFo0yH/SJu0zRBemeOjt76fVfR228JbWc3qynISvjhFygBQfssWA5VOx70YZ+cMYh9EweKN0ASOsvewWAszdsVOzj+JYZMijDK1xsHgqFLhCkUU8n2isQeI2tzTD4WKu2AyV5Eqe9dRg+NeoZ2Eb1ScTO81yIJ2c7OpEU=
+	t=1752458912; cv=none; b=kUk5PkSJBM8qfQvZAyRpkNWX0eYwZJQ/iduQ3C/fyhjDSFDIy9AIc9eCTs0xagJp+ddqln1BIpKRC6Vda1EsVsvM6DJEsCHDSIHWerW+SndafHvz0L97GICNYy8n+7qXoxnO62luyUqrxl5SK7aWtvnE1d4GjWmeD4i6RccGerA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752458669; c=relaxed/simple;
-	bh=HhL7ua/KoWjRknik4eGNGuN3G2THr/QC8XK+WdVx0Z8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=APRh/TlM7VvU1f0M1DquzYtStFUDtkEtc7l4KMdqZGRQvZBkjitZ9Xbuh4qirmUfSNmRrFAAsxgA6fyFfjaIeFWnWhABkm5WHhe4b+v/6VPa2wwTZlwyXOf4NJ8CNDhg6EGlYMOyBO6kg6S7SZWqHaqSxxJTiGh1HyZNqgjViJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=doMlkNsl; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a4fb9c2436so2290037f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 19:04:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1752458664; x=1753063464; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ORvUjo+bXX6M/XRFvv5w8sH8zT9KQkDoNBloZ51tLek=;
-        b=doMlkNsldr9GG71a/oQ6n3L2FhX00mybUmtmqmULYE9PRMjcC4/906pOJUUtZhbgDQ
-         lQZAnQOlMvoOGTsotHbaAB/icUOG7rvdITdsh0XIUvNceH0wMro2hOXRDtA9Ktn88mVH
-         rddgwowTY6bNS4ELSYZfzUTM6L1Z8n+gh+xjq+Z5vNCbNcXPmtnawVULfi3GO7nqyHKX
-         70Mdm3IuqM6c4MOl/RJ0HojvZQPb7Baxz1/jPnDzra9yKDhI/HrFQuzt/wv8rVXbrJbj
-         IbNSpWu426T8jh5sY9eH0+3Rw8pB/FHYY/krk3nIETjUfGclH/hrLtliWhtJUdET3oY1
-         21CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752458664; x=1753063464;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ORvUjo+bXX6M/XRFvv5w8sH8zT9KQkDoNBloZ51tLek=;
-        b=ZIJ2gRRTaNlZ99AdMbXyxcq6J87xXvgMEbUisJwWiqVHJ8xjVei0OolWLGqgI1+9p0
-         CNVImy75XfNrYpO8bfHLY+rW8pza2y7vVcaNcrB0blWQdOL3I69rHBULNPzTgEp9em92
-         Uvf6peBKCljQUMpR1qY22l6kw9qhwO7z9mhtV8h4jJaEEIkzBSzSp5B0BNgyqnR7ZkEr
-         BaNAQ/AhyPlbDqmiS7X9XP7l2iizdXWzg4KM5URJfCimRKIGQMDpg9AmCe09LHLd9d8D
-         7wfMA0ducAP6mns7/ozqhBwKW+tXLvCanPzfz9MRTTT6REMMkgLIoYFku5CjT28d4ByY
-         +ArA==
-X-Gm-Message-State: AOJu0Yzyw2yIdrFSBCmJ1FC9Cr1N1dGVF21wjpqfIVzzTQnNvzYpuU8l
-	/aoUMW87xXwaZI6r53rxoz4juN/c3xgas+PKhFwnWkVeh5AtgI8GSDLBtO69sgNrjQ8=
-X-Gm-Gg: ASbGncun+bztzwD6LEbkxZbN+rsFsrRlCRokLYIEGmA6UBKn/Mt7RUyXM5u8j5RlS92
-	YToa3Dyd0zPv5k1RNmtw9In0nAWol+SAS0bf4xo5t1K/hhRfRo5yM08VkIzrHm4J9Fia0aGm4Pj
-	d1RypcwNtGdC8n+fSfBCmOVcttsdEUmIFbzNADSoqAtrcT3HWZei4cV7pbllfx5gCKOmwJDLpSz
-	vF3fCgvjM6KRD6PTihckPjytGRhilaGbKOUrhHWV/N0BjQ3kIqW/G4e0dU7925A/viAwPfkXYIe
-	4hFLRacV+1rPtML+7/ZQf7T8rE5nSlXTLCiUilSZvEUqytXlF9qRBFa4AgwOUkSBc/B1FgNbg8V
-	rRFRc00IB5PSX1zj4BZPupsMIl3vug9ZR2QzjRXIcJb7SHizH+yECX9ZoCV0w
-X-Google-Smtp-Source: AGHT+IG399x+xUN2MiJQxtV3U7h9CB8vSboWbbYw1M+smtg9tXLwM+xk4rJBXLnfTFME7bV3UyZjKQ==
-X-Received: by 2002:a5d:4526:0:b0:3a4:eecd:f4d2 with SMTP id ffacd0b85a97d-3b5f18cec40mr8147517f8f.38.1752458664244;
-        Sun, 13 Jul 2025 19:04:24 -0700 (PDT)
-Received: from ?IPv6:2804:5078:828:f400:58f2:fc97:371f:2? ([2804:5078:828:f400:58f2:fc97:371f:2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f8b984sm9374967b3a.150.2025.07.13.19.04.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jul 2025 19:04:23 -0700 (PDT)
-Message-ID: <7252a50d2186bdcd39274d71be198d39b748d932.camel@suse.com>
-Subject: Re: [PATCH 2/2] kdb: Adapt kdb_msg_write to work with NBCON consoles
-From: Marcos Paulo de Souza <mpdesouza@suse.com>
-To: John Ogness <john.ogness@linutronix.de>, Greg Kroah-Hartman	
- <gregkh@linuxfoundation.org>, Petr Mladek <pmladek@suse.com>, Steven
- Rostedt	 <rostedt@goodmis.org>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Jason Wessel <jason.wessel@windriver.com>,
- Daniel Thompson <danielt@kernel.org>, Douglas Anderson	
- <dianders@chromium.org>
-Cc: linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
-Date: Sun, 13 Jul 2025 23:04:19 -0300
-In-Reply-To: <84ldorx1z2.fsf@jogness.linutronix.de>
-References: <20250713-nbcon-kgdboc-v1-0-51eccd9247a8@suse.com>
-	 <20250713-nbcon-kgdboc-v1-2-51eccd9247a8@suse.com>
-	 <84ldorx1z2.fsf@jogness.linutronix.de>
-Autocrypt: addr=mpdesouza@suse.com; prefer-encrypt=mutual;
- keydata=mDMEZ/0YqhYJKwYBBAHaRw8BAQdA4JZz0FED+JD5eKlhkNyjDrp6lAGmgR3LPTduPYGPT
- Km0Kk1hcmNvcyBQYXVsbyBkZSBTb3V6YSA8bXBkZXNvdXphQHN1c2UuY29tPoiTBBMWCgA7FiEE2g
- gC66iLbhUsCBoBemssEuRpLLUFAmf9GKoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- QemssEuRpLLWGxwD/S1I0bjp462FlKb81DikrOfWbeJ0FOJP44eRzmn20HmEBALBZIMrfIH2dJ5eM
- GO8seNG8sYiP6JfRjl7Hyqca6YsE
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (by Flathub.org) 
+	s=arc-20240116; t=1752458912; c=relaxed/simple;
+	bh=wu0gupS5zQwLU2l1U8KdXNwtiX+mE2dXFUa5VBnrjog=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y8dY2trLpyQs0Hu5rsqDCKFdfJyGNRvxsU3iGv0F5AQU78K3uNogaEhaVuWnHf/yNvthV95zQUAV0KqrujQpAXkAxL5u4H+xItI2WqPrWpv7l+sADl7eHFeMo22wRBHkWyun6zvuikSjYR+aMNx9Zm+ndXHWwzh9602EYwaEPYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5+SD9+2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B245FC4CEF7;
+	Mon, 14 Jul 2025 02:08:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752458911;
+	bh=wu0gupS5zQwLU2l1U8KdXNwtiX+mE2dXFUa5VBnrjog=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=e5+SD9+2Ik8EI+11sCkcR7PlafdAVzHPjAyXpMSsKZkmrympm/W2xQWAh2g0Q0zth
+	 ibZT8iYJzxo3xIw8PjRg7Z9oMRKHoOJcYwP8uz53hdBt3H5ca11OrlPwLsQ9ovap3m
+	 nwIVQJBnaUOfKpOzipmYDV7mEY6KHJMCwU2e0q2wvxBzHgO1W27npv3V9ZstBxHyWE
+	 /RuzLi9pt1BVFnjgDGBJS20csCoBLF2pwrZ2lCXgj409pVaoslC4FQhyUUOZrVy6Oh
+	 06mk17V3uOvd3JAPWpZb+jJjNA/KUO+UmYSeFwHejXgFKfT9nO/DueVz01k3k0aMv+
+	 HQalDxBtBaEUQ==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55628eaec6cso3273734e87.0;
+        Sun, 13 Jul 2025 19:08:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUvny3fLb0lido73Sc/4PEZ8AX9781Qh6qK0z0cr06KV7SxknA+XpIelVUnKnjMgdD5ERK3DcHOPNi4@vger.kernel.org, AJvYcCVsmeTPpkAyMrtiphcHjItrE3nn4WyM2SXp2xmlOUpSK3NXnYUCz/leZrAxnfxvvS9Gp/UTr8SJ72M0tPPO@vger.kernel.org, AJvYcCWKqpTiJvInByfRXvKIZiU3+jfy4OokpWgYR+iKR4c0vxoKYpBc7L2fzQZHv7AY4LLV7ChP8LvfNVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGCvGO+xiO0Qm50EemqElvSaaNFba/ptfJcVLdQjefjK/RHCav
+	yMLrS24aYeiz9NBPSD+dc3udPhQt7K9px1XHP5iscx3tfLWuNpFOGQYY0mU6Ugnjhhje5Griz5q
+	STgBuOtqcu6lZUg5S2bkFvgN3TWO2Juw=
+X-Google-Smtp-Source: AGHT+IFnC+Wm7NuX4/bTU91+875Jm+qyuf6g707T7r7/ii7gdVDmWAsIHbymYTyYYrGPYk/9ZPeTCy/VoI7+hRJ7NC8=
+X-Received: by 2002:a05:6512:3c92:b0:553:3127:b00 with SMTP id
+ 2adb3069b0e04-55a04637460mr3194297e87.32.1752458910051; Sun, 13 Jul 2025
+ 19:08:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250710084151.55003-1-feng.tang@linux.alibaba.com>
+ <CAMj1kXHDFq3FZj4134CTcQZnke4t1=u6iRNNsQBvuhb3F6KurQ@mail.gmail.com>
+ <CAMj1kXGiixvwsSmOz65F=OXQuHovO4DMAsJaPZ2sL3PBbMHh8A@mail.gmail.com> <20250711085608f4146d99@mail.local>
+In-Reply-To: <20250711085608f4146d99@mail.local>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 14 Jul 2025 12:08:17 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXEL90VvygoSk8EtQJO0cjybwpt10uHM+ufJg84LvR+Ouw@mail.gmail.com>
+X-Gm-Features: Ac12FXzKaB6EQRJG9NaJZr-R85q2e6GV-jLd0mcBWosj_q8XLWX4-SgVkwxioP8
+Message-ID: <CAMj1kXEL90VvygoSk8EtQJO0cjybwpt10uHM+ufJg84LvR+Ouw@mail.gmail.com>
+Subject: Re: [PATCH] rtc: efi: Add runtime check for the wakeup service capability
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Feng Tang <feng.tang@linux.alibaba.com>, linux-rtc@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 2025-07-13 at 22:42 +0206, John Ogness wrote:
-> On 2025-07-13, Marcos Paulo de Souza <mpdesouza@suse.com> wrote:
-> > diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
-> > index
-> > 9b11b10b120cf07e451a7a4d92ce50f9a6c066b2..3b7365c11d06b01d487767fd8
-> > 9f1081da10dd2ed 100644
-> > --- a/kernel/debug/kdb/kdb_io.c
-> > +++ b/kernel/debug/kdb/kdb_io.c
-> > @@ -558,6 +558,25 @@ static int kdb_search_string(char *searched,
-> > char *searchfor)
-> > =C2=A0	return 0;
-> > =C2=A0}
-> > =C2=A0
-> > +static struct nbcon_context *nbcon_acquire_ctxt(struct console
-> > *con,
-> > +					struct nbcon_write_context
-> > *wctxt,
-> > +					char *msg, int msg_len)
-> > +{
-> > +	struct nbcon_context *ctxt =3D &ACCESS_PRIVATE(wctxt, ctxt);
-> > +
-> > +	ctxt->console		=C2=A0=C2=A0=C2=A0 =3D con;
-> > +	ctxt->spinwait_max_us	=C2=A0=C2=A0=C2=A0 =3D 0;
-> > +	ctxt->prio		=C2=A0=C2=A0=C2=A0 =3D NBCON_PRIO_EMERGENCY;
-> > +	ctxt->allow_unsafe_takeover =3D false;
-> > +	wctxt->outbuf		=C2=A0=C2=A0=C2=A0 =3D msg;
-> > +	wctxt->len		=C2=A0=C2=A0=C2=A0 =3D msg_len;
-> > +
-> > +	if (!nbcon_context_try_acquire(ctxt))
-> > +		return NULL;
-> > +
-> > +	return ctxt;
->=20
-> This function is grabbing a reference to a private member and
-> returning
-> it, thus exposing internals. Can we instead create a proper API in
-> kernel/printk/nbcon.c for kdb?
->=20
-> For example, take a look at:
->=20
-> nbcon_device_try_acquire() and nbcon_device_release()
->=20
-> We could have something similar for kdb, such as:
->=20
-> bool *nbcon_kdb_try_acquire(struct nbcon_write_context *wctxt,
-> 			=C2=A0=C2=A0=C2=A0 struct console *con, char *msg, int
-> msg_len);
->=20
-> void nbcon_kdb_release(struct nbcon_write_context *wctxt);
+On Fri, 11 Jul 2025 at 18:56, Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+>
+> On 11/07/2025 11:26:18+1000, Ard Biesheuvel wrote:
+> > On Fri, 11 Jul 2025 at 11:06, Ard Biesheuvel <ardb@kernel.org> wrote:
+> > >
+> > > On Thu, 10 Jul 2025 at 18:41, Feng Tang <feng.tang@linux.alibaba.com> wrote:
+> > > >
+> > > > The kernel selftest of rtc reported a error on an ARM server which
+> > > > use rtc-efi device:
+> > > >
+> > > >         RUN           rtc.alarm_alm_set ...
+> > > >         rtctest.c:262:alarm_alm_set:Alarm time now set to 17:31:36.
+> > > >         rtctest.c:267:alarm_alm_set:Expected -1 (-1) != rc (-1)
+> > > >         alarm_alm_set: Test terminated by assertion
+> > > >                  FAIL  rtc.alarm_alm_set
+> > > >         not ok 5 rtc.alarm_alm_set
+> > > >
+> > > > The root cause is, the underlying EFI firmware doesn't support wakeup
+> > > > service (get/set alarm), while it doesn't have the EFI RT_PROP table
+> > > > either. As Ard Biesheuvel clarified [1], this breaks the UEFI spec,
+> > > > which requires EFI firmware to provide a 'RT_PROP' table if it doesn't
+> > > > support all runtime services (Section 4.6.2, UEFI spec 2.10).
+> > > >
+> > > > This issue was also reproduced on ARM server from another vendor, which
+> > > > doesn't have RT_PROP table either. This means, in real world, there are
+> > > > quite some platforms having this issue, that it doesn't support wakeup
+> > > > service while not providing a correct RT_PROP table, which makes it
+> > > > wrongly claimed to support it.
+> > > >
+> > > > Add a runtime check for the wakeup service to detect and correct this
+> > > > kind of cases.
+> > > >
+> > > > [1]. https://lore.kernel.org/lkml/CAMj1kXEkzXsjm0dPhzxB+KdtzqADd4NmafKmw2rKw7mAPBrgdA@mail.gmail.com/
+> > > >
+> > > > Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
+> > > > ---
+> > > >  drivers/rtc/rtc-efi.c | 4 +++-
+> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > >
+> > >
+> > > Thanks, I've queued this up now.
+> > >
+> >
+> > Actually, we might just remove the EFI get/set wakeup time
+> > functionality altogether, as it seems rather pointless to me to begin
+> > with.
+> >
+> > I'll send out an RFC shortly.
+>
+> I guess this is going to also solve the issue reported by loongson
+> https://lore.kernel.org/linux-rtc/20250613061747.4117470-1-wangming01@loongson.cn/
+>
+> However, please let me take care of patches in my subsystem...
+>
 
-Makes sense John! Thanks for the quick review and suggestion! I'll work
-on it in the next few days, but also wait for more people to take a
-look as well.
+Apologies - I've dropped it now.
 
->=20
-> > +}
-> > +
-> > =C2=A0static void kdb_msg_write(const char *msg, int msg_len)
-> > =C2=A0{
-> > =C2=A0	struct console *c;
-> > @@ -589,12 +608,26 @@ static void kdb_msg_write(const char *msg,
-> > int msg_len)
-> > =C2=A0	 */
-> > =C2=A0	cookie =3D console_srcu_read_lock();
-> > =C2=A0	for_each_console_srcu(c) {
-> > -		if (!(console_srcu_read_flags(c) & CON_ENABLED))
-> > +		struct nbcon_write_context wctxt =3D { };
-> > +		struct nbcon_context *ctxt;
->=20
-> With the above suggestion we do not need @ctxt.
->=20
-> > +		short flags =3D console_srcu_read_flags(c);
-> > +
-> > +		if (!console_is_usable(c, flags, true))
-> > =C2=A0			continue;
-> > =C2=A0		if (c =3D=3D dbg_io_ops->cons)
-> > =C2=A0			continue;
-> > -		if (!c->write)
-> > -			continue;
-> > +
-> > +		/*
-> > +		 * Do not continue if the console is NBCON and the
-> > context
-> > +		 * can't be acquired.
-> > +		 */
-> > +		if (flags & CON_NBCON) {
-> > +			ctxt =3D nbcon_acquire_ctxt(c, &wctxt, (char
-> > *)msg,
-> > +						=C2=A0 msg_len);
-> > +			if (!ctxt)
-> > +				continue;
->=20
-> And this becomes:
->=20
-> 			if (!nbcon_kdb_try_acquire(&wctxt, c, (char
-> *)msg, msg_len))
-> 				continue;
-
-Agreed.
-
-> > +		}
-> > +
-> > =C2=A0		/*
-> > =C2=A0		 * Set oops_in_progress to encourage the console
-> > drivers to
-> > =C2=A0		 * disregard their internal spin locks: in the
-> > current calling
-> > @@ -605,7 +638,12 @@ static void kdb_msg_write(const char *msg, int
-> > msg_len)
-> > =C2=A0		 * for this calling context.
-> > =C2=A0		 */
-> > =C2=A0		++oops_in_progress;
-> > -		c->write(c, msg, msg_len);
-> > +		if (flags & CON_NBCON) {
-> > +			c->write_atomic(c, &wctxt);
-> > +			nbcon_context_release(ctxt);
->=20
-> And this becomes:
->=20
-> 			nbcon_kdb_release(&wctxt);
-
-Much better and cleaner!
-
->=20
-> > +		} else {
-> > +			c->write(c, msg, msg_len);
-> > +		}
-> > =C2=A0		--oops_in_progress;
-> > =C2=A0		touch_nmi_watchdog();
-> > =C2=A0	}
->=20
-
-Thanks for the quick review!
-
-> John Ogness
+But please don't queue this, I'll send out my RFC shortly.
 
