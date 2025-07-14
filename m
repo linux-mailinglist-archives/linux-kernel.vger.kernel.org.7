@@ -1,185 +1,434 @@
-Return-Path: <linux-kernel+bounces-730126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45083B0407A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:46:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A198B0408C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 001B7175CC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:44:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EDD418897BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DEF24EAB2;
-	Mon, 14 Jul 2025 13:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEAF2505A9;
+	Mon, 14 Jul 2025 13:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sx0kOClg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b="ZkAEmwFb"
+Received: from mail14.out.titan.email (mail14.out.titan.email [3.64.226.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7283248866
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8222405F9
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.64.226.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752500676; cv=none; b=CTW3pb4jni1fixVS83cQaqoajnoxy6M1BWQqvMn0+nPuH93IGMG7xCUnIYAbTEhommrAK6CMJIQ3IsFzoJCPMYQQ/SVDga2u8ysZdJHNAYx+XEv8q8FrhPKmouC03KRqnN16IV+HaacM7HNGiuTvLX3cLmquN7WHgcJsUtQpk9o=
+	t=1752501036; cv=none; b=sH/hwziie6QR2wAvYLiwvL+817UbkDVVSMBjS3ny4kKSB6qt5hwstL4y4N8eyiKKsHRUMIn4jjIYOOoyj7HTfnHtcp1iyFgGHyj1d9+/wNTBGohWDyq9tiEc2An4lTHocFVyW8uIHcrEKtWBsOOCHGcHesBsFpIM5fyb+QjrNMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752500676; c=relaxed/simple;
-	bh=L9rd/YFjBCYeu+vrNj99L08qC8r/zV90EKJEPXRCDgk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s0P7FR1pE1gW8on+M2O5HcsbEerA8jRVjCWU3ipjIrIQFeXf+rMqpOyHPGYZLcWBMMXJxHBRNH+OysIQLKT6j99a5E/RVEY3y9owZ+vbdniiMPKAUkngO4sbqUxxj5XFLpeVnAZPjBh4hdRjI5+mBLRd1pAohmIhH4N3zOemsWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sx0kOClg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752500673;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=X+GS2rPtBARL/ESHq8iljkHKPEQ7wONWjHbxi92M2D8=;
-	b=Sx0kOClguq3BfG2Heo3DI1LQiZbi/N3tB1CxOJlpdKqiYFW9g1GpkEdxA9cfxC6tnPIECv
-	ca1yOZM6y1MdJWLPi1diCvt2PINn4Gt04u/GP1DHgjd38HpEJb+oXSV0K5qrHLddvGhRtw
-	++Usl48VwP3L7Cs5xZ7J7VDJ8o6AXMs=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-141-Qmw5lbwlOgmyhAue2sI_RQ-1; Mon, 14 Jul 2025 09:44:32 -0400
-X-MC-Unique: Qmw5lbwlOgmyhAue2sI_RQ-1
-X-Mimecast-MFC-AGG-ID: Qmw5lbwlOgmyhAue2sI_RQ_1752500671
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-451d7de4ae3so27893355e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 06:44:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752500671; x=1753105471;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=X+GS2rPtBARL/ESHq8iljkHKPEQ7wONWjHbxi92M2D8=;
-        b=ST3zUqqgXT+UI1ynNkzGUA318vx6hPZbFxK3v/6Yt5Whe4lRaJlZf9XjRk6HMFZZ6u
-         LAiCDNsAnLT8H0M8Dq1mWYSwJB1yEf0Fa3VT6EmZxVSH4OeGxpCWn3aLFtMiNygWjK8L
-         VLq3xRm11509X7DCBYG+MRlewYSI515gKBJplIKsMLDz1+3NOjQ3IfplIZy73878vXS7
-         aH1eCPyrZbwU36yRLSHNJRfJ8M6E9ZmBLWQ/G3Syx6tSGk7vHi4T6RJ1aXkCJ225AL6t
-         rmB1LqLBUb6HPL4Twdv0RdbtjH9Wa/40jlgoNmJgk3XSRLt1OEtlIVhhM/uEYQLabfDa
-         NLkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWXikzz8ie1mwdE1heaQHFEkJqve0MHWnJHYcbjyJupwxVnD9NP3BUDtMd0DIrg8mtwjl7tBROwBSRLkMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJnmY7dFSrtP9qccEnrnN0YRUnD2nlb578MIQ7xN8FNTQ5uV/6
-	CSEHBRumcaEa/U3CdMUkiHGrc83iqZjmoM/uyXqN/0MTHj6y6wbw+bYDjI0D9/wMFQaQtDjY8GB
-	56snrP/2f7ugdQUY7mGUZCcPh5nCq964deOItapO21Ucbwq/8IN4teoKO5eTer5zOUw==
-X-Gm-Gg: ASbGncuwUOabu2370IbDmnEF3M2ZLG0mTBujNn9KHqWruJDxe0AXsRGddKqgTlkf/lh
-	F4nlXHqHx3MpPPZ/daO1I6rSZJ2qJfTLUL1+UK3WFjTR7y3+kAH+uTAPuKrFPvDBceGtUL/ENeX
-	tcNLgve9hIsgm1mejFt4n2R25MHENQ+phUzxZprtn6lD/Z5uWyzsAud6ZSYi3aXwZuYiY08UBjh
-	Xs+uhyC4eM86/CD8FixvAK+JeMODvVcdDVvFagLAtk4BRgZlLsbKwFqPB/3dv7RF153IOQGLFVc
-	y/aSiC9GcjNP+vwHM7na0L5abvzxcHnX4OTxiK1sz2O78IgIklf9naNfBN3iUnxNM1lODdQzFbs
-	vWg5CXU/jXBMBU6+2Vx3qpP13gYUr5Z7d7KZ2IO+/Vu30as7JpWeWJzTHOWOe3A+0
-X-Received: by 2002:a05:600c:821a:b0:456:207e:fd86 with SMTP id 5b1f17b1804b1-456207f008bmr21905965e9.2.1752500671098;
-        Mon, 14 Jul 2025 06:44:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH3ScZAKbeGoqX2wP9/gRIpia/X8+PS57jXCXwanug3eBTNK8Z/wPQG4PIBWgLe3XbF2i1MEw==
-X-Received: by 2002:a05:600c:821a:b0:456:207e:fd86 with SMTP id 5b1f17b1804b1-456207f008bmr21905615e9.2.1752500670671;
-        Mon, 14 Jul 2025 06:44:30 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f38:ca00:ca3a:83da:653e:234? (p200300d82f38ca00ca3a83da653e0234.dip0.t-ipconnect.de. [2003:d8:2f38:ca00:ca3a:83da:653e:234])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d732sm12689842f8f.52.2025.07.14.06.44.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 06:44:30 -0700 (PDT)
-Message-ID: <4a3e0759-caa1-4cfa-bc3f-402593f1eee3@redhat.com>
-Date: Mon, 14 Jul 2025 15:44:28 +0200
+	s=arc-20240116; t=1752501036; c=relaxed/simple;
+	bh=NmFszBrIV7zGZIvpKSPWWWLPizwKNyaC3zo73UYiMTo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Za9WZNwvpuFkSM0plxq5CR+HrJ7BE2oTaWUJFDg8q5Ez1hsVefE1BwlCZW/VWOzXj8dTuXzhmXIDs+g4M1OV5nnXSKn0c8GJhrAR9grndOkPU7suU2XVGnr+B85hR84I4tE8f3+nnCbIQdtPyQ4PzS75VpIiv5EK3afIuQqhOwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net; spf=pass smtp.mailfrom=techsingularity.net; dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b=ZkAEmwFb; arc=none smtp.client-ip=3.64.226.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=techsingularity.net
+Received: from localhost (localhost [127.0.0.1])
+	by smtp-out0101.titan.email (Postfix) with ESMTP id 4D765100012;
+	Mon, 14 Jul 2025 13:45:04 +0000 (UTC)
+DKIM-Signature: a=rsa-sha256; bh=M9fplg23H3WoNHXvsJY1R8gOlfy/WKRyjaaNcDupBSc=;
+	c=relaxed/relaxed; d=techsingularity.net;
+	h=to:message-id:in-reply-to:cc:from:date:mime-version:subject:references:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
+	q=dns/txt; s=titan1; t=1752500704; v=1;
+	b=ZkAEmwFbPQ6tUgRCuy1+zEm9XC/npLumy61EFzHAw4i2h2tZ6LjA6vIoXEdHWdgjji/0Jabi
+	TtIvgB+TAqw19pCleyZI+JB+W/0SOV0GofX1iiyVV5cztr+3UKKYWu3PheH9QRj0aE+xXha3dub
+	5VvM97JhJ2WVrwgAfQSSUAbA=
+Received: from mail.blacknight.com (ip-84-203-196-90.broadband.digiweb.ie [84.203.196.90])
+	by smtp-out0101.titan.email (Postfix) with ESMTPA id A6B2F10000E;
+	Mon, 14 Jul 2025 13:45:03 +0000 (UTC)
+Feedback-ID: :mgorman@techsingularity.net:techsingularity.net:flockmailId
+From: Mel Gorman <mgorman@techsingularity.net>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Mel Gorman <mgorman@techsingularity.net>
+Subject: [PATCH 2/2] sched/fair: Reimplement NEXT_BUDDY to align with EEVDF goals
+Date: Mon, 14 Jul 2025 14:44:29 +0100
+Message-ID: <20250714134429.19624-3-mgorman@techsingularity.net>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250714134429.19624-1-mgorman@techsingularity.net>
+References: <20250714134429.19624-1-mgorman@techsingularity.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/mm: refactor common code and improve test
- skipping in guard_region
-To: Mark Brown <broonie@kernel.org>, wang lian <lianux.mm@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, SeongJae Park <sj@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
- Jann Horn <jannh@google.com>, Liam Howlett <Liam.Howlett@oracle.com>,
- Shuah Khan <shuah@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- gkwang <gkwang@linx-info.com>, p1ucky0923 <p1ucky0923@gmail.com>,
- ryncsn <ryncsn@gmail.com>, "zijing . zhang" <zijing.zhang@proton.me>,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org
-References: <20250714130009.14581-1-lianux.mm@gmail.com>
- <a3457ab8-8bb7-4a43-913e-2eb73149ff20@sirena.org.uk>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <a3457ab8-8bb7-4a43-913e-2eb73149ff20@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-F-Verdict: SPFVALID
+X-Titan-Src-Out: 1752500704139972606.2332.6835603429642827323@prod-euc1-smtp-out1001.
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.4 cv=HKo5Fptv c=1 sm=1 tr=0 ts=687509e0
+	a=+XWPlUOTt03IZrtNKHUAqA==:117 a=+XWPlUOTt03IZrtNKHUAqA==:17
+	a=CEWIc4RMnpUA:10 a=R_Myd5XaAAAA:8 a=GvbgNo71V--88RbVpKUA:9
+	a=L2g4Dz8VuBQ37YGmWQah:22
 
-On 14.07.25 15:39, Mark Brown wrote:
-> On Mon, Jul 14, 2025 at 09:00:09PM +0800, wang lian wrote:
-> 
->> Move the generic `FORCE_READ` macro from `guard-regions.c` to the shared
->> `vm_util.h` header to promote code reuse.
->>
->> In `guard-regions.c`, replace `ksft_exit_skip()` with the `SKIP()` macro
->> to ensure only the current test is skipped on permission failure, instead
->> of terminating the entire test binary.
-> 
-> These two changes look fine but they're not really related so should be
-> separate patches.  Looking briefly at guard-regions.c I see a bunch more
-> use of ksft_exit_ functions that ought to be fixed as well, but your fix
-> is good.
+Reimplement NEXT_BUDDY preemption to take into account the deadline and
+eligibility of the wakee with respect to the waker. In the event
+multiple buddies could be considered, the one with the earliest deadline
+is selected.
 
-The FORCE_READ() could be factored out separately, and as part of the 
-same patch, replace the "asm volatile("" : "+r" (XXX));" usage in
+Sync wakeups are treated differently to every other type of wakeup. The
+WF_SYNC assumption is that the waker promises to sleep in the very near
+future. This is violated in enough cases that WF_SYNC should be treated
+as a mild suggestion instead of a hard rule. If a waker does go to sleep
+almost immediately then the delay in wakeup is negligible. In all other
+cases, it's throttled based on the accumulated runtime of the waker so
+there is a chance that some batched wakeups have been issued before
+preemption.
 
-* cow.c
-* hugetlb-madvise.c
-* migration.c
-* pagemap_ioctl.c
-* split_huge_page_test.c
+For all other wakeups, preemption happens if the wakee has a sooner deadline
+than the waker and eligible to run.
 
+While many workloads were tested, the two main targets were a modified
+dbench4 benchmark and hackbench because the are on opposite ends of the
+spectrum -- one prefers throughput by avoiding preemption and the other
+relies on preemption.
+
+First is the dbench throughput data even though it is a terrible metric for
+dbench as it's the default one reported. The test machine is a 2-socket
+CascadeLake machine and the backing filesystem is XFS as a lot of the IO
+work is dispatched to kernel threads. It's important to note that these
+results are not representative across all machines, especially Zen machines,
+as different bottlenecks are exposed on different machines and filesystems.
+
+dbench4 Throughput (misleading but traditional)
+                          6.16.0-rc5             6.16.0-rc5
+                             vanilla sched-preemptnext-v1r8
+Hmean     1       1286.83 (   0.00%)     1281.73 (  -0.40%)
+Hmean     4       4017.50 (   0.00%)     3934.85 *  -2.06%*
+Hmean     7       5536.45 (   0.00%)     5453.55 *  -1.50%*
+Hmean     12      7251.59 (   0.00%)     7217.25 (  -0.47%)
+Hmean     21      8957.92 (   0.00%)     9188.07 (   2.57%)
+Hmean     30      9403.41 (   0.00%)    10523.72 *  11.91%*
+Hmean     48      9320.12 (   0.00%)    11496.27 *  23.35%*
+Hmean     79      8962.30 (   0.00%)    11555.71 *  28.94%*
+Hmean     110     8066.52 (   0.00%)    11307.26 *  40.18%*
+Hmean     141     7605.20 (   0.00%)    10622.52 *  39.67%*
+Hmean     160     7422.56 (   0.00%)    10250.78 *  38.10%*
+
+As throughput is misleading, the benchmark is modified to use a short
+loadfile report the completion time duration in milliseconds.
+
+dbench4 Loadfile Execution Time
+                           6.16.0-rc5             6.16.0-rc5
+                              vanilla sched-preemptnext-v1r8
+Amean      1         14.35 (   0.00%)       14.27 (   0.57%)
+Amean      4         18.58 (   0.00%)       19.01 (  -2.35%)
+Amean      7         23.83 (   0.00%)       24.18 (  -1.48%)
+Amean      12        31.59 (   0.00%)       31.77 (  -0.55%)
+Amean      21        44.65 (   0.00%)       43.44 (   2.71%)
+Amean      30        60.73 (   0.00%)       54.21 (  10.74%)
+Amean      48        98.25 (   0.00%)       79.41 (  19.17%)
+Amean      79       168.34 (   0.00%)      130.06 (  22.74%)
+Amean      110      261.03 (   0.00%)      185.04 (  29.11%)
+Amean      141      353.98 (   0.00%)      251.55 (  28.94%)
+Amean      160      410.66 (   0.00%)      296.87 (  27.71%)
+Stddev     1          0.51 (   0.00%)        0.48 (   6.67%)
+Stddev     4          1.14 (   0.00%)        1.21 (  -6.78%)
+Stddev     7          1.63 (   0.00%)        1.58 (   3.12%)
+Stddev     12         2.62 (   0.00%)        2.38 (   9.05%)
+Stddev     21         5.21 (   0.00%)        3.87 (  25.70%)
+Stddev     30        10.03 (   0.00%)        6.65 (  33.65%)
+Stddev     48        22.31 (   0.00%)       12.26 (  45.05%)
+Stddev     79        41.14 (   0.00%)       29.11 (  29.25%)
+Stddev     110       70.55 (   0.00%)       47.71 (  32.38%)
+Stddev     141       98.12 (   0.00%)       66.83 (  31.89%)
+Stddev     160      139.37 (   0.00%)       67.73 (  51.40%)
+
+That is still looking good and the variance is reduced quite a bit.
+Finally, fairness is a concern so the next report tracks how many
+milliseconds does it take for all clients to complete a workfile. This
+one is tricky because dbench makes to effort to synchronise clients so
+the durations at benchmark start time differ substantially from typical
+runtimes. This problem could be mitigated by warming up the benchmark
+for a number of minutes but it's a matter of opinion whether that
+counts as an evasion of inconvenient results.
+
+dbench4 All Clients Loadfile Execution Time
+                           6.16.0-rc5             6.16.0-rc5
+                              vanilla sched-preemptnext-v1r8
+Amean      1         14.93 (   0.00%)       14.91 (   0.11%)
+Amean      4        348.88 (   0.00%)      277.06 (  20.59%)
+Amean      7        722.94 (   0.00%)      991.70 ( -37.18%)
+Amean      12      2055.72 (   0.00%)     2684.48 ( -30.59%)
+Amean      21      4393.85 (   0.00%)     2625.79 (  40.24%)
+Amean      30      6119.84 (   0.00%)     2491.15 (  59.29%)
+Amean      48     20600.85 (   0.00%)     6717.61 (  67.39%)
+Amean      79     22677.38 (   0.00%)    21866.80 (   3.57%)
+Amean      110    35937.71 (   0.00%)    22517.63 (  37.34%)
+Amean      141    25104.66 (   0.00%)    29897.08 ( -19.09%)
+Amean      160    23843.74 (   0.00%)    23106.66 (   3.09%)
+Stddev     1          0.50 (   0.00%)        0.46 (   6.67%)
+Stddev     4        201.33 (   0.00%)      130.13 (  35.36%)
+Stddev     7        471.94 (   0.00%)      641.69 ( -35.97%)
+Stddev     12      1401.94 (   0.00%)     1750.14 ( -24.84%)
+Stddev     21      2519.12 (   0.00%)     1416.77 (  43.76%)
+Stddev     30      3469.05 (   0.00%)     1293.37 (  62.72%)
+Stddev     48     11521.49 (   0.00%)     3846.34 (  66.62%)
+Stddev     79     12849.21 (   0.00%)    12275.89 (   4.46%)
+Stddev     110    20362.88 (   0.00%)    12989.46 (  36.21%)
+Stddev     141    13768.42 (   0.00%)    17108.34 ( -24.26%)
+Stddev     160    13196.34 (   0.00%)    13029.75 (   1.26%)
+
+This is more of a mixed bag but it at least shows that fairness
+is not crippled.
+
+The hackbench results are more neutral but this is still important.
+It's possible to boost the dbench figures by a large amount but only by
+crippling the performance of a workload like hackbench.
+
+hackbench-process-pipes
+                          6.16.0-rc5             6.16.0-rc5
+                             vanilla sched-preemptnext-v1r8
+Amean     1        0.2183 (   0.00%)      0.2223 (  -1.83%)
+Amean     4        0.5780 (   0.00%)      0.5413 (   6.34%)
+Amean     7        0.7727 (   0.00%)      0.7093 (   8.20%)
+Amean     12       1.1220 (   0.00%)      1.1170 (   0.45%)
+Amean     21       1.7470 (   0.00%)      1.7713 (  -1.39%)
+Amean     30       2.2940 (   0.00%)      2.6957 * -17.51%*
+Amean     48       3.7337 (   0.00%)      4.1003 *  -9.82%*
+Amean     79       4.9310 (   0.00%)      5.1417 *  -4.27%*
+Amean     110      6.1800 (   0.00%)      6.5370 *  -5.78%*
+Amean     141      7.5737 (   0.00%)      8.0060 *  -5.71%*
+Amean     172      9.0820 (   0.00%)      9.4767 *  -4.35%*
+Amean     203     10.6053 (   0.00%)     10.8870 (  -2.66%)
+Amean     234     12.3380 (   0.00%)     13.1290 *  -6.41%*
+Amean     265     14.5900 (   0.00%)     15.3547 *  -5.24%*
+Amean     296     16.1937 (   0.00%)     17.1533 *  -5.93%*
+
+Processes using pipes are impacted and it's outside the noise as the
+coefficient of variance is roughly 3%. These results are not always
+reproducible. If executed across multiple reboots, it may show neutral or
+small gains so the worst measured results are presented.
+
+Hackbench using sockets is more reliably neutral as the wakeup
+mechanisms are different between sockets and pipes.
+
+hackbench-process-sockets
+                          6.16.0-rc5             6.16.0-rc5
+                             vanilla sched-preemptnext-v1r8
+Amean     1        0.3217 (   0.00%)      0.3053 (   5.08%)
+Amean     4        0.8967 (   0.00%)      0.9007 (  -0.45%)
+Amean     7        1.4780 (   0.00%)      1.5067 (  -1.94%)
+Amean     12       2.1977 (   0.00%)      2.2693 (  -3.26%)
+Amean     21       3.4983 (   0.00%)      3.6667 *  -4.81%*
+Amean     30       4.9270 (   0.00%)      5.1207 *  -3.93%*
+Amean     48       7.6250 (   0.00%)      7.9667 *  -4.48%*
+Amean     79      15.7477 (   0.00%)     15.4177 (   2.10%)
+Amean     110     21.8070 (   0.00%)     21.9563 (  -0.68%)
+Amean     141     29.4813 (   0.00%)     29.2327 (   0.84%)
+Amean     172     36.7433 (   0.00%)     35.9043 (   2.28%)
+Amean     203     40.8823 (   0.00%)     40.3467 (   1.31%)
+Amean     234     43.1627 (   0.00%)     43.0343 (   0.30%)
+Amean     265     49.6417 (   0.00%)     49.9030 (  -0.53%)
+Amean     296     51.3137 (   0.00%)     51.9310 (  -1.20%)
+
+At the time of writing, other tests are still running but most or either
+neutral or relatively small gains. In general, the other workloads are
+less wakeup-intensive than dbench or hackbench.
+
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ kernel/sched/fair.c | 123 ++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 106 insertions(+), 17 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 7a14da5396fb..62fa036b0c3e 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -936,6 +936,16 @@ static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq)
+ 	if (cfs_rq->nr_queued == 1)
+ 		return curr && curr->on_rq ? curr : se;
+ 
++	/*
++	 * Picking the ->next buddy will affect latency but not fairness.
++	 */
++	if (sched_feat(PICK_BUDDY) &&
++	    cfs_rq->next && entity_eligible(cfs_rq, cfs_rq->next)) {
++		/* ->next will never be delayed */
++		WARN_ON_ONCE(cfs_rq->next->sched_delayed);
++		return cfs_rq->next;
++	}
++
+ 	if (curr && (!curr->on_rq || !entity_eligible(cfs_rq, curr)))
+ 		curr = NULL;
+ 
+@@ -1205,6 +1215,83 @@ static inline bool do_preempt_short(struct cfs_rq *cfs_rq,
+ 	return false;
+ }
+ 
++enum preempt_buddy_action {
++	PREEMPT_BUDDY_NONE,		/* No action on the buddy */
++	PREEMPT_BUDDY_NEXT,		/* Check next is most eligible
++					 * before rescheduling.
++					 */
++	PREEMPT_BUDDY_RESCHED,		/* Plain reschedule */
++	PREEMPT_BUDDY_IMMEDIATE		/* Remove slice protection
++					 * and reschedule
++					 */
++};
++
++static void set_next_buddy(struct sched_entity *se);
++
++static inline enum preempt_buddy_action
++do_preempt_buddy(struct rq *rq, struct cfs_rq *cfs_rq, int wake_flags,
++		 struct sched_entity *pse, struct sched_entity *se,
++		 s64 delta, bool did_short)
++{
++	bool pse_before, pse_eligible;
++
++	if (!sched_feat(NEXT_BUDDY) ||
++	    (wake_flags & WF_FORK) ||
++	    (pse->sched_delayed)) {
++		BUILD_BUG_ON(PREEMPT_BUDDY_NONE + 1 != PREEMPT_BUDDY_NEXT);
++		return PREEMPT_BUDDY_NONE + did_short;
++	}
++
++	/* Reschedule if waker is no longer eligible */
++	if (!entity_eligible(cfs_rq, se))
++		return PREEMPT_BUDDY_RESCHED;
++
++	/* Keep existing buddy if the deadline is sooner than pse */
++	if (cfs_rq->next && entity_before(cfs_rq->next, pse))
++		return PREEMPT_BUDDY_NONE;
++
++	set_next_buddy(pse);
++	pse_before = entity_before(pse, se);
++	pse_eligible = entity_eligible(cfs_rq, pse);
++
++	/*
++	 * WF_SYNC implies that waker will sleep soon but it is not enforced
++	 * because the hint is often abused or misunderstood.
++	 */
++	if ((wake_flags & (WF_TTWU|WF_SYNC)) == (WF_TTWU|WF_SYNC)) {
++		/*
++		 * WF_RQ_SELECTED implies the tasks are stacking on a
++		 * CPU. Only consider reschedule if pse deadline expires
++		 * before se.
++		 */
++		if ((wake_flags & WF_RQ_SELECTED) &&
++		    delta < sysctl_sched_migration_cost) {
++
++			if (!pse_before)
++				return PREEMPT_BUDDY_NONE;
++
++			/* Fall through to pse deadline.  */
++		}
++
++		/*
++		 * Reschedule if pse's deadline is sooner and there is a chance
++		 * that some wakeup batching has completed.
++		 */
++		if (pse_before &&
++		    delta >= (sysctl_sched_migration_cost >> 6)) {
++			return PREEMPT_BUDDY_IMMEDIATE;
++		}
++
++		return PREEMPT_BUDDY_NONE;
++	}
++
++	/* Check eligibility of buddy to start now. */
++	if (pse_before && pse_eligible)
++		return PREEMPT_BUDDY_IMMEDIATE;
++
++	return PREEMPT_BUDDY_NEXT;
++}
++
+ /*
+  * Used by other classes to account runtime.
+  */
+@@ -5589,16 +5676,6 @@ pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
+ {
+ 	struct sched_entity *se;
+ 
+-	/*
+-	 * Picking the ->next buddy will affect latency but not fairness.
+-	 */
+-	if (sched_feat(PICK_BUDDY) &&
+-	    cfs_rq->next && entity_eligible(cfs_rq, cfs_rq->next)) {
+-		/* ->next will never be delayed */
+-		WARN_ON_ONCE(cfs_rq->next->sched_delayed);
+-		return cfs_rq->next;
+-	}
+-
+ 	se = pick_eevdf(cfs_rq);
+ 	if (se->sched_delayed) {
+ 		dequeue_entities(rq, se, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
+@@ -7056,8 +7133,6 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	hrtick_update(rq);
+ }
+ 
+-static void set_next_buddy(struct sched_entity *se);
+-
+ /*
+  * Basically dequeue_task_fair(), except it can deal with dequeue_entity()
+  * failing half-way through and resume the dequeue later.
+@@ -8767,6 +8842,8 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+ 	struct sched_entity *se = &donor->se, *pse = &p->se;
+ 	struct cfs_rq *cfs_rq = task_cfs_rq(donor);
+ 	int cse_is_idle, pse_is_idle;
++	bool did_short;
++	s64 delta;
+ 
+ 	if (unlikely(se == pse))
+ 		return;
+@@ -8780,10 +8857,6 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+ 	if (unlikely(throttled_hierarchy(cfs_rq_of(pse))))
+ 		return;
+ 
+-	if (sched_feat(NEXT_BUDDY) && !(wake_flags & WF_FORK) && !pse->sched_delayed) {
+-		set_next_buddy(pse);
+-	}
+-
+ 	/*
+ 	 * We can come here with TIF_NEED_RESCHED already set from new task
+ 	 * wake up path.
+@@ -8829,6 +8902,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+ 		return;
+ 
+ 	cfs_rq = cfs_rq_of(se);
++	delta = rq_clock_task(rq) - se->exec_start;
+ 	update_curr(cfs_rq);
+ 	/*
+ 	 * If @p has a shorter slice than current and @p is eligible, override
+@@ -8837,9 +8911,24 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+ 	 * Note that even if @p does not turn out to be the most eligible
+ 	 * task at this moment, current's slice protection will be lost.
+ 	 */
+-	if (do_preempt_short(cfs_rq, pse, se))
++	did_short = do_preempt_short(cfs_rq, pse, se);
++	if (did_short)
+ 		cancel_protect_slice(se);
+ 
++	switch (do_preempt_buddy(rq, cfs_rq, wake_flags, pse, se, delta, did_short)) {
++	case PREEMPT_BUDDY_NONE:
++		return;
++		break;
++	case PREEMPT_BUDDY_IMMEDIATE:
++		cancel_protect_slice(se);
++		;;
++	case PREEMPT_BUDDY_RESCHED:
++		goto preempt;
++		break;
++	case PREEMPT_BUDDY_NEXT:
++		break;
++	}
++
+ 	/*
+ 	 * If @p has become the most eligible task, force preemption.
+ 	 */
 -- 
-Cheers,
-
-David / dhildenb
+2.43.0
 
 
