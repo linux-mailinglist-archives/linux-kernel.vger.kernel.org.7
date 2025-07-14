@@ -1,224 +1,133 @@
-Return-Path: <linux-kernel+bounces-730474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C1DB0453B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:17:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2577B04544
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BA7C188677E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:11:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E831188860F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E94425F790;
-	Mon, 14 Jul 2025 16:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6412025F78D;
+	Mon, 14 Jul 2025 16:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FqRj8qpT"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oKK4RAHI"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4AD256C9C;
-	Mon, 14 Jul 2025 16:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A0A256C9C
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 16:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752509482; cv=none; b=NWAjjydOhyHc3IAaqJjAFE7sFzvKULxRcLLnBjqEGODFcFftjuIBygIAMB4YWuaGii5/FPvYpZ0eTq18Fb9o5tllREUY0Ph5Wx/I9ZwzdGHU2QQ4LvVvWId9kLMGfRYa3uGfzNdxEtxqLTnE7dNwKm+z3/cRv1nHZV0wEYazG60=
+	t=1752509549; cv=none; b=lemJ334qQv5Y/Zq4IJkBV5u1sHZxQepp9gFFI13ycuLzScuggxGoKlYn/+nsaxuEfdjiEU5jalmmFRdkn7ngoA4jeJjlMDDbQM+fQice2eP6n8yoMcOwyWuJ3J8kn58QoaxZY614bDUm5TQSuGK3JV6Zff8xINvwui5FSSAL4aY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752509482; c=relaxed/simple;
-	bh=nf4vs6nOKYWis7A8F8h4VTZb3Ww/LSePChVIWjjRS4Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=t3oOKGde9zSQzzpBRO5+3vIPaN30xhBLjT3UXv+76auKnY2szcP4aZAtxNzVJN/Gu2YsWXRDSHQsYaYlvGD+as0qSCc9G0iBqCBqYnkJkov/1v861N2hLfWgNLNiUQBGpDV7jO7zDxojI1AhtZwfZMRkR00R1mQFacXUmbPZAJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FqRj8qpT; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4537edf2c3cso46829385e9.3;
-        Mon, 14 Jul 2025 09:11:20 -0700 (PDT)
+	s=arc-20240116; t=1752509549; c=relaxed/simple;
+	bh=Ud5cVeqCrhSqByxBQEPlGgrKvjboJ0YYy+W542jSiCA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B79E61cyj77r4YPGbIR8ZEP0Mr4Fkc2BIW+f9hcQxTgbRfRrzQA76vF+Bkr5ZZy/QPkY5c1J6SbPhC6M4Bkle9CfeKhESOZmTwkEl3x/sIN80rmQoQ0buJDIlWyJ2yg7ETqvv0Uw6zh3gxNEMFL3GbPCWSo9HjagZD0y0a79yBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oKK4RAHI; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso4397905f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:12:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752509479; x=1753114279; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nf4vs6nOKYWis7A8F8h4VTZb3Ww/LSePChVIWjjRS4Q=;
-        b=FqRj8qpTfljob1UkpZE3vtWf+E1l/eArbL7WvKk7mvixVdmNyAQ7ExmDtUUTo8xkoi
-         sgD28dgjWzOt3dROnAciSPTVsab0chtDIBb2Hv/EkULo19Ut6gk8Ayg+Q2bQcuBf+NkV
-         SfuoAt5yC9C/5zj0vszy67xMk9b84BlHtz7qPfKOHjgvkvF05CEHFr7EFZG/2Di18r1f
-         1dgTbiqCBKQIusfjw2qJys92s4QEDBkS7DGZLhHzfzf6m08/dBnOb3IaYe8tOi6TIkEN
-         La2mDqkmH/mOSTfdyU3j17izXP2brL/HdJ5uBI5JkhW05pxFa/+SIaPrpTajBQPQAMA0
-         /sQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752509479; x=1753114279;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=linaro.org; s=google; t=1752509545; x=1753114345; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=nf4vs6nOKYWis7A8F8h4VTZb3Ww/LSePChVIWjjRS4Q=;
-        b=pHNlm29bTa8ZzRLR5RIC6OsYGzOscJihTTPUt1dudGg+7HAwNhb4LDF7MAEhrRDN1E
-         gpmq444MwiVmFUX/5IFG7ai7ZaFyBmlzKbLVL+rUDsYRGkburrY9H0puq62MwiuaumEo
-         vnnwuyeY3YfADGVYsA66z/+sG/17EPMWvjkVEcrU3eCiUz13JDzlv/HLqg6mekGvD4Tm
-         AQ3m4rk5Od2iWvM9PWmECQQe8JWID4cQvFWTW0q8P75x68BOcnMoOwgb+VzOQaBQKPri
-         kiiNW8gxYmXCN5b4QVYjTnHu7IiFN0IwZvxHua63MHN/9NVNgdZ6XarYzalVmqaneDCO
-         7mTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcHnJLkImaXQUbWQUH6r6LPxP4hupHNM6RmspUhvIe9ic9mFEKHAxLz1qEVSD16vXILyWmc4Gg0AY30MkA@vger.kernel.org, AJvYcCVxlTib/ujdTdahNc+CBxa0jFNEcCS5Tkm6nAlGQm+f0+BDgTfGTCaU9ELGs3lqGOba79xv962+8v7Z@vger.kernel.org, AJvYcCWOlH3jnbveah3de27+K1g2nKfC7yeoNYq23pD786arcL65Yjpin6UhgNS3TC4rdG8EAh0p77zSoR1d@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7Z9wD6ZfGpk0UW6jzKarWb50Sdi6pHEBfWsOWFUdXQT4po3Pj
-	iARE237uHQ38pH4FW2TLsVUwTPxv5a2X4wyzvENt1d6gElI06T8xU+UA
-X-Gm-Gg: ASbGncsMqVXGZfoudNBaXLHR5tc6ZwyzoH853xW/fa/W/hLRwOym8wHXiX59yPG60NU
-	9fa7bMLP62Lj1ERlsMkUK2n1/8ZsDNWwSzLsCoEEUFQjQpr5i6vycTc+JVSWyu1MNWGqBZzCF6T
-	dWcGXTRPSJUUCN97ryxj9CA/1u0uuMHthFdDeXbWl8v27lImPdzn9pNoQnZrgbi0/XWyVCHxTMc
-	2sp5nOaA4itmOGams4yrM0FzgbfGMb2+T0OgsCVbLjag9iFWwYHwqPxPlHsh5+GZfY4yEuwhWIQ
-	LCqvzQE7HpJS0MbuKKOZN21vKVOJngyD95zDEonIO5tFsNN1GNrrb0qbxvfmKCk8cmmBUJYKcJP
-	OvXcI2tCpZ4YhZr0dUgsNfrm6zBJNUA==
-X-Google-Smtp-Source: AGHT+IGUpToWdSctfAs3OEHNJr6LLvNw1cbXYajG3U/nqh4JtR7+4OuHXsfmXW0g3MdCYO1qHiV4iA==
-X-Received: by 2002:adf:b643:0:b0:3a5:8cc2:10aa with SMTP id ffacd0b85a97d-3b5f188ea13mr9929289f8f.32.1752509478866;
-        Mon, 14 Jul 2025 09:11:18 -0700 (PDT)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8bd163csm12660465f8f.4.2025.07.14.09.11.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 09:11:18 -0700 (PDT)
-Message-ID: <6b32118a13e9e28b7cf12152af33642c76367c34.camel@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: iio: adc: imx93: Add calibration
- properties
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Primoz Fiser <primoz.fiser@norik.com>, Jonathan Cameron
- <jic23@kernel.org>,  David Lechner <dlechner@baylibre.com>, Haibo Chen
- <haibo.chen@nxp.com>
-Cc: Nuno Sa <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley	 <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer	 <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>,  Fabio Estevam <festevam@gmail.com>,
- linux-iio@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org,
- 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	upstream@lists.phytec.de, andrej.picej@norik.com
-Date: Mon, 14 Jul 2025 17:11:31 +0100
-In-Reply-To: <de2c8e15-14e9-4c61-9a13-97ef1ec567a4@norik.com>
-References: <20250710073905.1105417-1-primoz.fiser@norik.com>
-	 <20250710073905.1105417-2-primoz.fiser@norik.com>
-	 <2bcd758b-c2d0-488a-8ead-ec7fb39f93e2@baylibre.com>
-	 <20250713160247.0f22bbfe@jic23-huawei>
-	 <de2c8e15-14e9-4c61-9a13-97ef1ec567a4@norik.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+        bh=wzg/M3LkGVFpt8ELQhzn2f3Sv5jfT0EMwgEqK6jhlaQ=;
+        b=oKK4RAHI/c2qGbAdUDrRmQYB4lEciQUuRRPKFDT0Gyf3eRGykwEsQy5y1l3/L3oio1
+         ro9Y43ncK/+ojdNT7pUVDu+xVsrmSOiexmJx6Sj0UdC34rGYVLlgxwuUwU5dQ9kyeE/q
+         NkXpATrnJzi6LvCpONOim/Dpx00IVE5mQ7bZoId8kNNAouUbtbwKp1zRzUaqezGQFger
+         gzGgDzht+9Ko0x4gUdWIl2IU3nDnTidYbWucfrSmgm4fQw+03pgriJk9v8qxm8RN+kOS
+         Q9RW+Qc8+bLWdKrIvJrzyIIBB90PDQ18d1Ny+lX9T8hcrFVz6sEmrVH/XZmtygJ/RRvw
+         nbXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752509545; x=1753114345;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wzg/M3LkGVFpt8ELQhzn2f3Sv5jfT0EMwgEqK6jhlaQ=;
+        b=vxRBW/V12zl6EvCSS2yaNuytsQMorQUMxwGZT+v39GVqDDO82Es/AOEHH//6l2KLX4
+         KNvrgQD9OFt9iTuvfY2kdN/DcwsfZQuk0yfRWeq31SRzGJ8a2sdEmuYrQHUtldNAzGx/
+         rtsxx0PajD1tELz7WkiLxIJO1ZlBpIpkrvL9etYaCkeUJ5tHJNycBYS7tRa/KmVCFe5i
+         hebsYYsGsVCFDFGpVz3deV+lNpHmF+xNDd4/1lPwJ3URfxHMEj+LpDKc8/C7Xr+So0Bp
+         eBWV0m9DrOmGIlHDAYUTbXLgkJ2/K851h2pjyZEsE3flTx1bs51EPls5yhKGweeLUp82
+         m3Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCU13RraUiiaVWKD69K9rie8hGT8FvdLUIjH8BdrVsYaWB++M4td7oUWzxUHlLIfGC+UyxsIt07U0txGV7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFYC9lMfVG0+Vyk7BG22WYhv+qqoU/OWcTQk0ovqOVGmOhOxIa
+	6cLDAesodqH6bipZpjo6DNGBd6Y7MxXlb8FwXx8m5dpemRS03gd0o1VnKYQyuu+TaFM=
+X-Gm-Gg: ASbGncu0OrZcOg4Jp4AAifK9smXmXDoYIMtQ5kolxPBwnE1c+yFO/3w0y+Pi3Gefm7o
+	Kf5F8VPsQ1lIbtOwg+KuH3dx27b+6YP7/KUVjn8DAsHglRu27lClz3Qm33tV7sVl21kWyEx2IVo
+	SgqawwjJ9cqhB2dobm6t60u54AZiE9EMf672VYqIYrujW7YFyvWl7vl66e12OKJQbXtCNWECGui
+	nt4SA46DJlkqA6Cbjq8ixbwICuOwRHh0080pZkQvYGZa5GVDUkhYVskIuvpH9Y8fj4/nLM8SlhM
+	g3UosA+X5YFw5M3k+N3WeaYV0CcIgAhrUAYDj5IxYUO0OvmchTVUZ6Mf2pcjkuuxm+WRF54mW45
+	VNuq8f+cBqFJGxJqrPJX4FZwjBJjSS/+1fZXhTay7ctQnT0PB4moXSPlt7gREOIksDOBtmhkoY0
+	6iHDIoRQ==
+X-Google-Smtp-Source: AGHT+IFVO69NK6TLVDV9V9ARXGldGhKQ7IorXlDR8Y5hpNvYSeqRuAaCbC3iULGdQkY9+PrDjKAl7g==
+X-Received: by 2002:a05:6000:2181:b0:3a5:52cc:5e29 with SMTP id ffacd0b85a97d-3b5f18565a3mr10560074f8f.7.1752509545082;
+        Mon, 14 Jul 2025 09:12:25 -0700 (PDT)
+Received: from ?IPV6:2a0d:e487:151f:275b:ea0c:492a:7f48:847e? ([2a0d:e487:151f:275b:ea0c:492a:7f48:847e])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc1fd7sm12606620f8f.26.2025.07.14.09.12.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 09:12:24 -0700 (PDT)
+Message-ID: <ee1dd7e4-c34d-4c94-ab44-b2425adad4e5@linaro.org>
+Date: Mon, 14 Jul 2025 18:12:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] dt-bindings: timer: fsl,ftm-timer: use items for
+ reg
+To: Frank Li <Frank.li@nxp.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Animesh Agarwal <animeshagarwal28@gmail.com>,
+ "open list:CLOCKSOURCE, CLOCKEVENT DRIVERS" <linux-kernel@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>
+Cc: imx@lists.linux.dev
+References: <20250523141437.533643-1-Frank.Li@nxp.com>
+ <aHUhLSDQ/vdrg3hX@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <aHUhLSDQ/vdrg3hX@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2025-07-14 at 07:56 +0200, Primoz Fiser wrote:
-> Hi all,
->=20
-> On 13. 07. 25 17:02, Jonathan Cameron wrote:
-> > On Thu, 10 Jul 2025 10:46:44 -0500
-> > David Lechner <dlechner@baylibre.com> wrote:
-> >=20
-> > > On 7/10/25 2:39 AM, Primoz Fiser wrote:
-> > > > From: Andrej Picej <andrej.picej@norik.com>
-> > > >=20
-> > > > Document i.MX93 ADC calibration properties and how to set them.
-> > > >=20
-> > > > Signed-off-by: Andrej Picej <andrej.picej@norik.com>
-> > > > Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
-> > > > ---
-> > > > =C2=A0.../bindings/iio/adc/nxp,imx93-adc.yaml=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 21 +++++++++++++++++++
-> > > > =C2=A01 file changed, 21 insertions(+)
-> > > >=20
-> > > > diff --git a/Documentation/devicetree/bindings/iio/adc/nxp,imx93-
-> > > > adc.yaml b/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.=
-yaml
-> > > > index c2e5ff418920..d1c04cf85fe6 100644
-> > > > --- a/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
-> > > > +++ b/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
-> > > > @@ -52,6 +52,27 @@ properties:
-> > > > =C2=A0=C2=A0 "#io-channel-cells":
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0 const: 1
-> > > > =C2=A0
-> > > > +=C2=A0 nxp,calib-avg-en:
-> > > > +=C2=A0=C2=A0=C2=A0 default: 1
-> > > > +=C2=A0=C2=A0=C2=A0 description:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Enable or disable calibration avera=
-ging function (AVGEN).
-> > > > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32
-> > > > +=C2=A0=C2=A0=C2=A0 enum: [ 0, 1 ]
-> > > > +
-> > > > +=C2=A0 nxp,calib-nr-samples:
-> > > > +=C2=A0=C2=A0=C2=A0 default: 512
-> > > > +=C2=A0=C2=A0=C2=A0 description:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Selects number of samples (NRSMPL) =
-to be used during calibration.
-> > > > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32
-> > > > +=C2=A0=C2=A0=C2=A0 enum: [ 16, 32, 128, 512 ]
-> >=20
-> > Allow 1 as a value and drop the enabled above.=C2=A0=C2=A0 Averaging ov=
-er 1 sample
-> > is same as no averaging and gives simpler binding.
-> >=20
-> > > > +
-> > > > +=C2=A0 nxp,calib-t-sample:
-> > > > +=C2=A0=C2=A0=C2=A0 default: 22
-> > > > +=C2=A0=C2=A0=C2=A0 description:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Selects sample time (TSAMP) of cali=
-bration conversions in ADC
-> > > > clock cycles
-> > > > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32
-> > > > +=C2=A0=C2=A0=C2=A0 enum: [ 8, 16, 22, 32 ]
-> > > > +
-> > > > =C2=A0required:
-> > > > =C2=A0=C2=A0 - compatible
-> > > > =C2=A0=C2=A0 - reg=C2=A0=20
-> > >=20
-> > > This seem like things that should be set at runtime rather than
-> > > in the devicetree. Unless there is some justification on why
-> > > these values depend on how the chip is wired up?
->=20
-> It depends how ADC 1.8V Vref is wired up, especially how noisy it is.
->=20
-> >=20
-> > Further to that, I'd like to see some explanation of why we care
-> > to change it at all. Is it ever a bad idea to enable averaging and
-> > pick a large number of samples for calibration?
->=20
-> This is a snippet from the i.MX93 TRM, chapter Analog-to-Digital
-> Converter (SAR_ADC) describing calibration steps:
->=20
-> 1. Wait for deassertion of functional reset.
-> 2. Configure SAR controller operating clock (MCR[ADCLKSE] =3D 0).
-> 3. Bring ADC out of Power-down state (MCR[PWDN] =3D 0).
-> 4. Configure desired calibration settings (default values kept for
-> highest accuracy maximum time).
-> =E2=80=A2 MCR[TSAMP]: Sample time for calibration conversion
-> =E2=80=A2 MCR[NRSMPL]: Number of samples in averaging
-> =E2=80=A2 MCR[AVGEN]: Averaging function enable in calibration
-> 5. Run calibration by writing a one to MCR[CALSTART].
-> 6. Check calibration run status in MSR[CALBUSY]=E2=80=94wait until MSR[CA=
-LBUSY]
-> =3D 0; alternatively, MSR[ADCSTAT] can be
-> used to check status.
-> 7. Check calibration pass/fail status in MSR[CALFAIL] field. If
-> MSR[CALFAIL] =3D 1 then calibration failed. Detailed status
-> can be checked in CALSTAT.
->=20
->=20
-> See point 4).
->=20
-> Not sure why would there be an option to configure i.MX93 ADC
-> calibration parameters if one use-case (max accuracy max time) to rule
-> them all?
->=20
+On 7/14/25 17:24, Frank Li wrote:
+> On Fri, May 23, 2025 at 10:14:37AM -0400, Frank Li wrote:
+>> The original txt binding doc is:
+>>    reg : Specifies base physical address and size of the register sets for
+>>          the clock event device and clock source device.
+>>
+>> And existed dts provide two reg MMIO spaces. So change to use items to
+>> descript reg property.
+>>
+>> Update examples.
+>>
+>> Fixes: 8fc30d8f8e86 ("dt-bindings: timer: fsl,ftm-timer: Convert to dtschema")
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> 
+> Daniel Lezcano Or Rob
+> 
+> Krzysztof Kozlowski already reviewed. Could you place pick this one?
 
-Sometimes HW guys just want to give you some options. Does not mean we have=
- to
-use them all :).
 
-I guess what Jonathan is interested in, is to understand in what conditions=
- the
-defaults are no good for the calibration? If we can have a set of values th=
-at
-should pretty much always work, no need to further complicate the bindings =
-or
-the driver.
+Yes
 
-- Nuno S=C3=A1=20
-> On the other hand, public TRM doesn't give much more information and
-> >=20
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
