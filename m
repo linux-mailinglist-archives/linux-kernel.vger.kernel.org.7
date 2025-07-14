@@ -1,125 +1,136 @@
-Return-Path: <linux-kernel+bounces-729649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2EF6B039B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:41:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11CA1B039B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DF741896EDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:41:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AF4F174214
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6081123B624;
-	Mon, 14 Jul 2025 08:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C5523BD0C;
+	Mon, 14 Jul 2025 08:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="HZihgED6"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m0Fex4el"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE1F72600;
-	Mon, 14 Jul 2025 08:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C348572600;
+	Mon, 14 Jul 2025 08:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752482460; cv=none; b=A6S+nl2KZWEoT5xTKKs4EUQ7mR1/r9vsJmALoobySj8DE3vfVVYC7/MYbBsdzTvcozu/BFVYAsb0O1YjM05yB4ak9NaAteJ4xXGgNLoRwYVT9jrqaAEKYx3T+B7mA1ZEtIfg8WTOHhjQy4aE0ZEaHJ+8fujwtVpAydH8KIYuWqU=
+	t=1752482482; cv=none; b=aHcVeLfmr8O8sj3vPmiHsmbrV/27Cvq3e598aBjOae1hxhFpjy5tTw6duP1gr/3ywZFWqJnOOJKj9yx+UbERJVl63yq/MvNvEEw1ieOHB5d1eBnFDpMTLmeBix+uIzUA3Tyue1tEdyzepXtsacG7Mf6L4gxs/RRUxHGZjqacf4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752482460; c=relaxed/simple;
-	bh=v2VRkts/Zx1rF43HvxXtnSPcGoYdWgjg2pLAEYFvqN0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GFWfNpVcgKejuyrVdw3Iv1b6mubgeoE6e8+B1OCU533KdU3+oTZsWoMulGFzIhQxIVpWYnUvIQAj5HaC+dFGft3b+a5TGAFlJXv1rUMAOmA7muMMjuNAliRL0urSvB98OzXxLXJSZViUz0dOMI3ZQECqfTrBN67dBKm+Je3sOOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=HZihgED6; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+	s=arc-20240116; t=1752482482; c=relaxed/simple;
+	bh=AFPbbQKmFQzEKr3gkNtMVTXj/EvD9hFsVfOvP1+bCnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Na+Las4VrcO1SYdHVTb8zmo7GuG+LPT6jlsYSH7hQnkOXggNtmmD3h3MVIgH5DlrKH+NYh7fbcYP9R1V9bGYP5d+iYV9uLcldNOUwbwNx9LGIurGzX2rNzqbIDn8swOe7PMwwDea4OMky+q2C1/sWDQ82/xqADjpQM/iibb3qWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m0Fex4el; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=b3rN+WlnOjw8gvJly9EwRFG9AjBWEoJiVEl4e+5e7rE=; t=1752482457; x=1753087257; 
-	b=HZihgED6AZOCKV6KL6z3GTR/1TCHEU0bzZzpky0KS3MPclgZmwNQpPChSG3i6CNc0ejiCjNbL1G
-	dMwJ470kN9wOpYtfTEMgs6QMXe+bdlqOgi/k/D0ZrIqG61xqsIOwwciY/U8g/kZrnsPn+rQzN8hVd
-	1mVIVDzlAsZ11CrogBHNGGLFxifQLDSsOtktDRbDAy7BPXKnqYjXm2c1tQ2vnO8C4sYtyvWEl86bt
-	GVbIMZRKuKxKdASXqpCs9wtw7C3xueMFuHOlr4U4Ci+SnTw1nQToCCqw2CP+ECz9y/OxvsS7XXMOV
-	7NRGgcqeey8T1ziSOgpMmKY3FqZ/VvgB7uZA==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1ubEjx-00000003jKN-2XH2; Mon, 14 Jul 2025 10:40:49 +0200
-Received: from p57bd96d0.dip0.t-ipconnect.de ([87.189.150.208] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1ubEjx-00000002vEm-1K9l; Mon, 14 Jul 2025 10:40:49 +0200
-Message-ID: <d5fb6ea95666737c15069abd4d011571c95d7ae6.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 1/2] vdso: sparc: stub out custom vdso implementation
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Arnd Bergmann <arnd@arndb.de>, Andreas Larsson <andreas@gaisler.com>, 
- Arnd Bergmann <arnd@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Thomas =?ISO-8859-1?Q?Wei=DFschuh?=	 <thomas.weissschuh@linutronix.de>,
- "David S . Miller" <davem@davemloft.net>
-Cc: Andy Lutomirski <luto@kernel.org>, Vincenzo Frascino	
- <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>, Anna-Maria Gleixner	
- <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, John
- Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, Catalin
- Marinas	 <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Eric
- Biggers	 <ebiggers@google.com>, sparclinux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Mon, 14 Jul 2025 10:40:48 +0200
-In-Reply-To: <ba62bc7b-fa3e-4f34-a966-cc734468b8ef@app.fastmail.com>
-References: <20250707144726.4008707-1-arnd@kernel.org>
-	 <a2cfee1a725f24f90937f070eacdedd2716ef307.camel@physik.fu-berlin.de>
-	 <5c479b4d-65f1-466e-a79e-43f6dfc9345c@app.fastmail.com>
-	 <6b77e7da8c0bd6f211685bda9f624f8db971bbe1.camel@physik.fu-berlin.de>
-	 <7e29bcc1-3dc7-40f8-84f0-fbe497fb01bf@gaisler.com>
-	 <ba62bc7b-fa3e-4f34-a966-cc734468b8ef@app.fastmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ntm/LBdN0S4A30B4dtjj6Gi3D4WZTRJ/GjFERQMn/X8=; b=m0Fex4elzthcxje6BpwIB1OJFt
+	DxAnz00XadX762HYwhvoDGS6bm7yg0uDfun42d7VpkLat3Xl169ONIioag1snENPlMRwfkGhsOMNz
+	17x+6k3MlOuZtKK6kkFmBxANAcw70r3FLWsXyoqqjeuydnL7Fghd93cbbDjasSA8au5yaQRjJW4nA
+	TTvcpivhmtCBf5lJNSLD1SJbOKJ0X+01d/l15y1uwm5KQBqwZ0yeMrhVfCMY41bEgO4bPQRX93l26
+	KnMR60RbOQ5G0nyqmg2vuferp+dFzxYxy/Z46ooLINuBqoTgkT+HNH3nm7KEzQXgQd7DeX2/x48Fe
+	6ZH9OJoQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ubEkJ-00000009iX6-27Og;
+	Mon, 14 Jul 2025 08:41:11 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1EAD93001AA; Mon, 14 Jul 2025 10:41:10 +0200 (CEST)
+Date: Mon, 14 Jul 2025 10:41:09 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lujialin4@huawei.com, chenridong@huawei.com
+Subject: Re: [PATCH next] cpuset: fix warning when attaching tasks with
+ offline CPUs
+Message-ID: <20250714084109.GK905792@noisy.programming.kicks-ass.net>
+References: <20250714032311.3570157-1-chenridong@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714032311.3570157-1-chenridong@huaweicloud.com>
 
-Hello Arnd,
+On Mon, Jul 14, 2025 at 03:23:11AM +0000, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+> 
+> A kernel warning was observed in the cpuset migration path:
+> 
+>     WARNING: CPU: 3 PID: 123 at kernel/cgroup/cpuset.c:3130
+>     cgroup_migrate_execute+0x8df/0xf30
+>     Call Trace:
+>      cgroup_transfer_tasks+0x2f3/0x3b0
+>      cpuset_migrate_tasks_workfn+0x146/0x3b0
+>      process_one_work+0x5ba/0xda0
+>      worker_thread+0x788/0x1220
+> 
+> The issue can be reliably reproduced with:
+> 
+>     # Setup test cpuset
+>     mkdir /sys/fs/cgroup/cpuset/test
+>     echo 2-3 > /sys/fs/cgroup/cpuset/test/cpuset.cpus
+>     echo 0 > /sys/fs/cgroup/cpuset/test/cpuset.mems
+> 
+>     # Start test process
+>     sleep 100 &
+>     pid=$!
+>     echo $pid > /sys/fs/cgroup/cpuset/test/cgroup.procs
+>     taskset -p 0xC $pid  # Bind to CPUs 2-3
+> 
+>     # Take CPUs offline
+>     echo 0 > /sys/devices/system/cpu/cpu3/online
+>     echo 0 > /sys/devices/system/cpu/cpu2/online
+> 
+> Root cause analysis:
+> When tasks are migrated to top_cpuset due to CPUs going offline,
+> cpuset_attach_task() sets the CPU affinity using cpus_attach which
+> is initialized from cpu_possible_mask. This mask may include offline
+> CPUs. When __set_cpus_allowed_ptr() computes the intersection between:
+> 1. cpus_attach (possible CPUs, may include offline)
+> 2. p->user_cpus_ptr (original user-set mask)
+> The resulting new_mask may contain only offline CPUs, causing the
+> operation to fail.
+> 
+> The fix changes cpus_attach initialization to use cpu_active_mask
+> instead of cpu_possible_mask, ensuring we only consider online CPUs
+> when setting the new affinity. This prevents the scenario where
+> the intersection would result in an invalid CPU set.
+> 
+> Fixes: da019032819a ("sched: Enforce user requested affinity")
+> Reported-by: Yang Lijin <yanglijin@huawei.com>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> ---
+>  kernel/cgroup/cpuset.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index f74d04429a29..5401adbdffa6 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -3121,7 +3121,7 @@ static void cpuset_attach_task(struct cpuset *cs, struct task_struct *task)
+>  	if (cs != &top_cpuset)
+>  		guarantee_active_cpus(task, cpus_attach);
+>  	else
+> -		cpumask_andnot(cpus_attach, task_cpu_possible_mask(task),
+> +		cpumask_andnot(cpus_attach, cpu_active_mask,
+>  			       subpartitions_cpus);
 
-On Fri, 2025-07-11 at 12:31 +0200, Arnd Bergmann wrote:
-> It is probably not all that hard to convert the VDSO to use the
-> generic implementation if you remove the runtime patching between
-> TICK and STICK mode. From the code and the documentation, it
-> seems that any JPS1 compatible CPU (or newer) uses STICK,
-> this would be UltraSPARC III (Cheetah), SPARC64 V (Zeus)
-> and all UltraSPARC T. If you want to give it a try to do the
-> conversion to the generic VDSO, I could respin my patch to only
-> remove the older TICK version and the runtime patching but leave
-> the STICK one. I don't think it's worth my time trying to convert
-> STICK myself since I have no way of testing it.
-
-I could create an account for you on the SPARC T4 that Andreas is
-currently using for testing, so you could test these changes on real
-hardware (Linux LDOM running on Solaris 11.4).
-
-In about one month, I could also create an account for you on a SPARC T5
-which is much faster and where you have more RAM and disk space available
-for testing.
-
-Please send me a private email if you're interested.
-
-I can also help with other architectures such as SuperH, MIPS, PowerPC or
-Alpha. All on real hardware.
-
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+This breaks things. Any task mask must be a subset of
+task_cpu_possible_mask() at all times. It might not be able to run
+outside of that mask.
 
