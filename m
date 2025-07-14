@@ -1,224 +1,198 @@
-Return-Path: <linux-kernel+bounces-730281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C45B0424B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:57:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D44FB0424E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26E8A7AA0B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:55:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D0BD3A7583
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5BF259C83;
-	Mon, 14 Jul 2025 14:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OxlVJYU9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C25E25A333;
+	Mon, 14 Jul 2025 14:57:10 +0000 (UTC)
+Received: from smtp232.sjtu.edu.cn (smtp232.sjtu.edu.cn [202.120.2.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772B224E4AD;
-	Mon, 14 Jul 2025 14:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C570259CB0;
+	Mon, 14 Jul 2025 14:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.120.2.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752505005; cv=none; b=FnkVT2wX7rA300kkoGnqL90iyVlm7kR8HTDy3L9W8a3qVCLevjl9I+fk9gSDlO0qeD015poOyrKWtnSikq/mn25jZ9zvswkuT4fAf1mtRp99vHmShUGIl6yFvtgtoZsVQcaIWQbEhTRButpZ3FUCUx9JBgJ8z7B0fE8nLkA7xAo=
+	t=1752505029; cv=none; b=ZV/aR09l2nrX94WVE2T5saJVHal6MZoAWe3arbsYlx0SLaWE75xER8qz6gA958o0CuoLKCl9b0354ipCfOW9d1pvZPEa4CjQUUIvDyO5ssOOZlry1kXPGHLg2ALCY5bm43y1uvuT1TF3ZGkGgzHFg5uJfbgLyb6U8gRkJyQOjGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752505005; c=relaxed/simple;
-	bh=603QU5t2EV5T1tw1hCkBQXZ4TlGTcXH3cQEDUeEh1P4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bH/A2kw0iwXdN6BwaE2+uDHOsic/pROYWDfON7a+pyeq4NKhqUx9gqdlnT+jbl5cU0yK4hW/PE0HMDaPOMUE3Fv1vy01tLqE6WwNqu3z2wdNxS5VNYkUEtV1W6P4sqfI/LwQnJqGTauBPnLMYjDVpxOtngAgXFwCrI9LLmDRBR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OxlVJYU9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35D28C4CEED;
-	Mon, 14 Jul 2025 14:56:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752505005;
-	bh=603QU5t2EV5T1tw1hCkBQXZ4TlGTcXH3cQEDUeEh1P4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=OxlVJYU9dFpuJT5A7474EhhBynMHnCS1VzDTP7agtlH6C7+5du+Wy48NktA8GISCK
-	 9lCcE8XO99SvvMcCqb9CvXol3Ev5sBC18mCbb3bijyaxM8fLd4c+1uJoOGYhcnpNzq
-	 Z7PPhsAOITr+dR2NXmgR0ROZaDGD9w8e7en6334b6/eP3YU63VrtjvITsMT9jgmfae
-	 4CdBlDfCt3jvwbffeYgJrquh595/AeC07U3rqjrxf2G6IOU8sn6hXedDDDDySRokUZ
-	 EqHGd0Mmwl+kloVP4Anui9N7GeSQvQxzmCPXwzO1jbw4MoVwUHolomYcZAa7UZBsDS
-	 P1U3S7K8FAFsQ==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: David Matlack <dmatlack@google.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  Christian Brauner
- <brauner@kernel.org>,  Pasha Tatashin <pasha.tatashin@soleen.com>,
-  jasonmiu@google.com,  graf@amazon.com,  changyuanl@google.com,
-  rppt@kernel.org,  rientjes@google.com,  corbet@lwn.net,
-  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
-  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
-  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
-  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
-  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
-  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com
-Subject: Re: [RFC v2 10/16] luo: luo_ioctl: add ioctl interface
-In-Reply-To: <CALzav=dhuoaS73ikufCf2D11Vq=jfMceYv0abdMxOdaHzmVR0g@mail.gmail.com>
-References: <20250515182322.117840-1-pasha.tatashin@soleen.com>
-	<20250515182322.117840-11-pasha.tatashin@soleen.com>
-	<20250624-akzeptabel-angreifbar-9095f4717ca4@brauner>
-	<CA+CK2bBu4ex9O5kPcR7++DVg3RM8ZWg3BCpcc6CboJ=aG8mVmQ@mail.gmail.com>
-	<20250625-akrobatisch-libellen-352997eb08ef@brauner>
-	<CALzav=d+XgS1bUs-v7+ws5nYU9y=4uc1c8oVLHrJ16qLpnUi9Q@mail.gmail.com>
-	<mafs0sejmse57.fsf@kernel.org>
-	<CALzav=dhuoaS73ikufCf2D11Vq=jfMceYv0abdMxOdaHzmVR0g@mail.gmail.com>
-Date: Mon, 14 Jul 2025 16:56:35 +0200
-Message-ID: <mafs04iveu8gs.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1752505029; c=relaxed/simple;
+	bh=CVaX47SHOe4vJ05VeCEEWy1KKUEuNVXFqHTL3r5qeSk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=f/DiWHBoeG/wE23/GF6zE1j3NvEtIHwEiqImvGVJFVpQ61XNXsE2lnKu1KIYo+/Unk1A+dgZbHhfRCCyGNoKNEy+t84cJJADjzbZ2bEDljjiRICsMvBuHgMAgO4fCz+Mq4D8NyHxMscp29/P7wGRlVrnPpfwKGzSqsVbQIYSRYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sjtu.edu.cn; spf=pass smtp.mailfrom=sjtu.edu.cn; arc=none smtp.client-ip=202.120.2.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sjtu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sjtu.edu.cn
+Received: from proxy188.sjtu.edu.cn (smtp188.sjtu.edu.cn [202.120.2.188])
+	by smtp232.sjtu.edu.cn (Postfix) with ESMTPS id 3318710051698;
+	Mon, 14 Jul 2025 22:57:02 +0800 (CST)
+Received: from smtpclient.apple (unknown [202.120.40.82])
+	by proxy188.sjtu.edu.cn (Postfix) with ESMTPSA id B68BC37C929;
+	Mon, 14 Jul 2025 22:56:59 +0800 (CST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [BUG] NULL pointer dereference in sev_writeback_caches during KVM
+ SEV migration kselftest on AMD platform
+From: Zheyun Shen <szy0127@sjtu.edu.cn>
+In-Reply-To: <aHUYwCNDWlsar3qk@google.com>
+Date: Mon, 14 Jul 2025 22:56:44 +0800
+Cc: Srikanth Aithal <sraithal@amd.com>,
+ linux-next@vger.kernel.org,
+ kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <15D0C887-E17F-4432-8716-BF62EEE61B6B@sjtu.edu.cn>
+References: <935a82e3-f7ad-47d7-aaaf-f3d2b62ed768@amd.com>
+ <F7AF073C-D630-45A3-8746-DE66B15FC3E1@sjtu.edu.cn>
+ <aHUYwCNDWlsar3qk@google.com>
+To: Sean Christopherson <seanjc@google.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
 
-Hi David,
+The problem is triggered by the following codes in =
+tools/testing/selftests/kvm/x86/sev_migrate_tests.c:
+static void test_sev_migrate_from(bool es)
+{
+	struct kvm_vm *src_vm;
+	struct kvm_vm *dst_vms[NR_MIGRATE_TEST_VMS];
+	int i, ret;
 
-On Thu, Jun 26 2025, David Matlack wrote:
+	src_vm =3D sev_vm_create(es);
+	for (i =3D 0; i < NR_MIGRATE_TEST_VMS; ++i)
+		dst_vms[i] =3D aux_vm_create(true);
 
-> On Thu, Jun 26, 2025 at 8:42=E2=80=AFAM Pratyush Yadav <pratyush@kernel.o=
-rg> wrote:
->>
->> On Wed, Jun 25 2025, David Matlack wrote:
->>
->> > On Wed, Jun 25, 2025 at 2:36=E2=80=AFAM Christian Brauner <brauner@ker=
-nel.org> wrote:
->> >> >
->> >> > While I agree that a filesystem offers superior introspection and
->> >> > integration with standard tools, building this complex, stateful
->> >> > orchestration logic on top of VFS seemed to be forcing a square peg
->> >> > into a round hole. The ioctl interface, while more opaque, provides=
- a
->> >> > direct and explicit way to command the state machine and manage the=
-se
->> >> > complex lifecycle and dependency rules.
->> >>
->> >> I'm not going to argue that you have to switch to this kexecfs idea
->> >> but...
->> >>
->> >> You're using a character device that's tied to devmptfs. In other wor=
-ds,
->> >> you're already using a filesystem interface. Literally the whole code
->> >> here is built on top of filesystem APIs. So this argument is just very
->> >> wrong imho. If you can built it on top of a character device using VFS
->> >> interfaces you can do it as a minimal filesystem.
->> >>
->> >> You're free to define the filesystem interface any way you like it. We
->> >> have a ton of examples there. All your ioctls would just be tied to t=
-he
->> >> fileystem instance instead of the /dev/somethingsomething character
->> >> device. The state machine could just be implemented the same way.
->> >>
->> >> One of my points is that with an fs interface you can have easy state
->> >> seralization on a per-service level. IOW, you have a bunch of virtual
->> >> machines running as services or some networking services or whatever.
->> >> You could just bind-mount an instance of kexecfs into the service and
->> >> the service can persist state into the instance and easily recover it
->> >> after kexec.
->> >
->> > This approach sounds worth exploring more. It would avoid the need for
->> > a centralized daemon to mediate the preservation and restoration of
->> > all file descriptors.
->>
->> One of the jobs of the centralized daemon is to decide the _policy_ of
->> who gets to preserve things and more importantly, make sure the right
->> party unpreserves the right FDs after a kexec. I don't see how this
->> interface fixes this problem. You would still need a way to identify
->> which kexecfs instance belongs to who and enforce that. The kernel
->> probably shouldn't be the one doing this kind of policy so you still
->> need some userspace component to make those decisions.
->
-> The main benefits I see of kexecfs is that it avoids needing to send
-> all FDs over UDS to/from liveupdated and therefore the need for
-> dynamic cross-process communication (e.g. RPCs).
->
-> Instead, something just needs to set up a kexecfs for each VM when it
-> is created, and give the same kexecfs back to each VM after kexec.
-> Then VMs are free to save/restore any FDs in that kexecfs without
-> cross-process communication or transferring file descriptors.
+	/* Initial migration from the src to the first dst. */
+	sev_migrate_from(dst_vms[0], src_vm);
 
-Isn't giving back the right kexecfs instance to the right VMM the main
-problem? After a kexec, you need a way to make that policy decision. You
-would need a userspace agent to do that.
+	for (i =3D 1; i < NR_MIGRATE_TEST_VMS; i++)
+		sev_migrate_from(dst_vms[i], dst_vms[i - 1]);
 
-I think what you are suggesting does make a lot of sense -- the agent
-should be handing out sessions instead of FDs, which would make FD
-save/restore simpler for applications. But that can be done using the
-ioctl interface as well. Each time you open() the /dev/liveupdate, you
-get a new session. Instead of file FDs like memfd or iommufs, we can
-have the agent hand out these session FDs and anything that was saved
-using this session would be ready for restoring.
+	/* Migrate the guest back to the original VM. */
+	ret =3D __sev_migrate_from(src_vm, dst_vms[NR_MIGRATE_TEST_VMS - =
+1]);
+	TEST_ASSERT(ret =3D=3D -1 && errno =3D=3D EIO,
+		    "VM that was migrated from should be dead. ret %d, =
+errno: %d", ret,
+		    errno);
 
-My main point is that this can be done with the current interface as
-well as kexecfs. I think there is very much a reason for considering
-kexecfs (like not being dependent on devtmpfs), but I don't think this
-is necessarily the main one.
+	kvm_vm_free(src_vm);
+	for (i =3D 0; i < NR_MIGRATE_TEST_VMS; ++i)
+		kvm_vm_free(dst_vms[i]);
+}
 
->
-> Policy can be enforced by controlling access to kexecfs mounts. This
-> naturally fits into the standard architecture of running untrusted VMs
-> (e.g. using chroots and containers to enforce security and isolation).
+I add some logs in kvm and following shows the result:
+[   51.618135] sev guest init kvm:ff177f272432e000                       =
+                                                          =20
+[   51.627235] kvm destory vm kvm:ff177f272432e000                       =
+                                                           =20
+[   51.628011] kvm destory vm mmu notifier unregister =
+kvm:ff177f272432e000                                                     =
+    =20
+[   51.642840] kvm destory vm arch destory vm kvm:ff177f272432e000       =
+                                                          =20
+[   51.673612] vm destory x86                                            =
+                                                          =20
+[   51.673957] svm vm destory                                            =
+                                                          =20
+[   51.674401] kvm destory vm kvm:ff177f272432c000                       =
+                                                           =20
+[   51.675152] kvm destory vm mmu notifier unregister =
+kvm:ff177f272432c000                                                     =
+    =20
+[   51.675981] kvm destory vm arch destory vm kvm:ff177f272432c000       =
+                                                          =20
+[   51.715937] vm destory x86                                            =
+                                                          =20
+[   51.716289] svm vm destory                                            =
+                                                          =20
+[   51.716754] kvm destory vm kvm:ff177f272432a000                       =
+                                                           =20
+[   51.717530] kvm destory vm mmu notifier unregister =
+kvm:ff177f272432a000                                                     =
+    =20
+[   51.718363] kvm destory vm arch destory vm kvm:ff177f272432a000       =
+                                                          =20
+[   51.746672] vm destory x86
+[   51.747018] svm vm destory
+[   51.747454] kvm destory vm kvm:ff177f2724328000
+[   51.748219] kvm destory vm mmu notifier unregister =
+kvm:ff177f2724328000
+[   51.749033] BUG: kernel NULL pointer dereference, address: =
+0000000000000000
+[   51.749885] #PF: supervisor read access in kernel mode
+[   51.750519] #PF: error_code(0x0000) - not-present page
 
-How? After a kexec, how do you tell which process can get which kexecfs
-mount/instance? If any of them can get any, then we lose all sort of
-policy enforcement.
+It seems that the cpumask structure is not transferred correctly from =
+ff177f272432e000 to ff177f2724328000.
+But unfortunately I=E2=80=99m not familiar with SEV migration. I need to =
+spend some time looking into how SEV=20
+migration works in order to solve this issue.
 
->
->>
->> >
->> > I'm not sure that we can get rid of the machine-wide state machine
->> > though, as there is some kernel state that will necessarily cross
->> > these kexecfs domains (e.g. IOMMU driver state). So we still might
->> > need /dev/liveupdate for that.
->>
->> Generally speaking, I think both VFS-based and IOCTL-based interfaces
->> are more or less equally expressive/powerful. Most of the ioctl
->> operations can be translated to a VFS operation and vice versa.
->>
->> For example, the fsopen() call is similar to open("/dev/liveupdate") --
->> both would create a live update session which auto closes when the FD is
->> closed or FS unmounted. Similarly, each ioctl can be replaced with a
->> file in the FS. For example, LIVEUPDATE_IOCTL_FD_PRESERVE can be
->> replaced with a fd_preserve file where you write() the FD number.
->> LIVEUPDATE_IOCTL_GET_STATE or LIVEUPDATE_IOCTL_PREPARE, etc. can be
->> replaced by a "state" file where you can read() or write() the state.
->>
->> I think the main benefit of the VFS-based interface is ease of use.
->> There already exist a bunch of utilites and libraries that we can use to
->> interact with files. When we have ioctls, we would need to write
->> everything ourselves. For example, instead of
->> LIVEUPDATE_IOCTL_GET_STATE, you can do "cat state", which is a bit
->> easier to do.
->>
->> As for downsides, I think we might end up with a bit more boilerplate
->> code, but beyond that I am not sure.
->
-> I agree we can more or less get to the same end state with either
-> approach. And also, I don't think we have to do one or the other. I
-> think kexecfs is something that we can build on top of this series.
-> For example, kexecfs would be a new kernel subsystem that registers
-> with LUO.
+Thanks,
+Zheyun Shen
 
-Yeah, fair point. Though I'd rather we agree on one and go with that.
-Having two interfaces for the same thing isn't the best.
+> 2025=E5=B9=B47=E6=9C=8814=E6=97=A5 22:48=EF=BC=8CSean Christopherson =
+<seanjc@google.com> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> On Mon, Jul 14, 2025, Zheyun Shen wrote:
+>> Hi Aithal,
+>> I can reproduce this issue in my environment, and I will try to =
+resolve it as
+>> soon as possible.
+>=20
+> Phew, that's good, because I can't repro this, and I don't see =
+anything obviously
+> wrong.
+>=20
+>>> 2025=E5=B9=B47=E6=9C=8814=E6=97=A5 13:21=EF=BC=8CAithal, Srikanth =
+<sraithal@amd.com> =E5=86=99=E9=81=93=EF=BC=9A
+>>>=20
+>>> Hello,
+>>>=20
+>>> While running the kselftest for SEV migration (sev_migrate_tes) on
+>>> linux-next (6.16.0-rc5-next-20250711, commit a62b7a37e6) on an =
+AMD-based
+>>> paltforms [Milan,Genoa,Turin], I encountered below kernel crash =
+while
+>>> running kvm kselftests:
+>>>=20
+>>> [ 714.008402] BUG: kernel NULL pointer dereference, address: =
+0000000000000000
+>>> [ 714.015363] #PF: supervisor read access in kernel mode
+>>> [ 714.020504] #PF: error_code(0x0000) - not-present page
+>>> [ 714.025643] PGD 11364b067 P4D 11364b067 PUD 12e195067 PMD 0
+>>> [ 714.031303] Oops: Oops: 0000 [#1] SMP NOPTI
+>>> [ 714.035487] CPU: 14 UID: 0 PID: 16663 Comm: sev_migrate_tes Not =
+tainted 6.16.0-rc5-next-20250711-a62b7a37e6-42f78243e0c #1 =
+PREEMPT(voluntary)
+>>> [ 714.048253] Hardware name: Dell Inc. PowerEdge R6515/07PXPY, BIOS =
+2.17.0 12/04/2024
+>>> [ 714.055905] RIP: 0010:_find_first_bit+0x1d/0x40
+>=20
+> ..
+>=20
+>>> [ 714.148307] ? sev_writeback_caches+0x25/0x40 [kvm_amd]
+>>> [ 714.153544] sev_guest_memory_reclaimed+0x34/0x40 [kvm_amd]
+>>> [ 714.159115] kvm_arch_guest_memory_reclaimed+0x12/0x20 [kvm]
+>>> [ 714.164817] kvm_mmu_notifier_release+0x3c/0x60 [kvm]
+>>> [ 714.169896] mmu_notifier_unregister+0x53/0xf0
+>>> [ 714.174343] kvm_destroy_vm+0x12d/0x2d0 [kvm]
+>>> [ 714.178727] kvm_vm_stats_release+0x34/0x60 [kvm]
+>>> [ 714.183459] __fput+0xf2/0x2d0
+>>> [ 714.186520] fput_close_sync+0x44/0xa0
+>>> [ 714.190269] __x64_sys_close+0x42/0x80
+>>> [ 714.194024] x64_sys_call+0x1960/0x2180
+>>> [ 714.197861] do_syscall_64+0x56/0x1e0
+>>> [ 714.201530] entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
---=20
-Regards,
-Pratyush Yadav
 
