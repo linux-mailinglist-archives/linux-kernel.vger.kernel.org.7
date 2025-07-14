@@ -1,91 +1,119 @@
-Return-Path: <linux-kernel+bounces-729272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90796B03427
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 03:21:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7FD7B03419
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 03:06:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D97591899F9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:22:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F0A9177CAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6B418FDD2;
-	Mon, 14 Jul 2025 01:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FN9Ed2VK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F52718A6A7;
+	Mon, 14 Jul 2025 01:06:03 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4501CD0C
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 01:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0971FC3;
+	Mon, 14 Jul 2025 01:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752456113; cv=none; b=Xec4Dle4YOZXlnkSuBZEK0FxoEZiEff8gG/WT9QrEgWhlWzrCZ0D7O5Vv9OcH83HR3Eo5tez0/nbXH35usRmM0a5gnuXDR0nV1adV7sHp+ryxjDRoSaJbq0iPFkqHLr2JKarEpfwJeJjGG9Ci+WNBYYVdUeJ9yqLLyA1gYhJSUs=
+	t=1752455162; cv=none; b=uNvs2W8RWXQUSZd2ieAsGmp0v04mBvNaGb4sKsPKC90AHdg2s9l5La17VxKsCj4IHULVoUdJoeBDN8oFQvwV1+QxfSjVde7bUuNYoHZdQegw3292h6YMSr0F2vEGKKjbWELniyKQjzg57nOUtDr530XoJY2RtVcKsbvL+zOsb8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752456113; c=relaxed/simple;
-	bh=XAud1Pv31eLsYz+orMn2BbAo72VanMQHTQvVzidaRao=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S69OvxrScSxw8slG/MeDUtqgkl4OIou0ahEY8OolBAZXl5FJVmhbFDbCTp6av3OYHpDGlwiWKwKnmTfn2I3XaAYacmMtxdU/8fQTLH94QayhV0dkCuXa10nnUnDtyWzPzKzMF2EGKok2NShBl0U0opYGhTuS42SRlImhrrfd5S0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FN9Ed2VK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F455C4CEE3;
-	Mon, 14 Jul 2025 01:21:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752456113;
-	bh=XAud1Pv31eLsYz+orMn2BbAo72VanMQHTQvVzidaRao=;
-	h=From:To:Cc:Subject:Date:From;
-	b=FN9Ed2VKhjH7gbh0whR3mxRzJOjpRohYEyP8bcQG72SRSuFeX1H/n0QQ52V6JlHAK
-	 eiUW9veLRJT+3cd3vf74uw/YkDPqOW9diLJ6TpZx0RklfvA9BKt7yqDZUNnYcXxT8H
-	 Jbyc5VQIY0xwgJ7R556tGlg1sfQTIMhNPIUHVYAZEUrTmohWsPAPU/NLA1Rjrj/bvm
-	 vAzSRtQ2rvndv+pnys5XaDalo5qWvfkLwI5cz1od8u7Mpj58sTKVg6Xf5XTo+UlQ1n
-	 A9VF4IgNifjJOVSERFB+iu0Zv3SoGeVrBLYzWLQALy7o+IVXIKEkwo55Ot3BqGc97+
-	 rHWHrxclyYF2g==
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] regulator: tps6286x-regulator: Fix a copy & paste error
+	s=arc-20240116; t=1752455162; c=relaxed/simple;
+	bh=bJRJQ30ihyl+2uSUUGcMy1ghyKNWXsYlVJ4mGZwrp8k=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=MuspcsX0Pqz4Cr9t/mFKgwgPPn1kLIEPkOKzES3V2rpR0YazF6bClh1dXzSGKyT5jcS0BGlB3kJDD7XPoDiIxNQaGZrcPN/GJdS9gLtRUXtyv8eVZiX4PjIuBsbqhDJsE6imQYUeaf9DvngP7yFHtZUW8yWbYXCfKfVqADZY2ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bgPFF44xCz2FbNt;
+	Mon, 14 Jul 2025 09:02:57 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5CDA7140277;
+	Mon, 14 Jul 2025 09:04:58 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 14 Jul 2025 09:04:57 +0800
+Message-ID: <df1c269a-085a-47cc-83ef-294ea84b98a2@huawei.com>
 Date: Mon, 14 Jul 2025 09:04:56 +0800
-Message-ID: <20250714010456.4906-1-jszhang@kernel.org>
-X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
+	<shenjian15@huawei.com>, <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <arnd@kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 net-next 00/11] net: hns3: use seq_file for debugfs
+To: Simon Horman <horms@kernel.org>
+References: <20250711061725.225585-1-shaojijie@huawei.com>
+ <20250712121920.GX721198@horms.kernel.org>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <20250712121920.GX721198@horms.kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-The volatile_reg function is named as tps6287x_volatile_reg by mistake
-when enabing the REGCACHE_MAPLE support.
 
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
----
- drivers/regulator/tps6286x-regulator.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+on 2025/7/12 20:19, Simon Horman wrote:
+> On Fri, Jul 11, 2025 at 02:17:14PM +0800, Jijie Shao wrote:
+>> Arnd reported that there are two build warning for on-stasck
+>> buffer oversize. As Arnd's suggestion, using seq file way
+>> to avoid the stack buffer or kmalloc buffer allocating.
+>>
+>> ---
+>> ChangeLog:
+>> v1 -> v2:
+>>    - Remove unused functions in advance to eliminate compilation warnings, suggested by Jakub Kicinski
+>>    - Remove unnecessary cast, suggested by Andrew Lunn
+>>    v1: https://lore.kernel.org/all/20250708130029.1310872-1-shaojijie@huawei.com/
+>> ---
+>>
+>> Jian Shen (5):
+>>    net: hns3: clean up the build warning in debugfs by use seq file
+>>    net: hns3: use seq_file for files in queue/ in debugfs
+>>    net: hns3: use seq_file for files in tm/ in debugfs
+>>    net: hns3: use seq_file for files in tx_bd_info/ and rx_bd_info/ in
+>>      debugfs
+> Thanks for the update, but unfortunately I don't think this is enough.
+>
+> W=1 builds with bouth Clang 20.1.7 and GCC 15.1.0 warn that
+> hns3_dbg_fops is unused with the patch (10/11) above applied.
+>
+>>    net: hns3: remove the unused code after using seq_file
+> I suspect this patch (11/11) needs to be squashed into the previous one (10/11).
+>
+> ...
 
-diff --git a/drivers/regulator/tps6286x-regulator.c b/drivers/regulator/tps6286x-regulator.c
-index 778f169b0acc..e29aab06bf79 100644
---- a/drivers/regulator/tps6286x-regulator.c
-+++ b/drivers/regulator/tps6286x-regulator.c
-@@ -25,7 +25,7 @@
- #define TPS6286X_MAX_MV		1675
- #define TPS6286X_STEP_MV	5
- 
--static bool tps6287x_volatile_reg(struct device *dev, unsigned int reg)
-+static bool tps6286x_volatile_reg(struct device *dev, unsigned int reg)
- {
- 	return reg == TPS6286X_STATUS;
- }
-@@ -34,7 +34,7 @@ static const struct regmap_config tps6286x_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
- 	.cache_type = REGCACHE_MAPLE,
--	.volatile_reg = tps6287x_volatile_reg,
-+	.volatile_reg = tps6286x_volatile_reg,
- };
- 
- static int tps6286x_set_mode(struct regulator_dev *rdev, unsigned int mode)
--- 
-2.50.0
+Yes, it looks like so...
+
+However, in this case, the operation of patch10 is not singular.
+It modified a debugfs file through a patch while also removing unused code frameworks.
+
+In fact, this warning was cleared in patch 11...
+
+...
+
+I will merge patch 11 into patch 10 in v3.
+
+Thanks,
+Jijie Shao
+
+
+
+
+
+
+
 
 
