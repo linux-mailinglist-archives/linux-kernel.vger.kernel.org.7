@@ -1,89 +1,86 @@
-Return-Path: <linux-kernel+bounces-729368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75FDEB03583
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:15:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E7A0B03587
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B637B189A3CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:16:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9BA7189A357
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F101D1FDA97;
-	Mon, 14 Jul 2025 05:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D48D1F582E;
+	Mon, 14 Jul 2025 05:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gcBqUR+5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="dkEP3VwA"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551CF1F4CBB;
-	Mon, 14 Jul 2025 05:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBE734CF9;
+	Mon, 14 Jul 2025 05:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752470147; cv=none; b=DwJpIims0732RZbRukTOzNs0RTJzf63EgwbU8PCgcwtmdqG1/rZyWjd7TTRqPLKY/Ppc+h32eNv/PUfeknG51eIRg2v4pYHJJfTcuQcheoIqlEI1FfjS4YorgBInMYUYv5hyN/Pq/htR9HaGztOFwhOlMu2gwmRxa2mtcbVbbjU=
+	t=1752470503; cv=none; b=oqoBaviWzmVGriVm0YGONrtthOSTUOWHxIuAtlwzZxqzk76buxk0EgZxeNRE15fh9tyNMXbm01kq+DcYR42lVtw5v+XXqxV9xB2fMJxwyS9blbcWHEmSJJf8jGohERFYm+hQgZJe/gjKURSERxRiqwnilPtfF+yKprsWcMX6RwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752470147; c=relaxed/simple;
-	bh=thh1XgY/SVk5OpwWCUhi4ogjwQf9J3PUZtkRf2Su1ow=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nw9j77VuOnfu9vy17eQT9L901tgNUwsLSoMXWSYeq/FWKOyi1qh97fWevInJNLm1ioXFrrMttBNkXGyU74NDzANF9atk2nuHOiM/THLxvI+sQiD+yrcVcP+irUaHQxvEc28CaC/+a6owf3PnP8xusGy5LBjL/DzUW4eTXDR9Dzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gcBqUR+5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C1B3C4CEF6;
-	Mon, 14 Jul 2025 05:15:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752470146;
-	bh=thh1XgY/SVk5OpwWCUhi4ogjwQf9J3PUZtkRf2Su1ow=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=gcBqUR+5dUHan5NNpsi5kxG8Ia8CSUIebThCjWkt9jAASQ2cNPMJChzFkHwoYa/cT
-	 5r3yElxcJUu6lBXwINpaqy4JXaD7TNNUUjad7+A+0y+7gjbVXNkEwo10mTCcg6iW1n
-	 Ucs+bMhxKXHbSbv1b8p/nPMpaYqn0sUFAKuE4npNNEEhRGfxisaMraf3oeKb/MSs6d
-	 YHD61yblqUPG8mzFVL9ahTenfvjhlV9v2IZA2/GsA+GCOKZvmmrsMmF/2HYig2I2Kq
-	 X0luhNt71g2jHd65czdsLyEVZXjoPHyX30W0bUzDyX8RFIkyqG7HCMvWhtlv7toSom
-	 LUUqcN7mCVSWw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
- Xu Yang <xu.yang_2@nxp.com>, Howard Chu <howardchu95@gmail.com>, 
- "Dr. David Alan Gilbert" <linux@treblig.org>, 
- Levi Yun <yeoreum.yun@arm.com>, Andi Kleen <ak@linux.intel.com>, 
- Thomas Richter <tmricht@linux.ibm.com>, Weilin Wang <weilin.wang@intel.com>, 
- Tiezhu Yang <yangtiezhu@loongson.cn>, 
- Gautam Menghani <gautam@linux.ibm.com>, 
- Thomas Falcon <thomas.falcon@intel.com>, Chun-Tse Shao <ctshao@google.com>, 
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ian Rogers <irogers@google.com>
-In-Reply-To: <20250710235126.1086011-1-irogers@google.com>
-References: <20250710235126.1086011-1-irogers@google.com>
-Subject: Re: [PATCH v2 00/13] Python motivated fixes and cleanup
-Message-Id: <175247014620.2439485.15132380175284657909.b4-ty@kernel.org>
-Date: Sun, 13 Jul 2025 22:15:46 -0700
+	s=arc-20240116; t=1752470503; c=relaxed/simple;
+	bh=/BiSzimMSvNh/AKevqHPH8cH7nKlihij6DZUgRmNu3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zg6agmMHlr3eFU+LLtbTB3yaZzvvfgD7KBMC+L+I+ae2zc40PStb5PK3xaSeWie6oBx70opWWT2Fh/vpUiJ4EuyiII8N0452vIqUnSxXTlcmTWXB70CY0ltCa64JzFBNXQ9j8kTsKVFLy/BCcbGVoKbqp+rpWAxLF12tbwhCM2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=dkEP3VwA; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1752470499;
+	bh=/BiSzimMSvNh/AKevqHPH8cH7nKlihij6DZUgRmNu3I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dkEP3VwA0gFNJxxIsOGau5WreWEW9znwrimCJWF9oX/6y0kHFDbVkfPIU5PJzTwKw
+	 kiKYlArHtDudA4iRLGr4Mnc9NZ2wlA5XJecDsD75ITkaWGsiiblb94MrI+EENyEXD5
+	 yLwzpb1N9f8QBRNEdFBUPq/5EaUzJp1I/EZuCIQ0=
+Date: Mon, 14 Jul 2025 07:21:38 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Richard Henderson <richard.henderson@linaro.org>
+Cc: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>, 
+	Matt Turner <mattst88@gmail.com>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-alpha@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Subject: Re: [PATCH] tools/nolibc: add support for Alpha
+Message-ID: <6cb31334-8b39-4920-810e-de123898a2e0@t-8ch.de>
+References: <20250713-nolibc-alpha-v1-1-10216333d308@weissschuh.net>
+ <ceef9e43-5591-4c03-ba51-af1ccc68a05b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c04d2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ceef9e43-5591-4c03-ba51-af1ccc68a05b@linaro.org>
 
-On Thu, 10 Jul 2025 16:51:13 -0700, Ian Rogers wrote:
-> Various fixes and clean ups done as part of creating the ilist app,
-> the v4 patch series of which is posted here:
-> https://lore.kernel.org/lkml/20250628000929.230406-1-irogers@google.com/
+Hi Richard,
+
+On 2025-07-13 16:21:58-0600, Richard Henderson wrote:
+> On 7/13/25 14:08, Thomas Weißschuh wrote:
+> > +++ b/tools/testing/selftests/nolibc/nolibc-test.c
+> > @@ -709,6 +709,10 @@ int run_startup(int min, int max)
+> >   	/* checking NULL for argv/argv0, environ and _auxv is not enough, let's compare with sbrk(0) or &end */
+> >   	extern char end;
+> >   	char *brk = sbrk(0) != (void *)-1 ? sbrk(0) : &end;
+> > +#if defined(__alpha__)
+> > +	/* the ordering above does not work on an alpha kernel */
+> > +	brk = NULL;
+> > +#endif
 > 
-> These patches are separated out to give something smaller to review
-> before adding features. As requested by Namhyung.
-> 
-> [...]
-Applied to perf-tools-next, thanks!
+> The syscall api is different for brk on alpha.
+> A change to sys_brk or brk in include/nolibc/sys.h is required.
 
-Best regards,
-Namhyung
+You are referring to osf_brk, right?
+I think that should work as-is with the current wrappers.
+On alpha, mm->brk and mm->arg_start are ordered differently from other
+architectures. Personally I think the nolibc tests are a bit bogus here.
 
 
+Thomas
 
