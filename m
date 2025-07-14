@@ -1,112 +1,122 @@
-Return-Path: <linux-kernel+bounces-730670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10229B047E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:32:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD97EB047EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C5E617C2ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:32:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F49A3B3D74
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBD81FFC5C;
-	Mon, 14 Jul 2025 19:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD1D229B21;
+	Mon, 14 Jul 2025 19:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ON60AI2Q"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kt2Y25vt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A329A41
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 19:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5FA3A41;
+	Mon, 14 Jul 2025 19:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752521519; cv=none; b=kF82t8tD6YAuIuZtK4Ft1VRn+sw6sq3DnOSUKDtxq1jdxgIzHLSBQp8R7T/oOyUztGVX4UWioQN6WZ876JYJhqGUQq02I2Ar6WIvU/q7XCs4UzoWRwim8XlsiiuAYmBhB2egUbuUcH/0EHpPxH5HRhnnu+iDiMk80yAJNV8l0UQ=
+	t=1752521537; cv=none; b=RAHzD3nIqw3zYjE3O3NyqX3yURnCTJV82IXShyAqMuAq5V/wHKFebxnvVc/RzcHb53BenPJgBTKGY5FN0rtYC8rXO/A5bys6gpKxwWMFwS2UyKi7a9jFjSjKAYxwsj7TmF/7ki4AJqxZo7Hp5XnPkV32NE5oCllmvtKIPNW1drs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752521519; c=relaxed/simple;
-	bh=zLrbypOrzR46GTL8Pt/5KkdnLKETdTLW70b15jUQbUA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JScaQg31fr48H2euZavRII4PKWY5M1YGoZtgl5TwvAx554+8ySJ5NgJkiDHT7b+UzRvLSZZvJckmlJh1WxNuyVozRSOSJhu4mQ63getNhiNpbnLsYWfemMZ+ZUyfFlDGZySldAujphMl/DDtZ7DzDZj4RcJlGrgtGvJLbDIoGkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ON60AI2Q; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-31393526d0dso3371834a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:31:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752521518; x=1753126318; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zLrbypOrzR46GTL8Pt/5KkdnLKETdTLW70b15jUQbUA=;
-        b=ON60AI2QfGVXeqaAPu5KaqfxLU+TjHLbXUFhVJ9+QnKVJOHKEtrlTNOOvUo9gcBh2x
-         JQ6MCt5GVHv2V/jDShCr+OfoL0DzAH/Lu1N59kQfYUGG/X8mx0JUsS9gGAT2ftWJ/GWP
-         eoB+SF4fhTTDYVwLO3tQtnQlOkCNepOAMveknM+rqFYbBq+e5WKj0RZtrgP+WZz1KjwP
-         Q5oTazKsparBEeO5WhalRvKDJa2PPhxcphRYJiZ+3UY8JZGC1cYexqWRe5DQHcLh2yKC
-         FDmH2CfC5Q+D3WbsNaP4Mn1SwUzOhFIOYjAlu2Z82w1IpeF33aFMP66U9zOzA7QFwmXl
-         rtqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752521518; x=1753126318;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zLrbypOrzR46GTL8Pt/5KkdnLKETdTLW70b15jUQbUA=;
-        b=Uzis1AZ9bjiCwU9dnGzSyQJFxcUwPE0UKAQPrrXjGRP2Y8eVdqVCAajIHuKPRwLkEA
-         fq/cqYHApjmHN3j2jqGwarFS9K1JJ0t5Dwced9Q8cVkrIqH+Yl8yqG3dE3pS5cb4kH0f
-         szy+jzb0+epC1FKG9feynXgetYRzDDu1GHJu0qUF9vGsYFVtaC/2FyItVpj5fw/4Yu5A
-         n39W/v7N+KCOFGDWRv/6G6HYAjUb6dQHSOClX2xHBFqS/eWb+SlWkGiMmB+FkOKMPb4p
-         OnPF0RItqbFocV+8UyY+bLkKb/NjHIuf80LeWM4cX1Y9smnknu255Nv3hV/rwmvrYaSH
-         lXRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkDslgfBJeJzFaY4pq5eewbYutaFxfH2reWb3YFSs2B9bHHhrZ5qx13DDgrYLQ5Qk4r4yhsViUcXW4wmc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNIeEzmwh//U9xIc/F+u0JVFk6r81+2A1vLQRE2JNnYBp0IgUB
-	0TtdDl7CAJbTaE6JzB8BB8X7b7HhIBvjXpUJ1ce0jjAUQLHInmEeSxgR9yrsiqwgS6BQSLPmHla
-	OzLPkJv0zahHtUJNXiP5maxA8lA8N9y5GUFVbMgRD
-X-Gm-Gg: ASbGncvDDKW3UEo+pFknxRi/vflhDgTjNZ/YztSzvasIdvmdIHjFYQqUeXegTxLr6xy
-	zogFInteRy9R5OwQ9nBAcmPaza2HrWLQHVaEhkDbyMhz0eUSvRku8WnknMxI159gkG07BbJaEn8
-	jqY7wFw03mLVHiCyHk75MXuS+F+MBPE33PYnHu58WbMsDfKfhEmCOpbD9KKhk3Ib5+NhMlucoi9
-	ZPMTXuI
-X-Google-Smtp-Source: AGHT+IEDsiYxX3feyKKPWzR2t9muyDoNO4YK4kUIFl03g6sLc5hPJWuyzDuLWzJTAUc+YNhH9AD5VTE4+VvICtNKxQo=
-X-Received: by 2002:a17:90a:d88e:b0:312:959:dc4f with SMTP id
- 98e67ed59e1d1-31c4cc9d4f4mr21733366a91.5.1752521517702; Mon, 14 Jul 2025
- 12:31:57 -0700 (PDT)
+	s=arc-20240116; t=1752521537; c=relaxed/simple;
+	bh=AQrxO9GMuQ9aYr3Jm8n6Ii4kIOHde1vJf8LTBljYPok=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=iWNGRSS9IY9mrscsR3ySmIY7wTV+nt0+e5NrBnyrKZZGRJJptZYTYHfBpyrIM7hvCElclGRAkxN8HIgJhycyypInLQ8p4vwJLqCtknb0ugoe1NZMbGItUcShvmtUr3UDd8pK77LHVx+ymzmtwxosThtvNYsyaAm9/sR6nHrkh0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kt2Y25vt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 199CBC4CEED;
+	Mon, 14 Jul 2025 19:32:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752521536;
+	bh=AQrxO9GMuQ9aYr3Jm8n6Ii4kIOHde1vJf8LTBljYPok=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=kt2Y25vtysozivPuujqnU8y4JyYjsGSn7HGHKaj5Wh8im8SJ1Xp4AhW8AGo2lP1+5
+	 zQEGTF+WevtHwlWsbyhKSwTxlET+cZv73pqoC8/5HHIVTIQ0twq6Iovw3U2pz4ue5j
+	 r8L0vuloLaWvG/U1xJ3+3sALLbE6AZNV6/R/aByiqKxQEYiDjLiGmQTMyxiaD2bPe3
+	 StjJOwSesK0gl0/B6TchmYHyagJ3VaUupNEVzqDfUZi8oDQe9ueKnLO4kpq221zmpT
+	 ptb5CayJ9iFz5OOBWHkbyYDrRZBjKpBGeRRsEDSCQFAN6fN40wGIzb7/Gh4DPuThtc
+	 mkMIBPsaLSQUQ==
+Date: Mon, 14 Jul 2025 14:32:14 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Hans Zhang <18255117159@163.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
+	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+	qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com,
+	quic_vpernami@quicinc.com, quic_mrana@quicinc.com,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Subject: Re: [PATCH v4 06/11] PCI/ASPM: Clear aspm_disable as part of
+ __pci_enable_link_state()
+Message-ID: <20250714193214.GA2415073@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714-topics-tyr-regulator2-v8-0-c7ab3955d524@collabora.com> <20250714-topics-tyr-regulator2-v8-1-c7ab3955d524@collabora.com>
-In-Reply-To: <20250714-topics-tyr-regulator2-v8-1-c7ab3955d524@collabora.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 14 Jul 2025 21:31:42 +0200
-X-Gm-Features: Ac12FXzQIy3omIUEcNHlxi_83F8sPIeBn9e-6qbpPK1wclA7WZXBKCaASY_2_mg
-Message-ID: <CAH5fLghT+wkrKr_2oUQg3EfzZP-ahYDsKtnLcZbeZn6gj+hgzQ@mail.gmail.com>
-Subject: Re: [PATCH v8 1/2] rust: regulator: add a bare minimum regulator abstraction
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <470742a6-861e-498e-9da4-1fa213969c7e@163.com>
 
-On Mon, Jul 14, 2025 at 8:52=E2=80=AFPM Daniel Almeida
-<daniel.almeida@collabora.com> wrote:
->
-> Add a bare minimum regulator abstraction to be used by Rust drivers.
-> This abstraction adds a small subset of the regulator API, which is
-> thought to be sufficient for the drivers we have now.
->
-> Regulators provide the power needed by many hardware blocks and thus are
-> likely to be needed by a lot of drivers.
->
-> It was tested on rk3588, where it was used to power up the "mali"
-> regulator in order to power up the GPU.
->
-> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+On Sun, Jul 13, 2025 at 12:05:18AM +0800, Hans Zhang wrote:
+> On 2025/7/12 17:35, Manivannan Sadhasivam wrote:
+> ...
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> > > IMO the "someday" goal should be that we get rid of aspm_policy
+> > > and enable all the available power saving states by default.  We
+> > > have sysfs knobs that administrators can use if necessary, and
+> > > drivers or quirks can disable states if they need to work around
+> > > hardware defects.
+> > 
+> > Yeah, I think the default should be powersave and let the users
+> > disable it for performance if they want.
+> 
+> Perhaps I don't think so. At present, our company's testing team has
+> tested quite a few NVMe SSDS. As far as I can remember, the SSDS
+> from two companies have encountered problems and will hang directly
+> when turned on. We have set CONFIG_PCIEASPM_POWERSAVE=y by default.
+> When encountering SSDS from these two companies, we had to add
+> "pcie_aspm.policy=default" in the cmdline, and then the boot worked
+> normally. Currently, we do not have a PCIe protocol analyzer to
+> analyze such issues. The current approach is to modify the cmdline.
+> So I can't prove whether it's a problem with the Root Port of our
+> SOC or the SSD device.
+
+Have you reported these?
+
+> Here I agree with Bjorn's statement that sometimes the EP is not
+> necessarily very standard and there are no hardware issues.
+> Personally, I think the default is default or performance. When
+> users need to save power, they should then decide whether to
+> configure it as powersave or powersupersave.  Sometimes, if the EP
+> device connected by the customer is perfect, they can turn it on to
+> save power. But if the EP is not perfect, at least they will
+> immediately know what caused the problem.
+
+We should discover device defects as early as possible so we can add
+quirks for them.  Defaulting to ASPM being partly disabled means it
+gets much less testing and users end up passing around "fixes" like
+booting with "pcie_aspm.policy=default" or similar.  I do not want
+users to trip over a device that doesn't work and have to look for
+workarounds on the web.
+
+I also think it's somewhat irresponsible of us to consume more power
+than necessary.  But as Mani said, this would be a big change and
+might have to be done with a BIOS date check or something to try to
+avoid regressions.
+
+Bjorn
 
