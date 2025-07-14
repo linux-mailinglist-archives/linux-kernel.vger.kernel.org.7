@@ -1,96 +1,224 @@
-Return-Path: <linux-kernel+bounces-729603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F55DB038FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:17:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05AC6B038FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E537189DD00
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:17:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA5D717B3BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BB023B612;
-	Mon, 14 Jul 2025 08:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P64ao80Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579BA2343C2;
-	Mon, 14 Jul 2025 08:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFFE23FC54;
+	Mon, 14 Jul 2025 08:16:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F92E23BCF0;
+	Mon, 14 Jul 2025 08:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752480964; cv=none; b=h6mo1iwQJ9Z44XTzpGh5PcaQTriRm/0s9CddKNxiuhmi7TddyOkpNhbYlyrxm4IsVrIRfgi0ca8AN7KCy1IiLQoXYK95QMsM08Wim3mSQ60b0b3I4nR6IWvz8wcX5SwRoJtkN+E5+iWEEq2gm3PRjPi6s270ZVGp+DK3m81ln0I=
+	t=1752480970; cv=none; b=RxHCSljb3ToEgzwkZ33EC+tKEbnl9CLr8qLAUx4y4Gwqw1jRq3Hh5+GSgnpyd9HzBTiPrSdZPuRzNDJwDg29r300H3VcTGjdkJ7ddsHCO6Sf8cp1489Ml+74hfgTtXGTMKD/NJke9mhLOicp29JBV4QLNMsnW2TZ6NWClM4itM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752480964; c=relaxed/simple;
-	bh=VUCkFWGlNjZRGe+zHbksIQrn5M6PivU0Nf1tCQHaFIg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CiyRUT/E8+ahIquBoI2ljMGpO402gccbEiqsUYV4jw6syfg5SSqF3exznBtPo2koT+XjFXldV7GXX72PE5NjqIVZ447mJioNw4I7bopSoCzyoK0jQLMhPu9TmTT0NfmDE4WfNdPXeJPeaHwTg4camdipx0RBTG+EMlch5/QvqXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P64ao80Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93DA0C4CEED;
-	Mon, 14 Jul 2025 08:16:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752480964;
-	bh=VUCkFWGlNjZRGe+zHbksIQrn5M6PivU0Nf1tCQHaFIg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=P64ao80YpTcyJXdxpk6L9+ya5e7Dk0RJ7cigSqF/1laL41vnZSeDyRGUXZO+5K7zO
-	 iRR2JXTh/w6VHIZyDl7Vp32tw32xXUHSw6aM7n4RNRzyho4n97z5KIei3v4nHkMDDl
-	 7z7fDbupAFs8BTGbkh4nUoNV4W+02vcAbXhN6mmqVEkrKE2Hxo3gqEKZTXkxb9sYMt
-	 BIB+PCI3269F2Rkf2b++SCL+yMWRZ7wcn9P3klhPkhgLLoecXnZaw5uMVx4I4hLM6t
-	 87nX/uqJC3unkBIzgmyqcvnxWlWVrRWH39CVCwTM8zQowBEb0G3AYnofpI6UEonTnA
-	 J3gMh3iODIlSA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: "David E. Box" <david.e.box@linux.intel.com>,
-	Hans de Goede <hansg@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86/intel/pmt: fix build dependency for kunit test
-Date: Mon, 14 Jul 2025 10:15:43 +0200
-Message-Id: <20250714081559.4056777-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1752480970; c=relaxed/simple;
+	bh=EexMReTv3q6l7NhAPQ60w5rxtxXATRRRQxcgGkUf1Ec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rlwUESUJhE/DaI2WZx2tzReSTATbchzH+4ug+SDCC0bbYCjYBHFbJi6IUCfkco4fzSvqd0LsTod+hhPFp+wnzzTgbEA87W6doBB4HX3GMqnMAbZnoDm+jPPBSJ++JVs8CH+CSMZm+pLQFe3o10yGf4Y0+RnvyhH+UM0xpEJAr8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1BD351764;
+	Mon, 14 Jul 2025 01:15:57 -0700 (PDT)
+Received: from [10.57.83.2] (unknown [10.57.83.2])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A368D3F66E;
+	Mon, 14 Jul 2025 01:16:04 -0700 (PDT)
+Message-ID: <86a82f42-918c-45f8-ac49-2b1f341ee0d3@arm.com>
+Date: Mon, 14 Jul 2025 09:16:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/filemap: Align last_index to folio size
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>,
+ Youling Tang <youling.tang@linux.dev>, Matthew Wilcox <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, chizhiling@163.com,
+ Youling Tang <tangyouling@kylinos.cn>, Chi Zhiling <chizhiling@kylinos.cn>
+References: <20250711055509.91587-1-youling.tang@linux.dev>
+ <e80c3fdd-782e-4857-810e-5b7384448154@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <e80c3fdd-782e-4857-810e-5b7384448154@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 11/07/2025 17:08, David Hildenbrand wrote:
+> CCing Ryan, who recently fiddled with readahead.
+> 
+> 
+> On 11.07.25 07:55, Youling Tang wrote:
+>> From: Youling Tang <tangyouling@kylinos.cn>
+>>
+>> On XFS systems with pagesize=4K, blocksize=16K, and CONFIG_TRANSPARENT_HUGEPAGE
+>> enabled, We observed the following readahead behaviors:
+>>   # echo 3 > /proc/sys/vm/drop_caches
+>>   # dd if=test of=/dev/null bs=64k count=1
+>>   # ./tools/mm/page-types -r -L -f  /mnt/xfs/test
+>>   foffset    offset    flags
+>>   0    136d4c    __RU_l_________H______t_________________F_1
+>>   1    136d4d    __RU_l__________T_____t_________________F_1
+>>   2    136d4e    __RU_l__________T_____t_________________F_1
+>>   3    136d4f    __RU_l__________T_____t_________________F_1
+>>   ...
+>>   c    136bb8    __RU_l_________H______t_________________F_1
+>>   d    136bb9    __RU_l__________T_____t_________________F_1
+>>   e    136bba    __RU_l__________T_____t_________________F_1
+>>   f    136bbb    __RU_l__________T_____t_________________F_1   <-- first read
+>>   10    13c2cc    ___U_l_________H______t______________I__F_1   <-- readahead
+>> flag
+>>   11    13c2cd    ___U_l__________T_____t______________I__F_1
+>>   12    13c2ce    ___U_l__________T_____t______________I__F_1
+>>   13    13c2cf    ___U_l__________T_____t______________I__F_1
+>>   ...
+>>   1c    1405d4    ___U_l_________H______t_________________F_1
+>>   1d    1405d5    ___U_l__________T_____t_________________F_1
+>>   1e    1405d6    ___U_l__________T_____t_________________F_1
+>>   1f    1405d7    ___U_l__________T_____t_________________F_1
+>>   [ra_size = 32, req_count = 16, async_size = 16]
+>>
+>>   # echo 3 > /proc/sys/vm/drop_caches
+>>   # dd if=test of=/dev/null bs=60k count=1
+>>   # ./page-types -r -L -f  /mnt/xfs/test
+>>   foffset    offset    flags
+>>   0    136048    __RU_l_________H______t_________________F_1
+>>   ...
+>>   c    110a40    __RU_l_________H______t_________________F_1
+>>   d    110a41    __RU_l__________T_____t_________________F_1
+>>   e    110a42    __RU_l__________T_____t_________________F_1   <-- first read
+>>   f    110a43    __RU_l__________T_____t_________________F_1   <-- first
+>> readahead flag
+>>   10    13e7a8    ___U_l_________H______t_________________F_1
+>>   ...
+>>   20    137a00    ___U_l_________H______t_______P______I__F_1   <-- second
+>> readahead flag (20 - 2f)
+>>   21    137a01    ___U_l__________T_____t_______P______I__F_1
+>>   ...
+>>   3f    10d4af    ___U_l__________T_____t_______P_________F_1
+>>   [first readahead: ra_size = 32, req_count = 15, async_size = 17]
+>>
+>> When reading 64k data (same for 61-63k range, where last_index is page-aligned
+>> in filemap_get_pages()), 128k readahead is triggered via page_cache_sync_ra()
+>> and the PG_readahead flag is set on the next folio (the one containing 0x10
+>> page).
+>>
+>> When reading 60k data, 128k readahead is also triggered via page_cache_sync_ra().
+>> However, in this case the readahead flag is set on the 0xf page. Although the
+>> requested read size (req_count) is 60k, the actual read will be aligned to
+>> folio size (64k), which triggers the readahead flag and initiates asynchronous
+>> readahead via page_cache_async_ra(). This results in two readahead operations
+>> totaling 256k.
+>>
+>> The root cause is that when the requested size is smaller than the actual read
+>> size (due to folio alignment), it triggers asynchronous readahead. By changing
+>> last_index alignment from page size to folio size, we ensure the requested size
+>> matches the actual read size, preventing the case where a single read operation
+>> triggers two readahead operations.
 
-When INTEL_PMT_TELEMETRY is in a loadable module, the discovery
-test cannot be built-in:
+I recently fiddled with mmap readahead paths, doing similar-ish things. I
+haven't looked at the non-mmap paths so don't consider myself expert here. But
+what you are saying makes sense and superficially the solution looks good to me, so:
 
-x86_64-linux-ld: drivers/platform/x86/intel/pmt/discovery-kunit.o: in function `test_intel_pmt_get_regions_by_feature':
-discovery-kunit.c:(.text+0x29d): undefined reference to `intel_pmt_get_regions_by_feature'
-x86_64-linux-ld: discovery-kunit.c:(.text+0x2c3): undefined reference to `intel_pmt_put_feature_group'
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
 
-Add a Kconfig dependency to prevent this.
+with one nit below...
 
-Fixes: b9707d46a959 ("platform/x86/intel/pmt: KUNIT test for PMT Enhanced Discovery API")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-A simpler 'depends on INTEL_PMT_TELEMETRY' would work just as well here,
-not sure what the more logical variant is between the two.
----
- drivers/platform/x86/intel/pmt/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+>>
+>> After applying the patch:
+>>   # echo 3 > /proc/sys/vm/drop_caches
+>>   # dd if=test of=/dev/null bs=60k count=1
+>>   # ./page-types -r -L -f  /mnt/xfs/test
+>>   foffset    offset    flags
+>>   0    136d4c    __RU_l_________H______t_________________F_1
+>>   1    136d4d    __RU_l__________T_____t_________________F_1
+>>   2    136d4e    __RU_l__________T_____t_________________F_1
+>>   3    136d4f    __RU_l__________T_____t_________________F_1
+>>   ...
+>>   c    136bb8    __RU_l_________H______t_________________F_1
+>>   d    136bb9    __RU_l__________T_____t_________________F_1
+>>   e    136bba    __RU_l__________T_____t_________________F_1   <-- first read
+>>   f    136bbb    __RU_l__________T_____t_________________F_1
+>>   10    13c2cc    ___U_l_________H______t______________I__F_1   <-- readahead
+>> flag
+>>   11    13c2cd    ___U_l__________T_____t______________I__F_1
+>>   12    13c2ce    ___U_l__________T_____t______________I__F_1
+>>   13    13c2cf    ___U_l__________T_____t______________I__F_1
+>>   ...
+>>   1c    1405d4    ___U_l_________H______t_________________F_1
+>>   1d    1405d5    ___U_l__________T_____t_________________F_1
+>>   1e    1405d6    ___U_l__________T_____t_________________F_1
+>>   1f    1405d7    ___U_l__________T_____t_________________F_1
+>>   [ra_size = 32, req_count = 16, async_size = 16]
+>>
+>> The same phenomenon will occur when reading from 49k to 64k. Set the readahead
+>> flag to the next folio.
+>>
+>> Because the minimum order of folio in address_space equals the block size (at
+>> least in xfs and bcachefs that already support bs > ps), having request_count
+>> aligned to block size will not cause overread.
+>>
+>> Co-developed-by: Chi Zhiling <chizhiling@kylinos.cn>
+>> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
+>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+>> ---
+>>   include/linux/pagemap.h | 6 ++++++
+>>   mm/filemap.c            | 5 +++--
+>>   2 files changed, 9 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+>> index e63fbfbd5b0f..447bb264fd94 100644
+>> --- a/include/linux/pagemap.h
+>> +++ b/include/linux/pagemap.h
+>> @@ -480,6 +480,12 @@ mapping_min_folio_nrpages(struct address_space *mapping)
+>>       return 1UL << mapping_min_folio_order(mapping);
+>>   }
+>>   +static inline unsigned long
+>> +mapping_min_folio_nrbytes(struct address_space *mapping)
+>> +{
+>> +    return mapping_min_folio_nrpages(mapping) << PAGE_SHIFT;
+>> +}
+>> +
+>>   /**
+>>    * mapping_align_index() - Align index for this mapping.
+>>    * @mapping: The address_space.
+>> diff --git a/mm/filemap.c b/mm/filemap.c
+>> index 765dc5ef6d5a..56a8656b6f86 100644
+>> --- a/mm/filemap.c
+>> +++ b/mm/filemap.c
+>> @@ -2584,8 +2584,9 @@ static int filemap_get_pages(struct kiocb *iocb, size_t
+>> count,
+>>       unsigned int flags;
+>>       int err = 0;
+>>   -    /* "last_index" is the index of the page beyond the end of the read */
+>> -    last_index = DIV_ROUND_UP(iocb->ki_pos + count, PAGE_SIZE);
+>> +    /* "last_index" is the index of the folio beyond the end of the read */
 
-diff --git a/drivers/platform/x86/intel/pmt/Kconfig b/drivers/platform/x86/intel/pmt/Kconfig
-index 785c206e1beb..7363446b7773 100644
---- a/drivers/platform/x86/intel/pmt/Kconfig
-+++ b/drivers/platform/x86/intel/pmt/Kconfig
-@@ -55,6 +55,7 @@ config INTEL_PMT_DISCOVERY
- config INTEL_PMT_KUNIT_TEST
- 	tristate "KUnit tests for Intel PMT driver"
- 	depends on INTEL_PMT_DISCOVERY
-+	depends on INTEL_PMT_TELEMETRY || !INTEL_PMT_TELEMETRY
- 	depends on KUNIT
- 	help
- 	  Enable this option to compile and run a suite of KUnit tests for the Intel
--- 
-2.39.5
+pedantic nit: I think you actually mean "the index of the first page within the
+first minimum-sized folio beyond the end of the read"?
+
+Thanks,
+Ryan
+
+>> +    last_index = round_up(iocb->ki_pos + count,
+>> mapping_min_folio_nrbytes(mapping));
+>> +    last_index >>= PAGE_SHIFT;
+>>   retry:
+>>       if (fatal_signal_pending(current))
+>>           return -EINTR;
+> 
+> 
 
 
