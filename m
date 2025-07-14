@@ -1,158 +1,209 @@
-Return-Path: <linux-kernel+bounces-730077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA6C4B04005
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:33:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95664B03FE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAF214A4B62
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:29:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F04B17A5336
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0291024DD0A;
-	Mon, 14 Jul 2025 13:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1575724EF8B;
+	Mon, 14 Jul 2025 13:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aH6cGN1o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QaRYtQUT"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FEFA246767;
-	Mon, 14 Jul 2025 13:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB3D149C51;
+	Mon, 14 Jul 2025 13:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752499769; cv=none; b=Z1x/KXRX1BmmF6+rF6Q1H/gth7LiCCoyaii/8T8wC++Kcn6ex3WLMLU0EfX0IqTJTLtvDVQb+zqvXeQco7FX39xOAv7lfzFAzjTIEaM4blI+XozQQGjnPmoxeDVmoys/P6lpXE/HPsDR7Qvo10iqh3ydDuWUgugDAmrFshFBgoM=
+	t=1752499799; cv=none; b=nmBYrdYGHAk4XLOezVt+jYG2TpO9VsrC0i04ZGBKslryrYnt1PiMXTtwfRBlPV7jcwdl9bBSYxs/bW8FTQ5QZtIlhgfO6gHUdGsiMJ6frv+6TM7ar96mX9CUw/pItpMMkF38iU2TL3juv82YWwOOHQd7Oz++yEUYKtkMyLkquIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752499769; c=relaxed/simple;
-	bh=q2ArqOrD99umJqG1o/bJ4D7H01aAcZ2g/okByrrMjxo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oUNP2SEqOgQ6WJ8CO7ZxRv1ph+EmZBomv2D3nEZ3M1gTEPeal6idk6UiLQx+rTIiYr94YxUm0TtF10xHHPCB7Vc7lroL2TFBwEaffDM2K6kdt3uRyDHKc8kJCc0MLaTN1eCCSq6ZoIPtNRCMxcvHltdSFkYxw7PWYOvPsHQbYVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aH6cGN1o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27770C4CEED;
-	Mon, 14 Jul 2025 13:29:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752499769;
-	bh=q2ArqOrD99umJqG1o/bJ4D7H01aAcZ2g/okByrrMjxo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aH6cGN1o9ME+TeE3lhLvwdOUZAXzJb6tukmPvUJJ89cEUyvCqlPfwoGFq6ThdQ8sG
-	 SEdScqfnmxB6xh41zW5B+rMtz93o8ZJ9sv4h1umtunQMSw42GEXg7cQNuJYRUY+eLw
-	 Fx0YCDtID0aCj4xIs5E50CODQ+QQypo34wdoxo8ALIDCnrv1f+IX5AC+wqBcOHPlFE
-	 SvpzoRfWwH12bR853oe29tZFE8LRyJsu1fbEQsy04velnHpsPrEIQamOpMfjIygmHq
-	 0QedsDbR9js/AtXpA4Xet8mo5iho9A6gcp9VbbaGDi8Lb3u28dNgt5x5hFmlkbG4M5
-	 Nua1AnEO1D6zA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1ubJFG-00FX9b-T0;
-	Mon, 14 Jul 2025 14:29:27 +0100
-Date: Mon, 14 Jul 2025 14:29:26 +0100
-Message-ID: <861pqiaojt.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: syzbot <syzbot+4e09b1432de3774b86ae@syzkaller.appspotmail.com>
-Cc: catalin.marinas@arm.com,
-	joey.gouly@arm.com,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	oliver.upton@linux.dev,
-	suzuki.poulose@arm.com,
-	syzkaller-bugs@googlegroups.com,
-	will@kernel.org,
-	yuzenghui@huawei.com
-Subject: Re: [syzbot] [kvmarm?] WARNING in pend_sync_exception
-In-Reply-To: <68730fbb.a70a0220.3b380f.001a.GAE@google.com>
-References: <68730fbb.a70a0220.3b380f.001a.GAE@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1752499799; c=relaxed/simple;
+	bh=uSDvZ7VTvhMtab969Fj7Ke5hLfJuIyLW2Vi1cGLIv8c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CGZ0HxKBeIHgFyQpjkSPss6ygE35Ick/2fCxLPuQfydJV6YAx+hbJGQQUT7XbbkWb9kfkT4FP10Xk/PrtaZsoVeHPCpQ1+oXf1HNWOGY+OwNCmhvsHesGFftNN8qXTYLJton8kxF53fPab+iGd4UK+cflst0g6tX/ysLp+rdjsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QaRYtQUT; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=pLHtmwVxblwTxA9MgozfbATAwzmb9kfhVgNP2IA4oMs=; b=QaRYtQUT8DMpCfibdprLAmU2yP
+	s6O31SaFATCU/6kXR25bnBKQDVCedhjAlRRXmVan5tWPqWOZcv7tVMfpG9exJ28l6GxzxB+uxYSNj
+	wOcJUw7oBaKIFgS6MfzlbfjHEIYJihiwqUJ3J6JbfI/Cytmb9XVIwWgBD3ExsOtvcWVmx+ehLJUeQ
+	QCO9FS7+H/RYp/PSOotRq/8iL/xAx9/nqbDNglsbFm6ejOlZAgzgRL47Low1Mkl1cMAKerFC6ZW/5
+	nOjzbrrsbBWh5gz5sQghWUoRysrTMWEJ+1w5F0v459MxIn2MDZOWQUF43xb+ATuRG7XS+H3mSAuf1
+	CzpLgnJg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ubJFR-00000009llQ-3hx3;
+	Mon, 14 Jul 2025 13:29:38 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BC1CA30039A; Mon, 14 Jul 2025 15:29:36 +0200 (CEST)
+Date: Mon, 14 Jul 2025 15:29:36 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, x86@kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+	Sam James <sam@gentoo.org>
+Subject: Re: [PATCH v13 07/14] unwind_user/deferred: Make unwind deferral
+ requests NMI-safe
+Message-ID: <20250714132936.GB4105545@noisy.programming.kicks-ass.net>
+References: <20250708012239.268642741@kernel.org>
+ <20250708012358.831631671@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: syzbot+4e09b1432de3774b86ae@syzkaller.appspotmail.com, catalin.marinas@arm.com, joey.gouly@arm.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, suzuki.poulose@arm.com, syzkaller-bugs@googlegroups.com, will@kernel.org, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708012358.831631671@kernel.org>
 
-On Sun, 13 Jul 2025 02:45:31 +0100,
-syzbot <syzbot+4e09b1432de3774b86ae@syzkaller.appspotmail.com> wrote:
+On Mon, Jul 07, 2025 at 09:22:46PM -0400, Steven Rostedt wrote:
+> From: Steven Rostedt <rostedt@goodmis.org>
 > 
-> Hello,
+> Make unwind_deferred_request() NMI-safe so tracers in NMI context can
+> call it and safely request a user space stacktrace when the task exits.
 > 
-> syzbot found the following issue on:
+> Note, this is only allowed for architectures that implement a safe
+> cmpxchg. If an architecture requests a deferred stack trace from NMI
+> context that does not support a safe NMI cmpxchg, it will get an -EINVAL.
+> For those architectures, they would need another method (perhaps an
+> irqwork), to request a deferred user space stack trace. That can be dealt
+> with later if one of theses architectures require this feature.
 > 
-> HEAD commit:    15724a984643 Merge branch 'kvm-arm64/doublefault2' into kv..
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13e26a8c580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=82bd3cd421993314
-> dashboard link: https://syzkaller.appspot.com/bug?extid=4e09b1432de3774b86ae
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17137582580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17e26a8c580000
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/fa3fbcfdac58/non_bootable_disk-15724a98.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/ec0f03d375a1/vmlinux-15724a98.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/a36232f8c6dd/Image-15724a98.gz.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+4e09b1432de3774b86ae@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 3595 at arch/arm64/kvm/inject_fault.c:63 pend_sync_exception+0x198/0x5ac arch/arm64/kvm/inject_fault.c:63
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 3595 Comm: syz.2.16 Not tainted 6.16.0-rc3-syzkaller-g15724a984643 #0 PREEMPT 
-> Hardware name: linux,dummy-virt (DT)
-> pstate: 81402009 (Nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-> pc : pend_sync_exception+0x198/0x5ac arch/arm64/kvm/inject_fault.c:63
-> lr : pend_sync_exception+0x198/0x5ac arch/arm64/kvm/inject_fault.c:63
-> sp : ffff80008e7378c0
-> x29: ffff80008e7378c0 x28: 0000000000000063 x27: 63f000001d7702a8
-> x26: 0000000000000063 x25: 0000000000000000 x24: 0000000000000000
-> x23: 0000000000000000 x22: 0000000000000063 x21: 63f000001d770e81
-> x20: 0000000000000007 x19: efff800000000000 x18: 0000000000000000
-> x17: 0000000000000041 x16: ffff800080011d9c x15: 00000000200000c0
-> x14: ffffffffffffffff x13: 0000000000000028 x12: 00000000000000cc
-> x11: ccf000001d756de4 x10: 0000000000ff0100 x9 : 0000000000000000
-> x8 : ccf000001d755880 x7 : ffff800080b08704 x6 : ffff80008e737a88
-> x5 : ffff80008e737a88 x4 : 0000000000000001 x3 : ffff8000801a2e80
-> x2 : 0000000000000000 x1 : 0000000000000002 x0 : 0000000000000000
-> Call trace:
->  pend_sync_exception+0x198/0x5ac arch/arm64/kvm/inject_fault.c:63 (P)
->  inject_abt64 arch/arm64/kvm/inject_fault.c:115 [inline]
->  __kvm_inject_sea+0x268/0x96c arch/arm64/kvm/inject_fault.c:207
->  kvm_inject_sea+0x98/0x72c arch/arm64/kvm/inject_fault.c:229
->  kvm_inject_sea_dabt arch/arm64/include/asm/kvm_emulate.h:54 [inline]
->  __kvm_arm_vcpu_set_events+0x134/0x238 arch/arm64/kvm/guest.c:847
->  kvm_arm_vcpu_set_events arch/arm64/kvm/arm.c:1698 [inline]
->  kvm_arch_vcpu_ioctl+0xed8/0x16b0 arch/arm64/kvm/arm.c:1810
->  kvm_vcpu_ioctl+0x5c4/0xc2c virt/kvm/kvm_main.c:4632
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:907 [inline]
->  __se_sys_ioctl fs/ioctl.c:893 [inline]
->  __arm64_sys_ioctl+0x18c/0x244 fs/ioctl.c:893
->  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->  invoke_syscall+0x90/0x2b4 arch/arm64/kernel/syscall.c:49
->  el0_svc_common+0x180/0x2f4 arch/arm64/kernel/syscall.c:132
->  do_el0_svc+0x58/0x74 arch/arm64/kernel/syscall.c:151
->  el0_svc+0x58/0x160 arch/arm64/kernel/entry-common.c:767
->  el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
->  el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-> irq event stamp: 2626
-> hardirqs last  enabled at (2625): [<ffff80008653cb88>] __raw_read_unlock_irqrestore include/linux/rwlock_api_smp.h:241 [inline]
-> hardirqs last  enabled at (2625): [<ffff80008653cb88>] _raw_read_unlock_irqrestore+0x44/0xbc kernel/locking/spinlock.c:268
-> hardirqs last disabled at (2626): [<ffff800086517e08>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:511
-> softirqs last  enabled at (2576): [<ffff8000800c988c>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-> softirqs last disabled at (2574): [<ffff8000800c9858>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
-> ---[ end trace 0000000000000000 ]---
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git kvm-arm64/df-2-fixes
+How's this instead?
 
--- 
-Without deviation from the norm, progress is not possible.
+---
+--- a/kernel/unwind/deferred.c
++++ b/kernel/unwind/deferred.c
+@@ -12,6 +12,40 @@
+ #include <linux/slab.h>
+ #include <linux/mm.h>
+ 
++/*
++ * For requesting a deferred user space stack trace from NMI context
++ * the architecture must support a safe cmpxchg in NMI context.
++ * For those architectures that do not have that, then it cannot ask
++ * for a deferred user space stack trace from an NMI context. If it
++ * does, then it will get -EINVAL.
++ */
++#ifdef CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG
++#define UNWIND_NMI_SAFE 1
++static inline bool try_assign_cnt(struct unwind_task_info *info, u32 cnt)
++{
++	u32 zero = 0;
++	return try_cmpxchg(&info->id.cnt, &zero, cnt);
++}
++static inline bool test_and_set_pending(struct unwind_task_info *info)
++{
++	return info->pending || cmpxchg_local(&info->pending, 0, 1);
++}
++#else
++#define UNWIND_NMI_SAFE 0
++/* When NMIs are not allowed, this always succeeds */
++static inline bool try_assign_cnt(struct unwind_task_info *info, u32 cnt)
++{
++	info->id.cnt = cnt;
++	return true;
++}
++static inline bool test_and_set_pending(struct unwind_task_info *info)
++{
++	int pending = info->pending;
++	info->pending = 1;
++	return pending;
++}
++#endif /* CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG */
++
+ /* Make the cache fit in a 4K page */
+ #define UNWIND_MAX_ENTRIES					\
+ 	((SZ_4K - sizeof(struct unwind_cache)) / sizeof(long))
+@@ -41,21 +75,16 @@ static DEFINE_PER_CPU(u32, unwind_ctx_ct
+  */
+ static u64 get_cookie(struct unwind_task_info *info)
+ {
+-	u32 cpu_cnt;
+-	u32 cnt;
+-	u32 old = 0;
++	u32 cnt = 1;
+ 
+ 	if (info->id.cpu)
+ 		return info->id.id;
+ 
+-	cpu_cnt = __this_cpu_read(unwind_ctx_ctr);
+-	cpu_cnt += 2;
+-	cnt = cpu_cnt | 1; /* Always make non zero */
+-
+-	if (try_cmpxchg(&info->id.cnt, &old, cnt)) {
+-		/* Update the per cpu counter */
+-		__this_cpu_write(unwind_ctx_ctr, cpu_cnt);
+-	}
++	/* LSB it always set to ensure 0 is an invalid value. */
++	cnt |= __this_cpu_read(unwind_ctx_ctr) + 2;
++	if (try_assign_cnt(info, cnt))
++		__this_cpu_write(unwind_ctx_ctr, cnt);
++
+ 	/* Interrupts are disabled, the CPU will always be same */
+ 	info->id.cpu = smp_processor_id() + 1; /* Must be non zero */
+ 
+@@ -174,27 +203,29 @@ int unwind_deferred_request(struct unwin
+ 
+ 	*cookie = 0;
+ 
+-	if (WARN_ON_ONCE(in_nmi()))
+-		return -EINVAL;
+-
+ 	if ((current->flags & (PF_KTHREAD | PF_EXITING)) ||
+ 	    !user_mode(task_pt_regs(current)))
+ 		return -EINVAL;
+ 
++	/* NMI requires having safe cmpxchg operations */
++	if (WARN_ON_ONCE(!UNWIND_NMI_SAFE && in_nmi()))
++		return -EINVAL;
++
+ 	guard(irqsave)();
+ 
+ 	*cookie = get_cookie(info);
+ 
+ 	/* callback already pending? */
+-	if (info->pending)
++	if (test_and_set_pending(info))
+ 		return 1;
+ 
+ 	/* The work has been claimed, now schedule it. */
+ 	ret = task_work_add(current, &info->work, TWA_RESUME);
+-	if (WARN_ON_ONCE(ret))
++	if (WARN_ON_ONCE(ret)) {
++		WRITE_ONCE(info->pending, 0);
+ 		return ret;
++	}
+ 
+-	info->pending = 1;
+ 	return 0;
+ }
+ 
 
