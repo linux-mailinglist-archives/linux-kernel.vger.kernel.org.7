@@ -1,156 +1,97 @@
-Return-Path: <linux-kernel+bounces-730832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B66B04A82
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:23:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE39B04A8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 940C23B3153
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:22:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEABD16C65A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C61E278E7C;
-	Mon, 14 Jul 2025 22:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BA6277C87;
+	Mon, 14 Jul 2025 22:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kewX7Vd8"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="uBtMImE8"
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13707277035;
-	Mon, 14 Jul 2025 22:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69ACF230BE3;
+	Mon, 14 Jul 2025 22:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752531757; cv=none; b=UNSFoXUMqABQDhekkCvHiugOMh1oVyWSQ3kaNuKgct7Hq+yZ3TsqGkq+AaeTSw5fRZI8HDiXLMzOuybYjTg4aGx0ws+21eBC4aPXp3eYZz08YRS/eEch9KG1FbZtfzDaZp+F/hp3YhCwXQjIyz4MqgGMw4dicvHbaOlkOCy5EXw=
+	t=1752531917; cv=none; b=hg9xhNy6FJH9bNa3XOvYjuEYKBiJpjuaUO4SfRKJ2Cq1En0Iw2oODQw66TxRFoYWDrvt91+Xg4QPMl1hUkz9RsJBAqmfcO0OPdoHPoGUIpa8HxmZbrfV5FHo3bJFWCyr0OE4q3/LvvF6caC6RGsFyOSvX0PK+Mmw02qhl4zEya8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752531757; c=relaxed/simple;
-	bh=H/rUtKlTuPgoSauFrLhwQiEJfb+OwWO5jy25yqbUZMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=mpPys+WLXhslKCd1NGGsRN4GHRMaOivv400EhSbl9/Dlm310Zo6HLI/YBb+yh4NmgC5DF2P3yw2sswpG99dWdpdyHB0iijxBTfx+1bGMsRYYBQPNBuq/j9251gvDz6iPEGIlhOtWq9ghB16S5DKJGvADQJKFOFfG5sPrqe/p3ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kewX7Vd8; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752531646;
-	bh=eBpqteH/pBpzNfMhDYDJvCnUUzJdriSw6w0u6InNYpM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=kewX7Vd8Rc2Y+9XLDfKRJd+Wp5WxywFzDqEw/I/v8MyhKGeuhPBqcGCxXiJLZjNND
-	 iRzueZekG1PVODznZ4//ZS0aSt3ImWHRSip2w7hReJlcmIp62cGkV78HEsAeHlbD/a
-	 Yg2L3SnVJGZ1Xr442g6Wn3t6eOYQML+aQTgIktADntycKcXLo9J/nM8/pvdYiZQIZ/
-	 JzfrWlTbFYTYFNFMbTgrJDUOCDSi24J99B55YFcCMVyOcI/7lgezJzlVhlcz0RTNbn
-	 rGtj1jH1PpefmrgMWOU+Yl7YtlU7Un33tNWrMrvf4w0udy+KZGI9XujFaq9Yq4hgS7
-	 IahsU7HYjqODA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bgxbd4F0mz4w2Q;
-	Tue, 15 Jul 2025 08:20:45 +1000 (AEST)
-Date: Tue, 15 Jul 2025 08:22:30 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Zhang Yi <yi.zhang@huawei.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the ext4 tree
-Message-ID: <20250715082230.7f5bcb1e@canb.auug.org.au>
+	s=arc-20240116; t=1752531917; c=relaxed/simple;
+	bh=4XuX/PYpEN8nAtv8oHkTyRtLKNxOjbkUhAeP/vk/0C4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k2cIIT/tcQrLI8XfWc9tnJTvmd1Hma5wKcG2HrxNwaRPZAhQcU9KZuvZ/pz01iNk8FR7kkMU/hLIxLuIuIRsqcHmbfeUayPMJff3SQ7VgUFH2+tuDa5YrBqaDKudzuCLUdG3eAfb3QL5wUYVBzq2wnDSNq10HeL8w4QbxvUAu1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=uBtMImE8; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+DKIM-Signature: a=rsa-sha256; bh=4XuX/PYpEN8nAtv8oHkTyRtLKNxOjbkUhAeP/vk/0C4=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1752531826; v=1; x=1752963826;
+ b=uBtMImE8MkSWBszj0mA40VHczqtf8SMXQ+Djm8Dkyh0so7//byOoCXCmE9OkaVtPsNlGaeEi
+ DkSO1G1RHzD3hG5xKWZyX6nhG/w4WlcGmHfsrI0K4Ll8fgKLRcF4TMnCnHzzAQbiP2QlxP3TjAR
+ jyPutFkgO0QlnVBVd/OvljASXZB+pOsnQ7KZy8StpEBa4/AH2ui/c0eO7VWtScoT1COiJjCAuGk
+ V3UIZqWWbSyGQlkPzClEB3duAVeBfjpgouVSPnbx7Y9P72J0KfYUJFsWuE0dFUbPJY05rphxsst
+ iJ0hXcfiTtZgtrAKpukggmMvZPiarK78NijZlLIkM1iAQ==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id acbc0645; Tue, 15 Jul 2025 00:23:46 +0200
+From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, David Wronek <david@mainlining.org>,
+ Karel Balej <balejk@matfyz.cz>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-hardening@vger.kernel.org, phone-devel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, soc@lists.linux.dev,
+ linux-mmc@vger.kernel.org
+Subject:
+ Re: [PATCH v16 1/5] dt-bindings: mmc: sdhci-pxa: restrict pinctrl to pxav1
+Date: Tue, 15 Jul 2025 00:23:45 +0200
+Message-ID: <3028096.e9J7NaK4W3@radijator>
+In-Reply-To: <20250711-hypnotic-aloof-nuthatch-f3761c@krzk-bin>
+References:
+ <20250708-pxa1908-lkml-v16-0-b4392c484180@dujemihanovic.xyz>
+ <3379810.44csPzL39Z@radijator>
+ <20250711-hypnotic-aloof-nuthatch-f3761c@krzk-bin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//n.eiB+mCfh.1hNaJ=V0Ubw";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_//n.eiB+mCfh.1hNaJ=V0Ubw
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hi all,
+On Friday, 11 July 2025 09:31:55 Central European Summer Time Krzysztof=20
+Kozlowski wrote:
+> On Wed, Jul 09, 2025 at 07:33:01PM +0200, Duje Mihanovi=C4=87 wrote:
+> > Would it then be acceptable to declare the pinctrl properties in the top
+> > level and define each controller's respective description: and items: in
+> > the allOf: block?
+>=20
+> just min/maxItems should be enough in each allOf:if:then: sections.
 
-After merging the ext4 tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+I guess for now. Later however I might need to add a state_uhs setting to t=
+he=20
+pxav3 driver; is the method I described right for this or is there somethin=
+g=20
+better?
 
-In file included from <command-line>:
-fs/ext4/inode.c: In function 'ext4_set_inode_mapping_order':
-include/linux/compiler_types.h:568:45: error: call to '__compiletime_assert=
-_652' declared with attribute error: min(({ __auto_type __UNIQUE_ID_x_647 =
-=3D (((0 ? 4 : 6) * 2 - 1)); __auto_type __UNIQUE_ID_y_648 =3D (((16 + __pt=
-e_index_size)-16)); do { __attribute__((__noreturn__)) extern void __compil=
-etime_assert_649(void) __attribute__((__error__("min""(""((0 ? 4 : 6) * 2 -=
- 1)"", ""((16 + __pte_index_size)-16)"") signedness error"))); if (!(!(!(((=
-((typeof(__UNIQUE_ID_x_647))(-1)) < ( typeof(__UNIQUE_ID_x_647))1) ? (2 + (=
-__builtin_constant_p((long long)(__UNIQUE_ID_x_647) >=3D 0) && ((long long)=
-(__UNIQUE_ID_x_647) >=3D 0))) : (1 + 2 * (sizeof(__UNIQUE_ID_x_647) < 4))) =
-& ((((typeof(__UNIQUE_ID_y_648))(-1)) < ( typeof(__UNIQUE_ID_y_648))1) ? (2=
- + (__builtin_constant_p((long long)(__UNIQUE_ID_y_648) >=3D 0) && ((long l=
-ong)(__UNIQUE_ID_y_648) >=3D 0))) : (1 + 2 * (sizeof(__UNIQUE_ID_y_648) < 4=
-))))))) __compiletime_assert_649(); } while (0); ((__UNIQUE_ID_x_647) < (__=
-UNIQUE_ID_y_648) ? (__UNIQUE_ID_x_647) : (__UNIQUE_ID_y_648)); }), (11 + (i=
-node)->i_blkbits - 16)) signedness error
-  568 |         _compiletime_assert(condition, msg, __compiletime_assert_, =
-__COUNTER__)
-      |                                             ^
-include/linux/compiler_types.h:549:25: note: in definition of macro '__comp=
-iletime_assert'
-  549 |                         prefix ## suffix();                        =
-     \
-      |                         ^~~~~~
-include/linux/compiler_types.h:568:9: note: in expansion of macro '_compile=
-time_assert'
-  568 |         _compiletime_assert(condition, msg, __compiletime_assert_, =
-__COUNTER__)
-      |         ^~~~~~~~~~~~~~~~~~~
-include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_a=
-ssert'
-   39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-      |                                     ^~~~~~~~~~~~~~~~~~
-include/linux/minmax.h:93:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-   93 |         BUILD_BUG_ON_MSG(!__types_ok(ux, uy),           \
-      |         ^~~~~~~~~~~~~~~~
-include/linux/minmax.h:98:9: note: in expansion of macro '__careful_cmp_onc=
-e'
-   98 |         __careful_cmp_once(op, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y=
-_))
-      |         ^~~~~~~~~~~~~~~~~~
-include/linux/minmax.h:105:25: note: in expansion of macro '__careful_cmp'
-  105 | #define min(x, y)       __careful_cmp(min, x, y)
-      |                         ^~~~~~~~~~~~~
-fs/ext4/inode.c:5204:17: note: in expansion of macro 'min'
- 5204 |                 min(MAX_PAGECACHE_ORDER, (11 + (i)->i_blkbits - PAG=
-E_SHIFT))
-      |                 ^~~
-fs/ext4/inode.c:5211:39: note: in expansion of macro 'EXT4_MAX_PAGECACHE_OR=
-DER'
- 5211 |                                       EXT4_MAX_PAGECACHE_ORDER(inod=
-e));
-      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~
+Regards,
+=2D-
+Duje
 
-Caused by commit
 
-  e14bef2a00b5 ("ext4: limit the maximum folio order")
-
-I have used the ext4 tree from next-20250714 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_//n.eiB+mCfh.1hNaJ=V0Ubw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh1gyYACgkQAVBC80lX
-0Gx7BAgAhRbz+BPY7I+h/T5keqD4ZQJlQWBgeOdt5KCFpq9s3+KT6SD6U87vjGiO
-pzQbFeBY5Va34ZLQvQjTAJm/IgD6D5Dc633wUOCip5B3okfi4U9esQ1ex8vd+lVT
-83Goc8bHlgO0Otcomv0gLEDSkVvh7vTuwc8uNWhGosYg1k4Y5gYlMc6ehtXI3yCY
-kjyXGVDOcplCsA4Lv4CKhXXNx324yfRZnXbt1Sw5AnFHZxHE9fQmdJXDqDNzxa6o
-VWe4ljmfTUecvy2fD7ZIpHOwtuyB1pmn+04piURmZFFmi8Nj9Q/4s29tAyHql3I8
-x6DRz7FoTn8QKQoD40Eg7zqiWFtaRQ==
-=XQqP
------END PGP SIGNATURE-----
-
---Sig_//n.eiB+mCfh.1hNaJ=V0Ubw--
 
