@@ -1,183 +1,216 @@
-Return-Path: <linux-kernel+bounces-730680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99CD8B0480D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:44:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CFBB0480F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE0D04A0D62
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:44:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F0B17AD633
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A232122F389;
-	Mon, 14 Jul 2025 19:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4340123182D;
+	Mon, 14 Jul 2025 19:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZ1fX7Ck"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E8zZN4Lh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A09612BF24;
-	Mon, 14 Jul 2025 19:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BD22E630
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 19:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752522289; cv=none; b=W0Wr7cUsuMInerj2tQGjJ2p3+1lzh79ctbjbZyabcL7yQWDW+4xU0D2qdhlAtzdBpsLDu4F3LuNrC10iOweUMNAQN2LOzrixsx6lsTFV97ccQdR004VjiJxzuWDaylEyfUIIPZsFTN2vHEWGq2Y0zhBLAgT28MKriVStpWjOzQ8=
+	t=1752522393; cv=none; b=QsD0qXYYcgnrSRbOLLwpz3WQibLF8BQdITBB8dDK45sdXXB0LdzGjgrlJFS8vxhy38Tb6XFvG9/HG2rf/fESwAQ+fCN+MmwCaRmRYiZsny9NdLOGDdeEhGgHH5XSJayZWAfDyzbZV2EcOSqRJnFcp2Vx67TQGMhOXs2kYInQth4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752522289; c=relaxed/simple;
-	bh=oK+GzCnTtE/GVZkDozk8xGm58FvGdJaCuIeAS7oANOk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E6a46gEUNtoLFhpsnKvYuP/m9bJuWt4NfV7v2wRmJIh5nDAsIhaqThsq0zZS+JweXWNybxSeX8OPq9kaZ2gfyvRv7kcj3Ahf1LY4il5tJyUNf8gEwsjUjl8tB2PfMwARErxlunjWS4IspocboWudi0RX9nvzwnRXiiGp5gofUc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OZ1fX7Ck; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e8ba9f36550so991015276.0;
-        Mon, 14 Jul 2025 12:44:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752522286; x=1753127086; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=titEX2y3+9/xscj56vYw1l9vJIIgnO8oj3qH72QFLTw=;
-        b=OZ1fX7Ckx6sEIONsuQiEOUETwerwoSv9i3bBqejfKNr2V37xZHo+rHdDEhci9gOePG
-         lQEcaGbgWX3Wr8nBbCsk7V2yJg4nTgoEKFzOO60LHfkSCm+GnXyNxHfH8b8eLycOFoe0
-         25n8QgpV5Vd2O9yNxIhFRIbqh7ax8CNKex+JyeOwIJPxKsIqN5DXCu7T0a0k6UwT21DD
-         BNgMT59/+azOhUKtLyMRv/6hNkWQ0UEvj/63kzkIiFVIisQCbn1LsdXWAbIZNZnBhCCj
-         Jqunu8kKHBI/y9HQt8RlDJUqsNgJHLXBzq14aTKRJIWUYYTOyjbvbqQAtaV5mixNHdVP
-         B2sA==
+	s=arc-20240116; t=1752522393; c=relaxed/simple;
+	bh=vQOqi9iZD6wccfid1TBvWsr440HmgFH1TPenVglGRzM=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=CvH6u9RFwuZHI2VyoC1GkLOzkKQApcr9yx2WyJQbbinJjLd02auWLHRHgLK8UKiCbXDe7Jk/nSz2qlpNowyScriJg1l1sf5LZJqx27VblVn6fBdLsXNo692ZvQykRXI3f5IXIWkUUSCEPCYXgAJYE3wFZ0KpRU6QGlDtyEgVGuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E8zZN4Lh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752522389;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e77DmMCoRU1Wn+QB8qyXAVxRpVcBX5B1RuM9TG938xk=;
+	b=E8zZN4LhfuUBVOabp0cyJg2x5+OHLSNljtTqdtwmc4ZBEhCZiACCNcmcIHv4Mr5gFPsXNN
+	WdJV2URKt2AjGJSIZd1Xe30cHVU+LzP2aWw6h9/AKQvvOrFGilL3vftWEoCcFTqp+T+Shw
+	TOwE2mCbAJrJRDO3t9454NfpVlF6UB8=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-587-XkIw0RZPNBy-hoMkX_BeIQ-1; Mon, 14 Jul 2025 15:46:27 -0400
+X-MC-Unique: XkIw0RZPNBy-hoMkX_BeIQ-1
+X-Mimecast-MFC-AGG-ID: XkIw0RZPNBy-hoMkX_BeIQ_1752522387
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-704817522b9so72158356d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:46:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752522286; x=1753127086;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=titEX2y3+9/xscj56vYw1l9vJIIgnO8oj3qH72QFLTw=;
-        b=VIEd9SwOgglRLIA1nL5k/m0m/ka8B4/Llwzh9DZZnMzAJvWUJOm1pyQRibwkADyOU3
-         nUV8fZmC0ZkdWr0oo/VvXiYyA+CP5E10w89pTGryEMMddTkOlT+ktF21vBvB2fqXV8QK
-         SfPXodG2EFR558XRHFJOi3THoq6mmntyddlxmsZfD584l32Us0H2vth3YxQuaijC+gj9
-         NTvT57tz0le5G0y2pVXE+nUqONavKtQNvYngBH+eGtbuDGyYsn8ow1Zm6OES6s1NScM8
-         8FL4qy53F3KXTCBkcDhOXWKIZgwH2HoaUUPkfsZuw55OMcMzeZ0B77FDwmb9iJ+QZdYU
-         quDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQTmgHNdibhTFb5bKvAhdxf5HuqeAOKjn13XOJ02+sosMDwnczpeTcva514fvK3GtZLV308+HhVtekLw==@vger.kernel.org, AJvYcCUZIpmUv+YW1QxeV8YEZ5CC9WN7H+Xev+z7ZpzfpUCw7CS7Ml4S8PDLomNKRhb1LS6og/Q6vNrXH92u3pTk@vger.kernel.org, AJvYcCXgYZGgBwqU/4EWa+Wx/PDSmal0JjfdkizoS7UsT2Wea9eg88gZihIHtDXytVednJ8oCsJ7goYZUX7d@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXfh/bR0cDOgWx9oXWaCpLFjNy8RLHk0R9gQG9BOrDEjT0fOg2
-	0DtDdX0id3sbG5bATuloXgjlNHpSdRJ6flQID8hjyR6ejEXIqOl3mwgIvbRxCKfJAjNAHbFOcBY
-	rIjExDr2p4TBp1WaRxeMzjOggxS/RHDk=
-X-Gm-Gg: ASbGncvpyNCzUF8dXKX0UVS3S8So+K3y5L/pnVglryYvfCe1zpnk++Hjc5iyE0FYzat
-	rq0yNVJ1iIJBHA2L4nQDch6cYdR6ciCkiEyQwItBfCSEY1gFjPMRLTVHBHNSrR5TagwYgpPFIld
-	osJyVIoyvEyvF2exmlxZdezyxC5F+XiGy0CkoCSR0Yptz2P8ujEevkUvg7QURumFGOZj8wvOwts
-	37Qc0v3aKTM7WcOyxlL
-X-Google-Smtp-Source: AGHT+IHDaQy35GA+Qses/SKs7Ih1reu0z/6Xmv8VCPpNc9I9mI3lGzILxxovXV+PULcNjOZ/ySpa/++hRe2/LR3lxNI=
-X-Received: by 2002:a05:690c:60c4:b0:70e:404f:6714 with SMTP id
- 00721157ae682-71822cea95bmr12446627b3.19.1752522286247; Mon, 14 Jul 2025
- 12:44:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752522387; x=1753127187;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e77DmMCoRU1Wn+QB8qyXAVxRpVcBX5B1RuM9TG938xk=;
+        b=coGKkHIO8uN/rwdeAzOVCgP/lMvas8HrjaVSpg/aVCu1PUco4DOLMvxRNT5WUCgTGS
+         g8s0VrUXsAEzNESvd+7QP3lQyFgYcvzjUcQM43FnyygtyYJ+O3Yc3SNUJU3+yNuqMomA
+         8Kvu0rh8GoJDlf9N1PQlY2qBiZ1WrCWr2pkHmYu6JJxlGxCKHNvAVz2TVbSIHQiPogYX
+         CNH1bILcQNhGO2/m09j0feIl+QVp7S4YpYUV7La3gLKk3iaMHZG20JA/zErnQ4amxcfB
+         zljhPieFUrDLz4JEy+KHXraSUjDcxBzZj66tXQFh2KwXpnBhthZXlMsV8A2ZB4PZfo+2
+         Yxzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzpVsMjoD9CjMhojRlTKpcPgXs9rHsANZJjYSexaWfnQNIYN3pj+ZnILxioXQXpch7Uq8Snqln/2fDytc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOEPMvRNWsc6tqG+qLHOr/bXaVjZQXlCdLoxZY2dDtyM0QsAvq
+	hhov140RhBzB/ZQ2weBGa3OBQXMTUT0ouKoczcHcSu4GWx5DFS307XalgefXdMK22LrK74q1C7N
+	hqw2y8V+NtVsZ4V8esCAeK+TYq2B3l4kVZAThXg22Nm7w5hsQjySUgYLIlHo0T2O4pg==
+X-Gm-Gg: ASbGncuTNstZ/2Y6MN2eknYFQ3l2h6PfvevFlR5o8DQH+ur4UYOa6/ftGk5Ofvdplq4
+	1JBZtV1uhd8piFC2WeLKJYKS8VGOf9QPUjyNGrkUO0HU7csGrzVz4SmcA0yBEp6h8kZMgzctKlC
+	n+yQ7Y6w46F3Gsf+rRBHrk+4fkNaowzt75DGfxknuJlowKuZ78xPxJf34tyQeTATxJkdNaMNB+P
+	njHndf/Ff3AH8O7ColNUYkDQSB1kSzm717tLi7XXzOaschgRhvUTvmPOLIuoOz12k44+Mb7/OSW
+	V6NToWPhWuIWSKAclqtfsd8cWGh8etfghRU4oFj+Sd3hpFk41jTcgdHw5+S+FskcZCFiQthP+k3
+	ZyXcD4xW3vg==
+X-Received: by 2002:a05:6214:cc2:b0:704:7dfc:f56e with SMTP id 6a1803df08f44-704a3613b4dmr244553046d6.18.1752522386915;
+        Mon, 14 Jul 2025 12:46:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IElhu76RklpmkE20l9U4kG/pwoEeaDE5mQBdKQN+0kBAtrFc9uJ9PSyHoUopb1ufV0fL2J4VQ==
+X-Received: by 2002:a05:6214:cc2:b0:704:7dfc:f56e with SMTP id 6a1803df08f44-704a3613b4dmr244552446d6.18.1752522386276;
+        Mon, 14 Jul 2025 12:46:26 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70497d71424sm50382696d6.85.2025.07.14.12.46.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 12:46:25 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <0dac8a78-79d1-41d0-bc82-0c8af8db9104@redhat.com>
+Date: Mon, 14 Jul 2025 15:46:23 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250712210448.429318-1-rosenp@gmail.com> <20250712210448.429318-8-rosenp@gmail.com>
- <20250714-subtle-origami-gopher-c9099f@krzk-bin>
-In-Reply-To: <20250714-subtle-origami-gopher-c9099f@krzk-bin>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Mon, 14 Jul 2025 12:44:35 -0700
-X-Gm-Features: Ac12FXxoR7CKJ2q8b56sbgmGdKBzHJHT0GepGHfBUGsgSAe8RihtGnci6IAEay4
-Message-ID: <CAKxU2N8au-uncWoP+vGH4cHhHMOtq+VRFGNDs6rRLuHn-i1G-Q@mail.gmail.com>
-Subject: Re: [PATCHv4 wireless-next 7/7] dt-bindings: net: wireless: rt2800: add
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-wireless@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Stanislaw Gruszka <stf_xl@wp.pl>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:MIPS" <linux-mips@vger.kernel.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] cpuset: fix warning when attaching tasks with
+ offline CPUs
+To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
+ hannes@cmpxchg.org, mkoutny@suse.com, peterz@infradead.org
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20250714032311.3570157-1-chenridong@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <20250714032311.3570157-1-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 14, 2025 at 12:27=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
+On 7/13/25 11:23 PM, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
 >
-> On Sat, Jul 12, 2025 at 02:04:48PM -0700, Rosen Penev wrote:
-> > Add device-tree bindings for the RT2800 SOC wifi device found in older
-> > Ralink/Mediatek devices.
+> A kernel warning was observed in the cpuset migration path:
 >
-> Your subject was cut. Probably you wanted something like add "Realtek foo=
- adapter" etc.
-Not sure I follow.
+>      WARNING: CPU: 3 PID: 123 at kernel/cgroup/cpuset.c:3130
+>      cgroup_migrate_execute+0x8df/0xf30
+>      Call Trace:
+>       cgroup_transfer_tasks+0x2f3/0x3b0
+>       cpuset_migrate_tasks_workfn+0x146/0x3b0
+>       process_one_work+0x5ba/0xda0
+>       worker_thread+0x788/0x1220
 >
+> The issue can be reliably reproduced with:
 >
-> >
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > ---
-> >  .../bindings/net/wireless/ralink,rt2880.yaml  | 47 +++++++++++++++++++
-> >  1 file changed, 47 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/net/wireless/rali=
-nk,rt2880.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/net/wireless/ralink,rt28=
-80.yaml b/Documentation/devicetree/bindings/net/wireless/ralink,rt2880.yaml
-> > new file mode 100644
-> > index 000000000000..a92aedf6ba01
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/net/wireless/ralink,rt2880.yaml
-> > @@ -0,0 +1,47 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/net/wireless/ralink,rt2880.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Ralink RT2880 wireless device
-> > +
-> > +maintainers:
-> > +  - Stanislaw Gruszka <stf_xl@wp.pl>
-> > +
-> > +description: |
-> > +  This node provides properties for configuring RT2880 SOC wifi device=
-s.
-> > +  The node is expected to be specified as a root node of the device.
-> > +
-> > +allOf:
-> > +  - $ref: ieee80211.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - ralink,rt2880-wifi
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
+>      # Setup test cpuset
+>      mkdir /sys/fs/cgroup/cpuset/test
+>      echo 2-3 > /sys/fs/cgroup/cpuset/test/cpuset.cpus
+>      echo 0 > /sys/fs/cgroup/cpuset/test/cpuset.mems
 >
-> Why clocks are optional? SoC devices rarely work without a clock.
-Before this patchset the code was doing
+>      # Start test process
+>      sleep 100 &
+>      pid=$!
+>      echo $pid > /sys/fs/cgroup/cpuset/test/cgroup.procs
+>      taskset -p 0xC $pid  # Bind to CPUs 2-3
+>
+>      # Take CPUs offline
+>      echo 0 > /sys/devices/system/cpu/cpu3/online
+>      echo 0 > /sys/devices/system/cpu/cpu2/online
+>
+> Root cause analysis:
+> When tasks are migrated to top_cpuset due to CPUs going offline,
+> cpuset_attach_task() sets the CPU affinity using cpus_attach which
+> is initialized from cpu_possible_mask. This mask may include offline
+> CPUs. When __set_cpus_allowed_ptr() computes the intersection between:
+> 1. cpus_attach (possible CPUs, may include offline)
+> 2. p->user_cpus_ptr (original user-set mask)
+> The resulting new_mask may contain only offline CPUs, causing the
+> operation to fail.
+>
+> The fix changes cpus_attach initialization to use cpu_active_mask
+> instead of cpu_possible_mask, ensuring we only consider online CPUs
+> when setting the new affinity. This prevents the scenario where
+> the intersection would result in an invalid CPU set.
+>
+> Fixes: da019032819a ("sched: Enforce user requested affinity")
+> Reported-by: Yang Lijin <yanglijin@huawei.com>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> ---
+>   kernel/cgroup/cpuset.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index f74d04429a29..5401adbdffa6 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -3121,7 +3121,7 @@ static void cpuset_attach_task(struct cpuset *cs, struct task_struct *task)
+>   	if (cs != &top_cpuset)
+>   		guarantee_active_cpus(task, cpus_attach);
+>   	else
+> -		cpumask_andnot(cpus_attach, task_cpu_possible_mask(task),
+> +		cpumask_andnot(cpus_attach, cpu_active_mask,
+>   			       subpartitions_cpus);
+>   	/*
+>   	 * can_attach beforehand should guarantee that this doesn't
 
- 25         rt2x00dev->clk =3D clk_get(&pdev->dev, NULL);
- 24         if (IS_ERR(rt2x00dev->clk))
- 23                 rt2x00dev->clk =3D NULL;
+Offline CPUs are explicitly included for tasks in top_cpuset. Can you 
+try the following patch to see if it works?
 
-I changed it to use devm_clk_get_optional since that's what it looks
-like here. It's not returning under failure so I assume that means
-it's optional.
+Thanks,
+Longman
 
-OTOH all downstream OpenWrt users of this code (as well as
-mt7620a.dtsi here) do specify a clock. _optional might be a mistake.
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 3bc4301466f3..acd70120228c 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -3114,6 +3114,10 @@ static void cpuset_cancel_attach(struct 
+cgroup_taskset *tset)
+  static cpumask_var_t cpus_attach;
+  static nodemask_t cpuset_attach_nodemask_to;
 
-Maybe Stanislaw knows more.
->
->
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->
-> Best regards,
-> Krzysztof
->
++/*
++ * Note that tasks in the top cpuset won't get update to their cpumasks 
+when
++ * a hotplug event happens. So we include offline CPUs as well.
++ */
+  static void cpuset_attach_task(struct cpuset *cs, struct task_struct 
+*task)
+  {
+         lockdep_assert_held(&cpuset_mutex);
+@@ -3127,7 +3131,16 @@ static void cpuset_attach_task(struct cpuset *cs, 
+struct task_struct *task)
+          * can_attach beforehand should guarantee that this doesn't
+          * fail.  TODO: have a better way to handle failure here
+          */
+-       WARN_ON_ONCE(set_cpus_allowed_ptr(task, cpus_attach));
++       if (unlikely(set_cpus_allowed_ptr(task, cpus_attach))) {
++               /*
++                * Since offline CPUs are included for top_cpuset,
++                * set_cpus_allowed_ptr() can fail if user_cpus_ptr contains
++                * only offline CPUs. Take out the offline CPUs and retry.
++                */
++               if (cs == &top_cpuset)
++                       cpumask_and(cpus_attach, cpus_attach, 
+cpu_active_mask);
++               WARN_ON_ONCE(set_cpus_allowed_ptr(task, cpus_attach));
++       }
+
+         cpuset_change_task_nodemask(task, &cpuset_attach_nodemask_to);
+         cpuset1_update_task_spread_flags(cs, task);
+
 
