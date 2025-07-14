@@ -1,182 +1,98 @@
-Return-Path: <linux-kernel+bounces-730168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B23B040F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:06:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B96F7B040F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:06:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C840617B3FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:05:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F654163DA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630502566E9;
-	Mon, 14 Jul 2025 14:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UBMuCA4u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DB824DD0B;
+	Mon, 14 Jul 2025 14:06:29 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6901FDA94;
-	Mon, 14 Jul 2025 14:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29E324DCEF
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752501905; cv=none; b=qpCYomPjwETz9wHMwegtELnBGAJgl5BNC82Nl2ezmfC9iEyHx7fZO5eEaWC7OCsskj62D9sbIVwjKcq2br99dGwk5vbmmALsx/HObe4YHQ9CDHbjugOi3l8twR/m64eo8vhPDvBC1qhqR95O1DZSHF6OUlQZ6ru2U1v9n3W4uG8=
+	t=1752501989; cv=none; b=F5/C9uxDXBCjMdIGxr5jBWdZEG9yQSDpKfT1TYIkXXmEj5d9xLIv+njq5W8ifzDUyMhJsD3gFgUH0T7KhasjVdP7hekIbZsZZtw0hfJ/wXwHKLToOhhJvDyDPYFw6HQtbbCk/Fty4rlerWq5bKxBiPjP9V392gYY7CjnC9/pRjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752501905; c=relaxed/simple;
-	bh=EocI6ObgL37liRI9WW5f9BVNKTK6gn6068Ri6+WKImA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hvWqeqazFK5JBv2dviYGih8FcfNL80a0i2WBh/SJcAlVxf2TWFlCqLC0mnJuYLilteHRiW6To5/PzrEvOGcPq1n8JDY3AL2ohtFMqdDKIOhJgn8AbsP15W3FU+SjMwVlYao+IFxijR8EGKboyMUIGKHzp6HM+Sn14fcaE66GXhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UBMuCA4u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D899C4CEF0;
-	Mon, 14 Jul 2025 14:05:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752501905;
-	bh=EocI6ObgL37liRI9WW5f9BVNKTK6gn6068Ri6+WKImA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UBMuCA4uFQ3xCg5qkj4+X2S3Ok65SznAs4mYRq4MasZAhb1BpMWeQE25kkJH954uJ
-	 R3LURzdGggBqtucYDUtIfRB7Ax9fBM6wEiqNwqOP+WJK1zUVzXzPCqMUIH0HypBzRI
-	 y+IC0h4gUcrirH82AHDJsnrRtCT/eyxpxV0xI1K5tdVL0TWCwCFw7j47mu9LVDUV72
-	 d/3gCb1QtXktwVefouUVdtJcWdIbhP9JYDJ7m0XvETMOTR9FC46AHanPX0QBZuRd8C
-	 6VC7dG9feVMjOGFWq/ssZ0TTAajh+NWaPNqI/qndjACqaQ/5OZOtJhuZ1DV7kBdayi
-	 zhSWHfWJn1ALg==
-Date: Mon, 14 Jul 2025 15:04:58 +0100
-From: Will Deacon <will@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>, leo.yan@arm.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v3 07/10] perf: arm_spe: Add support for filtering on
- data source
-Message-ID: <aHUOig-kaRo15ZH5@willie-the-truck>
-References: <20250605-james-perf-feat_spe_eft-v3-0-71b0c9f98093@linaro.org>
- <20250605-james-perf-feat_spe_eft-v3-7-71b0c9f98093@linaro.org>
+	s=arc-20240116; t=1752501989; c=relaxed/simple;
+	bh=Xwr1vcyUrckVHV5kH7obupTr6TzvD31DOMhK/UPVmJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HmwLFAeIvxgxpdou8cCTnYTrekVLrQUw1sg0vXt9SOXX5fHQX1IwE7QUnhAVpEVP1oaJ5uRnpzKwHf45xWdAIbmnO5w+YZbyedBr7y7Srvs7mXscX7ZNE6yJBewRvTb4ctCRIdIwRJHBMn2YFgJCPCJHad0wCB1K8LDNbc0vOo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 725DC1401A7;
+	Mon, 14 Jul 2025 14:06:18 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 4E8B420;
+	Mon, 14 Jul 2025 14:06:14 +0000 (UTC)
+Date: Mon, 14 Jul 2025 10:05:53 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, Josh
+ Poimboeuf <jpoimboe@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu
+ Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, tech-board-discuss@lists.linuxfoundation.org
+Subject: Re: [RFC PATCH 2/5] unwind: Export unwind_user symbol to GPL
+ modules
+Message-ID: <20250714100553.4e30a669@batman.local.home>
+In-Reply-To: <2025071435-disorder-obliged-b74e@gregkh>
+References: <aHC-_HWR2L5kTYU5@infradead.org>
+	<20250711065742.00d6668b@gandalf.local.home>
+	<aHSmIa3uffj5vW-m@infradead.org>
+	<20250714062724.6febd9fb@gandalf.local.home>
+	<aHTsOcIUs0ObXCo1@infradead.org>
+	<20250714075426.36bdda0b@gandalf.local.home>
+	<2025071443-lazily-blabber-3fbd@gregkh>
+	<20250714082033.702160ad@gandalf.local.home>
+	<2025071419-negligent-balcony-84c5@gregkh>
+	<20250714093547.62159c19@gandalf.local.home>
+	<2025071435-disorder-obliged-b74e@gregkh>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250605-james-perf-feat_spe_eft-v3-7-71b0c9f98093@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: uk14f84iiya4zs1gm7jy868hjjsqqpfj
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 4E8B420
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+PP/+9tdRnbTHtccOPaywoOJty52BLQkU=
+X-HE-Tag: 1752501974-194159
+X-HE-Meta: U2FsdGVkX1+/giixfV2RlkeRZA8zduW88pyYsFrCy6jtetZwp17Emm04BU9ruvrAQX8bKLnbaJHquYqRUF8vMkB3S7qJHgNvQbginLS4SvEiTspV2M48Sdasm92naa5I4uqPDI+mFcDMJ33yh2NZjGY52dNQNrgxXIUjNASXhADfJ4qXwz9sx/lV4BK5ZjGLUDOlmrB16a2iEdfi/bMAcoeqcN1UcPeo0QM1wLFR+Vi1nS/Q5+rxtr3QMMmBl8Vk9xyivBDvxgcUK6y7icTraYcdvUUt5G1tLc7FcmKTIkotbU65PXBgwxxjbvhZB/vv++FyL47WUexKOJFoTVClFGIVJWwrtUXDmvl0T6pmGG6N2Q3MjkwmDXKbKTO7b8qA
 
-On Thu, Jun 05, 2025 at 11:49:05AM +0100, James Clark wrote:
-> SPE_FEAT_FDS adds the ability to filter on the data source of packets.
-> Like the other existing filters, enable filtering with PMSFCR_EL1.FDS
-> when any of the filter bits are set.
-> 
-> Each bit maps to data sources 0-63 described by bits[0:5] in the data
-> source packet (although the full range of data source is 16 bits so
-> higher value data sources can't be filtered on). The filter is an OR of
-> all the bits, so for example setting bits 0 and 3 filters packets from
-> data sources 0 OR 3.
-> 
-> Reviewed-by: Leo Yan <leo.yan@arm.com>
-> Tested-by: Leo Yan <leo.yan@arm.com>
-> Signed-off-by: James Clark <james.clark@linaro.org>
-> ---
->  drivers/perf/arm_spe_pmu.c | 31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
-> index 9309b846f642..d04318411f77 100644
-> --- a/drivers/perf/arm_spe_pmu.c
-> +++ b/drivers/perf/arm_spe_pmu.c
-> @@ -87,6 +87,7 @@ struct arm_spe_pmu {
->  #define SPE_PMU_FEAT_INV_FILT_EVT		(1UL << 6)
->  #define SPE_PMU_FEAT_DISCARD			(1UL << 7)
->  #define SPE_PMU_FEAT_EFT			(1UL << 8)
-> +#define SPE_PMU_FEAT_FDS			(1UL << 9)
->  #define SPE_PMU_FEAT_DEV_PROBED			(1UL << 63)
->  	u64					features;
->  
-> @@ -232,6 +233,10 @@ static const struct attribute_group arm_spe_pmu_cap_group = {
->  #define ATTR_CFG_FLD_inv_event_filter_LO	0
->  #define ATTR_CFG_FLD_inv_event_filter_HI	63
->  
-> +#define ATTR_CFG_FLD_data_src_filter_CFG	config4	/* PMSDSFR_EL1 */
-> +#define ATTR_CFG_FLD_data_src_filter_LO	0
-> +#define ATTR_CFG_FLD_data_src_filter_HI	63
-> +
->  GEN_PMU_FORMAT_ATTR(ts_enable);
->  GEN_PMU_FORMAT_ATTR(pa_enable);
->  GEN_PMU_FORMAT_ATTR(pct_enable);
-> @@ -248,6 +253,7 @@ GEN_PMU_FORMAT_ATTR(float_filter);
->  GEN_PMU_FORMAT_ATTR(float_filter_mask);
->  GEN_PMU_FORMAT_ATTR(event_filter);
->  GEN_PMU_FORMAT_ATTR(inv_event_filter);
-> +GEN_PMU_FORMAT_ATTR(data_src_filter);
->  GEN_PMU_FORMAT_ATTR(min_latency);
->  GEN_PMU_FORMAT_ATTR(discard);
->  
-> @@ -268,6 +274,7 @@ static struct attribute *arm_spe_pmu_formats_attr[] = {
->  	&format_attr_float_filter_mask.attr,
->  	&format_attr_event_filter.attr,
->  	&format_attr_inv_event_filter.attr,
-> +	&format_attr_data_src_filter.attr,
->  	&format_attr_min_latency.attr,
->  	&format_attr_discard.attr,
->  	NULL,
-> @@ -286,6 +293,9 @@ static umode_t arm_spe_pmu_format_attr_is_visible(struct kobject *kobj,
->  	if (attr == &format_attr_inv_event_filter.attr && !(spe_pmu->features & SPE_PMU_FEAT_INV_FILT_EVT))
->  		return 0;
->  
-> +	if (attr == &format_attr_data_src_filter.attr && !(spe_pmu->features & SPE_PMU_FEAT_FDS))
-> +		return 0;
-> +
->  	if ((attr == &format_attr_branch_filter_mask.attr ||
->  	     attr == &format_attr_load_filter_mask.attr ||
->  	     attr == &format_attr_store_filter_mask.attr ||
-> @@ -406,6 +416,9 @@ static u64 arm_spe_event_to_pmsfcr(struct perf_event *event)
->  	if (ATTR_CFG_GET_FLD(attr, inv_event_filter))
->  		reg |= PMSFCR_EL1_FnE;
->  
-> +	if (ATTR_CFG_GET_FLD(attr, data_src_filter))
-> +		reg |= PMSFCR_EL1_FDS;
+On Mon, 14 Jul 2025 15:56:14 +0200
+Greg KH <gregkh@linuxfoundation.org> wrote:
 
-Is the polarity correct here? The description of PMSDSFR_EL1.S<m> suggests
-that setting bits to 1 _excludes_ the FDS filtering.
+> lttng not getting merged because you don't have time to review it should
+> not make the above rule somehow invalid.
 
->  	if (ATTR_CFG_GET_FLD(attr, min_latency))
->  		reg |= PMSFCR_EL1_FL;
->  
-> @@ -430,6 +443,12 @@ static u64 arm_spe_event_to_pmslatfr(struct perf_event *event)
->  	return FIELD_PREP(PMSLATFR_EL1_MINLAT, ATTR_CFG_GET_FLD(attr, min_latency));
->  }
->  
-> +static u64 arm_spe_event_to_pmsdsfr(struct perf_event *event)
-> +{
-> +	struct perf_event_attr *attr = &event->attr;
-> +	return ATTR_CFG_GET_FLD(attr, data_src_filter);
-> +}
-> +
->  static void arm_spe_pmu_pad_buf(struct perf_output_handle *handle, int len)
->  {
->  	struct arm_spe_pmu_buf *buf = perf_get_aux(handle);
-> @@ -788,6 +807,10 @@ static int arm_spe_pmu_event_init(struct perf_event *event)
->  	if (arm_spe_event_to_pmsnevfr(event) & arm_spe_pmsevfr_res0(spe_pmu->pmsver))
->  		return -EOPNOTSUPP;
->  
-> +	if (arm_spe_event_to_pmsdsfr(event) &&
-> +	    !(spe_pmu->features & SPE_PMU_FEAT_FDS))
-> +		return -EOPNOTSUPP;
+Well, it's because LTTng is a separate entity that handles different
+users than I worry about.
 
-Same question here.
+I'm having enough trouble keeping up with what is already in the
+kernel. If we can find someone else to help out, I'm all for it.
+Currently the tracing subsystem has two maintainers (Masami and
+myself), and there's still not enough time to review the current code.
+Mathieu is listed as a reviewer on the tracing subsystem. Could he
+review his own code?
 
-Will
+-- Steve
 
