@@ -1,91 +1,97 @@
-Return-Path: <linux-kernel+bounces-730585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6202B046A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:36:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA80B046A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E081E1A62395
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 876CA176168
 	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7CB2676F3;
-	Mon, 14 Jul 2025 17:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142E0268FE3;
+	Mon, 14 Jul 2025 17:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LbV+buNG"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gd67S3kI"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0626925F97D;
-	Mon, 14 Jul 2025 17:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B63266F1D;
+	Mon, 14 Jul 2025 17:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752514589; cv=none; b=WAivO5e+dfjINA6vK5Ybwv6eAoZHTo3FOpbhZceQ1jfYv0dFcPiPPXPpRAV9EFyIsep6cLpkb8cJ0LiXsgnD07/cBiFxjtbfgE54STwMZ9Y1f21T91Ix61LqNPC4ZhMftaVZfZDVqp3kfSzDYk+IvtTKNucnmFXRwXIcY6zTso0=
+	t=1752514591; cv=none; b=XvqILs10l/8RiHa/WZsNWxUQ3FOeEvbUCPSoTq1eO8a7KgAtRh2ftouBvGeJtlycypZI0y+vDEaFLcPxma1Kfcyr7G+VQqtw5vpSEmjZg+zjMbAu7ZJ9SFlHFbFkQQllSr3TuO0wo9nT7I2HUfkZwthDmYtelA0l94wh5VHwLQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752514589; c=relaxed/simple;
-	bh=WfsKXVJyKGBvrBPYu2BcjrGMJIbk4VCvgUzrDGZK53E=;
+	s=arc-20240116; t=1752514591; c=relaxed/simple;
+	bh=rq5YgPNx9avXK/rSM4iKKmkgwxS5W87KGGkv7TSCwXA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jZ1duc18b3sxrzF1N+EJr8fkO2sJMS+A+s9y0OhcPpejjFbPQNDRCewZcx08t+PabJVy1ZU7dmyh7xxU5MPQ3rtt7P3U+Mf1chBeA+kEWK6SXQVRAk+Bs3tW8UJ0G9PJbQC11cljEABesUFPzUOFQXN8OD2PK8kK3OxAmbYImxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LbV+buNG; arc=none smtp.client-ip=209.85.221.47
+	 MIME-Version:Content-Type; b=OfL/5Q0btxIU1kTDZurCsrOdCjoRC1NpN2KUdgtwvpLBGvHb18b0ePy17AaMspd72W/hWQi+YF7+EGKGTI+ctnctKm6qZc2AxsiVyu9wPbxa0w0ImJyF5tm6o7GQoEYSC81bzMnbaX+ZkLfp8cq01oIsf1EKfaXCwZF+Mm1s8uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gd67S3kI; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a4fb9c2436so2772283f8f.1;
-        Mon, 14 Jul 2025 10:36:27 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a6e8b1fa37so3717997f8f.2;
+        Mon, 14 Jul 2025 10:36:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752514586; x=1753119386; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752514588; x=1753119388; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Wp/9FJf0itBzRi4wdHtyABmcjqnv5WaOUuSEUpWjg7g=;
-        b=LbV+buNG7WWMKQ5ofOX57vEm86OBDNhHnh3t/gUP1SoqXc0FaspCYLZEpaNDwAcSpe
-         fiofjx7cLHFypVUWw/iQj7I2QxQbAZHQ9dhoi9cpxXWNVvnKNzLaH6b5xOK0BsV1ysNW
-         wT0omS3FE8s7aXNM4ZY4l6SGXdE1AHOhz3d3DbGZBo4/OiqFvPmILuJ37DgFSmnCCKqt
-         bELAUOl+3OVrAdt37NrVE5f2Vi/Oo2yTx9PQ8IuUrqR9j2OXj+7QzUBetYoKPnHCbF7m
-         qZQRIfOue7RitcZWYYu4SKfh9QUn46bxf51mpJ8KXteXM3c+4rSecs5z1CzVWJpYNCiw
-         hpKA==
+        bh=nMORlJFstCu30eoDehbfDqzhHnI2qIre3FxSZT/6bX8=;
+        b=Gd67S3kI7iFKZi4wNWjXnOLPN73oB6T5cl48QOyKdnjsEKnEm1iaKuUF00RiszboLo
+         QOcVKqEf46yMVW8XJruZMHuT8IT+pHTpKi6FlkO5+brVcjZZwWZqmJ0BSCt3VPuFbM0Q
+         vyxhJ9F1AH+p7Ba7g0KpsvUWG6NZJM4IvpyK6WdTSm9N1OSlLDN5Q4YZ3fp2CWs797XT
+         igJugG4s52Rq2LdQqDzDG/09to5samqfcffdfgoG6CITD6DAtARXZ/pue7SdlLzz7dwG
+         45qPw78ZPlyFxN4dMXMi9mnuFjCw59ToEqkoYzS4RHpZfxOvdtzMyLRZuexKqJ0qelvV
+         h3rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752514586; x=1753119386;
+        d=1e100.net; s=20230601; t=1752514588; x=1753119388;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Wp/9FJf0itBzRi4wdHtyABmcjqnv5WaOUuSEUpWjg7g=;
-        b=PrXfY/IpETDuY/DIGMIcvJWtJw7QhOvhSC17m5LxbLk2/c6Y6Xn67AYJztRZVsIjfm
-         YETBMgWHwc9LMZbbGWpybH0a7P3Bwhl8pHyOTH30//nrBzULFTw4M88QMqqZ2zZkqZkT
-         9hLI1lGLDRy+xsxcUAxAtjJ+nM/ty9ZjeSMF0C1RK+xq8m0dgVajAt1NguDydoiGfc+v
-         LuHoGXWX9gwcSh6+VEfuB0WJz576SrzEZk717hx9Ymun4VMwO10IplMf/sXtMa4lfm7p
-         GgiacNW46+wMi6WPeqH7v6soCwZr2JEuKkFY25eu7guj7vN/O1UeaiEJVnGjXX+jnlHo
-         HUlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzkrvV3ueEui3DfBwghI/L27IRNj6uA0Jo9YaRTpPDRxWb8Xt+QfEnVMLxSqk03/kaufZZDzvMTM+7bg6h@vger.kernel.org, AJvYcCXUfmxVmGOIxlEhfCmhe+m9+HkUycNlZ7rDgw/EdhOmqvx1V5vXpoSQQ4Fn3oCQy21DUfaBDLh/u8k0@vger.kernel.org, AJvYcCXXfUa0qB2Oy7qow+KymbQKdzB193oRqVaLvd4NltRtQZcUBLTfgTv7DPIFuabkUsR8uFjfrrcNw9OkdcrRYA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBSY5jBVmAEvW1QpZdya8/jd3M1+fPCAt3EvtGpZn4ZSbt8Cgv
-	TUQwXiJAyBgpR+2sxgzOd665f7Yd7/RcwYlTEGgmXFeiDVqsGPDJR4HL
-X-Gm-Gg: ASbGncvVQtAbwJoryMDJBt12+Eg2Ly8JL2Mj0TkCssUbZ1LkQC1f/UWA2YtRb18umAv
-	mv4/IYenSqRC8rfGtKNcVrv1MKhE5iNG8cezNIQvpWqGDPy3JGHJ8c/fVVWkVupqskpXukrPR7s
-	J8lVp8Z3mBVznY/wVJpsUhJRhjjAwaq1FV8Oxv7eQwEbRw9rJip3CLR3vBQCJMtpXCdJgGHQUgf
-	XfgQ6UesvneqAsvZWzq7AcP77wkQmrzH7KyChkteAYf6+kJ0ApI9Wn6Imd6YQNXzvuFBShJiyQz
-	LfxW7RB0PUOf3Czdt93QUwh9CB2P+UxAkHrruKvO/pZynAc8wVNUMMxjHloR8YKIcSLAH95YDUJ
-	7G+wLnBWY2cCYuyH6QpLubwumTjBNjb2YI7I=
-X-Google-Smtp-Source: AGHT+IFWbQgqrB3G2gTde3RY/C4Kg+J//8ZmNXMoD/ZO1cqQ1rI6IBsnRuGz97pwsS7RiZMx8g3jnA==
-X-Received: by 2002:a05:6000:240e:b0:3a4:e5ea:1ac0 with SMTP id ffacd0b85a97d-3b5f187a4a8mr13297156f8f.5.1752514586015;
-        Mon, 14 Jul 2025 10:36:26 -0700 (PDT)
+        bh=nMORlJFstCu30eoDehbfDqzhHnI2qIre3FxSZT/6bX8=;
+        b=TyzvEBcnXVpqIG9h48wzcPvZAyov+dcQL2li/OcexJQdNATvq4DUFEYo+dzo8R06zK
+         rrzl/f19BAGwFU6+ltIUs0BEFn2SZfCXtEud+/6rnzviSvJ++zJn/GVXOHBdjKCl6cuk
+         y/XDwRz93DdeoSNKjf8R7ZLKMm8sOku6tgrRTgtzTmMCCyvZXeDzn1pixCxh6Q1ZiNPF
+         qAX0l8LZKtNSdcOYcabS9+lfmgupyNOd3PT74klWYMTNAcYC1eJp9gG72QbrWLiYiV/R
+         PAggjb0BMXoC16Ns90HvKwV2J7Irp2Udl9epB/Eps5UpXJPrLxzOK21yzf8wacr6tR/e
+         8Hrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWo1+yk0diVuEvf83Jq+FfoNU9iLiS3lA6Q9b4HZ9A07JEfJCvTbhkR5SLcavsxR8a6KKlZa7so8cP@vger.kernel.org, AJvYcCXOEFO5SQMMVT3Lj3VEwwHcuqz+qBBqDpQnHd6TlBRjKOMQ5LdgbKN/PXR3/eE8GhsxK8cK6e7vVKCXJCkM@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH7dIvcYk1mkkbM0LFXJk2l2HfRHLQmU0ccJh3ST333fO0plCT
+	0vWPL2E4+mcPKDUiX/NjStDy/Ir+0EXPUlzy1mK2o2ylXH01A1vZUhB0
+X-Gm-Gg: ASbGnctYFtI/B1oFpFxn6cqyP/COORA49tYC2r0p6qYDb6mRGSnXxAppSoXNuF1knf8
+	xH6oVkF6YvKER602Zerhuhy3TDnA9cUsuoR9OHB4Xc3duS8rHn0D4SEjG6kbWrFwzQeK3A0cC2D
+	4Nqp/VHmN/wdwEZcDWk0zqVE+WiXGaPDp71MMEWkkCrV+coErn1T6QR8i13SKsPfuxM2je56i4n
+	4agq2MtZxMppEgDGXTeOCyxZ7Gq2TSjjC8R1AMf4nvDN7XtIyBzow8d9BiQ1fU35MsG/p4DQDGt
+	WcWiiyZFL/jPy1Wm8+r9gCfNgqWMp8vlEYVETzVq0YM1WMwKUapZ/f/8L9PXC+b/7MoZA6+eV9g
+	mqTAFruNakBcEurOpeh3WxyeGcxcgfQCqXY0=
+X-Google-Smtp-Source: AGHT+IG/PVExtP/WEztpoYPT5TAxxypHZ9Dem6h6Z1iXLOh9gPpqN0Q+vxVVWdYcuYu48wCDZrC55g==
+X-Received: by 2002:a5d:64e2:0:b0:3b5:f907:f263 with SMTP id ffacd0b85a97d-3b5f907f2admr7131124f8f.31.1752514587610;
+        Mon, 14 Jul 2025 10:36:27 -0700 (PDT)
 Received: from alarm (92.40.201.95.threembb.co.uk. [92.40.201.95])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d872sm13152531f8f.60.2025.07.14.10.36.24
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d872sm13152531f8f.60.2025.07.14.10.36.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 10:36:25 -0700 (PDT)
+        Mon, 14 Jul 2025 10:36:27 -0700 (PDT)
 From: Dale Whinham <daleyo@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
+	Conor Dooley <conor+dt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>
 Cc: =?UTF-8?q?J=C3=A9r=C3=B4me=20de=20Bretagne?= <jerome.debretagne@gmail.com>,
 	Dale Whinham <daleyo@gmail.com>,
-	linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/9] dt-bindings: arm: qcom: Document Microsoft Surface Pro 11
-Date: Mon, 14 Jul 2025 18:35:37 +0100
-Message-ID: <20250714173554.14223-2-daleyo@gmail.com>
+Subject: [PATCH 2/9] dt-bindings: display: panel: samsung,atna30dw01: document ATNA30DW01
+Date: Mon, 14 Jul 2025 18:35:38 +0100
+Message-ID: <20250714173554.14223-3-daleyo@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250714173554.14223-1-daleyo@gmail.com>
 References: <20250714173554.14223-1-daleyo@gmail.com>
@@ -98,29 +104,28 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Jérôme de Bretagne <jerome.debretagne@gmail.com>
+The Samsung ATNA30DW01 panel is a 13" AMOLED eDP panel. It is similar to
+the ATNA33XC20 except that it is smaller and has a higher resolution.
 
-Add the compatible for the Qualcomm X1-based Microsoft Surface Pro 11,
-using its Denali codename.
-
-Signed-off-by: Jérôme de Bretagne <jerome.debretagne@gmail.com>
+Tested-by: Jérôme de Bretagne <jerome.debretagne@gmail.com>
 Signed-off-by: Dale Whinham <daleyo@gmail.com>
 ---
- Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/display/panel/samsung,atna33xc20.yaml   | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-index 6260839fe972..2b02619e665f 100644
---- a/Documentation/devicetree/bindings/arm/qcom.yaml
-+++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-@@ -1135,6 +1135,7 @@ properties:
-               - dell,xps13-9345
-               - hp,omnibook-x14
-               - lenovo,yoga-slim7x
-+              - microsoft,denali
-               - microsoft,romulus13
-               - microsoft,romulus15
-               - qcom,x1e80100-crd
+diff --git a/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml b/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
+index 31f0c0f038e4..e36659340ef3 100644
+--- a/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
++++ b/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
+@@ -19,6 +19,8 @@ properties:
+       - const: samsung,atna33xc20
+       - items:
+           - enum:
++              # Samsung 13" 3K (2880×1920 pixels) eDP AMOLED panel
++              - samsung,atna30dw01
+               # Samsung 14" WQXGA+ (2880×1800 pixels) eDP AMOLED panel
+               - samsung,atna40yk20
+               # Samsung 14.5" WQXGA+ (2880x1800 pixels) eDP AMOLED panel
 -- 
 2.50.1
 
