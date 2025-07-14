@@ -1,187 +1,171 @@
-Return-Path: <linux-kernel+bounces-729713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3539B03AA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:18:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86A6DB03AAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70C3A189F6EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:18:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 825A01669FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7337241116;
-	Mon, 14 Jul 2025 09:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD1F241686;
+	Mon, 14 Jul 2025 09:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="o7n2dh3D";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mBQmaIad";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="o7n2dh3D";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mBQmaIad"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jRJpb3zk"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773CF23F424
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A9D20966B;
+	Mon, 14 Jul 2025 09:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752484701; cv=none; b=e6/UCWmez3ojYiWQUB/03GrnSFyHtrCYOhc8rl32opo2Aig5jifkcuccG++tjOy0eY0gTjkobIIWLv1u0M1ozOt9U991iSExA1jmuae/3VlnWA07RJQNkcUT2/FiPtRqdxc3y0FZNer0vQFvb59Pd3YVHGNaukzfQAWfXGPJtdM=
+	t=1752484856; cv=none; b=VBMMUyRoEqF0xqaAfHGCbjHocqK582+osUxpzTFrVqkc0GWrohOzMV6HWq1JYWdyK0Y1VfulqIOHun0yTZE58h+Z1rn1dLyHs1ow+n+wtWzqk/nKTfV/vj6hN2qPmkSQGR+YXkzYaugq2b7DDLgcsFx/GKHQRYua5qP0QZySqLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752484701; c=relaxed/simple;
-	bh=RDrles8DEnLcUn3NIgE9ss2/zp1WroVHFMW2MtcuS54=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yi2nGBbtbKJZuiqKrsyCDfFse4G+tdLd7ZiHzIv3ltYAPkvFozACDJhBbQlQadyAn3njlf6UnzitOcw7hQ5c7G4UIpAqNRzlI3zr3MQw3zHU8qWrs9u18jO8bmZEX9zVefNC26V8AK7fGYj2owKl3iJ3iRkREa8fPhLUsNKsTgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=o7n2dh3D; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mBQmaIad; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=o7n2dh3D; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mBQmaIad; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A09991F7A9;
-	Mon, 14 Jul 2025 09:18:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752484697; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nc5HoPyCGpHMjcV/1O/vCk8mruKFytfnsClT8E+ahA0=;
-	b=o7n2dh3DbawO1/z2JepfpLrO+tnYWBXFr+AK/+kZXh7otcv6dOGx2ym0MoDNBxFDhOlSIx
-	kBKuxvoliIK4QesErukj/haIJp2zSyXXSxmqVakk6dq+R+PLmaFFRI+uUj5pB97oQXQDeT
-	GOxprd49alrhpfjtieeXcS6L1FMq5kA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752484697;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nc5HoPyCGpHMjcV/1O/vCk8mruKFytfnsClT8E+ahA0=;
-	b=mBQmaIadydHnzQ4nB1CAgIZqV5udXlE28/t2F35Q4hfxVS2h/mekfwmkxLpwaUJELiLk0F
-	/o4ki0v8O029//CA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752484697; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nc5HoPyCGpHMjcV/1O/vCk8mruKFytfnsClT8E+ahA0=;
-	b=o7n2dh3DbawO1/z2JepfpLrO+tnYWBXFr+AK/+kZXh7otcv6dOGx2ym0MoDNBxFDhOlSIx
-	kBKuxvoliIK4QesErukj/haIJp2zSyXXSxmqVakk6dq+R+PLmaFFRI+uUj5pB97oQXQDeT
-	GOxprd49alrhpfjtieeXcS6L1FMq5kA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752484697;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nc5HoPyCGpHMjcV/1O/vCk8mruKFytfnsClT8E+ahA0=;
-	b=mBQmaIadydHnzQ4nB1CAgIZqV5udXlE28/t2F35Q4hfxVS2h/mekfwmkxLpwaUJELiLk0F
-	/o4ki0v8O029//CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6CA73138A1;
-	Mon, 14 Jul 2025 09:18:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kaNBGVnLdGg4PgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 14 Jul 2025 09:18:17 +0000
-Date: Mon, 14 Jul 2025 11:18:16 +0200
-Message-ID: <87frez871j.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Mark Brown <broonie@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Takashi Iwai <tiwai@suse.de>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the sound-asoc tree with the sound tree
-In-Reply-To: <20250714130122.58f531e5@canb.auug.org.au>
-References: <20250714130122.58f531e5@canb.auug.org.au>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1752484856; c=relaxed/simple;
+	bh=nsJCzN1RuvWH0xipKFOTbj1OfP0Tz1nFWOA2QY/vEq4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Jk4LWla5/71LNzFmMmTaCEcSbmt1vbc8wxT9Q3vXTlnRsyMTqy0jl5CJNrwKBFk5hRD/I96cFAMSyrMBWKFYEm4ZC4VOrJDYRyT2mJDfGN0DP/ecsGevD1TnlJhMMiHZ/QX1sNKXi1efHwbvuIQcJT6Cuog2g7uzbKpgtv02/98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jRJpb3zk; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56E9KCVD2579656;
+	Mon, 14 Jul 2025 04:20:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752484812;
+	bh=VpRIsrh/SskIsYvaFioLSeLx3UZ4lfhfIHEZTyHFdm4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=jRJpb3zkCM2TPcl/pnOSPoKvoGNKE2RRL8R3vySw8ty8MIGmfwjLeyF/u2TXmutp1
+	 3kg/8FTnKIMknYEV9gFX7feo6LK+SBynXsCac5zuUWnOD1argqveNGhHjY4N5Ds1IG
+	 V6LF4DGptIMEQl/nT4H3TZDsByJhpPtZ57s301+M=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56E9KCRv3165019
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 14 Jul 2025 04:20:12 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 14
+ Jul 2025 04:20:11 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 14 Jul 2025 04:20:11 -0500
+Received: from [172.24.26.195] (lt9560gk3.dhcp.ti.com [172.24.26.195])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56E9K55c269797;
+	Mon, 14 Jul 2025 04:20:06 -0500
+Message-ID: <268f6849-efc6-4663-af20-f6726bd4b78d@ti.com>
+Date: Mon, 14 Jul 2025 14:50:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[canb.auug.org.au,gmail.com,suse.de,renesas.com,vger.kernel.org];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC net-next 0/5] net: ethernet: ti: am65-cpsw: add AF_XDP
+ zero copy support
+To: Roger Quadros <rogerq@kernel.org>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov
+	<ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard
+ Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Sumit
+ Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?=
+	<christian.koenig@amd.com>
+CC: <srk@ti.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <bpf@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>
+References: <20250520-am65-cpsw-xdp-zc-v1-0-45558024f566@kernel.org>
+Content-Language: en-US
+From: "Malladi, Meghana" <m-malladi@ti.com>
+In-Reply-To: <20250520-am65-cpsw-xdp-zc-v1-0-45558024f566@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, 14 Jul 2025 05:01:22 +0200,
-Stephen Rothwell wrote:
-> 
-> Hi all,
-> 
-> Today's linux-next merge of the sound-asoc tree got a conflict in:
-> 
->   sound/soc/codecs/hdac_hdmi.c
-> 
-> between commit:
-> 
->   ed677858d4fe ("ALSA: hda: Move widget capability macros into hdaudio.h")
-> 
-> from the sound tree and commit:
-> 
->   039de8f598dd ("ASoC: hdac_hdmi: remove hdac_hdmi_jack[_port]_init()")
-> 
-> from the sound-asoc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc sound/soc/codecs/hdac_hdmi.c
-> index b33cd5178008,3aae0a2eb047..000000000000
-> --- a/sound/soc/codecs/hdac_hdmi.c
-> +++ b/sound/soc/codecs/hdac_hdmi.c
-> @@@ -24,7 -24,7 +24,6 @@@
->   #include <sound/hda_i915.h>
->   #include <sound/pcm_drm_eld.h>
->   #include <sound/hda_chmap.h>
-> - #include "hdac_hdmi.h"
->  -#include "../../hda/local.h"
->   
->   #define NAME_SIZE	32
->   
+Hi Roger,
 
-The conflict resolution looks good, thanks.
+On 5/20/2025 3:53 PM, Roger Quadros wrote:
+> This series adds AF_XDP zero coppy support to am65-cpsw driver.
+> 
+> Tests were performed on AM62x-sk with xdpsock application [1].
+> 
+> A clear improvement is seen in 64 byte packets on Transmit (txonly)
+> and receive (rxdrop).
+> 1500 byte test seems to be limited by line rate (1G link) so no
+> improvement seen there in packet rate. A test on higher speed link
+> (or PHY-less setup) might be worthwile.
+> 
+> There is some issue during l2fwd with 64 byte packets and benchmark
+> results show 0. I'm still investigating this issue.
+> 
+> AF_XDP performance using 64 byte packets in Kpps.
+> Benchmark:	XDP-SKB		XDP-Native	XDP-Native(ZeroCopy)
+> rxdrop		317		504		824
+> txonly		400		405		757
+> l2fwd 		207		264		0
+> 
+> AF_XDP performance using 1500 byte packets in Kpps.
+> Benchmark:	XDP-SKB		XDP-Native	XDP-Native(ZeroCopy)
+> rxdrop		82		82		82
+> txonly		82		82		82
+> l2fwd 		82		82		82
+> 
+> [1]: https://github.com/xdp-project/bpf-examples/tree/master/AF_XDP-example
+> 
+> To:
+> 
+> Signed-off-by: Roger Quadros <rogerq@kernel.org>
 
-Mark, could you send an early PR for 6.17 about ASoC stuff?
-I'd like to catch up the conflicts earlier.
+This series crashes Linux on am64xx-hsevm, when I tried nfs boot using 
+AM65-CPSW-NUSS driver:
+logs: 
+https://gist.github.com/MeghanaMalladiTI/d655a1c8ca88113ee7f5f57d6ab0ec4c
 
+Seems like you have reverted the fix for the same bug which was reported 
+by Siddharth and fixed by Julien: 
+https://lore.kernel.org/all/7f7fb71a-6d15-46f1-b63c-b569a2e230b7@baylibre.com/
 
-thanks,
+reverted lines:
+		if (!common->ports[port].ndev)
+		/* FIXME should we BUG here? */
+			continue;
 
-Takashi
+Can you please take a look at it.
+
+> ---
+> Roger Quadros (5):
+>        net: ethernet: ti: am65-cpsw: fix BPF Program change on multi-port CPSW
+>        net: ethernet: ti: am65-cpsw: add XSK pool helpers
+>        net: ethernet: ti: am65-cpsw: Add AF_XDP zero copy for RX
+>        net: ethernet: ti: am65-cpsw: Add AF_XDP zero copy for TX
+>        net: ethernet: ti: am65-cpsw: enable zero copy in XDP features
+> 
+>   drivers/net/ethernet/ti/Makefile         |   2 +-
+>   drivers/net/ethernet/ti/am65-cpsw-nuss.c | 526 +++++++++++++++++++++++++++----
+>   drivers/net/ethernet/ti/am65-cpsw-nuss.h |  37 ++-
+>   drivers/net/ethernet/ti/am65-cpsw-xdp.c  | 155 +++++++++
+>   4 files changed, 656 insertions(+), 64 deletions(-)
+> ---
+> base-commit: 9f607dc39b6658ba8ea647bd99725e68c66071b7
+> change-id: 20250225-am65-cpsw-xdp-zc-2af9e4be1356
+> 
+> Best regards,
+
+-- 
+Thanks,
+Meghana Malladi
+
 
