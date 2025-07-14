@@ -1,84 +1,237 @@
-Return-Path: <linux-kernel+bounces-730241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A9D0B041C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:33:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58908B041C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FC203A75C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:32:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D99A1896FC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456F0253F35;
-	Mon, 14 Jul 2025 14:32:55 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6774C25228D;
+	Mon, 14 Jul 2025 14:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="kYzX2Nm9"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2AA11CBA;
-	Mon, 14 Jul 2025 14:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81CD248F72
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752503574; cv=none; b=UYsFxr25xjluu8yJuyJs+XToJAyeMibNtE7/a08ZMRDSwDludc399fTmJDl1nIFL8s8p6B1YetwldmnNQqT9EvJkCeGMGFYLo3t+YJsBK/pWZ+HVffpoSDXyntTJOQKepmhldRKXa4p8ha6wK6182FW0DviW5BH18Fbuhbwrwso=
+	t=1752503619; cv=none; b=f8Tr7a+6BkE/xq2nDxJrUdbGvcf0BX5qNlJryYliwU4KU4FT2YOF1byvFnscXoBrfXEo3edFiT5hioMBEeF/VOCQ+6tSPcqNp/5VUpoXVZAQYQBxxS3p6UJ2iQCld7TX0Pb6i7qS/KHa5AjMIvTvhvg4GJSNH07qWJQKPidAND4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752503574; c=relaxed/simple;
-	bh=y8Zyu954SfhFDdcRBZhN33yK86h816ltT5DQDQhAZ0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FoaJEWakFCTE3vhyWMiRCCsHZM+OCPYCSZEKHM30fVkdoOnaetA1aY6Zeyb07ELZG012QqDto2cpX/ljhsymF/eKKaPJl1x9mO6TM5RjAPjofl+Eos0OgJOE7tdbM4aaFiPg/BTfWytVmAuIXnyTSxO1fBPBus4xYE+ptiN2218=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id 32B055690E;
-	Mon, 14 Jul 2025 14:32:45 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 7BE4E2000D;
-	Mon, 14 Jul 2025 14:32:43 +0000 (UTC)
-Date: Mon, 14 Jul 2025 10:32:48 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] tracing: Remove "__attribute__()" from the type
- field of event format
-Message-ID: <20250714103248.0673aba8@batman.local.home>
-In-Reply-To: <20250714231412.73e511c5c9524cde5d475770@kernel.org>
-References: <175197567999.977073.8989204607899013923.stgit@mhiramat.tok.corp.google.com>
-	<175197568917.977073.2201559708302320631.stgit@mhiramat.tok.corp.google.com>
-	<20250709131107.397a3278@batman.local.home>
-	<20250711143703.60a1a9a9f31a45f2000eec9d@kernel.org>
-	<20250711120322.4ddb9b39@batman.local.home>
-	<20250712204524.13ece418f90ea66d4bd0e598@kernel.org>
-	<20250712103732.79c7b9e1@batman.local.home>
-	<20250714231412.73e511c5c9524cde5d475770@kernel.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752503619; c=relaxed/simple;
+	bh=EzR89/ZKlpIkjzthOy50Fps3KUMoaxG4XdPa6EX+pLk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mxIFQQWgiqDE2Sr2+tau6XWUvWO6/HUVNYjVhzNmKrxc3rFTZGecovb7+he9drJm/+e6H/MJV87ZcN521t3MpvMFUWmeNJvN7z2vFf4OXnN6uotZMlPuBlgj6Df3NsGHGF+g/7WWvEx5h6g4uJ5IBPdXWfEtM98+qkiYyRQ4bzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=kYzX2Nm9; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so30578135e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 07:33:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1752503616; x=1753108416; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zjD3qNRffV1fPCxAkyiPd3YMx1zGbdbkxYO0A6y57I0=;
+        b=kYzX2Nm9Ta3k2CkrqMco3TzagSbD7gugeQcJPql/FgyB41L/Scrw4k5YFb/DZYTTrq
+         Es3F30SRhwt3sl4RixMr6bnxG78FyPbhIzLEH1apxv4jsDvu0k9ovEncCwkyi3SRJoAi
+         EcuqR3Gi3KGCkhdTUXl7dOo3O3liHFMc59xkEMZGwibJv8kFRTuAfxm7O4UUyaIcczmS
+         Y9UpTcB744zrIZ0F8JdixHWKcDllehUHBZSQhBfh+jWSOVhLwPNN2s5so6PrZ7jeBBu7
+         gOY5bb2mJdRZgdfETahY+erOUpJuFfbm8AJR0n2VfRww2ZXTc0EyiGl4XmeSEGLTuTRd
+         Nj9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752503616; x=1753108416;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zjD3qNRffV1fPCxAkyiPd3YMx1zGbdbkxYO0A6y57I0=;
+        b=Sbt6X93hgs+P0j4QKblXuhzDAC6I1Zup5UPuNjVRBhcUm2c2dAgJ57CmdOaMUXiUB7
+         boyzkdq2Ump0RUC52D0P9FXt4IqzC3FwzkIGpoHSd58JOavYnTwh6uXIj9C/+I80lPRs
+         MfityVkVOAYKjdBEjX6l4NKI5vx7dc/pjJD2V3/rWLkp+so2PD29PWvGjT5STKylW89X
+         QAdguNTxdOtGPMMEm4JUpLjmf3cWic+hbuXHFpOKVabXSseE9xXi+CduIbzh2+h5F8aC
+         N5aKcf7mbDB+8Vg33JftgUamsWg8l0t2gXxl/MmScf8ck3SQ1qNBaJfWVavsLtTTGud+
+         I8YA==
+X-Gm-Message-State: AOJu0YznfRpeMvllzWc7diFTef8OMK/vDWFCsqxHFkxpoUVYYbXTCsqb
+	i/Q6azj9GZ1Hu9SlgK2RJ+99NOGAnKR5FL5AsQmWFPT/dmFzMcf08PkGosCwDoreZ90=
+X-Gm-Gg: ASbGncsbRDOOSMj2wJpLcZSzo5mVIPOBN0P/brnsUIHqoSH80g5gvrzTPS+/+b9iRiO
+	xHsuFZ1H07QWEPnddAFRCOnl2K30VOKo01LW14DKMv32ZVuecLUYXlMB29KJvJM5bfbp5h7Dl7F
+	/PWW3E4TmLM9yABjKK9QWE3dw2eXNEw4E6y6EH3PnRdAuCDnpyhu4H99wqnZuTD5uBFi3RdEAsJ
+	5txehUtWG6Rfyt/fguUzy5fcuEb7d0pIqyqAdecpJAznonI/aHhfYTu1Inx2izKjluZHiycJ5Wg
+	uM2VnUgtjiIeAd7AxfUGowlnt6dS0VKAljf1Lm8Dgvw2koc+O7IWE2x58+E3q6T6rtIIG0i1a8W
+	0jc8CUOVav9QLTU4/GtBX1W4=
+X-Google-Smtp-Source: AGHT+IHTr5Gho4NUdo+vFql/luwvswl0EbO5oRq2brlzlSf9x0q9cmkpo37KQP1JjIfdW0J5PWJ0tA==
+X-Received: by 2002:a05:6000:4a09:b0:3a4:e672:deef with SMTP id ffacd0b85a97d-3b5f35785abmr10164071f8f.36.1752503615784;
+        Mon, 14 Jul 2025 07:33:35 -0700 (PDT)
+Received: from matt-Precision-5490.. ([2a09:bac1:2880:f0::3d9:33])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45624651a09sm3577045e9.12.2025.07.14.07.33.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 07:33:34 -0700 (PDT)
+From: Matt Fleming <matt@readmodwrite.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@cloudflare.com,
+	Marco Elver <elver@google.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Matt Fleming <mfleming@cloudflare.com>
+Subject: [PATCH] stackdepot: Make max number of pools boot-time configurable
+Date: Mon, 14 Jul 2025 15:33:32 +0100
+Message-Id: <20250714143332.264997-1-matt@readmodwrite.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: 7BE4E2000D
-X-Stat-Signature: djbo74g3ejbp1ccpjbr5jcx51nmsdnrz
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/Z2Ik69s9g68g35xz+FYMx443Wo7Gyzi4=
-X-HE-Tag: 1752503563-818362
-X-HE-Meta: U2FsdGVkX1/vDIkwvVBYX0cCb3zLhGDtCX1e0C1WzdzIZY9HE3qann50Q40/Pmo3qC3Hslah5Qm0Zwn337LfCoCblCB+GVgh+0HoLBVo/mIC/qm0t87ki/4jN6HBXWxtMEHu6jlAtK7rhATeIe28NKP4/dzT7IdZF6cvqyl3zScHGtKMLsSOGf/eYbm80OzNhohshS31HEKtUvRaN48X/o/dw4350/gVw/b0EFmTrgkCd/ILLLSiDJBpJPwPHV1qL5l7sgielu7GQ13K8VgwlLAyA38q/VaVYCx1yla1iclOLs6byDgGXIWu7n5CFPpbYC0xmasakLFpX8k5ykyYNyQrYeNr5GOY
+Content-Transfer-Encoding: 8bit
 
-On Mon, 14 Jul 2025 23:14:12 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+From: Matt Fleming <mfleming@cloudflare.com>
 
-> Hmm, is this called unless loading modules? It seems that the
-> function is only kicked from trace_module_notify() -> trace_module_add_evals() -> trace_insert_eval_map() (but if mod has any trace_evals)
+We're hitting the WARN in depot_init_pool() about reaching the stack
+depot limit because we have long stacks that don't dedup very well.
 
-As it has to work on non-module events, yes it is called.
+Introduce a new start-up parameter to allow users to set the number of
+maximum stack depot pools.
 
-late_init_syscall() -> trace_eval_init() -> queue_work(eval_map_work)
+Signed-off-by: Matt Fleming <mfleming@cloudflare.com>
+---
+ .../admin-guide/kernel-parameters.txt         |  5 ++
+ lib/stackdepot.c                              | 55 +++++++++++++++++--
+ 2 files changed, 56 insertions(+), 4 deletions(-)
 
-  eval_map_work_func() -> trace_insert_eval_map() -> ...
-
--- Steve
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b5cb36148554..6a6d60de4530 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6542,6 +6542,11 @@
+ 			consumed by the stack hash table. By default this is set
+ 			to false.
+ 
++	stack_depot_max_pools= [KNL,EARLY]
++			Specify the maximum number of pools to use for storing
++			stack traces. Pools are allocated on-demand up to this
++			limit. Default value is 8191 pools.
++
+ 	stacktrace	[FTRACE]
+ 			Enabled the stack tracer on boot up.
+ 
+diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+index 245d5b416699..f66b1d572efb 100644
+--- a/lib/stackdepot.c
++++ b/lib/stackdepot.c
+@@ -42,6 +42,8 @@
+ 	(((1LL << (DEPOT_POOL_INDEX_BITS)) - 1 < DEPOT_POOLS_CAP) ? \
+ 	 (1LL << (DEPOT_POOL_INDEX_BITS)) - 1 : DEPOT_POOLS_CAP)
+ 
++static unsigned int stack_max_pools = DEPOT_MAX_POOLS;
++
+ static bool stack_depot_disabled;
+ static bool __stack_depot_early_init_requested __initdata = IS_ENABLED(CONFIG_STACKDEPOT_ALWAYS_INIT);
+ static bool __stack_depot_early_init_passed __initdata;
+@@ -62,7 +64,7 @@ static unsigned int stack_bucket_number_order;
+ static unsigned int stack_hash_mask;
+ 
+ /* Array of memory regions that store stack records. */
+-static void *stack_pools[DEPOT_MAX_POOLS];
++static void **stack_pools;
+ /* Newly allocated pool that is not yet added to stack_pools. */
+ static void *new_pool;
+ /* Number of pools in stack_pools. */
+@@ -101,6 +103,33 @@ static int __init disable_stack_depot(char *str)
+ }
+ early_param("stack_depot_disable", disable_stack_depot);
+ 
++static int __init parse_max_pools(char *str)
++{
++	const long long limit = (1LL << (DEPOT_POOL_INDEX_BITS)) - 1;
++	unsigned int max_pools;
++	int rv;
++
++	rv = kstrtouint(str, 0, &max_pools);
++	if (rv)
++		return rv;
++
++	if (max_pools < 1024) {
++		pr_err("stack_depot_max_pools too low, using default\n");
++		goto out;
++	}
++
++	if (max_pools > limit) {
++		pr_err("stack_depot_max_pools too high, using default\n");
++		goto out;
++
++	}
++
++	stack_max_pools = max_pools;
++out:
++	return 0;
++}
++early_param("stack_depot_max_pools", parse_max_pools);
++
+ void __init stack_depot_request_early_init(void)
+ {
+ 	/* Too late to request early init now. */
+@@ -182,6 +211,15 @@ int __init stack_depot_early_init(void)
+ 	}
+ 	init_stack_table(entries);
+ 
++	pr_info("allocating space for %u stack pools via memblock\n", stack_max_pools);
++	stack_pools = memblock_alloc(stack_max_pools * sizeof(void *), PAGE_SIZE);
++	if (!stack_pools) {
++		pr_err("stack pools allocation failed, disabling\n");
++		memblock_free(stack_table, entries * sizeof(struct list_head));
++		stack_depot_disabled = true;
++		return -ENOMEM;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -231,6 +269,15 @@ int stack_depot_init(void)
+ 	stack_hash_mask = entries - 1;
+ 	init_stack_table(entries);
+ 
++	pr_info("allocating space for %u stack pools via kvcalloc\n", stack_max_pools);
++	stack_pools = kvcalloc(stack_max_pools, sizeof(void *), GFP_KERNEL);
++	if (!stack_pools) {
++		pr_err("stack pools allocation failed, disabling\n");
++		kvfree(stack_table);
++		stack_depot_disabled = true;
++		ret = -ENOMEM;
++	}
++
+ out_unlock:
+ 	mutex_unlock(&stack_depot_init_mutex);
+ 
+@@ -245,9 +292,9 @@ static bool depot_init_pool(void **prealloc)
+ {
+ 	lockdep_assert_held(&pool_lock);
+ 
+-	if (unlikely(pools_num >= DEPOT_MAX_POOLS)) {
++	if (unlikely(pools_num >= stack_max_pools)) {
+ 		/* Bail out if we reached the pool limit. */
+-		WARN_ON_ONCE(pools_num > DEPOT_MAX_POOLS); /* should never happen */
++		WARN_ON_ONCE(pools_num > stack_max_pools); /* should never happen */
+ 		WARN_ON_ONCE(!new_pool); /* to avoid unnecessary pre-allocation */
+ 		WARN_ONCE(1, "Stack depot reached limit capacity");
+ 		return false;
+@@ -273,7 +320,7 @@ static bool depot_init_pool(void **prealloc)
+ 	 * NULL; do not reset to NULL if we have reached the maximum number of
+ 	 * pools.
+ 	 */
+-	if (pools_num < DEPOT_MAX_POOLS)
++	if (pools_num < stack_max_pools)
+ 		WRITE_ONCE(new_pool, NULL);
+ 	else
+ 		WRITE_ONCE(new_pool, STACK_DEPOT_POISON);
+-- 
+2.34.1
 
 
