@@ -1,361 +1,305 @@
-Return-Path: <linux-kernel+bounces-729530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FFD0B037FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:30:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6193BB03846
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4A703B9A83
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:29:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6EB33AAE23
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BCD234984;
-	Mon, 14 Jul 2025 07:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89D22367C9;
+	Mon, 14 Jul 2025 07:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pvkax10m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="VsJ/519f"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011021.outbound.protection.outlook.com [52.101.70.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6211233723;
-	Mon, 14 Jul 2025 07:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752478185; cv=none; b=b/TXs3DSADCi07UdJ/Q0VHhzatH2AC7CfMSWJJ+7e31lxuzviG7fORa24RWisj2HPUpXqCaJyoeSQnwn1YOLDBtffCgw7pMFdAxWsdJrXE1fP7g3JSmyHmgZYl+WCdunugQkZz7TeYN8DvMID9Apwn9V0OA6YYrz7p6CNBAq91M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752478185; c=relaxed/simple;
-	bh=3R4hBblRAjDJwYFq1ZJFkuy2r1uvrtk59qFFdU7msaw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YbELYB8qqySwyMg4H3Q78QWKtHCEBPDHwD+9XRO1EpPxAggFHEiOn09hjwGgHcPvVGInYgxIOD4+hPqbDIGs4cYq04kBeKZBqFWKq4c/zA35K62Ty/MXKpEpJIydI6DapB6DPg/g71tUbqeuh/Waazme4cvu3Ke3VMige57AG+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pvkax10m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79BC6C4CEF7;
-	Mon, 14 Jul 2025 07:29:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752478184;
-	bh=3R4hBblRAjDJwYFq1ZJFkuy2r1uvrtk59qFFdU7msaw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Pvkax10miz8lCHurIzNB/OiktlCQ6TGz/IwrO3oKdQuYupX3a9FxVGZBQgj9wH3Vw
-	 IBmpnXxYTl6+U7bMzf8rFDa7hwKib2LzAsuoevqwC4HssS7qjjqzsW2R6KsV3ySXPO
-	 iFp+36QQCsEZArKXMGtTwhIUiLz47oDsPMYxdKkC/QGL7C59XWMHSM1MObjjsyHPUT
-	 vpx9LSLxfusWxQ28Qa/3dRhfz9PlYRaXKW7rYgDfso4rTJNPIM6RrN7Tx+YyqeJcjW
-	 nji9dovZV86h0Bc4phGHxF/uB6lejva12oTVos39j5rcm2eVLz3roUPeS/XA+Ig2GU
-	 KLm4ggzO9IKFg==
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-611998766c0so1877973eaf.1;
-        Mon, 14 Jul 2025 00:29:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWBp8RT+WkICnteNUcTyQhPZQY6cIOeKW/rCHLaJpmWG29OV8MBXmTo21Dzzw2MC6fuiDtRre2zc64/DMI=@vger.kernel.org, AJvYcCXPBdU4Atb5sdiqgitXInF5EQms6b0Pbb7rtclNujocayNP5+EHZq2eHvs81gmAvbgC19+ruAHqxTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUhVVOgvn2Oxrjhig97uSskkGWPA5EDRXNIzEJNB3ITa+Cjzcl
-	YqO1iBnEuxldZgU9HcEYxJuSO2xwbIG0qz896TtFj4nsw3QZdKihCVmVD9pw8twJq7p+NWmZO8h
-	gvAT7wT7g/jUTpdvbOzYk2xuwQfvfeGo=
-X-Google-Smtp-Source: AGHT+IGqNNob6ac5P3t+2ODl2G5OzOiHGbAaE4DnInSNhrCwz4VALA5Jtx9MReaFTC8wZVUzGCQxZUR7cFwJuA1wCm8=
-X-Received: by 2002:a05:6820:1e8b:b0:611:bdaa:5b01 with SMTP id
- 006d021491bc7-613e5fe0d17mr8817549eaf.6.1752478183694; Mon, 14 Jul 2025
- 00:29:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666B83D76;
+	Mon, 14 Jul 2025 07:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752479304; cv=fail; b=AHvCHIbO22WPnw1xZcxcIS0eODJRAtoB3WIJv8mFvu6jtgKK1HUI7h0OPQ1xqeF75sw2pQYAvTgpBDm5Q618QYzrs5Co7TIJ+TLFq23ppdx85kcZ4c1EyBWc6MxFPPi54Wrv2M7kbS2s0W+kCFDjBp5NFVIEc0CtlceF5RMxeUU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752479304; c=relaxed/simple;
+	bh=3xIRtyuFnyDKlMk7g+pMEQc5fCz3NUanplr8wgFmcsM=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=l20gmL/0JnIe2E7vhad1PcYezLrYSk3iX59alj0oiGaYTmTe47k/UxVbZhUiushf92yg+YRJUWAEbRWkKHcfB2fxZllhv7mizSbrYYBhUBmsi0RLE3MeRV6jupeWbwveSAQjve7rJRShkAzQxYWvGTRSgfolxcrhoZ9zqA4Vjrs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=VsJ/519f; arc=fail smtp.client-ip=52.101.70.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WU80B6x/KF96Hk/4ZwZfdYrpfs/urS5fNNdy7H9kLbARP6Ki6QYNRWg4Cw61KMIonCGYmuY7j7NwLucrmxUxEqJdUIAo1e0k5SdZQzO5xfyLeiJh5w2evY6XvXIspXtA7RyGF/I8GsWt4t0ay+Js2ytGgtlzUCZ6zuEDEJ+bUmW8bl/YpntbFdywOCbfLoag0zUuyy6W81sl7nTyUPRq0svu1R1z3pu5oVFLVS9KTeW4qX/JQxPhYVc0N5VMWsTpgqOPVjt1iz4yd+wVZWh+Sp8mSmIHMpGmqM2EAwUTJZX7M6sHiXBHsSHt1VqfhQymzDHtH1TEcGEDb3iGTb7Cgg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hAf0STOMY691vxgphBERkNuLPZpY8Tmq8pO4pFi/YgI=;
+ b=xthe5Qf4U2qi8AgN0SZkRHK309utjmNt0R2isrdxiHEef6CHFp0FLr5ufdbNtD4Mj5VRhgqiXDAUwnw9JBe03fog5th8LTR9ljLVQ/SYguwKqlAzQBTSZgcfrdINGIBIByOUzq/xQoT1Q4QUnIRlfp+NLsXuITm2hxo3Y0bPa3Q2h7Ptall/VBabyOYlpIpIP8it+PRv6j8Jhh+pw7OpX8ap7fnC185Hoaz1jNZ8Mos65HVAgZ0VfcQrckuOIwm84ZBpZ9/HRpD9Z7symRLhENfkDPLBvofsz6LGAuK+qQjw355qFR0aluV6W8WxdBQljZj/dxzA94m31ZbzAfKcIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hAf0STOMY691vxgphBERkNuLPZpY8Tmq8pO4pFi/YgI=;
+ b=VsJ/519fJLrqlJUVjsykHmnyGNUxyVysyVdXERuTY7bPxP+ZwjcJVWKaUWXuMnL8ukL1QEhPnY0MIq/RGZfwjrp+kw7J96Zc1QJfdhFqJkBLVDIRwtWCz63lX9BE5voA/7OWH3wRkwFqqKfbqzhe9uK57ywtNS124ux5Idf4W2EqZh4rgFAZXNspXk9kycBNKtIKA3DNlQ1/o+58M12sQiZtn/OgA7OvQBwK4i5T/cXJc+R3jkvajWdrKioCZuV1IigB45O6NXf06kGtR3xmJnyKl48AG6ZZr1BXG5J/yN8BUaHJQhyPoprY7Iq1P96kPT/j2yKWHKmHWdpRWCprEQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9692.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::20)
+ by VI0PR04MB10496.eurprd04.prod.outlook.com (2603:10a6:800:21a::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Mon, 14 Jul
+ 2025 07:48:19 +0000
+Received: from AS4PR04MB9692.eurprd04.prod.outlook.com
+ ([fe80::a2bf:4199:6415:f299]) by AS4PR04MB9692.eurprd04.prod.outlook.com
+ ([fe80::a2bf:4199:6415:f299%5]) with mapi id 15.20.8901.033; Mon, 14 Jul 2025
+ 07:48:18 +0000
+From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	amitkumar.karwar@nxp.com,
+	neeraj.sanjaykale@nxp.com,
+	sherry.sun@nxp.com,
+	manjeet.gupta@nxp.com,
+	jean-yves.salaun@nxp.com
+Subject: [PATCH v1 1/2] Bluetooth: btnxpuart: Correct the Independent Reset handling after FW dump
+Date: Mon, 14 Jul 2025 13:00:15 +0530
+Message-Id: <20250714073016.1703837-1-neeraj.sanjaykale@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA0PR01CA0069.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:ad::10) To AS4PR04MB9692.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4fe::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <10629535.nUPlyArG6x@rjwysocki.net> <CAJZ5v0hpPOHNYCSTM1bb+p-wyAZkpg+k-huf9f5df9_S8MfvEg@mail.gmail.com>
- <CAJZ5v0jFP2njw3ic47yyh_7u7evKQKQuqGp27Vj7X-FfDLH7uQ@mail.gmail.com>
- <4677865.LvFx2qVVIh@rjwysocki.net> <ae6d65f7-990a-4145-9865-63f23518405c@linaro.org>
-In-Reply-To: <ae6d65f7-990a-4145-9865-63f23518405c@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 14 Jul 2025 09:29:32 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hatwNn_Qh7n7wjDyXDZK=L4vkB+aotZRfn4Zi21sGKxw@mail.gmail.com>
-X-Gm-Features: Ac12FXy-IcEvMln2fxRJDe3ab5PV9UMldxH3rz0ZnxK2CkxLtcP4eQ7PPTMbJpE
-Message-ID: <CAJZ5v0hatwNn_Qh7n7wjDyXDZK=L4vkB+aotZRfn4Zi21sGKxw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] PM: sleep: Resume children after resuming the parent
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold <johan@kernel.org>, 
-	Jon Hunter <jonathanh@nvidia.com>, Saravana Kannan <saravanak@google.com>, 
-	William McVicker <willmcvicker@google.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9692:EE_|VI0PR04MB10496:EE_
+X-MS-Office365-Filtering-Correlation-Id: 07982309-1757-4011-b1cc-08ddc2aacc43
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZCtOci84RlMxbmRLVEZtRGZXci94aHhaOEE4RW9OUzdFUitqU1R6WVZWS2FV?=
+ =?utf-8?B?ZVVvVTZZR3E1QmM5VEhzTDhLYll0dGZTWHFuTmk2YWFqajVMTVljKzAxT1g0?=
+ =?utf-8?B?c2M5RzJ3SmtNbXNyeEVDaUNpRzRlcEhTQ01ZdHRQWElaZVNKM1AwY0pzcHlq?=
+ =?utf-8?B?bHQ4dmhVWFBHVGNlRGxKUnpTODBabTg1bnpaWFJaSUpPdkZYejRtNWk0SFQv?=
+ =?utf-8?B?akk5ZW1sZ2hWaHNJMW1aR1Zzb0hWTFRwM2xXV1pxQlJRaWNIQlYzeDM2Y3kx?=
+ =?utf-8?B?RzJDYk1BdFhNR2lEaDJHRENrWGdUYW5tNGZBWElYa012dzJhTlFFUHFNaXB6?=
+ =?utf-8?B?eUtTcWpxWG9mNGljS2k4RWhXMDdHUHliNkJqeWhPRjFudFdqVW9FbFY4aEJL?=
+ =?utf-8?B?VFhoeU5kQXl2S1dQRHo3bFNnU3I5Qms0NUVOR1MvWVFrRlFibFE1UzZrMGs2?=
+ =?utf-8?B?K0dsTzVyRzhSTDZjdHRydjUyODZnM0d2eFIyYS9vc3pLQTRTV0REbXRvWG5L?=
+ =?utf-8?B?K1pycDhTeEY3bWNLQ0l3QVBmejFjYi91OFhPZDJ6eW9nKy9WaEtzNWpPNmtr?=
+ =?utf-8?B?Z25jQVBYNU1mNzUzRy9Ba2taSEdMS3UvdFIvNFJHU2pqTUVwWVJIdHVvMDBz?=
+ =?utf-8?B?dHBlQ0o3dUxaekM1QVJsQkRuZTJ5M2ZueGo4Z1FrNllGQ1ZkUmZrdHludjJx?=
+ =?utf-8?B?c2swQnpXUVpZYXNQWHBJVzU2S1hCd3I5ZWozS2lyWE4xeTBjQ1hxTXNlMTN2?=
+ =?utf-8?B?d3UwRG0ydjR3c3FSeGQ3ekgwYm9NcDhHV1BuUVVtbDcvWXhMZ1pFNjVXNGlM?=
+ =?utf-8?B?UDV4MUtRakxSOVZQSTc0NDVRbVZMZG1CZTd3RHB4MFdsczEwajZMOEpHUUJE?=
+ =?utf-8?B?djJnVGdpTm1uWUd6dFZETkNhTjFqeFRybWxuK1FEbHV3cDVwa3FPSmVJRjFM?=
+ =?utf-8?B?TjJxa3M4d2IxdXRmOTJoZWF0L3lYRDQrdDl5WmZKQk13MC9pOTIrdTUwY0JN?=
+ =?utf-8?B?bVNlRzEzTUx3d1JMUnJ3bkVuUDF6NlpPdzJPUmxlbVNna2Q5blRyVjRaZzN4?=
+ =?utf-8?B?anZGTHIzY1k5YnpTSVlyUE9NMi9DYVJtVU8xSVNrczhUUzVDNVY1bXY5UmY0?=
+ =?utf-8?B?L1RVSm5rYmtwdmhlaTQ3UGRTTFhVUGk1RGxsS2hWRmtYYVAvR081SG5kN0N6?=
+ =?utf-8?B?VURPSFVZNGo0eDlFSEVJVktadTAyQTdlM2hBUnhweUZqSDM1M3NUN3lmcFBV?=
+ =?utf-8?B?TWlkV2pRQnk1Nnc3VjdJcHZhSnNlZWZkOE8zK3FxMVphb2NhR0lnNkMvTTRI?=
+ =?utf-8?B?STdQc0FXZURlTVIwUzJjQmllZ0pCdy82aHplYmRJSDJnTzhlcGE4TEZWS0tu?=
+ =?utf-8?B?LzlsQnJGSWI3WTRST1NCZFJFUEhWZXM1Qk90c2V6QWdjSGxkbDJFTEpIVy95?=
+ =?utf-8?B?bVRiNUYvREVleDhqMVcydS94M0hhTkZJbUpnZUpoMUZDSkNLZmduWS9MTTBG?=
+ =?utf-8?B?MmdyN1dTamgybFVzd29NWk92aURMeW52RVhnRGpHY2hhRE5mV2xPMW9QcjlO?=
+ =?utf-8?B?dTlsWFBPODZhZHRqZXI3Zi9xek9mblhvblQzdW0xQnlZMFBscjBpeFp6UTFz?=
+ =?utf-8?B?OUhiME0wSEg0dm85VnUrR1pISTdVZTBmVmRSQ00rNlZad29XQ0w2dXFkQzBB?=
+ =?utf-8?B?UVdocDh2T2t4Q0ozSEtUb0RCUU9FQmhzYzBOZEh3clF3cHRkVmVYdm9IL0do?=
+ =?utf-8?B?YXljTE5GM0dsK2U5QVlHd2RQdzYzUE5odWxDTGVGM0ZseW1JSFREaThNN0NY?=
+ =?utf-8?B?RldPLzUwWE1wRXdldTRrV044VVZPNmowWkZpUC9LcVFUbHZIT3NlSnZZRHYy?=
+ =?utf-8?B?bmJsVVo3RlQxeEYrYjY4VWFtZEVOOFhkMVdDS242RkpHT09OVW5tTlZRbWky?=
+ =?utf-8?B?TDNwYzhTVjZiV1VVMndiRi82VGlOdUlyZFRBd0tTNU5TVUE4ZlpxdUgycmpD?=
+ =?utf-8?B?elRNSEloNERnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9692.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cHJkYURxN2E2T0JuWHpGaW80RDh1ZC9jd0RjcExBRnFVdkxkV0NnMTh6VThS?=
+ =?utf-8?B?b1VNZCtKMWc3aDBCWWdrVkFoZzNoanRnQnZUTDBvSXdPZndxbllTUmc4QThL?=
+ =?utf-8?B?bWVZNDQ1dHdpZkNveWNYdGsySHM2RGdCNG9wVHlmbkNpblVKQnJMUjRhUlpP?=
+ =?utf-8?B?TTVqVmRaNEtiWHN6WlBjVlVQalBsODlXNWpLZzUrK3cyR3B6RGtQNEs5b1hR?=
+ =?utf-8?B?ZXluek9wT1N2Qlk1TUhybGhRUDZXcDRHQ0J6d1QyTE1BVzMrRTIwUTQzbjh4?=
+ =?utf-8?B?dXU4bS80QXFTN2s0dDdUTUFrRVlTRllXT0NQZFVJR3N0MXhaQ2ZaNjM5MFZJ?=
+ =?utf-8?B?U09BZGR4emV4K1lSaktKUjZhbmF5Qkt1SENNL09TcmIyT2hMcEErRTd1bE8r?=
+ =?utf-8?B?ZTg0eUxHcE4rUkFEMGtqUHE5WVFndnBFQ3RTZlFoWUtONnlRRVM1cGxBdDJn?=
+ =?utf-8?B?Nm1oRzhrK2FmZFRRaHhTS24ydXh0cnlZQW5PNVB0bVZFa2xsWktwbEx3UVA4?=
+ =?utf-8?B?WjBudUdYd3BlUm9Wck5LTFlpODJoSDZacVZlQWlINkE0cXB1WlcrWnlSaFpp?=
+ =?utf-8?B?VTc4ejYzTTRhdm1GMGh5QmxsblA0d1lCY1QrekMzRHYvTTM3V0twemlmYnFp?=
+ =?utf-8?B?MXBnT2VtdEZZNVF1dDNLd2JyeHZWZkZrSFYvZ1J6eVdocEdsWGxRQkNlekhr?=
+ =?utf-8?B?aHdsWTdTS1Z1ZmlncjhJK3QzNHBHV3htbTgwUHE3UjVGY3RuclZxWElXTU1U?=
+ =?utf-8?B?VDVGR0lTV0ZvbnZza1cvazFUMXpPdkJSRUoyTlhBZEhVOUdudDErVVk2UGVZ?=
+ =?utf-8?B?RTBqWjR1VzY1bi8wUmFkdjBCS3VXRUpBRGhQcDg5aDFGd0dLVFBMM25nT0R3?=
+ =?utf-8?B?WWZZQzEva2J0czJ2SHgyclgxbTlJWTh6dDJSYkcrL01RSGpSRC9TSUJCNGY1?=
+ =?utf-8?B?TXUxUzBhdmFCRUpwUFp6M2lvckg0VDlJZURlWUN1cExIVkp4YTVSdE1BYW1l?=
+ =?utf-8?B?K25pQ0lNWXB1NUlaSTd1Y0lMWUhoRTBYQXdDampId3BBUHB0WFVrOVU0Y3c4?=
+ =?utf-8?B?RUxWbkl5L1pBbFZ2cWczbHQvKzVlTWg1dzRIY2ppZ2hIczFqS3VaK0U2cUdU?=
+ =?utf-8?B?REVlSmF1K0FObU9GaXBTbTdiREh2WDdhWURXaHQyaEV1MTN2cE9xUWJvUkgx?=
+ =?utf-8?B?MllNUmNUdGlBc2FCQnZkdDl1RTFTcnVRaXkwZDFxNDNNYkVqQktmVlJycVFL?=
+ =?utf-8?B?bGFTZ2dFbm5HTVRnNGZOWG05cG54QnZ6ZTZOclJuL1lmU0pVT1hHamQ0bSt6?=
+ =?utf-8?B?U2FnRjNCdEFoN09VOS83L2R5SGhNSEUvMGc3YjBuaUp3Q1lYSkNJSlZURXYx?=
+ =?utf-8?B?bDJ4Undyb2ljeEFtRmRnVCttVzNrc2JLR2VuUEMxUkxaSVlmUHM4bE1saEd6?=
+ =?utf-8?B?NVYyRFdXanlLQm9wK3hqcDEvTGl6TkZ2TVdWVHdTK2JEd0VZWnJKL2tVcGt3?=
+ =?utf-8?B?MUZhb3hSQjluWFpERm5CV2NrSGMxRmtSYUI1d3pMQ0xtNGR4MnIvRVNKRWhr?=
+ =?utf-8?B?SVFRM0NORU9EcnZQWWtMbU1HaUVzQUQwRGZyY3Jlbjl5Qy92L1Z6ZXZyeXha?=
+ =?utf-8?B?cGRudHp2WVhqU1krVy91aTE3UEtzWURwRlIvQnd5RUo2WlhnK3p6YVNzRmxP?=
+ =?utf-8?B?VWhvZ2VuVDhObVlFcjhrVjdMWDVXSnZqRktOdkZpRHNBbXJ6TDllanNpOTFn?=
+ =?utf-8?B?Y2R0TnY5eEZEZC91amtvV2ptWHMrck9saUJQMk1XTFJoMzFaR1lSdkhtbStX?=
+ =?utf-8?B?QVNqMVJRL3llYTkwc1pxTUs0NmtHUHFOazFzZUV3NU5vbWlUS3NYVTZZSTdT?=
+ =?utf-8?B?cXVEMVhyMWQrcFdkZGVUWFlhZ3FmVzhHTCsxOFhwVllVOWd3Qm4wTWhHWEdi?=
+ =?utf-8?B?dmpPeWQvMnN2VGl4RjNuL09CbXdROENTN3lsK2pIcUhLaEhMTWp1dGFrV0hG?=
+ =?utf-8?B?YU12LzFYTXlMVzVFaDhGZ2gwdWRWQjd2eWYwc25RUGRpZkhqWjdUR1AvR2JT?=
+ =?utf-8?B?dVAvYldGRDVtMFB6UUpkcnJaUDNTSlJ0dG5JSVpsRHRkSnR6aHJxOEhZaHox?=
+ =?utf-8?B?Z2RpK3JTeCtHRndOemFjOGFnK3RzSVUvSThwbitPLzlzOEt6WFBvUFhFN3c2?=
+ =?utf-8?B?Umc9PQ==?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07982309-1757-4011-b1cc-08ddc2aacc43
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9692.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2025 07:48:18.8347
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3HmjVK1IrEGlI3yeRvz+RCsBo+WNhYyb8GOoa9fT4rcn4vWXbmahJsxzYkH0hr2ziM/CZ3uBNxN7s6y6tF6RaVVvTfmtGS57omLnjUMcWWc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10496
 
-On Mon, Jul 14, 2025 at 9:09=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
-.org> wrote:
->
->
->
-> On 7/12/25 8:54 AM, Rafael J. Wysocki wrote:
-> > On Friday, July 11, 2025 3:54:00 PM CEST Rafael J. Wysocki wrote:
-> >> On Fri, Jul 11, 2025 at 3:38=E2=80=AFPM Rafael J. Wysocki <rafael@kern=
-el.org> wrote:
-> >>>
-> >>> On Fri, Jul 11, 2025 at 3:08=E2=80=AFPM Tudor Ambarus <tudor.ambarus@=
-linaro.org> wrote:
-> >>>>
-> >>>>
-> >>>> Hi, Rafael,
-> >>>>
-> >>>> On 3/14/25 12:50 PM, Rafael J. Wysocki wrote:
-> >>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>>>>
-> >>>>> According to [1], the handling of device suspend and resume, and
-> >>>>> particularly the latter, involves unnecessary overhead related to
-> >>>>> starting new async work items for devices that cannot make progress
-> >>>>> right away because they have to wait for other devices.
-> >>>>>
-> >>>>> To reduce this problem in the resume path, use the observation that
-> >>>>> starting the async resume of the children of a device after resumin=
-g
-> >>>>> the parent is likely to produce less scheduling and memory manageme=
-nt
-> >>>>> noise than starting it upfront while at the same time it should not
-> >>>>> increase the resume duration substantially.
-> >>>>>
-> >>>>> Accordingly, modify the code to start the async resume of the devic=
-e's
-> >>>>> children when the processing of the parent has been completed in ea=
-ch
-> >>>>> stage of device resume and only start async resume upfront for devi=
-ces
-> >>>>> without parents.
-> >>>>>
-> >>>>> Also make it check if a given device can be resumed asynchronously
-> >>>>> before starting the synchronous resume of it in case it will have t=
-o
-> >>>>> wait for another that is already resuming asynchronously.
-> >>>>>
-> >>>>> In addition to making the async resume of devices more friendly to
-> >>>>> systems with relatively less computing resources, this change is al=
-so
-> >>>>> preliminary for analogous changes in the suspend path.
-> >>>>>
-> >>>>> On the systems where it has been tested, this change by itself does
-> >>>>> not affect the overall system resume duration in a measurable way.
-> >>>>>
-> >>>>> Link: https://lore.kernel.org/linux-pm/20241114220921.2529905-1-sar=
-avanak@google.com/ [1]
-> >>>>> Suggested-by: Saravana Kannan <saravanak@google.com>
-> >>>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>>>
-> >>>> I'd like to let you know of a suspend crash that I'm dealing with
-> >>>> when using the OOT pixel6 drivers on top of v6.16-rc4.
-> >>>
-> >>> Well, thanks, but there's not much I can do about it.
-> >>>
-> >>> It is also better to start a new thread in such cases than to reply t=
-o
-> >>> a patch submission.
-> >>>
-> >>>> Similar to what Jon reported, everything gets back to normal if
-> >>>> I disable pm_async or if I revert the following patches:
-> >>>> 443046d1ad66 PM: sleep: Make suspend of devices more asynchronous
-> >>>> aa7a9275ab81 PM: sleep: Suspend async parents after suspending child=
-ren
-> >>>> 0cbef962ce1f PM: sleep: Resume children after resuming the parent
-> >>>>
-> >>>> I also reverted their fixes when testing:
-> >>>> 8887abccf8aa PM: sleep: Add locking to dpm_async_resume_children()
-> >>>> d46c4c839c20 PM: sleep: Fix power.is_suspended cleanup for direct-co=
-mplete devices
-> >>>> 079e8889ad13 PM: sleep: Fix list splicing in device suspend error pa=
-ths
-> >>>>
-> >>>> It seems that the hang happens in dpm_suspend() at
-> >>>> async_synchronize_full() time after a driver fails to suspend.
-> >>>> The phone then naturally resets with an APC watchdog.
-> >>>>
-> >>>> [  519.142279][ T7917] lwis lwis-eeprom-m24c64x: Can't suspend becau=
-se eeprom-m24c64x is in use!
-> >>>> [  519.143556][ T7917] lwis-i2c eeprom@2: PM: dpm_run_callback(): pl=
-atform_pm_suspend returns -16
-> >>>> [  519.143872][ T7917] lwis-i2c eeprom@2: PM: platform_pm_suspend re=
-turned -16 after 1596 usecs
-> >>>> [  519.144197][ T7917] lwis-i2c eeprom@2: PM: failed to suspend: err=
-or -16
-> >>>> [  519.144448][ T7917] PM: tudor: dpm_suspend: after while loop, lis=
-t_empty(&dpm_prepared_list)? 1
-> >>>> [  519.144779][ T7917] PM: tudor: dpm_suspend: before async_synchron=
-ize_full
-> >>>>
-> >>>> The extra prints are because of:
-> >>>> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> >>>> index d9d4fc58bc5a..3efe538c2ec2 100644
-> >>>> --- a/drivers/base/power/main.c
-> >>>> +++ b/drivers/base/power/main.c
-> >>>> @@ -1967,10 +1967,15 @@ int dpm_suspend(pm_message_t state)
-> >>>>                         break;
-> >>>>                 }
-> >>>>         }
-> >>>> +       pr_err("tudor: %s: after while loop, list_empty(&dpm_prepare=
-d_list)? %d\n",
-> >>>> +              __func__, list_empty(&dpm_prepared_list));
-> >>>>
-> >>>>         mutex_unlock(&dpm_list_mtx);
-> >>>>
-> >>>> +       pr_err("tudor: %s: before async_synchronize_full\n", __func_=
-_);
-> >>>>         async_synchronize_full();
-> >>>> +       pr_err("tudor: %s: after async_synchronize_full();\n", __fun=
-c__);
-> >>>> +
-> >>>>         if (!error)
-> >>>>                 error =3D async_error;
-> >>>>
-> >>>> The synchronous suspend works because its strict, one-by-one orderin=
-g
-> >>>> ensures that device dependencies are met and that no device is suspe=
-nded
-> >>>> while another is still using it. The asynchronous suspend fails beca=
-use
-> >>>> it creates a race condition where the lwis-eeprom-m24c64x is called =
-for
-> >>>> suspension before the process using it has been suspended, leading t=
-o a
-> >>>> fatal "device busy" error. Should the failure of a device suspend be
-> >>>> fatal?
-> >>>
-> >>> It shouldn't in principle, but it depends on what exactly is involved=
- and how.
-> >>>
-> >>> It looks like something is blocking on power.completion somewhere.
-> >>> I'll check the code, maybe a complete() is missing in an error path o=
-r
-> >>> similar.
-> >>
-> >> It doesn't look like anything is missing in the core, so the suspend
-> >> failure seems to be triggering a deadlock of some sort.
-> >
-> > Well, I'm taking this back.
-> >
-> > The following scenario definitely can happen:
-> >
-> > 1. Device A is async and it depends on device B that is sync.
-> > 2. Async suspend is scheduled for A before the processing of B is start=
-ed.
-> > 3. A is waiting for B.
-> > 4. In the meantime, an unrelated device fails to suspend and returns an=
- error.
-> > 5. The processing of B doesn't start at all and its power.completion is=
- not
-> >    updated.
-> > 6. A is still waiting for B when async_synchronize_full() is called.
-> > 7. Deadlock ensues.
-> >
-> > If this is what happens in your case, the (untested) patch below should=
- help
-> > (unless I messed it up, that is).
->
-> Thanks, Rafael.
->
-> I added few prints (see updated patch below) to figure out whether
-> complete_all(&dev->power.completion) is called in my case, and it seems
-> it's not, I still get the APC watchdog:
->
-> [  724.361425][ T8468] lwis-i2c eeprom@2: PM: calling platform_pm_suspend=
- @ 8468, parent: platform
-> [  724.361751][ T8468] lwis lwis-eeprom-m24c64x: Can't suspend because ee=
-prom-m24c64x is in use!
-> [  724.362098][ T8468] lwis-i2c eeprom@2: PM: dpm_run_callback(): platfor=
-m_pm_suspend returns -16
-> [  724.362427][ T8468] lwis-i2c eeprom@2: PM: platform_pm_suspend returne=
-d -16 after 679 usecs
-> [  724.362750][ T8468] lwis-i2c eeprom@2: PM: failed to suspend: error -1=
-6
-> [  724.362999][ T8468] PM: tudor: dpm_async_suspend_complete_all: enter
-> [  724.363242][ T8468] PM: tudor: dpm_suspend: before async_synchronize_f=
-ull
+This adds proper handling for the independent reset command sent by the
+driver after FW dump is complete.
 
-Well, this most likely happens because ->
+In normal scenario, the independent reset vendor command gives a success
+response before jumping to bootcode.
 
->
->
-> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index d9d4fc58bc5a..0e186bc38a00 100644
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -1281,6 +1281,27 @@ static void dpm_async_suspend_parent(struct device=
- *dev, async_func_t func)
->                 dpm_async_with_cleanup(dev->parent, func);
->  }
->
-> +static void dpm_async_suspend_complete_all(struct list_head *device_list=
-)
-> +{
-> +       struct device *dev;
-> +
-> +
-> +       pr_err("tudor: %s: enter\n", __func__);
-> +       guard(mutex)(&async_wip_mtx);
-> +
-> +       list_for_each_entry_reverse(dev, device_list, power.entry) {
-> +               /*
-> +                * In case the device is being waited for and async proce=
-ssing
-> +                * has not started for it yet, let the waiters make progr=
-ess.
-> +                */
-> +               pr_err("tudor: %s: in device list\n", __func__);
-> +               if (!dev->power.work_in_progress) {
-> +                       pr_err("tudor: %s: call complete_all\n", __func__=
-);
-> +                       complete_all(&dev->power.completion);
-> +               }
-> +       }
-> +}
-> +
->  /**
->   * resume_event - Return a "resume" message for given "suspend" sleep st=
-ate.
->   * @sleep_state: PM message representing a sleep state.
-> @@ -1459,6 +1480,7 @@ static int dpm_noirq_suspend_devices(pm_message_t s=
-tate)
->                 mutex_lock(&dpm_list_mtx);
->
->                 if (error || async_error) {
-> +                       dpm_async_suspend_complete_all(&dpm_late_early_li=
-st);
->                         /*
->                          * Move all devices to the target list to resume =
-them
->                          * properly.
-> @@ -1663,6 +1685,7 @@ int dpm_suspend_late(pm_message_t state)
->                 mutex_lock(&dpm_list_mtx);
->
->                 if (error || async_error) {
-> +                       dpm_async_suspend_complete_all(&dpm_late_early_li=
-st);
->                         /*
->                          * Move all devices to the target list to resume =
-them
->                          * properly.
-> @@ -1959,6 +1982,7 @@ int dpm_suspend(pm_message_t state)
->                 mutex_lock(&dpm_list_mtx);
->
->                 if (error || async_error) {
-> +                       dpm_async_suspend_complete_all(&dpm_late_early_li=
-st);
+However, when FW goes in a bad state, and sends out FW dump packets, the
+independent reset command does not get any response from the controller.
 
--> There is a bug here which is not present in the patch I've sent.
+[  159.807732] Bluetooth: hci0: ==== Start FW dump ===
+[  180.759060] Bluetooth: hci0: ==== FW dump complete ===
+[  182.779208] Bluetooth: hci0: command 0xfcfc tx timeout
+[  183.364974] Bluetooth: hci0: ChipID: 7601, Version: 0
+[  183.368490] Bluetooth: hci0: Request Firmware: nxp/uartspi_n61x_v1.bin.se
+[  184.679977] Bluetooth: hci0: FW Download Complete: 417064 bytes
+[  187.963102] Bluetooth: hci0: Opcode 0x0c03 failed: -110
 
-It should be
+As a fix for such scenario, the independent reset vendor command is sent
+using the __hci_cmd_send() API, which does not expect any response for
+vendor commands.
 
-        dpm_async_suspend_complete_all(&dpm_prepared_list);
+__hci_cmd_send is non blocking, so before the tx_work is scheduled, it
+sometimes gets canceled and 3F|FC command is never sent. Adding a small
+delay after __hci_cmd_send allows the command to be sent to the
+controller.
 
-It is also there in dpm_noirq_suspend_devices() above, but it probably
-doesn't matter.
+Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+Tested-by: Jean-Yves Salaün <jean-yves.salaun@nxp.com>
+---
+ drivers/bluetooth/btnxpuart.c | 32 +++++++++++++++++++++++---------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
 
->                         /*
->                          * Move all devices to the target list to resume =
-them
->                          * properly.
-> @@ -1970,9 +1994,12 @@ int dpm_suspend(pm_message_t state)
->
->         mutex_unlock(&dpm_list_mtx);
->
-> +       pr_err("tudor: %s: before async_synchronize_full\n", __func__);
->         async_synchronize_full();
->         if (!error)
->                 error =3D async_error;
-> +       pr_err("tudor: %s: after async_synchronize_full();\n", __func__);
-> +
->
->         if (error)
->                 dpm_save_failed_step(SUSPEND_SUSPEND);
+diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+index c56b52bd8d98..f40794be2d89 100644
+--- a/drivers/bluetooth/btnxpuart.c
++++ b/drivers/bluetooth/btnxpuart.c
+@@ -367,17 +367,26 @@ static u8 crc8_table[CRC8_TABLE_SIZE];
+ 
+ static struct sk_buff *nxp_drv_send_cmd(struct hci_dev *hdev, u16 opcode,
+ 					u32 plen,
+-					void *param)
++					void *param,
++					bool resp)
+ {
+ 	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+ 	struct ps_data *psdata = &nxpdev->psdata;
+-	struct sk_buff *skb;
++	struct sk_buff *skb = NULL;
+ 
+ 	/* set flag to prevent nxp_enqueue from parsing values from this command and
+ 	 * calling hci_cmd_sync_queue() again.
+ 	 */
+ 	psdata->driver_sent_cmd = true;
+-	skb = __hci_cmd_sync(hdev, opcode, plen, param, HCI_CMD_TIMEOUT);
++	if (resp) {
++		skb = __hci_cmd_sync(hdev, opcode, plen, param, HCI_CMD_TIMEOUT);
++	} else {
++		__hci_cmd_send(hdev, opcode, plen, param);
++		/* Allow command to be sent before tx_work is cancelled
++		 * by btnxpuart_flush()
++		 */
++		msleep(20);
++	}
+ 	psdata->driver_sent_cmd = false;
+ 
+ 	return skb;
+@@ -597,7 +606,7 @@ static int send_ps_cmd(struct hci_dev *hdev, void *data)
+ 		pcmd.ps_cmd = BT_PS_DISABLE;
+ 	pcmd.c2h_ps_interval = __cpu_to_le16(psdata->c2h_ps_interval);
+ 
+-	skb = nxp_drv_send_cmd(hdev, HCI_NXP_AUTO_SLEEP_MODE, sizeof(pcmd), &pcmd);
++	skb = nxp_drv_send_cmd(hdev, HCI_NXP_AUTO_SLEEP_MODE, sizeof(pcmd), &pcmd, true);
+ 	if (IS_ERR(skb)) {
+ 		bt_dev_err(hdev, "Setting Power Save mode failed (%ld)", PTR_ERR(skb));
+ 		return PTR_ERR(skb);
+@@ -646,7 +655,7 @@ static int send_wakeup_method_cmd(struct hci_dev *hdev, void *data)
+ 		break;
+ 	}
+ 
+-	skb = nxp_drv_send_cmd(hdev, HCI_NXP_WAKEUP_METHOD, sizeof(pcmd), &pcmd);
++	skb = nxp_drv_send_cmd(hdev, HCI_NXP_WAKEUP_METHOD, sizeof(pcmd), &pcmd, true);
+ 	if (IS_ERR(skb)) {
+ 		bt_dev_err(hdev, "Setting wake-up method failed (%ld)", PTR_ERR(skb));
+ 		return PTR_ERR(skb);
+@@ -1272,7 +1281,7 @@ static int nxp_set_baudrate_cmd(struct hci_dev *hdev, void *data)
+ 	if (!psdata)
+ 		return 0;
+ 
+-	skb = nxp_drv_send_cmd(hdev, HCI_NXP_SET_OPER_SPEED, 4, (u8 *)&new_baudrate);
++	skb = nxp_drv_send_cmd(hdev, HCI_NXP_SET_OPER_SPEED, 4, (u8 *)&new_baudrate, true);
+ 	if (IS_ERR(skb)) {
+ 		bt_dev_err(hdev, "Setting baudrate failed (%ld)", PTR_ERR(skb));
+ 		return PTR_ERR(skb);
+@@ -1330,7 +1339,7 @@ static void nxp_coredump(struct hci_dev *hdev)
+ 	struct sk_buff *skb;
+ 	u8 pcmd = 2;
+ 
+-	skb = nxp_drv_send_cmd(hdev, HCI_NXP_TRIGGER_DUMP, 1, &pcmd);
++	skb = nxp_drv_send_cmd(hdev, HCI_NXP_TRIGGER_DUMP, 1, &pcmd, true);
+ 	if (IS_ERR(skb))
+ 		bt_dev_err(hdev, "Failed to trigger FW Dump. (%ld)", PTR_ERR(skb));
+ 	else
+@@ -1372,7 +1381,6 @@ static int nxp_process_fw_dump(struct hci_dev *hdev, struct sk_buff *skb)
+ 
+ 	if (buf_len == 0) {
+ 		bt_dev_warn(hdev, "==== FW dump complete ===");
+-		clear_bit(BTNXPUART_FW_DUMP_IN_PROGRESS, &nxpdev->tx_state);
+ 		hci_devcd_complete(hdev);
+ 		nxp_set_ind_reset(hdev, NULL);
+ 	}
+@@ -1486,7 +1494,13 @@ static int nxp_shutdown(struct hci_dev *hdev)
+ 	u8 pcmd = 0;
+ 
+ 	if (ind_reset_in_progress(nxpdev)) {
+-		skb = nxp_drv_send_cmd(hdev, HCI_NXP_IND_RESET, 1, &pcmd);
++		if (test_and_clear_bit(BTNXPUART_FW_DUMP_IN_PROGRESS,
++				       &nxpdev->tx_state))
++			skb = nxp_drv_send_cmd(hdev, HCI_NXP_IND_RESET, 1,
++					       &pcmd, false);
++		else
++			skb = nxp_drv_send_cmd(hdev, HCI_NXP_IND_RESET, 1,
++					       &pcmd, true);
+ 		serdev_device_set_flow_control(nxpdev->serdev, false);
+ 		set_bit(BTNXPUART_FW_DOWNLOADING, &nxpdev->tx_state);
+ 		/* HCI_NXP_IND_RESET command may not returns any response */
+-- 
+2.34.1
+
 
