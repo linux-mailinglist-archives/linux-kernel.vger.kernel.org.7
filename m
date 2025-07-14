@@ -1,268 +1,199 @@
-Return-Path: <linux-kernel+bounces-729396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A930DB03607
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:40:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B865DB03608
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 728A93BB0A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:39:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 739A616973A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0978F20B7EC;
-	Mon, 14 Jul 2025 05:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1998C1E9906;
+	Mon, 14 Jul 2025 05:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QtDMzsyZ"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zxdd1Dz2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1BD22F389;
-	Mon, 14 Jul 2025 05:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA831F03D9;
+	Mon, 14 Jul 2025 05:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752471445; cv=none; b=VnLTDO2IWsOVckl4scCLmF3NAE5M86cpQm0svCgRlRsjuFJjOi4hJkaxg9VEeBgVMnREO1PvaeEmqUcK5A+lAGJLR+McatK93iVKwQajUMl2OTxwBcQmzmx/KqrWBf7hde5pBdgOjJBFDyxYexa//ATrgITUtaxBbCfymcF1tSI=
+	t=1752471541; cv=none; b=qg4VU7JkVNRvOgjqo7sdMsOmNllvWaxK/knfybjvNm9G4z0MIcso5DaHYkqqx+OYj28C5YRFr2PSB9PjvIiRJy37aWmBPNjW7LCce9OfLGXLIdrYzt6Fjsn7X70Cp/LXXXQAOzj8crZj+0J9mwMEtxpAuGHyFbGSB/VSTLomGWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752471445; c=relaxed/simple;
-	bh=Xx7XrimI1grrY3rjitNo3nkWmAHUSiS/xYf9TETdwcM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tUQKMWTOmu+HwJY0yMW0onWsxg/eh4SFQRoX+tVHkk6RhBj9D0xBxbVrTK3r4+yMC4XNiTelmLJLBcUcD1EvdcdUpevCoEgyV01c5TqrR8k2owpGW20ZBcYlDFbr/XcUbJ7BcbTCsAfHcamaMiIxPWBkua4cZEsKuwEA+HlW28k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QtDMzsyZ; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6fafd3cc8f9so58093126d6.3;
-        Sun, 13 Jul 2025 22:37:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752471442; x=1753076242; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:feedback-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9o14AcfIbJR88gN5wImGuKOPlipr5VAPIVjAMRfZdsk=;
-        b=QtDMzsyZ4ZLEG2Hvbs5kDlQt8CGoY6gE4utAlgIM2XjATzBbUEBwgl/Qqgk6LcDRDi
-         paLHnGW0h8or/SzrOs0B7Pma8RBeFHD05f8dTVVm3rSdBJhT/NcpNXcJ9x9Mlup8gtCw
-         mSEpukXrw79IFuAR2YdGlFRxCtJ80qeT/EVHzecLYYgPh4HjtO1et70y2Iw3IJqF1PyS
-         FAdEIKOCqaCJ1fVdswvCOeyLZalDSC8HD04ghekaLfVd6LxAmJSTKPMjADWEhr9sL5Wo
-         +8Bu7OoGG9Zf+xyAxrIO1UZowzdhGydAEEUTx6Q0QZtUaY1J6q9uWgFbO4rm0SYttgzb
-         03/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752471442; x=1753076242;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:feedback-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9o14AcfIbJR88gN5wImGuKOPlipr5VAPIVjAMRfZdsk=;
-        b=cIcgBN4CoXGfG3qkNyiVoJFwRQenQB08KB1eJcuueM8eOxTRrZNKJyEOailTGoWhd2
-         qgffuMSQSDPSAfcG3Dv4kWXLbFVgv6LkBZm3UtP2UvA99Zed9i3+5hSbpdaaAEq9D5Ij
-         OYE1Ed8wAlOlAsHV4sYSZ7L4Q+96+jNYq07Uw4ToG095zI4FikdPMq4X/IlGjUuJRfbJ
-         9ERwD6GJG06tS5pQNWEFoU0IQEjH6979QmNScm5m4lpcGVpBDOkcyb1gBQhvR0KDbYsy
-         mjM3oMos4HkWmEkBQe20wjrZXAECXfPBcY785d2IgawCjptRMKukb8zVQd1FkXQ6gb9F
-         /2sg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMNs/8yz/Jmmpu8WVmSD/BHJzPpLG6cHlMAS/8qOri/R1POF+d7izRU4LujVVEXQJiXZJomgwDwx85@vger.kernel.org, AJvYcCXFPVIAIl3ECxfR+Qqhg0YGMd51jePnEG/2eECxDrCV5E8Q1Q7AUITLgzKxD/gQ4LiFXk7i0k3x22H+8YM5EfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnDRFk6Vt48O0tV78FqOv0VyaDgXl92xN8vnDqmLA5hlEz2oLZ
-	hfuybQVezd2uk8nVeNMzUvyrX9W/D7DAgdilDkwNXtOcrn6rIt6/eETC
-X-Gm-Gg: ASbGncutGhDmyAdWcyRsLb9bo1WPeBHcwUXRQ5Qx9fg0aXJYNOOVFqDgCrbDZuUrlzt
-	eug421DjF6vMW33GDNclu4N9gUDepWwj80FzHCffFkUqrqk3VM6+e/4K85Zt7mchu3kdypgqSLY
-	WNrvqqwO1tXCWPW5ZNEA4F2pxvyWoFKXXQmy31k1hbGvdTWFFzbqkyKdGlrKQAZ3cdLo3LJgoO7
-	t8ge+WSXRB5uM8Dx3B/T1ZewDAeNq1Y+GoithzPwleWxN8O5qLStdBW2zueXcpGo7Ojc3rMWzho
-	V4PWVLM6lQl4/8P17L00hmQwjtuk638pOtw9xYwmyx9A5w3W+SlgGVW5Jo4GtuazkFX/KoTWRp0
-	N68Z7bjE7kNiAw82myOP2rTCep3eZzy+xMNayoyFCupJ3Nzf/SGYxGG1A70r+9QgpSN13WPfz3P
-	M5nx685x3ESIvS
-X-Google-Smtp-Source: AGHT+IHrL78L7nYkPxpZf9whcVqknp6Yf5dLicLrAotiRmMUMxMDJa2AV0OPspkgKmrWBtKNoC1D8Q==
-X-Received: by 2002:a05:622a:480c:b0:4a9:befe:c13 with SMTP id d75a77b69052e-4a9fb85c9d9mr167555741cf.9.1752471442433;
-        Sun, 13 Jul 2025 22:37:22 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ab7755b45fsm551571cf.39.2025.07.13.22.37.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jul 2025 22:37:22 -0700 (PDT)
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 636AEF40066;
-	Mon, 14 Jul 2025 01:37:21 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Mon, 14 Jul 2025 01:37:21 -0400
-X-ME-Sender: <xms:kZd0aFrI1NRpxvwzzlHoC4Sp9IfZiY5D9GNIN5q0OWKQCGxGnWTrGA>
-    <xme:kZd0aFzUgy1MCLsKTA4_Z_M8A5_TLzmZUqG45rPIIP-rNvffGsqvt_rjhPzyxJTHH
-    OLFmTUL6J0sHb60dA>
-X-ME-Received: <xmr:kZd0aMxqsxbvQ_XFrBdVtbqQnIU5ZSvaa5534-QighMZCXOQNuFleeJDXw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehuddufecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhepgeeljeeitdehvdehgefgjeevfeejjeekgfevffeiueejhfeuiefggeeuheeggefg
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
-    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
-    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
-    drnhgrmhgvpdhnsggprhgtphhtthhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtoheplhhkmhhmsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoh
-    eplhhinhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    ohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorh
-    esghhmrghilhdrtghomhdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdr
-    tghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhope
-    gsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomh
-X-ME-Proxy: <xmx:kZd0aFbXC8L9o4J0zu-g4Ry02tX3aP_e_CgXDQwtgmxmjkp1ty1J8Q>
-    <xmx:kZd0aFn9eqld5PRW14qoqqD8eocbeD9tMyQ_tR9pMHPL9G9vXn_yZg>
-    <xmx:kZd0aCG2tWJdFdDnD_vAcj8ytxwY7PsXfVqio4zOkJmxfj3edcGXQA>
-    <xmx:kZd0aEiFjwoRzO18CKwLc72Be-tCkAVaCyF4hWGgMw_gndIdQI8v-A>
-    <xmx:kZd0aMlZ9aOFCyUbhUeDBcYweMgDWT0yzETowaJM-ffXVU0tSL-ih8Zo>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 14 Jul 2025 01:37:20 -0400 (EDT)
-From: Boqun Feng <boqun.feng@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	lkmm@lists.linux.dev,
-	linux-arch@vger.kernel.org
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,
-	"Alex Gaynor" <alex.gaynor@gmail.com>,
-	"Boqun Feng" <boqun.feng@gmail.com>,
-	"Gary Guo" <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	"Benno Lossin" <lossin@kernel.org>,
-	"Andreas Hindborg" <a.hindborg@kernel.org>,
-	"Alice Ryhl" <aliceryhl@google.com>,
-	"Trevor Gross" <tmgross@umich.edu>,
-	"Danilo Krummrich" <dakr@kernel.org>,
-	"Will Deacon" <will@kernel.org>,
-	"Peter Zijlstra" <peterz@infradead.org>,
-	"Mark Rutland" <mark.rutland@arm.com>,
-	"Wedson Almeida Filho" <wedsonaf@gmail.com>,
-	"Viresh Kumar" <viresh.kumar@linaro.org>,
-	"Lyude Paul" <lyude@redhat.com>,
-	"Ingo Molnar" <mingo@kernel.org>,
-	"Mitchell Levy" <levymitchell0@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-	"Linus Torvalds" <torvalds@linux-foundation.org>,
-	"Thomas Gleixner" <tglx@linutronix.de>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH v7 9/9] rust: sync: atomic: Add Atomic<{usize,isize}>
-Date: Sun, 13 Jul 2025 22:36:56 -0700
-Message-Id: <20250714053656.66712-10-boqun.feng@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250714053656.66712-1-boqun.feng@gmail.com>
-References: <20250714053656.66712-1-boqun.feng@gmail.com>
+	s=arc-20240116; t=1752471541; c=relaxed/simple;
+	bh=xUikFrssxeDjsZahHBVxmdWOPkTepIiKmrUKbN3HYG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b2NWme4nLZm7dG96/5QWHMx03D75HujnhgkShPZOp9YLl8jvFIdDuGjCvmY3X/euhwNc55sYkg94Cc6HF8WxqXlxhbAAwj6gFT9wlX2mf2hxBKuCww69Oi2pXnoE8p1rGKFh6sx/4irjPcK/1Gu9mzuT4lyEFcr4c5INd5e6hAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zxdd1Dz2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 602B9C4CEED;
+	Mon, 14 Jul 2025 05:38:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752471540;
+	bh=xUikFrssxeDjsZahHBVxmdWOPkTepIiKmrUKbN3HYG8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Zxdd1Dz2yYFaDzKSb05NfTfc5X61QmEAHYML1YsHiQ9waW30KoQB1GbpFIwkOUiij
+	 xUgbM11GW8Maj76YxLkE6Rh2pQJsfSCxTykua/m+TqVJXicJgdE7zkqRqO19ag11fn
+	 xfK3DY7P3L/kfZDSLi9xHZKma0ICyl8GNcitRPhwzTnrw+C7IkXfHlHkAVAoeDMf/i
+	 s9wZqLPyFZn1n3nVolyQyA3BvQ99iLxsKHxGmIzexEySi7fseHoZI191fx7Sa0LfDS
+	 AjESL0SQ5OcUTqzluQFUfFaNu7vum3KcNUAOqNxufjciSnVVruP5Q9YaWf0HbsKc97
+	 bRwQY2U6ZdPDw==
+Message-ID: <65d7009e-dc4a-44b4-88fe-b5c7e1ecdfc1@kernel.org>
+Date: Mon, 14 Jul 2025 07:38:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] dt-bindings: iio: imu: Add inv_icm45600
+To: remi.buisson@tdk.com, Jonathan Cameron <jic23@kernel.org>,
+ David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250710-add_newport_driver-v2-0-bf76d8142ef2@tdk.com>
+ <20250710-add_newport_driver-v2-1-bf76d8142ef2@tdk.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250710-add_newport_driver-v2-1-bf76d8142ef2@tdk.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add generic atomic support for `usize` and `isize`. Note that instead of
-mapping directly to `atomic_long_t`, the represention type
-(`AllowAtomic::Repr`) is selected based on CONFIG_64BIT. This reduces
-the necessity of creating `atomic_long_*` helpers, which could save
-the binary size of kernel if inline helpers are not available. To do so,
-an internal type `isize_atomic_repr` is defined, it's `i32` in 32bit
-kernel and `i64` in 64bit kernel.
+On 10/07/2025 10:57, Remi Buisson via B4 Relay wrote:
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  interrupt-names:
+> +    minItems: 1
+> +    maxItems: 2
+> +    items:
+> +      enum:
+> +        - INT1
+> +        - INT2
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-Reviewed-by: Benno Lossin <lossin@kernel.org>
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
----
- rust/kernel/sync/atomic.rs | 50 +++++++++++++++++++++++++++++++++++---
- 1 file changed, 46 insertions(+), 4 deletions(-)
+This can be simpler
 
-diff --git a/rust/kernel/sync/atomic.rs b/rust/kernel/sync/atomic.rs
-index eb4a47d7e2f3..3c1bb0c4d396 100644
---- a/rust/kernel/sync/atomic.rs
-+++ b/rust/kernel/sync/atomic.rs
-@@ -49,6 +49,35 @@ fn rhs_into_delta(rhs: i64) -> i64 {
-     }
- }
- 
-+// Defines an internal type that always maps to the integer type which has the same size alignment
-+// as `isize` and `usize`, and `isize` and `usize` are always bi-directional transmutable to
-+// `isize_atomic_repr`, which also always implements `AtomicImpl`.
-+#[allow(non_camel_case_types)]
-+#[cfg(not(CONFIG_64BIT))]
-+type isize_atomic_repr = i32;
-+#[allow(non_camel_case_types)]
-+#[cfg(CONFIG_64BIT)]
-+type isize_atomic_repr = i64;
-+
-+// Ensure size and alignment requirements are checked.
-+crate::static_assert!(core::mem::size_of::<isize>() == core::mem::size_of::<isize_atomic_repr>());
-+crate::static_assert!(core::mem::align_of::<isize>() == core::mem::align_of::<isize_atomic_repr>());
-+crate::static_assert!(core::mem::size_of::<usize>() == core::mem::size_of::<isize_atomic_repr>());
-+crate::static_assert!(core::mem::align_of::<usize>() == core::mem::align_of::<isize_atomic_repr>());
-+
-+// SAFETY: `isize` has the same size and alignment with `isize_atomic_repr`, and is round-trip
-+// transmutable to `isize_atomic_repr`.
-+unsafe impl generic::AllowAtomic for isize {
-+    type Repr = isize_atomic_repr;
-+}
-+
-+// SAFETY: The wrapping add result of two `isize_atomic_repr`s is a valid `usize`.
-+unsafe impl generic::AllowAtomicAdd<isize> for isize {
-+    fn rhs_into_delta(rhs: isize) -> isize_atomic_repr {
-+        rhs as isize_atomic_repr
-+    }
-+}
-+
- // SAFETY: `u32` and `i32` has the same size and alignment, and `u32` is round-trip transmutable to
- // `i32`.
- unsafe impl generic::AllowAtomic for u32 {
-@@ -75,6 +104,19 @@ fn rhs_into_delta(rhs: u64) -> i64 {
-     }
- }
- 
-+// SAFETY: `usize` has the same size and alignment with `isize_atomic_repr`, and is round-trip
-+// transmutable to `isize_atomic_repr`.
-+unsafe impl generic::AllowAtomic for usize {
-+    type Repr = isize_atomic_repr;
-+}
-+
-+// SAFETY: The wrapping add result of two `isize_atomic_repr`s is a valid `usize`.
-+unsafe impl generic::AllowAtomicAdd<usize> for usize {
-+    fn rhs_into_delta(rhs: usize) -> isize_atomic_repr {
-+        rhs as isize_atomic_repr
-+    }
-+}
-+
- use crate::macros::kunit_tests;
- 
- #[kunit_tests(rust_atomics)]
-@@ -94,7 +136,7 @@ macro_rules! for_each_type {
- 
-     #[test]
-     fn atomic_basic_tests() {
--        for_each_type!(42 in [i32, i64, u32, u64] |v| {
-+        for_each_type!(42 in [i32, i64, u32, u64, isize, usize] |v| {
-             let x = Atomic::new(v);
- 
-             assert_eq!(v, x.load(Relaxed));
-@@ -103,7 +145,7 @@ fn atomic_basic_tests() {
- 
-     #[test]
-     fn atomic_xchg_tests() {
--        for_each_type!(42 in [i32, i64, u32, u64] |v| {
-+        for_each_type!(42 in [i32, i64, u32, u64, isize, usize] |v| {
-             let x = Atomic::new(v);
- 
-             let old = v;
-@@ -116,7 +158,7 @@ fn atomic_xchg_tests() {
- 
-     #[test]
-     fn atomic_cmpxchg_tests() {
--        for_each_type!(42 in [i32, i64, u32, u64] |v| {
-+        for_each_type!(42 in [i32, i64, u32, u64, isize, usize] |v| {
-             let x = Atomic::new(v);
- 
-             let old = v;
-@@ -131,7 +173,7 @@ fn atomic_cmpxchg_tests() {
- 
-     #[test]
-     fn atomic_arithmetic_tests() {
--        for_each_type!(42 in [i32, i64, u32, u64] |v| {
-+        for_each_type!(42 in [i32, i64, u32, u64, isize, usize] |v| {
-             let x = Atomic::new(v);
- 
-             assert_eq!(v, x.fetch_add(12, Full));
--- 
-2.39.5 (Apple Git-154)
+minItems: 1
+items:
+  - enum: [ int1, int2 ]
+  - const: int 2
 
+and use lowercase anyway.
+
+> +    description: Choose chip interrupt pin to be used as interrupt input.
+> +
+> +  drive-open-drain:
+> +    type: boolean
+> +
+> +  vdd-supply:
+> +    description: Regulator that provides power to the sensor
+> +
+> +  vddio-supply:
+> +    description: Regulator that provides power to the bus
+> +
+> +  mount-matrix:
+> +    description: an optional 3x3 mounting rotation matrix
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-names
+
+Missing supplies
+
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        icm45605@68 {
+
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
+Maybe you need to update your dtschema and yamllint. Don't rely on
+distro packages for dtschema and be sure you are using the latest
+released dtschema.
+
+(see how other bindings or DTS call this type of device)
+
+> +            compatible = "invensense,icm45605";
+> +            reg = <0x68>;
+> +            interrupt-parent = <&gpio2>;
+> +            interrupt-names = "INT1";
+> +            interrupts = <7 IRQ_TYPE_EDGE_RISING>;
+> +            vdd-supply = <&vdd>;
+> +            vddio-supply = <&vddio>;
+> +            mount-matrix = "0", "-1", "0",
+> +                           "1", "0", "0",
+> +                           "0", "0", "1";
+> +        };
+Best regards,
+Krzysztof
 
