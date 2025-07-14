@@ -1,167 +1,266 @@
-Return-Path: <linux-kernel+bounces-730841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8887AB04ABD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:33:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C316AB04AC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D58E04A4AB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:33:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C9E11A66F08
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DAE243968;
-	Mon, 14 Jul 2025 22:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86EF242D99;
+	Mon, 14 Jul 2025 22:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cLnbG/TV"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S5u4JKb+"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B61922F152
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 22:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA072376F7;
+	Mon, 14 Jul 2025 22:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752532425; cv=none; b=YeH0Ofbfob2kdVWnltSisHJ7jCcj9SPX3qir+AopvEdDhEkaPODYrt3mU3Ywa7kMAPPgt/oxhowajmOZrbgLbgimIb9ijzH3BKetQLCTErdZRbL2NnL6cjfbfGAi8fth22PPjUoLDKRbL8nlGuKkUURPE8hzLsI0LTPMsU5L5cw=
+	t=1752532458; cv=none; b=DdPX2st4HdQ8PHvmEzXeOeTDR7j+ayMNspfpqZUQIVZ9KgyPvO8vdL3aB3xloaKNO2Z9je6SWwR8I5VwJFsTs/BF0cHFQJPzenWTjALJUaGxZdNmaOWdf1tqnDrNuCNInrmjy0byUwxSpw/Dp4zglMZMhwvdg/sYoBLikaQM9P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752532425; c=relaxed/simple;
-	bh=bunis5LfXrPX5VTCd+1M7mKLIy9OUoNx+GoYz1o1G4k=;
+	s=arc-20240116; t=1752532458; c=relaxed/simple;
+	bh=W6v8lbE3JTdREJrkREG+NkOzPzswYh1Vlh1TFABX1hg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ohbpCGds7to6bpfO0up2rm2lfDmNYOZ70X0absLJKG+M0wRBH3DL9fvebq6vxqqnzxr06L1iig36nNssJNEv+t5OWw8MvUAQ+xGi5vzw1vjtkjGEtoYHhn+yi7JC4jdv7MSAmTkyFG6mEIZGfFxgAueAFaLppw/qbM57aWwFOGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cLnbG/TV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56EHbnnO027032
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 22:33:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jin39v5RU2OC6taZwVEep++H4MP+V5H7HkCH2SULjQw=; b=cLnbG/TVb7wqSU9v
-	zXIC8UP2dgJsrBQ/B49OUI5+PtwnNpBuqPs7LZhg2O42Jmd6A5PxQw/dh/SgKwIK
-	EzxjQqEWQRmCdeUQFQHRPpkwOCxY4f4rXXUTe31S63/hhRRkKLWIKjFeAoW1IYUe
-	VTohsGPvpiI51AuRT5/LwE4T/NbaSkfokgp8/Pgadh9/CNNOKetIbDQf7wWyq8Tu
-	5phMJwzNcqPQV7F/zdmW7gUKxPcm9lXFrY0cB1IfKmQ/iOvEKpx1CnImyFgedVEU
-	ONa83X4bOFlrR9FXvS9Xgr1nrLa9HgxCtFlv94cLsUbt14wEBqu0s9+Sqpdour2l
-	pcPwew==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ugvmxd12-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 22:33:42 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e1aeab456cso253934485a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:33:42 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hk1NSe3g33uj7zv4EtxggSoURIb3WxfPXaPqwY2hPTQLDNspcZLrUYriNwuRX3uBUFWce9OboEjBPEZwmu/IWfcRtYVy3PJhsmzN8rJ5mA9iWIvFdFv0fOqIJ1gAL9uMZD+vXA/e9spIevJO+kfeY9yCQeP+5l6Ag3cJ/C/vDkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S5u4JKb+; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32ce1b2188dso43031711fa.3;
+        Mon, 14 Jul 2025 15:34:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752532454; x=1753137254; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/lsfIzpS/FedAznKrsoeJxLXMye9IFP7RjuGV3Aj11E=;
+        b=S5u4JKb+nrPwofZmUwHA0RTsVp59iyoMAWLvnp+CyX8iqHx0bteYMtL8k99MSoD+8C
+         a5rBj9vrxK7we7feGjU4BpQhT/MsHn7GcxJLUWFq8Qc9ip/2cT0ZvD6cE/OKR9TsKyUJ
+         bdbrqvrh88ohLCtThvPV+IN4Bg58mDKRkYLe6KPzoUKPV1YABFFiiOPsey2nn2X5s9FM
+         XcrfpohZxwP+JOu6KlSNonVKWQFEUQZYPjgIuZrw2/nSCkO/UatyA7K4V6VTlZ10VfyA
+         D2gaqH0mFfFyG7hmILBgbbdcSGxkxRNf1eplCHkOssuZtnROx2QbQmbHJpnXNIlU3XZg
+         swNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752532421; x=1753137221;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jin39v5RU2OC6taZwVEep++H4MP+V5H7HkCH2SULjQw=;
-        b=hWlL5HeNYbW42YkwB/FqcN4Tbk4WmYy/kyOVO1hm4uApBhEs3kl8d0SuAbahulhxvr
-         cZs8hVDuS9WFrNWXuVJGOatDdGDSDYryZsuBkUBQ434570TK3a5wvFSUVQhgkon9M4pK
-         u78QSaOUYsVgxQ5fDBgBjvow2qRjF8sI+D9Ws0eaKWrT3P/2tfv9g4IjBRZbfZzvVW3t
-         b8o+auB3WDUkLJubGa2QTA+zgDoOQeJ0KjmDzLW4nHP8bkokZGjRQWen0hVlO5pZZ67t
-         xF09g/metnQFoABrElRAjwMoMouGgdgVAIxe+Iqdy2nnBc/VBrJb/uy37JEBHYHgkoaC
-         LXpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsF9R5INYUnJnZi1+f+DP5TRqHs11pPClVT8tOJ2KrmgQvIDgqwHyuZGRs9HY+itxIauwzD0tyNzychCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza75PVRO+XWcqJObgMhs/Ge8shnbI9CcPn+5szdvdplcJedl2x
-	Yj3hA/Hk4n+JzgEntbRCOT86UzRT7uAXRK2pKszo54HUznYFJKlRzC3e3r0eTA+M83Fn+AsiknZ
-	UHNAYPPSMJS2h/h9EyEv0GL0a3nSHz5HdTYqJv26I48EHeZU8I50I+strZEyo1jb9CUU=
-X-Gm-Gg: ASbGncuNkNimKUvqlx4OwV1M18Vfdsi6rJ6XFwbfmRCuVrxo0h7NFRcztOynT9y5ea4
-	G7iWLmhWMCCUArnYqDUUScNqhBF2CXcc3DQzLcnMz6PE7lJ6kWKe8DsF1gdjc89rrQ1GAWK2jWG
-	ZYOpoCYWc9CygQrxg+AsZYAurvhCDweY7DQITxhqXeZzNmldEEikcZl09BeiOZOohE8SnZtg19Z
-	IhQMDJ9UFddn042X0mX2QxiUIw5XIkbfaYTtv8CIiS1tNuYoveJUZcFmkDcNrvY6A3Q+NlkEl6w
-	XyW9LHZaSXtpy52zybjyfqx8LLtaQElnKd7pUGODyx6AuutXwpcQrNb1HT6xqVCcI458IGoaNqm
-	ScY6S+aaSX2t3IDRUaGGHDqO3ZX3SNghVUG1bAHiuzUx9BUyBUGP0
-X-Received: by 2002:a05:620a:472c:b0:7d7:891:83f with SMTP id af79cd13be357-7e338d264c6mr102022885a.50.1752532420665;
-        Mon, 14 Jul 2025 15:33:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFCqBgY+159Vec1cfE9dZ+u3XhxSpLqUZeIaerPTNko5JEPCLrdG5Wtqgg6IXPtXcsQrNQU6A==
-X-Received: by 2002:a05:620a:472c:b0:7d7:891:83f with SMTP id af79cd13be357-7e338d264c6mr102017785a.50.1752532420066;
-        Mon, 14 Jul 2025 15:33:40 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32fa2930e70sm17078441fa.33.2025.07.14.15.33.38
+        d=1e100.net; s=20230601; t=1752532454; x=1753137254;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/lsfIzpS/FedAznKrsoeJxLXMye9IFP7RjuGV3Aj11E=;
+        b=L3LNscTbss+fk575zAD138LMi3So0pvmDVcymBQQCWsdI3TCooEyibRcHcF42CBQ7I
+         J3Udwgj+UAJkqrye2m1RHWe4RhpuqIdwA961HMXLgNbuLXiWICbr6u2cWVN6OckQCf2R
+         Kt8HWPB6OYccPUVJhlCoxgbZU1hXE3XZiyemlvAYungm1ThfHTdvD2KKBNE/RZzWLm8G
+         GizkrKiotDsPUZhCTiEf0l3DQ0DjghH4/fHhZqq5U5jUmxSHESHsZrUBDbc4c2DZsflb
+         vJYHXQm1Z9eD28xWj2jQTMkgw1NPm+x3LozbJWmoMyI8RdV4B1x2S/aFS2hx9jLQhTFV
+         AHfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWn9IwNR+MeVgqWCHqoaOqtp/ovbzlC5LBxLYhRYpca21euIBzEUbzzS3Fa+zaXFuEL0COjMXy9/eRB6XQ@vger.kernel.org, AJvYcCUsq7oTbSbYz2C49Q3mPbEw2VE9DKEGewiZC6zH9543bgSOtC1fVWoM4sQO2Mcz+Q2DbiyVCM52vfjHo+gt@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOQHhetJo4ATtXGhbYP5nWi5TurFyNw+/ZrklMXA1MeS605r6R
+	TY1wmlaerpkN4Q69wE2yhvampSVOM4jfB0/KBP0eXFGsnoa+CoBp5CxgaRFOYg==
+X-Gm-Gg: ASbGncvzyfV8vJaBMxUQZRpQNbUmqNuWFmKQdcYCEPvFysG1XF7bV6N8UizGZZvpz0X
+	NadC4pgAt0BpWiThzIOFxiHcfCY4EnlhGuqrJRQQJHXRisHMFjPUtQFsrNOEw6wQPgEbRY1sT6Z
+	XypSExaUC1GHUJVTe4ga7DG1oBl3oelEM4fnB0Zizbd4slJHCbqpN8mNtXxYtvVV5jxA3Rkd3x+
+	/jYZHfl7VXV30+vLC/ZCAWxw9F67sbx2tKZBFxtwls4+veWqiGFV+5/LVyjYLMbKyo5I/Q7uF6m
+	Fo4B7YJlCG0K8hkumOCBWUhjq6goDYK2Oa9DDVe7TqBpvnAq+kK+9BzZ8/+FDViHeBAUmswNQ1f
+	001K74ugZz5BUUFVThwsp/zdMXoQcwPh+IGjm3A==
+X-Google-Smtp-Source: AGHT+IFbEs0ZIkKVf8Yeir4vPF7NLzO/D3Zi0Tryd7KVEWog+DBD5fk2bx5TP047Ps/J9OHvdNCFLA==
+X-Received: by 2002:a05:651c:1a0c:b0:32b:7ddd:278d with SMTP id 38308e7fff4ca-330532d0515mr34780581fa.3.1752532453644;
+        Mon, 14 Jul 2025 15:34:13 -0700 (PDT)
+Received: from localhost (soda.int.kasm.eu. [2001:678:a5c:1202:4fb5:f16a:579c:6dcb])
+        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-32fa294bbf3sm16610651fa.49.2025.07.14.15.34.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 15:33:39 -0700 (PDT)
-Date: Tue, 15 Jul 2025 01:33:37 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Dale Whinham <daleyo@gmail.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-        =?utf-8?B?SsOpcsO0bWU=?= de Bretagne <jerome.debretagne@gmail.com>,
-        Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
-        ath12k@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/9 RFC] dt-bindings: wireless: ath12k: Add
- disable-rfkill property
-Message-ID: <prrra3lon2p4pugkgeytf5ow5wls62lfdnwcdykztw3qzwity2@d26aqh6wdyln>
-References: <20250714173554.14223-1-daleyo@gmail.com>
- <20250714173554.14223-8-daleyo@gmail.com>
+        Mon, 14 Jul 2025 15:34:13 -0700 (PDT)
+Date: Tue, 15 Jul 2025 00:34:12 +0200
+From: Klara Modin <klarasmodin@gmail.com>
+To: Youling Tang <youling.tang@linux.dev>
+Cc: Matthew Wilcox <willy@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, chizhiling@163.com, 
+	Youling Tang <tangyouling@kylinos.cn>, Chi Zhiling <chizhiling@kylinos.cn>
+Subject: Re: [PATCH] mm/filemap: Align last_index to folio size
+Message-ID: <yru7qf5gvyzccq5ohhpylvxug5lr5tf54omspbjh4sm6pcdb2r@fpjgj2pxw7va>
+References: <20250711055509.91587-1-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250714173554.14223-8-daleyo@gmail.com>
-X-Proofpoint-GUID: vr5NXYqkVCNJB9jbdyZPT2wkHol1g6lx
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDE1NyBTYWx0ZWRfX75JTtfXdxrWD
- iH9fqXXUJ1OXEsBFsqWA6NKEVeUr0O/p5GYJlMev3rV5ut+p0goo/pWBzhbicBPDobLRTedS+Ns
- icU8h1/MzIWlv/lg8vKGH+J717dtP+WlXw9L4onUumUUgO1b0tlgpa8tJXF6XqfyJgKn7ksHb1O
- SY2Pt/RZSiGvFAA8rfOc2e788sZN/WJaHIMV+KanY75VDCxatWijPvAoAv59FNcrwoNe7pP8ZNi
- fAzTfiruCaITEjqveZSwoTZp8+qJCsHBRHqLR3lUa9xVN3zpd9QkRxDV7PyuvFm4rjjLBniexhM
- 2Y1R+7X7B/D6xi/2dUJ1jvFQaWZei8PASygvqBNpapT1yfOOiFxBmGZpKiVipaPDRnMmmCQZ1R5
- tE3NzzSHwT4MBEv0ZZ824PYngynvIF1tYTcoQYkEmBUpqP4ZQ2AYFCWLygeELpNKA2Jlzyh3
-X-Proofpoint-ORIG-GUID: vr5NXYqkVCNJB9jbdyZPT2wkHol1g6lx
-X-Authority-Analysis: v=2.4 cv=C4fpyRP+ c=1 sm=1 tr=0 ts=687585c6 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
- a=Wb1JkmetP80A:10 a=pGLkceISAAAA:8 a=g818jjc2pSN6WLbPb0IA:9 a=3ZKOabzyN94A:10
- a=wPNLvfGTeEIA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-14_02,2025-07-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 mlxscore=0 suspectscore=0 phishscore=0
- clxscore=1015 lowpriorityscore=0 spamscore=0 malwarescore=0 bulkscore=0
- impostorscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507140157
+In-Reply-To: <20250711055509.91587-1-youling.tang@linux.dev>
 
-On Mon, Jul 14, 2025 at 06:35:43PM +0100, Dale Whinham wrote:
-> From: Jérôme de Bretagne <jerome.debretagne@gmail.com>
+Hi,
+
+On 2025-07-11 13:55:09 +0800, Youling Tang wrote:
+> From: Youling Tang <tangyouling@kylinos.cn>
 > 
-> Document the disable-rfkill property.
-
-Why? What does it mean? Why are you describing Linux driver firmware in
-the DT?
-
+> On XFS systems with pagesize=4K, blocksize=16K, and CONFIG_TRANSPARENT_HUGEPAGE
+> enabled, We observed the following readahead behaviors:
+>  # echo 3 > /proc/sys/vm/drop_caches
+>  # dd if=test of=/dev/null bs=64k count=1
+>  # ./tools/mm/page-types -r -L -f  /mnt/xfs/test
+>  foffset	offset	flags
+>  0	136d4c	__RU_l_________H______t_________________F_1
+>  1	136d4d	__RU_l__________T_____t_________________F_1
+>  2	136d4e	__RU_l__________T_____t_________________F_1
+>  3	136d4f	__RU_l__________T_____t_________________F_1
+>  ...
+>  c	136bb8	__RU_l_________H______t_________________F_1
+>  d	136bb9	__RU_l__________T_____t_________________F_1
+>  e	136bba	__RU_l__________T_____t_________________F_1
+>  f	136bbb	__RU_l__________T_____t_________________F_1   <-- first read
+>  10	13c2cc	___U_l_________H______t______________I__F_1   <-- readahead flag
+>  11	13c2cd	___U_l__________T_____t______________I__F_1
+>  12	13c2ce	___U_l__________T_____t______________I__F_1
+>  13	13c2cf	___U_l__________T_____t______________I__F_1
+>  ...
+>  1c	1405d4	___U_l_________H______t_________________F_1
+>  1d	1405d5	___U_l__________T_____t_________________F_1
+>  1e	1405d6	___U_l__________T_____t_________________F_1
+>  1f	1405d7	___U_l__________T_____t_________________F_1
+>  [ra_size = 32, req_count = 16, async_size = 16]
 > 
-> Signed-off-by: Jérôme de Bretagne <jerome.debretagne@gmail.com>
-> Signed-off-by: Dale Whinham <daleyo@gmail.com>
+>  # echo 3 > /proc/sys/vm/drop_caches
+>  # dd if=test of=/dev/null bs=60k count=1
+>  # ./page-types -r -L -f  /mnt/xfs/test
+>  foffset	offset	flags
+>  0	136048	__RU_l_________H______t_________________F_1
+>  ...
+>  c	110a40	__RU_l_________H______t_________________F_1
+>  d	110a41	__RU_l__________T_____t_________________F_1
+>  e	110a42	__RU_l__________T_____t_________________F_1   <-- first read
+>  f	110a43	__RU_l__________T_____t_________________F_1   <-- first readahead flag
+>  10	13e7a8	___U_l_________H______t_________________F_1
+>  ...
+>  20	137a00	___U_l_________H______t_______P______I__F_1   <-- second readahead flag (20 - 2f)
+>  21	137a01	___U_l__________T_____t_______P______I__F_1
+>  ...
+>  3f	10d4af	___U_l__________T_____t_______P_________F_1
+>  [first readahead: ra_size = 32, req_count = 15, async_size = 17]
+> 
+> When reading 64k data (same for 61-63k range, where last_index is page-aligned
+> in filemap_get_pages()), 128k readahead is triggered via page_cache_sync_ra()
+> and the PG_readahead flag is set on the next folio (the one containing 0x10 page).
+> 
+> When reading 60k data, 128k readahead is also triggered via page_cache_sync_ra().
+> However, in this case the readahead flag is set on the 0xf page. Although the
+> requested read size (req_count) is 60k, the actual read will be aligned to
+> folio size (64k), which triggers the readahead flag and initiates asynchronous
+> readahead via page_cache_async_ra(). This results in two readahead operations
+> totaling 256k.
+> 
+> The root cause is that when the requested size is smaller than the actual read
+> size (due to folio alignment), it triggers asynchronous readahead. By changing
+> last_index alignment from page size to folio size, we ensure the requested size
+> matches the actual read size, preventing the case where a single read operation
+> triggers two readahead operations.
+> 
+> After applying the patch:
+>  # echo 3 > /proc/sys/vm/drop_caches
+>  # dd if=test of=/dev/null bs=60k count=1
+>  # ./page-types -r -L -f  /mnt/xfs/test
+>  foffset	offset	flags
+>  0	136d4c	__RU_l_________H______t_________________F_1
+>  1	136d4d	__RU_l__________T_____t_________________F_1
+>  2	136d4e	__RU_l__________T_____t_________________F_1
+>  3	136d4f	__RU_l__________T_____t_________________F_1
+>  ...
+>  c	136bb8	__RU_l_________H______t_________________F_1
+>  d	136bb9	__RU_l__________T_____t_________________F_1
+>  e	136bba	__RU_l__________T_____t_________________F_1   <-- first read
+>  f	136bbb	__RU_l__________T_____t_________________F_1
+>  10	13c2cc	___U_l_________H______t______________I__F_1   <-- readahead flag
+>  11	13c2cd	___U_l__________T_____t______________I__F_1
+>  12	13c2ce	___U_l__________T_____t______________I__F_1
+>  13	13c2cf	___U_l__________T_____t______________I__F_1
+>  ...
+>  1c	1405d4	___U_l_________H______t_________________F_1
+>  1d	1405d5	___U_l__________T_____t_________________F_1
+>  1e	1405d6	___U_l__________T_____t_________________F_1
+>  1f	1405d7	___U_l__________T_____t_________________F_1
+>  [ra_size = 32, req_count = 16, async_size = 16]
+> 
+> The same phenomenon will occur when reading from 49k to 64k. Set the readahead
+> flag to the next folio.
+> 
+> Because the minimum order of folio in address_space equals the block size (at
+> least in xfs and bcachefs that already support bs > ps), having request_count
+> aligned to block size will not cause overread.
+> 
+> Co-developed-by: Chi Zhiling <chizhiling@kylinos.cn>
+> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
+> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+
+I bisected boot failures on two of my 32-bit systems to this patch.
+
 > ---
->  .../devicetree/bindings/net/wireless/qcom,ath12k.yaml          | 3 +++
->  1 file changed, 3 insertions(+)
+>  include/linux/pagemap.h | 6 ++++++
+>  mm/filemap.c            | 5 +++--
+>  2 files changed, 9 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-> index 9e557cb838c7..f15b630fb034 100644
-> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-> @@ -48,6 +48,9 @@ properties:
->    vddpcie1p8-supply:
->      description: VDD_PCIE_1P8 supply regulator handle
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index e63fbfbd5b0f..447bb264fd94 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -480,6 +480,12 @@ mapping_min_folio_nrpages(struct address_space *mapping)
+>  	return 1UL << mapping_min_folio_order(mapping);
+>  }
 >  
-> +  disable-rfkill:
-> +    type: boolean
+> +static inline unsigned long
+> +mapping_min_folio_nrbytes(struct address_space *mapping)
+> +{
+> +	return mapping_min_folio_nrpages(mapping) << PAGE_SHIFT;
+> +}
 > +
->  required:
->    - compatible
->    - reg
-> -- 
-> 2.50.1
-> 
+>  /**
+>   * mapping_align_index() - Align index for this mapping.
+>   * @mapping: The address_space.
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 765dc5ef6d5a..56a8656b6f86 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2584,8 +2584,9 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+>  	unsigned int flags;
+>  	int err = 0;
+>  
+> -	/* "last_index" is the index of the page beyond the end of the read */
+> -	last_index = DIV_ROUND_UP(iocb->ki_pos + count, PAGE_SIZE);
+> +	/* "last_index" is the index of the folio beyond the end of the read */
 
--- 
-With best wishes
-Dmitry
+> +	last_index = round_up(iocb->ki_pos + count, mapping_min_folio_nrbytes(mapping));
+
+iocb->ki_pos is loff_t (long long) while pgoff_t is unsigned long and
+this overflow seems to happen in practice, resulting in last_index being
+before index.
+
+The following diff resolves the issue for me:
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 3c071307f40e..d2902be0b845 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2585,8 +2585,8 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+ 	int err = 0;
+ 
+ 	/* "last_index" is the index of the folio beyond the end of the read */
+-	last_index = round_up(iocb->ki_pos + count, mapping_min_folio_nrbytes(mapping));
+-	last_index >>= PAGE_SHIFT;
++	last_index = round_up(iocb->ki_pos + count,
++			mapping_min_folio_nrbytes(mapping)) >> PAGE_SHIFT;
+ retry:
+ 	if (fatal_signal_pending(current))
+ 		return -EINTR;
+
+Regards,
+Klara Modin
+
+> +	last_index >>= PAGE_SHIFT;
+>  retry:
+>  	if (fatal_signal_pending(current))
+>  		return -EINTR;
+> -- 
+> 2.34.1
+> 
 
