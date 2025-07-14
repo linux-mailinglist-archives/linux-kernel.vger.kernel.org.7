@@ -1,50 +1,77 @@
-Return-Path: <linux-kernel+bounces-730076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A64B04008
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:33:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47123B03FDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AEB7188A6EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:29:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ADC34A3919
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F31149C7B;
-	Mon, 14 Jul 2025 13:29:24 +0000 (UTC)
-Received: from camille.insymetrique.net (camille.insymetrique.net [80.67.172.148])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042FF253351;
+	Mon, 14 Jul 2025 13:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZDCLcuh2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3ECA246767
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.67.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983DF251793;
+	Mon, 14 Jul 2025 13:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752499764; cv=none; b=qT0PpP1npQuhcEqQuAHAZCfvrzoSJniPiyUbkPROZ0oLs5A07FGzK/ZqNggyy57ltusENAhjk+UTIsZS/5e6TaefBBcyoHCX79apsoje3UqQe4ufJQHLAuRgUmBnFEra1pMgSH3mryQr0OisiRh+8+dN7kASADZjjQFsUSKquys=
+	t=1752499450; cv=none; b=MhYZRw+QJAbE8D9+VDAa0xg8RTmquKGmKgMPe0n7JXtMYz9yVTegugVc7jZbwGPZOCDfksfiNh4TqI1G2rAQWHvJM66xTeTJTuyAqxAcvCHpREqJ682rWgqH2e9dynw+ks5arTA0jlX+AkFfBZYvHaDIwIadxYuaAWSjeAApekI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752499764; c=relaxed/simple;
-	bh=VoE/He8A7pFiu7S2/GPsIasmNwCHjvnNQp8zOIbyzw0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V6GqHzG62UkDmpXL9VM7aAB5Yuu5xUvqoPQewqypyjQIhChLs3CeoNlbCJ/IB7Iuh5lrz0LVYzcTvQH3A+uwEnNShPYE58kFY9K2JsvaLmFUnWge+o2XmfhESLhK1VtWpUSfB5lCvtjCddKCZPZ6Ye6v00S20T6ZzfB0U9LMsRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dupart.org; spf=pass smtp.mailfrom=dupart.org; arc=none smtp.client-ip=80.67.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dupart.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dupart.org
-Received: from kern.. (unknown [89.234.162.240])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: jonathan@dupart.org)
-	by camille.insymetrique.net (Postfix) with ESMTPSA id 4bgjhV3VCSz75P6;
-	Mon, 14 Jul 2025 13:24:10 +0000 (UTC)
-From: Jonathan Dupart <jonathan+kernel@dupart.org>
-X-Clacks-Overhead: GNU Terry Pratchett
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: ~lkcamp/patches@lists.sr.ht,
-	koike@igalia.com,
-	Jonathan Dupart <jonathan+kernel@dupart.org>
-Subject: [PATCH] staging: rtl8723bs: hal: add spaces around ternary operator
-Date: Mon, 14 Jul 2025 15:23:41 +0200
-Message-ID: <20250714132343.1613229-1-jonathan+kernel@dupart.org>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1752499450; c=relaxed/simple;
+	bh=QwjAUiKmfnYkBvb9mYSuBBbGE4Yr2f5m1crl+9/gD0w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fSFrUd5XzUP4ZmGjypAEjAflkCFfvDBmDhsb+6L74zDAqB0w7uBTqwKgVabBjHuiuXc2tZpww/jnlyzgCJa2QwGNO0wJLSxoXYkLsKxqovfEYSEEQMM+w/2xmgU1C5bv2xl6FQ+0xIZprmgx/9//MonfwC/0n+sIWFAeTuWZycE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZDCLcuh2; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752499449; x=1784035449;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=QwjAUiKmfnYkBvb9mYSuBBbGE4Yr2f5m1crl+9/gD0w=;
+  b=ZDCLcuh2WxqCOqAZ5l6nNl5uLTFTjwmHsglcFmnn3edtKkIJKjJn/P/9
+   +GXmHBs265EYv/deYCrC311OOX8MyalX8YnK37xXzAgBqwaLWh+Idflyj
+   JXLoxVpZcz9a37TIsqAHlpQPiyKaxFSug9cbxMEkSK9JrSuW43Y3cmWLa
+   UI1ALEo3GVzoKvfBQ2KtF+X/nhm/VfAgnz3X0ut+IY6mXv14KpfD3e8jN
+   3+1U+yCMq4VYf36rBv+sETGeEHB+hkFUSIibAEoYlcWg46emHTp8ZesYQ
+   1mbBCb0Y+ZMAqHM0eOYbVoQ0zRwloVdRJEcIXLClfmgVAtaiyyEEo6nqJ
+   g==;
+X-CSE-ConnectionGUID: e2gWmo8+Tn23QmXD4i4hMA==
+X-CSE-MsgGUID: 0QvA4WVZR86iSTeFWWAHwA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="53802619"
+X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
+   d="scan'208";a="53802619"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 06:24:08 -0700
+X-CSE-ConnectionGUID: JGEi9CteTpi93TV1UUp+aQ==
+X-CSE-MsgGUID: 364hvLYfRwyi7LAfHkPM2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
+   d="scan'208";a="160944785"
+Received: from johunt-mobl9.ger.corp.intel.com (HELO mdjait-mobl.intel.com) ([10.245.244.75])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 06:24:05 -0700
+From: Mehdi Djait <mehdi.djait@linux.intel.com>
+To: sakari.ailus@linux.intel.com,
+	arnd@arndb.de,
+	laurent.pinchart@ideasonboard.com
+Cc: jacopo.mondi@ideasonboard.com,
+	hverkuil@xs4all.nl,
+	kieran.bingham@ideasonboard.com,
+	mchehab@kernel.org,
+	hdegoede@redhat.com,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mehdi Djait <mehdi.djait@linux.intel.com>
+Subject: [PATCH V3] media: i2c: Kconfig: Ensure a dependency on HAVE_CLK for VIDEO_CAMERA_SENSOR
+Date: Mon, 14 Jul 2025 15:23:56 +0200
+Message-ID: <20250714132356.154971-1-mehdi.djait@linux.intel.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,32 +80,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Adhere to Linux kernel coding style according to checkpatch :
+Both ACPI and DT-based systems are required to obtain the external
+camera sensor clock using the new devm_v4l2_sensor_clk_get() helper
+function.
 
-CHECK: spaces required around that ':' (ctx:VxV)
+Ensure a dependency on HAVE_CLK when config VIDEO_CAMERA_SENSOR is
+enabled.
 
-Signed-off-by: Jonathan Dupart <jonathan+kernel@dupart.org>
-
+Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
 ---
-Hey, this is my first patch, I appreciate any feedback, thanks!
----
- drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 2 +-
+v2 -> v3:
+Suggested by Arnd Bergmann and Sakari:
+	- replaced depends on COMMON_CLK by depends on HAVE_CLK
+
+Link v2: https://lore.kernel.org/linux-media/20250709101114.22185-1-mehdi.djait@linux.intel.com/
+
+v1 -> v2:
+Suggested by Arnd Bergmann:
+	- removed the select statement and replaced it by "depends on
+	  COMMON_CLK"
+
+Link v1: https://lore.kernel.org/linux-media/20250708161637.227111-1-mehdi.djait@linux.intel.com
+
+ drivers/media/i2c/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-index 893cab0532ed..563d66afa547 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-@@ -3185,7 +3185,7 @@ void GetHwReg8723B(struct adapter *padapter, u8 variable, u8 *val)
- 		break;
- 	case HW_VAR_CHK_HI_QUEUE_EMPTY:
- 		val16 = rtw_read16(padapter, REG_TXPKT_EMPTY);
--		*val = (val16 & BIT(10)) ? true:false;
-+		*val = (val16 & BIT(10)) ? true : false;
- 		break;
- 	default:
- 		GetHwReg(padapter, variable, val);
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index a1a8ef9f35c1..01f348cc3b27 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -27,7 +27,7 @@ config VIDEO_IR_I2C
+ 
+ menuconfig VIDEO_CAMERA_SENSOR
+ 	bool "Camera sensor devices"
+-	depends on MEDIA_CAMERA_SUPPORT && I2C
++	depends on MEDIA_CAMERA_SUPPORT && I2C && HAVE_CLK
+ 	select MEDIA_CONTROLLER
+ 	select V4L2_FWNODE
+ 	select VIDEO_V4L2_SUBDEV_API
 -- 
-2.47.2
+2.49.0
 
 
