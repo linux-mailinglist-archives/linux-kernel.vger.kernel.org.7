@@ -1,93 +1,154 @@
-Return-Path: <linux-kernel+bounces-729672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B5DEB03A25
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:57:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2067B03A29
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21AEB1891B1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:58:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479AB3BCD05
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FBF23A989;
-	Mon, 14 Jul 2025 08:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A2620D4FF;
+	Mon, 14 Jul 2025 08:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YWT0Jv1q"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oVE8o/6b"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EEB198E8C
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07D823A989
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752483467; cv=none; b=BrS0HbnVFuoAG/5CVPI44nIPFng2IOLUqF/PY0T3hYFgVeo23Z6+kc0VT55ZHO54f8FNPT5GOgiNwgWgkqHBKaXR3EWfUNN32RzHtn7ppqk7iP+R8iZ6i0UN5TAXPW0z1nkb5biGVOLSk+VFVKPYxiWXdLEsbfgdv9hF8/tuOxg=
+	t=1752483522; cv=none; b=sunaW3l00jrgukj1VsReNTK4cVNygAkvHIJ67e61heaDLgenDA5NBKzMI4c9hU4uLRmuz+BaiucbPorhYINuFgYatlbt+SEwge1ln1AI7zCxkf7GUdx3NjCtVg2PvCpMX3NwQ0hEK6rmsvtBEf2LI2jS8vS4KvWUa16ideBhWVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752483467; c=relaxed/simple;
-	bh=TBZOnMOJrvNQ4QWCY/1VlrxplWTM7R3zW9huyEwCz0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CaZa7gPEqk254l7KgTwJMl/JkNDLAyqgjXN/zDITXFDTFdBmpTEj68NpVZxJNFZa7RqY7+Wt/NEU867HDuCy4k3L5RJtKvJS2m7aEDtcVPEsQVANBHvMjA0WnOJdqPtbNFFncIdLMScwQHer+odZAgI/arWTeDPNfK1JLI4blVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YWT0Jv1q; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=t2UpYQwB+D7PZb318IHnhuH4uZMwRt/xC1ltZf6ovAY=; b=YWT0Jv1qRf5qEOAxINeYcfP9VA
-	BfLVOGn3wc/8R6EGz+sXgwaXJxvXiI9nIf6bk7xSJF1C2iHfud71p0Dm4hQDVUxDCQg+fooIakYaW
-	H41ku8qY35P9QPhPJo1TBgHSU2YfhkwtWqS2p6C2gvPsRa/Uq2a+xFer1rWDqB4sJlnquHanAVxuo
-	vhXv5oubWIPe3qxQjvCzf6k+RV0+yoIOzx9BJx1o2LRB6TfHabYrSVN80wfL5WQiGZ5DhEO+z/1Pl
-	KYK4lFjdUeDtzLnFJ32NmJe1e9IHX2k2u/1cL+xYkV1jxuvw5eILbh8Nbe3e1gvv7maOEqtoa/4tI
-	tew/3yew==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubF05-00000006aFt-3BAX;
-	Mon, 14 Jul 2025 08:57:30 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 51E06300186; Mon, 14 Jul 2025 10:57:29 +0200 (CEST)
-Date: Mon, 14 Jul 2025 10:57:29 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Li Chen <me@linux.beauty>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Li Chen <chenl311@chinatelecom.cn>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/4] smpboot: introduce SDTL_INIT() helper to tidy
- sched topology setup
-Message-ID: <20250714085729.GM905792@noisy.programming.kicks-ass.net>
-References: <20250710105715.66594-1-me@linux.beauty>
- <20250710105715.66594-2-me@linux.beauty>
- <ba4dbdf8-bc37-493d-b2e0-2efb00ea3e19@amd.com>
- <20250711130601.GD905792@noisy.programming.kicks-ass.net>
- <0305d98a-0300-429a-adc2-39fd9b3af876@amd.com>
+	s=arc-20240116; t=1752483522; c=relaxed/simple;
+	bh=QiVcEFWR3A0fEZp/JWzDxq5uuw1b/SjZBvKgRWUUwHk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=deKdlSi1DrxwJAy17p7RZquVtgpa08TWZ9JFk7blCi39UdKs/P3q2iRoIjlDJO4O09kpeZ1J//f7sfKEtaCzNvJjqlxjkCnqbLs4k2oDt9S8AoIZGpzZA5vnC0cvMpFR944JEQzB+bLqgrNFEc027zcoGeO1Ht1GnBkz7nI0suo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oVE8o/6b; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56DLfG99004879
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:58:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eVFSQFBFf/hmbWz5fQBJA1oBoM/6k55vueTBlZ5GRIw=; b=oVE8o/6bscuHKq7J
+	IW5N6KHrzpEo/H6P8ELGcZQbbiL/AvZtwBHw+hZnrkiaVs6CDSybdof1Tt/ogY+C
+	Eezy6RrDjflRxkIfFH2ZJMarw81pvItkKYS4GI97axTyl4nirCjqA0qLR0vKfAsa
+	Dwb1fHLhntSzm6edej+Tdn/Lqh4mAoMwUbg3ImwCtjCcNypowPEaWQt/0y5lPFbp
+	2k0vs7IkYhlm/VpFdj+7CF01Np+dMlUiPiaC6ZZJMjZLt8zIkBeUOc+ZmneBQpku
+	3F4KADkHtv8y/usjqruPzuoglpNo9fWJ0oDktIgm4oxI1n2d0p3iEbLB6Y5xQ1Sg
+	OtT84A==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufxauxtc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:58:39 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ab7a01c38cso125321cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 01:58:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752483518; x=1753088318;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eVFSQFBFf/hmbWz5fQBJA1oBoM/6k55vueTBlZ5GRIw=;
+        b=EAuMpicdBVqZR0CtvKHCY30ne7dFfA2W58Z/867HSok7L2/gsChSxvj7b8NtKuk5f+
+         BsiafAYTrrEtHi4BrtcUJUhNKUFSPXfM1gAVtmzJ/g9qU6bnyrfi66fmO097FEiRPUIz
+         6Fdf12A+7esGo46kLA+YAnec1HBBhgyxqAVWQ0YMp5aN7k+n8RXPctjjCBDKsPzVjgxT
+         GFjL928UK0BZaEYjs6iBAvKnK2wE8YGVLWHolKQvXKgjbk6CuTbtKgl5B1g9QOodg+CX
+         QtGY5LAMCnivILDlA8aG2kyYwofOq1th5i3Kan6Bj36G1hzPWRYE9th6O168wCBrTUD/
+         +0FA==
+X-Gm-Message-State: AOJu0Yz8S5CTTToGd63x0sJMnjTMyPUv3s8pvMMsEy6XQCZpWbudG+kr
+	LX2Q5fV6LehcGBx6WTfeC+iS2/r2h8U8v3OIsm4eY+HEFRErK+gjnLEq+8z6EdlOsNHYMQXjrqc
+	h3A4yUYX2jUD3STV0QSzoBEsyEZV6u2zkdtOdFs2PSW/LEsZ0wnFFUelpsOGff6BJEMjiCrVQef
+	E=
+X-Gm-Gg: ASbGncvSWtaDbufjjDCOoEIKf7EyF4xVviBa88nzVOC8RRrM5T1Yh78SGl5H1/9CVmH
+	Kd0ks/FZF4hSEOuUA2/1DSk85J3ZD3RvTfn/lcPB2WjSDdRPwvYQIIWfYHErBXD7JK9MixK/7nZ
+	2VG60UOnZatQfLlP7aDyxZjdS1lcxiV6SeLMzsCdTtEuI03EjYBkfuxj5AvGAlHc4n1UknUw24p
+	Zp7+2mC7Kms4BKuedZLNgw8QwGkbKvXBPw85uFo/SJJDJvlT3lHECrsrlxi5Jj5bdndInb9/oP7
+	i2IhNI06s8gGtXYjfGPm+Jvn7sBH32ZCgFYwZj5hh9QZN4VCMMZirsfvbAjLSQuGHS6afRqo/wV
+	31+fqcHNLEBno7BB3BkLz
+X-Received: by 2002:a05:622a:6a04:b0:4ab:533c:109f with SMTP id d75a77b69052e-4ab533c1d38mr33202211cf.15.1752483518552;
+        Mon, 14 Jul 2025 01:58:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFyWKteUj8o5VODQK+2BJ0/X/YeuYekA6dRnqZzX1W2y2SY55bcGHUGGjZdrZb6seu9rPe14A==
+X-Received: by 2002:a05:622a:6a04:b0:4ab:533c:109f with SMTP id d75a77b69052e-4ab533c1d38mr33202141cf.15.1752483518093;
+        Mon, 14 Jul 2025 01:58:38 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee48f6sm802041966b.55.2025.07.14.01.58.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 01:58:37 -0700 (PDT)
+Message-ID: <55048b4e-6c80-4f4e-ac05-e2b8cb48203b@oss.qualcomm.com>
+Date: Mon, 14 Jul 2025 10:58:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0305d98a-0300-429a-adc2-39fd9b3af876@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: sm8450-qrd: add pmic glink node
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, neil.armstrong@linaro.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20250714045310.2092385-1-krishna.kurapati@oss.qualcomm.com>
+ <20250714045310.2092385-2-krishna.kurapati@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250714045310.2092385-2-krishna.kurapati@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: o3c-_zKN23Xs-HRUa4VFdnFAMeIv-vY0
+X-Proofpoint-ORIG-GUID: o3c-_zKN23Xs-HRUa4VFdnFAMeIv-vY0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA1MSBTYWx0ZWRfX2/xCpiy85uHB
+ X/rPu9DqlN5Bgvh7v2x94iA7xjrp/M5k/TmROVNlbMlSIAgTDfE0bUNBiuYWqTnQ1suyTJ4+Crc
+ XUxDaxj3IWJxiShH0k0yK9mox1sQUEekyoXvyqNs93tnshPfTY59s9DjonBh5OTmKXa/1IJ2WG1
+ N7V8GFNSQfDO51J72rmlPEaxtFQ2pZnq2RyE4UJIOZxbQlGggTqTsuaHh7a2/45lXUo639ulNHU
+ 6wsjFMn1IWyXJ8qGJdUSUFiMtc5Y0PPYALK7yKQPdBOyLrK9VTgfBa3+fndWziuKxEx61DCDBBK
+ zScwu8+hyNq4V8+RvHYvVFHhIMCRXT5SsH115qNd6CApnU1pGFq51qu29ZkfB5cs0MAyB76kuqH
+ k9mXiIS+glxnXzDgES4TgKBcEyfx+FVEL78DxBmcs5XYTkeOPFRcfVCvX8NzoFah+94wRR+z
+X-Authority-Analysis: v=2.4 cv=Xc2JzJ55 c=1 sm=1 tr=0 ts=6874c6bf cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=GY1l66hMsWQi9t9MqZEA:9
+ a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-14_01,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 mlxscore=0 priorityscore=1501 adultscore=0 mlxlogscore=900
+ phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
+ clxscore=1015 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507140051
 
-On Mon, Jul 14, 2025 at 09:33:42AM +0530, K Prateek Nayak wrote:
-
-> Works for me! If you need a formal commit message:
-
-Thanks, much better than the badly edited thing I put in place.
-
-> P.S. Are we still considering the following for v6.16 cycle?
-> https://lore.kernel.org/lkml/20250709161917.14298-1-kprateek.nayak@amd.com/
+On 7/14/25 6:53 AM, Krishna Kurapati wrote:
+> Add the pmic glink node linked with the DWC3 USB controller
+> switched to OTG mode and tagged with usb-role-switch.
 > 
-> If not, I can rebase it on top of queue:sched/core and send it out with
-> the conflicts resolved to save you a couple of edits :)
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8450-qrd.dts | 51 ++++++++++++++++++++++++-
+>  1 file changed, 49 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8450-qrd.dts b/arch/arm64/boot/dts/qcom/sm8450-qrd.dts
+> index 8c39fbcaad80..a5093eee3dea 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8450-qrd.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8450-qrd.dts
+> @@ -37,6 +37,49 @@ vph_pwr: vph-pwr-regulator {
+>  		regulator-always-on;
+>  		regulator-boot-on;
+>  	};
+> +
+> +	pmic-glink {
 
-Already done, about to push out.
+Please move pmic-glink above vph-pwr-regulator (so it's alphabetically
+sorted). The rest looks good
+
+Konrad
 
