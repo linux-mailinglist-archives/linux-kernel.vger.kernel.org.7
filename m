@@ -1,118 +1,127 @@
-Return-Path: <linux-kernel+bounces-730079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C991B03FF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:31:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3DE3B04000
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C00AB4A0E93
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:30:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20AAE4A393C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32600251792;
-	Mon, 14 Jul 2025 13:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8225F24E4C6;
+	Mon, 14 Jul 2025 13:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bb6ak4J5"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IunKLAIg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3056E23A9BB
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE19E246767;
+	Mon, 14 Jul 2025 13:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752499800; cv=none; b=QedFKQT29UHbfhrHUe6x/dMluFVW+r61QiicuNo7NgyXVdbhMFSjfAvyoHzdQYL+fJWo6GkKmDVQ5FNqxqSuyN4cTV5vI0pP6+IzWYgvwM+N3kR2I+E3f93YHNtzRjGUApkieipNLCkWb1nlIFbNjvnf/D/u2rb/TJTXlH9u/pw=
+	t=1752499739; cv=none; b=AKE2LLVdwXJAqLn0+bGeDUJL6puiDLTLe34GE83JdXxFKBXhpTGizxrSX0dEKExgdjuKY5cJ2PgkzlsjtQZu45hXShF9zdiWOFh4VZFbHt2dnKpTPfKtgr/x7AJoJaR0fv2t2Zo7fzCSuzVLEFcBOqgCcU8ucnCN1gCd/CpCIXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752499800; c=relaxed/simple;
-	bh=7Sm5LsOFtuRrz/TkiuLgXge3S0NaRIa9UfX2d9h8Clo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aOlXu0mHyjpZOLzJXlMRo4KNmOWihZB4NSlaFVAynK4DJMNdWrv6UXNcSX6+EOXDKrvSMjYH9EEOyqkDufVXCFY3iw5hI/25XAozKHl3MGaFC42oYL+DZxdyM6wCpMoJCHKyodlU3yYQlXTR6aa30m2COyBIyrvUtAuNqmOld6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bb6ak4J5; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-712be7e034cso40139767b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 06:29:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752499798; x=1753104598; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ar8UcJJp6D80cSBExxGKJ5XW7V6hUSuTns7AE4Udt1E=;
-        b=bb6ak4J5VpL+C1u7/U3Bui83/b7eYIkTaR3eyJuz35GMNAfOH8LV63uZthvnB/GjCP
-         IRt+Vs2vE7mUT7LgFXu5U0KjOlvciMxJEn1x1BDPmWlcs8HORmRX8Jxw4x37//7YaiMT
-         /ZGvg3o5bQm/mCqye7h6cuisaCRClKoC2Np8SLzFReYWiCWtaJIYb+VDost+06mpjC6m
-         d6DUKjdg2RB5ZyPjkCGRY/eFaNO5vI9eZ5LLsIJMkHV/7q4Dc5Q500g2MSObu7v7zg53
-         8CKgjUpHm1Mr/Gta1/CtoOsHF4FGRF9ty8+0vmEUP27TJMlCRVXK5RIXsmW/WN5wnfAS
-         sNAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752499798; x=1753104598;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ar8UcJJp6D80cSBExxGKJ5XW7V6hUSuTns7AE4Udt1E=;
-        b=FFdzVnS23zmh5joEf0DX9prpeB46RTdH8kGbkYSGw/O1Al1a2EGmQR4ijTOh8kcz9m
-         s8L6B000/cSXDtWNCrFkVLYWXbSy3cAnMZqKmtwywokql+BWSxolJIIBfo5+vrx57z4Q
-         MmBLpeqOxgJSL7EZqJV644XxECm0XXjlFgQCywbIxMW8AzV9dHimB8bgWudY+fc9Muha
-         3HnwXniqSmB15cYc2gXD6LxbwbXTIc8MKclq7JcIzsTzcNvqqP+ui6XTv/CnQ5fB00g3
-         ZuVdMX4rCdyGRh7tejySc3I3zqjGcj5sBKDW793M3t/BiSRwlHp10p+TeAWROtw6ZoqH
-         j5zg==
-X-Forwarded-Encrypted: i=1; AJvYcCXoL8vc28E/IzX1x37+NaaoA0AgaPH56ia+LjYhMIsFYDIQjshBwnNsOtGbfFmeGq4dyUaWDe1qi2aXuWI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR7kIebRXSxKY0D3xDB8o2+A63YHpRPgIzv0Y+Q+HsabYnDeYH
-	PsR8pkHCZIh8g6DeVELd9L7LNwhPMFsnYZgbvEjlUx6YnkpkjMqPXVuD
-X-Gm-Gg: ASbGncuOCWtFFpAdBaH3SYPgT3y6i5pa+EQ4b3R/hnjAsO6OUN6+RCfqZYHrO8dOtnE
-	sWAYP4aTdb+q3vB4R0wmfyeCI+FKw/jo6EvF8Jfbr9kNeYejSWmxoTrqol4YxaUpWBOROh3aLy3
-	C2/TEFfuxcJeApxaYfv6lH4QYkWDjECknN7OmHsPBzcrcP6DSQygYTbEnzHxHDQU2epvFDeUR/V
-	52f/LK4KSr8kuiIMG0vor7zv9QLPwkYCD+QfTkf3CyOOiTKykfWMHpeWP7Gl710Kh4d4EewsUlM
-	nhzutMRGGgjJ5ODV8UfdpeiFS/cNMYmWRhlPGL9dKPVvjYsRlYOV8ztJcj7oXmcwjvYuSncNB8Y
-	/xn0u9xWO/XkTB5G4Olb0X5f5aqFPFWk=
-X-Google-Smtp-Source: AGHT+IH7+og1xlpSo1KjxvBX6cVnUl4llNG6qDuzOyNqlBivr5CMAMFFA7FG/5rqovphZxKeWwjDDA==
-X-Received: by 2002:a05:690c:6608:b0:70e:326:6ae8 with SMTP id 00721157ae682-717d5b83502mr204844177b3.2.1752499798235;
-        Mon, 14 Jul 2025 06:29:58 -0700 (PDT)
-Received: from localhost.localdomain ([89.234.162.240])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-717c5d792d1sm19529317b3.48.2025.07.14.06.29.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 06:29:57 -0700 (PDT)
-From: Ravi Kant Sharma <rks1986@gmail.com>
-X-Google-Original-From: Ravi Kant Sharma <contact@r4v1.net>
-To: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: ~lkcamp/patches@lists.sr.ht,
-	koike@igalia.com,
-	Ravi Kant Sharma <contact@r4v1.net>
-Subject: [PATCH] staging: rtl8723bs: remove blank line before close brace.
-Date: Mon, 14 Jul 2025 09:28:34 -0400
-Message-Id: <20250714132834.79911-1-contact@r4v1.net>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1752499739; c=relaxed/simple;
+	bh=dQMp3Ed76Brn4mr71z5eM3y/S6u63AAUedcvy/zDi3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TfEuxFVUhHc14ZX0yG3Yj3Ogk3n4N21xzM7y+QiCM90+1QHdM6d1C+5fKDhCGX0eenFgQlU5lrNdJWuQoW84uNQX0jPPX3zfYcrXUOUVpfImHe30/6tShh36Y3hIshM1ykMIOB1CpbqMiKMZ9ZMmCYwlfKHWjP4y+4AMyzttvUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IunKLAIg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0F77C4CEED;
+	Mon, 14 Jul 2025 13:28:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752499737;
+	bh=dQMp3Ed76Brn4mr71z5eM3y/S6u63AAUedcvy/zDi3E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IunKLAIg8iMZbN3FKxL2b3ZdHLbEZqaIE+Dyb3UZsS8Dyezsp8GvkEIWImkMhXfbt
+	 sL7u9bSB/epaFtcq+6H1EN/F6Kzcg1EriH2YTtPniEozPit0shElP5L4IfpFc0JVy4
+	 wesAbksMb+tn8t4BzXZ16E7/lMKhl3rdSkN2ofnevj+CFe8ojgWIOySI6P2mAbv1Hs
+	 TIWgYgsoFkr4NPKu00fBybgivOMdUOJ3OPGD4QqQqilihSaeAP9XMwlmQCJHwm/0KC
+	 lSWXzTvYRDnaq1DpOBKlfzLKUtOGGUfSMHJ8fgSDoiX/RxvKwvKfG04WxU/4azP4ss
+	 dUrSZL3YYxCKw==
+Date: Mon, 14 Jul 2025 14:28:50 +0100
+From: Mark Brown <broonie@kernel.org>
+To: wang lian <lianux.mm@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>, SeongJae Park <sj@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	Jann Horn <jannh@google.com>,
+	Liam Howlett <Liam.Howlett@oracle.com>,
+	Shuah Khan <shuah@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+	gkwang <gkwang@linx-info.com>, p1ucky0923 <p1ucky0923@gmail.com>,
+	ryncsn <ryncsn@gmail.com>,
+	"zijing . zhang" <zijing.zhang@proton.me>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v5] selftests/mm: add process_madvise() tests
+Message-ID: <b01d1d06-9d7c-4081-b3e3-c2c0fea06fad@sirena.org.uk>
+References: <20250714122533.3135-1-lianux.mm@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="au4xLk1UCIU5PYUe"
+Content-Disposition: inline
+In-Reply-To: <20250714122533.3135-1-lianux.mm@gmail.com>
+X-Cookie: Non-sequiturs make me eat lampshades.
 
-Fix checkpatch CHECK Blank lines aren't necessary before a close brace '}'
-FILE: drivers/staging/rtl8723bs/os_dep/os_intfs.c:631.
 
-Signed-off-by: Ravi Kant Sharma <contact@r4v1.net>
----
-Hey, this is my first patch, I appreciate any feedback, thanks!
----
- drivers/staging/rtl8723bs/os_dep/os_intfs.c | 1 -
- 1 file changed, 1 deletion(-)
+--au4xLk1UCIU5PYUe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/staging/rtl8723bs/os_dep/os_intfs.c b/drivers/staging/rtl8723bs/os_dep/os_intfs.c
-index d4dc169e1..292b5f8dc 100644
---- a/drivers/staging/rtl8723bs/os_dep/os_intfs.c
-+++ b/drivers/staging/rtl8723bs/os_dep/os_intfs.c
-@@ -627,7 +627,6 @@ void rtw_reset_drv_sw(struct adapter *padapter)
- 	padapter->mlmeextpriv.sitesurvey_res.state = SCAN_DISABLE;
- 
- 	rtw_set_signal_stat_timer(&padapter->recvpriv);
--
- }
- 
- 
--- 
-2.39.5
+On Mon, Jul 14, 2025 at 08:25:33PM +0800, wang lian wrote:
 
+> +TEST_F(process_madvise, remote_collapse)
+> +{
+
+> +	self->child_pid = fork();
+> +	ASSERT_NE(self->child_pid, -1);
+
+> +	ret = read(pipe_info[0], &info, sizeof(info));
+> +	if (ret <= 0) {
+> +		waitpid(self->child_pid, NULL, 0);
+> +		SKIP(return, "Failed to read child info from pipe.\n");
+> +	}
+> +	ASSERT_EQ(ret, sizeof(info));
+
+> +cleanup:
+> +	/* Cleanup */
+> +	kill(self->child_pid, SIGKILL);
+> +	waitpid(self->child_pid, NULL, 0);
+> +	if (pidfd >= 0)
+> +		close(pidfd);
+
+The cleanup here won't get run if we skip or assert, skipping will
+return immediately (you could replace the return with a 'goto cleanup')
+and the asserts will exit the test immediately.  This will mean we leak
+the child.  This isn't an issue for things that are memory mapped or
+tracked with file descriptors, the harness will for a new child for each
+test so anything that's cleaned up with the process will be handled, but
+that doesn't apply to child processes.
+
+I think doing the child setup in a fixture should DTRT but I haven't
+gone through in full detail to verify that this is the case.
+
+--au4xLk1UCIU5PYUe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmh1BhEACgkQJNaLcl1U
+h9D2gAf/XSHWkSHMfUatmFAnzIj+OI5FkqqF4LaylDlMsdeIRdjoxGNkquKk27ws
+7xolTAbdeaxz0Dzne04hHvAGc8lzxEMfxYfWzwKuFZpdCOszT3nXnRdGH8BcWvGI
+BLMibYwQbRW55TX5BSE4+hdBXuZA+R40l8trfIzpCj+gel3nGWWiMUnTChxqVICX
+UxZXi0SNC0vSRJgtMn5/1vfMInhp6WfxIJ6QXnP314lCY8RZFDJThGE3VLe6Qi6n
+HjSqHN4NhmDDI2j9AzHnCW4z4GWXs8QQpse0NVABakTiHOPoOA63x59PvLjrkoio
+9JDT+pMy8w7RP9UpxFUoEJNewRIiuQ==
+=Cplh
+-----END PGP SIGNATURE-----
+
+--au4xLk1UCIU5PYUe--
 
