@@ -1,174 +1,120 @@
-Return-Path: <linux-kernel+bounces-729335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B28BB03517
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:05:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 840F0B0352E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A37B3B898D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 04:05:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0FF4175E3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 04:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40B21E00A0;
-	Mon, 14 Jul 2025 04:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGZacxgG"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C794A11
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 04:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528781E9B2F;
+	Mon, 14 Jul 2025 04:29:46 +0000 (UTC)
+Received: from audible.transient.net (audible.transient.net [24.143.126.66])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 2B9B41FB3
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 04:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.143.126.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752465927; cv=none; b=kWGHvHRQ9Zn9r9QdIhxZCenUblkxG+FbwumNxGaJPXtoYxzgNNFQBMtckEdIBxrLUM39/cZPh9dLory/vYg8DhU8waqkpstAKLBcz63fubALT3Z0A2BEKiAiKgcuAPpKb6vKFGpkyv/fxv11ZTLakn8bfHbejTNfjYvLv6Y6X1Y=
+	t=1752467386; cv=none; b=kQoOrb+86lAc7fX31QDGwGfbef2VR3+V7f4+kcDbPK//EpF4aadWpyN61qLbsGhh0YP0ei+Xxi8KgkVVXRdrzGOw5WChelZfN1i5xP0wFQpqRyhp1aBfaKULu3SFxh0THtNjJD0x5RHdjp54h/vbonUypQKUzxtoIWXC03zWJN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752465927; c=relaxed/simple;
-	bh=rccaMSjcsovTEuAr2IUb9f0GeP8mr0MO/9YswAXr4/w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qjxqn4M7TKVmjXInDbq/wzdLhjNBcpzVZC1r8ZIU2gqkaVCmGXV2L1sEyDjqqO5Yd5GzBzvvHY/MWBaHhNGmsKZNiI3QH439O24tfyXl8rFLQ6jDVFFvpd5L40tTfop5W3Ze54cxsSbZmY0MX9qO928ASrfOSo+fhY0anI9FsJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RGZacxgG; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-af51596da56so3090046a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 21:05:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752465925; x=1753070725; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2yUx6Kpacbbv22zmbKXmQwmZBrxyIzEaW0Pe8fwuZw8=;
-        b=RGZacxgGRS1mWsvh6O3r5UNTVO16Xq5OgWRG9aUHp2J/GuiVzwwauw8l5615sxvTnt
-         Mx8f345fqZitHbOrvuQYK2rbbCmbTB45SWlJ6+VMtJTkpdQ7If6AlDIV9d1K41D3iflK
-         OmKOtkaEC02zIB7JIpymC85wMLMaFd6TOrTInuIb4R2SVkkSXCgEQJ8g9o8Rvtb5Xuq9
-         D81t9ZSwyj0TArXB156hsz2xyxgQp3q+jKU+bP0V1R+Fht5JQ6Ko5dHscKG1wJ/yorQw
-         DGZy3Rf9etWgNFNAxdZRSGaPNLdIJ54CocTHad1QZw6pEEui5p3/RUFhvJXXEXHzwzK4
-         XcOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752465925; x=1753070725;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2yUx6Kpacbbv22zmbKXmQwmZBrxyIzEaW0Pe8fwuZw8=;
-        b=hNH3DPEU51IL8Uw2XXO5EJtBAJ3fnpfeVuBXnsulHbZWPcrR7FT3NnXWSSV0roB2FE
-         7/4hHJcyt1n5rFxzgEwuZXo2cdrFkjS1bykF6yGk5ybsOvh6+666xeDbJOFi9ezZbA5l
-         c+vULeW5eUxpJ9Dfr6G3HxymemitMg5OzUDvrR2BKl7GbUbx5Mdjhx9WV7+AyhlLprjQ
-         cxfb7vX9YXE1tgWMiEY9eWUWEy/sgtjUGECwPJTHn82MFgiEdk/wnHe9iXxuf/VlMEiS
-         OmDyrxLrXgM82Tp4PvmqtGHfWiIbqgi+1Lo44Y+ah0fIgSwfZU/gSxU82F1PBKRvnbWl
-         CMAg==
-X-Gm-Message-State: AOJu0YzG25u+HMHirdWIiFpisG8xj5F8g+qNbull4cwr56fGkkd7LA/R
-	tu+oG+GiS0XBZxl+/ze/UVrd41DlHC38hbELxK4ZC0DCGEkD7v2VJSwijhQNmadR/kM=
-X-Gm-Gg: ASbGncvNG2O/Dgs8ktEfCejYwCj5eDz4Ui1kx/TWGDzp6VzCtZJdcmbOGfZECGkqMkX
-	AMxhnxgWvjoN0lhJE7wSstloaT2qkDxyrv0fAzeLOku9hym1WfBzOZnWTdzytR0+vWW2FqduzE1
-	MCOSuWUs+ik0wRepZDmlIJNIrQGv+N+DEBXxd1Ii9ybFcev7bqmk/6cHPpb11Tjnrdtt8vivdp9
-	JgzRTU9LdnLTx2Y8rNYo7h8AJXiS0MIk+5ZltlKxMvkVZ0HyQsa7r6E2YoLUEekJ6mcaslbyEjl
-	z9tnZ95jZ74ML7U/w7MxhH2Cp1RqA3saQw8UsdQFKoynYYVL4NeTvKQFfpPJhzvGEFPQSdDWknY
-	DFlTIvZuab7k994XOlKP45g==
-X-Google-Smtp-Source: AGHT+IHl/s5y5BxecLricbiYOnBfm+gQh1H7ZQQhosnyysxFUHErtPU8NdGxxCu6fRQixLRubU4OXg==
-X-Received: by 2002:a17:90b:2f07:b0:313:dcf4:37bc with SMTP id 98e67ed59e1d1-31c4f586468mr12882641a91.34.1752465924907;
-        Sun, 13 Jul 2025 21:05:24 -0700 (PDT)
-Received: from jemmy.. ([180.172.48.100])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3003e413sm12617896a91.9.2025.07.13.21.05.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jul 2025 21:05:24 -0700 (PDT)
-From: Jemmy Wong <jemmywong512@gmail.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	dtcccc@linux.alibaba.com
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v1] sched/eevdf: propagate min slice during {throttle, unthrottle}_cfs_rq
-Date: Mon, 14 Jul 2025 12:05:16 +0800
-Message-ID: <20250714040516.10196-1-jemmywong512@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752467386; c=relaxed/simple;
+	bh=zvOMDuQxVpw9IwjSsPAugCfSeoG57QOOhnCX2S+BTZw=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Me3UjCT9MVT6KSQ8fGj2+IjG0xqdZN/V6VRtxP6EQ/aPOpFUVqB9VqTPPcXVi7pbd8fGh+oH4A0G7bzBqKXwA+GZC0/3wnKdSsl2FhAfBG6kzeLJ8KtSnDA5T2O/NhpJ3IqUfCTT/dRavvwNyT9SuGRviFJS8ggy3YeH9T+40Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=audible.transient.net; spf=pass smtp.mailfrom=audible.transient.net; arc=none smtp.client-ip=24.143.126.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=audible.transient.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=audible.transient.net
+Received: (qmail 8375 invoked from network); 14 Jul 2025 04:29:35 -0000
+Received: from stink-foot.audible.transient.net (192.168.2.99)
+  by canarsie.audible.transient.net with QMQP; 14 Jul 2025 04:29:35 -0000
+Received: (nullmailer pid 1746 invoked by uid 1000);
+	Mon, 14 Jul 2025 02:44:42 -0000
+Date: Mon, 14 Jul 2025 02:44:42 +0000
+From: Jamie Heilman <jamie@audible.transient.net>
+To: Ben Skeggs <bskeggs@nvidia.com>, Rui Salvaterra <rsalvaterra@gmail.com>, airlied@gmail.com, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [REGRESSION] NVIDIA ION graphics broken with Linux 6.16-rc*
+Message-ID: <aHRvGvqbeGufqJQI@audible.transient.net>
+Mail-Followup-To: Ben Skeggs <bskeggs@nvidia.com>,
+	Rui Salvaterra <rsalvaterra@gmail.com>, airlied@gmail.com,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+References: <CALjTZvZgH0N43rMTcZiDVSX93PFL680hsYPwtp8=Ja1OWPvZ1A@mail.gmail.com>
+ <aG2mzB58k3tkxvK-@audible.transient.net>
+ <25642e5b-25ee-49b2-b08d-4c64fa2e505a@nvidia.com>
+ <aG5axlstlhnUYks2@audible.transient.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aG5axlstlhnUYks2@audible.transient.net>
 
-The min slice should be propagated through task group hierarchy during
-{throttle, unthrottle}_cfs_rq similar to how normal tasks are handled in
-{enqueue, dequeue}_entities.
+Jamie Heilman wrote:
+> Ben Skeggs wrote:
+> > On 7/9/25 09:16, Jamie Heilman wrote:
+> > > Rui Salvaterra wrote:
+> > > > Unfortunately, bisecting is not feasible for me.
+> > > That looks pretty similar to the problem I posted
+> > > (https://lore.kernel.org/lkml/aElJIo9_Se6tAR1a@audible.transient.net/)
+> > > that I bisected to 862450a85b85 ("drm/nouveau/gf100-: track chan
+> > > progress with non-WFI semaphore release").  It still reverts cleanly
+> > > as of v6.16-rc5 so you might want to give that a shot.
+> > 
+> > Hi,
+> > 
+> > Thank you for bisecting!  Are you able to try the attached patch?
+> 
+> Yeah that got graphics visible again for me, though there's something
+> else horrible going on now (still? I'm not sure if its new behavior or
+> not) and it blows out my dmesg ringbuffer with errors or warnings of
+> some kind, that I was just about to start trying to debug that when
+> some power event seems to have fried my PSU.  Combined with a bunch of
+> filesystem corruption, its going to be a while a before I can get that
+> system back up to that spot where I can troubleshoot it again, the
+> root volume is fried and I'm going to have rebuild.  Anyway, I think
+> whatever it is was probably an entirely separate issue.
 
-Signed-off-by: Jemmy Wong <jemmywong512@gmail.com>
+OK, validated, this solves the problem for me completely too.  (The
+other traces were a byproduct of my userspace doing the wrong thing
+when putting together a partitioned-md / lvm stack and the resulting
+filesystem corruption.)
 
----
- kernel/sched/fair.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+> > From 6987c1c254285305fdc20270e21709a313632e0d Mon Sep 17 00:00:00 2001
+> > From: Ben Skeggs <bskeggs@nvidia.com>
+> > Date: Wed, 9 Jul 2025 10:54:15 +1000
+> > Subject: [PATCH] drm/nouveau/nvif: fix null ptr deref on pre-fermi boards
+> > 
+> > Check that gpfifo.post() exists before trying to call it.
+> > 
+> > Fixes: 862450a85b85 ("drm/nouveau/gf100-: track chan progress with non-WFI semaphore release")
+> > Signed-off-by: Ben Skeggs <bskeggs@nvidia.com>
+> > ---
+> >  drivers/gpu/drm/nouveau/nvif/chan.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/nouveau/nvif/chan.c b/drivers/gpu/drm/nouveau/nvif/chan.c
+> > index baa10227d51a..80c01017d642 100644
+> > --- a/drivers/gpu/drm/nouveau/nvif/chan.c
+> > +++ b/drivers/gpu/drm/nouveau/nvif/chan.c
+> > @@ -39,6 +39,9 @@ nvif_chan_gpfifo_post(struct nvif_chan *chan)
+> >  	const u32 pbptr = (chan->push.cur - map) + chan->func->gpfifo.post_size;
+> >  	const u32 gpptr = (chan->gpfifo.cur + 1) & chan->gpfifo.max;
+> >  
+> > +	if (!chan->func->gpfifo.post)
+> > +		return 0;
+> > +
+> >  	return chan->func->gpfifo.post(chan, gpptr, pbptr);
+> >  }
+> >  
+> > -- 
+> > 2.49.0
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7a14da5396fb..a0fa2df65e42 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5890,6 +5890,7 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
- 	struct sched_entity *se;
- 	long queued_delta, runnable_delta, idle_delta, dequeue = 1;
- 	long rq_h_nr_queued = rq->cfs.h_nr_queued;
-+	u64 slice = 0;
-
- 	raw_spin_lock(&cfs_b->lock);
- 	/* This will start the period timer if necessary */
-@@ -5950,6 +5951,7 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
- 		if (qcfs_rq->load.weight) {
- 			/* Avoid re-evaluating load for this entity: */
- 			se = parent_entity(se);
-+			slice = cfs_rq_min_slice(qcfs_rq);
- 			break;
- 		}
- 	}
-@@ -5963,6 +5965,11 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
- 		update_load_avg(qcfs_rq, se, 0);
- 		se_update_runnable(se);
-
-+		se->slice = slice;
-+		if (se != qcfs_rq->curr)
-+			min_vruntime_cb_propagate(&se->run_node, NULL);
-+		slice = cfs_rq_min_slice(qcfs_rq);
-+
- 		if (cfs_rq_is_idle(group_cfs_rq(se)))
- 			idle_delta = cfs_rq->h_nr_queued;
-
-@@ -5996,6 +6003,7 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
- 	struct sched_entity *se;
- 	long queued_delta, runnable_delta, idle_delta;
- 	long rq_h_nr_queued = rq->cfs.h_nr_queued;
-+	u64 slice = 0;
-
- 	se = cfs_rq->tg->se[cpu_of(rq)];
-
-@@ -6041,7 +6049,13 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
- 			dequeue_entity(qcfs_rq, se, flags);
- 		} else if (se->on_rq)
- 			break;
-+
-+		if (slice) {
-+			se->slice = slice;
-+			se->custom_slice = 1;
-+		}
- 		enqueue_entity(qcfs_rq, se, ENQUEUE_WAKEUP);
-+		slice = cfs_rq_min_slice(qcfs_rq);
-
- 		if (cfs_rq_is_idle(group_cfs_rq(se)))
- 			idle_delta = cfs_rq->h_nr_queued;
-@@ -6064,6 +6078,11 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
- 		if (cfs_rq_is_idle(group_cfs_rq(se)))
- 			idle_delta = cfs_rq->h_nr_queued;
-
-+		se->slice = slice;
-+		if (se != qcfs_rq->curr)
-+			min_vruntime_cb_propagate(&se->run_node, NULL);
-+		slice = cfs_rq_min_slice(qcfs_rq);
-+
- 		qcfs_rq->h_nr_queued += queued_delta;
- 		qcfs_rq->h_nr_runnable += runnable_delta;
- 		qcfs_rq->h_nr_idle += idle_delta;
---
-2.43.0
+-- 
+Jamie Heilman                     http://audible.transient.net/~jamie/
 
