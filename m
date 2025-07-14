@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-730430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 038B6B04480
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:46:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7F74B04475
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC5737ACA7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:40:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 007123A029C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264D526FDAC;
-	Mon, 14 Jul 2025 15:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3730A26F467;
+	Mon, 14 Jul 2025 15:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="kNg+BrQo"
-Received: from outbound.pv.icloud.com (p-west1-cluster3-host10-snip4-1.eps.apple.com [57.103.66.94])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="xbD9u5Fj"
+Received: from outbound.pv.icloud.com (p-west1-cluster1-host8-snip4-6.eps.apple.com [57.103.64.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6632626F467
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.66.94
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA5326528B
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.64.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752507314; cv=none; b=VT5vnaZvxwFvydstax6o/cUyg9kM0gzGfW4JuJ6ddF5BLrlZwpCD0dfyeqdv7D/zlzzj88Td3cWgA8hA5nwZj1PcnrBJf5+26o4o03nxA/BZNzk1SBxj0EQVFbAJByoNfLqdiGU+Ata+jbGlmP4/Dyw4lDiH2XoN1PFJLH6rNQA=
+	t=1752507321; cv=none; b=o/jzbtW6l5JRGD3uPwMdLjyxLc3u9LqS+AgvjJCw1MqZcOiUtgj1TZS8noY1wY3nhkMIIgRFnqxWWN38TrT0kCmvirrrtJvde6TQ/w1LW5ZtmEtgsF3kS0NpfT1qBEwJwj4m91pyL74JmSB94J8bJ5I7P1t++HrmR7VICIpAa3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752507314; c=relaxed/simple;
-	bh=abVLHhlrbRD4j7Q9knssLHFcwdKTohtl5aEN2e8X638=;
+	s=arc-20240116; t=1752507321; c=relaxed/simple;
+	bh=rUPc6HarIFgYCi5PCcb/6kreZya/jVbJye2++gX7mpw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OLTUicYmyHcScIwISMvieMiPWNzJfnTd9g8OhAl+vgG1s58/gjdcM6p7kixgFtry6I2sRdVujGy3t93KDTfqzwQR1Su5XOScA7H8fC4CkiqgM1RxpsUnS4+ZeUnKPPTfhSMT+hXuoQQsJr8aJYy9boG+2dS9lBTUhXUUHQqszCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=kNg+BrQo; arc=none smtp.client-ip=57.103.66.94
+	 In-Reply-To:To:Cc; b=IrFszb8V1zjSUAoFBqrNbSHZkmvbDCVSjLv1S0PmtR6dCbiw2H7yo3cNitmXFg7X2fayjpKeS1FCP+KNrYOxCOeq/3IOOCBs3wwxk9Nxluw5sIY/J5IKfkabv1krTUGp0g64bNq1t+MVkVeM0f+LmUDbm7LNWLLtN2cDv+J0hXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=xbD9u5Fj; arc=none smtp.client-ip=57.103.64.39
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
 Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
-	by outbound.pv.icloud.com (Postfix) with ESMTPS id 39EAD1800200;
-	Mon, 14 Jul 2025 15:35:09 +0000 (UTC)
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=OZilOEgmhkbniE4e1rdKTYefieL2PDjJBxvY1WxL31Q=; h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme; b=kNg+BrQoXkvffPGUi5n/9f/Jnc0+GwYbCdzztqGR7RZMah3BQQiubSxG9AWaQIpmm0XlbZ2Jr3nUkOZUA0Iuc+hw9wDPmJWibDqpRzO2zak33beBDUYSuvnLps5uf7rPLbKL/3tKq+gBaFTXjVk2Iw9xRhMJs1b5vh30GoEvoexUP/pUHP7dy9GkFTHnJaln3rL5J5rQ0odmQAYrNq9H4Xk7iVkZczzQa+rwbCogo4GYyAIaDZ1tReHyH/EOHIMjiwgu56OkJXVozucdgBSBOE7sbErTUzuRe4W+NJfxirwiYOM8Zw3ELvr5woUWA5A0EfphU+5IKhjFtcrtBPbwWA==
+	by outbound.pv.icloud.com (Postfix) with ESMTPS id 5240B18004BC;
+	Mon, 14 Jul 2025 15:35:13 +0000 (UTC)
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=MxR3vmUTXOypUpeb+mW6WO9zX6HevJTvOmfA6oc0iJM=; h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme; b=xbD9u5FjnQyANUrmKm4jq+QkelC03JFjr828Ui2YO4h85h+vm22GwNY3Kea6aC6Q+Exrxksz+eIZeWEiLcG6zyim/IOjeUmrKjiLPV1otAPR6k1R1LdNdnyvf//l74cmbectrQmZ8L/aSHEIP8R++U26F1CzWb6NOCr/lID/LfSU0JgEJDf6eIM9STaC74bjuJS6ZBZXSU4Tf3Vl/oJ3hbboqMiFKMHxFPE7wlpALBplewQGHRA7BTgiMvR+swWTL1Y8suDaWE+Z7+8CPH6kfJXTUfSeofjPqhwJfkZWwpjBUSorivA2vQM8jZmSBamh9RiDcmQpg1bIa2wdiGY4dg==
 Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
-	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 17CEB18004AE;
-	Mon, 14 Jul 2025 15:35:04 +0000 (UTC)
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 2DBFB18004AF;
+	Mon, 14 Jul 2025 15:35:09 +0000 (UTC)
 From: Zijun Hu <zijun_hu@icloud.com>
-Date: Mon, 14 Jul 2025 23:34:18 +0800
-Subject: [PATCH v6 7/8] char: misc: Register fixed minor EISA_EEPROM_MINOR
- in linux/miscdevice.h
+Date: Mon, 14 Jul 2025 23:34:19 +0800
+Subject: [PATCH v6 8/8] sparc: kernel: apc: Remove macro APC_MINOR
+ definition
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250714-rfc_miscdev-v6-7-2ed949665bde@oss.qualcomm.com>
+Message-Id: <20250714-rfc_miscdev-v6-8-2ed949665bde@oss.qualcomm.com>
 References: <20250714-rfc_miscdev-v6-0-2ed949665bde@oss.qualcomm.com>
 In-Reply-To: <20250714-rfc_miscdev-v6-0-2ed949665bde@oss.qualcomm.com>
 To: Arnd Bergmann <arnd@arndb.de>, 
@@ -62,56 +62,54 @@ Cc: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
  linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
  Zijun Hu <zijun.hu@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Proofpoint-ORIG-GUID: A_SWEXpZH4lOMO2gf5QVLjFiD8bnOcy1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA5MyBTYWx0ZWRfX+MdopjM0NIx9
- EMB4s6jqLmSqVVkQubV6RlLcZPwNwmZhlGNndnOAQbD2tyge+G3kYHi58diHkFGIfANHGRtkn5B
- dZ3PP/nMdX5yRbLs4JZb0KZ2P7MOjQaOjXSyx4TijQ33eubTWkE99ESGIJP87oZp6HOBzuY6dFb
- mcfmATHZH6FXcVCM5XCvJHWrg40IItNRwFLsfTnNueWbLOR4a75E6ly/xDmBlrxSgmp1c76fVP/
- ImdtX6nJGzUXNuExgG52wAgykHSCeszpevcnpzQAwdd64KumBIc9rIQSgkr1jpFSvOBpyaGNA=
-X-Proofpoint-GUID: A_SWEXpZH4lOMO2gf5QVLjFiD8bnOcy1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA5MyBTYWx0ZWRfX151xmLBW09/b
+ K6SHkvSFhVdFlcP1XXLoCRvCCPNoIyN/0q/Cs7GGvom4FL+32RH2LKxuUf9LplGAGxGwmLlNV5R
+ 5UPkQrBSDYtQM5TqbMYBtUHGKIM39bgLS07h9EZsYZEfAh820uyVThm+tqB5XjofiECAOCYsIOb
+ XihCJcAwPrYWa/5zSpFwSm6e51fkSrjiiyO31iAiGuv0ucA1T8LF334p5Yq7Y5Qlg3LMgpUrB8U
+ PypG1/xMlf1QNxxN8RJIWEoU/EX6C6bjva90eV/Wa8KtZ3bv00pksSZtnFxwgsvjexwv13RTw=
+X-Proofpoint-ORIG-GUID: CZIDtwtu-DxiERIJsUoSJz_qQvAo2zwW
+X-Proofpoint-GUID: CZIDtwtu-DxiERIJsUoSJz_qQvAo2zwW
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-07-14_01,2025-07-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
- mlxscore=0 clxscore=1015 malwarescore=0 phishscore=0 bulkscore=0 adultscore=0
- spamscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.22.0-2506270000 definitions=main-2507140093
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015
+ mlxscore=0 phishscore=0 bulkscore=0 suspectscore=0 spamscore=0 malwarescore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.22.0-2506060001 definitions=main-2507140093
 
 From: Zijun Hu <zijun.hu@oss.qualcomm.com>
 
-Move fixed minor EISA_EEPROM_MINOR definition to linux/miscdevice.h.
+Macro APC_MINOR is defined as MISC_DYNAMIC_MINOR to request dynamic
+minor, but its name 'APC_MINOR' looks like fixed minor.
+
+Remove the macro definition and directly use MISC_DYNAMIC_MINOR instead.
 
 Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
 ---
- drivers/parisc/eisa_eeprom.c | 2 --
- include/linux/miscdevice.h   | 1 +
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ arch/sparc/kernel/apc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/parisc/eisa_eeprom.c b/drivers/parisc/eisa_eeprom.c
-index 443b15422fc179c7379082bb165ea2bb80785fb3..601cbb22574fd64b0c6be568442d5064d38a2c20 100644
---- a/drivers/parisc/eisa_eeprom.c
-+++ b/drivers/parisc/eisa_eeprom.c
-@@ -15,8 +15,6 @@
- #include <linux/uaccess.h>
- #include <asm/eisa_eeprom.h>
+diff --git a/arch/sparc/kernel/apc.c b/arch/sparc/kernel/apc.c
+index d44725d37e30f388bf8cf19d72baf720f94da084..849db20e7165cdf48d4d36cf770dd6aaaa191b41 100644
+--- a/arch/sparc/kernel/apc.c
++++ b/arch/sparc/kernel/apc.c
+@@ -28,7 +28,6 @@
+  * #define APC_DEBUG_LED
+  */
  
--#define 	EISA_EEPROM_MINOR 241
--
- static loff_t eisa_eeprom_llseek(struct file *file, loff_t offset, int origin)
+-#define APC_MINOR	MISC_DYNAMIC_MINOR
+ #define APC_OBPNAME	"power-management"
+ #define APC_DEVNAME "apc"
+ 
+@@ -138,7 +137,7 @@ static const struct file_operations apc_fops = {
+ 	.llseek =		noop_llseek,
+ };
+ 
+-static struct miscdevice apc_miscdev = { APC_MINOR, APC_DEVNAME, &apc_fops };
++static struct miscdevice apc_miscdev = { MISC_DYNAMIC_MINOR, APC_DEVNAME, &apc_fops };
+ 
+ static int apc_probe(struct platform_device *op)
  {
- 	return fixed_size_llseek(file, offset, origin, HPEE_MAX_LENGTH);
-diff --git a/include/linux/miscdevice.h b/include/linux/miscdevice.h
-index 565b88efeb23d02b7d91df1cd7df4bdcf2898224..7d0aa718499cc1867790e98eb6b84c1673091905 100644
---- a/include/linux/miscdevice.h
-+++ b/include/linux/miscdevice.h
-@@ -70,6 +70,7 @@
- #define UHID_MINOR		239
- #define USERIO_MINOR		240
- #define VHOST_VSOCK_MINOR	241
-+#define EISA_EEPROM_MINOR	241
- #define RFKILL_MINOR		242
- 
- /*
 
 -- 
 2.34.1
