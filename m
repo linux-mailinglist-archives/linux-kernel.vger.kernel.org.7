@@ -1,181 +1,87 @@
-Return-Path: <linux-kernel+bounces-730166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00F65B040E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:04:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50083B040CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14CE8188B916
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:05:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C06117670A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6B9254AF3;
-	Mon, 14 Jul 2025 14:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmaXUJhO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456B22561DD;
+	Mon, 14 Jul 2025 13:58:23 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C286E24DCEF;
-	Mon, 14 Jul 2025 14:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D18A255222;
+	Mon, 14 Jul 2025 13:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752501882; cv=none; b=P1qDba/ZVmz3PkL8ydrC46ayFN1NxvywHfyvD2euAqX/lfLVDwCwo+2Huw2yB26DrLbJ+0w6m8wVQAleM1hXlrY8aSxPhBSzB1JZWFCQsgPYlttfMzlc7hwHazV04ACUZYlrwi+zORyjTjpl2u0wjarhVr+on5jRfsajbdUDgbg=
+	t=1752501502; cv=none; b=QbSizUNlJEL6UZ8i1L58ewxBGnT0zC4NdeiqHnvUZo+mPf1pq4yAi8+RarsFZEBrnZkB2vNfhGaVcu5KQfmz42rWVm1g5Yn8NYiWItSx3dFokzs2ZTVs9KjRQCXvp7TLXX0FbE9zOGYsDiRrhfnzlWddTRjTQeOdfqsDEwrV1OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752501882; c=relaxed/simple;
-	bh=YH668rpFJXukxr+2YwtKp1L0+P3LzA2wA6CXb2BnnQg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Y/3bAfnIjH8GU2uYmZyGDYS0NnD+S2E9VaPrp6gBoWbeI3WucPgF2zHCvvZkoTywhO91KPkshZh4lVagGJM9b9J5YcXfAOoJ4OnqFoxKpE3jezmp0tpEnCu38Vb2mWrT3iFiS+RbykPQ1uaaS4g3Vm2NA/902F2s5gNJjic9Ftw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmaXUJhO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7722C4CEED;
-	Mon, 14 Jul 2025 14:04:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752501882;
-	bh=YH668rpFJXukxr+2YwtKp1L0+P3LzA2wA6CXb2BnnQg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tmaXUJhOO8qybGoimCIa4isgnq+xkf3T3BhrXkU9fzm+cA2Ch6J72q09lN5cfBjbE
-	 WzYmXaE2GRADoAZYwrFIopbZZ8tplLswF9KfPSXHlcjiPtMtGG2zRgeynf604KU20M
-	 2r2teSMcYiyoGttJ57Ao7otA0AJFGpL/3Zp1xhQL71SpCMthxrdauPxO217kK4hB9V
-	 QjPp9LmUnY/GmmzhUMOxfA9e4PqLO+wvMpZW81AS6zNgCMXHb4QKj8gCNiJG45aQiw
-	 Xsstnu66NOxAgnx5klLX7njL3Qkn9EAFrQQbGcn/WIeDGnWTl2dP4gcJjRUT7Wesmq
-	 FWQLsc+kIJKfw==
-Date: Mon, 14 Jul 2025 23:04:38 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Andrii Nakryiko <andrii@kernel.org>, Alejandro Colomar <alx@kernel.org>,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, x86@kernel.org, Song Liu
- <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, John Fastabend
- <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Alan Maguire
- <alan.maguire@oracle.com>, David Laight <David.Laight@ACULAB.COM>, Thomas
- =?UTF-8?B?V2Vpw59zY2h1aA==?= <thomas@t-8ch.de>, Ingo Molnar
- <mingo@kernel.org>
-Subject: Re: [PATCHv5 22/22] man2: Add uprobe syscall page
-Message-Id: <20250714230438.c5494ba28608e9466d676763@kernel.org>
-In-Reply-To: <20250711082931.3398027-23-jolsa@kernel.org>
-References: <20250711082931.3398027-1-jolsa@kernel.org>
-	<20250711082931.3398027-23-jolsa@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752501502; c=relaxed/simple;
+	bh=cbQD77zOpDuh21Lhn8qdoh9hYv1nwfrqrIX0n5vdZzQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s8uabmT6MZlxdo/QKESHOsT2z+/GUtYs6mFUAe9/9sqHx/Djh76CDFGCmqp23A3prPuQC0SuQ+OiD1fSot6+X7fh7xYSMjdner2suklBPS4pg3Jnym0ixUWMz4g0YNHlIjaTg8/wfC//wincm2ee0PcMFwAuG0GWf3kp6lCyL/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bgkNs0LZ9z29drm;
+	Mon, 14 Jul 2025 21:55:41 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 90565140230;
+	Mon, 14 Jul 2025 21:58:17 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 14 Jul
+ 2025 21:58:16 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+	<ap420073@gmail.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>
+Subject: [PATCH net] ipv6: mcast: Delay put pmc->idev in mld_del_delrec()
+Date: Mon, 14 Jul 2025 22:19:57 +0800
+Message-ID: <20250714141957.3301871-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Fri, 11 Jul 2025 10:29:30 +0200
-Jiri Olsa <jolsa@kernel.org> wrote:
+pmc->idev is still used in ip6_mc_clear_src(), so as mld_clear_delrec()
+does, the reference should be put after ip6_mc_clear_src() return.
 
-> Changing uretprobe syscall man page to be shared with new
-> uprobe syscall man page.
-> 
+Fixes: 63ed8de4be81 ("mld: add mc_lock for protecting per-interface mld data")
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ net/ipv6/mcast.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looks good to me.
-
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thanks,
-
-> Cc: Alejandro Colomar <alx@kernel.org>
-> Reviewed-by: Alejandro Colomar <alx@kernel.org>
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  man/man2/uprobe.2    |  1 +
->  man/man2/uretprobe.2 | 36 ++++++++++++++++++++++++------------
->  2 files changed, 25 insertions(+), 12 deletions(-)
->  create mode 100644 man/man2/uprobe.2
-> 
-> diff --git a/man/man2/uprobe.2 b/man/man2/uprobe.2
-> new file mode 100644
-> index 000000000000..ea5ccf901591
-> --- /dev/null
-> +++ b/man/man2/uprobe.2
-> @@ -0,0 +1 @@
-> +.so man2/uretprobe.2
-> diff --git a/man/man2/uretprobe.2 b/man/man2/uretprobe.2
-> index bbbfb0c59335..df0e5d92e5ed 100644
-> --- a/man/man2/uretprobe.2
-> +++ b/man/man2/uretprobe.2
-> @@ -2,22 +2,28 @@
->  .\"
->  .\" SPDX-License-Identifier: Linux-man-pages-copyleft
->  .\"
-> -.TH uretprobe 2 (date) "Linux man-pages (unreleased)"
-> +.TH uprobe 2 (date) "Linux man-pages (unreleased)"
->  .SH NAME
-> +uprobe,
->  uretprobe
->  \-
-> -execute pending return uprobes
-> +execute pending entry or return uprobes
->  .SH SYNOPSIS
->  .nf
-> +.B int uprobe(void);
->  .B int uretprobe(void);
->  .fi
->  .SH DESCRIPTION
-> +.BR uprobe ()
-> +is an alternative to breakpoint instructions
-> +for triggering entry uprobe consumers.
-> +.P
->  .BR uretprobe ()
->  is an alternative to breakpoint instructions
->  for triggering return uprobe consumers.
->  .P
->  Calls to
-> -.BR uretprobe ()
-> +these system calls
->  are only made from the user-space trampoline provided by the kernel.
->  Calls from any other place result in a
->  .BR SIGILL .
-> @@ -26,22 +32,28 @@ The return value is architecture-specific.
->  .SH ERRORS
->  .TP
->  .B SIGILL
-> -.BR uretprobe ()
-> -was called by a user-space program.
-> +These system calls
-> +were called by a user-space program.
->  .SH VERSIONS
->  The behavior varies across systems.
->  .SH STANDARDS
->  None.
->  .SH HISTORY
-> +.TP
-> +.BR uprobe ()
-> +TBD
-> +.TP
-> +.BR uretprobe ()
->  Linux 6.11.
->  .P
-> -.BR uretprobe ()
-> -was initially introduced for the x86_64 architecture
-> -where it was shown to be faster than breakpoint traps.
-> -It might be extended to other architectures.
-> +These system calls
-> +were initially introduced for the x86_64 architecture
-> +where they were shown to be faster than breakpoint traps.
-> +They might be extended to other architectures.
->  .SH CAVEATS
-> -.BR uretprobe ()
-> -exists only to allow the invocation of return uprobe consumers.
-> -It should
-> +These system calls
-> +exist only to allow the invocation of
-> +entry or return uprobe consumers.
-> +They should
->  .B never
->  be called directly.
-> -- 
-> 2.49.0
-> 
-
-
+diff --git a/net/ipv6/mcast.c b/net/ipv6/mcast.c
+index 65831b4fee1f..616bf4c0c8fd 100644
+--- a/net/ipv6/mcast.c
++++ b/net/ipv6/mcast.c
+@@ -807,8 +807,8 @@ static void mld_del_delrec(struct inet6_dev *idev, struct ifmcaddr6 *im)
+ 		} else {
+ 			im->mca_crcount = idev->mc_qrv;
+ 		}
+-		in6_dev_put(pmc->idev);
+ 		ip6_mc_clear_src(pmc);
++		in6_dev_put(pmc->idev);
+ 		kfree_rcu(pmc, rcu);
+ 	}
+ }
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.34.1
+
 
