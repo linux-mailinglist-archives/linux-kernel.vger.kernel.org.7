@@ -1,140 +1,124 @@
-Return-Path: <linux-kernel+bounces-729569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC60AB03886
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:59:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D6AB03891
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 117BA178F81
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:59:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B62916CF28
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3140E238C36;
-	Mon, 14 Jul 2025 07:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B792023BCEE;
+	Mon, 14 Jul 2025 08:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WZAmyDgF"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HDrDuibB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8995F22FE0F;
-	Mon, 14 Jul 2025 07:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDC9223324;
+	Mon, 14 Jul 2025 08:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752479963; cv=none; b=hFOq8/9MYzcBaMH6ef89hPBF+o//kgP5qC8Ddj0/XjZH/rK+5Ov6KfqBxoJmoGaFQQFSFlWCjWA9iPIB7vatEG9my4fqssO3aMNUwz61hwb+Hj61AqILkGM6j+Ai/cw7TyaVNA61OC3QMlbB2yMx3bod3d2f7XjPLZZs6boIykc=
+	t=1752480028; cv=none; b=owXfBeXm2UQL5kpAGKzUtOPW+otQJsrOO21CTYLIfUdf0dyS3awIjWq2M5UOPMb8xbdWZ59f+G/+YzdOMSbAHxrYv18slB77HGYopbjT/V2WAZWh8zoEWVo2OWWyglbqJhYKOaa/BvwvlRUJKq6QT8YmozhCyZnYa2514JLpUUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752479963; c=relaxed/simple;
-	bh=R5rR/XDUQo37NVX2ZZnE7IMZWUUCI6M2Fq3lUTAd4tU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=u5KQPX9LzpGfh0ZZrny0gdy6BuywmDE0bj//B6KSvuQcAYQp1yjNPdG0RXttzZttpGvVyZpJg/CvrBLFQGxysVG8g9M3FoM4xZjYpJsyFacW8W7HL5QjWMpcModUlQvya1wIsL7AG3ImUtebgigZADfl5kFyf+Bf/GKTXfOHcfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=WZAmyDgF; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752479856;
-	bh=xvpupJJZzCN+ptXyBXjLUPMy03e3XLWXPmP44BueyzY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=WZAmyDgFNAlidEIOv6ZSjuveLP3P6RrM4FxkNqBi16thQqlXHIBqoHjiqtt4OxuXK
-	 uMWbUvABnn3pWxOb25+XAWl1pFbsl/FBartp0jga0s+/WSUzzVK2s2M+FgRA4Cz2Mu
-	 c+ND2sQC/Xte2oA6oplLgN6I7b1Ep3fWDArBr6cAnm88WzAJ592ChS0YgQkJ+zrRVo
-	 VCRG7GVXgbdANWyEx20kIzJABxKWFk1/bgvAg45hSTPj8D7Yf1EgtSDfCWmy0IUgU9
-	 80FvEnE1u83y+veUEB3CazISJLWd2d/zS8dgsHyHjBflAlDgORntP9ZIhgWlml63l0
-	 z7UZHTRGnGXyA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bgZRg3l19z4wbW;
-	Mon, 14 Jul 2025 17:57:35 +1000 (AEST)
-Date: Mon, 14 Jul 2025 17:59:16 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, Joel
- Granados <joel.granados@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami
- Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Thomas =?UTF-8?B?V2Vpw59zY2h1?=
- =?UTF-8?B?aA==?= <thomas.weissschuh@linutronix.de>
-Subject: linux-next: manual merge of the sysctl tree with the modules tree
-Message-ID: <20250714175916.774e6d79@canb.auug.org.au>
+	s=arc-20240116; t=1752480028; c=relaxed/simple;
+	bh=XpzvAHUxAzYVFgTQa2ypdhi4koHcoO778v2ak/zqA4E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ndsWBtUjLB5MLpjvv46lqmDp1BICgqS2928WAt8rUtVvz/Ov2fr2i3tL7pBa6Zf0BND6KcxCcifPzmR0ymHxse/wAu54lzLk5cE8WLOt/fhNMt2ow7vG6WWkCHidZkh0RyPfB9axMRgshvIGiM+a5xFrebyqK2kU+hAJwXabCJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HDrDuibB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E15EDC4CEF5;
+	Mon, 14 Jul 2025 08:00:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752480028;
+	bh=XpzvAHUxAzYVFgTQa2ypdhi4koHcoO778v2ak/zqA4E=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=HDrDuibBTCydpiKJ0NbveuCOlz7D3WxJr3Rf8dLFGuFGFjp0wpaLejaB8MuItUD+1
+	 BL2dih69sQ6thOdZodL3eqIvpYNdPD396Pdhi5xkWqsuTcRN6lzycgmgC5oi8+4jif
+	 BN77iEwF2KWHaOVGfgkndxiPW3c3yc7Z3UyaEv7MHbMQdaOdRwWUB9Bbe3MyUEBEPB
+	 CfoQaBRoa3BxpUVICYUgQzyOt6HW2nAzvm1rersBHsjZ8JS2t9eQZaExlXZcfaMgQ+
+	 4+yL/dJACiSGqixmATbMO6Ufr50HRhEZzHxnt2Ndt+mZSt1Xz3I5Z9V8HqlGvXwzyZ
+	 m+jMqI87e1UmA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D094CC83F1B;
+	Mon, 14 Jul 2025 08:00:27 +0000 (UTC)
+From: Rohan G Thomas via B4 Relay <devnull+rohan.g.thomas.altera.com@kernel.org>
+Date: Mon, 14 Jul 2025 15:59:17 +0800
+Subject: [PATCH net-next 1/3] net: stmmac: xgmac: Disable RX FIFO Overflow
+ interrupts
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/djCT7TUsKaOPOEN2=QpD/Pi";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250714-xgmac-minor-fixes-v1-1-c34092a88a72@altera.com>
+References: <20250714-xgmac-minor-fixes-v1-0-c34092a88a72@altera.com>
+In-Reply-To: <20250714-xgmac-minor-fixes-v1-0-c34092a88a72@altera.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Serge Semin <fancer.lancer@gmail.com>, 
+ Romain Gantois <romain.gantois@bootlin.com>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Rohan G Thomas <rohan.g.thomas@altera.com>, 
+ Matthew Gerlach <matthew.gerlach@altera.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752480026; l=1448;
+ i=rohan.g.thomas@altera.com; s=20250415; h=from:subject:message-id;
+ bh=oFA2+kb2AvW4R/3k8yiyiYdyPGfCRckJUe8sIarPelM=;
+ b=EpWkcMwrFCOnahq0Sl2yqqNCuHkZ5+aiumNQUuGm3nIiRP/zrTLO8zBmThd3neqcinM6oKkYO
+ eznyo+EFxqaBHNVY5L+WIa8S1nkwy9pKMLTjSZ2QiRppcCei+eDBdO+
+X-Developer-Key: i=rohan.g.thomas@altera.com; a=ed25519;
+ pk=TLFM1xzY5sPOABaIaXHDNxCAiDwRegVWoy1tP842z5E=
+X-Endpoint-Received: by B4 Relay for rohan.g.thomas@altera.com/20250415
+ with auth_id=460
+X-Original-From: Rohan G Thomas <rohan.g.thomas@altera.com>
+Reply-To: rohan.g.thomas@altera.com
 
---Sig_/djCT7TUsKaOPOEN2=QpD/Pi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Rohan G Thomas <rohan.g.thomas@altera.com>
 
-Hi all,
+Enabling RX FIFO Overflow interrupts is counterproductive
+and causes an interrupt storm when RX FIFO overflows.
+Disabling this interrupt has no side effect and eliminates
+interrupt storms when the RX FIFO overflows.
 
-Today's linux-next merge of the sysctl tree got a conflict in:
+Commit 8a7cb245cf28 ("net: stmmac: Do not enable RX FIFO
+overflow interrupts") disables RX FIFO overflow interrupts
+for DWMAC4 IP and removes the corresponding handling of
+this interrupt. This patch is doing the same thing for
+XGMAC IP.
 
-  include/linux/module.h
+Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
+Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-between commits:
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+index 5dcc95bc0ad28b756accf9670c5fa00aa94fcfe3..7201a38842651a865493fce0cefe757d6ae9bafa 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+@@ -203,10 +203,6 @@ static void dwxgmac2_dma_rx_mode(struct stmmac_priv *priv, void __iomem *ioaddr,
+ 	}
+ 
+ 	writel(value, ioaddr + XGMAC_MTL_RXQ_OPMODE(channel));
+-
+-	/* Enable MTL RX overflow */
+-	value = readl(ioaddr + XGMAC_MTL_QINTEN(channel));
+-	writel(value | XGMAC_RXOIE, ioaddr + XGMAC_MTL_QINTEN(channel));
+ }
+ 
+ static void dwxgmac2_dma_tx_mode(struct stmmac_priv *priv, void __iomem *ioaddr,
 
-  6633d3a45a8c ("module: move 'struct module_use' to internal.h")
-  a55842991352 ("module: make structure definitions always visible")
+-- 
+2.25.1
 
-from the modules tree and commit:
 
-  6bb37af62634 ("module: Move modprobe_path and modules_disabled ctl_tables=
- into the module subsys")
-
-from the sysctl tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/module.h
-index 3b665cb0cabe,e93cdb92ad92..000000000000
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@@ -584,17 -608,6 +584,16 @@@ struct module=20
-  #define MODULE_ARCH_INIT {}
-  #endif
- =20
- +#ifdef CONFIG_MODULES
- +
-- extern int modules_disabled; /* for sysctl */
- +/* Get/put a kernel symbol (calls must be symmetric) */
- +void *__symbol_get(const char *symbol);
- +void *__symbol_get_gpl(const char *symbol);
- +#define symbol_get(x)	({ \
- +	static const char __notrim[] \
- +		__used __section(".no_trim_symbol") =3D __stringify(x); \
- +	(typeof(&x))(__symbol_get(__stringify(x))); })
- +
-  #ifndef HAVE_ARCH_KALLSYMS_SYMBOL_VALUE
-  static inline unsigned long kallsyms_symbol_value(const Elf_Sym *sym)
-  {
-
---Sig_/djCT7TUsKaOPOEN2=QpD/Pi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh0uNQACgkQAVBC80lX
-0GzLSwf9GDEV4caEzjAMiRjjDPR1+UcFQEqbFYQ1Rx4OyTphZTV+yJLOiRiG2ZK1
-121BXMXnjULZk8v70MqVe8WlMnk5mwCRzRoMBO8/Unqu8bKh6HoSF9Egq9SwSekn
-ZsF4jPeow4DHvbHrRUk87oxf2+QRVfKXNmLTuU808rPp9ml+4O/mlDRkblJmuVTs
-cOdRwCgpp77gnWIUXdcn9bHpsA8V8B/Ru03ejDmk9qW4FxrUjMfb2OmYeICGMMez
-c70obI/eY3+b7W+tnUQuOT6krLVHfY/U+wJYLO+ABJDoa34/NovwaUp6QKr+BKKc
-fsHGEjseNpVkHkopFO3AHeyxm1VlZA==
-=FVaC
------END PGP SIGNATURE-----
-
---Sig_/djCT7TUsKaOPOEN2=QpD/Pi--
 
