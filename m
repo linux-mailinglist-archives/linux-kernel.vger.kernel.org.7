@@ -1,210 +1,246 @@
-Return-Path: <linux-kernel+bounces-730338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E558B04346
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:18:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1DB0B0435C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9199E1889FE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:16:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D333A1885B9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B05261596;
-	Mon, 14 Jul 2025 15:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF0D258CED;
+	Mon, 14 Jul 2025 15:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oC/V2J1U"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b="G6egAU5o"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11020112.outbound.protection.outlook.com [52.101.56.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9617826056A
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752506088; cv=none; b=kjFOrjJ0yrFVpHELOMbxYB7P0Lu2sAvgWUejx4QumIEvmRlk5s3zPWujS9ZwJP4Yq1xiCDaVZ0L81I2dXKmV4QhJsjDfQdjiP1VEN0kkk2FGb21ccgth0MddBaygaSjiPG+Ktry+ZM3/OA08Q0XczhbRgILJWCpjg79SySa4ueg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752506088; c=relaxed/simple;
-	bh=Rb5Ojqqhv5eA0DyW6c06TTTVEu+CSbhkppk2UGzPmqI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ApUEnlcas3XxkFV85LhIzdsteHoF8lj9mopfnKt9S990uutV8Dctw2itUQ7l+hJgf88s2bNL+AhdEKrR86+WOTswypC/eB9ZgBzU6AXFxtlYzFYEBe6c+arg4OTLeuSHpgAfFSvlvz/dq0zvpNWZ0fP5Sedj+cp+djW+udC+Pq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oC/V2J1U; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b3bc9d9590cso4378134a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:14:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752506086; x=1753110886; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2Mly3ZZQYDnlEsq3pZjTSNYHkF/08sz7EiTQ0FuSgIM=;
-        b=oC/V2J1Uv0NMGgtIG/hxBZvfJMx7HhTEUxPJfVqBOMVNycGUPUt6n49iq03KVsWMXB
-         ilcOjrwsjGVB5BzyVzSFYqHTXFw6LVN7VcqdNHPS24sh+w2tHwuxNnIQbsH8j85IjzYU
-         iti1YU9UW8IdLg8ehl4ebuLmZKJdi87lEESYBwmw55H8y2/WIH+fpw4FEMWQWNig6hXW
-         WxID7C6PW7Pj1KGiNjEm5/r+Vqrpikw3PWQEoxoP0TN1+T7VN2K6eunnuLheP8d5KP/5
-         svHn0uEtGjsvjcDfsIzoNBTpqaQTzNZ1UEv9P2OIMHtCdDwnYvfaVdpWKhx6JIO0z3T8
-         tNjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752506086; x=1753110886;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2Mly3ZZQYDnlEsq3pZjTSNYHkF/08sz7EiTQ0FuSgIM=;
-        b=e3GIlSqW1LNsyYEcdSoPlb06Q3va2deXA1oB2sW9lIf9dElxEb21sW3Tv0977riYNR
-         A17RwCYPU7VZnKgW1wmnfUP6uXQ2IHAGhywoxT6MEJWKwrgJrJV33rfwc7kdIONYt9+5
-         64AX1STPfdrm8ZU2z1PNBFQPL5WSSvNqjSTWkrJ9H5Sk0MABSzfpARnN2Jy1HmIO+DRt
-         SyjRKXvXmvXFWA8hqCW6DtATtwEvL/mDU1S7hhRCyTPXqRmtMn4/qO9HOQX8SXkN76D4
-         Pnr+/c7VKXGKM3cyM4f7EZe0PqZEXqdO76OG5bquUqbBuiAMtLOaQr2h9hXZAi8at0rr
-         IeqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+xAclwjoLhNlXNNNDM7thr40C3QBJ70T7EBfoz3jIrglL3m1rjPFefPMYbWK0lfmX1lcqP28zIc4efVE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxWoaQmP3zhGwrVV9LxzfhITWxqoJ97OYov1vb/uCCZR1Jo3P3
-	k6ZGEbfgqd7x/9jB9hLojKPACDpkNhSBmIk992dHVLo/MOdZMPxbonWW+7GB2eTJP4Y0O5295nI
-	xnKmdXg==
-X-Google-Smtp-Source: AGHT+IFBQoWH3T35EGiYhrDKTL5i22UHbM257opXaQWUd5rayk7z4NwPu6Y8eWW3cbf2CEYUVF5qa++lnWc=
-X-Received: from pjbss4.prod.google.com ([2002:a17:90b:2ec4:b0:31c:2fe4:33be])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d610:b0:313:fb08:4261
- with SMTP id 98e67ed59e1d1-31c4cd55c4cmr19544828a91.32.1752506085892; Mon, 14
- Jul 2025 08:14:45 -0700 (PDT)
-Date: Mon, 14 Jul 2025 08:14:44 -0700
-In-Reply-To: <15D0C887-E17F-4432-8716-BF62EEE61B6B@sjtu.edu.cn>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820A36BB5B;
+	Mon, 14 Jul 2025 15:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752506155; cv=fail; b=lN47zDsOqPipfINJFyK2Hwb4T8hGBOihELiylD+/DZaVZLpBIvPjym2rdlyytgfLfj8rJ4LDPQ7e+0iqqajLvLnuM6lMjxIAofbcnu2T5c63IV0IZpDPzNXAYqfYtZPI1WMZBpdO0OAdEdJnuWzRu3dGEcti+TcTxeDw1iGuJTI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752506155; c=relaxed/simple;
+	bh=A56Psng3IOBuQ+hR1mqZFhtcijrUlbwsKHNIWOaQrW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=KYWvs9uVVS1ZRuKB1ZLQAK4Yi2txQqPvqE6oMMtDe+jqQdIGsLlKJcB9cXr99pHTOHjzPrv5+Kllpvdla0tsXTQqfKy94OxzPysGz2pyNnj9jjL9McLtVQ8ryfdT6hZGt7Mc2Zf7DhXk3rRR4Zcl4qmzIPPRA7fRCajDgb7VO3k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com; spf=pass smtp.mailfrom=inmusicbrands.com; dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b=G6egAU5o; arc=fail smtp.client-ip=52.101.56.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inmusicbrands.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jk2IqVgMNJ9O1tLnhnQqoagsZw178bQ3iNEdlEwTrh4h7gHdhl4uKGVPPAHiEbfjyChmTX8oTR9xmb8Ss1mXVyi41RHkmGhfwr0bFRBzd2UJJ2aU2lIDfC1g0tXNi+KF1mb1iCK2o+pLXhrScfIEy4NfppEmwAOdo2auAzTbjKTBXs0RpJRnqxc0McQzaumf4YMCpyw7KtRSASE6ZF3pZ3vFFcPWneif/BlpL1BmsWuXl+kK5xzciYrVo+AdT85P9dI4eedGc7ghOYUG5GzVl+TH6HH0qyIFeI03VgVC7iCKIgHgoDhl8SSuxUiqjLHFjCnKuvlsKlcZXxJmyMN0WA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9ygSKGZL8Na83xJlW8HqlTS26a5PsVkiYYDDUARydCI=;
+ b=KsPS3myTnyEIomHLSBL/+PvVLzJRSUAHmIhZ4wE6V3V6Ff/jbMiFvgAPPpNooAsNBIFKfb1JMcOSkZuW4gG+wFYpSLBXUn+CDKj5ehSkW1KEelBYNQ2rSm/S0GbsZvpBHAegFbdxeU/Ul8EbpW4KjaoX8aR83aViBAuct2CevG7BmneZn/IydD64vgo7VN02VJufG8vSL5uPY69pH1NaJ8HMHuqmRc/wXqpabxmcf2tpykdJcIzK2ZFGMp1JBRpb1wwNOh4z+k7tDLBqKX/fLs87WZwa8v8zp3qI+Iqo4zYtjsOYFamBLPmYKbso3Y9O61fSaq3cGh1RONdUzUMl3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=inmusicbrands.com; dmarc=pass action=none
+ header.from=inmusicbrands.com; dkim=pass header.d=inmusicbrands.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=inmusicbrands.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9ygSKGZL8Na83xJlW8HqlTS26a5PsVkiYYDDUARydCI=;
+ b=G6egAU5oA4Knn2YdT69BP9TCGU3IWOiMtNYWXmWbylbXk4vXmhIUkBVAVJAR7Pvh3iAekhxtlGTRmiGNdsVRcTv3q0YNkRCjBQyHu7M4zxov4kLy8yKgmkfwA9mLy7p2VbXIt7IaglHJaLTiqkEY4+Wzeo5vgl1tL4TnLQiPW14=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=inmusicbrands.com;
+Received: from MW4PR08MB8282.namprd08.prod.outlook.com (2603:10b6:303:1bd::18)
+ by SA2PR08MB6716.namprd08.prod.outlook.com (2603:10b6:806:11c::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.33; Mon, 14 Jul
+ 2025 15:15:42 +0000
+Received: from MW4PR08MB8282.namprd08.prod.outlook.com
+ ([fe80::55b3:31f1:11c0:4401]) by MW4PR08MB8282.namprd08.prod.outlook.com
+ ([fe80::55b3:31f1:11c0:4401%7]) with mapi id 15.20.8922.023; Mon, 14 Jul 2025
+ 15:15:40 +0000
+Date: Mon, 14 Jul 2025 16:15:32 +0100
+From: John Keeping <jkeeping@inmusicbrands.com>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC/PATCH 1/2] usb: dwc3: disable for USB_ROLE_NONE
+Message-ID: <aHUfFGnGZP4z7UgK-jkeeping@inmusicbrands.com>
+References: <20250710152252.2532020-1-jkeeping@inmusicbrands.com>
+ <20250710152252.2532020-2-jkeeping@inmusicbrands.com>
+ <20250712001131.ax3rw24h3deekxfv@synopsys.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250712001131.ax3rw24h3deekxfv@synopsys.com>
+X-ClientProxiedBy: LO2P265CA0160.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9::28) To MW4PR08MB8282.namprd08.prod.outlook.com
+ (2603:10b6:303:1bd::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <935a82e3-f7ad-47d7-aaaf-f3d2b62ed768@amd.com> <F7AF073C-D630-45A3-8746-DE66B15FC3E1@sjtu.edu.cn>
- <aHUYwCNDWlsar3qk@google.com> <15D0C887-E17F-4432-8716-BF62EEE61B6B@sjtu.edu.cn>
-Message-ID: <aHUe5HY4C2vungCd@google.com>
-Subject: Re: [BUG] NULL pointer dereference in sev_writeback_caches during KVM
- SEV migration kselftest on AMD platform
-From: Sean Christopherson <seanjc@google.com>
-To: Zheyun Shen <szy0127@sjtu.edu.cn>
-Cc: Srikanth Aithal <sraithal@amd.com>, linux-next@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR08MB8282:EE_|SA2PR08MB6716:EE_
+X-MS-Office365-Filtering-Correlation-Id: fb44d944-6b74-4f7b-8379-08ddc2e94b59
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0muWFhu+jsXp1WDpSsQ6WpMKg+FRXzQY9xpCbmPQN4s0uDwxgrUgfO6RcWnn?=
+ =?us-ascii?Q?yW1X+DTxU/Do1ZADAqnvvHS6X9td6uAGr3XaaOitWrq7vsrKKVSgtadtKxex?=
+ =?us-ascii?Q?9LlNLCepIxDW3tBGKABFKrNBUWt3uQQP5meYQkEu99dgGuRJu5pSB8cjtiys?=
+ =?us-ascii?Q?cnRVxTZln7n+82BIkTTCSmWnXGspPWxoOSS9jdDn5SlyNXmexL5rol/tinFi?=
+ =?us-ascii?Q?j1lO2oAax6oAIC2H5L+0gSXAiPLn1PdvAmZNUMr5FDVloo41wKFm3SEHE3Z5?=
+ =?us-ascii?Q?HD4t7h4ARSxSbh5tl8I8TWL1l2cp2BNexiq7lflFrCRBvZuYOa6RhL8cqPfL?=
+ =?us-ascii?Q?Itmluq4EUh7nGpOQSnNWJwdXpg/69KLjQISv/+c71GxO+zP3rCaY16O0JA1B?=
+ =?us-ascii?Q?EwxmJkG/nf4VWVpESBvAyJgRj/Wr5dMF0T4g7tHxlSbbc2m56PUdJP4yUvH2?=
+ =?us-ascii?Q?pTuYfleZz3+TS17YpqK/rGOviaUg9cVslRV2nIflBl5EB9aDuhA0ircsNu6x?=
+ =?us-ascii?Q?3EYC3/2fdqbfQj3rdTredUJt6y74+Orts6e6R/KatcvoGPhIliXrr0pdgJdG?=
+ =?us-ascii?Q?u2ps0Mw8JjP7A1aLtyT6Y6w5vn+2/jOe8iqD9kyyUfs/hZozjaoosVkUXsG+?=
+ =?us-ascii?Q?CnzW0wuO0H6iOF1lQVDNd+Cmtg11uMpJ55J5QdoYZmDxAu2TTbWcwyd4Rz7x?=
+ =?us-ascii?Q?CeAPcvM88kiMfe8tu6WY2NGYQsD+UAqUIWl3BERaSY3uVSZA7nz+TPth0Yl5?=
+ =?us-ascii?Q?JhBdgptiRhpNU+aQ90pOuWy8AOj3OHm6Z9zsgYlUuakSAxHwDJLPkp1G7t1F?=
+ =?us-ascii?Q?um6QyriwKsqpTS9aKlt6mYE/36yjrx/SUNZ8rVSZbjfPcsYgkPXcTaFO38SI?=
+ =?us-ascii?Q?Jeg6gHBC4F4by9JRq8NCEroffjIG+JwtnRrAgRwMi0jOqnq17/UXYBO2385W?=
+ =?us-ascii?Q?oOghl35JC6YHf0JEsydWXAE39v7p19K0SABj/a0tSj565MfpU2Du/Mei1i90?=
+ =?us-ascii?Q?wMN/pdAYet6OKuHVbLQY98XE8Vc8tzvssZm2eGBWwf9VGfKG0VuJiYGlKBI1?=
+ =?us-ascii?Q?CpBkyvjFcw6rMlTxTrQ8grGMGS6KEMM1yNoZX8mCR6CWTPPtwGl/kf5k9tEI?=
+ =?us-ascii?Q?g3V88Wj274pisSNux9/bl4cTQvnon0teFZnhyiQBLyKhcdrKtnsSVAjGZ16d?=
+ =?us-ascii?Q?zCz3pTdCDzxqMV5TYw7PVU8XkGdduon1TXqnxCKxVqMAw6k/UZn965HkaGMY?=
+ =?us-ascii?Q?+nVnZGhI58eSIcywlMxdHDhX8rkHYAdg98X/MSyyCa3Cp1ldb5qxsuCIHKs8?=
+ =?us-ascii?Q?S+eXpr79PU/fvlM6++tuSauHSazKIfJd2i8u/PrvY3p+gvFIWw3yToQvC8Pa?=
+ =?us-ascii?Q?vX7imMeuSNK4I1MxDEsZ6WXPtuZcmFzvWUfqK1m8BOusIlR+ZopOnCfwWGGe?=
+ =?us-ascii?Q?Prwy837iAS1EIudlFOhiUzIneOUqyPQHmWXV8Ic3X8B/mIzz6RwkfQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR08MB8282.namprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?wzAEQy2pRTc+RXH+nSa5S5ZLviB9wpHnDeSVTxO3pPR//T9UTUZ2YtSSSkm3?=
+ =?us-ascii?Q?HMgCBFF+L6oLS5nexHNmYn2SOUOi0RwDmrv1cEM0LAQzpJcgl2qi+MgLi8H7?=
+ =?us-ascii?Q?KM3UgK9OaCAJ9sZHGQGh0j5hNPMbTGSHXgXA5T+heRUG2K15o+NJBd+QRZ8u?=
+ =?us-ascii?Q?jUB819xmdN59x6DzqsKQF6S6A7NgKf2Z8bikXSrEqQ7rv1DrqmfF9bOZ7cu7?=
+ =?us-ascii?Q?c1ZAyJgf3wC9Gdni5bv9dDnu8xDoAe+JdE8KLk5WzYNHU4PY4lYsgHBc0qWP?=
+ =?us-ascii?Q?XAJ8tqC+36M8SOJFU3RgRPx3RW5aX59ZFP7Mh4DkLT7qns7DVEHPf88XTCG1?=
+ =?us-ascii?Q?rwYDvyhIO54l93AlzRYF28KirwhsKL72kh7qC+2pz4mD3+uUY3Op6YqzIMKA?=
+ =?us-ascii?Q?/vOKAeTegvKtPMEVG1qEuTtYaxEGItyudU9LlBzebDB18zV6NJLrJPY7kwu1?=
+ =?us-ascii?Q?tA3iX8kAqPd6YxymUrXVegqAQBQ/VrFT/GOB6lmkCMkWOOwczfLugrRQqCcW?=
+ =?us-ascii?Q?36j4EOU5KqgkXuIYusZfzzC4+R6XlRY6UK0HsFUq0rMG5+7DBRZLykJELiyk?=
+ =?us-ascii?Q?NaI8WvkI7Qtp0T+C9lMRRqBm3rP7w+zGAoTaMtmTg+hUmmsV4M6ShitCK8kp?=
+ =?us-ascii?Q?hT/7+d8XjWMZ8PKmforg7cxgIO7WBMLoW/xJrg62FZS2tUk09JoEwLI9IWEP?=
+ =?us-ascii?Q?8ZcaHysyqmWPZ+zbb2h1vnlKESE8bA7Fw5h2KeuQy4DdGNjUoxr4IXq/ZowB?=
+ =?us-ascii?Q?madkeep/To4MOZJVjcaEva3qfIhHKE61C0YPjz9LYWaEvMFEG9MLhAyf8rPv?=
+ =?us-ascii?Q?MXJLNL8vJkBhXNHbDEOP5vQq3dUBsmnRh+CApsXZ+C0k5HydmapMLJEqr/7c?=
+ =?us-ascii?Q?CjLH1kKmBeeRhPhaQojHkdXw9/VoGG63Tkavw0xT/hGDUv5yaFN3/lh859jq?=
+ =?us-ascii?Q?VuSeF6uXoqiPJxFBuOtKX1TxKTnOTp9hnRSeKvFMBXz0WkupCl810AZB9HYe?=
+ =?us-ascii?Q?gFAPHAqAgLBiUTeCSvXO6QyBlbxPW1et8Wqfm8kwzVMU+9THPyl0HvFu1Y92?=
+ =?us-ascii?Q?cq+LZO98PZSqb1Wxh5rOREZvzRoLCD9XTBvgeV4VNJ+XlKZcFjaEW7wEMHEP?=
+ =?us-ascii?Q?web9HcIy3pjSVSNF62tOZGTnSXI38babhGtURMEYlp1aHjtZbpnDxNVB8rgZ?=
+ =?us-ascii?Q?pZNtWhsLeCI3jeJL60Wh+YIT3aAnjLgfCfv4Dh8CbjI2AQaVFnLzM9pjS5xB?=
+ =?us-ascii?Q?uYwiHfxzQVm70MY0gs5zz4DaO9PTx2ap9G+ViYaB2iTyRcFfoPUz/17I+PYC?=
+ =?us-ascii?Q?tsB3wlfWK5Gh2CqgpjhB6faJpb8ww36ogq8tjjlyCBANmqsQxNo6WVvD6zYI?=
+ =?us-ascii?Q?wXFX9GutdNV/x09mgAe+z7WkMpRdYlVBOaHO6xft81gxWDKq/MAgkrwaIFoY?=
+ =?us-ascii?Q?wmANAFWY3alOh7a/LQjILrZmedsDfdUjelZIka5oon9zCJMoPAJDopapiM1X?=
+ =?us-ascii?Q?Ue5Wb0T58GwOl082jdUYGiS0i8eDXI7AHeigOjxA0Z9iwgTq13HBcRffSl7/?=
+ =?us-ascii?Q?7qDJ/DyR+QADp0uGGMTgUPjmYpbk0TtfZ9DjoGeGsXYZTZfSQE8rBpH/9R8D?=
+ =?us-ascii?Q?0w=3D=3D?=
+X-OriginatorOrg: inmusicbrands.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb44d944-6b74-4f7b-8379-08ddc2e94b59
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR08MB8282.namprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2025 15:15:40.6539
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 24507e43-fb7c-4b60-ab03-f78fafaf0a65
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BIRFrvxbTCO5LNAgtmpW08oNvGwPaCGcjmcYnGRSQc8NuBGat/I+QBZUOLcFS+ceCWzoyMc/v9nbdZJQLqfGkfzijnH6lOwAex7K7/aMqZI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR08MB6716
 
-On Mon, Jul 14, 2025, Zheyun Shen wrote:
-> The problem is triggered by the following codes in tools/testing/selftest=
-s/kvm/x86/sev_migrate_tests.c:
-> static void test_sev_migrate_from(bool es)
-> {
-> 	struct kvm_vm *src_vm;
-> 	struct kvm_vm *dst_vms[NR_MIGRATE_TEST_VMS];
-> 	int i, ret;
->=20
-> 	src_vm =3D sev_vm_create(es);
-> 	for (i =3D 0; i < NR_MIGRATE_TEST_VMS; ++i)
-> 		dst_vms[i] =3D aux_vm_create(true);
->=20
-> 	/* Initial migration from the src to the first dst. */
-> 	sev_migrate_from(dst_vms[0], src_vm);
->=20
-> 	for (i =3D 1; i < NR_MIGRATE_TEST_VMS; i++)
-> 		sev_migrate_from(dst_vms[i], dst_vms[i - 1]);
->=20
-> 	/* Migrate the guest back to the original VM. */
-> 	ret =3D __sev_migrate_from(src_vm, dst_vms[NR_MIGRATE_TEST_VMS - 1]);
-> 	TEST_ASSERT(ret =3D=3D -1 && errno =3D=3D EIO,
-> 		    "VM that was migrated from should be dead. ret %d, errno: %d", ret,
-> 		    errno);
->=20
-> 	kvm_vm_free(src_vm);
-> 	for (i =3D 0; i < NR_MIGRATE_TEST_VMS; ++i)
-> 		kvm_vm_free(dst_vms[i]);
-> }
->=20
-> I add some logs in kvm and following shows the result:
-> [   51.618135] sev guest init kvm:ff177f272432e000                       =
-                                                          =20
+On Sat, Jul 12, 2025 at 12:11:38AM +0000, Thinh Nguyen wrote:
+> On Thu, Jul 10, 2025, John Keeping wrote:
+> > When the phy is acting as a Type C mux, it may need to reset when the
+> > cable direction changes.  But this should not happen while DWC3 is
+> > trying to use the USB connection.
+> > 
+> > In this case, there must be a connection manager to notify the phy of
+> > the orientation change and tcpm_mux_set() ensures this happens before
+> > DWC3's role switch is informed of a change.
+> > 
+> > It should not be possible to go directly from device->device or
+> > host->host with a change in orientation without transitioning through
+> > the "none" role as the cable is unplugged.  So ensuring that DWC3 always
+> 
+> The controller is either host or device mode. It's odd to use "none" to
+> indicate connection.
 
-Argh, I forgot that sev_vm_move_enc_context_from() requires the destination=
- to
-*not* be an SEV guest.  KVM needs to explicitly copy over the stack.
+There is no connection in this state.  When the type C controller
+indicates that the role is "none" then there cannot be a USB connection.
 
-> [   51.627235] kvm destory vm kvm:ff177f272432e000                       =
-                                                           =20
-> [   51.628011] kvm destory vm mmu notifier unregister kvm:ff177f272432e00=
-0                                                         =20
-> [   51.642840] kvm destory vm arch destory vm kvm:ff177f272432e000       =
-                                                          =20
-> [   51.673612] vm destory x86                                            =
-                                                          =20
-> [   51.673957] svm vm destory                                            =
-                                                          =20
-> [   51.674401] kvm destory vm kvm:ff177f272432c000                       =
-                                                           =20
-> [   51.675152] kvm destory vm mmu notifier unregister kvm:ff177f272432c00=
-0                                                         =20
-> [   51.675981] kvm destory vm arch destory vm kvm:ff177f272432c000       =
-                                                          =20
-> [   51.715937] vm destory x86                                            =
-                                                          =20
-> [   51.716289] svm vm destory                                            =
-                                                          =20
-> [   51.716754] kvm destory vm kvm:ff177f272432a000                       =
-                                                           =20
-> [   51.717530] kvm destory vm mmu notifier unregister kvm:ff177f272432a00=
-0                                                         =20
-> [   51.718363] kvm destory vm arch destory vm kvm:ff177f272432a000       =
-                                                          =20
-> [   51.746672] vm destory x86
-> [   51.747018] svm vm destory
-> [   51.747454] kvm destory vm kvm:ff177f2724328000
-> [   51.748219] kvm destory vm mmu notifier unregister kvm:ff177f272432800=
-0
-> [   51.749033] BUG: kernel NULL pointer dereference, address: 00000000000=
-00000
-> [   51.749885] #PF: supervisor read access in kernel mode
-> [   51.750519] #PF: error_code(0x0000) - not-present page
->=20
-> It seems that the cpumask structure is not transferred correctly from
-> ff177f272432e000 to ff177f2724328000.  But unfortunately I=E2=80=99m not =
-familiar
-> with SEV migration. I need to spend some time looking into how SEV migrat=
-ion
-> works in order to solve this issue.
+> > informs the phy of the new mode whenever a plug is detected should be
+> > sufficient for the phy to safely reset itself at a time that is safe for
+> > DWC3.
+> 
+> Couldn't the phy do this as it detects connection/disconnection.
 
-...
+I don't think the phy can detect a connection.  If it is configured for
+the wrong orientation then it will not monitor the correct data lines.
+The phy hardware does not signal any interrupts to the CPU for the
+driver to react to.
 
-> >> I can reproduce this issue in my environment, and I will try to resolv=
-e it as
-> >> soon as possible.
-> >=20
-> > Phew, that's good, because I can't repro this, and I don't see anything=
- obviously
-> > wrong.
+> It seems what you need is a full controller initialization upon new
+> connection on orientation change, and you're using role_switch selecting
+> "none" to do so.
 
-/facepalm
+I'm not sure whether a complete initialization is necessary, but what I
+want to avoid is the phy resetting while the controller is part-way
+through device enumeration or setting up a gadget configuration.
 
--ENOCOFFEE.  I was conflating CONFIG_VMAP_STACK with CONFIG_CPUMASK_OFFSTAC=
-K and
-thus testing the wrong thing.
+It may be that simply avoiding resetting the phy if the orientation is
+unchanged is enough to avoid some of this problem, but I suspect there
+are still problems if the clocks from the phy to the controller are
+stopped unexpectedly.  However, I have run some tests of this change and
+it looks promising.
 
-I think this is the fix, testing now...
+> I'm not sure if role-switch has the right interface to do so. Perhaps we
+> can introduce one? I don't think we should change the behavior of the
+> current flow and apply that to all other platforms.
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 95668e84ab86..1476e877b2dc 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -1936,6 +1936,7 @@ static void sev_migrate_from(struct kvm *dst_kvm, str=
-uct kvm *src_kvm)
-        dst->enc_context_owner =3D src->enc_context_owner;
-        dst->es_active =3D src->es_active;
-        dst->vmsa_features =3D src->vmsa_features;
-+       memcpy(&dst->have_run_cpus, &src->have_run_cpus, sizeof(src->have_r=
-un_cpus));
-=20
-        src->asid =3D 0;
-        src->active =3D false;
-@@ -1943,6 +1944,7 @@ static void sev_migrate_from(struct kvm *dst_kvm, str=
-uct kvm *src_kvm)
-        src->pages_locked =3D 0;
-        src->enc_context_owner =3D NULL;
-        src->es_active =3D false;
-+       memset(&src->have_run_cpus, 0, sizeof(src->have_run_cpus));
-=20
-        list_cut_before(&dst->regions_list, &src->regions_list, &src->regio=
-ns_list);
+I don't think it's unreasonable for the controller to be idle when there
+is an external type C controller notifying the connection state.
+
+The hardware setup looks like this, with the Linux type C code notifying
+the phy driver of the orientation change and the DWC3 driver of the role
+change:
+
+                      +------+          
+                      | DWC3 |<----+    
+                      +--^---+     |    
+                         |         |    
+                      +--v--+      |    
+                +---->| PHY |      |Role
+                |     +--^--+      |    
+    Orientation |        |         |    
+                |   +----v----+    |    
+                +---+ FUSB302 +----+    
+                    +---------+
+
+The advantage of using the role hook is that we are guaranteed that it
+is called after the phy has been notified of the orientation change.
+
+Do you have an idea of a new interface?  Or do you think it is safe to
+reset the phy underneath the controller when that will halt the clocks
+from the phy to the controller for some period of time?
+
+
+Regards,
+John
 
