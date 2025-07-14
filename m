@@ -1,94 +1,93 @@
-Return-Path: <linux-kernel+bounces-730590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF3F5B046AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:37:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B15B046B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13A324A3348
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:37:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C58B51A630E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE1E26B74C;
-	Mon, 14 Jul 2025 17:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F8C26B948;
+	Mon, 14 Jul 2025 17:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Shx2Bv93"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IvuhEJ6d"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCAE26AAB8;
-	Mon, 14 Jul 2025 17:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C622266B59;
+	Mon, 14 Jul 2025 17:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752514597; cv=none; b=IH+LnqF8aPppxgOkrcdSIF5J5qCYvMFCuNYMkWzcFRtMXa2skeKcBbluxXh9w/hTvjwysrKx+tfBY2ukJbuqJVVQF7fl55SZ96PoSPv295o4IrktGPd5A274e9O8NshHWfa/WKJp+J6dlnzA0w1NpUrxXYLFOw6iQyA5J5p9czo=
+	t=1752514599; cv=none; b=kTw9bIbkDy8bbMmyff9Hw+NI0N1QlUC4K3v9QoIBAOOJUTKX6aeCa5QpJF/pLYHlyJLLFtw5OUKeQo/gub7Uqbs9zH0FTKmglyHssRPNrnZM0Fqs5Fs5nPIIIvSZO9kwUZedJ6OOFeVfVhrapBluuFryoJJfK3XvHQVtP3X2OpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752514597; c=relaxed/simple;
-	bh=yFDhGE9IplYEOvGFju2aOSOp44FEaesNKxsZjzDka9k=;
+	s=arc-20240116; t=1752514599; c=relaxed/simple;
+	bh=0aJdUw9TeYZ6XbjFold1qejFsdtCWo7V+1B83llu208=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ogbKY5AElpDAB3BzGpBW/7qk3RkSZuyLtcOtW0GO0dKahzX6ud+/VAVLLjqdfi+zmTQyQhOY/E+18OlsiwVgJSXtRyq1RrLUMXUXqQv7j/D9IFujrMN9VVHMuWqnANusWjuY0I+iPpncqD79pQpXdWixP6PBFXVHqAiMUzn5OEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Shx2Bv93; arc=none smtp.client-ip=209.85.128.46
+	 MIME-Version:Content-Type; b=FVbbNuwa0ZHHK1KS3yEmcpsYn3hFSQmxLcAiqisujZBMzUNLF9qws6KsbIGQEznIV/y+vqJ5qsLA418s6WE13ber0Fy1+Lt9RFJSES5CdksomBqaeMef22oNaa/ztlYiWfvtYiVUXa9etETjdioT5NVSwd5SrLDU98yPjDN9xJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IvuhEJ6d; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-455ecacfc32so13666515e9.3;
-        Mon, 14 Jul 2025 10:36:35 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-455b00283a5so18708025e9.0;
+        Mon, 14 Jul 2025 10:36:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752514594; x=1753119394; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752514596; x=1753119396; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BtITE6KgMoS3AhCyG7ge+r6WLj1yPmuHodNoaoo4KmM=;
-        b=Shx2Bv93si4/ATcc2lLsEmh/2jQTrfv/WMqdWBMI/DKs855IbY2ORidVxZDVUZe72z
-         +6hPKvLA3jMFM8bxuip4uJxB7kmbRi64s8xi4EqenxnGGPBT7atYaUv3NN1tvDpY6VhP
-         4nTOFjXCEfRi4mCIKGcdfUMAW3YTfFHNnK16SoPAzBzMHZx5xCEDe/zwXIgSK2iOdsm5
-         ylDGOBZYidBBYn9VtKwYk/mMHc/Kz9q48mvf8FQ4QYPzypH8uwUwVFOC5Kkv9dCjEhGJ
-         vv7ZppIM3aXl15M7BcSSa72IgSx8BftKetT38lzYjniirIohqjgDmcToApTJfHnpSs+N
-         k2uQ==
+        bh=27zoUGw+O71pRkY17Cb5b44izqDIRpoqwysQTHKG9hU=;
+        b=IvuhEJ6dvEZnNdKXNUYHCNbZRYbV79tPjmz4S2oRsnE/aq0xCQJwX3h7poTr2UCyy1
+         43qXEfV/iLR1BGxAwvPb4z/HNw/blldnikKp3vl1cf3NwcG6AGNxnM9l0is7WjNoOpRX
+         wvua7+QTDHPtRzTsBu36QUcTlVI9qv+4wKnI8CptdOQeIERi9U9SIaTdl3dHvD1bSMUa
+         vEyCoqtvMII8pMUVa/QUZ30Dyi3WwOjSWOI/UKDzK0rczdZJZyGaEZSIvWr46QsUoW8r
+         snssasNUETTQW6ByxGFcqWaMlJ9AfMhHaEbjjAnGzEOzclMst3yoWhqq/aBnMvAdYn2t
+         vBGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752514594; x=1753119394;
+        d=1e100.net; s=20230601; t=1752514596; x=1753119396;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BtITE6KgMoS3AhCyG7ge+r6WLj1yPmuHodNoaoo4KmM=;
-        b=hr+bKv/33YzOD7a7QQhgdhqtomxGTsJNSbGelFWGKmfpDjAwXBSCtReG2Li+4RcZPn
-         HA7Um6TLw1RoqwmWftufJMHMkV+3/UILQ+G8OxAxhZpKPbcDoaqDVUNmgDd/3IIF3ZlO
-         lgguUKg1k8t18NdM6vnL6HJDGbdr7RkbwTaZa6cpZpWTCZ01ZwWrh/QMY7GwAuaKQmi6
-         qJGfxviG31tnbDoSaQEUIedBDzyXuOOZcdYXsH8SueNex9NPPjzOcdRdpWbWwkktpB1Y
-         u1SrcqT5TPOsuF6IKpKsMLDvhOlSOaFyyBZ4mSeeLdQgaHyZAWI+CppXMr4kc7ashvQb
-         LpKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvC4bGOOhEKSGYt1xNJsyu5oNXm9t/pIWniOj+ZsKVBBzfny0yUJ4bq4ba69/3EyxfKcNw92UpX5R8o7zs@vger.kernel.org, AJvYcCW6eUJas6+BGpynytaTdCpXHZ1inYlb1XI32hDNPutEJIhHIdTeu7SjYJK7pcaxknZe/K+6PT0El/VXBqU+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlrGTCZEqmWMFKY0VGnXeERQeKoecMHOv0w4JwS0taKRL6nf/d
-	um+HkJ1hjgePaF7FUpONhB20CeAVnOCyXnfiFhELLxVEmLhNP0pXk4zHNOZ0EX7L8q0=
-X-Gm-Gg: ASbGncudsNdVrehN4dZlt5ZSnniH48Tvjv7wNMol0EYWu2GUwcZeV+NOzMBG6KROZbO
-	wBxqDcBikME8ynvOjV/PhP9ujanvdL5qFwKhVV2gWo8lR4gmTWLhnf/jiiIOKloK/MAsC0IUrh2
-	27opSAsUFA8NF6Tg0toNw7QijK9qSknY8pdDY6KZ+b1eTiBkg3DP3NjRf05XDnguOl18YRg9nMI
-	rNsxYM6WwPvvd8jXg5i5CrADb2fr9CXhV+Q4GNyBJ7OsewEK/baj+me1GN0jrAUpjCn613FgWNt
-	8ppPu/jICo6Cw3667TnrdCjpFO7K5qYlbLlCs7awwi67uyKYiu6GaPVnfHTXLyn+1J7WbSBeD++
-	rlbAe+vCk9BnU/hsFoFINAMhnT6LAw/ROINSagquvPI8Jvw==
-X-Google-Smtp-Source: AGHT+IF3IHZAfUwjccfOhHLL0NnXoP3T/kMpOhEmbqxn+mxAllsqLzGXG/3Az9GvJrjSX4te6HwBiQ==
-X-Received: by 2002:a05:600c:3f18:b0:456:c50:1b3 with SMTP id 5b1f17b1804b1-4560c50065emr75556405e9.29.1752514593967;
-        Mon, 14 Jul 2025 10:36:33 -0700 (PDT)
+        bh=27zoUGw+O71pRkY17Cb5b44izqDIRpoqwysQTHKG9hU=;
+        b=ittZJxIVi4iMD719ZVSeSvNgFi37RCrbcIh9T19x0Egg0PN1FdQIEGZ07lXR+RfOz/
+         dNrqokieaYXIhVK3fiYEQgwFetKzzG4wS2C6ptUTCr2S8nAkjPhsq0d0/a1EEExS5n1l
+         zf6KCNIZqXGCH9vhj034vQ2WBtA0FYIofMf6fLrDvUdKA1EKatiYnuXG97GUyAeiyypE
+         AqbAD3/fAzXrDObSLr4nSNAidnBlFFYjGWZeQfvStjUm/P/2V/QWFpX6iSbT0boJtvdy
+         nH+Aggc7VJ91scHZT49G9v5/I63Yy1kdORDs9NSIXVbXAvXru4vH4UBrdpwPA+nGGPOr
+         tTcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpdSYAIvoCOc/MqJ9AoMmoMY+NLj+Y5Tt6idsHg13dENibhnqHl9DfE8DqOMin6yLtmJCcnEawlS3KngH3@vger.kernel.org, AJvYcCV5wJ4fHLqLFEZW1v9/THeMcO/f8jpSxms4nc2AT9tXjDov5+mDzSXwQeB7CwPn92nAUEmdMFLnLhOkCTv/zf4=@vger.kernel.org, AJvYcCWb7xdAo8ag548tKIgQloexi3YbEpfd9vn4t+/K9sLWYw8XmSiJUW+KB01veNzRR5x+04k/Zr1cnWQQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlSJpMKQ7FkrepmKoPEKz2XAzcjgLTXdAWMhBdPN63xl9+1RO8
+	aDK7L1BZfzq7A+SJj5Jnx8dRgz8WAZV49m6J4LKHTzpRkS6ABH7XFB45
+X-Gm-Gg: ASbGncvWZ+kZzPhjkOP9pKnusXm+8v84LnLIJeohCJyjbZJbwROfgXZHwoluuySsoXb
+	3SW47VAjiEiuf+fJJkyjRCX/NDA26HbV/oPovW37DOFPtHP0oxNd4TkIMbhQX3Dfo0vjF8ZVWeH
+	KbMbAL4PW+2x4bvq7/7Pjs7cPkMeYlDOfNSKerPurOfxXNTaLEZkSTlR4zFa12/SYk0dbQ8kX6y
+	nBDFryB78v8A9bfdSaKtAQbwihKEcpopXVyxi0v/WjJbQxCGHh/B6b0UB1y8zpXgAk/breD5uzz
+	GhbaPPC++A8bVcsBgcuNm2B87m0LGs1WaxAFWFC0Km+hof68PbL98EV7aemeWCtW7TH15d7Jl1H
+	CMP1sZ27lEdE68MZVOuEFYeRoaeZgsqOrPcM=
+X-Google-Smtp-Source: AGHT+IHgvMVpSzu1V0uiZyQXxUUB2sDhT1TXAVv0QnYeeVesufnJpndQ8w9cDsN//TZkJRwawRLG8w==
+X-Received: by 2002:adf:e7d1:0:b0:3b4:4790:8415 with SMTP id ffacd0b85a97d-3b5f18d977dmr10613323f8f.48.1752514595511;
+        Mon, 14 Jul 2025 10:36:35 -0700 (PDT)
 Received: from alarm (92.40.201.95.threembb.co.uk. [92.40.201.95])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d872sm13152531f8f.60.2025.07.14.10.36.32
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d872sm13152531f8f.60.2025.07.14.10.36.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 10:36:33 -0700 (PDT)
+        Mon, 14 Jul 2025 10:36:35 -0700 (PDT)
 From: Dale Whinham <daleyo@gmail.com>
-To: Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
+To: Johannes Berg <johannes@sipsolutions.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>
 Cc: =?UTF-8?q?J=C3=A9r=C3=B4me=20de=20Bretagne?= <jerome.debretagne@gmail.com>,
 	Dale Whinham <daleyo@gmail.com>,
-	linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	linux-wireless@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	ath12k@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/9] drm/msm/dp: Work around bogus maximum link rate
-Date: Mon, 14 Jul 2025 18:35:42 +0100
-Message-ID: <20250714173554.14223-7-daleyo@gmail.com>
+Subject: [PATCH 7/9 RFC] dt-bindings: wireless: ath12k: Add disable-rfkill property
+Date: Mon, 14 Jul 2025 18:35:43 +0100
+Message-ID: <20250714173554.14223-8-daleyo@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250714173554.14223-1-daleyo@gmail.com>
 References: <20250714173554.14223-1-daleyo@gmail.com>
@@ -103,53 +102,28 @@ Content-Transfer-Encoding: 8bit
 
 From: Jérôme de Bretagne <jerome.debretagne@gmail.com>
 
-The OLED display in the Surface Pro 11 reports a maximum link rate of
-zero in its DPCD, causing it to fail to probe correctly.
-
-The Surface Pro 11's DSDT table contains some XML with an
-"EDPOverrideDPCDCaps" block that defines the max link rate as 0x1E
-(8.1Gbps/HBR3).
-
-Add a quirk to conditionally override the max link rate if its value
-is zero specifically for this model.
+Document the disable-rfkill property.
 
 Signed-off-by: Jérôme de Bretagne <jerome.debretagne@gmail.com>
 Signed-off-by: Dale Whinham <daleyo@gmail.com>
 ---
- drivers/gpu/drm/msm/dp/dp_panel.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ .../devicetree/bindings/net/wireless/qcom,ath12k.yaml          | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/dp_panel.c
-index 4e8ab75c771b..b2e65b987c05 100644
---- a/drivers/gpu/drm/msm/dp/dp_panel.c
-+++ b/drivers/gpu/drm/msm/dp/dp_panel.c
-@@ -11,6 +11,8 @@
- #include <drm/drm_of.h>
- #include <drm/drm_print.h>
+diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+index 9e557cb838c7..f15b630fb034 100644
+--- a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
++++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+@@ -48,6 +48,9 @@ properties:
+   vddpcie1p8-supply:
+     description: VDD_PCIE_1P8 supply regulator handle
  
-+#include <linux/dmi.h>
++  disable-rfkill:
++    type: boolean
 +
- #define DP_MAX_NUM_DP_LANES	4
- #define DP_LINK_RATE_HBR2	540000 /* kbytes */
- 
-@@ -58,6 +60,17 @@ static int msm_dp_panel_read_dpcd(struct msm_dp_panel *msm_dp_panel)
- 	if (rc)
- 		return rc;
- 
-+	/*
-+	 * for some reason the ATNA30DW01-1 OLED panel in the Surface Pro 11
-+	 * reports a max link rate of 0 in the DPCD. Fix it to match the
-+	 * EDPOverrideDPCDCaps string found in the ACPI DSDT
-+	 */
-+	if (dpcd[DP_MAX_LINK_RATE] == 0 &&
-+	    dmi_match(DMI_SYS_VENDOR, "Microsoft Corporation") &&
-+	    dmi_match(DMI_PRODUCT_NAME, "Microsoft Surface Pro, 11th Edition")) {
-+		dpcd[1] = DP_LINK_BW_8_1;
-+	}
-+
- 	msm_dp_panel->vsc_sdp_supported = drm_dp_vsc_sdp_supported(panel->aux, dpcd);
- 	link_info = &msm_dp_panel->link_info;
- 	link_info->revision = dpcd[DP_DPCD_REV];
+ required:
+   - compatible
+   - reg
 -- 
 2.50.1
 
