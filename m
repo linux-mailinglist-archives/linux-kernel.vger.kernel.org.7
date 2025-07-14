@@ -1,214 +1,156 @@
-Return-Path: <linux-kernel+bounces-729263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD1CB0340A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 03:00:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A1FB0340E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 03:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 337251899CD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:00:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 344D93B2B15
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED511624DD;
-	Mon, 14 Jul 2025 01:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F35B15B971;
+	Mon, 14 Jul 2025 01:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="L2Cl8Gez"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="GS7lfgbV"
+Received: from outbound.pv.icloud.com (p-west1-cluster4-host6-snip4-2.eps.apple.com [57.103.65.243])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A0C1FC3;
-	Mon, 14 Jul 2025 01:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CC71FC3
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 01:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.65.243
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752454827; cv=none; b=SLcdlBW4J2xkYnSEhnMC4Rn9nc6E+3/TXkA0qdy4mp00QjzFm7h43ao6W++VY6qxGA534WmVVyfUFPjDs7fXb+/bKghSznsIis68OjkoNBUP6GFtwIDTD05J7+l0jMbv6YtYrpVPHlg4sfXjqJjPXRYFBi8Ih4OoUWqnR7gO8m4=
+	t=1752454939; cv=none; b=ZjbToOQPGEInLHMuMidNLejLSXv8eJyEPllcqNAFCdTyDELdPXZ5/MThCZSIHk5Zvvw9S9ZvKKi3bCPyqZE0so+Q8NPu+R0Z4419orXqIkTKHQPQA7ldv2/X5WstBdj7xtrmDw7nX570J78gw2CGAIfzDM9Y9GjDN4gME77un/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752454827; c=relaxed/simple;
-	bh=/PImNDpsKBHTO5j8+6O63P7nRRG2EcEQFHDZOqoJskc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kR+ik5ApRKV7gCL9qoTBblD7DTuicKAC6cExWmgifcO43C1D4/OPZZUKKorh/9pDkPxcb2iHhtZTNuSvyveXi8V7Is69kmnTvsE0Cf8+T34nYRjp0ZJVYKLJ1PgIxu80/qLK+Z3ZidsNr9Eq/o4sL1k9TZuYecOs+sxb/oUdIBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=L2Cl8Gez; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 43FC020E25;
-	Mon, 14 Jul 2025 03:00:22 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id Kg2EVRnGv0KQ; Mon, 14 Jul 2025 03:00:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1752454820; bh=/PImNDpsKBHTO5j8+6O63P7nRRG2EcEQFHDZOqoJskc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=L2Cl8GezlIwKoGgZFR8yBr8t4BeY99hAAyG2YOMFivhA13G8l1yvip8kC9fOsAsDa
-	 0QfQnVByuNOBylf+8CkyBNKLvHl0WmYxPSBu5TQBbO1LUJlBF3FNt29WTOrWf6LnyJ
-	 y4zDEwyRudmKlhtTAFasswlprzXe2fZHP8eVb8iGJb8ZvzebnRdG1UVGcT8ocArvKK
-	 YG1WnAI3vPTipgF3WCudVKsN4iOHxXMXZWryN/IpfZXtkznwofBKsH0l6CoqeKnx08
-	 pywbyqrW52aTWNq38Tu2RvI4ETeG3DubsNIoqW6d836NLPrr3Xuf8E8oJDurYEYI/i
-	 j0N+xUOJkz16w==
-Date: Mon, 14 Jul 2025 01:00:08 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Alex Bee <knaerzche@gmail.com>, Jonas Karlman <jonas@kwiboo.se>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chukun Pan <amadeus@jmu.edu.cn>,
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] arm64: dts: rockchip: Add ROCK 2A/2F, Sige1 and
- NanoPi Zero2
-Message-ID: <aHRWmMFTh7leEhrq@pie.lan>
-References: <20250712173805.584586-1-jonas@kwiboo.se>
- <702dc4bb-7b3c-4647-b84f-8516989b0836@gmail.com>
- <9aae8b30-23ae-4866-9ce8-02bbc8b44a82@kwiboo.se>
- <88c7b90d-4c29-453b-9a5c-9679b371a3a9@gmail.com>
+	s=arc-20240116; t=1752454939; c=relaxed/simple;
+	bh=LAqW6Xz/aenhHrNc03i1d+2r/dZeUUxScJCa+rxwOw8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TLDLshKVfF+lP6FNMBlchVDySaVCSV+1/xq148g3qeff6IKdaj7kG0OH3LFNP3D7DF0ApudeW6gtHwFCOuaAWc/a/JnYsfr7PyddHed8JQYMZHCCDkSU9HYbDvCucB4tOHBvHBpA5FW3WL8M4Z03ehgZSa61wb8p2l9gmJxhCaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=GS7lfgbV; arc=none smtp.client-ip=57.103.65.243
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
+	by outbound.pv.icloud.com (Postfix) with ESMTPS id 18C6418002BB;
+	Mon, 14 Jul 2025 01:02:14 +0000 (UTC)
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=JSa9SdVcVOj5jZYORBeS6/ykjag1Gc6PWlM78AoxMg8=; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme; b=GS7lfgbVyLlhz5jnb6RbTEfKlI+AYXx9gflz9nyyji/5jkad0DkUm4ZHoXRLe6J/w85uGFFG5L6W3ehSMkJoNfXu1Jl8+X45SqHyPlDmvtMjwXTarqe9kCSVN1JePOsmfOFECjs22dd1op0WU2/105ITVX6aGIEd0AdF75tw9xlCVF+V7Sb25DwWYacLvEx16vZ83JXOTYjsIyd39HYUs73p7/FdTvQVdsGux2SoWw1/v0HyO89tjqSbywwvdztOyE2i6L7f7++LbhfCtRjbLEUaug3Gn5DjFTmObPJvz+McHfItSqIQTK0O0/qh8GpA+iDo3feE/x5xu+xYV+mqQg==
+Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 3E8EF18002AF;
+	Mon, 14 Jul 2025 01:02:12 +0000 (UTC)
+Message-ID: <8a0bfdc6-5edb-4ca0-b142-067eb94ef57f@icloud.com>
+Date: Mon, 14 Jul 2025 09:02:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <88c7b90d-4c29-453b-9a5c-9679b371a3a9@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 5/8] char: misc: Fix kunit test case
+ miscdev_test_dynamic_reentry() failure
+To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>, "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, linux-kernel@vger.kernel.org,
+ linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+ Zijun Hu <zijun.hu@oss.qualcomm.com>
+References: <20250710-rfc_miscdev-v5-0-b3940297db16@oss.qualcomm.com>
+ <20250710-rfc_miscdev-v5-5-b3940297db16@oss.qualcomm.com>
+ <aHADQWaYsjK5EYsN@quatroqueijos.cascardo.eti.br>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <aHADQWaYsjK5EYsN@quatroqueijos.cascardo.eti.br>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: uPq-G_qOM5bY1m-tzO4y1Uosnb98Rir3
+X-Proofpoint-GUID: uPq-G_qOM5bY1m-tzO4y1Uosnb98Rir3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDAwMiBTYWx0ZWRfX2mhJykUiyQTV
+ cxWuzr948aPPgODkxLoXsQqPzIx0pb3ZuN+dyUcfF5NLKBPdREWl0la49y8+0TBfDaNc1MTPZEy
+ uB04hvHFdIhh0UkFUKYgoZ9ENlLXnAbgQ+loP4/7QKcOlg6cAbI5iFLyFflSChcMMpi5rrlaSiL
+ JqinaOmdEnIgpcmbHYlmeNRU6/H21NaGM5cw36MGASzgK80VUMt5ttriKSTIsx/m70Rfi37MSCm
+ zeL5J8DAGPd3OR2bbxi6sCPt7A1AjqWyjxFmGSl+2q8cjCo1FhVxZLp26MqamPRajLBl92PVo=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-13_03,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0
+ mlxlogscore=999 malwarescore=0 adultscore=0 spamscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.22.0-2506060001 definitions=main-2507140002
 
-On Sun, Jul 13, 2025 at 10:56:59PM +0200, Alex Bee wrote:
-> Hi Jonas,
-> 
-> > Hi Alex,
-> > 
-> > On 7/13/2025 9:13 PM, Alex Bee wrote:
-> > > Hi list, Hi Jonas,
-> > > 
-> > > > This series adds dt-bindings and initial device tree for the following
-> > > > Rockchip RK3528A boards:
-> > > > - Radxa ROCK 2A/2F
-> > > > - ArmSoM Sige1
-> > > > - FriendlyElec NanoPi Zero2
-> > > 
-> > > this only sub-related to this series: Is there any particular reason, why
-> > > we call the compatible "rockchip,rk3528" and not "rockchip,rk3528a"? From
-> > > what I can see all boards currently supported (and those in this series)
-> > > are having the RK3528A version of the SoC. I didn't follow the development
-> > > here, but there are differences - I did a quick compare of the datasheets
-> > > of those two SoC versions - it looks like RK3528 version has USB3-DRD
-> > > controller, while RK3528A has USB3 host-only controller. Also it seems to
-> > > have different video codec IPs and the DRAM controller additionally
-> > > supports LPDDR4X.
-> > What datasheet versions did you check? I can only find:
-> > - RK3528 Rev 1.0 (2023-05-22)
-> > - RK3528A Rev 1.2 (2024-04-10)
-> I used
-> 
-> 2023-07-12 Revision V1.0
-> 
-> which didn't include these features - which is interesting: Why would a
-> SoC vendor not try to sell all features in the first place :)
-> 
-> But I now double checked in
-> 
-> 2025-05-12 Revision 1.4
-> 
-> and you are right: It appears there also for RK3528A.
-> 
-> The only difference I could now make out by comparing v1.4 of both versions
-> is the cipher engine: RK3528 additionally supports "SM2/SM3/SM4 cipher" -
-> but still it exists and additionally the different video codec (if mpp
-> userspace library is correct about that).
-> 
-> Anyway: My question was more about: Why didn't we choose the correct
-> compatible from the beginning? And of course the dts files would have to be
-> renamed if the compatible is changed, as they are named according to their
-> SoC-compatible.
+On 2025/7/11 02:15, Thadeu Lima de Souza Cascardo wrote:
+> Adding a failing test and then fixing the code does not seem the best way
+> to justify this change. I would rather add the fix with a proper
+> justification and then add the test.
+>
+may need to only correct commit message. the order about unit test and
+fix may be right as last reply.
 
-Just like what Jonas said, I was not aware of any technical
-documentation at the time of writing the basic devicetree, and even for
-now the only datasheet I manage to find is the 2023 revision about
-RK3528 without A suffix, so I didn't realize the difference between
-RK3528 and RK3528A, but just followed the vendor code and devicetree[1],
-where only RK3528 is mentioned :-(
+> On the other hand, I have found real cases where this might happen, some by
+> code inspection only, but I also managed to reproduce the issue here,
+> where:
+> 
+> 1) wmi/dell-smbios registered minor 122, acpi_thermal_rel registered minor
+> 123.
+> 2) unbind "int3400 thermal" driver from its device, this will unregister
+> acpi_thermal_rel
+> 3) remove dell_smbios module
+> 4) reinstall dell_smbios module, now wmi/dell-smbios is using misc 123
+> 5) bind the device to "int3400 thermal" driver again, acpi_thermal_rel
+> fails to register
+> 
 
-Regards,
-Yao Zi
+above issue should not happen with current char-misc tree since fixed
+minor have no such reentry issue:
 
-[1]: https://github.com/rockchip-linux/kernel, branch develop-5.10
+for any fixed minor fixed_A in range [0, 255): ".minor = fixed_A" ->
+registered -> ".minor = fixed_A" -> de-registered -> ".minor = fixed_A"
+, namely, for fixed minor, it is always un-changed about registering
+and de-registering.
 
-> Regards,
-> Alex
-> > 
-> > And both list LPDDR4X support and the A-variant seem to list USB3-DRD
-> > support, did you mix them up above?
-> > 
-> > I think these SoCs are similar to rk3228/rk3229, rk3228h/rk3328 and now
-> > rk3528/rk3528a, in that only the second variant support VP9 decoding.
-> > 
-> > Use of rockchip,rk3528a compatible could be something to change,
-> > could also be something that bootloader set at runtime, similar to
-> > what it does for rk3288w.
-> > 
-> > > I guess it would be good to discuss this before this series is merged,
-> > > because re-naming *.dts files after they have been in a release is somewhat
-> > > impossible.
-> > I think renaming the device tree files is unnecessary, as there seem to
-> > be very little difference. All boards I have come across are currently
-> > RK3528A variants. How would we treat the Radxa E20C?, it is not named
-> > rk3528-radxa-e20c.dtb, yet uses the A-variant.
-> > 
-> > For mainline U-Boot I have included printing out the SoC-variant,
-> > however the compatible is not adjusted:
-> > 
-> >    Model: Radxa E20C
-> >    SoC:   RK3528A
-> >    DRAM:  2 GiB
-> > 
-> > Regards,
-> > Jonas
-> > 
-> > > Regards,
-> > > Alex
-> > > > The bt/wifi_reg_on pins are described in the device tree using
-> > > > rfkill-gpio nodes.
-> > > > 
-> > > > Changes in v3:
-> > > > - Rename led nodes to led-0/led-1
-> > > > - Remove pinctrl* props from sdio0
-> > > > - Collect a-b tags
-> > > > 
-> > > > Changes in v2:
-> > > > - Limit sdmmc max-frequency to 100 MHz on ROCK 2A/2F
-> > > > - Drop clock-output-names prop from rtc node on Sige1 and NanoPi Zero2
-> > > > - Drop regulator-boot-on from usb 2.0 host regulators on Sige1
-> > > > - Add bluetooth and wifi nodes on Sige1
-> > > > - Collect t-b tag for NanoPi Zero2
-> > > > 
-> > > > These boards can be booted from emmc or sd-card using the U-Boot 2025.07
-> > > > generic-rk3528 target or work-in-progress patches for these boards [1].
-> > > > 
-> > > > For working bluetooth on ArmSoM Sige1 the patch "arm64: dts: rockchip:
-> > > > Fix UART DMA support for RK3528" [2] is required.
-> > > > 
-> > > > [1] https://source.denx.de/u-boot/contributors/kwiboo/u-boot/-/commits/rk3528
-> > > > [2] https://lore.kernel.org/r/20250709210831.3170458-1-jonas@kwiboo.se
-> > > > 
-> > > > Jonas Karlman (6):
-> > > >     dt-bindings: arm: rockchip: Add Radxa ROCK 2A/2F
-> > > >     arm64: dts: rockchip: Add Radxa ROCK 2A/2F
-> > > >     dt-bindings: arm: rockchip: Add ArmSoM Sige1
-> > > >     arm64: dts: rockchip: Add ArmSoM Sige1
-> > > >     dt-bindings: arm: rockchip: Add FriendlyElec NanoPi Zero2
-> > > >     arm64: dts: rockchip: Add FriendlyElec NanoPi Zero2
-> > > > 
-> > > >    .../devicetree/bindings/arm/rockchip.yaml     |  17 +
-> > > >    arch/arm64/boot/dts/rockchip/Makefile         |   4 +
-> > > >    .../boot/dts/rockchip/rk3528-armsom-sige1.dts | 465 ++++++++++++++++++
-> > > >    .../boot/dts/rockchip/rk3528-nanopi-zero2.dts | 340 +++++++++++++
-> > > >    .../boot/dts/rockchip/rk3528-rock-2.dtsi      | 293 +++++++++++
-> > > >    .../boot/dts/rockchip/rk3528-rock-2a.dts      |  82 +++
-> > > >    .../boot/dts/rockchip/rk3528-rock-2f.dts      |  10 +
-> > > >    7 files changed, 1211 insertions(+)
-> > > >    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-armsom-sige1.dts
-> > > >    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-nanopi-zero2.dts
-> > > >    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2.dtsi
-> > > >    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2a.dts
-> > > >    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2f.dts
-> > > > 
+
+> I think we have a few options to fix these bugs:
+> 
+> 1) Apply your suggested fix.
+> 2) Fix all the buggy drivers.
+> 3) Change API and have the minor be a misc_register parameter.
+> 
+> The advantage of your option is that it is simple and contained and easy to
+> backport.
+> 
+> Changing API would require changing a lot of code and hard to backport, but
+> I find it less error-prone than requiring the minor member to be reset, if
+> we end up deciding about fixing the drivers.
+> 
+> As for fixing individual drivers, one helpful feature is applying your
+> previous patch [1], but perhaps with stronger message, maybe a WARN_ON.
+> 
+> [1] char: misc: Disallow registering miscdevice whose minor > MISC_DYNAMIC_MINOR
+> 
+> I am leaning towards your suggested fix, but with different wording, and
+> before adding the test case.
+> 
+> Something like:
+> 
+> Some drivers may reuse the miscdevice structure after they are
+> deregistered. If the intention is to allocate a dynamic minor, if the minor
+> number is not reset to MISC_DYNAMIC_MINOR before calling misc_register, it
+> will try to register a previously dynamically allocated minor number, which
+> may have been registered by a different driver.
+> 
+
+let me correct commit message based on this suggestions.
+thank you.
+
+> One such case is the acpi_thermal_rel misc device, registered by the
+> int3400 thermal driver. If the device is unbound from the driver and later
+> bound, if there was another dynamic misc device registered in between, it
+> would fail to register the acpi_thermal_rel misc device. Other drivers
+> behave similarly.
+> 
+> Instead of fixing all the drivers, just reset the minor member to
+> MISC_DYNAMIC_MINOR when calling misc_deregister in case it was a
+> dynamically allocated minor number.
+
 
