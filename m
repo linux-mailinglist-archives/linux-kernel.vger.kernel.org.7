@@ -1,92 +1,239 @@
-Return-Path: <linux-kernel+bounces-730489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC889B04559
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:23:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20CEFB0456B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0276C16B86A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:23:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B4133BDD75
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688A625FA10;
-	Mon, 14 Jul 2025 16:22:55 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B6126059F;
+	Mon, 14 Jul 2025 16:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FKQYgf3E"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0669D1A5BA3;
-	Mon, 14 Jul 2025 16:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003971F4CB3;
+	Mon, 14 Jul 2025 16:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752510175; cv=none; b=ZzGFblZtqjIFhgRG9qCd8sBqkugarMPklvTx3eeAgn8EPZp/CpqxUf7WZ8ynswLTbMhJ6L8b6EqPpwOtPHvmvmWjLvnGY4huw9Zlh49Cj9icwy3bQ568cqMtBHm8qc5AhCmapdgNyPkbzhOvs+Lbu7hEtNIh8Ss7YkTC47HG76I=
+	t=1752510455; cv=none; b=q38G1IE2C3zP61rydvN6KNWFJSfutYe8zj9jX8+z9+IASNTtLW7GJEm+LOqUxmE+hPimzlKqn6ZTCK7wFG8xPl5mxMfquhSUPjNdGvv8jI9DRpjG4JvA9gLmwIsIOv8wtX+KqG0GbOC61J3mEcF/0IR1JjodDd7y0CSgows2Kfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752510175; c=relaxed/simple;
-	bh=J5BbmABitS/Z56U/21eFenfHagRARnIxhQAY6AH/nvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XX6XsBOmTnlSJic8hVj+rnzleanxuISF0Z6BCfn9AmUVbopepYQEl/Sq6NfMRNlmoDNyVMaswxogJHvsx8I2Qb2g60SgkT+f59B7Uuou1IaRwwQuaXuGN63V4g1wt5/dxRvEToj7Ia+GSkXo0jwgnVgslF7IXXRriekS62GBjEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id 0982C14021E;
-	Mon, 14 Jul 2025 16:22:49 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 895B02000E;
-	Mon, 14 Jul 2025 16:22:44 +0000 (UTC)
-Date: Mon, 14 Jul 2025 12:22:43 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski
- <luto@kernel.org>, Borislav Petkov <bp@alien8.de>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Daniel Gomez <da.gomez@samsung.com>, Dave
- Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, "Liam
- R. Howlett" <Liam.Howlett@oracle.com>, Luis Chamberlain
- <mcgrof@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
- <peterz@infradead.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen
- <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, Yann
- Ylavic <ylavic.dev@gmail.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-modules@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v3 8/8] x86/ftrace: enable EXECMEM_ROX_CACHE for ftrace
- allocations
-Message-ID: <20250714122243.19c9ab59@batman.local.home>
-In-Reply-To: <20250713071730.4117334-9-rppt@kernel.org>
-References: <20250713071730.4117334-1-rppt@kernel.org>
-	<20250713071730.4117334-9-rppt@kernel.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752510455; c=relaxed/simple;
+	bh=y2jxOeKNkzNzjBd4Buy6KiV3RBEW4nmi1WrMEKekot0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tgLl/mwzJAcgVU5clX++/Z8avM+0EuoxXTZIsnJD9InurdsqCywBc9Qjz50NlnsTJd92CgvS3mG0fOfEpExbr4Cs1JDDPXY+TexyJ0v8agmeq97ABrHfaKZJoKolP2wIkoVTQxZn7aLif/X6SqBJPrSWYirQSgPij/GAI9eRB7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FKQYgf3E; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 297771127;
+	Mon, 14 Jul 2025 18:27:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1752510420;
+	bh=y2jxOeKNkzNzjBd4Buy6KiV3RBEW4nmi1WrMEKekot0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FKQYgf3ER7OVDPog8Mh2kcdc6NWCh26CQuAzJ318DJdqa6Dt2DpnFNjdxTdAZFhwt
+	 ZdGUod3lYmWt4Okal3O+RvJnqxGnCKIm1T63wiKSKS4z7amac8zX2v8cicW8RenkI1
+	 DWT2mn8lqFWdb7wW4mjwKjpVcQcV5c6PtOQTPYBY=
+Date: Mon, 14 Jul 2025 19:27:00 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans de Goede <hansg@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v8 4/5] media: uvcvideo: Introduce
+ V4L2_META_FMT_UVC_MSXU_1_5
+Message-ID: <20250714162700.GA20231@pendragon.ideasonboard.com>
+References: <20250707-uvc-meta-v8-0-ed17f8b1218b@chromium.org>
+ <20250707-uvc-meta-v8-4-ed17f8b1218b@chromium.org>
+ <20250714145935.GL8243@pendragon.ideasonboard.com>
+ <CANiDSCt=cS9_BsEvo8fEpRDfud9nob2nzgDR6CvmcFczZurG2w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: r5wb4pojfof4fa8g781jhh8kxo5zdy18
-X-Rspamd-Server: rspamout08
-X-Rspamd-Queue-Id: 895B02000E
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/oABu5KOy2BGyNBDoF58dzOuDvF5o4bxI=
-X-HE-Tag: 1752510164-377651
-X-HE-Meta: U2FsdGVkX18IZtlRjXFC0Shaa3uvZtomzZV05f7tYUhGt4RkiFauQtQUurUuegTuoLcma+mw8FIVARA/Wj5NN1NslWhNKbTBwkarCYNoTHSkbMcATn/le9x0PhshvTnU8uVrOxG7pycAfALTcc1w3cikw76Rhkqux8yXlXh5WTjksBbCQeCbYMpBNd3INbvKLRw/hnvxlWCLKGtVZ9+yDZC30Ll6nlpiwdG3iVrbKeGPqb/hKi2pJEU3Oqx+wqWA5KH1rGRg7cYtHo5Zj8AMWeak61Y/2Zs92WL9JnS1HNjdUBv0L5qegHctcO56Pol5m+ivZUt/rbVfF9j0dom+ncrMn26ImeGxznLqJ7Kz8xGyzj/8gBNpFF8Rucy78NTn9lGP+OYWa31Abm9XEUayW1Tb47d+HsyCntzFaZksEAl2rM/KM6GRrhZa1XZ5n9x59+tLnFeOGEArptCfL7/bRQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANiDSCt=cS9_BsEvo8fEpRDfud9nob2nzgDR6CvmcFczZurG2w@mail.gmail.com>
 
-On Sun, 13 Jul 2025 10:17:30 +0300
-Mike Rapoport <rppt@kernel.org> wrote:
-
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+On Mon, Jul 14, 2025 at 06:21:05PM +0200, Ricardo Ribalda wrote:
+> On Mon, 14 Jul 2025 at 17:00, Laurent Pinchart wrote:
+> >
+> > Hi Ricardo,
+> >
+> > A bit of a stupid question, or rather a question that I wonder why I
+> > didn't think of before.
 > 
-> For the most part ftrace uses text poking and can handle ROX memory.
-> The only place that requires writable memory is create_trampoline() that
-> updates the allocated memory and in the end makes it ROX.
-> 
-> Use execmem_alloc_rw() in x86::ftrace::alloc_tramp() and enable ROX cache
-> for EXECMEM_FTRACE when configuration and CPU features allow that.
-> 
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> I believe we discussed this in the very beginning, when I just enabled
+> V4L2_META_FMT_D4XX for all the devices.
 
-Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Sorry if that was the case, it was a while ago.
 
--- Steve
+> We thought that it could break applications. Imagine an APP that can
+> work with D4XX but not with other formats: if it tries to parse MSXU
+> format it might crash.
+
+How so, if V4L2_META_FMT_D4XX and V4L2_META_FMT_UVC_MSXU_1_5 identify
+the same format ?
+
+> > On Mon, Jul 07, 2025 at 06:34:04PM +0000, Ricardo Ribalda wrote:
+> > > The UVC driver provides two metadata types V4L2_META_FMT_UVC, and
+> > > V4L2_META_FMT_D4XX. The only difference between the two of them is that
+> > > V4L2_META_FMT_UVC only copies PTS, SCR, size and flags, and
+> > > V4L2_META_FMT_D4XX copies the whole metadata section.
+> > >
+> > > Now we only enable V4L2_META_FMT_D4XX for the Intel D4xx family of
+> > > devices, but it is useful to have the whole metadata payload for any
+> > > device where vendors include other metadata, such as the one described by
+> > > Microsoft:
+> > > https://learn.microsoft.com/en-us/windows-hardware/drivers/stream/mf-capture-metadata
+> > >
+> > > This patch introduces a new format V4L2_META_FMT_UVC_MSXU_1_5, that is
+> > > identical to V4L2_META_FMT_D4XX.
+> >
+> > Wouldn't it be simpler for everybody to just
+> >
+> > #define V4L2_META_FMT_UVC_MSXU_1_5  v4l2_fourcc('D', '4', 'X', 'X') /* UVC MSXU metadata */
+> > #define V4L2_META_FMT_D4XX      V4L2_META_FMT_UVC_MSXU_1_5 /* For backward compatibility */
+> >
+> > ? I'm a bit uncomfortable with committing to a UABI with two different
+> > 4CCs for the exact same format.
+> >
+> > > Let the user enable this format with a quirk for now. This way they can
+> > > test if their devices provide useful metadata without rebuilding the
+> > > kernel. They can later contribute patches to auto-quirk their devices.
+> > > We will also work in methods to auto-detect devices compatible with this
+> > > new metadata format.
+> > >
+> > > Suggested-by: Hans de Goede <hdegoede@redhat.com>
+> > > Reviewed-by: Hans de Goede <hansg@kernel.org>
+> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > ---
+> > >  .../userspace-api/media/v4l/meta-formats.rst       |  1 +
+> > >  .../media/v4l/metafmt-uvc-msxu-1-5.rst             | 23 ++++++++++++++++++++++
+> > >  MAINTAINERS                                        |  1 +
+> > >  drivers/media/usb/uvc/uvc_metadata.c               |  4 ++++
+> > >  drivers/media/usb/uvc/uvcvideo.h                   |  1 +
+> > >  drivers/media/v4l2-core/v4l2-ioctl.c               |  1 +
+> > >  include/uapi/linux/videodev2.h                     |  1 +
+> > >  7 files changed, 32 insertions(+)
+> > >
+> > > diff --git a/Documentation/userspace-api/media/v4l/meta-formats.rst b/Documentation/userspace-api/media/v4l/meta-formats.rst
+> > > index bb6876cfc271e1a0543eee4209d6251e1a6a73cc..0de80328c36bf148051a19abe9e5241234ddfe5c 100644
+> > > --- a/Documentation/userspace-api/media/v4l/meta-formats.rst
+> > > +++ b/Documentation/userspace-api/media/v4l/meta-formats.rst
+> > > @@ -20,6 +20,7 @@ These formats are used for the :ref:`metadata` interface only.
+> > >      metafmt-pisp-fe
+> > >      metafmt-rkisp1
+> > >      metafmt-uvc
+> > > +    metafmt-uvc-msxu-1-5
+> > >      metafmt-vivid
+> > >      metafmt-vsp1-hgo
+> > >      metafmt-vsp1-hgt
+> > > diff --git a/Documentation/userspace-api/media/v4l/metafmt-uvc-msxu-1-5.rst b/Documentation/userspace-api/media/v4l/metafmt-uvc-msxu-1-5.rst
+> > > new file mode 100644
+> > > index 0000000000000000000000000000000000000000..dd1c3076df243d770a13e7f6d07c3296a269e16a
+> > > --- /dev/null
+> > > +++ b/Documentation/userspace-api/media/v4l/metafmt-uvc-msxu-1-5.rst
+> > > @@ -0,0 +1,23 @@
+> > > +.. SPDX-License-Identifier: GFDL-1.1-no-invariants-or-later
+> > > +
+> > > +.. _v4l2-meta-fmt-uvc-msxu-1-5:
+> > > +
+> > > +***********************************
+> > > +V4L2_META_FMT_UVC_MSXU_1_5 ('UVCM')
+> > > +***********************************
+> > > +
+> > > +Microsoft(R)'s UVC Payload Metadata.
+> > > +
+> > > +
+> > > +Description
+> > > +===========
+> > > +
+> > > +V4L2_META_FMT_UVC_MSXU_1_5 buffers follow the metadata buffer layout of
+> > > +V4L2_META_FMT_UVC with the only difference that it includes all the UVC
+> > > +metadata in the `buffer[]` field, not just the first 2-12 bytes.
+> > > +
+> > > +The metadata format follows the specification from Microsoft(R) [1].
+> > > +
+> > > +.. _1:
+> > > +
+> > > +[1] https://docs.microsoft.com/en-us/windows-hardware/drivers/stream/uvc-extensions-1-5
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 658543062bba3b7e600699d7271ffc89250ba7e5..fdde1d37ed2ef9058e3ea3417bec25afe454dfc0 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -25827,6 +25827,7 @@ S:    Maintained
+> > >  W:   http://www.ideasonboard.org/uvc/
+> > >  T:   git git://linuxtv.org/media.git
+> > >  F:   Documentation/userspace-api/media/drivers/uvcvideo.rst
+> > > +F:   Documentation/userspace-api/media/v4l/metafmt-uvc-msxu-1-5.rst
+> > >  F:   Documentation/userspace-api/media/v4l/metafmt-uvc.rst
+> > >  F:   drivers/media/common/uvc.c
+> > >  F:   drivers/media/usb/uvc/
+> > > diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
+> > > index 4bcbc22f47e67c52baf6e133f240131ff3d32a03..77e03273d3cf6b00cac6ebb9b29b941f1cbfd9f7 100644
+> > > --- a/drivers/media/usb/uvc/uvc_metadata.c
+> > > +++ b/drivers/media/usb/uvc/uvc_metadata.c
+> > > @@ -195,6 +195,10 @@ void uvc_meta_init(struct uvc_device *dev)
+> > >           !WARN_ON(dev->info->meta_format == V4L2_META_FMT_UVC))
+> > >               dev->meta_formats[i++] = dev->info->meta_format;
+> > >
+> > > +     if (dev->quirks & UVC_QUIRK_MSXU_META &&
+> > > +         !WARN_ON(dev->info->meta_format == V4L2_META_FMT_UVC_MSXU_1_5))
+> > > +             dev->meta_formats[i++] = V4L2_META_FMT_UVC_MSXU_1_5;
+> > > +
+> > >        /* IMPORTANT: for new meta-formats update UVC_MAX_META_DATA_FORMATS. */
+> > >       dev->meta_formats[i++] = 0;
+> > >  }
+> > > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> > > index b3c094c6591e7a71fc00e1096bcf493a83f330ad..616adc417c62a58686beccbc440a5dfac0a2d588 100644
+> > > --- a/drivers/media/usb/uvc/uvcvideo.h
+> > > +++ b/drivers/media/usb/uvc/uvcvideo.h
+> > > @@ -77,6 +77,7 @@
+> > >  #define UVC_QUIRK_DISABLE_AUTOSUSPEND        0x00008000
+> > >  #define UVC_QUIRK_INVALID_DEVICE_SOF 0x00010000
+> > >  #define UVC_QUIRK_MJPEG_NO_EOF               0x00020000
+> > > +#define UVC_QUIRK_MSXU_META          0x00040000
+> > >
+> > >  /* Format flags */
+> > >  #define UVC_FMT_FLAG_COMPRESSED              0x00000001
+> > > diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > > index be94a79b976e3de4eb957f5d2584ec6d4230469e..993b36417b4655456ce545cb42a41b55b98e4d6c 100644
+> > > --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> > > +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > > @@ -1463,6 +1463,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+> > >       case V4L2_META_FMT_VSP1_HGO:    descr = "R-Car VSP1 1-D Histogram"; break;
+> > >       case V4L2_META_FMT_VSP1_HGT:    descr = "R-Car VSP1 2-D Histogram"; break;
+> > >       case V4L2_META_FMT_UVC:         descr = "UVC Payload Header Metadata"; break;
+> > > +     case V4L2_META_FMT_UVC_MSXU_1_5:        descr = "UVC MSXU Metadata"; break;
+> > >       case V4L2_META_FMT_D4XX:        descr = "Intel D4xx UVC Metadata"; break;
+> > >       case V4L2_META_FMT_VIVID:       descr = "Vivid Metadata"; break;
+> > >       case V4L2_META_FMT_RK_ISP1_PARAMS:      descr = "Rockchip ISP1 3A Parameters"; break;
+> > > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> > > index 6f7bd38dd5aa4b1b2084685512512a380d76a5e4..863bc5b7dec32303e852d7e9c3891011ce5a3d71 100644
+> > > --- a/include/uapi/linux/videodev2.h
+> > > +++ b/include/uapi/linux/videodev2.h
+> > > @@ -867,6 +867,7 @@ struct v4l2_pix_format {
+> > >  #define V4L2_META_FMT_VSP1_HGT    v4l2_fourcc('V', 'S', 'P', 'T') /* R-Car VSP1 2-D Histogram */
+> > >  #define V4L2_META_FMT_UVC         v4l2_fourcc('U', 'V', 'C', 'H') /* UVC Payload Header metadata */
+> > >  #define V4L2_META_FMT_D4XX        v4l2_fourcc('D', '4', 'X', 'X') /* D4XX Payload Header metadata */
+> > > +#define V4L2_META_FMT_UVC_MSXU_1_5  v4l2_fourcc('U', 'V', 'C', 'M') /* UVC MSXU metadata */
+> > >  #define V4L2_META_FMT_VIVID    v4l2_fourcc('V', 'I', 'V', 'D') /* Vivid Metadata */
+> > >
+> > >  /* Vendor specific - used for RK_ISP1 camera sub-system */
+
+-- 
+Regards,
+
+Laurent Pinchart
 
