@@ -1,191 +1,124 @@
-Return-Path: <linux-kernel+bounces-729413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8284B03641
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:52:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D262BB03643
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89F5D18959B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:52:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 283381895AFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A6A20C004;
-	Mon, 14 Jul 2025 05:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597D920D4FF;
+	Mon, 14 Jul 2025 05:52:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="htsW7Hnd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WAwcwBxM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LQSTvngi"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132CA2E3705;
-	Mon, 14 Jul 2025 05:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB0D1FECB0;
+	Mon, 14 Jul 2025 05:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752472320; cv=none; b=ulHXZXvTPZlwNbD3tm19j/Anl3T4uvynR47t6B/BqRUyNSNQUkjbLR3QygmHLWp27xDtWUKhTGk4R6P1V9huVgWVeB9neEU4puwvINRCXe3p+mkdnWmnwJL72dVUO9S3H6Sv+9qMz6YN74C8KkHBaA8ZHEPsbEbtflBCpGtNG2k=
+	t=1752472352; cv=none; b=Xdi9ms6N+Jhfc4Tq5CWFgzRkf5fBwr/NOU7ccwLN5vOwtdSw8rpk//hIO4q1PdLf2EbTVfFoklwxrSOHosdbnXM9r+tdAOoOguCOflQH64lw0ra63LkL3um4eFuii9Bh8Up22EVG/1Zc+6R1Wl2H6CkweYS7ei3S7jZoSACufpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752472320; c=relaxed/simple;
-	bh=2LtHspjFSXcBOwKYztoRClrLY8oarllesMWia3wF3Xg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JjVBfULh5MBWM/rtiZTAMOBvRCoD5sOvEKJ1WrsUrfmEE+959C6PqNsr9pRjIku1rIAgQolYfmSSX//A/60QteRC3cTt/wY1xsqnio4TZVSkaLlT/gtiAbjHSJOekF3yf6potTQ4bPkE58GT3EOqe430nwutQvq1hF+Ynk0+sAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=htsW7Hnd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D75DC4CEED;
-	Mon, 14 Jul 2025 05:51:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752472319;
-	bh=2LtHspjFSXcBOwKYztoRClrLY8oarllesMWia3wF3Xg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=htsW7HndlvL4CLP5HDJ+uonTLCseq68TBcVFlLT1wvewM0BfJloFv3U9Vw1mmd2xt
-	 56wU+hxYguk7Vww+5UEDEo7laSzRBuwyDMYWmaxYFdr0yklPhm2M4dvoWRZkON6TDt
-	 XZicCOgYbjk/n0ooZ0ZMuzRc5Cjh9pWcgK74pOFvvxJSpL/rZJcPcGGI9WOrYsPkk9
-	 X1IJQjWOUBSCsV6Dh0NbKLqKXygbgxNUY7GEk094DMyruweWgsaAgINMnhBJcY64Bc
-	 TPrByFpfeThXeGTbM3lC9dS9Jau3L6QrI1A87bFpI7vEfJwA+tkR/x48KU7ecTbH8+
-	 vEIMEiwKFFE5A==
-Message-ID: <ce7e7889-f76b-461f-8c39-3317bcbdb0b3@kernel.org>
-Date: Mon, 14 Jul 2025 07:51:52 +0200
+	s=arc-20240116; t=1752472352; c=relaxed/simple;
+	bh=iG2qaT7w/dT9D0g11thzAv3huQ/PeXWKlk/XO2ue5c4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qlBABGVlUNEAsZjraBE95VNkPTKHunWVYwUUDL/fF1i+P+i+1pwvfiR7ybZA/1VNW1pnFSBgCZ4BaQW8wFP1C0FYFf4AX6CBfk5qLZj8N3qeaemyrG65Gsybw9LoJz9E0/QI61MItSXUCpbSx782+HWTKGtyRRYLHlm1zR+70U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WAwcwBxM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LQSTvngi; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 14 Jul 2025 07:52:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752472348;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tcn7KzoF3+YrILZ3Kdq0XPJoobaWTLboR5t69HVtrPo=;
+	b=WAwcwBxMpxobTR/w4nAwY+rAv/N8ucjCOv7U1ImZc6uiv5ATTUJZ2AnrNJmdip/i/WEfyz
+	yPc7OVVidfZzVTan7eVHkUrF0zX5lWm9//5sbRpxwtx5DGI+kIs+SX8Yxe6l82BrblozfL
+	22eqULLjFV8j8rHP9w+9dC5cEvtmNSxN3cfl0EGHP9XuxI+KUC12hj8FTtbQI6gYOqb5aY
+	NJCQmj6/z7H7Oe6C6ppaqepDJIJQDnZm6/ouLK/HQazp4+GmzfPynM14PyKfMDEfrhQPop
+	QqSnOBZquEHxiB7piqdbCN39cqeVl+p+a3XSLMA6xwmkzlL0utxGjmVt/uWPpg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752472348;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tcn7KzoF3+YrILZ3Kdq0XPJoobaWTLboR5t69HVtrPo=;
+	b=LQSTvngi/vg/uvwHf64AM3bw+vJJx/DNfD4JQmn7evNrWg8k5Lor8vj82gOCO2b87Syk+g
+	toHwpFkkAF9aIECA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Al Viro <viro@zeniv.linux.org.uk>, 
+	Luis Chamberlain <mcgrof@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Christian Brauner <brauner@kernel.org>, 
+	Jan Kara <jack@suse.cz>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 06/15] fs,fork,exit: export symbols necessary for
+ KUnit UAPI support
+Message-ID: <20250714073704-ad146959-da12-4451-be01-819aba61c917@linutronix.de>
+References: <20250626-kunit-kselftests-v4-0-48760534fef5@linutronix.de>
+ <20250626-kunit-kselftests-v4-6-48760534fef5@linutronix.de>
+ <20250711123215-12326d5f-928c-40cd-8553-478859d9ed18@linutronix.de>
+ <20250711154423.GW1880847@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 01/12] dt-bindings: ptp: add bindings for NETC
- Timer
-To: Wei Fang <wei.fang@nxp.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, richardcochran@gmail.com, claudiu.manoil@nxp.com,
- vladimir.oltean@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: fushi.peng@nxp.com, devicetree@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev
-References: <20250711065748.250159-1-wei.fang@nxp.com>
- <20250711065748.250159-2-wei.fang@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250711065748.250159-2-wei.fang@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250711154423.GW1880847@ZenIV>
 
-On 11/07/2025 08:57, Wei Fang wrote:
-> Add device tree binding doc for the PTP clock based on NETC Timer.
+(+Luis for the usermode helper discussion)
 
-
-A nit, subject: drop second/last, redundant "bindings for". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
+On Fri, Jul 11, 2025 at 04:44:23PM +0100, Al Viro wrote:
+> On Fri, Jul 11, 2025 at 12:35:59PM +0200, Thomas Weißschuh wrote:
+> > Hi Kees, Al, Christian and Honza,
+> > 
+> > On Thu, Jun 26, 2025 at 08:10:14AM +0200, Thomas Weißschuh wrote:
+> > > The KUnit UAPI infrastructure starts userspace processes.
+> > > As it should be able to be built as a module, export the necessary symbols.
 > 
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> ---
->  .../devicetree/bindings/ptp/nxp,ptp-netc.yaml | 67 +++++++++++++++++++
->  1 file changed, 67 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/ptp/nxp,ptp-netc.yaml
+> What's wrong with kernel/umh.c?
+
+It gets neutered by CONFIG_STATIC_USERMODEHELPER_PATH. That could be worked
+around be overriding sub_info->path, but it would be a hack.
+It does not allow to implement a custom wait routine to forward the process
+output to KUnit as implemented in kunit_uapi_forward_to_printk() [0].
+That may be solved by adding another thread, but that would also be hacky.
+
+It would probably be possible to extend kernel/umh.c for my usecase but I
+didn't want bloat the core kernel code for my test-only functionality.
+
+> > could you take a look at these new symbol exports?
 > 
-> diff --git a/Documentation/devicetree/bindings/ptp/nxp,ptp-netc.yaml b/Documentation/devicetree/bindings/ptp/nxp,ptp-netc.yaml
-> new file mode 100644
-> index 000000000000..b6b2e881a3c0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/ptp/nxp,ptp-netc.yaml
-> @@ -0,0 +1,67 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/ptp/nxp,ptp-netc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP NETC Timer PTP clock
+> > > +EXPORT_SYMBOL_GPL_FOR_MODULES(put_filesystem, "kunit-uapi");
+> 
+> What's that one for???
 
-What is NETC?
+What are you referring to?
 
-> +
-> +description:
-> +  NETC Timer provides current time with nanosecond resolution, precise
-> +  periodic pulse, pulse on timeout (alarm), and time capture on external
-> +  pulse support. And it supports time synchronization as required for
-> +  IEEE 1588 and IEEE 802.1AS-2020.
-> +
-> +maintainers:
-> +  - Wei Fang <wei.fang@nxp.com>
-> +  - Clark Wang <xiaoning.wang@nxp.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - pci1131,ee02
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    oneOf:
+The macro EXPORT_SYMBOL_GPL_FOR_MODULES() will only export the symbol for one
+specific module. Personally I'm also fine with EXPORT_SYMBOL_GPL().
 
-Why oneOf? Drop
+"kunit-uapi" is a new module I am implementing in this patchset. It allows to
+run userspace executables as part of KUnit.
+Some more information in the cover-letter [1] of the series and the code using
+these symbols[0]. Both should also be in your inbox.
+There is also an article on LWN [2].
 
-> +      - enum:
-> +          - system
-> +          - ccm_timer
-> +          - ext_1588
-
-Why is this flexible?
-
-> +
-> +  nxp,pps-channel:
-> +    $ref: /schemas/types.yaml#/definitions/uint8
-> +    default: 0
-> +    description:
-> +      Specifies to which fixed interval period pulse generator is
-> +      used to generate PPS signal.
-> +    enum: [0, 1, 2]
-
-Cell phandle tells that. Drop property.
+[0] https://lore.kernel.org/lkml/20250626-kunit-kselftests-v4-12-48760534fef5@linutronix.de/
+[1] https://lore.kernel.org/lkml/20250626-kunit-kselftests-v4-0-48760534fef5@linutronix.de/
+[2] https://lwn.net/SubscriberLink/1029077/fa55c3b2d238a6bb/
 
 
-Best regards,
-Krzysztof
+Thomas
 
