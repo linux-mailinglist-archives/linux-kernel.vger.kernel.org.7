@@ -1,159 +1,224 @@
-Return-Path: <linux-kernel+bounces-730473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA20B04523
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:13:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36C1DB0453B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:17:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A21DC3B06B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:10:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BA7C188677E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A02825EFBC;
-	Mon, 14 Jul 2025 16:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E94425F790;
+	Mon, 14 Jul 2025 16:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Aauq/HO9"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FqRj8qpT"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0360323D280;
-	Mon, 14 Jul 2025 16:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4AD256C9C;
+	Mon, 14 Jul 2025 16:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752509426; cv=none; b=r90wlZM8klJ8+YIlf/WRv6KuGXazhn9sk3nu67NGheL0Dz4chvGzo1JCsuUW0e4DdHkLttw8MVORtqsoJSFZvXS8Fk/+LddoQPV7rUNgWfM++27T5/DYExEqqDllaHpI3myRkEGxs//y2EveKmbTagK/pF4e0pONhqiHmaZ9EpY=
+	t=1752509482; cv=none; b=NWAjjydOhyHc3IAaqJjAFE7sFzvKULxRcLLnBjqEGODFcFftjuIBygIAMB4YWuaGii5/FPvYpZ0eTq18Fb9o5tllREUY0Ph5Wx/I9ZwzdGHU2QQ4LvVvWId9kLMGfRYa3uGfzNdxEtxqLTnE7dNwKm+z3/cRv1nHZV0wEYazG60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752509426; c=relaxed/simple;
-	bh=INOeSI1G96P3fbLeYvwcOfYxU0fUNYZx8hlSoEK7Ve8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=JaZBISPXR+oprnnlmYL4naV9h+b9V3dBEZU5Jh5r9Oprdrzc+/xKuxxTwaFR69wlwxMABI3b2wC2xyvX5xgmSlxfiPlU9McRJe+kecsvCYJ1co2Nxmzz0U/VWIaY7jcYmu5ewEnUdTKhoRygmQPYUcvMpmAWnsgo4Tkvh5ZcIZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Aauq/HO9; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1752509415; x=1753114215; i=markus.elfring@web.de;
-	bh=yGFL3CsKlUx5mqQW7FrhtJ6qimxNivY+M0QIT0tgJXo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Aauq/HO9xY7xhv+j75kFry4IOUh9jj+yATM96V6zP3/cvHvOFYGJo9EcHn7/UDyH
-	 6Jc+gOxxNIEqH7FkXKRIDJTmjBjsOZBs1Ry34ySwAByK1XD4qnfkDrxlmdsicAxUd
-	 YHqytN4ftfWL6WfjyuBultktmINtnu1OA1+GoM40fg81Ew4Jot8p+LCYTH1GzAp7y
-	 AcCaWOgkVjh74rIwD2b34b2YGauTPCQj8L7GUJEgWHqrEmsWSzZDVsOlx4z91S8lR
-	 OvFny145uoTgCjuEJrqVeG6H9tt68NkRcC1Z+3LT2RJfmTzAeM/7dATxUaaPoJBnQ
-	 o50ZDpmnN03RHRBH1A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.184]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M2ggd-1uciXC32H1-00GjBd; Mon, 14
- Jul 2025 18:10:13 +0200
-Message-ID: <4dd92668-7e8c-45a8-ac93-8c5a292ab340@web.de>
-Date: Mon, 14 Jul 2025 18:10:01 +0200
+	s=arc-20240116; t=1752509482; c=relaxed/simple;
+	bh=nf4vs6nOKYWis7A8F8h4VTZb3Ww/LSePChVIWjjRS4Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=t3oOKGde9zSQzzpBRO5+3vIPaN30xhBLjT3UXv+76auKnY2szcP4aZAtxNzVJN/Gu2YsWXRDSHQsYaYlvGD+as0qSCc9G0iBqCBqYnkJkov/1v861N2hLfWgNLNiUQBGpDV7jO7zDxojI1AhtZwfZMRkR00R1mQFacXUmbPZAJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FqRj8qpT; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4537edf2c3cso46829385e9.3;
+        Mon, 14 Jul 2025 09:11:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752509479; x=1753114279; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nf4vs6nOKYWis7A8F8h4VTZb3Ww/LSePChVIWjjRS4Q=;
+        b=FqRj8qpTfljob1UkpZE3vtWf+E1l/eArbL7WvKk7mvixVdmNyAQ7ExmDtUUTo8xkoi
+         sgD28dgjWzOt3dROnAciSPTVsab0chtDIBb2Hv/EkULo19Ut6gk8Ayg+Q2bQcuBf+NkV
+         SfuoAt5yC9C/5zj0vszy67xMk9b84BlHtz7qPfKOHjgvkvF05CEHFr7EFZG/2Di18r1f
+         1dgTbiqCBKQIusfjw2qJys92s4QEDBkS7DGZLhHzfzf6m08/dBnOb3IaYe8tOi6TIkEN
+         La2mDqkmH/mOSTfdyU3j17izXP2brL/HdJ5uBI5JkhW05pxFa/+SIaPrpTajBQPQAMA0
+         /sQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752509479; x=1753114279;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nf4vs6nOKYWis7A8F8h4VTZb3Ww/LSePChVIWjjRS4Q=;
+        b=pHNlm29bTa8ZzRLR5RIC6OsYGzOscJihTTPUt1dudGg+7HAwNhb4LDF7MAEhrRDN1E
+         gpmq444MwiVmFUX/5IFG7ai7ZaFyBmlzKbLVL+rUDsYRGkburrY9H0puq62MwiuaumEo
+         vnnwuyeY3YfADGVYsA66z/+sG/17EPMWvjkVEcrU3eCiUz13JDzlv/HLqg6mekGvD4Tm
+         AQ3m4rk5Od2iWvM9PWmECQQe8JWID4cQvFWTW0q8P75x68BOcnMoOwgb+VzOQaBQKPri
+         kiiNW8gxYmXCN5b4QVYjTnHu7IiFN0IwZvxHua63MHN/9NVNgdZ6XarYzalVmqaneDCO
+         7mTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVcHnJLkImaXQUbWQUH6r6LPxP4hupHNM6RmspUhvIe9ic9mFEKHAxLz1qEVSD16vXILyWmc4Gg0AY30MkA@vger.kernel.org, AJvYcCVxlTib/ujdTdahNc+CBxa0jFNEcCS5Tkm6nAlGQm+f0+BDgTfGTCaU9ELGs3lqGOba79xv962+8v7Z@vger.kernel.org, AJvYcCWOlH3jnbveah3de27+K1g2nKfC7yeoNYq23pD786arcL65Yjpin6UhgNS3TC4rdG8EAh0p77zSoR1d@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7Z9wD6ZfGpk0UW6jzKarWb50Sdi6pHEBfWsOWFUdXQT4po3Pj
+	iARE237uHQ38pH4FW2TLsVUwTPxv5a2X4wyzvENt1d6gElI06T8xU+UA
+X-Gm-Gg: ASbGncsMqVXGZfoudNBaXLHR5tc6ZwyzoH853xW/fa/W/hLRwOym8wHXiX59yPG60NU
+	9fa7bMLP62Lj1ERlsMkUK2n1/8ZsDNWwSzLsCoEEUFQjQpr5i6vycTc+JVSWyu1MNWGqBZzCF6T
+	dWcGXTRPSJUUCN97ryxj9CA/1u0uuMHthFdDeXbWl8v27lImPdzn9pNoQnZrgbi0/XWyVCHxTMc
+	2sp5nOaA4itmOGams4yrM0FzgbfGMb2+T0OgsCVbLjag9iFWwYHwqPxPlHsh5+GZfY4yEuwhWIQ
+	LCqvzQE7HpJS0MbuKKOZN21vKVOJngyD95zDEonIO5tFsNN1GNrrb0qbxvfmKCk8cmmBUJYKcJP
+	OvXcI2tCpZ4YhZr0dUgsNfrm6zBJNUA==
+X-Google-Smtp-Source: AGHT+IGUpToWdSctfAs3OEHNJr6LLvNw1cbXYajG3U/nqh4JtR7+4OuHXsfmXW0g3MdCYO1qHiV4iA==
+X-Received: by 2002:adf:b643:0:b0:3a5:8cc2:10aa with SMTP id ffacd0b85a97d-3b5f188ea13mr9929289f8f.32.1752509478866;
+        Mon, 14 Jul 2025 09:11:18 -0700 (PDT)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8bd163csm12660465f8f.4.2025.07.14.09.11.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 09:11:18 -0700 (PDT)
+Message-ID: <6b32118a13e9e28b7cf12152af33642c76367c34.camel@gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: iio: adc: imx93: Add calibration
+ properties
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Primoz Fiser <primoz.fiser@norik.com>, Jonathan Cameron
+ <jic23@kernel.org>,  David Lechner <dlechner@baylibre.com>, Haibo Chen
+ <haibo.chen@nxp.com>
+Cc: Nuno Sa <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley	 <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer	 <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>,  Fabio Estevam <festevam@gmail.com>,
+ linux-iio@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org,
+ 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	upstream@lists.phytec.de, andrej.picej@norik.com
+Date: Mon, 14 Jul 2025 17:11:31 +0100
+In-Reply-To: <de2c8e15-14e9-4c61-9a13-97ef1ec567a4@norik.com>
+References: <20250710073905.1105417-1-primoz.fiser@norik.com>
+	 <20250710073905.1105417-2-primoz.fiser@norik.com>
+	 <2bcd758b-c2d0-488a-8ead-ec7fb39f93e2@baylibre.com>
+	 <20250713160247.0f22bbfe@jic23-huawei>
+	 <de2c8e15-14e9-4c61-9a13-97ef1ec567a4@norik.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Yue Haibing <yuehaibing@huawei.com>, linux-bluetooth@vger.kernel.org,
- Kai-Heng Feng <kai.heng.feng@canonical.com>,
- Luiz Von Dentz <luiz.dentz@gmail.com>, Marcel Holtmann <marcel@holtmann.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20250628103105.211049-1-yuehaibing@huawei.com>
-Subject: Re: [PATCH net-next] Bluetooth: btrtl: Fix passing zero to 'ERR_PTR'
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250628103105.211049-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:rQxJSUL0Umot9Bag5/IhKzd68d2nZk0ldw5WqEsuEVi3ny1P5bN
- XB6wbp/HbmTU0SvJfGR1QOrYwoaq86PfeWZRINfs65ZwIZgolFSH3imzIIeIkxVDkbUKfJt
- fB4lPCW/fpqyNl7dRIvmwvc0p53XvebrUwAwdZcyoTC1tXcfiYSEOpxowFhg3S0kY9fF6XX
- lQLatDXdmksufUCH8pifA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Z5/FKDsJfPE=;yY/QF+hoprFUvI029hNfIkaicCJ
- 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
- fWOPb0YGaSFEJyot+kU1XBVZbC
 
-> If bt_skb_alloc() fails, ret should be -ENOMEM then pass to ERR_PTR().
+On Mon, 2025-07-14 at 07:56 +0200, Primoz Fiser wrote:
+> Hi all,
+>=20
+> On 13. 07. 25 17:02, Jonathan Cameron wrote:
+> > On Thu, 10 Jul 2025 10:46:44 -0500
+> > David Lechner <dlechner@baylibre.com> wrote:
+> >=20
+> > > On 7/10/25 2:39 AM, Primoz Fiser wrote:
+> > > > From: Andrej Picej <andrej.picej@norik.com>
+> > > >=20
+> > > > Document i.MX93 ADC calibration properties and how to set them.
+> > > >=20
+> > > > Signed-off-by: Andrej Picej <andrej.picej@norik.com>
+> > > > Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+> > > > ---
+> > > > =C2=A0.../bindings/iio/adc/nxp,imx93-adc.yaml=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 21 +++++++++++++++++++
+> > > > =C2=A01 file changed, 21 insertions(+)
+> > > >=20
+> > > > diff --git a/Documentation/devicetree/bindings/iio/adc/nxp,imx93-
+> > > > adc.yaml b/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.=
+yaml
+> > > > index c2e5ff418920..d1c04cf85fe6 100644
+> > > > --- a/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
+> > > > +++ b/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
+> > > > @@ -52,6 +52,27 @@ properties:
+> > > > =C2=A0=C2=A0 "#io-channel-cells":
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0 const: 1
+> > > > =C2=A0
+> > > > +=C2=A0 nxp,calib-avg-en:
+> > > > +=C2=A0=C2=A0=C2=A0 default: 1
+> > > > +=C2=A0=C2=A0=C2=A0 description:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Enable or disable calibration avera=
+ging function (AVGEN).
+> > > > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32
+> > > > +=C2=A0=C2=A0=C2=A0 enum: [ 0, 1 ]
+> > > > +
+> > > > +=C2=A0 nxp,calib-nr-samples:
+> > > > +=C2=A0=C2=A0=C2=A0 default: 512
+> > > > +=C2=A0=C2=A0=C2=A0 description:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Selects number of samples (NRSMPL) =
+to be used during calibration.
+> > > > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32
+> > > > +=C2=A0=C2=A0=C2=A0 enum: [ 16, 32, 128, 512 ]
+> >=20
+> > Allow 1 as a value and drop the enabled above.=C2=A0=C2=A0 Averaging ov=
+er 1 sample
+> > is same as no averaging and gives simpler binding.
+> >=20
+> > > > +
+> > > > +=C2=A0 nxp,calib-t-sample:
+> > > > +=C2=A0=C2=A0=C2=A0 default: 22
+> > > > +=C2=A0=C2=A0=C2=A0 description:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Selects sample time (TSAMP) of cali=
+bration conversions in ADC
+> > > > clock cycles
+> > > > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32
+> > > > +=C2=A0=C2=A0=C2=A0 enum: [ 8, 16, 22, 32 ]
+> > > > +
+> > > > =C2=A0required:
+> > > > =C2=A0=C2=A0 - compatible
+> > > > =C2=A0=C2=A0 - reg=C2=A0=20
+> > >=20
+> > > This seem like things that should be set at runtime rather than
+> > > in the devicetree. Unless there is some justification on why
+> > > these values depend on how the chip is wired up?
+>=20
+> It depends how ADC 1.8V Vref is wired up, especially how noisy it is.
+>=20
+> >=20
+> > Further to that, I'd like to see some explanation of why we care
+> > to change it at all. Is it ever a bad idea to enable averaging and
+> > pick a large number of samples for calibration?
+>=20
+> This is a snippet from the i.MX93 TRM, chapter Analog-to-Digital
+> Converter (SAR_ADC) describing calibration steps:
+>=20
+> 1. Wait for deassertion of functional reset.
+> 2. Configure SAR controller operating clock (MCR[ADCLKSE] =3D 0).
+> 3. Bring ADC out of Power-down state (MCR[PWDN] =3D 0).
+> 4. Configure desired calibration settings (default values kept for
+> highest accuracy maximum time).
+> =E2=80=A2 MCR[TSAMP]: Sample time for calibration conversion
+> =E2=80=A2 MCR[NRSMPL]: Number of samples in averaging
+> =E2=80=A2 MCR[AVGEN]: Averaging function enable in calibration
+> 5. Run calibration by writing a one to MCR[CALSTART].
+> 6. Check calibration run status in MSR[CALBUSY]=E2=80=94wait until MSR[CA=
+LBUSY]
+> =3D 0; alternatively, MSR[ADCSTAT] can be
+> used to check status.
+> 7. Check calibration pass/fail status in MSR[CALFAIL] field. If
+> MSR[CALFAIL] =3D 1 then calibration failed. Detailed status
+> can be checked in CALSTAT.
+>=20
+>=20
+> See point 4).
+>=20
+> Not sure why would there be an option to configure i.MX93 ADC
+> calibration parameters if one use-case (max accuracy max time) to rule
+> them all?
+>=20
 
-You would like to achieve a more appropriate error code for another case.
+Sometimes HW guys just want to give you some options. Does not mean we have=
+ to
+use them all :).
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.16-rc6#n94
+I guess what Jonathan is interested in, is to understand in what conditions=
+ the
+defaults are no good for the calibration? If we can have a set of values th=
+at
+should pretty much always work, no need to further complicate the bindings =
+or
+the driver.
 
-
-=E2=80=A6
-> +++ b/drivers/bluetooth/btrtl.c
-> @@ -1137,8 +1137,10 @@ struct btrtl_device_info *btrtl_initialize(struct=
- hci_dev *hdev,
-> =20
->  	if (btrtl_dev->drop_fw) {
->  		skb =3D bt_skb_alloc(sizeof(*cmd), GFP_KERNEL);
-> -		if (!skb)
-> +		if (!skb) {
-> +			ret =3D -ENOMEM;
->  			goto err_free;
-> +		}
-> =20
->  		cmd =3D skb_put(skb, HCI_COMMAND_HDR_SIZE);
-=E2=80=A6
-
-Will it be a bit nicer to perform the desired variable assignment
-after an additional label like =E2=80=9Cerr_no_mem=E2=80=9D?
-
-Regards,
-Markus
+- Nuno S=C3=A1=20
+> On the other hand, public TRM doesn't give much more information and
+> >=20
 
