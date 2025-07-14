@@ -1,128 +1,130 @@
-Return-Path: <linux-kernel+bounces-730695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06F9CB0483E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:07:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AA6AB04841
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52C9C17055A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 20:07:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A88034A5292
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 20:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A064233D9E;
-	Mon, 14 Jul 2025 20:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB643246BD9;
+	Mon, 14 Jul 2025 20:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DSsH2yy7"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LwDF24gQ"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABD1154BF5
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 20:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E09233735
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 20:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752523650; cv=none; b=mTv+8ndsuseeGIR59+iKMqLN2fP1ZFyg6QmX2CF7tdayPN1d1Wi5A3TODwEpUkCTIet9RxHaXI/luruchqYgfWlbDEX15reYUe98Bb7WkLb0TrBgNlIltLUVW+aaOcKxqVm0nq+py4xc4ymXRxWsgKkf76jmB44SAJ0Xw34yC64=
+	t=1752523701; cv=none; b=eiSMprscHr8t5M5MjNuCQH+RIWnxmLoYKmK7fR+H3b/tw1VMKsHAHsPoqj/5NUCVzznrTXP/sAvLMW+kE/6pJBkzGnFg/XfUCU+ciYjGZNYB2OaPnxYTDRzjZNQGcQ9UlOMkFdXztJEiIGWfEtYTLOKb+Ejf8ukZPwtUd2heDEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752523650; c=relaxed/simple;
-	bh=lhHj23COqr+Z1qDF/+jPVYoPfGo9fQ4Pg+5BhVl/gmM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fAlNmcBAY89AbOlIg03k0xNFQLRTmSogd3t3WunLOhXJcgrGGeYjKt8RphjYBkbaZiLLAexCVh9wjs8Ey3bzf1xI4uJU4Q4fM+C/HO9PvbtqtkPLXYrePXoqtqNTZZs8upgA03OcwQdO4hKjlXNa6r8jfDBZ7I9PckCuHM0j6bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DSsH2yy7; arc=none smtp.client-ip=209.85.210.170
+	s=arc-20240116; t=1752523701; c=relaxed/simple;
+	bh=0zDSlRkiOlS0QSI3YIJVzMXfvMcRVm9iZvEXCz8nZYI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pq+wyZrka9QkYPbldfzCGdAYN36dy/QG3N9jikd9wUW+QXophrLfYi0F+ZBM1C8MZ0nuSEOvNZUTiGt3Z4JeK6bD1VlmRE31nrN0qnWKklxVYl7Wv7br8yQmkxWy7NLjn/NkSsxBk2hPxnixHPzBGhiWehIcvTRNvcpZgZviQkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LwDF24gQ; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-749068b9b63so3204894b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:07:28 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2353a2bc210so47514075ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:08:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1752523648; x=1753128448; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DhdO2177EcE4SnYgx1n3JtwOIGI5XgQENyhYsXV5do4=;
-        b=DSsH2yy71DtFTNmrCDlDg2dp+vuvBD9Pa/uhpI4zrx5vmeQ5whtpSmohsHDhdieWYg
-         I83P7I2JFD7eHxVn3tj0+8AuUoEBL0IC4Gmk3w/CDgGxZTMIVlrupndzq+GpkPr9JBkW
-         CeJo4sjzR3fJWriZArb/3jHjzSA4/A+cbEYUs=
+        d=chromium.org; s=google; t=1752523698; x=1753128498; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JdX6wuJVyhd+STM969KIAF+7bNTfgsWX/rffAcR7Ohg=;
+        b=LwDF24gQpgysjOheTLqlaoRS0K7Xw+Iec034lX6mASePrWGs2EcHckQbptcB3O8WLD
+         2rSOxzRtxXOb9BbdnEcV6TKROfl5Fe25y2E6KDa2xxPj4Ngeu9Q36yaL1SkPQA0aeiu4
+         qrqH2LUyMCw1OpnFsSd1cmab+UycGTwMmzhM4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752523648; x=1753128448;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DhdO2177EcE4SnYgx1n3JtwOIGI5XgQENyhYsXV5do4=;
-        b=Ug0YiA8zGXI2sQe6d5Cb4rS79d78L4M9FJEWyYaH792VdtpuyP3/71JhWyon3b9M/6
-         /LptBoGn9XsNb1csV57pTv6ii1g6IYcIEZGav2lqj+quSaWFrR/BRK4CpSvYYDzUtGEk
-         FVX6XScQ7Ytwk6UvAFdANbQotWWWQXTBiFhRjICIaZlQt8+eLEDeoeusr/CpSmHrPoZ+
-         drk+V1IKGMVxMEJbSx27N0koy62NDtQjUDw9L6bsvkcj6LdlohEhfgUYKQBk2YG9iaHi
-         LXxIN6oXKG/dTn096NE9o8N3YpnDyGpFZEVzqOWhPJjJyf0BXltKR36TrhWFpGuhBhJ0
-         Gf5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVtXOoTTJUV4N5vMdWXiynVCVIsud/WpYFGG40M279Y8rgSe9tz6PJVOZ8B9cmI6J3EFlykpEFy0QfJcQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRPENPfeAftQfMxayKyXhI+aq+lCvMLPIP0dQUPityJFA9Xt5U
-	BJOIEdn6T7iiZar8n7xqmD3LpmLxbHnS0I4ty956QsXHY/pttuBNCf2aiaq06lI0ew==
-X-Gm-Gg: ASbGncsaShk5lbIq3hCKYFjZ+7IUHifXNkqbZgwYrTee6zhOoQxkP/vdUaj0fWR3rmM
-	eNTBPrrG7iCQMxWpFoeZGjjRwlA1i0f5gXcpGD7o8ltjudgNgG69FfcB4yyC5Q/d+WwjU6zPzNf
-	aBxp7P4Nlz7h7wdcHEGLfEGJxXK28Ujnx8nLMYqoH18v91u1Tj2GSSlwBwAO4xPPQogiToUivIf
-	+S3ovGELJBG6/FrH09fA+m98yhosNv9esHbjtHcbjCiytlmIYn86qlGZtPxy42CxiSJ85JgVbAh
-	jbin3NXkI5WRUpwTXm70XxrjO+8TGBz0/a146G7t+JvqoAed95NqCKJyAFSufzKLL9tTsWjv3bA
-	YPY9RaNiocjn+94Ogq8QabUjsb1RYRpkhoY+lmZ5mZFUtvvuqsCbtdfmEmeqs62j8znFWR/U2BO
-	UvQ/lJwQ==
-X-Google-Smtp-Source: AGHT+IH/sBAf7ZMF0haSNivYQxKsv1D44OPDHqeimprF/0WoqKmowK55eKE6ZIb1ExZDD+1b6JkFZg==
-X-Received: by 2002:a05:6a00:b93:b0:748:2b23:308c with SMTP id d2e1a72fcca58-74f1e7ddd35mr17399241b3a.14.1752523648187;
-        Mon, 14 Jul 2025 13:07:28 -0700 (PDT)
-Received: from dianders.sjc.corp.google.com ([2a00:79e0:2e14:7:1728:40c9:46f6:6e5e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f53903sm10032053b3a.128.2025.07.14.13.07.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 13:07:27 -0700 (PDT)
-From: Douglas Anderson <dianders@chromium.org>
-To: dri-devel@lists.freedesktop.org
-Cc: Douglas Anderson <dianders@chromium.org>,
-	kernel test robot <lkp@intel.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Jayesh Choudhary <j-choudhary@ti.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/bridge: ti-sn65dsi86: Remove extra semicolon in ti_sn_bridge_probe()
-Date: Mon, 14 Jul 2025 13:06:32 -0700
-Message-ID: <20250714130631.1.I1cfae3222e344a3b3c770d079ee6b6f7f3b5d636@changeid>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+        d=1e100.net; s=20230601; t=1752523698; x=1753128498;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JdX6wuJVyhd+STM969KIAF+7bNTfgsWX/rffAcR7Ohg=;
+        b=YxXBOojlCctQp91zl8iWwC1lx+rMXfT0bz0Ve1rjjVUXcmBQNJMrOkyjSUyVEXj8jo
+         vNBuECvm6+BCfgqg7DrmhoF7GL3BWjd/gflGbHwfQ/+2gP+xixPPhtOrOuSGB6Soz9Ra
+         QKjwOl1KlnjHswCsP4ujDkZqN7cbrktczglqZRTZKj8tNmaPnWfakczVOxZqxSnAered
+         dXDHQLhwVTmGALDLr/w3ztWRlr6uGjOAwV2mIN+3AYmBj9NCpugEkJA1UIXYuDNuvEq6
+         WCcEUD5aD9FLylkuUCQidSHswnDjoFSHEZCviyXYPOjZX0tmTPlwkDKrJDUlwehg0d7y
+         obVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpcIYBEIpBKaRV/8aXHxW1SKijleDdPYJ2IeFV/hPXn/A7gzNiS9nlSlx3r6VY+yr2QlgtXy/Wy9rhpwY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI+KNTJfjomzyiaojywe3TXBnaN5RoTyMzTxWk13VWSNXlZI1Q
+	oGWl49p9dNPSlZL6dB+8fz8QQ3qIvd5UA455DxOZrgeLAzWQ/hbSELwNuHWE9+B7W5ZhmnRwwkm
+	oEro=
+X-Gm-Gg: ASbGncuvTx4/cyrqCupz6GCVIRfgSZmf90sPFCIKZYYNkmDp1VtnF9uKOfiGnTjEvGe
+	xyhbni/XHPXqvp3GewypdApzfHbn6o7QAcRm23VqhJEh6r5cN+No0UVZ8rV+WvAQRRAaRrm2Czl
+	Ugcv+HTQiwUteyH5rQv8VPK9uYXlT86ZYeTERRQqRrvviiVc3Jvuc6DRO4DOxpoMWDz5Ojy85d3
+	zR98B2pnpIDT/7oqoa+gQKh9AdL90XY7Zc8op8SlY5JULgVqjw0zk8LrLzIZR8d8r+CPNPbdryu
+	hPpsFDl1uTUmwU+NmMxoH18EeIi/RIuXBkMGDijcMezLCSRDFYkAbgVmIc/IrlGKD2jzszXQLxw
+	oheqkM+Xl/3bO3Dp8zpnAGBZv/Rx5/U7J4Hx2s4B11DOnfz/XkASFQ92J7/QKDQ==
+X-Google-Smtp-Source: AGHT+IHBM1IdiAm+irgWRBGsjJd2OPrsBjZunR0gFWRzMFKOU6iITWNCIhH/DOMFAnLawvfVNmaV6w==
+X-Received: by 2002:a17:902:f745:b0:235:225d:30a2 with SMTP id d9443c01a7336-23dee0ded1fmr214307145ad.48.1752523697952;
+        Mon, 14 Jul 2025 13:08:17 -0700 (PDT)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com. [209.85.216.41])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42ad295sm97297695ad.81.2025.07.14.13.08.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 13:08:16 -0700 (PDT)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3139027b825so3731843a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:08:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUnKLG38F65mvpnztcpUMuQHzcYEgJdadlYC/2laet4s51U1X9SiB1aUn0xi9rNxoItsNr5EdonkVbs0LQ=@vger.kernel.org
+X-Received: by 2002:a17:90b:5645:b0:312:26d9:d5b2 with SMTP id
+ 98e67ed59e1d1-31c4c972577mr24053371a91.0.1752523695994; Mon, 14 Jul 2025
+ 13:08:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <202506301704.0SBj6ply-lkp@intel.com>
+In-Reply-To: <202506301704.0SBj6ply-lkp@intel.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 14 Jul 2025 13:08:03 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XmY1Hm7H9R1uT3nAcWOC9XFYA5YZUFWj_-xZTX335ZNA@mail.gmail.com>
+X-Gm-Features: Ac12FXw2vJl6mE_r2r8DlAbddESOYuqs5UPn3qfeXrUhF4FOOKAlHOvJs75MGjg
+Message-ID: <CAD=FV=XmY1Hm7H9R1uT3nAcWOC9XFYA5YZUFWj_-xZTX335ZNA@mail.gmail.com>
+Subject: Re: drivers/gpu/drm/bridge/ti-sn65dsi86.c:1376:2-3: Unneeded semicolon
+To: kernel test robot <lkp@intel.com>
+Cc: Jayesh Choudhary <j-choudhary@ti.com>, oe-kbuild-all@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-As report by the kernel test robot, a recent patch introduced an
-unnecessary semicolon. Remove it.
+Hi,
 
-Fixes: 55e8ff842051 ("drm/bridge: ti-sn65dsi86: Add HPD for DisplayPort connector type")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202506301704.0SBj6ply-lkp@intel.com/
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
+On Mon, Jun 30, 2025 at 2:14=E2=80=AFAM kernel test robot <lkp@intel.com> w=
+rote:
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
+t master
+> head:   d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af
+> commit: 55e8ff842051b1150461d7595d8f1d033c69d66b drm/bridge: ti-sn65dsi86=
+: Add HPD for DisplayPort connector type
+> date:   5 days ago
+> config: s390-randconfig-r061-20250630 (https://download.01.org/0day-ci/ar=
+chive/20250630/202506301704.0SBj6ply-lkp@intel.com/config)
+> compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146=
+a88f60492b520a36f8f8f3231e15f3cc6082)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202506301704.0SBj6ply-lkp=
+@intel.com/
+>
+> cocci warnings: (new ones prefixed by >>)
+> >> drivers/gpu/drm/bridge/ti-sn65dsi86.c:1376:2-3: Unneeded semicolon
 
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Posted:
 
-diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-index de9c23537465..834b42a4d31f 100644
---- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-+++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-@@ -1373,7 +1373,7 @@ static int ti_sn_bridge_probe(struct auxiliary_device *adev,
- 			regmap_update_bits(pdata->regmap, SN_HPD_DISABLE_REG,
- 					   HPD_DISABLE, 0);
- 		mutex_unlock(&pdata->comms_mutex);
--	};
-+	}
- 
- 	drm_bridge_add(&pdata->bridge);
- 
--- 
-2.50.0.727.gbf7dc18ff4-goog
-
+https://lore.kernel.org/r/20250714130631.1.I1cfae3222e344a3b3c770d079ee6b6f=
+7f3b5d636@changeid
 
