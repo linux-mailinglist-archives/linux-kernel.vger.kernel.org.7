@@ -1,146 +1,55 @@
-Return-Path: <linux-kernel+bounces-729336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB9EB03520
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:21:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA84FB03525
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC720177574
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 04:21:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CEE51894BBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 04:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FE71EFF9B;
-	Mon, 14 Jul 2025 04:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MT5KAQ2l"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853E36FC3;
-	Mon, 14 Jul 2025 04:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34531F1909;
+	Mon, 14 Jul 2025 04:24:02 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAAC6FC3;
+	Mon, 14 Jul 2025 04:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752466856; cv=none; b=YiNyUhoNx5XybRw4uh+t4hCuAgdWC7AI2B6ntWXfJj0UDjtPnoW6kpr5/nG6Urg8qzAdc7PV1ii5dvlKjt/g3bbJ3C7ionepNsHduKeToaCgcdiqKlbJt8mI4DcogVrj4KBHIex7xX602xEgxoBFHXfmhejUaYgKxL5PHS1CefQ=
+	t=1752467042; cv=none; b=YeNROScK3gwrRN3NYxhW+1PFE0m33XcUKf14qbVeuFlxi1Cn7R0amA6/Mq0jG809+Gkca8GWYhDQo38XS6Wou9WCs5nZmRSaJVCaJm6T42RP8ltIQCwOfvTsIQpAgbapFHMACAgfSRrGVaCTSi+48nmNxKxGaQUhC3TpVAI0QQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752466856; c=relaxed/simple;
-	bh=SuP+qQVi/MxIQB/1CDIRKWnHRBYowFHJSKjU7kuP458=;
+	s=arc-20240116; t=1752467042; c=relaxed/simple;
+	bh=tVtCeEn2gf6NnRX1UQX7W30NiqyFXes5Xv72AHBhBZo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M9N8AT/iKTlwsPSigcYOaUCz6XPAG9Ld7vo0s5z36Go+tm7IDOoR0VnmNNFNqrNPToyhZRXB2qhXbvflfTUSE+8SkZrATc7VphA/ZM155MwZShw9AzMIu0O2dhuucpLmtycgETb5fp4N1sDmamjZYH3g/Q+zUx8FihBkr2zPqNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MT5KAQ2l; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6facf4d8ea8so31957986d6.0;
-        Sun, 13 Jul 2025 21:20:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752466853; x=1753071653; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n7KPUZRfwzKm6vhoXm+OjqDoe1jPCZoU1nC9eh6TlIU=;
-        b=MT5KAQ2lNS6JEgsg4FJl3hGJIBjJqJ+pphzmP3wWObQ2B0IK+DTsYVs1IAkVoWBsQj
-         5F/b++gy4da9cO5UT8g9UiWTyfEKorlZerk70VmTsDjS/yGBambmmY8vR2OpnNDrmBI3
-         M0roNcv5Q5zWc4Y3gJmytcQf/99vuZCigsAKV59ON/0c5tuj3/BwYH79uCbcrsDjFTQQ
-         laSzUuZz66v16YcHZPFVE53lo3p4Ndc0avXdk5ZEz5L3UGfa17JK7FOkiKC+AAWd2zLW
-         tXqqUelIL/KGqU6qBAm16cWlwxyin8+SvzjPZ2BxgRSNrxf5yK+MfBnyhRbSbMEgo2UH
-         bYQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752466853; x=1753071653;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n7KPUZRfwzKm6vhoXm+OjqDoe1jPCZoU1nC9eh6TlIU=;
-        b=MlTo00AjpbYnV3/qMgSdtxqeYce0YfFlijdDs5oqtSCatRa3SVZicz3/dQHmDzeNgJ
-         +IAU0jt3rrjIyu+1uYJ3Hj3mIENZkPGa3xb2t/aiUbdEpgZo090b/duF93XSW/s1czyS
-         nI90HU/4SQQOZNNTC1U/XgMlHfx7XlJvqm6ZJ2YjULP7fHtSd8THjCEIK6CQKW6ql9BA
-         MXskd6cQt5YZ91GFktBM3xjKoZu1asgtWlovfeuHeJ1omOFZJxxGwhZTCJYQ68oVQsb7
-         oUrMjidX+atdWoH9sKUruY443t+4G3KaPf8CFURkx1VWTFbIIO6pWZ5aVbt9kTzr57Px
-         U8iw==
-X-Forwarded-Encrypted: i=1; AJvYcCUl5VL4KP8YelIbnvsJdHh+Z4A3gu+CBUEQoWH76cPJlcE7T8AFfqmFPcV1eUFkeJEPMeemWK9rCcLf@vger.kernel.org, AJvYcCUoIRvG5tcZTcZ5jaPkzE9ikq8mgCrj76NjAcEhXspT2rYjb68cmLSL7GkOHA/jC3tf6RVfIpzfxzy/8wv6Ed0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn95Njcuyr14wZZNxRDToEvTHsXfUqJojsIAf2b1huA8fjJgm9
-	LgTB6ziIhrWhDw0IeW0pzG5pyFsiQJ5tTu6od6/d+4O9JUT3xYI2HSpg
-X-Gm-Gg: ASbGncvFr4kGVeoMxlHc2IjZ7SoKqQ0rKTo0g+SeqEId9PqPCpU5QkyGKdweZvcV3Kx
-	v9HEXdEavqdnO8MgbBom9i8TZ5wzo/QeWef+OjpdXeGhYf2my1iimLUxVJC/2pdDk8CoRrMJRUT
-	g0T9SqOXPJLWtlTZ3Lvm5xXtUO/MxMJxrNAFwtn58IFp63T2sNHpebdzsWz3pama5fNhyOt/fuj
-	aOwvR27LGf1OIdZRwpz7KoGmjVS0BlT9koDqY4HlQ2rW9mjsvmOf5WvD2eFOKY0CxePiVWiRkBI
-	1RvJ/s5csSUpACHQNRo5k2cIhAll0xeF+ArNTlJ+dWPOzDG6ioOn6K0yVQVflmOpMJog94VWeZ7
-	IOLw0Pg1DwLlLP7EQba/KsOzFyaCbiX4S7UmT/B+vRcA0X5OLQJqWkALj9X8MWXypTx+WeDMcBg
-	/wS3sDd85ee71i
-X-Google-Smtp-Source: AGHT+IHDDJtu8kjLF/zH3u5N6Plv3lcX73uCNtxm0f/WjVKubUEQQc4jhA6eH6Rs5519YEmB38XtbQ==
-X-Received: by 2002:ad4:5945:0:b0:704:9618:51d with SMTP id 6a1803df08f44-704a7065aacmr172694506d6.39.1752466853319;
-        Sun, 13 Jul 2025 21:20:53 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70497d39450sm42915536d6.75.2025.07.13.21.20.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jul 2025 21:20:52 -0700 (PDT)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id C2CE5F40068;
-	Mon, 14 Jul 2025 00:20:51 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Mon, 14 Jul 2025 00:20:51 -0400
-X-ME-Sender: <xms:o4V0aKiB1Yw7Ddrs-kWGfndprpgdgr2L4ZwzQ1bpn3xOScxnW6O2kQ>
-    <xme:o4V0aMiNFkqdufkeyTRzHerJ32MkF7t-qTIVUX8DLu3rg7sM6jRmbbBVMvhspcwOI
-    VJwbZM5_uDHTD6gmg>
-X-ME-Received: <xmr:o4V0aGptazfK8y3G3bHmO2t0DIBwc0Ognkz1pQIMmEt5dYQJaZYAULhgcA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehtdelkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
-    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
-    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
-    drnhgrmhgvpdhnsggprhgtphhtthhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtoheplhhoshhsihhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdq
-    fhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlkh
-    hmmheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhgt
-    hhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjoh
-    hrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:o4V0aCx8tIrHfRplnrskijHUbnjmpbNmW6HQXSp3MqqCbl2dGVu6Sw>
-    <xmx:o4V0aFy-744haymfbCRLccCE2OUtfmYIzSVyeymjGwgmyHIbByiZIg>
-    <xmx:o4V0aKbLjg8NsprenSkNmhPeXiNXzO378ZXxij6O6bhpTn9N15w8jA>
-    <xmx:o4V0aGnjfOsVAqLEaOGud3_0YQJQHJ1DbIekyMfBTdy0tpC1dB3OkA>
-    <xmx:o4V0aPEK9yjyqaJ155JtUU2KwuH3hswo_x5ZsYn5jREZow-089i7qi-2>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 14 Jul 2025 00:20:51 -0400 (EDT)
-Date: Sun, 13 Jul 2025 21:20:50 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v6 6/9] rust: sync: atomic: Add the framework of
- arithmetic operations
-Message-ID: <aHSFosU8tS1Oqj4l@Mac.home>
-References: <20250710060052.11955-1-boqun.feng@gmail.com>
- <20250710060052.11955-7-boqun.feng@gmail.com>
- <DB93KSS3F3AK.3R9RFOHJ4FSAQ@kernel.org>
- <aHEiE0OoA3w1FmCp@Mac.home>
- <DB9GDOR3AY9B.21YFXYHE4F0MP@kernel.org>
- <aHFrUa3VWaKTe0xr@tardis-2.local>
- <DB9J3GBDB2UK.2OHWT5AI5DXFD@kernel.org>
- <aHGAhbmgsb9f3ImR@tardis-2.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kWxVeLtPWzF2lbOH7NzlsRL3TebLrcnt3SQEl8yWgEg+gBcp7AW+F67F6HE1c3+5v8IgRCLD8Db/fewbDdoeU3fU2wl/NJuFu5vYxMs8NShx8E2+ngre4nniIqfZmVixcS2jegjCoLBv0Y5PXw2fB4I8CkF//e/AUHZeOICxvcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-54-68748658e11a
+Date: Mon, 14 Jul 2025 13:23:46 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: willy@infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
+	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
+	akpm@linux-foundation.org, davem@davemloft.net,
+	john.fastabend@gmail.com, andrew+netdev@lunn.ch, toke@redhat.com,
+	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
+	saeedm@nvidia.com, leon@kernel.org, ast@kernel.org,
+	daniel@iogearbox.net, david@redhat.com, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, horms@kernel.org,
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
+	vishal.moola@gmail.com, hannes@cmpxchg.org, ziy@nvidia.com,
+	jackmanb@google.com
+Subject: Re: [PATCH net-next v9 1/8] netmem: introduce struct netmem_desc
+ mirroring struct page
+Message-ID: <20250714042346.GA68818@system.software.com>
+References: <20250710082807.27402-1-byungchul@sk.com>
+ <20250710082807.27402-2-byungchul@sk.com>
+ <b1f80514-3bd8-4feb-b227-43163b70d5c4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -149,52 +58,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aHGAhbmgsb9f3ImR@tardis-2.local>
+In-Reply-To: <b1f80514-3bd8-4feb-b227-43163b70d5c4@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe895d85xNnidZW/1oVhJYGRZUs8Hi27Q+VIEfagMrJWHNnKr
+	NjUvBJaWNXPdhGwqrZv3HCxzKiY2TbtSGdbpqmlKlhlZDU3b8hhR3378/w+/5/nwCKzWoZoh
+	GM2JksWsT9Bxaqz+PPnSgi1HEw2LMqsIFLoqOagYToGSrloVFJbXIPg+8oqHby1tHFy+6GOh
+	8FEWhh+unyz0tnbzUOFeD53FfRgasj0sdJ+8w0Fu1igLN0cGeThcW8rA4xq7CvJ+XmXBk9HF
+	w9P6Qg7eVgZU0OfNxXDXUYah074SWp1h4Ls/gKDF5WHAd6KIg7PtTg56sjoRtDd3Yyg4ZEfg
+	apRVMDo87ii4/ZZfOVdsHvjCitVlLxixzvGGF53uJPF6aYRok9tZ0V1+nBPdQ2d48fWzBk68
+	kz+Kxbrab4yYmznIiV97X2LxS2MHJ7qqO7D4wNnCbwyJVcfESwnGZMmycMUOteFrRz7el82n
+	ZJ7yoAzUqrKhIIGSaDrYf2SchQl25UQpMSbhNM/hYRTmyDwqyyOswlPIfPrpuZe3IbXAknyO
+	Vr0r5pQilOjpvTE7VlhDgPpsP7AypCV5iD58MsD9KULo3fPvJ4ZYEkFlfz+jLGbJTFriF5Q4
+	iCynDyrGJpZNJXNoU00bo3goaRLolfN25s/R0+mtUhmfQsTxn9bxn9bxT+tEbDnSGs3JJr0x
+	ITrSkGo2pkTu2mtyo/GPKT44tq0WDT3e5EVEQLrJGrnaatCq9MnWVJMXUYHVTdF8fGMxaDXx
+	+tQ0ybJ3uyUpQbJ60UwB66ZpFvsOxGvJbn2itEeS9kmWvy0jBM3IQLFturLeUdko5HQNzBnO
+	WWYL86e1qH/F8MHxmy4+igtJWxpof7h52qzOY2Aq2BKHV8ecdn4I+aU+11jFRSUFpQvlwV3+
+	7FlPXMYiqSgtf8Ok0/Vln0+kr4u40NSz9tzWsWUBc8+a4GvdN2bvXxKqXs+aUgM7A33hq+Sh
+	HbHb/ZVuHbYa9FERrMWq/w04IrSdLQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTcRjG+59zds7ZanRaVicDraUJhnah6KUs/BB0CpLoQ0IUtfLUhtuK
+	bYoLQk3JWrluo2xOWFle5miwzM1QkWkzMzMX1rqpWY0uZul0aC7LFVHfHt7f87zPl4fGJWEi
+	mlaodbxGLVNKSREhSttQkJR+Uidf2fgoBSwOOwk14zlQ2e8WgMVWh2B04iUFwdY2EsqvhXCw
+	dBUSMOb4jsN77wAFNc7t0FcRIKChyIXDwLn7JBQXTuLQODFEwQl3FQYtZe0CeFxnFIDp+00c
+	XHn9FDy5ayGh1/5TAAFPMQHt5moC+oyp4LXOh1DHIIJWhwuD0NkyEi75rCS8LexD4GsZIKA0
+	34jA0eQXwOT49I/Se71UajzXMvgV52qrn2Ncvfk1xVmdWdztqkTO4PfhnNN2muScIxcp7tXT
+	BpK7XzJJcPXuIMYVFwyR3PD7FwT3tamH5Mo/fMM4R20PsUOyW5SSwSsV2bxmxab9IvlwTwlx
+	tIjKKTjvQnnIKzAgmmaZNazjzCoDEtIEE8+azC4sokkmgfX7J/CIjmKWs5+feSgDEtE4U0Ky
+	t95UkBEwl5GxD8JGIqLFDLAhwxgRMUkYE2I7uwfJP2AO23713W8TziSy/qmPWKQYZxaxlVN0
+	5CxkNrIPa8K/y+YxS9nmujbsPBKb/0ub/0ub/6WtCLehKIU6WyVTKNcmazPlerUiJ/ngEZUT
+	TW+i4nj4ghuNPtniQQyNpLPE/lqtXCKQZWv1Kg9iaVwaJf70WiOXiDNk+mO85sg+TZaS13rQ
+	IpqQLhBvS+f3S5jDMh2fyfNHec1fitHC6DzUtiv4I+3j2i7f1XnGzYdexa3MNX1R5XoCe5Mu
+	/5hpmG3TJQ+tS45Z0dq1ZESwemuTeGfM4KlluVfsecw2+z5hmmWDQS62KgsCCRbVrtju8T35
+	d8KYVnojOLIzhHVUL4neEpdqK2QWm69P6Y2xWZ0Lk7wzTpuEP63rY45nHGiuOywltHLZqkRc
+	o5X9AlsVzYoPAwAA
+X-CFilter-Loop: Reflected
 
-On Fri, Jul 11, 2025 at 02:22:13PM -0700, Boqun Feng wrote:
-[...]
-> > >     pub unsafe trait AtomicAdd<Rhs>: AllowAtomic {
-> > >         type Delta = Self::Repr;
-> > >         fn rhs_into_delta(rhs: Rhs) -> Delta;
-> > >     }
-> > >
-> > > Note that I have to provide a `Delta` (or better named as `ReprDelta`?)
-> > > because of when pointer support is added, atomic addition is between
-> > > a `*mut ()` and a `isize`, not two `*mut()`.
+On Sat, Jul 12, 2025 at 03:39:59PM +0100, Pavel Begunkov wrote:
+> On 7/10/25 09:28, Byungchul Park wrote:
+> > To simplify struct page, the page pool members of struct page should be
+> > moved to other, allowing these members to be removed from struct page.
 > > 
-> > Makes sense, but we don't have default associated types yet :(
-> > 
+> > Introduce a network memory descriptor to store the members, struct
+> > netmem_desc, and make it union'ed with the existing fields in struct
+> > net_iov, allowing to organize the fields of struct net_iov.
 > 
-> Oops, we are lucky enough to only have a few types to begin with ;-)
-> Maybe we can use `#[derive(AtomicAdd)] to select the default delta type
-> later.
+> FWIW, regardless of memdesc business, I think it'd be great to have
+> this patch, as it'll help with some of the netmem casting ugliness and
+> shed some cycles as well. For example, we have a bunch of
+> niov -> netmem -> niov casts in various places.
+
+If Jakub agrees with this, I will re-post this as a separate patch so
+that works that require this base can go ahead.
+
+	Byungchul
 > 
-
-Turn out I could give `AtomcImpl` an associate type:
-
-    pub trait AtomicImpl: Sealed {
-    	type Delta;
-    }
-
-and then
-
-    pub unsafe trait AllowAtomicAdd<Rhs = Self>: AllowAtomic {
-        /// Converts `Rhs` into the `Delta` type of the atomic implementation.
-        fn rhs_into_delta(rhs: Rhs) -> <Self::Repr as AtomicImpl>::Delta;
-    }
-
-(Yeah, I named it `AllowAtomicAdd` ;-))
-
-and I only need to provide `Delta` for three types (i32, i64 and *mut
-()).
-
-BTW, since atomic arithmetic is wrapping, do we want things like `impl
-AllowAtomicAdd<u32> for i32`, similar to the concept of
-`i32::wrapping_add_unsigned()` ;-)
-
-Regards,
-Boqun
-
-> Regards,
-> Boqun
+> --
+> Pavel Begunkov
 
