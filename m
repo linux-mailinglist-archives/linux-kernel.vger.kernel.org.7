@@ -1,98 +1,122 @@
-Return-Path: <linux-kernel+bounces-730170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B96F7B040F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:06:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC91CB040F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F654163DA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:06:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B86263A17FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DB824DD0B;
-	Mon, 14 Jul 2025 14:06:29 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78671254AF4;
+	Mon, 14 Jul 2025 14:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="NMI4dFbD"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29E324DCEF
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E125524A04D;
+	Mon, 14 Jul 2025 14:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752501989; cv=none; b=F5/C9uxDXBCjMdIGxr5jBWdZEG9yQSDpKfT1TYIkXXmEj5d9xLIv+njq5W8ifzDUyMhJsD3gFgUH0T7KhasjVdP7hekIbZsZZtw0hfJ/wXwHKLToOhhJvDyDPYFw6HQtbbCk/Fty4rlerWq5bKxBiPjP9V392gYY7CjnC9/pRjs=
+	t=1752501987; cv=none; b=pAl5gXbzW8mhj6TdisZgFxeJO/TtjDZDatSmTPnaSg6gdHcgzvKn3S+nD4QeLgUD+jcwTaJsRsA8MSSEcIbSQRDMoFJr45uD2QlBG0uSGolaMFTCo8DOhLpfPXfH5NtV6AG5sh8aj2vlYY2scLKJn0Q3s/goHH6gPL2kxxkNE9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752501989; c=relaxed/simple;
-	bh=Xwr1vcyUrckVHV5kH7obupTr6TzvD31DOMhK/UPVmJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HmwLFAeIvxgxpdou8cCTnYTrekVLrQUw1sg0vXt9SOXX5fHQX1IwE7QUnhAVpEVP1oaJ5uRnpzKwHf45xWdAIbmnO5w+YZbyedBr7y7Srvs7mXscX7ZNE6yJBewRvTb4ctCRIdIwRJHBMn2YFgJCPCJHad0wCB1K8LDNbc0vOo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id 725DC1401A7;
-	Mon, 14 Jul 2025 14:06:18 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 4E8B420;
-	Mon, 14 Jul 2025 14:06:14 +0000 (UTC)
-Date: Mon, 14 Jul 2025 10:05:53 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, Josh
- Poimboeuf <jpoimboe@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu
- Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
- Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, tech-board-discuss@lists.linuxfoundation.org
-Subject: Re: [RFC PATCH 2/5] unwind: Export unwind_user symbol to GPL
- modules
-Message-ID: <20250714100553.4e30a669@batman.local.home>
-In-Reply-To: <2025071435-disorder-obliged-b74e@gregkh>
-References: <aHC-_HWR2L5kTYU5@infradead.org>
-	<20250711065742.00d6668b@gandalf.local.home>
-	<aHSmIa3uffj5vW-m@infradead.org>
-	<20250714062724.6febd9fb@gandalf.local.home>
-	<aHTsOcIUs0ObXCo1@infradead.org>
-	<20250714075426.36bdda0b@gandalf.local.home>
-	<2025071443-lazily-blabber-3fbd@gregkh>
-	<20250714082033.702160ad@gandalf.local.home>
-	<2025071419-negligent-balcony-84c5@gregkh>
-	<20250714093547.62159c19@gandalf.local.home>
-	<2025071435-disorder-obliged-b74e@gregkh>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752501987; c=relaxed/simple;
+	bh=lF4HUh2FNID12gyCRHT/h0QFn8b9KU09/te1cR2FPsI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=K3GrRu2pGnBHqoG/faJWCz8i15uNM42lKRwNOclgDbEmiwDqYoux6nhD1pVfrSsPEOuqz+aUKkw6x275dEZqFAbuXquoPK/chSvbspH+vzDmF5i953sDSA9JHmFjN/6fvg5STVlJT6KUTXlQZNHLflBZj1E4ktvl1z7fD3HPjM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=NMI4dFbD; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: b37eb49260bb11f0b1510d84776b8c0b-20250714
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=7mJcjUvSFYbGs2W28uhwfy8o8MgVOg2cTpg8MwDAIIY=;
+	b=NMI4dFbDMuGIoSAH+Vtf8BO/n5iIdGSMOANTQUk+5Xd7RoENje9s4jD6hWLGC5dHrvdo/wEB8wVnCZ7zagOOyRFT7/D7Uwm01cNXE4HRSuNtRhMPfpyOaiLhOt1SOMBVPqIyofCbmVDLNx2FjrdJqx1h/rVwYBbE/Zp6rVz9dz8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.2,REQID:13d9c071-fbe1-4aa9-8bd5-929429c89e0b,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:9eb4ff7,CLOUDID:08c624df-2070-40bb-9c24-dfabef7c07f4,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: b37eb49260bb11f0b1510d84776b8c0b-20250714
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
+	(envelope-from <sirius.wang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 654204093; Mon, 14 Jul 2025 22:06:13 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Mon, 14 Jul 2025 22:06:11 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Mon, 14 Jul 2025 22:06:11 +0800
+From: Sirius Wang <sirius.wang@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, "Matthias
+ Brugger" <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@mediatek.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-serial@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <wenst@chromium.org>,
+	<xavier.chang@mediatek.com>, Sirius Wang <sirius.wang@mediatek.com>
+Subject: [PATCH v4 0/3] Add mt8189 dts evaluation board and Makefile
+Date: Mon, 14 Jul 2025 22:06:02 +0800
+Message-ID: <20250714140608.2065966-1-sirius.wang@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: uk14f84iiya4zs1gm7jy868hjjsqqpfj
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 4E8B420
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+PP/+9tdRnbTHtccOPaywoOJty52BLQkU=
-X-HE-Tag: 1752501974-194159
-X-HE-Meta: U2FsdGVkX1+/giixfV2RlkeRZA8zduW88pyYsFrCy6jtetZwp17Emm04BU9ruvrAQX8bKLnbaJHquYqRUF8vMkB3S7qJHgNvQbginLS4SvEiTspV2M48Sdasm92naa5I4uqPDI+mFcDMJ33yh2NZjGY52dNQNrgxXIUjNASXhADfJ4qXwz9sx/lV4BK5ZjGLUDOlmrB16a2iEdfi/bMAcoeqcN1UcPeo0QM1wLFR+Vi1nS/Q5+rxtr3QMMmBl8Vk9xyivBDvxgcUK6y7icTraYcdvUUt5G1tLc7FcmKTIkotbU65PXBgwxxjbvhZB/vv++FyL47WUexKOJFoTVClFGIVJWwrtUXDmvl0T6pmGG6N2Q3MjkwmDXKbKTO7b8qA
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Mon, 14 Jul 2025 15:56:14 +0200
-Greg KH <gregkh@linuxfoundation.org> wrote:
+We add basic chip support for Mediatek MT8189 on evaluation board.
 
-> lttng not getting merged because you don't have time to review it should
-> not make the above rule somehow invalid.
+In this series, we also add dt-bindings document definition for MT8189.
 
-Well, it's because LTTng is a separate entity that handles different
-users than I worry about.
+This series is based on tag: next-20250714
 
-I'm having enough trouble keeping up with what is already in the
-kernel. If we can find someone else to help out, I'm all for it.
-Currently the tracing subsystem has two maintainers (Masami and
-myself), and there's still not enough time to review the current code.
-Mathieu is listed as a reviewer on the tracing subsystem. Could he
-review his own code?
+Changs in v4:
+ - Correct cpu-idle-states
+ - Change the "reg" property name of the "memory" node in the 
+   device tree source (DTS) to lowercase.
 
--- Steve
+Changs in v3:
+ - Move ulposc and ulposc3 before cpu nodes.
+ - Refactor cpu-map to a single cluster0.
+ - Change cpu nodes name from medium core to big core.
+ - Move psci before timer nodes.
+
+Changs in v2:
+ - Fix warning issues for make CHECK_DTBS=y
+ - Add mediatek,uart.yaml document
+
+
+Sirius Wang (3):
+  dt-bindings: arm: Add compatible for MediaTek MT8189
+  dt-bindings: serial: mediatek,uart: Add compatible for MT8189
+  arm64: dts: mt8189: Add mt8189 dts evaluation board and Mafefile
+
+ .../devicetree/bindings/arm/mediatek.yaml     |   4 +
+ .../bindings/serial/mediatek,uart.yaml        |   1 +
+ arch/arm64/boot/dts/mediatek/Makefile         |   1 +
+ arch/arm64/boot/dts/mediatek/mt8189-evb.dts   |  20 +
+ arch/arm64/boot/dts/mediatek/mt8189.dtsi      | 419 ++++++++++++++++++
+ 5 files changed, 445 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8189-evb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8189.dtsi
+
+-- 
+2.45.2
+
 
