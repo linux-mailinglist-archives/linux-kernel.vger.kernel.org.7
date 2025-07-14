@@ -1,120 +1,167 @@
-Return-Path: <linux-kernel+bounces-730840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB1CBB04AB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:31:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8887AB04ABD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:33:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 110DD18839E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:31:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D58E04A4AB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5340225D6;
-	Mon, 14 Jul 2025 22:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DAE243968;
+	Mon, 14 Jul 2025 22:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nC2v84ys"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cLnbG/TV"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C67B1A5BB1;
-	Mon, 14 Jul 2025 22:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B61922F152
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 22:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752532217; cv=none; b=KcYiV2M6HcszZ1OdVAwPHBF33F/QYX6reeiiE2XfRT8Xb2L2gJrg/t55cJc+iBXYLfDPKEgaBTDyPeni0xC+XLJmvhv1x9kUytml5uXGXjTHvu65v7KV3QQKpPE8/GF8lWzc57lKcyol4wFDrjgeyfqG5cN9H4t4orB8tWPGC+g=
+	t=1752532425; cv=none; b=YeH0Ofbfob2kdVWnltSisHJ7jCcj9SPX3qir+AopvEdDhEkaPODYrt3mU3Ywa7kMAPPgt/oxhowajmOZrbgLbgimIb9ijzH3BKetQLCTErdZRbL2NnL6cjfbfGAi8fth22PPjUoLDKRbL8nlGuKkUURPE8hzLsI0LTPMsU5L5cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752532217; c=relaxed/simple;
-	bh=iXqppg9k8rV1d6w4yOEjGAZY8uZOr1ScrIu3M0QPUkQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=F7gu3pjtpCehy+zamaEMJBgzy2xrQiw9ZKN1QKkwGOzUHxAAopZUCxOq4i2ehg/+3Qxo/3kDhzRggflj406UEUX79+fIAzXACaCLhHluv8Dcij9E73EOJBzVggaUbz7G6apRUJOr4aqIJAPC0T2zJt7Z35sLIPTxVBt+3dWH4NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nC2v84ys; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-8760d31bd35so182465139f.2;
-        Mon, 14 Jul 2025 15:30:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752532214; x=1753137014; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iXqppg9k8rV1d6w4yOEjGAZY8uZOr1ScrIu3M0QPUkQ=;
-        b=nC2v84ysSST/fWf8/AphARrzEHuxfoTziYHtlOxCC5+E8PptK885+fW/+GOqziPd4j
-         3uw0p24m4HCeXyIPYRCxvOmoW6RRokObJbhEvYJVEf2WJP7JoNuQlxEcVQVrh5WOXwwo
-         85T1VinIDEfQMnABWwas4JIRRTlWz/8WaYtT93oUXdO9ci/l5NvmqW8w8YDssq+sYKQb
-         KjhguT4+DXWbxYozaebF3176YnwuWvAlOmRVgMwb83ImJ9umABuPkg7xFphT9RHuQ5XF
-         fQ+I/7n7njzNEuPeozLFkqIsh24Dpu5Yzi1eyspY+HW6lgCWcN6AstW591REZSC3Ltuy
-         ZsLQ==
+	s=arc-20240116; t=1752532425; c=relaxed/simple;
+	bh=bunis5LfXrPX5VTCd+1M7mKLIy9OUoNx+GoYz1o1G4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ohbpCGds7to6bpfO0up2rm2lfDmNYOZ70X0absLJKG+M0wRBH3DL9fvebq6vxqqnzxr06L1iig36nNssJNEv+t5OWw8MvUAQ+xGi5vzw1vjtkjGEtoYHhn+yi7JC4jdv7MSAmTkyFG6mEIZGfFxgAueAFaLppw/qbM57aWwFOGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cLnbG/TV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56EHbnnO027032
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 22:33:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jin39v5RU2OC6taZwVEep++H4MP+V5H7HkCH2SULjQw=; b=cLnbG/TVb7wqSU9v
+	zXIC8UP2dgJsrBQ/B49OUI5+PtwnNpBuqPs7LZhg2O42Jmd6A5PxQw/dh/SgKwIK
+	EzxjQqEWQRmCdeUQFQHRPpkwOCxY4f4rXXUTe31S63/hhRRkKLWIKjFeAoW1IYUe
+	VTohsGPvpiI51AuRT5/LwE4T/NbaSkfokgp8/Pgadh9/CNNOKetIbDQf7wWyq8Tu
+	5phMJwzNcqPQV7F/zdmW7gUKxPcm9lXFrY0cB1IfKmQ/iOvEKpx1CnImyFgedVEU
+	ONa83X4bOFlrR9FXvS9Xgr1nrLa9HgxCtFlv94cLsUbt14wEBqu0s9+Sqpdour2l
+	pcPwew==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ugvmxd12-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 22:33:42 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e1aeab456cso253934485a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:33:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752532214; x=1753137014;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iXqppg9k8rV1d6w4yOEjGAZY8uZOr1ScrIu3M0QPUkQ=;
-        b=ebAmE0ZMRcNWVvVnIfgaWi1xQG1AD4QU2EUWQ3Pzf3FbYlA1jyuH9SBl14R+KJW7wu
-         oxTQwnDqMu3IhwK2nStgvjkFttZ4jT2GWTRCd/WDLMDts6kgVR4dYgnXlRv0z2mkgQM1
-         gVfxkG8CssyJ0OEnTxiQceKCybE6VX58QFqkh9zLqX62G73pVs2yQCZuRQzOlqYkYOXg
-         NaxNYZzBZzMB8vfegVsIZzCGMgjaG74jRlVhcQW5NMBfmzES3CoJYa0hqvwUKfP4OAnj
-         84tomb1tA7Pq/hYqDC6+kZkTV11Pyxuf5lyAGjke9CrZ6845YC+YnSCregzwUiU/7TON
-         Qtvg==
-X-Forwarded-Encrypted: i=1; AJvYcCURU7KzPpzVMXVec2tDd7+Y/SMkoHeLq+U/E+SYdQI9Ci+IqSNL18XS+8AB0C9qlF6IIuZiehNda5BDYwc=@vger.kernel.org, AJvYcCXJnOi/vYPQzDaWZHM85DPI9q56z1s+qehmPfv399Qg2oEY4MJ+LJnBogNNjBD+vvoOaB64fweSVDIs7Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY+iOXpYKdVBtTB+jak6DPMcs5SCQvWNj5FyyoIjMBUVPv3OEQ
-	3Fltt4ISd+qtVr8vXsbEW1nXlbzSxTu2ZYsYazwVmWTAF0olSDlod2mGX8epsrw=
-X-Gm-Gg: ASbGnctYR4sw438C/upp9ltPn6PZaH/gpmXL3jlLGPVjmr2lDFExKbcj6cAGVdg5dzk
-	y6aqQboB4qdoOeAGu6G8H1T8Mf0PPtFltmXfWYF0eJ3w3KP+49vVL5Vsc9abdAm8v8/htF6WplS
-	Wn6E6Y2EvOS2ZOC82Tr6yBkV4TVsRTC6rM0okstEXbW/zABfz5EVuudaGSX3khKIbHOx6jFfueT
-	rg0DFZPJrYur6tsuSRTh/npbjHsIKxfMsrgxsISZjyu7JVm17YsBUPhzN7am2gHC6TYhENT4yZV
-	fLhyunKdjyMUrwtPfTxOakKZcUvPPyNX2YsDgNvt5BQHhEI3KvaXRkt4ge00oKRukMEa+9LRPfr
-	KwFlW1YtWKiC3ImnGAS5djwyigHvZolm/kXP8ug==
-X-Google-Smtp-Source: AGHT+IHygS17S19Nxz9wCfYqxbOBgc6XAIudJj4aYVo1DBv4RIhZTMfupb8fQiLbUq/dSVUg716FPw==
-X-Received: by 2002:a05:6602:13c4:b0:864:9cc7:b847 with SMTP id ca18e2360f4ac-87977fe5c3bmr1903389239f.14.1752532214534;
-        Mon, 14 Jul 2025 15:30:14 -0700 (PDT)
-Received: from leira.trondhjem.org ([204.8.116.104])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8796bc1313asm270321739f.28.2025.07.14.15.30.12
+        d=1e100.net; s=20230601; t=1752532421; x=1753137221;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jin39v5RU2OC6taZwVEep++H4MP+V5H7HkCH2SULjQw=;
+        b=hWlL5HeNYbW42YkwB/FqcN4Tbk4WmYy/kyOVO1hm4uApBhEs3kl8d0SuAbahulhxvr
+         cZs8hVDuS9WFrNWXuVJGOatDdGDSDYryZsuBkUBQ434570TK3a5wvFSUVQhgkon9M4pK
+         u78QSaOUYsVgxQ5fDBgBjvow2qRjF8sI+D9Ws0eaKWrT3P/2tfv9g4IjBRZbfZzvVW3t
+         b8o+auB3WDUkLJubGa2QTA+zgDoOQeJ0KjmDzLW4nHP8bkokZGjRQWen0hVlO5pZZ67t
+         xF09g/metnQFoABrElRAjwMoMouGgdgVAIxe+Iqdy2nnBc/VBrJb/uy37JEBHYHgkoaC
+         LXpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsF9R5INYUnJnZi1+f+DP5TRqHs11pPClVT8tOJ2KrmgQvIDgqwHyuZGRs9HY+itxIauwzD0tyNzychCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza75PVRO+XWcqJObgMhs/Ge8shnbI9CcPn+5szdvdplcJedl2x
+	Yj3hA/Hk4n+JzgEntbRCOT86UzRT7uAXRK2pKszo54HUznYFJKlRzC3e3r0eTA+M83Fn+AsiknZ
+	UHNAYPPSMJS2h/h9EyEv0GL0a3nSHz5HdTYqJv26I48EHeZU8I50I+strZEyo1jb9CUU=
+X-Gm-Gg: ASbGncuNkNimKUvqlx4OwV1M18Vfdsi6rJ6XFwbfmRCuVrxo0h7NFRcztOynT9y5ea4
+	G7iWLmhWMCCUArnYqDUUScNqhBF2CXcc3DQzLcnMz6PE7lJ6kWKe8DsF1gdjc89rrQ1GAWK2jWG
+	ZYOpoCYWc9CygQrxg+AsZYAurvhCDweY7DQITxhqXeZzNmldEEikcZl09BeiOZOohE8SnZtg19Z
+	IhQMDJ9UFddn042X0mX2QxiUIw5XIkbfaYTtv8CIiS1tNuYoveJUZcFmkDcNrvY6A3Q+NlkEl6w
+	XyW9LHZaSXtpy52zybjyfqx8LLtaQElnKd7pUGODyx6AuutXwpcQrNb1HT6xqVCcI458IGoaNqm
+	ScY6S+aaSX2t3IDRUaGGHDqO3ZX3SNghVUG1bAHiuzUx9BUyBUGP0
+X-Received: by 2002:a05:620a:472c:b0:7d7:891:83f with SMTP id af79cd13be357-7e338d264c6mr102022885a.50.1752532420665;
+        Mon, 14 Jul 2025 15:33:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFCqBgY+159Vec1cfE9dZ+u3XhxSpLqUZeIaerPTNko5JEPCLrdG5Wtqgg6IXPtXcsQrNQU6A==
+X-Received: by 2002:a05:620a:472c:b0:7d7:891:83f with SMTP id af79cd13be357-7e338d264c6mr102017785a.50.1752532420066;
+        Mon, 14 Jul 2025 15:33:40 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32fa2930e70sm17078441fa.33.2025.07.14.15.33.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 15:30:13 -0700 (PDT)
-Message-ID: <6af3f3273703c29dad890934a7fdb14153858ff8.camel@gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the nfs tree
-From: Trond Myklebust <trondmy@gmail.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christoph Hellwig <hch@lst.de>, Linux Kernel Mailing List
-	 <linux-kernel@vger.kernel.org>, Linux Next Mailing List
-	 <linux-next@vger.kernel.org>
-Date: Mon, 14 Jul 2025 15:30:11 -0700
-In-Reply-To: <20250715075731.52b7485e@canb.auug.org.au>
-References: <20250715075731.52b7485e@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        Mon, 14 Jul 2025 15:33:39 -0700 (PDT)
+Date: Tue, 15 Jul 2025 01:33:37 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Dale Whinham <daleyo@gmail.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        =?utf-8?B?SsOpcsO0bWU=?= de Bretagne <jerome.debretagne@gmail.com>,
+        Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
+        ath12k@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/9 RFC] dt-bindings: wireless: ath12k: Add
+ disable-rfkill property
+Message-ID: <prrra3lon2p4pugkgeytf5ow5wls62lfdnwcdykztw3qzwity2@d26aqh6wdyln>
+References: <20250714173554.14223-1-daleyo@gmail.com>
+ <20250714173554.14223-8-daleyo@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250714173554.14223-8-daleyo@gmail.com>
+X-Proofpoint-GUID: vr5NXYqkVCNJB9jbdyZPT2wkHol1g6lx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDE1NyBTYWx0ZWRfX75JTtfXdxrWD
+ iH9fqXXUJ1OXEsBFsqWA6NKEVeUr0O/p5GYJlMev3rV5ut+p0goo/pWBzhbicBPDobLRTedS+Ns
+ icU8h1/MzIWlv/lg8vKGH+J717dtP+WlXw9L4onUumUUgO1b0tlgpa8tJXF6XqfyJgKn7ksHb1O
+ SY2Pt/RZSiGvFAA8rfOc2e788sZN/WJaHIMV+KanY75VDCxatWijPvAoAv59FNcrwoNe7pP8ZNi
+ fAzTfiruCaITEjqveZSwoTZp8+qJCsHBRHqLR3lUa9xVN3zpd9QkRxDV7PyuvFm4rjjLBniexhM
+ 2Y1R+7X7B/D6xi/2dUJ1jvFQaWZei8PASygvqBNpapT1yfOOiFxBmGZpKiVipaPDRnMmmCQZ1R5
+ tE3NzzSHwT4MBEv0ZZ824PYngynvIF1tYTcoQYkEmBUpqP4ZQ2AYFCWLygeELpNKA2Jlzyh3
+X-Proofpoint-ORIG-GUID: vr5NXYqkVCNJB9jbdyZPT2wkHol1g6lx
+X-Authority-Analysis: v=2.4 cv=C4fpyRP+ c=1 sm=1 tr=0 ts=687585c6 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=Wb1JkmetP80A:10 a=pGLkceISAAAA:8 a=g818jjc2pSN6WLbPb0IA:9 a=3ZKOabzyN94A:10
+ a=wPNLvfGTeEIA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-14_02,2025-07-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 mlxscore=0 suspectscore=0 phishscore=0
+ clxscore=1015 lowpriorityscore=0 spamscore=0 malwarescore=0 bulkscore=0
+ impostorscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507140157
 
-On Tue, 2025-07-15 at 07:57 +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> In commit
->=20
-> =C2=A0 dad2fe3c563d ("NFS: drop __exit from nfs_exit_keyring")
->=20
-> Fixes tag
->=20
-> =C2=A0 Fixes: 2c285621176c ("nfs: create a kernel keyring")
->=20
-> has these problem(s):
->=20
-> =C2=A0 - Target SHA1 does not exist
->=20
-> Maybe you meant
->=20
-> Fixes: 6a247819238d ("nfs: create a kernel keyring")
+On Mon, Jul 14, 2025 at 06:35:43PM +0100, Dale Whinham wrote:
+> From: Jérôme de Bretagne <jerome.debretagne@gmail.com>
+> 
+> Document the disable-rfkill property.
 
-Thanks! Fixed, and ditto with the other one.
+Why? What does it mean? Why are you describing Linux driver firmware in
+the DT?
 
---=20
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trondmy@kernel.org, trond.myklebust@hammerspace.com
+> 
+> Signed-off-by: Jérôme de Bretagne <jerome.debretagne@gmail.com>
+> Signed-off-by: Dale Whinham <daleyo@gmail.com>
+> ---
+>  .../devicetree/bindings/net/wireless/qcom,ath12k.yaml          | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+> index 9e557cb838c7..f15b630fb034 100644
+> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+> @@ -48,6 +48,9 @@ properties:
+>    vddpcie1p8-supply:
+>      description: VDD_PCIE_1P8 supply regulator handle
+>  
+> +  disable-rfkill:
+> +    type: boolean
+> +
+>  required:
+>    - compatible
+>    - reg
+> -- 
+> 2.50.1
+> 
+
+-- 
+With best wishes
+Dmitry
 
