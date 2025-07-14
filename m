@@ -1,239 +1,214 @@
-Return-Path: <linux-kernel+bounces-730490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20CEFB0456B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:27:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF120B0456E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B4133BDD75
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:27:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F41A33BBBAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B6126059F;
-	Mon, 14 Jul 2025 16:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FKQYgf3E"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92DA26058B;
+	Mon, 14 Jul 2025 16:28:30 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003971F4CB3;
-	Mon, 14 Jul 2025 16:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B262260580;
+	Mon, 14 Jul 2025 16:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752510455; cv=none; b=q38G1IE2C3zP61rydvN6KNWFJSfutYe8zj9jX8+z9+IASNTtLW7GJEm+LOqUxmE+hPimzlKqn6ZTCK7wFG8xPl5mxMfquhSUPjNdGvv8jI9DRpjG4JvA9gLmwIsIOv8wtX+KqG0GbOC61J3mEcF/0IR1JjodDd7y0CSgows2Kfk=
+	t=1752510510; cv=none; b=Wx5/SdeXaLWIVVZNpv+gvgQcaa6uaQZQ5GNRzxtxTjtTDHp43iZAUExPGwQCk/1E2dCqxOpAJLYNSyjdbYSDFMQX6LdUjYFb46vP9NS7VkP/RvdEyEDuAPq5tETvHSvOgm3/X05dfhEfKeK3l5kqrKAkK0TVMIeyiVBiYD48U7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752510455; c=relaxed/simple;
-	bh=y2jxOeKNkzNzjBd4Buy6KiV3RBEW4nmi1WrMEKekot0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tgLl/mwzJAcgVU5clX++/Z8avM+0EuoxXTZIsnJD9InurdsqCywBc9Qjz50NlnsTJd92CgvS3mG0fOfEpExbr4Cs1JDDPXY+TexyJ0v8agmeq97ABrHfaKZJoKolP2wIkoVTQxZn7aLif/X6SqBJPrSWYirQSgPij/GAI9eRB7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FKQYgf3E; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 297771127;
-	Mon, 14 Jul 2025 18:27:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752510420;
-	bh=y2jxOeKNkzNzjBd4Buy6KiV3RBEW4nmi1WrMEKekot0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FKQYgf3ER7OVDPog8Mh2kcdc6NWCh26CQuAzJ318DJdqa6Dt2DpnFNjdxTdAZFhwt
-	 ZdGUod3lYmWt4Okal3O+RvJnqxGnCKIm1T63wiKSKS4z7amac8zX2v8cicW8RenkI1
-	 DWT2mn8lqFWdb7wW4mjwKjpVcQcV5c6PtOQTPYBY=
-Date: Mon, 14 Jul 2025 19:27:00 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans de Goede <hansg@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH v8 4/5] media: uvcvideo: Introduce
- V4L2_META_FMT_UVC_MSXU_1_5
-Message-ID: <20250714162700.GA20231@pendragon.ideasonboard.com>
-References: <20250707-uvc-meta-v8-0-ed17f8b1218b@chromium.org>
- <20250707-uvc-meta-v8-4-ed17f8b1218b@chromium.org>
- <20250714145935.GL8243@pendragon.ideasonboard.com>
- <CANiDSCt=cS9_BsEvo8fEpRDfud9nob2nzgDR6CvmcFczZurG2w@mail.gmail.com>
+	s=arc-20240116; t=1752510510; c=relaxed/simple;
+	bh=+5kEwgQzjaASRloqt5fWQWCM7O0SdzAdNy7bCPc+Q5M=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=P5Y8FQcOgGd/GiJr9UFFtzR65cOWzPuptGjPD5u9/B+qf7y1PKm2jxWFHr0mnglCmFBrxpQ2e5NGl9oroRt+z9ASbQFxxddNT680mBKOHU6mkkiz1hwaBsiNnZtUaJfOvl6AfozMNw1nL/jRcfHl8uOQYDne6Q63tYAYwRXA+ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bgnlq2R0Gz6L5Gx;
+	Tue, 15 Jul 2025 00:27:19 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4F493140275;
+	Tue, 15 Jul 2025 00:28:24 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml500005.china.huawei.com (7.182.85.13) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 14 Jul 2025 18:28:23 +0200
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Mon, 14 Jul 2025 18:28:23 +0200
+From: Shiju Jose <shiju.jose@huawei.com>
+To: Dan Williams <dan.j.williams@intel.com>, "linux-cxl@vger.kernel.org"
+	<linux-cxl@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "David
+ Lechner" <dlechner@baylibre.com>, Peter Zijlstra <peterz@infradead.org>,
+	"Linus Torvalds" <torvalds@linux-foundation.org>, Ingo Molnar
+	<mingo@kernel.org>, "Fabio M. De Francesco"
+	<fabio.m.de.francesco@linux.intel.com>, "Davidlohr Bueso"
+	<dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>, Dave
+ Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>, "Ira Weiny" <ira.weiny@intel.com>
+Subject: RE: [PATCH v3 8/8] cxl: Convert to ACQUIRE() for conditional rwsem
+ locking
+Thread-Topic: [PATCH v3 8/8] cxl: Convert to ACQUIRE() for conditional rwsem
+ locking
+Thread-Index: AQHb8r6Ir5Mnvswws02cjfabWtneq7QxxK1Q
+Date: Mon, 14 Jul 2025 16:28:23 +0000
+Message-ID: <a49ab85cbd70469c8d1ebb9a43db0517@huawei.com>
+References: <20250711234932.671292-1-dan.j.williams@intel.com>
+ <20250711234932.671292-9-dan.j.williams@intel.com>
+In-Reply-To: <20250711234932.671292-9-dan.j.williams@intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANiDSCt=cS9_BsEvo8fEpRDfud9nob2nzgDR6CvmcFczZurG2w@mail.gmail.com>
 
-On Mon, Jul 14, 2025 at 06:21:05PM +0200, Ricardo Ribalda wrote:
-> On Mon, 14 Jul 2025 at 17:00, Laurent Pinchart wrote:
-> >
-> > Hi Ricardo,
-> >
-> > A bit of a stupid question, or rather a question that I wonder why I
-> > didn't think of before.
-> 
-> I believe we discussed this in the very beginning, when I just enabled
-> V4L2_META_FMT_D4XX for all the devices.
+>-----Original Message-----
+>From: Dan Williams <dan.j.williams@intel.com>
+>Sent: 12 July 2025 00:50
+>To: linux-cxl@vger.kernel.org
+>Cc: linux-kernel@vger.kernel.org; David Lechner <dlechner@baylibre.com>;
+>Peter Zijlstra <peterz@infradead.org>; Linus Torvalds <torvalds@linux-
+>foundation.org>; Ingo Molnar <mingo@kernel.org>; Fabio M. De Francesco
+><fabio.m.de.francesco@linux.intel.com>; Davidlohr Bueso <dave@stgolabs.net=
+>;
+>Jonathan Cameron <jonathan.cameron@huawei.com>; Dave Jiang
+><dave.jiang@intel.com>; Alison Schofield <alison.schofield@intel.com>; Vis=
+hal
+>Verma <vishal.l.verma@intel.com>; Ira Weiny <ira.weiny@intel.com>; Shiju J=
+ose
+><shiju.jose@huawei.com>
+>Subject: [PATCH v3 8/8] cxl: Convert to ACQUIRE() for conditional rwsem lo=
+cking
+>
+>Use ACQUIRE() to cleanup conditional locking paths in the CXL driver The
+>ACQUIRE() macro and its associated ACQUIRE_ERR() helpers, like
+>scoped_cond_guard(), arrange for scoped-based conditional locking. Unlike
+>scoped_cond_guard(), these macros arrange for an ERR_PTR() to be retrieved
+>representing the state of the conditional lock.
+>
+>The goal of this conversion is to complete the removal of all explicit unl=
+ock calls
+>in the subsystem. I.e. the methods to acquire a lock are solely via guard(=
+),
+>scoped_guard() (for limited cases), or ACQUIRE(). All unlock is implicit /=
+ scope-
+>based. In order to make sure all lock sites are converted, the existing rw=
+sem's
+>are consolidated and renamed in 'struct cxl_rwsem'. While that makes the p=
+atch
+>noisier it gives a clean cut-off between old-world (explicit unlock allowe=
+d), and
+>new world (explicit unlock deleted).
+>
+>Cc: David Lechner <dlechner@baylibre.com>
+>Cc: Peter Zijlstra <peterz@infradead.org>
+>Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>Cc: Ingo Molnar <mingo@kernel.org>
+>Cc: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+>Cc: Davidlohr Bueso <dave@stgolabs.net>
+>Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+>Cc: Dave Jiang <dave.jiang@intel.com>
+>Cc: Alison Schofield <alison.schofield@intel.com>
+>Cc: Vishal Verma <vishal.l.verma@intel.com>
+>Cc: Ira Weiny <ira.weiny@intel.com>
+>Cc: Shiju Jose <shiju.jose@huawei.com>
+>Acked-by: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+>Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-Sorry if that was the case, it was a while ago.
+Hi Dan,
 
-> We thought that it could break applications. Imagine an APP that can
-> work with D4XX but not with other formats: if it tries to parse MSXU
-> format it might crash.
+For changes in CXL EDAC (drivers/cxl/core/edac.c),
+Tested-by: Shiju Jose <shiju.jose@huawei.com>
 
-How so, if V4L2_META_FMT_D4XX and V4L2_META_FMT_UVC_MSXU_1_5 identify
-the same format ?
+>---
+> drivers/cxl/core/cdat.c   |   6 +-
+> drivers/cxl/core/core.h   |  17 ++-
+> drivers/cxl/core/edac.c   |  44 +++---
+> drivers/cxl/core/hdm.c    |  41 +++---
+> drivers/cxl/core/mbox.c   |   6 +-
+> drivers/cxl/core/memdev.c |  50 +++----
+> drivers/cxl/core/port.c   |  18 +--
+> drivers/cxl/core/region.c | 295 ++++++++++++++++----------------------
+> drivers/cxl/cxl.h         |  13 +-
+> include/linux/rwsem.h     |   1 +
+> 10 files changed, 212 insertions(+), 279 deletions(-)
+>
+[...]
+>diff --git a/drivers/cxl/core/edac.c b/drivers/cxl/core/edac.c index
+>2cbc664e5d62..f1ebdbe222c8 100644
+>--- a/drivers/cxl/core/edac.c
+>+++ b/drivers/cxl/core/edac.c
+>@@ -115,10 +115,9 @@ static int cxl_scrub_get_attrbs(struct
+>cxl_patrol_scrub_context *cxl_ps_ctx,
+> 						flags, min_cycle);
+> 	}
+>
+>-	struct rw_semaphore *region_lock __free(rwsem_read_release) =3D
+>-		rwsem_read_intr_acquire(&cxl_region_rwsem);
+>-	if (!region_lock)
+>-		return -EINTR;
+>+	ACQUIRE(rwsem_read_intr, rwsem)(&cxl_rwsem.region);
+>+	if ((ret =3D ACQUIRE_ERR(rwsem_read_intr, &rwsem)))
+Checkpatch is giving error here and in other places with similar coding sty=
+le, =20
+"ERROR: do not use assignment in if condition"
 
-> > On Mon, Jul 07, 2025 at 06:34:04PM +0000, Ricardo Ribalda wrote:
-> > > The UVC driver provides two metadata types V4L2_META_FMT_UVC, and
-> > > V4L2_META_FMT_D4XX. The only difference between the two of them is that
-> > > V4L2_META_FMT_UVC only copies PTS, SCR, size and flags, and
-> > > V4L2_META_FMT_D4XX copies the whole metadata section.
-> > >
-> > > Now we only enable V4L2_META_FMT_D4XX for the Intel D4xx family of
-> > > devices, but it is useful to have the whole metadata payload for any
-> > > device where vendors include other metadata, such as the one described by
-> > > Microsoft:
-> > > https://learn.microsoft.com/en-us/windows-hardware/drivers/stream/mf-capture-metadata
-> > >
-> > > This patch introduces a new format V4L2_META_FMT_UVC_MSXU_1_5, that is
-> > > identical to V4L2_META_FMT_D4XX.
-> >
-> > Wouldn't it be simpler for everybody to just
-> >
-> > #define V4L2_META_FMT_UVC_MSXU_1_5  v4l2_fourcc('D', '4', 'X', 'X') /* UVC MSXU metadata */
-> > #define V4L2_META_FMT_D4XX      V4L2_META_FMT_UVC_MSXU_1_5 /* For backward compatibility */
-> >
-> > ? I'm a bit uncomfortable with committing to a UABI with two different
-> > 4CCs for the exact same format.
-> >
-> > > Let the user enable this format with a quirk for now. This way they can
-> > > test if their devices provide useful metadata without rebuilding the
-> > > kernel. They can later contribute patches to auto-quirk their devices.
-> > > We will also work in methods to auto-detect devices compatible with this
-> > > new metadata format.
-> > >
-> > > Suggested-by: Hans de Goede <hdegoede@redhat.com>
-> > > Reviewed-by: Hans de Goede <hansg@kernel.org>
-> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > ---
-> > >  .../userspace-api/media/v4l/meta-formats.rst       |  1 +
-> > >  .../media/v4l/metafmt-uvc-msxu-1-5.rst             | 23 ++++++++++++++++++++++
-> > >  MAINTAINERS                                        |  1 +
-> > >  drivers/media/usb/uvc/uvc_metadata.c               |  4 ++++
-> > >  drivers/media/usb/uvc/uvcvideo.h                   |  1 +
-> > >  drivers/media/v4l2-core/v4l2-ioctl.c               |  1 +
-> > >  include/uapi/linux/videodev2.h                     |  1 +
-> > >  7 files changed, 32 insertions(+)
-> > >
-> > > diff --git a/Documentation/userspace-api/media/v4l/meta-formats.rst b/Documentation/userspace-api/media/v4l/meta-formats.rst
-> > > index bb6876cfc271e1a0543eee4209d6251e1a6a73cc..0de80328c36bf148051a19abe9e5241234ddfe5c 100644
-> > > --- a/Documentation/userspace-api/media/v4l/meta-formats.rst
-> > > +++ b/Documentation/userspace-api/media/v4l/meta-formats.rst
-> > > @@ -20,6 +20,7 @@ These formats are used for the :ref:`metadata` interface only.
-> > >      metafmt-pisp-fe
-> > >      metafmt-rkisp1
-> > >      metafmt-uvc
-> > > +    metafmt-uvc-msxu-1-5
-> > >      metafmt-vivid
-> > >      metafmt-vsp1-hgo
-> > >      metafmt-vsp1-hgt
-> > > diff --git a/Documentation/userspace-api/media/v4l/metafmt-uvc-msxu-1-5.rst b/Documentation/userspace-api/media/v4l/metafmt-uvc-msxu-1-5.rst
-> > > new file mode 100644
-> > > index 0000000000000000000000000000000000000000..dd1c3076df243d770a13e7f6d07c3296a269e16a
-> > > --- /dev/null
-> > > +++ b/Documentation/userspace-api/media/v4l/metafmt-uvc-msxu-1-5.rst
-> > > @@ -0,0 +1,23 @@
-> > > +.. SPDX-License-Identifier: GFDL-1.1-no-invariants-or-later
-> > > +
-> > > +.. _v4l2-meta-fmt-uvc-msxu-1-5:
-> > > +
-> > > +***********************************
-> > > +V4L2_META_FMT_UVC_MSXU_1_5 ('UVCM')
-> > > +***********************************
-> > > +
-> > > +Microsoft(R)'s UVC Payload Metadata.
-> > > +
-> > > +
-> > > +Description
-> > > +===========
-> > > +
-> > > +V4L2_META_FMT_UVC_MSXU_1_5 buffers follow the metadata buffer layout of
-> > > +V4L2_META_FMT_UVC with the only difference that it includes all the UVC
-> > > +metadata in the `buffer[]` field, not just the first 2-12 bytes.
-> > > +
-> > > +The metadata format follows the specification from Microsoft(R) [1].
-> > > +
-> > > +.. _1:
-> > > +
-> > > +[1] https://docs.microsoft.com/en-us/windows-hardware/drivers/stream/uvc-extensions-1-5
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 658543062bba3b7e600699d7271ffc89250ba7e5..fdde1d37ed2ef9058e3ea3417bec25afe454dfc0 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -25827,6 +25827,7 @@ S:    Maintained
-> > >  W:   http://www.ideasonboard.org/uvc/
-> > >  T:   git git://linuxtv.org/media.git
-> > >  F:   Documentation/userspace-api/media/drivers/uvcvideo.rst
-> > > +F:   Documentation/userspace-api/media/v4l/metafmt-uvc-msxu-1-5.rst
-> > >  F:   Documentation/userspace-api/media/v4l/metafmt-uvc.rst
-> > >  F:   drivers/media/common/uvc.c
-> > >  F:   drivers/media/usb/uvc/
-> > > diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
-> > > index 4bcbc22f47e67c52baf6e133f240131ff3d32a03..77e03273d3cf6b00cac6ebb9b29b941f1cbfd9f7 100644
-> > > --- a/drivers/media/usb/uvc/uvc_metadata.c
-> > > +++ b/drivers/media/usb/uvc/uvc_metadata.c
-> > > @@ -195,6 +195,10 @@ void uvc_meta_init(struct uvc_device *dev)
-> > >           !WARN_ON(dev->info->meta_format == V4L2_META_FMT_UVC))
-> > >               dev->meta_formats[i++] = dev->info->meta_format;
-> > >
-> > > +     if (dev->quirks & UVC_QUIRK_MSXU_META &&
-> > > +         !WARN_ON(dev->info->meta_format == V4L2_META_FMT_UVC_MSXU_1_5))
-> > > +             dev->meta_formats[i++] = V4L2_META_FMT_UVC_MSXU_1_5;
-> > > +
-> > >        /* IMPORTANT: for new meta-formats update UVC_MAX_META_DATA_FORMATS. */
-> > >       dev->meta_formats[i++] = 0;
-> > >  }
-> > > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> > > index b3c094c6591e7a71fc00e1096bcf493a83f330ad..616adc417c62a58686beccbc440a5dfac0a2d588 100644
-> > > --- a/drivers/media/usb/uvc/uvcvideo.h
-> > > +++ b/drivers/media/usb/uvc/uvcvideo.h
-> > > @@ -77,6 +77,7 @@
-> > >  #define UVC_QUIRK_DISABLE_AUTOSUSPEND        0x00008000
-> > >  #define UVC_QUIRK_INVALID_DEVICE_SOF 0x00010000
-> > >  #define UVC_QUIRK_MJPEG_NO_EOF               0x00020000
-> > > +#define UVC_QUIRK_MSXU_META          0x00040000
-> > >
-> > >  /* Format flags */
-> > >  #define UVC_FMT_FLAG_COMPRESSED              0x00000001
-> > > diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> > > index be94a79b976e3de4eb957f5d2584ec6d4230469e..993b36417b4655456ce545cb42a41b55b98e4d6c 100644
-> > > --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> > > +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> > > @@ -1463,6 +1463,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
-> > >       case V4L2_META_FMT_VSP1_HGO:    descr = "R-Car VSP1 1-D Histogram"; break;
-> > >       case V4L2_META_FMT_VSP1_HGT:    descr = "R-Car VSP1 2-D Histogram"; break;
-> > >       case V4L2_META_FMT_UVC:         descr = "UVC Payload Header Metadata"; break;
-> > > +     case V4L2_META_FMT_UVC_MSXU_1_5:        descr = "UVC MSXU Metadata"; break;
-> > >       case V4L2_META_FMT_D4XX:        descr = "Intel D4xx UVC Metadata"; break;
-> > >       case V4L2_META_FMT_VIVID:       descr = "Vivid Metadata"; break;
-> > >       case V4L2_META_FMT_RK_ISP1_PARAMS:      descr = "Rockchip ISP1 3A Parameters"; break;
-> > > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> > > index 6f7bd38dd5aa4b1b2084685512512a380d76a5e4..863bc5b7dec32303e852d7e9c3891011ce5a3d71 100644
-> > > --- a/include/uapi/linux/videodev2.h
-> > > +++ b/include/uapi/linux/videodev2.h
-> > > @@ -867,6 +867,7 @@ struct v4l2_pix_format {
-> > >  #define V4L2_META_FMT_VSP1_HGT    v4l2_fourcc('V', 'S', 'P', 'T') /* R-Car VSP1 2-D Histogram */
-> > >  #define V4L2_META_FMT_UVC         v4l2_fourcc('U', 'V', 'C', 'H') /* UVC Payload Header metadata */
-> > >  #define V4L2_META_FMT_D4XX        v4l2_fourcc('D', '4', 'X', 'X') /* D4XX Payload Header metadata */
-> > > +#define V4L2_META_FMT_UVC_MSXU_1_5  v4l2_fourcc('U', 'V', 'C', 'M') /* UVC MSXU metadata */
-> > >  #define V4L2_META_FMT_VIVID    v4l2_fourcc('V', 'I', 'V', 'D') /* Vivid Metadata */
-> > >
-> > >  /* Vendor specific - used for RK_ISP1 camera sub-system */
+>+		return ret;
+>
+[...]
+> 		p =3D &cxlr->params;
+>@@ -2215,18 +2173,18 @@ int cxl_decoder_detach(struct cxl_region *cxlr,
+> 	struct cxl_region *detach;
+>
+> 	/* when the decoder is being destroyed lock unconditionally */
+>-	if (mode =3D=3D DETACH_INVALIDATE)
+>-		down_write(&cxl_region_rwsem);
+>-	else {
+>-		int rc =3D down_write_killable(&cxl_region_rwsem);
+>+	if (mode =3D=3D DETACH_INVALIDATE) {
+>+		guard(rwsem_write)(&cxl_rwsem.region);
+>+		detach =3D __cxl_decoder_detach(cxlr, cxled, pos, mode);
+>+	} else {
+>+		int rc;
+>
+>-		if (rc)
+>+		ACQUIRE(rwsem_write_kill, rwsem)(&cxl_rwsem.region);
+>+		if ((rc =3D ACQUIRE_ERR(rwsem_write_kill, &rwsem)))
+> 			return rc;
+>+		detach =3D __cxl_decoder_detach(cxlr, cxled, pos, mode);
+> 	}
+May be detach =3D __cxl_decoder_detach(cxlr, cxled, pos, mode);
+add outside if ... else as before?
+>
+>-	detach =3D __cxl_decoder_detach(cxlr, cxled, pos, mode);
+>-	up_write(&cxl_region_rwsem);
+>-
+> 	if (detach) {
+> 		device_release_driver(&detach->dev);
+> 		put_device(&detach->dev);
+>@@ -2234,29 +2192,35 @@ int cxl_decoder_detach(struct cxl_region *cxlr,
+> 	return 0;
+> }
+[...]
+> /*
+>  * downgrade write lock to read lock
+>--
+>2.50.0
+>
 
--- 
-Regards,
-
-Laurent Pinchart
+Thanks,
+Shiju
 
