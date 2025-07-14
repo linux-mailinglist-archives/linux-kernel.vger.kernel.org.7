@@ -1,124 +1,107 @@
-Return-Path: <linux-kernel+bounces-729499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9D75B0378C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:08:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53913B0378E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 736EE7A4D9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:07:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C798189BCA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3AE22E406;
-	Mon, 14 Jul 2025 07:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3789222FAFD;
+	Mon, 14 Jul 2025 07:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=flawful.org header.i=@flawful.org header.b="ZAzUu6mT"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bseCXV9d"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58E4226D10;
-	Mon, 14 Jul 2025 07:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A596922F74B;
+	Mon, 14 Jul 2025 07:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752476913; cv=none; b=pkaOeYCnGc88MT4el11ibXXrIXgCaAtIrchcaiBgkDbQAsTZd832+0sMXMhkwOs+y0etifgSuU8uqtBkmu+EcE5p6s2raA41J3pLV4LSPJ02BDnGYLaXn3wFU37WpCVe2u+cU8BLxxD2jaANpDmRcEKMFiLAJOEXteTD7X8WkZA=
+	t=1752476937; cv=none; b=Qiu3z5QzCC+0jN7BpywGMeNohPMYhjIqCd/YG1AlEwXb0nKcAnBBPxQV8D3iQMwE5zLnXjx5M1YNrnx9VWHLc7SluWwa9L2ZKCXvFBvyxO+vB1CqXn3hA3IuhB89dCE114W7NLGOgMxiH020Es5yPOOPvaV3W7riJ8TDpNT3EMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752476913; c=relaxed/simple;
-	bh=pT3B4LvfDX/MI3J6lEc9pWSE+5SEOgad6IB0H01Ds/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gwbDwm/Xx8078mTeWMnDtsJB1/EcDCk1QuFrS2LMV3vMU+2zh9vnS3zqNZckqIjFV/9uTjIqK5q9s+6L5GUfUxp1Gpu69G2SKL/4R4Y+qTZodlOKC+GE8Mwyc6AOKT67U5qw1YxJm7QVr8iOE1hsj52Dk60I8d6rUsM0UeSpTkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flawful.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (1024-bit key) header.d=flawful.org header.i=@flawful.org header.b=ZAzUu6mT; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flawful.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-553b5165cf5so4882271e87.0;
-        Mon, 14 Jul 2025 00:08:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752476908; x=1753081708;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:dkim-signature:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Tvj3gb3g5xG1uLM/RcM8g7BKLGsZeoiyqFNvZ44VmfY=;
-        b=ufeL7jCw4p1coL2ifPfBDnZnerLOS+s/WXIbXpIWOTG3HARBADeXWawtKAjqpgaDnG
-         3y2iXN8lv8AtvBQQAkAZHtS8WHXxU3FvODIeZPbY/XFM18GAAUidWu9pIiYdPdYyuTIN
-         /YJQ1g0/BcC3M4O8jYwCbBk+E2OtmAWex/DlJx0mmrldmo9FFSgF0kDPJzPLlTnDHRjA
-         RKhQWGvP3JCDJL6yX3pSmOLZcaWpj/d9r77h/Hz6Vs5N6by+pGUXvdXC2cUmQPXx5YXu
-         0BuqQs2oto4JIlsGLi8/RK5eJAFZ9oRIkDvIkOx2TN+cNBONyMt9NeyF5Zq6VIh1DcGz
-         PKFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGoRyyotOr03WPDf0Vhof4jL6v/kPDAgIJViq2ACV6jFVIGRxrDG2Pip599HlIBwqqiLyK9qYspc+xlUY=@vger.kernel.org, AJvYcCXNDDgZfoQEO6dw8mAF3/rTM8zmRP6alv1tnN8ozkNcoeBy5ivDpXWgyr6XhOv4fjySrqBeP0RUgqHe@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztt97UemVEZhEJlGWFPwXfPf4Y4tO5FnciL2C9aoX2lmvBvYA4
-	FVv8HWqcUd822Nz9eUy0wOqKi/Y/Gl3wcf2on7BDZ2G8ySCshFZyYBbg
-X-Gm-Gg: ASbGncvaWJJwK6/8j33Q95HV55/etmSSgaxzjrNHH1PUsHnIYm97k+NsqzSKpl4bkRo
-	s3+KFXbI6jGKp4iy8bcWFvT4dJiVeJc2CZDYXfYou1TBe4IwWik2Ic/ljSk+T5X3wStP3RV9yLv
-	RT3eL0JVWGyGzJ/16s5VUgQyn/OK6lPXaHzTXZMxNPfUi9pAkWdrpE7XR3u2ydGTHiMrZ7fpjov
-	mkXLvXH8++p3JAa7HyFujJJ3YfNZIZjzFFbTtL/0cYV3K3+chDoFb9DRfEffbu9mXcnH3K76lQl
-	AUedTwuzG8BJuFmkod+5Ctcx0++d4WAzkRhFdQjuBmGBf4rgyJf8qTXzGMoYr7tTkvGuoDDsXGR
-	qqA50VLk3hI+qOZXIHDdQHDYGyFameGqLc9RRHhgOcMvSf0rRRSA=
-X-Google-Smtp-Source: AGHT+IHZExcglefkFbZyxQyZmTQW7ESvjfFFcOrkVbfQH5yCY2A1BKdqYldJd9CQjXY0nM8bm5Zx/Q==
-X-Received: by 2002:ac2:4f05:0:b0:553:2e4a:bb58 with SMTP id 2adb3069b0e04-55a057c3822mr3294856e87.9.1752476907492;
-        Mon, 14 Jul 2025 00:08:27 -0700 (PDT)
-Received: from flawful.org (c-85-226-250-50.bbcust.telenor.se. [85.226.250.50])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55943b8c5ccsm1838327e87.258.2025.07.14.00.08.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 00:08:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=flawful.org; s=mail;
-	t=1752476905; bh=pT3B4LvfDX/MI3J6lEc9pWSE+5SEOgad6IB0H01Ds/8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZAzUu6mTAghiqz+sb/0NN+t3i5vbtH2Gm0D/k79j8IW1KdAXdxYqI+TyyNvO+m+pR
-	 j++AqOsMDVLapns9fbPJiEwAc2serysN51fUe8tpkJZIZy9wdzXjyUNGHnmK480yHa
-	 vYQWoBPspdSwe8tejxapHU8TtFlYMxZaUKsgcIBw=
-Received: by flawful.org (Postfix, from userid 1001)
-	id 4F1AE2C0F; Mon, 14 Jul 2025 09:08:25 +0200 (CEST)
-Date: Mon, 14 Jul 2025 09:08:25 +0200
-From: Niklas Cassel <nks@flawful.org>
-To: David Bremner <david@tethera.net>
-Cc: wilfred.opensource@gmail.com, alistair@alistair23.me,
-	bhelgaas@google.com, cassel@kernel.org, dlemoal@kernel.org,
-	heiko@sntech.de, kw@linux.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, lpieralisi@kernel.org,
-	mani@kernel.org, p.zabel@pengutronix.de, robh@kernel.org,
-	wilfred.mallawa@wdc.com, Shawn Lin <shawn.lin@rock-chips.com>
-Subject: Re: [PATCH v3] PCI: dw-rockchip: Add support for slot reset on link
- down event
-Message-ID: <aHSs6ZF8rQIqEOyR@flawful.org>
-References: <20250509-b4-pci_dwc_reset_support-v3-1-37e96b4692e7@wdc.com>
- <87cya6wdhc.fsf@tethera.net>
+	s=arc-20240116; t=1752476937; c=relaxed/simple;
+	bh=Dx+bWg0y/ulJ68RoEXf6wKfPP86WrNECzHUQd/8/HOQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rPVuvwI/u4OI2qi0uW0+nOX8kjInc29/s//dgQayMOYRj+3C5t42HOAb9VAocOUqjz8TmMYW66Rb8AiFm9Zro2w7rbwJ0eKelONGsDtXjqWZG40Tym4RBMLyhZ/27ar//QoXCT04O4lV9rgJVcf+L7UC4IQwR6EudfzAY3lEoys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bseCXV9d; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752476829;
+	bh=rOOnT+vCR/jEoBk0F19TrnUSvpTrdf+d7rIbiva2K6c=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bseCXV9d6TIsy13ZYCzemJO8muowbxYZE4sTppZ+VC7Wuzm2pIkNJx3+9ZcbTdXIy
+	 kvrEln2VxGQo3G6uug/y3pscdeM+CIW2BXXprGcFE9Zj6/T+qKEmfskpZx9gKIjazR
+	 vucwPHrfFLNGG2XDVpnJpJwyQKcRB5wsaaUB5A3yj8aDYhai3oBiyLdq9PUx+uZxIL
+	 h7lfOMPEiBWBdivkC32jUemNqrLK8RHqLl1855HvDFsU5tY0GOmRjcdMjTh9225C78
+	 7LNIrVGl/mQJWda+4Oi4vrTXJELj1oRqiahvia4WQsVFEZ6+Y4o4vkemy9pqd/BU3c
+	 KodF3NBONt3kg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bgYKT1fn1z4wcd;
+	Mon, 14 Jul 2025 17:07:09 +1000 (AEST)
+Date: Mon, 14 Jul 2025 17:08:48 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Luca Weiss <luca.weiss@fairphone.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the pinctrl tree
+Message-ID: <20250714170848.0fb46353@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87cya6wdhc.fsf@tethera.net>
+Content-Type: multipart/signed; boundary="Sig_/4G66NGgpa=WeYsaVpR9UDUq";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello David,
+--Sig_/4G66NGgpa=WeYsaVpR9UDUq
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 11, 2025 at 07:48:31PM -0300, David Bremner wrote:
-> 
-> What is the current status of this patch (and the pre-requisites) with
-> respect to mainline linux?
-> 
-> I'm wondering if it might be relevent to the problems [1] I've been
-> having with rk3588 resume, but it isn't clear to me what I need to apply
-> to e.g. v6.16~rc1 to test it.
+Hi all,
 
-This is the prerequisite series:
-https://lore.kernel.org/linux-pci/20250508-pcie-reset-slot-v4-0-7050093e2b50@linaro.org/
+After merging the pinctrl tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-However, Bjorn gave some comments on it, and Manivannan has said that he
-will send a new version.
+drivers/pinctrl/qcom/pinctrl-milos.c:1323:19: error: 'msm_pinctrl_remove' u=
+ndeclared here (not in a function); did you mean 'msm_pinctrl_probe'?
+ 1323 |         .remove =3D msm_pinctrl_remove,
+      |                   ^~~~~~~~~~~~~~~~~~
+      |                   msm_pinctrl_probe
 
+Caused by commit
 
+  b614f176b308 ("pinctrl: qcom: Add Milos pinctrl driver")
 
-That said, if you have problems with suspend/resume, perhaps you want to
-try this patch instead:
-https://lore.kernel.org/linux-pci/1744940759-23823-1-git-send-email-shawn.lin@rock-chips.com/
+I have used the pinctrl tree from next-20250711 for today.
 
-I don't know if Shawn intends to send a new version or not.
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/4G66NGgpa=WeYsaVpR9UDUq
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Kind regards,
-Niklas
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh0rQAACgkQAVBC80lX
+0GxGowgApS8FuX4sl6BTeKs2NFg2xxZ1SwD3ZsIE5NCP+42/KGMaub50CfusSUJJ
+gsJWE6hfPdpTUmjPu7aU+zBH8JuDfS6E4WIrmxNd9NvnwVoB/8C2CdMyZA3DrBtK
+jSJcHVX6rQV/zNNAyTEiBl/x/R2w52cjEXyKC8nUamCw2UnFEyc2ibY5tVX+K6op
+6Po4vYSpgJLfbW/lTokfsrMqvTz+3q8eEPgy54OKh00eHmPx03gZTh47rQ3N/O0V
+9EkoKvOajDdKAyAfrsCLjEVPS4BiGeXixPa7hh3LsiPrN7favwxcbY+3AJgvCJAx
+LHjQvV7hqmjs0r6icyXyou07qGnwrA==
+=Rie9
+-----END PGP SIGNATURE-----
+
+--Sig_/4G66NGgpa=WeYsaVpR9UDUq--
 
