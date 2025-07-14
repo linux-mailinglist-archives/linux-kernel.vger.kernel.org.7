@@ -1,148 +1,111 @@
-Return-Path: <linux-kernel+bounces-729381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD87B035CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:35:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACCF5B035D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD6B8176E60
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:35:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50F67178CBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E74205ABF;
-	Mon, 14 Jul 2025 05:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B63207DE2;
+	Mon, 14 Jul 2025 05:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CP/9Im8o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddZ8zxEA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28E62E371B;
-	Mon, 14 Jul 2025 05:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0361FECB0;
+	Mon, 14 Jul 2025 05:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752471321; cv=none; b=dXyuVu2MN1v+asNAqDjRvwirH2fXILDvvPPe7W+jui45RE2+VlgpR+btmw2uhkDqX/BMrVv1sOpw5XcQ2MwerP/iXJyVAhQRYW/FbOsyjUostAG1jPX4obInbhJN7nA++SZSf5MvDvrWbxY/dB4+rhnhdYm9eHv7J0bps9GM51c=
+	t=1752471340; cv=none; b=dsM1Rjitw84K9ybm8Fz9EOPcjwawfZ+xCaO4R0r2/WR/inaPjzfDwYnlZNHGab3D3GGKdWP15rJOfVVKJwceQ77aM6XEIaK+o/0qDZmXgmEd71ORmJRz2t1bmOzt2CkoIPJ5NbuWT3ADHU6L79tvmM8gejGkyz0MLtD3pVuHiaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752471321; c=relaxed/simple;
-	bh=pBCIRAJi0foXxJRoXZ3zYn02pRbQBBQBVlaAHcDr2JU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PZE2yWNxUMFE7jdyShHqd67MroacaQqOEt0YSdpaVpXZBo/uq3dW7pPxL9aJGnREvZUR774+jojhA4go5Njx91aO0CtqZwrk0hseO9yoYshIJGiwkJyQBDqDh7g7geEs/HvX1KLgLYYAcZ4C8AknNMmyvsHeLNYy9YuKYQAoXcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CP/9Im8o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E63AC4CEF7;
-	Mon, 14 Jul 2025 05:35:14 +0000 (UTC)
+	s=arc-20240116; t=1752471340; c=relaxed/simple;
+	bh=AhfXLPJit+nq2sVNcl1gEor+RQLrJZeeiC7pziqeDIc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EDs0VnD5Z+WpvuSXlqtW/7rb5/+uMXHCNGcr29ha6ZizN7ahGRQ3YQmUXF9tVWSTLMweXWd6HOlBICqTYCoIDRLvwroa3uUsUMNylwvqzW7pI/hVlOx5vHkBPjyWbI+EFHzKp3wXaA/BeBBQvqZscQNmVNmvakc26XksD/RuiyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ddZ8zxEA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB4EEC4CEFB;
+	Mon, 14 Jul 2025 05:35:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752471318;
-	bh=pBCIRAJi0foXxJRoXZ3zYn02pRbQBBQBVlaAHcDr2JU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CP/9Im8olLCuDP41Dxr6lvO5fHVQ2U8QdvNcUq1nn3GQmlMHb+AUJ7ICjW/9+mylh
-	 Kta9XJWKfjtbD9CHx3NuAb5Gi4rcuLU1j60j2O1V7GRi5zfGy0z2NuOPRYGdOK9vZf
-	 Yv8+Dw0beR3RQ+7Q2aWTgmLcPQGhAAO0fDaRB+EgPPCjBzA5fKKs7voMbfdqo4xcgJ
-	 /mTsELhrWA4wW9lPmhhzwlIZkjWsacYy+XuI3Gl1ct90rnJse9LJb/O+8lOoZbN7QY
-	 CbYuRYDeswhGW9XGb0POcg/kEWvw+4NmW0hFss1AayBMMLIRA/moj+2+qf+OriT7No
-	 XVdof3/fjV7Jw==
-Message-ID: <ed14c7ba-12e6-49f4-ba3f-1bbe57f507fd@kernel.org>
-Date: Mon, 14 Jul 2025 07:35:13 +0200
+	s=k20201202; t=1752471337;
+	bh=AhfXLPJit+nq2sVNcl1gEor+RQLrJZeeiC7pziqeDIc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ddZ8zxEAQWvd2uKLTx/MqCvkHdYlE8+ZFaOGxa95LxGvIIkbQ4Qa/Lv1MA5Fkba2O
+	 U40OTw/aGVt7sa2Q6wSFCr37Q6zODj+hin6CXBjNYrmqi0ISPOdiAEw2FurPK+lTOk
+	 lIKvMov9H2RLtzbEkhEksubFKmGSZPgiWtc9hk5Twt6Q3/fvK2Nz/vMMlrSe6tbMUw
+	 bR7KfhZ/kmm8UeCa0vyxW6v2/wVpZj0UBFve9r5vEhGdUhFqLbrQQ0+e+03MPI1vKW
+	 SlZ/d8E+zuuRFVXg/qlq/iPODaql6PW/zMDX8vFIPo8HXkzRis9ABBg6J9aDT+m/mf
+	 eaptsVz2ztrBQ==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-32b43cce9efso31067841fa.3;
+        Sun, 13 Jul 2025 22:35:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX6AVekZv0tK2rCNYVe00cQcp1YfxNqkEc8QsoEGVb5pJ702CVcq2b/wZplSdLkVIJlmmmHHh2Z4aCIh54=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG4+ttV+HIXSDnTs1wUkTsXQJmIVxzLLOy0eP6vhIdu/AB7WyS
+	SWFRtveO6v05kPiqIp7Mtq+3PyuNWqQMyUxuMpDfHcHQ/wAOiRm1OPZsZNb+MH88dIhJ5W52bGC
+	SwBMR0MkzYax+0Z1YHnmOfE0z9JON/vw=
+X-Google-Smtp-Source: AGHT+IE/n3Pei1+hhhJWAvyg52eVap2Ik9HDTQdu5m0wlgA5Mu6mp4EgrZtImkRCLoTgZJ0lGSuxGUxQmYFDqW6fybA=
+X-Received: by 2002:a05:651c:542:b0:32c:a097:4140 with SMTP id
+ 38308e7fff4ca-33052f70c5amr31941361fa.0.1752471336076; Sun, 13 Jul 2025
+ 22:35:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: vendor-prefixes: Add Mayqueen name
-To: LiangCheng Wang <zaq14760@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Wig Cheng <onlywig@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org
-References: <20250714-drm-v2-0-5d1a2e12796c@gmail.com>
- <20250714-drm-v2-1-5d1a2e12796c@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250714-drm-v2-1-5d1a2e12796c@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250709200112.258500-1-ebiggers@kernel.org>
+In-Reply-To: <20250709200112.258500-1-ebiggers@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 14 Jul 2025 15:35:24 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXGzz5hGiq5ebj9kxzXa3uHOt0eTBx3JHk7kP3S_+acwLQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwp7Fbb6COXkH-2bqBOjCIG6h27XjbFFg53HLlKFRHW0DIqtcRf-rDbuAQ
+Message-ID: <CAMj1kXGzz5hGiq5ebj9kxzXa3uHOt0eTBx3JHk7kP3S_+acwLQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/4] KUnit tests for SHA-2 and Poly1305
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"Jason A . Donenfeld" <Jason@zx2c4.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 14/07/2025 04:59, LiangCheng Wang wrote:
-> From: Wig Cheng <onlywig@gmail.com>
-> 
-> Mayqueen is a Taiwan-based company primarily focused on the development
-> of arm64 development boards and e-paper displays.
-> 
-> Signed-off-by: Wig Cheng <onlywig@gmail.com>
-> ---
-<form letter>
-This is a friendly reminder during the review process.
+On Thu, 10 Jul 2025 at 06:04, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> This series is also available at:
+>
+>     git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git libcrypto-kunit-v5
+>
+> This series adds the first KUnit tests for lib/crypto/, including tests
+> for SHA-2 and Poly1305.
+>
+> Changed in v5:
+> - Moved hash_irq_test2_state from stack to heap
+>   (fixes https://lore.kernel.org/r/202507081257.9sV2D0Ys-lkp@intel.com)
+> - Replaced HRTIMER_MODE_REL with HRTIMER_MODE_REL_HARD to make hardirq
+>   context be used on CONFIG_PREEMPT_RT (fixes a WARN_ON_ONCE).
+> - Removed an unnecessary initialization in hash_irq_test2_func()
+> - Added comments that explain kconfig option naming
+> - Added link to Poly1305 paper
+>
+> Changed in v4:
+> - Added Poly1305 tests.
+> - Split the addition of hash-test-template.h and gen-hash-testvecs.py
+>   into a separate patch.
+> - Added two more test cases to hash-test-template.h
+>   (test_hash_all_lens_up_to_4096 and test_hash_interrupt_context_2).
+> - Simplified test_hmac to use a single consolidated test vector.
+> - Lots of other cleanups.
+>
+> Changed in v3:
+> - Split from SHA-512 and SHA-256 series, as per the request from Linus
+>   that the tests be kept last on the branch.
+>
+> Eric Biggers (4):
+>   lib/crypto: tests: Add hash-test-template.h and gen-hash-testvecs.py
+>   lib/crypto: tests: Add KUnit tests for SHA-224 and SHA-256
+>   lib/crypto: tests: Add KUnit tests for SHA-384 and SHA-512
+>   lib/crypto: tests: Add KUnit tests for Poly1305
+>
 
-It looks like you received a tag and forgot to add it.
-
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here. However, there's no need to repost
-patches *only* to add the tags. The upstream maintainer will do that for
-tags received on the version they apply.
-
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
-
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
