@@ -1,265 +1,110 @@
-Return-Path: <linux-kernel+bounces-730782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4FFEB049BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:49:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB78B049BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D047189FB55
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:49:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A4B17A82B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA55023C4EA;
-	Mon, 14 Jul 2025 21:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6328223BD0B;
+	Mon, 14 Jul 2025 21:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PS1YadVg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xC6TWPEo"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3530D238171;
-	Mon, 14 Jul 2025 21:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E06190676
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 21:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752529768; cv=none; b=Jd/2WCVsogROZfPsgSUN2befO0/9+PNtIbCzi2WMK3ls/7yfAtx5iFjTz8S588RI1qlvmlHzcwMxeUnIweHll3X528TNyThHKg9SOMCRtl2mOqicKIIJPnN45Ua/pMUU9TlJjz1zhoupSrDIXL3pjPoHrycvJP2oNLM+wYQMnu8=
+	t=1752529820; cv=none; b=sP5NviVar5IsPt6IuvrDvaZnFu79pOyte9gIt8S53qzJ7+cLhuUIFgpoUVfAdz5TjhP+a0a10bwHwgJQyXrDyA9yM1jVu72/Wjd/N1vv9WVv8haxybjHJQ5z2tT9H6BQGPaChVS9ZBS0U9DomiBtyfBKr/zh+OWeCHlspKFo87w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752529768; c=relaxed/simple;
-	bh=tqqpQqkzdJlgwrVjzP3leMMwLjWGiwUiYUHXHdkAuPE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H8atdTWWKnOVG0Qzj1F9wxfF7qclYPPa/0MgleqE6aLvr+OT9IAJxWYN77beDUhoPt67HJTc9EMOj/5jcsESOpblsUhFKTPhESpsPIB8U1MvwVQ4uup3LSzqwnKsr81Dy17pUbKMZMja8fmq9Up8vCbfg0AtfXR2onpdXjAdgCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PS1YadVg; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752529766; x=1784065766;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=tqqpQqkzdJlgwrVjzP3leMMwLjWGiwUiYUHXHdkAuPE=;
-  b=PS1YadVgfiZlLatRTsw3TvZzFe4l+7+mkzW7B5LEdwsiQH8h8x13AQjD
-   /fEf4oFKhuRSnAXQXTdpojn4kJamxoxn+cjkySm4mZ+lUJcL2OfBCZoHK
-   yb2qSCM5Yi/vwljRQQROmSS+fJvs3D7jZdvLUKip1kGkazckWPXNuljLT
-   y1bzwuoPVdPUAxIyBXsvcjV7sD+BESiTVVxVcSp54KnXYZBlYyt5LlGn6
-   ASEvZlQa62ygfXHeA4Iwo9RPQ+aKT09+Yga0lkFkkTZqpHmrOHqXH/PaN
-   P7mxZ04d4aMGVAW7sZLLWDlke0haa2ol9MHZJA9lx9zynzARNGsQvG0TP
-   Q==;
-X-CSE-ConnectionGUID: y53E2G0kQIuFNotQ+zpZbg==
-X-CSE-MsgGUID: Nxqn/QyHQzSCuh6AM4VKZg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="80176887"
-X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
-   d="scan'208";a="80176887"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 14:49:25 -0700
-X-CSE-ConnectionGUID: RlCsYAw8QQSB5kDMsu55Cg==
-X-CSE-MsgGUID: pQ0GDPpTS9iFDgzGJJxS1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
-   d="scan'208";a="157595572"
-Received: from slindbla-desk.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.95])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 14:49:21 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: linux-cxl@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>
-Cc: linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject:
- Re: [PATCH v3 5/8] cxl/region: Split commit_store() into __commit() and
- queue_reset() helpers
-Date: Mon, 14 Jul 2025 23:49:14 +0200
-Message-ID: <3189798.9o76ZdvQCi@fdefranc-mobl3>
-In-Reply-To: <20250711234932.671292-6-dan.j.williams@intel.com>
-References:
- <20250711234932.671292-1-dan.j.williams@intel.com>
- <20250711234932.671292-6-dan.j.williams@intel.com>
+	s=arc-20240116; t=1752529820; c=relaxed/simple;
+	bh=iM0bLDr0wjEfompnEdKiLWQmyHdzCRZYdk03xCWbjnI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rZHP+8E9elwVkJIluzjghsWfoup19qIcbdN7ZXWE0bmjXcBAbOYLD7PMQytF8a6W4IJQPHVf7nMww29rPPssiG15TrJNWaNl3mX6ozl56BY/Am4hDkDgIan2YmiKEYyqaZK7+i0ZFhBESTMNFlFljl8YQEmnUV01L/SOtBIQDxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xC6TWPEo; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <750dd5f1-a5f8-4ed2-a448-1a57cb5447dc@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752529815;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PhuocBLqA3gzBc4uu2GGr+rR7kPr/v7HEImY11Vzz0E=;
+	b=xC6TWPEoJvNnTQcLv2Qk9thEImxEEpeJqn7+RCxAi0mkv9//Ag4ZtRq8vJz0UUdBGuwd7v
+	ya6xCN5GomrCWpqJwJ/ACd97T4mTIq7jDgepOUQaraIQkLKYwBto6SRCXYlZyUKg7r6row
+	hkfLasBNcNLb2hVSMr/blgIx8JVP0oo=
+Date: Tue, 15 Jul 2025 05:50:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-
-On Saturday, July 12, 2025 1:49:29=E2=80=AFAM Central European Summer Time =
-Dan Williams wrote:
-> The complexity of dropping the lock is removed in favor of splitting comm=
-it
-> operations to a helper, and leaving all the complexities of "decommit" for
-> commit_store() to coordinate the different locking contexts.
->=20
-> The CPU cache-invalidation in the decommit path is solely handled now by
-> cxl_region_decode_reset(). Previously the CPU caches were being needlessly
-> flushed twice in the decommit path where the first flush had no guarantee
-> that the memory would not be immediately re-dirtied.
->=20
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Alison Schofield <alison.schofield@intel.com>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-
-Reviewed-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
-
-> ---
->  drivers/cxl/core/region.c | 99 +++++++++++++++++++++++++++------------
->  1 file changed, 70 insertions(+), 29 deletions(-)
->=20
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 6e5e1460068d..3a77aec2c447 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -349,30 +349,42 @@ static int cxl_region_decode_commit(struct cxl_regi=
-on *cxlr)
->  	return rc;
->  }
-> =20
-> -static ssize_t commit_store(struct device *dev, struct device_attribute =
-*attr,
-> -			    const char *buf, size_t len)
-> +static int queue_reset(struct cxl_region *cxlr)
->  {
-> -	struct cxl_region *cxlr =3D to_cxl_region(dev);
->  	struct cxl_region_params *p =3D &cxlr->params;
-> -	bool commit;
-> -	ssize_t rc;
-> +	int rc;
-> =20
-> -	rc =3D kstrtobool(buf, &commit);
-> +	rc =3D down_write_killable(&cxl_region_rwsem);
->  	if (rc)
->  		return rc;
-> =20
-> +	/* Already in the requested state? */
-> +	if (p->state < CXL_CONFIG_COMMIT)
-> +		goto out;
-> +
-> +	p->state =3D CXL_CONFIG_RESET_PENDING;
-> +
-> +out:
-> +	up_write(&cxl_region_rwsem);
-> +
-> +	return rc;
-> +}
-> +
-> +static int __commit(struct cxl_region *cxlr)
-> +{
-> +	struct cxl_region_params *p =3D &cxlr->params;
-> +	int rc;
-> +
->  	rc =3D down_write_killable(&cxl_region_rwsem);
->  	if (rc)
->  		return rc;
-> =20
->  	/* Already in the requested state? */
-> -	if (commit && p->state >=3D CXL_CONFIG_COMMIT)
-> -		goto out;
-> -	if (!commit && p->state < CXL_CONFIG_COMMIT)
-> +	if (p->state >=3D CXL_CONFIG_COMMIT)
->  		goto out;
-> =20
->  	/* Not ready to commit? */
-> -	if (commit && p->state < CXL_CONFIG_ACTIVE) {
-> +	if (p->state < CXL_CONFIG_ACTIVE) {
->  		rc =3D -ENXIO;
->  		goto out;
->  	}
-> @@ -385,31 +397,60 @@ static ssize_t commit_store(struct device *dev, str=
-uct device_attribute *attr,
->  	if (rc)
->  		goto out;
-> =20
-> -	if (commit) {
-> -		rc =3D cxl_region_decode_commit(cxlr);
-> -		if (rc =3D=3D 0)
-> -			p->state =3D CXL_CONFIG_COMMIT;
-> -	} else {
-> -		p->state =3D CXL_CONFIG_RESET_PENDING;
-> -		up_write(&cxl_region_rwsem);
-> -		device_release_driver(&cxlr->dev);
-> -		down_write(&cxl_region_rwsem);
-> -
-> -		/*
-> -		 * The lock was dropped, so need to revalidate that the reset is
-> -		 * still pending.
-> -		 */
-> -		if (p->state =3D=3D CXL_CONFIG_RESET_PENDING) {
-> -			cxl_region_decode_reset(cxlr, p->interleave_ways);
-> -			p->state =3D CXL_CONFIG_ACTIVE;
-> -		}
-> -	}
-> +	rc =3D cxl_region_decode_commit(cxlr);
-> +	if (rc =3D=3D 0)
-> +		p->state =3D CXL_CONFIG_COMMIT;
-> =20
->  out:
->  	up_write(&cxl_region_rwsem);
-> =20
-> +	return rc;
-> +}
-> +
-> +static ssize_t commit_store(struct device *dev, struct device_attribute =
-*attr,
-> +			    const char *buf, size_t len)
-> +{
-> +	struct cxl_region *cxlr =3D to_cxl_region(dev);
-> +	struct cxl_region_params *p =3D &cxlr->params;
-> +	bool commit;
-> +	ssize_t rc;
-> +
-> +	rc =3D kstrtobool(buf, &commit);
->  	if (rc)
->  		return rc;
-> +
-> +	if (commit) {
-> +		rc =3D __commit(cxlr);
-> +		if (rc)
-> +			return rc;
-> +		return len;
-> +	}
-> +
-> +	rc =3D queue_reset(cxlr);
-> +	if (rc)
-> +		return rc;
-> +
-> +	/*
-> +	 * Unmap the region and depend the reset-pending state to ensure
-> +	 * it does not go active again until post reset
-> +	 */
-> +	device_release_driver(&cxlr->dev);
-> +
-> +	/*
-> +	 * With the reset pending take cxl_region_rwsem unconditionally
-> +	 * to ensure the reset gets handled before returning.
-> +	 */
-> +	guard(rwsem_write)(&cxl_region_rwsem);
-> +
-> +	/*
-> +	 * Revalidate that the reset is still pending in case another
-> +	 * thread already handled this reset.
-> +	 */
-> +	if (p->state =3D=3D CXL_CONFIG_RESET_PENDING) {
-> +		cxl_region_decode_reset(cxlr, p->interleave_ways);
-> +		p->state =3D CXL_CONFIG_ACTIVE;
-> +	}
-> +
->  	return len;
->  }
-> =20
-> --=20
-> 2.50.0
->=20
->=20
->=20
+Subject: Re: [PATCH bpf-next v3] bpf: make the attach target more accurate
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Menglong Dong <menglong8.dong@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Menglong Dong <dongml2@chinatelecom.cn>
+References: <20250710070835.260831-1-dongml2@chinatelecom.cn>
+ <CAADnVQKmUE3_5RHDFLmKzNSDkLD=Z2g3bkfT2aRsPkFiMPd-4Q@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Menglong Dong <menglong.dong@linux.dev>
+In-Reply-To: <CAADnVQKmUE3_5RHDFLmKzNSDkLD=Z2g3bkfT2aRsPkFiMPd-4Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
+On 2025/7/15 03:52, Alexei Starovoitov wrote:
+> On Thu, Jul 10, 2025 at 12:10 AM Menglong Dong <menglong8.dong@gmail.com> wrote:
+>>                          } else {
+>> -                               addr = kallsyms_lookup_name(tname);
+>> +                               ret = bpf_lookup_attach_addr(NULL, tname, &addr);
+>>                          }
+> Not sure why your benchmarking doesn't show the difference,
+> but above is a big regression.
+> kallsyms_lookup_name() is a binary search whereas your
+> bpf_lookup_attach_addr() is linear.
+> You should see a massive degradation in multi-kprobe attach speeds.
 
 
+Hi, Alexei. Like I said above, the benchmarking does have
+a difference for the symbol in the modules, which makes
+the attachment time increased from 0.135543s to 0.176904s
+for 8631 symbols. As the symbols in the modules
+is not plentiful, which makes the overhead slight(or not?).
+
+But for the symbol in vmlinux, bpf_lookup_attach_addr() will
+call kallsyms_on_each_match_symbol(), which is also
+a binary search, so the benchmarking has no difference,
+which makes sense.
+
+I thought we don't need this patch after the pahole fixes this
+problem. Should I send a V4?
+
+Thanks!
+Menglong Dong
+
+
+>
+> --
+> pw-bot: cr
+>
 
