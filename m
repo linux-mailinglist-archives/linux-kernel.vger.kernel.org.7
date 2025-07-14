@@ -1,116 +1,162 @@
-Return-Path: <linux-kernel+bounces-730672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C0AB047ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:32:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6961B047F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8892B17C451
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:32:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3839D3BC339
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D821FFC5C;
-	Mon, 14 Jul 2025 19:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864D722A7E9;
+	Mon, 14 Jul 2025 19:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IQBX2YtQ"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TrsPwXzu"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE55712CDBE
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 19:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7CB1FE451
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 19:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752521557; cv=none; b=q8M/EjQFd+YNt5xCdFks3N+mrqhX+AhgMzK34CAFML/84phuvrJqvICcOrdq3OGauNa3/prn27a+FmjrEHm6pirAFNF4sSjeaODNLgN3UbyfxUSwBpVjBBRs+FubECkwimTU7nucrgGFZuKELyD1QMLMyW1JHlaw2Kqtfjxqtms=
+	t=1752521868; cv=none; b=sp4xGKnrf+coo5dNAak6wVaLr8f/Ip8lXFXykWEqfrfiUcNADhrPbds3d2GZhjLDd6ldYEmdeA+H4Q3H40kZBopnGipZkvvXa8/9tyl6dMPjmzaaRI0nMqNGsP5EYcE2xEefcsGzndWBPBuExEU7xbY05nDm9Q0nZB9QkC0vEwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752521557; c=relaxed/simple;
-	bh=a2HEin4T5mKgH4UnU+j+pw+iQeGGmxQpjb2Qfl4MXB4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AMjJOHo8F7u8egAXi/NofaMD1RDCBOuwjWJg5ROCNVTPFsZNWHuYy045z6otao4qDQNx4msSpaVA9stLM7kc+plEQCn8eC1eFspaL4PC1ZUrklZXa2vaOrw7Z1yIQ1TvPo5zjRfEAYRtVItpYHrCcHGYosb97ahx5cc/28sc9fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IQBX2YtQ; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7494999de28so6583604b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:32:35 -0700 (PDT)
+	s=arc-20240116; t=1752521868; c=relaxed/simple;
+	bh=r3KO+ZBs4mN082/WzjFPu6+tKInahyanTvO0ZCUAo/A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=NYc/bt83bou2WuCV0rpWyNZTqhmHNVMKjyA97wunJU+6DSEAiNRDFAiCGCDoLI+OezN5/x+I375mdFNoT4xTyRdXyxa4wKbRNsWousnITqOA3BAbHvAFp10nUHldlh/Y+GtyC7IMHJljdcSQyhSWGvX3lfguYJrxR+/CkwT+Z44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TrsPwXzu; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-735a6d7c5b1so2745754a34.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:37:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752521555; x=1753126355; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kN0WRPalT18RoBzndkHpefn+s6+2P/jByoSYx/fNQKU=;
-        b=IQBX2YtQNCKnuHZnGprTcLVyxPrPsQF8k0myRp6HEb2ppmQtZFPhFC9HCFPmFzAAps
-         Xkmk7bjDwhgSkfzlbqepErAWAsUJ63ElMJyVzcidweA1mOwM3E3mxL09aZhRnZnw6DVP
-         QtKB2XvvI4on/gZaDiKesMqKxNlNabGlENhvLpNalpccwwp3oqMPLl0+7TRO3JHkm3q9
-         7XY/ggfyb6RCyKnKunsJn+hiCYK5u7cCw9m9t+ziagvmMxFUukdzqBkf/l+3W3lyhsJH
-         nZ1gJZaBmia2EiT6TIm/460UqNOxPohTqYDZ4xkyA2I+TVMEHwZlra5IG1E3SDqhAqEn
-         BLZg==
+        d=linaro.org; s=google; t=1752521866; x=1753126666; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sP/J78YSZFnZNYcFRTT3/TqZZq4tSvgtl6O7DciL3GA=;
+        b=TrsPwXzuu5S+SjzRHJM4Ljplet3/tn+FzAUYaPewiO4Lhw/kIQc7oKrmZvj8U1vLxE
+         JBYEcXOWuGEGpNi6sI4rYyvNxUpZOiQmlq6yngUN+fAjvUzfI29ARoMvxATz5HGPuuNF
+         5LbXjMGeDbRzBdCPhYKZemnedfchNYimNZcz1bwM2OOuZzwkuk1RMaN4KdYlBpEnuK46
+         Ire2RQ8bVR9pwya/wv2Q7Uyhx5+x1QgG17vzl8tBab+NLFx7n5ChdJfDfU/ARCi0fRCR
+         zW0utb99kCEJ6i0oOzdAzNoA/ueUNiRPQ0xJelMJe5Cdj70XA0NCNg+stuWrmCu6cFuD
+         3CEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752521555; x=1753126355;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kN0WRPalT18RoBzndkHpefn+s6+2P/jByoSYx/fNQKU=;
-        b=iWI5wVXx+Fdn5JgeuShpvorSjXYLQb+0LwyYPXjSyV418lKEyEeSq9uTiVVNxAdPsw
-         bM8yUPk18tz+n7SSQSaCXA2vYkBXY2cw6t5XtPe9x9lBQkwPaglOmEXE6EKSKXyYDyoG
-         xTRG6ky7NmIhY0oKCuRLk9KaArbSjZ5q8FyRWB5PF+1lMQQ+BZpC4wmLt/EEINi9HdXa
-         onxTUS5GxiimjCZIVU2peTWjhjpHI7eXttbPXEbZV33EflhaIyZFd99jtWe97w82pVbo
-         551j1qwMbaWJ/3YX1z6KhP5KxU/9AJdtWWDFIJegm08kN2vmhhyH2lx38r5vD/ZOnGyM
-         aITA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSp0YnQMC/r27eUS+BgsUH1c5XTXGf+Tpo+qNay9citB0LsRQf1cDCmv3k0F8scQoC1j2CTiKv3RemdEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/r06kR3ERKDbEvE/sFerJZ/DSHKeXZHYR1+nHTLdVfLrKR2Xk
-	iKEzSFi/CJVu3rHiwlz5Qdi/DgaOla8bVjvxjBod73x3h00KFMlN5+u9IzltAtPDJnooJ4Wc4X+
-	LUsT82gqLFxuFgXQKTVzm2F6+Zw==
-X-Google-Smtp-Source: AGHT+IHA855jXksBvtV5n3vCT+ApX24/hHTyFJBq8J7w0ONUiwLJ6Smk9CmIJEbMuIj0XT5gcIm6G6heyJvLp6fUiQ==
-X-Received: from pfmm19.prod.google.com ([2002:a05:6a00:2493:b0:746:2ceb:2ec0])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:bd85:b0:73c:a55c:6cdf with SMTP id d2e1a72fcca58-74ee0aa5ae1mr19446492b3a.1.1752521555020;
- Mon, 14 Jul 2025 12:32:35 -0700 (PDT)
-Date: Mon, 14 Jul 2025 12:32:33 -0700
-In-Reply-To: <aGYM6uQkFAtdqMs9@yzhao56-desk.sh.intel.com>
+        d=1e100.net; s=20230601; t=1752521866; x=1753126666;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sP/J78YSZFnZNYcFRTT3/TqZZq4tSvgtl6O7DciL3GA=;
+        b=mKP37S6xp/C0n0jty4lemw/5n2ZdL8FCrSe4kd80oIubqelNl4SqmqsLQvJpOEFTti
+         GRTAye9J/6331z1DwqwggbQz75DixQ6geiwP6fgPfeTTibhsEaT8RCVd5RPOnuMxWTjY
+         K8swOTrNXtKiLoVv7kGpRRkOSgShE13RImiMGZlHICkD8H6wSJhhhPoRDs7uGlKmfDGZ
+         aYTRUaS9WO78miiQmC/Wiuk6Imzso/YRrAV04JGJASHOaQH1cGLIAVAKlueD4V2Bn2kU
+         yi+e8gGoB1QwPmAtKl4JIbtkpm8tZGdxowVU2Ps6UTS/sekHcvqS84EGMVvbRfbCbZn6
+         t1hw==
+X-Forwarded-Encrypted: i=1; AJvYcCUIE6OyQikC4vPohSibGBqmGRfXtpOBp7JHxJ79ufOGREMZgatae9n6Z0YsLx/pwEoRVj8nGSYBDFUJP6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzun7K5pg14NIR9SIOBcXE6z8lBhPzvhl+Y8yF/v6N17ew80GK2
+	drXpkWA5/W0d+M0HN1mgtBVi0PRCId0GG1rYh9oTbbTazsj6grRdszSBbG31gnOFxo5ha9VpfJN
+	DzEYU
+X-Gm-Gg: ASbGnctoRn5ikM45RJE1VG19kGecAKBFnO4IxLKN4nmlZaR18l08MX03Ez9yq9bypCz
+	dHxHsoeWDA3fvsXbozFX9sPTftnjijwrEKuLwJqEd/xYTC3XVcnhyWop+niWMrkqquxDGhl4hHO
+	L9To1eNaB165Aoq3czn6VoWD9LkWQVxTkxvNrpXjbc1JGHiZL2eundna+BdFD4sfNJifgRiFiwD
+	ws8BthB9I0gSxTIZ3VYACgHtrHTxmW9nRk4muBQWHb3cKyRWsM921ivYElqpne8xoTKE0G+RglJ
+	66m3JVCT5ur+rXM7+Xfuo+3LAz2X03E+OlPJEKwJGIyLRUgux/MzkacvvR0+p4FEuCqAtEa42id
+	LrOnhSassubACKiqjQCXLt8HNsMhCTA==
+X-Google-Smtp-Source: AGHT+IFErlbQA7v+YncKKuLD+GZLIWHCFOI/036UbG1GrAOyALCZ86WcXDhbFE3hQMC28zdAmyVLWQ==
+X-Received: by 2002:a05:6830:7105:b0:72b:8aec:fbd4 with SMTP id 46e09a7af769-73cfc2b4cacmr10268075a34.3.1752521866082;
+        Mon, 14 Jul 2025 12:37:46 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:6bb2:d90f:e5da:befc])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73cf12a609esm1658573a34.53.2025.07.14.12.37.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 12:37:45 -0700 (PDT)
+Date: Mon, 14 Jul 2025 22:37:44 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, admiyo@os.amperecomputing.com,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Robert Moore <robert.moore@intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Len Brown <lenb@kernel.org>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Huisong Li <lihuisong@huawei.com>
+Subject: Re: [PATCH net-next v22 1/2] mailbox/pcc: support mailbox management
+ of the shared buffer
+Message-ID: <3806fc87-e574-46cf-98af-158c37f640e0@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <aGJxU95VvQvQ3bj6@yzhao56-desk.sh.intel.com> <a40d2c0105652dfcc01169775d6852bd4729c0a3.camel@intel.com>
- <diqzms9pjaki.fsf@ackerleytng-ctop.c.googlers.com> <fe6de7e7d72d0eed6c7a8df4ebff5f79259bd008.camel@intel.com>
- <aGNrlWw1K6nkWdmg@yzhao56-desk.sh.intel.com> <CAGtprH-csoPxG0hCexCUg_n4hQpsss83inRUMPRqJSFdBN0yTQ@mail.gmail.com>
- <aGN6GIFxh57ElHPA@yzhao56-desk.sh.intel.com> <diqzms9n4l8i.fsf@ackerleytng-ctop.c.googlers.com>
- <aGUW5PlofbcNJ7s1@yzhao56-desk.sh.intel.com> <diqzecuy4eno.fsf@ackerleytng-ctop.c.googlers.com>
- <aGYM6uQkFAtdqMs9@yzhao56-desk.sh.intel.com>
-Message-ID: <diqzms964lgu.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH 08/21] KVM: TDX: Increase/decrease folio ref for huge pages
-From: Ackerley Tng <ackerleytng@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Vishal Annapurve <vannapurve@google.com>, "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
-	"quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>, 
-	"Shutemov, Kirill" <kirill.shutemov@intel.com>, "Hansen, Dave" <dave.hansen@intel.com>, 
-	"david@redhat.com" <david@redhat.com>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
-	"vbabka@suse.cz" <vbabka@suse.cz>, "tabba@google.com" <tabba@google.com>, "Du, Fan" <fan.du@intel.com>, 
-	"michael.roth@amd.com" <michael.roth@amd.com>, "seanjc@google.com" <seanjc@google.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "Peng, Chao P" <chao.p.peng@intel.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Weiny, Ira" <ira.weiny@intel.com>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "Li, Zhiquan1" <zhiquan1.li@intel.com>, 
-	"jroedel@suse.de" <jroedel@suse.de>, "Miao, Jun" <jun.miao@intel.com>, 
-	"pgonda@google.com" <pgonda@google.com>, "x86@kernel.org" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710191209.737167-2-admiyo@os.amperecomputing.com>
 
-Yan Zhao <yan.y.zhao@intel.com> writes:
+Hi,
 
-> On Wed, Jul 02, 2025 at 11:43:23AM -0700, Ackerley Tng wrote:
->> >> vmemmap-optimized folios. Setting a page flag on a vmemmap-optimized
->> >> folio will be setting the flag on a few pages.
->> > BTW, I have a concern regarding to the overhead vmemmap-optimization.
->> >
->> > In my system,
->> > with hugetlb_free_vmemmap=false, the TD boot time is around 30s;
->> > with hugetlb_free_vmemmap=true, the TD boot time is around 1m20s;
->> 
->> I'm aware of this, was investigating this for something similar
->> internally. In your system and test, were you working with 1G pages, or
->> 2M pages?
-> 2M pages. 
+kernel test robot noticed the following build warnings:
 
-Thanks for letting me know. I'll look more into this. I'm currently also
-working on some optimizations, hope this will get addressed.
+url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mailbox-pcc-support-mailbox-management-of-the-shared-buffer/20250711-031525
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250710191209.737167-2-admiyo%40os.amperecomputing.com
+patch subject: [PATCH net-next v22 1/2] mailbox/pcc: support mailbox management of the shared buffer
+config: x86_64-randconfig-161-20250711 (https://download.01.org/0day-ci/archive/20250712/202507120609.Myazax08-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202507120609.Myazax08-lkp@intel.com/
+
+smatch warnings:
+drivers/mailbox/pcc.c:498 pcc_send_data() error: uninitialized symbol 'ret'.
+
+vim +/ret +498 drivers/mailbox/pcc.c
+
+86c22f8c9a3b71 Ashwin Chaugule    2014-11-12  490  static int pcc_send_data(struct mbox_chan *chan, void *data)
+86c22f8c9a3b71 Ashwin Chaugule    2014-11-12  491  {
+c45ded7e11352d Sudeep Holla       2021-09-17  492  	int ret;
+bf18123e78f4d1 Sudeep Holla       2021-09-17  493  	struct pcc_chan_info *pchan = chan->con_priv;
+e332edef98ddac Adam Young         2025-07-10  494  	struct acpi_pcct_ext_pcc_shared_memory __iomem *pcc_hdr;
+e332edef98ddac Adam Young         2025-07-10  495  
+e332edef98ddac Adam Young         2025-07-10  496  	if (pchan->chan.rx_alloc)
+e332edef98ddac Adam Young         2025-07-10  497  		ret = pcc_write_to_buffer(chan, data);
+
+Hi Adam!  :)
+
+ret is uninitialized on the else path.
+
+e332edef98ddac Adam Young         2025-07-10 @498  	if (ret)
+e332edef98ddac Adam Young         2025-07-10  499  		return ret;
+8b0f57889843af Prakash, Prashanth 2016-02-17  500  
+c45ded7e11352d Sudeep Holla       2021-09-17  501  	ret = pcc_chan_reg_read_modify_write(&pchan->cmd_update);
+c45ded7e11352d Sudeep Holla       2021-09-17  502  	if (ret)
+c45ded7e11352d Sudeep Holla       2021-09-17  503  		return ret;
+c45ded7e11352d Sudeep Holla       2021-09-17  504  
+e332edef98ddac Adam Young         2025-07-10  505  	pcc_hdr = pchan->chan.shmem;
+e332edef98ddac Adam Young         2025-07-10  506  	if (ioread32(&pcc_hdr->flags) & PCC_CMD_COMPLETION_NOTIFY)
+e332edef98ddac Adam Young         2025-07-10  507  		pchan->chan.irq_ack = true;
+e332edef98ddac Adam Young         2025-07-10  508  
+3db174e478cb0b Huisong Li         2023-08-01  509  	ret = pcc_chan_reg_read_modify_write(&pchan->db);
+e332edef98ddac Adam Young         2025-07-10  510  
+3db174e478cb0b Huisong Li         2023-08-01  511  	if (!ret && pchan->plat_irq > 0)
+3db174e478cb0b Huisong Li         2023-08-01  512  		pchan->chan_in_use = true;
+3db174e478cb0b Huisong Li         2023-08-01  513  
+3db174e478cb0b Huisong Li         2023-08-01  514  	return ret;
+86c22f8c9a3b71 Ashwin Chaugule    2014-11-12  515  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
