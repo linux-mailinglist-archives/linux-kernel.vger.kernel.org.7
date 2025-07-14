@@ -1,88 +1,161 @@
-Return-Path: <linux-kernel+bounces-730642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C6AB04786
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 20:50:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F80B04789
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 20:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E4674A3677
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:50:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6A8C4A36EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E365277036;
-	Mon, 14 Jul 2025 18:50:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CFB273D89;
+	Mon, 14 Jul 2025 18:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nRtBvyzf"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD58276056
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 18:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2EC25B66A;
+	Mon, 14 Jul 2025 18:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752519004; cv=none; b=XUWgxxmD5gr28ew64bkVqCiSiBNS+qJiwDnmmFJ0x1r9h114RxBGQR96EelZJ2xf1YqSpNnhqrg3J1AICQh+0clpRVgXHyHEu6Bcog8bFQWqRChkFiee8uGNxfsxzKhjgXKawdAH/Axp3Y9DNEcze/r/Ye/LwIVgBCOXjZ1fads=
+	t=1752519145; cv=none; b=ngZGeWBdcWVIPytzM9KCbcmtY51W/nGkstuqXo+A74EOaYdd5hax8jmpf9HY6Umcn0M3/SOijGndRqtY3tuATYgqv1ypxgTng1jA+NySTwbbUkuICwsGeJKK54u5iZZSHzQO3IyQvSP9/lQWapMoLSoi5csQ+vQbn9lpTSdONl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752519004; c=relaxed/simple;
-	bh=sL3Ty6zb90cdZAu3orpLPgO6y1Pv97CVNHZeDEtIJI0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YWAVnSFqP6Ht0SsAlkFhKob9t+IUlhW9uFTkv0CkZDlQ3xcr5QW5AFk48uMjX8KL9a7jsdNWZa6vcO/46QR6k9wBEsEXQLim5GhWa9yRHrzsaoGIcdxkFhGKX76JGNU/03q1dzD6Kc+eNYfEa13Z01wn6xUKMaKGSU0bOk3FJRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-86cfff5669bso458434239f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:50:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752519002; x=1753123802;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aD+SVBl8w3djGHImI0ouoaCds+D4brGq+H/e+A2QQA8=;
-        b=fHlOcUn3qPOtgrvBsl426AJbXCLycfwmNfg5oF4KdczXHbgsPHLlISee4BTpYV9ul8
-         N3Dy/rsBD/XogHcu1ABXmq9tt8U6b4WV40vADGZ5Q7MH731y/yM+m1byBEfSYuqYFU2v
-         54Gh2k5CgC3sUYJPYjB4g/3/OzeoAqVwC7HlH8/srqeKmAKOmenoPToCTeyBl445f0hZ
-         geXLiWUdvzfqejoZ0I/EEaJ88QD3SYfkRwElGa3lhEAN6CN7PeNW9XLaIdiSmsNSMlgD
-         RS5TPQEGyat1iULjKiYLfA0GmG+EfSJu8hrK4OjlYPa3Y+HWZl5/g7he6OtvepE0Sic2
-         AcJA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7asqzAGAZS9UiD5ifim25e1fgDI9r4M2ccVbh4vGYg0Wa2yd6qZHl62RWemC9IihER1GlJSK4YuDeQpY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVWzhXf8Yvuf98hfZuYxwFiy//DnydWO91CyYLsiTDPoEJrIgB
-	D/w6kwIRhqWOpIADvqNjNwpiPrmoMu0ZF6ojuQRneRn+eXPpgFMFzBG/g8uIO07IHxPw9Y7bjfS
-	nWnNRxzz0PBHjOYsoddG+Dw/fOd5tEJ0qliqPHmZbsQDvGKu/vjkVpsSOiPQ=
-X-Google-Smtp-Source: AGHT+IFzNT+ecM3Iao421peKAwInDKwETKEbMkk8Yte5dfJG8bGYr6cgBOlEREmDlx69Fk8YtdQEjKR2+ZeBTJgp7PRDfp+n2UjI
+	s=arc-20240116; t=1752519145; c=relaxed/simple;
+	bh=eTQVHiD2DBqTrTHdXQdwOxgTOu4JnTGjuuUnROq9D6Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=q1kmGp+YghetPkbPwS/lY49YUsBns4DhQFLnwljWxK22YvxAXLmpdHCR59z/WKGpC0+dvAGz648S8uvdwkyXtLc/RmvG6SDt/3Rv84PiPERFUGkayIlJ7ny9YT56H95lVhm+HqqL7hjb56azIw0KOCkg0L9RhuIq7aRdac6txlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nRtBvyzf; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1752519141;
+	bh=eTQVHiD2DBqTrTHdXQdwOxgTOu4JnTGjuuUnROq9D6Y=;
+	h=From:Subject:Date:To:Cc:From;
+	b=nRtBvyzfHNl4GBpM+SHe2jE9rz/WgWoBXT8FBodCy9V9gq2sOgl24nacX2o/31ibe
+	 KmPEqe1VA3E1EsTWjhBrIodZELyY7NGEkYPznXmGBLM233s6fSfzIMZs0Tg2PHHyCM
+	 Y0EbKsfxuFWlCJ4foFi6504GTBrNSz0LC3Kk9c2EKGjCTHE4bpvvzsqWANbO8g1Oax
+	 YTkap++d+hXLRl9/ZjGOpqfQK7mLGP71OT2IRuTuLDXdNk7mwUZiizCBD8nZ2+hHaA
+	 swNGjAQAPrC1w7Y38x6JRSbnZVxAkUJ+sgsW357n9fw1wLerwivig7cUG0zVyqR7V7
+	 IOJn5O97C1rKw==
+Received: from [192.168.0.2] (unknown [IPv6:2804:14d:72b4:82f6:67c:16ff:fe57:b5a3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dwlsalmeida)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6AE2B17E0DD7;
+	Mon, 14 Jul 2025 20:52:19 +0200 (CEST)
+From: Daniel Almeida <daniel.almeida@collabora.com>
+Subject: [PATCH v8 0/2] Add a bare-minimum Regulator abstraction
+Date: Mon, 14 Jul 2025 15:52:03 -0300
+Message-Id: <20250714-topics-tyr-regulator2-v8-0-c7ab3955d524@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2bf0:b0:876:737:85da with SMTP id
- ca18e2360f4ac-879aec80118mr86370039f.0.1752519002324; Mon, 14 Jul 2025
- 11:50:02 -0700 (PDT)
-Date: Mon, 14 Jul 2025 11:50:02 -0700
-In-Reply-To: <f6e67c38-8d63-4536-827c-09757a8d5609@rowland.harvard.edu>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6875515a.a70a0220.18f9d4.0006.GAE@google.com>
-Subject: Re: [syzbot] [input?] [usb?] UBSAN: shift-out-of-bounds in s32ton (2)
-From: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>
-To: bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANNRdWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyLHQUlJIzE
+ vPSU3UzU4B8JSMDI1MDc0MT3ZL8gszkYt2SyiLdotT00pzEkvwiI13jxNTkFFMTS6MkoxQloN6
+ CotS0zAqwudGxtbUAb7cezWcAAAA=
+X-Change-ID: 20250714-topics-tyr-regulator2-3aecd5492b2d
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ Alexandre Courbot <acourbot@nvidia.com>, 
+ Daniel Almeida <daniel.almeida@collabora.com>
+X-Mailer: b4 0.14.2
 
-Hello,
+Changes in v8:
+- Added Alex's r-b
+- Added helpers/regulator.c, since the stubs are declared as inline if
+  CONFIG_REGULATOR is not set (Intel bot)
+- Removed unneeded "regulator.enable()" line from docs: it was not needed
+  and, ironically, it misused the API by choosing Regulator<Dynamic>
+  and then not keeping the enabled count count balenced (Alex)
+- Clarified that the "Enabled" state decreases the enabled refcount when it
+  drops (Alex)
+- Renamed "Microvolt" as "Voltage" and introduced
+  from_microvolts/as_microvolts (Alex)
+- Fixed the spelling for MAINTAINERS in the second commit (Alex)
+- Link to v7: https://lore.kernel.org/rust-for-linux/20250704-topics-tyr-regulator-v7-0-77bfca2e22dc@collabora.com/
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Changes in v7:
+- Add RegulatorState::DISABLE_ON_DROP (Alice)
+- Remove #[cfg(CONFIG_REGULATOR)] in lib.rs (if this is N we will use
+  the stubs)
+- Add the bound on 'static directly on RegulatorState to avoid
+  repetition
+- Removed the `data` member on the example (Alice)
+- Removed the `mut` token from try_into_enabled() and
+  try_into_disabled() (Miguel & Intel bot)
+- Link to v6: https://lore.kernel.org/r/20250627-topics-tyr-regulator-v6-0-1d015219b454@collabora.com
 
-failed to checkout kernel repo https://git.kernel.org/pub/scm/linux/kernel/git/hid.git on commit c2ca42f190b6: failed to run ["git" "fetch" "--force" "--tags" "0d6f9bdf969aa7d8637c9aa20dfc4a9cfc8f96cd"]: exit status 128
-fatal: repository 'https://git.kernel.org/pub/scm/linux/kernel/git/hid.git/' not found
+Changes in v6:
+- Use ManuallyDrop<T> to avoid running the destructor in
+  try_into_enabled() and try_into_disabled(). This is the same strategy
+  that was being used successfully in the pre-typestate version of this
+  patch
+- Link to v5: https://lore.kernel.org/r/20250623-topics-tyr-regulator-v5-0-99069658cb54@collabora.com
 
+Changes in v5:
+- Remove TryIntoEnabled and TryIntoDisabled traits (they were only
+  implemented for a single type anyways)
+- Added regulator.rs to VOLTAGE AND CURRENT REGULATOR FRAMEWORK
+- Applied the diff from Miguel Ojeda to format the docs
+- Link to v4: https://lore.kernel.org/r/20250609-topics-tyr-regulator-v4-1-b4fdcf1385a7@collabora.com
 
+Changes in v4:
+- Rewrote the abstraction to use typestates as per the suggestions by
+  Benno and Alex.
+- Introduced the `Dynamic` state.
+- Added more examples.
+- Fixed some broken docs.
+- Link to v3: https://lore.kernel.org/r/20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com
 
-Tested on:
+Changes in v3:
+- Rebased on rust-next
+- Added examples to showcase the API
+- Fixed some rendering issues in the docs
+- Exposed {get|set}_voltage for both Regulator and EnabledRegulator
+- Derived Clone, Copy, PartialEq and Eq for Microvolt
+- Link to v2: https://lore.kernel.org/r/20250326-topics-tyr-regulator-v2-1-c0ea6a861be6@collabora.com
 
-commit:         [unknown 
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/hid.git c2ca42f190b6
-kernel config:  https://syzkaller.appspot.com/x/.config?x=28729dff5d03ad1
-dashboard link: https://syzkaller.appspot.com/bug?extid=b63d677d63bcac06cf90
-compiler:       
+Resend v2:
+  - cc Regulator maintainers
+Changes from v1:
+  - Rebased on rust-next
+  - Split the design into two types as suggested by Alice Ryhl.
+  - Modify the docs to highlight how users can use kernel::types::Either
+    or an enum to enable and disable the regulator at runtime.
+  - Link to v1: https://lore.kernel.org/rust-for-linux/20250219162517.278362-1-daniel.almeida@collabora.com/
 
-Note: no patches were applied.
+---
+Daniel Almeida (2):
+      rust: regulator: add a bare minimum regulator abstraction
+      MAINTAINERS: add regulator.rs to the regulator API entry
+
+ MAINTAINERS                     |   1 +
+ rust/bindings/bindings_helper.h |   1 +
+ rust/helpers/helpers.c          |   1 +
+ rust/helpers/regulator.c        |  43 +++++
+ rust/kernel/lib.rs              |   1 +
+ rust/kernel/regulator.rs        | 418 ++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 465 insertions(+)
+---
+base-commit: e04c78d86a9699d136910cfc0bdcf01087e3267e
+change-id: 20250714-topics-tyr-regulator2-3aecd5492b2d
+
+Best regards,
+-- 
+Daniel Almeida <daniel.almeida@collabora.com>
+
 
