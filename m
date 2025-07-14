@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-730256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B316B041FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:40:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8612EB041FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FF0F188FD96
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:40:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9303166437
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FE12561AE;
-	Mon, 14 Jul 2025 14:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2242561A7;
+	Mon, 14 Jul 2025 14:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="feRvCEln"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zJatAwmu"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A92C246BD3
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA8C14A60F
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752504007; cv=none; b=mS2iyGc6X8w8t9DfxN1pYluK2Bpo9s5TvGcyrrx5zgOVkvf3BmQ35dTzwL59DuAOOJ6kLTE4W8qdJqQWGdVXo56HcPxJ/LIzXR36NxAZTA9orrL5/r5Sx8yCAQvBHWe+MgJLTu6rULYpaQXwTth0vlYorR+dHjWfswgnaMhl1Pk=
+	t=1752504059; cv=none; b=mSUFAl0XE7jM+Hab50aJvwXaFb0LYX+U39szwBFyXyA6yjpDzJkf6c34tmjDV5Ro779aF9YileOQ67TsANNVkOI7S7cn3KvEgKzIBCyCq09e3T515FAIspNMkFDkzjOLWW1KrcHt1/fUbQdlgo25k/0zLsTK8qS4Fyo2aZ1TjDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752504007; c=relaxed/simple;
-	bh=oyfvGg2DL1aFHhuyCBMaTIMnV2Guv0J8oJJm/jU6KS4=;
+	s=arc-20240116; t=1752504059; c=relaxed/simple;
+	bh=KPa1Xi+0Kj9jOLgaY3CpZ5S39oFaWuIleqPBJQU4uko=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jmKdANkAQiBnPMLoAyemxRs+ugpMa3CawTST6p7ZwBnC8HESDLjvkGqcwWJvuu1A4kW6AZz9uwDPxmjqjF83zyz5aMnt5kpXA0J3gIuXl92R/x5lEqOBO8tf3QDtUM3c8tfpAiU8TU0tMn2Q2xwUYi9eNRrnMWbgyqP2/RsZ6bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=feRvCEln; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752504005;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FZLxa33erWQTN3e570HsEbSf87tz27RP18qPQR0Fz2Q=;
-	b=feRvCEln+8vnYleYGWVJXIHtWtGdinRRVFDWXAw9BMR2LKY2UNUG1k8HtJriLg5mndhm5d
-	2uGYXlQgGSJHk3sxf/Gzd5xi/NxMNJRGYHRR7jSkGK6bZmCRwILIHI2EKDI/A6gPo2cEOE
-	bqk6rDf9mbTlExrxTwcV6qMaUC304vI=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-361-pwo0fv9uNpqWxwPSQwwH6g-1; Mon, 14 Jul 2025 10:40:02 -0400
-X-MC-Unique: pwo0fv9uNpqWxwPSQwwH6g-1
-X-Mimecast-MFC-AGG-ID: pwo0fv9uNpqWxwPSQwwH6g_1752504002
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-455e918d690so13837025e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 07:40:02 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=Pg01DrxflZWWbaUm7P88zXpgb99u48e+yFPSmDzf8yfSnlLlgYMPfHdXFuRtJ4XcbUr69d5LMLLT5J43uDGWHVZjvzctBOLiN/zDoYcwxvrlNQAm2mnKK5XOIEnuSS0LfkOf9X8VmB3vgNbgEdldKAbenDmwChEV7npyns68YyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zJatAwmu; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4562421501fso57555e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 07:40:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752504056; x=1753108856; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=83mP6l1iA2hcAoEVcKK7xAWQf3cJP6s75bC7pATme9U=;
+        b=zJatAwmuxgmSNRVF47AMoXX1E2O23aNeShSeSYW5NWZDI/ZmlZ8vf7zZkxRuKVazqp
+         joQA70Pd6avAmAIEe0Jx0KRWhD1IsV1/UiVzeipfizC7pQEAys2LKcyQwm+9iI9EP/js
+         0R6Iyh2pyfJymVDbw932URstbBqjLkwJs8UFg2Ib0TTCouVKF5TmOG2hBlO/wgaeRAdK
+         P7McbBjpJTMnZwFk4xM+dv701dtzXAOEJ1WhaNMtlyTXW2ZT3WfAGSmygS+C5qGgTrJD
+         +5wtV3efRV7O7t04K/JS0QlrEY2QTARO+q1a0T2P4r1WXBZ+vUSec6pkMnyaQQMxeTrj
+         folw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752504001; x=1753108801;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
+        d=1e100.net; s=20230601; t=1752504056; x=1753108856;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FZLxa33erWQTN3e570HsEbSf87tz27RP18qPQR0Fz2Q=;
-        b=DyopU1KpiepZRTDQT7ntO/HXi2n8xWNnEoyMGt9cbiupd98BD/DWD4drGaZ0W2egAY
-         pHqAoQtPTn6i/4Ak4MFIIxg0mWwiGPvqu3RPHuI2ImL0PmJgng0hSD1fjzZKvBsVhH+1
-         0IBL4GAQKFJl110cKxdALIbUFeW9g+qQP5LuByFjY/IG2z8Wj9dLm0FbxqeYS91CAJhC
-         IB907yH3XfvsMn0bYYzMAFA5ovVrUPaJEpOuVgpICvIUCYS6EtvzbDbMvGWFL0r7NTWM
-         HcdcneyPjZFqw5A5USIz53LyKYJmCvBha55P63aMRKoalbo3jGjgVNfgodr+HfY9p32n
-         uIqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbAJPI2CFxjg7p28/zxYUPZglnuojwpP6RuLuCcyxHKDV83Weh6goRVdoUezWNj8VFqAPoJ5PURTb20O4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykeY407t9MlYZjnx0jOC5OlnR2s2nPRf8ACZGtl84N/xDxyCtS
-	8bX6MbhNguG/52JwQ7yraLc0mw+mGq3HUtMLFfxghgRhxD7FVizbrmr5y+FtaKFYXU9VzUHTnVM
-	Vc5o7HsRHO3NrYG2yfGbEQeQKRKw3zS1Bde0wMijAIJ51O5j98Ujuzyck+t+wPDylNA==
-X-Gm-Gg: ASbGnctDV7AJ8pqe5yzJ5oYYCBAejNk8xop9e79wEw3jTbnn1fike3nWcJgt7U6cmPk
-	GzNr9QkHvCThCTevLu2SbkXu9w+NHZQTGbyAsTsyFmWAP/T71pNE2kGUuQbTHD7Gwj4Vo4hIihk
-	2vrz22uyfhYq15i6pm8FXSzqv8Da3fiW2MJqjYsg7uwSMI3/HE5KKEFPg8eoZoZBLx1QtNJGuxb
-	q7Mmw+NhYjepxPwUgVtiY8lbkq3y6uyGVCYNmOqt1P/THU8DFtf1WBTkKpFAzDXb+SiCf378kzR
-	+5SKuEuO2VnI/rezipcLbc57/m/46Z2DCgPC+/nNzU6gs1Bxj6O1+jb+QoLKHTSh7VGhcDF9EYz
-	6G3TgMvUd3GMBo9MZA4wLIzv4oh5hI0dmxL2FWqSSK8MvIA1OHw+zQado0Sf1Q0uZ
-X-Received: by 2002:a05:600c:46ce:b0:456:21f4:a0a3 with SMTP id 5b1f17b1804b1-45621f4a239mr19332445e9.5.1752504001519;
-        Mon, 14 Jul 2025 07:40:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF0eMROROoQTHA6Typm5AVxcQMCystkOVfLcE8YYkqQ3/u8zaJ82I+Y7a8SVMD5WD76QbN18w==
-X-Received: by 2002:a05:600c:46ce:b0:456:21f4:a0a3 with SMTP id 5b1f17b1804b1-45621f4a239mr19332115e9.5.1752504001092;
-        Mon, 14 Jul 2025 07:40:01 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f38:ca00:ca3a:83da:653e:234? (p200300d82f38ca00ca3a83da653e0234.dip0.t-ipconnect.de. [2003:d8:2f38:ca00:ca3a:83da:653e:234])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d5053725sm177245925e9.16.2025.07.14.07.39.59
+        bh=83mP6l1iA2hcAoEVcKK7xAWQf3cJP6s75bC7pATme9U=;
+        b=jThbU0v3gqVYsqXzzWC5ttqxMcNI/k8NezCNmSN/ngA68sqz5wNX4FX30aF7YIz5Bz
+         6SmkKz0uZDdHo/WktHJ3eWTJ27MZNYcC16asSD5y+nR0KxAMSb4I/yRAo4RtyUQvpanG
+         yclijGTSaqdkE5jXZaeXeWyC9MqIq/6jUr9GnZKc8uQHrPmM2Ozo313DM/JOFXXiANcq
+         P4dz4oaAsv4rAALsPCCJCzRuyVOyhex5J08RSFEFoNrdAOvSomlmd0dSisPZpDVdpk1S
+         DmzSaNk9l1EN9nQGJSag9A6uQwb4tx9dJU1gY8L4KJcVtPqyzYjbIwchOsjfRFizmwjr
+         ZKEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVit+ZohvZhjk29THJrlH3RqNU53RWqqmy7p7qwCsV5JbmQOITfGYmqctepxxyKRvtROtB5HErp2/xhPkE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeGoQ/rPzL8sESSsqRzKtxODPSxpj0Wgj2R86P4dvA1O8ljxPB
+	aK0DhRDdr3X6A1FTxvJNDtjJFI30vWAnF4AajXYvtrcJPjcfRbdZJ4cNHaSKFifUw9M=
+X-Gm-Gg: ASbGncuHPF71aKM1db9UifTAkA3TiZyyf4cKduWeurVm6FKbLS++Z88wl3JXNy39vER
+	wTX2E2jLbkgmQ2BU1t7MPQQIGXBZwV9ehBjKU9hRpyiv/uuCzjrE4ijobFRQztykWKNa6xrKita
+	EFx3zBPy/ow2QMxkOsKJdlC4Odh2C2SLfqOY7/kro14MheJYbG/Kmw2aPajJ6MZu8ShnO7rCB2w
+	52U+CtM93kpFgBCtj9TpRxnhEgMLe6bdsra9kNuQEI+mtJEPPHakwGb3c+qpYg5/CfTiD9iIQln
+	aMUyA6rj4QJXs0BC0sC3TY7JrO7koDuDDtWEt670IdI4V9Rs1xCqSzq5VmqT+FGNRFrjbXfdzSC
+	fEKamnqznqVPkYBjpRxgYV77QukSwWKa+y2HPYTwTO4TSX+X61C0b
+X-Google-Smtp-Source: AGHT+IF/6VLR+s+RRZQkaP+/wGIfCuQAfLZweR0sCDTX1mOmUud28cvHC26ApEa2AAxHWg7MFRtFOg==
+X-Received: by 2002:a05:6000:659:10b0:3a5:2dae:970f with SMTP id ffacd0b85a97d-3b5f1893c29mr2997763f8f.13.1752504055681;
+        Mon, 14 Jul 2025 07:40:55 -0700 (PDT)
+Received: from [192.168.1.110] ([178.197.222.89])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d5easm12473850f8f.48.2025.07.14.07.40.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 07:40:00 -0700 (PDT)
-Message-ID: <c9c8de37-278b-4d73-97d2-869a7aab3ba3@redhat.com>
-Date: Mon, 14 Jul 2025 16:39:59 +0200
+        Mon, 14 Jul 2025 07:40:55 -0700 (PDT)
+Message-ID: <f9157fbf-09a1-41e5-b5f2-902ca20b870d@linaro.org>
+Date: Mon, 14 Jul 2025 16:40:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,37 +82,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] mm/mseal: small cleanups
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
-References: <cover.1752497324.git.lorenzo.stoakes@oracle.com>
- <4df6b55c407b5e6890429d4d7cc39e8f28948975.1752497324.git.lorenzo.stoakes@oracle.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH] i3c: master: cdns: Simplify handling clocks in probe()
+To: Frank Li <Frank.li@nxp.com>
+Cc: =?UTF-8?Q?Przemys=C5=82aw_Gaj?= <pgaj@cadence.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250713152411.74917-2-krzysztof.kozlowski@linaro.org>
+ <aHUQ7Ge97/glY+s7@lizhi-Precision-Tower-5810>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-Organization: Red Hat
-In-Reply-To: <4df6b55c407b5e6890429d4d7cc39e8f28948975.1752497324.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <aHUQ7Ge97/glY+s7@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14.07.25 15:00, Lorenzo Stoakes wrote:
-> Drop the wholly unnecessary set_vma_sealed() and vma_is_sealed() helpers
-> which are used only once, and place VMA_ITERATOR() declarations in the
-> correct place.
+On 14/07/2025 16:15, Frank Li wrote:
+> On Sun, Jul 13, 2025 at 05:24:12PM +0200, Krzysztof Kozlowski wrote:
+>> The two clocks, driver is getting, are not being disabled/re-enabled
+>> during runtime of the device.  Eliminate one variable in state struct,
+>> all error paths and a lot of code from probe() and remove() by using
+>> devm_clk_get_enabled().
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  drivers/i3c/master/i3c-master-cdns.c | 51 +++++++---------------------
+>>  1 file changed, 12 insertions(+), 39 deletions(-)
+>>
+>> diff --git a/drivers/i3c/master/i3c-master-cdns.c b/drivers/i3c/master/i3c-master-cdns.c
+>> index 449e85d7ba87..cc504b58013a 100644
+>> --- a/drivers/i3c/master/i3c-master-cdns.c
+>> +++ b/drivers/i3c/master/i3c-master-cdns.c
+>> @@ -412,7 +412,6 @@ struct cdns_i3c_master {
+>>  	} xferqueue;
+>>  	void __iomem *regs;
+>>  	struct clk *sysclk;
+>> -	struct clk *pclk;
+>>  	struct cdns_i3c_master_caps caps;
+>>  	unsigned long i3c_scl_lim;
+>>  	const struct cdns_i3c_data *devdata;
+>> @@ -1566,6 +1565,7 @@ MODULE_DEVICE_TABLE(of, cdns_i3c_master_of_ids);
+>>  static int cdns_i3c_master_probe(struct platform_device *pdev)
+>>  {
+>>  	struct cdns_i3c_master *master;
+>> +	struct clk *pclk;
+>>  	int ret, irq;
+>>  	u32 val;
+>>
+>> @@ -1581,11 +1581,11 @@ static int cdns_i3c_master_probe(struct platform_device *pdev)
+>>  	if (IS_ERR(master->regs))
+>>  		return PTR_ERR(master->regs);
+>>
+>> -	master->pclk = devm_clk_get(&pdev->dev, "pclk");
+>> -	if (IS_ERR(master->pclk))
+>> -		return PTR_ERR(master->pclk);
+>> +	pclk = devm_clk_get_enabled(&pdev->dev, "pclk");
+>> +	if (IS_ERR(pclk))
+>> +		return PTR_ERR(pclk);
+>>
+>> -	master->sysclk = devm_clk_get(&pdev->dev, "sysclk");
+>> +	master->sysclk = devm_clk_get_enabled(&pdev->dev, "sysclk");
 > 
-> No functional change intended.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
+> Can you use devm_clk_bulk_get_all_enabled() to simpilfy futher?
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Instead of asking redundant question check yourself. On a first glance
+it cannot, because it won't be simpler - you still need individual
+clock. But if you find it possible which is not visible on first glance,
+make a proposal instead of just random drive by comments.
 
--- 
-Cheers,
-
-David / dhildenb
-
+Best regards,
+Krzysztof
 
