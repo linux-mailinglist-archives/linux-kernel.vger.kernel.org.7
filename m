@@ -1,120 +1,99 @@
-Return-Path: <linux-kernel+bounces-729896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B88B03D28
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:18:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02E90B03D33
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AAFE1896F2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:18:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70D75189B23E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246C0244696;
-	Mon, 14 Jul 2025 11:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4AB246BD7;
+	Mon, 14 Jul 2025 11:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UwvzvRnj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T1sKVGCQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F0B17C77
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C751917C77;
+	Mon, 14 Jul 2025 11:20:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752491913; cv=none; b=cHhN0xV47K2XN1d+Y1nMzUVnM7D7KQwOXdzRjmf3Boid8Etc5AGyvpoZNZLbguQnzTbt1y/TvYmBBMW+PY22RnkKcINYFp/hxGKTHNWEOaELRagDcW4752r+mIiCSJShhNWndi0ftFjWI8rHfrcMLS0gfaGjqFGTOk+UiQiBU+I=
+	t=1752492027; cv=none; b=HNSr3IlE4WzFW0QuNWA5wNo3otfAMXyBfMWcLVHRVDEB4rm3IZFszS4KQjtJ8v3hpz0wNPEM5WG/xSTsFuj0YWAwnbfXvgAfDFmF2pxOfzVL8+Mgn877cgne2mtSXrqQIMcChoX8zrfllWLm6zGAJ2igSLCyEYb4IVr58MDF0D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752491913; c=relaxed/simple;
-	bh=6Ly3qJeJYAFCTaFHf5UQkroFT0+Y29UG+MGZis04kLQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kuuiT9XtntdFvM+fq5NOrHwTavtVhBeABPSmZtMsJgxWV3oEINkFP3oaUGClf5DtrN5va+EfB+ZLGFE8QxIxtWh1Gx0qdphPb+uThf3/+WBT0ZdakyF9NG8zkUT0uIfbN/NWp8DLiU+HDB85cUjcJDpYWj0Bni2PcF1+lW0eHFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UwvzvRnj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BAD8C4CEF8
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:18:33 +0000 (UTC)
+	s=arc-20240116; t=1752492027; c=relaxed/simple;
+	bh=yyO1ARgaD0chxUdPV6nq/lVx78EqnrQvO7cKx+N0Xcc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=RWBdJ3c0apcy/pDOaM4TLE+2AwOZyZcOs5XRbAt8d8PzoQy1OZENvOnXg6XWLrlCVFRbgbC03pTs9E2XYoZr8yN1LSmtgv5LOTjitVo9SCxnVX272xFICzBos8iou1EG0QmWeb8Az97JXTVBKp56Kl377nnS5N46bOh0hi8uNfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T1sKVGCQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F374C4CEF7;
+	Mon, 14 Jul 2025 11:20:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752491913;
-	bh=6Ly3qJeJYAFCTaFHf5UQkroFT0+Y29UG+MGZis04kLQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UwvzvRnjRk/uZNAL6j/iy14PlraexxzX2d2a9sRvJFb+1NIujjR3bAsH1eM0Cgpl/
-	 VHZyPIGngG15gk5JN8A0zRli/Va4b1Omsmk7Vuwr75xR/YEMNNk9Q08VI0N+yHoVq1
-	 1pf2/B+IzcTuBCUA6kCkVWZk1sLfSIjQdEYxWXHRHCsD/rT6AwksWrM7rxcSYUhO0D
-	 rWCnOvmrZofgxU4hF+iqWx/VyjU4i90r+0qpXl/vj5o2y2qeM0qCLNtOEvGe9urC0F
-	 JGXrBvWHOwJ6dRRejIBgZqnj7y3lo8R4Po52aNeUS928aJPR43ZM4lqiNx4gPKAyF+
-	 IPkx0xDu/KVUA==
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-60d6303a11eso1944717eaf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 04:18:33 -0700 (PDT)
-X-Gm-Message-State: AOJu0Yx2F3ShnFKCMlnoOjo6cXNpgu9jW94N6dVEhJqvR+Bl1YKJ4MM7
-	q4KhFkv5+0MbzBhvKDeVWttfYYcvF1DSRV4zEgALPu3mlrwGo2AyQAVgwzJcSYHtp6ZGHzfOUgS
-	6xZXkLv0gkks/rk4DPiDQPGayR0JynXo=
-X-Google-Smtp-Source: AGHT+IHh6G7mfGLXnPbRhjRa2YkeKB6JcqJk0BICfiWkTEpPAch4lJF5ljvRMHAX19odUgkEioqGk/77qamlS+OmNPs=
-X-Received: by 2002:a05:6820:1795:b0:615:86a2:6cc5 with SMTP id
- 006d021491bc7-61586a26da2mr1893184eaf.2.1752491912398; Mon, 14 Jul 2025
- 04:18:32 -0700 (PDT)
+	s=k20201202; t=1752492026;
+	bh=yyO1ARgaD0chxUdPV6nq/lVx78EqnrQvO7cKx+N0Xcc=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=T1sKVGCQiQdvyl/cIrNjaFkfKdIghzZjDABgUQVkPoZcEydnAmLGISsDlkF2nzUe0
+	 FnfuetExCJGdIdp3EpKqzxsGcY2zumfZ2wk57u8+1F/va1VYZAvTuldCeeRkxL4PH6
+	 ZTgQ8IzqNfHDLE/8p0Ilbp8QJWdrQ7OtdNeQC8sHgkxBlGYGYYGEiDqRVyIKBRiDFK
+	 7r1kchDXiXNFLIRBm7ZOZvlk4hx6ko6J0Xv4pBheLJQQ0kpyrV2aMO879FM4SNZfjs
+	 Qen023IiMr+Rpai/MMpXQeFmy8dQnnVBckFzyKZ7vk2+tauOCAapDlMiNEWZRKkiPU
+	 W7z9Dhgu5R0YA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250515234803.1385375-1-rdunlap@infradead.org>
-In-Reply-To: <20250515234803.1385375-1-rdunlap@infradead.org>
-From: Chanwoo Choi <chanwoo@kernel.org>
-Date: Mon, 14 Jul 2025 20:17:55 +0900
-X-Gmail-Original-Message-ID: <CAGTfZH3fRxgqhu2tDzshRi5MkV7DJk4iCDYE=x_hecWtBYWUpQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyjaQ3RVvUhxDpdrbLZ2R59kFrOrv0pn8LwH2h-wS-IdbOAAfc7J994sAs
-Message-ID: <CAGTfZH3fRxgqhu2tDzshRi5MkV7DJk4iCDYE=x_hecWtBYWUpQ@mail.gmail.com>
-Subject: Re: [PATCH] extcon: max14526: depends on I2C to prevent build warning/errors
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Svyatoslav Ryhel <clamor95@gmail.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 14 Jul 2025 13:20:14 +0200
+Message-Id: <DBBQKL12V4V0.W2CW7276D7WE@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Viresh Kumar"
+ <viresh.kumar@linaro.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "FUJITA Tomonori"
+ <fujita.tomonori@gmail.com>, "Andrew Lunn" <andrew@lunn.ch>, "Heiner
+ Kallweit" <hkallweit1@gmail.com>, "Russell King" <linux@armlinux.org.uk>,
+ "David S. Miller" <davem@davemloft.net>, "Eric Dumazet"
+ <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni"
+ <pabeni@redhat.com>, "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Breno Leitao" <leitao@debian.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Luis Chamberlain"
+ <mcgrof@kernel.org>, "Russ Weight" <russ.weight@linux.dev>, "Dave Ertman"
+ <david.m.ertman@intel.com>, "Ira Weiny" <ira.weiny@intel.com>, "Leon
+ Romanovsky" <leon@kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Arnd
+ Bergmann" <arnd@arndb.de>, "Brendan Higgins" <brendan.higgins@linux.dev>,
+ "David Gow" <davidgow@google.com>, "Rae Moar" <rmoar@google.com>, "Jens
+ Axboe" <axboe@kernel.dk>, <linux-pm@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+ <netdev@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <kunit-dev@googlegroups.com>, <linux-block@vger.kernel.org>
+To: "Tamir Duberstein" <tamird@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH 00/17] rust: replace `kernel::c_str!` with C-Strings
+References: <20250710-core-cstr-cstrings-v1-0-027420ea799e@gmail.com>
+In-Reply-To: <20250710-core-cstr-cstrings-v1-0-027420ea799e@gmail.com>
 
-Hi,
+On Thu Jul 10, 2025 at 5:31 PM CEST, Tamir Duberstein wrote:
+> This series depends on step 3[0] which depends on steps 2a[1] and 2b[2]
+> which both depend on step 1[3].
 
-Applied it. Thanks.
+For nova-core, auxiliary, device, firmware, PCI and platform,
 
-On Fri, May 16, 2025 at 9:26=E2=80=AFAM Randy Dunlap <rdunlap@infradead.org=
-> wrote:
->
-> Make EXTCON_MAX14526 depend on I2C to address a kconfig warning and
-> subsequent build errors:
->
-> WARNING: unmet direct dependencies detected for REGMAP_I2C
->   Depends on [m]: I2C [=3Dm]
->   Selected by [y]:
->   - EXTCON_MAX14526 [=3Dy] && EXTCON [=3Dy]
->
-> ld: vmlinux.o: in function `max14526_driver_init':
-> extcon-max14526.c:(.init.text+0x77b0e): undefined reference to `i2c_regis=
-ter_driver'
-> ld: vmlinux.o: in function `max14526_driver_exit':
-> extcon-max14526.c:(.exit.text+0x467c): undefined reference to `i2c_del_dr=
-iver'
->
-> Fixes: c2aeb8647e53 ("extcon: Add basic support for Maxim MAX14526 MUIC")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Svyatoslav Ryhel <clamor95@gmail.com>
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-> ---
->  drivers/extcon/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
->
-> --- linux-next-20250515.orig/drivers/extcon/Kconfig
-> +++ linux-next-20250515/drivers/extcon/Kconfig
-> @@ -136,6 +136,7 @@ config EXTCON_MAX8997
->
->  config EXTCON_MAX14526
->         tristate "Maxim MAX14526 EXTCON Support"
-> +       depends on I2C
->         select IRQ_DOMAIN
->         select REGMAP_I2C
->         help
->
+	Acked-by: Danilo Krummrich <dakr@kernel.org>
 
-
---=20
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+(Note that there is quite some new stuff queued up in various trees that wi=
+ll
+need those changes as well.)
 
