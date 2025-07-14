@@ -1,187 +1,110 @@
-Return-Path: <linux-kernel+bounces-730162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C377BB040E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:03:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3935B040DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 890CC163036
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:02:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2803F1883D32
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A5A254854;
-	Mon, 14 Jul 2025 14:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSTwvTUW"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB885254AFF;
+	Mon, 14 Jul 2025 14:02:37 +0000 (UTC)
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7678248866;
-	Mon, 14 Jul 2025 14:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BD325332E;
+	Mon, 14 Jul 2025 14:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752501715; cv=none; b=BMGCUOYX5RtADe5zY+J68Y38aMjx/+VQhctmISx4aTp7h6gabk44N1lSt3wdoQiahYabGNyeGJJSbi3F8bJ8v/Ig7E6tJwJX9zDauUkgIkaoUw/HSMENzcA2FaGMqwVqNb3ieqwGgJbkz8FlM/H0/UIFjfEUoVdM2Fv3nTLUVWA=
+	t=1752501757; cv=none; b=PHlcKwHPNnXtsGeL7pLUcUQBCKzbzySTThMgIM9zKtpXopJ2MzDXs/yzk1S24b91A2JuM1T4/S8n0HespBVjmZnzVnRqiiV0pmjdxi4s548wI0wJXQk5ANhwbAMMREgGwa7LRUI0wS0p+sOFEGWCtHW12+LqAtaOxZZkEJdAmcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752501715; c=relaxed/simple;
-	bh=+W+Iab+QeCoIVVC0odHtguOXjB1oJzVEw1Ij/e51zSM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fZUvVMNlEfyfPPP2P19MNgvpxTgi4X64dTCuJ+ipnLoY1V5CiwCtFOytxBhUwsA4nsJex82nsqnHr6+OO2FPxlvgaozCChe4sIII/KEtCT3whL77HaWbntA02KKBye4U6TBSOJZCRIGyU/PasLkGjUP2yyKc4W7/rC+gcPSLVHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MSTwvTUW; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2349f096605so54715045ad.3;
-        Mon, 14 Jul 2025 07:01:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752501712; x=1753106512; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2itJZiCiKIHVHDCXuPLo5rtiNq4JGHFwDWSwFrRHTbY=;
-        b=MSTwvTUWju5OPNQZkIdvisG1K7TJJJ8P3e5H4FAzrQKA2A5najOhSmrS1jhwPZKTOT
-         +S64NKW2GI811aNFAwCQBdjQJ1dfOojQnBnIb+JnRS30yiUEDqTdabbZBMzZxGIcNhBW
-         u+UOx4ygQHdcFQbTziH+u+GiK/a+60h1Mwoxg4NBgqTDUMhrB3O4nw1z8N+En7Vlfdep
-         dibY7ARACp/i/+Czqf3l0gNUqdA4WIQ7p4BU3Vn6ioJ0HG8mwv5r7n8iCxhB1fsORAii
-         ydrs7NFcecZGcBXTPqqA/Wy3+SPYlXNjzOCUAiuNRAAU9Rx1fsnxVC3cuw9NgysqdwIX
-         h1/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752501712; x=1753106512;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2itJZiCiKIHVHDCXuPLo5rtiNq4JGHFwDWSwFrRHTbY=;
-        b=oAc0ZM9Nq1cqcqx5+EDyubMd8v0cJpr1NPidIATd0YqYoJ3rDiErD1xFPElB6c3rmK
-         9+ux/1w8oEawbdsGqAz7rHoC1gHrf8mJ2qwNiAaPN7ichNW0fcxfuxzqFgVI/H1XIj0L
-         6nXzImRtd6GEKobEHyuBWuIouORBBjABzT6oS+NjZVfNQLDFIGSr9D6VwzACSTbJKAs8
-         W5+KCdvkBLtOb0SQ95fJe5QbNbJVwHfOFR3nS/paUq8kgcpf1g7TlOm1SbX1VPs9clP1
-         D+/DWp8HWC+429DHf0Ob1nVkFq2o1UPL03WVfa0xFdU2DwU3jvUb7d46OCFUHNVjZQmY
-         j7OA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpY9+ie5HZsM2PireJgLxgdnBj6yMcqCx3Xim864WChh8kiMZxptu/gLTExMnuTxwvCB3Q2sFlYQg92wz8@vger.kernel.org, AJvYcCWeSCPl45JivCWqYCTYLFab47DTBQ4RFSsgO91KDBu4ungdAu2Xfv9JXrtlrF7YNyegAmWFE9/jM0Zl@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfJop7KINsk4Ze69eryDqAWLfuqmcV7couWwrfAuk8XpnvlSxL
-	i3bYP/MfsB9QEQYiGNIJmhy8PtmG+J+K8HGg46gV0a+yqL2b7Ay3M/1hQfVxtwUgM2w=
-X-Gm-Gg: ASbGncsUanSbCdAo1tXutHbbgjZj21UPZ4FL6M6dJguOewXdOH/eb4x4Jx7jDoAn34m
-	n+TadbLtMN0yMm0Ecq55Mk8ThTl/adthWhLHu4UAKKBnTz5Ro+87YgcdDSsWZNKzc/rBqn+oDfL
-	bMpsUTIbs1LIFBqCmRr2hXE1/edsYfRkL2iBlufAvDSnZdZW3Cu3sZHTLln4vD499FVgKOkzBi3
-	L+64sEeakvGrdKk8CaQHGCNAUfYfIVxH1ml/67qB2PRkIKkFd8VPOKbJY+BoxD6YjfA71x3Ji2Z
-	U0A+HQR354kbBVcMt93ZBQSOlZGMyU1e4P6B65S0k9xSXCER050k/6FIJ3GovYjaGnfuKwtPj53
-	uhrVQJhkPMo0cQ/ERPJfXXQ8L
-X-Google-Smtp-Source: AGHT+IFxlY/tbQWQdHO9CkQoCYihwVfQoIVbQ3lwjQbXpoDtKex1Gum8g9YRWi0x4l/ARiQeWskYuA==
-X-Received: by 2002:a17:902:ea08:b0:224:23be:c569 with SMTP id d9443c01a7336-23dee18be42mr228116755ad.22.1752501710570;
-        Mon, 14 Jul 2025 07:01:50 -0700 (PDT)
-Received: from shamiko.dns.podman ([2a09:bac5:398e:16c8::245:d5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4365b02sm91875585ad.245.2025.07.14.07.01.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 07:01:49 -0700 (PDT)
-From: Wang Haoran <haoranwangsec@gmail.com>
-To: tony.luck@intel.com,
-	bp@alien8.de
-Cc: james.morse@arm.com,
-	mchehab@kernel.org,
-	rric@kernel.org,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wang Haoran <haoranwangsec@gmail.com>
-Subject: [PATCH] edac: Use scnprintf() for safer buffer handling
-Date: Mon, 14 Jul 2025 22:01:30 +0800
-Message-ID: <20250714140130.1092079-1-haoranwangsec@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752501757; c=relaxed/simple;
+	bh=DfZSxMlKQHM8fVTPHG4G5K6/3qK7daDUPfpkAU+xVcM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=RvwgdnjHt5E1WA44mSb/iCpSlxi/xiWn0NcFttTGNz1+P8FNTafaqpInxRInaDS8Ay907MIfjU4qBbT86ePhE9NT3g7Oe/GWUi8XBF0D6jd3nfmMOKgqQiXKVU0e+PUfkYs4Ce0w22hpuJXulAIuV6rzthzl4e7LRa/cKS4QlA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Received: from localhost (ip-109-42-113-167.web.vodafone.de [109.42.113.167])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id 1D7C22F7;
+	Mon, 14 Jul 2025 16:02:24 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 14 Jul 2025 16:02:23 +0200
+Message-Id: <DBBU0QGILT7C.33TZQUPDJU81O@kernel.org>
+Subject: Re: [PATCH net-next v2 2/3] net: ethernet: ti: am65-cpsw: fixup PHY
+ mode for fixed RGMII TX delay
+Cc: "Matthias Schiffer" <matthias.schiffer@ew.tq-group.com>, "Andrew Lunn"
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo
+ Abeni" <pabeni@redhat.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Andy Whitcroft" <apw@canonical.com>, "Dwaipayan Ray"
+ <dwaipayanray1@gmail.com>, "Lukas Bulwahn" <lukas.bulwahn@gmail.com>, "Joe
+ Perches" <joe@perches.com>, "Jonathan Corbet" <corbet@lwn.net>, "Nishanth
+ Menon" <nm@ti.com>, "Vignesh Raghavendra" <vigneshr@ti.com>, "Siddharth
+ Vadapalli" <s-vadapalli@ti.com>, "Roger Quadros" <rogerq@kernel.org>, "Tero
+ Kristo" <kristo@kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux@ew.tq-group.com>, "Maxime Chevallier"
+ <maxime.chevallier@bootlin.com>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Andrew Lunn" <andrew@lunn.ch>
+X-Mailer: aerc 0.16.0
+References: <cover.1750756583.git.matthias.schiffer@ew.tq-group.com>
+ <9b3fb1fbf719bef30702192155c6413cd5de5dcf.1750756583.git.matthias.schiffer@ew.tq-group.com> <DBBOW776RS0Z.1UZDHR9MGX26P@kernel.org> <fa3688c0-3b01-49fb-9c16-eeea66748876@lunn.ch>
+In-Reply-To: <fa3688c0-3b01-49fb-9c16-eeea66748876@lunn.ch>
 
-snprintf() is fragile when its return value will be used to append additional data to a buffer. Use scnprintf() instead.
+Hi,
 
-Signed-off-by: Wang Haoran (Vul337) <haoranwangsec@gmail.com>
----
- drivers/edac/i10nm_base.c | 18 +++++++++---------
- drivers/edac/skx_common.c |  4 ++--
- 2 files changed, 11 insertions(+), 11 deletions(-)
+On Mon Jul 14, 2025 at 3:09 PM CEST, Andrew Lunn wrote:
+> On Mon, Jul 14, 2025 at 12:01:22PM +0200, Michael Walle wrote:
+> > On Tue Jun 24, 2025 at 12:53 PM CEST, Matthias Schiffer wrote:
+> > > All am65-cpsw controllers have a fixed TX delay, so the PHY interface
+> > > mode must be fixed up to account for this.
+> > >
+> > > Modes that claim to a delay on the PCB can't actually work. Warn peop=
+le
+> > > to update their Device Trees if one of the unsupported modes is speci=
+fied.
+> > >
+> > > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> > > Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> > > Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> >=20
+> > For whatever reason, this patch is breaking network on our board
+> > (just transmission). We have rgmii-id in our devicetree which is now
+> > modified to be just rgmii-rxid. The board has a TI AM67A (J722S) with a
+> > Broadcom BCM54210E PHY. I'm not sure, if AM67A MAC doesn't add any
+> > delay or if it's too small. I'll need to ask around if there are any
+> > measurements but my colleague doing the measurements is on holiday
+> > at the moment.
+>
+> I agree, we need to see if this is a AM65 vs AM67 issue. rgmii-id
+> would be correct if the MAC is not adding delays.
+>
+> Do you have access to the datasheets for both? Can you do a side by
+> side comparison for the section which describes the fixed TX delay?
 
-diff --git a/drivers/edac/i10nm_base.c b/drivers/edac/i10nm_base.c
-index a3fca2567752..679d34c097c0 100644
---- a/drivers/edac/i10nm_base.c
-+++ b/drivers/edac/i10nm_base.c
-@@ -343,7 +343,7 @@ static void show_retry_rd_err_log(struct decoded_addr *res, char *msg,
- 
- 	status_mask = rrl->over_mask | rrl->uc_mask | rrl->v_mask;
- 
--	n = snprintf(msg, len, " retry_rd_err_log[");
-+	n = scnprintf(msg, len, " retry_rd_err_log[");
- 	for (i = 0; i < rrl->set_num; i++) {
- 		scrub = (rrl->modes[i] == FRE_SCRUB || rrl->modes[i] == LRE_SCRUB);
- 		if (scrub_err != scrub)
-@@ -355,9 +355,9 @@ static void show_retry_rd_err_log(struct decoded_addr *res, char *msg,
- 			log = read_imc_reg(imc, ch, offset, width);
- 
- 			if (width == 4)
--				n += snprintf(msg + n, len - n, "%.8llx ", log);
-+				n += scnprintf(msg + n, len - n, "%.8llx ", log);
- 			else
--				n += snprintf(msg + n, len - n, "%.16llx ", log);
-+				n += scnprintf(msg + n, len - n, "%.16llx ", log);
- 
- 			/* Clear RRL status if RRL in Linux control mode. */
- 			if (retry_rd_err_log == 2 && !j && (log & status_mask))
-@@ -367,10 +367,10 @@ static void show_retry_rd_err_log(struct decoded_addr *res, char *msg,
- 
- 	/* Move back one space. */
- 	n--;
--	n += snprintf(msg + n, len - n, "]");
-+	n += scnprintf(msg + n, len - n, "]");
- 
- 	if (len - n > 0) {
--		n += snprintf(msg + n, len - n, " correrrcnt[");
-+		n += scnprintf(msg + n, len - n, " correrrcnt[");
- 		for (i = 0; i < rrl->cecnt_num && len - n > 0; i++) {
- 			offset = rrl->cecnt_offsets[i];
- 			width = rrl->cecnt_widths[i];
-@@ -378,20 +378,20 @@ static void show_retry_rd_err_log(struct decoded_addr *res, char *msg,
- 
- 			/* CPUs {ICX,SPR} encode two counters per 4-byte CORRERRCNT register. */
- 			if (res_cfg->type <= SPR) {
--				n += snprintf(msg + n, len - n, "%.4llx %.4llx ",
-+				n += scnprintf(msg + n, len - n, "%.4llx %.4llx ",
- 					      corr & 0xffff, corr >> 16);
- 			} else {
- 			/* CPUs {GNR} encode one counter per CORRERRCNT register. */
- 				if (width == 4)
--					n += snprintf(msg + n, len - n, "%.8llx ", corr);
-+					n += scnprintf(msg + n, len - n, "%.8llx ", corr);
- 				else
--					n += snprintf(msg + n, len - n, "%.16llx ", corr);
-+					n += scnprintf(msg + n, len - n, "%.16llx ", corr);
- 			}
- 		}
- 
- 		/* Move back one space. */
- 		n--;
--		n += snprintf(msg + n, len - n, "]");
-+		n += scnprintf(msg + n, len - n, "]");
- 	}
- }
- 
-diff --git a/drivers/edac/skx_common.c b/drivers/edac/skx_common.c
-index c9ade45c1a99..39c733dbc5b9 100644
---- a/drivers/edac/skx_common.c
-+++ b/drivers/edac/skx_common.c
-@@ -670,12 +670,12 @@ static void skx_mce_output_error(struct mem_ctl_info *mci,
- 	}
- 
- 	if (res->decoded_by_adxl) {
--		len = snprintf(skx_msg, MSG_SIZE, "%s%s err_code:0x%04x:0x%04x %s",
-+		len = scnprintf(skx_msg, MSG_SIZE, "%s%s err_code:0x%04x:0x%04x %s",
- 			 overflow ? " OVERFLOW" : "",
- 			 (uncorrected_error && recoverable) ? " recoverable" : "",
- 			 mscod, errcode, adxl_msg);
- 	} else {
--		len = snprintf(skx_msg, MSG_SIZE,
-+		len = scnprintf(skx_msg, MSG_SIZE,
- 			 "%s%s err_code:0x%04x:0x%04x ProcessorSocketId:0x%x MemoryControllerId:0x%x PhysicalRankId:0x%x Row:0x%x Column:0x%x Bank:0x%x BankGroup:0x%x",
- 			 overflow ? " OVERFLOW" : "",
- 			 (uncorrected_error && recoverable) ? " recoverable" : "",
--- 
-2.43.0
+The datasheets and TRMs of the SoC are public of the SoC. According
+to the AM67A TRM the delay should be 1.2ns if I'm reading it
+correctly. The BCM PHY requires a setup time of -0.9ns (min). So, is
+should work (?), but it doesn't. I'm also not aware of any routing
+skew between the signals. But as I said, I'll have to check with my
+colleague next week.
 
+-michael
 
