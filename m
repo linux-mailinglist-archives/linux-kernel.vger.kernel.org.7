@@ -1,75 +1,242 @@
-Return-Path: <linux-kernel+bounces-730016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F680B03F29
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:02:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E27FB03F88
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9523189DE49
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:03:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02CAB4A09B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333582475CF;
-	Mon, 14 Jul 2025 13:02:44 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE3A2528F7;
+	Mon, 14 Jul 2025 13:18:36 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA4C134A8
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49E71F7098;
+	Mon, 14 Jul 2025 13:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752498163; cv=none; b=Doie3ZARuwzwKlzYUTMiVGltKqFkzqaR2UULPovLDrNYl8hX02VcVtNyYE1qSt51ckPVHi/XX4hzWGoGL7PNBGFsaYqf+BeMNAqtVUEUu9qxRrwPs1h1J42q/D9ZDLkdFBvNojcl4r1s/gujRPzYnfLCjlhXHPAR9LcFyVgRBLM=
+	t=1752499116; cv=none; b=udMyHoEA7DdLrcUSE8PWyLeYBU4pMCJIg5XNZVa14/9fxUC9NJezilr1DfyeXgiEPUZzkP7c2XaMxtrHdW82sudHAjrFy0Q7ceDjJdkgG4XP6UTp0mJ8jKvLrjL2BAusiPnzDSR9rVsVRi5LUOr+wJzTOf7yH+up+6h5EZyUfWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752498163; c=relaxed/simple;
-	bh=QJ59oWudwDTZxpVVYwyyyirIdNah5pUv/UiITKRqoJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FbF2pxyqe9qF7xqs4zvtHISjPk41Hl1npy/BUuPIE+0J2eGQe3vMubrMJU1A3lae6PK6rAIqKgiOr1TnsHRR223+N/YiiS+qrVnzZo27Kts3rusKr6qCVEVdbTE5ZZGCU2P/YGyD1nH2NUkXhVH8f0eZSHSdpN98hDWUs/oFyOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 50B22227A88; Mon, 14 Jul 2025 15:02:31 +0200 (CEST)
-Date: Mon, 14 Jul 2025 15:02:31 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Klaus Jensen <k.jensen@samsung.com>, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/8] nvme: Add Controller Data Queue to the nvme
- driver
-Message-ID: <20250714130230.GA7752@lst.de>
-References: <20250714-jag-cdq-v1-0-01e027d256d5@kernel.org>
+	s=arc-20240116; t=1752499116; c=relaxed/simple;
+	bh=Cdd+9N9KlD//MJSEe52uoFJliR6Jnr1/asbx6nksI6E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fG34Gb+7xVmTYF6YVtGDkGoj2DUusHcyRpDruKQssqZo2un6SS4OIyZL7IOx1s+TAI7kBDl+HHCHa13EH/xN9uX+9b4r6CjtNDlg7HY4NX74YLWJhHKkHK+qltDW6Nw3d5Zi0JUr9HAiRrGGBeOJqxNOvWZEB1j3dq9IDuvmS90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bgjSm2b0czXdym;
+	Mon, 14 Jul 2025 21:14:00 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 74A2F180450;
+	Mon, 14 Jul 2025 21:18:28 +0800 (CST)
+Received: from huawei.com (10.175.112.188) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 14 Jul
+ 2025 21:18:27 +0800
+From: Baokun Li <libaokun1@huawei.com>
+To: <linux-ext4@vger.kernel.org>
+CC: <tytso@mit.edu>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
+	<linux-kernel@vger.kernel.org>, <ojaswin@linux.ibm.com>,
+	<julia.lawall@inria.fr>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>,
+	<libaokun1@huawei.com>, <libaokun@huaweicloud.com>
+Subject: [PATCH v3 00/17] ext4: better scalability for ext4 block allocation
+Date: Mon, 14 Jul 2025 21:03:10 +0800
+Message-ID: <20250714130327.1830534-1-libaokun1@huawei.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714-jag-cdq-v1-0-01e027d256d5@kernel.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-On Mon, Jul 14, 2025 at 11:15:31AM +0200, Joel Granados wrote:
-> Motivation
-> ==========
-> The main motivation is to enable Controller Data Queues as described in
-> the 2.2 revision of the NVME base specification. This series places the
-> kernel as an intermediary between the NVME controller producing CDQ
-> entries and the user space process consuming them. It is general enough
-> to encompass different use cases that require controller initiated
-> communication delivered outside the regular I/O traffic streams (like
-> LBA tracking for example).
+Changes since v2:
+ * Collect RVB from Jan Kara. (Thanks for your review!)
+ * Add patch 2.
+ * Patch 4: Switching to READ_ONCE/WRITE_ONCE (great for single-process)
+        over smp_load_acquire/smp_store_release (only slight multi-process
+        gain). (Suggested by Jan Kara)
+ * Patch 5: The number of global goals is now set to the lesser of the CPU
+        count or one-fourth of the group count. This prevents setting too
+        many goals for small filesystems, which lead to file dispersion.
+        (Suggested by Jan Kara)
+ * Patch 5: Directly use kfree() to release s_mb_last_groups instead of
+        kvfree(). (Suggested by Julia Lawall)
+ * Patch 11: Even without mb_optimize_scan enabled, we now always attempt
+        to remove the group from the old order list.(Suggested by Jan Kara)
+ * Patch 14-16: Added comments for clarity, refined logic, and removed
+        obsolete variables.
+ * Update performance test results and indicate raw disk write bandwidth. 
 
-That's rather blurbish.  The only use case for CDQs in NVMe 2.2 is
-tracking of dirty LBAs for live migration, and the live migration
-feature in 2.2 is completely broken because the hyperscalers wanted
-to win a point.  So for CDQs to be useful in Linux we'll need the
-proper live migration still under heavy development.  With that I'd
-very much expect the kernel to manage the CDQs just like any other
-queue, and not a random user ioctl.  So what would be the use case for
-a user controlled CDQ?
+Thanks to Honza for your suggestions!
+
+v2: https://lore.kernel.org/r/20250623073304.3275702-1-libaokun1@huawei.com
+
+Changes since v1:
+ * Patch 1: Prioritize checking if a group is busy to avoid unnecessary
+       checks and buddy loading. (Thanks to Ojaswin for the suggestion!)
+ * Patch 4: Using multiple global goals instead of moving the goal to the
+       inode level. (Thanks to Honza for the suggestion!)
+ * Collect RVB from Jan Kara and Ojaswin Mujoo.(Thanks for your review!)
+ * Add patch 2,3,7-16.
+ * Due to the change of test server, the relevant test data was refreshed.
+
+v1: https://lore.kernel.org/r/20250523085821.1329392-1-libaokun@huaweicloud.com
+
+Since servers have more and more CPUs, and we're running more containers
+on them, we've been using will-it-scale to test how well ext4 scales. The
+fallocate2 test (append 8KB to 1MB, truncate to 0, repeat) run concurrently
+on 64 containers revealed significant contention in block allocation/free,
+leading to much lower average fallocate OPS compared to a single
+container (see below).
+
+   1   |    2   |    4   |    8   |   16   |   32   |   64
+-------|--------|--------|--------|--------|--------|-------
+295287 | 70665  | 33865  | 19387  | 10104  |  5588  |  3588
+
+Under this test scenario, the primary operations are block allocation
+(fallocate) and block deallocation (truncate). The main bottlenecks for
+these operations are the group lock and s_md_lock. Therefore, this patch
+series primarily focuses on optimizing the code related to these two locks.
+
+The following is a brief overview of the patches, see the patches for
+more details.
+
+Patch 1: Add ext4_try_lock_group() to skip busy groups to take advantage
+of the large number of ext4 groups.
+
+Patch 2: Separates stream goal hits from s_bal_goals in preparation for
+cleanup of s_mb_last_start.
+
+Patches 3-5: Split stream allocation's global goal into multiple goals and
+remove the unnecessary and expensive s_md_lock.
+
+Patches 6-7: minor cleanups
+
+Patches 8: Converted s_mb_free_pending to atomic_t and used memory barriers
+for consistency, instead of relying on the expensive s_md_lock.
+
+Patches 9: When inserting free extents, we now attempt to merge them with
+already inserted extents first, to reduce s_md_lock contention.
+
+Patches 10: Updates bb_avg_fragment_size_order to -1 when a group is out of
+free blocks, eliminating efficiency-impacting "zombie groups."
+
+Patches 11: Fix potential largest free orders lists corruption when the
+mb_optimize_scan mount option is switched on or off.
+
+Patches 12-17: Convert mb_optimize_scan's existing unordered list traversal
+to ordered xarrays, thereby reducing contention between block allocation
+and freeing, similar to linear traversal.
+
+"kvm-xfstests -c ext4/all -g auto" has been executed with no new failures.
+
+Here are some performance test data for your reference:
+
+Test: Running will-it-scale/fallocate2 on CPU-bound containers.
+Observation: Average fallocate operations per container per second.
+
+|CPU: Kunpeng 920   |          P80           |            P1           |
+|Memory: 512GB      |------------------------|-------------------------|
+|960GB SSD (0.5GB/s)| base  |    patched     | base   |    patched     |
+|-------------------|-------|----------------|--------|----------------|
+|mb_optimize_scan=0 | 2667  | 20049 (+651%)  | 314065 | 316724 (+0.8%) |
+|mb_optimize_scan=1 | 2643  | 19342 (+631%)  | 316344 | 328324 (+3.7%) |
+
+|CPU: AMD 9654 * 2  |          P96           |             P1          |
+|Memory: 1536GB     |------------------------|-------------------------|
+|960GB SSD (1GB/s)  | base  |    patched     | base   |    patched     |
+|-------------------|-------|----------------|--------|----------------|
+|mb_optimize_scan=0 | 3450  | 52125 (+1410%) | 205851 | 215136 (+4.5%) |
+|mb_optimize_scan=1 | 3209  | 50331 (+1468%) | 207373 | 209431 (+0.9%) |
+
+Tests also evaluated this patch set's impact on fragmentation: a minor
+increase in free space fragmentation for multi-process workloads, but a
+significant decrease in file fragmentation:
+
+Test Script：
+```shell
+#!/bin/bash
+
+dir="/tmp/test"
+disk="/dev/sda"
+
+mkdir -p $dir
+
+for scan in 0 1 ; do
+    mkfs.ext4 -F -E lazy_itable_init=0,lazy_journal_init=0 \
+              -O orphan_file $disk 200G
+    mount -o mb_optimize_scan=$scan $disk $dir
+
+    fio -directory=$dir -direct=1 -iodepth 128 -thread -ioengine=falloc \
+        -rw=write -bs=4k -fallocate=none -numjobs=64 -file_append=1 \
+        -size=1G -group_reporting -name=job1 -cpus_allowed_policy=split
+
+    e2freefrag $disk
+    e4defrag -c $dir # Without the patch, this could take 5-6 hours.
+    filefrag ${dir}/job* | awk '{print $2}' | \
+                           awk '{sum+=$1} END {print sum/NR}'
+    umount $dir
+done
+```
+
+Test results:
+-------------------------------------------------------------|
+                         |       base      |      patched    |
+-------------------------|--------|--------|--------|--------|
+mb_optimize_scan         | linear |opt_scan| linear |opt_scan|
+-------------------------|--------|--------|--------|--------|
+bw(MiB/s)                | 217    | 217    | 5718   | 5626   |
+-------------------------|-----------------------------------|
+Avg. free extent size(KB)| 1943732| 1943732| 1316212| 1171208|
+Num. free extent         | 71     | 71     | 105    | 118    |
+-------------------------------------------------------------|
+Avg. extents per file    | 261967 | 261973 | 588    | 570    |
+Avg. size per extent(KB) | 4      | 4      | 1780   | 1837   |
+Fragmentation score      | 100    | 100    | 2      | 2      |
+-------------------------------------------------------------|
+
+Comments and questions are, as always, welcome.
+
+Thanks,
+Baokun
+
+Baokun Li (17):
+  ext4: add ext4_try_lock_group() to skip busy groups
+  ext4: separate stream goal hits from s_bal_goals for better tracking
+  ext4: remove unnecessary s_mb_last_start
+  ext4: remove unnecessary s_md_lock on update s_mb_last_group
+  ext4: utilize multiple global goals to reduce contention
+  ext4: get rid of some obsolete EXT4_MB_HINT flags
+  ext4: fix typo in CR_GOAL_LEN_SLOW comment
+  ext4: convert sbi->s_mb_free_pending to atomic_t
+  ext4: merge freed extent with existing extents before insertion
+  ext4: fix zombie groups in average fragment size lists
+  ext4: fix largest free orders lists corruption on mb_optimize_scan
+    switch
+  ext4: factor out __ext4_mb_scan_group()
+  ext4: factor out ext4_mb_might_prefetch()
+  ext4: factor out ext4_mb_scan_group()
+  ext4: convert free groups order lists to xarrays
+  ext4: refactor choose group to scan group
+  ext4: implement linear-like traversal across order xarrays
+
+ fs/ext4/balloc.c            |   2 +-
+ fs/ext4/ext4.h              |  61 +--
+ fs/ext4/mballoc.c           | 895 ++++++++++++++++++++----------------
+ fs/ext4/mballoc.h           |   9 +-
+ include/trace/events/ext4.h |   3 -
+ 5 files changed, 534 insertions(+), 436 deletions(-)
+
+-- 
+2.46.1
 
 
