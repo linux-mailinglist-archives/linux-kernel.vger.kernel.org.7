@@ -1,146 +1,91 @@
-Return-Path: <linux-kernel+bounces-729366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D882AB03579
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:12:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD767B03582
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3192916A2B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:12:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29DDA189A6A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B58C1F7580;
-	Mon, 14 Jul 2025 05:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286901E9B22;
+	Mon, 14 Jul 2025 05:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qlRAfAfR"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQDDu+Kb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC11C18D;
-	Mon, 14 Jul 2025 05:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F485D2FF;
+	Mon, 14 Jul 2025 05:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752469964; cv=none; b=V3sgLa+/GYzmRxTFOndMuPMKM5T4DE2XfbXm1BxTN3pEh5Kd5PDMPKI4kyBFaP0EyGaQm50bJqphL7xZUsNhJRecTLZkg0Ci0LDYKEBZkAddhMIi6Me+uqmjeVMBcLt3nrN5RvP1l4yw8y4bnv3iA8c9IF62ktKTmGXJVnvuRlQ=
+	t=1752470146; cv=none; b=IjntCl0Xw8evnhFr8TyktwPzbf1ApAqyPBrPhVQABj8feFiXx9UMx71xbbZmzpvRWNjg/fyOvx0ymy8rn7z/MBc/upP51BQYWy1te2/VUW+OMUuqZTOl3Jw6DLEgdiR0kdQrqTQKOa/5qqXMutBxZOFsF1dH6ESpyCtiaXENR50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752469964; c=relaxed/simple;
-	bh=bjXIj2NW2ENyB+v3zwdbAHRxsCOs9Zu3CbFS4c0w/xs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=aj4IltEccD44qIvcXcZ+Hj4yhm9Fa9wTrY887jDtE/bWD1KZkQikzHVajqd51aHZkxpijWpf2B+ioFpFCZLgUlJxTaOU63UFn/ql/mntImCmoFLeEn8nxk9dOv9jVyQCROWO8x2XlCg8vRahTRQ1lk8iNMgstIuEY00EPAS5HEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qlRAfAfR; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752469855;
-	bh=zzMCZDIyh8x+TPcVLivrHVOvQoCnaH/bb5c5gJcOS+k=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qlRAfAfRTFZZUO6L839DxrjLv+v5O3m8CcQ5Jj+LVEXLblpxT3hbyghKo2kwY+amM
-	 UtDfS9f5foLvokImW7TZl6fwjR4m0/3XlX0Gb0gnAT7nv7FinOhfEnvh/tCP1aNCa7
-	 GJVsLsPMEc9Z8UueSJLepmb7sAUtpwZOHlNsLps+PXtVYg7Uar9r5LKM+SZVACOrs6
-	 rFPeQ3cNCBSoCcKwO6tRLzl7Hqx2Kl2EEc47wxSOycT3giUoPPQiAb3Gt0ffs347x1
-	 nHzjA+vRas09BrC3AMlGv7Epo04k4ZElabUeJElWW1bN2sdlWuKGgX+zyEN69AduIL
-	 afgDFQ1GwzLRg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bgVlL3Xxyz4wbW;
-	Mon, 14 Jul 2025 15:10:54 +1000 (AEST)
-Date: Mon, 14 Jul 2025 15:11:30 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Hans de Goede <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>
-Cc: Ilpo =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Mark Pearson <mpearson-lenovo@squebb.ca>,
- Torsten Hilbrich <torsten.hilbrich@secunet.com>
-Subject: linux-next: manual merge of the drivers-x86 tree with the
- drivers-x86-fixes tree
-Message-ID: <20250714151130.4e236389@canb.auug.org.au>
+	s=arc-20240116; t=1752470146; c=relaxed/simple;
+	bh=3Zio1HgVHjR3u+O4tSXZLt8lZjOvmTUKk8T66mWWPEo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=VTiD2rS8rkLK6qAiRTSGw62AA5en1/9ngVb2XPAKPUAZUKPDqUGIBfaQi0jukNnC72rZgnZxJo8NuJP4Yi1GRz2gPae+L4XQx0ZhXUKUoTmxryk8wjfztg64EkLhAvgpWcuhf6bsbJq4iIc4vgZ6+fH+Si0XHyIwkNKs9PKdFXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQDDu+Kb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B661DC4CEED;
+	Mon, 14 Jul 2025 05:15:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752470146;
+	bh=3Zio1HgVHjR3u+O4tSXZLt8lZjOvmTUKk8T66mWWPEo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=RQDDu+KbGKcVto/EG+rPMKOE5vYXf4WLofUofuOM5qa92WNrsnoB8IGEs93Lo05RL
+	 WLA79YvhtM9uEL442H/d+nWoA+TPyeS3LoNR/wDU92vIVMxkpDgYof0b97lc1sRcJ9
+	 HyZ8wyKPrc9o5z/Vz/B0DmDzYqaMF8PbyLnTEK+0C1J+KAMXLlRiDqqyfOq+w3k+gl
+	 I7ZLtc9rBMm4tTZ7KIyduqAbBVmbhjEY8i/t610R0VudNPfYRV3b9g1Cs/ZAb5jWPu
+	 t4giI05IT1QZdUeVfGC7lnJptuwPMTJHRFLTv2i1NRKFcUKzzJEdx+nABVZNU4PxHg
+	 BIV0xIvfz7wvg==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Leo Yan <leo.yan@arm.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Aishwarya TCV <aishwarya.tcv@arm.com>
+In-Reply-To: <20250711-perf_fix_breakpoint_accounting-v1-1-b314393023f9@arm.com>
+References: <20250711-perf_fix_breakpoint_accounting-v1-1-b314393023f9@arm.com>
+Subject: Re: [PATCH] perf tests bp_account: Fix leaked file descriptor
+Message-Id: <175247014569.2439485.13518661338130989352.b4-ty@kernel.org>
+Date: Sun, 13 Jul 2025 22:15:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/COljwCKoursMaeZHlKPACVt";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c04d2
 
---Sig_/COljwCKoursMaeZHlKPACVt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, 11 Jul 2025 12:10:15 +0100, Leo Yan wrote:
+> Since the commit e9846f5ead26 ("perf test: In forked mode add check that
+> fds aren't leaked"), the test "Breakpoint accounting" reports the error:
+> 
+>   # perf test -vvv "Breakpoint accounting"
+>   20: Breakpoint accounting:
+>   --- start ---
+>   test child forked, pid 373
+>   failed opening event 0
+>   failed opening event 0
+>   watchpoints count 4, breakpoints count 6, has_ioctl 1, share 0
+>   wp 0 created
+>   wp 1 created
+>   wp 2 created
+>   wp 3 created
+>   wp 0 modified to bp
+>   wp max created
+>   ---- end(0) ----
+>   Leak of file descriptor 7 that opened: 'anon_inode:[perf_event]'
+> 
+> [...]
+Applied to perf-tools-next, thanks!
 
-Hi all,
+Best regards,
+Namhyung
 
-Today's linux-next merge of the drivers-x86 tree got a conflict in:
 
-  drivers/platform/x86/Makefile
-
-between commit:
-
-  2bfe3ae1aa45 ("platform/x86: Fix initialization order for firmware_attrib=
-utes_class")
-
-from the drivers-x86-fixes tree and commit:
-
-  651b57dd4087 ("platform/x86: Move Lenovo files into lenovo subdir")
-
-from the drivers-x86 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/platform/x86/Makefile
-index bea87a85ae75,0530a224bebd..000000000000
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@@ -58,19 -58,12 +58,14 @@@ obj-$(CONFIG_X86_PLATFORM_DRIVERS_HP)	+
-  # Hewlett Packard Enterprise
-  obj-$(CONFIG_UV_SYSFS)       +=3D uv_sysfs.o
- =20
- +obj-$(CONFIG_FW_ATTR_CLASS)	+=3D firmware_attributes_class.o
- +
-- # IBM Thinkpad and Lenovo
-+ # IBM Thinkpad (before 2005)
-  obj-$(CONFIG_IBM_RTL)		+=3D ibm_rtl.o
-- obj-$(CONFIG_IDEAPAD_LAPTOP)	+=3D ideapad-laptop.o
-- obj-$(CONFIG_LENOVO_WMI_HOTKEY_UTILITIES)	+=3D lenovo-wmi-hotkey-utilitie=
-s.o
-- obj-$(CONFIG_LENOVO_YMC)	+=3D lenovo-ymc.o
-  obj-$(CONFIG_SENSORS_HDAPS)	+=3D hdaps.o
-- obj-$(CONFIG_THINKPAD_ACPI)	+=3D thinkpad_acpi.o
-- obj-$(CONFIG_THINKPAD_LMI)	+=3D think-lmi.o
-- obj-$(CONFIG_YOGABOOK)		+=3D lenovo-yogabook.o
-- obj-$(CONFIG_YT2_1380)		+=3D lenovo-yoga-tab2-pro-1380-fastcharger.o
-- obj-$(CONFIG_LENOVO_WMI_CAMERA)	+=3D lenovo-wmi-camera.o
-+=20
-+ # Lenovo
-+ obj-y				+=3D lenovo/
- =20
-  # Intel
-  obj-y				+=3D intel/
-
---Sig_/COljwCKoursMaeZHlKPACVt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh0kYIACgkQAVBC80lX
-0Gxc4Qf9G/U539gmZd9gEpn4HxqW6UktAbB4HGjj+9JlJU3DOBsH5+1gihPEtFIm
-IEDpUWayv3PlENY3lPlTKSBGvoLEC1h+uhLjEq0+JUMfWwHOE78drLb4vK4BgFRL
-ARja3NRu/vJfx3wIdU0KWoet9pdxihSYN5cRA430Bb8xygRWO9afBJFrAVQI5DVp
-0e94fMT0fpS6L5I9y9asdfv7Bmwo6shIEvqg5ROsEugkFwTu/sfSp8TC5icEPu5Z
-UXOylnD3uQyZZkFjov6HN5S9cDIL1GX8JpN+980YXh4YS04bN3IipRwLbWhTOg9w
-1gzXS/rlF/Y1PTYpk1EWJEBsHULXeg==
-=NqFY
------END PGP SIGNATURE-----
-
---Sig_/COljwCKoursMaeZHlKPACVt--
 
