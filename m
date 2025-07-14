@@ -1,119 +1,122 @@
-Return-Path: <linux-kernel+bounces-730397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE93AB04402
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:33:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA0F3B04426
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A99A7B49C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:32:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55989188A817
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA14261581;
-	Mon, 14 Jul 2025 15:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583F42652BF;
+	Mon, 14 Jul 2025 15:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="lDPI4d+b"
-Received: from mx1.secunet.com (mx1.secunet.com [62.96.220.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKINuZM5"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E57B26136D
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1402620E5;
+	Mon, 14 Jul 2025 15:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752506842; cv=none; b=rCCipdbRrUmMO1pvYPxdtyTCYHFuOXjz9Da/DTgHsDdgz+pm8K1GR9emAG6VsaQgq0nXi9YvrONEc+fr9AnBYOf6hovo4cJarTi24sw09DL6CoCf1/uuymhbA+BAl17yI+AncwkrfhEGD69+aIpg30lE3VSPmVfRYOslwQUmYt4=
+	t=1752506890; cv=none; b=ExBGu8Jw07dqioKQgYyBVx16X008PH30dZ6NoTRhlU14gfHjpZ4pzDDWSOsE5iH+uhgabDEJeVy+vVKm7FVfum2isCZvKpY1VHjSrRjPhjPgYeVQkdCBPLI/wjUwJWPM1ptbhoD9D1w+xrmuxmbqONNbqOCiE07EVIEYidMaTBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752506842; c=relaxed/simple;
-	bh=VhISQusA4JxiQyLFqdYM75SPbIGJqEPE0o6W49XMvhU=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=STvYuWLvY5whJOFyKI8DE4UBIiGlH9p1s90H7h4KNi1Z933a2ZM/8GLslZbHjWmlU5FAqV3EiXw0IK6D2AfA3SthcDPTpug9q2RRmqqzrvvJ5Rfoa+xjQRDkv6RSoeiLYTTV6V1HRDmb9VubLed5f40goeVJzU3ljIB4NG/RgSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=lDPI4d+b; arc=none smtp.client-ip=62.96.220.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
-Received: from localhost (localhost [127.0.0.1])
-	by mx1.secunet.com (Postfix) with ESMTP id D7C532050A;
-	Mon, 14 Jul 2025 17:27:16 +0200 (CEST)
-X-Virus-Scanned: by secunet
-Received: from mx1.secunet.com ([127.0.0.1])
- by localhost (mx1.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id z4sMKxBn-z8T; Mon, 14 Jul 2025 17:27:16 +0200 (CEST)
-Received: from EXCH-03.secunet.de (unknown [10.32.0.243])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.secunet.com (Postfix) with ESMTPS id 4BAB220189;
-	Mon, 14 Jul 2025 17:27:16 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.secunet.com 4BAB220189
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
-	s=202301; t=1752506836;
-	bh=VhISQusA4JxiQyLFqdYM75SPbIGJqEPE0o6W49XMvhU=;
-	h=From:To:CC:Subject:Date:From;
-	b=lDPI4d+bBnEQ1QXRAHNaqclaZkU6pg50UCIMOaOzcsIowpHpc0F+bVmpGAiniYU5/
-	 mgzK9h7+eJhyTDH3Qc94sj6xne4QGVdUej1n3LzIP5vb1gW79SHzGNxL1BfZQ6LsRW
-	 dm56H0RC2iF90bsQ/1GTipw7MNaYRbqQbNPJJAe6qLZoRYT/yMrC5/o+nt1Wzubqup
-	 Gevy5RmVEwWbDfySZlOwoxwSVny2GdkuctQ/+GvOGVehJmPVQtnIbl/yD2VL8xshhO
-	 8gvlD5915WnEXbDScNVseLb4NbJiHZTaLugNVbVdjzWO1T6nDgUJxQk+OzeVhpTw2k
-	 IUGzF6B2lM+3g==
-Received: from EXCH-04.secunet.de (10.32.0.184) by EXCH-03.secunet.de
- (10.32.0.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 14 Jul
- 2025 17:27:15 +0200
-Received: from EXCH-04.secunet.de ([fe80::f0d0:317:aa9d:ee57]) by
- EXCH-04.secunet.de ([fe80::f0d0:317:aa9d:ee57%4]) with mapi id
- 15.02.1748.010; Mon, 14 Jul 2025 17:27:06 +0200
-From: "Heijligen, Thomas" <thomas.heijligen@secunet.com>
-To: "lee@kernel.org" <lee@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: "Huber, Nico" <Nico.Huber@secunet.com>, "michael.brunner@kontron.com"
-	<michael.brunner@kontron.com>, "Schumann, Peter" <Peter.Schumann@secunet.com>
-Subject: [PATCH] mfd: kempld: Switch back to earlier ->init() behavior
-Thread-Topic: [PATCH] mfd: kempld: Switch back to earlier ->init() behavior
-Thread-Index: AQHb9NPB/wnq4hn0ZUu7P6EQBYYsOw==
-Date: Mon, 14 Jul 2025 15:27:06 +0000
-Message-ID: <71883d70d1b99f58c96ba1b0016751f41519025b.camel@secunet.com>
-Accept-Language: en-US, de-DE
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4E9EE9A97BCD764FA20E32CC4F4F7C21@secunet.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1752506890; c=relaxed/simple;
+	bh=oc+GlE+Ii/Y1/zyiLxV403jXwmHI4Vq7Wn9/5LCARxQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nhNdVm8wlw8xtb0cM+LtFp3e7PctdykE8OGA8st38V3ktAyETPZ8/iXyHzojVdT4YmsG02xMwj/1LH2cntfRiM3P2PXR6S/X4ex0qdaXsuwsHMsWeMgnlUOAo0jTSWZE9P0mhXFxkasg4RDVWscD1I2gY6j361vCE37VR1D/y2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MKINuZM5; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32b50f357ecso38289711fa.2;
+        Mon, 14 Jul 2025 08:28:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752506887; x=1753111687; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oc+GlE+Ii/Y1/zyiLxV403jXwmHI4Vq7Wn9/5LCARxQ=;
+        b=MKINuZM5XBC02FZi9X8B2BpUiYUbZe3b/+InaAbCUxH7f2XJLrJFuVtpiIngGvntjJ
+         hvRMo7pvkLmp2D7jLb+NHuaO0d2cgX7DfwFtWniHOdM8gW8U3uhGPvv6JeYWdIYCngiT
+         IlS3nbV8swHJ8bFQ/ZoEUZohkCydAi3DgZnMCy+o3h+AQkdcGKZ/6hgXZNEaKCyUDtOm
+         5ZhFS7Pppnph7dQoW+Vp/uW+y3cAIAMVvW19aIf8wVvCgnkW0TfMQSmm2L2Ekk1/v8pi
+         zSPlAoAGYI/uwxH/jcKdXWRsTQKNhzZVbs2XfXTEKEt3TJMT3/gRZ7chnNuWZIg9iIaq
+         aS8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752506887; x=1753111687;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oc+GlE+Ii/Y1/zyiLxV403jXwmHI4Vq7Wn9/5LCARxQ=;
+        b=sZOJIZx5TXYVCTG/Jbctn8PMKbJVRyudeityIP8h25OpnKr95L6n7gjF5cfZsADoi2
+         TJyolL8jVC9n7JbWC42Y1F1A36F0KwxrYx2sYW0XA5nB5yL2qBa7hrXxeoLEBhQmsB1J
+         jBNhfTYv0C/yjT27tgwJN0ZU7TcbZ6y7Qq41/fLYMafzhdtckFUjAj2LKkYbqKxQJU/+
+         SCTJag9qJuzJgPtpiVqr+e9G9jyWiJ6CGODw7c9TUEFZ0KTggO5aN9g1Ki9YOx8QwGSb
+         cYYUKiP1ElpcyrTxGYbFgxOIgiu0xYgt1Z4K6z4iCjcnOh4q5qxmESqrur45OUa9n3tY
+         CYfA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYdDE4e/JZwz0s2VYg7E3XeFLCgJBe4k8yPI1kI1bp+NjHSCiwDsDCrGLV2m0P8l9yhWfy/4swLPR04FNslWU=@vger.kernel.org, AJvYcCVhMjFDZ2thAjd0esYBdiogLwI/93ks3VOudz9tQuVUDUz/f9qrsQRz614gCwRwIwKeeUrRZwplpmsa@vger.kernel.org, AJvYcCVwX84X3gbuqomAT81pr0W56yf7A3irraveYlwa7p26LuUBRtZpZ2wz7TNVYo5IdelKfcWeClvUG7NvodG4uITn@vger.kernel.org, AJvYcCWcT3ylMRjt2ZFpxevrWv7SOh7V12Zc8lfKcg3tH+yHluF6yFvXViFyW+LPcUiQ605rDJNaVlz/xYI=@vger.kernel.org, AJvYcCXDVMTKhLkUZRM/pc23a91woiS0qHllT7uWxWUVsEfCodEQIv0aTg9nzx4e4WPrjjpnp0WS06egfAQ5aQQu@vger.kernel.org, AJvYcCXayz3cgG1LDPsCJdPmkdYZYHMrMBjiZI8CIi1L7oPhIC25VMIjDKRBR3kMmQB73rVHCDn1VHmO@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP2+pNtfFQaKy8GGfyPGJBS95zN09fgliC4f24CthcKLen8NXZ
+	LUCcPmN2nJiu9NHRvwLBrqlDUDndUr78MCuCZR/Bf2ljuHAGCgPHvtCJ/68JFhjqJK0klBZE5gE
+	0WhuoQKMxfRu6F6ZXIgg/5V8ZYvgZbdk=
+X-Gm-Gg: ASbGnctbidaRkLNybqmHGhxv0LGqB2zfnh71s4llVdikH5UtDNebnrMKSP5pno4HDJ8
+	3envqA5/2Y5aR2vlaDQoxZlEF/XAEyOqS1BdNXGgb9Ak+y5q6WSlN7uoRDtVk6bTK4J00/eg4ZL
+	Uc5er305CRHXLszkHccPQVOcf+vVkUIJ/t2sVqHautxn/pzMCuLKvwhrz9KTF6NokXi/VpTXYhk
+	Hmqh68GoEge/297he1WA8MRW5+UUC4lU2+U3/wX9g==
+X-Google-Smtp-Source: AGHT+IH+F8scuE37tUd3Pg2ae8pcuxAEv4ojDDepRKjbKvYeGMh+F2C6iR06+KNOVOtz/FNk6yomF9YDFaXHlblFUCU=
+X-Received: by 2002:a05:651c:1108:10b0:32a:77a3:8781 with SMTP id
+ 38308e7fff4ca-3305344519fmr27998491fa.30.1752506886586; Mon, 14 Jul 2025
+ 08:28:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250709-core-cstr-fanout-1-v1-0-fd793b3e58a2@gmail.com>
+ <20250709-core-cstr-fanout-1-v1-1-fd793b3e58a2@gmail.com> <DBBQE3GJ0CHT.5PEF7RLS6C33@kernel.org>
+ <CAJ-ks9=ZHtzeyyFSZaVuA1t-3C8-hc40n6r8qFWxn628qT-OeA@mail.gmail.com> <CANiq72kyQQMutGDkHH=McRQens+V+wkHLpiSfivmnAwwgXE62w@mail.gmail.com>
+In-Reply-To: <CANiq72kyQQMutGDkHH=McRQens+V+wkHLpiSfivmnAwwgXE62w@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 14 Jul 2025 11:27:30 -0400
+X-Gm-Features: Ac12FXy_EgfuBW5UCKV_g6NQQc-Ao21V9VhJ3CJtjS90O4a7j1zHA01rM8fcK4c
+Message-ID: <CAJ-ks9kzrihJ7Jb8kAp0LpbPCfdouDQdFK06AHN3xi9pXNWZ9w@mail.gmail.com>
+Subject: Re: [PATCH 01/10] gpu: nova-core: use `core::ffi::CStr` method names
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, Breno Leitao <leitao@debian.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, Javier Martinez Canillas <javierm@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Q29tbWl0IDllMzY3NzVjMjJjNyAoIm1mZDoga2VtcGxkOiBSZW1vdmUgY3VzdG9tIERNSSBtYXRj
-aGluZyBjb2RlIikNCnJlbW92ZXMgdGhlIGFiaWxpdHkgdG8gbG9hZCB0aGUgZHJpdmVyIGlmIG5v
-IG1hdGNoaW5nIHN5c3RlbSBETUkgZGF0YQ0KaXMgZm91bmQuIEJlZm9yZSB0aGlzIGNvbW1pdCB0
-aGUgZHJpdmVyIGNvdWxkIGJlIGxvYWRlZCB1c2luZw0KYWx0ZXJuYXRpdmUgbWV0aG9kcyBzdWNo
-IGFzIEFDUEkgb3IgYGZvcmNlX2RldmljZV9pZGAgaW4gdGhlIGFic2VuY2UNCm9mIGEgbWF0Y2hp
-bmcgc3lzdGVtIERNSSBlbnRyeS4NCg0KUmVzdG9yZSB0aGlzIGFiaWxpdHkgd2hpbGUga2VlcGlu
-ZyB0aGUgcmVmYWN0b3JlZA0KYHBsYXRmb3JtX2RldmljZV9pbmZvYCB0YWJsZS4NCg0KU2lnbmVk
-LW9mZi1ieTogVGhvbWFzIEhlaWpsaWdlbiA8dGhvbWFzLmhlaWpsaWdlbkBzZWN1bmV0LmNvbT4N
-Ci0tLQ0KIGRyaXZlcnMvbWZkL2tlbXBsZC1jb3JlLmMgfCAyNSArKysrKysrKysrKy0tLS0tLS0t
-LS0tLS0tDQogMSBmaWxlIGNoYW5nZWQsIDExIGluc2VydGlvbnMoKyksIDE0IGRlbGV0aW9ucygt
-KQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZmQva2VtcGxkLWNvcmUuYyBiL2RyaXZlcnMvbWZk
-L2tlbXBsZC1jb3JlLmMNCmluZGV4IGM1YmZiNjQ0MGE5My4uYjBkZGNlYWUzODY0IDEwMDY0NA0K
-LS0tIGEvZHJpdmVycy9tZmQva2VtcGxkLWNvcmUuYw0KKysrIGIvZHJpdmVycy9tZmQva2VtcGxk
-LWNvcmUuYw0KQEAgLTc3OSwyMiArNzc5LDE5IEBAIE1PRFVMRV9ERVZJQ0VfVEFCTEUoZG1pLCBr
-ZW1wbGRfZG1pX3RhYmxlKTsNCiBzdGF0aWMgaW50IF9faW5pdCBrZW1wbGRfaW5pdCh2b2lkKQ0K
-IHsNCiAJY29uc3Qgc3RydWN0IGRtaV9zeXN0ZW1faWQgKmlkOw0KLQlpbnQgcmV0ID0gLUVOT0RF
-VjsNCiANCi0JZm9yIChpZCA9IGRtaV9maXJzdF9tYXRjaChrZW1wbGRfZG1pX3RhYmxlKTsgaWQ7
-IGlkID0gZG1pX2ZpcnN0X21hdGNoKGlkICsgMSkpIHsNCi0JCS8qIENoZWNrLCBpZiB1c2VyIGFz
-a2VkIGZvciB0aGUgZXhhY3QgZGV2aWNlIElEIG1hdGNoICovDQotCQlpZiAoZm9yY2VfZGV2aWNl
-X2lkWzBdICYmICFzdHJzdHIoaWQtPmlkZW50LCBmb3JjZV9kZXZpY2VfaWQpKQ0KLQkJCWNvbnRp
-bnVlOw0KLQ0KLQkJcmV0ID0ga2VtcGxkX2NyZWF0ZV9wbGF0Zm9ybV9kZXZpY2UoJmtlbXBsZF9w
-bGF0Zm9ybV9kYXRhX2dlbmVyaWMpOw0KLQkJaWYgKHJldCkNCi0JCQljb250aW51ZTsNCi0NCi0J
-CWJyZWFrOw0KKwlpZiAoZm9yY2VfZGV2aWNlX2lkWzBdKSB7DQorCQlmb3IgKGlkID0ga2VtcGxk
-X2RtaV90YWJsZTsgaWQtPm1hdGNoZXNbMF0uc2xvdCAhPSBETUlfTk9ORTsgaWQrKykNCisJCQlp
-ZiAoc3Ryc3RyKGlkLT5pZGVudCwgZm9yY2VfZGV2aWNlX2lkKSkNCisJCQkJaWYgKCFrZW1wbGRf
-Y3JlYXRlX3BsYXRmb3JtX2RldmljZSgma2VtcGxkX3BsYXRmb3JtX2RhdGFfZ2VuZXJpYykpDQor
-CQkJCQlicmVhazsNCisJCWlmIChpZC0+bWF0Y2hlc1swXS5zbG90ID09IERNSV9OT05FKQ0KKwkJ
-CXJldHVybiAtRU5PREVWOw0KKwl9IGVsc2Ugew0KKwkJZm9yIChpZCA9IGRtaV9maXJzdF9tYXRj
-aChrZW1wbGRfZG1pX3RhYmxlKTsgaWQ7IGlkID0gZG1pX2ZpcnN0X21hdGNoKGlkKzEpKQ0KKwkJ
-CWlmIChrZW1wbGRfY3JlYXRlX3BsYXRmb3JtX2RldmljZSgma2VtcGxkX3BsYXRmb3JtX2RhdGFf
-Z2VuZXJpYykpDQorCQkJCWJyZWFrOw0KIAl9DQotCWlmIChyZXQpDQotCQlyZXR1cm4gcmV0Ow0K
-LQ0KIAlyZXR1cm4gcGxhdGZvcm1fZHJpdmVyX3JlZ2lzdGVyKCZrZW1wbGRfZHJpdmVyKTsNCiB9
-DQogDQotLSANCjIuNDkuMA0KDQo=
+On Mon, Jul 14, 2025 at 11:18=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Mon, Jul 14, 2025 at 2:35=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
+m> wrote:
+> >
+> > How should I respin this one? the subject should be drm/panic, I think.
+>
+> I would mimic what the previous commits did, i.e. drm/panic indeed.
+>
+> (If I happen to pick it up before a resend, I could fix it on my side)
+
+Yep, that's what I was going to do - but do I resend the whole series,
+or somehow just this patch?
 
