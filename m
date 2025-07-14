@@ -1,123 +1,126 @@
-Return-Path: <linux-kernel+bounces-729657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB2EB039C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:46:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A71D8B039CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2C5E3A8B35
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:46:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EF8F7ACF18
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426E623C4E0;
-	Mon, 14 Jul 2025 08:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F1B23C4E0;
+	Mon, 14 Jul 2025 08:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="K7jUc9ez"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Wzm4jIIJ"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2238118D;
-	Mon, 14 Jul 2025 08:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A649718D;
+	Mon, 14 Jul 2025 08:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752482804; cv=none; b=bbvwZgHMoqxbdDfSeQnwlfg06U0wN07JZnT+zbcabGLFrf0HXVnqTHREtb2jjq01lEVXsJMjI33J2/rl5V9gHOij8NIb8zmgqegaF4PF+oWrYLWG7s3OWZ5OsDRiClO7wJhs2vILgYX6zgYf9s3C/jMotaQxkJNWnTHcH5H+usk=
+	t=1752482863; cv=none; b=KANTA58afO/fAQovKIoa098O/NKkN4FwbZXP4PBfIX78sC4Ryi6hAFe1wd5GXWKdilt7ZuyvM0j9s7HS9zGsnZiyUIg0T/HLKZfIMAEP9Yxz4uK6VpeJAMpM0mHD5zdENHnSmX92fxdv8noUJBK+b2DWlQT3rtC67A1oL9QJMC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752482804; c=relaxed/simple;
-	bh=BFy8MleXcXtgklpMCeGYGOJYu9f9q7epntNXpb7QDto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YesFEQbXKiqt65arDoBtiIWQ+gXtwvhQGfjWAnO+KpMA+VBNKEJF8omEgD3rix8l5ZGHwx1i7ukeTkCLsTIfFLxpA86zQjdFump6i60jyKE5Sa9T+6wkhGb/znQnTO2TXYRGUXio+Vh9RuzRXfHA96o64CyWlpuPpp/2A3dz7F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=K7jUc9ez; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=RsVjotjGFwn4gIDgrJ+E8OefcgZwcT0N+CJTunCyL8Q=; b=K7jUc9ez58nrxekhKWTDy3aWp4
-	iDC4IIF/G05u3M7NlfaatOz9FE+wZRp8sonmYHGNl7oecBk8slqvLTCAEOnlffc4Uh7N+nAOpk4pz
-	SX0XsH0yFKPnTPeiLFNW0okicua/2mvtRMvm3PjjtFdapR6/IQOC/Ah1hBaw5KD1QnhkDxlfIPPB5
-	qkFyG2c8vwTbTDwymDVBXJvT9/RLlnQpC1VEtOf3OXeV1aH81Wr9Egk+jGOmjYlxotL3rEOH0uG+z
-	8Pu6KYcdwJV89B/vi7ipBBcmkKmY55gGvsMRV8CxQCc+g3zop2Vqr9kk0CwvGjGpoVNxyXULc6olE
-	XPAoy1Pg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubEpa-00000009il9-39sR;
-	Mon, 14 Jul 2025 08:46:39 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 4DB90300186; Mon, 14 Jul 2025 10:46:38 +0200 (CEST)
-Date: Mon, 14 Jul 2025 10:46:38 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] objtool/rust: add one more `noreturn` Rust function
- for Rust 1.89.0
-Message-ID: <20250714084638.GL905792@noisy.programming.kicks-ass.net>
-References: <20250712160103.1244945-1-ojeda@kernel.org>
- <20250712160103.1244945-2-ojeda@kernel.org>
+	s=arc-20240116; t=1752482863; c=relaxed/simple;
+	bh=2yuai8UnBb9zpoj2Dz89OXxlnRC1pzOFSWPiKRkdFpQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W4PlRXiADD7C5sP/ZbtfhLUCk8hd8eWXSFNgtkcVosfu8Ou8nbmc4RYg6DnsMKP+iKurZ4Yv8YRZwKlIz9pImmRwwaO4cJ2iQhZ71pKDfEfetreBJE9FXCI8ls2DCq72gJnt3kJ3rkcdQcuDL2XaB74qha1LqbWhUYXRkuUhUSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Wzm4jIIJ; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1752482854;
+	bh=2yuai8UnBb9zpoj2Dz89OXxlnRC1pzOFSWPiKRkdFpQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Wzm4jIIJtgJreaN92gm42sD6apc9wRY3xZ1FVNYWbhJdyNsOQ5Q2QlelUTgRDWdT1
+	 freAjquBex0sEw9hjUvBpuL8JT0WGHkQXXrcZI0NxnAbxn5mKPsPQEE3qn433KL59C
+	 gk/AASg+Ww7oar/9ABMOmCgdtmYBEq+iSjCsWjYt6diX0almRkMLN8XdnSDts+tdW6
+	 pif5SfJrOYi6KT0FoHbPAyGzmIZH5MKi5r5vuBjoho0+whjaoKHq0JbxKA/Op/0Hdi
+	 +gFiN36PItGgd9myBZxQ51R7NvyS4fCtVOZWTi7nLoyStTlkbav/wvIWmP6B/Wf3aL
+	 fy9IlPEXbSnyw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 49D4C17E056F;
+	Mon, 14 Jul 2025 10:47:33 +0200 (CEST)
+Message-ID: <4537173f-7f79-4629-a2ef-cbf1edd2ed81@collabora.com>
+Date: Mon, 14 Jul 2025 10:47:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250712160103.1244945-2-ojeda@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: mfd: syscon: Add mt8196 fdvfs syscons
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Hector Yuan <hector.yuan@mediatek.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org
+References: <20250711-mt8196-cpufreq-v1-0-e1b0a3b4ac61@collabora.com>
+ <20250711-mt8196-cpufreq-v1-1-e1b0a3b4ac61@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250711-mt8196-cpufreq-v1-1-e1b0a3b4ac61@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Jul 12, 2025 at 06:01:02PM +0200, Miguel Ojeda wrote:
-> Starting with Rust 1.89.0 (expected 2025-08-07), under
-> `CONFIG_RUST_DEBUG_ASSERTIONS=y`, `objtool` may report:
+Il 11/07/25 16:57, Nicolas Frattaroli ha scritto:
+> The MT8196 SoC uses two syscon ranges for CPU DVFS that are separate
+> from each other. One, mt8196-fdvfs-config, is used to check for a magic
+> number at that memory address to verify that fdvfs should be used. The
+> other, mt8196-fdvfs, is used to configure the desired frequency for the
+> DVFS controller for each CPU core.
 > 
->     rust/kernel.o: warning: objtool: _R..._6kernel4pageNtB5_4Page8read_raw()
->     falls through to next function _R..._6kernel4pageNtB5_4Page9write_raw()
-> 
-> (and many others) due to calls to the `noreturn` symbol:
-> 
->     core::panicking::panic_nounwind_fmt
-> 
-> Thus add the mangled one to the list so that `objtool` knows it is
-> actually `noreturn`.
-> 
-> See commit 56d680dd23c3 ("objtool/rust: list `noreturn` Rust functions")
-> for more details.
-> 
-> Cc: stable@vger.kernel.org # Needed in 6.12.y and later (Rust is pinned in older LTSs).
-> Cc: Josh Poimboeuf <jpoimboe@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+What is the reason why you're using syscons here?
 
+Can't we simply assign the FDVFS MMIO to the cpufreq-hw node?
+
+Or is there any reason why we can't declare it as mmio-sram? ...because I'm not
+entirely sure but the FDVFS space should effectively be a [c]SRAM memory range...
+
+Cheers,
+Angelo
+
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 > ---
->  tools/objtool/check.c | 1 +
->  1 file changed, 1 insertion(+)
+>   Documentation/devicetree/bindings/mfd/syscon.yaml | 4 ++++
+>   1 file changed, 4 insertions(+)
 > 
-> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-> index f23bdda737aa..3257eefc41ed 100644
-> --- a/tools/objtool/check.c
-> +++ b/tools/objtool/check.c
-> @@ -224,6 +224,7 @@ static bool is_rust_noreturn(const struct symbol *func)
->  	       str_ends_with(func->name, "_4core9panicking14panic_explicit")				||
->  	       str_ends_with(func->name, "_4core9panicking14panic_nounwind")				||
->  	       str_ends_with(func->name, "_4core9panicking18panic_bounds_check")			||
-> +	       str_ends_with(func->name, "_4core9panicking18panic_nounwind_fmt")			||
->  	       str_ends_with(func->name, "_4core9panicking19assert_failed_inner")			||
->  	       str_ends_with(func->name, "_4core9panicking30panic_null_pointer_dereference")		||
->  	       str_ends_with(func->name, "_4core9panicking36panic_misaligned_pointer_dereference")	||
+> diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
+> index 27672adeb1fedb7c81b8ae86c35f4f3b26d5516f..5ee49d2ba0cdb72dd697a0fd71c8416ad4fd2c1e 100644
+> --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+> @@ -88,6 +88,8 @@ select:
+>             - mediatek,mt8135-pctl-a-syscfg
+>             - mediatek,mt8135-pctl-b-syscfg
+>             - mediatek,mt8173-pctl-a-syscfg
+> +          - mediatek,mt8196-fdvfs
+> +          - mediatek,mt8196-fdvfs-config
+>             - mediatek,mt8365-syscfg
+>             - microchip,lan966x-cpu-syscon
+>             - microchip,mpfs-sysreg-scb
+> @@ -194,6 +196,8 @@ properties:
+>             - mediatek,mt8135-pctl-a-syscfg
+>             - mediatek,mt8135-pctl-b-syscfg
+>             - mediatek,mt8173-pctl-a-syscfg
+> +          - mediatek,mt8196-fdvfs
+> +          - mediatek,mt8196-fdvfs-config
+>             - mediatek,mt8365-infracfg-nao
+>             - mediatek,mt8365-syscfg
+>             - microchip,lan966x-cpu-syscon
+> 
 
-Just having "_4core9panicking" substring is not sufficient?
 
 
