@@ -1,133 +1,209 @@
-Return-Path: <linux-kernel+bounces-729762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EE8DB03B3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:46:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9458CB03B43
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6575E3A2903
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:45:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03C41883F07
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0622D24293C;
-	Mon, 14 Jul 2025 09:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="EPweWqJ7"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF51A1E47A8
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6F923AB9F;
+	Mon, 14 Jul 2025 09:46:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9B823505E
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752486368; cv=none; b=J/oWxjtM5ABSB4vi5lUS3abh21wk8Bx8rL2paaFN6766+Q4b4Ruyxk9xYKSxYGtpbAb/69VAr90nZt5M9veI+ivcqfxS0X2/fvPonJMdUZYKJduhh1k5ocDken5OhWGZ6PiD3IZ03Bj4eBpFfcqpriC72yT1dN60GNxDw4+REAA=
+	t=1752486408; cv=none; b=eXM6AYcUm20/tsx1pp0VgWGHdAiqwGlZm7/PPssUBCTO4WQoa9Q8cJhujiNDmMdwZSzuV+MYYgllhRJ8KNvnGA/7+weI/jlWKB+O38kESbVKUL67oplfzcI+4QmcKY895Ws2p+cD6Pjwk0J98HPGIoUClwadHvkGPauYlwALAz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752486368; c=relaxed/simple;
-	bh=nSDiWwcKhqBcSjyKV3EIuCxjblg1mWRaJe5gw9GZdDQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qLekCy4+GwhnTEd8D15Fpu6mwYLUINyPAyk8lP70pncfbXU4gICBEcZERVHEeRKbvhNWIUdVx5/BtOcShWvK5Vxoptx9HAE7DzmyH0M60ey6GXe3Z+6hsOM+/e2xk6Y4EAg2CTSxU6NKk15E3+bO9djB2RG+J2cVAuBYbiQ+aoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=EPweWqJ7; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-742c7a52e97so3170328b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 02:46:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1752486364; x=1753091164; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0dnf5JriQVpHQM4YNtZJFgadu2tM3f9E9KiPFuztXa0=;
-        b=EPweWqJ7HGg20kQdGVRKB9YV8O/2pre0jfr1xrOznkxR8hzx86XPJ8Dx2JJVvIPsCc
-         p1WuWswI9AwmsYV7XcVyiE9A967cY2F0CYgBa/q4Rwex+6HhMPXf8bH2GZyePZTKPMQy
-         ZjRwDhHv5F1bLW0nKHyW+zDoTjYzcyTlVnsM2Qjw1JYPyuL8S67N//kveGksavFSJ62c
-         ld6Z/Az/NlQSUhaFCRyJTbpl1FDACPiOxKPOTLQ/PbkoBEQsDeL5aULTi2NbBhXPeET4
-         NGBOKpeRkdbnG63LUqMYNk1bpDFUehwNLz1YwBB1r5Mz3UooC3w7I7yl3eKf9KQJs0WU
-         9DwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752486364; x=1753091164;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0dnf5JriQVpHQM4YNtZJFgadu2tM3f9E9KiPFuztXa0=;
-        b=MnGQCE0Cwdd3QbyW0aHA+HpITx2eqovc+ibaU0oyIbECjxIQN6eq3eaemFnd0ckt15
-         96CHZRfFug/W56gvzu+4sjczxz+Yu8LY3rIEs9OHAqPua6lsFeQbta1tNgHIaewjKLiM
-         rJZ623gjNAo7A+3hzVf0d91zqFl8WtQPKLz5aLILAcZMeezPDlJlJa7dOfWeML6mb6eK
-         xLSxltF1tK2jo9Q8zSw7/ZthHaJfUSVoqHasaDfZyJTbSqoxdXgiZZzpuwYm16HiMbKD
-         kQv/qH0ZlsfMqmsxaTAQGPcwLh/8tVZVzuR0y0fp/KX2f4xWyWTj2Q0wflaa4mmuaXiz
-         4Izw==
-X-Forwarded-Encrypted: i=1; AJvYcCWRXhIBc2BzU2ujzaSwFO044sE2xOXQXwb4VV3jS4tQ21rfz7Fw14UhYZIfzGATgsLiqOFFzYvDn1SJe9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJDzKxXF1HSniBZSSlDi+kxblDm2A2Jr4Xx6D4yLx27rqzDAaf
-	ZaiTlC/Yon5ar00WGh7Q1SJsBNTfXfwbTUlMvsb0ZDRFrQqMe4PBk605xxRQzFs3q80=
-X-Gm-Gg: ASbGncvDvxp0rwLtavgLe56GKjCToK2OgkcQ6zA3GDIRUJyjvulXRGeh4HpCBlpTXyh
-	V+v9gNP2/Ku+5ZCIysQpnte7nNhC1xxiQ5j6VN3/Jv7bK8BkBwBZ/yvwrDFG/dd3Hxyg9DnoFMd
-	S7PoBcuNebNIRDVq174bDHkgcSIETm6gCVhLoN9VQz9IpWce8TlL6GCWuGqwQE98+gQ4+pPrWSc
-	kM9X3Y/9VQD8JQ4E4V9q5+J/1f4grw11LzyqFOCR5EW9p3ZH/bpop5gSlZy6E5062pKjepBpVYl
-	daZ1/eg7L6+VY5SHg7l88+wEXzSO37lBm8vH4nsx/PVESJ8rVpKR97SHCT6XGkn8GtcKyLwE/Ff
-	EsQ9Yfp5ZRE2kTQDns20nCBXg7WJjMMvAQyiXq4xEozQZcTvforqLVN30xz270gJ509PMZ1ByEy
-	OF8KNl7N58Qw==
-X-Google-Smtp-Source: AGHT+IFF990cxBBIj5rcns4ua/Z9mSLbBzTWgWQcSkoafAxgEV/F4FcvyqoXGxjBchTkM6/hWtRe9Q==
-X-Received: by 2002:a05:6a00:1992:b0:747:accb:773c with SMTP id d2e1a72fcca58-74ee2c509e7mr17413857b3a.13.1752486364023;
-        Mon, 14 Jul 2025 02:46:04 -0700 (PDT)
-Received: from J9GPGXL7NT.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd73b7sm10201283b3a.1.2025.07.14.02.45.59
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 14 Jul 2025 02:46:03 -0700 (PDT)
-From: Xu Lu <luxu.kernel@bytedance.com>
-To: rkrcmar@ventanamicro.com,
-	cleger@rivosinc.com,
-	anup@brainfault.org,
-	atish.patra@linux.dev,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr
-Cc: kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [PATCH v4] RISC-V: KVM: Delegate illegal instruction fault to VS mode
-Date: Mon, 14 Jul 2025 17:45:54 +0800
-Message-Id: <20250714094554.89151-1-luxu.kernel@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1752486408; c=relaxed/simple;
+	bh=WjD2+6GSYczgjE9l3ETMrddKylV0LGR1r30FIyjZ4HQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=KPTPwofJVreJSVFtQzROWqQG1itfmfrwUiJFMQDWpr23TfBqfvR+4lCYVRodcldeAmGdjO9t/G4NplxrejG7lyIK30eHnG/UT2oWIzxEyLHQlxK++pEhntAijXA8iUSXRQe+Ru+BhIYazTVStm4iy/3SvvQeAnC4/rTG8+h2bkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6CC831BC0;
+	Mon, 14 Jul 2025 02:46:36 -0700 (PDT)
+Received: from [10.57.83.2] (unknown [10.57.83.2])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF4C23F694;
+	Mon, 14 Jul 2025 02:46:43 -0700 (PDT)
+Message-ID: <c3174c99-dcec-45fa-9e8c-14f378b2b97d@arm.com>
+Date: Mon, 14 Jul 2025 10:46:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/10] arm64: mm: Implicitly invalidate user ASID based on
+ TLBI operation
+Content-Language: en-GB
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>
+References: <20250711161732.384-1-will@kernel.org>
+ <20250711161732.384-4-will@kernel.org>
+ <9dccf004-1ac4-45ae-9098-69fcad7107a8@arm.com>
+In-Reply-To: <9dccf004-1ac4-45ae-9098-69fcad7107a8@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Delegate illegal instruction fault to VS mode by default to avoid such
-exceptions being trapped to HS and redirected back to VS.
+On 14/07/2025 09:44, Ryan Roberts wrote:
+> On 11/07/2025 17:17, Will Deacon wrote:
+>> When kpti is enabled, separate ASIDs are used for userspace and
+>> kernelspace, requiring ASID-qualified TLB invalidation by virtual
+>> address to invalidate both of them.
+>>
+>> Push the logic for invalidating the two ASIDs down into the low-level
+>> __tlbi_level_op() function based on the TLBI operation and remove the
+>> burden from the caller to handle the kpti-specific behaviour.
+>>
+>> Signed-off-by: Will Deacon <will@kernel.org>
+>> ---
+>>  arch/arm64/include/asm/tlbflush.h | 45 ++++++++++++++++++-------------
+>>  1 file changed, 26 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+>> index 4408aeebf4d5..08e509f37b28 100644
+>> --- a/arch/arm64/include/asm/tlbflush.h
+>> +++ b/arch/arm64/include/asm/tlbflush.h
+>> @@ -115,17 +115,25 @@ enum tlbi_op {
+>>  
+>>  #define TLBI_TTL_UNKNOWN	INT_MAX
+>>  
+>> -#define __GEN_TLBI_OP_CASE(op)						\
+>> +#define ___GEN_TLBI_OP_CASE(op)						\
+>>  	case op:							\
+>> -		__tlbi(op, arg);					\
+>> +		__tlbi(op, arg)
+>> +
+>> +#define __GEN_TLBI_OP_ASID_CASE(op)					\
+>> +	___GEN_TLBI_OP_CASE(op);					\
+>> +		__tlbi_user(op, arg);					\
+>> +		break
+>> +
+>> +#define __GEN_TLBI_OP_CASE(op)						\
+>> +	___GEN_TLBI_OP_CASE(op);					\
+>>  		break
+>>  
+>>  static __always_inline void __tlbi_level_op(const enum tlbi_op op, u64 arg)
+>>  {
+>>  	switch (op) {
+>> -	__GEN_TLBI_OP_CASE(vae1is);
+>> +	__GEN_TLBI_OP_ASID_CASE(vae1is);
+>>  	__GEN_TLBI_OP_CASE(vae2is);
+>> -	__GEN_TLBI_OP_CASE(vale1is);
+>> +	__GEN_TLBI_OP_ASID_CASE(vale1is);
+>>  	__GEN_TLBI_OP_CASE(vale2is);
+>>  	__GEN_TLBI_OP_CASE(vaale1is);
+>>  	__GEN_TLBI_OP_CASE(ipas2e1);
+>> @@ -134,7 +142,8 @@ static __always_inline void __tlbi_level_op(const enum tlbi_op op, u64 arg)
+>>  		BUILD_BUG();
+>>  	}
+>>  }
+>> -#undef __GEN_TLBI_OP_CASE
+>> +#undef __GEN_TLBI_OP_ASID_CASE
+>> +#undef ___GEN_TLBI_OP_CASE
+>>  
+>>  #define __tlbi_level(op, addr, level) do {				\
+>>  	u64 arg = addr;							\
+>> @@ -150,11 +159,6 @@ static __always_inline void __tlbi_level_op(const enum tlbi_op op, u64 arg)
+>>  	__tlbi_level_op(op, arg);					\
+>>  } while(0)
+>>  
+>> -#define __tlbi_user_level(op, arg, level) do {				\
+>> -	if (arm64_kernel_unmapped_at_el0())				\
+>> -		__tlbi_level(op, (arg | USER_ASID_FLAG), level);	\
+>> -} while (0)
+>> -
+>>  /*
+>>   * This macro creates a properly formatted VA operand for the TLB RANGE. The
+>>   * value bit assignments are:
+>> @@ -418,22 +422,28 @@ static inline void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
+>>   *    operations can only span an even number of pages. We save this for last to
+>>   *    ensure 64KB start alignment is maintained for the LPA2 case.
+>>   */
+>> -#define __GEN_TLBI_OP_CASE(op)						\
+>> +#define ___GEN_TLBI_OP_CASE(op)						\
+>>  	case op:							\
+>> -		__tlbi(r ## op, arg);					\
+>> +		__tlbi(r ## op, arg)
+>> +
+>> +#define __GEN_TLBI_OP_ASID_CASE(op)					\
+>> +	___GEN_TLBI_OP_CASE(op);					\
+>> +		__tlbi_user(r ## op, arg);				\
+>>  		break
+>>  
+>>  static __always_inline void __tlbi_range(const enum tlbi_op op, u64 arg)
+>>  {
+>>  	switch (op) {
+>> -	__GEN_TLBI_OP_CASE(vae1is);
+>> -	__GEN_TLBI_OP_CASE(vale1is);
+>> +	__GEN_TLBI_OP_ASID_CASE(vae1is);
+>> +	__GEN_TLBI_OP_ASID_CASE(vale1is);
+>>  	__GEN_TLBI_OP_CASE(vaale1is);
+>>  	__GEN_TLBI_OP_CASE(ipas2e1is);
+> 
+> Bug? This 2 underscore version is still defined from the level case above. So
+> this is no longer issuing a range-based tlbi? (i.e. you're no longer prepending
+> the "r" here.
 
-The delegation of illegal instruction fault is particularly important
-to guest applications that use vector instructions frequently. In such
-cases, an illegal instruction fault will be raised when guest user thread
-uses vector instruction the first time and then guest kernel will enable
-user thread to execute following vector instructions.
+Do thse __GEN_TLBI_*() macros really help that much? I think I'd prefer to see
+the case statement just written out long hand. It will make things much clearer
+for not that many more lines, and if I'm right about that bug, would have
+prevented it.
 
-The fw pmu event counter remains undeleted so that guest can still query
-illegal instruction events via sbi call. Guest will only see zero count
-on illegal instruction faults and know 'firmware' has delegated it.
+Thanks,
+Ryan
 
-Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
----
- arch/riscv/include/asm/kvm_host.h | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
-index 85cfebc32e4cf..3f6b9270f366a 100644
---- a/arch/riscv/include/asm/kvm_host.h
-+++ b/arch/riscv/include/asm/kvm_host.h
-@@ -44,6 +44,7 @@
- #define KVM_REQ_STEAL_UPDATE		KVM_ARCH_REQ(6)
- 
- #define KVM_HEDELEG_DEFAULT		(BIT(EXC_INST_MISALIGNED) | \
-+					 BIT(EXC_INST_ILLEGAL)     | \
- 					 BIT(EXC_BREAKPOINT)      | \
- 					 BIT(EXC_SYSCALL)         | \
- 					 BIT(EXC_INST_PAGE_FAULT) | \
--- 
-2.20.1
+> 
+>>  	default:
+>>  		BUILD_BUG();
+>>  	}
+>>  }
+>> +#undef __GEN_TLBI_OP_ASID_CASE
+>> +#undef ___GEN_TLBI_OP_CASE
+>>  #undef __GEN_TLBI_OP_CASE
+>>  
+>>  #define __flush_tlb_range_op(op, start, pages, stride,			\
+>> @@ -452,8 +462,6 @@ do {									\
+>>  		    (lpa2 && __flush_start != ALIGN(__flush_start, SZ_64K))) {	\
+>>  			addr = __TLBI_VADDR(__flush_start, asid);	\
+>>  			__tlbi_level(op, addr, tlb_level);		\
+>> -			if (tlbi_user)					\
+>> -				__tlbi_user_level(op, addr, tlb_level);	\
+>>  			__flush_start += stride;			\
+>>  			__flush_pages -= stride >> PAGE_SHIFT;		\
+>>  			continue;					\
+>> @@ -464,8 +472,6 @@ do {									\
+>>  			addr = __TLBI_VADDR_RANGE(__flush_start >> shift, asid, \
+>>  						scale, num, tlb_level);	\
+>>  			__tlbi_range(op, addr);				\
+>> -			if (tlbi_user)					\
+>> -				__tlbi_user(r##op, addr);		\
+>>  			__flush_start += __TLBI_RANGE_PAGES(num, scale) << PAGE_SHIFT; \
+>>  			__flush_pages -= __TLBI_RANGE_PAGES(num, scale);\
+>>  		}							\
+>> @@ -584,6 +590,7 @@ static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *b
+>>  {
+>>  	__flush_tlb_range_nosync(mm, start, end, PAGE_SIZE, true, 3);
+>>  }
+>> -#endif
+>>  
+>> +#undef __tlbi_user
+>> +#endif
+>>  #endif
+> 
 
 
