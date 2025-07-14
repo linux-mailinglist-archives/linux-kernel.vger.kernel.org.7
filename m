@@ -1,211 +1,135 @@
-Return-Path: <linux-kernel+bounces-729866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF260B03CA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A88EEB03CB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEAC21887B1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:54:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D852188FC2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8332E1FDA94;
-	Mon, 14 Jul 2025 10:52:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEF81DD0C7;
-	Mon, 14 Jul 2025 10:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9666B248891;
+	Mon, 14 Jul 2025 10:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="LGJuBfVJ"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889AC24887E;
+	Mon, 14 Jul 2025 10:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752490369; cv=none; b=glktZQhF4e+9oZ5c8TlIM/WBZASZ7H2ham1xvt+H5HrT/kUBWSV7lRNt/tpFVDUnZvUMA2cgoMXI/5+gvvTHVJMs3ttd2t5jmHtTlCvr+BLtceZ/vVCgtPGKc1mi/ygrg3seijaS/PXZZ7UkhPQWaoe4TEK2sdyaALKJQspMwzI=
+	t=1752490398; cv=none; b=U3ra9Va5GuECsRYZzu/iX/uWYcQnAicl6gMhu6u/v6Jjdl2hl6taK9GfUoZWAvRBWpMygdcb6tXGZcijY7boH4J/m8Flj9JafAzmyv1gAP357EM5S9mw5fPXRyjlGaqf9a1d5FjhZ8j6WYdJI74n/ekgFHQld4C95eFI7RnQjeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752490369; c=relaxed/simple;
-	bh=8XPSpfcnpA5YhqSdHS4f5gHFRWQZ1wZOSNp8AjlFrcY=;
+	s=arc-20240116; t=1752490398; c=relaxed/simple;
+	bh=faQh3yDJ3cmAtPWHJAAYh+8EJbkuKGS8rv10u+6kVdA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uId4sFbLAEm6rLK7zXUi9LUa2ZTb0FjyOB5PYgquQtfZXdHRThcmV3xIVj88j0jUOOCygZnFh3TDvEydAt8zH/YhusCpvMM5sEpds0s7RJ2ecth3gk7xfDe+dHs0yM88wVJRh7BYhzg/xYT+DRQkGrK0kIkhUCH8kLtLCk5QbYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 687071BC0;
-	Mon, 14 Jul 2025 03:52:36 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F6DE3F694;
-	Mon, 14 Jul 2025 03:52:45 -0700 (PDT)
-Date: Mon, 14 Jul 2025 11:52:43 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, ankita@nvidia.com,
-	bwicaksono@nvidia.com, rmk+kernel@armlinux.org.uk,
-	catalin.marinas@arm.com, linux-serial@vger.kernel.org,
-	rmikey@meta.com, linux-arm-kernel@lists.infradead.org,
-	usamaarif642@gmail.com, linux-kernel@vger.kernel.org,
-	paulmck@kernel.org
-Subject: Re: arm64: csdlock at early boot due to slow serial (?)
-Message-ID: <20250714105243.GD1093654@e132581.arm.com>
-References: <aGVn/SnOvwWewkOW@gmail.com>
- <aGZbYmV26kUKJwu_@J2N7QTR9R3>
- <aGaQBghdAl8VGWmV@gmail.com>
- <aGawTd8N2i8MDCmL@J2N7QTR9R3>
- <aG0kYjl/sphGqd4r@gmail.com>
- <juiog3337iozva23zpf4apdydegj4z7jibqykfvcgnkabemw4w@z5g5hhwrqr2w>
- <20250710133557.GA1093654@e132581.arm.com>
- <jlhgtwkeezoca34wbqipvsgr4muxov5wmgrswleo2k7zqitzfr@4ngriyb2udra>
- <20250711095023.GB1093654@e132581.arm.com>
- <cno3lsprrz36gqu27omvwrw27d2ubqtshac3cahfgkhcm2rla7@bpnulcmsyx2u>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LiAwpH6c+ARGTcsguiT0/E9yRxSPml67jSup8FbXwG38lwQ/kxNz43KeX5aFo1Q7Z4aYQxSB2u62wm+j5lp8Yz5pQoKZ7elGbRMItwRDj5t2rDFzXpOE0nCYkECyKAA1bs+OUn2Yfg2g5FpbFI07t+tobASpsdo9TARgHni73OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=LGJuBfVJ; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 176A840E0163;
+	Mon, 14 Jul 2025 10:53:14 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 4Z3gr6BUp_8I; Mon, 14 Jul 2025 10:53:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1752490390; bh=6rOjcKLLPgtL8H8EwqYk8h4UdVGv4zjdYvcfXegnVJk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LGJuBfVJv5V78O/C0L4MoZYTuwjK5J+gcPXX2cgukGxgzvxEgt37jJUN/SCv6kZaz
+	 xX7j+jLBpSu9dx7xf6CkThp8UtgEj85Cc7q6sf3aIR3z9DYiyhEIxqopRQHXHqYiom
+	 qYf/1nboKxOOMz648e1eYL2JfYLseRkEwJpjZ6SnCH2/JzA/JpwNDULq0dTOWYiqiY
+	 5PJR2Wxk8Cdk/LgTKC3FOz/BuvZK4dC/kA00Tq5xgqqgyjWrbn+KJp4pwPtvulZH89
+	 CopPPaFErRwNusjZy0lTNFrMjE7qeMAYl8zWhXdZQRa92bNYdB2qFAtjbdSBJJWcAG
+	 qNWjgMZd4LMrRvXuLX+RbB8r6GMGt2dXB3/jx0GTuuj2x8EmbSJojcJFcidV9qMnKc
+	 2kYdFUFbHNXshbXj5OwmihP1d4w1EbyJ3Y2oWPSIcK9K0AtCTS9a0gyVH56fNlidjv
+	 COyC6Puwys9eb0KxnpDRA/UPEj8bWd7cJCUtWpac1On40A1a9tyYPIMoTONsFOv/bk
+	 NieBSEVb2oq6om8TZoIXMos79NNuEQkWNHyjmhSJ2boV4nKvPt+nPSlcejkdIAZWXP
+	 Ij2ODJWDH4UIMJzrHSo+AVJNwrDhNfUxaYvCiaJCVT0YkY3GUab5GI4WJsTOl5Nv4y
+	 bLEvZGjCi+Wv4DvRwJ1G14fg=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3934140E01FD;
+	Mon, 14 Jul 2025 10:52:49 +0000 (UTC)
+Date: Mon, 14 Jul 2025 12:52:48 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
+	Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com,
+	David.Kaplan@amd.com, x86@kernel.org, hpa@zytor.com,
+	peterz@infradead.org, pbonzini@redhat.com, kvm@vger.kernel.org,
+	kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
+	naveen.rao@amd.com, kai.huang@intel.com
+Subject: Re: [RFC PATCH v8 16/35] x86/apic: Simplify bitwise operations on
+ APIC bitmap
+Message-ID: <20250714105248.GFaHThgLB9QnrW2xLW@fat_crate.local>
+References: <20250709033242.267892-1-Neeraj.Upadhyay@amd.com>
+ <20250709033242.267892-17-Neeraj.Upadhyay@amd.com>
+ <aG5-PV7U2KaZDNGX@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cno3lsprrz36gqu27omvwrw27d2ubqtshac3cahfgkhcm2rla7@bpnulcmsyx2u>
+In-Reply-To: <aG5-PV7U2KaZDNGX@google.com>
 
-On Fri, Jul 11, 2025 at 03:45:03AM -0700, Breno Leitao wrote:
-> On Fri, Jul 11, 2025 at 10:50:23AM +0100, Leo Yan wrote:
-> > > I've reverted commit 2eb2608618ce ("serial: amba-pl011: Implement nbcon
-> > > console"), and I don't see the CSD locks anymoer. The serial speed is
-> > > the same and continue to be slow, but, the CSD lock is not there. Here
-> > > is the time spent on the serial flush when reverting the commit above
-> > > 
-> > > 	[    0.309561] printk: legacy console [ttyAMA0] enabled
-> > > 	[    8.657938] ACPI: PCI Root Bridge [PCI2] (domain 0002 [bus 00-ff])
-> > 
-> > From this result, we can know both the atomic path and the thread path
-> > take a long time polling.
->
-> I am wondering if this slowdown is by design, or, if there is a bug
-> somewhere.
-
-Polling for over 5 seconds (5,001,000,000 ns) seems too long; it
-should not be by design.
-
-> > Since both paths configure the UART clock, I'm curious about the
-> > behaviour if the UART clock is untouched. The relevant code is shown
-> > below.
+On Wed, Jul 09, 2025 at 07:35:41AM -0700, Sean Christopherson wrote:
+> On Wed, Jul 09, 2025, Neeraj Upadhyay wrote:
+> > Use 'regs' as a contiguous linear bitmap for bitwise operations in
+> > apic_{set|clear|test}_vector(). This makes the code simpler by eliminating
 > 
-> Is this the clock frequency that is connected to pl011 coming from AMBA?
-
-The programming clock is for programming registers, my understanding is
-the clock is not provided by bus.
-
-> > I may seem a bit stubborn in suspecting a clock issue :) But if you
-> > have confirmed that a standard pl011 UART IP is being used.
+> That's very debatable.  I don't find this code to be any simpler.  Quite the
+> opposite; it adds yet another open coded math exercise, which is so "simple"
+> that it warrants its own comment to explain what it's doing.
 > 
-> How do I double check this is a pl011 UART IP or if this is being
-> emulated by firmware/ACPI.
+> I'm not dead set against this, but I'd strongly prefer to drop this patch.
 
-The log shows:
+> > +static inline unsigned int get_vec_bit(unsigned int vec)
+> > +{
+> > +	/*
+> > +	 * The registers are 32-bit wide and 16-byte aligned.
+> > +	 * Compensate for the resulting bit number spacing.
+> > +	 */
+> > +	return vec + 96 * (vec / 32);
 
-  ARMH0011:00: ttyAMA0 at MMIO 0xc280000 (irq = 66, base_baud = 0) is a SBSA
+I kinda agree. The naked 96 doesn't tell me anything. If we do this, the
+explaination of what this thing does should be crystal clear, perhaps even
+with an example. And the naked numbers need to be defines with proper names.
 
-This should be emulated by firmware by reading Peripheral Identification
-Registers (see [1]).
+Also:
 
-The most reliable way is to confirm with SoC vendor if the IP is
-standard or includes any modification.
+>     This change results in slight increase in generated code size for
+>     gcc-14.2.
+>     
+>     - Without change
 
-[1] https://developer.arm.com/documentation/ddi0183/g/programmers-model/register-descriptions/peripheral-identification-registers--uartperiphid0-3
+What is the asm supposed to tell me?
 
-> > diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-> > index 71482d639a6d..b04773ba2602 100644
-> > --- a/drivers/amba/bus.c
-> > +++ b/drivers/amba/bus.c
-> >
-> I've tested it, but, it seems it didnt' help much. here is the full log
+The new change gets a LEA which is noticeable or so?
 
-[...]
+The generated code size increase is, what, a couple of bytes? Who cares?
 
-> [    0.307809] ARMH0011:00: ttyAMA0 at MMIO 0xc280000 (irq = 66, base_baud = 0) is a SBSA
-> [    0.307816] printk: console [ttyAMA0] enabled
+We add asm to commit messages when it is really important. Doesn't seem so to
+me here but maybe I'm missing an angle...
 
-Based on this log and followed OOPS, the issue happens just after
-enabling console. It is a bit tricky that it prints logs during
-console registration (and configuration).
+Thx.
 
-Seems to me, it is good to check pl011_console_setup() or
-sbsa_uart_set_termios() has any impaction on the long waiting. For
-example, the flow below will configure pin control and which might
-impact the data transaction:
+-- 
+Regards/Gruss,
+    Boris.
 
-  pl011_console_setup()
-   `> pinctrl_pm_select_default_state()
-
-Based on the information shared earlier, the UART FIFO appears to be
-stalled, which is causing the long wait times.
-
-Apologies if my suggestion was unreliable or misled anything, and
-welcome others to freely correct me.
-
-Thanks,
-Leo
-
-> [    5.414515] smp: csd: Detected non-responsive CSD lock (#1) on CPU#0, waiting 5001000000 ns for CPU#01 do_nothing+0x0/0x10(0x0).
-> [    5.414532] smp: 	csd: CSD lock (#1) unresponsive.
-> [    5.414535] Sending NMI from CPU 0 to CPUs 1:
-> [    5.414541] NMI backtrace for cpu 1
-> [    5.414545] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.16.0-rc5-00056-gd7753fd13f9e #86 NONE 
-> [    5.414548] Hardware name: Quanta JAVA ISLAND PVT 29F0EMAZ049/Java Island, BIOS F0EJ3A13 06/04/2025
-> [    5.414550] pstate: 61400009 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-> [    5.414552] pc : pl011_console_write_atomic+0x94/0x170
-> [    5.414559] lr : pl011_console_write_atomic+0x84/0x170
-> [    5.414562] sp : ffff80008492f1a0
-> [    5.414564] pmr: 000000c0
-> [    5.414565] x29: ffff80008492f1a0 x28: 0000000000000000 x27: 00000000000000e0
-> [    5.414572] x26: 0000000000000190 x25: 0000000000000000 x24: 0000000000000000
-> [    5.414578] x23: 0000000000000001 x22: 0000000000000000 x21: ffff800080c38ea8
-> [    5.414584] x20: ffff80008492f288 x19: ffff0000b2060080 x18: 00000000ffffffff
-> [    5.414590] x17: 6362323230303030 x16: 3030303078303a30 x15: 206e6f6967657220
-> [    5.414595] x14: 3030303064322072 x13: 3030303063623232 x12: 3030303030303030
-> [    5.414601] x11: 78303a30206e6f69 x10: 6765722030303030 x9 : ffff800080c390e4
-> [    5.414607] x8 : 6964657220646e75 x7 : 205d313533383630 x6 : 302e30202020205b
-> [    5.414612] x5 : ffff0000ad10200f x4 : 0000000000000000 x3 : 0000000000000008
-> [    5.414618] x2 : ffff8000816336c0 x1 : 0000000000000018 x0 : 0000000000000018
-> [    5.414624] Call trace:
-> [    5.414626]  pl011_console_write_atomic+0x94/0x170 (P)
-> [    5.414630]  nbcon_emit_next_record+0x234/0x388
-> [    5.414634]  __nbcon_atomic_flush_pending_con+0x88/0x108
-> [    5.414637]  __nbcon_atomic_flush_pending+0x108/0x198
-> [    5.414640]  nbcon_atomic_flush_pending+0x24/0x38
-> [    5.414643]  vprintk_emit+0x200/0x348
-> [    5.414645]  vprintk_default+0x3c/0x50
-> [    5.414647]  vprintk+0x2c/0x40
-> [    5.414650]  _printk+0x50/0x60
-> [    5.414652]  register_console+0x424/0x560
-> [    5.414654]  serial_core_register_port+0x878/0x898
-> [    5.414659]  serial_ctrl_register_port+0x14/0x28
-> [    5.414661]  uart_add_one_port+0x14/0x28
-> [    5.414664]  pl011_register_port+0x74/0x130
-> [    5.414667]  sbsa_uart_probe+0x164/0x1b8
-> [    5.414670]  platform_probe+0x8c/0x100
-> [    5.414674]  really_probe+0xc4/0x398
-> [    5.414676]  __driver_probe_device+0x80/0x1a8
-> [    5.414679]  driver_probe_device+0x44/0x120
-> [    5.414681]  __device_attach_driver+0xb8/0x158
-> [    5.414683]  bus_for_each_drv+0x74/0xc0
-> [    5.414685]  __device_attach+0xac/0x1e0
-> [    5.414687]  device_initial_probe+0x18/0x28
-> [    5.414690]  bus_probe_device+0xa8/0xb8
-> [    5.414692]  device_add+0x648/0x830
-> [    5.414697]  platform_device_add+0x114/0x280
-> [    5.414700]  platform_device_register_full+0x148/0x1b8
-> [    5.414702]  acpi_create_platform_device+0x264/0x388
-> [    5.414706]  acpi_bus_attach+0x2c8/0x2e8
-> [    5.414709]  acpi_dev_for_one_check+0x38/0x48
-> [    5.414711]  device_for_each_child+0x54/0xa0
-> [    5.414714]  acpi_dev_for_each_child+0x30/0x40
-> [    5.414716]  acpi_bus_attach+0x6c/0x2e8
-> [    5.414718]  acpi_dev_for_one_check+0x38/0x48
-> [    5.414720]  device_for_each_child+0x54/0xa0
-> [    5.414723]  acpi_dev_for_each_child+0x30/0x40
-> [    5.414725]  acpi_bus_attach+0x6c/0x2e8
-> [    5.414727]  acpi_bus_scan+0x5c/0x1b0
-> [    5.414730]  acpi_scan_init+0xa0/0x288
-> [    5.414737]  acpi_init+0x1e8/0x4b8
-> [    5.414740]  do_one_initcall+0x3c/0x2a0
-> [    5.414743]  kernel_init_freeable+0x22c/0x460
-> [    5.414746]  kernel_init+0x28/0x1f0
-> [    5.414750]  ret_from_fork+0x10/0x20
+https://people.kernel.org/tglx/notes-about-netiquette
 
