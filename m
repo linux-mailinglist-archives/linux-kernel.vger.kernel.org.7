@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-730521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B404B045C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:46:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D14B045CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 584BF3B749B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:45:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2559E1718AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E5826771B;
-	Mon, 14 Jul 2025 16:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CDE268C73;
+	Mon, 14 Jul 2025 16:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0S5N0gvX"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IB3EanhT"
 Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8A0265637
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 16:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A662673B7
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 16:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752511469; cv=none; b=H0G8FUFiOiEFxflldIMxe3t2oOVRw4ziHXnclMQ1zIhbA5HfxbED76iNGjgvEG72KtXyDuWrSYWDT146erZ8XLLsUI/j8dt7eZtKA7X2+zFS8R9NfGq1dwmDmvzbklsgbOXt8WVXhPgLT0/wBVNOhE+Gb+QGTaCl6zQ6VKloYOI=
+	t=1752511471; cv=none; b=SEevNYFl9Jb7EEmCNtkK6HcpDOs8CxLX0Cfp3uahZ38YoWIYVy25d2Pi9IalFI81T1roYTB3razgMOeXVU4zrrNLxaoIAGEUksLhVd+7K4hSU9AIC7gzLyh3s6aL3VKR/JHIsnHVJYXY7lxo+13vWXY8tsyenqblhqM3x3pWri8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752511469; c=relaxed/simple;
-	bh=WDFb8KRjkWtnIVv8Htut7znggZbaQvt3o8qYiqxrd2c=;
+	s=arc-20240116; t=1752511471; c=relaxed/simple;
+	bh=IO7FvvdNH5mdXbeA366TB1YHTzn2Zgj5KkqRuVkdEz8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=W378MN7aWWb9LXoK/FiJEwAOj9fEOFQchxMwm/7G60bsJAxBsj86UrwnzO5GdV/LUs0zYvyudCdTB6/n1/NrkH93DNxwqMlUHEWCQOpARugrs7NrDcjYyAVi69c153WdCyNOnZNhYUkRVINBB5WuGZCeS+wNn2ixsP/yGiRKtC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0S5N0gvX; arc=none smtp.client-ip=209.85.214.202
+	 To:Content-Type; b=DNbSyMjnuSy39OKRfwlqlOaCxdpX+sVXvLzqr7DeTCrrFNwtkagb49yA5lrqQdTBDnjb+My7kr6lUI9M6U4OxdmiKZnANBRP1Wa92h+FqJvFyPBz8MHgEGZfokKHAORFktZ7gFUqnOl7M7nqX9xI9IPMKYiR1dOPGQvkHC40k2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IB3EanhT; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-23536f7c2d7so74013345ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:44:27 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2354ba59eb6so56568735ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:44:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752511467; x=1753116267; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1752511469; x=1753116269; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Gj6H/6wWHWCvqxE/S+KSUU184sKn3KsUwpHe5HzrhKI=;
-        b=0S5N0gvX/Vm5aqR1BsEVTVCHTtpev2HkK6lIlllEtkkkBFN2TCFezi/uPHFAaDr3JA
-         PV176H+ECckWpLA2RhPP6xkKA76VCNYZtcn8vqMhwXmyQua9RarveByZ20A0b+eQdubT
-         5DaBIPmnEkiMo3kugiwz1xoRtWe1IQAN70I0vyePr7OtlCsxd2UBdoNIMHR5BocUdzhN
-         yxQnJX0BGqA3ghkd1tN9RnBXAJ3eMariH8vVx8HrUTIF1ioDJCdkfzA9gJOhJoPUCvfJ
-         DvHK9ob4zcBgLW1X72+HMM9Z7ryNe0p2FW0eWQyzQMtMHpKiHVBx5MJuCVoGKEljRBmP
-         YxPg==
+        bh=RNpTkoNE8II3Xmed5cX8hZeCLxHuWXoamhAnTHonxFM=;
+        b=IB3EanhTuEc5MdR32bs+wya3imnzXl0cqMjQ5E7k68AkYMrxYA/9JQuGIyv6X6r/F6
+         7haZmnIC6K/aSwKy4cGrqAOXIaWSlXtnkWlq+Qo7naer1J8qMNGLDLBiYGK4cg5Vd5YZ
+         3F7f1S/h46IZEj9YIh9fcywhcfplnwNl6y0bxdX4FUg5To7KYaDXaBioYuHW/EOfhU+x
+         rOSl7YJPfNaehz+Z5Xg3hLZmQVPy8HYXO1XGX0IB7A3YO5vWymW1MRs5KGVrcX3qwisA
+         YjkH9Heo93j1fqVBVccCho4SSL8UPn4NxeOdc2dSfS3WfKDiG1rJcWapzoh8HVAJCN54
+         9GuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752511467; x=1753116267;
+        d=1e100.net; s=20230601; t=1752511469; x=1753116269;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gj6H/6wWHWCvqxE/S+KSUU184sKn3KsUwpHe5HzrhKI=;
-        b=qrndgGwNxCybXKssZ0mX0vL+3ukx9/om1/eFZuXQF+NVWAgFxVS690u2iy2Xy17EF/
-         6UCAwvcMsEYrILEnmCN8JXjADJ9+f3a7ZHbU0Tp9/w2EY/zD0w2nrZWJuNgA4kJRcI9v
-         x9oFLB/8j15dht9pyM7mjFIZjC3Su/pC+YzKXbvzcVKViLEptOugkUXJWGyR+eEnM7uC
-         7kZ7HNKSQskCaHSqZW1c4x4kx4zxhf3qUMWb4F8n9I+kPRT1gNtSx3llx1g901bzuyeU
-         cKNRLMPihB/UjnXMMdFowZ57Y1XqsvuJj/PGpRIQbCIJD2PWlOoVpAgoJ7bfAksMY3KZ
-         YlXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkwJWCNtTeZTqxMz5nxM27qBG8rlCrba6ghPpqn16/6AK2lzSK3993yEN7LLHuKR8PXXlRazqn2SOGK0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGo39f8q72qSpLv9Qx+O2ZNI2SDCpAcJ2dPE4Eb3sKub0B2Z/y
-	2+O5ZVTcWbkVC3oEFzmjWIqU1YtO3LKvN4e0xlG4N+kfVTwMBCrKTBNpgcuMRTyYu/RUzDoEj48
-	cJysKHHNt8w==
-X-Google-Smtp-Source: AGHT+IHThaOZrwv7vNnjKKkw81fYMbm9wUwXPz7cKmEhuXFkBx/N0hqwMXNTYQXdJH17JJRVF0v9BYCDBmii
-X-Received: from plkq5.prod.google.com ([2002:a17:902:edc5:b0:234:9673:1d13])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1a2f:b0:23d:dd63:2cd9
- with SMTP id d9443c01a7336-23dee27dc17mr231875115ad.46.1752511467196; Mon, 14
- Jul 2025 09:44:27 -0700 (PDT)
-Date: Mon, 14 Jul 2025 09:43:55 -0700
+        bh=RNpTkoNE8II3Xmed5cX8hZeCLxHuWXoamhAnTHonxFM=;
+        b=Zhv+uWXQ8+wMI3z6ggA0IHJhHx9Jdf+RXTXWBlBZeWV2tkLthqV1Ubx8RDWK3q+7g3
+         xw6sMIu0C7vWjEGFCQe5tgnFeGYEHZRRBzWy9Rm6evWbQybWDgmQG59AOnxIZbCfzkE6
+         PXuv5EMV2MDJDGOvnNOVz56wkbNt2Cq9qdW0rI2gltR2Mx8gUfMjh0d4JubnENy5Rvar
+         Yml7IDnFgmdGhbPxrxzQ0jNz3Y7vGE4kUg4+k/r0V7QFRLgFvZ/TUUpsTJHGbjr3gFBJ
+         CGXK71jrAdpYpt5nRlu42L2TZ3vhX8Eij5yu+ygg4Fd9BmDK3UOIVrYWhyGDdZk3cLoY
+         t9iw==
+X-Forwarded-Encrypted: i=1; AJvYcCWp0/2eT7Y4+bxZayxJQp+sOTIuIagkmfOEfEV0V8LXFlVIzxXiPDAWQ50KRlnmnDX3e4eLtZNra9rn8ow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMo76Lw8XIZZMYN7cfX0KnwZExBs1kIB/mZvCLo/GZsS9VuBPI
+	PGrPMkVZ9Qs9UKVR5lnaaVQYRAH5RFcSD/RjiWZFIDamwXa4Bv74hS/vPrNaWb0v8/DSbWWlIKU
+	UulNLYnyfFQ==
+X-Google-Smtp-Source: AGHT+IEGJcSrv1or/zD0cju4ZrW/u3RgyXa/Qm8OVx7fWyxbcGF6DW9TTLNdvDZtAiLSp57AUWfQL8GaEhTJ
+X-Received: from plhs17.prod.google.com ([2002:a17:903:3211:b0:234:683b:5792])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f1d5:b0:23d:fa75:eaee
+ with SMTP id d9443c01a7336-23dfa75ec43mr135766855ad.32.1752511468998; Mon, 14
+ Jul 2025 09:44:28 -0700 (PDT)
+Date: Mon, 14 Jul 2025 09:43:56 -0700
 In-Reply-To: <20250714164405.111477-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250714164405.111477-1-irogers@google.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250714164405.111477-8-irogers@google.com>
-Subject: [PATCH v7 07/16] perf list: Skip ABI PMUs when printing pmu values
+Message-ID: <20250714164405.111477-9-irogers@google.com>
+Subject: [PATCH v7 08/16] perf python: Improve the tracepoint function if no libtraceevent
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -91,173 +91,55 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Avoid printing tracepoint, legacy and software events when listing for
-the pmu option. Add the PMU type to the print_event callbacks to ease
-detection.
+The tracepoint function just returns the tracepoint id, this doesn't
+require libtraceevent which is only used for parsing the event format
+data. Implement the function using the id function in tp_pmu. No
+current code in perf is using this, the previous code migrated to
+perf.parse_events, but it feels good to have less ifdef
+HAVE_LIBTRACEEVENT.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/builtin-list.c      | 17 +++++++++++++----
- tools/perf/util/pfm.c          |  2 ++
- tools/perf/util/pmus.c         |  2 ++
- tools/perf/util/print-events.c |  5 +++++
- tools/perf/util/print-events.h |  2 +-
- 5 files changed, 23 insertions(+), 5 deletions(-)
+ tools/perf/util/python.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
-index 3a4061d02f6c..caf42276bd0f 100644
---- a/tools/perf/builtin-list.c
-+++ b/tools/perf/builtin-list.c
-@@ -58,6 +58,8 @@ struct print_state {
- 	bool metrics;
- 	/** @metricgroups: Controls printing of metric and metric groups. */
- 	bool metricgroups;
-+	/** @exclude_abi: Exclude PMUs with types less than PERF_TYPE_MAX except PERF_TYPE_RAW. */
-+	bool exclude_abi;
- 	/** @last_topic: The last printed event topic. */
- 	char *last_topic;
- 	/** @last_metricgroups: The last printed metric group. */
-@@ -113,7 +115,8 @@ static void wordwrap(FILE *fp, const char *s, int start, int max, int corr)
- 	}
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index 02544387f39d..9d97affb79c1 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -18,6 +18,7 @@
+ #include "record.h"
+ #include "strbuf.h"
+ #include "thread_map.h"
++#include "tp_pmu.h"
+ #include "trace-event.h"
+ #include "metricgroup.h"
+ #include "mmap.h"
+@@ -1544,10 +1545,6 @@ static const struct perf_constant perf__constants[] = {
+ static PyObject *pyrf__tracepoint(struct pyrf_evsel *pevsel,
+ 				  PyObject *args, PyObject *kwargs)
+ {
+-#ifndef HAVE_LIBTRACEEVENT
+-	return NULL;
+-#else
+-	struct tep_event *tp_format;
+ 	static char *kwlist[] = { "sys", "name", NULL };
+ 	char *sys  = NULL;
+ 	char *name = NULL;
+@@ -1556,12 +1553,7 @@ static PyObject *pyrf__tracepoint(struct pyrf_evsel *pevsel,
+ 					 &sys, &name))
+ 		return NULL;
+ 
+-	tp_format = trace_event__tp_format(sys, name);
+-	if (IS_ERR(tp_format))
+-		return PyLong_FromLong(-1);
+-
+-	return PyLong_FromLong(tp_format->id);
+-#endif // HAVE_LIBTRACEEVENT
++	return PyLong_FromLong(tp_pmu__id(sys, name));
  }
  
--static void default_print_event(void *ps, const char *topic, const char *pmu_name,
-+static void default_print_event(void *ps, const char *topic,
-+				const char *pmu_name, u32 pmu_type,
- 				const char *event_name, const char *event_alias,
- 				const char *scale_unit __maybe_unused,
- 				bool deprecated, const char *event_type_desc,
-@@ -130,6 +133,9 @@ static void default_print_event(void *ps, const char *topic, const char *pmu_nam
- 	if (print_state->pmu_glob && pmu_name && !strglobmatch(pmu_name, print_state->pmu_glob))
- 		return;
- 
-+	if (print_state->exclude_abi && pmu_type < PERF_TYPE_MAX && pmu_type != PERF_TYPE_RAW)
-+		return;
-+
- 	if (print_state->event_glob &&
- 	    (!event_name || !strglobmatch(event_name, print_state->event_glob)) &&
- 	    (!event_alias || !strglobmatch(event_alias, print_state->event_glob)) &&
-@@ -354,7 +360,8 @@ static void fix_escape_fprintf(FILE *fp, struct strbuf *buf, const char *fmt, ..
- 	fputs(buf->buf, fp);
- }
- 
--static void json_print_event(void *ps, const char *topic, const char *pmu_name,
-+static void json_print_event(void *ps, const char *topic,
-+			     const char *pmu_name, u32 pmu_type __maybe_unused,
- 			     const char *event_name, const char *event_alias,
- 			     const char *scale_unit,
- 			     bool deprecated, const char *event_type_desc,
-@@ -647,9 +654,11 @@ int cmd_list(int argc, const char **argv)
- 		} else if (strcmp(argv[i], "cache") == 0 ||
- 			 strcmp(argv[i], "hwcache") == 0)
- 			print_hwcache_events(&print_cb, ps);
--		else if (strcmp(argv[i], "pmu") == 0)
-+		else if (strcmp(argv[i], "pmu") == 0) {
-+			default_ps.exclude_abi = true;
- 			perf_pmus__print_pmu_events(&print_cb, ps);
--		else if (strcmp(argv[i], "sdt") == 0)
-+			default_ps.exclude_abi = false;
-+		} else if (strcmp(argv[i], "sdt") == 0)
- 			print_sdt_events(&print_cb, ps);
- 		else if (strcmp(argv[i], "metric") == 0 || strcmp(argv[i], "metrics") == 0) {
- 			default_ps.metricgroups = false;
-diff --git a/tools/perf/util/pfm.c b/tools/perf/util/pfm.c
-index 0dacc133ed39..15fc3898ec83 100644
---- a/tools/perf/util/pfm.c
-+++ b/tools/perf/util/pfm.c
-@@ -234,6 +234,7 @@ print_libpfm_event(const struct print_callbacks *print_cb, void *print_state,
- 
- 	if (is_libpfm_event_supported(name, cpus, threads)) {
- 		print_cb->print_event(print_state, topic, pinfo->name,
-+				      /*pmu_type=*/PERF_TYPE_RAW,
- 				      name, info->equiv,
- 				      /*scale_unit=*/NULL,
- 				      /*deprecated=*/NULL, "PFM event",
-@@ -269,6 +270,7 @@ print_libpfm_event(const struct print_callbacks *print_cb, void *print_state,
- 			print_cb->print_event(print_state,
- 					topic,
- 					pinfo->name,
-+					/*pmu_type=*/PERF_TYPE_RAW,
- 					name, /*alias=*/NULL,
- 					/*scale_unit=*/NULL,
- 					/*deprecated=*/NULL, "PFM event",
-diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
-index 409b909cfa02..004f5f0c621f 100644
---- a/tools/perf/util/pmus.c
-+++ b/tools/perf/util/pmus.c
-@@ -645,6 +645,7 @@ void perf_pmus__print_pmu_events(const struct print_callbacks *print_cb, void *p
- 		print_cb->print_event(print_state,
- 				aliases[j].topic,
- 				aliases[j].pmu_name,
-+				aliases[j].pmu->type,
- 				aliases[j].name,
- 				aliases[j].alias,
- 				aliases[j].scale_unit,
-@@ -749,6 +750,7 @@ void perf_pmus__print_raw_pmu_events(const struct print_callbacks *print_cb, voi
- 		print_cb->print_event(print_state,
- 				/*topic=*/NULL,
- 				/*pmu_name=*/NULL,
-+				pmu->type,
- 				format_args.short_string.buf,
- 				/*event_alias=*/NULL,
- 				/*scale_unit=*/NULL,
-diff --git a/tools/perf/util/print-events.c b/tools/perf/util/print-events.c
-index 3a5e5e7bae13..4153124a9948 100644
---- a/tools/perf/util/print-events.c
-+++ b/tools/perf/util/print-events.c
-@@ -121,6 +121,7 @@ void print_sdt_events(const struct print_callbacks *print_cb, void *print_state)
- 		print_cb->print_event(print_state,
- 				/*topic=*/NULL,
- 				/*pmu_name=*/NULL,
-+				PERF_TYPE_TRACEPOINT,
- 				evt_name ?: sdt_name->s,
- 				/*event_alias=*/NULL,
- 				/*deprecated=*/false,
-@@ -222,6 +223,7 @@ int print_hwcache_events(const struct print_callbacks *print_cb, void *print_sta
- 					print_cb->print_event(print_state,
- 							"cache",
- 							pmu->name,
-+							pmu->type,
- 							name,
- 							alias_name,
- 							/*scale_unit=*/NULL,
-@@ -278,6 +280,7 @@ void print_symbol_events(const struct print_callbacks *print_cb, void *print_sta
- 		print_cb->print_event(print_state,
- 				/*topic=*/NULL,
- 				/*pmu_name=*/NULL,
-+				type,
- 				nd->s,
- 				alias,
- 				/*scale_unit=*/NULL,
-@@ -438,6 +441,7 @@ void print_events(const struct print_callbacks *print_cb, void *print_state)
- 	print_cb->print_event(print_state,
- 			/*topic=*/NULL,
- 			/*pmu_name=*/NULL,
-+			PERF_TYPE_RAW,
- 			"rNNN",
- 			/*event_alias=*/NULL,
- 			/*scale_unit=*/NULL,
-@@ -452,6 +456,7 @@ void print_events(const struct print_callbacks *print_cb, void *print_state)
- 	print_cb->print_event(print_state,
- 			/*topic=*/NULL,
- 			/*pmu_name=*/NULL,
-+			PERF_TYPE_BREAKPOINT,
- 			"mem:<addr>[/len][:access]",
- 			/*scale_unit=*/NULL,
- 			/*event_alias=*/NULL,
-diff --git a/tools/perf/util/print-events.h b/tools/perf/util/print-events.h
-index 4d95b8257e23..d6ba384f0c66 100644
---- a/tools/perf/util/print-events.h
-+++ b/tools/perf/util/print-events.h
-@@ -12,7 +12,7 @@ struct print_callbacks {
- 	void (*print_start)(void *print_state);
- 	void (*print_end)(void *print_state);
- 	void (*print_event)(void *print_state, const char *topic,
--			const char *pmu_name,
-+			const char *pmu_name, u32 pmu_type,
- 			const char *event_name, const char *event_alias,
- 			const char *scale_unit,
- 			bool deprecated, const char *event_type_desc,
+ static PyObject *pyrf_evsel__from_evsel(struct evsel *evsel)
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
