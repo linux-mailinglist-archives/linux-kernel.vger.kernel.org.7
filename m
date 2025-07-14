@@ -1,116 +1,123 @@
-Return-Path: <linux-kernel+bounces-730458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99B9B044D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:55:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E23D3B044D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901B51883B8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:55:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CD521882E9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F87225A645;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAE925BEF0;
 	Mon, 14 Jul 2025 15:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ToQWeWnz"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AiB6JPZA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0728C23BF9B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A152AD32
 	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752508492; cv=none; b=mAniVv8Yd4Kle6/t9xOqqXnqM2M4SDX0uzyhgWdAPX0SSg/vOr3EyAKvfEei6cuZ88V0ZZwefho0TlsJ1xpVr+arEMUVRAKA1dr3YFCn2lYv5HwiI/ay9tgtPY+VYUOYDQkuaFGdRHkFSk8yoz61WghLwUmPhygeVbczWZPhPYk=
+	t=1752508492; cv=none; b=MtwbOoC8PLSfu9x0zwhqM4QCRdnm3kjLxzgYUKANdSHRLHa/gKqUxAPEFYiDHij4gG46HKP6cFVH/61wZlECp1w2D1MXPA0J69uWZGSwlhQ25Gy/pfBp5fkdkdN9IKSAK+cM7KZdaIGS2afCUGSKZfwNh5hB7UIwf4iUL8yFsCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752508492; c=relaxed/simple;
-	bh=7urBbC1NysPMXQOqJYTgImAU6AMJ8gvAIZARt1v7K54=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A4FZg1Q97AbnmqVQ8A8CFwNgJauDzAMtmDWwLsh1Gk4PHncyR1FJ6is9kQiV9wGeexvxrKFgZJTcqjHkUW2EWlScnvl0CGMR+gpKVvpUjd657ETu/NJ3bRlluUiNjbzs9My60wtT3Q7LLdxgSnC6E6Yir/7X+gNbAt2WDYlW7cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ToQWeWnz; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5561ab55c4dso4734499e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:54:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752508489; x=1753113289; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vl+T2liedzRtoZmf1zhQsu14QQt2+MQ88BOC/gvd+Sg=;
-        b=ToQWeWnz7xM/WODc7uABJWkZ1tQYOsy38BdEAsCmpKo7iK5Ik8u1cX0YSIIsBQVGah
-         9B3uOgkrNSKGCXUj/0JhF1+M9OhA1nawBAgxnQjaD5iENWqLWbDaj+2L7xm+AFMVRPso
-         r2iaps1x+RdywSJ6kELIWa6ZAeDtySN00Vuhq8OHi7ougkwRCBo9BF+o2KBh/FinmaA3
-         jTf0ApjAHQdqF3AeWlRr54hN+fSWWDMQmmBJ/JVkDQfx2UaWKW8iHgrLq2XZyCFZCkm+
-         twJgj5ss0DWz+mBNlSFHhfoPoyecFS0KrYPsu1AbU0HcvqxFWPHs4i9U/7BEHf0rrTyt
-         WPQg==
+	bh=IqukGYnJBM/DV41H6y2aluGx3nsl+OW1Y29A/ncH0as=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pGcwvTSI2bBKFAKWdj2NXX0NhVpQ9BipAinEymLWS+ZELiAbELVto8NT5bEsYSjlwJSA7GcGDlwcpZlNjWU364iadOUgEoqTcpZ/CHnRiUNakiGXR2kAsGKzmroJq1cR5qA8KrO8A1sEYBkcsR5wOrcaoSwodqotp4Z3SX4wrq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AiB6JPZA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752508489;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zOG1Nvo/l+gwKO8BFDZuLd2b0R76dEBumOlOk4xJ6DU=;
+	b=AiB6JPZAuobbR+7/1MQ3kzFIpxiImsSbGNz6ykUQWKS2k/bRDp6FlqrK/CYWu43rg6pcbU
+	6v6B9cVZ89Jq9gH5nyyprfCNeTO9g5N/N8l5ktT9Q/cKRGACM8o6r+YFklANnRaxehXZXi
+	lyYO/6RObNrMaHFVVg5ZmRrvTVPChm8=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-623--If2AyGMP3ioYJG5fWn0gg-1; Mon, 14 Jul 2025 11:54:46 -0400
+X-MC-Unique: -If2AyGMP3ioYJG5fWn0gg-1
+X-Mimecast-MFC-AGG-ID: -If2AyGMP3ioYJG5fWn0gg_1752508485
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-453a5d50b81so32941635e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:54:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752508489; x=1753113289;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vl+T2liedzRtoZmf1zhQsu14QQt2+MQ88BOC/gvd+Sg=;
-        b=sUJfjVbth37qL18RMiBOhz5nxi6yZunqXeb/KM/AdA8OduAVn7i/4Iitn23hbj07tY
-         AO8xYgasmYQTP2fVS1pVDvFHukraiciB/cK9SdXihbbnbVDbnRoAwONpxssBY6l+7XX7
-         KjEAh/rb4oYsMmDtnFIgRSJmeqPM7Xs9hfJN5rQFaP+oqsoWafB5TV/Dco58Gc5YzZwq
-         YxXch5XHxP+hw2VDZDj7onGzr3VBP83khj/2VNPOt9wzLvtGuBTu2HQavOjty9GMqDtF
-         MQA0kE6eAV+Dt616rhKCDjXAxfRKm6z2MPM2dBEwUHuUsnHSx9s/73u5MEXtpZ3JB3zT
-         sx6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWHgHRMMr0GxMYs1S/8uJe+1/3feacPH1rNWFzTC7uCFQJVYGWX5pGhiY3EwuncOtvubJFpJzmk37p+5Wg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm5D+j++FKcIsKDyakU82C+RECMIQ4G6qjUtic2wBmOcfPJk+b
-	2LnEEW1beRqLWEGoAu362ImnMEUgm3UceuXtKwjONlysBb8u6x04XN2wuKhWH8Fvbx7ra0/cCpc
-	OKe1oOaXG80uSLBZgoqePEuRzM8plEQIdCMRIl/7btw==
-X-Gm-Gg: ASbGncsLgoFdGrPG93ViYIHsfG8zhwf8YEC1FHtCRdxzEtvyj93REpWmL5Su17wWrVU
-	aVnqa5hrVS+YdUOCuUHvZcmrG0W+dO65fvbWhF9IZea4M+UOHTp0ZLssgcie/DRMeFpQ+QDY5i2
-	SzxImhyQv8wiMFum8kki1wvrInRrt4c1BTBxqxtatSpBTXRnsffwpH/P4RB7vGNkFPfTQ9+ulJ6
-	LoKVW8=
-X-Google-Smtp-Source: AGHT+IHaLn3+Udwsa8sFc8d/9/aHQq6wB9mzYzABB1MIG5NegxyR63z0rfh4I5QsjPYZbiAIbQq3zUht3HuZnxGcUFs=
-X-Received: by 2002:a05:6512:220b:b0:553:a456:a0d4 with SMTP id
- 2adb3069b0e04-55a044f0096mr4449856e87.15.1752508489020; Mon, 14 Jul 2025
- 08:54:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752508485; x=1753113285;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zOG1Nvo/l+gwKO8BFDZuLd2b0R76dEBumOlOk4xJ6DU=;
+        b=a5eKoHnQrDmTjjCXRlvzQxWLPG4X+g8HpOIjQcohEWoWYjaMxqBfSSoZMQEhaATJrF
+         4LWH/A6CXcBwSKy0buBdYcQ+UVuUxXQWhbNG6qmMjKrdU8eplXAt3QU3ilznNWsLsbQL
+         Rx7R+f/QSEMqHwriybRn/lpQFHeOn+q6pUm+SaN9SQ3t5vlOBiNCxqUijeCyNcM9rZmV
+         VIOutvfbMjT1GB2VFYJWNfn/w7nksgZBwV3ZzzJQHgvH5tzIu9quhIF+8+VVWqnVCJ8P
+         CbeoQzDyiGk0xTcgIJkY8HfKfieRh2p/lGPk+FHHXUFiU1NkP1XuhML8XUIowWv1QVzv
+         oAVA==
+X-Gm-Message-State: AOJu0YzvTsqYC7s0gQYOMujVhDvZDZF9WccrnUSiLeiafi+bFs67dsnS
+	3QnUbwaYCNpbcPMI010mfYFQCeLc4JZU5iRdRviQ9qNj1BbVZujRea7PJYzF6+ZUikVEnluWNYS
+	va/PMWqG8ZAS0E4IrALFZmUokZhZj09rLhciwKKGHZStorVHxoQPoMm5Jl9jxHbXUjg==
+X-Gm-Gg: ASbGncu2+O1UgyWMX2CoX+YeckKHA5WFR7YmcYXN/HpwVWz1/YHLR3QKgWKEPeAwWOT
+	8ZdIIzvxg4+6QhirEygGITpbSoPqTlm3BWUWvPhUnt6zCIroXuVR2EKtWGDm5pJLX83A2acfaiS
+	TCqV6mS3/UOwWhhu7sf5qYuNAqfHpcDK5W54KCiQEpB5Dljc/cbkMWIyRah4Nr+99p89zhkl2yL
+	plJw8uogw1CU22bXYRA0NKkjR1Yq64Y8Umeoon6buh3kO+F62A9kpJGxduuYbMFEMshoKNUIrVn
+	SVUmUzbV6SNenAzsYrgKkN+wc+JIHI+6CGr7kTXHzEChCso+CeuHgblWbGagUseaLw==
+X-Received: by 2002:a05:6000:2707:b0:3b5:f8d5:5dba with SMTP id ffacd0b85a97d-3b5f8d55e64mr4732088f8f.30.1752508485442;
+        Mon, 14 Jul 2025 08:54:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGGz92D4MS71muOuG5qTgK18jL+PvOXMZCtPLjCp6/q9A5nOHQ2DyRXHcgTNMlTfI+AggOmBA==
+X-Received: by 2002:a05:6000:2707:b0:3b5:f8d5:5dba with SMTP id ffacd0b85a97d-3b5f8d55e64mr4732073f8f.30.1752508485008;
+        Mon, 14 Jul 2025 08:54:45 -0700 (PDT)
+Received: from localhost ([89.128.88.54])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d5103c2asm173094775e9.33.2025.07.14.08.54.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 08:54:44 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: linux-kernel@vger.kernel.org, ipedrosa@redhat.com, David Airlie
+ <airlied@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
+ dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 2/5] drm/sitronix/st7571-i2c: Log probe deferral
+ cause for GPIO get failure
+In-Reply-To: <aHTyTsFuakcQsEm7@gmail.com>
+References: <20250714104421.323753-1-javierm@redhat.com>
+ <20250714104421.323753-3-javierm@redhat.com> <aHTyTsFuakcQsEm7@gmail.com>
+Date: Mon, 14 Jul 2025 17:54:43 +0200
+Message-ID: <874ive22f0.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714170848.0fb46353@canb.auug.org.au> <DBBN42KD0D2L.10BGEGJJ5XH0J@fairphone.com>
-In-Reply-To: <DBBN42KD0D2L.10BGEGJJ5XH0J@fairphone.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 14 Jul 2025 17:54:37 +0200
-X-Gm-Features: Ac12FXx1I8rP_VVQDL4JOaDWYJ2npnkK3d0_UajlkfvmD0v0z0SiJw_Z43iS2BE
-Message-ID: <CACRpkdbED6fi_XupJimEBwhiNoon109wYPtranmCPdx9wBpiJA@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the pinctrl tree
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Jul 14, 2025 at 10:37=E2=80=AFAM Luca Weiss <luca.weiss@fairphone.c=
-om> wrote:
+Marcus Folkesson <marcus.folkesson@gmail.com> writes:
 
-> > drivers/pinctrl/qcom/pinctrl-milos.c:1323:19: error: 'msm_pinctrl_remov=
-e' undeclared here (not in a function); did you mean 'msm_pinctrl_probe'?
-> >  1323 |         .remove =3D msm_pinctrl_remove,
-> >       |                   ^~~~~~~~~~~~~~~~~~
-> >       |                   msm_pinctrl_probe
-> >
-> > Caused by commit
-> >
-> >   b614f176b308 ("pinctrl: qcom: Add Milos pinctrl driver")
-> >
-> > I have used the pinctrl tree from next-20250711 for today.
+> On Mon, Jul 14, 2025 at 12:44:01PM +0200, Javier Martinez Canillas wrote:
+>> The driver already uses the dev_err_probe() helper (that only prints error
+>> messages for the -EPROBE_DEFER case) when fails to get any other resource.
+>> 
+>> Also do the same when it fails to obtain the rest GPIO.
+> reset GPIO
+
+Ups, I'll fix the typo when applying the patches.
+
+>> 
+>> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
 >
-> This seems to be the for-next/devel branch not containing a commit from
-> fixes. I'll let Linus sort this out, just needs one line to be removed
-> from pinctrl-milos.c as per
-> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/=
-commit/?h=3D56ec63a6e107e724619e61c7e605b49d365dfa07
+> Reviewed-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 
-I went in and patched out that line, thanks!
+-- 
+Best regards,
 
-Yours,
-Linus Walleij
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
 
