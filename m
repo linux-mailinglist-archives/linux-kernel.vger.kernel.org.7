@@ -1,110 +1,132 @@
-Return-Path: <linux-kernel+bounces-730501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFDA9B045A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:40:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8EDFB045A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF7DF7AC65C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:36:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F272A4A6931
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C364F266B6C;
-	Mon, 14 Jul 2025 16:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="BgPARjtu"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374A07262A;
+	Mon, 14 Jul 2025 16:38:33 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CBB263F49;
-	Mon, 14 Jul 2025 16:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40969248176;
+	Mon, 14 Jul 2025 16:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752511035; cv=none; b=ekqDkP06lvbNakANvFuCCwFb5F98X0GfNUDuujaxqN5sc2piKn+FYyH3quqv3mOjNa4HAmgyuNKXxRpo+hcX12RCb8SkuUrL4RL8hZflk3gOJlCdEmtMgsqFQ5ElvHCCoMxGcmMRku6z1ggWWcKGpGuv8XzVltA+digMsPwTyTg=
+	t=1752511112; cv=none; b=gFI6vtrVt4WpP4AsBAJNFRQ3ytvo5/XDBMarrpDt8oTua+YRqpA8Hj6wPOw+rg0Yi7OgbxWIbmiaDktNDZ474XX9kfBudw3hGfrHi1f+KIkuy8uN5M8eLN85LM+XJiAVx6FW7fAi31aazSpBTpUEAdYhNa+BazMbw+pt2Iu4yps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752511035; c=relaxed/simple;
-	bh=fpIAXpXNXAv248bbnrtINLulVPuRlVHg3Zy4cW4/LIE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FzK/SNY0cT8Y3H03iN77mT0lfLawDVZD9JOuSZrtwqvuqBEgBi0Ld+CKly4AdJ/FyLgIuPb6a3KCZqea75WJnPNmL/YaqEIWyjjM55pDAe6Ld1QEqTFnBbTzhqspuvgySNyDM+PzLMrPX108Jfb/8MlJIEXn6idALRm7KYxJ06M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=BgPARjtu; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1752511033; x=1784047033;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=fpIAXpXNXAv248bbnrtINLulVPuRlVHg3Zy4cW4/LIE=;
-  b=BgPARjtu1J856xJNkDTsBDlxOapz0W29takYLAP2k5NKjrGfVSKnVpbC
-   Lp6ElwX3ZvI2WlXjj/N2u7WxKTPXgcqHMU08EICqhMnWozAzpe+QzF7pn
-   OucvmeECoQ1nLEsLpJ/5pjwQjam1mdPJFAl9rqyZDwjTSdbvroeLd0xui
-   vTyR0gB5I3gBsOLQaCq0Cs/nUrLtKGmgOLUNKVyUs0AGED2+zkIgHk+s8
-   sdoRT7lYhYG1jDGr5yY4h1bMcjOofq0SbBk0mzDDcFbNcfaVLM//XeexC
-   yZ5YLJk7114ql/PIZhmNj13aoZ4tPvUwyQr+YOGftJ5ShBUoGuhI5YHQo
-   A==;
-X-CSE-ConnectionGUID: hBq1ljEWSkqL674rDMJkcA==
-X-CSE-MsgGUID: dA8NuFKRS86B4XYXOA7fdw==
-X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
-   d="scan'208";a="211399329"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Jul 2025 09:37:12 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 14 Jul 2025 09:36:29 -0700
-Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Mon, 14 Jul 2025 09:36:29 -0700
-From: <Ryan.Wanner@microchip.com>
-To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, "Ryan
- Wanner" <Ryan.Wanner@microchip.com>
-Subject: [PATCH v2 5/5] ARM: dts: microchip: sama7g5: Add RMII ext refclk flag
-Date: Mon, 14 Jul 2025 09:37:03 -0700
-Message-ID: <8ea2d96c898ee7b57310b5155eee92efd4e25215.1752510727.git.Ryan.Wanner@microchip.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1752510727.git.Ryan.Wanner@microchip.com>
-References: <cover.1752510727.git.Ryan.Wanner@microchip.com>
+	s=arc-20240116; t=1752511112; c=relaxed/simple;
+	bh=7DsJYVGGIS1ZzwUf364GMrQzJPF/FeA6/5DvQFchNAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KYIt1pM4DnlP6SV55Ver1l+HdSRcC+3RUdbwV3wZY6h3ONWXaaRED7hrD7EncCOizFHQ2VG6FZPjzbGgMLl1IpVflt55FpXadDd8EzAhyTZ+NT6glBrIMc9uGjW2yPnrlWSwMTaQ9UA0cGItBvvJhakPx+UK4g4XTtNe3dQRN8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id 95B0A160251;
+	Mon, 14 Jul 2025 16:38:28 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id 8775120023;
+	Mon, 14 Jul 2025 16:38:26 +0000 (UTC)
+Date: Mon, 14 Jul 2025 12:38:25 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Guillaume Nault <gnault@redhat.com>,
+ Paolo Abeni <pabeni@redhat.com>, Ido Schimmel <idosch@nvidia.com>, Petr
+ Machata <petrm@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] tracing: ipv6: Replace deprecated strcpy()
+ with strscpy()
+Message-ID: <20250714123825.6f0485c9@batman.local.home>
+In-Reply-To: <20250714075436.226197-2-thorsten.blum@linux.dev>
+References: <20250714075436.226197-2-thorsten.blum@linux.dev>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: agarbzxstp4yw77ftn7gk9okcxg8zn86
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: 8775120023
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+6AcqoDoVWA1W/e4qtJEAhI65x0rg72DI=
+X-HE-Tag: 1752511106-650672
+X-HE-Meta: U2FsdGVkX18vpYpE7F6fEZpsBptaJuMiDi8vuKRHOjuzXxEnTUZ3mfAdVgI2FizooA2YVhHVqIorK53TMnSbcluZoZ+txqq9UimR26q5z81hMVeX08ujBLS8EF8UykAjP3+y8VnutfSFkXecMMFMzaiIaVdF0W7YVX4yjLxwNu+U9PWRnamzfjxaYiaYXQJmgTKFydCdf81ZICzaqKEC2+PU00fzYwXAoEI1N77Qj7av74exyL00iOCsvOPPViewmdNKvNSt1NpjAc5nOo0m7gjvy1+9dALRi+gy2aRoTPGURTSzbw3vAUz7DHhJBvTR
 
-From: Ryan Wanner <Ryan.Wanner@microchip.com>
+On Mon, 14 Jul 2025 09:54:33 +0200
+Thorsten Blum <thorsten.blum@linux.dev> wrote:
 
-The REFCLK for the RMII interface is provided by an extrenal source.
+> diff --git a/include/trace/events/fib6.h b/include/trace/events/fib6.h
+> index 8d22b2e98d48..903a18836bc6 100644
+> --- a/include/trace/events/fib6.h
+> +++ b/include/trace/events/fib6.h
+> @@ -64,11 +64,9 @@ TRACE_EVENT(fib6_table_lookup,
+>  			__entry->dport = 0;
+>  		}
+>  
+> -		if (res->nh && res->nh->fib_nh_dev) {
+> -			strscpy(__entry->name, res->nh->fib_nh_dev->name, IFNAMSIZ);
+> -		} else {
+> -			strcpy(__entry->name, "-");
+> -		}
+> +		strscpy(__entry->name, res->nh && res->nh->fib_nh_dev ?
+> +				       res->nh->fib_nh_dev->name : "-");
+> +
+>  		if (res->f6i == net->ipv6.fib6_null_entry) {
+>  			in6 = (struct in6_addr *)__entry->gw;
+>  			*in6 = in6addr_any;
 
-This flag matches the change in the macb driver to determine the REFCLK
-source.
+Hmm, why is that string hard coded to 16 bytes and doesn't use the
+dynamic string facility? Perhaps something like this?
 
-Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
----
- arch/arm/boot/dts/microchip/at91-sama7g5ek.dts | 1 +
- 1 file changed, 1 insertion(+)
+[ I didn't even compile the below, so it may have a syntax error ]
 
-diff --git a/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts b/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
-index 2543599013b1..3c898afdc313 100644
---- a/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
-+++ b/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
-@@ -542,6 +542,7 @@ &pinctrl_gmac1_mdio_default
- 	phy-mode = "rmii";
- 	nvmem-cells = <&eeprom1_eui48>;
- 	nvmem-cell-names = "mac-address";
-+	cdns,refclk-ext;
- 	status = "okay"; /* Conflict with pdmc0. */
+-- Steve
+
+diff --git a/include/trace/events/fib6.h b/include/trace/events/fib6.h
+index 8d22b2e98d48..98d2edb02431 100644
+--- a/include/trace/events/fib6.h
++++ b/include/trace/events/fib6.h
+@@ -32,7 +32,8 @@ TRACE_EVENT(fib6_table_lookup,
+ 		__field(        u16,	dport		)
+ 		__field(        u8,	proto		)
+ 		__field(        u8,	rt_type		)
+-		__array(		char,	name,	IFNAMSIZ )
++		__string(	name,	res->nh && res->nh->fib_nh_dev ?
++					res->nh->fib_nh_dev->name : "-")
+ 		__array(		__u8,	gw,	16	 )
+ 	),
  
- 	ethernet-phy@0 {
--- 
-2.43.0
-
+@@ -64,11 +65,7 @@ TRACE_EVENT(fib6_table_lookup,
+ 			__entry->dport = 0;
+ 		}
+ 
+-		if (res->nh && res->nh->fib_nh_dev) {
+-			strscpy(__entry->name, res->nh->fib_nh_dev->name, IFNAMSIZ);
+-		} else {
+-			strcpy(__entry->name, "-");
+-		}
++		__assign_str(name);
+ 		if (res->f6i == net->ipv6.fib6_null_entry) {
+ 			in6 = (struct in6_addr *)__entry->gw;
+ 			*in6 = in6addr_any;
+@@ -82,7 +79,7 @@ TRACE_EVENT(fib6_table_lookup,
+ 		  __entry->tb_id, __entry->oif, __entry->iif, __entry->proto,
+ 		  __entry->src, __entry->sport, __entry->dst, __entry->dport,
+ 		  __entry->flowlabel, __entry->tos, __entry->scope,
+-		  __entry->flags, __entry->name, __entry->gw, __entry->err)
++		  __entry->flags, __get_str(name), __entry->gw, __entry->err)
+ );
+ 
+ #endif /* _TRACE_FIB6_H */
 
