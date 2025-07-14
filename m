@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-730382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C37CB043D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:29:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2B4B043E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 078D91621B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:27:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C2B5164271
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10070265CC5;
-	Mon, 14 Jul 2025 15:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B48266F15;
+	Mon, 14 Jul 2025 15:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LK8SGKLr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e1tlCZXH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A362265293;
-	Mon, 14 Jul 2025 15:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCA1265CD4;
+	Mon, 14 Jul 2025 15:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752506674; cv=none; b=NwpJpqEK7qVktSM6QwKuP8L+yeQmTNsc+8vfORxXtqYnTjR0kTu1avmJ/zzGeGqnilyinGXx6QOiI9P5zWslZFnjGu37Kiu4AW8XJCEtNN/ZYn2hOYHGeb/nm4zkNxTS78OavLloodtkCRlwHIlDyI6KqlmBdlngQrgHyc2fMtQ=
+	t=1752506677; cv=none; b=sUibB46/H1qpRtqGAH5OKGCw+KR8I6zaVJIlqZXtosn887B62uhegQtEhhUPbYKaWhLOmpPpW9B9OyAuDoRaACoYRYTtSUv0uorxWFvDV762mWOikDlepETNy9GpQWTttoUeD0KbhnlAHdf42JdeQACHW7Svtd06XshwSb5OKA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752506674; c=relaxed/simple;
-	bh=0cN73o2yYiCiXCp/p9M0zuVbz++37qgqTvQ6ZjDqtEY=;
+	s=arc-20240116; t=1752506677; c=relaxed/simple;
+	bh=jqexnbLIfSCaVHSdpx++8/8rvhCv3R9G6QN62bj3nRM=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=bZBZv4dnIuxLq1RDBqERxHp7QOoVRZDycYTpjV7jfxulewz0cbHQOiPFxZ9O4je+Ws/6PEsWpb+IvVSO73d3doaEzFGIBU+cSr5e2DhaEBtxTTegq3L+Ai9NYb5FvIr/vC4b63f87xEjD3OME3UH3rbCQ5/0b5RdSPRAKp9DxSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LK8SGKLr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC20EC4CEF0;
-	Mon, 14 Jul 2025 15:24:33 +0000 (UTC)
+	 Message-Id:Subject; b=NyNb6gEz1+Vt6Fy3gocGJbebN39zUTd8t2BF7t425KRE9heSBJgv9lvFyBXYzE0SeVGtRm3+Fe0Fk6St9vzJ+AZUy2adsRoJu63dS8HKZbt1ajUG3f0u+JBKEVdJuL+DLT8cjsQeKLHTsIfYVDepvVXdF7uFi3ATJe2PoZi7Uss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e1tlCZXH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9925C4CEF8;
+	Mon, 14 Jul 2025 15:24:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752506673;
-	bh=0cN73o2yYiCiXCp/p9M0zuVbz++37qgqTvQ6ZjDqtEY=;
+	s=k20201202; t=1752506674;
+	bh=jqexnbLIfSCaVHSdpx++8/8rvhCv3R9G6QN62bj3nRM=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=LK8SGKLrKtSedVixTGKOrpesyxF/Rur6+7jCC5sJ+VQayZVxMRGVgZGMDc61XfpxU
-	 n8xpgFfxNMrUXXwc9VMh+zWtxhBusZcYtxC+nxka5WUluk87JLYpyYvsljxZlQ74MO
-	 6kulwGTS5eXbTST0sTGe26OriyP/AqJBrgnUspJn3P7xAcLtDV9tDlszE94+lKM6Hc
-	 UlnIATFpiY8Dw69pfRrzf0mABKoHTHbMxZLM0VPWjacZXe4/Ynajr37cQKfXipz3GQ
-	 IlWu+qnaraklF5X9Ol9lh+0luFw7xgRjj/iKQXM/N+vfzd2hyyMVXvVCHWJ/eyMuz7
-	 E6bOZu8miiQyQ==
-Date: Mon, 14 Jul 2025 10:24:32 -0500
+	b=e1tlCZXH9zA0MbK/ke06xJRZEoK6rYMhCFCXvPbGfKySGlSS9p2ENxxdKzDFL85fQ
+	 /AydRgEIY6e3stZPJSld0RJdXoomZXEcZhyTOrdq3LyCnqd/0888Byu8mC5bYEAAD9
+	 lzz47CAge5BKzvaOO38oDQ+UKn18kkF7KKwADMXIX+ektfNqwrX8Wk8uhbqQcDGvhg
+	 IJynXTOHRzGZVnsBh7m80CJBpQ1eSCmv+47V7cu+9wphUngaN4X6m0Mgug15m8VI0H
+	 SjFkVNa99mJRrW/Hu0RCaKa66mcNV09XPq7xwnpYC59lzMngqLIWf+eEmRMjh7cM1S
+	 bC/wNDa9A3NgQ==
+Date: Mon, 14 Jul 2025 10:24:34 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,96 +50,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: jingoohan1@gmail.com, Ziyue Zhang <quic_ziyuzhan@quicinc.com>, 
- quic_vbadigan@quicinc.com, abel.vesa@linaro.org, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, kw@linux.com, 
- konradybcio@kernel.org, kwilczynski@kernel.org, linux-pci@vger.kernel.org, 
- andersson@kernel.org, krzk+dt@kernel.org, kishon@kernel.org, 
- linux-phy@lists.infradead.org, johan+linaro@kernel.org, bhelgaas@google.com, 
- quic_krichai@quicinc.com, devicetree@vger.kernel.org, lpieralisi@kernel.org, 
- mani@kernel.org, vkoul@kernel.org, qiang.yu@oss.qualcomm.com, 
- neil.armstrong@linaro.org, conor+dt@kernel.org
-To: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-In-Reply-To: <20250714081529.3847385-1-ziyue.zhang@oss.qualcomm.com>
-References: <20250714081529.3847385-1-ziyue.zhang@oss.qualcomm.com>
-Message-Id: <175250104197.2052778.9197055030236211122.robh@kernel.org>
-Subject: Re: [PATCH v8 0/5] pci: qcom: Add QCS8300 PCIe support
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, nm@ti.com, 
+ vigneshr@ti.com, imx@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ krzk+dt@kernel.org, kristo@kernel.org, vaishnav.a@ti.com, 
+ linux-arm-kernel@lists.infradead.org, u-kumar1@ti.com
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+In-Reply-To: <20250714092708.3944641-1-y-abhilashchandra@ti.com>
+References: <20250714092708.3944641-1-y-abhilashchandra@ti.com>
+Message-Id: <175250104225.2052826.8188127494648542129.robh@kernel.org>
+Subject: Re: [PATCH 0/7] Add Interrupts property for CDNS CSI2RX
 
 
-On Mon, 14 Jul 2025 16:15:24 +0800, Ziyue Zhang wrote:
-> This series depend on the sa8775p gcc_aux_clock and link_down reset change
-> https://lore.kernel.org/all/20250529035416.4159963-1-quic_ziyuzhan@quicinc.com/
+On Mon, 14 Jul 2025 14:57:01 +0530, Yemike Abhilash Chandra wrote:
+> The driver patch that adds support for error detection on the
+> Cadence CSI2RX by enabling its interrupt lines was recently
+> picked up [0].
 > 
-> This series adds document, phy, configs support for PCIe in QCS8300.
-> It also adds 'link_down' reset for sa8775p.
+> Accordingly, this patch adds the required interrupts property
+> to the Cadence CSI2RX device tree nodes.
 > 
-> Have follwing changes:
-> 	- Add dedicated schema for the PCIe controllers found on QCS8300.
-> 	- Add compatible for qcs8300 platform.
-> 	- Add configurations in devicetree for PCIe0, including registers, clocks, interrupts and phy setting sequence.
-> 	- Add configurations in devicetree for PCIe1, including registers, clocks, interrupts and phy setting sequence.
+> Test logs:
+> (To validate the complete functionality, CRC errors were
+> intentionally generated by modifying the sensor overlay)
 > 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-> ---
-> Changes in v8:
-> - rebase sc8280xp-qmp-pcie-phy change to solve conflicts.
-> - Add Fixes tag to phy change (Johan)
-> - Link to v7: https://lore.kernel.org/all/20250625092539.762075-1-quic_ziyuzhan@quicinc.com/
+> AM68: https://gist.github.com/Yemike-Abhilash-Chandra/123fed82e798a76944ec23f8e46d1114
+> AM69: https://gist.github.com/Yemike-Abhilash-Chandra/1820e39888cb50e250a83e2d059365f6
+> J721E: https://gist.github.com/Yemike-Abhilash-Chandra/63f993a995fd6a12cb113454952c063f
+> J722S: https://gist.github.com/Yemike-Abhilash-Chandra/2144fc8ab2f7bcdb3ef868e85424467d
+> J721S2: https://gist.github.com/Yemike-Abhilash-Chandra/f46587ec1ef72671ee31803dd93434b4
+> J784S4: https://gist.github.com/Yemike-Abhilash-Chandra/0c594683772f11c70bccb508757e9799
 > 
-> Changes in v7:
-> - rebase qcs8300-ride.dtsi change to solve conflicts.
-> - Link to v6: https://lore.kernel.org/all/20250529035635.4162149-1-quic_ziyuzhan@quicinc.com/
+> Driver and Binding patch series: https://lore.kernel.org/all/20250416121938.346435-1-y-abhilashchandra@ti.com/
 > 
-> Changes in v6:
-> - move the qcs8300 and sa8775p phy compatibility entry into the list of PHYs that require six clocks
-> - Update QCS8300 and sa8775p phy dt, remove aux clock.
-> - Fixed compile error found by kernel test robot
-> - Link to v5: https://lore.kernel.org/all/20250507031019.4080541-1-quic_ziyuzhan@quicinc.com/
+> [0]: https://lore.kernel.org/all/aG9tuMFOnvwXkcE-@valkosipuli.retiisi.eu/
 > 
-> Changes in v5:
-> - Add QCOM PCIe controller version in commit msg (Mani)
-> - Modify platform dts change subject (Dmitry)
-> - Fixed compile error found by kernel test robot
-> - Link to v4: https://lore.kernel.org/linux-phy/20241220055239.2744024-1-quic_ziyuzhan@quicinc.com/
+> Yemike Abhilash Chandra (7):
+>   arm64: dts: ti: k3-j721s2-main: Add interrupts property
+>   arm64: dts: ti: k3-j721e-main: Add interrupts property
+>   arm64: dts: ti: k3-j784s4-j742s2-main-common: Add interrupts property
+>   arm64: dts: ti: k3-am62p-j722s-common-main: Add interrupts property
+>   arm64: dts: ti: k3-j722s-main: Add interrupts property
+>   arm64: dts: ti: k3-am62-main: Add interrupts property
+>   arm64: dts: ti: k3-am62a-main: Add interrupts property
 > 
-> Changes in v4:
-> - Add received tag
-> - Fixed compile error found by kernel test robot
-> - Link to v3: https://lore.kernel.org/lkml/202412211301.bQO6vXpo-lkp@intel.com/T/#mdd63e5be39acbf879218aef91c87b12d4540e0f7
+>  arch/arm64/boot/dts/ti/k3-am62-main.dtsi                 | 3 +++
+>  arch/arm64/boot/dts/ti/k3-am62a-main.dtsi                | 3 +++
+>  arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi   | 3 +++
+>  arch/arm64/boot/dts/ti/k3-j721e-main.dtsi                | 6 ++++++
+>  arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi               | 6 ++++++
+>  arch/arm64/boot/dts/ti/k3-j722s-main.dtsi                | 9 +++++++++
+>  arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi | 9 +++++++++
+>  7 files changed, 39 insertions(+)
 > 
-> Changes in v3:
-> - Add received tag(Rob & Dmitry)
-> - Update pcie_phy in gcc node to soc dtsi(Dmitry & Konrad)
-> - remove pcieprot0 node(Konrad & Mani)
-> - Fix format comments(Konrad)
-> - Update base-commit to tag: next-20241213(Bjorn)
-> - Corrected of_device_id.data from 1.9.0 to 1.34.0.
-> - Link to v2: https://lore.kernel.org/all/20241128081056.1361739-1-quic_ziyuzhan@quicinc.com/
-> 
-> Changes in v2:
-> - Fix some format comments and match the style in x1e80100(Konrad)
-> - Add global interrupt for PCIe0 and PCIe1(Konrad)
-> - split the soc dtsi and the platform dts into two changes(Konrad)
-> - Link to v1: https://lore.kernel.org/all/20241114095409.2682558-1-quic_ziyuzhan@quicinc.com/
-> 
-> 
-> 
-> Ziyue Zhang (5):
->   dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Update pcie phy bindings
->     for qcs8300
->   arm64: dts: qcom: qcs8300: enable pcie0
->   arm64: dts: qcom: qcs8300-ride: enable pcie0 interface
->   arm64: dts: qcom: qcs8300: enable pcie1
->   arm64: dts: qcom: qcs8300-ride: enable pcie1 interface
-> 
->  .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |   2 +-
->  arch/arm64/boot/dts/qcom/qcs8300-ride.dts     |  80 +++++
->  arch/arm64/boot/dts/qcom/qcs8300.dtsi         | 296 +++++++++++++++++-
->  3 files changed, 375 insertions(+), 3 deletions(-)
-> 
-> 
-> base-commit: b551c4e2a98a177a06148cf16505643cd2108386
 > --
 > 2.34.1
 > 
@@ -162,25 +124,242 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: using specified base-commit b551c4e2a98a177a06148cf16505643cd2108386
+ Base: attempting to guess base-commit...
+ Base: tags/v6.16-rc1-21-g3b08f8a34a20 (exact match)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250714081529.3847385-1-ziyue.zhang@oss.qualcomm.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/ti/' for 20250714092708.3944641-1-y-abhilashchandra@ti.com:
 
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c00000 (qcom,pcie-qcs8300): reset-names: ['pci', 'link_down'] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c00000 (qcom,pcie-qcs8300): resets: [[50, 1], [50, 2]] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c10000 (qcom,pcie-qcs8300): reset-names: ['pci', 'link_down'] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c10000 (qcom,pcie-qcs8300): resets: [[50, 6], [50, 7]] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000 (qcom,sa8775p-qmp-gen4x4-pcie-phy): clock-names: ['aux', 'cfg_ahb', 'ref', 'rchng', 'pipe', 'pipediv2'] is too short
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000 (qcom,sa8775p-qmp-gen4x4-pcie-phy): clocks: [[50, 70], [50, 68], [50, 80], [50, 72], [50, 74], [50, 77]] is too short
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-dev.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-dev.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-dahlia.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-dahlia.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-mallow.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-mallow.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-yavia.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-yavia.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-wifi-ivy.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dtb: ticsi2rx@4500000 (ti,j721e-csi2rx-shim): csi-bridge@4504000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-wifi-ivy.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dtb: csi-bridge@4504000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-ivy.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-ivy.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dtb: ticsi2rx@4510000 (ti,j721e-csi2rx-shim): csi-bridge@4514000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dtb: csi-bridge@4514000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j742s2-evm.dtb: ticsi2rx@4500000 (ti,j721e-csi2rx-shim): csi-bridge@4504000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j742s2-evm.dtb: csi-bridge@4504000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j742s2-evm.dtb: ticsi2rx@4510000 (ti,j721e-csi2rx-shim): csi-bridge@4514000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j742s2-evm.dtb: csi-bridge@4514000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j742s2-evm.dtb: ticsi2rx@4520000 (ti,j721e-csi2rx-shim): csi-bridge@4524000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j742s2-evm.dtb: csi-bridge@4524000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am625-beagleplay.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am625-beagleplay.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-dahlia.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-dahlia.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-sk.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-sk.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am62-pocketbeagle2.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am62-pocketbeagle2.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-wifi-mallow.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-wifi-mallow.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dtb: ticsi2rx@4500000 (ti,j721e-csi2rx-shim): csi-bridge@4504000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dtb: csi-bridge@4504000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dtb: ticsi2rx@4510000 (ti,j721e-csi2rx-shim): csi-bridge@4514000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dtb: csi-bridge@4514000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am62a7-phyboard-lyra-rdk.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am62a7-phyboard-lyra-rdk.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-nonwifi-mallow.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-nonwifi-mallow.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-dev.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-dev.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-nonwifi-dahlia.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-nonwifi-dahlia.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j722s-evm.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j722s-evm.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j722s-evm.dtb: ticsi2rx@30122000 (ti,j721e-csi2rx-shim): csi-bridge@30121000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j722s-evm.dtb: csi-bridge@30121000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j722s-evm.dtb: ticsi2rx@30142000 (ti,j721e-csi2rx-shim): csi-bridge@30141000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j722s-evm.dtb: csi-bridge@30141000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j722s-evm.dtb: ticsi2rx@30162000 (ti,j721e-csi2rx-shim): csi-bridge@30161000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j722s-evm.dtb: csi-bridge@30161000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-nonwifi-dev.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-nonwifi-dev.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dtb: ticsi2rx@4500000 (ti,j721e-csi2rx-shim): csi-bridge@4504000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dtb: csi-bridge@4504000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dtb: ticsi2rx@4510000 (ti,j721e-csi2rx-shim): csi-bridge@4514000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dtb: csi-bridge@4514000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-nonwifi-ivy.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-nonwifi-ivy.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am69-sk.dtb: ticsi2rx@4500000 (ti,j721e-csi2rx-shim): csi-bridge@4504000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am69-sk.dtb: csi-bridge@4504000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am69-sk.dtb: ticsi2rx@4510000 (ti,j721e-csi2rx-shim): csi-bridge@4514000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am69-sk.dtb: csi-bridge@4514000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am69-sk.dtb: ticsi2rx@4520000 (ti,j721e-csi2rx-shim): csi-bridge@4524000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am69-sk.dtb: csi-bridge@4524000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am62-lp-sk.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am62-lp-sk.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-wifi-dahlia.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-wifi-dahlia.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-yavia.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-yavia.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am68-phyboard-izar.dtb: ticsi2rx@4500000 (ti,j721e-csi2rx-shim): csi-bridge@4504000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am68-phyboard-izar.dtb: csi-bridge@4504000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am68-phyboard-izar.dtb: ticsi2rx@4510000 (ti,j721e-csi2rx-shim): csi-bridge@4514000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am68-phyboard-izar.dtb: csi-bridge@4514000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-nonwifi-yavia.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-nonwifi-yavia.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dtb: ticsi2rx@4500000 (ti,j721e-csi2rx-shim): csi-bridge@4504000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dtb: csi-bridge@4504000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dtb: ticsi2rx@4510000 (ti,j721e-csi2rx-shim): csi-bridge@4514000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dtb: csi-bridge@4514000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-mallow.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-mallow.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dtb: ticsi2rx@30122000 (ti,j721e-csi2rx-shim): csi-bridge@30121000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dtb: csi-bridge@30121000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dtb: ticsi2rx@30142000 (ti,j721e-csi2rx-shim): csi-bridge@30141000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dtb: csi-bridge@30141000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dtb: ticsi2rx@30162000 (ti,j721e-csi2rx-shim): csi-bridge@30161000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dtb: csi-bridge@30161000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-rdk.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-rdk.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-wifi-yavia.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-wifi-yavia.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j784s4-evm.dtb: ticsi2rx@4500000 (ti,j721e-csi2rx-shim): csi-bridge@4504000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j784s4-evm.dtb: csi-bridge@4504000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j784s4-evm.dtb: ticsi2rx@4510000 (ti,j721e-csi2rx-shim): csi-bridge@4514000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j784s4-evm.dtb: csi-bridge@4514000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j784s4-evm.dtb: ticsi2rx@4520000 (ti,j721e-csi2rx-shim): csi-bridge@4524000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j784s4-evm.dtb: csi-bridge@4524000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am625-sk.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am625-sk.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-ivy.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-ivy.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-wifi-dev.dtb: ticsi2rx@30102000 (ti,j721e-csi2rx-shim): csi-bridge@30101000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-am62p5-verdin-wifi-dev.dtb: csi-bridge@30101000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j721e-sk.dtb: ticsi2rx@4500000 (ti,j721e-csi2rx-shim): csi-bridge@4504000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j721e-sk.dtb: csi-bridge@4504000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
+arch/arm64/boot/dts/ti/k3-j721e-sk.dtb: ticsi2rx@4510000 (ti,j721e-csi2rx-shim): csi-bridge@4514000: 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/ti,j721e-csi2rx-shim.yaml#
+arch/arm64/boot/dts/ti/k3-j721e-sk.dtb: csi-bridge@4514000 (ti,j721e-csi2rx): 'interrupt-names', 'interrupts' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.yaml#
 
 
 
