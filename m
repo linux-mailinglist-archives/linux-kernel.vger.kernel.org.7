@@ -1,126 +1,108 @@
-Return-Path: <linux-kernel+bounces-729658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A71D8B039CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:47:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 512F3B039CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EF8F7ACF18
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:46:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A98053BC7AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F1B23C4E0;
-	Mon, 14 Jul 2025 08:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CF423BCFA;
+	Mon, 14 Jul 2025 08:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Wzm4jIIJ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T9G8kgBk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A649718D;
-	Mon, 14 Jul 2025 08:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7401D63E6
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752482863; cv=none; b=KANTA58afO/fAQovKIoa098O/NKkN4FwbZXP4PBfIX78sC4Ryi6hAFe1wd5GXWKdilt7ZuyvM0j9s7HS9zGsnZiyUIg0T/HLKZfIMAEP9Yxz4uK6VpeJAMpM0mHD5zdENHnSmX92fxdv8noUJBK+b2DWlQT3rtC67A1oL9QJMC0=
+	t=1752482890; cv=none; b=KqPJBp+f3bzWP0Xkkn3+KiWg3njOmKVkjH+xgUVJbKNsebUZtAIOeFK/cN92sU1+Ob4G/7+r2f/JH0So2NzORHeYkfIErgGv01LEphX6qK7Pw1J06TBTLuL5OT7wUvJpZn37fi4M5LBS9YiAMqPI4m6ysQe34Rlq//qOWSOeWTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752482863; c=relaxed/simple;
-	bh=2yuai8UnBb9zpoj2Dz89OXxlnRC1pzOFSWPiKRkdFpQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W4PlRXiADD7C5sP/ZbtfhLUCk8hd8eWXSFNgtkcVosfu8Ou8nbmc4RYg6DnsMKP+iKurZ4Yv8YRZwKlIz9pImmRwwaO4cJ2iQhZ71pKDfEfetreBJE9FXCI8ls2DCq72gJnt3kJ3rkcdQcuDL2XaB74qha1LqbWhUYXRkuUhUSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Wzm4jIIJ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1752482854;
-	bh=2yuai8UnBb9zpoj2Dz89OXxlnRC1pzOFSWPiKRkdFpQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Wzm4jIIJtgJreaN92gm42sD6apc9wRY3xZ1FVNYWbhJdyNsOQ5Q2QlelUTgRDWdT1
-	 freAjquBex0sEw9hjUvBpuL8JT0WGHkQXXrcZI0NxnAbxn5mKPsPQEE3qn433KL59C
-	 gk/AASg+Ww7oar/9ABMOmCgdtmYBEq+iSjCsWjYt6diX0almRkMLN8XdnSDts+tdW6
-	 pif5SfJrOYi6KT0FoHbPAyGzmIZH5MKi5r5vuBjoho0+whjaoKHq0JbxKA/Op/0Hdi
-	 +gFiN36PItGgd9myBZxQ51R7NvyS4fCtVOZWTi7nLoyStTlkbav/wvIWmP6B/Wf3aL
-	 fy9IlPEXbSnyw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1752482890; c=relaxed/simple;
+	bh=2niaVsTmWeDEc1GLMp2VpCA/RTFr3wbMcCJdr+ANmuA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HJTqFzjl+K+k5ixD/e5/pHg1QQY6O5ML83DXgd+dasgYHgQ+9ctQDAeybhy66MyRjqY3rVMEa0l01j6pccPOdtrMinTXFcWr28OFN40EKodKuQITajWP46RVnV+1BALGcy6NLK6oQwQ7+EBqJyzLs9NZxv4S56gpuvW5UDf9rcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T9G8kgBk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752482888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2gVoPhyx6QmIeHT3O2/lEXU8D3dbckG15WcXenmrf30=;
+	b=T9G8kgBkL8tgeSWCuVZgGd0tPrTDs9w1XY7cY0uv1DdqvqG6O2kZoVTEIDon8/mezvfaYt
+	BHdgA+Prwa3TYFA2urmCUbQ28MPX6anZlV0hx4imysEJx+wedu6pGG+KUsetib2Nbhv4qq
+	PINqYA9DmG1uDqEQoTixfrrsYn9FZ6o=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-452-h7jNacrzNwGlmuqQFUoXGw-1; Mon,
+ 14 Jul 2025 04:48:06 -0400
+X-MC-Unique: h7jNacrzNwGlmuqQFUoXGw-1
+X-Mimecast-MFC-AGG-ID: h7jNacrzNwGlmuqQFUoXGw_1752482885
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 49D4C17E056F;
-	Mon, 14 Jul 2025 10:47:33 +0200 (CEST)
-Message-ID: <4537173f-7f79-4629-a2ef-cbf1edd2ed81@collabora.com>
-Date: Mon, 14 Jul 2025 10:47:32 +0200
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 410711956089;
+	Mon, 14 Jul 2025 08:48:05 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.72.112.55])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2568218002B5;
+	Mon, 14 Jul 2025 08:48:00 +0000 (UTC)
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	eperezma@redhat.com
+Cc: kvm@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jonah.palmer@oracle.com
+Subject: [PATCH net-next V2 0/3] in order support for vhost-net
+Date: Mon, 14 Jul 2025 16:47:52 +0800
+Message-ID: <20250714084755.11921-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: mfd: syscon: Add mt8196 fdvfs syscons
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Hector Yuan <hector.yuan@mediatek.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org
-References: <20250711-mt8196-cpufreq-v1-0-e1b0a3b4ac61@collabora.com>
- <20250711-mt8196-cpufreq-v1-1-e1b0a3b4ac61@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250711-mt8196-cpufreq-v1-1-e1b0a3b4ac61@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Il 11/07/25 16:57, Nicolas Frattaroli ha scritto:
-> The MT8196 SoC uses two syscon ranges for CPU DVFS that are separate
-> from each other. One, mt8196-fdvfs-config, is used to check for a magic
-> number at that memory address to verify that fdvfs should be used. The
-> other, mt8196-fdvfs, is used to configure the desired frequency for the
-> DVFS controller for each CPU core.
-> 
+Hi all,
 
-What is the reason why you're using syscons here?
+This series implements VIRTIO_F_IN_ORDER support for vhost-net. This
+feature is designed to improve the performance of the virtio ring by
+optimizing descriptor processing.
 
-Can't we simply assign the FDVFS MMIO to the cpufreq-hw node?
+Benchmarks show a notable improvement. Please see patch 3 for details.
 
-Or is there any reason why we can't declare it as mmio-sram? ...because I'm not
-entirely sure but the FDVFS space should effectively be a [c]SRAM memory range...
+Changes since V1:
+- add a new patch to fail early when vhost_add_used() fails
+- drop unused parameters of vhost_add_used_ooo()
+- conisty nheads for vhost_add_used_in_order()
+- typo fixes and other tweaks
 
-Cheers,
-Angelo
+Thanks
 
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
->   Documentation/devicetree/bindings/mfd/syscon.yaml | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
-> index 27672adeb1fedb7c81b8ae86c35f4f3b26d5516f..5ee49d2ba0cdb72dd697a0fd71c8416ad4fd2c1e 100644
-> --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
-> @@ -88,6 +88,8 @@ select:
->             - mediatek,mt8135-pctl-a-syscfg
->             - mediatek,mt8135-pctl-b-syscfg
->             - mediatek,mt8173-pctl-a-syscfg
-> +          - mediatek,mt8196-fdvfs
-> +          - mediatek,mt8196-fdvfs-config
->             - mediatek,mt8365-syscfg
->             - microchip,lan966x-cpu-syscon
->             - microchip,mpfs-sysreg-scb
-> @@ -194,6 +196,8 @@ properties:
->             - mediatek,mt8135-pctl-a-syscfg
->             - mediatek,mt8135-pctl-b-syscfg
->             - mediatek,mt8173-pctl-a-syscfg
-> +          - mediatek,mt8196-fdvfs
-> +          - mediatek,mt8196-fdvfs-config
->             - mediatek,mt8365-infracfg-nao
->             - mediatek,mt8365-syscfg
->             - microchip,lan966x-cpu-syscon
-> 
+Jason Wang (3):
+  vhost: fail early when __vhost_add_used() fails
+  vhost: basic in order support
+  vhost_net: basic in_order support
 
+ drivers/vhost/net.c   |  88 +++++++++++++++++++++---------
+ drivers/vhost/vhost.c | 123 ++++++++++++++++++++++++++++++++++--------
+ drivers/vhost/vhost.h |   8 ++-
+ 3 files changed, 171 insertions(+), 48 deletions(-)
+
+-- 
+2.39.5
 
 
