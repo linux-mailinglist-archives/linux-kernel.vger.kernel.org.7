@@ -1,177 +1,121 @@
-Return-Path: <linux-kernel+bounces-730029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F04C0B03F5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:12:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80BB4B03F67
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5493A16C691
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:12:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF3DC3BA6A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B07C2512E6;
-	Mon, 14 Jul 2025 13:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF59A243946;
+	Mon, 14 Jul 2025 13:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVr8G+qD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pQUnRcg8"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50072E36F0;
-	Mon, 14 Jul 2025 13:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A182F22
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752498723; cv=none; b=I7LJHJG+sXCyyVMCzhQx+hZzovsd2eL1MMbfS6dSnxDlEKqFUwM/8tUnLysHouY0sjbGtOIOY7UA7Qu26wRj1b8K2YHqiXJzSKvzf03WTt0w0AP5Btgo3w3FBc36I/mkQcZU2bTs3JEbz+lh6SpnRMljtYgD6c3Uz0oMHrQ6Bx4=
+	t=1752498975; cv=none; b=QBjhvhDGIiYhBkA1oNon+EeFKKREk8Qa6Zv1gxYFR7yxLWSrwBV7Xo2SCtReNZzhuRo8wZ6ML2+9cWi5AJ2obJe3VPCWmL2AFcqCetHmbEaSgnjayMFi33NW+nvMI9iu5MEd+Br6YhqHaWNHeUgQqlHMiPLTzHe5s5HaSpIyU7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752498723; c=relaxed/simple;
-	bh=ec+Udmi4sR8vkrCaJiGlwkEUhKa728+eNuhwSHOmtz8=;
+	s=arc-20240116; t=1752498975; c=relaxed/simple;
+	bh=uNySO4lrbvjnur5E+Fbnn4kIAnHeOJOxR0gDtx4P1Jo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TcINy01vQlcmzT94DnWuQrID4BeIFyXcHN0eeKKeMV656vO2mgeGVBhGIaGOYj6SMUmY+r7gdFhfJGFLpaWmNaE8WYXrZtEjbRWD50DAmjt1HuplglltefQwIQv7XMxmYhOCaYhQJtLHNMyMDBIxNAoUFeacuaRCmDIBzE0+alc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVr8G+qD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD9EBC4CEED;
-	Mon, 14 Jul 2025 13:11:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752498722;
-	bh=ec+Udmi4sR8vkrCaJiGlwkEUhKa728+eNuhwSHOmtz8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VVr8G+qDqDdZUDyAuW3H1sLmJueWylzP37/u9WObNzf8RR85ZkKavXjnzGHFpb1tr
-	 wkniPWcwzPwcECydeSqkmawQ/by0UH8EJaY1qbz73UU3CcXAPWz/KCTQ5EO9jDjzHD
-	 Oa9FwT++n6gyYY46KsIzlmem0HbRaUC2p+BrCNgl8bZz+myC2f5j2QeGv2kR9a2hun
-	 twr0EBhHlsW6M4WQOWGRtg67jN2H67grS0UanVngnV6/lkYumKTLVvGEPR1paz1viP
-	 /tN5ug2V1u3NIbpb12UmZ6sxcdX7lMIxDFi7WjqcyRHxXGPUlEvJ9NlKXSREYpUYPW
-	 318PhowFjSpww==
-Message-ID: <ff8e5e11-6947-4d7e-98fa-26fdd4054a36@kernel.org>
-Date: Mon, 14 Jul 2025 15:11:55 +0200
+	 In-Reply-To:Content-Type; b=sLZoMuTQ4R/W66oD+6zRASMLhSZV886R/oCj+0OtXAVd5xnlCRZdCH9ImV/THKT8v/0yF+h9hJxxcOrQRjpASqCsKWQRL+Nj0OhUG0yi0U9/xQ+TnU6lJSt8ZbNHF6Eza0XpZ9WlhF1TmdDzFB8dzJPe618AMi2Be9KFzJMkNw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pQUnRcg8; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f580b139-a08b-4705-addd-31f104fd570c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752498961;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cwvkiriw30wqyfBkgssYOekF5g8YqkH87P9dXphqWRE=;
+	b=pQUnRcg80CPnSfkpWkKdM8t1njWTWpnOW0i/rQBEWtj5gatjUJ5Ki7EGxzIpK3xq4CN5ID
+	SZEXd1V+Ih+SbNQr1OT85+rNtB1tI+BWCqs7eGRGT9EI2bmO8Ty1dqQdbyj9j+lfA/jygF
+	gA2No1YVlGl0PSGZITIaYhW7wHod23M=
+Date: Mon, 14 Jul 2025 21:15:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/12] media: ipu-bridge: Use v4l2_fwnode for unknown
- rotations
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
- <hverkuil@xs4all.nl>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
-References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
- <20250605-uvc-orientation-v2-5-5710f9d030aa@chromium.org>
- <aGw_1T_Edm8--gXW@kekkonen.localdomain>
- <CANiDSCup2iRx+0RcaijSmbn04nBY4Ui9=esCPFsQzOKe=up9Gg@mail.gmail.com>
- <aGzjTRSco39mKJcf@kekkonen.localdomain>
- <CANiDSCsqEHTnbvzLMoe_yxi8JRzp+2PQe3ksXhD=Y3+AqC_9hw@mail.gmail.com>
- <aG0NI2V0Tfh2HZ6O@kekkonen.localdomain>
- <CANiDSCu=wU_Oi7CLPcYTC3Xf_pGbDroaVitPAiAj7ND5pXy-6g@mail.gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <CANiDSCu=wU_Oi7CLPcYTC3Xf_pGbDroaVitPAiAj7ND5pXy-6g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH bpf-next 1/2] bpf: Add struct bpf_token_info
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, willemb@google.com,
+ kerneljasonxing@gmail.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250711094517.931999-1-chen.dylane@linux.dev>
+ <CAEf4BzZzsqu1=Q-3+6uJvgvKd52o+FR=DFp28w+vT5knP9NyCQ@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <CAEf4BzZzsqu1=Q-3+6uJvgvKd52o+FR=DFp28w+vT5knP9NyCQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+在 2025/7/12 01:10, Andrii Nakryiko 写道:
 
-On 8-Jul-25 16:58, Ricardo Ribalda wrote:
-> On Tue, 8 Jul 2025 at 14:21, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+Hi Andrri,
+
+> On Fri, Jul 11, 2025 at 2:45 AM Tao Chen <chen.dylane@linux.dev> wrote:
 >>
->> Hi Ricardo,
+>> The 'commit 35f96de04127 ("bpf: Introduce BPF token object")' added
+>> BPF token as a new kind of BPF kernel object. And BPF_OBJ_GET_INFO_BY_FD
+>> already used to get BPF object info, so we can also get token info with
+>> this cmd.
 >>
->> On Tue, Jul 08, 2025 at 02:09:28PM +0200, Ricardo Ribalda wrote:
->>> On Tue, 8 Jul 2025 at 11:22, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
->>>>
->>>> Hi Ricardo,
->>>>
->>>> On Tue, Jul 08, 2025 at 11:16:25AM +0200, Ricardo Ribalda wrote:
->>>>> Hi Sakari
->>>>>
->>>>> Thanks for your review
->>>>>
->>>>> On Mon, 7 Jul 2025 at 23:45, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
->>>>>>
->>>>>> Hi Ricardo,
->>>>>>
->>>>>> On Thu, Jun 05, 2025 at 05:52:58PM +0000, Ricardo Ribalda wrote:
->>>>>>> The v4l2_fwnode_device_properties contains information about the
->>>>>>> rotation. Use it if the ssdb data is inconclusive.
->>>>>>
->>>>>> As SSDB and _PLD provide the same information, are they always aligned? Do
->>>>>> you have any experience on how is this actually in firmware?
->>>>>
->>>>> Not really, in ChromeOS we are pretty lucky to control the firmware.
->>>>>
->>>>> @HdG Do you have some experience/opinion here?
->>>>>
->>>>>>
->>>>>> _PLD is standardised so it would seem reasonable to stick to that -- if it
->>>>>> exists. Another approach could be to pick the one that doesn't translate to
->>>>>> a sane default (0°).
->>>>>
->>>>> I'd rather stick to the current prioritization unless there is a
->>>>> strong argument against it. Otherwise there is a chance that we will
->>>>> have regressions (outside CrOS)
->>>>
->>>> My point was rather there are no such rules currently for rotation: only
->>>> SSDB was being used by the IPU bridge to obtain the rotation value,
->>>> similarly only _PLD is consulted when it comes to orientation.
->>>
->>> So something like this:?
->>>
->>> static u32 ipu_bridge_parse_rotation(struct acpi_device *adev,
->>>                                      struct ipu_sensor_ssdb *ssdb,
->>>                                      struct
->>> v4l2_fwnode_device_properties *props)
->>> {
->>>         if (props->rotation != V4L2_FWNODE_PROPERTY_UNSET)
->>>                 return props->rotation;
->>>
->>>         switch (ssdb->degree) {
->>>         case IPU_SENSOR_ROTATION_NORMAL:
->>>                 return 0;
->>>         case IPU_SENSOR_ROTATION_INVERTED:
->>>                 return 180;
->>>         }
->>>
->>>         dev_warn(ADEV_DEV(adev),
->>>                  "Unknown rotation %d. Assume 0 degree rotation\n",
->>>                  ssdb->degree);
->>
->> Maybe:
->>
->>         acpi_handle_warn(acpi_device_handle(adev), ...);
->>
->> ?
->>
->>>         return 0;
->>> }
->>
->> Looks good to me. Maybe something similar for orientation?
 > 
-> Do you mean using ssdb also for orientation or using acpi_handle_warn?
+> Do you have a specific use case in mind for this API? I can see how
+> this might be useful for some hypothetical cases, but I have a few
+> reservations as of right now:
 > 
+>    - we don't allow iterating all BPF token objects in the system the
+> same way we do it for progs, maps, and btfs, so bpftool cannot take
+> advantage of this to list all available tokens and their info, which
+> makes this API a bit less useful, IMO;
 > 
-> I cannot find anything related to orientation for SSDB
-> https://github.com/coreboot/coreboot/blob/main/src/drivers/intel/mipi_camera/chip.h#L150
+>    - BPF token was designed in a way that users don't really need to
+> know allowed_* values (and if they do, they can get it from BPF FS's
+> mount information (e.g., from /proc/mounts).
 > 
-> Am I looking in the right place?
+> As I said, I can come up with some hypothetical situations where a
+> user might want to avoid doing something that otherwise they'd do
+> outside of userns, but I'm wondering what your motivations are for
+> this?
+> 
 
-I believe that orientation is only available in the PLD,
-so for orientation we can just use the value returned in
-v4l2_fwnode_device_properties defaulting to front when
-it is not set.
+Sorry for the delay. Recentlly, i tried to use bpf_token feature in our 
+production environment, in fact, bpf_token grants permission to prog, 
+map, cmd, etc. It would be great if it could indicate which specific 
+permission is the issue to user. So i wanted to provide a token info 
+query interface. As you said, "mount | grep bpf" may solve it, but
+functionally, can we make it more complete?
 
-Otherwise I agree with what has been discussed in this
-thread (for this patch) so far.
+>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+>> ---
+>>   include/linux/bpf.h            | 11 +++++++++++
+>>   include/uapi/linux/bpf.h       |  8 ++++++++
+>>   kernel/bpf/syscall.c           | 18 ++++++++++++++++++
+>>   kernel/bpf/token.c             | 30 ++++++++++++++++++++++++++++--
+>>   tools/include/uapi/linux/bpf.h |  8 ++++++++
+>>   5 files changed, 73 insertions(+), 2 deletions(-)
+>>
+> 
+> [...]
 
-Regards,
 
-Hans
-
+-- 
+Best Regards
+Tao Chen
 
