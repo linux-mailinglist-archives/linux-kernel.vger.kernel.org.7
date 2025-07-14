@@ -1,238 +1,188 @@
-Return-Path: <linux-kernel+bounces-729411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9DCAB03639
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:45:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B81DB0363E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4235E165152
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:44:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8537F1890C36
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928F120B7EC;
-	Mon, 14 Jul 2025 05:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF0B20012B;
+	Mon, 14 Jul 2025 05:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PjI5WHrs"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2082.outbound.protection.outlook.com [40.107.220.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c++Zmpjn"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D9A2046BA;
-	Mon, 14 Jul 2025 05:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752471803; cv=fail; b=HOjY9Ev8D0sf2P8VNGTVKjJASLfHKUCewtAYPeVgKX42HIiHyRukBJRDfDt5Rp3o2/iIYLovmY99cQsn4pf7xNW7VJXOd10AR+pXgDaW0rTxtu6ZlTKXPUAlp056xldc72bKYX0a26Rcl0vpTEuG0+4DcostYyGc0MdC4vkxVP0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752471803; c=relaxed/simple;
-	bh=XxzEOANBz3iLAHY68aU3586eXCJNF09dtTjjmW4uQ3I=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=t9fFqmI1yO5sV20h0li1PzfQQURPHsmWKrQMv2yLbSFB6au2Y5k6IjvCE2bpPQSMtERIa2Cvdj12T9BXMitt6K9QG/USTMLTyl/mSrugrHBjt/QEeZzh9pgX/h5YXLh8UfJCPahSSPU3P2XoZbZXsAE6QzoYIv4gf0mwGILrWMM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PjI5WHrs; arc=fail smtp.client-ip=40.107.220.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XaNugzId505NRsbcw+Jv+tIBqzb+ZBP1hxbsGhYA96BrrmUG/PltWiqOQ5t8TaERAuhNS1Gh06aZOrIBfHmQZlcHZcSAt941islFmwV215xzgyD4fMhS5K6TKgZzSmnmPxC7EmjvsJ1mv+oQghQDWvDEZNfQszQbMR4krX0G02Ix4rfuvccgTAH0Ojr3/GMADuKEx48z8OhRa9XT2HROocWdA1BswPdYPHdc6oaJE39esZPWElbc7HHFIfE0rju8dQuqYtYDmJWtEO2RuZOYpi/KZUAcudk6SZMXxaJ8SFp1gVziyi5wNeVq21jZ/tsv6Xv+cKRvypyZe38mqwCMug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8MULHtqelWof0fQOoG5qQd/eHhlSNI45B5FGli4mBEc=;
- b=QPapLku2n1OY+AukrhaP8cokXhcRC1hLVC32k9cT7Xl1QVVkgXr2qzqLTjGNrHYAvHck8jRLVMlxzO8/I1L9xFHzmpCmTjNuJXrEqC268R64plYYo/cS60L8MXonys6Dxn7/e8ZkvQuZkUOM0HI5v8dfKgVzQhUk85ifumQugsSZmoUbeuodoMOUwcw4cNUiFOTJQreRnDSV63OjRo6MJ8KnMLQ6buTgJzQpPAXODUYH0amvmN4twVJLqhmOVL/LWEhgZn4j/0ek8t6pHhFrgRsgTLUZ8a4y7BeHjO4ULwbO5jdDBiEmcleSm7135m9c71t7jdWBNjoMF8DAzXJCFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8MULHtqelWof0fQOoG5qQd/eHhlSNI45B5FGli4mBEc=;
- b=PjI5WHrsBBxElznCflePBhtlGyl5BKQFX2wyjBJmEw6CgCF/N54uz8KeAow8XEg2jIIvAUF1+opENDXEpHlFkawDtw3/08urTdnoW+WKbMUR4e0KZ3nwsP9O8grxfBJ2UP31DmIXObJWhrXOGL5ZmZGzKytIbOnuJOaxCPD6juE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CY5PR12MB6321.namprd12.prod.outlook.com (2603:10b6:930:22::20)
- by MW4PR12MB6779.namprd12.prod.outlook.com (2603:10b6:303:20f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Mon, 14 Jul
- 2025 05:43:18 +0000
-Received: from CY5PR12MB6321.namprd12.prod.outlook.com
- ([fe80::62e5:ecc4:ecdc:f9a0]) by CY5PR12MB6321.namprd12.prod.outlook.com
- ([fe80::62e5:ecc4:ecdc:f9a0%4]) with mapi id 15.20.8901.024; Mon, 14 Jul 2025
- 05:43:18 +0000
-Message-ID: <7ea7a720-1271-4021-b6e1-89b9aa3b69ba@amd.com>
-Date: Mon, 14 Jul 2025 11:13:10 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] KVM: x86: Reject KVM_SET_TSC_KHZ VM ioctl when
- vCPUs have been created
-To: Kai Huang <kai.huang@intel.com>, seanjc@google.com, pbonzini@redhat.com
-Cc: kvm@vger.kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
- isaku.yamahata@intel.com, xiaoyao.li@intel.com, rick.p.edgecombe@intel.com,
- chao.gao@intel.com, linux-kernel@vger.kernel.org
-References: <cover.1752444335.git.kai.huang@intel.com>
- <135a35223ce8d01cea06b6cef30bfe494ec85827.1752444335.git.kai.huang@intel.com>
-Content-Language: en-US
-From: "Nikunj A. Dadhania" <nikunj@amd.com>
-In-Reply-To: <135a35223ce8d01cea06b6cef30bfe494ec85827.1752444335.git.kai.huang@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN4P287CA0098.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:278::7) To CY5PR12MB6321.namprd12.prod.outlook.com
- (2603:10b6:930:22::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E3D19A;
+	Mon, 14 Jul 2025 05:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752471954; cv=none; b=TQR/wiw0GSFXxgPLk91QSRWEZDB10EL1R0EjcsP6MVOpHXQq8OIo5lzJ46askLl/q0ALuwZPCGPZenrJ0DHej3aaLWPlsxhBrFnxX8I6Pe70nrPlY8koM1sm3cQY8vlvTG6y4Wf2Xl0vXwlnkUjzosjdthXV5POP4NjGzDdRXuo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752471954; c=relaxed/simple;
+	bh=6z8Sp3Tr8iV1COqe+xw273i57IQTfJG7JA5LvjkRnQE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lkM1VeVaHZIh1uex/wp2q2Fo/z7W4chwSXGU7g7BKMgH87nx7e0E2qj+KAFWXhbx1qeYnd5BBLEouy/D0syzSpUVQ7+nWunxEagBq3c/yD/yCEiXzuzUWyLidd47AzPGduPINpuoePbxfq8VFhBacCzoKM3b7KryLDWMsn+AlPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c++Zmpjn; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-553b6a349ccso4804041e87.0;
+        Sun, 13 Jul 2025 22:45:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752471951; x=1753076751; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pVTYNalbBM5olFEChg+MjuhuKNcUdjwiKE1Nx8DyHVc=;
+        b=c++Zmpjnhwy7wO5lCXM5aMRM8ON0u6EZEu6G/JV36xwDYlsOxComlpPwmn8qtvSh7X
+         sN5ZRWfDO1iW4m6Ue9T/800CMD9WvVsmJ/cU2VdAPrYMBluNHNfiHgZD0mRVdUfg0yhh
+         oPLwvCh7MERVcevIs9ALUQnq/lKjpXcDOBvrC46V/ORbzK4vuivbhXOyX/6sf8uWDXTk
+         dIoUk3aK/CO+VPkYRzeoMgdJxLfZbNOMW2Cx9voHzBbF5gyaFK9D0bqc4H5+3R0fG10l
+         FlJfh216e8VCkB3w7WJHZAoQEQ6Nz3qbtsenHoc/SFjVTBY7gnNHGUnEwvlKtni5gTCe
+         7D1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752471951; x=1753076751;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pVTYNalbBM5olFEChg+MjuhuKNcUdjwiKE1Nx8DyHVc=;
+        b=IyA+7uojjNX+mlcazBXKaguB0IkqBX1Z4/dCMuFHgC2vryJr4t7gbc9OwlKlp/J29C
+         ZutzSxovwcROF2bNpxtyXaW4eR4qY63kG/HcwZQ7wrbQEc29PShueJ3aSH9KNoA6NchY
+         4jxWelE+nEyA5j9PoCk3VsOvi0wwxhWivNjH0DF8ckMDw7mYjk4ON5VZVB7flgE5O7tM
+         x+LkResBbtLAyG1NQ5Dn+3r8CZwQzExdgbrl409ZkEHRsWj+ytIK1jZtQSX3xQ3+MNOS
+         FhrXgUqngODiwwM+dLhelyCKoEieYZTYixw7kDzeKk7jfJrBhjPkVGKC9TWcB6oZnZDO
+         R34g==
+X-Forwarded-Encrypted: i=1; AJvYcCVArAsY7pKo4JQt7rjkUY43p5+8hL0g8FY4RjsWhO911Li9K0eCogY7lgbXHqnytAHI3wcakM0LK0jcUow=@vger.kernel.org, AJvYcCVo64v7fb0vpKLUQrH4n86T8Z3JvP8nCN6mkzZblODxSPz1BnJZt60ytwPM6U88CGEy3QrdzDR/VnYd@vger.kernel.org, AJvYcCWm4iTnpPKaGBYegCNa2nArwG8GIxwI6Ix1InBID34FBu99Z4GqP6pmTaZZlmQECR72rGgbP2bpIhOrwg==@vger.kernel.org, AJvYcCXBhMOq3jomlM0brQ6+R84hGbArXY+BJrsuDNxiLLOrI4xc4PUitn1Q56JSVh8gBFFpKqmIgMDQDccT/qKC@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpLP9FIbm3RhAe9RmTJ6ixRKpQauOxt3UA+sjAHCwxs95YZtZl
+	IfTCbxzcjegP/Mk3zoqi7iNt4bYab4otdgSYZE6SPArXtLO9RrTtGnps7wntAbow7cNP11llODl
+	AUNBQoQ+TD3fYeIvCpVvjPiflScLOaRo=
+X-Gm-Gg: ASbGncsgeBY3sQ4a3f1t/1hSvSZZDHpshQK8OldOXtoZYBwM22nV8QM9Mya1b3Rne3V
+	XOFTOtrOEzwRyDEKdPjsL8KtDBAU3+3cpEKIHeGztveqivm9PO3KTlGJYi4Tur3VJdPDsniST5d
+	/kUWAbwnJFu1zHLg/ZbVqFuBh43vDg9t0qTnFpuW97Kv9wQNT/CW5GDVCxk1teetAqqh7vxRwgy
+	j2S9Fk=
+X-Google-Smtp-Source: AGHT+IEeFJTEdcgxGRq7MSRIyL+pUGzAE+SuHtAzHjgTjInquw6BxQB4oD1jE6z8Ny+HIzeJdEcgoGSVQf6JVav6crA=
+X-Received: by 2002:a05:6512:3a86:b0:553:291f:92d with SMTP id
+ 2adb3069b0e04-55a04642322mr3412376e87.57.1752471951120; Sun, 13 Jul 2025
+ 22:45:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6321:EE_|MW4PR12MB6779:EE_
-X-MS-Office365-Filtering-Correlation-Id: 47a1192c-2858-4fc8-44b2-08ddc299559f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YTROTzNFWGdaU1BYZU5TQlE0a2djTVAxcGhJanlNZzkweXIrVWk0dG1tZkVo?=
- =?utf-8?B?b2w0cGYvdFBwSXR6eXpkSVVNOW1ObytqMzJlb25aWVVxd0NaL2NyVkZOQ1dp?=
- =?utf-8?B?ZndPT2ZiQTM1RkgyNCtXcGJ3MVNVUmdnamtlT1c0aWZjbGpJUWRXc2JVVW1S?=
- =?utf-8?B?YklQQnZ3S3p1NkR6cjJGRjRkaE9vdmE3RVNMUHJ2cDRkOHpGUjhWVjd5cEgv?=
- =?utf-8?B?dTZHYjduWHRzTFcrbzRPQk5vdlZWanQ1a0Jxak84WXVwOFgwMUVNeVdIcDBP?=
- =?utf-8?B?cHZSY3lLSXl0L2tnR0QyMzdFUlNNRnZKa0E2bEd1Uis2cHdDQzBBTHJDTXg1?=
- =?utf-8?B?c2hISEVZK05uS0c5SDlBUlFpbEhsY2FRREhFblB0NENYQlRBSTl1eTU4NmpF?=
- =?utf-8?B?dEdHblF4VENmRUluQlBqYlRzQ0d2QnI4RWZickhKTm5xUkpWUWl6TE9SbXFm?=
- =?utf-8?B?dkhXMk5oMjFoWXoyaTZVT2p0QkxscUdEVG04dVZtREVSSCtjN1ZMY1VkWjM5?=
- =?utf-8?B?YmE1OCt0TVMveTNxZGZweVRzQlk5RDdIV3BzbW1jMjk3OXByT1M1V3dzQTd5?=
- =?utf-8?B?V0tiQkNXRTgzeU92eUhqSEgzbm90SEhPMjlxQzBlNE16dnVTM2xMeEVYazFn?=
- =?utf-8?B?T0NuUTZRVFFSTUJYL0xjL0dubWJJYlYwZkpPTjVJT0c4U1p2YkVMaWZCNWsx?=
- =?utf-8?B?VS9hVTArazRkZ0Y1dVo5ZjZNMy8vejZ3ZlBvQUo0S3hDQ3dSYVNMM3hEejd3?=
- =?utf-8?B?Y0M2VHg3Y2lQOWpRV0FTOUwzVVdhSEtjR0hOMXU2SDd0SEFLTy9KeGs5YVNs?=
- =?utf-8?B?VERtMWJjaWE0eWNwdG5HMDZycW1FSFFJVDR0c0UxTWQzek91Vnd1V202M2lY?=
- =?utf-8?B?U0h6U2pHUjRKeWgvRlVrUEtmUFF5T1hzdlZtbDRjTVovcDRnTnU1c0hVOFg1?=
- =?utf-8?B?TlQyTks5REFYUHdTdkpIdnQ3RXNwUkdiY1F3a3U5Y3BUTWRwazM4TSttQjF2?=
- =?utf-8?B?THdDUkpCdW5oeHJ0QU1ELzRMMWRna1hxK1JEQzdKWEoxWVp6RzYvOFBmZDJS?=
- =?utf-8?B?ckkxU0UrZXRzZEJzMnl2MGFZYU1WeXFrZzhDWlRPWnlRTk9yRVRicXZpZDVT?=
- =?utf-8?B?N2dRTGRFajJJU1MyMWtyYmJzblorTitCZllaWTZsZkY0MlRPQTRiVmR3UGtz?=
- =?utf-8?B?K1B5c0VvNWVZRTZXZWh4RDdxcktEVWNJbUM0YS9oY0RnbDd1Qlo3ZS8va25r?=
- =?utf-8?B?NmlVRGVWVlVMZWZ3bVB5MmRSRmxQblVXM3JnQUs3QUd5MHRESjU2MzlwTVRO?=
- =?utf-8?B?YlhWOVpRYnFpSjVJR1YxdTdCaU00dG0xei9yQmc3dGVWTUFlU0VCRHpZS0sv?=
- =?utf-8?B?aWlzeTVrSjdyV2w2dDRmRzJ1WGJVNllmNmVYRmtTUGc5U1M3MTFtY0tFZUM0?=
- =?utf-8?B?Q1c3ZDRJTm5DWW12Q2RjdkFXVUFwUFdqQjQrVTVrYlFBOGhJQUozVEpIOG1x?=
- =?utf-8?B?UFlSbE9zZFhlQWNodmtPU29WR29iTGJqVjdJZUFqM3gzTFVJbVY4MHlVWEFP?=
- =?utf-8?B?emxFc3Q2Mis3YkppamUreTFxWTVvZW1VeVgwQ1RJQkVJd3VMUTIxMXdoMEhP?=
- =?utf-8?B?ZC9OOXJzMkJFeDhTd2xSeUdBazhBSHR6dFh0ZDYwakVaMGlOeXpEMzB6cEhX?=
- =?utf-8?B?TEJ3cVNhdHluQWtHMDBHVGIzYVNacE4vU0E2dDBwaWRBenVDUEVCS1lDWFlN?=
- =?utf-8?B?dGt4MzcvdTJRcHJQVlo0OFJlQWNvc243NjhQc2N2MlI4RW10aU9HSTBUa1lv?=
- =?utf-8?B?SjlYV2ZSaVpnd2JUcDJXb0UvYkJLMUJnSUNKUDN6T0Q3SFpURExTSEdkWjVR?=
- =?utf-8?B?clYyU3BrcmFGcVZ2R0NWalQ0QURDWnZrSlZWQ3N3MVhUMHc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6321.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZVorTE1vZlJZODBPRzg3V1NyL1U1eUZiZHN5QUtwYUdKbFI1c0NkTm5kMEZl?=
- =?utf-8?B?dFVWQnBTVXRsTHkzQkx0ZDNBYXhpUXpYKzdtZTFSOHJpbFpIV0JBRCt3QVZ6?=
- =?utf-8?B?ak5Ec000a1JYQ2xuakZjQ1BCcGZXK3lrSjNTL1dYY2xmdlI0am0rbmdxUjZt?=
- =?utf-8?B?ZUx5TW1KbWNESFJPekJBZFo0UHlvaktDZTNjRHgzalJZQ2hyT2tRRnA5SmFB?=
- =?utf-8?B?MHNnaWJQb1hNNGJ0R2NtWW9ZcEtnNUprM1dDSUpYVFZHU0l3aU5pUXRoU2Q0?=
- =?utf-8?B?Snd2aDJvV2tQbmJyTlBwZ25XS3EzcmxZbG1NZVl2bFJuU3pOc1Ewa0dkd3A0?=
- =?utf-8?B?eXBFemp5U3VBWnFDcWFlVmE1eWYxUmt6RlZ1YWRsNFJpa1lPbVBCaDA2T0gx?=
- =?utf-8?B?a2xmczdSSU83NFJnWEF0Sm5tTXFmdDNVTVIxbGlIUUFlVm5HbU0zS2dDSEMw?=
- =?utf-8?B?dGtmbFpodlo5bGNEbE1PcjRQb1ZIL0ZOeGRzTEFqbVgxbms0NkF4cXJZd04r?=
- =?utf-8?B?TTJSTzNMVWo3bHBoN2RZbXg2N1lMNTBSYTlzTmM3Vlk5MnhjOU5wNUswQ2NQ?=
- =?utf-8?B?VWZQU1JpY0V4NkJYM0pLUTdxUy90QThYWDAxQVdudGh4aWM2cGw1R3VzVWR4?=
- =?utf-8?B?dDE5R1FlclJsNlpXNzdBL2Ixay9QbDNEcUhjeENwcDZTV0ZUbWlCYXBXbVZ2?=
- =?utf-8?B?SEhUMGVPSFhuWWxMZ3ZFQ2tka1BzdmtCdHJwS1JZVG5uZXNjMDZpR3lUMzE0?=
- =?utf-8?B?SnVQejhUaVhEMElxN2JqK054U0xnektQeHQyTkJFUzFsWEQwNklqZThHN3dz?=
- =?utf-8?B?U25PSXVPTGtaeWJEKzJEMFVGSkhteVNOTXZyclBhLzdtbWdZdHIxSEZmMWlk?=
- =?utf-8?B?YVhiRjFhRWJjbVlxSFdHY3FGaEtRZXpnT0lqV1ZkeTVvblk2cUhmZFlmZ3J4?=
- =?utf-8?B?ZjlneVdZVDdPb2pDTStIS0E3Qml5UlFUc0NYekFOTk1iUU5yV0tiWjFyZjZr?=
- =?utf-8?B?ci9CQ0V2aVl4YkRaOTZHWjVyNVk5bHNzQWtXWXdOaDlUV3dQbjY2dmw2Q0ww?=
- =?utf-8?B?VnFrN0pvc3grUVNUYkJ0RkNOREVMWXBGSzlJOFhMaG9jandBYzZpSW40U2F2?=
- =?utf-8?B?bG9lTm9XR3drVkdpT2FBQXBLVDA4Tm5MSmRzOHVGQnM4UVpSZVZ6OUFBTFVF?=
- =?utf-8?B?dGJrOWxvcy84dy9SeTZlRVVYSXlMVkU2dTJoUHBIREtkV2RPejdINkFBMnBv?=
- =?utf-8?B?TzI4OStvM2VwUmVOY1FENzZ6WmZLSmlJdWxuVkVNQmQzMTM0NkIrTWlRVjZx?=
- =?utf-8?B?MWQreWcvSDVva3F0NnplVHlKd25qdllFVStKQXlacVZLVE9wb0NTd2RMYjhY?=
- =?utf-8?B?bHlqTDJZS05ibm40QTlkbWFidTA5N0JUNDBtbFVkcmNhTWVRRllWcGJXbkhK?=
- =?utf-8?B?bURPakprS1M4NTBVOFYrR1ArS280WjVpMHdvZGFTZzAvOVIvRlg1amloZXB5?=
- =?utf-8?B?cUhMM1U3ZG00OGFQUUZIZWhnUnF0ZG1jTG5VUWlGMWNuNE5ZRjdFbi9kbi8v?=
- =?utf-8?B?NDF2MjcwYVRCSjZMcGRrZmhtN1dHdzlhWWdGRjVqa2pMYjdlWW11SGVLQ0ta?=
- =?utf-8?B?Rmw5ekxvRnllUHVnZEVHSHNZM1RzaXJQM0pwbzFWWWpBazdTRWlkRGVSS2g3?=
- =?utf-8?B?Vi95VHgvZDVTbENVRVNtdEZRejl6QlIxMmxCMUdaNEpGVU5yekRqdUh1di9J?=
- =?utf-8?B?VmJiV1FjZGppT2NHSGNVbTAxWTFSWWIwYTc4TVN4QUZpSWNQVVpxbVZjZkFZ?=
- =?utf-8?B?c0k3cnhFQnhPcncrUDRiZmVwbDJrOXk3YU8vTC9xUm9zcG5XcnRWRW8yQUxE?=
- =?utf-8?B?WEMxelRJYlFkMzlXVm82ZWlJWUY1c0s5cVhHTW8yU0U2QkdWd0x3TWlySTVO?=
- =?utf-8?B?SmdOU0RVQ0M0VlBORzRya29JZXdVQzZ4OXkzczN3UHZ2SEY5VWFoT2pJUUcz?=
- =?utf-8?B?SDR4K3hiZDhMZTBTWXdOSWVLNzY4b2pzd2lNZ1M3S0FlN0xZR016MEVpMGhM?=
- =?utf-8?B?ZFQ2aFhVZUs4N2dXaDlhNzB1aWg3NGRQVThNRURjM0wvL1g1d3VHbjFsT0NS?=
- =?utf-8?Q?9vDWVwHscyCbk6TA6DSzcZSqO?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47a1192c-2858-4fc8-44b2-08ddc299559f
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6321.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2025 05:43:18.0243
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nyft7ghQOzPgNDu5a6m6032kEQmX9ysdhxm9mQZkIBMoA6ZGnmO2nzWZABZbFDOmrdYgcC7kQTrzhskaJ+zOcg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6779
+References: <20250608-tegra186-pinctrl-v2-0-502d41f3eedd@gmail.com>
+ <20250608-tegra186-pinctrl-v2-2-502d41f3eedd@gmail.com> <yw2uglyxxx22d3lwyezy34wdniouu32zppfgwqs5omny3ge5zd@iuqo4qmi55a2>
+ <CACRpkdZha_ucjWvP_NQ+z2vbD65Y3u7Q0U57NYbJ=vqQ6uPGGA@mail.gmail.com>
+ <yslfabklduaybg255d3ulaxmzpghyj54zdfeqkx3oxgisxf6fo@2wecuqpvvefc>
+ <CALHNRZ8jq++KVKxKP2-GwMA6CauP=cM2_wt==MRAV4mOzK2kxw@mail.gmail.com> <xc72g7j7png443pjxu2wpsuqofgrpxvn43emkt3rv5qrjzf7vt@qzvsiy3eakub>
+In-Reply-To: <xc72g7j7png443pjxu2wpsuqofgrpxvn43emkt3rv5qrjzf7vt@qzvsiy3eakub>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Mon, 14 Jul 2025 00:45:39 -0500
+X-Gm-Features: Ac12FXybSVq_CahVKZ6mV4emprpB0sz1OeXMOs2OzYzElXfBnQGbjICI8iX-vqs
+Message-ID: <CALHNRZ928+=85FbvfKt1c4VX7RudU7ehuOa6wwLj8JJNz+=W-A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] pinctrl: tegra: Add Tegra186 pinmux driver
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jul 3, 2025 at 2:08=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
+.com> wrote:
+>
+> On Mon, Jun 30, 2025 at 02:23:42PM -0500, Aaron Kling wrote:
+> > On Wed, Jun 11, 2025 at 10:23=E2=80=AFAM Thierry Reding
+> > <thierry.reding@gmail.com> wrote:
+> > >
+> > > On Wed, Jun 11, 2025 at 08:58:49AM +0200, Linus Walleij wrote:
+> > > > On Tue, Jun 10, 2025 at 11:40=E2=80=AFAM Thierry Reding
+> > > > <thierry.reding@gmail.com> wrote:
+> > > >
+> > > > > One thing that's not clear from this patch set is whether we actu=
+ally
+> > > > > need the Tegra186 pinmux driver, or you're only adding it because=
+ it
+> > > > > happens to be present in a 5.10 downstream driver. Do you actuall=
+y have
+> > > > > a requirement for setting pins dynamically at runtime? Do you nee=
+d to be
+> > > > > able to set a static configuration at boot that can't be set usin=
+g some
+> > > > > earlier bootloader/firmware mechanism?
+> > > >
+> > > > Actually, speaking as the maintainer of pin control I hear the foll=
+owing
+> > > > a lot:
+> > > >
+> > > > - We don't need pin control, the BIOS/firmware deals with it
+> > > > - We don't need runtime pin control, the BIOS/firmware deals
+> > > >   with it
+> > > > - We don't need runtime pin control, static set-up should be
+> > > >   enough
+> > > >
+> > > > These are all enthusiastic estimates, but in practice, for any
+> > > > successful SoC we always need pin control. Either the BIOS
+> > > > firmware authors got things wrong or made errors (bugs) and
+> > > > there is no path to upgrade the firmware safely, or runtime
+> > > > usecases appear that no-one ever thought about.
+> > > >
+> > > > Aarons case looks like that latter.
+> > >
+> > > This was a long time ago now, but I have a vague recollection about
+> > > hardware engineers telling software engineers that muxing pins
+> > > dynamically at runtime wasn't safe for all pins and hence we had to
+> > > do static configuration during early boot.
+> > >
+> > > But then along came devkits with expansion headers and then people
+> > > started using scripts to mux pins to the right functions and such.
+> > >
+> > > > I think it'd be wise to send the message to any SoC system
+> > > > architects (or Linux base port overseer or whatever title
+> > > > this person may have) that a pin control driver is usually
+> > > > needed.
+> > > >
+> > > > The SCMI people heard the message and have added pin
+> > > > control into the specification for that firmware interface.
+> > >
+> > > I'd agree with you that there's plenty of evidence that we need these
+> > > drivers, so maybe I need to go back and look at what exactly the risk=
+s
+> > > are that come with this and maybe there's something we need to do to
+> > > avoid that (I'm thinking along the lines of certain pins being genera=
+lly
+> > > safe to mux at runtime, but not all).
+> > >
+> > > Thierry
+> >
+> > So what's the path forward on this? Will this series be used, or is
+> > Nvidia going to bring back the pinmux scripts and regenerate
+> > everything in a new series?
+>
+> Let's bring back the pinmux scripts. I don't have much time to look into
+> this right now. If you have some spare cycles to take a stab, that'd be
+> great.
+>
+> For most of these newer chips it should be far less work to get this
+> going because we really only need the SoC bits, for which all of the
+> information is available. For earlier chips where all of the default
+> configuration had to be done by Linux there was a lot more generation
+> needed, but newer chips do all of the default settings in early
+> firmware, so we don't need a whole lot of pinmuxing in DT, only where
+> it deviates from the defaults.
 
+I started looking at the pinmux scripts a few days ago, but updating
+the pinmux driver import/export for the t194 style spiderwebbed out of
+control quickly. I expected it to be hairy, but that was an
+underestimation. Doesn't help that I'm not the most proficient at
+python either. I'll continue the effort later, but if someone with
+more familiarity wants to try, it might be quicker.
 
-On 7/14/2025 3:50 AM, Kai Huang wrote:
-> Reject the KVM_SET_TSC_KHZ VM ioctl when vCPUs have been created and
-> update the documentation to reflect it.
-> 
-> The VM scope KVM_SET_TSC_KHZ ioctl is used to set up the default TSC
-> frequency that all subsequently created vCPUs can use.  It is only
-> intended to be called before any vCPU is created.  Allowing it to be
-> called after that only results in confusion but nothing good.
-> 
-> Note this is an ABI change.  But currently in Qemu (the de facto
-> userspace VMM) only TDX uses this VM ioctl, and it is only called once
-> before creating any vCPU, therefore the risk of breaking userspace is
-> pretty low.
-> 
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
-> Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
-
-LTGM:
-
-Reviewed-by: Nikunj A Dadhania <nikunj@amd.com>
-
-> ---
->  Documentation/virt/kvm/api.rst | 2 +-
->  arch/x86/kvm/x86.c             | 9 ++++++---
->  2 files changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index 43ed57e048a8..e343430ccb01 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -2006,7 +2006,7 @@ frequency is KHz.
->  
->  If the KVM_CAP_VM_TSC_CONTROL capability is advertised, this can also
->  be used as a vm ioctl to set the initial tsc frequency of subsequently
-> -created vCPUs.
-> +created vCPUs. The vm ioctl must be called before any vCPU is created.
->  
->  4.56 KVM_GET_TSC_KHZ
->  --------------------
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 2806f7104295..4051c0cacb92 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -7199,9 +7199,12 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
->  		if (user_tsc_khz == 0)
->  			user_tsc_khz = tsc_khz;
->  
-> -		WRITE_ONCE(kvm->arch.default_tsc_khz, user_tsc_khz);
-> -		r = 0;
-> -
-> +		mutex_lock(&kvm->lock);
-> +		if (!kvm->created_vcpus) {
-> +			WRITE_ONCE(kvm->arch.default_tsc_khz, user_tsc_khz);
-> +			r = 0;
-> +		}
-> +		mutex_unlock(&kvm->lock);
->  		goto out;
->  	}
->  	case KVM_GET_TSC_KHZ: {
-
+Aaron
 
