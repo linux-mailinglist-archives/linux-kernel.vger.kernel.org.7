@@ -1,277 +1,138 @@
-Return-Path: <linux-kernel+bounces-730770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5F9AB04996
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:36:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC7EFB04999
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53AA37AD65A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:35:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1E513BFAAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623DF24729F;
-	Mon, 14 Jul 2025 21:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A3B26A095;
+	Mon, 14 Jul 2025 21:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DPbN51BC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="di5j+XFT"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FA527470;
-	Mon, 14 Jul 2025 21:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F0B2367DF;
+	Mon, 14 Jul 2025 21:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752528979; cv=none; b=akqoqzgQn5wWN3h28xMthzxJUlw1zMclBz5GhSB/vmtCr6zgLg7kUCEuAotk7T22LGeJK+lbnt43yyL2e2ewpd3nWfF4ilhrhE4ZGSxXwA/6irbmEPSrlTJ2KXswwjPKgR7qdMTPHZ5tv+IcoR+KmmQXjgfQgmnhhJHJb9c4iCA=
+	t=1752529167; cv=none; b=cUpXqY+8ooUbvmHCx/5e/GohMbzsxj80qRpnBJlL7ytfE+TzdJtP1CpZlqhOVnOINWE3u6Mnd4oJ8BxKV8+NW2WAjpeehSYhWmeCEIqdcWT5s+/ByLtcklMfIG2YUu3ZNi7mU4LOzEKqOjIWdUxllwjTIBO1a0kaareY/FWDo1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752528979; c=relaxed/simple;
-	bh=Lsk++WNZwd8l07ClOik8A4/ie6IeyFPm25vz2b2+fRU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vBWNxy2ElH0AC+WFIu3VbhSvQ5x95mzYyurFTa/1nwpJlAp1faR+lnbV5tzxOaGyxB286gTNRdYlCSX//xgkUWk3O7XFgDrvBWb2Xmijohwp0VvRpxAr6Fl7Mt2+gaybB1no0TTTGITv5xtAZqhUuQNPmzxRO6s1xksAeaO1h9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DPbN51BC; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752528978; x=1784064978;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Lsk++WNZwd8l07ClOik8A4/ie6IeyFPm25vz2b2+fRU=;
-  b=DPbN51BCvarN15NnHizg9IDEN3WKMJKK0wER4QlLdZqzGWC9hMyP0L8V
-   Sa6Av+rwwd8UuCPtMFjrvBInkWWn1pi+ZlyPRHv5vNvbKm20KQiQX3iF0
-   WBGE09zV4VzOzPsPl/hqcx6cvmMPYzRdZ4aWKEA8pCFnVd4I/K13kkYQu
-   LUqZoqGOLXgVvsUVBK0NdfyZUvqKhPcHcXTRkkW2ans/lEjhUDmaFrrjq
-   fMnOGBHJpaFY+8YRSq9KJM5ox22uqHrwLWMx/Ffp8qP8cb0Hq+Lbxz2ei
-   Wn5SPTwn2xR+Qp/J+Wla3CUM5nHEXKSFpgmp1xAyyCOaQgb7/X7EkGPcz
-   A==;
-X-CSE-ConnectionGUID: R4Ip8gd+QNOSaNxAUumEpA==
-X-CSE-MsgGUID: DJwncBo1Rr2gRkqz7OYOBg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="66092408"
-X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
-   d="scan'208";a="66092408"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 14:36:17 -0700
-X-CSE-ConnectionGUID: gRShPBIQT0ONPM4U6iExOw==
-X-CSE-MsgGUID: ysWxhUcGSbO77HkExoZh2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
-   d="scan'208";a="161359410"
-Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.125.111.97]) ([10.125.111.97])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 14:36:17 -0700
-Message-ID: <e337a408-9c29-4990-bb74-d65f1e523998@intel.com>
-Date: Mon, 14 Jul 2025 14:36:15 -0700
+	s=arc-20240116; t=1752529167; c=relaxed/simple;
+	bh=m6TGmVdROEh+kbr9yjIZqVE6jmbuJqMSbTa5zUKTw6E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PvzFx4g0zat7bW733rB2a4HxdrtVSbeJ8dVUQoXqTICIUGMeFabOLHtmz2CzNakBLQ/sC2VJhy3cgDCsqTlS4SYStT9NTsmG6yCP+eHY2h0fuYn8csr9TuGSoDC9FPDDtSgwkq9vJAvMEXcNKxjuPPOZZTsf0S3ie+fHCgPen0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=di5j+XFT; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so8681376a12.2;
+        Mon, 14 Jul 2025 14:39:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752529164; x=1753133964; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m6TGmVdROEh+kbr9yjIZqVE6jmbuJqMSbTa5zUKTw6E=;
+        b=di5j+XFTfyj/+TqiT7NABmd4dvDVy1NWUTrTdNuAlG1dGeZmQ0BE7dNJC6/5PmOxjI
+         E0IBe6K27D0p0F6+FNUJ/DjZM+LfATOXxHf4dvV4EqbhuvF43+zllWguYEFYBs9avkzP
+         1MU1w1gC+UJJ/cYbfQ6lWvDZ9N+cNxmhLbk4v7qm2JkCJYDQS50Qau4ty5ghdN7ihNI+
+         PqjwjXiwwxlINAOz1l8wCHoXQsn/R74c7evrkVGSADOQuBwY/4glY/kkiky1UelHmh+R
+         PznNOQzWS2PRRYg8Y5Tu4BF3sC9ChsbZkCv4GLQ6P3niRS7t0/gDvpK9x8u8JcxrKA0Z
+         hRfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752529164; x=1753133964;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m6TGmVdROEh+kbr9yjIZqVE6jmbuJqMSbTa5zUKTw6E=;
+        b=uxNyFyLg8FrLMsEskPhTrxmOiZcGO/IjB07//V/M/qp1MgBImnN7AtYlV1o+Y8bgRS
+         Jwl4v1huzzQ8cfeNyZEh/hdd1NdVAzweuHMGvtRbSE+nHDnCvdTYIGusXIAva8DtY+g0
+         KoMxMNVbH+7D7JWRPWZjH1Mkj53LCQ0GPHEOxvAiMOgPu/WOss3VljrkKbe3E+h2gPbL
+         +1SXFKOx73nzGeNubJ84GOPIkKbnLyBykmtOTHK4A3USU8gtGi1NE8BB8c7SpInL2VQY
+         Vz/MJkiR7dCeCXTrUZZYghvMH+pl3l1OE+qXtF/3lLMc2eunKxnf7pUt6ePzWsg7XAnJ
+         myrw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/bOOKQcQAXUjnY+AhFmlSy4KhBCpBWYbcd2awhU12wREcF9359kux+10hZr4c4Q7BwUY2OEaiYCo2l5Q=@vger.kernel.org, AJvYcCXC1umBBp/1b4Ae5aQ6LLgddtVHCYACfH3Tbfb3XglLbEAK9lU1d2nLG2jv/dJEqbA7nWVos0iDjzMWYzg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMNsIU8nG/EfFfzEy3v97nbqbneKL/TRv5BvwWHTngNnfBhn0P
+	8wgPHm8W2VrisMniZdVmbbPzCXz7Oz+v8qlqDj842SNd3FEeZdmeg0fpHeB/AuzjnuBtSTBH8IY
+	RDj4dAFR6q/190CxJ/Ye/O6xWbz3j068=
+X-Gm-Gg: ASbGncuTBRn9E3OdNuvBvY4jTXTYvdqbWrBm+sUOmy/f+r+2qlOOHPl/Plqbzj56Hvd
+	1/QKtV/NU0kxiblozaiDwkESwJNzP4hUoIwkHq/hVmIQTuTsnF2ZQQi0GmnIrr6qgJylh73EyTy
+	QSHFxJIM1+E1sLLU09opkMoLcdnwF+auYx8GhgNB5JJp/M4FyPgoDEHjufVnCMllqiiUmyY1lnk
+	eqGwKY=
+X-Google-Smtp-Source: AGHT+IGqzqAHU3cihRnjsSirtSa0RUPFO/bTodaNwIqpvJJ4wBL31wC4fLkgA29xwEsophl7ajbmtbgb0wMGxRzw7Pc=
+X-Received: by 2002:a17:907:1c1f:b0:ae3:75e5:ff7a with SMTP id
+ a640c23a62f3a-ae6fbc8a3dbmr1549421766b.19.1752529163641; Mon, 14 Jul 2025
+ 14:39:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cxl: Remove core/acpi.c and cxl core dependency on ACPI
-To: Robert Richter <rrichter@amd.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
-References: <20250711151529.787470-1-rrichter@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250711151529.787470-1-rrichter@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250714153409.46085-1-martin@weidenauer.cc> <CAHp75VdUNe=bn-Emv6oyHtejTMyhKaiqQfGic0Ha94Z_FAPs2A@mail.gmail.com>
+ <4289C286-62A1-4C22-9A03-E6CD3731F3D7@weidenauer.cc>
+In-Reply-To: <4289C286-62A1-4C22-9A03-E6CD3731F3D7@weidenauer.cc>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 15 Jul 2025 00:38:47 +0300
+X-Gm-Features: Ac12FXxzi44zF7DDDz-kYM9sXM188FyUQbg6w51QqTLshWgcl2V0XFPc0QnHSaA
+Message-ID: <CAHp75VcvOaSPbrpurRAjrvwW992qiP-ffZcroQ-feg=_PAoquQ@mail.gmail.com>
+Subject: Re: [PATCH] staging: atomisp: isp: fix open brace on new line
+To: Martin Weidenauer <martin@weidenauer.cc>
+Cc: Woohee Yang <woohee9527@gmail.com>, Jongmin Kim <jmkim@debian.org>, hansg@kernel.org, 
+	mchehab@kernel.org, sakari.ailus@linux.intel.com, andy@kernel.org, 
+	gregkh@linuxfoundation.org, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, 
+	~lkcamp/patches@lists.sr.ht, koike@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jul 14, 2025 at 10:39=E2=80=AFPM Martin Weidenauer <martin@weidenau=
+er.cc> wrote:
+> On 14 July 2025 19:47:41 CEST, Andy Shevchenko <andy.shevchenko@gmail.com=
+> wrote:
+
+> >Guys, please, coordinate and issue only one (or a few) patch(es) per
+> >an issue. No need to send zillions patches for the same problem
+> >file-by-file.
+
+> >On Mon, Jul 14, 2025 at 6:34=E2=80=AFPM Martin Weidenauer <martin@weiden=
+auer.cc> wrote:
+> >>
+> >> Fix checkpatch error "ERROR: that open brace { should be on the previo=
+us line"
+> >> in ia_css_dvs.host.c:277.
+
+> I deeply apologize, however this was the instruction of our workshop in D=
+ebConf by Helen Koike <koike@igalia.com>
+
+This may be okay for the driver that consists of let's say less than
+10 files, AtomISP consists of dozens of files in several (nested)
+folders. It's not a good example for such an approach.
+
+> Here is the link to the exact workshop:
+> <https://debconf25.debconf.org/talks/55-submit-your-first-contribution-to=
+-the-linux-kernel/>
+
+Hmm... this really needs an update to explain how to work with the
+drivers that contain many files and literally tens of thousands lines
+of code.
+
+In any case the problem with your contribution is not the code, the
+absence of coordination and possibility to clash with somebody else.
+Also it looks like a DDoS attack against maintainers capacity. The
+smaller patches are and the more of them --- the less the usefulness
+of all this activity as at some point that floods the maintainer's
+mailbox.
+
+TL:DR; (always) Use common sense!
 
 
-
-On 7/11/25 8:15 AM, Robert Richter wrote:
-> From Dave [1]:
-> 
-> """
-> It was a mistake to introduce core/acpi.c and putting ACPI dependency on
-> cxl_core when adding the extended linear cache support.
-> """
-> 
-> Current implementation calls hmat_get_extended_linear_cache_size() of
-> the ACPI subsystem. That external reference causes issue running
-> cxl_test as there is no way to "mock" that function and ignore it when
-> using cxl test.
-> 
-> Instead of working around that using cxlrd ops and extensively
-> expanding cxl_test code [1], just move HMAT calls out of the core
-> module to cxl_acpi. Implement this by adding a @cache_size member to
-> struct cxl_root_decoder. During initialization the cache size is
-> determined and added to the root decoder object in cxl_acpi. Later on
-> in cxl_core the cache_size parameter is used to setup extended linear
-> caching.
-> 
-> [1] https://patch.msgid.link/20250610172938.139428-1-dave.jiang@intel.com
-> 
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-
-Applied to cxl/next
-4211a8a86304a53719931e7d19efc102eb8ede24
-
-> ---
->  drivers/cxl/acpi.c        | 59 +++++++++++++++++++++++++++++++++++++++
->  drivers/cxl/core/Makefile |  1 -
->  drivers/cxl/core/acpi.c   | 11 --------
->  drivers/cxl/core/core.h   |  2 --
->  drivers/cxl/core/region.c |  7 +----
->  drivers/cxl/cxl.h         |  1 +
->  6 files changed, 61 insertions(+), 20 deletions(-)
->  delete mode 100644 drivers/cxl/core/acpi.c
-> 
-> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-> index a1a99ec3f12c..712624cba2b6 100644
-> --- a/drivers/cxl/acpi.c
-> +++ b/drivers/cxl/acpi.c
-> @@ -335,6 +335,63 @@ static int add_or_reset_cxl_resource(struct resource *parent, struct resource *r
->  	return rc;
->  }
->  
-> +static int cxl_acpi_set_cache_size(struct cxl_root_decoder *cxlrd)
-> +{
-> +	struct cxl_decoder *cxld = &cxlrd->cxlsd.cxld;
-> +	struct range *hpa = &cxld->hpa_range;
-> +	resource_size_t size = range_len(hpa);
-> +	resource_size_t start = hpa->start;
-> +	resource_size_t cache_size;
-> +	struct resource res;
-> +	int nid, rc;
-> +
-> +	res = DEFINE_RES(start, size, 0);
-> +	nid = phys_to_target_node(start);
-> +
-> +	rc = hmat_get_extended_linear_cache_size(&res, nid, &cache_size);
-> +	if (rc)
-> +		return rc;
-> +
-> +	/*
-> +	 * The cache range is expected to be within the CFMWS.
-> +	 * Currently there is only support cache_size == cxl_size. CXL
-> +	 * size is then half of the total CFMWS window size.
-> +	 */
-> +	size = size >> 1;
-> +	if (cache_size && size != cache_size) {
-> +		dev_warn(&cxld->dev,
-> +			 "Extended Linear Cache size %pa != CXL size %pa. No Support!",
-> +			 &cache_size, &size);
-> +		return -ENXIO;
-> +	}
-> +
-> +	cxlrd->cache_size = cache_size;
-> +
-> +	return 0;
-> +}
-> +
-> +static void cxl_setup_extended_linear_cache(struct cxl_root_decoder *cxlrd)
-> +{
-> +	int rc;
-> +
-> +	rc = cxl_acpi_set_cache_size(cxlrd);
-> +	if (!rc)
-> +		return;
-> +
-> +	if (rc != -EOPNOTSUPP) {
-> +		/*
-> +		 * Failing to support extended linear cache region resize does not
-> +		 * prevent the region from functioning. Only causes cxl list showing
-> +		 * incorrect region size.
-> +		 */
-> +		dev_warn(cxlrd->cxlsd.cxld.dev.parent,
-> +			 "Extended linear cache calculation failed rc:%d\n", rc);
-> +	}
-> +
-> +	/* Ignoring return code */
-> +	cxlrd->cache_size = 0;
-> +}
-> +
->  DEFINE_FREE(put_cxlrd, struct cxl_root_decoder *,
->  	    if (!IS_ERR_OR_NULL(_T)) put_device(&_T->cxlsd.cxld.dev))
->  DEFINE_FREE(del_cxl_resource, struct resource *, if (_T) del_cxl_resource(_T))
-> @@ -394,6 +451,8 @@ static int __cxl_parse_cfmws(struct acpi_cedt_cfmws *cfmws,
->  		ig = CXL_DECODER_MIN_GRANULARITY;
->  	cxld->interleave_granularity = ig;
->  
-> +	cxl_setup_extended_linear_cache(cxlrd);
-> +
->  	if (cfmws->interleave_arithmetic == ACPI_CEDT_CFMWS_ARITHMETIC_XOR) {
->  		if (ways != 1 && ways != 3) {
->  			cxims_ctx = (struct cxl_cxims_context) {
-> diff --git a/drivers/cxl/core/Makefile b/drivers/cxl/core/Makefile
-> index 79e2ef81fde8..5ad8fef210b5 100644
-> --- a/drivers/cxl/core/Makefile
-> +++ b/drivers/cxl/core/Makefile
-> @@ -15,7 +15,6 @@ cxl_core-y += hdm.o
->  cxl_core-y += pmu.o
->  cxl_core-y += cdat.o
->  cxl_core-y += ras.o
-> -cxl_core-y += acpi.o
->  cxl_core-$(CONFIG_TRACING) += trace.o
->  cxl_core-$(CONFIG_CXL_REGION) += region.o
->  cxl_core-$(CONFIG_CXL_MCE) += mce.o
-> diff --git a/drivers/cxl/core/acpi.c b/drivers/cxl/core/acpi.c
-> deleted file mode 100644
-> index f13b4dae6ac5..000000000000
-> --- a/drivers/cxl/core/acpi.c
-> +++ /dev/null
-> @@ -1,11 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0-only
-> -/* Copyright(c) 2024 Intel Corporation. All rights reserved. */
-> -#include <linux/acpi.h>
-> -#include "cxl.h"
-> -#include "core.h"
-> -
-> -int cxl_acpi_get_extended_linear_cache_size(struct resource *backing_res,
-> -					    int nid, resource_size_t *size)
-> -{
-> -	return hmat_get_extended_linear_cache_size(backing_res, nid, size);
-> -}
-> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
-> index 29b61828a847..9462aea9ce9d 100644
-> --- a/drivers/cxl/core/core.h
-> +++ b/drivers/cxl/core/core.h
-> @@ -120,8 +120,6 @@ int cxl_port_get_switch_dport_bandwidth(struct cxl_port *port,
->  int cxl_ras_init(void);
->  void cxl_ras_exit(void);
->  int cxl_gpf_port_setup(struct cxl_dport *dport);
-> -int cxl_acpi_get_extended_linear_cache_size(struct resource *backing_res,
-> -					    int nid, resource_size_t *size);
->  
->  #ifdef CONFIG_CXL_FEATURES
->  struct cxl_feat_entry *
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 6e5e1460068d..bc542a7142c0 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3282,15 +3282,10 @@ static int cxl_extended_linear_cache_resize(struct cxl_region *cxlr,
->  {
->  	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
->  	struct cxl_region_params *p = &cxlr->params;
-> -	int nid = phys_to_target_node(res->start);
->  	resource_size_t size = resource_size(res);
->  	resource_size_t cache_size, start;
-> -	int rc;
-> -
-> -	rc = cxl_acpi_get_extended_linear_cache_size(res, nid, &cache_size);
-> -	if (rc)
-> -		return rc;
->  
-> +	cache_size = cxlrd->cache_size;
->  	if (!cache_size)
->  		return 0;
->  
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index e7b66ca1d423..4643a95ca111 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -432,6 +432,7 @@ typedef u64 (*cxl_hpa_to_spa_fn)(struct cxl_root_decoder *cxlrd, u64 hpa);
->   */
->  struct cxl_root_decoder {
->  	struct resource *res;
-> +	resource_size_t cache_size;
->  	atomic_t region_id;
->  	cxl_hpa_to_spa_fn hpa_to_spa;
->  	void *platform_data;
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
