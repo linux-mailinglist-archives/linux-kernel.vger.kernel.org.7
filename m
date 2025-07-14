@@ -1,78 +1,91 @@
-Return-Path: <linux-kernel+bounces-730329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897B1B0431D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:14:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C9EB04329
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A5641A6689B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:14:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80BF4E1035
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B07262FED;
-	Mon, 14 Jul 2025 15:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eyjXK2Li"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE57C264613;
+	Mon, 14 Jul 2025 15:12:10 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F2C25A34B;
-	Mon, 14 Jul 2025 15:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2792125F96B;
+	Mon, 14 Jul 2025 15:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752505916; cv=none; b=VZluvAA1RA9Keum7KFa+pq/Ou7FzSJ1MBSQmdYySYK0J+Z7ZXMRpRq3uImv9xc2JK2upvd0YElgkyqHUShnNvN1yfgQheJWQ/dNg61unN1xAbShs/vYJs/gQVnzLvw3PgHYQINBvfybzGQJcbOOG25idubqoMedPsQwFvo5s34A=
+	t=1752505930; cv=none; b=iuRGhQTe0Atm6syTzXra2K3Ec7NYlKcUa26Bx0ICa9+1nvxg1bjoS+9xXhHuKubn0bghKFr5xHUOnZbrn5cbzcvy0d9EBbWZFYcCdoOGYQk3HddGy7LGZS3p5dHiCVlZekvDEnQsJ8tRhsBC5+UICExLGLEAAJI57WaNrNYWy5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752505916; c=relaxed/simple;
-	bh=2Mp3An8Tm0oRvEmiusJdna3PrB49aRBXX+u9hCsh/yE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XtEvRcNPAFyXDvvyfcN3OkhY3xmMzbjb3Qxj4EwzO+vjr6UopdN6B65KqeSaez+G4t4kkfI+jmGZGK4wy9OFAh0eQyBdPEGvvpEEDhpm/mVJ6OPbyB8svMB2Lx7O088Oo9hdYPzkPRWmL98pxCJHWPKKmlbScskp/xfT4FoaZHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eyjXK2Li; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E81BC4CEED;
-	Mon, 14 Jul 2025 15:11:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752505916;
-	bh=2Mp3An8Tm0oRvEmiusJdna3PrB49aRBXX+u9hCsh/yE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eyjXK2LiLMSUKBgJhZgIyu2rg1Jg0v5V7r6Jjg7qz5Cvlj1ceo5oKWj7reiP5ZNu+
-	 noQCSEp0i8lY0DoGEFMCW6Uy+xa5aICmCJ9uFNp1c3RQ7UCPiHbCA51SlyRQqj6V5m
-	 IkcWCaAJTTvB+P/S7vVlq0JtqltbszZ+QHWqHNn+bWZwcyUVJJOVn+t1yfx67Ulxda
-	 0r0kjx63a9rFhvP7lQ8OjVu/owlphxajgzXqtmAqEEuOPi0tSEn8MjJ7SXwUw4Aae+
-	 hlCxD9EV83cmkYZkdg/JXH80pQgNRjPvmehJrVuHJMV5nlYfkrt/bMN6vjpFa41TFR
-	 Eh1aZQozJf6Hg==
-Date: Mon, 14 Jul 2025 16:11:50 +0100
-From: Will Deacon <will@kernel.org>
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Sven Peter <sven@kernel.org>,
-	Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
-	asahi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v7 02/21] drivers/perf: apple_m1: Only init PMUv3
- remap when EL2 is available
-Message-ID: <aHUeNpx6bsC5Gk3b@willie-the-truck>
-References: <20250616-apple-cpmu-v7-0-df2778a44d5c@gmail.com>
- <20250616-apple-cpmu-v7-2-df2778a44d5c@gmail.com>
+	s=arc-20240116; t=1752505930; c=relaxed/simple;
+	bh=oq/kRc8YkSkQx0CNEH486rkwM/R8OEPfaXk2gBAVbk0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zg4ExF7xnQsNfO+ruinUiFfGOCMFCuhNDpi5u70r/09wnGLLWOajnsyJgkKyyTpWQAD4kKUfHiZIQ0aKiBuXD3VqPtEuloCLT2+ffFIN5Esgi+jU9X+f1sCIXSgcrszTJC5l0UoZcZmv+4KIEVlNb/oqy65Tal+0cVx/Zt/gMcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id C30B7801E3;
+	Mon, 14 Jul 2025 15:12:04 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id DC2E42000E;
+	Mon, 14 Jul 2025 15:11:59 +0000 (UTC)
+Date: Mon, 14 Jul 2025 11:11:58 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
+ <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
+ Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
+ E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Sam
+ James <sam@gentoo.org>
+Subject: Re: [PATCH v13 07/14] unwind_user/deferred: Make unwind deferral
+ requests NMI-safe
+Message-ID: <20250714111158.41219a86@batman.local.home>
+In-Reply-To: <20250714150516.GE4105545@noisy.programming.kicks-ass.net>
+References: <20250708012239.268642741@kernel.org>
+	<20250708012358.831631671@kernel.org>
+	<20250714132936.GB4105545@noisy.programming.kicks-ass.net>
+	<20250714101919.1ea7f323@batman.local.home>
+	<20250714150516.GE4105545@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250616-apple-cpmu-v7-2-df2778a44d5c@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 5yczkq9m3prf68zz9rpu1dhpt1xqqi8t
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: DC2E42000E
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18va/HTPSKBw/fWiX/8a5inP/5claP6jAI=
+X-HE-Tag: 1752505919-76516
+X-HE-Meta: U2FsdGVkX185sujVYAEVxebt/0QBj4TxPRzIVvAoMsm/98GD2mjQpIxYcV5v1hYrijXv5Gp2cGzUdMVt1FjILgERmtMpQIuwkRahwlryzR5BZGPo3rQ7bqYG5ufGHclTPG7mHHfcSQrb1zM6r36CCHVI/FL1YXQ4uuTlwFt7mV/V8Yy7/DBUwVyDRkeqLAIHuTsk6/eCqtTjXICC1IIgsPu5hEeTbregqgb89x+bc+OAcKkqQoQZrPZXBmxCEEjcHvcjPbLCsLopleqas/RYzg0N3QqM3+hicI0tZsLP2BJE124Rvl5ki/jskepY5yE7AA06fd2J8zMUOGGQ4hLQ8NJ33iKTg0/r5bmioi/tQk13h2wKfdnn1imz3EO+tLjboeG1RJePCqltKYiEMYryHQ==
 
-On Mon, Jun 16, 2025 at 09:31:51AM +0800, Nick Chan wrote:
-> Skip initialization of PMUv3 remap when EL2 is not available.
-> Initialization is harmless in EL1 but it is still a weird thing to do.
+On Mon, 14 Jul 2025 17:05:16 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Why is that weird?
+> Urgh; so I hate reviewing code you're ripping out in the next patch :-(
 
-Will
+Sorry. It just happened to be developed that way. Patch 10 came about
+to fix a bug that was triggered with the current method.
+
+> 
+> Let me go stare at that.
+
+Thanks!
+
+-- Steve
 
