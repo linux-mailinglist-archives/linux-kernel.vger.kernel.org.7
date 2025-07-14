@@ -1,144 +1,198 @@
-Return-Path: <linux-kernel+bounces-729934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E07B03DDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:56:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C26B03DE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D0D73A782F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:56:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AB9517CAA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9628F2472A0;
-	Mon, 14 Jul 2025 11:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77ECC2472A0;
+	Mon, 14 Jul 2025 11:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="ZRjhVP93"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="aj0QdiFV"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038DA24728A;
-	Mon, 14 Jul 2025 11:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752494161; cv=none; b=NqYLFMcJ2vHP/kdZO7KO1wOt370uLScFK1Go9T+yK1mX1PrAclAaYUczKgbWTIchtkO7JgrYIR4kZWGveeOUvQNjDqkDE7jXqSAETqvZsTNzs9zR1bL/8ujS0isfyL3hrZ3nj1wzIpBt45v/U1v1lX4WJbOTT+/MWbzejP0Ke04=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752494161; c=relaxed/simple;
-	bh=Cm6YzKm//JNXfOzgNh0nJtI+oglXVJjSAUrrNto/YP8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XhyND8eZ1WBI+V1hgWMJwzDTdDuRK9hyZzaL74BPShPdCySvmGVGef/csrkARgrdFSwS1pq3o1EXFxHmccFuvwXA8j52ieMxpsxdF8Qen/6iOhLrmLVrrE9Esz0QLzDQx3lzTeWfUeWwjZ+jmn6RpSG4ImcXadrEzMBT2rLmSxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=ZRjhVP93; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=uEaMeaKe2woigzgc+/lPc6No3aXg9fhiN7bOQHOaDMI=; b=ZRjhVP93T+UwvSXx6irfyT3WJa
-	UmczJCdh551T5xTcztt3rg8rTH9hd2iVJYlRj4Y+twXyC2xr+/YlVfcZkxhP1QuQc4f5CYSlZ7Jp7
-	oFW1K8BwP4wE8ylM4mavlMLoeFrAcRvmT8egMnZLYpQhbKQc/bSNu+FmkqDQAJhGauCtHjU44SaLq
-	H4lhnF3Ic7ALdJxXzNxZhrZ6SZvdtToR6D0C2jeeU84loAZf9QMJHuH/GwJPy6zyN1e1VgMoaepez
-	+Dof4/hoSRqFNDTOs5VXsd+b2jsLF/XpwAkdH1k8fNFxRd2blC9OpxDMtFW3TwtmtE5AKxkIgkB/M
-	NoOoq5mA==;
-Received: from [89.212.21.243] (port=37122 helo=[192.168.69.116])
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <primoz.fiser@norik.com>)
-	id 1ubHmn-001QUg-0K;
-	Mon, 14 Jul 2025 13:55:57 +0200
-Message-ID: <ca5c6c3d-3053-415f-8b16-05cbdf530797@norik.com>
-Date: Mon, 14 Jul 2025 13:55:54 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD32246BB9;
+	Mon, 14 Jul 2025 11:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752494362; cv=pass; b=EHPmUzKuiss/9ivnam7bABUo3Ueb/NMJIAUyWRdVshPuamGD+BCTcDLr3I3u/sg5OmQGkRBEPcMAxckWSSIbGLiLroaTWiX2R6G1iA6HDnep/pPvTlqrF3P7RzoXrjrAY9fu1dbSGSmv0VoU6FQjRqzm1C6SDpmvQ1QWjqov3C4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752494362; c=relaxed/simple;
+	bh=tDV9/Q7u6+pOYicayxwt8pwpLClJb9GzCkMGqZQIKxM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QIgfucfmydoOYPiaYMPTSWq8uecpJ3k+e2GnWvQOhnInxfn7hAiotqtqVGz2X2RvVHC2KR42w0aToB/eUVilrdIGYOpvb/sDP3a+2KrIbTmGewEAJJFbElWMKNF7UJ20pXuspwzGw2NxynnjNAZhpCOd+VSiK6ufsoti4NxfH6U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=aj0QdiFV; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752494332; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=iGxMupPycqjxa9mYweKkM1w0s56YuVBdz40VSohqHJ3DXNzUCYRc0iDuCpWhd1e1iQCtv+NNjNDg9xPLYXdOL006E1zaX0LDHjqO8w9yGeXqJe7lKw+DDb3YBdN41kehkm8w1fxfZc1a+NC+/qy+9J8PITBiq2rV+10PPyJxUTA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752494332; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=l+1LS81FGm60dIyP9CaATX2ddHWIPZWWedbPOybtiZA=; 
+	b=FOFJails5Ae40soxsPBXDAMaGs6GdcMZ9fthL+58TXmaBHN1pRpOTIby7gN85neyM8wi9quxpIlfq5ly00RUP3SL6TwLmEToc7CTcioKIhaK8V6fvNd7OgDuWphAyIFq+HMJbzE3GZNb+dEmdu8whdIK8oPFuHLyoQA9EWuAGwk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752494332;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=l+1LS81FGm60dIyP9CaATX2ddHWIPZWWedbPOybtiZA=;
+	b=aj0QdiFV/CZDv8u7a2xKrN6idNVJH5GSz9novrbYVUgsWiDx/znyr52+XSR2b85x
+	hmj6oKZLj+9eTDZAY0wlEAp10Lx86SU71uQzRdkFW+al/wNl2BJ4qfNCPVrUsb0Vfgz
+	Cjsqj8X6ekiU7rdpt5mtI9G7NA5CT9t53O457SRI=
+Received: by mx.zohomail.com with SMTPS id 1752494328917431.64095668770517;
+	Mon, 14 Jul 2025 04:58:48 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Hector Yuan <hector.yuan@mediatek.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: mfd: syscon: Add mt8196 fdvfs syscons
+Date: Mon, 14 Jul 2025 13:58:44 +0200
+Message-ID: <2866261.BEx9A2HvPv@workhorse>
+In-Reply-To: <4537173f-7f79-4629-a2ef-cbf1edd2ed81@collabora.com>
+References:
+ <20250711-mt8196-cpufreq-v1-0-e1b0a3b4ac61@collabora.com>
+ <20250711-mt8196-cpufreq-v1-1-e1b0a3b4ac61@collabora.com>
+ <4537173f-7f79-4629-a2ef-cbf1edd2ed81@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] i2c: lpi2c: implement master_xfer_atomic callback
-To: Francesco Dolcini <francesco@dolcini.it>,
- Dong Aisheng <aisheng.dong@nxp.com>, Andi Shyti <andi.shyti@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
- linux-i2c@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250523082931.23170-1-francesco@dolcini.it>
- <20250626075837.GA9216@francesco-nb>
-Content-Language: en-US
-From: Primoz Fiser <primoz.fiser@norik.com>
-Autocrypt: addr=primoz.fiser@norik.com; keydata=
- xjMEZrROOxYJKwYBBAHaRw8BAQdAADVOb5tiLVTUAC9nu/FUl4gj/+4fDLqbc3mk0Vz8riTN
- JVByaW1veiBGaXNlciA8cHJpbW96LmZpc2VyQG5vcmlrLmNvbT7CiQQTFggAMRYhBK2YFSAH
- ExsBZLCwJGoLbQEHbnBPBQJmtE47AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQagttAQducE+T
- gAD+K4fKlIuvH75fAFwGYG/HT3F9mN64majvqJqvp3gTB9YBAL12gu+cm11m9JMyOyN0l6Os
- jStsQFghPkzBSDWSDN0NzjgEZrROPBIKKwYBBAGXVQEFAQEHQP2xtEOhbgA+rfzvvcFkV1zK
- 6ym3/c/OUQObCp50BocdAwEIB8J4BBgWCAAgFiEErZgVIAcTGwFksLAkagttAQducE8FAma0
- TjwCGwwACgkQagttAQducE8ucAD9F1sXtQD4iA7Qu+SwNUAp/9x7Cqr37CSb2p6hbRmPJP8B
- AMYR91JYlFmOJ+ScPhQ8/MgFO+V6pa7K2ebk5xYqsCgA
-Organization: Norik systems d.o.o.
-In-Reply-To: <20250626075837.GA9216@francesco-nb>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
-X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On 26. 06. 25 09:58, Francesco Dolcini wrote:
-> Hello,
->
-> On Fri, May 23, 2025 at 10:29:29AM +0200, Francesco Dolcini wrote:
->> From: Francesco Dolcini <francesco.dolcini@toradex.com>
->>
->> This series adds atomic operations support to the imx-lpi2c driver and split
->> the previous v3 patch into two separate patches.
->>
->> The first patch replaces the open-coded polling loops with readl_poll_timeout.
->> This improves readability and consistency, and prepares the code for
->> integration of the second patch, while maintaining the same functionality.
->>
->> The second patch implements the .master_xfer_atomic() callback, enabling
->> support for atomic I2C transfers.
-> Just a gentle ping to not forget about this.
->
-> Francesco
->
-Hi Francesco,
+On Monday, 14 July 2025 10:47:32 Central European Summer Time AngeloGioacchino Del Regno wrote:
+> Il 11/07/25 16:57, Nicolas Frattaroli ha scritto:
+> > The MT8196 SoC uses two syscon ranges for CPU DVFS that are separate
+> > from each other. One, mt8196-fdvfs-config, is used to check for a magic
+> > number at that memory address to verify that fdvfs should be used. The
+> > other, mt8196-fdvfs, is used to configure the desired frequency for the
+> > DVFS controller for each CPU core.
+> > 
+> 
+> What is the reason why you're using syscons here?
+> 
+> Can't we simply assign the FDVFS MMIO to the cpufreq-hw node?
 
-just a heads-up that this needs rebase on latest linux-next due to
-commit 614b1c3cbfb0 ("i2c: use inclusive callbacks in struct
-i2c_algorithm").
+That would require refactoring the driver way more since it currently
+gets the number of performance domains from the number of regs. If
+you want me to do that, I'll need to know how we should disambiguate
+performance domains from misc things like fdvfs. Stuff like string
+comparisons on reg-names seems very ugly for the driver to do, but
+adding a property to explicitly specify the number of performance
+domains would then put into question what the existing binding did
+by just assuming this information is something that implementations
+can get without any ambiguity.
 
-Afterwards, I was able to test functionality on PHYTEC
-phyBOARD-Nash-i.MX93 and you can add my:
+Even if we forget that Linux is the only kernel that cares about this
+device tree, I'm not totally on board with having the smattering of
+dozens of different tiny register ranges in every DT node on mediatek
+like the vendor kernel does it. And not to forget, it'd change the
+binding even more, to the point where I'd probably have to create a
+new binding for mt8196.
 
-Tested-by: Primoz Fiser <primoz.fiser@norik.com>
+> Or is there any reason why we can't declare it as mmio-sram? ...because I'm not
+> entirely sure but the FDVFS space should effectively be a [c]SRAM memory range...
 
-for your v5 if you want.
+mmio-sram is fairly useless for the purposes of having something as
+a fixed set of registers, hence why nobody else does it. From my
+research, it appears to mainly be used if you want to actually treat
+it like a pool of memory from which to then dynamically allocate
+things.
 
-BR,
+To use it like a syscon, which is what we're doing, you'll have to
+specify your mmio-sram node, then add a child node as a reserved range
+for the "syscon-like" area, and then specify in ranges that you want
+that child node's address translated into the global address space as
+expected. Then in the driver, you can't just do a single function call
+to get some regmap to write into, you have to follow a phandle in your
+vendor property pointing to said sram range, then get its address,
+translate said address to the global SoC address space, and then iomap
+it. And the cleanup for error paths/driver remove isn't fun either.
 
-Primoz
+Besides, we don't actually know whether this is an sram range, or how
+large it is. The only confirmed sram range was the csram_sys thing at
+like 0x11bc00 which is not used because it turned out to be useless,
+and dealing with the kernel's sram interface to use it as a reserved
+range just to read 4 bytes from it was a wasted afternoon. And that's
+not even the real starting address of that sram area, that's just a
+part we know is used because downstream uses 5 KiB there for a codepath
+that's dead when fdvfs is present (except the one thing where it installs
+a panic handler to shove something into a register to make it stop dvfs
+logging if the kernel is in the process of crashing).
 
--- 
-Primoz Fiser
-phone: +386-41-390-545
-email: primoz.fiser@norik.com
---
-Norik systems d.o.o.
-Your embedded software partner
-Slovenia, EU
-phone: +386-41-540-545
-email: info@norik.com
+I can be convinced to go through the pain of making this mmio-sram if
+I have documentation of the whole memory map of the SoC that shows me
+where and how large each area of sram is, so that I don't need to come
+up with my own starting addresses and offsets based on whatever random
+stuff I can infer from downstream DT.
+
+Really, every writable syscon is probably implemented as "sram" in
+hardware. But an sram cell that is not general use memory but is
+treated by the hardware as having some meaning is not mmio-sram. We
+can't ever use it in any way other than as a syscon, and telling
+implementations that they can except then slapping a huge reserved
+range into it just makes them have to implement syscons twice, once
+as syscons and once as syscons-except-it's-a-reserved-sram-mmio-range.
+
+> 
+> Cheers,
+> Angelo
+> 
+
+Kind regards,
+Nicolas Frattaroli
+
+> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> > ---
+> >   Documentation/devicetree/bindings/mfd/syscon.yaml | 4 ++++
+> >   1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
+> > index 27672adeb1fedb7c81b8ae86c35f4f3b26d5516f..5ee49d2ba0cdb72dd697a0fd71c8416ad4fd2c1e 100644
+> > --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
+> > +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+> > @@ -88,6 +88,8 @@ select:
+> >             - mediatek,mt8135-pctl-a-syscfg
+> >             - mediatek,mt8135-pctl-b-syscfg
+> >             - mediatek,mt8173-pctl-a-syscfg
+> > +          - mediatek,mt8196-fdvfs
+> > +          - mediatek,mt8196-fdvfs-config
+> >             - mediatek,mt8365-syscfg
+> >             - microchip,lan966x-cpu-syscon
+> >             - microchip,mpfs-sysreg-scb
+> > @@ -194,6 +196,8 @@ properties:
+> >             - mediatek,mt8135-pctl-a-syscfg
+> >             - mediatek,mt8135-pctl-b-syscfg
+> >             - mediatek,mt8173-pctl-a-syscfg
+> > +          - mediatek,mt8196-fdvfs
+> > +          - mediatek,mt8196-fdvfs-config
+> >             - mediatek,mt8365-infracfg-nao
+> >             - mediatek,mt8365-syscfg
+> >             - microchip,lan966x-cpu-syscon
+> > 
+> 
+> 
+> 
+
+
+
 
 
