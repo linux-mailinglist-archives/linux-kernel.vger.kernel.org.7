@@ -1,145 +1,228 @@
-Return-Path: <linux-kernel+bounces-730847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85D19B04ADC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:40:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A95B04AE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:41:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B92841AA0061
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:41:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 538674A5C36
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEF9278E79;
-	Mon, 14 Jul 2025 22:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8F7273D95;
+	Mon, 14 Jul 2025 22:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RAIskzLJ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wibqIVuF"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2081.outbound.protection.outlook.com [40.107.92.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9137E278E6A
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 22:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752532825; cv=none; b=FC2VM0Tis509leZcssohB+qucaJLLuX+kMBx/3cTPCIwnK9/mdXr7lv1YdDjKxxOcuMzwi8yA7DRBtYQjQLdzZOFGxjkMyMA+4WfogTJT14DgqvyNkzd78f1Mh0c47DlgQKklclfWXgBUPl2wlD/DPuHB4nbZpDOhM4dJZI9gh8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752532825; c=relaxed/simple;
-	bh=4h5qlwpeesyHN/FRt2ZtRRGwEAs4CU5jNL3eU0tHdm4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mZ2pSLi+asFW9ZvKQgve/vDn23NKVR08dqgZnJwsefZTkguctNqZiTor8+we/kF1+VkkjX9uHh/ytoYC0MLfB1ItNChv7uBIsxoTPBO4MOt8U2HU1bwcyN2dbaNQj9ZOgn7HIvP/dNyxWhqbiyLtNcN2UxnJthx/AvJUqXmS7SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RAIskzLJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56EGGkoO005616
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 22:40:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=yjSwbo76oRHzxnrqM3sUTeEv
-	V+WSiuNA1qDRjRRLBOw=; b=RAIskzLJfeqGTk8Y5KGy1lzHZlBjDQv76CdUyhVq
-	8DbTbSHio1vEHXy4ivnLB9uYSngwhb5L8VAQDAxbV+t6VvCeXRkmf4kZGE3GS1y4
-	3prAq5BUDHTKDWFJ6P7rLw7CdA5TbbCDsuMCHu5qhVBIj1UAkO2LnQ4vjjLNn7na
-	mNvc9G7CNirOYJZ6eauSta3ixtg3Im4CjBioKCIkkG323zDdrCMCWuQ6+CWe/UDz
-	fJfMp0gOhTzDxsoPgc1CJX0Gk1iz9BgC0IjxpIziQFR6bzdDef+UTu9W1xbH2PAY
-	YIDk2FIMVxjnA3u3vNeo3loYNODWHDuZJtt/h+d71GL8YA==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w58ygvet-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 22:40:22 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e269587d8eso276699585a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:40:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752532822; x=1753137622;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yjSwbo76oRHzxnrqM3sUTeEvV+WSiuNA1qDRjRRLBOw=;
-        b=Yv6f5YUK10DGolJvFjvKdyHLZKnKVRzSGNL7YEXunQCUDyTL2FRKqjFHj8tuXTJdgL
-         xgUr7ZVPhacducP4qyJ+hi59gmC57MfimJvNVzWrmfZzMSlvDUh5oOzBJhCf3Jfcsay1
-         /YMYQ71YQ+2EyY9FfVtYRZbv1ciyRGLwew/OulAXApnW6e7eA/WrMDQvbOOL/oBhDhMA
-         o5lCIlMFC3dnpIoH2S6sRDNaZvl9xQRcuIMihptJCwX5sUBYm0kFKucstPppxoL/9a3W
-         +33SjgJTmRdscV8gRy49wM3ubPv3YvpvuU8+Q17orUAEXxDkZeXjUG0Y5Q+DwWaxKkBv
-         7PEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdR/7zk8FKDj1fwCg1+R1/vT5umIsvhzno1WWNtHZ5OEXU06lcU0VY2bAj89oGDBIdo7jcvtpS1okfm0I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaPqGgEX8Gu71ZMYs3sFfoN0rubE8xVUqeoOGOJWqaqZ2/UDlL
-	A/2rpMIisI+cTBFP14nSl9XlvSOFZYIDMeWrusPhso18+i7pN8u8jyxUPEI6bfNwk79emj02RpG
-	jf4vtfDPlO5VmBy/6RDcMwZDDfcAEBA5yhYo0o3e3lhYsuskWGJmteGYsmCq7uAu3nXo=
-X-Gm-Gg: ASbGncu1sJWXc5d7THgEDx9zZVkZD5dLN/JB8pupJR2yu/evikqxr56/a0h2jXcw5L0
-	OKz9H6bWDrakmZSZ7L68lu/xStpvWzPOsrgukNT5MjxGRogKmn/zCAkqBYNp5ZJ5JtWFNVKPflG
-	3rPT09Vz7zzVQGuJpg/iSrU34FRDlij5DMKt2GhtMCFCYQFqE9YVga2IuKtShUqHTFFaqQtCklh
-	E8EEePa1X6vM+N7q+9z+32Wm4N4tF/0h//TQDnDP7WiR3c/xqUwdeOHjWrNbKS8K4PA6UGGf3qf
-	9d631PT/Yt4yG+qvL5nxisj1vs9fIMteW1yH3jZnQItb0ANgYh4XWHNBrH0dygl3zgQiprqElB3
-	Y5j6oZXKbipY3ZSdIFOoEHNhIJt3X5d0BF0XEdb1rpL7Mb9VD83l3
-X-Received: by 2002:a05:620a:40c9:b0:7d5:d065:5473 with SMTP id af79cd13be357-7ddebc95009mr2146589285a.37.1752532821540;
-        Mon, 14 Jul 2025 15:40:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHa0HRa/hfK6x/NEBmsxm/cQ5Kjrt7W4P1iVcEqAb7PlaCTrfUqNMH3CjK1pQSOrmvZybaOZw==
-X-Received: by 2002:a05:620a:40c9:b0:7d5:d065:5473 with SMTP id af79cd13be357-7ddebc95009mr2146585685a.37.1752532820961;
-        Mon, 14 Jul 2025 15:40:20 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c7ea2easm2085007e87.66.2025.07.14.15.40.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 15:40:20 -0700 (PDT)
-Date: Tue, 15 Jul 2025 01:40:17 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Prahlad Valluru <venkata.valluru@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shashank Maurya <quic_ssmaurya@quicinc.com>
-Subject: Re: [PATCH] arm64: dts: qcom: qcs9075-iq-9075-evk: Enable Display
- Port
-Message-ID: <fibzazcqx5rhdrsuz24hdasribdxllsj5cclq4pe3wd4mpqiqe@qr3fzc72wbuj>
-References: <20250711-enable-iq9-dp-v1-1-6d381e105473@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D9022DA1F;
+	Mon, 14 Jul 2025 22:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752532839; cv=fail; b=i8Lc1ke+SMVFSrOLv7+FoGqp3bEsGbRl8pM+JtuadEWmnId5lwwAQWqi5NGJ5BpsEGE8TiUP5u763uVs0yA135pds3Zb8Zf66UOk+p8ivQZNizxwimwXZS/eTDAD9xXwRLRgmWzOhF9Jj2FaMn+U/yFueUPmgs/P402Qwl4sAz4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752532839; c=relaxed/simple;
+	bh=EbCfapcfKNXTw9Wn0+yaQtHA8gtCQ+ExdT5njBRoUHg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QYVa2NCqJqauKvcK8jRuv5+OtYBXMijNgULWfQDlCgNt+Pp4fUZbf7p6g9TqFtYEU+Ob2IR6lz/+9A31+rrfmQkIMMqNWEBbMjGMgw+0mzCW+U8l21JIsGS3cV3+0rBkdgYgSZp336JnjuG2xiVvIk4AWgYDzaXzdIdAgJ519hY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wibqIVuF; arc=fail smtp.client-ip=40.107.92.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rNM3YfMQSNy33ZrrmIbpFqQXc7L6Bd0tRXUCWfhwhCJKeUQ1rMpkF5o0M5hP3FxVTAjBcPAqcOL5ReLjAhRYmZDmpszXTya/KH1txzbfuOBVVTrjHcNq9/lia3BdY+YPdHaV7byvk06zkCuHqrwRHCwDQv0Oxs1vzgzbd5NVGQorYnMm/HZstZkOSVs2CQXLTY1FcXKCUiiHyFyTk7uQqgVitIBqXXCJFkFuwmoHZlCRDakpCNV/ngQrc6t71/EI0V79ed9U5EmJDcVm9FgmRwIQ8BY2iUOzNEWqYVCGqfG9aVpDcwR9+2TESuoocGLMZHeviYhF/wsGruUXs3CLIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JJCiynNmCfzkXzvlMNkD8O9M1HMiKr9Bqv7ewdRFvZo=;
+ b=GkCHNFr1xCG8D9dhHhXc09kWUKtTqcqxI1YyTPfTXdFmHx4sIIadEGYqLeSDE5NRnuCcR6AraeKWmC+Sbx1qc8W0Jac81+f3iF8ns6daGzAjld3GryWox1pzPGA8/DmkDsUSxA0DHNqnnQvd1qmZPHzfhg1oW4e4o2O2eU3n2ldSi1SHm2JAkss9b10v5ZjQNg0LnRtDfPfNwjSP7USRnIl1NaEr3Zjxh8T4KkzBjaaCgRTpWJKenzW5qBnI1wBFynx+xbZosWxgrx7jsLIQuf5N6+ZrE/mmM2AL3o+fqi2gRjAZF4aardtDbjNH8NHco+q/ocOSgZRu+t525ivOAw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lwn.net smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JJCiynNmCfzkXzvlMNkD8O9M1HMiKr9Bqv7ewdRFvZo=;
+ b=wibqIVuFlVm3kHTEQR/YppLbu+kY+/mw5NdsOU8HsjSR+p7WpBE8rWLj5pZjLg+6CLciZG+w48AUQR8ACKpZWD6TKM48tU8lJv3RRvNiyNyGeidpIEnKs20cWRTjcagSrkbrNufwgDi9nq5l5Bw1V8lLY8APzz28/HAEgYcMxEs=
+Received: from SN7PR04CA0233.namprd04.prod.outlook.com (2603:10b6:806:127::28)
+ by CY5PR12MB6225.namprd12.prod.outlook.com (2603:10b6:930:23::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.25; Mon, 14 Jul
+ 2025 22:40:30 +0000
+Received: from SN1PEPF0002BA50.namprd03.prod.outlook.com
+ (2603:10b6:806:127:cafe::c0) by SN7PR04CA0233.outlook.office365.com
+ (2603:10b6:806:127::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.32 via Frontend Transport; Mon,
+ 14 Jul 2025 22:40:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF0002BA50.mail.protection.outlook.com (10.167.242.73) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8922.22 via Frontend Transport; Mon, 14 Jul 2025 22:40:30 +0000
+Received: from purico-ed09host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 14 Jul
+ 2025 17:40:28 -0500
+From: Ashish Kalra <Ashish.Kalra@amd.com>
+To: <corbet@lwn.net>, <seanjc@google.com>, <pbonzini@redhat.com>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<thomas.lendacky@amd.com>, <john.allen@amd.com>,
+	<herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+	<akpm@linux-foundation.org>, <rostedt@goodmis.org>, <paulmck@kernel.org>
+CC: <nikunj@amd.com>, <Neeraj.Upadhyay@amd.com>, <aik@amd.com>,
+	<ardb@kernel.org>, <michael.roth@amd.com>, <arnd@arndb.de>,
+	<linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
+Subject: [PATCH v6 4/7] crypto: ccp - Introduce new API interface to indicate SEV-SNP Ciphertext hiding feature
+Date: Mon, 14 Jul 2025 22:40:18 +0000
+Message-ID: <2afb8bf011d6d40419b880303f4556299a1a2c46.1752531191.git.ashish.kalra@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1752531191.git.ashish.kalra@amd.com>
+References: <cover.1752531191.git.ashish.kalra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711-enable-iq9-dp-v1-1-6d381e105473@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDE1OSBTYWx0ZWRfX+fgADCLm2g9M
- M5obxOxXUD70PUuXR3apW5Iv0pkm5NGPXW1ZnHZQKoaDQ0X2WmMnZw5D6ImLuvxlcUnIrJ97AJh
- YbjS1oBV00YExrp/IyJCDV4JtjnQPSoaGxYlHqimS+9yW1hyW28VOmQySX/Fp4a/gqS/DfU2LZ6
- ohIvb6PuSsyuKpSlFld+2zww4bq1saWiIfy3wRb6MiONtHBCSOBmr/kYuOAbDq/ZZ8kskVaLoav
- oFRDUYptN8yY9wOqcv5zR+DDpGqGVmbu1RW9hLy4h4v45W35qGPxhUj0p32Ninas/W6d5j1phLq
- RwuoDj8bPmAoEJFR+MoC46fEAwUHPzFk0u6rkd3fe8uB+vdrptltjBmtCFU8Eyrrc9y1M2wdRTa
- I5TWFgblUKCff8XFpOBJWIErXdFCEAmH31pliqUiwIQSXTaz6feT/PNp59AA7//o5MgWqY7n
-X-Proofpoint-GUID: cVk-3dbvugfgBAdapdn_o_y70hTMEzpU
-X-Proofpoint-ORIG-GUID: cVk-3dbvugfgBAdapdn_o_y70hTMEzpU
-X-Authority-Analysis: v=2.4 cv=Or9Pyz/t c=1 sm=1 tr=0 ts=68758756 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=QGU9b-9ATRnlJsYRrdYA:9
- a=CjuIK1q_8ugA:10 a=bTQJ7kPSJx9SKPbeHEYW:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-14_02,2025-07-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 suspectscore=0 adultscore=0 spamscore=0 phishscore=0
- priorityscore=1501 lowpriorityscore=0 mlxlogscore=834 bulkscore=0
- impostorscore=0 malwarescore=0 clxscore=1015 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507140159
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA50:EE_|CY5PR12MB6225:EE_
+X-MS-Office365-Filtering-Correlation-Id: d17624c9-37fc-4dab-f45a-08ddc3276fca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?EIZOUcc4tqbmEf2BxrxJmTHXcC2KgaTe9j5PAWmcV+qaTvbq9+2Un4edUFpj?=
+ =?us-ascii?Q?UPTMnkPgzP0MfbEHU2bSulxwcTZshJfZqaQcgxS7OkqsN/8LcH7eMFgcucbP?=
+ =?us-ascii?Q?oIFsB9DXDgrirR8c6HAmYb4G2PlZ1UELPv6iUUABjMxWN3kKWln9V7tvOT4p?=
+ =?us-ascii?Q?T4tG1uwmebD4+J26arO1YMF0shZm1sSk0EA5SA/Et7Y0DR6EsjURtaKljZ0S?=
+ =?us-ascii?Q?wG579oVEVz624jriFnDiqtB4i+T42nbqqE4wVWPcuze+Hw6lmg7wDFw/Xk/y?=
+ =?us-ascii?Q?fbabt/3nKFTAhHcwmGgvKd1tfWTbKDflh9fNEQYfiuHJEXhlDm8WcLtUopv1?=
+ =?us-ascii?Q?PwEgd1JfuZFkOXPjAYomZTjpYysokztAKAdq+4cVJKGWAL1zIGmmWWhe/NLR?=
+ =?us-ascii?Q?5Frk3BGiY5gkC7R+TTsOesQ2umHZ1ikdCLf6NavgffC9HLCxrOHVoRctcl1p?=
+ =?us-ascii?Q?VTKvl24HOSRuVQJFHS6WynKSsziZWTUHlmwIt92pyIkgs0IwXxIVs8LFhZrK?=
+ =?us-ascii?Q?/HJtw74IeYUxJO0Cpm0VFXQuwTkluB50+AEp38TUMDnE4r6fAFUhdfRDyf5F?=
+ =?us-ascii?Q?DVkXEOu+BcSo8dspemD84R10Ug5DMlGbA3RqXS2emF1H4s/pepOODNkvjPSY?=
+ =?us-ascii?Q?yohZKIDTcpikbyyTFwllUDH9wQl980b5i8duR0wI/oJVScXuyVKTCA2J+yR2?=
+ =?us-ascii?Q?gge1SfndVgrESlYPt4ElIVehuU1gI883YoH5xqCERwJHB729Lg1HVZCRk2Q2?=
+ =?us-ascii?Q?HrQ1wLph0b1G+Jn816Rqn/5ML9UkhiM8uja4Yq1sJl8eWiBV6/6w0Z6wbjMg?=
+ =?us-ascii?Q?oMimE956r1HJlN4aQ6DgPEmeO8t4IoXEkIoKacR2+WbEoCKSTrB1Thc7LyKr?=
+ =?us-ascii?Q?AWMgBEPJOB1WItoceM07QdCJpy9sG7IxkYWTuURZaalhgKn+n8Au07/km6aw?=
+ =?us-ascii?Q?IVRk3okj+pa/CsEOD8k7oRwenRLx1hHn6m6jyrT0n1A5iIMXkTsJP0YHYfF7?=
+ =?us-ascii?Q?9AhiLFo+AWKtGSKk0XFlZpwYwfTnW1LH4ZEZ8ADNJgTwuIfbHLR51KepsVnR?=
+ =?us-ascii?Q?6kUYj9oMVLXbPryFjrrTRzkh4Z4TYlGD55kRvo/4o4B1NUX+gmad2nXtb+tz?=
+ =?us-ascii?Q?fRURSfRTMEbXOhqgIudiOsa7Ia0rZACaKWghGCSZvic+Np2CqFna9npDPnOp?=
+ =?us-ascii?Q?gd+80fArOqxxS/3/tJpzDJ7wkoY8Mb7TF83DjUWTW+296Rva0E+pZ7iXi8h6?=
+ =?us-ascii?Q?NkXuU7al1qrDGEoa+VzypKpGLNJa2UUm7GZR7UiEkp4zRqiSyJt9buL1PS+t?=
+ =?us-ascii?Q?Pc3QpWrBErQKbHT1nMJBj/q3V3keF+3pyvg6vWQ3dPrCaGorGDkbvIl/R9f2?=
+ =?us-ascii?Q?/jCse1r4D84/QqYTVX653940Gw6SJMH1OcbxfDKxuk7qo+mU5I7Z3M6EX3B7?=
+ =?us-ascii?Q?bweFYx6YHgXoYobqbwYxaffnuR+t+l5phJaMUzC/xI0+gNFthDYG23oGge9n?=
+ =?us-ascii?Q?sSRsBPEb1C34Yf++eR3ih/WBxAHauMVS741Vdqh7zs6sUjK+E9FST649rw?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2025 22:40:30.2539
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d17624c9-37fc-4dab-f45a-08ddc3276fca
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002BA50.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6225
 
-On Fri, Jul 11, 2025 at 09:13:47PM +0530, Prahlad Valluru wrote:
-> From: Shashank Maurya <quic_ssmaurya@quicinc.com>
-> 
-> Enable DPTX0 and DPTX1 along with their corresponding PHYs for
-> qcs9075-iq-9075-evk platform.
+From: Ashish Kalra <ashish.kalra@amd.com>
 
-Please add corresponding dp-connector devices.
+Implement an API that checks the overall feature support for SEV-SNP
+ciphertext hiding.
 
-> 
-> Signed-off-by: Shashank Maurya <quic_ssmaurya@quicinc.com>
-> Signed-off-by: Prahlad Valluru <venkata.valluru@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts | 52 ++++++++++++++++++++++++
->  1 file changed, 52 insertions(+)
-> 
+This API verifies both the support of the SEV firmware for the feature
+and its enablement in the platform's BIOS.
+
+Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+---
+ drivers/crypto/ccp/sev-dev.c | 21 +++++++++++++++++++++
+ include/linux/psp-sev.h      |  5 +++++
+ 2 files changed, 26 insertions(+)
+
+diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
+index 8f4e22751bc4..ed18cd113724 100644
+--- a/drivers/crypto/ccp/sev-dev.c
++++ b/drivers/crypto/ccp/sev-dev.c
+@@ -1074,6 +1074,27 @@ static void snp_set_hsave_pa(void *arg)
+ 	wrmsrq(MSR_VM_HSAVE_PA, 0);
+ }
+ 
++bool sev_is_snp_ciphertext_hiding_supported(void)
++{
++	struct psp_device *psp = psp_master;
++	struct sev_device *sev;
++
++	if (!psp || !psp->sev_data)
++		return false;
++
++	sev = psp->sev_data;
++
++	/*
++	 * Feature information indicates if CipherTextHiding feature is
++	 * supported by the SEV firmware and additionally platform status
++	 * indicates if CipherTextHiding feature is enabled in the
++	 * Platform BIOS.
++	 */
++	return ((sev->snp_feat_info_0.ecx & SNP_CIPHER_TEXT_HIDING_SUPPORTED) &&
++		 sev->snp_plat_status.ciphertext_hiding_cap);
++}
++EXPORT_SYMBOL_GPL(sev_is_snp_ciphertext_hiding_supported);
++
+ static int snp_get_platform_data(struct sev_device *sev, int *error)
+ {
+ 	struct sev_data_snp_feature_info snp_feat_info;
+diff --git a/include/linux/psp-sev.h b/include/linux/psp-sev.h
+index 5fb6ae0f51cc..d83185b4268b 100644
+--- a/include/linux/psp-sev.h
++++ b/include/linux/psp-sev.h
+@@ -843,6 +843,8 @@ struct snp_feature_info {
+ 	u32 edx;
+ } __packed;
+ 
++#define SNP_CIPHER_TEXT_HIDING_SUPPORTED	BIT(3)
++
+ #ifdef CONFIG_CRYPTO_DEV_SP_PSP
+ 
+ /**
+@@ -986,6 +988,7 @@ void *psp_copy_user_blob(u64 uaddr, u32 len);
+ void *snp_alloc_firmware_page(gfp_t mask);
+ void snp_free_firmware_page(void *addr);
+ void sev_platform_shutdown(void);
++bool sev_is_snp_ciphertext_hiding_supported(void);
+ 
+ #else	/* !CONFIG_CRYPTO_DEV_SP_PSP */
+ 
+@@ -1022,6 +1025,8 @@ static inline void snp_free_firmware_page(void *addr) { }
+ 
+ static inline void sev_platform_shutdown(void) { }
+ 
++static inline bool sev_is_snp_ciphertext_hiding_supported(void) { return false; }
++
+ #endif	/* CONFIG_CRYPTO_DEV_SP_PSP */
+ 
+ #endif	/* __PSP_SEV_H__ */
 -- 
-With best wishes
-Dmitry
+2.34.1
+
 
