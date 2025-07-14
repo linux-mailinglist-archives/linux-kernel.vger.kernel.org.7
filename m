@@ -1,171 +1,253 @@
-Return-Path: <linux-kernel+bounces-729715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86A6DB03AAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:21:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66515B03AB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:22:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 825A01669FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:21:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA4E03ADE67
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD1F241686;
-	Mon, 14 Jul 2025 09:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378DC24111D;
+	Mon, 14 Jul 2025 09:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jRJpb3zk"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U/fwuVb7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A9D20966B;
-	Mon, 14 Jul 2025 09:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752484856; cv=none; b=VBMMUyRoEqF0xqaAfHGCbjHocqK582+osUxpzTFrVqkc0GWrohOzMV6HWq1JYWdyK0Y1VfulqIOHun0yTZE58h+Z1rn1dLyHs1ow+n+wtWzqk/nKTfV/vj6hN2qPmkSQGR+YXkzYaugq2b7DDLgcsFx/GKHQRYua5qP0QZySqLA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752484856; c=relaxed/simple;
-	bh=nsJCzN1RuvWH0xipKFOTbj1OfP0Tz1nFWOA2QY/vEq4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Jk4LWla5/71LNzFmMmTaCEcSbmt1vbc8wxT9Q3vXTlnRsyMTqy0jl5CJNrwKBFk5hRD/I96cFAMSyrMBWKFYEm4ZC4VOrJDYRyT2mJDfGN0DP/ecsGevD1TnlJhMMiHZ/QX1sNKXi1efHwbvuIQcJT6Cuog2g7uzbKpgtv02/98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jRJpb3zk; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56E9KCVD2579656;
-	Mon, 14 Jul 2025 04:20:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752484812;
-	bh=VpRIsrh/SskIsYvaFioLSeLx3UZ4lfhfIHEZTyHFdm4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=jRJpb3zkCM2TPcl/pnOSPoKvoGNKE2RRL8R3vySw8ty8MIGmfwjLeyF/u2TXmutp1
-	 3kg/8FTnKIMknYEV9gFX7feo6LK+SBynXsCac5zuUWnOD1argqveNGhHjY4N5Ds1IG
-	 V6LF4DGptIMEQl/nT4H3TZDsByJhpPtZ57s301+M=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56E9KCRv3165019
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 14 Jul 2025 04:20:12 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 14
- Jul 2025 04:20:11 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 14 Jul 2025 04:20:11 -0500
-Received: from [172.24.26.195] (lt9560gk3.dhcp.ti.com [172.24.26.195])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56E9K55c269797;
-	Mon, 14 Jul 2025 04:20:06 -0500
-Message-ID: <268f6849-efc6-4663-af20-f6726bd4b78d@ti.com>
-Date: Mon, 14 Jul 2025 14:50:05 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652B820966B;
+	Mon, 14 Jul 2025 09:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752484935; cv=fail; b=eoqoD2eIsY4iqaMiMo5L/rsVSWE5sup7umVeyrzS2Lx46COK7DBsEFRHhGN/bHLewdhAtxPi0XA/b18PaD2OnRPR+LnzDDhp9v+69OUxXqMT8qoznp4PeBW+nfya4vyMLt0rTBU5Pq0sAb0eSuo44pvCGSzXgLVrXl709grdCBM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752484935; c=relaxed/simple;
+	bh=Dn6haXKl0aA8b8DcEln62Cr8pPmeiocBEvev2D/u1Is=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=nA9qPhFEuvekfjiwMylsr3vmu9PsV6R5QPxlR3+vjAuV1w5IsGhVUnz+1UmuXHlu/Glk1y4anUFkSSgRv3OC35cqjueUfhdcn2oTsj3H2MuWdSwKNvN7IcqMLBckAB2O00plNxUbUHocL1e6iIDVFQmq4hp1QDmzthgx2UWQ/fg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U/fwuVb7; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752484934; x=1784020934;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=Dn6haXKl0aA8b8DcEln62Cr8pPmeiocBEvev2D/u1Is=;
+  b=U/fwuVb7Pny5JY8NQ7PHFL3YHXnSV0kjl4Q5lufZfOstBggRdpbp4ZtY
+   YRZVfUVDvdE5kvRgrl5DvqDY8eXIeY5Cmu/gIu99Yh9skBrNLqW1wjWbI
+   6AcKIyPwAW4GwL8ygsGHdc8gYUi+fB+4Kysfke0TgXeBV0kJK3fLBHjIB
+   XEBnVL6keySlhYhKK3qr8x9948+tiObSpI6oxf5SJWbIYqv6r7jYY0m5h
+   oyo0bOfw3eqbysE0FK9O1F6QNCmJCjvXqVBA6sQBpiPELJW2h9Ik7Lx/7
+   6TUHl1yG3pHRV5ieBr/e2VZMO0wXK3xJ3yOLG01vORJ0Dbmx/J7H7LUg0
+   A==;
+X-CSE-ConnectionGUID: Ps1ahYDeRGyytbQYIW9s9A==
+X-CSE-MsgGUID: 7G/s3oFeS7OktHAdaOCs6g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54798567"
+X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
+   d="scan'208";a="54798567"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 02:22:13 -0700
+X-CSE-ConnectionGUID: lit6y9qvTaKj3iwDM3BrHA==
+X-CSE-MsgGUID: LsSAE084SKO7Lu88K+nORg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
+   d="scan'208";a="160906513"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 02:22:12 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Mon, 14 Jul 2025 02:22:11 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Mon, 14 Jul 2025 02:22:11 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.40)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Mon, 14 Jul 2025 02:22:11 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bkUFjtBUGLMfR5atY6pF95h9DJtMZA1Hw6jpFzqNcPkTPqbs5lfkmuX1VClIeu9WiyxECtvEc7IMBA5E2Lp4EWqP5ld44IfZboslfD9xw4iBp84oENzPNzPwEu/jC0t7XL7BaGd/lhvx5ybeytUSH08fj7Pic9TqK4vtpofbM42eyVXg/tqfcB9qe8954ovKYYZ9g99N+19d5w5yvJbtNKFzuFf5zfM5tzHZYqBqOwu/2/70DinHCX3lnIbBXaTX+d3EYcE3ihTSvc9orUM7HgOBaUohOZfjaNEnmfzlvgLXa+tSs2Gf2E3P6e7tmAkQEra7iI1uzUsLbcMin1jFwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rN2HaEmMZLrToZjjB3RaLkgny88M724BvQYdFMFc/V4=;
+ b=FHrNnq3ueI6ze9hRCDWujD5xC7iuiXy+WZGGBI9BGdFxPDr1keMrJNzYVf/cewe3Ql52LYimqN5TVl8FLeZvMgDyov2IvUZq1pfEBSGtbJZuBY2PuibSH4ZRfG+YwVM/yzVUhQIV0RkUNj1fD8bDy8/WdpcWHh7g9cI/dKjGIT245eY4MqjAcu7mqZSVdIJHv7FdXu1nz2SF5dYINwH/7xRfqwAjkeaN/yld/+NmWWlqRsZNI4LIUlb0aMJV6AlrG0ZjZ0e3nWZKCX0TSHH70zEAU8VBvCEbk35XgXjj1IUcNy/WOgf/L0Y/vv705PBYeHfMJKLzarBqQJqIheIduQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by IA0PR11MB7259.namprd11.prod.outlook.com (2603:10b6:208:43c::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.29; Mon, 14 Jul
+ 2025 09:22:09 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%6]) with mapi id 15.20.8901.033; Mon, 14 Jul 2025
+ 09:22:09 +0000
+Date: Mon, 14 Jul 2025 17:21:56 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: <linux-coco@lists.linux.dev>, <x86@kernel.org>, <kvm@vger.kernel.org>,
+	<pbonzini@redhat.com>, <eddie.dong@intel.com>, <kirill.shutemov@intel.com>,
+	<dave.hansen@intel.com>, <dan.j.williams@intel.com>, <kai.huang@intel.com>,
+	<isaku.yamahata@intel.com>, <elena.reshetova@intel.com>,
+	<rick.p.edgecombe@intel.com>, Farrah Chen <farrah.chen@intel.com>, "Thomas
+ Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "Borislav
+ Petkov" <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter
+ Anvin" <hpa@zytor.com>, "Kirill A. Shutemov"
+	<kirill.shutemov@linux.intel.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 03/20] x86/virt/seamldr: Introduce a wrapper for
+ P-SEAMLDR SEAMCALLs
+Message-ID: <aHTMNK574ZDIcgHJ@intel.com>
+References: <20250523095322.88774-1-chao.gao@intel.com>
+ <20250523095322.88774-4-chao.gao@intel.com>
+ <aHEYtGgA3aIQ7A3y@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <aHEYtGgA3aIQ7A3y@google.com>
+X-ClientProxiedBy: SI2PR01CA0025.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::10) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC net-next 0/5] net: ethernet: ti: am65-cpsw: add AF_XDP
- zero copy support
-To: Roger Quadros <rogerq@kernel.org>,
-        Siddharth Vadapalli
-	<s-vadapalli@ti.com>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov
-	<ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard
- Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Sumit
- Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?=
-	<christian.koenig@amd.com>
-CC: <srk@ti.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <bpf@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>
-References: <20250520-am65-cpsw-xdp-zc-v1-0-45558024f566@kernel.org>
-Content-Language: en-US
-From: "Malladi, Meghana" <m-malladi@ti.com>
-In-Reply-To: <20250520-am65-cpsw-xdp-zc-v1-0-45558024f566@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|IA0PR11MB7259:EE_
+X-MS-Office365-Filtering-Correlation-Id: e3aa0f0e-c8ae-4fd3-2122-08ddc2b7e871
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?tZYivFAgOSktbxKR8kp1n6+e2TCpBu9qwZ+U5OSYwr9kJr8AnhFnk2QXDvNF?=
+ =?us-ascii?Q?9vv4i17uxt+jjSvclnaIJlpHlVg6eUmFZcWfi0fLllVbaTC3tlo62i/RaqXE?=
+ =?us-ascii?Q?hmn+3J9YazZ5yE/PLMpfFaJH/5zbCg5oZgaDNhB0UPNtyeQGFNZt8jX7RMIR?=
+ =?us-ascii?Q?PQfLSdRDqQ8p9yR5VtbpGTSNENBeXAKiRRH8I5LCwSC6ugt6djj4XsrG9Tfc?=
+ =?us-ascii?Q?n/SBmSzQyGDRW7sQGJrTeReLzq/PH7TJ1TWtwW1mhboLuNVNBHJuJmzJVa78?=
+ =?us-ascii?Q?zmALWPMsJ60Fzb7tqZXpNSiWaMXNYVB6QsQH8x7zTt91NEBclyVFN7TLI0VN?=
+ =?us-ascii?Q?gXmi/JsQWu7g8ez7cLWpkIU3W7p0Xr8JEGQVrDr2p8PikJ58SkdjWLtg4A1R?=
+ =?us-ascii?Q?pOrxM09/buIzs0TKUEpL+nFf08xRHjoRGBsldJeD4niozA27JFVpZ2KoWgWG?=
+ =?us-ascii?Q?AHi5Xmj7RAyWaIn+/WDC7B8R8qumOz19CbgWjHq5GYxGxjQRRwOOD8h3yUk7?=
+ =?us-ascii?Q?46pPtwB9VK/Sq/ih6jJZUCrLee8WjPChkVQvMyCCYja7UTnnf66NolVZawPO?=
+ =?us-ascii?Q?in7c3biGOLp/k4Do26RRpG0eKtUfmZux7zRPFzjTBy+J9RvlfnhlLVi4Nnll?=
+ =?us-ascii?Q?F5vOk/Ib4tt8uTERINEQuJWRoKb2cLXKVxj6uEeGDaSsDs2pvInpnNtviRPf?=
+ =?us-ascii?Q?AJINQliT3IxAIDIMDvcu30KRLjAdBc7TA57u3vUgaWJ6HYjdg3JCk6pH39BP?=
+ =?us-ascii?Q?w+h1unl32Po3fSi9hT3DJoa/57EtRP5xVNMwFlDiQIsYSeZ3i0g3lRHeUGay?=
+ =?us-ascii?Q?JOHhORvgqw88VDCbJ2wzdU7E7VJq1/O3oVERYrCb7P8Mg5u74mLGC5wa25ig?=
+ =?us-ascii?Q?eSo0yjUPD/OxR9OCi8sD0DW6twE+V9Nwe77d8oZ2vvtEix5On/I597uNzBDi?=
+ =?us-ascii?Q?pApsxSYyUN/Kl/7k4K8GCplJ7g5/CSa0g1mGKgxSmrtE1NpbDRhMPTbw+Mlt?=
+ =?us-ascii?Q?GtOmEFvV6+RruoUeS3uYZwRe2p1qFzaZRpPUj6AeKxyqLKUwTO3X+PFjjUd+?=
+ =?us-ascii?Q?fKbQVhz09VNZjZJ9TG8H0+FVxPOSCV3xoNzcb0F8kfrPJD9ujFw050Do3hVV?=
+ =?us-ascii?Q?Fokadun8gDHgFraloOLrJKRSwmcfS6T40lQDRIl0r3tyeK4o0WeUJJjdmOfe?=
+ =?us-ascii?Q?A8YOQnGDKs3yBohsD8gh4NaYYRxkqg7NITIGeFKgpncz5uADaF6JspfXUXoR?=
+ =?us-ascii?Q?k3SgBCsm8jiRivTBruXdriVQ6o0Lukazo1qdyqfPGTlVOo7xZ+5DpvwB0hcT?=
+ =?us-ascii?Q?SHljwasRMeQAkrWEnxMt86gYPnodYR2ZZHZmIvODb6Rhbcu9PbhQ+ZZCXijS?=
+ =?us-ascii?Q?EyB/71U+Vb9/Nu/scIHK9+l3ogr88SuM5TAO/sY9g05DReFfqKVJyHpdDVaN?=
+ =?us-ascii?Q?R07isutBqYo=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?FV1d0t8u5a2dugO+13Q1afqwSDKhrOGWKdz8LNSnbTwx0LYCafO9eTl69RCX?=
+ =?us-ascii?Q?kPyY4Sdo1cbIkw2GZPfYyveyJS/YUzbWiEzSlfS0rTL1DOE6OqGNCgEoHLK1?=
+ =?us-ascii?Q?G91JBVmQXFSw3/u3dJ7bvbBLyoh077v9pU83gtY6TF0XztcFvjWRPjqdb0ba?=
+ =?us-ascii?Q?iObOECnSvMAGca9sciCKwsFxnryhSn78W0BZ9+FckMW5Uwo0H5zzEztSgcv0?=
+ =?us-ascii?Q?11jrCFPE9WjSqRUGtaXyjzpKL4F1rNLSb0/xXvQTwDqB4UgjRPa4DaIoUisI?=
+ =?us-ascii?Q?7IKh8AUZmsW96D2hsgbyHir5eEyvsqXKtjRDlo6L/rFklUvUeRsSRqBRyAPh?=
+ =?us-ascii?Q?eko/JJEw3gap2w/oNLPAOGSHmSAOazw8UwJLDNra27jtSQxHIgDvswrwQadE?=
+ =?us-ascii?Q?OvJ4q7BWfJXLSiHnmfoiHzfVjZ1LR/NxEZkwa5VW/N14TrcmeX4AqInW8q42?=
+ =?us-ascii?Q?RSaZ9lyQDeQ9nol37ELR9VaI2sxDHXVpuff+EhJqOMaLOQsSSgAUZapQVHrm?=
+ =?us-ascii?Q?ZbiFMYG1rNV+9gY8maa7sUYsLF3oFMavhLXDEZyzXZgpD5lTLLgqRJx0i90W?=
+ =?us-ascii?Q?G+wUjw8dSTWImV02tcoZTYAwQfwPyqB/Ob+IpGzBerEPGXBzcF/1A87ymYQe?=
+ =?us-ascii?Q?6YjrmNyXLuegFLVbjkSGwrwXiUiMdyf7vc+XZ3pIJhAyBy/aKWcy6S2z0fZ8?=
+ =?us-ascii?Q?Rgj5wD13CHlBIOwLxEmTtMp0uDsYjFk8iccN+LDX9yIww5r4qGAILUgik/+t?=
+ =?us-ascii?Q?l/d1RkQ0s6OgSxYir6G24vmWNgRwW8DVuE8h3XQTR2okl4XxNA7U/+PrI0f1?=
+ =?us-ascii?Q?0alk8B4vFzlvNuA/U6U8bkdSPWiOPpyVHHfzsuRyEThK6wS2tgqEDpFX/Wta?=
+ =?us-ascii?Q?caSxueir0U3GL3op8F9iQlrOoc5HJ8TIeVeyqgJ9q2wHSbuCRUb6514j7vG4?=
+ =?us-ascii?Q?ZD/LKZO52Zaok2ZVRDcFIW03e/mO+F4ohlpfe5LHkLh6xxxTpXBOLg0OLR6+?=
+ =?us-ascii?Q?oscoYf/JW6OYbGH4At8awv9gWV7ffwjG2p8f/PY2IG6sQC6GQ1EGLwmG1/Ai?=
+ =?us-ascii?Q?XpiJ6uZenu9sjpOHXGCh/ckG1gDAvdwTU0xAFQSk9Bbr2XX2ue2Tr6Iobxe2?=
+ =?us-ascii?Q?tG3Dx+Q37bllUtZ6IPvO73DROGopaNilAThKNtHIm9zZzz0vmjuUN9uIYTYQ?=
+ =?us-ascii?Q?3QCNIGpyUMzV9KYMY+ojRrU5kn3lo+zOeicW9IR93FC1J8Ai7YAxK9Rj2aLa?=
+ =?us-ascii?Q?OHTpgrdcsV98n/QgDnpvo+MrqGJfsjjNMfelQq8by4+FU35Rxso4pU0NckAZ?=
+ =?us-ascii?Q?DF5CtRctF3mDYC/8+qQjG/1LpVPwLYAP31VUINVuFHBkOapp0DMpmudSQf0b?=
+ =?us-ascii?Q?8RnzOMEZY3kJV80efNmA0hza1++O/oGMMSjTweo3YjN1Pxrk1xhLHJal0LGE?=
+ =?us-ascii?Q?3iVTXYZLrgzxDuIy0whIAuzoQx/T+I5E7023xGf4dG0ZJGbEr9L1404y4elr?=
+ =?us-ascii?Q?G7h0e0IdDY6k6Y4KRUjLH/W6gZ4UF5aahtwf2Rv6UxsvZOPJ4eBCTiaapUam?=
+ =?us-ascii?Q?QAUij9NOJEsvKKudxEPC/5Co4uVQjDJElPNowNXR?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: e3aa0f0e-c8ae-4fd3-2122-08ddc2b7e871
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2025 09:22:09.3119
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: S1T20wK5DqKZhkE30z5YACHRH3MlnrTGWj3Pi5H/McHSjlVMMXkCMrTE41s8s1TtA/RjrcWZau2nujIbHLXpyg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7259
+X-OriginatorOrg: intel.com
 
-Hi Roger,
+>Regarding question #3 from the cover letter:
+>
+>  3. Two helpers, cpu_vmcs_load() and cpu_vmcs_store(), are added in patch 3
+>     to save and restore the current VMCS. KVM has a variant of cpu_vmcs_load(),
+>     i.e., vmcs_load(). Extracting KVM's version would cause a lot of code
+>     churn, and I don't think that can be justified for reducing ~16 LoC
+>     duplication. Please let me know if you disagree.
+>
+>I'm fine with the SEAMLDR code having its own code, because I agree it's not worth
+>extracting KVM's macro maze just to get at VMPTRLD.  But I'm not fine with creating
+>a new, inferior framework.  So if we elect to leave KVM alone for the time being,
+>I would prefer to simply open code VMPTRST and VMPTRLD in seamldr.c, e.g.
 
-On 5/20/2025 3:53 PM, Roger Quadros wrote:
-> This series adds AF_XDP zero coppy support to am65-cpsw driver.
-> 
-> Tests were performed on AM62x-sk with xdpsock application [1].
-> 
-> A clear improvement is seen in 64 byte packets on Transmit (txonly)
-> and receive (rxdrop).
-> 1500 byte test seems to be limited by line rate (1G link) so no
-> improvement seen there in packet rate. A test on higher speed link
-> (or PHY-less setup) might be worthwile.
-> 
-> There is some issue during l2fwd with 64 byte packets and benchmark
-> results show 0. I'm still investigating this issue.
-> 
-> AF_XDP performance using 64 byte packets in Kpps.
-> Benchmark:	XDP-SKB		XDP-Native	XDP-Native(ZeroCopy)
-> rxdrop		317		504		824
-> txonly		400		405		757
-> l2fwd 		207		264		0
-> 
-> AF_XDP performance using 1500 byte packets in Kpps.
-> Benchmark:	XDP-SKB		XDP-Native	XDP-Native(ZeroCopy)
-> rxdrop		82		82		82
-> txonly		82		82		82
-> l2fwd 		82		82		82
-> 
-> [1]: https://github.com/xdp-project/bpf-examples/tree/master/AF_XDP-example
-> 
-> To:
-> 
-> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+Agreed. And the code below makes perfect sense to me, so I will incorporate it
+into my next version.
 
-This series crashes Linux on am64xx-hsevm, when I tried nfs boot using 
-AM65-CPSW-NUSS driver:
-logs: 
-https://gist.github.com/MeghanaMalladiTI/d655a1c8ca88113ee7f5f57d6ab0ec4c
+Thanks for your prompt feedback.
 
-Seems like you have reverted the fix for the same bug which was reported 
-by Siddharth and fixed by Julien: 
-https://lore.kernel.org/all/7f7fb71a-6d15-46f1-b63c-b569a2e230b7@baylibre.com/
-
-reverted lines:
-		if (!common->ports[port].ndev)
-		/* FIXME should we BUG here? */
-			continue;
-
-Can you please take a look at it.
-
-> ---
-> Roger Quadros (5):
->        net: ethernet: ti: am65-cpsw: fix BPF Program change on multi-port CPSW
->        net: ethernet: ti: am65-cpsw: add XSK pool helpers
->        net: ethernet: ti: am65-cpsw: Add AF_XDP zero copy for RX
->        net: ethernet: ti: am65-cpsw: Add AF_XDP zero copy for TX
->        net: ethernet: ti: am65-cpsw: enable zero copy in XDP features
-> 
->   drivers/net/ethernet/ti/Makefile         |   2 +-
->   drivers/net/ethernet/ti/am65-cpsw-nuss.c | 526 +++++++++++++++++++++++++++----
->   drivers/net/ethernet/ti/am65-cpsw-nuss.h |  37 ++-
->   drivers/net/ethernet/ti/am65-cpsw-xdp.c  | 155 +++++++++
->   4 files changed, 656 insertions(+), 64 deletions(-)
-> ---
-> base-commit: 9f607dc39b6658ba8ea647bd99725e68c66071b7
-> change-id: 20250225-am65-cpsw-xdp-zc-2af9e4be1356
-> 
-> Best regards,
-
--- 
-Thanks,
-Meghana Malladi
-
+>
+>static inline int seamldr_call(u64 fn, struct tdx_module_args *args)
+>{
+>	u64 vmcs;
+>	int ret;
+>
+>	if (!is_seamldr_call(fn))
+>		return -EINVAL;
+>
+>	/*
+>	 * SEAMRET from P-SEAMLDR invalidates the current VMCS.  Save/restore
+>	 * the VMCS across P-SEAMLDR SEAMCALLs to avoid clobbering KVM state.
+>	 * Disable interrupts as KVM is allowed to do VMREAD/VMWRITE in IRQ
+>	 * context (but not NMI context).
+>	 */
+>	guard(irqsave)();
+>
+>	asm goto("1: vmptrst %0\n\t"
+>		 _ASM_EXTABLE(1b, %l[error])
+>		 : "=m" (&vmcs) : "cc" : error);
+>
+>	ret = seamldr_prerr(fn, args);
+>
+>	/*
+>	 * Restore the current VMCS pointer.  VMPTSTR "returns" all ones if the
+>	 * current VMCS is invalid.
+>	 */
+>	if (vmcs != -1ULL) {
+>		asm goto("1: vmptrld %0\n\t"
+>			 "jna %l[error]\n\t"
+>			 _ASM_EXTABLE(1b, %l[error])
+>			 : : "m" (&vmcs) : "cc" : error);
+>	}
+>
+>	return ret;
+>
+>error:
+>	WARN_ONCE(1, "Failed to save/restore the current VMCS");
+>	return -EIO;
+>}
 
