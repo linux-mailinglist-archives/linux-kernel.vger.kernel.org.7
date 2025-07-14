@@ -1,147 +1,180 @@
-Return-Path: <linux-kernel+bounces-730906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E40C3B04C40
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:27:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 770C4B04C44
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA5117A324F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:26:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0FDD1AA0FF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AB4263F4A;
-	Mon, 14 Jul 2025 23:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D143D2459E1;
+	Mon, 14 Jul 2025 23:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BdPqp6kt"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l/uSsZ+Q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2167C1DFCE;
-	Mon, 14 Jul 2025 23:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F01A126F0A
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 23:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752535647; cv=none; b=XyPP28Pq9vSR8WxpbCVWdkY0Q4bwkLaqXRv+6ezS99+TnmKJf1xyu0a5wYPMdbX+OsxoFmAykC2n2RHWB2l5TZT9fNTK5OAFoEGDmxF2jccu6rFv1e/6U9ejGk3cQjy7PqfxoISBAIhRJQ/joLuysO4KgHX73DSNoAdRkNTt6BY=
+	t=1752535771; cv=none; b=EA5OTk6bVNey7AzJWpbYv2q65o2HmqUw/nWSM/fflNoXFvWKIs5ovD46vriTKjVCyDJ7spane4eUzWJi/m13dMwOCt0Vbeedctgd4WB08vIdPpgykzcheM9goemUSNDUzJsuH2JawvmsUZIzwknxXosqE+89T12g/Lu+0ou5orI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752535647; c=relaxed/simple;
-	bh=oSMnXm8xNMGu8kyySNLUWLKWniZxyLqIJbwxo2+Cymw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fY8IMEVO1Xqqul0I8G2hCggiBY7+++34c5W0FKNlBUm7oF4BzuhjXYSwESuNTEr7NXdv0T0S8l0FSX8c/pEDZ5i1Ns+r95J6GsYeJt+ygnEx8OFnoZsfmnKqoCbC/yTnavgW+O4I/pA+vv3x8S9gw3JIbbPao+IodZ5Wmjfg9P8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BdPqp6kt; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60789b450ceso9060377a12.2;
-        Mon, 14 Jul 2025 16:27:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752535644; x=1753140444; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5cWUdw/XWL0wKty/4mlXjtObOvYTaL5gOM763vl3Zdc=;
-        b=BdPqp6kt6EpQn8WMNMOah/DVoZ9L3e5/jYIXheQTGUmvQ2jrgxYzPPuGU45lbrd5Tc
-         eu0627fjogu0z3Gvj5SI5saRy59iFH9+RTTgTIIbhcFjjxOMyOAhW1nxUaxz8R0fKJ/R
-         emgGnHd6/Zg4fDN+Y54lMHUnS1tthNU3vWexcnKWZZ6n/9gitzE7ASCzGCol+Q3Gex+Q
-         AcidJJxHmEhYDu7bFKgbFm6by/TXlTe35jkNiBxI/uXFSjscri+kkC9hB7r2RUVogeMW
-         w6a56/sC/dBStv44JcjtePWBEW2IYodxKmeFvsVfBOeYvCNiW3fOJq+4kX6sYQiFbYIV
-         CkNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752535644; x=1753140444;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5cWUdw/XWL0wKty/4mlXjtObOvYTaL5gOM763vl3Zdc=;
-        b=CUe385RzDTVpaNAd9ySdviNl9niB7B/qgWiDKtpkA6P7UfwBIIO0JQUwFYMqFTAM0h
-         qVgsWWJK3MJBR2xVPsJsRfDL4r8sO0iEIGZQRjrpJqXih4kabSL98k2IsbtCK+wrr9gt
-         CqrRKEu2bQG4O8wpEsHOMcYwTs7Atimb7tvwSn2drlxxuUn8FLipZNzT7iaFH/4q77lR
-         VycYO/EFxJFpFXKzHgl6aTu57DCQPJaWzVkLwsyYnybbGkwKFk5a7Ioe3oRW2ebjnaej
-         Ctmkp+sB9X/bFi3oRHLN2CdWpMLAwWNK1UKJDZvxT9yQrEAcNYZlOWKTAQOWNDKMn5Xr
-         imAA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6OqnAontJfVAhNPo3jFxV2RCRC8jj2vrPDxQHiG/SkneWKPoYe1O6tlsvyZEOQq6LTRXcPD9nmBXofeHK@vger.kernel.org, AJvYcCXI5iczKmUn/nQ6zqgLPXSatlP0YpebpOmWk0Lv9Tv4SlbsRllwQRO/GycOWaSAeycE6OZLas44gv1D4xcuaxg=@vger.kernel.org, AJvYcCXJh90YXQY2vz3TrH5C0Jl5Ze+yRUXvvLaxLhfKUzk02idnWIIXbeBGlolDzabzPnGmyJwcfjckAIDe@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRbJT9U8Zr9eUHyOCGcGm4vnvmnkIdpVI8FXECgRK3rFtdl0cU
-	c6LfRw5OLpWlFOvSTZ/An4GSHuJLbqtPa8Z6lJgTxCPVIcuJWM7sVVDrCmrdS5WU/upUgUoUvmi
-	zmnW3QKdbGMZg8qb/QKWcg7scZYGwv83m
-X-Gm-Gg: ASbGncuVOWsw3H7yUB2oh+7RxgkiNDtVhGgZ3VEMmCZ6NoKFNSXqNhzlQrR4Hx4flGz
-	CCBbgwq/6nL+Ept4i5qjJs2gKIsVdbx2alTcpvcY6I0XmA9KYCGP5oU3wiTOLxoKgWuONTe2zOW
-	uHqvJm3nt9YCtFcc4mho8GGAFs853OiPPvlFWVqj8fGQuiDtfb4ZBkGy0DZrNq+rkICgahdS/kM
-	YWXGys/XLKv9Tuvs5GMREQS3qEOgHPT8INWxugFQsUETyulHQ==
-X-Google-Smtp-Source: AGHT+IE1PoTMFQT9rN7uOrNQbjO/MTvhGrGizKsF8Ga/T1DM3Q0YSP9nliT/80O/sEv8vzCBNVnaHRdoGdRfcsiVDlc=
-X-Received: by 2002:a05:6402:5202:b0:608:50ab:7e38 with SMTP id
- 4fb4d7f45d1cf-611e7c21fa9mr14227624a12.14.1752535644154; Mon, 14 Jul 2025
- 16:27:24 -0700 (PDT)
+	s=arc-20240116; t=1752535771; c=relaxed/simple;
+	bh=9lpKrA2ZZdvS9r9T1azcHLeWuluBNKZeDSTH0hQdONA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dYNuUSF/ubRs82EGSEikhWVoZlDvMkzELWaYLMYrJaWA1AKKPch3v8RJZ8i0aB2TTC6xcQlbG1JLRrdt6Ecgpi0o5AawDf+3aNQ0s13g/s2SRiO2DUCuWMlWOVv58at1eKAUMm3VQO1/Z6bAFpoQmODfPNXzbnmbDRhbleNbR/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l/uSsZ+Q; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752535769; x=1784071769;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9lpKrA2ZZdvS9r9T1azcHLeWuluBNKZeDSTH0hQdONA=;
+  b=l/uSsZ+QRcrQGjP7lkTDqsLBiXJeLKeEvLoqAXkkw2otp7k/v9u0/I8T
+   bcvqr/ckmgsLmua0R95tXB6+tM55pW8fKIpxkJK3brXQtMiwVvCCLjafd
+   ahL9Xh18rUEPWfgPqi1To96HRosTYG7S9FGAadO38akYc/Zsr0EiYaXCU
+   1kXPctFpmUg4azdwgQsT+z+ZsAmJsrN04yEtqeNz9C/rHw6L/uKoQigOs
+   QuOqZQ+okMg53jL/4CtKm0+e5vDdKPx/f2y/nS/ERrLLy4yebw24Q8vIG
+   aD0veU6IVK85izyDCjuIpD/o5t9vYHSjLhiviwVBoIjCjlGkbD/SZWC2D
+   A==;
+X-CSE-ConnectionGUID: bD7wdelKQFazB3n/FH+08A==
+X-CSE-MsgGUID: kDOqIJYJTB6hptq7s8rzPA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="57350438"
+X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
+   d="scan'208";a="57350438"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 16:29:28 -0700
+X-CSE-ConnectionGUID: BcmVzP6PTyCPJ+A7+/JD2A==
+X-CSE-MsgGUID: NjRNO+U6SOetWUVJPnSGXw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
+   d="scan'208";a="194223439"
+Received: from vcostago-mobl3.jf.intel.com ([10.98.36.96])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 16:29:29 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: tim.c.chen@intel.com,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: [RFC] sched/fair: Mitigate the impact of retrieving tg->load_avg
+Date: Mon, 14 Jul 2025 16:29:14 -0700
+Message-ID: <20250714232915.523679-1-vinicius.gomes@intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714173554.14223-1-daleyo@gmail.com> <20250714173554.14223-8-daleyo@gmail.com>
- <prrra3lon2p4pugkgeytf5ow5wls62lfdnwcdykztw3qzwity2@d26aqh6wdyln>
-In-Reply-To: <prrra3lon2p4pugkgeytf5ow5wls62lfdnwcdykztw3qzwity2@d26aqh6wdyln>
-From: =?UTF-8?B?SsOpcsO0bWUgZGUgQnJldGFnbmU=?= <jerome.debretagne@gmail.com>
-Date: Tue, 15 Jul 2025 01:26:48 +0200
-X-Gm-Features: Ac12FXyokWE3P9WfHcZydzKzoz6l-6OPJ8mBLmVCv-L78yLEYDKASAdX8sAOtqw
-Message-ID: <CA+kEDGFR3FB=ead50kFBAL23-1dXo-LOMqhT7f=WecNMf_MaNg@mail.gmail.com>
-Subject: Re: [PATCH 7/9 RFC] dt-bindings: wireless: ath12k: Add disable-rfkill property
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Dale Whinham <daleyo@gmail.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jeff Johnson <jjohnson@kernel.org>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>, 
-	linux-wireless@vger.kernel.org, devicetree@vger.kernel.org, 
-	ath12k@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Lingbo Kong <quic_lingbok@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon. Jul 15, 2025 at 00:33, Dmitry Baryshkov
-<dmitry.baryshkov@oss.qualcomm.com> wrote :
->
-> On Mon, Jul 14, 2025 at 06:35:43PM +0100, Dale Whinham wrote:
-> > From: J=C3=A9r=C3=B4me de Bretagne <jerome.debretagne@gmail.com>
-> >
-> > Document the disable-rfkill property.
->
-> Why? What does it mean? Why are you describing Linux driver firmware in
-> the DT?
+Reduce the impact of update_cfs_group()/update_load_avg() by reducing
+the frequency that tg->load_avg is retrieved.
 
-rfkill should be disabled according to the Surface Pro 11's DSDT.
+This is "the other side" of commit 1528c661c24b ("sched/fair:
+Ratelimit update to tg->load_avg"), which reduced the frequency of the
+"store" side, now it's reducing the frequency of the "load" side.
 
-https://lore.kernel.org/all/20250113074810.29729-3-quic_lingbok@quicinc.com=
-/
-has added support to read the ACPI bitflag when ACPI is supported.
+Sending as a RFC because I want to point out that there is still
+contention when updating/loading the load_avg of a group, I do not
+believe that this particular piece of code is the solution.
 
-The idea was to expose one specific feature (DISABLE_RFKILL_BIT) for
-devices described with a DT, so that the feature can be disabled.
+On a series[1] with a similar objective (and independent), it was
+pointed out that perhaps the effort was best spent on something like
+this:
 
+https://lore.kernel.org/all/20190906191237.27006-1-riel@surriel.com/
 
+Would that be the way to go?
 
-> >
-> > Signed-off-by: J=C3=A9r=C3=B4me de Bretagne <jerome.debretagne@gmail.co=
-m>
-> > Signed-off-by: Dale Whinham <daleyo@gmail.com>
-> > ---
-> >  .../devicetree/bindings/net/wireless/qcom,ath12k.yaml          | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k=
-.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-> > index 9e557cb838c7..f15b630fb034 100644
-> > --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-> > +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-> > @@ -48,6 +48,9 @@ properties:
-> >    vddpcie1p8-supply:
-> >      description: VDD_PCIE_1P8 supply regulator handle
-> >
-> > +  disable-rfkill:
-> > +    type: boolean
-> > +
-> >  required:
-> >    - compatible
-> >    - reg
-> > --
-> > 2.50.1
-> >
->
-> --
-> With best wishes
-> Dmitry
+Just to make it a bit more fancy, some perf numbers, running:
+
+$ ./schbench -r 60
+
+* current master:
+-   68.38%     0.05%  schbench         schbench                     [.] worker_thread
+   - 68.37% worker_thread
+      - 56.70% asm_sysvec_apic_timer_interrupt
+         - 56.10% sysvec_apic_timer_interrupt
+            - 54.32% __sysvec_apic_timer_interrupt
+               - 54.11% hrtimer_interrupt
+                  - 49.99% __hrtimer_run_queues
+                     - 48.08% tick_nohz_handler
+                        - 47.02% update_process_times
+                           - 39.41% sched_tick
+                              - 27.31% task_tick_fair
+                                   12.88% update_cfs_group
+                                 - 9.61% update_load_avg
+                                      3.52% __update_load_avg_cfs_rq
+                                      0.72% __update_load_avg_se
+
+* patched kernel:
+-   66.27%     0.05%  schbench         schbench                     [.] worker_thread
+   - 66.26% worker_thread
+      - 52.47% asm_sysvec_apic_timer_interrupt
+         - 51.87% sysvec_apic_timer_interrupt
+            - 50.19% __sysvec_apic_timer_interrupt
+               - 49.97% hrtimer_interrupt
+                  - 45.06% __hrtimer_run_queues
+                     - 42.77% tick_nohz_handler
+                        - 41.64% update_process_times
+                           - 33.32% sched_tick
+                              - 19.33% task_tick_fair
+                                 - 7.72% update_load_avg
+                                      4.24% __update_load_avg_cfs_rq
+                                      0.80% __update_load_avg_se
+                                   6.63% update_cfs_group
+
+I can see some improvements in schbench, but seem to be in the noise.
+
+[1] https://lore.kernel.org/all/20250605142851.GU39944@noisy.programming.kicks-ass.net/
+
+Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+---
+ kernel/sched/fair.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 7a14da5396fb..c23c6e45f49d 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3980,6 +3980,7 @@ static void update_cfs_group(struct sched_entity *se)
+ {
+ 	struct cfs_rq *gcfs_rq = group_cfs_rq(se);
+ 	long shares;
++	u64 now;
+ 
+ 	/*
+ 	 * When a group becomes empty, preserve its weight. This matters for
+@@ -3991,6 +3992,14 @@ static void update_cfs_group(struct sched_entity *se)
+ 	if (throttled_hierarchy(gcfs_rq))
+ 		return;
+ 
++	/*
++	 * For migration heavy workloads, access to tg->load_avg can be
++	 * unbound. Limit the update rate to at most once per ms.
++	 */
++	now = sched_clock_cpu(cpu_of(rq_of(gcfs_rq)));
++	if (now - gcfs_rq->last_update_tg_load_avg < NSEC_PER_MSEC)
++		return;
++
+ #ifndef CONFIG_SMP
+ 	shares = READ_ONCE(gcfs_rq->tg->shares);
+ #else
+-- 
+2.50.1
+
 
