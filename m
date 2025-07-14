@@ -1,172 +1,144 @@
-Return-Path: <linux-kernel+bounces-729276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B461B03430
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 03:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66421B03434
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 03:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7388C175B8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:34:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 006371754C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D58219D88F;
-	Mon, 14 Jul 2025 01:34:07 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E81119E97A;
+	Mon, 14 Jul 2025 01:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCiDyx0h"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E90153BED;
-	Mon, 14 Jul 2025 01:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE722E630;
+	Mon, 14 Jul 2025 01:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752456846; cv=none; b=UMenoUHJwjHr2sx5HC+oaJGczmZ6ihXv5w+bIlbq0/TbHaI3O3PbMRadleRhMEZ4Ft2q9V38AFxgELVB6SgRZ2giGAbVPp+g1k8/UDia8ygcMqNzOPaOHRhanmt0ecKKVQDHjU6Tvsiiw6c9mXShZ4JC8jtSD42rF2ydz0r/CsA=
+	t=1752457102; cv=none; b=hQiAcTULYQHoCmaCJ6MJoTsqrO0FYMzG1TonZwCJwMEoZJKPmuHcxFwbfPFS5Ko0GTTWHukHSs1kf+AHwKMHCe09ur+M6UwtwLLZGDTgokKfWkJkChOIeMzYUQqxEmfTe9+fsxR+6lVDqocmqA0SEDuUHAan+26bPYU2rKlQDSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752456846; c=relaxed/simple;
-	bh=yRSpgC7Rr4aHCZ7Ox1XCum5rSxpCLsdCyTsF1z5mcpk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RohKCo+lXo/EobA1OkGUwPX8t5OTUc8usTg3+Brt2cx7cLj7A0JN7eM/n3qUdJfGENpsE+ieoA5jQfw+riEI+NZ6pKfXEVH23fTCWQ03J6/VFctFOjLfsXvGFNtEED6lM+QRxztOqSPRsz4/1xUq+3c6Sma+ZJBDgMU9Y3+A7RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bgPtm5k7rz2FbPT;
-	Mon, 14 Jul 2025 09:32:00 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9CAFE1A0174;
-	Mon, 14 Jul 2025 09:34:01 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 14 Jul 2025 09:33:52 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 14 Jul
- 2025 09:33:52 +0800
-Message-ID: <4c1926ef-f9fa-49d5-8d5f-ed4ee2638d62@huawei.com>
-Date: Mon, 14 Jul 2025 09:33:51 +0800
+	s=arc-20240116; t=1752457102; c=relaxed/simple;
+	bh=DHusJ3vyligIBarK8AcXZdKTmRrphxVq4ktA+nGAWI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sfG/VxMGCwXfZ6Mfko6mm9MLcxPeX8xpJK31rngQlYeYeDpjHz5+YEqC4zTq3TueIkPH7buyOkgFmqmYw6LsMaXWj3i8bM3jlwZljf7ufEQA4GEDxQ7HgtEx1eQH3QAkiq+P9Ndo17NXi++WdCfCgd1uv4y8yJodlrqD/qZBMIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UCiDyx0h; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-234d3261631so29370745ad.1;
+        Sun, 13 Jul 2025 18:38:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752457101; x=1753061901; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=CtcreD6AJjdJvbgPMY2aPGi0VXiodaMP38me0CGQ908=;
+        b=UCiDyx0hIAWjLBzVlTfe74nwQ81doQqiVMy+C4HEHTL3Bo5UN36pNq2lkGcCV8W9K/
+         5DVyqwNGZ5JGkeTXc5cVvPnUHdq41BEQckWmnECHdk2SUCHvl8JJctFOn55sBsvyJus0
+         g+sD1tForp0JEBMFUvBdI4WFg2BG7XXl8i6EDeO7KndHf5o9ioM9RNubMB6YQfgcSZKB
+         NoeLB3AVs7dkaahBQZ2s8QQNbhHNvq+CPeqRNIABpnjUUAvzwNRSKmNN+4+o8wGZ0X9W
+         EXqUQS7CA/hjefQIFAu/IW5eLKSsK2xczx/+0RzRUPbjToTZfCGXOoJotYXd74vXICVU
+         mSng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752457101; x=1753061901;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CtcreD6AJjdJvbgPMY2aPGi0VXiodaMP38me0CGQ908=;
+        b=Oljyz5Sc8/1BtZWdbSJk3SDBEOzQIuv7Dxso4KG9vMEAJ0+r5nX7fjPbuld7Wb4jpz
+         iBBQJs9kAwpz2sEe8xpx9J9qdlkbR+FiyOopQVon+HdAhKKvmBfK0FX5cdpBM8yf1YRd
+         Zhav7pNj89CN7m84FEvUUOMZHBu7MG969/e1paKhYBv+2LsXiWg827+5NJ/h4Bllu5Tm
+         X8fJOGGpqzu5AK5IqWZMXJhUV+9ur4zYC+BkmRqiAU5+nTZMSFE34U3VH4d7SACkaJes
+         8CChA3ap2mGiTjhwV0c7roKR8tLPA4lzpMw3otGu2ZUh6+s4fqyhYOWRcwbs1xlLMe8x
+         GImw==
+X-Forwarded-Encrypted: i=1; AJvYcCVD5RJ2Il201ODSWong10sd7w3T0/hJ+guJfJMW8OGG4Nrtpa7ZMSPe6JqO5qxkIFdbtw/p8ztUJyiS@vger.kernel.org, AJvYcCXzursX3SkkLX7VOzNMcprQ9bER3yJWHFlzHI+0B1y6oN3sWD/UfXMs7gzfRBPn6EMX0Olsvg64uXIF5lqq@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgqXlctAAUkRmqXea8q8GGlCSMb2HYTVqRmYbxg3VSN6KDkswa
+	SM2vL3wLhDBMsgvWe7fda8d0KprTGa88QD9asVDtenPJRTQG8a+mrCqx
+X-Gm-Gg: ASbGncsGD3cT1sf0n96BuOYU7vbGStSeXP3kGZitsaAnuzfaIG3VMez+D5pt6jeLssQ
+	cQYkabotRG82qtLhW1IlPii8Lb5Bc8wl4pUQHvEiOo+H/UfugEsDtr7oCG83hOF+0dnT2DweMC8
+	0BC370TqGWMxO0AWO75Ods6z81dQxONKO6NAHGJ82Ka9sd6gxkSpughIc3lJ5nAzfmg41mybza4
+	fZn9fslllG74yWHiwfbn3zg9aH1bGRwzYftV0ic8ZI3WUGhruiZEyCc8jC8T0Aiz+lGxvX4LM1f
+	nCUxYzJeOiWBaoHPVvldZRgaO6zZWdq9p+obuMCON60RdTrp27jf+GPzYxA64la4Y8lrFm6jFyA
+	TBSmolviat+46GCbckvqi7gv50e0W1dx+dkfBM5XtVi+clER1wQ==
+X-Google-Smtp-Source: AGHT+IEIRUYRqdI+zg7zKmJp6H3n+T7xR/d9+UN+LenXlPemYbXlm4SkmvEEau4mVAJEmnAi/H+H7A==
+X-Received: by 2002:a17:903:46cd:b0:235:655:11aa with SMTP id d9443c01a7336-23dede92f44mr173918115ad.39.1752457100589;
+        Sun, 13 Jul 2025 18:38:20 -0700 (PDT)
+Received: from rigel (61-68-193-107.tpgi.com.au. [61.68.193.107])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4359b6fsm81283295ad.212.2025.07.13.18.38.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Jul 2025 18:38:19 -0700 (PDT)
+Date: Mon, 14 Jul 2025 09:38:13 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Jan =?iso-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>,
+	Marek Vasut <marex@denx.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v4 00/10] gpio: sysfs: add a per-chip export/unexport
+ attribute pair
+Message-ID: <20250714013813.GA12284@rigel>
+References: <20250704-gpio-sysfs-chip-export-v4-0-9289d8758243@linaro.org>
+ <CAMRc=Mc7HaVjchDWN_oWUuqgVZbj3ZVYvU-bwiA+ZUH+0gEXSQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: processor: idle: Fix resource rollback in
- acpi_processor_power_init
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>, <zhanjie9@hisilicon.com>,
-	<zhenglifeng1@huawei.com>, <yubowen8@huawei.com>, <liuyonglong@huawei.com>,
-	<lihuisong@huawei.com>
-References: <20250619061327.1674384-1-lihuisong@huawei.com>
- <CAJZ5v0gjkZ3a-BwgJxjUJbNwu5E_j9VUUHrR3M=a+KPTA-tZcA@mail.gmail.com>
- <6a35291a-32e8-461e-a0e5-405b7b5d24ce@huawei.com>
- <CAJZ5v0hXHgyCKoEOMTtp0c_yu__vGGDcPnqaUML2Xg7hyJWc3g@mail.gmail.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <CAJZ5v0hXHgyCKoEOMTtp0c_yu__vGGDcPnqaUML2Xg7hyJWc3g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+In-Reply-To: <CAMRc=Mc7HaVjchDWN_oWUuqgVZbj3ZVYvU-bwiA+ZUH+0gEXSQ@mail.gmail.com>
 
+On Sun, Jul 13, 2025 at 10:48:03AM +0200, Bartosz Golaszewski wrote:
+> On Fri, Jul 4, 2025 at 2:58 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> >
+> > Following our discussion[1], here's a proposal for extending the sysfs
+> > interface with attributes not referring to GPIO lines by their global
+> > numbers in a backward compatible way.
+> >
+> > Long story short: there is now a new class device for each GPIO chip.
+> > It's called chipX where X is the ID of the device as per the driver
+> > model and it lives next to the old gpiochipABC where ABC is the GPIO
+> > base. Each new chip class device has a pair of export/unexport
+> > attributes which work similarly to the global ones under /sys/class/gpio
+> > but take hardware offsets within the chip as input, instead of the
+> > global numbers. Finally, each exported line appears at the same time as
+> > the global /sys/class/gpio/gpioABC as well as per-chip
+> > /sys/class/gpio/chipX/gpioY sysfs group except that the latter only
+> > implements a minimal subset of the functionality of the former, namely:
+> > only the 'direction' and 'value' attributes and it doesn't support event
+> > polling.
+> >
+> > The series contains the implementation of a parallel GPIO chip entry not
+> > containing the base GPIO number in the name and the corresponding sysfs
+> > attribute group for each exported line that lives under the new chip
+> > class device as well as a way to allow to compile out the legacy parts
+> > leaving only the new elements of the sysfs ABI.
+> >
+> > This series passes the compatibility tests I wrote while working on the
+> > user-space compatibility layer for sysfs[2].
+> >
+> > [1] https://lore.kernel.org/all/CAMRc=McUCeZcU6co1aN54rTudo+JfPjjForu4iKQ5npwXk6GXA@mail.gmail.com/
+> > [2] https://github.com/brgl/gpio-sysfs-compat-tests
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > ---
+> 
+> Alright, so what are we doing about this? Should I queue these patches
+> for v6.17? Kent, any additional comments?
 
-在 2025/7/3 19:09, Rafael J. Wysocki 写道:
-> On Thu, Jul 3, 2025 at 8:23 AM lihuisong (C) <lihuisong@huawei.com> wrote:
->> Hi,
->>
->> Thanks for your review.
->>
->>
->> 在 2025/7/3 1:42, Rafael J. Wysocki 写道:
->>> On Thu, Jun 19, 2025 at 8:13 AM Huisong Li <lihuisong@huawei.com> wrote:
->>>> There are two resource rollback issues in acpi_processor_power_init:
->>>> 1> Do not unregister acpi_idle_driver when do kzalloc failed.
->>>> 2> Do not free cpuidle device memory when register cpuidle device failed.
->>>>
->>>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
->>>> ---
->>>>    drivers/acpi/processor_idle.c | 24 +++++++++++++++++-------
->>>>    1 file changed, 17 insertions(+), 7 deletions(-)
->>>>
->>>> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
->>>> index 2c2dc559e0f8..3548ab9dac9e 100644
->>>> --- a/drivers/acpi/processor_idle.c
->>>> +++ b/drivers/acpi/processor_idle.c
->>>> @@ -1392,8 +1392,10 @@ int acpi_processor_power_init(struct acpi_processor *pr)
->>>>                   }
->>>>
->>>>                   dev = kzalloc(sizeof(*dev), GFP_KERNEL);
->>>> -               if (!dev)
->>>> -                       return -ENOMEM;
->>>> +               if (!dev) {
->>>> +                       retval = -ENOMEM;
->>>> +                       goto unregister_driver;
->>> No, unregistering the driver here is pointless.
->> I don't quite understand why here is pointless. Can you explain it?
-> When this function is run for another CPU, it will attempt to register
-> the driver again if it is unregistered here.
-Yeah, got it.
-So registering cpuidle also has a potential race issue here.
->
-> Quite frankly, the driver should be registered before running this
-> function because it is a CPU hotplug callback and registering a
-> cpuidle driver from within it is quite questionable.
->
-> Alternatively, it can be registered when all of the CPUs have been brought up.
-Agree with you.
-The reason why is that the initialization of acpi_idle_driver depands on 
-the power management information of CPU.
-But the power management information of CPU is obtained in this callback.
-I have an idea.
-Because acpi_idle_driver is applied to all possiable CPUs. And use the 
-power information of the first onlined CPU to initialize and register 
-acpi_idle_driver, currently.
-So I think we can use this logic and dependency to extract a function to 
-initialize and register acpi_idle_driver. And put this function to 
-acpi_processor_driver_init().
-I tested it is ok.
-What do you think about this?
+Nothing beyond what I've already said.
 
-/Huisong
->
->>>> +               }
->>>>                   per_cpu(acpi_cpuidle_device, pr->id) = dev;
->>>>
->>>>                   acpi_processor_setup_cpuidle_dev(pr, dev);
->>>> @@ -1402,14 +1404,22 @@ int acpi_processor_power_init(struct acpi_processor *pr)
->>>>                    * must already be registered before registering device
->>>>                    */
->>>>                   retval = cpuidle_register_device(dev);
->>>> -               if (retval) {
->>>> -                       if (acpi_processor_registered == 0)
->>>> -                               cpuidle_unregister_driver(&acpi_idle_driver);
->>> Pretty much the same as here.
->>>
->>> It would be good to clean up dev here though.
->> It is ok if above is pointless.
->>>> -                       return retval;
->>>> -               }
->>>> +               if (retval)
->>>> +                       goto free_cpuidle_device;
->>>> +
->>>>                   acpi_processor_registered++;
->>>>           }
->>>>           return 0;
->>>> +
->>>> +free_cpuidle_device:
->>>> +       per_cpu(acpi_cpuidle_device, pr->id) = NULL;
->>>> +       kfree(dev);
->>>> +
->>>> +unregister_driver:
->>>> +       if (acpi_processor_registered == 0)
->>>> +               cpuidle_unregister_driver(&acpi_idle_driver);
->>>> +
->>>> +       return retval;
->>>>    }
->>>>
->>>>    int acpi_processor_power_exit(struct acpi_processor *pr)
->>>> --
->>>> 2.33.0
->>>>
+Cheers,
+Kent.
 
