@@ -1,170 +1,109 @@
-Return-Path: <linux-kernel+bounces-730401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F3CB04428
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:39:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10647B04471
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D573D188D6F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:35:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D0BD7B4E5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DFA264A95;
-	Mon, 14 Jul 2025 15:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0A0267713;
+	Mon, 14 Jul 2025 15:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="Z/BES+gk";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="AQxoKkTN"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="nRCiH0M9"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C454526462C
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17C8264A73;
+	Mon, 14 Jul 2025 15:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752506892; cv=none; b=aAnW9kDPphWbtDKC8lCMA8ZEKJRG6OnS+Id5pSG23Y38lccPXTUXrvdF5AhP21OhwtCmd86LdhqEyIxk8IBPxRzcjACa5tJBgUAtpkrZO5igiqXvgrwCkR+sJl6/XDKYyKgjpHo4Er9bKyH4GCTxQvpcfk0LYMEuVfzrMVXqTg0=
+	t=1752506962; cv=none; b=R9gw07Z35NB0T1YxoK+4N8JZpTX8ma0+DMj6aEQjs6/osEKgdAwaXRxUUZwlhOabZ49cyL0Kk3kbLBYcQkbnaDz3nOZBpGr4bTtG/cf3oXitor7Lw2iSqtmvoW4U9JFMoZYpbakgLWaLAGNjOYvgRoyVi/R0IkuWg6GlfHikEMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752506892; c=relaxed/simple;
-	bh=6/eBWxJ1QIgkIgwCwS+ng4W7G8JH+ooFJnVUfMl83dE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oaue7j3KmZz65d0Pa6uiHUpc2V5/sy0mflRQji16VR1TKUdJCXepBFYPM90xnzdGysUBa5dxMUoVcn6mkFvAzMgY6Ts8okxcROWYracV4IB6la8hwFwQBzCMod3T77mHs5m1uXC2ig9mTgxmg+ePU385W9g+THoz4HvBrRarXiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=Z/BES+gk; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=AQxoKkTN; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1752506881; x=1753111681;
-	d=konsulko.se; s=rsa1;
-	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
-	 subject:mime-version:date:message-id:from;
-	bh=CxNCFSgystRqkUUeIIO2FJHvWHtIjD7SOGJQsrFHYEE=;
-	b=Z/BES+gklQqP0Ut67CFd0O7AKDdxn7SzeAeP9sKo9hDxc5vHyaQluD8u4GBmORfa/K3k6FT/QNg5K
-	 +5pSyJLd1VjFqcGU04jt6VNqDAAKY3U2gnBYhHJ6CKvmCDjQu4vgMW4qZXRNtX3EmIVFOTqzZwJzXk
-	 zeb8JB1bgVleUMUYPfwoZcku/BGt2s7xNJaMnERDpWZcbDs0R3vrVJURffyKZK5uSNMVcOY8Da6QAH
-	 aky+odmUqXjx0O/6U3/CTVeIX0gYVFyMxMidO6cmQQq/CB7FbGRVLsUEonhUKu7GDT93zLKlHdMVZO
-	 TpEdBDsXq5yhp1IwW7irPS5z6/BDsZA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1752506881; x=1753111681;
-	d=konsulko.se; s=ed1;
-	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
-	 subject:mime-version:date:message-id:from;
-	bh=CxNCFSgystRqkUUeIIO2FJHvWHtIjD7SOGJQsrFHYEE=;
-	b=AQxoKkTNHwRxzS8AOTETVDzj4k4Jmbk8Yhmp3MgKFL7e8XlwIfsKyDurTcDTsSbvUFVkpLk9Df/aH
-	 3NS4YiLAQ==
-X-HalOne-ID: 1ed28d5b-60c7-11f0-bb53-e90f2b8e16ca
-Received: from [192.168.10.245] (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
-	by mailrelay2.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id 1ed28d5b-60c7-11f0-bb53-e90f2b8e16ca;
-	Mon, 14 Jul 2025 15:28:00 +0000 (UTC)
-Message-ID: <45e705ef-e40b-4dd3-a9b9-1a713df5d4e5@konsulko.se>
-Date: Mon, 14 Jul 2025 17:27:59 +0200
+	s=arc-20240116; t=1752506962; c=relaxed/simple;
+	bh=kH+76pQfe8h+nA25aD3uhXFxx4VONMtqA+YpB33JP94=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZneXn3PQE2fdF/BVqoPnkVmAHnliGls9qxWhSzWJrWPlk7TIRaSEjNnFCWnBn/VFhdHMmAXkj6Cx1TrqbzX/X4jiQYPFBDQGV1wi8bZ+bD/mV/hFToYDIOsY1wHNuHqVybmZtdVofGrY6eQpQh/9NH5WsQ5bRNvGjAD9K+scj7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=nRCiH0M9; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56EFSctL62444685, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1752506918; bh=kH+76pQfe8h+nA25aD3uhXFxx4VONMtqA+YpB33JP94=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=nRCiH0M9XTTm+KVkMleEMU+EQFkvopUfvgApC7PkSX+yJu1mF6n5hJSxUpnBxMfj0
+	 9ZsRmvCLon1TuuN4DZZyfogmbtBawZHeLdpvKr3KDZsOuUODA0hm+Gjd3VHOSM1bsQ
+	 XL/+VvUCoh13bbDjF/X3FlFwdOWYNUrhuHKdNNoARBqXgm2XKMa4Q7307XVYAw/N6E
+	 qdl/2FZ530FbKb9HzokeZdvVaATz+OaCoBLkfP5lRKH/HrlZHrYH1/7+biiHyBRZY+
+	 cr+fe2AC8vZrXAwbOa53+GtJPHUdWuhR9BeDM/bkscT4MxASNH8CA7M4fkFQiSc1eT
+	 mHtKLlGvbN0hw==
+Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56EFSctL62444685
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 14 Jul 2025 23:28:38 +0800
+Received: from RTEXMBS02.realtek.com.tw (172.21.6.95) by
+ RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 14 Jul 2025 23:28:38 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Mon, 14 Jul 2025 23:28:37 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47]) by
+ RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47%5]) with mapi id
+ 15.01.2507.035; Mon, 14 Jul 2025 23:28:37 +0800
+From: Hau <hau@realtek.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        nic_swsd
+	<nic_swsd@realtek.com>,
+        "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com"
+	<edumazet@google.com>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next] r8169: add quirk for RTL8116af SerDes
+Thread-Topic: [PATCH net-next] r8169: add quirk for RTL8116af SerDes
+Thread-Index: AQHb8hYZ3m83qQJc5k6oVaa3M0JZALQvxoaAgAH73gA=
+Date: Mon, 14 Jul 2025 15:28:37 +0000
+Message-ID: <50df9352e81e4688b917072949b2ee4c@realtek.com>
+References: <20250711034412.17937-1-hau@realtek.com>
+ <9291f271-eafe-4f65-aa08-3c6cb4236f64@lunn.ch>
+In-Reply-To: <9291f271-eafe-4f65-aa08-3c6cb4236f64@lunn.ch>
+Accept-Language: zh-TW, en-US
+Content-Language: en-US
+x-kse-serverinfo: RTEXMBS02.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 2/4] mm/slub: allow to set node and align in
- k[v]realloc
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Harry Yoo <harry.yoo@oracle.com>, linux-mm@kvack.org,
- akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- Uladzislau Rezki <urezki@gmail.com>, Danilo Krummrich <dakr@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Kent Overstreet <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org,
- bpf@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>
-References: <20250709172345.1031907-1-vitaly.wool@konsulko.se>
- <20250709172441.1032006-1-vitaly.wool@konsulko.se> <aHDSLyHZ8b1ELeWe@hyeyoo>
- <5bc89531-ab09-4690-aae4-a44f9ddb4a68@suse.cz>
- <3AD3F7B5-679F-4DC8-968F-9FE991B56A5C@konsulko.se>
- <1dedcee0-c5a2-47b3-ae13-315ad437ae1a@suse.cz>
-Content-Language: en-US
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-In-Reply-To: <1dedcee0-c5a2-47b3-ae13-315ad437ae1a@suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-
-
-On 7/14/25 10:14, Vlastimil Babka wrote:
-> On 7/12/25 14:43, Vitaly Wool wrote:
->>
->>
->>> On Jul 11, 2025, at 5:43 PM, Vlastimil Babka <vbabka@suse.cz> wrote:
->>>
->>> On 7/11/25 10:58, Harry Yoo wrote:
->>>> On Wed, Jul 09, 2025 at 07:24:41PM +0200, Vitaly Wool wrote:
->>>>> static __always_inline __realloc_size(2) void *
->>>>> -__do_krealloc(const void *p, size_t new_size, gfp_t flags)
->>>>> +__do_krealloc(const void *p, size_t new_size, unsigned long align, gfp_t flags, int nid)
->>>>> {
->>>>> void *ret;
->>>>> size_t ks = 0;
->>>>> @@ -4859,6 +4859,20 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
->>>>> if (!kasan_check_byte(p))
->>>>> return NULL;
->>>>>
->>>>> + /* refuse to proceed if alignment is bigger than what kmalloc() provides */
->>>>> + if (!IS_ALIGNED((unsigned long)p, align) || new_size < align)
->>>>> + return NULL;
->>>>
->>>> Hmm but what happens if `p` is aligned to `align`, but the new object is not?
->>>>
->>>> For example, what will happen if we  allocate object with size=64, align=64
->>>> and then do krealloc with size=96, align=64...
->>>>
->>>> Or am I missing something?
->>>
->>> Good point. We extended the alignment guarantees in commit ad59baa31695
->>> ("slab, rust: extend kmalloc() alignment guarantees to remove Rust padding")
->>> for rust in a way that size 96 gives you alignment of 32. It assumes that
->>> rust side will ask for alignments that are power-of-two and sizes that are
->>> multiples of alignment. I think if that assumption is still honored than
->>> this will keep working, but the check added above (is it just a sanity check
->>> or something the rust side relies on?) doesn't seem correct?
->>>
->>
->> It is a sanity check and it should have looked like this:
->>
->>          if (!IS_ALIGNED((unsigned long)p, align) && new_size <= ks)
->>                  return NULL;
->>
->> and the reasoning for this is the following: if we don’t intend to reallocate (new size is not bigger than the original size), but the user requests a larger alignment, it’s a miss. Does that sound reasonable?
-> 
-> So taking a step back indeed the align passed to krealloc is indeed used
-> only for this check. If it's really just a sanity check, then I'd rather not
-> add this parameter to krealloc functions at all - kmalloc() itself also
-> doesn't have it, so it's inconsistent that krealloc() would have it - but
-> only to return NULL and not e.g. try to reallocate for alignment.
-> 
-> If it's not just a sanity check, it means it's expected that for some
-> sequence of valid kvrealloc_node_align() calls it can return NULL and then
-> rely on the fallback to vmalloc. That would be rather wasteful for the cases
-> like going from 64 to 96 bytes etc. So in that case it would be better if
-> krealloc did the reallocation, same as in cases when size increases. Of
-> course it would still have to rely on the documented alignment guarantees
-> only and not provide anything arbitrary. aligned_size() in
-> rust/kernel/alloc/allocator.rs is responsible for that, AFAIK.
-> 
-> And I think it's not a sanity check but the latter - if the following is a
-> valid k(v)realloc sequence (from Rust POV). The individual size+align
-> combinations AFAIK are, but if it's valid to make them follow one another
-> them like this, I don't know.
-> 
-> krealloc(size=96, align=32) -> can give object with 32 alignment only
-> krealloc(size=64, align=64) -> doesn't increase size but wants alignment 64
-> 
-
-We should be able to correctly process these. I agree that making such 
-cases fall back to vrealloc is suboptimal but it's a technically correct 
-behavior. I understand that you would rather have a reallocation on the 
-slub side in these cases, so this will look as
-
-           if (!IS_ALIGNED((unsigned long)p, align) && new_size <= ks)
-                   goto alloc_new;
-
-I'll modify/retest for the next patchset iteration.
-
-~Vitaly
+>=20
+> Can you give us a few more details. What is on the other end of the SERDE=
+S?
+> An SGMII PHY? An SFP cage? An Ethernet switch chip?
+>=20
+> A quick search suggests it is used with an SFP cage. How is the I2C bus
+> connected? What about GPIOs? Does the RTL8116af itself have GPIOs and an
+> I2C bus?
+>=20
+RTL8116af 's SERDES will connect to a SFP cage. It has GPIO and a I2C bus. =
+But driver did not use it to access SFP cage.
+Driver depends on mac io 0x6c (LinkStatus) to check link status.
 
