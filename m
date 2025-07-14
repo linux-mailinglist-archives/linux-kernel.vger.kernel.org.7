@@ -1,158 +1,138 @@
-Return-Path: <linux-kernel+bounces-729478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5504EB0373F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:36:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FF5DB03746
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BD1B18979FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:36:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8C3F7A2CB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBC72264D4;
-	Mon, 14 Jul 2025 06:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD6E2264B9;
+	Mon, 14 Jul 2025 06:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MNjvyRYw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0BzFd2t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4879BE4A;
-	Mon, 14 Jul 2025 06:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0282A1F4E34;
+	Mon, 14 Jul 2025 06:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752474968; cv=none; b=dDg5uoW0RghWCDbNpSOeSzyeHOiG+iP5bW5KD9aslVfZfHLPoYNdqixghzkWsPpPdmGz06bcF8b5CsOPYPF60mnp4XJ2ErK7BARKMtVMj1aalDDx45GA+r2JV6Qzd9X80pcOONgWwobHl6yanqLTZweTVZWthWbtwGjYMQxq1l8=
+	t=1752475152; cv=none; b=P1hHzQon4eqWPKPY9Bc+yw90rRs3kT1EKj1rS8NVqVpKdE0Jy7frvzbBSqgiXJ+vRDOGAuu8dputFnCrUppyO+zSBV62cYa/2wIMihHD0KaaoAgusWRlUTSoD/kun+o6kkKsWn8jFnSs4i8smSI0e9n0uTMzRXFJ9rZkQUFUSJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752474968; c=relaxed/simple;
-	bh=COauMq+Zx3uq569P2RZsqh2PKi46abFL9EqFFIlngoY=;
-	h=Content-Type:Date:Message-Id:Cc:From:To:Subject:References:
-	 In-Reply-To; b=HQP9Ti2geasXd6f0CtdbA6ERA4ghdI0T0JVgo8xjzf3ENQO4V1PRoxq/xDgfhmUVH2lAC7S3iF6xgvvpcx3cDQCZ327Q76LZciCYeHS23Or2td+VaD+Atvi+SWCnuom1mC/9Biutp1dkcNUYZGuWDFstVihLU20EWjx6hXrZgy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MNjvyRYw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9A7EC4CEED;
-	Mon, 14 Jul 2025 06:36:07 +0000 (UTC)
+	s=arc-20240116; t=1752475152; c=relaxed/simple;
+	bh=FoVaztxrgRjP723XEHoNpTeXrGoae6UBLEUANs0Qpaw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cKeUVcGICzRma1u71Nq02e0CsO+/6qWZLrC3CxVpL1Io0aUr9viwPiBp0vYFq+I1yL+rEK8uIaQXT1nZlu6oR05n6BPQcndbY5Ow8VQE4ZN4k8r2HrhhtPIDodnJldLvOY3WI9SliHmUhPzl8dGCSqquSsp/5i5FhSvG44lwwvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0BzFd2t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81383C4CEF7;
+	Mon, 14 Jul 2025 06:39:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752474968;
-	bh=COauMq+Zx3uq569P2RZsqh2PKi46abFL9EqFFIlngoY=;
-	h=Date:Cc:From:To:Subject:References:In-Reply-To:From;
-	b=MNjvyRYw7yHD9P+QQydki15ecx2DgosCaUdFKTxhS4R9/uKCYx6aAJHX5vdqsTaRi
-	 CuZ8A/4wNDMmM56Mccrox6PBjtg88wiyvLCnVQRYq1hDXA2ViQ+5d6kpvlV6QkoW4B
-	 QDEyRVnWiSQ542TK0kX0miTfj5lG/00suwBTogExssr8nExAKRIbkvT0AQGicPH5CV
-	 2nuuguTQkpxgV/Icg7tVXi3DLoLjphI9Qki4f0GIRJOB7SSvK8fToKxV3bAbm+DtqG
-	 NwZddqh8XzKgz9qSN0f/7NxwK6QbSV0KzBVYdraCMoYwhOHVkTk/KczVbryo+38IfT
-	 gcc58bp2+1mCA==
-Content-Type: multipart/signed;
- boundary=f4bf19f601e8d4e8c8230525d2e6b92647bd8f296438ae8780d8e32759dd;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Mon, 14 Jul 2025 08:36:03 +0200
-Message-Id: <DBBKJ05VNSDG.30MNWDWT9JAEC@kernel.org>
-Cc: "Ioana Ciornei" <ioana.ciornei@nxp.com>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>, "Shawn Guo"
- <shawnguo@kernel.org>, "Lee Jones" <lee@kernel.org>, "Frank Li"
- <Frank.Li@nxp.com>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Linus Walleij" <linus.walleij@linaro.org>, "Andrew Lunn"
- <andrew@lunn.ch>
-Subject: Re: [PATCH 4/9] gpio: regmap: add the .get_direction() callback
-X-Mailer: aerc 0.16.0
-References: <20250709112658.1987608-1-ioana.ciornei@nxp.com>
- <20250709112658.1987608-5-ioana.ciornei@nxp.com>
- <0d0e9cee-2aaa-402d-a811-8c4704aadd74@lunn.ch>
- <CACRpkdYDTXA7+YN2zRCsQxu2AKEAwbDVq8-m27ah5XTw9iRNPw@mail.gmail.com>
- <55e7aeb5-565f-4452-bc11-55968dcc0a9e@lunn.ch>
- <CACRpkda+=A5R4vZZQZKmF3LnGd6xMYbNomahgTW+j9aX9swBFA@mail.gmail.com>
-In-Reply-To: <CACRpkda+=A5R4vZZQZKmF3LnGd6xMYbNomahgTW+j9aX9swBFA@mail.gmail.com>
+	s=k20201202; t=1752475151;
+	bh=FoVaztxrgRjP723XEHoNpTeXrGoae6UBLEUANs0Qpaw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=E0BzFd2tMpHuzCAGj0Ha0CVohGxMveMx8per5k7RAhR7NUoko0ZizjF4aMru7nVx+
+	 f6DO/K6pD5VjJXRceEphe82jro7Utmnm0HWgud6W2bQfDWJEB/hzU9evMVlCu6LbBk
+	 mxkRJe0YzBHASOoAsnfuoyRjYAV/uc1qwbynoV9IIyEhIeSvKS1WZrCspje8ajHZKQ
+	 8aCQzFkaP01xv9sFO1evfdyraLMjqgEeh1qCX6moUT5F7RHLN88XbjHpoDDG1eyxdt
+	 KSVirQoQ+SBohXHHQHsKQ/1kKzFgE6mRmw4CZTRewqndUcmr3KYh+6S7nmFwo1ToU5
+	 azFAeYfAEIU3g==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-553ba7f11cbso3977163e87.1;
+        Sun, 13 Jul 2025 23:39:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWn040dsPeSnnSq0JwY4UInDltRbbANLHP4goDQIIpTKDSrbDuVRPSd0d/o333ER9z08hgLo7jzXw0=@vger.kernel.org, AJvYcCXVFf96qkbg/OKHvB5+kSj88fQQ4kSuAAwbVND07YljZrwfRdkr22kNCFH+rScjbJb1/SJyuVQa5+hDbZxS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3EcxLcX9rl/QGlWkQgKwb5AlPkhGnLpcioRh2odkZH5nmbRsT
+	CeRvyH/R/1w3/1Z1ejBigvQKPsFKCnM7CzjepaIFXVt3tEr7BswdZwSUtjxSM9DQLfrs/h9EpxV
+	cZ48tmBD2T17RC0+KNyMMqttZ0VcOH2E=
+X-Google-Smtp-Source: AGHT+IFxzHHsHKYeCt0f+cMy1PRcE2Hm8loCADPyjxk8BTSemM4PgfyJ8BFt5KB/oTN+yNGLKV77gfsAksW2t1ap+Ik=
+X-Received: by 2002:a05:6512:398c:b0:553:2bb2:7890 with SMTP id
+ 2adb3069b0e04-55a044ee7c4mr2693238e87.25.1752475149885; Sun, 13 Jul 2025
+ 23:39:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250514174339.1834871-9-ardb+git@google.com> <20250514174339.1834871-15-ardb+git@google.com>
+ <aHEUpiXt-pW7DBAN@willie-the-truck>
+In-Reply-To: <aHEUpiXt-pW7DBAN@willie-the-truck>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 14 Jul 2025 16:38:57 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXFLZWvEBTX__P6B+3nMn-HZpKaVRkiUmfj35xiG8LH0bQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyjnBSSZ8dr1S-plRyUJrxrxaJsBWEcfmexP3uC92-azvZJoR8dJ8zqYvk
+Message-ID: <CAMj1kXFLZWvEBTX__P6B+3nMn-HZpKaVRkiUmfj35xiG8LH0bQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 6/7] arm64/efi: Move uaccess en/disable out of efi_set_pgd()
+To: Will Deacon <will@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Mark Rutland <mark.rutland@arm.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
---f4bf19f601e8d4e8c8230525d2e6b92647bd8f296438ae8780d8e32759dd
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-
-On Fri Jul 11, 2025 at 8:06 PM CEST, Linus Walleij wrote:
-> On Fri, Jul 11, 2025 at 7:45=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrot=
-e:
-> > On Fri, Jul 11, 2025 at 07:43:13PM +0200, Linus Walleij wrote:
-> > > On Wed, Jul 9, 2025 at 5:09=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> w=
-rote:
-> > >
-> > > > This is not my area, so i will deffer to the GPIO
-> > > > Maintainers. However, it is not clear to me what get_direction()
-> > > > should return.
-> > >
-> > > This callback should return the current direction as set up
-> > > in the hardware.
-> > >
-> > > A major usecase is that this is called when the gpiochip is
-> > > registered to read out all the current directions of the GPIO
-> > > lines, so the kernel has a clear idea of the state of the
-> > > hardware.
-> > >
-> > > Calling this should ideally result in a read of the status from
-> > > a hardware register.
+On Fri, 11 Jul 2025 at 23:42, Will Deacon <will@kernel.org> wrote:
+>
+> On Wed, May 14, 2025 at 07:43:46PM +0200, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
 > >
-> > O.K, so completely different to what is proposed in this patch.
+> > efi_set_pgd() will no longer be called when invoking EFI runtime
+> > services via the efi_rts_wq work queue, but the uaccess en/disable are
+> > still needed when using PAN emulation using TTBR0 switching. So move
+> > these into the callers.
 > >
-> > Maybe you can suggest a better name.
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > ---
+> >  arch/arm64/include/asm/efi.h | 3 ---
+> >  arch/arm64/kernel/efi.c      | 3 +++
+> >  2 files changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/arch/arm64/include/asm/efi.h b/arch/arm64/include/asm/efi.h
+> > index decf87777f57..abe9176a3a23 100644
+> > --- a/arch/arm64/include/asm/efi.h
+> > +++ b/arch/arm64/include/asm/efi.h
+> > @@ -132,15 +132,12 @@ static inline void efi_set_pgd(struct mm_struct *mm)
+> >                        * exception when invoking the EFI run-time services.
+> >                        */
+> >                       update_saved_ttbr0(current, mm);
+> > -                     uaccess_ttbr0_enable();
+> > -                     post_ttbr_update_workaround();
+> >               } else {
+> >                       /*
+> >                        * Defer the switch to the current thread's TTBR0_EL1
+> >                        * until uaccess_enable(). Restore the current
+> >                        * thread's saved ttbr0 corresponding to its active_mm
+> >                        */
+> > -                     uaccess_ttbr0_disable();
+> >                       update_saved_ttbr0(current, current->active_mm);
+> >               }
+> >       }
+> > diff --git a/arch/arm64/kernel/efi.c b/arch/arm64/kernel/efi.c
+> > index d01ae156bb63..5d188c6c44d7 100644
+> > --- a/arch/arm64/kernel/efi.c
+> > +++ b/arch/arm64/kernel/efi.c
+> > @@ -177,6 +177,8 @@ bool arch_efi_call_virt_setup(void)
+> >               return false;
+> >
+> >       efi_virtmap_load();
+> > +     uaccess_ttbr0_enable();
+> > +     post_ttbr_update_workaround();
+> >       __efi_fpsimd_begin();
+> >       return true;
+> >  }
+> > @@ -185,6 +187,7 @@ void arch_efi_call_virt_teardown(void)
+> >  {
+> >       __efi_fpsimd_end();
+> >       efi_virtmap_unload();
+> > +     uaccess_ttbr0_disable();
 >
-> If the hardware only supports one direction, then .get_direction()
-> should return that direction.
+> Moving this after updating the saved TTBR0 isn't great for SWPAN, as it
+> means that if we take an exception (e.g. an IRQ) before calling
+> uaccess_ttbr0_disable() then I think we'll end up running with the user
+> page-table installed briefly in TTBR0 which SWPAN is supposed to prevent
+> outside of genuine uaccess sections.
 >
-> What the patch does is to
-> read the direction from the hardware and use that in the
-> set_direction() callback, as if all regmapped hardware in the
-> world had fixed direction, that's wrong.
->
-> I'd just add something custom in gpio-regmap if this is
-> something reoccuring in regmapped GPIO drivers.
->
-> bool is_fixed_direction(struct gpio_regmap *gpio, unsigned int offset)
->
-> or so?
->
-> Then the core can use is_fixed_direction() together
-> with gpio_get_direction() to check if it can do
-> a certain set_direction().
->
-> Pseudocode:
->
-> mydir =3D get_direction(line)
-> if (is_fixed_direction(line) && (mydir !=3D requested_dir)
->   return -ERROR;
 
-You don't need a .is_fixed_direction(). You can deduce that if only
-.get_direction() is set in the gpio-regmap config.
-
-mydir =3D get_direction(line)
-if (!config->set_direction && mydir !=3D requested_dir)
-  return -ERROR;
-
-That or either Andrew's idea of setting a bitmap within the
-gpio-regmap config which already tells the gpio-regmap core and then
-amend gpio_regmap_get_direction() to return that fixed direction if
-that bitmap is not NULL.
-
-I'm fine with both.
-
--michael
-
---f4bf19f601e8d4e8c8230525d2e6b92647bd8f296438ae8780d8e32759dd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaHSlVBIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/jQ+QF/Sh9YipYQ+NuecbEAX6M3aMt220c2QO/i
-BcZFdXjO9B54HMg0xV402FYHoqqVUzMBAXwPLqgnOoKN+UW5OzisXT/wp8tx42vH
-5YcYBv+I9kZuCMxqUDqGJQrewv4OJdbajA4=
-=oUeW
------END PGP SIGNATURE-----
-
---f4bf19f601e8d4e8c8230525d2e6b92647bd8f296438ae8780d8e32759dd--
+OK, I'll respin this to take that into account.
 
