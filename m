@@ -1,47 +1,87 @@
-Return-Path: <linux-kernel+bounces-730200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F4A6B04153
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:19:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8C6B04148
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49E7E189DDE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:18:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CB627A84EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C782561AF;
-	Mon, 14 Jul 2025 14:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8302571C2;
+	Mon, 14 Jul 2025 14:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CsnNcafN"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DrSLAt8o"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD9319ABC6;
-	Mon, 14 Jul 2025 14:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80FAD246787
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752502686; cv=none; b=jSIJpmlHaS1IoIvjLKS94aFfm6Ct5M40V7jMY6aw1i5O8iTJ+SPMaQ1m8lPk9JHhBgpW0WEt4Pt7qorM6w5UmEDX6Od5TnKih8SKU62aWvQcIYVv2w4RWgpnaKds1SV23bkhGz5CvQ5cDeTvrZ2OhLz3KFZw/hoELLbphRYmkhk=
+	t=1752502702; cv=none; b=eELWY21D842rjDJNApY5mUiQaeZeuiqofEi4dpsQ65raQssWjHeVUgpFrEJXqwvCfIVkxH+9nEcfkkMQA+k5AgiHMRQEUOa8Hjdu6e9ssg2za7+eLJ5z+lOmVEHkf0MYi7yLwwsF8T8E8VHcdlDFbGowsxoJA3qzc86PnuyM+uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752502686; c=relaxed/simple;
-	bh=u4Xsa31YyF3/xCL3GAMg1OW8VN80iO4/Jh8BrDcy2Ds=;
+	s=arc-20240116; t=1752502702; c=relaxed/simple;
+	bh=R/69WRnWJQ0bSIrNALHoxXiO/EnyzE/KdbifGQnoIk0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZJ70r1mRqcIBu3BXXCSiYCOrjP50yYRPi+08VsTMJbrqKSb+5O0lzfXmBhQxnyOeswyu9JCGXt+lS33NTqU7LEbkcNR6Xlwt3EpPVvqr9LBIb3WmQA7nrArvFhh/trAUq/qRV/dJQU4tJqxwMEfZgnFDTytXrq2d8ZCoWn4+49I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CsnNcafN; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4658B166D;
-	Mon, 14 Jul 2025 16:17:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752502650;
-	bh=u4Xsa31YyF3/xCL3GAMg1OW8VN80iO4/Jh8BrDcy2Ds=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CsnNcafNvClh8KCYX5R/4vX7ay2FqU9HYU2ZIe+xaEFKXdiUil0MxR7B3QxEJ9CxY
-	 Zcqc+QASohJlncqfrA+hKr+39M6//dQGwOlb22LEFf5FV92w4fD+O6CFZomSNrgGrH
-	 3cfVDqMZlEQ2vdOkBJEsKO3UgUkmoGpQctsK3+rE=
-Message-ID: <0e72b927-7fff-466a-afea-4531722f7fdd@ideasonboard.com>
-Date: Mon, 14 Jul 2025 15:17:58 +0100
+	 In-Reply-To:Content-Type; b=AdH+Jq/gIwVibiMRfLg9e4+JBQ3ocFmVQTkcCrKRiOltQFQTAffv2m8jK3LxWXc0T9+NtU/Bthv5sNHUxIoALw93IiV1qsT8KtOmxER3KMiyDpwAmAVijiEB2wIkQRzgdcmMP9El5M082/0hYWO6BGwkdKv1RLDo6xHlDEk2v/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DrSLAt8o; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752502699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=eAJ3iCVhDdz6z6h3YYRgguFqsc8zl+o4S274gAq3QzQ=;
+	b=DrSLAt8odfUyitC9Ihjmm9Nf2beqQT8KPvqglg/m5Op6t0aYejHY5sXBEkq6jRtfqNBM3v
+	4t6nywHqmRDd9zFSyVqK3fQGEzlgYzkjqatekaHHglGnNpoTXica246QDU8TIHkdBcfKW0
+	+hfQmxN2K5OF03xmSSooCx1Gt45jDzw=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-541-GP3vU1zKNv-49zLZCqdeFw-1; Mon, 14 Jul 2025 10:18:18 -0400
+X-MC-Unique: GP3vU1zKNv-49zLZCqdeFw-1
+X-Mimecast-MFC-AGG-ID: GP3vU1zKNv-49zLZCqdeFw_1752502697
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-451d7de4ae3so28145335e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 07:18:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752502697; x=1753107497;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eAJ3iCVhDdz6z6h3YYRgguFqsc8zl+o4S274gAq3QzQ=;
+        b=OphL4o6vIVxEV4uCA23SCxo2Ulhxh0gJ1ImGjkln9DVocR7NK568pjID3BRvPfHW2H
+         SEyQFoEbqYN4v/ketlxcer1wr0eNDfXrRklmesWT5WY2Ef9bjhdMTFQM/864uGA3VePL
+         yyGAGC9CWtyTGjZwqXoKah+pUEgfbH4F7ij7TO51WqcSrRHSuenmajh+EOGGj8G9HpJ7
+         cUoWpbwEsE99kY8219gvdNfAO8O2ZFGlC7F9TNK+wEk1+59d1ESwMI4KdjJVud8RVYFH
+         QYOtssu4igrh4jOOeEuaGbPCGIx2PG0cclXR05PoYcWwrRccVjSFMj7yIbDUAiFjzrHf
+         Z3gA==
+X-Forwarded-Encrypted: i=1; AJvYcCVShXeM8/K5h4xhT//CQu56lsKaW2mGqNFqRIA+4b3mx0ZViaoBoc9G6xgim/7yPVAvZgGGNV0IhWh0WNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws5xgBWdgDwINYiJxLQ6XBoc6s5fQXUaUzsKZZoOtjKpPfm6e5
+	LGhzj9MbBlOrXmhvDUDRBRV9SBeR/x0TsaOsgE9CiDedMGDYqHmMB0bgLe3eqj+HsKc5Ldz1qW4
+	Y451HvKfxyxZGegsHQNNIUjj2jLTOiFJEJLvhmyjOgY3TkJqqx/FPisLzo5OMj/OYvA==
+X-Gm-Gg: ASbGncuMaQDtoWkheZhrIWjO6HwEpVVqKcGg/wqQq7k0ASkU/gPurCLY+l4Tlw4m6TJ
+	YCsIaaOA2+64OKr9J2uoktuQJ1jxDQeiyql9wJPP9kkRpDgO3V94GYe11X4UrVRmggovZvRiMT3
+	iKUPkBitXxT2DWKxBhp/D9R/e0U0SZAFIBl8gifDfawacpCrSotbuxyXA0XaVZSmMJUkEz9Ysrz
+	e87iWgjI9GyqPmh0kl3MArnUXYeLYJLIKwxOL5TGsoIcMgmBGRu8UIAZQIijkpayN8GcfRkd2Ne
+	swvq2wX3wSD6bCX2esfPf/qUlKjMcJXxVc1Y0ifpMyC6dQE4U03bkw2GMg0DQD3VT1Tmu76Zndf
+	QxgvrvSa4KtR8qYtPxVL+4UrOqGsF8Rf3rHhz3zYe/O01KC5EEx5U6zFenVpzsq5+
+X-Received: by 2002:a05:600c:a08c:b0:456:22f0:d9ca with SMTP id 5b1f17b1804b1-45622f0de79mr13353515e9.26.1752502696734;
+        Mon, 14 Jul 2025 07:18:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEbT9ZPIoGGCqiO8MFBsH9vqN4nFX90UcX2di/BtWtN0bS6sk4srxVganZc03A1dsYc4N/AGw==
+X-Received: by 2002:a05:600c:a08c:b0:456:22f0:d9ca with SMTP id 5b1f17b1804b1-45622f0de79mr13353295e9.26.1752502696314;
+        Mon, 14 Jul 2025 07:18:16 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f38:ca00:ca3a:83da:653e:234? (p200300d82f38ca00ca3a83da653e0234.dip0.t-ipconnect.de. [2003:d8:2f38:ca00:ca3a:83da:653e:234])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-456114a417csm55711175e9.25.2025.07.14.07.18.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 07:18:14 -0700 (PDT)
+Message-ID: <ee19189f-7510-4ddd-85b0-34d6319f8fc6@redhat.com>
+Date: Mon, 14 Jul 2025 16:18:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,679 +89,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/8] media: rkisp1: Use v4l2-params for validation
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Dafna Hirschfeld <dafna@fastmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20250710-extensible-parameters-validation-v2-0-7ec8918ec443@ideasonboard.com>
- <20250710-extensible-parameters-validation-v2-6-7ec8918ec443@ideasonboard.com>
+Subject: Re: [PATCH] mm/vma: refactor vma_modify_flags_name() to
+ vma_modify_name()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250714135839.178032-1-lorenzo.stoakes@oracle.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Dan Scally <dan.scally@ideasonboard.com>
-Autocrypt: addr=dan.scally@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20250710-extensible-parameters-validation-v2-6-7ec8918ec443@ideasonboard.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250714135839.178032-1-lorenzo.stoakes@oracle.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Jacopo
-
-On 10/07/2025 14:52, Jacopo Mondi wrote:
-> Convert rkisp1-params.c to use the new types for block handlers
-> defined in v4l2-params.h and use the new helpers from v4l2-params.c
-> to remove bolierplate code from the driver.
->
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+On 14.07.25 15:58, Lorenzo Stoakes wrote:
+> The single instance in which we use this function doesn't actually need to
+> change VMA flags, so remove this parameter and update the caller
+> accordingly.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
->   .../media/platform/rockchip/rkisp1/rkisp1-params.c | 349 +++++++++------------
->   1 file changed, 141 insertions(+), 208 deletions(-)
->
-> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-> index f1585f8fa0f478304f74317fd9dd09199c94ec82..d7bfb1b50ed7e8dec5a20aec6cd775b721091abf 100644
-> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-> @@ -12,6 +12,7 @@
->   #include <media/v4l2-common.h>
->   #include <media/v4l2-event.h>
->   #include <media/v4l2-ioctl.h>
-> +#include <media/v4l2-params.h>
->   #include <media/videobuf2-core.h>
->   #include <media/videobuf2-vmalloc.h>	/* for ISP params */
+>   mm/madvise.c |  4 ++--
+>   mm/vma.c     |  4 +---
+>   mm/vma.h     | 15 +++++++--------
+>   3 files changed, 10 insertions(+), 13 deletions(-)
+> 
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index 9de9b7c797c6..afa9e4db2adb 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -162,8 +162,8 @@ static int madvise_update_vma(vm_flags_t new_flags,
+>   		return 0;
 >   
-> @@ -40,30 +41,6 @@
->   #define RKISP1_EXT_PARAMS_BLOCK_GROUP_OTHERS	BIT(0)
->   #define RKISP1_EXT_PARAMS_BLOCK_GROUP_LSC	BIT(1)
->   
-> -union rkisp1_ext_params_config {
-> -	struct rkisp1_ext_params_block_header header;
-> -	struct rkisp1_ext_params_bls_config bls;
-> -	struct rkisp1_ext_params_dpcc_config dpcc;
-> -	struct rkisp1_ext_params_sdg_config sdg;
-> -	struct rkisp1_ext_params_lsc_config lsc;
-> -	struct rkisp1_ext_params_awb_gain_config awbg;
-> -	struct rkisp1_ext_params_flt_config flt;
-> -	struct rkisp1_ext_params_bdm_config bdm;
-> -	struct rkisp1_ext_params_ctk_config ctk;
-> -	struct rkisp1_ext_params_goc_config goc;
-> -	struct rkisp1_ext_params_dpf_config dpf;
-> -	struct rkisp1_ext_params_dpf_strength_config dpfs;
-> -	struct rkisp1_ext_params_cproc_config cproc;
-> -	struct rkisp1_ext_params_ie_config ie;
-> -	struct rkisp1_ext_params_awb_meas_config awbm;
-> -	struct rkisp1_ext_params_hst_config hst;
-> -	struct rkisp1_ext_params_aec_config aec;
-> -	struct rkisp1_ext_params_afc_config afc;
-> -	struct rkisp1_ext_params_compand_bls_config compand_bls;
-> -	struct rkisp1_ext_params_compand_curve_config compand_curve;
-> -	struct rkisp1_ext_params_wdr_config wdr;
-> -};
+>   	if (set_new_anon_name)
+> -		vma = vma_modify_flags_name(&vmi, madv_behavior->prev, vma,
+> -			range->start, range->end, new_flags, anon_name);
+> +		vma = vma_modify_name(&vmi, madv_behavior->prev, vma,
+> +			range->start, range->end, anon_name);
+>   	else
 
+The doc of madvise_update_vma() is a bit misleading:
 
-I still think it would look nicer if we kept this; I just noticed that this uses struct members 
-rather than pointers though, perhaps that makes it harder. I don't feel too strongly about it 
-though, so either way:
+"Update the vm_flags and/or anon_name"
 
+I assume it's xor? Do we want to sanity check that this will hold true?
 
-Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
+In general, LGTM.
 
-> -
->   enum rkisp1_params_formats {
->   	RKISP1_PARAMS_FIXED,
->   	RKISP1_PARAMS_EXTENSIBLE,
-> @@ -1689,11 +1666,12 @@ static void rkisp1_isp_isr_meas_config(struct rkisp1_params *params,
->    * Extensible parameters format handling
->    */
->   
-> -static void
-> -rkisp1_ext_params_bls(struct rkisp1_params *params,
-> -		      const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_bls(void *dev,
-> +				  const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_bls_config *bls = &block->bls;
-> +	const struct rkisp1_ext_params_bls_config *bls =
-> +		(const struct rkisp1_ext_params_bls_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (bls->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_param_clear_bits(params, RKISP1_CIF_ISP_BLS_CTRL,
-> @@ -1709,11 +1687,12 @@ rkisp1_ext_params_bls(struct rkisp1_params *params,
->   				      RKISP1_CIF_ISP_BLS_ENA);
->   }
->   
-> -static void
-> -rkisp1_ext_params_dpcc(struct rkisp1_params *params,
-> -		       const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_dpcc(void *dev,
-> +				   const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_dpcc_config *dpcc = &block->dpcc;
-> +	const struct rkisp1_ext_params_dpcc_config *dpcc =
-> +		(const struct rkisp1_ext_params_dpcc_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (dpcc->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_param_clear_bits(params, RKISP1_CIF_ISP_DPCC_MODE,
-> @@ -1729,11 +1708,12 @@ rkisp1_ext_params_dpcc(struct rkisp1_params *params,
->   				      RKISP1_CIF_ISP_DPCC_MODE_DPCC_ENABLE);
->   }
->   
-> -static void
-> -rkisp1_ext_params_sdg(struct rkisp1_params *params,
-> -		      const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_sdg(void *dev,
-> +				  const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_sdg_config *sdg = &block->sdg;
-> +	const struct rkisp1_ext_params_sdg_config *sdg =
-> +		(const struct rkisp1_ext_params_sdg_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (sdg->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_param_clear_bits(params, RKISP1_CIF_ISP_CTRL,
-> @@ -1749,11 +1729,12 @@ rkisp1_ext_params_sdg(struct rkisp1_params *params,
->   				      RKISP1_CIF_ISP_CTRL_ISP_GAMMA_IN_ENA);
->   }
->   
-> -static void
-> -rkisp1_ext_params_lsc(struct rkisp1_params *params,
-> -		      const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_lsc(void *dev,
-> +				  const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_lsc_config *lsc = &block->lsc;
-> +	const struct rkisp1_ext_params_lsc_config *lsc =
-> +		(const struct rkisp1_ext_params_lsc_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (lsc->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_param_clear_bits(params, RKISP1_CIF_ISP_LSC_CTRL,
-> @@ -1769,11 +1750,12 @@ rkisp1_ext_params_lsc(struct rkisp1_params *params,
->   				      RKISP1_CIF_ISP_LSC_CTRL_ENA);
->   }
->   
-> -static void
-> -rkisp1_ext_params_awbg(struct rkisp1_params *params,
-> -		       const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_awbg(void *dev,
-> +				   const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_awb_gain_config *awbg = &block->awbg;
-> +	const struct rkisp1_ext_params_awb_gain_config *awbg =
-> +		(const struct rkisp1_ext_params_awb_gain_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (awbg->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_param_clear_bits(params, RKISP1_CIF_ISP_CTRL,
-> @@ -1789,11 +1771,12 @@ rkisp1_ext_params_awbg(struct rkisp1_params *params,
->   				      RKISP1_CIF_ISP_CTRL_ISP_AWB_ENA);
->   }
->   
-> -static void
-> -rkisp1_ext_params_flt(struct rkisp1_params *params,
-> -		      const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_flt(void *dev,
-> +				  const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_flt_config *flt = &block->flt;
-> +	const struct rkisp1_ext_params_flt_config *flt =
-> +		(const struct rkisp1_ext_params_flt_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (flt->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_param_clear_bits(params, RKISP1_CIF_ISP_FILT_MODE,
-> @@ -1809,11 +1792,12 @@ rkisp1_ext_params_flt(struct rkisp1_params *params,
->   				      RKISP1_CIF_ISP_FLT_ENA);
->   }
->   
-> -static void
-> -rkisp1_ext_params_bdm(struct rkisp1_params *params,
-> -		      const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_bdm(void *dev,
-> +				  const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_bdm_config *bdm = &block->bdm;
-> +	const struct rkisp1_ext_params_bdm_config *bdm =
-> +		(const struct rkisp1_ext_params_bdm_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (bdm->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_param_clear_bits(params, RKISP1_CIF_ISP_DEMOSAIC,
-> @@ -1829,11 +1813,12 @@ rkisp1_ext_params_bdm(struct rkisp1_params *params,
->   				      RKISP1_CIF_ISP_DEMOSAIC_BYPASS);
->   }
->   
-> -static void
-> -rkisp1_ext_params_ctk(struct rkisp1_params *params,
-> -		      const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_ctk(void *dev,
-> +				  const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_ctk_config *ctk = &block->ctk;
-> +	const struct rkisp1_ext_params_ctk_config *ctk =
-> +		(const struct rkisp1_ext_params_ctk_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (ctk->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_ctk_enable(params, false);
-> @@ -1847,11 +1832,12 @@ rkisp1_ext_params_ctk(struct rkisp1_params *params,
->   		rkisp1_ctk_enable(params, true);
->   }
->   
-> -static void
-> -rkisp1_ext_params_goc(struct rkisp1_params *params,
-> -		      const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_goc(void *dev,
-> +				  const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_goc_config *goc = &block->goc;
-> +	const struct rkisp1_ext_params_goc_config *goc =
-> +		(const struct rkisp1_ext_params_goc_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (goc->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_param_clear_bits(params, RKISP1_CIF_ISP_CTRL,
-> @@ -1869,11 +1855,12 @@ rkisp1_ext_params_goc(struct rkisp1_params *params,
->   			      RKISP1_CIF_ISP_CTRL_ISP_GAMMA_OUT_ENA);
->   }
->   
-> -static void
-> -rkisp1_ext_params_dpf(struct rkisp1_params *params,
-> -		      const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_dpf(void *dev,
-> +				  const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_dpf_config *dpf = &block->dpf;
-> +	const struct rkisp1_ext_params_dpf_config *dpf =
-> +		(const struct rkisp1_ext_params_dpf_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (dpf->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_param_clear_bits(params, RKISP1_CIF_ISP_DPF_MODE,
-> @@ -1889,20 +1876,22 @@ rkisp1_ext_params_dpf(struct rkisp1_params *params,
->   				      RKISP1_CIF_ISP_DPF_MODE_EN);
->   }
->   
-> -static void
-> -rkisp1_ext_params_dpfs(struct rkisp1_params *params,
-> -		       const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_dpfs(void *dev,
-> +				   const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_dpf_strength_config *dpfs = &block->dpfs;
-> +	const struct rkisp1_ext_params_dpf_strength_config *dpfs =
-> +		(const struct rkisp1_ext_params_dpf_strength_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	rkisp1_dpf_strength_config(params, &dpfs->config);
->   }
->   
-> -static void
-> -rkisp1_ext_params_cproc(struct rkisp1_params *params,
-> -			const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_cproc(void *dev,
-> +				    const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_cproc_config *cproc = &block->cproc;
-> +	const struct rkisp1_ext_params_cproc_config *cproc =
-> +		(const struct rkisp1_ext_params_cproc_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (cproc->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_param_clear_bits(params, RKISP1_CIF_C_PROC_CTRL,
-> @@ -1918,11 +1907,12 @@ rkisp1_ext_params_cproc(struct rkisp1_params *params,
->   				      RKISP1_CIF_C_PROC_CTR_ENABLE);
->   }
->   
-> -static void
-> -rkisp1_ext_params_ie(struct rkisp1_params *params,
-> -		     const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_ie(void *dev,
-> +				 const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_ie_config *ie = &block->ie;
-> +	const struct rkisp1_ext_params_ie_config *ie =
-> +		(const struct rkisp1_ext_params_ie_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (ie->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_ie_enable(params, false);
-> @@ -1936,11 +1926,12 @@ rkisp1_ext_params_ie(struct rkisp1_params *params,
->   		rkisp1_ie_enable(params, true);
->   }
->   
-> -static void
-> -rkisp1_ext_params_awbm(struct rkisp1_params *params,
-> -		       const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_awbm(void *dev,
-> +				   const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_awb_meas_config *awbm = &block->awbm;
-> +	const struct rkisp1_ext_params_awb_meas_config *awbm =
-> +		(const struct rkisp1_ext_params_awb_meas_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (awbm->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		params->ops->awb_meas_enable(params, &awbm->config,
-> @@ -1956,11 +1947,12 @@ rkisp1_ext_params_awbm(struct rkisp1_params *params,
->   					     true);
->   }
->   
-> -static void
-> -rkisp1_ext_params_hstm(struct rkisp1_params *params,
-> -		       const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_hstm(void *dev,
-> +				   const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_hst_config *hst = &block->hst;
-> +	const struct rkisp1_ext_params_hst_config *hst =
-> +		(const struct rkisp1_ext_params_hst_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (hst->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		params->ops->hst_enable(params, &hst->config, false);
-> @@ -1974,11 +1966,12 @@ rkisp1_ext_params_hstm(struct rkisp1_params *params,
->   		params->ops->hst_enable(params, &hst->config, true);
->   }
->   
-> -static void
-> -rkisp1_ext_params_aecm(struct rkisp1_params *params,
-> -		       const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_aecm(void *dev,
-> +				   const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_aec_config *aec = &block->aec;
-> +	const struct rkisp1_ext_params_aec_config *aec =
-> +		(const struct rkisp1_ext_params_aec_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (aec->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_param_clear_bits(params, RKISP1_CIF_ISP_EXP_CTRL,
-> @@ -1994,11 +1987,12 @@ rkisp1_ext_params_aecm(struct rkisp1_params *params,
->   				      RKISP1_CIF_ISP_EXP_ENA);
->   }
->   
-> -static void
-> -rkisp1_ext_params_afcm(struct rkisp1_params *params,
-> -		       const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_afcm(void *dev,
-> +				   const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_afc_config *afc = &block->afc;
-> +	const struct rkisp1_ext_params_afc_config *afc =
-> +		(const struct rkisp1_ext_params_afc_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (afc->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_param_clear_bits(params, RKISP1_CIF_ISP_AFM_CTRL,
-> @@ -2014,11 +2008,12 @@ rkisp1_ext_params_afcm(struct rkisp1_params *params,
->   				      RKISP1_CIF_ISP_AFM_ENA);
->   }
->   
-> -static void rkisp1_ext_params_compand_bls(struct rkisp1_params *params,
-> -					  const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_compand_bls(void *dev,
-> +					  const struct v4l2_params_block_header *block)
->   {
->   	const struct rkisp1_ext_params_compand_bls_config *bls =
-> -		&block->compand_bls;
-> +		(const struct rkisp1_ext_params_compand_bls_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (bls->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_param_clear_bits(params, RKISP1_CIF_ISP_COMPAND_CTRL,
-> @@ -2034,11 +2029,13 @@ static void rkisp1_ext_params_compand_bls(struct rkisp1_params *params,
->   				      RKISP1_CIF_ISP_COMPAND_CTRL_BLS_ENABLE);
->   }
->   
-> -static void rkisp1_ext_params_compand_expand(struct rkisp1_params *params,
-> -					     const union rkisp1_ext_params_config *block)
-> +static void
-> +rkisp1_ext_params_compand_expand(void *dev,
-> +				 const struct v4l2_params_block_header *block)
->   {
->   	const struct rkisp1_ext_params_compand_curve_config *curve =
-> -		&block->compand_curve;
-> +		(const struct rkisp1_ext_params_compand_curve_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (curve->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_param_clear_bits(params, RKISP1_CIF_ISP_COMPAND_CTRL,
-> @@ -2054,11 +2051,13 @@ static void rkisp1_ext_params_compand_expand(struct rkisp1_params *params,
->   				      RKISP1_CIF_ISP_COMPAND_CTRL_EXPAND_ENABLE);
->   }
->   
-> -static void rkisp1_ext_params_compand_compress(struct rkisp1_params *params,
-> -					       const union rkisp1_ext_params_config *block)
-> +static void
-> +rkisp1_ext_params_compand_compress(void *dev,
-> +				   const struct v4l2_params_block_header *block)
->   {
->   	const struct rkisp1_ext_params_compand_curve_config *curve =
-> -		&block->compand_curve;
-> +		(const struct rkisp1_ext_params_compand_curve_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (curve->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_param_clear_bits(params, RKISP1_CIF_ISP_COMPAND_CTRL,
-> @@ -2074,10 +2073,12 @@ static void rkisp1_ext_params_compand_compress(struct rkisp1_params *params,
->   				      RKISP1_CIF_ISP_COMPAND_CTRL_COMPRESS_ENABLE);
->   }
->   
-> -static void rkisp1_ext_params_wdr(struct rkisp1_params *params,
-> -				  const union rkisp1_ext_params_config *block)
-> +static void rkisp1_ext_params_wdr(void *dev,
-> +				  const struct v4l2_params_block_header *block)
->   {
-> -	const struct rkisp1_ext_params_wdr_config *wdr = &block->wdr;
-> +	const struct rkisp1_ext_params_wdr_config *wdr =
-> +		(const struct rkisp1_ext_params_wdr_config *)block;
-> +	struct rkisp1_params *params = dev;
->   
->   	if (wdr->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE) {
->   		rkisp1_param_clear_bits(params, RKISP1_CIF_ISP_WDR_CTRL,
-> @@ -2093,15 +2094,7 @@ static void rkisp1_ext_params_wdr(struct rkisp1_params *params,
->   				      RKISP1_CIF_ISP_WDR_CTRL_ENABLE);
->   }
->   
-> -typedef void (*rkisp1_block_handler)(struct rkisp1_params *params,
-> -			     const union rkisp1_ext_params_config *config);
-> -
-> -static const struct rkisp1_ext_params_handler {
-> -	size_t size;
-> -	rkisp1_block_handler handler;
-> -	unsigned int group;
-> -	unsigned int features;
-> -} rkisp1_ext_params_handlers[] = {
-> +static const struct v4l2_params_handler rkisp1_ext_params_handlers[] = {
->   	[RKISP1_EXT_PARAMS_BLOCK_TYPE_BLS] = {
->   		.size		= sizeof(struct rkisp1_ext_params_bls_config),
->   		.handler	= rkisp1_ext_params_bls,
-> @@ -2224,18 +2217,18 @@ static void rkisp1_ext_params_config(struct rkisp1_params *params,
->   
->   	/* Walk the list of parameter blocks and process them. */
->   	while (block_offset < cfg->data_size) {
-> -		const struct rkisp1_ext_params_handler *block_handler;
-> -		const union rkisp1_ext_params_config *block;
-> +		const struct v4l2_params_handler *block_handler;
-> +		const struct v4l2_params_block_header *block;
->   
-> -		block = (const union rkisp1_ext_params_config *)
-> +		block = (const struct v4l2_params_block_header *)
->   			&cfg->data[block_offset];
-> -		block_offset += block->header.size;
-> +		block_offset += block->size;
->   
->   		/*
->   		 * Make sure the block is supported by the platform and in the
->   		 * list of groups to configure.
->   		 */
-> -		block_handler = &rkisp1_ext_params_handlers[block->header.type];
-> +		block_handler = &rkisp1_ext_params_handlers[block->type];
->   		if (!(block_handler->group & block_group_mask))
->   			continue;
->   
-> @@ -2245,10 +2238,10 @@ static void rkisp1_ext_params_config(struct rkisp1_params *params,
->   
->   		block_handler->handler(params, block);
->   
-> -		if (block->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE)
-> -			params->enabled_blocks &= ~BIT(block->header.type);
-> -		else if (block->header.flags & RKISP1_EXT_PARAMS_FL_BLOCK_ENABLE)
-> -			params->enabled_blocks |= BIT(block->header.type);
-> +		if (block->flags & RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE)
-> +			params->enabled_blocks &= ~BIT(block->type);
-> +		else if (block->flags & RKISP1_EXT_PARAMS_FL_BLOCK_ENABLE)
-> +			params->enabled_blocks |= BIT(block->type);
->   	}
->   }
->   
-> @@ -2641,36 +2634,36 @@ static void rkisp1_params_vb2_buf_queue(struct vb2_buffer *vb)
->   	spin_unlock_irq(&params->config_lock);
->   }
->   
-> +static int
-> +rkisp1_ext_params_validate_buffer(struct device *dev,
-> +				  const struct v4l2_params_buffer *buffer)
-> +{
-> +	/* Only v1 is supported at the moment. */
-> +	if (buffer->version != RKISP1_EXT_PARAM_BUFFER_V1) {
-> +		dev_dbg(dev, "Unsupported extensible format version: %u\n",
-> +			buffer->version);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   static int rkisp1_params_prepare_ext_params(struct rkisp1_params *params,
->   					    struct vb2_buffer *vb)
->   {
->   	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
->   	struct rkisp1_params_buffer *params_buf = to_rkisp1_params_buffer(vbuf);
-> -	size_t header_size = offsetof(struct rkisp1_ext_params_cfg, data);
->   	struct rkisp1_ext_params_cfg *cfg = params_buf->cfg;
->   	size_t payload_size = vb2_get_plane_payload(vb, 0);
->   	struct rkisp1_ext_params_cfg *usr_cfg =
->   		vb2_plane_vaddr(&vbuf->vb2_buf, 0);
-> -	size_t block_offset = 0;
-> -	size_t cfg_size;
-> -
-> -	/*
-> -	 * Validate the buffer payload size before copying the parameters. The
-> -	 * payload has to be smaller than the destination buffer size and larger
-> -	 * than the header size.
-> -	 */
-> -	if (payload_size > params->metafmt->buffersize) {
-> -		dev_dbg(params->rkisp1->dev,
-> -			"Too large buffer payload size %zu\n", payload_size);
-> -		return -EINVAL;
-> -	}
-> +	int ret;
->   
-> -	if (payload_size < header_size) {
-> -		dev_dbg(params->rkisp1->dev,
-> -			"Buffer payload %zu smaller than header size %zu\n",
-> -			payload_size, header_size);
-> -		return -EINVAL;
-> -	}
-> +	ret = v4l2_params_buffer_validate(params->rkisp1->dev, vb,
-> +					  params->metafmt->buffersize,
-> +					  rkisp1_ext_params_validate_buffer);
-> +	if (ret)
-> +		return ret;
->   
->   	/*
->   	 * Copy the parameters buffer to the internal scratch buffer to avoid
-> @@ -2678,71 +2671,11 @@ static int rkisp1_params_prepare_ext_params(struct rkisp1_params *params,
->   	 */
->   	memcpy(cfg, usr_cfg, payload_size);
->   
-> -	/* Only v1 is supported at the moment. */
-> -	if (cfg->version != RKISP1_EXT_PARAM_BUFFER_V1) {
-> -		dev_dbg(params->rkisp1->dev,
-> -			"Unsupported extensible format version: %u\n",
-> -			cfg->version);
-> -		return -EINVAL;
-> -	}
-> -
-> -	/* Validate the size reported in the parameters buffer header. */
-> -	cfg_size = header_size + cfg->data_size;
-> -	if (cfg_size != payload_size) {
-> -		dev_dbg(params->rkisp1->dev,
-> -			"Data size %zu different than buffer payload size %zu\n",
-> -			cfg_size, payload_size);
-> -		return -EINVAL;
-> -	}
-> -
-> -	/* Walk the list of parameter blocks and validate them. */
-> -	cfg_size = cfg->data_size;
-> -	while (cfg_size >= sizeof(struct rkisp1_ext_params_block_header)) {
-> -		const struct rkisp1_ext_params_block_header *block;
-> -		const struct rkisp1_ext_params_handler *handler;
-> -
-> -		block = (const struct rkisp1_ext_params_block_header *)
-> -			&cfg->data[block_offset];
-> -
-> -		if (block->type >= ARRAY_SIZE(rkisp1_ext_params_handlers)) {
-> -			dev_dbg(params->rkisp1->dev,
-> -				"Invalid parameters block type\n");
-> -			return -EINVAL;
-> -		}
-> -
-> -		if (block->size > cfg_size) {
-> -			dev_dbg(params->rkisp1->dev,
-> -				"Premature end of parameters data\n");
-> -			return -EINVAL;
-> -		}
-> -
-> -		if ((block->flags & (RKISP1_EXT_PARAMS_FL_BLOCK_ENABLE |
-> -				     RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE)) ==
-> -		   (RKISP1_EXT_PARAMS_FL_BLOCK_ENABLE |
-> -		    RKISP1_EXT_PARAMS_FL_BLOCK_DISABLE)) {
-> -			dev_dbg(params->rkisp1->dev,
-> -				"Invalid parameters block flags\n");
-> -			return -EINVAL;
-> -		}
-> -
-> -		handler = &rkisp1_ext_params_handlers[block->type];
-> -		if (block->size != handler->size) {
-> -			dev_dbg(params->rkisp1->dev,
-> -				"Invalid parameters block size\n");
-> -			return -EINVAL;
-> -		}
-> -
-> -		block_offset += block->size;
-> -		cfg_size -= block->size;
-> -	}
-> -
-> -	if (cfg_size) {
-> -		dev_dbg(params->rkisp1->dev,
-> -			"Unexpected data after the parameters buffer end\n");
-> -		return -EINVAL;
-> -	}
-> -
-> -	return 0;
-> +	return v4l2_params_blocks_validate(params->rkisp1->dev,
-> +					   (struct v4l2_params_buffer *)cfg,
-> +					   rkisp1_ext_params_handlers,
-> +					   ARRAY_SIZE(rkisp1_ext_params_handlers),
-> +					   NULL);
->   }
->   
->   static int rkisp1_params_vb2_buf_prepare(struct vb2_buffer *vb)
-> @@ -2842,7 +2775,7 @@ static int rkisp1_params_ctrl_init(struct rkisp1_params *params)
->   	v4l2_ctrl_handler_init(&params->ctrls, 1);
->   
->   	for (unsigned int i = 0; i < ARRAY_SIZE(rkisp1_ext_params_handlers); i++) {
-> -		const struct rkisp1_ext_params_handler *block_handler;
-> +		const struct v4l2_params_handler *block_handler;
->   
->   		block_handler = &rkisp1_ext_params_handlers[i];
->   		ctrl_config.max |= BIT(i);
->
+-- 
+Cheers,
+
+David / dhildenb
+
 
