@@ -1,156 +1,146 @@
-Return-Path: <linux-kernel+bounces-729985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D9DB03EAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:28:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20332B03EB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91C693BEE11
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:27:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D86F64A0F4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB7F24729A;
-	Mon, 14 Jul 2025 12:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5AE248878;
+	Mon, 14 Jul 2025 12:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iV0HXkOD"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lOMiTO0B"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B08B2472B0
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D5C23C4E1;
+	Mon, 14 Jul 2025 12:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752496046; cv=none; b=QD7eBd9j7Hcm9mafIlrGUqLNDhXD1CHit63yHXG0CJ5Oc+FErieWNdvijDzX/C6ESFRwdZkZj6LLBiBDg6S/LNbpGA0T7DeHS4u8deqDhf9iQOVAX52S7WwhShH3Bk3Wwy96baOxzyWgFKffnnLH/FWyfGETfqsYXpTvsWWzyp4=
+	t=1752496133; cv=none; b=NlRe+adHU0bU/kqq0lpl6FTWZdx526IDyEyznFmSwyiHCF5bRdObSVArUvgApBKibZlIUu/iO7rXn9pQsVWJpA0v8F2PdwNVf0kurQrNBDqjHcylnYa2svlCCqs7gZIM7Qzg/1aEe7wQXKVNmaEM1Tl5o4kiacgzU+Eq5I3g6NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752496046; c=relaxed/simple;
-	bh=1L6R4wxjetxb/pWZk2A2ku+TcEAJsE2+TTcPhlpd8j8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TFNddkJCn4AZxuyxRhVv3+BUDqObQvS30jNmNG0zu3e1RQtXcTXsXRShSRBMmyin8Ww8uhAnakEH9fphhAM7KQ7xGE4S5Wx/JK62DcbldhJZETMeaXJA0WCEVejN6P7fqf+dQd4VUbmT7jqvikCworKS3QfplcZgLBN/RdPGVLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iV0HXkOD; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56E9wCBb021735
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:27:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=6EgrQ6Evaclca/mv/a+/ccLx
-	hAtqa936HRQUO/m+epI=; b=iV0HXkOD2VYKwXwBtVQRczeh4oiytnh9ytNquBSz
-	x7n0Yh8bvnNPuGZPy28cMQ0sug9hN77RWUK6i7uHw6hEy9lwrEHYyVxjgxB+J1BA
-	3HhiSlTLoetbOSZBja+g2C/hRrgykzfBtXgLb85ncyMlHhJ8gnRJQ8lA8rFE7DDf
-	oFfOKQnx76lcX7jMZQ4dW5gV68AlN9sXSJW48UnR3unpSjC2gh9ip7TRceFaUNB+
-	s/f+R7eomha1r4I5VpPkpfG9sJrvU5wms/ST0YtOA4SZY+EAtMGQ6s3TnksMubcP
-	aFmdqiGz1gFuL6fml9c0XxAzp6hrfKgBC7IOis2uLjDIkA==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47uftmcp5e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:27:22 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7e237c2f4ddso208181385a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 05:27:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752496042; x=1753100842;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1752496133; c=relaxed/simple;
+	bh=VhjsyGfVk/NYPkxf3dUl3ag4ZXP4DikybPpZX89jZFE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tgKKWwFtRFaPSJAQJEjiYvk5pY/ucMBV+0mutzY3TtoRHY53vuHCv7kW7sLL89Zp5sE/VI+6pY/tuH8XhhLdef3QurPZcMa036UWy4DYXLXTUX0Bq288s2NaEYkyTrJY7wxoN77NU/mZ5y8wiq44nzuua383HktasmXkqAQTN4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lOMiTO0B; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32cd0dfbdb8so34196881fa.0;
+        Mon, 14 Jul 2025 05:28:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752496130; x=1753100930; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6EgrQ6Evaclca/mv/a+/ccLxhAtqa936HRQUO/m+epI=;
-        b=iUnMv8WiiZeGEYy9mXcGaFORgqEpf4ZnKl+f+8FCxNjLOEKw6TAP87vt0fCg4PCJZa
-         90Zr7CihOax9Yn+GOC9NTA+4Im0qUKGqJUv1PgKNWNMADFQ333fxp8XpeUdy7e/NqqFS
-         B6jHWTtW8lJyIH9NH3zyHfp5lJ6wEH+8kFwF1jnbq9HR/6aV2O+RvCSccfEQEVFaI9p5
-         2/8R/mehfHcsyleDOIN+CULNzlbRlNUFF4Pc77+wHrsmnrZ191xG1vZ4fcZTqK9vMHef
-         Vq6T7glMl4Hhf1b9TSXnW1qmD7VEb6gY2jn1ccKUnnaxQ5WHrm6awdJC3eyK+PTiW6sG
-         el7A==
-X-Forwarded-Encrypted: i=1; AJvYcCXDHrWP1oA1gipPiAmwt3qO44ppZwvCHTllvdTIs1DBBC9y2t0VEi0/sNHnSEGKK33jKb2ZMsTVagoJvY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywlw32Kw7anwFNSHQgOu36YC6NXDucWDXOrkfJCPfQUHxRti8NQ
-	sKSO9uDYiQM4tJPs2rVUdZmd2wBX1WK5F4kITbdhg5/GUUJYyjmuF4TI95KNADV7Sv4/C93JbfS
-	y+4M8x1HogQxEq/cGrEBBIOtzbeuojEnJY4jN64tSJYw76FQ39nLPG0KcEnZiT8iFzpo=
-X-Gm-Gg: ASbGnct56QofLYj+CG7zDMkFA+C1FQmj0Gn0XSuftl27XNHxsV3rZtp7xxMr2ekDFEq
-	699/bHeBL60o5M+hODezge3Awx8IKdfGi4wOIaO47KN7J0v+3fv00LFop9KSYXCLcSka4z0AdVn
-	q8S48kqKYJuF/1IzJ1qPBAGejznlkExfIWRafVrodNMqRLL9CV9agH5tJun2GoJ+TqcDpqZkC3I
-	t3vGwh6F5v7d6TK6Ib3F18cUfbV56AgD9MVo9askf4uGdBdtuZUQeZwH725SxuoPh4hnNhpBhYd
-	FpLrtF0R9swtNL7itmvAIAxZiO6DI0oh7/ZsoOOx0cZvpgrCNHY+AHbM6m6W8TZqjyOyG2K7S03
-	NmaddCUpsbUhYzxL3oZxjuoWrTcjVr6eopQzXriiy+f+g5qUH2dQS
-X-Received: by 2002:a05:620a:3704:b0:7d0:9782:9b05 with SMTP id af79cd13be357-7ddea81b3ccmr2041494485a.25.1752496041897;
-        Mon, 14 Jul 2025 05:27:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF/DL8IYvSTdgwjCn0jn6ALMNC2tGNJGfPy5aqEL2dhHJ1me0Kau9nI8+0T6UE91J0zx/Y4eQ==
-X-Received: by 2002:a05:620a:3704:b0:7d0:9782:9b05 with SMTP id af79cd13be357-7ddea81b3ccmr2041490285a.25.1752496041286;
-        Mon, 14 Jul 2025 05:27:21 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55943b6b821sm1945844e87.182.2025.07.14.05.27.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 05:27:20 -0700 (PDT)
-Date: Mon, 14 Jul 2025 15:27:18 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Yongxing Mou <quic_yongmou@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>
-Subject: Re: [PATCH 04/19] drm/msm/dp: replace ST_DISPLAY_OFF with power_on
- in msm_dp_hpd_unplug_handle()
-Message-ID: <rmlgjr3fzb7dmnwmthf5bj67wb6fkcksmn3ouchzsvhhgxiv7h@vwcieejcufr7>
-References: <20250711-hpd-refactor-v1-0-33cbac823f34@oss.qualcomm.com>
- <20250711-hpd-refactor-v1-4-33cbac823f34@oss.qualcomm.com>
+        bh=SbUxRDt1V115BL2AgQxJUishMrxXTwdY/Gt4NlJymo0=;
+        b=lOMiTO0B2YTNiSCrl+ZvRtoZ98lAhynFz1dmUxHF79iSRytHCZL+crfJl/ZYoubxfl
+         z9NG2U8v9EjaTemKOx0nGA/XZdmeagJmGKjEydKdPl5isnmWASZJ34+JB1oIsWMYXqPo
+         KLYHDj0EbqhWFdILgZMcirT3hhL8NOTWdwN2f+5xweI9Xjqhf8fMS7zJOMvxGXBs/9iB
+         kvxaQ7iy7Mgn68KoMx12V86Yo6J3Po2iOuUnsVcLkTnN6ieL4dnxw3MGJEr4EVSZ7B6V
+         /uJ/KIThHJ9qVHzYLfNcUZDiJnOq+Yf2vwDMTDkVogtaAnsHpOqHzxtYg7XGGu0gmJAc
+         oA1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752496130; x=1753100930;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SbUxRDt1V115BL2AgQxJUishMrxXTwdY/Gt4NlJymo0=;
+        b=RU+IE5tWIWzaz8RAXxLYlhEZVkzFynVSCe/Ay08/S6LD2IRuxm1WhMkfN8QTi8wjqM
+         t6qZ5ce6wS1ohLe2645SPQ0qwv6sagu9bok9f4UKBbi4XWCpxv2yK/kh31k96G05xdqr
+         llchz9sa/9dvwqKyifJyuUcn72GvH6aw0zB9Yky0ZoRXrog39VBK3uLkHPvQ32CtcBB4
+         8ilXF9KzER6c9tCZDMd6jtB1nteLmU5Vpf2kgTCk/8NR21AbyQ5DCVQQgTp2Ikh9U66u
+         grqAJlKfzc4qccvaOpigMYzDw3IgQj3lF2MmOfeQmHUtoaTKqDrL2iuDsGQ+XCNDr6ju
+         plrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYdt9Z0redpu3PgAlxy3YM9zjWVbG/oFXMmSSWYSCbpqaIbnT6eVy8gnmlfgeGPGYQTQYRu0+U6euvKOjU@vger.kernel.org, AJvYcCW6ks7v2fNsNs6yBAtlCTJ+SpP1jhc7A7NtQMB3uPo2KC+2yBqd6QQyjS7EfXIoIIw7itV2eLFM5hQXUYT7b0A=@vger.kernel.org, AJvYcCWj3eNRE6w4HNQQYTIrYS9WS/76foJTtmbskLw832SpneCKGgCctOr1EDQVboLfLy708RN7RTtyDACA@vger.kernel.org, AJvYcCXHGm+Hs7wcSZKG1KiShqWFZUbYB7nBRWrDYSwjvTu0eOHZQcEZ5gZCWNa6ZRiGRQp0jxuP7o49FyinAE691Pa3@vger.kernel.org, AJvYcCXMi/2YI4HO8d84iMtrln4ETDc8Oh0d/oyYU4oezrXRtCj7GSM6Wlg/S8neeplI0KGJTUfwh6tf@vger.kernel.org, AJvYcCXuA5rnfUtruG3RHZWAuHRpE+RFqjj4aa6ZvAu73WH4tHLuvwmMSPiGAEOVDWXPtFRaI959hUtjyLE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRm8oXPWILPjaV9akEciCXyBtcq2VHdvF2bPcbyNX9dweB8MlQ
+	crBqEgnhAk/lICQhE7GLyOpxnk+lMGDcJlQNxgr4tEGpxm0S6916uisfXpiQzBaOokRgbivD5HH
+	BuZoAF+aYWm3s+0bx20ve6lFNv5NL/nE=
+X-Gm-Gg: ASbGncsH8CJC47vwTo/RcthQZcwakpV3sn5eTFwFeu0AnITy/qkJhOSd0E0I+HqZwMb
+	q260G5JyW8C1mpZkR6oLU0C8lANHw2P942KkAXcX5RNPetzpLV/dTolFuJHKXslU/jcPV+XTXb5
+	3xt+r056+BlXmIrJdzCM55xXSJYiv1L59WzOroT/NcR7kNEh+pgmy1NpGIyUJABC3MvVnwAEJTF
+	3sRPlFf0Xlpu9Iyl275IU5i6padEU8gGRa4B+vlsz27Vo+z3pC+
+X-Google-Smtp-Source: AGHT+IHrSBkjEoqU/I5DY/nGtzSq30SG70sPRuWAgDJvgCsJU9oDbgAOubBSXw4/LD+Vz0YhYyXX8s9x0cDKBQKVndA=
+X-Received: by 2002:a2e:b5da:0:b0:32b:7111:95a7 with SMTP id
+ 38308e7fff4ca-330535da03dmr27580171fa.41.1752496129946; Mon, 14 Jul 2025
+ 05:28:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711-hpd-refactor-v1-4-33cbac823f34@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=AI4FyeZ1 c=1 sm=1 tr=0 ts=6874f7ab cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=e5mUnYsNAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=JFUgQLFdXU3b13EZuZoA:9 a=CjuIK1q_8ugA:10 a=NFOGd7dJGGMPyQGDc5-O:22
- a=Vxmtnl_E_bksehYqCbjh:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: wcTgib1ySvuzcIcUYOA1ENmktFTA6uAb
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA3MyBTYWx0ZWRfX6UquA3jDwJaC
- x9Pm8J4ZdmjuVh5XQhQ2sKoqkoArQF8LIPmErUJhh+oo2u9rvHdG2PNWz7Kmx1uNIF3jpYVaI/6
- lGyRuAkHUjK2tG5HDt+96MTp4eLHNXbxpbYcx6vkgR+5AK23+7FvCJDbxCg0VYok0nPPVp05Hc7
- LQYFdshBEtqrDV7J5aARx8wsskMnKSfFtuhdEGtz2G5Cq9+a6miprPEQ2apEs2VNAbqChVFjN02
- OKXGVNnLPfTXAzhEkW9FEz8FHovlNAMGpeVmQAKyCyJEtUvFQCko3BP8tcLZ9NG07Wn4n88kQPS
- xtv6eChQ69nHMLggWTyXmbyKx1LRfVS1yIOG5iUHvX61IqdmRIyP9MX+QKKB+fJ+WYVpvouDcqC
- sZ0uTfgKTzdOScXVMBqrLfUuFPxNblyE2xJ62T3en4QhcP8ZcDcKRaaOlu8zTlphAYYZlpiK
-X-Proofpoint-GUID: wcTgib1ySvuzcIcUYOA1ENmktFTA6uAb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-14_01,2025-07-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=680 phishscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 impostorscore=0 clxscore=1015 adultscore=0
- priorityscore=1501 spamscore=0 bulkscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507140073
+References: <20250709-core-cstr-fanout-1-v1-0-fd793b3e58a2@gmail.com>
+ <20250709-core-cstr-fanout-1-v1-5-fd793b3e58a2@gmail.com> <DBBQCHNN1N7F.3O470V9YDXE70@kernel.org>
+In-Reply-To: <DBBQCHNN1N7F.3O470V9YDXE70@kernel.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 14 Jul 2025 08:28:13 -0400
+X-Gm-Features: Ac12FXxlpQphBeoscQniP1NYfXjAeRGBqEAxGkTlGCPTLLtOzVyVDIQfLGYMkU0
+Message-ID: <CAJ-ks9k2jyVpc6g9bGK4fUHbqUBUnH-aHawi5YKvhtpAEcqr2A@mail.gmail.com>
+Subject: Re: [PATCH 05/10] rust: drm: use `core::ffi::CStr` method names
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, Breno Leitao <leitao@debian.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 11, 2025 at 05:58:09PM -0700, Jessica Zhang wrote:
-> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> 
-> msm_dp_hpd_unplug_handle() checks if the display was already disabled and
-> if so does not transition to ST_DISCONNECT_PENDING state and goes directly
-> to ST_DISCONNECTED. The same result can be achieved with the !power_on
-> check.
-> 
-> Replace ST_DISPLAY_OFF with !power_on to achieve the same outcome.
-> 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-> ---
-> Note: Taken from https://patchwork.freedesktop.org/series/142010/
-> ---
->  drivers/gpu/drm/msm/dp/dp_display.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Jul 14, 2025 at 7:09=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> On Wed Jul 9, 2025 at 9:58 PM CEST, Tamir Duberstein wrote:
+> > Prepare for `core::ffi::CStr` taking the place of `kernel::str::CStr` b=
+y
+> > avoid methods that only exist on the latter.
+> >
+> > Link: https://github.com/Rust-for-Linux/linux/issues/1075
+> > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> > ---
+> >  rust/kernel/drm/device.rs | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
+> > index b7ee3c464a12..998b942b6dd8 100644
+> > --- a/rust/kernel/drm/device.rs
+> > +++ b/rust/kernel/drm/device.rs
+> > @@ -83,8 +83,8 @@ impl<T: drm::Driver> Device<T> {
+> >          major: T::INFO.major,
+> >          minor: T::INFO.minor,
+> >          patchlevel: T::INFO.patchlevel,
+> > -        name: T::INFO.name.as_char_ptr().cast_mut(),
+> > -        desc: T::INFO.desc.as_char_ptr().cast_mut(),
+> > +        name: crate::str::as_char_ptr_in_const_context(T::INFO.name).c=
+ast_mut(),
+> > +        desc: crate::str::as_char_ptr_in_const_context(T::INFO.desc).c=
+ast_mut(),
+>
+> Maybe looks slightly cleaner to import this function, not a blocker thoug=
+h.
 
-Please squash all state-related patches into a single one. It would make
-it easier to review and more logical.
+I don't feel strongly. I think I chose not to import it because of the
+potential for conflicts.
 
--- 
-With best wishes
-Dmitry
+See also https://github.com/rust-lang/rfcs/pull/3490 which would
+obviate the need for this method.
 
