@@ -1,147 +1,125 @@
-Return-Path: <linux-kernel+bounces-730531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB32B045E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:51:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48384B045E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C87E1163079
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:48:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50177165A92
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CAB62AE99;
-	Mon, 14 Jul 2025 16:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDF928EA;
+	Mon, 14 Jul 2025 16:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tg1EGDIS"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MjyzgVVA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52BD2AD20
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 16:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395DE262FD4;
+	Mon, 14 Jul 2025 16:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752511548; cv=none; b=E51GiucOdsLiMQjm2AZ/9gLmczahID63J3tiiGKd7Phjt9trDHNK5ZV2lB8izzqIS+2uwIAEZ+zawmqHJCZ2A/q2PeZrOny/mVwiDwNmtDUe0asFbL1RmAheExLO9yspZ5+WHmEPkvy4hdliIOVjIyWS8HssXz0WaocsijSVF/s=
+	t=1752511611; cv=none; b=bjEQUs3kGFw927M1RLsQ3tNnSNyGkYKU85BF0V3lW862cCmQz9RRIMf46gaNHwTZXNAjnCrRVVIeYaHQoWhSjLbj2MAgR+TE4Pe9dUwR5S2yXE5rVWlhehPE6Wa4kLc5BLrDih+plf1bnARcoYh6+R6gXgdEZWGL9mya7Ai30KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752511548; c=relaxed/simple;
-	bh=ZFCJUQX+R1jDLGp1kQxI7pxWZsQX4PlP9o9505K2UFs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=P2fw+soLhp0SWpYlaeLYE2Jnn3nzQqxFy7Js3/FisQATj9+Y26PdKz/2O8c/sJ0DtFqf6cvcOviuhKBmyuFgMsu+yffhY8DJ5GKV5/HFlZ10aD8Llm3Vpqvqj86riWVTHzwH/Gbj/8cBDRSgsKhQWn845iVrpYVadg4x9KUhsfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Tg1EGDIS; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-32f2947ab0bso31734891fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:45:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1752511545; x=1753116345; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xD4diS2eZIxvYk4/vXs4cqI2wW3yeZXdZZaYc3t249U=;
-        b=Tg1EGDISZxsQVv0xJcC+RuZV9tpQPCuYn45J86ab7FjO3xhQSt/naprVB7qvhkl5rY
-         VFQcQUF0/YQQYlQP1gQPsylAMIxigXgNjMIVumHdbKB4JXWC5m3b+ETW44cTy7PIaftC
-         B8GQ+4w8gC2pbSPCHH0c05VCH2aj/lGCH7ZB4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752511545; x=1753116345;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xD4diS2eZIxvYk4/vXs4cqI2wW3yeZXdZZaYc3t249U=;
-        b=jIaHsuZvsIIfiKzPWWARP1vhJeaVgmODsWw3lIjH9jpXvTff+vNsR+dRrMGsytmPD8
-         V+BMF0U8bI66qBEAGu9CliZT6r1jd5Zwkg8kcXNYuAr5I8jFAdhKIIs7yN0KArId+llB
-         +1eqQfUhSesIU11SqVDXDOAmYPbKyG6mx3hQx0O9LqsKu7qAj9OwRp/ZNRZKrgeXr67j
-         MLVKovPPVUlMQtvYKlXLWrA1U5xp5S+71SlBm5SiTLGW3YSZXG4Bd0XCic0cCeKoXALQ
-         cWSCaXZVrpGKQ3Amw/dxRuGdP0cuALgobWCbGuT+kX2nnjpdlmVkpkukrLWg/bdmGSld
-         cZlA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRj++URgxodqU/NqGlgUwE/LSoZNxPGiU6ISD5uBcgDryITqFXGIKJoWDoHq9tV1SsKawzGZAtir8hnlc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw031VFelxmhrY28VX85nDxoma8wu11629Iuq5etzElDyUxHXwk
-	0W/Ip/g9KPsqPDBvzZJkQuz2vHWfizgvV4BkAouDzx+uqaxsfUGPWRqsIrhudFWg1g==
-X-Gm-Gg: ASbGncsXBCWmCsqzymq2oa6W27kOah8fuQ0FfCUA0ybMMQA3gwIaAwDoOpRouL5tEdU
-	kGnKGyCzPfjxzfrwzHgNV0Xi+xeMIJke1+MXPidu13JvD2iiwYdFSnraoGQYZnyXxqpImp7PJO/
-	ZsZpr3xRB9D8RQ9hlaIeu4m3JxtfHpInWSqBQIVvpve1wDhbsPc/0vYBnaLyrXwwwWR8gSb4OGD
-	zlcc7DuPT3t3h3mgOcomq+PQC7vBP2zuoYRiL/RAZhRGSzLMkQem0hFFY53HaewEDAZ/3x+gJsW
-	3x3EW5E0FcqRUaCGynb0d3/uUddBZQwqNjTIirpyl/sF76hsTUI6rbaHiioHLeE/WAjJg93bJ9/
-	SC0a3cRt1O1pCZ/BogXGYINnaQZk5CiAWJKGBT4hySGZhlFS2aqphkuBw0vSxT75HdHj3ssKq7O
-	oXOQ==
-X-Google-Smtp-Source: AGHT+IGb7GrL5YkGYqwPa7G0HJ0dKuqlTDSGAH8yZuJoIyviiXBnaIvpe2Ddznx0fDOzJaZFq3wGVw==
-X-Received: by 2002:a2e:be89:0:b0:32a:864a:46eb with SMTP id 38308e7fff4ca-33052f808aamr44196941fa.0.1752511544883;
-        Mon, 14 Jul 2025 09:45:44 -0700 (PDT)
-Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32fa293b6cdsm16459571fa.38.2025.07.14.09.45.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 09:45:44 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 14 Jul 2025 16:45:43 +0000
-Subject: [PATCH] media: uvcvideo: Fix comments in uvc_meta_detect_msxu
+	s=arc-20240116; t=1752511611; c=relaxed/simple;
+	bh=CZ4g0Gar9M48yZ3aK1dx0+90CzTsdoCR/PgLbozfuBU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Xnkd4A0ckAIM4BUC3i1poNjGrYq1b6elbRnFF3vaqf6W+e/X/aG0OnVXTPV+TKwmjp0rKVyMYw0WoAyr3Mu+5Awjqfi6TEX9zLzbFAnByY4uBEnv1ppTvZoU/AsAM3gS3nfxp1JSBxJuywmzprP3fS8775tyIbc+BUsjsNE0qaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MjyzgVVA; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752511610; x=1784047610;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=CZ4g0Gar9M48yZ3aK1dx0+90CzTsdoCR/PgLbozfuBU=;
+  b=MjyzgVVAdtr7x/F38wpNqAu+8F4zXQeS5RZYGd1BB66j2YmMi1RppI2A
+   2foql3p07fkCnoH4Fsbgkz68XHXbjJ99xDwtoT+cUE/W83GgvUp1e0KPW
+   /xg9YQjQHHPYQ+Un1oXirDWybWppo6h1hFEYBsn3QYkRCNZvCFGRwlb2q
+   vaifsyOdQH0IRx/F2/j2BKvSQVpBg0QwQwNyU+NgddrY3e0gbaEL/A+6u
+   wSTbP70oilZe0nJeHBrgCR7mUVr6xUCQV/rngE4XyejcINUcTbJPZ8EZC
+   87Nm+ie/PuMpJzn/xOo6f94+6nqb/arvLsPnhFcHc07nM/r8olMyAqX8Z
+   Q==;
+X-CSE-ConnectionGUID: ihoPRr1BQtCLoriR6DVfJQ==
+X-CSE-MsgGUID: rdohjBxkQeiGSQALwVlhmg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="77246297"
+X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
+   d="scan'208";a="77246297"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 09:46:49 -0700
+X-CSE-ConnectionGUID: QA0SCNZUTDqsyaMzUzfR7A==
+X-CSE-MsgGUID: WpfMqmwiQHGZaqab8lNOQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
+   d="scan'208";a="161529272"
+Received: from jithudellxeon.sc.intel.com ([172.25.103.66])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 09:46:49 -0700
+From: Jithu Joseph <jithu.joseph@intel.com>
+To: ilpo.jarvinen@linux.intel.com,
+	hdegoede@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	jithu.joseph@intel.com,
+	tony.luck@intel.com,
+	ashok.raj.linux@gmail.com
+Subject: [PATCH] MAINTAINERS: Update entries for IFS and SBL drivers
+Date: Mon, 14 Jul 2025 09:46:43 -0700
+Message-Id: <20250714164643.3879784-1-jithu.joseph@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250714-uvc-meta-followup-v1-1-67bd2dc05ef2@chromium.org>
-X-B4-Tracking: v=1; b=H4sIADY0dWgC/x3MTQ5AMBBA4avIrE2ijb+4ilgwpkyCSqtIxN01l
- t/ivQc8O2EPTfKA41O82C1CpQnQ3G8To4zRoDNdZJXKMZyEKx89Grss9go7KqKh5JoN6QFitzs
- 2cv/PtnvfD7Z2hdZjAAAA
-X-Change-ID: 20250714-uvc-meta-followup-1ccb6e8efc2b
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hansg@kernel.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans Verkuil <hverkuil@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-The comments can be more precise. Let's fix them.
+Update the MAINTAINERS file to reflect the following changes for two Intel
+platform drivers:
 
-Fixes: 6cb786f040ad ("media: uvcvideo: Auto-set UVC_QUIRK_MSXU_META")
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+- Tony has agreed to take over maintainership of the Intel In-Field Scan
+  (IFS) driver, and is now listed as the new maintainer.
+- Remove myself as the maintainer for the Slim BootLoader (SBL) firmware
+  update driver and mark it as Orphan. To the best of my knowledge, there
+  is no one familiar with SBL who can take over this role.
+
+These changes are being made as I will soon be leaving Intel.
+
+Signed-off-by: Jithu Joseph <jithu.joseph@intel.com>
 ---
-This series fixes the uvc metadata series landed in:
-https://patchwork.linuxtv.org/project/linux-media/patch/998c5fb0-8d32-496c-a1e2-cc9c1a73ede0@kernel.org/
+ MAINTAINERS | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-There is no need to Cc: stable, because the series have not landed in
-any stable kernel.
----
- drivers/media/usb/uvc/uvc_metadata.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
-index 229e08ff323eed9129d835b24ea2e8085bb713b8..2905e46514d74cee09215d86e8eb7ad6e787ece1 100644
---- a/drivers/media/usb/uvc/uvc_metadata.c
-+++ b/drivers/media/usb/uvc/uvc_metadata.c
-@@ -196,7 +196,10 @@ static int uvc_meta_detect_msxu(struct uvc_device *dev)
- 	if (!data)
- 		return -ENOMEM;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fad6cb025a19..9b90f434101b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12185,9 +12185,8 @@ F:	drivers/dma/idxd/*
+ F:	include/uapi/linux/idxd.h
  
--	/* Check if the metadata is already enabled. */
-+	/*
-+	 * Check if the metadata is already enabled, or if the device always
-+	 * returns metadata.
-+	 */
- 	ret = uvc_query_ctrl(dev, UVC_GET_CUR, entity->id, dev->intfnum,
- 			     MSXU_CONTROL_METADATA, data, sizeof(*data));
- 	if (ret)
-@@ -208,9 +211,9 @@ static int uvc_meta_detect_msxu(struct uvc_device *dev)
- 	}
+ INTEL IN FIELD SCAN (IFS) DEVICE
+-M:	Jithu Joseph <jithu.joseph@intel.com>
++M:	Tony Luck <tony.luck@intel.com>
+ R:	Ashok Raj <ashok.raj.linux@gmail.com>
+-R:	Tony Luck <tony.luck@intel.com>
+ S:	Maintained
+ F:	drivers/platform/x86/intel/ifs
+ F:	include/trace/events/intel_ifs.h
+@@ -12527,8 +12526,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/iwlwifi.git
+ F:	drivers/net/wireless/intel/iwlwifi/
  
- 	/*
--	 * We have seen devices that require 1 to enable the metadata, others
--	 * requiring a value != 1 and others requiring a value >1. Luckily for
--	 * us, the value from GET_MAX seems to work all the time.
-+	 * Set the value of MSXU_CONTROL_METADATA to the value from GET_MAX to
-+	 * enable the production of MSXU metadata.
-+	 * https://learn.microsoft.com/en-us/windows-hardware/drivers/stream/uvc-extensions-1-5#2229-metadata-control
- 	 */
- 	ret = uvc_query_ctrl(dev, UVC_GET_MAX, entity->id, dev->intfnum,
- 			     MSXU_CONTROL_METADATA, data, sizeof(*data));
+ INTEL WMI SLIM BOOTLOADER (SBL) FIRMWARE UPDATE DRIVER
+-M:	Jithu Joseph <jithu.joseph@intel.com>
+-S:	Maintained
++S:	Orphan
+ W:	https://slimbootloader.github.io/security/firmware-update.html
+ F:	drivers/platform/x86/intel/wmi/sbl-fw-update.c
+ 
 
----
-base-commit: d968e50b5c26642754492dea23cbd3592bde62d8
-change-id: 20250714-uvc-meta-followup-1ccb6e8efc2b
-
-Best regards,
+base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
 -- 
-Ricardo Ribalda <ribalda@chromium.org>
+2.34.1
 
 
