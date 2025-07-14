@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-730898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA2EB04BEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:13:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7177B04BFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:14:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E384F4A821E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:12:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 043573AC0CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA85729CB4D;
-	Mon, 14 Jul 2025 23:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191A4278753;
+	Mon, 14 Jul 2025 23:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aMPL76GC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W3dOVIFK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B4F29C33E;
-	Mon, 14 Jul 2025 23:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AED1F3BAC;
+	Mon, 14 Jul 2025 23:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752534490; cv=none; b=lH0MSBlCsQXyD3ZeeYuKRHh6PHoCvwvkGMS8kzuvRm19xAsxHt9SQZCqCkD34CbqLapa6JpYWYVhVTvIaBkGE4A4wgS9VtSlPCZeXyI4tR64x2stXoXIzOb5VHfJX9nKgfslNLQclcM35LlhkIQZQCgxTwjg1UuF3i7uLkFqlm0=
+	t=1752534499; cv=none; b=WG2Bju6pSsKzX12ayy667E/RxwgfFuSdMiiwGKr1ny1iXg23gl2yPUQfgz4Eg+C4GNHcfiYZRw1ZFCJfJ6D9dJa485wnyPTAjEQhYDDT7JrlgFodD8S0TRIUyMeOLR3kIY6U680LpxonEBoWcGoshTXkUwiz22jHHag191tLgyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752534490; c=relaxed/simple;
-	bh=b7KvlxwylytKHpUdIAxfnnWaTU1xv55jtaVMQCzTPnY=;
+	s=arc-20240116; t=1752534499; c=relaxed/simple;
+	bh=aZopBhGjm6b8ZhwVgOoxaIYjjq15fUw+DW+MiePavw4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=f+9fYawodKc8/IDBpTWOZEmm/+LgXIaQbujLUCoc+0RL4AYMZUblisD0hXMLsNaTqlWNzE/9uF5J0ye6s1ZWnU0oEwbaXglkewfxpFfHA2Q8fHxx4/Gi1sJO5W1MzRfxh9u7sV45PpuTG4BvuS5KwaFX2NOP3ssjYllbKeLdWWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aMPL76GC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5B83C4CEED;
-	Mon, 14 Jul 2025 23:08:08 +0000 (UTC)
+	 MIME-Version; b=cDUhv9EKgjlp+DafdiRiD1PY6FVpLWqA4bgTtDTHPdw9q6CwLPgL5zc9ALzQ4aGGzK+bi/d5VpGXZhvI4/TlWQ/godzabhTTiTgT6epu8lfihA/O9dR/FS4D1dgg9UhN38WhT/rAiKLbfQXSh9H9EZ8FpO2oX3jM+AKLzqRVlJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W3dOVIFK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE5CFC4CEF0;
+	Mon, 14 Jul 2025 23:08:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752534490;
-	bh=b7KvlxwylytKHpUdIAxfnnWaTU1xv55jtaVMQCzTPnY=;
+	s=k20201202; t=1752534499;
+	bh=aZopBhGjm6b8ZhwVgOoxaIYjjq15fUw+DW+MiePavw4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aMPL76GCRXMYcLGh/tTlauV/1ExVjvsJHkIcjKvoW6N1Gy9Fo4pU1hhjmxMYmkZ/d
-	 be/LQRkfTzzoc8PXBAIKZ+7FoNvqehl/C4Ea/diQtmEJrtpFuOLkAvZ6SQDNy21CQG
-	 BVAXPNyNvzLRDlvRmZExQW0cpV69vxt26DN3VyZLsx29XYrC+UQV9S2uYxVAXG89oU
-	 uU0Z4h1uEViNa0Inxo7SsS9h0mgfkxJOl9I7uIxutsnViIp9Lp7MH+UVG8sxrTCzZU
-	 2jI/mpuc51uFhbogWrfjsQCUznLu1EeWwJEoTCbuP6eOQ5QVN1g0+w+oz/7kI7324d
-	 RZAB5MUAlXjcQ==
+	b=W3dOVIFKLiFjzmg7MwAfHkxwXm3nz2lulJUiUsEjBkB5GGcVt94f2tOfwXsXmD+KZ
+	 TW+DWf/zEhmggpqr5DNVlP7Q00w0GXZAfFcRIRdsI7/T4LMNa/lKfWkjMMOlK6GKVD
+	 D1QRWTcvLRd5d/b9MIruQSC9SFfNSjCU5MHWmgPEDDezenJ63s+MvPVhMlczkzrYCu
+	 1xHtXcnAQqvieKuzAbYzeKSmWMM2cAt7hDEXdYzvWDXc+wVjOnfX6Q28Eu5N1lsH+J
+	 ZY5dn6ZK8BNM1st5VRQuz0TuUjcomAHKKxwV7l62QIQDJaKwqWFiWh8bVphUHF3Vm4
+	 pYu+VnsPSnYHg==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -52,12 +52,12 @@ Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
 	namhyung@kernel.org,
 	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 3/4] perf/core: Fix WARN in perf_sigtrap()
-Date: Mon, 14 Jul 2025 19:07:57 -0400
-Message-Id: <20250714230759.3710404-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 2/3] perf/core: Fix WARN in perf_sigtrap()
+Date: Mon, 14 Jul 2025 19:08:11 -0400
+Message-Id: <20250714230812.3710500-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250714230759.3710404-1-sashal@kernel.org>
-References: <20250714230759.3710404-1-sashal@kernel.org>
+In-Reply-To: <20250714230812.3710500-1-sashal@kernel.org>
+References: <20250714230812.3710500-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,7 +66,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.145
+X-stable-base: Linux 5.15.188
 Content-Transfer-Encoding: 8bit
 
 From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
@@ -139,10 +139,10 @@ legitimate exit case without triggering false warnings.
  1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 2761db0365ddc..c3ad15247009a 100644
+index c7ae6b426de38..e2457319b63e1 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -6571,18 +6571,18 @@ void perf_event_wakeup(struct perf_event *event)
+@@ -6667,18 +6667,18 @@ void perf_event_wakeup(struct perf_event *event)
  static void perf_sigtrap(struct perf_event *event)
  {
  	/*
