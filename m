@@ -1,119 +1,85 @@
-Return-Path: <linux-kernel+bounces-730355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7EF8B04370
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A23FB04378
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E51A27AFB28
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:19:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B25C97B2278
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEA02609F7;
-	Mon, 14 Jul 2025 15:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9203E265CC0;
+	Mon, 14 Jul 2025 15:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f4aCNCmZ"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Nxkhfcrc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844D92571DD;
-	Mon, 14 Jul 2025 15:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F377E261584;
+	Mon, 14 Jul 2025 15:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752506298; cv=none; b=Jg3Ak7J0RpaP7/TQ8uo/kSO+TpAiN2IArYYvQFuefU64tQc92qO+obE6o4C5ndsivqXdtrQyPvMcurpiAS8ss0DZ8pzOkmbmewWn9zalEQkR+xprjqdtPXGxYQvH2sPZm/ZrX8u9JBkLV9+9yA4+Z1uuyeUtf4opeSZcAGohBp4=
+	t=1752506305; cv=none; b=oEwqUH0PRlEs5mPfkiZPToG89wwQYKEpOwrZdW6XwFue0Dzj0jKtAmW72CWe9wtnutvaVLuda9JYCkqfFhcwZ9xOtL6fRXOhIpsjRQAjrXo5qNmksicvpIKUa6dIYCx44iVOr8QHlvW0lXbGSb+S/zlJIFaedLRJgP1Gok2YfzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752506298; c=relaxed/simple;
-	bh=H2Vfa1hTNVLtaQ3ZfRlV+2JX86DONilPDV8aWr5D5/E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M4AhlEbVarVpe4ql0xU8nxcS4Es/WGiLgqy8/5bojD4xQRi8r5iF6ah9hOuzEPK//QcpG6mb2N0Z6MCRHb+0kpUSQVUSW6SvPeFP+UaGfxT2EX61ypKwgHQcT8M5QGm+f6WdXliBnwCxt3mnq/HCEwERdChSuA8TS8R6d85xyCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f4aCNCmZ; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3138e64fc73so1164607a91.2;
-        Mon, 14 Jul 2025 08:18:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752506297; x=1753111097; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H2Vfa1hTNVLtaQ3ZfRlV+2JX86DONilPDV8aWr5D5/E=;
-        b=f4aCNCmZ1Aj0r3Y+WD0umwp2tFFDkErl/1ZAj0oEkH0KtM3BfnPvoMYSIqkIvi3o4B
-         YP4ZKV3yhgzv6tX+Y4bi3UwPKOwDCNUwKE6JCWTagnl1yUPKrbYLQ1n+6993aWfaa8pA
-         G0EEZ4a/wUzobX9E6L1VMMjprfUhn2pSzmqIKyjR6V9SJ0Wfjs4L8iOlRtSilNdXO5rq
-         5/okjGefXTQYSKdddgemyOn3TAo2cQgvZo8foc/hVB/9touB7t15NXNCjywv8NsrEl5b
-         r7H61FLqS4vRaeuPga4W3B+73MspGALC9qbWmkRnzMQTgb/8Irb8R/aJad/emnM4xNB7
-         VWXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752506297; x=1753111097;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H2Vfa1hTNVLtaQ3ZfRlV+2JX86DONilPDV8aWr5D5/E=;
-        b=vfYo6kttb+RC4cJ5CNvz9m9EORkYifO51G8WHwLQtwy7342Sq/Q5NnT4qRy4OROKGd
-         z9J4omjQrgLD2eh/YMDmsZIYPMOeLjaOfOodz1gyEqEXgeeMCPG88B3HP8cddB4VaD6q
-         8FtP3PMmK8xSK6SY/kT8bWNlz/13xtAuXX/f8x4bE/p+AXqVJ4rqBIEm6RTbZJMIT2Ag
-         a+BaoawLdaTQQFmvKh0W8nJTRGynLCYheV0FO9gjfMcaOtplaZJP0/TGILwVl02eFSxN
-         YCaqSg32nE0cAb6t3CIRxc3J0d+V74d7zVdNJoTGLHB9TvwM7NT/M6Ncj2TNnqf8b3Gw
-         WzCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGGGAqpocemJ3S3L17372Pua6AGf/nEJamokubpptJy9O51cNHNcCpP5GySADV81CcD526jo3BiY4NaPnsBmKz@vger.kernel.org, AJvYcCULz24z4pWU4sdsFUC60n4/j8zvbyACgmsKQm6i3W6ByUjcGE7ly6OY/F9POMLMoSyncIZzjldV2H5rY2bn@vger.kernel.org, AJvYcCVMJfMp7kERUTRt3AZxUZQJqRK1x1hOUICGJx5bEN75GdktyoQurtcWb2FNx9pUb+A/JUdCF1Op9ujmW8yXXuo=@vger.kernel.org, AJvYcCXsBJ4i+rg/42BXKyy60IfyI0wQJ2j4Uzj+DVvnd+mUSz4qyMrUVXsX0XGXWRoRMMdO9B1g0xdERq4Q@vger.kernel.org, AJvYcCXvMQov6Nzat1SW5zQsPM0N1dS25Iv84LDOlnfp3W71Q3o4SlARNLD9WMeR0ZKh8HMs4AuMTG+OMbM=@vger.kernel.org, AJvYcCXw1DpBVbTLqQN6t5XpeDvltxHmguQPyodOIvMKYi55+A/yn+uLctZrM6kB5Hnkam8VOXpozaYQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfTiglU9oFQoTaYXaZt20lefc/Phi/HynvXd4jtXrtjFfNW0It
-	/7AfFduUwB1bgxN/7MH9TWC2eDdRhrONZPL+KSBX3jc3ik+xLK+DdQ1I1926LYCt1z+fT9qthq5
-	cifdGMn9Xl478mLZuvoEy+pf4Eqbq7ks=
-X-Gm-Gg: ASbGncs89UTvOvFt8Js00O4xOcxUSgBf/6/U7ysMRP/s6JKL2TA/wKSBGlnGokr50JV
-	h3CrukIosWiP2uKktLxp9wmPir1CY7GaymajyI1SkZVFmFAi8LbTuPHgMqdzH1NGA/ibQcQYvH1
-	IVxi5yu9L5XBQFvfEP/NiWk8HAGgn4NxlQOoq53kuSEAEsvFHmmE5JjAu4U4I5dMjTKcG+TGr52
-	P1Icyf+dliyW49+cUA=
-X-Google-Smtp-Source: AGHT+IEAaevWA3THWIOPb1Ft9IVMbazdTZ0Roc9iuvAoj1b5HTax5adhB7GCfo0cZ1I1i+dSyxYRJQcg/1n6uYcNd6A=
-X-Received: by 2002:a17:90b:558f:b0:313:f9fc:7214 with SMTP id
- 98e67ed59e1d1-31c4ca77626mr8723572a91.1.1752506296678; Mon, 14 Jul 2025
- 08:18:16 -0700 (PDT)
+	s=arc-20240116; t=1752506305; c=relaxed/simple;
+	bh=pq+NLLmLhIE4dHxrgUkQASyW21vs9n6uPDMFCPR+yNw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lm7w47rukTA7Y/NeHNGbLe45h0WA1W6wYIud1fp6Iok2ZtGCUQURN2gCQYQYroJItwLvcG+rLo+TzTkk/hZkmmjDrKhdIoqRnkKFiLo6Y3ngQK5rq4vaxjx6hDb9H06j5bDmVJ5tKA4fIsSrkuziVMGuT4n0JdANcPTv5Z5UCPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Nxkhfcrc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C3FDC4CEED;
+	Mon, 14 Jul 2025 15:18:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752506304;
+	bh=pq+NLLmLhIE4dHxrgUkQASyW21vs9n6uPDMFCPR+yNw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Nxkhfcrc7BQc5znMS2r7yp7f8GeNbsk1DbyVTQN3uT65UsGab+ItMzU0v0skAxHuI
+	 JjXF21RsiGmvjp3iD7bb/HR+Ut3U97Co3kvLHRuM5FWz0YaRpdojof71BZmtcVLyY2
+	 QkdNZ87W8KOT6CZr0bELAvPnji5I0AVzVjGjrmjk=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	torvalds@linux-foundation.org,
+	stable@vger.kernel.org
+Cc: lwn@lwn.net,
+	jslaby@suse.cz,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Linux 6.12.38
+Date: Mon, 14 Jul 2025 17:18:19 +0200
+Message-ID: <2025071408-skimmed-demise-ab18@gregkh>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709-core-cstr-fanout-1-v1-0-fd793b3e58a2@gmail.com>
- <20250709-core-cstr-fanout-1-v1-1-fd793b3e58a2@gmail.com> <DBBQE3GJ0CHT.5PEF7RLS6C33@kernel.org>
- <CAJ-ks9=ZHtzeyyFSZaVuA1t-3C8-hc40n6r8qFWxn628qT-OeA@mail.gmail.com>
-In-Reply-To: <CAJ-ks9=ZHtzeyyFSZaVuA1t-3C8-hc40n6r8qFWxn628qT-OeA@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 14 Jul 2025 17:18:04 +0200
-X-Gm-Features: Ac12FXzX4FOFR5k7wOozEqN2_nmttthJfs0me70_TpwVT6YUdkB9gcZMGomkNT4
-Message-ID: <CANiq72kyQQMutGDkHH=McRQens+V+wkHLpiSfivmnAwwgXE62w@mail.gmail.com>
-Subject: Re: [PATCH 01/10] gpu: nova-core: use `core::ffi::CStr` method names
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, Breno Leitao <leitao@debian.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, Javier Martinez Canillas <javierm@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 14, 2025 at 2:35=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> How should I respin this one? the subject should be drm/panic, I think.
+I'm announcing the release of the 6.12.38 kernel.
 
-I would mimic what the previous commits did, i.e. drm/panic indeed.
+Only users of AMD x86-based processors need to upgrade, all others may
+skip this release.
 
-(If I happen to pick it up before a resend, I could fix it on my side)
+The updated 6.12.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-6.12.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
 
-Cheers,
-Miguel
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile                  |    2 +-
+ arch/x86/kernel/cpu/amd.c |    1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+Borislav Petkov (AMD) (1):
+      x86/CPU/AMD: Properly check the TSA microcode
+
+Greg Kroah-Hartman (1):
+      Linux 6.12.38
+
 
