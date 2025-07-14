@@ -1,60 +1,62 @@
-Return-Path: <linux-kernel+bounces-730895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3220B04BDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:12:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92461B04BEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59FE85602DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:12:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C55123B0A51
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00C62989B0;
-	Mon, 14 Jul 2025 23:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C0129A30E;
+	Mon, 14 Jul 2025 23:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hn6+kWY6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BOnH0Zw7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C2D298CA4;
-	Mon, 14 Jul 2025 23:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE4E299A87;
+	Mon, 14 Jul 2025 23:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752534475; cv=none; b=TDA6b2PWe/yRPMgx6dxs8bSAR5WYItrRUtxVuizIlIQtMjYD/EXMRYsLLL1UHA7Lctg7Kvs5gKUyB6bWItZ23p3ZYuoZxwEcBjNQ2WiuL91gpZ0y59V0o2JDalrMZIhEQ1ZAe9oj/5WLq5ONUelNhfJz8h6qlAGAraRLjvF+tSU=
+	t=1752534478; cv=none; b=pw5RTz82Ab1/ye4XH68H9Ir4T4GAGb1Bx+HX9NZt4wXdK+OhxA2h/7hMa5yxgrNOqX4WV+dmIM38mX37rn4rkXkZxyu1uMzN7Sv0kkS4nxKhf60LPA6XyWTVhDfvbePE/2zwuBRwmbnGlvE1MUEnmcAnfngTaA5MoL2Lhc6gqP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752534475; c=relaxed/simple;
-	bh=64AD+8Six6qCxgsMIz6zvbkOGb1ypExIrfiYZg4UJv4=;
+	s=arc-20240116; t=1752534478; c=relaxed/simple;
+	bh=llCKPdymkwOCEQqOyhPXP7KMp3M4AAo5dbahH5BPm3w=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Buw8TQRKHv2gwr+b/nEY4lPX8our03xdCDqyO9Zy+l9kzYE6qEhy6NKUSIfAe4JdrnBp/wSIsKqKYcxReRH4/A3Y/17sBOxyVZVwFdckTnlWxjbM/jznbnGQ7QNM+u05Naajf0kVb8y+59ZHgIcms0v9gGpuxFaFjKD124ShGdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hn6+kWY6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C210C4CEED;
-	Mon, 14 Jul 2025 23:07:53 +0000 (UTC)
+	 MIME-Version; b=cNNVp7BkSyXsWUu3iHpxAnXAUSn4UIDvjED3KVXtPccuTwB95XNwhBT4+9r7DySW3lMEnHg63A/y1btD02Br8bpD+C/EKh51jp56Eg4eTuHhGiDNB9pvRVC3df96bJq3M/wLZdejbIKLCLrSy2K9QLWYf4LfxE7pkPJINsb8Hs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BOnH0Zw7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE80EC4CEFE;
+	Mon, 14 Jul 2025 23:07:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752534474;
-	bh=64AD+8Six6qCxgsMIz6zvbkOGb1ypExIrfiYZg4UJv4=;
+	s=k20201202; t=1752534478;
+	bh=llCKPdymkwOCEQqOyhPXP7KMp3M4AAo5dbahH5BPm3w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Hn6+kWY6l7AYydb30Kwmy+/4kgWsQkdaqh1YnA3nx21/l3yXKiJPBoy10oF4lCMcC
-	 8RqDn48Bsb2+YBaMPUi05RC83tLEcsRgTcUJo4Y2CdJ6VZhDnEm/z+Xhg+18qMJeqn
-	 e5PxDsrEYFa3MZ4mgmWDjZe7Dv4yDoqa1gsIkBrVGRRo3YP7BhxgygvVxZO8ota9M/
-	 9jrOQihMPBSNvtx/R8HC5PYCv3e9cNOYeB/unljbYv33Mwh6jkbuKtSSZ0flI++xrz
-	 RKg7+NeRdxcj2PgVvugw/gYOBAhoTIEfxU86UrOQJf/E47HCjgt040zYKv3N1bF/II
-	 kZQdKPRa8WArQ==
+	b=BOnH0Zw7fUoFkyUlx1Z+RKr/v4P5y1ooVXQOku/OvIm3CDH6OwzuetkppdB1X/8E1
+	 G94Lbsh/LW3qNQs3kCXFa94zaugNo67N9ERDXeoYe6oYf3Wfsk3P319CmHOV3oYq9t
+	 X+q/JyHPUMRj2GQ4GT/5Ns4igaSUhyh4Ly8UQNsfPXBdFOnvuAjyjpAxTAFI9g6bNl
+	 yBxLIRAwzBq5lLJzOwkDwUIx3UGB3j7EUiuI4SN7SAwNsNJA2hvDl9JQzdQyfi8OAT
+	 U8yYPmMqHyGxUWPEvLklAx8vKKhxm+KrPFKXhrDRy/NcQDYeHktaRpTGZjYiq4AaEP
+	 aVRJ+RNUzXGcQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzbot+2fe61cb2a86066be6985@syzkaller.appspotmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
+Cc: Felix Fietkau <nbd@nbd.name>,
+	Chad Monroe <chad.monroe@adtran.com>,
 	Sasha Levin <sashal@kernel.org>,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 4/6] perf/core: Fix WARN in perf_sigtrap()
-Date: Mon, 14 Jul 2025 19:07:41 -0400
-Message-Id: <20250714230744.3710270-4-sashal@kernel.org>
+	lorenzo@kernel.org,
+	ryder.lee@mediatek.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.6 6/6] wifi: mt76: fix queue assignment for deauth packets
+Date: Mon, 14 Jul 2025 19:07:43 -0400
+Message-Id: <20250714230744.3710270-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250714230744.3710270-1-sashal@kernel.org>
 References: <20250714230744.3710270-1-sashal@kernel.org>
@@ -69,105 +71,95 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.98
 Content-Transfer-Encoding: 8bit
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Felix Fietkau <nbd@nbd.name>
 
-[ Upstream commit 3da6bb419750f3ad834786d6ba7c9d5d062c770b ]
+[ Upstream commit dedf2ec30fe417d181490896adf89cd6b9885b23 ]
 
-Since exit_task_work() runs after perf_event_exit_task_context() updated
-ctx->task to TASK_TOMBSTONE, perf_sigtrap() from perf_pending_task() might
-observe event->ctx->task == TASK_TOMBSTONE.
+When running in AP mode and deauthenticating a client that's in powersave
+mode, the disassoc/deauth packet can get stuck in a tx queue along with
+other buffered frames. This can fill up hardware queues with frames
+that are only released after the WTBL slot is reused for another client.
 
-Swap the early exit tests in order not to hit WARN_ON_ONCE().
+Fix this by moving deauth packets to the ALTX queue.
 
-Closes: https://syzkaller.appspot.com/bug?extid=2fe61cb2a86066be6985
-Reported-by: syzbot <syzbot+2fe61cb2a86066be6985@syzkaller.appspotmail.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/b1c224bd-97f9-462c-a3e3-125d5e19c983@I-love.SAKURA.ne.jp
+Reported-by: Chad Monroe <chad.monroe@adtran.com>
+Link: https://patch.msgid.link/20250707154702.1726-2-nbd@nbd.name
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-Based on my analysis of the commit, let me provide my assessment:
+Now I understand the issue and the fix better. Let me analyze this
+commit:
 
 **YES**
 
 This commit should be backported to stable kernel trees for the
 following reasons:
 
-1. **It fixes a real bug with user-visible impact**: The commit fixes a
-   WARN_ON_ONCE() that fires in perf_sigtrap() when the system hits a
-   specific race condition. This WARN causes kernel log spam and
-   indicates an unexpected state that shouldn't occur.
+1. **It fixes a real bug affecting users**: The commit addresses a
+   specific issue where deauthentication packets sent to clients in
+   powersave mode can get stuck in hardware TX queues. This causes queue
+   exhaustion and prevents the WTBL (Wireless Table) slot from being
+   properly reused for new clients. This is a significant functional bug
+   that impacts AP mode operation.
 
-2. **The fix is small and contained**: The change is minimal - it simply
-   reorders two early exit checks in perf_sigtrap():
-   - Before: Check `event->ctx->task != current` first, then check
-     `PF_EXITING`
-   - After: Check `PF_EXITING` first, then check `event->ctx->task !=
-     current`
+2. **The fix is small and contained**: The change is minimal - it only
+   adds a single condition (`||
+   ieee80211_is_deauth(hdr->frame_control)`) to the existing queue
+   assignment logic. This is a low-risk change that doesn't introduce
+   new functionality or architectural changes.
 
-3. **Clear race condition**: The commit message explains the race:
-   exit_task_work() runs after perf_event_exit_task_context() has
-   updated ctx->task to TASK_TOMBSTONE. When perf_sigtrap() is called
-   from perf_pending_task() during this window, it observes
-   event->ctx->task == TASK_TOMBSTONE, which doesn't match current,
-   triggering the WARN.
+3. **Clear problem and solution**: The commit message clearly describes
+   the issue (deauth packets getting stuck with other buffered frames)
+   and the solution (moving deauth packets to the ALTX/PSD queue). The
+   fix is logical because:
+   - According to `ieee80211_is_bufferable_mmpdu()` (line 4517), deauth
+     frames ARE considered bufferable MMPDUs
+   - However, when a client is being deauthenticated, we don't want
+     these frames to be buffered with regular data - they need immediate
+     transmission
+   - The PSD (Power Save Delivery) queue is more appropriate for
+     management frames that need immediate handling
 
-4. **Low risk of regression**: The fix simply reorders existing checks
-   without changing functionality. If the task is exiting (PF_EXITING is
-   set), we return early regardless. The reordering just prevents the
-   WARN from firing in this legitimate exit scenario.
+4. **Similar to previous backported fixes**: Looking at the similar
+   commits, commit #1 (fca9615f1a43) which fixed queue handling for
+   loopback packets was backported. This current fix addresses a similar
+   class of queue assignment issues.
 
-5. **Fixes a reproducible issue**: The commit references a specific
-   syzbot report
-   (https://syzkaller.appspot.com/bug?extid=2fe61cb2a86066be6985),
-   indicating this is a real issue that can be triggered, not just
-   theoretical.
+5. **No architectural changes**: The fix uses existing infrastructure
+   (MT_TXQ_PSD queue) and existing helper functions
+   (ieee80211_is_deauth). It doesn't introduce new features or change
+   any APIs.
 
-6. **Follows stable tree rules**: This is an important bugfix (prevents
-   kernel warnings), has minimal risk, and doesn't introduce new
-   features or make architectural changes.
+6. **Prevents resource exhaustion**: The bug can lead to hardware queue
+   exhaustion which is a serious issue in production AP deployments.
+   This makes it an important fix for stable kernels.
 
-The fix is appropriate because during task exit, it's expected that
-ctx->task might be TASK_TOMBSTONE while the task is still cleaning up
-its work items. By checking PF_EXITING first, we properly handle the
-legitimate exit case without triggering false warnings.
+The code change shows that previously, only non-bufferable MMPDUs were
+assigned to the PSD queue, but deauth frames (which are technically
+bufferable) were getting stuck in regular data queues when sent to
+powersave clients. This fix ensures deauth frames bypass the normal
+buffering mechanism and get transmitted promptly via the PSD queue.
 
- kernel/events/core.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/net/wireless/mediatek/mt76/tx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 873b17545717c..7ceacbc24cfae 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -6785,18 +6785,18 @@ void perf_event_wakeup(struct perf_event *event)
- static void perf_sigtrap(struct perf_event *event)
- {
- 	/*
--	 * We'd expect this to only occur if the irq_work is delayed and either
--	 * ctx->task or current has changed in the meantime. This can be the
--	 * case on architectures that do not implement arch_irq_work_raise().
-+	 * Both perf_pending_task() and perf_pending_irq() can race with the
-+	 * task exiting.
- 	 */
--	if (WARN_ON_ONCE(event->ctx->task != current))
-+	if (current->flags & PF_EXITING)
- 		return;
+diff --git a/drivers/net/wireless/mediatek/mt76/tx.c b/drivers/net/wireless/mediatek/mt76/tx.c
+index 47cdccdbed6aa..dfca2369e97d5 100644
+--- a/drivers/net/wireless/mediatek/mt76/tx.c
++++ b/drivers/net/wireless/mediatek/mt76/tx.c
+@@ -604,7 +604,8 @@ mt76_txq_schedule_pending_wcid(struct mt76_phy *phy, struct mt76_wcid *wcid)
+ 		if ((dev->drv->drv_flags & MT_DRV_HW_MGMT_TXQ) &&
+ 		    !(info->flags & IEEE80211_TX_CTL_HW_80211_ENCAP) &&
+ 		    !ieee80211_is_data(hdr->frame_control) &&
+-		    !ieee80211_is_bufferable_mmpdu(skb))
++		    (!ieee80211_is_bufferable_mmpdu(skb) ||
++		     ieee80211_is_deauth(hdr->frame_control)))
+ 			qid = MT_TXQ_PSD;
  
- 	/*
--	 * Both perf_pending_task() and perf_pending_irq() can race with the
--	 * task exiting.
-+	 * We'd expect this to only occur if the irq_work is delayed and either
-+	 * ctx->task or current has changed in the meantime. This can be the
-+	 * case on architectures that do not implement arch_irq_work_raise().
- 	 */
--	if (current->flags & PF_EXITING)
-+	if (WARN_ON_ONCE(event->ctx->task != current))
- 		return;
- 
- 	send_sig_perf((void __user *)event->pending_addr,
+ 		q = phy->q_tx[qid];
 -- 
 2.39.5
 
