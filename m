@@ -1,81 +1,161 @@
-Return-Path: <linux-kernel+bounces-729417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2FEAB0364D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:55:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93ACFB0364F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 714A516A5F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:55:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FFAA189A8DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4854820B7EC;
-	Mon, 14 Jul 2025 05:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252A021171B;
+	Mon, 14 Jul 2025 05:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WRqQL6V4"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZOOL7m8e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70E1C13B;
-	Mon, 14 Jul 2025 05:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760BCC13B;
+	Mon, 14 Jul 2025 05:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752472506; cv=none; b=RiIg5TnKD75RY6/Dmp178dGLNUpnOYdzjF3A6cgrSM6+1TsGswDZkjCNC95M5tu33EGz9etr5Ml/goAPfsRehpPSJ/pgbfZo2ZnCpAV5zIdkhNIqmzK8aRFvz2LayCsBgfr2gjCWz3cHrwyBbDMQyqG/8Xuqk8JNGF6dT36yMKU=
+	t=1752472539; cv=none; b=Yf5TI/IfepRd/f9Cn/W2DpLuIFTaYJhtohVqLKSDsffQDNmdbD+1ejejqm/LoKYNF1jLiQzyhIGtcXKC4NUhx1nAOVwOKtoY4tOSX/SG1G9mtpUA1eXOI7XjBh9EMzJy7Vel1+5HGcEkh0oZ0B0MTVxnjk4yUmdOL8vfWaMLXGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752472506; c=relaxed/simple;
-	bh=mk34GIyH4yJUe9oiK58Yqndh2OPckjxtiftZuXychkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ov0xGcGNkpjosrCZwkPco3oYuVU69B25MCEO/taNlCMt3PMqRx1JH8WwRp5pTy1Mw6WVZHPzMW+4a9er5y77+6FznFQ+JXiC3hSchyRbZhM8o7ppbjtb1RkIvEANyiInwAOwjeph3YDKP9nY+yUx1VONNDbyv4Vg5t9e+GoLjMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WRqQL6V4; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mk34GIyH4yJUe9oiK58Yqndh2OPckjxtiftZuXychkw=; b=WRqQL6V4ApLOIlDwNX9kvQNOL4
-	yEiafI9yz9BPOscGrZeLFab5IjIuLxYdldTCsPTUrZthMO9M97CJnuj708P50KZRBsvi8PJu/Hx/V
-	42iI+3rR70iPXUTNYS2Ys+aasErd958mjz+Z1Q0Nody4CTosW+B3fJcnXO6HTkZnaK4lMCsKW2Q0p
-	gxduMX9GaBtWuNXjOHKuQA5OB99qP4ci6UzuSGScYYyz248JlCxKa0aCn0ebA0CJ1lYoc30uKPMtX
-	dvAFLtqwwOvU/VPTGMCgDeFRPjzKNgNJsH1RIz4ASrUjvgZnTd/KBs6BfVZyKrZwE/AbJ6HDGLZsC
-	EUK/Vmng==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubC9V-00000001Frn-0OIv;
-	Mon, 14 Jul 2025 05:55:01 +0000
-Date: Sun, 13 Jul 2025 22:55:01 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: George Hu <integral@archlinux.org>
-Cc: Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xfs: replace min & max with clamp() in
- xfs_max_open_zones()
-Message-ID: <aHSbtRNhuU9p1NEt@infradead.org>
-References: <20250712145741.41433-1-integral@archlinux.org>
+	s=arc-20240116; t=1752472539; c=relaxed/simple;
+	bh=/vA4vao9lqvPPolTnzO87qhxfdcnKwl67DQjGBaDAUo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n5SV6hd5LbqZz/9EzcOcUgkr6EkupOUSC8qIMT8NJSys+iTSbNERg7+2MAuH6AazjtzqTZS/Mcd1UAJ9f2XY4Ct2SxKcy6+SXpXygZgs/rkornrytypzzuZRAoBkF+07t0WWJ1hGly2nEi5CQDKIsmxi7N1Hhm1lwq5f2L663Q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZOOL7m8e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C55DC4CEED;
+	Mon, 14 Jul 2025 05:55:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752472539;
+	bh=/vA4vao9lqvPPolTnzO87qhxfdcnKwl67DQjGBaDAUo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZOOL7m8egvGKPQvcpEWEI8H+M9doH7idxZkc7X7TryhoYs4Rtrw9J0WOGnk+geSOM
+	 OXofKayQaZcV0up77W4R/k+otV+k/+O+kGgLR76ATSGQNmS9NAyW8sKMWVOxbMKxXu
+	 Xzcq7u0oFYs1aPvbqp0nTHoIYfVdL/S4bpJ7YSNYKAp7pigyNJmr7l0Gaw8E728Itd
+	 CAvr5co63rEOIMkWeB/zfLXZbx4PoNNa9E6nLiVRMLn1QEPhh5NLPLsBjjbeVMWD7x
+	 kBNrKrvp2U599llDq1v5jqSzUmgDxKBwT2t6zSXHzAbIHlDp1pMwoRPwcg4//rvXC1
+	 6X7RxMcm01Jeg==
+Message-ID: <6df95250-f28a-4b33-9744-de8fcb0ea339@kernel.org>
+Date: Mon, 14 Jul 2025 07:55:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250712145741.41433-1-integral@archlinux.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 02/12] ptp: netc: add NETC Timer PTP driver
+ support
+To: Wei Fang <wei.fang@nxp.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, richardcochran@gmail.com, claudiu.manoil@nxp.com,
+ vladimir.oltean@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: fushi.peng@nxp.com, devicetree@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev
+References: <20250711065748.250159-1-wei.fang@nxp.com>
+ <20250711065748.250159-3-wei.fang@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250711065748.250159-3-wei.fang@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Jul 12, 2025 at 10:57:41PM +0800, George Hu wrote:
-> Refactor the xfs_max_open_zones() function by replacing the usage
-> of min() and max() macro with clamp() to simplify the code and
-> improve readability.
+On 11/07/2025 08:57, Wei Fang wrote:
+> +
+> +static void netc_timer_get_source_clk(struct netc_timer *priv)
+> +{
+> +	struct device *dev = &priv->pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	const char *clk_name = NULL;
+> +	u64 ns = NSEC_PER_SEC;
+> +
+> +	if (!np)
+> +		goto select_system_clk;
+> +
+> +	of_property_read_string(np, "clock-names", &clk_name);
+> +	if (clk_name) {
+> +		priv->src_clk = devm_clk_get_optional(dev, clk_name);
+> +		if (IS_ERR_OR_NULL(priv->src_clk)) {
+> +			dev_warn(dev, "Failed to get source clock\n");
 
-Nit: you can use up to 73 characters in each commit message line:
+No, look how deferred probe is handled.
 
-Refactor the xfs_max_open_zones() function by replacing the usage of
-min() and max() macro with clamp() to simplify the code and improve
-readability.
+This is really poor style of coding clk_get.
 
-Otherwise looks good:
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+> +			priv->src_clk = NULL;
+> +			goto select_system_clk;
+> +		}
+> +
+> +		priv->clk_freq = clk_get_rate(priv->src_clk);
+> +		if (!strcmp(clk_name, "system")) {
+> +			/* There is a 1/2 divider */
+> +			priv->clk_freq /= 2;
+> +			priv->clk_select = NETC_TMR_SYSTEM_CLK;
+> +		} else if (!strcmp(clk_name, "ccm_timer")) {
+> +			priv->clk_select = NETC_TMR_CCM_TIMER1;
+> +		} else if (!strcmp(clk_name, "ext_1588")) {
+> +			priv->clk_select = NETC_TMR_EXT_OSC;
+> +		} else {
+> +			dev_warn(dev, "Unknown clock source\n");
+> +			priv->src_clk = NULL;
+> +			goto select_system_clk;
+> +		}
+> +
+> +		goto cal_clk_period;
 
+
+Why are you duplicating nxp,pps-channel logic?
+
+
+Best regards,
+Krzysztof
 
