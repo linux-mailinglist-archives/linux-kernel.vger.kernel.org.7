@@ -1,100 +1,160 @@
-Return-Path: <linux-kernel+bounces-730184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE7DB0411F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:12:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB645B040EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C02C170382
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:12:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9A663ADB7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491202571C2;
-	Mon, 14 Jul 2025 14:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA7425525F;
+	Mon, 14 Jul 2025 14:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CysqORFb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OaoTfUSm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63972571A5;
-	Mon, 14 Jul 2025 14:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2091FDA94;
+	Mon, 14 Jul 2025 14:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752502335; cv=none; b=qGc6r2C/G0MH67TkrYv72F9ZvQWhCOsYrI3xHaWDTybtiXzPx6Hy1ojFKJutN4ha7P1l8eHrKnD/aHbP13uRctOsGiz3qhgrFXJcqbbGUZWlYNl9+Enh1VGS43EuVB/eRRTfNv4eyoLaQoO/j2gdu0sN8LMxRhD6+FQ85uf0vyo=
+	t=1752501902; cv=none; b=K2Mn/cQSEuDEL8gHcXvYx2LHLjfYOTrJL7ERkGRE7v1UG1M75xgqeaJOswz8uml2ALZnFsuGfYRkHUJ7uZbHoBaeo1+cKnfqZkhzYtKSSruqMdmgHJW8TXc74v2b2QJcgagoF/C3jIMNsWy72uEnLE8yTUyPdhpQWAAti21oWKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752502335; c=relaxed/simple;
-	bh=4YMzC/UP5j9ONXIT+pgGQsuo5xL6W9saqp3GH+DFxd8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=m+52AoJLq+lDG7rGZnZ12hUoNPU6IseFlUp7TdQ7S+LHOewiGgUnIETE/+jwCvLnvCJn8w9T7V6UqkNmV+VN3DQd89Yzj+3EClnGTWZInz2ZwhHi2aeLdrYVfifn5RSXo+JpqCASG9pehcAEIomAO64qni0XNoJS/JeFop5adIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CysqORFb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07797C4CEF0;
-	Mon, 14 Jul 2025 14:12:12 +0000 (UTC)
+	s=arc-20240116; t=1752501902; c=relaxed/simple;
+	bh=mggx0wHvULzigPHETIueJkEyaSC8PRHg7dCwgCjnVWM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OI9wR+Ay6iTUoQlLgX4KAyvDP1QmjU331Yf+NNdOnJYwdtphWExk8Bcqa8YgKczBON9rnVirShl/6rbIhHJ6Mr5/y6FFHYBr26tQnTXOdNexFFl9CJF6FJBNzKP11AIlVXT4NgEQQj/v8hpSYZG/YBeLiCZlaoDk0CClrRAVa4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OaoTfUSm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4058C4CEED;
+	Mon, 14 Jul 2025 14:04:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752502334;
-	bh=4YMzC/UP5j9ONXIT+pgGQsuo5xL6W9saqp3GH+DFxd8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=CysqORFb3xC8ZG6E8HU1d/Sxvgowb2lCUs6fO4R7hhP1ApCHr0+97Ypuy1/ns6zEY
-	 CLw45FEWcShhxVrMhpBV9NddleL8HjTJqY34VE1frCH5mPKBSciUcEA++4vT67rI1y
-	 JvEzfBP45vAAJdzJK/Y3dnX9Fweq1wwxN3n21HvtBSFCuLK6sxBo9LmyBVuoA8FUzn
-	 t0GXG1x7M6hN4FcF5AHG4E7hmPmhFB/j2DkUfCpGOkE2O2B/cZgPCCSZHiv8uPj6mN
-	 GaKjZ9cD/bQfTCbkdmXgYc/ew5Ck8NaRs2OsIFyKbW9TIbfR7rWLfqZTRIcfVTJ2oW
-	 gkw6uDtosgxbA==
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 14 Jul 2025 15:03:36 +0100
-Subject: [PATCH 2/2] selftests/fchmodat2: Use ksft_finished()
+	s=k20201202; t=1752501901;
+	bh=mggx0wHvULzigPHETIueJkEyaSC8PRHg7dCwgCjnVWM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OaoTfUSmpusIqoaxvm/NBpedLoOrYOneprYkDc/zUT6HjJHLfJWExnwts2djgVJ9w
+	 59XijHcaJVV7HqB/yUUd2yIjZrmnegXCQx9XsBL2tlj3my3DLfpKSvXxJbGo2YmdjY
+	 I8Fbm9J+QRATSBbZdWuZSqKTynfYc8/rm64lCaNhseuxRXEbgM5ZRBNVVPMdJQDgz5
+	 43hon1XY6eXcKV9YXo3KB+mckRiBSmKnKvUonueT8Vvv9RNBVZG4CJ27VL8aXt8slA
+	 BD1fFtmPAENfGafVQNdxQopXPGCda9kV4JQ18z3IG/IHICJ2x2/Kof68y37F2bCsc8
+	 yxKrfr6Jdc8gQ==
+Message-ID: <380fb0f4-f5dd-47ad-92e3-943f30b08c31@kernel.org>
+Date: Mon, 14 Jul 2025 16:04:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 01/12] dt-bindings: ptp: add bindings for NETC
+ Timer
+To: Wei Fang <wei.fang@nxp.com>
+Cc: "F.S. Peng" <fushi.peng@nxp.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "richardcochran@gmail.com" <richardcochran@gmail.com>,
+ Claudiu Manoil <claudiu.manoil@nxp.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>, Clark Wang
+ <xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+ "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>
+References: <20250711065748.250159-1-wei.fang@nxp.com>
+ <20250711065748.250159-2-wei.fang@nxp.com>
+ <ce7e7889-f76b-461f-8c39-3317bcbdb0b3@kernel.org>
+ <PAXPR04MB8510C8823F5F229BC78EB4B38854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <61e6c90d-3811-41c2-853d-d93d9db38f21@kernel.org>
+ <PAXPR04MB85109EE6F29A1D80CF3F367A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <169e742f-778e-4d42-b301-c954ecec170a@kernel.org>
+ <PAXPR04MB85107A7E7EB7141BC8F2518A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <836c9f0b-2b73-4b36-8105-db1ae59b799c@kernel.org>
+ <PAXPR04MB8510CCEA719F8A6DADB8566A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <70560f1e-fbbc-4e65-a8f4-140eb9a6e56e@kernel.org>
+ <PAXPR04MB8510A9625CCB563BDA8AEBBD8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <PAXPR04MB8510A9625CCB563BDA8AEBBD8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250714-selftests-fchmodat2-v1-2-b74f3ee0d09c@kernel.org>
-References: <20250714-selftests-fchmodat2-v1-0-b74f3ee0d09c@kernel.org>
-In-Reply-To: <20250714-selftests-fchmodat2-v1-0-b74f3ee0d09c@kernel.org>
-To: Shuah Khan <shuah@kernel.org>, Alexey Gladkov <legion@kernel.org>, 
- Christian Brauner <brauner@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-cff91
-X-Developer-Signature: v=1; a=openpgp-sha256; l=780; i=broonie@kernel.org;
- h=from:subject:message-id; bh=4YMzC/UP5j9ONXIT+pgGQsuo5xL6W9saqp3GH+DFxd8=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBodRA3ok4ladySzTp+/5wpGWVhgh+6kUr2lRCTS
- u8Y2U7CQQyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaHUQNwAKCRAk1otyXVSH
- 0HSLB/9IpFW9TNpPUNwBMo7mGE0IA+8mQNgdLfWpjIR2sCvuCiA7YYon9KnZ2yDd2IcBE5fCdiw
- n2Rm5fzKtC8nPfFZrU0S9aFsvmdu/bHVGugEuC9bEBmT9z7Il90Q9ybma1eVz8vvZAU/J3FQYjP
- WJ66fRtU1oY4RbJ4lOlNgiGPh/+4/zucdP2P3UwaedW2bGnQmd70SsZ1c4MgugFvs7FOelzWzwo
- ewAlVlYaoMVpfWiVIdoclgqlFGvqZXRSf0NyWnLcIctDQfKXdgW7sjWWG5l5rylXZfkmqJq7A0X
- 4eM1sUR5jXEIlslBwMJe0ufeNkt4TbNGvp534Ifl2oMCUpAk
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-The fchmodat2 test program open codes a version of ksft_finished(), use the
-standard version.
+On 14/07/2025 15:43, Wei Fang wrote:
+>> On 14/07/2025 12:28, Wei Fang wrote:
+>>>>>
+>>>>> Currently, the enetc driver uses the PCIe device number and function
+>> number
+>>>>> of the Timer to obtain the Timer device, so there is no related binding in
+>> DTS.
+>>>>
+>>>> So you just tightly coupled these devices. Looks poor design for me, but
+>>>> your choice. Anyway, then use that channel as information to pass the
+>>>> pin/timer/channel number. You do not get a new property for that.
+>>>>
+>>>
+>>> I do not understand, the property is to indicate which pin the board is
+>>> used to out PPS signal, as I said earlier, these pins are multiplexed with
+>>
+>> Sure, I get it and my argument for phandle cells stays. If you decide
+>> not to use it, you do not get a new property.
+> 
+> I do not know how to add the phandle cells, a phandle value is a way to
+> reference another node in the DTS. But for the NETC Timer, what node
+> does it need to reference? To be honest, I have no idea.
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/fchmodat2/fchmodat2_test.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/fchmodat2/fchmodat2_test.c b/tools/testing/selftests/fchmodat2/fchmodat2_test.c
-index e977d942c00b..d3682ccd7cb8 100644
---- a/tools/testing/selftests/fchmodat2/fchmodat2_test.c
-+++ b/tools/testing/selftests/fchmodat2/fchmodat2_test.c
-@@ -196,8 +196,5 @@ int main(int argc, char **argv)
- 	test_regfile();
- 	test_symlink();
- 
--	if (ksft_get_fail_cnt() + ksft_get_error_cnt() > 0)
--		ksft_exit_fail();
--	else
--		ksft_exit_pass();
-+	ksft_finished();
- }
+I don't think you tried hard enough... I asked to read other bindings.
+If you did that, you would notice timestamper property and argument.
 
--- 
-2.39.5
 
+Best regards,
+Krzysztof
 
