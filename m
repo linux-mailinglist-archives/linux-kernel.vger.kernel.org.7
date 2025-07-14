@@ -1,139 +1,128 @@
-Return-Path: <linux-kernel+bounces-729993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29FD7B03ECB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:34:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18199B03ED2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57D5E3A287B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:33:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E89157A33E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F593248881;
-	Mon, 14 Jul 2025 12:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FD5248F67;
+	Mon, 14 Jul 2025 12:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MwWLeaSO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HTAt0zcR"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAD420AF67;
-	Mon, 14 Jul 2025 12:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F7D20AF67;
+	Mon, 14 Jul 2025 12:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752496450; cv=none; b=fVVg1n8oakeNsEbQxlZwxuivj1Srw2NxtzaCAI779f35KE/IoM2yFnJGQ+kwZdyNbJxfEPIMzzkOK5Vjys9pBc5Qea00LJvSWwAXpHZrVOKWwTddalySCfdsHNsxG/SG/D0/riM1fn3TQq4DCzzQEBrUvRChO+kU2KgQ3D4RFns=
+	t=1752496538; cv=none; b=WSP+SrOLrUtkA52/yRePv9IzpAhPMzUOlZ5ni+gfDDJrNhTC6a2vYuHpFZO8Ah5kpf/g0fS+fl5q1z5Z9Go/Vltda7sCQe6Jw7+MAcsomlImZWNUO/fyJK2iDY7dwW78mReLpBF1WkHOfbq1Ry2pjnOGfIAigwOPSSoKjyg13s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752496450; c=relaxed/simple;
-	bh=HM7lPTcOhP0g5tlLdGyYh/Y1WZWK13CH4tkWaNRrCdE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tGVENv01mxFp5wSuSWj5OcyOGoVyp88ubs34OR4As3DQEGtjZtItUKfwGIc7GA1KUs8Fg3ANp2VrTlcH0FDcAKZs3dwT2atX4MpTdql0IUw/tERhFqyKjKJOyoV/4mmSmROX6feTS3dhJh6ngMOfsTojgSJZq6YvGFWDA6SGI6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MwWLeaSO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8A51C4CEED;
-	Mon, 14 Jul 2025 12:34:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752496449;
-	bh=HM7lPTcOhP0g5tlLdGyYh/Y1WZWK13CH4tkWaNRrCdE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MwWLeaSOAe32DRkRPl9Y0CkELkFPEvsDIB6wcdvds+AwRgRw6RtzVF/hb/I6OcKw8
-	 J6fGpnRIeG97nAyHzb+pWv8x8Db0nj4QI87/+jiOipx++JZugyDej3FOCkM0jR18n/
-	 Pp1sGwgGA28pa9wL2uM0s+e8xKNzIvKuS455LznRsCK3iV2mzKtHcp81+ExaGVdy9q
-	 neSyZR7Miit5VhhxBCKXYKr/lFXgsM0Y6Fg2CmyUDk5VszGstR05T15BXl82hRMcPy
-	 UCuOA7BrmB0NsnfOju50OQ6HGP/xXLeSGefAcC0Iw+xPMyFYLsL1DauSLshUw2DuYp
-	 ABgBInkuM1irA==
-Message-ID: <4a828765-abf0-4b19-95c8-bfde01d7026d@kernel.org>
-Date: Mon, 14 Jul 2025 14:34:04 +0200
+	s=arc-20240116; t=1752496538; c=relaxed/simple;
+	bh=rKnLYV6EmHmE3mzoMHqDHoN8VPsmF1S4gphrWDmSfbw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CGnI4HktYvVhhlJz46hhInURiQFJqVHhCZ2zSiBgiDGvEi+3y2J7xGP9hpHj5SOsmmWQfm+ZscV2PwtucXz9pjl+VEg31AQUBZ+8xYF/sM/i9rV9TWKhSQve2XoqulA3z1pIyCxo1OlFubt4zI5yD9HvFL1uJzDfN5lyNxgFFeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HTAt0zcR; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so7703239a12.2;
+        Mon, 14 Jul 2025 05:35:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752496534; x=1753101334; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/JJkBY6StLlPiYYNcDOCRaSTmquHRBX1aQ9fP/9Yejg=;
+        b=HTAt0zcRenTTuIAy7QHrcU+NnxaEGPRAQN9tSIyMGU2SdFMzuERaYQkPMBRCKOybbw
+         0k8BpL9X/XScJYwSDCfdrF0KKHbp/B2nEzQaxsXKA8/NjJi07ke0ijq29Vl2QIRIC6Yg
+         QtV5qHL8h2Z/PvebG+ICoQfRVycUlL4205resx/Nx9/PJRBdVjQ9tProGmRMUnovfDnu
+         igDleclR2O207edI+QvD6KfccH+f3bZOX9DCtIW8amYahRj0Jkhy55yLUIkEPFxNskJv
+         MKt44ZoyH/p+yH9MZ8tAUa32+X1//Fmkd3shyBAJ7UnIQdtxehxMNpWN9MT7eVBbiLeS
+         eBWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752496534; x=1753101334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/JJkBY6StLlPiYYNcDOCRaSTmquHRBX1aQ9fP/9Yejg=;
+        b=kYJ1xbP+l5WXe9PtCXHI5Zz28Gg9Um6sBSTxWHHdhRSJ4ETTJAbKveK808FeTv/nVL
+         OVno4qOQhqxodsWPRdWXzAwftXlbA76ENN+6Gd615nIxQF1kIDUNSUhap9dF9+OYr2Y1
+         6MOltHL2uJ+G4QP8CECKG8A0MBAVo0ogsm+7WZV0wUKl8DXxkm4MSvUlbeWyBTCZBz/o
+         sXYG608Q0TiiNvY9c0YVjtXPV1vbFgPw5IlkZ4ja7FPODI483JNJgQeFnap1LCXochuB
+         PG+sl6Umwn5PJ5j8pu1xefw6hGb21wFAESVQsPm2babWBIe5CoHuVbv5koU1MR35a0au
+         FmcA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+3RgLUvf2NiU381lhtaSRkoWLEdJpTi6FmN8UGTjCURjAn1kRXksGHdXGZTOPvQMrhRWnTVEji3NeO7mb@vger.kernel.org, AJvYcCUhGBCuCfY+pNyWG4OtLUYeyOkH2+TEqGj8u07G/PaiJFSobQSiNQMWwPRqG0kv2pWonmTftT5DAOE=@vger.kernel.org, AJvYcCVNGUiRgJa3d4MjJmaVQ+3HaX87Bp9agYs9YFc2L6WcmqwYdSOLBxJjMtwamlkoud5eO4K3Ff3B+5ez5V3Jpno=@vger.kernel.org, AJvYcCXLlJTpvLULoU66O+bpqEMLejFaWROSk0YSdyYGrL0gALk/5JPT5kq5dSv+z85/24HS4J208GZY1OCi@vger.kernel.org, AJvYcCXWrTKpfQvGrIzreTDNoRWT8uqf1C9majubdMA6OSC+Jf7xcZlbg6GxVW58nWPR7a57QAT+tHtp@vger.kernel.org, AJvYcCXiSl7mbii0oZ3nc6nA/32wlOCYSPyGvILEe7z62cuowD4lTHCWwMJA0f+0FsFUBRdaXF8zBI55crjEIu72uZOc@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRY67yT44xp7eMkHjBIKftmuf6PvahA25X0nhhrlLOVRwLkJAc
+	3WV3chcsbeMt8Fdf+jE1p5ipzRgnf/6E810wE02yVxd4PUGNnF0fY+dxpcD24QhYrIrgjaSzZRq
+	SDjZqXnxEjMJdIC+UsAG/V7IILal3WHI=
+X-Gm-Gg: ASbGncsQvZBOTswBI3UQQaNwNy/oQT9c5D1K9S+CfGQlIjQl6+QKPqFvbaO7gSssTgr
+	A0bXv80UYm7/ueigk5wnlIxkTD2Q1WReGvCRFOCRjuUnbmx3NjVUzsMhZYNADaNffhPgZC/W2fh
+	XGbyuZA7vpTS9w3QyD9Y3BNZR3H59n4XsM966fIcnvVYwxZQ4FbhhJSGA/rH1Vg2zM4fJN2vM6r
+	rE1wiBgvyoW7bXzmU60uFOCsddBf1ZgScURuxKR1sjCYiMXbaAu
+X-Google-Smtp-Source: AGHT+IEHpxC5111y9Cj6JQaRaXgMXbAFzbh9lkbxM7Yb2ILuf+3IGoAWfMQm4cez9+Bj4NXuw+pe+X+/AUAJqf9Zudk=
+X-Received: by 2002:a17:906:d7d5:b0:ae3:6744:3675 with SMTP id
+ a640c23a62f3a-ae6fc0c3796mr1235555966b.48.1752496533691; Mon, 14 Jul 2025
+ 05:35:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: asus-wmi: map more keys on ExpertBook B9
-To: Anton Khirnov <anton@khirnov.net>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D. Jones"
- <luke@ljones.dev>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250702070231.2872-1-anton@khirnov.net>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <20250702070231.2872-1-anton@khirnov.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250709-core-cstr-fanout-1-v1-0-fd793b3e58a2@gmail.com>
+ <20250709-core-cstr-fanout-1-v1-1-fd793b3e58a2@gmail.com> <DBBQE3GJ0CHT.5PEF7RLS6C33@kernel.org>
+In-Reply-To: <DBBQE3GJ0CHT.5PEF7RLS6C33@kernel.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 14 Jul 2025 08:34:56 -0400
+X-Gm-Features: Ac12FXyt7LMvW07NA5KJthMOxTToFChah-hJr4NBCGuAbPJrhV6AWz6kEkIvvTw
+Message-ID: <CAJ-ks9=ZHtzeyyFSZaVuA1t-3C8-hc40n6r8qFWxn628qT-OeA@mail.gmail.com>
+Subject: Re: [PATCH 01/10] gpu: nova-core: use `core::ffi::CStr` method names
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, Breno Leitao <leitao@debian.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, Javier Martinez Canillas <javierm@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Jul 14, 2025 at 7:11=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> On Wed Jul 9, 2025 at 9:58 PM CEST, Tamir Duberstein wrote:
+> > Prepare for `core::ffi::CStr` taking the place of `kernel::str::CStr` b=
+y
+> > avoid methods that only exist on the latter.
+> >
+> > Link: https://github.com/Rust-for-Linux/linux/issues/1075
+> > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> > ---
+> >  drivers/gpu/drm/drm_panic_qr.rs | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> This doesn't look like nova-core. :)
 
-On 2-Jul-25 09:02, Anton Khirnov wrote:
-> * there is a dedicated "noise cancel" key in top row, between mic mute
->   and PrintScreen; it sends 0xCA when pressed by itself (mapped to F14),
->   0xCB with Fn (mapped to F15)
-> * Fn+f sends 0x9D; it is not documented in the manual, but some web
->   search results mention "asus intelligent performance"; mapped to PROG2
-> * Fn+space sends 0x5B; it is not documented or mentioned anywhere I
->   could find; mapped to PROG3
-> 
-> Signed-off-by: Anton Khirnov <anton@khirnov.net>
-> ---
->  drivers/platform/x86/asus-nb-wmi.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
-> index 3f8b2a324efd..42d7b435ba63 100644
-> --- a/drivers/platform/x86/asus-nb-wmi.c
-> +++ b/drivers/platform/x86/asus-nb-wmi.c
-> @@ -573,6 +573,7 @@ static const struct key_entry asus_nb_wmi_keymap[] = {
->  	{ KE_KEY, 0x55, { KEY_CALC } },
->  	{ KE_IGNORE, 0x57, },  /* Battery mode */
->  	{ KE_IGNORE, 0x58, },  /* AC mode */
-> +	{ KE_KEY, 0x5B, { KEY_PROG3 } }, /* Fn+space */
+Oops :(
 
-What is this key-combo supposed to do, is there any icon for this on
-the spacebar? What does it do under Windows?
-
-Based on other laptops I would expect this to maybe need to be
-KEY_KBDILLUMTOGGLE, which toggles the kbd backlight on/off ?
-
->  	{ KE_KEY, 0x5C, { KEY_F15 } },  /* Power Gear key */
-
-Why KEY_F15, Why not some other KEY_ ? Generally speaking
-the key-code send should match the intended purpose of
-they key / key-combo. E.g. If the button opens
-the control-panel under Windows use KEY_CONTROLPANEL
-
->  	{ KE_KEY, 0x5D, { KEY_WLAN } }, /* Wireless console Toggle */
->  	{ KE_KEY, 0x5E, { KEY_WLAN } }, /* Wireless console Enable */
-> @@ -609,6 +610,7 @@ static const struct key_entry asus_nb_wmi_keymap[] = {
->  	{ KE_KEY, 0x93, { KEY_SWITCHVIDEOMODE } }, /* SDSP LCD + CRT + TV + DVI */
->  	{ KE_KEY, 0x95, { KEY_MEDIA } },
->  	{ KE_KEY, 0x99, { KEY_PHONE } }, /* Conflicts with fan mode switch */
-> +	{ KE_KEY, 0X9D, { KEY_PROG2 } }, /* Fn+f */
-
-Same remark as on the other keys. what does this do under Windows ?
-
->  	{ KE_KEY, 0xA0, { KEY_SWITCHVIDEOMODE } }, /* SDSP HDMI only */
->  	{ KE_KEY, 0xA1, { KEY_SWITCHVIDEOMODE } }, /* SDSP LCD + HDMI */
->  	{ KE_KEY, 0xA2, { KEY_SWITCHVIDEOMODE } }, /* SDSP CRT + HDMI */
-> @@ -623,6 +625,8 @@ static const struct key_entry asus_nb_wmi_keymap[] = {
->  	{ KE_IGNORE, 0xC0, }, /* External display connect/disconnect notification */
->  	{ KE_KEY, 0xC4, { KEY_KBDILLUMUP } },
->  	{ KE_KEY, 0xC5, { KEY_KBDILLUMDOWN } },
-> +	{ KE_KEY, 0xCA, { KEY_F14 } }, /* Noise cancelling on Expertbook B9 */
-
-KEY_SOUND ?
-
-> +	{ KE_KEY, 0xCB, { KEY_F15 } }, /* Fn+noise-cancel */
-
-What does Fn + noise-cancel do under Windows ?
-
->  	{ KE_IGNORE, 0xC6, },  /* Ambient Light Sensor notification */
->  	{ KE_IGNORE, 0xCF, },	/* AC mode */
->  	{ KE_KEY, 0xFA, { KEY_PROG2 } },           /* Lid flip action */
-
-
-Regards,
-
-Hans
-
-
+How should I respin this one? the subject should be drm/panic, I think.
 
