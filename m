@@ -1,187 +1,80 @@
-Return-Path: <linux-kernel+bounces-729895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193E6B03D22
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:17:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BA2B03D1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55EC51895F15
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:17:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCF6A16F022
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80EC3246BA4;
-	Mon, 14 Jul 2025 11:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D84246797;
+	Mon, 14 Jul 2025 11:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmh39Dmd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPrC0iuc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED85246335;
-	Mon, 14 Jul 2025 11:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543041DE892;
+	Mon, 14 Jul 2025 11:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752491823; cv=none; b=sD7jmTJ0ultFzs6fgzEztJi/nO5Ew3eLnvQGt3qkzJwWb/YZfnUiVVTvmXMWjIArAPqw5khyWRFw50JYE0XzQIMJHu8Dr2xpPbY+L+VOsOAS2A0gpTo2ADcFLGcIa2/qsEwZnQh9rdmfCBmL61b4KUpBeiRVoCOccBbdWuvnUqY=
+	t=1752491803; cv=none; b=kxDTHSFasWh3CCvzTKqhRPUAxP6qrbK2gzSiPmB2ogjH1NnuIDGrxQz7C782Nnbk5LRKDpqrmD+JsxY0Q7FErYh+WBeqXeNefxZmDdDJgEDlnZ54mZzdVUJjkQ2sxLvSUlrrEdlxnriTU1Sn3CeDT8a+LU8CBPT59x0p+IVRVQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752491823; c=relaxed/simple;
-	bh=jtFx4pL8Anx9YacgOth1/BoSyAI2lXPJpKUkYMiMZ0k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pD6i0WMEZgM3GFvQuArKJkIyqza8pYSRt2dZsCGqjSh1XQ9c+FjhhD+Hcxu8rhWhpk8EHeY7JnuAtXr3BAxpGQaTESyIQzEUnuRLY79GtUy50ApTlapyVc18e7UA+XZX2QmJ9qPJDDOOgxy8KtBFVVx08YiuW7wW+WU+I7NTd38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bmh39Dmd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6298C4CEF8;
-	Mon, 14 Jul 2025 11:17:03 +0000 (UTC)
+	s=arc-20240116; t=1752491803; c=relaxed/simple;
+	bh=0L97nO7zHcOuVigYKy/frMxIIrUYEkgLI3SYihpOnUY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=SC/gCCB6eS2nfYOnV3gy5GQCUVlV2PlQPN9mre7C8wIIt0PeQ8qTV2b0Gth+lBjcYBXvWOTeVUu6eMoEvme6Ijrz842t/Z0y9cN1/bNrzsGdqPQoCWVhZiq7o+fbZk5t3PhU6dBRNWUBwq7eMqqK3V8FDoWxZIgmd7Mx7H9Xdkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPrC0iuc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5252BC4CEF7;
+	Mon, 14 Jul 2025 11:16:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752491823;
-	bh=jtFx4pL8Anx9YacgOth1/BoSyAI2lXPJpKUkYMiMZ0k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bmh39DmdnJqlVEk8Apn85g8bf/zyCT0fjzAZnVL6JfcP+yzjmCWZjIsSMUwUFKnXq
-	 3euu6NqvVwe7u+XxG5jGF5/m5TINYmjSHHhIe5bTyz+0+PsoScfT+w3JGAq6aEiUvB
-	 TssCfiBT/5lrppJz0m+l5pZ6MJJy6Ymvlm0zChhggNGMVjxzy8siHvcV4A3hl42Faw
-	 qpsfo/WYlJllfZiBIQ0AeY+28jSd+AnC5XWj8l94U5AOkM1d7iYYgW8CnOmz8gWbno
-	 5FyYcD1h1pBqQXnDvAnl/gglydARAyPHUTiVtJEJeL6+CMG4h4xCWVtzwnpuQmbSkc
-	 watzM8CYiUnUQ==
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-73afbe1497bso1625206a34.1;
-        Mon, 14 Jul 2025 04:17:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX7BEA0gQISSm5YzDokuLWKyStKsU9zMLsfi/zv+DuCTmtS6ri2SdXUzxCa1FynfhQCpT603FoDoxN8330=@vger.kernel.org, AJvYcCXmjrm7Lr9iycrsR1P3dFAYOtmNju3eJwg51DeVz5vMqigHljIReruSQrxB4eLvGV6N+0dcsHeo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3Yb9Td+KVfovn9bYJOMeJbfb3DFDOlJqooRRiW5RiXg1bm73r
-	MEEFsFG++9P8MBdvcLEppKyPWeEI1xxkUckG7m17+Auz/uhdCamYpLHGrGFTQdWIEanqEUXhLwv
-	1kAzAwv6xFIXqiESwsxnfK85UJqDfSps=
-X-Google-Smtp-Source: AGHT+IGu81YkXnXVR4uYHMbNBn0ya2L9Bqlk0fyDImYRai2coJ7nBh0o00WNlU/NsflWHQzpCxj0h0hdLZmmo2v0vko=
-X-Received: by 2002:a05:6808:4fe9:b0:403:56f4:8780 with SMTP id
- 5614622812f47-4150fd907camr9016209b6e.9.1752491822980; Mon, 14 Jul 2025
- 04:17:02 -0700 (PDT)
+	s=k20201202; t=1752491801;
+	bh=0L97nO7zHcOuVigYKy/frMxIIrUYEkgLI3SYihpOnUY=;
+	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
+	b=qPrC0iucYyymvL8G6yL+KJpjF2tnzLtMlhXYjdvtqJjXXlsGI11SJMAukM/aHPXUF
+	 YOirxKN+/rWLrHxOYc2VJgFvoU1bKIRVvgOItZZZt5S3EW4U7h5HneZUG4b8uPGXGN
+	 hKt1vH0moCffu/BBHCYHMoUrG+0n8wK4ssm6EDLbfRjLqPFm9mWkgHNIg5IrYLJPh5
+	 mgi2f023qBhIJf+YS+/FB8ZXMAG5ZqA65wErzAk4/ikT9zJi5DIEJIT/PW5EL4CpTz
+	 V1U+5mgSmOhtwmKuGX6UBQD5tLUwKGMgZHkWgOA7gyl/Wztk/DBxQUy7qiYrz/QygS
+	 KZpCqhjS8yRfg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250522091456.2402795-1-Vladimir.Moskovkin@kaspersky.com>
-In-Reply-To: <20250522091456.2402795-1-Vladimir.Moskovkin@kaspersky.com>
-From: Chanwoo Choi <chanwoo@kernel.org>
-Date: Mon, 14 Jul 2025 20:16:25 +0900
-X-Gmail-Original-Message-ID: <CAGTfZH2YqZw6R0A+b_Zs3CipsCba5KbDusi=p-TVurJEmsuCGg@mail.gmail.com>
-X-Gm-Features: Ac12FXxqq5mhiXy3LZLFUD6OBsxjckT2-FYCgt6nnAJddoCZeqPUwb29u4MOsZA
-Message-ID: <CAGTfZH2YqZw6R0A+b_Zs3CipsCba5KbDusi=p-TVurJEmsuCGg@mail.gmail.com>
-Subject: Re: [PATCH] extcon: fsa9480: Avoid buffer overflow in fsa9480_handle_change()
-To: Vladimir Moskovkin <Vladimir.Moskovkin@kaspersky.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	=?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, 
-	Jonathan Bakker <xc-racer2@live.ca>, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, 
-	lvc-project@linuxtesting.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 14 Jul 2025 13:16:35 +0200
+Message-Id: <DBBQHSODN0Y3.2OS8U2NKNT9W7@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH 0/9] rust: use `kernel::{fmt,prelude::fmt!}`
+Cc: "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Jens
+ Axboe" <axboe@kernel.dk>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Brendan Higgins" <brendan.higgins@linux.dev>, "David Gow"
+ <davidgow@google.com>, "Rae Moar" <rmoar@google.com>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-block@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <kunit-dev@googlegroups.com>
+To: "Tamir Duberstein" <tamird@gmail.com>
+References: <20250709-core-cstr-fanout-1-v1-0-64308e7203fc@gmail.com>
+In-Reply-To: <20250709-core-cstr-fanout-1-v1-0-64308e7203fc@gmail.com>
 
-Hi,
+On Wed Jul 9, 2025 at 9:59 PM CEST, Tamir Duberstein wrote:
+> This is series 2a/5 of the migration to `core::ffi::CStr`[0].
+> 20250704-core-cstr-prepare-v1-0-a91524037783@gmail.com.
 
-Applied it. Thanks.
+For nova-core, alloc and device,
 
-On Thu, May 22, 2025 at 6:23=E2=80=AFPM Vladimir Moskovkin
-<Vladimir.Moskovkin@kaspersky.com> wrote:
->
-> Bit 7 of the 'Device Type 2' (0Bh) register is reserved in the FSA9480
-> device, but is used by the FSA880 and TSU6111 devices.
->
-> From FSA9480 datasheet, Table 18. Device Type 2:
->
-> Reset Value: x0000000
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
->  Bit # |     Name     | Size (Bits) |             Description
-> -------------------------------------------------------------------------=
---
->    7   |   Reserved   |      1      | NA
->
-> From FSA880 datasheet, Table 13. Device Type 2:
->
-> Reset Value: 0xxx0000
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
->  Bit # |     Name     | Size (Bits) |             Description
-> -------------------------------------------------------------------------=
---
->    7   | Unknown      |      1      | 1: Any accessory detected as unknow=
-n
->        | Accessory    |             |    or an accessory that cannot be
->        |              |             |    detected as being valid even
->        |              |             |    though ID_CON is not floating
->        |              |             | 0: Unknown accessory not detected
->
-> From TSU6111 datasheet, Device Type 2:
->
-> Reset Value:x0000000
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
->  Bit # |     Name     | Size (Bits) |             Description
-> -------------------------------------------------------------------------=
---
->    7   | Audio Type 3 |      1      | Audio device type 3
->
-> So the value obtained from the FSA9480_REG_DEV_T2 register in the
-> fsa9480_detect_dev() function may have the 7th bit set.
-> In this case, the 'dev' parameter in the fsa9480_handle_change() function
-> will be 15. And this will cause the 'cable_types' array to overflow when
-> accessed at this index.
->
-> Extend the 'cable_types' array with a new value 'DEV_RESERVED' as
-> specified in the FSA9480 datasheet. Do not use it as it serves for
-> various purposes in the listed devices.
->
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->
-> Fixes: bad5b5e707a5 ("extcon: Add fsa9480 extcon driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Vladimir Moskovkin <Vladimir.Moskovkin@kaspersky.com>
-> ---
->  drivers/extcon/extcon-fsa9480.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/extcon/extcon-fsa9480.c b/drivers/extcon/extcon-fsa9=
-480.c
-> index b11b43171063..30972a7214f7 100644
-> --- a/drivers/extcon/extcon-fsa9480.c
-> +++ b/drivers/extcon/extcon-fsa9480.c
-> @@ -68,6 +68,7 @@
->  #define DEV_T1_CHARGER_MASK     (DEV_DEDICATED_CHG | DEV_USB_CHG)
->
->  /* Device Type 2 */
-> +#define DEV_RESERVED            15
->  #define DEV_AV                  14
->  #define DEV_TTY                 13
->  #define DEV_PPD                 12
-> @@ -133,6 +134,7 @@ static const u64 cable_types[] =3D {
->         [DEV_USB] =3D BIT_ULL(EXTCON_USB) | BIT_ULL(EXTCON_CHG_USB_SDP),
->         [DEV_AUDIO_2] =3D BIT_ULL(EXTCON_JACK_LINE_OUT),
->         [DEV_AUDIO_1] =3D BIT_ULL(EXTCON_JACK_LINE_OUT),
-> +       [DEV_RESERVED] =3D 0,
->         [DEV_AV] =3D BIT_ULL(EXTCON_JACK_LINE_OUT)
->                    | BIT_ULL(EXTCON_JACK_VIDEO_OUT),
->         [DEV_TTY] =3D BIT_ULL(EXTCON_JIG),
-> @@ -228,7 +230,7 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *=
-usbsw)
->                 dev_err(usbsw->dev, "%s: failed to read registers", __fun=
-c__);
->                 return;
->         }
-> -       val =3D val2 << 8 | val1;
-> +       val =3D val2 << 8 | (val1 & 0xFF);
->
->         dev_info(usbsw->dev, "dev1: 0x%x, dev2: 0x%x\n", val1, val2);
->
-> --
-> 2.25.1
->
->
-
-
---=20
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+	Acked-by: Danilo Krummrich <dakr@kernel.org>
 
