@@ -1,112 +1,117 @@
-Return-Path: <linux-kernel+bounces-729711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 059B2B03AA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:18:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD5DB03AA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3890D189F4E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:18:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E6E7189AEBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3C6241674;
-	Mon, 14 Jul 2025 09:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="lvdeWwVj"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FC8240604;
+	Mon, 14 Jul 2025 09:20:32 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D35246791
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C37610A1E;
+	Mon, 14 Jul 2025 09:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752484603; cv=none; b=JHVs10BSnx5MJFXuAZFMjfevgAeWGOOksD8dUHuHGIjPPTIGlhf/9GykMtsIkZJEtqhl2bZZdCCxD4Dpn3K6XCCPLV2CCG8VdVa0i00BrENQgg8uklWeTd4vvWewZjyPaHMzJ0MefTgh7mUXBt0TyY8N695HviBRIZXs0G2EMys=
+	t=1752484832; cv=none; b=KqlA07g6ao5YJ28XE8U81zolTCn/p6PgOBlkbKwn3qeRPFplpU6k8YRcgmby//SbNQnAlVfjGP77xQeywciIEtxtdjyxjyMxhD1X1vGh5XTkCmNHxyXJuTPlYKkNRhTy5HbMDBul28bLxS6/6uVxlfwc1VWe1bk/g9U3L/vBark=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752484603; c=relaxed/simple;
-	bh=nG2jwbcLk7SXQKXcTmNSqdZ+/DC2xEkEzu3JnMvQfYw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KAT/+1spIOuZyIWna6fJ3CXlDRXaGjIgV2x6ojks8yPmln6efs7UTux8OZRIewlppxRyh/jZJxFdqaB16KQ4EpPuhGWr+LzcAgTyl62jtjqqvIBAir+qouTZwOglFokgfVIlvNY4WCdmQavB1r4QFoGsYCC7mwfk1smlqdyb4Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=lvdeWwVj; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-70e3c6b88dbso27852617b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 02:16:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1752484601; x=1753089401; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nG2jwbcLk7SXQKXcTmNSqdZ+/DC2xEkEzu3JnMvQfYw=;
-        b=lvdeWwVjKR1Pf7nmoNWj3Dn90ESTbhWvKog7RDq9VtpFOsTClHn5MejmUsdBFqCTyU
-         PApnZGWdkWbnOGsMx+VnXgXd8Azc6ijPCAiePwHefBCwVIEE7Uq0jkRJxqrdh11MiT8N
-         yk382KQjVGqdCLWE0oZoWBmmzd4+LpDkuHZKIK2nrM0jswMxhGnmqqKXGsoc21iP3oer
-         Bw/io/VZjAPsOmOYtgASop8OfKVBsONPS+v4Ltlxp/0llxov1WwmK5eSppqwUU51S0s7
-         yYEtgjseZaAFmtUsN6oHWkNfiafLKn18F1RAg60G2mWQxEcAbSYruHyj+acEVNyngwxz
-         XlTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752484601; x=1753089401;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nG2jwbcLk7SXQKXcTmNSqdZ+/DC2xEkEzu3JnMvQfYw=;
-        b=UNm6lkHh2kakRgaUWj0KKTtHoPV+PjxslYrOJlgR4sPWPc7FJZQFwjsOHy3deoRynS
-         qym9ZqpIDxuxcIF4TJ59Zpl+BQ7lR5+j8FlZlCCi+zQ2NmbY3tubUtYu/KCVibC7eW4V
-         dgEcXfdJ5oFrP/zgmPYM3PYxpFc3L+PLC+jUtzI3/Wc156yssZ+1PxJk8kXqQS3RcAB1
-         fm1zE2HqNeZOCTMBa7jHVFfYo3WGftaf5Q5W556Vbk4nxyhLAxfziHIh9mV9J7oXKPbF
-         LgCfgJD/98GSK3L62wa+lPp032QzKaZRp5EyWP7mj4ugvC1AEbH+WJSRdeGjdmA3Q/M4
-         8u/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWoQ39maRTyjV89kt1d36956d9+gwsbZKHW0cNnZsjNnYMoPOmjauhcq8ncLkLp/NfVMHrKpHEXh1X8KYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGkJ0oDS4/B82gySlw5uJfHuZIfs+UgMmE4kvPWYS8leSBUzVS
-	NgYWjCqf3+X9ehrRS9w+Ss91faZGIU6IQCVi2bSGBVKWP4NCW6+RhTskJ1bPPbOmFPwmUBPKEbY
-	qTbiX5VtuLi6ZVLB+jq3uNkOAGfBW3Vm3Uk/Va2Fr+g==
-X-Gm-Gg: ASbGncsnChJI5SldJFA2VQH4capJG4NGGL1sgxbl1JQWsvrn91E7xkfhUTXkyZeMbci
-	tuegCATMs42hpXE/VUCasjaIFuouH6fh3lRYB8nMGyAXeiBzUWieZySRwvejrOqOf9+JP55pr78
-	p9lMdiAOT6zAHKmhDG8ecfFikP1dlukpEbEVjdw6G1Bq4qYe3deis0ks5VW/aeE2UzZL45BGNN8
-	CcxBxp2Sc43x7umBREmiP7JpguOd/feBoWF0tmMmg==
-X-Google-Smtp-Source: AGHT+IGGKVZL2gi3YF6dcBpVJCqmCTegzTcKiJ9fHmRZqlNYn7Bg2+Yd24bFWr79pSRo5RVmMmRv+MnI7JAH4UVwWPA=
-X-Received: by 2002:a05:690c:ec6:b0:70d:fe09:9b18 with SMTP id
- 00721157ae682-717d5c373a9mr204630517b3.2.1752484600812; Mon, 14 Jul 2025
- 02:16:40 -0700 (PDT)
+	s=arc-20240116; t=1752484832; c=relaxed/simple;
+	bh=L7BcJGw5ym6qPfgaTER92wS3T7ZHpzuHID6PqQyX3Gc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KiIiWc37y0pUBU6mc2W5ee7Kh1pdoTzHKYYkutgqI9m2sKIUAB66YpFh/zRr290IWa0RHwdCW+jjxB6Vqt126ZV5TpubWjcpeOcxH5miOO09dlyG0q2aYzIgHhZieS73T2R76w08IJHbRQMs+01v9eTbAlupTN050J8Wjh7mLWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [211.71.28.34])
+	by APP-03 (Coremail) with SMTP id rQCowAD3h3kTy3RotjvpAw--.2702S2;
+	Mon, 14 Jul 2025 17:17:10 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com,
+	rrichter@amd.com,
+	ming.li@zohomail.com,
+	zijun.hu@oss.qualcomm.com,
+	fabio.m.de.francesco@linux.intel.com
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] cxl/region: Balance device refcount when destroying devices
+Date: Mon, 14 Jul 2025 17:16:54 +0800
+Message-Id: <20250714091654.3206432-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708-leds-is31fl3236a-v3-0-d68979b042dd@thegoodpenguin.co.uk>
- <20250708-leds-is31fl3236a-v3-2-d68979b042dd@thegoodpenguin.co.uk> <20250709-happy-gazelle-of-fascination-fe0fd4@krzk-bin>
-In-Reply-To: <20250709-happy-gazelle-of-fascination-fe0fd4@krzk-bin>
-From: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
-Date: Mon, 14 Jul 2025 10:16:29 +0100
-X-Gm-Features: Ac12FXyAnSttrQTxfZ3hyjQUCceH_uU_FETUA29_qdO6yKKW6bWWhuKLl-Sbr54
-Message-ID: <CAA6zWZKRA2Qn3ajN9f9o_oBTZAgrx22gP28A5CHgx=+0jFrOKg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] dt-bindings: leds: is31fl32xx: convert the binding
- to yaml
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, 
-	Lucca Fachinetti <luccafachinetti@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAD3h3kTy3RotjvpAw--.2702S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJF18Kr1fXF4kZr4DZF4fXwb_yoW8GrWkp3
+	yUCFWUuryrCF109rnxZayUZry5uFWDuayrurW8J34Fg3s5J3y0yrWUA3Z0gF17A392qF1U
+	ZrnFyF18CayUW3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14
+	v_GFWl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AK
+	xVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrx
+	kI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v2
+	6r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
+	CI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYPEfUUUU
+	U
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-> Driver as Linux driver or LED driver? If the first, then drop.
-LED driver, might not be obvious, could change to controller,
-however the datasheet refers to the device "LED driver".
+Using device_find_child() to lookup the proper device to destroy
+causes an unbalance in device refcount, since device_find_child()
+calls an implicit get_device() to increment the device's reference
+count before returning the pointer. cxl_port_find_switch_decoder()
+directly converts this pointer to a cxl_decoder and returns it without
+releasing the reference properly. We should call put_device() to
+decrement reference count.
 
-> These should be people interested in this hardware, not subsystem
-> maintainers.
+As comment of device_find_child() says, 'NOTE: you will need to drop
+the reference with put_device() after use'.
 
-I will let maintainers decide who should be included here perhaps ?
+Found by code review.
 
-> Keep consistent quotes, either " or '. You made different choice for the
-> same properties even...
+Cc: stable@vger.kernel.org
+Fixes: d6879d8cfb81 ("cxl/region: Add function to find a port's switch decoder by range")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/cxl/core/region.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Copied over from original poster, have not spotted that before, thanks.
+diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+index 6e5e1460068d..cae16d761261 100644
+--- a/drivers/cxl/core/region.c
++++ b/drivers/cxl/core/region.c
+@@ -3234,6 +3234,9 @@ cxl_port_find_switch_decoder(struct cxl_port *port, struct range *hpa)
+ 	struct device *cxld_dev = device_find_child(&port->dev, hpa,
+ 						    match_decoder_by_range);
+ 
++	/* Drop the refcnt bumped implicitly by device_find_child */
++	put_device(cxld_dev);
++
+ 	return cxld_dev ? to_cxl_decoder(cxld_dev) : NULL;
+ }
+ 
+-- 
+2.25.1
 
-> Pattern does not match entirely the reg constraints. 36 is 0x24.
-
-Pattern allows for one or more hexadecimal values starting from 1,
-so the second number should start from zero is the second error here.
-
-Thanks !
 
