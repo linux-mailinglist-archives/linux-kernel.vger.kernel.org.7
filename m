@@ -1,107 +1,128 @@
-Return-Path: <linux-kernel+bounces-729487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE9AB0375F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:48:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F375B03766
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACBC1189B567
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:48:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDF4F7A6994
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B249D22DF86;
-	Mon, 14 Jul 2025 06:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FCD22A1C5;
+	Mon, 14 Jul 2025 06:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="le8BHDbi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SJhHypb/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1020922B8A1;
-	Mon, 14 Jul 2025 06:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC0A218827;
+	Mon, 14 Jul 2025 06:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752475664; cv=none; b=JqJ6AaBWaPows12yoZNh2xel4mmfF1E1DlAF29/8f6IWICi90UTw7EDzyu8ZxqghIEv/idoyJuuOlqzZLBNlNT2LFxfHVlNwzRRGxUmuSX7yXfiY+TP0lMSWCtrmSk1tlixw6imUtTk8brTs3qtLLjD6WiKNQ/lSTGbA1DEgLCU=
+	t=1752475840; cv=none; b=c5p8F0lmCgQrNR3VGKmhNa4o+iUYN0erRDykX31fymf14STuonNOmmIaNQQrB+G5Tpr1SjAFm7FBRKX12ZFyMBP7gnQMe4/JVB7ho0SRYeuS2vmS+sm2NdsO2IgxkM0cAYf0k+QdLT2EQN+XM2KoYxk8ZaGUL3368Bw4C2ZiWK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752475664; c=relaxed/simple;
-	bh=Hmw/tp+sBdq2ziMP6TR3hCzb9wJ+2WfBgsvg4Va7Ya8=;
+	s=arc-20240116; t=1752475840; c=relaxed/simple;
+	bh=K4mc5x/W9JtBv/fhS4Ws9JbTJwyveuJyLnrexcFHoMY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rwiOD+bEKq/pv3ifEa3Gb4S8QvZyekSr+dTOmmXnBO3ADtUt6rDgcWfkN9ffWpUowcdAULbG0EHmedE6scLwlTn1TFNQHuorKWrT6DdxtSZXCo/Iskm2omgXNPq9SPflwbK0+7/Sp1TWpL1MuTpuAj7Ftc3VOVKGTkmJAGX3pKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=le8BHDbi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18B2CC4CEF6;
-	Mon, 14 Jul 2025 06:47:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752475663;
-	bh=Hmw/tp+sBdq2ziMP6TR3hCzb9wJ+2WfBgsvg4Va7Ya8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=le8BHDbiG2aNfWCfPAs1SYVdSi/No69Ukea+4UI/CVmXsBPV1fsrOfDgFf31EBQAg
-	 Cz4RygdxBaiiY08F20J/SHhs0KO2/O+8xOgZg6FiJAaqq38UMlpJy/cwRiggXyAZ86
-	 /c/eBIvXDYoJh2461Ei/gL7tqMjeUg43L9aKbCkSqoxNKcD2XV0Hhly4QRTCEZPbC6
-	 Da7H5nIW1rzLZ/VXZneJ5pRr1S7m2PNwTSL3ADjJUsOKxu8I+QdO/IH6WIccO9bgM2
-	 Q3K1d7wpSK/bn/ydmEEqb38XV9hOP+68qVyaF8tlZW/7nNPZatOMEi0Z+FFi2jSzJn
-	 JVnVKf06MyJ2A==
-Date: Mon, 14 Jul 2025 08:47:41 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mao Jinlong <quic_jinlmao@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 3/5] dt-bindings: arm: Add qcom,qmi-id for remote etm
-Message-ID: <20250714-true-pistachio-peacock-53da1b@krzk-bin>
-References: <20250711094031.4171091-1-quic_jinlmao@quicinc.com>
- <20250711094031.4171091-4-quic_jinlmao@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YVSncizkF3nfd1vKlOSaEY35VNGfE1PX9RJUMxzTDodhWWIv8OaIVY9DbUG+7AG5seLOK7KzKWp/oBwD8svggWLqelvQPMjmd9xnO8cXjwhkO70Z5fxQyvWizJH+K0eDIlG1TzWXYBKxJwloBMZmiMrKmPGJRSH0RXrrIkB4800=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SJhHypb/; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752475838; x=1784011838;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=K4mc5x/W9JtBv/fhS4Ws9JbTJwyveuJyLnrexcFHoMY=;
+  b=SJhHypb/wpAaC2gpC5StgdZ4//JCKPlRxyqIxzOh+TmFOUKuENsjgEoP
+   Oh/sfQD4PM5RSARpUIhd6bWNSoNGiwOTVn8rstQSOkmbNXLKPvmdV2WMU
+   RnwGVNYNSLf6wg+U3E/2BRuFXqv0u4IrmtGi6/yCSDnyvlc6MXQH5VBBh
+   5mirWh5fM8dTcpz2wExSvt42P3xjpj0WBIwwqnicnLCEKC9dbNuRHxGc0
+   yXR5V66QFTaqnArDrh2ZKrBrTW/kyDHn5+HsbTgMyoSewHfpH7WNJu5yr
+   dfNDYtvK5UJVbdqqyuh2x2WyIkYDesJ+riOuT2lPqKgkGXUQ0nEAaqU95
+   Q==;
+X-CSE-ConnectionGUID: BNx1ffXiQpuQnUxXRw5liw==
+X-CSE-MsgGUID: JGlkgn+MSWCS+0jlv2EbMw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="58319973"
+X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
+   d="scan'208";a="58319973"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2025 23:50:38 -0700
+X-CSE-ConnectionGUID: Mr8VClpdTVmoWQpu7FNLHQ==
+X-CSE-MsgGUID: HCV3t0icRR++xmWnzTOKkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
+   d="scan'208";a="157596729"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2025 23:50:34 -0700
+Date: Mon, 14 Jul 2025 08:49:29 +0200
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Saeed Mahameed <saeed@kernel.org>, Gal Pressman <gal@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Leon Romanovsky <leonro@nvidia.com>
+Subject: Re: [PATCH net-next 3/6] net/mlx5e: Properly access RCU protected
+ qdisc_sleeping variable
+Message-ID: <aHSocHfM6IRFHneZ@mev-dev.igk.intel.com>
+References: <1752471585-18053-1-git-send-email-tariqt@nvidia.com>
+ <1752471585-18053-4-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250711094031.4171091-4-quic_jinlmao@quicinc.com>
+In-Reply-To: <1752471585-18053-4-git-send-email-tariqt@nvidia.com>
 
-On Fri, Jul 11, 2025 at 02:40:29AM -0700, Mao Jinlong wrote:
-> Remote etm binding change was merged to fix the dt warning. Driver
-> changes were not merged at that time. qcom,qmi-instance-id is
-> required for remote etm driver to find the remote subsystem connection.
-
-Again, driver... 
-
-
-> It is the instance id used by qmi to communicate with remote processor.
+On Mon, Jul 14, 2025 at 08:39:42AM +0300, Tariq Toukan wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
 > 
-> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+> qdisc_sleeping variable is declared as "struct Qdisc __rcu" and
+> as such needs proper annotation while accessing it.
+> 
+> Without rtnl_dereference(), the following error is generated by sparse:
+> 
+> drivers/net/ethernet/mellanox/mlx5/core/en/qos.c:377:40: warning:
+>   incorrect type in initializer (different address spaces)
+> drivers/net/ethernet/mellanox/mlx5/core/en/qos.c:377:40:    expected
+>   struct Qdisc *qdisc
+> drivers/net/ethernet/mellanox/mlx5/core/en/qos.c:377:40:    got struct
+>   Qdisc [noderef] __rcu *qdisc_sleeping
+> 
+> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 > ---
->  .../bindings/arm/qcom,coresight-remote-etm.yaml          | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>  drivers/net/ethernet/mellanox/mlx5/core/en/qos.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml
-> index 4fd5752978cd..bd78f6bc2fdf 100644
-> --- a/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml
-> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml
-> @@ -20,6 +20,12 @@ properties:
->    compatible:
->      const: qcom,coresight-remote-etm
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/qos.c b/drivers/net/ethernet/mellanox/mlx5/core/en/qos.c
+> index f0744a45db92..4e461cb03b83 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en/qos.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en/qos.c
+> @@ -374,7 +374,7 @@ void mlx5e_reactivate_qos_sq(struct mlx5e_priv *priv, u16 qid, struct netdev_que
+>  void mlx5e_reset_qdisc(struct net_device *dev, u16 qid)
+>  {
+>  	struct netdev_queue *dev_queue = netdev_get_tx_queue(dev, qid);
+> -	struct Qdisc *qdisc = dev_queue->qdisc_sleeping;
+> +	struct Qdisc *qdisc = rtnl_dereference(dev_queue->qdisc_sleeping);
 >  
-> +  qcom,qmi-instance-id:
+>  	if (!qdisc)
+>  		return;
 
-Don't come with another, 20th property for your remote proc
-architecture. Use existing properties.
+Good catch, other acesses to the qdisc_sleeping are fine.
 
-This pattern in qcom is extremely confusing - similar thing for remote
-proc called 20 different ways, just because in downstream you have 20
-different drivers.
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
 
-NAK
-
-Come with unified schema for existing and future properties like that.
-Assuming this is NOT FOR DRIVER in the first place.
-
-Best regards,
-Krzysztof
-
+> -- 
+> 2.40.1
 
