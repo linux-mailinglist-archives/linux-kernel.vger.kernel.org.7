@@ -1,163 +1,210 @@
-Return-Path: <linux-kernel+bounces-730708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F03CB0486F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:28:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10680B04873
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C0B1A67126
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 20:29:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F7011A6736D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 20:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580C225A65A;
-	Mon, 14 Jul 2025 20:28:07 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A1E238C06;
+	Mon, 14 Jul 2025 20:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UqAMpgFZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44493239E8D
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 20:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8F223817F;
+	Mon, 14 Jul 2025 20:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752524886; cv=none; b=P2WpLzEfo06zLhgq8226+O0/hAT1i63ZwI1DaJcihoH9nzua2TRTXO9tZ+TVui73nyV2Jt5p6WZHTiSmwuVoDqOLhg9SBoqfuf5mZJCExjoCtnUpRhWFpXUv0ExybtcwpDeOu0hBx2gNVZ2B5uWDuZXZX1hPtux+ie7Re/X5j0Y=
+	t=1752524891; cv=none; b=tl6Kv+JaLnS1dSolifQG/jMHUJU8kZVg/xiaIAn3rFhobb3U2cAqfGiGhP9/aDt17bgesj06Bmcp+soxiyfh7Ug46kzWZf/CvcjLFkDtzQv+FGaHB9MUPD63Oa2dcpBuvFPJq7odB0WRvZhpWAkKnzxzPpDr0HYWtX89xTYiZBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752524886; c=relaxed/simple;
-	bh=ZnJqAflWsKEdHGKvLIrAEjR5k0Dz87YTYYrBO4IKE9M=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=boU7hAbblgPwBYjt6SWxkgM+WfVySnZUH5pjLRnS/nRxyqVSCUD4V0CtttlkDjnaphtgSvsuf6eqe5kFLTmSArMsOcxl5c5TyXTI30QNEJ2bAjpyumK3r62gLJDkUZp/v9IBRTTBZBtoiBZCF1fYtEtKyK6Erg8523AweCtchtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-876a8bb06b0so860516239f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:28:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752524884; x=1753129684;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=98TjZeXG3VE4MdrIythBGYUD0Adr8lYuykO6pNqgAAk=;
-        b=maWu1tz/8Dq/Ns3hHtQxmdalb30bH4R9FBd2iAZ1z3MV9kF8EB2RF+uOUwjGMLhjf+
-         0Wjs9S92Noomk1NO3KRBKHxVhPp8yQbRXuDgwLA943r+hxEB0ETw5wCbtza/0d+Fm4bA
-         XUCqoOy0skbFQ5IzF1OMXg/q+PMiVQhO1hM/CzAMht+a8WJb36J2S+VeTDLrkAQ7ynGp
-         fVtaR0oKrLLpE3dDjSDAiafT4FZfS/obhECKB+MG9ki7VpYUNV80rPl5a1O59w+42W72
-         Kp8WWxgsWr6K9jVlufEi/JsBzNU3tRW9l7d0tXf0oPZDmKsXY1N3aQS1I89GZ16qES+I
-         IeNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlbAJWYh1JXPhA9nWjU4pZhBclJBhtSSWV5MahX/CJXW6htpN4Nq8/PHkJnrTUDxpKhYreLBCfJiDkV60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGOZCrXYHlJeSepA0guj7re/K1Nho/pAsaeQOBU3Tf0IE8hwYF
-	UiRyed+GN5W2ffBmukn2GH8syn3F3N320kE3mX/12cOMPkmJvWN74qneUe9R0kemDQAJ/+BUug9
-	4+hgE3Cq7+JgCc/CqKKKcITqED5YC2g5RdSFKGGmozi3pkxkSuJ6BgPaClfs=
-X-Google-Smtp-Source: AGHT+IETJ3Eh3fLrx3bfKYNlCDoQT5BYHUHjrKZI9YXhHuqPW571tOuI3xtdagEQrmLTlU/irxwABmkZ2nGV+BkVLn4aW+bZAji1
+	s=arc-20240116; t=1752524891; c=relaxed/simple;
+	bh=7tmgLZ7qPWDbvNfGMSr0/2hEpmJEbuFyqMpzTXHDGOw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dfgy/7LZquhHuJoYthk9SxojafA4dBNJ7nQCQeARkCIDz6Nm4zGjxfjMI65qqLxE9fiCaLysqnXEqwIVodVblb/a8hHM2v9LJxGHHTvBqkwuC4yrUgfIDjFXOyWumX11enppnW76OrpAor28iyp5BCB0U1He6Juy8aYPBoPHauY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UqAMpgFZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55DEAC4CEED;
+	Mon, 14 Jul 2025 20:28:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752524890;
+	bh=7tmgLZ7qPWDbvNfGMSr0/2hEpmJEbuFyqMpzTXHDGOw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UqAMpgFZGjF7NNO3pJG0WROlo1zg/fLFEqJX3yU4bOo4+vcFPEFsRxtIysmMDEJc+
+	 e3YSfgnHeHSXKqKk0mV6JpXORKi6JZxmCkq6Nxs3s17DfwcdqxS1tHTdKOV1LtDomX
+	 5xgl6HW7aYrFV0BjVYjZmsug4OkYN1aH7aObKZyOQRmTIW8gfnPYr4rYYhqDtC6mfI
+	 Pgzf5ksw1oCADW7LC0u7uPav+EG21a+Fd6v4npH/d969s/XyeeRhzj48Dl5i2QSZcn
+	 jL1i7KjeRMbPs+JYgViAYG8SYtAI6GMk6C359utkRF/1yCuUzLmSlcPZmgN44hkVsc
+	 3eVHySHPCV0aw==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Joshua Henderson <joshua.henderson@microchip.com>,
+	Chandra Mandal <purna.mandal@microchip.com>
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: gpio: Convert microchip,pic32mzda-gpio to DT schema
+Date: Mon, 14 Jul 2025 15:28:06 -0500
+Message-ID: <20250714202807.3010652-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:15c6:b0:875:d450:9297 with SMTP id
- ca18e2360f4ac-87977f735e1mr1598853339f.5.1752524884484; Mon, 14 Jul 2025
- 13:28:04 -0700 (PDT)
-Date: Mon, 14 Jul 2025 13:28:04 -0700
-In-Reply-To: <ea7f1f42-273b-4c07-8bf2-769992dd9ced@rowland.harvard.edu>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68756854.a70a0220.18f9d4.0007.GAE@google.com>
-Subject: Re: [syzbot] [input?] [usb?] UBSAN: shift-out-of-bounds in s32ton (2)
-From: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>
-To: bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Convert the Microchip PIC32 GPIO binding to DT schema format. It's a
+straight forward conversion.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-UBSAN: shift-out-of-bounds in s32ton
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/gpio/microchip,pic32-gpio.txt    | 49 -------------
+ .../gpio/microchip,pic32mzda-gpio.yaml        | 71 +++++++++++++++++++
+ 2 files changed, 71 insertions(+), 49 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/microchip,pic32-gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/microchip,pic32mzda-gpio.yaml
 
-usb 4-1: config 0 interface 0 altsetting 0 has 1 endpoint descriptor, different from the interface descriptor's value: 9
-usb 4-1: New USB device found, idVendor=045e, idProduct=07da, bcdDevice= 0.00
-usb 4-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-usb 4-1: config 0 descriptor??
-microsoft 0003:045E:07DA.0001: ignoring exceeding usage max
-microsoft 0003:045E:07DA.0001: unsupported Resolution Multiplier 0
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in drivers/hid/hid-core.c:69:16
-shift exponent 4294967295 is too large for 32-bit type 'int'
-CPU: 1 UID: 0 PID: 2803 Comm: kworker/1:2 Not tainted 6.15.0-syzkaller-11339-gc2ca42f190b6 #0 PREEMPT(voluntary) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
- ubsan_epilogue lib/ubsan.c:233 [inline]
- __ubsan_handle_shift_out_of_bounds+0x27f/0x420 lib/ubsan.c:494
- s32ton.cold+0x37/0x9c drivers/hid/hid-core.c:69
- hid_output_field drivers/hid/hid-core.c:1841 [inline]
- hid_output_report+0x36f/0x4a0 drivers/hid/hid-core.c:1874
- __hid_request+0x2b4/0x3c0 drivers/hid/hid-core.c:1997
- hidinput_change_resolution_multipliers drivers/hid/hid-input.c:1950 [inline]
- hidinput_connect+0x1ada/0x2bd0 drivers/hid/hid-input.c:2327
- hid_connect+0x13f3/0x1a60 drivers/hid/hid-core.c:2248
- hid_hw_start drivers/hid/hid-core.c:2363 [inline]
- hid_hw_start+0xaa/0x140 drivers/hid/hid-core.c:2354
- ms_probe+0x195/0x500 drivers/hid/hid-microsoft.c:391
- __hid_device_probe drivers/hid/hid-core.c:2733 [inline]
- hid_device_probe+0x363/0x720 drivers/hid/hid-core.c:2770
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:657
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:829
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:957
- bus_for_each_drv+0x156/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1029
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x1148/0x1a70 drivers/base/core.c:3692
- hid_add_device+0x373/0xa60 drivers/hid/hid-core.c:2916
- usbhid_probe+0xd38/0x13f0 drivers/hid/usbhid/hid-core.c:1435
- usb_probe_interface+0x303/0x9c0 drivers/usb/core/driver.c:396
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:657
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:829
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:957
- bus_for_each_drv+0x156/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1029
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x1148/0x1a70 drivers/base/core.c:3692
- usb_set_configuration+0x1187/0x1e20 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:250
- usb_probe_device+0xef/0x3e0 drivers/usb/core/driver.c:291
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:657
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:829
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:957
- bus_for_each_drv+0x156/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1029
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x1148/0x1a70 drivers/base/core.c:3692
- usb_new_device+0xd07/0x1a20 drivers/usb/core/hub.c:2663
- hub_port_connect drivers/usb/core/hub.c:5531 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5671 [inline]
- port_event drivers/usb/core/hub.c:5831 [inline]
- hub_event+0x2f85/0x5030 drivers/usb/core/hub.c:5913
- process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3321 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
- kthread+0x3c5/0x780 kernel/kthread.c:464
- ret_from_fork+0x5b6/0x6c0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
----[ end trace ]---
+diff --git a/Documentation/devicetree/bindings/gpio/microchip,pic32-gpio.txt b/Documentation/devicetree/bindings/gpio/microchip,pic32-gpio.txt
+deleted file mode 100644
+index dd031fc93b55..000000000000
+--- a/Documentation/devicetree/bindings/gpio/microchip,pic32-gpio.txt
++++ /dev/null
+@@ -1,49 +0,0 @@
+-* Microchip PIC32 GPIO devices (PIO).
+-
+-Required properties:
+- - compatible: "microchip,pic32mzda-gpio"
+- - reg: Base address and length for the device.
+- - interrupts: The port interrupt shared by all pins.
+- - gpio-controller: Marks the port as GPIO controller.
+- - #gpio-cells: Two. The first cell is the pin number and
+-   the second cell is used to specify the gpio polarity as defined in
+-   defined in <dt-bindings/gpio/gpio.h>:
+-      0 = GPIO_ACTIVE_HIGH
+-      1 = GPIO_ACTIVE_LOW
+-      2 = GPIO_OPEN_DRAIN
+- - interrupt-controller: Marks the device node as an interrupt controller.
+- - #interrupt-cells: Two. The first cell is the GPIO number and second cell
+-   is used to specify the trigger type as defined in
+-   <dt-bindings/interrupt-controller/irq.h>:
+-      IRQ_TYPE_EDGE_RISING
+-      IRQ_TYPE_EDGE_FALLING
+-      IRQ_TYPE_EDGE_BOTH
+- - clocks: Clock specifier (see clock bindings for details).
+- - microchip,gpio-bank: Specifies which bank a controller owns.
+- - gpio-ranges: Interaction with the PINCTRL subsystem.
+-
+-Example:
+-
+-/* PORTA */
+-gpio0: gpio0@1f860000 {
+-	compatible = "microchip,pic32mzda-gpio";
+-	reg = <0x1f860000 0x100>;
+-	interrupts = <118 IRQ_TYPE_LEVEL_HIGH>;
+-	#gpio-cells = <2>;
+-	gpio-controller;
+-	interrupt-controller;
+-	#interrupt-cells = <2>;
+-	clocks = <&rootclk PB4CLK>;
+-	microchip,gpio-bank = <0>;
+-	gpio-ranges = <&pic32_pinctrl 0 0 16>;
+-};
+-
+-keys {
+-	...
+-
+-	button@sw1 {
+-		label = "ESC";
+-		linux,code = <1>;
+-		gpios = <&gpio0 12 0>;
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/gpio/microchip,pic32mzda-gpio.yaml b/Documentation/devicetree/bindings/gpio/microchip,pic32mzda-gpio.yaml
+new file mode 100644
+index 000000000000..d8d932c86697
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/microchip,pic32mzda-gpio.yaml
+@@ -0,0 +1,71 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/microchip,pic32mzda-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Microchip PIC32 GPIO controller
++
++maintainers:
++  - Joshua Henderson <joshua.henderson@microchip.com>
++  - Purna Chandra Mandal <purna.mandal@microchip.com>
++
++properties:
++  compatible:
++    const: microchip,pic32mzda-gpio
++
++  reg:
++    maxItems: 1
++
++  gpio-controller: true
++
++  gpio-ranges: true
++
++  "#gpio-cells":
++    const: 2
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 2
++
++  clocks:
++    maxItems: 1
++
++  microchip,gpio-bank:
++    description: Bank index owned by the controller
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++required:
++  - compatible
++  - reg
++  - gpio-controller
++  - gpio-ranges
++  - "#gpio-cells"
++  - interrupts
++  - interrupt-controller
++  - "#interrupt-cells"
++  - clocks
++  - microchip,gpio-bank
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    gpio@1f860000 {
++        compatible = "microchip,pic32mzda-gpio";
++        reg = <0x1f860000 0x100>;
++        interrupts = <118 IRQ_TYPE_LEVEL_HIGH>;
++        #gpio-cells = <2>;
++        gpio-controller;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++        clocks = <&rootclk 11>;
++        microchip,gpio-bank = <0>;
++        gpio-ranges = <&pic32_pinctrl 0 0 16>;
++    };
+-- 
+2.47.2
 
-
-Tested on:
-
-commit:         c2ca42f1 HID: core: do not bypass hid_hw_raw_request
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=16ecc7d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=255f64b90a60c429
-dashboard link: https://syzkaller.appspot.com/bug?extid=b63d677d63bcac06cf90
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
 
