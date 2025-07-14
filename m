@@ -1,93 +1,101 @@
-Return-Path: <linux-kernel+bounces-729514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B170B037C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:21:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CD4DB037CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F30C27AA30E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:20:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A896F3A847C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37633235047;
-	Mon, 14 Jul 2025 07:21:30 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD99233704;
+	Mon, 14 Jul 2025 07:22:33 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF4D22F772;
-	Mon, 14 Jul 2025 07:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81664322A
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 07:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752477689; cv=none; b=oMkif9mwfFpoqiqAOOTBG0SybMNCxtuFr7WMLeIQc22BZv/rbMR4is80oTRaJuJIvo5h0mFwv9ja/kn/CJ6dW0BSL4WMrqOurHATLUjyyw5fXjy1e0fSKiCANrgU33IqC8apuEUHHtCApXN8VKpW060UxXmbjsaBMgD4VpLiHUw=
+	t=1752477753; cv=none; b=Uabx+TiJegybGSxQNCqPI07YjtZt+Mk6ZOptEYC4vVOJsOncIAfSIiF0KhjKb6ZAKQM+l4AKeghzVzIuSr/huNEckB3/kZ44OpOoFgWyoliqU8xrVsda7xgVCPqfrKzXyLLchmDE8i+wUCh6Rc7MkpREmgDKmaRBIV9qEBBhfPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752477689; c=relaxed/simple;
-	bh=31zPVtFzDYB0pfKAV+z+qFaQhpWSePR/M/ur2bh52hY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=p33i9/B1ZGeW7SxBmjxszQA3tT3fgKMO8LmxVOx7SvaZX10IpzpJfaZ5DXiZFNroAPKLc9ltITpF6i2Km5WseCzKo1qzTLIijkcsfKpt4/3936FEGd94fiRNoN/y7y+8T93FkdOfD/bS8bzuzO+U0J8kRZYSrQDpqL8zwBRenLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A213C4CEF5;
-	Mon, 14 Jul 2025 07:21:29 +0000 (UTC)
-Received: from wens.tw (localhost [127.0.0.1])
-	by wens.tw (Postfix) with ESMTP id 6D3BD5FE7F;
-	Mon, 14 Jul 2025 15:21:26 +0800 (CST)
-From: Chen-Yu Tsai <wens@csie.org>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@redhat.com>, 
- Brian Masney <bmasney@redhat.com>
-Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev
-In-Reply-To: <20250703-clk-cocci-drop-round-rate-v1-0-3a8da898367e@redhat.com>
-References: <20250703-clk-cocci-drop-round-rate-v1-0-3a8da898367e@redhat.com>
-Subject: Re: (subset) [PATCH 00/10] clk: convert drivers from deprecated
- round_rate() to determine_rate()
-Message-Id: <175247768644.1732129.7805401715825787511.b4-ty@csie.org>
-Date: Mon, 14 Jul 2025 15:21:26 +0800
+	s=arc-20240116; t=1752477753; c=relaxed/simple;
+	bh=cUjRIPbmUy0lKKYkcdJFj/W6+blRgUvmQPyiuwbVx8A=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hi2SF84x+X1qqElJ7xqLwCE2vJ4NFfhANBJKH8n3GwdJxI0nw9mjdb/xEODFCCkgeSwpZ8ZSsOxdODMhLg/M7JwYXdl5qTqz3b8ZegVuAW9raMdlwA8jvgf2uRpD24A8ysauM5QbLyXfyinqYx8pbVSO7aYJIpFyv3Rjbt88dH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-86d126265baso369621239f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 00:22:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752477750; x=1753082550;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Po/A+wtbc1jdSXvCuFG0YJfDF9pUij39LY3Ij2dIkBI=;
+        b=N8yz/12a/O+wpUyIaXPa/tBehQQccZs92i0IGGiIbPutlOJT1WCcxg07ELo1+O2u1g
+         UZROjkrCRe7fMpD6mU2N2jZa5sCH67xKgC1iigYx94V5uNRPZIG5UemfDzxocMGiFfcH
+         fkERMzAIVOUtp3yrh72BYMNELnweXwx/8jFLgXECDcHMLE1IzdzwBA3JJV2gbpaAOdRm
+         YIqC0pfhh3W/MSyeybmAzq6/7rSgtl3rq4hc6c1Y7hde3bom5rcLIjVFsq7f7M+6kCqt
+         dBym5Abg7fxnM45ACCVv/CIFc4O0NlUaA3+9pDprAQv2DfZqtZd/L79mpOhgP2srMEzD
+         cYvA==
+X-Forwarded-Encrypted: i=1; AJvYcCXT6ry+tXRDYt1rzcgW4GvEdFvIX2nRAq+TH03lCLnJVAFQuElYvVHPDiKsJYwWByhibiqz1UrpJL0uAUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0k/ycoB8eRyTC+RxUNA1/6AUWOlN7nqK3eBuIT/HW1GO6cQfh
+	QVuzjWJ3BU6cH91a8GIQRMOdVg34tyq4kT1qJd6Kn3wAsqixzQTFInX7MGZpVDnLezTN3saLq1M
+	/6TE0SGtDlzRWw/wBE2neIQnvi8PG4I7sX4H3tNck5FMhrKO4fSjgGRlJdA4=
+X-Google-Smtp-Source: AGHT+IHow8fclkeQxrcpSvlhr8B47ljuvaAAHcrVgmrSeuvEPnUISMKfj5mI/kwyQvb1q1n87wIAn9yS2VssI6EbHb6hN6UsaG7H
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+X-Received: by 2002:a05:6602:1354:b0:876:d18f:fb06 with SMTP id
+ ca18e2360f4ac-87977ea916amr1283794839f.0.1752477750675; Mon, 14 Jul 2025
+ 00:22:30 -0700 (PDT)
+Date: Mon, 14 Jul 2025 00:22:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6874b036.a70a0220.3b380f.004b.GAE@google.com>
+Subject: [syzbot] Monthly fbdev report (Jul 2025)
+From: syzbot <syzbot+listfb4485d95eabb4a677d4@syzkaller.appspotmail.com>
+To: deller@gmx.de, dri-devel@lists.freedesktop.org, 
+	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 03 Jul 2025 19:22:24 -0400, Brian Masney wrote:
-> The round_rate() clk ops is deprecated in the clk framework in favor
-> of the determine_rate() ops, so let's go ahead and convert some of the
-> outstanding bcm, qcom, and sunxi drivers that have a round_rate()
-> implementation over to determine_rate() using the Coccinelle semantic
-> patch posted below.
-> 
-> This Coccinelle semantic patch is able to automatically convert ~95% of
-> the clk drivers, and I can clean up the remaining ones by hand. I'll
-> initially post some small changes to get feedback about the approach,
-> and I can post some larger series by submaintainer once we get
-> agreement that the approach looks good.
-> 
-> [...]
+Hello fbdev maintainers/developers,
 
-Applied to sunxi/clk-for-6.17 in local tree, thanks!
+This is a 31-day syzbot report for the fbdev subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/fbdev
 
-[07/10] clk: sunxi-ng: ccu_gate: convert from round_rate() to determine_rate()
-        commit: ee9c15ca0f628435334afef74d2ff03112d80bf0
-[08/10] clk: sunxi-ng: ccu_nk: convert from round_rate() to determine_rate()
-        commit: 2b0d4f1b3f8524b413208d47099c445eaf7c18f5
-[09/10] clk: sunxi-ng: ccu_nkmp: convert from round_rate() to determine_rate()
-        commit: 8bc614c6ac3c97cef385aebc6520ddcfa0fca8f7
-[10/10] clk: sunxi-ng: ccu_nm: convert from round_rate() to determine_rate()
-        commit: 80395c3b47577c12121d4e408e7b9478f7f88d02
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 5 issues are still open and 26 have already been fixed.
 
-Best regards,
--- 
-Chen-Yu Tsai <wens@csie.org>
+Some of the still happening issues:
 
+Ref Crashes Repro Title
+<1> 2587    Yes   KASAN: vmalloc-out-of-bounds Write in imageblit (4)
+                  https://syzkaller.appspot.com/bug?extid=c4b7aa0513823e2ea880
+<2> 192     Yes   KASAN: slab-out-of-bounds Read in fbcon_prepare_logo
+                  https://syzkaller.appspot.com/bug?extid=0c815b25cdb3678e7083
+<3> 39      No    KASAN: vmalloc-out-of-bounds Write in fillrect
+                  https://syzkaller.appspot.com/bug?extid=7a63ce155648954e749b
+<4> 28      Yes   KASAN: global-out-of-bounds Read in bit_putcs (3)
+                  https://syzkaller.appspot.com/bug?extid=793cf822d213be1a74f2
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
