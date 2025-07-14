@@ -1,79 +1,64 @@
-Return-Path: <linux-kernel+bounces-730436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FFFAB04463
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:43:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BC9FB0447D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA901166F40
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:42:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7E521A62174
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF54267700;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC4E2676F3;
 	Mon, 14 Jul 2025 15:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NDIzDkx3"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iHACN7UI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111BC266F00;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC6C6A8D2;
 	Mon, 14 Jul 2025 15:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752507475; cv=none; b=e2ttRFKplnlJ7UIdCU6DvI5B34h0bc2nUmU83x3KhcvSd1ChlXMw++5LsxkfErL7VNiCy3pOK/xj+BxV2hvH2BJfUgAc2kw2vEkH2aaL9q0Qd+TtcOb/1ETNvff9KADflBXOjM+h7i9WdjaNKpEX7dsbvyBsnf04MUw5++p1Xyo=
+	t=1752507475; cv=none; b=SJXMgq0Kjx1OT/gOg854iyqBvVQs+da1ilTJsCj7G6Uy5jpAKYzWIl/L2UNCd1XA79EXXKEUW1Me7ij6vPxgKNJ4L1tEiwin6vVzr3VZclmUSlgyHObghmh9VXa3Jr/cF5K6X3rd+p3qrD8dRCSQf/WWJnhtEz2F5QHMZo53Aec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752507475; c=relaxed/simple;
-	bh=QjQ0UWlscOYrLTxqfo8jeI2W2cZqq+DP0CdXTDyGEcE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u0h8mrEZOGTLmkviyWOdReZfHlpUNPM3MA12uiuQYd3kcLD+kJVu2I5MV6W6ul9dByoyR5gQhos7i7iPWlGp/PTR2ftaTYp0o+4VH5w9ewLPIYy836FaZW+OBed/KiZnMK270wI0ow/WPBrlaxeQPxRl8qMwgWCGuX8ke+A/h1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NDIzDkx3; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-235d6de331fso49000075ad.3;
-        Mon, 14 Jul 2025 08:37:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752507473; x=1753112273; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QjQ0UWlscOYrLTxqfo8jeI2W2cZqq+DP0CdXTDyGEcE=;
-        b=NDIzDkx3Bq3miRT9xFy762nSk+VGxI7KaInx3vbv9Y4NhVQtZ6ybtWPFbPhB9gxU4D
-         ePbVztjRTcOzAti4fiu08gUi+UQkG6ZoTQemQQaBvTIMjsDweJ/dogdo/FNRMwXHXJ1F
-         X/8QITXAAS9rlU7HnALobpC2hDJYGoYWivRlmr0nj9zrrNuzSheC3OgYI3eiEPp5Fnbz
-         qsfDNTbHwuWc0hxWi+hgO8TGrRKt+OFytpg9xRZu0Xr7FApPy6kigFT32t7kUaaHdMig
-         KqCJvRxm21j/bf728tCB4PnRKwCPeMP47yXB73+8yao67/ma0l9kBHxZ2XtGWpYfXXhB
-         1vYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752507473; x=1753112273;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QjQ0UWlscOYrLTxqfo8jeI2W2cZqq+DP0CdXTDyGEcE=;
-        b=rF2HR3LIdrvATzjyL00vSNO7BpjnA2mQfI9tNaUEfGUycPHCygKfc1pVMlbSUjO7na
-         Pcmo6dYuk7chvVNx5MLDKGhQDPGFDCVnJbAgC6yJRZtgF+oJx/35UAK2jmOWFY0pBF1G
-         5KBrki7bBgN17qAPIauxA8APzMpD+wZzudKWGwMS+8r6xnnTx5eVhrXwl9oIn5iBfc13
-         inQ07lQt63ZMoA6VmxJcJQ5bg0MfKMuwLTmFxcOkV7MraeaS67DQyl//4OCcOZmzFR5R
-         f1GW+cEpK8NVdz9dmqQDGNbQ7NEjN2i0POv2ERGwYUU+1GPOlr1RqPzfUK5Os/CgwWmb
-         PEQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBfRLBjDipB5tw5LUj9Ng7BnSq5EujEaSFEnl032umR6k6k5YDbAuWOp4J1vQWakQuN5XOYQ+dudWXJFNlN7MdLw==@vger.kernel.org, AJvYcCV4N5KsdL1+j9qP8XZc2Zf15l/2qieVeWQYs5N1wWhXlyRJoy9O3pJrlv7usWtLDEhqxFS/uKLjvRRw@vger.kernel.org, AJvYcCVx+BvPnFI03PRISEsXi8v+IN3ClJNjd0vWGsylPWgHo53LcNMo8DnKDke9sxlbHsc80E6Krd/WCCOUcV/y@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxDAR+Pf0JhiCdB+x4jAgiMVWyCncuXiFWmL4CzQjaVZA5+hqt
-	T4eZuCaOIiKa4UB9u26F809NLc9dCkznZK89BRrZNL7jvN9sZiPJq4YpBLwjxo5qQ7yMVA==
-X-Gm-Gg: ASbGncue7fjHoZJfvE7+VgjY2NyioA6IIAffTnJ4BENrsfPHARXOqW3IJa6zgNdS6xt
-	FeaRRv+3Z5gP+AT5wM1Mre4HxaZbFtxd8d6yHCRea/jXzlktAVjTLBnoB7uXkj2eeb1dozdWRBY
-	re3shj5OnoNpADnramLofgs8j6y3OR5WJ0ZFZOlZuj8qpMBcdXbTvj6UV/wA9vv4PL0NIFoDhWr
-	kOrtFvGsoA7NOuuOMappdZyJ684WpnFsWXNmMg4G4l4bgsnw4MBGbI1vunGuzta0fTDjTEuNfLy
-	q4aJtwfYhkT108us2tBYWJKI2Y6ws8w5vZAmUq4ZmStaL9y6sitVKVVQV5Rbg1/6WqHDeOJdghr
-	W9qMW/haZv7PFom1R4L8wCtvzFFjSuLnhlAS1E1PYHzATD87HUSc7We4IlDHZbS8=
-X-Google-Smtp-Source: AGHT+IEMvnX379Cfqxjm8d/1Z5fQyV4o83jOtFXuWtyBzvMeYslcOx4WAebdY0n5WCMLCRYgzq0u0g==
-X-Received: by 2002:a17:903:a4f:b0:235:f70:fd39 with SMTP id d9443c01a7336-23dede2e17cmr167967685ad.10.1752507472927;
-        Mon, 14 Jul 2025 08:37:52 -0700 (PDT)
-Received: from [192.168.0.124] (061092221177.ctinets.com. [61.92.221.177])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42ae9f5sm95068015ad.66.2025.07.14.08.37.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 08:37:52 -0700 (PDT)
-Message-ID: <81addd64-6ba6-465e-901e-05f9cb29185b@gmail.com>
-Date: Mon, 14 Jul 2025 23:37:46 +0800
+	bh=0K+u1Qy1DhY50hQkwewgkYfh4QzDBTaZCLEBQjOQcPw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Iz/2ouXX+wFh/hkfkEZE6bogp0K4hWtdQvyBxZ2FTHkcIOq5b9c5kuNp6WePpyi0q68Emrsxy5gJTRUYz9SGWzNtMHWwXWASz4YuLuXZo8CSA5y4TtH1uQj1yIZuy9EwGbTs5oLKUb11+tcLu39d+jfWPIjrVhRcHD4wN/DUsFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iHACN7UI; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752507474; x=1784043474;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=0K+u1Qy1DhY50hQkwewgkYfh4QzDBTaZCLEBQjOQcPw=;
+  b=iHACN7UI06MBTPhyM1NuqWMhMEycemiI0UazExBEztM0o9PnilPJnCmi
+   sMZ6AkHAlC6TeN1GMUd41RtEl5qru3CUWoTYvK/yuTvnbsqg02HpbWDxl
+   Vd9pIRql2Z+Xdiy41pEsWvMG3L4eloAh8j1iFWrDqZM4dhyuRBWVYMJGS
+   eU8Wux06/tNFOGzBV/vKMrQIdACFUV4VWjuvtSzeZ5p5lyxb2yZceaVBD
+   o9t0mxHvra2a3qU1yfU3kIHvnf6LMuBfjPqnEpWSNRjQeV/EV9girMPjq
+   YMuUv5dd2v2m1K0EBjm7m4Tq15PcIBl++wPeYlrbhjY4mqvmhZuJIbrCX
+   A==;
+X-CSE-ConnectionGUID: 0WpNUkmYQ3esFwrmIzqdPg==
+X-CSE-MsgGUID: usrBL9TBQICg0Y3o8Km67A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54831925"
+X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
+   d="scan'208";a="54831925"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 08:37:53 -0700
+X-CSE-ConnectionGUID: MbG7zrlKTOu5SP974B/DCQ==
+X-CSE-MsgGUID: ck7x8PG4Q2CG3rhGDHOP7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
+   d="scan'208";a="187947800"
+Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.111.82]) ([10.125.111.82])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 08:37:51 -0700
+Message-ID: <c1421f42-4107-4a6a-80f3-c46d915b40a6@intel.com>
+Date: Mon, 14 Jul 2025 08:37:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,41 +66,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v7 02/21] drivers/perf: apple_m1: Only init PMUv3
- remap when EL2 is available
-To: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Neal Gompa <neal@gompa.dev>, Sven Peter <sven@kernel.org>,
- Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
- asahi@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250616-apple-cpmu-v7-0-df2778a44d5c@gmail.com>
- <20250616-apple-cpmu-v7-2-df2778a44d5c@gmail.com>
- <aHUeNpx6bsC5Gk3b@willie-the-truck>
+Subject: Re: [PATCH v7 5/5] x86/sgx: Enable automatic SVN updates for SGX
+ enclaves
+From: Dave Hansen <dave.hansen@intel.com>
+To: "Reshetova, Elena" <elena.reshetova@intel.com>
+Cc: "jarkko@kernel.org" <jarkko@kernel.org>,
+ "seanjc@google.com" <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>,
+ "mingo@kernel.org" <mingo@kernel.org>,
+ "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>, "Mallick, Asit K"
+ <asit.k.mallick@intel.com>,
+ "Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
+ "Cai, Chong" <chongc@google.com>, "Aktas, Erdem" <erdemaktas@google.com>,
+ "Annapurve, Vishal" <vannapurve@google.com>,
+ "dionnaglaze@google.com" <dionnaglaze@google.com>,
+ "Bondarevska, Nataliia" <bondarn@google.com>,
+ "Raynor, Scott" <scott.raynor@intel.com>
+References: <20250711165212.1354943-1-elena.reshetova@intel.com>
+ <20250711165212.1354943-6-elena.reshetova@intel.com>
+ <461a33d3-f91a-4dd3-bb97-048670530b25@intel.com>
+ <DM8PR11MB57503EC8DF105A7D7FF02303E754A@DM8PR11MB5750.namprd11.prod.outlook.com>
+ <2cd81800-12ba-460e-ac28-4532d0be1ec9@intel.com>
 Content-Language: en-US
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <aHUeNpx6bsC5Gk3b@willie-the-truck>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <2cd81800-12ba-460e-ac28-4532d0be1ec9@intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+On 7/14/25 06:54, Dave Hansen wrote:
+> On 7/14/25 00:35, Reshetova, Elena wrote:
+>> I think you put it: this would require a spinlock in the fast path and
+>> *in theory* if we are running many many concurrent enclaves can create 
+>> contention
+> FWIW, my mental model is that spinlocks that are held for short periods
+> of time are pretty much the same cost as an atomic under contention.
+> 
+> If there are lots of users, the cost of moving the cacheline for the
+> atomic or the spinlock dominates everything else. It doesn't matter
+> whether that cacheline is an atomic_t or spinlock_t.
+> 
+> The only difference is that there is _visible_ spinning for a spinlock.
 
-Will Deacon 於 2025/7/14 夜晚11:11 寫道:
-> On Mon, Jun 16, 2025 at 09:31:51AM +0800, Nick Chan wrote:
->> Skip initialization of PMUv3 remap when EL2 is not available.
->> Initialization is harmless in EL1 but it is still a weird thing to do.
-> Why is that weird?
+Oh, and I had a brain fart on this one. You've got a mutex, not a spinlock.
 
-Maybe I could use better wording but if the check is not here, then for Apple A7 which has very
-different event mappings, it either has to use the mappings for M1 which is wrong on the hardware,
-or declare an a7_pmu_pmceid_map, which would just be dead code since A7's CPU does not
-support EL2. Not initializing the mapping in EL1 avoid these problems.
+But the concept still applies: for small critical sections, the cost of
+moving the cacheline dominates the cost of everything else, no matter if
+it's a mutex, spinlock or atomic.
 
->
-> Will
->
-Nick Chan
-
+Never add complexity unless you're getting actual, real-world
+performance out of it. In this case, the only thing you'd _maybe_
+improve with added complexity is an open()/close() loop on /dev/sgx,
+which is completely unrealistic.
 
