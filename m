@@ -1,105 +1,166 @@
-Return-Path: <linux-kernel+bounces-730693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 772AFB04839
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:04:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60719B0483C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F4BB16E00C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 20:04:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD3D916D3AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 20:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40C5246BD9;
-	Mon, 14 Jul 2025 20:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032F9246BD9;
+	Mon, 14 Jul 2025 20:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a4U4Xl96"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XtsjOh5A"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB39204098;
-	Mon, 14 Jul 2025 20:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B81A204098;
+	Mon, 14 Jul 2025 20:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752523489; cv=none; b=QUj+J/Qlv+0COBswiCH+mQMms2/LIQOdPibrsHA2u2Dp+i0mYq7oMapqJx3QwRneWTqTRXQmGPu0WA7Je7al+WJhOe6M16G2wwbnb4EHQcoeslOweAA6CgVnWIU2YiIJCxdRTblHEAikbJbD+8NmWilq+fppCTWNNGxR8QcLonE=
+	t=1752523556; cv=none; b=Uh5G7ob3rnvLVArb2iGQ4hGwBiZgMscEPmMHMMhr45s+WHhK68GMLHU9Oq1z3gE0gl+mKOvuDRHMlxdSDHpjvjIRgaxEuzfgxbrESp5yqPmWwvTcmztEARCEirqL8Rw/fcrY+AfTa2/OxxarnpN5/iu9Gw4O9CXm28eTT+n1Alg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752523489; c=relaxed/simple;
-	bh=xd/xfYOEUPPLbpxh3voDncT+zjKQzDRxMcauig6LqSA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GEzsymexlGhQRILwYwW70d5kuBgBagzzLTVt51UL38u7KrZZT+BbQ0QZHMWLXeK3GMvo+PxFla6xZOEMvFa4OciAVL3EoaQUEPpwW7tAzLD+38HPlSupZ3GUh+BDti/EWXbJrKu2+coyzlTMCy1N1qB8yH1GW2z0mj+O+JPKHt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a4U4Xl96; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEE85C4CEED;
-	Mon, 14 Jul 2025 20:04:43 +0000 (UTC)
+	s=arc-20240116; t=1752523556; c=relaxed/simple;
+	bh=774extu3EbE/at8bK2G6NRtny1ot7XOThjOCbB2Kxg0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ehbatLxXt7aC4b3bkJN0ntyEEvrEmCVf8vCsF8fUoj9q0tssY12/+kQMnLilJKg+0K1ve1IhEEK/FimCidjcFRTPYcHIoDj6bxBDbu/5SPelpWZv2y1MGGoJZcmTsqqKC8RoJPV6UfLUHXPKQuEHv5QQT6HYsgyOaLgfj731N2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XtsjOh5A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01BDCC4CEED;
+	Mon, 14 Jul 2025 20:05:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752523488;
-	bh=xd/xfYOEUPPLbpxh3voDncT+zjKQzDRxMcauig6LqSA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=a4U4Xl96FI2EXcfOd225VoOy4zz2pnnK+h9491TSV+5rOSj1Lubf+m/Jgg/nScmEA
-	 tdMt/pVJbU8LpLBm4q8b2qc3Ae3khgKFZTDt+TsRCayPDXmpNw+PftSK/4v9hyBSDD
-	 9IiVW1Zi53GhqH0n56csK8bgs5dGOt1bkAr5U+V+qAEUf/v2x/m02COYu9vWnOfoGK
-	 tbg54ZQkafgLxLIFaCQXZH6SaLvI+SiPyyzi5Ud2MSZ1JvyNTrvc6nU/jOAoyfMCQU
-	 PjoPcjqVWkz+goSPVG2TnvRWR/jTekwUAA7wmaKHOvDCPCq3KBEaMxFRINXs+w63eo
-	 h68qY/lwqcf5Q==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: haiyan.liu@unisoc.com
-Cc: Ping.Zhou1@unisoc.com,
-	Ziwei.Dai@unisoc.com,
-	lina.yang@unisoc.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	shuang.wang@unisoc.com,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	kasan-dev@googlegroups.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>,
-	Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Christian Brauner <christian@brauner.io>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: Meet compiled kernel binaray abnormal issue while enabling generic kasan in kernel 6.12 with some default KBUILD_RUSTFLAGS on
-Date: Mon, 14 Jul 2025 22:04:30 +0200
-Message-ID: <20250714200431.1917584-1-ojeda@kernel.org>
-In-Reply-To: <4c459085b9ae42bdbf99b6014952b965@BJMBX01.spreadtrum.com>
-References: <4c459085b9ae42bdbf99b6014952b965@BJMBX01.spreadtrum.com>
+	s=k20201202; t=1752523556;
+	bh=774extu3EbE/at8bK2G6NRtny1ot7XOThjOCbB2Kxg0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=XtsjOh5A/oNMyG9gybPrSrluKoNLS4F3kMIxBh5hZ18lBYSAZyrMnn3VGv0bBrv3K
+	 D9GWZbtpDL/WgrRFK/F87PnIcVxHgzQPHeaYjojl0/InlHcnEXd8MXKhdPz5NZsl/y
+	 WvukWT+hIA9kxDV2+2+fgyPFwVdhF0aevYMqsvIlHScJjergwK+efgotQPiBTcb6zI
+	 /mBPd8ZKiXlZQSArZ3Io85SjBTEdCqu2pXfEQ8XQVz47nj2BNDz00+ZcZMwLwdEBiM
+	 pBj64wGJoEXt5LkDntSOxVqieuGYzh7zu75bjiUB7+dD+wF8BFVuIKMH8XSFHJhZhz
+	 xHWtBVvWxovmA==
+Date: Mon, 14 Jul 2025 15:05:53 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Matt Roper <matthew.d.roper@intel.com>
+Subject: Re: [PATCH v10 0/5] PCI: VF resizable BAR
+Message-ID: <20250714200553.GA2418827@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250702093522.518099-1-michal.winiarski@intel.com>
 
-On Mon, 14 Jul 2025 03:12:33 +0000 "刘海燕 (Haiyan Liu)" <haiyan.liu@unisoc.com> wrote:
->
-> After I delete the rust build flags, the asan.module_ctor binary is right and kasan feature works fine.Could you help check why KBUILD_RUSTFLAGS impacts kernel complication with kasan feature enabled and how can this issue fixed?
+On Wed, Jul 02, 2025 at 11:35:17AM +0200, Michał Winiarski wrote:
+> Hi,
+> 
+> The series is now reviewed, and it looks like there's no further
+> feedback.
+> To limit it to PCI subsystem, I removed the last patch in the series, as
+> it contained changes in drm/xe driver (it can still be found in v9 for
+> reference, and I expect that this single patch will go through DRM tree
+> anyways).
+> 
+> v9 can be found here:
+> https://lore.kernel.org/linux-pci/20250527120637.665506-1-michal.winiarski@intel.com/
+> 
+> For regular BAR, drivers can use pci_resize_resource to resize it to the
+> desired size provided that it is supported by the hardware, which the
+> driver can query using pci_rebar_get_possible_sizes.
+> This series expands the API to work with IOV BAR as well.
+> It also adds the additional API for drivers to change the VF BAR size
+> without resizing the entire underlying reservation (within the original
+> resource boundary).
+> 
+> Thanks,
+> -Michał
+> 
+> v9 -> v10:
+> - Remove last patch with drm/xe changes
+> 
+> v8 -> v9:
+> - Use u64 as do_div() dividend (LKP)
+> - Introduce a helper to access cached vf_rebar_cap (LKP)
+> 
+> v7 -> v8:
+> - Update variable ordering and missing includes (Ilpo)
+> 
+> v6 -> v7:
+> - Eliminate the loop in pci_iov_vf_bar_get_sizes() (Ilpo)
+> - Use helper variable for indexes (Ilpo)
+> - Kerneldoc formatting (Ilpo)
+> - Refer to latest PCI spec (Ilpo)
+> - Commit message wording (Ilpo)
+> 
+> v5 -> v6:
+> - Rebased on latest pci/next
+> - Cache the VF resizable BAR capability position to avoid multiple
+>   lookups (Ilpo)
+> - Use pci_resource_n helper (Ilpo)
+> 
+> v4 -> v5:
+> - Rename pci_resource_to/from_iov helpers and add WARN if called without
+>   CONFIG_PCI_IOV (Ilpo)
+> - Reword kerneldoc for pci_iov_vf_bar_get_sizes (Bjorn)
+> - Reword commit message for VF BAR size check, extract the additional
+>   size check to separate conditional (Bjorn)
+> 
+> v3 -> v4:
+> - Change the approach to extending the BAR (Christian)
+> - Tidy the commit messages, use 80 line limit where necessary (Bjorn)
+> - Add kerneldocs to exported functions (Bjorn)
+> - Add pci_resource_to_iov() / pci_resource_from_iov() helpers (Ilpo)
+> - Use FIELD_GET(), tidy whitespace (Ilpo)
+> 
+> v2 -> v3:
+> - Extract introducing pci_resource_is_iov to separate commit and
+>   use it elsewhere in PCI subsystem (Christian)
+> - Extract restoring VF rebar state to separate commit (Christian)
+> - Reorganize memory decoding check (Christian)
+> - Don't use dev_WARN (Ilpo)
+> - Fix build without CONFIG_PCI_IOV (CI)
+> 
+> v1 -> v2:
+> - Add pci_iov_resource_extend() and usage in Xe driver
+> - Reduce the number of ifdefs (Christian)
+> - Drop patch 2/2 from v1 (Christian)
+> - Add a helper to avoid upsetting static analysis tools (Krzysztof)
+> 
+> Michał Winiarski (5):
+>   PCI/IOV: Restore VF resizable BAR state after reset
+>   PCI: Add a helper to convert between VF BAR number and IOV resource
+>   PCI: Allow IOV resources to be resized in pci_resize_resource()
+>   PCI/IOV: Check that VF BAR fits within the reservation
+>   PCI: Allow drivers to control VF BAR size
+> 
+>  drivers/pci/iov.c             | 153 +++++++++++++++++++++++++++++++---
+>  drivers/pci/pci.c             |   8 +-
+>  drivers/pci/pci.h             |  39 +++++++++
+>  drivers/pci/setup-bus.c       |   3 +-
+>  drivers/pci/setup-res.c       |  35 ++++++--
+>  include/linux/pci.h           |   6 ++
+>  include/uapi/linux/pci_regs.h |   9 ++
+>  7 files changed, 235 insertions(+), 18 deletions(-)
 
-I assume Rust is enabled in that kernel, right? Or do you mean that somehow removing those lines from the `Makefile` makes the issue go away even if Rust is not enabled?
-
-Could you please share your kernel commit and the full configuration? From a quick build arm64 KASAN in v6.12.38, I see the `paciasp`/`autiasp` pair in one of the Rust object files:
-
-    0000000000000000 <asan.module_ctor>:
-           0: d503233f     	paciasp
-           4: f81f0ffe     	str	x30, [sp, #-0x10]!
-           8: 90000000     	adrp	x0, 0x0 <asan.module_ctor>
-           c: 91000000     	add	x0, x0, #0x0
-          10: 52800601     	mov	w1, #0x30               // =48
-          14: 94000000     	bl	0x14 <asan.module_ctor+0x14>
-          18: f84107fe     	ldr	x30, [sp], #0x10
-          1c: d50323bf     	autiasp
-          20: d65f03c0     	ret
-
-But I am definitely not an expert at all in this, so Cc'ing KASAN and Android maintainers: https://lore.kernel.org/rust-for-linux/4c459085b9ae42bdbf99b6014952b965@BJMBX01.spreadtrum.com/
-
-Cheers,
-Miguel
+Applied to pci/resources for v6.17, thanks for the reminder!
 
