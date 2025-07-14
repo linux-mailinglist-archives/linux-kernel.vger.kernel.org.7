@@ -1,88 +1,76 @@
-Return-Path: <linux-kernel+bounces-730823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A32B04A68
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:20:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 782BAB04A39
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DEC97B07A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:18:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 782284A4402
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F94B277CB9;
-	Mon, 14 Jul 2025 22:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DB427FD40;
+	Mon, 14 Jul 2025 22:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YHHEnw5l"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EA5292B25
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 22:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MQMLQOas"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6073D2417F2;
+	Mon, 14 Jul 2025 22:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752531367; cv=none; b=CgYaeMcnr9KI4zG5zW5Mxw/FyzgdFJbIUJ86esTt/spjrdOBvtANjWgPWggzQ7uZ/EjFSyh90fKMR/606ReuBTMxLhFXqtiRqx0GmZczFUmQ56CVaaUzlfudAX7D7fOf7z84X2G1ORa9/QS99HZB0gWAv3OSiH0wk4CJApH8Hnk=
+	t=1752531350; cv=none; b=gGmcumruUSVYT0hDca1rrbM6+q/DPW/QhcXF0do7B/CPk1hcM7aRnJoesyIklN5iVRrdXeX2QUVMpMIUX0GK/HF35DKZIJv9Hh9VmfIqQZLaA37GlWs0nKE/CyYNeMc7yJbnGAQ5mLaX+UBmScE4zx4/6Us9Y/qiYYPkE9OzfiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752531367; c=relaxed/simple;
-	bh=x4i3F36zur0SCPEBSIihXNVHrrhQtaP9gSe3rusIcKA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cOd154YJ6RZIau2hwg0lmzk1vGh2703wkqfuRll7skJB1pObBmTY4SzbG6BzZgYNTm1u47jRFq4apNlX1YrWg/EUI7rUNyNSETurPGPUbl4BsRKxpxD1P4JU1W6j0GlXibM22MO6oA+Kwd6kMJLPyBnwmxqJtYUGmsq4oJRo6RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YHHEnw5l; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-31393526d0dso3468284a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:16:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752531365; x=1753136165; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nOrDcippQTVHdM8Im6lXJg7pxH380YZvu5sA6YJz/hM=;
-        b=YHHEnw5lfvjWHsNbJs5OqEaiIsRB028a3VoVd4pu0rJoJaCOhieL/lEmN7GzDYf/Su
-         v04d+PhLSreSOuWwaALUV7lqeaQGKhaZy2+/6B9yLboo9plIfoiRUkvyEtrPhAnoN/Tc
-         pykM8Ymcxq2E80eyvssDAWTODrN1/biIYf5lLw45pNJv83n0MrU4RzF+uxGZWgSSq9dy
-         rf5QIa3/QJvoix2XzoONoWXypnQQKN3wJGhXxg0bedWzHIKcccFaRZ8pcfBgSGyWbqXX
-         dQZhIA1tX2FP+BBMHOL9FfWhj35G0O4/axTK+bzAKVRqCSVAM+22pl8Il+XimgHYdg7z
-         u98Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752531365; x=1753136165;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nOrDcippQTVHdM8Im6lXJg7pxH380YZvu5sA6YJz/hM=;
-        b=og4o5/VXCwY2m/HWDuJD4L9YH2QFBaScmwAVtcnu93XaDsU1BFsluTO4GVO7/oJECb
-         nR0I3z2SgijL2IJdPmHsIAQbVwq0GZdY73liag4yLOR9zUM80OrQlV32vCD/PXisINdt
-         7CgTcrDEROqKWUtuf5sUL9QwaW5i3yJnA40wWLRNEsauJYp3ne7wki8J778AK+HTsSUu
-         wgd1UN/UvbMOA9w5DQZkHqjDsP5Z/SrBP/ZRtdObOnXfn6o3TC/bMWYi/awlxcA0p2AY
-         ch0Vt1VpYTRjJqRROtlQWZEm/GAO5KDPXU3FbLYHUz3RFHh/LY2AqyMnKeFHvDdvSJ8N
-         iNSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTLdJuIIHBrLkyZ3gz9OElmSG5igciFcKvzRJ0aRPPQpbR45pdkxj1uc0SmMAdcylgpD/sbLIRWMaqDW8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUUSydOktTLi4s+hLF1Z45Lnd4c5VhHpnn2M5MAGzMZudwQwxw
-	zeh2nJISIhR8By1ltcQdi6Lhu8+l/KOgazNaCnmFcYi11lvm8d6fFDXl
-X-Gm-Gg: ASbGncvswSFHKDj/GaPvrlRsWlMzbx8HisWwW33+zU6s9+oIx6t78QuZY3azVyIC4jZ
-	ij2yFFxM32oqq1OT/kV5kgZoWv1uP6IUzCKXlLucNqXFkJVs6MsOM3NoynBneJe0NSyWssXPejF
-	tvvjAHY5uwlEaqO2dB/ne000ZTstN8YbfoWD+Ckjp+jJIX0Wj/XcEcNBS6MGxIFhCPd8mNCYf2M
-	s0rXi9ToMMYFIqj6yzLiGMmSRFx0UFwygaE5Z5E0h8DaAAGTIsOfXDfW0G52ROmtBVhuzQCj2hu
-	g+6aI8Qnr1wqvtPhCrPPD0cxEJJR6ZtpS9XovcVc6Te0mGVJRVa5S5gzFk/aHUTn97ztOE/vD6r
-	tf61F+Jz1Wz8n5imKKsXehFF+uM909f+5j3dGnI6E
-X-Google-Smtp-Source: AGHT+IGEDtw8J5mq4n3QR7e0NMdWhjFjPhLHYhyib35yYfZ/xubqWOItnQ0j+sZBQfSH0+Dy1wDpHQ==
-X-Received: by 2002:a17:90b:268b:b0:312:25dd:1c86 with SMTP id 98e67ed59e1d1-31c4cd65841mr26348729a91.18.1752531364522;
-        Mon, 14 Jul 2025 15:16:04 -0700 (PDT)
-Received: from localhost.localdomain ([2804:14c:96:9a2a:564d:ba07:e7f5:17b2])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3003f96dsm13821273a91.2.2025.07.14.15.16.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 15:16:04 -0700 (PDT)
-From: Diogo Jahchan Koike <djahchankoike@gmail.com>
-To: Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: Diogo Jahchan Koike <djahchankoike@gmail.com>,
-	syzbot+1fed2de07d8e11a3ec1b@syzkaller.appspotmail.com,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	ocfs2-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ocfs2: fix lock acquisition order in refcounttree
-Date: Mon, 14 Jul 2025 19:15:32 -0300
-Message-ID: <20250714221552.4853-1-djahchankoike@gmail.com>
+	s=arc-20240116; t=1752531350; c=relaxed/simple;
+	bh=iaLzwCzp0IBa5pLtIbdZA0HxXWmyfYsrxH1UgdPLj6c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FBnAleYi+Lrzk1vmXPH2AGU/kwKkMYlBu1Cfw5lEtGqdl6FGxTdmbOKltV/jPGILdEMRCIZUFHw7XBmFGHoweGqxZ2pnxjDyUgME6uhV+/iSXbZAMmpyBS6tIAuXq+cb4glDMaYJj1gpwJ34z2CdK4rAX6nmMam/6vzOsTAyOjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MQMLQOas; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from romank-3650.corp.microsoft.com (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id BD5FA201657D;
+	Mon, 14 Jul 2025 15:15:47 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BD5FA201657D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1752531347;
+	bh=GZ9q8PABxSs18Zr3hF+BwFDwqPPPErZZn+AsTkCq4VM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MQMLQOasilfc5p+57UYvb/o65rCe8PyftaAglpZ5vEVxW+RpLBF/MrhzxvaN7DiAf
+	 9pkEnIAdc1NgSLEKTHzGtN29K4tW8WeaDgd0EAPUfRPZDQFzY7rWjZqfP5jcKwmEUn
+	 NkWf1qo9U1UPIajpUyW1IScdabpMJM8YEdsPSFwA=
+From: Roman Kisel <romank@linux.microsoft.com>
+To: alok.a.tiwari@oracle.com,
+	arnd@arndb.de,
+	bp@alien8.de,
+	corbet@lwn.net,
+	dave.hansen@linux.intel.com,
+	decui@microsoft.com,
+	haiyangz@microsoft.com,
+	hpa@zytor.com,
+	kys@microsoft.com,
+	mhklinux@outlook.com,
+	mingo@redhat.com,
+	rdunlap@infradead.org,
+	tglx@linutronix.de,
+	Tianyu.Lan@microsoft.com,
+	wei.liu@kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-coco@lists.linux.dev,
+	linux-doc@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Cc: apais@microsoft.com,
+	benhill@microsoft.com,
+	bperkins@microsoft.com,
+	sunilmut@microsoft.com
+Subject: [PATCH hyperv-next v4 03/16] arch: hyperv: Get/set SynIC synth.registers via paravisor
+Date: Mon, 14 Jul 2025 15:15:32 -0700
+Message-ID: <20250714221545.5615-4-romank@linux.microsoft.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250714221545.5615-1-romank@linux.microsoft.com>
+References: <20250714221545.5615-1-romank@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,44 +79,207 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Acquiring the locks in refcounttree should follow
-the ip_alloc --> ip_xattr ordering, as done by multiple
-code paths in ocfs2; otherwise, we risk an ABBA deadlock
-(i.e in the start transaction path).
+The existing Hyper-V wrappers for getting and setting MSRs are
+hv_get/set_msr(). Via hv_get/set_non_nested_msr(), they detect
+when running in a CoCo VM with a paravisor, and use the TDX or
+SNP guest-host communication protocol to bypass the paravisor
+and go directly to the host hypervisor for SynIC MSRs. The "set"
+function also implements the required special handling for the
+SINT MSRs.
 
-Reported-by: syzbot+1fed2de07d8e11a3ec1b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=1fed2de07d8e11a3ec1b
-Tested-by: syzbot+1fed2de07d8e11a3ec1b@syzkaller.appspotmail.com
-Reviewed-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Signed-off-by: Diogo Jahchan Koike <djahchankoike@gmail.com>
+But in some Confidential VMBus cases, the guest wants to talk only
+with the paravisor. To accomplish this, provide new functions for
+accessing SynICs that always do direct accesses (i.e., not via
+TDX or SNP GHCB), which will go to the paravisor. The mirroring
+of the existing "set" function is also not needed. These functions
+should be used only in the specific Confidential VMBus cases that
+require them.
+
+Provide functions that allow manipulating the SynIC registers
+through the paravisor.
+
+Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+Reviewed-by: Alok Tiwari <alok.a.tiwari@oracle.com>
 ---
- fs/ocfs2/refcounttree.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/mshyperv.c | 39 ++++++++++++++++++
+ drivers/hv/hv_common.c         | 13 ++++++
+ include/asm-generic/mshyperv.h | 75 ++++++++++++++++++----------------
+ 3 files changed, 92 insertions(+), 35 deletions(-)
 
-diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
-index 8f732742b26e..c8467b92b64e 100644
---- a/fs/ocfs2/refcounttree.c
-+++ b/fs/ocfs2/refcounttree.c
-@@ -928,8 +928,8 @@ int ocfs2_try_remove_refcount_tree(struct inode *inode,
- 	struct ocfs2_inode_info *oi = OCFS2_I(inode);
- 	struct ocfs2_dinode *di = (struct ocfs2_dinode *)di_bh->b_data;
+diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+index c78f860419d6..07c60231d0d8 100644
+--- a/arch/x86/kernel/cpu/mshyperv.c
++++ b/arch/x86/kernel/cpu/mshyperv.c
+@@ -90,6 +90,45 @@ void hv_set_non_nested_msr(unsigned int reg, u64 value)
+ }
+ EXPORT_SYMBOL_GPL(hv_set_non_nested_msr);
  
--	down_write(&oi->ip_xattr_sem);
- 	down_write(&oi->ip_alloc_sem);
-+	down_write(&oi->ip_xattr_sem);
++/*
++ * Attempt to get the SynIC register value from the paravisor.
++ *
++ * Not all paravisors support reading SynIC registers, so this function
++ * may fail. The register for the SynIC of the running CPU is accessed.
++ *
++ * Writes the SynIC register value into the memory pointed by val,
++ * and ~0ULL is on failure.
++ *
++ * Returns -ENODEV if the MSR is not a SynIC register, or another error
++ * code if getting the MSR fails (meaning the paravisor doesn't support
++ * relaying VMBus communucations).
++ */
++int hv_para_get_synic_register(unsigned int reg, u64 *val)
++{
++	if (!hv_is_synic_msr(reg))
++		return -ENODEV;
++	return native_read_msr_safe(reg, val);
++}
++
++/*
++ * Attempt to set the SynIC register value with the paravisor.
++ *
++ * Not all paravisors support setting SynIC registers, so this function
++ * may fail. The register for the SynIC of the running CPU is accessed.
++ *
++ * Sets the register to the value supplied.
++ *
++ * Returns: -ENODEV if the MSR is not a SynIC register, or another error
++ * code if writing to the MSR fails (meaning the paravisor doesn't support
++ * relaying VMBus communucations).
++ */
++int hv_para_set_synic_register(unsigned int reg, u64 val)
++{
++	if (!hv_is_synic_msr(reg))
++		return -ENODEV;
++	return native_write_msr_safe(reg, val);
++}
++
+ u64 hv_get_msr(unsigned int reg)
+ {
+ 	if (hv_nested)
+diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+index 49898d10faff..a179ea482cb1 100644
+--- a/drivers/hv/hv_common.c
++++ b/drivers/hv/hv_common.c
+@@ -716,6 +716,19 @@ u64 __weak hv_tdx_hypercall(u64 control, u64 param1, u64 param2)
+ }
+ EXPORT_SYMBOL_GPL(hv_tdx_hypercall);
  
- 	if (oi->ip_clusters)
- 		goto out;
-@@ -945,8 +945,8 @@ int ocfs2_try_remove_refcount_tree(struct inode *inode,
- 	if (ret)
- 		mlog_errno(ret);
- out:
--	up_write(&oi->ip_alloc_sem);
- 	up_write(&oi->ip_xattr_sem);
-+	up_write(&oi->ip_alloc_sem);
- 	return 0;
++int __weak hv_para_get_synic_register(unsigned int reg, u64 *val)
++{
++	*val = ~0ULL;
++	return -ENODEV;
++}
++EXPORT_SYMBOL_GPL(hv_para_get_synic_register);
++
++int __weak hv_para_set_synic_register(unsigned int reg, u64 val)
++{
++	return -ENODEV;
++}
++EXPORT_SYMBOL_GPL(hv_para_set_synic_register);
++
+ void hv_identify_partition_type(void)
+ {
+ 	/* Assume guest role */
+diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
+index 9722934a8332..9447558f425b 100644
+--- a/include/asm-generic/mshyperv.h
++++ b/include/asm-generic/mshyperv.h
+@@ -162,41 +162,6 @@ static inline u64 hv_generate_guest_id(u64 kernel_version)
+ 	return guest_id;
  }
  
+-/* Free the message slot and signal end-of-message if required */
+-static inline void vmbus_signal_eom(struct hv_message *msg, u32 old_msg_type)
+-{
+-	/*
+-	 * On crash we're reading some other CPU's message page and we need
+-	 * to be careful: this other CPU may already had cleared the header
+-	 * and the host may already had delivered some other message there.
+-	 * In case we blindly write msg->header.message_type we're going
+-	 * to lose it. We can still lose a message of the same type but
+-	 * we count on the fact that there can only be one
+-	 * CHANNELMSG_UNLOAD_RESPONSE and we don't care about other messages
+-	 * on crash.
+-	 */
+-	if (cmpxchg(&msg->header.message_type, old_msg_type,
+-		    HVMSG_NONE) != old_msg_type)
+-		return;
+-
+-	/*
+-	 * The cmxchg() above does an implicit memory barrier to
+-	 * ensure the write to MessageType (ie set to
+-	 * HVMSG_NONE) happens before we read the
+-	 * MessagePending and EOMing. Otherwise, the EOMing
+-	 * will not deliver any more messages since there is
+-	 * no empty slot
+-	 */
+-	if (msg->header.message_flags.msg_pending) {
+-		/*
+-		 * This will cause message queue rescan to
+-		 * possibly deliver another msg from the
+-		 * hypervisor
+-		 */
+-		hv_set_msr(HV_MSR_EOM, 0);
+-	}
+-}
+-
+ int hv_get_hypervisor_version(union hv_hypervisor_version_info *info);
+ 
+ void hv_setup_vmbus_handler(void (*handler)(void));
+@@ -333,6 +298,8 @@ bool hv_is_isolation_supported(void);
+ bool hv_isolation_type_snp(void);
+ u64 hv_ghcb_hypercall(u64 control, void *input, void *output, u32 input_size);
+ u64 hv_tdx_hypercall(u64 control, u64 param1, u64 param2);
++int hv_para_get_synic_register(unsigned int reg, u64 *val);
++int hv_para_set_synic_register(unsigned int reg, u64 val);
+ void hyperv_cleanup(void);
+ bool hv_query_ext_cap(u64 cap_query);
+ void hv_setup_dma_ops(struct device *dev, bool coherent);
+@@ -375,6 +342,44 @@ static inline int hv_call_create_vp(int node, u64 partition_id, u32 vp_index, u3
+ #endif /* CONFIG_MSHV_ROOT */
+ bool vmbus_is_confidential(void);
+ 
++/* Free the message slot and signal end-of-message if required */
++static inline void vmbus_signal_eom(struct hv_message *msg, u32 old_msg_type)
++{
++	/*
++	 * On crash we're reading some other CPU's message page and we need
++	 * to be careful: this other CPU may already had cleared the header
++	 * and the host may already had delivered some other message there.
++	 * In case we blindly write msg->header.message_type we're going
++	 * to lose it. We can still lose a message of the same type but
++	 * we count on the fact that there can only be one
++	 * CHANNELMSG_UNLOAD_RESPONSE and we don't care about other messages
++	 * on crash.
++	 */
++	if (cmpxchg(&msg->header.message_type, old_msg_type,
++		    HVMSG_NONE) != old_msg_type)
++		return;
++
++	/*
++	 * The cmxchg() above does an implicit memory barrier to
++	 * ensure the write to MessageType (ie set to
++	 * HVMSG_NONE) happens before we read the
++	 * MessagePending and EOMing. Otherwise, the EOMing
++	 * will not deliver any more messages since there is
++	 * no empty slot
++	 */
++	if (msg->header.message_flags.msg_pending) {
++		/*
++		 * This will cause message queue rescan to
++		 * possibly deliver another msg from the
++		 * hypervisor
++		 */
++		if (vmbus_is_confidential())
++			hv_para_set_synic_register(HV_MSR_EOM, 0);
++		else
++			hv_set_msr(HV_MSR_EOM, 0);
++	}
++}
++
+ #if IS_ENABLED(CONFIG_HYPERV_VTL_MODE)
+ u8 __init get_vtl(void);
+ #else
 -- 
 2.43.0
 
