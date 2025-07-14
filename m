@@ -1,199 +1,283 @@
-Return-Path: <linux-kernel+bounces-730237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F7DB041B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:31:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81DFEB041B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9028B3BB0AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:30:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 824621888CC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B533F2571BD;
-	Mon, 14 Jul 2025 14:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6D62594B7;
+	Mon, 14 Jul 2025 14:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PLVa3aKN"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YzsfI8UQ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8948F1922F4;
-	Mon, 14 Jul 2025 14:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D712571C6;
+	Mon, 14 Jul 2025 14:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752503438; cv=none; b=hufubiH3FCAiVNKSpJR+mNZ8p9sVCm3peW7xYsWaLzEieP+z8eZ+PsisCF9Zik+5cmmIxazy7fJuE2Td1fwwdSadHaDdzg7LpONrDGOIVz5xOY5Ya0LRXW0geBgnX5+XdDa7/pMwy0oht7J3rl0T6p2dys48UzTOMV0X681gcdk=
+	t=1752503515; cv=none; b=YVTFHsOHh4WR8WEW2ZrwdpA2ekQ2vI7ak+8NFE5fTKmmS14Smou9o5UN2BIQiq6scAMB3+2jt/DB6Tf0v+trUi0arxWt7/t1kQbkZ/6AW3sosq2sUlixcYpX2KbaJWzJ8T5EdrS3RJm9HJ8CNyltqGBeyQyUMcYv19vG5P0iCpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752503438; c=relaxed/simple;
-	bh=sFtKmdPe3yM1e81VjhNJm4orvucz96RczzN9REg2yBI=;
+	s=arc-20240116; t=1752503515; c=relaxed/simple;
+	bh=NxGpWE5smTe6pD4h2sPhZMmxtHdGB2n2GfpRvK3iYbI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pu+CLHgAzvRSWSC+sAHT0OOTIO+3MACT4sCEKE7jEeMLQTwVUBODnjek38jgDn2SYcO7qLQN6vrWtVrl6eEo/FRblpar4zQ+jobiTXObfr9MhRwFd88rCRCcF0XUJYFifodt5MROIQ3uWqiIuQJ5w2o8OQYLNvkSdMakzRSsaNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PLVa3aKN; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7df981428abso467078985a.1;
-        Mon, 14 Jul 2025 07:30:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752503435; x=1753108235; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+Rc1Y+pmzpiPQHIuTeXg8gdbq5HQwcIQr312n6KM6r8=;
-        b=PLVa3aKNHGiLyiCCE9WK9mzXBYBDy/L3fYyyZKnZJqVIdBwejX7wkUdsnQbKRBvs8h
-         opGFMzD5yQ6CGbkPgFauDr82vkPT0/02JX//av32fteLqwekB71O9EYRWMuUxvIBw/vz
-         jnmFwCQkqFuL7F4cKwi9FS7vH+sod3H5ndu+e1LO7+F5Ma/CpTEN7Qh5HGSmstT9P2hD
-         vUD0M7sBOMoT9D9BwPDBWDX84vBGMa0P0Evrq06V9m2jkMcwmDWtXoVR5wgAB3BffiI3
-         W6iKQngfPkeBfUJXeWZ3eD3TZgtGMfTpyjZ4hWKjItnILal/5uGtndUsCzMMLZ7lyxVc
-         wQTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752503435; x=1753108235;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+Rc1Y+pmzpiPQHIuTeXg8gdbq5HQwcIQr312n6KM6r8=;
-        b=tYIhobUpTdS77n2aYvqWK0eXARZxLcp9u6kuooEFg/oZJPxdv7p6p1x0A+1+0zPdH2
-         RevXajPXvZMVSZY/ghlI76/RyPJpCi4/qJLQaMuoh9sXjkkEx6RVVhLb/ixs96eZvVvN
-         IzVriLv0StuHPOwKjA/6Vhy8Ru+Y6nK8faWHbgkGER2iRuXeH4GBEEtTO+/NttkAwAXE
-         CxDAsw8LKgeF6SxI+Taz34HxMI996L4iOpVpEzwoaTQ0sicd9A4PIP0Y2R1pJTwpPErx
-         age6EJira7M311ANXJkEyw8fSwdTi5MJIrOvlFM2dXqsPkzedlJeEXAThFctRPNhfleX
-         GJuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrWV6PulPDNMQ2X/BdIFVSAVchGXCkG24vvDxf/DoXuOnM2pioiP14GecLvdXJzN1oEUrlOsDdbUIhx1oqvXU=@vger.kernel.org, AJvYcCX5hQY8QQ1PJJ5mUAPmLZPIcrkQhn/NasTVjQvAg0Znu6tv0YT1sMU/zxNqMNqsIgSJndxcjiygC00R@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPzTiVFLwHi9F2V33iCqMt9xjfoL27i1uZJQUMx/FA7gAlowi2
-	gXOnkHbshO3wEuLyZokyjzWu1pG4AvAHmTWh1fGTx7PA2MINjc/mUZbv
-X-Gm-Gg: ASbGncvUw3WABa9Gp99pqEtCT2NjoJTC51lMKP+sG/ack0Fw3bbYs3wws2tabiVUrVj
-	P/fhPnnQbsByasMa1djPufjvz4CIsEDzs+pruAVVTRaYmWnRlQ9z4UEDM9mboynbzFykBEVJ7nr
-	8xN7H+jNZ3yPg3PQuXtRZWzA+JmI/bwy7d++BlNrPxMBUz1JUv2GzksQVYaslFMbTu/vithamd5
-	ruM/lAIWhxYwOjsU+dZ6lRekJsDu3S0X/kEBCkmFd5DpiA876ihVMIyz8cKRx1Sk70ja0WiPNsm
-	GWMNyIRhYT2O5znmPZMm94dCaLM3nzSqAJMql2QqmiJSGj1P4/zEsqn8unPRT7rT5cRJspkjAnq
-	zLB55I1zwDoO3hJJG9W3/fW1EHDjROj2ZCME0eulnY6+WIUPkT56tfgwhwbF6fhxEj8+m7ID7Xe
-	veK069dYdCsPkT
-X-Google-Smtp-Source: AGHT+IF0pbXsZLq0snH0wnmLL5ls49lFxGDEqoVsSMvAY9S8YD2h69gdmg5fta+/VfYNmQm3T0yudA==
-X-Received: by 2002:a05:620a:a10c:b0:7d4:2868:89ea with SMTP id af79cd13be357-7dde9d4b5c7mr2023428385a.4.1752503435233;
-        Mon, 14 Jul 2025 07:30:35 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e32b48255esm101836385a.97.2025.07.14.07.30.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 07:30:34 -0700 (PDT)
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 060ABF40069;
-	Mon, 14 Jul 2025 10:30:34 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Mon, 14 Jul 2025 10:30:34 -0400
-X-ME-Sender: <xms:iRR1aOZzmEGMwvq2uJb8XUtPw9mtTqD7Jih499gVA-lzsHxQBqe0CA>
-    <xme:iRR1aC5m43tKLj_ZorwYBPEQGrVvjQplpwchY9k8-wTv2nJZOAZzBIuwnkyZI1hL0
-    yabrxYWOh97UXnrFw>
-X-ME-Received: <xmr:iRR1aNg0F2haNx-8k9GhJ4P7lnCmBqpfo222zAuDHnTKRqydl_352yz57Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehvddulecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdortddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhepiedtfeevhfetkeelgfethfegleekfeffledvvefhheeukedtvefhtedtvdetvedv
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
-    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
-    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
-    drnhgrmhgvpdhnsggprhgtphhtthhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtoheplhhoshhsihhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdq
-    fhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlkh
-    hmmheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhgt
-    hhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjoh
-    hrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:iRR1aAI6bdb5j9SlrqJR1GEBCp-THjl-WOmFtlN8OZsPKc327nareQ>
-    <xmx:iRR1aHrWblwNl_cd-hb--sq-LQY2w0Rk_FmoRlSmnMbW-U2xFxADSA>
-    <xmx:iRR1aGwE__1ZTP_dHaNsJNJU5-dyAbl9D_7kS7pmwtkHgK3tHc3N7Q>
-    <xmx:iRR1aLfzzk5h2QRjAjFW1hCKTvRmAB1sKfgI-foyi6LnL1BXyKKIWQ>
-    <xmx:iRR1aCcQdtkXu3U5pqJyjfBCKvgm73QV-IdmlfGmKCh-2qWURALUR-nM>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 14 Jul 2025 10:30:33 -0400 (EDT)
-Date: Mon, 14 Jul 2025 07:30:32 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=VN2qLNxtx5JvFAKhYCe1XljaVPOW4h8PBcC+jIo9X7p3kj0FdSQ91yI7vhGhhG/v+fDEytya+KyoRtjYZxOJzG2Lop8yPLD5fNUIjjAXW6lYZGGr9BrqfHJ/Vd0tbwC/T0z2rVtGtyDsvHPsM6ZHnKX5JofsyJ2u2VumP6zEyM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=YzsfI8UQ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 0AE1A166D;
+	Mon, 14 Jul 2025 16:31:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1752503480;
+	bh=NxGpWE5smTe6pD4h2sPhZMmxtHdGB2n2GfpRvK3iYbI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YzsfI8UQCqjLW5R/Hhsvgrzqg/jqBh9260WBd23z9uSpFubnKCpOb77PmLwGg6sjb
+	 n4CiIxoaYo9vNZnu8w8K5hbRloKi42GBQxTjoqV3ZKSTGUIQDbXkuuW4KzkpX2ukzY
+	 SfNhtFffsogguI96KSe5mLqo7HYFxg33thwEMJ1g=
+Date: Mon, 14 Jul 2025 17:31:20 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v7 4/9] rust: sync: atomic: Add generic atomics
-Message-ID: <aHUUiIHbJaCltawK@Mac.home>
-References: <20250714053656.66712-1-boqun.feng@gmail.com>
- <20250714053656.66712-5-boqun.feng@gmail.com>
- <DBBPI9ZJVO64.3A83G118BMVLI@kernel.org>
- <aHUSgXW9A6LzjBIS@Mac.home>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v2 11/12] media: uvcvideo: Add support for
+ V4L2_CID_CAMERA_ROTATION
+Message-ID: <20250714143120.GJ8243@pendragon.ideasonboard.com>
+References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
+ <20250605-uvc-orientation-v2-11-5710f9d030aa@chromium.org>
+ <20250629181440.GO24912@pendragon.ideasonboard.com>
+ <CANiDSCvSP-NXpefOiKnGf53eUWKVf7iJqtXPEPN9e-Gaxt0k7A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aHUSgXW9A6LzjBIS@Mac.home>
+In-Reply-To: <CANiDSCvSP-NXpefOiKnGf53eUWKVf7iJqtXPEPN9e-Gaxt0k7A@mail.gmail.com>
 
-On Mon, Jul 14, 2025 at 07:21:53AM -0700, Boqun Feng wrote:
-> On Mon, Jul 14, 2025 at 12:30:12PM +0200, Benno Lossin wrote:
-> > On Mon Jul 14, 2025 at 7:36 AM CEST, Boqun Feng wrote:
-> > > To provide using LKMM atomics for Rust code, a generic `Atomic<T>` is
-> > > added, currently `T` needs to be Send + Copy because these are the
-> > > straightforward usages and all basic types support this.
+Hi Ricardo,
+
+On Tue, Jul 01, 2025 at 01:26:51PM +0200, Ricardo Ribalda wrote:
+> On Sun, 29 Jun 2025 at 20:15, Laurent Pinchart wrote:
+> > On Thu, Jun 05, 2025 at 05:53:04PM +0000, Ricardo Ribalda wrote:
+> > > Fetch the rotation from the fwnode and map it into a control.
 > > >
-> > > Implement `AllowAtomic` for `i32` and `i64`, and so far only basic
-> > > operations load() and store() are introduced.
-> > >
-> > > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> > > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 > > > ---
-> > >  rust/kernel/sync/atomic.rs         |  14 ++
-> > >  rust/kernel/sync/atomic/generic.rs | 285 +++++++++++++++++++++++++++++
-> > >  2 files changed, 299 insertions(+)
-> > >  create mode 100644 rust/kernel/sync/atomic/generic.rs
+> > >  drivers/media/usb/uvc/uvc_ctrl.c     | 22 +++++++++++++--
+> > >  drivers/media/usb/uvc/uvc_swentity.c | 55 ++++++++++++++++++++++++++++++++----
+> > >  drivers/media/usb/uvc/uvcvideo.h     |  5 ++++
+> > >  3 files changed, 74 insertions(+), 8 deletions(-)
 > > >
-> > > diff --git a/rust/kernel/sync/atomic.rs b/rust/kernel/sync/atomic.rs
-> > > index e80ac049f36b..c5193c1c90fe 100644
-> > > --- a/rust/kernel/sync/atomic.rs
-> > > +++ b/rust/kernel/sync/atomic.rs
-> > > @@ -16,7 +16,21 @@
-> > >  //!
-> > >  //! [`LKMM`]: srctree/tools/memory-model/
-> > >  
-> > > +pub mod generic;
-> > 
-> > Hmm, maybe just re-export the stuff? I don't think there's an advantage
-> > to having the generic module be public.
-> > 
+> > > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> > > index 59be62ae24a4219fa9d7aacf2ae7382c95362178..5788f0c0f6604da06a7bca1b9999d0957817e75e 100644
+> > > --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> > > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> > > @@ -378,11 +378,18 @@ static const struct uvc_control_info uvc_ctrls[] = {
+> > >       },
+> > >       {
+> > >               .entity         = UVC_GUID_SWENTITY,
+> > > -             .selector       = 0,
+> > > -             .index          = 0,
+> > > +             .selector       = UVC_SWENTITY_ORIENTATION,
+> > > +             .index          = UVC_SWENTITY_ORIENTATION,
+> > >               .size           = 1,
+> > >               .flags          = UVC_CTRL_FLAG_GET_CUR,
+> > >       },
+> > > +     {
+> > > +             .entity         = UVC_GUID_SWENTITY,
+> > > +             .selector       = UVC_SWENTITY_ROTATION,
+> > > +             .index          = UVC_SWENTITY_ROTATION,
+> > > +             .size           = 2,
+> > > +             .flags          = UVC_CTRL_FLAG_GET_RANGE,
+> > > +     },
+> > >  };
+> > >
+> > >  static const u32 uvc_control_classes[] = {
+> > > @@ -1025,7 +1032,7 @@ static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
+> > >       {
+> > >               .id             = V4L2_CID_CAMERA_ORIENTATION,
+> > >               .entity         = UVC_GUID_SWENTITY,
+> > > -             .selector       = 0,
+> > > +             .selector       = UVC_SWENTITY_ORIENTATION,
+> > >               .size           = 8,
+> > >               .offset         = 0,
+> > >               .v4l2_type      = V4L2_CTRL_TYPE_MENU,
+> > > @@ -1033,6 +1040,15 @@ static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
+> > >               .menu_mask      = GENMASK(V4L2_CAMERA_ORIENTATION_EXTERNAL,
+> > >                                         V4L2_CAMERA_ORIENTATION_FRONT),
+> > >       },
+> > > +     {
+> > > +             .id             = V4L2_CID_CAMERA_SENSOR_ROTATION,
+> > > +             .entity         = UVC_GUID_SWENTITY,
+> > > +             .selector       = UVC_SWENTITY_ROTATION,
+> > > +             .size           = 16,
+> > > +             .offset         = 0,
+> > > +             .v4l2_type      = V4L2_CTRL_TYPE_INTEGER,
+> > > +             .data_type      = UVC_CTRL_DATA_TYPE_UNSIGNED,
+> > > +     },
+> > >  };
+> > >
+> > >  /* ------------------------------------------------------------------------
+> > > diff --git a/drivers/media/usb/uvc/uvc_swentity.c b/drivers/media/usb/uvc/uvc_swentity.c
+> > > index 702a2c26e029a0655dade177ed2a9b88d7a4136d..60f3166addbeb7d2e431d107b23034d2d11a1812 100644
+> > > --- a/drivers/media/usb/uvc/uvc_swentity.c
+> > > +++ b/drivers/media/usb/uvc/uvc_swentity.c
+> > > @@ -10,10 +10,11 @@
+> > >  #include <media/v4l2-fwnode.h>
+> > >  #include "uvcvideo.h"
+> > >
+> > > -static int uvc_swentity_get_cur(struct uvc_device *dev, struct uvc_entity *entity,
+> > > -                             u8 cs, void *data, u16 size)
+> > > +static int uvc_swentity_get_orientation(struct uvc_device *dev,
+> > > +                                     struct uvc_entity *entity, u8 cs,
+> > > +                                     void *data, u16 size)
+> > >  {
+> > > -     if (size < 1)
+> > > +     if (cs != UVC_SWENTITY_ORIENTATION || size != 1)
+> > >               return -EINVAL;
+> > >
+> > >       switch (entity->swentity.props.orientation) {
+> > > @@ -30,6 +31,31 @@ static int uvc_swentity_get_cur(struct uvc_device *dev, struct uvc_entity *entit
+> > >       return 0;
+> > >  }
+> > >
+> > > +static int uvc_swentity_get_rotation(struct uvc_device *dev,
+> > > +                                  struct uvc_entity *entity, u8 cs, void *data,
+> > > +                                  u16 size)
+> > > +{
+> > > +     if (cs != UVC_SWENTITY_ROTATION || size != 2)
+> > > +             return -EINVAL;
+> > > +
+> > > +     ((u8 *)data)[0] = entity->swentity.props.rotation;
+> > > +     ((u8 *)data)[1] = entity->swentity.props.rotation >> 8;
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static int uvc_swentity_get_cur(struct uvc_device *dev, struct uvc_entity *entity,
+> > > +                             u8 cs, void *data, u16 size)
+> > > +{
+> > > +     switch (cs) {
+> > > +     case UVC_SWENTITY_ORIENTATION:
+> > > +             return uvc_swentity_get_orientation(dev, entity, cs, data, size);
+> > > +     case UVC_SWENTITY_ROTATION:
+> > > +             return uvc_swentity_get_rotation(dev, entity, cs, data, size);
+> > > +     }
+> > > +     return -EINVAL;
+> > > +}
+> > > +
+> > >  static int uvc_swentity_get_info(struct uvc_device *dev,
+> > >                                struct uvc_entity *entity, u8 cs, u8 *caps)
+> > >  {
+> > > @@ -37,11 +63,22 @@ static int uvc_swentity_get_info(struct uvc_device *dev,
+> > >       return 0;
+> > >  }
+> > >
+> > > +static int uvc_swentity_get_res(struct uvc_device *dev, struct uvc_entity *entity,
+> > > +                             u8 cs, void *res, u16 size)
+> > > +{
+> > > +     if (size == 0)
+> > > +             return -EINVAL;
+> >
+> > The get_cur functions return an error if the size doesn't match the
+> > expected size. I think you can return -EINVAL if size != 1.
+> >
+> > > +     ((u8 *)res)[0] = 1;
+> > > +     memset(res + 1, 0, size - 1);
+> >
+> > And drop the memset.
+> >
+> > > +     return 0;
+> > > +}
+> > > +
+> > >  int uvc_swentity_init(struct uvc_device *dev)
+> > >  {
+> > >       static const u8 uvc_swentity_guid[] = UVC_GUID_SWENTITY;
+> > >       struct v4l2_fwnode_device_properties props;
+> > >       struct uvc_entity *unit;
+> > > +     u8 controls = 0;
+> > >       int ret;
+> > >
+> > >       ret = v4l2_fwnode_device_parse(&dev->udev->dev, &props);
+> > > @@ -49,7 +86,11 @@ int uvc_swentity_init(struct uvc_device *dev)
+> > >               return dev_err_probe(&dev->intf->dev, ret,
+> > >                                    "Can't parse fwnode\n");
+> > >
+> > > -     if (props.orientation == V4L2_FWNODE_PROPERTY_UNSET)
+> > > +     if (props.orientation != V4L2_FWNODE_PROPERTY_UNSET)
+> > > +             controls |= BIT(UVC_SWENTITY_ORIENTATION);
+> > > +     if (props.rotation != V4L2_FWNODE_PROPERTY_UNSET)
+> > > +             controls |= BIT(UVC_SWENTITY_ROTATION);
+> > > +     if (!controls)
+> > >               return 0;
+> > >
+> > >       unit = uvc_alloc_entity(UVC_SWENTITY_UNIT, UVC_SWENTITY_UNIT_ID, 0, 1);
+> > > @@ -60,9 +101,13 @@ int uvc_swentity_init(struct uvc_device *dev)
+> > >       unit->swentity.props = props;
+> > >       unit->swentity.bControlSize = 1;
+> > >       unit->swentity.bmControls = (u8 *)unit + sizeof(*unit);
+> > > -     unit->swentity.bmControls[0] = 1;
+> > > +     unit->swentity.bmControls[0] = controls;
+> > >       unit->get_cur = uvc_swentity_get_cur;
+> > >       unit->get_info = uvc_swentity_get_info;
+> > > +     unit->get_res = uvc_swentity_get_res;
+> > > +     unit->get_def = uvc_swentity_get_rotation;
+> > > +     unit->get_min = uvc_swentity_get_rotation;
+> > > +     unit->get_max = uvc_swentity_get_rotation;
+> >
+> > Why do you support GET_DEF, GET_MIN and GET_MAX for rotation only ?
 > 
-> If `generic` is not public, then in the kernel::sync::atomic page, it
+> Orientation has enum type. It does not require min or max.
+> 
+> For get_def I could use get_cur, but 0 is as good as any other value
+> within range.
 
-I meant the rustdoc of `kernel::sync::atomic` page.
+Both the orientation and rotation are read-only, and should report min
+== max == def == cur. What am I missing ?
 
+> > >       strscpy(unit->name, "SWENTITY", sizeof(unit->name));
+> > >
+> > >       list_add_tail(&unit->list, &dev->entities);
+> > > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> > > index d6da8ed3ad4cf3377df49923e051fe04d83d2e38..7cca0dc75d11f6a13bc4f09676a5a00e80cb38f7 100644
+> > > --- a/drivers/media/usb/uvc/uvcvideo.h
+> > > +++ b/drivers/media/usb/uvc/uvcvideo.h
+> > > @@ -45,6 +45,11 @@
+> > >  #define UVC_SWENTITY_UNIT            0x7ffd
+> > >  #define UVC_SWENTITY_UNIT_ID         0x101
+> > >
+> > > +enum {
+> > > +     UVC_SWENTITY_ORIENTATION,
+> > > +     UVC_SWENTITY_ROTATION
+> > > +};
+> > > +
+> > >  /* ------------------------------------------------------------------------
+> > >   * Driver specific constants.
+> > >   */
+
+-- 
 Regards,
-Boqun
 
-> won't should up, and there is no mentioning of struct `Atomic` either.
-> 
-> If I made it public and also re-export the `Atomic`, there would be a
-> "Re-export" section mentioning all the re-exports, so I will keep
-> `generic` unless you have some tricks that I don't know.
-> 
-> Also I feel it's a bit naturally that `AllowAtomic` and `AllowAtomicAdd`
-> stay under `generic` (instead of re-export them at `atomic` mod level)
-> because they are about the generic part of `Atomic`, right?
-> 
-[...]
+Laurent Pinchart
 
