@@ -1,87 +1,97 @@
-Return-Path: <linux-kernel+bounces-730157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50083B040CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:00:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA49EB0411B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C06117670A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:59:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DB401890E32
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456B22561DD;
-	Mon, 14 Jul 2025 13:58:23 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DFF255F25;
+	Mon, 14 Jul 2025 14:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q7ObX0bP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D18A255222;
-	Mon, 14 Jul 2025 13:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E4B139E;
+	Mon, 14 Jul 2025 14:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752501502; cv=none; b=QbSizUNlJEL6UZ8i1L58ewxBGnT0zC4NdeiqHnvUZo+mPf1pq4yAi8+RarsFZEBrnZkB2vNfhGaVcu5KQfmz42rWVm1g5Yn8NYiWItSx3dFokzs2ZTVs9KjRQCXvp7TLXX0FbE9zOGYsDiRrhfnzlWddTRjTQeOdfqsDEwrV1OQ=
+	t=1752502331; cv=none; b=AaeN/uxavR/tw8XKgYBiNTIH0DP4CTpGzKLYUCyHSnmu9B2OV/De1HXYZ1p3tGc2FemxI1oNB8ujd3WME3s+pLnRAjc7RZp4igsWiAGDYBNyTz7HDh0U+wNVNz4EitiUYYBCWWoXFxZDWdkLiyNjDpPBXn8pisNNXfDu6dCwqIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752501502; c=relaxed/simple;
-	bh=cbQD77zOpDuh21Lhn8qdoh9hYv1nwfrqrIX0n5vdZzQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s8uabmT6MZlxdo/QKESHOsT2z+/GUtYs6mFUAe9/9sqHx/Djh76CDFGCmqp23A3prPuQC0SuQ+OiD1fSot6+X7fh7xYSMjdner2suklBPS4pg3Jnym0ixUWMz4g0YNHlIjaTg8/wfC//wincm2ee0PcMFwAuG0GWf3kp6lCyL/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bgkNs0LZ9z29drm;
-	Mon, 14 Jul 2025 21:55:41 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 90565140230;
-	Mon, 14 Jul 2025 21:58:17 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 14 Jul
- 2025 21:58:16 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<ap420073@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH net] ipv6: mcast: Delay put pmc->idev in mld_del_delrec()
-Date: Mon, 14 Jul 2025 22:19:57 +0800
-Message-ID: <20250714141957.3301871-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1752502331; c=relaxed/simple;
+	bh=jJd2AdrJxorMf3F7ZC60nhGVIIEZvq6HX9MbQuxjauo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HhI1EsEh9ZfPByfKYw3XwZQ8DYRpYK+GKtSx0Nn2E1w3+Cxc6Tf/WqpDMBw4+r7O2IB/76OiEgZAy/EfZ0p9Vyiw6ZjB6FoKHQIPIvKQcQ34dmmoCzv8tv+hKhkDzsotox4oyNJ1PwxNpOshDoMssI/SRU4hP7e1Ru1t/DIJzO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q7ObX0bP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0198DC4CEED;
+	Mon, 14 Jul 2025 14:12:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752502331;
+	bh=jJd2AdrJxorMf3F7ZC60nhGVIIEZvq6HX9MbQuxjauo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Q7ObX0bPSUkQ69EJdKOGwvA5ZLzXee4+1xnRNQT3bBuMd9Ujz+ynuwZ8QmHXUKAbX
+	 y+IA5fCW7A6n1i7g0IXHvP61Q6vplyhwJ7cRrrPOrdl1Oc3a7yBJqCei9DWVo/MY4H
+	 xbOF73lBHponN5gRBljnW6AKCS823mAPRqxloTl8gFYmBjhQKI3Sl8rG6K+uyE+qtE
+	 SGDLiJaz6o8HnuJmHj6H/7sp6W0QW64KDQ3j5lO6q07W5XGd0hF1JeNxteJrMmzkbW
+	 zAj3S7R+j0i54jG5kuOFN49tabXxRt3rpKtcfv7+e3rfXWrsPqo4blXNZIO+igeNKV
+	 O7bNGrA5XLMnQ==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH 0/2] selftests/fchmodat2: Error handling and general
+ cleanups
+Date: Mon, 14 Jul 2025 15:03:34 +0100
+Message-Id: <20250714-selftests-fchmodat2-v1-0-b74f3ee0d09c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADcOdWgC/x3MTQqAIBBA4avErBP8qYyuEi3CxhwoC0ciiO6et
+ PwW7z3AmAgZhuqBhBcxHbFA1RW4MMcVBS3FoKVupVVKMG4+I2cW3oX9WOashTPS2MYZ2/keSnk
+ m9HT/13F63w8lVhSNZQAAAA==
+X-Change-ID: 20250711-selftests-fchmodat2-c30374c376f8
+To: Shuah Khan <shuah@kernel.org>, Alexey Gladkov <legion@kernel.org>, 
+ Christian Brauner <brauner@kernel.org>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-cff91
+X-Developer-Signature: v=1; a=openpgp-sha256; l=763; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=jJd2AdrJxorMf3F7ZC60nhGVIIEZvq6HX9MbQuxjauo=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBodRA2TyA5UQzLeDchOvAFt+MuHiv5prO176swK
+ ig3RX/ErsOJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaHUQNgAKCRAk1otyXVSH
+ 0AqoB/9cFdYXC3nCsSURty3+jZ88U8WEjrrjW5RNBcB6CFm88bnnoA29nI5wrdSvr6xJbToac+D
+ /CFoONARS4904VOyXUdMm8L2HaLdekhJDgRyhTYdmp2kuCLFrjtinmt4AyN0u8EA/hxz6DaXpA9
+ 64BkmAl0i2Xxd/ggzjlRrp5k0qr9tTQlyNE3UJF3cwKImTNHuXZSJocZILh49MVNikLxV0N6+1B
+ tfeBly+Mo0Hyy8YetKi5xU1sbbB/KRwzY2ukq0Hba8PikMYs9Zl8EEaJM9VZyZxZDeYFFuVxFtc
+ mBemQOdlpLchXdvAyBx9G4d+w0WKaWwl2/aFddZApBGoj4a/
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-pmc->idev is still used in ip6_mc_clear_src(), so as mld_clear_delrec()
-does, the reference should be put after ip6_mc_clear_src() return.
+I looked at the fchmodat2() tests since I've been experiencing some
+random intermittent segfaults with them in my test systems, while doing
+so I noticed these two issues.  Unfortunately I didn't figure out the
+original yet, unless I managed to fix it unwittingly.
 
-Fixes: 63ed8de4be81 ("mld: add mc_lock for protecting per-interface mld data")
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- net/ipv6/mcast.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Mark Brown (2):
+      selftests/fchmodat2: Clean up temporary files and directories
+      selftests/fchmodat2: Use ksft_finished()
 
-diff --git a/net/ipv6/mcast.c b/net/ipv6/mcast.c
-index 65831b4fee1f..616bf4c0c8fd 100644
---- a/net/ipv6/mcast.c
-+++ b/net/ipv6/mcast.c
-@@ -807,8 +807,8 @@ static void mld_del_delrec(struct inet6_dev *idev, struct ifmcaddr6 *im)
- 		} else {
- 			im->mca_crcount = idev->mc_qrv;
- 		}
--		in6_dev_put(pmc->idev);
- 		ip6_mc_clear_src(pmc);
-+		in6_dev_put(pmc->idev);
- 		kfree_rcu(pmc, rcu);
- 	}
- }
--- 
-2.34.1
+ tools/testing/selftests/fchmodat2/fchmodat2_test.c | 166 ++++++++++++++-------
+ 1 file changed, 112 insertions(+), 54 deletions(-)
+---
+base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+change-id: 20250711-selftests-fchmodat2-c30374c376f8
+
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
 
 
