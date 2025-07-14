@@ -1,57 +1,72 @@
-Return-Path: <linux-kernel+bounces-729799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E378DB03BB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:16:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F27B8B03BBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32F4B189B527
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:16:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 450C73A58C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7E0237194;
-	Mon, 14 Jul 2025 10:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="aBgYoWLX"
-Received: from mail-24421.protonmail.ch (mail-24421.protonmail.ch [109.224.244.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBC6241139;
+	Mon, 14 Jul 2025 10:18:03 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ABEE23A6
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 10:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DE51E47A8
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 10:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752488171; cv=none; b=Rz1M8M1yumX3LDLKWZTNQf/PtPbG8+2zFkEbhVJmZw4t1csRYejlnrKlNivEe1atCpzc+1W/pgon/54jUFbvhlRO0KvPtz4W0rjs0R2LfT2vWbAZzBK4WUcnp/BYsoEqc6JumOfMt9h2ygTDQTamhFJyNcnZZj8WHL0G20PRcEU=
+	t=1752488282; cv=none; b=fd5tZIigQqHqqY2UGhiMFPTKdX8BGhPnNmyLjkLx3Ely/cQ+/mEHwzpbzCS9IgIlX2rcnQL8NYN+pq5HGkG275LFnPUxHTkBdrO5rKW3Tje38llveyVYT/SYC3ddQUgCSXI3vbF2GVBS/hvp8cHiQwTZmmSme+vzcxPuYPLtuEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752488171; c=relaxed/simple;
-	bh=TEA+LcV8PJ/77CIpg1cZRcs6OYEz2keG6V1mKniOMXU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DJM/Fi1rwH2DXEFmcXTIvoN9ydRDA7/XV3O2qzGHLX2juP5BXWtb5jD/exLuaRWK67tK83E2MZDnrfX3DiOT7R6CMC9CKEikF2Rt74DkqxNssA3tv9esXy1UIPxmrjAwMZNG+N8SrEInuosyN0zMjvR8RvkotvXlsojznSpzU6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=aBgYoWLX; arc=none smtp.client-ip=109.224.244.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
-	s=protonmail; t=1752488165; x=1752747365;
-	bh=TEA+LcV8PJ/77CIpg1cZRcs6OYEz2keG6V1mKniOMXU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=aBgYoWLXNvAxJ8mnO0Ux+QFgS3RV7HwkD+5cW19RgaWPJjTjaznFcjVaY/ZcZFEw8
-	 NdThDsXerd1fnlMJsB69/xi0JSP39H0bzDPm+dsnoSVWqwfoqO81+t1GRNFzQRBpKa
-	 VsmGwF4edjOySmBr9UA/E1ceKSAbWpZbBuLiO4VQRJsEULYWRKaZ1YSrgy253J+twz
-	 eooe2nEZP/u/q9fvp2GMbC9BSO8FiQcX+U4LhQBXanJbH+DtfWRraOPJlQUbMlwUjr
-	 D2YezV+RblSlPW8HDR1NbWE/mYUrxJCy6JPmtm1FsnlA/NjEyd2O42TDGCodyiKh9O
-	 m4BljzDikaAvQ==
-Date: Mon, 14 Jul 2025 10:15:59 +0000
-To: Jonathan Cameron <jic23@kernel.org>
-From: Sean Nyekjaer <sean@geanix.com>
-Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, David Lechner <dlechner@baylibre.com>, =?utf-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] iio: imu: inv_icm42600: Avoid configuring if already pm_runtime suspended
-Message-ID: <kcrov3lqigiqzea2eds73ibhix46ovqrqkhodfatqwfmjanxya@l2cla3fkl6ow>
-In-Reply-To: <20250713153227.08af0a54@jic23-huawei>
-References: <20250709-icm42pmreg-v1-0-3d0e793c99b2@geanix.com> <20250709-icm42pmreg-v1-6-3d0e793c99b2@geanix.com> <20250713153227.08af0a54@jic23-huawei>
-Feedback-ID: 134068486:user:proton
-X-Pm-Message-ID: 60d8d85adecaea37af326a4d51a2bcdaffed5921
+	s=arc-20240116; t=1752488282; c=relaxed/simple;
+	bh=aeszjQw2c9arLj1BbbOYpfg53cIWR3hrpjFv96howeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VT5rrrBQZejy9C6YyrfCRPZa0sMIqo9LlcDVwKpUdzXBFu7ElmdZsmfmQeoiP53Zde9Gl5NQI8bylD5+FEP4p7rz/FlxGDR1ctROGbW+hC0Um58mIzPXYwip6147MuVEpsXr8nETtB3oNDriEnrseQ1jwmPDPCMqZvjXP8rTtzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1ubGFp-0006xk-La; Mon, 14 Jul 2025 12:17:49 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1ubGFo-008Oei-1j;
+	Mon, 14 Jul 2025 12:17:48 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1ubGFo-0007P4-1M;
+	Mon, 14 Jul 2025 12:17:48 +0200
+Date: Mon, 14 Jul 2025 12:17:48 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Sebastian Reichel <sre@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org,
+	=?utf-8?B?U8O4cmVu?= Andersen <san@skov.dk>,
+	Guenter Roeck <groeck@chromium.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	chrome-platform@lists.linux.dev
+Subject: Re: [PATCH v11 0/7] Introduction of PSCR Framework and Related
+ Components
+Message-ID: <aHTZTFxfS6Bn4yhz@pengutronix.de>
+References: <20250618120255.3141862-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,68 +74,148 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250618120255.3141862-1-o.rempel@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Sun, Jul 13, 2025 at 03:32:27PM +0100, Jonathan Cameron wrote:
-> On Wed, 09 Jul 2025 14:35:14 +0200
-> Sean Nyekjaer <sean@geanix.com> wrote:
->=20
-> > Do as in suspend, skip resume configuration steps if the device is alre=
-ady
-> > pm_runtime suspended. This avoids reconfiguring a device that is alread=
-y
-> > in the correct low-power state and ensures that pm_runtimeM handles the
-> > power state transitions properly.
-> >
-> > Fixes: 31c24c1e93c3 ("iio: imu: inv_icm42600: add core of new inv_icm42=
-600 driver")
-> > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
-> > ---
->=20
-> Not really related to what you have here, but this code would really
-> benefit from using guard(mutex)()
->=20
-> Jonathan
+Hi Greg,
 
-I have converted most of this driver to use guard(mutex).
+this patch series doesn’t belong to any single existing subsystem. It
+spans drivers like power/reset/, touches nvmem, regulator, and adds new
+interfaces.
 
-Does it make sense to use guard(mutex) in functions that still relies on
-goto error out? Like...
+Since there's no clear maintainer fit and the code is self-contained,
+I’d like to ask you to pick it up.
 
-static int inv_icm42600_temp_read(struct inv_icm42600_state *st, s16 *temp)
-{
-=09struct device *dev =3D regmap_get_device(st->map);
-=09__be16 *raw;
-=09int ret;
+The latest version is v11 and has addressed all review comments.
 
-=09pm_runtime_get_sync(dev);
-=09mutex_lock(&st->lock);
+Thanks!
+Oleksij
 
-=09ret =3D inv_icm42600_set_temp_conf(st, true, NULL);
-=09if (ret)
-=09=09goto exit;
+On Wed, Jun 18, 2025 at 02:02:48PM +0200, Oleksij Rempel wrote:
+> changes v11:
+> - add missing break reported by kernel test robot <lkp@intel.com>
+> 
+> changes v10:
+> - add some add Reviewed-by tags
+> - regulator_handle_critical: set pscr = PSCR_UNKNOWN for default case
+> - make g_pscrr static
+> 
+> changes v9:
+> - Remove redundant pr_crit() messages before hw_protection_trigger()
+> - Replace psc_reason_to_str() switch with static const string array
+> - Mark psc_last_reason as static
+> 
+> changes v8:
+> - Use DEFINE_GUARD() and guard(g_pscrr) for scoped locking of the global
+>   pscrr_core struct
+> - Replace manual mutex_lock/unlock with automatic cleanup-based guard()
+>   usage
+> - Centralize backend and locking state in struct pscrr_core
+> - Prepare for future multi-backend support with clean encapsulation
+> - Improve sysfs documentation:
+>   * Added full enum psc_reason value table
+>   * Simplified example comments, removed redundant "may differ" phrasing
+>   * Added note that not all values are supported on all systems
+>   * Linked value definitions to include/linux/reboot.h
+>   * Added clear read/write usage examples for sysfs entries
+> 
+> changes v7:
+> - document expected values in sysfs documentation
+> - make write support optional
+> 
+> changes v6:
+> - add sysfs documentation
+> - rebase against latest hw_protection_reboot changes:
+>   https://web.git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?h=mm-nonmm-unstable&id=212dd3f6e57f6af8ed3caa23b93adc29334f9652
+> - push core part of the reset reason the kernel/reboot.c
+> 
+> changes v5:
+> - fix compile with NVMEM=n and potential issues with NVMEM=m
+> 
+> changes v4:
+> - fix compile with CONFIG_PSCRR=n
+> 
+> changes v3
+> - rework to remove devicetree dependencies
+> - extend NVMEM to search devices and cells by names.
+> 
+> changes v2:
+> - rename the framework from PSCR to PSCRR (last R is for Recorder)
+> - extend power on reason header and use it to show detected reason on
+>   system start and in sysfs.
+> - remove "unknow" reason
+> - rebase on top of v6.8-rc1
+> - yaml fixes
+> - zero reason state on boot
+> 
+> Hello all,
+> 
+> This patch series introduces the Power State Change Reasons Recording
+> (PSCRR) framework and its related components into the kernel. The PSCR
+> framework is designed for systems where traditional methods of storing
+> power state change reasons, like PMICs or watchdogs, are inadequate. It
+> provides a structured way to store reasons for system shutdowns and
+> reboots, such as under-voltage or software-triggered events, in
+> non-volatile hardware storage.
+> 
+> These changes are critical for systems requiring detailed postmortem
+> analysis and where immediate power-down scenarios limit traditional
+> storage options. The framework also assists bootloaders and early-stage
+> system components in making informed recovery decisions.
+> 
+> 
+> 
+> Oleksij Rempel (7):
+>   power: Extend power_on_reason.h for upcoming PSCRR framework
+>   reboot: hw_protection_trigger: use standardized numeric
+>     shutdown/reboot reasons instead of strings
+>   power: reset: Introduce PSCR Recording Framework for Non-Volatile
+>     Storage
+>   nvmem: provide consumer access to cell size metrics
+>   nvmem: add support for device and sysfs-based cell lookups
+>   power: reset: add PSCR NVMEM Driver for Recording Power State Change
+>     Reasons
+>   Documentation: Add sysfs documentation for PSCRR reboot reason
+>     tracking
+> 
+>  .../ABI/testing/sysfs-kernel-reboot-pscrr     |  74 ++++
+>  drivers/nvmem/core.c                          | 134 ++++++
+>  drivers/platform/chrome/cros_ec_lpc.c         |   2 +-
+>  drivers/power/reset/Kconfig                   |  47 ++
+>  drivers/power/reset/Makefile                  |   2 +
+>  drivers/power/reset/pscrr-nvmem.c             | 254 +++++++++++
+>  drivers/power/reset/pscrr.c                   | 405 ++++++++++++++++++
+>  drivers/regulator/core.c                      |  16 +-
+>  drivers/regulator/irq_helpers.c               |   9 +-
+>  drivers/thermal/thermal_core.c                |   3 +-
+>  include/linux/nvmem-consumer.h                |  25 ++
+>  include/linux/power/power_on_reason.h         |   4 +
+>  include/linux/pscrr.h                         |  58 +++
+>  include/linux/reboot.h                        |  77 +++-
+>  kernel/reboot.c                               |  85 +++-
+>  15 files changed, 1173 insertions(+), 22 deletions(-)
+>  create mode 100644 Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
+>  create mode 100644 drivers/power/reset/pscrr-nvmem.c
+>  create mode 100644 drivers/power/reset/pscrr.c
+>  create mode 100644 include/linux/pscrr.h
+> 
+> --
+> 2.39.5
+> 
+> 
 
-=09raw =3D (__be16 *)&st->buffer[0];
-=09ret =3D regmap_bulk_read(st->map, INV_ICM42600_REG_TEMP_DATA, raw, sizeo=
-f(*raw));
-=09if (ret)
-=09=09goto exit;
-
-=09*temp =3D (s16)be16_to_cpup(raw);
-=09if (*temp =3D=3D INV_ICM42600_DATA_INVALID)
-=09=09ret =3D -EINVAL;
-
-exit:
-=09mutex_unlock(&st->lock);
-=09pm_runtime_mark_last_busy(dev);
-=09pm_runtime_put_autosuspend(dev);
-
-=09return ret;
-}
-
-
-If I use guard_scoped(..) it creates a lot of diff lines...
-
-/Sean
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
