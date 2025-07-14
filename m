@@ -1,110 +1,197 @@
-Return-Path: <linux-kernel+bounces-730273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ED8DB04232
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:52:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C06CAB04236
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE923A7626
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:52:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 892CF3AB1DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEB3258CD8;
-	Mon, 14 Jul 2025 14:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F86125A2AE;
+	Mon, 14 Jul 2025 14:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Abiq4bu1"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IRagxvKU"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5062D2459E3;
-	Mon, 14 Jul 2025 14:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB5D2594AA;
+	Mon, 14 Jul 2025 14:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752504762; cv=none; b=tpM9PMVEJfcTepfFfsBqkoQhGtSa1upkkGPM6q0m52x99HlGJdT2MnU2SJrfMAAbmA5RXH2M+/notRLyEFsfKSQMNe3KHw98CUqsbRtwLjNtRneG++cepinQV2fjPe+FjENhs1FeHFOW6Jb35IYEhDtHMb8icdscsyxbYTXnjHg=
+	t=1752504787; cv=none; b=Ve717bSpwyNKjsQLbozXgQN2jPUn0iIgz+IVDxd/WpAZiERBDOmxfMFAIDmuaEe4XNkly6HgVfJBONf8ZR4B9et0y04dr3ht+8jGzHWlqFn3bRotUszLZnVbdlzqzGhDG1veDmBB3voEHbjS6UkqK6hn3eb0lgFLqM/QFVrGjE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752504762; c=relaxed/simple;
-	bh=ALwKxArqUoXjIR2QYQJYhe3QVGhssgLDNe8GTzcfYDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F/Jc49vrhQlMS87SWD4TNg+B5w0KU995PGyxnemwyLAhpr7AoemEr08M3D8B6+I0WkH/gzjfl93eYx3zB/lag5241vkrV6gmNABY3Q/F84UZKBMIm6HAaIQEvJ98smpPNV2Lq8oFDQstfFcryh2ljVIYzaT5ZVsfSfgW1AYS0as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Abiq4bu1; arc=none smtp.client-ip=209.85.216.51
+	s=arc-20240116; t=1752504787; c=relaxed/simple;
+	bh=Xi87K1n3E3/9eEQwywuM1RQ8TuihTQgkIKzC4BoyTEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jB128lIaz6HVjsXizx9mv3hZIoOfks3j2yhLBUjg9a/jxnbBgoXhPMxK9mAum2S4GPqIvvvKGuBb9CaemC5050PbLqremBVP78BaEeyzOAh8OW/ZqnNmvf4uSjoAf6inTwExrYqsnbIctk1DVY7Xg9NkUBhuuBOKajAnHxM7kG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IRagxvKU; arc=none smtp.client-ip=209.85.222.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-313fab41fd5so1073551a91.1;
-        Mon, 14 Jul 2025 07:52:41 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7dfd667e539so318344285a.2;
+        Mon, 14 Jul 2025 07:53:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752504760; x=1753109560; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ALwKxArqUoXjIR2QYQJYhe3QVGhssgLDNe8GTzcfYDE=;
-        b=Abiq4bu1kDjPHELFhsJfEZru1NJjDVfGIFmyE3ZMjHOzho+iH4FIqclsNvxmDTdDNz
-         uRQ++jJP1abvcQe7Rne3LeUYNkdyY1+vAgseopNIBIj5INx697/OI56YTxxsFASKXszb
-         rmyqnyX0TFejoucQh/Uk8+njGRvv8XEghOESOYRb7N1+mEKU6Qvl02xf4+KB6bP7ivbU
-         lOpG2LoXa4hlVwXDe4vU67egEMmYSP3PpE7zTLbLioh4ElqH7XlFuYX7QqP1YDDK+Orx
-         iOvRrlMMKF40x4ElW0quiU8d9rWHHEBUJEDPo8i8n2eQi0GyMAkPZAfiFlR8ycMeUYW9
-         uRiw==
+        d=gmail.com; s=20230601; t=1752504785; x=1753109585; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=6qnE2JyrBpFNh6aD4UkpO19Juwdqz7o/U9HH2b1z+dI=;
+        b=IRagxvKU+dRwnsfCgTfXzFTE4/vhWnsAS34nq0tWGH6X9d0kNXPJzi1p/oiKcgAxIX
+         1w5S37sAa6aYr1Avvddi3KPY+uzKEPQJsKnZLtO2TFV12/oPl6nWrxYhPfrxETlAPELg
+         VI2RFwWApEaii0Ud3VlPZaVej3Oh5sATpoIBkFfxYI7KGPM+CKrindwm+knv8EOGXNHs
+         eldjyuPLk4A9efZfDQIoSvH7m/uyshltD6q1bUHIIqbkGn59e1SJmu3s7X9b0tLQVIB4
+         zOwZ+GGOLnJjlnZoS/+b35+o1vlfBxr/cLhqHSp94J8jj/dEuLsDOr+UKB8f0FsXgdGz
+         3l8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752504760; x=1753109560;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ALwKxArqUoXjIR2QYQJYhe3QVGhssgLDNe8GTzcfYDE=;
-        b=Kb42/ewOcZFx40nPyX+9BlVzcp+4rCs9f0wJ+C20u24KukverJFysHNoAodDtuvp54
-         D5jFPo7d7gE3alyJy2q6/wWghzteD8Le/AkfnekpVMfD8V2masnowqoFIFmoxQzQB364
-         PCw6aEc1jkEd0Mw6vGiVwtkVU31L4NXPtBTSAszXS8e1RL/u8FIASwnydK0/c/z+fAgN
-         jWaZ/GPQ9OEI4gQ0h1lo067h+XizN2yIdaBVBRbOr1ysujuRJSXzl9tdozK+ExWapPw3
-         B88vPIs2XWyIIx9np7ol6KwkQ7S/chzmoq5prYYYHsCihBRjE9nJCwAsajtxhjhqYnSn
-         GlTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVit9mN2heFzP973QcCyx5Ja15wN0b4z70XBv3GpLwfP5GiMt+mOi3jvfUPRuvVZHC5v3HD7Xx5Q/ptgRrN@vger.kernel.org, AJvYcCVkdNe/ECoUmf/1NHEveZ8IcYBbiCGXV4vnwjBww4ok6Wo/fHooDkc7YPqh8kiQkROY1HvugyO4AaS3v4yCIvQ=@vger.kernel.org, AJvYcCXGemmoMD/bJUj9Swh9f9ShA4Dub07weTR6nLvCTnnf0G0zvppvD73Q3ZXtKPOZCMsOrEebTXuT8hOwREIT@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvWRbyKlJg+9dEJY+KbQRQOTv1s26sPnFYpl4TMihvEX77aNpd
-	EJbzT8rwQH6kSaZIaMlQyfMpuVnGpyKuwix5nwlf1eRQeO6R47+NrNEskeTtESu82t37qNLcOAv
-	w92uT/ho/DH7sVryoTt3U1uAU1qPU7VI=
-X-Gm-Gg: ASbGncusT2+EU7f9vWJksk8Kc5mgXrg44g4ye3j7MOp3oqZT5/XUNz/vUKNPdk59OdJ
-	8lmXmSTK3omFHIKxlfU3lO+zLjvaiFl2Ii8Nz+AYYdL122KRCB972/jJYlWi8ljz1fkzmPviYPI
-	ZKYUzrL+rkC/df2MKfS+p/U4/t9J/yuoiVBZfwvUKqcciwm93vc0rxc+9PXEF5P54LGx6WJT7Eg
-	hW0oTsB
-X-Google-Smtp-Source: AGHT+IHcwCJMDp1SPTbI63OWvldNiz/Uhdc0dLj+cXdt/zSQIRmR6AhZHlLW/nHhKTRYw6vPffpup4VPrUjiDiOeibM=
-X-Received: by 2002:a17:90b:51cb:b0:311:e8cc:4250 with SMTP id
- 98e67ed59e1d1-31c4f50be98mr7430463a91.3.1752504760367; Mon, 14 Jul 2025
- 07:52:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752504785; x=1753109585;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6qnE2JyrBpFNh6aD4UkpO19Juwdqz7o/U9HH2b1z+dI=;
+        b=FEKW8lGmxkW/c4amv/o4Ldqh/weuBVLQXe4EvguLRdfIr/DNeeiUAQ+J5i8X9QtVlb
+         hiGSoRKHLQW++KAHegJd+22FWaraiviWF3WpFir19TdzQSyW2vo6ZtBG8j+zXVJq+4vW
+         /wxuVud+wf7Oae9hOXr00ASYNsSu4oxg/pleShzBJTnMQTqz6CkMC8OxKjhqwLMya11R
+         6qRgN4el7iiGlsSk7e+A4A+ZX6CpVXnWerTPYBMKK/xTVyBjry8lUTM45mxmQE5B9QKc
+         9pj/SIvDif0wX+16NiMnLpzfUvPgYUDaJNgqFkA1MzPPAYysG43RK5z/8hzSESWG8r4Z
+         yyRg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4oHSF7o9CiujoHq2IBL+PKWjHw85uURzWY/TqPOquFRcZM7py4m9KLkhTBSyFnb3MwBY0ZRWMSv31IJhHdV8=@vger.kernel.org, AJvYcCVoksUcZTF5RhzltRIQd7Rseme1GqNEIqJymXlE/0EuSyaQLdPcj1meSv0Or8T91fh1PKTOEYOdn2cPzL/N@vger.kernel.org, AJvYcCXbaJ526yJuIkVh3fitWeVOzabropsYymANCvn1j2jeT8q3Z0n0/lo2Vp3AYfuZ1nLC7KZvFURa22xQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX560tqRcAVwFvmMPuuaZYx7bstrzxlLnkI5Pjk/iotxpmrk/L
+	TLnVsOFEGl/03KZXhZJ7+ptbvcAPwvIwAkvo37GExnaDAr5Lav7ysGpY
+X-Gm-Gg: ASbGncui3m+NQM30EANhxv8JGqxOUPzH7wO2lec7FW20kfq0BW+xtn9mzZZPtWBhqGS
+	mUWlUPKotYe1ftbBYGXsqOTC+Ug8v/gZh2lXyJkl7P1lKBFLrYHqsZAMeFLDP2rw5ECjG0LVOdl
+	DuADh1Pq6ir7pdHusFxa/E1f4JeIvUt0lX0qd64Jry0AhKOqpT1UnMZL9dS2j08L035yogwQPC0
+	7WZ4yohGcyRPhqz4HwHZjkCJhmOA5wCwOgdeT61wTj049K4SIy5OhdB96dQ6p2MghonRunDJ/kP
+	uRCzGNNZkQQFF/31FcdajBQJQslo6S+LrSFrssGLVR9ffvWnIuT+YMdlQXfD+hLAoxiLWFq0r3K
+	eKh1Gut+7qY7DBZvH2320MFl5l9yCbI+wbEbMfOprUc4G2iNi0lSi6rkZ3i153UDKX5YH34Ps0H
+	HziiW/9NJ+0zxm
+X-Google-Smtp-Source: AGHT+IGypP/MybZIZ90NbN1IElm2htDIEQjwnBX1LF2MTvz7nWTRAhC3SjCrLmKlr166NWslnLCaUA==
+X-Received: by 2002:a05:620a:40cc:b0:7e2:3a27:a117 with SMTP id af79cd13be357-7e23a27a4d6mr866347785a.55.1752504784611;
+        Mon, 14 Jul 2025 07:53:04 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e332a794c3sm41568185a.10.2025.07.14.07.53.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 07:53:04 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 6B252F40066;
+	Mon, 14 Jul 2025 10:53:03 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Mon, 14 Jul 2025 10:53:03 -0400
+X-ME-Sender: <xms:zxl1aOuAotqCyuRmLoGEdbhMkdl8aLt6jHiBOrbXuFpeznCkxfR3rQ>
+    <xme:zxl1aEvnVbdWlAjpjOdQlaV6MyHbzHmaErNVa4l_BMs8ymIgojh_YwJHw3yRmKRpF
+    KNA90czcWDs346V5Q>
+X-ME-Received: <xmr:zxl1aCowqL3TpmwqvoZqBx-iY4ltN_LVzHO_jw8FI0tDTtNtqlZYywfZyQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehvddvgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepuehoqhhunhcu
+    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
+    gvrhhnpedtieevkeejffffueehleethedtjeduieekgffhveeugeejjeeihfekvdegvdev
+    gfenucffohhmrghinhepsggvlhhofidrshgrfhgvthihnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhh
+    phgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunh
+    drfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphht
+    thhopedvkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhighhuvghlrdhojh
+    gvuggrrdhsrghnughonhhishesghhmrghilhdrtghomhdprhgtphhtthhopehlohhsshhi
+    nheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhig
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhkmhhmsehlihhsthhsrd
+    hlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehg
+    rghrhiesghgrrhihghhuohdrnhgvth
+X-ME-Proxy: <xmx:zxl1aAMoVZOSJsH5MKPLSnVoiQEIatbmb3aNLMoNXig-JJnkiPkD7w>
+    <xmx:zxl1aAk_RDbPnpZE-0AIOWtxvASesWcpQeOIbI372bBB4Ac6g2BzsA>
+    <xmx:zxl1aKtUYoJlOcATb67oqfITdqaNY7l_BMcW6KPaNXq4Ha5fYafZ5w>
+    <xmx:zxl1aPmOm6FYkArE_XREcCUknIo2lB7rB9STHOBwqK7FdzIt4A25Lw>
+    <xmx:zxl1aDn0EUhwvjQ906NDPDBfpr3v4TCYHigKgfSyBfkuHRWbFbcGxNhM>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 14 Jul 2025 10:53:02 -0400 (EDT)
+Date: Mon, 14 Jul 2025 07:53:01 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, lkmm@lists.linux.dev,
+	linux-arch@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,	Lyude Paul <lyude@redhat.com>,
+ Ingo Molnar <mingo@kernel.org>,	Mitchell Levy <levymitchell0@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v7 4/9] rust: sync: atomic: Add generic atomics
+Message-ID: <aHUZzdbUSkN_4v2G@Mac.home>
+References: <20250714053656.66712-1-boqun.feng@gmail.com>
+ <20250714053656.66712-5-boqun.feng@gmail.com>
+ <DBBPI9ZJVO64.3A83G118BMVLI@kernel.org>
+ <aHUSgXW9A6LzjBIS@Mac.home>
+ <CANiq72mFa0bM_DZV2tHViU0SKqNG_tX6AxBWz4AQ=2UmBrt=nQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714124637.1905722-1-aliceryhl@google.com> <20250714124637.1905722-2-aliceryhl@google.com>
-In-Reply-To: <20250714124637.1905722-2-aliceryhl@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 14 Jul 2025 16:52:28 +0200
-X-Gm-Features: Ac12FXzpYijkIhRenpWeLfB97hgjaloD3FOEkKcBbBD_Q0q-iICTPoaH6jjN_-k
-Message-ID: <CANiq72nC6L9_SB6dQLn7AVjPguTucnuX_N_eA=iLh9qKDr9VWA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pid: add Rust files to MAINTAINERS
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72mFa0bM_DZV2tHViU0SKqNG_tX6AxBWz4AQ=2UmBrt=nQ@mail.gmail.com>
 
-On Mon, Jul 14, 2025 at 2:47=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> This files is maintained by Christian Brauner, thus add it to the
-> relevant MAINTAINERS entry.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+On Mon, Jul 14, 2025 at 04:34:39PM +0200, Miguel Ojeda wrote:
+> On Mon, Jul 14, 2025 at 4:22 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > Hmm.. why? This is the further information about what the above
+> > "Examples" section just mentioned?
+> 
+> I think Benno may be trying to point out is may be confusing what
+> "this" may be referring to, i.e. is it referring to something concrete
+> about the example, or about `from_ptr` as a whole / in all cases?
+> 
 
-Like the VFS one, I think this is what Christian wanted (which is
-great, by the way):
+Ok, how about I do this:
 
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
+diff --git a/rust/kernel/sync/atomic/generic.rs b/rust/kernel/sync/atomic/generic.rs
+index 26d9ff3f7c35..e40010394536 100644
+--- a/rust/kernel/sync/atomic/generic.rs
++++ b/rust/kernel/sync/atomic/generic.rs
+@@ -135,6 +135,9 @@ pub const fn new(v: T) -> Self {
 
-Cheers,
-Miguel
+     /// Creates a reference to an atomic `T` from a pointer of `T`.
+     ///
++    /// This usually is used when when communicating with C side or manipulating a C struct, see
++    /// examples below.
++    ///
+     /// # Safety
+     ///
+     /// - `ptr` is aligned to `align_of::<T>()`.
+@@ -185,9 +188,6 @@ pub const fn new(v: T) -> Self {
+     /// // no data race.
+     /// unsafe { Atomic::from_ptr(foo_a_ptr) }.store(2, Release);
+     /// ```
+-    ///
+-    /// However, this should be only used when communicating with C side or manipulating a C
+-    /// struct.
+     pub unsafe fn from_ptr<'a>(ptr: *mut T) -> &'a Self
+     where
+         T: Sync,
+
+?
+
+Regards,
+Boqun
+
+> Cheers,
+> Miguel
 
