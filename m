@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-729346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C88DAB03552
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:53:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 485CBB03553
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC4F8177047
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 04:53:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EC033B4A14
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 04:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B821F8AD3;
-	Mon, 14 Jul 2025 04:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F841FF61E;
+	Mon, 14 Jul 2025 04:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kvhLvcjo"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jKuTArE3"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99DF1F3B8A
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 04:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EC21F4624
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 04:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752468770; cv=none; b=o3BDl8zmPjiZY5dApkt6Ouspf7ylZYr6q2A9F237rbBldLOTFrP9Bz/r3DsSE3rmUEXMq/N9RFUogOBlvoCdpUGp6ZS1ZhXMIROqNIvYRnJBOoip3yA4ou9FM/AHOPjNvbH1xuzZ3uhPq7yyk4AkCRNnfuA5AkDFyTUVyBQ5UKg=
+	t=1752468771; cv=none; b=T1n/OI8+pUak69J4iwJYGHxkKJSf1uECyjjldHZMoGqHQdt/OAKFX77aP94+zDW4yAqvk2a6Xb2S/0yOliGKlHgRhLOPjfjf84l4ELPB9l0J09iiw5Hgo9UaHAUgPKJfKBda47wHBh4uJUNbrBV6BnXrRVUvDuJKlzCkjXnGVKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752468770; c=relaxed/simple;
-	bh=syDR/ggoQRcY2z+FN85gCRMGWAqN9JGTyQdffmweMoo=;
+	s=arc-20240116; t=1752468771; c=relaxed/simple;
+	bh=DwUhOZ8kbcjWYIdLnos9Z/vLhWxZdh9oLPf3cntU9Sk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rMUGsrNZMucsLd1lnwyaIGFpoJKfOQHKaEvZQ5aiU1XZrs28VFaPTBHjhfb7TW7p2vWARWOFbFD8DEnydKRv+pbE2fexplXcjqduCrPm15scgPX9tbDL1l80q+MJPZu7ymrWl4T6npPPMVb1spd95wOG1AgooKvdqQ2d84YtB3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kvhLvcjo; arc=none smtp.client-ip=192.198.163.19
+	 MIME-Version; b=p4v857vNpzsaGZaAfQF6bbtiSJgIozOMRdm4OxIfmn50dGcjKKrPoLJbIo+Jp00gJu+XVvb8LKzsJBAjsXTZ5XYprfltkrBNpUnCb2gtjEShfXCPeZEG57hyOgYslzNP6VuZB4MwMyeS4wbezitbvGc6Js9yMWUYvgaQ43mZcaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jKuTArE3; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752468768; x=1784004768;
+  t=1752468769; x=1784004769;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=syDR/ggoQRcY2z+FN85gCRMGWAqN9JGTyQdffmweMoo=;
-  b=kvhLvcjo7qFxbq8cC35FRVmG4OdkPyzHCt6jk6HUYspJ45do2Fouj/e6
-   NWMjSKnsZrWTz1crU1+xvB+g+2zKiHNUBnXpyDf6/+YtfsKT7F1zpNYLR
-   xEgnyw+Jz3blofs9Ab4rl3Wt9ajGIb6Q70d8XaTA6pmqp0X96Gn5rA4gy
-   Jxo8HJ++mTz9KIRdjG3tNEjEQf1UCCy9IxdYWwYjTAiDrw883PNUm/q5c
-   7EfZx2beamSrNF/UxXvzIntVsyRU2ojdw8QfMv1uXQnvccHQmArcifhlH
-   Fp/92MYyPXBD6mSwi76E+1cORcuzqfNndROyFBaZPUOj3tsv+YJXt9jlf
-   Q==;
-X-CSE-ConnectionGUID: dRrnUApxT1Sm/9cLHOPuUg==
-X-CSE-MsgGUID: yAENH/XlTKK4cHKSRprKkA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="53765035"
+  bh=DwUhOZ8kbcjWYIdLnos9Z/vLhWxZdh9oLPf3cntU9Sk=;
+  b=jKuTArE3xyT/gNgBLuumRyromW4QYpf9uG61l5YyNhwp/DWLi5fDOnO2
+   1SznpihD/DMN4Qy8QqY1C6v8Lb+uio/BtXpbR+zSsCwS0lDY3CnaoTpoB
+   2ifqoTIs/MoIIqGetwjj/IjSSWNWKEeBXi+NTo97J/QSXQ+3tAET6QPIa
+   hpjKNosAvWxRBf5QnvWQDFV6yx99V6RJaIPSIBnQoRpzTuQFvdw5bK6pX
+   mjyAtPeAEp85hUCyx0e4ns0zUVPOn4+p97+Jdh5rp5PyiZnIMLA4Tr0xm
+   X4Up378M2M/grIzWTyxFVHX1MdNDjynlsAG/GIXcLzUz8iRsPmO/lKD6p
+   A==;
+X-CSE-ConnectionGUID: yjcwdAn1TEq6KE2RFeCBIQ==
+X-CSE-MsgGUID: 21I0S2p+QMOCeyQK9URJrw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="53765038"
 X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
-   d="scan'208";a="53765035"
+   d="scan'208";a="53765038"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2025 21:52:47 -0700
-X-CSE-ConnectionGUID: EHG8kM0tSCq1tMSgDxKGPA==
-X-CSE-MsgGUID: J/LEche7Sp2vi2tu6+bBcA==
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2025 21:52:49 -0700
+X-CSE-ConnectionGUID: PKVbN8MVQQK2OS1dUDJbXQ==
+X-CSE-MsgGUID: 7dT/4QJATLiy2tFd5rfK7g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
-   d="scan'208";a="161166145"
+   d="scan'208";a="161166146"
 Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by orviesa003.jf.intel.com with ESMTP; 13 Jul 2025 21:52:47 -0700
+  by orviesa003.jf.intel.com with ESMTP; 13 Jul 2025 21:52:49 -0700
 From: Lu Baolu <baolu.lu@linux.intel.com>
 To: Joerg Roedel <joro@8bytes.org>
 Cc: iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 01/11] iommu/vt-d: Remove the CONFIG_X86 wrapping from iommu init hook
-Date: Mon, 14 Jul 2025 12:50:18 +0800
-Message-ID: <20250714045028.958850-2-baolu.lu@linux.intel.com>
+Subject: [PATCH 02/11] iommu/vt-d: Optimize iotlb_sync_map for non-caching/non-RWBF modes
+Date: Mon, 14 Jul 2025 12:50:19 +0800
+Message-ID: <20250714045028.958850-3-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250714045028.958850-1-baolu.lu@linux.intel.com>
 References: <20250714045028.958850-1-baolu.lu@linux.intel.com>
@@ -75,42 +75,105 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: "Vineeth Pillai (Google)" <vineeth@bitbyteword.org>
+The iotlb_sync_map iommu ops allows drivers to perform necessary cache
+flushes when new mappings are established. For the Intel iommu driver,
+this callback specifically serves two purposes:
 
-iommu init hook is wrapped in CONFI_X86 and is a remnant of dmar.c when
-it was a common code in "drivers/pci/dmar.c". This was added in commit
-(9d5ce73a64be2 x86: intel-iommu: Convert detect_intel_iommu to use
-iommu_init hook)
+- To flush caches when a second-stage page table is attached to a device
+  whose iommu is operating in caching mode (CAP_REG.CM==1).
+- To explicitly flush internal write buffers to ensure updates to memory-
+  resident remapping structures are visible to hardware (CAP_REG.RWBF==1).
 
-Now this is built only for x86. This config wrap could be removed.
+However, in scenarios where neither caching mode nor the RWBF flag is
+active, the cache_tag_flush_range_np() helper, which is called in the
+iotlb_sync_map path, effectively becomes a no-op.
 
-Signed-off-by: Vineeth Pillai (Google) <vineeth@bitbyteword.org>
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Link: https://lore.kernel.org/r/20250616131740.3499289-1-vineeth@bitbyteword.org
+Despite being a no-op, cache_tag_flush_range_np() involves iterating
+through all cache tags of the iommu's attached to the domain, protected
+by a spinlock. This unnecessary execution path introduces overhead,
+leading to a measurable I/O performance regression. On systems with NVMes
+under the same bridge, performance was observed to drop from approximately
+~6150 MiB/s down to ~4985 MiB/s.
+
+Introduce a flag in the dmar_domain structure. This flag will only be set
+when iotlb_sync_map is required (i.e., when CM or RWBF is set). The
+cache_tag_flush_range_np() is called only for domains where this flag is
+set. This flag, once set, is immutable, given that there won't be mixed
+configurations in real-world scenarios where some IOMMUs in a system
+operate in caching mode while others do not. Theoretically, the
+immutability of this flag does not impact functionality.
+
+Reported-by: Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>
+Closes: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2115738
+Link: https://lore.kernel.org/r/20250701171154.52435-1-ioanna-maria.alifieraki@canonical.com
+Fixes: 129dab6e1286 ("iommu/vt-d: Use cache_tag_flush_range_np() in iotlb_sync_map")
+Cc: stable@vger.kernel.org
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+Link: https://lore.kernel.org/r/20250703031545.3378602-1-baolu.lu@linux.intel.com
 ---
- drivers/iommu/intel/dmar.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/iommu/intel/iommu.c | 19 ++++++++++++++++++-
+ drivers/iommu/intel/iommu.h |  3 +++
+ 2 files changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/intel/dmar.c b/drivers/iommu/intel/dmar.c
-index b61d9ea27aa9..ec975c73cfe6 100644
---- a/drivers/iommu/intel/dmar.c
-+++ b/drivers/iommu/intel/dmar.c
-@@ -935,14 +935,11 @@ void __init detect_intel_iommu(void)
- 		pci_request_acs();
- 	}
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 148b944143b8..b23efb70b52c 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -1796,6 +1796,18 @@ static int domain_setup_first_level(struct intel_iommu *iommu,
+ 					  (pgd_t *)pgd, flags, old);
+ }
  
--#ifdef CONFIG_X86
- 	if (!ret) {
- 		x86_init.iommu.iommu_init = intel_iommu_init;
- 		x86_platform.iommu_shutdown = intel_iommu_shutdown;
- 	}
++static bool domain_need_iotlb_sync_map(struct dmar_domain *domain,
++				       struct intel_iommu *iommu)
++{
++	if (cap_caching_mode(iommu->cap) && !domain->use_first_level)
++		return true;
++
++	if (rwbf_quirk || cap_rwbf(iommu->cap))
++		return true;
++
++	return false;
++}
++
+ static int dmar_domain_attach_device(struct dmar_domain *domain,
+ 				     struct device *dev)
+ {
+@@ -1833,6 +1845,8 @@ static int dmar_domain_attach_device(struct dmar_domain *domain,
+ 	if (ret)
+ 		goto out_block_translation;
  
--#endif
--
- 	if (dmar_tbl) {
- 		acpi_put_table(dmar_tbl);
- 		dmar_tbl = NULL;
++	domain->iotlb_sync_map |= domain_need_iotlb_sync_map(domain, iommu);
++
+ 	return 0;
+ 
+ out_block_translation:
+@@ -3954,7 +3968,10 @@ static bool risky_device(struct pci_dev *pdev)
+ static int intel_iommu_iotlb_sync_map(struct iommu_domain *domain,
+ 				      unsigned long iova, size_t size)
+ {
+-	cache_tag_flush_range_np(to_dmar_domain(domain), iova, iova + size - 1);
++	struct dmar_domain *dmar_domain = to_dmar_domain(domain);
++
++	if (dmar_domain->iotlb_sync_map)
++		cache_tag_flush_range_np(dmar_domain, iova, iova + size - 1);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
+index 2d1afab5eedc..61f42802fe9e 100644
+--- a/drivers/iommu/intel/iommu.h
++++ b/drivers/iommu/intel/iommu.h
+@@ -614,6 +614,9 @@ struct dmar_domain {
+ 	u8 has_mappings:1;		/* Has mappings configured through
+ 					 * iommu_map() interface.
+ 					 */
++	u8 iotlb_sync_map:1;		/* Need to flush IOTLB cache or write
++					 * buffer when creating mappings.
++					 */
+ 
+ 	spinlock_t lock;		/* Protect device tracking lists */
+ 	struct list_head devices;	/* all devices' list */
 -- 
 2.43.0
 
