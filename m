@@ -1,80 +1,114 @@
-Return-Path: <linux-kernel+bounces-729641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39EEAB03995
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:30:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E9CB0399B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:32:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 783631890B01
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:31:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF80F3B9CAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6964B23A989;
-	Mon, 14 Jul 2025 08:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9F8239E82;
+	Mon, 14 Jul 2025 08:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N82ZdbCj"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gUu2Bx0f"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D83E72600;
-	Mon, 14 Jul 2025 08:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D837464
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752481839; cv=none; b=TGGbn+2AeCDxo218Ro/cFIt9RsFIb+FIUJRVa5+BiwptMGThrwXljMRM5hAVuVXBWI1EQzeGa7XMKQYXJYiI7HKqcqSbpGf4HI+lBkGvJO1fTe05gn3zLzCsczrPb4VkCB/bQfILpFqzgKaRzlXf8sfBIr0j2oMQaBBkKIDFHBU=
+	t=1752481937; cv=none; b=kxqjXTs9hVSQCIKcMz4gX8o+pMhYjgtL6udf0PtMFpjx16RHw2UrNewyWffJU9kg2+F//n+/LJlTtqx9iRAu73yzoEtjZDPDciN7yWOSOp5XojXHi2rhU/1ga9OyEsVLpZ6stxJ1j6qzw0KJ3ezuYPFloOvsmOoLAuZbaVtjAbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752481839; c=relaxed/simple;
-	bh=UXxWUo53aedqVB8S2fdgJLytsMH1oCAccK6tpYkBahQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oswLCqRe0RSxImNPRuE34l3ieTY1BmNU0EiSkNBAZIzyiLqHnX1tGs4ONJqNet2V9Tdz8FgM3VCY/2+B7PEEnXN6i0lHtmqWGIccZC9dVM4s2TUpjR/Nfw4Iar42w3wyxRIMH9oGyLF6EIloELhTlx56Cev83rSBGaYxHvIfeMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=N82ZdbCj; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=UXxWUo53aedqVB8S2fdgJLytsMH1oCAccK6tpYkBahQ=; b=N82ZdbCjturlES3ex0s4qZ5ELi
-	ZRYcC79RYeThJxke0T2vwa75bcTjUhvtnhO/iTRQBa0UEFVir4P28IRmwZjUTwZiLsO1SVwImeHuF
-	7hFlHsXyJbMfMH52l02zK2/L8fcKcPWp/2Q6sg/B7t7+MJN7BKIc/1a4NgUO4O1RICAoDEr7QBXGq
-	To19P7TLya59FIblwm/L4zJeOouCEbITe3Ki+9Jvcdp9MecnGA0AXbt1wKiEKa8DBcHwq8itpAFsq
-	yWu9MpCNRaBTHmgbYJDM18xKzGMHXkH4kqGZzvJslNwijPsDmPR1Mg9nDOUOSSq96hCWW9mj0EjJ5
-	r8sWX5MQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubEZs-00000006WXJ-025b;
-	Mon, 14 Jul 2025 08:30:24 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id AFF7B300186; Mon, 14 Jul 2025 10:30:22 +0200 (CEST)
-Date: Mon, 14 Jul 2025 10:30:22 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Matt Gilbride <mattgilbride@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>,
-	David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH 1/1] uprobes: relax valid_vma check for VM_MAYSHARE
-Message-ID: <20250714083022.GJ905792@noisy.programming.kicks-ass.net>
-References: <20250711200705.1545447-1-mattgilbride@google.com>
+	s=arc-20240116; t=1752481937; c=relaxed/simple;
+	bh=Go7IxiOZ0sAIGTwsDe7Eg9RsaCUI0tpzXc8tbaNuhbE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PEf5N8doxzs/3lYo//dZCivQiSwSsw2TM/Yfc7kwdNpXxlccmxctFMfjm6u7e5mMhEKw26xFUdPKhJm/SFCMkmvtlcqFsIQbwNy9T2DH8KN2PES9prS08OFOjwe0c2l0Ck3Tad4MpOq8IPVteN1e5GlvJephKMlmr2qgMAARZYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gUu2Bx0f; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-531426c7139so1624426e0c.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 01:32:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752481935; x=1753086735; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k0M6siWvZJnp6SHGUTLYeoItEe86brhosUCvwv3Sj6g=;
+        b=gUu2Bx0fgMVQnH4Y1ljHAqjCv1zHmoEOhcp6agaqalw9P6C7ICT8uNgZjTNUWbWe1m
+         TQOz4qQjemDi72079jxycHs+KWeFPmRaQcFqCrTkScpxvZdNtCe0HDNuX5WZ7jg6cw09
+         lXfSMpLrY/ga9gg9CN1B97nLHshxtHLD1SPesaFbGMbL085X63ykNftroMp3P19JH4y9
+         8EP1Y4X3O7Q0uoVM739r6j6oaCsLLSAkovEjlx0XjAKDnfn41P5zhvryD8xQZt35u0Uu
+         JazFfjcuV08jq/Q+R8Sh9nfUMEncrw6ivi7M1m0MJKis6falySdahMZfiwPjZ/OUE7zZ
+         oncA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752481935; x=1753086735;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k0M6siWvZJnp6SHGUTLYeoItEe86brhosUCvwv3Sj6g=;
+        b=XxU7xNhn1M5FIs2wc2HX98XwV3osCu3Hf77e4whovzDoyrIO1Gah6VZ3ZmULC7LYfK
+         skSgme4qDaPhzgY2w87uUvHGLVnX4g00FGe8md5e8/yp0c3edYuItRqeJs55obZyGt1E
+         oMSwv08WSfqIqbfZEFiySiuFwo2QHGgkKaarn63G3dMjBgh+dtgZEWidnvjOPaMC2Xj6
+         Bn+tRU8IZb1ttSsRiQA3EA15xPVE5/PPfxuN1FKZfiW41vcxNfZ39jpGIaHzDSotdICr
+         5W/cqlETe5VhbVFgiGOKA863AFfNZjFOYFabbBke8FACmbWxX2FH2ps8mpvJiBHltoe9
+         L/8A==
+X-Forwarded-Encrypted: i=1; AJvYcCU2I/PvFzuI6gUtbFiTqdREapJFYYqUcRyS/jnhBPiYrhRgaYK00FP2cbkhvTH1/U0Q6+mWFQBYHNf4Nm8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxawdnOnqVXr7ponyeDgpipKYqPn9t4vIkG9KOy7ljKA5YpwTkZ
+	DVjhxU63O3wx9PzqEGTJFOOf81irDWTVeGUmL0yxM9tY8lkrIrigxfwMp7d8CZMaUMXi64fzvCC
+	R14mzJHeVyjbybZBHyEwqJ2/CBn0bP3SfhZuaYuxk
+X-Gm-Gg: ASbGncsF5z1eM9WRoeakDXsd8aUXZ+60orS82xEqfs4ltuYliBkYlitHoKXhVo93UwC
+	G2DhGG2j8ilW4WHdSTcveOs4d6XPmnX23G6h8y+CAYwDJStJD5/PGW8IqUumqz5F9KyulOAeifl
+	4Fp1atJri8H95Ko42fRR4+NaEI7Gb4itU2rnUVi46cYkM1drrf1nLtGF6inMbx6rqT7M9WmgcpJ
+	CM0qY7z3y6X2+ofW4TQf4MpfFhZyRCK7XfruA==
+X-Google-Smtp-Source: AGHT+IGclyUn0o5DxCYmV+W1r6lMYYeWyJ2l3l3YKph27RKIvJiE9F17q7jK7UBpfFkKyhlun6BZzlofd+c8jNIzjXI=
+X-Received: by 2002:a05:6122:4b86:b0:534:7570:b68 with SMTP id
+ 71dfb90a1353d-535f4558182mr6039352e0c.0.1752481934473; Mon, 14 Jul 2025
+ 01:32:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711200705.1545447-1-mattgilbride@google.com>
+References: <20250711003502.857536-1-raduvele@google.com> <20250711003502.857536-2-raduvele@google.com>
+ <aHCPDXonAevxkMho@google.com>
+In-Reply-To: <aHCPDXonAevxkMho@google.com>
+From: Radu Vele <raduvele@google.com>
+Date: Mon, 14 Jul 2025 10:32:03 +0200
+X-Gm-Features: Ac12FXwKEEUbGRgte43q8kv8Q9D0mBi3-qbFkUsMFkQsG4LANLOGjwjdka7KiXE
+Message-ID: <CACKy9TJHtA5K2YqdNdnMuTvOsz4OCkRds4Hbj8aZdK5VXpMgWw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] platform/chrome: cros_ec_typec: Add lock per-port
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Benson Leung <bleung@chromium.org>, 
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Jameson Thies <jthies@google.com>, 
+	Andrei Kuchynski <akuchynski@chromium.org>, chrome-platform@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 11, 2025 at 08:07:05PM +0000, Matt Gilbride wrote:
-> ART maps a memfd twice, once as RW and once as RX, to uphold W^X for
-> security (defense in depth),
+On Fri, Jul 11, 2025 at 6:12=E2=80=AFAM Tzung-Bi Shih <tzungbi@kernel.org> =
+wrote:
+>
+> On Fri, Jul 11, 2025 at 12:35:02AM +0000, Radu Vele wrote:
+> > Add a lock associated to each port to protect port data against
+> > concurrent access. Concurrency may result from sysfs commands
+> > and ec events.
+>
+> I realized the critical sections are way too large.  What exactly data th=
+e
+> lock tries to protect?  Is the race possibility introduced by any previou=
+s
+> commits?  Please provide more context.
 
-I'll argue this is no defence at all. As long as there is a writable
-mapping for an executable page, you've lost. You have effectively
-violated W^X.
+With the implementation of the role swap operations from the previous
+commit (and also enter usb mode from another recent commit) we
+introduce the possibility of concurrent access to the cros_ec_typec port
+data from the userspace (e.g. trigger a power role swap from sysfs) vs
+from EC events (e.g. partner triggered a role swap that we accept).
+This is the main reason to propose a per-port lock. This way we ensure
+we protect the state of each port in the cros_ec_typec driver.
 
