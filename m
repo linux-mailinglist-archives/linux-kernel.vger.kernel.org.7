@@ -1,125 +1,125 @@
-Return-Path: <linux-kernel+bounces-730532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48384B045E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:52:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56BEDB045E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50177165A92
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:48:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 419C0188909A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDF928EA;
-	Mon, 14 Jul 2025 16:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D0025C6E2;
+	Mon, 14 Jul 2025 16:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MjyzgVVA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AxJzWuim"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395DE262FD4;
-	Mon, 14 Jul 2025 16:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA74427470;
+	Mon, 14 Jul 2025 16:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752511611; cv=none; b=bjEQUs3kGFw927M1RLsQ3tNnSNyGkYKU85BF0V3lW862cCmQz9RRIMf46gaNHwTZXNAjnCrRVVIeYaHQoWhSjLbj2MAgR+TE4Pe9dUwR5S2yXE5rVWlhehPE6Wa4kLc5BLrDih+plf1bnARcoYh6+R6gXgdEZWGL9mya7Ai30KY=
+	t=1752511772; cv=none; b=Ci3J0OAa6Yw9flTjN16JkO9/+UsaL9A22sLTre4zuwEgC7uHrxOns0tzQ/HUPKsFIlAFMm1KYV8Fp5tI6G3yWdlEWXdL9IcjQWyxtGRp+X2KgxVhN6UkyRp1XS+rPbUHydxXFgqaVnotiKJlCKwfvtRx9o5rvjUuPk6DFGzJ13U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752511611; c=relaxed/simple;
-	bh=CZ4g0Gar9M48yZ3aK1dx0+90CzTsdoCR/PgLbozfuBU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Xnkd4A0ckAIM4BUC3i1poNjGrYq1b6elbRnFF3vaqf6W+e/X/aG0OnVXTPV+TKwmjp0rKVyMYw0WoAyr3Mu+5Awjqfi6TEX9zLzbFAnByY4uBEnv1ppTvZoU/AsAM3gS3nfxp1JSBxJuywmzprP3fS8775tyIbc+BUsjsNE0qaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MjyzgVVA; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752511610; x=1784047610;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=CZ4g0Gar9M48yZ3aK1dx0+90CzTsdoCR/PgLbozfuBU=;
-  b=MjyzgVVAdtr7x/F38wpNqAu+8F4zXQeS5RZYGd1BB66j2YmMi1RppI2A
-   2foql3p07fkCnoH4Fsbgkz68XHXbjJ99xDwtoT+cUE/W83GgvUp1e0KPW
-   /xg9YQjQHHPYQ+Un1oXirDWybWppo6h1hFEYBsn3QYkRCNZvCFGRwlb2q
-   vaifsyOdQH0IRx/F2/j2BKvSQVpBg0QwQwNyU+NgddrY3e0gbaEL/A+6u
-   wSTbP70oilZe0nJeHBrgCR7mUVr6xUCQV/rngE4XyejcINUcTbJPZ8EZC
-   87Nm+ie/PuMpJzn/xOo6f94+6nqb/arvLsPnhFcHc07nM/r8olMyAqX8Z
-   Q==;
-X-CSE-ConnectionGUID: ihoPRr1BQtCLoriR6DVfJQ==
-X-CSE-MsgGUID: rdohjBxkQeiGSQALwVlhmg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="77246297"
-X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
-   d="scan'208";a="77246297"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 09:46:49 -0700
-X-CSE-ConnectionGUID: QA0SCNZUTDqsyaMzUzfR7A==
-X-CSE-MsgGUID: WpfMqmwiQHGZaqab8lNOQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
-   d="scan'208";a="161529272"
-Received: from jithudellxeon.sc.intel.com ([172.25.103.66])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 09:46:49 -0700
-From: Jithu Joseph <jithu.joseph@intel.com>
-To: ilpo.jarvinen@linux.intel.com,
-	hdegoede@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	jithu.joseph@intel.com,
-	tony.luck@intel.com,
-	ashok.raj.linux@gmail.com
-Subject: [PATCH] MAINTAINERS: Update entries for IFS and SBL drivers
-Date: Mon, 14 Jul 2025 09:46:43 -0700
-Message-Id: <20250714164643.3879784-1-jithu.joseph@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1752511772; c=relaxed/simple;
+	bh=F3n3V4Luz/JT6U4pUZqkAcRtEeYBFe3axNzOYeHa0To=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cWOc5/bP2kkhJA3w8x0gUWXMSzbzpNny5nyUkoVBDTlElS7OZ2ovSe0JOSCw9XIQ6fxwjaJI9Y7SB6hTJfm3Ia0YYUtQh+4MABfGsfxyIfC2eaJ4bfWAkWCS7kzUaGnBQ9y0O/RUpeQMYrczIOcVjpJeGXv8pcxwXguj7F+YEGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AxJzWuim; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-31306794b30so728026a91.2;
+        Mon, 14 Jul 2025 09:49:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752511770; x=1753116570; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UMaGzs93jlELahs0rig1FTyg0FWKuWnjkUHeg3IWFQc=;
+        b=AxJzWuim/Mdj2lo63YbTvlK+Mnt9FY8xSJS0EQXdXV2ZBsyJ/LjcMNqN4nJ9sH6crO
+         U7ODOzVpU2nERKbZ1cWDNeuZKfgKXB+ro2RaeXleMAcHqutlHFUbwHT5YqVMOCKGsD8F
+         7WAEAn3JO3F36sdQ8sqtcoZ8VROIvaDuDoQawFnCkG3+nDiIM3+1DNSP/VE6vD4gd1BW
+         gEuXn5Jx5LU3QL+SefrHvV7rNQc+tgFuuVJ91LzdgglRCZwPqw2HpgBUOSwOyLyil2T2
+         0O8L7T3IaOabNpoVnd1TdhBieV/q1UCO7hk5h9fU+dxnxbMbRuTETq5UZRbwf87q2oc4
+         Dskw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752511770; x=1753116570;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UMaGzs93jlELahs0rig1FTyg0FWKuWnjkUHeg3IWFQc=;
+        b=nDAmM9E/uVlYU6Qjy0DoSwpes0HMFF46tW/wQSSRQPsNqmnrmc6Cd9AkSrTuOXUvCT
+         nFbXMCvQZ6eb91bjn62nwStSpimYVw8RFWyTrBoCnpvkTPDO6FuxDp2EgGsyx/xOddNB
+         PrmRIYqINrz0q/WjF2Akd45P4i6gQXAfj1agfNFBp8jd8ZzyNtfdeSuEHSIe9uGIpDKh
+         a4t1aVaWx11QJuh/r5L+bksRjVlQvuiFJtAtLIn9VGQjaqt3L6e+YL8/eD/eBdRG5GSn
+         AwpDaZ/8nlL1dfwBkMGlpkRgxEO79hBTmqqeIKa/sBBdQbW+NIeWYbVNCB6my9h+uAOt
+         nkwA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5PQCogCUEv1Oa4UyNogPhD8IM+oG6LrGRD3+uBeMjRyprMagbP4vvQq9xgdliY863Ozl/8VfdwL1cnXDK5OY=@vger.kernel.org, AJvYcCWufSL3SaxbuAN0Ws6yKrUxt3hUEklSr3O0WuxFYnjQSIrh/8UNMFKMCxQisSmrjCQ+l8pa/GkeKPOPEtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/Kh+e23l2cyhxM8pUvzbsd92L+tzINMGYIDE6Fc/VhLO25LMJ
+	lVw+V5tTlQ6LPoiXZHYH1jSthMJ0ZfyB9ZCSfElIp+GNB4Sqjmnv7dOEXOzmmBOYIBFlsNsp120
+	mpyreN44EacNgSZIZV+Knu3sqB31tBP4=
+X-Gm-Gg: ASbGncs4khlBchQhCXOE10lz3sFZxpZSZZtB2uQVHjVTqYpivV5GLjwlWNxZreHuIfv
+	HUeBroMAHchSZze6q/OmOFslQGyYiqYtHDVyunNWPA8bB8bQXqbc9hWE11yHziX0oHwA7hD86Wp
+	wZst6UxW/CsrpSivQ7qKeXVTfGedCXYyDUO9JRMymukX/mDEh7rg2h87O1R59LGoCYvbz5ir8Hc
+	zHwouYs
+X-Google-Smtp-Source: AGHT+IF9VUiu5LPlclakBgM3GjB0x7a7WdSL8pK58j4wRhwnqb6evRDCQ2/FJ1svGKQsOjvPuueCSoQoypWeAnUKwMU=
+X-Received: by 2002:a17:90b:5303:b0:2ff:7970:d2b6 with SMTP id
+ 98e67ed59e1d1-31c4f545a20mr8544225a91.5.1752511769896; Mon, 14 Jul 2025
+ 09:49:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250713213614.188921-1-shankari.ak0208@gmail.com>
+ <20250713213614.188921-2-shankari.ak0208@gmail.com> <DBBNCQQ5HF3N.3HXQWJR71RZ8S@kernel.org>
+In-Reply-To: <DBBNCQQ5HF3N.3HXQWJR71RZ8S@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 14 Jul 2025 18:49:16 +0200
+X-Gm-Features: Ac12FXwXO2KNcdQV3tlX-rY7Yz59jrBSbZYooFPejMZSrz3E3NZnZ7iFxrUjBHY
+Message-ID: <CANiq72=NSRMV_6UxXVgkebmWmbgN4i=sfRszr-G+x3W5A4DYOg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] rust: update ARef and AlwaysRefCounted call sites
+ to import from sync::aref
+To: Benno Lossin <lossin@kernel.org>
+Cc: Shankari Anand <shankari.ak0208@gmail.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Update the MAINTAINERS file to reflect the following changes for two Intel
-platform drivers:
+On Mon, Jul 14, 2025 at 10:49=E2=80=AFAM Benno Lossin <lossin@kernel.org> w=
+rote:
+>
+> We probably want to split this by subsystem and not remove the
+> re-exports this cycle. @Miguel what do you think?
 
-- Tony has agreed to take over maintainership of the Intel In-Field Scan
-  (IFS) driver, and is now listed as the new maintainer.
-- Remove myself as the maintainer for the Slim BootLoader (SBL) firmware
-  update driver and mark it as Orphan. To the best of my knowledge, there
-  is no one familiar with SBL who can take over this role.
+Indeed, unless we get quick Acked-bys and so on, it is likely we want
+to do this (i.e. the second patch) in 2 kernel cycles.
 
-These changes are being made as I will soon be leaving Intel.
+Shankari: i.e. one cycle that cleans up most of the code (which you
+can submit split by subsystem so that each maintainer picks on their
+own, which typically helps to get patches merged quicker), and then
+another kernel cycle that finally cleans anything new (which ideally
+are very few) that was added meanwhile and removes the re-export.
 
-Signed-off-by: Jithu Joseph <jithu.joseph@intel.com>
----
- MAINTAINERS | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+There was recent discussion on this sort of split recently on Tamir's
+series, in this subthread, in case it helps:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fad6cb025a19..9b90f434101b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12185,9 +12185,8 @@ F:	drivers/dma/idxd/*
- F:	include/uapi/linux/idxd.h
- 
- INTEL IN FIELD SCAN (IFS) DEVICE
--M:	Jithu Joseph <jithu.joseph@intel.com>
-+M:	Tony Luck <tony.luck@intel.com>
- R:	Ashok Raj <ashok.raj.linux@gmail.com>
--R:	Tony Luck <tony.luck@intel.com>
- S:	Maintained
- F:	drivers/platform/x86/intel/ifs
- F:	include/trace/events/intel_ifs.h
-@@ -12527,8 +12526,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/iwlwifi.git
- F:	drivers/net/wireless/intel/iwlwifi/
- 
- INTEL WMI SLIM BOOTLOADER (SBL) FIRMWARE UPDATE DRIVER
--M:	Jithu Joseph <jithu.joseph@intel.com>
--S:	Maintained
-+S:	Orphan
- W:	https://slimbootloader.github.io/security/firmware-update.html
- F:	drivers/platform/x86/intel/wmi/sbl-fw-update.c
- 
+    https://lore.kernel.org/rust-for-linux/CANiq72kta=3DWk=3D3764A5SzxB6Mq=
+=3DsJfm9DyMZXFC91ojUSj1TeQ@mail.gmail.com/
 
-base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
--- 
-2.34.1
+Sorry if this is (I think) one of your first series sent -- in Rust
+moving types around modules is a bit painful. At least the first patch
+should not have this issue.
 
+Thanks!
+
+Cheers,
+Miguel
 
