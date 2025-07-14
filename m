@@ -1,212 +1,197 @@
-Return-Path: <linux-kernel+bounces-730459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B8EAB044D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:55:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1DF4B044A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:50:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 523537ADD0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:53:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD71A188EEA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59F825EF97;
-	Mon, 14 Jul 2025 15:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B69025CC69;
+	Mon, 14 Jul 2025 15:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IcWRSa1Z"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ciNU5kgF"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2487125BF1B
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1411825C81F
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752508494; cv=none; b=lNnTfHB+iIw0IDG5MWZFy2ZA5hCwXJZGV6PxAYv9UGOeUMYRRC8vvxinigRUCAOfeBAqT6oSyQK5TObIRrWrMKokqVcLnmXqvFR/jwOadCPh3ywnC8+Jb9OtU9TFDYZbZ+I+r39Va+d/n5ktPpfMrB2+gW/I4+5kS1atHan1Hjw=
+	t=1752508022; cv=none; b=qt2xAYOD20p8ejRz4zdX8Xjq5GczIN2pZj1vSmck+yepNLIL3z5Mlpr31lAm/LyC4k8COaJjvNgaxPLnZgmvtzVteuJ/C/+H8rgTHSwJxJmxUgoNM+HWAgEuglAtYNYzoVWtGHeY/D+LloaGYFEnQS6fg9FF2kSF94zT5tkAdTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752508494; c=relaxed/simple;
-	bh=5LlMEN4J3o3aD6YDXjwZ5zCkBWXWLqScnxci+wtPW0U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pf+u4WQFcz/bQAdRph3bltXXeXo1ZeDaezd5GWogVnCmrbrahzjkjLc4Y/JUNxVJ7jf6xeHpvkiwxKkHs+e983RW8LqreIpEAiJYoyckHdkY7FiBSpn80+zxD8PsiYUKTmkofaDMf27dwxEsZcxrB2EoyhO7PpW75gt6XzW701g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IcWRSa1Z; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ae36e88a5daso897969366b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:54:52 -0700 (PDT)
+	s=arc-20240116; t=1752508022; c=relaxed/simple;
+	bh=HLqpQgnXCt5R5jCRQgf7gHVzF6nqzmxv52TkY/rVIdY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=IXDHYkBBte8LYL3sce6Os1fjS1jp1LRvTTPltM4/ANRUgZnDN9XsK0pvJKGnYZGUwEw6LG98HNwmbouMP5bMo4imhRsDN6lIRhpokLU6WHFlGTI8UgSp3J6axzu7Ey5TwV94/UsF2GYmC9swQtsgZQrf2+jRY2RsldB+IOnfwXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ciNU5kgF; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b3642ab4429so3500753a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:47:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1752508491; x=1753113291; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9h6RiMEbdSPWHXVsj9OLxwFBmTJFmqoquTZg92Kpnmk=;
-        b=IcWRSa1ZJ0lxbrbqEkWQJ956iUSO8Sw5FFvp/6eSfoQ1a/HSuupelG75ueybDrz14z
-         r7xHuWxsCWu3ht1FJfZJilz5PUkxL019+2WkamzipPcLjB1Dh8Knq/PiorkZtRUoo5f3
-         QI/X9YaJm3+er2Fx1ffgt9Aa5IQeUnfXimCcE=
+        d=google.com; s=20230601; t=1752508020; x=1753112820; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ip9t0x4/3FNLLNvz+wHbRbiM0nrlhqfHzpLLV/dpYr8=;
+        b=ciNU5kgFGRdlaZSZH2ZyMyYSuj7KkTZkpHt2B/AmY4GbX43XG2/FKp+UcCyx3UVvR7
+         d7ro/q2BBbTTRLFluKW7odfh25ai7n47RLE3jLd+rgL93ghtGZDUObhvbIzn7GmWRp5+
+         l2tkxePcuLr/ZHlwRGCAzwTQEJj61dttVfyHkBo6ug3C5RyZgnCIvxcHy9xIVU73HQfO
+         1UT/crhBghclljrEQMo3oUkZ5Z7zop1iIsliqcDdftdx9ZxJJ/n+iURcZK6ijVWBfWLL
+         vBipx7U7Ep5bsy7gGtSF5tWfznN6pcWda6pC/Cgh57vBSxi5uEdiUy4YxsDHtlrY/41j
+         gYCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752508491; x=1753113291;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9h6RiMEbdSPWHXVsj9OLxwFBmTJFmqoquTZg92Kpnmk=;
-        b=igwY2UsWo6/E8KGJxRaPe4nfGxBgdxLi72Vn7n1gy9OqEU9/WHGGf0rNBv7q7jF7AH
-         YxlqsfvJ6HH1zzHexlgi5lgckc3Vr/Ei5MEqvYLMwln2K5R5TForB2HCbomhsdaXrhfs
-         rFOVSPzDZlJZUFQOi8pyz2MkWuEZBb6mcMxlnPR00LAJ1bSiZzmZ10D994pU+tiWbV+7
-         SGokoKhiRj17JNtQY/z34Yy9WyCHl57jSBp0HJiVwqmSRGBcwxFMi+rFe32JeD4/xAPQ
-         7vdUawp+OkvzmE1WZ8AFZxybWDVfuyP8w0WO8KEA9DbZUW87PllRAwclRFu1P5/q3xB8
-         lvjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUv+IN0t+pz8f1vocCTchgZo0MfN9uu9kFQJkVSLtRZANKrkTKqPY6El7cQDPSMnv9/cN6ni9tcIyVW9SU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+NtYMVa0AndeHFW340DMobZj6DukmCa0gbMg8tj6GwRmMT9Wj
-	FQU571NxLgsmXlUa+hwwQMO3T2D9wXOsbqy1K6MUKan/Dn/yCcla24eEWG7/+KzDOzdmp2GZr0/
-	pOjDxHg==
-X-Gm-Gg: ASbGncunEVh9+didAkRM2Q44h33qT8kamSGtjXkWUDoOyKk/VYut9HlR6dx8tf4hDqp
-	Vfk/D9/Rz0u1WJtv+AUkHC5CsoMXd2umYw91T8PKOnEDIN/Fj3WljoKX3JZXCldau3LIyM7jlxx
-	zMLXlSeF6VBkT8R8MnrE9rP53nlH71c7Y9sD0A1zNhuv1UdNS0Y77AClF2nw65Jwr4m5op1fAkw
-	z/ZnaDk/HbM6FXlcBE5/48W2+f1//s3CqeCK/+EXTz36bbBenlOcqFr6KVsSvryk1w0AxQUokFL
-	ideHko6o6YZhq0g6snBq7OfUb6g5dUPEHQ35gx1bauAC/KUKtQesFcDAX7SAD9FaI1FLIrXNAOO
-	bEPI93kiOI/T8Yawyg1XiXB3GzppUtoYSW4jEuWeNHjWwHNCmUAqX2OptB7Ex
-X-Google-Smtp-Source: AGHT+IFcORXQnRlyAQl1BWIkNKBcRWIRUrC5YBpxoOBv4Wb3iX34/fPFZjmwfnOilEdKaHia8kiIfA==
-X-Received: by 2002:a17:907:3c85:b0:ae3:f296:84cf with SMTP id a640c23a62f3a-ae6fc1204f3mr1387359066b.30.1752508491254;
-        Mon, 14 Jul 2025 08:54:51 -0700 (PDT)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82ded59sm830302566b.169.2025.07.14.08.54.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 08:54:51 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6070293103cso7093068a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:54:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUTr9itchJDQyJky3ubwmJg64DtoizDJZEveXPZbrOVzUA6AjcvgfbxSpK2vfErnpQI2waQmALxozUvBMU=@vger.kernel.org
-X-Received: by 2002:a05:6512:b10:b0:553:3492:b708 with SMTP id
- 2adb3069b0e04-55a046250abmr3344250e87.49.1752508013248; Mon, 14 Jul 2025
- 08:46:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752508020; x=1753112820;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ip9t0x4/3FNLLNvz+wHbRbiM0nrlhqfHzpLLV/dpYr8=;
+        b=MEcVQwh9fiYjDboI0OVWrMpIrkOasIZeSINymzYGFvWhlBSxkdoJ5yWrLMr6gj0iBm
+         p8f4Jxtq1MBu/BMxJtR+Kd4lH6GWlCXIFhIgPTlHbep9hrAjOv1zKJzajPqdLp41xTu3
+         sivAAgHouHZDzLhONTbEQ/z7QHeP0yYYpBi+7A+4Pwa+pJtQCkVpMbaFvVewwpNvVhC1
+         Ep5TQYsuU732R0UXTDFI/XWI+MsojnGcMRgy+NfU+4tc1w5nYmyriVghgDT0k4jCORhj
+         DipwB52fdC+1SAT2iAcdact2axbanDeAsFTlDD2OMuHbJJQt4u98SELDLP1UGCK2UgQ1
+         8Rpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWeJn3ZLvcA9lm7GF/W32YpfoF/GIPrRSKoe7NMRNVQ4Wic2MPo1Rih1zH7sMHdctcYVpnJhmNneQf0v+Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjS8I9U6QpETqoSxv7GL7UFu9aQCKpA3ZDqG9QneRgRsQbDhU5
+	NSlP05/Dx1UT5IPXDXugBFl1Wh1FHs8N6oQro46fOELCxFT6f/bGy4AUast/u9i8kOc0vnRzJ8F
+	lNqSe6w==
+X-Google-Smtp-Source: AGHT+IFY2NgFhRjN9PGIVOp9BWGAVuSX9NaJdtJo9InKm3qgjHFYFHo5G7SVt9DLtZkRBzbBwizV4byUFw8=
+X-Received: from pjbpq9.prod.google.com ([2002:a17:90b:3d89:b0:311:1a09:11ff])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:e7d1:b0:311:2f5:6b1
+ with SMTP id 98e67ed59e1d1-31c4ccddbd8mr21035595a91.22.1752508020404; Mon, 14
+ Jul 2025 08:47:00 -0700 (PDT)
+Date: Mon, 14 Jul 2025 08:46:59 -0700
+In-Reply-To: <aHSgdEJpY/JF+a1f@yzhao56-desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
- <20250605-uvc-orientation-v2-10-5710f9d030aa@chromium.org>
- <20250629181246.GE6260@pendragon.ideasonboard.com> <CANiDSCsu0RT4dcGyBJRutP=9HTe+niUoohxTZE=qJ8O_9ez=+A@mail.gmail.com>
- <20250714142926.GI8243@pendragon.ideasonboard.com>
-In-Reply-To: <20250714142926.GI8243@pendragon.ideasonboard.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 14 Jul 2025 17:46:40 +0200
-X-Gmail-Original-Message-ID: <CANiDSCvFe23xmrJ0-qbWWa6+vKGb+QdDFV8VSLkmWdAnfsFtzw@mail.gmail.com>
-X-Gm-Features: Ac12FXzUtyaVLj7tKhzc2QjlgMNdUTCkm86hTg8iZ2lfMiulh_fOCFYDlXtaIQQ
-Message-ID: <CANiDSCvFe23xmrJ0-qbWWa6+vKGb+QdDFV8VSLkmWdAnfsFtzw@mail.gmail.com>
-Subject: Re: [PATCH v2 10/12] media: uvcvideo: Add get_* functions to uvc_entity
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250703062641.3247-1-yan.y.zhao@intel.com> <20250709232103.zwmufocd3l7sqk7y@amd.com>
+ <aG_pLUlHdYIZ2luh@google.com> <aHCUyKJ4I4BQnfFP@yzhao56-desk>
+ <20250711151719.goee7eqti4xyhsqr@amd.com> <aHEwT4X0RcfZzHlt@google.com> <aHSgdEJpY/JF+a1f@yzhao56-desk>
+Message-ID: <aHUmcxuh0a6WfiVr@google.com>
+Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from kvm_gmem_populate()
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Michael Roth <michael.roth@amd.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
+	adrian.hunter@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com, 
+	tony.lindgren@intel.com, binbin.wu@linux.intel.com, dmatlack@google.com, 
+	isaku.yamahata@intel.com, ira.weiny@intel.com, vannapurve@google.com, 
+	david@redhat.com, ackerleytng@google.com, tabba@google.com, 
+	chao.p.peng@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Laurent
+On Mon, Jul 14, 2025, Yan Zhao wrote:
+> On Fri, Jul 11, 2025 at 08:39:59AM -0700, Sean Christopherson wrote:
+> > On Fri, Jul 11, 2025, Michael Roth wrote:
+> > > On Fri, Jul 11, 2025 at 12:36:24PM +0800, Yan Zhao wrote:
+> > > > Besides, it can't address the 2nd AB-BA lock issue as mentioned in the patch
+> > > > log:
+> > > > 
+> > > > Problem
+> > > > ===
+> > > > ...
+> > > > (2)
+> > > > Moreover, in step 2, get_user_pages_fast() may acquire mm->mmap_lock,
+> > > > resulting in the following lock sequence in tdx_vcpu_init_mem_region():
+> > > > - filemap invalidation lock --> mm->mmap_lock
+> > > > 
+> > > > However, in future code, the shared filemap invalidation lock will be held
+> > > > in kvm_gmem_fault_shared() (see [6]), leading to the lock sequence:
+> > > > - mm->mmap_lock --> filemap invalidation lock
+> > > 
+> > > I wouldn't expect kvm_gmem_fault_shared() to trigger for the
+> > > KVM_MEMSLOT_SUPPORTS_GMEM_SHARED case (or whatever we end up naming it).
+> > 
+> > Irrespective of shared faults, I think the API could do with a bit of cleanup
+> > now that TDX has landed, i.e. now that we can see a bit more of the picture.
+> > 
+> > As is, I'm pretty sure TDX is broken with respect to hugepage support, because
+> > kvm_gmem_populate() marks an entire folio as prepared, but TDX only ever deals
+> > with one page at a time.  So that needs to be changed.  I assume it's already
+> In TDX RFC v1, we deals with multiple pages at a time :)
+> https://lore.kernel.org/all/20250424030500.32720-1-yan.y.zhao@intel.com/
+> 
+> > address in one of the many upcoming series, but it still shows a flaw in the API.
+> > 
+> > Hoisting the retrieval of the source page outside of filemap_invalidate_lock()
+> > seems pretty straightforward, and would provide consistent ABI for all vendor
+> > flavors.  E.g. as is, non-struct-page memory will work for SNP, but not TDX.  The
+> > obvious downside is that struct-page becomes a requirement for SNP, but that
+> > 
+> > The below could be tweaked to batch get_user_pages() into an array of pointers,
+> > but given that both SNP and TDX can only operate on one 4KiB page at a time, and
+> > that hugepage support doesn't yet exist, trying to super optimize the hugepage
+> > case straightaway doesn't seem like a pressing concern.
+> 
+> > static long __kvm_gmem_populate(struct kvm *kvm, struct kvm_memory_slot *slot,
+> > 				struct file *file, gfn_t gfn, void __user *src,
+> > 				kvm_gmem_populate_cb post_populate, void *opaque)
+> > {
+> > 	pgoff_t index = kvm_gmem_get_index(slot, gfn);
+> > 	struct page *src_page = NULL;
+> > 	bool is_prepared = false;
+> > 	struct folio *folio;
+> > 	int ret, max_order;
+> > 	kvm_pfn_t pfn;
+> > 
+> > 	if (src) {
+> > 		ret = get_user_pages((unsigned long)src, 1, 0, &src_page);
+> get_user_pages_fast()?
+> 
+> get_user_pages() can't pass the assertion of mmap_assert_locked().
 
-On Mon, 14 Jul 2025 at 16:30, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> On Tue, Jul 01, 2025 at 01:13:10PM +0200, Ricardo Ribalda wrote:
-> > On Sun, 29 Jun 2025 at 20:13, Laurent Pinchart wrote:
-> > > On Thu, Jun 05, 2025 at 05:53:03PM +0000, Ricardo Ribalda wrote:
-> > > > Virtual entities need to provide more values than get_cur and get_cur
-> > >
-> > > I think you meant "get_info and get_cur".
-> > >
-> > > > for their controls. Add support for get_def, get_min, get_max and
-> > > > get_res.
-> > >
-> > > Do they ? The UVC specification defines controls that don't list
-> > > GET_DEF, GET_MIN, GET_MAX and GET_RES as mandatory requests. Can't we do
-> > > the same for the software controls ? This patch is meant to support the
-> > > UVC_SWENTITY_ORIENTATION and UVC_SWENTITY_ROTATION control in the next
-> > > patch, and those are read-only controls. Aren't GET_INFO and GET_CUR
-> > > enough ?
-> >
-> > V4L2_CID_CAMERA_ROTATION has the type UVC_CTRL_DATA_TYPE_UNSIGNED,
-> > that time requires get_min and get_max.
->
-> Where does that requirement come from ? Is it because how the
-> corresponding V4L2 type (V4L2_CTRL_TYPE_INTEGER) is handled in
-> uvc_ctrl_clamp() ? uvc_ctrl_clamp() is only called when setting a
-> control, from uvc_ctrl_set(), and V4L2_CID_CAMERA_ROTATION should be
-> read-only.
+Oh, I forgot get_user_pages() requires mmap_lock to already be held.  I would
+prefer to not use a fast variant, so that userspace isn't required to prefault
+(and pin?) the source.
 
-It its for VIDIOC_QUERY_EXT_CTRL
+So get_user_pages_unlocked()?
 
-uvc_query_v4l2_ctrl -> __uvc_query_v4l2_ctrl -> __uvc_queryctrl_boundaries
+> 
+> > 		if (ret < 0)
+> > 			return ret;
+> > 		if (ret != 1)
+> > 			return -ENOMEM;
+> > 	}
+> > 
+> > 	filemap_invalidate_lock(file->f_mapping);
+> > 
+> > 	if (!kvm_range_has_memory_attributes(kvm, gfn, gfn + 1,
+> > 					     KVM_MEMORY_ATTRIBUTE_PRIVATE,
+> > 					     KVM_MEMORY_ATTRIBUTE_PRIVATE)) {
+> if (kvm_mem_is_private(kvm, gfn)) ? where
+> 
+> static inline bool kvm_mem_is_private(struct kvm *kvm, gfn_t gfn)
+> {
+>         struct kvm_memory_slot *slot;
+> 
+>         if (!IS_ENABLED(CONFIG_KVM_GMEM))
+>                 return false;
+> 
+>         slot = gfn_to_memslot(kvm, gfn);
+>         if (kvm_slot_has_gmem(slot) && kvm_gmem_memslot_supports_shared(slot))
+>                 return kvm_gmem_is_private(slot, gfn);
+> 
+>         return kvm_get_memory_attributes(kvm, gfn) & KVM_MEMORY_ATTRIBUTE_PRIVATE;
+> }
+> 
+> 
+> > 		ret = -EINVAL;
+> > 		goto out_unlock;
+> > 	}
+> > 
+> > 	folio = __kvm_gmem_get_pfn(file, slot, index, &pfn, &is_prepared, &max_order);
+> If max_order > 0 is returned, the next invocation of __kvm_gmem_populate() for
+> GFN+1 will return is_prepared == true.
 
-We need to list the min, max, def and step for every control. They are
-fetched with uvc_ctrl_populate_cache()
-
-
-
->
-> > We can create a new type UVC_CTRL_DATA_TYPE_UNSIGNED_READ_ONLY that
-> > fakes min, max and res, but I think that it is cleaner this approach.
-> >
-> > > > This is a preparation patch.
-> > > >
-> > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > > ---
-> > > >  drivers/media/usb/uvc/uvc_ctrl.c | 12 ++++++++++++
-> > > >  drivers/media/usb/uvc/uvcvideo.h |  8 ++++++++
-> > > >  2 files changed, 20 insertions(+)
-> > > >
-> > > > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> > > > index 21ec7b978bc7aca21db7cb8fd5d135d876f3330c..59be62ae24a4219fa9d7aacf2ae7382c95362178 100644
-> > > > --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> > > > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> > > > @@ -596,6 +596,18 @@ static int uvc_ctrl_query_entity(struct uvc_device *dev,
-> > > >       if (query == UVC_GET_CUR && ctrl->entity->get_cur)
-> > > >               return ctrl->entity->get_cur(dev, ctrl->entity,
-> > > >                                            ctrl->info.selector, data, len);
-> > > > +     if (query == UVC_GET_DEF && ctrl->entity->get_def)
-> > > > +             return ctrl->entity->get_def(dev, ctrl->entity,
-> > > > +                                          ctrl->info.selector, data, len);
-> > > > +     if (query == UVC_GET_MIN && ctrl->entity->get_min)
-> > > > +             return ctrl->entity->get_min(dev, ctrl->entity,
-> > > > +                                          ctrl->info.selector, data, len);
-> > > > +     if (query == UVC_GET_MAX && ctrl->entity->get_max)
-> > > > +             return ctrl->entity->get_max(dev, ctrl->entity,
-> > > > +                                          ctrl->info.selector, data, len);
-> > > > +     if (query == UVC_GET_RES && ctrl->entity->get_res)
-> > > > +             return ctrl->entity->get_res(dev, ctrl->entity,
-> > > > +                                          ctrl->info.selector, data, len);
-> > > >       if (query == UVC_GET_INFO && ctrl->entity->get_info)
-> > > >               return ctrl->entity->get_info(dev, ctrl->entity,
-> > > >                                             ctrl->info.selector, data);
-> > > > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> > > > index a931750bdea25b9062dcc7644bf5f2ed89c1cb4c..d6da8ed3ad4cf3377df49923e051fe04d83d2e38 100644
-> > > > --- a/drivers/media/usb/uvc/uvcvideo.h
-> > > > +++ b/drivers/media/usb/uvc/uvcvideo.h
-> > > > @@ -261,6 +261,14 @@ struct uvc_entity {
-> > > >                       u8 cs, u8 *caps);
-> > > >       int (*get_cur)(struct uvc_device *dev, struct uvc_entity *entity,
-> > > >                      u8 cs, void *data, u16 size);
-> > > > +     int (*get_def)(struct uvc_device *dev, struct uvc_entity *entity,
-> > > > +                    u8 cs, void *data, u16 size);
-> > > > +     int (*get_min)(struct uvc_device *dev, struct uvc_entity *entity,
-> > > > +                    u8 cs, void *data, u16 size);
-> > > > +     int (*get_max)(struct uvc_device *dev, struct uvc_entity *entity,
-> > > > +                    u8 cs, void *data, u16 size);
-> > > > +     int (*get_res)(struct uvc_device *dev, struct uvc_entity *entity,
-> > > > +                    u8 cs, void *data, u16 size);
-> > > >
-> > > >       unsigned int ncontrols;
-> > > >       struct uvc_control *controls;
->
-> --
-> Regards,
->
-> Laurent Pinchart
-
-
-
---
-Ricardo Ribalda
+I don't see any reason to try and make the current code truly work with hugepages.
+Unless I've misundertood where we stand, the correctness of hugepage support is
+going to depend heavily on the implementation for preparedness.  I.e. trying to
+make this all work with per-folio granulartiy just isn't possible, no?
 
