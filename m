@@ -1,163 +1,101 @@
-Return-Path: <linux-kernel+bounces-730789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3554CB049E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:02:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9912DB049EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:02:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F9873AE939
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:02:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6B3F1A6795A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526A423BCEE;
-	Mon, 14 Jul 2025 22:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F8E242D6E;
+	Mon, 14 Jul 2025 22:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E2w/9K3S"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WCx4Fm/7"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892182114;
-	Mon, 14 Jul 2025 22:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B93220A5D6;
+	Mon, 14 Jul 2025 22:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752530547; cv=none; b=B7gnUQdZUNiSNTPE3Rv2QowqA4IQ28eXw0UTfGD3fQnw5Gp6oIIz3Y0DyJTyHvmb/Xescthp+Zg9OfeEGVVe2vpYE+Fmns+O71x7UCycjYfBWi+C38oU481se7+vLVm7izEGOwWkYzxHdOAt9YVz1sZgL+PrmL9OIrHYsgfSRJ4=
+	t=1752530570; cv=none; b=AyIE3v1s8xqZa3BQdHublGg9rnV5G65pWZmvTbkh6jKRoEE5HaLPaHLGLoW/RxKgk24roFVE0CTf4mUSs6IwaYlBuqy+ZWi3BcgbHQnmyIagr5biP0XvvAfC6d5lwx/vo7tMKnBy2p2IHth/lf9X9tfvOmzVwFr9+QLnD10hseM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752530547; c=relaxed/simple;
-	bh=1lHZsb4r+okitv458h/5R2qI7+rSxffEGn1Sd8vECnw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pf9oLNhQB5m7xekvd5xvWSoCTuwaUknGVGwmzQqLiCc9K0cLnwlKH0KQGk9Lnd8lVaFdwHBZRpWv+GWGOICbavZDpY5XhYgC7pnR+i5tvACr6JjEWOZQJ+RjOy1wRC5Yu6PdC6ep9REwtc5GRGuny2lV3nIZWaSPuhYZH8nn/ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E2w/9K3S; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752530546; x=1784066546;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=1lHZsb4r+okitv458h/5R2qI7+rSxffEGn1Sd8vECnw=;
-  b=E2w/9K3SQ6A3spOM4kdtr7WJ4OxTn48wL6E2OTFBak170EtTbHt0NCVQ
-   Prta211pOh/Pj2DoootR7IwWKKuSCINvwjthIIr1/AFOLBDfjiV1op04z
-   FrmZirFXR4upuew6hkbsUMqU7V1NAAIWDEZO6xOZmn86OIxGHHVA+iqsj
-   KvJ5AFycDIuvzILzc/znIEz+ADwCFA/21iYW8vRp/nqtgzCcHvOb5/3tx
-   HefP2MO4AzGtiobevETT6UFj+yXOb2DJ2lVOb3MD0EZSFWscNN1mUSxls
-   D8CjwNrDcqj/aG3/TYvh8t9s63L8br0cZjS/U/4qlc1n7Dh8mnuu8OnLJ
-   Q==;
-X-CSE-ConnectionGUID: 0jPxq0BlRi242YDifGLbQA==
-X-CSE-MsgGUID: JMQ6jWcRSlWeglsRyCi2Gw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="58392905"
-X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
-   d="scan'208";a="58392905"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 15:02:25 -0700
-X-CSE-ConnectionGUID: 4dsijGEBT8OhXiMcQvmgkw==
-X-CSE-MsgGUID: RZNigl73RWu6Nfypl2d+RA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
-   d="scan'208";a="157141299"
-Received: from slindbla-desk.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.95])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 15:02:21 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: linux-cxl@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>
-Cc: linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject:
- Re: [PATCH v3 6/8] cxl/region: Move ready-to-probe state check to a helper
-Date: Tue, 15 Jul 2025 00:02:17 +0200
-Message-ID: <3315674.vFx2qVVIhK@fdefranc-mobl3>
-In-Reply-To: <20250711234932.671292-7-dan.j.williams@intel.com>
-References:
- <20250711234932.671292-1-dan.j.williams@intel.com>
- <20250711234932.671292-7-dan.j.williams@intel.com>
+	s=arc-20240116; t=1752530570; c=relaxed/simple;
+	bh=JGE1wDGx3xAOmjvKZ4dyFo3/vl1S4o/l/NIby3eNNXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=P8wa3kEign9dHr5UB5cnUOWHq4d4/8dNHpGYZ8xideUadoOZizreDrlrn/OJpDZP/sW9DCyx0is+lhymuJLycciwXmG2LLOGJXlaMNMVBNvAKTEmRjC6Jzup7qjJfh8hlE0AP094/BuYg1Ae7z8WbL8RnJ6viyw1d3GfQ7Qjxxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=WCx4Fm/7; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752530460;
+	bh=C7Ml6jV9UoQjB3YOr822a/ax+E8sd+966vN5TJvqTm4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=WCx4Fm/7qI9qPZSelTZqcVqYXdN08hTu4HTYjz6gS6NgxFhT1RMjzQpdrXEeQrdx7
+	 x2lMq9MjMH0cElxCvleVD7fFmg/6Sl1AeINlEx4IIJRIDaLRnA/2DFNknP8x/wTm8I
+	 Kkec2RX6IfuaLqZY0r6AouGrTsMnGdKpHin/jHfe1KA6xgoSRsXmv4PrDJpC8undKq
+	 B7a0u3/ZUnRzU3ZXp0otHT+XRWFfq9Q504XryNbr9XDgc/wTVTGaB1jVwHCw1sWM16
+	 dfrCPniWUwZk3qu8dS33XJ2wCezdt6I5JYPqOA+dhKl1cIqroXOxN7L7FW2hmSfPZh
+	 25tn2ZzvDBiUA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bgx8r0xxTz4wbY;
+	Tue, 15 Jul 2025 08:01:00 +1000 (AEST)
+Date: Tue, 15 Jul 2025 08:02:44 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commits in the jfs tree
+Message-ID: <20250715080244.375a152c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/6t8x4L8badqpMDMVzHlec4t";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/6t8x4L8badqpMDMVzHlec4t
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-On Saturday, July 12, 2025 1:49:30=E2=80=AFAM Central European Summer Time =
-Dan Williams wrote:
-> Rather than unlocking the region rwsem in the middle of cxl_region_probe()
-> create a helper for determining when the region is ready-to-probe.
->=20
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Alison Schofield <alison.schofield@intel.com>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Hi all,
 
-Reviewed-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+Commits
 
-> ---
->  drivers/cxl/core/region.c | 24 ++++++++++++++++++------
->  1 file changed, 18 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 3a77aec2c447..2a97fa9a394f 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3572,9 +3572,8 @@ static void shutdown_notifiers(void *_cxlr)
->  	unregister_mt_adistance_algorithm(&cxlr->adist_notifier);
->  }
-> =20
-> -static int cxl_region_probe(struct device *dev)
-> +static int cxl_region_can_probe(struct cxl_region *cxlr)
->  {
-> -	struct cxl_region *cxlr =3D to_cxl_region(dev);
->  	struct cxl_region_params *p =3D &cxlr->params;
->  	int rc;
-> =20
-> @@ -3597,15 +3596,28 @@ static int cxl_region_probe(struct device *dev)
->  		goto out;
->  	}
-> =20
-> -	/*
-> -	 * From this point on any path that changes the region's state away from
-> -	 * CXL_CONFIG_COMMIT is also responsible for releasing the driver.
-> -	 */
->  out:
->  	up_read(&cxl_region_rwsem);
-> =20
->  	if (rc)
->  		return rc;
-> +	return 0;
-> +}
-> +
-> +static int cxl_region_probe(struct device *dev)
-> +{
-> +	struct cxl_region *cxlr =3D to_cxl_region(dev);
-> +	struct cxl_region_params *p =3D &cxlr->params;
-> +	int rc;
-> +
-> +	rc =3D cxl_region_can_probe(cxlr);
-> +	if (rc)
-> +		return rc;
-> +
-> +	/*
-> +	 * From this point on any path that changes the region's state away from
-> +	 * CXL_CONFIG_COMMIT is also responsible for releasing the driver.
-> +	 */
-> =20
->  	cxlr->memory_notifier.notifier_call =3D cxl_region_perf_attrs_callback;
->  	cxlr->memory_notifier.priority =3D CXL_CALLBACK_PRI;
-> --=20
-> 2.50.0
->=20
->=20
->=20
+  4c5232572aee ("jfs: truncate good inode pages when hard link is 0")
+  96a7c5605a49 ("jfs: upper bound check of tree index in dbAllocAG")
 
+are missing a Signed-off-by from their authors.
 
+Please fix up these mailing list munged addresses e.g. the Reply-To
+address is probably correct?
 
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/6t8x4L8badqpMDMVzHlec4t
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh1foQACgkQAVBC80lX
+0GyUIwgAk3FyjONYVdiAB9wUW1a99cE7mQWr39kME8jNZTnjGYAYyYeqiB+Pczt3
+Gv6dH676/Dhxdyn+echcd6ZahT+UzyoUb51kO4q9urXD8xY1sR3dZQfxlNxe5o7p
+4B6uJHhPDB05znMMUk12rjOLxV6i629RWtGvI57R+NqUaUHH2wAVIsdtKO9HOfbm
+MN7MDjX5ihKCepbnduNn6Oew/a851dJ6Rm7un6t7z3zfvpLcm/Bw8bjz7MLfL7xQ
+VA9dxaKSMT+yxhR0OVZTAunvujrjvGxDTcjfLNaeg/FkujzVRT8/PGxpgL0jDB4M
+3FcS5Q8U8wgmw6Lq9ZwIQLbwQGd1Yw==
+=dbZx
+-----END PGP SIGNATURE-----
+
+--Sig_/6t8x4L8badqpMDMVzHlec4t--
 
