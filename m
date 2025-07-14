@@ -1,134 +1,214 @@
-Return-Path: <linux-kernel+bounces-729966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3898EB03E5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:10:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30018B03E5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A18A14A5D25
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:09:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EE914A6069
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1AC248894;
-	Mon, 14 Jul 2025 12:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E47024A044;
+	Mon, 14 Jul 2025 12:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RwGT3AUF"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="trqiWccH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8367D243964
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4198248F5F;
+	Mon, 14 Jul 2025 12:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752494889; cv=none; b=CQwXmbejBL3/koJvsqDNa3RXc3BvTCE3Kf6xizxS0nM4vaDVYdEktCDbSjhxW6rUpyN211y3USdWM69EXFcFGpAs6qYe5l/1iK0hb1q1HXjI2iL6yrrZ+0sTt/iCgwRzfua7cNx/Wkseqw9L0kZXky3QTYwhWTQOpHrBhoJ4xuU=
+	t=1752494920; cv=none; b=MAc9l/Q8f8oYw5+dZiPL9CGGRbtsjL0rnVl2MezvOaVrSfaAGYeo6Uk/NM6TJq/XIZUavs74Sn8tRlueddofJ/onDs4d1ZavTSv/+Y3MGTG7AB9j/TXUmmKvajjUdMDMP8+ImIB9GSSwGJ2r0EfGELcFsSs9W+kdL177NJ9aF+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752494889; c=relaxed/simple;
-	bh=rrTQ1/piU5c3HlEkqsvmHmiT+sRyPTggNbv96TDoEuE=;
+	s=arc-20240116; t=1752494920; c=relaxed/simple;
+	bh=wJpZOrDsWmR3OsD6VllKDLh4xwGIWO/czyVInoIGEZY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sve5eJhjCUCA9rsbWMFC6NLFtMryunGIjVBkY18/mroj0FMjZ9NYJu/LsHwqY/gAelWtyQQ6hc21d4n2lX7AbaXgE35TcKihTpSpcosjg01ZUKSqzdoaLisnErao0azyaeevxUPU5Pk8AgPUsB0DPQ4IBoBtZLxEPtzZYQzLnjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RwGT3AUF; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-553e5df44f8so3855517e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 05:08:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752494885; x=1753099685; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rrTQ1/piU5c3HlEkqsvmHmiT+sRyPTggNbv96TDoEuE=;
-        b=RwGT3AUFzM4YVtUzfFv/wppJHSfTBCSRMu3SeIBSPBsDX4kRDv0vV8mugXNVzIToU0
-         bphCsn6oHSCmETiCZKWvBX3n+e4TizZ+9C5E2ZGPZqTAG42VZAFE+hxLjSRlZbMW5Net
-         ApT62H4CkqVAh/Ic5s8DH6Zg1Lw+rmeOkTvhOkgXtEMyGrBi7xJgmpKNOHUfCD3vdux2
-         DUOQLzW6yuR2JzeWBeGmZLoXv3wkdv+4+sN+SBJgr3/Z5MA+ZtgujTeTQU5WbusLbi9I
-         FTDFR5rk9eMp7Jjv4duxw7mvnIaXpW/Db1mXTPesHlxo6874ijF7MJYvy8F7W3gwIBZr
-         dc4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752494885; x=1753099685;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rrTQ1/piU5c3HlEkqsvmHmiT+sRyPTggNbv96TDoEuE=;
-        b=eAD4xn7iY5mZtyJTo09/c+Kzq6TF6EWgQR/U4bVcAxy0aSE3vZ1lJCWGzJ/FC2jI6r
-         HdTowQwlk1DQvqcJEg+kskKJ3+GXNYLWjxvs1MYCaXK/YhF9qnzBrjqAyMStiptz/CCe
-         Ny5r89gpCgjlp8J945hb7H2jOInHC0m3CJCVmoF1zKSpCETtS8bcucxB9a8CP0oQcyj4
-         yilCtCW98BC6K3yHnSnoD/cZgKfpUpYxyxbrwjVYmmuQ0Rn6duUfnZpwHBluiZj7BVLK
-         kyCX/ErumISrTekXcZJJuOErmRz2I2X6/OOoWMkk79dnGE51n5SXFWjLdRHGM9+QcSD2
-         xjpw==
-X-Gm-Message-State: AOJu0Yxy6/0+eQ16BVVd63BJ2d5eQw+kqxVxi+QmDgbjpEsW4SEiqKOx
-	Wiof6mFjIUBCeTfqz7a+x4cQSxihs7OlSto1QrilC7N77b86lUiGpNrQ
-X-Gm-Gg: ASbGncu/au4w0F157UifvBhNql2O3xYjkzSDsFuVMx9r6NYA32ggm/r81w7c7odIbvg
-	9HdnLd1aWprTZVEyb2BmxvE73XamZibO/SeSRMzRowBaIAENFlQMrOXLfXaP87687gAzgnTUmrv
-	XVya+YcWb6PM1lrXgmwvRvEZ9z59dKiqOgEkJMVtxPrywJLJe2N3q8aN10jkWOeUbY3PLm75ztc
-	CvCJcXQLl1ndkSCyMsXVNkjsvxbnOFcDXtd44+/qA+oyhZ3DlYKaLOEEgIpPMj1PfJmuvpcHTA7
-	2nPS+BlMeyznO+NqM9lfMNrDjj76fkctks9av3AOj1ElyvhCaSR5NZ0SwJVfqzYh6PUqEt/YtUI
-	aqmVGEQz1w3rnXfRAg4EfPHVuX2u10Nj1C0zPVQrKkN/JOAeJqBV7ngYk9UJsnCHQgtP/Bw==
-X-Google-Smtp-Source: AGHT+IEzEQDT9SlcMJXRWaUpVIthbB3FTkJ0mV934wHqVQgkTP67sY6GyOX+sERvMFkML4JM1C6sHw==
-X-Received: by 2002:a05:651c:419c:b0:32a:81a2:ebb with SMTP id 38308e7fff4ca-33053293410mr34114811fa.1.1752494885131;
-        Mon, 14 Jul 2025 05:08:05 -0700 (PDT)
-Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32fa29133fcsm15060511fa.3.2025.07.14.05.08.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 05:08:03 -0700 (PDT)
-Date: Mon, 14 Jul 2025 14:08:01 +0200
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: linux-kernel@vger.kernel.org, ipedrosa@redhat.com,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 3/5] drm/sitronix/st7571-i2c: Add an indirection level
- to parse DT
-Message-ID: <aHTzIcxe3Z_j62-X@gmail.com>
-References: <20250714104421.323753-1-javierm@redhat.com>
- <20250714104421.323753-4-javierm@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sUfUYmjev/Z7pMo/MFw4uf4OR2LxllfNuxj2wLiZqZOVDG+WJO2L6u1J8jXGgSKztGV2mBVChpnbbE7y7GfYdLemifaCfZeWbsd8972OX4+xuV5xaLk/ZXH2G5lYYeNbiCc6sINu1OSTAA+GRF8IdI8SUuYy6+psYc0AX6mSjbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=trqiWccH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A99D4C4CEED;
+	Mon, 14 Jul 2025 12:08:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752494917;
+	bh=wJpZOrDsWmR3OsD6VllKDLh4xwGIWO/czyVInoIGEZY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=trqiWccHinVvUiKTbjbxlGMWU2TqEjXG1ph1pc6e/dbRniwMVzHuzjWYIgSx5zY/S
+	 n5D2uxRV0KYpkK68a/cJLoWy6EL5T9gOnR/gn3oho6w6PNt2yN6auNj2N1sBc0hxNS
+	 K7z1j2Wv5C+a4VkQX0nNSSHfaFqWPjmx6ML5znRkgmLNdCJ2EePrQ/dJOumtQ5juQO
+	 MhHt4tzV/51KIrhrRL9QZrSi7xdFmlq2knGX0kFd2yhT+A5MBEqSPA4mRQwLs4Hq9C
+	 nnfsZtPAl49b3+Q/oRzYUboKsiFIYphlM4myKDlEK5iq8hI2vUEMXC15ObePthXA9C
+	 Q/UnTDZpVVzxw==
+Date: Mon, 14 Jul 2025 13:08:31 +0100
+From: Will Deacon <will@kernel.org>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Cc: joro@8bytes.org, robin.murphy@arm.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
+	nicolas.dufresne@collabora.com, jgg@ziepe.ca, iommu@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v6 3/5] iommu: Add verisilicon IOMMU driver
+Message-ID: <aHTzPwTob8_5rtBS@willie-the-truck>
+References: <20250710082450.125585-1-benjamin.gaignard@collabora.com>
+ <20250710082450.125585-4-benjamin.gaignard@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4ZunG6Sz0bu+w/YO"
-Content-Disposition: inline
-In-Reply-To: <20250714104421.323753-4-javierm@redhat.com>
-
-
---4ZunG6Sz0bu+w/YO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250710082450.125585-4-benjamin.gaignard@collabora.com>
 
-On Mon, Jul 14, 2025 at 12:44:02PM +0200, Javier Martinez Canillas wrote:
-> Other Sitronix display controllers might need a different parsing DT
-> logic, so lets add a .parse_dt callback to struct st7571_panel_data.
->=20
-> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Hi,
 
-Reviewed-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+On Thu, Jul 10, 2025 at 10:24:44AM +0200, Benjamin Gaignard wrote:
+> diff --git a/drivers/iommu/vsi-iommu.c b/drivers/iommu/vsi-iommu.c
+> new file mode 100644
+> index 000000000000..15322b9929af
+> --- /dev/null
+> +++ b/drivers/iommu/vsi-iommu.c
+> @@ -0,0 +1,781 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/* Copyright (C) 2025 Collabora Ltd.
+> + *
+> + * IOMMU API for Verisilicon
+> + *
+> + * Module Authors:	Yandong Lin <yandong.lin@rock-chips.com>
+> + *			Simon Xue <xxm@rock-chips.com>
+> + *			Benjamin Gaignard <benjamin.gaignard@collabora.com>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/compiler.h>
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/errno.h>
+> +#include <linux/init.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/iommu.h>
+> +#include <linux/list.h>
+> +#include <linux/mm.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_iommu.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +
+> +#include "iommu-pages.h"
+> +
+> +struct vsi_iommu {
+> +	struct device *dev;
+> +	void __iomem *regs;
+> +	struct clk_bulk_data *clocks;
+> +	int num_clocks;
+> +	struct iommu_device iommu;
+> +	struct list_head node; /* entry in vsi_iommu_domain.iommus */
+> +	struct iommu_domain *domain; /* domain to which iommu is attached */
+> +	spinlock_t lock;
+> +	int irq;
+> +};
+> +
+> +struct vsi_iommu_domain {
+> +	struct list_head iommus;
+> +	struct device *dev;
+> +	u32 *dt;
+> +	dma_addr_t dt_dma;
+> +	struct iommu_domain domain;
+> +	u64 *pta;
+> +	dma_addr_t pta_dma;
+> +	spinlock_t lock;
+> +};
+> +
+> +static struct iommu_domain vsi_identity_domain;
+> +
+> +#define NUM_DT_ENTRIES	1024
+> +#define NUM_PT_ENTRIES	1024
+> +#define PT_SIZE		(NUM_PT_ENTRIES * sizeof(u32))
+> +
+> +#define SPAGE_SIZE	BIT(12)
+> +
+> +/* vsi iommu regs address */
+> +#define VSI_MMU_CONFIG1_BASE			0x1ac
+> +#define VSI_MMU_AHB_EXCEPTION_BASE		0x380
+> +#define VSI_MMU_AHB_CONTROL_BASE		0x388
+> +#define VSI_MMU_AHB_TLB_ARRAY_BASE_L_BASE	0x38C
+> +
+> +/* MMU register offsets */
+> +#define VSI_MMU_FLUSH_BASE		0x184
+> +#define VSI_MMU_BIT_FLUSH		BIT(4)
+> +
+> +#define VSI_MMU_PAGE_FAULT_ADDR		0x380
+> +#define VSI_MMU_STATUS_BASE		0x384	/* IRQ status */
+> +
+> +#define VSI_MMU_BIT_ENABLE		BIT(0)
+> +
+> +#define VSI_MMU_OUT_OF_BOUND		BIT(28)
+> +/* Irq mask */
+> +#define VSI_MMU_IRQ_MASK		0x7
+> +
+> +#define VSI_DTE_PT_ADDRESS_MASK		0xffffffc0
+> +#define VSI_DTE_PT_VALID		BIT(0)
+> +
+> +#define VSI_PAGE_DESC_LO_MASK		0xfffff000
+> +#define VSI_PAGE_DESC_HI_MASK		GENMASK_ULL(39, 32)
+> +#define VSI_PAGE_DESC_HI_SHIFT		(32 - 4)
 
---4ZunG6Sz0bu+w/YO
-Content-Type: application/pgp-signature; name=signature.asc
+How does this page-table format relate to the one supported already by
+rockchip-iommu.c? From a quick glance, I suspect this is a derivative
+and so ideally we'd be able to have a common implementation of the
+page-table code which can be used by both of the drivers.
 
------BEGIN PGP SIGNATURE-----
+Similarly:
 
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmh08xwACgkQiIBOb1ld
-UjI3nA/6AhbJzYc14e2kj9qjpjhvgbOUHXl7QmMsJ3Abc63kZe2h1CSouL1ma1on
-xVhcpVZTmWnhAi9mtFNdUZ4oaDkUvEuEQDMPC4Ky+nRIl8UIC8MIwH2YGOvv9Nhk
-LT9+UmcK0fQSlDGxtTI8v2LHoBMjaJQYYKwrOBO4khDEA8S4nYLnUxF0fVvnbuMJ
-SqOLd22GDJMHjGZHPM1a99EAOQDjLS0JYRORQOOljvtKv0bdDpB68TNY+1djaC2D
-V13Rl3AXJkBwsQ2QdCKyB9QBdF8fLCh3c2F5OtintxgANurwtM6mTqc71eDuvTA0
-yV0yO2APTKZwFBx491C4xqUjjEOxLD3aGErbe8z3czqQ32q0dyDh6WdNSuAX0VGo
-l/A0pmxaKCNKZo6Le/DDcaWYWlC42x9FnCIcd7U3J7wZLRGph82bzHiSQizivnX1
-AoiZZsro2hAEoxD9rjRxibtuyeSF6H23MTpsey8UP7S6N8P39EE7VeftBp07l/+e
-MpX6ZmVf5L8avvtbrT9RKNdcl5LZhA16isAqhGL0/N5tIYgi2kiJD7Kfb14doi38
-izpVE+91wWPEXRDc2lxMjAC2pewKB6CwJ0KJRPya7v6/zzMfcApq39fObws9RX+i
-q5CM8xY6CGvs2KeF5kVLB3BunhtDMwuI2ZlfvL3/KSZz35EOwyw=
-=JGEU
------END PGP SIGNATURE-----
+> +static void vsi_iommu_domain_free(struct iommu_domain *domain)
+> +{
+> +	struct vsi_iommu_domain *vsi_domain = to_vsi_domain(domain);
+> +	unsigned long flags;
+> +	int i;
+> +
+> +	spin_lock_irqsave(&vsi_domain->lock, flags);
+> +
+> +	WARN_ON(!list_empty(&vsi_domain->iommus));
+> +
+> +	for (i = 0; i < NUM_DT_ENTRIES; i++) {
+> +		u32 dte = vsi_domain->dt[i];
+> +
+> +		if (vsi_dte_is_pt_valid(dte)) {
+> +			phys_addr_t pt_phys = vsi_dte_pt_address(dte);
+> +			u32 *page_table = phys_to_virt(pt_phys);
+> +
+> +			dma_unmap_single(vsi_domain->dev, pt_phys,
+> +					 SPAGE_SIZE, DMA_TO_DEVICE);
+> +			iommu_free_pages(page_table);
+> +		}
+> +	}
+> +
+> +	dma_unmap_single(vsi_domain->dev, vsi_domain->dt_dma,
+> +			 SPAGE_SIZE, DMA_TO_DEVICE);
+> +	iommu_free_pages(vsi_domain->dt);
+> +
+> +	dma_unmap_single(vsi_domain->dev, vsi_domain->pta_dma,
+> +			 SPAGE_SIZE, DMA_TO_DEVICE);
+> +	iommu_free_pages(vsi_domain->pta);
+> +
+> +	spin_unlock_irqrestore(&vsi_domain->lock, flags);
+> +
+> +	kfree(vsi_domain);
+> +}
 
---4ZunG6Sz0bu+w/YO--
+is almost a carbon copy of rk_iommu_domain_free(), so it seems that
+there's room for code re-use even beyond the page-table support.
+
+I think that also means we'll want Heiko's Ack before we merge anything.
+
+Will
 
