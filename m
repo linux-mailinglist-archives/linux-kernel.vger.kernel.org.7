@@ -1,109 +1,169 @@
-Return-Path: <linux-kernel+bounces-730408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10647B04471
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:45:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 745E8B04450
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D0BD7B4E5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:35:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FB427BABC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0A0267713;
-	Mon, 14 Jul 2025 15:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7543225A645;
+	Mon, 14 Jul 2025 15:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="nRCiH0M9"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ya44pY77"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17C8264A73;
-	Mon, 14 Jul 2025 15:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CAA25CC63
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752506962; cv=none; b=R9gw07Z35NB0T1YxoK+4N8JZpTX8ma0+DMj6aEQjs6/osEKgdAwaXRxUUZwlhOabZ49cyL0Kk3kbLBYcQkbnaDz3nOZBpGr4bTtG/cf3oXitor7Lw2iSqtmvoW4U9JFMoZYpbakgLWaLAGNjOYvgRoyVi/R0IkuWg6GlfHikEMQ=
+	t=1752506934; cv=none; b=O2kOYPOduAwcbW2KGWSyaSEPcxPKNCuXSHpPnVGdsM+NvxjsLHYWRJ1yM/3jrp3l4tHlKWlKtuX/JTIlKmbX4DmtJwaJPr3D+u5yXdoDc74UnbbWt9TrU0/OdNVBX9JVxRY+Wk7d+sxbRdummt30Kn4cwi1LWILkKaEp3P5OP0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752506962; c=relaxed/simple;
-	bh=kH+76pQfe8h+nA25aD3uhXFxx4VONMtqA+YpB33JP94=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZneXn3PQE2fdF/BVqoPnkVmAHnliGls9qxWhSzWJrWPlk7TIRaSEjNnFCWnBn/VFhdHMmAXkj6Cx1TrqbzX/X4jiQYPFBDQGV1wi8bZ+bD/mV/hFToYDIOsY1wHNuHqVybmZtdVofGrY6eQpQh/9NH5WsQ5bRNvGjAD9K+scj7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=nRCiH0M9; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56EFSctL62444685, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1752506918; bh=kH+76pQfe8h+nA25aD3uhXFxx4VONMtqA+YpB33JP94=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=nRCiH0M9XTTm+KVkMleEMU+EQFkvopUfvgApC7PkSX+yJu1mF6n5hJSxUpnBxMfj0
-	 9ZsRmvCLon1TuuN4DZZyfogmbtBawZHeLdpvKr3KDZsOuUODA0hm+Gjd3VHOSM1bsQ
-	 XL/+VvUCoh13bbDjF/X3FlFwdOWYNUrhuHKdNNoARBqXgm2XKMa4Q7307XVYAw/N6E
-	 qdl/2FZ530FbKb9HzokeZdvVaATz+OaCoBLkfP5lRKH/HrlZHrYH1/7+biiHyBRZY+
-	 cr+fe2AC8vZrXAwbOa53+GtJPHUdWuhR9BeDM/bkscT4MxASNH8CA7M4fkFQiSc1eT
-	 mHtKLlGvbN0hw==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56EFSctL62444685
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 14 Jul 2025 23:28:38 +0800
-Received: from RTEXMBS02.realtek.com.tw (172.21.6.95) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 14 Jul 2025 23:28:38 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 14 Jul 2025 23:28:37 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47]) by
- RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47%5]) with mapi id
- 15.01.2507.035; Mon, 14 Jul 2025 23:28:37 +0800
-From: Hau <hau@realtek.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        nic_swsd
-	<nic_swsd@realtek.com>,
-        "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com"
-	<edumazet@google.com>,
-        "kuba@kernel.org" <kuba@kernel.org>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net-next] r8169: add quirk for RTL8116af SerDes
-Thread-Topic: [PATCH net-next] r8169: add quirk for RTL8116af SerDes
-Thread-Index: AQHb8hYZ3m83qQJc5k6oVaa3M0JZALQvxoaAgAH73gA=
-Date: Mon, 14 Jul 2025 15:28:37 +0000
-Message-ID: <50df9352e81e4688b917072949b2ee4c@realtek.com>
-References: <20250711034412.17937-1-hau@realtek.com>
- <9291f271-eafe-4f65-aa08-3c6cb4236f64@lunn.ch>
-In-Reply-To: <9291f271-eafe-4f65-aa08-3c6cb4236f64@lunn.ch>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-x-kse-serverinfo: RTEXMBS02.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1752506934; c=relaxed/simple;
+	bh=lTkgOT/mVYRWV0jBajzFx1hlDK9iwts3ugakHaagITQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M0mJmFgPHTchHqoUIc0Zh9Gw3F/8sPoT4yZ8gpjH6sgbUDdOYYRS9cmfVnf75R65+TLX0dzvCS+No8bkR2vR/xFOor8OwAJqMbjbTpor7UfJtnyuuECwHs7G+Ov3t1P/o2Ub3oGlZRs1gSJIidW4EaBxTT0BY8cxMw5KZa+9hLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ya44pY77; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8729F442A2;
+	Mon, 14 Jul 2025 15:28:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1752506930;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FH7mbmy9dxnMHrp8nr70Ezf/5UVtiIiZlJSsEGAGlLs=;
+	b=Ya44pY77iHOQNF60LEEuM+0Eyg6Nn9Ip9xr+EVnEcKDdwS2wCBAAisJGaRKqT8ShlWuHmz
+	KlljPt9MzYtpAhUIVpmcvEq/NAPApnq83ZlfLb/MLBRDkr2ZHruyaXvFN/vaenjyV36VSM
+	TIgYWLCHaUCKahpcakMBnFFcjeuhxLhG4CashqCrx4rigem23MCmXl4pZikHkaJFHdlJa4
+	vRvGcSCtjYwWEYzHMXzacL3XbtIUyu701ikDh0wALD2gC8e8WHycvcyZp0Bj4fZ9Ni9gDU
+	bf76krJLFiByvbOqRZWXo+VhKCfTgkzIOrMEzEdNf9Z6LpvaJQiPU2Yfrj5EaA==
+Date: Mon, 14 Jul 2025 17:28:45 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Inki Dae
+ <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, Marek
+ Szyprowski <m.szyprowski@samsung.com>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Dmitry Baryshkov <lumag@kernel.org>, Hui Pu
+ <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@lists.linux.dev, Kevin Hilman <khilman@baylibre.com>, Jerome
+ Brunet <jbrunet@baylibre.com>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH 00/32] drm/mipi-dsi: avoid DSI host drivers to have
+ pointers to DSI devices
+Message-ID: <20250714172845.1432972f@booty>
+In-Reply-To: <20250707121319.1e40a73a@booty>
+References: <20250625-drm-dsi-host-no-device-ptr-v1-0-e36bc258a7c5@bootlin.com>
+	<20250707-strange-warm-bear-cb4ee8@houat>
+	<20250707115853.128f2e6f@booty>
+	<20250707121319.1e40a73a@booty>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehvdefudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeglefffefghefhtddvfeeufeeiveekgffgleekieduteekkeetvdehudekgfdvvdenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvhedprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepthiiihhmmhgvrhhmrghnn
+ hesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
->=20
-> Can you give us a few more details. What is on the other end of the SERDE=
-S?
-> An SGMII PHY? An SFP cage? An Ethernet switch chip?
->=20
-> A quick search suggests it is used with an SFP cage. How is the I2C bus
-> connected? What about GPIOs? Does the RTL8116af itself have GPIOs and an
-> I2C bus?
->=20
-RTL8116af 's SERDES will connect to a SFP cage. It has GPIO and a I2C bus. =
-But driver did not use it to access SFP cage.
-Driver depends on mac io 0x6c (LinkStatus) to check link status.
+Hi Maxime,
+
+On Mon, 7 Jul 2025 12:13:19 +0200
+Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
+
+...
+
+> > Post scriptum. The very initial issue that led to all this discussion
+> > when writing the hotplug-bridge driver is that the samsung-dsim driver
+> > will not drm_bridge_add() until a DSI device does .attach to it. Again,
+> > see the comments before hotplug_bridge_dsi_attach() in [0] for details.
+> > However by re-examining the driver for the N-th time now from a new
+> > POV, I _think_ this is not correct and potentially easy to solve. But this leads to one fundamental question:  
+> 
+> The question is: should a DSI host bridge driver:
+> 
+>  A) wait for a DSI device to .attach before drm_bridge_add()ing itself,
+>     or
+>  B) drm_bridge_add() itself unconditionally, and let the DSI device
+>     .attach whenever it happens?
+> 
+> A) is what many drivers (IIRC the majority) does. It implies the card
+> will not be populated until .attach, which in the hotplug case could
+> happen very late
+> 
+> B) is done by a few drivers and allows the card to appear in the
+> hotplug case without the device, which is needed for hotplug.
+
+I haven't received any reply to this e-mail. Should this be due to the
+fuzzyness of what I wrote, you're perfectly understood. :-)
+
+Let me try to start cleaner, and focus only on the question quoted here
+above. It is very relevant to the hotplug work, so I'd like any informed
+opinions about it in the first place. Many other things depend on it.
+
+The samsung-dsim driver, which is in the hardware I'm working on, falls
+in the A) case, and this is problematic.
+
+> I had tried simply moving drm_bridge_add() from .attach to probe in
+> the samsung-dsim driver in the pase but that would not work. Now I did
+> yet another check at the code and I suspect it can be done with a small
+> additional change, but cannot access the hardware to test it currently.
+
+I managed to try today and test on hardware, and I can confirm that the
+samsung-dsim driver can be moved from A) to B). In other words the
+drm_bridge_add() call to add the samsung-dsim bridge can be moved from
+the mipi_dsi_host_ops.attach op to the probe function, but this
+requires an additional change, at least when using the imx8mp LCDIF:
+
+@@ -1645,6 +1645,9 @@ static int samsung_dsim_attach(struct drm_bridge *bridge,
+ {
+        struct samsung_dsim *dsi = bridge_to_dsi(bridge);
+ 
++       if (!dsi->out_bridge)
++               return -EPROBE_DEFER;
++
+        return drm_bridge_attach(encoder, dsi->out_bridge, bridge,
+                                 flags);
+ }
+
+Without the above change, the mxsfb driver will hard-fail because
+mxsfb_attach_bridge() [0] finds the next bridge (the samsung-dsim
+bridge, which is now added earlier, in probe) but cannot attach it to
+the encoder chain (the samsung-dsim bridge still hasn't got an
+out_bridge).
+
+I have a working draft of the above samsung-dsim changes working with
+the hotplug-bridge, and it makes the hotplug code one relevant step
+simpler.
+
+Your opinion would be appreciated before I proceed to cleaning up and
+sending such change.
+
+[0] https://elixir.bootlin.com/linux/v6.16-rc5/source/drivers/gpu/drm/mxsfb/mxsfb_drv.c#L128-L145
+
+Luca
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
