@@ -1,79 +1,87 @@
-Return-Path: <linux-kernel+bounces-729970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A97EAB03E70
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:15:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C0A2B03E73
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D1031A61869
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:15:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A4267A67D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530B6247DE1;
-	Mon, 14 Jul 2025 12:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7261C80B;
+	Mon, 14 Jul 2025 12:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v2wYO0fN"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KfbNB7i9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEAE246BB3
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A74D1991B6
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752495302; cv=none; b=hKl7s21YzRwEDDxaMGWQl4Pmbm69Zl2eF0aj1p1S2C8zk2fA5aMBSICUCrUZg1eH3EDjh0rkhyF8AIaGaNax0EsVOAlaZcvb5BbbwaoRdM7qDjL7CSMtUBi+LBHmCDE4hb/4b3XLN27W0YAHLKqmo9bBxehmWLBRlL8rkSERBmQ=
+	t=1752495372; cv=none; b=JdggbwvdN7lt6nCYBv3MKqXulcJXUHnR+8axt3T2IYaFKhJtkYBw98EUOhGp7ZKVwE5y/VAh9vNYMwtApc0CyoOFY43CEKVpVkovbl9hCl2ufZARowVNCFdpyspcf9bTS0bq+n5ktOIq/NRDXKYtKvfO2HNDeD4DR6u9tvSqIzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752495302; c=relaxed/simple;
-	bh=BYzBPfh/ytviOirTkWz4504u4O0RE0FqexEQaYlECV4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NFXopRAKZDATqgDgWwUeH5jhZqp1Ha1wXhaHFST4eBHYC3dHfHXJXMB3AxOFgsAR1kg74Q0HNLevGAVZSzoOvV2i+L6ztL9Th28dvg/2qseFJiOwB7thgj5Bux+pc7DIsNjbsgnuAfOSXnn5yZb5Siris4TxcwYcp0SB3j0LdOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v2wYO0fN; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae401ebcbc4so753811666b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 05:14:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752495298; x=1753100098; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KsBsNedKx8xGt4I6WaKkCB8jsWquCjMbNNOAEnJdX54=;
-        b=v2wYO0fNllNinMF0JVTpFgsGwXhvAhLR61DG4MT/u45zZNwrxwuB60jlY4wLD/fj3n
-         ZvWFEkCJ4B1nkN4dKfkN/fwsZq8nslmSVj2IfFDXhA8LSlYZpVwZY9O6raWY9f8MJqXL
-         hsdbC7DvQ7Xuk2anEUL5Y6ct9g/WgjVUI+8mx2nXe6VwdZcVDHp4B7nyCYjKM3OnrIzW
-         Z28LHVrZsA55p/l+Ut10S9olhI83ypopN8AZxRS7zLYm9A41yaCqaIXpqX6i3gmegcon
-         rAnYlX8zZVYW4W2S/cEZ7ilhmgKGxMWByOldsLVuOLU8pmW0+hiGKjFhuUP4ArfBOn2H
-         VuYg==
+	s=arc-20240116; t=1752495372; c=relaxed/simple;
+	bh=Vyeu+QiMbOwu86RKcH8fkphcLeAnnuEM9Fw6UpjuzrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pl2lvIqVwXoyEe5EljqTem4xOjbTFHBcbc/0FBIDPwqYRA+f1QjWSPDY5gKBV2PScAwDHGv6RTz+xZUw8pm3DJEpCTFR3YoWjl7mQdC3k/xuH86vLAfECWqfNQN1gGQncCMu9ftG8Cmkrz9UQvl25/heNEZi+PD8zhhuF6hTKAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KfbNB7i9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56E9iI9D005981
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:16:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EdRSmpVGBOQnwqugOp0k7YiXL90KQtzCPk+rW9r7tLA=; b=KfbNB7i92g6NJVhk
+	DwC2UKjJSwnQnDOMTnDM2yXjXmWcY4hTWJPdpAZEuDVVz1mT9BtyvFkqBgh8BqvI
+	uX3rQhQhy2WU0BkwcDrrm2L6HGUW1KbC4ZmpkFNKkYVdArwymUOD5fBPgzZPLf/G
+	nzzYSqib0jkA6sqMg2jqHv+SRY3GIF2wN4ZedhSgB4gDPLr0EgiYTSntSIUP4v43
+	6637o5qF8mYRxM9hsD3Letj8A82ffEF33pjwF0mv972pou7B7kejqT9edMVUKwei
+	f9wcWkntVnGEvz84ntmCPJupYleEa/iWiQ67sKi5D5T1ffA1OJnY+bKRn6syKTkf
+	oKJMqw==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufxavnbh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:16:10 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ab5e4f4600so860941cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 05:16:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752495298; x=1753100098;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1752495369; x=1753100169;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KsBsNedKx8xGt4I6WaKkCB8jsWquCjMbNNOAEnJdX54=;
-        b=mYnpYlxHDuDycN8/ngReRwM65rIK/DwR63Cr6BnWZo+6r1vwGBz1K1+YifnVENgkvE
-         Ig/fe35ysPbxLSFHVDhD3ScOyUXnK1lte2DvFvu0ZSzAIWuLHDCVns9N1AoU28A1s9XU
-         KwLwh91ngkrl1BpnxVT9dNcHeylEdIGVpRT2O1S4zi3wplNybnFWfiq4iGHztXC9XYFG
-         wp02GONyMetBc8GvdvblITWIvOrDcU/EXi5AM1bpJ5eCiPr03zye4eqVO5SW/8ZbpTar
-         XxFDakFObY+mlRaHBx/xlpnw36EkOG3rkXhzEoBQXGGo6tT0QQj8qY3I6BVP0mxw/wln
-         9UTg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+w/Phh/FwArx30hGXaKsdf8uAm57z0kkRrHqBF9pZSrsNtIGl7PtD/bsdc7jFmI04ROCNgWCkZCz2AQw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwokWrHAFDzuHQlrBT7Irv3/tyP0/OPyP8QQ5JnuI4uBF85A0Wb
-	sRHVFvkRV9b+IeV8KkNxQ39EAtC2zrDUzrEdukxjhKpHxNwbEf2iOlk0U+3IkcySW4g=
-X-Gm-Gg: ASbGncs0CTfoGKwLy0VFFi27LXQps6f2NsrOMb5acOm0RbJjPj5trMaDg5ZkoY3T52z
-	FibeQ4mV+h1hHb0dS/LTCGvqchbrIkiZ2nRNWi2kuTOukrzsITr5Oh2XRjdBxCXIH9o4+V51ffT
-	7mt/+itgKrpAtyMzuhMa71Q+IOENoXBQiHYYSUOICJOp5bE1+MZJFftyrQUaDbkyVl6kyIYT1+g
-	ZXyWHYPpFwKfHU44kPPL2lKWAdefH61nccqo1CJiC0YVeWjn5nqz7jhzCFRJih81gzwIJrpS8Xy
-	niIHaDllT683roC2yguXDB2alDTToBlaNcwAzGQ1ODOctH7Su2v8rbCmYbYxIrEKvVQlEQi8jdw
-	H7ar6pt6FDZmnkfEWlAeTThutTS8qcmyu
-X-Google-Smtp-Source: AGHT+IG5VtsLFvFUDT520ex2RKhAB9eBro+IUiGxHRhjbk7jTorQ4ULKI2K0vvCF0z4O054xQO9Yxw==
-X-Received: by 2002:a17:906:9c82:b0:ae3:6bb4:2741 with SMTP id a640c23a62f3a-ae6fbfa7d75mr1203346566b.38.1752495298018;
-        Mon, 14 Jul 2025 05:14:58 -0700 (PDT)
-Received: from [192.168.0.251] ([188.27.143.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee4607sm827250566b.57.2025.07.14.05.14.56
+        bh=EdRSmpVGBOQnwqugOp0k7YiXL90KQtzCPk+rW9r7tLA=;
+        b=K+d9FIzJzwW0VuZ8uQCh3odEUHPbXnJOwWbgkQNo/iC6gM2CJNSQtjzzJAyoZ/bztZ
+         lSq0KSUji9SOf9pw19F5DoNY5r+QQWuuFIuVxW+KaP98QWsvO1Nll2yFsz1jel+iGa5i
+         75S6BkHnsbJPipPQX9mOxsdI/SweUosayYfb5uS5PP04c2gsosPG/8sCzZ/Uly+vGbfu
+         ys1dmPCJRnrSZpYBILDtbnYCS+KkZ0PHAF7hbwJ/zWDxh/WOFnzdaa6WWYRKoMv1K9ep
+         XTgq2B3dySsYJBDprhNqA1mVSvtfn3sW6OmsKXjMUk+nuD7iDiPX6rDaYyIYJNvmQ/Bx
+         VliQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURUjoHgVbiFUzfdn6kUuNs6vYT+MACK+/OYsnuMkjGAUq4GdB9060HDxt/9/yqJBxO8EajOJGh1WokX9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLkytdfYTD37vp1DSKn42TuvTUE+yEhdnjqCQytXUESWq//7QX
+	KjGMH7Bp3gJHblM79R3J3Kh3XlEWVzFbXjkU/3H6xRAI6zHnvI9wgc66mAQyBuwPpMXcTBchY8N
+	7ts8ldG1sfikvHtdCURzOd3D9UcquCIojZkGjOR3m9B3OBBUOJdqw1W6JvwTATWJexVU=
+X-Gm-Gg: ASbGncuqilPCO3H2DRPcPmrLLm0NYabQb5Km/R8NRD5tHGb+5xzB6EjSDQg/KtcR8Qx
+	+zP6Cfdt+wLtXqzwBGQMBGtcqXoG8b9Kvpu2AI8hXG2FB9eTXW6f0s7dunkiphYVJcQYkNDRCja
+	cpQ/UbH5cgYO4/v2l4D72yrDELmYxqamvaDfgXN3Uc57JmtyfzYkZ3k4NfFqmvnLTxXOl5FzfuA
+	kkW9x6S+M2fHq4hgTwyY4ZWR+BeVK+6saW0vqqi1tZJYcneeVrLD+8y+iHASy+hw6sjIVOtiOMm
+	mf7cmS4x600MgigmksieM9tBo9iS2BJKgh5Daoy60Mur9h4uB4Ouh6vu8HUcRU4ePxC2fDixizP
+	kg2GZezgJxKcKl78eari3
+X-Received: by 2002:a05:620a:a003:b0:7d5:d01f:602 with SMTP id af79cd13be357-7ddebf7dab9mr655449485a.14.1752495369214;
+        Mon, 14 Jul 2025 05:16:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFqDFY2LUDJWJKJDllYLF4aFMaNOU6OwD93goYemebkVnOeOPXbah23nYaZ32vbmOeya/kHoA==
+X-Received: by 2002:a05:620a:a003:b0:7d5:d01f:602 with SMTP id af79cd13be357-7ddebf7dab9mr655446585a.14.1752495368724;
+        Mon, 14 Jul 2025 05:16:08 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8313036sm799472766b.180.2025.07.14.05.16.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 05:14:57 -0700 (PDT)
-Message-ID: <30a08478-824b-4ac5-91e7-c985adcf4d09@linaro.org>
-Date: Mon, 14 Jul 2025 13:14:56 +0100
+        Mon, 14 Jul 2025 05:16:08 -0700 (PDT)
+Message-ID: <0d60632e-ad2d-4dbd-bf48-7daca73b6347@oss.qualcomm.com>
+Date: Mon, 14 Jul 2025 14:16:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,104 +89,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] PM: sleep: Resume children after resuming the
- parent
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson
- <ulf.hansson@linaro.org>, Johan Hovold <johan@kernel.org>,
- Jon Hunter <jonathanh@nvidia.com>, Saravana Kannan <saravanak@google.com>,
- William McVicker <willmcvicker@google.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-References: <10629535.nUPlyArG6x@rjwysocki.net>
- <CAJZ5v0hpPOHNYCSTM1bb+p-wyAZkpg+k-huf9f5df9_S8MfvEg@mail.gmail.com>
- <CAJZ5v0jFP2njw3ic47yyh_7u7evKQKQuqGp27Vj7X-FfDLH7uQ@mail.gmail.com>
- <4677865.LvFx2qVVIh@rjwysocki.net>
- <ae6d65f7-990a-4145-9865-63f23518405c@linaro.org>
- <CAJZ5v0hatwNn_Qh7n7wjDyXDZK=L4vkB+aotZRfn4Zi21sGKxw@mail.gmail.com>
- <7186da1f-4d16-48f5-bdc0-cb04942b3a5e@linaro.org>
+Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100-crd: Add USB multiport
+ fingerprint reader
+To: Stephan Gerhold <stephan.gerhold@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
+References: <20250714-x1e80100-crd-fp-v2-1-3246eb02b679@linaro.org>
 Content-Language: en-US
-In-Reply-To: <7186da1f-4d16-48f5-bdc0-cb04942b3a5e@linaro.org>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250714-x1e80100-crd-fp-v2-1-3246eb02b679@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: OolEHZSmtOEAwL-7yzCUXQr5exTaHpAO
+X-Proofpoint-ORIG-GUID: OolEHZSmtOEAwL-7yzCUXQr5exTaHpAO
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA3MiBTYWx0ZWRfXwlNM7/eycWfd
+ qxwO/3gcFFr3y3ObwStNUjpFU1eHpUANc1caq9gDtZjc6q8ghYqAzgHT1r6zdZKxIZ+GKJQYll8
+ 9B/c6hV/GDufDWUw+ltZ3PTS8fhOSTcT8TGxs+b7uAB3fdOKVD17K8+iedQB3j9llxckPjuzW6K
+ Cr61Ib7n3Hp0EdCdfzOJ6V5xxUEMZ9WSLxBACMpL33K2icDTOMIfs8Gs+SBiSehRpMoJc7Nq1Tn
+ uyfJ2oyIXsvpmTZ8OpOomFBcBBION0/MTjn4qjrPef/6ua08/ZqY7OlBQim7e2IGpdKK/H2y81z
+ AJU0ehvLG/iiOYNpR//XrIeKfdVoMbvyjDcHVquKIags6/hWofqwBTQtxTJoYFp+Pk4QLPqsxSu
+ 7nu11a6O0UE2cVXf7qzoCRctwFzwPU7FMhmHqhfP+ALiL5EnauYZ3bVoJBbuHDuVzmvDrkXU
+X-Authority-Analysis: v=2.4 cv=Xc2JzJ55 c=1 sm=1 tr=0 ts=6874f50a cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
+ a=ZM3GxCyrS3NlQnMyuMUA:9 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-14_01,2025-07-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 mlxscore=0 priorityscore=1501 adultscore=0 mlxlogscore=528
+ phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
+ clxscore=1015 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507140072
 
+On 7/14/25 1:48 PM, Stephan Gerhold wrote:
+> The X1E80100 CRD has a Goodix fingerprint reader connected to the USB
+> multiport controller on eUSB6. All other ports (including USB super-speed
+> pins) are unused.
+> 
+> Set it up in the device tree together with the NXP PTN3222 repeater.
+> 
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
 
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-On 7/14/25 11:35 AM, Tudor Ambarus wrote:
-> 
-> 
-> On 7/14/25 8:29 AM, Rafael J. Wysocki wrote:
->>> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
->>> index d9d4fc58bc5a..0e186bc38a00 100644
->>> --- a/drivers/base/power/main.c
->>> +++ b/drivers/base/power/main.c
->>> @@ -1281,6 +1281,27 @@ static void dpm_async_suspend_parent(struct device *dev, async_func_t func)
->>>                 dpm_async_with_cleanup(dev->parent, func);
->>>  }
->>>
->>> +static void dpm_async_suspend_complete_all(struct list_head *device_list)
->>> +{
->>> +       struct device *dev;
->>> +
->>> +
->>> +       pr_err("tudor: %s: enter\n", __func__);
->>> +       guard(mutex)(&async_wip_mtx);
->>> +
->>> +       list_for_each_entry_reverse(dev, device_list, power.entry) {
->>> +               /*
->>> +                * In case the device is being waited for and async processing
->>> +                * has not started for it yet, let the waiters make progress.
->>> +                */
->>> +               pr_err("tudor: %s: in device list\n", __func__);
->>> +               if (!dev->power.work_in_progress) {
->>> +                       pr_err("tudor: %s: call complete_all\n", __func__);
->>> +                       complete_all(&dev->power.completion);
->>> +               }
->>> +       }
->>> +}
->>> +
->>>  /**
->>>   * resume_event - Return a "resume" message for given "suspend" sleep state.
->>>   * @sleep_state: PM message representing a sleep state.
->>> @@ -1459,6 +1480,7 @@ static int dpm_noirq_suspend_devices(pm_message_t state)
->>>                 mutex_lock(&dpm_list_mtx);
->>>
->>>                 if (error || async_error) {
->>> +                       dpm_async_suspend_complete_all(&dpm_late_early_list);
->>>                         /*
->>>                          * Move all devices to the target list to resume them
->>>                          * properly.
->>> @@ -1663,6 +1685,7 @@ int dpm_suspend_late(pm_message_t state)
->>>                 mutex_lock(&dpm_list_mtx);
->>>
->>>                 if (error || async_error) {
->>> +                       dpm_async_suspend_complete_all(&dpm_late_early_list);
->>>                         /*
->>>                          * Move all devices to the target list to resume them
->>>                          * properly.
->>> @@ -1959,6 +1982,7 @@ int dpm_suspend(pm_message_t state)
->>>                 mutex_lock(&dpm_list_mtx);
->>>
->>>                 if (error || async_error) {
->>> +                       dpm_async_suspend_complete_all(&dpm_late_early_list);
->> -> There is a bug here which is not present in the patch I've sent.
-> 
-> My bad, I edited by hand, sorry.
-> 
->>
->> It should be
->>
->>         dpm_async_suspend_complete_all(&dpm_prepared_list);
-> 
-> 
-> Wonderful, it seems this makes suspend happy on downstream pixel6!
-> I'm running some more tests and get back to you in a few hours.
-> 
-
-Solves failures on pixel6 downstream:
-Reported-and-tested-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-
-Thanks!
+Konrad
 
