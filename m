@@ -1,130 +1,125 @@
-Return-Path: <linux-kernel+bounces-729484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23C19B03753
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:44:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 346E8B03757
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58A581757D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:44:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 021073B565F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715DC22836C;
-	Mon, 14 Jul 2025 06:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C28D226D10;
+	Mon, 14 Jul 2025 06:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Brup725k"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sRvj2oOb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5BA13A86C;
-	Mon, 14 Jul 2025 06:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A184D1CD1F;
+	Mon, 14 Jul 2025 06:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752475453; cv=none; b=DAgdQH+N40lcCen4j3PmorjGpvFAMRcoKjBYPdY2sWNRkNnQbXDz/LEJltJbi5dKQ7IrwhJ+8vK7vCB5rJfYNXYRIk5tg+mcv4AmCr8B9GdmAet0cDfMq5ef7RdOwIsDduOne59nOuWzDLtnKiTpXWoz6T4rdzfX0/5Z3B3ufF0=
+	t=1752475546; cv=none; b=C10lATh0OiMZUCjNu36A8iwXBAfe2Zg3fYPuWv3H+ZX8RysevLQqMbsfe9Zcx+CZ2+0/3MKmizPw6TpJVf6HcAgRei4aI7UztqiAjHUTl0XCxNo/sbQ5BnUJTk33qqOz/ZvYhIdJRb9Wt8S8OtevfUF1l4E3zLrp2+n3y4TMvRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752475453; c=relaxed/simple;
-	bh=3gmL7rjyWzxXlZQp4lpwIQABbTj7vbN8aapxCnC0n+M=;
+	s=arc-20240116; t=1752475546; c=relaxed/simple;
+	bh=Qy1hfqEo2dMgMv0YIqJ7mPsIFK2YG8agMEQFgBf9GCg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p9rQKFzO235DjEJnsVNV0uHv5vNc67BI0XNxJqWpj/PXBc+rfGKzxtYmLV65mKg8oEhcSZAgFFzjfbghCKqPhrobp1oxpkYXlJlBiWj/e5rBBR1JPtTT1vNiJaUGV/MTTNjnD71uv/+EQQeA8oTc+v78qwjzxGtNWoANRWA92bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Brup725k; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752475452; x=1784011452;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3gmL7rjyWzxXlZQp4lpwIQABbTj7vbN8aapxCnC0n+M=;
-  b=Brup725kIGhUkM0k+TSGSl0BFEG703EGaTUfV6llAFCO+2h0kXhKMFA+
-   HsrUWKyw98bm5D/wGGHQdhe0pP96VFWHQ5qz0wqqk5QPyBY7Lpr8/QQ5q
-   O5AOp2f4rHUXbYM9zDQHurVHJAkO0PBMkMIikURSUI/HM/vkpK9VYuvL6
-   95O2UQc22TjsMh1aIPdLHAd1s+2J3diPP2Tl26JnazgJrgwtNs0VQX9vW
-   lhyjtelaVgEizZJFTRX5naKdph4rScZTPvgCtIruoGn+QyBemh5VWtABl
-   jsd9goqrTJVpU0vHOwfIBfIyjUr/oA92YUoMl2XE69PO2bp8n1GTJfjfD
-   w==;
-X-CSE-ConnectionGUID: 4/CdFXU0R7GlMpc+WNa1uQ==
-X-CSE-MsgGUID: sV/zTeFrR6CLpnvgHz3KlQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="65360063"
-X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
-   d="scan'208";a="65360063"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2025 23:44:11 -0700
-X-CSE-ConnectionGUID: fYwSSvNZSNqHUsz3jfG30A==
-X-CSE-MsgGUID: bcTFa//hRzaoX68h8vkNfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
-   d="scan'208";a="156957374"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2025 23:44:08 -0700
-Date: Mon, 14 Jul 2025 08:43:04 +0200
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Saeed Mahameed <saeed@kernel.org>, Gal Pressman <gal@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Lama Kayal <lkayal@nvidia.com>
-Subject: Re: [PATCH net-next 1/6] net/mlx5: HWS, Enable IPSec hardware
- offload in legacy mode
-Message-ID: <aHSm7SHg1xTMNE0F@mev-dev.igk.intel.com>
-References: <1752471585-18053-1-git-send-email-tariqt@nvidia.com>
- <1752471585-18053-2-git-send-email-tariqt@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xj0TuueYaE97eqRP6BpoVqcgF6+63d8XxJo7+p33zZcTkK08MnLwFaeuwVHjM14/JUWXUw4gLWJ3Ir+6yHcwuJdBJCDPw2Ahg5Ma3qJpMJnyfK4PMsUPX48tGlJ90kfRFXOjYdZtDkTZs0jcTpnqaz25sC/bZnfEsnbHN2EZpi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sRvj2oOb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E441C4CEED;
+	Mon, 14 Jul 2025 06:45:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752475546;
+	bh=Qy1hfqEo2dMgMv0YIqJ7mPsIFK2YG8agMEQFgBf9GCg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sRvj2oObA6+JGOF4oIOjLEOKy+uoSWaXh5DELylrWEk4SoiumxqOXvVtQX4eRZAO7
+	 XTJSjWGErNxiF2JDcd1ZsrtprHphsXbd74GpHtv2jkmjiSBNXylRjG2LY2r6mv22Vc
+	 oqamtRF8KJWqfmmut8fm37FF2hb+HQrGO83xiEz8EAxa726EzOXXBfYtDiSLk92UTR
+	 OIvRIJDdJ52NaJIk0beldr+KdhC23hdp8ckuG0PIxQHcxAOOcfd4or6QBNya7Kkfov
+	 5FWurEZP8iK1OJRFay50oll0n4j3GZ3NGA3VYfaLEMT35mAD7uPOuo+IvoQDTiWN6D
+	 XAfw6xU1LZhNw==
+Date: Mon, 14 Jul 2025 08:45:43 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Mao Jinlong <quic_jinlmao@quicinc.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/5] dt-bindings: arm: Add CoreSight QMI component
+ description
+Message-ID: <20250714-impressive-spiked-chicken-9fe06e@krzk-bin>
+References: <20250711094031.4171091-1-quic_jinlmao@quicinc.com>
+ <20250711094031.4171091-2-quic_jinlmao@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1752471585-18053-2-git-send-email-tariqt@nvidia.com>
+In-Reply-To: <20250711094031.4171091-2-quic_jinlmao@quicinc.com>
 
-On Mon, Jul 14, 2025 at 08:39:40AM +0300, Tariq Toukan wrote:
-> From: Lama Kayal <lkayal@nvidia.com>
+On Fri, Jul 11, 2025 at 02:40:27AM -0700, Mao Jinlong wrote:
+> Add new coresight-qmi.yaml file describing the bindings required
+> to define qmi node in the device trees.
 > 
-> IPSec hardware offload in legacy mode should not be affected by the
-> steering mode, hence it should also work properly with hmfs mode.
-
-What about dmfs mode? I am not sure, if you didn't remove it because it
-is still needed or just forgot about removing it.
-
-In case it is ok as it is:
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-
-Thanks
-
-> 
-> Remove steering mode validation when calculating the cap for packet
-> offload, this will also enable the missing cap MLX5_IPSEC_CAP_PRIO
-> needed for crypto offload.
-> 
-> Signed-off-by: Lama Kayal <lkayal@nvidia.com>
-> Reviewed-by: Jianbo Liu <jianbol@nvidia.com>
-> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
 > ---
->  .../net/ethernet/mellanox/mlx5/core/en_accel/ipsec_offload.c   | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  .../bindings/arm/qcom,coresight-qmi.yaml      | 65 +++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-qmi.yaml
 > 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec_offload.c b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec_offload.c
-> index 820debf3fbbf..ef7322d381af 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec_offload.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec_offload.c
-> @@ -42,8 +42,7 @@ u32 mlx5_ipsec_device_caps(struct mlx5_core_dev *mdev)
->  
->  	if (MLX5_CAP_IPSEC(mdev, ipsec_full_offload) &&
->  	    (mdev->priv.steering->mode == MLX5_FLOW_STEERING_MODE_DMFS ||
-> -	     (mdev->priv.steering->mode == MLX5_FLOW_STEERING_MODE_SMFS &&
-> -	     is_mdev_legacy_mode(mdev)))) {
-> +	     is_mdev_legacy_mode(mdev))) {
->  		if (MLX5_CAP_FLOWTABLE_NIC_TX(mdev,
->  					      reformat_add_esp_trasport) &&
->  		    MLX5_CAP_FLOWTABLE_NIC_RX(mdev,
-> -- 
-> 2.40.1
-> 
+> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-qmi.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-qmi.yaml
+> new file mode 100644
+> index 000000000000..601c865fe4d7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-qmi.yaml
+> @@ -0,0 +1,65 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/qcom,coresight-qmi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm coresight QMI(Qualcomm Messaging Interface) component
+> +
+> +description: |
+> +  Qualcomm Messaging Interface (QMI) is an interface that clients can
+> +  use to send, and receive, messages from a remote entity. The coresight
+> +  QMI component is to configure QMI instance ids and service ids for different
+> +  remote subsystem connections. Coresight QMI driver uses the ids to init
+
+So driver... Driver stuff is not accepted in the bindings.
+
+> +  the qmi connections. Other coresight drivers call the send qmi request
+> +  function when connection is established.
+> +
+> +maintainers:
+> +  - Mao Jinlong <quic_jinlmao@quicinc.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,coresight-qmi
+
+Don't send new versions while discussion is still going.
+
+There is no need for this binding at all, it is not a coresight device.
+
+> +
+> +patternProperties:
+> +  '^conns(-[0-9]+)?$':
+
+Drop, why do you keep enforcing the node names? Look at other bindings.
+
+
+Best regards,
+Krzysztof
+
 
