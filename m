@@ -1,107 +1,128 @@
-Return-Path: <linux-kernel+bounces-729309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F188B034C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:02:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C0A2B034C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE41D7AC9E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 03:00:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E61E31899DED
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 03:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A071DF24F;
-	Mon, 14 Jul 2025 03:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE0A1DE4DC;
+	Mon, 14 Jul 2025 03:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="dX3MqPN+"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kQy2MmZc"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80A219F11B
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 03:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5277B652;
+	Mon, 14 Jul 2025 03:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752462112; cv=none; b=IVGxL60b+WpxvW5Vv6mQM04m5gdQJquhZzuwHtZGEbnrR0IkrnqjtRYc2FvS8KAPiGe5XGcrZzRI3qfQJySgiB+zNdHcrAG03fib2gXEBCO3Qo2QNOOLGqTxTLHdW9A0LA4Dh/c27+2VCZvCLARCRJrZdk7cokqeSiWWqL6ETjA=
+	t=1752462092; cv=none; b=FJCrRlbtsN4WI7d1InN589bS20XP1NAnCnYXnqpBbADwt5ap/BkO41pV7/tBwgWy06/63VKBdFRuCbcBj2CqGy6j7jjtmEorcG0eRkzZNgtxazuYVYfN+x2AKuKGf8cTWa9u83dl1yOfH8UJyOioegnfEn0SOVV3UgB6o/4hmSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752462112; c=relaxed/simple;
-	bh=Aq1rM+qcFw92PCMfk8PfrQHMyDeO9MCGzHbY26d4ThY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KJe/I0hdhCtUCMHPdTpivzv6E3V3zPv8YSQ3+sQJ2EaGHnGhxdcJ5uL3TuTaDhW58LaamYoxv+PKCWFZ3sgEFwnJZcHqe9MmPuobVn0xHDD5F6CPN5Kbv2nI46rNwNljjf+fFCvvAESJ4wEE0Nm16OPoTZ0gq5nOTcKZhEOKlSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=dX3MqPN+; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-102-187.bstnma.fios.verizon.net [173.48.102.187])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 56E31DEx013642
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 13 Jul 2025 23:01:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1752462075; bh=az4g3hsulj8mW1Cfag3L68fybzF+wNymkzqJ+vgeBNQ=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=dX3MqPN+Eg+4Cjp6dFe9w9AYNzd+LEAVyIxXP+pWdSWPvyEaJ9NC421TY2v0MIvCr
-	 MN4yXD7vPS9h71NBg2gLaa/aE9UXtvIS/zeRt3mo7mtzjJUUb1pRBCnMoifA9xiXGZ
-	 dDIq7e8cvIoVE/3NIZ4fib75XHcwi4JZtMPR+7HKHw6I9wXAaAN/N9LtiNXVCjZXXp
-	 m9sgXqf99nk9/+s+ghSlFHDD4cXlwUhxX7mVIuWfFdQEqFTG+4ToQ4bkIHa3nX2ZMz
-	 CY7dNGUYdjm/zWgxRWAxESjT41iUVpc6wHFEUgPxXSidaDE719K+Nd+4+RjsuvIe0W
-	 CYCoLoxoUNdRw==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 3704C2E00D5; Sun, 13 Jul 2025 23:01:13 -0400 (EDT)
-Date: Sun, 13 Jul 2025 23:01:13 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Jan Kara <jack@suse.cz>
-Cc: Baokun Li <libaokun1@huawei.com>, linux-ext4@vger.kernel.org,
-        adilger.kernel@dilger.ca, ojaswin@linux.ibm.com,
-        linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
-        yangerkun@huawei.com
-Subject: Re: [PATCH v2 03/16] ext4: remove unnecessary s_md_lock on update
- s_mb_last_group
-Message-ID: <20250714030113.GA23343@mit.edu>
-References: <20250623073304.3275702-4-libaokun1@huawei.com>
- <xlzlyqudvp7a6ufdvc4rgsoe7ty425rrexuxgfbgwxoazfjd25@6eqbh66w7ayr>
- <1c2d7881-94bb-46ff-9cf6-ef1fbffc13e5@huawei.com>
- <mfybwoygcycblgaln2j4et4zmyzli2zibcgvixysanugjjhhh5@xyzoc4juy4wv>
- <db4b9d71-c34d-4315-a87d-2edf3bbaff2d@huawei.com>
- <e2dgjtqvqjapir5xizb5ixkilhzr7fm7m7ymxzk6ixzdbwxjjs@24n4nzolye77>
- <272e8673-36a9-4fef-a9f1-5be29a57c2dc@huawei.com>
- <kvgztznp6z2gwuujrw5vtklfbmq3arjg54bpiufmxdwmuwjliw@og7qkacbdtax>
- <9ecfe98f-b9d5-478a-b2a5-437b452dbd58@huawei.com>
- <6bf7irhdjrsvuodga344g2ulha52z65f2qf2l3tuldvwbb5pf6@cz7m2gypd4su>
+	s=arc-20240116; t=1752462092; c=relaxed/simple;
+	bh=ERgzvsslLVirasSKlBbVbFonq00aWcG2raAMszxdrjA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=E8KrQulxYtJ54oBs/IG5Azh0lmmDfGmWkYBqDeHMN4Wx8jpyuw0btCecRP9ABBBNYf9TBMWge03VZF9IPQZJ2XCLvIXH8xZikphKh/Y/arV0HJre3RykTJ9zKxbPvmXBc4IT9QOiPKg9qYgQFNydBiz6yBb7rchcZJKeT6jXMEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kQy2MmZc; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752461985;
+	bh=Iqjf9O5T8nAP0FkxcU7OI+OyNrQDbwpMfJerUeBVolY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=kQy2MmZc84PwsPxo/pSplFAQc3d4PTCbuq8UhWkU56mbeBckHszw5NJZ0w7Y39kRj
+	 BWQkZvYWXi0hJnlWyDr4EWt5htXTL0jGGIcYGPypqGI/XAogM6TFU3f5cR5XHZnD5H
+	 igOW1LAxZSt2BTb9uJtNbHg9Wrrh63YCsjruNAdPUgqEH/i5JeduKuVzV1u4BeP+7N
+	 QvUxwQHdlRKBoB7YiQBPTbrqq3Cm6VM7yL8dGXs9/seBvlQDeiQFxmIzsVaV4/38rj
+	 psWdUQLyMSXTgK5Uo0oFA+KeGyt503rL73MPzQ3m6acyKTrieKx7/w8JFhyw5Prfcr
+	 hF88hLELAkNwQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bgRr053wqz4wb0;
+	Mon, 14 Jul 2025 12:59:44 +1000 (AEST)
+Date: Mon, 14 Jul 2025 13:01:22 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Takashi Iwai <tiwai@suse.de>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the sound-asoc tree with the sound tree
+Message-ID: <20250714130122.58f531e5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6bf7irhdjrsvuodga344g2ulha52z65f2qf2l3tuldvwbb5pf6@cz7m2gypd4su>
+Content-Type: multipart/signed; boundary="Sig_/.RFu7TFsY1DX3MKCQ3DCQyf";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Jul 10, 2025 at 04:38:33PM +0200, Jan Kara wrote:
-> 
-> Yes, apparently both approaches have their pros and cons. I'm actually
-> surprised the impact of additional barriers on ARM is so big for the
-> single container case. 10% gain for single container cases look nice OTOH
-> realistical workloads will have more container so maybe that's not worth
-> optimizing for. Ted, do you have any opinion?
+--Sig_/.RFu7TFsY1DX3MKCQ3DCQyf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Let me try to summarize; regardless of whether we use
-{READ,WRITE})_ONCE or smp_load_acquire / smp_store_restore, both are
-signiicantly better than using a the spinlock.  The other thing about
-the "single-threaded perforance" is that there is the aditional cost
-of the CPU-to-CPU syncing is not free.  But CPU synchronization cost
-applies when that the single thread is bouncing between CPU's --- if
-we hada single threaded application which is pinned on a single CPU
-cost of smp_load_acquire would't be there since the cache line
-wouldn't be bouncing back and forth.  Is that correct, or am I missing
-something?
+Hi all,
 
-In any case, so long as the single-threaded performance doesn't
-regress relative to the current spin_lock implementation, I'm inclined
-to prefer the use smp_load_acquire approach if it improves
-multi-threaded allocation performance on ARM64.
+Today's linux-next merge of the sound-asoc tree got a conflict in:
 
+  sound/soc/codecs/hdac_hdmi.c
+
+between commit:
+
+  ed677858d4fe ("ALSA: hda: Move widget capability macros into hdaudio.h")
+
+from the sound tree and commit:
+
+  039de8f598dd ("ASoC: hdac_hdmi: remove hdac_hdmi_jack[_port]_init()")
+
+from the sound-asoc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
 Cheers,
+Stephen Rothwell
 
-							- Ted
+diff --cc sound/soc/codecs/hdac_hdmi.c
+index b33cd5178008,3aae0a2eb047..000000000000
+--- a/sound/soc/codecs/hdac_hdmi.c
++++ b/sound/soc/codecs/hdac_hdmi.c
+@@@ -24,7 -24,7 +24,6 @@@
+  #include <sound/hda_i915.h>
+  #include <sound/pcm_drm_eld.h>
+  #include <sound/hda_chmap.h>
+- #include "hdac_hdmi.h"
+ -#include "../../hda/local.h"
+ =20
+  #define NAME_SIZE	32
+ =20
+
+--Sig_/.RFu7TFsY1DX3MKCQ3DCQyf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh0cwMACgkQAVBC80lX
+0GwSSwgAmk+IeFlfjGSf1CFjSSnUhTvrV9GN7FOazgIjxv2at5bsqpcqIamtddzd
+19/KiIry09RERLjfq8vlPAY+lVOJ5GKppKoBi+1ZSxiGs2twTCRpO+pSoMJOTpQo
+EOAu5stx5FbzaSwGf9OWGrzlj3qCeECEVkxQU91YQQKun02xWWnrkPyeILZZP9/T
+SEBjwxRFZQB5CFx6xetM5xEVHHNmMqUJTw/LYaSbw8U+XylLHOkM6SCKnp1FiYfV
+7WjiBD+txpBo3tPOui1IaWlYL6p/WW1wOS13qqGyeGlKCkgocBfe4I6iyQvLpa+f
+sGmMyeVm8QfY7Pvd4IwUZl8JMbKBJA==
+=RXuG
+-----END PGP SIGNATURE-----
+
+--Sig_/.RFu7TFsY1DX3MKCQ3DCQyf--
 
