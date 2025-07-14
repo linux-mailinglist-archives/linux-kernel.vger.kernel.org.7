@@ -1,88 +1,75 @@
-Return-Path: <linux-kernel+bounces-730854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3069B04AFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:49:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 885F9B04B06
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C69AA7A2900
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:47:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C36443B7275
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B47277C95;
-	Mon, 14 Jul 2025 22:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C6E233712;
+	Mon, 14 Jul 2025 22:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XC7J3Xn/"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hc4iOhSQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEB022E3FA;
-	Mon, 14 Jul 2025 22:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F66822F152
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 22:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752533335; cv=none; b=hCZ3bx3ETrKbaKYSVWATGmjzccVv7lKmMMYD61f/pQZIrxha+dTWwGbDk8rcPBN/secybyQIMLFQih3ZqJ2d+pHPQdgoR8uTJj5jnN3axR6XeG3Xss+/N1Fn2Y2S4QLPlw8d8V9Ue06KHn/FIUBRyCj1rLPIZ2bfCvGSypSR3Oc=
+	t=1752533375; cv=none; b=DjK0nWqTBit+hL1y84phqmQZljZrSvFyPboMH30MggRDF5PRy0r1EgZFE8pt77Z0aSkE12RYB9YW2krF0X9gjH1oZcCg6U3rZtq4EiYgjfda/I9nt0gjlJI0eJq3Sg5MqksSirXgjWE+6BCEJe4CGFH/+gY4sZ9lpx4QPpWi668=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752533335; c=relaxed/simple;
-	bh=mCGqSvO96GNTrlQhZgG2zQIiLUg+WWEq3WuU7DOz20s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cUU5lAGSMmumPKG+VmqOuhLL3XyGyaCUeBaHN0wlyYtqdsdFGkpHOLOzXbx8/dj9ghruTxF7Mr9s7ChmuoHb5f/NIXRUWvGHLbJd/LOrxm5vOKAmATDMaMuXMLrBKPnKPRjfV6XgNe2CEBNIm9gLeDY/kikHiaHncEIwdpKopS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XC7J3Xn/; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-553be4d2fbfso5355003e87.0;
-        Mon, 14 Jul 2025 15:48:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752533332; x=1753138132; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=T92uQF0Sbtu86irFu+lw6khoAaH7Wb2TKMFFWqJI07I=;
-        b=XC7J3Xn/MsewEl3BWwMplsLQxmmhOsR7oAuEHe2dydr+Y1LBAxwZ+DxhGqLTb90cXG
-         LR8WZw9NOKRn5cACBKMYJIksFNG75p8+K813ycCNyNBIN/l2mfA+iKzDUicHXoYG0Oaj
-         3Xr6tRRw51Il/HG2oT9HGkVGeHsO5cNJ95cqNgBFFWxyjfowNJ69F69lgs3BJMaLnU4j
-         nWAx7QMFmsdqFHUT3Zu8bLWd14YjEee04OU3DsgJbVoU8cN2fpHcJjVawFh6pSZiIZ5Q
-         S35hLRjRgIu8DUL39UQp0gnO1fiZBUNK8AhHoV2AtI1y26qwbT3Dz3/ZnfxWPc8Hkdp3
-         c2Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752533332; x=1753138132;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T92uQF0Sbtu86irFu+lw6khoAaH7Wb2TKMFFWqJI07I=;
-        b=AxKuuZrGtisygygydNVhnzIG3DFVDE4uff1kR/TfVW1u+oZrI4arOhLpza2HMmXRlP
-         6rzlFzeKsx3G31BO5Ow8mwo77QkNiCrpiL/nmp6gfm08JKR0QBBnLJGCNI32kEQa1BRX
-         13XPC+yigfkSWZdKoSVQ0ojazxaUtrYDrAccUnjOL45McneXQR/pEYVGG8yaERJJsWU8
-         +z3CIZmEOdlqV8SSrDyVgB9JOOIcspasJ2LqshqiOHFuv/uj1Ux+lai5t0CrEXEvVo7Q
-         Ff+Xu00iOx4mX8+vH6tl+YvVHSBEV6XwVdvbxVlkHYtbT3TwCtgOoAcU8Of5F3pLtVak
-         RMXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1YNW0XLNekdq4Y85X2TBvO0vAza/CHs6xwoJM2xL0elHeEAs/Y5jDVE8Z6ZTZRqk9TWg6zJkIrbf2OLbd@vger.kernel.org, AJvYcCVsS6ZeWUBiWbMdZymX3CTtyI2L8lBIj9+Omlq4uEBNAKjw/ExsGkijeO5waA+E8HWTHUikCTY/L9OLIXZX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLuhRR1jB5PdVYK7TAt2xoW7V9qseeWcj7VwGd2iL4nAuB301h
-	UpsS/cZLlLA/R3NdcRcSwW8NA6WVhS2a5AuCZt6XFefPTUwntlPI08iG
-X-Gm-Gg: ASbGncs0b7251QGGKXAMlmZxnOarW8+cZlzldOc5/LIc8CfHzZniYj3ibb/XRae4i3R
-	d8HfLs6s1GHy+XloihwmPKdS0sTw1wuvOJr1ZA0eIms7SA4BSHGV2H8hK5xtytVcYB6Uaev4zhy
-	d/izxDY7G1BGUQKqqfnB6lcsW/ndEVyNGNLFEEjpu48DjDRh5TxncrBLZjf/5sm1L5D3MMWSntP
-	nHhjoj/D8AeJDDhJv6TnQdWxkrMievZo/cO7TPvku9tELM92poDKJjOOjKdXUz9tMNrDbj0M9VO
-	Y2E1QFgDhgy/U8npJY0uAAio1/FOhAS5fOgunVTeKw1Dd4lCoK2FkTQK+TXDkvI8TQsxZ/OzHcU
-	iYAmnHB9ceKNKdvR9aL4qwbqSHRqj1e9Vlvkjoks/DdZMY7oc
-X-Google-Smtp-Source: AGHT+IGBUSppvNFOdCzI9M0WJqy9nhMbI/cp4rl4D8ZljJ9yckzvVxpPP3lre5cM+jmiZNJbUr8xUw==
-X-Received: by 2002:a05:6512:2316:b0:553:35ad:2f2d with SMTP id 2adb3069b0e04-55a044cc87bmr4115868e87.18.1752533331307;
-        Mon, 14 Jul 2025 15:48:51 -0700 (PDT)
-Received: from localhost (soda.int.kasm.eu. [2001:678:a5c:1202:4fb5:f16a:579c:6dcb])
-        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-55943b8c5absm2085832e87.257.2025.07.14.15.48.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 15:48:50 -0700 (PDT)
-Date: Tue, 15 Jul 2025 00:48:50 +0200
-From: Klara Modin <klarasmodin@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Youling Tang <youling.tang@linux.dev>, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, chizhiling@163.com, 
-	Youling Tang <tangyouling@kylinos.cn>, Chi Zhiling <chizhiling@kylinos.cn>
-Subject: Re: [PATCH] mm/filemap: Align last_index to folio size
-Message-ID: <7weonxk3sdq4ysipns5mnv2lmqlb5froca3cblv7ndkv3gzsf7@ncs2qp22tg55>
-References: <20250711055509.91587-1-youling.tang@linux.dev>
- <yru7qf5gvyzccq5ohhpylvxug5lr5tf54omspbjh4sm6pcdb2r@fpjgj2pxw7va>
- <20250714154355.e27c812d71b5968bdd83764c@linux-foundation.org>
+	s=arc-20240116; t=1752533375; c=relaxed/simple;
+	bh=sdrtmEaKjUsyBMg5s3VhIz8zPd0e41+pq19DXeFUsmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fZGHwa+Plc2TT5b6ujhuQamuZncZY1QrFBGyvSxvnvc61gW4OlUWdEHSJLup59PEXfhjWHe0tVP/zvvhxEKhlh2tBxfkAdBOWgeXM7DL1rqApsxuUZf0z3HM2+tuYxrTz3qNQwWsblPejw0sxJdzhbAhPuGAfhLRfGxO4lnKbe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hc4iOhSQ; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752533373; x=1784069373;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=sdrtmEaKjUsyBMg5s3VhIz8zPd0e41+pq19DXeFUsmA=;
+  b=hc4iOhSQmo91v0iP+FgGinSwgXfgm89pVDd4c7BZQB81ADz/ffkgbf/F
+   /EX9tz9XDFf9EpSacFDgLywRNRO/s3Dd+kK5OLli1j/U4wTOnQ/0BUOAd
+   ps1DdRnVxlPGWta3ACvexgsxJJ6zUfTlRXCI9LKpUtJyl4Pz4mPMJzet9
+   csoBQWq7IqaG43VJHqOLizVPAiaDaJIgfImhwxlB7H1eeDPCqLfnG49R8
+   igK58y/6/0Krc+c/JX1BQ9L+f+z8Ve0LsK/13DRpGxG7hYvhXOoxm2/Lp
+   ya8BcDNu/wSsNj09xKb2BywtS3r3nEIvWBT6GRYjKbMrsp6hT+CpL3zUl
+   A==;
+X-CSE-ConnectionGUID: Zxq+MShNShKWeH7BWty4RA==
+X-CSE-MsgGUID: 6yfCi4LpTsOw4X752bqvCw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54711054"
+X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
+   d="scan'208";a="54711054"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 15:49:33 -0700
+X-CSE-ConnectionGUID: +JzEyOlGSTWFSv0grsrfIA==
+X-CSE-MsgGUID: 93haTxWbROaKu5KhBJtSAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
+   d="scan'208";a="157602070"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 14 Jul 2025 15:49:31 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ubRzF-0009Q7-1T;
+	Mon, 14 Jul 2025 22:49:29 +0000
+Date: Tue, 15 Jul 2025 06:48:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Asad Kamal <asad.kamal@amd.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Lijo Lazar <lijo.lazar@amd.com>,
+	Hawking Zhang <Hawking.Zhang@amd.com>
+Subject: drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_12_ppt.c:273:5-8:
+ Unneeded variable: "ret". Return "0" on line 329
+Message-ID: <202507150618.WOfvWsQF-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,36 +78,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250714154355.e27c812d71b5968bdd83764c@linux-foundation.org>
 
-On 2025-07-14 15:43:55 -0700, Andrew Morton wrote:
-> On Tue, 15 Jul 2025 00:34:12 +0200 Klara Modin <klarasmodin@gmail.com> wrote:
-> 
-> > iocb->ki_pos is loff_t (long long) while pgoff_t is unsigned long and
-> > this overflow seems to happen in practice, resulting in last_index being
-> > before index.
-> > 
-> > The following diff resolves the issue for me:
-> > 
-> > diff --git a/mm/filemap.c b/mm/filemap.c
-> > index 3c071307f40e..d2902be0b845 100644
-> > --- a/mm/filemap.c
-> > +++ b/mm/filemap.c
-> > @@ -2585,8 +2585,8 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
-> >  	int err = 0;
-> >  
-> >  	/* "last_index" is the index of the folio beyond the end of the read */
-> > -	last_index = round_up(iocb->ki_pos + count, mapping_min_folio_nrbytes(mapping));
-> > -	last_index >>= PAGE_SHIFT;
-> > +	last_index = round_up(iocb->ki_pos + count,
-> > +			mapping_min_folio_nrbytes(mapping)) >> PAGE_SHIFT;
-> >  retry:
-> >  	if (fatal_signal_pending(current))
-> >  		return -EINTR;
-> 
-> Looks good, thanks.  I added your signed-off-by (which I trust is OK?)
-> and queued this up.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   347e9f5043c89695b01e66b3ed111755afcf1911
+commit: 0b4119d54b17618c2ddb04a2af5bf5ebe24121e3 drm/amd/pm: Use separate metrics table for smu_v13_0_12
+date:   5 months ago
+config: arm-randconfig-r064-20250714 (https://download.01.org/0day-ci/archive/20250715/202507150618.WOfvWsQF-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 01c97b4953e87ae455bd4c41e3de3f0f0f29c61c)
 
-Thanks, that's fine:
-Signed-off-by: Klara Modin <klarasmodin@gmail.com>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507150618.WOfvWsQF-lkp@intel.com/
+
+cocci warnings: (new ones prefixed by >>)
+>> drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_12_ppt.c:273:5-8: Unneeded variable: "ret". Return "0" on line 329
+
+vim +273 drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_12_ppt.c
+
+   265	
+   266	int smu_v13_0_12_get_smu_metrics_data(struct smu_context *smu,
+   267					      MetricsMember_t member,
+   268					      uint32_t *value)
+   269	{
+   270		struct smu_table_context *smu_table = &smu->smu_table;
+   271		MetricsTable_t *metrics = (MetricsTable_t *)smu_table->metrics_table;
+   272		struct amdgpu_device *adev = smu->adev;
+ > 273		int ret = 0;
+   274		int xcc_id;
+   275	
+   276		/* For clocks with multiple instances, only report the first one */
+   277		switch (member) {
+   278		case METRICS_CURR_GFXCLK:
+   279		case METRICS_AVERAGE_GFXCLK:
+   280			xcc_id = GET_INST(GC, 0);
+   281			*value = SMUQ10_ROUND(metrics->GfxclkFrequency[xcc_id]);
+   282			break;
+   283		case METRICS_CURR_SOCCLK:
+   284		case METRICS_AVERAGE_SOCCLK:
+   285			*value = SMUQ10_ROUND(metrics->SocclkFrequency[0]);
+   286			break;
+   287		case METRICS_CURR_UCLK:
+   288		case METRICS_AVERAGE_UCLK:
+   289			*value = SMUQ10_ROUND(metrics->UclkFrequency);
+   290			break;
+   291		case METRICS_CURR_VCLK:
+   292			*value = SMUQ10_ROUND(metrics->VclkFrequency[0]);
+   293			break;
+   294		case METRICS_CURR_DCLK:
+   295			*value = SMUQ10_ROUND(metrics->DclkFrequency[0]);
+   296			break;
+   297		case METRICS_CURR_FCLK:
+   298			*value = SMUQ10_ROUND(metrics->FclkFrequency);
+   299			break;
+   300		case METRICS_AVERAGE_GFXACTIVITY:
+   301			*value = SMUQ10_ROUND(metrics->SocketGfxBusy);
+   302			break;
+   303		case METRICS_AVERAGE_MEMACTIVITY:
+   304			*value = SMUQ10_ROUND(metrics->DramBandwidthUtilization);
+   305			break;
+   306		case METRICS_CURR_SOCKETPOWER:
+   307			*value = SMUQ10_ROUND(metrics->SocketPower) << 8;
+   308			break;
+   309		case METRICS_TEMPERATURE_HOTSPOT:
+   310			*value = SMUQ10_ROUND(metrics->MaxSocketTemperature) *
+   311				 SMU_TEMPERATURE_UNITS_PER_CENTIGRADES;
+   312			break;
+   313		case METRICS_TEMPERATURE_MEM:
+   314			*value = SMUQ10_ROUND(metrics->MaxHbmTemperature) *
+   315				 SMU_TEMPERATURE_UNITS_PER_CENTIGRADES;
+   316			break;
+   317		/* This is the max of all VRs and not just SOC VR.
+   318		 * No need to define another data type for the same.
+   319		 */
+   320		case METRICS_TEMPERATURE_VRSOC:
+   321			*value = SMUQ10_ROUND(metrics->MaxVrTemperature) *
+   322				 SMU_TEMPERATURE_UNITS_PER_CENTIGRADES;
+   323			break;
+   324		default:
+   325			*value = UINT_MAX;
+   326			break;
+   327		}
+   328	
+ > 329		return ret;
+   330	}
+   331	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
