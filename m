@@ -1,100 +1,163 @@
-Return-Path: <linux-kernel+bounces-730742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A27AB04927
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:10:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC43DB0492F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C256E4A4BEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:09:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F048D1AA06E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E632475E3;
-	Mon, 14 Jul 2025 21:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="joELX53R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621C226A095;
+	Mon, 14 Jul 2025 21:11:40 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A902C263F4A;
-	Mon, 14 Jul 2025 21:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F88E84A35
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 21:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752527385; cv=none; b=KpvCVosf1T8TCjKOK8w2OCNk+WT04+8QsQNSoc1UqURqYfVkBlGAzF5N4zBMAI3C4FIfhMIv/Xzld+wXPNgutllwSkfh2e/fnbSgb2Yf7gpFPpmKUVENJ9WtE6qo/4O5Cg1N6X7NTjjhsf/xbkE1rG27CwbEh7VeZ2Wkp0T/u08=
+	t=1752527500; cv=none; b=GfEpWwU+whoi4M5gzhiJUMucaavErfFkrW7+OoQ/o1I2BLbLnU/PKi8YEPiKVIO4ae5uvpxNOzTgSc7cO8HA+ff+Xz8UrfTDFq4LNuVo8J/xTlD7ocv0FTs9yRmfrxYr2ZwK2x5X6nyf+SWJZ1kc5lXQtYuc71MeA8dNbag4fm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752527385; c=relaxed/simple;
-	bh=nVBCslxlPncX/VDKuIE89eGSx6wKViW/DDBK2FBzxVI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=J5z9VI2NI0lctt8buwEPkXScedkldxhlE7CqrRQ+OZTuxA7T52V/6bjjwbPXsnmeVjKJ8L86/1Z4GYJ2+m9raBxcpjVbTbPQ1+pCZDuACy8AU/38AyFKPF+LDQ5jL37GmMBR5+kKScGZyfEfm/Rx2/Yt/DNbqalLbooL5lgFlCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=joELX53R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FD7CC4CEED;
-	Mon, 14 Jul 2025 21:09:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752527385;
-	bh=nVBCslxlPncX/VDKuIE89eGSx6wKViW/DDBK2FBzxVI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=joELX53Rga5hFZYciwlJWqtUWUutrfWonkxX1p1xjg9cXUVhc/k4/9eSZgvTOCK8U
-	 vtwpq3EoWstMaF4gr+o6wNtd39T+vcEBO+DjTuMoiBiZIf7ewMziZI3biGpf1I/0TE
-	 c7vGFoEvy5tZvxOcxHX9VhZRaD8a8zxXe7tn8n9e5fvb6gv4eDt+SRUBbtfHsDUymC
-	 7wDw8D3xa8/5r/KJSwxKiaEVPCeOsyDHf9ejzQvWi6ro4vkE4ILolT8HP8Wv9odLpZ
-	 QLnwLZJmJDk05rf8VIt7LGIqT/PYZPHUEUfeVgtzDoxmNKjZehIWSrWB5cNkat8wQK
-	 Io/xh3ckaxuWg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 345DF383B276;
-	Mon, 14 Jul 2025 21:10:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1752527500; c=relaxed/simple;
+	bh=+ctVWatCu7lgPfwHkdPKCaqXaZhAmGu3JQJ8Ne63Ljw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Y2v2qFsNsQJI/Ltyw/XtfvhbfAFY7NXO5SUghJGTVlxd3y86JH0HFqQEldxniRmY1NO4TwY5vJDhJeF+nfZuEeXNVzdyFd/Oz4HNRJUUpOZ5SKtOTxgvUiz0MN/WDiqEo99IWvTlD2d0Qj85/zQ5IizKeQJd7sxgpbfNuK7XwPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-86d126265baso447056839f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:11:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752527496; x=1753132296;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x5yOpjMiDG72er6VPMXxsfpav3LwFE3KOyDhO2auBsg=;
+        b=O6geUW7JazTEQAfmgS3wh41g5sRFBOjYRVkOYDpCukoZQMz944tpgpzg8H5OsZvyln
+         AC1qS0xyELwZh2uE44TB0pecfU1NqTMo/zXpiqztwOEByP+A5XxL7NIzZjdo8SuqIzOX
+         SQCZz6vkfn8PGaxsZscce/0D+Wlcd75pGNnWFN5T8kPR3b96NhF/Yc7sw4l+nozDTdw/
+         TNm4w4igjwbzCw0IQg6f9nFZKDtsyEadtRXgFtSwpg42VKTiK3Hpb2xf44KKZfAsM83U
+         QOMJNeXieJKYQ3Hhk4k53Q5BStr1rz9QNjjca7zEXyqlZV/zaHDb83N4LWgTv26sLWGq
+         ky4A==
+X-Forwarded-Encrypted: i=1; AJvYcCU4LF1qI9wWqZtUFyJZTOLy70//q/K8ysJCN5SxlTJfzXU12yw9B+UnzFetQPj0Gp70nSYC+3Y0nHzT8PY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf4Flz9EvP4d7rdGogcxSOimWHBO0fznYjKSh60HfNfW1t+m6F
+	trQIf9Cep0WXEbf3a174lNON2g5J4rX20yr4zC1nPNftuuC+VD3vxaISHXOQh/74HDWLMeDmWNY
+	A8GmKjmi9MT12PZcSpxhDxAx+3d128YYPgKk6oupiiaMNsWqF8JA30tIlL28=
+X-Google-Smtp-Source: AGHT+IEbm+gvwuXrO5B9bMoUZ7tpUzQKFMn94FvpdcvDyzwLrp+i/VTJ1q4Oc8Jrnytjb4I6P5UWpEjWqhBMGBfk7t2X+5IMPr9t
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 1/3] Bluetooth: hci_core: fix typos in macros
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <175252740601.3988382.10149417016230822674.git-patchwork-notify@kernel.org>
-Date: Mon, 14 Jul 2025 21:10:06 +0000
-References: <20250714202744.11578-2-ceggers@arri.de>
-In-Reply-To: <20250714202744.11578-2-ceggers@arri.de>
-To: Christian Eggers <ceggers@arri.de>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, pav@iki.fi,
- johan.hedberg@gmail.com, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, sean.wang@mediatek.com,
- amitkumar.karwar@nxp.com, neeraj.sanjaykale@nxp.com, yang.li@amlogic.com,
- sven@svenpeter.dev, j@jannau.net, alyssa@rosenzweig.io, neal@gompa.dev,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, asahi@lists.linux.dev, netdev@vger.kernel.org
+X-Received: by 2002:a05:6602:15c7:b0:876:a8dc:96cc with SMTP id
+ ca18e2360f4ac-87977f8234emr1765274739f.6.1752527496489; Mon, 14 Jul 2025
+ 14:11:36 -0700 (PDT)
+Date: Mon, 14 Jul 2025 14:11:36 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68757288.a70a0220.5f69f.0003.GAE@google.com>
+Subject: [syzbot] [fs?] WARNING: bad unlock balance in query_matching_vma
+From: syzbot <syzbot+d4316c39e84f412115c9@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+Hello,
 
-This series was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+syzbot found the following issue on:
 
-On Mon, 14 Jul 2025 22:27:43 +0200 you wrote:
-> The provided macro parameter is named 'dev' (rather than 'hdev', which
-> may be a variable on the stack where the macro is used).
-> 
-> Fixes: a9a830a676a9 ("Bluetooth: hci_event: Fix sending HCI_OP_READ_ENC_KEY_SIZE")
-> Fixes: 6126ffabba6b ("Bluetooth: Introduce HCI_CONN_FLAG_DEVICE_PRIVACY device flag")
-> Signed-off-by: Christian Eggers <ceggers@arri.de>
-> 
-> [...]
+HEAD commit:    a62b7a37e6fc Add linux-next specific files for 20250711
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1422dd82580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7d42120e19faaef
+dashboard link: https://syzkaller.appspot.com/bug?extid=d4316c39e84f412115c9
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1222dd82580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1205d0f0580000
 
-Here is the summary with links:
-  - [1/3] Bluetooth: hci_core: fix typos in macros
-    https://git.kernel.org/bluetooth/bluetooth-next/c/359bc1aaa840
-  - [2/3] Bluetooth: hci_core: add missing braces when using macro parameters
-    https://git.kernel.org/bluetooth/bluetooth-next/c/de92c6716970
-  - [3/3] Bluetooth: hci_dev: replace 'quirks' integer by 'quirk_flags' bitmap
-    https://git.kernel.org/bluetooth/bluetooth-next/c/be736f5f89d5
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/691b5f8ab5b1/disk-a62b7a37.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/47d1a209784d/vmlinux-a62b7a37.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/eb70d73c9e55/bzImage-a62b7a37.xz
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d4316c39e84f412115c9@syzkaller.appspotmail.com
+
+=====================================
+WARNING: bad unlock balance detected!
+6.16.0-rc5-next-20250711-syzkaller #0 Not tainted
+-------------------------------------
+syz.0.32/6076 is trying to release lock (vm_lock) at:
+[<ffffffff825aa9e7>] get_next_vma fs/proc/task_mmu.c:181 [inline]
+[<ffffffff825aa9e7>] query_vma_find_by_addr fs/proc/task_mmu.c:512 [inline]
+[<ffffffff825aa9e7>] query_matching_vma+0x2f7/0x5c0 fs/proc/task_mmu.c:544
+but there are no more locks to release!
+
+other info that might help us debug this:
+1 lock held by syz.0.32/6076:
+ #0: ffffffff8e53c5a0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8e53c5a0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8e53c5a0 (rcu_read_lock){....}-{1:3}, at: query_vma_find_by_addr fs/proc/task_mmu.c:510 [inline]
+ #0: ffffffff8e53c5a0 (rcu_read_lock){....}-{1:3}, at: query_matching_vma+0x141/0x5c0 fs/proc/task_mmu.c:544
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 6076 Comm: syz.0.32 Not tainted 6.16.0-rc5-next-20250711-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_unlock_imbalance_bug+0xdc/0xf0 kernel/locking/lockdep.c:5301
+ __lock_release kernel/locking/lockdep.c:5540 [inline]
+ lock_release+0x269/0x3e0 kernel/locking/lockdep.c:5892
+ vma_refcount_put include/linux/mmap_lock.h:141 [inline]
+ vma_end_read include/linux/mmap_lock.h:237 [inline]
+ unlock_vma+0x70/0x180 fs/proc/task_mmu.c:135
+ get_next_vma fs/proc/task_mmu.c:181 [inline]
+ query_vma_find_by_addr fs/proc/task_mmu.c:512 [inline]
+ query_matching_vma+0x2f7/0x5c0 fs/proc/task_mmu.c:544
+ do_procmap_query fs/proc/task_mmu.c:629 [inline]
+ procfs_procmap_ioctl+0x3f9/0xd50 fs/proc/task_mmu.c:747
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f667ed8e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f667fb27038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f667efb6080 RCX: 00007f667ed8e929
+RDX: 0000200000000180 RSI: 00000000c0686611 RDI: 0000000000000003
+RBP: 00007f667ee10b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f667efb6080 R15: 00007fff4a18d328
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
