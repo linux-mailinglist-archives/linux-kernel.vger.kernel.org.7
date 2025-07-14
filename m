@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-730647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87966B0478F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 20:53:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD97DB04791
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 20:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D30AF1AA01E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:53:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E9071AA0320
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADCB7276052;
-	Mon, 14 Jul 2025 18:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3D9277036;
+	Mon, 14 Jul 2025 18:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4Ueewz1F"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j+O7YNfs"
+Received: from mail-oa1-f74.google.com (mail-oa1-f74.google.com [209.85.160.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE2B2222B7
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 18:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508EA27702D
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 18:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752519211; cv=none; b=lRcudnvNgBWL9a871O1NMjRPYCL8yia/OTosUhBTjoEScNmCbDmDMYkVjMImaPSHqevp8/mtF8MRCleoqZY0mv3fwpBThXj+z8CHkGamr1C/A31IGGE4lid7ue3sDEQGrM87qPdNegjCiLg5fHLEMzlkPxoB+w/TVFNfqsGMjTk=
+	t=1752519215; cv=none; b=j80y5tXNvPhBoR+VIpHnEUpLJU8mNS4d9dUAIVbbelDbnz9NBhIPThh2lt6kdfdmMhC/it3/lxve4RN6rW6IpWzHOa4XFrKxfqEvnL7ZoRJZVaVvdLsL0LhlaFlF2ExE2WywXH4Nxt+mIYWGMxJMJOEyylOTZNcf+qRzro/hfng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752519211; c=relaxed/simple;
-	bh=risPXDj3ZE97v8mJJ667EAITpJdxezJ7+lZmuf9qg8I=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=llfIulMCoTG7hR8qTUSQZpUr+TTmIjkaUyCs8XcWkAhvKlYhUC8w1AfV1MJgWeoDhSAVMSrxrW9+eJAZ7WbwHbf5znt2iWQgM/FReOciKvRNPyjd7anoHK1duG2JCqIL/hGs6EM7LUR+b4TFR1aVaiNFnkF3DvniCDhYW4zv1TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4Ueewz1F; arc=none smtp.client-ip=209.85.215.202
+	s=arc-20240116; t=1752519215; c=relaxed/simple;
+	bh=XwSHl3R6x0geSRen2/MMqiPJvr7MDKRDFgnW0OKJPCg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=YJBJ3iYHn71nfY/PztyJhSjF4A3HmxvpHb8go86BhTRkXxv3aEbrv5Epfk4a0WBFXanwsbXodCbUokPkdjd9XA/kF7qiyj2D1GFRDjYQ1gPBW5bDyqioWPJz3CYDgGZ/LstMygu58sVDQydoxJGDSeKrEIfLzqhfeEkhkVMu+YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j+O7YNfs; arc=none smtp.client-ip=209.85.160.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b31bd4c3359so2632007a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:53:29 -0700 (PDT)
+Received: by mail-oa1-f74.google.com with SMTP id 586e51a60fabf-2e9b1f85b2bso5581059fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:53:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752519209; x=1753124009; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Q+xgwesTSILPgyLCGoIs7ePcEq+ry82PgVAHVTCzBcY=;
-        b=4Ueewz1F/CJ3qbuWZM8Ui8AHSdSBjE5ovda541sstDrFWifpib8/qOuwKhb4oYlKSL
-         7ZIyFVTKHFZWuWFGx40dTvQkzQuTw4OXmzl6JUUygkM+aZeuQctwmv2J2MpvPYoQ5RSi
-         eyQxnfJCUb59o6W6BhaOL5GJLjYFDw+Zu6n3AgJbQf+PbNq1zY24pcoDJafsaP2dROuR
-         YwiOPNiWP1/pbbOD85cvlFl4ADySj7oDg+DrbKHyJQ+6G4wER5sRZKT89qUTIVJsdBcO
-         MQ+vrweman6Zm2JAj49O02FRRHw5JfI7LO62xsY7yZyu4q+1djVgIY8HZHiqv6DoMvos
-         aeSA==
+        d=google.com; s=20230601; t=1752519213; x=1753124013; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=U2ToBQsH2KBAAKqSrwB/wtB0CqIjOe4g4OmnGE6U2PU=;
+        b=j+O7YNfs64EISFMnzJ77sAwPWhyHmP2fxsHGUIPfp0tQzkxaphWjqlYD71Wa3hUVkr
+         7pAf+EaebfDYzx1UfoUSCAP7dT49muGT6eCvX768vwI8PINtOuVBN+6KeaR/XvNn0sW/
+         aLQUCutPe3Pl2DUkLFnyZoifXW5fVHCbmELMEli98aVzdxKVwrfoD0frhkVoGf6SedZp
+         7YRYEI3MI0U6Xp1tp+R45dUQbGp5nQdQAhzGcaJB6IqktUV273IyoCDvXal6A+HNulT/
+         nyKeQus7IlSV0I8G55knBIuGdr4FmXuBtCcwmNB+Pm0QsepYvPbOY1SHk1oV3LzsJu9x
+         rt/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752519209; x=1753124009;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q+xgwesTSILPgyLCGoIs7ePcEq+ry82PgVAHVTCzBcY=;
-        b=dwAboS9uqvrAnChf2zhqo9FQAcUXC1GOxIQpRwuPG/fcsmN+2wplKio9y79vhGumkv
-         dN+EBE2zjUwzmySdataFSeOfC8a4Cv98L852qBagooENorqAKeQhpDHZWyzesaiiwGQ2
-         w7qIKAibOw4XWKPSvvbB4laW5BWW8ClJntVQDK+w6VyDSlFxO517gsfznzc12TEVMrHU
-         fudDUIv0EGPQ2n+aJExk/jvGNROP0XQJBKi13S3eotp4KMpXvcGWwgeYidd3MfezLhn4
-         IvaF3PZcPFxvckFbZTTs1W76gl2mJ4X3cjQ6OVRMl1yhLOJBCcKb7gOlrnLZBL6oPdMW
-         tZPw==
-X-Gm-Message-State: AOJu0YzksEO40XWlgdxtC8lDfDeXW+n9ZMHoz9rgjvX6UhYUq9k9dcd9
-	4MBtJnEqGhyxq/R1f9f0aftaNKVlJitwHfZ5WyHc3VwcTaY8oAtztE7HKxpKBxOAvVJShAmJP8P
-	EkGsHIoLjktDskisTLG/CpYNNUC0kfSkrZBsmBWmX9pL3Ak5nBFN/YT2d7N7D14tyhf8QSRwZNr
-	vCQ6j0o8xGEmGM5yBAD42+aLPIiOJCagpYODul1BuLztk+fRsf5w==
-X-Google-Smtp-Source: AGHT+IGSxDfyVQ+AlcvCfHNaTx/qi0MWma6wabzsdqo+Mm0Scra8QIkBiktjFo9tWCkzTTnfXRPym5tTQn1j
-X-Received: from pjj14.prod.google.com ([2002:a17:90b:554e:b0:31c:2fe4:33bd])
- (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:39cc:b0:311:ffe8:20e9
- with SMTP id 98e67ed59e1d1-31c4f5127ebmr23378221a91.17.1752519208906; Mon, 14
- Jul 2025 11:53:28 -0700 (PDT)
-Date: Mon, 14 Jul 2025 11:53:13 -0700
+        d=1e100.net; s=20230601; t=1752519213; x=1753124013;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U2ToBQsH2KBAAKqSrwB/wtB0CqIjOe4g4OmnGE6U2PU=;
+        b=ALWWuEg+xEABn4gcdI7SPfZ7D5B03W9EDRrrqGgTJMsK9CdU/1OS/nTVfFIu1Pe9ev
+         JNVWHvqs3MUqe9TL4fyjRWredaVyax5tWN7UlOhGu6s3/jKXqNihPObJJGMIeq5q8dou
+         hnonkrmrNPLgQRaovEM60Crg+RfY1ptxPQekphyhhs6P6qoaLcnYqLCpbYylBSlpQYIV
+         bSrnNen998k7eOwyAX9OHsgtDZu0NrWz4hhKDAQ664kirNa8zii0wg2i211k2MtdPgZf
+         LeDUwxzj264DOw0hF0UatGOddCyHn5KHt/05gyxoAF7yB2b+/AsJBDDXjx7Kz6lUdLZk
+         lAIg==
+X-Gm-Message-State: AOJu0YxK5MaRMUpOMvNjaUwbbGywxgKeIUDcsCr/u/bJw4+dN8Y49dZc
+	8cwrCQ+XZrMYF169619WUlRwKxjsLWVK7UOrvDLuIZ2bqNQbOwdu2vHsRLSzX4SFDyhxxTTbX96
+	pi1kGzqDjAgTZN2OecQDvJ4X5g4/C5Jg2ol74OV6He9ZyjsKqgiwjbpO9l1AMDoMZmhbm04Vp8h
+	Lu47ijAUw53ruji2pGKyFXWJg1ofql+kz+nO7hQ3JsXGoghDJrmA==
+X-Google-Smtp-Source: AGHT+IFitcv4rcRBTerguEKCsh7TKl705K/Y/N/RPPwgQCEScQ+VKqIuk28UlrV6d2EJBb5zRjTc0wf115oi
+X-Received: from oabra17.prod.google.com ([2002:a05:6871:6111:b0:2e9:7781:2867])
+ (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:2b05:b0:2d4:ef88:97af
+ with SMTP id 586e51a60fabf-2ff26e7a249mr9942418fac.3.1752519213343; Mon, 14
+ Jul 2025 11:53:33 -0700 (PDT)
+Date: Mon, 14 Jul 2025 11:53:14 -0700
+In-Reply-To: <20250714185321.2417234-1-ynaffit@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250714185321.2417234-1-ynaffit@google.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250714185321.2417234-1-ynaffit@google.com>
-Subject: [PATCH v3 0/6] binder: Set up KUnit tests for alloc
+Message-ID: <20250714185321.2417234-2-ynaffit@google.com>
+Subject: [PATCH v3 1/6] binder: Fix selftest page indexing
 From: Tiffany Yang <ynaffit@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: keescook@google.com, kernel-team@android.com, 
@@ -84,46 +87,33 @@ Cc: keescook@google.com, kernel-team@android.com,
 	kunit-dev@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+The binder allocator selftest was only checking the last page of buffers
+that ended on a page boundary. Correct the page indexing to account for
+buffers that are not page-aligned.
 
-binder_alloc_selftest provides a robust set of checks for the binder
-allocator, but it rarely runs because it must hook into a running binder
-process and block all other binder threads until it completes. The test
-itself is a good candidate for conversion to KUnit, and it can be
-further isolated from user processes by using a test-specific lru
-freelist instead of the global one. This series converts the selftest
-to KUnit to make it less burdensome to run and to set up a foundation
-for unit testing future binder_alloc changes.
+Signed-off-by: Tiffany Yang <ynaffit@google.com>
+---
+ drivers/android/binder_alloc_selftest.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Tiffany
-
-Tiffany Yang (6):
-  binder: Fix selftest page indexing
-  binder: Store lru freelist in binder_alloc
-  kunit: test: Export kunit_attach_mm()
-  binder: Scaffolding for binder_alloc KUnit tests
-  binder: Convert binder_alloc selftests to KUnit
-  binder: encapsulate individual alloc test cases
-
- drivers/android/Kconfig                    |  15 +-
- drivers/android/Makefile                   |   2 +-
- drivers/android/binder.c                   |  10 +-
- drivers/android/binder_alloc.c             |  39 +-
- drivers/android/binder_alloc.h             |  14 +-
- drivers/android/binder_alloc_selftest.c    | 306 -----------
- drivers/android/binder_internal.h          |   4 +
- drivers/android/tests/.kunitconfig         |   3 +
- drivers/android/tests/Makefile             |   3 +
- drivers/android/tests/binder_alloc_kunit.c | 573 +++++++++++++++++++++
- include/kunit/test.h                       |  12 +
- lib/kunit/user_alloc.c                     |   4 +-
- 12 files changed, 645 insertions(+), 340 deletions(-)
- delete mode 100644 drivers/android/binder_alloc_selftest.c
- create mode 100644 drivers/android/tests/.kunitconfig
- create mode 100644 drivers/android/tests/Makefile
- create mode 100644 drivers/android/tests/binder_alloc_kunit.c
-
+diff --git a/drivers/android/binder_alloc_selftest.c b/drivers/android/binder_alloc_selftest.c
+index c88735c54848..486af3ec3c02 100644
+--- a/drivers/android/binder_alloc_selftest.c
++++ b/drivers/android/binder_alloc_selftest.c
+@@ -142,12 +142,12 @@ static void binder_selftest_free_buf(struct binder_alloc *alloc,
+ 	for (i = 0; i < BUFFER_NUM; i++)
+ 		binder_alloc_free_buf(alloc, buffers[seq[i]]);
+ 
+-	for (i = 0; i < end / PAGE_SIZE; i++) {
+ 		/**
+ 		 * Error message on a free page can be false positive
+ 		 * if binder shrinker ran during binder_alloc_free_buf
+ 		 * calls above.
+ 		 */
++	for (i = 0; i <= (end - 1) / PAGE_SIZE; i++) {
+ 		if (list_empty(page_to_lru(alloc->pages[i]))) {
+ 			pr_err_size_seq(sizes, seq);
+ 			pr_err("expect lru but is %s at page index %d\n",
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
