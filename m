@@ -1,131 +1,126 @@
-Return-Path: <linux-kernel+bounces-729809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0CBFB03BDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:27:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 475DFB03BDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1164C17AA11
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:27:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 371734A0998
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69211244661;
-	Mon, 14 Jul 2025 10:27:24 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C416242D9B;
+	Mon, 14 Jul 2025 10:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Ebkdrr2Z"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD3D242D99
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 10:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D0B23C4EB
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 10:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752488844; cv=none; b=M+DlQAxoC0hd7eihlQtDE6Pihrvu5wRw+yYTRQ0WAHTiCpMhoFUWurqDxZM3+iepFo769WnnqJ31XQ/bmPNp0OzWyjj92I1577ZQKBlgsxi5nWpHviaKUn9ltSEQ7czMCAvQjiDQ4MF/jC0tyx9xS3oMLDnP1Dj0biTsRB323A8=
+	t=1752488869; cv=none; b=gToljkZS6NB5eZhSyVJH465s2EDyJmSlEsI6U+SZ5TwNeDAVZE0OZ0Shk15lkDitVUUIBqlcgBpOf0JKxcRSNDQoOiNCIA1DGwdnGCZT1hSLj2I+EiBrHoFSJJm9N0yw6hZbDZfCwBk9XSwOSd91tcapRil1xopHKbvzfqXYbDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752488844; c=relaxed/simple;
-	bh=f859ImdpSudKeNW1SzWr5v9y2JT4OEGZRmj8f/rUPqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bO4lYCrLc4Oj6Ij0l2m92KVBmsooQa2nHWr0E6ZwGaY7kuLn9wuLDdGCMkKBJaLaDMiaFWC+UII5JupT1PPEp9NbM1EjtlLToa6KMaPXdmeeXhB0IvMJK2bImJGFl4rqUy47EVC2x5Hv0E7txlEz7UHxJKltKEYHr/SXvBjCH00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id A94001CECC7;
-	Mon, 14 Jul 2025 10:27:13 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 32DEB20025;
-	Mon, 14 Jul 2025 10:27:10 +0000 (UTC)
-Date: Mon, 14 Jul 2025 06:27:24 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
- <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
- Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
- E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
- Jens Remus <jremus@linux.ibm.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
- tech-board-discuss@lists.linuxfoundation.org
-Subject: Re: [RFC PATCH 2/5] unwind: Export unwind_user symbol to GPL
- modules
-Message-ID: <20250714062724.6febd9fb@gandalf.local.home>
-In-Reply-To: <aHSmIa3uffj5vW-m@infradead.org>
-References: <20250709212556.32777-1-mathieu.desnoyers@efficios.com>
-	<20250709212556.32777-3-mathieu.desnoyers@efficios.com>
-	<aHC-_HWR2L5kTYU5@infradead.org>
-	<20250711065742.00d6668b@gandalf.local.home>
-	<aHSmIa3uffj5vW-m@infradead.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752488869; c=relaxed/simple;
+	bh=7f5JO+G5HSg85L10NnYDJg7gTycID3e/O4cdxAf0U2s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mVBfJ7XbcEFzObqYR3tpuFhMJXzl1RUJyCy/Gq/9a09iLgox45rAQxmll7ePhF4CF5ftdfEVXFDG8uRMb91iC3CNqs3aU9OVzbaDKVVYCJ7+PpHIK9D6j7AyWDaiY4rq9f7yJ4d2tE0p+t8G66413VYKAJ9MOmVfDGyCbyWWslU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Ebkdrr2Z; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 48B2540E0216;
+	Mon, 14 Jul 2025 10:27:44 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id PDwsZvDTdks1; Mon, 14 Jul 2025 10:27:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1752488860; bh=NROTqCYd1HPCd3KjwaxGfkgS7An8P7HR/pAbvsSC+UM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ebkdrr2ZMM2R0m6Bx4MmqAWJBPUQFKq5wVCacxwcERPGRNUI54UaZfS5JCk16L5Bx
+	 50v8/HxJGaeswItFtl6N7/ZMrqNs7t+KAUayI1LF3aOzPDKvSb3+olXpTPKh/8Hht5
+	 +W4Rr8Be+kVQcoXT8fLtyTrQK9a7Z/vjkTLWCVEWinYv495po7bVIlz3grzvPoUF1Y
+	 uMsQYC1hoUgUIwpMe39vV5UlxqG5FduP+fJ94x1lER50iGyEDzWdcTrH5IhskP9hAs
+	 MG8DchvARI9bUvK8/R754xQEHd7pg+/uykFumfrKAXYra8hTb+K3LU4UsqY4wGd4zD
+	 Q3ecNJlK2kXyoRTUGrJixsXVVACZKTecYL7Hk8B0Vnrs7nYmDiQklyvGzX9czAmlfi
+	 7RVHajXTwUuCRf6Z0sYPPEVBJKLQVsHiWr3Z6neCS4wxnRI2xz3y/p4vahdvagtgZS
+	 81NRzV3svR3TS5r/1GAAl935zuKqU+Qp6m71jOvyJeC9N8EVKupgkJZ2nYCCCoKsnZ
+	 slK6IFruJC1rkM+F9gZpLSEJwZP/bXW+cmx7QTZI3uo/h2sN2CeCKRUdkHa9Y4vD3r
+	 g/xkEFYsGzDs+r5yuEOa8iA2BLbqT58QQiYfxnbuiwN6tTll3yti+9YD4nkm003/mV
+	 Ffo2resE7GJ9JZq3AO5Q0FvU=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3B94C40E01FD;
+	Mon, 14 Jul 2025 10:27:35 +0000 (UTC)
+Date: Mon, 14 Jul 2025 12:27:29 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] x86/sev: Work around broken noinstr on GCC
+Message-ID: <20250714102729.GDaHTbkRSLA61z7vPz@fat_crate.local>
+References: <20250714073402.4107091-2-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Queue-Id: 32DEB20025
-X-Stat-Signature: 5qx5ek55mhyn7n675zawxk8zhbzg8bb7
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18O29vn19TQ9DkBZJ68uISE+kXJHJzJkEI=
-X-HE-Tag: 1752488830-25392
-X-HE-Meta: U2FsdGVkX184+gBKiABvkn1oq2sQKAAZrP3lEarukBPpxTbeh/BtWNKCKOXxNjDrLePW4aS/24VAhlT4wFQPQXlSDIsI68eKHe55LYHJ6uY2QSYR+MbUCafcQWJzPFx9qTmH6kq/wpfNBe3chX+pssx6Wtn6qpiyPEj1pa/D1ouek4aSPTrLqeq5zVWXcjn+HI/iYRHmeUlHoNv3YC5ZwPp5ImQY4GKiS17V7bs05HDW+Nl1ZJkGJ//GU6MsdJpLKFfcrCaiio3Ytry1N0C6wmaqyZ2/4NsrNCPkW11TY5HNSMVESAPvHOZO1o/wXOBDd39ztBo4JUQ0T1UXi2ytCzevM2jWTss+bFej4YV1z2f00cUsqy2FSUc3k/+0D1gNJstUwg5Mhj+Pj/ryFwNet93UxGUMH1f5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250714073402.4107091-2-ardb+git@google.com>
 
-On Sun, 13 Jul 2025 23:39:29 -0700
-Christoph Hellwig <hch@infradead.org> wrote:
+On Mon, Jul 14, 2025 at 09:34:03AM +0200, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
+> 
+> Forcibly disable KCSAN for the sev-nmi.c source file, which only
+> contains functions annotated as 'noinstr' but is emitted with calls to
+> KCSAN instrumentation nonetheless. E.g.,
+> 
+>   vmlinux.o: error: objtool: __sev_es_nmi_complete+0x58: call to __kcsan_check_access() leaves .noinstr.text section
+>   make[2]: *** [/usr/local/google/home/ardb/linux/scripts/Makefile.vmlinux_o:72: vmlinux.o] Error 1
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> ---
+>  arch/x86/coco/sev/Makefile | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/coco/sev/Makefile b/arch/x86/coco/sev/Makefile
+> index db3255b979bd..342d79f0ab6a 100644
+> --- a/arch/x86/coco/sev/Makefile
+> +++ b/arch/x86/coco/sev/Makefile
+> @@ -5,5 +5,6 @@ obj-y += core.o sev-nmi.o vc-handle.o
+>  # Clang 14 and older may fail to respect __no_sanitize_undefined when inlining
+>  UBSAN_SANITIZE_sev-nmi.o	:= n
+>  
+> -# GCC may fail to respect __no_sanitize_address when inlining
+> +# GCC may fail to respect __no_sanitize_address or __no_kcsan when inlining
+>  KASAN_SANITIZE_sev-nmi.o	:= n
+> +KCSAN_SANITIZE_sev-nmi.o	:= n
+> -- 
 
-> On Fri, Jul 11, 2025 at 06:57:42AM -0400, Steven Rostedt wrote:
-> > I want to bring up this discussion. I understand there's a policy not to
-> > add EXPORT_SYMBOL_GPL() unless there's a current user of it in the kern=
-el
-> > proper. My question is, does this policy have to be draconian? =20
->=20
-> Yes.  Making exception for friends and family is like Austrian law
+Hmm, so this points to the carve out:
 
-This has nothing to do with Mathieu being a friend. He's a long time Linux
-kernel contributor and has played a key role in developing a new feature
-that will help both perf and ftrace, but without the EXPORT_SYMBOL_GPL(),
-LTTng can't use it. It's basically saying "thank you Mathieu for helping us
-with this new feature, now go F*** off!"
+b66fcee1574e ("x86/sev: Move noinstr NMI handling code into separate source file")
 
-> enforcement and thus errodes the whole principle.  If you think lttng
-> is useful help ustreaming it.
+but then we didn't do any KCSAN exclusion to SEV code before either.
 
-That's the entire point. I have no stake in LTTng getting upstream. I just
-sympathize with Mathieu as he has been very helpful in improving ftrace. To
-me, open source software should work with each other.
+I guess send this to Linus now so that it is in 6.16?
 
-Now, I would not block LTTng from getting upstream. I had a conversation
-with Mathieu to discuss why it failed last time, and that's because we went
-with the approach of trying to merge the features of ftrace and LTTng where
-it made sense, and that became way more work than either of us had, and we
-found no real benefit from it (besides getting LTTng upstream). It would
-require at least 3 or 4 full months of manpower which I don't have time for.
+Hmm.
 
-=46rom what Mathieu told me, LTTng's kernel module is 75K SLOC, with 20 years
-of development. It already has its own ecosystem. The only practical way
-for it to get upstream is if it were to become its own subsystem (like
-kernel/lttng).
+-- 
+Regards/Gruss,
+    Boris.
 
-Who's going to review 75K of SLOC? I don't have the time to. The only
-reason I would want LTTng in the kernel is to officially welcome Mathieu
-into our community. Other than that, I have no need for LTTng.
-
-What would you recommend Mathieu to do? He's been helping us for several
-years and the work he does helps perf and ftrace and other parts of the
-kernel (he's helped improve RCU). But to get LTTng upstream, it would take
-a massive amount of work. And Mathieu has tried before without success. Why
-should he spend all this time to break up the code into reviewable portions
-without anyone willing to review it?
-
-As I mentioned before, Mathieu is at a bit of a disadvantage. His customers
-are non-kernel developers. But he needs the interest of kernel developers
-to review his code. But he can't find anyone willing to do that. He doesn't
-want to waste his time trying spending months of work to get LTTng upstream
-if there's no guarantee that it will be accepted.
-
-Would be willing to review his work?
-
--- Steve
+https://people.kernel.org/tglx/notes-about-netiquette
 
