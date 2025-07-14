@@ -1,182 +1,187 @@
-Return-Path: <linux-kernel+bounces-729628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B96A7B0395C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:24:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BB05B0397E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA5C01642BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:23:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E07EC16441C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A98223C518;
-	Mon, 14 Jul 2025 08:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D57324337D;
+	Mon, 14 Jul 2025 08:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GA9ew2ME"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aKUl+Fy3"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2071.outbound.protection.outlook.com [40.107.93.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6B323B608;
-	Mon, 14 Jul 2025 08:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752481354; cv=none; b=QJmr44W53xVxagkqWzjICapmTbX3wF5/nQq2IG26nK8LikEYEBfuK68l3jOgaUOq3bOYDWREeOHgN9txBlxLzlxixJEj+ous0BThE3AAJwlPWcutSUKBK2y8GNJWXtsCN6lnAfou3nWioT+mEP20g3p5uRHwhx30B0OOUEyj8dY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752481354; c=relaxed/simple;
-	bh=9FsRu860H4W8OcEf2wpkIXNWWM6nplf11dSrJZDLgQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s2NG3WuPKrxlsNKlFjA9g1RxdN4Aa0fD0JndVV0ZsPcSxiUvvGlT9+Kkw+z+Nj2uIDR57qo/2JXdBYaRL/YpHe/ZU2fL9WZ/7qAEhqLXH/+EGxO4qUXjUApdGD2rEBB23JTTXbWb6v5vrt9EdHpLWZpWu7ygfOo1OoW0T1DFhjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GA9ew2ME; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752481353; x=1784017353;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9FsRu860H4W8OcEf2wpkIXNWWM6nplf11dSrJZDLgQo=;
-  b=GA9ew2MEHpMjmhO4xz7yYL3hefsbIhIdxLD8faYaRAQElH8UfSqzNBe/
-   pE/LT+9ZvFTH2rS4805im55eqnxDvxzqRxdLszgNMbKIUnsCVHLK4U+au
-   B//qpzpstjxvGM5VMD15ZyIQqPuiX0XojuSBij73G+7BZw6shjRCQecdW
-   2U7TwhvTulHRlGYbbKfcfjazMEzOmFWP6CMiNEn0JVIv2kiBoy16VlXjs
-   v0CZWR5aL8/pQoGIeiXCA06cCrmP8mFR+gmLhcTD0Jjc37chRl/hJAXdu
-   uSM+dAt0Kmr662vrByBpeP/vCRwjyZ9AGbBDImqmLstLOmzVfsR0yO1s1
-   Q==;
-X-CSE-ConnectionGUID: 30rqk1b/R/OnslbC9M08BQ==
-X-CSE-MsgGUID: +aX6vxYQQ2CcnoFWOKjyww==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54602488"
-X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
-   d="scan'208";a="54602488"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 01:22:32 -0700
-X-CSE-ConnectionGUID: FhSDe/JRREeFxD2jxZltkg==
-X-CSE-MsgGUID: 5L5J8xCsTwSdnL9D+kQEwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
-   d="scan'208";a="162544044"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 14 Jul 2025 01:22:27 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ubES8-0008gJ-1W;
-	Mon, 14 Jul 2025 08:22:24 +0000
-Date: Mon, 14 Jul 2025 16:22:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Sumit Garg <sumit.garg@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Apurupa Pattapu <quic_apurupa@quicinc.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: oe-kbuild-all@lists.linux.dev, Harshal Dev <quic_hdev@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-	linux-doc@vger.kernel.org,
-	Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v6 08/12] firmware: qcom: tzmem: export shm_bridge
- create/delete
-Message-ID: <202507141458.kBLqFFYk-lkp@intel.com>
-References: <20250713-qcom-tee-using-tee-ss-without-mem-obj-v6-8-697fb7d41c36@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C16D241CB6;
+	Mon, 14 Jul 2025 08:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752481401; cv=fail; b=BLeHUCKTDVBF+CWePJ5uhYBJ/eidN65ilFr4aCmk+SDeClEhzHFhy0rEaafoZdtC9YKkKZvAzU+IBXSj71SF3FJMyWomYjKnPjR7IjaaqFRX825cBwp6dA4iznsou0oNB9PIemoAvvBp6V2dn4x4uPrQXTTZDEoxNO1/+TVFvy0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752481401; c=relaxed/simple;
+	bh=cMhLMyhKkWB+rEqfa0hW9cCO8+ihel0h35EzQHTDZss=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y3/QfZiwHLeyzfunZDhNyxWvd+hPGx+Ifw6IiOdxYx5BHqlCDs4sWs4GEd6C3/CH+hJxKQ00A+GAoROKLArHMdyhIJdjPnFazFlB9noy7jGekM7+ubUlnr+rBmzIAt1sJI3c7101nIFIiILvmmDCQb1LgtOZai4ob2s1NVeusnY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aKUl+Fy3; arc=fail smtp.client-ip=40.107.93.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T2r8LifUqsB+oMgxg0oITE1Oexy7TovpIKXZOqWbr4UAfyXjL8OpzuE6uhSfKx739AxbQWJ5ZYB7vsbBfPPA7yEZlqtZPeIDAnJEI56XlgYFDhYG1YZpmBKRzI3AGeam3VSB8OJ/Qs0KnpTIAQSRVF7M/q6LQeEizY9svTeJrD95s//bxxOT5WOaKfZ/Wnuhnfx1270PA3pF+Yux8W5Pnvc92GgHf/hTdthX42jqCmbW9TyNNBNvy9udCJDhkWtWWe39CTnA7iUlAipr8SMU8sOd6JfjobwG/5DUYLZCaTftnBgBUAA16LkUxzadw9AGm7tlQ9YwWIyTVTeCihnP5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EjHXte37Mq4DSSqXKZxUTyzZJFLqSOIfp+UsoGzXYmY=;
+ b=ugLmxj4f0cs5Gz6PcJcSHa9j5Cw5F22KdGB8vMbdhJtzgB1fFqQdMUrWXkQJqC3IUzTkVkM1e0tulzMnSJkGFlBn/SwhGeacfZsLDMnCakyeBkHAXoN4JeWjEq90+ihuw63Zw92od+VCLhT8izutSA1+58UI6z5SViTAjkMrHTRTN+hTc/zVrqQ5bVayVFvP9xjkbB2DqgMMcLGjqN5oR0qTmbDa1MLQbQlLb/PgXRwsUk2W55zASu5iivrn+OyxCuhmvAGDVLsZc7YCoTcu+gXCdMJ3Xa6awHNIuU5ljDCxSt7wrNdTOh+/qQROvpVSSxsOuV+MM6EP9bA17GH0aQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EjHXte37Mq4DSSqXKZxUTyzZJFLqSOIfp+UsoGzXYmY=;
+ b=aKUl+Fy3kMT130l93GP4Qmz+4kFStqNI29q+2xIwzfVqSEusouWBhC7Vdd4Ojx9FwF3JRRikQpo4qHI6p8C+/NnJQndMen5ss1FCJTmg6i4ifHpJFvYV3f8Ko+Myc+O4oKCmvEEY76OtmTiOSwbtnF8wObW6yxs2pviaqU6u7ENnE5FC1YNIQcTT8TvR0ErFOSx6gXYR0TkOklkgBSYn22rCMDqrbITqSAJYbpIj69CQy//qf6NmqwqcoTychqdrz9CYPgdD3tjHTMQ02OhsG1u0oyOXdEOj1KmFIK3hijQYQrKWQqSyUFwy/KOrzp9DMVFNgkvrQwRhsg+4rpayhA==
+Received: from DS7PR03CA0099.namprd03.prod.outlook.com (2603:10b6:5:3b7::14)
+ by CH1PPF93AB4E694.namprd12.prod.outlook.com (2603:10b6:61f:fc00::61b) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.25; Mon, 14 Jul
+ 2025 08:23:14 +0000
+Received: from DS1PEPF00017095.namprd03.prod.outlook.com
+ (2603:10b6:5:3b7:cafe::3c) by DS7PR03CA0099.outlook.office365.com
+ (2603:10b6:5:3b7::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.28 via Frontend Transport; Mon,
+ 14 Jul 2025 08:23:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DS1PEPF00017095.mail.protection.outlook.com (10.167.17.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8922.22 via Frontend Transport; Mon, 14 Jul 2025 08:23:14 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 14 Jul
+ 2025 01:23:03 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 14 Jul
+ 2025 01:23:03 -0700
+Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Mon, 14
+ Jul 2025 01:23:00 -0700
+From: Tariq Toukan <tariqt@nvidia.com>
+To: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>
+CC: Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, "Saeed
+ Mahameed" <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, Mark Bloch <mbloch@nvidia.com>
+Subject: [pull-request] mlx5-next updates 2025-07-14
+Date: Mon, 14 Jul 2025 11:22:37 +0300
+Message-ID: <1752481357-34780-1-git-send-email-tariqt@nvidia.com>
+X-Mailer: git-send-email 2.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250713-qcom-tee-using-tee-ss-without-mem-obj-v6-8-697fb7d41c36@oss.qualcomm.com>
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF00017095:EE_|CH1PPF93AB4E694:EE_
+X-MS-Office365-Filtering-Correlation-Id: c2ad1d55-f1f8-4b5c-156d-08ddc2afada3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?GyEHsXNzMIEoyo9eyA/fUBw106luByhFyhI2zvjdzGW/OH5Ud2KWtSQIt+H9?=
+ =?us-ascii?Q?p1w3Xkx7IsXKwedI9R/LL6H8SRD+O4roaGXkkOhLlTEkYZcynEl3llsdX1T8?=
+ =?us-ascii?Q?36aMlBdSnHnzivY1OPHHmfon+VGdClRglxtU6/QPyEijM4cVGQVJ2PwSj9uA?=
+ =?us-ascii?Q?g2f+ofaaAIzXSpPIP6+oWZOCO2+Sngps4IjRbBY0oNjCnYb0ohj0Y/5HYa8d?=
+ =?us-ascii?Q?5VblWDtexeXCMRLtKvHa4/daeESoq5VlPafm7v22rCJI2sk1+BZiPwBzaAVe?=
+ =?us-ascii?Q?/1rE7tBLGUvqLD5xPaMECpwuND8eJwRv9LJxPF6ZsYF7Qc055//cqale2HLa?=
+ =?us-ascii?Q?YGB4ASWd5d4gB6yWJxS84kZu9HUJnfpBG7aAtp1UZFgNS9tmJNFUaDbwNYNb?=
+ =?us-ascii?Q?Lr+G9D/EgQ9KvglRwGNhi3i4xv3v4CFabE3Pvd90H4V64HqABUABpzHAGE3L?=
+ =?us-ascii?Q?rnAImUQnTIqD3lN/wdjIpgBr7hlWTh0VLjCqA3TUV98CxZIAvkteSjPOsmE1?=
+ =?us-ascii?Q?5E6pKKzugeBsZ0JQsQpNkNyJb2DLtjGiN9bIHllpfAyfhtiQSw6dz3pPZfLN?=
+ =?us-ascii?Q?/Z62RutL7CrBTjcNwkQgu65sA4xafmsfYzUr37aogjT/0L6Vw9K9b4bxdoVR?=
+ =?us-ascii?Q?3qcinxsaGC3b4tSXKwfG+FgTeVtUf8arapJodAS0rePMID5WzECYsFzy2vFh?=
+ =?us-ascii?Q?OD4QOb6B7pSXBXz3yA/KwnRumCstcvasNe1/ZudyC6JSzQ1Om2tqapWH6v98?=
+ =?us-ascii?Q?3xhQgB9FSgd6Udey/hOSWvmNHD5pNHPCegGx7omKuUmWvIcWHti5M2DI6Md0?=
+ =?us-ascii?Q?Ctufe89eSul9IlNMRk4sKnuxJWuP9t7xT7GrrFpWnOKqWDyPxyy22M2aV4lZ?=
+ =?us-ascii?Q?d3kZ2/jYYNpfvjccFVfWWm/Vd2wrMTNKE9aESf+9ymUZrGa1d1pnUmjHanwU?=
+ =?us-ascii?Q?vR1yRC4gmGqRAe/GS++xG4g38J0B16WVW/aVht9klBqFAnqDro5znUi/YZIl?=
+ =?us-ascii?Q?P0uykm4Hl1ARxvR4GuwxbsEuWKg+VWz+UiMwLBysH0rv7nh7kU/UTdCdqrCt?=
+ =?us-ascii?Q?98ZC7SR3R8MWxuhUaTZaC8n4sWnvrT0XTG7nNdL/SgEVE1ctQjqWuvaiTfNa?=
+ =?us-ascii?Q?Gq0od/bTRzRxeeloQVqnLbdHvEsB2DbkDiuI47XUg39hMbfFTsvWMMeqOswg?=
+ =?us-ascii?Q?Afx27kJStMvozYtIXz1AQMnKscunecGGeL/a/f2jL1ZBg+zF91wSsu78w4X8?=
+ =?us-ascii?Q?tt8sv4FlJLEwYEHLNsBeWRrfRL117IojlTmlfbRmXCSV5PvQaZtVCixkUNhX?=
+ =?us-ascii?Q?jbxIHPm3x3wd2mpm/loBHtAR5uUlGWRemBrcHHR0q2V0jwJ8PsScMqeNxMfW?=
+ =?us-ascii?Q?bu38U0IlHcZdU29ESq0d7D3gkDPVax5ET0jj27KIQFXdKYlzgnjljF30MrIg?=
+ =?us-ascii?Q?YTfhz8ZFUxLne0yShaujYstbD/FlOBTwfAgCqE2+y4j9OaAQyugXwY7QTPVk?=
+ =?us-ascii?Q?jiN7zTMBPayw4TZZw6YTVGFFTMqAPssF5oiV?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2025 08:23:14.3082
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c2ad1d55-f1f8-4b5c-156d-08ddc2afada3
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF00017095.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPF93AB4E694
 
-Hi Amirreza,
+Hi,
 
-kernel test robot noticed the following build warnings:
+The following pull-request contains common mlx5 updates
+for your *net-next* tree.
+Please pull and let me know of any problem.
 
-[auto build test WARNING on 835244aba90de290b4b0b1fa92b6734f3ee7b3d9]
+Regards,
+Tariq
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Amirreza-Zarrabi/tee-allow-a-driver-to-allocate-a-tee_device-without-a-pool/20250714-085215
-base:   835244aba90de290b4b0b1fa92b6734f3ee7b3d9
-patch link:    https://lore.kernel.org/r/20250713-qcom-tee-using-tee-ss-without-mem-obj-v6-8-697fb7d41c36%40oss.qualcomm.com
-patch subject: [PATCH v6 08/12] firmware: qcom: tzmem: export shm_bridge create/delete
-config: arc-randconfig-001-20250714 (https://download.01.org/0day-ci/archive/20250714/202507141458.kBLqFFYk-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250714/202507141458.kBLqFFYk-lkp@intel.com/reproduce)
+----------------------------------------------------------------
+The following changes since commit 70f238c902b8c0461ae6fbb8d1a0bbddc4350eea:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507141458.kBLqFFYk-lkp@intel.com/
+  net/mlx5: Check device memory pointer before usage (2025-07-02 14:08:23 -0400)
 
-All warnings (new ones prefixed by >>):
+are available in the Git repository at:
 
-   In file included from include/linux/device.h:15,
-                    from include/linux/dma-mapping.h:5,
-                    from drivers/firmware/qcom/qcom_tzmem.c:10:
-   drivers/firmware/qcom/qcom_tzmem.c: In function 'qcom_tzmem_shm_bridge_create':
->> drivers/firmware/qcom/qcom_tzmem.c:139:27: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 4 has type 'phys_addr_t' {aka 'unsigned int'} [-Wformat=]
-      dev_err(qcom_tzmem_dev, "SHM Bridge failed: ret %d paddr 0x%llx, size%zu\n",
-                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:110:16: note: in definition of macro 'dev_printk_index_wrap'
-      _p_func(dev, fmt, ##__VA_ARGS__);   \
-                   ^~~
-   include/linux/dev_printk.h:154:49: note: in expansion of macro 'dev_fmt'
-     dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-                                                    ^~~~~~~
-   drivers/firmware/qcom/qcom_tzmem.c:139:3: note: in expansion of macro 'dev_err'
-      dev_err(qcom_tzmem_dev, "SHM Bridge failed: ret %d paddr 0x%llx, size%zu\n",
-      ^~~~~~~
+  git://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux.git mlx5-next
 
+for you to fetch changes up to cd1746cb6555a2238c4aae9f9d60b637a61bf177:
 
-vim +139 drivers/firmware/qcom/qcom_tzmem.c
+  net/mlx5: IFC updates for disabled host PF (2025-07-13 03:17:30 -0400)
 
-   110	
-   111	/**
-   112	 * qcom_tzmem_shm_bridge_create() - Create a SHM bridge.
-   113	 * @paddr: Physical address of the memory to share.
-   114	 * @size: Size of the memory to share.
-   115	 * @handle: Handle to the SHM bridge.
-   116	 *
-   117	 * On platforms that support SHM bridge, this function creates a SHM bridge
-   118	 * for the given memory region with QTEE. The handle returned by this function
-   119	 * must be passed to qcom_tzmem_shm_bridge_delete() to free the SHM bridge.
-   120	 *
-   121	 * Return: On success, returns 0; on failure, returns < 0.
-   122	 */
-   123	int qcom_tzmem_shm_bridge_create(phys_addr_t paddr, size_t size, u64 *handle)
-   124	{
-   125		u64 pfn_and_ns_perm, ipfn_and_s_perm, size_and_flags;
-   126		int ret;
-   127	
-   128		if (!qcom_tzmem_using_shm_bridge)
-   129			return 0;
-   130	
-   131		pfn_and_ns_perm = paddr | QCOM_SCM_PERM_RW;
-   132		ipfn_and_s_perm = paddr | QCOM_SCM_PERM_RW;
-   133		size_and_flags = size | (1 << QCOM_SHM_BRIDGE_NUM_VM_SHIFT);
-   134	
-   135		ret = qcom_scm_shm_bridge_create(pfn_and_ns_perm, ipfn_and_s_perm,
-   136						 size_and_flags, QCOM_SCM_VMID_HLOS,
-   137						 handle);
-   138		if (ret) {
- > 139			dev_err(qcom_tzmem_dev, "SHM Bridge failed: ret %d paddr 0x%llx, size%zu\n",
-   140				ret, paddr, size);
-   141	
-   142			return ret;
-   143		}
-   144	
-   145		return 0;
-   146	}
-   147	EXPORT_SYMBOL_GPL(qcom_tzmem_shm_bridge_create);
-   148	
+----------------------------------------------------------------
+Carolina Jubran (1):
+      net/mlx5: Expose disciplined_fr_counter through HCA capabilities in mlx5_ifc
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Daniel Jurgens (1):
+      net/mlx5: IFC updates for disabled host PF
+
+Edward Srouji (1):
+      RDMA/mlx5: Fix UMR modifying of mkey page size
+
+Michael Guralnik (1):
+      net/mlx5: Expose HCA capability bits for mkey max page size
+
+ drivers/infiniband/hw/mlx5/umr.c |  6 ++++--
+ include/linux/mlx5/device.h      |  1 +
+ include/linux/mlx5/mlx5_ifc.h    | 11 ++++++++---
+ 3 files changed, 13 insertions(+), 5 deletions(-)
 
