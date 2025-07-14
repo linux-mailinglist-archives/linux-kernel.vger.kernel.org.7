@@ -1,63 +1,71 @@
-Return-Path: <linux-kernel+bounces-729937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4EB4B03DF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:00:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57E0BB03DEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D68017AD014
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:58:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A06417CAD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C8A248F5A;
-	Mon, 14 Jul 2025 11:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0820A24728C;
+	Mon, 14 Jul 2025 12:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="S2Hsds8P"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kV3OPMYr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B182472AA;
-	Mon, 14 Jul 2025 11:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A40246BAA
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752494365; cv=none; b=ablMbBVv2/m6ksB2rZK07ch2wNV7by5dj5rHbMXNCkxOaPEejcHA7N73CHakAWtB/fYrUhfENEt9y6mk3uQHfYF4bEc8LCPB5ekbvYiXJro48r56PJWb4XMqRiA3CCRXoN6gXird5Cq4aZQWxALCIwy+FstW8F9ajgAp6vlb7Lg=
+	t=1752494399; cv=none; b=PejJgjj/P3u9XbbDmJA0B1m1GTqX1N8U3io9esb+MPLip4Na/NRHGoDkDhcassGlLH3Axi+z4ElLP6D1G5IbCD7z8/b+lTpnFgzMrebDdLVfyDgJp686er/Kfdr65vS5KLykwlBcIWtgcV2p7zP+JK6UPPbDV8+mIlZDIlEN7ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752494365; c=relaxed/simple;
-	bh=z6xxZ7ie7amVNGU5zyuAAZgT0FOgqT6yz9y9A53vPuQ=;
+	s=arc-20240116; t=1752494399; c=relaxed/simple;
+	bh=P0YeL7xnTSDWA1FhH9xFnBFFkFFYsGju9SThgrGgAP4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RYHI98AX+MRE0ZaglCjZzoR0zximJ34ISya5ZXpj1uBBfMz6eOz1nD8X804wHevsd+WXi67q7+t9Gaq1vNQxmdRdgYdAivkvC3YQ124WhC1G/QzJcXM8y1HF8e+qdCHLj7zb/8Wm32vSGaOFZQWqroRibikSOEdcNXLBI+kvkDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=S2Hsds8P; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=PS8iHLWKV67y4WTZrVIpXmKU38BJWCS/8TFAYbVGALc=; b=S2Hsds8PGlRw078QCmkJiEYE1k
-	s5Mv3Z/UpJSQZ70lFq2hbHL35D6TusMLiH208Zs+wmhIf0NyxDV71E7ef3sRJzsWVKJnXB7vOryAl
-	qYPWhomekFSEhCb+dtoUljlqVhEndartGg61+srNyzGrWgALexq2iCzprOD9sVK2uj0neSuHGany6
-	i90ZWktzfxVs/ZLr57rHQ2hIXiLXT+c3ackLAXwXVmrwOylNO4vej6BB37YQ7MaVl5EAF5blWdwE9
-	FwEeIe5yUvtIDie07d82pDHSz2M5QGJKGwuSt9wURN3OZY1rke+06SDlUlesdlU71gmi3Ja2n9Cyr
-	C6utEXqw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubHq0-000000076PT-00Yw;
-	Mon, 14 Jul 2025 11:59:16 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 66F01300186; Mon, 14 Jul 2025 13:59:15 +0200 (CEST)
-Date: Mon, 14 Jul 2025 13:59:15 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com, chenridong@huawei.com
-Subject: Re: [PATCH next] cpuset: fix warning when attaching tasks with
- offline CPUs
-Message-ID: <20250714115915.GU905792@noisy.programming.kicks-ass.net>
-References: <20250714032311.3570157-1-chenridong@huaweicloud.com>
- <20250714084109.GK905792@noisy.programming.kicks-ass.net>
- <090bd627-95dc-49ef-a4f6-d78d8f6d6cec@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mUQtumxVAdE69l0+sYFcJK1SJJsROCUvYIZ6Hx0ABVPOErKIWejHcGCgsiOe6iXkyPC9fIpFzVVjwj2y3HsOrChcBzLzEpeHBLseB7m1IQdP7n8lBD31SnQkr5cfwg5tt8V+WdWqDmddKpXNagXXPej50QPO9tqKoOadpayXlr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kV3OPMYr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46021C4CEED;
+	Mon, 14 Jul 2025 11:59:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752494398;
+	bh=P0YeL7xnTSDWA1FhH9xFnBFFkFFYsGju9SThgrGgAP4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kV3OPMYrCo/K+z8oxHuo0NpmSUk/HXEUyHwQAMONJ6vWxkS6gNcXo+vmtANkO9hQz
+	 uq9H9B0lrnIhoaM9XplsKFgxp7nBGXxwsTL2RhkZy81AeHT85gf6OM4GtC01byk0fi
+	 v8TxgS54z3TJXAXkgPX9e07UJKVknNYxTn26nvG8=
+Date: Mon, 14 Jul 2025 13:59:56 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	tech-board-discuss@lists.linuxfoundation.org
+Subject: Re: [RFC PATCH 2/5] unwind: Export unwind_user symbol to GPL modules
+Message-ID: <2025071443-lazily-blabber-3fbd@gregkh>
+References: <20250709212556.32777-1-mathieu.desnoyers@efficios.com>
+ <20250709212556.32777-3-mathieu.desnoyers@efficios.com>
+ <aHC-_HWR2L5kTYU5@infradead.org>
+ <20250711065742.00d6668b@gandalf.local.home>
+ <aHSmIa3uffj5vW-m@infradead.org>
+ <20250714062724.6febd9fb@gandalf.local.home>
+ <aHTsOcIUs0ObXCo1@infradead.org>
+ <20250714075426.36bdda0b@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,48 +74,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <090bd627-95dc-49ef-a4f6-d78d8f6d6cec@huaweicloud.com>
+In-Reply-To: <20250714075426.36bdda0b@gandalf.local.home>
 
-On Mon, Jul 14, 2025 at 07:30:39PM +0800, Chen Ridong wrote:
-
-> >> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> >> index f74d04429a29..5401adbdffa6 100644
-> >> --- a/kernel/cgroup/cpuset.c
-> >> +++ b/kernel/cgroup/cpuset.c
-> >> @@ -3121,7 +3121,7 @@ static void cpuset_attach_task(struct cpuset *cs, struct task_struct *task)
-> >>  	if (cs != &top_cpuset)
-> >>  		guarantee_active_cpus(task, cpus_attach);
-> >>  	else
-> >> -		cpumask_andnot(cpus_attach, task_cpu_possible_mask(task),
-> >> +		cpumask_andnot(cpus_attach, cpu_active_mask,
-> >>  			       subpartitions_cpus);
+On Mon, Jul 14, 2025 at 07:54:26AM -0400, Steven Rostedt wrote:
+> On Mon, 14 Jul 2025 04:38:33 -0700
+> Christoph Hellwig <hch@infradead.org> wrote:
+> 
+> > On Mon, Jul 14, 2025 at 06:27:24AM -0400, Steven Rostedt wrote:
+> > > This has nothing to do with Mathieu being a friend. He's a long time Linux
+> > > kernel contributor and has played a key role in developing a new feature
+> > > that will help both perf and ftrace, but without the EXPORT_SYMBOL_GPL(),
+> > > LTTng can't use it. It's basically saying "thank you Mathieu for helping us
+> > > with this new feature, now go F*** off!"  
 > > 
-> > This breaks things. Any task mask must be a subset of
-> > task_cpu_possible_mask() at all times. It might not be able to run
-> > outside of that mask.
+> > You don't have to be as explicit, but otherwise that's exactly how
+> > it works.  No one gets a free ride just because they are nice and/or
+> > contributed something.
 > 
-> Hi Peter,
+> Why is that?
 > 
-> Thanks for your feedback. I'm afraid I don't fully understand what you
-> mean by "breaks things".  Could you please explain in more detail?
+> And yes, I still consider it draconian.
 > 
-> To clarify my current understanding: this patch simply changes the
-> cpus_attach initialization from task_cpu_possible_mask(task) to
-> cpu_active_mask. The intention is that when CPUs are offlined and
-> tasks get migrated to root cpuset, we shouldn't try to migrate tasks
-> to offline CPUs. And since cpu_active_mask is a subset of
-> cpu_possible_mask, I thought this would be safe. Did I miss anything?
+> > 
+> > The rest of your mail looks just as confused.
+> 
+> Let me rephrase it then.
+> 
+> How would you recommend getting LTTng into the kernel? It's a relatively
+> large project that has 75K of lines of code with development that lasted
+> around 20 years.
 
-task_cpu_possible_mask() is the mask a task *MUST* stay inside of.
+The same exact way any such out-of-tree project gets merged into the
+kernel tree.  This isn't unusual, why is anyone confused here?
 
-Specifically, this was introduced for ARMv9 where some CPUs drop the
-capability to run ARM32 instructions. Trying to schedule an ARM32 task
-on a CPU that does not support that instruction set is an immediate and
-fatal fail.
+> To break it up now, into reviewable patches would be a huge undertaking.
+> And who is going to review it? I don't have the time, do you?
 
-Your change results in in something akin to:
+The maintainers of the subsystems in which the new code interacts with
+are the reviewers, as always.  Again, nothing unusual here.
 
-  set_cpus_allowed_task(task, cpu_active_mask & ~subpartition_cpus);
+> Have any suggestions for him, or do you just not care? But you are one of
+> the gate keepers of EXPORT_SYMBOL_GPL() which affects him.
 
-Which does not honor the task_cpu_possible_mask() constraint.
+This is not the issue at all, sorry Just submit it like normal.
+
+I think there's a whole in-kernel document that describes the process :)
+
+thanks,
+
+greg k-h
 
