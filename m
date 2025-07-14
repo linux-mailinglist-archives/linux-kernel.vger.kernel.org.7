@@ -1,210 +1,311 @@
-Return-Path: <linux-kernel+bounces-730449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6158CB044B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:51:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1C23B044B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B53C3B3E57
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:49:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A2C77A8898
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519AD25BEE6;
-	Mon, 14 Jul 2025 15:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B39D25C82E;
+	Mon, 14 Jul 2025 15:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="y0K2VibT"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2076.outbound.protection.outlook.com [40.107.243.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H6UkCAIX"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBC52459D7
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752508173; cv=fail; b=YvOJMyW4AiwTnJS10SEqU3k58eEZ5hl2lnDlPZg/wVhRaT3f2f2xF8swPOqxlgidlBnPPD0i0cLrpbRCGF7Uc58RQZSZjQf6bsekgdvGkUlFHzqjpZ55ZLALjOH5uEFK9a98JFWmd+Qu/bAWH/JmL+RKx5pELrkk5ZT/4P2dheY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752508173; c=relaxed/simple;
-	bh=Wnmw41cXhOuGPYJU9IDAxSw1/mjWF0VWRb7vJl6YxbQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=uEigF6b39bPMMp8E3SSXa9bPadvULfpbEzn1lYZGRqwMmsTIPrgk9lVxw+GTo+37f3hmfIEQPXwU3kctuE3q/mEs0d9HRGwxHWLJY0bsPtE+Mtc3msAoT6pXMi2iT7qlqqFOh7+NvCEc7I9PNtTkqHqS4pHolHVOBEAqOnJsQJA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=y0K2VibT; arc=fail smtp.client-ip=40.107.243.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H5tN2ZF2fN0HXXIvj0jy5s0rIq0TLBxiPb/y13GTRch00fNAYHdthI+CyA4XCIi9OYQW9MpA4pvQ4BxMowrwxFrsP2X1Yj1N0+oLTU73IsmbmoINw654Bnqit1nUcbHSh1ncOuoo7SjY3EaCDhznVAGdB9lB/qUmcKGcl+Wrr4QgR697hma/KfgHQ8dX2hJD9w2gQFx8ijlSSPKTyG8JgVtebRi0eHHqCT13GeBhd9zY1Kffr/IBHEuy1EzN5MFZVpu+6TK1HH6ZBP7Q5UNp7APLelIsTNqZm6jjvGWmaMI5lRmaxj3AmKHFPPogBBsSsCRFJADSNWl0SAME/+K4Xg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Wnmw41cXhOuGPYJU9IDAxSw1/mjWF0VWRb7vJl6YxbQ=;
- b=UuTNjR9/rf8f0mozAybJDsMz8OsaPyJvUt9wGDouo79i6DfC+5L/3r2h+VrIKY44aGV4d9egg8KB85fUqJOWZFVFhITD/kgSEY80QamXxPlDWaM7PSW1RQvYBOdJi6TX27IOMjZIrWen30PXUcAQYWApi71l1yJHtJ6XviXR67glEeqKMl7bGVeJCAvm2roLlF1Vu/Qa/jAtDY58ETHATKhlBtjtmZi79smTVz0mcciN0/0LrRCvKRGtrogf/d2+HyuyMshYcD89zr4qncpt7k1IdO7261Wn0nqpf5SwxisvIPU1I+0ScxiczAt2KSpVTQzeE8a+WmB2lHk0YncNuA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wnmw41cXhOuGPYJU9IDAxSw1/mjWF0VWRb7vJl6YxbQ=;
- b=y0K2VibTz6J2k6yHTC3Ei7+PshYuQPaNRw/JBDJL7C2UUggMzP7+VygRtOfR9oUiZJ0ifhaJ4LagvhBs7m0P7vBkSua8qUOFgeZh9uc/5FcXY/8k9l6XvPC9YDk8KE6Kc9nUt15jlMplM7Ms/LcqsWqWpMEW3J9B1kETPh8rjv0=
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by SJ1PR12MB6171.namprd12.prod.outlook.com (2603:10b6:a03:45a::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.33; Mon, 14 Jul
- 2025 15:49:28 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%3]) with mapi id 15.20.8901.033; Mon, 14 Jul 2025
- 15:49:28 +0000
-From: "Limonciello, Mario" <Mario.Limonciello@amd.com>
-To: Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>, "Deucher,
- Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian"
-	<Christian.Koenig@amd.com>, Dave Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, "Lazar, Lijo" <Lijo.Lazar@amd.com>, "Zhang, GuoQing (Sam)"
-	<GuoQing.Zhang@amd.com>
-CC: "Olsak, Marek" <Marek.Olsak@amd.com>, "amd-gfx@lists.freedesktop.org"
-	<amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/amdgpu: fix link error for !PM_SLEEP
-Thread-Topic: [PATCH] drm/amdgpu: fix link error for !PM_SLEEP
-Thread-Index: AQHb9Jeh7iYLBsEnJ0q+oYD5dzOV5rQxt1KIgAANQQA=
-Date: Mon, 14 Jul 2025 15:49:28 +0000
-Message-ID: <8ed29f44-9f64-4b8a-a5f2-c8ee374df40d@amd.com>
-References: <20250714081635.4071570-1-arnd@kernel.org>
- <db654178-a6d7-416c-bab6-b494a7c118ce@amd.com>
- <724b4600-d983-434a-acf6-68cd87b04636@app.fastmail.com>
-In-Reply-To: <724b4600-d983-434a-acf6-68cd87b04636@app.fastmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR12MB6101:EE_|SJ1PR12MB6171:EE_
-x-ms-office365-filtering-correlation-id: cb3c2910-ac3c-46f8-e58a-08ddc2ee0414
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|921020|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?ekNINmxmMDdLbkU4RnRRN2ZHUlBXSmJoM3RxWDhwaUhWK1FEeHVkNlRhYVRY?=
- =?utf-8?B?dUN6aHFKemdvTnlNVEl2VzhvdmprbC9yU3h4NTAzYUwzVmZtaG5kSEhJVUZ0?=
- =?utf-8?B?OXp4SUxWM1lHVXpnQUdaZkM0dW9IU3VtWHg3YmJISklTSDFleDd5SHQvWC8y?=
- =?utf-8?B?Mkk5Y0xhY05FbTA2UjNFUm5FTzBOR0pHY3Avc2VKS0FtZlNyR2VGSi96b3hE?=
- =?utf-8?B?Rk5DWEhUNVRjVi9UaGYyQ2d5d2Z5U1VGV21BNU4yTGdlZWVHamNGeG9oSUZi?=
- =?utf-8?B?OHR3VTdxUXdHNkk0TFFzVERyeW55U2N4a21DaDJZWG1uL1FRNW0vQm95SENN?=
- =?utf-8?B?eW5mbkcwdXVOWDcvMnRGQ0tkMEZyaDJTN1l5T3JKQWs0Zkg1ekZkdDJpdVFo?=
- =?utf-8?B?YVFqd0VNVC81YWlCNGFUSTgwdXlJREw3T09XMUNSeUw0WDNpYjVzUVRwQkZB?=
- =?utf-8?B?SUJzYmxOOFI3aGZUaVNjc0p2bmtrelA2L2NhcGxqOFNTN0tMVEE2biszcEls?=
- =?utf-8?B?ek9mcEhzSGtjMmVscHBOSERIQlFxaW9MeXhySmUzL2VXQmllNU9pYmpKSVpv?=
- =?utf-8?B?ZFZuNXNONGFMZ2FNZHhrS21Za01nQnQxckZrV2kxSlNnZ0pnanRvZFh1WnUx?=
- =?utf-8?B?RU9JS2JvMUtuVFRQZ2VEc0hYZlVqOTQ1ak9ha0d4b0EvMGpsc1kvZnAvUGVV?=
- =?utf-8?B?bW0xYWJEOW53eElock1hU1FnOGszRzNKb01OSld1UW44T0cwVkZZM0dITnFk?=
- =?utf-8?B?STlWZmhlT2U5ODlWb0wvZ2lVWEpkYmV6aUxNWVlENHBwbFM2TEpYbGdsY2pG?=
- =?utf-8?B?bTlHSjh4eDJaS3lCV09HRWRHRThwN21vLzc2cHArdmdxM20zc2tqWUhTUnJ6?=
- =?utf-8?B?S040Zy9GNjFreENQUnFBbzB3YUUvVDM4TTZETUtub2ZPUmhKNS9mZHNOMnR6?=
- =?utf-8?B?ZXJsaEVqNnBJeW5QVnB6NzhFNDZJQzZwc05SWG1hUjBpbFBZOGFia1QydHI1?=
- =?utf-8?B?NG5zeXJiZ2NkMjljOHdqYkUrWFBrUzJLVHgxbzhpSEdPRUgzZnp5aFMrMm5Q?=
- =?utf-8?B?YmJUditPR1REU2JMSW03a1ZxRUR0WUlJYkRKai9lalFiVEpNT1JUNUEwMlhO?=
- =?utf-8?B?bCtyUG5oM3EzYStuY1J3cE9TYnl6RVNERUJDNE9qdEc1cVNuaExadGUreE5y?=
- =?utf-8?B?UGpOOVl4NDVXZHR6bitBYlVVbDJZNlNZallDVjhjU29xWWJJNTZQcDQyVjZZ?=
- =?utf-8?B?L1R6c1FzQ1I3OFpxbUFFcVpWTEMvKzRaTGpQdk5BS0xDaHh2VTA3NUVRU1ZK?=
- =?utf-8?B?TTdHZWZBRkZmNDk4TnNPTFZ3bm5wdXFIcXJKejVmandGRk1DOUxveGVLYWtI?=
- =?utf-8?B?TExyZXlnWk9JS2NYYzVualU3ZXJEcURiVnFCQ0NMSVlGL3dQRkNuWkJSQWVt?=
- =?utf-8?B?L001eTZGWXpxOU1lSHlOK1RZUFZQVWRTeVFCNXBTRzM4eVE1c2V4R3BybStQ?=
- =?utf-8?B?SUVRMUdrOHBTUkN0aXZvaCtpZVJMNjVvZE9oSm50bXhmMnpsSmh6NHAxMGtn?=
- =?utf-8?B?VTZIQ0pMVStWQWVKdGxqZ2RKcWpqZUJCK0xEN1hFUzMrZVRwaWhRVk02dmRz?=
- =?utf-8?B?SlNUZ2ZwNmdWMHM1VUxDVXpIbkJGWlpqb0FOUFlqT1ptS24ybnVzUXNQYys4?=
- =?utf-8?B?Qm0zZmhwRGtzTmdrRzdxQkJUOVFNQ25iMlVESjV5bFZNeDRaMVY1VzdPWkxl?=
- =?utf-8?B?M1VYaFgwb0VHU0hkSkRVZjZsU1RpM0wyejluTWxKbXdLQTBwTUVGbDB3THk2?=
- =?utf-8?B?WXN5RzVNcjZoWi82RlZtRlY4anVMNFJWNXRTTThMNDVOOFdLSjZDM2l0dDVl?=
- =?utf-8?B?ZGdLRUw0K2pYWFA0WVFvOWtJMmZPd0tJTG5TNmxQWlNFZzl1RGtTNGVIdmZj?=
- =?utf-8?B?ZkgzcGptNFRBNVgra2h5MkFVRnNMVzM3YUdoZjlZMUpqUUN2ak5oeCtQSm55?=
- =?utf-8?Q?JNHbeHdMDTsNIc6SBhvFKzIKITTIfk=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(921020)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?eW1tblpWZ1p0ZS9TNGRKdElKM3dBdUgrcThiT3FScW11dHZtRUxpSU1udDhI?=
- =?utf-8?B?bWEyTE1acnZSWVNVd1lFS1NuQ3BLekJBZ0tMS2Z0WnZyM0RXSFR3c0o3TU9h?=
- =?utf-8?B?Y2tFT2tOZGNHWjVENGtTNXZGVWlLNSsxLy9taVBROWF2Y1ZPYnVhd1ErM3JP?=
- =?utf-8?B?U0g5bFdCM1lNM1VWZ3F6cWFraGdNNEZxek4ybjB4djc1NGYycEJyQ1lKMnFE?=
- =?utf-8?B?RllhVHZwWGpGYTE5aWdzM0IwTDNtY2J2T0JaUDRRc1FjR04yOXcyR0Nma0FI?=
- =?utf-8?B?bUVWcDdjMnhYTE9KcDFmdm93TGgxbkJZWjVsUGIyM3k5NHlTTVhkcjJZd3Ux?=
- =?utf-8?B?OTBRZ1hzRHVqTVQxN0VndDZCYWRUN1l1UFlna0JjcStqWTBaTjY4WStlVm9k?=
- =?utf-8?B?NzB0TmRHNTN2YVh2dm5tL0VzM1N6ZUx6U1BPRUlZTUc4YWFRSGRFZkM5SWNZ?=
- =?utf-8?B?aC9DUGZDcHhrSlViaVp5NzFtQnFtNm1iaUQ0ZmI3VFlXdDlYamdXZW5iY0VL?=
- =?utf-8?B?UkMyNWVhMGcreFZrc0tFM2NlTEdMcFprMzh2VHhwRi9IS2pwWTBSZlJTR2ZE?=
- =?utf-8?B?TXRvRG1uNHA1alBTdVBLaThrZEVramFkSjVOMzV2Sk8zeDNsRy9BRTlhS3Bq?=
- =?utf-8?B?RG9DZkRHSTV0dnUrdloyR3RIYnA2aGZrY1ZIb21BZjIwbmRnVHJObU55UHMy?=
- =?utf-8?B?UlkvNmtUbWIwWmE3NEFlQUtXSjg0Wko2QytaWnpiR1k2MmNEWnRFS1JScm9s?=
- =?utf-8?B?WHRERVhWT3NKd09YNGIyWHc0TWtZOThwdHBXS3VRK3JDRUM0WW13REN6RHBT?=
- =?utf-8?B?Q0JtWDZ6RHpWZzZva3FnOTd2NXpBbk42dS9yMkF1VmtZR0xyY042VHVaMFh2?=
- =?utf-8?B?N1J5RjBPOC9TVUVRMVJqTERCV2k3RHpPd0RhTXg5NmdjbFozc0VHUGUrWDhv?=
- =?utf-8?B?RnRNYWNqaSszVHlQb0x1UjU2T2Z5S08rQzZoU3RYNnkvdHh2cUVNMUY0MkRC?=
- =?utf-8?B?eE5LbmxzWWdZVnlaTW5VWmd0dUNSaTVCQmdaRndEbGN1Wm5wSnJSekhicmIy?=
- =?utf-8?B?N0pOTWlNcHVwbFNXcHdzdUx3VjNKcHFiT0NmV3hMTmp6NStSMlZUSURFTlRE?=
- =?utf-8?B?L2hYVFczMWl3eExlVXFzcnZiY0Z0ZUdEcXJWeDhDbzBEZXRBRURUUXdKZ095?=
- =?utf-8?B?OTcrNmg2aWQybjdZODF1SWRXUGd1NjFmZHNlWGpwY2VjdFlBME14UkhSais0?=
- =?utf-8?B?UStQWVVDb1llbXdIeFEvUEx2RlJOVlZWWWhaQVJLMXdrRjBqL0dodlM1dDFy?=
- =?utf-8?B?VUFxZ09mbVFVQlcrTWJSeVplT1kzRTNNM3E4a0ZVUW4xdXhWNEFoK3Qwb083?=
- =?utf-8?B?dm4yamR1WEtCNHFEaVFhODhpLzU2TERjUUh0YlFzVk91UHUwNjJiUkhXRHJZ?=
- =?utf-8?B?U0lTS3BFaC91UHZiZG5XN0xQUFNKbitPY1h0R3Y3Mzh4VkNjWFc3Wm96NDQv?=
- =?utf-8?B?ME5VQ3lBRWRQMlhwWjI5UFBBSmN4V3RZVVdkc0RyVFNBcVVta0ladjQ3MTUw?=
- =?utf-8?B?dGpmYlRoNVphTHRlVWZMNVJNWkNmNGdjQmlyMGxLK0thTWVmRzFYWmJzTks2?=
- =?utf-8?B?amF6dHlTZ3RVVzR5cUcyVmhVTW55NlA3SW9UUHpaRFZnRUR6bTRXbEtwRThD?=
- =?utf-8?B?ZVFydDJOTEZjWjFuZ3p0enBWZW1OaTZqbk9lcVplNU03eVFnZWsrWmF5Y3k2?=
- =?utf-8?B?S1VRSktWMlQ1RjQ5WnJyUUxTcG1LWVpvNkdJMFc2Nm9yVU1ZeEx1Q2lCVUZU?=
- =?utf-8?B?U21LdzBtaDdIcHdZUmNmK00xM01ldExlSmxIbWZsSmtzZnhhY3ljMkwzT1hr?=
- =?utf-8?B?VGhQSlBCUytKZHdWazdpMTVURC9JVzlYc2gxdXBLL2tmSUU1OG1jNnk0VjNn?=
- =?utf-8?B?Z1hwM2Y2MTQ4eFMzbSs4aWhrT2tNbmVEbGkybTg0b0pmNUVlWmtId3R4bCtl?=
- =?utf-8?B?WUd3ZWFpUit4T0Q5VE13UUx5b3k3cGorOElKTnhhbVBhVUcwMUQ3TEVORG93?=
- =?utf-8?B?Y3l4NnFmYWkzbVBqdHVneDdjUk1OWkVrYllPbk1NRklYZmVNb3R0NVNNbmhz?=
- =?utf-8?Q?DZNM=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8AD56D67DA67B743B59116BC62F80B25@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7CE19F43A
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752508285; cv=none; b=ScqDGJblS++QWLyIdiNZo4DsgdreM2ROG/BTbksdzUdM9lriWgQ3RudMi51NF3RKgGNJ92JeX6DNZyUyS7zSAdksoQ9NlCUx+gFJWsCz/OcEl/IPxep1g9zJTjFEctMN6P4RADd5fnXrH5gk+e/PsRW0P62ZP8GT5Z67gs7sdNw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752508285; c=relaxed/simple;
+	bh=BUEqJYqut2iTVt5+5KMeLcGgtNQULwQgbWxEHQyKu2s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h//QA96zPzg7V3pyKizTL+3RSEaP6OSRCqHcOgrmP0dv4x5VRWq4mXAd6qDagMf2XajSZfeXWXMZ3+wpKx5os3l2ODE3wORZDCkp28gb9lmLCShRNv3oz1fRgab1JBXdrp/nRNlfWv21qj7qDLySm3G6JC3f4YaFNxq3DQn6Jh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=H6UkCAIX; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-32b78b5aa39so39120401fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:51:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1752508282; x=1753113082; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JOUTiRTHZw62UnMALOtaZI8EYRouFJiKeX0szARAd/k=;
+        b=H6UkCAIXSiJsS9GmmzC5D8lHSKne++9vb90OG5/s44ImLwOZtetCDfkJGy6dbheKuc
+         yI5X4far3Yj25koh0ur89EPYnWVJAp/21MIr1E8FT+kafjugL+p7pHKSjBomAJzQNjRt
+         nP7j71g9UO4JBSB4f61FFnXp/bzAm+tDw5uu8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752508282; x=1753113082;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JOUTiRTHZw62UnMALOtaZI8EYRouFJiKeX0szARAd/k=;
+        b=P0Hkko7V5T/qPFx6ZZAB56EaekWJZFmYnaic4Vbwo6T62h3HrcorDq/lkxibc5avJE
+         u8gKXWM87BbuTzdGkZhRz5eQt8Q5c1x6HmpWmFf+Q1iBKs4ZvJMTbmWZThRmCu94medk
+         NcM8xSViSVds88WJlr1hlSPFabY0tBCyMzfxMzwPufqF6s4NatEdSkZ7+QeI15sl9B5/
+         gkP/5JY8OJkGiHnspF7z0LObcPtVZgp0cL2wGjwU+yU3AXA9P4yK8AYAbt6pMJJqmyzm
+         Xe3L2l+T2ppRPNdNLIfqP5i6irPQokHGA+Nqntt7P86FW0E9+ipq7KyTXpYbBhg36KG6
+         krEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXX4d3W/ul7gbKRMbXdvpqKXXdiLjLETxG3uyHkqEhf1Bwvz+871ZsGhOLMS/rXuAAb13gSi54FSX+AAR0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yytqa4P9U83yoT7nYqTfmgo3uBCffrMPmq12b0tcPkdfO79xRqI
+	HXk/ZakVaPwGFgubrfSWHgObE8NhrvRdtALPqF6lyj/HpGwvXQwIBpp+ej9CUf5dBGBQgZVwYRY
+	1/xUR4A==
+X-Gm-Gg: ASbGncu2r+sYj5RPR3fbvCt+tLvVa0JJADPHfDfQbt+WA47uSu5DrWhMW8EThzyD8ts
+	q4JVGAO7bx6ic7ZnlK3ljHEJ6OxL2YZQpEOLqwvzwsOpsLys7Om+qgCfPxwYJisZw9Ao3XoffNS
+	vGg3LdQ/Hz4kA7S3872HBhQbadG5rKGnIIBxpz9gjP4TmRm9L57dAVqGhqyEWuDRyBZaJI71FgL
+	kPAuxFi1BtvZ5+pdpIk336io2dhekiveQ6PliR+/7WJ+ssPa2NT8P1xr6umYx0a9GLeM4dCALYx
+	t47Wh3nflpJ7zlQD1ES1csEUbSIFQNN5r6rOGWwLMVhz9DBoboJc91XMq1SPO37fywornG2RRpG
+	G1g7uBNcPkw+VPtBzRk1Ca78B/0wXf0fQM6sYe1IN9OFMLR4GC5mte04nD77If7ck
+X-Google-Smtp-Source: AGHT+IFA6WWauE2WtiOZB2M9l5C8acy+0c/MmVBIv8UEUkq8EearyUpSzh9i4qvQaTKE2TzChWXqew==
+X-Received: by 2002:a2e:a7ca:0:b0:32c:a097:4198 with SMTP id 38308e7fff4ca-330532989d3mr43514341fa.1.1752508281584;
+        Mon, 14 Jul 2025 08:51:21 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32fa29482f5sm16035581fa.42.2025.07.14.08.51.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 08:51:20 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b2f5d91c8so33942071fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:51:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUK16Vm5Qsndhgso/nXS0cuskPfprhYW50P2Vj/wfmlScZGQ4VcdciKw8u/t+Q9VvUuOfpHjIk6upPunJs=@vger.kernel.org
+X-Received: by 2002:a05:651c:214c:b0:32a:8035:3f65 with SMTP id
+ 38308e7fff4ca-3305348a560mr20431831fa.36.1752508279445; Mon, 14 Jul 2025
+ 08:51:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb3c2910-ac3c-46f8-e58a-08ddc2ee0414
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jul 2025 15:49:28.2605
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ct9ufir2bO2hEB+CEH5mGWGbTwqEzbj7Xv2G068AziDo284iytk6Q2xkPM/CMZSd+N9SWAz6wXsQQdCSw/FTQA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6171
+References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
+ <20250605-uvc-orientation-v2-9-5710f9d030aa@chromium.org> <e573334d-da02-4d67-95ad-d372aa7f4a67@kernel.org>
+In-Reply-To: <e573334d-da02-4d67-95ad-d372aa7f4a67@kernel.org>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 14 Jul 2025 17:51:06 +0200
+X-Gmail-Original-Message-ID: <CANiDSCu0uHa9EAwyr-4AMdU_UL0k1YxPdT+YKX6yS22nyWw_DA@mail.gmail.com>
+X-Gm-Features: Ac12FXwXunI1HhkoiTEAA1El4jNCwDB1UDYcjdPHccPPCbsUo8Spnc2mel0__-w
+Message-ID: <CANiDSCu0uHa9EAwyr-4AMdU_UL0k1YxPdT+YKX6yS22nyWw_DA@mail.gmail.com>
+Subject: Re: [PATCH v2 09/12] media: uvcvideo: Add uvc_ctrl_query_entity helper
+To: Hans de Goede <hansg@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-T24gNy8xNC8yNSAxMDowMSBBTSwgQXJuZCBCZXJnbWFubiB3cm90ZToNCj4gT24gTW9uLCBKdWwg
-MTQsIDIwMjUsIGF0IDE2OjU5LCBMaW1vbmNpZWxsbywgTWFyaW8gd3JvdGU6DQo+PiBPbiA3LzE0
-LzI1IDM6MTYgQU0sIEFybmQgQmVyZ21hbm4gd3JvdGU6DQo+Pj4gRnJvbTogQXJuZCBCZXJnbWFu
-biA8YXJuZEBhcm5kYi5kZT4NCj4+Pg0KPj4+IFdoZW4gcG93ZXIgbWFuYWdlbWVudCBpcyBub3Qg
-ZW5hYmxlZCBpbiB0aGUga2VybmVsIGJ1aWxkLCB0aGUgbmV3bHkNCj4+PiBhZGRlZCBoaWJlcm5h
-dGlvbiBjaGFuZ2VzIGNhdXNlIGEgbGluayBmYWlsdXJlOg0KPj4+DQo+Pj4gYXJtLWxpbnV4LWdu
-dWVhYmktbGQ6IGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9kcnYubzogaW4gZnVu
-Y3Rpb24gYGFtZGdwdV9wbW9wc190aGF3JzoNCj4+PiBhbWRncHVfZHJ2LmM6KC50ZXh0KzB4MTUx
-NCk6IHVuZGVmaW5lZCByZWZlcmVuY2UgdG8gYHBtX2hpYmVybmF0ZV9pc19yZWNvdmVyaW5nJw0K
-Pj4+DQo+Pj4gTWFrZSB0aGUgcG93ZXIgbWFuYWdlbWVudCBjb2RlIGluIHRoaXMgZHJpdmVyIGNv
-bmRpdGlvbmFsIG9uDQo+Pj4gQ09ORklHX1BNIGFuZCBDT05GSUdfUE1fU0xFRVANCj4+Pg0KPj4+
-IEZpeGVzOiA1MzA2OTRmNTRkZDUgKCJkcm0vYW1kZ3B1OiBkbyBub3QgcmVzdW1lIGRldmljZSBp
-biB0aGF3IGZvciBub3JtYWwgaGliZXJuYXRpb24iKQ0KPj4+IFNpZ25lZC1vZmYtYnk6IEFybmQg
-QmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+DQo+Pg0KPj4gV2UncmUgZ29pbmcgdG8gZml4IGl0IHVz
-aW5nIHRoaXMgc3R1YiBpbnN0ZWFkLg0KPj4NCj4+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xp
-bnV4LXBtLzIwMjUwNzEyMjMzNzE1LjgyMTQyNC0xLXN1cGVybTFAa2VybmVsLm9yZy8NCj4+DQo+
-PiBJdCdzIGluIGRybS1taXNjLW5leHQgYXMgb2YgdGhpcyB3ZWVrZW5kIGFuZCBpdCBzaG91bGQg
-c2hvdyB1cCBpbg0KPj4gbGludXgtbmV4dCBpbiB0aGUgbmV4dCBkYXkgb3IgdHdvLg0KPiANCj4g
-VGhhdCBwYXRjaCBtYWtlcyBzZW5zZSBhcyB3ZWxsLCBidXQgSSB0aGluayBtaW5lIGlzIHVzZWZ1
-bCBhcyBhbg0KPiBpbXByb3ZlbWVudCBldmVuIGlmIGl0IGRvZXNuJ3QgYWRkcmVzcyBhIGxpbmsg
-ZmFpbHVyZSBidXQgb25seQ0KPiByZWR1Y2VzIHRoZSBvYmplY3Qgc2l6ZSBieSByZWR1Y2luZyB0
-aGUgYW1vdW50IG9mIGRlYWQgY29kZS4NCj4gDQo+ICAgICAgICBBcm5kDQoNClRoYW5rcyBmb3Ig
-cG9pbnRpbmcgaXQgb3V0LiAgWW91J3JlIHJpZ2h0LiAgSSdsbCBnZXQgaXQgcGlja2VkIHVwLg0K
-DQpSZXZpZXdlZC1ieTogTWFyaW8gTGltb25jaWVsbG8gPG1hcmlvLmxpbW9uY2llbGxvQGFtZC5j
-b20+DQo=
+On Mon, 14 Jul 2025 at 16:24, Hans de Goede <hansg@kernel.org> wrote:
+>
+> Hi Ricardo,
+>
+> On 5-Jun-25 19:53, Ricardo Ribalda wrote:
+> > Create a helper function to query a control. The new function reduces
+> > the number of arguments, calculates the length of the operation and
+> > redirects the operation to the hardware or to the entity private
+> > functions.
+> >
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+>
+> Thanks, this looks like a nice cleanup.
+>
+> > ---
+> >  drivers/media/usb/uvc/uvc_ctrl.c | 81 ++++++++++++++++++++--------------------
+> >  1 file changed, 41 insertions(+), 40 deletions(-)
+> >
+> > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> > index b2768080c08aafa85acb9b7f318672c043d84e55..21ec7b978bc7aca21db7cb8fd5d135d876f3330c 100644
+> > --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> > @@ -576,6 +576,34 @@ static const struct uvc_control_mapping uvc_ctrl_power_line_mapping_uvc15 = {
+> >                                 V4L2_CID_POWER_LINE_FREQUENCY_DISABLED),
+> >  };
+> >
+> > +static int uvc_ctrl_query_entity(struct uvc_device *dev,
+> > +                              const struct uvc_control *ctrl, u8 query,
+> > +                              void *data)
+> > +{
+> > +     u16 len;
+> > +
+> > +     switch (query) {
+> > +     case UVC_GET_INFO:
+> > +             len = 1;
+> > +             break;
+> > +     case UVC_GET_LEN:
+> > +             len = 2;
+> > +             break;
+> > +     default:
+> > +             len = ctrl->info.size;
+> > +     }
+> > +
+> > +     if (query == UVC_GET_CUR && ctrl->entity->get_cur)
+> > +             return ctrl->entity->get_cur(dev, ctrl->entity,
+> > +                                          ctrl->info.selector, data, len);
+> > +     if (query == UVC_GET_INFO && ctrl->entity->get_info)
+> > +             return ctrl->entity->get_info(dev, ctrl->entity,
+> > +                                           ctrl->info.selector, data);
+> > +
+> > +     return uvc_query_ctrl(dev, query, ctrl->entity->id, dev->intfnum,
+> > +                           ctrl->info.selector, data, len);
+>
+> Maybe:
+>
+>         if (query == UVC_GET_CUR && ctrl->entity->get_cur)
+>                 return ctrl->entity->get_cur(dev, ctrl->entity,
+>                                              ctrl->info.selector, data, len);
+>         else if (query == UVC_GET_INFO && ctrl->entity->get_info)
+>                 return ctrl->entity->get_info(dev, ctrl->entity,
+>                                               ctrl->info.selector, data);
+>         else
+>                 return uvc_query_ctrl(dev, query, ctrl->entity->id, dev->intfnum,
+>                                       ctrl->info.selector, data, len);
+>
+> ?
+>
+> That + Laurent's well observed remark about info->selector vs
+> ctrl->info.selector which I would probably have missed...
+>
+> About Laurent's remark about one case of this pre-existing,
+> please fix this in a separate patch (I guess you would have done so
+> anyways, but just to be sure).
+
+I have changed the code a bit so we can always rely on
+ctrl->info.selector. I have made a small "preparation patch" getting
+ready for it. Keep an eye on the next version ;)
+
+There is no need to send a new patch fixing the current code because
+the only controls that could have invalid ctrl->info.selector are xu
+and software entities are not xu.
+
+Regards!
+>
+> Regards,
+>
+> Hans
+>
+>
+>
+>
+>
+> > +}
+> > +
+> >  static const struct uvc_control_mapping *uvc_ctrl_filter_plf_mapping(
+> >       struct uvc_video_chain *chain, struct uvc_control *ctrl)
+> >  {
+> > @@ -1222,35 +1250,27 @@ static int uvc_ctrl_populate_cache(struct uvc_video_chain *chain,
+> >       int ret;
+> >
+> >       if (ctrl->info.flags & UVC_CTRL_FLAG_GET_DEF) {
+> > -             ret = uvc_query_ctrl(chain->dev, UVC_GET_DEF, ctrl->entity->id,
+> > -                                  chain->dev->intfnum, ctrl->info.selector,
+> > -                                  uvc_ctrl_data(ctrl, UVC_CTRL_DATA_DEF),
+> > -                                  ctrl->info.size);
+> > +             ret = uvc_ctrl_query_entity(chain->dev, ctrl, UVC_GET_DEF,
+> > +                                     uvc_ctrl_data(ctrl, UVC_CTRL_DATA_DEF));
+> >               if (ret < 0)
+> >                       return ret;
+> >       }
+> >
+> >       if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MIN) {
+> > -             ret = uvc_query_ctrl(chain->dev, UVC_GET_MIN, ctrl->entity->id,
+> > -                                  chain->dev->intfnum, ctrl->info.selector,
+> > -                                  uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN),
+> > -                                  ctrl->info.size);
+> > +             ret = uvc_ctrl_query_entity(chain->dev, ctrl, UVC_GET_MIN,
+> > +                                     uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN));
+> >               if (ret < 0)
+> >                       return ret;
+> >       }
+> >       if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MAX) {
+> > -             ret = uvc_query_ctrl(chain->dev, UVC_GET_MAX, ctrl->entity->id,
+> > -                                  chain->dev->intfnum, ctrl->info.selector,
+> > -                                  uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX),
+> > -                                  ctrl->info.size);
+> > +             ret = uvc_ctrl_query_entity(chain->dev, ctrl, UVC_GET_MAX,
+> > +                                     uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX));
+> >               if (ret < 0)
+> >                       return ret;
+> >       }
+> >       if (ctrl->info.flags & UVC_CTRL_FLAG_GET_RES) {
+> > -             ret = uvc_query_ctrl(chain->dev, UVC_GET_RES, ctrl->entity->id,
+> > -                                  chain->dev->intfnum, ctrl->info.selector,
+> > -                                  uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES),
+> > -                                  ctrl->info.size);
+> > +             ret = uvc_ctrl_query_entity(chain->dev, ctrl, UVC_GET_RES,
+> > +                                     uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES));
+> >               if (ret < 0) {
+> >                       if (UVC_ENTITY_TYPE(ctrl->entity) !=
+> >                           UVC_VC_EXTENSION_UNIT)
+> > @@ -1291,16 +1311,7 @@ static int __uvc_ctrl_load_cur(struct uvc_video_chain *chain,
+> >               return 0;
+> >       }
+> >
+> > -     if (ctrl->entity->get_cur)
+> > -             ret = ctrl->entity->get_cur(chain->dev, ctrl->entity,
+> > -                                         ctrl->info.selector, data,
+> > -                                         ctrl->info.size);
+> > -     else
+> > -             ret = uvc_query_ctrl(chain->dev, UVC_GET_CUR,
+> > -                                  ctrl->entity->id, chain->dev->intfnum,
+> > -                                  ctrl->info.selector, data,
+> > -                                  ctrl->info.size);
+> > -
+> > +     ret = uvc_ctrl_query_entity(chain->dev, ctrl, UVC_GET_CUR, data);
+> >       if (ret < 0)
+> >               return ret;
+> >
+> > @@ -2164,11 +2175,8 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
+> >                       continue;
+> >
+> >               if (!rollback)
+> > -                     ret = uvc_query_ctrl(dev, UVC_SET_CUR, ctrl->entity->id,
+> > -                             dev->intfnum, ctrl->info.selector,
+> > -                             uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT),
+> > -                             ctrl->info.size);
+> > -
+> > +                     ret = uvc_ctrl_query_entity(dev, ctrl, UVC_SET_CUR,
+> > +                             uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
+> >               if (!ret)
+> >                       processed_ctrls++;
+> >
+> > @@ -2570,13 +2578,7 @@ static int uvc_ctrl_get_flags(struct uvc_device *dev,
+> >       if (data == NULL)
+> >               return -ENOMEM;
+> >
+> > -     if (ctrl->entity->get_info)
+> > -             ret = ctrl->entity->get_info(dev, ctrl->entity,
+> > -                                          ctrl->info.selector, data);
+> > -     else
+> > -             ret = uvc_query_ctrl(dev, UVC_GET_INFO, ctrl->entity->id,
+> > -                                  dev->intfnum, info->selector, data, 1);
+> > -
+> > +     ret = uvc_ctrl_query_entity(dev, ctrl, UVC_GET_INFO, data);
+> >       if (!ret) {
+> >               info->flags &= ~(UVC_CTRL_FLAG_GET_CUR |
+> >                                UVC_CTRL_FLAG_SET_CUR |
+> > @@ -2654,8 +2656,7 @@ static int uvc_ctrl_fill_xu_info(struct uvc_device *dev,
+> >       info->selector = ctrl->index + 1;
+> >
+> >       /* Query and verify the control length (GET_LEN) */
+> > -     ret = uvc_query_ctrl(dev, UVC_GET_LEN, ctrl->entity->id, dev->intfnum,
+> > -                          info->selector, data, 2);
+> > +     ret = uvc_ctrl_query_entity(dev, ctrl, UVC_GET_LEN, data);
+> >       if (ret < 0) {
+> >               uvc_dbg(dev, CONTROL,
+> >                       "GET_LEN failed on control %pUl/%u (%d)\n",
+> >
+>
+
+
+-- 
+Ricardo Ribalda
 
