@@ -1,104 +1,172 @@
-Return-Path: <linux-kernel+bounces-729593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 956BCB038D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:13:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65521B038D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 104AD161604
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:13:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B16A162F1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F66239E60;
-	Mon, 14 Jul 2025 08:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1955239E60;
+	Mon, 14 Jul 2025 08:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/e4KxYT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="R/y9CA6w"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0066E2E370A;
-	Mon, 14 Jul 2025 08:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6A8233723;
+	Mon, 14 Jul 2025 08:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752480782; cv=none; b=nRji80XHLjoMv+uJsysa5QctqzlCT3kYXOiDPYirK4miWxn6+Iq8XdiSQgLuHoPjzMeXYeYQXGU/L1tCI7vuwAD5xkk5WShz3/K3qj4vjV6UHu9tQrQ83EV8LjrB4pjg/zSTk+H+37+tGMxQphKgJLjB5sS7T0vm7vWQZa7+WW4=
+	t=1752480830; cv=none; b=OvHlE40LVRwUlmykrs4pjqgY9MMjd9KYXsE+YDIKDH7HPrmNQgq6Q7ZjMkqZixcrAilohCkZe2ns3aXSe7Q4eSYl4ObYAmFkseGVF61TCfVvQn6/+6yl2fmv9HpFvkL24zGRE56pz92rIcI1WJaOBGIXWi3K9GhK+yesivZnt90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752480782; c=relaxed/simple;
-	bh=eYX9mlVmNIdiqs19RLbDyQSky0HEgi+QIUoV5j9P+zY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sK2YzNg6qnWXusW93CsF2mW+Gjwd/sdcelvVLjxDQmObPvrBUgB6TWP2QusYNfvNBXU7N/UxBKWA5ikTmEZzgMcbfLMVM4Nubm5BtK4X+gwdE0XSn4jROPrG7erNMGEe2yWGSoCCohVMH8TTis/jYNBzwrOHyvm95uvc3DzHhwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P/e4KxYT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F2C4C4CEED;
-	Mon, 14 Jul 2025 08:12:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752480781;
-	bh=eYX9mlVmNIdiqs19RLbDyQSky0HEgi+QIUoV5j9P+zY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P/e4KxYTKu4jlOwPcroo4+UNuZsjPfHR2xBpjWdqyGeNIzT4J7HmVSa8cFABYww4p
-	 xYoD8x7nZcDn4d7G7nVzkQk3CNcydNxiiMTV33PZQyPjdUdR+fSv/OormbXxiDAIWh
-	 GH8Pu6tomvgHwde9I/xx5C9Nd4staFpwgBP11jdxTVZoRpenyORR3soAk4FOj3oS/M
-	 OSVUxtjQ1oaJgBIPKHBa+Q49cJRF9bfJiK69+ZXCa215ycojuFGb3mAPO1ZUFZE8YD
-	 oC1jdTeRNcUQW8m650eqtjt2nmloLAdwpQekHw3dhBvv9BeLiJPYwmoMdtn5EMkdB1
-	 aWBkV/59JP0jA==
-Date: Mon, 14 Jul 2025 10:12:56 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/15] fs,fork,exit: export symbols necessary for
- KUnit UAPI support
-Message-ID: <20250714-fernhalten-holzkisten-d085d5802884@brauner>
-References: <20250626-kunit-kselftests-v4-0-48760534fef5@linutronix.de>
- <20250626-kunit-kselftests-v4-6-48760534fef5@linutronix.de>
- <20250711123215-12326d5f-928c-40cd-8553-478859d9ed18@linutronix.de>
- <20250711154423.GW1880847@ZenIV>
- <20250714073704-ad146959-da12-4451-be01-819aba61c917@linutronix.de>
+	s=arc-20240116; t=1752480830; c=relaxed/simple;
+	bh=ijSj0nNnOFhkaX33zP3006/BjY2IiWqgc6kU4O7j/Y8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=lIrKwVVUFKrulcnWN1f2zcCDecKpz9dsJ5R5ySH4B7oeGLpyJKQ8hLFgGHTyxqJnnoHfh/mQl18Qn6W5cBCKvI+o+RA78bAco+M+aI4myQ7upsLxzrcDbJYcoThEb6pn2pUmQV9hxsk4KZhjKr9faicBFbkokxNTlIXl54M5iQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=R/y9CA6w; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752480722;
+	bh=ghdz5xFRnF5nNmP0kKsRi9Xq+05OrdZ47rDiRodm4W8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=R/y9CA6wsaADf1X7O5W+/PjI2zFSba3iLj7Oibz8nUVx6wR8Jvba9dpQQHE9nqRUJ
+	 K5QRzVou5DzpmjCEnn7lpAySnS4YYWbk5SUcfMv6clYAcJGeLQZrcSchdt3FBq+lQ+
+	 9Y0usaePlz/dV7fgCZnUWzqqGlXe54Zg20tnJDNEB/p8NTH+rFE1VjH6n4Iwt11Oua
+	 P46hIaWTTKeKpGn6xMpaEVysL9KvEzuvVJOTrJm0I6WpRObVkwwSEq6KpafHzzC6el
+	 Z/BhqBVcGYhMuBwMvof5frwCm5sZVXcLh1FxlMU29pwOur3x9MiVg+eFRCrCYt2YqN
+	 +aj8Jvpx1RTgA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bgZmL04j5z4w2Q;
+	Mon, 14 Jul 2025 18:12:01 +1000 (AEST)
+Date: Mon, 14 Jul 2025 18:13:41 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Lothar Rubusch <l.rubusch@gmail.com>, Andy Shevchenko <andy@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build warnings after merge of the iio tree
+Message-ID: <20250714181341.1d10df2a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250714073704-ad146959-da12-4451-be01-819aba61c917@linutronix.de>
+Content-Type: multipart/signed; boundary="Sig_/KrIQ73r/pFlo+SWKSmUtZzx";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Jul 14, 2025 at 07:52:27AM +0200, Thomas Weißschuh wrote:
-> (+Luis for the usermode helper discussion)
-> 
-> On Fri, Jul 11, 2025 at 04:44:23PM +0100, Al Viro wrote:
-> > On Fri, Jul 11, 2025 at 12:35:59PM +0200, Thomas Weißschuh wrote:
-> > > Hi Kees, Al, Christian and Honza,
-> > > 
-> > > On Thu, Jun 26, 2025 at 08:10:14AM +0200, Thomas Weißschuh wrote:
-> > > > The KUnit UAPI infrastructure starts userspace processes.
-> > > > As it should be able to be built as a module, export the necessary symbols.
-> > 
-> > What's wrong with kernel/umh.c?
-> 
-> It gets neutered by CONFIG_STATIC_USERMODEHELPER_PATH. That could be worked
-> around be overriding sub_info->path, but it would be a hack.
-> It does not allow to implement a custom wait routine to forward the process
-> output to KUnit as implemented in kunit_uapi_forward_to_printk() [0].
-> That may be solved by adding another thread, but that would also be hacky.
-> 
-> It would probably be possible to extend kernel/umh.c for my usecase but I
-> didn't want bloat the core kernel code for my test-only functionality.
-> 
-> > > could you take a look at these new symbol exports?
-> > 
-> > > > +EXPORT_SYMBOL_GPL_FOR_MODULES(put_filesystem, "kunit-uapi");
-> > 
-> > What's that one for???
-> 
-> What are you referring to?
-> 
-> The macro EXPORT_SYMBOL_GPL_FOR_MODULES() will only export the symbol for one
-> specific module. Personally I'm also fine with EXPORT_SYMBOL_GPL().
+--Sig_/KrIQ73r/pFlo+SWKSmUtZzx
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-No, we're going to use the new restricted macros going forward that
-limit exports to very specific modules. This is a good example. Though
-it will be renamed to EXPORT_SYMBOL_FOR_MODULES() anyway.
+Hi all,
+
+After merging the iio tree, today's linux-next build (htmldocs) produced
+these warnings:
+
+Documentation/iio/adxl313.rst:230: ERROR: Error in "code-block" directive:
+maximum 1 argument(s) allowed, 11 supplied.
+
+.. code-block:: bash
+        root:/sys/bus/iio/devices/iio:device0> echo 1.28125 > ./events/in_a=
+ccel_mag_rising_value
+        root:/sys/bus/iio/devices/iio:device0> echo 1 > ./events/in_accel_x=
+\|y\|z_mag_rising_en
+
+        root:/sys/bus/iio/devices/iio:device0> iio_event_monitor adxl313
+        Found IIO device with name adxl313 with device number 0
+        <only while moving the sensor>
+        Event: time: 1748795762298351281, type: accel(x|y|z), channel: 0, e=
+vtype: mag, direction: rising
+        Event: time: 1748795762302653704, type: accel(x|y|z), channel: 0, e=
+vtype: mag, direction: rising
+        Event: time: 1748795762304340726, type: accel(x|y|z), channel: 0, e=
+vtype: mag, direction: rising
+        ... [docutils]
+Documentation/iio/adxl313.rst:244: ERROR: Error in "code-block" directive:
+maximum 1 argument(s) allowed, 10 supplied.
+
+.. code-block:: bash
+        root:/sys/bus/iio/devices/iio:device0> echo 0 > ./events/in_accel_x=
+\|y\|z_mag_rising_en
+        root:/sys/bus/iio/devices/iio:device0> iio_event_monitor adxl313
+        <nothing> [docutils]
+Documentation/iio/adxl313.rst:251: ERROR: Error in "code-block" directive:
+maximum 1 argument(s) allowed, 16 supplied.
+
+.. code-block:: bash
+        root:/sys/bus/iio/devices/iio:device0> echo 1.234375 > ./events/in_=
+accel_mag_falling_value
+        root:/sys/bus/iio/devices/iio:device0> echo 5 > ./events/in_accel_m=
+ag_falling_period
+        root:/sys/bus/iio/devices/iio:device0> echo 1 > ./events/in_accel_x=
+\&y\&z_mag_falling_en
+
+        root:/sys/bus/iio/devices/iio:device0> iio_event_monitor adxl313
+        Found IIO device with name adxl313 with device number 0
+        Event: time: 1748796324115962975, type: accel(x&y&z), channel: 0, e=
+vtype: mag, direction: falling
+        Event: time: 1748796329329981772, type: accel(x&y&z), channel: 0, e=
+vtype: mag, direction: falling
+        Event: time: 1748796334543399706, type: accel(x&y&z), channel: 0, e=
+vtype: mag, direction: falling
+        ...
+        <every 5s now indicates inactivity> [docutils]
+Documentation/iio/adxl313.rst:266: ERROR: Error in "code-block" directive:
+maximum 1 argument(s) allowed, 11 supplied.
+
+.. code-block:: bash
+        root:/sys/bus/iio/devices/iio:device0> echo 1.28125 > ./events/in_a=
+ccel_mag_rising_value
+        root:/sys/bus/iio/devices/iio:device0> echo 1 > ./events/in_accel_x=
+\|y\|z_mag_rising_en
+
+        root:/sys/bus/iio/devices/iio:device0> iio_event_monitor adxl313
+        Found IIO device with name adxl313 with device number 0
+        <some activity with the sensor>
+        Event: time: 1748796880354686777, type: accel(x|y|z), channel: 0, e=
+vtype: mag_adaptive, direction: rising
+        <5s of inactivity, then>
+        Event: time: 1748796885543252017, type: accel(x&y&z), channel: 0, e=
+vtype: mag, direction: falling
+        <some other activity detected by accelerating the sensor>
+        Event: time: 1748796887756634678, type: accel(x|y|z), channel: 0, e=
+vtype: mag_adaptive, direction: rising
+        <again, 5s of inactivity>
+        Event: time: 1748796892964368352, type: accel(x&y&z), channel: 0, e=
+vtype: mag, direction: falling
+        <stays like this until next activity in auto-sleep> [docutils]
+
+Introduced by commit
+
+  6508debb4af1 ("docs: iio: add ADXL313 accelerometer")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/KrIQ73r/pFlo+SWKSmUtZzx
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh0vDUACgkQAVBC80lX
+0GzfXgf/dvE+rCNkAONnI4d47j9rd3065Ip0NnhShpbZmnK2xR4wChsUavehkVTy
+5o9VJrAtgVAy5ATevj9z513rIxMj/2tQCfLjHup6twG7dblHIZJyCrIHAAzt7+Nm
+lox4GzWBLJ/XUyETPvTZB4Wd/6g+MFKWWar0E0Ow+cfGPRXmE1V4jFcEOTEze5VA
+Yzpb+P35hbuJQEtXEqd2LRotiPP8cc6LQ2SESvX+1djyfpC+E8730poHyY3vhOeN
+AeYVTITycAE56r+nTo7UUFaniAR3ajtiXk5gda8Jh4qzmTm/h55Iiul8Wj4/05Z1
+fbK0HBF6Ch+r+rhhyuZnbcHcmCm+Qg==
+=1pSv
+-----END PGP SIGNATURE-----
+
+--Sig_/KrIQ73r/pFlo+SWKSmUtZzx--
 
