@@ -1,142 +1,373 @@
-Return-Path: <linux-kernel+bounces-730824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E33B04A69
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:20:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2BE5B04A6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF4EB3B7FFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:19:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F174C7B0AA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF66279910;
-	Mon, 14 Jul 2025 22:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6306627815E;
+	Mon, 14 Jul 2025 22:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R1h3Sh9L"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TFI22ITP"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCCA279785;
-	Mon, 14 Jul 2025 22:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E1F5103F
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 22:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752531383; cv=none; b=fQ4JAbIYA6+gv7XwvI3PDRQ29vqdEF1ax7tQi6gOgkoH3GMfgqTYV/4IvfTv1RxHGW3UGWWh7hIhKXtQi2GY8KB2nq2o0sCQoajtLVnN3MveBWiSO+0vPQRYSJDCYPRAWMsq3oIhKUra46k+eo/UzKDxweKdO122n5pTReQrCNo=
+	t=1752531452; cv=none; b=ahTzED+g9T28o2Ark+86Wju0RIsWzN25Cl5rhZ23b5ax50DH3Su6UBNLghmzJe7wEwdMO0grjXYN0wggUM3Hsk4yt97/rB6808qqDCokPA1Bl8W2izGPlDUcuN6O1kuxiKbD8RpfRE1JwwH7m+WGcc9SQPg1WJBmPAb86GoYX68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752531383; c=relaxed/simple;
-	bh=BX4aGpk7bRSOXa+qX2TZabthJLnJIj5XYr/A5yliKDc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jQVOiXPHChNnRTuunu1Z4kXbR8fTTN6bUTX+vbj14birrTPxbm3QU/n1H/aHXkoA/H7W1d1dyw+iYUpt18qv9o+QuAttFiMlNAz3ndGUluLhk16OOwuqaMca2qYcYFvTGtEQk3ilspZg0LGuS0ltXBikBi1nO2d8qn/a+SJYaSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R1h3Sh9L; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5331fdc1cf4so193420e0c.0;
-        Mon, 14 Jul 2025 15:16:21 -0700 (PDT)
+	s=arc-20240116; t=1752531452; c=relaxed/simple;
+	bh=q6PdS6wlvZ8hWbAhQaU+AV70alnsbuxe09DmeKdhbgE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=EbrBIF/5GA8BmoU2BoXZ77vtiF73Rn1HETytaha/c//aC/h5Kw140MgiehYy9pBoWQ/BnyLdZNjGyeeeBWFPjwfRkrpWWcvJxpxdIEhwyejm7njMQUJIzJC8ayC0Zi4QmVKp8KC5nBbczV02ESBV8X6sO/otzsiaK3+7u4WMimM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TFI22ITP; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b115fb801bcso5098839a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:17:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752531380; x=1753136180; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lD/9nxeI2AaJ6HCAD6gBRlNwjsIBFd+9JJLqM10a/7w=;
-        b=R1h3Sh9Llp29LKDZ9fxboU/74J2mYYmZSkV4pUq9lCPWtOyz3OYHxrPvtz+5WlZQdr
-         Thbb0IERFRP1VNcLoIvs8v7ue+VTjaFD4LOqiiaGJiAk3gxS2Dx/j3wZE00ga6ytsdFb
-         u3dLCqh+3+OOALajm4pXnB/rIWfG0nB1tjPTzjtILtyW4BbWdGVwWxBi83EQMwePV9Nd
-         qJRcQSCpoe8f/azD9TFakgragoJoJtUIh+lPjIt6gMofwG3bHB6MBIp0xAwgy2VJA29O
-         XBxkw8qtkVcJYxy+GBEKfQZ2MujIpvQFiUukhnj27Mms8lQCzz6tKaMNYI3Odiyy2Gd1
-         BraA==
+        d=google.com; s=20230601; t=1752531450; x=1753136250; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YsfqHZF2eex1fFWEZK+9hGZCkr1RmGiBcZKUCMjWg4E=;
+        b=TFI22ITPwGpOWveDiykfdPJsCXMtC0pZdHlVtwQJogOSngzh5U4LESdWY4/mJMZZAL
+         DIUMPEFydd/P40hwSaz1G2h0QfTF8Hrh8H4ZGa5xlgQJAKTgME48liU9HgbMCD3RdYBq
+         O+M0Z07JEmlaej2P5S4COk+O5/VvYd7leY9J7/aWXBfUCm3xo/xDRKAK9DxAItJsY3rD
+         5mM0X0rHcWtIQMM6Peas7VLChb/8YpWuFqPq0+VAKcVcV2pe+jgoCPxb9N0poSN5GXuJ
+         4L3eHKreAA025VjopsG1D4v3gMEjYaCkkI4ezZtcq4Q+VnqPIrVPZwaTB6cSALwPHwRe
+         qgoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752531380; x=1753136180;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lD/9nxeI2AaJ6HCAD6gBRlNwjsIBFd+9JJLqM10a/7w=;
-        b=Tb3OkdSrfi+quLv+vYMbhwcIyy8m8OomZmGYG6bKEI5xXtzZGERxNnToZI6kYUdy1b
-         NZCtWHDSiVcpj5G2uUHH5eEtXO/upYEklQQms2xjanXNNlg3w6PMO3PClkyaoIisguKH
-         yvXMIpTYereDoOFFKilXdQqzeL0KF/Ovqb06BhKTE8l5bugonwVNiOy5JRkDwVgPo41Z
-         Nq3ZvdXKA6H7C5RlqM3l8Zy6R1oRfIDgF+5W4w9A0qKsKDWabQZEDsLDT7/wBKlw2zE5
-         Ghu6f/jdHvIObdXyENPM/fu06pvLRa63njJ32TV4ZTrHD25R7LM0EyplgPS0wMlhWEoe
-         4y6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ3vKgDhGsK96yRR8XsptjB3kitKdS7Xv+xGrgzHAX/spZtwXUSpzS839xf6PNOI7aGvkNXQAdjL/wOLE=@vger.kernel.org, AJvYcCXQDRyfwu6NH5FSY1+yvveOUcxOAxHDxNO4lKRPgj5ArvTsBijFbC73GwTV1y87qZex18NV4TA//1ZPdTlc7ik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFbkpClQqu5GciehqOMp9ggrpp8ymWsUE5nD0adtgbzOnAdRAA
-	zC9FrC07PqPa3QGhsBkb6+oNRthwublI03343MkJpNclahtn6P94finIz7X530+ucA3aRrhw4gO
-	wxbrE0/Kf+i8ZfopDCqug7AMHvxhvnBI=
-X-Gm-Gg: ASbGnctMGFKH2pdHxG38Tg13FH5mKUKmqeMl7yKqi3/nA3n9jDrT9JZGw//BO1P5WQp
-	ANxl6fTd/sLt/I7uuYUziT50MYJpTlCELE9SPyaG2spKj0ICoUwLdkbU+G9iRjOxWsyFr4P7Enw
-	ZsRlrBK3K3goQezF4Bl6GxzHqyUeYl4JQ7G9gmOAg9mcNZLLu7TkVLfA24Y/pLpoRI1YxQdsYii
-	JavLL6vNwV2/PK38bg=
-X-Google-Smtp-Source: AGHT+IEtegaV1kM6/2eLKcpj3YnxCpPwYOriAmnOSwvuuGJD0qRyytN8YsAqk2zDujqqqWicoDY8XH9Zq54w9g3oz7Q=
-X-Received: by 2002:a05:6102:d93:b0:4df:4ef8:8624 with SMTP id
- ada2fe7eead31-4f684178557mr2417289137.7.1752531380313; Mon, 14 Jul 2025
- 15:16:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752531450; x=1753136250;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YsfqHZF2eex1fFWEZK+9hGZCkr1RmGiBcZKUCMjWg4E=;
+        b=gZoJ1Y6bfo1kiusyyHBk2cI8b3h41YeYSo0FKAdGmjvzXvHmKu0NdnR/MFnmVDwr0Y
+         m3M1N+Q+7UV+fytUE8ppksbHLAl61KGZNFwPjxEi0svRnUH052OBR2/lnoPTeeh3VdN9
+         lbxzVwAn7LiaagK0q1CtO6XhHAv8MJJSrnyJEgB8HKQHlWFuiMj4NcdUT0o9+QdjHnpt
+         mFB4c00F9gQWzxyU350uZDirGlBThBSwEzVejD2jVJP+8Er+Pxme7zoMIWuFQzdl984A
+         IqMhftiPY50Q8Tbsp7fglEBZ5cEREPu5JNfkvsq04mvx4jHGUm0mKzFWvk0FjtQRo5pB
+         954w==
+X-Forwarded-Encrypted: i=1; AJvYcCVnoVykmWwNOeQc16dUueExNGxKbMx6MW+nsj0NkEXT5iL+u7orFnYSEGN04NgFUOUgyDCV+gm3Q+vW0dc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW7v5FuPofzwPopeXUgEw2Lwj1tbEcitH7Z2kz3j2s3Gk8v0CD
+	OB4WyZiSRTRB2tEEmSCB4iFdun82RhoC4AsS7sLVNdlZW4F2X9TVRbjHyLZeTdFZkX6PMVS/AZA
+	HrY89mA==
+X-Google-Smtp-Source: AGHT+IENFWroR9VdJzaKaolkunqI1VmDLzziPdV/9v1noDcfmOsawCXVJaeB2x5PgPIld5+VOoiKV62f+d8=
+X-Received: from pgac7.prod.google.com ([2002:a05:6a02:2947:b0:b2f:6290:cd48])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:e198:b0:220:9174:dd5f
+ with SMTP id adf61e73a8af0-2311e53433bmr27105907637.15.1752531449933; Mon, 14
+ Jul 2025 15:17:29 -0700 (PDT)
+Date: Mon, 14 Jul 2025 15:17:28 -0700
+In-Reply-To: <aHU1PGWwp9f6q8sk@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250624042802.105623-1-christiansantoslima21@gmail.com> <DB5KEWX9EJ2Q.3CX5EGS66OVHH@nvidia.com>
-In-Reply-To: <DB5KEWX9EJ2Q.3CX5EGS66OVHH@nvidia.com>
-From: Christian <christiansantoslima21@gmail.com>
-Date: Mon, 14 Jul 2025 19:16:08 -0300
-X-Gm-Features: Ac12FXx35yH4yjasif5jRv2fvp6Y53qbDwQRjQeWgKsIPTvdXuP3ZJDxbt3EzHU
-Message-ID: <CABm2a9cfK+HuidwQwcD0Cs_n+dvd9Y71tFn=grz1ahGpbPpurA@mail.gmail.com>
-Subject: Re: [PATCH v8] rust: transmute: Add methods for FromBytes trait
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht, 
-	richard120310@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <935a82e3-f7ad-47d7-aaaf-f3d2b62ed768@amd.com> <F7AF073C-D630-45A3-8746-DE66B15FC3E1@sjtu.edu.cn>
+ <aHUYwCNDWlsar3qk@google.com> <15D0C887-E17F-4432-8716-BF62EEE61B6B@sjtu.edu.cn>
+ <aHUe5HY4C2vungCd@google.com> <aHU1PGWwp9f6q8sk@google.com>
+Message-ID: <aHWB-JPG8r_x2w-A@google.com>
+Subject: Re: [BUG] NULL pointer dereference in sev_writeback_caches during KVM
+ SEV migration kselftest on AMD platform
+From: Sean Christopherson <seanjc@google.com>
+To: Zheyun Shen <szy0127@sjtu.edu.cn>
+Cc: Srikanth Aithal <sraithal@amd.com>, linux-next@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Hi, Alexandre. No problem, take your time.
+On Mon, Jul 14, 2025, Sean Christopherson wrote:
+> So as much as I want to avoid allocating another cpumask (ugh), it's the right
+> thing to do.  And practically speaking, I doubt many real world users of SEV will
+> be using MAXSMP, i.e. the allocations don't exist anyways.
+> 
+> Unless someone objects and/or has a better idea, I'll squash this:
+> 
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 95668e84ab86..e39726d258b8 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -2072,6 +2072,17 @@ int sev_vm_move_enc_context_from(struct kvm *kvm, unsigned int source_fd)
+>         if (ret)
+>                 goto out_source_vcpu;
+>  
+> +       /*
+> +        * Allocate a new have_run_cpus for the destination, i.e. don't copy
+> +        * the set of CPUs from the source.  If a CPU was used to run a vCPU in
+> +        * the source VM but is never used for the destination VM, then the CPU
+> +        * can only have cached memory that was accessible to the source VM.
+> +        */
+> +       if (!zalloc_cpumask_var(&dst_sev->have_run_cpus, GFP_KERNEL_ACCOUNT)) {
+> +               ret = -ENOMEM;
+> +               goto out_source_vcpu;
+> +       }
+> +
+>         sev_migrate_from(kvm, source_kvm);
+>         kvm_vm_dead(source_kvm);
+>         cg_cleanup_sev = src_sev;
+> @@ -2771,13 +2782,18 @@ int sev_vm_copy_enc_context_from(struct kvm *kvm, unsigned int source_fd)
+>                 goto e_unlock;
+>         }
+>  
+> +       mirror_sev = to_kvm_sev_info(kvm);
+> +       if (!zalloc_cpumask_var(&mirror_sev->have_run_cpus, GFP_KERNEL_ACCOUNT)) {
+> +               ret = -ENOMEM;
+> +               goto e_unlock;
+> +       }
+> +
+>         /*
+>          * The mirror kvm holds an enc_context_owner ref so its asid can't
+>          * disappear until we're done with it
+>          */
+>         source_sev = to_kvm_sev_info(source_kvm);
+>         kvm_get_kvm(source_kvm);
+> -       mirror_sev = to_kvm_sev_info(kvm);
+>         list_add_tail(&mirror_sev->mirror_entry, &source_sev->mirror_vms);
+>  
+>         /* Set enc_context_owner and copy its encryption context over */
 
-> Let's elaborate on when it is "possible", i.e. the reference is properly
-> aligned, and the size of the slice is equal to that of `T`. Let's also
-> clarify that `None` is returned in other cases.
+This isn't quite right either, because sev_vm_destroy() won't free the cpumask
+for mirror VMs.
 
-I see, thanks for a better explanation, I'll include it in the next patch.
+Aha!  And KVM will also unnecessarily leak have_run_cpus if SNP decomission
+fails (though that should be an extremely rare error scecnario).
 
-> > +    fn from_mut_bytes(bytes: &mut [u8]) -> Option<&mut Self>
->
-> `from_bytes_mut` sounds like a more idiomatic name for this method.
+KVM is guaranteed to have blasted WBINVD before reaching sev_vm_destroy() (see
+commit 7e00013bd339 "KVM: SVM: Remove wbinvd in sev_vm_destroy()"), so unless I'm
+missing something, KVM can simply free have_run_cpus at the start of sev_vm_destroy().
 
-It is done this way to match the zero copy API. [1]
+Ooh, side topic!  The fact that sev_vm_destroy() wasn't blasting WBINVD would
+have been a bug if not for kvm_arch_guest_memory_reclaimed() and
+kvm_arch_gmem_invalidate() taking care of mirror VMs.
 
-> > +    where
-> > +        Self: AsBytes;
-> > +}
->
-> Note that `samples/rust/rust_dma.rs` will fail to compile due to this
-> change - you must make it derive `FromBytesSized` instead. There may be
-> other implementors of `FromBytes` so please make sure to track and
-> update them to avoid breaking the build.
+New hash for the patch:
 
-In this case, if we don't include `AsBytes` the user can add padding
-bytes in the slice. [2]
+  KVM: SVM: Flush cache only on CPUs running SEV guest
+  https://github.com/kvm-x86/linux/commit/6f38f8c57464
 
-> nova-next also adds new implementations of `FromBytes`, and since they
-> are not in mainline yet this will make it harder to adapt them... I see
-> two possible solutions if we want this for the next cycle:
->
-> - Take this patch into nova-next and update `FromBytes` implementations
->   in lockstep,
-> - Add temporary default implementations for `from_bytes` and
->   `from_mut_bytes` that simply return `None` so current implementors
->   keep building.
+And the full contexts of what I force-pushed:
 
-I think the first option is better considering the current state.
+--
+From: Zheyun Shen <szy0127@sjtu.edu.cn>
+Date: Thu, 22 May 2025 16:37:32 -0700
+Subject: [PATCH] KVM: SVM: Flush cache only on CPUs running SEV guest
 
-> I don't think this implementation takes care of arrays?
+On AMD CPUs without ensuring cache consistency, each memory page
+reclamation in an SEV guest triggers a call to do WBNOINVD/WBINVD on all
+CPUs, thereby affecting the performance of other programs on the host.
 
-Arrays are sized types implemented in `FromBytesSized`, I believe in
-this case arrays are implemented too.
+Typically, an AMD server may have 128 cores or more, while the SEV guest
+might only utilize 8 of these cores. Meanwhile, host can use qemu-affinity
+to bind these 8 vCPUs to specific physical CPUs.
 
-[1] https://lore.kernel.org/rust-for-linux/CAGSQo03teSsTa84Mx=4SFRAfa2=irBwgXXoh5eB_Q0RoixrF6Q@mail.gmail.com/
-[2] https://lore.kernel.org/rust-for-linux/D8FXFGYZTEXT.24UM4V3HZ5MWH@proton.me/
+Therefore, keeping a record of the physical core numbers each time a vCPU
+runs can help avoid flushing the cache for all CPUs every time.
 
-Thanks,
-Christian
+Take care to allocate the cpumask used to track which CPUs have run a
+vCPU when copying or moving an "encryption context", as nothing guarantees
+memory in a mirror VM is a strict subset of the ASID owner, and the
+destination VM for intrahost migration needs to maintain it's own set of
+CPUs.  E.g. for intrahost migration, if a CPU was used for the source VM
+but not the destination VM, then it can only have cached memory that was
+accessible to the source VM.  And a CPU that was run in the source is also
+used by the destination is no different than a CPU that was run in the
+destination only.
+
+Note, KVM is guaranteed to do flush caches prior to sev_vm_destroy(),
+thanks to kvm_arch_guest_memory_reclaimed for SEV and SEV-ES, and
+kvm_arch_gmem_invalidate() for SEV-SNP.  I.e. it's safe to free the
+cpumask prior to unregistering encrypted regions and freeing the ASID.
+
+Cc: Srikanth Aithal <sraithal@amd.com>
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Zheyun Shen <szy0127@sjtu.edu.cn>
+Co-developed-by: Sean Christopherson <seanjc@google.com>
+Link: https://lore.kernel.org/r/20250522233733.3176144-9-seanjc@google.com
+Link: https://lore.kernel.org/all/935a82e3-f7ad-47d7-aaaf-f3d2b62ed768@amd.com
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/svm/sev.c | 71 ++++++++++++++++++++++++++++++++++++------
+ arch/x86/kvm/svm/svm.h |  1 +
+ 2 files changed, 63 insertions(+), 9 deletions(-)
+
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index ed39f8a4d9df..a62cd27a4f45 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -447,7 +447,12 @@ static int __sev_guest_init(struct kvm *kvm, struct kvm_sev_cmd *argp,
+ 	init_args.probe = false;
+ 	ret = sev_platform_init(&init_args);
+ 	if (ret)
+-		goto e_free;
++		goto e_free_asid;
++
++	if (!zalloc_cpumask_var(&sev->have_run_cpus, GFP_KERNEL_ACCOUNT)) {
++		ret = -ENOMEM;
++		goto e_free_asid;
++	}
+ 
+ 	/* This needs to happen after SEV/SNP firmware initialization. */
+ 	if (vm_type == KVM_X86_SNP_VM) {
+@@ -465,6 +470,8 @@ static int __sev_guest_init(struct kvm *kvm, struct kvm_sev_cmd *argp,
+ 	return 0;
+ 
+ e_free:
++	free_cpumask_var(sev->have_run_cpus);
++e_free_asid:
+ 	argp->error = init_args.error;
+ 	sev_asid_free(sev);
+ 	sev->asid = 0;
+@@ -709,16 +716,31 @@ static void sev_clflush_pages(struct page *pages[], unsigned long npages)
+ 	}
+ }
+ 
+-static void sev_writeback_caches(void)
++static void sev_writeback_caches(struct kvm *kvm)
+ {
++	/*
++	 * Note, the caller is responsible for ensuring correctness if the mask
++	 * can be modified, e.g. if a CPU could be doing VMRUN.
++	 */
++	if (cpumask_empty(to_kvm_sev_info(kvm)->have_run_cpus))
++		return;
++
+ 	/*
+ 	 * Ensure that all dirty guest tagged cache entries are written back
+ 	 * before releasing the pages back to the system for use.  CLFLUSH will
+ 	 * not do this without SME_COHERENT, and flushing many cache lines
+ 	 * individually is slower than blasting WBINVD for large VMs, so issue
+-	 * WBNOINVD (or WBINVD if the "no invalidate" variant is unsupported).
++	 * WBNOINVD (or WBINVD if the "no invalidate" variant is unsupported)
++	 * on CPUs that have done VMRUN, i.e. may have dirtied data using the
++	 * VM's ASID.
++	 *
++	 * For simplicity, never remove CPUs from the bitmap.  Ideally, KVM
++	 * would clear the mask when flushing caches, but doing so requires
++	 * serializing multiple calls and having responding CPUs (to the IPI)
++	 * mark themselves as still running if they are running (or about to
++	 * run) a vCPU for the VM.
+ 	 */
+-	wbnoinvd_on_all_cpus();
++	wbnoinvd_on_cpus_mask(to_kvm_sev_info(kvm)->have_run_cpus);
+ }
+ 
+ static unsigned long get_num_contig_pages(unsigned long idx,
+@@ -2046,6 +2068,17 @@ int sev_vm_move_enc_context_from(struct kvm *kvm, unsigned int source_fd)
+ 	if (ret)
+ 		goto out_source_vcpu;
+ 
++	/*
++	 * Allocate a new have_run_cpus for the destination, i.e. don't copy
++	 * the set of CPUs from the source.  If a CPU was used to run a vCPU in
++	 * the source VM but is never used for the destination VM, then the CPU
++	 * can only have cached memory that was accessible to the source VM.
++	 */
++	if (!zalloc_cpumask_var(&dst_sev->have_run_cpus, GFP_KERNEL_ACCOUNT)) {
++		ret = -ENOMEM;
++		goto out_source_vcpu;
++	}
++
+ 	sev_migrate_from(kvm, source_kvm);
+ 	kvm_vm_dead(source_kvm);
+ 	cg_cleanup_sev = src_sev;
+@@ -2707,7 +2740,7 @@ int sev_mem_enc_unregister_region(struct kvm *kvm,
+ 		goto failed;
+ 	}
+ 
+-	sev_writeback_caches();
++	sev_writeback_caches(kvm);
+ 
+ 	__unregister_enc_region_locked(kvm, region);
+ 
+@@ -2749,13 +2782,18 @@ int sev_vm_copy_enc_context_from(struct kvm *kvm, unsigned int source_fd)
+ 		goto e_unlock;
+ 	}
+ 
++	mirror_sev = to_kvm_sev_info(kvm);
++	if (!zalloc_cpumask_var(&mirror_sev->have_run_cpus, GFP_KERNEL_ACCOUNT)) {
++		ret = -ENOMEM;
++		goto e_unlock;
++	}
++
+ 	/*
+ 	 * The mirror kvm holds an enc_context_owner ref so its asid can't
+ 	 * disappear until we're done with it
+ 	 */
+ 	source_sev = to_kvm_sev_info(source_kvm);
+ 	kvm_get_kvm(source_kvm);
+-	mirror_sev = to_kvm_sev_info(kvm);
+ 	list_add_tail(&mirror_sev->mirror_entry, &source_sev->mirror_vms);
+ 
+ 	/* Set enc_context_owner and copy its encryption context over */
+@@ -2817,7 +2855,13 @@ void sev_vm_destroy(struct kvm *kvm)
+ 
+ 	WARN_ON(!list_empty(&sev->mirror_vms));
+ 
+-	/* If this is a mirror_kvm release the enc_context_owner and skip sev cleanup */
++	free_cpumask_var(sev->have_run_cpus);
++
++	/*
++	 * If this is a mirror VM, remove it from the owner's list of a mirrors
++	 * and skip ASID cleanup (the ASID is tied to the lifetime of the owner).
++	 * Note, mirror VMs don't support registering encrypted regions.
++	 */
+ 	if (is_mirroring_enc_context(kvm)) {
+ 		struct kvm *owner_kvm = sev->enc_context_owner;
+ 
+@@ -3106,7 +3150,7 @@ static void sev_flush_encrypted_page(struct kvm_vcpu *vcpu, void *va)
+ 	return;
+ 
+ do_sev_writeback_caches:
+-	sev_writeback_caches();
++	sev_writeback_caches(vcpu->kvm);
+ }
+ 
+ void sev_guest_memory_reclaimed(struct kvm *kvm)
+@@ -3119,7 +3163,7 @@ void sev_guest_memory_reclaimed(struct kvm *kvm)
+ 	if (!sev_guest(kvm) || sev_snp_guest(kvm))
+ 		return;
+ 
+-	sev_writeback_caches();
++	sev_writeback_caches(kvm);
+ }
+ 
+ void sev_free_vcpu(struct kvm_vcpu *vcpu)
+@@ -3451,6 +3495,15 @@ int pre_sev_run(struct vcpu_svm *svm, int cpu)
+ 	if (sev_es_guest(kvm) && !VALID_PAGE(svm->vmcb->control.vmsa_pa))
+ 		return -EINVAL;
+ 
++	/*
++	 * To optimize cache flushes when memory is reclaimed from an SEV VM,
++	 * track physical CPUs that enter the guest for SEV VMs and thus can
++	 * have encrypted, dirty data in the cache, and flush caches only for
++	 * CPUs that have entered the guest.
++	 */
++	if (!cpumask_test_cpu(cpu, to_kvm_sev_info(kvm)->have_run_cpus))
++		cpumask_set_cpu(cpu, to_kvm_sev_info(kvm)->have_run_cpus);
++
+ 	/* Assign the asid allocated with this SEV guest */
+ 	svm->asid = asid;
+ 
+diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+index e6f3c6a153a0..a7c6f07260cf 100644
+--- a/arch/x86/kvm/svm/svm.h
++++ b/arch/x86/kvm/svm/svm.h
+@@ -113,6 +113,7 @@ struct kvm_sev_info {
+ 	void *guest_req_buf;    /* Bounce buffer for SNP Guest Request input */
+ 	void *guest_resp_buf;   /* Bounce buffer for SNP Guest Request output */
+ 	struct mutex guest_req_mutex; /* Must acquire before using bounce buffers */
++	cpumask_var_t have_run_cpus; /* CPUs that have done VMRUN for this VM. */
+ };
+ 
+ #define SEV_POLICY_NODBG	BIT_ULL(0)
+
+base-commit: a77896eea33db6fe393d1db1380e2e52f74546a2
+--
 
