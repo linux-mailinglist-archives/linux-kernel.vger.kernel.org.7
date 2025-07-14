@@ -1,166 +1,200 @@
-Return-Path: <linux-kernel+bounces-730683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC38B04813
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:49:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC91B04818
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 175D64A2662
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:49:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75E8C1A65722
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B242367DF;
-	Mon, 14 Jul 2025 19:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0682233722;
+	Mon, 14 Jul 2025 19:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mrV7aq1d"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WGPQ++58"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C150E230997
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 19:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295AA230997
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 19:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752522588; cv=none; b=GzZpJezZTPR5PhbIGogiugXvy3+2g8j6mPyu+vaXbG6/RvIMbDNAkyC6vnAPrTe3AEPgODkIRha+GBvUpnigoI0jTkia4IEQ5E00X9OnWW4vWkGDA1tUQ5FYDgjNk7QFvc4wtJc4ctVduFSOM3vGgnybd3oq+UCxufUIQ8k5y2U=
+	t=1752522671; cv=none; b=tSG9AM7t9PiA2is8lIhSmu/wZg9sOVMnDrC7I+qdQTsQk90FjV3j25PlE0EuYz8POIBApnMCqRt0itBGrZfW595VKT7xRb8clUnOI4ToZbwZCxqExQO/3L6fAXh+TlX+eR3ETwxMjiVLLYzjc5Eq79lL4HgLmtU+04oREmP09I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752522588; c=relaxed/simple;
-	bh=yWOqjM+tnJXB+iS8z8RSLG6VbltiE5lZkB4fv77IZdg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SZlCS/rYQAkJpX4+nUeF4yBtwaETKjgLuS7Jbr0EHaozvy4Bxfy/XYnwOrEz/jLyBB3M9PAG1dceHqUBfwoG3N7/DOLnSETbJBZbD6c1DDpBKeg0OH00u/CM7ATPFz00zygn8mf5q6aaAy1Wcztk9z6em2Q0NkyCel8doa7rLuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mrV7aq1d; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b3bc9d9590cso4625254a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:49:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752522586; x=1753127386; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ICcg0kScB2Zwj8UqwZwwX6H3Hb3sbc2THMrldLCPfAE=;
-        b=mrV7aq1dFqDxTapv8jzGX8ekE7CbCBPrU54VhTHi7AiBfBjispbdVQbQ5/J2l7xTLs
-         ETphmykk5WEbzRoYKXK57QDPxsm2TcXZ+WnShdd8GA0jdmoxnQXMyjMTkRd3+B+5GRPY
-         eVSLY8IBW00BWNfacBDeW5cNIXm9Un+hxXCcC4ZjSM6E/MzQGAK5CZGpE244jZtK7YYc
-         UIlpmjC2rHto2Ksxv02HJ7gjjlpFFLyRl3KHHpvhhmgO1yNPn92tc9xYX6IHnTqe6AWX
-         A2spY2bSkjZvtNUlQhAx+5GXl+qWEjFk+hl1cxZdTQ3deZVAyPZdKPZP50AXph+yGGbC
-         RzLg==
+	s=arc-20240116; t=1752522671; c=relaxed/simple;
+	bh=P2DjgQqNmhul/3Tjrh71ORmKHZE60e0bzK86Zvefny8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q7TFQKFb6+p9kF/s+hoplwyxwej748wGqpf0fxUuqxCkYAq4+F6EWlHA1qJfCo9bY9d9eC4lPfrwF6RggnYQiVtH9BmizMFvP4Va94KYVa4HwE6MA9fFAMSyBICK5sTr8FBL0633fAvzs+9y6hRlfBr7ayxaNcGFpo7q6gFnO4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WGPQ++58; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56EGJsQ8015971
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 19:51:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=
+	qcppdkim1; bh=cHAxU5EnEHUmmvSd/XnW201tIJmHnogoSkLScD389cU=; b=WG
+	PQ++58bGoF+QZqX8R59+SGOPQ5PGrMacju4rWcCYnLEkDxTgEJpKP7YkBwD154sq
+	9WiG72nCnuXda1yJIvewzAF2zawQFDgKGOrKExlFBKoLj/C5y2wPx78Nha1PiqBX
+	Twqo/auhtkq8WhM6evSTi0ZYi8n2erpzgm1acGEMk5bghAeqxykWQAqEBUU4Ed1M
+	6px2RztULwEMNBz7M641NHGu5GdxX+hx+qOrB4EdMRESJYB1B3te87vDc7l/x3OX
+	87+DDYTkC0cUF5H7GaNoudRFJssKsuEC7qnwnBxO9NyxB58x4yf3P3OyrQRN9MXf
+	LIGd1bQId2+prm6eMjow==
+Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufxawss6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 19:51:07 +0000 (GMT)
+Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-61573600cd6so979229eaf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:51:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752522586; x=1753127386;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ICcg0kScB2Zwj8UqwZwwX6H3Hb3sbc2THMrldLCPfAE=;
-        b=PVni5+ml5oYR2Z128F5YFB4Qx7Ih4YlOnfpuUbTqoLcx0k1ofI5xLO4aiqJm8GZGRp
-         J9pvJN9OvSY60We2WSg9ZSyCq+cCNbq+9i9iIb/jdR9uMIbAS3Vz8Z0jt44y4/zgEMtX
-         p/BYpIf475pLIFM0ZIuqD/6PdjJ1TSK5CLnsvu+gx1eBgr+Bd3dQkb/7wEKbG1ron9wi
-         EL9ZVFQVn2RN4zimmJJDD2omF3JBUgWgk4RdUygM9gIFJ8LXzw0B8NRfhF/dFUL9KtFe
-         ZQDjbz5G6ycsHbSeQOR1gMAKkkCwv4CRN9WlJp4BDJRMAYKy+n9SmcBYsOC00nEXLm0Y
-         AhpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVdX4MOHFmScsU7S0bSHjVMRYViI3s8nHm6GvtTrhBR9DHz/g3TyZWTsfGQRdu+QQy5QIMUuQZQPmk+BY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOij0w0VT6WUhZWthIkHpP1EGwzKzYghcUpwBwUFLmzTl7NC3W
-	Nt8VDk5YLuMwdIBUWL15IGTO0RLVuLYSf9SZJLLzekrLJDV5qQS+ixnD5To3R7o/pjGDC3pziy1
-	lTutCXVZiNesMF0FS6P0gU60pRw==
-X-Google-Smtp-Source: AGHT+IHYRx34pwTQ1/zxuK41iVUIxojsyjeG9fu7hIcirB2HtzSq/CDTqyAKgWSVpxntbG5X9IzCGePZMY1LK4n9RA==
-X-Received: from pfblm11.prod.google.com ([2002:a05:6a00:3c8b:b0:748:f270:c438])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:7f8e:b0:1f5:79c4:5da6 with SMTP id adf61e73a8af0-2311dc59daemr19721553637.5.1752522585949;
- Mon, 14 Jul 2025 12:49:45 -0700 (PDT)
-Date: Mon, 14 Jul 2025 12:49:44 -0700
-In-Reply-To: <4c70424ab8bc076142e5f6e8423f207539602ff1.camel@intel.com>
+        d=1e100.net; s=20230601; t=1752522667; x=1753127467;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cHAxU5EnEHUmmvSd/XnW201tIJmHnogoSkLScD389cU=;
+        b=tW5IvPHCwPltoeLQ6ACUsDF87hC904gB09iS8mrDb6gybnSi3c43LuOkBfk3Njd5Oc
+         ytGtOAUhp0yV9KHLWWTgXWLbP3tkp/d7OkRoBWxfBKj4Kr5kW5yoFERn40zaBWuXNj/S
+         MGpbo0+j1KV6ThDpBWui63F5LFgg9iDbwUB63rjiPHR9pBJq/1/c3A84Pl4PjI8bWdcs
+         tF7lY6zFz2xMY49Kt+FHn+bF0hXtdFHajGWlg1Hfsc6k2MWNMF9Tg3vD2KTbpNJNej2g
+         zP54xiYWx4plcdFCBEm4JcPcTrNJ1nVptXeSqybOVGeDjXtr1nP6HxcbU8q1lbqV4Xco
+         wKsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgJWjp42iQsnKv0B8o8TXeJ7/jYZPP+wPcZ0wnrXlkSDLqi1jjcvWuGkXNmkyzM4s3OVWPAD9PupHRFew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVWy5d9CVai0bTGfFZjY6LJAtX7LtBqz6ETwGRg5blFuYBSLME
+	W/gszUh81ROrTXwrxKu8jOZGS/ZRW8NDL+HmLHTwwPQVLRNFSFQata2ROg9bi3Q24K7ZT6dJWEs
+	BPBZwIliQkNR26R3E9X/Z3wtFqpBuD6NQiUef6lIK372C+KvWoMjGmfSYHtleRzcxOB+LrzYPHv
+	lM6iqUgO7hU5gXwph+DmN1CVOjrtiBFiXKRrM2T3moZQ==
+X-Gm-Gg: ASbGnctA0PauaqTEA3VQK6KG/BfqUPUKQP7o9k4waiAWpLIqCsK4e1k8MJpNoQ34wEG
+	3dM/jrZl0ATa+B00hyGqOo0RiCUV48P3hgWOIyKuva9akU6wemayQbTB6ZTB3vQ3HBa4AYhy/ei
+	600P2p4vU7rbv8ZokfK26AS9aNMlolVFCO/qRiMskV+gNLIQI1BbMk
+X-Received: by 2002:a05:6820:2b14:b0:613:90e1:729a with SMTP id 006d021491bc7-615933298d2mr395646eaf.4.1752522666664;
+        Mon, 14 Jul 2025 12:51:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFvNOTRr7nTbzGLFYFpm62n4sXgSE9iNBusqXlHlebIghEEjvoyILcY8+9jbV1NxN9chrsAuYDFxtNto888VVg=
+X-Received: by 2002:a05:6820:2b14:b0:613:90e1:729a with SMTP id
+ 006d021491bc7-615933298d2mr395636eaf.4.1752522666307; Mon, 14 Jul 2025
+ 12:51:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <diqzms9pjaki.fsf@ackerleytng-ctop.c.googlers.com>
- <fe6de7e7d72d0eed6c7a8df4ebff5f79259bd008.camel@intel.com>
- <aGNrlWw1K6nkWdmg@yzhao56-desk.sh.intel.com> <cd806e9a190c6915cde16a6d411c32df133a265b.camel@intel.com>
- <diqzy0t74m61.fsf@ackerleytng-ctop.c.googlers.com> <04d3e455d07042a0ab8e244e6462d9011c914581.camel@intel.com>
- <diqz7c0q48g7.fsf@ackerleytng-ctop.c.googlers.com> <a9affa03c7cdc8109d0ed6b5ca30ec69269e2f34.camel@intel.com>
- <diqz1pqq5qio.fsf@ackerleytng-ctop.c.googlers.com> <53ea5239f8ef9d8df9af593647243c10435fd219.camel@intel.com>
- <aHCdRF10S0fU/EY2@yzhao56-desk> <4c70424ab8bc076142e5f6e8423f207539602ff1.camel@intel.com>
-Message-ID: <diqzikju4ko7.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH 08/21] KVM: TDX: Increase/decrease folio ref for huge pages
-From: Ackerley Tng <ackerleytng@google.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>
-Cc: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>, 
-	"Du, Fan" <fan.du@intel.com>, "Hansen, Dave" <dave.hansen@intel.com>, 
-	"david@redhat.com" <david@redhat.com>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
-	"vbabka@suse.cz" <vbabka@suse.cz>, "Li, Zhiquan1" <zhiquan1.li@intel.com>, 
-	"Shutemov, Kirill" <kirill.shutemov@intel.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
-	"seanjc@google.com" <seanjc@google.com>, "Weiny, Ira" <ira.weiny@intel.com>, 
-	"Peng, Chao P" <chao.p.peng@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "tabba@google.com" <tabba@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "Annapurve, Vishal" <vannapurve@google.com>, 
-	"jroedel@suse.de" <jroedel@suse.de>, "Miao, Jun" <jun.miao@intel.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pgonda@google.com" <pgonda@google.com>, 
-	"x86@kernel.org" <x86@kernel.org>
+MIME-Version: 1.0
+References: <20250714173554.14223-1-daleyo@gmail.com> <20250714173554.14223-7-daleyo@gmail.com>
+In-Reply-To: <20250714173554.14223-7-daleyo@gmail.com>
+Reply-To: rob.clark@oss.qualcomm.com
+From: Rob Clark <rob.clark@oss.qualcomm.com>
+Date: Mon, 14 Jul 2025 12:50:54 -0700
+X-Gm-Features: Ac12FXzMmQvS5rnzO5-iDknQYE-6ywvsNV2cxkydI09oPN8GV7Xk6HdI3xrZ3s4
+Message-ID: <CACSVV00-DDnQYp-65Pi-XwpEKT1_jYik2=zH_bK_oJiGLxX48A@mail.gmail.com>
+Subject: Re: [PATCH 6/9] drm/msm/dp: Work around bogus maximum link rate
+To: Dale Whinham <daleyo@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        =?UTF-8?B?SsOpcsO0bWUgZGUgQnJldGFnbmU=?= <jerome.debretagne@gmail.com>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-GUID: Ma8NxEuTrtdmOOglsLcnJ10VhyvqZZAD
+X-Proofpoint-ORIG-GUID: Ma8NxEuTrtdmOOglsLcnJ10VhyvqZZAD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDEzMCBTYWx0ZWRfX1g5e490TISaH
+ LH6Gzej/8ZJVQSbcE8i/TJo6gAUPJVzU4tGK8TyUGiu1zh/JmuQFY24f+zpMi3xKy4sAoOTsNJ8
+ gdy1mSWdT0rTisb/9U+UiCG/WDAqUpKE9oqLcl/+2+dvw3wiHzb1l/3oqUXFJhpW/ZNMDwIy9DQ
+ NspCnOj+9d1HPnVW5gc3PJI5DJtEIlHYFtHqgGplomYrZyzDkEcP7IU297nganCj8I4LkaKo+Ue
+ vXggKPjn3IZ3oZDRcnHuKT6B4ie+pXVvrIz7n4cr1ovXsZ2uPsjwRDBRZQ8jjBCeMDwde/qa2K3
+ VUYXCN69QEJ1DxhoHhrxBpsBte4zuWw3MFAyvUacbxlNa/zwKPWxd22F0UcrKK5ZhdyW6VL5ROd
+ 41iq6jc8mYzOXbebQ9Esxpm0m8qNOk0n72owTmQMY9yCtle7DXj4A1YfpK9GKqYFgzgASNBd
+X-Authority-Analysis: v=2.4 cv=Xc2JzJ55 c=1 sm=1 tr=0 ts=68755fab cx=c_pps
+ a=V4L7fE8DliODT/OoDI2WOg==:117 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
+ a=pGLkceISAAAA:8 a=B0QqisOVu6ZhBNclzXcA:9 a=QEXdDO2ut3YA:10
+ a=WZGXeFmKUf7gPmL3hEjn:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-14_02,2025-07-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 mlxscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
+ phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
+ clxscore=1015 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507140130
 
-"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> writes:
-
-> On Fri, 2025-07-11 at 13:12 +0800, Yan Zhao wrote:
->> > Yan, is that your recollection? I guess the other points were that although
->> > TDX
->> I'm ok if KVM_BUG_ON() is considered loud enough to warn about the rare
->> potential corruption, thereby making TDX less special.
->> 
->> > doesn't need it today, for long term, userspace ABI around invalidations
->> > should
->> > support failure. But the actual gmem/kvm interface for this can be figured
->> > out
->> Could we elaborate what're included in userspace ABI around invalidations?
+On Mon, Jul 14, 2025 at 10:36=E2=80=AFAM Dale Whinham <daleyo@gmail.com> wr=
+ote:
 >
-> Let's see what Ackerley says.
+> From: J=C3=A9r=C3=B4me de Bretagne <jerome.debretagne@gmail.com>
 >
-
-There's no specific invalidation command for ioctl but I assume you're
-referring to the conversion ioctl?
-
-There is a conversion ioctl planned for guest_memfd and the conversion
-ioctl can return an error. The process of conversion involves
-invalidating the memory that is to be converted, and for now,
-guest_memfd assumes unmapping is successful (like Yan says), but that
-can be changed.
-
->> 
->> I'm a bit confused as I think the userspace ABI today supports failure
->> already.
->> 
->> Currently, the unmap API between gmem and KVM does not support failure.
+> The OLED display in the Surface Pro 11 reports a maximum link rate of
+> zero in its DPCD, causing it to fail to probe correctly.
 >
-> Great. I'm just trying to summarize the internal conversations. I think the
-> point was for a future looking user ABI, supporting failure is important. But we
-> don't need the KVM/gmem interface figured out yet.
+> The Surface Pro 11's DSDT table contains some XML with an
+> "EDPOverrideDPCDCaps" block that defines the max link rate as 0x1E
+> (8.1Gbps/HBR3).
 >
+> Add a quirk to conditionally override the max link rate if its value
+> is zero specifically for this model.
+>
+> Signed-off-by: J=C3=A9r=C3=B4me de Bretagne <jerome.debretagne@gmail.com>
+> Signed-off-by: Dale Whinham <daleyo@gmail.com>
+> ---
+>  drivers/gpu/drm/msm/dp/dp_panel.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/d=
+p_panel.c
+> index 4e8ab75c771b..b2e65b987c05 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_panel.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_panel.c
+> @@ -11,6 +11,8 @@
+>  #include <drm/drm_of.h>
+>  #include <drm/drm_print.h>
+>
+> +#include <linux/dmi.h>
+> +
+>  #define DP_MAX_NUM_DP_LANES    4
+>  #define DP_LINK_RATE_HBR2      540000 /* kbytes */
+>
+> @@ -58,6 +60,17 @@ static int msm_dp_panel_read_dpcd(struct msm_dp_panel =
+*msm_dp_panel)
+>         if (rc)
+>                 return rc;
+>
+> +       /*
+> +        * for some reason the ATNA30DW01-1 OLED panel in the Surface Pro=
+ 11
+> +        * reports a max link rate of 0 in the DPCD. Fix it to match the
+> +        * EDPOverrideDPCDCaps string found in the ACPI DSDT
+> +        */
+> +       if (dpcd[DP_MAX_LINK_RATE] =3D=3D 0 &&
+> +           dmi_match(DMI_SYS_VENDOR, "Microsoft Corporation") &&
+> +           dmi_match(DMI_PRODUCT_NAME, "Microsoft Surface Pro, 11th Edit=
+ion")) {
+> +               dpcd[1] =3D DP_LINK_BW_8_1;
+> +       }
 
-I'm onboard here. So "do nothing" means if there is a TDX unmap failure,
+Not a dp expert myself, but..
 
-+ KVM_BUG_ON() and hence the TD in question stops running,
-    + No more conversions will be possible for this TD since the TD
-      stops running.
-    + Other TDs can continue running?
-+ No refcounts will be taken for the folio/page where the memory failure
-  happened.
-+ No other indication (including HWpoison) anywhere in folio/page to
-  indicate this happened.
-+ To round this topic up, do we do anything else as part of "do nothing"
-  that I missed? Is there any record in the TDX module (TDX module
-  itself, not within the kernel)?
+In drm_dp_helpers.c there is dpcd_quirk_list[].. which applies quirks
+based on the oui ("Organizational Unique ID") of the dp sink.  I think
+this would be the correct way to handle this.  Although I guess you'll
+need to add a new quirk for this.
 
-I'll probably be okay with an answer like "won't know what will happen",
-but just checking - what might happen if this page that had an unmap
-failure gets reused? Suppose the KVM_BUG_ON() is noted but somehow we
-couldn't get to the machine in time and the machine continues to serve,
-and the memory is used by 
+Idk if the surface pro 11 has multiple different panel options.  If so
+you defn wouldn't want to match on the DMI.
 
-1. Some other non-VM user, something else entirely, say a database?
-2. Some new non-TDX VM?
-3. Some new TD?
+BR,
+-R
 
 
->> 
->> In the future, we hope gmem can check if KVM allows a page to be unmapped
->> before
->> triggering the actual unmap.
+> +
+>         msm_dp_panel->vsc_sdp_supported =3D drm_dp_vsc_sdp_supported(pane=
+l->aux, dpcd);
+>         link_info =3D &msm_dp_panel->link_info;
+>         link_info->revision =3D dpcd[DP_DPCD_REV];
+> --
+> 2.50.1
+>
 
