@@ -1,47 +1,55 @@
-Return-Path: <linux-kernel+bounces-729418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93ACFB0364F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:56:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4172B03653
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FFAA189A8DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:56:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1040E17143D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252A021171B;
-	Mon, 14 Jul 2025 05:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C292116F6;
+	Mon, 14 Jul 2025 05:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZOOL7m8e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="jhPRhfxm"
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760BCC13B;
-	Mon, 14 Jul 2025 05:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180271F561D;
+	Mon, 14 Jul 2025 05:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752472539; cv=none; b=Yf5TI/IfepRd/f9Cn/W2DpLuIFTaYJhtohVqLKSDsffQDNmdbD+1ejejqm/LoKYNF1jLiQzyhIGtcXKC4NUhx1nAOVwOKtoY4tOSX/SG1G9mtpUA1eXOI7XjBh9EMzJy7Vel1+5HGcEkh0oZ0B0MTVxnjk4yUmdOL8vfWaMLXGs=
+	t=1752472584; cv=none; b=ZQcpNx90Fzdes9rwfDr1zF/gYp9o2p325wY2x5BHeX7CZ4WJeCLMzSvcPTt84yEQtnU7t7rCeQvID3q3+K+VJi7rwZsCenQQBvlmSapuBzR4BsAhfYNgRg9jkpLIZmtNNlqZeUTe65Uc5q8DFN0hm1ydfmyum42mk+fpwAOqHxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752472539; c=relaxed/simple;
-	bh=/vA4vao9lqvPPolTnzO87qhxfdcnKwl67DQjGBaDAUo=;
+	s=arc-20240116; t=1752472584; c=relaxed/simple;
+	bh=KpVr2qHA44LAcwoq/rGsxS1U0kdeoyCLFjsHRxJwvd0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n5SV6hd5LbqZz/9EzcOcUgkr6EkupOUSC8qIMT8NJSys+iTSbNERg7+2MAuH6AazjtzqTZS/Mcd1UAJ9f2XY4Ct2SxKcy6+SXpXygZgs/rkornrytypzzuZRAoBkF+07t0WWJ1hGly2nEi5CQDKIsmxi7N1Hhm1lwq5f2L663Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZOOL7m8e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C55DC4CEED;
-	Mon, 14 Jul 2025 05:55:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752472539;
-	bh=/vA4vao9lqvPPolTnzO87qhxfdcnKwl67DQjGBaDAUo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZOOL7m8egvGKPQvcpEWEI8H+M9doH7idxZkc7X7TryhoYs4Rtrw9J0WOGnk+geSOM
-	 OXofKayQaZcV0up77W4R/k+otV+k/+O+kGgLR76ATSGQNmS9NAyW8sKMWVOxbMKxXu
-	 Xzcq7u0oFYs1aPvbqp0nTHoIYfVdL/S4bpJ7YSNYKAp7pigyNJmr7l0Gaw8E728Itd
-	 CAvr5co63rEOIMkWeB/zfLXZbx4PoNNa9E6nLiVRMLn1QEPhh5NLPLsBjjbeVMWD7x
-	 kBNrKrvp2U599llDq1v5jqSzUmgDxKBwT2t6zSXHzAbIHlDp1pMwoRPwcg4//rvXC1
-	 6X7RxMcm01Jeg==
-Message-ID: <6df95250-f28a-4b33-9744-de8fcb0ea339@kernel.org>
-Date: Mon, 14 Jul 2025 07:55:33 +0200
+	 In-Reply-To:Content-Type; b=dwMUO0g42190iwp4r7b3jOGTX99Ksb1IDY8rbyHFcCllXhHkuTJPSUvowqmxK/YHLEnSw4d2Dh2IXD9tr+fxAeOHOuOp//vpaw39sEBkg1GQ57id34OiOr9bPukaX45ptPBL7BU5Ys4IXA2DQJHCmnNBLZmRmuM/N2Mfy9p4Bq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=jhPRhfxm; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=VmQRB4BQyT5SRUui0QV2mNKCT63SGZmsVVOxvqdEiDk=; b=jhPRhfxmkD9TUXGb434XOz77aX
+	oDdHFWLKI/8AF9XJwvSNNI684VpSafF4BM4YxkjH1yDKHFzJrUVue603a0vyiQ78y2D3SVn7LpkMT
+	g0rv96rx5oNuKmoZFoE9uxBI7YiFCjYy06Tmt81TvOif6PGRaY//vbQdzyKiTnD5/nu9mIRA54pU4
+	ankRp1sB1CCSTL1JlX2yMQZre/HVI1SmJfip0PEKgUSi2oU4Dpy7yf33BcxHuGowD42mt8ioRk5Y3
+	gRGZT5HfCf6hnbOip9haa+XG/b8+30mjqm0qpCxKB5QCQxee1lPWirbcY+wyoa0Fn9bR0xocAiFAS
+	uTIauDOA==;
+Received: from [89.212.21.243] (port=36550 helo=[192.168.69.116])
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <primoz.fiser@norik.com>)
+	id 1ubCAg-000PT0-0A;
+	Mon, 14 Jul 2025 07:56:13 +0200
+Message-ID: <de2c8e15-14e9-4c61-9a13-97ef1ec567a4@norik.com>
+Date: Mon, 14 Jul 2025 07:56:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,113 +57,162 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 02/12] ptp: netc: add NETC Timer PTP driver
- support
-To: Wei Fang <wei.fang@nxp.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, richardcochran@gmail.com, claudiu.manoil@nxp.com,
- vladimir.oltean@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: fushi.peng@nxp.com, devicetree@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev
-References: <20250711065748.250159-1-wei.fang@nxp.com>
- <20250711065748.250159-3-wei.fang@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: iio: adc: imx93: Add calibration
+ properties
+To: Jonathan Cameron <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, Haibo Chen <haibo.chen@nxp.com>
+Cc: Haibo Chen <haibo.chen@nxp.com>, Nuno Sa <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, linux-iio@vger.kernel.org,
+ imx@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ upstream@lists.phytec.de, andrej.picej@norik.com
+References: <20250710073905.1105417-1-primoz.fiser@norik.com>
+ <20250710073905.1105417-2-primoz.fiser@norik.com>
+ <2bcd758b-c2d0-488a-8ead-ec7fb39f93e2@baylibre.com>
+ <20250713160247.0f22bbfe@jic23-huawei>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250711065748.250159-3-wei.fang@nxp.com>
+From: Primoz Fiser <primoz.fiser@norik.com>
+Autocrypt: addr=primoz.fiser@norik.com; keydata=
+ xjMEZrROOxYJKwYBBAHaRw8BAQdAADVOb5tiLVTUAC9nu/FUl4gj/+4fDLqbc3mk0Vz8riTN
+ JVByaW1veiBGaXNlciA8cHJpbW96LmZpc2VyQG5vcmlrLmNvbT7CiQQTFggAMRYhBK2YFSAH
+ ExsBZLCwJGoLbQEHbnBPBQJmtE47AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQagttAQducE+T
+ gAD+K4fKlIuvH75fAFwGYG/HT3F9mN64majvqJqvp3gTB9YBAL12gu+cm11m9JMyOyN0l6Os
+ jStsQFghPkzBSDWSDN0NzjgEZrROPBIKKwYBBAGXVQEFAQEHQP2xtEOhbgA+rfzvvcFkV1zK
+ 6ym3/c/OUQObCp50BocdAwEIB8J4BBgWCAAgFiEErZgVIAcTGwFksLAkagttAQducE8FAma0
+ TjwCGwwACgkQagttAQducE8ucAD9F1sXtQD4iA7Qu+SwNUAp/9x7Cqr37CSb2p6hbRmPJP8B
+ AMYR91JYlFmOJ+ScPhQ8/MgFO+V6pa7K2ebk5xYqsCgA
+Organization: Norik systems d.o.o.
+In-Reply-To: <20250713160247.0f22bbfe@jic23-huawei>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
+X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On 11/07/2025 08:57, Wei Fang wrote:
-> +
-> +static void netc_timer_get_source_clk(struct netc_timer *priv)
-> +{
-> +	struct device *dev = &priv->pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	const char *clk_name = NULL;
-> +	u64 ns = NSEC_PER_SEC;
-> +
-> +	if (!np)
-> +		goto select_system_clk;
-> +
-> +	of_property_read_string(np, "clock-names", &clk_name);
-> +	if (clk_name) {
-> +		priv->src_clk = devm_clk_get_optional(dev, clk_name);
-> +		if (IS_ERR_OR_NULL(priv->src_clk)) {
-> +			dev_warn(dev, "Failed to get source clock\n");
+Hi all,
 
-No, look how deferred probe is handled.
+On 13. 07. 25 17:02, Jonathan Cameron wrote:
+> On Thu, 10 Jul 2025 10:46:44 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+> 
+>> On 7/10/25 2:39 AM, Primoz Fiser wrote:
+>>> From: Andrej Picej <andrej.picej@norik.com>
+>>>
+>>> Document i.MX93 ADC calibration properties and how to set them.
+>>>
+>>> Signed-off-by: Andrej Picej <andrej.picej@norik.com>
+>>> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+>>> ---
+>>>  .../bindings/iio/adc/nxp,imx93-adc.yaml       | 21 +++++++++++++++++++
+>>>  1 file changed, 21 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml b/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
+>>> index c2e5ff418920..d1c04cf85fe6 100644
+>>> --- a/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
+>>> +++ b/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
+>>> @@ -52,6 +52,27 @@ properties:
+>>>    "#io-channel-cells":
+>>>      const: 1
+>>>  
+>>> +  nxp,calib-avg-en:
+>>> +    default: 1
+>>> +    description:
+>>> +      Enable or disable calibration averaging function (AVGEN).
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>> +    enum: [ 0, 1 ]
+>>> +
+>>> +  nxp,calib-nr-samples:
+>>> +    default: 512
+>>> +    description:
+>>> +      Selects number of samples (NRSMPL) to be used during calibration.
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>> +    enum: [ 16, 32, 128, 512 ]
+> 
+> Allow 1 as a value and drop the enabled above.   Averaging over 1 sample
+> is same as no averaging and gives simpler binding.
+> 
+>>> +
+>>> +  nxp,calib-t-sample:
+>>> +    default: 22
+>>> +    description:
+>>> +      Selects sample time (TSAMP) of calibration conversions in ADC clock cycles
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>> +    enum: [ 8, 16, 22, 32 ]
+>>> +
+>>>  required:
+>>>    - compatible
+>>>    - reg  
+>>
+>> This seem like things that should be set at runtime rather than
+>> in the devicetree. Unless there is some justification on why
+>> these values depend on how the chip is wired up?
 
-This is really poor style of coding clk_get.
+It depends how ADC 1.8V Vref is wired up, especially how noisy it is.
+
+> 
+> Further to that, I'd like to see some explanation of why we care
+> to change it at all. Is it ever a bad idea to enable averaging and
+> pick a large number of samples for calibration?
+
+This is a snippet from the i.MX93 TRM, chapter Analog-to-Digital
+Converter (SAR_ADC) describing calibration steps:
+
+1. Wait for deassertion of functional reset.
+2. Configure SAR controller operating clock (MCR[ADCLKSE] = 0).
+3. Bring ADC out of Power-down state (MCR[PWDN] = 0).
+4. Configure desired calibration settings (default values kept for
+highest accuracy maximum time).
+• MCR[TSAMP]: Sample time for calibration conversion
+• MCR[NRSMPL]: Number of samples in averaging
+• MCR[AVGEN]: Averaging function enable in calibration
+5. Run calibration by writing a one to MCR[CALSTART].
+6. Check calibration run status in MSR[CALBUSY]—wait until MSR[CALBUSY]
+= 0; alternatively, MSR[ADCSTAT] can be
+used to check status.
+7. Check calibration pass/fail status in MSR[CALFAIL] field. If
+MSR[CALFAIL] = 1 then calibration failed. Detailed status
+can be checked in CALSTAT.
 
 
-> +			priv->src_clk = NULL;
-> +			goto select_system_clk;
-> +		}
-> +
-> +		priv->clk_freq = clk_get_rate(priv->src_clk);
-> +		if (!strcmp(clk_name, "system")) {
-> +			/* There is a 1/2 divider */
-> +			priv->clk_freq /= 2;
-> +			priv->clk_select = NETC_TMR_SYSTEM_CLK;
-> +		} else if (!strcmp(clk_name, "ccm_timer")) {
-> +			priv->clk_select = NETC_TMR_CCM_TIMER1;
-> +		} else if (!strcmp(clk_name, "ext_1588")) {
-> +			priv->clk_select = NETC_TMR_EXT_OSC;
-> +		} else {
-> +			dev_warn(dev, "Unknown clock source\n");
-> +			priv->src_clk = NULL;
-> +			goto select_system_clk;
-> +		}
-> +
-> +		goto cal_clk_period;
+See point 4).
 
+Not sure why would there be an option to configure i.MX93 ADC
+calibration parameters if one use-case (max accuracy max time) to rule
+them all?
 
-Why are you duplicating nxp,pps-channel logic?
+On the other hand, public TRM doesn't give much more information and
+input from NXP would be highly desired.
 
+@Haibo Chen your thoughts?
 
-Best regards,
-Krzysztof
+BR,
+Primoz
+
+> 
+>>
+>>
+> 
+
+-- 
+Primoz Fiser
+phone: +386-41-390-545
+email: primoz.fiser@norik.com
+--
+Norik systems d.o.o.
+Your embedded software partner
+Slovenia, EU
+phone: +386-41-540-545
+email: info@norik.com
 
