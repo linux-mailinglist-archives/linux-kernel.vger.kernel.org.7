@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-730380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 432CCB043EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:31:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DAA7B043E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57C731A64E1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:27:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 965D23ACF25
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20FB26461F;
-	Mon, 14 Jul 2025 15:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7568264FB3;
+	Mon, 14 Jul 2025 15:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnMay5B4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oihjKSIi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B476263C90;
-	Mon, 14 Jul 2025 15:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220D026462B;
+	Mon, 14 Jul 2025 15:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752506672; cv=none; b=EUsYqkAwI9mKX9xicryQqhdNaupfj1s5Yd8bnayz0Efy9JkLAOYwK36J7MtUWAeap/hoWRAGR/3rDzLu0Obh4dPtGOV/qivos07WYlsmDOeEfPUq1XlQpdAuKoE4enVpX6/tFmOtZQeKv6nh2NDYdV5wEkkeT1C0rCxvvA4N8n4=
+	t=1752506673; cv=none; b=qo04Cca7T2ANUNbsyOhRlCAyrlpHh/+ZdOuVkeB/IE9NqmH4Wm7Rpv2qoz49RKIaDlpzj/whjDZCSXvW+ZU55F9IOxK4+vqmUutjDEKiIkxnNu9/cJAEpM93FDjgNB+xruiSINW254pOfp9WBHtIYJm+3wDh4vDicORr/vPa8qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752506672; c=relaxed/simple;
-	bh=jmQpWZpxE51V1zI7ZcpOFojkr0HJooLaU1IlITgogwg=;
+	s=arc-20240116; t=1752506673; c=relaxed/simple;
+	bh=97EuZvHvv4ugwMLOhUGF3QO1KrDIi3MQ4YL2KEQadRw=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=kjUToPk+sV14QYyuxeEG2p88aXhXospmL1E6CMpiUtC//kni6JIUMplf4JAUYgWiGApRsqxJfajJ0+gfCQatXa0GUdwH8EWaqBzjsyUgPeq4i4LpYoZCTWMy1vpudrV4fduQUJFjf9p0d/u5Jh6tVDuRQhpIMSSb6Q8aSrxguu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnMay5B4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A18C9C4CEED;
-	Mon, 14 Jul 2025 15:24:31 +0000 (UTC)
+	 Message-Id:Subject; b=TEGjGyD2BkJYoGBKhtvO8tTH2bsTa5E7IgWDpUlSQL5h3BUuGMeeh+REX/wp5wUVWeCjXdPOzAwsWlvc+uwyMrlU+7DSsKLaIdVTRzKUVONA2psvllXbzAWVLRtEo4mL3NTF9fQXb0irgCl2SxT+eC1q6hhZS+B7mdIhSYLuM8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oihjKSIi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2A59C4CEED;
+	Mon, 14 Jul 2025 15:24:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752506671;
-	bh=jmQpWZpxE51V1zI7ZcpOFojkr0HJooLaU1IlITgogwg=;
+	s=k20201202; t=1752506672;
+	bh=97EuZvHvv4ugwMLOhUGF3QO1KrDIi3MQ4YL2KEQadRw=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=MnMay5B4uXIGs9rEPEG9MmjC8izp0qe6VSr0AYMqAyVGTPCSbzaeyAIqyFDtjLjv7
-	 6CwdDSiz4MVPmRU/Ts8Zhhy5J4a0Us+MYQ7fSCwl1o2UZzHR1WgjBARS+4bxQ1VDQ5
-	 V9mTpDUbegvQsbExfgMRDM+cmTwQxR7b6jSf/ClNtHPvndvmAxQsMaKNgosMNOe9+C
-	 LKKZobXq7YScJ7vS9qmSHFiLa6m0b/xHEc0lHamc1oH6bA9ZOUBKXqadhjKgw3zvNY
-	 kYqcQun9vGNEvaOEikOSX8Ph/ZioOGEK0xtNmUOsN765cMbN1MedZnTxSg6tH0iZll
-	 4vSKhHMVm5jVg==
-Date: Mon, 14 Jul 2025 10:24:31 -0500
+	b=oihjKSIi/U08U/aF0oUWpCIvcwpkg4fY55ayG74wWQprui21gdwqtombf2URQo2Tc
+	 LN/GXPynytAMNsfWcmS4uHX6+SlBU9ibf+1V7tswTWHqOmpfuOhUqBSNdIaKNgofSV
+	 vSwTzka19riEp3AEyvwm6Tod0tll9S+tiKkWC7PAJb+lzu1Dy/gRe/Ie9Vg75cWDqd
+	 cc+LH9F0YDbuCqxy/iOJJp+r+7rUJY07sWBMdrTRElf8GR55C4EcnP2k/vZIcAj2u0
+	 v+a0bPeqT+4xYBYNq/RJ0FQNBLbTk7ot9e/lfK0s7SAdoP3EA/zLqeHw6opRbnHqMc
+	 m2bNRSUAGuYOw==
+Date: Mon, 14 Jul 2025 10:24:32 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,46 +50,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: s.hauer@pengutronix.de, conor+dt@kernel.org, krzk+dt@kernel.org, 
- linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org, 
- angelogioacchino.delregno@collabora.com, rafal@milecki.pl, 
- rafael@kernel.org, linux-mediatek@lists.infradead.org, 
- devicetree@vger.kernel.org, matthias.bgg@gmail.com, rui.zhang@intel.com, 
- linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
- lukasz.luba@arm.com
-To: Aleksander Jan Bajkowski <olek2@wp.pl>
-In-Reply-To: <20250712195904.6988-1-olek2@wp.pl>
-References: <20250712195904.6988-1-olek2@wp.pl>
-Message-Id: <175250104102.2052726.927170028799402599.robh@kernel.org>
-Subject: Re: [PATCH v4 0/2] Add thermal sensors support for MT7981
+Cc: devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Rafal Milecki <zajec5@gmail.com>, Stefan Wahren <wahrenst@gmx.net>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Linus Walleij <linus.walleij@linaro.org>, Hauke Mehrtens <hauke@hauke-m.de>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+To: Taishi Shimizu <s.taishi14142@gmail.com>
+In-Reply-To: <20250713071826.726682-1-s.taishi14142@gmail.com>
+References: <20250713071826.726682-1-s.taishi14142@gmail.com>
+Message-Id: <175250104141.2052760.5355993543096717369.robh@kernel.org>
+Subject: Re: [PATCH v2 0/2] ARM: BCM5301X: Add support for Buffalo
+ WXR-1750DHP
 
 
-On Sat, 12 Jul 2025 21:59:02 +0200, Aleksander Jan Bajkowski wrote:
-> This patch adds support for the temperature sensor in the MT7981 SoC.
-> This sensor is exactly the same as the one in the MT7986.
+On Sun, 13 Jul 2025 16:18:23 +0900, Taishi Shimizu wrote:
+> This patch series adds support for the Buffalo WXR-1750DHP router,
+> based on the Broadcom BCM4708 SoC.
 > 
-> Changes in v4:
->  - sorted bindings by fallback names
->  - dropped accepted patch
+> Patch 1 updates the device tree bindings documentation to list
+> Buffalo WXR-1750DHP as a supported board under BCM4708.
 > 
-> Changes in v3:
->  - added fallback in bindings
+> Patch 2 introduces a device tree source file for the router.
 > 
-> Changes in v2:
->  - added fallback to an existing compatible string
->  - removed second patch as obsolete
+> Changes since v1:
+>  - remove `chosen` node and `bootargs` (inherited from bcm4708.dtsi)
+>  - replace `label` in LEDs with `color` and `function` properties
+>  - change USB LED to use `LED_FUNCTION_USB` and added `trigger-sources`
+>  - reorder GPIOs and clean up button node formatting
 > 
-> Aleksander Jan Bajkowski (2):
->   dt-bindings: thermal: mediatek: add falback compatible string for
->     MT7981 and MT8516
->   arm64: dts: mediatek: add thermal sensor support on mt7981
+> Taishi Shimizu (2):
+>   dt-bindings: arm: bcm: Add support for Buffalo WXR-1750DHP
+>   ARM: dts: BCM5301X: Add support for Buffalo WXR-1750DHP
 > 
->  .../bindings/thermal/mediatek,thermal.yaml    | 27 ++++++++++------
->  arch/arm64/boot/dts/mediatek/mt7981b.dtsi     | 31 ++++++++++++++++++-
->  2 files changed, 47 insertions(+), 11 deletions(-)
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> # for patch 1
 > 
+>  .../bindings/arm/bcm/brcm,bcm4708.yaml        |   1 +
+>  arch/arm/boot/dts/broadcom/Makefile           |   1 +
+>  .../broadcom/bcm4708-buffalo-wxr-1750dhp.dts  | 138 ++++++++++++++++++
+>  3 files changed, 140 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dts
+> 
+> 
+> base-commit: 379f604cc3dc2c865dc2b13d81faa166b6df59ec
 > --
-> 2.39.5
+> 2.43.0
 > 
 > 
 > 
@@ -110,43 +118,48 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/v6.16-rc1-8-g95a042a0c8ec (exact match)
+ Base: using specified base-commit 379f604cc3dc2c865dc2b13d81faa166b6df59ec
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/mediatek/' for 20250712195904.6988-1-olek2@wp.pl:
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/broadcom/' for 20250713071826.726682-1-s.taishi14142@gmail.com:
 
-arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dtb: adc@1100d000 (mediatek,mt7981-auxadc): compatible: 'oneOf' conditional failed, one must be fixed:
-	['mediatek,mt7981-auxadc', 'mediatek,mt7986-auxadc'] is too long
-	'mediatek,mt7981-auxadc' is not one of ['mediatek,mt2701-auxadc', 'mediatek,mt2712-auxadc', 'mediatek,mt6765-auxadc', 'mediatek,mt7622-auxadc', 'mediatek,mt7986-auxadc', 'mediatek,mt8173-auxadc']
-	'mediatek,mt7981-auxadc' is not one of ['mediatek,mt7623-auxadc']
-	'mediatek,mt7981-auxadc' is not one of ['mediatek,mt6893-auxadc', 'mediatek,mt8183-auxadc', 'mediatek,mt8186-auxadc', 'mediatek,mt8188-auxadc', 'mediatek,mt8195-auxadc', 'mediatek,mt8516-auxadc']
-	'mediatek,mt2701-auxadc' was expected
-	'mediatek,mt8173-auxadc' was expected
-	from schema $id: http://devicetree.org/schemas/iio/adc/mediatek,mt2701-auxadc.yaml#
-arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dtb: /soc/adc@1100d000: failed to match any schema with compatible: ['mediatek,mt7981-auxadc', 'mediatek,mt7986-auxadc']
-arch/arm64/boot/dts/mediatek/mt7981b-cudy-wr3000-v1.dtb: adc@1100d000 (mediatek,mt7981-auxadc): compatible: 'oneOf' conditional failed, one must be fixed:
-	['mediatek,mt7981-auxadc', 'mediatek,mt7986-auxadc'] is too long
-	'mediatek,mt7981-auxadc' is not one of ['mediatek,mt2701-auxadc', 'mediatek,mt2712-auxadc', 'mediatek,mt6765-auxadc', 'mediatek,mt7622-auxadc', 'mediatek,mt7986-auxadc', 'mediatek,mt8173-auxadc']
-	'mediatek,mt7981-auxadc' is not one of ['mediatek,mt7623-auxadc']
-	'mediatek,mt7981-auxadc' is not one of ['mediatek,mt6893-auxadc', 'mediatek,mt8183-auxadc', 'mediatek,mt8186-auxadc', 'mediatek,mt8188-auxadc', 'mediatek,mt8195-auxadc', 'mediatek,mt8516-auxadc']
-	'mediatek,mt2701-auxadc' was expected
-	'mediatek,mt8173-auxadc' was expected
-	from schema $id: http://devicetree.org/schemas/iio/adc/mediatek,mt2701-auxadc.yaml#
-arch/arm64/boot/dts/mediatek/mt7981b-cudy-wr3000-v1.dtb: /soc/adc@1100d000: failed to match any schema with compatible: ['mediatek,mt7981-auxadc', 'mediatek,mt7986-auxadc']
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku6.dtb: clock-controller@15520000 (mediatek,mt8188-imgsys-wpe2): '#reset-cells' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt8188-clock.yaml#
-arch/arm64/boot/dts/mediatek/mt7981b-xiaomi-ax3000t.dtb: adc@1100d000 (mediatek,mt7981-auxadc): compatible: 'oneOf' conditional failed, one must be fixed:
-	['mediatek,mt7981-auxadc', 'mediatek,mt7986-auxadc'] is too long
-	'mediatek,mt7981-auxadc' is not one of ['mediatek,mt2701-auxadc', 'mediatek,mt2712-auxadc', 'mediatek,mt6765-auxadc', 'mediatek,mt7622-auxadc', 'mediatek,mt7986-auxadc', 'mediatek,mt8173-auxadc']
-	'mediatek,mt7981-auxadc' is not one of ['mediatek,mt7623-auxadc']
-	'mediatek,mt7981-auxadc' is not one of ['mediatek,mt6893-auxadc', 'mediatek,mt8183-auxadc', 'mediatek,mt8186-auxadc', 'mediatek,mt8188-auxadc', 'mediatek,mt8195-auxadc', 'mediatek,mt8516-auxadc']
-	'mediatek,mt2701-auxadc' was expected
-	'mediatek,mt8173-auxadc' was expected
-	from schema $id: http://devicetree.org/schemas/iio/adc/mediatek,mt2701-auxadc.yaml#
-arch/arm64/boot/dts/mediatek/mt7981b-xiaomi-ax3000t.dtb: /soc/adc@1100d000: failed to match any schema with compatible: ['mediatek,mt7981-auxadc', 'mediatek,mt7986-auxadc']
+arch/arm/boot/dts/broadcom/bcm958305k.dtb: pwm@180aa500 (brcm,kona-pwm): compatible:0: 'brcm,kona-pwm' is not one of ['brcm,bcm11351-pwm']
+	from schema $id: http://devicetree.org/schemas/pwm/brcm,kona-pwm.yaml#
+arch/arm/boot/dts/broadcom/bcm47081-buffalo-wzr-600dhp2.dtb: pcie@12000: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
+arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dtb: /axi@18000000: failed to match any schema with compatible: ['brcm,bus-axi']
+arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dtb: pcie@12000: 'device_type' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
+arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dtb: pcie@12000: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
+arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dtb: pcie@13000: 'device_type' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
+arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dtb: pcie@13000: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
+arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dtb: pcie@14000: 'device_type' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
+arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dtb: pcie@14000: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
+arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dtb: ethernet-switch@18007000 (brcm,bcm53011-srab): ports:port@5: 'phy-mode' is a required property
+	from schema $id: http://devicetree.org/schemas/net/dsa/brcm,b53.yaml#
+arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dtb: ethernet-switch@18007000 (brcm,bcm53011-srab): ports:port@5: 'oneOf' conditional failed, one must be fixed:
+	'fixed-link' is a required property
+	'phy-handle' is a required property
+	'managed' is a required property
+	from schema $id: http://devicetree.org/schemas/net/dsa/brcm,b53.yaml#
+arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dtb: ethernet-switch@18007000 (brcm,bcm53011-srab): ports:port@7: 'phy-mode' is a required property
+	from schema $id: http://devicetree.org/schemas/net/dsa/brcm,b53.yaml#
+arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dtb: ethernet-switch@18007000 (brcm,bcm53011-srab): ports:port@7: 'oneOf' conditional failed, one must be fixed:
+	'fixed-link' is a required property
+	'phy-handle' is a required property
+	'managed' is a required property
+	from schema $id: http://devicetree.org/schemas/net/dsa/brcm,b53.yaml#
+arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dtb: ethernet-switch@18007000 (brcm,bcm53011-srab): ports:port@8: 'phy-mode' is a required property
+	from schema $id: http://devicetree.org/schemas/net/dsa/brcm,b53.yaml#
+arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dtb: ethernet-switch@18007000 (brcm,bcm53011-srab): Unevaluated properties are not allowed ('ports' was unexpected)
+	from schema $id: http://devicetree.org/schemas/net/dsa/brcm,b53.yaml#
 
 
 
