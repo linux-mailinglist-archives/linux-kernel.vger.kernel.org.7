@@ -1,89 +1,91 @@
-Return-Path: <linux-kernel+bounces-729878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7796FB03CC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:02:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50FD1B03CCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A98E81774A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:02:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DF9717733F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999AF245031;
-	Mon, 14 Jul 2025 11:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2D6239E60;
+	Mon, 14 Jul 2025 11:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3R5uK4s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="cECLdLaz"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F392F239E60;
-	Mon, 14 Jul 2025 11:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A96F244660;
+	Mon, 14 Jul 2025 11:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752490933; cv=none; b=Jf3yiCbwiuPxV9jt+ZdZGMImk8NSQzNuXdk31EA9r6oN8x2XdOUXFIIr8EI2HJXepA3XMwmP75dC8eM3Zvo26SQh3AK3U9f0YWH9YDXsDwa5MgVI3IXrUixASqxxmyiKYrgY59g9OulDBJ3TuXegiuDXyYu5VMNBu9tUESHYrg0=
+	t=1752490943; cv=none; b=EnUeq4cTY1dRRRY7Ap5O9tDOJWAaNqGW5Ely0HUE/oBEl071adSAUQQTSRF6HL7ntu+FZfwUv6o8Ot25w47Ofm1xZb7Cnf4oko3KjiY9ceofC3qlSyZ7o5jr99eYTdwtGhTEYa7fS7eYJMn3vjn/BFrF0pHG5zuQDfM/NZoUxCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752490933; c=relaxed/simple;
-	bh=nPxink05T5UZYe3FMijXbIpttjgyGk6c2hQX0HSdz2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LR5vBGWTkmAn5KXFuLWOTBTC7pcCv5lNr7islqOkMZgvakVyeR4GgufoBFcmQ+HvQANuDSL6wPJo/QSBmPJ74P3b6VwAA4aEW6vQOPSxlc9WKH6jyvMOUo9d8vVXZ0Hi/Gg5mpYJ4WD6CFo30drV1TTbTBLsN/+aFyGPzdjw4uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f3R5uK4s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 691D4C4CEED;
-	Mon, 14 Jul 2025 11:02:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752490932;
-	bh=nPxink05T5UZYe3FMijXbIpttjgyGk6c2hQX0HSdz2E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f3R5uK4sIyPd3KoHIFWgzDtMaGRUupHCjSrUaE74omqUFb3docOSmYQBSycv8G5EG
-	 fKSE7Bq8rm/1fLWNp1oHKc4+eSyHVm6TsrwZ4LSxPNtLcjtl3FaCu6PzAF5mwEfVcm
-	 21GzmF4/pm5Rx72n4eUJZ1Y4Z3d7T8s1CI1jHMyP5juQhYGxmDDmyoMNi9FmlzKJK2
-	 pdL0MBQqfNmMCd1n5t6+LwrQgN75JzTWdbrP00m1LZZK7Hu77j4vwpuPnTR5cX3OOc
-	 lpHgQN9i1tUVWQHSLYKoq9gApIrF/jU+IawGxwc59hNUI/rwChj+kH1X8feDAtQv1z
-	 aviBLuPeo76mg==
-Date: Mon, 14 Jul 2025 12:02:06 +0100
-From: Simon Horman <horms@kernel.org>
-To: Markus =?utf-8?Q?Bl=C3=B6chl?= <markus@blochl.de>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	John Stultz <jstultz@google.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	markus.bloechl@ipetronik.com
-Subject: Re: [PATCH net] net: stmmac: intel: populate entire
- system_counterval_t in get_time_fn() callback
-Message-ID: <20250714110206.GI721198@horms.kernel.org>
-References: <20250713-stmmac_crossts-v1-1-31bfe051b5cb@blochl.de>
+	s=arc-20240116; t=1752490943; c=relaxed/simple;
+	bh=Q7mHjJIlM1zrLh2J6kLtqfIR0uerU9l9tMz6AXhZJUY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WByY4WzKmxMWZRgGO3ZmwDKMGKxpCYiLVQ6HQyfNplNhVPlUInNa/KHrZQnsMJe6RrGEvqONcYoQyvDZzwjA/Z1JRtf6ClUwKNotfIG+aIA0R5aJ+O6l//RpkI00w9glnfdD0MFu8h/iYib1coJcPjOzCMsjig2P95mCtQw+qxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=cECLdLaz; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=AIo12JmCL5qs9O/rqxjqYFRpuvTpm98N98ZleGBE5gk=;
+	t=1752490942; x=1753700542; b=cECLdLaz6FO83WSsD23mnC1sP9QLDT9y9Qt3WXJFHYvwyLh
+	bWPPBHQpPOZaNGrMD24qRHd4S+TvbT99P4QpbeqL8ivozZ2/76SbySAAioPhbE1klIepsCWPlbAhr
+	W5aJLWE28J6r4gohtyJYLoDb+lnn5cMeMqQ4sNaLJwvWboMtLg49pJR4POrLi3o0ePvNRu9NQoymt
+	HJ7Rv+xF92nO0cj2g7QTdtYGsCuxH2dm2AZO5zJptoPxi6Vr5BNtLn+feEAKzgOt6QnX7UdWiP19Z
+	hsHWPWcCYIZszL3k6Bf7cbmw35tPQK9leK55WKS4SLS4Syqc1Dx1x/TYbfHqnQfA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1ubGwo-00000003wxR-3M4Y;
+	Mon, 14 Jul 2025 13:02:15 +0200
+Message-ID: <791111506ac7772108f00b9dae92fc4fce4217d3.camel@sipsolutions.net>
+Subject: Re: [PATCH] wifi: iwlwifi: Fix typo "ransport"
+From: Johannes Berg <johannes@sipsolutions.net>
+To: WangYuli <wangyuli@uniontech.com>, miriam.rachel.korenblit@intel.com, 
+	akpm@linux-foundation.org
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	emmanuel.grumbach@intel.com, yanzhen@vivo.com, shenlichuan@vivo.com, 
+	yujiaoliang@vivo.com, colin.i.king@gmail.com, cvam0000@gmail.com, 
+	zhanjun@uniontech.com, niecheng1@uniontech.com, guanwentao@uniontech.com
+Date: Mon, 14 Jul 2025 13:02:12 +0200
+In-Reply-To: <03DFEDFFB5729C96+20250714104736.559226-1-wangyuli@uniontech.com> (sfid-20250714_130040_758163_5B73BDC9)
+References: 
+	<03DFEDFFB5729C96+20250714104736.559226-1-wangyuli@uniontech.com>
+	 (sfid-20250714_130040_758163_5B73BDC9)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250713-stmmac_crossts-v1-1-31bfe051b5cb@blochl.de>
+X-malware-bazaar: not-scanned
 
-On Sun, Jul 13, 2025 at 10:21:41PM +0200, Markus Blöchl wrote:
-> get_time_fn() callback implementations are expected to fill out the
-> entire system_counterval_t struct as it may be initially uninitialized.
-> 
-> This broke with the removal of convert_art_to_tsc() helper functions
-> which left use_nsecs uninitialized.
-> 
-> Initially assign the entire struct with default values.
-> 
-> Fixes: f5e1d0db3f02 ("stmmac: intel: Remove convert_art_to_tsc()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Markus Blöchl <markus@blochl.de>
+On Mon, 2025-07-14 at 18:47 +0800, WangYuli wrote:
+> There is a spelling mistake of 'ransport' in comments which
+> should be 'transport'.
+>=20
+> This typo was not listed in scripts/spelling.txt, thus it was more
+> difficult to detect. Add it for convenience.
+>=20
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+> ---
+>  drivers/net/wireless/intel/iwlwifi/dvm/agn.h | 2 +-
+>  scripts/spelling.txt                         | 1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+I don't know who maintains spelling.txt, but I guess we won't merge that
+through our tree(s). Also doesn't really seem worth it for a single
+instance anyway?
 
+johannes
 
