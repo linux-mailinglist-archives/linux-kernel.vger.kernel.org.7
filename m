@@ -1,138 +1,91 @@
-Return-Path: <linux-kernel+bounces-730771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC7EFB04999
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:39:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE9CEB0499C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1E513BFAAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:39:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E9D04A6720
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A3B26A095;
-	Mon, 14 Jul 2025 21:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7124227603C;
+	Mon, 14 Jul 2025 21:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="di5j+XFT"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F0B2367DF;
-	Mon, 14 Jul 2025 21:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MUcKHKwm"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70AA6246BD9;
+	Mon, 14 Jul 2025 21:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752529167; cv=none; b=cUpXqY+8ooUbvmHCx/5e/GohMbzsxj80qRpnBJlL7ytfE+TzdJtP1CpZlqhOVnOINWE3u6Mnd4oJ8BxKV8+NW2WAjpeehSYhWmeCEIqdcWT5s+/ByLtcklMfIG2YUu3ZNi7mU4LOzEKqOjIWdUxllwjTIBO1a0kaareY/FWDo1s=
+	t=1752529186; cv=none; b=c1wxe8Vr6mb8H7Ym96RPAkYcOt1Y00/nr9OlqfvXpFMJhCdgKbATEEv+X8cvtZObNCQDiD/qjDSBuNJN2tkACOG7sAgLYbZ8FgMVSznqts4SrtPSo8GG0Mpwa8f+p7QXtiq7dDDIAcaGcqYd7qX/D6lfvza2mXUp+q1Dc0xTAUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752529167; c=relaxed/simple;
-	bh=m6TGmVdROEh+kbr9yjIZqVE6jmbuJqMSbTa5zUKTw6E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PvzFx4g0zat7bW733rB2a4HxdrtVSbeJ8dVUQoXqTICIUGMeFabOLHtmz2CzNakBLQ/sC2VJhy3cgDCsqTlS4SYStT9NTsmG6yCP+eHY2h0fuYn8csr9TuGSoDC9FPDDtSgwkq9vJAvMEXcNKxjuPPOZZTsf0S3ie+fHCgPen0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=di5j+XFT; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so8681376a12.2;
-        Mon, 14 Jul 2025 14:39:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752529164; x=1753133964; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m6TGmVdROEh+kbr9yjIZqVE6jmbuJqMSbTa5zUKTw6E=;
-        b=di5j+XFTfyj/+TqiT7NABmd4dvDVy1NWUTrTdNuAlG1dGeZmQ0BE7dNJC6/5PmOxjI
-         E0IBe6K27D0p0F6+FNUJ/DjZM+LfATOXxHf4dvV4EqbhuvF43+zllWguYEFYBs9avkzP
-         1MU1w1gC+UJJ/cYbfQ6lWvDZ9N+cNxmhLbk4v7qm2JkCJYDQS50Qau4ty5ghdN7ihNI+
-         PqjwjXiwwxlINAOz1l8wCHoXQsn/R74c7evrkVGSADOQuBwY/4glY/kkiky1UelHmh+R
-         PznNOQzWS2PRRYg8Y5Tu4BF3sC9ChsbZkCv4GLQ6P3niRS7t0/gDvpK9x8u8JcxrKA0Z
-         hRfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752529164; x=1753133964;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m6TGmVdROEh+kbr9yjIZqVE6jmbuJqMSbTa5zUKTw6E=;
-        b=uxNyFyLg8FrLMsEskPhTrxmOiZcGO/IjB07//V/M/qp1MgBImnN7AtYlV1o+Y8bgRS
-         Jwl4v1huzzQ8cfeNyZEh/hdd1NdVAzweuHMGvtRbSE+nHDnCvdTYIGusXIAva8DtY+g0
-         KoMxMNVbH+7D7JWRPWZjH1Mkj53LCQ0GPHEOxvAiMOgPu/WOss3VljrkKbe3E+h2gPbL
-         +1SXFKOx73nzGeNubJ84GOPIkKbnLyBykmtOTHK4A3USU8gtGi1NE8BB8c7SpInL2VQY
-         Vz/MJkiR7dCeCXTrUZZYghvMH+pl3l1OE+qXtF/3lLMc2eunKxnf7pUt6ePzWsg7XAnJ
-         myrw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/bOOKQcQAXUjnY+AhFmlSy4KhBCpBWYbcd2awhU12wREcF9359kux+10hZr4c4Q7BwUY2OEaiYCo2l5Q=@vger.kernel.org, AJvYcCXC1umBBp/1b4Ae5aQ6LLgddtVHCYACfH3Tbfb3XglLbEAK9lU1d2nLG2jv/dJEqbA7nWVos0iDjzMWYzg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMNsIU8nG/EfFfzEy3v97nbqbneKL/TRv5BvwWHTngNnfBhn0P
-	8wgPHm8W2VrisMniZdVmbbPzCXz7Oz+v8qlqDj842SNd3FEeZdmeg0fpHeB/AuzjnuBtSTBH8IY
-	RDj4dAFR6q/190CxJ/Ye/O6xWbz3j068=
-X-Gm-Gg: ASbGncuTBRn9E3OdNuvBvY4jTXTYvdqbWrBm+sUOmy/f+r+2qlOOHPl/Plqbzj56Hvd
-	1/QKtV/NU0kxiblozaiDwkESwJNzP4hUoIwkHq/hVmIQTuTsnF2ZQQi0GmnIrr6qgJylh73EyTy
-	QSHFxJIM1+E1sLLU09opkMoLcdnwF+auYx8GhgNB5JJp/M4FyPgoDEHjufVnCMllqiiUmyY1lnk
-	eqGwKY=
-X-Google-Smtp-Source: AGHT+IGqzqAHU3cihRnjsSirtSa0RUPFO/bTodaNwIqpvJJ4wBL31wC4fLkgA29xwEsophl7ajbmtbgb0wMGxRzw7Pc=
-X-Received: by 2002:a17:907:1c1f:b0:ae3:75e5:ff7a with SMTP id
- a640c23a62f3a-ae6fbc8a3dbmr1549421766b.19.1752529163641; Mon, 14 Jul 2025
- 14:39:23 -0700 (PDT)
+	s=arc-20240116; t=1752529186; c=relaxed/simple;
+	bh=39w8P3oLG9ffQgwWHPAp3VRDQ3K39fpZMLKKuhazPaw=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=u/LlevmkMHiOzcDzxQHmyZUn8G4vJul9ZTZE5XNdrcNAToXa8K8mfpu8NdI0IX01PHlfOgzPvBdxmYiJ2hcX/ff3UdjLaFMjigvKnN9bxl4QbPsBxi7nbOSRuJdKk9Hh9Bp8scEdjBmzhFF+9V120tc/XtSVdFiU2ZplrPaP88Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MUcKHKwm; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1223)
+	id 0AFBC211CDEB; Mon, 14 Jul 2025 14:39:45 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0AFBC211CDEB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1752529185;
+	bh=vifNDMqsOEqtxM1Hx9SKPQiYFcWKln6vrUqhXwYHPbM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MUcKHKwm4+uVsEAY89zsafPFUkk1bAxV0FNJ2xe5MMK/mEtxRcCaB5hOPCKMvLn4s
+	 HiE17b0A1Izc2I1voFtUA9B9ATVxEYs3E4TZQ7H97WCFC2PBHU4ul1l+MOX8klhcht
+	 VE+uFHKuZADZx/eMPvr0ySN9iXf150j35IxQYCQ0=
+From: Meagan Lloyd <meaganlloyd@linux.microsoft.com>
+To: alexandre.belloni@bootlin.com
+Cc: linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	code@tyhicks.com,
+	giometti@enneenne.com,
+	Meagan Lloyd <meaganlloyd@linux.microsoft.com>
+Subject: [PATCH RESEND 0/2] Expand oscillator stop flag (OSF) validity check to ds1341
+Date: Mon, 14 Jul 2025 14:39:35 -0700
+Message-Id: <1752529177-8154-1-git-send-email-meaganlloyd@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250714153409.46085-1-martin@weidenauer.cc> <CAHp75VdUNe=bn-Emv6oyHtejTMyhKaiqQfGic0Ha94Z_FAPs2A@mail.gmail.com>
- <4289C286-62A1-4C22-9A03-E6CD3731F3D7@weidenauer.cc>
-In-Reply-To: <4289C286-62A1-4C22-9A03-E6CD3731F3D7@weidenauer.cc>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 15 Jul 2025 00:38:47 +0300
-X-Gm-Features: Ac12FXxzi44zF7DDDz-kYM9sXM188FyUQbg6w51QqTLshWgcl2V0XFPc0QnHSaA
-Message-ID: <CAHp75VcvOaSPbrpurRAjrvwW992qiP-ffZcroQ-feg=_PAoquQ@mail.gmail.com>
-Subject: Re: [PATCH] staging: atomisp: isp: fix open brace on new line
-To: Martin Weidenauer <martin@weidenauer.cc>
-Cc: Woohee Yang <woohee9527@gmail.com>, Jongmin Kim <jmkim@debian.org>, hansg@kernel.org, 
-	mchehab@kernel.org, sakari.ailus@linux.intel.com, andy@kernel.org, 
-	gregkh@linuxfoundation.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, 
-	~lkcamp/patches@lists.sr.ht, koike@igalia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 14, 2025 at 10:39=E2=80=AFPM Martin Weidenauer <martin@weidenau=
-er.cc> wrote:
-> On 14 July 2025 19:47:41 CEST, Andy Shevchenko <andy.shevchenko@gmail.com=
-> wrote:
+We would like to use CONFIG_RTC_HCTOSYS to sync a supercapacitor-backed
+DS1342 RTC to the kernel time early in boot. An obstacle is that the
+sync in rtc_hctosys() is unconditional as long as rtc_read_time()
+succeeds and in some power loss situations, our RTC comes up with either
+an unpredictable future time or the default 01/01/00 from the datasheet.
+Syncing a future time, followed by an NTP sync would not be desired as
+it would result in a backwards time jump. The sync feature is useful in
+boot scenarios where power is maintained so syncing only when the RTC
+data is valid would allow us to make use of the feature.
 
-> >Guys, please, coordinate and issue only one (or a few) patch(es) per
-> >an issue. No need to send zillions patches for the same problem
-> >file-by-file.
+The DS1342 has the oscillator stop flag (OSF) which is a status flag
+indicating that the oscillator stopped for a period of time. It can be
+set due to power loss. Some chip types in the ds1307 driver already use
+the OSF to determine whether .read_time should provide valid data or
+return -EINVAL. This patch series expands that handling to the ds1341
+chip type (DS1341 and DS1342 share a datasheet).
 
-> >On Mon, Jul 14, 2025 at 6:34=E2=80=AFPM Martin Weidenauer <martin@weiden=
-auer.cc> wrote:
-> >>
-> >> Fix checkpatch error "ERROR: that open brace { should be on the previo=
-us line"
-> >> in ia_css_dvs.host.c:277.
+These changes enable us to make use of CONFIG_RTC_HCTOSYS as they
+prevent the invalid time from getting synced to the kernel time. It will
+also prevent userspace programs from getting the invalid time as the fix
+cuts it off at the source - the .read_time function.
 
-> I deeply apologize, however this was the instruction of our workshop in D=
-ebConf by Helen Koike <koike@igalia.com>
+Meagan Lloyd (2):
+  rtc: ds1307: remove clear of oscillator stop flag (OSF) in probe
+  rtc: ds1307: handle oscillator stop flag (OSF) for ds1341
 
-This may be okay for the driver that consists of let's say less than
-10 files, AtomISP consists of dozens of files in several (nested)
-folders. It's not a good example for such an approach.
-
-> Here is the link to the exact workshop:
-> <https://debconf25.debconf.org/talks/55-submit-your-first-contribution-to=
--the-linux-kernel/>
-
-Hmm... this really needs an update to explain how to work with the
-drivers that contain many files and literally tens of thousands lines
-of code.
-
-In any case the problem with your contribution is not the code, the
-absence of coordination and possibility to clash with somebody else.
-Also it looks like a DDoS attack against maintainers capacity. The
-smaller patches are and the more of them --- the less the usefulness
-of all this activity as at some point that floods the maintainer's
-mailbox.
-
-TL:DR; (always) Use common sense!
+ drivers/rtc/rtc-ds1307.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
 
---=20
-With Best Regards,
-Andy Shevchenko
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+-- 
+2.49.0
+
 
