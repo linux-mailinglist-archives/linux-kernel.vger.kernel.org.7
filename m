@@ -1,207 +1,121 @@
-Return-Path: <linux-kernel+bounces-729428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96407B03676
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:01:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C20B03681
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3552172435
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:01:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D5C37A4781
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E82C217F55;
-	Mon, 14 Jul 2025 06:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCAC2153D4;
+	Mon, 14 Jul 2025 06:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jpYLgY21"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQqRNaGp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A1D37160;
-	Mon, 14 Jul 2025 06:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6241537160;
+	Mon, 14 Jul 2025 06:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752472894; cv=none; b=bT0+kzaOTH5P2e8+dIjONlJKde3wMWHPNLxm9oA+tQWKQ/oTVNlQtgWbZJRJ7a85YQMmrp+JOBWPmB7SmTAxbPAbsMNmInE2wlGUv4hFsRzXriexhjqmPkRi15INFXFRDvlfkUgeLqWHu1GgGML/c2EpoHy5KtPl+mZRV50PXRM=
+	t=1752473061; cv=none; b=b/oCAXshGXyr5OzC3YGk9JkFLqk3gb27twOP3GMqap7IPMICnaeLiNdezIJzVIhQDifjyoQhf+YAoKQG3f/PGpGQ0oF+hv5qCEWzpn5IMds86RdsLmLmaNDmk8qkRe42oirWmvp/YlLp5cr/INmpLG0zGDSc3EuQZWdb1+jmjBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752472894; c=relaxed/simple;
-	bh=KSutYYpzj12A8Clp1V3EpFhK6twa9mZjwopcGDUMZ88=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XnOsFMrMIxoj4cT1UjDd2aSQuv7CCib8lZhKs95d6UN/DIpV1MGvuZcgtqV5auQmWahNyKTKuFOdbB7zZ8NgCTuTX9SUt5HhXXj76QDoqp1QWC3gHUAfl9Ne8Sojrk9+tOEr0iH3ZSwC64MnS4zKh4L+zWvviGCs4oIkh3ft6P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jpYLgY21; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-558f7472d64so3957663e87.0;
-        Sun, 13 Jul 2025 23:01:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752472891; x=1753077691; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KSutYYpzj12A8Clp1V3EpFhK6twa9mZjwopcGDUMZ88=;
-        b=jpYLgY21+XDh96iUmqxsqEalfky21jMjlACP2W1b6GOCwOLKrmEqcFPXmW4GWj9XeS
-         WyE1pfnaAv/G7EopgYNLXD+ct3h34qCIHCOpanx+920fVnewgzW+Nn+AnEhJLsKJUkcy
-         8mWcIWKunAs1Q25zHFoFstBH7X/WgURFP65t3ROz6K96xhuPzbbXGwmJFKJYNC4rzPSo
-         LSNeh9wSjRBjJgZXuE8uS5IyeqE7aqv6ZCBTJKrl6msyXFn2CWQTsABUyWiXz13nAbs3
-         zMLghYc5cf++zyQUZC+pykBeyW/1l+IrG684RhXd7mSM6VoplQnSo4CrER3UWSyM+os0
-         leLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752472891; x=1753077691;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KSutYYpzj12A8Clp1V3EpFhK6twa9mZjwopcGDUMZ88=;
-        b=IMGymLnWDhb2WqMAcyITTdXl/QLz91R3Rz32dy2BatSzXqN0SNSu8+4YN/mevaDRzr
-         e5cO1v0XAGqYsHeCV9XMc0TIc458vcqXzzwqmKnxrNi3gg6RFhHgbGsOPQ6ytBbt+au1
-         W5SXAEGaXI/lM6Q9rIO+olCmxtOTgjFgPClLHVe+TU6z9Thgdm3AH5S7sj8kNsFocEBq
-         4bbX5aUT4zP7xJe/x0xfwZ6cgdLdVfxr81n76lql0snMzqox7tX5/wPIJkZDb/4PMEX8
-         P8nzYU5KYIGU4qoygzu+Bptfd10q87AjIDoWiqwJPpkXT5xWsU7gDJBaHjamnuP8LoSE
-         OrJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHefiywZiuZNqi2154/asLnzccW1EOo/ls3KxJsb1etie+92Ae4RplwIvxujdL4pe1+Xb/Yq0I1UO4eZ8=@vger.kernel.org, AJvYcCUQjnFEY6xP8LxcK+xV8CxpmkXDw5LedgLJjeSlENr/4ubOfeYq/afqAwAaxG/00ha6gxXMvZTVNRFh@vger.kernel.org, AJvYcCX3OfH9SyouPMKtfsc+hDxeqw6f0JxjUSy7sVKEg86Ye9hDRC/Ux/eZH/bcd47plkRVbrJJ48DFYr/3wViJ/XVR@vger.kernel.org, AJvYcCXrKLBSaBeh3acklGW72f7RI8aYWTdpmOSXdM4O2WKhGGlD3cRl2LbHJJ7xIbnOuBFhOE4NOm9gF67hdoHC@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQG+KmVmNBQD7c+FVKeoRM0OtXQKg/+nPBYvPi4zqAFsIC94M+
-	FJcDol+C+Tpj0DcQ0I+VaYfOF1gG6qg/OK99oayMq0pHLP6GTImpSpFBWXJbWRcMZRTUE6ZrVgi
-	vqYgxNRQvT9iTtwpywu0LBTcPt44/4Uc=
-X-Gm-Gg: ASbGncsREDcdcUOYfz0Y2vnU1pFa21kC403SzUCoMr658Y6sOyZQr2bmS+qA9PZ2Owy
-	EYupMkrH2ysxVMfNKrlGLqFA1/i7rwuI5iThBKhI/awbPdPmryz86KzpshIhFUoNb+KjJpOmRAP
-	63x0l60gSoS3JK86ESzRQZvNjKerfA9vUjkBJNmkJdWAQ9ZnDOwWu80S7NOjvPMQefYxp5Lh0S6
-	QDhtJY=
-X-Google-Smtp-Source: AGHT+IFaK4CVePoPSDAN6z50vAdyVoIA95uNU2vm1WeFoylnBGb0O9yoyyrFrkD1jzp77/kg4hC3YqzelAGQlJZiMY4=
-X-Received: by 2002:a05:6512:4004:b0:553:2bdf:8b87 with SMTP id
- 2adb3069b0e04-559006bad5bmr4367708e87.10.1752472890874; Sun, 13 Jul 2025
- 23:01:30 -0700 (PDT)
+	s=arc-20240116; t=1752473061; c=relaxed/simple;
+	bh=vzgvlv2XPADpF1c1LLRUJU+3qEX4j9KZednFhOIE+mw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fxY0LVny7nv8E007DWNc8Bqk1kmsTVMuGCz5ACx4YKXQ96c0cg+9C2hyM6VUA8WpF4QKriIn7y7KU3faoaSbTx1iqHUyu9IJnqdDTyfAVDnFh5F1olvABhCuWSJHTwRG0tatrD7V4+x71difAfPVSKEHhhacKuUiBObVe/XU8ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQqRNaGp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 994F3C4CEED;
+	Mon, 14 Jul 2025 06:04:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752473060;
+	bh=vzgvlv2XPADpF1c1LLRUJU+3qEX4j9KZednFhOIE+mw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UQqRNaGpGUS+/EQuckr609GspLJook4ugkiX4PWDkYpXazmq4Lz25Dbaagjh6Trpu
+	 Fp9xxpYh5FxQcEr7RXy7EdLXa5CzY/6yxya1uF4USOyTfNetEIyoDvo6n6s8O1OMOZ
+	 /bD3e7Jsz2I1Y4MfR4l5ht2hvRosYbMvqSHC2eWikD8Pb2pCF5RVI/Ndk8gj8vJMT1
+	 ww6Vt6zIagNSFXZuy+WDeyXfHQMy32PL4EzVRRjPCgS1e/FuCJmT1jY0j1dXro/YXH
+	 DT4rAAuiTy2AbVv0XZxi7bdK35wXnuAlVcXUP879n/76AASRY4WYtzA9D+Pwq4kcgb
+	 z2khF7kEmThZw==
+Message-ID: <6e96a7ac-5e29-4e04-98a9-2f0a7d506ffe@kernel.org>
+Date: Mon, 14 Jul 2025 08:04:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <83d17d6e-41c2-4729-94e6-5ccf480c766d@kernel.org>
- <CALHNRZ8+vnXrx7xw=qjpB34MX32hW_m7k+=CdePJpErBPPzv-g@mail.gmail.com>
- <53c943dc-5ea6-456b-a289-08212fc01d5d@kernel.org> <CALHNRZ8+X61YzQ_gYRkuAZrz2XFiZK36GDgk=801+384y2KnOQ@mail.gmail.com>
- <CALHNRZ-YZg3cKzRBMGaxRpejFMLSpOOz-FPQEaQVXFpFao40WA@mail.gmail.com>
- <CALHNRZ-jxC5PXqiG4tNShybaU9gZjTz4YT+VXgfQFNQ-Ox7crg@mail.gmail.com>
- <yczvbwanjadyfife3hnp2khxkgs77pokypqkxotlldjskshskt@xckrkfucg6xx>
- <CALHNRZ--ZUxqrXHEnizXC8ddHC5LFA10oH+CgQmOcTt+cJ1CWw@mail.gmail.com>
- <6abdc70c-0def-4cf1-b1f4-ea9bdde4fcb5@kernel.org> <CALHNRZ8=ikQe4L6h9VHpTGm+OFU0iZA_OV6LUP6jDUySBv4+Lg@mail.gmail.com>
- <lvj5atllziwnfreau25fejckllzhgur3rgh5udpx6boz55lgu5@h6fpsnz4xmkg>
-In-Reply-To: <lvj5atllziwnfreau25fejckllzhgur3rgh5udpx6boz55lgu5@h6fpsnz4xmkg>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 14 Jul 2025 01:01:19 -0500
-X-Gm-Features: Ac12FXzSmllv1_2-S7ZArROlDnlEZ-mxn1jEusIi4cfhaFgSU98vKE9b_xmI7P8
-Message-ID: <CALHNRZ9VEUzU07j_fUWhNnF24y64wkO5_Vun-mf6d_m=Xyx4dA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: tegra: Enable ramoops on Tegra210 and newer
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 RESEND 4/5] watchdog: s3c2410_wdt: exynosautov920:
+ Enable QUIRK_HAS_32BIT_MAXCNT
+To: Sangwook Shin <sw617.shin@samsung.com>, alim.akhtar@samsung.com,
+ wim@linux-watchdog.org, linux@roeck-us.net
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250714055440.3138135-1-sw617.shin@samsung.com>
+ <CGME20250714055859epcas2p256ce350e05d8812ca2900823a1e4913d@epcas2p2.samsung.com>
+ <20250714055440.3138135-5-sw617.shin@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250714055440.3138135-5-sw617.shin@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 3, 2025 at 2:24=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
-.com> wrote:
->
-> On Mon, Jun 30, 2025 at 01:48:28PM -0500, Aaron Kling wrote:
-> > On Thu, May 29, 2025 at 3:53=E2=80=AFAM Krzysztof Kozlowski <krzk@kerne=
-l.org> wrote:
-> > >
-> > > On 28/05/2025 19:35, Aaron Kling wrote:
-> > > >>>>
-> > > >>>> Friendly reminder to the Tegra maintainers about this question.
-> > > >>>>
-> > > >>> In lieu of a response from the Tegra subsystem maintainers, I can=
- only
-> > > >>> hazard an assumption, Krzysztof. I presume the pstore carveout is
-> > > >>> bootloader controlled because various stages of the boot stack ca=
-n
-> > > >>> dynamically allocate memory, and this became bootloader controlle=
-d to
-> > > >>> prevent any of those from overwriting pstore. I worry about hardc=
-oding
-> > > >>> an address in the kernel dt, then finding out later that there's =
-an
-> > > >>> in-use configuration that overwrites or corrupts that section of =
-ram
-> > > >>> during boot. What are your thoughts on this? And is there any way=
- for
-> > > >>> this patch to proceed?
-> > > >>
-> > > >> I haven't been able to find anything out about this yet. Generally=
- it's
-> > > >> difficult to get the bootloaders updated for these devices. Tegra1=
-94 and
-> > > >> Tegra234 may be new enough to make an update eventually go into a
-> > > >> release, but for Tegra186 and older, I honestly wouldn't hold my
-> > > >> breath.
-> > > >>
-> > > >> Thierry
-> > > >
-> > > > Krzysztof, based on this response, is there any way or form that th=
-e
-> > > > Tegra186 part of this could be submitted? I can drop the newer
-> > > > platforms from this patch if Thierry can get a response to his othe=
-r
-> > > > reply about how the bootloader could conform.
-> > > >
-> > > I don't NAK it. Eventually it is up to platform maintainer if they
-> > > accept known DTC warnings.
-> > >
-> > > Best regards,
-> > > Krzysztof
-> >
-> > If the decision is up the the tegra maintainers, then Thierry, what's
-> > your thoughts now? What is in this patch should be compatible with
-> > existing l4t and android bootloaders. But it does add a few new dtb
-> > check lines.
->
-> I don't adding new DTC warnings, especially ones that we know up front
-> we can never get rid of. The memory one is a notable exception because
-> the system becomes unusable without it.
->
-> ramoops is not in that same category. While it's certainly nice to have,
-> I don't think it's critical enough to warrant that permanent exception.
-> Where possible I think we need to work to address issues souch as this
-> at the root and fix bootloaders to do the right thing.
->
-> For any cases where we can't fix the bootloaders, I think that's
-> something we have to live with. Having the support for this live in a
-> fork is a fair compromise, I think.
->
-> I know this is frustrating, and it's very painful for me personally
-> because I initially set out to redress a lot of these things and failed
-> to do so.
->
-> However I can't justify accepting endless amounts of quirks upstream,
-> all of which would set a bad precedent, just for the sake of things
-> being upstream.
->
-> Thierry
+On 14/07/2025 07:54, Sangwook Shin wrote:
+> Enable QUIRK_HAS_32BIT_MAXCNT to ExynosAutov920 SoC which has 32-bit WTCNT.
+> 
+> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+> ---
+>  drivers/watchdog/s3c2410_wdt.c | 4 ++--
 
-Alright, so to make sure everything is on the same page, let me walk
-through the archs.
+This should be squashed with previous patch.
 
-T210: This fits within dt check requirements afaik. If I send a v2
-with only t210, would that patch be acceptable? Though, I would like
-to double check that my assumption about the arch is correct. The
-downstream 4.9 kernel does allocations for ramoop I can't quite track
-in the vendor code. I'm assuming that by matching what the downstream
-kernel picks, that it's within a large carveout that the bootloader
-will never touch. I've not seen any corruption in my use of it so far.
-Is this a safe assumption?
-
-T186: Software support for this arch is eol, so what the bootloader
-does cannot be changed. Presumably no other choice but to relegate to
-a commit in a fork or out of tree patches.
-
-T194: Some software support still exists for this arch in L4T r35. Is
-there any positive feedback on making bootloader changes to meet dt
-check requirements, or is it too late in the cycle?
-
-T234: Still has active software support in L4T r36. But essentially
-the same question as t194.
-
-T264: I assume whatever happens for t234 will be mirrored here.
-
-Aaron
+Best regards,
+Krzysztof
 
