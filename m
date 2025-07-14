@@ -1,428 +1,260 @@
-Return-Path: <linux-kernel+bounces-729665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E50B039E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:51:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F14FB039EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EBB5168BE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:51:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 733FF1884E28
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7EA23C397;
-	Mon, 14 Jul 2025 08:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D390123BF9B;
+	Mon, 14 Jul 2025 08:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YHIhWMZp"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="aRlmpvpf"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E485918D;
-	Mon, 14 Jul 2025 08:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752483109; cv=none; b=GnKgIk+rTsDl2tjQELCZVS+W8QTl7ARfoNaAABumO/iEI3I55CReIVyjlB401jW+TZNu+q1Qlipp7Md/DYl1Lb/33GDzLe3ulMD/JasE4XNPEcPzZXV+PwSXQG0tS4gnARPTElhgd4XVX0NGsBhQig/hUXFlL3uiD8CmLWXJXAc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752483109; c=relaxed/simple;
-	bh=0bq0K8OfL6M4aPku/VfCBSkagDTz0F+sbz+md0m69d8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=QvVHOfDoz0ivGVW10ZBJRJb/IfAfndBPrv3r57Zk1dbyo8g/4WgCXYx0nR3F0Uqb8mmvyAIMmYlApt04kbokmDwlHXye+p6nR1MV7mKKZqf8Ro87tEJlZosITaqkf9wtGdFrTNf+rwUXBlIh04vUOKL4NDeYZ2cyG5GbV+vw84o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YHIhWMZp; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-74b54cead6cso2686542b3a.1;
-        Mon, 14 Jul 2025 01:51:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752483107; x=1753087907; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vjcaN3TK1/ipyAXF0Ozg91NsiOrwTAt3igwqT0Oz2yU=;
-        b=YHIhWMZp/DHs8nNagj9U4jBf9KZL2HWgA2cs+gW1keNjzRiZbDRVI3nQf6CA9076ST
-         H7Vc8sAwVm+zExI4Exhb4rcM2AKbE1GhbsPPGWWKvdHhpLi7VnjrYhfptq6oIDp6mI/i
-         IaENOaLpWe+LMJkre3CA/3rehU2EuX70QvVsx/BjXPZKww0DZnKJS1ymzL/5yW+XUpB7
-         npOCrH6xaBotFerSDzPQTeJCGenHAlcjaaroAOiqJ/qfl0OyuKUo8ZLXP01n0rjn2jWD
-         q/IAE7rqv4ecYzFpl8UfX2FSWnLMnFlIgBG8GOIpEspF18dmDD6HzrT+8/W1AC6HTg0d
-         gRTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752483107; x=1753087907;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vjcaN3TK1/ipyAXF0Ozg91NsiOrwTAt3igwqT0Oz2yU=;
-        b=a1f7X+NXoyAOjzHFAztl7xb56gGF2AIeWO2x9t970p6K8vdIQx3QY4Qt/d0+bqnGRV
-         GQzTSvesIOf8mGNFLG9QTz4m+yMAEA0ce+XxfkPXtmb9o/SikFHXCMEABrpsAb02T6W/
-         Zpdc5ImUGWyeqB/32oiYl3rKo6PX7F543uLwi1EFjw44/9SNMf7J94nJ+9c8phEEPL81
-         3Kccj2npqzfeiXhtTa6WWbiUQOg1tIdBiQHtyAtnyAHQD04KR/hqiFup1vyxvyXYOd5k
-         IXwnHOSOKupp/MZQ+076anlPoKrpoH3n4Hx49+QAzVG8j49hDzoQA/1wucW1mqZEkvBr
-         uSTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJtkz4nMNXDgmq6kH82YgJqoiEFZCwTK/1obepcB8TtTDsLpWYGri+ge4L6UPEH1caKY0TcyzUx61ydB8=@vger.kernel.org, AJvYcCUTUPUGWORSFqQx+fHhzoiofG2NTwoGhoVuiwxyuBZeteD0znUj15M6e1gKGZslr9Sn6P3TUQlj@vger.kernel.org, AJvYcCVzF9+obct164S1zwN0wFK0gIXzagOUjYT6C/+LOp7j6PfAjLUzAnUcmLB9w2L8S5/CitKY7NBsc93L@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFTQ6c8vu/L3xwlKQ+WoPr9iByzNbbkgjhLz3cNc8OPhZAN6iH
-	QRD9ouuR4tm40Su3MIZjIsYM3J54sDox1D1IAbx92ynyaQlsG/s1Ntk0
-X-Gm-Gg: ASbGncvhF9nq0sTQMADIRrDstfRjRty0y8L9A+wQp3m4bIThHad1g9y7z+mwwQSk+/U
-	FdUAjwnuOgBvWB49t9HhfNBvp/FKg6sVVAqmOE1I91T8DpxKFO+SigZ4l4fX5pUVh8uMZiuf+5s
-	dFDPXeE4cUvQsbFhqhMQonZki2sQMntwRsJmcEwB4+en90cliujqHLUaz9DoFfh1V7DKaDsiWpV
-	DaoCK8zEd1dm6qxL4RdzKqmWtfldBkVEmSc/pQj389orKzYbE+fFvzPzmrAatwedYxrpzX50e0B
-	86gsOFkFTPpvTwDjY4ltOG2pzLb9Rjfe7WtH8hGYebCyfZlhz0wl6VYEgA0mmvjnO2jbbADjyDX
-	fS2aIAlCiXTIaTZMx
-X-Google-Smtp-Source: AGHT+IGko9sPPq3tXLjmbCsU5NO6smqzZADUbzSqc4BdMPjej/nHJb87Y3cnK2TKEX4mxx3ILkMxPQ==
-X-Received: by 2002:a05:6a21:398f:b0:21c:f778:6736 with SMTP id adf61e73a8af0-2312030f117mr21623496637.27.1752483107014;
-        Mon, 14 Jul 2025 01:51:47 -0700 (PDT)
-Received: from gmail.com ([116.237.168.226])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe6c5660sm9571052a12.48.2025.07.14.01.51.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 01:51:43 -0700 (PDT)
-From: Qingfang Deng <dqfext@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-ppp@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH net-next] ppp: remove rwlock usage
-Date: Mon, 14 Jul 2025 16:51:38 +0800
-Message-ID: <20250714085139.2220182-1-dqfext@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5D52E3718;
+	Mon, 14 Jul 2025 08:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752483178; cv=pass; b=R0SKT0KNaN2gdk4TRuE3AfC/c23vbjhjWre1+iAQPmfKMvkJCUs1XWaa0Yq0anzo0NfUEhoec4NkyX9x3TM8Mi3LVRPDzCcD5SMGX7Ch39F8vaXckpMOUYjkFpxlkRnd2HdRnmmOdZl6dEBfqcshV5bO+H76dpssD6SSJ6zakHM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752483178; c=relaxed/simple;
+	bh=89ZBrSM6CUw+jNcJJob/MTrJtZ6+iX1RGAGI/vpn3ek=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YZOJRLLWHlANvDVEUWo37XpNGRZ0sZbiGdKGSaZRqAQUgC1IynMEBy+c+OMvx42X9871krOQ1KfrO1L/89J6utZor7c2Z/galVzaTAvqtZIg4LbA/PydngbnuX6WGbRkP0214qa9ItOK1jNcQ66Vtlqqd401NH/FyGJXiv9b28A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=aRlmpvpf; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752483145; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=cPIvEWqgyPzfPU2Pzl4YkZxowH0/lPVy7yb660klPkA6fT6qLmtzHqPgv570Jz8zrXsozQ44gA1ww2BrymQ2I2bgPDcuKY8Fxu/T96rin4jmK7JKOjQ6WugRP+Iyawq3odYVMAUL7I3FlmvCJVTmB7q97Qx72nmGx6jogycH5mY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752483145; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=aAmMtPikedDzzrWNEE4etFqjFIi0lZYc3D9DwNk0y+U=; 
+	b=jt9y2WhoNnM4SmJsJv9wT7lX2EZq1F/M7CkIQWYOa5TDg2rv+ZD5wAloQvBHMX7Kot22OV/SDCPLYf7mEocKcdL08rt204KOlu6lkMW7Jaa5l6GtNB+zmHpEgvTYuO4pi4zYKFWqB3bPdxNPx7csXPBwUJB59rb/hDddDDWISgI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752483145;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=aAmMtPikedDzzrWNEE4etFqjFIi0lZYc3D9DwNk0y+U=;
+	b=aRlmpvpfXLglPznghkrAXTJQRU1ayaqRIDd2Xtwqn98e3zaPKq+fCS7Ph5Q9/HeG
+	oFq+8p97xAcDIN9/jWDB5y6IWwZUpLHXfhJHhd5/m+gJ4/fFFrwZWb47N5emgnCZ0qs
+	yt86GP4VB9YIYypqen0iUWqG+EUHrtPDpoKEMxlg=
+Received: by mx.zohomail.com with SMTPS id 1752483141694960.830248739222;
+	Mon, 14 Jul 2025 01:52:21 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Alex Bee <knaerzche@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
+ linux-rockchip@lists.infradead.org, Kever Yang <kever.yang@rock-chips.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Chukun Pan <amadeus@jmu.edu.cn>, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Yao Zi <ziyao@disroot.org>
+Subject: Re: [PATCH v3 0/6] arm64: dts: rockchip: Add ROCK 2A/2F,
+ Sige1 and NanoPi Zero2
+Date: Mon, 14 Jul 2025 10:52:17 +0200
+Message-ID: <13801788.uLZWGnKmhe@workhorse>
+In-Reply-To: <aHRWmMFTh7leEhrq@pie.lan>
+References:
+ <20250712173805.584586-1-jonas@kwiboo.se>
+ <88c7b90d-4c29-453b-9a5c-9679b371a3a9@gmail.com> <aHRWmMFTh7leEhrq@pie.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-In struct channel, the upl lock is implemented using rwlock_t,
-protecting access to pch->ppp and pch->bridge.
+Hello,
 
-As previously discussed on the list, using rwlock in the network fast
-path is not recommended.
-This patch replaces the rwlock with a spinlock for writers, and uses RCU
-for readers.
++To: kever, as he may have some insight on the differences between
+RK3528 and RK3528A.
 
-- pch->ppp and pch->bridge are now declared as __rcu pointers.
-- Readers use rcu_dereference_bh() under rcu_read_lock_bh().
-- Writers use spin_lock_bh() to update, followed by synchronize_rcu()
-  where required.
+On Monday, 14 July 2025 03:00:08 Central European Summer Time Yao Zi wrote:
+> On Sun, Jul 13, 2025 at 10:56:59PM +0200, Alex Bee wrote:
+> > Hi Jonas,
+> > 
+> > > Hi Alex,
+> > > 
+> > > On 7/13/2025 9:13 PM, Alex Bee wrote:
+> > > > Hi list, Hi Jonas,
+> > > > 
+> > > > > This series adds dt-bindings and initial device tree for the following
+> > > > > Rockchip RK3528A boards:
+> > > > > - Radxa ROCK 2A/2F
+> > > > > - ArmSoM Sige1
+> > > > > - FriendlyElec NanoPi Zero2
+> > > > 
+> > > > this only sub-related to this series: Is there any particular reason, why
+> > > > we call the compatible "rockchip,rk3528" and not "rockchip,rk3528a"? From
+> > > > what I can see all boards currently supported (and those in this series)
+> > > > are having the RK3528A version of the SoC. I didn't follow the development
+> > > > here, but there are differences - I did a quick compare of the datasheets
+> > > > of those two SoC versions - it looks like RK3528 version has USB3-DRD
+> > > > controller, while RK3528A has USB3 host-only controller. Also it seems to
+> > > > have different video codec IPs and the DRAM controller additionally
+> > > > supports LPDDR4X.
+> > > What datasheet versions did you check? I can only find:
+> > > - RK3528 Rev 1.0 (2023-05-22)
+> > > - RK3528A Rev 1.2 (2024-04-10)
+> > I used
+> > 
+> > 2023-07-12 Revision V1.0
+> > 
+> > which didn't include these features - which is interesting: Why would a
+> > SoC vendor not try to sell all features in the first place :)
+> > 
+> > But I now double checked in
+> > 
+> > 2025-05-12 Revision 1.4
+> > 
+> > and you are right: It appears there also for RK3528A.
+> > 
+> > The only difference I could now make out by comparing v1.4 of both versions
+> > is the cipher engine: RK3528 additionally supports "SM2/SM3/SM4 cipher" -
+> > but still it exists and additionally the different video codec (if mpp
+> > userspace library is correct about that).
+> > 
+> > Anyway: My question was more about: Why didn't we choose the correct
+> > compatible from the beginning? And of course the dts files would have to be
+> > renamed if the compatible is changed, as they are named according to their
+> > SoC-compatible.
+> 
+> Just like what Jonas said, I was not aware of any technical
+> documentation at the time of writing the basic devicetree, and even for
+> now the only datasheet I manage to find is the 2023 revision about
+> RK3528 without A suffix, so I didn't realize the difference between
+> RK3528 and RK3528A, but just followed the vendor code and devicetree[1],
+> where only RK3528 is mentioned :-(
 
-Signed-off-by: Qingfang Deng <dqfext@gmail.com>
----
- drivers/net/ppp/ppp_generic.c | 121 ++++++++++++++++++----------------
- 1 file changed, 65 insertions(+), 56 deletions(-)
+I wouldn't be too worried about getting this wrong, the only set-in-
+stone part of this is the name of the device tree for devices and the
+compatible; we can still rename rk3528.dtsi to rk3528a.dtsi and shuffle
+things around internally. Furthermore, if the only difference is
+something that can be enumerated at runtime (e.g. if a different set
+of supported features in the crypto accel is identifiable with some
+config register bits initial value), then I don't think we need to
+distinguish them at all.
 
-diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
-index 4cf9d1822a83..bfa60a03ee4a 100644
---- a/drivers/net/ppp/ppp_generic.c
-+++ b/drivers/net/ppp/ppp_generic.c
-@@ -173,11 +173,11 @@ struct channel {
- 	struct ppp_channel *chan;	/* public channel data structure */
- 	struct rw_semaphore chan_sem;	/* protects `chan' during chan ioctl */
- 	spinlock_t	downl;		/* protects `chan', file.xq dequeue */
--	struct ppp	*ppp;		/* ppp unit we're connected to */
-+	struct ppp __rcu *ppp;		/* ppp unit we're connected to */
- 	struct net	*chan_net;	/* the net channel belongs to */
- 	netns_tracker	ns_tracker;
- 	struct list_head clist;		/* link in list of channels per unit */
--	rwlock_t	upl;		/* protects `ppp' and 'bridge' */
-+	spinlock_t	upl;		/* protects `ppp' and 'bridge' */
- 	struct channel __rcu *bridge;	/* "bridged" ppp channel */
- #ifdef CONFIG_PPP_MULTILINK
- 	u8		avail;		/* flag used in multilink stuff */
-@@ -639,34 +639,34 @@ static struct bpf_prog *compat_ppp_get_filter(struct sock_fprog32 __user *p)
-  */
- static int ppp_bridge_channels(struct channel *pch, struct channel *pchb)
- {
--	write_lock_bh(&pch->upl);
--	if (pch->ppp ||
-+	spin_lock_bh(&pch->upl);
-+	if (rcu_dereference_protected(pch->ppp, lockdep_is_held(&pch->upl)) ||
- 	    rcu_dereference_protected(pch->bridge, lockdep_is_held(&pch->upl))) {
--		write_unlock_bh(&pch->upl);
-+		spin_unlock_bh(&pch->upl);
- 		return -EALREADY;
- 	}
- 	refcount_inc(&pchb->file.refcnt);
- 	rcu_assign_pointer(pch->bridge, pchb);
--	write_unlock_bh(&pch->upl);
-+	spin_unlock_bh(&pch->upl);
- 
--	write_lock_bh(&pchb->upl);
--	if (pchb->ppp ||
-+	spin_lock_bh(&pchb->upl);
-+	if (rcu_dereference_protected(pchb->ppp, lockdep_is_held(&pch->upl)) ||
- 	    rcu_dereference_protected(pchb->bridge, lockdep_is_held(&pchb->upl))) {
--		write_unlock_bh(&pchb->upl);
-+		spin_unlock_bh(&pchb->upl);
- 		goto err_unset;
- 	}
- 	refcount_inc(&pch->file.refcnt);
- 	rcu_assign_pointer(pchb->bridge, pch);
--	write_unlock_bh(&pchb->upl);
-+	spin_unlock_bh(&pchb->upl);
- 
- 	return 0;
- 
- err_unset:
--	write_lock_bh(&pch->upl);
-+	spin_lock_bh(&pch->upl);
- 	/* Re-read pch->bridge with upl held in case it was modified concurrently */
- 	pchb = rcu_dereference_protected(pch->bridge, lockdep_is_held(&pch->upl));
- 	RCU_INIT_POINTER(pch->bridge, NULL);
--	write_unlock_bh(&pch->upl);
-+	spin_unlock_bh(&pch->upl);
- 	synchronize_rcu();
- 
- 	if (pchb)
-@@ -680,25 +680,25 @@ static int ppp_unbridge_channels(struct channel *pch)
- {
- 	struct channel *pchb, *pchbb;
- 
--	write_lock_bh(&pch->upl);
-+	spin_lock_bh(&pch->upl);
- 	pchb = rcu_dereference_protected(pch->bridge, lockdep_is_held(&pch->upl));
- 	if (!pchb) {
--		write_unlock_bh(&pch->upl);
-+		spin_unlock_bh(&pch->upl);
- 		return -EINVAL;
- 	}
- 	RCU_INIT_POINTER(pch->bridge, NULL);
--	write_unlock_bh(&pch->upl);
-+	spin_unlock_bh(&pch->upl);
- 
- 	/* Only modify pchb if phcb->bridge points back to pch.
- 	 * If not, it implies that there has been a race unbridging (and possibly
- 	 * even rebridging) pchb.  We should leave pchb alone to avoid either a
- 	 * refcount underflow, or breaking another established bridge instance.
- 	 */
--	write_lock_bh(&pchb->upl);
-+	spin_lock_bh(&pchb->upl);
- 	pchbb = rcu_dereference_protected(pchb->bridge, lockdep_is_held(&pchb->upl));
- 	if (pchbb == pch)
- 		RCU_INIT_POINTER(pchb->bridge, NULL);
--	write_unlock_bh(&pchb->upl);
-+	spin_unlock_bh(&pchb->upl);
- 
- 	synchronize_rcu();
- 
-@@ -2139,10 +2139,9 @@ static int ppp_mp_explode(struct ppp *ppp, struct sk_buff *skb)
- #endif /* CONFIG_PPP_MULTILINK */
- 
- /* Try to send data out on a channel */
--static void __ppp_channel_push(struct channel *pch)
-+static void __ppp_channel_push(struct channel *pch, struct ppp *ppp)
- {
- 	struct sk_buff *skb;
--	struct ppp *ppp;
- 
- 	spin_lock(&pch->downl);
- 	if (pch->chan) {
-@@ -2161,7 +2160,6 @@ static void __ppp_channel_push(struct channel *pch)
- 	spin_unlock(&pch->downl);
- 	/* see if there is anything from the attached unit to be sent */
- 	if (skb_queue_empty(&pch->file.xq)) {
--		ppp = pch->ppp;
- 		if (ppp)
- 			__ppp_xmit_process(ppp, NULL);
- 	}
-@@ -2169,15 +2167,18 @@ static void __ppp_channel_push(struct channel *pch)
- 
- static void ppp_channel_push(struct channel *pch)
- {
--	read_lock_bh(&pch->upl);
--	if (pch->ppp) {
--		(*this_cpu_ptr(pch->ppp->xmit_recursion))++;
--		__ppp_channel_push(pch);
--		(*this_cpu_ptr(pch->ppp->xmit_recursion))--;
-+	struct ppp *ppp;
-+
-+	rcu_read_lock_bh();
-+	ppp = rcu_dereference_bh(pch->ppp);
-+	if (ppp) {
-+		(*this_cpu_ptr(ppp->xmit_recursion))++;
-+		__ppp_channel_push(pch, ppp);
-+		(*this_cpu_ptr(ppp->xmit_recursion))--;
- 	} else {
--		__ppp_channel_push(pch);
-+		__ppp_channel_push(pch, NULL);
- 	}
--	read_unlock_bh(&pch->upl);
-+	rcu_read_unlock_bh();
- }
- 
- /*
-@@ -2279,6 +2280,7 @@ void
- ppp_input(struct ppp_channel *chan, struct sk_buff *skb)
- {
- 	struct channel *pch = chan->ppp;
-+	struct ppp *ppp;
- 	int proto;
- 
- 	if (!pch) {
-@@ -2290,18 +2292,19 @@ ppp_input(struct ppp_channel *chan, struct sk_buff *skb)
- 	if (ppp_channel_bridge_input(pch, skb))
- 		return;
- 
--	read_lock_bh(&pch->upl);
-+	rcu_read_lock_bh();
-+	ppp = rcu_dereference_bh(pch->ppp);
- 	if (!ppp_decompress_proto(skb)) {
- 		kfree_skb(skb);
--		if (pch->ppp) {
--			++pch->ppp->dev->stats.rx_length_errors;
--			ppp_receive_error(pch->ppp);
-+		if (ppp) {
-+			++ppp->dev->stats.rx_length_errors;
-+			ppp_receive_error(ppp);
- 		}
- 		goto done;
- 	}
- 
- 	proto = PPP_PROTO(skb);
--	if (!pch->ppp || proto >= 0xc000 || proto == PPP_CCPFRAG) {
-+	if (!ppp || proto >= 0xc000 || proto == PPP_CCPFRAG) {
- 		/* put it on the channel queue */
- 		skb_queue_tail(&pch->file.rq, skb);
- 		/* drop old frames if queue too long */
-@@ -2310,11 +2313,11 @@ ppp_input(struct ppp_channel *chan, struct sk_buff *skb)
- 			kfree_skb(skb);
- 		wake_up_interruptible(&pch->file.rwait);
- 	} else {
--		ppp_do_recv(pch->ppp, skb, pch);
-+		ppp_do_recv(ppp, skb, pch);
- 	}
- 
- done:
--	read_unlock_bh(&pch->upl);
-+	rcu_read_unlock_bh();
- }
- 
- /* Put a 0-length skb in the receive queue as an error indication */
-@@ -2323,20 +2326,22 @@ ppp_input_error(struct ppp_channel *chan, int code)
- {
- 	struct channel *pch = chan->ppp;
- 	struct sk_buff *skb;
-+	struct ppp *ppp;
- 
- 	if (!pch)
- 		return;
- 
--	read_lock_bh(&pch->upl);
--	if (pch->ppp) {
-+	rcu_read_lock_bh();
-+	ppp = rcu_dereference_bh(pch->ppp);
-+	if (ppp) {
- 		skb = alloc_skb(0, GFP_ATOMIC);
- 		if (skb) {
- 			skb->len = 0;		/* probably unnecessary */
- 			skb->cb[0] = code;
--			ppp_do_recv(pch->ppp, skb, pch);
-+			ppp_do_recv(ppp, skb, pch);
- 		}
- 	}
--	read_unlock_bh(&pch->upl);
-+	rcu_read_unlock_bh();
- }
- 
- /*
-@@ -2884,7 +2889,6 @@ int ppp_register_net_channel(struct net *net, struct ppp_channel *chan)
- 
- 	pn = ppp_pernet(net);
- 
--	pch->ppp = NULL;
- 	pch->chan = chan;
- 	pch->chan_net = get_net_track(net, &pch->ns_tracker, GFP_KERNEL);
- 	chan->ppp = pch;
-@@ -2895,7 +2899,7 @@ int ppp_register_net_channel(struct net *net, struct ppp_channel *chan)
- #endif /* CONFIG_PPP_MULTILINK */
- 	init_rwsem(&pch->chan_sem);
- 	spin_lock_init(&pch->downl);
--	rwlock_init(&pch->upl);
-+	spin_lock_init(&pch->upl);
- 
- 	spin_lock_bh(&pn->all_channels_lock);
- 	pch->file.index = ++pn->last_channel_index;
-@@ -2924,13 +2928,15 @@ int ppp_channel_index(struct ppp_channel *chan)
- int ppp_unit_number(struct ppp_channel *chan)
- {
- 	struct channel *pch = chan->ppp;
-+	struct ppp *ppp;
- 	int unit = -1;
- 
- 	if (pch) {
--		read_lock_bh(&pch->upl);
--		if (pch->ppp)
--			unit = pch->ppp->file.index;
--		read_unlock_bh(&pch->upl);
-+		rcu_read_lock_bh();
-+		ppp = rcu_dereference_bh(pch->ppp);
-+		if (ppp)
-+			unit = ppp->file.index;
-+		rcu_read_unlock_bh();
- 	}
- 	return unit;
- }
-@@ -2942,12 +2948,14 @@ char *ppp_dev_name(struct ppp_channel *chan)
- {
- 	struct channel *pch = chan->ppp;
- 	char *name = NULL;
-+	struct ppp *ppp;
- 
- 	if (pch) {
--		read_lock_bh(&pch->upl);
--		if (pch->ppp && pch->ppp->dev)
--			name = pch->ppp->dev->name;
--		read_unlock_bh(&pch->upl);
-+		rcu_read_lock_bh();
-+		ppp = rcu_dereference_bh(pch->ppp);
-+		if (ppp && ppp->dev)
-+			name = ppp->dev->name;
-+		rcu_read_unlock_bh();
- 	}
- 	return name;
- }
-@@ -3470,9 +3478,9 @@ ppp_connect_channel(struct channel *pch, int unit)
- 	ppp = ppp_find_unit(pn, unit);
- 	if (!ppp)
- 		goto out;
--	write_lock_bh(&pch->upl);
-+	spin_lock_bh(&pch->upl);
- 	ret = -EINVAL;
--	if (pch->ppp ||
-+	if (rcu_dereference_protected(pch->ppp, lockdep_is_held(&pch->upl)) ||
- 	    rcu_dereference_protected(pch->bridge, lockdep_is_held(&pch->upl)))
- 		goto outl;
- 
-@@ -3497,13 +3505,13 @@ ppp_connect_channel(struct channel *pch, int unit)
- 		ppp->dev->hard_header_len = hdrlen;
- 	list_add_tail(&pch->clist, &ppp->channels);
- 	++ppp->n_channels;
--	pch->ppp = ppp;
-+	rcu_assign_pointer(pch->ppp, ppp);
- 	refcount_inc(&ppp->file.refcnt);
- 	ppp_unlock(ppp);
- 	ret = 0;
- 
-  outl:
--	write_unlock_bh(&pch->upl);
-+	spin_unlock_bh(&pch->upl);
-  out:
- 	mutex_unlock(&pn->all_ppp_mutex);
- 	return ret;
-@@ -3518,10 +3526,11 @@ ppp_disconnect_channel(struct channel *pch)
- 	struct ppp *ppp;
- 	int err = -EINVAL;
- 
--	write_lock_bh(&pch->upl);
--	ppp = pch->ppp;
--	pch->ppp = NULL;
--	write_unlock_bh(&pch->upl);
-+	spin_lock_bh(&pch->upl);
-+	ppp = rcu_replace_pointer(pch->ppp, NULL, lockdep_is_held(&pch->upl));
-+	spin_unlock_bh(&pch->upl);
-+	synchronize_rcu();
-+
- 	if (ppp) {
- 		/* remove it from the ppp unit's list */
- 		ppp_lock(ppp);
--- 
-2.43.0
+As another data point, rkbin mentions "Add support for rk3528A" in the
+changelog file `doc/release/RK3528_EN.md` for `rk3528_bl31_v1.15.elf`.
+
+Someone could contrast and compare that BL31 binary with the v1.14 one
+to see if they have any immediately obvious differences.
+
+My personal guess for what happened here is that they switched
+the packaging process after release to optimize supply, like what
+happened with RK3568 -> RK3568B2, and the only change is some OTP
+values to identify the chip variant. This would also explain why
+everything we've seen on the market so far, at least to my knowledge,
+has been RK3528A.
+
+Kind regards,
+Nicolas Frattaroli
+
+> 
+> Regards,
+> Yao Zi
+> 
+> [1]: https://github.com/rockchip-linux/kernel, branch develop-5.10
+> 
+> > Regards,
+> > Alex
+> > > 
+> > > And both list LPDDR4X support and the A-variant seem to list USB3-DRD
+> > > support, did you mix them up above?
+> > > 
+> > > I think these SoCs are similar to rk3228/rk3229, rk3228h/rk3328 and now
+> > > rk3528/rk3528a, in that only the second variant support VP9 decoding.
+> > > 
+> > > Use of rockchip,rk3528a compatible could be something to change,
+> > > could also be something that bootloader set at runtime, similar to
+> > > what it does for rk3288w.
+> > > 
+> > > > I guess it would be good to discuss this before this series is merged,
+> > > > because re-naming *.dts files after they have been in a release is somewhat
+> > > > impossible.
+> > > I think renaming the device tree files is unnecessary, as there seem to
+> > > be very little difference. All boards I have come across are currently
+> > > RK3528A variants. How would we treat the Radxa E20C?, it is not named
+> > > rk3528-radxa-e20c.dtb, yet uses the A-variant.
+> > > 
+> > > For mainline U-Boot I have included printing out the SoC-variant,
+> > > however the compatible is not adjusted:
+> > > 
+> > >    Model: Radxa E20C
+> > >    SoC:   RK3528A
+> > >    DRAM:  2 GiB
+> > > 
+> > > Regards,
+> > > Jonas
+> > > 
+> > > > Regards,
+> > > > Alex
+> > > > > The bt/wifi_reg_on pins are described in the device tree using
+> > > > > rfkill-gpio nodes.
+> > > > > 
+> > > > > Changes in v3:
+> > > > > - Rename led nodes to led-0/led-1
+> > > > > - Remove pinctrl* props from sdio0
+> > > > > - Collect a-b tags
+> > > > > 
+> > > > > Changes in v2:
+> > > > > - Limit sdmmc max-frequency to 100 MHz on ROCK 2A/2F
+> > > > > - Drop clock-output-names prop from rtc node on Sige1 and NanoPi Zero2
+> > > > > - Drop regulator-boot-on from usb 2.0 host regulators on Sige1
+> > > > > - Add bluetooth and wifi nodes on Sige1
+> > > > > - Collect t-b tag for NanoPi Zero2
+> > > > > 
+> > > > > These boards can be booted from emmc or sd-card using the U-Boot 2025.07
+> > > > > generic-rk3528 target or work-in-progress patches for these boards [1].
+> > > > > 
+> > > > > For working bluetooth on ArmSoM Sige1 the patch "arm64: dts: rockchip:
+> > > > > Fix UART DMA support for RK3528" [2] is required.
+> > > > > 
+> > > > > [1] https://source.denx.de/u-boot/contributors/kwiboo/u-boot/-/commits/rk3528
+> > > > > [2] https://lore.kernel.org/r/20250709210831.3170458-1-jonas@kwiboo.se
+> > > > > 
+> > > > > Jonas Karlman (6):
+> > > > >     dt-bindings: arm: rockchip: Add Radxa ROCK 2A/2F
+> > > > >     arm64: dts: rockchip: Add Radxa ROCK 2A/2F
+> > > > >     dt-bindings: arm: rockchip: Add ArmSoM Sige1
+> > > > >     arm64: dts: rockchip: Add ArmSoM Sige1
+> > > > >     dt-bindings: arm: rockchip: Add FriendlyElec NanoPi Zero2
+> > > > >     arm64: dts: rockchip: Add FriendlyElec NanoPi Zero2
+> > > > > 
+> > > > >    .../devicetree/bindings/arm/rockchip.yaml     |  17 +
+> > > > >    arch/arm64/boot/dts/rockchip/Makefile         |   4 +
+> > > > >    .../boot/dts/rockchip/rk3528-armsom-sige1.dts | 465 ++++++++++++++++++
+> > > > >    .../boot/dts/rockchip/rk3528-nanopi-zero2.dts | 340 +++++++++++++
+> > > > >    .../boot/dts/rockchip/rk3528-rock-2.dtsi      | 293 +++++++++++
+> > > > >    .../boot/dts/rockchip/rk3528-rock-2a.dts      |  82 +++
+> > > > >    .../boot/dts/rockchip/rk3528-rock-2f.dts      |  10 +
+> > > > >    7 files changed, 1211 insertions(+)
+> > > > >    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-armsom-sige1.dts
+> > > > >    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-nanopi-zero2.dts
+> > > > >    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2.dtsi
+> > > > >    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2a.dts
+> > > > >    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2f.dts
+> > > > > 
+> 
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+> 
+
+
+
 
 
