@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-729584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E993B038AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:05:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825F8B038B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEB4C3BDBCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:05:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 949B517AEA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46323239086;
-	Mon, 14 Jul 2025 08:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B66B23C8C5;
+	Mon, 14 Jul 2025 08:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hn0LpUoa"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JAPttOUt"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F1623BCED;
-	Mon, 14 Jul 2025 08:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A2423C397;
+	Mon, 14 Jul 2025 08:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752480282; cv=none; b=BHKody6J6Yc/Z9FyVWZjPlL0JzcfG3QlU91K8beeoLWy5igaV8rZxDHB633Utvd+MjKHGkjEe508A2RSY5YHJ1QWlfCvOlboEhyCw4CyyU4CV55ap5cOHYPEnGFB2j8UtZNc2Q6OMedGADpOfVsKFYApMd5awavWpnH5khwM7ag=
+	t=1752480283; cv=none; b=lPYz0Ck/uMoSDG3Rg9xzxXIQ21l7fFDvzaDcbN/5O7ErPHCrpu08NmNnN//wHdRPMW0ej/GCLmZSNWyb0v/U+s4jbiB5vN6NjEcRGlpra5dwxzBFmfFyCB41aYmxEoJBTyWWO7kbe0UELmmMLJxxpgbnJtqbXtphb15enySQqog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752480282; c=relaxed/simple;
-	bh=ooFuzc1HYLH/b7G70oju18p8HTIYAY5mUG8vjFp+a4E=;
+	s=arc-20240116; t=1752480283; c=relaxed/simple;
+	bh=lEahKLLZv0LLgcdxOGD69aUK2W4QHfqMPLiGWzoEYP0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kyzNJAzkyCqwOalgriI7nBqWD+9NwQW8JT6JJOM53DkyejTZuCUBXuK2phmEvEb/KhNaEJpF2rQ+8QaZP+NM/RJQ3tQR6as76LZEhNOS7hqm5cYlrdtJHFVxsOg8JQmCm92ZBtvEFGLPvIEX0ttauCKCx86lwGS1iRKhmkvV45E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hn0LpUoa; arc=none smtp.client-ip=209.85.167.42
+	 In-Reply-To:To:Cc; b=rNFs9BTYUtcqVMmodKnI3RIS0+LDpq1suuZBkm2K91DudruwgC6sMzk9ofXVoXQtsndIjwJmlaSOwxz4A6IFbYnp1KW3PqgxwNUc7D6aBManM9Uh4nbqVJXOaVpqUyV+hycYMVQ3rwcqQrL2IBf8D1JIkUGSF4RE3LzSQe3T+PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JAPttOUt; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-553d52cb80dso3671570e87.1;
-        Mon, 14 Jul 2025 01:04:39 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-553b16a0e38so4246505e87.1;
+        Mon, 14 Jul 2025 01:04:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752480278; x=1753085078; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752480280; x=1753085080; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=O6n/TwiMXWZ+ZdKfM/oDMUklaYFacBzQ7BUUpsRuWbs=;
-        b=hn0LpUoam7wHbVedK7w0zv5ntK+AuwZAoltCSgetWPkuH18xteclasxt64HNADeBof
-         9Ruk+8QhkOkjVNfFpTjUd7Lk33cHbC5s7r4PR6bqaJWQldr7bftLXRg8uF3zCRvjPPtq
-         wFJyRqQhotCpizd6akqaSdblcQDceP7ponviADp62DLZlMm0vq+yTV/cCRFso1Gnu/DC
-         8YhjY7s4kWBvXDcojq9X6ofKUyAifrH0rpGZGN6AM06/NSCywG7yG9LrrrtQWsLIRhT3
-         PrYDu1oeo5WHqq6vWd2FQwBgZKavtyPeIVgubMCBOt/nJGYmLReF7JvBhcf6dJFAzbOr
-         iRSw==
+        bh=p263TqCClLXlOHu3dp7Z4XuoCZcYckTKI9E2PFULeZU=;
+        b=JAPttOUto2l8iLucogK/EaaJr4/Y/c1GCYm8eX3JuHZxeZ8dLPZiV9UiSaNqShOKte
+         +VV5FYnG5Mi6mCvI8UGo685u+MEU0ZRjjl5AmqjNSx3SnZrYoWc8M5vTPRY3dC2rORG+
+         C0Eqy+bjA9YSuHjrvWjbm1V/w8u1Z+rtTno9NWPUbtdnwkYwEdG4ZYmTw/uGZ7Y4XpGy
+         kKmGhjAR2MGj8SmnwI5FGPBMBdBB+7Ok3dgrGUATAND3Dea+2j5NWk01g0CthLoOXa4c
+         7oZGI5epLe5B1nY37hXzJ87MldmPT59Cc1BUpGmiL0pD84xKQuDlQ/SfFBjnkC5YmXo2
+         yReA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752480278; x=1753085078;
+        d=1e100.net; s=20230601; t=1752480280; x=1753085080;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=O6n/TwiMXWZ+ZdKfM/oDMUklaYFacBzQ7BUUpsRuWbs=;
-        b=uHn9cmUt3jiT+Z28O+iunqy2l55n/gGr782DIwJvIV0JWw/i9JfWEB5o18tRekGoRr
-         76NTKXVlsd5ZS8819UYGDnxEbEhw+6l4bquurstSzZgiZlDoYgV/Z4dbRwf8jqS4Bk6v
-         kbFfqeqf4+bxwP0EapgrU07MYNWA4TELjfQNwfJdjXSJhoPwkVgJf+22EKKTOd441hJM
-         eCI4F77rtPhzEA/g1vKsXSZKU9aSlwDPFyFqF2RiODUCkT+l0w4ZbKAn5CkhEReCpcH1
-         8L/0V7ZXorOstcM5RMiHMOibGG+57ax3yIP9iJ6PgtyRlp5B2Gv1+vQNXEA/x+0b7UqN
-         +g1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVu3E33Uhq0iRVcHFr3SlZd9/XTbmm+j7CskbzpaWWX7Fxgo/hTlExrPdBntW0c94WNTYI5SiFgwIBy8PLo@vger.kernel.org, AJvYcCWHwDlqg65/H3z0oRVNgT/gI+iIZHYQ7Fq+taKg5PTd8270f04T/Xq9TXXv3CGqVSRGSw5+AaR6lWSK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCqTMlSPjF5hW3MoEQ1RscVayNOsUt8KautwkpgPnHK8bjYJuN
-	KSSKAgISu83hDyn/mKe4AOGD5qiDWpIHR3I2MnXhXDS2pGuiJbBFIIpB
-X-Gm-Gg: ASbGnct1/+IJ5tl52xfcC5Qmzk1BfMZ5KljfgAu5ecfXqVfaKdvvQMP0dgG/KIi12Yh
-	n0jMXdWL7lazOthY6EM9Nql/SkyhPUie7Rby9D7b+fJp7h3Y8KlJzZ+3jd0fyV9We8wWWY28tCU
-	IPE5A1k+sIhq1pF+sastKmjSv+IsdPBnRJXpqnBmnIPAGrXGlSfAe1KoJHaVZV7LDb3yd4tT+gE
-	TPGbWYsnnH4sTsTVdlJ/XIIb68POS00oGh3D/P9Xz3Pof7p9ZFW0LuTW8fR7sFwgcR/nOOHoyn8
-	s3pm03MHuhrRB83BgQ+DwKBLmyLvXj52stKkDkQ/aVBHZi47XHa2JKIGpR/63cnYO+sjpiMF2cZ
-	cweko1i3Y/YwT26E5bsiNdAWlrYIA966yHBt1Tc57rCMQou5DdXeQazc9H8b9HXHelUo=
-X-Google-Smtp-Source: AGHT+IEBE9Cy/LCHX7ybxe5olrJJBgZsocOmqcWEkUaqPVygE09g2iOxi2b1SpZvEuhz9qq28SJV5g==
-X-Received: by 2002:a05:6512:a82:b0:554:f82f:180e with SMTP id 2adb3069b0e04-55900715435mr4867704e87.16.1752480277970;
-        Mon, 14 Jul 2025 01:04:37 -0700 (PDT)
+        bh=p263TqCClLXlOHu3dp7Z4XuoCZcYckTKI9E2PFULeZU=;
+        b=T0EBBU9IuAqmr2TAzqpHyUX9vRjHme5/B4lqTVzoj2x7WiKfjZIKODVPAMEEFqmXbv
+         TBDKqi4ekSFikJqBEKjq/FxM8Y4glKYJfAG/IwTIM9yoNu9Jak4bIiOptrssKHF4iIIu
+         gBqbDInxjGuWryrSlakaFjbW2lkcqHPveTpkqsegQXoMU7aPO2pK2H4jjp2AwKQn4mxA
+         C6JIHHN/jqtXalDarfN1fzGARBBytEKGUy9pzFCcEN3BiH4KWO1x3vKIA7zSecMz9ep5
+         dR6b3jHqACRaaSb3ngpRH9s4ZgOM2ZQqtv3iA+JI+Q8jCl2ISvb6xSqcPDwjlsB3sNYC
+         054g==
+X-Forwarded-Encrypted: i=1; AJvYcCV2uWQSY7YSV4o/OmCiJVDTlA6NBxlW2dm1c3et2UsJq0E4mluHFovy41XLYFgW797ABPbpR4VRWa5wjRTB@vger.kernel.org, AJvYcCViCZWpwYI4PLsvd+5VkJuPuc0BpaviDMQqJoGkuCNvZRi3knZiX0g7h5OcJWlG8H8ghZWSjIatCZj/@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiNG7l4WznqcjWqNKH+MeS6w6dFkvOjhlKahHrJ8BJDMZpnrno
+	r/YAkFFEfI+/Y55Vt5wCu/YNtj7g5D8fIbh4z4aMGAD95F6QN8c25HGt
+X-Gm-Gg: ASbGncu6Nsb5+1wzwXvNusVUanGZ5KTOg0dBZztFAQo++emxKbanAluDX6io16Z7sQQ
+	6NK23Op/wj/YutPSD6/x8GzpjnTQ3oEaPUMoEWfEOMXOVNl9Egioz+XJVIN4HRJyTLAl5silbvw
+	F0IRJZLndp1N9876h+bfPMwEtV14oRc+5Re1piCuPQKDB/k8oLZztP6MbCXbTMnBjSCrDj8FWYP
+	AMDdytGW7miUp8a6SQ3mS/wjg2tmFYgHDP/kCDBjUIs/bUF0klGIGszPFA7YM7syGxbbyrXpIto
+	t5IKVXhPxei70GS1aTmeKmXXmas88936H587qilBPYlRsCjF51h6s6LQMulP6auajJi4BoRPJiW
+	zOnQ+BfJpmkpsTLSf14oWDEVKkIDwpqdhvs5sVSOUODmIlE7MsopCupzkeKcSZ75KEH0=
+X-Google-Smtp-Source: AGHT+IE3ZGGk8mZi8PoK4ms4CTR4TyCRXk7fcOY1Cm8zIS7n5cos+N2F2WJeqZ5ykBVRsyCfAC7TLg==
+X-Received: by 2002:a05:6512:1384:b0:553:a490:fee0 with SMTP id 2adb3069b0e04-55a044d1e73mr3798544e87.10.1752480279357;
+        Mon, 14 Jul 2025 01:04:39 -0700 (PDT)
 Received: from [192.168.1.198] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55943b6c08esm1864385e87.187.2025.07.14.01.04.36
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55943b6c08esm1864385e87.187.2025.07.14.01.04.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 01:04:37 -0700 (PDT)
+        Mon, 14 Jul 2025 01:04:38 -0700 (PDT)
 From: Marcus Folkesson <marcus.folkesson@gmail.com>
-Date: Mon, 14 Jul 2025 10:04:02 +0200
-Subject: [PATCH 4/5] drm/format-helper: introduce
- drm_fb_xrgb8888_to_gray2()
+Date: Mon, 14 Jul 2025 10:04:03 +0200
+Subject: [PATCH 5/5] drm/st7571-i2c: add support for 2bit grayscale for
+ XRGB8888
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250714-st7571-format-v1-4-a27e5112baff@gmail.com>
+Message-Id: <20250714-st7571-format-v1-5-a27e5112baff@gmail.com>
 References: <20250714-st7571-format-v1-0-a27e5112baff@gmail.com>
 In-Reply-To: <20250714-st7571-format-v1-0-a27e5112baff@gmail.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -96,242 +96,119 @@ To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  devicetree@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10226;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3579;
  i=marcus.folkesson@gmail.com; h=from:subject:message-id;
- bh=ooFuzc1HYLH/b7G70oju18p8HTIYAY5mUG8vjFp+a4E=;
- b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBodLoF0ZTa/9a0Qdm2qtUpwNofhWVkNVOPnD9ne
- Q5kubcTwyuJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCaHS6BQAKCRCIgE5vWV1S
- Mr1lEACqCwR6AEgqV8hZXgC3lhcGfGGsjZCWqN/PYINIXepXrFQgripCiZM4yiTtVj4kvcwr4di
- vshmO8yqdv03J1uf+Hd4XVGBSyh3XKfXjnpGA4MAU7sVpQgDiZUsJAsDkfo8LUW2wV0xEXGk889
- jRCf9OhWivNIMXsIda4HRqEBCyDN06vRjP15CQnCJ13YE2iDAkGmU9IQ59TWEo+i45LWIMqT8jw
- vsyrLGjjfqKxAwmDGBvoMJ3NW8LMTt2Uw9WrE3XLAPWn8D4bD1vF3mMcZnU3ZwazfAHLsQyG0H8
- iE1yWTrMhmlECoQT9RdkNylPM24i5sqSnN9nEEwdAwK0aSaulc6h0eRrlZE5W7AgbQ2u6FuGYav
- ae2xjatJMsWPoYdZ1kGc4RPYTE6pPJecpSjVIpXLZTOi3LiC6upSNUNgldSzOWYh/eeipfMGttY
- fkCv3AVtKkoEDvMjlNgG+2rOPUFnYLnAb9O2Wl2HBCKo15r3YfOd00wwVB8XLITk5pUEFbStxhF
- f1d+lDwKUQ4gN2naASe3AKQ4bHyQi8iJhkfIF2tLdhAVTbj8miuLObmFwO6mYlloYvYFIzu7MCU
- 6loezOb/47UtkPfCIsvJ6nEwMS7F9a2xbKd04gOYPl2/tdBU5vLy0PCwOMzSSXhfyUqaMFR6ub8
- QoHxFM90ZqlNIgw==
+ bh=lEahKLLZv0LLgcdxOGD69aUK2W4QHfqMPLiGWzoEYP0=;
+ b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBodLoKlMDoV62CdpZv99GtIylRkXaQLIgIy6fzV
+ /c8d65lA0CJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCaHS6CgAKCRCIgE5vWV1S
+ MhgJD/46rCLbofHMykyf7wYDHr1TeW7OTQOPfm4/xt0V5SR16spFYk9WNtfROaJOvNKjD22h14J
+ 8l8hAIBl9TyUgpPB1RgyQt6E6KcIWLb3crFcefFMorm5BK+kfuNOl+fUDmaU0H7vzEArNP/jF6a
+ UGZL0lq/KAEZFHnepTZ5gx/oDWkLftwDA4N84po1d7zo1jWewiDsrooiwIkYPzdrep04nYGy9JB
+ X1ZE+iVHzJX9q2aoUTAfq6FmgNCJsEhlrlx/R0eVQjgTyOW1DtP2ZxpXKaGc5wXTcNtZHrdIRTy
+ 7vIl3LMqXbu4KpNBqkmZcCqSl/JbykhneDMeId8clmcdzsajmfJ960T36E6XU4CBUJrEe1FZ4cf
+ MPBAH5M12rWvpqVntdnQH+EBg36hsvQ6hsG0BpK0twJ936RBSv+LMs8VV0Vv7Zl4EKPH4H+HIdC
+ gmKnqNcqPha7EtYe+26O7P0FYqipFVd5ZFaEkeYDuSBwHWIl+0IRiQiEcbjt6GxMMqycs2Eo9pn
+ T9CmDtOQjyN8uIMjtK2+CebhgSoMFnEqEJElDIEhurPahT/GsRPnMsvwz3WsNAMY6JSj+fa/hhx
+ nxexDgw6d1G8G5d8m8Yuo9AzFLA0RbWcaewPi1RvZdA2BdqbStpDfdLXLDZI/8CfL8+5zz/GVdL
+ p0wjLz3aZ5HqxCw==
 X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
  fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
 
-drm_fb_xrgb8888_to_gray2() works like and share much code with
-drm_fb_xrgb8888_to_mono(), but converts XRGB8888 to
-2bit grayscale instead.
-
-It uses drm_fb_xrgb8888_to_gray8() to convert the pixels to gray8 as an
-intermediate step before converting to gray2.
+Add support for 2bit grayscale and use it for XRGB8888 when grayscale is
+supported.
 
 Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 ---
- drivers/gpu/drm/drm_format_helper.c | 148 ++++++++++++++++++++++++++----------
- include/drm/drm_format_helper.h     |   4 +
- 2 files changed, 110 insertions(+), 42 deletions(-)
+ drivers/gpu/drm/sitronix/st7571-i2c.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_format_helper.c b/drivers/gpu/drm/drm_format_helper.c
-index 8f3daf38ca639d3d39742c2c9fa0c54a3a9297a5..2f2171b3df609263cc9ce6809bf6144028c25380 100644
---- a/drivers/gpu/drm/drm_format_helper.c
-+++ b/drivers/gpu/drm/drm_format_helper.c
-@@ -1253,6 +1253,25 @@ int drm_fb_blit(struct iosys_map *dst, const unsigned int *dst_pitch, uint32_t d
- }
- EXPORT_SYMBOL(drm_fb_blit);
- 
-+static void drm_fb_gray8_to_gray2_line(void *dbuf, const void *sbuf, unsigned int pixels)
-+{
-+	u8 *dbuf8 = dbuf;
-+	const u8 *sbuf8 = sbuf;
-+	u8 px;
-+
-+	while (pixels) {
-+		unsigned int i, bits = min(pixels, 4U);
-+		u8 byte = 0;
-+
-+		for (i = 0; i < bits; i++, pixels--) {
-+			byte >>= 2;
-+			px = (*sbuf8++ * 3 + 127) / 255;
-+			byte |= (px &= 0x03) << 6;
-+		}
-+		*dbuf8++ = byte;
-+	}
-+}
-+
- static void drm_fb_gray8_to_mono_line(void *dbuf, const void *sbuf, unsigned int pixels)
- {
- 	u8 *dbuf8 = dbuf;
-@@ -1270,40 +1289,11 @@ static void drm_fb_gray8_to_mono_line(void *dbuf, const void *sbuf, unsigned int
- 	}
+diff --git a/drivers/gpu/drm/sitronix/st7571-i2c.c b/drivers/gpu/drm/sitronix/st7571-i2c.c
+index 6a5d719f8b0044ec700ff119972b580c904ffb27..2af800a4c5e4960f3dfcebfeda4554b56015915f 100644
+--- a/drivers/gpu/drm/sitronix/st7571-i2c.c
++++ b/drivers/gpu/drm/sitronix/st7571-i2c.c
+@@ -215,10 +215,11 @@ static int st7571_send_command_list(struct st7571_device *st7571,
+ 	return ret;
  }
  
--/**
-- * drm_fb_xrgb8888_to_mono - Convert XRGB8888 to monochrome
-- * @dst: Array of monochrome destination buffers (0=black, 1=white)
-- * @dst_pitch: Array of numbers of bytes between the start of two consecutive scanlines
-- *             within @dst; can be NULL if scanlines are stored next to each other.
-- * @src: Array of XRGB8888 source buffers
-- * @fb: DRM framebuffer
-- * @clip: Clip rectangle area to copy
-- * @state: Transform and conversion state
-- *
-- * This function copies parts of a framebuffer to display memory and converts the
-- * color format during the process. Destination and framebuffer formats must match. The
-- * parameters @dst, @dst_pitch and @src refer to arrays. Each array must have at
-- * least as many entries as there are planes in @fb's format. Each entry stores the
-- * value for the format's respective color plane at the same index.
-- *
-- * This function does not apply clipping on @dst (i.e. the destination is at the
-- * top-left corner). The first pixel (upper left corner of the clip rectangle) will
-- * be converted and copied to the first bit (LSB) in the first byte of the monochrome
-- * destination buffer. If the caller requires that the first pixel in a byte must
-- * be located at an x-coordinate that is a multiple of 8, then the caller must take
-- * care itself of supplying a suitable clip rectangle.
-- *
-- * DRM doesn't have native monochrome support. Drivers can use this function for
-- * monochrome devices that don't support XRGB8888 natively. Such drivers can
-- * announce the commonly supported XR24 format to userspace and use this function
-- * to convert to the native format.
-- *
-- * This function uses drm_fb_xrgb8888_to_gray8() to convert to grayscale and
-- * then the result is converted from grayscale to monochrome.
-- */
--void drm_fb_xrgb8888_to_mono(struct iosys_map *dst, const unsigned int *dst_pitch,
--			     const struct iosys_map *src, const struct drm_framebuffer *fb,
--			     const struct drm_rect *clip, struct drm_format_conv_state *state)
-+static void drm_fb_xrgb8888_to_gray(u8 *dst, const unsigned int *dst_pitch,
-+			     u8 *src, const struct drm_framebuffer *fb,
-+			     const struct drm_rect *clip, struct drm_format_conv_state *state,
-+			     u8 bpp,
-+			     void (*xfrm_line)(void *dbuf, const void *sbuf, unsigned int npixels))
+-static inline u8 st7571_transform_xy(const char *p, int x, int y)
++static inline u8 st7571_transform_xy(const char *p, int x, int y, u8 bpp)
  {
- 	static const unsigned int default_dst_pitch[DRM_FORMAT_MAX_PLANES] = {
- 		0, 0, 0, 0
-@@ -1313,11 +1303,10 @@ void drm_fb_xrgb8888_to_mono(struct iosys_map *dst, const unsigned int *dst_pitc
- 	unsigned int cpp = fb->format->cpp[0];
- 	unsigned int len_src32 = linepixels * cpp;
- 	struct drm_device *dev = fb->dev;
--	void *vaddr = src[0].vaddr;
- 	unsigned int dst_pitch_0;
- 	unsigned int y;
--	u8 *mono = dst[0].vaddr, *gray8;
- 	u32 *src32;
-+	u8 *gray8;
- 
- 	if (drm_WARN_ON(dev, fb->format->format != DRM_FORMAT_XRGB8888))
- 		return;
-@@ -1330,7 +1319,7 @@ void drm_fb_xrgb8888_to_mono(struct iosys_map *dst, const unsigned int *dst_pitc
- 	 * The mono destination buffer contains 1 bit per pixel
- 	 */
- 	if (!dst_pitch_0)
--		dst_pitch_0 = DIV_ROUND_UP(linepixels, 8);
-+		dst_pitch_0 = DIV_ROUND_UP(linepixels, 8 / bpp);
+ 	int xrest = x % 8;
+ 	u8 result = 0;
++	u8 row_len = 16 * bpp;
  
  	/*
- 	 * The dma memory is write-combined so reads are uncached.
-@@ -1349,13 +1338,88 @@ void drm_fb_xrgb8888_to_mono(struct iosys_map *dst, const unsigned int *dst_pitc
+ 	 * Transforms an (x, y) pixel coordinate into a vertical 8-bit
+@@ -233,7 +234,7 @@ static inline u8 st7571_transform_xy(const char *p, int x, int y)
  
- 	gray8 = (u8 *)src32 + len_src32;
+ 	for (int i = 0; i < 8; i++) {
+ 		int row_idx = y + i;
+-		u8 byte = p[row_idx * 16 + x];
++		u8 byte = p[row_idx * row_len + x];
+ 		u8 bit = (byte >> xrest) & 1;
  
--	vaddr += clip_offset(clip, fb->pitches[0], cpp);
-+	src += clip_offset(clip, fb->pitches[0], cpp);
- 	for (y = 0; y < lines; y++) {
--		src32 = memcpy(src32, vaddr, len_src32);
-+		src32 = memcpy(src32, src, len_src32);
- 		drm_fb_xrgb8888_to_gray8_line(gray8, src32, linepixels);
--		drm_fb_gray8_to_mono_line(mono, gray8, linepixels);
--		vaddr += fb->pitches[0];
--		mono += dst_pitch_0;
-+		xfrm_line(dst, gray8, linepixels);
-+		src += fb->pitches[0];
-+		dst += dst_pitch_0;
+ 		result |= (bit << i);
+@@ -300,11 +301,11 @@ static void st7571_prepare_buffer_grayscale(struct st7571_device *st7571,
+ 	struct iosys_map dst;
+ 
+ 	switch (fb->format->format) {
+-	case DRM_FORMAT_XRGB8888: /* Only support XRGB8888 in monochrome mode */
+-		dst_pitch = DIV_ROUND_UP(drm_rect_width(rect), 8);
++	case DRM_FORMAT_XRGB8888:
++		dst_pitch = DIV_ROUND_UP(drm_rect_width(rect), 4);
+ 		iosys_map_set_vaddr(&dst, st7571->hwbuf);
+ 
+-		drm_fb_xrgb8888_to_mono(&dst, &dst_pitch, vmap, fb, rect, fmtcnv_state);
++		drm_fb_xrgb8888_to_gray2(&dst, &dst_pitch, vmap, fb, rect, fmtcnv_state);
+ 		break;
+ 
+ 	case DRM_FORMAT_R1:
+@@ -330,7 +331,7 @@ static int st7571_fb_update_rect_monochrome(struct drm_framebuffer *fb, struct d
+ 
+ 	for (int y = rect->y1; y < rect->y2; y += ST7571_PAGE_HEIGHT) {
+ 		for (int x = rect->x1; x < rect->x2; x++)
+-			row[x] = st7571_transform_xy(st7571->hwbuf, x, y);
++			row[x] = st7571_transform_xy(st7571->hwbuf, x, y, 1);
+ 
+ 		st7571_set_position(st7571, rect->x1, y);
+ 
+@@ -355,14 +356,13 @@ static int st7571_fb_update_rect_grayscale(struct drm_framebuffer *fb, struct dr
+ 	rect->y2 = min_t(unsigned int, round_up(rect->y2, ST7571_PAGE_HEIGHT), st7571->nlines);
+ 
+ 	switch (format) {
+-	case DRM_FORMAT_XRGB8888:
+-		/* Threated as monochrome (R1) */
+-		fallthrough;
+ 	case DRM_FORMAT_R1:
+-		x1 = rect->x1;
+-		x2 = rect->x2;
++		x1 = rect->x1 * 1;
++		x2 = rect->x2 * 1;
+ 		break;
+ 	case DRM_FORMAT_R2:
++		fallthrough;
++	case DRM_FORMAT_XRGB8888:
+ 		x1 = rect->x1 * 2;
+ 		x2 = rect->x2 * 2;
+ 		break;
+@@ -370,7 +370,7 @@ static int st7571_fb_update_rect_grayscale(struct drm_framebuffer *fb, struct dr
+ 
+ 	for (int y = rect->y1; y < rect->y2; y += ST7571_PAGE_HEIGHT) {
+ 		for (int x = x1; x < x2; x++)
+-			row[x] = st7571_transform_xy(st7571->hwbuf, x, y);
++			row[x] = st7571_transform_xy(st7571->hwbuf, x, y, 2);
+ 
+ 		st7571_set_position(st7571, rect->x1, y);
+ 
+@@ -391,7 +391,7 @@ static int st7571_fb_update_rect_grayscale(struct drm_framebuffer *fb, struct dr
+ 			 * For monochrome formats, write the same value twice to get
+ 			 * either a black or white pixel.
+ 			 */
+-			if (format == DRM_FORMAT_R1 || format == DRM_FORMAT_XRGB8888)
++			if (format == DRM_FORMAT_R1)
+ 				regmap_bulk_write(st7571->regmap, ST7571_DATA_MODE, row + x, 1);
+ 		}
  	}
- }
-+
-+/**
-+ * drm_fb_xrgb8888_to_mono - Convert XRGB8888 to monochrome
-+ * @dst: Array of monochrome destination buffers (0=black, 1=white)
-+ * @dst_pitch: Array of numbers of bytes between the start of two consecutive scanlines
-+ *             within @dst; can be NULL if scanlines are stored next to each other.
-+ * @src: Array of XRGB8888 source buffers
-+ * @fb: DRM framebuffer
-+ * @clip: Clip rectangle area to copy
-+ * @state: Transform and conversion state
-+ *
-+ * DRM doesn't have native monochrome support. Drivers can use this function for
-+ * monochrome devices that don't support XRGB8888 natively. Such drivers can
-+ * announce the commonly supported XR24 format to userspace and use this function
-+ * to convert to the native format.
-+ *
-+ * This function copies parts of a framebuffer to display memory and converts the
-+ * color format during the process. Destination and framebuffer formats must match. The
-+ * parameters @dst, @dst_pitch and @src refer to arrays. Each array must have at
-+ * least as many entries as there are planes in @fb's format. Each entry stores the
-+ * value for the format's respective color plane at the same index.
-+ *
-+ * This function does not apply clipping on @dst (i.e. the destination is at the
-+ * top-left corner). The first pixel (upper left corner of the clip rectangle) will
-+ * be converted and copied to the first bit (LSB) in the first byte of the monochrome
-+ * destination buffer. If the caller requires that the first pixel in a byte must
-+ * be located at an x-coordinate that is a multiple of 8, then the caller must take
-+ * care itself of supplying a suitable clip rectangle.
-+ *
-+ *
-+ * This function uses drm_fb_xrgb8888_to_gray8() to convert to grayscale and
-+ * then the result is converted from grayscale to monochrome.
-+ */
-+
-+
-+void drm_fb_xrgb8888_to_mono(struct iosys_map *dst, const unsigned int *dst_pitch,
-+			     const struct iosys_map *src, const struct drm_framebuffer *fb,
-+			     const struct drm_rect *clip, struct drm_format_conv_state *state)
-+{
-+	drm_fb_xrgb8888_to_gray(dst[0].vaddr, dst_pitch, src[0].vaddr, fb, clip, state,
-+				1, drm_fb_gray8_to_mono_line);
-+}
- EXPORT_SYMBOL(drm_fb_xrgb8888_to_mono);
-+
-+/**
-+ * drm_fb_xrgb8888_to_gray2 - Convert XRGB8888 to gray2
-+ * @dst: Array of gray2 destination buffers
-+ * @dst_pitch: Array of numbers of bytes between the start of two consecutive scanlines
-+ *             within @dst; can be NULL if scanlines are stored next to each other.
-+ * @src: Array of XRGB8888 source buffers
-+ * @fb: DRM framebuffer
-+ * @clip: Clip rectangle area to copy
-+ * @state: Transform and conversion state
-+ *
-+ * This function copies parts of a framebuffer to display memory and converts the
-+ * color format during the process. Destination and framebuffer formats must match. The
-+ * parameters @dst, @dst_pitch and @src refer to arrays. Each array must have at
-+ * least as many entries as there are planes in @fb's format. Each entry stores the
-+ * value for the format's respective color plane at the same index.
-+ *
-+ * DRM doesn't have native gray2 support. Drivers can use this function for
-+ * gray2 devices that don't support XRGB8888 natively. Such drivers can
-+ * announce the commonly supported XR24 format to userspace and use this function
-+ * to convert to the native format.
-+ *
-+ * This function uses drm_fb_xrgb8888_to_gray8() to convert to grayscale and
-+ * then the result is converted from grayscale to gray2.
-+ */
-+void drm_fb_xrgb8888_to_gray2(struct iosys_map *dst, const unsigned int *dst_pitch,
-+			      const struct iosys_map *src, const struct drm_framebuffer *fb,
-+			      const struct drm_rect *clip, struct drm_format_conv_state *state)
-+{
-+	drm_fb_xrgb8888_to_gray(dst[0].vaddr, dst_pitch, src[0].vaddr, fb, clip, state,
-+				2, drm_fb_gray8_to_gray2_line);
-+}
-+EXPORT_SYMBOL(drm_fb_xrgb8888_to_gray2);
-diff --git a/include/drm/drm_format_helper.h b/include/drm/drm_format_helper.h
-index 562bc383ece4e90d96aa92b47b4f69609f825a6e..8488befafb7e0e0311f87bd2fef5011bab45065b 100644
---- a/include/drm/drm_format_helper.h
-+++ b/include/drm/drm_format_helper.h
-@@ -136,4 +136,8 @@ void drm_fb_xrgb8888_to_mono(struct iosys_map *dst, const unsigned int *dst_pitc
- 			     const struct iosys_map *src, const struct drm_framebuffer *fb,
- 			     const struct drm_rect *clip, struct drm_format_conv_state *state);
- 
-+void drm_fb_xrgb8888_to_gray2(struct iosys_map *dst, const unsigned int *dst_pitch,
-+			     const struct iosys_map *src, const struct drm_framebuffer *fb,
-+			     const struct drm_rect *clip, struct drm_format_conv_state *state);
-+
- #endif /* __LINUX_DRM_FORMAT_HELPER_H */
 
 -- 
 2.49.0
