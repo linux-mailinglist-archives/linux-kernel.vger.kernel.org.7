@@ -1,108 +1,163 @@
-Return-Path: <linux-kernel+bounces-730386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AB97B043DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:29:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B891B043F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67C227B1601
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:28:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3BB87B914A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEAD246BB6;
-	Mon, 14 Jul 2025 15:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E1425DB12;
+	Mon, 14 Jul 2025 15:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="d0Ba4E2X"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="edWjV44M"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B90254848
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7264625DAFF
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752506747; cv=none; b=CrYIa1MK3NxSLzZyQ/SroVjwMjp+6kB6EuPJWPFTnwNQ/R8eckYQiMKyqG0HYXoXZ03qALtEGnxLJ99ad0p/MUrNPRenfLgHAkUi0N1JVYpgoYfQn6++DjqQEckfzK4IsoiHXjPSE31+VWBAa4OxXISq1rI9InBJ4u0wjrtWTkI=
+	t=1752506767; cv=none; b=mA1olpm+QNKgMvGm/TmUQ/Zc86jXtKzH1fUVRomXzKZ5ewTUH8Xd878JQ+bh3p+UcL3ewLQMpBc98QneWiOesYGjamP+a9x8ps4Kk40rChdW2mXYqcfYKIafJcGLBOyhBfLO1nqWrWNNhbhYw768N2E/QnGMMN2C/wUsIlVn784=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752506747; c=relaxed/simple;
-	bh=D/Wj8AsdkHqTWNaaXM8tQekTCQ36OzCntggY/5Khy1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WgEIlH8rsVhixPvROdcDfCJmiy6dSlv7or24J7U7FmG2d9CqcMbSK26Is84sbmG2hqXCWSQ1r7W1YazHUOwbJjXyXXv7DcdtAJeCGLg5Zgmd76xnX2ISpErIi4pSfRad5kau+KKLCTYzpVnGPRftCvWw6QHrnhx25QJ2KqOVY9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=d0Ba4E2X; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-702cbfe860cso42905036d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:25:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1752506744; x=1753111544; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4zjJXXLh5+tZigrmWR5HYIKk25Y2UR8qF+dPi0kLozI=;
-        b=d0Ba4E2XJalsfqW2mZ7eOszM48fujgxi6LCSzw+RItXxqaKdshvbhdxQhj2V4YZBl8
-         JWXv3KRqrVQ0UgVKbsRlmOjca9rJ4hd7AuEzRQqhztOr5AAp3b17r9QUu3quZpBgJ7P9
-         rt8wxFzpF7J2RKTFVj0pgldHqchMO6Q1YjBek+Uf+7pCwoHZHnXtSI0+iUHxQkp06MPp
-         rdCmDHp4B6oTa7p9lkZC/vjciqorX9WoXoli9JeXZLSr5D7KqWK+JpWMEoYzYe1B6p0o
-         nZkJiaC+rGTKq2H45XgpEqS4mK6epzCwlKcoDaxTzHyZ97p83BpxfmRx3t4yjSgMfcCG
-         68yw==
+	s=arc-20240116; t=1752506767; c=relaxed/simple;
+	bh=B2nNnofCbdWQMLA1IZqPAeR1yiz8M/mYhPdaoGDi0a4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rhxp0xhQCvC4+M5jcquDW0TupE4k+WJ6Rse7yrTKCjk2Dl68jBtZ0KT9JaQOWN/UeZ1iSj8lVLtDC1ISzpZNALuNlNfoI3oR9t1sC03y/fbxaaTLH1kHi7nClGr5+R7SZEIn2ElI60iw8oqvsjPfVjfDNprtvoSNeCSv3EV8WyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=edWjV44M; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752506764;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1VHGCViQy1nmkV3DUJUcJGBuXbl9yxC8NPr6QML7nGo=;
+	b=edWjV44MxqVuyXtN4DBBYg5UOIt7D28loHnvRfNRb5h9s4ZLySGdqAxRAGM9mBRSmNU3Wt
+	/w8PA9aEZLWsUztd5cKGrc5DE4Ng1DEOcSlYeEa2v3coJQCk0JOCSdf0uxExYpwvURGO/l
+	XU41sCsNuko7NMy5teatVr6NoGE+tXw=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-664-WxyJcq6WMrWUU7R2mHG3hw-1; Mon, 14 Jul 2025 11:26:02 -0400
+X-MC-Unique: WxyJcq6WMrWUU7R2mHG3hw-1
+X-Mimecast-MFC-AGG-ID: WxyJcq6WMrWUU7R2mHG3hw_1752506761
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-451d30992bcso34582955e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:26:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752506744; x=1753111544;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4zjJXXLh5+tZigrmWR5HYIKk25Y2UR8qF+dPi0kLozI=;
-        b=M0oQNrn6WUZMNOFHdMQ8dNO3H4BKlynrKUcNFIj61U1lxlVBbM7nCKgB6DsCv2PiBm
-         vZLcKuV/Br9GKpfgAwatR2jBXDwfJqJoU9pt1plHqPpAbGpitu84GRUvywg/hJfA1Nkc
-         HFFOlOHb2Obym6EQ2LLUKd2vkdwlEpuN39rxpxzxnFRyEJAHxil4Era6Z37WadSeInla
-         no4E5EGNFs1ZH0JxxCUu6hbbwucVJrWkjcZQKpw6kKmkzv26bKMQv6pbkGtGp+NdN/1Y
-         Qpal4uLqb2ir5ma1OA4KAIwLaK92hd6WtbZkwVr0zWlsYE2xLSLFUgt5coYurz0O2/oE
-         2TIw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9QMzKoolvX5oFoirF0LsSzyFTp/i2DLwCzujvwBByShsbDQVDHxdsaJFR/pGZKNdEO9UeaCwwJ7IMbEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+HCvaLXNqxZGMKqI05nxOpbW9Br7IudNPwBiO0+KpgD3dg+Bp
-	JmDXm0rq8NOA1AoGe0HjadUtMPkBqLyJGG39VONovbQE+DY0UB9ZOyKylC/mvJCfSYw=
-X-Gm-Gg: ASbGnctIZWB5paFNmh/RzglkELynJIrvTiSJdkF1r9LoO20okyM05dK8s9eXkPGv3CN
-	UbL7fp+mxxh1za60GlFaIAyr7QR2VSrQKfZd1NFyxFbQCGg++IowyctArK0YqVkkXMZ0Oxdd++n
-	Nk8uW22ldxjEV0ttef9+/TtTF3Q+TPRIFFCj2HoPS9T10SkZ5i7cEh5bsZpAcEaCamJKdoh8RoD
-	78WM5+eZyPXKPscFwg6vB+9VxgUaI2xvg/fGM+HIt1OOsr1yo4u78IjcmDChU05H8xX78bGnGHk
-	g475wuReYzTwQNMzDUAI/bDQy4/jiYJA3JtzCbSTkZcoVGfYszWnFKxlsU23Xhb1ZeXNWZ/ekvG
-	SpwykEyhOWsTELLmcwXd+nA==
-X-Google-Smtp-Source: AGHT+IGbamWt1AigSEs9ivKOwpf41eWX2oLFFTHNBKRPHLRWhi9iVPDjxP+wb0xJDZlOHCzLCGEF4g==
-X-Received: by 2002:a05:6214:519b:b0:702:daca:9038 with SMTP id 6a1803df08f44-704a70175c0mr227046206d6.22.1752506744629;
-        Mon, 14 Jul 2025 08:25:44 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:365a:60ff:fe62:ff29])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-70497d895eesm48174306d6.96.2025.07.14.08.25.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 08:25:43 -0700 (PDT)
-Date: Mon, 14 Jul 2025 11:25:43 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: skip lru_note_cost() when scanning only file or anon
-Message-ID: <20250714152543.GC991@cmpxchg.org>
-References: <20250711155044.137652-1-roman.gushchin@linux.dev>
- <8734b21tie.fsf@linux.dev>
- <21100102-51b6-79d5-03db-1bb7f97fa94c@google.com>
+        d=1e100.net; s=20230601; t=1752506761; x=1753111561;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1VHGCViQy1nmkV3DUJUcJGBuXbl9yxC8NPr6QML7nGo=;
+        b=Z45436yRIzOExrLXOz3At9GuKx7IJLa9yTv3Gz+RnWkyXwbpM385uUwWnB7rYVM4NL
+         quzl1GrA+r1f5TnmMd9i3kUW2zsvzJsWLJhBaogohcnv2OpezPTO2SPqNklk+/1hb6B+
+         eOoryOhdA7mDd3D4utoURoOOW1dnsy0HIPXwEJvGtNAYtqvNMw+4s5Yx0cqqrbXMfsDg
+         clAocaqsPmeFV7QzZXTvspXL4BPeeXEOFIGPMBc2ncyYx+JRc4DlEAkD4+aDWfJitMzG
+         wGfmL5FHjO5c6bylYP8EgKmDyEKqxkSs9ogZ8xshB1rV60X7xpSTfh3p4rhymWEHVDYT
+         Hokw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQDdtmVZZinSOHbmTKGO6xFKSw2F5k4G7jKr5fLRkDtczQ/53z04bG5dbiDFwoUrrSTh8Nzwbm01ehhmw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz54h/chsRFJIZkRHHzWXYZxrqGvim2mZiUlnxb9epRCEzQ+fpz
+	mVT7BggsmuI/huWjBpO9cxQhr14LJi5NC+UcrRXQ68oyaxwCf4BPYHcCBs7wXAF7RfpezBmdyRX
+	j4xyjd5raBOcugf0VoKPYPcDYGImb/iNHLyEK8lMhrxhYmVBM/nVr8hI8PtOQJTcRpw==
+X-Gm-Gg: ASbGnctEW+S+woEE1J6c5OnRjdG7si5hUmccF5Q2AG1fiyYo+5pgV0JhaB2l7P0qDTX
+	6EYMNHBIyr3E8FTGHSyrILlrxuIL9PUPuCpZnmQo5KTlJYnyi95ayyC0DxxEvTbVc7SONcnV7tC
+	LeA3qe+6n5Y5KMdZu4KJCzjqwe1AS1QsJ35REB058YQgKXt+sJ/tW6dxLiUtDgLYzdvfZEOt0kW
+	OJJ5JzY+FcgihfR5LKoAXalEZ5CBpGy3u+/3jw8+YHFJKEtzMIArIAn0LJ+zmk2LotHqeVuwuSA
+	EhDojsCJL4aFBfWIzDrKSGYPP/k7VWa4r18grkeAPMv2CAQ9SLgJw0dguMPSt2hgEpGQh6NpW4l
+	Ka4DTxRztNz1e4icFKfnZoVtvUvYPaVWA9V9Vh5SYPuzoqO2WYn/sKb9q/7iMysp6
+X-Received: by 2002:a05:600c:8483:b0:440:6a1a:d89f with SMTP id 5b1f17b1804b1-455bd87a4a2mr110812185e9.4.1752506761044;
+        Mon, 14 Jul 2025 08:26:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEuOWgnY869Vy5HqhGIQqeATnGreqOqbm0tJKMjayVDKE7oxj+d5bWRSPH3Beio9jC9kUAbgQ==
+X-Received: by 2002:a05:600c:8483:b0:440:6a1a:d89f with SMTP id 5b1f17b1804b1-455bd87a4a2mr110811915e9.4.1752506760617;
+        Mon, 14 Jul 2025 08:26:00 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f38:ca00:ca3a:83da:653e:234? (p200300d82f38ca00ca3a83da653e0234.dip0.t-ipconnect.de. [2003:d8:2f38:ca00:ca3a:83da:653e:234])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4561d19a21dsm26792415e9.24.2025.07.14.08.25.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 08:26:00 -0700 (PDT)
+Message-ID: <d0b345c8-29be-4ca4-8243-de16583c93e2@redhat.com>
+Date: Mon, 14 Jul 2025 17:25:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <21100102-51b6-79d5-03db-1bb7f97fa94c@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] mm/mseal: separate out and simplify VMA gap check
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Pedro Falcato <pfalcato@suse.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Jeff Xu <jeffxu@chromium.org>
+References: <cover.1752497324.git.lorenzo.stoakes@oracle.com>
+ <f010ec1ce65f35dbe1fbd82ce002ea833a7128f3.1752497324.git.lorenzo.stoakes@oracle.com>
+ <ky2jvl6uyi75qwfmpwzmwu6qfnlwxshk2zunywe3pve2pshdxj@p2ihhzov3imx>
+ <cd3516af-8481-4418-9f72-a7738a9fd024@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Organization: Red Hat
+In-Reply-To: <cd3516af-8481-4418-9f72-a7738a9fd024@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jul 13, 2025 at 12:57:18PM -0700, Hugh Dickins wrote:
-> [PATCH] mm: lru_note_cost_unlock_irq()
+On 14.07.25 17:23, Lorenzo Stoakes wrote:
+> On Mon, Jul 14, 2025 at 04:17:23PM +0100, Pedro Falcato wrote:
+>> On Mon, Jul 14, 2025 at 02:00:39PM +0100, Lorenzo Stoakes wrote:
+>>> The check_mm_seal() function is doing something general - checking whether
+>>> a range contains only VMAs (or rather that it does NOT contain any unmapped
+>>> regions).
+>>>
+>>> Generalise this and put the logic in mm/vma.c - introducing
+>>> range_contains_unmapped(). Additionally we can simplify the logic, we are
+>>> simply checking whether the last vma->vm_end has either a VMA starting
+>>> after it or ends before the end parameter.
+>>>
+>>
+>> I don't like this. Unless you have any other user for this in mind,
+>> we'll proliferate this awful behavior (and add this into core vma code).
 > 
-> Dropping a lock, just to demand it again for an afterthought, cannot be
-> good if contended: convert lru_note_cost() to lru_note_cost_unlock_irq().
+> I'm not sure how putting it in an internal-only mm file perpetuates
+> anything.
 > 
-> Signed-off-by: Hugh Dickins <hughd@google.com>
+> I'm naming the function by what it does, and putting it where it belongs in
+> the VMA logic, and additionally making the function less horrible.
+> 
+> Let's not please get stuck on the isues with mseal implementation which
+> will catch-22 us into not being able to refactor.
+> 
+> We can do the refactoring first and it's fine to just yank this if it's not
+> used.
+> 
+> I'm not having a function like this sat in mm/mseal.c when it has
+> absolutely nothing to do with mseal specifically though.
+> 
+>>
+>> I have some patches locally to fully remove this upfront check, and AFAIK
+>> we're somewhat in agreement that we can simply nuke this check (for
+>> various reasons, including that we *still* don't have a man page for the
+>> syscall). I can send them for proper discussion after your series lands.
+> 
+> Yes I agree this check is odd, I don't really see why on earth we're
+> concerned with whether there are gaps or not, you'd surely want to just
+> seal whatever VMAs exist in the range?
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Probably because GAPs cannot be sealed. So user space could assume that 
+in fact, nothing in that area can change after a successful mseal, while 
+it can ...
+
+Not sure, though ...
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
