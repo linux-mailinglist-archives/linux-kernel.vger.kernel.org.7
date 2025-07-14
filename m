@@ -1,61 +1,63 @@
-Return-Path: <linux-kernel+bounces-729605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BBEAB03903
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:18:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D3FB0391D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6BC189D8CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:18:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 980F63BDFCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD257239E67;
-	Mon, 14 Jul 2025 08:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CBA2417C6;
+	Mon, 14 Jul 2025 08:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTqa48Ul"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Aaa8ezBu"
+Received: from smtp.smtpout.orange.fr (smtp-71.smtpout.orange.fr [80.12.242.71])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B232239E60
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E29323D285
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752481000; cv=none; b=UghevSqe5Td0Edhcw1jVio1yL2ufBt/QL89ngLUwpkyfyn6/OKpM5/gUCC+Ea8mZx+iKpPV44GcK9mGxTgTDSLtD5JGfZf/CzGpiPCAloXpMaTtn+5h/2GEyutGvOszPGJeQkzirm3WGrMI7qtuZoJq+1r7E4ylePFhOLl3l6rw=
+	t=1752481079; cv=none; b=QewCZsmIW1HOGSxKmFckSpR7AS+/2Qgl/33ogB/NO0wYJBbSJlCdg2oFyPko8DzGE6YG5S37apJ70CAoPjo62XD3i6gVPTPlHHbVNkrhrKrx8grNdqKuYdnwDL4STprHC1z0vN3fg16gaXCe9RjrWp/hY/sOdYwFM4/wTCFl6Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752481000; c=relaxed/simple;
-	bh=EXUNVHi0qvG4fFZ1xPIguHipbPUIz2io8+UJKpg8FyU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uOP7kwl7aRq9NqrWAQXVqSi762BUmt4VxLYLqpZMsOrIxfD7xSKnSHTfRpvgHnURMr1nVpgT7qaZ8z6ly0EXtk3aNB/HHUNFvZlseWOXIi9UJFCzcTZe16bcaxWnFtehl9E4+ySaTRfx9nePWn2dLptr3cN3aBWI8YP7QdCRl/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTqa48Ul; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68839C4CEED;
-	Mon, 14 Jul 2025 08:16:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752480999;
-	bh=EXUNVHi0qvG4fFZ1xPIguHipbPUIz2io8+UJKpg8FyU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZTqa48UlO78Li3onnWYC5vQW8yqGdlM649Pkr8uH4P6SI/5WTAAbNjVGWB5S9R1S4
-	 aQtjlseQIh7URWzGAN2CnyZWO1GkXpwR2tIGtMkhTLd5rytdwig2Hj3QWLlPtucMbZ
-	 Z+0ole/U3r2CaYcKXu+kT0bCzGa6sUnU4/WU1z+AkruB9NAKV7yhUTRBuPYvs8cSZ1
-	 1c6swSGzxDru7CQMUXKYap5O+NiY5xHX/XkkFRgZS+aPKv3XurelBpM6JtY5dDlBJv
-	 NogSKEh55G9ljgahYZYLacZnBUWqCrKZJrowdSU7iABgFWSsel0QEjFxS45xeSyX0y
-	 wzg1w3KAEWnTw==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Lijo Lazar <lijo.lazar@amd.com>,
-	Samuel Zhang <guoqing.zhang@amd.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	=?UTF-8?q?Marek=20Ol=C5=A1=C3=A1k?= <marek.olsak@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amdgpu: fix link error for !PM_SLEEP
-Date: Mon, 14 Jul 2025 10:16:25 +0200
-Message-Id: <20250714081635.4071570-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1752481079; c=relaxed/simple;
+	bh=6eKbJRC0egYYk0hIoQ1KegYpV6rakAhDZIFaxng8+HM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B3EwuJULb9eGEua+1oqP7xFg98BWKiN3gaI6Fpj8yMAyM6Diqm/T+6EuYH4y0xmNL82bM5EOmnAnuYg1q0TGsCBuCuJ7PXscuqzNQINucD3nUkVhc3JlQ7gvSZIQgI5VSX9/5jE3i2FDKyPVmuW6CZNrdCAXTs9M243Q2VzPSzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Aaa8ezBu; arc=none smtp.client-ip=80.12.242.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id bENfuHN2LILtwbENfuVI5i; Mon, 14 Jul 2025 10:17:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1752481069;
+	bh=4wZNbpRPzeGr+80jW4oHXMfPFK+sXJcG4wfEmFBYDPQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Aaa8ezBui2MyM1ToWtYkKEyRZNvJ0DJzCPXkp23ZPYw+jeYcsrQysBN+w6OVu7IK5
+	 gRstHYiSu5fcvhR1nV5fiJUsr9934vbmPWXmWuUdS3JhunfVQcxgdwvnlqWjLCkXS5
+	 RqUaB69YSNrrlCdpIoNjTKRq5tMRW9FvtOamf8Va57/MX4roAjA/R60c1PRNWHk68y
+	 5axep6sQLYfhMKLZCB31E3HRe8VcTYGdTElmo2KoD9oyDU82vUWRg/TFelHOqVT4C4
+	 Q/qvlOzq5sYc2kIMbJku1o/bdco8enBZqXoq6YWX0qxyYFS2dFtO1Csh2GpiMzwioo
+	 p59BtZ72eK9Kw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 14 Jul 2025 10:17:49 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: willy@infradead.org,
+	srini@kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v3 0/3] ida: Remove the ida_simple_xxx() API
+Date: Mon, 14 Jul 2025 10:17:07 +0200
+Message-ID: <cover.1752480043.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,62 +66,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+This is the final steps to remove the ida_simple_xxx() API.
 
-When power management is not enabled in the kernel build, the newly
-added hibernation changes cause a link failure:
+This serie was last proposed in August 2024. Since then, some users
+of the old API have be re-introduced and then removed.
 
-arm-linux-gnueabi-ld: drivers/gpu/drm/amd/amdgpu/amdgpu_drv.o: in function `amdgpu_pmops_thaw':
-amdgpu_drv.c:(.text+0x1514): undefined reference to `pm_hibernate_is_recovering'
+A first time in drivers/misc/rpmb-core.c, added in commit 1e9046e3a154
+("rpmb: add Replay Protected Memory Block (RPMB) subsystem") (2024-08-26)
+and removed in commit dfc881abca42 ("rpmb: Remove usage of the
+deprecated ida_simple_xx() API") (2024-10-13).
 
-Make the power management code in this driver conditional on
-CONFIG_PM and CONFIG_PM_SLEEP
+A second time in drivers/gpio/gpio-mpsse.c, added in commit c46a74ff05c0
+("gpio: add support for FTDI's MPSSE as GPIO") (2024-10-14) and removed
+in commit f57c08492866 (gpio: mpsse: Remove usage of the deprecated
+ida_simple_xx() API) (2024-11-22).
 
-Fixes: 530694f54dd5 ("drm/amdgpu: do not resume device in thaw for normal hibernation")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+Since then, I've not spotted any new usage.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-index 021defca9b61..66b5b3260fb9 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-@@ -2963,15 +2963,15 @@ long amdgpu_drm_ioctl(struct file *filp,
- }
- 
- static const struct dev_pm_ops amdgpu_pm_ops = {
--	.prepare = amdgpu_pmops_prepare,
--	.complete = amdgpu_pmops_complete,
--	.suspend = amdgpu_pmops_suspend,
--	.suspend_noirq = amdgpu_pmops_suspend_noirq,
--	.resume = amdgpu_pmops_resume,
--	.freeze = amdgpu_pmops_freeze,
--	.thaw = amdgpu_pmops_thaw,
--	.poweroff = amdgpu_pmops_poweroff,
--	.restore = amdgpu_pmops_restore,
-+	.prepare = pm_sleep_ptr(amdgpu_pmops_prepare),
-+	.complete = pm_sleep_ptr(amdgpu_pmops_complete),
-+	.suspend = pm_sleep_ptr(amdgpu_pmops_suspend),
-+	.suspend_noirq = pm_sleep_ptr(amdgpu_pmops_suspend_noirq),
-+	.resume = pm_sleep_ptr(amdgpu_pmops_resume),
-+	.freeze = pm_sleep_ptr(amdgpu_pmops_freeze),
-+	.thaw = pm_sleep_ptr(amdgpu_pmops_thaw),
-+	.poweroff = pm_sleep_ptr(amdgpu_pmops_poweroff),
-+	.restore = pm_sleep_ptr(amdgpu_pmops_restore),
- 	.runtime_suspend = amdgpu_pmops_runtime_suspend,
- 	.runtime_resume = amdgpu_pmops_runtime_resume,
- 	.runtime_idle = amdgpu_pmops_runtime_idle,
-@@ -3116,7 +3116,7 @@ static struct pci_driver amdgpu_kms_pci_driver = {
- 	.probe = amdgpu_pci_probe,
- 	.remove = amdgpu_pci_remove,
- 	.shutdown = amdgpu_pci_shutdown,
--	.driver.pm = &amdgpu_pm_ops,
-+	.driver.pm = pm_ptr(&amdgpu_pm_ops),
- 	.err_handler = &amdgpu_pci_err_handler,
- 	.dev_groups = amdgpu_sysfs_groups,
- };
+So things being stable now, it's time to end this story once and for good.
+
+
+Patch 1 updates the test suite. This is the last users of the API.
+
+Patch 2 removes the old API.
+
+Patch 3 is just a minor clean-up that still speak about the old API.
+
+Christophe JAILLET (3):
+  idr test suite: Remove usage of the deprecated ida_simple_xx() API
+  ida: Remove the ida_simple_xxx() API
+  nvmem: Update a comment related to struct nvmem_config
+
+ include/linux/idr.h                 |  8 --------
+ include/linux/nvmem-provider.h      |  2 +-
+ tools/testing/radix-tree/idr-test.c | 16 +++++++---------
+ 3 files changed, 8 insertions(+), 18 deletions(-)
+
 -- 
-2.39.5
+2.50.1
 
 
