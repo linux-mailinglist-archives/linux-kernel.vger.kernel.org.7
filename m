@@ -1,149 +1,89 @@
-Return-Path: <linux-kernel+bounces-730917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49323B04C70
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:39:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15FC1B04C75
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88FA84A36EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:38:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5524F4A381F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6337B1DED40;
-	Mon, 14 Jul 2025 23:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WUZGo1tN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC87622F76E;
+	Mon, 14 Jul 2025 23:39:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF36277CB0
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 23:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A1C2561D1
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 23:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752536331; cv=none; b=lTXixs5rK3OOXafg64TLzmD0ehKopYq5umdy+Lf/3GNvrXJ7wI882Vs5dsWy9TK8grDx39r7ieUVZix+x/US0fhmL5wV6sLoSiOBb6hQN5iw30ujnqpfBQ+EMBSZu5FqkXxoEwtfJC/Xf7D/JmmJVWC12j6unu8/jJGrJFTOsAA=
+	t=1752536345; cv=none; b=p4abatdLBWOQt44WWkaWVjftf9DtorQIIDbihUTQegpc9Ir+tR555DfIq/Epr25F52Q/1aIWH2sWFIhzfWHRf6MKo4092Qp2r7vcdphP31afD3umF4mJ4m8F2S8SmL0gok6gxAei2IxHkVu8Jufqw2KS6wL19V13BSq/5f2sapE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752536331; c=relaxed/simple;
-	bh=GmMQmFSg0AJVI5JP9hjR+rt4PIAIy16GY7WuNnosvI0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=gU41wNtk24pNZ6qdR4BsEETIZnGKMhhZvGUcH8Qw6wcMxjDI+yc55hLBgOYCao5L2dlICtIxRq7M5GFr11KFXL04asmgWwlrccBIYdcA2H0WYUfiRNg5Ur29UC0I9FN4dsSn0et66qZcYo8K4Y9fvCVeVYwOXLAQ3sxtNdFStdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WUZGo1tN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D64E9C4CEFE;
-	Mon, 14 Jul 2025 23:38:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752536331;
-	bh=GmMQmFSg0AJVI5JP9hjR+rt4PIAIy16GY7WuNnosvI0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WUZGo1tNinaRtIURCuY6icV/ahZodUH+zw5nhZ7YKkBgniM+Br6WIt2YPGLESwSY8
-	 b0aZ67BGp12GMtTR4mFNIZL8im5I208cPZzvo9EB/QEOkyHxmwPztZALCrz4xVLnqc
-	 jaFuY0str56bhfBKjHenIW9lqm8s7f9zuJGb/TKY=
-Date: Mon, 14 Jul 2025 16:38:50 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Matt Fleming <matt@readmodwrite.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@cloudflare.com, Marco Elver
- <elver@google.com>, Alexander Potapenko <glider@google.com>, Andrey
- Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, Oscar
- Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>, Matt
- Fleming <mfleming@cloudflare.com>
-Subject: Re: [PATCH] stackdepot: Make max number of pools boot-time
- configurable
-Message-Id: <20250714163850.e58dd109d4c9e0d191995405@linux-foundation.org>
-In-Reply-To: <20250714143332.264997-1-matt@readmodwrite.com>
-References: <20250714143332.264997-1-matt@readmodwrite.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752536345; c=relaxed/simple;
+	bh=JA7JIyohv6KpJIi6c3GqiTQVtKiGdSnXxxLH47r7J40=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=n76hKpZGayAhrFdWUJqXuxqCVr5WlTPAHbqnqL9iiK4tJzo95AL1d95e6ltukPDf7+1zjBa4hXKjTlQeQtKBrU7rropBB/CiAGJIrGtHU+ck4f/MhsO6DNStJrerbPhHXTcWQPOQgLmn+8gaJ6URVQ9ybg075uXoTYqZ+v7+syA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-86cfea700daso455028239f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 16:39:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752536343; x=1753141143;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s/pz0JPSLrwcXULwEX8WsSET6ZklGL5HqsXo8ZbZ+FI=;
+        b=qU6eUL+G4w5SRjtw62tBtNPhk1tnVjasL8XGOxOG9ac9u4wOudtrPrd32Co0SDeDkT
+         moqev675vLEHhMAPceRqTSbOhw+AnwSrSpSJOMwb+B/hyqjkj1Gp0Nf9oFrPzKJdPCeH
+         BoQcSrZf3DMc2RLmwOsStt16MtDA4FGyAsHG458csoNQHCuCS4H+/QFsagmuwEgocAK0
+         H8hoCCbwWXJAffpFjODAXiIxlRhLy2ScJ0cxkRPgychpgiRW3AIs/TqjJZPj261dcAE1
+         I6Wt161cGzOYP9C8qoFW74d9jWKlKSxUlxDL647f+GL0PHGtwE7Orb6+6vEwLqjeHsvG
+         kqPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXYO6Zf4h22z+FRwT6TzdddBJbD62N13qB2/Jju5iHBwl5T0E+WhbGFIq7yThAytcCcbRPg6S1oATXHzoQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywwokgo6+8w0KfnqnGd2HdJ7upqcKsbgwis4j9ldii2cbqG87CJ
+	I1paMJpQtOa5fDLDaFZbtjrP0uFc26ZvNlDdogpOiPuou1VWuZuqwDD4M46ZCJcgnT7Ys/RL7mq
+	1bCzMyR/ntiex+lZAi0I2dJh+OoEh3Qos26wrejnck5zxSjvGYVbCFemIdpI=
+X-Google-Smtp-Source: AGHT+IHNPx8IATVQPVtElxwALygbQqQ0jiz1LbPETazjmI4hxou9gdLHNtXOyxwUb9iJ/3mq1wLYBv977x2xRxgNM7Tfid9P98bc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:7402:b0:873:35c8:16f9 with SMTP id
+ ca18e2360f4ac-8797882781amr1362237939f.8.1752536343204; Mon, 14 Jul 2025
+ 16:39:03 -0700 (PDT)
+Date: Mon, 14 Jul 2025 16:39:03 -0700
+In-Reply-To: <9008807c-58c6-4b2d-b227-545882436ec6@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68759517.a70a0220.18f9d4.0010.GAE@google.com>
+Subject: Re: [syzbot] [cgroups?] WARNING in css_rstat_exit
+From: syzbot <syzbot+8d052e8b99e40bc625ed@syzkaller.appspotmail.com>
+To: cgroups@vger.kernel.org, hannes@cmpxchg.org, inwardvessel@gmail.com, 
+	linux-kernel@vger.kernel.org, mkoutny@suse.com, shakeel.butt@linux.dev, 
+	syzkaller-bugs@googlegroups.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 14 Jul 2025 15:33:32 +0100 Matt Fleming <matt@readmodwrite.com> wrote:
+Hello,
 
-> From: Matt Fleming <mfleming@cloudflare.com>
-> 
-> We're hitting the WARN in depot_init_pool() about reaching the stack
-> depot limit because we have long stacks that don't dedup very well.
-> 
-> Introduce a new start-up parameter to allow users to set the number of
-> maximum stack depot pools.
-> 
-> ...
->
-> --- a/lib/stackdepot.c
-> +++ b/lib/stackdepot.c
-> @@ -42,6 +42,8 @@
->  	(((1LL << (DEPOT_POOL_INDEX_BITS)) - 1 < DEPOT_POOLS_CAP) ? \
->  	 (1LL << (DEPOT_POOL_INDEX_BITS)) - 1 : DEPOT_POOLS_CAP)
->  
-> +static unsigned int stack_max_pools = DEPOT_MAX_POOLS;
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Geeze that was all quite the mouthful.  Can't we just do this?
+failed to apply patch:
+checking file kernel/cgroup/cgroup.c
+patch: **** unexpected end of file in patch
 
---- a/lib/stackdepot.c~a
-+++ a/lib/stackdepot.c
-@@ -36,13 +36,11 @@
- #include <linux/memblock.h>
- #include <linux/kasan-enabled.h>
- 
--#define DEPOT_POOLS_CAP 8192
--/* The pool_index is offset by 1 so the first record does not have a 0 handle. */
--#define DEPOT_MAX_POOLS \
--	(((1LL << (DEPOT_POOL_INDEX_BITS)) - 1 < DEPOT_POOLS_CAP) ? \
--	 (1LL << (DEPOT_POOL_INDEX_BITS)) - 1 : DEPOT_POOLS_CAP)
--
--static unsigned int stack_max_pools = DEPOT_MAX_POOLS;
-+/*
-+ * The pool_index is offset by 1 so the first record does not have a 0 handle.
-+ */
-+static unsigned int stack_max_pools __read_mostly =
-+	MIN((1LL << DEPOT_POOL_INDEX_BITS) - 1, 8192);
- 
- static bool stack_depot_disabled;
- static bool __stack_depot_early_init_requested __initdata = IS_ENABLED(CONFIG_STACKDEPOT_ALWAYS_INIT);
-_
 
-(please add this to the next version)
 
-(but why do we do this min() at all?  Why not simply use (1<<DEPOT_POOL_INDEX_BITS)?)
+Tested on:
 
-(shouldn't that 8192 be 8191?  Seems oddly inconsistent)
-
-> @@ -101,6 +103,33 @@ static int __init disable_stack_depot(char *str)
->  }
->  early_param("stack_depot_disable", disable_stack_depot);
->  
-> +static int __init parse_max_pools(char *str)
-> +{
-> +	const long long limit = (1LL << (DEPOT_POOL_INDEX_BITS)) - 1;
-
-Expands to
-limit = (1LL << (((sizeof(depot_stack_handle_t) * 8) - (2 + 12 - 4) - 5))) - 1;
-which is 131071.
-
-This seems a reasonable limit.  If we are to have any limit at all. 
-Why do we have a limit?
-
-> +	unsigned int max_pools;
-> +	int rv;
-> +
-> +	rv = kstrtouint(str, 0, &max_pools);
-> +	if (rv)
-> +		return rv;
-> +
-> +	if (max_pools < 1024) {
-> +		pr_err("stack_depot_max_pools too low, using default\n");
-> +		goto out;
-> +	}
-> +
-> +	if (max_pools > limit) {
-> +		pr_err("stack_depot_max_pools too high, using default\n");
-
-If user hits this they're going to tear hair figuring out the actual
-limit.  So how about "stack_depot_max_pools exceeds %d, using default
-of %d".
-
+commit:         347e9f50 Linux 6.16-rc6
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=84eae426cbd8669c
+dashboard link: https://syzkaller.appspot.com/bug?extid=8d052e8b99e40bc625ed
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16e3fd82580000
 
 
