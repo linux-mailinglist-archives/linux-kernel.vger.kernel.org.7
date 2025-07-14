@@ -1,54 +1,87 @@
-Return-Path: <linux-kernel+bounces-730258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22DF4B041FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:41:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B6DB04201
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DFFC3A2FAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:41:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B95D8171685
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5713425744F;
-	Mon, 14 Jul 2025 14:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B84B2571D4;
+	Mon, 14 Jul 2025 14:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DWqN3P1g"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b7M93jM4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC2B14A60F;
-	Mon, 14 Jul 2025 14:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9E42561AE
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752504095; cv=none; b=QngLU1MTd6z4vStNVsI6HePMgjaZbeCi1TPiutGvr8jdCMS0YmSicJFDGid6egnAe9zhYy00gFf9+Ahqe97ce9ArGklXFSIi8PraQW39nMFQ2G0OLthgenY3UXKGfIzNShCgt9AIaBwGlnOPvvSrZ0xa0TbeyHYhf/mIYH/Q6jo=
+	t=1752504122; cv=none; b=AAq8ixhpgBgaER/86C2UKVRFdq96/UxN7c0kNickO59Xu0EjJNZIIJK8cbXsbtEo11qdi5+jE/zozEBGigJTvQAacFVC+y6BjRC6jkW7v4ynmuJs07ukaYW7zaWZX7qqGjOMuCPKNm0ETjoDgaEJ3Zgj+GWMn6HwxRMfZkabahQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752504095; c=relaxed/simple;
-	bh=Fz/d3uILd9FczXZOmPm/sOeGs9pVqLhoY4n9Jd808lc=;
+	s=arc-20240116; t=1752504122; c=relaxed/simple;
+	bh=hEwuaejv2lup+7bKSClcCKg4jBAz1j/grkIQ5qrq6gg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tNZUIb/fCEJMgBCFmzPG4FVdkcLbJ9UgS/kMGbemHoVY7ue5YWAqqd3oVmCzlGZ/D1wpxgsyFOs42EArhAElB26BPfuwMobMMS/3pEokjd2i0Lzvk9GZxsi+nu8Ai2q1ZPcqfH857Lyz1ZwMhuxl9vpOZialAa+K2RmoRMwMpuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DWqN3P1g; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1752504092;
-	bh=Fz/d3uILd9FczXZOmPm/sOeGs9pVqLhoY4n9Jd808lc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DWqN3P1gZB07xBDPA94x9vftku2YsQluF4nLOPZsKQcPfqd989ajB1sq6zTe8whzK
-	 xhdSryo4lp8qEa3OgV+z5FTy1b09RHlPqknRNW8+hoSLzWhoU9gceoOSa94iVbQDqm
-	 4hD2aNkCHMmzrRGd++OSkCz9S6sDoVS23Wo9rBH5PNzubIbgJqQqn4YiHTW8wEuMfw
-	 awiyxdXkvilc8qYRSecHdRcWwAH6bhpV4NGj7UsHcUW8UtM6oUVA1BV4MOSIjoRPL2
-	 +uXF4GISJoWiXJqa30pZasMQwSxrxczPgw4N2vZwpOVXzvHudLDMkPPRh0MxOr+fWi
-	 bYp6HXUxT6pkQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4B5F017E0DD7;
-	Mon, 14 Jul 2025 16:41:31 +0200 (CEST)
-Message-ID: <fd561a8c-f1a7-41c2-a686-abc89f5fa555@collabora.com>
-Date: Mon, 14 Jul 2025 16:41:30 +0200
+	 In-Reply-To:Content-Type; b=hQFeEnxYUqXglShBBrpznSQ4T0YrcfD8sgaRYQlJaDvzFKUTpELoxDvReyJ7dS+m5NuseTgezWggXHN3QAY6P8kT4SA4LqvrnCvrxlKbI28HjZE97b62jGRDDRDqnDak5T1BOnCROHtBlI9tVsAHZtifOUO+FFNn76QGfQwnenY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b7M93jM4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752504119;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6XSp3g2fAIWlkOffxIKmWmNhMdOSyZK3SoWUfVwFhRE=;
+	b=b7M93jM4sxvzzx0c3Hnw9j5XMH/Y/qK/bwlsbIIkvwFhuHETZW/4JaGNQZIDFqzHcbF3T8
+	+MFGrzv8lRwf4kAF20bPta+rwc8sUv4+I0TuzBuZOFZNapWoXB3jnRGUxooWhEpmcSdkTl
+	Qg2+o5OlaGDouVi867Uc85wom+QID/0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-265-aZySKOKVMtyrprRpPjZa4A-1; Mon, 14 Jul 2025 10:41:58 -0400
+X-MC-Unique: aZySKOKVMtyrprRpPjZa4A-1
+X-Mimecast-MFC-AGG-ID: aZySKOKVMtyrprRpPjZa4A_1752504117
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45359bfe631so27149945e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 07:41:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752504117; x=1753108917;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6XSp3g2fAIWlkOffxIKmWmNhMdOSyZK3SoWUfVwFhRE=;
+        b=tdLvZFePwm/dYWsE9Wjz53/vKS+nWB2fh2G5D9s3hR0oJgkZRL4+ntB8lJkRcwSl17
+         wcKuzNNNGEwDNTvWXPZbJCxr02MKcEnL3mXhnIhFj51CRMd9i94jqJ+zXqn+cRpSaszH
+         KtbYX08drxkQAiUfZtwS991oTK6MDbpPg+m3a08SNS/3YL/Q84FvGaAv48+cXxVmxlaA
+         F5Vs1cw5uYfmbpLwKs27rS3WytchDCHR1lbACPYAFoZd4nIDffrkr17t/fg5MH4sUy/c
+         1Fqtbqe3g83mSux5W7PBoCZb+VPJ6jA8cLXe0qWepeKkG1DkaYzhGaoHD0wrTTea4VtS
+         Abzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZXn5Zf2HuKCMrxmZ19VnLZDHvBBQq/W0O45MwmEpo+Lv3vVpKkHc089Cl2+uSsI3d9jvZycmGfjbrrYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLcYEbiV7zfVPINf8Udi8gzs4G92HM/tPkhl5Hdh9kiBlYpmUA
+	rTLGim729bScKQUMxIyqJsWnqctP5QLojG/OQRHtYefab0vba/6EMtVt0zWOpwYV47Hr2opnyTy
+	D/GZlk61X0Dzv6jFotkjncBQoww5ZdepwBf+P5ZHfUz8ar6cXKlfAo+osYGrjFaS5MA==
+X-Gm-Gg: ASbGnctkLCNrzcUdAd0T5Y1tMIdKATvEQ8G+Q5yNJnP42oPrQ4yr1t8M82Weh/8fn9H
+	OUhgXKIKeX+DKON3ztd0XXl1NFCaEcBLjPDZOhBIYynj9RJdp/9BZ6uZ1dPN4XNxLkPAGscr+jc
+	tYBIoBRZJWYKxriLaM72KEy/EjNcCmLVRV4gN90wFvHUPlla14xaSOGUZsMRMkFNKutyOE1BeGG
+	ssEazb8Mu4LpKZsvoR0zE5DarhNqJ5kwITA/iZ444LNk5S0eoAkdbTI1x10284121LtgNWa4VQL
+	jPTn6mf3ciGJZU+TmvF3x1ED5+rBA4Wl4f+G+7g1h5M5z35VqVdQbxS8F6Hn6NoAl+rMwE/I4Uy
+	iQoNF7mKGSkyx6Q++ilZjqffEZJOwAPxrKkh4cHnbt3uCFYIyk1FjP5OXynxTi3T2
+X-Received: by 2002:a05:600c:a216:b0:450:d386:1afb with SMTP id 5b1f17b1804b1-45555e4c191mr83447125e9.9.1752504117111;
+        Mon, 14 Jul 2025 07:41:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHpAwsbfGFLRxIAqd4lnQYU1wvx/si6+mPOar46wAeNRpM9iaWeamMTKNQf0GzctApu37HEtQ==
+X-Received: by 2002:a05:600c:a216:b0:450:d386:1afb with SMTP id 5b1f17b1804b1-45555e4c191mr83446895e9.9.1752504116695;
+        Mon, 14 Jul 2025 07:41:56 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f38:ca00:ca3a:83da:653e:234? (p200300d82f38ca00ca3a83da653e0234.dip0.t-ipconnect.de. [2003:d8:2f38:ca00:ca3a:83da:653e:234])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc201asm12455795f8f.22.2025.07.14.07.41.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 07:41:56 -0700 (PDT)
+Message-ID: <88ad463c-b5a1-431a-9a0e-ed7e39e86c18@redhat.com>
+Date: Mon, 14 Jul 2025 16:41:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,154 +89,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: cpufreq: Add
- mediatek,mt8196-cpufreq-hw binding
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: kernel@collabora.com, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-References: <20250714-mt8196-cpufreq-v2-0-cc85e78855c7@collabora.com>
- <20250714-mt8196-cpufreq-v2-1-cc85e78855c7@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 4/5] mm/mseal: separate out and simplify VMA gap check
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
+References: <cover.1752497324.git.lorenzo.stoakes@oracle.com>
+ <f010ec1ce65f35dbe1fbd82ce002ea833a7128f3.1752497324.git.lorenzo.stoakes@oracle.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-In-Reply-To: <20250714-mt8196-cpufreq-v2-1-cc85e78855c7@collabora.com>
+Organization: Red Hat
+In-Reply-To: <f010ec1ce65f35dbe1fbd82ce002ea833a7128f3.1752497324.git.lorenzo.stoakes@oracle.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Il 14/07/25 16:08, Nicolas Frattaroli ha scritto:
-> The MediaTek MT8196 SoC has new cpufreq hardware, with added memory
-> register ranges to control Dynamic-Voltage-Frequency-Scaling.
+On 14.07.25 15:00, Lorenzo Stoakes wrote:
+> The check_mm_seal() function is doing something general - checking whether
+> a range contains only VMAs (or rather that it does NOT contain any unmapped
+> regions).
 > 
-> The DVFS hardware is controlled through a set of registers referred to
-> as "FDVFS"; one is a location from which a magic number is read to
-> ensure DVFS should be used, the other is a region to set the desired
-> target frequency that DVFS should aim towards for each performance
-> domain.
+> Generalise this and put the logic in mm/vma.c - introducing
+> range_contains_unmapped(). Additionally we can simplify the logic, we are
+> simply checking whether the last vma->vm_end has either a VMA starting
+> after it or ends before the end parameter.
 > 
-> Instead of working around the old binding and its already established
-> meanings for the reg items, add a new binding. The FDVFS register memory
-> regions are at the beginning, which allows us to easily expand this
-> binding for future SoCs which may have more than 3 performance domains.
+> No functional change intended.
 > 
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
->   .../cpufreq/mediatek,mt8196-cpufreq-hw.yaml        | 86 ++++++++++++++++++++++
->   1 file changed, 86 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/cpufreq/mediatek,mt8196-cpufreq-hw.yaml b/Documentation/devicetree/bindings/cpufreq/mediatek,mt8196-cpufreq-hw.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..26bf21e05888646b4d1bdac95bfba0f36e037ffd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/cpufreq/mediatek,mt8196-cpufreq-hw.yaml
-> @@ -0,0 +1,86 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/cpufreq/mediatek,mt8196-cpufreq-hw.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek CPUFreq for MT8196 and related SoCs
 
-title: MediaTek Hybrid CPUFreq for MT8196/MT6991 series SoCs
+Acked-by: David Hildenbrand <david@redhat.com>
 
-> +
-> +maintainers:
-> +  - Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> +
-> +description:
-> +  MT8196 uses CPUFreq management hardware that supports dynamic voltage
-> +  frequency scaling (dvfs), and can support several performance domains.
-> +
-> +properties:
-> +  compatible:
-> +    const: mediatek,mt8196-cpufreq-hw
-> +
-> +  reg:
-> +    items:
-> +      - description: FDVFS magic number register region
-
-As already said in the other commit, we might just be able to avoid adding the
-magic number register region :-)
-
-> +      - description: FDVFS control register region
-> +      - description: OPP tables and control for performance domain 0
-> +      - description: OPP tables and control for performance domain 1
-> +      - description: OPP tables and control for performance domain 2
-> +
-> +  "#performance-domain-cells":
-> +    description:
-> +      Number of cells in a performance domain specifier. Must be 1.
-
-The description is redundant and doesn't add any real information, I think you
-should drop it.
-
-Bindings maintainers, please, opinions?
-
-> +    const: 1
-> +
-
-Everything else looks good to me.
-
+-- 
 Cheers,
-Angelo
 
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#performance-domain-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    cpus {
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            cpu0: cpu@0 {
-> +                device_type = "cpu";
-> +                compatible = "arm,cortex-a720";
-> +                enable-method = "psci";
-> +                performance-domains = <&performance 0>;
-> +                reg = <0x000>;
-> +            };
-> +
-> +            /* ... */
-> +
-> +            cpu6: cpu@600 {
-> +                device_type = "cpu";
-> +                compatible = "arm,cortex-x4";
-> +                enable-method = "psci";
-> +                performance-domains = <&performance 1>;
-> +                reg = <0x600>;
-> +            };
-> +
-> +            cpu7: cpu@700 {
-> +                device_type = "cpu";
-> +                compatible = "arm,cortex-x925";
-> +                enable-method = "psci";
-> +                performance-domains = <&performance 2>;
-> +                reg = <0x700>;
-> +            };
-> +    };
-> +
-> +    /* ... */
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        performance: performance-controller@c2c2034 {
-> +            compatible = "mediatek,mt8196-cpufreq-hw";
-> +            reg = <0 0xc2c2034 0 0x4>, <0 0xc220400 0 0x20>,
-> +                  <0 0xc2c0f20 0 0x120>, <0 0xc2c1040 0 0x120>,
-> +                  <0 0xc2c1160 0 0x120>;
-> +            #performance-domain-cells = <1>;
-> +        };
-> +    };
-> 
+David / dhildenb
+
 
