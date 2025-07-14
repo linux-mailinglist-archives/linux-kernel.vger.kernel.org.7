@@ -1,160 +1,81 @@
-Return-Path: <linux-kernel+bounces-729972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0EDB03E78
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:17:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610B0B03E79
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64B351A61FEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:17:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4B273B32EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15CE24502D;
-	Mon, 14 Jul 2025 12:17:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BED980B;
-	Mon, 14 Jul 2025 12:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7B3246BBA;
+	Mon, 14 Jul 2025 12:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShpKcoSw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18671E9B21;
+	Mon, 14 Jul 2025 12:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752495442; cv=none; b=RGH+h/eXStW/+zXh683NeGhuxStuHjgaLlUvuF+eaFv75jCx6Hk6B6LPwvoolNd9FkHIKYdGVC7my1EEGkXZzi4rOqf+Wes26HXLaFHQexsnR+m3uHavkyAM5faPlCeH9LzVYP9+2yHFgvUGTDSwmaq8P7LTY1HoYn9H9n4q5Ls=
+	t=1752495462; cv=none; b=FCSh4rbEmlk7XzkgIfrdesZMy660sZxVHBnNjIXntJ+miFHVtvEPfuJyV6ea4nlbKwMdZEl9/CBxSCU9A8TumNxk4bKHcCCDCg/YGWCwq0mQrUbjsnrCVCg9R4jgN5dasxa1ahcrTCgep1swkL5IwE2b4sF52QiTKjAOogkdf4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752495442; c=relaxed/simple;
-	bh=rVzCRsG6jbe1SFUCABKrLG0KeTKJrBiOOgY3bakeaSk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DJSLC7vRCMrszNTR5On0CGu0Xx7D7VY2X7bRmjsEqllYDAZJsoYA1OQbkGR7ICJu0qxKSehVGfLZdEak5lxpyRJrNxIyqRMfDuLlevw+SwJHXUnf03eh9EZ3omsjXTwoeGLri04Sy7plMoE370DwLooOjIEcq3Nha1ZQRhKbIHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A8471BC0;
-	Mon, 14 Jul 2025 05:17:10 -0700 (PDT)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 13B0D3F694;
-	Mon, 14 Jul 2025 05:17:17 -0700 (PDT)
-Message-ID: <e89b250a-7e9b-45fa-9e81-fc071487078b@arm.com>
-Date: Mon, 14 Jul 2025 14:16:25 +0200
+	s=arc-20240116; t=1752495462; c=relaxed/simple;
+	bh=fDezF0nJjErwuEBNTTQi89g3s72rqXCrWgP7mRRutRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TzKlXHrqjp9MN/S6FYynrIQIs71TAwPSJ+X7ssqX+GnvYFl4/Jvc1RaK1dhjxW6qMfGsAizMkJw7xN/i4cQPVC/60eU7pO6XgvqLv3QyiOndJiw0N2C//90Fc1XXDjG8L+ZJNlQyrS631/Cf/xRDj1XiHr8wJbyYJ8X4UZeMVAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShpKcoSw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA154C4CEED;
+	Mon, 14 Jul 2025 12:17:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752495462;
+	bh=fDezF0nJjErwuEBNTTQi89g3s72rqXCrWgP7mRRutRc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ShpKcoSwVHnio0qR8KUKWYYZV/7jGDBn38P1DwoyLyFe0fHhp1zA2qUvUwgT+YGWV
+	 jEK5pdTuTD0Efwps2pfCc+I2hx/r4BqdjCerSsSjtCt7nLSSz+8DSIxH9hywlsPJbe
+	 pnw3BVyLM5Ca0F7wN+mnUw/5PssyYPsI53yhRzpViXFiau+sHiWnsdnV0QXaaZehuL
+	 LPZj1hTbAJqXREWBtfvgIROEhWgyFW2X3vvEjQGqh5glTBlEaobl32hyUjVDo5ahbI
+	 Siq7wNd0YoXykQCCJnNZQFKOow2FlSHrqVxyD9zqeseSe9Wf2LmciNMJTiTAN6XAIE
+	 OaDLJOmMtWVoA==
+Date: Mon, 14 Jul 2025 13:17:37 +0100
+From: Will Deacon <will@kernel.org>
+To: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>,
+	suravee.suthikulpanit@amd.com, Vasant.Hegde@amd.com
+Cc: joro@8bytes.org, robin.murphy@arm.com, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: Re: [PATCH v7 0/8] Introduce debugfs support in IOMMU
+Message-ID: <aHT1YeC30-ZiyS8p@willie-the-truck>
+References: <20250702093804.849-1-dheerajkumar.srivastava@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] cpufreq,base/arch_topology: Calculate cpu_capacity
- according to boost
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Sudeep Holla <sudeep.holla@arm.com>,
- Christian Loehle <christian.loehle@arm.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Robin Murphy <robin.murphy@arm.com>,
- Beata Michalska <beata.michalska@arm.com>, zhenglifeng1@huawei.com,
- "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
- Ionela Voinescu <ionela.voinescu@arm.com>
-References: <20250626093018.106265-1-dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250626093018.106265-1-dietmar.eggemann@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702093804.849-1-dheerajkumar.srivastava@amd.com>
 
-+cc Vincent Guittot <vincent.guittot@linaro.org>
-+cc Ionela Voinescu <ionela.voinescu@arm.com>
+On Wed, Jul 02, 2025 at 03:07:56PM +0530, Dheeraj Kumar Srivastava wrote:
+> Introducing debugfs support in AMD/IOMMU driver that will allow
+> userspace to dump below IOMMU information
+> 1) MMIO and Capability register per IOMMU
+> 2) Command buffer
+> 3) Device table entry
+> 4) Interrupt remapping table entry
 
-On 26/06/2025 11:30, Dietmar Eggemann wrote:
-> I noticed on my Arm64 big.Little platform (Juno-r0, scmi-cpufreq) that
-> the cpu_scale values (/sys/devices/system/cpu/cpu*/cpu_capacity) of the
-> little CPU changed in v6.14 from 446 to 505. I bisected and found that
-> commit dd016f379ebc ("cpufreq: Introduce a more generic way to set
-> default per-policy boost flag") (1) introduced this change.
-> Juno's scmi FW marks the 2 topmost OPPs of each CPUfreq policy (policy0:
-> 775000 850000, policy1: 950000 1100000) as boost OPPs.
-> 
-> The reason is that the 'policy->boost_enabled = true' is now done after
-> 'cpufreq_table_validate_and_sort() -> cpufreq_frequency_table_cpuinfo()'
-> in cpufreq_online() so that 'policy->cpuinfo.max_freq' is set to the
-> 'highest non-boost' instead of the 'highest boost' frequency.
-> 
-> This is before the CPUFREQ_CREATE_POLICY notifier is fired in
-> cpufreq_online() to which the cpu_capacity setup code in
-> [drivers/base/arch_topology.c] has registered.
-> 
-> Its notifier_call init_cpu_capacity_callback() uses
-> 'policy->cpuinfo.max_freq' to set the per-cpu
-> capacity_freq_ref so that the cpu_capacity can be calculated as:
-> 
-> cpu_capacity = raw_cpu_capacity (2) * capacity_freq_ref /
-> 				      'max system-wide cpu frequency'
-> 
-> (2) Juno's little CPU has 'capacity-dmips-mhz = <578>'.
-> 
-> So before (1) for a little CPU:
-> 
-> cpu_capacity = 578 * 850000 / 1100000 = 446
-> 
-> and after:
-> 
-> cpu_capacity = 578 * 700000 / 800000 = 505
-> 
-> This issue can also be seen on Arm64 boards with cpufreq-dt drivers
-> using the 'turbo-mode' dt property for boosted OPPs.
-> 
-> What's actually needed IMHO is to calculate cpu_capacity according to
-> the boost value. I.e.:
-> 
-> (a) The infrastructure to adjust cpu_capacity in arch_topology.c has to
->     be kept alive after boot.
-> 
-> (b) There has to be some kind of notification from cpufreq.c to
->     arch_topology.c about the toggling of boost. I'm abusing
->     CPUFREQ_CREATE_POLICY for this right now. Could we perhaps add a
->     CPUFREQ_MOD_POLICY for this?
-> 
-> (c) Allow unconditional set of policy->cpuinfo.max_freq in case boost
->     is set to 0 in cpufreq_frequency_table_cpuinfo().
->     This currently clashes with the commented feature that in case the
->     driver has set a higher value it should stay untouched.
-> 
-> Tested on Arm64 Juno (scmi-cpufreq) and Hikey 960 (cpufreq-dt +
-> added 'turbo-mode' to the topmost OPPs in dts file).
-> 
-> This is probably related what Christian Loehle tried to address in
-> https://lkml.kernel.org/r/3cc5b83b-f81c-4bd7-b7ff-4d02db4e25d8@arm.com .
+Suravee, Vasant -- are you happy with this series now? I'll be closing
+the IOMMU tree for 6.17 shortly and it would be a shame for this to
+miss the cut given that it's got to v7 and Dheeraj has been receptive to
+all the feedback so far.
 
-Christian L. reminded me that since commit dd016f379ebc we also have a
-performance regression on a system with boosted OPPs using schedutil
-CPUfreq governor.
+Of course, if it's not ready then it's not ready, but I wanted to make
+sure you had a chance to look at it before I switch to fixes-only.
 
-The reason is that per cpu 'capacity_freq_ref' is set in
-drivers/base/arch_topology.c only during system boot so far based on the
-highest non-boosted OPP since boost is disabled per default.
+Cheers,
 
-Schedutil uses capacity_freq_ref (*) in get_next_freq() to calculate the
-next frequency request:
-
-   next_freq = max_freq * util / max
-               ^^^^^^^^
-                 (*)
-
-In case the boost OPPs will be enabled:
-
-   echo 1 > /sys/devices/system/cpu/cpufreq/boost
-
-'capacity_freq_ref' stays at the highest non-boosted OPP's so schedutil
-won't request any boosted OPPs for util values > ''highest non boosted
-OPP'/'highest boosted OPP' * max'. The 'highest non boosted OPP' will be
-used by schedutil instead.
-
-This performance regression will go away with the proposed patch as well.
-
-Calling drivers/base/arch_topology.c's init_cpu_capacity_callback() in
-the event that boost is toggled makes sure that 'capacity_freq_ref' will
-be set to the highest boosted (0->1) or highest non-boosted (1->0) OPP.
-
-[...]
-
-
-
-
-
+Will
 
