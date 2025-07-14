@@ -1,155 +1,138 @@
-Return-Path: <linux-kernel+bounces-730615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A80AB046FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:58:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB85B046FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AE18171BC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:58:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 136C14A7CE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9F0269B08;
-	Mon, 14 Jul 2025 17:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6359326A0B0;
+	Mon, 14 Jul 2025 17:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNjhsoZZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AJOVWf6h"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B843E189F43;
-	Mon, 14 Jul 2025 17:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3A217B50A
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 17:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752515887; cv=none; b=DafLrwaDj/ROexkozzaUau16PRARUn/x9L0ENaUZFR7WZW4T+hxpfvjIz+lfSNWwlImq4Lp5bPS2bAWXPR+RY4c7SX4GnvLls6QjAa3ux0DJvIHfrtUgWCXzkBc63tkR88zLMUn9dzBypsH7YaoRVSL4WR3/zi1ECR/PZGwzbcs=
+	t=1752515958; cv=none; b=qnm8kfV1Tch0x5QSnPu+zwBdbyPOuYRdKdpaJWS7gzvkfLv7KaxinRJC1zzoirwkV04DXOZohlz5tscTSwcZZ0ZY32LpBHhx/V3N+/frxZSV3q9nmNeo97KBPQ/cK+dU6Nwyng7hDe492n0iqacTcZ26RhMcvgsIOS2Cymqp1Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752515887; c=relaxed/simple;
-	bh=LX84ZA8u4OqGM7/QO9Mt0UfyOk1ThAVKqbVZns8igMA=;
+	s=arc-20240116; t=1752515958; c=relaxed/simple;
+	bh=pWsqG8O4gteQp++J/AH4LAtg1DHLTeRe8fGwJhBLVDI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GPvoylp5TQncakxi/9M9iBVcbkCxsg82EcPmJqO3kYEU0OiN4/8ziVklNmCMOtTGf4ppqdnj2hX3V0nPhHINoiGfJ4sjrcT7jDtHe3tkO1/ToIC7tXckztcLglzV5eKK+2HFnOGuOPw36Y9ZDin96ZV0BYuWUjAUIQ6G/1FLEgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sNjhsoZZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98722C4CEF0;
-	Mon, 14 Jul 2025 17:58:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752515887;
-	bh=LX84ZA8u4OqGM7/QO9Mt0UfyOk1ThAVKqbVZns8igMA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sNjhsoZZ934e3XKkIGFIigPtyvMK+vIt4UZNlSZshsIwM8vsSSRGcW2C77QnHqjF3
-	 gLTOzbOGnBlnKSY5gra/vgP8pUCfIQdQRwEwBPDo05T4EK2c94iKgATFYz3OapdMV0
-	 e4Rz53woiqMauCcyQWY+//Pdm4SdTh5vQs/15kNVnzaA1Hw9h54Bb1BUco1cV0Cnu/
-	 BHDR9eFNjpsJlel0YeW3d5XnpTnaw/sAjRbxHH7CrtkeFVoT9/GcjmQZ2Svu3JypOc
-	 1ELhOB14zGh4lxWp6ivFOSg6xs9TPcp5qCPYHSCJVIELvFqwRaQg5L6Z/k5UFLWa9m
-	 h8316+GsfEOdg==
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-41b1a0a683dso192946b6e.3;
-        Mon, 14 Jul 2025 10:58:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX3RJOj3kLyZrqiaxQ6K0CLdNrujYFjSpBWs+pLtd4bHNQucwe9DQLA7XK4ux2O+DesZ3TuTCDGPYw=@vger.kernel.org, AJvYcCXpuWvF3z9C0utdhR9RcWCjx2ila5/Z7pd4QkD91Jx2+GnvMxeLmIHAaCmiMmjqNCimgixX00jy9UmMvFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhVvJ6jvSeo1m8XnSmZecVCivCBAZI3tI4ZbrNpbsuq3JsOnPa
-	13klnxo0eYapq0dEjIgQHDW9KrRTOpd1SJckBtct9AKgTFNR61zmyCJa8vf0Pmtnl4gX68wMy7G
-	bnZbla243YXlSql1iJwamgzXJKqfAtMs=
-X-Google-Smtp-Source: AGHT+IEd/J1V+d+F8GB9l8q5kBT2zsuto+qQqfPOnB+R8HudNkOwTTzbCFmG8Wm1Ds0hRnrNhC6ASd6MhUcf4x1+moU=
-X-Received: by 2002:a05:6808:18a8:b0:401:e98b:ee41 with SMTP id
- 5614622812f47-4151161962fmr10287764b6e.21.1752515886799; Mon, 14 Jul 2025
- 10:58:06 -0700 (PDT)
+	 To:Cc:Content-Type; b=rpOrSS8T/nQiakf3V1DH3Uo2Fohhcbn5d7dsetTEx6A51a/Q8CmC1t2X48th3aeQeMMkoa0WysOytUU1LK4aU7JYG1+jjibWGVaQS0lt6/SVauOj2sxBQcoLK4PUW6uoTIB3zL/Xqw7ktlf3bOnOzL9kiM2rGMDXzX0T64+JCZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AJOVWf6h; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-74b52bf417cso2989061b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 10:59:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1752515954; x=1753120754; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OG3AY/r+5jGyweejzWZqU76oacNUXzplqvD2s/v/W0c=;
+        b=AJOVWf6hBiHxt9Cyyy/sJq6iUfVRdrF8AUV6HL8TUc1y9Bgltju1U1pjN8ouisE/L5
+         4KDo3HUg609rOdSBa8Pjkqwpvh0oMlmNrtrVuBPMa3gxxDNBTR0TJJp9wNDnAVfkGZgH
+         mcYnmGEN8FVG6vgH3dHoitEeqp6ml5vk9cI2Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752515954; x=1753120754;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OG3AY/r+5jGyweejzWZqU76oacNUXzplqvD2s/v/W0c=;
+        b=RtoD8enSXrXaLCq29IM0zqO0MsyEJiXcUUW2qh2CMruBAmDa03i67hwdQH8oY2Z/tX
+         LDfK037o0+ZJErOlSdCD6jSYFTt4SdYpk64jFsuPnBMffesFs1NZM3pZItb/AQHsgn9/
+         mBDtgECXrD3xjkrWIerrUtHy5ffBxRRuJGAy8q3D87zqeHUSmGgRxx+99T2FHfjyDYth
+         vXrS9ak/6gjiiVurXNe0D0toQGI9i7DtpO0Bec9lmc8l+1/Ei9EZlY3Vt+9sUopXBOHC
+         fXU9OIT5VKk8RSpknU8oaea4pGYIvIAvAS/KYe6aJ8Cg//04fY44BAbIrHCgm6MS1Khh
+         u6Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCVBoK8/LI6eM6SKhw0Va5HF8wS+FS6vlltskugsxeJBRJhhhW08YG/EBnI6veFAZfnZxt2fQFHaGEu1zZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgV3dlmjz9isX7zT3uy/RnaEpn48KogKkKyHi51wtlUkD912/+
+	v8mi7dIQi5VDQGkmw25fSHgebe0NEGL+dnV88K9HVL6tuxm8q0EKd33sD8fulw9HAjoevPMffAk
+	Ia/s=
+X-Gm-Gg: ASbGncvIG5jzkMqoVmVidtk1+oJjzEPLWULK0+eyYEGIWUhZEd5cuA8lZUk4aEkAqRE
+	wXagpqx/qr8xhhtMZLmJzUUCbCjG+ry5tNGdnrujNM7vhXi28AECKmcpMWxmZg17ZYEEP7srTfB
+	btyGVH8xG3AYkgd1qEL1Y6Vb9A5tCqB6tT6gPg8OyRS0IN28RHXrcxbZ/UhP3P4CDRgdH1axE2X
+	W+NXVHr4mz6NQlQ/4zK66Kw2Ee8WgNcVcZ0eX++UH4gXcyCD9ld23Mbp0vZnkS6dXZM5hjje+If
+	MGgWRdx5Ze+Nh5lr3PAnYPNcKE0KYKKvcKigLn2b5IS3C3zHWCe9mN15Q9QaYF0l14wDI2YCk50
+	VR2enKx00IsABD53FaKxYxVFJF05t9syS1ZsiWgSfaJdgtmXsrHFlYr6YGj+k4tei9gKuYGfu
+X-Google-Smtp-Source: AGHT+IGGqd9vZNTUGs8sQvz7ModLirIbB3mmyIhuBV3OWFJmAhrn1FdmNyJWO6sztfOL8bQApWRy0Q==
+X-Received: by 2002:a05:6a00:3e09:b0:736:51ab:7aed with SMTP id d2e1a72fcca58-74ee3045152mr18251659b3a.16.1752515954236;
+        Mon, 14 Jul 2025 10:59:14 -0700 (PDT)
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com. [209.85.216.53])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9e05a2bsm10888029b3a.39.2025.07.14.10.59.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 10:59:11 -0700 (PDT)
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-31c38e75dafso3887102a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 10:59:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXQtXDdkiD5BshhbaWpnvE/88YoqTGbaJGHhU/N8iKHbRBoWIPqqr7BuPf3EvgOvwFeWmf3mTzuq/TG/5Y=@vger.kernel.org
+X-Received: by 2002:a17:90b:6cb:b0:311:c5d9:2c79 with SMTP id
+ 98e67ed59e1d1-31c4ccdd5c0mr20464043a91.21.1752515950671; Mon, 14 Jul 2025
+ 10:59:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250712030824.81474-1-zhangzihuan@kylinos.cn> <9d35035d-c63e-4d11-a403-54c50e8b35c1@kylinos.cn>
-In-Reply-To: <9d35035d-c63e-4d11-a403-54c50e8b35c1@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 14 Jul 2025 19:57:55 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0g22fMDc21yV2svePf_4BWZRrcy+b3-efpbfAGLpa2=Lw@mail.gmail.com>
-X-Gm-Features: Ac12FXylHZiUKH1htuCl5RLqzGZL7BWvLpsSu7vXn9CbZ6lwLl1K9bZZK1zT1vk
-Message-ID: <CAJZ5v0g22fMDc21yV2svePf_4BWZRrcy+b3-efpbfAGLpa2=Lw@mail.gmail.com>
-Subject: Re: [PATCH v1] PM: suspend: clean up redundant filesystems_freeze/thaw
- handling
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250706205723.9790-2-val@packett.cool> <20250706205723.9790-7-val@packett.cool>
+In-Reply-To: <20250706205723.9790-7-val@packett.cool>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 14 Jul 2025 10:58:58 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=V7HckYJn6Lrh8deipcX=_T3s_B=oXeVSQuxt1a01dwEg@mail.gmail.com>
+X-Gm-Features: Ac12FXw7OXhFtZwKbLQwLc4HMDijZPxZ1TH2maNwjg4oUlQ_nk5JprebZ5XShwY
+Message-ID: <CAD=FV=V7HckYJn6Lrh8deipcX=_T3s_B=oXeVSQuxt1a01dwEg@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] drm/panel-edp: Add BOE NE14QDM panel for Dell
+ Latitude 7455
+To: Val Packett <val@packett.cool>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Mon, Jul 14, 2025 at 10:44=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylinos.=
-cn> wrote:
+On Sun, Jul 6, 2025 at 1:59=E2=80=AFPM Val Packett <val@packett.cool> wrote=
+:
 >
-> Hi Rafael,
+> Cannot confirm which variant exactly it is, as the EDID alphanumeric data
+> contains '0RGNR' <0x80> 'NE14QDM' and ends there; but it's 60 Hz and with
+> touch.
 >
-> Just a gentle ping on this patch.
-
-I've lost track of it for some reason, sorry.
-
-> I realized I forgot to mention an important motivation in the changelog:
-> calling filesystems_freeze() twice (from both suspend_prepare() and
-> enter_state()) lead to a black screen and make the system unable to resum=
-e..
+> I do not have access to datasheets for these panels, so the timing is
+> a guess that was tested to work fine on this laptop.
 >
-> This patch avoids the duplicate call and resolves that issue.
+> Raw EDID dump:
+>
+> 00 ff ff ff ff ff ff 00 09 e5 1e 0b 00 00 00 00
+> 10 20 01 04 a5 1e 13 78 07 fd 85 a7 53 4c 9b 25
+> 0f 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+> 01 01 01 01 01 01 a7 6d 00 a0 a0 40 78 60 30 20
+> 36 00 2e bc 10 00 00 1a b9 57 00 a0 a0 40 78 60
+> 30 20 36 00 2e bc 10 00 00 1a 00 00 00 fe 00 30
+> 52 47 4e 52 80 4e 45 31 34 51 44 4d 00 00 00 00
+> 00 02 41 31 a8 00 01 00 00 1a 41 0a 20 20 00 8f
+>
+> Signed-off-by: Val Packett <val@packett.cool>
+> ---
+>  drivers/gpu/drm/panel/panel-edp.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Now applied as a fix for 6.16-rc7, thank you!
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-> =E5=9C=A8 2025/7/12 11:08, Zihuan Zhang =E5=86=99=E9=81=93:
-> > The recently introduced support for freezing filesystems during system
-> > suspend included calls to filesystems_freeze() in both suspend_prepare(=
-)
-> > and enter_state(), as well as calls to filesystems_thaw() in both
-> > suspend_finish() and the Unlock path in enter_state(). These are
-> > redundant.
-> >
-> > - filesystems_freeze() is already called in suspend_prepare(), which is
-> >    the proper and consistent place to handle pre-suspend operations. Th=
-e
-> > second call in enter_state() is unnecessary and removed.
-> >
-> > - filesystems_thaw() is invoked in suspend_finish(), which covers
-> >    successful suspend/resume paths. In the failure case , we add a call
-> > to filesystems_thaw() only when needed, avoiding the duplicate call in
-> > the general Unlock path.
-> >
-> > This change simplifies the suspend code and avoids repeated freeze/thaw
-> > calls, while preserving correct ordering and behavior.
-> >
-> > Fixes: eacfbf74196f91e4c26d9f8c78e1576c1225cd8c ("power: freeze filesys=
-tems during suspend/resume")
-> > Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-> > ---
-> >   kernel/power/suspend.c | 4 +---
-> >   1 file changed, 1 insertion(+), 3 deletions(-)
-> >
-> > diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-> > index bb608b68fb30..8f3e4c48d5cd 100644
-> > --- a/kernel/power/suspend.c
-> > +++ b/kernel/power/suspend.c
-> > @@ -384,6 +384,7 @@ static int suspend_prepare(suspend_state_t state)
-> >               return 0;
-> >
-> >       dpm_save_failed_step(SUSPEND_FREEZE);
-> > +     filesystems_thaw();
-> >       pm_notifier_call_chain(PM_POST_SUSPEND);
-> >    Restore:
-> >       pm_restore_console();
-> > @@ -593,8 +594,6 @@ static int enter_state(suspend_state_t state)
-> >               ksys_sync_helper();
-> >               trace_suspend_resume(TPS("sync_filesystems"), 0, false);
-> >       }
-> > -     if (filesystem_freeze_enabled)
-> > -             filesystems_freeze();
-> >
-> >       pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[s=
-tate]);
-> >       pm_suspend_clear_flags();
-> > @@ -614,7 +613,6 @@ static int enter_state(suspend_state_t state)
-> >       pm_pr_dbg("Finishing wakeup.\n");
-> >       suspend_finish();
-> >    Unlock:
-> > -     filesystems_thaw();
-> >       mutex_unlock(&system_transition_mutex);
-> >       return error;
-> >   }
-> Thanks,
-> Zihuan Zhang
+Pushed to drm-misc-next:
+
+[5/5] drm/panel-edp: Add BOE NE14QDM panel for Dell Latitude 7455
+      commit: 1a304a2f8f7dbe25f555721f502227f9197145ed
 
