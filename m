@@ -1,129 +1,105 @@
-Return-Path: <linux-kernel+bounces-730411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFCB5B04448
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:41:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8120CB0448E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B50FA189C1FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:38:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE87D7BB56C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7549426A1DE;
-	Mon, 14 Jul 2025 15:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178F2253F30;
+	Mon, 14 Jul 2025 15:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OpV+l75w"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y1OMjNen"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E842026A1DD
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABF625A640
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752507055; cv=none; b=AflutAEtDWG6ntNUJXxb6N7x8nfguOBE5/tkehuWAn3NJuVsp6+jt5Svom90PNoqbPES8yQ3WZ6mBT3p2iPm60xkpBzCE2NsmBBxUSlrP2o1qYx8IOhuuggGI8AEaMA8umNmB8innDy5IGf5liul/sPjsGsUyz1aJHaZOqzrBKI=
+	t=1752507091; cv=none; b=YxpQSrTov6UcMJh97EbJWazkAJicUBt7bSajOveMzz/VTE4Jpppdpc40tcSA9pzIrrZ+p4+lORr9JGQzQxWL48x4WNa+jFaiGK87VzMHLSCRosL4vES2P0T1uwuVhahD4KZmpmwBTi6rFUD9DCAfNFzJJxO4PYDA322uhlQJ8xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752507055; c=relaxed/simple;
-	bh=fA43pWYFrATPW6o5X367Dz4sZp9Qsee5YWb/rsDVtHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rQZFZtQIW1eMSSEVWllF7iaysE4Wm6quUe5qhOBiCP/+dupuYzpUchodhVycda6glGiINGh5xv0ZbuPNx0iYYxher1xLwlNqDlkzZjaK3qRtls9icoVUNVKLlRa7d4S2p8KNPcITQ6Fyo++bK9NJliNQnpZcyuXRH9V7eJFdKKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OpV+l75w; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-553b7a3af9aso284253e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:30:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752507052; x=1753111852; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GhPM3WYx0FxLSMjDVhXzRCwSNY+8UAUHTyFHv1jdzFE=;
-        b=OpV+l75wSKtdSC6QHwVfpc5V8y+cLJrZLCHK7El9n9SBmWloBzGrX8Bb2tP6eUN2Ea
-         ovzkOiIwEaAyQX7IrxEW4UUbjkFndypRsVZtWMmWwIzinwBE6sQ666BaD1mmyuZVs4GM
-         7inWAj08Bq6P0NvC6M260Hub3oHnOiorTRyTH0vWrPhj+oTgtx6IpWm5jVdhX4WsblIG
-         EPjPx81ClEuesSAO51IbGn2SqaqA/4p2lZ8/ZFo83QFfu0XG/ZzIl+F0wf+vlr+pLVzf
-         XWaX8PQhiMhqhu7YTVoopo18W8ONQUu8khEfBxu1QRtISeGH8cUEhFu4bIteK/uKVWI0
-         /dXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752507052; x=1753111852;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GhPM3WYx0FxLSMjDVhXzRCwSNY+8UAUHTyFHv1jdzFE=;
-        b=FXYpmd3rH27RLz5K/dA18JUVYt9VdSwtmQCb9Bf8gwqvRp/US85wfQvHay/ds2Xbs4
-         8uBNl9BKL2rPtdrgXPuPixjiJbD6Ez+iB4qeYiOo8I1WrxjysOBst/6QwPrta14uiw6D
-         Q71JtlvWudKerqhtzoPxUyGVEaLkTys9TZo5uYPFYoGYNdHCQZfVsoS90m1khKQe5xf2
-         W0lBTL8t2DZhkuoNnsal1a3L8cP6uQ95cXgCOOO5HEtrzHeGPd9fYZ6KIvXYL1HYVJNf
-         PdDv8EiBDSoKsNBkNB+Vnwfq/XiDeVfz6tAR/buVe/sk98iDgnewzQ5EkVj+IWySJXQI
-         3rJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVShEcn+yRSuhVUMqeYAwD3UOhpEQfXH5a/GZ/IHf58rndH6AmogDBu+jKo0BZTfGXIVQO9QZYKR5hiwNg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF+nC3IqGxOPI1ruE5dgwRh/W9bge6p3VfuCjnO1W0GjbAlM4k
-	fUpFYXu3yoaWCmE40VlbTr8c5Lm5ZQdZJixaHdnLVLA243A48kEasHIW8YDCVqaYN6c=
-X-Gm-Gg: ASbGnctVmue2SMXndGM2FA0+5rsNkjPWDyaxGbRILpK72WzKjgPF69l9LMr2ShNP0B1
-	KidXBXgMsKQQ1NDFVqEursU57Fb91Pmu7nFJC3anjycQ5ChcZa4fw1VJCYaQJEKnlEBG1+D5nld
-	fdgKsmmc4PHovN1bV+TOz7LF77ghP3/LUOVERrpAR8VHqUSwvQhXvVPxHuQ1bmfXC6XqmLBvvs2
-	NNlQo/osSsFTL2mMtnoCts0YyssjHc4dyRaUfo+63L3xvY7DhC59CxupYETmaG0GJpCpSguHeEr
-	CIRiFYcvagjzQKzh69Ing8BU5f+7CoZnByUamvEayOrtPhRvqLxtoORmxSuv2XGOG6eaMHKSQxE
-	GJdFrD2+EotAWBxLMrgF01pR1kJw4LvgqsivVlcF7jFXqYvjuuzSR4wz8KUzXS0h1NcAVfAEdod
-	1w
-X-Google-Smtp-Source: AGHT+IHfIWtfLwmI4o3tG95if0xJBRcWewfBclWlcePGlLyhwHi1HTCoA+WOs0ItuEmU884D+uo5xw==
-X-Received: by 2002:a05:6512:2388:b0:554:f76a:bab8 with SMTP id 2adb3069b0e04-55a049b4b48mr1393417e87.15.1752507051897;
-        Mon, 14 Jul 2025 08:30:51 -0700 (PDT)
-Received: from [192.168.1.100] (88-112-128-43.elisa-laajakaista.fi. [88.112.128.43])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c9d0f35sm1985120e87.108.2025.07.14.08.30.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 08:30:51 -0700 (PDT)
-Message-ID: <eac3a877-a4aa-4789-9013-ab8b6c91e0f3@linaro.org>
-Date: Mon, 14 Jul 2025 18:30:50 +0300
+	s=arc-20240116; t=1752507091; c=relaxed/simple;
+	bh=GyIGOOq0yekY5kYlEYIUN1prHtw6vCNxDk5GHeLMFVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ASDk5LDj4/Epm4GRd9GjS2lvkCYS7pfbKImV7cnwLm5g7anGqMadu3ZkXob3MJ0mbrrU221uGYToEjkMuq0gDyjXsc7/V5RcGYLBBkyC7/vo3N5+Qe30BJYuwfxzo+CfkpcMYoJmtANo3pis1qXyUWzNyOosF+Fv97fNtNAsbKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y1OMjNen; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752507090; x=1784043090;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GyIGOOq0yekY5kYlEYIUN1prHtw6vCNxDk5GHeLMFVA=;
+  b=Y1OMjNenQOVsJxwRpPUeBFwVexJcnx8xZhc0R7yKZ6SKpXW/tW26vYbD
+   dIdHMdBgrDd6aZssYWN+sSR0sYPXKG08yDsrg3X2PpVrtd840AQJpOuBn
+   UWwE7vH5pVaN/rcv7SnrPI4FqTDbPsRPo6ee7givN+3b7oJmDqF4r6uE6
+   e/1T4aCH3h6YFDB4n18xQ5vOdZt8vZTXTyw/2f58sLf3K61ZJD/jT8/R9
+   iEujeu0I4uZi3m5N2TiEIKTqVIMhWkeW7Yq11v861ti16oaLEhw6ZZpNX
+   BKKPJjzmCRmlzSaoEt5sFVFVagjcCHSXs/GlOlVaZXIEyvojAJsJZxlDd
+   A==;
+X-CSE-ConnectionGUID: /gT1nvKAStm1Yz1/4UPQ8Q==
+X-CSE-MsgGUID: 6yhQgdsuRVCBnHcONnZXJA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54851147"
+X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
+   d="scan'208";a="54851147"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 08:31:30 -0700
+X-CSE-ConnectionGUID: kPpFxqLaTnyr+gR6CypAqg==
+X-CSE-MsgGUID: EPjy9iPuTQacdh3KRcArXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
+   d="scan'208";a="162517661"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 08:31:26 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ubL9H-0000000FOvW-2xre;
+	Mon, 14 Jul 2025 18:31:23 +0300
+Date: Mon, 14 Jul 2025 18:31:23 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v2 1/1] x86/defconfigs: Explicitly unset CONFIG_64BIT in
+ i386_defconfig
+Message-ID: <aHUiy79B7aMnpXW_@smile.fi.intel.com>
+References: <20250626150118.318836-1-andriy.shevchenko@linux.intel.com>
+ <aG_0K7Zx5WpQHGJE@smile.fi.intel.com>
+ <20250714142957.GIaHUUZTHu9zoGEaNg@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] phy: qcom-mipi-csi2: Add a CSI2 MIPI D-PHY driver
-Content-Language: ru-RU
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Bryan O'Donoghue <bod@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org>
- <20250710-x1e-csi2-phy-v1-2-74acbb5b162b@linaro.org>
- <11b573d5-ce4d-476c-b94c-216d427cd838@linaro.org>
- <08261aa4-689b-4d6b-bfd2-221c1976d254@linaro.org>
- <a7f64b31-4767-4281-b452-a2bc5351d745@mleia.com>
- <c93624bb-ee7b-45ac-8b53-b5391f11c9c9@linaro.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <c93624bb-ee7b-45ac-8b53-b5391f11c9c9@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714142957.GIaHUUZTHu9zoGEaNg@fat_crate.local>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 7/14/25 18:17, Bryan O'Donoghue wrote:
-> On 14/07/2025 15:58, Vladimir Zapolskiy wrote:
->>
->> This proposed device node scheme does not solve the known and already
->> discussed technical issue expectedly, namely there is no given way
->> to describe a combo mode hardware configuration, when two independant
->> sensors are wired to the same CSIPHY. This is an unsolvable problem
->> with this design.
+On Mon, Jul 14, 2025 at 04:29:57PM +0200, Borislav Petkov wrote:
+> On Thu, Jul 10, 2025 at 08:11:07PM +0300, Andy Shevchenko wrote:
+> > Can it be applied now?
 > 
-> I think that is genuinely something we should handle in camss-csid.c
-> maybe with some meta-data inside of the ports/endpoints..
+> I've merged it into the commit in Fixes:
 > 
+> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=x86/kconfig&id=6453e7cc32d1fd69344311224dbd00692eadc592
 
-This is a CSIPHY property, a CSIPHY hardware configuration and a wiring
-of sensors to a CSIPHY. Where is the relation to CSID here? There is no.
-
-Please share at least a device tree node description, which supports
-a connection of two sensors to a single CSIPHY, like it shall be done
-expectedly.
+Thank you!
 
 -- 
-Best wishes,
-Vladimir
+With Best Regards,
+Andy Shevchenko
+
+
 
