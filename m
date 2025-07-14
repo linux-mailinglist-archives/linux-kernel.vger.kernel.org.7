@@ -1,167 +1,197 @@
-Return-Path: <linux-kernel+bounces-730450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD59B044B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:52:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3DF8B0447F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4B48188B4C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:50:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 441867A1A5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5B025D1FE;
-	Mon, 14 Jul 2025 15:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1129258CED;
+	Mon, 14 Jul 2025 15:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="wfCsT+lc"
-Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dgaAPgzY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D9225C810;
-	Mon, 14 Jul 2025 15:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF162459D2
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752508182; cv=none; b=RjsEvELnRyylo8qO/6jGVivg9NDwzbocyV4cgZjDRDgrQhliKdceztuH9rhVu8ZGyXQcAdCDIwccCJs7ivydFMQBjEFDCGPytrjNf0STr4ZPBMUC7OCw33elbIfJVBf7Sc+PYArNC33MKJSyyETG/8WtpqCSzI0WJ0ZXhAdoP5Y=
+	t=1752507844; cv=none; b=flwsA8D2rvyM1CLad+klXw1L2XHmASzltYDg4PX6/LizHVbkTfoOKWr8J6aiuhkO1d/zsE4ny3M+MbpFijdt9p4DbwmRtTKMUPmKwDGKpt2HMlYU8gPkXjwjyOrtrqwo6dUJJt52DiQT14ezg+d2kUWBRMgVwNi+0yhDwZEJopw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752508182; c=relaxed/simple;
-	bh=MXT6cnk26Vs4zRGiD6Tr/CTODiUVmYGALHN6Q7w7/PA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aHhbOc8iHwxYq6GowhWb/AvE/ohJL8j1lPbF4TCWmq6dl1/x/df6+P8AWKTCmHYbJG6+JSXA3KGCVRqLKn0/S6TlBR5CbYeTGHEo3kSqQpiMefew9ZhCnZLW3OwepcigdonX4mHPVzvpV9LHp2tki2gwu6qXGRNsTu4c7LBa+sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=wfCsT+lc; arc=none smtp.client-ip=109.230.236.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
-	t=1752507760; bh=MXT6cnk26Vs4zRGiD6Tr/CTODiUVmYGALHN6Q7w7/PA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=wfCsT+lcyZPpUl8MEw61/eOpSNg7RA8vglToYyFcdK+4AVUgdmCRgU3WQj83idkXh
-	 vZ6zQwaoFJwAL8HStTCD5nx82J606trAe6u4oGzWO8EQrqN2FpN2NzChC4VsgMCKk7
-	 Rgf+vmh7wrjULp4KeHyBztbWxNEpLvNE1G/C1yws=
-Received: from [IPV6:2001:67c:10ec:5784:8000::87] (2001-67c-10ec-5784-8000--87.net6.ethz.ch [IPv6:2001:67c:10ec:5784:8000::87])
-	by r-passerv.ralfj.de (Postfix) with ESMTPSA id 2567B2054EE3;
-	Mon, 14 Jul 2025 17:42:40 +0200 (CEST)
-Message-ID: <4d373b56-0f36-4f8a-9052-cee38b90f59b@ralfj.de>
-Date: Mon, 14 Jul 2025 17:42:39 +0200
+	s=arc-20240116; t=1752507844; c=relaxed/simple;
+	bh=NHZTk1MbSwuX2TC/cvr03+rgfi9Vzg5JE+R5y6MRDO0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=uzBmFQhsknTwKzCKTYDb56Y1rZ6v/LGoGBTeELpIv0xbqcJfr38TyQNON25eBVtwgLEBD9MunImW04d/PKtgRb8rkmDbngTC6eLqW1+WLkvYvnWZZv0n3dJAJIywvdxkEcn1qdidiM2NJRGFs2KUEWBRxj8WY6wSyLveZ0PgSkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dgaAPgzY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752507839;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pioZSV5t4QyWHRN8AGbngDT1fEVjtAAoah29uzJwYZQ=;
+	b=dgaAPgzYmImyTg5Q3bRekiQy23bojiigh0yFT7iO+9wUCkoXvUU/Px4dQRVL59a36voiCj
+	LLOta0GvVvZQx0YHVLWaRVa8Aa9W9h4Wst5LS0Ncdm5387L9tDiBpcTdXnnwEZ07NTozYI
+	QKP5wDM3snCjl6y91q8uVxsVV74D1kM=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-274-A2zzeiPKMzuFj4_W3vNnnQ-1; Mon,
+ 14 Jul 2025 11:43:55 -0400
+X-MC-Unique: A2zzeiPKMzuFj4_W3vNnnQ-1
+X-Mimecast-MFC-AGG-ID: A2zzeiPKMzuFj4_W3vNnnQ_1752507833
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 530631800343;
+	Mon, 14 Jul 2025 15:43:52 +0000 (UTC)
+Received: from [10.22.80.10] (unknown [10.22.80.10])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D81B5180035E;
+	Mon, 14 Jul 2025 15:43:47 +0000 (UTC)
+Date: Mon, 14 Jul 2025 17:43:42 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Dongsheng Yang <dongsheng.yang@linux.dev>
+cc: agk@redhat.com, snitzer@kernel.org, axboe@kernel.dk, hch@lst.de, 
+    dan.j.williams@intel.com, Jonathan.Cameron@Huawei.com, 
+    linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev, 
+    dm-devel@lists.linux.dev
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v2_00=2F11=5D_dm-pcache_=E2=80=93_pe?=
+ =?UTF-8?Q?rsistent-memory_cache_for_block_devices?=
+In-Reply-To: <e50ef45e-4c1a-4874-8d5f-9ca86f9a532c@linux.dev>
+Message-ID: <1ff2da54-60dd-9719-eb55-386ff32ae421@redhat.com>
+References: <20250707065809.437589-1-dongsheng.yang@linux.dev> <85b5cb31-b272-305f-8910-c31152485ecf@redhat.com> <e50ef45e-4c1a-4874-8d5f-9ca86f9a532c@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 8/9] rust: sync: Add memory barriers
-To: Boqun Feng <boqun.feng@gmail.com>, Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Viresh Kumar <viresh.kumar@linaro.org>, Lyude Paul <lyude@redhat.com>,
- Ingo Molnar <mingo@kernel.org>, Mitchell Levy <levymitchell0@gmail.com>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Alan Stern <stern@rowland.harvard.edu>
-References: <20250710060052.11955-1-boqun.feng@gmail.com>
- <20250710060052.11955-9-boqun.feng@gmail.com>
- <DB93NWEAK46D.2YW5P9MSAWVCN@kernel.org> <aHFWCsOfcGLSUPAP@tardis-2.local>
-Content-Language: en-US, de-DE
-From: Ralf Jung <post@ralfj.de>
-In-Reply-To: <aHFWCsOfcGLSUPAP@tardis-2.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; BOUNDARY="-1463811712-660552650-1752506079=:673007"
+Content-ID: <1c6a656d-7cb0-02e3-f428-fcf371e66565@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Hi all,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On 11.07.25 20:20, Boqun Feng wrote:
-> On Fri, Jul 11, 2025 at 10:57:48AM +0200, Benno Lossin wrote:
->> On Thu Jul 10, 2025 at 8:00 AM CEST, Boqun Feng wrote:
->>> diff --git a/rust/kernel/sync/barrier.rs b/rust/kernel/sync/barrier.rs
->>> new file mode 100644
->>> index 000000000000..df4015221503
->>> --- /dev/null
->>> +++ b/rust/kernel/sync/barrier.rs
->>> @@ -0,0 +1,65 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +
->>> +//! Memory barriers.
->>> +//!
->>> +//! These primitives have the same semantics as their C counterparts: and the precise definitions
->>> +//! of semantics can be found at [`LKMM`].
->>> +//!
->>> +//! [`LKMM`]: srctree/tools/memory-model/
->>> +
->>> +/// A compiler barrier.
->>> +///
->>> +/// A barrier that prevents compiler from reordering memory accesses across the barrier.
->>> +pub(crate) fn barrier() {
->>> +    // By default, Rust inline asms are treated as being able to access any memory or flags, hence
->>> +    // it suffices as a compiler barrier.
->>
->> I don't know about this, but it also isn't my area of expertise... I
->> think I heard Ralf talk about this at Rust Week, but I don't remember...
->>
-> 
-> Easy, let's Cc Ralf ;-)
-> 
-> Ralf, I believe the question here is:
-> 
-> In kernel C, we define a compiler barrier (barrier()), which is
-> implemented as:
-> 
-> # define barrier() __asm__ __volatile__("": : :"memory")
-> 
-> Now we want to have a Rust version, and I think an empty `asm!()` should
-> be enough as an equivalent as a barrier() in C, because an empty
-> `asm!()` in Rust implies "memory" as the clobber:
-> 
-> 	https://godbolt.org/z/3z3fnWYjs
-> 
-> ?
-> 
-> I know you have some opinions on C++ compiler_fence() [1]. But in LKMM,
-> barrier() and other barriers work for all memory accesses not just
-> atomics, so the problem "So, if your program contains no atomic
-> accesses, but some atomic fences, those fences do nothing." doesn't
-> exist for us. And our barrier() is strictly weaker than other barriers.
-> 
-> And based on my understanding of the consensus on Rust vs LKMM, "do
-> whatever kernel C does and rely on whatever kernel C relies" is the
-> general suggestion, so I think an empty `asm!()` works here. Of course
-> if in practice, we find an issue, I'm happy to look for solutions ;-)
-> 
-> Thoughts?
-> 
-> [1]: https://github.com/rust-lang/unsafe-code-guidelines/issues/347
+---1463811712-660552650-1752506079=:673007
+Content-Type: text/plain; CHARSET=UTF-8
+Content-Transfer-Encoding: 8BIT
+Content-ID: <604db260-a208-1612-a6e0-250e4a0b7b66@redhat.com>
 
-If I understood correctly, this is about using "compiler barriers" to order 
-volatile accesses that the LKMM uses in lieu of atomic accesses?
-I can't give a principled answer here, unfortunately -- as you know, the mapping 
-of LKMM through the compiler isn't really in a state where we can make 
-principled formal statements. And making principled formal statements is my main 
-expertise so I am a bit out of my depth here. ;)
 
-So I agree with your 2nd paragraph: I would say just like the fact that you are 
-using volatile accesses in the first place, this falls under "do whatever the C 
-code does, it shouldn't be any more broken in Rust than it is in C".
 
-However, saying that it in general "prevents reordering all memory accesses" is 
-unlikely to be fully correct -- if the compiler can prove that the inline asm 
-block could not possibly have access to a local variable (e.g. because it never 
-had its address taken), its accesses can still be reordered. This applies both 
-to C compilers and Rust compilers. Extra annotations such as `noalias` (or 
-`restrict` in C) can also give rise to reorderings around arbitrary code, 
-including such barriers. This is not a problem for concurrent code since it 
-would anyway be wrong to claim that some pointer doesn't have aliases when it is 
-accessed by multiple threads, but it shows that the framing of barriers in terms 
-of preventing reordering of accesses is too imprecise. That's why the C++ memory 
-model uses a very different framing, and that's why I can't give a definite 
-answer here. :)
+On Wed, 9 Jul 2025, Dongsheng Yang wrote:
 
-Kind regards,
-Ralf
+> 
+> 在 7/8/2025 4:16 AM, Mikulas Patocka 写道:
+> > 
+> > On Mon, 7 Jul 2025, Dongsheng Yang wrote:
+> > 
+> > > Hi Mikulas,
+> > > 	This is V2 for dm-pcache, please take a look.
+> > > 
+> > > Code:
+> > >      https://github.com/DataTravelGuide/linux tags/pcache_v2
+> > > 
+> > > Changelogs
+> > > 
+> > > V2 from V1:
+> > > 	- introduce req_alloc() and req_init() in backing_dev.c, then we
+> > > 	  can do req_alloc() before holding spinlock and do req_init()
+> > > 	  in subtree_walk().
+> > > 	- introduce pre_alloc_key and pre_alloc_req in walk_ctx, that
+> > > 	  means we can pre-allocate cache_key or backing_dev_request
+> > > 	  before subtree walking.
+> > > 	- use mempool_alloc() with NOIO for the allocation of cache_key
+> > > 	  and backing_dev_req.
+> > > 	- some coding style changes from comments of Jonathan.
+> > Hi
+> > 
+> > mempool_alloc with GFP_NOIO never fails - so you don't have to check the
+> > returned value for NULL and propagate the error upwards.
+> 
+> 
+> Hi Mikulas:
+> 
+>    I noticed that the implementation of mempool_alloc—it waits for 5 seconds
+> and retries when allocation fails.
+
+No, this is incorrect observation.
+
+mempool_alloc will add the current process to a wait queue:
+  prepare_to_wait(&pool->wait, &wait, TASK_UNINTERRUPTIBLE);
+then, it will execute the wait:
+  io_schedule_timeout(5*HZ);
+and then remove the current process from a wait queue:
+  finish_wait(&pool->wait, &wait);
+
+but the io_schedule_timeout function will wait at most 5 seconds - it 
+doesn't wait exactly 5 seconds. If some other piece of code frees some 
+data into the mempool, it executes:
+  wake_up(&pool->wait);
+so that the process that is waiting in io_schedule_timeout(5*HZ) is woken 
+up immediatelly.
+
+See this comment in mempool_alloc:
+        /*
+         * FIXME: this should be io_schedule().  The timeout is there as a
+         * workaround for some DM problems in 2.6.18.
+         */
+        io_schedule_timeout(5*HZ);
+
+- the timeout is actually a workaround for some buggy code in device 
+mapper where the code allocated more and more entries from the mempool 
+without freeing them. I fixed this bug many years ago. But people 
+shouldn't add more buggy code that depends on this timeout.
+
+> With this in mind, I propose that we handle -ENOMEM inside defer_req() using a
+> similar mechanism. something like this commit:
+> 
+> 
+> https://github.com/DataTravelGuide/linux/commit/e6fc2e5012b1fe2312ed7dd02d6fbc2d038962c0
+> 
+> 
+> Here are two key reasons why:
+> 
+> (1) If we manage -ENOMEM in defer_req(), we don’t need to modify every
+> lower-level allocation to use mempool to avoid failures—for example,
+> 
+> cache_key, backing_req, and the kmem.bvecs you mentioned. More importantly,
+> there’s no easy way to prevent allocation failure in some places—for instance,
+> bio_init_clone() could still return -ENOMEM.
+> 
+> (2) If we use a mempool, it will block and wait indefinitely when memory is
+> unavailable, preventing the process from exiting.
+
+Mempool will wait until some other code frees some data into the mempool. 
+So, as long as your code can make forward progress and finish some 
+requests and free their data into the mempool, it should work properly.
+
+On the other hand, non-mempool GFP_NOIO allocations can wait indefinitely.
+
+> But with defer_req(), the user can still manually stop the pcache device using
+> dmsetup remove, releasing some memory if user want.
+> 
+> What do you think?
+
+I think that you should go back to version 2 (that had mempools) and 
+change the non-mempool allocation "backing_req->kmem.bvecs = 
+kmalloc_array(n_vecs, sizeof(struct bio_vec), GFP_NOIO);" to use a 
+mempool.
+
+> Thanx
+> 
+> Dongsheng
+
+Mikulas
+---1463811712-660552650-1752506079=:673007--
 
 
