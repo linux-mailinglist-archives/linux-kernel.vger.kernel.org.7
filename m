@@ -1,180 +1,147 @@
-Return-Path: <linux-kernel+bounces-730030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D9E8B03F63
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:12:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F14B1B03F5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DEF517A01F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:12:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB1023BB0DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3CA24DCE8;
-	Mon, 14 Jul 2025 13:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242F324DFF3;
+	Mon, 14 Jul 2025 13:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ubuntu.com header.i=@ubuntu.com header.b="EhRtxneI"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yb06c7hb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748A324C692
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688392E36F0;
+	Mon, 14 Jul 2025 13:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752498751; cv=none; b=Abi4YQK69D+APuLeqgzzffUE8wUn8v9hUqgQ50G6sprC4rA6J+8ZcC1s8y7wroCwhLFfJMckAgiPgcw/fCHJjwFRCVVZaa6AT5TabY5TQJRfwFsubP7wh72uAw1XDbdHdeXfzcXG4Ivuh8UFxCA7geJQZBY14mtopHsu2j0iOU0=
+	t=1752498710; cv=none; b=L8taKF4uG2yontq+xgQIAC0DMDXTRjnRFsE+LGFtV1pq+cqS4BI3vfJImucCGuC5/PFvht8gygku9AW3gqpGWCZWjzKdbD0ix75QdXtB8a9Ia0SMVYEz/oWXyvBNftIHHFrOmOu1OGt8o8jjUeQKF1GpeIGFZ7A5neYkmoZe/c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752498751; c=relaxed/simple;
-	bh=uxtVMW5ptGidGGwUzvq6Y9xl6J+S5oSN6o93pQ6Z7o0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LwgOrXfw6N4tbeuqpND2OdLaOcTAGF2E95PE6lE1ryqa50E+WBbEi1VNpIcxxTOIg7deLgfN0e4dDSvnmCqISGtvf5apb+jzSgZO+qLE2OiYOzTu9Yb71eGTLrBv6bKIPEFCRPREnKt493DBfCjUpsCZadr+GSwpALcJkznRVms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ubuntu.com; spf=pass smtp.mailfrom=fe-bounces.ubuntu.com; dkim=pass (2048-bit key) header.d=ubuntu.com header.i=@ubuntu.com header.b=EhRtxneI; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ubuntu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.ubuntu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ubuntu.com;
- h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
- To: From; q=dns/txt; s=fe-953a8a3ca9; t=1752498748;
- bh=urrC69RSn/xpKnJTpVLILpFXwIJPBmtW775RpQeEWDE=;
- b=EhRtxneITAYOZ/Yren0XdwE2zWeKKP4lRhjl+4AzI35qWdqxuCsWzM8uyrK+OKl8z9eNW9dH+
- ERzojF/6SxamZueH2+yinqi9OoVNlD7JeGtAc/+HXqHmq+W/qxj8TzPzjqoWLVea/NyYjDvyG3L
- YI2f/KXuUA1abg6LpglZ3nyxTLdMwecFfLpeXXgX7TroKEwrZZaOEawN1E6AcEbz4XCLOo2gTIX
- TEtdYP2EvJYLJ4QWf9zYzyS5M9mQ/nOx5MiKPnNp7hIq54M8i5gCfaiP3+f2TcMTKR+j1YHhOrK
- 9ox0cYksUbrA4d7mNV1Dy2bI0YIGpkWaRuqgHsqR99lw==
-X-Forward-Email-ID: 6875023685526031a5bf8a98
-X-Forward-Email-Sender: rfc822; schopin@ubuntu.com, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 1.1.6
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-From: Simon Chopin <schopin@ubuntu.com>
-To: greybus-dev@lists.linaro.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>,
-	Alex Elder <elder@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: ~lkcamp/patches@lists.sr.ht,
-	koike@igalia.com,
-	Simon Chopin <schopin@ubuntu.com>
-Subject: [PATCH] staging: greybus: fix whitespace alignments in firmware.c
-Date: Mon, 14 Jul 2025 15:10:47 +0200
-Message-ID: <20250714131101.434301-1-schopin@ubuntu.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1752498710; c=relaxed/simple;
+	bh=KoPIBYxCDRt+wj0haf0ET1qOMy5vh0KrC7gb2yW4fVw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z20BNrt/7g1kaQ1NSj5nVoNBm9uUyAF6vQPDeqADlghEDz3sFaw2tABPPQ4LpxEOhv5QqOR017MAvgGzVU3xrgUzFJNf5D01mpDSH/irNWBbwSug4YXHv0/Wa1Vn0lBCh9C/XLNX2d9QkEl4+9uOjCw0F0u4BSR6ulzYIU+JNyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yb06c7hb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD835C4CEED;
+	Mon, 14 Jul 2025 13:11:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752498709;
+	bh=KoPIBYxCDRt+wj0haf0ET1qOMy5vh0KrC7gb2yW4fVw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Yb06c7hbpWEWE/3ag6aHgq9FZEs9UmIKOyHOm1gbSriCnj4Ii8XrIbr4l+DOld/fm
+	 YqqmqNc3YikHQb7RnjyAEip+Ty7f9ypLJW0ReDriE7K+lSr5uFqH6c1QFB6Fv67fBw
+	 MRfJ1M5V5klJQPjjxOThKeWWHCvpBL16CzOZZi41GWo7XOMdh0JWieTsPjAKSYi7BK
+	 +dZIAF57n+Tcx5wPfb3Ef0+G3zOxIzthP7EwDc3rk0cjUYuUHDlYwezt7CGkDklNTX
+	 4FzkASsXmjClvAzCtPclU11YUsKyF3qzI60XgV1UvOIgnNN0ZzfJT4kEOv4Sv8bGmD
+	 ZyMtCg5RF1/5w==
+Message-ID: <ecdac806-364e-42db-a238-a71b1b2d8624@kernel.org>
+Date: Mon, 14 Jul 2025 15:11:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 04/12] media: ipu-bridge: Use v4l2_fwnode_device_parse
+ helper
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+ <hverkuil@xs4all.nl>, Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
+ <20250605-uvc-orientation-v2-4-5710f9d030aa@chromium.org>
+Content-Language: en-US, nl
+From: Hans de Goede <hansg@kernel.org>
+In-Reply-To: <20250605-uvc-orientation-v2-4-5710f9d030aa@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This addresses all instances of the checkpatch.pl warning
-"CHECK: Alignment should match open parenthesis"
-in this file.
+Hi,
 
-Signed-off-by: Simon Chopin <schopin@ubuntu.com>
+On 5-Jun-25 19:52, Ricardo Ribalda wrote:
+> v4l2_fwnode_device_parse now supports acpi devices as well. Use the
+> helper instead of re-implement the logic.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/pci/intel/ipu-bridge.c | 32 ++++++--------------------------
+>  1 file changed, 6 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
+> index 83e682e1a4b77d9d97b2988750732d0b7c9087b3..020aa52f590d66b6d333adc56ebfb9ab0561db51 100644
+> --- a/drivers/media/pci/intel/ipu-bridge.c
+> +++ b/drivers/media/pci/intel/ipu-bridge.c
+> @@ -253,36 +253,16 @@ static u32 ipu_bridge_parse_rotation(struct acpi_device *adev,
+>  
+>  static enum v4l2_fwnode_orientation ipu_bridge_parse_orientation(struct acpi_device *adev)
+>  {
 
----
+In patch 5/12 you add a "struct v4l2_fwnode_device_properties *props" parameter
+to this function and move the calling of v4l2_fwnode_device_parse() to
+ipu_bridge_parse_ssdb().
 
-This patch was created as part of the "Submit your first
-contribution to the Linux kernel" workshop at Debconf 25.
----
- .../greybus/Documentation/firmware/firmware.c | 24 +++++++++----------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+You might just as well do this here so that there is a bit less churn in
+the series.
 
-diff --git a/drivers/staging/greybus/Documentation/firmware/firmware.c b/drivers/staging/greybus/Documentation/firmware/firmware.c
-index 765d69faa9cc..b27d425c5c06 100644
---- a/drivers/staging/greybus/Documentation/firmware/firmware.c
-+++ b/drivers/staging/greybus/Documentation/firmware/firmware.c
-@@ -47,12 +47,12 @@ static int update_intf_firmware(int fd)
- 	ret = ioctl(fd, FW_MGMT_IOC_GET_INTF_FW, &intf_fw_info);
- 	if (ret < 0) {
- 		printf("Failed to get interface firmware version: %s (%d)\n",
--			fwdev, ret);
-+		       fwdev, ret);
- 		return -1;
- 	}
- 
- 	printf("Interface Firmware tag (%s), major (%d), minor (%d)\n",
--		intf_fw_info.firmware_tag, intf_fw_info.major,
-+	       intf_fw_info.firmware_tag, intf_fw_info.major,
- 		intf_fw_info.minor);
- 
- 	/* Try Interface Firmware load over Unipro */
-@@ -69,20 +69,20 @@ static int update_intf_firmware(int fd)
- 	ret = ioctl(fd, FW_MGMT_IOC_INTF_LOAD_AND_VALIDATE, &intf_load);
- 	if (ret < 0) {
- 		printf("Failed to load interface firmware: %s (%d)\n", fwdev,
--			ret);
-+		       ret);
- 		return -1;
- 	}
- 
- 	if (intf_load.status != GB_FW_U_LOAD_STATUS_VALIDATED &&
- 	    intf_load.status != GB_FW_U_LOAD_STATUS_UNVALIDATED) {
- 		printf("Load status says loading failed: %d\n",
--			intf_load.status);
-+		       intf_load.status);
- 		return -1;
- 	}
- 
- 	printf("Interface Firmware (%s) Load done: major: %d, minor: %d, status: %d\n",
--		firmware_tag, intf_load.major, intf_load.minor,
--		intf_load.status);
-+	       firmware_tag, intf_load.major, intf_load.minor,
-+	       intf_load.status);
- 
- 	/* Initiate Mode-switch to the newly loaded firmware */
- 	printf("Initiate Mode switch\n");
-@@ -108,12 +108,12 @@ static int update_backend_firmware(int fd)
- 	ret = ioctl(fd, FW_MGMT_IOC_GET_BACKEND_FW, &backend_fw_info);
- 	if (ret < 0) {
- 		printf("Failed to get backend firmware version: %s (%d)\n",
--			fwdev, ret);
-+		       fwdev, ret);
- 		return -1;
- 	}
- 
- 	printf("Backend Firmware tag (%s), major (%d), minor (%d), status (%d)\n",
--		backend_fw_info.firmware_tag, backend_fw_info.major,
-+	       backend_fw_info.firmware_tag, backend_fw_info.major,
- 		backend_fw_info.minor, backend_fw_info.status);
- 
- 	if (backend_fw_info.status == GB_FW_U_BACKEND_VERSION_STATUS_RETRY)
-@@ -122,7 +122,7 @@ static int update_backend_firmware(int fd)
- 	if ((backend_fw_info.status != GB_FW_U_BACKEND_VERSION_STATUS_SUCCESS)
- 	    && (backend_fw_info.status != GB_FW_U_BACKEND_VERSION_STATUS_NOT_AVAILABLE)) {
- 		printf("Failed to get backend firmware version: %s (%d)\n",
--			fwdev, backend_fw_info.status);
-+		       fwdev, backend_fw_info.status);
- 		return -1;
- 	}
- 
-@@ -148,10 +148,10 @@ static int update_backend_firmware(int fd)
- 
- 	if (backend_update.status != GB_FW_U_BACKEND_FW_STATUS_SUCCESS) {
- 		printf("Load status says loading failed: %d\n",
--			backend_update.status);
-+		       backend_update.status);
- 	} else {
- 		printf("Backend Firmware (%s) Load done: status: %d\n",
--				firmware_tag, backend_update.status);
-+		       firmware_tag, backend_update.status);
- 	}
- 
- 	return 0;
-@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
- 		fw_timeout = strtoul(argv[4], &endptr, 10);
- 
- 	printf("Trying Firmware update: fwdev: %s, type: %s, tag: %s, timeout: %u\n",
--		fwdev, fw_update_type == 0 ? "interface" : "backend",
-+	       fwdev, fw_update_type == 0 ? "interface" : "backend",
- 		firmware_tag, fw_timeout);
- 
- 	printf("Opening %s firmware management device\n", fwdev);
+Regards,
 
-base-commit: 1b0ee85ee7967a4d7a68080c3f6a66af69e4e0b4
--- 
-2.48.1
+Hans
+
+
+> -	enum v4l2_fwnode_orientation orientation;
+> -	struct acpi_pld_info *pld = NULL;
+> +	struct v4l2_fwnode_device_properties props;
+> +	int ret;
+>  
+> -	if (!acpi_get_physical_device_location(ACPI_PTR(adev->handle), &pld)) {
+> -		dev_warn(ADEV_DEV(adev), "_PLD call failed, using default orientation\n");
+> +	ret = v4l2_fwnode_device_parse(ADEV_DEV(adev), &props);
+> +	if (!ret || props.rotation == V4L2_FWNODE_PROPERTY_UNSET) {
+> +		dev_warn(ADEV_DEV(adev), "Using default orientation\n");
+>  		return V4L2_FWNODE_ORIENTATION_EXTERNAL;
+>  	}
+>  
+> -	switch (pld->panel) {
+> -	case ACPI_PLD_PANEL_FRONT:
+> -		orientation = V4L2_FWNODE_ORIENTATION_FRONT;
+> -		break;
+> -	case ACPI_PLD_PANEL_BACK:
+> -		orientation = V4L2_FWNODE_ORIENTATION_BACK;
+> -		break;
+> -	case ACPI_PLD_PANEL_TOP:
+> -	case ACPI_PLD_PANEL_LEFT:
+> -	case ACPI_PLD_PANEL_RIGHT:
+> -	case ACPI_PLD_PANEL_UNKNOWN:
+> -		orientation = V4L2_FWNODE_ORIENTATION_EXTERNAL;
+> -		break;
+> -	default:
+> -		dev_warn(ADEV_DEV(adev), "Unknown _PLD panel val %d\n",
+> -			 pld->panel);
+> -		orientation = V4L2_FWNODE_ORIENTATION_EXTERNAL;
+> -		break;
+> -	}
+> -
+> -	ACPI_FREE(pld);
+> -	return orientation;
+> +	return props.orientation;
+>  }
+>  
+>  int ipu_bridge_parse_ssdb(struct acpi_device *adev, struct ipu_sensor *sensor)
+> 
 
 
