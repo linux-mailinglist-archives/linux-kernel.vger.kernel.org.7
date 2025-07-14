@@ -1,135 +1,116 @@
-Return-Path: <linux-kernel+bounces-729868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A88EEB03CB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:57:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ACCCB03CB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:57:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D852188FC2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:54:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5E5C1893BEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9666B248891;
-	Mon, 14 Jul 2025 10:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB2D23BCED;
+	Mon, 14 Jul 2025 10:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="LGJuBfVJ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N4D6me88"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889AC24887E;
-	Mon, 14 Jul 2025 10:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE644239570;
+	Mon, 14 Jul 2025 10:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752490398; cv=none; b=U3ra9Va5GuECsRYZzu/iX/uWYcQnAicl6gMhu6u/v6Jjdl2hl6taK9GfUoZWAvRBWpMygdcb6tXGZcijY7boH4J/m8Flj9JafAzmyv1gAP357EM5S9mw5fPXRyjlGaqf9a1d5FjhZ8j6WYdJI74n/ekgFHQld4C95eFI7RnQjeQ=
+	t=1752490527; cv=none; b=YTVK5IDXzWvZhOvR3RtPddYfRP/qDjlXf3ux7uoYJGD4iFu4UZk/h/2wlpkpo/5hEyK513KDN25WD5W8Ggikv++3j+VhNUpCOENYytU3I+BkYfRyFShhTtCJfjMhy4PPIfDN1fo5vMnNqotAAQihZw4F5PcWyEMaBP9Q+qxNQPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752490398; c=relaxed/simple;
-	bh=faQh3yDJ3cmAtPWHJAAYh+8EJbkuKGS8rv10u+6kVdA=;
+	s=arc-20240116; t=1752490527; c=relaxed/simple;
+	bh=dYNW+G9IkWXMB5UjzS7cVgR6jqNbPLgCYskPD++uc54=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LiAwpH6c+ARGTcsguiT0/E9yRxSPml67jSup8FbXwG38lwQ/kxNz43KeX5aFo1Q7Z4aYQxSB2u62wm+j5lp8Yz5pQoKZ7elGbRMItwRDj5t2rDFzXpOE0nCYkECyKAA1bs+OUn2Yfg2g5FpbFI07t+tobASpsdo9TARgHni73OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=LGJuBfVJ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 176A840E0163;
-	Mon, 14 Jul 2025 10:53:14 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 4Z3gr6BUp_8I; Mon, 14 Jul 2025 10:53:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1752490390; bh=6rOjcKLLPgtL8H8EwqYk8h4UdVGv4zjdYvcfXegnVJk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LGJuBfVJv5V78O/C0L4MoZYTuwjK5J+gcPXX2cgukGxgzvxEgt37jJUN/SCv6kZaz
-	 xX7j+jLBpSu9dx7xf6CkThp8UtgEj85Cc7q6sf3aIR3z9DYiyhEIxqopRQHXHqYiom
-	 qYf/1nboKxOOMz648e1eYL2JfYLseRkEwJpjZ6SnCH2/JzA/JpwNDULq0dTOWYiqiY
-	 5PJR2Wxk8Cdk/LgTKC3FOz/BuvZK4dC/kA00Tq5xgqqgyjWrbn+KJp4pwPtvulZH89
-	 CopPPaFErRwNusjZy0lTNFrMjE7qeMAYl8zWhXdZQRa92bNYdB2qFAtjbdSBJJWcAG
-	 qNWjgMZd4LMrRvXuLX+RbB8r6GMGt2dXB3/jx0GTuuj2x8EmbSJojcJFcidV9qMnKc
-	 2kYdFUFbHNXshbXj5OwmihP1d4w1EbyJ3Y2oWPSIcK9K0AtCTS9a0gyVH56fNlidjv
-	 COyC6Puwys9eb0KxnpDRA/UPEj8bWd7cJCUtWpac1On40A1a9tyYPIMoTONsFOv/bk
-	 NieBSEVb2oq6om8TZoIXMos79NNuEQkWNHyjmhSJ2boV4nKvPt+nPSlcejkdIAZWXP
-	 Ij2ODJWDH4UIMJzrHSo+AVJNwrDhNfUxaYvCiaJCVT0YkY3GUab5GI4WJsTOl5Nv4y
-	 bLEvZGjCi+Wv4DvRwJ1G14fg=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3934140E01FD;
-	Mon, 14 Jul 2025 10:52:49 +0000 (UTC)
-Date: Mon, 14 Jul 2025 12:52:48 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, linux-kernel@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
-	Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com,
-	David.Kaplan@amd.com, x86@kernel.org, hpa@zytor.com,
-	peterz@infradead.org, pbonzini@redhat.com, kvm@vger.kernel.org,
-	kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
-	naveen.rao@amd.com, kai.huang@intel.com
-Subject: Re: [RFC PATCH v8 16/35] x86/apic: Simplify bitwise operations on
- APIC bitmap
-Message-ID: <20250714105248.GFaHThgLB9QnrW2xLW@fat_crate.local>
-References: <20250709033242.267892-1-Neeraj.Upadhyay@amd.com>
- <20250709033242.267892-17-Neeraj.Upadhyay@amd.com>
- <aG5-PV7U2KaZDNGX@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Df+2tzMG3/nkiNIworvTYmzeefhO4KjafkM7TRoQLxpHrHE+ZAqJcMcwtTbwW0fTLqprwylZrK2uGXBgZ+DYS+pLIm5BiNaS/OkCK5sVRALtZEYHyQ/J7UgLxEWnWptIkgjM+fMmM9EguTriVz5HyIQKDF43aMKHLsBGT7nWsuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=N4D6me88; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=io1tVKXnDmOOI4XAw6Cl9XPcaBmlolImRCBWLa00h8I=; b=N4D6me884F1hBjIu5NxRO7FgvY
+	iXLtliNvdrcSD8/DIyEzvNJYZBZABGiXogm2TnPRf7I5Y8QOT0/jzkf3/DIh+ST6w7305iOxhodEd
+	mgJxBWZRB25kusp+aKjCUeyCmjROcjZG0LCGqPdCUB8+AzV1WkgyqgKUhTKjh1JXjF15Iom/z3g0L
+	+9kNFg38iKHO3n4FUXUhs73cKTob67z5QgqWf3YnsUlL12FvR3DTPKzed82xsBEP4mS7POZKUYCUe
+	R0T6pylJ8olwL3CKTaoviWWTUhiCMiCgd5yZm45AYEtrcJqWaoWvMRHXZ/6wPnQWdq0YGhZTxADi3
+	+CGUYysA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ubGq9-00000006w5j-0q8W;
+	Mon, 14 Jul 2025 10:55:21 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BE084300186; Mon, 14 Jul 2025 12:55:20 +0200 (CEST)
+Date: Mon, 14 Jul 2025 12:55:20 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [RFC PATCH 7/7] arm64/efi: Call EFI runtime services without
+ disabling preemption
+Message-ID: <20250714105520.GS905792@noisy.programming.kicks-ass.net>
+References: <20250514174339.1834871-9-ardb+git@google.com>
+ <20250514174339.1834871-16-ardb+git@google.com>
+ <20250711134833.GI905792@noisy.programming.kicks-ass.net>
+ <CAMj1kXGEHWMhMgY8ZMiRxKPTeD+oZBReozKwA4udJsrp-j_P_A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aG5-PV7U2KaZDNGX@google.com>
+In-Reply-To: <CAMj1kXGEHWMhMgY8ZMiRxKPTeD+oZBReozKwA4udJsrp-j_P_A@mail.gmail.com>
 
-On Wed, Jul 09, 2025 at 07:35:41AM -0700, Sean Christopherson wrote:
-> On Wed, Jul 09, 2025, Neeraj Upadhyay wrote:
-> > Use 'regs' as a contiguous linear bitmap for bitwise operations in
-> > apic_{set|clear|test}_vector(). This makes the code simpler by eliminating
+On Mon, Jul 14, 2025 at 12:20:30PM +1000, Ard Biesheuvel wrote:
+> On Fri, 11 Jul 2025 at 23:48, Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Wed, May 14, 2025 at 07:43:47PM +0200, Ard Biesheuvel wrote:
+> > > From: Ard Biesheuvel <ardb@kernel.org>
+> > >
+> > > The only remaining reason why EFI runtime services are invoked with
+> > > preemption disabled is the fact that the mm is swapped out behind the
+> > > back of the context switching code.
+> > >
+> > > The kernel no longer disables preemption in kernel_neon_begin().
+> > > Furthermore, the EFI spec is being clarified to explicitly state that
+> > > only baseline FP/SIMD is permitted in EFI runtime service
+> > > implementations, and so the existing kernel mode NEON context switching
+> > > code is sufficient to preserve and restore the execution context of an
+> > > in-progress EFI runtime service call.
+> > >
+> > > Most EFI calls are made from the efi_rts_wq, which is serviced by a
+> > > kthread. As kthreads never return to user space, they usually don't have
+> > > an mm, and so we can use the existing infrastructure to swap in the
+> > > efi_mm while the EFI call is in progress. This is visible to the
+> > > scheduler, which will therefore reactivate the selected mm when
+> > > switching out the kthread and back in again.
+> > >
+> > > Given that the EFI spec explicitly permits runtime services to be called
+> > > with interrupts enabled, firmware code is already required to tolerate
+> > > interruptions. So rather than disable preemption, disable only migration
+> > > so that EFI runtime services are less likely to cause scheduling delays.
+> > >
+> > > Note, though, that the firmware executes at the same privilege level as
+> > > the kernel, and is therefore able to disable interrupts altogether.
+> >
+> > Is the migrate_disable() strictly required, or just paranoia?
+> >
 > 
-> That's very debatable.  I don't find this code to be any simpler.  Quite the
-> opposite; it adds yet another open coded math exercise, which is so "simple"
-> that it warrants its own comment to explain what it's doing.
-> 
-> I'm not dead set against this, but I'd strongly prefer to drop this patch.
+> Runtime services might be polling the secure firmware for an async
+> completion when they are interrupted, and so I don't think it is
+> generally safe to assume that an interrupted EFI runtime service can
+> be resumed on another CPU.
 
-> > +static inline unsigned int get_vec_bit(unsigned int vec)
-> > +{
-> > +	/*
-> > +	 * The registers are 32-bit wide and 16-byte aligned.
-> > +	 * Compensate for the resulting bit number spacing.
-> > +	 */
-> > +	return vec + 96 * (vec / 32);
+Can we please get a comment with that migrate_disable() explaining this?
 
-I kinda agree. The naked 96 doesn't tell me anything. If we do this, the
-explaination of what this thing does should be crystal clear, perhaps even
-with an example. And the naked numbers need to be defines with proper names.
-
-Also:
-
->     This change results in slight increase in generated code size for
->     gcc-14.2.
->     
->     - Without change
-
-What is the asm supposed to tell me?
-
-The new change gets a LEA which is noticeable or so?
-
-The generated code size increase is, what, a couple of bytes? Who cares?
-
-We add asm to commit messages when it is really important. Doesn't seem so to
-me here but maybe I'm missing an angle...
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks!
 
