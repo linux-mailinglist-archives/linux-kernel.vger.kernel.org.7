@@ -1,85 +1,115 @@
-Return-Path: <linux-kernel+bounces-729991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9929DB03EC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:33:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9822B03E8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:25:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9217175DCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:32:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 662BD7A2C40
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0182D248872;
-	Mon, 14 Jul 2025 12:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26D5247290;
+	Mon, 14 Jul 2025 12:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=khirnov.net header.i=@khirnov.net header.b="PEN9EZ0m"
-Received: from mail0.khirnov.net (red.khirnov.net [176.97.15.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LRmQBjW7"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFCE247294;
-	Mon, 14 Jul 2025 12:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.97.15.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C785724728F;
+	Mon, 14 Jul 2025 12:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752496371; cv=none; b=cB86YB900ppPaO8G6hqn11tBp/rAV5k2RXuDLKmxJ5BqOQZM+NZz1oebJ5ESVwb7c6VbDPQH8x3hGoga0F2j9R9HLhS9gMtSYLa2EBsjRlD2aXo66YzsPhOfruqyX/Py0efwfVJBvqjMDH2N0deEgUONyTkyYgaJ5RL1p9B15Is=
+	t=1752495893; cv=none; b=ZzwFhfljhFJ9YiVoQFY/IiLp59sWHtKzOZpsbMM8oeyvHcHyW/PE7BuglKS195Ok4NIoZKqeDlD6KpCC++8GyFnPgajDY/xvn9Mgx6kBcEWfZWD7K1RsoDo50t+U9Mc+gjYk5bGf5nvW/pgklLx1NKP/sM3u1LoeSYrhEicExTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752496371; c=relaxed/simple;
-	bh=nE94uqfkRsgkO3NvOCBnZhGFPYUB4TT58PqKmdCbsbM=;
-	h=Content-Type:Subject:From:To:Cc:In-Reply-To:References:Date:
-	 Message-ID:MIME-Version; b=phkkufUXR47A3YffnorZoY0BpD5mWiP2/A2sS/Yn8E16dSaUi1f+9UJ2AdMO36Ve9GE8Ey05LEudbHWZZ5c+SJMhGdWsobgMDVucr7IbNHXnZXYj9a/UGLyfEXFdO046jI8xv3skS3FVKXKybbh5tFxNe8gkGa94JNVNcPuwLc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=khirnov.net; spf=pass smtp.mailfrom=khirnov.net; dkim=pass (2048-bit key) header.d=khirnov.net header.i=@khirnov.net header.b=PEN9EZ0m; arc=none smtp.client-ip=176.97.15.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=khirnov.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=khirnov.net
-Authentication-Results: mail0.khirnov.net;
-	dkim=pass (2048-bit key; unprotected) header.d=khirnov.net header.i=@khirnov.net header.a=rsa-sha256 header.s=mail header.b=PEN9EZ0m;
-	dkim-atps=neutral
-Received: from localhost (localhost [IPv6:::1])
-	by mail0.khirnov.net (Postfix) with ESMTP id DD17F2444CB;
-	Mon, 14 Jul 2025 14:23:31 +0200 (CEST)
-Received: from mail0.khirnov.net ([IPv6:::1])
- by localhost (mail0.khirnov.net [IPv6:::1]) (amavis, port 10024) with ESMTP
- id MQ0dWijxmNAH; Mon, 14 Jul 2025 14:23:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=khirnov.net; s=mail;
-	t=1752495811; bh=nE94uqfkRsgkO3NvOCBnZhGFPYUB4TT58PqKmdCbsbM=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date:From;
-	b=PEN9EZ0mNFpI4wliVeLDiaNw0J01iKgzvkS9o8TsilWSlBgJH1CImo5EYZ4lLsno7
-	 0Xv2JQnWqkeQYiJWgZzU6BH9RgKH/SY8mIAx7PgUVbCnUGE0zZ3l1RgSM1PEyzyHxe
-	 el/o5fVr1cJFt+tInAqmk4ZP2LseXx1nOtX+RXy+v/xYJLtAUmcRsxlMgW/BabCF/n
-	 XaOdpjLbI5QQEzQpm1F81QjdKnMekrkxRl3PeY22zf7nSIUB+/OuWqtmXYoLhx+otW
-	 Bis/rPZimcD9igv0F9NCYAKofD7F8CyXrrkXBKu7SQMnJwzxBZ9gJ2ZgS3JGnz3Qne
-	 dFFEndngj3x5A==
-Received: from lain.khirnov.net (lain.khirnov.net [IPv6:2001:67c:1138:4306::3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256
-	 client-signature RSA-PSS (2048 bits) client-digest SHA256)
-	(Client CN "lain.khirnov.net", Issuer "smtp.khirnov.net SMTP CA" (verified OK))
-	by mail0.khirnov.net (Postfix) with ESMTPS id 222D92412EF;
-	Mon, 14 Jul 2025 14:23:31 +0200 (CEST)
-Received: by lain.khirnov.net (Postfix, from userid 1000)
-	id 02CA31601BA; Mon, 14 Jul 2025 14:23:30 +0200 (CEST)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject:  Re: [PATCH] platform/x86: asus-wmi: map more keys on ExpertBook B9
-From:  Anton Khirnov <anton@khirnov.net>
-To:  Corentin Chary <corentin.chary@gmail.com>,
- "Luke D. Jones" <luke@ljones.dev>, Hans de Goede <hansg@kernel.org>,
- Ilpo =?utf-8?q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc:  platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To:  <20250702070231.2872-1-anton@khirnov.net>
-References:  <20250702070231.2872-1-anton@khirnov.net>
-Date: Mon, 14 Jul 2025 14:23:30 +0200
-Message-ID: <175249581097.21445.9069512593432044354@lain.khirnov.net>
-User-Agent: alot/0.8.1
+	s=arc-20240116; t=1752495893; c=relaxed/simple;
+	bh=ZuXG+i+SmuchIhngE9ENKqZaKdRzXUfnsQZhyf2kAEg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rxn8JjLSNi0XHIQNu9ciBY7Zxd24sLcIIiDZ0HPoXBlTiX3jEOazpOaSGqoFpGUI+z7BU3VQwyVbhEBu3RDZOr9ADNd8ZcAC1olbmBwEHlJfaXDbaRu4A1eMfSwFvF5o/kkyOOaNrKfMao8trAuLqccbz4biZUbj8nL3Z+wakqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LRmQBjW7; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32ce1b2188dso37659951fa.3;
+        Mon, 14 Jul 2025 05:24:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752495890; x=1753100690; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IiunIh4eAaoI70/iX33maNxdiRWc/PBAOU6pQuqO8mg=;
+        b=LRmQBjW7nU1o7nHTrUrmfHy+zZuzMFPPXoR4w+4sHcnOr449KLoG+MmiqgR5TL2iiz
+         5E1ZiJ8bQEJ41TSj/lVCABzQ6b1fXiXCdwTxSS06r3wMRlMvcNkL/Ok8uTRuS8aEnZMn
+         phwiOiSpP1UAL5/qgnwojfqq8E4r1fU2Jrc07TYWgYcCS8OZ8VuTrRN+F+p2LyprYKKz
+         e8D6AhUENwl6ymaZiagrWMDyh7wAXXIdyNfaoq1R6KOhHa/Dp8aTILtodYyJvx3hKydc
+         5oCC/uMwXYwS6hgaqlv71FhTfeHNmpphMwdOBA2317Ep5mkL+o/B/WoBnm+AZrm++36a
+         qadw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752495890; x=1753100690;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IiunIh4eAaoI70/iX33maNxdiRWc/PBAOU6pQuqO8mg=;
+        b=wSuTORzdbBDDoxB3snk1FFJa8KmWi0OjNtkcBy5ne4vh9NjPlV2ZqE1Jq0JKs0C/J+
+         5h6mbVgIUdJKJdkrXVOZl1lQDEKONvAk5DmreE7dyZ3IrDz+dptFO3Vqrg2EXsKjbqvF
+         yAltdUdqo7YJhZ3yQ1cXmTDKN9PaAzLgIaxHjSODmMV22BK29eUfZgy/LOqhseXy5vbd
+         CP35R5dYn/otSH74LoJ55k9xNbtl4BTWL1jKFTiYHP7ci9uH6RorGHOYKXj/w+Vl0Tgy
+         nDE9nsHCISa7ejE5bfmpDe0yjO9MwjRIZ9YY8r2y79J/t4JU/ETPv1ns0C+dopfB10vR
+         SaSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+LRD/c7HBnqnKHhwignN+RGHftdj0yMg0orENTvJD3jBsAXqp9a6leNlSSbMzHXcEFJbHDE1SB0aD6gQ=@vger.kernel.org, AJvYcCVsvaE0AP6xooriXSnTAQEhSgRJPk2dYdxkZKdsLVF0X8VEtYs6htsqYPLL0wHQkQFp0uwn1v7GlspWIgRP4ag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQtzj2FhGecpBdWoC/4RZZXxDGKVa1NzzfNKhrwIVoi51B79Uf
+	giuiDcfiesRZEw3x/fSfsCS8oF3bELbEzm1a5BgdiMS88bxDD5sHqgHjjH+h72q4RRlzdwyFF3l
+	BOzy4IQiExtrP8JRUMs7LzY85znXJZTk=
+X-Gm-Gg: ASbGncupAJ8JPwNT1sorYEGTDDe8Anh5CCxgJAMj/WtBdC9VuNzFVJCLD9SxXgoIpb1
+	RcV0ziOf+fq4ETacZMKvg4hxFPpOBzOgnt9JBzSH3xiNp1PbP+XifVxPZkpopaEawLYz+FSukPE
+	fnUA79g32tFRx9+M0bSyDjI/Y6pDwcVhdRrHl8ZTEFM6AIrG0gNLLEFTA+kR34UYIMXpGB/xPu/
+	wXSoR+Cfv4bEYlZyGIn/1F4IXIHQM+ZuRblOwHYlA==
+X-Google-Smtp-Source: AGHT+IFupoiMpTpkWvoF37zAwoSnfHR0O5s//yyqCJ8UyAIoPxUTpvFl1pIX2xmYkdy/dg3/14bCw9Qz+Z8UhOrXzJE=
+X-Received: by 2002:a2e:8005:0:b0:32f:219d:760d with SMTP id
+ 38308e7fff4ca-330534661d6mr26394161fa.20.1752495889605; Mon, 14 Jul 2025
+ 05:24:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250709-init-remove-old-workaround-v2-0-a3b1be8fd490@gmail.com>
+ <20250709-init-remove-old-workaround-v2-1-a3b1be8fd490@gmail.com> <CANiq72ngcL9CSkSTFcp+Of8PemAKbvQc1TJ5s3vCiLoHX4QfcA@mail.gmail.com>
+In-Reply-To: <CANiq72ngcL9CSkSTFcp+Of8PemAKbvQc1TJ5s3vCiLoHX4QfcA@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 14 Jul 2025 08:24:13 -0400
+X-Gm-Features: Ac12FXyMojXfpaatszHdqv7PAZmb1uKx2hqH7RiyjwyzDTQ5tp-1mmntU2x1_jA
+Message-ID: <CAJ-ks9mSLKzw=-rxPgfyjbGk0hzXQ0o+_kH4HoEZeSAW-Opa2A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] rust: init: compile examples
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ping, can anyone please look at this patch?
+On Sun, Jul 13, 2025 at 4:33=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Thu, Jul 10, 2025 at 12:49=E2=80=AFAM Tamir Duberstein <tamird@gmail.c=
+om> wrote:
+> >
+> > It's not exactly clear to me why these were `ignore`d. There are many
+> > others like this in pin-init, but I'm only touching the kernel-specific
+> > ones here.
+> >
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+>
+> This seems essentially equivalent to this one applied a few weeks ago:
+>
+>     https://lore.kernel.org/rust-for-linux/20250526152914.2453949-1-ojeda=
+@kernel.org/
+>
+> But that one uses `expect` to, which is a bit better for the future.
 
-Thanks,
--- 
-Anton Khirnov
+Yep, thanks!
 
