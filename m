@@ -1,117 +1,77 @@
-Return-Path: <linux-kernel+bounces-730492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50F7B04575
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:30:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 562FDB04581
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE6E27A2CC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:29:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EB394A48E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33EF2609FC;
-	Mon, 14 Jul 2025 16:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC0E261393;
+	Mon, 14 Jul 2025 16:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kg+7iDZV"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QSEcZaJT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD0E13AA53;
-	Mon, 14 Jul 2025 16:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261901D5CE5;
+	Mon, 14 Jul 2025 16:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752510626; cv=none; b=skYDedrviffapcuRy7Hm7j3OGs7SjjUBjku/bNatGZ+1FGz5l+PnfMkteWj/d3USzzPyke/MlLcPNq7gRRJm2SfX8QDBX1z5TFhAFf40WquDIdwOGLBYGhfzRDFMl4GuaV0lS4zZ/Ya5ZaqlcNRcjN4uJKIKBBeSTkG5I4hXBSU=
+	t=1752510717; cv=none; b=d7UbLmEOl6wvS4J9kn8uiO13+izsc4S5fnGABZMO4E+GV3dbVAvXYg/vuXH+KexBW+KC2jJlOLhoSynRLM5z8pqCGuoQKcz4wDMNSZeK9mIiYYmzvecB6dui6c0Zja7obNmIR9xRo3HCaNWW4/1o++kZyp2QxiDQevb3IJ7mEkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752510626; c=relaxed/simple;
-	bh=lLEsaBZOlrQnGfQntry0h0Gc0xbjURUDnEKTrwol9tY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=shgthJNrENVuj7o5QDlzyzVn23ryHZ/MGu85PileCOm8/Wp3dR8Uad/XBa7QhM6S1wdISiRlyS5tttrDeb3kxz2Ywdo96qLpa5Al1hfXU6IG0jNjig/QwdtMnYtYhr/h6ok9LpB5gX280eiB7KYAUwqHIxv653zqoGjyaqBlUnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kg+7iDZV; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b350c85cf4eso466460a12.1;
-        Mon, 14 Jul 2025 09:30:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752510624; x=1753115424; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D+8sgm4KGNU/qNdB+13y9KyGhaX2MKC48G1yc7u2rJ0=;
-        b=Kg+7iDZVWt6qdMbnyIH1q7E/y7QAXLgirxa8fTYyzVhj2O5PWxB5eWEawOxw+Ksb20
-         xiHfpgeR7U/VVmohhU6Uff85njd0oT8ayYo3/8OfZDqOqsxwSr8moJVYUByHQPuG6roF
-         PuT54D1JhuH8dA8X3Ncw08bDqctDBNpXizZ55reVVk4EPLPTClmRDaGBA63Z8JuhRPzC
-         FYXGjkdav3MajYi4+LRuauqXt8BHthXD2qtYOVcRa2XRZ+IPal+cSgFNPx4C9JQiUItA
-         DwWLTeTQ2c/aRbzjH0fJDSaVfr5i5bJG+4Vkj5deAaIxfGYpzxX862nFB+ODm+q1OtVO
-         yLuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752510624; x=1753115424;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D+8sgm4KGNU/qNdB+13y9KyGhaX2MKC48G1yc7u2rJ0=;
-        b=D6Nvf+CCsPtiDjStnzHMYC5uKtjVEgakprXGBfOFsxjUQe8Lbpsj1KtD3W8xctPixv
-         6kGIr8YJfbD8qp5BIrLuSDGdA2bCHotlHfJJVG1ksDyFQWjHda4AMJzHPqHSlkdgREbj
-         t5QfVqQIdW5IXjF6dIw0rpdUl2C92g+5pdC7gRDrZuIOn8qtz3QOn4EiaT9kfbzq+0v/
-         YsDMv7ay0cQbfvDTdfsOQ16H/jnWgTXQY+dTkE3rsB/LTO8MNk4lMrSxC9a0/knKMd5M
-         MCLsv9J21RV/+hCs+w4BcEsU69COvdTw0a54Tdhp+Fd6PgWF5yWc29CYZpbeNIPxKCUo
-         BsJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsb3RUA5NZ9kBCdvPQgu6VxA0xbpaq4YpaJX2Nwb1Bneo8I3IdayIo3n2XvEwyW95gifPYA5NJDwC5DjGe@vger.kernel.org, AJvYcCVZ29RSZoC2hIiAUN2bp8DqfjEM2wL37qwlfyMnQXxJbbcum8TbAJKiyl08FJOcvRU8k7bn0uZjWv0C@vger.kernel.org, AJvYcCVvvydYOaWdHEzrjU4lXJj3EJEn3sEBBWI7PFWsxdXluxSsi4qNGfpLLofgd73zoSMSDJ/Oc9gNYZY1H6Ir@vger.kernel.org, AJvYcCVxWje6TEdc7+I3vB9Z4YnU8w/27MQPygKxsZpHwbOAyZtnIr9wtOBl1Jyg9sK/q926JfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN5rR4wXaQbtmEOJO6DhVP1ID2cV4vy6k80nLI5Ht2pp7Hfat3
-	LJ2LpXHtQrLcDG814syUWypeQQ+cspvipZZs9lM8MTt1WFkN2VGWOyk6AwnMS59t9S4ZKx5kgrJ
-	cc0gHdx6zY68nZzb5yHiGcshJmogofVQ=
-X-Gm-Gg: ASbGncuFSNrKhlePhEN+liQq+CqbMPU9Z/+LbAVJFnBPcBEGN4UmsbSBw+Hvc2B6pHR
-	3XUOkjocotfWLjwQi5fMyZU/OnSY5SMAKdm77hh5r/yi4UXzFEUl5KldTKC2BCUiUncrrb1dL6e
-	VQgR0QJ9rtkgjT208PXcX6YFyHPG8aU1fzryMQYbI3wFQ1c8kcPicg/PL9Va+6obpNpO15xoGAs
-	54ycQ05
-X-Google-Smtp-Source: AGHT+IHyYvv5+3JWpqsKuSY+wK3z8BqR9a/T94bPsj6wT6Sjx0azXqcCyCWcvR/Ia/9kNSO+F2zypZBSntO4e7l+ce0=
-X-Received: by 2002:a05:6a21:6d97:b0:233:38b4:7983 with SMTP id
- adf61e73a8af0-23338b47df1mr5041293637.3.1752510624098; Mon, 14 Jul 2025
- 09:30:24 -0700 (PDT)
+	s=arc-20240116; t=1752510717; c=relaxed/simple;
+	bh=vejXSpkDXi2CRJw5A12Vz3zkbc+lLT/K0N+b130MARE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SOPQyPWITmPrLY7xbThRjZ4NHZ2i0C6vnjMxLV16YfNMLFg1Bsd5pXR8/fnWKw92auqKvC7mVTAnOkBuNxLjLgk3Z9m7Z8wCtZ2TgRbuwzgfo694RYnYAFR5DU6g4JHRHJvCulbF5NqQYTVAAp+P5c3kix2nf89PJk56FUELACQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QSEcZaJT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DBE9C4CEED;
+	Mon, 14 Jul 2025 16:31:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752510716;
+	bh=vejXSpkDXi2CRJw5A12Vz3zkbc+lLT/K0N+b130MARE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QSEcZaJTa8+jkJIVrtp29GCnecVXC0zKAoGiBdW5ubGRpnO9qt5DggmlEmM61R+X0
+	 UDubWS2K/MKFK9POf8bhZjqt4uf4jShfszeDv34HERl0XVX8piWi0HsHyRj9D71/Pi
+	 Qg5uB8/i70n45GySJrHPODPvAQcmJRYa8KaehiNwMFFXHRGlKamcRDcCpbeVmgDU7/
+	 2gV6KPqeZk+vOaKyB1C5WbLvqVcBImDPpw7NCLGdy7LAtuRzsu+xMrz80AKmco7meO
+	 3P/7QW684VzSMEHvTSggG/IGHIvD1qZr4DE5OCS4X202yr8miEGYg0FyKB0l9ER7z/
+	 pGY4nrGJmEqzA==
+Date: Mon, 14 Jul 2025 17:31:53 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rui Salvaterra <rsalvaterra@gmail.com>
+Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+	edumazet@google.com, kuba@kernel.org,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH iwl-next] igc: demote register and ring dumps to debug
+Message-ID: <20250714163153.GQ721198@horms.kernel.org>
+References: <20250707092531.365663-1-rsalvaterra@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714102011.758008629@infradead.org> <20250714103441.496787279@infradead.org>
-In-Reply-To: <20250714103441.496787279@infradead.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 14 Jul 2025 18:30:09 +0200
-X-Gm-Features: Ac12FXyg-TiF3LiiNdjUgzoE4zwXcE3ylmR03od-QeLGVHK8BYgEqxSLcgHYRQ4
-Message-ID: <CANiq72kP7_24ChdQ+vDg+HWJB-4mKWvB9P33C9O=0W_kLt0+eA@mail.gmail.com>
-Subject: Re: [PATCH v3 16/16] objtool: Validate kCFI calls
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org, kys@microsoft.com, haiyangz@microsoft.com, 
-	wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com, 
-	pbonzini@redhat.com, ardb@kernel.org, kees@kernel.org, 
-	Arnd Bergmann <arnd@arndb.de>, gregkh@linuxfoundation.org, jpoimboe@kernel.org, 
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-efi@vger.kernel.org, samitolvanen@google.com, 
-	ojeda@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707092531.365663-1-rsalvaterra@gmail.com>
 
-On Mon, Jul 14, 2025 at 12:45=E2=80=AFPM Peter Zijlstra <peterz@infradead.o=
-rg> wrote:
->
-> Apparently some Rust 'core' code violates this and explodes when ran
-> with FineIBT.
+On Mon, Jul 07, 2025 at 10:17:10AM +0100, Rui Salvaterra wrote:
+> This is debug information, upon which the user is not expected to act. Output as
+> such. This avoids polluting the dmesg with full register dumps at every link
+> down.
+> 
+> Signed-off-by: Rui Salvaterra <rsalvaterra@gmail.com>
+> ---
+> 
+> This file hasn't been touched in over four years, it's probably from a time when
+> the driver was under heavy development (started in 2018). Nevertheless, the
+> status quo is positively annoying. :)
 
-I think this was fixed in Rust 1.88 (latest version), right? Or is
-there an issue still?
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-    5595c31c3709 ("x86/Kconfig: make CFI_AUTO_DEFAULT depend on !RUST
-or Rust >=3D 1.88")
-
->  - runtime EFI is especially henous because it also needs to disable
->    IBT. Basically calling unknown code without CFI protection at
->    runtime is a massice security issue.
-
-heinous
-massive
-
-Cheers,
-Miguel
 
