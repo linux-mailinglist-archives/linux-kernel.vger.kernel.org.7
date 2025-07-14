@@ -1,79 +1,94 @@
-Return-Path: <linux-kernel+bounces-729502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B279FB03791
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:09:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97DC9B03795
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BBA33B8886
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:09:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E390A16C2E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46379230BD5;
-	Mon, 14 Jul 2025 07:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84AC22FE0E;
+	Mon, 14 Jul 2025 07:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wbpb+Fgm"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="B45H+o2d";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bIIJaQsF";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="a0b9zZBX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aAl4sERf"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29A6231840
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 07:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13E922F762
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 07:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752476949; cv=none; b=T7nmOJBBnaQR9ImPkJDU6WiFEQn1L6WoNpDQzfvIecMGaKVyQjY1hvoUKOYcJYlTiuH3sZN5k+iEK7rIXJid1R1WBCdZQwCSQ16xWOn/oKEaBJ8bpw99ec0wUskIZF22w5+CGf+ZboatrqWgiFdCsHTXzMVMTQwVcfZDPdJAEdE=
+	t=1752476985; cv=none; b=Ms0yWSgZHqLF/Kwxhr2im3z5kyfKbmFAIsfkdjTWz/x1aw8B7yqLhEAyrf0XRSLzaNpXR6eOmPoMqa13QK3n6te/yic5HMt89Idz8fcE4zFacJDAmOIgYs4g+S9dcJ76x4WkH7octSbm82qSHDWB7dcNW3X9FDQPF/ibdaH7spo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752476949; c=relaxed/simple;
-	bh=rPSUYx/5VC6HrCnGvBFYSyrXuRZRyFGP8OwFdpfXQ88=;
+	s=arc-20240116; t=1752476985; c=relaxed/simple;
+	bh=ehiJGRMp02AIO8z2cJ0eoOGCKNObyvEOvni2x0THx1Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fo0GmCTcrP7ozztQNaIgVFy6jwrrQC/itUIrEAqUfQdIpI40kJMds3w1jZa9Wpm+LEa3voNMCkL3+swJvdJSwkQVintiGqBM0PB6jjtS5PSyEaavuAjTYsrqeFMffpWPo8zR8CZphk0wWKkdKjOiE2lW+/XPVEPd5UNY9cJAtdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wbpb+Fgm; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60c93c23b08so7862040a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 00:09:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752476944; x=1753081744; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SJUPNG/YCCutYXD8xzKdp1taJCF1uJWQ/rw5PwH8FUs=;
-        b=Wbpb+FgmGpyMU3XoRGw3H3SCpGCxWsirKqYVe4Izv/yBZu55DyoEHHynySMoXO35LA
-         caMRyRaxqNnndOhFrHVzh51t1E0bvcU/MUC3asVBug7hdKfX1mwgh0NWVA/Og8FakacG
-         XEYO3zw2hyTpLU4pYYcpxqSLuA5ksQr6Rp1n2zAoOXG/7m4lY/HIjpma2YHWVkdBWu+d
-         V3qQF3O7c5dXw8KfXjBUUB7hsoNYKWlNz9X6m5QobjnyFiCpmRuv78klYXO6hHVTGP0I
-         A948VULgEccPldCxYVCq5Bu9YhDdmF0mykLz4pTjDxKnK13GXXgKA570wXQbe/+mb/82
-         iEzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752476944; x=1753081744;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SJUPNG/YCCutYXD8xzKdp1taJCF1uJWQ/rw5PwH8FUs=;
-        b=xPlBhHQycEn8qmzyNAayYND9Ox1x0uq7H96H0BPn4jYeawmXjbrMPicNuP2qbzDKJ1
-         RPcgWtMkuc8rw/TCY5++URael4P277buLv1WwBCYVJgWbs7IZt/6Eoagm5AkD745G6Oo
-         249ty4LeprbVW/5lwkN23RM3ffJMdgtZJWvYetWNuWJbnp2/j1e5lqX/YbWJSUsScXSG
-         9RseN3e51xBpjrpqIC7jHzC25yY53G4SemY7zMF2T7VsVS9Qwodco63rI9D5+es1mnKI
-         ISbMF1oelAWXdoSGxYh8wlnF+9FZGuYdd+zow8Hi688poVNWf3tA06XRhdDoDJRqmiZk
-         MCTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpFrBsGb7AtlAK6dlr5DuOCKR6k4ppSpXaOlJoE/t/CYBMx8EXJffH50q0XWpLCm9kpusQeaZy9+zm2yk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzyo8QxkdbGXS5HIWMGKtIh4ex5rx1mhEtH+hSk/1c8tD2gwDKT
-	rlxGL1St+CSFXJtGySJN1f9o58bRZMKCY6ghCpQQhXvJnlWIxRrTw5lVowQtpYeoqjM=
-X-Gm-Gg: ASbGncvVlSkJBD8GBeuLuRPix25ZyVHy9V8ZqzTYiHj0YQemFR2eFYPXyeTk48duySY
-	ntm/y+RFvKaycZR9M4E97XGTkPRYSZs7z0sPdakuFYYOhSHD2ALyb7NuZYjsZ2o8jiUZ6Egs0Nr
-	jMgrrkdrGcZg9Gd8o9ng+PF1L8++u8eZmE9+pKqxCzabCVvwRtwPn6XpukmgYZxBj7MQvRcIzn1
-	DTcY6WRcvcyQdi9CMh57s6hDC//N3UWcyBpgzuC0X1tD7wMQbcoFshSy1w+s3RIzqbv4VZMkpZ5
-	f51Z5FXUyBCYtZFHBlJZ9CIwGscWnxrcU/fMc1eJBmqv4GnYj3mnT+HqHv8MZhHrkL+vr3gk8uF
-	RtH5zhQ/+6yosnPRQ7TQ6CE7n/ixBkEYe
-X-Google-Smtp-Source: AGHT+IET/7RfXjto9C+sVjtiLIsOnH7n9hntCoUGq+Uy8AgUeJogWTjQLJDpvqeFUo+zNnA5GkpHeg==
-X-Received: by 2002:a17:907:6d2a:b0:ae8:fd2d:44b8 with SMTP id a640c23a62f3a-ae8fd2d4636mr810859666b.29.1752476943736;
-        Mon, 14 Jul 2025 00:09:03 -0700 (PDT)
-Received: from [192.168.0.251] ([188.27.143.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82635aasm758859166b.84.2025.07.14.00.09.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 00:09:03 -0700 (PDT)
-Message-ID: <ae6d65f7-990a-4145-9865-63f23518405c@linaro.org>
-Date: Mon, 14 Jul 2025 08:09:01 +0100
+	 In-Reply-To:Content-Type; b=lC9+nGn7yFjHA6UTionHFjGHgGLduHfzEDiB9TdGDWCRO3/cdUY66ScSse/kdMZat5NysbYHCUL6w0TDev/tZW3EhUaSmG8vlssEnum+y6geBNckKFIMhAjKXFUJpStT4nT0UcOj2LUx2i0gGQBwRMDVTwZBYyxD/lb8LKPFHWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=B45H+o2d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bIIJaQsF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=a0b9zZBX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aAl4sERf; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B29612118D;
+	Mon, 14 Jul 2025 07:09:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752476982; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=G2qA91gO6tcAaQVJpknYZYn5HNXpIJ5Jl9tGtCwshMU=;
+	b=B45H+o2dArwfpWQVw6f8KwhITXmgUUfld6sm0XCePHhEanZqKUaynj7zuU4uSX5Jec7b45
+	polvJPSwsGaa+9I5jbTDJD0d8hXct9bIi2UQNkNbzmjxvhLOjz1wiWzSYcDOx/b/wZmAVu
+	Bg3FNd1QEb0Zt1pa72AcfHw8HsYh42U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752476982;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=G2qA91gO6tcAaQVJpknYZYn5HNXpIJ5Jl9tGtCwshMU=;
+	b=bIIJaQsFVhYA5PtUI14DXQ90MyAz5IlSJetvVU6svzab1tvF5e3+bYcHwwKMkXNjxEAWAU
+	JOA4DKk9jTv8LHDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752476980; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=G2qA91gO6tcAaQVJpknYZYn5HNXpIJ5Jl9tGtCwshMU=;
+	b=a0b9zZBXUyXDVSKGdsLvzTJaR1HooezpI6e87kx1DOO8/KtDOJY8lypC1keEgOsnZJYxAl
+	gyioNPZcpDy16jxI461iH4KWS8xx0McbO+L5pIG+0hBcLcyJqySDKIjjV1yRNyWeiGWqwH
+	2SPKs06woC6Ey6MDEj3HcZ4kDyK+Bqo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752476980;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=G2qA91gO6tcAaQVJpknYZYn5HNXpIJ5Jl9tGtCwshMU=;
+	b=aAl4sERfiHATIupx8nDix0OXGGT4Z38OK6MOjKwlBwWm5WERIIwttitCCHbBsPV7RO4BMq
+	9rcEUCHyRF+oh+Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8639E138A1;
+	Mon, 14 Jul 2025 07:09:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oUtwIDStdGgNFAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 14 Jul 2025 07:09:40 +0000
+Message-ID: <678290fe-f171-4680-82bd-fa50e5fde7a4@suse.cz>
+Date: Mon, 14 Jul 2025 09:09:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,238 +96,145 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] PM: sleep: Resume children after resuming the
- parent
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson
- <ulf.hansson@linaro.org>, Johan Hovold <johan@kernel.org>,
- Jon Hunter <jonathanh@nvidia.com>, Saravana Kannan <saravanak@google.com>,
- William McVicker <willmcvicker@google.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-References: <10629535.nUPlyArG6x@rjwysocki.net>
- <CAJZ5v0hpPOHNYCSTM1bb+p-wyAZkpg+k-huf9f5df9_S8MfvEg@mail.gmail.com>
- <CAJZ5v0jFP2njw3ic47yyh_7u7evKQKQuqGp27Vj7X-FfDLH7uQ@mail.gmail.com>
- <4677865.LvFx2qVVIh@rjwysocki.net>
+Subject: Re: [PATCH v2] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
+ EXPORT_SYMBOL_FOR_MODULES
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Daniel Gomez <da.gomez@kernel.org>
+Cc: Matthias Maennich <maennich@google.com>, Jonathan Corbet
+ <corbet@lwn.net>, Luis Chamberlain <mcgrof@kernel.org>,
+ Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
+ Daniel Gomez <da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas.schier@linux.dev>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Christoph Hellwig <hch@infradead.org>, Peter Zijlstra
+ <peterz@infradead.org>, David Hildenbrand <david@redhat.com>,
+ Shivank Garg <shivankg@amd.com>, "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20250711-export_modules-v2-1-b59b6fad413a@suse.cz>
+ <b9b74600-4467-4c76-aa41-0a36b1cce1f4@kernel.org>
+ <2025071355-debunk-sprang-e1ad@gregkh>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <4677865.LvFx2qVVIh@rjwysocki.net>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <2025071355-debunk-sprang-e1ad@gregkh>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-
-
-On 7/12/25 8:54 AM, Rafael J. Wysocki wrote:
-> On Friday, July 11, 2025 3:54:00 PM CEST Rafael J. Wysocki wrote:
->> On Fri, Jul 11, 2025 at 3:38 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->>>
->>> On Fri, Jul 11, 2025 at 3:08 PM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->>>>
->>>>
->>>> Hi, Rafael,
->>>>
->>>> On 3/14/25 12:50 PM, Rafael J. Wysocki wrote:
->>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>>>
->>>>> According to [1], the handling of device suspend and resume, and
->>>>> particularly the latter, involves unnecessary overhead related to
->>>>> starting new async work items for devices that cannot make progress
->>>>> right away because they have to wait for other devices.
->>>>>
->>>>> To reduce this problem in the resume path, use the observation that
->>>>> starting the async resume of the children of a device after resuming
->>>>> the parent is likely to produce less scheduling and memory management
->>>>> noise than starting it upfront while at the same time it should not
->>>>> increase the resume duration substantially.
->>>>>
->>>>> Accordingly, modify the code to start the async resume of the device's
->>>>> children when the processing of the parent has been completed in each
->>>>> stage of device resume and only start async resume upfront for devices
->>>>> without parents.
->>>>>
->>>>> Also make it check if a given device can be resumed asynchronously
->>>>> before starting the synchronous resume of it in case it will have to
->>>>> wait for another that is already resuming asynchronously.
->>>>>
->>>>> In addition to making the async resume of devices more friendly to
->>>>> systems with relatively less computing resources, this change is also
->>>>> preliminary for analogous changes in the suspend path.
->>>>>
->>>>> On the systems where it has been tested, this change by itself does
->>>>> not affect the overall system resume duration in a measurable way.
->>>>>
->>>>> Link: https://lore.kernel.org/linux-pm/20241114220921.2529905-1-saravanak@google.com/ [1]
->>>>> Suggested-by: Saravana Kannan <saravanak@google.com>
->>>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>>
->>>> I'd like to let you know of a suspend crash that I'm dealing with
->>>> when using the OOT pixel6 drivers on top of v6.16-rc4.
->>>
->>> Well, thanks, but there's not much I can do about it.
->>>
->>> It is also better to start a new thread in such cases than to reply to
->>> a patch submission.
->>>
->>>> Similar to what Jon reported, everything gets back to normal if
->>>> I disable pm_async or if I revert the following patches:
->>>> 443046d1ad66 PM: sleep: Make suspend of devices more asynchronous
->>>> aa7a9275ab81 PM: sleep: Suspend async parents after suspending children
->>>> 0cbef962ce1f PM: sleep: Resume children after resuming the parent
->>>>
->>>> I also reverted their fixes when testing:
->>>> 8887abccf8aa PM: sleep: Add locking to dpm_async_resume_children()
->>>> d46c4c839c20 PM: sleep: Fix power.is_suspended cleanup for direct-complete devices
->>>> 079e8889ad13 PM: sleep: Fix list splicing in device suspend error paths
->>>>
->>>> It seems that the hang happens in dpm_suspend() at
->>>> async_synchronize_full() time after a driver fails to suspend.
->>>> The phone then naturally resets with an APC watchdog.
->>>>
->>>> [  519.142279][ T7917] lwis lwis-eeprom-m24c64x: Can't suspend because eeprom-m24c64x is in use!
->>>> [  519.143556][ T7917] lwis-i2c eeprom@2: PM: dpm_run_callback(): platform_pm_suspend returns -16
->>>> [  519.143872][ T7917] lwis-i2c eeprom@2: PM: platform_pm_suspend returned -16 after 1596 usecs
->>>> [  519.144197][ T7917] lwis-i2c eeprom@2: PM: failed to suspend: error -16
->>>> [  519.144448][ T7917] PM: tudor: dpm_suspend: after while loop, list_empty(&dpm_prepared_list)? 1
->>>> [  519.144779][ T7917] PM: tudor: dpm_suspend: before async_synchronize_full
->>>>
->>>> The extra prints are because of:
->>>> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
->>>> index d9d4fc58bc5a..3efe538c2ec2 100644
->>>> --- a/drivers/base/power/main.c
->>>> +++ b/drivers/base/power/main.c
->>>> @@ -1967,10 +1967,15 @@ int dpm_suspend(pm_message_t state)
->>>>                         break;
->>>>                 }
->>>>         }
->>>> +       pr_err("tudor: %s: after while loop, list_empty(&dpm_prepared_list)? %d\n",
->>>> +              __func__, list_empty(&dpm_prepared_list));
->>>>
->>>>         mutex_unlock(&dpm_list_mtx);
->>>>
->>>> +       pr_err("tudor: %s: before async_synchronize_full\n", __func__);
->>>>         async_synchronize_full();
->>>> +       pr_err("tudor: %s: after async_synchronize_full();\n", __func__);
->>>> +
->>>>         if (!error)
->>>>                 error = async_error;
->>>>
->>>> The synchronous suspend works because its strict, one-by-one ordering
->>>> ensures that device dependencies are met and that no device is suspended
->>>> while another is still using it. The asynchronous suspend fails because
->>>> it creates a race condition where the lwis-eeprom-m24c64x is called for
->>>> suspension before the process using it has been suspended, leading to a
->>>> fatal "device busy" error. Should the failure of a device suspend be
->>>> fatal?
->>>
->>> It shouldn't in principle, but it depends on what exactly is involved and how.
->>>
->>> It looks like something is blocking on power.completion somewhere.
->>> I'll check the code, maybe a complete() is missing in an error path or
->>> similar.
->>
->> It doesn't look like anything is missing in the core, so the suspend
->> failure seems to be triggering a deadlock of some sort.
+On 7/13/25 10:31, Greg Kroah-Hartman wrote:
+> On Sat, Jul 12, 2025 at 08:26:17PM +0200, Daniel Gomez wrote:
+>> On 11/07/2025 16.05, Vlastimil Babka wrote:
+>> > Changes in v2:
+>> > - drop the patch to restrict module namespace export for in-tree modules
+>> > - fix a pre-existing documentation typo (Nicolas Schier)
+>> > - Link to v1: https://patch.msgid.link/20250708-export_modules-v1-0-fbf7a282d23f@suse.cz
+>> > ---
+>> >  Documentation/core-api/symbol-namespaces.rst | 8 ++++----
+>> >  fs/anon_inodes.c                             | 2 +-
+>> >  include/linux/export.h                       | 2 +-
+>> >  3 files changed, 6 insertions(+), 6 deletions(-)
+>> > 
+>> > diff --git a/Documentation/core-api/symbol-namespaces.rst b/Documentation/core-api/symbol-namespaces.rst
+>> > index 32fc73dc5529e8844c2ce2580987155bcd13cd09..6f7f4f47d43cdeb3b5008c795d254ca2661d39a6 100644
+>> > --- a/Documentation/core-api/symbol-namespaces.rst
+>> > +++ b/Documentation/core-api/symbol-namespaces.rst
+>> > @@ -76,8 +76,8 @@ A second option to define the default namespace is directly in the compilation
+>> >  within the corresponding compilation unit before the #include for
+>> >  <linux/export.h>. Typically it's placed before the first #include statement.
+>> >  
+>> > -Using the EXPORT_SYMBOL_GPL_FOR_MODULES() macro
+>> > ------------------------------------------------
+>> > +Using the EXPORT_SYMBOL_FOR_MODULES() macro
+>> > +-------------------------------------------
+>> >  
+>> >  Symbols exported using this macro are put into a module namespace. This
+>> >  namespace cannot be imported.
+>> 
+>> The new naming makes sense, but it breaks the pattern with _GPL suffix:
+>> 
+>> * EXPORT_SYMBOL(sym)
+>> * EXPORT_SYMBOL_GPL(sym)
+>> * EXPORT_SYMBOL_NS(sym, ns)
+>> * EXPORT_SYMBOL_NS_GPL(sym, ns)
+>> * EXPORT_SYMBOL_FOR_MODULES(sym, mods)
+>> 
+>> So I think when reading this one may forget about the _obvious_ reason. That's
+>> why I think clarifying that in the documentation would be great. Something like:
+>> 
+>> Symbols exported using this macro are put into a module namespace. This
+>> namespace cannot be imported. And it's implicitly GPL-only as it's only intended
+>> for in-tree modules.
 > 
-> Well, I'm taking this back.
+> s/implicitly/explicitly/
+
+From the point of the macro name,
+it was explicit with "EXPORT_SYMBOL_GPL_FOR_MODULES()"
+it's implicit with "EXPORT_SYMBOL_FOR_MODULES()"
+
+> thanks,
 > 
-> The following scenario definitely can happen:
-> 
-> 1. Device A is async and it depends on device B that is sync.
-> 2. Async suspend is scheduled for A before the processing of B is started.
-> 3. A is waiting for B.
-> 4. In the meantime, an unrelated device fails to suspend and returns an error.
-> 5. The processing of B doesn't start at all and its power.completion is not
->    updated.
-> 6. A is still waiting for B when async_synchronize_full() is called.
-> 7. Deadlock ensues.
-> 
-> If this is what happens in your case, the (untested) patch below should help
-> (unless I messed it up, that is).
+> greg k-h
 
-Thanks, Rafael.
-
-I added few prints (see updated patch below) to figure out whether
-complete_all(&dev->power.completion) is called in my case, and it seems
-it's not, I still get the APC watchdog:
-
-[  724.361425][ T8468] lwis-i2c eeprom@2: PM: calling platform_pm_suspend @ 8468, parent: platform
-[  724.361751][ T8468] lwis lwis-eeprom-m24c64x: Can't suspend because eeprom-m24c64x is in use!
-[  724.362098][ T8468] lwis-i2c eeprom@2: PM: dpm_run_callback(): platform_pm_suspend returns -16
-[  724.362427][ T8468] lwis-i2c eeprom@2: PM: platform_pm_suspend returned -16 after 679 usecs
-[  724.362750][ T8468] lwis-i2c eeprom@2: PM: failed to suspend: error -16
-[  724.362999][ T8468] PM: tudor: dpm_async_suspend_complete_all: enter
-[  724.363242][ T8468] PM: tudor: dpm_suspend: before async_synchronize_full
-
-
-
-diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-index d9d4fc58bc5a..0e186bc38a00 100644
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1281,6 +1281,27 @@ static void dpm_async_suspend_parent(struct device *dev, async_func_t func)
-                dpm_async_with_cleanup(dev->parent, func);
- }
- 
-+static void dpm_async_suspend_complete_all(struct list_head *device_list)
-+{
-+       struct device *dev;
-+
-+
-+       pr_err("tudor: %s: enter\n", __func__);
-+       guard(mutex)(&async_wip_mtx);
-+
-+       list_for_each_entry_reverse(dev, device_list, power.entry) {
-+               /*
-+                * In case the device is being waited for and async processing
-+                * has not started for it yet, let the waiters make progress.
-+                */
-+               pr_err("tudor: %s: in device list\n", __func__);
-+               if (!dev->power.work_in_progress) {
-+                       pr_err("tudor: %s: call complete_all\n", __func__);
-+                       complete_all(&dev->power.completion);
-+               }
-+       }
-+}
-+
- /**
-  * resume_event - Return a "resume" message for given "suspend" sleep state.
-  * @sleep_state: PM message representing a sleep state.
-@@ -1459,6 +1480,7 @@ static int dpm_noirq_suspend_devices(pm_message_t state)
-                mutex_lock(&dpm_list_mtx);
- 
-                if (error || async_error) {
-+                       dpm_async_suspend_complete_all(&dpm_late_early_list);
-                        /*
-                         * Move all devices to the target list to resume them
-                         * properly.
-@@ -1663,6 +1685,7 @@ int dpm_suspend_late(pm_message_t state)
-                mutex_lock(&dpm_list_mtx);
- 
-                if (error || async_error) {
-+                       dpm_async_suspend_complete_all(&dpm_late_early_list);
-                        /*
-                         * Move all devices to the target list to resume them
-                         * properly.
-@@ -1959,6 +1982,7 @@ int dpm_suspend(pm_message_t state)
-                mutex_lock(&dpm_list_mtx);
- 
-                if (error || async_error) {
-+                       dpm_async_suspend_complete_all(&dpm_late_early_list);
-                        /*
-                         * Move all devices to the target list to resume them
-                         * properly.
-@@ -1970,9 +1994,12 @@ int dpm_suspend(pm_message_t state)
- 
-        mutex_unlock(&dpm_list_mtx);
- 
-+       pr_err("tudor: %s: before async_synchronize_full\n", __func__);
-        async_synchronize_full();
-        if (!error)
-                error = async_error;
-+       pr_err("tudor: %s: after async_synchronize_full();\n", __func__);
-+
- 
-        if (error)
-                dpm_save_failed_step(SUSPEND_SUSPEND);
 
