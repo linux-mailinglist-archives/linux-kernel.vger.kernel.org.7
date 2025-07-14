@@ -1,45 +1,65 @@
-Return-Path: <linux-kernel+bounces-730120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D31E6B04072
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:45:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1AA0B04073
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EF393B2EF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:42:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D1916305D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AD425484D;
-	Mon, 14 Jul 2025 13:42:39 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B99252903;
+	Mon, 14 Jul 2025 13:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="o9snk7CR"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C60253950
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26449251791;
+	Mon, 14 Jul 2025 13:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752500559; cv=none; b=kWSGMetWm4LqpkwIMvbKmfowScIZinUbunZupgnyvQkZtHbjAuu6frNnvYLSRONmMxt0HMJ/6TEwp0LNmXnkr4GdM6AT7SuH/zgQGl5hPyeSY1v0KPvCCknv+DMPiU/ZrxVajCzEnvOMzx+425i4ShP7yjmEPpfeyMkAhbbbJN0=
+	t=1752500576; cv=none; b=r8nxdQVfcq+5OOIqPmh9O2FH61P9DOO32ud7zIn2BdK4kYDTHOBfHLhSKq9ziiYNTweDonWQh+EFmSd4ar4xHPlToGWFcwk+4AOBJEdsU3PLuM9zw07ZSBAGP66WgYkCvzLNQiu9pjclrwe10uLqICwK84TUPuH5DQuDtFZ+5/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752500559; c=relaxed/simple;
-	bh=iNMyIZJyXueqDxhMc2gAyF7Jz51P01o6d80BQGFvRh0=;
+	s=arc-20240116; t=1752500576; c=relaxed/simple;
+	bh=ZY1mEcbA788gFY1MJ/lv1DNRtgW1ZN3tMmWQwl/jZKs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iA/DTW6CVRuImR3KIqzQDCxq282hnElBxcQTl8n4TmVreXNqRPERoE5oGLYjcSMNeW5S/ZvXtWCQtp1JB4UxolbWKcni1HsouDmHPb66AXG+k7lpBqz3R8vm2rw7UkBwJDjwGMzPnppNh+gEdQE8IXEaavwhEP+cWYeh4326KOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 35F10227A88; Mon, 14 Jul 2025 15:42:31 +0200 (CEST)
-Date: Mon, 14 Jul 2025 15:42:31 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
-	yi.zhang@redhat.com, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, yukuai3@huawei.com,
-	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-Subject: Re: [PATCH] nvme: clear nvme request for nonready request
-Message-ID: <20250714134231.GA11132@lst.de>
-References: <20250628064634.3823093-1-yukuai1@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cn/+q7aYJWNBgsWVAjetZFPdtNPJSzzX8Slo2+S89X+lUhS2HZ0DjvjgDnI8ujmp3CjZnCCNhU8KA9B4A64IizmtkLqyozKHB+0Ugdre1rKJODRdMmsuDXfnSxmp7ziEeWkqJmen80KpFtJ20pviDe2y+vYHynqQrjrcZT94J7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=o9snk7CR; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=t0N+ZrcA6krV10K6bTfQdk8wc9i24Hjdh5v0wcjrSLs=; b=o9snk7CRkLQssnn3PEHd9K4Sh+
+	C07WQDruJICyhgeokACJ7umEuGahIpsER59n8X89FmzJ7DvTg6BqwjoAzsMGZm6A9TDL9sOdzJSB0
+	PvvNXEcbejJlHGLoMcDY7U3mO67GAl1ORZXmeXJ/i9Ss6/4Ki/Qf8D2UUJ3loUBMmftE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ubJS7-001Sne-Q2; Mon, 14 Jul 2025 15:42:43 +0200
+Date: Mon, 14 Jul 2025 15:42:43 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: rohan.g.thomas@altera.com
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Romain Gantois <romain.gantois@bootlin.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Matthew Gerlach <matthew.gerlach@altera.com>
+Subject: Re: [PATCH net-next 2/3] net: stmmac: xgmac: Correct supported speed
+ modes
+Message-ID: <b192c96a-2989-4bdf-ba4f-8b7bcfd09cfa@lunn.ch>
+References: <20250714-xgmac-minor-fixes-v1-0-c34092a88a72@altera.com>
+ <20250714-xgmac-minor-fixes-v1-2-c34092a88a72@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,10 +68,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250628064634.3823093-1-yukuai1@huaweicloud.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20250714-xgmac-minor-fixes-v1-2-c34092a88a72@altera.com>
 
-Are you going to resend this with the feedback from Sagi taken into
-account?
+On Mon, Jul 14, 2025 at 03:59:18PM +0800, Rohan G Thomas via B4 Relay wrote:
+> From: Rohan G Thomas <rohan.g.thomas@altera.com>
+> 
+> Correct supported speed modes as per the XGMAC databook.
+> Commit 9cb54af214a7 ("net: stmmac: Fix IP-cores specific
+> MAC capabilities") removes support for 10M, 100M and
+> 1000HD. 1000HD is not supported by XGMAC IP, but it does
+> support 10M and 100M FD mode, and it also supports 10M and
+> 100M HD mode if the HDSEL bit is set in the MAC_HW_FEATURE0
+> reg. This commit adds support for 10M and 100M speed modes
+> for XGMAC IP.
 
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+> @@ -405,6 +405,7 @@ static int dwxgmac2_get_hw_feature(void __iomem *ioaddr,
+>  	dma_cap->sma_mdio = (hw_cap & XGMAC_HWFEAT_SMASEL) >> 5;
+>  	dma_cap->vlhash = (hw_cap & XGMAC_HWFEAT_VLHASH) >> 4;
+>  	dma_cap->half_duplex = (hw_cap & XGMAC_HWFEAT_HDSEL) >> 3;
+> +	dma_cap->mbps_10_100 = (hw_cap & XGMAC_HWFEAT_GMIISEL) >> 1;
+
+The commit message does not mention this change.
+
+What does XGMAC_HWFEAT_GMIISEL mean? That a SERDES style interface is
+not being used? Could that be why Serge removed these speeds? He was
+looking at systems with a SERDES, and they don't support slower
+speeds?
+
+	Andrew
 
