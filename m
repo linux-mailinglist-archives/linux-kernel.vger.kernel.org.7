@@ -1,129 +1,220 @@
-Return-Path: <linux-kernel+bounces-730705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C8DFB04861
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:27:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F752B04864
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BAE5188D5F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 20:28:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 340637B1DB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 20:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4582367C3;
-	Mon, 14 Jul 2025 20:27:49 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACAB4238C0A;
+	Mon, 14 Jul 2025 20:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HIVmCnKC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD661F418B
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 20:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CBA1F418B;
+	Mon, 14 Jul 2025 20:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752524869; cv=none; b=nzLnZR0h0Y9c2pReS+OyRsbwTRZnbE9iQMGDs2cIUi8QjfQYT4GB+9+oL9BwsbLg9df4CcB2RO4I6qaYPSR4HQSUtn0dSxAg6+Ea3pf3p6XDnJVnSRQkjTZfVKFxRzrqJud40R7UCYZYoLRiJREySxeqAplaLFmrOMVhZKUP4Xc=
+	t=1752524878; cv=none; b=pji2CFqwawg6avaiIgyMPP0w6lUUuyCxzVJ2ndcn/Ll67j9rfzelBT7xiChVqnzu7n3xLD8qfdeOVIkf7Vo4Vq77owup+JFsEURLQNCEJqz8d4ca2d3I2MLB1QRkSPHNGIc02O2n2tSo4wvRnIcO1ECR6HJHySumorQJYfAFrRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752524869; c=relaxed/simple;
-	bh=TnQs/Oot/qjUXCPgwmfF9IA7aE1EZdZLCDd9zgiAl2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IkESbsZgszFhyfisJ31MvYcnpdzXvoH+Yd8vZLX5OCAZ8ighfOnAXn6g/a+6sgH8LaIiQjWSS/Ju+JodkzJhKLgkZM57QV40wcQl042hxhOzq9+gsDfKav0anaH6HezujvvpKzxeb3BUTKg70r67qMz40v8eM+g3MLxpQZ+eN5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 5F0D112C6D1;
-	Mon, 14 Jul 2025 20:27:37 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id 311BB2D;
-	Mon, 14 Jul 2025 20:27:35 +0000 (UTC)
-Date: Mon, 14 Jul 2025 16:27:50 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Steven Rostedt
- <rostedt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Christoph Hellwig <hch@infradead.org>, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
- <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel
- <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] LTTng upstreaming next steps
-Message-ID: <20250714162750.45b12314@gandalf.local.home>
-In-Reply-To: <CAHk-=wiT9Cz+EbbuKozqiu7DnZQ7ftAWSmGf-xy_CdhJPCsNSg@mail.gmail.com>
-References: <b554bfa3-d710-4671-945b-5d6ec49e52cd@efficios.com>
-	<CAHk-=wiT9Cz+EbbuKozqiu7DnZQ7ftAWSmGf-xy_CdhJPCsNSg@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752524878; c=relaxed/simple;
+	bh=KqTIXe7cJXAI//GfX/ufzx2y0/k8296xkvEHRld4EcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HkY4L5kkz8O9i/zfYsoKX9MPSZErpajVGtKamPM9lI80LRBs538Our2SmGXv/TPSyPZ2zaH1/nYtE+8sefZK4I/rsufElGW9Go1a8Iapf4ACTOWASvdwyvYvNLWTTKd288x1Sri5Li//GZPAx9aH3LleWDPLMgp1d/Po+zIiqpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HIVmCnKC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D931C4CEED;
+	Mon, 14 Jul 2025 20:27:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752524877;
+	bh=KqTIXe7cJXAI//GfX/ufzx2y0/k8296xkvEHRld4EcI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HIVmCnKCdOaJsEfDFxI6J6SJTCP5nezyuRTsuo7zwz+ADS1fPZyzuuFW8SPlaNZl2
+	 Sa8xyOOy9JUjunN27sYVhaqOvtJhL5N0oBlS+EoU8rDfoK91QFaeiWISUetCFZ9ZQt
+	 +k2jFLYOprlio8fvKR9S6uGzxpsY8YR4Jw0Dek6aCuF3Zp7Bvmft4Z5MvLYlCUX3HE
+	 F21ThqB+ODOiQNVngYuMuCGsCIaDAKKfzv41TaTHLNVJWfMP/AYXu+nwHoXlgr5FKP
+	 iP3Gzm7VefjlgWMGAdLcA9kqYT7pStnWoFdGPop0NUwv6mgiFdeQPiDo2du4a9CkhF
+	 lzhYYaSpcsUcA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Viresh Kumar <vireshk@kernel.org>
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: gpio: Convert st,spear-spics-gpio to DT schema
+Date: Mon, 14 Jul 2025 15:27:52 -0500
+Message-ID: <20250714202753.3010240-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: x4fudhqyaf667z9d9f4dw1ufwdqtonb3
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 311BB2D
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19YtcZPqQ1PV4vwI8ablZMhFMJIKw9c8LM=
-X-HE-Tag: 1752524855-122563
-X-HE-Meta: U2FsdGVkX1+dxjWdkBu+bwZKvi5G8J1HcB7lQ6YMMoObmXke9sXAb1VwseE5xCAtxxHgQvltNfyYzyzn5ej1bhjU5/8ILOObK4kB3IRhGYQ3Cv4Zb8shJV1FwhWPnK2oKkjs4LVgHXHs+EHlF1H3NHVZ7UXsYh0wHOAVBzbxSaA30fpawyKBS1tQHzeJmDq2OvA5prLsnJRLGBxP5aW85Yxxd5IFXwfDIA6dQaAPz6DO2dca+UC9waFMwxiHhx0C1wftB8oErtnsFq9GIYhe+nEOsLgAOY2xS2+yAGIVpd/lJHU0iAKkqFN5pMpgsfNcU+4x3dMh7Yj1/7PqCpxhLMa/DHCWR4e84I1L2etDXRGlqvFGfMiaZYTp/yhxL3KS4CO7Fm/voTJ7fm5VoYRQ2lcuLBk97CDha0d486K4adEPYrRO+1aqOCl7bVyyMZsx
+Content-Transfer-Encoding: 8bit
 
-On Mon, 14 Jul 2025 13:00:27 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Convert the ST SPEAr SPI CS GPIO binding to DT schema format. It's a
+straight forward conversion.
 
-> On Mon, 14 Jul 2025 at 12:41, Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote>
-> > A) Bulk upstreaming  
-> 
-> Honestly, I don't see the point.
-> 
-> The reason the current tracting infrastructure got merged was that
-> people were willing to do it incrementally.
-> 
-> I was hoping that there would be some kind of eventual merging of the
-> different ring buffers etc. That was discussed as a hopeful end goal
-> originally, but here were are, decades later, and it never happened.
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../devicetree/bindings/gpio/spear_spics.txt  | 49 -----------
+ .../bindings/gpio/st,spear-spics-gpio.yaml    | 82 +++++++++++++++++++
+ 2 files changed, 82 insertions(+), 49 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/spear_spics.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/st,spear-spics-gpio.yaml
 
-I'll note that one of the reasons that we couldn't use the LTTng ring
-buffer is because the format of the tracing ring buffer and the perf ring
-buffer were already exposed to user space and would break tooling if they
-were changed. LTTng actually has more features than either the existing in
-kernel buffers so it couldn't use the existing buffers without breaking its
-own tooling.
-
-> 
-> And honestly, I am NOT interested in just having two different tracing models.
-> 
-> If people need two tracing models, then the other one will be out of
-> tree. It's that simple.
-
-It's not that anyone needs two models. It's that there's one model that one
-set of people use, and there's another model that another set of people use.
-The in-tree tracing (aka ftrace) is designed to be used for kernel
-developers. It's quick and easy to use to find issues and is mostly focused
-around kernel development. The tracefs directory interface has been a
-godsend for embedded developers since it only needs busybox to be useful.
-
-LTTng is more focused toward user admins and is around monitoring how the
-system is behaving. It has a different set of tooling and interfaces.
-
-> 
-> Because if people haven't been able to agree on common models in the
-> decades past, I really don't see the point in maintaining two models
-> indefinitely side-by-side in the upstream kernel.
-> 
-> So as far as I'm concerned, this discussion is not a discussion.
-> Either there's a way to merge things incrementally with SHARED
-> infrastructure, or there isn't.
-> 
-> No "two different and disjoint trace buffers".
-> 
-> No "two different and disjoint trace interfaces".
-
-Although they do have a separate set of buffers and interfaces, the actual
-infrastructure (tracepoints, function hooks, etc) is shared.
-
-> 
-> And very clearly - based on history - that unification will never happen.
-
-Unfortunately, I think you're right. :-(
-
--- Steve
+diff --git a/Documentation/devicetree/bindings/gpio/spear_spics.txt b/Documentation/devicetree/bindings/gpio/spear_spics.txt
+deleted file mode 100644
+index dd04d96e6ff1..000000000000
+--- a/Documentation/devicetree/bindings/gpio/spear_spics.txt
++++ /dev/null
+@@ -1,49 +0,0 @@
+-=== ST Microelectronics SPEAr SPI CS Driver ===
+-
+-SPEAr platform provides a provision to control chipselects of ARM PL022 Prime
+-Cell spi controller through its system registers, which otherwise remains under
+-PL022 control. If chipselect remain under PL022 control then they would be
+-released as soon as transfer is over and TxFIFO becomes empty. This is not
+-desired by some of the device protocols above spi which expect (multiple)
+-transfers without releasing their chipselects.
+-
+-Chipselects can be controlled by software by turning them as GPIOs. SPEAr
+-provides another interface through system registers through which software can
+-directly control each PL022 chipselect. Hence, it is natural for SPEAr to export
+-the control of this interface as gpio.
+-
+-Required properties:
+-
+-  * compatible: should be defined as "st,spear-spics-gpio"
+-  * reg: mentioning address range of spics controller
+-  * st-spics,peripcfg-reg: peripheral configuration register offset
+-  * st-spics,sw-enable-bit: bit offset to enable sw control
+-  * st-spics,cs-value-bit: bit offset to drive chipselect low or high
+-  * st-spics,cs-enable-mask: chip select number bit mask
+-  * st-spics,cs-enable-shift: chip select number program offset
+-  * gpio-controller: Marks the device node as gpio controller
+-  * #gpio-cells: should be 1 and will mention chip select number
+-
+-All the above bit offsets are within peripcfg register.
+-
+-Example:
+--------
+-spics: spics@e0700000{
+-        compatible = "st,spear-spics-gpio";
+-        reg = <0xe0700000 0x1000>;
+-        st-spics,peripcfg-reg = <0x3b0>;
+-        st-spics,sw-enable-bit = <12>;
+-        st-spics,cs-value-bit = <11>;
+-        st-spics,cs-enable-mask = <3>;
+-        st-spics,cs-enable-shift = <8>;
+-        gpio-controller;
+-        #gpio-cells = <2>;
+-};
+-
+-
+-spi0: spi@e0100000 {
+-        num-cs = <3>;
+-        cs-gpios = <&gpio1 7 0>, <&spics 0>,
+-                   <&spics 1>;
+-	...
+-}
+diff --git a/Documentation/devicetree/bindings/gpio/st,spear-spics-gpio.yaml b/Documentation/devicetree/bindings/gpio/st,spear-spics-gpio.yaml
+new file mode 100644
+index 000000000000..3b0d2112da79
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/st,spear-spics-gpio.yaml
+@@ -0,0 +1,82 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/st,spear-spics-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ST Microelectronics SPEAr SPI CS GPIO Controller
++
++maintainers:
++  - Viresh Kumar <vireshk@kernel.org>
++
++description: >
++  SPEAr platform provides a provision to control chipselects of ARM PL022 Prime
++  Cell spi controller through its system registers, which otherwise remains
++  under PL022 control. If chipselect remain under PL022 control then they would
++  be released as soon as transfer is over and TxFIFO becomes empty. This is not
++  desired by some of the device protocols above spi which expect (multiple)
++  transfers without releasing their chipselects.
++
++  Chipselects can be controlled by software by turning them as GPIOs. SPEAr
++  provides another interface through system registers through which software can
++  directly control each PL022 chipselect. Hence, it is natural for SPEAr to
++  export the control of this interface as gpio.
++
++properties:
++  compatible:
++    const: st,spear-spics-gpio
++
++  reg:
++    maxItems: 1
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 2
++
++  st-spics,peripcfg-reg:
++    description: Offset of the peripcfg register.
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  st-spics,sw-enable-bit:
++    description: Bit offset to enable software chipselect control.
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  st-spics,cs-value-bit:
++    description: Bit offset to drive chipselect low or high.
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  st-spics,cs-enable-mask:
++    description: Bitmask selecting which chipselects to enable.
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  st-spics,cs-enable-shift:
++    description: Bit shift for programming chipselect number.
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++required:
++  - compatible
++  - reg
++  - gpio-controller
++  - '#gpio-cells'
++  - st-spics,peripcfg-reg
++  - st-spics,sw-enable-bit
++  - st-spics,cs-value-bit
++  - st-spics,cs-enable-mask
++  - st-spics,cs-enable-shift
++
++additionalProperties: false
++
++examples:
++  - |
++    gpio@e0700000 {
++        compatible = "st,spear-spics-gpio";
++        reg = <0xe0700000 0x1000>;
++        st-spics,peripcfg-reg = <0x3b0>;
++        st-spics,sw-enable-bit = <12>;
++        st-spics,cs-value-bit = <11>;
++        st-spics,cs-enable-mask = <3>;
++        st-spics,cs-enable-shift = <8>;
++        gpio-controller;
++        #gpio-cells = <2>;
++    };
+-- 
+2.47.2
 
 
