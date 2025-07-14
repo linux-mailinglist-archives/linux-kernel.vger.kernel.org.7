@@ -1,88 +1,146 @@
-Return-Path: <linux-kernel+bounces-729365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3EC7B03576
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:08:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D882AB03579
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFB32189A978
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:08:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3192916A2B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A667C1F4297;
-	Mon, 14 Jul 2025 05:08:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B58C1F7580;
+	Mon, 14 Jul 2025 05:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qlRAfAfR"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41033D81
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 05:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC11C18D;
+	Mon, 14 Jul 2025 05:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752469685; cv=none; b=LnGyU5O5SIlUQCkvzt7P3ZTJ5fd72H8QUuQOwLmPwCfOQ4pTb24X/p4gzJVj+DaXc/Yh9ePd28xGW1sRhaI687/NKjCq0ig86jTuBMLTtM4vTG92a2/Yy02W31wcXvD/V7E20JoDrIj2EOTXybRObvbAHAcFvn8Zx9f8dqVMjOE=
+	t=1752469964; cv=none; b=V3sgLa+/GYzmRxTFOndMuPMKM5T4DE2XfbXm1BxTN3pEh5Kd5PDMPKI4kyBFaP0EyGaQm50bJqphL7xZUsNhJRecTLZkg0Ci0LDYKEBZkAddhMIi6Me+uqmjeVMBcLt3nrN5RvP1l4yw8y4bnv3iA8c9IF62ktKTmGXJVnvuRlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752469685; c=relaxed/simple;
-	bh=WlPI/wFJPEXMGS0nmls4LXyAqoJRNQ80VI40A1RMeP8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nt91Jl5F6BMyYDgLPeqMO0tFGNBJl3Wmz6WXkdWPydQLlHjIhvKcN/2WKn8PW7QnNCJaILvZdARTqsncR8VhPe0qZuAVoTX1HUHSe4QJm5oiHJoh4teZ5sH+JsRjOYR1KtF7Z3/PINw/ndL1eSUzkHK8qR/gUv/N3Fr9gvPSYqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-86cfff5669bso383607039f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 22:08:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752469683; x=1753074483;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gIsNucXB6Px03mWQ5TC1KHiSeVFF2WgYavWzXtnawWw=;
-        b=QhUMEUQNpMKBVpXtRYmt86dpBrSX92wCY1/o6ws4DUSYNt0sD4ZIAe1fLQTPuZR4ON
-         5UPZm7qbOXcXyO+7he4Eh3bKBLmXdebfnTXvgRXVPT7hGXOMrIFkeO9yQYSKmBaJGEhW
-         6q27F3rci1If4NeehdRxBv2Gq79x5XKeymbk2Kg0K3G88AcVd3PMPIeF0bxmT0XDC5ob
-         7LbXpjIu8xY5a78iREYmmjiqyAfElmvNGgEhInIQUMbsQRHOcPqzCnnors4cf/g7l3B+
-         Minhma7YMwXYwdEKJtGSPlsQGZ3z7plwCm/OF2QsGfVpNIeBCUNFjlYmYrMhcGSjQnwA
-         A+bg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpyLvSU1gWT9qTgiOVkK/vRbRZ1jTqswyVBbFommDTLFERRo21uAtTestk48yEJeVLFNkHgbsJvOXUBaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdEu+uHkqZXnT1+6KJKSAy3S4jqTrUffRIBbXB0CitEUW8CoJA
-	w5daToYj4JpL1CRgby/3ClYoNNTwAPlu1K9ndXGqCyPX1WTc6nQgh8l9/ncELDX95Sfe0HPRQbr
-	oU3o3TSuYZT6ciQ/xsHHyCQE1Knzc/Q8wFXxeDC81rc6dgxW63lhabcKg6zI=
-X-Google-Smtp-Source: AGHT+IEpB5Rn6xJgA/DDklQnbk0r4Z3QBxG23xYQiRZo41BEGItwFGYXO0J4JcTEAhZ+4QpfV6TqHI2SbFxXzzrd/5fDbrDmHwWh
+	s=arc-20240116; t=1752469964; c=relaxed/simple;
+	bh=bjXIj2NW2ENyB+v3zwdbAHRxsCOs9Zu3CbFS4c0w/xs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=aj4IltEccD44qIvcXcZ+Hj4yhm9Fa9wTrY887jDtE/bWD1KZkQikzHVajqd51aHZkxpijWpf2B+ioFpFCZLgUlJxTaOU63UFn/ql/mntImCmoFLeEn8nxk9dOv9jVyQCROWO8x2XlCg8vRahTRQ1lk8iNMgstIuEY00EPAS5HEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qlRAfAfR; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752469855;
+	bh=zzMCZDIyh8x+TPcVLivrHVOvQoCnaH/bb5c5gJcOS+k=;
+	h=Date:From:To:Cc:Subject:From;
+	b=qlRAfAfRTFZZUO6L839DxrjLv+v5O3m8CcQ5Jj+LVEXLblpxT3hbyghKo2kwY+amM
+	 UtDfS9f5foLvokImW7TZl6fwjR4m0/3XlX0Gb0gnAT7nv7FinOhfEnvh/tCP1aNCa7
+	 GJVsLsPMEc9Z8UueSJLepmb7sAUtpwZOHlNsLps+PXtVYg7Uar9r5LKM+SZVACOrs6
+	 rFPeQ3cNCBSoCcKwO6tRLzl7Hqx2Kl2EEc47wxSOycT3giUoPPQiAb3Gt0ffs347x1
+	 nHzjA+vRas09BrC3AMlGv7Epo04k4ZElabUeJElWW1bN2sdlWuKGgX+zyEN69AduIL
+	 afgDFQ1GwzLRg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bgVlL3Xxyz4wbW;
+	Mon, 14 Jul 2025 15:10:54 +1000 (AEST)
+Date: Mon, 14 Jul 2025 15:11:30 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Hans de Goede <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>
+Cc: Ilpo =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Torsten Hilbrich <torsten.hilbrich@secunet.com>
+Subject: linux-next: manual merge of the drivers-x86 tree with the
+ drivers-x86-fixes tree
+Message-ID: <20250714151130.4e236389@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d8e:b0:876:e10b:9763 with SMTP id
- ca18e2360f4ac-87978296516mr1051400039f.5.1752469683020; Sun, 13 Jul 2025
- 22:08:03 -0700 (PDT)
-Date: Sun, 13 Jul 2025 22:08:03 -0700
-In-Reply-To: <20250714024903.3965-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687490b3.a70a0220.3b380f.0048.GAE@google.com>
-Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbhid_raw_request
-From: syzbot <syzbot+fbe9fff1374eefadffb9@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, stern@rowland.harvard.edu, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/COljwCKoursMaeZHlKPACVt";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello,
+--Sig_/COljwCKoursMaeZHlKPACVt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hi all,
 
-Reported-by: syzbot+fbe9fff1374eefadffb9@syzkaller.appspotmail.com
-Tested-by: syzbot+fbe9fff1374eefadffb9@syzkaller.appspotmail.com
+Today's linux-next merge of the drivers-x86 tree got a conflict in:
 
-Tested on:
+  drivers/platform/x86/Makefile
 
-commit:         c2ca42f1 HID: core: do not bypass hid_hw_raw_request
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=138330f0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7367e34c3d60253b
-dashboard link: https://syzkaller.appspot.com/bug?extid=fbe9fff1374eefadffb9
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+between commit:
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+  2bfe3ae1aa45 ("platform/x86: Fix initialization order for firmware_attrib=
+utes_class")
+
+from the drivers-x86-fixes tree and commit:
+
+  651b57dd4087 ("platform/x86: Move Lenovo files into lenovo subdir")
+
+from the drivers-x86 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/platform/x86/Makefile
+index bea87a85ae75,0530a224bebd..000000000000
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@@ -58,19 -58,12 +58,14 @@@ obj-$(CONFIG_X86_PLATFORM_DRIVERS_HP)	+
+  # Hewlett Packard Enterprise
+  obj-$(CONFIG_UV_SYSFS)       +=3D uv_sysfs.o
+ =20
+ +obj-$(CONFIG_FW_ATTR_CLASS)	+=3D firmware_attributes_class.o
+ +
+- # IBM Thinkpad and Lenovo
++ # IBM Thinkpad (before 2005)
+  obj-$(CONFIG_IBM_RTL)		+=3D ibm_rtl.o
+- obj-$(CONFIG_IDEAPAD_LAPTOP)	+=3D ideapad-laptop.o
+- obj-$(CONFIG_LENOVO_WMI_HOTKEY_UTILITIES)	+=3D lenovo-wmi-hotkey-utilitie=
+s.o
+- obj-$(CONFIG_LENOVO_YMC)	+=3D lenovo-ymc.o
+  obj-$(CONFIG_SENSORS_HDAPS)	+=3D hdaps.o
+- obj-$(CONFIG_THINKPAD_ACPI)	+=3D thinkpad_acpi.o
+- obj-$(CONFIG_THINKPAD_LMI)	+=3D think-lmi.o
+- obj-$(CONFIG_YOGABOOK)		+=3D lenovo-yogabook.o
+- obj-$(CONFIG_YT2_1380)		+=3D lenovo-yoga-tab2-pro-1380-fastcharger.o
+- obj-$(CONFIG_LENOVO_WMI_CAMERA)	+=3D lenovo-wmi-camera.o
++=20
++ # Lenovo
++ obj-y				+=3D lenovo/
+ =20
+  # Intel
+  obj-y				+=3D intel/
+
+--Sig_/COljwCKoursMaeZHlKPACVt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh0kYIACgkQAVBC80lX
+0Gxc4Qf9G/U539gmZd9gEpn4HxqW6UktAbB4HGjj+9JlJU3DOBsH5+1gihPEtFIm
+IEDpUWayv3PlENY3lPlTKSBGvoLEC1h+uhLjEq0+JUMfWwHOE78drLb4vK4BgFRL
+ARja3NRu/vJfx3wIdU0KWoet9pdxihSYN5cRA430Bb8xygRWO9afBJFrAVQI5DVp
+0e94fMT0fpS6L5I9y9asdfv7Bmwo6shIEvqg5ROsEugkFwTu/sfSp8TC5icEPu5Z
+UXOylnD3uQyZZkFjov6HN5S9cDIL1GX8JpN+980YXh4YS04bN3IipRwLbWhTOg9w
+1gzXS/rlF/Y1PTYpk1EWJEBsHULXeg==
+=NqFY
+-----END PGP SIGNATURE-----
+
+--Sig_/COljwCKoursMaeZHlKPACVt--
 
