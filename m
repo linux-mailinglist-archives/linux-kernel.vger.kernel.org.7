@@ -1,160 +1,92 @@
-Return-Path: <linux-kernel+bounces-730104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD3FB04048
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:41:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BAE5B0404B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68A781885380
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:38:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 602A41889624
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0928824886A;
-	Mon, 14 Jul 2025 13:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="R6+4lpqc"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A696B23AB8E;
-	Mon, 14 Jul 2025 13:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30D9250C18;
+	Mon, 14 Jul 2025 13:37:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66FC23AB8E;
+	Mon, 14 Jul 2025 13:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752500261; cv=none; b=HSqPgopFv1zzZDJODRFBrb50N/b2POkgYb7n2fKk2yJWppNLt2rJJ8blOChE7RM+j5aGOGIwvgnIxIH6w5TRmKa1IGXp6k8uevDAFkxJbou2jWXJXa83O6zpdhrZo4npQSwbcEqw60yDHqvbgVgp+nDnFT23npCDv97soDniYfA=
+	t=1752500267; cv=none; b=IJCXFl+KDmj6VD/V+giMriD9ExpDpVtZmQLWwIXsz9+ZbYj3+w/kjqDFT3g+XmPgLB3EBZOLB1rKNYInFDhhChUATMPGzw3qqcFGd49Zc7lvYAC1yD6hZH1zbFdxkqScU9UdDVC85ra/zLsXTvrT1EZkwcG0xUL2HuMyUxuAAMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752500261; c=relaxed/simple;
-	bh=ucZkSpFfXMCWM+n/ckXWhndxhkQPKbM9AwH9fq36q2g=;
-	h=From:To:Cc:Date:Message-Id:MIME-Version:Subject; b=LWfBqDVYfQeVML1D0CSxHAJ7Wq02yEUv4GZCt+Sfpu3JxR5L0U2U4hewd2hs92kD8sxSoxa4gm/0uuni9pqiUVvBfY1X0lI156Wk80jiKkZgfmldzeJAZ1FU2otwAztwgEXWyPVaKqROeP+7jbNu+HASLYoQxpD3Ym16rZTge8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=R6+4lpqc; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
-	:From:subject:date:message-id:reply-to;
-	bh=aHNAeOZ/dbZ3uZvDxMF1/QUUJWuRA5K3D1Shf8AvzvE=; b=R6+4lpqcsFLsNZ2KVoHe2koGyT
-	UGgVMhR684enW3Y6Fomi5kagG1Ei7D+XghphqGJVuEUtBYT2ye0PaU5PQiYk6P1nTnBvSOWoQuFNP
-	XD0i67nXDupNI/+NOgCcn8c24hQkHOUkvvAFxZ7Zv3YPJLqrCbLLerfY93/Uigna+qw0=;
-Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:45674 helo=pettiford.lan)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1ubJNB-0002WY-Em; Mon, 14 Jul 2025 09:37:37 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: hugo@hugovil.com,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Date: Mon, 14 Jul 2025 09:37:30 -0400
-Message-Id: <20250714133730.6353-1-hugo@hugovil.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1752500267; c=relaxed/simple;
+	bh=28FqZG/QrHT3XpjRqRhn4Oj2ZnLlkcmVYKXwAZEEcOs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VL+8LnsV1dRuXVApbgYkEuq9Va9YeuD1+3SmScGU3Fpmogh5dPLLP1c5x/3XT7X2ipNDCKpS6UAWBHdI0Sz61jQHIiO/JwI2e0aOmwGzYzOmKowi9omXbz5y+z9SOezYAz8sl+HvWJ0oMTUL6tweSVUYguSZWjI2FgceqqprBjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 905E41BC0;
+	Mon, 14 Jul 2025 06:37:34 -0700 (PDT)
+Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CA9193F66E;
+	Mon, 14 Jul 2025 06:37:41 -0700 (PDT)
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Yuanfang Zhang <quic_yuanfang@quicinc.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	kernel@oss.qualcomm.com,
+	linux-arm-msm@vger.kernel.org,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Leo Yan <leo.yan@arm.com>
+Subject: Re: [PATCH v11 0/2] coresight: Add Coresight Trace Network On Chip driver
+Date: Mon, 14 Jul 2025 14:37:30 +0100
+Message-ID: <175250020505.487814.2214255862249827250.b4-ty@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250710-trace-noc-v11-0-f849075c40b8@quicinc.com>
+References: <20250710-trace-noc-v11-0-f849075c40b8@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 184.161.19.61
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-Subject: [PATCH v2] gpio: pca953x: use regmap_update_bits() to improve efficiency
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
-Using regmap_update_bits() allows to reduce the number of I2C transfers
-when updating bits that haven't changed on non-volatile registers.
+On Thu, 10 Jul 2025 13:27:19 +0800, Yuanfang Zhang wrote:
+> The Trace Network On Chip (TNOC) is an integration hierarchy which is a
+> hardware component that integrates the functionalities of TPDA and
+> funnels. It collects trace from subsystems and transfers it to coresight
+> sink.
+> 
+> In addition to the generic TNOC mentioned above, there is also a special type
+> of TNOC called Interconnect TNOC. Unlike the generic TNOC, the Interconnect
+> TNOC doesn't need ATID. Its primary function is to connect the source of
+> subsystems to the Aggregator TNOC. Its driver is different from this patch and
+> will describe it and upstream its driver separately.
+> 
+> [...]
 
-For example on a PCAL6416, when changing a GPIO direction from input to
-output, the number of I2C transfers can be reduced from 4 to just 1 if
-the pull resistors configuration hasn't changed and the output value
-is the same as before.
+Applied, thanks!
 
-Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
----
-V1 -> V2: rebase on gpio/for-next
----
- drivers/gpio/gpio-pca953x.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+[1/2] dt-bindings: arm: Add device Trace Network On Chip definition
+      https://git.kernel.org/coresight/c/015959687cff
+[2/2] coresight: add coresight Trace Network On Chip driver
+      https://git.kernel.org/coresight/c/26e20622a8ae
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index f5184860bd89f..169877e59da9d 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -611,9 +611,9 @@ static int pca953x_gpio_direction_input(struct gpio_chip *gc, unsigned off)
- 	guard(mutex)(&chip->i2c_lock);
- 
- 	if (PCA_CHIP_TYPE(chip->driver_data) == TCA6418_TYPE)
--		return regmap_write_bits(chip->regmap, dirreg, bit, 0);
-+		return regmap_update_bits(chip->regmap, dirreg, bit, 0);
- 
--	return regmap_write_bits(chip->regmap, dirreg, bit, bit);
-+	return regmap_update_bits(chip->regmap, dirreg, bit, bit);
- }
- 
- static int pca953x_gpio_direction_output(struct gpio_chip *gc,
-@@ -628,7 +628,7 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
- 	guard(mutex)(&chip->i2c_lock);
- 
- 	/* set output level */
--	ret = regmap_write_bits(chip->regmap, outreg, bit, val ? bit : 0);
-+	ret = regmap_update_bits(chip->regmap, outreg, bit, val ? bit : 0);
- 	if (ret)
- 		return ret;
- 
-@@ -637,9 +637,9 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
- 	 * (in/out logic is inverted on TCA6418)
- 	 */
- 	if (PCA_CHIP_TYPE(chip->driver_data) == TCA6418_TYPE)
--		return regmap_write_bits(chip->regmap, dirreg, bit, bit);
-+		return regmap_update_bits(chip->regmap, dirreg, bit, bit);
- 
--	return regmap_write_bits(chip->regmap, dirreg, bit, 0);
-+	return regmap_update_bits(chip->regmap, dirreg, bit, 0);
- }
- 
- static int pca953x_gpio_get_value(struct gpio_chip *gc, unsigned off)
-@@ -667,7 +667,7 @@ static int pca953x_gpio_set_value(struct gpio_chip *gc, unsigned int off,
- 
- 	guard(mutex)(&chip->i2c_lock);
- 
--	return regmap_write_bits(chip->regmap, outreg, bit, val ? bit : 0);
-+	return regmap_update_bits(chip->regmap, outreg, bit, val ? bit : 0);
- }
- 
- static int pca953x_gpio_get_direction(struct gpio_chip *gc, unsigned off)
-@@ -751,9 +751,9 @@ static int pca953x_gpio_set_pull_up_down(struct pca953x_chip *chip,
- 
- 	/* Configure pull-up/pull-down */
- 	if (param == PIN_CONFIG_BIAS_PULL_UP)
--		ret = regmap_write_bits(chip->regmap, pull_sel_reg, bit, bit);
-+		ret = regmap_update_bits(chip->regmap, pull_sel_reg, bit, bit);
- 	else if (param == PIN_CONFIG_BIAS_PULL_DOWN)
--		ret = regmap_write_bits(chip->regmap, pull_sel_reg, bit, 0);
-+		ret = regmap_update_bits(chip->regmap, pull_sel_reg, bit, 0);
- 	else
- 		ret = 0;
- 	if (ret)
-@@ -761,9 +761,9 @@ static int pca953x_gpio_set_pull_up_down(struct pca953x_chip *chip,
- 
- 	/* Disable/Enable pull-up/pull-down */
- 	if (param == PIN_CONFIG_BIAS_DISABLE)
--		return regmap_write_bits(chip->regmap, pull_en_reg, bit, 0);
-+		return regmap_update_bits(chip->regmap, pull_en_reg, bit, 0);
- 	else
--		return regmap_write_bits(chip->regmap, pull_en_reg, bit, bit);
-+		return regmap_update_bits(chip->regmap, pull_en_reg, bit, bit);
- }
- 
- static int pca953x_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
-
-base-commit: e502df58b5e3767c00e887744b6eff43b7fde3ea
+Best regards,
 -- 
-2.39.5
-
+Suzuki K Poulose <suzuki.poulose@arm.com>
 
