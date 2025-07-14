@@ -1,124 +1,108 @@
-Return-Path: <linux-kernel+bounces-729769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3466B03B4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:49:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8380CB03B51
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:50:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C87F63A69E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:49:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0CF2189881D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3266E24293C;
-	Mon, 14 Jul 2025 09:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5538242D7B;
+	Mon, 14 Jul 2025 09:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="P6KUVfql"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o9CUVXgs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BF81E47A8;
-	Mon, 14 Jul 2025 09:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA7323F41D;
+	Mon, 14 Jul 2025 09:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752486570; cv=none; b=lONzpPNfIXFZx9mPNMfAwsKW4W07/3mhvkRDlZAPnwpb2Xi/YTdGjDv7GJln6Aq7S4oh0rn/VF0VEAOV4vFCZAtgqqrEbPaBNFNf7KBaogyP8777siPcA/7W6g4rIdmwPsQfklZN7nK5QXYHd+2/TaqWAZKIlO0Xdg2VV8HbZ0c=
+	t=1752486589; cv=none; b=AvQ3OMQje5CWDL2hFuMe2igK/K7CF+wyWzA/NT+L22iBUbc5CcxStpK9txG7f/2iugj0eKQ3/b5IZNaNJt1A9nS4s5tRp841UXdth8wnozDDbOpyNEhUoYnUmJv8ETi4JVYCLruGg3kaja+fkuFRi9iVqOE45we44zLoVQtMIPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752486570; c=relaxed/simple;
-	bh=fSQmqTmFXiJr35bumTDLx/6khX6zLKHvHySYlt9rJ/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i0uaOxl9mbcWB9l3jg1pkD47m4AwYl6vMaIuV+hsIKnztKxdH2FAUok9HBMQLtScStAhMRs0gISjsi6GKtPe07E8UjkBFXEw0tNiGE+pZGPd+IrUcp9VW8l7k46TxJiRxB+28wSRLBJjiP2WAmmr/tXzZ1ZVEazKF+1A6oSaLy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=P6KUVfql; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B6B2840E01FD;
-	Mon, 14 Jul 2025 09:49:24 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id KFiAFINQwJ0H; Mon, 14 Jul 2025 09:49:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1752486560; bh=u5N4pTc0wlCZb0vYn03d8qHPb6wSiN52lq5zu+DU4g0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P6KUVfqlDJpHL8iXfV0Zb8Zb8VVTaZqCLrbVPIOHc6mS7eNPKWJHRJQF/cKT0kh2P
-	 rYd9LpHOKx8gXD6eIiydUO7tOTwzeWd290HvFVePOgZBbdkOGNCiWdfzeqf9T71CMU
-	 +NHCX9LCQtuMsQ+csYIG7YBa39hJoxRfUZcTQM2fUEw7IBS57aFekVNeF6uLbHYcQQ
-	 6xnqzcPVIGo6sqFy50hHMHy0AbnAVQe/Xvr5e8T3adTdjrDTQu2EhrUGlte0ptPJPD
-	 liTHkTl7Rw3wXwp3DL7S/PgVZbLo0iehAaWmWV8hkk59FLT9kfGS+EXflqef11FBJY
-	 nlHYIoTZS1y0dGOORy+c2KMMcBFNxZemsnjHh33CL7eRDj7eT1OMerBtq4uzaLUbgL
-	 kQXXAFJt4lDgBGTxmo6PBYWzoQjLKwdJ7ESJjX5LmUliipPFv5bC4qLEWrKlcEoXGb
-	 UQksxvwe2sw6bOVlC5Eh0EeO3ip0VqOfkKlD4DG1IUEvlUIKw2uiVTvoCBCGL4BnNI
-	 H/q5YDErGMlg76r4KA6G5srs+IOdKUr/nvUwX3kVUQKljaoZurHz7payTElBRJYz1v
-	 EmD+uwPBLg604CGalyObU3zogXYOAwT+qw3CoQpU3evEFeEYdw+xsOtkNUz0P7VzrM
-	 Xslq/7/PVoUAiHXRNy+oybGs=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A1B3940E00CE;
-	Mon, 14 Jul 2025 09:49:10 +0000 (UTC)
-Date: Mon, 14 Jul 2025 11:49:09 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-	sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/Kconfig: Enable HUGETLBFS only if
- ARCH_SUPPORTS_HUGETLBFS
-Message-ID: <20250714094909.GBaHTSlW8nkuINON9p@fat_crate.local>
-References: <20250711102934.2399533-1-anshuman.khandual@arm.com>
- <20250712161549.499ec62de664904bd86ffa90@linux-foundation.org>
- <f86c9ec6-d82d-4d0c-80b2-504f7c6da22e@arm.com>
+	s=arc-20240116; t=1752486589; c=relaxed/simple;
+	bh=6Pi4vWH/FNwr6vj0hUHJc4WguZ+oLxIkRNeYBOuG9eA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=NSfMcp3URmcTJgqtVa0/s/sQgx4H/13EYVd3W8o0gbjJuzsR2MA+oujNKX1NLUK61j7JwmkwwYPuzfQnnOC+NfEOyOC+ZQ8sJSrL67wyuSYfHlklNvKaLvBd/A3bg+z4gk2FTh6fsNk9FfigOmI7XrDXTQ7gZgnIDN1BHF/7f+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o9CUVXgs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D569C4CEF4;
+	Mon, 14 Jul 2025 09:49:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752486588;
+	bh=6Pi4vWH/FNwr6vj0hUHJc4WguZ+oLxIkRNeYBOuG9eA=;
+	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
+	b=o9CUVXgsG8LGcukZyMpLGiPz/OfA65Vo7qmN1vvCnNJTNccD2LjjKG/wTAl0SFKY7
+	 G6QUqrRoKA+gA0cXlAyuSK5z41m1M9Qt4eWxMOy2vrqQwa6hJUZK7ujtE7vEYCkndp
+	 VdKk/ez88p+Qcr5X76SoLwBWk9UQA1bFmePkP7uS4L2Nuo3XxcKAW9IPl9KmaAJsHv
+	 37fja+9SzJwyu/2IP/umkHTJoQV1IdeCU8GFKhB+F4/bs1VteMITAc3ag9kO9KlA0B
+	 d9fx14MrmrUwqD47NGbMovZzEtBWatV3ddKTWDWwTpWuxaaTx0uhoYk8Mnfk0gFbJo
+	 hXUTCpz7bSjEw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f86c9ec6-d82d-4d0c-80b2-504f7c6da22e@arm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 14 Jul 2025 11:49:44 +0200
+Message-Id: <DBBONAMQ0C3X.825M3H3R2IUY@kernel.org>
+To: "Greg KH" <gregkh@linuxfoundation.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH 2/2] rust: device: implement Device::as_bound()
+Cc: <rafael@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+ <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+ <lossin@kernel.org>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
+ <tmgross@umich.edu>, <daniel.almeida@collabora.com>,
+ <m.wilczynski@samsung.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+References: <20250713182737.64448-1-dakr@kernel.org>
+ <20250713182737.64448-2-dakr@kernel.org>
+ <2025071411-casually-cold-6aff@gregkh>
+In-Reply-To: <2025071411-casually-cold-6aff@gregkh>
 
-On Mon, Jul 14, 2025 at 08:05:31AM +0530, Anshuman Khandual wrote:
-> The original first commit had added 'BROKEN', although currently there
-> are no explanations about it in the tree.
+On Mon Jul 14, 2025 at 7:30 AM CEST, Greg KH wrote:
+> On Sun, Jul 13, 2025 at 08:26:54PM +0200, Danilo Krummrich wrote:
+>> Provide an unsafe functions for abstractions to convert a regular
+>> &Device to a &Device<Bound>.
+>>=20
+>> This is useful for registrations that provide certain guarantees for the
+>> scope of their callbacks, such as IRQs or certain class device
+>> registrations (e.g. PWM, miscdevice).
+>
+> Do we have an example where this can be used today in the tree, or is
+> this only for new stuff going forward that would use it?
 
-commit c0dde7404aff064bff46ae1d5f1584d38e30c3bf
-Author: Linus Torvalds <torvalds@home.osdl.org>
-Date:   Sun Aug 17 21:23:57 2003 -0700
+There's miscdevice in tree, but to be fair, miscdevice doesn't need it with=
+out
+my patch series [1] adding driver support for the existing miscdevice
+abstractions; the patch in [2] out of this series would use it within
+args_from_registration().
 
-    Add CONFIG_BROKEN (default 'n') to hide known-broken drivers.
+The PWM abstractions [3] need it in bound_parent_device(). The use-case is =
+the
+same as everywhere else, PWM chips never out-live driver unbind, hence they=
+ can
+provide the corresponding bus device as &Device<Bound>.
 
-diff --git a/init/Kconfig b/init/Kconfig
-index 0d1629e23398..5c012aeb2a8f 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -32,6 +32,17 @@ config EXPERIMENTAL
- 	  you say Y here, you will be offered the choice of using features or
- 	  drivers that are currently considered to be in the alpha-test phase.
- 
-+config BROKEN
-+	bool "Prompt for old and known-broken drivers"
-+	depends on EXPERIMENTAL
-+	default n
-+	help
-+	  This option allows you to choose whether you want to try to
-+	  compile (and fix) old drivers that haven't been updated to
-+	  new infrastructure.
-+
-+	  If unsure, say N.
-+
- endmenu
- 
+The same is true for IRQ registrations [4]. free_irq() is guaranteed to be
+called before driver unbind, hence we can provide a &Device<Bound> in the I=
+RQ
+callbacks.
 
--- 
-Regards/Gruss,
-    Boris.
+Ultimately, we want to provide this "cookie" in any driver scope that can b=
+e
+proven to be lifetime wise limited to device / driver unbind, so there'll b=
+e
+much more users.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+[1] https://lore.kernel.org/lkml/20250530142447.166524-1-dakr@kernel.org/
+[2] https://lore.kernel.org/lkml/20250530142447.166524-7-dakr@kernel.org/
+[3] https://lore.kernel.org/lkml/20250710-rust-next-pwm-working-fan-for-sen=
+ding-v11-3-93824a16f9ec@samsung.com/
+[4] https://lore.kernel.org/lkml/20250703-topics-tyr-request_irq-v6-3-74103=
+bdc7c52@collabora.com/
 
