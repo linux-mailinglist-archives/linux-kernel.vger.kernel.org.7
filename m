@@ -1,164 +1,151 @@
-Return-Path: <linux-kernel+bounces-729579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C151FB0389E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:04:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EF51B038A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2045A188F872
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:04:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A0693B45DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7451E23958A;
-	Mon, 14 Jul 2025 08:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E45323A9AC;
+	Mon, 14 Jul 2025 08:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="tL3yj00f"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bAV3+5Qc"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C0E1E32C3
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505BA239099;
+	Mon, 14 Jul 2025 08:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752480253; cv=none; b=cT5lKZLd3LrB6Ddv3pG3e/KuYi9Y/ONWoeY18eBr3sq8SUa2bi5dRJ5UepZ0j48MHl+Ap7Y2DJX/fc72fK2APc8GnvV1OxiZGO6w80iQqkoz2J+uhRgcJayNaSEkxtZ8sW7lDvIkmGx+dfIi9mjNMweJucGcLGw6r0bC9AcyG+4=
+	t=1752480278; cv=none; b=oDktpWsOXAiazhZWc/AGIpSu6HJHmVi9HpxtYf21mhsMrViMFKlwSTKo0U4wlHjxAhXv1LEXShVHFYaJ0zc2x6fYLT711zofG0f/ByjThbQ/7HUqzKPPnyy7T3eWeQb+w6ThgF4h/UpPD8Nu4ieCBFsqU2rmwGOO2Z5+/W6HqLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752480253; c=relaxed/simple;
-	bh=f+o9WVDsyRj3e9aXVc3KN67EOFIQrJYY2xIcE0eTzEA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gEq7fdti8TuSo55bFV6GEyAgfkZSHRvSzbUO7pju8fTjlxkYAd5OyKW+Dc0nz3p70LvXyahgpaUj4htB+ESuDvoG7Pfe5mpyr2EJtfx69BNM2vRyea5BwDDjxXoLsVQahSYUtMpkA1sW6bOu4AAB/w/88wGTW8RxM2wwXDM7KVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=tL3yj00f; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3df4bdadca5so15675885ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 01:04:11 -0700 (PDT)
+	s=arc-20240116; t=1752480278; c=relaxed/simple;
+	bh=X3ffU5ZPQL/iK6X7dL3NI0KO+0AZSsAr7S+Y6bShp/M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=KjUM66Z/BvIYfAVMuhTxLgHAXfKBYC7UqJ+ORczjRQwFMELmNhVyTHIMP0B5qIlVmn76Pw+GuMdAFqW+P8NAnxJ8Xm6bSm3Eni1IVTeXAdOIoEt+ro5WmxR6MmjRdsvgnSWIJW42WP50Q4VoOdKLTvKPWgLEzBV7A8//Rfc3lE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bAV3+5Qc; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-553bcf41440so4097239e87.3;
+        Mon, 14 Jul 2025 01:04:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1752480251; x=1753085051; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OZgIQGeH6iTe1iCoPtim6lSFnAFbmo2QUEBDo1A3JBQ=;
-        b=tL3yj00fNL/H6AzWzxrsDV+69GuYO5036L104qSA1sZJ4oBiXtvJbLiygI6YkPtswg
-         l4MJCXCegnoTrBEaYin6YCFVnEhMVEuLUZ3bd0/7LfjdBTTgciZ5Tu+AcgtgAbaV8U1J
-         ZAxLf+RB+g5DK1+UYedfK8/yixClNC5whozruCCu8S0TZhYqUTJfYslvrrrm3hahfju3
-         f2giv9mU8Q0Ivo9AqHbsdgvVQ+dqh9SV1zHnj5IeHrRQ/jGpIl+foybYCo7ow7S2/whs
-         Xtzzx1B+TpAmLnUaIR6AjtnWqm7E0q0luSIhAFBMDaFI7NKkoOrsgRiyMTfwuCT1cm3n
-         it6w==
+        d=gmail.com; s=20230601; t=1752480274; x=1753085074; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C6t5fJRCHpoSZ7F8pJt3tQSM8oWBMiBs4n4p924ZYdk=;
+        b=bAV3+5QcIVmt/Az2q/EUxJNLRG3yyVsG9MimajcwUxn/nZxjeJALt5CCcvq8WZ1PUt
+         jdiVgNyI7PP5JA0fjyY13RUVEHmShA4I4oYzeJWtBH7IRJavzRKyqIWr8f1i87ecsQ0e
+         rETeC0NENPX3aj5qqfwNmSfI3rb023ieobqgJkUxNYQkDP8ZgPj3M3VFkbYskgOloCyz
+         ownVRvyjPQNu/QL/3eWroxC6nf6l8H/GiTWYTCDJM9a3/pWd24f1p/8H3k8PZ8VWIu2c
+         rZZ3XtTkRbJMp+r3OuPPKDmfmGiHk54rNGGW6E2eJyn5hITgEG8e3HuLEJEmsgnv4XDX
+         /8+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752480251; x=1753085051;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1752480274; x=1753085074;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OZgIQGeH6iTe1iCoPtim6lSFnAFbmo2QUEBDo1A3JBQ=;
-        b=KFScgc0PR1+ogYqpg9ONJtl6KaU4o/VeFW7e6REy720vQ9mPHCEbmzSVEA9upmGb28
-         J59jIU7XUsTvpjHf5p0j/IR1W1lrUSHsCUxNORel7CEiZoiPCr+k5oSh6GrhYCh0xSj6
-         U3M2K7dL4OpN5FMELX84IpwZwRfwk2PM4tI5aUVlW9sGAOasVcryCIrFMhphF6faw+v8
-         2khwrIvz346+pGLteYInbd9IC9ureCSW6izEP0ySL5LZX3IJsaNj9EMkUChY+u1pA3Ly
-         NCrBajMz4kJQFvDyVUyu6bkpDCLxa+gP3FakXX1leKAjmwabBcJq+E4xSqRhXRzyMEOA
-         goGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqbG+MAOSQJ3PhL+P6hTn5J4EIRwucnXpnGOcnD6aqxMFoPm2s3q5yZVC7fwnJT9zVhyhPpDVzGZQcvLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2RdT/7FfOOoFhHXhlfvNJXK+aFo50JaxvTxIsZkgq28/U3Fhq
-	Z4XPrYnmWqlOcnxSgWjKh5TLV2kadr4QKNpOFmbEeSWmM5nPnSEp0sAhDadZLREiobNge5Dvf35
-	8K/3K2iEz6s4EhNdU5MMPbaAcepi5lKsvlpYDX9exuw==
-X-Gm-Gg: ASbGncvMTNRUee7YZw/HZSVRdjFNptHWS72RhRvSAvSXLryHtekh+bcUjBsJr5hoo3N
-	RZinBduNIjIJgcEK0A6vxOsBnGyx9tF+iLKbnrT3tkOVQiTnmR27mA5FAsYGy9cpSQBvYgZxtkA
-	PUYy6XL4cKR1oEDEInOMMDB+IZKRcocMmFtMQ3wYGp/LQ1ItS3JvtIlKbzO9kygRKTSzeYWpHQu
-	NZkzrjUkh0k9qiPRNI=
-X-Google-Smtp-Source: AGHT+IFRHVQzoAt1qKkfWgKOuTxoczx2KhtXwBF+kniHBzyY3kBO8gLSgMJy+LXX+IM1zlPXQQUK731W+/4cNca4pWM=
-X-Received: by 2002:a05:6e02:304a:b0:3df:4046:93a9 with SMTP id
- e9e14a558f8ab-3e25325550bmr122893985ab.5.1752480250607; Mon, 14 Jul 2025
- 01:04:10 -0700 (PDT)
+        bh=C6t5fJRCHpoSZ7F8pJt3tQSM8oWBMiBs4n4p924ZYdk=;
+        b=ZK9rpH1grguMRtaqISUTG9gzcNif/jNI8cv66I2yzPJT4IhXc1A2k2GT/LLW29V6FR
+         9ZfFspgro36iARZ8ODU5sPnIQiqv3VsTI3ERbPnKjWbKGmH3u8ABiV3MiqSlRUD01u+F
+         Jg48Srm0KqTZQLDTdsjfkEJkElXN9aNcu/FtMbvsm97VuTpmzZ9FkL1brcFh+WyKfOcE
+         Tfdgz2DAXKImc1yfCraAP89LUDctweXeulAkT2K7KoFvx5oyOAOUCv01gBxXeVa2LqHg
+         O/5VjWvgRK2e3WqlQwcOQTv+sNHeYKFAau/k20RUIsnf5Ou00Fqj0vPsHe4IxeBJkTOV
+         qLJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJTk84R13H9RcHYfmObkJkOWbhPkZbO33CQszoK18Kv8Af5AJN+pYLEUcR3ReghMijUHx3pl1pK2k4@vger.kernel.org, AJvYcCX3/JOzYRfkv4dYIXxZMUcRrCweuBTSWt1h/I18nskodJ+hAHzJuJEdWCQ61drafbtxYe1QqgyiRHNc7PxB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv1RldssOt375EV1h9rcM890VBLyTjKcabTbAqKTEZ3ipKj4Mn
+	66MVoYzarIZCib2DXJzEZyL0szpJlZNw1dep3MAevHf3oNB7TqFLolu5
+X-Gm-Gg: ASbGncstv+XT/HxAViFPg8Bmk+Avh4mB+lcdkOS19tz0nfcm4xJiZ0U/AFjLpl9hU5v
+	DFCD9vd6dqdwK6I0gI34SvJpkE1G6nmWuS10uii/zUy7DeZ6VD9eqRIUlr9qS+he8eZVjWxDNAn
+	CPwC9fSI+J0jcKTP8B3p2jEWLjBxW6WBPoOGvFcDj6e3/XstTeucF6eISp/kvAnmFeaYR+EP5h9
+	j2Ftsdf7zYaaMWWO4uPHGRDY0IGPy03Hn55W082HGkbjI7mrhpuPlfTaTta4+KGplrxb2krDHrj
+	wk+bcLB6Zvu4JDmL+D9eCTjIA18Ktu921A6aIJJEFpRT3+UEbBShrYicmAlobxy+znHvZXaJEnh
+	2QPRb0+riyd99X0MfzptiATQnfSgV0L0pPf/DU5BiX6R0sWDbbbNFhV1UQC82d9fI+MY=
+X-Google-Smtp-Source: AGHT+IGO+3QtpME4CCrqHVYceKIs+EzxANjanQNgmj5QsH7D8grBIIDUPIbXCvr+3hhKeD3znxuUpw==
+X-Received: by 2002:a05:6512:239c:b0:554:f9c5:6b3e with SMTP id 2adb3069b0e04-55a046498e8mr3794634e87.41.1752480274141;
+        Mon, 14 Jul 2025 01:04:34 -0700 (PDT)
+Received: from [192.168.1.198] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55943b6c08esm1864385e87.187.2025.07.14.01.04.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 01:04:33 -0700 (PDT)
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+Date: Mon, 14 Jul 2025 10:03:59 +0200
+Subject: [PATCH 1/5] drm/st7571-i2c: correct pixel data format description
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711101537.16308-1-luxu.kernel@bytedance.com>
-In-Reply-To: <20250711101537.16308-1-luxu.kernel@bytedance.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Mon, 14 Jul 2025 13:33:59 +0530
-X-Gm-Features: Ac12FXxof_i54yoTN6sBpKdXuMFJfg4CBnTxqLczo_oXcUYHd6dY56mBe6MespY
-Message-ID: <CAAhSdy0OumSXbJEEafE6q-LPu2PTdN9Tzx_aoapy=RJD214uBw@mail.gmail.com>
-Subject: Re: [PATCH v3] RISC-V: KVM: Delegate illegal instruction fault to VS mode
-To: Xu Lu <luxu.kernel@bytedance.com>
-Cc: rkrcmar@ventanamicro.com, cleger@rivosinc.com, atish.patra@linux.dev, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250714-st7571-format-v1-1-a27e5112baff@gmail.com>
+References: <20250714-st7571-format-v1-0-a27e5112baff@gmail.com>
+In-Reply-To: <20250714-st7571-format-v1-0-a27e5112baff@gmail.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Javier Martinez Canillas <javierm@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1200;
+ i=marcus.folkesson@gmail.com; h=from:subject:message-id;
+ bh=X3ffU5ZPQL/iK6X7dL3NI0KO+0AZSsAr7S+Y6bShp/M=;
+ b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBodLn2NLRJC7QmCcM48VdTkHlG7HKLR0Zzz7Ym3
+ 1TaJ9VTuz2JAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCaHS59gAKCRCIgE5vWV1S
+ MluOEADQB0UdULY8BmNpIjqemT9VnYXMEdA6qIDFPHZZx0uqZXCwOZ2axoaN671SPYSwzAEF0AB
+ 3Vr1XZMvhG3YkHUxMEceZbc7pv2MvE1czli5gsrh4ckp+C9xpoatCbVfpAPcX8T794+/zF64W7d
+ Sjo+nin4O87meWMd2Ydu0488b3b+HwyFOeqjweYkCH7gREvMfYbrHXRK+NTkCXBVyZiDSAFYBVp
+ 1Jq4CBN/sMwLnTMNpCh2UONgDXICZUBHZrzSpRJrBrq7NvD3GE6mSNARe6kU4wTfiThRQk0kDLL
+ oBJriXF2L4skdu8Uhn92YgnXwQOpcNBjNwVJA4gomW/tBbKPxfA+SNXJK7i8k3jE7GsLqdvuBlI
+ mbzEEh90o7/Y5eqeUHZwYQUEgh+HfpbmW5bprH2qN40AL113ppFnXzG6qP4SO3mHymMKV7oZQ9D
+ xQlhEMT6JGEh5cCBkRplL2QWIowpZLAgNMrXj6Jq09Ab1mWePpr8fIRcUpZ8OC6V07UiREAs1Om
+ WVnYdH29cwaisTOz9Mpv2BsG8u120tLnE6cALkjbYYCYng/QdJumP/oajR9lGTNQTXqZ4ty2pdr
+ EiI7ogUVMDZpFX36AZTMJhSWHMG1JN3jhGbhtlo4WOJqYzDqLXn6cMdu0mrVxmROQ6D32c4dGgN
+ ELSEbufM2TmTyZw==
+X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
+ fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
 
-On Fri, Jul 11, 2025 at 3:45=E2=80=AFPM Xu Lu <luxu.kernel@bytedance.com> w=
-rote:
->
-> Delegate illegal instruction fault to VS mode in default to avoid such
+The comment describes the pixel data format as stated in
+the st7571 datasheet, which is not necessary the same
+as for the connected display.
 
-s/in default/by default/
+Instead, describe the expected pixel data format which is used for
+R1/R2/XRGB8888.
 
-> exceptions being trapped to HS and redirected back to VS.
->
-> The delegation of illegal instruction fault is particularly important
-> to guest applications that use vector instructions frequently. In such
-> cases, an illegal instruction fault will be raised when guest user thread
-> uses vector instruction the first time and then guest kernel will enable
-> user thread to execute following vector instructions.
->
-> The fw pmu event counter remains undeleted so that guest can still query
-> illegal instruction events via sbi call. Guest will only see zero count
-> on illegal instruction faults and know 'firmware' has delegated it.
->
-> Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
-> ---
->  arch/riscv/include/asm/kvm_host.h | 1 +
->  arch/riscv/kvm/vcpu_exit.c        | 5 -----
->  2 files changed, 1 insertion(+), 5 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/k=
-vm_host.h
-> index 85cfebc32e4cf..3f6b9270f366a 100644
-> --- a/arch/riscv/include/asm/kvm_host.h
-> +++ b/arch/riscv/include/asm/kvm_host.h
-> @@ -44,6 +44,7 @@
->  #define KVM_REQ_STEAL_UPDATE           KVM_ARCH_REQ(6)
->
->  #define KVM_HEDELEG_DEFAULT            (BIT(EXC_INST_MISALIGNED) | \
-> +                                        BIT(EXC_INST_ILLEGAL)     | \
->                                          BIT(EXC_BREAKPOINT)      | \
->                                          BIT(EXC_SYSCALL)         | \
->                                          BIT(EXC_INST_PAGE_FAULT) | \
-> diff --git a/arch/riscv/kvm/vcpu_exit.c b/arch/riscv/kvm/vcpu_exit.c
-> index 6e0c184127956..cd8fa68f3642c 100644
-> --- a/arch/riscv/kvm/vcpu_exit.c
-> +++ b/arch/riscv/kvm/vcpu_exit.c
-> @@ -193,11 +193,6 @@ int kvm_riscv_vcpu_exit(struct kvm_vcpu *vcpu, struc=
-t kvm_run *run,
->         ret =3D -EFAULT;
->         run->exit_reason =3D KVM_EXIT_UNKNOWN;
->         switch (trap->scause) {
-> -       case EXC_INST_ILLEGAL:
-> -               kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_ILLEGAL_INSN)=
-;
-> -               vcpu->stat.instr_illegal_exits++;
-> -               ret =3D vcpu_redirect(vcpu, trap);
-> -               break;
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
+ drivers/gpu/drm/sitronix/st7571-i2c.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Lets keep the illegal instruction trap handling so that if SBI implementati=
-on
-forwards VS-mode illegal instruction trap to HS-mode ignoring hedeleg
-due to unknown reasons then we still forward this trap to Guest otherwise
-such an illegal instruction trap will cause exit to user-space and eventual=
-ly
-kill the Guest.
+diff --git a/drivers/gpu/drm/sitronix/st7571-i2c.c b/drivers/gpu/drm/sitronix/st7571-i2c.c
+index eec846892962dce2d0b86c9c5c226d44135f2b0d..3024c94c890497d1ddbbf0f7f81ec4664f48d580 100644
+--- a/drivers/gpu/drm/sitronix/st7571-i2c.c
++++ b/drivers/gpu/drm/sitronix/st7571-i2c.c
+@@ -382,10 +382,10 @@ static int st7571_fb_update_rect_grayscale(struct drm_framebuffer *fb, struct dr
+ 			 * even if the format is monochrome.
+ 			 *
+ 			 * The bit values maps to the following grayscale:
+-			 * 0 0 = White
+-			 * 0 1 = Light gray
+-			 * 1 0 = Dark gray
+-			 * 1 1 = Black
++			 * 0 0 = Black
++			 * 0 1 = Dark gray
++			 * 1 0 = Light gray
++			 * 1 1 = White
+ 			 *
+ 			 * For monochrome formats, write the same value twice to get
+ 			 * either a black or white pixel.
 
->         case EXC_LOAD_MISALIGNED:
->                 kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_MISALIGNED_LO=
-AD);
->                 vcpu->stat.load_misaligned_exits++;
-> --
-> 2.20.1
->
+-- 
+2.49.0
 
-Regards,
-Anup
 
