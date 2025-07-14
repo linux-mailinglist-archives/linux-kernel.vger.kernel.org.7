@@ -1,163 +1,101 @@
-Return-Path: <linux-kernel+bounces-730435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BC9FB0447D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:46:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C864B04484
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7E521A62174
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:43:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 016F24A2BB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC4E2676F3;
-	Mon, 14 Jul 2025 15:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9570226136D;
+	Mon, 14 Jul 2025 15:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iHACN7UI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="u2gyHu4Z"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC6C6A8D2;
-	Mon, 14 Jul 2025 15:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9A5251791;
+	Mon, 14 Jul 2025 15:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752507475; cv=none; b=SJXMgq0Kjx1OT/gOg854iyqBvVQs+da1ilTJsCj7G6Uy5jpAKYzWIl/L2UNCd1XA79EXXKEUW1Me7ij6vPxgKNJ4L1tEiwin6vVzr3VZclmUSlgyHObghmh9VXa3Jr/cF5K6X3rd+p3qrD8dRCSQf/WWJnhtEz2F5QHMZo53Aec=
+	t=1752507506; cv=none; b=KpemdWJDn67oyBtmaQ+O35Ibj+KAulqBNoDr7D8ddO27A22Q/xyXIK0HB5uZuG18vLJE1zEVyD4ZPkoJLyr2+PQpi4xJm1cPueUUNk4rJNco6qGvh5oRcPEn0EWkU+i54Afu1CPNLfqjihbSCL1ULrN8njzQhCxlh5JH3uTbPpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752507475; c=relaxed/simple;
-	bh=0K+u1Qy1DhY50hQkwewgkYfh4QzDBTaZCLEBQjOQcPw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Iz/2ouXX+wFh/hkfkEZE6bogp0K4hWtdQvyBxZ2FTHkcIOq5b9c5kuNp6WePpyi0q68Emrsxy5gJTRUYz9SGWzNtMHWwXWASz4YuLuXZo8CSA5y4TtH1uQj1yIZuy9EwGbTs5oLKUb11+tcLu39d+jfWPIjrVhRcHD4wN/DUsFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iHACN7UI; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752507474; x=1784043474;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=0K+u1Qy1DhY50hQkwewgkYfh4QzDBTaZCLEBQjOQcPw=;
-  b=iHACN7UI06MBTPhyM1NuqWMhMEycemiI0UazExBEztM0o9PnilPJnCmi
-   sMZ6AkHAlC6TeN1GMUd41RtEl5qru3CUWoTYvK/yuTvnbsqg02HpbWDxl
-   Vd9pIRql2Z+Xdiy41pEsWvMG3L4eloAh8j1iFWrDqZM4dhyuRBWVYMJGS
-   eU8Wux06/tNFOGzBV/vKMrQIdACFUV4VWjuvtSzeZ5p5lyxb2yZceaVBD
-   o9t0mxHvra2a3qU1yfU3kIHvnf6LMuBfjPqnEpWSNRjQeV/EV9girMPjq
-   YMuUv5dd2v2m1K0EBjm7m4Tq15PcIBl++wPeYlrbhjY4mqvmhZuJIbrCX
-   A==;
-X-CSE-ConnectionGUID: 0WpNUkmYQ3esFwrmIzqdPg==
-X-CSE-MsgGUID: usrBL9TBQICg0Y3o8Km67A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54831925"
-X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
-   d="scan'208";a="54831925"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 08:37:53 -0700
-X-CSE-ConnectionGUID: MbG7zrlKTOu5SP974B/DCQ==
-X-CSE-MsgGUID: ck7x8PG4Q2CG3rhGDHOP7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
-   d="scan'208";a="187947800"
-Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.111.82]) ([10.125.111.82])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 08:37:51 -0700
-Message-ID: <c1421f42-4107-4a6a-80f3-c46d915b40a6@intel.com>
-Date: Mon, 14 Jul 2025 08:37:50 -0700
+	s=arc-20240116; t=1752507506; c=relaxed/simple;
+	bh=Jp6a7sFCA8bADzjFKBewsi2dTVeNX6BR5dt8ClsAD8Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kc9E6MbdxNDk8ffbS/QCqVKbeyX/sSXmhOWjw75Obz5lpdl6EeDT2DY1yfmDp9Ms2VIavVYcgueDsCBsAEIA8QTkLxHejYbm+Ot/wycy0hLfxqGnouZFtsR8OTV5bhkKhm9lm9qdFNXL9QHA4bBS1bbUuqmvAQdaWz9LYa46mdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=u2gyHu4Z; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=7XTQ1m4MzAcEXx/P+ZyDtRSsoZG9qL19KcIoqi9+fQQ=; b=u2gyHu4ZeEXc/81OUAZF1rqzPX
+	YpzM5RlB83XapYCOuco7OleR8J4VT+n+L+O3mQ0yu2ePS/5fbN8n8eNg3zTUJiQeebJTZFWs94O+y
+	vTyhqRYDIK7jMjrxrrgekAhSsI9Q2894OagjovPrHFuOr/5ZIaHU4K/i9p8KVKkcKQJQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ubLFr-001Tl7-3j; Mon, 14 Jul 2025 17:38:11 +0200
+Date: Mon, 14 Jul 2025 17:38:11 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Hau <hau@realtek.com>
+Cc: "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	nic_swsd <nic_swsd@realtek.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] r8169: add quirk for RTL8116af SerDes
+Message-ID: <e571d596-da26-4596-bf90-b858b5a2f5b4@lunn.ch>
+References: <20250711034412.17937-1-hau@realtek.com>
+ <9291f271-eafe-4f65-aa08-3c6cb4236f64@lunn.ch>
+ <50df9352e81e4688b917072949b2ee4c@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 5/5] x86/sgx: Enable automatic SVN updates for SGX
- enclaves
-From: Dave Hansen <dave.hansen@intel.com>
-To: "Reshetova, Elena" <elena.reshetova@intel.com>
-Cc: "jarkko@kernel.org" <jarkko@kernel.org>,
- "seanjc@google.com" <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>,
- "mingo@kernel.org" <mingo@kernel.org>,
- "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>, "Mallick, Asit K"
- <asit.k.mallick@intel.com>,
- "Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
- "Cai, Chong" <chongc@google.com>, "Aktas, Erdem" <erdemaktas@google.com>,
- "Annapurve, Vishal" <vannapurve@google.com>,
- "dionnaglaze@google.com" <dionnaglaze@google.com>,
- "Bondarevska, Nataliia" <bondarn@google.com>,
- "Raynor, Scott" <scott.raynor@intel.com>
-References: <20250711165212.1354943-1-elena.reshetova@intel.com>
- <20250711165212.1354943-6-elena.reshetova@intel.com>
- <461a33d3-f91a-4dd3-bb97-048670530b25@intel.com>
- <DM8PR11MB57503EC8DF105A7D7FF02303E754A@DM8PR11MB5750.namprd11.prod.outlook.com>
- <2cd81800-12ba-460e-ac28-4532d0be1ec9@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <2cd81800-12ba-460e-ac28-4532d0be1ec9@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <50df9352e81e4688b917072949b2ee4c@realtek.com>
 
-On 7/14/25 06:54, Dave Hansen wrote:
-> On 7/14/25 00:35, Reshetova, Elena wrote:
->> I think you put it: this would require a spinlock in the fast path and
->> *in theory* if we are running many many concurrent enclaves can create 
->> contention
-> FWIW, my mental model is that spinlocks that are held for short periods
-> of time are pretty much the same cost as an atomic under contention.
-> 
-> If there are lots of users, the cost of moving the cacheline for the
-> atomic or the spinlock dominates everything else. It doesn't matter
-> whether that cacheline is an atomic_t or spinlock_t.
-> 
-> The only difference is that there is _visible_ spinning for a spinlock.
+On Mon, Jul 14, 2025 at 03:28:37PM +0000, Hau wrote:
+> > 
+> > Can you give us a few more details. What is on the other end of the SERDES?
+> > An SGMII PHY? An SFP cage? An Ethernet switch chip?
+> > 
+> > A quick search suggests it is used with an SFP cage. How is the I2C bus
+> > connected? What about GPIOs? Does the RTL8116af itself have GPIOs and an
+> > I2C bus?
+> > 
 
-Oh, and I had a brain fart on this one. You've got a mutex, not a spinlock.
+> RTL8116af 's SERDES will connect to a SFP cage. It has GPIO and a
+> I2C bus. But driver did not use it to access SFP cage.  Driver
+> depends on mac io 0x6c (LinkStatus) to check link status.
 
-But the concept still applies: for small critical sections, the cost of
-moving the cacheline dominates the cost of everything else, no matter if
-it's a mutex, spinlock or atomic.
+You cannot correctly use an SFP cage without using the I2C bus and the
+GPIOs. e.g. A copper SFP module likely needs SGMII, where as a fibre
+module needs 1000BaseX. You need to reprogram the PCS depending on
+what the SFP EEPROM says.
 
-Never add complexity unless you're getting actual, real-world
-performance out of it. In this case, the only thing you'd _maybe_
-improve with added complexity is an open()/close() loop on /dev/sgx,
-which is completely unrealistic.
+The kernel has all the code needed to coordinate this, phylink. All
+you need to do is write a standard Linux I2C bus driver, a standard
+Linux GPIO driver, and turn your PCS into a Linux PCS. You can then
+instantiate an SFP device. The txgbe driver does this, you can
+probably copy the code from there.
+
+Have you licensed these parts? The txgbe hardware uses synopsys I2C
+and PCS. So all that was needed was a wrapper around the existing
+drivers.
+
+	Andrew
 
