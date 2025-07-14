@@ -1,107 +1,85 @@
-Return-Path: <linux-kernel+bounces-730006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DF75B03EFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:49:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB19B03F02
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D85897A3C72
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:48:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 791553B1274
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5936524A074;
-	Mon, 14 Jul 2025 12:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAFF248F59;
+	Mon, 14 Jul 2025 12:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vowa25Dy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nOMqeveC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2+F7ANaK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5F61FAC4B;
-	Mon, 14 Jul 2025 12:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0ACF1DEFDD;
+	Mon, 14 Jul 2025 12:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752497359; cv=none; b=Kqiit943OhWEidzjSXS0kPjbOyAetB4zeFG1IspcAElxTbd+N33YFKt7axDikRbI/VO2jIXWZgcmPVDmP3kd9ZE2v2u3l+g7y8MRsMbdoYTOBym2k5GHPw1rqUIrTJwp9mFbjpLujv91k0d9/dpZAZa9qtE/HHN0jSSrOKu7oO0=
+	t=1752497460; cv=none; b=shSgm5GFdog7t8p5W7QVt7lPj6X/B2j07opM75SO/DdEAjw1La6xiqfKmmN+8c20fydStNCF2Ugs6Y4/Gwf5XSn4GuOHMsB5eOBgNpW3duOgPBzWD3+djRQ7IqlDC5aWqexhMR+itCbM3QyUtgKFldtV07KSu+rmPcfpt9nuBhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752497359; c=relaxed/simple;
-	bh=N/f33CMuyRsXcRqpNJ4vLf0/iLZImvju1Ttk7ZPo+h0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=IQTVOFlUQ9lFp2PH5kr+YoH01YkVlWh43nH7/bSMCNWjgRKoKbfwyVnnPCOGK10nLgVdH9o5NHJ/IOfy21xm1tRGOKq53Jb453AUAJBB3al4x9p6LrS2noCcuSRLfLhRogIVpgYForqUUzKL6vb1Szf5x/Xk4YbFc7b0UySAmUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vowa25Dy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5FD8C4CEF4;
-	Mon, 14 Jul 2025 12:49:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752497358;
-	bh=N/f33CMuyRsXcRqpNJ4vLf0/iLZImvju1Ttk7ZPo+h0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Vowa25Dyn4V4MtBTE6oPxFRnat/0qvi5nuhad4OSsQmMyoi/kr7GyCyTptTELd1Yt
-	 +wsIy8b/raueJ0wEnmuHhQGQz5M1WvzAcFdnyNNqX2MWMU6yl7TyAaaJ4UMk0m/U1D
-	 wZoXCBBay6R5Mt18mqlOc3edy7oXqvwrfSs0ozKJw5Zf2yfi13BtR2s0WZs2cJ8rAC
-	 scaC3QR4OZgeYlAFMVgk2d3Bl614J1TD0Q/jVfBwEKZW8nRPuLXGxcZlHh8pa5tM9D
-	 6p4H/AbO8JCgoA0o+9WyX2qH8ZZDiixYzTahWnM5F1ArJ0Jfijsc0FSVug+f74XHP7
-	 J2yR9YO0gTHnw==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Luca Weiss <luca.weiss@fairphone.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250711-pm7550-pmr735b-rpmh-regs-v2-0-bca8cc15c199@fairphone.com>
-References: <20250711-pm7550-pmr735b-rpmh-regs-v2-0-bca8cc15c199@fairphone.com>
-Subject: Re: [PATCH v2 0/4] Add RPMh regulator support for PM7550 & PMR735B
-Message-Id: <175249735528.52337.17952107558438792594.b4-ty@kernel.org>
-Date: Mon, 14 Jul 2025 13:49:15 +0100
+	s=arc-20240116; t=1752497460; c=relaxed/simple;
+	bh=Kklq/eaOD0KAugS9lJAdNxyOy5yPCLX/ILc7zRrBCYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=npL8nd+qRmZBeTGvVPIzDp8QC11CjWJRKt8dPSl6kgKR4MfaVXy7Er24omehIvKqrhIZLTeQa6ncIbadOACwZLxj5m5/I1IxAT+gD1aC3rPdz/vUTHJvLSfAQpz2PzFecqE7oCQcOOKv7uHiCPxfPzkgZeophfPefmpAX5xc7ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nOMqeveC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2+F7ANaK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 14 Jul 2025 14:50:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752497457;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UByYrp3x6mZxdvTZRCl6jvDHHYPXIGCclFcqAZKin7Q=;
+	b=nOMqeveCV6IiMqHShSXUp3JTHXBaDwtAYagtWoJTL4JI08r1t++2XKqjU2qu7F9EfF5CZO
+	xKmJd1OKpCqmkUwwojb1iz9dVTAYWx0zBQnO7lguyun2lNdUdS5wN3L+OVUNsALBfB51U7
+	befDGcA+zLJ/cvl40sX0nJ8nt8zdS2qvZOwt6lvp+UhCYLPsL+7mMzsk2B1L+VXe4s7vLJ
+	pRipKXly2a5SsiFXyRZcpg8th27L53oY7QoDEhzWa3myUmS1cACbrfyhCQWQFZLXbh8G34
+	jha7aV7tj+xZKv6clyhosXbnM6ou/lFP1BKoCRgdS0u/wrGGu9pK5GTkhJWP+Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752497457;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UByYrp3x6mZxdvTZRCl6jvDHHYPXIGCclFcqAZKin7Q=;
+	b=2+F7ANaKe1hROiTwWnGr0md+qoqnnF/AwuGzGGSDt6VZOhYD1TGZ4n2OcHOQqiElBVHAX3
+	BJOQ1OJ20Pmtd5DA==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] verification/rvgen: Support the 'next' operator
+Message-ID: <20250714125055.kqp3dNm1@linutronix.de>
+References: <cover.1752239482.git.namcao@linutronix.de>
+ <9c32cec04dd18d2e956fddd84b0e0a2503daa75a.1752239482.git.namcao@linutronix.de>
+ <7f4409eae10023a804d24ad2a9c67d368db152cb.camel@redhat.com>
+ <20250714124208.qVXvUVqp@linutronix.de>
+ <20250714124802.kjqjNWmr@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714124802.kjqjNWmr@linutronix.de>
 
-On Fri, 11 Jul 2025 09:28:38 +0200, Luca Weiss wrote:
-> Document and add support for the regulators on PM7550 and PMR735B, which
-> can be paired with the Milos SoC.
-> 
-> 
+On Mon, Jul 14, 2025 at 02:48:04PM +0200, Nam Cao wrote:
+>      RULE = always (((not SCHEDULING) and (next SCHEDULING)) imply (next next SWITCH))
 
-Applied to
+Btw, I think this "(not X) and (next X)" seems very useful. So we could
+define a helper for this, perhaps something like "rising_edge".
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/4] regulator: dt-bindings: qcom,rpmh: Add PM7550 compatible
-      commit: 729ff4a936c6f3faba78aaa8bc4291b6477c6576
-[2/4] regulator: dt-bindings: qcom,rpmh: Add PMR735B compatible
-      commit: 20a01de0808364c26836cc8f47ed3b59a40a927d
-[3/4] regulator: qcom-rpmh: add support for pmr735b regulators
-      commit: 28758434900ff4c4dce4e104fb5982ef3c0141ba
-[4/4] regulator: qcom-rpmh: add support for pm7550 regulators
-      commit: 3aa47d2ec83316c24e1ed15a492b331802dc6a69
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Nam
 
