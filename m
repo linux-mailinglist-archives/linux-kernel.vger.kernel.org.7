@@ -1,126 +1,112 @@
-Return-Path: <linux-kernel+bounces-730020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E52B03F44
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:08:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEE80B03F4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA29D189EDBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:09:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ED2917B3E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D78A24EAAB;
-	Mon, 14 Jul 2025 13:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB11324DCE3;
+	Mon, 14 Jul 2025 13:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kESir9BF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="sUyJsBIY"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C7224DCE2;
-	Mon, 14 Jul 2025 13:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985414A1A;
+	Mon, 14 Jul 2025 13:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752498508; cv=none; b=F3BRpwBifBBGPPJuLu0dAMcGLRwH5LdKfF97Nrm6n+yPHziMOrjcKFpPy+ySsZYZvo4NBGg0x9jLyaR2bzrGW211Tpu7HPDSO2+CmVWarbECFlPbm9Z5Z8NqzJkuR54VdtQWBDhhAww0vFt/5VEYi3UkVKTDaOxSvMICoVQRy8k=
+	t=1752498583; cv=none; b=EXfKJrVP52k00R3N5PuL7sF9ff48Y2qrOsXQdzBCYY5lIGXxMPBvK/ML4w78cHgvpK5smbsstqWD9ddf6w80cwM1Aft6Jw7TOfT7HdvsT8uX+p9S2nA0g3UfmCJz+OYJmIoPSYqyKwoEC0Ixi9jIr/kH5sfIisWswSxIXJ1Z3ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752498508; c=relaxed/simple;
-	bh=LYypQ4vxOLwqTrqcgG0q2wlxoW2Is3r5NQ/pgJZs9Lg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BEN7GLy9OZzHLpQvhjvO1OzLAqqeVkG7Sdrtn7XD7rUJ8ufTc24y4v1h2eMh7TSZ36LQAJTwuINOqjfDa4IlsKiI0FKHfph7Jno9YcHoL3mq/Gb/b3JYwdew3OgJDImCmpIWfZFu1QSFp7BtC/PNbwALE7r1kOij7RDpktK84Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kESir9BF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93DCEC4CEF6;
-	Mon, 14 Jul 2025 13:08:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752498507;
-	bh=LYypQ4vxOLwqTrqcgG0q2wlxoW2Is3r5NQ/pgJZs9Lg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kESir9BFcDEVmbbHGoCj/Qd0hihAZwO/ciB75VXsgrI7YB9Eyzv78WK2Nu/0G1Wh+
-	 9K5YSdgat2KTvACGGR3WbM1+sfv4XfPqmfwj5xJJwcHB8pqJN/ad36wV11ZoTSlk7h
-	 xt8oIFrT/XkupS9hMB3xc0dDpzkTvQpi3MDJzwLpp5gsw47vhyHScQrm4gHC6yA8PC
-	 cWccidaRyhUI5PuOPbltVM4j1s3BeJDZZO++cSjOz8Fu7yuybR41gjRpO4pnWXNZHn
-	 g31J9K5cJt0N41AZJ3HZz2tI2zc1hezuBSyWTdsC5n3etBNuEiphynOFPInBNzP9gu
-	 ywDV3xIlVqtWA==
-Message-ID: <bbf76d81-fc5c-4234-951a-29b2e54b6603@kernel.org>
-Date: Mon, 14 Jul 2025 15:08:21 +0200
+	s=arc-20240116; t=1752498583; c=relaxed/simple;
+	bh=o1qYm/noaZ9CX74Y7R9xLDN0A7RylinyT4ae2zkhmQk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tJsZhO9As6dRXc+4woOAWl+cpe4TOmPMGJKQqBI7KDbfH3jx4JnjrBbQq07Zx8iNl1t11jUGs1LXyaIwAUOWnZ1c2TD9Qau1D5V/mHmAfaJlsuMHw2IG3EzVZVKGtoMJrQNozjplegiV55ThwEn4ptHl/IUAw4ciFijLtoKVQbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=sUyJsBIY; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=cQqhnepfREGfXBXs6Gy2jlQYAmeLNJdpGYN4w0cdQSQ=; b=sUyJsBIYZZmfdt9NaOTTe/wl8q
+	9WCbAVyudP9xk/saAaz0MTppPijs97FYttyaxfqpr7xVQ6OTJjCkEGFAhgBSaxAh4dwC9Jq7uggHk
+	tfCx0DB5aSxpzzhMh0Y5uqbpHKzQkO4qB1JegaktAqSu0QQovxxJZFiUwhetDKg6fXoU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ubIvq-001SZ7-L8; Mon, 14 Jul 2025 15:09:22 +0200
+Date: Mon, 14 Jul 2025 15:09:22 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Michael Walle <mwalle@kernel.org>
+Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andy Whitcroft <apw@canonical.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Joe Perches <joe@perches.com>, Jonathan Corbet <corbet@lwn.net>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Roger Quadros <rogerq@kernel.org>, Tero Kristo <kristo@kernel.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH net-next v2 2/3] net: ethernet: ti: am65-cpsw: fixup PHY
+ mode for fixed RGMII TX delay
+Message-ID: <fa3688c0-3b01-49fb-9c16-eeea66748876@lunn.ch>
+References: <cover.1750756583.git.matthias.schiffer@ew.tq-group.com>
+ <9b3fb1fbf719bef30702192155c6413cd5de5dcf.1750756583.git.matthias.schiffer@ew.tq-group.com>
+ <DBBOW776RS0Z.1UZDHR9MGX26P@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/12] ACPI: mipi-disco-img: Do not duplicate rotation
- info into swnodes
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
- <hverkuil@xs4all.nl>, Sakari Ailus <sakari.ailus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
-References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
- <20250605-uvc-orientation-v2-3-5710f9d030aa@chromium.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <20250605-uvc-orientation-v2-3-5710f9d030aa@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DBBOW776RS0Z.1UZDHR9MGX26P@kernel.org>
 
-Hi,
-
-On 5-Jun-25 19:52, Ricardo Ribalda wrote:
-> The function v4l2_fwnode_device_parse() is not capable of parsint the
-> _PLD method, there is no need to duplicate the rotation information in a
-> swnode.
+On Mon, Jul 14, 2025 at 12:01:22PM +0200, Michael Walle wrote:
+> Hi,
 > 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-
-Thanks, patch looks good to me:
-
-Reviewed-by: Hans de Goede <hansg@kernel.org>
-
-with Sakari's review remarks addressed.
-
-Regards,
-
-Hans
-
-
-> ---
->  drivers/acpi/mipi-disco-img.c | 15 ---------------
->  1 file changed, 15 deletions(-)
+> On Tue Jun 24, 2025 at 12:53 PM CEST, Matthias Schiffer wrote:
+> > All am65-cpsw controllers have a fixed TX delay, so the PHY interface
+> > mode must be fixed up to account for this.
+> >
+> > Modes that claim to a delay on the PCB can't actually work. Warn people
+> > to update their Device Trees if one of the unsupported modes is specified.
+> >
+> > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> > Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> > Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 > 
-> diff --git a/drivers/acpi/mipi-disco-img.c b/drivers/acpi/mipi-disco-img.c
-> index 5b85989f96beeb726f59ac9e12e965a215fb38f6..b58b5ba22a47a4afc5212998074d322f0b7586dc 100644
-> --- a/drivers/acpi/mipi-disco-img.c
-> +++ b/drivers/acpi/mipi-disco-img.c
-> @@ -617,21 +617,6 @@ static void init_crs_csi2_swnodes(struct crs_csi2 *csi2)
->  
->  	adev_fwnode = acpi_fwnode_handle(adev);
->  
-> -	/*
-> -	 * If the "rotation" property is not present, but _PLD is there,
-> -	 * evaluate it to get the "rotation" value.
-> -	 */
-> -	if (!fwnode_property_present(adev_fwnode, "rotation")) {
-> -		struct acpi_pld_info *pld;
-> -
-> -		if (acpi_get_physical_device_location(handle, &pld)) {
-> -			swnodes->dev_props[NEXT_PROPERTY(prop_index, DEV_ROTATION)] =
-> -					PROPERTY_ENTRY_U32("rotation",
-> -							   pld->rotation * 45U);
-> -			kfree(pld);
-> -		}
-> -	}
-> -
->  	if (!fwnode_property_read_u32(adev_fwnode, "mipi-img-clock-frequency", &val))
->  		swnodes->dev_props[NEXT_PROPERTY(prop_index, DEV_CLOCK_FREQUENCY)] =
->  			PROPERTY_ENTRY_U32("clock-frequency", val);
-> 
+> For whatever reason, this patch is breaking network on our board
+> (just transmission). We have rgmii-id in our devicetree which is now
+> modified to be just rgmii-rxid. The board has a TI AM67A (J722S) with a
+> Broadcom BCM54210E PHY. I'm not sure, if AM67A MAC doesn't add any
+> delay or if it's too small. I'll need to ask around if there are any
+> measurements but my colleague doing the measurements is on holiday
+> at the moment.
+
+I agree, we need to see if this is a AM65 vs AM67 issue. rgmii-id
+would be correct if the MAC is not adding delays.
+
+Do you have access to the datasheets for both? Can you do a side by
+side comparison for the section which describes the fixed TX delay?
+
+	Andrew
 
 
