@@ -1,114 +1,138 @@
-Return-Path: <linux-kernel+bounces-730067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9AB4B03FE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:30:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF432B03FDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 729F33A3147
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:26:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D001D16FFC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E7B24EA85;
-	Mon, 14 Jul 2025 13:26:08 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372B524EAAB;
+	Mon, 14 Jul 2025 13:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qw1miNrN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE9E42065;
-	Mon, 14 Jul 2025 13:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA44248883;
+	Mon, 14 Jul 2025 13:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752499568; cv=none; b=UHJuIWiv+KStkZYVPnQBMz5fm7MRxKeyDma7hxMZOe2pLrcqXfi5qjmPr/HAFHT0lC7uZz2A8CHWrwmdk7iDrIwpTaI6izZB8gD/THgm4gDgNBXysmXoLMCmkIixVRrlRR01RhLAEo28q1OUMKXDjcspt6j5fbdXxTsRBohUT8Y=
+	t=1752499607; cv=none; b=KtVps/esgVohwjjXylRJz+qSmRD3Th4kTTkEHtl3Jj+58IwPnBU61iSLFh6UnckdG8ZN4X8uv6VGvJ+u/+gkdes/iFDIwdfuzYi1KED4dh0k3kSYDgS9qZj/Z6oAqkNpRKOh6isWtmhYFZCwuDI6URhkFnfqqTCjN5Uq2bxtytg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752499568; c=relaxed/simple;
-	bh=Bp0ivLgBZtp4hrFPANE5xtiIY5wC9HeHAM404poOIEQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FVycTPu9GKciL+h6dmFsozNQhRyqrH50Ix5u0Ofnd5rKB9/bxmgDO7VJUoLBsvdKc1PHapIQLvZdtognzS2QZq6Rm9WBkhgbH5OPnC0Aw+x3GZhRQvgwZhGCGIQ6OFxjQOsA0jMKWMpFniLT5rUJx2jruOVT6Ew0K8mI87DHC3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [211.71.28.34])
-	by APP-03 (Coremail) with SMTP id rQCowAAHmHlHBXVoRzv2Aw--.4170S2;
-	Mon, 14 Jul 2025 21:25:41 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: mchehab@kernel.org,
-	ribalda@chromium.org,
-	rafael.j.wysocki@intel.com,
-	dongcheng.yan@intel.com,
-	gregkh@linuxfoundation.org,
-	make24@iscas.ac.cn,
-	peterz@infradead.org,
-	wentong.wu@intel.com,
-	sakari.ailus@linux.intel.com,
-	andriy.shevchenko@linux.intel.com
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] media: pci: intel: Balance device refcount when destroying devices
-Date: Mon, 14 Jul 2025 21:25:26 +0800
-Message-Id: <20250714132526.3216569-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1752499607; c=relaxed/simple;
+	bh=F0h9qPfS1IFEzVFRGzECq3FkHstZL9RWV6sL0z924sM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bPJ3XLYnLY+fg9CAQsXqdvgSSOF7e0mgoi+LQ9yOR0Wd7EAVZFamsbniBMGuIGR9xPAO1tGB+G849oa2svcEoz0VaPidHFKk7zJsGImPp8WiS9v8s64FX79ujih440EGWyQERpdhYZ661EUq4800ZAHb3QSX0YV08qOedVTE3N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qw1miNrN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F583C4CEED;
+	Mon, 14 Jul 2025 13:26:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752499607;
+	bh=F0h9qPfS1IFEzVFRGzECq3FkHstZL9RWV6sL0z924sM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qw1miNrNBh0wkTZ/anfy7aGB7/NfB3gC2jbI1iY9RGdvO/jyibOW8mHgITKi/WHqR
+	 9oruhqtRVHi/HQFfXtVrXuYJ8tZSUnO4DVdS2NHst28qKNxNDDzU6WK5nYKhHQJYVb
+	 uowtKbBVr9JRIUntIH7+S1lUBzaDpxa9otPil7K44hjlPzCqul67n3QFd3ZGZczViR
+	 U+QDSKRGKRyVd5PIhDK8FPKGWsmsA9XaPAHHpeTvU5IVhI4905xdRra3VdM/HwM3UG
+	 KBpN/xFSGxOEZpAnqx2ouiyPiaYCl3uVQthDvJqmqbutytAYTgehiKk7kY17tExVdO
+	 uzSg3fUKz4cAA==
+Date: Mon, 14 Jul 2025 14:26:39 +0100
+From: Will Deacon <will@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>, leo.yan@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v3 02/10] perf: arm_spe: Support FEAT_SPEv1p4 filters
+Message-ID: <aHUFj9lH5bZwa4Z2@willie-the-truck>
+References: <20250605-james-perf-feat_spe_eft-v3-0-71b0c9f98093@linaro.org>
+ <20250605-james-perf-feat_spe_eft-v3-2-71b0c9f98093@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAAHmHlHBXVoRzv2Aw--.4170S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF1xZF1xZFWDuF4fXFWDurg_yoW8GF48pr
-	Wj9FyrArWrXr48W3yfZ3WUXFya9ws5uay3Gr4Sk3ZY9a1fXasayFWjva4qqrn2yF97Ar15
-	Z3W7tFW8AFWDAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwV
-	W5GwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
-	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2
-	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
-	Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMI
-	IF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU3uc_UUUUU
-	=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250605-james-perf-feat_spe_eft-v3-2-71b0c9f98093@linaro.org>
 
-Using ipu_bridge_get_ivsc_csi_dev() to locate the device could cause
-an imbalance in the device's reference count.
-ipu_bridge_get_ivsc_csi_dev() calls device_find_child_by_name() to
-implement the localization, and device_find_child_by_name() calls an
-implicit get_device() to increment the device's reference count before
-returning the pointer. Throughout the entire implementation process,
-no mechanism releases resources properly. This leads to a memory leak
-because the reference count of the device is never decremented.
+On Thu, Jun 05, 2025 at 11:49:00AM +0100, James Clark wrote:
+> FEAT_SPEv1p4 (optional from Armv8.8) adds some new filter bits, so
+> remove them from the previous version's RES0 bits using
+> PMSEVFR_EL1_RES0_V1P4_EXCL. It also makes some previously available bits
+> unavailable again, so add those back using PMSEVFR_EL1_RES0_V1P4_INCL.
+> E.g:
+> 
+>   E[30], bit [30]
+>   When FEAT_SPEv1p4 is _not_ implemented ...
+> 
+> FEAT_SPE_V1P3 has the same filters as V1P2 so explicitly add it to the
+> switch.
+> 
+> Reviewed-by: Leo Yan <leo.yan@arm.com>
+> Tested-by: Leo Yan <leo.yan@arm.com>
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>  arch/arm64/include/asm/sysreg.h | 7 +++++++
+>  drivers/perf/arm_spe_pmu.c      | 5 ++++-
+>  2 files changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+> index f1bb0d10c39a..880090df3efc 100644
+> --- a/arch/arm64/include/asm/sysreg.h
+> +++ b/arch/arm64/include/asm/sysreg.h
+> @@ -358,6 +358,13 @@
+>  	(PMSEVFR_EL1_RES0_IMP & ~(BIT_ULL(18) | BIT_ULL(17) | BIT_ULL(11)))
+>  #define PMSEVFR_EL1_RES0_V1P2	\
+>  	(PMSEVFR_EL1_RES0_V1P1 & ~BIT_ULL(6))
+> +#define PMSEVFR_EL1_RES0_V1P4_EXCL \
+> +	(BIT_ULL(2) | BIT_ULL(4) | GENMASK_ULL(10, 8) | GENMASK_ULL(23, 19))
+> +#define PMSEVFR_EL1_RES0_V1P4_INCL \
+> +	(GENMASK_ULL(31, 26))
+> +#define PMSEVFR_EL1_RES0_V1P4	\
+> +	(PMSEVFR_EL1_RES0_V1P4_INCL | \
+> +	(PMSEVFR_EL1_RES0_V1P2 & ~PMSEVFR_EL1_RES0_V1P4_EXCL))
+>  
+>  /* Buffer error reporting */
+>  #define PMBSR_EL1_FAULT_FSC_SHIFT	PMBSR_EL1_MSS_SHIFT
+> diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+> index 3efed8839a4e..d9f6d229dce8 100644
+> --- a/drivers/perf/arm_spe_pmu.c
+> +++ b/drivers/perf/arm_spe_pmu.c
+> @@ -701,9 +701,12 @@ static u64 arm_spe_pmsevfr_res0(u16 pmsver)
+>  	case ID_AA64DFR0_EL1_PMSVer_V1P1:
+>  		return PMSEVFR_EL1_RES0_V1P1;
+>  	case ID_AA64DFR0_EL1_PMSVer_V1P2:
+> +	case ID_AA64DFR0_EL1_PMSVer_V1P3:
+> +		return PMSEVFR_EL1_RES0_V1P2;
+> +	case ID_AA64DFR0_EL1_PMSVer_V1P4:
+>  	/* Return the highest version we support in default */
+>  	default:
+> -		return PMSEVFR_EL1_RES0_V1P2;
+> +		return PMSEVFR_EL1_RES0_V1P4;
 
-As the comment of device_find_child_by_name() says, 'NOTE: you will
-need to drop the reference with put_device() after use'.
+See my reply [1] to Leo about this function, but I think we should just
+remove it.
 
-Found by code review.
+Will
 
-Cc: stable@vger.kernel.org
-Fixes: c66821f381ae ("media: pci: intel: Add IVSC support for IPU bridge driver")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/media/pci/intel/ipu-bridge.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
-index 83e682e1a4b7..f8b4672accab 100644
---- a/drivers/media/pci/intel/ipu-bridge.c
-+++ b/drivers/media/pci/intel/ipu-bridge.c
-@@ -192,6 +192,7 @@ static int ipu_bridge_check_ivsc_dev(struct ipu_sensor *sensor,
- 
- 		sensor->csi_dev = csi_dev;
- 		sensor->ivsc_adev = adev;
-+		put_device(csi_dev);
- 	}
- 
- 	return 0;
--- 
-2.25.1
-
+[1] https://lore.kernel.org/all/20250707-arm_spe_support_hitm_overhead_v1_public-v3-0-33ea82da3280@arm.com/
 
