@@ -1,123 +1,119 @@
-Return-Path: <linux-kernel+bounces-730098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E52B04039
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:39:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9977CB0403C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3834C1A65F67
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:35:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B82E3AE594
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCEE21171B;
-	Mon, 14 Jul 2025 13:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7EC2475E3;
+	Mon, 14 Jul 2025 13:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qPYqJaoS"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="cF7SlMQI"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511BE2F22;
-	Mon, 14 Jul 2025 13:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752500100; cv=none; b=k0ClVnX5bI62Mkc1XEc7Jjaqbs/k/mbDUKxJ5mTnBtp8ujpweCTXzfKNmBJLxumwvhPgS8ulyFEO3OZsT3zWJF5wavF8yyT0153SA1rZpJfSnax8NBpXscYp5UMSBtSqCjNDFut3qXGysNf+uhZR+iaYAMOZaA6FFD/PGAMWYI8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752500100; c=relaxed/simple;
-	bh=CEkKa/aikU/CDzdfcPAjOT99jNpHypxstJjnFfoQF3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m5VF5/nClZzIYxlJba8mqM+mGtULo4d9jEqZ8IsOB47QZWqc6EK1g1gy4DAc4KfZ8PiQrRSJXW91a8QPZBmK5JZIdRKEgpt6HaiBI2tyfAouFNSqy7I3q04Bzvtihi4cqUTfAIxw2pmhaHxPrO1s/icfBKMMuF9c82QFHvoL7kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qPYqJaoS; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=rkKA5JFXkaqeIgKnZeTRvq/H+eMfFQ7tSAFHadzv+i4=; b=qPYqJaoStTW6WZY8E3xsfppAcV
-	GciwfhUoAIxtaUx5hRVyOQZL595Nutl12IeZGQ+2QwMLot/GFSllOAsMkFzzwfSJiTKTwqNREFIWM
-	u1tdKdG9gNKJ9cvGzr99Z+DlXIe3rzBruOF4Hcro7UHi3k4oDscE48rIsYpUmNuaWcqU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ubJKR-001SkI-Ao; Mon, 14 Jul 2025 15:34:47 +0200
-Date: Mon, 14 Jul 2025 15:34:47 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: rohan.g.thomas@altera.com
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Romain Gantois <romain.gantois@bootlin.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Matthew Gerlach <matthew.gerlach@altera.com>
-Subject: Re: [PATCH net-next 1/3] net: stmmac: xgmac: Disable RX FIFO
- Overflow interrupts
-Message-ID: <bef4d761-8909-4f90-8822-8c344291cb93@lunn.ch>
-References: <20250714-xgmac-minor-fixes-v1-0-c34092a88a72@altera.com>
- <20250714-xgmac-minor-fixes-v1-1-c34092a88a72@altera.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D486F236A70;
+	Mon, 14 Jul 2025 13:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752500187; cv=pass; b=Dy1p+mRfgzN9rdRoEAPTfR3D/zujZ7pqgODYoBTeq3tHjpkTrPCoOAlGJ7xMRmLlJKfWyelzxoTbxtPmwV3V9dMbrRcH2huSbrCQxHgf97rNp63ytwY3VOVn8wQhSd3XkPsk9oU3+hneLXVjL9VH44oS52YDnAae2o++zbhKwLs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752500187; c=relaxed/simple;
+	bh=3PX1K71yszUYNO0T/AEtvp1Oa/aw4df/3ahyuw1mn4I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DtvNb85gFOM/ljmW3B5GxdoWH8fgUC95A37aFDR5fGlWZPWNwuyFTtnYYg7QjXOoAiL49AIIBgeGaLXERaNjf3e7TSEJ6I7q5n2ERUX3MPL5q+tbOZJOd/G2OvHIxqGHxbaSogzFiBjR5BNleq884qvVAUXbMn1CXykKg2TqHpE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=cF7SlMQI; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752500130; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=LLwf90veDCfX/vug+RY51XJsew+TIOZx7ZDM1Z2CSQQciK1qiq4NgD6QzC3oXvHLraPMuS9r4r08v3rRKvkam1IsL54XA/7L3kWF73CpjhwlXnBM0t877peicmCqjD9fI0I51SfS5dqZHB2BA67UOaoku1ckdm6kmCRsxMSzgwE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752500130; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=UizOBT89f5MRX6YGiBh9LFBmNsdbZc9aL8t32eOk9Ls=; 
+	b=DG1MXaTm0GH7Zzhu75mIeDgkj0NacaYQEAJk7lYWjDOfg5HqLc/uxecDifFzLmrvYKxSD/mLlrDSNnWrDi/LWRXmcQJeSEw08v1WLlNyPlLVj7mlGFKqWDEFTvHhBzwxugL0xZZTZeJ/KcEbr9IZ9D4uP1o/jmIgRTO4Vw1Nv/w=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752500130;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=UizOBT89f5MRX6YGiBh9LFBmNsdbZc9aL8t32eOk9Ls=;
+	b=cF7SlMQIVCLi+7LyiNNzpE0msj22oD9LyCxoRHQVUNRlv+qOxfVUPSMBNdvJbscZ
+	OLdlAaeWMmXFLxxuYh4gLPwm8eNgwqt4xWl52WtxDLR0xqiUT8hub7S39Q2edenUd1J
+	SnxY+eKDm6GfP/fT6GS7lJF8E+rhvBO2yMuZRqPE=
+Received: by mx.zohomail.com with SMTPS id 1752500120862937.2041501644019;
+	Mon, 14 Jul 2025 06:35:20 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Jianfeng Liu <liujianfeng1994@gmail.com>
+Cc: heiko@sntech.de, kernel@collabora.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ mchehab@kernel.org, nicolas.dufresne@collabora.com,
+ nicolas.frattaroli@collabora.com
+Subject: Re: [PATCH 00/12] media: rkvdec: Add support for VDPU381 and VDPU383
+Date: Mon, 14 Jul 2025 09:35:19 -0400
+Message-ID: <2229133.irdbgypaU6@trenzalore>
+In-Reply-To: <20250713142514.56742-1-liujianfeng1994@gmail.com>
+References:
+ <20250708151946.374349-1-detlev.casanova@collabora.com>
+ <20250713142514.56742-1-liujianfeng1994@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714-xgmac-minor-fixes-v1-1-c34092a88a72@altera.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-ZohoMailClient: External
 
-On Mon, Jul 14, 2025 at 03:59:17PM +0800, Rohan G Thomas via B4 Relay wrote:
-> From: Rohan G Thomas <rohan.g.thomas@altera.com>
+Hi Jianfeng,
+
+On Sunday, 13 July 2025 10:25:14 EDT Jianfeng Liu wrote:
+> Hi,
 > 
-> Enabling RX FIFO Overflow interrupts is counterproductive
-> and causes an interrupt storm when RX FIFO overflows.
-> Disabling this interrupt has no side effect and eliminates
-> interrupt storms when the RX FIFO overflows.
+> On Tue,  8 Jul 2025 11:19:33 -0400, Detlev Casanova wrote:
+> >As there is a considerable part of the code that can be shared with the
+> >already supported rkvdec decoder driver, the support for these variants
+> >is added here rather than writing a new driver.
 > 
-> Commit 8a7cb245cf28 ("net: stmmac: Do not enable RX FIFO
-> overflow interrupts") disables RX FIFO overflow interrupts
-> for DWMAC4 IP and removes the corresponding handling of
-> this interrupt. This patch is doing the same thing for
-> XGMAC IP.
+> I have tested the new series on rk3588 and rk3399 with chromium. Since the
+> HEVC decoder need EXT_SPS_RPS related patches, I ony test the H264 decoder.
+> There are two issues:
 > 
-> Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
-> Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
+> 1, The decoder max size is detected 1920x1088, which should be the fallback
+> size when queryig VIDIOC_ENUM_FRAMESIZES[1].
 
-Please take a read of:
+From the linked code, the max size is hard coded to 1920x1088.
+The driver sets the frame size type to V4L2_FRMSIZE_TYPE_CONTINUOUS, so the 
+snippet you pointed to doesn't update the values for max/min. See [2] for the 
+discussion about using V4L2_FRMSIZE_TYPE_CONTINUOUS.
 
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+> 2, Playing H264 videos ends up with green screen.
 
-This appears to be a fixed, so the Subject: line should indicate this.
-Please also include a Fixes: tag, and Cc: stable.
+Can you elaborate a bit ? What videos ?
+Is that on both SoCs ?
+Is there any logs in dmesg ?
 
-> ---
->  drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c | 4 ----
->  1 file changed, 4 deletions(-)
+> These above issues don't happen with the old rkvdec2 series.
 > 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
-> index 5dcc95bc0ad28b756accf9670c5fa00aa94fcfe3..7201a38842651a865493fce0cefe757d6ae9bafa 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
-> @@ -203,10 +203,6 @@ static void dwxgmac2_dma_rx_mode(struct stmmac_priv *priv, void __iomem *ioaddr,
->  	}
->  
->  	writel(value, ioaddr + XGMAC_MTL_RXQ_OPMODE(channel));
-> -
-> -	/* Enable MTL RX overflow */
-> -	value = readl(ioaddr + XGMAC_MTL_QINTEN(channel));
-> -	writel(value | XGMAC_RXOIE, ioaddr + XGMAC_MTL_QINTEN(channel));
+> [1]
+> https://github.com/chromium/chromium/blob/138.0.7204.92/media/gpu/v4l2/v4l2
+> _utils.cc#L520-L533
 
-What is the reset default? Would it make sense to explicitly disable
-it, rather than never enable it? What does 8a7cb245cf28 do?
+[2] https://lore.kernel.org/all/c7882f94-e2cb-4023-a53e-87ebc8fa3460@gmail.com/
 
-    Andrew
+Regards,
+Detlev
 
----
-pw-bot: cr
+
 
 
 
