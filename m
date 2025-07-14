@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-729485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 346E8B03757
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:45:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B9B0B0375C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 021073B565F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:45:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71727177315
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C28D226D10;
-	Mon, 14 Jul 2025 06:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95781229B0D;
+	Mon, 14 Jul 2025 06:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sRvj2oOb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mfLacVT5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A184D1CD1F;
-	Mon, 14 Jul 2025 06:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643181CD1F;
+	Mon, 14 Jul 2025 06:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752475546; cv=none; b=C10lATh0OiMZUCjNu36A8iwXBAfe2Zg3fYPuWv3H+ZX8RysevLQqMbsfe9Zcx+CZ2+0/3MKmizPw6TpJVf6HcAgRei4aI7UztqiAjHUTl0XCxNo/sbQ5BnUJTk33qqOz/ZvYhIdJRb9Wt8S8OtevfUF1l4E3zLrp2+n3y4TMvRE=
+	t=1752475662; cv=none; b=S5LJRSbg1OfJm8Z1M4mm8MxEw6QnKHxtWPh5RrwBifsEAaMdWzYqeo3j6g3pUQ87PkUnN+lEbJcGDf8/r1S84eN/80Ed5LZL9LgD9KyXMzBboc+6qG0YsVBbK43AJrUaWuhjS9ptSIdvZDKL9QppmiwuJsyLoyBY7xzknbv0vqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752475546; c=relaxed/simple;
-	bh=Qy1hfqEo2dMgMv0YIqJ7mPsIFK2YG8agMEQFgBf9GCg=;
+	s=arc-20240116; t=1752475662; c=relaxed/simple;
+	bh=6xDUYWE/Jr47TmrJ9Hv9e2CUNFE7R/C1tZglMaQ+AtM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xj0TuueYaE97eqRP6BpoVqcgF6+63d8XxJo7+p33zZcTkK08MnLwFaeuwVHjM14/JUWXUw4gLWJ3Ir+6yHcwuJdBJCDPw2Ahg5Ma3qJpMJnyfK4PMsUPX48tGlJ90kfRFXOjYdZtDkTZs0jcTpnqaz25sC/bZnfEsnbHN2EZpi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sRvj2oOb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E441C4CEED;
-	Mon, 14 Jul 2025 06:45:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752475546;
-	bh=Qy1hfqEo2dMgMv0YIqJ7mPsIFK2YG8agMEQFgBf9GCg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sRvj2oObA6+JGOF4oIOjLEOKy+uoSWaXh5DELylrWEk4SoiumxqOXvVtQX4eRZAO7
-	 XTJSjWGErNxiF2JDcd1ZsrtprHphsXbd74GpHtv2jkmjiSBNXylRjG2LY2r6mv22Vc
-	 oqamtRF8KJWqfmmut8fm37FF2hb+HQrGO83xiEz8EAxa726EzOXXBfYtDiSLk92UTR
-	 OIvRIJDdJ52NaJIk0beldr+KdhC23hdp8ckuG0PIxQHcxAOOcfd4or6QBNya7Kkfov
-	 5FWurEZP8iK1OJRFay50oll0n4j3GZ3NGA3VYfaLEMT35mAD7uPOuo+IvoQDTiWN6D
-	 XAfw6xU1LZhNw==
-Date: Mon, 14 Jul 2025 08:45:43 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mao Jinlong <quic_jinlmao@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/5] dt-bindings: arm: Add CoreSight QMI component
- description
-Message-ID: <20250714-impressive-spiked-chicken-9fe06e@krzk-bin>
-References: <20250711094031.4171091-1-quic_jinlmao@quicinc.com>
- <20250711094031.4171091-2-quic_jinlmao@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YQvuBU2cFO7C0GxM+C7T+tAyAD08g2AmvKfzDxdxDccFQ9hY9x0n+NDocwKgboD6g2nRWrRTTwNCWW0c6UNQCwKOjan7en8EqYNjkE/WTpwimJsk/5F9yao4FJzmeZG+QLjD00IIFEYzxCxXxcU/yybTENSKc+vtdYcvFdIb3NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mfLacVT5; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752475660; x=1784011660;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6xDUYWE/Jr47TmrJ9Hv9e2CUNFE7R/C1tZglMaQ+AtM=;
+  b=mfLacVT5lc7rKvqAeGp7TvpwKGNvEd1/tZaAmJEBPbcqgkTY2QdQ1eOV
+   adlpCjfwtKifhiUgq7vYRlfu77Hqhm0tD3XUzCCMZ6pqDRQsg8O3PUwEY
+   j38wwDr+qMkv52uCFTXFJg+Ea2SH6qotMpaOgmCIPmzh8g93FemkjE7WQ
+   0lwQf5SALFLTKt33DhIVwTqIIDFtQr3I/4Erjk9sHG2S43Ax+1f+arB3O
+   rm7GXtYMmrwCMFBwslP8jzHdpyBVZx34KtiCSTfpthyq/J0I+kkRgjeku
+   8+ADZ21q0hvFP13uSoosxHWIpHRX73wwy7vgGLPjbtkuUH3pjZytwWJLy
+   w==;
+X-CSE-ConnectionGUID: mZhCkYtGT1SsisIGWeeZZw==
+X-CSE-MsgGUID: St4IEwijSDuhnd52Q6mQOw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="42296094"
+X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
+   d="scan'208";a="42296094"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2025 23:47:39 -0700
+X-CSE-ConnectionGUID: lad1MMgrQi+Chk/T806a5Q==
+X-CSE-MsgGUID: xWRV+z6XQa2BqI5IlVwcOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
+   d="scan'208";a="156942085"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2025 23:47:36 -0700
+Date: Mon, 14 Jul 2025 08:46:31 +0200
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Saeed Mahameed <saeed@kernel.org>, Gal Pressman <gal@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Moshe Shemesh <moshe@nvidia.com>
+Subject: Re: [PATCH net-next 2/6] net/mlx5e: fix kdoc warning on eswitch.h
+Message-ID: <aHSnvakoq5U4QX3T@mev-dev.igk.intel.com>
+References: <1752471585-18053-1-git-send-email-tariqt@nvidia.com>
+ <1752471585-18053-3-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250711094031.4171091-2-quic_jinlmao@quicinc.com>
+In-Reply-To: <1752471585-18053-3-git-send-email-tariqt@nvidia.com>
 
-On Fri, Jul 11, 2025 at 02:40:27AM -0700, Mao Jinlong wrote:
-> Add new coresight-qmi.yaml file describing the bindings required
-> to define qmi node in the device trees.
+On Mon, Jul 14, 2025 at 08:39:41AM +0300, Tariq Toukan wrote:
+> From: Moshe Shemesh <moshe@nvidia.com>
 > 
-> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+> Fix the following kdoc warning:
+> git ls-files *.[ch] | egrep drivers/net/ethernet/mellanox/mlx5/core/ |\
+> xargs scripts/kernel-doc --none
+> drivers/net/ethernet/mellanox/mlx5/core/eswitch.h:824: warning: cannot
+> understand function prototype: 'struct mlx5_esw_event_info '
+> 
+> Signed-off-by: Moshe Shemesh <moshe@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 > ---
->  .../bindings/arm/qcom,coresight-qmi.yaml      | 65 +++++++++++++++++++
->  1 file changed, 65 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-qmi.yaml
+>  drivers/net/ethernet/mellanox/mlx5/core/eswitch.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-qmi.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-qmi.yaml
-> new file mode 100644
-> index 000000000000..601c865fe4d7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-qmi.yaml
-> @@ -0,0 +1,65 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/qcom,coresight-qmi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm coresight QMI(Qualcomm Messaging Interface) component
-> +
-> +description: |
-> +  Qualcomm Messaging Interface (QMI) is an interface that clients can
-> +  use to send, and receive, messages from a remote entity. The coresight
-> +  QMI component is to configure QMI instance ids and service ids for different
-> +  remote subsystem connections. Coresight QMI driver uses the ids to init
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.h b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.h
+> index d59fdcb29cb8..b0b8ef3ec3c4 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.h
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.h
+> @@ -827,7 +827,7 @@ void mlx5_esw_vport_vhca_id_clear(struct mlx5_eswitch *esw, u16 vport_num);
+>  int mlx5_eswitch_vhca_id_to_vport(struct mlx5_eswitch *esw, u16 vhca_id, u16 *vport_num);
+>  
+>  /**
+> - * mlx5_esw_event_info - Indicates eswitch mode changed/changing.
+> + * struct mlx5_esw_event_info - Indicates eswitch mode changed/changing.
+>   *
+>   * @new_mode: New mode of eswitch.
+>   */
 
-So driver... Driver stuff is not accepted in the bindings.
+Looks like it is the only one structure in this file described using
+kdoc.
 
-> +  the qmi connections. Other coresight drivers call the send qmi request
-> +  function when connection is established.
-> +
-> +maintainers:
-> +  - Mao Jinlong <quic_jinlmao@quicinc.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,coresight-qmi
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
 
-Don't send new versions while discussion is still going.
-
-There is no need for this binding at all, it is not a coresight device.
-
-> +
-> +patternProperties:
-> +  '^conns(-[0-9]+)?$':
-
-Drop, why do you keep enforcing the node names? Look at other bindings.
-
-
-Best regards,
-Krzysztof
-
+> -- 
+> 2.40.1
 
