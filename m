@@ -1,160 +1,182 @@
-Return-Path: <linux-kernel+bounces-730167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB645B040EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:06:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B23B040F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:06:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9A663ADB7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:04:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C840617B3FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA7425525F;
-	Mon, 14 Jul 2025 14:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630502566E9;
+	Mon, 14 Jul 2025 14:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OaoTfUSm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UBMuCA4u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2091FDA94;
-	Mon, 14 Jul 2025 14:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6901FDA94;
+	Mon, 14 Jul 2025 14:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752501902; cv=none; b=K2Mn/cQSEuDEL8gHcXvYx2LHLjfYOTrJL7ERkGRE7v1UG1M75xgqeaJOswz8uml2ALZnFsuGfYRkHUJ7uZbHoBaeo1+cKnfqZkhzYtKSSruqMdmgHJW8TXc74v2b2QJcgagoF/C3jIMNsWy72uEnLE8yTUyPdhpQWAAti21oWKM=
+	t=1752501905; cv=none; b=qpCYomPjwETz9wHMwegtELnBGAJgl5BNC82Nl2ezmfC9iEyHx7fZO5eEaWC7OCsskj62D9sbIVwjKcq2br99dGwk5vbmmALsx/HObe4YHQ9CDHbjugOi3l8twR/m64eo8vhPDvBC1qhqR95O1DZSHF6OUlQZ6ru2U1v9n3W4uG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752501902; c=relaxed/simple;
-	bh=mggx0wHvULzigPHETIueJkEyaSC8PRHg7dCwgCjnVWM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OI9wR+Ay6iTUoQlLgX4KAyvDP1QmjU331Yf+NNdOnJYwdtphWExk8Bcqa8YgKczBON9rnVirShl/6rbIhHJ6Mr5/y6FFHYBr26tQnTXOdNexFFl9CJF6FJBNzKP11AIlVXT4NgEQQj/v8hpSYZG/YBeLiCZlaoDk0CClrRAVa4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OaoTfUSm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4058C4CEED;
-	Mon, 14 Jul 2025 14:04:57 +0000 (UTC)
+	s=arc-20240116; t=1752501905; c=relaxed/simple;
+	bh=EocI6ObgL37liRI9WW5f9BVNKTK6gn6068Ri6+WKImA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hvWqeqazFK5JBv2dviYGih8FcfNL80a0i2WBh/SJcAlVxf2TWFlCqLC0mnJuYLilteHRiW6To5/PzrEvOGcPq1n8JDY3AL2ohtFMqdDKIOhJgn8AbsP15W3FU+SjMwVlYao+IFxijR8EGKboyMUIGKHzp6HM+Sn14fcaE66GXhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UBMuCA4u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D899C4CEF0;
+	Mon, 14 Jul 2025 14:05:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752501901;
-	bh=mggx0wHvULzigPHETIueJkEyaSC8PRHg7dCwgCjnVWM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OaoTfUSmpusIqoaxvm/NBpedLoOrYOneprYkDc/zUT6HjJHLfJWExnwts2djgVJ9w
-	 59XijHcaJVV7HqB/yUUd2yIjZrmnegXCQx9XsBL2tlj3my3DLfpKSvXxJbGo2YmdjY
-	 I8Fbm9J+QRATSBbZdWuZSqKTynfYc8/rm64lCaNhseuxRXEbgM5ZRBNVVPMdJQDgz5
-	 43hon1XY6eXcKV9YXo3KB+mckRiBSmKnKvUonueT8Vvv9RNBVZG4CJ27VL8aXt8slA
-	 BD1fFtmPAENfGafVQNdxQopXPGCda9kV4JQ18z3IG/IHICJ2x2/Kof68y37F2bCsc8
-	 yxKrfr6Jdc8gQ==
-Message-ID: <380fb0f4-f5dd-47ad-92e3-943f30b08c31@kernel.org>
-Date: Mon, 14 Jul 2025 16:04:55 +0200
+	s=k20201202; t=1752501905;
+	bh=EocI6ObgL37liRI9WW5f9BVNKTK6gn6068Ri6+WKImA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UBMuCA4uFQ3xCg5qkj4+X2S3Ok65SznAs4mYRq4MasZAhb1BpMWeQE25kkJH954uJ
+	 R3LURzdGggBqtucYDUtIfRB7Ax9fBM6wEiqNwqOP+WJK1zUVzXzPCqMUIH0HypBzRI
+	 y+IC0h4gUcrirH82AHDJsnrRtCT/eyxpxV0xI1K5tdVL0TWCwCFw7j47mu9LVDUV72
+	 d/3gCb1QtXktwVefouUVdtJcWdIbhP9JYDJ7m0XvETMOTR9FC46AHanPX0QBZuRd8C
+	 6VC7dG9feVMjOGFWq/ssZ0TTAajh+NWaPNqI/qndjACqaQ/5OZOtJhuZ1DV7kBdayi
+	 zhSWHfWJn1ALg==
+Date: Mon, 14 Jul 2025 15:04:58 +0100
+From: Will Deacon <will@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>, leo.yan@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v3 07/10] perf: arm_spe: Add support for filtering on
+ data source
+Message-ID: <aHUOig-kaRo15ZH5@willie-the-truck>
+References: <20250605-james-perf-feat_spe_eft-v3-0-71b0c9f98093@linaro.org>
+ <20250605-james-perf-feat_spe_eft-v3-7-71b0c9f98093@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 01/12] dt-bindings: ptp: add bindings for NETC
- Timer
-To: Wei Fang <wei.fang@nxp.com>
-Cc: "F.S. Peng" <fushi.peng@nxp.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "richardcochran@gmail.com" <richardcochran@gmail.com>,
- Claudiu Manoil <claudiu.manoil@nxp.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>, Clark Wang
- <xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
- "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>,
- "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>
-References: <20250711065748.250159-1-wei.fang@nxp.com>
- <20250711065748.250159-2-wei.fang@nxp.com>
- <ce7e7889-f76b-461f-8c39-3317bcbdb0b3@kernel.org>
- <PAXPR04MB8510C8823F5F229BC78EB4B38854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <61e6c90d-3811-41c2-853d-d93d9db38f21@kernel.org>
- <PAXPR04MB85109EE6F29A1D80CF3F367A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <169e742f-778e-4d42-b301-c954ecec170a@kernel.org>
- <PAXPR04MB85107A7E7EB7141BC8F2518A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <836c9f0b-2b73-4b36-8105-db1ae59b799c@kernel.org>
- <PAXPR04MB8510CCEA719F8A6DADB8566A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <70560f1e-fbbc-4e65-a8f4-140eb9a6e56e@kernel.org>
- <PAXPR04MB8510A9625CCB563BDA8AEBBD8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <PAXPR04MB8510A9625CCB563BDA8AEBBD8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250605-james-perf-feat_spe_eft-v3-7-71b0c9f98093@linaro.org>
 
-On 14/07/2025 15:43, Wei Fang wrote:
->> On 14/07/2025 12:28, Wei Fang wrote:
->>>>>
->>>>> Currently, the enetc driver uses the PCIe device number and function
->> number
->>>>> of the Timer to obtain the Timer device, so there is no related binding in
->> DTS.
->>>>
->>>> So you just tightly coupled these devices. Looks poor design for me, but
->>>> your choice. Anyway, then use that channel as information to pass the
->>>> pin/timer/channel number. You do not get a new property for that.
->>>>
->>>
->>> I do not understand, the property is to indicate which pin the board is
->>> used to out PPS signal, as I said earlier, these pins are multiplexed with
->>
->> Sure, I get it and my argument for phandle cells stays. If you decide
->> not to use it, you do not get a new property.
+On Thu, Jun 05, 2025 at 11:49:05AM +0100, James Clark wrote:
+> SPE_FEAT_FDS adds the ability to filter on the data source of packets.
+> Like the other existing filters, enable filtering with PMSFCR_EL1.FDS
+> when any of the filter bits are set.
 > 
-> I do not know how to add the phandle cells, a phandle value is a way to
-> reference another node in the DTS. But for the NETC Timer, what node
-> does it need to reference? To be honest, I have no idea.
+> Each bit maps to data sources 0-63 described by bits[0:5] in the data
+> source packet (although the full range of data source is 16 bits so
+> higher value data sources can't be filtered on). The filter is an OR of
+> all the bits, so for example setting bits 0 and 3 filters packets from
+> data sources 0 OR 3.
+> 
+> Reviewed-by: Leo Yan <leo.yan@arm.com>
+> Tested-by: Leo Yan <leo.yan@arm.com>
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>  drivers/perf/arm_spe_pmu.c | 31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+> 
+> diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+> index 9309b846f642..d04318411f77 100644
+> --- a/drivers/perf/arm_spe_pmu.c
+> +++ b/drivers/perf/arm_spe_pmu.c
+> @@ -87,6 +87,7 @@ struct arm_spe_pmu {
+>  #define SPE_PMU_FEAT_INV_FILT_EVT		(1UL << 6)
+>  #define SPE_PMU_FEAT_DISCARD			(1UL << 7)
+>  #define SPE_PMU_FEAT_EFT			(1UL << 8)
+> +#define SPE_PMU_FEAT_FDS			(1UL << 9)
+>  #define SPE_PMU_FEAT_DEV_PROBED			(1UL << 63)
+>  	u64					features;
+>  
+> @@ -232,6 +233,10 @@ static const struct attribute_group arm_spe_pmu_cap_group = {
+>  #define ATTR_CFG_FLD_inv_event_filter_LO	0
+>  #define ATTR_CFG_FLD_inv_event_filter_HI	63
+>  
+> +#define ATTR_CFG_FLD_data_src_filter_CFG	config4	/* PMSDSFR_EL1 */
+> +#define ATTR_CFG_FLD_data_src_filter_LO	0
+> +#define ATTR_CFG_FLD_data_src_filter_HI	63
+> +
+>  GEN_PMU_FORMAT_ATTR(ts_enable);
+>  GEN_PMU_FORMAT_ATTR(pa_enable);
+>  GEN_PMU_FORMAT_ATTR(pct_enable);
+> @@ -248,6 +253,7 @@ GEN_PMU_FORMAT_ATTR(float_filter);
+>  GEN_PMU_FORMAT_ATTR(float_filter_mask);
+>  GEN_PMU_FORMAT_ATTR(event_filter);
+>  GEN_PMU_FORMAT_ATTR(inv_event_filter);
+> +GEN_PMU_FORMAT_ATTR(data_src_filter);
+>  GEN_PMU_FORMAT_ATTR(min_latency);
+>  GEN_PMU_FORMAT_ATTR(discard);
+>  
+> @@ -268,6 +274,7 @@ static struct attribute *arm_spe_pmu_formats_attr[] = {
+>  	&format_attr_float_filter_mask.attr,
+>  	&format_attr_event_filter.attr,
+>  	&format_attr_inv_event_filter.attr,
+> +	&format_attr_data_src_filter.attr,
+>  	&format_attr_min_latency.attr,
+>  	&format_attr_discard.attr,
+>  	NULL,
+> @@ -286,6 +293,9 @@ static umode_t arm_spe_pmu_format_attr_is_visible(struct kobject *kobj,
+>  	if (attr == &format_attr_inv_event_filter.attr && !(spe_pmu->features & SPE_PMU_FEAT_INV_FILT_EVT))
+>  		return 0;
+>  
+> +	if (attr == &format_attr_data_src_filter.attr && !(spe_pmu->features & SPE_PMU_FEAT_FDS))
+> +		return 0;
+> +
+>  	if ((attr == &format_attr_branch_filter_mask.attr ||
+>  	     attr == &format_attr_load_filter_mask.attr ||
+>  	     attr == &format_attr_store_filter_mask.attr ||
+> @@ -406,6 +416,9 @@ static u64 arm_spe_event_to_pmsfcr(struct perf_event *event)
+>  	if (ATTR_CFG_GET_FLD(attr, inv_event_filter))
+>  		reg |= PMSFCR_EL1_FnE;
+>  
+> +	if (ATTR_CFG_GET_FLD(attr, data_src_filter))
+> +		reg |= PMSFCR_EL1_FDS;
 
+Is the polarity correct here? The description of PMSDSFR_EL1.S<m> suggests
+that setting bits to 1 _excludes_ the FDS filtering.
 
-I don't think you tried hard enough... I asked to read other bindings.
-If you did that, you would notice timestamper property and argument.
+>  	if (ATTR_CFG_GET_FLD(attr, min_latency))
+>  		reg |= PMSFCR_EL1_FL;
+>  
+> @@ -430,6 +443,12 @@ static u64 arm_spe_event_to_pmslatfr(struct perf_event *event)
+>  	return FIELD_PREP(PMSLATFR_EL1_MINLAT, ATTR_CFG_GET_FLD(attr, min_latency));
+>  }
+>  
+> +static u64 arm_spe_event_to_pmsdsfr(struct perf_event *event)
+> +{
+> +	struct perf_event_attr *attr = &event->attr;
+> +	return ATTR_CFG_GET_FLD(attr, data_src_filter);
+> +}
+> +
+>  static void arm_spe_pmu_pad_buf(struct perf_output_handle *handle, int len)
+>  {
+>  	struct arm_spe_pmu_buf *buf = perf_get_aux(handle);
+> @@ -788,6 +807,10 @@ static int arm_spe_pmu_event_init(struct perf_event *event)
+>  	if (arm_spe_event_to_pmsnevfr(event) & arm_spe_pmsevfr_res0(spe_pmu->pmsver))
+>  		return -EOPNOTSUPP;
+>  
+> +	if (arm_spe_event_to_pmsdsfr(event) &&
+> +	    !(spe_pmu->features & SPE_PMU_FEAT_FDS))
+> +		return -EOPNOTSUPP;
 
+Same question here.
 
-Best regards,
-Krzysztof
+Will
 
