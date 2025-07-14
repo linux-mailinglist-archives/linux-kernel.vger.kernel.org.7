@@ -1,127 +1,177 @@
-Return-Path: <linux-kernel+bounces-730902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C2DB04C05
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:14:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3468B04C2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F03B5560442
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:13:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2011C3AD9A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE0A28689C;
-	Mon, 14 Jul 2025 23:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB096242D99;
+	Mon, 14 Jul 2025 23:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kcs1Ihc4"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b="N3VRZgBP"
+Received: from mail17.out.titan.email (mail17.out.titan.email [3.64.226.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2619C24679C
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 23:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C65D1662E7
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 23:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.64.226.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752534731; cv=none; b=ia8ISLwB/28sUL4NtDkswMtta5nHObbcOFdGVceo//shK5X5wsJiPXFs8SDkKKwfG4tgrhrmQZris41bsFMNaRduYCQ3eA2rJWcXGT27Nnyn4XEFlRavzZ7BIKHBKzo/agEHohsYwCp7SYDWXegCoKoNV2Cr+qGfU1LXmeyP3Mw=
+	t=1752535451; cv=none; b=KFNw8dBfTedyvs3/na2VGZj53b7dlWSe4UAtgSafY9MUXAYJ/KRYh+gRwLct7JlGGkFkh7ywhu8EAXQsg37+MZZ+/52U2bBUseKsisEe1lT8lkzRxRBMrt6VWMq+S+Pi18jRqFyyuXJVLzsPanx09sW0g5ryDqEaO3atxqP5CRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752534731; c=relaxed/simple;
-	bh=JS8+GsYrWXB/OgNcS4dyHDFXjB1Fan1qX8YF8Kq1ifY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AcVrWcJLoFi6gZld5Aweyd97d3Nn26xx6hBcW1NUvCJ6+/3dbHI7rdyBU7t3YIQNNBAXSSGi74GjmyH1nv6FjEgMKxL2//eWUoJJqdWfDuwEiGErTlYFwwdNd5HMJn86A33f0ChaEAghCd31u51KwWSsDXgj22kw45A4T/DgkxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kcs1Ihc4; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31202bbaafaso5053095a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 16:12:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752534729; x=1753139529; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ldIlIZsTmWxf4Q+RRVJYW7oQvHk6FV8rejAxUTRDEWY=;
-        b=kcs1Ihc4G2GjoiDrNp8JbakZ7eEIlcMAq0YqZIhpMXxl6Q8a8lFyof3+KMQktEJO93
-         iDXlvScxBvRv0F1N58sGUBhzjjsY3CJdRlssmy1NTw7GJf12biKu642yTZC7Gl6INGAr
-         F88KHZfkbLe20Z3v2oeYOeHYyJMyTlQffAxsuLIPjl15eYkYdoqkXfBy8wZW2XfBH2Bn
-         NPK+5FYXIZk8C8z0Liqsb20UzZk7QUsNhaVl78eGDxaAFiA/3uK8NU/FARaQTpAkzgKY
-         WWuWTmdRwEE+FQEU1bmoM7olot8xjg5F9v5U7zYGyCk5AEaUC4WVNw/TwGMmNc2a0QBp
-         8deg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752534729; x=1753139529;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ldIlIZsTmWxf4Q+RRVJYW7oQvHk6FV8rejAxUTRDEWY=;
-        b=X4XKDWBv1Z/b2ccRI3P5634US5ipP/hEd8fsdshFNpmPNHNg8SO4FtdkGtA7oFtLk6
-         s4aSwHOBLo3IFPPkeehmqdZDnrLhMOOa7tIxEMTMc9Lb55bPtZgmkcICI0zJzUuiucIb
-         +UoRa7ESu/wCBUbfAlCV19q4AiszAkxzb+1XY8MXDF3THzGaYX6mRYXEz+O6twJsfOlq
-         ECwPi7aStdLs8hbH8NzNbQjTVPqF0nJc8G4wGSCGbQex+2haQtW8Vo2rwk5AyKAbr9MN
-         78TbroSiciJ+cRVS/Ws8PI6uQJxpso25q7XKgeQeejFYBNtdPJf5331705CKfcdZw21E
-         CWfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwi7yUbZfITnUWbwizn1vK/fln3Gpu39rHDSXdobR5qEzVrD7qA0DJhNNDxhG1fKKzo+88YpsKubTawMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrqqrbHWGNVuET6xex8s/JXL4imZ85Gd771dBuMr8tkZG/1BhT
-	j953nl5Dl85bYo135DPOY3DtOJkXxF0+qELCdFo+QsjXzWFM73hgf/fk1SiG6xuIOT+pU6U5hoS
-	eOUbqKg==
-X-Google-Smtp-Source: AGHT+IEzy6Rbika3xLoFUr4Vlk4xlhsX2KuawN4KiX8pvy3epkbma1XhqdnQYReJ+Wv1KnbebzcJCwnHiP8=
-X-Received: from pjbee8.prod.google.com ([2002:a17:90a:fc48:b0:31c:2fe4:33b4])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:46:b0:311:a561:86f3
- with SMTP id 98e67ed59e1d1-31c4f48baa6mr23431669a91.6.1752534729373; Mon, 14
- Jul 2025 16:12:09 -0700 (PDT)
-Date: Mon, 14 Jul 2025 16:12:07 -0700
-In-Reply-To: <68758e01d3ae4_38ba7129493@iweiny-mobl.notmuch>
+	s=arc-20240116; t=1752535451; c=relaxed/simple;
+	bh=w/njO+Eio19jojpm3LOUc6VAGrzjCD/N9jpa95dSiN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XZXMHrMlZ/Q9K996QxYLlg9xYGLlnmtKCvBXjbyydqbiu1tMKkSlwc9C9Av9MLYZdQ1m7pRNEGFwrjTQC0qZhjlBs9h05ARugwY+dSddE4/GBITLzpHcCxrCq6ROKKXYVNE7iDRBZ1ECvgoY2GoKDQX9UgGyosQpGEwYwt6ePzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net; spf=pass smtp.mailfrom=techsingularity.net; dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b=N3VRZgBP; arc=none smtp.client-ip=3.64.226.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=techsingularity.net
+Received: from localhost (localhost [127.0.0.1])
+	by smtp-out0101.titan.email (Postfix) with ESMTP id 9DE78A0006;
+	Mon, 14 Jul 2025 23:14:54 +0000 (UTC)
+DKIM-Signature: a=rsa-sha256; bh=IZEkWRPWmtJUxnmSXF7VAq23VNGGw/RoGxJV/hfIDTg=;
+	c=relaxed/relaxed; d=techsingularity.net;
+	h=to:message-id:date:from:cc:subject:references:mime-version:in-reply-to:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
+	q=dns/txt; s=titan1; t=1752534894; v=1;
+	b=N3VRZgBPEIp9DETNkM7oN7lGHYv8y2O2btGPK/ZE6VCHA3pIi+/XGg4kiwDmLsrlLRLjDyu5
+	gDQkG9M9mEOWwrUDPTpDUENUPGzpghAJBk0biI1sarRnCEnKtD9NWtOPh6izs2fJbfpRklx7mgR
+	P5EyTAakwv/kflWf4KTCFrZc=
+Received: from mail.blacknight.com (ip-84-203-196-90.broadband.digiweb.ie [84.203.196.90])
+	by smtp-out0101.titan.email (Postfix) with ESMTPA id C1CCEA0002;
+	Mon, 14 Jul 2025 23:14:53 +0000 (UTC)
+Date: Tue, 15 Jul 2025 00:14:52 +0100
+Feedback-ID: :mgorman@techsingularity.net:techsingularity.net:flockmailId
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, 
+	vschneid@redhat.com, clm@meta.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 05/12] sched: Add ttwu_queue controls
+Message-ID: <yz42ivo4lgdmn2ikmfagzzmtj2iodz2rq6jw2og5n4yddsi5az@x2i7zypbh7xt>
+References: <20250702114924.091581796@infradead.org>
+ <20250702121158.817814031@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250703062641.3247-1-yan.y.zhao@intel.com> <20250709232103.zwmufocd3l7sqk7y@amd.com>
- <aG_pLUlHdYIZ2luh@google.com> <aHCUyKJ4I4BQnfFP@yzhao56-desk>
- <20250711151719.goee7eqti4xyhsqr@amd.com> <aHEwT4X0RcfZzHlt@google.com>
- <20250711163440.kwjebnzd7zeb4bxt@amd.com> <68717342cfafc_37c14b294a6@iweiny-mobl.notmuch>
- <aHGWtsqr8c403nIj@google.com> <68758e01d3ae4_38ba7129493@iweiny-mobl.notmuch>
-Message-ID: <aHWOx6-IztKB--Af@google.com>
-Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from kvm_gmem_populate()
-From: Sean Christopherson <seanjc@google.com>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Michael Roth <michael.roth@amd.com>, Yan Zhao <yan.y.zhao@intel.com>, pbonzini@redhat.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com, 
-	kai.huang@intel.com, adrian.hunter@intel.com, reinette.chatre@intel.com, 
-	xiaoyao.li@intel.com, tony.lindgren@intel.com, binbin.wu@linux.intel.com, 
-	dmatlack@google.com, isaku.yamahata@intel.com, vannapurve@google.com, 
-	david@redhat.com, ackerleytng@google.com, tabba@google.com, 
-	chao.p.peng@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20250702121158.817814031@infradead.org>
+X-F-Verdict: SPFVALID
+X-Titan-Src-Out: 1752534894450122467.2206.2939698480240242390@prod-euc1-smtp-out1002.
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.4 cv=FN3hx/os c=1 sm=1 tr=0 ts=68758f6e
+	a=+XWPlUOTt03IZrtNKHUAqA==:117 a=+XWPlUOTt03IZrtNKHUAqA==:17
+	a=Q9fys5e9bTEA:10 a=CEWIc4RMnpUA:10 a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8
+	a=bbLQEv47hkCM5Bk10OkA:9 a=PUjeQqilurYA:10 a=1CNFftbPRP8L7MoqJWF3:22
 
-On Mon, Jul 14, 2025, Ira Weiny wrote:
-> Sean Christopherson wrote:
-> > On Fri, Jul 11, 2025, Ira Weiny wrote:
-> > > Michael Roth wrote:
-> > > > For in-place conversion: the idea is that userspace will convert
-> > > > private->shared to update in-place, then immediately convert back
-> > > > shared->private;
-> > > 
-> > > Why convert from private to shared and back to private?  Userspace which
-> > > knows about mmap and supports it should create shared pages, mmap, write
-> > > data, then convert to private.
-> > 
-> > Dunno if there's a strong usecase for converting to shared *and* populating the
-> > data, but I also don't know that it's worth going out of our way to prevent such
-> > behavior, at least not without a strong reason to do so.
+On Wed, Jul 02, 2025 at 01:49:29PM +0200, Peter Zijlstra wrote:
+> There are two (soon three) callers of ttwu_queue_wakelist(),
+> distinguish them with their own WF_ and add some knobs on.
 > 
-> I'm not proposing to prevent such behavior.  Only arguing that the
-> private->shared->private path to data population is unlikely to be a
-> 'common' use case.
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Link: https://lkml.kernel.org/r/20250520101727.874587738@infradead.org
+> ---
+>  kernel/sched/core.c     |   22 ++++++++++++----------
+>  kernel/sched/features.h |    2 ++
+>  kernel/sched/sched.h    |    2 ++
+>  3 files changed, 16 insertions(+), 10 deletions(-)
 > 
-> > E.g. if it allowed for
-> > a cleaner implementation or better semantics, then by all means.  But I don't
-> > think that's true here?  Though I haven't thought hard about this, so don't
-> > quote me on that. :-)
-> 
-> Me neither.  Since I am new to this I am looking at this from a pretty
-> hight level and it seems to me if the intention is to pass data to the
-> guest then starting shared is the way to go.  Passing data out, in a Coco
-> VM, is probably not going to be supported.
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3888,7 +3888,7 @@ bool cpus_share_resources(int this_cpu,
+>  	return per_cpu(sd_share_id, this_cpu) == per_cpu(sd_share_id, that_cpu);
+>  }
+>  
+> -static inline bool ttwu_queue_cond(struct task_struct *p, int cpu)
+> +static inline bool ttwu_queue_cond(struct task_struct *p, int cpu, bool def)
+>  {
+>  	/* See SCX_OPS_ALLOW_QUEUED_WAKEUP. */
+>  	if (!scx_allow_ttwu_queue(p))
+> @@ -3929,18 +3929,19 @@ static inline bool ttwu_queue_cond(struc
+>  	if (!cpu_rq(cpu)->nr_running)
+>  		return true;
+>  
+> -	return false;
+> +	return def;
+>  }
+>  
+>  static bool ttwu_queue_wakelist(struct task_struct *p, int cpu, int wake_flags)
+>  {
+> -	if (sched_feat(TTWU_QUEUE) && ttwu_queue_cond(p, cpu)) {
+> -		sched_clock_cpu(cpu); /* Sync clocks across CPUs */
+> -		__ttwu_queue_wakelist(p, cpu, wake_flags);
+> -		return true;
+> -	}
+> +	bool def = sched_feat(TTWU_QUEUE_DEFAULT);
+> +
+> +	if (!ttwu_queue_cond(p, cpu, def))
+> +		return false;
+>  
+> -	return false;
+> +	sched_clock_cpu(cpu); /* Sync clocks across CPUs */
+> +	__ttwu_queue_wakelist(p, cpu, wake_flags);
+> +	return true;
+>  }
+>  
 
-IIUC, passing data out is supported and used by pKVM.  I can see use cases for
-things where the output of some processing is a non-trivial amount of data.
-E.g. pass in "public" data/inputs, protect the data in-place, process the data
-using a super secret model, then finally pass the sanitized, "safe for public
-consumption" result back to the untrusted world.
+I get that you're moving the feature checks into the callers but it's
+unclear what the intent behind TTWU_QUEUE_DEFAULT is. It's somewhat
+preserving existing behaviour and is probably preparation for a later
+patch but it's less clear why it's necessary or what changing it would
+reveal while debugging.
+
+>  static void ttwu_queue(struct task_struct *p, int cpu, int wake_flags)
+> @@ -3948,7 +3949,7 @@ static void ttwu_queue(struct task_struc
+>  	struct rq *rq = cpu_rq(cpu);
+>  	struct rq_flags rf;
+>  
+> -	if (ttwu_queue_wakelist(p, cpu, wake_flags))
+> +	if (sched_feat(TTWU_QUEUE) && ttwu_queue_wakelist(p, cpu, wake_flags))
+>  		return;
+>  
+>  	rq_lock(rq, &rf);
+> @@ -4251,7 +4252,8 @@ int try_to_wake_up(struct task_struct *p
+>  		 * scheduling.
+>  		 */
+>  		if (smp_load_acquire(&p->on_cpu) &&
+> -		    ttwu_queue_wakelist(p, task_cpu(p), wake_flags))
+> +		    sched_feat(TTWU_QUEUE_ON_CPU) &&
+> +		    ttwu_queue_wakelist(p, task_cpu(p), wake_flags | WF_ON_CPU))
+>  			break;
+>  
+>  		cpu = select_task_rq(p, p->wake_cpu, &wake_flags);
+> --- a/kernel/sched/features.h
+> +++ b/kernel/sched/features.h
+> @@ -81,6 +81,8 @@ SCHED_FEAT(TTWU_QUEUE, false)
+>   */
+>  SCHED_FEAT(TTWU_QUEUE, true)
+>  #endif
+> +SCHED_FEAT(TTWU_QUEUE_ON_CPU, true)
+> +SCHED_FEAT(TTWU_QUEUE_DEFAULT, false)
+>  
+>  /*
+>   * When doing wakeups, attempt to limit superfluous scans of the LLC domain.
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -2279,6 +2279,8 @@ static inline int task_on_rq_migrating(s
+>  #define WF_CURRENT_CPU		0x40 /* Prefer to move the wakee to the current CPU. */
+>  #define WF_RQ_SELECTED		0x80 /* ->select_task_rq() was called */
+>  
+> +#define WF_ON_CPU		0x0100
+> +
+>  static_assert(WF_EXEC == SD_BALANCE_EXEC);
+>  static_assert(WF_FORK == SD_BALANCE_FORK);
+>  static_assert(WF_TTWU == SD_BALANCE_WAKE);
+> 
+
+-- 
+Mel Gorman
+SUSE Labs
 
