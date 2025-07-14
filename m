@@ -1,201 +1,139 @@
-Return-Path: <linux-kernel+bounces-730419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2735B0443E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:40:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5BCB0445F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A1E916D8A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:39:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0F004E0BB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE2F26158B;
-	Mon, 14 Jul 2025 15:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4BA2641EA;
+	Mon, 14 Jul 2025 15:34:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KuKChJsS"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="KVqwbiAp"
+Received: from outbound.pv.icloud.com (p-west1-cluster3-host2-snip4-1.eps.apple.com [57.103.66.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAE924728A;
-	Mon, 14 Jul 2025 15:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30BC2561AE
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.66.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752507255; cv=none; b=YzkOxE6Itha41/0fNAejJBJ1W7cdmlkdXx3BfTooviCR1VvBhs/HM0aachNS8fMV0MCaqCOLTBGj0MQrtO6X3ckHNa0Qb8wcVjnWGvM/WN5VHK8N6XTvD4l1ijyhrp7unz3GtmQDZiZrIirPKkiICx29kReriDBaRPujoAzb65A=
+	t=1752507285; cv=none; b=flsYD5ITFTkaIFS8G+Qg4QVXoTGaHYGx3outGIkFHRp+lo/Bi5maeGTEClNDoNC61KfXAimfBXYqqEFwe7JKsdgFe3DdAfGShQiVVrtSAy5H7KZQ3jdELuZruzGE3TNUtA29NvpeZEmI1vNT5GZ/FlqeLpMQCgz6XQC+98iBfho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752507255; c=relaxed/simple;
-	bh=g+O+Onw4EEFGOhr3iVz4F85RgpHcqoS4Sf24nG8i2RY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xg6Kv214XkjY5dAHYglaHqYDELLNxhSBh4wfv3xr8uGdqcRD+Cce4i21kttpg4kqUbkAvrFhjZ+kkqPi1pGLvfZH+EzzzkoNjcZ2xsEhyC/z0R48ddpLrq9Ej8RNrHIIp74J7HgSxokzBSfBut05JA6HclaCTiRdo8fSoHOpoZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KuKChJsS; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7e095510a6cso272951185a.1;
-        Mon, 14 Jul 2025 08:34:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752507253; x=1753112053; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y1ah1KiBYa+nQwV3ZRjbCEW6rsly24N5LKmoT4ikCOg=;
-        b=KuKChJsSHs/4J7lLPPny6TRmwphqP1BL+h3MA1EAIPEfMzecsPFBDwy1ADTbs7E7eu
-         8SW83cwkvgvfd6gQQ8H1A1lZFXhXfCvA96q68zS2iVD5C/Tc69e8uqggL/bPAPt8Kzx3
-         km3agXf5zg/4/kFbluyb2jxDLkBLNJJLuECKn6Cq8Z+PmtKNHhJzNvhCeUuiuEFo+uDX
-         xUzuv0EbXnYWCSKk8sz6pvufQXcTqJHWX16ERiXrQgFFK0M8/tgu2UNkPNvKMyGjsrdD
-         WKVcWdiZ4yP5DualDuCvu61ndKO4+avmuK74r44Ptrdzi6+a2qHw8l8ihqbxlVcSWIuA
-         7fxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752507253; x=1753112053;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y1ah1KiBYa+nQwV3ZRjbCEW6rsly24N5LKmoT4ikCOg=;
-        b=RTlKnW4ASOEbHktaaFxNo/TKgYZfJ+ibJm2IXgXB38pC6JJmCEQSXdfUP8eIq2nbOu
-         46GL/JTokxB0DN9EB+gQtFZSovXVjhCafi8dpdKS4jpUYU6R/7JyI1TH4eTD2tX6/kTm
-         3sapxh7ZszNILzxNDkGeV23FQ5GdfqzCtWP6SX2epNDecinNwfNxMgfyQQM8OIuVSr3B
-         a+GO4kqwo9TFzqN7l9BErJfDDKEIAI/C9m4HfyEs0hoJCw8uABoNMgPFk7FvLMzFHwLu
-         Si8YmZu6Wsg8sX8yIhczvb86NQqlQ90dm0uvo+cX45j6MmMgG5ZI0OtQ9DkFZXdeK2+i
-         tXUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUY5irTrocIlWS7WeSqoddUiBk/ZdYQ0hIOCqjyPACJL2/QciNaHMpn8VIwaBxil9/+crudtTHRoXvf@vger.kernel.org, AJvYcCVvp6bmwUuiyxbzAQoSNIj4Cd0OBNfz4iDEF8+AgHEcvZrgEepd9n1CCmcUSRI2mNnO6nCXQoWJl/gn63wxN2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz52PpLipTPuWd/LYz3lwCp6NwM/gY3f7XQtjdzCQBJGBi2/r/9
-	ccz2PnsxfY1uBbRq09ski1nDPCIbDQXR7LjpcYwsOnSU8EeWByh75HP3
-X-Gm-Gg: ASbGncviMAkDBF3SiQgZnQN4tKMNyTFyqwbqad2t320Vhxez5IMPV0BCmK7vE8va04K
-	tf20jZhBTEM/vsymqp69mwuNoaLeAgGT2sdMBrW1vMPmg9daM3xtRs8s8hKlfdFGtWpyKOssnD4
-	afej1tuzquA5FjYCdFWBTnq+fAaOuEuJ6X9Vohxj+O1ell3BaPrR7O2HxukaqFiymGkxG6C04o3
-	QLVBLDtOfhPgJGAu5uIi0mwuiZ7RHbhqgycjW3nBx9azNoM3FmZKwefVkQRU+P6u+S/djbMBZAE
-	bbaDPxe69X93IUJpU4Qz8gQekUaTqDWIAQPeCC5Yk8bx+vfIeoQQoYazgV+zidGyXyGlO+RtBys
-	p6j20D0qo3nsU+iFOAgoFb0zef/i5BGphbE0/UJDc8BoBus9wXND00+beTDOJGSTzKmRZJSNkQb
-	M7fA0l6MDDIHZe
-X-Google-Smtp-Source: AGHT+IFmUKHtXtb7dpJhb3zmSZ1eVrPeDqvK2CSHNEiPnxRXmpl4kr66ZO7VxCg9aDpOs9IfcA6Fkg==
-X-Received: by 2002:a05:620a:3190:b0:7d4:4b9b:3eed with SMTP id af79cd13be357-7de05769905mr2084229985a.25.1752507252602;
-        Mon, 14 Jul 2025 08:34:12 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7049799e407sm48780616d6.23.2025.07.14.08.34.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 08:34:12 -0700 (PDT)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 74DFDF40066;
-	Mon, 14 Jul 2025 11:34:11 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Mon, 14 Jul 2025 11:34:11 -0400
-X-ME-Sender: <xms:cyN1aHmQVSMW2S2kEq1pJPrebkugzUZZx7YSPkqXy92gzTKnBgbOjQ>
-    <xme:cyN1aMWimFINoAGnOsd9k2-95HuuNjyfZvtfXxt3C144lclHGnYiYmH2XP1GkvWtR
-    FfmAOs2ELA7odHkGQ>
-X-ME-Received: <xmr:cyN1aCOr5XRn66xwYrCaGaBmW8Mw1sEOEIic3APIUkO34OXuYJTEcin3Ig>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehvdefvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
-    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
-    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
-    drnhgrmhgvpdhnsggprhgtphhtthhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtoheplhhoshhsihhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdq
-    fhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlkh
-    hmmheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhgt
-    hhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjoh
-    hrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:cyN1aPH5wN_4PmpthNSngTdrYOPJjgSl15y13eQUJj_aQD9DH9kFGA>
-    <xmx:cyN1aD1J3MVqK-QZtu3f2ou6mS4vPSyPB9KByu2qLhsCR4qjF8R-wQ>
-    <xmx:cyN1aHMTeBwM7TrQisU8VdSZ1GfDbQmh4LIhCesL8I_3ljXaHCvUGA>
-    <xmx:cyN1aLKjTvhAQH3Na9-PBi3nibRPE6UbgVpON2CqydagPKOgBL6Lnw>
-    <xmx:cyN1aAaAU6I6XSTTQYdwSmB3rGmKKNGqPScIUTdw_qwz8-ZlwVgyLlI4>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 14 Jul 2025 11:34:10 -0400 (EDT)
-Date: Mon, 14 Jul 2025 08:34:09 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v7 2/9] rust: sync: Add basic atomic operation mapping
- framework
-Message-ID: <aHUjcSI_r0rYdTwc@Mac.home>
-References: <20250714053656.66712-1-boqun.feng@gmail.com>
- <20250714053656.66712-3-boqun.feng@gmail.com>
- <DBBOXLF23VVA.2T3U6GBOZ3Y20@kernel.org>
- <aHUJYTv4_wsatAw5@Mac.home>
- <DBBV9KHTEM3E.3T10KY9JN754X@kernel.org>
+	s=arc-20240116; t=1752507285; c=relaxed/simple;
+	bh=OMJ960bvppJHmuxurYcPegcppYFhep1C7c8Zh6iOOpk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HtbPAaUNoaUp6lP/2QuNeZiqIckYJSuFlpk9Dvj1UsLYiYKDaGhExbcVJX0CfpKhc+6Hlx6XFNNHNKvvkyRwIJKrkLxk5rvz0u1TLzCrWmHtKaO1rp5lkwfahkbwoibZLoR7kpdmrmfwX+GeUxxb/PJVHDA8W+stoD9uv2o2mS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=KVqwbiAp; arc=none smtp.client-ip=57.103.66.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
+	by outbound.pv.icloud.com (Postfix) with ESMTPS id C87BB18001EB;
+	Mon, 14 Jul 2025 15:34:39 +0000 (UTC)
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=hBBSdHG6C4hu+CJ0dF0ErxXT1O8dBj60X44ZNFpkvdo=; h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:x-icloud-hme; b=KVqwbiApcPAQCJj9QyL6mRLGeGQaBiABFBLeJtIcGEdVUiKNT2gMBQPhzyj0B1kTIRvlmg0Ml/2mpkVFPnVBCYfyYlrtqRvCzQm1KICH7hcJHVgeltXidlte/K0eZk4zFpZIxKKMJHosODxHCsWPIRTJbBsjywtUXOKk2lkRDyqR+/zttePEeglphv+pF3zzNNkeNAow03HgBdFLNKQMpTlC08I9ak+a7rhm3xJtHIMo/EeAiQHAIOZSgzlemlAP60cjKnDSFBlCfgDx2SRRzsZpLSH7ObzN3C2O8XTr8kLMdYGZB8rKeQ75btD6F7nPfOFwrG5bO9sHczqagEWl9g==
+Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 7631F180048B;
+	Mon, 14 Jul 2025 15:34:35 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Subject: [PATCH v6 0/8] char: misc: Various cleanup for miscdevice
+Date: Mon, 14 Jul 2025 23:34:11 +0800
+Message-Id: <20250714-rfc_miscdev-v6-0-2ed949665bde@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DBBV9KHTEM3E.3T10KY9JN754X@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHMjdWgC/3XQQW7DIBCF4atErEsEM4DtrHKPqKowg2ukOrSQo
+ laR716cTe022SC9xXz6xZVln4LP7LC7suRLyCGe6zBPO+ZGe371PFDdDARo0QjJ0+BeppAd+cJ
+ REyFK4RonWL14T34IXzft9Fz3kOLEL2Py9tcwIDZGkVzygSxo0gIsNseY8/7j0765OE37+izyG
+ PIlpu9bZoHFv19UgAuOvgfoB43Y+//aElZwTcCWwEpQ29Ug37Qd0gNCrQm1JVQletV2rZESyNg
+ HhF4R8s+36IXATgnoGuqluUPM8/wDsHq32sABAAA=
+X-Change-ID: 20250701-rfc_miscdev-35dd3310c7c0
+To: Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ Helge Deller <deller@gmx.de>, "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>
+Cc: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, 
+ Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
+ linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
+ Zijun Hu <zijun.hu@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-GUID: -GNrbL7e7Wx9NMW9jXIRRYp_WPn0eSG4
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA5MyBTYWx0ZWRfX82GmQmd4G3zA
+ ig8cvQTRiThq6IXW9eJMY8LXqW3VJU3TCPEc5Ry+U5RuYOYSt7AKIIG2Wt2nl8X0/pOjUb8MPnD
+ RSPMYITh6hHSwUB9EWCiUELicKyFvoki/ygDn/gToIpXBwbbizuz3AXs/W1pNaXNNNLg+KoVPFa
+ 90n6yEDzyRangKn7SZtXGX+g23BkIgRARJ+uaAxY8EZow2j7vbM5sfcsEieNg1TDi2kj+zHRLmn
+ kaYyeEa75xlgml2Cl5h4JQcay9JEyowVsR3gnCTWmjciEFPRa2bhLvhz6Buf81m1J7mrEfNO8=
+X-Proofpoint-ORIG-GUID: -GNrbL7e7Wx9NMW9jXIRRYp_WPn0eSG4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-14_01,2025-07-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0
+ clxscore=1015 suspectscore=0 malwarescore=0 mlxscore=0 mlxlogscore=968
+ spamscore=0 adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.22.0-2506060001 definitions=main-2507140093
 
-On Mon, Jul 14, 2025 at 05:00:56PM +0200, Benno Lossin wrote:
-> On Mon Jul 14, 2025 at 3:42 PM CEST, Boqun Feng wrote:
-> > On Mon, Jul 14, 2025 at 12:03:11PM +0200, Benno Lossin wrote:
-> > [...]
-> >> > +declare_and_impl_atomic_methods!(
-> >> > +    /// Basic atomic operations
-> >> > +    pub trait AtomicHasBasicOps {
-> >> 
-> >> I think we should drop the `Has` from the names. So this one can just be
-> >> `AtomicBasicOps`. Or how about `BasicAtomic`, or `AtomicBase`?
-> >> 
-> >
-> > Actually, given your feedback to `ordering::Any` vs `core::any::Any`,
-> > I think it makes more sense to keep the current names ;-) These are only
-> > trait names to describe what operations do an `AtomicImpl` has, and they
-> > should be used only in atomic mod, so naming them a bit longer is not a
-> > problem. And by doing so, we free the better names `BasicAtomic` or
-> > `AtomicBase` for other future usages.
-> >
-> > Best I could do is `AtomicBasicOps` or `HasAtomicBasicOps`.
-> 
-> But you are already in the `ops` namespace, so by your argument you
-> could just use `ops::BasicAtomic` :)
-> 
-> I'm fine with `AtomicBasicOps`.
-> 
-> >> > +declare_and_impl_atomic_methods!(
-> >> > +    /// Atomic arithmetic operations
-> >> > +    pub trait AtomicHasArithmeticOps {
-> >> 
-> >> Forgot to rename this one to `Add`? I think `AtomicAdd` sounds best for
-> >
-> > No, because at the `AtomicImpl` level, it's easy to know whether a type
-> > has all the arithmetic operations or none (also the `Delta` type should
-> > be known). But I don't have opinions on renaming it to `AtomicAddOps` or
-> > `HasAtomicAddOps`.
-> 
-> Ahh right yeah this makes sense. So let's use `AtomicArithmeticOps` if
-> you insist on the `Ops` part.
-> 
+This patch series is to do cleanup for:
 
-Done with AtomicBasicOps AtomicExchangeOps and AtomicArithmeticOps ;-)
-Thank you!
+- Miscdevice APIs
+- Miscdevice kunit test cases
+- Drivers which use miscdevice APIs
 
-Regards,
-Boqun
+Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
+---
+Previous discussion link:
+https://lore.kernel.org/all/20250620-rfc_miscdev-v1-1-fda25d502a37@oss.qualcomm.com
 
-> ---
-> Cheers,
-> Benno
+---
+Changes in v6:
+- Correct title and commit message as cascardo's suggestion for [PATCH 5/8]
+- Link to v5: https://lore.kernel.org/r/20250710-rfc_miscdev-v5-0-b3940297db16@oss.qualcomm.com
+
+Changes in v5:
+- Replace space with table in fist patch's Makefile
+- Correct title and commit messages
+- Link to v4: https://lore.kernel.org/r/20250704-rfc_miscdev-v4-0-b48986112d6a@oss.qualcomm.com
+
+Changes in v4:
+- Fix WARNINGs reported by "kernel test robot <lkp@intel.com>"
+- Link to v3: https://lore.kernel.org/r/20250702-rfc_miscdev-v3-0-d8925de7893d@oss.qualcomm.com
+
+Changes in v3:
+- Drop the change which allocates 4 fixed minors for watchdog
+- Correct tile and commit message
+- Link to v2: https://lore.kernel.org/r/20250701-rfc_miscdev-v2-0-3eb22bf533be@oss.qualcomm.com
+
+---
+Zijun Hu (8):
+      char: misc: Move drivers/misc/misc_minor_kunit.c to drivers/char/
+      char: misc: Adapt and add test cases for simple minor space division
+      char: misc: Disallow registering miscdevice whose minor > MISC_DYNAMIC_MINOR
+      char: misc: Add a case to test registering miscdevice again without reinitialization
+      char: misc: Make misc_register() reentry for miscdevice who wants dynamic minor
+      char: misc: Does not request module for miscdevice with dynamic minor
+      char: misc: Register fixed minor EISA_EEPROM_MINOR in linux/miscdevice.h
+      sparc: kernel: apc: Remove macro APC_MINOR definition
+
+ arch/sparc/kernel/apc.c                   |  3 +-
+ drivers/char/Makefile                     |  1 +
+ drivers/char/misc.c                       | 16 +++++-
+ drivers/{misc => char}/misc_minor_kunit.c | 95 +++++++++++++++++++++----------
+ drivers/misc/Makefile                     |  1 -
+ drivers/parisc/eisa_eeprom.c              |  2 -
+ include/linux/miscdevice.h                |  9 +++
+ 7 files changed, 89 insertions(+), 38 deletions(-)
+---
+base-commit: db15ec7abd33ce245120f36be91f56f0ba0b247e
+change-id: 20250701-rfc_miscdev-35dd3310c7c0
+
+Best regards,
+-- 
+Zijun Hu <zijun.hu@oss.qualcomm.com>
+
 
