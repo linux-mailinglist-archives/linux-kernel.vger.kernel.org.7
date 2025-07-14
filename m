@@ -1,144 +1,141 @@
-Return-Path: <linux-kernel+bounces-729277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66421B03434
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 03:38:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE525B03438
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 03:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 006371754C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:38:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34A32175724
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E81119E97A;
-	Mon, 14 Jul 2025 01:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCiDyx0h"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405441A5BB1;
+	Mon, 14 Jul 2025 01:42:43 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE722E630;
-	Mon, 14 Jul 2025 01:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B54F17B50F;
+	Mon, 14 Jul 2025 01:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752457102; cv=none; b=hQiAcTULYQHoCmaCJ6MJoTsqrO0FYMzG1TonZwCJwMEoZJKPmuHcxFwbfPFS5Ko0GTTWHukHSs1kf+AHwKMHCe09ur+M6UwtwLLZGDTgokKfWkJkChOIeMzYUQqxEmfTe9+fsxR+6lVDqocmqA0SEDuUHAan+26bPYU2rKlQDSM=
+	t=1752457362; cv=none; b=MMXlaetbLnHBE4yuR0O+hpg1qzdqfdOWIg6bvorouSE8+2qMUA4oKYU2RZ03EiN68onUyo4Z4tMEU/3stjtP1m3ByhEmEQKXgI0LgzDuauqdcZKr7gnyK50mUib/aRzsvTjt6lZU5hIJGDPi9KpriT6eQDGtvD9enlc0+NvkOM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752457102; c=relaxed/simple;
-	bh=DHusJ3vyligIBarK8AcXZdKTmRrphxVq4ktA+nGAWI0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sfG/VxMGCwXfZ6Mfko6mm9MLcxPeX8xpJK31rngQlYeYeDpjHz5+YEqC4zTq3TueIkPH7buyOkgFmqmYw6LsMaXWj3i8bM3jlwZljf7ufEQA4GEDxQ7HgtEx1eQH3QAkiq+P9Ndo17NXi++WdCfCgd1uv4y8yJodlrqD/qZBMIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UCiDyx0h; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-234d3261631so29370745ad.1;
-        Sun, 13 Jul 2025 18:38:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752457101; x=1753061901; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=CtcreD6AJjdJvbgPMY2aPGi0VXiodaMP38me0CGQ908=;
-        b=UCiDyx0hIAWjLBzVlTfe74nwQ81doQqiVMy+C4HEHTL3Bo5UN36pNq2lkGcCV8W9K/
-         5DVyqwNGZ5JGkeTXc5cVvPnUHdq41BEQckWmnECHdk2SUCHvl8JJctFOn55sBsvyJus0
-         g+sD1tForp0JEBMFUvBdI4WFg2BG7XXl8i6EDeO7KndHf5o9ioM9RNubMB6YQfgcSZKB
-         NoeLB3AVs7dkaahBQZ2s8QQNbhHNvq+CPeqRNIABpnjUUAvzwNRSKmNN+4+o8wGZ0X9W
-         EXqUQS7CA/hjefQIFAu/IW5eLKSsK2xczx/+0RzRUPbjToTZfCGXOoJotYXd74vXICVU
-         mSng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752457101; x=1753061901;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CtcreD6AJjdJvbgPMY2aPGi0VXiodaMP38me0CGQ908=;
-        b=Oljyz5Sc8/1BtZWdbSJk3SDBEOzQIuv7Dxso4KG9vMEAJ0+r5nX7fjPbuld7Wb4jpz
-         iBBQJs9kAwpz2sEe8xpx9J9qdlkbR+FiyOopQVon+HdAhKKvmBfK0FX5cdpBM8yf1YRd
-         Zhav7pNj89CN7m84FEvUUOMZHBu7MG969/e1paKhYBv+2LsXiWg827+5NJ/h4Bllu5Tm
-         X8fJOGGpqzu5AK5IqWZMXJhUV+9ur4zYC+BkmRqiAU5+nTZMSFE34U3VH4d7SACkaJes
-         8CChA3ap2mGiTjhwV0c7roKR8tLPA4lzpMw3otGu2ZUh6+s4fqyhYOWRcwbs1xlLMe8x
-         GImw==
-X-Forwarded-Encrypted: i=1; AJvYcCVD5RJ2Il201ODSWong10sd7w3T0/hJ+guJfJMW8OGG4Nrtpa7ZMSPe6JqO5qxkIFdbtw/p8ztUJyiS@vger.kernel.org, AJvYcCXzursX3SkkLX7VOzNMcprQ9bER3yJWHFlzHI+0B1y6oN3sWD/UfXMs7gzfRBPn6EMX0Olsvg64uXIF5lqq@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgqXlctAAUkRmqXea8q8GGlCSMb2HYTVqRmYbxg3VSN6KDkswa
-	SM2vL3wLhDBMsgvWe7fda8d0KprTGa88QD9asVDtenPJRTQG8a+mrCqx
-X-Gm-Gg: ASbGncsGD3cT1sf0n96BuOYU7vbGStSeXP3kGZitsaAnuzfaIG3VMez+D5pt6jeLssQ
-	cQYkabotRG82qtLhW1IlPii8Lb5Bc8wl4pUQHvEiOo+H/UfugEsDtr7oCG83hOF+0dnT2DweMC8
-	0BC370TqGWMxO0AWO75Ods6z81dQxONKO6NAHGJ82Ka9sd6gxkSpughIc3lJ5nAzfmg41mybza4
-	fZn9fslllG74yWHiwfbn3zg9aH1bGRwzYftV0ic8ZI3WUGhruiZEyCc8jC8T0Aiz+lGxvX4LM1f
-	nCUxYzJeOiWBaoHPVvldZRgaO6zZWdq9p+obuMCON60RdTrp27jf+GPzYxA64la4Y8lrFm6jFyA
-	TBSmolviat+46GCbckvqi7gv50e0W1dx+dkfBM5XtVi+clER1wQ==
-X-Google-Smtp-Source: AGHT+IEIRUYRqdI+zg7zKmJp6H3n+T7xR/d9+UN+LenXlPemYbXlm4SkmvEEau4mVAJEmnAi/H+H7A==
-X-Received: by 2002:a17:903:46cd:b0:235:655:11aa with SMTP id d9443c01a7336-23dede92f44mr173918115ad.39.1752457100589;
-        Sun, 13 Jul 2025 18:38:20 -0700 (PDT)
-Received: from rigel (61-68-193-107.tpgi.com.au. [61.68.193.107])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4359b6fsm81283295ad.212.2025.07.13.18.38.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jul 2025 18:38:19 -0700 (PDT)
-Date: Mon, 14 Jul 2025 09:38:13 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Jan =?iso-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>,
-	Marek Vasut <marex@denx.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v4 00/10] gpio: sysfs: add a per-chip export/unexport
- attribute pair
-Message-ID: <20250714013813.GA12284@rigel>
-References: <20250704-gpio-sysfs-chip-export-v4-0-9289d8758243@linaro.org>
- <CAMRc=Mc7HaVjchDWN_oWUuqgVZbj3ZVYvU-bwiA+ZUH+0gEXSQ@mail.gmail.com>
+	s=arc-20240116; t=1752457362; c=relaxed/simple;
+	bh=Ig2mW+5iqgiYPqiUeW1n6f3E0LqQ+vCx9U52+gFjSac=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Sf3hij9mfkPvsILoSIrRKoxAak8lzaMggxGkQ+HXfNbay4InmOpQEsc06KdMli44zQ9SKJqC92Ic+vUo0k7JSOePT8N+G7UbZVMIpS1WBT7YnA1+oJ6Q/ofx7DA7oKc2LzMUPfA1sYgN/RkOS3uHQkODjKkOj0ZBfdTYy5YevYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bgQ6x0TDfzKHMrL;
+	Mon, 14 Jul 2025 09:42:33 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 99A3C1A07FA;
+	Mon, 14 Jul 2025 09:42:31 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgB3QBGGYHRosQjDAA--.28839S3;
+	Mon, 14 Jul 2025 09:42:31 +0800 (CST)
+Subject: Re: [PATCH RFC] mm/readahead: improve randread performance with
+ readahead disabled
+To: Yu Kuai <yukuai1@huaweicloud.com>, willy@infradead.org,
+ akpm@linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250701110834.3237307-1-yukuai1@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <19b73b35-1e16-cb7d-d32f-d054d3e66fa0@huaweicloud.com>
+Date: Mon, 14 Jul 2025 09:42:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20250701110834.3237307-1-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Mc7HaVjchDWN_oWUuqgVZbj3ZVYvU-bwiA+ZUH+0gEXSQ@mail.gmail.com>
+X-CM-TRANSID:gCh0CgB3QBGGYHRosQjDAA--.28839S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF4rWF4fGr43AFyxCrWUtwb_yoW8ZF15pF
+	W3Can2yr1xXryfArWxJ3WUXF4SgFsaqF4fJFy5J345CrnxGrWakr9agr4DWFWqyrn7Xw4U
+	Zr4DZF9xZrWqvrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUZYFZUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Sun, Jul 13, 2025 at 10:48:03AM +0200, Bartosz Golaszewski wrote:
-> On Fri, Jul 4, 2025 at 2:58â€¯PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> >
-> > Following our discussion[1], here's a proposal for extending the sysfs
-> > interface with attributes not referring to GPIO lines by their global
-> > numbers in a backward compatible way.
-> >
-> > Long story short: there is now a new class device for each GPIO chip.
-> > It's called chipX where X is the ID of the device as per the driver
-> > model and it lives next to the old gpiochipABC where ABC is the GPIO
-> > base. Each new chip class device has a pair of export/unexport
-> > attributes which work similarly to the global ones under /sys/class/gpio
-> > but take hardware offsets within the chip as input, instead of the
-> > global numbers. Finally, each exported line appears at the same time as
-> > the global /sys/class/gpio/gpioABC as well as per-chip
-> > /sys/class/gpio/chipX/gpioY sysfs group except that the latter only
-> > implements a minimal subset of the functionality of the former, namely:
-> > only the 'direction' and 'value' attributes and it doesn't support event
-> > polling.
-> >
-> > The series contains the implementation of a parallel GPIO chip entry not
-> > containing the base GPIO number in the name and the corresponding sysfs
-> > attribute group for each exported line that lives under the new chip
-> > class device as well as a way to allow to compile out the legacy parts
-> > leaving only the new elements of the sysfs ABI.
-> >
-> > This series passes the compatibility tests I wrote while working on the
-> > user-space compatibility layer for sysfs[2].
-> >
-> > [1] https://lore.kernel.org/all/CAMRc=McUCeZcU6co1aN54rTudo+JfPjjForu4iKQ5npwXk6GXA@mail.gmail.com/
-> > [2] https://github.com/brgl/gpio-sysfs-compat-tests
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
+Hi,
+
+ÔÚ 2025/07/01 19:08, Yu Kuai Ð´µÀ:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> Alright, so what are we doing about this? Should I queue these patches
-> for v6.17? Kent, any additional comments?
+> We have a workload of random 4k-128k read on a HDD, from iostat we observed
+> that average request size is 256k+ and bandwidth is 100MB+, this is because
+> readahead waste lots of disk bandwidth. Hence we disable readahead and
+> performance from user side is indeed much better(2x+), however, from
+> iostat we observed request size is just 4k and bandwidth is just around
+> 40MB.
+> 
+> Then we do a simple dd test and found out if readahead is disabled,
+> page_cache_sync_ra() will force to read one page at a time, and this
+> really doesn't make sense because we can just issue user requested size
+> request to disk.
+> 
+> Fix this problem by removing the limit to read one page at a time from
+> page_cache_sync_ra(), this way the random read workload can get better
+> performance with readahead disabled.
+> 
+> PS: I'm not sure if I miss anything, so this version is RFC
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>   mm/readahead.c | 12 ++++++++++--
+>   1 file changed, 10 insertions(+), 2 deletions(-)
+> 
 
-Nothing beyond what I've already said.
+Friendly ping ...
 
-Cheers,
-Kent.
+> diff --git a/mm/readahead.c b/mm/readahead.c
+> index 20d36d6b055e..1df85ccba575 100644
+> --- a/mm/readahead.c
+> +++ b/mm/readahead.c
+> @@ -561,13 +561,21 @@ void page_cache_sync_ra(struct readahead_control *ractl,
+>   	 * Even if readahead is disabled, issue this request as readahead
+>   	 * as we'll need it to satisfy the requested range. The forced
+>   	 * readahead will do the right thing and limit the read to just the
+> -	 * requested range, which we'll set to 1 page for this case.
+> +	 * requested range.
+>   	 */
+> -	if (!ra->ra_pages || blk_cgroup_congested()) {
+> +	if (blk_cgroup_congested()) {
+>   		if (!ractl->file)
+>   			return;
+> +		/*
+> +		 * If the cgroup is congested, ensure to do at least 1 page of
+> +		 * readahead to make progress on the read.
+> +		 */
+>   		req_count = 1;
+>   		do_forced_ra = true;
+> +	} else if (!ra->ra_pages) {
+> +		if (!ractl->file)
+> +			return;
+> +		do_forced_ra = true;
+>   	}
+>   
+>   	/* be dumb */
+> 
+
 
