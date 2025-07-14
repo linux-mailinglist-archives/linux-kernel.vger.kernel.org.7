@@ -1,151 +1,138 @@
-Return-Path: <linux-kernel+bounces-730141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CBC8B040A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:55:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A302FB040AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97E3C1737FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:55:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 017C5189068D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63018253F05;
-	Mon, 14 Jul 2025 13:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD976254B03;
+	Mon, 14 Jul 2025 13:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wflch4V2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kdl3S+vL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2BC1991B6;
-	Mon, 14 Jul 2025 13:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAF41991B6;
+	Mon, 14 Jul 2025 13:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752501296; cv=none; b=LKFeqgjbT14gfOMu2VDgFUnZu96jxIvWh89MUcKOpw3dJ9ZWD+94Eev9ja8BOScKzzopkz86BTHoFkKHCc4kSGDBPSA8L6RPGqmpwGDO4Bf/Cum8d8mRVnJCo4ITb1b7wqEe0sbIPellzWTqz+M6ReqWwrJxvrDyUAWMVFeqMOQ=
+	t=1752501306; cv=none; b=lxHShbplYM6ZVVcGaep8Rx347Y6ZjWA3ABQ3Lmxv9enP3yeVz1fiDuO+wIM7JNDvPYa0atVi7Ja4I53IfhZUGuQcVera0aXyegssWLRxmirJwVg/nM6OcpN3NsT2Twaxefztnq9ToaB2mLWOUnA/lAlB/lXkirts/a/OdXvIKX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752501296; c=relaxed/simple;
-	bh=w38kbmwlooLguwpYmfhwYlDVSOpB0PSAX31I9YDADzk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oyKCYJxtRiMT1l5APGOlkuweHLnKH9dLJmPTmffy7+lYt4GUXePODBttb0UCbe/BgngC5jShzhHs6wtYf+jXOmJdrThqMwNMjhaKO7yK5YMVDhlievMfqOeU7KvBX12i/TNOO7ohhtIpXuY74pIrpYxFm9vLNa5ubMnDAeDc4HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wflch4V2; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752501295; x=1784037295;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=w38kbmwlooLguwpYmfhwYlDVSOpB0PSAX31I9YDADzk=;
-  b=Wflch4V2C+GzOA+ZaeT/qO8qCbm3M5Wd0nWjcbd4dVmqKSLiQEQOLP4H
-   qypzFXL3CWQ9F6g96EkQnN6RAe7zGFTBqyPa5DGVUBz/BYlQ/Bnjfx6Ij
-   Q4uxJ6wedak36GaVSp/qAo417iuO9eO+B53CsMrWO937XKHhv6W48KAyS
-   eXGQVP18I/6E2T9Lm+Ob6No0HwpK+UlMfYtRihdELNiPnCz6w/dufm5IU
-   MMcqT2nwsKXrk9z/qbxq8WFa3udjK+E0Xvu4mT6p+zxIGM1g4dx+jHpmL
-   Rpk+ad+2nuc7sTPMUJo4wggAKbMHdh8rAqehyXfFw9TiwySFWiu+J2qSD
-   w==;
-X-CSE-ConnectionGUID: jwdyKsaQSIKynbwA1yZROw==
-X-CSE-MsgGUID: SrEPvrxhQdaZY5PKLh8T+g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="64952869"
-X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
-   d="scan'208";a="64952869"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 06:54:55 -0700
-X-CSE-ConnectionGUID: YftOcVh/SKqmm3qTBCsFgw==
-X-CSE-MsgGUID: 0wUaOB3eRBq8RYZIXbPsIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
-   d="scan'208";a="157040592"
-Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.111.82]) ([10.125.111.82])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 06:54:52 -0700
-Message-ID: <2cd81800-12ba-460e-ac28-4532d0be1ec9@intel.com>
-Date: Mon, 14 Jul 2025 06:54:50 -0700
+	s=arc-20240116; t=1752501306; c=relaxed/simple;
+	bh=SsDJZedGWgEi2BKmb66mOY5op0SJ42iRGSbd4YnIV8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IcJig9k+mB8wIoitspc7LGvaCw1809a7lPce80c6texXct1lOEP9YGtR1IgE5vsHp//F/qnfwOkNeVW42TSTMiBstfmq8GYzZ5qV9RUnNgYHPTCcvzAyB0PW4hkFYPc8BsqdyxZR9YtbeBpqROaS8Z4j3JFYB/uL1Cld/Ym8ErY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kdl3S+vL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6438C4CEED;
+	Mon, 14 Jul 2025 13:55:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752501305;
+	bh=SsDJZedGWgEi2BKmb66mOY5op0SJ42iRGSbd4YnIV8w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kdl3S+vLRtZWBuqnyVvLDBGEiSQ8tPChA9ba9F6FokLDS+mmIPv17jkqYGxc7Qx2B
+	 cD7S5UlGpnMsdqM0tkC/edGc2W+EBHd3o1Tw4nM4WFrM64PxIewSARZPHleeTtIUp5
+	 1h1qC7duFHHetvOrGA1YcArcNWi4AJKfltmgQXcJkSkHibFhwUDdZoufD43GwEhYaN
+	 sOVLKO4DanJ+LB+KnRbIPEl6YxXWXwdqB446mBP8IST/mMcHYjT2QBJLkQ7ubB40yn
+	 hUbfva7GkltBHybjFJhHFvJagzFIbIm5JYxkbzic5uzE/JdgFQ3UgYObJqN4qCXr7Y
+	 rjVxp5L6kZnyA==
+Date: Mon, 14 Jul 2025 14:54:58 +0100
+From: Will Deacon <will@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>, leo.yan@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v3 04/10] arm64/boot: Enable EL2 requirements for
+ SPE_FEAT_FDS
+Message-ID: <aHUMMk9JUdK6luLN@willie-the-truck>
+References: <20250605-james-perf-feat_spe_eft-v3-0-71b0c9f98093@linaro.org>
+ <20250605-james-perf-feat_spe_eft-v3-4-71b0c9f98093@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 5/5] x86/sgx: Enable automatic SVN updates for SGX
- enclaves
-To: "Reshetova, Elena" <elena.reshetova@intel.com>
-Cc: "jarkko@kernel.org" <jarkko@kernel.org>,
- "seanjc@google.com" <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>,
- "mingo@kernel.org" <mingo@kernel.org>,
- "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>, "Mallick, Asit K"
- <asit.k.mallick@intel.com>,
- "Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
- "Cai, Chong" <chongc@google.com>, "Aktas, Erdem" <erdemaktas@google.com>,
- "Annapurve, Vishal" <vannapurve@google.com>,
- "dionnaglaze@google.com" <dionnaglaze@google.com>,
- "Bondarevska, Nataliia" <bondarn@google.com>,
- "Raynor, Scott" <scott.raynor@intel.com>
-References: <20250711165212.1354943-1-elena.reshetova@intel.com>
- <20250711165212.1354943-6-elena.reshetova@intel.com>
- <461a33d3-f91a-4dd3-bb97-048670530b25@intel.com>
- <DM8PR11MB57503EC8DF105A7D7FF02303E754A@DM8PR11MB5750.namprd11.prod.outlook.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <DM8PR11MB57503EC8DF105A7D7FF02303E754A@DM8PR11MB5750.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250605-james-perf-feat_spe_eft-v3-4-71b0c9f98093@linaro.org>
 
-On 7/14/25 00:35, Reshetova, Elena wrote:
-> I think you put it: this would require a spinlock in the fast path and
-> *in theory* if we are running many many concurrent enclaves can create 
-> contention
+On Thu, Jun 05, 2025 at 11:49:02AM +0100, James Clark wrote:
+> SPE data source filtering (optional from Armv8.8) requires that traps to
+> the filter register PMSDSFR be disabled. Document the requirements and
+> disable the traps if the feature is present.
+> 
+> Tested-by: Leo Yan <leo.yan@arm.com>
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>  Documentation/arch/arm64/booting.rst | 11 +++++++++++
+>  arch/arm64/include/asm/el2_setup.h   | 14 ++++++++++++++
+>  2 files changed, 25 insertions(+)
+> 
+> diff --git a/Documentation/arch/arm64/booting.rst b/Documentation/arch/arm64/booting.rst
+> index dee7b6de864f..abd75085a239 100644
+> --- a/Documentation/arch/arm64/booting.rst
+> +++ b/Documentation/arch/arm64/booting.rst
+> @@ -404,6 +404,17 @@ Before jumping into the kernel, the following conditions must be met:
+>      - HDFGWTR2_EL2.nPMICFILTR_EL0 (bit 3) must be initialised to 0b1.
+>      - HDFGWTR2_EL2.nPMUACR_EL1 (bit 4) must be initialised to 0b1.
+>  
+> +  For CPUs with SPE data source filtering (FEAT_SPE_FDS):
+> +
+> +  - If EL3 is present:
+> +
+> +    - MDCR_EL3.EnPMS3 (bit 42) must be initialised to 0b1.
+> +
+> +  - If the kernel is entered at EL1 and EL2 is present:
+> +
+> +    - HDFGRTR2_EL2.nPMSDSFR_EL1 (bit 19) must be initialised to 0b1.
+> +    - HDFGWTR2_EL2.nPMSDSFR_EL1 (bit 19) must be initialised to 0b1.
+> +
+>    For CPUs with Memory Copy and Memory Set instructions (FEAT_MOPS):
+>  
+>    - If the kernel is entered at EL1 and EL2 is present:
+> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
+> index 1e7c7475e43f..02b4a7fc016e 100644
+> --- a/arch/arm64/include/asm/el2_setup.h
+> +++ b/arch/arm64/include/asm/el2_setup.h
+> @@ -279,6 +279,20 @@
+>  	orr	x0, x0, #HDFGRTR2_EL2_nPMICFILTR_EL0
+>  	orr	x0, x0, #HDFGRTR2_EL2_nPMUACR_EL1
+>  .Lskip_pmuv3p9_\@:
+> +	mrs	x1, id_aa64dfr0_el1
+> +	ubfx	x1, x1, #ID_AA64DFR0_EL1_PMSVer_SHIFT, #4
+> +	/* If SPE is implemented, */
+> +	cmp	x1, #ID_AA64DFR0_EL1_PMSVer_IMP
+> +	b.lt	.Lskip_spefds_\@
+> +	/* we can read PMSIDR and */
+> +	mrs_s	x1, SYS_PMSIDR_EL1
+> +	and	x1, x1,  #PMSIDR_EL1_FDS
+> +	/* if FEAT_SPE_FDS is implemented, */
+> +	cbz	x1, .Lskip_spefds_\@
+> +	/* disable traps to PMSDSFR. */
+> +	orr	x0, x0, #HDFGRTR2_EL2_nPMSDSFR_EL1
 
-FWIW, my mental model is that spinlocks that are held for short periods
-of time are pretty much the same cost as an atomic under contention.
+Why is this being done here rather than alongside the existing SPE
+configuration of HDFGRTR_EL2 and HDFGWTR_EL2 near the start of
+__init_el2_fgt?
 
-If there are lots of users, the cost of moving the cacheline for the
-atomic or the spinlock dominates everything else. It doesn't matter
-whether that cacheline is an atomic_t or spinlock_t.
-
-The only difference is that there is _visible_ spinning for a spinlock.
+Will
 
