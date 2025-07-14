@@ -1,120 +1,240 @@
-Return-Path: <linux-kernel+bounces-730128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D118DB04081
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:47:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA02B0407F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80473AD2D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:46:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 397EF16344A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9122325394C;
-	Mon, 14 Jul 2025 13:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64D422A808;
+	Mon, 14 Jul 2025 13:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qs9++FUC"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HIBZiCJT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAA1253F2C
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6044253355;
+	Mon, 14 Jul 2025 13:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752500789; cv=none; b=vAinWwnLvSkwan4EMj7GH/B59XFoFkI/qUZJou+zLElYYHTohQ8zeaotlALlSRCmjfCGHLnZddw+vM0t++5WLmsWDNnQg1/DT8hDibR8EhvcXrg1kplIHRa7apThGDe45jdD38I3ulmjYQ2httRQLLwC+DR5DVlyaFu8L4B1oUA=
+	t=1752500785; cv=none; b=tQokTb/jRGMXpWNXhzyxMNpvQtNJvpWOwSLQYeKYDoJU42l7PX+EUf/nPetmIk1pvmjlwjv6zeTVVKBeQePMtt+YynuTIRkv8QVxvkULJV67TmEyVERNmhc0LxJeO4ZxWB5t5Hg6Cx3toOOW2taBzQTeUzADojU7nqu9ciBgz0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752500789; c=relaxed/simple;
-	bh=UWzSca5u9tiBU+W9UUwhaW3+bszaRw65dQ+DZ4fHHbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kjemwTyx7yXrzM8RSHOUAXBno6DD3mACczj1p6hlpcbahOA3aLCH6hi/mZIz3ynojpWKb+GDIn+DejKkjFkP11yXihWfgib/a7NzsT/ancvnFAcB2i/MNPcPck8vmXa/O/Z8RiQYtDDvqZy8rOWxms9DD+qQN824w+/ygoohuLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qs9++FUC; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-708d90aa8f9so37769747b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 06:46:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752500785; x=1753105585; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=r6Hbz92/x9FL+FBlPeBNmgTh+QKbNYeF+ROETx2CnRA=;
-        b=Qs9++FUCv0e6vB/MAgMnw4bL1np486iY+fYuSlfDNdtnKgiRo2SqudikjWl5HfnNGM
-         6X8kdN5O7XmealFzEtgxEpEHJKjMZI52XnRQBIJmHVDOoCZL+dREYLl2vJVGiZnfjKqT
-         MTeLo+0CdAlTRIAqN6+cfzwT4jjaGEcnI7DxXc0rNdcuxa3BkUjYGGlyigkbdw6vrfVH
-         gjQxtbAoA8bXuuU5yAbrjghtDCt6AOdQWy4BdPggJltpFDtgtDNdXCI2ZrKr0JIr+kvd
-         6klmMOH56ombYpf+8dhw5qocOzrjdcExNxld3+XTkNvMlUv7K9birCaS+QBSh5bW/bus
-         8KXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752500785; x=1753105585;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r6Hbz92/x9FL+FBlPeBNmgTh+QKbNYeF+ROETx2CnRA=;
-        b=oiSvF/3FpzI9+DD3IYTFFGsxJnGFEg1QOJ7Y7jPFOeFzQpK0Ul3UkH55y4SuJMWvy2
-         LU2NdznlEMHpMUhDZH/eRSKyLrt7KaSdCBxmLH5B84LPebgPTXTrotuLS8TSnMVW6UeT
-         HYLLOg/xKggowe3wpdNc1duc/XhnCpOdpWLWrL3EIPk35m1mDYQUXut0cxzMaddFPtSl
-         H6O+VernFSEWPgCecn2Xk5TbZColZBaGl1r//7T8FTEyzh2nqA1m/KF6PRg8XurRwv5K
-         cDcYJdgMtsZdedOzzZL8YGn6quoTHWFpVr2xoafyhsCqMl9+l2L+eb39MzDM42IXIMDY
-         5RAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbJbYnWnS2xn392ZD61SVRo5g64uyqju9TGX0RNgr3zpqRd+T3NyIFcl+vKqfPyN4A55/lH6l0yC0wwzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8BfoDtbmwdztZwGZZEVa/5kKekQ5CrivLNuj6lJLISvRYvJC5
-	1YjRc2jo3OmRF1VL2je7Rw6e+2euo/rIz0j70mMtaVxGd0Uzq6+Azx/j
-X-Gm-Gg: ASbGncuixeI0gKq/bep4WUm9Xc9fzqLCDFnO8oj57zDYOA9Ff0mzyioXboRfFsaneQI
-	cN/Sd6LJHlwU6+Zl7yiusZOkBaYInKWav8WHq1cCtBdFc+Q7d/cKXCwJQ25stTA7o4z1oReeTBp
-	sBXw8KZ2Ixz0QBGUlFGq6lnFJXeuY26lp2g8ctn9SojVVkI9zDRt9nUTLy7w2qVybYX/VRVT2Lc
-	7apbUh1HUyXNJhF0ikr4ybKvHRxr+FEAJIBe9n5COiS+nK/TUWNs9y6qk18ngRT3GooDSLkqsZi
-	sll8elK8DL6o4nboXyohCB138jPV+jZKA7qmgwOy3LUosetRRjOTiADU2nBxDveFlOEbqox8ez3
-	rnyb7lfoCtzxG4o+MDFpcR9cghfvyot+N+56BtmSo+ZF5kUN1yAs=
-X-Google-Smtp-Source: AGHT+IEjFQnYc3dX2wC/TJw+1x2lmoR80MZ9iengzJu2U4aQJIm7eVy+DcNW7hsQ+5G1kVVNvKQ+2A==
-X-Received: by 2002:a05:690c:c09:b0:716:69e0:bb85 with SMTP id 00721157ae682-717d5dab701mr219868997b3.18.1752500785259;
-        Mon, 14 Jul 2025 06:46:25 -0700 (PDT)
-Received: from elitebook.4.local ([2a00:5881:3041:2700:8626:7146:3329:ad67])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-717c5d891fesm19722487b3.52.2025.07.14.06.46.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 06:46:24 -0700 (PDT)
-From: Andrei Zeucianu <benjaminpotron@gmail.com>
-To: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org
-Cc: ~lkcamp/patches@lists.sr.ht,
-	koike@igalia.com,
-	Andrei Zeucianu <benjaminpotron@gmail.com>
-Subject: [PATCH] staging: rtl8723bs: hal: remove blank line before close brace
-Date: Mon, 14 Jul 2025 15:46:11 +0200
-Message-ID: <20250714134611.119442-1-benjaminpotron@gmail.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1752500785; c=relaxed/simple;
+	bh=z6HOlc4d4/6v9yiOT75dMW3Y+Io2teVHe4b1UBdhmCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LunL5MODffrUk7/3H32tNwl2Ya8BMvGfY7os0oezi1ldfttkONBeyFHp7apNXsmjdoF2IsDiqGW25x8brtss2RAilqWwve6BGAkNrOoXI+YrOauJZafrsOsnP/Jy7j+i9ywcMqqeoc5s4BEFdh78oMVuQsM/M62fKSCzivLHkQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HIBZiCJT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64FA9C4CEED;
+	Mon, 14 Jul 2025 13:46:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752500784;
+	bh=z6HOlc4d4/6v9yiOT75dMW3Y+Io2teVHe4b1UBdhmCU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HIBZiCJTIKcoMWgz53SvYqU3ji9dzJEOTX+rFPy95fViBAusWB9EkY/w4W3up1gyR
+	 QHtxlLIZCjXLRof2AjpP3ONdEVpxnTBsQwfhFTzHy8qR+f9lhU9dJWPhG+svZCkJFc
+	 Z11jlBcwl4r/tXv+Q0sQz9nUT0PM1i6aApkMVyLvn+V/2FGDBOVgGW7IRhVayckknz
+	 WEwRr2aAhGQBblBdnkpp3MX24zHuQshjSxoHUeyM+LyiPOrqm6eKZy3lZkIYK4eyc5
+	 eHO7nemJ3YhytIe6vz1zpmz5NyE5cnRApAjw1rerqH2HFcYjcBFAnwziN3FGhbzA+5
+	 D/g+8lPwKKRmA==
+Date: Mon, 14 Jul 2025 14:46:16 +0100
+From: Will Deacon <will@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>, leo.yan@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v3 03/10] perf: arm_spe: Add support for FEAT_SPE_EFT
+ extended filtering
+Message-ID: <aHUKKPySsJ4ne-EE@willie-the-truck>
+References: <20250605-james-perf-feat_spe_eft-v3-0-71b0c9f98093@linaro.org>
+ <20250605-james-perf-feat_spe_eft-v3-3-71b0c9f98093@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250605-james-perf-feat_spe_eft-v3-3-71b0c9f98093@linaro.org>
 
-Fix checkpatch error "CHECK: Blank lines aren't necessary
-before a close brace '}' in odm_DIG.c:374.
+On Thu, Jun 05, 2025 at 11:49:01AM +0100, James Clark wrote:
+> FEAT_SPE_EFT (optional from Armv9.4) adds mask bits for the existing
+> load, store and branch filters. It also adds two new filter bits for
+> SIMD and floating point with their own associated mask bits. The current
+> filters only allow OR filtering on samples that are load OR store etc,
+> and the new mask bits allow setting part of the filter to an AND, for
+> example filtering samples that are store AND SIMD. With mask bits set to
+> 0, the OR behavior is preserved, so the unless any masks are explicitly
+> set old filters will behave the same.
+> 
+> Add them all and make them behave the same way as existing format bits,
+> hidden and return EOPNOTSUPP if set when the feature doesn't exist.
+> 
+> Reviewed-by: Leo Yan <leo.yan@arm.com>
+> Tested-by: Leo Yan <leo.yan@arm.com>
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>  drivers/perf/arm_spe_pmu.c | 64 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+> 
+> diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+> index d9f6d229dce8..9309b846f642 100644
+> --- a/drivers/perf/arm_spe_pmu.c
+> +++ b/drivers/perf/arm_spe_pmu.c
+> @@ -86,6 +86,7 @@ struct arm_spe_pmu {
+>  #define SPE_PMU_FEAT_ERND			(1UL << 5)
+>  #define SPE_PMU_FEAT_INV_FILT_EVT		(1UL << 6)
+>  #define SPE_PMU_FEAT_DISCARD			(1UL << 7)
+> +#define SPE_PMU_FEAT_EFT			(1UL << 8)
+>  #define SPE_PMU_FEAT_DEV_PROBED			(1UL << 63)
+>  	u64					features;
+>  
+> @@ -197,6 +198,27 @@ static const struct attribute_group arm_spe_pmu_cap_group = {
+>  #define ATTR_CFG_FLD_discard_CFG		config	/* PMBLIMITR_EL1.FM = DISCARD */
+>  #define ATTR_CFG_FLD_discard_LO			35
+>  #define ATTR_CFG_FLD_discard_HI			35
+> +#define ATTR_CFG_FLD_branch_filter_mask_CFG	config	/* PMSFCR_EL1.Bm */
+> +#define ATTR_CFG_FLD_branch_filter_mask_LO	36
+> +#define ATTR_CFG_FLD_branch_filter_mask_HI	36
+> +#define ATTR_CFG_FLD_load_filter_mask_CFG	config	/* PMSFCR_EL1.LDm */
+> +#define ATTR_CFG_FLD_load_filter_mask_LO	37
+> +#define ATTR_CFG_FLD_load_filter_mask_HI	37
+> +#define ATTR_CFG_FLD_store_filter_mask_CFG	config	/* PMSFCR_EL1.STm */
+> +#define ATTR_CFG_FLD_store_filter_mask_LO	38
+> +#define ATTR_CFG_FLD_store_filter_mask_HI	38
+> +#define ATTR_CFG_FLD_simd_filter_CFG		config	/* PMSFCR_EL1.SIMD */
+> +#define ATTR_CFG_FLD_simd_filter_LO		39
+> +#define ATTR_CFG_FLD_simd_filter_HI		39
+> +#define ATTR_CFG_FLD_simd_filter_mask_CFG	config	/* PMSFCR_EL1.SIMDm */
+> +#define ATTR_CFG_FLD_simd_filter_mask_LO	40
+> +#define ATTR_CFG_FLD_simd_filter_mask_HI	40
+> +#define ATTR_CFG_FLD_float_filter_CFG		config	/* PMSFCR_EL1.FP */
+> +#define ATTR_CFG_FLD_float_filter_LO		41
+> +#define ATTR_CFG_FLD_float_filter_HI		41
+> +#define ATTR_CFG_FLD_float_filter_mask_CFG	config	/* PMSFCR_EL1.FPm */
+> +#define ATTR_CFG_FLD_float_filter_mask_LO	42
+> +#define ATTR_CFG_FLD_float_filter_mask_HI	42
+>  
+>  #define ATTR_CFG_FLD_event_filter_CFG		config1	/* PMSEVFR_EL1 */
+>  #define ATTR_CFG_FLD_event_filter_LO		0
+> @@ -215,8 +237,15 @@ GEN_PMU_FORMAT_ATTR(pa_enable);
+>  GEN_PMU_FORMAT_ATTR(pct_enable);
+>  GEN_PMU_FORMAT_ATTR(jitter);
+>  GEN_PMU_FORMAT_ATTR(branch_filter);
+> +GEN_PMU_FORMAT_ATTR(branch_filter_mask);
+>  GEN_PMU_FORMAT_ATTR(load_filter);
+> +GEN_PMU_FORMAT_ATTR(load_filter_mask);
+>  GEN_PMU_FORMAT_ATTR(store_filter);
+> +GEN_PMU_FORMAT_ATTR(store_filter_mask);
+> +GEN_PMU_FORMAT_ATTR(simd_filter);
+> +GEN_PMU_FORMAT_ATTR(simd_filter_mask);
+> +GEN_PMU_FORMAT_ATTR(float_filter);
+> +GEN_PMU_FORMAT_ATTR(float_filter_mask);
+>  GEN_PMU_FORMAT_ATTR(event_filter);
+>  GEN_PMU_FORMAT_ATTR(inv_event_filter);
+>  GEN_PMU_FORMAT_ATTR(min_latency);
+> @@ -228,8 +257,15 @@ static struct attribute *arm_spe_pmu_formats_attr[] = {
+>  	&format_attr_pct_enable.attr,
+>  	&format_attr_jitter.attr,
+>  	&format_attr_branch_filter.attr,
+> +	&format_attr_branch_filter_mask.attr,
+>  	&format_attr_load_filter.attr,
+> +	&format_attr_load_filter_mask.attr,
+>  	&format_attr_store_filter.attr,
+> +	&format_attr_store_filter_mask.attr,
+> +	&format_attr_simd_filter.attr,
+> +	&format_attr_simd_filter_mask.attr,
+> +	&format_attr_float_filter.attr,
+> +	&format_attr_float_filter_mask.attr,
+>  	&format_attr_event_filter.attr,
+>  	&format_attr_inv_event_filter.attr,
+>  	&format_attr_min_latency.attr,
+> @@ -250,6 +286,16 @@ static umode_t arm_spe_pmu_format_attr_is_visible(struct kobject *kobj,
+>  	if (attr == &format_attr_inv_event_filter.attr && !(spe_pmu->features & SPE_PMU_FEAT_INV_FILT_EVT))
+>  		return 0;
+>  
+> +	if ((attr == &format_attr_branch_filter_mask.attr ||
+> +	     attr == &format_attr_load_filter_mask.attr ||
+> +	     attr == &format_attr_store_filter_mask.attr ||
+> +	     attr == &format_attr_simd_filter.attr ||
+> +	     attr == &format_attr_simd_filter_mask.attr ||
+> +	     attr == &format_attr_float_filter.attr ||
+> +	     attr == &format_attr_float_filter_mask.attr) &&
+> +	     !(spe_pmu->features & SPE_PMU_FEAT_EFT))
+> +		return 0;
+> +
+>  	return attr->mode;
+>  }
+>  
+> @@ -341,8 +387,15 @@ static u64 arm_spe_event_to_pmsfcr(struct perf_event *event)
+>  	u64 reg = 0;
+>  
+>  	reg |= FIELD_PREP(PMSFCR_EL1_LD, ATTR_CFG_GET_FLD(attr, load_filter));
+> +	reg |= FIELD_PREP(PMSFCR_EL1_LDm, ATTR_CFG_GET_FLD(attr, load_filter_mask));
+>  	reg |= FIELD_PREP(PMSFCR_EL1_ST, ATTR_CFG_GET_FLD(attr, store_filter));
+> +	reg |= FIELD_PREP(PMSFCR_EL1_STm, ATTR_CFG_GET_FLD(attr, store_filter_mask));
+>  	reg |= FIELD_PREP(PMSFCR_EL1_B, ATTR_CFG_GET_FLD(attr, branch_filter));
+> +	reg |= FIELD_PREP(PMSFCR_EL1_Bm, ATTR_CFG_GET_FLD(attr, branch_filter_mask));
+> +	reg |= FIELD_PREP(PMSFCR_EL1_SIMD, ATTR_CFG_GET_FLD(attr, simd_filter));
+> +	reg |= FIELD_PREP(PMSFCR_EL1_SIMDm, ATTR_CFG_GET_FLD(attr, simd_filter_mask));
+> +	reg |= FIELD_PREP(PMSFCR_EL1_FP, ATTR_CFG_GET_FLD(attr, float_filter));
+> +	reg |= FIELD_PREP(PMSFCR_EL1_FPm, ATTR_CFG_GET_FLD(attr, float_filter_mask));
+>  
+>  	if (reg)
+>  		reg |= PMSFCR_EL1_FT;
+> @@ -716,6 +769,10 @@ static int arm_spe_pmu_event_init(struct perf_event *event)
+>  	u64 reg;
+>  	struct perf_event_attr *attr = &event->attr;
+>  	struct arm_spe_pmu *spe_pmu = to_spe_pmu(event->pmu);
+> +	const u64 feat_spe_eft_bits = PMSFCR_EL1_LDm | PMSFCR_EL1_STm |
+> +				      PMSFCR_EL1_Bm | PMSFCR_EL1_SIMD |
+> +				      PMSFCR_EL1_SIMDm | PMSFCR_EL1_FP |
+> +				      PMSFCR_EL1_FPm;
 
-Signed-off-by: Andrei Zeucianu <benjaminpotron@gmail.com>
+I'm not sure this constant is adding much, especially as its defined
+quite a long way from its single user.
 
----
+>  
+>  	/* This is, of course, deeply driver-specific */
+>  	if (attr->type != event->pmu->type)
+> @@ -761,6 +818,10 @@ static int arm_spe_pmu_event_init(struct perf_event *event)
+>  	    !(spe_pmu->features & SPE_PMU_FEAT_FILT_LAT))
+>  		return -EOPNOTSUPP;
+>  
+> +	if ((reg & feat_spe_eft_bits) &&
+> +	    !(spe_pmu->features & SPE_PMU_FEAT_EFT))
+> +		return -EOPNOTSUPP;
 
-Hi, this is my first commit/patch in the Linux kernel, I would
-appreciate any feedback! Thanks!
----
- drivers/staging/rtl8723bs/hal/odm_DIG.c | 1 -
- 1 file changed, 1 deletion(-)
+You could probably just spell out the entire thing tbh. It's verbose,
+but it's also pretty clear and it means we have everything in one place:
 
-diff --git a/drivers/staging/rtl8723bs/hal/odm_DIG.c b/drivers/staging/rtl8723bs/hal/odm_DIG.c
-index 1e2946a23beb..f10427abd849 100644
---- a/drivers/staging/rtl8723bs/hal/odm_DIG.c
-+++ b/drivers/staging/rtl8723bs/hal/odm_DIG.c
-@@ -370,7 +370,6 @@ void odm_DIGInit(void *pDM_VOID)
- 
- 	pDM_DigTable->rx_gain_range_max = DM_DIG_MAX_NIC;
- 	pDM_DigTable->rx_gain_range_min = DM_DIG_MIN_NIC;
--
- }
- 
- 
--- 
-2.47.2
+	if ((FIELD_GET(PMSFCR_EL1_LDm, reg) ||
+	     FIELD_GET(PMSFCR_EL1_STm, reg) ||
+	     FIELD_GET(PMSFCR_EL1_Bm, reg) ||
+	     FIELD_GET(PMSFCR_EL1_SIMD, reg) ||
+	     FIELD_GET(PMSFCR_EL1_SIMDm, reg) ||
+	     FIELD_GET(PMSFCR_EL1_FP, reg) ||
+	     FIELD_GET(PMSFCR_EL1_FPm, reg)) &&
+           !(spe_pmu->features & SPE_PMU_FEAT_EFT))
+		return -EOPNOTSUPP;
 
+Will
 
