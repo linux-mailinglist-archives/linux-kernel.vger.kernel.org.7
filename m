@@ -1,64 +1,80 @@
-Return-Path: <linux-kernel+bounces-729364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E04FB03573
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:03:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E97C8B03571
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C483B2F44
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:02:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 621B73B406A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4911B1F417E;
-	Mon, 14 Jul 2025 05:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0231F3BA2;
+	Mon, 14 Jul 2025 05:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ml+e+nJj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y6GI6UVc"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386D31B87E9;
-	Mon, 14 Jul 2025 05:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C2D1F19A;
+	Mon, 14 Jul 2025 05:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752469381; cv=none; b=QhBTi9vdbtvllnBv8RXOX6v+TyhHjZzfwRz6YJ1GCzaCPrxYLVxF0HxZZ6lCTj56qdMQwv6ySq/w0ef3vO+y5KQ2AmLWWntwEO409aqP2fvD1UfVjpyjQSg4JQV4qTYhjItQBn8Xw3ICjmC3Yx8Nl2nh8jhFTvY+FvhIefiTqV8=
+	t=1752469311; cv=none; b=XmTnMZesm/0JLyDJnl9tYnOpYoNOQljLJik1w//iyUgTEuuLfq9/OLV3Q63mVsHzuJRN1X4uXCG+6u/mlUPMA2GMC8Imc36V4nxGW92ByAOvyy5jo43SdRJMG3lEhjFTmwbQr60UKZ+Hi9xPnYTrACxKbSwUt6PpCMWvFQ7JUPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752469381; c=relaxed/simple;
-	bh=bk+D5GWjlKkrsF4m2p4rY+C+7RTHgzpB647/hMjATqM=;
+	s=arc-20240116; t=1752469311; c=relaxed/simple;
+	bh=GNxzXsYzlNDPVH27Z5T91SIlMeNBsdS+2ls/3XwDN+o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZYmv66BxcbdvzF48usgJOoiJc2TognewSFoh97IK03bDE3LgR0mWHbqRepT6C2gt6XD4tTLydq2/EO7as56NE9rCRYy+k6jPs41ZAUqdmCSThIzdMERGx3tAslB76TI+/et59TQgAmWiWXJcPW+J1icmSwBzRNx/Pg2NGQetBvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ml+e+nJj; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752469380; x=1784005380;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=bk+D5GWjlKkrsF4m2p4rY+C+7RTHgzpB647/hMjATqM=;
-  b=ml+e+nJjq4AWNWbFiDfE9DXHfaO+kq9AoBG/ICziveZYt5qOXj8Zm8M6
-   gEFyq3apqq8FlQ3DAr0YpjBVhZsE6lHX0Gp1ZMi8DRY9snRb1BxRbVajY
-   1Oi+PqEUNFfGBeEmGCLU4bx/Uj6BT/lr96Ofva51JnPuAZfcL8bGNUNP9
-   FV03uFpScNrj+x5Llmxa0UjYewkRd89T7izMls/6xkkhGJRnUnguiBJro
-   sgewKmWSzv8SXhx8xWLDC6SLGeLq69cDRbUykptzMrEiX5kZcji08fGWu
-   uIAdL/krQS0BSRhNcX4zeSLR9S12j8LDoL8mVTclton+mItmuOz3RireW
-   Q==;
-X-CSE-ConnectionGUID: hxhX03CVRniDCmwPFPMpOQ==
-X-CSE-MsgGUID: kdOOqJjZTQWgTGuTUAXBPA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="53765664"
-X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
-   d="scan'208";a="53765664"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2025 22:02:59 -0700
-X-CSE-ConnectionGUID: BWuprgykSqi8fDTzocsl4Q==
-X-CSE-MsgGUID: rhP02i+NTCGJ7P8FPinBkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
-   d="scan'208";a="157185381"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2025 22:02:57 -0700
-Message-ID: <131705ba-95f6-4ad5-9249-400b0ae97dee@linux.intel.com>
-Date: Mon, 14 Jul 2025 13:01:09 +0800
+	 In-Reply-To:Content-Type; b=GpKmtabnc6SgWwaHJPu6coWsH5HmwsC4g7sY2AQCxyZ2fDtcMFJQpp3kPQcnkpGIjc/wQRhNaLhkEjVuJr0+lhCEFbjvaFEc5YUiyOsdeTQH0gKy5HFED281QQMeQ6khR1g3049vuQ7jfCULjzbrlYawDDTG8SQWlzp+iKkKlRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y6GI6UVc; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-23dea2e01e4so40101395ad.1;
+        Sun, 13 Jul 2025 22:01:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752469310; x=1753074110; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=W+yJisL55v29eyx2sRZ1lV9ZD+fajqVVRY3S+f2r7hc=;
+        b=Y6GI6UVcYBAVPUkcTe7bCoEQ6w7un4B677UtBC3Qls4371SxpSbuIz91K9YbKMaxPL
+         uA9/aD7rCS6MnlTqXJWzwbduE6QvGVN/QjMOYDMe+EFEvvCljmV39gBevZMVDFe/PaAH
+         70IebWx4qw7uuUmT4/9MEYQYJukGHKRZFf1BPcpCatxhlGGvwXqbP81O5xUiYmaogp6/
+         yvhhJnJZBDvGPbWVfKRUpT5NOQ2PL/cykuVdURFPjaK4vHqHVXrlfptrzrbxD2DXPHp9
+         l7hbd/OregVS2tkseFvdWYHi6J3NbZJCwc0zB6rs4lj+3V99qL9mpz3D8T9YZPhB6Hdb
+         kxAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752469310; x=1753074110;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W+yJisL55v29eyx2sRZ1lV9ZD+fajqVVRY3S+f2r7hc=;
+        b=BKBscAvNylhppjrpcHH447caXGNnutilq2gczLtWSv2tLukMlzajQBoBxMONUqLxaB
+         KgFJOq21P8+4pfwYma7la7/ES9qzMUjmQ7RXSr8zFa3m8UbIi3Q3l3k0oDk8uRbIJ7DZ
+         9XPF7HhDPVoTFRWuBc/OKlSImahSDGvUsRF9HF1t/MX5DQDWZjOkPhUkoJIXER2CA/1W
+         VtEheviOZ2e4JEBBNyBucM4mwc3ZoBLUvIcSx9Gmhii5ikgkAZo3YFkw/vlCt6GXag1U
+         0JSNdMXT9YTlXW5HjBAIn52ulfZMjEeOZhJQPkcylRM4eb2z8YNxyeYw2aryEunvcBdO
+         f0sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtcN8L1e6U8GtGyoYYmeWOHF6hhWubAwwmSyMwRO2BwHzWzt5UHhwK9VNgp6dL7NwdkHZEK9uBQxemqtE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+2IJ5ueqKJgaPvQJgCCvy9hET3UcwR+RmbYExAvz3Jk9RthcR
+	LPnGSySK27+GCpBqF3DTNnIPpoJ3LTVX7F90aqxZ5nKji/EwBLdj6Fah
+X-Gm-Gg: ASbGnctSvoYYUpi1QeGoqGMg0YnmBGiNYfivt/wxlWjDWKxCoOb2StsU+rUWIlfhORX
+	FyP3mot0IzTAuji8zHd/EMOsMDLYH5KfSC5aO5UOzxu7Wscw0d74gncsnUH29zmqHC6aSqJEHA0
+	oGdrT3cJw0fH1krg8EwW2SkRS55ekVuJ6/fJizIGsDBohr1396rn+MQ7ng2XOB88TqBWyUeRVW1
+	GPa3GDJHv1G+vssY1B8S27DOhUkLmiuh9MjcBRqDevTlbqXicMpn3EaQoEsxs0R4oQ51PQ6fL2Q
+	xe4I7cFodqgWYFyuOJeWsa7psGZqJ9CRRJaoL4ljWBVwUeci+cv7yIYAPz1FIRDrDbZvzeu+/zq
+	Zfxst41zJxQUe3nE9WHh0SIuzV9dGUSu7BD9TRCwzaUCmpZahb/uOLlcavDIsfVlR2lm8RJIhFW
+	HLog==
+X-Google-Smtp-Source: AGHT+IGGRJZ0TN2pbJo6LSslcMT5o/cPZHsOJ0HiUeWBjmZ2uA9BnQZDwFW1S9tqGVvYk0720IH/Tg==
+X-Received: by 2002:a17:902:ec8c:b0:234:b743:c7a4 with SMTP id d9443c01a7336-23dede874cbmr189167135ad.38.1752469309569;
+        Sun, 13 Jul 2025 22:01:49 -0700 (PDT)
+Received: from ?IPV6:2409:4090:20a4:5c0c:45b1:8db9:582c:7df4? ([2409:4090:20a4:5c0c:45b1:8db9:582c:7df4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de436056bsm84429175ad.238.2025.07.13.22.01.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 13 Jul 2025 22:01:49 -0700 (PDT)
+Message-ID: <21a075b9-8a2e-4b55-b63d-fedce36e7260@gmail.com>
+Date: Mon, 14 Jul 2025 10:31:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,60 +82,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] iommu/vt-d: Optimize iotlb_sync_map for
- non-caching/non-RWBF modes
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
- Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250703031545.3378602-1-baolu.lu@linux.intel.com>
+Subject: Re: [PATCH v2] block: floppy: Fix uninitialized use of outparam
+To: Jens Axboe <axboe@kernel.dk>, efremov@linux.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250713070020.14530-1-purvayeshi550@gmail.com>
+ <175243012818.93872.4165824196717735145.b4-ty@kernel.dk>
 Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250703031545.3378602-1-baolu.lu@linux.intel.com>
+From: Purva Yeshi <purvayeshi550@gmail.com>
+In-Reply-To: <175243012818.93872.4165824196717735145.b4-ty@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 7/3/25 11:15, Lu Baolu wrote:
-> The iotlb_sync_map iommu ops allows drivers to perform necessary cache
-> flushes when new mappings are established. For the Intel iommu driver,
-> this callback specifically serves two purposes:
+On 13/07/25 23:38, Jens Axboe wrote:
 > 
-> - To flush caches when a second-stage page table is attached to a device
->    whose iommu is operating in caching mode (CAP_REG.CM==1).
-> - To explicitly flush internal write buffers to ensure updates to memory-
->    resident remapping structures are visible to hardware (CAP_REG.RWBF==1).
+> On Sun, 13 Jul 2025 12:30:20 +0530, Purva Yeshi wrote:
+>> Fix Smatch-detected error:
+>> drivers/block/floppy.c:3569 fd_locked_ioctl() error:
+>> uninitialized symbol 'outparam'.
+>>
+>> Smatch may incorrectly warn about uninitialized use of 'outparam'
+>> in fd_locked_ioctl(), even though all _IOC_READ commands guarantee
+>> its initialization. Initialize outparam to NULL to make this explicit
+>> and suppress the false positive.
+>>
+>> [...]
 > 
-> However, in scenarios where neither caching mode nor the RWBF flag is
-> active, the cache_tag_flush_range_np() helper, which is called in the
-> iotlb_sync_map path, effectively becomes a no-op.
+> Applied, thanks!
 > 
-> Despite being a no-op, cache_tag_flush_range_np() involves iterating
-> through all cache tags of the iommu's attached to the domain, protected
-> by a spinlock. This unnecessary execution path introduces overhead,
-> leading to a measurable I/O performance regression. On systems with NVMes
-> under the same bridge, performance was observed to drop from approximately
-> ~6150 MiB/s down to ~4985 MiB/s.
+> [1/1] block: floppy: Fix uninitialized use of outparam
+>        commit: cb1bdf0797acd79c53a899f72a06ab8c1ebc5bcb
 > 
-> Introduce a flag in the dmar_domain structure. This flag will only be set
-> when iotlb_sync_map is required (i.e., when CM or RWBF is set). The
-> cache_tag_flush_range_np() is called only for domains where this flag is
-> set.
-> 
-> Reported-by: Ioanna Alifieraki<ioanna-maria.alifieraki@canonical.com>
-> Closes:https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2115738
-> Link:https://lore.kernel.org/r/20250701171154.52435-1-ioanna- 
-> maria.alifieraki@canonical.com
-> Fixes: 129dab6e1286 ("iommu/vt-d: Use cache_tag_flush_range_np() in iotlb_sync_map")
-> Cc:stable@vger.kernel.org
-> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
-> ---
->   drivers/iommu/intel/iommu.c | 19 ++++++++++++++++++-
->   drivers/iommu/intel/iommu.h |  3 +++
->   2 files changed, 21 insertions(+), 1 deletion(-)
+> Best regards,
 
-Queued for linux-next.
+Hi Jens,
 
---
-baolu
+Thank you for applying the patch.
+
+Best regards,
+Purva Yeshi
 
