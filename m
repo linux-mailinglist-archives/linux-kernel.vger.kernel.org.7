@@ -1,102 +1,108 @@
-Return-Path: <linux-kernel+bounces-729495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0673FB03784
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:05:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF4CB03787
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:06:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 014E83AFD32
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:04:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1147189AE88
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7848222E406;
-	Mon, 14 Jul 2025 07:04:59 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DAB122DA08;
-	Mon, 14 Jul 2025 07:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B7B226CF1;
+	Mon, 14 Jul 2025 07:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZKiXWlEQ"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5DC2236E3
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 07:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752476699; cv=none; b=Fz8mCgai61HlYUBtqS89G5BQ9nxP5jhMjyyaS06Gj1LSlvstN1XRA0Gdss59ln2Uz3qOgwghfv5mfzkBsnT0rrhAheoTQjeCEOqmnPNVBoxPaOVSlfAiT2uUaVq2DiflfiUSvmpfrHeECcQVK4499EB4PonheoH+fNoy6zx2YBQ=
+	t=1752476761; cv=none; b=lZSMZyfg1x3XDsAQEPxQhiFzhaCTBpXirZ4Ic9/WNgonfGOpSRuSd49qXzX9Spgz/SdBs/qmf52KufNl2khKmXW7FaH8cfalw6NpV9+w6uAdqPt+mgSRLcIoOvb1lLezBse2aVyOSR7FwXQnOZz3PWWQZ9XbBG4+JbxxNYBNpEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752476699; c=relaxed/simple;
-	bh=cToq3o3HlGCMSYHZ2d6IQRVOA5a0EC+VOiw+pnCaSKk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oUNgw9zBnMazxf3ubQtFiHcMgec/h1U4NjGAo+3Fozl43GUdoKx03BvvpO/Ciob1HK+omcDV2y0Y4gUWP65RggDDO6d4NCZXcpCZpLa2U5w/efocywu4wKXO96RHuSH70Ncenyy8i7Yzqa1+8aTz6kiacmIVEWgBxxIqSCRG9TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.193])
-	by gateway (Coremail) with SMTP id _____8DxzOIVrHRo6g4pAQ--.19529S3;
-	Mon, 14 Jul 2025 15:04:53 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.193])
-	by front1 (Coremail) with SMTP id qMiowJAx_8EPrHRo4HoWAA--.4569S2;
-	Mon, 14 Jul 2025 15:04:52 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	Xuefeng Li <lixuefeng@loongson.cn>,
-	Guo Ren <guoren@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] LoongArch: Make relocate_new_kernel_size be a .quad value
-Date: Mon, 14 Jul 2025 15:04:38 +0800
-Message-ID: <20250714070438.2399153-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1752476761; c=relaxed/simple;
+	bh=PFTTtrIpuORXhRZKjU0iNiB9gnyYxhRcUMgU9JImO2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PqHkhDe4IPvVwmm/KjpzPpck0br+wJWr8i09Ar01FsOp35zf4f6GArDGxkJ/oUJfugEBGCdaO8VYCt/boV+cDut7rCG2U679J0D6rm8+7EvdnRC6YgRzeDvZgKrDHrga5BvoQSOU73vgt1naGjtzWqoeoACiEB/v2eZbxV87rvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZKiXWlEQ; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Y6vj
+	uqwLKZFVmEIDVFmGXIKmsoIIDuTPzS4oauv70vQ=; b=ZKiXWlEQbbQqnkwUbmny
+	zIcf0bpoR2rLWfONoJN5VuZ4tPWVC3KOSGDay2o9jfSHxBBKcbalMLjZWwyK/he/
+	OPVYpZc+mymelO0v7pEG1BuIWx/bOElqIm0vcLG8alpG+9QUYZVszHnXYq4EKpYR
+	+O5SVH2OfuHgeARQrQ5/oTHkdlgMPl6ix/K2jpXc9kZ8B2X+FVrVhq74zHyeEzfy
+	fAD6vuR+C4yKLR1FQufG+nSJssxozLpv5zZv09o/d2AU7YtI8qaGPMXURslYAtHd
+	jWWmw4uC0ZS0lHK7aMoiXP9i1yd1vIsrclntHedCL3oWKUxMekFvX00EdH5EojJJ
+	Zw==
+Received: (qmail 2359571 invoked from network); 14 Jul 2025 09:05:48 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Jul 2025 09:05:48 +0200
+X-UD-Smtp-Session: l3s3148p1@V9gISt45xK0gAwDPXxNjAMIr4MhSGEU6
+Date: Mon, 14 Jul 2025 09:05:47 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+	linux-i2c <linux-i2c@vger.kernel.org>
+Subject: Re: [GIT PULL] i2c-host-fixes for v6.16-rc6
+Message-ID: <aHSsSwLcSzJr5knE@shikoro>
+References: <7zjrabdfofykjclb7pv7agfua4mvwepahc2hicis34frpr3ap2@kkbsms4a5c5z>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAx_8EPrHRo4HoWAA--.4569S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj9xXoW7GrWfWF17Ar18GFy5XryDXFc_yoWktrX_KF
-	yxJws8Gr4UJF4jywn0vwsavr1Ygw15Jas5Cw1kX3yxJasxArWjyr45Xan5uwsIkr4kGrWY
-	qw1DGFsayr42qosvyTuYvTs0mTUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUb7kYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAF
-	wI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcVc_UUUUU
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OJCbTkJFWr/BG4iA"
+Content-Disposition: inline
+In-Reply-To: <7zjrabdfofykjclb7pv7agfua4mvwepahc2hicis34frpr3ap2@kkbsms4a5c5z>
 
-Now relocate_new_kernel_size is a .long value, which means 32bit, so its
-high 32bit is undefined. This causes memcpy((void *)reboot_code_buffer,
-relocate_new_kernel, relocate_new_kernel_size) in machine_kexec_prepare()
-access out of range memories in some cases, and then end up with an ADE
-exception.
 
-So make relocate_new_kernel_size be a .quad value, which means 64bit, to
-avoid such errors.
+--OJCbTkJFWr/BG4iA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- arch/loongarch/kernel/relocate_kernel.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Andi,
 
-diff --git a/arch/loongarch/kernel/relocate_kernel.S b/arch/loongarch/kernel/relocate_kernel.S
-index 84e6de2fd973..8b5140ac9ea1 100644
---- a/arch/loongarch/kernel/relocate_kernel.S
-+++ b/arch/loongarch/kernel/relocate_kernel.S
-@@ -109,4 +109,4 @@ SYM_CODE_END(kexec_smp_wait)
- relocate_new_kernel_end:
- 
- 	.section ".data"
--SYM_DATA(relocate_new_kernel_size, .long relocate_new_kernel_end - relocate_new_kernel)
-+SYM_DATA(relocate_new_kernel_size, .quad relocate_new_kernel_end - relocate_new_kernel)
--- 
-2.47.1
+> Here is this week's pull request. One more fix from Akhil arrived
 
+Thanks, pulled. I sadly didn't have time this weekend, so it will all
+go to rc7. I am sorry about that!
+
+> a bit too late, so I left it out for now.
+
+Sure, please send an incremental pull request based on this one and not
+a rebased branch.
+
+All the best,
+
+   Wolfram
+
+
+--OJCbTkJFWr/BG4iA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmh0rEcACgkQFA3kzBSg
+KbbumQ//X8HmWk3qIOHRN94WdMBvpV1KAYb1PWPlSSPe5UoqW4tOC1kC51vUQNbD
+CBtkWypyx645uN0QM4Wnv5/W8yYMM0GzvwS123g5V6+4ziwYsg1oSYPDjKxzFvA+
+6xuJC8oIosFZI+0Z8AXjLxje9VKJ3rPR2SpTMortrsOMbNckh7G6YoAY5IW4vCr9
+GsBivnjjq+Aa4Z05C9ocFDPImGOrm4ti3lFXqxI+xtVlfDyc6gJ8UqMQwnS13jkE
+42Plga+93i4xjAjonqHkB8tX9y3Kp6tzv37TOoCsT8Td7bQlQBG8e7sIs72ES57p
+5Yqmv2hvZ2ZHyKIpUPv4XYbR20t4UdGvYs+e5cAphGejudb0o5nN/U3bYKWhwaBU
+UiKw9CWoYU5TWu6o5hdq/BmHdUuVmkjw9nRRUFHYWHHzQzBErWaMHlmtl4IJaEQk
+WZU0RLkcbh7mQN6x9Wdpl5ReOczkscEGk7/25rfd8gdCyyHjpfBeCxj7kD1r2HF2
+Xdxnto53gntHN9yDFZt0T2WtQCKOOh8Q6KtfSfJobBqfCOzNstRIghvFLL2ahwHX
+YVwORCEI/0mYVZ86Hx9JKpfWz+uj0P0DwF17kn6XsmPZM9wu99gqv7u2fCiNSqDA
+qGQKYNU2uf69kiGC9P+V9X2dLjxrqlvS/oZHsHRIbommcMzKYBQ=
+=bNbC
+-----END PGP SIGNATURE-----
+
+--OJCbTkJFWr/BG4iA--
 
