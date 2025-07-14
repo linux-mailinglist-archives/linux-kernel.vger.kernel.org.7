@@ -1,238 +1,140 @@
-Return-Path: <linux-kernel+bounces-729531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A08DB03803
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:32:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA09B03808
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B6C017A6FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:32:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D9187ACDA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A7C23371F;
-	Mon, 14 Jul 2025 07:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88FE234973;
+	Mon, 14 Jul 2025 07:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="BK+CKbR8"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023123.outbound.protection.outlook.com [52.101.127.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fb5x/Fju"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A474944F;
-	Mon, 14 Jul 2025 07:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.123
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752478329; cv=fail; b=rMovB9HpeKUoFGhYkcVOJ3dazFnENtbGnciv8myPmZQQX1H8DF9KnAW61zYnz3SDYeqS84JgOE5KU6Gcc/Gh+vN2OnHa3zkTZFdiXDcJgPzHNXtJ+ENU5PnOfyOEW5N9jbgYhN+Dx0x4JEmWI8N54aSCBYWfmoci1oBnladWfjk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752478329; c=relaxed/simple;
-	bh=8vdcRxO2zLf3gvIup6aODAuZS5SddhlwmoE3JAOlffY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UxUMstPPf++LzbaCodOoxAXeds/FoS81R27js4g5osqMU8/BJEt5FVTGWn1lkI68AW4ckTNCGxx0ZHnyVawWSpdJWZlWXdCQAeZ41uGCCTOldBtbTfiJ0ESJHXiSSsl+tEHMCM1arkAKSK9ZfKm6NA6xFpD5yqPuVuaZa16okio=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=BK+CKbR8; arc=fail smtp.client-ip=52.101.127.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j6EvQmEo5+MvQkjoz7MmJa2sYYmGy7eQNRyVSpoIJquv9ceqEAR7AJlN2q2V1smhZcQZqW1BX5jPMZdszSSrwv/V1C+RbctIyW4k3DO9DPSlmUi8YpjYtTQEGDT+Jdxp8nXANFuUTu0YSuezwbFcZKpuKfxVfsRlNpdsL3AMJEgbJY3UvrUuA79cUXJma3MQuCeXkEwjr44NTGTPmV3weZ7LbSb47ezmLBzXbpD5H6AYhOWjw+mJEUiN2EreK8iDZFUBLGMemwpziSy+i2LNCSyh7Gu5SqwnXnf2gZTUjHbYpqiRRtdtd81TqJzIxl3pI4aM6GtRV23zVoSubNoOSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8vdcRxO2zLf3gvIup6aODAuZS5SddhlwmoE3JAOlffY=;
- b=rb9+TtKUdnwqgu1+z0MsJ1IiII2v6yujF6bc/wBqzWdCRWLJ+TxiBrxIUD1YFw/9wCck5AjhBpOso/h3G8KyhuwD4t2l16R5JohwmeloTSd0YAd/IlVZzRIwj5AC2axP2hL8F1JTEbwX7WvWzmR73fTqiTCy4w4cvxemFhVyrg08L0CJO/DhkRe/e10E+qOO90a4EJYXdNEWVBS+wWfqlpyAZrjr8YuWZ1BCi+IZPZXnu+6j5GZgiAtB99XZApcS1BZc/npxqnZQZ/ukbec85ZZF8CWW/wAZqs9mo6VNnmOySscVFo0IMk+ZgYmEnI/95aVO9mcG6WJNF/4H7vg6SA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8vdcRxO2zLf3gvIup6aODAuZS5SddhlwmoE3JAOlffY=;
- b=BK+CKbR8flrMIRrZHMdb1UCY8S1eO23dFjQAYsUtbzzp6RMown8RrCh/JfeLn9E5Zizu71CviZtrZmPQAiFmeYG2/ue/aBu2g4ipm50e+/BP35xev9IxbPJ2E4NVVUbivzTAIrxCzAcAocNbF29OPgiXZUzojWOqz5/o1PsBDhVztePhRMQ462m/sbjr/D00+GKxqJHYyF8tSobk/mlt8aluAerMGgY12YcjNDdhI0HJpxHzVQgNw5FyDTs5A96GfaWjWkWfhdmR0PwQlkFQVZxlwTWpKEwWKxKYHEfCLQQXy8spUBpZNpDwq9KA5bhjg4W8AtG5eFiAVMO4vLK6ew==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from PUZPR03MB7135.apcprd03.prod.outlook.com (2603:1096:301:113::15)
- by SEYPR03MB7862.apcprd03.prod.outlook.com (2603:1096:101:173::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Mon, 14 Jul
- 2025 07:32:04 +0000
-Received: from PUZPR03MB7135.apcprd03.prod.outlook.com
- ([fe80::ecac:a387:36d8:144d]) by PUZPR03MB7135.apcprd03.prod.outlook.com
- ([fe80::ecac:a387:36d8:144d%3]) with mapi id 15.20.8922.028; Mon, 14 Jul 2025
- 07:32:04 +0000
-Message-ID: <6846c3f5-0d73-44d7-9330-5edce7813f0e@amlogic.com>
-Date: Mon, 14 Jul 2025 15:31:58 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/6] dt-bindings: Asoc: axg-audio: Add s4 audio tocodec
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Jerome Brunet <jbrunet@baylibre.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com
-References: <20250710-audio_drvier-v5-0-d4155f1e7464@amlogic.com>
- <20250710-audio_drvier-v5-3-d4155f1e7464@amlogic.com>
- <82f1a34f-bfdf-466f-9c44-2e58d172f3fd@kernel.org>
- <b8d61abb-a6a6-49cd-94c3-f397bb30203e@kernel.org>
-From: Jiebing Chen <jiebing.chen@amlogic.com>
-In-Reply-To: <b8d61abb-a6a6-49cd-94c3-f397bb30203e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR02CA0127.apcprd02.prod.outlook.com
- (2603:1096:4:188::7) To PUZPR03MB7135.apcprd03.prod.outlook.com
- (2603:1096:301:113::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C469230BC6
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 07:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752478345; cv=none; b=QJsw9DGisxczn2jFUn9NKX5mNTsuNNqFkKxaNkSqELHQov8/BKb4k5jkFrevksVeaYEoImvp3o5Yy6xmHHargj+gao+rHMJQAk5zBIlhEL02UCm6t5vwWXJ3/ewvIKEzFXqEu+q0Lv9/PmjKQ14uEvoQyXcNCCKWpqNCdYWKKz8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752478345; c=relaxed/simple;
+	bh=JLygtD+6Bzb59X1CqJTUgCd+8x6usPf2+L4NNuh6NO4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Gtum5ZFlnxp7+35h70UzAIYJqt1A352o82/4nBhq3MTPoL2fazilm+LcaHaE4ppeZh5tSIaxMUxSAK8JTBLfVk+KbmQiXMKRFNuRmI12P4bRCybhGq/WmHrt4emhkTN2a2CXGHSm4pbDP1qWCiii1LPL/kCFEwFd/GwKhc1C4Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fb5x/Fju; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4FD7C4CEF5;
+	Mon, 14 Jul 2025 07:32:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752478345;
+	bh=JLygtD+6Bzb59X1CqJTUgCd+8x6usPf2+L4NNuh6NO4=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=Fb5x/Fju3CZ2kO8tu11MFHWmglzbFfHUSFZLj47TUPf7zKVsdOZQ/ARlFE1pnrQzx
+	 jpSdnXu2yCLKRA0GLsbmZAFwBM7cLM3UMic8PUTqRnE19qTkmUKk99geHcfpDoKjqp
+	 +cm0bWVWYaDCekNEUC49Rtub8oeNd9sMK/cs9NvqpCm4MUEOWrmKiQLITr7RuyTuo6
+	 HEjfOnyo4e60ZtVSoYqlzb1PVLjTDmFqBHvFS+ubuaUkdAtUiYhnR+qtgI7jeVBBt3
+	 C4+tG31JJw5nh2I3YEvtpO/pVr+4aYYJRsIFHkA4XcF+vVBHgZ4zRftN+4CZ/jrcmw
+	 1Ti1YM/pqoKog==
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfauth.phl.internal (Postfix) with ESMTP id DD5FAF40069;
+	Mon, 14 Jul 2025 03:32:20 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Mon, 14 Jul 2025 03:32:20 -0400
+X-ME-Sender: <xms:hLJ0aKla-AnPJiaZ3mBAJZX_KO01gHIecuN4Lsyn2bzFFR8zpl8Ogg>
+    <xme:hLJ0aB2M9MmMe3ednOzR-tZayzg3_smkNX9YziyICoKJFOkrdmUAuoch5UgaOa-oc
+    j-S83eGJbAvhp5_JPE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehudefiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvghlrdhorhhgqeenucggtffrrghtth
+    gvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeefiedtudeikeeggeefkefhudfhlefh
+    veenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidquddvkeehudejtddvgedq
+    vdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlhdrohhrghesrghrnhgusgdruggvpd
+    hnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggr
+    vhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesgh
+    hoohhglhgvrdgtohhmpdhrtghpthhtoheprhguuhhnlhgrphesihhnfhhrrgguvggrugdr
+    ohhrghdprhgtphhtthhopehhohhrmhhssehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrvgifodhnvghtuggv
+    vheslhhunhhnrdgthhdprhgtphhtthhopehmvghnghihuhgrnhhlohhusehnvghtqdhsfi
+    hifhhtrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgt
+    phhtthhopehjihgrfigvnhifuhesthhruhhsthhnvghtihgtrdgtohhm
+X-ME-Proxy: <xmx:hLJ0aJ-yqFbxVVMjFnHHARSmFHsE-bpCFWs3jzRgcVAoFFt0gOAGBA>
+    <xmx:hLJ0aM4CrtJTMkgVs0pLjbrrwhtRYXOntIglFlTLb83BfcW6HXOR8w>
+    <xmx:hLJ0aJuwtQEDruo1LaSsJxavCgtNBkwR6BXxyxVPTifzgGTVIvz1TA>
+    <xmx:hLJ0aG2tPPjW6-WKhue13PINWbCFws8wqdTuTbfMxH1TT_BE7KkLGw>
+    <xmx:hLJ0aKoC0M6mFxJaSoMR6OE94OXkatBB5lgw72isYsxNT87NJR91SjDR>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B265B700065; Mon, 14 Jul 2025 03:32:20 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR03MB7135:EE_|SEYPR03MB7862:EE_
-X-MS-Office365-Filtering-Correlation-Id: 11819406-6636-4ec3-8dc2-08ddc2a8874e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WmFubDZCbWRBK3cvNndFZktkcW9ySDdmc1BQREpEdzZQVjRlM2Z2RmtIWnAx?=
- =?utf-8?B?WHJBZ2pEaEZWc3RLVXFBc3hKS0J1TzVNemM1Y011UHNncWRVTXFROTYwSjMy?=
- =?utf-8?B?SGsvVWQwVjcyUVZtZTRHN2Rkd2x3bExodlNMcnpxNENTMHU3U054UmFRWUdv?=
- =?utf-8?B?OWNWY3lnWmhOUy9pbFpoaHIrems0THVrUXd4bHJzUTY3Q2tUR0RvNVYwVVl5?=
- =?utf-8?B?UDRwS1IwK1RUWWpqSEthV2NJWUNuVlhXaXM3ZHNKeGRNUS8vV2dDN0ZtcmZh?=
- =?utf-8?B?TW9EMERpU01RSWhXWVJnSXBINnNvUWJaS1J6VzJWUmVDc1kycXBwamw3ZTll?=
- =?utf-8?B?MUhmMFJ2ajFJVWwwSkxwdSs3KzlkVVRpZ2RDUjI1Y1poMWcyQTRTcHkreUE4?=
- =?utf-8?B?biswU0x1Wkk2c1ZMckc4Y3NCdWczWkdUQ24rcWF3dWo4OUlzSjlmWitZWXov?=
- =?utf-8?B?aU5hcHcycmtyVDQrYVJDc0piVy93RXJtRk0zbVR4a2hLcWdGL2JDMDNvZkdK?=
- =?utf-8?B?aE8vVFpSb1V1QmhUS2VGeUZjaWhGOGFQZ0dYQ2xCS3ZuaHJTQUM2cnRhZEd0?=
- =?utf-8?B?YkFXYnFMTlM2SXBMUXd3T2JHS1Fubm5vdVdCM2d4L3YzbHJFY2pyVHhTYm1i?=
- =?utf-8?B?b2s0ck5ZZS9Iclg1ZEFXa0o2RVM4SjZlT3hJL2t2RzJIcFEvc1ppaHczVlhv?=
- =?utf-8?B?M0llWEcwa3VoV2ozdXd2dzRXOGFVNExTS2Z5ZU1FRWRkaHRHOFJtR2tQRWhj?=
- =?utf-8?B?NFVUQmJPbjZJb0ZnTzJvSkY5anNOUzg4aDRxZUJXWDVyenN0LzBrMWFFc1gy?=
- =?utf-8?B?QkZhSlhSLzN5TTI0OGFTUERIT05HK3k4U1I3WjRjNXE0YVB2OGJqNVdFa3Nv?=
- =?utf-8?B?YzZxV21naU5hWGtUU1ZjSUNyY1VKOUtIWlZBcmJPbFp0ckJBaitGZVY3OVVN?=
- =?utf-8?B?STRQWnlZSUJWbmVINlh6cmJPazhSMkJ3dzhEWklObzBjVWg1N0NBN3RhTldr?=
- =?utf-8?B?Y0lJQWdEaDhET3oxYTIzSXM1SVo0aVVGclhUQzRuWnp5QktQRkx6VWMwVVha?=
- =?utf-8?B?Vi81clM5TmNpTnRpSURINFNNbWMxY2lDWUkwOGwwbmpmSTAraFRyU3RvWDhK?=
- =?utf-8?B?RnB1cFhxSEVtVlRQR3NNNTZBZzd4dXBpVWxmSHhHMFd1aElteFpOdCszR2xs?=
- =?utf-8?B?eE5Bd0tTY0llYXRxRHJEWkVDVHY3Vzdjb2tnMi96aHJGRUZObldxSlV4OCtS?=
- =?utf-8?B?bXVMcjAwM245eWkvd1YvQ2I0cHI2alF1cGJPSzBvUDhvQmFDSGtsOVMrMEVM?=
- =?utf-8?B?SXB1cDhsckZzYjZZOFRjOWR2d3AvR1JZTG9WZEl3VWVzSXhFdlB2d3pvRW9x?=
- =?utf-8?B?VG16clBIZzBYSDNRQWtEVUc3OThObTlST3oyU1ZRVnQvZm1OVjRVS0txU2k1?=
- =?utf-8?B?cVJZNVkwUkM4M0lwRHlwOWpvVUhxL1B5MENMM1N4eU5ZRVY1bERka2diYzJZ?=
- =?utf-8?B?V2I4elpWZUZrM3NBUjRrTDdHMG9aTFhVL3JWa3VuQWpLL1phRFJ1cHljOGFa?=
- =?utf-8?B?aEZEMDBDMHFSZXljNDN3cDJDc2d3R0RPd1A1WnBCaHkvaXQyZkxmSUtkNFlO?=
- =?utf-8?B?RmlpeTkxcmtqSGZhcG1ad2FBTmJvRTJwMXhUUDVSSzBFUEgwK2syNWRJb1Y5?=
- =?utf-8?B?bjFZMFpYRXRKMWZIbmdiOGVETUZrV0ErZERtWStQdC9MTWdodklsVzl2K2dY?=
- =?utf-8?B?RlgxUlJ6SEhZeUVuSlp2dEs5ZlhMaGtRcElWOThFOTFvZk4veTlLZk9ja1dt?=
- =?utf-8?B?UURiS2RjWkJCbU1oWE9hSXZDVWVEY09rMHplY0dsdjFFdWJxNnd6TWdIWUJT?=
- =?utf-8?B?OThzSzJCSWxzZFd4ck02WVZZaUlnWmZpMGlTamZZV0NBMjVVT1E4U2pRZWV2?=
- =?utf-8?B?bU5DeUFYUDJQK3F3UGFKMStTOHVlUm9lT1lYdFZzR0JDcWxPcWk3VXBoV1dp?=
- =?utf-8?B?dHBKaDFsMTB3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR03MB7135.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SlhEQXhldzdVcEc1YlRmOE9IZ1YwR1RkdHZJNWZvL0l6ZTBnano4T0JNRUFw?=
- =?utf-8?B?RnVHT3hHMlkycUk2RjFpWFRVMzQ3aHB2SUJtL0lrcWxuSGk3eTRzcWdOMzJr?=
- =?utf-8?B?dzR3TmVOdjh6RXUrNUtOVkxUK0NaMGNaQkZEVVVNL3FaaitXanM0S01LS0xI?=
- =?utf-8?B?aElreVluUHZSQXd2MmQ3RHhFemFSaThseVJYNU1HTXhxKy93M2N5amtEaEdx?=
- =?utf-8?B?aVZNVituS3RHNkRxei9rZDFYUHBOekZHUGxYWXZXZU0yLzFHaWs3Q0t3SHlO?=
- =?utf-8?B?TDFzZzBtbWJoUE1jeHRwUGh6VThUaUMwMXJXNngrQUxxYmVKWEt5ZTNFZTV1?=
- =?utf-8?B?V3BHWG51M1p6RmY5ZW1ZR0xJb0VnRDFuaHlyL20vR0RHUEU0NkdsKzU3czRm?=
- =?utf-8?B?bmhFNlpNVWE1TkdJditTSUxIWm1xcThXY21EaFh2aU5odThtdDFyTW5oakIx?=
- =?utf-8?B?eTBnYTZZdVRhTm5aM3FhMnlUWnpQdDNQTzhJVE5TZlVmTHZiUi85T3E0eWYr?=
- =?utf-8?B?ck41Y0Nja0NIMzM5d0pEYk10aWhQTGxyb2FxbUtUWmpiQ1U1RWtDTVRtelFq?=
- =?utf-8?B?MmJnRFJ2a3dGMDg4QXFXczBlSTZDQWxUVmpQemxINFEwTUNRU043M3lOcmU1?=
- =?utf-8?B?aDh4ZXF5STE1WlZMd2FSZm5Rdi9SWVU3ZTZvUXFuWjlTYmRrSUF1alpFV0Nm?=
- =?utf-8?B?TWQ5cWgxRTRZK05rZFNZYVNERVRpTXQwNFRVZ3BlcG03RWpLa1QrMWxxSk9k?=
- =?utf-8?B?QTMwSE1CUUJSMlQxcVN2TmFZRTBFV0FTMDlCOEc0NXJFLzViams4ZXR4aUNq?=
- =?utf-8?B?cEExWkhNRVd0UlRnc3U4a1dxM0w4NEdHeEx3RTVIOTRGL0U1YmNDNGtUck9U?=
- =?utf-8?B?VnY2a0QxdDdMVno0elpnRmpZRXZKcUhoTzhrRElqSG9EbkVmVjhFWlpzU2R1?=
- =?utf-8?B?K2JwZ3Y4SUpBejlBaFY5RGVkWWN2dUJlTEtXUWNrWHdybEY2c0J0eVZLeVN0?=
- =?utf-8?B?NEQvS09VdGJDUFJYSmdCb3BYWnN4UlI1d3o4WmdZMG44VlMzbGlMTWY1OUZV?=
- =?utf-8?B?ZW8xTTJld1UzT3BVOG5ZRkw3TTJGejQrSUtNK1hmZ0huRm40QmhoWWZKaFNl?=
- =?utf-8?B?bzVvc2FjMEswTC9qR29sanNKQXkrVEN3c0htbEw3QlZaUFF0bTAyRlZvNnZZ?=
- =?utf-8?B?NnorM05zREt5ZUFJeHppdHFBNTJhYm0wQXplYTJwY2x1MTNVUUFOR1Yxd3FR?=
- =?utf-8?B?czhTMXByb0J0ZHVBQ2RWQjBSZVlNYnJ4Nkx2anhMTFJhWVpXdWxIaHZRWnRn?=
- =?utf-8?B?UVVsRDJVVzd5Tm56SFhSYW90bU5CR01oOHMrNEpMbGQ3RGxoWmg2bU1oZXUr?=
- =?utf-8?B?MjBSRmhVcFlUdUYvbnFIRGN4V3BnZW5lem1GWk5PVnMveDJKMlQ2NzNOVGRO?=
- =?utf-8?B?QUZjZWUrMnJkODhYK2VXbko3UVZobEc1eTdiZUV3MVp3U3BDY3JLSDJQUm56?=
- =?utf-8?B?eGNXWWxoTDJKWEE2SXRkZnVPRGtDSkpQMXV6d3dpdnNPeDZkYUxqdlpLZm9O?=
- =?utf-8?B?K3pqcTNDeG1BbUZrNDhaUVcvM0dYRExRbWM0UDA1WndDVFhFQ0tQbGhPU3VX?=
- =?utf-8?B?VU9QWHp4RWpEQmFPRkZIQTBmRFdLNlZ1TEw3MlZCTnVCWitJVWtjdlBEV2Qx?=
- =?utf-8?B?UjJOZ05JRC9SNVQwY3VRNDZOWmwyMFpmcFo1MFo4dUFsS2E4dFZxSmdNOXFK?=
- =?utf-8?B?aVVteW1NYzVrVVIvQi9uaUR3WlJwVWU4a3l5cjMwZXh6QklRMmlLTHZxLzFE?=
- =?utf-8?B?ZklKTTZSYzhpU1NNMU05anhvcTdGMmM3aFJUbVZ5L0hGVWhSNE9QRUtJTFM3?=
- =?utf-8?B?L2Y3ZXVkMmxmZDNBbGFKZ1A1ZmFrTCtFb3dLbDUxK0dMV2tCUWdNd0hCY0JC?=
- =?utf-8?B?OEYvZTRwVVVjMEZzUFBycTlTR1hRcHJJMWY5TTBQNUVPNmpDNlFPQ1p6NWRL?=
- =?utf-8?B?cTAwMEVoNFVPb0xsUkVkNkNCUEl0OWVRRGUrcWtaUy9WWi9IdDJxdEwwbjBI?=
- =?utf-8?B?azZCUmZNcE84NmJhMWRKVG5TMGdaOStPREx4cHpOeUhGUi9zSnJQVTZPVkNp?=
- =?utf-8?B?R2ZYWCs4bTkyQW1Yd0VUbU9wUUhCRnVoS1dKRWdBRXdtZzkzTjBqTmhUdEc3?=
- =?utf-8?B?VlE9PQ==?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11819406-6636-4ec3-8dc2-08ddc2a8874e
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR03MB7135.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2025 07:32:03.9407
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ehedE5UGpHRUeXbB9mWJ6e8U/R/9D+RLtwtBJRP5EhY3Z745jfj7L1oAdzTHaOhYUSfhUbRRwJswxgGaKIKRS78UOFHy9YYWSvXZ6YgC5nU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB7862
+X-ThreadId: Tf7a06b27ed897eb3
+Date: Mon, 14 Jul 2025 09:32:00 +0200
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Simon Horman" <horms@kernel.org>, "Randy Dunlap" <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, "Jiawen Wu" <jiawenwu@trustnetic.com>,
+ "Mengyuan Lou" <mengyuanlou@net-swift.com>, Netdev <netdev@vger.kernel.org>,
+ "Andrew Lunn" <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>
+Message-Id: <b81a3d29-fc64-43af-839c-0d1d14dc55a0@app.fastmail.com>
+In-Reply-To: <20250712153052.GF721198@horms.kernel.org>
+References: <20250712055856.1732094-1-rdunlap@infradead.org>
+ <20250712153052.GF721198@horms.kernel.org>
+Subject: Re: [PATCH v2 net-next] net: wangxun: fix VF drivers Kconfig dependencies and
+ help text
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
+On Sat, Jul 12, 2025, at 17:30, Simon Horman wrote:
 
-在 2025/7/14 15:22, Krzysztof Kozlowski 写道:
-> [ EXTERNAL EMAIL ]
+>> v2: also drop PHYLINK for TXGBEVF, suggested by Jiawen Wu
 >
-> On 14/07/2025 08:10, Krzysztof Kozlowski wrote:
->> On 10/07/2025 05:35, jiebing chen via B4 Relay wrote:
->>> From: jiebing chen <jiebing.chen@amlogic.com>
->>>
->>> Add S4 SoC tocodec compatibility support.
->>>
->>> Acked-by: Rob Herring (Arm) <robh@kernel.org>
->>> Signed-off-by: Jiebing Chen <jiebing.chen@amlogic.com>
->>> ---
->> Please use subject prefixes matching the subsystem. You can get them for
->> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
->> your patch is touching. For bindings, the preferred subjects are
->> explained here:
->> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
->>
->>
->> <form letter>
->> This is a friendly reminder during the review process.
->>
->> It seems my or other reviewer's previous comments were not fully
->> addressed. Maybe the feedback got lost between the quotes, maybe you
->> just forgot to apply it. Please go back to the previous discussion and
->> either implement all requested changes or keep discussing them.
->>
->> Thank you.
->> </form letter>
->>
-> You responded in private, but that's not how we discuss here. Please
-> keep all discussions public.
+> Reviewed-by: Simon Horman <horms@kernel.org>
 >
-> Above form letter means you received feedback at v1 or v2 and you did
-> not implement it. You did not respond to it, either.
->
-> Please go back to v1 or v2 and implement entire feedback.
+> Arnd (CCed) has also posted a patch [1] for the unmet dependencies / build
+> errors portion of this patch. My 2c worth would be to take Arnd's patch and
+> for Randy then follow-up with an updated version of his patch with the
+> extra bits in it. But I don't feel strongly about this.
 
-thanks, I will refer to the previous submission.
+Sounds fine to me. I think we need another patch for the PHYLINK
+dependency, as the current version in linux-next breaks with LIBWX=y
+in combination with PHYLINK=m:
+
+wx_ethtool.c:(.text+0xb40): undefined reference to `phylink_ethtool_ksettings_get'
+/home/arnd/cross/arm64/gcc-12.5.0-nolibc/arm-linux-gnueabi/bin/arm-linux-gnueabi-ld: drivers/net/ethernet/wangxun/libwx/wx_ethtool.o: in function `wx_set_link_ksettings':
+wx_ethtool.c:(.text+0xb9c): undefined reference to `phylink_ethtool_ksettings_set'
+/home/arnd/cross/arm64/gcc-12.5.0-nolibc/arm-linux-gnueabi/bin/arm-linux-gnueabi-ld: drivers/net/ethernet/wangxun/libwx/wx_ethtool.o: in function `wx_set_pauseparam':
+wx_ethtool.c:(.text+0xc10): undefined reference to `phylink_ethtool_set_pauseparam'
+/home/arnd/cross/arm64/gcc-12.5.0-nolibc/arm-linux-gnueabi/bin/arm-linux-gnueabi-ld: drivers/net/ethernet/wangxun/libwx/wx_ethtool.o: in function `wx_get_pauseparam':
+
+Randy's patch removes one 'select PHYLINK', which would make that
+configuration slightly more likely to happen. The easiest workaround
+would probably be
+
+--- a/drivers/net/ethernet/wangxun/Kconfig
++++ b/drivers/net/ethernet/wangxun/Kconfig
+@@ -20,6 +20,7 @@ config LIBWX
+        tristate
+        depends on PTP_1588_CLOCK_OPTIONAL
+        select PAGE_POOL
++       select PHYLINK
+        help
+        Common library for Wangxun(R) Ethernet drivers.
 
 
-3fda85324b8d ASoC: dt-bindings: Extend name-prefix.yaml into common DAI
-properties
-
-ASoC: dt-bindings:
-
->
-> Best regards,
-> Krzysztof
+    Arnd
 
