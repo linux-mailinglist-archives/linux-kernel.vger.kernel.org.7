@@ -1,96 +1,97 @@
-Return-Path: <linux-kernel+bounces-730827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B1BBB04A71
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:21:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E12C9B04A72
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:21:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F24B47B2B6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:19:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67A207AE284
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589FC27F16C;
-	Mon, 14 Jul 2025 22:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA71283FF7;
+	Mon, 14 Jul 2025 22:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=scandent.com header.i=@scandent.com header.b="b0VnS6a+"
+	dkim=pass (2048-bit key) header.d=scandent.com header.i=@scandent.com header.b="ZZEeYIqB"
 Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4427F27C154
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 22:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B85427FD52
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 22:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752531497; cv=none; b=lkYu3rlOxQp1J6/ddpkslANb+ctOFxpGZ0M9QugHiiGaHNcsOsVo2MD0mg3JJ+s+neJZ2l8RA2XjgOuQwNgKuwzD6VSIEJptKeYNgc6SbPvYXZU6h6sYQow0YweUjxV+xFMxismCSKBa3CaqeSDYnzc75ajx/3dqriVm7v3xfC4=
+	t=1752531499; cv=none; b=Aa9HP8vQEBmh7L/03LzD6ckmnmHsC2rRLVqlVWs1fXxVfDrnbcferEd6Ij/Dcg808npMvKjkBN4rmz6tBfQC2RdSBUTnhPscom5C9KnfRJU9UAPhh7a9uc6eCoEQ7sHdA6baCMpw0Z+FL5JNkjko5Y3eIpE5rwYEShm8l0MIkTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752531497; c=relaxed/simple;
-	bh=NfEbJQ9APBMNxBx8/hFWpXBgQCXsN9BhVcLRIR0cydM=;
+	s=arc-20240116; t=1752531499; c=relaxed/simple;
+	bh=YLR0dTVZfAu5LlRsEWmmg9empbYzMLHU1znVEa4gBwA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H3WVGHkFm27DuTP2MCKU8ixcoKWmYwMlIXdqGa/NwsCs/qYOLtshoaSaPB+V7311jB5x8V9UyFCP+U9j+E0qP5jWP0vkwah9mxJ7D76IELm6LZXdfuS0RN2WH8NPjy5s7g7WhNZpL2UtnVY09qpBmuDr9RPtM4xjNz2R+x90LMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=scandent.com; spf=pass smtp.mailfrom=scandent.com; dkim=pass (2048-bit key) header.d=scandent.com header.i=@scandent.com header.b=b0VnS6a+; arc=none smtp.client-ip=209.85.160.181
+	 MIME-Version; b=LfA0qotX9zA4QxzwpoqzxeaxFG8qCknGBOfsScs8C8C2D3fFwSMkdqpNkMFIRyeKi5uvxny2umEFxoMmMrYj8X1hsPVLzPmLQCGXIA1xsfdM4rF4FsWYIpHH3lPDfvRdLACmF9/AkY36il491556nLWse5+fbTAVKc2BCDOvSpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=scandent.com; spf=pass smtp.mailfrom=scandent.com; dkim=pass (2048-bit key) header.d=scandent.com header.i=@scandent.com header.b=ZZEeYIqB; arc=none smtp.client-ip=209.85.160.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=scandent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=scandent.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ab5e2ae630so22421731cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:18:15 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ab71ac933eso9964841cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:18:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=scandent.com; s=google; t=1752531494; x=1753136294; darn=vger.kernel.org;
+        d=scandent.com; s=google; t=1752531495; x=1753136295; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WIaH38Gh5kKcHJRj8XVnX3nblAGXvNpyNwpxmX14OvU=;
-        b=b0VnS6a+rCpnmDrq0kKRMhImO9537Yw1x1jvH8isXr/G/m6ld0JiJNP87Pit/w3Ctr
-         3Xk6CF2hC5bo9/h5Ri2f4vzQpngKm5+Yh4y7Tr1Ndbr7wOGV3bdUo2XUGCdV+S7x9ge7
-         6AJ2xwYcvFtEhgAjnhI6GzqxXMCzMTsvfWUXyz3SVwvJdwXRx8NSUaKt4KSaPEnvYIuF
-         i0EA2WgDOLsVdsytCXFMebZu5hoNpYgsGv2eIUUFKbc5xfC0ZOvYqau8LFPE/6XGuCEI
-         jMBdyxFJpSI9T8DLfIW3BgtdZDb8mdSZdosDx/u6SaoJz1lbv4ZuK2dw2gyaofTl9rY/
-         UoXg==
+        bh=ouMuj11MjFvdwjVughz3WZjGk79DPdwniSFwLLOcIJQ=;
+        b=ZZEeYIqBcQTgIfCa7EZ+2JZkzc697MgW21NmoGf8sMRzZrOZRb4ocHJ0P0QLcNs6At
+         4XaJe1fw9lIALqCbV20LF2fc9FjG3kMovAunQxEDwPKS04u7tpTQOMh1US86UYpo38xp
+         s6R1hLG9irtS1eTVbXFwWhYiUkr+46x1hhZYZnWGwRk0mw5RVu8sKmMLgZEOQhlQe/3I
+         CB/+a1H4Y0vCRyg1i4gJTW4uiIWmFVFQJch6Ci8/I3yJrgGXXQ0557jWNds2bUmnjIKb
+         ENIbvmVcB/azqRsBXLjEtMciQiRPe1uhF0NjE451AWsgbfhevdvG9id3gtnjesSwiyH7
+         1i3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752531494; x=1753136294;
+        d=1e100.net; s=20230601; t=1752531495; x=1753136295;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WIaH38Gh5kKcHJRj8XVnX3nblAGXvNpyNwpxmX14OvU=;
-        b=Go15huTWXM8KIHIi5wqBeCxPsLbB910zGKRzgoUIcW070QofCkIuZgCTOvW8roFHiO
-         2YRgrPspo7SNYUIRvd3/jKzLSoZXBoDb5yLff54CUgy5a9d8AHHvrD5olBtMRdpntqW1
-         lhdIVVnZwk1Ad2QE0BhJkf/M5NHx6cy9BdHoTaF1TnCxoz01wEFU9zIsP7/zbcBJbf+d
-         RO1eQ6htyIu38GZFzyjI2XC5R5kXOEhNQDpYfjZ0JdUneBEbmssBl2E4/rO9DIbzyOJM
-         ZDMkaR7bmKVKCDgYonnulTE/ppWIcjI3SNTgh2ACqC3LlBXW4KAuiCl7h5ED3FyVZp1m
-         d8cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbrSb1WdAHGTreWoKTW/CXA1mEBDv2hwCK+vuYHXSPhFEupebQUbbct1SGce5kpXWFJpE93gowjYcuvFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/aOGoit0fjK/ZfkrWsmpLlnw/2Xyt1R3jGtekory0VThXwnqM
-	n5l0PrlEnddJIuMHJhge46dIbC3QRUu5IgHzYn/igQP8CcPAcGTkeaUud2XPj/AsbDY=
-X-Gm-Gg: ASbGncuqutLSj3swQoylw88wGesIZb7uVWZ2k/nTdSodOEnyiI8lIlm96YHvVO83ZJ0
-	vSfWk8ChgvAcW+agYXfXFPBBtQE7MqER7CpToNnbTy/XV9V7CYM7Guqel3fdILfq2M8tQ9V9nkX
-	SVEvOkjAtnxx7e47p+L+Rpis2XknpQVtWwCTUxTkpPX1VReoE2takjBplwi6NOB/OMWoFG2QAiT
-	AU06A+SIBYw5dVjPDxjPy6+HX9RR7A3FPP0BLyW0OtOkyAf+6LW+4xy+o9g7cY2QDj7hvOsM0Tu
-	VRVDgyg8wAnj/7wUKwpm3YrmiT3MrffkBfvocU5vL8g2Y4j/kSXO6cJLIzMK03yATy2Erixj57c
-	wtX9hHOOCu7W80dPjkb6ZseRdolkIIjsSaqvdR8oMS8xaSCHy
-X-Google-Smtp-Source: AGHT+IHF+khwSUVbi38c6jhWBuadogmIeY/qCFpX9uS8IQMaxlml1sIb3wH8o1wLSvvGA3Y1kGkIjw==
-X-Received: by 2002:ac8:59d5:0:b0:4a4:3147:41d6 with SMTP id d75a77b69052e-4aa35ca9258mr235602601cf.15.1752531494043;
-        Mon, 14 Jul 2025 15:18:14 -0700 (PDT)
+        bh=ouMuj11MjFvdwjVughz3WZjGk79DPdwniSFwLLOcIJQ=;
+        b=DQLBNiKWCBSydU1c7Gd2aqV8DsZ3ThakAtgs9uvZ8KsJUh4MDzCnaW/nZvxUxxJ/dA
+         kpKL5NdQLHUxRBGvZntEDJM2oIk5Y/4bHNAgr/I/eqhmAQ1MxXgw46YdELLvljpxAt7E
+         Hb5iC1qN+/23CluzmXIrcZVoRpp6z0TRHNe3JvM6at/DlA+nad1QVKvyk1xDlUXQlj8H
+         6R4xI5i6Wi/+WFoO/Cru8DVT8qXbL9CSdbK5FUtx4VXf5xjybUqhpVYhb6U9voYKeY4s
+         BD3Ow4oJJvDyikpQvVUodNHZxa6PGKMgdANvLqt3tiPLtm5OpkKEnGHH4q/QiLe1W9q9
+         OYhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXW14jLtQnJYsIdL6PEs/vBr4dfDYY2NXHuNFpjylYzv8es6EJeD5pwhoGaiKH98ti0BRNpLLIz38INBbI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzmtxyu+LNNZSKXzp1yICdJzbtZHv9xVks8V2+FdEiapvYXSPc+
+	ZNCYMALG1dDs36BQ38IBD0OAGI9fNdldt/JXkeM0YlXhHxfyToH7zWieU5Ho1xvp5u7Oavoj9q8
+	PPeglWGs=
+X-Gm-Gg: ASbGncsaeeeECmEayO+Ou6d8km6rMjVzu9GoXGxMSvpPQLyiQkhBcWCfuEb4pDIcy5/
+	yb7GEqVTdY3X1yttO0HkkpnsBt6X0prsRcOYyPUStjJXlWY32ubeo4L6shctxTCy//rf5I9m722
+	UGb6+a8CaGKwenw6IIlXtGDO1fZnuBpVY9dECGDr74cHtHsyUg5lJ+19WBRyHzscqZIQtlpYDzS
+	76/0ZGLz+vvHwd0BO75N+5zmrzxRdbk7O8a1Teza3p+b+UKm6N4/DlvKST38ydQr5K6EdH80P/Q
+	0kv+mcMXjZ8/C0kpWNJjGeursdgIvvVfr5sdxoJ4wxAZOtAPAzyW1NH03CBZ8odBS1K2pHa3naE
+	0uVazaOw0wBXdilRcLbtU1Nnx9LYU3ETtKMGlP5AQRvXda7RxqySEaaPMeak=
+X-Google-Smtp-Source: AGHT+IGSSrEk0sdISqge7G0djRIjWuuV30fns6i4QsiVDwWMYt0jZAnn6a3hXxiBvovc3VD+dN/cfQ==
+X-Received: by 2002:ac8:6909:0:b0:4ab:80e0:955f with SMTP id d75a77b69052e-4ab80e09e16mr13247631cf.34.1752531495432;
+        Mon, 14 Jul 2025 15:18:15 -0700 (PDT)
 Received: from vserver (ool-44c5118c.dyn.optonline.net. [68.197.17.140])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ab3a1ceae0sm37822021cf.25.2025.07.14.15.18.13
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ab3a1ceae0sm37822021cf.25.2025.07.14.15.18.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 15:18:13 -0700 (PDT)
+        Mon, 14 Jul 2025 15:18:14 -0700 (PDT)
 From: Richard Yao <richard@scandent.com>
 To: dri-devel@lists.freedesktop.org
 Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Akshay Athalye <akshay@scandent.com>,
 	Richard Yao <richard@scandent.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Junhao Xie <bigfoot@classfun.cn>,
-	Caleb James DeLisle <cjd@cjdns.fr>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Manivannan Sadhasivam <mani@kernel.org>
-Subject: [PATCH v3 1/3] dt-bindings: vendor-prefixes: Add Tianxianwei name
-Date: Mon, 14 Jul 2025 18:17:59 -0400
-Message-ID: <20250714221804.25691-2-richard@scandent.com>
+	Conor Dooley <conor+dt@kernel.org>
+Subject: [PATCH v3 2/3] dt-bindings: ilitek-ili9881c: Add Tianxianwei TWX700100S0 support
+Date: Mon, 14 Jul 2025 18:18:00 -0400
+Message-ID: <20250714221804.25691-3-richard@scandent.com>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250714221804.25691-1-richard@scandent.com>
 References: <20250714221804.25691-1-richard@scandent.com>
@@ -102,28 +103,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Tianxianwei is a company based in Shenzhen, China, making LCD screens.
-
-Add their name to the list of vendors.
+Document the compatible value for Tianxianwei TWX700100S0 panel.
 
 Signed-off-by: Richard Yao <richard@scandent.com>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ .../devicetree/bindings/display/panel/ilitek,ili9881c.yaml       | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 5d2a7a8d3ac6..a2151e2aef4b 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -1548,6 +1548,8 @@ patternProperties:
-     description: Texas Instruments
-   "^tianma,.*":
-     description: Tianma Micro-electronics Co., Ltd.
-+  "^tianxianwei,.*":
-+    description: Shenzhen Tianxianwei technology co., LTD
-   "^tlm,.*":
-     description: Trusted Logic Mobility
-   "^tmt,.*":
+diff --git a/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.yaml b/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.yaml
+index baf5dfe5f5eb..28d5fff79992 100644
+--- a/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.yaml
++++ b/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.yaml
+@@ -21,6 +21,7 @@ properties:
+           - feixin,k101-im2byl02
+           - startek,kd050hdfia020
+           - tdo,tl050hdv35
++          - tianxianwei,txw700100s0
+           - wanchanglong,w552946aba
+       - const: ilitek,ili9881c
+ 
 -- 
 2.50.0
 
