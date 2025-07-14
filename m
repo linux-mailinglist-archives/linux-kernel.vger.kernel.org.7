@@ -1,292 +1,230 @@
-Return-Path: <linux-kernel+bounces-730287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8DD4B0425A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:59:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 994BDB04256
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1B794A6F54
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:59:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CD241672A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6D425A2C0;
-	Mon, 14 Jul 2025 14:59:25 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2DB2580F1;
+	Mon, 14 Jul 2025 14:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VuKKoco2"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2055.outbound.protection.outlook.com [40.107.92.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EBB259C9F;
-	Mon, 14 Jul 2025 14:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752505165; cv=none; b=j8UJyLBAt8pvSZdaXV5BWSZ8GuC7V/ninnTD9vpSYf2N6/s783hBW9l46IF2hQ/L//aRBDGfLt+yHm3jzmag1drMfcLzhP+QIfMC7ttZSoHJg6hIh8DAsgEjsnODTW/CwSFITyScX+12Xi+AFetUlP9iIMJS+FUHyEw3cYXjbi0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752505165; c=relaxed/simple;
-	bh=LoJlg3EAlbipWWqeMfoaXHl8EBht7nYYHONIWaDbPlg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fHKtXImslIIn6yTRB/b3oUkiAeYcsQq9wFGpaKnl8Eg5z0hyMmoIQJOXgTf/qfNsuQiXF3V0jKb1p8YPAmgNt84xcB33ipdnHRtcCvYbVJlIMgu8SCI6u+JbrEyd9wwVIwBHdByeG+2oUa2MGJHTlkUUnX77TQb5QIH3G0bY3fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.42] (g42.guest.molgen.mpg.de [141.14.220.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id C11E161E64847;
-	Mon, 14 Jul 2025 16:58:58 +0200 (CEST)
-Message-ID: <21eded54-3460-4000-baba-815522012e02@molgen.mpg.de>
-Date: Mon, 14 Jul 2025 16:58:58 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7FC23B624
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752505147; cv=fail; b=S/Kdbmf8wGb4Q0kPGULBKZv9pqvsRA1CrmkAfvKXVyLsxhGt2ertFEX9eNlvydTJ2Z1yQv+HxsxILIXdE4ef7hK4H/lL1aey6/YEMYxQ3effMyVq/BpZFc/g3IqqH+BcsqFs8YymqWZ5+V2ERboNg9KsRNM7DSVBlp15a08Ukj4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752505147; c=relaxed/simple;
+	bh=NIg/iG2narhiCueVr0F+aRmXtKsQOg7Vq7JIqciLK24=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ah9vtEje4CsBkhrHuxaoAh6yzxFaVSuiJHLmbaGTKEhDyNJYqGALfLVfVZzQrdWxp2p1U2vC+0b3/cmqtbGmyOfcZVfzmgg4RcHGi6dTj238Y0kTGkBRsi9twvglhmgZoISN47iuuPUaEo/330YVgXOztJpMJ+ZMav0lsP5bErM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VuKKoco2; arc=fail smtp.client-ip=40.107.92.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=imziP0Q1FNh4GoU7SWgX/Opkn4ksgbBdrMq9EekvcoujtlDd+XqjjU7hvzxDzBT1WgHOYpZWPMfwnXR8SiHEb4g+yz+EVhXNBcTeiAMokWv4AiNjFCMvumD/xvAB1apImp89E4lavlWfn+l5zgdgIAPtuYVsmJnVpjl5cPI11EQ1L8XDSCGHrcpjTlEcE/ILbJLTOtHvaEbU9sEPP+TdG1MqUG9CY9Ir/LJ4U31xp1jATvg7/775rmjAL09J/Urzn3CHga0PtHhngkWaeB6Xb3biWGq+HgeMVSHkP6afGPidWfJmRHVrAhKHYz91CHRip+y+TtHciIRsWFx1tqzQeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NIg/iG2narhiCueVr0F+aRmXtKsQOg7Vq7JIqciLK24=;
+ b=m4L7Yajyd3ZSVbo2tM+vGsCHB4FFZ1GvYpxAg6h0FJ8eMX6LunG4Lw4i29U5siRbHV7I5EJjn4RYGLvRMM47dkuRuiKwBc2PFp11N2Hpdmbs/UdRSQbiE1IJN9ufWJZL0C6rUld1FvfZwxeWDE7A0WcAT7mahH7sRvqGaWPWQE/PZi2aTRxTBaIg27dajjTjLFOrt+IUYA/UvMJ+peqpy9MjjesIToTHFx00WEge1Tm0OO7rQDwuzvPs0VcOpF79fao+BFwqCjv6XJ9V+2JjZogoYdMk9r/2frFkF/DstFi1wDaW8IkstyIQfvoAMUflBdCmc7kLIeSOD73PWDGupQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NIg/iG2narhiCueVr0F+aRmXtKsQOg7Vq7JIqciLK24=;
+ b=VuKKoco2gP1KQ2zewKsh47keNh2nnYDBQjQfGurcI7aaiM8W2Hjvd8GrolcRJk9A61bL5xbzFbWLV4Ci1SN1Ew0iYmh0ZKxlGtApBEhaS8khFcFfTdnmh9GHbRPe7j1gRjXChluXN851uSQ10lrKh3ih4rjLB50ckSLZRZzZ1YU=
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by PH7PR12MB7137.namprd12.prod.outlook.com (2603:10b6:510:1ed::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Mon, 14 Jul
+ 2025 14:59:02 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%3]) with mapi id 15.20.8901.033; Mon, 14 Jul 2025
+ 14:59:02 +0000
+From: "Limonciello, Mario" <Mario.Limonciello@amd.com>
+To: Arnd Bergmann <arnd@kernel.org>, "Deucher, Alexander"
+	<Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Lazar,
+ Lijo" <Lijo.Lazar@amd.com>, "Zhang, GuoQing (Sam)" <GuoQing.Zhang@amd.com>
+CC: Arnd Bergmann <arnd@arndb.de>, "Olsak, Marek" <Marek.Olsak@amd.com>,
+	"amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/amdgpu: fix link error for !PM_SLEEP
+Thread-Topic: [PATCH] drm/amdgpu: fix link error for !PM_SLEEP
+Thread-Index: AQHb9Jeh7iYLBsEnJ0q+oYD5dzOV5rQxtnuA
+Date: Mon, 14 Jul 2025 14:59:02 +0000
+Message-ID: <db654178-a6d7-416c-bab6-b494a7c118ce@amd.com>
+References: <20250714081635.4071570-1-arnd@kernel.org>
+In-Reply-To: <20250714081635.4071570-1-arnd@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR12MB6101:EE_|PH7PR12MB7137:EE_
+x-ms-office365-filtering-correlation-id: 3a6d1ac3-3cf7-4571-45a1-08ddc2e6f852
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|1800799024|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?R3I3TjZ0ZXF5K2RpbFY1QStrVVNROC9VY1JibGwrbmo4NHE5ZWplOXdHVnA3?=
+ =?utf-8?B?aHRDYko1L2VoY3FzVStlVFh5VGpZUVBEb3BTOVJqZkJSWHExWThEUDBKRWxJ?=
+ =?utf-8?B?TTJtNUhSRUF0UGNWNDUrQ0huUHRtRnU0ZytsMUovaFpBcm5rTnJraFJYeWdJ?=
+ =?utf-8?B?NHBhaVlKcFo3ZDRSaVFlVTNZOTFTSVZidVR6V3JkRXllSUNsekdXSlB2VGhQ?=
+ =?utf-8?B?T0U5N1VlTkQ2VTdPWEZkd0IzeUU3TmRVOGpKcXIzTnV5eUhkeElHazdtNzBx?=
+ =?utf-8?B?UFh6Rm93L0hKMTVSZ3c2UzA0RE9SZVhaVXFYSmJYV3Vpdnpka0R4RjNaazRr?=
+ =?utf-8?B?Zm9iNUhUYjVkOEg5bGZoZlpqOE5UbFlwaTJLOWd4ajV5VDJkaVJ0aVRtZmh0?=
+ =?utf-8?B?YjNDR3dGYXdaMHhmVEpEWEtWRGJkQ09CZDRQaThCTHhFTFFJRDI0cllVSnlW?=
+ =?utf-8?B?VkRaRTJqMkxwd3ZKVG41ZEpzVlhaRGk3TzBobkJGem5TRWtuNkZoVWg1aW9Z?=
+ =?utf-8?B?WXlpWDBMdk15a2JUaGZ2V1lxZlEwaDdRN1ord0VDN0gxMHRPVGtVaCtzR1lZ?=
+ =?utf-8?B?aTFFZkhJSFFhYmNYK0duWWR3TFJtY1hKdjcvTS9kODVxaDlvUm9KbmcxQWs4?=
+ =?utf-8?B?aEI3bmdGOG5kWU9DaTdXWmVaTVhSUldyQTVlbFFqVVNlZFlyZ25UOG5KZzBk?=
+ =?utf-8?B?MkZLczBXcXFCb0lZMnZydXArQmJkRHlsM2VxSXdmMkg3TUkySnB3OU8xZCtZ?=
+ =?utf-8?B?MVdSbENxWUFoN1E3YkliOWp2ZWg3RFBQK2VGSHJ0MjhTQ3E4WENLRjgrMDdQ?=
+ =?utf-8?B?UTVjVUozSldKL1JSVHdYak9DSjh4Q2xlQk1SeVZrZzJmN1VHbVVZU3FxdHp1?=
+ =?utf-8?B?UmNzYzZQanNtQk9OTmM5M1pnajFHendxQUJocE03bGhZZHVXYkcycnFOK1Ey?=
+ =?utf-8?B?RElUbUltUkVZVGtabVFLZjN1azd1Zmg0MHkyaVhmTmx1TXZiS1F1VU5PK3g2?=
+ =?utf-8?B?MW5SMWMvWitPSVBETVM0YnVWaGpWKzlIRHM2cSs0RUpkREduY3dmUXdzOE1p?=
+ =?utf-8?B?c1pwMzdaazBvRlRDTU9YZHQ2ZHdHeEZQRHQybENMbmFXY29HRWVYVXRTUXR1?=
+ =?utf-8?B?MGdiY0VSZG9DUWVsSWNtZ0FsSUJ6ZnJBQmdBekQxTldJN1dHY0dEdmJqUk90?=
+ =?utf-8?B?cVVkWER3M3ZCcVdmVU1DemtVM0JMY1VlcmRPeE9CbWkvNE9wQTdkK3pHUjVQ?=
+ =?utf-8?B?cTVYVWYxaW5QLy9BbithUUVkZkYxeEFGMllZaGVBOE1qSU42R2RyS2p5eng5?=
+ =?utf-8?B?WDNqY2YwS0FKeDV3aG0vWXZOQ3pSVTBwODNyYmZIYm5nQy9aK1hzeTI4TEc4?=
+ =?utf-8?B?K29sQ1VsUDRaOS92OU9OOHRNakF3K2RHakVuOVNabTRzZHFaOCtPRkc3VEpp?=
+ =?utf-8?B?VnJRLy9ENjJUR1J1bENUWTBXWkZJSHd2RDJEUllCeVRiVGVtVnpqQXU3VUIw?=
+ =?utf-8?B?QzVERGN4MVBXSU9ZVURQaUtsVGtVY3dOVHF0eWpvRUZFczEvU2VwbUl4N2F4?=
+ =?utf-8?B?LytIVUgwV1ZWZHdGWXpCU0VuSnJKRUsyRC91SVJsRVlPQ0VNaW9UV3pKY1Z4?=
+ =?utf-8?B?QnFZNHVLa1QwY3FhV2hlNU1GU09SV3U3bHVZTXZ1aW1WWmVYVjVTZW5qeGds?=
+ =?utf-8?B?M3Z4aU1NRExuRmoyU21kR3duK2VPOGNIc25NNXFGMmRlSm01QzNhVWk3YzRN?=
+ =?utf-8?B?blVtVTl5RzJPRGhiSHFqbnBRUW81cGFyYytURGdzTXpnMEpqcnlxTXRKZCta?=
+ =?utf-8?B?YjlsNk5ka1A0L0tmazdhZXg0Rm9VeitHbm1oYWFVUDdsZzRXNWJLWXZTTk1a?=
+ =?utf-8?B?V2RHei9OdDUzODBURm1sOTNXZG9mc1ROSmVhM0dCaVB3cGdDSVZRcTVtMW9U?=
+ =?utf-8?B?akJvZVRiSUxvMDU4YmEyYThGSjNaRWU0Q251emoyUUFHR213bGNKSlJBSFFM?=
+ =?utf-8?Q?lVvm7ZoxvQv4WrF46qZYmlv/b8CdCI=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?cjV3d3BwMG1KampnSjhpb1M3OG94cEl6VHlOcEJkcDhqcDhiRFYwbXlrUW04?=
+ =?utf-8?B?MEJIM2hxdjNoeTQzZ2pYVDQwMFZacXUyYWp6U0N2TkthcUZRZ2ZyM1p6end2?=
+ =?utf-8?B?ZnZwRmRnWUdUQzdxRnJjdW4rQVhtRkVqSlV5YzlyQ2dOaWZYQ1FQWTBpbzZJ?=
+ =?utf-8?B?WFJvdzFldnZCRzFZNEx3YWlnUTM0eklhTTQycS9rSGhJVzR1dVVERlN4Q1lC?=
+ =?utf-8?B?UTZDZ1FGZmJjZHpWWjZhdUpHRHhhdytlWHMwVVMvdnd1em1Xamd5ZDlOeFVO?=
+ =?utf-8?B?ZEdxZ2lIMUNXVFVJTWZMendaeUxhc0dGSVIxZXgzRmxicE1ZS0d2bEE4cnVK?=
+ =?utf-8?B?czQxT1M2eDBxTGRqUStkalkxRTVyUjBZb0k2THJYRURnN3gxM2NTMVRURzNX?=
+ =?utf-8?B?ZWx6YW5rb2dUMFc1MzJVemFNd3hzaHBRR0I3N084ZE1UaFpjVllsNGFKdnQ0?=
+ =?utf-8?B?V2ZsWTgyeE9QSmtJYUFKaDNXY3pxSWMrV2RWVHZBYmlPdVp2WFdFZSsyUmRS?=
+ =?utf-8?B?SU15M0NPNDZpU01MWmFPbWlQV1dwdFlFZytEVGxlRFNNSDMxSXZ0cUVqb1pa?=
+ =?utf-8?B?VzVwSDNjVFIrdURsWW4xUHhZS3djcjlLSUNGQS92eFFJcEZ6ZngzTGZSRThR?=
+ =?utf-8?B?WmJEZDJWSGJWcDFHWWhtckJRdXh5UW90MFh0VkdTYU9sMlBKQXRnZ241Kzlu?=
+ =?utf-8?B?NkZVdjR1cXRyWVVpV1Z2dnVva2NpZVJreDRvYXhGbFhhVFZ1cng2c3ZSNkVH?=
+ =?utf-8?B?dXZhYzdBWWVPaUFaVS9tUFgxalRwY1lVWm5URVNqMVkzVmZLVXcrS05WYk10?=
+ =?utf-8?B?eUFJdjBBcjhPUTI1U2RLeHRTN1kzNW1TWVQ4MTQ0S2JpY0w4SHRHdy9WWXc5?=
+ =?utf-8?B?VU5kckJLK0drenFQK0wzSjlJQ3hMWThxckczK1VXZVoyQXhlV1QzR3lxWENL?=
+ =?utf-8?B?c3pHTTFVOGJ6U2pTL1JtL1kxWUU3UUFldmhIS0hpaklUVG55S3VHRzVPdVVR?=
+ =?utf-8?B?WWo2MDlibEd2cWNydHM3NkpDOGpoSVNIdUpCYXdZVHhMb25VUHNIMnB6RXp1?=
+ =?utf-8?B?TTBtU1Z1NHM2eUtMU0NHaTlUTHpOL1NHd29JakxGK0RHb2YvRXFvMzJYS1pV?=
+ =?utf-8?B?TTRWbGFRM3lrdDA1TUQvTzVaUmhsMHJIQzc4WWExMzk4SUxRU2p6VlZ1Q0I1?=
+ =?utf-8?B?cnJnOEZVVVAva3gycUEwaVNNMWMrMVBmUEhkd1NLeGJDbTRMbmFmWjBwbFFO?=
+ =?utf-8?B?Sy80bHBlVzlEbjBtam01aFdCeTFxOWExU2RORXNsbHpua3RjWGRhVmxsdUVU?=
+ =?utf-8?B?SlA0Y0NWTFZyUFIwbUpkaWR5aG9aRUlwMC9IYmltTUNvYzdjK0ZBMlRqL2cx?=
+ =?utf-8?B?cks2M0Q2MnJNOGNCWjMzWGhNSllvd1Y4L0M3UmRpNFdUdlFFeUc1eXBpMzUx?=
+ =?utf-8?B?NzdEaElpbU90MmNyQUJSZjc0NGY5dXlmeUZkT1J0bUR6N2lJOHlmMUxRMUpl?=
+ =?utf-8?B?SGNvbTRwUlRQS0R6aHpGcHJQM29BMDVCU2YzSWdaK0V0Zk9zMFR3ek9mKzFJ?=
+ =?utf-8?B?ZGY1dDhFWDlIbWZMZXF2UlgycEFqbFo3a2NsaHREWnhJQ1pnTHI5L2V6UjNZ?=
+ =?utf-8?B?V1g5TjUxS2taUThQZmwrOTcxbnp3dkpFMDlBR3E3MG9wSmJocVFUM2JyajAz?=
+ =?utf-8?B?L0MvWDd5Wmw1QVVTclAxV2QybVRlT1REUjZ1UmNTei9BMHJpcUhIa3B5dUgz?=
+ =?utf-8?B?R2xLNXJEcmtSNWNXWGFieWJsRkJBMnlBb1UzREdZNk80WTU2cHY0VER4Q3dT?=
+ =?utf-8?B?dFVKdXNHWHlLdEszeThrQkI5STU0QVdvTUZFdFkyMnFZMUJmMmFqODVnampZ?=
+ =?utf-8?B?cGNEbVhSdU9xZk5JcnhhRCt2RXEvSmlYWEhjZ2lOT08rekxEdWh1Nm8yS0x6?=
+ =?utf-8?B?MnRkV0F4TWlFKzZWSmM5K2YyVytaMjBMVVNld2tiOUloNVBuNFE1Z1c1ZHZO?=
+ =?utf-8?B?clVGZ1JTOHZmSm9ubkdlcDhaV2NjR3NiNmY5TC9KRmFaSUw3TSt5V3Y5QUhB?=
+ =?utf-8?B?UTVJejlnMHZucDNBOElnUUk4UURPRG45Ukhab0dIUDE4aEdVMkZJeEt0YVNO?=
+ =?utf-8?Q?Wy0s=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <CC0D2ECD2291764781EBC930BECE3021@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: ISO: add socket option to report packet seqnum
- via CMSG
-To: Pauli Virtanen <pav@iki.fi>
-Cc: linux-bluetooth@vger.kernel.org, marcel@holtmann.org,
- johan.hedberg@gmail.com, luiz.dentz@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <474a5321753aba17ec2819ba59adfd157ecfb343.1752501596.git.pav@iki.fi>
- <bbdbe42b-614c-4f66-8712-f0ab8d54b490@molgen.mpg.de>
- <e647579c99fcbfeb0c89f041ea5ea61e608be099.camel@iki.fi>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <e647579c99fcbfeb0c89f041ea5ea61e608be099.camel@iki.fi>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a6d1ac3-3cf7-4571-45a1-08ddc2e6f852
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jul 2025 14:59:02.0432
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: D2udp19F/jwZAZ1G1KrCoFPs/cJaLNq9DzZF0M1gh6JIa6hrjJfW30oO1tbUVT9g4AmfP3BJNgluyJx/LUHEeQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7137
 
-Dear Pauli,
-
-
-Thank you for your prompt reply.
-
-
-Am 14.07.25 um 16:53 schrieb Pauli Virtanen:
-
-> ma, 2025-07-14 kello 16:15 +0200, Paul Menzel kirjoitti:
-
->> Am 14.07.25 um 16:02 schrieb Pauli Virtanen:
->>> User applications need a way to track which ISO interval a given SDU
->>> belongs to, to properly detect packet loss. All controllers do not set
->>> timestamps, and it's not guaranteed user application receives all packet
->>> reports (small socket buffer, or controller doesn't send all reports
->>> like Intel AX210 is doing).
->>>
->>> Add socket option BT_PKT_SEQNUM that enables reporting of received
->>> packet ISO sequence number in BT_SCM_PKT_SEQNUM CMSG.
->>
->> Are there user applications already supporting this, so it can be tested?
-> 
-> I sent the associated tests to linux-bluetooth list
-> 
-> https://lore.kernel.org/linux-bluetooth/c9a75585e3640d8a1efca0bf96158eec1ca25fdc.1752501450.git.pav@iki.fi/
-
-Awesome. Can this be referenced in the commit message?
-
->>> Signed-off-by: Pauli Virtanen <pav@iki.fi>
->>> ---
->>>
->>> Notes:
->>>       Intel AX210 is not sending all reports:
->>>       
->>>       $ btmon -r dump.btsnoop -I -C90|grep -A1 'ISO Data RX: Handle 2304'
->>>       ...
->>>       > ISO Data RX: Handle 2304 flags 0x02 dlen 64                      #1713 [hci0] 22.567744
->>>               dd 01 3c 00 6d 08 e9 14 1e 3b 85 7b 35 c2 25 0b  ..<.m....;.{5.%.
->>>       --
->>>       > ISO Data RX: Handle 2304 flags 0x02 dlen 64                      #1718 [hci0] 22.573745
->>>               de 01 3c 00 41 65 22 4f 99 9b 0b b6 ff cb 06 00  ..<.Ae"O........
->>>       --
->>>       > ISO Data RX: Handle 2304 flags 0x02 dlen 64                      #1727 [hci0] 22.587933
->>>               e0 01 3c 00 8b 6e 33 44 65 51 ee d7 e0 ee 49 d8  ..<..n3DeQ....I.
->>>       --
->>>       > ISO Data RX: Handle 2304 flags 0x02 dlen 64                      #1732 [hci0] 22.596742
->>>               e1 01 3c 00 a7 48 54 a7 c1 9f dc 37 66 fe 04 ab  ..<..HT....7f...
->>>       ...
->>>       
->>>       Here, report for packet with sequence number 0x01df is missing.
->>
->> Sorry, but where are the sequence number in the trace?
-> 
-> It's the first two bytes, see Core specification Vol 4E Sec 5.4.5 "HCI
-> ISO Data packets".
-
-Now I see it. Thank you!
-
->>>       
->>>       This may be spec violation by the controller, see Core v6.1 pp. 3702
->>>       
->>>           All SDUs shall be sent to the upper layer including the indication
->>>           of validity of data. A report shall be sent to the upper layer if
->>>           the SDU is completely missing.
->>>       
->>>       Regardless, it will be easier for user applications to see the HW
->>>       sequence numbers directly, so they don't have to count packets and it's
->>>       in any case more reliable if packets get dropped due to socket buffer
->>>       size.
->>
->> I wouldn’t mind to have the note in the commit message.
-> 
-> I'm not sure it's a spec violation --- the text in the specification is
-> not fully clear what "All SDUs" means in the context here --- so I
-> don't really want to say so in the commit message.
-> 
-> The limited socket buffer and that AX210 drops some reports is mentioned
-> in the commit message.
-
-True.
-
->>>    include/net/bluetooth/bluetooth.h |  9 ++++++++-
->>>    net/bluetooth/af_bluetooth.c      |  7 +++++++
->>>    net/bluetooth/iso.c               | 21 ++++++++++++++++++---
->>>    3 files changed, 33 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/include/net/bluetooth/bluetooth.h b/include/net/bluetooth/bluetooth.h
->>> index 114299bd8b98..0e31779a3341 100644
->>> --- a/include/net/bluetooth/bluetooth.h
->>> +++ b/include/net/bluetooth/bluetooth.h
->>> @@ -244,6 +244,10 @@ struct bt_codecs {
->>>    
->>>    #define BT_ISO_BASE		20
->>>    
->>> +#define BT_PKT_SEQNUM		21
->>> +
->>> +#define BT_SCM_PKT_SEQNUM	0x05
->>> +
->>>    __printf(1, 2)
->>>    void bt_info(const char *fmt, ...);
->>>    __printf(1, 2)
->>> @@ -391,7 +395,8 @@ struct bt_sock {
->>>    enum {
->>>    	BT_SK_DEFER_SETUP,
->>>    	BT_SK_SUSPEND,
->>> -	BT_SK_PKT_STATUS
->>> +	BT_SK_PKT_STATUS,
->>> +	BT_SK_PKT_SEQNUM,
->>>    };
->>>    
->>>    struct bt_sock_list {
->>> @@ -475,6 +480,7 @@ struct bt_skb_cb {
->>>    	u8 pkt_type;
->>>    	u8 force_active;
->>>    	u16 expect;
->>> +	u16 pkt_seqnum;
->>
->> Excuse my ignorance, just want to make sure, the type is big enough.
-> 
-> The hardware sequence number is also 16 bits.
-
-Understood.
-
->>>    	u8 incoming:1;
->>>    	u8 pkt_status:2;
->>>    	union {
->>> @@ -488,6 +494,7 @@ struct bt_skb_cb {
->>>    
->>>    #define hci_skb_pkt_type(skb) bt_cb((skb))->pkt_type
->>>    #define hci_skb_pkt_status(skb) bt_cb((skb))->pkt_status
->>> +#define hci_skb_pkt_seqnum(skb) bt_cb((skb))->pkt_seqnum
->>>    #define hci_skb_expect(skb) bt_cb((skb))->expect
->>>    #define hci_skb_opcode(skb) bt_cb((skb))->hci.opcode
->>>    #define hci_skb_event(skb) bt_cb((skb))->hci.req_event
->>> diff --git a/net/bluetooth/af_bluetooth.c b/net/bluetooth/af_bluetooth.c
->>> index 6ad2f72f53f4..44b7acb20a67 100644
->>> --- a/net/bluetooth/af_bluetooth.c
->>> +++ b/net/bluetooth/af_bluetooth.c
->>> @@ -364,6 +364,13 @@ int bt_sock_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
->>>    			put_cmsg(msg, SOL_BLUETOOTH, BT_SCM_PKT_STATUS,
->>>    				 sizeof(pkt_status), &pkt_status);
->>>    		}
->>> +
->>> +		if (test_bit(BT_SK_PKT_SEQNUM, &bt_sk(sk)->flags)) {
->>> +			u16 pkt_seqnum = hci_skb_pkt_seqnum(skb);
->>> +
->>> +			put_cmsg(msg, SOL_BLUETOOTH, BT_SCM_PKT_SEQNUM,
->>> +				 sizeof(pkt_seqnum), &pkt_seqnum);
->>> +		}
->>>    	}
->>>    
->>>    	skb_free_datagram(sk, skb);
->>> diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
->>> index fc22782cbeeb..469450bb6b6c 100644
->>> --- a/net/bluetooth/iso.c
->>> +++ b/net/bluetooth/iso.c
->>> @@ -1687,6 +1687,17 @@ static int iso_sock_setsockopt(struct socket *sock, int level, int optname,
->>>    			clear_bit(BT_SK_PKT_STATUS, &bt_sk(sk)->flags);
->>>    		break;
->>>    
->>> +	case BT_PKT_SEQNUM:
->>> +		err = copy_safe_from_sockptr(&opt, sizeof(opt), optval, optlen);
->>> +		if (err)
->>> +			break;
->>> +
->>> +		if (opt)
->>> +			set_bit(BT_SK_PKT_SEQNUM, &bt_sk(sk)->flags);
->>> +		else
->>> +			clear_bit(BT_SK_PKT_SEQNUM, &bt_sk(sk)->flags);
->>> +		break;
->>> +
->>>    	case BT_ISO_QOS:
->>>    		if (sk->sk_state != BT_OPEN && sk->sk_state != BT_BOUND &&
->>>    		    sk->sk_state != BT_CONNECT2 &&
->>> @@ -2278,7 +2289,7 @@ static void iso_disconn_cfm(struct hci_conn *hcon, __u8 reason)
->>>    void iso_recv(struct hci_conn *hcon, struct sk_buff *skb, u16 flags)
->>>    {
->>>    	struct iso_conn *conn = hcon->iso_data;
->>> -	__u16 pb, ts, len;
->>> +	__u16 pb, ts, len, sn;
->>
->> Use `seqnum` for consistency with the parts above.
->>
->>>    
->>>    	if (!conn)
->>>    		goto drop;
->>> @@ -2308,6 +2319,7 @@ void iso_recv(struct hci_conn *hcon, struct sk_buff *skb, u16 flags)
->>>    				goto drop;
->>>    			}
->>>    
->>> +			sn = hdr->sn;
->>>    			len = __le16_to_cpu(hdr->slen);
->>>    		} else {
->>>    			struct hci_iso_data_hdr *hdr;
->>> @@ -2318,18 +2330,20 @@ void iso_recv(struct hci_conn *hcon, struct sk_buff *skb, u16 flags)
->>>    				goto drop;
->>>    			}
->>>    
->>> +			sn = hdr->sn;
->>>    			len = __le16_to_cpu(hdr->slen);
->>>    		}
->>>    
->>>    		flags  = hci_iso_data_flags(len);
->>>    		len    = hci_iso_data_len(len);
->>>    
->>> -		BT_DBG("Start: total len %d, frag len %d flags 0x%4.4x", len,
->>> -		       skb->len, flags);
->>> +		BT_DBG("Start: total len %d, frag len %d flags 0x%4.4x sn %d",
->>> +		       len, skb->len, flags, sn);
->>>    
->>>    		if (len == skb->len) {
->>>    			/* Complete frame received */
->>>    			hci_skb_pkt_status(skb) = flags & 0x03;
->>> +			hci_skb_pkt_seqnum(skb) = sn;
->>>    			iso_recv_frame(conn, skb);
->>>    			return;
->>>    		}
->>> @@ -2352,6 +2366,7 @@ void iso_recv(struct hci_conn *hcon, struct sk_buff *skb, u16 flags)
->>>    			goto drop;
->>>    
->>>    		hci_skb_pkt_status(conn->rx_skb) = flags & 0x03;
->>> +		hci_skb_pkt_seqnum(conn->rx_skb) = sn;
->>>    		skb_copy_from_linear_data(skb, skb_put(conn->rx_skb, skb->len),
->>>    					  skb->len);
->>>    		conn->rx_len = len - skb->len;
-
-Kind regards,
-
-Paul
+T24gNy8xNC8yNSAzOjE2IEFNLCBBcm5kIEJlcmdtYW5uIHdyb3RlOg0KPiBGcm9tOiBBcm5kIEJl
+cmdtYW5uIDxhcm5kQGFybmRiLmRlPg0KPiANCj4gV2hlbiBwb3dlciBtYW5hZ2VtZW50IGlzIG5v
+dCBlbmFibGVkIGluIHRoZSBrZXJuZWwgYnVpbGQsIHRoZSBuZXdseQ0KPiBhZGRlZCBoaWJlcm5h
+dGlvbiBjaGFuZ2VzIGNhdXNlIGEgbGluayBmYWlsdXJlOg0KPiANCj4gYXJtLWxpbnV4LWdudWVh
+YmktbGQ6IGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9kcnYubzogaW4gZnVuY3Rp
+b24gYGFtZGdwdV9wbW9wc190aGF3JzoNCj4gYW1kZ3B1X2Rydi5jOigudGV4dCsweDE1MTQpOiB1
+bmRlZmluZWQgcmVmZXJlbmNlIHRvIGBwbV9oaWJlcm5hdGVfaXNfcmVjb3ZlcmluZycNCj4gDQo+
+IE1ha2UgdGhlIHBvd2VyIG1hbmFnZW1lbnQgY29kZSBpbiB0aGlzIGRyaXZlciBjb25kaXRpb25h
+bCBvbg0KPiBDT05GSUdfUE0gYW5kIENPTkZJR19QTV9TTEVFUA0KPiANCj4gRml4ZXM6IDUzMDY5
+NGY1NGRkNSAoImRybS9hbWRncHU6IGRvIG5vdCByZXN1bWUgZGV2aWNlIGluIHRoYXcgZm9yIG5v
+cm1hbCBoaWJlcm5hdGlvbiIpDQo+IFNpZ25lZC1vZmYtYnk6IEFybmQgQmVyZ21hbm4gPGFybmRA
+YXJuZGIuZGU+DQoNCldlJ3JlIGdvaW5nIHRvIGZpeCBpdCB1c2luZyB0aGlzIHN0dWIgaW5zdGVh
+ZC4NCg0KaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtcG0vMjAyNTA3MTIyMzM3MTUuODIx
+NDI0LTEtc3VwZXJtMUBrZXJuZWwub3JnLw0KDQpJdCdzIGluIGRybS1taXNjLW5leHQgYXMgb2Yg
+dGhpcyB3ZWVrZW5kIGFuZCBpdCBzaG91bGQgc2hvdyB1cCBpbiANCmxpbnV4LW5leHQgaW4gdGhl
+IG5leHQgZGF5IG9yIHR3by4NCg0KPiAtLS0NCj4gICBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdw
+dS9hbWRncHVfZHJ2LmMgfCAyMCArKysrKysrKysrLS0tLS0tLS0tLQ0KPiAgIDEgZmlsZSBjaGFu
+Z2VkLCAxMCBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfZHJ2LmMgYi9kcml2ZXJzL2dwdS9k
+cm0vYW1kL2FtZGdwdS9hbWRncHVfZHJ2LmMNCj4gaW5kZXggMDIxZGVmY2E5YjYxLi42NmI1YjMy
+NjBmYjkgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9k
+cnYuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfZHJ2LmMNCj4g
+QEAgLTI5NjMsMTUgKzI5NjMsMTUgQEAgbG9uZyBhbWRncHVfZHJtX2lvY3RsKHN0cnVjdCBmaWxl
+ICpmaWxwLA0KPiAgIH0NCj4gICANCj4gICBzdGF0aWMgY29uc3Qgc3RydWN0IGRldl9wbV9vcHMg
+YW1kZ3B1X3BtX29wcyA9IHsNCj4gLQkucHJlcGFyZSA9IGFtZGdwdV9wbW9wc19wcmVwYXJlLA0K
+PiAtCS5jb21wbGV0ZSA9IGFtZGdwdV9wbW9wc19jb21wbGV0ZSwNCj4gLQkuc3VzcGVuZCA9IGFt
+ZGdwdV9wbW9wc19zdXNwZW5kLA0KPiAtCS5zdXNwZW5kX25vaXJxID0gYW1kZ3B1X3Btb3BzX3N1
+c3BlbmRfbm9pcnEsDQo+IC0JLnJlc3VtZSA9IGFtZGdwdV9wbW9wc19yZXN1bWUsDQo+IC0JLmZy
+ZWV6ZSA9IGFtZGdwdV9wbW9wc19mcmVlemUsDQo+IC0JLnRoYXcgPSBhbWRncHVfcG1vcHNfdGhh
+dywNCj4gLQkucG93ZXJvZmYgPSBhbWRncHVfcG1vcHNfcG93ZXJvZmYsDQo+IC0JLnJlc3RvcmUg
+PSBhbWRncHVfcG1vcHNfcmVzdG9yZSwNCj4gKwkucHJlcGFyZSA9IHBtX3NsZWVwX3B0cihhbWRn
+cHVfcG1vcHNfcHJlcGFyZSksDQo+ICsJLmNvbXBsZXRlID0gcG1fc2xlZXBfcHRyKGFtZGdwdV9w
+bW9wc19jb21wbGV0ZSksDQo+ICsJLnN1c3BlbmQgPSBwbV9zbGVlcF9wdHIoYW1kZ3B1X3Btb3Bz
+X3N1c3BlbmQpLA0KPiArCS5zdXNwZW5kX25vaXJxID0gcG1fc2xlZXBfcHRyKGFtZGdwdV9wbW9w
+c19zdXNwZW5kX25vaXJxKSwNCj4gKwkucmVzdW1lID0gcG1fc2xlZXBfcHRyKGFtZGdwdV9wbW9w
+c19yZXN1bWUpLA0KPiArCS5mcmVlemUgPSBwbV9zbGVlcF9wdHIoYW1kZ3B1X3Btb3BzX2ZyZWV6
+ZSksDQo+ICsJLnRoYXcgPSBwbV9zbGVlcF9wdHIoYW1kZ3B1X3Btb3BzX3RoYXcpLA0KPiArCS5w
+b3dlcm9mZiA9IHBtX3NsZWVwX3B0cihhbWRncHVfcG1vcHNfcG93ZXJvZmYpLA0KPiArCS5yZXN0
+b3JlID0gcG1fc2xlZXBfcHRyKGFtZGdwdV9wbW9wc19yZXN0b3JlKSwNCj4gICAJLnJ1bnRpbWVf
+c3VzcGVuZCA9IGFtZGdwdV9wbW9wc19ydW50aW1lX3N1c3BlbmQsDQo+ICAgCS5ydW50aW1lX3Jl
+c3VtZSA9IGFtZGdwdV9wbW9wc19ydW50aW1lX3Jlc3VtZSwNCj4gICAJLnJ1bnRpbWVfaWRsZSA9
+IGFtZGdwdV9wbW9wc19ydW50aW1lX2lkbGUsDQo+IEBAIC0zMTE2LDcgKzMxMTYsNyBAQCBzdGF0
+aWMgc3RydWN0IHBjaV9kcml2ZXIgYW1kZ3B1X2ttc19wY2lfZHJpdmVyID0gew0KPiAgIAkucHJv
+YmUgPSBhbWRncHVfcGNpX3Byb2JlLA0KPiAgIAkucmVtb3ZlID0gYW1kZ3B1X3BjaV9yZW1vdmUs
+DQo+ICAgCS5zaHV0ZG93biA9IGFtZGdwdV9wY2lfc2h1dGRvd24sDQo+IC0JLmRyaXZlci5wbSA9
+ICZhbWRncHVfcG1fb3BzLA0KPiArCS5kcml2ZXIucG0gPSBwbV9wdHIoJmFtZGdwdV9wbV9vcHMp
+LA0KPiAgIAkuZXJyX2hhbmRsZXIgPSAmYW1kZ3B1X3BjaV9lcnJfaGFuZGxlciwNCj4gICAJLmRl
+dl9ncm91cHMgPSBhbWRncHVfc3lzZnNfZ3JvdXBzLA0KPiAgIH07DQoNCg==
 
