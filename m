@@ -1,135 +1,146 @@
-Return-Path: <linux-kernel+bounces-729763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C65B03B42
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:46:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87081B03B3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 650441884C8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:46:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E61F07A4E8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE7D24337D;
-	Mon, 14 Jul 2025 09:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2168724291C;
+	Mon, 14 Jul 2025 09:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="H+DWqyEs"
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.67.179])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UlmyLUPg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C60D218AA0;
-	Mon, 14 Jul 2025 09:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.67.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2099323505E
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752486373; cv=none; b=POP2xr3Y/OT/6CvoNY6IbOromRkww+hdHbeZP9+PxWOWQ8IvV6JZGyS9dHX7wb3LB9Byu5/9hlt8kSqTbNHgk1sBnJJ9wF/i+5XHuol9RpxI9W6l0YNfPxjrasCmM9RvjUYZ5D3El8JAngbxAhN/+FqLmgdGhg9DTfFZOHaF6yk=
+	t=1752486325; cv=none; b=NAHyBgq1U9DpWVO3criRygXYSP6c5EcAZ6sIw7+SrpeY+KLGVmVbW4NlNWckhctobFKH0NXvPJ1Jbl4Qd76OQjvqkOrMzzm11P9bHpits5fw5+yXJ1anNw6xho0WG1xeoyty0VGjhlWs9X0f9fRgw40feZHngX0FviofK89AAF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752486373; c=relaxed/simple;
-	bh=3en/F3Q6Ei945LGNZ64Ifdb7jN+jYooDwO5SqIhJ1SQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=upaw2RslaVad9YVHyaDaEY0IIcDKrhkIiaZhFpmrYUXoANZvJhqkuWcQ18hpvd0mrrSMI3fpzIguZ3ILsnCbxG9VbL0KNzq2ye+bpmi7yV1hDR3LFZ3i7SAI3RW6g+964w9p4TQM5BunI39yX0uwUZ3E41xYQj40fcGw/p/XiFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=H+DWqyEs; arc=none smtp.client-ip=114.132.67.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1752486338;
-	bh=S4+EOTzh9hIQdp0CyIctQMlGIN0l3KlBQMuD+Hs9ZQQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=H+DWqyEsJyx7yEc08nO8VzZB3wTP6qnN/1hqpjhQMmLz4j5oGaNH01hngDCAb1p4X
-	 2JM0X4InKHQSSxPNJb+W77anbfsZf1MvTR/rzEMRcyTzc88sFOPhdHJdM0rA+JDlGg
-	 r1AkucXY1jJ6+Bh72viie0Mx/rqJfocG564LrzUg=
-X-QQ-mid: zesmtpip4t1752486326t80ffebb7
-X-QQ-Originating-IP: LmPXaHjx1X8amsH0wlJdpnh53bWafD8NNmtoIdzxwJU=
-Received: from avenger-e500 ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 14 Jul 2025 17:45:24 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 12365466882182443357
-EX-QQ-RecipientCnt: 7
-From: WangYuli <wangyuli@uniontech.com>
-To: johannes@sipsolutions.net
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH] wifi: mac80211: warn on insufficient antennas for injected HT frames
-Date: Mon, 14 Jul 2025 17:44:56 +0800
-Message-ID: <53AD760311F904D0+20250714094456.259784-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1752486325; c=relaxed/simple;
+	bh=19FLfrQWrYTSbSU3JGPlqFErrmbDK9ROcIwOmU/chSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mA/gxEx84CfJb8LZVMsMOwb0eFnpJR0LJqnXPdPOhy+88iy3ClAySTxGf783rgNOLpTROrR7BxkwhFzOWR6S31MFZjaOLF8IXJSHN0sXdZ5Yt91SGcnMl6S6DrTpF+mJNksoUdC6tUwqcrS10mop/eXcZy9OMug58cJDOlo3Tro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UlmyLUPg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56DNN5h1021735
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:45:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=RAwzxfCx7GmXiy6V5DJ7j7sn
+	U1MBsuON4yb7/O794BI=; b=UlmyLUPggLg76qotGeFrsy+nINSIvvwtxKOksFd0
+	7RVx5g2PJlNVK3FJjpsefV8CCFaAN8l3mS5dgKRvHIvqy4SRHwvCfdJ+RDT47CxX
+	ui+ArKf0zncegTI0z5dGjITETgznrr5pTqYUkhOMO2jqIO94ZeUbSITziJ2E3qFv
+	1yRk4bmJwAkbHEHC4uaAyZkKrhvVlMY2kr+udDH9zxVjHqF57Li3Qc84ut8fWV9T
+	NtiTNLKyoH7qbxW5gIxa5AQmqC36znJaAIoknSukVFnKF9OZHzOrVeHS167fpdYH
+	Os8QxOnRyoxEOR+w8LhFjKxzpNmWya5UrQ+XHu1bnjEBgw==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47uftmc2hq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:45:22 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e237c2f4ddso184585485a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 02:45:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752486322; x=1753091122;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RAwzxfCx7GmXiy6V5DJ7j7snU1MBsuON4yb7/O794BI=;
+        b=hKyvsORBf5dSXx1bGgPx0XICcuOWvEZ8otihS7lQCBYvHGkeO/7i+5dCKNIj6QVuoE
+         iqs+7OqPUE06gorD6CaTluAiEviRxbAfkBB16UakbGJti+q6cN1vcbXLbj8HqQ/ym/Sd
+         mWah5jiPopD3Hv9LmFme1orttEwqKzuAMB2Hvm51wmAVDtzdEkmH+pDwPmxLlTI1gJ7n
+         A1Wttokeu/iJwKBAqJQZbLZH62MC56G1XbrA8iwDu8H4gbCGMxz1wNb1yryLT7vtcRbo
+         Pa/sD6IMoT7pts4pvJZxyjGZCsLTgBXV5ecHOm4T2N+0fWYreWTgsAqRfFtDyvUQYTlJ
+         WjxA==
+X-Forwarded-Encrypted: i=1; AJvYcCXF2KLhbHfJ+hnL/+dbJm7wr0yh5sf2u5x7NRTecsqmOalAmPWAtkW1k9B4uWv9gGQVE/c6mOFcjPy3Koo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEfxad0+qdif5svjY+iFuHKbZVdHZRqbund3XwDxQwMfDwjan2
+	LNMyVW1D6rKRgpLKBwveh/nIDHYctN4Ni+1UY/7KLil6AUx/SuM6jFUUlaOX/XfVZ2cdU/0VLNs
+	faJKXjhbd0VXI0/UwMw4C9YUymf1jOV21ddH23CdsEiNqhB5qktcWMjM+wuwKwmoQ3n8=
+X-Gm-Gg: ASbGncuJdvscTc5KIspA4t7XxHa6BG2tRgxrSo3ZvPR/8VYnwD+3ibPaNCYTecjAdP9
+	cAGLZ+isGFznELRKi+nPqHl/44QlZcAEpQk/bIs0UOdxxqD/8/oo5piz2mEM12lT531vqoW7Qav
+	iWiz8tRrSVLKvwtdZ3UlORyxGqeSmfEYzNCEddt9YG1S0g7JRL6GpB1x2tqHaOwOsXy1WAkso6t
+	9jTMDR43aHrpW9i3Pmu8w4p3ldH6+bti3ejZnmH/IPlc00zVJVJlI8TMkxbncgNofJBNW4Pi4pI
+	g56kLn2ZrVRj3cTvLcFu55YtIbVURNe8GygzcWuP26Nig3qfqqAfgUNSrSK6dbrwf7f4q/FQ+hF
+	r6qQyItU1XWjBnoJ4Ar/Pyr56T22hbZsk4QNzo9hM0eI5jDWjH+Gb
+X-Received: by 2002:a05:620a:319b:b0:7d3:90b3:28f with SMTP id af79cd13be357-7dde9b5fcebmr1665487285a.5.1752486321976;
+        Mon, 14 Jul 2025 02:45:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFvhM/t1FHIrVZWVYG9mhbjIjtg3iUsjf8ZC04xPKQpfbPSy7xMPnq9ivIn1rnjpbbWl2zg9w==
+X-Received: by 2002:a05:620a:319b:b0:7d3:90b3:28f with SMTP id af79cd13be357-7dde9b5fcebmr1665483385a.5.1752486321371;
+        Mon, 14 Jul 2025 02:45:21 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c7ea9e4sm1889678e87.73.2025.07.14.02.45.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 02:45:20 -0700 (PDT)
+Date: Mon, 14 Jul 2025 12:45:18 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Ling Xu <quic_lxu5@quicinc.com>
+Cc: srini@kernel.org, amahesh@qti.qualcomm.com, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+        konradybcio@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
+        quic_kuiw@quicinc.com, ekansh.gupta@oss.qualcomm.com,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 4/4] misc: fastrpc: add support for gdsp remoteproc
+Message-ID: <lzdhczkz6irj2u2cwxounro3qcmp3glqzswreoqqvxibeeacny@tiohbb3bv4at>
+References: <20250714054133.3769967-1-quic_lxu5@quicinc.com>
+ <20250714054133.3769967-5-quic_lxu5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OW3qjH3bC/TA7ZL2Z5NH3TVrANB5Evb24xKSwrfGSFCZ0Rdie9PW3vhQ
-	ptIH+1UOpSNSldxYLnMHPdy/77xDeliS49Cjf5OCQ0wCy8AA/yEuGhZscgSGYwvRAFau7wk
-	GqoumRasZlJ75DKEE/qgiA3It1ppgQ3afSaO7juBO4O9hYO4SQbldAFDFwDvcgbbewCcIyQ
-	OvBUnsuKILMGH9dX7gN5jgkB6qLUTdTWY8ynLM+ZspdEZfOgQeUzqU3jJoPC+sjxeuT3NBy
-	NJI1sgZDOb6sQvKYhETmsiBjFr7dfjLPJiaJshbJhisPOiIO00ZxCo9dYmmy2/B3/17Yfim
-	Nl66IqK50c8pQ7bnflOEozjfcqT6/fISuW9f/25lDZ6zqioLUqFHr+xjzHnhcBgnrRgZfSH
-	pDd0vb/TJCjwpACX+tgWoz6TDSlcZKWU7Mx0oGOvzVSMmPbAcq2V5YK2Wo3/cErWHV3i0uh
-	sHvIC0OFjoQosonvkZLN3+9z0SZ/h88ghugvBBuDshH+AMUuGjUPWBFuMD59QAZ4qNn15QE
-	D5d1l2r9ID67HvU5Fu+eCHNg8Kyz8MyF/APbTDjnDdlNVKTZv6nPlaO2TmpIOhFshqgNjRl
-	Ya4Y8quTfCNDUyzAR6qVp0T2Zne7/eMf968iNWKkkavZ3fMcL/C9QX3En4Kt08pKWDf6mJZ
-	mhkLYKvUFkg9iDBR2h7LpyV2/CPVi/2uqIoCJnxDTlDI1F2J33w6+2V+leDN9Mt7jswJgBu
-	dF2mZgA6KgMT6DgsE+lRg+7eHrefPdjpdP0M6eJwGNynUo+RNMfK6UXoAMNObnwj8skcIlj
-	0piLEt29OeHhvG87P/FtIHD8/pTmpgKoKmKPb2T8FGJSssAG1CHvfRe9zk+cTmjGMq0trqr
-	karertfXlPz5OQelgUNg8yz6FcuJgNbTDFChcicbgF7aC2aqRMiEdhSYPfuZL6433zotVlv
-	9k/mD4y9WvFD2/yDfBc0OIGB/SS8t/B+QIc/0N6DcTV+vgqETxxoCgnfYTlasLc7EhM3JZu
-	1RVy3rq9HcezO2nML2UUvjnV7Kkqc=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714054133.3769967-5-quic_lxu5@quicinc.com>
+X-Authority-Analysis: v=2.4 cv=AI4FyeZ1 c=1 sm=1 tr=0 ts=6874d1b2 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=GAzI_fwOJHwl1SWvAbcA:9
+ a=CjuIK1q_8ugA:10 a=bTQJ7kPSJx9SKPbeHEYW:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: ywDL-vW0IfUKCGuZYWDn-72nDoA2WJJV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA1NiBTYWx0ZWRfX3SilOEIMDwZs
+ Kt6b86ClN0L3/Bm+0eXC8Uuo4qoo56nCEA6DYZzdKdL6CTZRTSRL93s7BusvYbdCnd5t2znZuig
+ BM7A5wFFt2tjfC31LaRV/MgXb2pFY1PUobfKnEZzD3AYOXFPBQLjU4bk4+STVHT4vFr7bfjgl4X
+ gRXTcWaUPfOsfPx2Dj4LSfyIu7a5IWPj/7aK76tKY9raVMDxtoXJpmzDQ9XHsuC+wICcr0SKgIv
+ Mw6P9VoXFRPj+uEDy785J3GCPlght7gZqDwHr2RLI/oIWvFdJi+3B2L3wOdZSmnCaKP18p/kEie
+ vur181lyNXcvoWFsDA4xdWmvcylFe3AOSvh53OMgDGzZBoY0v318kOGPg3+C1a9QB5olCTqKGge
+ 88RdiF1thQkYz4aN3xv5CSn5f5MxYsyVdU0dp1B8zHW/B155k2FfDVugVBvVNhsst6nv6Q3L
+X-Proofpoint-GUID: ywDL-vW0IfUKCGuZYWDn-72nDoA2WJJV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-14_01,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=768 phishscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ lowpriorityscore=0 impostorscore=0 clxscore=1015 adultscore=0
+ priorityscore=1501 spamscore=0 bulkscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507140056
 
-When injecting frames via radiotap, an HT MCS rate can be specified.
-The number of chains for that MCS implies a minimum number of
-antennas that must be enabled in the antenna bitmap. Previously,
-if the antenna bitmap specified fewer antennas than required by the
-MCS, the bitmap was silently cleared. This makes it hard to debug
-issues with injected frames.
+On Mon, Jul 14, 2025 at 11:11:33AM +0530, Ling Xu wrote:
+> Some platforms (like sa8775p) feature one or more GPDSPs (General
+> Purpose DSPs). Similar to other kinds of Hexagon DSPs, they provide
+> a FastRPC implementation, allowing code execution in both signed and
+> unsigned protection domains. Extend the checks to allow domain names
+> starting with "gdsp" (possibly followed by an index).
+> 
+> Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
+> ---
+>  drivers/misc/fastrpc.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
 
-Add a WARN_ONCE() to log a descriptive error when this happens, make
-it clear that the antenna configuration was insufficient and has
-been reset.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- net/mac80211/tx.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
-index d58b80813bdd..e1464ef7397d 100644
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -2251,14 +2251,21 @@ bool ieee80211_parse_tx_radiotap(struct sk_buff *skb,
- 		if (rate_flags & IEEE80211_TX_RC_MCS) {
- 			/* reset antennas if not enough */
- 			if (IEEE80211_HT_MCS_CHAINS(rate) >
--					hweight8(info->control.antennas))
-+					hweight8(info->control.antennas)) {
-+				WARN_ONCE(1, "Not enough antennas set for HT MCS chains (required: %d, set: %d), resetting antennas bitmap to 0\n",
-+					  IEEE80211_HT_MCS_CHAINS(rate),
-+					  hweight8(info->control.antennas));
- 				info->control.antennas = 0;
-+			}
- 
- 			info->control.rates[0].idx = rate;
- 		} else if (rate_flags & IEEE80211_TX_RC_VHT_MCS) {
- 			/* reset antennas if not enough */
--			if (vht_nss > hweight8(info->control.antennas))
-+			if (vht_nss > hweight8(info->control.antennas)) {
-+				WARN_ONCE(1, "Not enough antennas set for VHT MCS chains (required: %d, set: %d), resetting antennas bitmap to 0\n",
-+					  vht_nss, hweight8(info->control.antennas));
- 				info->control.antennas = 0;
-+			}
- 
- 			ieee80211_rate_set_vht(info->control.rates, vht_mcs,
- 					       vht_nss);
 -- 
-2.50.0
-
+With best wishes
+Dmitry
 
