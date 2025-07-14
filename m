@@ -1,78 +1,147 @@
-Return-Path: <linux-kernel+bounces-730747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02CEDB0493F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:21:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880C4B04946
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FB324A343A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:21:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F94C3B188B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E6926561E;
-	Mon, 14 Jul 2025 21:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AD926AA8F;
+	Mon, 14 Jul 2025 21:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFlPe2bt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pIG4Hiep"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF671D9A70;
-	Mon, 14 Jul 2025 21:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D752397A4;
+	Mon, 14 Jul 2025 21:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752528077; cv=none; b=pSOeOXTYvdjPwJ3/hqOMrQ9EcnJEuIDe0Eop/bTu321DdzRw9P/bNIbsG531/LUEcs+8Esxx7z/TbV+QI6diS0OYe13wOPZWANUCrfnB3w2F6F089qDm2SKXTXqWzXUD8n89svTykicaIHCzAWQlYIYJI3VnCELtBLChaULKGGM=
+	t=1752528121; cv=none; b=cO4xWWHzm9sPOQaOEjC2OyiznEEcA2TMR1b0VhfhHPUURuk/ZPnSiVOu5pi0s0Ww1JL7oEUD32EyCjIYfyc6LFauCLTeFKbvvhbmPTOqMdDUTyoMIVQgx9JYROPdtUd8gYuq/XEPajUnFzQo5icH4MVyjyEK43AkBhPuX03/tdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752528077; c=relaxed/simple;
-	bh=8i9rJxA3NTaQEbRzQ81+/17HPGqBh7Tb+twsR+6q+sU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dhOCU1OyunHpJYyed7kjdB/lCd2dAvqE9Q7eFS1i+k50Vwba2Z/JNTlytTX+mmrabY2UNYRrzxFjP+M5MaQaO+8uM84gmfuOlYqzS3mC5Gwfap86Om5oBcAe8t18OQVX/aHkh7a0ZbTfHBGhn1B53gPN4q/recO3IDxQCyWv2Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFlPe2bt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5053CC4CEED;
-	Mon, 14 Jul 2025 21:21:16 +0000 (UTC)
+	s=arc-20240116; t=1752528121; c=relaxed/simple;
+	bh=jkjnzC6sfDjlzR/6PyyPq8gX7cfAVbCf+7AS5IFUxHc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vl1DPRlr7S4zvbHTzKkoI/LORptxROy8zUCca7MSLNMLGy7sMY23h7P8s/QGiCKTb8PUuY93CJeEDpw6gJA0hsohMeAJqm4qXxnIv5EmCsjU36e7Fjo+Ow7KjkCJ7vvpBdG83QbQHBlSrOv4qvd7A8C+Srb54HtNkuW1wbfvSjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pIG4Hiep; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90D86C4CEF0;
+	Mon, 14 Jul 2025 21:21:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752528077;
-	bh=8i9rJxA3NTaQEbRzQ81+/17HPGqBh7Tb+twsR+6q+sU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dFlPe2btAxB4HQ8bDa+1MlmVEJaMXOKFKUBY0Em8ZddsAuQqiMQY1fM3603j6lf7J
-	 3zc8I4Wfpc1096wwVo7m7h3QiEuidnS6lKaPkX1dWzttfK1TjlU+Ny282A9rg9uSri
-	 aK503u9wu/IGrVylrLHoHif1M9o6/1nsC76K4op6uKeOThwuVlXsJkXkEbfGZezmDe
-	 uexXbzHmHbZlsJvGBcqiEgFUqRfGVHubB9EbekpcOPXqpMqr+FJ4suFoX71eykKtZS
-	 KTqwd4mET+V1MUvSxuphz6Io7DhBuajeZGp19byJpNiabpX4Jbjw9AsAQpDA7qZIKk
-	 zvYjBXJu7dC+g==
-Date: Mon, 14 Jul 2025 23:21:12 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Chen, Jian Jun" <jian.jun.chen@intel.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, linux-i2c@vger.kernel.org, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: virtio: Avoid hang by using interruptible
- completion wait
-Message-ID: <n26mc4qkgm452stvcsp3kf3hu7lbqsme2wnqaqclsxrmppqenb@4ofu6juzjusn>
-References: <b8944e9cab8eb959d888ae80add6f2a686159ba2.1751541962.git.viresh.kumar@linaro.org>
+	s=k20201202; t=1752528120;
+	bh=jkjnzC6sfDjlzR/6PyyPq8gX7cfAVbCf+7AS5IFUxHc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pIG4Hieprrm1uA4UcmMad5xVbCbju19dZ03/KYWx+XQvV8NEgoxno/feg6GtPL7QT
+	 Wn0n/9r1FzD47RscE8VDY/GQ+e51jq2FOpdPb1AYh/wieR6ZpyKhZ1QvP/gk4G8baS
+	 UzSaFh1F/fP22w7LVhKAVRvkpdkzXj6Gx2CZCkImzjpR0sHa3HP34jxyg2UbVj8tiZ
+	 YF5jx0f/QDXoL+SPCBjOP872b9JCgxNopkXbqO6XZmV2igdU3sHGB3FlC1TpIw+595
+	 0Yt26o+RiEIUf0r+zbWjgbXWjkpNNK9+28GudvoMs+0dN3sjMVxq3ckYyY0VV8uBDm
+	 TBd5esulbTznQ==
+From: Mario Limonciello <superm1@kernel.org>
+To: David Airlie <airlied@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Lukas Wunner <lukas@wunner.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
+	linux-kernel@vger.kernel.org (open list),
+	iommu@lists.linux.dev (open list:INTEL IOMMU (VT-d)),
+	linux-pci@vger.kernel.org (open list:PCI SUBSYSTEM),
+	kvm@vger.kernel.org (open list:VFIO DRIVER),
+	linux-sound@vger.kernel.org (open list:SOUND),
+	Daniel Dadap <ddadap@nvidia.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH v8 0/9] Adjust fbcon console device detection
+Date: Mon, 14 Jul 2025 16:21:37 -0500
+Message-ID: <20250714212147.2248039-1-superm1@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b8944e9cab8eb959d888ae80add6f2a686159ba2.1751541962.git.viresh.kumar@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-Hi Viresh,
+From: Mario Limonciello <mario.limonciello@amd.com>
 
-On Thu, Jul 03, 2025 at 05:01:02PM +0530, Viresh Kumar wrote:
-> The current implementation uses wait_for_completion(), which can cause
-> the caller to hang indefinitely if the transfer never completes.
-> 
-> Switch to wait_for_completion_interruptible() so that the operation can
-> be interrupted by signals.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+This series started out as changes to VGA arbiter to try to handle a case
+of a system with 2 GPUs that are not VGA devices.  This was discussed
+but decided not to overload the VGA arbiter for non VGA devices.
 
-merged to i2c/i2c-host-fixes.
+Instead move the x86 specific detection of framebuffer resources into x86
+specific code that the fbcon can use to properly identify the primary
+device. This code is still called from the VGA arbiter, and the logic does
+not change there. To avoid regression default to VGA arbiter and only fall
+back to looking up with x86 specific detection method.
 
-Thanks,
-Andi
+In order for userspace to also be able to discover which device was the
+primary video display device create a new sysfs file 'boot_display'.
+
+A matching userspace implementation for this file is available here:
+Link: https://gitlab.freedesktop.org/xorg/lib/libpciaccess/-/merge_requests/39
+Link: https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2038
+
+Dave Airlie has been pinged for a comment on this approach.
+Dave had suggested in the past [1]:
+
+"
+ But yes if that doesn't work, then maybe we need to make the boot_vga
+ flag mean boot_display_gpu, and fix it in the kernel
+"
+
+This was one of the approached tried in earlier revisions and it was
+rejected in favor of creating a new sysfs file (which is what this
+version does).
+
+It is suggested that this series merge entirely through the PCI tree.
+
+Link: https://gitlab.freedesktop.org/xorg/lib/libpciaccess/-/merge_requests/37#note_2938602 [1]
+
+v8 fixes an LKP robot reported issue
+
+Mario Limonciello (9):
+  PCI: Add helper for checking if a PCI device is a display controller
+  vfio/pci: Use pci_is_display()
+  vga_switcheroo: Use pci_is_display()
+  iommu/vt-d: Use pci_is_display()
+  ALSA: hda: Use pci_is_display()
+  Fix access to video_is_primary_device() when compiled without
+    CONFIG_VIDEO
+  PCI/VGA: Replace vga_is_firmware_default() with a screen info check
+  fbcon: Use screen info to find primary device
+  PCI: Add a new 'boot_display' attribute
+
+ Documentation/ABI/testing/sysfs-bus-pci |  8 +++++
+ arch/parisc/include/asm/video.h         |  2 +-
+ arch/sparc/include/asm/video.h          |  2 ++
+ arch/x86/include/asm/video.h            |  2 ++
+ arch/x86/video/video-common.c           | 17 ++++++++-
+ drivers/gpu/vga/vga_switcheroo.c        |  2 +-
+ drivers/iommu/intel/iommu.c             |  2 +-
+ drivers/pci/pci-sysfs.c                 | 46 +++++++++++++++++++++++++
+ drivers/pci/vgaarb.c                    | 31 +++--------------
+ drivers/vfio/pci/vfio_pci_igd.c         |  3 +-
+ include/linux/pci.h                     | 15 ++++++++
+ sound/hda/hdac_i915.c                   |  2 +-
+ sound/pci/hda/hda_intel.c               |  4 +--
+ 13 files changed, 101 insertions(+), 35 deletions(-)
+
+-- 
+2.43.0
+
 
