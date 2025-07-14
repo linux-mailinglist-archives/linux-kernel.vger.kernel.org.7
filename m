@@ -1,146 +1,120 @@
-Return-Path: <linux-kernel+bounces-730839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA160B04AB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:30:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB1CBB04AB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3208C16F420
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:30:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 110DD18839E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 22:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9F5278E79;
-	Mon, 14 Jul 2025 22:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5340225D6;
+	Mon, 14 Jul 2025 22:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZhg5ioi"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nC2v84ys"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A8919CD01;
-	Mon, 14 Jul 2025 22:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C67B1A5BB1;
+	Mon, 14 Jul 2025 22:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752532208; cv=none; b=CnTV6VO3KWWKWSb0CnZaE2pz7lbEXZ3faoW1OPJbxtfuT7ymVE98xcU6Kmx1IIKpqshKhTc+8R81spmnoRmSS3h0YaRlRStHneIhAYovfeTFqZe+HGX+C4I6numtWAbqqgbSAt+PMzTh3d6JzwnwFAqpdG/0qugMZUKXgL1eybE=
+	t=1752532217; cv=none; b=KcYiV2M6HcszZ1OdVAwPHBF33F/QYX6reeiiE2XfRT8Xb2L2gJrg/t55cJc+iBXYLfDPKEgaBTDyPeni0xC+XLJmvhv1x9kUytml5uXGXjTHvu65v7KV3QQKpPE8/GF8lWzc57lKcyol4wFDrjgeyfqG5cN9H4t4orB8tWPGC+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752532208; c=relaxed/simple;
-	bh=7yQAdW8SgBlbelXCbyx+6x3Eo2rdkzWH0feLGuqFTXI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qfHcMhnxlWV3jQN+Mkvv2YlOF8E1asMTb5IqzKu7bFlXnU0bDXFLXCQI/+JafyXQHLk1wNLKpXFRVUqPZ9/57nTtW/S9D2X7UKjkWsIMPDFVnT4Y81q9cM9Tpf4bHm290ljDYE8SvVppZPkSwyedD8/X/nm0SLAGxSKmQTW/Cyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HZhg5ioi; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1752532217; c=relaxed/simple;
+	bh=iXqppg9k8rV1d6w4yOEjGAZY8uZOr1ScrIu3M0QPUkQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=F7gu3pjtpCehy+zamaEMJBgzy2xrQiw9ZKN1QKkwGOzUHxAAopZUCxOq4i2ehg/+3Qxo/3kDhzRggflj406UEUX79+fIAzXACaCLhHluv8Dcij9E73EOJBzVggaUbz7G6apRUJOr4aqIJAPC0T2zJt7Z35sLIPTxVBt+3dWH4NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nC2v84ys; arc=none smtp.client-ip=209.85.166.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a50fc7ac4dso2200243f8f.0;
-        Mon, 14 Jul 2025 15:30:06 -0700 (PDT)
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-8760d31bd35so182465139f.2;
+        Mon, 14 Jul 2025 15:30:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752532205; x=1753137005; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=voZKt3OZFqV4HNSRlyMI/mjoMu7OKrG93jyyqd7nrWM=;
-        b=HZhg5ioi91Ml1GZ87fOR4V5weTC+q5vODAfowzgyE0U4b2bEySwticsPP9EJgEbXSc
-         p630TGApDq4qmgM/dIYgjVSA5ikSJeSZ2fCLy+J0TiZBJVCE4w+v4SmKkUJyN6LZ0uej
-         ia/4KdUF2oiGx7I1Tf/f+R1hmZkprLVAQFVRbMuXpuCq2sEx2tFlSrzNslKvdOOow/TB
-         DQgxKVtkiXNueaVPYmSmCkb1SFj/Hz5bOmTwToVGBq2zUr4JmU4Z53nh5bLww5AkLCwj
-         /40wIG7XsRdDLnWFD3bd4K/Too6fhCFGZ6+Q2Kcw8Xo5x2ZBBEfUQkmqzb50dZNocwB6
-         AyYQ==
+        d=gmail.com; s=20230601; t=1752532214; x=1753137014; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iXqppg9k8rV1d6w4yOEjGAZY8uZOr1ScrIu3M0QPUkQ=;
+        b=nC2v84ysSST/fWf8/AphARrzEHuxfoTziYHtlOxCC5+E8PptK885+fW/+GOqziPd4j
+         3uw0p24m4HCeXyIPYRCxvOmoW6RRokObJbhEvYJVEf2WJP7JoNuQlxEcVQVrh5WOXwwo
+         85T1VinIDEfQMnABWwas4JIRRTlWz/8WaYtT93oUXdO9ci/l5NvmqW8w8YDssq+sYKQb
+         KjhguT4+DXWbxYozaebF3176YnwuWvAlOmRVgMwb83ImJ9umABuPkg7xFphT9RHuQ5XF
+         fQ+I/7n7njzNEuPeozLFkqIsh24Dpu5Yzi1eyspY+HW6lgCWcN6AstW591REZSC3Ltuy
+         ZsLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752532205; x=1753137005;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=voZKt3OZFqV4HNSRlyMI/mjoMu7OKrG93jyyqd7nrWM=;
-        b=pZKmTjRLgsG1IBZNfUAVsgzciK9xgOMwNq2SXuWxdKumNuuPNtJ39CsG1iIcAtlqPp
-         E88lHM7B43N68/PaGG/wPO/kQlwcUZ8yTOMlmyBsPr3I4zrpmm+C/VglDYoBFQzVBOJG
-         8Tm7Bro4huBt7HKi4cuQPPFwUQliJx7jX5At6drYzXfLAqfu9S85zzcQABFjRxfbK7k1
-         IEMbqpLLu3jJDiWTI9/eoi/Rzyk9YzASjqErNHDH4rHleEMFFw1uIBfwnae6ZFb2nbul
-         mZHSNNZUOEi9UfZmyB6t58+HuLR+ZrhVcIcgVM0/gSVXauyaJfVBCaQnVXroB6PWVQTq
-         y46Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWL1CehJ4E+Clvfy31o0p8pXoSLeNHpLIiXxr3Drw/Lf1BiUtv5lTLyWtEhJ7wlazTnMtv0HnTwRvSDju6z@vger.kernel.org, AJvYcCWLnCp3B93/YOEcsq6rs8BJazmdxYMT3gn8xz2j75gLVoUgDVYgTXwPZvmLjNMmV2xQAxU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD2eY4yQaGmnCJoiNf2Cvb35vhI+H/VuTmShiWA+eqZi7yWs1D
-	ZMlAYCi+x4sJ2aqy5lQnZLiS+jtpxqkx+70Zu7QjP9GiKus8TD+syrx5NrVkODgZHVqRuAO3tAt
-	ykKVqABy/3GAPdFcInFWzz/Nz5DUeT2Y=
-X-Gm-Gg: ASbGncu29CJxn6KcLsE26rmAQO5WvSNXWqtrvNHHCTTxD4eXYacvCZgJ4oT1fRvTND7
-	i8a3xwO2/VEsk0p2oV0JnIHKVWgDEQMPh+Bu2E8KQ4Pv/peD+ZDvI8sBPVeOqUnQru0ZZdWYHIs
-	CVFM80fUuGF01AghEOMpvuwUxL7Yx3j+PGvDlviNxMo6Yij6wcYwfga4wjJcfWRIcmMThX/QGfW
-	puBZSxzh77k2JpB2pBQzLbMYF2n+Xxtm0lT
-X-Google-Smtp-Source: AGHT+IGRbeX8fmsTNmKi5NQJnQub/iuiFTDd8ihavQgYpw6Dr2yi6L1mh3Ir2506x2DmRqaEm+Uado/mD563wWrauMw=
-X-Received: by 2002:a5d:5f52:0:b0:3a6:c923:bc5f with SMTP id
- ffacd0b85a97d-3b5f187ebaamr13502161f8f.17.1752532204746; Mon, 14 Jul 2025
- 15:30:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752532214; x=1753137014;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iXqppg9k8rV1d6w4yOEjGAZY8uZOr1ScrIu3M0QPUkQ=;
+        b=ebAmE0ZMRcNWVvVnIfgaWi1xQG1AD4QU2EUWQ3Pzf3FbYlA1jyuH9SBl14R+KJW7wu
+         oxTQwnDqMu3IhwK2nStgvjkFttZ4jT2GWTRCd/WDLMDts6kgVR4dYgnXlRv0z2mkgQM1
+         gVfxkG8CssyJ0OEnTxiQceKCybE6VX58QFqkh9zLqX62G73pVs2yQCZuRQzOlqYkYOXg
+         NaxNYZzBZzMB8vfegVsIZzCGMgjaG74jRlVhcQW5NMBfmzES3CoJYa0hqvwUKfP4OAnj
+         84tomb1tA7Pq/hYqDC6+kZkTV11Pyxuf5lyAGjke9CrZ6845YC+YnSCregzwUiU/7TON
+         Qtvg==
+X-Forwarded-Encrypted: i=1; AJvYcCURU7KzPpzVMXVec2tDd7+Y/SMkoHeLq+U/E+SYdQI9Ci+IqSNL18XS+8AB0C9qlF6IIuZiehNda5BDYwc=@vger.kernel.org, AJvYcCXJnOi/vYPQzDaWZHM85DPI9q56z1s+qehmPfv399Qg2oEY4MJ+LJnBogNNjBD+vvoOaB64fweSVDIs7Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY+iOXpYKdVBtTB+jak6DPMcs5SCQvWNj5FyyoIjMBUVPv3OEQ
+	3Fltt4ISd+qtVr8vXsbEW1nXlbzSxTu2ZYsYazwVmWTAF0olSDlod2mGX8epsrw=
+X-Gm-Gg: ASbGnctYR4sw438C/upp9ltPn6PZaH/gpmXL3jlLGPVjmr2lDFExKbcj6cAGVdg5dzk
+	y6aqQboB4qdoOeAGu6G8H1T8Mf0PPtFltmXfWYF0eJ3w3KP+49vVL5Vsc9abdAm8v8/htF6WplS
+	Wn6E6Y2EvOS2ZOC82Tr6yBkV4TVsRTC6rM0okstEXbW/zABfz5EVuudaGSX3khKIbHOx6jFfueT
+	rg0DFZPJrYur6tsuSRTh/npbjHsIKxfMsrgxsISZjyu7JVm17YsBUPhzN7am2gHC6TYhENT4yZV
+	fLhyunKdjyMUrwtPfTxOakKZcUvPPyNX2YsDgNvt5BQHhEI3KvaXRkt4ge00oKRukMEa+9LRPfr
+	KwFlW1YtWKiC3ImnGAS5djwyigHvZolm/kXP8ug==
+X-Google-Smtp-Source: AGHT+IHygS17S19Nxz9wCfYqxbOBgc6XAIudJj4aYVo1DBv4RIhZTMfupb8fQiLbUq/dSVUg716FPw==
+X-Received: by 2002:a05:6602:13c4:b0:864:9cc7:b847 with SMTP id ca18e2360f4ac-87977fe5c3bmr1903389239f.14.1752532214534;
+        Mon, 14 Jul 2025 15:30:14 -0700 (PDT)
+Received: from leira.trondhjem.org ([204.8.116.104])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8796bc1313asm270321739f.28.2025.07.14.15.30.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 15:30:13 -0700 (PDT)
+Message-ID: <6af3f3273703c29dad890934a7fdb14153858ff8.camel@gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the nfs tree
+From: Trond Myklebust <trondmy@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christoph Hellwig <hch@lst.de>, Linux Kernel Mailing List
+	 <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+	 <linux-next@vger.kernel.org>
+Date: Mon, 14 Jul 2025 15:30:11 -0700
+In-Reply-To: <20250715075731.52b7485e@canb.auug.org.au>
+References: <20250715075731.52b7485e@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710070835.260831-1-dongml2@chinatelecom.cn>
- <CAADnVQKmUE3_5RHDFLmKzNSDkLD=Z2g3bkfT2aRsPkFiMPd-4Q@mail.gmail.com> <750dd5f1-a5f8-4ed2-a448-1a57cb5447dc@linux.dev>
-In-Reply-To: <750dd5f1-a5f8-4ed2-a448-1a57cb5447dc@linux.dev>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 14 Jul 2025 15:29:53 -0700
-X-Gm-Features: Ac12FXzSMKRUSNRy4FW07LRiVVjWQ8Ewfne8bN1Fu_Wa64oMvuCGk59Vmnd-nkY
-Message-ID: <CAADnVQLHORFKC3PzJ540xxa_bETBypXu2-z7Z+8c+as97vByXA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3] bpf: make the attach target more accurate
-To: Menglong Dong <menglong.dong@linux.dev>
-Cc: Menglong Dong <menglong8.dong@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Menglong Dong <dongml2@chinatelecom.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 14, 2025 at 2:50=E2=80=AFPM Menglong Dong <menglong.dong@linux.=
-dev> wrote:
->
->
-> On 2025/7/15 03:52, Alexei Starovoitov wrote:
-> > On Thu, Jul 10, 2025 at 12:10=E2=80=AFAM Menglong Dong <menglong8.dong@=
-gmail.com> wrote:
-> >>                          } else {
-> >> -                               addr =3D kallsyms_lookup_name(tname);
-> >> +                               ret =3D bpf_lookup_attach_addr(NULL, t=
-name, &addr);
-> >>                          }
-> > Not sure why your benchmarking doesn't show the difference,
-> > but above is a big regression.
-> > kallsyms_lookup_name() is a binary search whereas your
-> > bpf_lookup_attach_addr() is linear.
-> > You should see a massive degradation in multi-kprobe attach speeds.
->
->
-> Hi, Alexei. Like I said above, the benchmarking does have
-> a difference for the symbol in the modules, which makes
-> the attachment time increased from 0.135543s to 0.176904s
-> for 8631 symbols. As the symbols in the modules
-> is not plentiful, which makes the overhead slight(or not?).
->
-> But for the symbol in vmlinux, bpf_lookup_attach_addr() will
-> call kallsyms_on_each_match_symbol(), which is also
-> a binary search, so the benchmarking has no difference,
-> which makes sense.
+On Tue, 2025-07-15 at 07:57 +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> In commit
+>=20
+> =C2=A0 dad2fe3c563d ("NFS: drop __exit from nfs_exit_keyring")
+>=20
+> Fixes tag
+>=20
+> =C2=A0 Fixes: 2c285621176c ("nfs: create a kernel keyring")
+>=20
+> has these problem(s):
+>=20
+> =C2=A0 - Target SHA1 does not exist
+>=20
+> Maybe you meant
+>=20
+> Fixes: 6a247819238d ("nfs: create a kernel keyring")
 
-I see.
-Just curious, what was the function count in modules on your system ?
-cat /proc/kallsyms|grep '\['|grep -v bpf|wc -l
+Thanks! Fixed, and ditto with the other one.
 
-Only now I read the diff carefully enough to realize that
-you're looking for duplicates across vmlinux and that one module.
-
-Why ?
-BTF based attachment identifies a specific module.
-Even if there are dups between that module and vmlinux the attachment
-is not ambiguous.
-
-> I thought we don't need this patch after the pahole fixes this
-> problem. Should I send a V4?
-
-pahole should fix it, so this change is not needed.
-But pahole will be removing the dups within vmlinux and
-within each module independently. Not across them.
-I don't think "across" is needed, but you somehow believe that
-it's necessary ? (based on this diff)
+--=20
+Trond Myklebust
+Linux NFS client maintainer, Hammerspace
+trondmy@kernel.org, trond.myklebust@hammerspace.com
 
