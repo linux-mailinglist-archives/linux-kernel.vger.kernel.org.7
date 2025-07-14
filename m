@@ -1,170 +1,133 @@
-Return-Path: <linux-kernel+bounces-729962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4FC0B03E66
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:12:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D391FB03E51
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B810F7B0C8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:07:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84AA8188E291
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1579D2550AF;
-	Mon, 14 Jul 2025 12:06:31 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7747C248F56;
-	Mon, 14 Jul 2025 12:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62976255F56;
+	Mon, 14 Jul 2025 12:06:39 +0000 (UTC)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468331FBCA7;
+	Mon, 14 Jul 2025 12:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752494790; cv=none; b=qa0ylw7aU5XSCh+0pszopbQX9eeNJHRiUjewr9i+wM+0iY1W171hxQMgZjV99HXYoDfSzNA+NPWi8btoSYaztzo9bcn0i9hDhFhhi8rJreKJnwnNX1PH8SOoxCBfNgB8xi9yzuOo4e1BT6yZpFCbfM5p+GkIbCGHl7APbIuA96c=
+	t=1752494799; cv=none; b=rNUSWeND61LFuxRd9JmIp+xp35b5WjZ8jdwZNevxDzXl6SFCaikChCV3BCk91dEVtI3OZb6nJ2+f0wsUdlgCxNgryXuA0tOabGLCBWHAd5RfGx5abQWsdzL40y7NrbpowOQluzM2fUBuFmPhYuLmB+U3D814m2Yc4ZHt3yXDlL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752494790; c=relaxed/simple;
-	bh=Bw5K9Z6DSYdTf3NBvOviPDx7IVtplNK1PwEYeKD7k74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AF7pq1HHAEd5DPB3BQLQVZFmA2FNfshGvfmZ2iZ7Z5CtiQIf6NQciAjwX/VHDm2ShPwdRWrQ9zr5jTnkl+sldq7da1k2R8A7ucg5YWY2fXEzyECYg+Z5fXcouAfbYvLFdIfUVGMrmy47t0JQuv1BR8RUG7O9tUtqZwC25eV4c3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-a8-6874f2bee77b
-Date: Mon, 14 Jul 2025 21:06:17 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
-	akpm@linux-foundation.org, davem@davemloft.net,
-	john.fastabend@gmail.com, andrew+netdev@lunn.ch, toke@redhat.com,
-	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
-	saeedm@nvidia.com, leon@kernel.org, ast@kernel.org,
-	daniel@iogearbox.net, david@redhat.com, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com, horms@kernel.org,
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
-	vishal.moola@gmail.com, hannes@cmpxchg.org, ziy@nvidia.com,
-	jackmanb@google.com
-Subject: Re: [PATCH net-next v9 2/8] netmem: introduce utility APIs to use
- struct netmem_desc
-Message-ID: <20250714120617.GA36228@system.software.com>
-References: <20250710082807.27402-1-byungchul@sk.com>
- <20250710082807.27402-3-byungchul@sk.com>
- <4a8b0a45-b829-462c-a655-af0bda10a246@gmail.com>
- <20250713230752.GA7758@system.software.com>
- <5ee839d6-2734-41c5-b34c-8d686c910bc8@gmail.com>
- <20250714100551.GA44803@system.software.com>
- <ac59fba9-4f39-4691-afae-aa7a0b1270af@gmail.com>
+	s=arc-20240116; t=1752494799; c=relaxed/simple;
+	bh=jyKF8fukPkvqUEz1+31oAWoM4hg4RgCAuMgyvrXqcEs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=me//7pXoVwc6KGTweKqkjSsKh7UapcWyuLnCb7gMQ4S+s6j3YeYv3gtl1iAWZjAwclQM2TDLe4i4H2EV7pCnFIwK4s/fwBP90Hcn6hoX1va2PZyvAfNcnBWs5+1wwIsFOQEnl5Rx61IYAYc61XuW9j3a9+BGy3llWAEEobYe8MA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ae0de1c378fso687034666b.3;
+        Mon, 14 Jul 2025 05:06:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752494793; x=1753099593;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QnE8NcmRUhh5gLGowKcxUkNoDsSW0JZa2ifNZ2DC4io=;
+        b=p/3HGi3tVlQpDiPJm9Ay5o9l9kMow8m+/5jv20hFn+jpD7WbKWCV/oxkjx0j2dHbEU
+         ZaT384S9uyzFK/mNtCqu2/HUoyB000zNJPOFqUslT4amcn5s8I5imku+Cedlo25uE+GV
+         OLQcq1WqnKV1cKkWWjNJMvszB++QUEvZXQMibFrhj1l1uQZYSXqAolKxOiMgjwNOCohT
+         E+ZWgkn2Xvo1nqwd0nlbQMvldvdTBlC3tUeWmi3tDayyO7UOTCjXXdowHgCICFcFMaWN
+         7JoHnyiJ08kaMzPAj82qOJb8XHvu261CmUekRccgrf+uQsxQsoO9EZmj6Ap5fCKd/D5o
+         RYlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFY80IuOFnQjAKoc0EEsl17IzT4eN1uHMctOV/t+fECx5IbnE9pPLUYxouex9ju1Bd7dJwl3Qrsovz0gGh@vger.kernel.org, AJvYcCX3pCaAiq60z93rapupACGrf1BEsf9/BAGmqcK9bnEoKB/YT86HasG2qFm6zEDyFVtvY6Ptwa8/8ME=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxn7WejTkgMDtqsit5EZiFYVdW14GecE83Tg3lbu2idLzIJ9U9F
+	du/s1Jm2wl5aGIVkLbW0RN2ymXvbbWEZ4G9ZFiBCXWb3BcjqvTX1npyZ
+X-Gm-Gg: ASbGnctK5x5qQojFptiZ8IQaypSqcJOjuIvWwaFNECab7tEjK4gAp0Puoq+kxuYVeI9
+	YBJOHAz4xGmdgUX7LgAIiBTQwzF/iXAvSWkOOKb7DXY5zuaqZDD59+pp3HOCFPhXaoWoeSkDQ7e
+	nj3FzoXlBr8BMN2m4ZBwI4tYuP4a641Qn34G3os3SP0RaZvfyuY+UDCKYJ3QTj19NyccUeY5Xl5
+	CByWvoo0E34NuPedzWCUKjx2IybGWiYwFaPW2Lsr3FaqzzOrxmM0wPcp+nCWb2AmHWm5cvpqk/U
+	F/g7Y5hLO8zBPFM9+pQ+H3zG66gFOmtwokbPuZTMIs7qnsTbjnwcbJPDavdhUWOhUe8AEGldSIy
+	wt734A9fhynxypA==
+X-Google-Smtp-Source: AGHT+IFjL93rz150iKe+jlyv6uDExT4t4gcF9Gf1kGsrwiginPCS9TCgXX/bbH1N5i9tOJTMVleKwA==
+X-Received: by 2002:a17:907:86a6:b0:ae0:d9f3:9131 with SMTP id a640c23a62f3a-ae6fbc13fa4mr1315906166b.6.1752494793145;
+        Mon, 14 Jul 2025 05:06:33 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:74::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e826462bsm815755666b.104.2025.07.14.05.06.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 05:06:32 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Date: Mon, 14 Jul 2025 05:06:27 -0700
+Subject: [PATCH] docs: kernel: Clarify printk_ratelimit_burst reset
+ behavior
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ac59fba9-4f39-4691-afae-aa7a0b1270af@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTcRjG+Z//2TnH5eK4zP5pQawrVnb98EIXqk/HsntRFKQjD221rZiX
-	XFCsEqyRKyrI5oIt0bzlYto8iVkt80JSYVrLrJWZdLFZZqYuNNeF+vbwPA+/9/3wcFh5URbN
-	aQ2potGg1qkYOS3/FO6cW9ObqpnfUzUV7K5SBkoGMuDKK0kG9mIPgr7B5yx8ra1nIM/Zj8H+
-	MJOGb64hDG/rOlgoca8Ff0EXDdVZlRg6TjcwkJ0ZxHBzMMDCMamQgkceqwzOD+VjqDS/YuFx
-	lZ2Bl6UjMujyZtPQaCuiwW9dAXWOKOi/342g1lVJQf+pSwyca3Yw8CbTj6D5bgcNuUetCFw1
-	PhkEB0YZufdesiumCXe7e7BQUfSMEm7YXrCCw50mlBfGChZfMxbcxScZwd17lhXan1QzQkNO
-	kBZuSF8pIft4gBG+vG2jhZ6aVkZwVbTSQpOjlt0QsUO+NFnUadNF47zlSXJNXyV34AnJ6Mux
-	YzPKVVpQGEf4xaTlug3/1beul9EWxHE0P51cNZtCNsPPJD7f4K9KJD+bfHzqZS1IzmE+hyFl
-	rwuYUDCOTySfL3iokFbwQL55mlCopOSfUuTB2at/ggjSeLGTDmnMxxLf8HsqdAzzMeTKMBey
-	w/hlRKo7+qsynp9KbnvqqRCH8BJH3P4A9fvRieROoY8+g3jbf1jbf1jbP6wD4WKk1BrS9Wqt
-	bnGcxmTQZsTt3q93o9HBFBz+sVNCvY82exHPIVW4Aj6kapQydXqKSe9FhMOqSMWHF0aNUpGs
-	Nh0SjfsTjWk6McWLYjhaNUGxsP9gspLfo04V94niAdH4N6W4sGgzmrD6sf/EWByYY94VmKge
-	Kmtrz08KVsePkTpjjqyJnT3jUEJWfMW1vFXNEZP36jaF6ZfEXFpqSthqbciL2vLdGOHUz5mS
-	dKct2BLv7J1xkxRFr/NLs6zTT04q735TNm69tMhi6OgMpCnj30WO+OpHug6fLky4vDEvzukq
-	Lrdt2x61UkWnaNQLYrExRf0Tfe6G0SwDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe897ds5xNDguqxcNhEkERlcKHioloegtKaoPRRboqFNbqck2
-	RYtIU6lWalmQzQWLSs1yg1VzdjGd5bI7iroyL5lKTTOzZepCc1HUtx//y/N8+QtY6WdDBW2y
-	QdIlqxNVnJyVb1qZvaB62KBZnHtKBLPtJgc3RtOhtMspA3O5A4FvrI2Hb4/cHFy5PILB/CqH
-	he+2cQy99d083LBvhM6SPhbuH6/E0F3whIO8HD+GB2ODPBxzljFQd6lBBq8d+TI4P34NQ2Vm
-	Fw9Nd80cdNyclEGfK4+FBtN1FjrzV0O9ZRaMPBtA8MhWycDI6UscnGu0cPAhpxNBY103C8VZ
-	+Qhs1R4Z+EenbhQ/7uBXz6V1A18wvX39DUOrTO08tdhT6a2ySGr0NGJqLz/JUftwIU/ftdzn
-	6JMiP0urnN8Ympc9yNGvvW9Z+qW6maNXPg4x1Ha7md2sjJOv2iMlatMk3aLoBLnGVymktJB0
-	X5EZZ6JipREFCURcRh7esbJGJAisOJdUZGYEZE6cRzyeMRzgEHE+6W918UYkF7BYxBHr+xIu
-	YMwQ48nQBQcTYIUI5LvjOQqElGIrQ14WVvwxgknDxR42wFiMJJ6JT0zgGRbDSOmEEJCDxCji
-	rM/6HZkpRpAah5s5gxSm/9qm/9qmf20LwuUoRJuclqTWJi5fqD+gyUjWpi/cfTDJjqYmUXLk
-	51kn8jWtcyFRQKrpCvAaNEqZOk2fkeRCRMCqEIW3XadRKvaoMw5JuoPxutRESe9CYQKrmq3Y
-	sF1KUIr71AbpgCSlSLq/LiMEhWaiGvtnt3uXbH9KkJ+KWU+37A2PuzrAmwd9R0+UhG9tk3U0
-	5a5J6ZqcsOYfjogwLi2oNW8uHOohxwzRsVGvOoP7Y3KaOdy2zTvjbtGncO/j0dTYhmBv74va
-	ndZ77m37z4aNKTw7qqdVpc2Jsf7YuQJGZo6GbJK3IP16y0RwwtpQn4rVa9RLIrFOr/4F5NvG
-	lA4DAAA=
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250714-docs_ratelimit-v1-1-51a6d9071f1a@debian.org>
+X-B4-Tracking: v=1; b=H4sIAMLydGgC/x3M7QpAMBQG4Fs5vb+tZgi7FUmLM075altScu/Kc
+ wHPg8hBOMLSg8CXRDl2WMozwri4fWYlEyzBaFPpOi/VdIxxCC7xKpsk1fjSFdqbttUNMsIZ2Mv
+ 9h13/vh8QLu7rYAAAAA==
+X-Change-ID: 20250714-docs_ratelimit-8f4a30f29908
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: paulmck@kernel.org, pmladek@suse.com, rostedt@goodmis.org, 
+ john.ogness@linutronix.de, senozhatsky@chromium.org, 
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1286; i=leitao@debian.org;
+ h=from:subject:message-id; bh=jyKF8fukPkvqUEz1+31oAWoM4hg4RgCAuMgyvrXqcEs=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBodPLH4BPjVaFjlcy8x+acCa80xWuWYnWZO5eWg
+ 4Ped0nADmqJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaHTyxwAKCRA1o5Of/Hh3
+ bU17D/94pMXyV0UhQnrKzQX2GpKtyKEzJI2heR7kEoXwaKruY2gRVMMSMj3OqdLR2bbMCxDPEeS
+ tpJ5BxuA2fGI5weXgeCfjJ95x3U1DcEhoGw0byw1g5Ux4Rt0MrmZU3i0+yasUTHdKmzhsFRGHpO
+ f9HZQJIs2RD4AXn0LWhjBf2guVDYIll6V1QZ2Lto98FWFzmDmUBqgo0xa95GfUy1Aew1znOGOx7
+ wSAbost36AGWO+MkCloSbW2fPwQ1veusqc+p2cnnoaXVoqyxdg/TEakQrWMuN3s3bWcs56OiazZ
+ 0oR5FvWWFyV96MHeNh/mksOgWZl0mj2QHm2CjuBuyGXulXGGabFvop7ovrPKHOosdsf8jUT84df
+ 8ZHczVNapU2PiRts3DA2WxHcx1I1eRHRHXyd1iPfaa5d4D6Oaz+zS2s93AF12F7DG0aXZPrcW2h
+ hYPex35MdVFFdL4D/Ly32Ajs3/ka9ZQVWO7ZNJQl/o3iEp7BPkfhBceL5G4XE/HWJjwhBqkHmzu
+ nxx31CwmZ7Ye+R8sU/2GuVFHXMlmebTDe681N/AY5TQrhV0Nw/Sx50Pjn9zhnFc9ke6cxdv3oSp
+ pbHkeytsvvkKjiKJFBKRvNkTP9lUVA+mx2mXXo4mJUnWCKBhFtQT/dBmd8lpmp6WUd0G9vMl0Pm
+ 73IZKCymwVkVyyA==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On Mon, Jul 14, 2025 at 12:45:17PM +0100, Pavel Begunkov wrote:
-> On 7/14/25 11:05, Byungchul Park wrote:
-> > On Mon, Jul 14, 2025 at 10:43:35AM +0100, Pavel Begunkov wrote:
-> > > On 7/14/25 00:07, Byungchul Park wrote:
-> > > > On Sat, Jul 12, 2025 at 12:59:34PM +0100, Pavel Begunkov wrote:
-> > > > > On 7/10/25 09:28, Byungchul Park wrote:
-> > > > > ...> +
-> > > > > >     static inline struct net_iov *netmem_to_net_iov(netmem_ref netmem)
-> > > > > >     {
-> > > > > >         if (netmem_is_net_iov(netmem))
-> > > > > > @@ -314,6 +340,21 @@ static inline netmem_ref netmem_compound_head(netmem_ref netmem)
-> > > > > >         return page_to_netmem(compound_head(netmem_to_page(netmem)));
-> > > > > >     }
-> > > > > > 
-> > > > > > +#define nmdesc_to_page(nmdesc)               (_Generic((nmdesc),             \
-> > > > > > +     const struct netmem_desc * :    (const struct page *)(nmdesc),  \
-> > > > > > +     struct netmem_desc * :          (struct page *)(nmdesc)))
-> > > > > 
-> > > > > Considering that nmdesc is going to be separated from pages and
-> > > > > accessed through indirection, and back reference to the page is
-> > > > > not needed (at least for net/), this helper shouldn't even exist.
-> > > > > And in fact, you don't really use it ...
-> > > > > > +static inline struct netmem_desc *page_to_nmdesc(struct page *page)
-> > > > > > +{
-> > > > > > +     VM_BUG_ON_PAGE(PageTail(page), page);
-> > > > > > +     return (struct netmem_desc *)page;
-> > > > > > +}
-> > > > > > +
-> > > > > > +static inline void *nmdesc_address(struct netmem_desc *nmdesc)
-> > > > > > +{
-> > > > > > +     return page_address(nmdesc_to_page(nmdesc));
-> > > > > > +}
-> > > > > 
-> > > > > ... That's the only caller, and nmdesc_address() is not used, so
-> > > > > just nuke both of them. This helper doesn't even make sense.
-> > > > > 
-> > > > > Please avoid introducing functions that you don't use as a general
-> > > > > rule.
-> > > > 
-> > > > I'm sorry about making you confused.  I should've included another patch
-> > > > using the helper like the following.
-> > > 
-> > > Ah, I see. And still, it's not a great function. There should be
-> > > no way to extract a page or a page address from a nmdesc.
-> > > 
-> > > For the diff below it's same as with the mt76 patch, it's allocating
-> > > a page, expects it to be a page, using it as a page, but for no reason
-> > > keeps it wrapped into netmem. It only adds confusion and overhead.
-> > > A rule of thumb would be only converting to netmem if the new code
-> > > would be able to work with a netmem-wrapped net_iovs.
-> > 
-> > Thanks.  I'm now working on this job, avoiding your concern.
-> > 
-> > By the way, am I supposed to wait for you to complete the work about
-> > extracting type from page e.g. page pool (or bump) type?
-> 
-> 1/8 doesn't depend on it, if you're sending it separately. As for
+Add clarification that the printk_ratelimit_burst window resets after
+printk_ratelimit seconds have elapsed, allowing another burst of
+messages to be sent. This helps users understand that the rate limiting
+is not permanent but operates in periodic windows.
 
-Right.
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ Documentation/admin-guide/sysctl/kernel.rst | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> the rest, it might need to wait for the PGTY change, which is more
+diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+index a43b78b4b6464..6f8d3935147da 100644
+--- a/Documentation/admin-guide/sysctl/kernel.rst
++++ b/Documentation/admin-guide/sysctl/kernel.rst
+@@ -1099,7 +1099,8 @@ printk_ratelimit_burst
+ While long term we enforce one message per `printk_ratelimit`_
+ seconds, we do allow a burst of messages to pass through.
+ ``printk_ratelimit_burst`` specifies the number of messages we can
+-send before ratelimiting kicks in.
++send before ratelimiting kicks in.  After `printk_ratelimit`_ seconds
++have elapsed, another burst of messages may be sent.
+ 
+ The default value is 10 messages.
+ 
 
-Only 3/8 needs to wait for the PGTY change.  The rest can be merged
-regardless of it if acceptable.
+---
+base-commit: 0907e7fb35756464aa34c35d6abb02998418164b
+change-id: 20250714-docs_ratelimit-8f4a30f29908
 
-	Byungchul
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
 
-> likely to be for 6.18
-> 
-> --
-> Pavel Begunkov
 
