@@ -1,156 +1,140 @@
-Return-Path: <linux-kernel+bounces-729264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A1FB0340E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 03:02:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0383FB03416
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 03:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 344D93B2B15
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:01:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 442501899F62
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F35B15B971;
-	Mon, 14 Jul 2025 01:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BCD18C031;
+	Mon, 14 Jul 2025 01:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="GS7lfgbV"
-Received: from outbound.pv.icloud.com (p-west1-cluster4-host6-snip4-2.eps.apple.com [57.103.65.243])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A1CIfxuy"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CC71FC3
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 01:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.65.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CB21FC3;
+	Mon, 14 Jul 2025 01:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752454939; cv=none; b=ZjbToOQPGEInLHMuMidNLejLSXv8eJyEPllcqNAFCdTyDELdPXZ5/MThCZSIHk5Zvvw9S9ZvKKi3bCPyqZE0so+Q8NPu+R0Z4419orXqIkTKHQPQA7ldv2/X5WstBdj7xtrmDw7nX570J78gw2CGAIfzDM9Y9GjDN4gME77un/M=
+	t=1752455106; cv=none; b=YZYSc0nE4+YOpO9x5Zkk/xApt+PuSVuGadXONxtB31YRk8oIHC+eGidwzESdvUCNiLXg8OFFr54P5QwbMaoAzDUvOe43dkIeQ6As1nizKH73VJjpIU/AvwbFEVP1x55Q/DARXpkSoMotRWdMetIc8uWmu5iNi1c9oSKCS6x3QdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752454939; c=relaxed/simple;
-	bh=LAqW6Xz/aenhHrNc03i1d+2r/dZeUUxScJCa+rxwOw8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TLDLshKVfF+lP6FNMBlchVDySaVCSV+1/xq148g3qeff6IKdaj7kG0OH3LFNP3D7DF0ApudeW6gtHwFCOuaAWc/a/JnYsfr7PyddHed8JQYMZHCCDkSU9HYbDvCucB4tOHBvHBpA5FW3WL8M4Z03ehgZSa61wb8p2l9gmJxhCaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=GS7lfgbV; arc=none smtp.client-ip=57.103.65.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
-	by outbound.pv.icloud.com (Postfix) with ESMTPS id 18C6418002BB;
-	Mon, 14 Jul 2025 01:02:14 +0000 (UTC)
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=JSa9SdVcVOj5jZYORBeS6/ykjag1Gc6PWlM78AoxMg8=; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme; b=GS7lfgbVyLlhz5jnb6RbTEfKlI+AYXx9gflz9nyyji/5jkad0DkUm4ZHoXRLe6J/w85uGFFG5L6W3ehSMkJoNfXu1Jl8+X45SqHyPlDmvtMjwXTarqe9kCSVN1JePOsmfOFECjs22dd1op0WU2/105ITVX6aGIEd0AdF75tw9xlCVF+V7Sb25DwWYacLvEx16vZ83JXOTYjsIyd39HYUs73p7/FdTvQVdsGux2SoWw1/v0HyO89tjqSbywwvdztOyE2i6L7f7++LbhfCtRjbLEUaug3Gn5DjFTmObPJvz+McHfItSqIQTK0O0/qh8GpA+iDo3feE/x5xu+xYV+mqQg==
-Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
-	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 3E8EF18002AF;
-	Mon, 14 Jul 2025 01:02:12 +0000 (UTC)
-Message-ID: <8a0bfdc6-5edb-4ca0-b142-067eb94ef57f@icloud.com>
-Date: Mon, 14 Jul 2025 09:02:09 +0800
+	s=arc-20240116; t=1752455106; c=relaxed/simple;
+	bh=E/HmxZ5n2gH3WP8x7Vk/0dgXQoFkSgWA2r9qtpCAcU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uvnp+IaV7A6m9gpcZCw+2eOSh0o1uJETOeIAae9bSYpw7TulnsWsqafzTKLIQLnFgsr9nAe5eiDPVZDFGmyBbz5SKxFS6wQHR7WkUkg3L/j/dDrAPNaQRqBt08c4fEooTdZFHXzGxFIrTapV/okZaSNeR45KIIZiMaVpHnOmO8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A1CIfxuy; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae0de0c03e9so666164266b.2;
+        Sun, 13 Jul 2025 18:05:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752455103; x=1753059903; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OgjzoolF9QAkZAGrz9Zh/lCii89swrUvWtInk88c+zg=;
+        b=A1CIfxuylgfQR/8/i2GOtOheK9qIeNmj7X7xmqXRboiOjNfFnaa7e+yJoq2zq0brNE
+         FYrGjXxcQlk7q7jenaKNGMRqsYP+k6YTKNZlyE+3kqzZXE5juTmlo1NPRIEzX9Uqocai
+         a6vW2I44mbLjp1e4DVryoF3Xlknyob2J02vyiWUNlaV5msMYc3jQz6Ble2mO7xEC+mO5
+         kk7owijORhhKYOW8U9pTzVUb7jsYZ7STseUF4PEGdfzeTFhJXYgLbUkZanzyWX9LsPvU
+         vns/3x5bDBkd+aOiaIpxzpOp5KyVl0rdRu/XUnzpdjTFOzUwl3nGAZUkHvrN0d2YRwNR
+         SwWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752455103; x=1753059903;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OgjzoolF9QAkZAGrz9Zh/lCii89swrUvWtInk88c+zg=;
+        b=hwYD+Kxfz7lsklua00ngX7cB0VBfP2I/cqS4/DR1Jn4VwKVO45S7v0E6guVDC4Votl
+         4OUU4WuLzpoo+aAwxqnPnUGcEBdNHdqPFeVmPy94ukFcBOYAdjVQe0EJGWnhbPmgHUP2
+         tPPP9n/I7lSiQVfxIh8M9kCRoMCJGmc3av7lYFl1ZjlScPwPaRU1SrDrYIfmX1WuHkGv
+         eWpfPsyB8iqOt1r0hD+4mGVfq6GPSEWpRY+z4G1v3fo2gMOEjkmgtDsWfjR2+mUpG6J+
+         fnK+rwdKga9BMIe9pPT+F7FoLnhLS//9c6IxZCCcOoNW8DFrVXhYRCobsuRhDqdAsvW+
+         BPpg==
+X-Forwarded-Encrypted: i=1; AJvYcCVn1bVLm7SD2oygJnCgTGqOY3Q/9yVqR7Y7lQf/vtaZqD2AEZb5oEapuGWZCgR0cRqcaWNOfOgE4io=@vger.kernel.org, AJvYcCVsJTYSngMdBkhcQEgUx+XRWN0b2W/8fqbWv6voo7guU1i7E8wE8s1Zso9Wgm8DICmL9dT/A/qb6Nlpsbnf@vger.kernel.org, AJvYcCXaD7Z8dnyF1E/JEgnO1Wp4r7FfpymRNocx0x7OZycLw9dS03Tp7I5xcEdkyeK0fkKN5/LZnNq9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5fjMg2nOsWijPnpu+F9HYZDRz4ckLldaXUtRJ9UwWbDcJO3F3
+	zkF/zXm5FxUqxUwgFKVCns8SjTgtwFDHq4sZ8kHwMEkP7lKN+6M/xqf/ERckWQ==
+X-Gm-Gg: ASbGncu507Or93mNRMf5XjyVH3hk1vMyzGu4940OzSnem3OeFmLhxDYkPpAoTxbE8Yh
+	yOsJYi+Ww8R17b2mSxPyvCpfs+GrL8bk8C/V1gVfj4CUzDMRXDRAvC4ZiKMSeteBtELbTF7N77Q
+	yz3mvRRqs8yflEK3NDZ/2OlCpmfdesoEJZsn9cDUoKcyfgX9TF6TbiQ5W2q4Glxq3sJth7RRZbn
+	CLGbTFisPjLK62yJ52HzVJ9oBtPHfbYIIVTqavwiCMoM587aSfreN/D1Al3NQakgFimuXcevaB7
+	rZep+tEXXd2HQlcA38NjdTaq5SAu98Bx/3YtO46gllZGKCsTN5hJkc9CLMWQJ36UwKAhQ5qYWpv
+	xcHDqrftB8krGDGg3ikRP0A==
+X-Google-Smtp-Source: AGHT+IF4N0NBIMf66QVWdB2Wvpxc2yAm9emz4Bom0q51CWzc2xcY8yNkAgcJ3cJqRGg6aAKkWLvcpA==
+X-Received: by 2002:a17:907:6e8b:b0:ae0:c976:cc84 with SMTP id a640c23a62f3a-ae6fbda3f38mr1099077466b.24.1752455102421;
+        Sun, 13 Jul 2025 18:05:02 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8264756sm737302166b.105.2025.07.13.18.05.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Jul 2025 18:05:01 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 52EAB420A817; Mon, 14 Jul 2025 08:04:55 +0700 (WIB)
+Date: Mon, 14 Jul 2025 08:04:55 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Haren Myneni <haren@linux.ibm.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux PowerPC <linuxppc-dev@lists.ozlabs.org>,
+	Linux Networking <netdev@vger.kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrew Donnellan <ajd@linux.ibm.com>
+Subject: Re: [PATCH RESEND 1/3] Documentation: ioctl-number: Fix linuxppc-dev
+ mailto link
+Message-ID: <aHRXtzxOeL3CnR5L@archie.me>
+References: <20250708004334.15861-1-bagasdotme@gmail.com>
+ <20250708004334.15861-2-bagasdotme@gmail.com>
+ <3cdeef45acba94a1ab14e263cbb9764591343059.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/8] char: misc: Fix kunit test case
- miscdev_test_dynamic_reentry() failure
-To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- Helge Deller <deller@gmx.de>, "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, linux-kernel@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- Zijun Hu <zijun.hu@oss.qualcomm.com>
-References: <20250710-rfc_miscdev-v5-0-b3940297db16@oss.qualcomm.com>
- <20250710-rfc_miscdev-v5-5-b3940297db16@oss.qualcomm.com>
- <aHADQWaYsjK5EYsN@quatroqueijos.cascardo.eti.br>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <aHADQWaYsjK5EYsN@quatroqueijos.cascardo.eti.br>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: uPq-G_qOM5bY1m-tzO4y1Uosnb98Rir3
-X-Proofpoint-GUID: uPq-G_qOM5bY1m-tzO4y1Uosnb98Rir3
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDAwMiBTYWx0ZWRfX2mhJykUiyQTV
- cxWuzr948aPPgODkxLoXsQqPzIx0pb3ZuN+dyUcfF5NLKBPdREWl0la49y8+0TBfDaNc1MTPZEy
- uB04hvHFdIhh0UkFUKYgoZ9ENlLXnAbgQ+loP4/7QKcOlg6cAbI5iFLyFflSChcMMpi5rrlaSiL
- JqinaOmdEnIgpcmbHYlmeNRU6/H21NaGM5cw36MGASzgK80VUMt5ttriKSTIsx/m70Rfi37MSCm
- zeL5J8DAGPd3OR2bbxi6sCPt7A1AjqWyjxFmGSl+2q8cjCo1FhVxZLp26MqamPRajLBl92PVo=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-13_03,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0
- mlxlogscore=999 malwarescore=0 adultscore=0 spamscore=0 suspectscore=0
- phishscore=0 bulkscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.22.0-2506060001 definitions=main-2507140002
-
-On 2025/7/11 02:15, Thadeu Lima de Souza Cascardo wrote:
-> Adding a failing test and then fixing the code does not seem the best way
-> to justify this change. I would rather add the fix with a proper
-> justification and then add the test.
->
-may need to only correct commit message. the order about unit test and
-fix may be right as last reply.
-
-> On the other hand, I have found real cases where this might happen, some by
-> code inspection only, but I also managed to reproduce the issue here,
-> where:
-> 
-> 1) wmi/dell-smbios registered minor 122, acpi_thermal_rel registered minor
-> 123.
-> 2) unbind "int3400 thermal" driver from its device, this will unregister
-> acpi_thermal_rel
-> 3) remove dell_smbios module
-> 4) reinstall dell_smbios module, now wmi/dell-smbios is using misc 123
-> 5) bind the device to "int3400 thermal" driver again, acpi_thermal_rel
-> fails to register
-> 
-
-above issue should not happen with current char-misc tree since fixed
-minor have no such reentry issue:
-
-for any fixed minor fixed_A in range [0, 255): ".minor = fixed_A" ->
-registered -> ".minor = fixed_A" -> de-registered -> ".minor = fixed_A"
-, namely, for fixed minor, it is always un-changed about registering
-and de-registering.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="KXgAq2S9Sh2ErA+o"
+Content-Disposition: inline
+In-Reply-To: <3cdeef45acba94a1ab14e263cbb9764591343059.camel@linux.ibm.com>
 
 
-> I think we have a few options to fix these bugs:
-> 
-> 1) Apply your suggested fix.
-> 2) Fix all the buggy drivers.
-> 3) Change API and have the minor be a misc_register parameter.
-> 
-> The advantage of your option is that it is simple and contained and easy to
-> backport.
-> 
-> Changing API would require changing a lot of code and hard to backport, but
-> I find it less error-prone than requiring the minor member to be reset, if
-> we end up deciding about fixing the drivers.
-> 
-> As for fixing individual drivers, one helpful feature is applying your
-> previous patch [1], but perhaps with stronger message, maybe a WARN_ON.
-> 
-> [1] char: misc: Disallow registering miscdevice whose minor > MISC_DYNAMIC_MINOR
-> 
-> I am leaning towards your suggested fix, but with different wording, and
-> before adding the test case.
-> 
-> Something like:
-> 
-> Some drivers may reuse the miscdevice structure after they are
-> deregistered. If the intention is to allocate a dynamic minor, if the minor
-> number is not reset to MISC_DYNAMIC_MINOR before calling misc_register, it
-> will try to register a previously dynamically allocated minor number, which
-> may have been registered by a different driver.
-> 
+--KXgAq2S9Sh2ErA+o
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-let me correct commit message based on this suggestions.
-thank you.
+On Mon, Jul 07, 2025 at 11:23:30PM -0700, Haren Myneni wrote:
+> On Tue, 2025-07-08 at 07:43 +0700, Bagas Sanjaya wrote:
+> > Spell out full Linux PPC mailing list address like other subsystem
+> > mailing lists listed in the table.
+> >=20
+> >=20
+> Please also add:
+>   Fixes: 514f6ff4369a ("powerpc/pseries: Add papr-vpd character driver
+> for VPD retrieval")
+>   Fixes: 905b9e48786e ("powerpc/pseries/papr-sysparm: Expose character
+> device to user space")
 
-> One such case is the acpi_thermal_rel misc device, registered by the
-> int3400 thermal driver. If the device is unbound from the driver and later
-> bound, if there was another dynamic misc device registered in between, it
-> would fail to register the acpi_thermal_rel misc device. Other drivers
-> behave similarly.
-> 
-> Instead of fixing all the drivers, just reset the minor member to
-> MISC_DYNAMIC_MINOR when calling misc_deregister in case it was a
-> dynamically allocated minor number.
+OK, thanks! I will add these in v2.
 
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--KXgAq2S9Sh2ErA+o
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaHRXsgAKCRD2uYlJVVFO
+o9QUAP9hSnB9sVrTHZuYxdfH5z761AvDoeyCceLOal5lxQ5VoQD+KxDB/HFCPvXc
+UeYj+rGMuNLiSKWOuxQcSY0TQLyOcQ0=
+=Fvx7
+-----END PGP SIGNATURE-----
+
+--KXgAq2S9Sh2ErA+o--
 
