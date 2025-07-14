@@ -1,295 +1,181 @@
-Return-Path: <linux-kernel+bounces-729843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C9F5B03C67
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:49:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AB6FB03BC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AA7D164698
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:49:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94FBE16C252
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9412571BC;
-	Mon, 14 Jul 2025 10:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F8E244667;
+	Mon, 14 Jul 2025 10:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GTOfVI5d"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFEztGYE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDE5239570;
-	Mon, 14 Jul 2025 10:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8921B23A6;
+	Mon, 14 Jul 2025 10:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752489909; cv=none; b=mlUlLOFesZbuZZV3f3vpCQ+2lFkuoUNavnKYS2nAD6LmiC1lEamfMOjIZrRj1CB3IntScnK8XCHzvfczzqQaw6afVpFety+DJGzQDnomw5Iq8iKDdz6k+O+YeJNiBeNsH3AzvM+cGgBiHmhbbwMS6mWeVE00+TM35fL+76RyG+I=
+	t=1752488441; cv=none; b=WoddRcEOJrHGQt028dWDGtMwQ69vYKqQWg+dRm5/Aa6ka5qRCJqvQ92YjkwSznzT/3l9Mm9vaqWJzRpEBCM8r1Jld2ElhfXJjqS82XSTBeL4E646qYqsT+WS1hGgIUBBafaKhiYonIpFRuxhnHNoaJyeu+ql+eQOpdDyKYCZ3So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752489909; c=relaxed/simple;
-	bh=aGkfmjELao9k1FgDXHVaajQR1EjDMMt8/GCiX0e70PI=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=kyYYSIvHnXp8ChZ9UT2qIW0MZpNrCm5w1pOdKlT5+54c88AFPro3/loyrvsjil/q2OVMTwNjrzSRv+PeGy3v2nvXv/dTInC9plM3VNuUG1h9ATcqpuyXCjg3gfeCxdhYWbpswwZuKvrJA+LHvCyW+n0SGIRaiJnVGrqd3OvqmOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GTOfVI5d; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=upWx64KkvtXvdkAHnKQ/kaQ2aUrWbLJGP5mR8fF7cdE=; b=GTOfVI5d/iVG/JrjZfks4uWkvv
-	RZZ0SSg67o9t+w5RK0X08J58TaplwoKmdpklKLcbOYjhKxYDU/MRQbXC/CIvPYDwcNo7wAAoLa8gM
-	KNtaLuU17i9pCrLyK6Vic9Qw92H9fMv8saUVsDtnpWQxuBPv4vyBTb8D0vSIJXRb8XBoStGx+sq2t
-	QBYSo+e7Qaumoo+YAGYWsFyRLo19Y/I6UZP8Dh4ai1U8f+vFYXMqYNIrhlpooPth7fdV4+4y1YFoX
-	oXyDWSFMClBQlEiOvve0FjqzQDltQG6xfoaTKgHS0I/OsP3BF21yIMNlKFxLvVpEl4+3ZNp70qqHO
-	IvsTIcww==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubGg1-00000009kcr-15I1;
-	Mon, 14 Jul 2025 10:44:53 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 330EA302E2E; Mon, 14 Jul 2025 12:44:51 +0200 (CEST)
-Message-ID: <20250714103441.496787279@infradead.org>
-User-Agent: quilt/0.68
-Date: Mon, 14 Jul 2025 12:20:27 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: x86@kernel.org
-Cc: kys@microsoft.com,
- haiyangz@microsoft.com,
- wei.liu@kernel.org,
- decui@microsoft.com,
- tglx@linutronix.de,
- mingo@redhat.com,
- bp@alien8.de,
- dave.hansen@linux.intel.com,
- hpa@zytor.com,
- seanjc@google.com,
- pbonzini@redhat.com,
- ardb@kernel.org,
- kees@kernel.org,
- Arnd Bergmann <arnd@arndb.de>,
- gregkh@linuxfoundation.org,
- jpoimboe@kernel.org,
- peterz@infradead.org,
- linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org,
- linux-efi@vger.kernel.org,
- samitolvanen@google.com,
- ojeda@kernel.org
-Subject: [PATCH v3 16/16] objtool: Validate kCFI calls
-References: <20250714102011.758008629@infradead.org>
+	s=arc-20240116; t=1752488441; c=relaxed/simple;
+	bh=eGALbsLRPLRoVynPBApgOqN7lu1dbCFYwXQ+6d1ieiU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=tVBg+tMMM1VRD2pdlP0w6MAvD02wjr9tubov8g3XLcKkenY83webeUnwIpSxF6g5GIwl/5pDr65BSY7oZ8Qm8locWmBp9nxgy47Yomo8r6GpGHdczZsJAjDHeVKAy6NS2aOkQKmqBM8am2XabPk8UkaRCiogqmpQN5yc1AIaWo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFEztGYE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AC0BC4CEED;
+	Mon, 14 Jul 2025 10:20:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752488441;
+	bh=eGALbsLRPLRoVynPBApgOqN7lu1dbCFYwXQ+6d1ieiU=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=CFEztGYEmVnJQemUjX2iGy5+CREwiAfYc5ch4ydXaYnbtB24nRz0ZNa6P6vGbCobX
+	 rGwyFDdRROedf+PeeqdtGQWDQte8XKYEPT9wUYES5uur95rkQwbXgQou5612Pzveaj
+	 qz7QKDqsVqihK7HNE5ndDzDagagn/OtwmfzkuVrvjbGFwdLvdh6dMI2o8mYGCqxNoq
+	 5NRfvM8JVxGBRTrGTLncpK1wiA8ZESUxp3eaP5YiadewqtWXpoEDm+Eqh6ifHa99SM
+	 1O9QJ7QTtuyjDVaDotdb3P0/37wx61a4EhYtVR6rQ9XHH6XIXOIyCWmrowKxt5maY6
+	 EKFK3ql2S68QA==
+Message-ID: <eade255e-cb83-4e2f-adf7-ee3747bf90f3@kernel.org>
+Date: Mon, 14 Jul 2025 12:20:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 01/12] dt-bindings: ptp: add bindings for NETC
+ Timer
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: "F.S. Peng" <fushi.peng@nxp.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "richardcochran@gmail.com" <richardcochran@gmail.com>,
+ Claudiu Manoil <claudiu.manoil@nxp.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>, Clark Wang
+ <xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+ "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>
+References: <20250711065748.250159-1-wei.fang@nxp.com>
+ <20250711065748.250159-2-wei.fang@nxp.com>
+ <ce7e7889-f76b-461f-8c39-3317bcbdb0b3@kernel.org>
+ <PAXPR04MB8510C8823F5F229BC78EB4B38854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <61e6c90d-3811-41c2-853d-d93d9db38f21@kernel.org>
+ <PAXPR04MB85109EE6F29A1D80CF3F367A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <169e742f-778e-4d42-b301-c954ecec170a@kernel.org>
+ <PAXPR04MB85107A7E7EB7141BC8F2518A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <836c9f0b-2b73-4b36-8105-db1ae59b799c@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <836c9f0b-2b73-4b36-8105-db1ae59b799c@kernel.org>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Validate that all indirect calls adhere to kCFI rules. Notably doing
-nocfi indirect call to a cfi function is broken.
+On 14/07/2025 12:09, Krzysztof Kozlowski wrote:
+> On 14/07/2025 11:56, Wei Fang wrote:
+>>
+>>>
+>>> How does the other consumer - ethernet - reference this one here? Paste
+>>> complete DTS of this and users, otherwise it is just ping-pong
+>>> discussion where you put just a little effort to bounce back my question.
+>>
+>> Below is the DTS node of enetc (ethernet device) and timer node.
+>>
+>> enetc_port0: ethernet@0,0 {
+>> 	compatible = "pci1131,e101";
+>> 	reg = <0x000000 0 0 0 0>;
+>> 	pinctrl-names = "default";
+>> 	pinctrl-0 = <&pinctrl_enetc0>;
+>> 	phy-handle = <&ethphy0>;
+>> 	phy-mode = "rgmii-id";
+>> 	status = "okay";
+> 
+> How do you use netc_timer in such case?
+> 
+>> };
+>>
+>> netc_timer: ethernet@18,0 {
+>> 	compatible = "pci1131,ee02";
+>> 	reg = <0x00c000 0 0 0 0>;
+>> 	clocks = <&netc_system333m>;
+>> 	clock-names = "system";
+>> };
+>>
+>> Currently, the enetc driver uses the PCIe device number and function number
+>> of the Timer to obtain the Timer device, so there is no related binding in DTS.
+> 
+> So you just tightly coupled these devices. Looks poor design for me, but
+> your choice. Anyway, then use that channel as information to pass the
+> pin/timer/channel number. You do not get a new property for that.
+> 
+>> In the future, we plan to add phandle to the enetc document to bind enetc
+>> and Timer, because there will be multiple Timer instances on subsequent
+>> platforms.
+> 
+> Bindings must be complete, not "in the future" but now. Start sending
+> complete work, so we won't have to guess it.
 
-Apparently some Rust 'core' code violates this and explodes when ran
-with FineIBT.
+BTW, above DTS is not a patch. Post complete upstream DTS as patch for
+review, evaluation and merging. Otherwise you will be posting
+incomplete, unvalidated code which in fact does not work and shortly
+after you will be bringing fix-up patches for bindings.
 
-All the ANNOTATE_NOCFI_SYM sites are prime targets for attackers.
+No. This is not how the process is working for upstreaming SoC
+components from major vendor.
 
- - runtime EFI is especially henous because it also needs to disable
-   IBT. Basically calling unknown code without CFI protection at
-   runtime is a massice security issue.
-
- - Kexec image handover; if you can exploit this, you get to keep it :-)
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/kernel/machine_kexec_64.c  |    4 +++
- arch/x86/kvm/vmx/vmenter.S          |    4 +++
- arch/x86/platform/efi/efi_stub_64.S |    4 +++
- drivers/misc/lkdtm/perms.c          |    5 ++++
- include/linux/objtool.h             |   10 ++++++++
- include/linux/objtool_types.h       |    1 
- tools/include/linux/objtool_types.h |    1 
- tools/objtool/check.c               |   42 ++++++++++++++++++++++++++++++++++++
- tools/objtool/include/objtool/elf.h |    1 
- 9 files changed, 72 insertions(+)
-
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -453,6 +453,10 @@ void __nocfi machine_kexec(struct kimage
- 
- 	__ftrace_enabled_restore(save_ftrace_enabled);
- }
-+/*
-+ * Handover to the next kernel, no CFI concern.
-+ */
-+ANNOTATE_NOCFI_SYM(machine_kexec);
- 
- /* arch-dependent functionality related to kexec file-based syscall */
- 
---- a/arch/x86/kvm/vmx/vmenter.S
-+++ b/arch/x86/kvm/vmx/vmenter.S
-@@ -361,6 +361,10 @@ SYM_FUNC_END(vmread_error_trampoline)
- 
- .section .text, "ax"
- 
-+#ifndef CONFIG_X86_FRED
-+
- SYM_FUNC_START(vmx_do_interrupt_irqoff)
- 	VMX_DO_EVENT_IRQOFF CALL_NOSPEC _ASM_ARG1
- SYM_FUNC_END(vmx_do_interrupt_irqoff)
-+
-+#endif
---- a/arch/x86/platform/efi/efi_stub_64.S
-+++ b/arch/x86/platform/efi/efi_stub_64.S
-@@ -11,6 +11,10 @@
- #include <asm/nospec-branch.h>
- 
- SYM_FUNC_START(__efi_call)
-+	/*
-+	 * The EFI code doesn't have any CFI, annotate away the CFI violation.
-+	 */
-+	ANNOTATE_NOCFI_SYM
- 	pushq %rbp
- 	movq %rsp, %rbp
- 	and $~0xf, %rsp
---- a/drivers/misc/lkdtm/perms.c
-+++ b/drivers/misc/lkdtm/perms.c
-@@ -9,6 +9,7 @@
- #include <linux/vmalloc.h>
- #include <linux/mman.h>
- #include <linux/uaccess.h>
-+#include <linux/objtool.h>
- #include <asm/cacheflush.h>
- #include <asm/sections.h>
- 
-@@ -86,6 +87,10 @@ static noinline __nocfi void execute_loc
- 	func();
- 	pr_err("FAIL: func returned\n");
- }
-+/*
-+ * Explicitly doing the wrong thing for testing.
-+ */
-+ANNOTATE_NOCFI_SYM(execute_location);
- 
- static void execute_user_location(void *dst)
- {
---- a/include/linux/objtool.h
-+++ b/include/linux/objtool.h
-@@ -184,6 +184,15 @@
-  * WARN using UD2.
-  */
- #define ANNOTATE_REACHABLE(label)	__ASM_ANNOTATE(label, ANNOTYPE_REACHABLE)
-+/*
-+ * This should not be used; it annotates away CFI violations. There are a few
-+ * valid use cases like kexec handover to the next kernel image, and there is
-+ * no security concern there.
-+ *
-+ * There are also a few real issues annotated away, like EFI because we can't
-+ * control the EFI code.
-+ */
-+#define ANNOTATE_NOCFI_SYM(sym)		asm(__ASM_ANNOTATE(sym, ANNOTYPE_NOCFI))
- 
- #else
- #define ANNOTATE_NOENDBR		ANNOTATE type=ANNOTYPE_NOENDBR
-@@ -194,6 +203,7 @@
- #define ANNOTATE_INTRA_FUNCTION_CALL	ANNOTATE type=ANNOTYPE_INTRA_FUNCTION_CALL
- #define ANNOTATE_UNRET_BEGIN		ANNOTATE type=ANNOTYPE_UNRET_BEGIN
- #define ANNOTATE_REACHABLE		ANNOTATE type=ANNOTYPE_REACHABLE
-+#define ANNOTATE_NOCFI_SYM		ANNOTATE type=ANNOTYPE_NOCFI
- #endif
- 
- #if defined(CONFIG_NOINSTR_VALIDATION) && \
---- a/include/linux/objtool_types.h
-+++ b/include/linux/objtool_types.h
-@@ -65,5 +65,6 @@ struct unwind_hint {
- #define ANNOTYPE_IGNORE_ALTS		6
- #define ANNOTYPE_INTRA_FUNCTION_CALL	7
- #define ANNOTYPE_REACHABLE		8
-+#define ANNOTYPE_NOCFI			9
- 
- #endif /* _LINUX_OBJTOOL_TYPES_H */
---- a/tools/include/linux/objtool_types.h
-+++ b/tools/include/linux/objtool_types.h
-@@ -65,5 +65,6 @@ struct unwind_hint {
- #define ANNOTYPE_IGNORE_ALTS		6
- #define ANNOTYPE_INTRA_FUNCTION_CALL	7
- #define ANNOTYPE_REACHABLE		8
-+#define ANNOTYPE_NOCFI			9
- 
- #endif /* _LINUX_OBJTOOL_TYPES_H */
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -2390,6 +2390,8 @@ static int __annotate_ifc(struct objtool
- 
- static int __annotate_late(struct objtool_file *file, int type, struct instruction *insn)
- {
-+	struct symbol *sym;
-+
- 	switch (type) {
- 	case ANNOTYPE_NOENDBR:
- 		/* early */
-@@ -2431,6 +2433,15 @@ static int __annotate_late(struct objtoo
- 		insn->dead_end = false;
- 		break;
- 
-+	case ANNOTYPE_NOCFI:
-+		sym = insn->sym;
-+		if (!sym) {
-+			ERROR_INSN(insn, "dodgy NOCFI annotation");
-+			return -1;
-+		}
-+		insn->sym->nocfi = 1;
-+		break;
-+
- 	default:
- 		ERROR_INSN(insn, "Unknown annotation type: %d", type);
- 		return -1;
-@@ -4000,6 +4011,37 @@ static int validate_retpoline(struct obj
- 		warnings++;
- 	}
- 
-+	if (!opts.cfi)
-+		return warnings;
-+
-+	/*
-+	 * kCFI call sites look like:
-+	 *
-+	 *     movl $(-0x12345678), %r10d
-+	 *     addl -4(%r11), %r10d
-+	 *     jz 1f
-+	 *     ud2
-+	 *  1: cs call __x86_indirect_thunk_r11
-+	 *
-+	 * Verify all indirect calls are kCFI adorned by checking for the
-+	 * UD2. Notably, doing __nocfi calls to regular (cfi) functions is
-+	 * broken.
-+	 */
-+	list_for_each_entry(insn, &file->retpoline_call_list, call_node) {
-+		struct symbol *sym = insn->sym;
-+
-+		if (sym && (sym->type == STT_NOTYPE ||
-+			    sym->type == STT_FUNC) && !sym->nocfi) {
-+			struct instruction *prev =
-+				prev_insn_same_sym(file, insn);
-+
-+			if (!prev || prev->type != INSN_BUG) {
-+				WARN_INSN(insn, "no-cfi indirect call!");
-+				warnings++;
-+			}
-+		}
-+	}
-+
- 	return warnings;
- }
- 
---- a/tools/objtool/include/objtool/elf.h
-+++ b/tools/objtool/include/objtool/elf.h
-@@ -70,6 +70,7 @@ struct symbol {
- 	u8 local_label       : 1;
- 	u8 frame_pointer     : 1;
- 	u8 ignore	     : 1;
-+	u8 nocfi             : 1;
- 	struct list_head pv_target;
- 	struct reloc *relocs;
- 	struct section *group_sec;
-
-
+Best regards,
+Krzysztof
 
