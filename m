@@ -1,64 +1,65 @@
-Return-Path: <linux-kernel+bounces-729931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA9CAB03DCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:55:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D8C7B03DCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC8483B4EA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:54:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B2311A60297
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53171248866;
-	Mon, 14 Jul 2025 11:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F60C24BBE1;
+	Mon, 14 Jul 2025 11:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q8koG8gj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XpQXCszR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9931F247DEA;
-	Mon, 14 Jul 2025 11:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983BA24728F;
+	Mon, 14 Jul 2025 11:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752494087; cv=none; b=SpeCRxsd9YJd+0ifP/BJMOe3s5LBZ3zx2xXCIQ7F09yUABwdW0gSYYYzC9bdtlxBK5Bk280XrFRv+Od9Ntd76smflyE1rVLYhuh7xg+b4gqFESOfkyNMQrhKZd1ykFnSRAluqrHnWptG2yqo992rt214+rjtRVYbO9H1Gr97Kb4=
+	t=1752494091; cv=none; b=OaCMfs2ilf6dziXAtuzPJh9tjZ6LLAZuX8KnfxWP7PCRW7wjmHuQQ6nED7b+Xue9z1tYkiPonrBQ5fRT5pGf4mDtsbdu2wDYvcDteenT2nz5y95LFFRFj912vaSOKFnTQuaYpMfQDxPPrqVkeRw3Aw5JNPuYxTGsc99EKRPC1VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752494087; c=relaxed/simple;
-	bh=BEdI4suDCa1AJOjae1DPirfKUedWtLNitntVz/0EeU8=;
+	s=arc-20240116; t=1752494091; c=relaxed/simple;
+	bh=d0joSu+CYHb5OJCnlRZ4ebbkZ3bY9fgZjzT8Cp/Aqi8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QFPBN3lVIi8CLBvtOr5xfOS5TYTSMAtUpZbtY+c8okgXlG2aDpyWr0p/YPqGSHg3Pco8tQhbqfcC+l0c9/aN/l2W+zZqowKfRfUy42V5wuvaN66TcQ9N9NAbKVLrs+6V5hEkpwanlVJHSvC4fomEXST3W8Vejf3Nsv+OSNDBlNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q8koG8gj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E076BC4CEF4;
-	Mon, 14 Jul 2025 11:54:42 +0000 (UTC)
+	 MIME-Version:Content-Type; b=gp7DE1Y6JGxp3W0QtnnQF5XJOO99smlmPyu2pR/+xNkIGI0eWvWA5KIYQPkKvmu8dwUE4/ngfyRKxnFBn6F+UIGs8k2PwZC4iljE8luYDul/H693MuxMqKK672yYrhHopeQKrx5CpQ/uoS/HW1/8KOcY8VC1wjKNG6Hs7I7D94w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XpQXCszR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B100C4CEF4;
+	Mon, 14 Jul 2025 11:54:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752494085;
-	bh=BEdI4suDCa1AJOjae1DPirfKUedWtLNitntVz/0EeU8=;
+	s=k20201202; t=1752494091;
+	bh=d0joSu+CYHb5OJCnlRZ4ebbkZ3bY9fgZjzT8Cp/Aqi8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=q8koG8gjVjygdannSoTdETsTOxp8Rw2grBIrU7MX++iiGT9Uw0JkA/IQXnrDBQgdQ
-	 vFVHzsxPHggBECuaYnCaFxQZvie9awwqVUGz1HbWPyp2zBpaEuuuHqS1rp+CpdfTD3
-	 BsSZtMEdcQdgerBcm2pjQUHzukvtcNvHY9H0pIvA8TNTMEvm10rxg95xcEX9WSVk/8
-	 ++LecqB7nrZ3X3w1W24ibBToDW0mN0DzJzKNDrkjzrhu8mPjBjBZltSKlXkXcqQHWC
-	 3vyi1lwKXDABeyMgFf+BzxLWnEQpW3AjK2x9OPOhlRzDK/WcuhfR04yunvVa6MbprT
-	 d5JrqifJtlNYg==
+	b=XpQXCszR2pubUtIf+QwsIjfF08bbyU/kiEshe5/ToEoj4I7WHAtOf3/89BFTUK+8w
+	 BXsvNNrLhOtKrNb7CaGBrBlb5wC5CYcLKz6EYDC4NFwyN1WCrBh75LOK9jS/JFeSft
+	 f1SvUOAs/EOcb7eIjVBMssLHTUv/Uq5DrzobyTKdn1h2HdXGdP7KihK5moScSCwTxn
+	 uUcrNQQfIlr9kSJcah84/q79DgGR5rOoM5KfXzaJEJOc9nvNhahZokQDP3ML14QopM
+	 bQX9erDnWxVFiV8B4U9Wi2q1S1dHUYGVDbNd11KDGJHD9lCPJxDe2fgVLPXa62PTYp
+	 ieMOEgyJjAVzg==
 From: Will Deacon <will@kernel.org>
-To: Rob Clark <robin.clark@oss.qualcomm.com>,
-	Robin Murphy <robin.murphy@arm.com>,
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
 	Joerg Roedel <joro@8bytes.org>,
-	Bibek Kumar Patro <quic_bibekkum@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+	Robin Murphy <robin.murphy@arm.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Kaustabh Chakraborty <kauschluss@disroot.org>
 Cc: catalin.marinas@arm.com,
 	kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
 	iommu@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iommu/arm-smmu: disable PRR on SM8250
-Date: Mon, 14 Jul 2025 12:54:29 +0100
-Message-Id: <175249192027.1455700.18242171323809718995.b4-ty@kernel.org>
+Subject: Re: [PATCH] iommu/exynos: add support for reserved regions
+Date: Mon, 14 Jul 2025 12:54:31 +0100
+Message-Id: <175249276902.1459797.13570182845894865373.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250705-iommu-fix-prr-v2-1-406fecc37cf8@oss.qualcomm.com>
-References: <20250705-iommu-fix-prr-v2-1-406fecc37cf8@oss.qualcomm.com>
+In-Reply-To: <20250712-exynos-sysmmu-resv-regions-v1-1-e79681fcab1a@disroot.org>
+References: <20250712-exynos-sysmmu-resv-regions-v1-1-e79681fcab1a@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,16 +69,20 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Sat, 05 Jul 2025 19:08:33 +0300, Dmitry Baryshkov wrote:
-> On SM8250 / QRB5165-RB5 using PRR bits resets the device, most likely
-> because of the hyp limitations. Disable PRR support on that platform.
+On Sat, 12 Jul 2025 17:19:30 +0530, Kaustabh Chakraborty wrote:
+> The bootloader configures a reserved memory region for framebuffer,
+> which is protected by the IOMMU. The kernel-side driver is oblivious as
+> of which memory region is set up by the bootloader. In such case, the
+> IOMMU tries to reference the reserved region - which is not reserved in
+> the kernel anymore - and it results in an unrecoverable page fault. More
+> information about it is provided in [1].
 > 
-> 
+> [...]
 
-Applied to iommu (arm/smmu/updates), thanks!
+Applied to iommu (samsung/exynos), thanks!
 
-[1/1] iommu/arm-smmu: disable PRR on SM8250
-      https://git.kernel.org/iommu/c/b9bb7e814cd0
+[1/1] iommu/exynos: add support for reserved regions
+      https://git.kernel.org/iommu/c/2d70fdd9b5c9
 
 Cheers,
 -- 
