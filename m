@@ -1,198 +1,310 @@
-Return-Path: <linux-kernel+bounces-729936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C26B03DE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:00:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF38B03DE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AB9517CAA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:59:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CFDE7A7154
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77ECC2472A0;
-	Mon, 14 Jul 2025 11:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="aj0QdiFV"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD32246BB9;
-	Mon, 14 Jul 2025 11:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752494362; cv=pass; b=EHPmUzKuiss/9ivnam7bABUo3Ueb/NMJIAUyWRdVshPuamGD+BCTcDLr3I3u/sg5OmQGkRBEPcMAxckWSSIbGLiLroaTWiX2R6G1iA6HDnep/pPvTlqrF3P7RzoXrjrAY9fu1dbSGSmv0VoU6FQjRqzm1C6SDpmvQ1QWjqov3C4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752494362; c=relaxed/simple;
-	bh=tDV9/Q7u6+pOYicayxwt8pwpLClJb9GzCkMGqZQIKxM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QIgfucfmydoOYPiaYMPTSWq8uecpJ3k+e2GnWvQOhnInxfn7hAiotqtqVGz2X2RvVHC2KR42w0aToB/eUVilrdIGYOpvb/sDP3a+2KrIbTmGewEAJJFbElWMKNF7UJ20pXuspwzGw2NxynnjNAZhpCOd+VSiK6ufsoti4NxfH6U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=aj0QdiFV; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752494332; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=iGxMupPycqjxa9mYweKkM1w0s56YuVBdz40VSohqHJ3DXNzUCYRc0iDuCpWhd1e1iQCtv+NNjNDg9xPLYXdOL006E1zaX0LDHjqO8w9yGeXqJe7lKw+DDb3YBdN41kehkm8w1fxfZc1a+NC+/qy+9J8PITBiq2rV+10PPyJxUTA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752494332; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=l+1LS81FGm60dIyP9CaATX2ddHWIPZWWedbPOybtiZA=; 
-	b=FOFJails5Ae40soxsPBXDAMaGs6GdcMZ9fthL+58TXmaBHN1pRpOTIby7gN85neyM8wi9quxpIlfq5ly00RUP3SL6TwLmEToc7CTcioKIhaK8V6fvNd7OgDuWphAyIFq+HMJbzE3GZNb+dEmdu8whdIK8oPFuHLyoQA9EWuAGwk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752494332;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=l+1LS81FGm60dIyP9CaATX2ddHWIPZWWedbPOybtiZA=;
-	b=aj0QdiFV/CZDv8u7a2xKrN6idNVJH5GSz9novrbYVUgsWiDx/znyr52+XSR2b85x
-	hmj6oKZLj+9eTDZAY0wlEAp10Lx86SU71uQzRdkFW+al/wNl2BJ4qfNCPVrUsb0Vfgz
-	Cjsqj8X6ekiU7rdpt5mtI9G7NA5CT9t53O457SRI=
-Received: by mx.zohomail.com with SMTPS id 1752494328917431.64095668770517;
-	Mon, 14 Jul 2025 04:58:48 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Hector Yuan <hector.yuan@mediatek.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 1/5] dt-bindings: mfd: syscon: Add mt8196 fdvfs syscons
-Date: Mon, 14 Jul 2025 13:58:44 +0200
-Message-ID: <2866261.BEx9A2HvPv@workhorse>
-In-Reply-To: <4537173f-7f79-4629-a2ef-cbf1edd2ed81@collabora.com>
-References:
- <20250711-mt8196-cpufreq-v1-0-e1b0a3b4ac61@collabora.com>
- <20250711-mt8196-cpufreq-v1-1-e1b0a3b4ac61@collabora.com>
- <4537173f-7f79-4629-a2ef-cbf1edd2ed81@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEC82472BF;
+	Mon, 14 Jul 2025 11:59:11 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874A21E5018;
+	Mon, 14 Jul 2025 11:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752494351; cv=none; b=dsOekOtGk2/2G940CJfHUjWPi9wL/m1zwfxN3WhWR3fTDc7HDcim66/h80Gmub+I9/Chk1ckqMPFv2ydfJsFzrghDs8fZWnN0N4QRsYaNSBJDqg9PUW98RAYvqQuHGrmLzMqpZR4lcdh4h652ho1O63/qDJJadOR/m3bzY+Cvtc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752494351; c=relaxed/simple;
+	bh=+8kGNKX/cS17HIoZdLxG+aIihYIgBAWGehSLPSD24hw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z3Q5LBZtwTaXXT4QFSNtym3f/KE+KudzBHz61KWsnW6CxuBdWQ3kPCr058dA3uZnMeomICwn8rNEzphdY7BdhHlyCfU5EoTIGImzIWwNAiXHhsyvlqeuW2AQcfEKMr4EGUOmvxcrabO3W5qXko2Ygx9uzHr36cnUC87bPxojBNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-681ff7000002311f-47-6874f10695f3
+Date: Mon, 14 Jul 2025 20:58:57 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: willy@infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
+	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
+	akpm@linux-foundation.org, davem@davemloft.net,
+	john.fastabend@gmail.com, andrew+netdev@lunn.ch, toke@redhat.com,
+	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
+	saeedm@nvidia.com, leon@kernel.org, ast@kernel.org,
+	daniel@iogearbox.net, david@redhat.com, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, horms@kernel.org,
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
+	vishal.moola@gmail.com, hannes@cmpxchg.org, ziy@nvidia.com,
+	jackmanb@google.com
+Subject: Re: [PATCH net-next v9 1/8] netmem: introduce struct netmem_desc
+ mirroring struct page
+Message-ID: <20250714115857.GA31302@system.software.com>
+References: <20250710082807.27402-1-byungchul@sk.com>
+ <20250710082807.27402-2-byungchul@sk.com>
+ <b1f80514-3bd8-4feb-b227-43163b70d5c4@gmail.com>
+ <20250714042346.GA68818@system.software.com>
+ <a7bd1e6f-b854-4172-a29a-3f0662c6fd6e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a7bd1e6f-b854-4172-a29a-3f0662c6fd6e@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf0zMcRjH97nvz27d9u0UH2VsJ2NRYf3x2Pw29p1ms7AMm676rju6aldS
+	DQtZ3LqENrnOXKwrdTo7ra6k6frpx0iJi1JKhQjh9OOK7prx32vP+/289vzxsIQ0n/JllXFJ
+	gjpOHiujxaT4s+f1QPpbkmLlz9Jg0JtNNJSOpUBRr5UCfUkFgh/jrxn43tBMw40CBwH6pxkk
+	/DRPEDDQ1MdAqWUH9BgHSajJrCSg73wLDdqMSQLujY8wcMpaLILWimwKcicKCahM72WgvVpP
+	wxvTbwoGbVoSHuhuktCTvRGaDHPB8egTggZzpQgcWVdpuNRmoKE/owdBW30fCfknsxGYa+0U
+	TI7NOPIb3zAb/fn6T18Ivvxmp4iv0nUzvMFyhL9THMBr7G0Ebyk5R/OW0YsM3/WihuZb8iZJ
+	vsr6XcRrT4/Q/LeBVyT/pbaD5s3lHST/2NDA7PTaJ14bLcQqkwV18PoIseLUdB1KeLYl5WTZ
+	BSodfQ3RIA8WcyE401JO/OXBRhPpYpJbgjtH291Mc0ux3T7u7nhzy/HwSxujQWKW4PJoXPbW
+	SLuCOZwcP3RmuxckHOD3xmHkKkk5B8J52kZqNvDCD668c5cILgDbpz+INIidYT9cNM26xh7c
+	Ojz0RO+u+HCL8f2KZpHLgzkri+0TufTspfNxXbGdzEGc7j+t7j+t7p/WgIgSJFXGJavkytiQ
+	IEVqnDIlKCpeZUEzL2M87txvRaOtu2yIY5HMUwIfkxRSSp6cmKqyIcwSMm/Jx261QiqJlqem
+	Cer4g+ojsUKiDfmxpGyeZLXjaLSUi5EnCYcFIUFQ/01FrIdvOoopW1Ft8tkT2eTsUGyaWkVp
+	c5xN+9StU5tNw4oaw4KRNeJl2+NVv593a0KP91H528LTshZa94aF+6d3/zpzTbfFGdYyoCmo
+	uFt9Wfe6JTI36mD87gEYK2BUix7eqgrddfZATKaMezaFhyNu3d4anaEqDHT+GurfcOLQsRyj
+	X5d3oIxMVMhXBRDqRPkf8I3lSi4DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTcRjG+Z9zdnY2WpzWrIN+m0WgZQUGL2giRPWnNKKb1JdceWjDK5ua
+	BoU3EC1XVpitDdbNO42mblNUavPazVLKWd5t5q3MS6KzLGdEfvvxPM/v/fQypPQX5c2o4hJ5
+	dZwiRk6LKfGRoMwd9HSicpe7ywf0pgoayhdSoHjAJgB9mQXB3OInIcw2ttDw8P48Cfr2LAp+
+	mNwkuJqHhFBuDof+ohEK6rKtJAxdb6UhL2uJhPrFb0LIsJUQ4DC0CeCtRSuA2+7HJFjTBoTQ
+	Waunoa/itwBG7HkUtOlKKejXhkKzcRPMv5xE0GiyEjB/zUDDrQ4jDcNZ/Qg6HEMU3EvXIjA1
+	OAWwtLBy415TnzB0K3ZMTpG4qrSbwDW6XiE2mpNwZYkfznV2kNhclkNj88xNIe75UEfj1sIl
+	CtfYZgmcl/mNxtOujxSeanhP44ej3wlsqnpPHZWeEQdH8TGqZF69MyRSrMxYfo4S3u1LSX+S
+	L0hD3wNzkYjh2EBupKmC8jDFbuW6ZzpXmWa3cU7nIulhGevPTXTZhblIzJBsIc09GSyiPcVG
+	VsG9+KldFSQscKNFE8gzkrLziCvMaxL8LTZwbXc/r45I1o9zLo8RuYhZYR+ueJnxxCJ2L/fl
+	jX514sX6cs8sLcQNJNGtsXVrbN1/24jIMiRTxSXHKlQxewI00crUOFVKwPn4WDNaeYqiyz/z
+	bWiu86AdsQySr5PAeKJSKlAka1Jj7YhjSLlMMt6rVkolUYrUS7w6/qw6KYbX2JEPQ8k3Sw5F
+	8JFS9oIikY/m+QRe/a8lGJF3GnJ5b9HSY5WZ51peHxPNbWdDDxcsaAPennTh4kFD9vGL4Y9O
+	Pnh0R2RQ3zKJrLVeE9Yt+wN7UtOcEUfawqoP1AU/tTD5rijT8qkrHWFXq3P8C5D/bV9DvaXU
+	/eVpiN/60zL73RO8Mah92hH74NVQ+c2vMp+FwxuGzaHXwg6e0hCVckqjVOz2I9UaxR9qCeNy
+	EAMAAA==
+X-CFilter-Loop: Reflected
 
-On Monday, 14 July 2025 10:47:32 Central European Summer Time AngeloGioacchino Del Regno wrote:
-> Il 11/07/25 16:57, Nicolas Frattaroli ha scritto:
-> > The MT8196 SoC uses two syscon ranges for CPU DVFS that are separate
-> > from each other. One, mt8196-fdvfs-config, is used to check for a magic
-> > number at that memory address to verify that fdvfs should be used. The
-> > other, mt8196-fdvfs, is used to configure the desired frequency for the
-> > DVFS controller for each CPU core.
+On Mon, Jul 14, 2025 at 12:30:12PM +0100, Pavel Begunkov wrote:
+> On 7/14/25 05:23, Byungchul Park wrote:
+> > On Sat, Jul 12, 2025 at 03:39:59PM +0100, Pavel Begunkov wrote:
+> > > On 7/10/25 09:28, Byungchul Park wrote:
+> > > > To simplify struct page, the page pool members of struct page should be
+> > > > moved to other, allowing these members to be removed from struct page.
+> > > > 
+> > > > Introduce a network memory descriptor to store the members, struct
+> > > > netmem_desc, and make it union'ed with the existing fields in struct
+> > > > net_iov, allowing to organize the fields of struct net_iov.
+> > > 
+> > > FWIW, regardless of memdesc business, I think it'd be great to have
+> > > this patch, as it'll help with some of the netmem casting ugliness and
+> > > shed some cycles as well. For example, we have a bunch of
+> > > niov -> netmem -> niov casts in various places.
 > > 
+> > If Jakub agrees with this, I will re-post this as a separate patch so
+> > that works that require this base can go ahead.
 > 
-> What is the reason why you're using syscons here?
+> I think it'd be a good idea. It's needed to clean up netmem handling,
+> and I'll convert io_uring and get rid of the union in niov.
 > 
-> Can't we simply assign the FDVFS MMIO to the cpufreq-hw node?
-
-That would require refactoring the driver way more since it currently
-gets the number of performance domains from the number of regs. If
-you want me to do that, I'll need to know how we should disambiguate
-performance domains from misc things like fdvfs. Stuff like string
-comparisons on reg-names seems very ugly for the driver to do, but
-adding a property to explicitly specify the number of performance
-domains would then put into question what the existing binding did
-by just assuming this information is something that implementations
-can get without any ambiguity.
-
-Even if we forget that Linux is the only kernel that cares about this
-device tree, I'm not totally on board with having the smattering of
-dozens of different tiny register ranges in every DT node on mediatek
-like the vendor kernel does it. And not to forget, it'd change the
-binding even more, to the point where I'd probably have to create a
-new binding for mt8196.
-
-> Or is there any reason why we can't declare it as mmio-sram? ...because I'm not
-> entirely sure but the FDVFS space should effectively be a [c]SRAM memory range...
-
-mmio-sram is fairly useless for the purposes of having something as
-a fixed set of registers, hence why nobody else does it. From my
-research, it appears to mainly be used if you want to actually treat
-it like a pool of memory from which to then dynamically allocate
-things.
-
-To use it like a syscon, which is what we're doing, you'll have to
-specify your mmio-sram node, then add a child node as a reserved range
-for the "syscon-like" area, and then specify in ranges that you want
-that child node's address translated into the global address space as
-expected. Then in the driver, you can't just do a single function call
-to get some regmap to write into, you have to follow a phandle in your
-vendor property pointing to said sram range, then get its address,
-translate said address to the global SoC address space, and then iomap
-it. And the cleanup for error paths/driver remove isn't fun either.
-
-Besides, we don't actually know whether this is an sram range, or how
-large it is. The only confirmed sram range was the csram_sys thing at
-like 0x11bc00 which is not used because it turned out to be useless,
-and dealing with the kernel's sram interface to use it as a reserved
-range just to read 4 bytes from it was a wasted afternoon. And that's
-not even the real starting address of that sram area, that's just a
-part we know is used because downstream uses 5 KiB there for a codepath
-that's dead when fdvfs is present (except the one thing where it installs
-a panic handler to shove something into a register to make it stop dvfs
-logging if the kernel is in the process of crashing).
-
-I can be convinced to go through the pain of making this mmio-sram if
-I have documentation of the whole memory map of the SoC that shows me
-where and how large each area of sram is, so that I don't need to come
-up with my own starting addresses and offsets based on whatever random
-stuff I can infer from downstream DT.
-
-Really, every writable syscon is probably implemented as "sram" in
-hardware. But an sram cell that is not general use memory but is
-treated by the hardware as having some meaning is not mmio-sram. We
-can't ever use it in any way other than as a syscon, and telling
-implementations that they can except then slapping a huge reserved
-range into it just makes them have to implement syscons twice, once
-as syscons and once as syscons-except-it's-a-reserved-sram-mmio-range.
-
-> 
-> Cheers,
-> Angelo
-> 
-
-Kind regards,
-Nicolas Frattaroli
-
-> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> > ---
-> >   Documentation/devicetree/bindings/mfd/syscon.yaml | 4 ++++
-> >   1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
-> > index 27672adeb1fedb7c81b8ae86c35f4f3b26d5516f..5ee49d2ba0cdb72dd697a0fd71c8416ad4fd2c1e 100644
-> > --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
-> > +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
-> > @@ -88,6 +88,8 @@ select:
-> >             - mediatek,mt8135-pctl-a-syscfg
-> >             - mediatek,mt8135-pctl-b-syscfg
-> >             - mediatek,mt8173-pctl-a-syscfg
-> > +          - mediatek,mt8196-fdvfs
-> > +          - mediatek,mt8196-fdvfs-config
-> >             - mediatek,mt8365-syscfg
-> >             - microchip,lan966x-cpu-syscon
-> >             - microchip,mpfs-sysreg-scb
-> > @@ -194,6 +196,8 @@ properties:
-> >             - mediatek,mt8135-pctl-a-syscfg
-> >             - mediatek,mt8135-pctl-b-syscfg
-> >             - mediatek,mt8173-pctl-a-syscfg
-> > +          - mediatek,mt8196-fdvfs
-> > +          - mediatek,mt8196-fdvfs-config
-> >             - mediatek,mt8365-infracfg-nao
-> >             - mediatek,mt8365-syscfg
-> >             - microchip,lan966x-cpu-syscon
-> > 
+> The diff below should give a rough idea of what I want to use it for.
+> It kills __netmem_clear_lsb() to avoid casting struct page * to niov.
+> And saves some masking for zcrx, see page_pool_get_dma_addr_nmdesc(),
+> and there are more places like that.
 > 
 > 
+> diff --git a/include/net/netmem.h b/include/net/netmem.h
+> index 535cf17b9134..41f3a3fd6b6c 100644
+> --- a/include/net/netmem.h
+> +++ b/include/net/netmem.h
+> @@ -247,6 +247,8 @@ static inline unsigned long netmem_pfn_trace(netmem_ref netmem)
+>        return page_to_pfn(netmem_to_page(netmem));
+>  }
 > 
+> +#define pp_page_to_nmdesc(page)        ((struct netmem_desc *)(page))
+> +
+>  /* __netmem_clear_lsb - convert netmem_ref to struct net_iov * for access to
+>   * common fields.
+>   * @netmem: netmem reference to extract as net_iov.
+> @@ -262,11 +264,18 @@ static inline unsigned long netmem_pfn_trace(netmem_ref netmem)
+>   *
+>   * Return: the netmem_ref cast to net_iov* regardless of its underlying type.
+>   */
+> -static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
+> +static inline struct net_iov *__netmem_to_niov(netmem_ref netmem)
+>  {
+>        return (struct net_iov *)((__force unsigned long)netmem & ~NET_IOV);
+>  }
+> 
+> +static inline struct netmem_desc *netmem_to_nmdesc(netmem_ref netmem)
 
+I removed netmem_to_nmdesc() and its users, while I was working for v10.
+However, You can add it if needed for your clean up.
 
+I think I should share v10 now, to share the decision I made.
 
+	Byungchul
 
+> +{
+> +       if (netmem_is_net_iov(netmem))
+> +               return &__netmem_to_niov(netmem)->desc;
+> +       return pp_page_to_nmdesc(__netmem_to_page(netmem));
+> +}
+> +
+>  /**
+>   * __netmem_get_pp - unsafely get pointer to the &page_pool backing @netmem
+>   * @netmem: netmem reference to get the pointer from
+> @@ -280,17 +289,17 @@ static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
+>   */
+>  static inline struct page_pool *__netmem_get_pp(netmem_ref netmem)
+>  {
+> -       return __netmem_to_page(netmem)->pp;
+> +       return pp_page_to_nmdesc(__netmem_to_page(netmem))->pp;
+>  }
+> 
+>  static inline struct page_pool *netmem_get_pp(netmem_ref netmem)
+>  {
+> -       return __netmem_clear_lsb(netmem)->pp;
+> +       return netmem_to_nmdesc(netmem)->pp;
+>  }
+> 
+>  static inline atomic_long_t *netmem_get_pp_ref_count_ref(netmem_ref netmem)
+>  {
+> -       return &__netmem_clear_lsb(netmem)->pp_ref_count;
+> +       return &netmem_to_nmdesc(netmem)->pp_ref_count;
+>  }
+> 
+>  static inline bool netmem_is_pref_nid(netmem_ref netmem, int pref_nid)
+> @@ -355,7 +364,7 @@ static inline bool netmem_is_pfmemalloc(netmem_ref netmem)
+> 
+>  static inline unsigned long netmem_get_dma_addr(netmem_ref netmem)
+>  {
+> -       return __netmem_clear_lsb(netmem)->dma_addr;
+> +       return netmem_to_nmdesc(netmem)->dma_addr;
+>  }
+> 
+>  void get_netmem(netmem_ref netmem);
+> diff --git a/include/net/page_pool/helpers.h b/include/net/page_pool/helpers.h
+> index db180626be06..002858f3bcb3 100644
+> --- a/include/net/page_pool/helpers.h
+> +++ b/include/net/page_pool/helpers.h
+> @@ -425,9 +425,9 @@ static inline void page_pool_free_va(struct page_pool *pool, void *va,
+>        page_pool_put_page(pool, virt_to_head_page(va), -1, allow_direct);
+>  }
+> 
+> -static inline dma_addr_t page_pool_get_dma_addr_netmem(netmem_ref netmem)
+> +static inline dma_addr_t page_pool_get_dma_addr_nmdesc(struct netmem_desc *desc)
+>  {
+> -       dma_addr_t ret = netmem_get_dma_addr(netmem);
+> +       dma_addr_t ret = desc->dma_addr;
+> 
+>        if (PAGE_POOL_32BIT_ARCH_WITH_64BIT_DMA)
+>                ret <<= PAGE_SHIFT;
+> @@ -435,6 +435,13 @@ static inline dma_addr_t page_pool_get_dma_addr_netmem(netmem_ref netmem)
+>        return ret;
+>  }
+> 
+> +static inline dma_addr_t page_pool_get_dma_addr_netmem(netmem_ref netmem)
+> +{
+> +       struct netmem_desc *desc = netmem_to_nmdesc(netmem);
+> +
+> +       return page_pool_get_dma_addr_nmdesc(desc);
+> +}
+> +
+>  /**
+>   * page_pool_get_dma_addr() - Retrieve the stored DMA address.
+>   * @page:     page allocated from a page pool
+> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+> index 085eeed8cd50..2e80692d9ee1 100644
+> --- a/io_uring/zcrx.c
+> +++ b/io_uring/zcrx.c
+> @@ -290,7 +290,7 @@ static void io_zcrx_sync_for_device(const struct page_pool *pool,
+>        if (!dma_dev_need_sync(pool->p.dev))
+>                return;
+> 
+> -       dma_addr = page_pool_get_dma_addr_netmem(net_iov_to_netmem(niov));
+> +       dma_addr = page_pool_get_dma_addr_nmdesc(&niov->desc);
+>        __dma_sync_single_for_device(pool->p.dev, dma_addr + pool->p.offset,
+>                                     PAGE_SIZE, pool->p.dma_dir);
+>  #endif
+> diff --git a/net/core/netmem_priv.h b/net/core/netmem_priv.h
+> index cd95394399b4..97d4beda9174 100644
+> --- a/net/core/netmem_priv.h
+> +++ b/net/core/netmem_priv.h
+> @@ -5,19 +5,21 @@
+> 
+>  static inline unsigned long netmem_get_pp_magic(netmem_ref netmem)
+>  {
+> -       return __netmem_clear_lsb(netmem)->pp_magic & ~PP_DMA_INDEX_MASK;
+> +       return netmem_to_nmdesc(netmem)->pp_magic & ~PP_DMA_INDEX_MASK;
+>  }
+> 
+>  static inline void netmem_or_pp_magic(netmem_ref netmem, unsigned long pp_magic)
+>  {
+> -       __netmem_clear_lsb(netmem)->pp_magic |= pp_magic;
+> +       netmem_to_nmdesc(netmem)->pp_magic |= pp_magic;
+>  }
+> 
+>  static inline void netmem_clear_pp_magic(netmem_ref netmem)
+>  {
+> -       WARN_ON_ONCE(__netmem_clear_lsb(netmem)->pp_magic & PP_DMA_INDEX_MASK);
+> +       struct netmem_desc *desc = netmem_to_nmdesc(netmem);
+> 
+> -       __netmem_clear_lsb(netmem)->pp_magic = 0;
+> +       WARN_ON_ONCE(desc->pp_magic & PP_DMA_INDEX_MASK);
+> +
+> +       desc->pp_magic = 0;
+>  }
+> 
+>  static inline bool netmem_is_pp(netmem_ref netmem)
+> @@ -27,13 +29,13 @@ static inline bool netmem_is_pp(netmem_ref netmem)
+> 
+>  static inline void netmem_set_pp(netmem_ref netmem, struct page_pool *pool)
+>  {
+> -       __netmem_clear_lsb(netmem)->pp = pool;
+> +       netmem_to_nmdesc(netmem)->pp = pool;
+>  }
+> 
+>  static inline void netmem_set_dma_addr(netmem_ref netmem,
+>                                       unsigned long dma_addr)
+>  {
+> -       __netmem_clear_lsb(netmem)->dma_addr = dma_addr;
+> +       netmem_to_nmdesc(netmem)->dma_addr = dma_addr;
+>  }
+> 
+>  static inline unsigned long netmem_get_dma_index(netmem_ref netmem)
+> @@ -43,7 +45,7 @@ static inline unsigned long netmem_get_dma_index(netmem_ref netmem)
+>        if (WARN_ON_ONCE(netmem_is_net_iov(netmem)))
+>                return 0;
+> 
+> -       magic = __netmem_clear_lsb(netmem)->pp_magic;
+> +       magic = netmem_to_nmdesc(netmem)->pp_magic;
+> 
+>        return (magic & PP_DMA_INDEX_MASK) >> PP_DMA_INDEX_SHIFT;
+>  }
+> @@ -51,12 +53,12 @@ static inline unsigned long netmem_get_dma_index(netmem_ref netmem)
+>  static inline void netmem_set_dma_index(netmem_ref netmem,
+>                                        unsigned long id)
+>  {
+> -       unsigned long magic;
+> +       struct netmem_desc *desc;
+> 
+>        if (WARN_ON_ONCE(netmem_is_net_iov(netmem)))
+>                return;
+> 
+> -       magic = netmem_get_pp_magic(netmem) | (id << PP_DMA_INDEX_SHIFT);
+> -       __netmem_clear_lsb(netmem)->pp_magic = magic;
+> +       desc = netmem_to_nmdesc(netmem);
+> +       desc->pp_magic |= id << PP_DMA_INDEX_SHIFT;
+>  }
+>  #endif
 
