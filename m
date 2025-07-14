@@ -1,192 +1,135 @@
-Return-Path: <linux-kernel+bounces-730621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57907B04712
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 20:03:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E78D1B04715
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 20:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5A857AE923
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:01:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4BE318813B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34C426AAA3;
-	Mon, 14 Jul 2025 18:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C3126B2C4;
+	Mon, 14 Jul 2025 18:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="iOlfDSrr"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z9F92bNP"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D14924886A;
-	Mon, 14 Jul 2025 18:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752516189; cv=pass; b=G349ynmegvliEciMOZaEOHDMEgkU4Aw2vpLLcg0tDjZ/wFfn9TYlKV7D5t3VTZaSNyF7L9Uj1tZqaxmbl0h3ZqD+N5JcelG0/dHPnQiVt8S+mztatxHjU0fi/G21f3czySdPHASbJP2SHF4WU00Bhn6gxvSmdArjKMUQzp17Ie8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752516189; c=relaxed/simple;
-	bh=Aaj5bi2iGaSdPMLsdzQ71K2CzWOCsTf4rwaa3YuS1go=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=u+dVOWuhJj2+7nM7XrakOhVys8z9S5mhSxfbX08XqTa2kBrLLIVFyF6JpZKZlSN8ZXeUT7+u/goj5fpCmwJQ0yp2lmclX2XoTbNspr1Ox1J5bjV9WZTyRjXmCDk7X7dj0r+v09tm/LkBiDiMrjLeC90eo+IOul1G+AxZvVD6upM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=iOlfDSrr; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from [192.168.1.195] (unknown [IPv6:2a02:ed04:3581:4::d001])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pav@iki.fi)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4bgqtB3ZdBz49Px4;
-	Mon, 14 Jul 2025 21:02:58 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1752516179;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JoAEW3dPfmTmw+yh1yZuX1ysxv8VcKrgQe1cUgKWvPA=;
-	b=iOlfDSrrLzPS4vvD0d/2GW4F7SHv6yaT7ka/TgMO+rhmF04Pfhquc1s1svMYDAEpnGmJ8h
-	amkOuUZf+xuo6MDQvdLX+/JlJhG/3e5v2Pf2w7n+gg2KSsp5pj892l3UWRY4ytXeojFAXP
-	Us73/bRvEH63LoDGTmZyfB57Y9DUF81pKSJw2nOHAro0jc9vDA6nkp+gPLkUhH0EaeI6vy
-	nLMF5Do5yw1vjfuSQ3D+8w3uTMeij5sWU1bNv+aAAfZmgFLEvuq3deELUj1OP5yoIH/gcQ
-	5EjrFkTQGd9VvOs9CcOaLGiDXnd/hFar3wqVBrf03ZBJNNjKODIerbwCQJ2CbQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1752516179;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JoAEW3dPfmTmw+yh1yZuX1ysxv8VcKrgQe1cUgKWvPA=;
-	b=Eo4ikBjl52Z5LTb1cMBwR06Mp46wLhD4JPlKMJrrG/vJAqdsVf8vGZ0l33r63I2skkweEa
-	m4Cc20xO/E/oEwF5ELDKyDlH1LNf3X+EF68iykJmwrcFTZEpCwl8L63MkICRPVPHh4aPzZ
-	Smh4XOJ113+hlivEjhIuckCztIs4n5ArmxJ8HUh6BRuwAbsy+rIa1ymgItCLuNtSdNlgV4
-	Cl1fJFN47DsWYb/LJud7Qny7qgRm5HlopZP2WIkKfDG5Yl+P/YOal+Uxqp5McBDG7SqRFr
-	zEIQYWXMZ3Fo7jLPB9YxG3s4/4SSr8rc+7p4oLq3AZNadyZIdKNZpt+MFPB4xA==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pav@iki.fi smtp.mailfrom=pav@iki.fi
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1752516179; a=rsa-sha256;
-	cv=none;
-	b=cawJOHc/Fek0lIDpY3gStnLo9AcYdhCft+pnqxPNEipqcZwXjpobtMEoyP63ogJ0YD+Y1C
-	QhA98WNuMYJs6z5z/CordH/t2hjI24DsV73uw9aoFNnNB+N5erHpWVJmjEq2e7MrFmpTOA
-	sS8RarlKYO2X940cYWKGyXE3ArgXLMZnzSvQg+iE/MD25pklOLXoR2EpxmDfMR4tqx/jk9
-	iIl9cYSBT/xeq983B9BXusdVquQZkjdywYwiPNCnz98sa/dTYTw8qaxHmqbNb03WT5a2WK
-	8E0E+/C3QNEv12SDfRuJ9bs6E2vKXq+DYmwecAJk7M3pXQx1RrBgiJD5AzxU6g==
-Message-ID: <f14e501d2d478604554cc5280d863caabf6d5e94.camel@iki.fi>
-Subject: Re: struct hci_dev::quirks is running out of bits on 32-bit
- platforms
-From: Pauli Virtanen <pav@iki.fi>
-To: Christian Eggers <ceggers@arri.de>, linux-bluetooth@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Date: Mon, 14 Jul 2025 21:02:56 +0300
-In-Reply-To: <22185131.4csPzL39Zc@n9w6sw14>
-References: <22185131.4csPzL39Zc@n9w6sw14>
-Autocrypt: addr=pav@iki.fi; prefer-encrypt=mutual;
- keydata=mQINBGX+qmEBEACt7O4iYRbX80B2OV+LbX06Mj1Wd67SVWwq2sAlI+6fK1YWbFu5jOWFy
- ShFCRGmwyzNvkVpK7cu/XOOhwt2URcy6DY3zhmd5gChz/t/NDHGBTezCh8rSO9DsIl1w9nNEbghUl
- cYmEvIhQjHH3vv2HCOKxSZES/6NXkskByXtkPVP8prHPNl1FHIO0JVVL7/psmWFP/eeB66eAcwIgd
- aUeWsA9+/AwcjqJV2pa1kblWjfZZw4TxrBgCB72dC7FAYs94ebUmNg3dyv8PQq63EnC8TAUTyph+M
- cnQiCPz6chp7XHVQdeaxSfcCEsOJaHlS+CtdUHiGYxN4mewPm5JwM1C7PW6QBPIpx6XFvtvMfG+Ny
- +AZ/jZtXxHmrGEJ5sz5YfqucDV8bMcNgnbFzFWxvVklafpP80O/4VkEZ8Og09kvDBdB6MAhr71b3O
- n+dE0S83rEiJs4v64/CG8FQ8B9K2p9HE55Iu3AyovR6jKajAi/iMKR/x4KoSq9Jgj9ZI3g86voWxM
- 4735WC8h7vnhFSA8qKRhsbvlNlMplPjq0f9kVLg9cyNzRQBVrNcH6zGMhkMqbSvCTR5I1kY4SfU4f
- QqRF1Ai5f9Q9D8ExKb6fy7ct8aDUZ69Ms9N+XmqEL8C3+AAYod1XaXk9/hdTQ1Dhb51VPXAMWTICB
- dXi5z7be6KALQARAQABtCZQYXVsaSBWaXJ0YW5lbiA8cGF1bGkudmlydGFuZW5AaWtpLmZpPokCWg
- QTAQgARAIbAwUJEswDAAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBGrOSfUCZNEJOswAnOS
- aCbhLOrBPBQJl/qsDAhkBAAoJEOSaCbhLOrBPB/oP/1j6A7hlzheRhqcj+6sk+OgZZ+5eX7mBomyr
- 76G+m/3RhPGlKbDxKTWtBZaIDKg2c0Q6yC1TegtxQ2EUD4kk7wKoHKj8dKbR29uS3OvURQR1guCo2
- /5kzQQVxQwhIoMdHJYF0aYNQgdA+ZJL09lDz+JC89xvup3spxbKYc9Iq6vxVLbVbjF9Uv/ncAC4Bs
- g1MQoMowhKsxwN5VlUdjqPZ6uGebZyC+gX6YWUHpPWcHQ1TxCD8TtqTbFU3Ltd3AYl7d8ygMNBEe3
- T7DV2GjBI06Xqdhydhz2G5bWPM0JSodNDE/m6MrmoKSEG0xTNkH2w3TWWD4o1snte9406az0YOwkk
- xDq9LxEVoeg6POceQG9UdcsKiiAJQXu/I0iUprkybRUkUj+3oTJQECcdfL1QtkuJBh+IParSF14/j
- Xojwnf7tE5rm7QvMWWSiSRewro1vaXjgGyhKNyJ+HCCgp5mw+ch7KaDHtg0fG48yJgKNpjkzGWfLQ
- BNXqtd8VYn1mCM3YM7qdtf9bsgjQqpvFiAh7jYGrhYr7geRjary1hTc8WwrxAxaxGvo4xZ1XYps3u
- ayy5dGHdiddk5KJ4iMTLSLH3Rucl19966COQeCwDvFMjkNZx5ExHshWCV5W7+xX/2nIkKUfwXRKfK
- dsVTL03FG0YvY/8A98EMbvlf4TnpyyaytBtQYXVsaSBWaXJ0YW5lbiA8cGF2QGlraS5maT6JAlcEE
- wEIAEEWIQRqzkn1AmTRCTrMAJzkmgm4SzqwTwUCZf6qYQIbAwUJEswDAAULCQgHAgIiAgYVCgkICw
- IEFgIDAQIeBwIXgAAKCRDkmgm4SzqwTxYZD/9hfC+CaihOESMcTKHoK9JLkO34YC0t8u3JAyetIz3
- Z9ek42FU8fpf58vbpKUIR6POdiANmKLjeBlT0D3mHW2ta90O1s711NlA1yaaoUw7s4RJb09W2Votb
- G02pDu2qhupD1GNpufArm3mOcYDJt0Rhh9DkTR2WQ9SzfnfzapjxmRQtMzkrH0GWX5OPv368IzfbJ
- S1fw79TXmRx/DqyHg+7/bvqeA3ZFCnuC/HQST72ncuQA9wFbrg3ZVOPAjqrjesEOFFL4RSaT0JasS
- XdcxCbAu9WNrHbtRZu2jo7n4UkQ7F133zKH4B0SD5IclLgK6Zc92gnHylGEPtOFpij/zCRdZw20VH
- xrPO4eI5Za4iRpnKhCbL85zHE0f8pDaBLD9L56UuTVdRvB6cKncL4T6JmTR6wbH+J+s4L3OLjsyx2
- LfEcVEh+xFsW87YQgVY7Mm1q+O94P2soUqjU3KslSxgbX5BghY2yDcDMNlfnZ3SdeRNbssgT28PAk
- 5q9AmX/5YyNbexOCyYKZ9TLcAJJ1QLrHGoZaAIaR72K/kmVxy0oqdtAkvCQw4j2DCQDR0lQXsH2bl
- WTSfNIdSZd4pMxXHFF5iQbh+uReDc8rISNOFMAZcIMd+9jRNCbyGcoFiLa52yNGOLo7Im+CIlmZEt
- bzyGkKh2h8XdrYhtDjw9LmrprPQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA6126AA8F
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 18:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752516239; cv=none; b=Pjw7gB60WM5psl1FYqsJZVXQd9YDBVx81NCbNlqBN0PnnBYwUGGYyQkVnn1yLPR58jiJoW+k1+Xki1phQcA7OJehw5r3qXC5G4PQX4kQTFEMjp4XX4nI7QI/F13FZXuK5zBRk/n1LPsb4KBtWmfE4Gyk4uqbSDFnlAiZUTq9ySk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752516239; c=relaxed/simple;
+	bh=xKnjXWOY2IrRzosXfQB3Bpso/mm2u4JxGSYgZGdZjIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kwuf6cQ2Ab5fq16ndyW2cjRhjodhmfB1CtJAjXZzIG2lxBjMxK1jRJGsQK4ifeW/n1Idxwno+cdojUUAoAItTzHm6jB/G2ItNcRyH+S3NWFxCwrqFngYwi5nRiw2M/6j9JrY7vFUAe/JuC+3NiWKER2J6fXWVNV0EXNblRYUr/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z9F92bNP; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2ea58f008e9so4033067fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:03:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752516236; x=1753121036; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kUc//PEDPwGX6GKHFUnDylrVbmV9/GKD9WpLyzBk2E0=;
+        b=Z9F92bNPvUvzoOh9o+Tc/v+cCBf2+qu2MWe2G+RnjWD3C5x+s5lLbCFMjjA6bZZHKa
+         W84FRIVVuaQVJ2pqMnhdhw0dQ3pF4LOsc3XrVXolQ6aJ34SCadHwhMOMfQOJAULm48QY
+         OUHlIO8OIR6r5SZqjPuKKb2awKYWSxP9R4yVFTA59l7TkKPMj0wCHwV7sgywmQT9hgpk
+         ldT9xZUimI5KStO+hW3gwxTtS7p7ud+7upXQkYXbhVwVYA2zQ+YA8BBLAcBV5QdIjhHv
+         5FpaNP+G7k6nzJWFPnAKSC1L1uSWICCdR6vRbM98oluqvyDIvrmxKU+aNO1LnzLMerx4
+         DtGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752516236; x=1753121036;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kUc//PEDPwGX6GKHFUnDylrVbmV9/GKD9WpLyzBk2E0=;
+        b=NYbvZe15VfIv2poKepOnpOQglU1sFH5J1vqFuSHCeObiPnboBumutdTvPiXg2kx8I0
+         CFLwsT/SYzJVtp5bJ0WqOZaEjwzmLBXHvVRg6R9c5P2N8TOjB2lvbrh+vbcjfOyc0Ill
+         kDbZa1VVXBTQZz8bw99Tcy8v5lenA+i0Xnrn4nD15tDO5InhNmp0YzR0OgA49OiU7BOL
+         xxr5s9VsE7Lb9wr5U6udKhqQr8sl/0eflDCwnlNTCMjjjy55IsfO1ZxMw69/3ytbKXJk
+         A1faEYtqGvIJ2zpPm63RbrTW2fPyHJLW/Llfjm3cJHkia7kiWUr0NLVUw71yPT8i8bRs
+         UkkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsEHbSLF/VSExM2xUewpvw14EAbUNKWvSEiaY0DVhJ++tvHgyQq1Y3+umnU1YFOFFrjOvvAmORVKqsQ1Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdoBBBkU7E7wQYWt79jZ/99rza22VsNwNQJ4+fDwwT0D4fk5Ui
+	YhyBaHD1xB2KyxyakGR8ZFDYVXRv7QJ6lYOcupdGM6/1Cu5uiEVSLzqH37MmtMu9CeY=
+X-Gm-Gg: ASbGnctRGTNRVna3ULHLlQdZdnWENr2ryExhE+9ZVVwHdGUzXEndwxwQ0FGcn6And+q
+	4KI1t5EPO/7zJATMGiSsf8J7jo9yBVzbNIae9m80S9XQ7yn02QKW7EeZGuWPIwjsCwYGxEywCAN
+	zP8Ny4q8bvFf5D4MVW299iPzHeAt0i5L5FRB7LH/RSrfXD+r7GPXPBlJ2snnzC09DeKS+3Vt3Ej
+	cAdrlY+UpEXQmwVVSAZbmYBis1wFZ05OAxoe8kMzZ2VHO5BbwLlCUBgD2Fbe/3If4eaJYcGW4JC
+	iMugWZdAEWxPTZXxyPIxcsm8RapFumRSRnKAm200M45C1x7fDKSkcwqr6wXSfyQjOBRX3Pkw1m+
+	nBHK+IDe4VROOL5IhyiBSvmSnwGRkKA==
+X-Google-Smtp-Source: AGHT+IHTpGx6mV7WMwP1pIKs1b9CdmfJ9vEn7hc8jx+5sU/Mj67Y+rDomjPaMvowTYcY4XUtpdxDwA==
+X-Received: by 2002:a05:687c:2001:20b0:2ff:8822:2912 with SMTP id 586e51a60fabf-2ff88223f6cmr1071480fac.5.1752516235811;
+        Mon, 14 Jul 2025 11:03:55 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:6bb2:d90f:e5da:befc])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ff8dea112bsm84240fac.43.2025.07.14.11.03.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 11:03:55 -0700 (PDT)
+Date: Mon, 14 Jul 2025 21:03:53 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Kohei Enju <enjuk@amazon.com>, Thomas Gleixner <tglx@linutronix.de>,
+	linux-hams@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net/rose: Remove unnecessary if check in
+ rose_dev_first()
+Message-ID: <96fbe379-cf8e-44e9-aeaf-a8beee2eda9c@suswa.mountain>
+References: <20250704083309.321186-3-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250704083309.321186-3-thorsten.blum@linux.dev>
 
-ma, 2025-07-14 kello 19:09 +0200, Christian Eggers kirjoitti:
-> I just tried to introduce another quirk for Realtek Bluetooth controllers=
-=20
-> when I recognized that the underlying data type (unsigned long) has alrea=
-dy
-> run out available bits on system where sizeof(unsigned long) =3D=3D 4.
-> The number of entries in the (anonymous) quirks enum has already reached =
-34=20
-> in the latest kernels.
->=20
-> My first temptation was to simply change the data type to something like =
-__u64,
-> but this is not as easy as it seems. The test_bit() macro used almost eve=
-rywhere
-> for assigning quirks is guaranteed to be atomic and my platform (ARMv7) s=
-eems
-> not to have support for atomic operations on __u64.
->=20
-> I mainly see two options:
->=20
-> 1. Introducing a 'quirks2' member (bad)
->=20
-> This obviously would work, but requires another enum and will (I think)
-> introduce stupid bugs if the wrong quirks member is exercised.
+On Fri, Jul 04, 2025 at 10:33:08AM +0200, Thorsten Blum wrote:
+> dev_hold() already checks if its argument is NULL.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  net/rose/rose_route.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/net/rose/rose_route.c b/net/rose/rose_route.c
+> index b72bf8a08d48..35e21a2bec9c 100644
+> --- a/net/rose/rose_route.c
+> +++ b/net/rose/rose_route.c
+> @@ -608,8 +608,7 @@ struct net_device *rose_dev_first(void)
+>  			if (first == NULL || strncmp(dev->name, first->name, 3) < 0)
+>  				first = dev;
+>  	}
+> -	if (first)
+> -		dev_hold(first);
+> +	dev_hold(first);
 
-The pattern used for hci_dev::dev_flags is
+I'm not a fan of these sorts of "remove the NULL check" patches in
+general.  Sure it removes a line of code, but does it really improve
+readability?  I feel like someone reading this code might think a NULL
+check was required.
 
-	struct hci_dev {
-		DECLARE_BITMAP(quirk_flags, __HCI_NUM_QUIRKS);
-		...
-	}
-	#define hci_set_quirk(hdev, nr) set_bit((nr), (hdev)->quirk_flags)
-	#define hci_clear_quirk(hdev, nr) clear_bit((nr), (hdev)->quirk_flags)
-	#define hci_test_quirk(hdev, nr) test_bit((nr), (hdev)->quirk_flags)
+I guess there is also an argument that this is a tiny speedup.  That
+could be a valid argument especially if we had benchmarking data to back
+it up.
 
-> 2. Switch to using __64 with non atomic operations
->=20
-> About 99% of write accesses to the quirks member happen from probe() or
-> setup() routines which should (I hope) not allow simultaneous access from=
- other
-> contexts. I found 2 exceptions (as of linux-6.12):
->=20
-> a. btusb_setup_qca() is called from 'struct hci_dev::open()' (maybe uncri=
-tical).
-> b. Two quirks (strict_duplicate_filter, simultaneous_discovery) can be to=
-ggled=20
->    via debugfs.
->=20
-> So it looks like using non atomic operations can also introduce trouble i=
-f
-> not well reviewed. But as the 'strict_duplicate_filter' and=20
-> 'simultaneous_discovery' quirks are only used at very few locations, mayb=
-e
-> these should be moved to a new member for "atomic quirks", allowing to
-> convert the remaining ones to non atomic.
->=20
->=20
-> Are there any alternatives? Anything I missed?
->=20
-> regards,
-> Christian
->=20
->=20
+Of course, if you're planning to take over this code and be the
+maintainer of it, then you get to do whatever you feel is best.  So if
+this change were part of a larger change where you were taking over then
+that's fine.
 
---=20
-Pauli Virtanen
+regards,
+dan carpenter
+
 
