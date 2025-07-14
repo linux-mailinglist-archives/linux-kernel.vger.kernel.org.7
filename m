@@ -1,140 +1,106 @@
-Return-Path: <linux-kernel+bounces-730910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A78BB04C59
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:32:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB05B04C5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA9EB7A9295
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:30:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 572FD4A23A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873BC276058;
-	Mon, 14 Jul 2025 23:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F185327A139;
+	Mon, 14 Jul 2025 23:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I0UjMoJ9"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BexsRlHF"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B705DF76;
-	Mon, 14 Jul 2025 23:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FE6DF76;
+	Mon, 14 Jul 2025 23:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752535913; cv=none; b=uBFvW9NQK+1EBoqQyLDHU0/nOOA6+fHqsMYq6Ovdo4BTM7EbDvdpss8vEF9IphOLG17VHDOnYjgqAiEbtYgxIjGzF3sT0WAVFa/gOpq3BkcbTD/FhrjFjQaZHpllCUkwjXvyuWJ2tnMqsHmqcF13h3kRNBnErd2EzPAbaCSnj0s=
+	t=1752535918; cv=none; b=STKiZyKetb8ryD8aex0IEBVczEhvognEpKbAipQIMdKrRmxIpersEB9CyvBV9Dt481qVKOPUrISohHIhi0vo0fdYFkANitCIv9p63GVCYP/yW/1g5TrsimUwRDui7cYlK9m6kJkZIIqxgWcY5M9UY1QhKVhUeXF2NoTQbHE550w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752535913; c=relaxed/simple;
-	bh=VZcSFep2MkUzEp1HcwREjrWQXILilZW/IxidSrQV8ZY=;
+	s=arc-20240116; t=1752535918; c=relaxed/simple;
+	bh=5DYhIWiVpbviyeviltRjQNKz+SDlCzUTR7SrrCEhZMw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y0awDJUZeokIDsoCfSOuXN5FC+7BuFs6jpgyxUFZ4OGBUEmtdx7qB4KT7tAcimorwG0Ib//SQKqEMoLu8IVK/LFZN9LNNbLSBNb+gz08fZtQVcUVIkqdgn11hO1vToR57azd8aP5FA64cF1x9GfEfU7HK7rlP1A/hcb7S31APw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I0UjMoJ9; arc=none smtp.client-ip=209.85.216.44
+	 To:Cc:Content-Type; b=ch1zZV2nn/bZXuCJjQXF5R1sePIH4Ts4+GezF4N2jGN3JGTP1NNNdoJz5xrkLYdsVXTApgiJkTyMz6OZn5k6Nj05z6crVp2qbikBjHs8/HBx6sL0vOBBFUcjwbfuXRq/I5sl7Waw2kmCi8DpCWtbnK2LuQBjYoXtRSOaS2oFZkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BexsRlHF; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-312a806f002so847449a91.3;
-        Mon, 14 Jul 2025 16:31:51 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-31308f52248so887869a91.2;
+        Mon, 14 Jul 2025 16:31:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752535911; x=1753140711; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752535916; x=1753140716; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aswGT4n6XBplotGt1P69i2Jxc64wbmKylvGdX6lFK2Q=;
-        b=I0UjMoJ9/zlo6mN+jyPvlfb8+5bL32/gziF558IA/B8bl7i8Fh9XMK0dg7MW4B6U1z
-         fndkbMCsF3/jC4viOcyRy6ZgwQE3iTuzKP76F0vUz/KmOfF1Z1OPWXh8VJA85Rg0h31P
-         QhQnPr+uUwb5qIfCaz3kKYRNsqatrzN1JvbxUNvkSdP45cO9YMumRe7PhVRGb1OrdYcN
-         yqGq7iG7zyCUaev/SjTWNyS4EfTwLxyHzCwgEd3WSO1T6Tn69NIpgVNV8VLOClTmIZ1i
-         jb3LjzIvpvINz4qD1zt/WGYTVAm+Lu5JqHoGzZkyl9p1Fo40CtmqcSnSNGDeRZBCmQ0m
-         8eGA==
+        bh=5DYhIWiVpbviyeviltRjQNKz+SDlCzUTR7SrrCEhZMw=;
+        b=BexsRlHFDNDIna3k4S7qKI2EVatbNWzUa9lJR3wH11qYyIljvLIg8rqX8kKFE9bZrQ
+         TeSg5e4hDkFGvbxfeQRCU0RRBcXKoHl5yUUzMx5zAvu3Ub4XpOnsBvgQneHFQ5zDhd/j
+         LStBEUc8L58uj2VzvXsqdieduJHl8RJnuvE90ZBBVjlZf1tU3Oqdyz5cx2azr2jYcmpc
+         7F1fyIaHig6BU0RoDbVlKahnY+HqjjjRj2wJzUepfPBGNymODLzPQU3UJY00OKEur6UW
+         +CG9AXKfoUondqzOzgkcTpde0hWPyTOH7Ndm4uwJsqM266XUkaaW8fQhszpXXUqr4dgF
+         RXcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752535911; x=1753140711;
+        d=1e100.net; s=20230601; t=1752535916; x=1753140716;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aswGT4n6XBplotGt1P69i2Jxc64wbmKylvGdX6lFK2Q=;
-        b=TQHWK3sM5xIJSeKM24ybMIEYAClrOq49kABlTHXk1NWXkuNObI3AdVX5PYESSWeNZ8
-         rXb2QxEmFTcHZlNtGewcISTy+7xiwvSINvwZ5oQQrMFEr8kOL/yFI1mT0mHsNuIb0heV
-         46GIYyUmkfMdEmO1uqKWFw0u8CA8Qe0s9JmwvNDRSw3m81py87k8Gad03QEr3nuvg400
-         3CF7rKPkKBRRjOro0sAB2NIL9sWcWQ/p+BzzVJQe9Wpi6XuvnJoTf05fxRH0l6l9hkeu
-         Xwk5e5ybUNj2jqj6vFta5TzYwCbIRJj10NBGtZHXahkyFqftsDzf1LVGrDgo+/uhZnQS
-         DNJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBu2kp86ip53dRnzqjt7VBM20VQYk9HlOkytZce1m5FZ4MWQoxtY1UVY8+aAQ0elO+7cnxrc1GqZMgFm6OeaM=@vger.kernel.org, AJvYcCVjny5brLnxSVt8KO2LiaCpm3SdyNqCNmEwaFZFp5hPdINPMdfTpooA4Nm4LPG2S39D8M+gAicaLJ1qaDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfJX6JiPMVWIo4Vevcd3dwK8TIUNjDa3I3/4SQCyEQUOuNAyOF
-	csbqbZiXJgXjc5uFVfJ/5kszuKJ96OKtZ6k076xz1Zg6SDJ0o1+zvZ13F1nYAEAnF7bGOcfBZuP
-	daTlcwS81hyDAaX/iUO90fnfQ0d2jC2U=
-X-Gm-Gg: ASbGncvjk60EbifLmLb2yBVhwWz4bt/+UgukJ86ladcumz035mEQXInFBdS3S2thhwi
-	AV/lAC15ZXKcj8TtIye9+9P3O8lElI3SgzyT9152VWgjLRvRGv0LJ0rT/ru8fAjHj826OM+zfwg
-	0wTiLIz1pFKvqY3eOpZRC9qjcf652l8OWGIwmI7NDdjUCHma3jFJUCNdXZrKNIJahdTPKEvK76f
-	qxRkce6
-X-Google-Smtp-Source: AGHT+IHIEq1inOGlKuw7g3qrwCn1OBeJnYOpvs6/i/7HrepT1d/pQi+yDLO/0GzSeX5sgezj5xjADr58sl5ninR08jA=
-X-Received: by 2002:a17:90b:2747:b0:314:29ff:6845 with SMTP id
- 98e67ed59e1d1-31c4cce3657mr8967498a91.4.1752535910819; Mon, 14 Jul 2025
- 16:31:50 -0700 (PDT)
+        bh=5DYhIWiVpbviyeviltRjQNKz+SDlCzUTR7SrrCEhZMw=;
+        b=Ztjdcfu80BjUx2KCbWqtFJ/E4ciJpbZEynBikmD+Xx8/PWrFOY/ZhNqeebUyiLBMS3
+         PttT1MtEnK7JEhiXRiRhRqXW93KEUvaaSI8wuBbB+Qyp2xG33Wdy9q0qRw70VrdS6h7P
+         QmijEEkq/n9ls3hfor+H3JBWs5+QNFG2tzlhSm+5GQpRy2VCAnltx++qOp7wVm49jxT9
+         fRM/zq4u9be6I3BWFC3VK/F7HuhC4QN4E8lhEi4jty65gC+/U3g8rKu4NKlav4WweD+k
+         x+4Gl65L5QS8QiAmk5YQLY1QUkYyQjp1AJvLELkMpbX32PoRCpkdg14TzYKx1efa3zN9
+         kWxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUR4SMBTOhJQ5AR+aI6kq3iKHiBn/sO3Bm8OsonrqvEgOxDbsqwxlCX4V8+Aojpdm2awT/Aj7kmplgAjEE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo5o0ParuiZYr2R+qpQfbVZR4Gva6QTaC+EoD56MA8s36GJM+y
+	RYRk34FdeWHhBu5lPMO+ygNEU3VFvcrzIpKSWaYmLPJzORHnfObQbzD005wM3ePZvwbFKccATY9
+	DitN5apnKruJdIsjTzfCZFYcvZdQ+AgA=
+X-Gm-Gg: ASbGnctYncqcJAZetdGsPWoyN26pZV6+dl4ULjmV4lxWawOtKk8SIm6YxDnnXMbEXHJ
+	T8BI5V7G/NRVRBSKP0IO5T2mbEKnVO68R8IOb2n189+qXqW3bW6nWq3RldQ3w+U2cSXqvnfZ+6o
+	N1erPrC2yjToluh/DV+ZATsyhdfrGQeh6Pg69l/BNu3ySdMP5MDR6tPUcDro2bsFQ+ak9C9gqHA
+	+yodmmf
+X-Google-Smtp-Source: AGHT+IGIfLO/C1ar200om5JMV/P/HaOqUUd5cnHjPF3YbkSys/NYlXaADz8wLWvHAAO2H3iQjlEyDM5NYQiS4xT7HZo=
+X-Received: by 2002:a17:90b:17d1:b0:314:2d38:3e4d with SMTP id
+ 98e67ed59e1d1-31c4ccedac0mr8858804a91.3.1752535916305; Mon, 14 Jul 2025
+ 16:31:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616-userptr-newtype-v3-1-5ff7b2d18d9e@google.com>
-In-Reply-To: <20250616-userptr-newtype-v3-1-5ff7b2d18d9e@google.com>
+References: <20250629152533.889-1-prafulrai522@gmail.com>
+In-Reply-To: <20250629152533.889-1-prafulrai522@gmail.com>
 From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 15 Jul 2025 01:31:38 +0200
-X-Gm-Features: Ac12FXyGSEJpMaOYi_mHrkvH-SRpjq7JEvHXsyUH8zt6u9u17SJ98MTKjyCA8MY
-Message-ID: <CANiq72njeRLijF8Vt+Kgv_gCD6O4E67rH87bGOG6mZCs7wS+=g@mail.gmail.com>
-Subject: Re: [PATCH v3] uaccess: rust: use newtype for user pointers
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Christian Schrefl <chrisi.schrefl@gmail.com>
+Date: Tue, 15 Jul 2025 01:31:43 +0200
+X-Gm-Features: Ac12FXzvT3OeHNofF0uX07Bip9As7s_RgkT0FJAbpi1Vz2ZM4GmTyIPKIzjwMpk
+Message-ID: <CANiq72=aSUtWVGVkK3aKo-WbuuEROmijE6+PVciGoH+iisjGrw@mail.gmail.com>
+Subject: Re: [PATCH] rust: helpers: sort includes alphabetically
+To: Krishna Ketan Rai <prafulrai522@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org, 
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, 
+	dakr@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 16, 2025 at 3:46=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
+On Sun, Jun 29, 2025 at 5:26=E2=80=AFPM Krishna Ketan Rai
+<prafulrai522@gmail.com> wrote:
 >
-> Currently, Rust code uses a typedef for unsigned long to represent
-> userspace addresses. This is unfortunate because it means that userspace
-> addresses could accidentally be mixed up with other integers. To
-> alleviate that, we introduce a new UserPtr struct that wraps a raw
-> pointer to represent a userspace address. By using a struct, type
-> checking enforces that userspace addresses cannot be mixed up with
-> anything else.
+> The helper includes should be sorted alphabetically as indicated by the
+> comment at the top of the file, but they were not. Sort them properly.
 >
-> This is similar to the __user annotation in C that detects cases where
-> user pointers are mixed with non-user pointers.
->
-> Note that unlike __user pointers in C, this type is just a pointer
-> without a target type. This means that it can't detect cases such as
-> mixing up which struct this user pointer references. However, that is
-> okay due to the way this is intended to be used - generally, you create
-> a UserPtr in your ioctl callback from the provided usize *before*
-> dispatching on which ioctl is in use, and then after dispatching on the
-> ioctl you pass the UserPtr into a UserSliceReader or UserSliceWriter;
-> selecting the target type does not happen until you have obtained the
-> UserSliceReader/Writer.
->
-> The UserPtr type is not marked with #[derive(Debug)], which means that
-> it's not possible to print values of this type. This avoids ASLR
-> leakage.
->
-> The type is added to the prelude as it is a fairly fundamental type
-> similar to c_int. The wrapping_add() method is renamed to
-> wrapping_byte_add() for consistency with the method name found on raw
-> pointers.
->
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
-> Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-> Reviewed-by: Christian Schrefl <chrisi.schrefl@gmail.com>
-> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1174
+> Signed-off-by: Krishna Ketan Rai <prafulrai522@gmail.com>
 
 Applied to `rust-next` -- thanks everyone!
-
-    [ Reworded title. - Miguel ]
 
 Cheers,
 Miguel
