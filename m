@@ -1,79 +1,109 @@
-Return-Path: <linux-kernel+bounces-729875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBEA8B03CC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:59:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 557CDB03CC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 404FA188F389
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:59:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A099E1757B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED4E24397B;
-	Mon, 14 Jul 2025 10:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D62244695;
+	Mon, 14 Jul 2025 11:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3uzhHdHK"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6o//h02"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B3B1DF26A;
-	Mon, 14 Jul 2025 10:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF5733991;
+	Mon, 14 Jul 2025 11:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752490769; cv=none; b=pzjlDfJ2U3jh+vOeFI7eOTP8qHSTmymrS7PFgMOIqdbVX6TqJeI8X+Dl3fAVKhOr+2DM3eiJitn30QLmfiiCy1oOn7b7ny30p41IDzYFwF0tg8SSW4Nc7oxRpp1RySOLMNM2rFni4GjwbOXhpSlrZwZ+xVhtYn2c1WINj1NI98E=
+	t=1752490831; cv=none; b=PIzES6XGoxkjvrEVm5t47psDojqp0WyizwPnJ0qpuQ0wP77hoP1rNLq3Ne0xE59T3NzaYNvB6favuMNeYiraMujLgoMemwnk1EQPU7K5yiScKB9peSIFJahuxf8REx9s2C+fID0K/Udzb/1j+UncOIumd381HOGZNx4dgfoPH/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752490769; c=relaxed/simple;
-	bh=cpatPhjGSChBfeayVzxZ9beDHoG63u9phrhYlNlQ/Vk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H2wSxcozQz+gcB+Nrjw/xSTNsRyQn9o3uion+vxrDADO4xbM65lOt/NgPBIBXRvP9RViq+hTP/YJKWTp0ZI81AkSRsjiXtIQUsdxDXoi5uqBLnVRA+CTFUxoG9FkewT6CIgspCNx2Aup1q3MBN5uCRylJAQzvJtdGEaE8keYNKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3uzhHdHK; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Vm+j97b5alvltA79gK6cjufqYW1r2riUwjMxVXnVH9U=; b=3uzhHdHKKgUEL315yDZTsyTjkl
-	viGOcwMPdYYqGVIUQMQP4uGUQsfTtw1Nd+/Nf10SVGt8fkP3BwseN2CT8moTA6pYKyhV3HKHZdpuB
-	cBR0TXo4SlEDvt7omSH9nFzbRhFUS1ybjTwMMfNwyhfga3xtRQqpMzdPRpdeOnejvGa9h3+6BJPbv
-	hAmYVlZa49Ibn052FdddYQxMhpye/KfGLqAw/6pZHe8Du0lYjznvmMbkP+bvoWRcNkNcqLvS9VL7h
-	aBilYADw9GutwPSeSJ6Xcio9T9yEs5L+ZHSE7gm0JG2BdWCX86AoG8ss1ZiF3vxGsy6thdd9XgOkZ
-	SkKZqUgA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubGu7-00000001ysx-0t2U;
-	Mon, 14 Jul 2025 10:59:27 +0000
-Date: Mon, 14 Jul 2025 03:59:27 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: George Hu <integral@archlinux.org>, Carlos Maiolino <cem@kernel.org>,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xfs: replace min & max with clamp() in
- xfs_max_open_zones()
-Message-ID: <aHTjD6FxJYEu6C6R@infradead.org>
-References: <20250712145741.41433-1-integral@archlinux.org>
- <9ba1a836-c4c9-4e1a-903d-42c8b88b03c4@oracle.com>
+	s=arc-20240116; t=1752490831; c=relaxed/simple;
+	bh=xBgxSX5W7eh2nrFArSvAk+eWv8Afh7jkm+q2VKe1ppQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l/4IcY8dX9kguR6oGj8YZTumHwQMCTlUdZ191tMKfBD9vN3YFk4v1F6hEgZAxQ1KVu/mdo/LVkPDQ7+vcnhJ5tLfDszNQc8ah0HSloPQwAhZ2nl/hodoGYSu0s30qrVGV7VQyY6yGLmhJt2UGMgpJIc7MNeAWQaS09NqxbisuTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6o//h02; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09FA2C4CEED;
+	Mon, 14 Jul 2025 11:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752490830;
+	bh=xBgxSX5W7eh2nrFArSvAk+eWv8Afh7jkm+q2VKe1ppQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=O6o//h02FZweK95SYUlj1VcRa555Lqtzy+m0eefsyMOKxpERpf1zPg5oyAjn2v8nc
+	 btj5QGQsSHUpKTgNismCjpU3nrecMxtZwh+FTb4+MRbdeXFMMLN9rgin+dFuf3B0jY
+	 0+uMkAa/gU11plwe/vFcatrhalha48uD6RsxM2gyIn1UeqeS/FpDCIO0MxCfrUOkNt
+	 O5jjTqf1S9D98iC8UeQLm47jyoZffvLaHpDBgvncl1f6hds5VnfwsEHggporKbfnNd
+	 +01Yj/WzE+eEfP0ovXf3QsvdDu+q+5nscQ1tEpcoDAeDhB82nXPJ6t7iWcWWsavkLc
+	 aAg0q4U5knCdw==
+From: Will Deacon <will@kernel.org>
+To: Joerg Roedel <joro@8bytes.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/11] [PULL REQUEST] Intel IOMMU updates for v6.17
+Date: Mon, 14 Jul 2025 12:00:20 +0100
+Message-Id: <175248828553.1440119.11730625265073885463.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250714045028.958850-1-baolu.lu@linux.intel.com>
+References: <20250714045028.958850-1-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9ba1a836-c4c9-4e1a-903d-42c8b88b03c4@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 14, 2025 at 08:58:59AM +0100, John Garry wrote:
-> > @@ -1133,9 +1133,7 @@ xfs_max_open_zones(
-> >   	/*
-> >   	 * Cap the max open limit to 1/4 of available space
-> >   	 */
+On Mon, 14 Jul 2025 12:50:17 +0800, Lu Baolu wrote:
+> The following changes have been queued for v6.17-rc1. They are about new
+> features and code refactoring, including:
 > 
-> Maybe you can keep this comment, but it was pretty much describing the code
-> and not explaining the rationale.
+>  - Reorganize Intel VT-d to be ready for iommupt
+>  - Optimize iotlb_sync_map for non-caching/non-RWBF modes
+>  - Fix missed PASID in dev TLB invalidation in cache_tag_flush_all()
+>  - Miscellaneous cleanups
+> 
+> [...]
 
-Let me send an incremental patch to explain the rational as long as I
-can still remember it :)
+Applied to iommu (intel/vt-d), thanks!
 
+[01/11] iommu/vt-d: Remove the CONFIG_X86 wrapping from iommu init hook
+        https://git.kernel.org/iommu/c/bd26cd9d815a
+[02/11] iommu/vt-d: Optimize iotlb_sync_map for non-caching/non-RWBF modes
+        https://git.kernel.org/iommu/c/12724ce3fe1a
+[03/11] iommu/vt-d: Lift the __pa to domain_setup_first_level/intel_svm_set_dev_pasid()
+        https://git.kernel.org/iommu/c/cd0d0e4e48d8
+[04/11] iommu/vt-d: Fold domain_exit() into intel_iommu_domain_free()
+        https://git.kernel.org/iommu/c/00939bebe51c
+[05/11] iommu/vt-d: Do not wipe out the page table NID when devices detach
+        https://git.kernel.org/iommu/c/5c3687d5789c
+[06/11] iommu/vt-d: Split intel_iommu_domain_alloc_paging_flags()
+        https://git.kernel.org/iommu/c/b9434ba97c44
+[07/11] iommu/vt-d: Create unique domain ops for each stage
+        https://git.kernel.org/iommu/c/b33125296b50
+[08/11] iommu/vt-d: Split intel_iommu_enforce_cache_coherency()
+        https://git.kernel.org/iommu/c/0fa6f0893466
+[09/11] iommu/vt-d: Split paging_domain_compatible()
+        https://git.kernel.org/iommu/c/85cfaacc9937
+[10/11] iommu/vt-d: Fix missing PASID in dev TLB flush with cache_tag_flush_all
+        https://git.kernel.org/iommu/c/3141153816bf
+[11/11] iommu/vt-d: Deduplicate cache_tag_flush_all by reusing flush_range
+        https://git.kernel.org/iommu/c/e934464e098e
+
+Cheers,
+-- 
+Will
+
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 
