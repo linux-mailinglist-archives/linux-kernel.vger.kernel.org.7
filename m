@@ -1,77 +1,134 @@
-Return-Path: <linux-kernel+bounces-729525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7315B037DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:25:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE25B037E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E4483B8B32
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:24:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12B51188CB8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CE92356BA;
-	Mon, 14 Jul 2025 07:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A6A234971;
+	Mon, 14 Jul 2025 07:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jdGW2GFY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngJOi6bp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDA823506E;
-	Mon, 14 Jul 2025 07:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC61A3D76;
+	Mon, 14 Jul 2025 07:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752477903; cv=none; b=AvDNmVtcP/cphXLy3Nmoy5G3/qnj6T2FVxsvZA0Mumf+VG6VG4g/KeaEtHMAeGVdWmqThyAMbuyfqGzOZluo5zU2LrYWoej3qSznoi+u9eB9OhGjrrsrCIwlv4aoET5S3XAbL6g4bnd/48AargUc+iwegyUKjaXH6IB/PcCJssA=
+	t=1752478076; cv=none; b=Ppa1MGDIPkAEpCd5w13YR1NHPCCkYAtOCtf5MAXH/3axI760uuI8/oYKAaebXkIwc0pDQ0esdCmxfAtgNeqlFiEQcbmwH76ItEqEJuwDshYcOanscsxPsE3HFO4LGxOGm2b0YUOhoyxfxHg+EvBU98+m3DM1eVZ2fWfR8yk2ylw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752477903; c=relaxed/simple;
-	bh=NKXaOKo2AgS4yU21xtY04l5Dv95iMndWjDu3zIwvr5M=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qaTwnb03GAi8lpN7gMzOkz4M5QnGu/PoDxOwxroE+XMhC2p+q4CoHCE0lOmMVj/aHRTmJ2rnPP6sD93jumJm1vB72tNZSVl2duvSSaITZer0h1Qqc6GDnwSD/NTANoa6wQmv16knHpn+hQsjPr0cbQ72UNmvknrWs4PV8XVTXGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jdGW2GFY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78577C4CEED;
-	Mon, 14 Jul 2025 07:25:02 +0000 (UTC)
+	s=arc-20240116; t=1752478076; c=relaxed/simple;
+	bh=l9FcnN3Nw017Y5jMw/hRFAK60tqYcHmO+80ILEr7bjM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OpJplDjygGi+/UkI6njceEdotiyTay7H/CetU2M3PsUBOgFrso2fp0m0dPOjyoCKhA9l47msWQyG64QasFPhGXzueVvZt0J2xGjYUoSD2bXBKXqxyOep/Nbu+vd1KhDdfi86pQ7mDPw0B3BTmM9DzGrjXMN8t96KjxckEH4BrcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngJOi6bp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E09F4C4CEED;
+	Mon, 14 Jul 2025 07:27:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752477903;
-	bh=NKXaOKo2AgS4yU21xtY04l5Dv95iMndWjDu3zIwvr5M=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=jdGW2GFYZrbBrZ7IxBf6Fhw+iyIIghkw2XQvB9FQ4doKlSXJsWRWDThG0GW79wdDI
-	 AU8dGJ05uKUufO1V12uZ5hRxV6LN1KqcJz7RYLKgFgxRPou50YiuH13SrthdgYZTOD
-	 g47QGID7PPX6LFcfzLdzc2Z9/6usXZDWkTXO6Sxp2Wq5oKn+No5PkFJZRZpFBBzKma
-	 BfjAphRFKLXJzC9wRDF5oJvo9VFK0lD9PdAJ0NHHF20NXVrZ9EAUIgz80tIVwnbNR/
-	 j8QhKH0jl76Fz1os7CuvoCik+GrZP4FN3fi1dohcIaCD6Gps6O0g3nJ1lFilkCN1XJ
-	 vZd6kYl7r5Itg==
-From: Niklas Cassel <cassel@kernel.org>
-To: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>
-In-Reply-To: <20250711113650.1475307-1-andriy.shevchenko@linux.intel.com>
-References: <20250711113650.1475307-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] pata_rdc: Use registered definition for the RDC
- vendor
-Message-Id: <175247790222.1994830.10965267044601590862.b4-ty@kernel.org>
-Date: Mon, 14 Jul 2025 09:25:02 +0200
+	s=k20201202; t=1752478075;
+	bh=l9FcnN3Nw017Y5jMw/hRFAK60tqYcHmO+80ILEr7bjM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ngJOi6bps7q2MoH8KD+x/OCUoGWmHrKwsJt0uiO0jeK+fTy4I+fZwawX4oEfxak2r
+	 3zgZ2BT5ed2pg4NjE7pCCM5ZLAG30XmA0Q+9FrBR8DOOSNyXokxXNL8+yOo99yINCb
+	 nPgWFplMQAHiLP/PZ3PaSMdrozNaloMWSbN/vHxBX0ZM/WvyViTkW2waWtfMU3Rs2S
+	 aIRCSY6P+xiVnff8WPiJx89Fk3tKbTVvisetP+2dN6De+ba8vTou1irMP+qQB7Eq9M
+	 /NkosTtfAoYlwTtIs9h6jfAMJdJLsWknWS6O/pNaCEM4NnhwV+RP009Nf9Q5xC52RM
+	 CglfckzaVy5cg==
+Date: Mon, 14 Jul 2025 09:27:52 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-wireless@vger.kernel.org, 
+	Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Stanislaw Gruszka <stf_xl@wp.pl>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:MIPS" <linux-mips@vger.kernel.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCHv4 wireless-next 7/7] dt-bindings: net: wireless: rt2800:
+ add
+Message-ID: <20250714-subtle-origami-gopher-c9099f@krzk-bin>
+References: <20250712210448.429318-1-rosenp@gmail.com>
+ <20250712210448.429318-8-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250712210448.429318-8-rosenp@gmail.com>
 
-On Fri, 11 Jul 2025 14:36:50 +0300, Andy Shevchenko wrote:
-> Convert to PCI_VDEVICE() and use registered definition for RDC vendor
-> from pci_ids.h.
+On Sat, Jul 12, 2025 at 02:04:48PM -0700, Rosen Penev wrote:
+> Add device-tree bindings for the RT2800 SOC wifi device found in older
+> Ralink/Mediatek devices.
+
+Your subject was cut. Probably you wanted something like add "Realtek foo adapter" etc.
+
+
 > 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  .../bindings/net/wireless/ralink,rt2880.yaml  | 47 +++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/wireless/ralink,rt2880.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/net/wireless/ralink,rt2880.yaml b/Documentation/devicetree/bindings/net/wireless/ralink,rt2880.yaml
+> new file mode 100644
+> index 000000000000..a92aedf6ba01
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/wireless/ralink,rt2880.yaml
+> @@ -0,0 +1,47 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/wireless/ralink,rt2880.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Ralink RT2880 wireless device
+> +
+> +maintainers:
+> +  - Stanislaw Gruszka <stf_xl@wp.pl>
+> +
+> +description: |
+> +  This node provides properties for configuring RT2880 SOC wifi devices.
+> +  The node is expected to be specified as a root node of the device.
+> +
+> +allOf:
+> +  - $ref: ieee80211.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ralink,rt2880-wifi
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
 
-Applied to libata/linux.git (for-6.17), thanks!
+Why clocks are optional? SoC devices rarely work without a clock.
 
-[1/1] pata_rdc: Use registered definition for the RDC vendor
-      https://git.kernel.org/libata/linux/c/148fbaf5
 
-Kind regards,
-Niklas
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
 
