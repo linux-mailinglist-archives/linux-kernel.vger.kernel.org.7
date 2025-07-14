@@ -1,214 +1,234 @@
-Return-Path: <linux-kernel+bounces-729222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E019B03388
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:51:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBC2B0338C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 02:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B66E818983FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Jul 2025 23:51:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EB66174F0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 00:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD352222B4;
-	Sun, 13 Jul 2025 23:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4CF2322A;
+	Mon, 14 Jul 2025 00:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="mD83lXmK"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2126.outbound.protection.outlook.com [40.107.220.126])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="DOr7V3q+"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CE719D8AC;
-	Sun, 13 Jul 2025 23:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.126
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752450651; cv=fail; b=JBFtJ4iogaMBKfrds01gExbEDYR/CnjFbipb3IhVZ1apm+B7WJcXhOPH3FBgvlkmBdHMxEw303JaU1B2k6WuDKdvPeFRl5AqejYmrNbAmGqLwarRqRoN02csDgkHyoj/cRFNi5mG+HcE8kecZ5ZrYc1jvyeFdKs919M5qZyNvoI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752450651; c=relaxed/simple;
-	bh=8bVOEC0R8nxRrWIIay7ATSVV6fQDUozaAqRnFct9AiI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UbxYhN+VsJPQADOE+JdsZBYj/t3oSvTqLs/p73pBZmFloOCige8bx8jV3h3eQToDzLyVlZKDowtU4TwAEjRWYHECxuNQ0KUTGpG5N7+ed+3CGJ6rjzhwmVNu0kI24ikWCljCz68cVNB9//oHqAfXkDSj9Em1ycKE7bt+rxujqoM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=mD83lXmK reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.220.126
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UUUer34D4cprr4HVOGzkmykwXgTMTYRN+sRehyFq4y42jedDwnJvHVnUivPWaqsqsOEoJUDMB9EZ0XqPcxTWQeDQocnX1l6nBFGcg4D0hLWyaAqy8p7KR/gjbGzUgZPvBC+TtodIHwKnVfAgOCbvP/gCeCOwBVCFuLTlC7dpVSqkFVWhrg6LFjsSw1nFx5k+I07BdDqj5gCWQiDhdnXAf9GS7N2EGxsfoZtIJr1I/VhNZ9DOZHe5xUpkIFEABoRm/mwFdlSLfSoPVIP9yWNzpI/PmJlmT5/Zt7LhDH/ET0hhIwh4bugnlsObh8TCrWiwEQlOKNH1zE+KbfvfS6GeGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nbnbIjZi+hQBL80A9ApAyG2K4Fc4phheLcZtAg+tVJ8=;
- b=mAX76Hi9IEjB/SOmBX3O106syqJsxEEd+ff4GzughWJ+hpF8KVHYE5gB6+HUhupsQUt0CMXpjcrnzyLlJmryCsLllhdyr4veUmCVB7MJOg9ijeacB1c1tt7SVEDlt5XD+b20WtVePHhUkzGGAsTatCtFBqOMQPaSPI1l4VgP7IV4leGfzmi8XPgRnC2p90/yfe+ZPSI3bEEUQGMZsezDX6FfO4NByi9+CZmDrnEJaBHgaZiMXmU3BShhuaYrDPEN2KY9HABXeX1uGFdEG4I6QEN2o4WX0OTE8S0r3LNu+W0aX5xSC+DQNWHh0/g6M2yAa+croMB5higR7MdyDm9odA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nbnbIjZi+hQBL80A9ApAyG2K4Fc4phheLcZtAg+tVJ8=;
- b=mD83lXmKomNfohAHlrxRMn5M7o85vwE0fk52lroxe2uC6Bzu9m1+s9tl3X+TQL5mLxG4HteCsPuhXhy68zwkZnyx6nrpuDJJ+sjy339/sHzOBS87zJhHxfa2tTONmGS/QbefTbZfD8X0TZ5aTIqbcUOkYBdg1pqAYXFQT0h1/Nw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from BN3PR01MB9212.prod.exchangelabs.com (2603:10b6:408:2cb::8) by
- BN0PR01MB7165.prod.exchangelabs.com (2603:10b6:408:154::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8922.32; Sun, 13 Jul 2025 23:50:46 +0000
-Received: from BN3PR01MB9212.prod.exchangelabs.com
- ([fe80::3513:ad6e:208c:5dbd]) by BN3PR01MB9212.prod.exchangelabs.com
- ([fe80::3513:ad6e:208c:5dbd%4]) with mapi id 15.20.8922.028; Sun, 13 Jul 2025
- 23:50:45 +0000
-Message-ID: <0fe71acb-b8b5-4d30-93b4-21aedf2152c8@amperemail.onmicrosoft.com>
-Date: Sun, 13 Jul 2025 19:50:43 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v20 1/1] mctp pcc: Implement MCTP over PCC
- Transport
-To: "lihuisong (C)" <lihuisong@huawei.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Sudeep Holla <sudeep.holla@arm.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- admiyo@os.amperecomputing.com, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>,
- Jeremy Kerr <jk@codeconstruct.com.au>, Eric Dumazet <edumazet@google.com>,
- Matt Johnston <matt@codeconstruct.com.au>, Paolo Abeni <pabeni@redhat.com>,
- Jakub Kicinski <kuba@kernel.org>
-References: <20250423220142.635223-1-admiyo@os.amperecomputing.com>
- <20250423220142.635223-2-admiyo@os.amperecomputing.com>
- <497a60df-c97e-48b7-bf0f-decbee6ed732@huawei.com>
- <a9f67a55-3471-46b3-bd02-757b0796658a@amperemail.onmicrosoft.com>
- <807e5ea9-ed04-4203-b4a6-bf90952e7934@huawei.com>
- <9e3e0739-b859-4a62-954e-2b13f7d5dd85@amperemail.onmicrosoft.com>
- <c2034f07-5422-4ab1-952e-f7d74d0675a7@huawei.com>
-Content-Language: en-US
-From: Adam Young <admiyo@amperemail.onmicrosoft.com>
-In-Reply-To: <c2034f07-5422-4ab1-952e-f7d74d0675a7@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MN2PR16CA0016.namprd16.prod.outlook.com
- (2603:10b6:208:134::29) To BN3PR01MB9212.prod.exchangelabs.com
- (2603:10b6:408:2cb::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55126360
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 00:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752451461; cv=none; b=LWzv8OC+8UWn0GdGPXDiQlpuvAJ66FbdxRuVwY114+IQN9Uz8rS91jYzi0A2S/Ygam9t/V6cYIC5D8LVHW8OCOHnHwfyulFGGJ+EBNq1v+7ofF8T5eutp1Wm0HAtkT5n6wY3AaB3K89Bd+8aPw0fKDzZF6rYJ+R96TYJlAbQBHY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752451461; c=relaxed/simple;
+	bh=JHgv0USbm9wcIZSV+I50kTz5M7xY8oq6+TS1ZEEC3WM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hH89FDlNDKHzAETsPgC4smqqts1L4pvC141D/yiqG09UsN59UyGI+t6gvyCDJoQn/UqeyLjMkeHV/XUgw2h/cIdo2wD6nMxEIcD8pTpXeit7CaycPNPWqeMtO2u4FjnMTzovoh1fTV5L5cSsd/lqByjWKHB6fUknbsmwDmJywOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=DOr7V3q+; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1752451458;
+ bh=09+tGkfgsm4KwscqPR7hMZNk1h0y9NoFhShrUUaWQ88=;
+ b=DOr7V3q+a2zy1CBy8rxSxoWD7UOBIMDX8bhGGQUrf3e+Yk56pFwVPZvj9jqaKrpB4tfGssshB
+ FQ7MlrjcS/WtFHdmMHMi5bE6mUPk3pKbM2Fpek6ewTY9RflAzZE9fyEHGZY8hTW4vhBrZgOMKtw
+ fk4URoIwuXPf9cz5orQpWH0NcgrDkd+SRq+SBbktXKU3l6FkPIJ35ix+nWADA7QYqnILHJOWId2
+ vlpiN86e6/AOFfyJLzk8G+w1EJgsM0qmFDS7/kLO/K4iFunVKDkpTfmEFEVknklXdTmrNDQyO6c
+ XoW7UhLbAUv8YD4q8ITwFWN80iS1AePknJgF8nxaIj9Q==
+X-Forward-Email-ID: 687449765bca601a1a1d3609
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 1.1.6
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <16d99271-ba04-4ce1-a335-fab1917637c7@kwiboo.se>
+Date: Mon, 14 Jul 2025 02:04:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PR01MB9212:EE_|BN0PR01MB7165:EE_
-X-MS-Office365-Filtering-Correlation-Id: 47198643-efd5-4b72-15e3-08ddc26815da
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NkFxd1U3RVBEZ2hsN3k4Sm5HK0lFckFmQjlWR2VkeFliTktFQ2VnRm1xeVBR?=
- =?utf-8?B?RHZWeEVabU1tNzNRRmhobWdrYlU5TW5PQ3ZmUG5HUTNMeTdKNUJ4M3JyKzhV?=
- =?utf-8?B?em1BMzhOb2tqT1pNdkw5WXJVQXhkT3J1Ty9zdG9wQ3JndG03UUltbDF1OWdV?=
- =?utf-8?B?MTNFaXV6OHEzeWlhNmlOZkFOTFErTlFES2ZqdFRoRDZuZnh5eUZkVlVjM0Zk?=
- =?utf-8?B?S1FzcUFJdEFDdlJlUkpiT2lIWkVnUElaTjBOWUw4bGc0ejE3dGVjM0JxQ1hv?=
- =?utf-8?B?WDZ6U1Q2MnhWbjBQV1RWQS9xRmxjbjdLMmxDWGd2a0k3SXBydmNZcG5md1Vr?=
- =?utf-8?B?eHZMSlJxOGx4OXJVaWJyQW5KOU9iK1FuNzRXUEJaY1VyWWZZdEF0TThCN1hz?=
- =?utf-8?B?WUE1bkhTM2Rta1F1elZveDl6M3YzRGRKV1hYMzVrMGltaWRFaWVVdFJzT2Zk?=
- =?utf-8?B?MkRmNVFQVlRLS1dza0VpaFRPN2pRSlRpMlhaT0t2cURaZUhZYjMwR3I5ckE5?=
- =?utf-8?B?ekV4SERrWk5oSk4wYzVXbWtrOENmNXgvSkhVbi9NYVJGS2dOcGJqZytZSzEz?=
- =?utf-8?B?ZUEvYnFHdWF1cWpCRUlxOExoR3pNSGVHVzhSTUFIcTYyTkZJYlUvOFdvaFlm?=
- =?utf-8?B?U0E5RUtQTnBhZFdkOU1uY3NVWHlJMllLRWNUajViYjRkNllENVQ5cVdCVDdU?=
- =?utf-8?B?OXU4SU5MczJ1RDg3OHZxeU82dkhJc1p6M1FvcDdZaDFsU0cwZzQ0TVEvZ1Zr?=
- =?utf-8?B?UFlZeDVBeEE0WWkvcm42VFJ0eG14bXprZjYwM2l2RDg1SEc1OGpZQ25vVFJT?=
- =?utf-8?B?RTJuWFBjTlpnZE92SVA4aHV2UTh2UzVJdERaZW1lUXIzWlZMSUJLTi9KTTJH?=
- =?utf-8?B?M1liaHNEQWwrc0tlWjJiZjlEVW1xY3g4K1ZtaHEwQW5LUnFEZnFsdDgrM1Q0?=
- =?utf-8?B?cE92dm9PVmN2T0tIY2dHMkRiYVBER0VKeWlaWldFazlYbEpRRndPSTJjdUN0?=
- =?utf-8?B?cDk3dUNNZitBeVI5dFNOVU84TlUzM3hRZk9mbTJobVNpS2o0bnBFeU1tSFE0?=
- =?utf-8?B?ZW9YWmdnT0tQRVFyUHFYczJLUXA3Y0o1Ly9wR0RjRVd1b0VxRE11KzV5NGNX?=
- =?utf-8?B?cmliaDlEYXkxMGI0bUFhR2cvV1FwMjUzYldsUWtKMDZ0K1FmWFBVMVJrSzhT?=
- =?utf-8?B?MTlxdkc4RnV5aEgzNkFaNGk0Z2sxQXdxK0xHbEVpRmdHaENvbWl4QjBaYjFp?=
- =?utf-8?B?UFgvcTk5bjYrSFpaUFRHVXhJNnBSMGVMSE5yanU3Z2F5ZGYvZnNaaE40Wk9u?=
- =?utf-8?B?N2lNTUhmRStjaFg4bWt5cUZvL1AvMHZaVW9SY2dGbjRBa296R21wRWtxMTJ1?=
- =?utf-8?B?V3lrTTBlOVdkRXdHSGMyZ0p3b2hGRm8rRUtpcXVFOUEyL0UxUU5pTnJkUjV1?=
- =?utf-8?B?MWlFbnJFZEdRa2tBbWtiUmc5TlVRZFI3Vnd1YjV0MGcyc3V2dEtKZ3dYMng0?=
- =?utf-8?B?WWNCbnlsaFZZMTZibU9kUzFKT2VmMERDVWg2TXJiN0FRZ2ZHNUc4THVBQWJL?=
- =?utf-8?B?MitWdW1IYVhFTjhrU25MWHpuWnFCdHJ3OVRBYXNZRjdnSDdoNnliRmhSeDc4?=
- =?utf-8?B?VitBRkJtY0t2eGllUkFncVFBUG5QdElJK3p5WmorU29peCtZLzFMcEFra1Fz?=
- =?utf-8?B?RlJwc290cVN3cm1pcEl1YUhNa0NxQmNKc0RraDBNR0gzZEUwaXVpaCtSa25K?=
- =?utf-8?B?bC9qTnZrK25IV1pTVkxaM05zUzF6U05tMXN0c09Gb0toTVdtVHN3b3J5aWVO?=
- =?utf-8?B?Vkc2UFN4SmFHUlZROEhTMnpGZWVtTEY4ZjZqRzRNaTh5ZDFaTEN1VEJTV3hS?=
- =?utf-8?B?Q1JqNHlNSTBRNXF5UTJnVGc3TWw1bUN4aEFJS0pzVmFpcU9Ta2tXaFc0cTZt?=
- =?utf-8?Q?T+QYTrtLnAo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN3PR01MB9212.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZVFDRVdhUmVjeW9OaDY1NGdqU0tpVVVEdkxHYkh2dEg1VzVWbWdnQ2RoYmtV?=
- =?utf-8?B?elB6NjVJZ2lDWVlsUGJFcllqWEVCOXJpalU4cjRncFZJd3FkdWVmVjFLK3dF?=
- =?utf-8?B?OXg5OUF4MmhZOUtRRFRWSTVSLy9mUU9LZWV1WC81TEFjVDJtazZOdE5jWTZ5?=
- =?utf-8?B?dTlEaUpScVpoay9lcmxPUjlJTVdxTVBvdlZja2tiUDYrbDJVZmthOFdxOHpX?=
- =?utf-8?B?S1FIaVZEL3IvenA5ajh1SEEwcW1zdlRCRWYybTUwVEZRVlIzVDE0M3BlcDls?=
- =?utf-8?B?SnREcmtYZG8yM0pMcHIrWGJuWmhiVjA0N2t3VUppM3hTMS9sejAvODh1NnNN?=
- =?utf-8?B?YXgvLzBiZ2orOUQrQ2QxR00wRWlZOEVnaXVqTy9MWmd1U0FVRm1veXNxZXcw?=
- =?utf-8?B?UUcwcFpXZzFuN2lWS3pSTWxLRG00VkU0MzMzTVJLS3hnVXFwR2dVaEtreFlo?=
- =?utf-8?B?QkRhYmVicktvSUd4ZmlPVWRsUGFTOGFnSlRtanM4MjdPVnY4eW04ZlJrbmd1?=
- =?utf-8?B?K2pnckt3NSt2bnVKS0ZZVFJLWEJac25iUldYOHBvS1N6S2lCZndVQlp6WUxX?=
- =?utf-8?B?WmhNN1NmRG14czRvSXI1N3hmSWJPbjB0L3ZSa3FVbk01OG9pV1pCTUNqS3Mv?=
- =?utf-8?B?SWlPSzFsTmpwTmRQVXpVZnA1QS9OcmdMSkV4K2E3Sis1NHNxeUlPYktGeitm?=
- =?utf-8?B?bHhNK2tPVlRnd3EwMExjRmdxWDBVOGhoWExQVllJYXg1RE15VGZZUVBJNDMv?=
- =?utf-8?B?YWtFekhBVU9TNlpJeFIxMTRkQUJINTl4S2xob0FjaEhFSGY2ekpKK0c3V2hJ?=
- =?utf-8?B?RjdIcWFJK0JERnlvRS91WDhzcU1DbExjL04xc2VKaVB0VEpzVVhLZGpTOVI4?=
- =?utf-8?B?aU13VVVIZGVhaThGWFRMVGsyaThSYlJtNGZWQ2Nxa2s4NFpMdExHbkpkWkhm?=
- =?utf-8?B?Tll4dzZoVUlUMkNWSmZGME5ldWFSRDNMbkJDYS9IQmx3Wlc5L1VEYklkcm9T?=
- =?utf-8?B?VlRONlc0TDBhVzdRaWozeGF5SWxTcGdNR0hHN2ZCWTJtc0RqQlhCSVVjenBJ?=
- =?utf-8?B?dnpydm8rM2IyU0RBN1JlYUQzU2hua1I4ZDhZUlUwUGcrOHd0RHFwbkpRdWs1?=
- =?utf-8?B?WlBob09tREdMNGtBWjRUV3REd0tnbWtzdEFQMkpaSGUwYk9yUENiMkNiZHcy?=
- =?utf-8?B?eHNkVTkwWEJaZUdEKyt6Q2p2ak1zV3M2N2grRHF3Q0ZvTHdBZTI4eVJPM3lP?=
- =?utf-8?B?WHFNYWNSd3JlMEVJT2R0NnZiQVFUa1VGQlVDdHFmVVF0MDFMVWx5WGM5TjRQ?=
- =?utf-8?B?b1FvNzBTSFR2c3N5Q2EyZGpkRHpXVkNvSithVXhhQXcrVzMxWkZlS1Roa2h4?=
- =?utf-8?B?VzJ6M2FQSTNhRzdDZDBXSnF1bjZ4WWQ3QjI2TkVQUXhsQnVjQzZoWUlkcGk1?=
- =?utf-8?B?d240UkRHcUtDZ0NvM0k2MGdLWWdqMWRkeVd5R3F2a0lrVkpXbXpYWUJteEtD?=
- =?utf-8?B?Z01lWTE3bldTcnphM2FPN1hOa3Bac3ovTC9BSkx1Zzg3aWh6STZEeGdWVHU2?=
- =?utf-8?B?OVlyZWdDczhzL1QwSmZNa3VuUVIva2lrckM1Z3lvbmRyZWtuWXIxQ2hOOEMy?=
- =?utf-8?B?Nmd5VnliT0hrMlNrZFB1bWhneHR5enBVQllUV0FCT05DYldsbGlTZXZ2cmxU?=
- =?utf-8?B?Y0FRekxBUURNa2M4NVpEb3BBVGtPLzFObm4vZTJwK2s3RUo5ajcvVFFGQ1RQ?=
- =?utf-8?B?eFVKQWdBWHpxNWZCMVpZYUp6Q3NvdUh0SFo4Tk5YbEUrRzVIbFROQkhXTWJ3?=
- =?utf-8?B?NFZvWGpQeSt6WXF1MlZ1WFBJVjRCUE5ocXhWVngwOUNDQUlxLzVKaDdQUkxv?=
- =?utf-8?B?OVk5bzc2cEJ5WS83citZT2UzTnlwTDVZdk5rUE0vbWJOeWo2L0VqRHBzNno2?=
- =?utf-8?B?Z0pjMXJvY0FJZXhldEU3bEx4ZmtrV0NCNnYxbWtBV0tubmxjbUZ1S1Rhakla?=
- =?utf-8?B?RUdYdDRuL1A4eE5iZjNMcGtxcUR4Rm9DU25jRjRzQlFKNVQ0M0ZlQUZkWGV3?=
- =?utf-8?B?OWFwRjcrQ21EbEJUa3pVZUJ5V3Zvams5Tit1dW9UbHpRWXJSMnBkVjNFTHNa?=
- =?utf-8?B?Z2NURmc0a1J0YSswMHhudVE2aDRQSDBPOWZ1aXRYRTRMUzhEemwwQXkrV3JT?=
- =?utf-8?B?aXNCaWhORW9lcXlZOFE5Wk1SQkVtRGdkUDJaZ2xOUmdYL0FKRnE4TGEzK255?=
- =?utf-8?Q?khuJTUva/NpR38cKmCb5TS9p3t4dW5UlAwnlGjOl5A=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47198643-efd5-4b72-15e3-08ddc26815da
-X-MS-Exchange-CrossTenant-AuthSource: BN3PR01MB9212.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2025 23:50:45.7329
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5IlsyWp61uzz4GP3kDk/7QLaFizXGC4a+207ukTwEpD9A0yesQrwdOsUtQo4tK9YBSZ4oLPyt0eleQI0HsFCpf1jVgTIXAlUpB425uRP20uk9ysBViqGO8t5AFNwXUyi
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR01MB7165
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/6] arm64: dts: rockchip: Add ROCK 2A/2F, Sige1 and
+ NanoPi Zero2
+To: Alex Bee <knaerzche@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Yao Zi <ziyao@disroot.org>,
+ Chukun Pan <amadeus@jmu.edu.cn>, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250712173805.584586-1-jonas@kwiboo.se>
+ <702dc4bb-7b3c-4647-b84f-8516989b0836@gmail.com>
+ <9aae8b30-23ae-4866-9ce8-02bbc8b44a82@kwiboo.se>
+ <88c7b90d-4c29-453b-9a5c-9679b371a3a9@gmail.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <88c7b90d-4c29-453b-9a5c-9679b371a3a9@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi Alex,
 
-On 6/3/25 08:03, lihuisong (C) wrote:
+On 7/13/2025 10:56 PM, Alex Bee wrote:
+> Hi Jonas,
+> 
+>> Hi Alex,
 >>
->> Once the memcpy_toio completes, the driver will not look at the 
->> packet again.  if the Kernel did change it at this point, it would 
->> not affect the flow.  The send of the packet is checked vi rc 
->> returned from send_data, and it tags the packet as dropped. Is this 
->> not sufficient?
+>> On 7/13/2025 9:13 PM, Alex Bee wrote:
+>>> Hi list, Hi Jonas,
+>>>
+>>>> This series adds dt-bindings and initial device tree for the following
+>>>> Rockchip RK3528A boards:
+>>>> - Radxa ROCK 2A/2F
+>>>> - ArmSoM Sige1
+>>>> - FriendlyElec NanoPi Zero2
+>>>
+>>> this only sub-related to this series: Is there any particular reason, why
+>>> we call the compatible "rockchip,rk3528" and not "rockchip,rk3528a"? From
+>>> what I can see all boards currently supported (and those in this series)
+>>> are having the RK3528A version of the SoC. I didn't follow the development
+>>> here, but there are differences - I did a quick compare of the datasheets
+>>> of those two SoC versions - it looks like RK3528 version has USB3-DRD
+>>> controller, while RK3528A has USB3 host-only controller. Also it seems to
+>>> have different video codec IPs and the DRAM controller additionally
+>>> supports LPDDR4X.
+>> What datasheet versions did you check? I can only find:
+>> - RK3528 Rev 1.0 (2023-05-22)
+>> - RK3528A Rev 1.2 (2024-04-10)
+> I used
+> 
+> 2023-07-12 Revision V1.0
+> 
+> which didn't include these features - which is interesting: Why would a
+> SoC vendor not try to sell all features in the first place :)
+> 
+> But I now double checked in
+> 
+> 2025-05-12 Revision 1.4
+> 
+> and you are right: It appears there also for RK3528A.
+> 
+> The only difference I could now make out by comparing v1.4 of both versions
+> is the cipher engine: RK3528 additionally supports "SM2/SM3/SM4 cipher" -
+> but still it exists and additionally the different video codec (if mpp
+> userspace library is correct about that).
+> 
+> Anyway: My question was more about: Why didn't we choose the correct
+> compatible from the beginning? And of course the dts files would have to be
+> renamed if the compatible is changed, as they are named according to their
+> SoC-compatible.
+
+Not sure, possible due to lack of technical documentation for this SoC,
+to my knowledge all upstream development has been done without any
+access to a TRM for the SoC.
+
+Based on vendor code (u-boot and linux) there does not seem to be
+anything special about the A-variant, so my thinking has always been
+that the A-variant may have just been an updated/fixed hw revision and
+is the version that went into newer production devices.
+
+The recently released U-Boot 2025.07 is referencing the filename
+rk3528-radxa-e20c.dtb from the synced devicetree-rebasing tree. So a
+possible rename will affect a future release of U-Boot, and possible
+devices in the field depending on when a rename would land in linux.
+
+For this series I tried to just follow what is currently used for the
+Radxa E20C.
+
+If I am correct there is now also a RK3518 tvbox variant of this SoC,
+do not know how that would fit into all this :-S
+
+Regards,
+Jonas
+
+> 
+> Regards,
+> Alex
 >>
-> Yes, it is not enough.
-> Once send_data() return success, platform can receive an interrupt，but 
-> the processing of the platform has not ended.
-> This processing includes handling data and then triggering an 
-> interrupt to notify OS. 
-
-
-This comment caused me to rethink how I was using the PCC mailbox API.  
-I realized that it was not actually enforcing the PCC protocol, which 
-you identified.  It lead me to rewrite a postion of the PCC Mailbox API, 
-and that is in my next patch series.  I would appreciate it if you would 
-take a look. I think it addresses this concern, but it might not be 
-completely transparent to a reviewer.   I would greatly appreciate if 
-you were to look at it and confirm it fixes the issue, or, if I have 
-missed something, let me know what you see.
+>> And both list LPDDR4X support and the A-variant seem to list USB3-DRD
+>> support, did you mix them up above?
+>>
+>> I think these SoCs are similar to rk3228/rk3229, rk3228h/rk3328 and now
+>> rk3528/rk3528a, in that only the second variant support VP9 decoding.
+>>
+>> Use of rockchip,rk3528a compatible could be something to change,
+>> could also be something that bootloader set at runtime, similar to
+>> what it does for rk3288w.
+>>
+>>> I guess it would be good to discuss this before this series is merged,
+>>> because re-naming *.dts files after they have been in a release is somewhat
+>>> impossible.
+>> I think renaming the device tree files is unnecessary, as there seem to
+>> be very little difference. All boards I have come across are currently
+>> RK3528A variants. How would we treat the Radxa E20C?, it is not named
+>> rk3528-radxa-e20c.dtb, yet uses the A-variant.
+>>
+>> For mainline U-Boot I have included printing out the SoC-variant,
+>> however the compatible is not adjusted:
+>>
+>>    Model: Radxa E20C
+>>    SoC:   RK3528A
+>>    DRAM:  2 GiB
+>>
+>> Regards,
+>> Jonas
+>>
+>>> Regards,
+>>> Alex
+>>>> The bt/wifi_reg_on pins are described in the device tree using
+>>>> rfkill-gpio nodes.
+>>>>
+>>>> Changes in v3:
+>>>> - Rename led nodes to led-0/led-1
+>>>> - Remove pinctrl* props from sdio0
+>>>> - Collect a-b tags
+>>>>
+>>>> Changes in v2:
+>>>> - Limit sdmmc max-frequency to 100 MHz on ROCK 2A/2F
+>>>> - Drop clock-output-names prop from rtc node on Sige1 and NanoPi Zero2
+>>>> - Drop regulator-boot-on from usb 2.0 host regulators on Sige1
+>>>> - Add bluetooth and wifi nodes on Sige1
+>>>> - Collect t-b tag for NanoPi Zero2
+>>>>
+>>>> These boards can be booted from emmc or sd-card using the U-Boot 2025.07
+>>>> generic-rk3528 target or work-in-progress patches for these boards [1].
+>>>>
+>>>> For working bluetooth on ArmSoM Sige1 the patch "arm64: dts: rockchip:
+>>>> Fix UART DMA support for RK3528" [2] is required.
+>>>>
+>>>> [1] https://source.denx.de/u-boot/contributors/kwiboo/u-boot/-/commits/rk3528
+>>>> [2] https://lore.kernel.org/r/20250709210831.3170458-1-jonas@kwiboo.se
+>>>>
+>>>> Jonas Karlman (6):
+>>>>     dt-bindings: arm: rockchip: Add Radxa ROCK 2A/2F
+>>>>     arm64: dts: rockchip: Add Radxa ROCK 2A/2F
+>>>>     dt-bindings: arm: rockchip: Add ArmSoM Sige1
+>>>>     arm64: dts: rockchip: Add ArmSoM Sige1
+>>>>     dt-bindings: arm: rockchip: Add FriendlyElec NanoPi Zero2
+>>>>     arm64: dts: rockchip: Add FriendlyElec NanoPi Zero2
+>>>>
+>>>>    .../devicetree/bindings/arm/rockchip.yaml     |  17 +
+>>>>    arch/arm64/boot/dts/rockchip/Makefile         |   4 +
+>>>>    .../boot/dts/rockchip/rk3528-armsom-sige1.dts | 465 ++++++++++++++++++
+>>>>    .../boot/dts/rockchip/rk3528-nanopi-zero2.dts | 340 +++++++++++++
+>>>>    .../boot/dts/rockchip/rk3528-rock-2.dtsi      | 293 +++++++++++
+>>>>    .../boot/dts/rockchip/rk3528-rock-2a.dts      |  82 +++
+>>>>    .../boot/dts/rockchip/rk3528-rock-2f.dts      |  10 +
+>>>>    7 files changed, 1211 insertions(+)
+>>>>    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-armsom-sige1.dts
+>>>>    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-nanopi-zero2.dts
+>>>>    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2.dtsi
+>>>>    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2a.dts
+>>>>    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2f.dts
+>>>>
 
 
