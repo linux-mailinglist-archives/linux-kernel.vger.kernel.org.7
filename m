@@ -1,166 +1,206 @@
-Return-Path: <linux-kernel+bounces-730557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58255B04649
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:17:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8569CB0464B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABCB01715CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A41DB1A6233B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C020F2620EE;
-	Mon, 14 Jul 2025 17:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4B12620EE;
+	Mon, 14 Jul 2025 17:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KJx+kMct"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uqb9co0u"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2055.outbound.protection.outlook.com [40.107.93.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8616D25A342
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 17:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752513438; cv=none; b=sGplL/3ydgZ/sPcXzHEK88tT4N1BZ78akld48YvnNviq3xdMdkcYpf7whwC8gHT/A0zz1l54wB24cqFstP0tjbMwwhj1V+4CFEhbHcyxVEnPvVofZJ/pG4qKinhr6AZ9UTqwwzNWvJ2M+9Yik9taPK4bMLnDm6zlOhHIP0XRvNQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752513438; c=relaxed/simple;
-	bh=tiJQhLSIHDjv009JUXLp1PzpzTY95wk8W039bMr5naQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=nDDOt6PxN3qNZRuA/O9LvjbFVdRpkxVhVu+6OiDiYhg8oJWEoNbv8kH5ItkQFJQSXYT8ZmPM5S+heEB3l9XFk9TGD3Sdjw3w1mHoN6FFR5o4oN/L2bZdXuAuH4KnDeXM4Lg2SvCroOvkB+3P7wud/DWe8f7UBEe1XoqxfO775Co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KJx+kMct; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752513432;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=StenXae51hFgjVCmuBJO+neelh5zP4HIatFPuIaaQok=;
-	b=KJx+kMctimqcPWMvtphvzcOAvhuUmIohFLdfh1Ak1/hKgdC1J/nWWXPeCq53Hc9scmD6m6
-	2TQINLi6Xu8TN6lR3QBns3t2pkSX9kloJR4lHXzMQFzeEDoA7BTP5U3l1xzJdyV+/SC267
-	5nFCknvwdHwIPSxdvUmgesqJ00VKpdY=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-568-wQO2_PvMNU6UgxbTmF0Ykg-1; Mon,
- 14 Jul 2025 13:17:09 -0400
-X-MC-Unique: wQO2_PvMNU6UgxbTmF0Ykg-1
-X-Mimecast-MFC-AGG-ID: wQO2_PvMNU6UgxbTmF0Ykg_1752513428
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D498A1800268;
-	Mon, 14 Jul 2025 17:17:07 +0000 (UTC)
-Received: from [10.22.80.10] (unknown [10.22.80.10])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5786B180045C;
-	Mon, 14 Jul 2025 17:17:05 +0000 (UTC)
-Date: Mon, 14 Jul 2025 19:17:00 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Sheng Yong <shengyong2021@gmail.com>
-cc: agk@redhat.com, snitzer@kernel.org, nhuck@google.com, 
-    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-    Sheng Yong <shengyong1@xiaomi.com>, Wang Shuai <wangshuai12@xiaomi.com>
-Subject: Re: [PATCH] dm-bufio: fix sched in atomic context
-In-Reply-To: <20250710064855.239572-1-shengyong1@xiaomi.com>
-Message-ID: <673ddfed-d874-9ffe-c2fe-a741e8fc69f1@redhat.com>
-References: <20250710064855.239572-1-shengyong1@xiaomi.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95943FD4
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 17:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752513514; cv=fail; b=DBP+egX0UI2m++f896yulhqa+jc6VBsRnArtOe5UmmYnxFebhXcvEnXrF0Nsbyk8tXW+m74I74fG6yAlZfkAQbov8hviNB99xKglD3Ziz1qqozqc4YUA5FG1beLH8hqf04a+t1cGubWllNd2/28aa8MhlxRFIiPk52d5jT3kTlI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752513514; c=relaxed/simple;
+	bh=cOz9xI4gloDbZj/szDqZIU2gTFfJ4iOLNqVwdZ+ofdA=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=DHNZm/UHMH9/VFO4iENAOrlo38kW+p3UjGOfECkeW0gclgeuoQGZnDsrqlD09xLVzQDFCu+W4Rqj307/EaF4s8kj8+G9m7qtiW+l8IWVccqcYqYM4xnR0AY1M5Evq5CXNBN+mbOf7WIEYtnDYksd//vmWoUIDncaz+JD5RB7Kqw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uqb9co0u; arc=fail smtp.client-ip=40.107.93.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pY+SU+FofnklO1lgAff1sOhUf/gIM4DasvRZxYvTgabWTAq0iZx3/BID5kmPOAxSFKSxORAkPtjQW7HfjyQW1cE2XoESgF89rpJSpc7tcg4epyit4/KCy4pJbSB2GSircKp+ANLQD+2ipfMuyTsMI1YOtE3MYI7sG4wyDHL2hMVoko3kaqJcnm941T0hRIjO3ljwGYfCFI04W+RNYsivtBI2YqZtjHDRKp2ZGEsOTr2IcS0NzvmxRQtHOjMATGJz28hzTXjos4gHUJAwUicfMf1nTL9qp7/9/XFb/HX9Q5UyLlXNwQKppWAJv9qUTh2xZH4SH6dN6MK+tqwCsUCTOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nEI8SLBGgld3UlayCuyh6P1c0zJCasNO4jDkZHvh3AQ=;
+ b=rsKkWqEfx18mrjXaV5yI6wpDPYN8o5uoGR3WA8NIiy5SyDQAsJ0wuJR/gGrpzzDubUu3fRWwvaSSyQ/HSYEAUHekd7i8L7axSdFtVj/ixyPoc/ndNwUW87ykOTfXOyi+X1nwifyOm4zK/wUdqUMc2AipDdaBi4XUXefBf7C2EtRpCDg2N5y6A5X+504XcLDJgr7IlQ1Dl8gE8REvCuUbJaSt5h7MCEbT1lOW5wml/uw+XeCRg+jiupjDwwWn+M06ji6wQLktuZWnH8YragwWUcoCqsVc0tUiU4py9Xpd2C848S1tQwsOThki0ez0AAt9UHsBqYcF/7U98UQgbTeyUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nEI8SLBGgld3UlayCuyh6P1c0zJCasNO4jDkZHvh3AQ=;
+ b=uqb9co0u8Scgg8/pskxEdvywGdh41b2VvKflXOfId6o/91h1lXvJ3hfkej/kVSM0IX9CuEny3UQa+iewP8r+tiYYG0d5qeXF2ha01edSz0KTy+rSsUb/6G8yJlLrZwoyiWWAjGQrgSOFnRHb1mdwrh5T6OufM+YaKru27T8YafYEdSY7Kji+/2WRQ5jKTJ6DFn0aXg4t8tCNwZ5nPEQfpXl5sA/JvZ2c8ebiKNMi828r02PBpM+rsO0JmWIpJvgyqDL0L/cy0JK6li0St+h5BN6XPIE7azMjM/Fc0ET/o8ryjT5fQNV6HIM2Z29iPVd5YjNN1xxIEGAGmGOmN2qNyQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ PH7PR12MB7817.namprd12.prod.outlook.com (2603:10b6:510:279::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.23; Mon, 14 Jul
+ 2025 17:18:29 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.8922.023; Mon, 14 Jul 2025
+ 17:18:29 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Balbir Singh <balbirs@nvidia.com>,
+	David Hildenbrand <david@redhat.com>,
+	linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Hugh Dickins <hughd@google.com>,
+	Kirill Shutemov <k.shutemov@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] __folio_split() clean up.
+Date: Mon, 14 Jul 2025 13:18:21 -0400
+Message-ID: <20250714171823.3626213-1-ziy@nvidia.com>
+X-Mailer: git-send-email 2.47.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BL1P222CA0009.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:208:2c7::14) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|PH7PR12MB7817:EE_
+X-MS-Office365-Filtering-Correlation-Id: f64304ef-229a-47e4-99af-08ddc2fa73ad
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7DrGOrcPavVxybDbsUnihJ1O0is9rLjKGBxVkPVKBxawoaytzAu+jhnZPFAa?=
+ =?us-ascii?Q?NidQ9tRGHQofOCdfaFZsOrczfNAawXu5rpfde3t34nG6S/MzuNO/Bej+TN7E?=
+ =?us-ascii?Q?082WXLdr3lIxUWjkok2K8/ambZKrn79YEiDVwf9RV8C75+MP7JL4CpHhN2WL?=
+ =?us-ascii?Q?GTzs4yP6Zm3kBZ9YwVWjEIzT7KFp8AyOvX2gsQ+jsBWLuBZYVVYFhHxTULfU?=
+ =?us-ascii?Q?vvrjtVJ/DBObDCPgikbjJqSE3hG1Z3KusK8QlMYb4B4MZP8pUZoFnbAwaleR?=
+ =?us-ascii?Q?TcWG1Dem3nrgcEoNHO92r3TZkkxUYf29Sqf+4m7Hz950/r/s/imgFLzRsXjB?=
+ =?us-ascii?Q?6YmUIK3dTcbDP2wRN87vDs0R4SEuGWQ4KlhywxE+SEfqg24cul/OnwQU3erP?=
+ =?us-ascii?Q?8Uok2tghWBggYO5alpFiBT9M+7RXkqMly6FWbXTS+hu8msLLvESFaN9CMKRf?=
+ =?us-ascii?Q?f/H7LrjTFZD/XI4F6ruDNsomxfMxwDS0t4mLAFE3NDY34nbLEZffl7JXp1rY?=
+ =?us-ascii?Q?/7+LH8ttisiCxt6+a+lSyA/jXjEvV7SMo7cSa8NRhflqPgdUf5UHRnHNnwzC?=
+ =?us-ascii?Q?aqFql+/GdMcIbtmOZOFBb/LrRzGBSQb1PNUUqa4wK16aF8AksPPMxXZyYkEd?=
+ =?us-ascii?Q?Vx1kni0gkE02O6b01aKaFsExJdOmeBh0fLzB/zlUg5VMVnnpyZsLNqXXvnzD?=
+ =?us-ascii?Q?3N/ydVETmobap5nRNCJS2x2Afw4KO//TdpU5jdnM4Xf0N+NJ23aFwO7Q8Nq0?=
+ =?us-ascii?Q?cQT7FbP3OEwhLsqnmOA5WI2Ki3KqV6DhIGm5SaAl0P2ZTcf3v0GJHp+nV0Rm?=
+ =?us-ascii?Q?dLW8EvLxAO1NfQBfXvO8Jl5asyq5drMdAlCWSOcBbl4yhiQI+qRbEbH0Kk6x?=
+ =?us-ascii?Q?JMFqYFRV7AxAKdyECv5uXPZQxjl3kq8csVkHwNGjBrPJfpiEJq9ptyrVu7J0?=
+ =?us-ascii?Q?Hbzjsz5CLc//jd+4FaRFB3VH0lw/LgDJOLNu3kHEbyEw4+CQdbmbP1CGStpj?=
+ =?us-ascii?Q?B0XtmhLANmeBrZK5mXcNliYhzJr35PZRzOBRXCPF4D2meLtbIpC8MGjrCqKj?=
+ =?us-ascii?Q?qsmKIMRfA58zToVqGOeqnzdXC/yhTAmQKwkNvr1s0ttR682nwXcVq4003vQJ?=
+ =?us-ascii?Q?XAMdZaihyZMu52ZKnYcwO4W8bX0vQ6PcwxzPvuJsmv4b5KkjOONWfBZVn+Gn?=
+ =?us-ascii?Q?39+Q7S4hsRoPUeYqhqaFhVvsa0pvGg+SkQFuuupOJpgftMLt5MW4g+VzkvJ0?=
+ =?us-ascii?Q?Yk2G0YGHgq0KIctxuyyd9NEkN5KV1N5oZ9okLoZobpe7amXYT59sXl+Iflui?=
+ =?us-ascii?Q?leRHLI39AR/SnOh0+vh9C5RnqUCAI7HJtUSbxy1k2qC8qx60G5bWYu//WDi8?=
+ =?us-ascii?Q?t7/7n6tPj4/Adeypz0Utby+oc3HlAQBcqg7DBGQEIbtTjUV09//dtAUJ39w7?=
+ =?us-ascii?Q?32rzMnwt5aM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?+X7sVY2gi/3muZwKTuxmdhMdzy/6XJ89zcIHmYungJvQFU/484zjlIuUzbya?=
+ =?us-ascii?Q?8QTCEkxnEjwi5USIIx+1nTl2lO8J7ULJD7lhig+uULPYZRl8VBS61TwBLs3y?=
+ =?us-ascii?Q?Q1B+TrrK/1gv5UNZZr3c02sgTXPlNDrxWJPu+2Wpsrt3AAFQdEUey0VS1YJk?=
+ =?us-ascii?Q?f6sKjOmzEdzM0V+zUKwGIdbcKDJB78NCD+peaZCaIiQSxMQEn+0DGyQ0/LnY?=
+ =?us-ascii?Q?5CwXnDimrjl5MSnnVh74O4i0oxh3lXnhkQ5s3uHvdEgxc/nc8SI6fcUteaRZ?=
+ =?us-ascii?Q?YTLnVJGpVEmb+3uW4ZG76QINbZa3HrmftsYZSXcYA6GDjRACqPCpwHy057dS?=
+ =?us-ascii?Q?cWaLQF41F02xcxZQRtBsPlkWvWqa9xSDvOh7Y8lqREhZkc62da39G4uEqDqy?=
+ =?us-ascii?Q?MkuWr082iVr5O6EFknDIFFfK4bMk3z9OvFP0PcXLvwH/+AimtnUIVok7tUlt?=
+ =?us-ascii?Q?SlRofUq+CwlRuPecbew8mB79QaXv7eoaZeR5eoV7tO4TiSFFWjb/214UNaJP?=
+ =?us-ascii?Q?0LRDYRJcp8htlMxkm3h7sVjqK2bU/SKJ1bINIsdpVweKQgkSn2Mr14+DpPDp?=
+ =?us-ascii?Q?3VkeSdMzILfJKJ2p5T1VlJ2MQuh/yZY+9NV+Nsuzu9Rdq+RtJqAEbqjDS0LZ?=
+ =?us-ascii?Q?eX8MPw/dZyQUvkWrHPSb2FkowFz2sKVcdjRdxgBucUHBiBVrUQ1vDHWsz5Dq?=
+ =?us-ascii?Q?DKCSebKS9JMZ7ms8RfRFrB95fu1bGxSwviDyDUprK2o5RUaPNAugce3YVscs?=
+ =?us-ascii?Q?q37m/GkwQuppVxzkAmSm2lfVXTi1ld1T3o3OuIflapVXUjdoWzkmy+f1jlKO?=
+ =?us-ascii?Q?nJ0DSQfwFE+HJ5qACvKoVwrpZny5aznS3wHFOt/YoSVaV560S8JVZTknPebw?=
+ =?us-ascii?Q?5IdzdyJxP9Pgy6tXlwIZx8EVxw4M0czWyPAlPlMHPV4Sf5hansr1jhdq9RoF?=
+ =?us-ascii?Q?OX1JIosguOf4fXCnXKeiiryG+HMvoR7smsxtKz4P6NgCIZXgi+ZTmQ/vDyCL?=
+ =?us-ascii?Q?q005jo0k9BjM2s6w/tq7pClsGKUThx7RXF16oGWdnz2RAsDyeY2XP3sDrFPP?=
+ =?us-ascii?Q?U0lDZPwc8l/KFsg+PT8LbvRUoosJu2gwKBZ9PtyBqEplHbFEN336xyxFAEgT?=
+ =?us-ascii?Q?7iJMIQhuZpm5xY4b4zTD4qRpkG7zfvJyFFahzTYrdo9zjEdnjc4bnA1czChd?=
+ =?us-ascii?Q?na4U2FbHZAjjJ2qYJol8/+w102mOqL8a+U6pUZCdo1qiNzckefaiAjVVgJcV?=
+ =?us-ascii?Q?ABONgnsAnDhYDimcskNpe8Y/qgrArl9SNDoLvS4c8Ta6rTFou65YuqcgB8sL?=
+ =?us-ascii?Q?iKL3rO2lhnwfqR+GXtlvDpGonXO78vEM7hqcbRGD3fMqRdiORAxxaEx+X3Lg?=
+ =?us-ascii?Q?F0A4WBtlExFBbhzLe7oOkxbvfftawyOQATEjmrubTlLZZ6ZfXQ8zCVaDjfDm?=
+ =?us-ascii?Q?eO/DBqG2c1DVSTI+7Q6NQUgcV3bi/C95+gx/NWmiPycR0Rrc3he671Ec7bIK?=
+ =?us-ascii?Q?fxV4L4wEeq11bdRws32DpTo7xUw9en4JgvF+FGxJASMXf2GENsobNPK6Cx6a?=
+ =?us-ascii?Q?Q0xnQmxp/MQXFShxttrMAvYQc1leCtfuAvcK1wJ0?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f64304ef-229a-47e4-99af-08ddc2fa73ad
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2025 17:18:29.6183
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OvL9Cv7mCiU5N3P65mSplbN78Nj/UAVbFp6rOmsZcbd23rHjnlrqjKMAgVMljKrj
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7817
+
+Based on the prior discussion[1], this patch improves
+__split_unmapped_folio() by making it reusable for splitting unmapped
+folios. This helps avoid the need for a new boolean unmapped parameter
+to guard mapping-related code.
+
+An additional benefit is that __split_unmapped_folio() could be
+called on after-split folios by __folio_split(). It can enable new split
+methods. For example, at deferred split time, unmapped subpages can
+scatter arbitrarily within a large folio, neither uniform nor non-uniform
+split can maximize after-split folio orders for mapped subpages.
+The hope is that by calling __split_unmapped_folio() multiple times,
+a better split result can be achieved.
+
+It passed mm selftests.
 
 
+Changelog
+===
+From V2[3]:
+1. Code format fixes
+2. Restructured code to remove after_split goto label.
 
-On Thu, 10 Jul 2025, Sheng Yong wrote:
+From V1[2]:
+1. Fixed indentations.
+2. Used folio_expected_ref_count() to calculate ref_count instead of
+   open coding.
 
-> From: Sheng Yong <shengyong1@xiaomi.com>
-> 
-> If "try_verify_in_tasklet" is set for dm-verity, DM_BUFIO_CLIENT_NO_SLEEP
-> is enabled for dm-bufio. However, when bufio tries to evict buffers, there
-> is a chance to trigger scheduling in spin_lock_bh, the following warning
-> is hit:
-> 
-> BUG: sleeping function called from invalid context at drivers/md/dm-bufio.c:2745
-> in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 123, name: kworker/2:2
-> preempt_count: 201, expected: 0
-> RCU nest depth: 0, expected: 0
-> 4 locks held by kworker/2:2/123:
->  #0: ffff88800a2d1548 ((wq_completion)dm_bufio_cache){....}-{0:0}, at: process_one_work+0xe46/0x1970
->  #1: ffffc90000d97d20 ((work_completion)(&dm_bufio_replacement_work)){....}-{0:0}, at: process_one_work+0x763/0x1970
->  #2: ffffffff8555b528 (dm_bufio_clients_lock){....}-{3:3}, at: do_global_cleanup+0x1ce/0x710
->  #3: ffff88801d5820b8 (&c->spinlock){....}-{2:2}, at: do_global_cleanup+0x2a5/0x710
-> Preemption disabled at:
-> [<0000000000000000>] 0x0
-> CPU: 2 UID: 0 PID: 123 Comm: kworker/2:2 Not tainted 6.16.0-rc3-g90548c634bd0 #305 PREEMPT(voluntary)
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-> Workqueue: dm_bufio_cache do_global_cleanup
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x53/0x70
->  __might_resched+0x360/0x4e0
->  do_global_cleanup+0x2f5/0x710
->  process_one_work+0x7db/0x1970
->  worker_thread+0x518/0xea0
->  kthread+0x359/0x690
->  ret_from_fork+0xf3/0x1b0
->  ret_from_fork_asm+0x1a/0x30
->  </TASK>
-> 
-> That can be reproduced by:
-> 
->   veritysetup format --data-block-size=4096 --hash-block-size=4096 /dev/vda /dev/vdb
->   SIZE=$(blockdev --getsz /dev/vda)
->   dmsetup create myverity -r --table "0 $SIZE verity 1 /dev/vda /dev/vdb 4096 4096 <data_blocks> 1 sha256 <root_hash> <salt> 1 try_verify_in_tasklet"
->   mount /dev/dm-0 /mnt -o ro
->   echo 102400 > /sys/module/dm_bufio/parameters/max_cache_size_bytes
->   [read files in /mnt]
-> 
-> Fixes: 5721d4e5a9cd ("dm verity: Add optional "try_verify_in_tasklet" feature")
-> Signed-off-by: Wang Shuai <wangshuai12@xiaomi.com>
-> Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
-> ---
->  drivers/md/dm-bufio.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/md/dm-bufio.c b/drivers/md/dm-bufio.c
-> index ec84ba5e93e5..caf6ae9a8b52 100644
-> --- a/drivers/md/dm-bufio.c
-> +++ b/drivers/md/dm-bufio.c
-> @@ -2742,7 +2742,9 @@ static unsigned long __evict_a_few(unsigned long nr_buffers)
->  		__make_buffer_clean(b);
->  		__free_buffer_wake(b);
->  
-> +		dm_bufio_unlock(c);
->  		cond_resched();
-> +		dm_bufio_lock(c);
->  	}
->  
->  	dm_bufio_unlock(c);
-> -- 
-> 2.43.0
 
-Hi
+[1] https://lore.kernel.org/linux-mm/94D8C1A4-780C-4BEC-A336-7D3613B54845@nvidia.com/
+[2] https://lore.kernel.org/linux-mm/20250711030259.3574392-1-ziy@nvidia.com/
+[2] https://lore.kernel.org/linux-mm/20250711182355.3592618-1-ziy@nvidia.com/
 
-I accepted this patch. I changed it to:
+Zi Yan (2):
+  mm/huge_memory: move unrelated code out of __split_unmapped_folio()
+  mm/huge_memory: use folio_expected_ref_count() to calculate ref_count.
 
--               cond_resched();
-+               if (need_resched()) {
-+                       dm_bufio_unlock(c);
-+                       cond_resched();
-+                       dm_bufio_lock(c);
-+               }
-        }
+ mm/huge_memory.c | 289 +++++++++++++++++++++++------------------------
+ 1 file changed, 142 insertions(+), 147 deletions(-)
 
-        dm_bufio_unlock(c);
-
-so that we are not hammering on the dm bufio lock when scheduling is not 
-needed.
-
-Mikulas
+-- 
+2.47.2
 
 
