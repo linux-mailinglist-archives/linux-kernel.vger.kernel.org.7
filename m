@@ -1,274 +1,142 @@
-Return-Path: <linux-kernel+bounces-729733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFAB9B03ADE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:33:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0F2B03AE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F8BB189FE85
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:33:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4DEF17B0B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06352241668;
-	Mon, 14 Jul 2025 09:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3416241136;
+	Mon, 14 Jul 2025 09:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uDa8Kuzy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ckq19csk";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rd/SVjei";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zZn5+2pG"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="di1SOu9k"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21A02E3718
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878A8237186
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752485591; cv=none; b=f92LMZYkmTkU/gZf5jRc/V2sHpR3TfzgHoEFbPJ5Hje/EURP83kNLg79P5DEeIPnkPinOu6ZAnxVJpBIGDxt+zf+pfVaYw2Hn5YYarjORXQvMuY8ZvNkY9gp54Zx6RW/OacVSrclu5JRqFxdXMh2Sz2f8oUFg3a1Y9XnZox/pDQ=
+	t=1752485688; cv=none; b=pXOaY9iqnekiAjTFL6lhNbXctNbYuHHlJQpyhgfEjbID/wgZ84opqRhzvCbJBV9hASQRKUifDxTsqktSlhR1+WMMmSGxOVZiV22EOO749/N2+9RIW0cf4rf5CiBOwuVocTb2zju7FB3+0AT2hd6P83g5tvXsb72uZOEgqVNTIr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752485591; c=relaxed/simple;
-	bh=jff1rg7cdA6FSA/2rKn4bJCh/qsPeyAuTnbAkwk2QcM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G6I7f2dIeQPLBfCbG9O2g8lwi0fDou+h9QPmpMeDdApOw8fNqB7BULWtKwwgFRQlTFkop6N3Ln8v5wz/u3xxL7/nyO7n25A983k9m9/YtC7K9cowNj+DjpKwZCqJSoR+/YuRSWoe5Gz8+UtlLiKC8Ei5LF8s4EzUhJrtvjCxREM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uDa8Kuzy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ckq19csk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rd/SVjei; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zZn5+2pG; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id F086B1F387;
-	Mon, 14 Jul 2025 09:33:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752485587; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d58zeA97b6KomVEz3OwBjB6joIqhDEGdapyBAJdFDO4=;
-	b=uDa8KuzyXgrwwsYs3OSF6xtgLSIqrr+CpRxVRJmSg8aXN+LS6rYy2XEP2/jglPn8nr8c9S
-	xa5HrftK3ETtEbO/wNR5+VnDfMHF31H4VKQHhvD6LlHOZAg8QefiKDU3bZaA1IekNKcd2w
-	pViZCxpxHrtrdga1dmXDa8YqKi5vngM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752485587;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d58zeA97b6KomVEz3OwBjB6joIqhDEGdapyBAJdFDO4=;
-	b=ckq19csk+VQFzjGjaKsdslmAZn8AZqV7OQb9hIaOpnVYjtyVEXZZC9F79AhN542pzvhhAp
-	0Zae3GSxKMBEHbBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752485586; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d58zeA97b6KomVEz3OwBjB6joIqhDEGdapyBAJdFDO4=;
-	b=rd/SVjeiYRWfoGR0q7iBm66A1cHuGG83JLJ2Terf11aEOxj6aUs1IFWnOxIQ8MtWgUjsXm
-	z0e86hBhGlS+mUFGKM1U8ESCvGFToIX86beJXzwx5+P7kSIzC6BB2N3NdFmPJ014G4+CQO
-	O5t9VeL7sQJZ88TWZa+0FW6WbQXqOFs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752485586;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d58zeA97b6KomVEz3OwBjB6joIqhDEGdapyBAJdFDO4=;
-	b=zZn5+2pGv98ETicUtJVq48eQ+um7+gutKTEDb23w1b9wiOLp3CAKECN8LOAdqzHm6Yr5Jm
-	54HyA08jTaoST1Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E12DA138A1;
-	Mon, 14 Jul 2025 09:33:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TPH0NtLOdGjIQgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 14 Jul 2025 09:33:06 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8C12BA06F4; Mon, 14 Jul 2025 11:33:06 +0200 (CEST)
-Date: Mon, 14 Jul 2025 11:33:06 +0200
-From: Jan Kara <jack@suse.cz>
-To: Youling Tang <youling.tang@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, chizhiling@163.com, 
-	Youling Tang <tangyouling@kylinos.cn>, Chi Zhiling <chizhiling@kylinos.cn>
-Subject: Re: [PATCH] mm/filemap: Align last_index to folio size
-Message-ID: <jk3sbqrkfmtvrzgant74jfm2n3yn6hzd7tefjhjys42yt2trnp@avx5stdnkfsc>
-References: <20250711055509.91587-1-youling.tang@linux.dev>
+	s=arc-20240116; t=1752485688; c=relaxed/simple;
+	bh=UfwKYdfhLk2Qy+lp7anf0iJDtzV7naJAbuUbpizuis4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LZnxaT9j9LOi1FkT653W2ta+XwHSQS9zsT3FArjGPr3tAHZB04HXxqJP/9r2HokweoF/HDLRoatc135wx0rIcwRh6BXbMx4u0vcNJYmhExeM1ltSKwp6A44V75UaGF+yi04vW13h9nwhOQIaw2CvCp0BeDfjJ1azb7cFOxB44z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=di1SOu9k; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-70e3c6b88dbso27946787b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 02:34:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752485685; x=1753090485; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vEmmr4XGYIHTUb8r2LHfVd1MIoDVWAOSUqn/NEpPRbM=;
+        b=di1SOu9kEFU45yaf/R5J/6R+Bg6mYwoa9dYW5LtCDcJzD1ToEk5wcOtE/9Iag6dWcf
+         FJzKHkIh7LL9XZpdOe9l5mpGzgzKV4lf4vbyjSiaY0E0Cf6eQHy7jBS4RssfRCQ1bwiK
+         mlMjxiK0WpoBtUfGVevE+X+EhK7X41zVYyF+DisvaNNr+F3CYwihd4eVhJ0BqnSYxIce
+         42AvKP1sASthFrA0dcHmdF97uoz5WHuebMavzGRy4uhPicT7vMZGkPUjU51aZViAybC4
+         YlP3Ig+ZWzk68fU/dCrGTPcN4CJuLBw1XKm1RVRyE76462b88rNzZlxSw8Ef4gfToPtY
+         hqxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752485685; x=1753090485;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vEmmr4XGYIHTUb8r2LHfVd1MIoDVWAOSUqn/NEpPRbM=;
+        b=jX7NArnoIevp6pPZCPZLwdkL/ciTtbUohAlcQMhXsq/DUfqMK0PeuMq7xwjNcDQBzN
+         XE8JmyOp9Z/ccHVejUEUpqWrxdVi8gzozALOjlEdZZUB3KUPTyaeFo+VZiVYCeElUPAa
+         2x5fYOITw8MyqKEjMN71Rjna0FKSiA56epLdMKksjPidX4/9xLPxU0jUhuS8wdzLw1Tk
+         izCZq5luqlvYdtSgtdnkJ927EEhlQK+7+iYc9ww0ecXG4bNxBj3Q+YOQ5tZGDQuzFRmW
+         W9weJXOiss8vexPlfAXkhiqk3V1cWyVLTztP2n+X8m4ncwkZqGe98AFHHuJcfCLrCg+W
+         b50w==
+X-Forwarded-Encrypted: i=1; AJvYcCV9jOdeKBUqIH3iWYU2Oqwt/Qlm3ZcwBV/gyUWkWP3pJh1WMEgfKhnXxCHfnRZ/mJvjuP/IYgFz5ySfpt8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkCmgURiqfoFpynMd1S03CP67pO5ezTbf2WDYrqSnqbFhyf0ov
+	lBoz+D930IrsvjHhGtIFX1m3C00lhH74c6Y8+fzBct0XqfM8AEf6xPan/jvTqDX/1Dm6x12vxtP
+	ETBuGvfom16+2qBqHn/rO4myWBkvtE5oVmq/eJHXccQ==
+X-Gm-Gg: ASbGnctSsusjZf4Z94xhXD4MBPh4R5zsxN91N4jiommtizP/ayVRgQJRsYo4+tUu9m2
+	no1Tvb7tkUj6gqHWAsaYNH3w0QpaYaxJCaidDGiZzitMna8OOpvT8k18oO6I2ZNIFaznVaWTJ0n
+	XhWtt8dAauJsWpuoxFmUEGezvKLDUO7If7PTnM8huXbe23PBRACM8SspEKcUduAKhOruzBXW37h
+	kZXV7yqsmBVcAnx+Po=
+X-Google-Smtp-Source: AGHT+IHIlg2QgBnKLSKe6umOG6mLkyHuyOGa5CDuUCJGRmLch13uGRl1lyUH/fje8e3UhcJpXB/eeeAkkqwb0eDhQ3E=
+X-Received: by 2002:a05:690c:628a:b0:70e:7ff6:9ff3 with SMTP id
+ 00721157ae682-717d5f3d391mr195973477b3.35.1752485685299; Mon, 14 Jul 2025
+ 02:34:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711055509.91587-1-youling.tang@linux.dev>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[163.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[infradead.org,linux-foundation.org,suse.cz,vger.kernel.org,kvack.org,163.com,kylinos.cn];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.80
+References: <20250711114719.189441-1-ulf.hansson@linaro.org>
+In-Reply-To: <20250711114719.189441-1-ulf.hansson@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 14 Jul 2025 11:34:08 +0200
+X-Gm-Features: Ac12FXwf4BfTjOB0bq-V0l481-9ls28bgQwLelpMu5ij-cJg8s7O_Ow2nAI2D7E
+Message-ID: <CAPDyKFrouK9b8Gd+DYg-=BE0dYVuiwy3+Jkrp1=4dDXu90gDTw@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: samsung: Fix splash-screen handover by
+ enforcing a sync_state
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri 11-07-25 13:55:09, Youling Tang wrote:
-> From: Youling Tang <tangyouling@kylinos.cn>
-> 
-> On XFS systems with pagesize=4K, blocksize=16K, and CONFIG_TRANSPARENT_HUGEPAGE
-> enabled, We observed the following readahead behaviors:
->  # echo 3 > /proc/sys/vm/drop_caches
->  # dd if=test of=/dev/null bs=64k count=1
->  # ./tools/mm/page-types -r -L -f  /mnt/xfs/test
->  foffset	offset	flags
->  0	136d4c	__RU_l_________H______t_________________F_1
->  1	136d4d	__RU_l__________T_____t_________________F_1
->  2	136d4e	__RU_l__________T_____t_________________F_1
->  3	136d4f	__RU_l__________T_____t_________________F_1
->  ...
->  c	136bb8	__RU_l_________H______t_________________F_1
->  d	136bb9	__RU_l__________T_____t_________________F_1
->  e	136bba	__RU_l__________T_____t_________________F_1
->  f	136bbb	__RU_l__________T_____t_________________F_1   <-- first read
->  10	13c2cc	___U_l_________H______t______________I__F_1   <-- readahead flag
->  11	13c2cd	___U_l__________T_____t______________I__F_1
->  12	13c2ce	___U_l__________T_____t______________I__F_1
->  13	13c2cf	___U_l__________T_____t______________I__F_1
->  ...
->  1c	1405d4	___U_l_________H______t_________________F_1
->  1d	1405d5	___U_l__________T_____t_________________F_1
->  1e	1405d6	___U_l__________T_____t_________________F_1
->  1f	1405d7	___U_l__________T_____t_________________F_1
->  [ra_size = 32, req_count = 16, async_size = 16]
-> 
->  # echo 3 > /proc/sys/vm/drop_caches
->  # dd if=test of=/dev/null bs=60k count=1
->  # ./page-types -r -L -f  /mnt/xfs/test
->  foffset	offset	flags
->  0	136048	__RU_l_________H______t_________________F_1
->  ...
->  c	110a40	__RU_l_________H______t_________________F_1
->  d	110a41	__RU_l__________T_____t_________________F_1
->  e	110a42	__RU_l__________T_____t_________________F_1   <-- first read
->  f	110a43	__RU_l__________T_____t_________________F_1   <-- first readahead flag
->  10	13e7a8	___U_l_________H______t_________________F_1
->  ...
->  20	137a00	___U_l_________H______t_______P______I__F_1   <-- second readahead flag (20 - 2f)
->  21	137a01	___U_l__________T_____t_______P______I__F_1
->  ...
->  3f	10d4af	___U_l__________T_____t_______P_________F_1
->  [first readahead: ra_size = 32, req_count = 15, async_size = 17]
-> 
-> When reading 64k data (same for 61-63k range, where last_index is page-aligned
-> in filemap_get_pages()), 128k readahead is triggered via page_cache_sync_ra()
-> and the PG_readahead flag is set on the next folio (the one containing 0x10 page).
-> 
-> When reading 60k data, 128k readahead is also triggered via page_cache_sync_ra().
-> However, in this case the readahead flag is set on the 0xf page. Although the
-> requested read size (req_count) is 60k, the actual read will be aligned to
-> folio size (64k), which triggers the readahead flag and initiates asynchronous
-> readahead via page_cache_async_ra(). This results in two readahead operations
-> totaling 256k.
-> 
-> The root cause is that when the requested size is smaller than the actual read
-> size (due to folio alignment), it triggers asynchronous readahead. By changing
-> last_index alignment from page size to folio size, we ensure the requested size
-> matches the actual read size, preventing the case where a single read operation
-> triggers two readahead operations.
-> 
-> After applying the patch:
->  # echo 3 > /proc/sys/vm/drop_caches
->  # dd if=test of=/dev/null bs=60k count=1
->  # ./page-types -r -L -f  /mnt/xfs/test
->  foffset	offset	flags
->  0	136d4c	__RU_l_________H______t_________________F_1
->  1	136d4d	__RU_l__________T_____t_________________F_1
->  2	136d4e	__RU_l__________T_____t_________________F_1
->  3	136d4f	__RU_l__________T_____t_________________F_1
->  ...
->  c	136bb8	__RU_l_________H______t_________________F_1
->  d	136bb9	__RU_l__________T_____t_________________F_1
->  e	136bba	__RU_l__________T_____t_________________F_1   <-- first read
->  f	136bbb	__RU_l__________T_____t_________________F_1
->  10	13c2cc	___U_l_________H______t______________I__F_1   <-- readahead flag
->  11	13c2cd	___U_l__________T_____t______________I__F_1
->  12	13c2ce	___U_l__________T_____t______________I__F_1
->  13	13c2cf	___U_l__________T_____t______________I__F_1
->  ...
->  1c	1405d4	___U_l_________H______t_________________F_1
->  1d	1405d5	___U_l__________T_____t_________________F_1
->  1e	1405d6	___U_l__________T_____t_________________F_1
->  1f	1405d7	___U_l__________T_____t_________________F_1
->  [ra_size = 32, req_count = 16, async_size = 16]
-> 
-> The same phenomenon will occur when reading from 49k to 64k. Set the readahead
-> flag to the next folio.
-> 
-> Because the minimum order of folio in address_space equals the block size (at
-> least in xfs and bcachefs that already support bs > ps), having request_count
-> aligned to block size will not cause overread.
-> 
-> Co-developed-by: Chi Zhiling <chizhiling@kylinos.cn>
-> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
-> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+On Fri, 11 Jul 2025 at 13:47, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> It's has been reported that some Samsung platforms fails to boot with
+> genpd's new sync_state support.
+>
+> Typically the problem exists for platforms where bootloaders are turning on
+> the splash-screen and handing it over to be managed by the kernel. However,
+> at this point, it's not clear how to correctly solve the problem.
+>
+> Although, to make the platforms boot again, let's add a temporary hack in
+> the samsung power-domain provider driver, which enforces a sync_state that
+> allows the power-domains to be reset before consumer devices starts to be
+> attached.
+>
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Link: https://lore.kernel.org/all/212a1a56-08a5-48a5-9e98-23de632168d0@samsung.com
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-I agree with analysis of the problem but not quite with the solution. See
-below.
+Marek, Krzysztof thanks for reviewing and testing!
 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 765dc5ef6d5a..56a8656b6f86 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2584,8 +2584,9 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
->  	unsigned int flags;
->  	int err = 0;
->  
-> -	/* "last_index" is the index of the page beyond the end of the read */
-> -	last_index = DIV_ROUND_UP(iocb->ki_pos + count, PAGE_SIZE);
-> +	/* "last_index" is the index of the folio beyond the end of the read */
-> +	last_index = round_up(iocb->ki_pos + count, mapping_min_folio_nrbytes(mapping));
-> +	last_index >>= PAGE_SHIFT;
+I have applied for this for next!
 
-I think that filemap_get_pages() shouldn't be really trying to guess what
-readahead code needs and round last_index based on min folio order. After
-all the situation isn't special for LBS filesystems. It can also happen
-that the readahead mark ends up in the middle of large folio for other
-reasons. In fact, we already do have code in page_cache_ra_order() ->
-ra_alloc_folio() that handles rounding of index where mark should be placed
-so your changes essentially try to outsmart that code which is not good. I
-think the solution should really be placed in page_cache_ra_order() +
-ra_alloc_folio() instead.
+Kind regards
+Uffe
 
-In fact the problem you are trying to solve was kind of introduced (or at
-least made more visible) by my commit ab4443fe3ca62 ("readahead: avoid
-multiple marked readahead pages"). There I've changed the code to round the
-index down because I've convinced myself it doesn't matter and rounding
-down is easier to handle in that place. But your example shows there are
-cases where rounding down has weird consequences and rounding up would have
-been better. So I think we need to come up with a method how to round up
-the index of marked folio to fix your case without reintroducing problems
-mentioned in commit ab4443fe3ca62.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> ---
+>  drivers/pmdomain/samsung/exynos-pm-domains.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
+> index 9b502e8751d1..5d478bb37ad6 100644
+> --- a/drivers/pmdomain/samsung/exynos-pm-domains.c
+> +++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
+> @@ -147,6 +147,15 @@ static int exynos_pd_probe(struct platform_device *pdev)
+>                                 parent.np, child.np);
+>         }
+>
+> +       /*
+> +        * Some Samsung platforms with bootloaders turning on the splash-screen
+> +        * and handing it over to the kernel, requires the power-domains to be
+> +        * reset during boot. As a temporary hack to manage this, let's enforce
+> +        * a sync_state.
+> +        */
+> +       if (!ret)
+> +               of_genpd_sync_state(np);
+> +
+>         pm_runtime_enable(dev);
+>         return ret;
+>  }
+> --
+> 2.43.0
+>
 
