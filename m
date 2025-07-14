@@ -1,100 +1,181 @@
-Return-Path: <linux-kernel+bounces-730164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 681EEB040E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:03:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00F65B040E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB8431883D32
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:03:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14CE8188B916
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469BF254874;
-	Mon, 14 Jul 2025 14:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6B9254AF3;
+	Mon, 14 Jul 2025 14:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="RA+LIWrj"
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmaXUJhO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3CD1FDA94;
-	Mon, 14 Jul 2025 14:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C286E24DCEF;
+	Mon, 14 Jul 2025 14:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752501797; cv=none; b=bS4/HV645GbSBzBmTbbFyZr5KysRubDHGx1VWMK2lrrIb9ImC1WOkv24fyd+zxznSOzC6hiRWGxwpGuof2f98iovru42U+mutRnItZJDz+bgCSC+ZhXWYAM8aBAv6T7/OIKTwFu4ZZljGWqoEeKENbXr/c3xUjF5nc1jRcUP/Hk=
+	t=1752501882; cv=none; b=P1qDba/ZVmz3PkL8ydrC46ayFN1NxvywHfyvD2euAqX/lfLVDwCwo+2Huw2yB26DrLbJ+0w6m8wVQAleM1hXlrY8aSxPhBSzB1JZWFCQsgPYlttfMzlc7hwHazV04ACUZYlrwi+zORyjTjpl2u0wjarhVr+on5jRfsajbdUDgbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752501797; c=relaxed/simple;
-	bh=A7WlxUnNpImSsGbjOxRFg3xdaaOHXi5Txv+vIAdoa4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=egXZQgPGL9B6rhAHVKq/ZD3YPQF6/n1XfohKZUzmoRbfBU8HzZOT5EelyztkHLjx49nnqzEndQDRIF2JZJgRU/HxU1kaS0QWAPfTvjkDaRbaaVQXSBBHsecT4mQTKaTn85/fGu4TObsZd+Cx3sMp3kbHxQh6dKQYB/Lke9HxHDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=RA+LIWrj; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:Content-Type:MIME-Version:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=q4CbpbmpjajkKumLluX7ElNNQCOsTWVd86WNCYP+jzU=; b=RA+LIWrj5gK1iIfxmZJnx6LQAo
-	6L4MeokPWC2pjpUOsMQ3bK55HP+OEXG/F2vc3ONWO//UItrUwSaSuTxXSKcZnGQrcYTxE55eDzZvV
-	9DLKnrrDEP/aMb0hGW+8I55CH1NU/+NuWcYnKeq3cODqIP34sSZG0z8/Rp+lpmitJtCc5ySjKe5/I
-	QV6mulaccXqQWMVvlg/7LOC1XCpX9MZ3IOuwcgM/60rmtTKjHXnhoFRES4QDdQ/VkwJLet5F208Mu
-	NS31bpatkhYKkgfkyVC+/9HmkvjJhR37kXyKC4jXmTki2EVccYq51hY77nixR9OXxMOsYBO3fvybO
-	EfahUn5w==;
-Received: from authenticated user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.94.2)
-	(envelope-from <weepingclown@debian.org>)
-	id 1ubJlx-00173W-Mm; Mon, 14 Jul 2025 14:03:13 +0000
-Date: Mon, 14 Jul 2025 19:33:10 +0530
-From: Ananthu C V <weepingclown@debian.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	~lkcamp/patches@lists.sr.ht, koike@igalia.com,
-	weepingclown@debian.org
-Cc: ~lkcamp/patches@lists.sr.ht, koike@igalia.com,
-	Ananthu C V <weepingclown@debian.org>
-Subject: [PATCH] staging: rtl8723bs: remove unncessary multiple blank lines
-Message-ID: <20250714140307.51506-1-weepingclown@debian.org>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	~lkcamp/patches@lists.sr.ht, koike@igalia.com
+	s=arc-20240116; t=1752501882; c=relaxed/simple;
+	bh=YH668rpFJXukxr+2YwtKp1L0+P3LzA2wA6CXb2BnnQg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Y/3bAfnIjH8GU2uYmZyGDYS0NnD+S2E9VaPrp6gBoWbeI3WucPgF2zHCvvZkoTywhO91KPkshZh4lVagGJM9b9J5YcXfAOoJ4OnqFoxKpE3jezmp0tpEnCu38Vb2mWrT3iFiS+RbykPQ1uaaS4g3Vm2NA/902F2s5gNJjic9Ftw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmaXUJhO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7722C4CEED;
+	Mon, 14 Jul 2025 14:04:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752501882;
+	bh=YH668rpFJXukxr+2YwtKp1L0+P3LzA2wA6CXb2BnnQg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tmaXUJhOO8qybGoimCIa4isgnq+xkf3T3BhrXkU9fzm+cA2Ch6J72q09lN5cfBjbE
+	 WzYmXaE2GRADoAZYwrFIopbZZ8tplLswF9KfPSXHlcjiPtMtGG2zRgeynf604KU20M
+	 2r2teSMcYiyoGttJ57Ao7otA0AJFGpL/3Zp1xhQL71SpCMthxrdauPxO217kK4hB9V
+	 QjPp9LmUnY/GmmzhUMOxfA9e4PqLO+wvMpZW81AS6zNgCMXHb4QKj8gCNiJG45aQiw
+	 Xsstnu66NOxAgnx5klLX7njL3Qkn9EAFrQQbGcn/WIeDGnWTl2dP4gcJjRUT7Wesmq
+	 FWQLsc+kIJKfw==
+Date: Mon, 14 Jul 2025 23:04:38 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Andrii Nakryiko <andrii@kernel.org>, Alejandro Colomar <alx@kernel.org>,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, x86@kernel.org, Song Liu
+ <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, John Fastabend
+ <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Alan Maguire
+ <alan.maguire@oracle.com>, David Laight <David.Laight@ACULAB.COM>, Thomas
+ =?UTF-8?B?V2Vpw59zY2h1aA==?= <thomas@t-8ch.de>, Ingo Molnar
+ <mingo@kernel.org>
+Subject: Re: [PATCHv5 22/22] man2: Add uprobe syscall page
+Message-Id: <20250714230438.c5494ba28608e9466d676763@kernel.org>
+In-Reply-To: <20250711082931.3398027-23-jolsa@kernel.org>
+References: <20250711082931.3398027-1-jolsa@kernel.org>
+	<20250711082931.3398027-23-jolsa@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email 2.39.5
-Organization: The Debian Project
-X-Debian-User: weepingclown
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-fix "CHECK: Please don't use multiple blank lines" in
-drivers/staging/rtl8723bs/os_dep/os_intfs.c:102
+On Fri, 11 Jul 2025 10:29:30 +0200
+Jiri Olsa <jolsa@kernel.org> wrote:
 
-Signed-off-by: Ananthu C V <weepingclown@debian.org>
----
-Hello! This is my first patch, any feedback is very much
-appreciated!
----
- drivers/staging/rtl8723bs/os_dep/os_intfs.c | 2 --
- 1 file changed, 2 deletions(-)
+> Changing uretprobe syscall man page to be shared with new
+> uprobe syscall man page.
+> 
 
-diff --git a/drivers/staging/rtl8723bs/os_dep/os_intfs.c b/drivers/staging/rtl8723bs/os_dep/os_intfs.c
-index d4dc169e19d7..7b53a32094bc 100644
---- a/drivers/staging/rtl8723bs/os_dep/os_intfs.c
-+++ b/drivers/staging/rtl8723bs/os_dep/os_intfs.c
-@@ -99,8 +99,6 @@ MODULE_PARM_DESC(rtw_ant_num, "Antenna number setting");
- static int rtw_antdiv_cfg = 1; /*  0:OFF , 1:ON, 2:decide by Efuse config */
- static int rtw_antdiv_type; /* 0:decide by efuse  1: for 88EE, 1Tx and 1RxCG are diversity.(2 Ant with SPDT), 2:  for 88EE, 1Tx and 2Rx are diversity.(2 Ant, Tx and RxCG are both on aux port, RxCS is on main port), 3: for 88EE, 1Tx and 1RxCG are fixed.(1Ant, Tx and RxCG are both on aux port) */
- 
--
--
- static int rtw_hw_wps_pbc;
- 
- int rtw_mc2u_disable;
+Looks good to me.
+
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks,
+
+> Cc: Alejandro Colomar <alx@kernel.org>
+> Reviewed-by: Alejandro Colomar <alx@kernel.org>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  man/man2/uprobe.2    |  1 +
+>  man/man2/uretprobe.2 | 36 ++++++++++++++++++++++++------------
+>  2 files changed, 25 insertions(+), 12 deletions(-)
+>  create mode 100644 man/man2/uprobe.2
+> 
+> diff --git a/man/man2/uprobe.2 b/man/man2/uprobe.2
+> new file mode 100644
+> index 000000000000..ea5ccf901591
+> --- /dev/null
+> +++ b/man/man2/uprobe.2
+> @@ -0,0 +1 @@
+> +.so man2/uretprobe.2
+> diff --git a/man/man2/uretprobe.2 b/man/man2/uretprobe.2
+> index bbbfb0c59335..df0e5d92e5ed 100644
+> --- a/man/man2/uretprobe.2
+> +++ b/man/man2/uretprobe.2
+> @@ -2,22 +2,28 @@
+>  .\"
+>  .\" SPDX-License-Identifier: Linux-man-pages-copyleft
+>  .\"
+> -.TH uretprobe 2 (date) "Linux man-pages (unreleased)"
+> +.TH uprobe 2 (date) "Linux man-pages (unreleased)"
+>  .SH NAME
+> +uprobe,
+>  uretprobe
+>  \-
+> -execute pending return uprobes
+> +execute pending entry or return uprobes
+>  .SH SYNOPSIS
+>  .nf
+> +.B int uprobe(void);
+>  .B int uretprobe(void);
+>  .fi
+>  .SH DESCRIPTION
+> +.BR uprobe ()
+> +is an alternative to breakpoint instructions
+> +for triggering entry uprobe consumers.
+> +.P
+>  .BR uretprobe ()
+>  is an alternative to breakpoint instructions
+>  for triggering return uprobe consumers.
+>  .P
+>  Calls to
+> -.BR uretprobe ()
+> +these system calls
+>  are only made from the user-space trampoline provided by the kernel.
+>  Calls from any other place result in a
+>  .BR SIGILL .
+> @@ -26,22 +32,28 @@ The return value is architecture-specific.
+>  .SH ERRORS
+>  .TP
+>  .B SIGILL
+> -.BR uretprobe ()
+> -was called by a user-space program.
+> +These system calls
+> +were called by a user-space program.
+>  .SH VERSIONS
+>  The behavior varies across systems.
+>  .SH STANDARDS
+>  None.
+>  .SH HISTORY
+> +.TP
+> +.BR uprobe ()
+> +TBD
+> +.TP
+> +.BR uretprobe ()
+>  Linux 6.11.
+>  .P
+> -.BR uretprobe ()
+> -was initially introduced for the x86_64 architecture
+> -where it was shown to be faster than breakpoint traps.
+> -It might be extended to other architectures.
+> +These system calls
+> +were initially introduced for the x86_64 architecture
+> +where they were shown to be faster than breakpoint traps.
+> +They might be extended to other architectures.
+>  .SH CAVEATS
+> -.BR uretprobe ()
+> -exists only to allow the invocation of return uprobe consumers.
+> -It should
+> +These system calls
+> +exist only to allow the invocation of
+> +entry or return uprobe consumers.
+> +They should
+>  .B never
+>  be called directly.
+> -- 
+> 2.49.0
+> 
+
+
 -- 
-2.39.5
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
