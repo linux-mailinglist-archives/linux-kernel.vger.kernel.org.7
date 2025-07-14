@@ -1,120 +1,102 @@
-Return-Path: <linux-kernel+bounces-730780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D14B049BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:48:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F7EB049B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CF551A6130E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:48:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 783903BC548
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520AA27603C;
-	Mon, 14 Jul 2025 21:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46EF1CEADB;
+	Mon, 14 Jul 2025 21:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DA9yG1kF"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jOxmwhVC"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B07024679C
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 21:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52039190676;
+	Mon, 14 Jul 2025 21:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752529677; cv=none; b=r14VL9oDNal+KrzSKbroIzyhyBIjayZpnlo2RpnC6EZ0NlKrgM7DrEAnV8o0qoa6uh8buAqeKN13KEtT1q+oOJehJsHobANxBJnjrB3yf/xIQLe+ugp2UZfXv5z/suSsaf6uic0ZBTIJ6lxEEsmw+Q6WrgtW3Dn9rRhRhTHl8dc=
+	t=1752529675; cv=none; b=uAF1Q5jTw5bsDd5K5QyTvIzRXol8MF0V8axeA4gLK1NTUL7ZuZ1xS9piPaynN7iQC+PiiEPzonT2pw4vG81w12CQJMbFgeZkOXp57XzpzgHXRVINessDMximR2dSt+I8ZmGUJWnhNEwLMTK46LrcmPrlMOVR3krKLHVSYkXcuZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752529677; c=relaxed/simple;
-	bh=V9Y2NIs0QY+zYv8H9yC29XGZyfNuVxgSGOBvL77XYk4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aOVncMPQOunNEGRfEnHn+AD1/G1W9gQVB6n5Xbr4XxSgpGbpsqru7ZFCuEjOsHPqSuLzkGJoCqR28sioTdrVv5lsV6+BMqNJqoHCLZgY26Q2E0yRaGsir6z4WP8wsP7+yfhfHudzJkG4fzNRQWOwGR04wlWnjN6aDHm3X2IUKWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DA9yG1kF; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23c8a5053c2so46868985ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:47:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1752529672; x=1753134472; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fHUobGGDL83F/rNDnQcpYA+2CpRw+ILTCJaorukvyyU=;
-        b=DA9yG1kFPrAZESQ3fn+cHI6fSd7LVZ0B/+X9YsZb4qR69JXTHB5IOYCuktbd5JWEJb
-         ufrjtKbTql9m2bj1mLaFpRWlq7d2gE7asVkvqpUTG/CzRZNTGP+5So3gbo8nOUXl+Yj7
-         d30xDCgo+gwLJFk2AX/j7pil8l59Y+2cFt4+8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752529672; x=1753134472;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fHUobGGDL83F/rNDnQcpYA+2CpRw+ILTCJaorukvyyU=;
-        b=q5DC/+aOdSy9h07HYfvEOCE+MDrB0mBO/1xRyOGtl3WlfAtR6T54rE8AcsEFRyaTRS
-         DI0ezZo3zLkxCsrf3wWtCMTfXsoxQ1U+FY+UL1FWDzAGy5LrhggDkOrSUdpJHBZd9gz6
-         bOUKmKjix+/FHOc5HtpO2c0AlXCNlNXvztdSgTqiiFUlkqtgx+szKV8DLWA4h6fJiQXA
-         ih41YYk/vrHXFLuDt8SiGu4ywj9TZaBgqCzhSNoiwkGY5gQwLpDqovQzQAKVCUczrjhE
-         Cxl+fvDOghCG703F9TyvPeGTQ6kIpfQGKUzWG1QnIkePxrEJGfXH02BD/2YIquLGj62e
-         aupw==
-X-Forwarded-Encrypted: i=1; AJvYcCWULEgg+goSr1gGzPVmadyJH/N6c0ILb+jg3UXLHrloAMhBAqEkV5UVaQQEHjx17WpZyAa99b1dAtzYJsY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZlq61J2z0iKIiD/TtuAaseb99YKpjuAivnmUAmz1QlKPxF+LO
-	VDDYYxS1d8hUCRxM3D3JbY3zq6p3ag/SecS6Zs7K6/Dh3ps2hVk4/scKitX3z/3PEfGEpLAWBHM
-	JUz4=
-X-Gm-Gg: ASbGncsKBoAEkHWsiCgzaMl9ijch3rCdfQwls3fH5IkUkFvtQIKN6yVr0uR/xPCUtX9
-	s1Oy5q/ap49dYSzhDDbsicGp+8OHvW/0v/P9Nc2plzlY30x8sr8Oi5wf1olDdFAbnJ754c8iHuS
-	vtUsmdsfabbJ9u6VZtMWopRw+43kMg3aJbKMOJQnMU2W1kHnOjw+aeU7lQY1R04+AvWR3CyBsAQ
-	PTLEonY59DZe7p2N1o1c3Xqr04kMqJNqovNJbUge/aV9Twik0N0GHbuXx+0Z0KJMPvn+0kJ+CI2
-	Uz2Ta01QPK0hF8L/EkO+qUrFdn0boBApjrFbYD8TElOJOg2wzNM7jsZJJV82GNGiPCrns5Ew9zF
-	QGBCSEYNUqSDyMKX3pJBSAYfJTc2+gJIEj4utwrLbu7DxkaCy6hR0ZcaufJmutg==
-X-Google-Smtp-Source: AGHT+IFV6r2XWFX5UG0dTOzS/YT0EzuvCy+rzf8tyKGTx7OVvyzt+c+0oPJQdfpM9wS+MlmHKFym/w==
-X-Received: by 2002:a17:902:dace:b0:224:910:23f6 with SMTP id d9443c01a7336-23df0961d6cmr227312145ad.45.1752529672006;
-        Mon, 14 Jul 2025 14:47:52 -0700 (PDT)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com. [209.85.216.42])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4359aa9sm103376895ad.208.2025.07.14.14.47.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 14:47:48 -0700 (PDT)
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3122368d7c4so3960629a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:47:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU5Ug3QQY1XPRC8DFL4WXIoIfWPgzpiBkl6QsDwiQxo0xyW9bZuLt7yKSHmOL6DpVhOhCNPwm7oYEG+/q0=@vger.kernel.org
-X-Received: by 2002:a17:90b:2f03:b0:312:e90b:419e with SMTP id
- 98e67ed59e1d1-31c50d7b487mr22879682a91.12.1752529663338; Mon, 14 Jul 2025
- 14:47:43 -0700 (PDT)
+	s=arc-20240116; t=1752529675; c=relaxed/simple;
+	bh=zzl3UBEyb18LESYVFulpTvwL621ur031PwvoAGDIMc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=m5/NH+tsVdKNwQomtcUjARsvkNP5anLlkJq/YWdx+vbG5OLGhMe/s5KRHVWDxTCtt2h9IZdC/TTQ7YChNAw1zCgi34dd7tgSmP37OmXnHC0HNBY1odyDoYWANEgb5Odbi7fF53hBuM2r0+S4jWpwqwpcNwkttGDDRRJfy/C/9kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=jOxmwhVC; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752529562;
+	bh=W/fRJBCMj5GRLGBKfl+iK3mpOdEh9YZOTtbtk3QZG3E=;
+	h=Date:From:To:Cc:Subject:From;
+	b=jOxmwhVCXo08MeTbb6QpW+imAKY0GUzp1el+n9m5L0yre5CRjzJn/EPC1ncPlyJaU
+	 BNnVHNx11wdkbu03DlB0D7yISYkuWnrI7lPULXzIwoecmCR80+ehajnjBeMHAe1bnZ
+	 6BaZL/1vsbERDFuMieECYWEgLguAMKtiw5OZ0ugEJKAS9gIPraV3u24JMDrpBiQbdd
+	 nAc+jVDWtFiyaQuw4J+W4u35S7HRJZ3fMnDxIJ2XgBvSejt9C+yKobO989QeAl3jWs
+	 2CFq7dLsAwa5cEtmrwhiDikUTRqGOVBbL3X8NkOtVKz2lQhIa6Xc+orVNEvS/llvgW
+	 rbbJGaIj43mbg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bgwqY3L1hz4w2Q;
+	Tue, 15 Jul 2025 07:46:01 +1000 (AEST)
+Date: Tue, 15 Jul 2025 07:47:44 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the tip tree
+Message-ID: <20250715074744.5cf446ec@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708073901.90027-1-me@brighamcampbell.com> <20250708073901.90027-4-me@brighamcampbell.com>
-In-Reply-To: <20250708073901.90027-4-me@brighamcampbell.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 14 Jul 2025 14:47:31 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XJ8yqzyivLTrVCzjtNOH1Y8BUOS_U80es8vJGBt3AdCg@mail.gmail.com>
-X-Gm-Features: Ac12FXwFl16Z6-RJd6zYJ2xS_PM42hpyLDaAqwQv40cOctjOMerkyA2E6guYjpo
-Message-ID: <CAD=FV=XJ8yqzyivLTrVCzjtNOH1Y8BUOS_U80es8vJGBt3AdCg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] drm: docs: Update task from drm TODO list
-To: Brigham Campbell <me@brighamcampbell.com>
-Cc: tejasvipin76@gmail.com, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev, dri-devel@lists.freedesktop.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Jonathan Corbet <corbet@lwn.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/IMVtJ_JCbtZPx9tGq0ROLKB";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/IMVtJ_JCbtZPx9tGq0ROLKB
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi all,
 
-On Tue, Jul 8, 2025 at 12:39=E2=80=AFAM Brigham Campbell <me@brighamcampbel=
-l.com> wrote:
->
-> Update TODO item from drm documentation to contain more applicable
-> information regarding the removal of deprecated MIPI DSI functions and
-> no longer reference functions which have already been removed from the
-> kernel.
->
-> Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
-> ---
->  Documentation/gpu/todo.rst | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
+Commits
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+  14056ab8aa1d ("x86/tools: insn_sanity.c: Emit standard build success mess=
+ages")
+  122b69a53b3f ("x86/tools: insn_decoder_test.c: Emit standard build succes=
+s messages")
+
+are missing a Signed-off-by from their committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/IMVtJ_JCbtZPx9tGq0ROLKB
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh1ewEACgkQAVBC80lX
+0GwxEQf8DDJn30HSxnW/XR1beBGmT9Oc9+SInajHLerTtQ20qD25ZbdCxVlHqSO6
+AvIpcJjRVPxoswbEZEedVVydu19BF986zVyRWigp3iIsWFzz8CJsG4AvKN7PzNFk
+C2sh6xMxSXVYo6epjUyfE+SvL8Y9moqcFHFFTg7x17pkOLgZ+63nMygp3xINps/r
+xPYJrG9oudnsTS85GcRFL/hSWMcp0eMk88l8/kANHZJkMdlznWrzfU9dCydY1pU8
+IcJ4rwpi9zg4RlXcHmVcPzmOOIcdK2nn/CU9inICyncRlXzCeagzD56afh2xPvHx
+oRLtiwrBkRgO+B4TI/pfbAJk7V8xFA==
+=+alu
+-----END PGP SIGNATURE-----
+
+--Sig_/IMVtJ_JCbtZPx9tGq0ROLKB--
 
