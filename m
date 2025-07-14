@@ -1,144 +1,187 @@
-Return-Path: <linux-kernel+bounces-729712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F897B03AA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:18:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3539B03AA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFB7B189EE62
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:18:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70C3A189F6EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07695240604;
-	Mon, 14 Jul 2025 09:17:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33CB23F41F
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7337241116;
+	Mon, 14 Jul 2025 09:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="o7n2dh3D";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mBQmaIad";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="o7n2dh3D";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mBQmaIad"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773CF23F424
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752484656; cv=none; b=oZqVAgBrEd5NjyJKtI5IKTgeQSuXYn41AjedXIdSqu8S3XaDhHx46iP28Fff3AajN+toY6Z2Kss65eKEXh94LlbWBIYqScMkml25Pxq6VkqKD4e4679VeaE9g/5A47P+q5zkeG2nt55z7kDxN7pinGS2kWz0XYr+TsoAgYDKQ/4=
+	t=1752484701; cv=none; b=e6/UCWmez3ojYiWQUB/03GrnSFyHtrCYOhc8rl32opo2Aig5jifkcuccG++tjOy0eY0gTjkobIIWLv1u0M1ozOt9U991iSExA1jmuae/3VlnWA07RJQNkcUT2/FiPtRqdxc3y0FZNer0vQFvb59Pd3YVHGNaukzfQAWfXGPJtdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752484656; c=relaxed/simple;
-	bh=0gZ5AhGTPZtnIMk2VsgCVuia39W6okU3+0ESn+WMaSs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mCOXhC1LVaREae3hzXxdutFHaPKnq1pnby5ukf77cxhoTbk8pwBcbpzkIM0U1GJCtHG1YAZa/AxJvljqcjhfBpiYrjZDpCzUuhGFAqweUSl38+hWvNTfqduw81pCB9gbeHKobl09+H0ZQuXiYIzW/t0iH4ctAjO1MI6KRYS2uEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DF721764;
-	Mon, 14 Jul 2025 02:17:24 -0700 (PDT)
-Received: from [10.57.83.2] (unknown [10.57.83.2])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5EE553F694;
-	Mon, 14 Jul 2025 02:17:32 -0700 (PDT)
-Message-ID: <e3c6b8a5-083e-4993-8a87-9fe96af0763d@arm.com>
-Date: Mon, 14 Jul 2025 10:17:30 +0100
+	s=arc-20240116; t=1752484701; c=relaxed/simple;
+	bh=RDrles8DEnLcUn3NIgE9ss2/zp1WroVHFMW2MtcuS54=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Yi2nGBbtbKJZuiqKrsyCDfFse4G+tdLd7ZiHzIv3ltYAPkvFozACDJhBbQlQadyAn3njlf6UnzitOcw7hQ5c7G4UIpAqNRzlI3zr3MQw3zHU8qWrs9u18jO8bmZEX9zVefNC26V8AK7fGYj2owKl3iJ3iRkREa8fPhLUsNKsTgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=o7n2dh3D; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mBQmaIad; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=o7n2dh3D; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mBQmaIad; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A09991F7A9;
+	Mon, 14 Jul 2025 09:18:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752484697; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Nc5HoPyCGpHMjcV/1O/vCk8mruKFytfnsClT8E+ahA0=;
+	b=o7n2dh3DbawO1/z2JepfpLrO+tnYWBXFr+AK/+kZXh7otcv6dOGx2ym0MoDNBxFDhOlSIx
+	kBKuxvoliIK4QesErukj/haIJp2zSyXXSxmqVakk6dq+R+PLmaFFRI+uUj5pB97oQXQDeT
+	GOxprd49alrhpfjtieeXcS6L1FMq5kA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752484697;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Nc5HoPyCGpHMjcV/1O/vCk8mruKFytfnsClT8E+ahA0=;
+	b=mBQmaIadydHnzQ4nB1CAgIZqV5udXlE28/t2F35Q4hfxVS2h/mekfwmkxLpwaUJELiLk0F
+	/o4ki0v8O029//CA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752484697; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Nc5HoPyCGpHMjcV/1O/vCk8mruKFytfnsClT8E+ahA0=;
+	b=o7n2dh3DbawO1/z2JepfpLrO+tnYWBXFr+AK/+kZXh7otcv6dOGx2ym0MoDNBxFDhOlSIx
+	kBKuxvoliIK4QesErukj/haIJp2zSyXXSxmqVakk6dq+R+PLmaFFRI+uUj5pB97oQXQDeT
+	GOxprd49alrhpfjtieeXcS6L1FMq5kA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752484697;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Nc5HoPyCGpHMjcV/1O/vCk8mruKFytfnsClT8E+ahA0=;
+	b=mBQmaIadydHnzQ4nB1CAgIZqV5udXlE28/t2F35Q4hfxVS2h/mekfwmkxLpwaUJELiLk0F
+	/o4ki0v8O029//CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6CA73138A1;
+	Mon, 14 Jul 2025 09:18:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kaNBGVnLdGg4PgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 14 Jul 2025 09:18:17 +0000
+Date: Mon, 14 Jul 2025 11:18:16 +0200
+Message-ID: <87frez871j.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the sound-asoc tree with the sound tree
+In-Reply-To: <20250714130122.58f531e5@canb.auug.org.au>
+References: <20250714130122.58f531e5@canb.auug.org.au>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/10] arm64: mm: Inline __TLBI_VADDR_RANGE() into
- __tlbi_range()
-Content-Language: en-GB
-To: Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>
-References: <20250711161732.384-1-will@kernel.org>
- <20250711161732.384-9-will@kernel.org>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250711161732.384-9-will@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[canb.auug.org.au,gmail.com,suse.de,renesas.com,vger.kernel.org];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
 
-On 11/07/2025 17:17, Will Deacon wrote:
-> The __TLBI_VADDR_RANGE() macro is only used in one place and isn't
-> something that's generally useful outside of the low-level range
-> invalidation gubbins.
+On Mon, 14 Jul 2025 05:01:22 +0200,
+Stephen Rothwell wrote:
 > 
-> Inline __TLBI_VADDR_RANGE() into the __tlbi_range() function so that the
-> macro can be removed entirely.
+> Hi all,
 > 
-> Signed-off-by: Will Deacon <will@kernel.org>
-> ---
->  arch/arm64/include/asm/tlbflush.h | 32 +++++++++++++------------------
->  1 file changed, 13 insertions(+), 19 deletions(-)
+> Today's linux-next merge of the sound-asoc tree got a conflict in:
 > 
-> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-> index 434b9fdb340a..8618a85d5cd3 100644
-> --- a/arch/arm64/include/asm/tlbflush.h
-> +++ b/arch/arm64/include/asm/tlbflush.h
-> @@ -185,19 +185,6 @@ static inline void __tlbi_level(const enum tlbi_op op, u64 addr, u32 level)
->  #define TLBIR_TTL_MASK		GENMASK_ULL(38, 37)
->  #define TLBIR_BADDR_MASK	GENMASK_ULL(36,  0)
->  
-> -#define __TLBI_VADDR_RANGE(baddr, asid, scale, num, ttl)		\
-> -	({								\
-> -		unsigned long __ta = 0;					\
-> -		unsigned long __ttl = (ttl >= 1 && ttl <= 3) ? ttl : 0;	\
-> -		__ta |= FIELD_PREP(TLBIR_BADDR_MASK, baddr);		\
-> -		__ta |= FIELD_PREP(TLBIR_TTL_MASK, __ttl);		\
-> -		__ta |= FIELD_PREP(TLBIR_NUM_MASK, num);		\
-> -		__ta |= FIELD_PREP(TLBIR_SCALE_MASK, scale);		\
-> -		__ta |= FIELD_PREP(TLBIR_TG_MASK, get_trans_granule());	\
-> -		__ta |= FIELD_PREP(TLBIR_ASID_MASK, asid);		\
-> -		__ta;							\
-> -	})
-> -
->  /* These macros are used by the TLBI RANGE feature. */
->  #define __TLBI_RANGE_PAGES(num, scale)	\
->  	((unsigned long)((num) + 1) << (5 * (scale) + 1))
-> @@ -426,8 +413,19 @@ static inline void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
->  		__tlbi_user(r ## op, arg);				\
->  		break
->  
-> -static __always_inline void __tlbi_range(const enum tlbi_op op, u64 arg)
-> +static __always_inline void __tlbi_range(const enum tlbi_op op, u64 addr,
-> +					 u16 asid, int scale, int num,
-> +					 u32 level, bool lpa2)
+>   sound/soc/codecs/hdac_hdmi.c
+> 
+> between commit:
+> 
+>   ed677858d4fe ("ALSA: hda: Move widget capability macros into hdaudio.h")
+> 
+> from the sound tree and commit:
+> 
+>   039de8f598dd ("ASoC: hdac_hdmi: remove hdac_hdmi_jack[_port]_init()")
+> 
+> from the sound-asoc tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc sound/soc/codecs/hdac_hdmi.c
+> index b33cd5178008,3aae0a2eb047..000000000000
+> --- a/sound/soc/codecs/hdac_hdmi.c
+> +++ b/sound/soc/codecs/hdac_hdmi.c
+> @@@ -24,7 -24,7 +24,6 @@@
+>   #include <sound/hda_i915.h>
+>   #include <sound/pcm_drm_eld.h>
+>   #include <sound/hda_chmap.h>
+> - #include "hdac_hdmi.h"
+>  -#include "../../hda/local.h"
+>   
+>   #define NAME_SIZE	32
+>   
 
-Same comment about signedness of level; I think it would be marginally less
-confusing to consistently consider level as signed, and it will help us when we
-get to D128 pgtables.
+The conflict resolution looks good, thanks.
 
->  {
-> +	u64 arg = 0;
-> +
-> +	arg |= FIELD_PREP(TLBIR_BADDR_MASK, addr >> (lpa2 ? 16 : PAGE_SHIFT));
-> +	arg |= FIELD_PREP(TLBIR_TTL_MASK, level > 3 ? 0 : level);
-> +	arg |= FIELD_PREP(TLBIR_NUM_MASK, num);
-> +	arg |= FIELD_PREP(TLBIR_SCALE_MASK, scale);
-> +	arg |= FIELD_PREP(TLBIR_TG_MASK, get_trans_granule());
-> +	arg |= FIELD_PREP(TLBIR_ASID_MASK, asid);
-> +
->  	switch (op) {
->  	__GEN_TLBI_OP_ASID_CASE(vae1is);
->  	__GEN_TLBI_OP_ASID_CASE(vale1is);
-> @@ -448,8 +446,6 @@ do {									\
->  	typeof(pages) __flush_pages = pages;				\
->  	int num = 0;							\
->  	int scale = 3;							\
-> -	int shift = lpa2 ? 16 : PAGE_SHIFT;				\
-> -	unsigned long addr;						\
->  									\
->  	while (__flush_pages > 0) {					\
->  		if (!system_supports_tlb_range() ||			\
-> @@ -463,9 +459,7 @@ do {									\
->  									\
->  		num = __TLBI_RANGE_NUM(__flush_pages, scale);		\
->  		if (num >= 0) {						\
-> -			addr = __TLBI_VADDR_RANGE(__flush_start >> shift, asid, \
-> -						scale, num, tlb_level);	\
-> -			__tlbi_range(op, addr);				\
-> +			__tlbi_range(op, __flush_start, asid, scale, num, tlb_level, lpa2); \
->  			__flush_start += __TLBI_RANGE_PAGES(num, scale) << PAGE_SHIFT; \
->  			__flush_pages -= __TLBI_RANGE_PAGES(num, scale);\
->  		}							\
+Mark, could you send an early PR for 6.17 about ASoC stuff?
+I'd like to catch up the conflicts earlier.
 
+
+thanks,
+
+Takashi
 
