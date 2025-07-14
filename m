@@ -1,142 +1,166 @@
-Return-Path: <linux-kernel+bounces-730682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96CDBB04812
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:49:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCC38B04813
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3D334A238B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:49:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 175D64A2662
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1873E2356D2;
-	Mon, 14 Jul 2025 19:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B242367DF;
+	Mon, 14 Jul 2025 19:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="iZkkifgV"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mrV7aq1d"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C32224B07
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 19:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C150E230997
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 19:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752522534; cv=none; b=n8H1MXJ/ekahNWZ66qSvizeMW1NFUZe65Zm/IW0XQGZ7R4RRpExfuj3e3vmhUD7p00BVrj8SXFG54rOgyOQHF7/wKZX+B99hI1amb2cdY96rsNJlc6k0ZSCCjmKtpjCESDMAYzkqNAWM5KA9P4R0IczUCrLJetbclP3xplPR4Bo=
+	t=1752522588; cv=none; b=GzZpJezZTPR5PhbIGogiugXvy3+2g8j6mPyu+vaXbG6/RvIMbDNAkyC6vnAPrTe3AEPgODkIRha+GBvUpnigoI0jTkia4IEQ5E00X9OnWW4vWkGDA1tUQ5FYDgjNk7QFvc4wtJc4ctVduFSOM3vGgnybd3oq+UCxufUIQ8k5y2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752522534; c=relaxed/simple;
-	bh=/OqO8KrP3XFMW5AC08c4eVH2qV3g/0RAGd61kyJsEMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tJ7hw09vsZeTrNB33acyFB3AEGiSyXedOUGRonShkQEaIG6GvHtFU/+IVd9zwxQwTtvT0rI2M/QrXc46+A2N4PYqPtghiAV3y+uHPWmY8CfmuP7j871pfudK1tluwIlwBttLycVGz3SqSFVSd4SFs96IGDtnLrUYaw6KvZOAN1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=iZkkifgV; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7e0d65a87e8so205027585a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:48:52 -0700 (PDT)
+	s=arc-20240116; t=1752522588; c=relaxed/simple;
+	bh=yWOqjM+tnJXB+iS8z8RSLG6VbltiE5lZkB4fv77IZdg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=SZlCS/rYQAkJpX4+nUeF4yBtwaETKjgLuS7Jbr0EHaozvy4Bxfy/XYnwOrEz/jLyBB3M9PAG1dceHqUBfwoG3N7/DOLnSETbJBZbD6c1DDpBKeg0OH00u/CM7ATPFz00zygn8mf5q6aaAy1Wcztk9z6em2Q0NkyCel8doa7rLuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mrV7aq1d; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b3bc9d9590cso4625254a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:49:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1752522532; x=1753127332; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wdmQGkqaTRtELb9tyNiAvIlRJ3GJE9Ml7mc5y7fdsNg=;
-        b=iZkkifgVGVUttnJ1l2Ph3DbPuk7VR6WGw6lWy4hdElMvPLG5oI6LqpoJbeEVGtQo6a
-         t/UPSCHuqOnm+JOF0G1V32x3DaX7R127vDRnOnVxSE18E3jg/XZ0JR2TDfLWLJr1JlWp
-         6itTGfYoYkycHGxXNMdlWofpGiVgm3YRRu+pb6EjXDyZBwNaFKRsS62Eqy0UVz6ukR+d
-         SKcAEmjNpIMdWBDTr1tk3BSpFr5p1guuV3JXN2DlRhEXjkWvV/J2HiM+87+Tvy/0ceCU
-         M0R9zk+E/WfwOOFPZBPk7fxEGEYU2WxP90wa0C18W3tFq+G1lU2SZ2yQP55CZvfPsyWk
-         VGfg==
+        d=google.com; s=20230601; t=1752522586; x=1753127386; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ICcg0kScB2Zwj8UqwZwwX6H3Hb3sbc2THMrldLCPfAE=;
+        b=mrV7aq1dFqDxTapv8jzGX8ekE7CbCBPrU54VhTHi7AiBfBjispbdVQbQ5/J2l7xTLs
+         ETphmykk5WEbzRoYKXK57QDPxsm2TcXZ+WnShdd8GA0jdmoxnQXMyjMTkRd3+B+5GRPY
+         eVSLY8IBW00BWNfacBDeW5cNIXm9Un+hxXCcC4ZjSM6E/MzQGAK5CZGpE244jZtK7YYc
+         UIlpmjC2rHto2Ksxv02HJ7gjjlpFFLyRl3KHHpvhhmgO1yNPn92tc9xYX6IHnTqe6AWX
+         A2spY2bSkjZvtNUlQhAx+5GXl+qWEjFk+hl1cxZdTQ3deZVAyPZdKPZP50AXph+yGGbC
+         RzLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752522532; x=1753127332;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wdmQGkqaTRtELb9tyNiAvIlRJ3GJE9Ml7mc5y7fdsNg=;
-        b=YrejBe3G/5gCsK/c7/LBTLovyqHMxrlqtKUZAri4M/7XUgKLNv7eQwFt8Mwmmj4tus
-         8lMrUpwhqOMAKoBiUr1wL5gX1wOulC1HzYy7EU5Pqhu/Dl428G56RygzPVEE2csVhUHz
-         NdHbXt5aCVTpMPHUsx0pPfWVReRv0P4KibJzn5ll13WVRJDDHvR8VxEUWtbNrKQhu9AB
-         HCrC4mMTk07be55JPwClVI8Qy7kHYzwvkov5QIUf/n7rOq0kLqul05jXjrR4SAzeQAfZ
-         qR/r6hWG72X1rhLLgykaCX+WkhI7+xK0oEPNZ31cdFaWUG6G4vLq0DmaDATfQ6GfpCr2
-         HUug==
-X-Forwarded-Encrypted: i=1; AJvYcCVaP+cILew7up8Fp35fHP40Wnq2K4JTlWw8GP/36K77tq2O0g9jkOgQEuQM2sIBT+D8gDXJdaFBM2U66jU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxCbCQkTyENtmP7V9KvqXCvQLDXg4NcTBnvtdVGZcufm0o8W/L
-	Knc9zZ/FLHe927LsSPJf40gDZqzJvqotdouUa3b43pbq3vzen0q96sX+poPGsl1sOA==
-X-Gm-Gg: ASbGnct21Ut75sNjpacpE5LKrROZO1v8tWQLakRgC0grhIms6L9Ns7gD4EPbzVLPQQH
-	FMWeI42nUiMikJV7zcHsVc/48tKkEYzCguZKigQ/3O0CIM677rcnDOg2VAA2zGdL6/V/zWV5WTz
-	CE0NaD9v74SP42e8IDaLY6jGjczbr8aNrShQ4hW0T9OBsUjlmmNRA3pP/cpfp4sajlSCd++EleT
-	k9VjhPH6EnoLLF8NHinENvnqtgz56g+J+PwuXjSA8+Dt7EXW2GMp7ChcucRkY0Jb6mujI10Uls8
-	EJRAM5M5lCIJWmVNYmxGTaz9mp6egKT3xcjk+M4jrOppdBDj60z9kfDiQcO14ua+DrH9pvDTs3Q
-	MvdTuzJzrad7uo0TNmG96rt4BuY628Pfufw==
-X-Google-Smtp-Source: AGHT+IFTA2R80j9SbfaEXRoWmzMLYIcjed2smzlomYCQTMT8aZeLxjZsPC8Si0dahaqbmaH2YaZPsQ==
-X-Received: by 2002:a05:620a:1d0a:b0:7e3:3288:8ec3 with SMTP id af79cd13be357-7e332889121mr347701285a.32.1752522531624;
-        Mon, 14 Jul 2025 12:48:51 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::401d])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7049799e874sm50884366d6.18.2025.07.14.12.48.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 12:48:51 -0700 (PDT)
-Date: Mon, 14 Jul 2025 15:48:48 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>
-Cc: bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [input?] [usb?] UBSAN: shift-out-of-bounds in s32ton (2)
-Message-ID: <ea7f1f42-273b-4c07-8bf2-769992dd9ced@rowland.harvard.edu>
-References: <68753a08.050a0220.33d347.0008.GAE@google.com>
- <f6e67c38-8d63-4536-827c-09757a8d5609@rowland.harvard.edu>
+        d=1e100.net; s=20230601; t=1752522586; x=1753127386;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ICcg0kScB2Zwj8UqwZwwX6H3Hb3sbc2THMrldLCPfAE=;
+        b=PVni5+ml5oYR2Z128F5YFB4Qx7Ih4YlOnfpuUbTqoLcx0k1ofI5xLO4aiqJm8GZGRp
+         J9pvJN9OvSY60We2WSg9ZSyCq+cCNbq+9i9iIb/jdR9uMIbAS3Vz8Z0jt44y4/zgEMtX
+         p/BYpIf475pLIFM0ZIuqD/6PdjJ1TSK5CLnsvu+gx1eBgr+Bd3dQkb/7wEKbG1ron9wi
+         EL9ZVFQVn2RN4zimmJJDD2omF3JBUgWgk4RdUygM9gIFJ8LXzw0B8NRfhF/dFUL9KtFe
+         ZQDjbz5G6ycsHbSeQOR1gMAKkkCwv4CRN9WlJp4BDJRMAYKy+n9SmcBYsOC00nEXLm0Y
+         AhpA==
+X-Forwarded-Encrypted: i=1; AJvYcCWVdX4MOHFmScsU7S0bSHjVMRYViI3s8nHm6GvtTrhBR9DHz/g3TyZWTsfGQRdu+QQy5QIMUuQZQPmk+BY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOij0w0VT6WUhZWthIkHpP1EGwzKzYghcUpwBwUFLmzTl7NC3W
+	Nt8VDk5YLuMwdIBUWL15IGTO0RLVuLYSf9SZJLLzekrLJDV5qQS+ixnD5To3R7o/pjGDC3pziy1
+	lTutCXVZiNesMF0FS6P0gU60pRw==
+X-Google-Smtp-Source: AGHT+IHYRx34pwTQ1/zxuK41iVUIxojsyjeG9fu7hIcirB2HtzSq/CDTqyAKgWSVpxntbG5X9IzCGePZMY1LK4n9RA==
+X-Received: from pfblm11.prod.google.com ([2002:a05:6a00:3c8b:b0:748:f270:c438])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a20:7f8e:b0:1f5:79c4:5da6 with SMTP id adf61e73a8af0-2311dc59daemr19721553637.5.1752522585949;
+ Mon, 14 Jul 2025 12:49:45 -0700 (PDT)
+Date: Mon, 14 Jul 2025 12:49:44 -0700
+In-Reply-To: <4c70424ab8bc076142e5f6e8423f207539602ff1.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f6e67c38-8d63-4536-827c-09757a8d5609@rowland.harvard.edu>
+Mime-Version: 1.0
+References: <diqzms9pjaki.fsf@ackerleytng-ctop.c.googlers.com>
+ <fe6de7e7d72d0eed6c7a8df4ebff5f79259bd008.camel@intel.com>
+ <aGNrlWw1K6nkWdmg@yzhao56-desk.sh.intel.com> <cd806e9a190c6915cde16a6d411c32df133a265b.camel@intel.com>
+ <diqzy0t74m61.fsf@ackerleytng-ctop.c.googlers.com> <04d3e455d07042a0ab8e244e6462d9011c914581.camel@intel.com>
+ <diqz7c0q48g7.fsf@ackerleytng-ctop.c.googlers.com> <a9affa03c7cdc8109d0ed6b5ca30ec69269e2f34.camel@intel.com>
+ <diqz1pqq5qio.fsf@ackerleytng-ctop.c.googlers.com> <53ea5239f8ef9d8df9af593647243c10435fd219.camel@intel.com>
+ <aHCdRF10S0fU/EY2@yzhao56-desk> <4c70424ab8bc076142e5f6e8423f207539602ff1.camel@intel.com>
+Message-ID: <diqzikju4ko7.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH 08/21] KVM: TDX: Increase/decrease folio ref for huge pages
+From: Ackerley Tng <ackerleytng@google.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>
+Cc: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>, 
+	"Du, Fan" <fan.du@intel.com>, "Hansen, Dave" <dave.hansen@intel.com>, 
+	"david@redhat.com" <david@redhat.com>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
+	"vbabka@suse.cz" <vbabka@suse.cz>, "Li, Zhiquan1" <zhiquan1.li@intel.com>, 
+	"Shutemov, Kirill" <kirill.shutemov@intel.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
+	"seanjc@google.com" <seanjc@google.com>, "Weiny, Ira" <ira.weiny@intel.com>, 
+	"Peng, Chao P" <chao.p.peng@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "tabba@google.com" <tabba@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "Annapurve, Vishal" <vannapurve@google.com>, 
+	"jroedel@suse.de" <jroedel@suse.de>, "Miao, Jun" <jun.miao@intel.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pgonda@google.com" <pgonda@google.com>, 
+	"x86@kernel.org" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 14, 2025 at 10:10:32AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    b4b4dbfa96de media: stk1160: use usb_alloc_noncoherent/usb..
-> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15a830f0580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=28729dff5d03ad1
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b63d677d63bcac06cf90
-> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1614418c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1257dd82580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/7301552ad828/disk-b4b4dbfa.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/c559b38fa1b6/vmlinux-b4b4dbfa.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/9c1da8b2a83f/bzImage-b4b4dbfa.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com
-> 
-> usb 4-1: config 0 interface 0 altsetting 0 has 1 endpoint descriptor, different from the interface descriptor's value: 9
-> usb 4-1: New USB device found, idVendor=045e, idProduct=07da, bcdDevice= 0.00
-> usb 4-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-> usb 4-1: config 0 descriptor??
-> microsoft 0003:045E:07DA.0001: ignoring exceeding usage max
-> microsoft 0003:045E:07DA.0001: unsupported Resolution Multiplier 0
-> ------------[ cut here ]------------
-> UBSAN: shift-out-of-bounds in drivers/hid/hid-core.c:69:16
-> shift exponent 4294967295 is too large for 32-bit type 'int'
-> CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.16.0-rc4-syzkaller-00314-gb4b4dbfa96de #0 PREEMPT(voluntary) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-> Workqueue: usb_hub_wq hub_event
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
->  ubsan_epilogue lib/ubsan.c:233 [inline]
->  __ubsan_handle_shift_out_of_bounds+0x27f/0x420 lib/ubsan.c:494
->  s32ton.cold+0x37/0x9c drivers/hid/hid-core.c:69
->  hid_output_field drivers/hid/hid-core.c:1841 [inline]
->  hid_output_report+0x36f/0x4a0 drivers/hid/hid-core.c:1874
->  __hid_request+0x1e0/0x3c0 drivers/hid/hid-core.c:1987
->  hidinput_change_resolution_multipliers drivers/hid/hid-input.c:1950 [inline]
->  hidinput_connect+0x1ada/0x2bd0 drivers/hid/hid-input.c:2327
+"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> writes:
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git c2ca42f190b6
+> On Fri, 2025-07-11 at 13:12 +0800, Yan Zhao wrote:
+>> > Yan, is that your recollection? I guess the other points were that although
+>> > TDX
+>> I'm ok if KVM_BUG_ON() is considered loud enough to warn about the rare
+>> potential corruption, thereby making TDX less special.
+>> 
+>> > doesn't need it today, for long term, userspace ABI around invalidations
+>> > should
+>> > support failure. But the actual gmem/kvm interface for this can be figured
+>> > out
+>> Could we elaborate what're included in userspace ABI around invalidations?
+>
+> Let's see what Ackerley says.
+>
+
+There's no specific invalidation command for ioctl but I assume you're
+referring to the conversion ioctl?
+
+There is a conversion ioctl planned for guest_memfd and the conversion
+ioctl can return an error. The process of conversion involves
+invalidating the memory that is to be converted, and for now,
+guest_memfd assumes unmapping is successful (like Yan says), but that
+can be changed.
+
+>> 
+>> I'm a bit confused as I think the userspace ABI today supports failure
+>> already.
+>> 
+>> Currently, the unmap API between gmem and KVM does not support failure.
+>
+> Great. I'm just trying to summarize the internal conversations. I think the
+> point was for a future looking user ABI, supporting failure is important. But we
+> don't need the KVM/gmem interface figured out yet.
+>
+
+I'm onboard here. So "do nothing" means if there is a TDX unmap failure,
+
++ KVM_BUG_ON() and hence the TD in question stops running,
+    + No more conversions will be possible for this TD since the TD
+      stops running.
+    + Other TDs can continue running?
++ No refcounts will be taken for the folio/page where the memory failure
+  happened.
++ No other indication (including HWpoison) anywhere in folio/page to
+  indicate this happened.
++ To round this topic up, do we do anything else as part of "do nothing"
+  that I missed? Is there any record in the TDX module (TDX module
+  itself, not within the kernel)?
+
+I'll probably be okay with an answer like "won't know what will happen",
+but just checking - what might happen if this page that had an unmap
+failure gets reused? Suppose the KVM_BUG_ON() is noted but somehow we
+couldn't get to the machine in time and the machine continues to serve,
+and the memory is used by 
+
+1. Some other non-VM user, something else entirely, say a database?
+2. Some new non-TDX VM?
+3. Some new TD?
+
+
+>> 
+>> In the future, we hope gmem can check if KVM allows a page to be unmapped
+>> before
+>> triggering the actual unmap.
 
