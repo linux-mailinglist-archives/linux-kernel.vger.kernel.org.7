@@ -1,174 +1,214 @@
-Return-Path: <linux-kernel+bounces-729262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31C73B03400
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 02:56:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AD1CB0340A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 03:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 778B71666DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 00:56:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 337251899CD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 01:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C025189F43;
-	Mon, 14 Jul 2025 00:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED511624DD;
+	Mon, 14 Jul 2025 01:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bLiXd8+L"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="L2Cl8Gez"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAA01CD0C
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 00:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A0C1FC3;
+	Mon, 14 Jul 2025 01:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752454606; cv=none; b=CRhd/CAUIqXAY3z5jetRcVG8NrpLQ64eqzraAdbfVw/kXJWoXyeeuu7A1epPwR0RSj9CzlJrwDd3cjwEFSL8fo4DFIfFPfNulZNtfEmrwl63zh7TkFoUCWHg/6JhLUEpI4f2S3+kpQWdMQD1iUwY3aIp4JUZvlT08aqBfefgc0g=
+	t=1752454827; cv=none; b=SLcdlBW4J2xkYnSEhnMC4Rn9nc6E+3/TXkA0qdy4mp00QjzFm7h43ao6W++VY6qxGA534WmVVyfUFPjDs7fXb+/bKghSznsIis68OjkoNBUP6GFtwIDTD05J7+l0jMbv6YtYrpVPHlg4sfXjqJjPXRYFBi8Ih4OoUWqnR7gO8m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752454606; c=relaxed/simple;
-	bh=Aj2wrqzNkDFUp0Qlcm9ZHkXFqT0KNjoQwLntUrA8h4w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N53Zk8bP9r6P63VY1pD/GkS37wbBbRV5LZ23mawR4ctwQWU+czcIBC9Fyr4I70B96Dd0E6uQI/j1DoRAn14n0OIoF6dIsFJaQ6uSMARgxXRPPFnYDo9KQfC2qKpEGRS3SSyJFXxSmrDwZrxM19YesqdlNQ51wd+l5jDtKN3BMi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bLiXd8+L; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752454602;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qUmVGWmiQ9qj6UDI8yyGeFapyi86on9NnjOakrMOqpk=;
-	b=bLiXd8+LtLU0OzbdzO/ANH6EO6G5V8QjtSjGPcap0esMuzMg0g5aNpliz5T3ZRs4gRbk3S
-	WRgDZx4///LPkIRUyiKbSBV95tKjNStKsV9KeUJPBUoUn6xyEa7xHjlVbRFp8bG6PUGdF4
-	eMLrrEVf3VZpy9svJSrWy0/Rgiar+7s=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-176-9xRW2Ud_P6ysE9jhP4q1VQ-1; Sun, 13 Jul 2025 20:56:41 -0400
-X-MC-Unique: 9xRW2Ud_P6ysE9jhP4q1VQ-1
-X-Mimecast-MFC-AGG-ID: 9xRW2Ud_P6ysE9jhP4q1VQ_1752454600
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b362d101243so3110045a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 17:56:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752454600; x=1753059400;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qUmVGWmiQ9qj6UDI8yyGeFapyi86on9NnjOakrMOqpk=;
-        b=g/lmZ/9xo3SmSQTfY8eJDU8/AuPpICCBwS64wdTGSIUZAsxA6DP82O5hsD0iVDw9bB
-         k4wFAtP2mU1Cjonpn8NMA4OmL/wTogp8/OJT3oRYo9utfcatvp8uuhzv6MSzN0p+5kMI
-         IJHTDtw5T0Dsp3OSZGgzndWb/vfPjbab7CR3g8SrOS/OVBisxukYJDyqFV3/h9VWimK5
-         8wpkAvp/akChEpcFkTOZypsgi2yBHqIY3zdqHPM0tFEL0oEnSfnQFIrGc1bv+yCDMdcn
-         DpAQ+wHo15mVezq8ObC0Unw/OTenwFbRED5Hy2QrhirUJhZKjM6UYI7ZFtRlNueU9dn6
-         k2QA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtHx16yS2H8jfwgDwES9teI/HlDVi7BxiNPru7AibVNHdv1CsAD+Qycbf/o+0SAS2VRH0nEYtClBcpCNc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgotfKP2x2PxPLkLc9dI42NJnqW8PzAViW7vxYHlLtGArrRemb
-	7O06MfXcRlrALxWosI7n1eOs/dNXn5kKPge4MXSeizmEBmIk7Q//S/W9bnAW1Ikzk4WEggQOcHQ
-	Jz/sv8UuSSB+FiyJ21AD5X9h1tyAKHPgmjzGTkrm6oAiWnGms8Xh3bWUvlJA0ud/eRQ==
-X-Gm-Gg: ASbGncui7yJTwM1gCntmfZNo47+O486NBSAtSbU6nFmo0WA5v3CrSZzor3G1/sKphN8
-	svl3cd681A06d76jddUoViD0NW2m1ok/AfvMQeslBzJFkRAffnJMCsKYCX8fYVQTJdJ2Y2toavW
-	hGNJA1oKYhiJVnhxRLOWsOr9M5ENSACbwdUTa2RdERVG4DkJf0MOXv+4FW6GEDr6mzuyNCSSqeV
-	6cR/o3VIP9qTKF/nlrvXZTv87ggVMPyFU97gPHg+75NGnOSD/O5VwvfC7awruc74zQxIwQzQm6i
-	Hz2DSZofA9PiOY0QdCF8nplAo+A7RtnA0VtMVRaPRA1P97iaw0QHhYL9XL0SjIHDi2MROKQPV4h
-	RUgQ=
-X-Received: by 2002:a05:6a20:a108:b0:1f5:95a7:8159 with SMTP id adf61e73a8af0-2313504eae8mr16343983637.10.1752454599958;
-        Sun, 13 Jul 2025 17:56:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEuM+Zi92A0hbUgn10WrjgmwNif+FKdGvokkBLHmwp/rW6/7cd0fjnuie824/YWyiFVdE8dUA==
-X-Received: by 2002:a05:6a20:a108:b0:1f5:95a7:8159 with SMTP id adf61e73a8af0-2313504eae8mr16343960637.10.1752454599481;
-        Sun, 13 Jul 2025 17:56:39 -0700 (PDT)
-Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe727e33sm9168382a12.68.2025.07.13.17.56.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Jul 2025 17:56:38 -0700 (PDT)
-Message-ID: <05605650-2dd2-4abf-b0a5-f727753db7f5@redhat.com>
-Date: Mon, 14 Jul 2025 10:56:28 +1000
+	s=arc-20240116; t=1752454827; c=relaxed/simple;
+	bh=/PImNDpsKBHTO5j8+6O63P7nRRG2EcEQFHDZOqoJskc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kR+ik5ApRKV7gCL9qoTBblD7DTuicKAC6cExWmgifcO43C1D4/OPZZUKKorh/9pDkPxcb2iHhtZTNuSvyveXi8V7Is69kmnTvsE0Cf8+T34nYRjp0ZJVYKLJ1PgIxu80/qLK+Z3ZidsNr9Eq/o4sL1k9TZuYecOs+sxb/oUdIBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=L2Cl8Gez; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 43FC020E25;
+	Mon, 14 Jul 2025 03:00:22 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id Kg2EVRnGv0KQ; Mon, 14 Jul 2025 03:00:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1752454820; bh=/PImNDpsKBHTO5j8+6O63P7nRRG2EcEQFHDZOqoJskc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=L2Cl8GezlIwKoGgZFR8yBr8t4BeY99hAAyG2YOMFivhA13G8l1yvip8kC9fOsAsDa
+	 0QfQnVByuNOBylf+8CkyBNKLvHl0WmYxPSBu5TQBbO1LUJlBF3FNt29WTOrWf6LnyJ
+	 y4zDEwyRudmKlhtTAFasswlprzXe2fZHP8eVb8iGJb8ZvzebnRdG1UVGcT8ocArvKK
+	 YG1WnAI3vPTipgF3WCudVKsN4iOHxXMXZWryN/IpfZXtkznwofBKsH0l6CoqeKnx08
+	 pywbyqrW52aTWNq38Tu2RvI4ETeG3DubsNIoqW6d836NLPrr3Xuf8E8oJDurYEYI/i
+	 j0N+xUOJkz16w==
+Date: Mon, 14 Jul 2025 01:00:08 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Alex Bee <knaerzche@gmail.com>, Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chukun Pan <amadeus@jmu.edu.cn>,
+	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/6] arm64: dts: rockchip: Add ROCK 2A/2F, Sige1 and
+ NanoPi Zero2
+Message-ID: <aHRWmMFTh7leEhrq@pie.lan>
+References: <20250712173805.584586-1-jonas@kwiboo.se>
+ <702dc4bb-7b3c-4647-b84f-8516989b0836@gmail.com>
+ <9aae8b30-23ae-4866-9ce8-02bbc8b44a82@kwiboo.se>
+ <88c7b90d-4c29-453b-9a5c-9679b371a3a9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 (RESEND) 00/20] Change ghes to use HEST-based offsets
- and add support for error inject
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Igor Mammedov <imammedo@redhat.com>, "Michael S . Tsirkin" <mst@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Shiju Jose <shiju.jose@huawei.com>, qemu-arm@nongnu.org,
- qemu-devel@nongnu.org, =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?=
- <philmd@linaro.org>, Ani Sinha <anisinha@redhat.com>,
- Dongjiu Geng <gengdongjiu1@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Peter Maydell <peter.maydell@linaro.org>,
- Shannon Zhao <shannon.zhaosl@gmail.com>, Yanan Wang
- <wangyanan55@huawei.com>, Zhao Liu <zhao1.liu@intel.com>,
- kvm@vger.kernel.org, Cleber Rosa <crosa@redhat.com>,
- Eduardo Habkost <eduardo@habkost.net>, Eric Blake <eblake@redhat.com>,
- John Snow <jsnow@redhat.com>, Marcel Apfelbaum <marcel.apfelbaum@gmail.com>,
- Markus Armbruster <armbru@redhat.com>, Michael Roth <michael.roth@amd.com>,
- linux-kernel@vger.kernel.org
-References: <cover.1749741085.git.mchehab+huawei@kernel.org>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <cover.1749741085.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <88c7b90d-4c29-453b-9a5c-9679b371a3a9@gmail.com>
 
-Hi Mauro,
+On Sun, Jul 13, 2025 at 10:56:59PM +0200, Alex Bee wrote:
+> Hi Jonas,
+> 
+> > Hi Alex,
+> > 
+> > On 7/13/2025 9:13 PM, Alex Bee wrote:
+> > > Hi list, Hi Jonas,
+> > > 
+> > > > This series adds dt-bindings and initial device tree for the following
+> > > > Rockchip RK3528A boards:
+> > > > - Radxa ROCK 2A/2F
+> > > > - ArmSoM Sige1
+> > > > - FriendlyElec NanoPi Zero2
+> > > 
+> > > this only sub-related to this series: Is there any particular reason, why
+> > > we call the compatible "rockchip,rk3528" and not "rockchip,rk3528a"? From
+> > > what I can see all boards currently supported (and those in this series)
+> > > are having the RK3528A version of the SoC. I didn't follow the development
+> > > here, but there are differences - I did a quick compare of the datasheets
+> > > of those two SoC versions - it looks like RK3528 version has USB3-DRD
+> > > controller, while RK3528A has USB3 host-only controller. Also it seems to
+> > > have different video codec IPs and the DRAM controller additionally
+> > > supports LPDDR4X.
+> > What datasheet versions did you check? I can only find:
+> > - RK3528 Rev 1.0 (2023-05-22)
+> > - RK3528A Rev 1.2 (2024-04-10)
+> I used
+> 
+> 2023-07-12 Revision V1.0
+> 
+> which didn't include these features - which is interesting: Why would a
+> SoC vendor not try to sell all features in the first place :)
+> 
+> But I now double checked in
+> 
+> 2025-05-12 Revision 1.4
+> 
+> and you are right: It appears there also for RK3528A.
+> 
+> The only difference I could now make out by comparing v1.4 of both versions
+> is the cipher engine: RK3528 additionally supports "SM2/SM3/SM4 cipher" -
+> but still it exists and additionally the different video codec (if mpp
+> userspace library is correct about that).
+> 
+> Anyway: My question was more about: Why didn't we choose the correct
+> compatible from the beginning? And of course the dts files would have to be
+> renamed if the compatible is changed, as they are named according to their
+> SoC-compatible.
 
-On 6/13/25 1:17 AM, Mauro Carvalho Chehab wrote:
-> Hi Michael,
-> 
-> This is v10 of the patch series, rebased to apply after release
-> 10.0. The only difference against v9 is a minor confict resolution.
-> 
-> I sent already the patch with conflicts, but, as you didn't pick,
-> I'm assuming you're opting to see the entire series again, as it
-> could make easier for you to use b4 or some other script you may
-> use to pick patches. So, let me resend the entire series.
-> 
-> It is nearly identical to v9 which addressed 3 issues:
-> 
-> - backward compatibility logic moved to version 10.0;
-> - fixed a compilation issue with target/arm/kvm.c (probably
->    caused by some rebase - funny enough, incremental
->    compilation was fine here);
-> - added two missing SPDX comments.
-> 
-> As ghes_record_cper_errors() was written since the beginning
-> to be public and used by ghes-cper.c. It ended being meged
-> earlier because the error-injection series become too big,
-> so it was decided last year to split in two to make easier for
-> reviewers and maintainers to discuss.
-> 
-> This series change the way HEST table offsets are calculated,
-> making them identical to what an OSPM would do and allowing
-> multiple HEST entries without causing migration issues. It open
-> space to add HEST support for non-arm architectures, as now
-> the number and type of HEST notification entries are not
-> hardcoded at ghes.c. Instead, they're passed as a parameter
-> from the arch-dependent init code.
-> 
-> With such issue addressed, it adds a new notification type and
-> add support to inject errors via a Python script. The script
-> itself is at the final patch.
-> 
-> ---
-> 
-> v10:
-> - rebased on the top of current upstream:
->    d9ce74873a6a ("Merge tag 'pull-vfio-20250611' of https://github.com/legoater/qemu into staging")
-> - solved a minor conflict
-> 
+Just like what Jonas said, I was not aware of any technical
+documentation at the time of writing the basic devicetree, and even for
+now the only datasheet I manage to find is the 2023 revision about
+RK3528 without A suffix, so I didn't realize the difference between
+RK3528 and RK3528A, but just followed the vendor code and devicetree[1],
+where only RK3528 is mentioned :-(
 
-[...]
+Regards,
+Yao Zi
 
-Just head up to check if this series has been merged? I don't see those patches
-show up in the latest upstream QEMU yet. The reason why I'm asking is the subsequent
-fix [1], which depends on this series.
+[1]: https://github.com/rockchip-linux/kernel, branch develop-5.10
 
-[1] https://lists.nongnu.org/archive/html/qemu-devel/2025-05/msg06433.html
-
-Thanks,
-Gavin
-
-
+> Regards,
+> Alex
+> > 
+> > And both list LPDDR4X support and the A-variant seem to list USB3-DRD
+> > support, did you mix them up above?
+> > 
+> > I think these SoCs are similar to rk3228/rk3229, rk3228h/rk3328 and now
+> > rk3528/rk3528a, in that only the second variant support VP9 decoding.
+> > 
+> > Use of rockchip,rk3528a compatible could be something to change,
+> > could also be something that bootloader set at runtime, similar to
+> > what it does for rk3288w.
+> > 
+> > > I guess it would be good to discuss this before this series is merged,
+> > > because re-naming *.dts files after they have been in a release is somewhat
+> > > impossible.
+> > I think renaming the device tree files is unnecessary, as there seem to
+> > be very little difference. All boards I have come across are currently
+> > RK3528A variants. How would we treat the Radxa E20C?, it is not named
+> > rk3528-radxa-e20c.dtb, yet uses the A-variant.
+> > 
+> > For mainline U-Boot I have included printing out the SoC-variant,
+> > however the compatible is not adjusted:
+> > 
+> >    Model: Radxa E20C
+> >    SoC:   RK3528A
+> >    DRAM:  2 GiB
+> > 
+> > Regards,
+> > Jonas
+> > 
+> > > Regards,
+> > > Alex
+> > > > The bt/wifi_reg_on pins are described in the device tree using
+> > > > rfkill-gpio nodes.
+> > > > 
+> > > > Changes in v3:
+> > > > - Rename led nodes to led-0/led-1
+> > > > - Remove pinctrl* props from sdio0
+> > > > - Collect a-b tags
+> > > > 
+> > > > Changes in v2:
+> > > > - Limit sdmmc max-frequency to 100 MHz on ROCK 2A/2F
+> > > > - Drop clock-output-names prop from rtc node on Sige1 and NanoPi Zero2
+> > > > - Drop regulator-boot-on from usb 2.0 host regulators on Sige1
+> > > > - Add bluetooth and wifi nodes on Sige1
+> > > > - Collect t-b tag for NanoPi Zero2
+> > > > 
+> > > > These boards can be booted from emmc or sd-card using the U-Boot 2025.07
+> > > > generic-rk3528 target or work-in-progress patches for these boards [1].
+> > > > 
+> > > > For working bluetooth on ArmSoM Sige1 the patch "arm64: dts: rockchip:
+> > > > Fix UART DMA support for RK3528" [2] is required.
+> > > > 
+> > > > [1] https://source.denx.de/u-boot/contributors/kwiboo/u-boot/-/commits/rk3528
+> > > > [2] https://lore.kernel.org/r/20250709210831.3170458-1-jonas@kwiboo.se
+> > > > 
+> > > > Jonas Karlman (6):
+> > > >     dt-bindings: arm: rockchip: Add Radxa ROCK 2A/2F
+> > > >     arm64: dts: rockchip: Add Radxa ROCK 2A/2F
+> > > >     dt-bindings: arm: rockchip: Add ArmSoM Sige1
+> > > >     arm64: dts: rockchip: Add ArmSoM Sige1
+> > > >     dt-bindings: arm: rockchip: Add FriendlyElec NanoPi Zero2
+> > > >     arm64: dts: rockchip: Add FriendlyElec NanoPi Zero2
+> > > > 
+> > > >    .../devicetree/bindings/arm/rockchip.yaml     |  17 +
+> > > >    arch/arm64/boot/dts/rockchip/Makefile         |   4 +
+> > > >    .../boot/dts/rockchip/rk3528-armsom-sige1.dts | 465 ++++++++++++++++++
+> > > >    .../boot/dts/rockchip/rk3528-nanopi-zero2.dts | 340 +++++++++++++
+> > > >    .../boot/dts/rockchip/rk3528-rock-2.dtsi      | 293 +++++++++++
+> > > >    .../boot/dts/rockchip/rk3528-rock-2a.dts      |  82 +++
+> > > >    .../boot/dts/rockchip/rk3528-rock-2f.dts      |  10 +
+> > > >    7 files changed, 1211 insertions(+)
+> > > >    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-armsom-sige1.dts
+> > > >    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-nanopi-zero2.dts
+> > > >    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2.dtsi
+> > > >    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2a.dts
+> > > >    create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2f.dts
+> > > > 
 
