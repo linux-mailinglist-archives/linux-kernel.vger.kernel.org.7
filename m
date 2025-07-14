@@ -1,100 +1,164 @@
-Return-Path: <linux-kernel+bounces-729781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B63B03B91
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:01:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D183B03B73
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 034A7189E1C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:01:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0CAE3BBA4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248FC233712;
-	Mon, 14 Jul 2025 09:54:06 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA79243371;
+	Mon, 14 Jul 2025 09:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WY/AEwHB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A09224291C
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A184324291C;
+	Mon, 14 Jul 2025 09:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752486845; cv=none; b=KqKWVtuujz69pBbtAM3nOdP7JfanLk22ikwA8Ai8zfH2Hh7eApAKnbnsId7oeXwxAFiNEtOtSFXlm6AZNBjlK0UuI33uzbjMO6XaDl9Y8SAuQWC4O5erfWgKe/EhTTkb6xdpU5YEEj3l46FT4loogWWPwApI8INWexM4uUixY98=
+	t=1752486859; cv=none; b=dT4aNK+IKnXYMHhGdlacTZ7Dc8d+dm9d5rUc/XfJmHTV0xbIpNwav6Pg0SXJiDmCRsZi+A16k3aRkXfIPn9Qe0DuLHAbpiBpPCbnn+Mh+XP+G3ga09/waI3ElElHHbbVMucvKw8Rw76o6IinWmSDKTsFeOZNc35bibji8UmwCZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752486845; c=relaxed/simple;
-	bh=6IRl/mIn09xkrbWHw094gsekp4WjhdgE22sMfWIPkXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tOHm0R3J2a73fLQOXz6va9YtwKOPpC8ctukOQ9ndV4DA5R/FC+RhTOiU9csPK9ZjSBFb78iJC9gJ00KRICwPXHEyfuJ4FNjR89OonP7xGVjUFOv23fvdFnUMsm9QYqOgIb7c6nGPlUOBk15KCISzcJw9oXN/MWDlZmifUyOMI80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ubFsj-0007JF-0r; Mon, 14 Jul 2025 11:53:57 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ubFsi-008OKx-27;
-	Mon, 14 Jul 2025 11:53:56 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ubFsi-0006oc-1k;
-	Mon, 14 Jul 2025 11:53:56 +0200
-Date: Mon, 14 Jul 2025 11:53:56 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Simon Horman <horms@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	Andre Edich <andre.edich@microchip.com>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH net v3 2/3] net: phy: allow drivers to disable polling
- via get_next_update_time()
-Message-ID: <aHTTtHsYDP3YXgmF@pengutronix.de>
-References: <20250711094909.1086417-1-o.rempel@pengutronix.de>
- <20250711094909.1086417-3-o.rempel@pengutronix.de>
- <20250712131848.GA721198@horms.kernel.org>
+	s=arc-20240116; t=1752486859; c=relaxed/simple;
+	bh=Sm3eiLV4kStXDWKx6U4SBDM2lCQIVC/K/9Bi01tpfjY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=sO3NhAjn2hNh0cu/Ih/F47NIUJB8lCx/ZW1zOyFgvswmOQlsFRPTdLMWNbqXK2JnzadXlIK8dKvaesOz2f11ncIhR0YDBcbwWcozTU6N/aDFddeQXrn6VjdoBV0qy9/hJP5XOhY+4VhH5CltODXWI7xnIuH3um1woWz8V0Kv6ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WY/AEwHB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B672EC4CEED;
+	Mon, 14 Jul 2025 09:54:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752486855;
+	bh=Sm3eiLV4kStXDWKx6U4SBDM2lCQIVC/K/9Bi01tpfjY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WY/AEwHBn0K4zxiVE/Mvzb4ddg1YNQchRTLCar/ssDK3RJZ0U+IsCmOn7eO2lGTyd
+	 k6BrxoVGUlNwyiVUepUPOo2R4kQEvof5v/nOegkkKFeTMwBBOEOLUz4S+8OkzF3cSa
+	 F6bzUgVF2GP0psgTnmZ5Mpg66HVoLA1LnG5K60YozrnxNm2R+WZFh4VYpnNRd45osF
+	 oqadaAwBc7PYLPGROGxylvfE4udBKMxXyo4IxlKyq1gRFvTX+v16HmkCXazeutl2nD
+	 zGieM0nEjmg6CYqUIqqfA2LoHkHM1weKXlSMjzdv+jBlniKYoQzjsEaJLeDojx9XG2
+	 SEONkHFiGhg9Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250712131848.GA721198@horms.kernel.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 14 Jul 2025 11:54:10 +0200
+Message-Id: <DBBOQP2KELBM.IWOU5PB0KR27@kernel.org>
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Shankari Anand" <shankari.ak0208@gmail.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v3 1/4] rust: move ARef and AlwaysRefCounted to
+ sync::aref
+X-Mailer: aerc 0.20.1
+References: <20250713213614.188921-1-shankari.ak0208@gmail.com>
+In-Reply-To: <20250713213614.188921-1-shankari.ak0208@gmail.com>
 
-On Sat, Jul 12, 2025 at 02:18:48PM +0100, Simon Horman wrote:
-> > +			if (phydev->drv->update_stats) {
-> > +				WARN_ONCE("phy: %s: driver requested IRQ mode but needs polling fo=
-r stats\n",
-> > +					  phydev_name(phydev));
->=20
-> The first argument to WARN_ONCE() should be a condition, not a format str=
-ing.
->=20
-> Flagged by GCC and Clang builds with KCFLAGS=3D-Wformat-security
+On Sun Jul 13, 2025 at 11:36 PM CEST, Shankari Anand wrote:
+> diff --git a/rust/kernel/sync/aref.rs b/rust/kernel/sync/aref.rs
+> new file mode 100644
+> index 000000000000..c62dbb28282e
+> --- /dev/null
+> +++ b/rust/kernel/sync/aref.rs
+> @@ -0,0 +1,192 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Built-in Reference Counting Support
+> +
+> +/// Types that are _always_ reference counted.
+> +///
+> +/// It allows such types to define their own custom ref increment and de=
+crement functions.
+> +/// Additionally, it allows users to convert from a shared reference `&T=
+` to an owned reference
+> +/// [`ARef<T>`].
+> +///
+> +/// This is usually implemented by wrappers to existing structures on th=
+e C side of the code. For
+> +/// Rust code, the recommendation is to use [`Arc`](crate::sync::Arc) to=
+ create reference-counted
+> +/// instances of a type.
+> +use core::{marker::PhantomData, mem::ManuallyDrop, ops::Deref, ptr::NonN=
+ull};
 
-Thank you! I added it to my build test setup.
+This line seems misplaced?
 
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> +
+> +/// # Safety
+> +///
+> +/// Implementers must ensure that increments to the reference count keep=
+ the object alive in memory
+> +/// at least until matching decrements are performed.
+> +///
+> +/// Implementers must also ensure that all instances are reference-count=
+ed. (Otherwise they
+> +/// won't be able to honour the requirement that [`AlwaysRefCounted::inc=
+_ref`] keep the object
+> +/// alive.)
+> +pub unsafe trait AlwaysRefCounted {
+> +    /// Increments the reference count on the object.
+> +    fn inc_ref(&self);
+> +
+> +    /// Decrements the reference count on the object.
+> +    ///
+> +    /// Frees the object when the count reaches zero.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// Callers must ensure that there was a previous matching increment=
+ to the reference count,
+> +    /// and that the object is no longer used after its reference count =
+is decremented (as it may
+> +    /// result in the object being freed), unless the caller owns anothe=
+r increment on the refcount
+> +    /// (e.g., it calls [`AlwaysRefCounted::inc_ref`] twice, then calls
+> +    /// [`AlwaysRefCounted::dec_ref`] once).
+> +    unsafe fn dec_ref(obj: NonNull<Self>);
+> +}
+
+> +impl<T: AlwaysRefCounted> Drop for ARef<T> {
+> +    fn drop(&mut self) {
+> +        // SAFETY: The type invariants guarantee that the `ARef` owns th=
+e reference we're about to
+> +        // decrement.
+> +        unsafe { T::dec_ref(self.ptr) };
+> +    }
+> +}
+> +
+> +/// A sum type that always holds either a value of type `L` or `R`.
+> +///
+> +/// # Examples
+> +///
+> +/// ```
+> +/// use kernel::types::Either;
+> +///
+> +/// let left_value: Either<i32, &str> =3D Either::Left(7);
+> +/// let right_value: Either<i32, &str> =3D Either::Right("right value");
+> +/// ```
+> +pub enum Either<L, R> {
+> +    /// Constructs an instance of [`Either`] containing a value of type =
+`L`.
+> +    Left(L),
+> +
+> +    /// Constructs an instance of [`Either`] containing a value of type =
+`R`.
+> +    Right(R),
+> +}
+
+What is the `Either` type doing here? Maybe a copy-paste mistake?
+
+---
+Cheers,
+Benno
 
