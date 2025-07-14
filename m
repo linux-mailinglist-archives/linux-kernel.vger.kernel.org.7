@@ -1,86 +1,55 @@
-Return-Path: <linux-kernel+bounces-729601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD797B038F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:16:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F55DB038FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB28B189D6C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:16:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E537189DD00
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC52A23BCF1;
-	Mon, 14 Jul 2025 08:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BB023B612;
+	Mon, 14 Jul 2025 08:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CdigWLxJ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P64ao80Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B8523B60C;
-	Mon, 14 Jul 2025 08:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579BA2343C2;
+	Mon, 14 Jul 2025 08:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752480950; cv=none; b=NIcEKPyc8vEtukKTlrSUcIR+A0RMfEMO8YzYxe3pw2kP+8pCtbRJXU0jv3QH5sXQZlYHYcCqCv7EJ7rYGHPZc95aE8C6nPlTBSa8JSklGj4isI98Siy493VOPg0hayco3gi3phLQo7imwCAxxIzUlfm3Ya1rVoKx72L5FAQnyxU=
+	t=1752480964; cv=none; b=h6mo1iwQJ9Z44XTzpGh5PcaQTriRm/0s9CddKNxiuhmi7TddyOkpNhbYlyrxm4IsVrIRfgi0ca8AN7KCy1IiLQoXYK95QMsM08Wim3mSQ60b0b3I4nR6IWvz8wcX5SwRoJtkN+E5+iWEEq2gm3PRjPi6s270ZVGp+DK3m81ln0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752480950; c=relaxed/simple;
-	bh=Q8gV1Zi2ifbHbcA/5WD3lb3kk+S6uTYkwDneZydDWok=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mrmIhO0E/MwL5leJrA63w4B7WDAuy/Y4iIX139UWX7Mn5+P7jK4gXFDEeMXAt+8YkYBGQEkG/wzVFdGti8N8duKs+LOwvtD6k9bMtgJLhjCWIze9m8uDKeF3YRuazO4bHtRh660KTDbUX5WJIw0UBlNNYDXYahEtH+O4R4tfS+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CdigWLxJ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56E7QbQm007869;
-	Mon, 14 Jul 2025 08:15:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=TTUDTxyQV+O
-	ftN9SN4jSVdTMKwIVqPobiArGHZdB6yI=; b=CdigWLxJwGvJ8Sr9N8qz7V6jYky
-	up1K8Tni5qE0RI/pJE+Uq9+z2lJRvNAxaeoipemDKoq78ibpSJYSJva3VH8P+G/Z
-	rPjNQhrq9bDPORZeWqgEkQtM3Oy1qr/0flhbqgM3cSHP65HEF9UqWlaCyuSIQrt4
-	CvhVFWfxOEbuKSlCDehBBUHvUE8Z6iuUGy+ED/LWieK+AzOeOpbXGI3gL6xSOrWJ
-	TKh7+aW8dcwFymVAvrCKb1hZdtxVSUou3URKAoHgJLGhm9Bo4QNWAaTjd0US+jj8
-	C00iqxpkeXz2LMafcuhHQBlI6hL6tpuI5CIjgqGQDiGmWhySZj2kIPCouWQ==
-Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47vwghg486-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Jul 2025 08:15:36 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 56E8FYPx026711;
-	Mon, 14 Jul 2025 08:15:34 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 47ugsm629x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Jul 2025 08:15:34 +0000
-Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56E8FY28026699;
-	Mon, 14 Jul 2025 08:15:34 GMT
-Received: from cse-cd01-lnx.ap.qualcomm.com (cse-cd01-lnx.qualcomm.com [10.64.75.209])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 56E8FY9Z026697
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Jul 2025 08:15:34 +0000
-Received: by cse-cd01-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
-	id 1AFDA20F96; Mon, 14 Jul 2025 16:15:31 +0800 (CST)
-From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
-        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
-        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
-        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
-        kw@linux.com
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
-        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
-        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v8 5/5] arm64: dts: qcom: qcs8300-ride: enable pcie1 interface
-Date: Mon, 14 Jul 2025 16:15:29 +0800
-Message-Id: <20250714081529.3847385-6-ziyue.zhang@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250714081529.3847385-1-ziyue.zhang@oss.qualcomm.com>
-References: <20250714081529.3847385-1-ziyue.zhang@oss.qualcomm.com>
+	s=arc-20240116; t=1752480964; c=relaxed/simple;
+	bh=VUCkFWGlNjZRGe+zHbksIQrn5M6PivU0Nf1tCQHaFIg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CiyRUT/E8+ahIquBoI2ljMGpO402gccbEiqsUYV4jw6syfg5SSqF3exznBtPo2koT+XjFXldV7GXX72PE5NjqIVZ447mJioNw4I7bopSoCzyoK0jQLMhPu9TmTT0NfmDE4WfNdPXeJPeaHwTg4camdipx0RBTG+EMlch5/QvqXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P64ao80Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93DA0C4CEED;
+	Mon, 14 Jul 2025 08:16:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752480964;
+	bh=VUCkFWGlNjZRGe+zHbksIQrn5M6PivU0Nf1tCQHaFIg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=P64ao80YpTcyJXdxpk6L9+ya5e7Dk0RJ7cigSqF/1laL41vnZSeDyRGUXZO+5K7zO
+	 iRR2JXTh/w6VHIZyDl7Vp32tw32xXUHSw6aM7n4RNRzyho4n97z5KIei3v4nHkMDDl
+	 7z7fDbupAFs8BTGbkh4nUoNV4W+02vcAbXhN6mmqVEkrKE2Hxo3gqEKZTXkxb9sYMt
+	 BIB+PCI3269F2Rkf2b++SCL+yMWRZ7wcn9P3klhPkhgLLoecXnZaw5uMVx4I4hLM6t
+	 87nX/uqJC3unkBIzgmyqcvnxWlWVrRWH39CVCwTM8zQowBEb0G3AYnofpI6UEonTnA
+	 J3gMh3iODIlSA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: "David E. Box" <david.e.box@linux.intel.com>,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86/intel/pmt: fix build dependency for kunit test
+Date: Mon, 14 Jul 2025 10:15:43 +0200
+Message-Id: <20250714081559.4056777-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,100 +57,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=EbLIQOmC c=1 sm=1 tr=0 ts=6874bca9 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=0LYZJ8Fh9g_wO_RM1qMA:9
-X-Proofpoint-GUID: cwjD0diNzdKReQSggratB4sPuMmzpLKN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA0OCBTYWx0ZWRfX9/eF5C1DB0rp
- 7ACwk9dMc1CRrexfUz90YDb3RjXSwwoUo66BXFPmhHgYTCWHiB0H88laBuypaEoJyPEFOKjJy14
- Ac1ofnkBPLRfBfxhTh+Z7U7e6ptfAmC9O65lf3BnfEoTVMaKQtWk2Wbh6kiUKG/juKHfgn1NJe9
- cK6ZPcactWdGIxj4fApzi52yRdwFtOrH+foGrp+NmR4LCeJ/NaB1W2Oc3xsp0Jex9G1KWsHHFaD
- 2r+jtd0adfgjQhvookzL4gamjjpK+GvtS2ke/k8A9jIFoEWNftDcqT50PmELTBoqlMQb3y1BuvL
- O9onF/yuKuwWi0lo/raWSKEnaeH3rvGjMbE4oc2lBsZhFSh9pnMww1KR3/MpFzn+wrJSi0nHIDH
- j+F9R7NAB2dGkDkjSOb9FZ8w06QTsrCc2zMcMYt+mhF+xkkC+NJeW796EFSsrO7OLs1a7Ty6
-X-Proofpoint-ORIG-GUID: cwjD0diNzdKReQSggratB4sPuMmzpLKN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-14_01,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 lowpriorityscore=0 clxscore=1015 priorityscore=1501
- malwarescore=0 bulkscore=0 mlxscore=0 suspectscore=0 impostorscore=0
- adultscore=0 phishscore=0 mlxlogscore=999 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507140048
 
-Add configurations in devicetree for PCIe1, board related gpios,
-PMIC regulators, etc for qcs8300-ride platform.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+When INTEL_PMT_TELEMETRY is in a loadable module, the discovery
+test cannot be built-in:
+
+x86_64-linux-ld: drivers/platform/x86/intel/pmt/discovery-kunit.o: in function `test_intel_pmt_get_regions_by_feature':
+discovery-kunit.c:(.text+0x29d): undefined reference to `intel_pmt_get_regions_by_feature'
+x86_64-linux-ld: discovery-kunit.c:(.text+0x2c3): undefined reference to `intel_pmt_put_feature_group'
+
+Add a Kconfig dependency to prevent this.
+
+Fixes: b9707d46a959 ("platform/x86/intel/pmt: KUNIT test for PMT Enhanced Discovery API")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 40 +++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+A simpler 'depends on INTEL_PMT_TELEMETRY' would work just as well here,
+not sure what the more logical variant is between the two.
+---
+ drivers/platform/x86/intel/pmt/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-index e8e382db2b99..bec2905c5d8f 100644
---- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-@@ -325,6 +325,23 @@ &pcie0_phy {
- 	status = "okay";
- };
- 
-+&pcie1 {
-+	perst-gpios = <&tlmm 23 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 21 GPIO_ACTIVE_HIGH>;
-+
-+	pinctrl-0 = <&pcie1_default_state>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcie1_phy {
-+	vdda-phy-supply = <&vreg_l6a>;
-+	vdda-pll-supply = <&vreg_l5a>;
-+
-+	status = "okay";
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-@@ -388,6 +405,29 @@ perst-pins {
- 			bias-pull-down;
- 		};
- 	};
-+
-+   pcie1_default_state: pcie1-default-state {
-+		wake-pins {
-+			pins = "gpio21";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		clkreq-pins {
-+			pins = "gpio22";
-+			function = "pcie1_clkreq";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		perst-pins {
-+			pins = "gpio23";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+	};
- };
- 
- &uart7 {
+diff --git a/drivers/platform/x86/intel/pmt/Kconfig b/drivers/platform/x86/intel/pmt/Kconfig
+index 785c206e1beb..7363446b7773 100644
+--- a/drivers/platform/x86/intel/pmt/Kconfig
++++ b/drivers/platform/x86/intel/pmt/Kconfig
+@@ -55,6 +55,7 @@ config INTEL_PMT_DISCOVERY
+ config INTEL_PMT_KUNIT_TEST
+ 	tristate "KUnit tests for Intel PMT driver"
+ 	depends on INTEL_PMT_DISCOVERY
++	depends on INTEL_PMT_TELEMETRY || !INTEL_PMT_TELEMETRY
+ 	depends on KUNIT
+ 	help
+ 	  Enable this option to compile and run a suite of KUnit tests for the Intel
 -- 
-2.34.1
+2.39.5
 
 
