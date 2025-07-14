@@ -1,191 +1,131 @@
-Return-Path: <linux-kernel+bounces-730554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 114A8B04637
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:11:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6868DB0463E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C85E1A6237D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:11:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C6B516A318
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D11426159D;
-	Mon, 14 Jul 2025 17:10:35 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17040262FD4;
+	Mon, 14 Jul 2025 17:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UePoBlRt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128A5248F74
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 17:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1EF35942;
+	Mon, 14 Jul 2025 17:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752513034; cv=none; b=d2d2xX6a3whx4NPk8Rbq+cTDU7zWddksyRQ/Jy47nP9TyhxApFQHfVhEZZbX8GEujTQT0BSFUcRQiRntVQvxQ1KFEoA/HVlmHEf+JXjXf3MIr7/YZlc6uAK9pdbpDF+03ny3K1pcV1zMEvEol2ousuXohdid7IdnBVFrm3A3qa4=
+	t=1752513191; cv=none; b=X5Lzk/odazjTYaxhWMC/+7tGkTptSp19gy2YsmqcnjdlD78jm83zmzsXnW/MRXzJRs9Nzt+17+brXDU4M1CF9XO474HG+d2HDDWr9hfAPpmlynYCnQlgLrzzhQPSyYCRj3Z7YzUObdijdtLwIUk3ENuDPPUxELAo4NqYcPxNxmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752513034; c=relaxed/simple;
-	bh=0lKaue4Q/CodZJ43BE+2ERHP0tt8CkDwoKR/aeIu+bY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DP31GPKCygz/glAsXZIsS2Elcm1z2LWuMPjaztkeabVEiLa/pEO+ai31Z6LNQOPRtOYgAhGmYLnke6CAMlGpffBVAbxfNnzqhYFO0jk+NoCt0CD7PZm3tZcQ47tgRB+yydER3XqRMthYO4KKn9qC3SSPUo8JKrLQVpMx4pgwhhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-87313ccba79so899745639f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 10:10:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752513032; x=1753117832;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yEqYN+Sq66jPT1atBJx2sN18zNV7H4Qomhnbx5nCbYY=;
-        b=eo3EWZ+Rti7KustEqqtWTmQfL9M4v67IuWZMJdxsYB1+CnCB7P8PM1VbAI9nchoKLz
-         b61O50NVrLC4PVEGYU0VMZgu5qkFeiwHLgqZFGqfo8oxx9GXcv2n0xR+gZFMO1JeypKU
-         Fa5s1WMM2EBUVgYsIs7zVx1Qv2eWy664Q/jTKBHYD3uJdEz4vK8vQ/vmu5OQtsn3+JQE
-         uNV/BuPY4Nz64IWtTdhsu3C5sfC50IaMzlqxtUiREc2L0dfivXB1hI86XVuu+WAl8LVd
-         msAGQOQ8wyIBj8LxV9WWJ8qLCx59HRgHCFhm1S0trILtYB8LZmEhObjZUyPmYfpZq/5D
-         8wxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/M4gdAL8LyOiEFlHxvMOnFMd8GyiThqq2TLI1PVjUsm/VoUrFhZ3pnFJFLO4f6aZxcKEsDDhZMrKnzpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRVpB+re5w75b6WVR6Z5llHPWtI+knqVuU3LQ3TJtr2mSPLeYa
-	licOoL/AXCZQqTBG0t4L4EhOVIa7vyPchMameKtbEYmKLadAac91/Wu3EH2emGZwBtdW1XiXx3a
-	tKDnzXEZ3f+e+u6XOJoMpXlAFVqBnEk9f+1Z1Z8O6G+BhpsCQJl7qpS7ECZE=
-X-Google-Smtp-Source: AGHT+IH/WRScfN7dW3JFoDVyXS3WSTkXzALNIo+J1byjOIvna/aSlspqHWDQ2OrSbTux9AVCHS9jqEqoAyd6gOYCAes20kXbW0Td
+	s=arc-20240116; t=1752513191; c=relaxed/simple;
+	bh=1rEOYhdL+DAikrTqoRGBr/4ySSg5iKr6IK8WpawiH14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X3tF3OXG1aRtKUe0Asw74nRgRRJlxueWHDBjo/y7lNpPzc9GwGeV4lUMKoVkilqpWECCJmaGcOyUj5SgslQ3Y48hMb1fV0w6xel9yyvq6ZTsCOppo/MDSl/MaSqDJKKppgedaR3xJyhO9AsHo074xXG1lD6Hju8K6amiPhryy7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UePoBlRt; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752513190; x=1784049190;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1rEOYhdL+DAikrTqoRGBr/4ySSg5iKr6IK8WpawiH14=;
+  b=UePoBlRtjsnVVgc+oSROpBc/KXDjel3Sz8KqdgHtpiE9tYp2LYoajcJp
+   R01PTducIpqNugH23CLEzPYq9Vq1DERSQJ9k9UEYyKR/hJhDszBdtU0HD
+   gn3y+8h2snBUf1rCuT3y6RIHxzINmTqwBIN8bzd/oeRwMzIchwN7WHKwr
+   Poe2oOlWznk8OEZqgUtVDFKyM9/ZuXy/EgJQMO9dh8Z/S4CdL7gaD+ZlX
+   +ioXorX9FUoLJl5lDEbsZYy1NJIsegPj7CLFYDBkhgpfjBLlL97gq4777
+   QoN5ZdqpbWdaF7aZi8K6GJKznZdffgcdWBaw/ZCVeMWrFoTPKxIeLccEP
+   Q==;
+X-CSE-ConnectionGUID: up7/6z+sRA6yv29LyQ7awg==
+X-CSE-MsgGUID: 9FqeSzX/TQmfCt5k5ofEvQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="72163073"
+X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
+   d="scan'208";a="72163073"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 10:10:40 -0700
+X-CSE-ConnectionGUID: XG8NKM8oRY+P1328vBBlBg==
+X-CSE-MsgGUID: zBcYLkVYSRep1BjrTdYM3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
+   d="scan'208";a="160998129"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 10:10:39 -0700
+Date: Mon, 14 Jul 2025 10:10:38 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	James Morse <james.morse@arm.com>, Borislav Petkov <bp@alien8.de>,
+	Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev,
+	kernel-team@meta.com
+Subject: Re: [PATCH] ghes: Track number of recovered hardware errors
+Message-ID: <aHU6Ds1vrbB-Zbcp@agluck-desk3>
+References: <20250714-vmcore_hw_error-v1-1-8cf45edb6334@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:15c9:b0:86c:f9f4:6aa6 with SMTP id
- ca18e2360f4ac-879787d8f28mr1526841439f.7.1752513032251; Mon, 14 Jul 2025
- 10:10:32 -0700 (PDT)
-Date: Mon, 14 Jul 2025 10:10:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68753a08.050a0220.33d347.0008.GAE@google.com>
-Subject: [syzbot] [input?] [usb?] UBSAN: shift-out-of-bounds in s32ton (2)
-From: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>
-To: bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714-vmcore_hw_error-v1-1-8cf45edb6334@debian.org>
 
-Hello,
+On Mon, Jul 14, 2025 at 09:57:29AM -0700, Breno Leitao wrote:
+> Add a global variable, ghes_recovered_erors, to count hardware errors
+> classified as recoverable or corrected. This counter is exported and
+> included in vmcoreinfo for post-crash diagnostics.
+> 
+> Tracking this value helps operators potentially correlate hardware
+> errors across system events and crash dumps, indicating that RAS logs
+> might be useful while analyzing these crashes. This discussion and
+> motivation could be found in [1].
+> 
+> Atomic operations are deliberately omitted, as precise accuracy is not
+> required for this metric.
 
-syzbot found the following issue on:
+[snip]
 
-HEAD commit:    b4b4dbfa96de media: stk1160: use usb_alloc_noncoherent/usb..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=15a830f0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=28729dff5d03ad1
-dashboard link: https://syzkaller.appspot.com/bug?extid=b63d677d63bcac06cf90
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1614418c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1257dd82580000
+> @@ -1100,13 +1106,16 @@ static int ghes_proc(struct ghes *ghes)
+>  {
+>  	struct acpi_hest_generic_status *estatus = ghes->estatus;
+>  	u64 buf_paddr;
+> -	int rc;
+> +	int rc, sev;
+>  
+>  	rc = ghes_read_estatus(ghes, estatus, &buf_paddr, FIX_APEI_GHES_IRQ);
+>  	if (rc)
+>  		goto out;
+>  
+> -	if (ghes_severity(estatus->error_severity) >= GHES_SEV_PANIC)
+> +	sev = ghes_severity(estatus->error_severity);
+> +	if (sev == GHES_SEV_RECOVERABLE || sev ==  GHES_SEV_CORRECTED)
+> +		ghes_recovered_erors += 1;
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/7301552ad828/disk-b4b4dbfa.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c559b38fa1b6/vmlinux-b4b4dbfa.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9c1da8b2a83f/bzImage-b4b4dbfa.xz
+		ghes_recovered_erors++:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com
+> +	else if (sev >= GHES_SEV_PANIC)
+>  		__ghes_panic(ghes, estatus, buf_paddr, FIX_APEI_GHES_IRQ);
+>  
+>  	if (!ghes_estatus_cached(estatus)) {
+> @@ -1750,6 +1759,8 @@ void __init acpi_ghes_init(void)
+>  		pr_info(GHES_PFX "APEI firmware first mode is enabled by APEI bit.\n");
+>  	else
+>  		pr_info(GHES_PFX "Failed to enable APEI firmware first mode.\n");
+> +
+> +	ghes_recovered_erors = 0;
 
-usb 4-1: config 0 interface 0 altsetting 0 has 1 endpoint descriptor, different from the interface descriptor's value: 9
-usb 4-1: New USB device found, idVendor=045e, idProduct=07da, bcdDevice= 0.00
-usb 4-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-usb 4-1: config 0 descriptor??
-microsoft 0003:045E:07DA.0001: ignoring exceeding usage max
-microsoft 0003:045E:07DA.0001: unsupported Resolution Multiplier 0
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in drivers/hid/hid-core.c:69:16
-shift exponent 4294967295 is too large for 32-bit type 'int'
-CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.16.0-rc4-syzkaller-00314-gb4b4dbfa96de #0 PREEMPT(voluntary) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
- ubsan_epilogue lib/ubsan.c:233 [inline]
- __ubsan_handle_shift_out_of_bounds+0x27f/0x420 lib/ubsan.c:494
- s32ton.cold+0x37/0x9c drivers/hid/hid-core.c:69
- hid_output_field drivers/hid/hid-core.c:1841 [inline]
- hid_output_report+0x36f/0x4a0 drivers/hid/hid-core.c:1874
- __hid_request+0x1e0/0x3c0 drivers/hid/hid-core.c:1987
- hidinput_change_resolution_multipliers drivers/hid/hid-input.c:1950 [inline]
- hidinput_connect+0x1ada/0x2bd0 drivers/hid/hid-input.c:2327
- hid_connect+0x13f3/0x1a60 drivers/hid/hid-core.c:2239
- hid_hw_start drivers/hid/hid-core.c:2354 [inline]
- hid_hw_start+0xaa/0x140 drivers/hid/hid-core.c:2345
- ms_probe+0x195/0x500 drivers/hid/hid-microsoft.c:391
- __hid_device_probe drivers/hid/hid-core.c:2724 [inline]
- hid_device_probe+0x363/0x720 drivers/hid/hid-core.c:2761
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:657
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:829
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:957
- bus_for_each_drv+0x156/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1029
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x1148/0x1a70 drivers/base/core.c:3692
- hid_add_device+0x373/0xa60 drivers/hid/hid-core.c:2907
- usbhid_probe+0xd38/0x13f0 drivers/hid/usbhid/hid-core.c:1435
- usb_probe_interface+0x303/0x9c0 drivers/usb/core/driver.c:396
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:657
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:829
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:957
- bus_for_each_drv+0x156/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1029
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x1148/0x1a70 drivers/base/core.c:3692
- usb_set_configuration+0x1187/0x1e20 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:250
- usb_probe_device+0xef/0x3e0 drivers/usb/core/driver.c:291
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:657
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:829
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:957
- bus_for_each_drv+0x156/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1029
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x1148/0x1a70 drivers/base/core.c:3692
- usb_new_device+0xd07/0x1a20 drivers/usb/core/hub.c:2694
- hub_port_connect drivers/usb/core/hub.c:5566 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
- port_event drivers/usb/core/hub.c:5866 [inline]
- hub_event+0x2f85/0x5030 drivers/usb/core/hub.c:5948
- process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3321 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
- kthread+0x3c2/0x780 kernel/kthread.c:464
- ret_from_fork+0x5b3/0x6c0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
----[ end trace ]---
+Unnecessary. Global variables all start at zero unless otherwise
+initialized.
 
+>  }
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-Tony
 
