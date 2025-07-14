@@ -1,190 +1,136 @@
-Return-Path: <linux-kernel+bounces-730148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A82B040BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:58:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF3DB040C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52A283AA9AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:56:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DC393B3BF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC59254AF5;
-	Mon, 14 Jul 2025 13:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE46257451;
+	Mon, 14 Jul 2025 13:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vpcBp9V4"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Lm7aAlyc"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3100125485F
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5DD24FC09
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752501364; cv=none; b=crJKSRlECGzueH56OJr4AU2iGxvNrRhNbNJUFlawYw0RK0DdYwzRSyZW+vU21sVC3K67ux1dUiFK8HF7pEXBTMZGurjy7OoE8Stn0VmSwWSV/5H1rdWr3lHKPB/vhx0aa0faTzzHL4Rlvd40Jvwk1cYUnCx8N29gYztIlrX6P/A=
+	t=1752501402; cv=none; b=l254Au2MfgFaPCCL/v09IUmRlWCbQFchGdHYNUVSzsmG9VKjhoxP/ncvd1PyqaMItGnGIQNT3Y5qeYp72+IiVAWnzk7Qkj35nKLbYXzesU+gfH/nnNdsKdB1zdXj2o4lM0EcdsW6wDbFmCKelZN2CjfX3W922nSDRyGL2Kfn76E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752501364; c=relaxed/simple;
-	bh=rGhecsS5zqdVzGkJ8mfxbZvJAAAPC3oLxFoLmPkse8g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=oxUBMm35L1GcNxYJ849e5buKCRThU/5mfJ6UfrgKxM2o62dL5Y2n221jgu5o0jgp0TsR16YIt11o16zy+suDbUhCKvmp0WJR0r/v06JDx+6+GXdbdSa6W8D/UXl3eL57MFBOVgbdUgFQMcmVWe0kXVJWQUiigPbtz570keGaWko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vpcBp9V4; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-313d6d671ffso3967383a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 06:56:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752501362; x=1753106162; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EXh0L/pGZDzDzCdxhlAQW5J9KGhlFeCsERcM0Y4KBG4=;
-        b=vpcBp9V4U/2qTIDXUzketDvpstEx7/Vy357Ts/dZgiEdLmwvY1oxpbEpunz/YO6KYP
-         j7NtH9eisRlLgCJpY6W/8FA8IoC0mmiBRi+1BWt1ipEkS44OzL6TkeSfLRF8IsJhxzkB
-         g4PyW+fiuI6wyrs4w5TjglBi953yn/Pce70w0kdL3G91yQ4MhkTM1sOBZShQlO+wvwn4
-         Mwh1ukvd7U83FBytRr7dhqLQSHiDHVbFcAfOgQZKqMrRgIJsURLejsg6TIwIRZyiAUNZ
-         +PXiZe/uu6xXOho6D3Qjwcn4r+MPLwJnGmLJ+h62mxeodND7jWbctgG8N2TXoDQ1B/TC
-         abBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752501362; x=1753106162;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EXh0L/pGZDzDzCdxhlAQW5J9KGhlFeCsERcM0Y4KBG4=;
-        b=WRiXC6chYY7Io+j7SmyuAnGfkI5amQ/C8NJbO80HfORR6QP5IRexj0nXeDsI/CqzMt
-         RXdhGf27TT00Ksx6QXNmIKLvncYKPQAoPVkFBB6uujLcP7t/jLwjxxak3msbdYZ29Nqn
-         Q4jYxzS3H44e93Mko/BA4GbLMYg9SDuapx9pA3y6L7d2yUBXZfsaFxHa9tH9z2OgDwrM
-         sbrITJ/id+namtxK1bypdicOKV5tlDOeQ6TA5NcLY4VZ2EZnPIcCfoC99uEVnfjh4rN1
-         rjB5I63Hf5ZP/4bOvrzxLsuKKitA/agNt/NVrsMvrm36kT8aarneFMWQEqetcf02t6Cb
-         ekGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWn9BMB/9gmZKbzXq+nQKWXpv+hPJkBdnZbs7M0C4WDZ+yXOz5JT1QxlxRj9XBjdm4OOVVOgklhTzX7yl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS011vyZIvnJRuGq918cuIA7q3mMy3WQER/+IFUZrk6wDwmEE3
-	quDY8HUZVV6EtZuyNSqopQ4Yq/gsgMW3uKNNoSv3xOFnrcUhn0jUPMJu8xVjLOMDxj/PlpDIoBB
-	ACw+yIw==
-X-Google-Smtp-Source: AGHT+IFl/YgxxHUr8RELnZrkLBz3elV9AgIPvwir5e7dKByJGwTe0aB87PdvtxPSEkZwzCbcImbXo4vL0Ko=
-X-Received: from pjbpx9.prod.google.com ([2002:a17:90b:2709:b0:311:f699:df0a])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b8d:b0:313:b1a:3939
- with SMTP id 98e67ed59e1d1-31c50da140amr19072297a91.15.1752501362484; Mon, 14
- Jul 2025 06:56:02 -0700 (PDT)
-Date: Mon, 14 Jul 2025 06:56:01 -0700
-In-Reply-To: <3ef581f1-1ff1-4b99-b216-b316f6415318@intel.com>
+	s=arc-20240116; t=1752501402; c=relaxed/simple;
+	bh=2r4PJwbTP9Cp4Jke1ehe7I0MltoLzGMlwQSBAqTFUmM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AvZ2XKEMTjBK4ZV/0rWgTCMWMvnuzrfdDa5f5Q1+yjGMzoL/xpgXHxThEHl9XjGftZ/qaXJCN6/48tiPh/8WPXpfHQM0ILJ/whU6NU0NR5HcHD/9DKj2weeFJXnN+ZFSiekncQFj/zkWphBI6tGgBeCAVTuWPj6cmD4JViN/fs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Lm7aAlyc; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 4F077219D4;
+	Mon, 14 Jul 2025 15:56:33 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id um6tW3_VHP22; Mon, 14 Jul 2025 15:56:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1752501392; bh=2r4PJwbTP9Cp4Jke1ehe7I0MltoLzGMlwQSBAqTFUmM=;
+	h=From:To:Cc:Subject:Date;
+	b=Lm7aAlyct43Xu4OjGv7sYrci5fa5kzBZ8gCYhk2+2zDSG201+WFpqr2u331baSpec
+	 0aDFPaSrpgYLVWpFNAutxvO0jZS47k60SQ8FDFXAc6kR0FsPx+/HNTNI29GBNvBpzM
+	 JD0J2P2Od3l1hV9r4WLcO6B+WayPCW7qAeC/qLu+Vj81ncUyp8N1WI9UmA/U//fk1r
+	 8oXBGquRhhQWTie1U8dZoyDqeL6OeUlwM9EH2hztdqAOrrLwGK/o4p+mApHRJMM6UQ
+	 3DnRkN8ztv2IuFwkLLB2FiJUFIp6PCkoFa7ZWSU1l5MCfzxM8NeoJ7BKH7yp9HTgFU
+	 Yu1Xgz34+7jaw==
+From: Akhil Varkey <akhilvarkey@disroot.org>
+To: greybus-dev@lists.linaro.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	rmfrfs@gmail.com,
+	johan@kernel.org,
+	elder@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: ~lkcamp/patches@lists.sr.ht,
+	koike@igalia.com,
+	Akhil Varkey <akhilvarkey@disroot.org>
+Subject: [PATCH] staging: greybus: power_supply fix alignment
+Date: Mon, 14 Jul 2025 15:56:03 +0200
+Message-ID: <20250714135606.41671-1-akhilvarkey@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <175088949072.720373.4112758062004721516.b4-ty@google.com>
- <aF1uNonhK1rQ8ViZ@google.com> <7103b312-b02d-440e-9fa6-ba219a510c2d@intel.com>
- <aHEMBuVieGioMVaT@google.com> <3989f123-6888-459b-bb65-4571f5cad8ce@intel.com>
- <aHEdg0jQp7xkOJp5@google.com> <b5df4f84b473524fc3abc33f9c263372d0424372.camel@intel.com>
- <aHGYvrdX4biqKYih@google.com> <a29d4a7f319f95a45f775270c75ccf136645fad4.camel@intel.com>
- <3ef581f1-1ff1-4b99-b216-b316f6415318@intel.com>
-Message-ID: <aHUMcdJ9Khh2Yeox@google.com>
-Subject: Re: [PATCH V4 0/1] KVM: TDX: Decrease TDX VM shutdown time
-From: Sean Christopherson <seanjc@google.com>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Kai Huang <kai.huang@intel.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 14, 2025, Xiaoyao Li wrote:
-> On 7/12/2025 7:17 AM, Edgecombe, Rick P wrote:
-> > On Fri, 2025-07-11 at 16:05 -0700, Sean Christopherson wrote:
-> > > > Zero the reserved area in struct kvm_tdx_capabilities so that field=
-s added
-> > > > in
-> > > > the reserved area won't disturb any userspace that previously had g=
-arbage
-> > > > there.
-> > >=20
-> > > It's not only about disturbing userspace, it's also about actually be=
-ing able
-> > > to repurpose the reserved fields in the future without needing *anoth=
-er* flag
-> > > to tell userspace that it's ok to read the previously-reserved fields=
-.=C2=A0 I care
-> > > about this much more than I care about userspace using reserved field=
-s as
-> > > scratch space.
-> >=20
-> > If, before calling KVM_TDX_CAPABILITIES, userspace zeros the new field =
-that it
-> > knows about, but isn't sure if the kernel does, it's the same no?
+Fix checkpatch check "CHECK:Alignment should match open parenthesis"
 
-Heh, yeah, this crossed my mind about 5 minutes after I logged off :-)
+Signed-off-by: Akhil Varkey <akhilvarkey@disroot.org>
+---
 
-> > Did you see that the way KVM_TDX_CAPABILITIES is implemented today is a=
- little
-> > weird? It actually copies the whole struct kvm_tdx_capabilities from us=
-erspace
-> > and then sets some fields (not reserved) and then copies it back. So us=
-erspace
-> > can zero any fields it wants to know about before calling KVM_TDX_CAPAB=
-ILITIES.
-> > Then it could know the same things as if the kernel zeroed it.
-> >=20
-> > I was actually wondering if we want to change the kernel to zero reserv=
-ed, if it
-> > might make more sense to just copy caps->cpuid.nent field from userspac=
-e, and
-> > then populate the whole thing starting from a zero'd buffer in the kern=
-el.
->=20
-> +1 to zero the whole buffer of *caps in the kernel.
+Hello, This is my first patch, I appreciate any feedbacks. Thanks!!
+---
+ drivers/staging/greybus/power_supply.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Ya, I almost suggested that, but assumed there was a reason for copying the=
- entire
-structure.
+diff --git a/drivers/staging/greybus/power_supply.c b/drivers/staging/greybus/power_supply.c
+index 2ef46822f676..a484c0ca058d 100644
+--- a/drivers/staging/greybus/power_supply.c
++++ b/drivers/staging/greybus/power_supply.c
+@@ -324,7 +324,7 @@ static struct gb_power_supply_prop *get_psy_prop(struct gb_power_supply *gbpsy,
+ }
+ 
+ static int is_psy_prop_writeable(struct gb_power_supply *gbpsy,
+-				     enum power_supply_property psp)
++				 enum power_supply_property psp)
+ {
+ 	struct gb_power_supply_prop *prop;
+ 
+@@ -493,7 +493,7 @@ static int gb_power_supply_description_get(struct gb_power_supply *gbpsy)
+ 	if (!gbpsy->model_name)
+ 		return -ENOMEM;
+ 	gbpsy->serial_number = kstrndup(resp.serial_number, PROP_MAX,
+-				       GFP_KERNEL);
++					GFP_KERNEL);
+ 	if (!gbpsy->serial_number)
+ 		return -ENOMEM;
+ 
+@@ -546,7 +546,7 @@ static int gb_power_supply_prop_descriptors_get(struct gb_power_supply *gbpsy)
+ 	}
+ 
+ 	gbpsy->props = kcalloc(gbpsy->properties_count, sizeof(*gbpsy->props),
+-			      GFP_KERNEL);
++			       GFP_KERNEL);
+ 	if (!gbpsy->props) {
+ 		ret = -ENOMEM;
+ 		goto out_put_operation;
+@@ -634,8 +634,8 @@ static int __gb_power_supply_property_get(struct gb_power_supply *gbpsy,
+ }
+ 
+ static int __gb_power_supply_property_strval_get(struct gb_power_supply *gbpsy,
+-						enum power_supply_property psp,
+-						union power_supply_propval *val)
++						 enum power_supply_property psp,
++						 union power_supply_propval *val)
+ {
+ 	switch (psp) {
+ 	case POWER_SUPPLY_PROP_MODEL_NAME:
+@@ -943,8 +943,8 @@ static int gb_power_supplies_setup(struct gb_power_supplies *supplies)
+ 		goto out;
+ 
+ 	supplies->supply = kcalloc(supplies->supplies_count,
+-				     sizeof(struct gb_power_supply),
+-				     GFP_KERNEL);
++				   sizeof(struct gb_power_supply),
++				   GFP_KERNEL);
+ 
+ 	if (!supplies->supply) {
+ 		ret = -ENOMEM;
+-- 
+2.47.2
 
-> current code seems to have issue on the caps->kernel_tdvmcallinfo_1_r11/k=
-ernel_tdvmcallinfo_1_r12/user_tdvmcallinfo_1_r12,
-> as KVM cannot guarantee zero'ed value are returned to userspace.
-
-This?  (untested)
-
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index f4d4fd5cc6e8..42cb328d8a7d 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -2270,25 +2270,26 @@ static int tdx_get_capabilities(struct kvm_tdx_cmd =
-*cmd)
-        const struct tdx_sys_info_td_conf *td_conf =3D &tdx_sysinfo->td_con=
-f;
-        struct kvm_tdx_capabilities __user *user_caps;
-        struct kvm_tdx_capabilities *caps =3D NULL;
-+       u32 nr_user_entries;
-        int ret =3D 0;
-=20
-        /* flags is reserved for future use */
-        if (cmd->flags)
-                return -EINVAL;
-=20
--       caps =3D kmalloc(sizeof(*caps) +
-+       caps =3D kzalloc(sizeof(*caps) +
-                       sizeof(struct kvm_cpuid_entry2) * td_conf->num_cpuid=
-_config,
-                       GFP_KERNEL);
-        if (!caps)
-                return -ENOMEM;
-=20
-        user_caps =3D u64_to_user_ptr(cmd->data);
--       if (copy_from_user(caps, user_caps, sizeof(*caps))) {
-+       if (get_user(nr_user_entries, &user_caps->cpuid.nent)) {
-                ret =3D -EFAULT;
-                goto out;
-        }
-=20
--       if (caps->cpuid.nent < td_conf->num_cpuid_config) {
-+       if (nr_user_entries < td_conf->num_cpuid_config) {
-                ret =3D -E2BIG;
-                goto out;
-        }
 
