@@ -1,111 +1,150 @@
-Return-Path: <linux-kernel+bounces-729382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACCF5B035D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:36:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8591EB035D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50F67178CBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:35:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 608DD3AD03F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B63207DE2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8907C20A5D6;
 	Mon, 14 Jul 2025 05:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddZ8zxEA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DBwuZEQ2"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0361FECB0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE821FDA82;
 	Mon, 14 Jul 2025 05:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752471340; cv=none; b=dsM1Rjitw84K9ybm8Fz9EOPcjwawfZ+xCaO4R0r2/WR/inaPjzfDwYnlZNHGab3D3GGKdWP15rJOfVVKJwceQ77aM6XEIaK+o/0qDZmXgmEd71ORmJRz2t1bmOzt2CkoIPJ5NbuWT3ADHU6L79tvmM8gejGkyz0MLtD3pVuHiaM=
+	t=1752471340; cv=none; b=gsAfyQNx5WgnV/nibrHr0dORtIICFcObuxCMgGRRVFWBWK4kKHe3voW0FP57crDn2KS26ERj0EIhDaBuz3Lnt7XP+wWosQpnXRDTXcAsEXx2lqStT6FRQ7/2HdZkw7fELZNU9wCVABlfmvcDxFb6Z6YlizDLA1EB6J3DP3cf4uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752471340; c=relaxed/simple;
-	bh=AhfXLPJit+nq2sVNcl1gEor+RQLrJZeeiC7pziqeDIc=;
+	bh=ngWILdYTOPdUmTCLXucvX91cTQEWbU7wfaAKzIBBPEo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EDs0VnD5Z+WpvuSXlqtW/7rb5/+uMXHCNGcr29ha6ZizN7ahGRQ3YQmUXF9tVWSTLMweXWd6HOlBICqTYCoIDRLvwroa3uUsUMNylwvqzW7pI/hVlOx5vHkBPjyWbI+EFHzKp3wXaA/BeBBQvqZscQNmVNmvakc26XksD/RuiyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ddZ8zxEA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB4EEC4CEFB;
-	Mon, 14 Jul 2025 05:35:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752471337;
-	bh=AhfXLPJit+nq2sVNcl1gEor+RQLrJZeeiC7pziqeDIc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ddZ8zxEAQWvd2uKLTx/MqCvkHdYlE8+ZFaOGxa95LxGvIIkbQ4Qa/Lv1MA5Fkba2O
-	 U40OTw/aGVt7sa2Q6wSFCr37Q6zODj+hin6CXBjNYrmqi0ISPOdiAEw2FurPK+lTOk
-	 lIKvMov9H2RLtzbEkhEksubFKmGSZPgiWtc9hk5Twt6Q3/fvK2Nz/vMMlrSe6tbMUw
-	 bR7KfhZ/kmm8UeCa0vyxW6v2/wVpZj0UBFve9r5vEhGdUhFqLbrQQ0+e+03MPI1vKW
-	 SlZ/d8E+zuuRFVXg/qlq/iPODaql6PW/zMDX8vFIPo8HXkzRis9ABBg6J9aDT+m/mf
-	 eaptsVz2ztrBQ==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-32b43cce9efso31067841fa.3;
+	 To:Cc:Content-Type; b=jWT/g7DK2Nn9Z4SBI6nvmOc6gOa8xc+wnRARG9eRAQCT0M6wCT08k2G/ADYr/vS1gPBLiigYB5iGe943p15ENKqQyuTV8KxxIRjvEzLsv2pgHMHQmoTMB30lazITYKRu118/7nJbmqeqZmIOn3HKoAJpFCeqv3/qBOT1iyC4PHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DBwuZEQ2; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5561c20e2d5so4836257e87.0;
         Sun, 13 Jul 2025 22:35:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX6AVekZv0tK2rCNYVe00cQcp1YfxNqkEc8QsoEGVb5pJ702CVcq2b/wZplSdLkVIJlmmmHHh2Z4aCIh54=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG4+ttV+HIXSDnTs1wUkTsXQJmIVxzLLOy0eP6vhIdu/AB7WyS
-	SWFRtveO6v05kPiqIp7Mtq+3PyuNWqQMyUxuMpDfHcHQ/wAOiRm1OPZsZNb+MH88dIhJ5W52bGC
-	SwBMR0MkzYax+0Z1YHnmOfE0z9JON/vw=
-X-Google-Smtp-Source: AGHT+IE/n3Pei1+hhhJWAvyg52eVap2Ik9HDTQdu5m0wlgA5Mu6mp4EgrZtImkRCLoTgZJ0lGSuxGUxQmYFDqW6fybA=
-X-Received: by 2002:a05:651c:542:b0:32c:a097:4140 with SMTP id
- 38308e7fff4ca-33052f70c5amr31941361fa.0.1752471336076; Sun, 13 Jul 2025
- 22:35:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752471336; x=1753076136; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eTT2yBHfTcFyM4AF+LOcaGU3n4iWp5c18cO+9hDiy24=;
+        b=DBwuZEQ2a+fGBOKZdydHxpjAg7gnlKHzzwMdoRSk50MYYgUBtAa5ZtLFSN5Fh4PKhP
+         vLebwpZV64QV72wGMN4tW89hdCZK4RaP/7lA52mKkh633eSqRkZcN5/MPZVrwhQG0X1I
+         a1pL6yTTlnl1co2TPBbVRJ0PlJEN/Qzu9zZ+AxKbZ4/5QNr64Mn+b/Fod0EwUE2UsMAg
+         C/xzpy+2lTBwszM+9zhX1UE5QpaJqq1HUWIfrsSf7cn7jljYK/QkaxtJ8O3K6nM2DYIz
+         l5GVNbOfGGiEM/aQZtuDNF5UrnbVuL9sIQRIy8Q4OzM2hSCO6Dex4+60uPpog6voIIio
+         5Prw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752471336; x=1753076136;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eTT2yBHfTcFyM4AF+LOcaGU3n4iWp5c18cO+9hDiy24=;
+        b=WKRVkU+S/k5Yw3MitYKJK25xrHID97P8g+kXIg6kB2wkBGxCwWt4wVw6+S0Wcy+PaO
+         YUnbQU9MlANWzaFx0gfsDpfUnd+1GxAKjcdXYOdhDxQniagb+O82cdLHOOtXfQJBDCzo
+         L9Tra+qZY6dQa5MBZXmhiKZyq6l08lN1GFH/ioEA24MTEJ727Pv9GhHTthbxb25AkP8Y
+         9lBIszq19ONtGmroo4u6y4nySoD8kWGEyaJfk7OGFTZaitF6pGKejJlcbB0sLv0WAZuy
+         wrCR6qmLaGyKRvr4+nROdV2p0l+pxSSj+9g8lQc4/nmxxAChywxO8wQwQj5HlfEbAtxd
+         ir7w==
+X-Forwarded-Encrypted: i=1; AJvYcCURHYKUxO86yz5veS0fTaZppc0N+EwVkTZJwb/Fc15EWdbwi7eLFJV51Ln/KsfrYF2mSntLz3Mnv5UXR77k@vger.kernel.org, AJvYcCWpdDMFgzSXQOK+HZgoxqoAAUEmDgkvSf17lJMvf7q3b9LuzIv0tthpO73QDh2QpaGl+lgD/TGh0igt@vger.kernel.org, AJvYcCXAPqupT8wAc8z8yguDkjrPucHb+BRbhTI7O0nvtbeLOgXCufiGgnhG8yXfC2oTO2emd3OrF74cZzoFPps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiVxeb/hsnboyFOCHQAuNMwfJ3blb23qh2hL9oQgUACrE8ezsD
+	l965I3d7pJz8BDefeuxCReKbnj3Ube4To/xPV7Z+frT/dM18wTwHXIXn5+fB2G2jXGXvLLKuWyx
+	iQNcSdIxmQIsaRS3NK9G5eLUOp3Fb6gQ=
+X-Gm-Gg: ASbGncsC3JPpKFSqXJxwEz1cvB3NblqLeTRi7NzYXYpRSn5BsUu0NbfhJLFrWZ4gTdh
+	6uG1Jcjr66NeMbl1Ct8QYRUcqI59oh3ZYSb2zndyDScAMn++xYqa7vk/tWEeOj9aUfVEVXr9r7n
+	ryM/1KwUOmyBh7zAR3auhbOgn2jIGMlCeOUu+P/dzhDR2v6rUbkk60zKtpnLiXltpEHZGO6pXSS
+	W4QpSI=
+X-Google-Smtp-Source: AGHT+IHV4fBmRuHWERCERtBKF1vv92N3FV47ypgAwaO/xCEjquF4Mr1IdqtvKl7DD5jfu1N0pzIimlXWvHYl+LIxWiE=
+X-Received: by 2002:a05:6512:1585:b0:553:d444:d4c4 with SMTP id
+ 2adb3069b0e04-55a04674d99mr3458275e87.50.1752471335671; Sun, 13 Jul 2025
+ 22:35:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709200112.258500-1-ebiggers@kernel.org>
-In-Reply-To: <20250709200112.258500-1-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 14 Jul 2025 15:35:24 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXGzz5hGiq5ebj9kxzXa3uHOt0eTBx3JHk7kP3S_+acwLQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwp7Fbb6COXkH-2bqBOjCIG6h27XjbFFg53HLlKFRHW0DIqtcRf-rDbuAQ
-Message-ID: <CAMj1kXGzz5hGiq5ebj9kxzXa3uHOt0eTBx3JHk7kP3S_+acwLQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/4] KUnit tests for SHA-2 and Poly1305
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"Jason A . Donenfeld" <Jason@zx2c4.com>
+References: <20250513-tx2nx-role-switch-v1-1-d92ea1870ea5@gmail.com>
+ <CALHNRZ8H66g98ThQKZJAT2UohVNtt6OS=rKd5wtcT1YwBLURqA@mail.gmail.com> <CALHNRZ84+KGwioU=7ZOL=O39cR_VSRJBaV42MsA4fymXNJC6+g@mail.gmail.com>
+In-Reply-To: <CALHNRZ84+KGwioU=7ZOL=O39cR_VSRJBaV42MsA4fymXNJC6+g@mail.gmail.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Mon, 14 Jul 2025 00:35:24 -0500
+X-Gm-Features: Ac12FXxE5aZV5SkxpxM5fRk6baNQBIAxTa-fub-NXK9zqdd4H9DfiBgmAlp_UJ4
+Message-ID: <CALHNRZ9zfjV-ZttJd_ydgEaWk7XB+3YPfKGuYXLBL9qA8Exv0g@mail.gmail.com>
+Subject: Re: [PATCH] arm64: tegra: Remove otg id gpio from Jetson TX2 NX
+To: webgeek1234@gmail.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 10 Jul 2025 at 06:04, Eric Biggers <ebiggers@kernel.org> wrote:
+On Mon, Jun 30, 2025 at 2:27=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com>=
+ wrote:
 >
-> This series is also available at:
+> On Wed, May 28, 2025 at 12:42=E2=80=AFPM Aaron Kling <webgeek1234@gmail.c=
+om> wrote:
+> >
+> > On Tue, May 13, 2025 at 4:10=E2=80=AFPM Aaron Kling via B4 Relay
+> > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> > >
+> > > From: Aaron Kling <webgeek1234@gmail.com>
+> > >
+> > > The p3509 carrier board does not connect the id gpio. Prior to this, =
+the
+> > > gpio role switch driver could not detect the mode of the otg port.
+> > >
+> > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > > ---
+> > >  arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts | 1 -
+> > >  1 file changed, 1 deletion(-)
+> > >
+> > > diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-000=
+1.dts b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
+> > > index 26f71651933d1d8ef32bbd1645cac1820bd2e104..81f204e456409df355bbc=
+b691ef99b0d0c9d504e 100644
+> > > --- a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
+> > > +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
+> > > @@ -669,7 +669,6 @@ connector {
+> > >                                         vbus-gpios =3D <&gpio
+> > >                                                       TEGRA186_MAIN_G=
+PIO(L, 4)
+> > >                                                       GPIO_ACTIVE_LOW=
+>;
+> > > -                                       id-gpios =3D <&pmic 0 GPIO_AC=
+TIVE_HIGH>;
+> > >                                 };
+> > >                         };
+> > >
+> > >
+> > > ---
+> > > base-commit: 405e6c37c89ef0df2bfc7a988820a3df22dacb1b
+> > > change-id: 20250513-tx2nx-role-switch-37ec55d25189
+> > >
+> > > Best regards,
+> > > --
+> > > Aaron Kling <webgeek1234@gmail.com>
+> > >
+> > >
+> >
+> > Friendly reminder about this patch.
 >
->     git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git libcrypto-kunit-v5
->
-> This series adds the first KUnit tests for lib/crypto/, including tests
-> for SHA-2 and Poly1305.
->
-> Changed in v5:
-> - Moved hash_irq_test2_state from stack to heap
->   (fixes https://lore.kernel.org/r/202507081257.9sV2D0Ys-lkp@intel.com)
-> - Replaced HRTIMER_MODE_REL with HRTIMER_MODE_REL_HARD to make hardirq
->   context be used on CONFIG_PREEMPT_RT (fixes a WARN_ON_ONCE).
-> - Removed an unnecessary initialization in hash_irq_test2_func()
-> - Added comments that explain kconfig option naming
-> - Added link to Poly1305 paper
->
-> Changed in v4:
-> - Added Poly1305 tests.
-> - Split the addition of hash-test-template.h and gen-hash-testvecs.py
->   into a separate patch.
-> - Added two more test cases to hash-test-template.h
->   (test_hash_all_lens_up_to_4096 and test_hash_interrupt_context_2).
-> - Simplified test_hmac to use a single consolidated test vector.
-> - Lots of other cleanups.
->
-> Changed in v3:
-> - Split from SHA-512 and SHA-256 series, as per the request from Linus
->   that the tests be kept last on the branch.
->
-> Eric Biggers (4):
->   lib/crypto: tests: Add hash-test-template.h and gen-hash-testvecs.py
->   lib/crypto: tests: Add KUnit tests for SHA-224 and SHA-256
->   lib/crypto: tests: Add KUnit tests for SHA-384 and SHA-512
->   lib/crypto: tests: Add KUnit tests for Poly1305
->
+> Re-reminder about this patch.
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+Yet another reminder about this patch. It's been over two months
+without a response and many other patches have been pulled in the
+meantime.
+
+Aaron
 
