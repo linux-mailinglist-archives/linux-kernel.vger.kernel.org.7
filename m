@@ -1,224 +1,124 @@
-Return-Path: <linux-kernel+bounces-729768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A6D8B03B4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:48:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3466B03B4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BF41188AAEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:49:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C87F63A69E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F54124291C;
-	Mon, 14 Jul 2025 09:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3266E24293C;
+	Mon, 14 Jul 2025 09:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BeWA0E5X"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="P6KUVfql"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264311E47A8;
-	Mon, 14 Jul 2025 09:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BF81E47A8;
+	Mon, 14 Jul 2025 09:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752486516; cv=none; b=UF8ya5VVgdgzdIYBlN0CxD7Q0X51CB3zT7b0RTDncPj2Jm38zctwKbPfwZ015Jbk02nmpWGnhlSlPIlxzzPI2XtKVq4AqYx59BNwWHXYsANE/R+hQgbcgSU7iPYFXsDGooY5KdueCln9LtAFRDBSElnpWndZU35L6CtzLoMJduE=
+	t=1752486570; cv=none; b=lONzpPNfIXFZx9mPNMfAwsKW4W07/3mhvkRDlZAPnwpb2Xi/YTdGjDv7GJln6Aq7S4oh0rn/VF0VEAOV4vFCZAtgqqrEbPaBNFNf7KBaogyP8777siPcA/7W6g4rIdmwPsQfklZN7nK5QXYHd+2/TaqWAZKIlO0Xdg2VV8HbZ0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752486516; c=relaxed/simple;
-	bh=Pqhjlt7Xe4QZEQNw9loSdR5L7feW5hzre3d9xP9ALNs=;
+	s=arc-20240116; t=1752486570; c=relaxed/simple;
+	bh=fSQmqTmFXiJr35bumTDLx/6khX6zLKHvHySYlt9rJ/A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gvn7BtCLIZV9VlGN6NuEhvJpC+R4WxE7QAprLCyXSSjnijVMCYOCoeN/FXMTwxS3FOR6XcWWq08dDRGycs+sjoadbEEaJHzvGpygLJGJH5N2m7+QyY+ooDhQT9+I/1EIywIT0oZyAbdu/4pBysPQtnNRQzEJZMxSy/fsKJ2tqBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BeWA0E5X; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0BQrc84RUIgCrBwltnNpR1JpwRq1C4cmxPtCU54YBc0=; b=BeWA0E5XyP48nCmsFvJIJs73aS
-	8gVWLdq+voR0crClgGWWRv1JrT9+htkSYntujcpCiu+awuHnsNjyRmC+fHkKqSrYvJsMGykhBY2Hh
-	6lgBVzbJIw3NM86AtzG7efTn9wTVj8JgX8TzXpIQG/B0CGmRBkoaIYUmLRY+Am9bSorRvidnMIkji
-	q+E8v9L3rYRkfxS0Np2Q4Nhpjaw22IZHl43VPtmejI/vB0wjtvQETBjZrNdCkm5iTbYc0IIE7OgTu
-	Z/4BvKl/HdHioId1SNJsmTJ2n9d9EVpYz6quXrmaqN0d/U4IluC4fBcKm0u/uROsMG9h7TZhxIcAC
-	shSWd9Jg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubFnM-00000009k4R-3bMv;
-	Mon, 14 Jul 2025 09:48:25 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 54682300186; Mon, 14 Jul 2025 11:48:24 +0200 (CEST)
-Date: Mon, 14 Jul 2025 11:48:24 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@aculab.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCHv5 perf/core 10/22] uprobes/x86: Add support to optimize
- uprobes
-Message-ID: <20250714094824.GQ905792@noisy.programming.kicks-ass.net>
-References: <20250711082931.3398027-1-jolsa@kernel.org>
- <20250711082931.3398027-11-jolsa@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i0uaOxl9mbcWB9l3jg1pkD47m4AwYl6vMaIuV+hsIKnztKxdH2FAUok9HBMQLtScStAhMRs0gISjsi6GKtPe07E8UjkBFXEw0tNiGE+pZGPd+IrUcp9VW8l7k46TxJiRxB+28wSRLBJjiP2WAmmr/tXzZ1ZVEazKF+1A6oSaLy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=P6KUVfql; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B6B2840E01FD;
+	Mon, 14 Jul 2025 09:49:24 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id KFiAFINQwJ0H; Mon, 14 Jul 2025 09:49:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1752486560; bh=u5N4pTc0wlCZb0vYn03d8qHPb6wSiN52lq5zu+DU4g0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P6KUVfqlDJpHL8iXfV0Zb8Zb8VVTaZqCLrbVPIOHc6mS7eNPKWJHRJQF/cKT0kh2P
+	 rYd9LpHOKx8gXD6eIiydUO7tOTwzeWd290HvFVePOgZBbdkOGNCiWdfzeqf9T71CMU
+	 +NHCX9LCQtuMsQ+csYIG7YBa39hJoxRfUZcTQM2fUEw7IBS57aFekVNeF6uLbHYcQQ
+	 6xnqzcPVIGo6sqFy50hHMHy0AbnAVQe/Xvr5e8T3adTdjrDTQu2EhrUGlte0ptPJPD
+	 liTHkTl7Rw3wXwp3DL7S/PgVZbLo0iehAaWmWV8hkk59FLT9kfGS+EXflqef11FBJY
+	 nlHYIoTZS1y0dGOORy+c2KMMcBFNxZemsnjHh33CL7eRDj7eT1OMerBtq4uzaLUbgL
+	 kQXXAFJt4lDgBGTxmo6PBYWzoQjLKwdJ7ESJjX5LmUliipPFv5bC4qLEWrKlcEoXGb
+	 UQksxvwe2sw6bOVlC5Eh0EeO3ip0VqOfkKlD4DG1IUEvlUIKw2uiVTvoCBCGL4BnNI
+	 H/q5YDErGMlg76r4KA6G5srs+IOdKUr/nvUwX3kVUQKljaoZurHz7payTElBRJYz1v
+	 EmD+uwPBLg604CGalyObU3zogXYOAwT+qw3CoQpU3evEFeEYdw+xsOtkNUz0P7VzrM
+	 Xslq/7/PVoUAiHXRNy+oybGs=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A1B3940E00CE;
+	Mon, 14 Jul 2025 09:49:10 +0000 (UTC)
+Date: Mon, 14 Jul 2025 11:49:09 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+	sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs/Kconfig: Enable HUGETLBFS only if
+ ARCH_SUPPORTS_HUGETLBFS
+Message-ID: <20250714094909.GBaHTSlW8nkuINON9p@fat_crate.local>
+References: <20250711102934.2399533-1-anshuman.khandual@arm.com>
+ <20250712161549.499ec62de664904bd86ffa90@linux-foundation.org>
+ <f86c9ec6-d82d-4d0c-80b2-504f7c6da22e@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250711082931.3398027-11-jolsa@kernel.org>
+In-Reply-To: <f86c9ec6-d82d-4d0c-80b2-504f7c6da22e@arm.com>
 
-On Fri, Jul 11, 2025 at 10:29:18AM +0200, Jiri Olsa wrote:
-> +enum {
-> +	OPT_PART,
-> +	OPT_INSN,
-> +	UNOPT_INT3,
-> +	UNOPT_PART,
-> +};
-> +
-> +struct write_opcode_ctx {
-> +	unsigned long base;
-> +	int update;
-> +};
-> +
-> +static int is_call_insn(uprobe_opcode_t *insn)
-> +{
-> +	return *insn == CALL_INSN_OPCODE;
-> +}
-> +
-> +static int verify_insn(struct page *page, unsigned long vaddr, uprobe_opcode_t *new_opcode,
-> +		       int nbytes, void *data)
-> +{
-> +	struct write_opcode_ctx *ctx = data;
-> +	uprobe_opcode_t old_opcode[5];
-> +
-> +	uprobe_copy_from_page(page, ctx->base, (uprobe_opcode_t *) &old_opcode, 5);
-> +
-> +	switch (ctx->update) {
-> +	case OPT_PART:
-> +	case OPT_INSN:
-> +		if (is_swbp_insn(&old_opcode[0]))
-> +			return 1;
-> +		break;
-> +	case UNOPT_INT3:
-> +		if (is_call_insn(&old_opcode[0]))
-> +			return 1;
-> +		break;
-> +	case UNOPT_PART:
-> +		if (is_swbp_insn(&old_opcode[0]))
-> +			return 1;
-> +		break;
-> +	}
-> +
-> +	return -1;
-> +}
-> +
-> +static int write_insn(struct arch_uprobe *auprobe, struct vm_area_struct *vma, unsigned long vaddr,
-> +		      uprobe_opcode_t *insn, int nbytes, void *ctx)
-> +{
-> +	return uprobe_write(auprobe, vma, vaddr, insn, nbytes, verify_insn,
-> +			    true /* is_register */, false /* do_update_ref_ctr */, ctx);
-> +}
-> +
-> +static void relative_call(void *dest, long from, long to)
-> +{
-> +	struct __packed __arch_relative_insn {
-> +		u8 op;
-> +		s32 raddr;
-> +	} *insn;
-> +
-> +	insn = (struct __arch_relative_insn *)dest;
-> +	insn->raddr = (s32)(to - (from + 5));
-> +	insn->op = CALL_INSN_OPCODE;
-> +}
+On Mon, Jul 14, 2025 at 08:05:31AM +0530, Anshuman Khandual wrote:
+> The original first commit had added 'BROKEN', although currently there
+> are no explanations about it in the tree.
 
-We already have this in asm/text-patching.h, its called
-__text_gen_insn().
+commit c0dde7404aff064bff46ae1d5f1584d38e30c3bf
+Author: Linus Torvalds <torvalds@home.osdl.org>
+Date:   Sun Aug 17 21:23:57 2003 -0700
 
-> +
-> +static int swbp_optimize(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
-> +			 unsigned long vaddr, unsigned long tramp)
-> +{
-> +	struct write_opcode_ctx ctx = {
-> +		.base = vaddr,
-> +	};
-> +	char call[5];
-> +	int err;
-> +
-> +	relative_call(call, vaddr, tramp);
+    Add CONFIG_BROKEN (default 'n') to hide known-broken drivers.
 
-	__text_gen_insn(call, CALL_INSN_OPCODE, vaddr, tramp, CALL_INSN_SIZE);
+diff --git a/init/Kconfig b/init/Kconfig
+index 0d1629e23398..5c012aeb2a8f 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -32,6 +32,17 @@ config EXPERIMENTAL
+ 	  you say Y here, you will be offered the choice of using features or
+ 	  drivers that are currently considered to be in the alpha-test phase.
+ 
++config BROKEN
++	bool "Prompt for old and known-broken drivers"
++	depends on EXPERIMENTAL
++	default n
++	help
++	  This option allows you to choose whether you want to try to
++	  compile (and fix) old drivers that haven't been updated to
++	  new infrastructure.
++
++	  If unsure, say N.
++
+ endmenu
+ 
 
-> +
-> +	/*
-> +	 * We are in state where breakpoint (int3) is installed on top of first
-> +	 * byte of the nop5 instruction. We will do following steps to overwrite
-> +	 * this to call instruction:
-> +	 *
-> +	 * - sync cores
-> +	 * - write last 4 bytes of the call instruction
-> +	 * - sync cores
-> +	 * - update the call instruction opcode
+-- 
+Regards/Gruss,
+    Boris.
 
-The sanctioned text poke sequence has another sync-core at the end.
-Please also do this.
-
-> +	 */
-> +
-> +	smp_text_poke_sync_each_cpu();
-> +
-> +	ctx.update = OPT_PART;
-> +	err = write_insn(auprobe, vma, vaddr + 1, call + 1, 4, &ctx);
-> +	if (err)
-> +		return err;
-> +
-> +	smp_text_poke_sync_each_cpu();
-> +
-> +	ctx.update = OPT_INSN;
-> +	return write_insn(auprobe, vma, vaddr, call, 1, &ctx);
-> +}
-> +
-> +static int swbp_unoptimize(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
-> +			   unsigned long vaddr)
-> +{
-> +	uprobe_opcode_t int3 = UPROBE_SWBP_INSN;
-> +	struct write_opcode_ctx ctx = {
-> +		.base = vaddr,
-> +	};
-> +	int err;
-> +
-> +	/*
-> +	 * We need to overwrite call instruction into nop5 instruction with
-> +	 * breakpoint (int3) installed on top of its first byte. We will:
-> +	 *
-> +	 * - overwrite call opcode with breakpoint (int3)
-> +	 * - sync cores
-> +	 * - write last 4 bytes of the nop5 instruction
-> +	 * - sync cores
-> +	 */
-> +
-> +	ctx.update = UNOPT_INT3;
-> +	err = write_insn(auprobe, vma, vaddr, &int3, 1, &ctx);
-> +	if (err)
-> +		return err;
-> +
-> +	smp_text_poke_sync_each_cpu();
-> +
-> +	ctx.update = UNOPT_PART;
-> +	err = write_insn(auprobe, vma, vaddr + 1, (uprobe_opcode_t *) auprobe->insn + 1, 4, &ctx);
-> +
-> +	smp_text_poke_sync_each_cpu();
-> +	return err;
-> +}
-
-Please unify these two functions; it makes absolutely no sense to have
-two copies of this logic around.
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
