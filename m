@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-729902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8933DB03D4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:25:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89993B03D50
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE8671734ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:25:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7D2417569A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01ECC246BA9;
-	Mon, 14 Jul 2025 11:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E57246BB6;
+	Mon, 14 Jul 2025 11:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JXqzOilt"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdCmqvqj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C69B23BF9F
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458B523C8A1;
+	Mon, 14 Jul 2025 11:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752492293; cv=none; b=WZ+xCFKetmGdoyYmXOgAX6cH8TzBkGkWzKWc1AXlJohQBqkRlfSK8F4xgkVmdDaqmSwoD621kJPXC5GMqYaXzK5QbZQ78wkHMV1xjXPoMB/RdlUJen8bwRAUewJ32X58yw2NWgGO3xEE9Wgo+PTJYoTnPCLUYBC2INhnXQ7EWUw=
+	t=1752492313; cv=none; b=oSLa8ZLzYqvZHvugqtLRxa5h8OsSxBsV1sCB5trGCnHlxyRNpTFw56TQNlOvHGYX5Vcy86kEtQko4+izGM0/5PIPtv5tJ8xtYXDzA3/ICerY85ei3H29DO8byllHuRuWSbZOeUXpnt233aWGFl0H4uYhvmu4PTsuaiokYnxvUZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752492293; c=relaxed/simple;
-	bh=iYT44WElK5mienuaO/HbMHbwDQsz8DHTN4KSmVPDCUY=;
+	s=arc-20240116; t=1752492313; c=relaxed/simple;
+	bh=jVjb0enl4am9VQ0gK4IxsNZ9Gbgco14TTp2KvS0JZ2Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K6OXD0E+ovE05H8dqWOKwCvofFLO5sVVtXPkSWu5QoQzlFlLLnBwMbWAZ9R7TsIaNOl+O4d86rowqLChgo2YCqoH+81Ta48uZQs7BaRszMscMrEl0dkmsSFZRSnWSDZvstJXF/SUh0tjY9lpzT3LLZKyRcthEeSfADAU8ke9T0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JXqzOilt; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae3b37207easo867111466b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 04:24:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1752492289; x=1753097089; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SJSCkH8SXulB8gzjVSl7ssENLumIeAgZx3lJnpZRwXA=;
-        b=JXqzOiltTEZYwe7MXvGM27DzyF8fO9VGbZK9k2Wed5CpYT/tqzQWXMyCY4xox9dtFT
-         FSfbPM7FvH+zHCOtWleAKcp2blpAf5g+n+0Ne0dMVNC2oBBF3jYt+M7Dicl14Q+Lo8ri
-         iNWZ2s7K6Y65SRG8pd6sneUxh+L2omVYa8xLoonF6iZGDc2VGvc2ijOTczw2N0Zyf9MX
-         kVA81ZD7p7rPAXVNdolxfmwBSM7rMiVEKWPnKeDA43nAQ0MyUjhN2Q9iZpp6lqlcX+pR
-         tfHnZQrh1n/bZelwNIFCDGSfOk0F9HviD9+Z7IKTyK90OyfWbJx+vpcazUSpiE740DKV
-         50jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752492289; x=1753097089;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SJSCkH8SXulB8gzjVSl7ssENLumIeAgZx3lJnpZRwXA=;
-        b=MPwl6jncI7oiGMNaL4Xgc6hUYUarhfij1SrSjoKk2BovpirtCMnjahKvm80hhmb/+s
-         EtOKF4ziQkNYhNcs7EG2gcADjTl70nDI3xx+TI7GcHNWuUrvJq+EHEHHioX92LrnfqWt
-         eNs1mCcHRdhaa39G1OhtweJ0wzjbjoQ8J3a8q4mGd+3PFE4DodTDNnoJGmEtEYZ/HGnt
-         0JFsdqJF3aJq1GKatwEffA9ApUxcntbwjkl1K7euNPfvRPPzIpmjUeHyfCFQycKCusir
-         qkwAPP4GiUCWjaoS3f7vawiR5BGvlXjufLk+dti3U8GktdOnDcj1qWBjEd9125MnFoVt
-         5NPA==
-X-Forwarded-Encrypted: i=1; AJvYcCWaFa0zrHxvx0K7tvb2syEG9LGNV2oS6sdlCpS4A0T8HoMTjm9LheOaOurzh8gm2ClfWDFrebYZK93zv1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVA58RcZwxylWuEnszgmk8NBFf5mEN0JxVDFyYAPfOoW6grRWu
-	rF85cO2yQU/84TkQWz85IgTMJEKM4q/v6krKMbk7tosPCo6geA6GiOyTTb6o0lHKdKs=
-X-Gm-Gg: ASbGncvoiU29rT5Zy910PxW/jHC/y+ayXk6mk3Ap68YHHzp6aSYTs98QuGmxY2bulBC
-	pfzZla9cDvxPwV/kLKoYtXHo3EuphfgTcS5exDz9TfDoE+7A695ULWqq2uqW3DYsZ+hjjM7vTT2
-	2tKWLee2W0Yb9OTzk1TkGCQQ3DmELpZVVVqjKZd2fb7cRf8Di3WhIvDGpM+Me0TchRawC3+uvMS
-	Y2VV/0rw5gmrSo9BN6Tw1IYTgGZKcbZ6lpHvdpjhH3e9Uuo3gOmWFfwmGTE0CdA3x10LgaMJVeh
-	PzH2+8Y1yO7ZcJZHfOGPqRJpLt+pcPEIysyH9XpD5qIZ/7p9foW/vlLqeA9vgHoN4fsRODkJX4Q
-	2ys5BlHz5LNi0f0jJiVXLHfg=
-X-Google-Smtp-Source: AGHT+IF3OdEhLF0fZL6hcJiMrcz+5YZmdSpgfvxDQhaRSMdHTHJDqIPKAzb8nI/Qck+gtO90Oq46SA==
-X-Received: by 2002:a17:907:1c13:b0:ad5:7bc4:84b5 with SMTP id a640c23a62f3a-ae6fc0f4e38mr1399528866b.57.1752492289444;
-        Mon, 14 Jul 2025 04:24:49 -0700 (PDT)
-Received: from [10.20.4.146] ([149.62.209.4])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8293fe7sm794929866b.123.2025.07.14.04.24.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 04:24:49 -0700 (PDT)
-Message-ID: <4acfa729-e0ad-4dc7-8958-ececfae8ab80@suse.com>
-Date: Mon, 14 Jul 2025 14:24:42 +0300
+	 In-Reply-To:Content-Type; b=hBnjnXdKuqN38+AtQA/xvjEGVvkPqYCsoV10fQ3wCFq43bMC5ah+nrdFfNgCoNwkrBxzRwcbXfAgejXTXBaFrhk0c5TSDbhXtrW9+c5HLud1egSASFU+uSX8xZcneHZ3iVZo0T9T9QKuqIwywebxdpP70l38ssGd14ATDXNlKIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdCmqvqj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07BDCC4CEED;
+	Mon, 14 Jul 2025 11:25:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752492312;
+	bh=jVjb0enl4am9VQ0gK4IxsNZ9Gbgco14TTp2KvS0JZ2Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fdCmqvqj/AlK/8Rel1jsbGzSBgiEAYVJLUK+0TuOx59dGGKKMs3JXj8RimmJrtKC6
+	 K88CoC76ZsAOQzVej/WfVWLNDECBAGlTczA3NsPQfAdQFAtBi81Y0DCnUQujqa59Z0
+	 dYfAV1yOG5+k9ihF/sRB96YwSi84CQgPlluBmyyAAchLxLLoFTJn+W3BPB0/0P1asW
+	 I280dvcQBp0gjqJFLEhyXJgTTLn7syhSSvHe/SuK/KaYhukt9PMIv0nAINXH1V7ywc
+	 6i9IOgLeF2lC6247zTCnfR0oZ78+NjcR0sB2kOKLKzg4UaYOyn5Q16qzTSyhzs9hLm
+	 BgsgUethaMv4w==
+Message-ID: <70560f1e-fbbc-4e65-a8f4-140eb9a6e56e@kernel.org>
+Date: Mon, 14 Jul 2025 13:24:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,106 +49,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] x86/kvm: Force legacy PCI hole as WB under SNP/TDX
-To: Binbin Wu <binbin.wu@linux.intel.com>, Jianxiong Gao <jxgao@google.com>,
- Sean Christopherson <seanjc@google.com>
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Dionna Glaze <dionnaglaze@google.com>, "H. Peter Anvin" <hpa@zytor.com>,
- jgross@suse.com, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ingo Molnar <mingo@redhat.com>, pbonzini@redhat.com,
- Peter Gonda <pgonda@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Tom Lendacky <thomas.lendacky@amd.com>,
- Vitaly Kuznetsov <vkuznets@redhat.com>, x86@kernel.org,
- Rick Edgecombe <rick.p.edgecombe@intel.com>
-References: <CAMGD6P1Q9tK89AjaPXAVvVNKtD77-zkDr0Kmrm29+e=i+R+33w@mail.gmail.com>
- <0dc2b8d2-6e1d-4530-898b-3cb4220b5d42@linux.intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
+Subject: Re: [PATCH net-next 01/12] dt-bindings: ptp: add bindings for NETC
+ Timer
+To: Wei Fang <wei.fang@nxp.com>
+Cc: "F.S. Peng" <fushi.peng@nxp.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "richardcochran@gmail.com" <richardcochran@gmail.com>,
+ Claudiu Manoil <claudiu.manoil@nxp.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>, Clark Wang
+ <xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+ "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>
+References: <20250711065748.250159-1-wei.fang@nxp.com>
+ <20250711065748.250159-2-wei.fang@nxp.com>
+ <ce7e7889-f76b-461f-8c39-3317bcbdb0b3@kernel.org>
+ <PAXPR04MB8510C8823F5F229BC78EB4B38854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <61e6c90d-3811-41c2-853d-d93d9db38f21@kernel.org>
+ <PAXPR04MB85109EE6F29A1D80CF3F367A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <169e742f-778e-4d42-b301-c954ecec170a@kernel.org>
+ <PAXPR04MB85107A7E7EB7141BC8F2518A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <836c9f0b-2b73-4b36-8105-db1ae59b799c@kernel.org>
+ <PAXPR04MB8510CCEA719F8A6DADB8566A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <0dc2b8d2-6e1d-4530-898b-3cb4220b5d42@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <PAXPR04MB8510CCEA719F8A6DADB8566A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 14.07.25 г. 12:06 ч., Binbin Wu wrote:
-> 
-> 
-> On 7/10/2025 12:54 AM, Jianxiong Gao wrote:
->> I tested this patch on top of commit 8e690b817e38, however we are
->> still experiencing the same failure.
+On 14/07/2025 12:28, Wei Fang wrote:
+>>>
+>>> Currently, the enetc driver uses the PCIe device number and function number
+>>> of the Timer to obtain the Timer device, so there is no related binding in DTS.
 >>
-> I didn't reproduce the issue with QEMU.
-> After some comparison on how QEMU building the ACPI tables for HPET and 
-> TPM,
+>> So you just tightly coupled these devices. Looks poor design for me, but
+>> your choice. Anyway, then use that channel as information to pass the
+>> pin/timer/channel number. You do not get a new property for that.
+>>
 > 
-> - For HPET, the HPET range is added as Operation Region:
->      aml_append(dev,
->          aml_operation_region("HPTM", AML_SYSTEM_MEMORY, 
-> aml_int(HPET_BASE),
->                               HPET_LEN));
-> 
-> - For TPM, the range is added as 32-Bit Fixed Memory Range:
->      if (TPM_IS_TIS_ISA(tpm_find())) {
->          aml_append(crs, aml_memory32_fixed(TPM_TIS_ADDR_BASE,
->                     TPM_TIS_ADDR_SIZE, AML_READ_WRITE));
->      }
-> 
-> So, in KVM, the code patch of TPM is different from the trace for HPET 
-> in the
-> patch 
-> https://lore.kernel.org/kvm/20250201005048.657470-3-seanjc@google.com/,
-> HPET will trigger the code path acpi_os_map_iomem(), but TPM doesn't.
-> 
-> I tried to hack the code to map the region to WB first in tpm_tis driver to
-> trigger the error.
-> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-> index 9aa230a63616..62d303f88041 100644
-> --- a/drivers/char/tpm/tpm_tis.c
-> +++ b/drivers/char/tpm/tpm_tis.c
-> @@ -232,6 +232,7 @@ static int tpm_tis_init(struct device *dev, struct 
-> tpm_info *tpm_info)
->          if (phy == NULL)
->                  return -ENOMEM;
-> 
-> +       ioremap_cache(tpm_info->res.start, resource_size(&tpm_info->res));
->          phy->iobase = devm_ioremap_resource(dev, &tpm_info->res);
->          if (IS_ERR(phy->iobase))
->                  return PTR_ERR(phy->iobase);
-> Then I got the same error
-> [ 4.606075] ioremap error for 0xfed40000-0xfed45000, requested 0x2, got 0x0
-> [ 4.607728] tpm_tis MSFT0101:00: probe with driver tpm_tis failed with 
-> error -12
+> I do not understand, the property is to indicate which pin the board is
+> used to out PPS signal, as I said earlier, these pins are multiplexed with
+
+Sure, I get it and my argument for phandle cells stays. If you decide
+not to use it, you do not get a new property.
+
+> other devices, so different board design may use different pins to out
+> this PPS signal.
+
+multiplexing is task for pinctrl, so this only brings confusion.
 
 
-The thing is we don't really want to get into the if (pcm != new_pcm) { 
-branch, because even if it succeeds there then the mapping will be 
-wrong, because we want accesses to the TPM to be uncached since that's 
-an iomem region, whereas this error shows that the new_pcm is WB.
-
-Also looking at memtype_reserve in it there is the following piece of code:
-
-if (x86_platform.is_untracked_pat_range(start, end)) {
-      7                 if (new_type) 
-
-      6                         *new_type = _PAGE_CACHE_MODE_WB; 
-
-      5                 return 0; 
-
-      4         }
-
-
-So if is_untracked_pat_range returns true then the cache mode will 
-always be WB.
-
-
-> 
-> And with Sean's patch set, the issue can be resolved.
-> 
-> I guess google's VMM has built different ACPI table for TPM.
-> But according to my experiment, the issue should be able to be fixed by 
-> this
-> patch set, though I am not sure whether it will be the final solution or 
-> not.
+Best regards,
+Krzysztof
 
