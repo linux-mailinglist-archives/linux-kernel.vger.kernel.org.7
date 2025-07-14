@@ -1,69 +1,74 @@
-Return-Path: <linux-kernel+bounces-730004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC6EB03EFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:48:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71FEDB03EFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10E337A8679
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:46:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40DAA188C2E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1002451C3;
-	Mon, 14 Jul 2025 12:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2171E238149;
+	Mon, 14 Jul 2025 12:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZOC64fV8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1TP2UKzZ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V+66RgB5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE89139579;
-	Mon, 14 Jul 2025 12:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C261FAC4B
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752497287; cv=none; b=p21+3c5WaSnWMVcUZ4GeKI1dCziQ6FRBf/EVfL79bwcv69AcuaNsRpTHJ2HZBjv73Z7iws172BUbgKc0n5kkLtYYrVi3DSv6EP/7eRxL/AjMwtpYdF+70jOtnEorN+CYQrVe79T5cmTwysdiyp0KtswqrJb1ss+8Z5uAmS/Gyrc=
+	t=1752497349; cv=none; b=fD59CpKmrxg2JTOAm6Xs7FzKIBKdJJB9j/l5/fNZ5zWvSZc5Aj2adV8NmyAG/czDUvUNh852vLMXbmXsRpJlPIfKIxqIhG7avYnNN9k/se8havxkm6NZ+kx2iD+5NvRiI/7vxddDoYcr5ikncYAurPuqtJ1ZGO8ScecmYN2kDak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752497287; c=relaxed/simple;
-	bh=W1gBBx378huEbUH0UKJW2zvbwvEPzdigrptMNOSbIKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9dGQL+T5sXWmO/ogxI9mHduwAeBwCS9lhPD+JQ2e/D7FgOYvih5Z/100hV3A4spaivolpElJ3ZZh2PgxOzadyyquK5oH4L4yO41qmIGfE3IR4i95nR5IEqps8UCnOg8xLKpzoXd1xzg/n9TTNU/lEqzhy/XTPrKOh4WfxmnfR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZOC64fV8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1TP2UKzZ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 14 Jul 2025 14:48:02 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752497283;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DIpxN6xYFz8Yqjq9UwnnrNqlfbMEdukPF/7/bPkrB4g=;
-	b=ZOC64fV8yrxRmx1RNHaPYZFqHAdR4kcft4LnUXcslrgImE3o8J3ObKtLu6kn2MzYcovRhM
-	UlIa75N3chnEMw/bMY4mzd5PaGCuwu3zaThA2x9Z784fowxh+AtTm8jzNMJkjZohcrC+aS
-	CSJ75Iq7k7rixi4cS5mxNuFMTsyxo0YffC5BbOTzan2kAJOe6VjnjULQryERhFZXaaG7AT
-	P6etVh5x/kp06pc7y27uLve+qu977LPdeHF2FS8bsxJu5Vb9cLVWvsiZEyrNBn4Xj+Ie8o
-	BD+nJ91U3RKB6ZoRtSnlN/R5xccLG3T4gt1Uq1HnNgB94wof0Cz/FOuec44FYQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752497283;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DIpxN6xYFz8Yqjq9UwnnrNqlfbMEdukPF/7/bPkrB4g=;
-	b=1TP2UKzZ+hS1KqO7ntISw88fPLNKyXvqWw/fvrbF2E+skH6invyWk7xkTbS7HQbx/dzxw5
-	MJBroYGoz6ht1eBw==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] verification/rvgen: Support the 'next' operator
-Message-ID: <20250714124802.kjqjNWmr@linutronix.de>
-References: <cover.1752239482.git.namcao@linutronix.de>
- <9c32cec04dd18d2e956fddd84b0e0a2503daa75a.1752239482.git.namcao@linutronix.de>
- <7f4409eae10023a804d24ad2a9c67d368db152cb.camel@redhat.com>
- <20250714124208.qVXvUVqp@linutronix.de>
+	s=arc-20240116; t=1752497349; c=relaxed/simple;
+	bh=q3sFzrJkAfvwVuUi303xZghLQU14HiH4IYa+bfJZEhI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bWK4gH4YoZmY7H3CoBwvjllRndJpPDBVJ+mAtkYydbmAorkR1Pfy4vD648GMsPZSSM6dAuPuG2Tg/DaNgi/bTow4vKN/U0HgsIZhYZp68ALcy3MLf2hkxpfCZhKwu61NWSGa/J6965ooL2sz8NZy1J1a6kpzbUG7WXwKFsyRhhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V+66RgB5; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752497346; x=1784033346;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=q3sFzrJkAfvwVuUi303xZghLQU14HiH4IYa+bfJZEhI=;
+  b=V+66RgB50RD5zpP3XbHO3n+jSO8vwHry17ZkJisk9q6qBR9CUQ7UGdDU
+   ar7C4kGS/W0/tY0sCYv+bAsGnK9Dw094Ih5rsYUJTFTWihEqkNGcXxTjy
+   zTr94hm0cXgIkOg79H1IZKSu+QUUyn0/8BOrIor335/Jplz+zNnChSYFY
+   Ik/5cueln6Ud66CF+nrdkUlq/S0qgQx4vAlKlcvraMJUkMUTaDCoAslkl
+   v5uLPqHLc3rO/05ZzWHSmnND2ymkD/0WcBcSvkrBfuGtApb7IJMrk6M5j
+   DXSOzDB2dUFTE+2lC1+OTZOLOlO28j1WdLBCU4iYJsV8pKrWNuqkj84GV
+   Q==;
+X-CSE-ConnectionGUID: lzE18qsPQICOTVp4v4ZsiA==
+X-CSE-MsgGUID: SmSDyo/DT9ymOQkxRr2dAw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54659138"
+X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
+   d="scan'208";a="54659138"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 05:49:06 -0700
+X-CSE-ConnectionGUID: NyMi8R3PQbySMLffAqbV+Q==
+X-CSE-MsgGUID: 2vs7CO1aTTOWTlvChe3olg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
+   d="scan'208";a="160938070"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 14 Jul 2025 05:49:04 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ubIcA-0008sT-0k;
+	Mon, 14 Jul 2025 12:49:02 +0000
+Date: Mon, 14 Jul 2025 20:48:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>
+Subject: mm/maccess.c:41:17: sparse: sparse: incorrect type in argument 2
+ (different address spaces)
+Message-ID: <202507142033.p5lg4D5Q-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,32 +77,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250714124208.qVXvUVqp@linutronix.de>
 
-On Mon, Jul 14, 2025 at 02:42:10PM +0200, Nam Cao wrote:
-> On Mon, Jul 14, 2025 at 02:18:05PM +0200, Gabriele Monaco wrote:
-> > Now I can't think of a way to rewrite the model to allow a pulse in
-> > sched_switch, that is /whenever scheduling turns to true, the next
-> > event is a switch/ instead of /any time scheduling is true, the next
-> > event is a switch/.
-> > 
-> > I tried something like:
-> >   RULE = always ((not SCHEDULING and next SCHEDULING) imply next
-> > SWITCH)
-> 
-> Be careful of operator precedence. This rule is also what I would suggest,
-> but you need parentheses:
-> 
->     RULE = always (((not SCHEDULING) and (next SCHEDULING)) imply (next SWITCH))
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   347e9f5043c89695b01e66b3ed111755afcf1911
+commit: ca1a66cdd685030738cf077e3955fdedfe39fbb9 riscv: uaccess: do not do misaligned accesses in get/put_user()
+date:   6 weeks ago
+config: riscv-randconfig-r121-20250714 (https://download.01.org/0day-ci/archive/20250714/202507142033.p5lg4D5Q-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 8.5.0
+reproduce: (https://download.01.org/0day-ci/archive/20250714/202507142033.p5lg4D5Q-lkp@intel.com/reproduce)
 
-Actually no, this also does not work. You need double 'next':
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507142033.p5lg4D5Q-lkp@intel.com/
 
-     RULE = always (((not SCHEDULING) and (next SCHEDULING)) imply (next next SWITCH))
+sparse warnings: (new ones prefixed by >>)
+>> mm/maccess.c:41:17: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got unsigned long long [usertype] * @@
+   mm/maccess.c:41:17: sparse:     expected void const [noderef] __user *from
+   mm/maccess.c:41:17: sparse:     got unsigned long long [usertype] *
+>> mm/maccess.c:43:17: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got unsigned int [usertype] * @@
+   mm/maccess.c:43:17: sparse:     expected void const [noderef] __user *from
+   mm/maccess.c:43:17: sparse:     got unsigned int [usertype] *
+>> mm/maccess.c:45:17: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got unsigned short [usertype] * @@
+   mm/maccess.c:45:17: sparse:     expected void const [noderef] __user *from
+   mm/maccess.c:45:17: sparse:     got unsigned short [usertype] *
+>> mm/maccess.c:46:9: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got unsigned char [usertype] * @@
+   mm/maccess.c:46:9: sparse:     expected void const [noderef] __user *from
+   mm/maccess.c:46:9: sparse:     got unsigned char [usertype] *
+>> mm/maccess.c:73:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void [noderef] __user *to @@     got unsigned long long [usertype] * @@
+   mm/maccess.c:73:17: sparse:     expected void [noderef] __user *to
+   mm/maccess.c:73:17: sparse:     got unsigned long long [usertype] *
+>> mm/maccess.c:75:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void [noderef] __user *to @@     got unsigned int [usertype] * @@
+   mm/maccess.c:75:17: sparse:     expected void [noderef] __user *to
+   mm/maccess.c:75:17: sparse:     got unsigned int [usertype] *
+>> mm/maccess.c:77:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void [noderef] __user *to @@     got unsigned short [usertype] * @@
+   mm/maccess.c:77:17: sparse:     expected void [noderef] __user *to
+   mm/maccess.c:77:17: sparse:     got unsigned short [usertype] *
+>> mm/maccess.c:78:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void [noderef] __user *to @@     got unsigned char [usertype] * @@
+   mm/maccess.c:78:9: sparse:     expected void [noderef] __user *to
+   mm/maccess.c:78:9: sparse:     got unsigned char [usertype] *
+   mm/maccess.c:98:17: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got unsigned char [usertype] * @@
+   mm/maccess.c:98:17: sparse:     expected void const [noderef] __user *from
+   mm/maccess.c:98:17: sparse:     got unsigned char [usertype] *
 
-Or if you want to allow some other things to happen inbetween, then:
+vim +41 mm/maccess.c
 
-     RULE = always (((not SCHEDULING) and (next SCHEDULING)) imply (SCHEDULING until SWITCH))
+eab0c6089b6897 Christoph Hellwig    2020-06-08  15  
+e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  16  /*
+e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  17   * The below only uses kmsan_check_memory() to ensure uninitialized kernel
+e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  18   * memory isn't leaked.
+e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  19   */
+fe557319aa06c2 Christoph Hellwig    2020-06-17  20  #define copy_from_kernel_nofault_loop(dst, src, len, type, err_label)	\
+b58294ead14cde Christoph Hellwig    2020-06-08  21  	while (len >= sizeof(type)) {					\
+b58294ead14cde Christoph Hellwig    2020-06-08  22  		__get_kernel_nofault(dst, src, type, err_label);	\
+e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  23  		kmsan_check_memory(src, sizeof(type));			\
+b58294ead14cde Christoph Hellwig    2020-06-08  24  		dst += sizeof(type);					\
+b58294ead14cde Christoph Hellwig    2020-06-08  25  		src += sizeof(type);					\
+b58294ead14cde Christoph Hellwig    2020-06-08  26  		len -= sizeof(type);					\
+b58294ead14cde Christoph Hellwig    2020-06-08  27  	}
+b58294ead14cde Christoph Hellwig    2020-06-08  28  
+fe557319aa06c2 Christoph Hellwig    2020-06-17  29  long copy_from_kernel_nofault(void *dst, const void *src, size_t size)
+b58294ead14cde Christoph Hellwig    2020-06-08  30  {
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  31  	unsigned long align = 0;
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  32  
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  33  	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS))
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  34  		align = (unsigned long)dst | (unsigned long)src;
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  35  
+fe557319aa06c2 Christoph Hellwig    2020-06-17  36  	if (!copy_from_kernel_nofault_allowed(src, size))
+2a71e81d321987 Christoph Hellwig    2020-06-08  37  		return -ERANGE;
+b58294ead14cde Christoph Hellwig    2020-06-08  38  
+b58294ead14cde Christoph Hellwig    2020-06-08  39  	pagefault_disable();
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  40  	if (!(align & 7))
+fe557319aa06c2 Christoph Hellwig    2020-06-17 @41  		copy_from_kernel_nofault_loop(dst, src, size, u64, Efault);
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  42  	if (!(align & 3))
+fe557319aa06c2 Christoph Hellwig    2020-06-17 @43  		copy_from_kernel_nofault_loop(dst, src, size, u32, Efault);
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  44  	if (!(align & 1))
+fe557319aa06c2 Christoph Hellwig    2020-06-17 @45  		copy_from_kernel_nofault_loop(dst, src, size, u16, Efault);
+fe557319aa06c2 Christoph Hellwig    2020-06-17 @46  	copy_from_kernel_nofault_loop(dst, src, size, u8, Efault);
+b58294ead14cde Christoph Hellwig    2020-06-08  47  	pagefault_enable();
+b58294ead14cde Christoph Hellwig    2020-06-08  48  	return 0;
+b58294ead14cde Christoph Hellwig    2020-06-08  49  Efault:
+b58294ead14cde Christoph Hellwig    2020-06-08  50  	pagefault_enable();
+b58294ead14cde Christoph Hellwig    2020-06-08  51  	return -EFAULT;
+b58294ead14cde Christoph Hellwig    2020-06-08  52  }
+fe557319aa06c2 Christoph Hellwig    2020-06-17  53  EXPORT_SYMBOL_GPL(copy_from_kernel_nofault);
+b58294ead14cde Christoph Hellwig    2020-06-08  54  
+fe557319aa06c2 Christoph Hellwig    2020-06-17  55  #define copy_to_kernel_nofault_loop(dst, src, len, type, err_label)	\
+b58294ead14cde Christoph Hellwig    2020-06-08  56  	while (len >= sizeof(type)) {					\
+b58294ead14cde Christoph Hellwig    2020-06-08  57  		__put_kernel_nofault(dst, src, type, err_label);	\
+e4137f08816bbf Sabyrzhan Tasbolatov 2024-10-11  58  		instrument_write(dst, sizeof(type));			\
+b58294ead14cde Christoph Hellwig    2020-06-08  59  		dst += sizeof(type);					\
+b58294ead14cde Christoph Hellwig    2020-06-08  60  		src += sizeof(type);					\
+b58294ead14cde Christoph Hellwig    2020-06-08  61  		len -= sizeof(type);					\
+b58294ead14cde Christoph Hellwig    2020-06-08  62  	}
+b58294ead14cde Christoph Hellwig    2020-06-08  63  
+fe557319aa06c2 Christoph Hellwig    2020-06-17  64  long copy_to_kernel_nofault(void *dst, const void *src, size_t size)
+b58294ead14cde Christoph Hellwig    2020-06-08  65  {
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  66  	unsigned long align = 0;
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  67  
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  68  	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS))
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  69  		align = (unsigned long)dst | (unsigned long)src;
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  70  
+b58294ead14cde Christoph Hellwig    2020-06-08  71  	pagefault_disable();
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  72  	if (!(align & 7))
+fe557319aa06c2 Christoph Hellwig    2020-06-17 @73  		copy_to_kernel_nofault_loop(dst, src, size, u64, Efault);
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  74  	if (!(align & 3))
+fe557319aa06c2 Christoph Hellwig    2020-06-17 @75  		copy_to_kernel_nofault_loop(dst, src, size, u32, Efault);
+2423de2e6f4d86 Arnd Bergmann        2021-08-11  76  	if (!(align & 1))
+fe557319aa06c2 Christoph Hellwig    2020-06-17 @77  		copy_to_kernel_nofault_loop(dst, src, size, u16, Efault);
+fe557319aa06c2 Christoph Hellwig    2020-06-17 @78  	copy_to_kernel_nofault_loop(dst, src, size, u8, Efault);
+b58294ead14cde Christoph Hellwig    2020-06-08  79  	pagefault_enable();
+b58294ead14cde Christoph Hellwig    2020-06-08  80  	return 0;
+b58294ead14cde Christoph Hellwig    2020-06-08  81  Efault:
+b58294ead14cde Christoph Hellwig    2020-06-08  82  	pagefault_enable();
+b58294ead14cde Christoph Hellwig    2020-06-08  83  	return -EFAULT;
+b58294ead14cde Christoph Hellwig    2020-06-08  84  }
+ca79a00bb9a899 Sabyrzhan Tasbolatov 2024-10-16  85  EXPORT_SYMBOL_GPL(copy_to_kernel_nofault);
+b58294ead14cde Christoph Hellwig    2020-06-08  86  
 
-Best regards,
-Nam
+:::::: The code at line 41 was first introduced by commit
+:::::: fe557319aa06c23cffc9346000f119547e0f289a maccess: rename probe_kernel_{read,write} to copy_{from,to}_kernel_nofault
+
+:::::: TO: Christoph Hellwig <hch@lst.de>
+:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
