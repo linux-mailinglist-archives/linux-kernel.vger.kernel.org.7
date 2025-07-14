@@ -1,73 +1,104 @@
-Return-Path: <linux-kernel+bounces-730059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A40B03FC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:26:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E9EEB0400A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E9294A56F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:23:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F3444A01C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED14254AEC;
-	Mon, 14 Jul 2025 13:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001BA2522A1;
+	Mon, 14 Jul 2025 13:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TXLzeWp/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=fortysixandtwo.eu header.i=@fortysixandtwo.eu header.b="C91aBkc9"
+Received: from fortysixandtwo.eu (fortysixandtwo.eu [212.227.65.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B4325487B;
-	Mon, 14 Jul 2025 13:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1438224DCE6;
+	Mon, 14 Jul 2025 13:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.65.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752499290; cv=none; b=NxfKBEOA+y6ztv67Z8Bf+l7GnX2y/Pcya/v/O9/IourlAQUnURB5NTNO8te5k4DV6wjSBM83GsbnEu1/Rbvhr3NQl7AqmIoEgetchg3M9dvcUo98CjO5B3uGkREThNnfEgGXmbwSBFVPAz8ZHX1HTRYI7ypFyFKg3fScOa24qi8=
+	t=1752499897; cv=none; b=vFTa8DKR3mN4bEw71IPX5pwcNcXaM/9CxxHClrDxu/WKUOV/Fl8OIaJnocD0mkD/NXRU/lb1JlyjB2h/TK5t5qA5d53KF1ulRj1w7MBbwsGzrkZhB2dDuSka/6ZWJ75I/A6dFIHbEc6PFnT/Vb/I9Dxc2Eb2GeLPKyvwJ9KhjSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752499290; c=relaxed/simple;
-	bh=25Q81RBxzGD0tuOnHIG97mH5lfFX0cnFEdskq40h3HY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZnvshrG3QQnhA++IW93ugpOPgM3IgnlSJlHQVYhHOs1jlO0kAH9bWN5JAa629dvvDbymnsW6PlAjdDzYcT3T5GUwwMI5l6gpIzoewRX1TN73ywfXyhyFVzU9tKx7RRC/CJyqa40XNrH2OWuGfRKxgqpixPH7bRZJ8kBcAoRjiSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TXLzeWp/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12B9FC4CEED;
-	Mon, 14 Jul 2025 13:21:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752499289;
-	bh=25Q81RBxzGD0tuOnHIG97mH5lfFX0cnFEdskq40h3HY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TXLzeWp/s/VPnyiI/ryBjNGBYy4cmESglEckU7J8ohCqCIKUjRFENhe1o+jsuyr96
-	 JdFG0zc1koXlFIzJlP8sAHPgCv0LYIMlfFJ+zD0pYvK4MnO4pGil/aPFMqSThvVwVS
-	 quMVd2h4I5bYC9v4E8kZMWtFEgVlcVO4NjqqbY1A=
-Date: Mon, 14 Jul 2025 15:21:26 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Simon Chopin <schopin@ubuntu.com>
-Cc: greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-	Alex Elder <elder@kernel.org>, ~lkcamp/patches@lists.sr.ht,
-	koike@igalia.com
-Subject: Re: [PATCH] staging: greybus: fix whitespace alignments in firmware.c
-Message-ID: <2025071437-autograph-scalping-b1bd@gregkh>
-References: <20250714131101.434301-1-schopin@ubuntu.com>
+	s=arc-20240116; t=1752499897; c=relaxed/simple;
+	bh=xclahf+ZrUjjFua4GD4Fh4LfsEARiipy40GzZkFcGCs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o+d5ZEPu0D0WfAhFRTaotZHFV9atuvovQwjw/nBfBvZH43R6zUA4hSf8N8tAg2d6aeOGq7zzY38fe0cv6ZG5AYiflseywQyp74VYoXILikQDUumFmk69H2RjXv0/gM9QYqarIJi/Q6Bndu35QsWcikc3UbeshAOIOtvIKY1HCUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fortysixandtwo.eu; spf=pass smtp.mailfrom=fortysixandtwo.eu; dkim=pass (4096-bit key) header.d=fortysixandtwo.eu header.i=@fortysixandtwo.eu header.b=C91aBkc9; arc=none smtp.client-ip=212.227.65.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fortysixandtwo.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fortysixandtwo.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fortysixandtwo.eu;
+	s=mail; t=1752499361;
+	bh=xclahf+ZrUjjFua4GD4Fh4LfsEARiipy40GzZkFcGCs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=C91aBkc9q2zpVX1u5FFhU/0bdzw7FDyJPygmuntKK00sko/1JizUU1FUe6Gd2sK/9
+	 mdKLbSiRji0n+pwuC1LCB01CpOuf0nq8Ytg5DXmDqyyHSz5hTUzyQXBFATuquuPS5F
+	 U5TDVA+Y2JbJmBZsL3pivwED5r3Mi1592HUfLkfvCbaB+ZbjBeDnuRwTP+oGqKgzR8
+	 8l+HN9p0DXaC1+GFEgJNhI/STZLXwuUlC5aeCTI2Nha7NTJpUJmuzq3qHZpDKFoU7D
+	 Ju4AJQQFcjWdxGLRbH8fbwiYyjQtASnLkjQ0fO57FeHR0Bhbgb2pv92FJdJHyDXitf
+	 l4gk9QVQhnNheH9Y1G/soVBcsIynKHUhsX/BrcQmya/xvqoZUFN5CbyzpeYMkz24jw
+	 ekcZ2WCFNNN5JeuUetmnCVGA4nUkU5PfswYb0kE5qcooO+2NzKx/oHgHJqLgyX7a1z
+	 DGfMNilL01mlS7qZl+j69eV6jIMzOrvmHTe0Zth1Y/wC2NtJrQghD07AbiMVu8qG4S
+	 TkMRxhIARG5sT11iuzbf23fwrFRhS4ReyaK3ar/bdbx7KmNmIe6k3/KrpDpdDQ0plt
+	 eAYEuGj9793kVnQoikO3c4ahfLDyWXV6IGdaWdpO4QGYYKlfPptE8gaJr5ZYFt6vUI
+	 1DyqlOCd+dnbazR/9YnQAVAY=
+Received: from localhost (unknown [89.234.162.240])
+	by fortysixandtwo.eu (Postfix) with UTF8SMTPSA id A1DE72E742;
+	Mon, 14 Jul 2025 15:22:41 +0200 (CEST)
+From: Evangelos Ribeiro Tzaras <devrtz@fortysixandtwo.eu>
+To: andy@kernel.org,
+	hansg@kernel.org,
+	mchehab@kernel.org,
+	sakari.ailus@linux.intel.com,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Cc: ~lkcamp/patches@lists.sr.ht,
+	koike@igalia.com,
+	Evangelos Ribeiro Tzaras <devrtz@fortysixandtwo.eu>
+Subject: [PATCH] media: atomisp: put trailing statement on it's own line
+Date: Mon, 14 Jul 2025 15:22:16 +0200
+Message-ID: <20250714132221.4611-1-devrtz@fortysixandtwo.eu>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714131101.434301-1-schopin@ubuntu.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 14, 2025 at 03:10:47PM +0200, Simon Chopin wrote:
-> This addresses all instances of the checkpatch.pl warning
-> "CHECK: Alignment should match open parenthesis"
-> in this file.
+Fix checkpatch error "ERROR: trailing statements should be on next line"
+in ia_css_formats.host.c:47.
 
-Which file?  This is a documentation file, not a file that the kernel
-builds :)
+Signed-off-by: Evangelos Ribeiro Tzaras <devrtz@fortysixandtwo.eu>
+---
 
-So you might want to add "Documentation" to the subject line, right?
+Hey, this is my first patch
+(done as part of a workshop at DebConf25),
+I appreciate any feedback, thanks!
+---
+ .../atomisp/pci/isp/kernels/fc/fc_1.0/ia_css_formats.host.c    | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-thanks,
+diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/fc/fc_1.0/ia_css_formats.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/fc/fc_1.0/ia_css_formats.host.c
+index bae1ca2cd505..9a4f9cc40bfa 100644
+--- a/drivers/staging/media/atomisp/pci/isp/kernels/fc/fc_1.0/ia_css_formats.host.c
++++ b/drivers/staging/media/atomisp/pci/isp/kernels/fc/fc_1.0/ia_css_formats.host.c
+@@ -44,7 +44,8 @@ ia_css_formats_dump(
+     const struct sh_css_isp_formats_params *formats,
+     unsigned int level)
+ {
+-	if (!formats) return;
++	if (!formats)
++		return;
+ 	ia_css_debug_dtrace(level, "\t%-32s = %d\n",
+ 			    "video_full_range_flag", formats->video_full_range_flag);
+ }
+-- 
+2.50.0
 
-greg k-h
 
