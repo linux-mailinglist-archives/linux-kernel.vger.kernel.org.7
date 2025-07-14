@@ -1,153 +1,125 @@
-Return-Path: <linux-kernel+bounces-729928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9151DB03DC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:54:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C82E3B03DC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AAC8189FC76
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:55:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C966217C9A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5985D24729A;
-	Mon, 14 Jul 2025 11:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="J1H0zooR"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E9F247281;
+	Mon, 14 Jul 2025 11:54:26 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0791224728A;
-	Mon, 14 Jul 2025 11:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D04D2E3718
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752494078; cv=none; b=F//r3Ws1LRdCp+wxc3r/1l3SmCwGfIObYyWsL6BzXT2NgbkJQP7C8LL69Ydgn/lDfOv40hWhMloNahKnkfFDfEcIGpzg/Vlyu3t2rggBZzxLz0amysd6W08FynljcLGUjref/gvJTIYQpTAXtJVWKctCT+JsFbyrsqJJ9NccbJw=
+	t=1752494066; cv=none; b=rKyu+4+DRuJfLk2bG2Gd8zO1dJ+gt9WDuj8W+jIyvYz5deo12FSO+5OrqApthSQazMGH/q00EtPr7chxtStAIXbw1dg+qYvkhJu9BimWqTwfwsZaEoirpTXVggBKSQ2k/XhyQGoXm8ZTR5ABp9jE073cT9H/tgaE0qksRpa6qOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752494078; c=relaxed/simple;
-	bh=DsWNuJlwW12kx2XbMVvdqk0TE7uBYX+86/EE/LpoqT4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AlzwUwvxpO9aTmIf6eute36EGC/21+Mkq9/42QZXPx+R3Luz97+OFmoJa2oQGqdoCeFWadmz2s+zrafRnbHyjY//gOcFVuL6QJczRw+sdsJLklxkipC2N93iDYieAsowLvFj5mfe/yyTgeDZS4ilhNfE4fyqZVCtclBfaX6eB0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=J1H0zooR; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752494066; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=UkkwS35RaRMEd05xkjz7kqXm2/CwruKvAzqa1idwlHQ=;
-	b=J1H0zooRDCohtIcpkpbMFRDOBCS3lwGmJWvCzW+JSmhDEtyaIdUB6jBoLesdz9OYMown5Chlh1N9Jz2UKtrh5DIJbFDkgR7YHv6yLVwQkdn9bg9ruljRYdpmERO/oVYZ9X51vu/h3WHupJ4m9e9fgHKyB4FjHGS7Z8i1lJuXI5s=
-Received: from 30.246.162.71(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WiuVUPq_1752494062 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 14 Jul 2025 19:54:24 +0800
-Message-ID: <3a465782-a8ff-4be8-9c15-e46f39196757@linux.alibaba.com>
-Date: Mon, 14 Jul 2025 19:54:21 +0800
+	s=arc-20240116; t=1752494066; c=relaxed/simple;
+	bh=FIZk5guGJuky1lgVw7T7nzyF1yoRfASJtAyhoUEJc1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XB4cJc4Fq6Fh9a9jgma34NxfOuHV+IKorUGNo6s2POw74zGDu4/KKt3e2bjIVZiu8Rsi9Sx+KjB1u4jz4/KoH+1rcwgRvzvdj5o0yrwojBelhVHEfuzjL4ymQQJaMVOOGiYCbNhwPuzEuKYWTbf9GhchTmz5byxolmGIhwYoOUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id B5D2314013F;
+	Mon, 14 Jul 2025 11:54:15 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 1169417;
+	Mon, 14 Jul 2025 11:54:11 +0000 (UTC)
+Date: Mon, 14 Jul 2025 07:54:26 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
+ <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
+ Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
+ E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
+ tech-board-discuss@lists.linuxfoundation.org
+Subject: Re: [RFC PATCH 2/5] unwind: Export unwind_user symbol to GPL
+ modules
+Message-ID: <20250714075426.36bdda0b@gandalf.local.home>
+In-Reply-To: <aHTsOcIUs0ObXCo1@infradead.org>
+References: <20250709212556.32777-1-mathieu.desnoyers@efficios.com>
+	<20250709212556.32777-3-mathieu.desnoyers@efficios.com>
+	<aHC-_HWR2L5kTYU5@infradead.org>
+	<20250711065742.00d6668b@gandalf.local.home>
+	<aHSmIa3uffj5vW-m@infradead.org>
+	<20250714062724.6febd9fb@gandalf.local.home>
+	<aHTsOcIUs0ObXCo1@infradead.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v18 1/2] ACPI: APEI: send SIGBUS to current task if
- synchronous memory error not recovered
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Hanjun Guo <guohanjun@huawei.com>,
- Catalin Marinas <catalin.marinas@arm.com>, "Luck, Tony"
- <tony.luck@intel.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org, linux-edac@vger.kernel.org, x86@kernel.org,
- justin.he@arm.com, ardb@kernel.org, ying.huang@linux.alibaba.com,
- ashish.kalra@amd.com, baolin.wang@linux.alibaba.com, tglx@linutronix.de,
- dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
- robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
- zhuo.song@linux.alibaba.com, sudeep.holla@arm.com, lpieralisi@kernel.org,
- linux-acpi@vger.kernel.org, yazen.ghannam@amd.com, mark.rutland@arm.com,
- mingo@redhat.com, robin.murphy@arm.com, Jonathan.Cameron@huawei.com,
- bp@alien8.de, linux-arm-kernel@lists.infradead.org,
- wangkefeng.wang@huawei.com, tanxiaofei@huawei.com, mawupeng1@huawei.com,
- linmiaohe@huawei.com, naoya.horiguchi@nec.com, james.morse@arm.com,
- tongtiangen@huawei.com, gregkh@linuxfoundation.org, jarkko@kernel.org
-References: <20250404112050.42040-1-xueshuai@linux.alibaba.com>
- <20250404112050.42040-2-xueshuai@linux.alibaba.com>
- <0c0bc332-0323-4e43-a96b-dd5f5957ecc9@huawei.com>
- <709ee8d2-8969-424c-b32b-101c6a8220fb@linux.alibaba.com>
- <353809e7-5373-0d54-6ddb-767bc5af9e5f@huawei.com>
- <653abdd4-46d2-4956-b49c-8f9c309af34d@linux.alibaba.com>
- <de5d2417-dc92-b276-1125-4feb5151de7f@huawei.com>
- <f60f1128-0d42-48e5-9a06-6ed7ca10767f@linux.alibaba.com>
- <20250428152350.GA23615@willie-the-truck>
- <6671c3cc-5119-4544-bcb5-17e8cc2d7057@linux.alibaba.com>
- <CAJZ5v0j3NC2ki1XPXfznxZRBLaReDBJ+nzHFgvqMx5+MgERL-A@mail.gmail.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <CAJZ5v0j3NC2ki1XPXfznxZRBLaReDBJ+nzHFgvqMx5+MgERL-A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: otwqtqq743qo6hpxaickjywkywmts43x
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 1169417
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19dI3EFRUJ4cjyRMk+fzXDytKBKATOviaQ=
+X-HE-Tag: 1752494051-484047
+X-HE-Meta: U2FsdGVkX1+jtscyNN/GNuafLjT7xgUsyBvz5u7/bQbuCrfRkQjGXxCgmuh0+AkeOG7hmlchRFWF4GmaR+vchPjk/eY+0mdf1samVCT+g4WNv2dfsN1NkxSvqtZFQpawdJHGQxwNwOoOf6nv29SkfC2X2jof9inoUolZsSb+VfK/qV3EZnqxOO5XFJ14ESa/+Mi18mzT6pwZObueUbsZjIvNv9fJiaVHfjpo18AqC922NKDOzqibs2g2s/w4SNhARcys7Z2SADJ5Wa8OIY4wEN3g54crQHcbqkguvuR3eOWm5k8fYQdtul/Jm19Gtru9YA3Om6Ugep9fiDjFmf3pvJQI6PexV4xjxnXXpvTNElUNCvjF8oqouezSZ9qzdiQN
 
+On Mon, 14 Jul 2025 04:38:33 -0700
+Christoph Hellwig <hch@infradead.org> wrote:
 
-
-在 2025/7/1 21:56, Rafael J. Wysocki 写道:
-> On Tue, Jul 1, 2025 at 1:00 PM Shuai Xue <xueshuai@linux.alibaba.com> wrote:
->>
->>   >在 2025/4/28 23:23, Will Deacon 写道:
->>   >> On Fri, Apr 25, 2025 at 09:10:09AM +0800, Shuai Xue wrote:
->>   >>> 在 2025/4/25 09:00, Hanjun Guo 写道:
->>   >>>> Call force_sig(SIGBUS) directly in ghes_do_proc() is not my favourite,
->>   >>>> but I can bear that, please add
->>   >>>>
->>   >>>> Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
->>   >>>>
->>   >>>> Thanks
->>   >>>> Hanjun
->>   >>>
->>   >>> Thanks. Hanjun.
->>   >>>
->>   >>> @Rafael, @Catalin,
->>   >>>
->>   >>> Both patch 1 and 2 have reviewed-by tag from the arm64 ACPI
->> maintainers, Hanjun,
->>   >>> now. Are you happpy to pick and queue this patch set to acpi tree
->> or arm tree?
->>   >>
->>   >> Since this primarily touches drivers/acpi/apei/ghes.c, I think it should
->>   >> go via the ACPI tree and not the arm64 one.
->>   >>
->>   >> Will
->>   >
->>   >Hi, Will,
->>   >
->>   >Thank you for your confirmation :)
->>   >
->>   >@Rafael, do you have more comments on this patch set?
->>   >
->>   >Thanks you.
->>   >
->>   >Best Regards,
->>   >Shuai
->>
->> Hi, all,
->>
->> Gentle ping.
->>
->> Does ACPI or APEI tree still active? Looking forward to any response.
+> On Mon, Jul 14, 2025 at 06:27:24AM -0400, Steven Rostedt wrote:
+> > This has nothing to do with Mathieu being a friend. He's a long time Linux
+> > kernel contributor and has played a key role in developing a new feature
+> > that will help both perf and ftrace, but without the EXPORT_SYMBOL_GPL(),
+> > LTTng can't use it. It's basically saying "thank you Mathieu for helping us
+> > with this new feature, now go F*** off!"  
 > 
-> For APEI changes, you need an ACK from one of the reviewers listed in
-> the MAINTAINERS entry for APEI.
+> You don't have to be as explicit, but otherwise that's exactly how
+> it works.  No one gets a free ride just because they are nice and/or
+> contributed something.
+
+Why is that?
+
+And yes, I still consider it draconian.
+
 > 
-> Thanks!
+> The rest of your mail looks just as confused.
 
-Hi, Rafael
+Let me rephrase it then.
 
-Sorry, I missed your email which goes in span (:
+How would you recommend getting LTTng into the kernel? It's a relatively
+large project that has 75K of lines of code with development that lasted
+around 20 years.
 
-ARM maintain @Catalin points that:
+Should it be one big code drop?
 
- > James Morse is listed as reviewer of the ACPI APEI code but he's busy
- > with resctrl/MPAM. Adding Lorenzo, Sudeep and Hanjun as arm64 ACPI
- > maintainers, hopefully they can help.
+Should Mathieu copy the history of his git tree into the kernel/lttng
+directory and suggest a git pull request to Linus?
 
-And Hanjun explictly gived his Reviewed-by tag in this thread, is that 
-happy for you for merge?
+To break it up now, into reviewable patches would be a huge undertaking.
+And who is going to review it? I don't have the time, do you?
 
-Thanks.
-Shuai
+Basically, Mathieu has been a good Linux kernel community member, and even
+wants his code upstream. But when he's the only one with a stake in getting
+it upstream, and it's a long time large project, there's no easy path for
+him to do it.
 
+Now he's helped out with a simple feature that lets perf and ftrace get
+user space stack traces without the need for frame pointers, and he can't
+use it unless his code gets upstream.
+
+Have any suggestions for him, or do you just not care? But you are one of
+the gate keepers of EXPORT_SYMBOL_GPL() which affects him.
+
+-- Steve
 
