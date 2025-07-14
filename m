@@ -1,159 +1,153 @@
-Return-Path: <linux-kernel+bounces-730676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2901B047FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:39:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 261BCB04801
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C6A8165B4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:39:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 186453BD940
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E5222A7E9;
-	Mon, 14 Jul 2025 19:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B796E204C1A;
+	Mon, 14 Jul 2025 19:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F+lEts+O"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kTnxe6Hk"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCC4227EA4
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 19:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACD71662E7
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 19:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752521986; cv=none; b=cie5A/RSnOtR1FyhHyNpBVMLhBpSNK0IPMA+2cVUyoSP36gBwFDDVOdncso8EV+0ITW1q6CQKqVPrQ4bDMkK1FHCe72eMRP+hc3oJn4Eaql8TRb19BdzfUn5XWauA9+qQmnXLItQ5nePSObTa4kCVq3SfA+AApdo/b2b44S0vQQ=
+	t=1752522040; cv=none; b=UwE1zIWasSk83UUF+8Z2QsFgwDabrgh8jVNP06pTxwVXQEYOBcBLYQXiekjFDJija4GDef6Mek85DlxAFgYIutzJKeqyL6HLL+/U88DWyWRfAt/Oo1fJuhwk9ebSm8+g52Dg2EO+iFr5zZsN+9i0Egu3RICQpb9nlftUYZkSABw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752521986; c=relaxed/simple;
-	bh=5cSCYdKyaKnlsB59d7LA/sqcozRwuYbnW6S02DziChQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=P9k1Jc6sulWZibZQPlOyH+koekLd0fr1M46PWrxeyAER2YrKgD0To1TqYu9FtnR+seoW0WPeowQ2Ji/ewMoSazM3xzJMnRJVf0RvYNfgWknS8YxD3ZjxMDUtzHvl5JAG44KTnj7yS4Ph4Az+YKeN5kzr3pr4WIMU6eEnqbMBY0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F+lEts+O; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-61593d51267so68994eaf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:39:43 -0700 (PDT)
+	s=arc-20240116; t=1752522040; c=relaxed/simple;
+	bh=BLdMujJcsYQmdisLe92MyF6cvQ0+4KXuQTw1VF0Ah4U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WlDpctUF4Q7XKpKMLUyle4SCzyDenN0hNFBnXO1aX6B+nRoCzHaUqtA6dUCDwBk9OZQGAhcSPxBSUEAXz5YhWjvaXTnvWjPg0bZARObvqbZ+ZFqfhOU3JluaMAKecIml9HWdB6dIsDZVqo03KXYphbFLM3UqKtIr39FcqkBW0uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kTnxe6Hk; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-235a3dd4f0dso30586745ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:40:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752521983; x=1753126783; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=urOya2QD0PAv3aRyUi92qVBccHFN0GyUQM4mpsavCC0=;
-        b=F+lEts+OFVJIPuwVRnJK5F1pfmdT8s0b33WyPl3yTSpNzYc94+Ra3pdGqSBX9oXkZj
-         zc5FeOr9OPpCrRH3OUAE2AHItRNZXv0JzsCwrS4IQlZexQ/8ObfrLmgTilXyv757B5rS
-         sqTbM4JjI/euxM6GVNOWtBwz4PURIWU2GnNKOmguIxcWb2WuED7OQjtuH7NqUTcKCrcL
-         56GOombgsGoU6TcZCI8HQpOlxRl1dEo3smb1sYZGU5ks/yd7qjJOcwAinl9CsqCsUncx
-         V5T4qgOOy2+0ZK5j+7fhFq23EbhI9FM6PgC2MHLNaBRI5iN7mCjmUfEL5q7DQXkvT2D6
-         vpdA==
+        d=chromium.org; s=google; t=1752522033; x=1753126833; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JEniyjVNgLZ7A/xokzs1kJjeCJ9pKk7c1wIFnkTmCLg=;
+        b=kTnxe6HkbwHHXr2PW5e9Rk6MwGih66Jyfu1Boe5y4Eb/+9cO3aodO7OpNrUbf9+qni
+         Qk/Qrkhya0U9PE0ajAfljwZBaW8GVtTgTiPxbkrDvzDuV3fNt5lgINtXGSzNB56Hlpkz
+         HJScnxHlqcPIP5lEBSvZUnIsAJlIuNm51ssNw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752521983; x=1753126783;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=urOya2QD0PAv3aRyUi92qVBccHFN0GyUQM4mpsavCC0=;
-        b=BZLWlMEhCA+u47RFXM0/10CSvADJQpkXJWVTXTcaUVel3ZypCSfakZm3x9OnddG60o
-         JY8HXetZiC6jvsuyFdYsIPBq1EDPWAnjoFG1xrPby+eGgSZXLXqE000l9RW6m1Wlogf1
-         IDIffiQsFEGMUd1kZgBSjEp+ztRfp+6wkuc/wUWC4mkcBPYYMpzDxR1rMMpBrWFA4AA7
-         w6q7Z714HbrsFW8lKNnB+5HGrbveOsBAMipYPdKhEuoawq68YajUsnZeO0uk8AtrS9EL
-         41RSPOe5jfxXdsaPwXpZAVdkBkETjNW5fkf/SGJ8guDr3WZfDgMlh4hejJWC9f9WQKK2
-         zKwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxsRp8+GSnP8gq3jS9rD3qePJKTRAKIcRgr/qISivqG/LDVBNyz61iRScoETDgtGyDlnPitvKkkjhGaZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmTwS6SAt4KZgjLu5+9rMGZReLklqQpnZ4ZfRjcLTSVIP3Dswt
-	hTayPN8ltr80T0qWDMZWzuJFgcfA4Jl9dfiDDmjruzZ4C/2212aUm+sASSxDr+KsM0c=
-X-Gm-Gg: ASbGncuU+o5jZuNSXnNriC9YnWdk53w5VdWIKnrOb/NLFaWi7kB9ZhS0Gr45B/yCjFT
-	fk2KFR5NV2zY8II4QTQ2IF1ADuSGvhLYOkq0vfz2WXKZvlZJxCJUPNA4h06DuvT8UuNZr4IDgln
-	0Xem+dX7K57bgElfokJmQo+S9HoXzQMTgpmT7b1yPHhkrSQw9GQsPZKpawK0cSVzfsWE1aRqD37
-	NL1ccGsft6qbwEcjuZv94yqtf6wdOp+CgbXvB8irq5aBoZ8sT0Q5/f9yZwYQojTM8gDLAMva1IM
-	nN3Qs3jixeLsrNQ14UlrN1N4yrnhaqWeUc2xJSczJVn+pJ/XcuYN/f38IWownlnFZzfbp2b72Q9
-	JqMtM7iafF8EigUglYMmOHw+KH6mwUA==
-X-Google-Smtp-Source: AGHT+IG9YCfy/a8BjNGBo1GzQjJuR8GmP8UR9cv+uwP5yDJexmfxPdWGAOu8EtDFH9IyIV9EN6mZeg==
-X-Received: by 2002:a05:6870:c03:b0:296:bbc8:4a82 with SMTP id 586e51a60fabf-2ff2706c894mr10579426fac.27.1752521982792;
-        Mon, 14 Jul 2025 12:39:42 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:6bb2:d90f:e5da:befc])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73cf12b62e8sm1674368a34.60.2025.07.14.12.39.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 12:39:42 -0700 (PDT)
-Date: Mon, 14 Jul 2025 22:39:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev,
-	=?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Gatien Chevallier <gatien.chevallier@foss.st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
-	Le Goffic <legoffic.clement@gmail.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	=?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
-Subject: Re: [PATCH v2 09/16] perf: stm32: introduce DDRPERFM driver
-Message-ID: <1fd92742-0958-4f64-8e50-4d0595fe74eb@suswa.mountain>
+        d=1e100.net; s=20230601; t=1752522033; x=1753126833;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JEniyjVNgLZ7A/xokzs1kJjeCJ9pKk7c1wIFnkTmCLg=;
+        b=jbmCDhJoYC2LW7NmfMYXz8EWh76noZWnLo/TocC1wHSLHVveUu2AD5G3qgkr3rNv9w
+         +jUkXdhmlYkdgZfLuCt3lv4vXpCb7qR2Q8v/d9ezCJXZytAMAgo4mFLYAABu4tbXfSpL
+         ufKreeToFnxfAbYZfN+ow1f0NhobQy3OZsZJKLTPETJ1RXgpLuBkKRf5M2rbsmNmRKPs
+         SrVcrnrJNWhb6orBcrpJs9duEY94qGlJUVsIp+mgos2yODxwuppHeI/0pRKUrutarDYV
+         HxlQLDexMwcTD31q3j/azUo6JV4tA44rBNcCIXvXLjqA2GNFabdxEuUsc5GJJzp7VB56
+         KABQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNLcqvh2W9jCYbvDsWuOAkrjmcgVBfy8gxlso70iuhNT4UXXf3aYTPTWbY3Gth24K4iwrl10cxz1E2FyY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC5K6OXIaZiTpbzhzaxQdOv+R25t/sIuj/JX64SDE9P8Eu+U2d
+	A6NLpAfOP9h57mgKG91RyQY4zc+xexuqiVJqhB5z/FL4e0Quyegb4NtBMhBaZo6hKNEnD5T5g/1
+	QxnY=
+X-Gm-Gg: ASbGncu+u/7Zj4wXOQePnfRCmgWtRJy5jIJIGUGwnmEpOzFShGsQONset7B4PnOmiHU
+	yhk+Rp+Eixhla2ktCttWDUZ4imJ43J4KirZUexVg3VVEKMy1iOgP5eCLsCo9MIhMTLLsc4y9cv4
+	CY163rmlSFmrVL3YJPUG29Zr13kymtZu61zk/zTVjd2rl4MwBa7iGQYjt/LUp6Qsdenoj2XLJh2
+	3HL7cOkHCVY9pBnCK/eVRHvzbVUiNh3/QQO69uNvOJlJ3yb54Q7uf+SWWY3bKWIHHdeWiDQiXHG
+	9XLYXdmSCUTBmaimndL2iYDpvYijuise6Uq/ers20kI21R8ngCvHk8ZqPiWsaMxZSHckAZYFEed
+	wOkierT4KdaK6OeKXuMksn5tAUoMTc0+3VgB4Eue6hm2IoLJOZd6sm6M9/fIg9a39OQ==
+X-Google-Smtp-Source: AGHT+IGo8tn20W3Te49asvHMhiVo/YUH6IqN0YlctAVcixFifyDDcMHcWGodD8fUXYXWMlCCsowptA==
+X-Received: by 2002:a17:903:46cb:b0:234:9066:c857 with SMTP id d9443c01a7336-23e1b1092cdmr926275ad.21.1752522032941;
+        Mon, 14 Jul 2025 12:40:32 -0700 (PDT)
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com. [209.85.215.176])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de435cb63sm96015565ad.235.2025.07.14.12.40.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 12:40:27 -0700 (PDT)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b2c4331c50eso4370426a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:40:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXNDss1WGobJ6xoZYgumoyC+kdE+XzZNmqNfIu3Xq4xV6TgdFSEL0I8fwKttYrVJsYsP/KbLSjTqz0gYC8=@vger.kernel.org
+X-Received: by 2002:a17:90b:2247:b0:2fa:157e:c790 with SMTP id
+ 98e67ed59e1d1-31c4cca46b0mr20433281a91.5.1752522026579; Mon, 14 Jul 2025
+ 12:40:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250711-ddrperfm-upstream-v2-9-cdece720348f@foss.st.com>
+References: <20250701-x13x-touchscreen-lookup-v1-1-a1277f119f92@riscstar.com>
+In-Reply-To: <20250701-x13x-touchscreen-lookup-v1-1-a1277f119f92@riscstar.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 14 Jul 2025 12:40:14 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XzjC-+Uz4vpTQf+76uL9_Aad9Zs=qkQKBjadRxUKZgYg@mail.gmail.com>
+X-Gm-Features: Ac12FXyGVOxl4TaPz_wHI3nt_YQssoML9lSoXS6OMPQ4CI5qfxsAw4BaSTKq62Y
+Message-ID: <CAD=FV=XzjC-+Uz4vpTQf+76uL9_Aad9Zs=qkQKBjadRxUKZgYg@mail.gmail.com>
+Subject: Re: [PATCH] drm/edp-panel: Add touchscreen panel used by Lenovo X13s
+To: daniel@riscstar.com
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Clément,
+Hi,
 
-kernel test robot noticed the following build warnings:
+On Tue, Jul 1, 2025 at 1:17=E2=80=AFAM <daniel@riscstar.com> wrote:
+>
+> From: Daniel Thompson <daniel@riscstar.com>
+>
+> After (checks watch) a little over two years I finally investigated the
+> boot warning on my Thinkpad X13s and it was caused by the conservative
+> timings warning in panel-edp.c . The X13s was sold with a variety of
+> different panel versions; I have the 300 nit multi-touch variant.
+>
+> I have been unable to secure panel documentation so the I copied the
+> timings from NV133WUM-N63.
+>
+> The raw EDID is:
+>
+> 00 ff ff ff ff ff ff 00 09 e5 84 0a 00 00 00 00
+> 1e 1f 01 04 a5 1d 12 78 03 5c 70 a6 51 4c 9c 26
+> 0e 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+> 01 01 01 01 01 01 74 3c 80 a0 70 b0 28 40 30 20
+> 36 00 1e b3 10 00 00 1a 00 00 00 fd 00 28 3c 4b
+> 4b 10 01 0a 20 20 20 20 20 20 00 00 00 fe 00 42
+> 4f 45 20 48 46 0a 20 20 20 20 20 20 00 00 00 fe
+> 00 4e 56 31 33 33 57 55 4d 2d 54 30 31 0a 00 51
+>
+> Signed-off-by: Daniel Thompson <daniel@riscstar.com>
+> ---
+>  drivers/gpu/drm/panel/panel-edp.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/pa=
+nel-edp.c
+> index 90e8c154a9788ad40e2101fdf39cbd92f2e0773a..9144de974f1e4abdd1af12613=
+238f6f28d98fc41 100644
+> --- a/drivers/gpu/drm/panel/panel-edp.c
+> +++ b/drivers/gpu/drm/panel/panel-edp.c
+> @@ -1935,6 +1935,7 @@ static const struct edp_panel_entry edp_panels[] =
+=3D {
+>         EDP_PANEL_ENTRY('B', 'O', 'E', 0x0a3e, &delay_200_500_e80, "NV116=
+WHM-N49"),
+>         EDP_PANEL_ENTRY('B', 'O', 'E', 0x0a5d, &delay_200_500_e50, "NV116=
+WHM-N45"),
+>         EDP_PANEL_ENTRY('B', 'O', 'E', 0x0ac5, &delay_200_500_e50, "NV116=
+WHM-N4C"),
+> +       EDP_PANEL_ENTRY('B', 'O', 'E', 0x0a84, &delay_200_500_e50, "NV133=
+WUM-T01"),
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Cl-ment-Le-Goffic/bus-firewall-move-stm32_firewall-header-file-in-include-folder/20250712-030518
-base:   d7b8f8e20813f0179d8ef519541a3527e7661d3a
-patch link:    https://lore.kernel.org/r/20250711-ddrperfm-upstream-v2-9-cdece720348f%40foss.st.com
-patch subject: [PATCH v2 09/16] perf: stm32: introduce DDRPERFM driver
-config: sh-randconfig-r071-20250712 (https://download.01.org/0day-ci/archive/20250712/202507122125.eve8lg60-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 13.4.0
+Looks fine, but can you send a v2 with the proper sort ordering? 0xa84
+should be before 0xac5, I think...
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202507122125.eve8lg60-lkp@intel.com/
-
-smatch warnings:
-drivers/perf/stm32_ddr_pmu.c:380 stm32_ddr_pmu_get_counter() warn: variable dereferenced before check 'pmu' (see line 376)
-drivers/perf/stm32_ddr_pmu.c:380 stm32_ddr_pmu_get_counter() warn: variable dereferenced before check 'event' (see line 377)
-
-vim +/pmu +380 drivers/perf/stm32_ddr_pmu.c
-
-73af3c4ba702d7 Clément Le Goffic 2025-07-11  374  static int stm32_ddr_pmu_get_counter(struct stm32_ddr_pmu *pmu, struct perf_event *event)
-73af3c4ba702d7 Clément Le Goffic 2025-07-11  375  {
-73af3c4ba702d7 Clément Le Goffic 2025-07-11 @376  	u32 time_cnt_idx = pmu->cfg->time_cnt_idx;
-                                                                           ^^^^^^^^
-
-73af3c4ba702d7 Clément Le Goffic 2025-07-11 @377  	u32 config = event->attr.config;
-                                                                     ^^^^^^^
-
-73af3c4ba702d7 Clément Le Goffic 2025-07-11  378  	struct stm32_ddr_cnt *cnt;
-73af3c4ba702d7 Clément Le Goffic 2025-07-11  379  
-73af3c4ba702d7 Clément Le Goffic 2025-07-11 @380  	if (!pmu || !event)
-                                                            ^^^^^^^^^^^^^^
-Checks are too late.  The variables have already been dereferenced.
-
-73af3c4ba702d7 Clément Le Goffic 2025-07-11  381  		return -EINVAL;
-73af3c4ba702d7 Clément Le Goffic 2025-07-11  382  
-73af3c4ba702d7 Clément Le Goffic 2025-07-11  383  	pmu->selected_set = GROUP_VALUE(config);
-73af3c4ba702d7 Clément Le Goffic 2025-07-11  384  
-73af3c4ba702d7 Clément Le Goffic 2025-07-11  385  	if (config == TIME_CNT) {
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+-Doug
 
