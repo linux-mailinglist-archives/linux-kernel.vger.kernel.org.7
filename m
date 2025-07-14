@@ -1,144 +1,186 @@
-Return-Path: <linux-kernel+bounces-730610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6B9AB046ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:53:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF22FB046F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54B994A5057
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:53:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E22B31A66F0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98612676CE;
-	Mon, 14 Jul 2025 17:53:31 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D0C267705;
+	Mon, 14 Jul 2025 17:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YHQCd3V0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B656B258CEC
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 17:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD398266F1D
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 17:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752515611; cv=none; b=qqyD2WXQz0kz41wm8ixrVjazxdaGAN1V1Yagqv72K9MuczyGEBe7wDcBQwNcOVvaqvtXE5sKHhy9cfu0tKfzgJR/QLEL/mZflKEW+h9kBziA0htCWTGvBQkFVF2S0dk4cWTiqbuRU+d9sglY8NwhnmX4VqlQwaYpslhWOnlmIj4=
+	t=1752515629; cv=none; b=SOrd8gYdONq4Sp/+hPrw+MRe4vw50+jyQ6FiPcARG5W59jSgdqRLQqOXazRwfX4RXaUJ0kyfhDdlll9fVwJm2QBGpA0nNCk6qpKVQuF5B5JpLdlxRZMb1uAo7dlJHWPXYTl+ZiAFAzB1K14mVuXnkxjcEDiVB5HKn854SqEpeTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752515611; c=relaxed/simple;
-	bh=F2b+Ednpve0YB9ttDK5V5SBpMel/RnIQ1vJ4JNaTcVk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=a7zmiopF5InNxfWuSTdrqACb5WjEWaQf0Humn+YEj2+vDa63ln8+ILx+7mjkLhXbQ299PXy7CwMo4kR+JuD+XvjnzutDxgYLZHdP/lty4lf2c3bCwFmu2v4EW1L9yEfreManPJ159lZsPrMXeUTkVEGVQ7hCiXUfW78SuZV34dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-8760733a107so516463639f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 10:53:29 -0700 (PDT)
+	s=arc-20240116; t=1752515629; c=relaxed/simple;
+	bh=YvsJN12SAY9OQ75DnDkBYqvaW6o0cntTB75m162ikOg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J44KLY6a+hhOP0CW6Hj9aWNHSxvqJYPg1nfPcCk4tYJb0Ag1sd+3gViQM/fvWu2ByQ9XUmKljns4So0SGJD+7OVocCRaLbZX0NPe2vrIbeRlAyp2fiflABf5hZt8iBYLtWDW7NWtdttGwZrDpemZEMgc6YbzPYHUGqhwde1BvGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YHQCd3V0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56EA4qYV031354
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 17:53:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fK6x+ly3xuI/2lAjrk6WHaK2Wj/VJnTiR8SzPU9LGHk=; b=YHQCd3V0Cae+VGUk
+	84WIQIRbGymyYAmUvvD4+fCmV2kNvPOF6HVlOqX5DLwSrU6S70yklbcgbE/4BCL+
+	EeN22p30ny++MTzzLnKEHGe51UUxwLOAJgUuS0WGNTIrTLnNOgIaKUYRn7yRh/Tx
+	8OKLguXe81zaLvLUDJjY3O1ECX5PfZYGD5s8C70atShXlot5Y5W5hClCDa5B2Pp5
+	Y4LD/R6L5paSi+da7NqbFjTDzxrtyETwZQO1CVwYdabfMwdbt8ue2kWMe43HHnJ6
+	aGbxmaWCbzrXJk1NG2zKXdHN99bw12m1k7OrE9pgmYJ+zy2yL0Hy88DqR2D03cTL
+	g/1Y/g==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufvbdevs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 17:53:46 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6fac4b5f949so2662706d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 10:53:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752515609; x=1753120409;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TaGOXg4zhvEEaLHkswYZBqwNrVR3sKsoC/Zf4llTmOI=;
-        b=c0Pr+dfAnwbbOqYwgD19x0YjXEHoylIwPGSqw0QjSeAAdAb9Kp+WL97oPkeFIVMJGu
-         ekwGAdhRZ085lyLKh+pLWwTZ3uFn9lFV4M6h7MW5Hc6zoC9KJqBI0C+A4R2TNXZXI/jp
-         mYd6e4xdt6l0Dl0QDmUlKPXAcFS+VKhc478AsDbUJOq60GJJ94CUxm+hHqFFil7xvoIy
-         uF3Dq1zwUo+0TtjPXS7bFInleCzZq9a9eFrspMgMuYFffDYdR+olr5D601Ad2CmCx0Kb
-         l/o+2FhzAlztDSJSOpBQRGINAflGPMh7rkLi0C3inWpjIXsTDQaEPUn+ajX+d5xFoW8w
-         XZOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQaz5EAGiE5Un93PWbNQQxsW8qMXIa8Pp4y+PAMqkvQVjHQxiFGt18YNl2E0NDiS0LVL1BD0WT6IlSeFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLysXm+XTPyIvywBI211rMjgQfwS9g16BLAgeErDPbrhz8jpua
-	298ReVyi94/MCOJBbkxOlhusI9we6GcTik9REJq+Q0pTzUv8safxzjIBpvVk7Df8f4UYYQhvSf7
-	gZ2C9NzcTlNbM5TcgptkR4rEomUxIL6qGyAswnbzhPnF4YfiZlJ4eiUhXPH0=
-X-Google-Smtp-Source: AGHT+IFve6fuYUileRJn1yry//Lui3c6Zoi3p0X3LJMrk/zr1rkRiHa/Xp0DHgqnO9P+WZbAkNT23WLjFOQxBVYswrJnvj3YTlH/
+        d=1e100.net; s=20230601; t=1752515626; x=1753120426;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fK6x+ly3xuI/2lAjrk6WHaK2Wj/VJnTiR8SzPU9LGHk=;
+        b=Qcodk6ww5pffRm+1phavam6uyD8t2gaEn2DR2P+o/zdSx/DPYUW+4smY/YcYjvjIyu
+         DkLlKiG5LNySePFuTRIEWIM+Bb2BGTpiv0c8jRUDr648Jr2qonZGGReDDwESlj3f1HFR
+         cWyHDqtJau3USdpPiU+GJQcIncZJ1Htfg1GdHA1Ox6rj3XN172Sfqx+VF45lMh8scHxR
+         dq9FT7bu85Yw+HaTJ0ylyg/I3eteJqstj0+rGgp+EsfuGxqsUUhvVkowaGw4M6+V/+Pd
+         n4FKGBhHHAqKo6PDpbOVAPals7fR+gnAqS0QSJUMvzoPSTfin2CL/r7FoeRu7UcuBJvK
+         kKTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXoopo2hKZ57MlBrYbeOjxCo5dAu6ssP/3vWU0vVMZOnx3u8AX+haOG+ZxvQJS35BX9B85c8rmusW8lkSE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw+xC0s0fol3zjVa6zr2eXEv5gieH3wRYSZSnZdhX1DIDCj/hB
+	BkOWRxYFERDTYEDaxg+wi8WFYnVWLH0Oa7BorRZfoL8sIMoYGoS7NjO0WLsvKKqSGl8A5hRlj3b
+	X2LvFhP9L+pa6voH3JM8MCk+Cz6OCgrVtvXYQ0d8Y55t/4p0DKRSokmylXt3VSjEWO2Q=
+X-Gm-Gg: ASbGncteIDNHBj22r9obHgFLwh8A2nJomAPX+H1/NSoujIq4J+oQdVllK7q0A2CbD3J
+	ozoT0IFqtMFs+vFFJhQOkONPpu1MGKFSYzWGWKrnwILw7LZGvC5bFWmnj6XAa9MTC73bBx6asNr
+	r3IyHcWuMTKazvSFFWfBBVyznsMEPjlZP8Ouf42tZsOfZ0aCZWDa+dEfhuCQkj2dyGXja7aJoUr
+	5FtcRMGlt3Cwr07LG11hkVf5S/+gxP5RI7y8hH0FbbEndE+XQ7bYF8UdrmQmDufB+q18zFyxBNv
+	uUYcfUGPqZYeS3p0HbMLsXuhC22hexQOCQXVgXrIALvPs2ihLgDUL5U2JObNqUC1SgAW0xw4Uue
+	SpFGpp19L07G4zllMZRGX
+X-Received: by 2002:a05:620a:618f:b0:7e3:2d1d:bda5 with SMTP id af79cd13be357-7e32d1dc30fmr148798085a.9.1752515625438;
+        Mon, 14 Jul 2025 10:53:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH33J/OmI1AFTIjnQFvLICqDRKARWzq6lcWnIeXIfJs1esBEhAy06+UMvKScpJWaDTw5mOsbA==
+X-Received: by 2002:a05:620a:618f:b0:7e3:2d1d:bda5 with SMTP id af79cd13be357-7e32d1dc30fmr148796485a.9.1752515624920;
+        Mon, 14 Jul 2025 10:53:44 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c976ec04sm6252166a12.60.2025.07.14.10.53.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 10:53:44 -0700 (PDT)
+Message-ID: <bf78d681-723b-4372-86e0-c0643ecc2399@oss.qualcomm.com>
+Date: Mon, 14 Jul 2025 19:53:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d15:b0:86c:f0d9:553 with SMTP id
- ca18e2360f4ac-87977f74cc2mr1537575039f.5.1752515608914; Mon, 14 Jul 2025
- 10:53:28 -0700 (PDT)
-Date: Mon, 14 Jul 2025 10:53:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68754418.050a0220.33d347.000b.GAE@google.com>
-Subject: [syzbot] [gfs2?] UBSAN: shift-out-of-bounds in gfs2_dir_read (2)
-From: syzbot <syzbot+4708579bb230a0582a57@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 1/3] dt-bindings: sram: qcom,imem: Allow
+ modem-tables
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+ <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Alex Elder <elder@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Alex Elder <elder@riscstar.com>
+References: <20250527-topic-ipa_imem-v2-0-6d1aad91b841@oss.qualcomm.com>
+ <20250527-topic-ipa_imem-v2-1-6d1aad91b841@oss.qualcomm.com>
+ <97724a4d-fad5-4e98-b415-985e5f19f911@kernel.org>
+ <e7ee4653-194c-417a-9eda-2666e9f5244d@oss.qualcomm.com>
+ <68622599-02d0-45ca-82f5-cf321c153cde@kernel.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <68622599-02d0-45ca-82f5-cf321c153cde@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDExMyBTYWx0ZWRfX0EJU6uF6AELU
+ myHkRXVTRzt/rYNHlS8hrf9CLpe/ReiRgNTrKiozo14+C6ObnJJm7d4OZhkSfx++bSQVmVcngGr
+ xUB11JQBM/itX2KVWQib+MCnvyD6ncEnq65ovTbMGcDGofHF9Dv/qK6OBh/5y8TX3jjI7RzD13d
+ 7Ol/W//75Jo9mCyms74eHNfi4kMAi2xBViiqfw8eWEvR0QUOYBXyqQ0Co08jlwVoA4WBmwMl6QF
+ J0n4C3YIz/S2oVhpXTYWVMIMpmlBlGhJRUo6lMlmDqKg4Gk7vgYBEhE7E/Y/iRChway9DZVc37Z
+ 780D9UdQgisBLoYOL1Dhi2ChtC7y69AbKpGz4UgJlarrEIUVxXKLEwUNWE0RJkqnVnVsJn47Adk
+ oVSCS0elH7+kMF3ou3Htic9epfv4rX9/4T63grEul8AgrX6MsIlVdEsW6BJS63oGe5amoRh7
+X-Proofpoint-GUID: xCDJJFaZJNnq87eLhSosmlIE5qI1eNUP
+X-Authority-Analysis: v=2.4 cv=RPSzH5i+ c=1 sm=1 tr=0 ts=6875442a cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=kRKpuzDA6j_fRx5RDl4A:9
+ a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-ORIG-GUID: xCDJJFaZJNnq87eLhSosmlIE5qI1eNUP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-14_02,2025-07-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999 spamscore=0
+ clxscore=1015 suspectscore=0 phishscore=0 adultscore=0 lowpriorityscore=0
+ malwarescore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507140113
 
-Hello,
+On 5/27/25 1:42 PM, Krzysztof Kozlowski wrote:
+> On 27/05/2025 13:36, Konrad Dybcio wrote:
+>>>> diff --git a/Documentation/devicetree/bindings/sram/qcom,imem.yaml b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+>>>> index 2711f90d9664b70fcd1e2f7e2dfd3386ed5c1952..7c882819222dc04190db357ac6f9a3a35137cc9e 100644
+>>>> --- a/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+>>>> +++ b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+>>>> @@ -51,6 +51,9 @@ properties:
+>>>>      $ref: /schemas/power/reset/syscon-reboot-mode.yaml#
+>>>>  
+>>>>  patternProperties:
+>>>> +  "^modem-tables@[0-9a-f]+$":
+>>>> +    description: Region reserved for the IP Accelerator
+>>>
+>>> Missing additionalProperties: false, which would point you that this is
+>>> incomplete (or useless because empty).
+>>
+>> How do I describe a 'stupid' node that is just a reg?
+> With "reg" - similarly to many syscon bindings.
 
-syzbot found the following issue on:
+Is this sort of inline style acceptable, or should I introduce
+a separate file?
 
-HEAD commit:    347e9f5043c8 Linux 6.16-rc6
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13c070f0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f62a2ef17395702a
-dashboard link: https://syzkaller.appspot.com/bug?extid=4708579bb230a0582a57
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+diff --git a/Documentation/devicetree/bindings/sram/qcom,imem.yaml b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+index 7555947d7001..95fbb4ac9daa 100644
+--- a/Documentation/devicetree/bindings/sram/qcom,imem.yaml
++++ b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+@@ -67,7 +67,13 @@ properties:
+ 
+ patternProperties:
+   "^modem-tables@[0-9a-f]+$":
++    type: object
++    properties:
++      reg:
++        maxItems: 1
++
+     description: Region reserved for the IP Accelerator
++    additionalProperties: false
+ 
+   "^pil-reloc@[0-9a-f]+$":
+     $ref: /schemas/remoteproc/qcom,pil-info.yaml#
 
-Unfortunately, I don't have any reproducer for this issue yet.
+(fwiw checks are happy with the above)
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-347e9f50.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/49ae91eb36e0/vmlinux-347e9f50.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/78497f74bd6b/bzImage-347e9f50.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4708579bb230a0582a57@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 32768
-gfs2: fsid=syz:syz: Trying to join cluster "lock_nolock", "syz:syz"
-gfs2: fsid=syz:syz: Now mounting FS (format 1801)...
-gfs2: fsid=syz:syz.s: journal 0 mapped with 5 extents in 0ms
-gfs2: fsid=syz:syz.s: first mount done, others may mount
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/gfs2/dir.c:1544:15
-shift exponent 32 is too large for 32-bit type 'u32' (aka 'unsigned int')
-CPU: 0 UID: 0 PID: 5345 Comm: syz.0.0 Not tainted 6.16.0-rc6-syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
- __ubsan_handle_shift_out_of_bounds+0x386/0x410 lib/ubsan.c:494
- dir_e_read fs/gfs2/dir.c:1544 [inline]
- gfs2_dir_read+0x1730/0x1780 fs/gfs2/dir.c:1585
- gfs2_readdir+0x14c/0x1b0 fs/gfs2/file.c:116
- iterate_dir+0x5ac/0x770 fs/readdir.c:108
- __do_sys_getdents64 fs/readdir.c:410 [inline]
- __se_sys_getdents64+0xe4/0x260 fs/readdir.c:396
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f97c858e929
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f97c94ce038 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
-RAX: ffffffffffffffda RBX: 00007f97c87b5fa0 RCX: 00007f97c858e929
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
-RBP: 00007f97c8610b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f97c87b5fa0 R15: 00007ffd76387a88
- </TASK>
----[ end trace ]---
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Konrad
 
