@@ -1,114 +1,159 @@
-Return-Path: <linux-kernel+bounces-730675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C01DBB047F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:39:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2901B047FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 21:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19B0E164E3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:39:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C6A8165B4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 19:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309B322A7E9;
-	Mon, 14 Jul 2025 19:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E5222A7E9;
+	Mon, 14 Jul 2025 19:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=weidenauer.cc header.i=@weidenauer.cc header.b="glr1dM6n"
-Received: from taubenbroetchen.weidenauer.cc (taubenbroetchen.weidenauer.cc [37.252.242.197])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F+lEts+O"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62412E370F;
-	Mon, 14 Jul 2025 19:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.252.242.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCC4227EA4
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 19:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752521945; cv=none; b=h6fnUugQnKpmdxCOj33Q6mgu8/4nxt4/u0EAL4QMKAyDMHzMWzrYxZ1/OeEuP4eCpR7xH5+xlqtsID6Vmto1RaELSRhQ0HulbYM2Qs7NvrPt89ZxaUrEveY2Abo5rTSnBGsrbsKLXfwBeNEfrNo+/KvFlwYdo6nP+68fPjmxBtA=
+	t=1752521986; cv=none; b=cie5A/RSnOtR1FyhHyNpBVMLhBpSNK0IPMA+2cVUyoSP36gBwFDDVOdncso8EV+0ITW1q6CQKqVPrQ4bDMkK1FHCe72eMRP+hc3oJn4Eaql8TRb19BdzfUn5XWauA9+qQmnXLItQ5nePSObTa4kCVq3SfA+AApdo/b2b44S0vQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752521945; c=relaxed/simple;
-	bh=Mz5M/kJtIAT6vDMG1qYV1GLqe+Z3k6kVFXTM4uQXpWo=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=N6G1Hq7oCCJuv/eopvUYNc34bMLV0ixenlOfWJINoL7Cd2XV3SJa1XP7k9tdXMJjtyPdaJE9STEw2jiP33iOO0tnN1tUdAlUOfL4sV4Sr59e/KqKcCcUMb2dhB1gZLR2iEPooTbXCzYQn7GBeIkBljrmm682Qt1J0Ym8ETKdh5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=weidenauer.cc; spf=pass smtp.mailfrom=weidenauer.cc; dkim=pass (2048-bit key) header.d=weidenauer.cc header.i=@weidenauer.cc header.b=glr1dM6n; arc=none smtp.client-ip=37.252.242.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=weidenauer.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weidenauer.cc
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=weidenauer.cc;
-	s=taubenbroetchen; t=1752521941;
-	bh=Mz5M/kJtIAT6vDMG1qYV1GLqe+Z3k6kVFXTM4uQXpWo=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=glr1dM6nEdgu7wmbeaW1KoWuV3jcbijwxKsrJHcswMISzJiiMeFipQRxWBK1RMp0F
-	 0e71zG6JZ6WbkgxnQ2UVMCmjVKi/zji6JZocsBWw6ld8cEohJ3Lg0pvKtsz6vpG+WK
-	 Leb9qcmQBWR5oYx986k5GeLsejcd6bj3zBXeRXDIRPqPXveJpmoP5K4jZfMfgxs0aZ
-	 cdkmBsUyS6ogFT3Bli5DC8WXlBOo4pxMH0dbFFtQjD+pCfFuCyMx85t9yvDaoS6jW3
-	 sRdbeJrs311NyElztHjoJjeCB53pzWbkbXWJVkVIlkZ5/ZA3IEBRQnJF0aOTOFUI+g
-	 bhN39eFV8q8uQ==
-Received: from [127.0.0.1] (212095005104.public.telering.at [212.95.5.104])
-	by taubenbroetchen.weidenauer.cc (Postfix) with ESMTPSA id AA22C605D5;
-	Mon, 14 Jul 2025 21:39:00 +0200 (CEST)
-Date: Mon, 14 Jul 2025 21:38:58 +0200
-From: Martin Weidenauer <martin@weidenauer.cc>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
- Woohee Yang <woohee9527@gmail.com>, Jongmin Kim <jmkim@debian.org>
-CC: hansg@kernel.org, mchehab@kernel.org, sakari.ailus@linux.intel.com,
- andy@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
- ~lkcamp/patches@lists.sr.ht, koike@igalia.com
-Subject: Re: [PATCH] staging: atomisp: isp: fix open brace on new line
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAHp75VdUNe=bn-Emv6oyHtejTMyhKaiqQfGic0Ha94Z_FAPs2A@mail.gmail.com>
-References: <20250714153409.46085-1-martin@weidenauer.cc> <CAHp75VdUNe=bn-Emv6oyHtejTMyhKaiqQfGic0Ha94Z_FAPs2A@mail.gmail.com>
-Message-ID: <4289C286-62A1-4C22-9A03-E6CD3731F3D7@weidenauer.cc>
+	s=arc-20240116; t=1752521986; c=relaxed/simple;
+	bh=5cSCYdKyaKnlsB59d7LA/sqcozRwuYbnW6S02DziChQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=P9k1Jc6sulWZibZQPlOyH+koekLd0fr1M46PWrxeyAER2YrKgD0To1TqYu9FtnR+seoW0WPeowQ2Ji/ewMoSazM3xzJMnRJVf0RvYNfgWknS8YxD3ZjxMDUtzHvl5JAG44KTnj7yS4Ph4Az+YKeN5kzr3pr4WIMU6eEnqbMBY0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F+lEts+O; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-61593d51267so68994eaf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:39:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752521983; x=1753126783; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=urOya2QD0PAv3aRyUi92qVBccHFN0GyUQM4mpsavCC0=;
+        b=F+lEts+OFVJIPuwVRnJK5F1pfmdT8s0b33WyPl3yTSpNzYc94+Ra3pdGqSBX9oXkZj
+         zc5FeOr9OPpCrRH3OUAE2AHItRNZXv0JzsCwrS4IQlZexQ/8ObfrLmgTilXyv757B5rS
+         sqTbM4JjI/euxM6GVNOWtBwz4PURIWU2GnNKOmguIxcWb2WuED7OQjtuH7NqUTcKCrcL
+         56GOombgsGoU6TcZCI8HQpOlxRl1dEo3smb1sYZGU5ks/yd7qjJOcwAinl9CsqCsUncx
+         V5T4qgOOy2+0ZK5j+7fhFq23EbhI9FM6PgC2MHLNaBRI5iN7mCjmUfEL5q7DQXkvT2D6
+         vpdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752521983; x=1753126783;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=urOya2QD0PAv3aRyUi92qVBccHFN0GyUQM4mpsavCC0=;
+        b=BZLWlMEhCA+u47RFXM0/10CSvADJQpkXJWVTXTcaUVel3ZypCSfakZm3x9OnddG60o
+         JY8HXetZiC6jvsuyFdYsIPBq1EDPWAnjoFG1xrPby+eGgSZXLXqE000l9RW6m1Wlogf1
+         IDIffiQsFEGMUd1kZgBSjEp+ztRfp+6wkuc/wUWC4mkcBPYYMpzDxR1rMMpBrWFA4AA7
+         w6q7Z714HbrsFW8lKNnB+5HGrbveOsBAMipYPdKhEuoawq68YajUsnZeO0uk8AtrS9EL
+         41RSPOe5jfxXdsaPwXpZAVdkBkETjNW5fkf/SGJ8guDr3WZfDgMlh4hejJWC9f9WQKK2
+         zKwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxsRp8+GSnP8gq3jS9rD3qePJKTRAKIcRgr/qISivqG/LDVBNyz61iRScoETDgtGyDlnPitvKkkjhGaZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmTwS6SAt4KZgjLu5+9rMGZReLklqQpnZ4ZfRjcLTSVIP3Dswt
+	hTayPN8ltr80T0qWDMZWzuJFgcfA4Jl9dfiDDmjruzZ4C/2212aUm+sASSxDr+KsM0c=
+X-Gm-Gg: ASbGncuU+o5jZuNSXnNriC9YnWdk53w5VdWIKnrOb/NLFaWi7kB9ZhS0Gr45B/yCjFT
+	fk2KFR5NV2zY8II4QTQ2IF1ADuSGvhLYOkq0vfz2WXKZvlZJxCJUPNA4h06DuvT8UuNZr4IDgln
+	0Xem+dX7K57bgElfokJmQo+S9HoXzQMTgpmT7b1yPHhkrSQw9GQsPZKpawK0cSVzfsWE1aRqD37
+	NL1ccGsft6qbwEcjuZv94yqtf6wdOp+CgbXvB8irq5aBoZ8sT0Q5/f9yZwYQojTM8gDLAMva1IM
+	nN3Qs3jixeLsrNQ14UlrN1N4yrnhaqWeUc2xJSczJVn+pJ/XcuYN/f38IWownlnFZzfbp2b72Q9
+	JqMtM7iafF8EigUglYMmOHw+KH6mwUA==
+X-Google-Smtp-Source: AGHT+IG9YCfy/a8BjNGBo1GzQjJuR8GmP8UR9cv+uwP5yDJexmfxPdWGAOu8EtDFH9IyIV9EN6mZeg==
+X-Received: by 2002:a05:6870:c03:b0:296:bbc8:4a82 with SMTP id 586e51a60fabf-2ff2706c894mr10579426fac.27.1752521982792;
+        Mon, 14 Jul 2025 12:39:42 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:6bb2:d90f:e5da:befc])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73cf12b62e8sm1674368a34.60.2025.07.14.12.39.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 12:39:42 -0700 (PDT)
+Date: Mon, 14 Jul 2025 22:39:41 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev,
+	=?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Gatien Chevallier <gatien.chevallier@foss.st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+	Le Goffic <legoffic.clement@gmail.com>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	=?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
+Subject: Re: [PATCH v2 09/16] perf: stm32: introduce DDRPERFM driver
+Message-ID: <1fd92742-0958-4f64-8e50-4d0595fe74eb@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Server: mw-taubenbroetchen01
-X-Rspamd-Queue-Id: AA22C605D5
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [1.40 / 8.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,debian.org];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FROM_HAS_DN(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[]
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250711-ddrperfm-upstream-v2-9-cdece720348f@foss.st.com>
 
-On 14 July 2025 19:47:41 CEST, Andy Shevchenko <andy=2Eshevchenko@gmail=2Ec=
-om> wrote:
->Guys, please, coordinate and issue only one (or a few) patch(es) per
->an issue=2E No need to send zillions patches for the same problem
->file-by-file=2E
->
->On Mon, Jul 14, 2025 at 6:34=E2=80=AFPM Martin Weidenauer <martin@weidena=
-uer=2Ecc> wrote:
->>
->> Fix checkpatch error "ERROR: that open brace { should be on the previou=
-s line"
->> in ia_css_dvs=2Ehost=2Ec:277=2E
->
->
->--
->With Best Regards,
->Andy Shevchenko
+Hi Clément,
 
-I deeply apologize, however this was the instruction of our workshop in De=
-bConf by Helen Koike <koike@igalia=2Ecom>
+kernel test robot noticed the following build warnings:
 
-Here is the link to the exact workshop:
-<https://debconf25=2Edebconf=2Eorg/talks/55-submit-your-first-contribution=
--to-the-linux-kernel/>
+url:    https://github.com/intel-lab-lkp/linux/commits/Cl-ment-Le-Goffic/bus-firewall-move-stm32_firewall-header-file-in-include-folder/20250712-030518
+base:   d7b8f8e20813f0179d8ef519541a3527e7661d3a
+patch link:    https://lore.kernel.org/r/20250711-ddrperfm-upstream-v2-9-cdece720348f%40foss.st.com
+patch subject: [PATCH v2 09/16] perf: stm32: introduce DDRPERFM driver
+config: sh-randconfig-r071-20250712 (https://download.01.org/0day-ci/archive/20250712/202507122125.eve8lg60-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 13.4.0
 
-In grave apologies,
-Martin
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202507122125.eve8lg60-lkp@intel.com/
+
+smatch warnings:
+drivers/perf/stm32_ddr_pmu.c:380 stm32_ddr_pmu_get_counter() warn: variable dereferenced before check 'pmu' (see line 376)
+drivers/perf/stm32_ddr_pmu.c:380 stm32_ddr_pmu_get_counter() warn: variable dereferenced before check 'event' (see line 377)
+
+vim +/pmu +380 drivers/perf/stm32_ddr_pmu.c
+
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  374  static int stm32_ddr_pmu_get_counter(struct stm32_ddr_pmu *pmu, struct perf_event *event)
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  375  {
+73af3c4ba702d7 Clément Le Goffic 2025-07-11 @376  	u32 time_cnt_idx = pmu->cfg->time_cnt_idx;
+                                                                           ^^^^^^^^
+
+73af3c4ba702d7 Clément Le Goffic 2025-07-11 @377  	u32 config = event->attr.config;
+                                                                     ^^^^^^^
+
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  378  	struct stm32_ddr_cnt *cnt;
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  379  
+73af3c4ba702d7 Clément Le Goffic 2025-07-11 @380  	if (!pmu || !event)
+                                                            ^^^^^^^^^^^^^^
+Checks are too late.  The variables have already been dereferenced.
+
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  381  		return -EINVAL;
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  382  
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  383  	pmu->selected_set = GROUP_VALUE(config);
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  384  
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  385  	if (config == TIME_CNT) {
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
