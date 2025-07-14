@@ -1,317 +1,128 @@
-Return-Path: <linux-kernel+bounces-730090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 490E9B04027
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:37:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02D44B04003
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1535D1A63D6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:33:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D64DC160D53
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADFE246BC7;
-	Mon, 14 Jul 2025 13:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402B4248866;
+	Mon, 14 Jul 2025 13:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QdttMt7t"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BqTALYUi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD185255F5E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5432E36E5;
+	Mon, 14 Jul 2025 13:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752499917; cv=none; b=Lg8V2JV+XDK9hVb61skLxq5N90c/3EdQEPKDzthP//Hxy3RvayQtSyTqmw6XnyBZj4itJ34Jw2pJLNMp2gjghPU5w7J46t9xZEMOcMNNp+wEVIHr07M0Jd3o2KFzr7cbrHi2TTR3kgq1a7J7UH8HK774yZvaukiEmc0fn9B4PU4=
+	t=1752499870; cv=none; b=Lf4myGrF10XM3zdv7ezv43MnBlrlmu8s7+TDjX6OebyXCD+Jm1XMOrLx/CMJh+VHWaI1FvqjRAiYTVJOfuiFGsGWNn6Yu5AflUAAcWIILMLBcWH0nHyQFr7aw0dkoqnYbZuj77+97qc296ml2QOQeFkW4YrczmH3EtPNW4M4YBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752499917; c=relaxed/simple;
-	bh=K7qAczb3YQ6z1nXWwVbmqNORemjdg36f/1bzhva0amk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qEsGVlAOzi+eLRAh2qNrjrPPlboFuhUBXB7sx8pZpjAtbORy2PU9uXPnm8vD2H2KmC0x+Y7lIkQZH7uajnL0MnrI/oPrS+yFzaTHiTLQEHAulJBCgRMoMst2y9Uxl/mq0LLSYXs9V4oxH2M2y5iHp1w+a3qtPUvzZ30FKg30/3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QdttMt7t; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752499914;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WYbbgpzUKB8X3b3r4oh4zjfNRIGhYdLB9UmhVtf7hUw=;
-	b=QdttMt7tj8JB/o7cjp3dJa13o661OeOVlmGtMh9V+KDmhvJWDh0tBxKJeZYGzDzZ+nFHV4
-	XpzhC1j0ZwB9NfI5HA9GtMLOwSKN00s0pRtuSUD7t1p/om9maPMoOSiciFh/Zm7tT3kXFQ
-	P8PMowCZDe3RU2eNH1ihlVBkI9SvGmM=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-190-OBkFUcPZPOCTtncnJZZBcw-1; Mon,
- 14 Jul 2025 09:31:50 -0400
-X-MC-Unique: OBkFUcPZPOCTtncnJZZBcw-1
-X-Mimecast-MFC-AGG-ID: OBkFUcPZPOCTtncnJZZBcw_1752499909
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C3BA119560B7;
-	Mon, 14 Jul 2025 13:31:49 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.45.225.215])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 61EED19560A3;
-	Mon, 14 Jul 2025 13:31:46 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>
-Cc: Gabriele Monaco <gmonaco@redhat.com>
-Subject: [PATCH v8 7/7] timers: Exclude isolated cpus from timer migration
-Date: Mon, 14 Jul 2025 15:30:58 +0200
-Message-ID: <20250714133050.193108-16-gmonaco@redhat.com>
-In-Reply-To: <20250714133050.193108-9-gmonaco@redhat.com>
-References: <20250714133050.193108-9-gmonaco@redhat.com>
+	s=arc-20240116; t=1752499870; c=relaxed/simple;
+	bh=YkRnsX/tnvbZ3o3AEuquJmvgf1eoPe1aSLUVprvpuh0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZuX5C5ziwx4yXovXtj0yvx0vwGoCs8czuVab6kP7RRgO/Ynu9Ri2Bcb5J8mdIJCQrUp46r9hmRGWcMZe1PK5iPJOgttCTunBKLDzuY6xuOrNhrVIZGysNwidyR49xiOwPzXKck/YAyQLQg6nnqXhkID/FkCBWK5KVWlKl0K0tTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BqTALYUi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3133DC4CEED;
+	Mon, 14 Jul 2025 13:31:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752499870;
+	bh=YkRnsX/tnvbZ3o3AEuquJmvgf1eoPe1aSLUVprvpuh0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BqTALYUi1bmxjRdcMoInbUbbODAaFAcMAMF05bc9xSg2bnN2DunFcAqP2YaITGlwQ
+	 zuFqauoz8khrkj/sknJLqETl7VCJH0Lvrss29Sxaj2hTWZm2uubO2gFlR7QdEy79Id
+	 7648ZvprDr6QEULxGzR28yCeoqOsRZir5pPgFvRlce4pyHmod5dGM07py1UDkiqZdV
+	 3Ws/JIQPhW6eQHGz2s4tnea00/0Y5aj6RNDMKdmN+cVPmIJN5lddgtMD/EK9EGpQMM
+	 Xw7A1bSyNcf95OhLMDXPjiY3oX5JP+ejOW35uCdfMikc74mnJC39AX6664vndNUFHb
+	 u2V2WQeCdg1Qw==
+Message-ID: <e9c2bec9-4320-480c-89c1-514c995cf387@kernel.org>
+Date: Mon, 14 Jul 2025 15:31:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/12] media: uvcvideo: Make uvc_alloc_entity non
+ static
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+ <hverkuil@xs4all.nl>, Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
+ <20250605-uvc-orientation-v2-7-5710f9d030aa@chromium.org>
+Content-Language: en-US, nl
+From: Hans de Goede <hansg@kernel.org>
+In-Reply-To: <20250605-uvc-orientation-v2-7-5710f9d030aa@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The timer migration mechanism allows active CPUs to pull timers from
-idle ones to improve the overall idle time. This is however undesired
-when CPU intensive workloads run on isolated cores, as the algorithm
-would move the timers from housekeeping to isolated cores, negatively
-affecting the isolation.
+Hi,
 
-Exclude isolated cores from the timer migration algorithm, extend the
-concept of unavailable cores, currently used for offline ones, to
-isolated ones:
-* A core is unavailable if isolated or offline;
-* A core is available if non isolated and online;
+On 5-Jun-25 19:53, Ricardo Ribalda wrote:
+> The function is useful for other compilation units.
+> 
+> This is just a refactor patch, no new functionality is added.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-A core is considered unavailable as isolated if it belongs to:
-* the isolcpus (domain) list
-* an isolated cpuset
-Except if it is:
-* in the nohz_full list (already idle for the hierarchy)
-* the nohz timekeeper core (must be available to handle global timers)
+Thanks, patch looks good to me:
 
-All online CPUs are added to the hierarchy during early boot, isolated
-CPUs are removed during late boot if configured or whenever the cpuset
-isolation changes.
+Reviewed-by: Hans de Goede <hansg@kernel.org>
 
-Due to how the timer migration algorithm works, any CPU part of the
-hierarchy can have their global timers pulled by remote CPUs and have to
-pull remote timers, only skipping pulling remote timers would break the
-logic.
-For this reason, prevent isolated CPUs from pulling remote global
-timers, but also the other way around: any global timer started on an
-isolated CPU will run there. This does not break the concept of
-isolation (global timers don't come from outside the CPU) and, if
-considered inappropriate, can usually be mitigated with other isolation
-techniques (e.g. IRQ pinning).
+Regards,
 
-This effect was noticed on a 128 cores machine running oslat on the
-isolated cores (1-31,33-63,65-95,97-127). The tool monopolises CPUs,
-and the CPU with lowest count in a timer migration hierarchy (here 1
-and 65) appears as always active and continuously pulls global timers,
-from the housekeeping CPUs. This ends up moving driver work (e.g.
-delayed work) to isolated CPUs and causes latency spikes:
+Hans
 
-before the change:
 
- # oslat -c 1-31,33-63,65-95,97-127 -D 62s
- ...
-  Maximum:     1203 10 3 4 ... 5 (us)
 
-after the change:
-
- # oslat -c 1-31,33-63,65-95,97-127 -D 62s
- ...
-  Maximum:      10 4 3 4 3 ... 5 (us)
-
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
----
- include/linux/timer.h         |  9 ++++
- kernel/cgroup/cpuset.c        |  3 ++
- kernel/time/timer_migration.c | 90 +++++++++++++++++++++++++++++++++++
- 3 files changed, 102 insertions(+)
-
-diff --git a/include/linux/timer.h b/include/linux/timer.h
-index 0414d9e6b4fcd..62e1cea711257 100644
---- a/include/linux/timer.h
-+++ b/include/linux/timer.h
-@@ -188,4 +188,13 @@ int timers_dead_cpu(unsigned int cpu);
- #define timers_dead_cpu		NULL
- #endif
- 
-+#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
-+extern int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask);
-+#else
-+static inline int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask)
-+{
-+	return 0;
-+}
-+#endif
-+
- #endif
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index a946d85ce954a..ff5b66abd0474 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -1392,6 +1392,9 @@ static void update_exclusion_cpumasks(bool isolcpus_updated)
- 
- 	ret = workqueue_unbound_exclude_cpumask(isolated_cpus);
- 	WARN_ON_ONCE(ret < 0);
-+
-+	ret = tmigr_isolated_exclude_cpumask(isolated_cpus);
-+	WARN_ON_ONCE(ret < 0);
- }
- 
- /**
-diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-index 878fd3af40ecb..c07cc9a2b209d 100644
---- a/kernel/time/timer_migration.c
-+++ b/kernel/time/timer_migration.c
-@@ -10,6 +10,7 @@
- #include <linux/spinlock.h>
- #include <linux/timerqueue.h>
- #include <trace/events/ipi.h>
-+#include <linux/sched/isolation.h>
- 
- #include "timer_migration.h"
- #include "tick-internal.h"
-@@ -428,6 +429,9 @@ static DEFINE_PER_CPU(struct tmigr_cpu, tmigr_cpu);
-  */
- static cpumask_var_t tmigr_available_cpumask;
- 
-+/* Enabled during late initcall */
-+static bool tmigr_exclude_isolated __read_mostly;
-+
- #define TMIGR_NONE	0xFF
- #define BIT_CNT		8
- 
-@@ -436,6 +440,24 @@ static inline bool tmigr_is_not_available(struct tmigr_cpu *tmc)
- 	return !(tmc->tmgroup && tmc->available);
- }
- 
-+/*
-+ * Returns true if @cpu should be excluded from the hierarchy as isolated.
-+ * Domain isolated CPUs don't participate in timer migration, nohz_full
-+ * CPUs are still part of the hierarchy but are always considered idle.
-+ * This behaviour depends on the value of tmigr_exclude_isolated, which is
-+ * normally disabled during early boot.
-+ * This check is necessary, for instance, to prevent offline isolated CPU from
-+ * being incorrectly marked as available once getting back online.
-+ */
-+static inline bool tmigr_is_isolated(int cpu)
-+{
-+	if (!tmigr_exclude_isolated)
-+		return false;
-+	return (!housekeeping_cpu(cpu, HK_TYPE_DOMAIN) ||
-+		cpuset_cpu_is_isolated(cpu)) &&
-+	       housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE);
-+}
-+
- /*
-  * Returns true, when @childmask corresponds to the group migrator or when the
-  * group is not active - so no migrator is set.
-@@ -1454,6 +1476,8 @@ static int tmigr_clear_cpu_available(unsigned int cpu)
- 
- 	cpumask_clear_cpu(cpu, tmigr_available_cpumask);
- 	scoped_guard(raw_spinlock_irq, &tmc->lock) {
-+		if (!tmc->available)
-+			return 0;
- 		tmc->available = false;
- 		WRITE_ONCE(tmc->wakeup, KTIME_MAX);
- 
-@@ -1481,8 +1505,12 @@ static int tmigr_set_cpu_available(unsigned int cpu)
- 	if (WARN_ON_ONCE(!tmc->tmgroup))
- 		return -EINVAL;
- 
-+	if (tmigr_is_isolated(cpu))
-+		return 0;
- 	cpumask_set_cpu(cpu, tmigr_available_cpumask);
- 	scoped_guard(raw_spinlock_irq, &tmc->lock) {
-+		if (tmc->available)
-+			return 0;
- 		trace_tmigr_cpu_available(tmc);
- 		tmc->idle = timer_base_is_idle();
- 		if (!tmc->idle)
-@@ -1492,6 +1520,67 @@ static int tmigr_set_cpu_available(unsigned int cpu)
- 	return 0;
- }
- 
-+static bool tmigr_should_isolate_cpu(int cpu, void *ignored)
-+{
-+	/*
-+	 * The tick CPU can be marked as isolated by the cpuset code, however
-+	 * we cannot mark it as unavailable to avoid having no global migrator
-+	 * for the nohz_full CPUs.
-+	 */
-+	return tick_nohz_cpu_hotpluggable(cpu);
-+}
-+
-+static void tmigr_cpu_isolate(void *ignored)
-+{
-+	tmigr_clear_cpu_available(smp_processor_id());
-+}
-+
-+static void tmigr_cpu_unisolate(void *ignored)
-+{
-+	tmigr_set_cpu_available(smp_processor_id());
-+}
-+
-+int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask)
-+{
-+	cpumask_var_t cpumask;
-+
-+	lockdep_assert_cpus_held();
-+
-+	if (!alloc_cpumask_var(&cpumask, GFP_KERNEL))
-+		return -ENOMEM;
-+
-+	cpumask_and(cpumask, exclude_cpumask, tmigr_available_cpumask);
-+	cpumask_and(cpumask, cpumask, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE));
-+	on_each_cpu_cond_mask(tmigr_should_isolate_cpu, tmigr_cpu_isolate, NULL,
-+			      1, cpumask);
-+
-+	cpumask_andnot(cpumask, cpu_online_mask, exclude_cpumask);
-+	cpumask_andnot(cpumask, cpumask, tmigr_available_cpumask);
-+	on_each_cpu_mask(cpumask, tmigr_cpu_unisolate, NULL, 1);
-+
-+	free_cpumask_var(cpumask);
-+	return 0;
-+}
-+
-+static int __init tmigr_init_isolation(void)
-+{
-+	cpumask_var_t cpumask;
-+
-+	tmigr_exclude_isolated = true;
-+	if (!housekeeping_enabled(HK_TYPE_DOMAIN))
-+		return 0;
-+	if (!alloc_cpumask_var(&cpumask, GFP_KERNEL))
-+		return -ENOMEM;
-+	cpumask_andnot(cpumask, tmigr_available_cpumask,
-+		       housekeeping_cpumask(HK_TYPE_DOMAIN));
-+	cpumask_and(cpumask, cpumask, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE));
-+	on_each_cpu_cond_mask(tmigr_should_isolate_cpu, tmigr_cpu_isolate, NULL,
-+			      1, cpumask);
-+
-+	free_cpumask_var(cpumask);
-+	return 0;
-+}
-+
- static void tmigr_init_group(struct tmigr_group *group, unsigned int lvl,
- 			     int node)
- {
-@@ -1874,3 +1963,4 @@ static int __init tmigr_init(void)
- 	return ret;
- }
- early_initcall(tmigr_init);
-+late_initcall(tmigr_init_isolation);
--- 
-2.50.1
+> ---
+>  drivers/media/usb/uvc/uvc_driver.c | 4 ++--
+>  drivers/media/usb/uvc/uvcvideo.h   | 2 ++
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> index da24a655ab68cc0957762f2b67387677c22224d1..bcc97f71fa1703aea1119469fb32659c17d9409a 100644
+> --- a/drivers/media/usb/uvc/uvc_driver.c
+> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> @@ -792,8 +792,8 @@ static const u8 uvc_media_transport_input_guid[16] =
+>  	UVC_GUID_UVC_MEDIA_TRANSPORT_INPUT;
+>  static const u8 uvc_processing_guid[16] = UVC_GUID_UVC_PROCESSING;
+>  
+> -static struct uvc_entity *uvc_alloc_entity(u16 type, u16 id,
+> -		unsigned int num_pads, unsigned int extra_size)
+> +struct uvc_entity *uvc_alloc_entity(u16 type, u16 id, unsigned int num_pads,
+> +				    unsigned int extra_size)
+>  {
+>  	struct uvc_entity *entity;
+>  	unsigned int num_inputs;
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index b9f8eb62ba1d82ea7788cf6c10cc838a429dbc9e..dc23d8a97340dc4615d4182232d395106e6d9ed5 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -684,6 +684,8 @@ do {									\
+>   */
+>  
+>  struct uvc_entity *uvc_entity_by_id(struct uvc_device *dev, int id);
+> +struct uvc_entity *uvc_alloc_entity(u16 type, u16 id, unsigned int num_pads,
+> +				    unsigned int extra_size);
+>  
+>  /* Video buffers queue management. */
+>  int uvc_queue_init(struct uvc_video_queue *queue, enum v4l2_buf_type type);
+> 
 
 
