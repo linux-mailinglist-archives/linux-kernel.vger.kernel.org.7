@@ -1,156 +1,127 @@
-Return-Path: <linux-kernel+bounces-730455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA83B044C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:54:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CDDCB044CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E0674A0CA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:53:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13EFF4A59C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC86125CC75;
-	Mon, 14 Jul 2025 15:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D1925A640;
+	Mon, 14 Jul 2025 15:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F6UewqHh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HQ7RCpJ9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5DF25C80E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3AE2AD32
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752508384; cv=none; b=c/AWnwPcuKKh4TCacTvFMaVOMAXAg9BYUmU7I5VA8XBL6usoaVAQrEdyqiRvPBzxUvFx251rbzYhW4N4CYsF0NH8sPqgU8wHzLZDQjAkmeF0bzN65QlH//QueUedEEN2b7JhmJeJXylahWmXl+mlq7tfFyY77e4fwpuElW1Me1k=
+	t=1752508460; cv=none; b=AlksmL8JDqDpxcExOGDsb26WXQeoJh4FKZ8PmtB2LCUMa1bmK62OJ9E5T/RK49wRkgVAwaXYOIZtHB8BRN6MneDE0oIak71xuMwPV8GF0kWjupkYAv5FjThFR6+z8kJhyzeEsEAEDdDTL4cnQMxiKBrz+bo/RJZMsBNayAkOHGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752508384; c=relaxed/simple;
-	bh=CEXnDlx2sJuPjvpQa1TuoassZAU72YqfbV4oAqQbjRA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gJJrguw+euYrkqJQMeJpuK14FgWvyTz7zX58ZI6dne2Lj7Hohr44d+ukXt2iAZ1GMX3vgvPwMMzqVvzxOLcR13Z56EWD6MT3Ee6eNasknXNxpUsMdo3ZM+OGcWPQDpkXphiN9qYsAPLYTLY5tpcpYzj5Lp3Fps2ukNrGFFclA30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F6UewqHh; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1752508460; c=relaxed/simple;
+	bh=xom1hiROMVoy31v8NMzvv1RMs9VUBOjI5tx8PtHgbo4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=H+qkWzJ3IuAq056d9u2tXx5zbmzo+6cKUZ0S3hp089hP9kN6HG+f6TyzQ4+Ra6j6r36jY6wENq8sXqk6ioA+wz6dlVy0Hfra+C7ykJEaPpCzpc0oR/T1yUO0K7Q8jUqupYu8MKlp/i/ORw1QOGhOeiBHWmx9oDKj0r6+bXwlUEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HQ7RCpJ9; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752508381;
+	s=mimecast20190719; t=1752508458;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Afh2mt2XLyIRGvzUM8w1YNZeAUkQs3mudyhuKeejHlg=;
-	b=F6UewqHhJs/QOE3Bbw4HwxPnZNzk5EDFODRNUJA2F1YMIgSwl6PfOBSi/3Z8TCh7YIGWHR
-	SUvcvdfFAdxfw1I9JbkKacvcuMU6vucyOZDfS2R3e1eQ17tcH9nE8+AhQyOZ5nibe+irN9
-	r0+ZliEZ0bMynpm9mX/MY7BxxGDIe88=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=fafrMpU6qWwGQeEh/ZULn8SQLSmZiDDyM4ZSSsSMLQM=;
+	b=HQ7RCpJ9eSB4CfCegb6KIjtIP5aDKX6ARLamJNhvyjvk0etI0UIwvJh+9JaPfJ/h8x+T/j
+	lN3RLKo5M1PIEC4D/Cfzie8INi4Yaf84JXhQTJZCdX68JZlUwO7vV+PP4CIbtmp/KEInPm
+	eNu3w2u2tO4h/OhNHz9N6XbOrQkYtCs=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-519-nh8-YFc8M4GW6gGYCJCLJQ-1; Mon, 14 Jul 2025 11:53:00 -0400
-X-MC-Unique: nh8-YFc8M4GW6gGYCJCLJQ-1
-X-Mimecast-MFC-AGG-ID: nh8-YFc8M4GW6gGYCJCLJQ_1752508379
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4f858bc5eso3376430f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:53:00 -0700 (PDT)
+ us-mta-102-2l1xNBe7MFubcxkGWlPc5Q-1; Mon, 14 Jul 2025 11:54:11 -0400
+X-MC-Unique: 2l1xNBe7MFubcxkGWlPc5Q-1
+X-Mimecast-MFC-AGG-ID: 2l1xNBe7MFubcxkGWlPc5Q_1752508451
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4561a196f70so6724405e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:54:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752508379; x=1753113179;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Afh2mt2XLyIRGvzUM8w1YNZeAUkQs3mudyhuKeejHlg=;
-        b=iMEEi5xu7C4TuU2kqlFNCCJwlljwf+GOwEZz6lTHKkoBDYdedBd2hW1hNw5OyNjDyy
-         YEq5ROBSy0INffipPYGdw+lNZ98KUSGo49iRXCdIAHbi0Hm7ACTshpGFPDfF126rA381
-         a+oeduY53PXZA7Wk8DKbfYpRwwO/7rdzns1C1scMj0JNwUiWBqyEKJwByH+nYfNdh0SH
-         Kf4HdvzD4s5MsdHn/gW+qO6Ja+NxFsqfGV+Igxe07uZ6EIDbEOp7TOtXsoi1waM/l4Z4
-         SqaVY3DR0rLHeyxbRM8JEv3MCKhlkMGekdp6ofj7URT2FnuWi40M0Cg5lpbw4iqOidVv
-         tvPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNRS+Oy9ur+cCK6MODvgVP2NEgk6NBI1J62oLGw+Sw9YJ/CWk9onqA8u7qNGRc27rqAAaF6xLf3NE/oGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxGAjdyBDfLaa6Uo27bZ4YT+COp88b4RR+9ymka8y838IN19cM
-	uaoogAVYwKzKoTOCTNSIZoxLRqs6aam3NGnNSc7aqOThAj0Bd4yXNI8Fc3oXJMEiHsNsezqE9LY
-	whr2F7CCXA1TLnclmJYIxlva2r3raL0nJDuiTX3yig7kdckt00HagFUrZisUs2bzeDQ==
-X-Gm-Gg: ASbGnctfZxc2TY69Ji5ENm2fZtMq5u5cx5ug2kqN6qBUKy9ZemqswFsFnyI897IRbQH
-	E9SHJNjIsm0+7EOazOJymw9+vwbIWZG+G2vlDs2TH2ZAm31uozF6h1DEvxqt20hbfjVpWQS2y9S
-	xarYE29ZqZ5XionOOe5yk4yDux1Bd/KNEfXrzzppdnqfUjfZiMFpDGBHG6KoR0UV5W0565cj0Mn
-	kHOwBb+jBXMLCps9QMwjRh6NI+1a7pX/MbzN885BBXgBJlbnRUlj3YChCmCdHEbh+jtQCpPQMGZ
-	tnpiQIULrhL8qrOc8TaBDTESX2H50Jq3yT8WMvSxSk5W60qJEXEH6Mm/hHXiLLEbn33HVhT5xVM
-	mAt4cYhs7ksiUxtiADBQwj+wI99ARZDgP79KfxiOP2MHOwYNC1mbL428fow6F6ItR
-X-Received: by 2002:a05:6000:2dc5:b0:3b5:e6c0:1678 with SMTP id ffacd0b85a97d-3b5f2e33913mr11397475f8f.45.1752508378997;
-        Mon, 14 Jul 2025 08:52:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEBfPb+kSBwtyIkauT6Dvd8T6nbUdLfyAgQVkHC+WtToEfbcUDFhxah83coYfbK4ClyFfZRjg==
-X-Received: by 2002:a05:6000:2dc5:b0:3b5:e6c0:1678 with SMTP id ffacd0b85a97d-3b5f2e33913mr11397445f8f.45.1752508378555;
-        Mon, 14 Jul 2025 08:52:58 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f38:ca00:ca3a:83da:653e:234? (p200300d82f38ca00ca3a83da653e0234.dip0.t-ipconnect.de. [2003:d8:2f38:ca00:ca3a:83da:653e:234])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8bd1890sm12680696f8f.3.2025.07.14.08.52.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 08:52:57 -0700 (PDT)
-Message-ID: <60b0b01b-d397-4e47-8e85-295241ea3230@redhat.com>
-Date: Mon, 14 Jul 2025 17:52:56 +0200
+        d=1e100.net; s=20230601; t=1752508450; x=1753113250;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fafrMpU6qWwGQeEh/ZULn8SQLSmZiDDyM4ZSSsSMLQM=;
+        b=MUXzke8ElvduCddnZt9VCvoXlUCF0x4oNEZX4gtzFfq8x87kw57oXeE6AYIM+2I2Ac
+         dV+knXGnSIO0LYW/+mfKI8T9IK1g4FsysqOza9lHZWfSEC5ZOcEqUmpWSyCLH6dJjpAS
+         jRYnHzR+Nm/nwn+Z8nJOSVbJg/wAtoGj6v4CPvmXO19WLNr/FN0h68+ipo4Z0g/oPhvt
+         m/YwVyddCYLgoipb+7SnGV+7E6j8M2EAopbKU3v3G8xpEIytJH2fz70bnAnH7qgZabYC
+         9icBKcI5SRnel/hRwX1GHTfYSm6fhzTHuB2IrMZxcFSg7hPD6h066TQlRX1nmxpgizNn
+         /7GQ==
+X-Gm-Message-State: AOJu0YxQLIxpMJniJ+VtlijH9yf9C1GrnNEzFyrRmBIPoEiYTryZJEJa
+	zpAj7gsIJxKYRED025en41gP8yco+9hCbkhIhGyO+ZvwQMu6VHoGOzSu1i2sDQOMt5boSR75HGN
+	qMSbJq5Gqg5ii2CH2Ri9M6acjIeciJyY/leZrspxbg84ZTxP3gwYxgWG3Z4M4qOH79Q==
+X-Gm-Gg: ASbGncs4zbJVCQrId7rS6yWnaxcHxRHBG2DLafmXBZp55aj1+0nd8VY/ksONDmQGe2o
+	v46cj4fAT+Y2cx/41gVoe/mMtGUW5T5YeF4DvzWYIBOABCeJI0hk8CxFEhsH2iA93Z1UMingfNu
+	LKAb4VFUH9qiBrw8MFjy7RHKZ8Oqhe9pH42Mbk7AVxy4AZEMjId9i885gMccrqJsVcrqZJnAV1j
+	kk3mBXjWE2wW8VeEw+RU9DihG1ov9ntTVCp4eWXuOFfNXThdhn1ciGJp2oEisioCxYM7B1el3vs
+	VzG0TqTgJsjLaYaKC5atC1pqQIMuls1njgK3H3tun2OscZ1fJkj4iJion+zVfa/RSQ==
+X-Received: by 2002:a05:600c:4e03:b0:456:2142:7fa6 with SMTP id 5b1f17b1804b1-45621428198mr29093855e9.12.1752508450415;
+        Mon, 14 Jul 2025 08:54:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGCHe6mq8+XZn09BZU3bdrlf7cL8nFRYa64ZMeYLY281d4Q1xY8HGui6z7vV3S6rkcrDKdxyw==
+X-Received: by 2002:a05:600c:4e03:b0:456:2142:7fa6 with SMTP id 5b1f17b1804b1-45621428198mr29093445e9.12.1752508449939;
+        Mon, 14 Jul 2025 08:54:09 -0700 (PDT)
+Received: from localhost ([89.128.88.54])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4560ddf5e0esm70962005e9.18.2025.07.14.08.54.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 08:54:09 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: linux-kernel@vger.kernel.org, ipedrosa@redhat.com, David Airlie
+ <airlied@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
+ dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 1/5] drm/sitronix/st7571-i2c: Fix encoder callbacks
+ function names
+In-Reply-To: <aHTy3tbDKA0QVqBt@gmail.com>
+References: <20250714104421.323753-1-javierm@redhat.com>
+ <20250714104421.323753-2-javierm@redhat.com> <aHTy3tbDKA0QVqBt@gmail.com>
+Date: Mon, 14 Jul 2025 17:54:07 +0200
+Message-ID: <877c0a22g0.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] mm/mseal: move madvise() logic to mm/madvise.c
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Pedro Falcato <pfalcato@suse.de>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Jeff Xu <jeffxu@chromium.org>
-References: <cover.1752497324.git.lorenzo.stoakes@oracle.com>
- <5d932ec1f9d0ea115aac65067e4cb8241a06e791.1752497324.git.lorenzo.stoakes@oracle.com>
- <5e21df9f-7f75-412b-a173-fe6da49952e5@redhat.com>
- <b9bb8416-24a0-4bd2-97c1-055460cece23@lucifer.local>
- <0925c64b-c721-4dc5-913a-c43a94dc64a3@redhat.com>
- <nnm4cmygbeyzwxfwqduo5lq3d5cthuic5irof2l3tb5x43n2hz@mmjklktcfk2o>
- <184d7f4b-6ffd-4047-b245-aec32ebda9d6@redhat.com>
- <d7959e95-c248-43f8-911f-628db9313a61@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Organization: Red Hat
-In-Reply-To: <d7959e95-c248-43f8-911f-628db9313a61@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 14.07.25 17:45, Lorenzo Stoakes wrote:
-> On Mon, Jul 14, 2025 at 05:41:45PM +0200, David Hildenbrand wrote:
->> On 14.07.25 17:31, Pedro Falcato wrote:
->>> On Mon, Jul 14, 2025 at 05:03:03PM +0200, David Hildenbrand wrote:
->>>> [...]
->>>>
->>>> But now I wonder, why is it okay to discard anon pages in a MAP_PRIVATE file
->>>> mapping?
->>>
->>> IIRC this was originally suggested by Linus, on one of the versions introducing
->>> mseal. But the gist is that discarding pages is okay if you could already zero
->>> them manually, using e.g memset. Hence the writeability checks.
->>
->> What you can do is
->>
->> a) mmap(PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, ...)
->>
->> b) modify content (write, whatever)
->>
->> c) mprotect(PROT_READ)
->>
->> d) mseal()
->>
->> But then still do
->>
->> madvise(MADV_DONTNEED)
->>
->> to discard.
->>
->>
->> There is no writability anymore.
-> 
-> Well, you can mprotect() writable it again :)
+Marcus Folkesson <marcus.folkesson@gmail.com> writes:
 
-Isn't that what sealing ... prohibits?
+Hello Marcus,
+
+> On Mon, Jul 14, 2025 at 12:44:00PM +0200, Javier Martinez Canillas wrote:
+>> It seems the driver took some inspiration from ssd130x and some of the
+>> functions (encoder callbacks) were not renamed to use a st7571_ prefix.
+>
+> Outch, shame on me.
+
+On the contrary, I'm glad to know that the ssd130x driver was useful :)
+
+>> 
+>> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+>
+> Reviewed-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+>
+
+Thanks for your review!
 
 -- 
-Cheers,
+Best regards,
 
-David / dhildenb
+Javier Martinez Canillas
+Core Platforms
+Red Hat
 
 
