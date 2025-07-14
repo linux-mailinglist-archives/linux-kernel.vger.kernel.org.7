@@ -1,90 +1,79 @@
-Return-Path: <linux-kernel+bounces-730622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E78D1B04715
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 20:04:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8F38B0474A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 20:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4BE318813B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:04:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38A944A52B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C3126B2C4;
-	Mon, 14 Jul 2025 18:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25B326CE23;
+	Mon, 14 Jul 2025 18:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z9F92bNP"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ejzkQ+U5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA6126AA8F
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 18:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C722F26C39E
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 18:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752516239; cv=none; b=Pjw7gB60WM5psl1FYqsJZVXQd9YDBVx81NCbNlqBN0PnnBYwUGGYyQkVnn1yLPR58jiJoW+k1+Xki1phQcA7OJehw5r3qXC5G4PQX4kQTFEMjp4XX4nI7QI/F13FZXuK5zBRk/n1LPsb4KBtWmfE4Gyk4uqbSDFnlAiZUTq9ySk=
+	t=1752516730; cv=none; b=c4CinZMZkqUi/b4qz0/h8NugT5rK6HlB/y1rf+8NKmEEAbAmuA2k1ttctX10D4WVDCBu/9kRxh8qThB06YkvqF3iVhjxyAbr3/GOS+grjc93QTfxz4YZphxCbCDgkqhzIJceD8/3nz0qNH8JFA8zHGou4Yhlpojr/sIKhlW+KLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752516239; c=relaxed/simple;
-	bh=xKnjXWOY2IrRzosXfQB3Bpso/mm2u4JxGSYgZGdZjIQ=;
+	s=arc-20240116; t=1752516730; c=relaxed/simple;
+	bh=Zptfm1+ncVe0WYKzwnFgOc94sK+lXQkGVwbdmZ/nzRc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kwuf6cQ2Ab5fq16ndyW2cjRhjodhmfB1CtJAjXZzIG2lxBjMxK1jRJGsQK4ifeW/n1Idxwno+cdojUUAoAItTzHm6jB/G2ItNcRyH+S3NWFxCwrqFngYwi5nRiw2M/6j9JrY7vFUAe/JuC+3NiWKER2J6fXWVNV0EXNblRYUr/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z9F92bNP; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2ea58f008e9so4033067fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:03:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752516236; x=1753121036; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kUc//PEDPwGX6GKHFUnDylrVbmV9/GKD9WpLyzBk2E0=;
-        b=Z9F92bNPvUvzoOh9o+Tc/v+cCBf2+qu2MWe2G+RnjWD3C5x+s5lLbCFMjjA6bZZHKa
-         W84FRIVVuaQVJ2pqMnhdhw0dQ3pF4LOsc3XrVXolQ6aJ34SCadHwhMOMfQOJAULm48QY
-         OUHlIO8OIR6r5SZqjPuKKb2awKYWSxP9R4yVFTA59l7TkKPMj0wCHwV7sgywmQT9hgpk
-         ldT9xZUimI5KStO+hW3gwxTtS7p7ud+7upXQkYXbhVwVYA2zQ+YA8BBLAcBV5QdIjhHv
-         5FpaNP+G7k6nzJWFPnAKSC1L1uSWICCdR6vRbM98oluqvyDIvrmxKU+aNO1LnzLMerx4
-         DtGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752516236; x=1753121036;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kUc//PEDPwGX6GKHFUnDylrVbmV9/GKD9WpLyzBk2E0=;
-        b=NYbvZe15VfIv2poKepOnpOQglU1sFH5J1vqFuSHCeObiPnboBumutdTvPiXg2kx8I0
-         CFLwsT/SYzJVtp5bJ0WqOZaEjwzmLBXHvVRg6R9c5P2N8TOjB2lvbrh+vbcjfOyc0Ill
-         kDbZa1VVXBTQZz8bw99Tcy8v5lenA+i0Xnrn4nD15tDO5InhNmp0YzR0OgA49OiU7BOL
-         xxr5s9VsE7Lb9wr5U6udKhqQr8sl/0eflDCwnlNTCMjjjy55IsfO1ZxMw69/3ytbKXJk
-         A1faEYtqGvIJ2zpPm63RbrTW2fPyHJLW/Llfjm3cJHkia7kiWUr0NLVUw71yPT8i8bRs
-         UkkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsEHbSLF/VSExM2xUewpvw14EAbUNKWvSEiaY0DVhJ++tvHgyQq1Y3+umnU1YFOFFrjOvvAmORVKqsQ1Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdoBBBkU7E7wQYWt79jZ/99rza22VsNwNQJ4+fDwwT0D4fk5Ui
-	YhyBaHD1xB2KyxyakGR8ZFDYVXRv7QJ6lYOcupdGM6/1Cu5uiEVSLzqH37MmtMu9CeY=
-X-Gm-Gg: ASbGnctRGTNRVna3ULHLlQdZdnWENr2ryExhE+9ZVVwHdGUzXEndwxwQ0FGcn6And+q
-	4KI1t5EPO/7zJATMGiSsf8J7jo9yBVzbNIae9m80S9XQ7yn02QKW7EeZGuWPIwjsCwYGxEywCAN
-	zP8Ny4q8bvFf5D4MVW299iPzHeAt0i5L5FRB7LH/RSrfXD+r7GPXPBlJ2snnzC09DeKS+3Vt3Ej
-	cAdrlY+UpEXQmwVVSAZbmYBis1wFZ05OAxoe8kMzZ2VHO5BbwLlCUBgD2Fbe/3If4eaJYcGW4JC
-	iMugWZdAEWxPTZXxyPIxcsm8RapFumRSRnKAm200M45C1x7fDKSkcwqr6wXSfyQjOBRX3Pkw1m+
-	nBHK+IDe4VROOL5IhyiBSvmSnwGRkKA==
-X-Google-Smtp-Source: AGHT+IHTpGx6mV7WMwP1pIKs1b9CdmfJ9vEn7hc8jx+5sU/Mj67Y+rDomjPaMvowTYcY4XUtpdxDwA==
-X-Received: by 2002:a05:687c:2001:20b0:2ff:8822:2912 with SMTP id 586e51a60fabf-2ff88223f6cmr1071480fac.5.1752516235811;
-        Mon, 14 Jul 2025 11:03:55 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:6bb2:d90f:e5da:befc])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ff8dea112bsm84240fac.43.2025.07.14.11.03.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 11:03:55 -0700 (PDT)
-Date: Mon, 14 Jul 2025 21:03:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Kohei Enju <enjuk@amazon.com>, Thomas Gleixner <tglx@linutronix.de>,
-	linux-hams@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net/rose: Remove unnecessary if check in
- rose_dev_first()
-Message-ID: <96fbe379-cf8e-44e9-aeaf-a8beee2eda9c@suswa.mountain>
-References: <20250704083309.321186-3-thorsten.blum@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HLblLKepFhH/PyFqZDXgFs7J7teuTZmaQyHuGEbRyO8j6WEnwTdmWNAZIJVRLlEDj/93yGR+cEv2CWNMvrXUhio7pc+UzWS5Gypj3J1VQvJ1xHkIkWuw2ixEbX7eEWC8VSTO8hcH850HmebqFVvxGEDAY+CxNG2oqjKt7Rp4Hds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ejzkQ+U5; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752516729; x=1784052729;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Zptfm1+ncVe0WYKzwnFgOc94sK+lXQkGVwbdmZ/nzRc=;
+  b=ejzkQ+U59IPRIMkg5KB/WSFwd+n6XnI/Fo5JrobfereCKUiyJwo7hicb
+   zjuQ/+VcKbhvi8AFtSmpVt/PJ5/cPNxlqLtzfYpsSmW3nF4bvzhIsXVgu
+   v9Fs3zbNEKmbQEHR2a9xgZ+h+9WLJRkjfUVkkgqjnxZXOhetyXx47ZPcu
+   g/ZgikZwRRkb3Cov9rthWGU8pqmcuRWd8mbf8p8u0w3E55nubNadttM9f
+   ZOTaBfhmNtYL2N86cKvDVk1umxYtBIQX82vE7o3jso2HEr4WUWEDDm8H9
+   nVOuhBb+0jl7dRKGd5a8feAssB6we7qtrFVouXbKGODa0ETY/hXUrLVDA
+   A==;
+X-CSE-ConnectionGUID: BBubpxVTTbS4LuGEBGaVEA==
+X-CSE-MsgGUID: 4adcC6dpTxG16AJXF9eGfA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="57331256"
+X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
+   d="scan'208";a="57331256"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 11:12:08 -0700
+X-CSE-ConnectionGUID: ii9TSDseStKaN1Cdmrl4Aw==
+X-CSE-MsgGUID: Q+rxJdaHShqug6lQk6ge/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
+   d="scan'208";a="161320870"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa003.jf.intel.com with ESMTP; 14 Jul 2025 11:12:04 -0700
+Date: Tue, 15 Jul 2025 02:03:32 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, kevin.tian@intel.com, will@kernel.org,
+	aneesh.kumar@kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, joro@8bytes.org, robin.murphy@arm.com,
+	shuah@kernel.org, aik@amd.com, dan.j.williams@intel.com,
+	baolu.lu@linux.intel.com, yilun.xu@intel.com
+Subject: Re: [PATCH v4 4/7] iommufd: Destroy vdevice on idevice destroy
+Message-ID: <aHVGdG275Kcf14uJ@yilunxu-OptiPlex-7050>
+References: <20250709040234.1773573-1-yilun.xu@linux.intel.com>
+ <20250709040234.1773573-5-yilun.xu@linux.intel.com>
+ <aHHG/H6IT9lvYy8x@Asurada-Nvidia>
+ <aHKfwQ41x28bNWAL@yilunxu-OptiPlex-7050>
+ <aHUzCAM8NKuFYbj3@yilunxu-OptiPlex-7050>
+ <20250714165346.GI2067380@nvidia.com>
+ <aHU/nVdsuxgRK+u4@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,43 +82,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250704083309.321186-3-thorsten.blum@linux.dev>
+In-Reply-To: <aHU/nVdsuxgRK+u4@Asurada-Nvidia>
 
-On Fri, Jul 04, 2025 at 10:33:08AM +0200, Thorsten Blum wrote:
-> dev_hold() already checks if its argument is NULL.
+On Mon, Jul 14, 2025 at 10:34:21AM -0700, Nicolin Chen wrote:
+> On Mon, Jul 14, 2025 at 01:53:46PM -0300, Jason Gunthorpe wrote:
+> > On Tue, Jul 15, 2025 at 12:40:40AM +0800, Xu Yilun wrote:
+> > > diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
+> > > index 702ae248df17..bdd5a5227cbf 100644
+> > > --- a/drivers/iommu/iommufd/viommu.c
+> > > +++ b/drivers/iommu/iommufd/viommu.c
+> > > @@ -128,7 +128,8 @@ void iommufd_vdevice_destroy(struct iommufd_object *obj)
+> > >         mutex_lock(&idev->igroup->lock);
+> > >         iommufd_vdevice_abort(obj);
+> > >         mutex_unlock(&idev->igroup->lock);
+> > > -       iommufd_put_object(idev->ictx, &idev->obj);
+> > > +       refcount_dec(&idev->obj.shortterm_users);
+> > > +       wake_up_interruptible_all(&vdev->viommu->ictx->destroy_wait);
+> > >  }
+> > 
+> > I think the main point of keeping both refcounts is to keep the above
+> > hidden in the main functions and out of the object functions.
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  net/rose/rose_route.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> I see. Maybe we can just update the comments that we are keeping
+> both refcounts but using shortterm_users only to do the trick.
+
+I don't think we need special comments. The new usage is not a trick.
+It follows the existing mechanism of iommufd_get/put_object().
+
+https://lore.kernel.org/linux-iommu/20250707122502.GS1410929@nvidia.com/
+
+Adding a patch to rename shortterm_users -> wait_cnt should make
+thing clear.
+
+Thanks,
+Yilun
+
 > 
-> diff --git a/net/rose/rose_route.c b/net/rose/rose_route.c
-> index b72bf8a08d48..35e21a2bec9c 100644
-> --- a/net/rose/rose_route.c
-> +++ b/net/rose/rose_route.c
-> @@ -608,8 +608,7 @@ struct net_device *rose_dev_first(void)
->  			if (first == NULL || strncmp(dev->name, first->name, 3) < 0)
->  				first = dev;
->  	}
-> -	if (first)
-> -		dev_hold(first);
-> +	dev_hold(first);
-
-I'm not a fan of these sorts of "remove the NULL check" patches in
-general.  Sure it removes a line of code, but does it really improve
-readability?  I feel like someone reading this code might think a NULL
-check was required.
-
-I guess there is also an argument that this is a tiny speedup.  That
-could be a valid argument especially if we had benchmarking data to back
-it up.
-
-Of course, if you're planning to take over this code and be the
-maintainer of it, then you get to do whatever you feel is best.  So if
-this change were part of a larger change where you were taking over then
-that's fine.
-
-regards,
-dan carpenter
-
+> Otherwise, we'd need an iommufd_lock_obj_shortterm..
+> 
+> Thanks
+> Nicolin
 
