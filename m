@@ -1,122 +1,123 @@
-Return-Path: <linux-kernel+bounces-729859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D85B03C8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:53:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD365B03C8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4D9B17EF34
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:52:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39BBD17F2DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F27A24C09E;
-	Mon, 14 Jul 2025 10:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF43824DFF3;
+	Mon, 14 Jul 2025 10:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LDFaZ3Jw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZgKmApd7"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13760246332
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 10:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B2B246348;
+	Mon, 14 Jul 2025 10:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752490144; cv=none; b=OzYNDdiFxSZTIgHX++NSRMC29Jn67Vmp/NDN2zOM3nyvOPNOc9k10NMc3j2RgSeUE5Ui7BMv0NYzS29GDnw2Dr6EIUnEPMOF8pYAVpcIVpHwf6ZLKobrDbXndJFl2ijr4ShOlOCtNvnqTXPEFIpGaCzpPE3i89wCIJ3r+Blvi6Q=
+	t=1752490169; cv=none; b=SRd0QbwpEhU2po3EtSS1TJ7EzraYXh0Vr+8vZKj4yRfyLhtx6aCxOS1kK2Xs+ONW9tRtrHQC1dd2pYYG3dE3/q+ug71PjTdPrVr2DI2/RAz4f9ICeq9xsqyi8i1qWg0BXzR754v6VgljOEA5b+yNRtza8Z/HvrNwqefc9ZGOFVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752490144; c=relaxed/simple;
-	bh=k7otKPrVfPHtsH232FjME5rT7LJfHaZqqtlPb+Pnihk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RTj2uCfyukTKFjZjI/lGHEbfBWegxgFQ76NV+lCBUr+sPBun8XC/HI4onzknS2gPsEf6iWH6Ci9ojBpMv2qW61cs5x8yEGexqITV+0e8wzCn9R1opV0r1UO+//UyIcHNE5ZdVTPNLI0zByuhLBuOE3sLHOKpBczODL+EREZDw9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LDFaZ3Jw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752490142;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ltPdQyqHBsra0GyTjq74zXTigFI2B8itXhZ/svYCZPs=;
-	b=LDFaZ3JwBP+jKZGA3cIYXAl2q2xfNbjwqxbZPVfo4kh3xTdg5mKV03QcCUKDfvdVB26pn/
-	jhaVykxO5qXPODrnyOaV6Bw8SIqKkY+Vsplnwzqkchq/kje2DaWwkF0WjXBaDCfrZgJK6N
-	BGys9Kxc0+ZZi3YhyrqsJ9qBcd2wU/M=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-546-VxoFon7UMUqZDQ53iZ08HQ-1; Mon, 14 Jul 2025 06:49:00 -0400
-X-MC-Unique: VxoFon7UMUqZDQ53iZ08HQ-1
-X-Mimecast-MFC-AGG-ID: VxoFon7UMUqZDQ53iZ08HQ_1752490139
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a54a8a0122so2136392f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 03:49:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752490139; x=1753094939;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ltPdQyqHBsra0GyTjq74zXTigFI2B8itXhZ/svYCZPs=;
-        b=qkbJKZuRrCzuIq1+nVENJIY7dEX0xJyw4EdHWZNQBbIpohbkaIcd3OIKrc+7sVjvL3
-         RPJxdRZivKSoX3QexWFBGLD9HCy/KTVlpMZY80zqimNbI7xqG0JoUYy7vvPNXtPRU9vE
-         xhk3DOqkLExkIsrbPDhKtHPXJNnyqbNG04kzLE+SQDBmwYOT1Qk0w/bWCXktp309L9xN
-         fT30Rx3bEoeVSRMfPJsWD56kcgp1wqNR0GauxwGYp7L5xMEOh60naHC/hqn7u9vWLEsK
-         jQcrnNUSs3JzPlpqKuUEoxmskTW/sD/xbFnVy/HlXrpD7HrFSMoHpd5Si0OP2o9tLv+S
-         8zUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwuMsUwPE2mMAVFn1uMojlco16MSiZU3LciTUoC7c1Sh+6nfC2Y/C6IVmeY2wl61SFJSLgIwU8xVdsT9g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLRPC4XYQUz8+dyE0jMM4Exo8rCLzqpQMlBzBP6UxBTzw/Ryc5
-	FGsVjYUPFM2j0FOntM+w34dzGiGVcbId5qQAx6u9YvNBhcxBSM1iJgxfV6kuDVjXYJewDzgMvM6
-	RjiLzYGAAgGweXLPrkR0iWBl/BT+hCPnf8Hm0Kp0FvJBOGocJDa3d3cMrVrVOO2DoZA==
-X-Gm-Gg: ASbGncuUriuoUk7lS/TcPGjW0RZL8tpbKGm5Pbe9e/zgB1PyNmWaF2gz2EuTmFR5L8T
-	wG0nlZzsis3LOnSmQg7DzPoKY5DUq38W0cPX8xPojtG0LQ3N4QeRkDglaj21jqOCeL8S+xf/ns/
-	GoyFSLMbhQ1kLU4cSwmM88htmRmEP/+B6h6Udj6CPEtx5L2p5UgSekSHsxY/8aMgZD2WRpFZHZL
-	zGQmWwU5yEz/XKDlOgjeTZcKsLmE5BOa4IXsK3EHgoyQLaotcnWqz59TilB++eLtYLreJwFel9Z
-	1spzGWnSKteuGIRv2+2KFhfI4v2WiPwcIGaJWkCsmI8Vf8kA0mHWjVEMZ9P9HQfPdw==
-X-Received: by 2002:a5d:54c1:0:b0:3b5:def6:4e4 with SMTP id ffacd0b85a97d-3b5f18dc957mr9051335f8f.46.1752490139161;
-        Mon, 14 Jul 2025 03:48:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHImDSBSOZrXKdE7d+lK2DHEqPaurxGJM74dxsib/ppONQQBriF16K2WMaXixkeJMLS5CC1Jg==
-X-Received: by 2002:a5d:54c1:0:b0:3b5:def6:4e4 with SMTP id ffacd0b85a97d-3b5f18dc957mr9051311f8f.46.1752490138729;
-        Mon, 14 Jul 2025 03:48:58 -0700 (PDT)
-Received: from localhost ([89.128.88.54])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d76fsm12336085f8f.64.2025.07.14.03.48.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 03:48:58 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
-Subject: Re: [PATCH 1/5] drm/st7571-i2c: correct pixel data format description
-In-Reply-To: <20250714-st7571-format-v1-1-a27e5112baff@gmail.com>
-References: <20250714-st7571-format-v1-0-a27e5112baff@gmail.com>
- <20250714-st7571-format-v1-1-a27e5112baff@gmail.com>
-Date: Mon, 14 Jul 2025 12:48:56 +0200
-Message-ID: <87qzyjkpyf.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1752490169; c=relaxed/simple;
+	bh=lmMO9oWiY1La7NZpL7XvxppUXvYIpzkkNjadrtUu4bQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m67ntqh4Ov93FngLHKdUNbCNj7V+jIAshPLoN+gWUtrUITthSYr6PPbDrsR+rG/QeB5QA69cyvaoYZlz5FE7qzuzTW4WNc4sDjUF4+lmBw9lF1S426cCqZrsGl9MtTsF6oIadIuu1Cv5LzcFVo+VeDpsxqWR5h0i5asn0vEOUz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZgKmApd7; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sO+NWpjecFiPMw41O/Ux4KHMrLlaxGVkWqwkrh1sfjg=; b=ZgKmApd78AJ8K+Zxx2N+3LgMYS
+	e+q4x/TjxrEwsKIWi5LhxsYA7mFvf4cqT0UkD9/LrLMx9/qvwZkzrwaFNAdwGtJx1Jnlhsd7+M5D1
+	95nLHfjk98QmtXcsEnC4+ZJi4GEuOEr6GrauK6VuFd5qPGMsOFp42zOyUqzDpQHR8jD+Z9aT9Pcli
+	ZJn2xfw94xoz3RQzndfwe/7WDsREwiJNrXWBouxZwJMWLANI+YiIT43PldtrjTyBULVtb1mrLcAp1
+	TtLgcwgtrlXreF/N1SQ6zsGookNGMJoiLoe8J3ctRx5noHazWD2MotKNQcRUDQ6ENecBusKSQMZQJ
+	UYG0Oazw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ubGkJ-00000006v9i-3mPe;
+	Mon, 14 Jul 2025 10:49:20 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 633F4300186; Mon, 14 Jul 2025 12:49:19 +0200 (CEST)
+Date: Mon, 14 Jul 2025 12:49:19 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: x86@kernel.org
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+	seanjc@google.com, pbonzini@redhat.com, ardb@kernel.org,
+	kees@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	gregkh@linuxfoundation.org, jpoimboe@kernel.org,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-efi@vger.kernel.org,
+	samitolvanen@google.com, ojeda@kernel.org
+Subject: Re: [PATCH v3 16/16] objtool: Validate kCFI calls
+Message-ID: <20250714104919.GR905792@noisy.programming.kicks-ass.net>
+References: <20250714102011.758008629@infradead.org>
+ <20250714103441.496787279@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714103441.496787279@infradead.org>
 
-Marcus Folkesson <marcus.folkesson@gmail.com> writes:
+On Mon, Jul 14, 2025 at 12:20:27PM +0200, Peter Zijlstra wrote:
 
-> The comment describes the pixel data format as stated in
-> the st7571 datasheet, which is not necessary the same
-> as for the connected display.
->
-> Instead, describe the expected pixel data format which is used for
-> R1/R2/XRGB8888.
->
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> ---
+> --- a/arch/x86/platform/efi/efi_stub_64.S
+> +++ b/arch/x86/platform/efi/efi_stub_64.S
+> @@ -11,6 +11,10 @@
+>  #include <asm/nospec-branch.h>
+>  
+>  SYM_FUNC_START(__efi_call)
+> +	/*
+> +	 * The EFI code doesn't have any CFI, annotate away the CFI violation.
+> +	 */
+> +	ANNOTATE_NOCFI_SYM
+>  	pushq %rbp
+>  	movq %rsp, %rbp
+>  	and $~0xf, %rsp
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+FWIW, we should probably do something like this as well.
 
--- 
-Best regards,
+---
 
-Javier Martinez Canillas
-Core Platforms
-Red Hat
-
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -562,6 +562,13 @@ __noendbr u64 ibt_save(bool disable)
+ {
+ 	u64 msr = 0;
+ 
++	/*
++	 * Firmware code will not provide the same level of
++	 * control-flow-integriry. Taint the kernel to let the user know.
++	 */
++	if (disable || (IS_ENABLED(CONFIG_CFI_CLANG) && cfi_mode != CFI_OFF))
++		add_taint(TAINT_CFI, LOCKDEP_STILL_OK);
++
+ 	if (cpu_feature_enabled(X86_FEATURE_IBT)) {
+ 		rdmsrq(MSR_IA32_S_CET, msr);
+ 		if (disable)
+--- a/include/linux/panic.h
++++ b/include/linux/panic.h
+@@ -73,7 +73,8 @@ static inline void set_arch_panic_timeou
+ #define TAINT_RANDSTRUCT		17
+ #define TAINT_TEST			18
+ #define TAINT_FWCTL			19
+-#define TAINT_FLAGS_COUNT		20
++#define TAINT_CFI			20
++#define TAINT_FLAGS_COUNT		21
+ #define TAINT_FLAGS_MAX			((1UL << TAINT_FLAGS_COUNT) - 1)
+ 
+ struct taint_flag {
 
