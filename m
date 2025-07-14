@@ -1,82 +1,94 @@
-Return-Path: <linux-kernel+bounces-729490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6988BB0376F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:54:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107EEB03771
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1D6316DFF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:54:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 487D93BB873
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E6C229B21;
-	Mon, 14 Jul 2025 06:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062AC229B21;
+	Mon, 14 Jul 2025 06:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sAAjEShL"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Il16xPEm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F03BE65;
-	Mon, 14 Jul 2025 06:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EF31CD1F
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 06:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752476048; cv=none; b=RZp15AIdeJ0Uqsz+EsOTkkyg1Cq6ET4flc/Eq8/Atvx9RMbH+xvZiR2jqLPBf56NjqIOy+XmvG1xacmB+k2k+Zv/UEdU84bRKUFyQI4MAEUDwAWfSTWGRTt3eJQ9Y38bExOLGT5sQ7G0mKrOVmvjmbFFBaRQS/QQanII1yzCQs8=
+	t=1752476103; cv=none; b=oDbz0Wf7JrCs3GFNLkbCzg6nqtNfnCNtV7ohfkaxDwmFMtKfw84+DJBkusYREm0oH7AqgK7rFHHFs58X4SbXo6AGaUznRcgjsnptArDAw+/AjtpOfgPbc/Zrc3NXN+kRP3I7yhfwTsKRXdfnlwBB1v79buzLuvmxMT9a1GPHvFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752476048; c=relaxed/simple;
-	bh=trVG2f4buu2+4oM+u59GKmTkk9pA0hGNzYqTR3u3D8Y=;
+	s=arc-20240116; t=1752476103; c=relaxed/simple;
+	bh=UGs/+B32gn3cy1d8qhjGPSwAy5GCOeHq/3OLNLkco8o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d7EoMtePgDRCewharGtM08wSPnNLAQ7RGRRVfLQh/CuvL6Oi0Fh09rTPnIgjvSqU3PtdVBsQ6KkMDRFpvgafxDTNevg9Zxci534jpjGoheYpN5rCLIZhJNEp+ZdVN7TROjJ+QT1zAHzztaIWn6XAVef/vWI8CDKiDO3uMybYUwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sAAjEShL; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56DNtlhM002849;
-	Mon, 14 Jul 2025 06:53:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=5IEIgTExw2nSrI0cq1DIj0kuY0Gjph
-	8sAgtMBsqnDCo=; b=sAAjEShLBljMyMl8i6KR2ou0URliyg/4y0i9Rm7jX64o9y
-	FiSak/xLEz/F0FA0B3rMsewTdc5C4D+QD433F2I22tZtdbJGL4MkhALRyYV2maLw
-	NgHF4BNS7PJMKi/XWD6csKAdru4+jq7UyQTdRg+DAIjTfZfVeG71NvMV3igPg5xa
-	NaqTDs8KA/CwNK304E+9PL6mKmVuKzMyCiFP1RY6ERxZMbSpKTlJTCkYOAuGMo8h
-	f/YTCDfC1MKp6L1Wha8/Jju+LUNCozDqsv2q4owbMK1YtZmuUtnHh7Mglnj4s1W/
-	dqbp7ezMdKd/itCO/JhrjnJ6PaNFBeY3AJfLvNPQ==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47uf7cr3tb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Jul 2025 06:53:52 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56E6kJXd021906;
-	Mon, 14 Jul 2025 06:53:51 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47v4r2vdmp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Jul 2025 06:53:51 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56E6rngV50594296
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 14 Jul 2025 06:53:49 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 92CE520043;
-	Mon, 14 Jul 2025 06:53:49 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B8FEB20040;
-	Mon, 14 Jul 2025 06:53:47 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 14 Jul 2025 06:53:47 +0000 (GMT)
-Date: Mon, 14 Jul 2025 12:23:45 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, jack@suse.cz,
-        adilger.kernel@dilger.ca, linux-kernel@vger.kernel.org,
-        yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 01/16] ext4: add ext4_try_lock_group() to skip busy
- groups
-Message-ID: <aHSpeVzn1Bhxd2YO@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <20250623073304.3275702-1-libaokun1@huawei.com>
- <20250623073304.3275702-2-libaokun1@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WkGc8Zi3097kNDoUS5bN4jUqPWLT7iMdFnWuwvOf8GCdyEEFNNq5WcwR011iCZzb+WLR85gABuEAfDjauGXgRjEJZVnCWfNLP7Wfn+bqdIFvXKCWEHJ/YWbAz8Js5Ea2ITYuToj8NATBRN3HrploXkcjLKFUmcLyXAennFaubKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Il16xPEm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752476100;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sPMw9tnfPBR1vsdCImTl+h1akpJagNiW0hA8bPj+ieE=;
+	b=Il16xPEmlJN4ebqeQRYH0wDxWSXzdhB8xkTsvGiE9ryzliixlkOUAF8K64EJigfRxzT3i9
+	DzMXt3Cl4/RiCnJAupCBglwhqgeTfKF6VXirpImDsADRojHyPK08f76GvN623AGcC+aZ7X
+	3/y/czG55KDDvAmWXN+h5cCU3jtiwaA=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-179-KkM41J5UNteiWzFGGE3tEQ-1; Mon, 14 Jul 2025 02:54:58 -0400
+X-MC-Unique: KkM41J5UNteiWzFGGE3tEQ-1
+X-Mimecast-MFC-AGG-ID: KkM41J5UNteiWzFGGE3tEQ_1752476097
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4532ff43376so36260165e9.3
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 23:54:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752476097; x=1753080897;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sPMw9tnfPBR1vsdCImTl+h1akpJagNiW0hA8bPj+ieE=;
+        b=XkitQ8LF1oLG6zocsMFTVgfj9JMVKjGezw+ottqzpNqJVn0Or4T59GZQMdHCkubLna
+         UBZ3TtTJR0JvFYdEPSvuSHchRfVvGYv9HfVbxY7OwuT3K+2o474OtpxiNXtPXJkwbH88
+         Lz68YjlZhLE/fy2u/YY5qcSwY226LoADX136vE7H4UstHgZHJIPD+mDuhJqQHb4cLv5k
+         vT7pUBXIap1BDwyKCyBcEEHgBVH2MmM5REjPA3AWSk6QyVrfm6fxwCv+IWRFMiETwJpu
+         A+ADrG+W6ukG5Tbe4+SS6cAoZwHMMCfH4t3ha9xss7X8L+8jQXc9UCz2NKUPqn0xnwC9
+         AvVQ==
+X-Gm-Message-State: AOJu0YxpFeA4A4/sWfpSriJ+/XEN3LLkogjyTJU99Ba0/vBig4cdeHVc
+	emRCR4RTElYRb8OqtxD7ylPnJLoFUgN6n90p8Sy+s3VJiqRcDyEoqWYNkc+FB3kdjbFWB2T8aru
+	lyDPm+k6D9nkC+6FKmjPPztxpBvY+vYEIzSSMLN/Z7jQW3MqSygq35VXr/mwSm4Qeiw==
+X-Gm-Gg: ASbGncsxc1IvIpmRMAFbabn54Lh6BeSnqx0YzICWFakgUvrZsZx+qI7ppNsbywgd3Bc
+	YfRiwm9JscQCH9UXcy9gEb/86T79paGSWq8G04edkbvBSuIGRJiRQ9DLd5LMNWXV50G6HtZbQ6x
+	zZ9wCwmY+OUvYfsPAqCIQlE1ldUnxTFdnXIm9NjwENMIXYyG+9jxka9aH1hT13urhyQlSB1l2MK
+	VMlSEet/1EDtqfREhCC9uAl8G1EO82vGNHrFFkSRPylqbManPfd6SxIqHUl1FQ/2h9S/tmapC3R
+	KBu1kF7wQZj3ZvObSObZ6btEGAzKj0ql
+X-Received: by 2002:a05:600c:5024:b0:456:1611:cea5 with SMTP id 5b1f17b1804b1-4561611d3d6mr30785825e9.18.1752476096935;
+        Sun, 13 Jul 2025 23:54:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEE022c2VHr8WA+kO3hbXoaSxylmvCVJc9OW9gVm8pRiIUhm71J57/fOnW6tWgm61Q3Ykw7IA==
+X-Received: by 2002:a05:600c:5024:b0:456:1611:cea5 with SMTP id 5b1f17b1804b1-4561611d3d6mr30785655e9.18.1752476096517;
+        Sun, 13 Jul 2025 23:54:56 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:150d:fc00:de3:4725:47c6:6809])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45610c518e9sm46492725e9.17.2025.07.13.23.54.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Jul 2025 23:54:56 -0700 (PDT)
+Date: Mon, 14 Jul 2025 02:54:53 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Parav Pandit <parav@nvidia.com>, virtualization@lists.linux.dev,
+	stefanha@redhat.com, alok.a.tiwari@oracle.com,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH RFC v5 1/5] pci: report surprise removal event
+Message-ID: <20250714025357-mutt-send-email-mst@kernel.org>
+References: <cover.1752094439.git.mst@redhat.com>
+ <fba3d235e38c1c6fcef2a30ed083ad9e25b20fa3.1752094439.git.mst@redhat.com>
+ <aHSfeNhpocI4nmQk@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,76 +97,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250623073304.3275702-2-libaokun1@huawei.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: xoInn4410jql_Z_YsNNwsKoDP0BQeOmp
-X-Authority-Analysis: v=2.4 cv=LoGSymdc c=1 sm=1 tr=0 ts=6874a980 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8 a=G4Sw1XTuHnxZOQXlz7YA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: xoInn4410jql_Z_YsNNwsKoDP0BQeOmp
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDAzOSBTYWx0ZWRfX3JLgSIHK5sj6 atIty4JwCceSsDmWdNOD2Zyx1V00ddtv3lXEX3zMKe6KPld0GuZTqKssyuLGxGNYc4qK7z+wRtG 2jH4mZZxN7aXzFA5jFoaetHVtLrtG/d6+KEO2sJnobEhRfSQRQxf87D3pFGQSQlFwWq4DGaN78l
- 1wiJvIowkLXA1QV1wQxYXpg5DpIEm5pw4hjWk6hy4iHZl5wPwxw/jTjgZPO6QREFHCD6RbTzjFb df7B9P+lz+DeDckBFdw7wxhEJINMvnVMTVvHe2Ah5/37bzEgCtVWkpO6jFdOYv8t5a8bWadCgFl QvcveCu3K/+b97fMWXx7WPeHg+BWHKuCMVOHAdgt/IDOkSQB30/QXXejqyA6TFCEEnUQC+yfE6Q
- GkxfwgyjLloMi1zLArZwunFVpYcDVmWBje3O4t1ZbetTAkV5SprCmZFBXX/LgKKC4iclB7d6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-14_01,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 spamscore=0 malwarescore=0 impostorscore=0
- clxscore=1015 phishscore=0 mlxlogscore=693 priorityscore=1501
- suspectscore=0 mlxscore=0 adultscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507140039
+In-Reply-To: <aHSfeNhpocI4nmQk@wunner.de>
 
-On Mon, Jun 23, 2025 at 03:32:49PM +0800, Baokun Li wrote:
-> When ext4 allocates blocks, we used to just go through the block groups
-> one by one to find a good one. But when there are tons of block groups
-> (like hundreds of thousands or even millions) and not many have free space
-> (meaning they're mostly full), it takes a really long time to check them
-> all, and performance gets bad. So, we added the "mb_optimize_scan" mount
-> option (which is on by default now). It keeps track of some group lists,
-> so when we need a free block, we can just grab a likely group from the
-> right list. This saves time and makes block allocation much faster.
+On Mon, Jul 14, 2025 at 08:11:04AM +0200, Lukas Wunner wrote:
+> On Wed, Jul 09, 2025 at 04:55:26PM -0400, Michael S. Tsirkin wrote:
+> > At the moment, in case of a surprise removal, the regular remove
+> > callback is invoked, exclusively.  This works well, because mostly, the
+> > cleanup would be the same.
+> > 
+> > However, there's a race: imagine device removal was initiated by a user
+> > action, such as driver unbind, and it in turn initiated some cleanup and
+> > is now waiting for an interrupt from the device. If the device is now
+> > surprise-removed, that never arrives and the remove callback hangs
+> > forever.
 > 
-> But when multiple processes or containers are doing similar things, like
-> constantly allocating 8k blocks, they all try to use the same block group
-> in the same list. Even just two processes doing this can cut the IOPS in
-> half. For example, one container might do 300,000 IOPS, but if you run two
-> at the same time, the total is only 150,000.
+> For PCI devices in a hotplug slot, user space can initiate "safe removal"
+> by writing "0" to the hotplug slot's "power" file in sysfs.
 > 
-> Since we can already look at block groups in a non-linear way, the first
-> and last groups in the same list are basically the same for finding a block
-> right now. Therefore, add an ext4_try_lock_group() helper function to skip
-> the current group when it is locked by another process, thereby avoiding
-> contention with other processes. This helps ext4 make better use of having
-> multiple block groups.
+> If the PCI device is yanked from the slot while safe removal is ongoing,
+> there is likewise no way for the driver to know that the device is
+> suddenly gone.  That's because pciehp_unconfigure_device() only calls
+> pci_dev_set_disconnected() in the surprise removal case, not for
+> safe removal.
 > 
-> Also, to make sure we don't skip all the groups that have free space
-> when allocating blocks, we won't try to skip busy groups anymore when
-> ac_criteria is CR_ANY_FREE.
-> 
-> Performance test data follows:
-> 
-> Test: Running will-it-scale/fallocate2 on CPU-bound containers.
-> Observation: Average fallocate operations per container per second.
-> 
->                    | Kunpeng 920 / 512GB -P80| AMD 9654 / 1536GB -P96  |
->  Disk: 960GB SSD   |-------------------------|-------------------------|
->                    | base  |    patched      | base  |    patched      |
-> -------------------|-------|-----------------|-------|-----------------|
-> mb_optimize_scan=0 | 2667  | 4821  (+80.7%)  | 3450  | 15371 (+345%)   |
-> mb_optimize_scan=1 | 2643  | 4784  (+81.0%)  | 3209  | 6101  (+90.0%)  |
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-
-Hey Baokun, sorry I'm a bit late to the review, been caught up with a
-few things last couple weeks.
-
-The patch itself looks good, thanks for the changes.
-
-Feel free to add:
-
- Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> The solution proposed here is thus not a complete one:  It may work
+> if user space initiated *driver* removal, but not if it initiated *safe*
+> removal of the entire device.  For virtio, that may be sufficient.
 
 
-Regards,
-ojaswin
+No, I just missed this corner case.
+
+> > +++ b/drivers/pci/pci.h
+> > @@ -553,6 +553,12 @@ static inline int pci_dev_set_disconnected(struct pci_dev *dev, void *unused)
+> >  	pci_dev_set_io_state(dev, pci_channel_io_perm_failure);
+> >  	pci_doe_disconnected(dev);
+> >  
+> > +	if (READ_ONCE(dev->disconnect_work_enable)) {
+> > +		/* Make sure work is up to date. */
+> > +		smp_rmb();
+> > +		schedule_work(&dev->disconnect_work);
+> > +	}
+> > +
+> >  	return 0;
+> >  }
+> 
+> Going through all the callers of pci_dev_set_disconnected(),
+> I suppose the (only) one you're interested in is
+> pciehp_unconfigure_device().
+> 
+> The other callers are related to runtime resume, resume from
+> system sleep and ACPI slots.
+> 
+> Instead of amending pci_dev_set_disconnected(), I'd prefer
+> an approach where pciehp_unconfigure_device() first marks
+> all devices disconnected, then wakes up some global waitqueue, e.g.:
+> 
+> -	if (!presence)
+> +	if (!presence) {
+> 		pci_walk_bus(parent, pci_dev_set_disconnected, NULL);
+> +		wake_up_all(&pci_disconnected_wq);
+> +	}
+> 
+> The benefit is that there's no delay when marking devices disconnected.
+> (Granted, the delay is small for smp_rmb() + schedule_work().)
+> And just having a global waitqueue is simpler and may be useful
+> for other use cases.
+> 
+> So instead of adding timeouts when waiting for interrupts, drivers would
+> be woken via the waitqueue.
+> 
+> But again, it's not a complete solution as it doesn't cover the
+> "surprise removal during safe removal" case.
+> 
+> I also agree with Bjorn's and Keith's comments that the driver should
+> use timeouts for robustness,
+
+Yes - we can consider this an optimization, as robust timeouts
+are by necessity minutes.
+
+> but still wanted to provide additional
+> (hopefully constructive) thoughts.
+> 
+> Thanks!
+> 
+> Lukas
 
 
