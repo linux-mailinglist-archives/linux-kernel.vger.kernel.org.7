@@ -1,130 +1,173 @@
-Return-Path: <linux-kernel+bounces-729430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84D9BB03684
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:05:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9621BB0368A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CC9F7A612E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:03:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6CC01742CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD7C2153E7;
-	Mon, 14 Jul 2025 06:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C2C21882B;
+	Mon, 14 Jul 2025 06:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbYPLUat"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="aDQRSUNA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NMOIB9oI"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C65E37160;
-	Mon, 14 Jul 2025 06:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F05E17736;
+	Mon, 14 Jul 2025 06:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752473093; cv=none; b=ne+16o5jSpwaxLy0lgXYOAhG0QOd4j5Kkw1N6Th+FmEKZU1s3/xMa6F3L87q411xSUhYe22Njhe3LVWik1MwljQgaRdE6EajxkS55fEHM2BbBLPJCcZzPZ2D6UM8V/H3cagkYuwW5nMTHagk7UPpTHQjlhMBxO7ZeGSAU3FMoOI=
+	t=1752473328; cv=none; b=KqN1gdTR6K3yTi8L5FqNRy786Esgr/kNBX6jpG+KMSWWCyxl2IsfqKi+uER3Jw91Icv2yHq9ynHRdpe3eNhLI8r5IxYwyepMZ7jhCckdzOO6fWD52WVIptHh8Q+yaISZRTSRhekK28gUEuQ866xOB+CXmjh9Cxaaizk3G5edVH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752473093; c=relaxed/simple;
-	bh=GFXacdcqis+5a8r516CEjGxLPeFuvYwW7tVWRoTsDDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d9inHu0qboqfE/QCeVK3uzdxbP2Ydoy1ou147uD4w1swHGnfHRLrd1qoNt0tDo2LN+QfN3vcyuZ/RLuzfJsd8PR48z8VvFgJvhgFrOraA+U9Jb2lG+cjVlvmauP242le/UV8s57EUjjd5L1vEWt6ePcGz5GW5EOasot6RQoWcNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CbYPLUat; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21373C4CEED;
-	Mon, 14 Jul 2025 06:04:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752473092;
-	bh=GFXacdcqis+5a8r516CEjGxLPeFuvYwW7tVWRoTsDDk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CbYPLUatBaOkxX/NnFJbPMpp+IZu2PCO/xuZC6fKOWHCFslNoWoR5u2dmfU22VvXP
-	 lGOmdefgHoYpQfS8RjmCrNNDCw2z1BvIR+0ZW+EAlfYqb7vpaqvdDmoh7VrMd/rv1/
-	 dN8MqxTE4VGniZfvJcZJZiefXRu+jM6ougdUnJwxbLPht1TVofpBamTkotlME/2aC7
-	 tJIh5uQZUAzjd1xNHQEpD6K/A3uU6kMMzyzW6uUv/jffztPuG77gIaxxQSVG1UCV0D
-	 wN2QjO4XYcqiSmudsY0HjocDzfFrZHgsHZ8Jf9tlCuynCCF1aIiSuw9VUluen0Y4tb
-	 VLZO254oR4hZQ==
-Message-ID: <422fc81c-81d7-4473-92b6-9d112e6e247a@kernel.org>
-Date: Mon, 14 Jul 2025 08:04:47 +0200
+	s=arc-20240116; t=1752473328; c=relaxed/simple;
+	bh=IT52CMMNQVZe/JpsyeRDyVjFNpZ1hXZyOCPsnriWGuY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=hQeTcZ/KiF3ujRi3wVOfAdtXCxUu78/FQqg112QL9Vngr6Fqsi4/Zyjeriw0uIRoO2wDhf0d9CAbeTKsnWvvm+1WeDaeHWRyqTJ/QztsTObAFC+d6K0a5QFHigy67n2DHx8ZuMlSTMjcVlJR5sAu6C+hLrRyzigWvbXe/fWRoI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=aDQRSUNA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NMOIB9oI; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 75D78EC0453;
+	Mon, 14 Jul 2025 02:08:45 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Mon, 14 Jul 2025 02:08:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1752473325;
+	 x=1752559725; bh=RC+CFVWd/VWYy7402scfBHaFNOZ1+z4P3lAFBCgGdWQ=; b=
+	aDQRSUNAXm+/DcRr8JHFpYax0uaM0MtbIvLQBkPE0LGP414DcT3gKnoamV8T8SEN
+	xYDBlC2feBCzsPE8RIOl9gJX/ikFb2POYxKMPEA05S+M8ypfatJ8ALGNrb5cALTL
+	KDCKokVRPEcA/wH7mmkvLR21BSJnfsWKsmCPIHbSqW3OM967bPW7ofJ0SSVIqSJx
+	3LMnM/KApSyk04F8E1kcEeNy8Yh8Bz3/lpnj04X5uLq2XaQLMgFVQdx3k352jNpu
+	6MHc13Lzk98yPzAMgNkUOlqeSsAqcThKlOyCRgE+3WdAUM9G2skt5RrdeoJrr4+v
+	WcchmnE45GeMCekZhRbOAw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752473325; x=
+	1752559725; bh=RC+CFVWd/VWYy7402scfBHaFNOZ1+z4P3lAFBCgGdWQ=; b=N
+	MOIB9oIK4aFGz/MAFD2nsL3q6bVhYxOa+1rkg2f7yWSgVHnNep35yY+c0xwQzgsP
+	vMRwxeJnGvzwwxmEaQjimrah2ANgib3/waRIs7J0MBff5JWK2BuRG3V/gs48X2mH
+	vlSX0MrI8YV61X2YvowWrBpkGbPwwZgKMONU56Du0DBDjQ5pvBmdCMh/Ak6cISlM
+	7YxINbF6R4HK3hpbeP6adI/ZbzcjdrSk1IZzjIJr2ToCdWjW9MBjV3kknOLRcbC1
+	bAbloGmDZcko0XSzOVQtxTfXl9rd+Dx5DcSZgsIirq7CM+sIpLRzc9Enub5Y6Rzk
+	eo+eEwiVAq6EJ3fdKbTeg==
+X-ME-Sender: <xms:6550aNISqkL_c_gKSI1GS6zwoONBMO-j0aQrHirsA-Dx9-qhip8wJw>
+    <xme:6550aJLL4Ox0N4jUEaYXAg0enHEgZ0Hvj03HUlMKvtRESzvOZlCtNu5UrKmGPZXjZ
+    N-Z2U0G_l8VX-cujzE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehuddulecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeefuddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepjhhorhhoseeksgihthgvshdrohhrghdprhgtphhtthhopehvrghsrg
+    hnthdrhhgvghguvgesrghmugdrtghomhdprhgtphhtthhopehrohgsihhnrdhmuhhrphhh
+    hiesrghrmhdrtghomhdprhgtphhtthhopegsrghgrghsughothhmvgesghhmrghilhdrtg
+    homhdprhgtphhtthhopehthhhivghrrhihrdhrvgguihhnghesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehmshhhrghvihhtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprh
+    grrghnsehgohhoghhlvgdrtghomhdprhgtphhtthhopeiihhgrnhhgiigvkhhunhduudes
+    hhhurgifvghirdgtohhmpdhrtghpthhtohepugifmhifvdesihhnfhhrrgguvggrugdroh
+    hrgh
+X-ME-Proxy: <xmx:6550aCsD6On8GiPFBuhmhjg2cQ8kX7cKAjv83xfvNnNf8nYQRggg1w>
+    <xmx:6550aKpYGV3_6_Cw9r9zZqL9Q_5umAHi98hyl4oNeTYJZsfFeuThwA>
+    <xmx:6550aEmSWAshMXkV1Pf880BQ9xBOxPKTnOyiXYTu6frVsoV0UZLpTA>
+    <xmx:6550aCT8AC-3Qk2ejJ1a-d5tfh-z3Z7Ik7HcexIq2X1piS7MnP9Efw>
+    <xmx:7Z50aC55r5eujMz0Dvb8Ej99ArwfSU_zftLIRLdUgHJFaXhmzaUc6tH4>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id AB571700068; Mon, 14 Jul 2025 02:08:43 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 RESEND 3/5] watchdog: s3c2410_wdt: Increase max timeout
- value of watchdog
-To: Sangwook Shin <sw617.shin@samsung.com>, alim.akhtar@samsung.com,
- wim@linux-watchdog.org, linux@roeck-us.net
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250714055440.3138135-1-sw617.shin@samsung.com>
- <CGME20250714055858epcas2p47b849c0141fdb556288333f7abe00372@epcas2p4.samsung.com>
- <20250714055440.3138135-4-sw617.shin@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250714055440.3138135-4-sw617.shin@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+X-ThreadId: T0ce86a4a9bc2801a
+Date: Mon, 14 Jul 2025 08:08:21 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Nicolin Chen" <nicolinc@nvidia.com>, "Jason Gunthorpe" <jgg@nvidia.com>
+Cc: "Kevin Tian" <kevin.tian@intel.com>, "Jonathan Corbet" <corbet@lwn.net>,
+ "Bagas Sanjaya" <bagasdotme@gmail.com>, "Will Deacon" <will@kernel.org>,
+ "Robin Murphy" <robin.murphy@arm.com>, "Joerg Roedel" <joro@8bytes.org>,
+ "Thierry Reding" <thierry.reding@gmail.com>, vdumpa@nvidia.com,
+ "Jon Hunter" <jonathanh@nvidia.com>, shuah <shuah@kernel.org>,
+ jsnitsel@redhat.com, "Nathan Chancellor" <nathan@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Yi Liu" <yi.l.liu@intel.com>,
+ mshavit@google.com, praan@google.com, zhangzekun11@huawei.com,
+ iommu@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ patches@lists.linux.dev, mochs@nvidia.com,
+ "ALOK TIWARI" <alok.a.tiwari@oracle.com>, vasant.hegde@amd.com,
+ "David Woodhouse" <dwmw2@infradead.org>,
+ "Baolu Lu" <baolu.lu@linux.intel.com>
+Message-Id: <db221336-2694-4fcf-a2b2-8fcb46ba3c9e@app.fastmail.com>
+In-Reply-To: 
+ <9a888a326b12aa5fe940083eae1156304e210fe0.1752126748.git.nicolinc@nvidia.com>
+References: <cover.1752126748.git.nicolinc@nvidia.com>
+ <9a888a326b12aa5fe940083eae1156304e210fe0.1752126748.git.nicolinc@nvidia.com>
+Subject: Re: [PATCH v9 17/29] iommufd: Add mmap interface
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 14/07/2025 07:54, Sangwook Shin wrote:
-> Increase max_timeout value from 55s to 3664647s (1017h 57min 27s) with
-> 38400000 frequency system if the system has 32-bit WTCNT register.
+On Thu, Jul 10, 2025, at 07:59, Nicolin Chen wrote:
+>  EXPORT_SYMBOL_NS_GPL(_iommufd_object_undepend, "IOMMUFD");
 > 
-> cat /sys/devices/platform/10060000.watchdog_cl0/watchdog/watchdog0/max_timeout
-> 3664647
-> 
-> [    0.302473] s3c2410-wdt 10060000.watchdog_cl0: Heartbeat: count=1099394100000, timeout=3664647, freq=300000
-> [    0.302479] s3c2410-wdt 10060000.watchdog_cl0: Heartbeat: timeout=3664647, divisor=256, count=1099394100000 (fff8feac)
-> [    0.302510] s3c2410-wdt 10060000.watchdog_cl0: starting watchdog timer
-> [    0.302722] s3c2410-wdt 10060000.watchdog_cl0: watchdog active, reset enabled, irq disabled
-> 
-> If system has 32-bit WTCNT, add QUIRK_HAS_32BIT_MAXCNT to its quirk flags, then
-> it will operation with 32-bit counter. If not, with 16-bit counter like previous.
+> +/*
+> + * Allocate an @offset to return to user space to use for an mmap() 
+> syscall
+> + *
+> + * Driver should use a per-structure helper in include/linux/iommufd.h
+> + */
+> +int _iommufd_alloc_mmap(struct iommufd_ctx *ictx, struct 
+> iommufd_object *owner,
+> +			phys_addr_t mmio_addr, size_t length,
+> +			unsigned long *offset)
+> +{
+...
+> +
+> +	/* Skip the first page to ease caller identifying the returned offset 
+> */
+> +	rc = mtree_alloc_range(&ictx->mt_mmap, &startp, immap, immap->length,
+> +			       PAGE_SIZE, PHYS_ADDR_MAX, GFP_KERNEL);
 
-I claim that this patch fixes nothing, because there is no user of
-QUIRK_HAS_32BIT_MAXCNT.
 
-Best regards,
-Krzysztof
+This produces a warning on 32-bit targets with a 64-bit phys_addr_t,
+in practice this would be ARM Cortex-A15 or -A17 systems:
+
+In file included from include/linux/overflow.h:6,
+                 ...
+                 from drivers/iommu/iommufd/driver.c:4:
+drivers/iommu/iommufd/driver.c: In function '_iommufd_alloc_mmap':
+include/linux/limits.h:11:25: error: conversion from 'long long unsigned int' to 'long unsigned int' changes value from '18446744073709551615' to '4294967295' [-Werror=overflow]
+   11 | #define PHYS_ADDR_MAX   (~(phys_addr_t)0)
+      |                         ^~~~~~~~~~~~~~~~~
+drivers/iommu/iommufd/driver.c:61:43: note: in expansion of macro 'PHYS_ADDR_MAX'
+   61 |                                PAGE_SIZE, PHYS_ADDR_MAX, GFP_KERNEL);
+      |                                           ^~~~~~~~~~~~~
+
+
+The mtree_alloc_range() interface explicitly operates on 'unsigned long'
+address values, so I don't see an immediate workaround for this that would
+make it work on these machines. On the other hand, 
+
+At the moment, the only drivers that select CONFIG_IOMMUFD_DRIVER
+on 32-bit Arm systems are CONFIG_PDS_VFIO_PCI and CONFIG_MLX5_VFIO_PCI.
+It's probably fine to make all three symbols "depends on 64BIT" for
+now, but I don't know if there may be more drivers like this in the
+future that actually could make sense on embedded systems.
+
+     Arnd
 
