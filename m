@@ -1,79 +1,44 @@
-Return-Path: <linux-kernel+bounces-729907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077B8B03D62
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:29:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A20CEB03D6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D1523BBA19
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:28:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34A557A7E32
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBB824728D;
-	Mon, 14 Jul 2025 11:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KPL9N5gi"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F9424502D;
+	Mon, 14 Jul 2025 11:30:50 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F62246BA8;
-	Mon, 14 Jul 2025 11:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41824A1A;
+	Mon, 14 Jul 2025 11:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752492526; cv=none; b=k8MtPgNV4aKpe2KTKVB7lWy2ZwR/C5mLFgFIw7zcxBuHLtIBkuOMVHN5BeAbtGyWAuCXYL1A8elrPL0MWqIAOdVMFw9p8FkS2DQ0M63OTxopbIlxNfmReFzEjDiS8xDcjzm4Xvq7PFh6RIvqVe1sQ0WNtLWWiUbC9fElxXO34Zs=
+	t=1752492650; cv=none; b=DJDeYMcW4GDkGBd8soiC4xLrheMWtyF/09FOk1ti7e/7RGz3gV2UIgrapwIZfy7nAaTy6UMZf9fE6UI6lA77Ue2dfFuGa/vD9GWBKWM85MXP5YkK7JwE93uC7yn45QX77n70IgEmuElJN4czJWMBoNM48JMgJqfuFMA5zEvCsvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752492526; c=relaxed/simple;
-	bh=RMYHc+ObSPhtvgoU30+nhJ+/1B089yKqJDNHnPpfSiQ=;
+	s=arc-20240116; t=1752492650; c=relaxed/simple;
+	bh=XijAc5LD8/FYOXcf1sRJdmMJmeauIcztzfZ3YUc6O1Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NfwY5XFxJToveMzNWwYzYcVFHVjWe0CGSjCxwVItaUUP33SEudN4Q1PWdBrKHP3CLo/50bvOfW2DkEsBqMd8lRDWXE2BOR00dENuTG2CowSSv5ilrXWaqBufjbXLFqFkr+GBRECemGU8hzqaaAUbshwSR7wLbOjyNrqEm9UNbYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KPL9N5gi; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-60707b740a6so6416048a12.0;
-        Mon, 14 Jul 2025 04:28:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752492523; x=1753097323; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bpkZoh52U9bMTsE5g44NKcdh3S3DqEjKpM/aPLPBEE0=;
-        b=KPL9N5gibX5O+tUK48aMohFtZT/mcibS2Zlm1quoFjd3cFKr39F5VMaizHGC07v+HZ
-         tpnUaS1hbU3NBEnYxv542i5pqg2US6TgsVnCzgEj53Pmt9YkOYcavqxNLQjx35R+uMtF
-         aXMQilUrUrGNHS6YypieRfnRxrgZPnxX6fAVdLC98DdoFFf9MG2tBKhuqJxEeu1+9xct
-         6VSe3EGlkJJ/TSwZ2GVDaGp9GT1zTzdDYxqgoY74efp1q06HEiH4ruJ4p6WqAoqBLYIY
-         eKxfQEzKU++JZeJwfVxeo1I8xW7NKnErJY1SYZ9CDwF4d2FIoGkjXqw1w0NeCyMwWdWj
-         dMmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752492523; x=1753097323;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bpkZoh52U9bMTsE5g44NKcdh3S3DqEjKpM/aPLPBEE0=;
-        b=Q7Ts2Ch5QDghF+C1VQvI9Y9ZmOfWSD3QJzLBCmNPsMz/0Fl7iZRf6LQmKRpXGNCyrQ
-         alA+UyuQhTJarlstrzuHh0KvQbtNJOtiG8kja4nAMDv8tM8vZI+7wfI2KbOYFIporylU
-         TC9HRj0GP3jIoCV7PFkMBpTyBxoACNITv609P1mjRqOplCXyVchpEoiLHPFWR/ASXfG2
-         qiVUg8iGJeAEVOkCc1AVPQH5ByBEXi5bte+B68OtDn5twz95n4HpqzRDX3VE8Y0Bb4Qp
-         AYLbWnffZFwiQXtZpMgjvC59jSibm3wZxuDLsb/1nR4V6LjbFUnIn+CVG25Fye2gl28F
-         EpZA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4UZEdXzAPwot845guHGfCSaKZB2gq07XzCvZw7S9E81uIGBmt+Ko6Ukepo7SBJdM7YAU47IHN7NgE/iqE@vger.kernel.org, AJvYcCVEJ16HFd68XuteIXjznKBTvkYmUjFK7hjbJR/JhHlFmVgpjq2ws864jEqvi1YlIJgaDcCjm2Uo@vger.kernel.org, AJvYcCWPaqA5UP8c6heecq26AO4BfFltzjghPgiK6dn/2Nw+iE2rvIxGq0GUJq6X5ECpbHDW3xAGq7z/zvsEJg==@vger.kernel.org, AJvYcCXRtasJslatcC5EniOqW0kAuTtwqymfxRfOEa1WKAvssMhu0FuWq8JK4cf4REOoTUk9IOA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKUxb/9CihysOw2KaeuM5OeG2q1MATL3MVRywpcOcwVqIBWtYj
-	7sSQXsOyXWMjVzTUlRnhH4qpPzFtjcCc9kNqnnti+qrxSTkPsLsqrx/L
-X-Gm-Gg: ASbGnctBAF4vGqtn2BH/OSre6s2IpiGI6g/rwCIFkT/V7CKbh8vuPuiI/QLzKl3j/K+
-	f27ShtUZxlYT1rHeW2FXGbf1nix8baMaRldhBtuWLwGEbrIAkzwn4FwyXqHD1CulZKKdFSjXiMp
-	mM5/B3yDXQHWqFckFWdif8Z9mwwVwzMaeoeTa6Qk8XAnThYrCg4BGvWUZ6hBBSVfk+Z6vZxRtGJ
-	u8an3zZq+rUGfVKoo0sofEGw2nRdDGgvin2+g2o07mH+Cf+Hn1hjtO/IDKLSgBfmcZHaT4wcHw/
-	8RKVluMw8Xv6t7+Y0yuErwqG2u3lfhJh6RHaJG+MwP1ADj24Og03BFRprrvZqUt4z33JMJQwiiP
-	LP0a50Ln3UUiuxhddsOp9ZycTo6U0K5mCbqs=
-X-Google-Smtp-Source: AGHT+IHnrlaIgYieOJlbcldc8fhthk66yxfXBj+Mky+hwKDEqFFpNcHQod+MaMIOkC9i5kv/5aVVPA==
-X-Received: by 2002:a17:906:6a1d:b0:ae3:4f99:a5a5 with SMTP id a640c23a62f3a-ae6fc6a82c8mr1252959766b.6.1752492522653;
-        Mon, 14 Jul 2025 04:28:42 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:f749])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee4553sm819721866b.51.2025.07.14.04.28.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 04:28:41 -0700 (PDT)
-Message-ID: <a7bd1e6f-b854-4172-a29a-3f0662c6fd6e@gmail.com>
-Date: Mon, 14 Jul 2025 12:30:12 +0100
+	 In-Reply-To:Content-Type; b=ftJhzCSlACZA4WSP7IHzfpa372UbmTtE4htbi5KOFYupXdsN8ysCiKb6dt9vp8xpuCJQP7fzU5fxRusPd3hIoweF0J5O80neMkphp73BWmNEQdbinLRg8Jmrf0Q65iVnI4xRCXgpFEykthMd6FIuzV0w8OGOF4p+gnEhNq0vYA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bgg9b0xs3zKHMwn;
+	Mon, 14 Jul 2025 19:30:43 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id AB5D71A06D7;
+	Mon, 14 Jul 2025 19:30:41 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP2 (Coremail) with SMTP id Syh0CgAn57hg6nRo61HuAA--.5341S2;
+	Mon, 14 Jul 2025 19:30:41 +0800 (CST)
+Message-ID: <090bd627-95dc-49ef-a4f6-d78d8f6d6cec@huaweicloud.com>
+Date: Mon, 14 Jul 2025 19:30:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,234 +46,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 1/8] netmem: introduce struct netmem_desc
- mirroring struct page
-To: Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel_team@skhynix.com,
- kuba@kernel.org, almasrymina@google.com, ilias.apalodimas@linaro.org,
- harry.yoo@oracle.com, hawk@kernel.org, akpm@linux-foundation.org,
- davem@davemloft.net, john.fastabend@gmail.com, andrew+netdev@lunn.ch,
- toke@redhat.com, tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
- saeedm@nvidia.com, leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
- david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
- horms@kernel.org, linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
- vishal.moola@gmail.com, hannes@cmpxchg.org, ziy@nvidia.com,
- jackmanb@google.com
-References: <20250710082807.27402-1-byungchul@sk.com>
- <20250710082807.27402-2-byungchul@sk.com>
- <b1f80514-3bd8-4feb-b227-43163b70d5c4@gmail.com>
- <20250714042346.GA68818@system.software.com>
+Subject: Re: [PATCH next] cpuset: fix warning when attaching tasks with
+ offline CPUs
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com,
+ cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, lujialin4@huawei.com,
+ chenridong@huawei.com
+References: <20250714032311.3570157-1-chenridong@huaweicloud.com>
+ <20250714084109.GK905792@noisy.programming.kicks-ass.net>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250714042346.GA68818@system.software.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <20250714084109.GK905792@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgAn57hg6nRo61HuAA--.5341S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr45WrykZryrJr1UGF1Utrb_yoW5uF47pa
+	yIka4jyw45Jr1UC39Fv39FqFyFqa1kGF17GFn7KF4rJFWfCF109a17t3W5ZFyFqrs8u3W2
+	vF90vw42gFnFv3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On 7/14/25 05:23, Byungchul Park wrote:
-> On Sat, Jul 12, 2025 at 03:39:59PM +0100, Pavel Begunkov wrote:
->> On 7/10/25 09:28, Byungchul Park wrote:
->>> To simplify struct page, the page pool members of struct page should be
->>> moved to other, allowing these members to be removed from struct page.
->>>
->>> Introduce a network memory descriptor to store the members, struct
->>> netmem_desc, and make it union'ed with the existing fields in struct
->>> net_iov, allowing to organize the fields of struct net_iov.
+
+
+On 2025/7/14 16:41, Peter Zijlstra wrote:
+> On Mon, Jul 14, 2025 at 03:23:11AM +0000, Chen Ridong wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
 >>
->> FWIW, regardless of memdesc business, I think it'd be great to have
->> this patch, as it'll help with some of the netmem casting ugliness and
->> shed some cycles as well. For example, we have a bunch of
->> niov -> netmem -> niov casts in various places.
+>> A kernel warning was observed in the cpuset migration path:
+>>
+>>     WARNING: CPU: 3 PID: 123 at kernel/cgroup/cpuset.c:3130
+>>     cgroup_migrate_execute+0x8df/0xf30
+>>     Call Trace:
+>>      cgroup_transfer_tasks+0x2f3/0x3b0
+>>      cpuset_migrate_tasks_workfn+0x146/0x3b0
+>>      process_one_work+0x5ba/0xda0
+>>      worker_thread+0x788/0x1220
+>>
+>> The issue can be reliably reproduced with:
+>>
+>>     # Setup test cpuset
+>>     mkdir /sys/fs/cgroup/cpuset/test
+>>     echo 2-3 > /sys/fs/cgroup/cpuset/test/cpuset.cpus
+>>     echo 0 > /sys/fs/cgroup/cpuset/test/cpuset.mems
+>>
+>>     # Start test process
+>>     sleep 100 &
+>>     pid=$!
+>>     echo $pid > /sys/fs/cgroup/cpuset/test/cgroup.procs
+>>     taskset -p 0xC $pid  # Bind to CPUs 2-3
+>>
+>>     # Take CPUs offline
+>>     echo 0 > /sys/devices/system/cpu/cpu3/online
+>>     echo 0 > /sys/devices/system/cpu/cpu2/online
+>>
+>> Root cause analysis:
+>> When tasks are migrated to top_cpuset due to CPUs going offline,
+>> cpuset_attach_task() sets the CPU affinity using cpus_attach which
+>> is initialized from cpu_possible_mask. This mask may include offline
+>> CPUs. When __set_cpus_allowed_ptr() computes the intersection between:
+>> 1. cpus_attach (possible CPUs, may include offline)
+>> 2. p->user_cpus_ptr (original user-set mask)
+>> The resulting new_mask may contain only offline CPUs, causing the
+>> operation to fail.
+>>
+>> The fix changes cpus_attach initialization to use cpu_active_mask
+>> instead of cpu_possible_mask, ensuring we only consider online CPUs
+>> when setting the new affinity. This prevents the scenario where
+>> the intersection would result in an invalid CPU set.
+>>
+>> Fixes: da019032819a ("sched: Enforce user requested affinity")
+>> Reported-by: Yang Lijin <yanglijin@huawei.com>
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>>  kernel/cgroup/cpuset.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index f74d04429a29..5401adbdffa6 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -3121,7 +3121,7 @@ static void cpuset_attach_task(struct cpuset *cs, struct task_struct *task)
+>>  	if (cs != &top_cpuset)
+>>  		guarantee_active_cpus(task, cpus_attach);
+>>  	else
+>> -		cpumask_andnot(cpus_attach, task_cpu_possible_mask(task),
+>> +		cpumask_andnot(cpus_attach, cpu_active_mask,
+>>  			       subpartitions_cpus);
 > 
-> If Jakub agrees with this, I will re-post this as a separate patch so
-> that works that require this base can go ahead.
+> This breaks things. Any task mask must be a subset of
+> task_cpu_possible_mask() at all times. It might not be able to run
+> outside of that mask.
 
-I think it'd be a good idea. It's needed to clean up netmem handling,
-and I'll convert io_uring and get rid of the union in niov.
+Hi Peter,
 
-The diff below should give a rough idea of what I want to use it for.
-It kills __netmem_clear_lsb() to avoid casting struct page * to niov.
-And saves some masking for zcrx, see page_pool_get_dma_addr_nmdesc(),
-and there are more places like that.
+Thanks for your feedback. I'm afraid I don't fully understand what you mean by "breaks things".
+Could you please explain in more detail?
 
+To clarify my current understanding: this patch simply changes the cpus_attach initialization from
+task_cpu_possible_mask(task) to cpu_active_mask. The intention is that when CPUs are offlined and
+tasks get migrated to root cpuset, we shouldn't try to migrate tasks to offline CPUs. And since
+cpu_active_mask is a subset of cpu_possible_mask, I thought this would be safe. Did I miss anything?
 
-diff --git a/include/net/netmem.h b/include/net/netmem.h
-index 535cf17b9134..41f3a3fd6b6c 100644
---- a/include/net/netmem.h
-+++ b/include/net/netmem.h
-@@ -247,6 +247,8 @@ static inline unsigned long netmem_pfn_trace(netmem_ref netmem)
-  	return page_to_pfn(netmem_to_page(netmem));
-  }
-  
-+#define pp_page_to_nmdesc(page)	((struct netmem_desc *)(page))
-+
-  /* __netmem_clear_lsb - convert netmem_ref to struct net_iov * for access to
-   * common fields.
-   * @netmem: netmem reference to extract as net_iov.
-@@ -262,11 +264,18 @@ static inline unsigned long netmem_pfn_trace(netmem_ref netmem)
-   *
-   * Return: the netmem_ref cast to net_iov* regardless of its underlying type.
-   */
--static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
-+static inline struct net_iov *__netmem_to_niov(netmem_ref netmem)
-  {
-  	return (struct net_iov *)((__force unsigned long)netmem & ~NET_IOV);
-  }
-  
-+static inline struct netmem_desc *netmem_to_nmdesc(netmem_ref netmem)
-+{
-+	if (netmem_is_net_iov(netmem))
-+		return &__netmem_to_niov(netmem)->desc;
-+	return pp_page_to_nmdesc(__netmem_to_page(netmem));
-+}
-+
-  /**
-   * __netmem_get_pp - unsafely get pointer to the &page_pool backing @netmem
-   * @netmem: netmem reference to get the pointer from
-@@ -280,17 +289,17 @@ static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
-   */
-  static inline struct page_pool *__netmem_get_pp(netmem_ref netmem)
-  {
--	return __netmem_to_page(netmem)->pp;
-+	return pp_page_to_nmdesc(__netmem_to_page(netmem))->pp;
-  }
-  
-  static inline struct page_pool *netmem_get_pp(netmem_ref netmem)
-  {
--	return __netmem_clear_lsb(netmem)->pp;
-+	return netmem_to_nmdesc(netmem)->pp;
-  }
-  
-  static inline atomic_long_t *netmem_get_pp_ref_count_ref(netmem_ref netmem)
-  {
--	return &__netmem_clear_lsb(netmem)->pp_ref_count;
-+	return &netmem_to_nmdesc(netmem)->pp_ref_count;
-  }
-  
-  static inline bool netmem_is_pref_nid(netmem_ref netmem, int pref_nid)
-@@ -355,7 +364,7 @@ static inline bool netmem_is_pfmemalloc(netmem_ref netmem)
-  
-  static inline unsigned long netmem_get_dma_addr(netmem_ref netmem)
-  {
--	return __netmem_clear_lsb(netmem)->dma_addr;
-+	return netmem_to_nmdesc(netmem)->dma_addr;
-  }
-  
-  void get_netmem(netmem_ref netmem);
-diff --git a/include/net/page_pool/helpers.h b/include/net/page_pool/helpers.h
-index db180626be06..002858f3bcb3 100644
---- a/include/net/page_pool/helpers.h
-+++ b/include/net/page_pool/helpers.h
-@@ -425,9 +425,9 @@ static inline void page_pool_free_va(struct page_pool *pool, void *va,
-  	page_pool_put_page(pool, virt_to_head_page(va), -1, allow_direct);
-  }
-  
--static inline dma_addr_t page_pool_get_dma_addr_netmem(netmem_ref netmem)
-+static inline dma_addr_t page_pool_get_dma_addr_nmdesc(struct netmem_desc *desc)
-  {
--	dma_addr_t ret = netmem_get_dma_addr(netmem);
-+	dma_addr_t ret = desc->dma_addr;
-  
-  	if (PAGE_POOL_32BIT_ARCH_WITH_64BIT_DMA)
-  		ret <<= PAGE_SHIFT;
-@@ -435,6 +435,13 @@ static inline dma_addr_t page_pool_get_dma_addr_netmem(netmem_ref netmem)
-  	return ret;
-  }
-  
-+static inline dma_addr_t page_pool_get_dma_addr_netmem(netmem_ref netmem)
-+{
-+	struct netmem_desc *desc = netmem_to_nmdesc(netmem);
-+
-+	return page_pool_get_dma_addr_nmdesc(desc);
-+}
-+
-  /**
-   * page_pool_get_dma_addr() - Retrieve the stored DMA address.
-   * @page:	page allocated from a page pool
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 085eeed8cd50..2e80692d9ee1 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -290,7 +290,7 @@ static void io_zcrx_sync_for_device(const struct page_pool *pool,
-  	if (!dma_dev_need_sync(pool->p.dev))
-  		return;
-  
--	dma_addr = page_pool_get_dma_addr_netmem(net_iov_to_netmem(niov));
-+	dma_addr = page_pool_get_dma_addr_nmdesc(&niov->desc);
-  	__dma_sync_single_for_device(pool->p.dev, dma_addr + pool->p.offset,
-  				     PAGE_SIZE, pool->p.dma_dir);
-  #endif
-diff --git a/net/core/netmem_priv.h b/net/core/netmem_priv.h
-index cd95394399b4..97d4beda9174 100644
---- a/net/core/netmem_priv.h
-+++ b/net/core/netmem_priv.h
-@@ -5,19 +5,21 @@
-  
-  static inline unsigned long netmem_get_pp_magic(netmem_ref netmem)
-  {
--	return __netmem_clear_lsb(netmem)->pp_magic & ~PP_DMA_INDEX_MASK;
-+	return netmem_to_nmdesc(netmem)->pp_magic & ~PP_DMA_INDEX_MASK;
-  }
-  
-  static inline void netmem_or_pp_magic(netmem_ref netmem, unsigned long pp_magic)
-  {
--	__netmem_clear_lsb(netmem)->pp_magic |= pp_magic;
-+	netmem_to_nmdesc(netmem)->pp_magic |= pp_magic;
-  }
-  
-  static inline void netmem_clear_pp_magic(netmem_ref netmem)
-  {
--	WARN_ON_ONCE(__netmem_clear_lsb(netmem)->pp_magic & PP_DMA_INDEX_MASK);
-+	struct netmem_desc *desc = netmem_to_nmdesc(netmem);
-  
--	__netmem_clear_lsb(netmem)->pp_magic = 0;
-+	WARN_ON_ONCE(desc->pp_magic & PP_DMA_INDEX_MASK);
-+
-+	desc->pp_magic = 0;
-  }
-  
-  static inline bool netmem_is_pp(netmem_ref netmem)
-@@ -27,13 +29,13 @@ static inline bool netmem_is_pp(netmem_ref netmem)
-  
-  static inline void netmem_set_pp(netmem_ref netmem, struct page_pool *pool)
-  {
--	__netmem_clear_lsb(netmem)->pp = pool;
-+	netmem_to_nmdesc(netmem)->pp = pool;
-  }
-  
-  static inline void netmem_set_dma_addr(netmem_ref netmem,
-  				       unsigned long dma_addr)
-  {
--	__netmem_clear_lsb(netmem)->dma_addr = dma_addr;
-+	netmem_to_nmdesc(netmem)->dma_addr = dma_addr;
-  }
-  
-  static inline unsigned long netmem_get_dma_index(netmem_ref netmem)
-@@ -43,7 +45,7 @@ static inline unsigned long netmem_get_dma_index(netmem_ref netmem)
-  	if (WARN_ON_ONCE(netmem_is_net_iov(netmem)))
-  		return 0;
-  
--	magic = __netmem_clear_lsb(netmem)->pp_magic;
-+	magic = netmem_to_nmdesc(netmem)->pp_magic;
-  
-  	return (magic & PP_DMA_INDEX_MASK) >> PP_DMA_INDEX_SHIFT;
-  }
-@@ -51,12 +53,12 @@ static inline unsigned long netmem_get_dma_index(netmem_ref netmem)
-  static inline void netmem_set_dma_index(netmem_ref netmem,
-  					unsigned long id)
-  {
--	unsigned long magic;
-+	struct netmem_desc *desc;
-  
-  	if (WARN_ON_ONCE(netmem_is_net_iov(netmem)))
-  		return;
-  
--	magic = netmem_get_pp_magic(netmem) | (id << PP_DMA_INDEX_SHIFT);
--	__netmem_clear_lsb(netmem)->pp_magic = magic;
-+	desc = netmem_to_nmdesc(netmem);
-+	desc->pp_magic |= id << PP_DMA_INDEX_SHIFT;
-  }
-  #endif
+Best regards
+Ridong
 
 
