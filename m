@@ -1,113 +1,128 @@
-Return-Path: <linux-kernel+bounces-729777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30F47B03B6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:54:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B613AB03B6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD1AC7A037C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:52:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 304FC3A506A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C547242D6A;
-	Mon, 14 Jul 2025 09:53:06 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F49F245031;
+	Mon, 14 Jul 2025 09:54:02 +0000 (UTC)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CF124113C
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259BA24291C;
+	Mon, 14 Jul 2025 09:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752486785; cv=none; b=KVZj9Jyn/wrLp9WHfRlvzrm0/Ji1ALixEx9UXzScJZ3xe7nj9s9wZyNyl8ZfBlKqqlmLdOelnofYl+XqgdgGXH9yN+EFyFgwN3bEBS0UaJuCvxHBB+OtULKmNoYQhn6nc/98sGOCZEPCnpVwhGNSbOgwPU7DNAXevI8R/6ExfzI=
+	t=1752486841; cv=none; b=XgHej6c8puMo5TOzrBqKlOBMkmtdX2eSJYBBVQx/gmgY9jbF68OZfM+hMoekZXsg9zAo7CeKLA8dFrvzPloySK8jmjViYj7K/6dERzpPdICZnKWWNwWsRNATf3m2P/wvDHO7WbepGrRDmNpomQ4Q+Dy5nEqDkmkip7l3zR5SwEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752486785; c=relaxed/simple;
-	bh=CbCiqUTDXRnf2WGJYUeAhnYK/yEw5vjK8Gq97oCe900=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CfUZzbT8jWK9x3t1MFeMuE7Dzz0gZJj5kMg1fwJAWToJ/1tIA3eOazVoRRa8c1nljCeW4Ev8SD0F/p+jdn5YXICN6IQIs0xV5G6u5K2ppagSmFzBydha3aI71RifGuwvVCXJx+6ots5QdjeJxOL5DQQNcd+chnoPFN3E84vDlz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 56E9qJXt091864;
-	Mon, 14 Jul 2025 17:52:19 +0800 (+08)
-	(envelope-from Zhiguo.Niu@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4bgcv93yF0z2Q79s5;
-	Mon, 14 Jul 2025 17:48:05 +0800 (CST)
-Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.48; Mon, 14 Jul 2025 17:52:17 +0800
-From: Zhiguo Niu <zhiguo.niu@unisoc.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>,
-        <Hao_hao.Wang@unisoc.com>
-Subject: [PATCH] mkfs.f2fs: adjust zone alignment check to correct position
-Date: Mon, 14 Jul 2025 17:51:45 +0800
-Message-ID: <1752486705-9498-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Mailer: git-send-email 1.9.1
+	s=arc-20240116; t=1752486841; c=relaxed/simple;
+	bh=LVEVJJXdU2navZDiFimiwkAdBu778EfdOSQ47RGXLTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EYjPvBqF2T/Q5/sLkUMN50nX0Eg95vs3H1u17KWJXAqIWwPXpAtLPAqvhscvTnJg7XySJddFMsy0CqT9kak1hQrofDHvFu8CRbA3eZQE2JA5VZg6EeTKWYywro0wTB1rbv4Uid4yp4eY/3qKEz4GAugx5IxO32+Abfh88TBDoBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-60707b740a6so6289426a12.0;
+        Mon, 14 Jul 2025 02:53:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752486838; x=1753091638;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5+nwQ+gUq+eVRVteBjqQ9zFxb4lMzQgpjj70tq9U1Z0=;
+        b=OCP8klGSwKsLhyQMjXVMyFRlnTtLj4KX6rEmPuiNS2Od9lpYSUoAfGoMq5HUARVI7L
+         oMgW5YfxsjI4bUbvkZ8JSBn+/KmHaVupUUY2+Brx+WYSyouR/ie7E6eqpj8ibP+GiTtY
+         83r5xqMf/WsuwDZ/HENjFaQ6f7sFaEMddRYRfVwIzrDFnrGdZlO9Vv7PcA68TavTOfmo
+         xmjS0xpskGS4iskLjPNW/XRdK9qJIcQS3C4JjaiGPCBo579COlTvJRDHj8C49F/qguhL
+         TCQbhLJftqNaQLejMPwACOrFpk7T79Q7i6XEQcruauSPd/KWjLhumEtDLVxvBJqC7hJf
+         U6vg==
+X-Forwarded-Encrypted: i=1; AJvYcCUE7+ORtlsq8V4Adtjy6jVx0P1lNStueDhczP3rwzrv/PwOui5B8ZiwCaAyu9vRPtZqfPg=@vger.kernel.org, AJvYcCVaY6lQT0WwqKR+lthPdjnJ9GIbMFOgzNIGCJrTo8D3+OoExuGzIAftz8Mtz5cRCcB6zMMoPXd4wVeaZxK3@vger.kernel.org, AJvYcCWGPnvP9zYiKBtI8+6OAD6hGblwSw5iWRupL3GjgqI67N9I+zeZZHsPOF7iTIyheH9PgpR0jV7m@vger.kernel.org, AJvYcCXksiaIpSUc26KAIoT9jhjzGwuHsnuo1jFMFFu3TTTpaeJ04/6fU5+d2hzGIBS8f3cb4V82DUU3jwF5kzahOc3n@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1vELCKF3YmL282hAtXOXqBbqfBgdfZaMxbfe2lhGoslwEPveq
+	lrnEEGRmlOH3JNCo9ZQmgIRPgfTGyTCw+u6iGiJkoUxF8Y1NjFwvMA21
+X-Gm-Gg: ASbGncvEWv5Qs84++fp/5miEZRYcZ8LCk3E0jF/nUq9j/+oTi3NADU9VpT6t4DJJfMm
+	UiKIq5Xk0626FvD01SdSLlblwONVvJvU/ys4eqC4muDVEFDaEfZPQLTuJeixjuMJ5v/tsl5m+TX
+	Tbhz2whiEWujj2rOHdP3gC+quyQo68C9RTzF3Cy7Bq43oSRHndawG3JlqevkeqTUVDYaa1nmYC1
+	oTfTz9SEi9kbSuFKW4GzGaZ80Wp1g9H9S131Un4zak8SBcpKe405c7GRB/M/VAet/0Tie7ZC4tr
+	F4EPUVbQtIuaz+04Y0N7b97Kd7XgFBko95nMTKqEyKaPQu91R+6RYhwkFEn2LUm1Xcu1KidYM58
+	paJbsuBuV8awI6D2qOfEOxzc=
+X-Google-Smtp-Source: AGHT+IFLL9yNozFf9SkrqVC1Oj+fY6Ntdk+aVRqprSaJ8XTyV9GQg8vXooOlt13SfS2/j/4m+75OiQ==
+X-Received: by 2002:a17:907:84a:b0:ae3:a240:7ad2 with SMTP id a640c23a62f3a-ae6fc6aa6dcmr1339638066b.2.1752486838034;
+        Mon, 14 Jul 2025 02:53:58 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:7::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8294b5fsm780577966b.125.2025.07.14.02.53.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 02:53:57 -0700 (PDT)
+Date: Mon, 14 Jul 2025 02:52:13 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, bpf@vger.kernel.org, kernel-team@meta.com, 
+	Willem de Bruijn <willemb@google.com>
+Subject: Re: [PATCH net-next v6 3/3] selftests: net: add netpoll basic
+ functionality test
+Message-ID: <v3tiskdekzcj4ra4pgd3wegz2wkafp5sfzber3e2i7unj72bsp@sywehjrf45xb>
+References: <20250711-netpoll_test-v6-0-130465f286a8@debian.org>
+ <20250711-netpoll_test-v6-3-130465f286a8@debian.org>
+ <20250711101415.6ae42daf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 56E9qJXt091864
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711101415.6ae42daf@kernel.org>
 
-Should check these after c.devices[1].start_blkaddr is assigned
-when c.ndevs > 1.
+Hello Jakub,
 
-Fixes: 316e128fe3dc ("mkfs.f2fs: adjust zone alignment when using multi-partitions")
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
----
- mkfs/f2fs_format.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+On Fri, Jul 11, 2025 at 10:14:15AM -0700, Jakub Kicinski wrote:
+> On Fri, 11 Jul 2025 09:05:11 -0700 Breno Leitao wrote:
+> > +        rxq = ethtool_result["rx"]
+> > +        txq = ethtool_result["tx"]
+> 
+> Most HW NICs will actually use the "combined" channels (which have both
+> rx and tx ring on one NAPI).
 
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 2680bd3..3a899e6 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -339,17 +339,6 @@ static int f2fs_prepare_super_block(void)
- 	MSG(0, "Info: zone aligned segment0 blkaddr: %u\n",
- 					get_sb(segment0_blkaddr));
- 
--	if (c.zoned_mode &&
--		((c.ndevs == 1 &&
--			(get_sb(segment0_blkaddr) + c.start_sector /
--			DEFAULT_SECTORS_PER_BLOCK) % c.zone_blocks) ||
--		(c.ndevs > 1 &&
--			c.devices[1].start_blkaddr % c.zone_blocks))) {
--		MSG(1, "\tError: Unaligned segment0 block address %u\n",
--				get_sb(segment0_blkaddr));
--		return -1;
--	}
--
- 	for (i = 0; i < c.ndevs; i++) {
- 		if (i == 0) {
- 			c.devices[i].total_segments =
-@@ -390,6 +379,18 @@ static int f2fs_prepare_super_block(void)
- 
- 		c.total_segments += c.devices[i].total_segments;
- 	}
-+
-+	if (c.zoned_mode &&
-+		((c.ndevs == 1 &&
-+			(get_sb(segment0_blkaddr) + c.start_sector /
-+			DEFAULT_SECTORS_PER_BLOCK) % c.zone_blocks) ||
-+		(c.ndevs > 1 &&
-+			c.devices[1].start_blkaddr % c.zone_blocks))) {
-+		MSG(1, "\tError: Unaligned segment0 block address %u\n",
-+				get_sb(segment0_blkaddr));
-+		return -1;
-+	}
-+
- 	set_sb(segment_count, c.total_segments);
- 	set_sb(segment_count_ckpt, F2FS_NUMBER_OF_CHECKPOINT_PACK);
- 
--- 
-1.9.1
+Right. I am getting combined as well. With the JSON output in ethtool,
+I get;
 
+
+        ethtool_result = ethtool(f"-l {interface_name}", json=True)[0]
+        rxq = ethtool_result.get("rx", -1)
+        txq = ethtool_result.get("tx", -1)
+        combined = ethtool_result.get("combined", -1)
+
+> > +    logging.debug("calling: ethtool %s", cmdline)
+> 
+> ksft_pr() ? 
+
+ksft_pr() would make it very verbose. logging.debug() is always
+disabled, so, the selftest executes cleanly.
+
+> We had a plan to add a verbose() helper which would still be
+> TAP-compatible, but never finished the patches.
+
+I can try to help. How do you want to set verbose during the test
+execution? Any shell environment variable?
+
+> Either way, would you mind respinning the series (without the 24h wait)?
+> It conflicts with another series which adds a bpftool() helper.
+> I applied that patch so you should see a trivial conflict when rebasing.
+
+Thanks. I am sending a new version assuming ethtool -l has the json
+option. That would make the code simpler, given we don't need that hacky
+to_int().
+
+Thanks for the review,
+--breno
 
