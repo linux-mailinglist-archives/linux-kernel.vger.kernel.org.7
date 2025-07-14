@@ -1,279 +1,210 @@
-Return-Path: <linux-kernel+bounces-730335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F305B04349
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:18:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E558B04346
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BEC2176C5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:15:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9199E1889FE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6926125EF87;
-	Mon, 14 Jul 2025 15:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B05261596;
+	Mon, 14 Jul 2025 15:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ap8pjAbl"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oC/V2J1U"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27C4259C84;
-	Mon, 14 Jul 2025 15:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9617826056A
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752506064; cv=none; b=k5mEvIc23yBh60F7Ht7hc/QbSXiRMNwyOJ+l+x8HHuEP2K5C5Y+gL/AdYYUtKLpbhuxbB059vN+fPNUAjVMKbhp+xaNPdg1bHdQqAA1ZD8ZP16jvt+58FjSfvli0esobMrI9dQ1PggY1pW71PRBStAyKj0taVU3fQT4AsNjCo4g=
+	t=1752506088; cv=none; b=kjFOrjJ0yrFVpHELOMbxYB7P0Lu2sAvgWUejx4QumIEvmRlk5s3zPWujS9ZwJP4Yq1xiCDaVZ0L81I2dXKmV4QhJsjDfQdjiP1VEN0kkk2FGb21ccgth0MddBaygaSjiPG+Ktry+ZM3/OA08Q0XczhbRgILJWCpjg79SySa4ueg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752506064; c=relaxed/simple;
-	bh=bNA+Vw2JxlzycwGOS5vCv7StcjApy7+aocVwxhSM6RY=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kChBLQ1jSN/MGt98wweSbeYporNl9HXQHUyuPFsLESYM5NyOTWZxFj1GWC1T2IgL9foesyBDafWaZVXbyFPANqn6PN8/kit5Hbsc8C5XHx0yK8jUSSrh8gdRrQxSzal9eML2MPILI7xPJXNhJd3OV1Ztiz7N66AdlaWslY7+8fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ap8pjAbl; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a4fd1ba177so2918887f8f.0;
-        Mon, 14 Jul 2025 08:14:22 -0700 (PDT)
+	s=arc-20240116; t=1752506088; c=relaxed/simple;
+	bh=Rb5Ojqqhv5eA0DyW6c06TTTVEu+CSbhkppk2UGzPmqI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ApUEnlcas3XxkFV85LhIzdsteHoF8lj9mopfnKt9S990uutV8Dctw2itUQ7l+hJgf88s2bNL+AhdEKrR86+WOTswypC/eB9ZgBzU6AXFxtlYzFYEBe6c+arg4OTLeuSHpgAfFSvlvz/dq0zvpNWZ0fP5Sedj+cp+djW+udC+Pq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oC/V2J1U; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b3bc9d9590cso4378134a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:14:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752506061; x=1753110861; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+        d=google.com; s=20230601; t=1752506086; x=1753110886; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0IwAkpj3u5SIj9r6ALm0AsPoMzzkkW8yohb+3OrBJPY=;
-        b=ap8pjAblFjH3Ubwq2XYJOoaajZUg867+wDO6hzEjJGoawaCzlw+pp1yMAeil/lSM9k
-         k9C6j2+2ibzqepyrqmm95kQWstgdi9TExxZdNso86qZx+C+g3wVthB6DxrIKXNlnExuk
-         x1VH+Ul/K76HxmFu/qqxWTKwqCjg0imA/gS+WjVJDURfFTT/f1DSNVcVgq726ldpF18j
-         RNZDFb+ZICjmORx665SOPjoPgUPjfB0jOuBawkjcSj118WRmE3gHun3Q3faRD3RTCCrs
-         QjtEy1BgiGxaoySXIAx3+kiwBJCvymdzbqcZiLrDT5LEJe2KZYcBQeVI+JII/1hOWADD
-         KNKg==
+        bh=2Mly3ZZQYDnlEsq3pZjTSNYHkF/08sz7EiTQ0FuSgIM=;
+        b=oC/V2J1Uv0NMGgtIG/hxBZvfJMx7HhTEUxPJfVqBOMVNycGUPUt6n49iq03KVsWMXB
+         ilcOjrwsjGVB5BzyVzSFYqHTXFw6LVN7VcqdNHPS24sh+w2tHwuxNnIQbsH8j85IjzYU
+         iti1YU9UW8IdLg8ehl4ebuLmZKJdi87lEESYBwmw55H8y2/WIH+fpw4FEMWQWNig6hXW
+         WxID7C6PW7Pj1KGiNjEm5/r+Vqrpikw3PWQEoxoP0TN1+T7VN2K6eunnuLheP8d5KP/5
+         svHn0uEtGjsvjcDfsIzoNBTpqaQTzNZ1UEv9P2OIMHtCdDwnYvfaVdpWKhx6JIO0z3T8
+         tNjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752506061; x=1753110861;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0IwAkpj3u5SIj9r6ALm0AsPoMzzkkW8yohb+3OrBJPY=;
-        b=E2geat6miBaQ8HNlUy+gwmgdCuiZDBgtMumvR1uI+2DNpRiIAoJNtqpKur0Rp3gBGF
-         HQ3TcgHHP4ngRB4P4MbzhFijy+C8EyDnihE479sQYOBJkqJU5jUytufxB682VZ6iIWkY
-         Gj0iKj93fVrhMDc12+6pcbrgOXL3ZSi0NoTNBuaZlUNdbRe+kkpwQf5isNyen5ns6RrN
-         cWq9IZNybp2ujLBh1NJjaSVIOA/Y9DUBojYIDBVVxIApNmZbucL/LzAgKUwbZ3vGOIHD
-         JXtInZL4fnEy5nrhlrSQTBMdPGpPjsjp05otqepiuVprkeEzyD62YAec4pyhpFoDQni8
-         paoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxCzqq3jCbgw+DfLuT434YknHmo/1oHE4HLxvF4Q5fwnGfWDQTZEFLSupzMf7+35hishjjVM0EJc0P@vger.kernel.org, AJvYcCVkYfzfvHoa2WtYuFM0WnWfy0xcA6Krr9qBNL++Ja1FMDmcXYXek3kaC5hWlVI+XJq4xin4L+hYeOwKyqVz@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrmNgoHE9rwIR60VU5vB2r/xBOQTzLbsouX76n6d3EO4rQIjrf
-	cJzMsaY8fha/qi1/XR/0QVNcMDcfwZk6ICtIkVXKRRJzZILcYZtwc+rG
-X-Gm-Gg: ASbGncsBK0CJ4/HmnMvtTRbUfbNGcWFIcPw0yjsoif+PiXAVEgOK2lIE84XLRQDl87o
-	u2tSxxAVpFNHCemgDNsdTm828VMPsawV3/IZq67bq71Vw0TGPWyAG6YUONSTP0p04C7OID4j1zr
-	hvRzst++5oDKfVrhL+8mf7NuAkay55Pok/ZteI8CbgH2PkWm4b+YUWcU+CEFB95bPHvVQGLqRWB
-	PEPypPrxWkLvDlrv7SPlDR+RZueALZI5c2rXp/rOvewGuymntWOaoYfocFNyBzruRdYYu9Gw+ga
-	nPq3MMW2R4GVb4lvZNcidg0cf3Y+1D7mPPPFvMJTTTQM3jJYbqdGbc46pBXqnApA5nKNCZZGAWL
-	wPfdWi9AKfaNoeQn3Wi0+uMyGP2zf9kshz0ZgL+F9BVK1hHRNlwq6H4hfzTr7g/CBWl5OctujDL
-	WWVFi4A/TjWO3J
-X-Google-Smtp-Source: AGHT+IFjuvW9ez9GPecW/30EfrD4uF8071VqI6MJtbXRlpmCdQrC3iHMuCAqYg5JiO/uCEzM22mMOQ==
-X-Received: by 2002:a5d:5c0e:0:b0:3a5:7895:7f6b with SMTP id ffacd0b85a97d-3b5f1c72366mr11697431f8f.7.1752506060755;
-        Mon, 14 Jul 2025 08:14:20 -0700 (PDT)
-Received: from localhost.localdomain (host-212-171-170-230.retail.telecomitalia.it. [212.171.170.230])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b5e8e26f3asm12872427f8f.98.2025.07.14.08.14.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 08:14:20 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] nvmem: airoha: Add support for SMC eFUSE
-Date: Mon, 14 Jul 2025 17:13:47 +0200
-Message-ID: <20250714151349.28368-2-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250714151349.28368-1-ansuelsmth@gmail.com>
-References: <20250714151349.28368-1-ansuelsmth@gmail.com>
+        d=1e100.net; s=20230601; t=1752506086; x=1753110886;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2Mly3ZZQYDnlEsq3pZjTSNYHkF/08sz7EiTQ0FuSgIM=;
+        b=e3GIlSqW1LNsyYEcdSoPlb06Q3va2deXA1oB2sW9lIf9dElxEb21sW3Tv0977riYNR
+         A17RwCYPU7VZnKgW1wmnfUP6uXQ2IHAGhywoxT6MEJWKwrgJrJV33rfwc7kdIONYt9+5
+         64AX1STPfdrm8ZU2z1PNBFQPL5WSSvNqjSTWkrJ9H5Sk0MABSzfpARnN2Jy1HmIO+DRt
+         SyjRKXvXmvXFWA8hqCW6DtATtwEvL/mDU1S7hhRCyTPXqRmtMn4/qO9HOQX8SXkN76D4
+         Pnr+/c7VKXGKM3cyM4f7EZe0PqZEXqdO76OG5bquUqbBuiAMtLOaQr2h9hXZAi8at0rr
+         IeqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+xAclwjoLhNlXNNNDM7thr40C3QBJ70T7EBfoz3jIrglL3m1rjPFefPMYbWK0lfmX1lcqP28zIc4efVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxWoaQmP3zhGwrVV9LxzfhITWxqoJ97OYov1vb/uCCZR1Jo3P3
+	k6ZGEbfgqd7x/9jB9hLojKPACDpkNhSBmIk992dHVLo/MOdZMPxbonWW+7GB2eTJP4Y0O5295nI
+	xnKmdXg==
+X-Google-Smtp-Source: AGHT+IFBQoWH3T35EGiYhrDKTL5i22UHbM257opXaQWUd5rayk7z4NwPu6Y8eWW3cbf2CEYUVF5qa++lnWc=
+X-Received: from pjbss4.prod.google.com ([2002:a17:90b:2ec4:b0:31c:2fe4:33be])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d610:b0:313:fb08:4261
+ with SMTP id 98e67ed59e1d1-31c4cd55c4cmr19544828a91.32.1752506085892; Mon, 14
+ Jul 2025 08:14:45 -0700 (PDT)
+Date: Mon, 14 Jul 2025 08:14:44 -0700
+In-Reply-To: <15D0C887-E17F-4432-8716-BF62EEE61B6B@sjtu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <935a82e3-f7ad-47d7-aaaf-f3d2b62ed768@amd.com> <F7AF073C-D630-45A3-8746-DE66B15FC3E1@sjtu.edu.cn>
+ <aHUYwCNDWlsar3qk@google.com> <15D0C887-E17F-4432-8716-BF62EEE61B6B@sjtu.edu.cn>
+Message-ID: <aHUe5HY4C2vungCd@google.com>
+Subject: Re: [BUG] NULL pointer dereference in sev_writeback_caches during KVM
+ SEV migration kselftest on AMD platform
+From: Sean Christopherson <seanjc@google.com>
+To: Zheyun Shen <szy0127@sjtu.edu.cn>
+Cc: Srikanth Aithal <sraithal@amd.com>, linux-next@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for SMC eFUSE on AN7581 SoC. The SoC have 2 set of 2048 bits of
-eFUSE that are used to read calibration value for PCIe, Thermal, USB and
-other specific info of the SoC like revision and HW device present.
+On Mon, Jul 14, 2025, Zheyun Shen wrote:
+> The problem is triggered by the following codes in tools/testing/selftest=
+s/kvm/x86/sev_migrate_tests.c:
+> static void test_sev_migrate_from(bool es)
+> {
+> 	struct kvm_vm *src_vm;
+> 	struct kvm_vm *dst_vms[NR_MIGRATE_TEST_VMS];
+> 	int i, ret;
+>=20
+> 	src_vm =3D sev_vm_create(es);
+> 	for (i =3D 0; i < NR_MIGRATE_TEST_VMS; ++i)
+> 		dst_vms[i] =3D aux_vm_create(true);
+>=20
+> 	/* Initial migration from the src to the first dst. */
+> 	sev_migrate_from(dst_vms[0], src_vm);
+>=20
+> 	for (i =3D 1; i < NR_MIGRATE_TEST_VMS; i++)
+> 		sev_migrate_from(dst_vms[i], dst_vms[i - 1]);
+>=20
+> 	/* Migrate the guest back to the original VM. */
+> 	ret =3D __sev_migrate_from(src_vm, dst_vms[NR_MIGRATE_TEST_VMS - 1]);
+> 	TEST_ASSERT(ret =3D=3D -1 && errno =3D=3D EIO,
+> 		    "VM that was migrated from should be dead. ret %d, errno: %d", ret,
+> 		    errno);
+>=20
+> 	kvm_vm_free(src_vm);
+> 	for (i =3D 0; i < NR_MIGRATE_TEST_VMS; ++i)
+> 		kvm_vm_free(dst_vms[i]);
+> }
+>=20
+> I add some logs in kvm and following shows the result:
+> [   51.618135] sev guest init kvm:ff177f272432e000                       =
+                                                          =20
 
-eFuse value are taken by sending SMC command. ATF is responsible of
-validaing the data and rejecting reading protected data (like Private
-Key). In such case the SMC command will return non-zero value on a0
-register.
+Argh, I forgot that sev_vm_move_enc_context_from() requires the destination=
+ to
+*not* be an SEV guest.  KVM needs to explicitly copy over the stack.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/nvmem/Kconfig             |  13 ++++
- drivers/nvmem/Makefile            |   2 +
- drivers/nvmem/airoha-smc-efuses.c | 118 ++++++++++++++++++++++++++++++
- 3 files changed, 133 insertions(+)
- create mode 100644 drivers/nvmem/airoha-smc-efuses.c
+> [   51.627235] kvm destory vm kvm:ff177f272432e000                       =
+                                                           =20
+> [   51.628011] kvm destory vm mmu notifier unregister kvm:ff177f272432e00=
+0                                                         =20
+> [   51.642840] kvm destory vm arch destory vm kvm:ff177f272432e000       =
+                                                          =20
+> [   51.673612] vm destory x86                                            =
+                                                          =20
+> [   51.673957] svm vm destory                                            =
+                                                          =20
+> [   51.674401] kvm destory vm kvm:ff177f272432c000                       =
+                                                           =20
+> [   51.675152] kvm destory vm mmu notifier unregister kvm:ff177f272432c00=
+0                                                         =20
+> [   51.675981] kvm destory vm arch destory vm kvm:ff177f272432c000       =
+                                                          =20
+> [   51.715937] vm destory x86                                            =
+                                                          =20
+> [   51.716289] svm vm destory                                            =
+                                                          =20
+> [   51.716754] kvm destory vm kvm:ff177f272432a000                       =
+                                                           =20
+> [   51.717530] kvm destory vm mmu notifier unregister kvm:ff177f272432a00=
+0                                                         =20
+> [   51.718363] kvm destory vm arch destory vm kvm:ff177f272432a000       =
+                                                          =20
+> [   51.746672] vm destory x86
+> [   51.747018] svm vm destory
+> [   51.747454] kvm destory vm kvm:ff177f2724328000
+> [   51.748219] kvm destory vm mmu notifier unregister kvm:ff177f272432800=
+0
+> [   51.749033] BUG: kernel NULL pointer dereference, address: 00000000000=
+00000
+> [   51.749885] #PF: supervisor read access in kernel mode
+> [   51.750519] #PF: error_code(0x0000) - not-present page
+>=20
+> It seems that the cpumask structure is not transferred correctly from
+> ff177f272432e000 to ff177f2724328000.  But unfortunately I=E2=80=99m not =
+familiar
+> with SEV migration. I need to spend some time looking into how SEV migrat=
+ion
+> works in order to solve this issue.
 
-diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
-index 8671b7c974b9..5c44576d7457 100644
---- a/drivers/nvmem/Kconfig
-+++ b/drivers/nvmem/Kconfig
-@@ -28,6 +28,19 @@ source "drivers/nvmem/layouts/Kconfig"
- 
- # Devices
- 
-+config NVMEM_AIROHA_SMC_EFUSES
-+	tristate "Airoha SMC eFuse support"
-+	depends on ARCH_AIROHA || COMPILE_TEST
-+	depends on HAVE_ARM_SMCCC
-+	default ARCH_AIROHA
-+	help
-+	  Say y here to enable support for reading eFuses on Airoha AN7581
-+	  SoCs. These are e.g. used to store factory programmed
-+	  calibration data required for the PCIe or the USB-C PHY or Thermal.
-+
-+	  This driver can also be built as a module. If so, the module will
-+	  be called nvmem-airoha-smc-efuses.
-+
- config NVMEM_APPLE_EFUSES
- 	tristate "Apple eFuse support"
- 	depends on ARCH_APPLE || COMPILE_TEST
-diff --git a/drivers/nvmem/Makefile b/drivers/nvmem/Makefile
-index 5b77bbb6488b..77c0264f7d39 100644
---- a/drivers/nvmem/Makefile
-+++ b/drivers/nvmem/Makefile
-@@ -10,6 +10,8 @@ nvmem_layouts-y			:= layouts.o
- obj-y				+= layouts/
- 
- # Devices
-+obj-$(CONFIG_NVMEM_AIROHA_SMC_EFUSES)	+= nvmem-airoha-smc-efuses.o
-+nvmem-airoha-smc-efuses-y 		:= airoha-smc-efuses.o
- obj-$(CONFIG_NVMEM_APPLE_EFUSES)	+= nvmem-apple-efuses.o
- nvmem-apple-efuses-y 			:= apple-efuses.o
- obj-$(CONFIG_NVMEM_BCM_OCOTP)		+= nvmem-bcm-ocotp.o
-diff --git a/drivers/nvmem/airoha-smc-efuses.c b/drivers/nvmem/airoha-smc-efuses.c
-new file mode 100644
-index 000000000000..bb279d149519
---- /dev/null
-+++ b/drivers/nvmem/airoha-smc-efuses.c
-@@ -0,0 +1,118 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *  Author: Christian Marangi <ansuelsmth@gmail.com>
-+ */
-+
-+#include <linux/arm-smccc.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-provider.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+
-+#define AIROHA_SMC_EFUSE_FID		0x82000001
-+#define AIROHA_SMC_EFUSE_SUB_ID_READ	0x44414552
-+
-+#define AIROHA_EFUSE_CELLS		64
-+
-+struct airoha_efuse_bank_priv {
-+	u8 bank_index;
-+};
-+
-+static int airoha_efuse_read(void *context, unsigned int offset,
-+			     void *val, size_t bytes)
-+{
-+	struct regmap *regmap = context;
-+
-+	return regmap_bulk_read(regmap, offset,
-+				val, bytes / sizeof(u32));
-+}
-+
-+static int airoha_efuse_reg_read(void *context, unsigned int offset,
-+				 unsigned int *val)
-+{
-+	struct airoha_efuse_bank_priv *priv = context;
-+	struct arm_smccc_res res;
-+
-+	arm_smccc_1_1_invoke(AIROHA_SMC_EFUSE_FID,
-+			     AIROHA_SMC_EFUSE_SUB_ID_READ,
-+			     priv->bank_index, offset, 0, 0, 0, 0, &res);
-+
-+	/* check if SMC reported an error */
-+	if (res.a0)
-+		return -EIO;
-+
-+	*val = res.a1;
-+	return 0;
-+}
-+
-+static const struct regmap_config airoha_efuse_regmap_config = {
-+	.reg_read = airoha_efuse_reg_read,
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+};
-+
-+static int airoha_efuse_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	for_each_child_of_node_scoped(dev->of_node, child) {
-+		struct nvmem_config airoha_nvmem_config = {
-+			.name = "airoha-efuse",
-+			.size = AIROHA_EFUSE_CELLS * sizeof(u32),
-+			.stride = sizeof(u32),
-+			.word_size = sizeof(u32),
-+			.reg_read = airoha_efuse_read,
-+		};
-+		struct airoha_efuse_bank_priv *priv;
-+		struct nvmem_device *nvmem;
-+		struct regmap *regmap;
-+		u32 bank;
-+
-+		ret = of_property_read_u32(child, "reg", &bank);
-+		if (ret)
-+			return ret;
-+
-+		priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+		if (!priv)
-+			return -ENOMEM;
-+
-+		priv->bank_index = bank;
-+
-+		regmap = devm_regmap_init(dev, NULL, priv,
-+					  &airoha_efuse_regmap_config);
-+		if (IS_ERR(regmap))
-+			return PTR_ERR(regmap);
-+
-+		airoha_nvmem_config.priv = regmap;
-+		airoha_nvmem_config.dev = dev;
-+		airoha_nvmem_config.id = bank;
-+		nvmem = devm_nvmem_register(dev, &airoha_nvmem_config);
-+		if (IS_ERR(nvmem))
-+			return PTR_ERR(nvmem);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id airoha_efuse_of_match[] = {
-+	{ .compatible = "airoha,an7581-efuses", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, airoha_efuse_of_match);
-+
-+static struct platform_driver airoha_efuse_driver = {
-+	.probe = airoha_efuse_probe,
-+	.driver = {
-+		.name = "airoha-efuse",
-+		.of_match_table = airoha_efuse_of_match,
-+	},
-+};
-+module_platform_driver(airoha_efuse_driver);
-+
-+MODULE_AUTHOR("Christian Marangi <ansuelsmth@gmail.com>");
-+MODULE_DESCRIPTION("Driver for Airoha SMC eFUSEs");
-+MODULE_LICENSE("GPL");
--- 
-2.48.1
+...
 
+> >> I can reproduce this issue in my environment, and I will try to resolv=
+e it as
+> >> soon as possible.
+> >=20
+> > Phew, that's good, because I can't repro this, and I don't see anything=
+ obviously
+> > wrong.
+
+/facepalm
+
+-ENOCOFFEE.  I was conflating CONFIG_VMAP_STACK with CONFIG_CPUMASK_OFFSTAC=
+K and
+thus testing the wrong thing.
+
+I think this is the fix, testing now...
+
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index 95668e84ab86..1476e877b2dc 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -1936,6 +1936,7 @@ static void sev_migrate_from(struct kvm *dst_kvm, str=
+uct kvm *src_kvm)
+        dst->enc_context_owner =3D src->enc_context_owner;
+        dst->es_active =3D src->es_active;
+        dst->vmsa_features =3D src->vmsa_features;
++       memcpy(&dst->have_run_cpus, &src->have_run_cpus, sizeof(src->have_r=
+un_cpus));
+=20
+        src->asid =3D 0;
+        src->active =3D false;
+@@ -1943,6 +1944,7 @@ static void sev_migrate_from(struct kvm *dst_kvm, str=
+uct kvm *src_kvm)
+        src->pages_locked =3D 0;
+        src->enc_context_owner =3D NULL;
+        src->es_active =3D false;
++       memset(&src->have_run_cpus, 0, sizeof(src->have_run_cpus));
+=20
+        list_cut_before(&dst->regions_list, &src->regions_list, &src->regio=
+ns_list);
 
