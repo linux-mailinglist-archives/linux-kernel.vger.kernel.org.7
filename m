@@ -1,124 +1,263 @@
-Return-Path: <linux-kernel+bounces-730196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9F45B04144
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:18:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92594B0414C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D03CE18993CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:17:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F7F8189C48B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339852561B6;
-	Mon, 14 Jul 2025 14:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mdOdDiaf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="apuRX5PM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFBF257AF2;
+	Mon, 14 Jul 2025 14:16:45 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063B31DC07D
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FE92571A0;
+	Mon, 14 Jul 2025 14:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752502557; cv=none; b=iZHK/EcDCNTpjo2dNt8xVDGVAlgGNrQ2xwe2dAjUTnUJFOXFaDAUQZD4TeGP5uKL8pJy0aCEzasmCIUunzGUQRGYC+RDIg/gOAgvlicykuctX+3TgpdOaWlIsCv0tR7gVAN4oNBPTgYywAiCLUiXYWv7fjm3v8YHxJqjMZCq0bI=
+	t=1752502604; cv=none; b=D5h9p7cGUkJOeupucHnK8VXHQTlNUCXJaUtuUr8NQ4hluR+EU34sIQ6gBRuvDmGe41ed26E0Za+057D6H8oRk4gf/sxC/NzRLq0ZXZjNAAd8n1sJQbDFNC+N8u+qLS0mRdeiA2cZNuBKdqy0UJ0SZeO1Uwz6pvsJN2ZJo6eIvJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752502557; c=relaxed/simple;
-	bh=n24eQ8LHgGDDv2ugupnTXxv0mbA6T1YDoBoGXgQpG6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RR6yW2EG4o3DFUkqKzRw1fZLU/4ZhS8QGT9f+Xn6H5Zs8R8kHVAQnTzFLaP+l4Y8/W7nm0dqYV7EUAXCll6hT93c57QysOupiDwwYdBQjq42Tw1I0LQ7R8tRL+jSQ3Ce+gXCluNmyge00o65tLWR+MvoFWxMVXTUCbJjEgpDvkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mdOdDiaf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=apuRX5PM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1752502604; c=relaxed/simple;
+	bh=z9DfvaFw9l7kqkBkEL47LFSbZukFcQD9SW7x95qDfKs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QbloW1huL7tqEK40IF+BwHoRI7Hgrn9VGnq/QP+oTzqRItHTQMGjtlhnyJNVRfCjHvEZg+nfI9y491IvcgkRpzMWyl3rEEYxjRwY0uc5XRqN2lLw+MVlXAblAeFI5T4FCNnFPatUtOR992j45l3wo1d13LpDDObQ5szYs8D7DV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.42] (g42.guest.molgen.mpg.de [141.14.220.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 8201261E64847;
+	Mon, 14 Jul 2025 16:15:51 +0200 (CEST)
+Message-ID: <bbdbe42b-614c-4f66-8712-f0ab8d54b490@molgen.mpg.de>
 Date: Mon, 14 Jul 2025 16:15:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752502552;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=17Qqqm75cz837kgNMKsvPCvgtSIkAYWoBnH00UWbgM0=;
-	b=mdOdDiafTTKGKKfV+Wq/LOt+7ohyqyUelW5q52J56UfF+VAMWjmvHYsiCDcyigEx8tTmZR
-	x5W0VeNZy2eApHbdhRDa2JheghC0F3wPIjV0W6O78o0jNFwmIF5zHCCMFTHO7GnngiWUl8
-	OMHcQHz1gfsfrK5JxOw214EJFg//sky0ZUzILQPBnYowz8BI2LlWjFiYOZNuxXgOT3c5j5
-	8SOETUV5z1PowdIJty3FnUCbUy5Dcf2/hwLGt7T56OetnRGZC1361bjbTCrlq8s+tTg1y6
-	2x4HH4hJTC3SirVq4aA0CCdw2cynWMKDnpoLpotEhwrKslgfS7kkqpQi9mTfgw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752502552;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=17Qqqm75cz837kgNMKsvPCvgtSIkAYWoBnH00UWbgM0=;
-	b=apuRX5PMnL4qY3MEu+5CEnKqMxKwhuRHRFv9JNqGdT8ZUpNGbS69yhQ/z5Aadv1Lg68p7z
-	1HfcYMAwNP8KaLAg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
-	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>, lclaudio00@gmail.com
-Subject: Re: [PATCH v6] sched: do not call __put_task_struct() on rt if
- pi_blocked_on is set
-Message-ID: <20250714141551.l07CZvFl@linutronix.de>
-References: <aGvTz5VaPFyj0pBV@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aGvTz5VaPFyj0pBV@uudg.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Bluetooth: ISO: add socket option to report packet seqnum
+ via CMSG
+To: Pauli Virtanen <pav@iki.fi>
+Cc: linux-bluetooth@vger.kernel.org, marcel@holtmann.org,
+ johan.hedberg@gmail.com, luiz.dentz@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <474a5321753aba17ec2819ba59adfd157ecfb343.1752501596.git.pav@iki.fi>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <474a5321753aba17ec2819ba59adfd157ecfb343.1752501596.git.pav@iki.fi>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2025-07-07 11:03:59 [-0300], Luis Claudio R. Goncalves wrote:
-> With PREEMPT_RT enabled, some of the calls to put_task_struct() coming
-> from rt_mutex_adjust_prio_chain() could happen in preemptible context and
-> with a mutex enqueued. That could lead to this sequence:
-> 
->         rt_mutex_adjust_prio_chain()
->           put_task_struct()
->             __put_task_struct()
->               sched_ext_free()
->                 spin_lock_irqsave()
->                   rtlock_lock() --->  TRIGGERS
->                                       lockdep_assert(!current->pi_blocked_on);
-> 
-> This is not a SCHED_EXT bug. The first cleanup function called by
-> __put_task_struct() is sched_ext_free() and it happens to take a
-> (RT) spin_lock, which in the scenario described above, would trigger
-> the lockdep assertion of "!current->pi_blocked_on".
-> 
-> Crystal Wood was able to identify the problem as __put_task_struct()
-> being called during rt_mutex_adjust_prio_chain(), in the context of
-> a process with a mutex enqueued.
-> 
-> Instead of adding more complex conditions to decide when to directly
-> call __put_task_struct() and when to defer the call, unconditionally
-> resort to the deferred call on PREEMPT_RT to simplify the code.
-> 
-> Suggested-by: Crystal Wood <crwood@redhat.com>
-> Reviewed-by: Wander Lairson Costa <wander@redhat.com>
-> Fixes: 893cdaaa3977 ("sched: avoid false lockdep splat in put_task_struct()")
-> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+Dear Pauli,
 
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Side note: This simplifies the call chain to always free the task struct
-via RCU. This also means that the stack is not immediately available for
-recycle (CONFIG_VMAP_STACK) but after the grace period. Based on my
-testing the new task was also deployed on a remote CPU therefore I
-wouldn't worry too much here. Just wanted to point the only difference I
-could come up with.
+Thank you for your patch.
 
-Sebastian
+
+Am 14.07.25 um 16:02 schrieb Pauli Virtanen:
+> User applications need a way to track which ISO interval a given SDU
+> belongs to, to properly detect packet loss. All controllers do not set
+> timestamps, and it's not guaranteed user application receives all packet
+> reports (small socket buffer, or controller doesn't send all reports
+> like Intel AX210 is doing).
+> 
+> Add socket option BT_PKT_SEQNUM that enables reporting of received
+> packet ISO sequence number in BT_SCM_PKT_SEQNUM CMSG.
+
+Are there user applications already supporting this, so it can be tested?
+
+> Signed-off-by: Pauli Virtanen <pav@iki.fi>
+> ---
+> 
+> Notes:
+>      Intel AX210 is not sending all reports:
+>      
+>      $ btmon -r dump.btsnoop -I -C90|grep -A1 'ISO Data RX: Handle 2304'
+>      ...
+>      > ISO Data RX: Handle 2304 flags 0x02 dlen 64                      #1713 [hci0] 22.567744
+>              dd 01 3c 00 6d 08 e9 14 1e 3b 85 7b 35 c2 25 0b  ..<.m....;.{5.%.
+>      --
+>      > ISO Data RX: Handle 2304 flags 0x02 dlen 64                      #1718 [hci0] 22.573745
+>              de 01 3c 00 41 65 22 4f 99 9b 0b b6 ff cb 06 00  ..<.Ae"O........
+>      --
+>      > ISO Data RX: Handle 2304 flags 0x02 dlen 64                      #1727 [hci0] 22.587933
+>              e0 01 3c 00 8b 6e 33 44 65 51 ee d7 e0 ee 49 d8  ..<..n3DeQ....I.
+>      --
+>      > ISO Data RX: Handle 2304 flags 0x02 dlen 64                      #1732 [hci0] 22.596742
+>              e1 01 3c 00 a7 48 54 a7 c1 9f dc 37 66 fe 04 ab  ..<..HT....7f...
+>      ...
+>      
+>      Here, report for packet with sequence number 0x01df is missing.
+
+Sorry, but where are the sequence number in the trace?
+
+>      
+>      This may be spec violation by the controller, see Core v6.1 pp. 3702
+>      
+>          All SDUs shall be sent to the upper layer including the indication
+>          of validity of data. A report shall be sent to the upper layer if
+>          the SDU is completely missing.
+>      
+>      Regardless, it will be easier for user applications to see the HW
+>      sequence numbers directly, so they don't have to count packets and it's
+>      in any case more reliable if packets get dropped due to socket buffer
+>      size.
+
+I wouldn’t mind to have the note in the commit message.
+
+>   include/net/bluetooth/bluetooth.h |  9 ++++++++-
+>   net/bluetooth/af_bluetooth.c      |  7 +++++++
+>   net/bluetooth/iso.c               | 21 ++++++++++++++++++---
+>   3 files changed, 33 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/net/bluetooth/bluetooth.h b/include/net/bluetooth/bluetooth.h
+> index 114299bd8b98..0e31779a3341 100644
+> --- a/include/net/bluetooth/bluetooth.h
+> +++ b/include/net/bluetooth/bluetooth.h
+> @@ -244,6 +244,10 @@ struct bt_codecs {
+>   
+>   #define BT_ISO_BASE		20
+>   
+> +#define BT_PKT_SEQNUM		21
+> +
+> +#define BT_SCM_PKT_SEQNUM	0x05
+> +
+>   __printf(1, 2)
+>   void bt_info(const char *fmt, ...);
+>   __printf(1, 2)
+> @@ -391,7 +395,8 @@ struct bt_sock {
+>   enum {
+>   	BT_SK_DEFER_SETUP,
+>   	BT_SK_SUSPEND,
+> -	BT_SK_PKT_STATUS
+> +	BT_SK_PKT_STATUS,
+> +	BT_SK_PKT_SEQNUM,
+>   };
+>   
+>   struct bt_sock_list {
+> @@ -475,6 +480,7 @@ struct bt_skb_cb {
+>   	u8 pkt_type;
+>   	u8 force_active;
+>   	u16 expect;
+> +	u16 pkt_seqnum;
+
+Excuse my ignorance, just want to make sure, the type is big enough.
+
+>   	u8 incoming:1;
+>   	u8 pkt_status:2;
+>   	union {
+> @@ -488,6 +494,7 @@ struct bt_skb_cb {
+>   
+>   #define hci_skb_pkt_type(skb) bt_cb((skb))->pkt_type
+>   #define hci_skb_pkt_status(skb) bt_cb((skb))->pkt_status
+> +#define hci_skb_pkt_seqnum(skb) bt_cb((skb))->pkt_seqnum
+>   #define hci_skb_expect(skb) bt_cb((skb))->expect
+>   #define hci_skb_opcode(skb) bt_cb((skb))->hci.opcode
+>   #define hci_skb_event(skb) bt_cb((skb))->hci.req_event
+> diff --git a/net/bluetooth/af_bluetooth.c b/net/bluetooth/af_bluetooth.c
+> index 6ad2f72f53f4..44b7acb20a67 100644
+> --- a/net/bluetooth/af_bluetooth.c
+> +++ b/net/bluetooth/af_bluetooth.c
+> @@ -364,6 +364,13 @@ int bt_sock_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+>   			put_cmsg(msg, SOL_BLUETOOTH, BT_SCM_PKT_STATUS,
+>   				 sizeof(pkt_status), &pkt_status);
+>   		}
+> +
+> +		if (test_bit(BT_SK_PKT_SEQNUM, &bt_sk(sk)->flags)) {
+> +			u16 pkt_seqnum = hci_skb_pkt_seqnum(skb);
+> +
+> +			put_cmsg(msg, SOL_BLUETOOTH, BT_SCM_PKT_SEQNUM,
+> +				 sizeof(pkt_seqnum), &pkt_seqnum);
+> +		}
+>   	}
+>   
+>   	skb_free_datagram(sk, skb);
+> diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
+> index fc22782cbeeb..469450bb6b6c 100644
+> --- a/net/bluetooth/iso.c
+> +++ b/net/bluetooth/iso.c
+> @@ -1687,6 +1687,17 @@ static int iso_sock_setsockopt(struct socket *sock, int level, int optname,
+>   			clear_bit(BT_SK_PKT_STATUS, &bt_sk(sk)->flags);
+>   		break;
+>   
+> +	case BT_PKT_SEQNUM:
+> +		err = copy_safe_from_sockptr(&opt, sizeof(opt), optval, optlen);
+> +		if (err)
+> +			break;
+> +
+> +		if (opt)
+> +			set_bit(BT_SK_PKT_SEQNUM, &bt_sk(sk)->flags);
+> +		else
+> +			clear_bit(BT_SK_PKT_SEQNUM, &bt_sk(sk)->flags);
+> +		break;
+> +
+>   	case BT_ISO_QOS:
+>   		if (sk->sk_state != BT_OPEN && sk->sk_state != BT_BOUND &&
+>   		    sk->sk_state != BT_CONNECT2 &&
+> @@ -2278,7 +2289,7 @@ static void iso_disconn_cfm(struct hci_conn *hcon, __u8 reason)
+>   void iso_recv(struct hci_conn *hcon, struct sk_buff *skb, u16 flags)
+>   {
+>   	struct iso_conn *conn = hcon->iso_data;
+> -	__u16 pb, ts, len;
+> +	__u16 pb, ts, len, sn;
+
+Use `seqnum` for consistency with the parts above.
+
+>   
+>   	if (!conn)
+>   		goto drop;
+> @@ -2308,6 +2319,7 @@ void iso_recv(struct hci_conn *hcon, struct sk_buff *skb, u16 flags)
+>   				goto drop;
+>   			}
+>   
+> +			sn = hdr->sn;
+>   			len = __le16_to_cpu(hdr->slen);
+>   		} else {
+>   			struct hci_iso_data_hdr *hdr;
+> @@ -2318,18 +2330,20 @@ void iso_recv(struct hci_conn *hcon, struct sk_buff *skb, u16 flags)
+>   				goto drop;
+>   			}
+>   
+> +			sn = hdr->sn;
+>   			len = __le16_to_cpu(hdr->slen);
+>   		}
+>   
+>   		flags  = hci_iso_data_flags(len);
+>   		len    = hci_iso_data_len(len);
+>   
+> -		BT_DBG("Start: total len %d, frag len %d flags 0x%4.4x", len,
+> -		       skb->len, flags);
+> +		BT_DBG("Start: total len %d, frag len %d flags 0x%4.4x sn %d",
+> +		       len, skb->len, flags, sn);
+>   
+>   		if (len == skb->len) {
+>   			/* Complete frame received */
+>   			hci_skb_pkt_status(skb) = flags & 0x03;
+> +			hci_skb_pkt_seqnum(skb) = sn;
+>   			iso_recv_frame(conn, skb);
+>   			return;
+>   		}
+> @@ -2352,6 +2366,7 @@ void iso_recv(struct hci_conn *hcon, struct sk_buff *skb, u16 flags)
+>   			goto drop;
+>   
+>   		hci_skb_pkt_status(conn->rx_skb) = flags & 0x03;
+> +		hci_skb_pkt_seqnum(conn->rx_skb) = sn;
+>   		skb_copy_from_linear_data(skb, skb_put(conn->rx_skb, skb->len),
+>   					  skb->len);
+>   		conn->rx_len = len - skb->len;
+
+
+Kind regards,
+
+Paul
 
