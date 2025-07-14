@@ -1,240 +1,134 @@
-Return-Path: <linux-kernel+bounces-730001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4C50B03EF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:44:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C8AB03EF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5FD87A21F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:42:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9A6F178E58
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D120B248F65;
-	Mon, 14 Jul 2025 12:44:05 +0000 (UTC)
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022100.outbound.protection.outlook.com [52.101.126.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23333248F67;
+	Mon, 14 Jul 2025 12:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MOYnfRSt"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A7D248F41;
-	Mon, 14 Jul 2025 12:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.100
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752497045; cv=fail; b=AFUwRsHC4od0ua4yWE7c2kWNT+RxNqup6b05im6ikard8e/ZGP6jhm767AGTXfKe7Cd0izlQLKn5ztcNVOZy79HYWw3Cg/RJlAEZzP6YJrVk6Cg7JnW5NwbeO7APTQziUg7tbgd50Oi2s1yBKsWTp7yBN9BsZ4uL0JofnXdNc9A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752497045; c=relaxed/simple;
-	bh=6deOpJmLDqk8c+WBcczeuNDYwk5cOVDY1UrBXZUiE/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XNxh7duePFw0GQEjGTbopEsqDfT1XIZ8m+V01ORp9f+Q8LPEK4suiH5B55DSLOqhdQaW8RHP1hRyRIn+9foPxeJev0mEeTVKJe7xRHmhM0+SA/S+Aqp9TY6ZK2gyeQXGlocUhV9DgwSpr3B2PcZx+mtOffn6zIqFrr88kTELHE4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.126.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Zy16s2AFuM16tK+TgIMugAlQqzi88S+f+zPyB3qKE4dQqENIyjUoaHgmtEdzF+P1lk/0T1uscG2wAdEYMan2psEyMWXZCajsmV3wM5oRnpaV3Q2sjtCJ+k3+dRWVwmEDAg2Ql/wzZrG4IX4zPjUOhLETjzupo+u/xo1wFYYtgY8Gzy+JaQrg3nJBtyiiLY7/r686VS1gdsCS3PBcBnekeZ3fT2y60TytTAFm2QW7Xn6BrQNO2XvaWa1MCLehB6rO7xt/QMhi8Px0/x7oSgD0yOacoA5nh1vrQ/qByxVYw+g4aQxI6K5CVspe2Sy3KrVtS/rhLqxmcQiLRl6+Z//koA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BrzRIUHmvCSlZ+LIj286Iuv4w6Sy7CldafzzCelSpIs=;
- b=KCgNQKJMIYg0HP/ESC5sZIFKxUMMxSepozSRtqfgONyiN4EUgv/9FYivyGct1tItvd4s442k2/QERxnIdjvSs3nh+T+BH+/rlXVkRdR0btHCUfc3fN3f1+1v5wDMfF60yvyGeNzsaNfgFnkRu7C/BrZgRxRpe5/QqZaQWSBeMd549CWxJI0A0jJVI9hiOS2FsqdVHBNEkxjZcWfHnetwm0YuAB0A5GBtda5nYTCklyk0MFIzo94g/GZK6QRyF882z9WwwuhetkiS+0MOWFxPyudWYtrL4Cm6elzYb9Mok+ffYSTGRADhn/jzcnf14sG9JVaBkw5mRIZ2IMjRzGywlw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from TYAPR01CA0018.jpnprd01.prod.outlook.com (2603:1096:404::30) by
- KUXPR06MB8032.apcprd06.prod.outlook.com (2603:1096:d10:4e::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.35; Mon, 14 Jul 2025 12:43:56 +0000
-Received: from OSA0EPF000000CD.apcprd02.prod.outlook.com
- (2603:1096:404:0:cafe::a) by TYAPR01CA0018.outlook.office365.com
- (2603:1096:404::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.32 via Frontend Transport; Mon,
- 14 Jul 2025 12:43:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- OSA0EPF000000CD.mail.protection.outlook.com (10.167.240.59) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8922.22 via Frontend Transport; Mon, 14 Jul 2025 12:43:55 +0000
-Received: from gchen (unknown [172.20.64.84])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 04F8140A5BD6;
-	Mon, 14 Jul 2025 20:43:52 +0800 (CST)
-Date: Mon, 14 Jul 2025 12:43:51 +0000
-From: Guomin chen <guomin.chen@cixtech.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-	Peter Chen <peter.chen@cixtech.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cix-kernel-upstream <cix-kernel-upstream@cixtech.com>,
-	maz@kernel.org, sudeep.holla@arm.com, kajetan.puchalski@arm.com,
-	eballetb@redhat.com, Gary Yang <gary.yang@cixtech.com>,
-	Lihua Liu <Lihua.Liu@cixtech.com>
-Subject: Re: [PATCH v9 5/9] mailbox: add CIX mailbox driver
-Message-ID: <aHT7h7/5Ip2dDJ4O@gchen>
-References: <20250609031627.1605851-1-peter.chen@cixtech.com>
- <20250609031627.1605851-6-peter.chen@cixtech.com>
- <CABb+yY17OOBx73655OhBp8At1b81w9M61zzGu4uhXcMTw4Q=Dw@mail.gmail.com>
- <aG0i75h32dWg/L2G@gchen>
- <CABb+yY2BmqiQ18hU+7C234UnY8n-8PH5VEoS7nH5Xq5O1krGhQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CB0126C05
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 12:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752497218; cv=none; b=OvztUpqOPaUU+0QO77hLZBUf13ANj5p9uUvkZGy3+bwtiGfYBg1BowSWqE+Yblzy51VebnGpNnB8LaQBPtc9jAk5/U1qVwAM8uQq6oRFOnLt4xK+jczvpkw30pByN4sSPesekB50nZzIl4dOZv0PPyi1SGEauKeLLAO9vJ/VuHE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752497218; c=relaxed/simple;
+	bh=NwaR9/Je7AdkfWw/1b2DE6uNLUshXOFDwHugnY+q+RQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=dCPx6W76pw2P0cz8fdc90ssl0VvkozEnT3hiyxFepjhjkxVHkAIBPUFWKQiMRMOgafJ2HlqIatMnpE2flWZlgwNzjdKRo3vyyid06gCkHeTvtGsWOkz5kBrdwp4YR+lNK23i2lBSS4U3ica5haSEFIJ17AKIWtNFgl86mYcM244=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MOYnfRSt; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3b39cc43f15so2360147f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 05:46:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752497214; x=1753102014; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ccg/VW3jk6vHTqe8idOqc1Z4CEUc8mxrSFOjqsDu7cI=;
+        b=MOYnfRStU3Web5Ac2YvwK02vL2tkFYUmdqRhc5L2OBErHi4lCYKgVS7pyF5WgbnPas
+         GP4JV1J1yQ0MVw2sPnHVJNsr8pd263wgYKAmNxKnYFjfo0aXxrYW7wt2vOFIBXffyJvH
+         jd4b0e3kqK0R2CXMPKFzLTRrI8oWvNGGwOXi2C7TWS4vGsHU+wfjOSAeuNUy/Yhwgckk
+         pkQGoysdmnFyhswWtv24QGmRauCJu0l2AJ/fofaweRoRQAHzrgu+qismfAhJip5CBRuS
+         7zBM8NvBOlj+C4JCPNK+kG7d6bAgTImJMAAz/+Po4QJma8gC6KATVn15XvxLyphlSa44
+         yPFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752497214; x=1753102014;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ccg/VW3jk6vHTqe8idOqc1Z4CEUc8mxrSFOjqsDu7cI=;
+        b=bmgfCvrwrLygTJS+TzevJYMLtoJuI03743r80xrBMzUkswFRihlpoJS0tL+1y628G6
+         k+0JVX1XsVC28PT/IzlDUc8ICo8mRnfcI4CfbUrzuK0jfp5XwN/sDKHbBtpQL/mz9M3e
+         Ub5GzgbxgParfuy9myJm61vxxjcakFFeoC2zIkyrOJJcp9GLgBn61qlZydvmgjLf1Oar
+         4WUadn2qp+Jm+xw7rH1H+DJBAMENjTRP9j6fISJSzWKD3WnkRNexklDhDS0XAo6kjf/6
+         0djoDKQBu48yE4H81HSACGJsu6a8hw3UP0rlAUwlQOrUkYBz9yjEwjGGZGoXtFy8J1/B
+         0iaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8g2tN7HcAbkJBLHID9sNTCqZCo44AKiZsTI4HW37akuJa7ziyrRtPaAHCm27i3Ft6Yclw9DFpa96BuVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd70Zp/laJV2Wvf/R7Q5Wub499OMJRqL6d5ZpqMCtW90+zjNYj
+	gIMAuQYjZNa1ALyf601OERHU2c9zJ0DkCkIM12PWF+qB5CJZCRC/5CJVCLKUpYsvEkrw2+cMB7H
+	WH5C9O1tshlrCuo5b1g==
+X-Google-Smtp-Source: AGHT+IEpsrPLmARnWG0wtS9HbqgJ/QuMlwRCzIc+Pa2sIBjddgiU/CUibBgEAh8mKJeMd3XXQbDdyEVvZ7B5DMs=
+X-Received: from wmbes26.prod.google.com ([2002:a05:600c:811a:b0:456:217f:2625])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2dc3:b0:3a4:f6ed:767a with SMTP id ffacd0b85a97d-3b5f18d989fmr11340308f8f.38.1752497214090;
+ Mon, 14 Jul 2025 05:46:54 -0700 (PDT)
+Date: Mon, 14 Jul 2025 12:46:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABb+yY2BmqiQ18hU+7C234UnY8n-8PH5VEoS7nH5Xq5O1krGhQ@mail.gmail.com>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSA0EPF000000CD:EE_|KUXPR06MB8032:EE_
-X-MS-Office365-Filtering-Correlation-Id: 29b2adaa-76ca-415b-3412-08ddc2d41870
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UXZNeWRNU204ck03Ukk2YmV3eFhtUTdUc3lGNTk4cS9PbmMxZVdmd1k2RW1a?=
- =?utf-8?B?SUZuT2djWTUxbkJUUmd4ajZxbGd5MGdNbmwvWitKQ3N0bDdneUZ5c1c4N2R4?=
- =?utf-8?B?RmVSQXYyTTJOcUVZQzZYeWR4T0ZXNDVGaEs4amR6STkyZW5TeW9aUEtDTDNK?=
- =?utf-8?B?WXhKVjNjRUlpSWZ4eCtKaGlaNTBuTHVTRHc4cG8wek5qNTlzSEI1NzhnQk80?=
- =?utf-8?B?NHVyNExQNllVR2RjRFlrNitCVkNlYVhHSGZxZ284NUM0cEJFNEtxOHpZUEJp?=
- =?utf-8?B?Q3hCdlRSek1oL3V0M2NLYkorVS9KMUNtQmtoOXNMekRxdzl1bG1YdHF5SWF4?=
- =?utf-8?B?a0tQNVlVR2NtNnJZQ25ZRlNnZWRTSTFTY2g5UWFHVHluV1I4TXJnUFVUWTcx?=
- =?utf-8?B?RUF1UDl3elIwdGxOendQRGw1c29zcVlmK0dkc3hJaVlaSEI2V0YrendBQVVr?=
- =?utf-8?B?RlVXU0VzWUN0S2FXQVdvOUhKU2hma0xKbjdYbVd5dkpaMDd2UEJUS3hEQmND?=
- =?utf-8?B?UXZjVkdDcE1ISTY2VGtoUXVQcUV5WmtCczdRRVpReThTRTc3Q1cwY3ZDd0xI?=
- =?utf-8?B?TlFUTm1ETHlVQjBvR294eXZUaENEYmMwVFVpSHFqdUd0d3FCcXROTVMvUGxX?=
- =?utf-8?B?d2J1NUthYnNrZDY4RGthTG5GczROektINnhLNmd4b2ZYTVhLNU1wUFFWOU8z?=
- =?utf-8?B?elhlL1Y3WmdOcjF6MXg0eXFlWVVEdm15bGJRV1VPdkZLYk02cGcvY29MQ3hD?=
- =?utf-8?B?akpLUCttNnBNSXNLVUs5RlVBeWEvL3JxVDc1aTV6NEUzaDYxbFVPb3lHSTNP?=
- =?utf-8?B?SHpmWW9pcElIQnlZek5SUCtJcWFUcHlTQmRoVWc0SFArNEJ6bENveUxCQ0Jx?=
- =?utf-8?B?QXhPSDF6bDFTL3J4ZWlaYXJFVjZTZzNsUHJiNGZYMy9SamQwNmg0d0QxMXhz?=
- =?utf-8?B?Z1RjcGtLWFRGNXV2V216blFUQ05qNGNCaDArN1ord0UwQlQwR3Mrc1c3cFFx?=
- =?utf-8?B?cU9ud3prUWdQOGI0Zk4vaGVwdnJqTTlHUzVsZ3J5UUtRQWduODNZMG93K1JN?=
- =?utf-8?B?YVRQcDFsbnV1dnNHbytyaERtR2V4L0JnVkZTVkFkZENlK2krRkVEdlJaOGVa?=
- =?utf-8?B?RCtKQVBpeUZjSEpKN0EzelBpejVmb1ZkMmJDVStLWnFSTERFMURleTdta0dJ?=
- =?utf-8?B?eEROZDd6RlQ1bEg5aEJpS0EzSGJCUXlPalJUTlBkS2RKQVJQM3lVNFUzaDJX?=
- =?utf-8?B?b01rbENQUUFuWVdsenk2ZzR2Ui90SWVZNHg0VWIzTytEbEhxTitaMFhNQmRr?=
- =?utf-8?B?b1lhQ0VZMjUwUWhTYTFLLzd5UE1DQVp6N2djNDh4VG9HSWRrODNybFpya1dy?=
- =?utf-8?B?bmZmNURsTzFWTllQTll5VWhHSEJUYW9QeXhTa3lwbUlpenIvNWZCMm1MNlpl?=
- =?utf-8?B?Zkkyd2M5VmJWWWJ2NGJLazJZRWdkcFN1b212T25qWDFDR1ArUGVBb0JHRms2?=
- =?utf-8?B?WUJpbFRabE0ycXNzNUdHOStiYWZxY2c2UkRXeGVKRkdSdXMrcFI1K1MxNm81?=
- =?utf-8?B?K3JuSUVBbVIyV2hQOWZ2UDgybkJSV2g4aFBVMC9ZRHIycW45NXhvZ0dlZ1hu?=
- =?utf-8?B?bU9BeVAzMVl5NDd5QTloeUVzMzBta0oycGpkMzZQTHVsV0Nla0pTQ0JmWXp0?=
- =?utf-8?B?TmhKYXJCMnB0RmRQQ3FKWW0zV1ZpMENibUlGTEZRNC91WmdGV2pNdkU0ZEpJ?=
- =?utf-8?B?dlBhVjNBL1pDbjl3dVZtNDJ3OExEZEJwQkZtempsakJyaC9BSnoxelRRR1ht?=
- =?utf-8?B?eUNvNTdYRUhvVWlSKzlvUlBTanlCeGN4NHRGUTRzL1RIYzg1RzZiaGlHeE9w?=
- =?utf-8?B?QTdvMEQ1STBwYW9OSGVNSWVBQmE1MGUwOStmTkdSN3B3WGk1cEdEdHYwY3gx?=
- =?utf-8?B?VXRlYWZvNU9tRTBLVHVNRjRkSDBrOG1HWWNhdFQzK1VDZ1BtTE14VkhCYWJN?=
- =?utf-8?B?VGY1alZXakMxaml2R1czYzhyUGhmSFZrSzI3VTBRaXdFWG5LWU9Ycm9ENHo2?=
- =?utf-8?Q?b1cg7l?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024)(7416014);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2025 12:43:55.3064
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 29b2adaa-76ca-415b-3412-08ddc2d41870
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	OSA0EPF000000CD.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUXPR06MB8032
+Mime-Version: 1.0
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1075; i=aliceryhl@google.com;
+ h=from:subject; bh=NwaR9/Je7AdkfWw/1b2DE6uNLUshXOFDwHugnY+q+RQ=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBodPrFMtDYlaKtIAaCblIupqTBYvaLYd97VcZJ6
+ 79BZGvcyA6JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaHT6xQAKCRAEWL7uWMY5
+ RnfRD/4uT8Etu9wSyoy0yGLIXdzEUPphX1k2F5TDm3V0WmSBVEE97bKYg1pdD/ZnSn+kFFmfz8w
+ 3OidOftxqy12+pgS7M7m9ikQkjLaGvKVY/sAecJc5CBN+j9eyRy4y0O0XMZZirhPqMyDVc4m+fr
+ Tul3c9KCkL0g9Mc6MQfdYeLxJdMGwpuCwpq+/2Rk8DXZIU18nbG0k8QTogOxCfWfOM7srhlTG0O
+ 9B+WFJMqIkZAgxiYeA3/25yeYHvkb+Hof50r1PyJne3B6/kA6ciTtJVHiMCkxlkUoYOYHbGhyL5
+ 8IuAoHTxVTW+FcipkSJVJLQfyKd0A9xtouhZZETF/+7UYqlU1G6j5CSDLUEE0dOkQJS4//Vj0uk
+ D9/iZhYkMqvqD1jIVi8UOoj+O1J+hz69xAQkf0h/weqc1de7RK039xDFXuxa3AMYlBLvNrc9J1E
+ W9jZUUu/uC1k0EHXqQZyAICQY5OV713s1ZSVC7m6YEGXr3aIUai8XKiyJTbVB8jhDY9SwJEoPL9
+ 8SADujmmA01K+YjSxonhNt4xU+ovAxZB8DwL5qtPoieZQmrVCQixnHE4fDqtZ+YT6lzncPlddhm
+ elPNvlOWQKTHFvopT8R7W7nU5tDNcvInC3d8be07oAam4chEL1dRY8PFxMPQqS0LEmv7a6PPn8j eMNj3BoHFI02o3A==
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250714124637.1905722-1-aliceryhl@google.com>
+Subject: [PATCH 1/2] vfs: add Rust files to MAINTAINERS
+From: Alice Ryhl <aliceryhl@google.com>
+To: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Jul 13, 2025 at 12:00:06PM -0500, Jassi Brar wrote:
-> [Some people who received this message don't often get email from jassisinghbrar@gmail.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> EXTERNAL EMAIL
-> 
-> On Tue, Jul 8, 2025 at 8:54 AM Guomin chen <guomin.chen@cixtech.com> wrote:
-> ....
-> > > > +/* [0~7] Fast channel
-> > > > + * [8] doorbell base channel
-> > > > + * [9]fifo base channel
-> > > > + * [10] register base channel
-> > > > + */
-> > > > +#define MBOX_FAST_IDX          7
-> > > > +#define MBOX_DB_IDX            8
-> > > > +#define MBOX_FIFO_IDX          9
-> > > > +#define MBOX_REG_IDX           10
-> > > > +#define CIX_MBOX_CHANS         11
-> > > > +
-> > > if it is not really a single controller owning different channels,
-> > > maybe implement only what you currently use.
-> > >
-> > As mentioned in the previous email, a single controller can support
-> > multiple different channels.
-> >
-> OK. I am not too worried about having all variants in one driver esp
-> when it is manageable and share the code.
-> Unless I am overlooking something. Arnd?
-> 
-> 
-> > > > +static u32 cix_mbox_read(struct cix_mbox_priv *priv, u32 offset)
-> > > > +{
-> > > > +       if (priv->use_shmem)
-> > > > +               return ioread32(priv->base + offset - SHMEM_OFFSET);
-> > > > +       else
-> > > > +               return ioread32(priv->base + offset);
-> > > > +}
-> > > > +
-> > > use_shmem is set for only CIX_MBOX_TYPE_DB, but it affects every read/write.
-> > > Maybe instead adjust the base for TYPE_DB?
-> > >
-> > The reason we introduced use_shmem here is that we had to adjust the base
-> > address of TYPE_DB to resolve the reg conflict in the DTS.
-> > This change has virtually no impact on performance.
-> >
-> Yes, I can see it should have no impact on performance and I think
-> adjusting the base once
-> during init is cleaner than checking the flag every read/write.
-> But wait... use_shmem is a controller wide flag, and isn't
-> priv->use_shmem always set to true  in cix_mbox_init() ?
-> Is the driver even tested?
-> ....
-Yes, we did perform testing before sending out the patch. 
-The test here shows no issues because there aren’t more clients. 
-There indeed exists a problem with priv->use_shmem always being set to 
-true in cix_mbox_init(). 
-So I will add a restriction in the probe function in the next version.
+These files are maintained by the VFS subsystem, thus add them to the
+relevant MAINTAINERS entry to ensure that the maintainers are ccd on
+relevant changes.
 
-> > > > +static int cix_mbox_startup(struct mbox_chan *chan)
-> > > > +{
-> > > > +       struct cix_mbox_priv *priv = to_cix_mbox_priv(chan->mbox);
-> > > > +       struct cix_mbox_con_priv *cp = chan->con_priv;
-> > > > +       int index = cp->index, ret;
-> > > > +       u32 val_32;
-> > > > +
-> > > > +       ret = request_irq(priv->irq, cix_mbox_isr, 0,
-> > > > +                         dev_name(priv->dev), chan);
-> > > The same irq is requested for each channel. How do you expect it to
-> > > work? Maybe request it just once in probe and pass the 'priv' instead
-> > > of 'chan' , and in the cix_mbox_isr handle according to INT_STATUS
-> > >
-> > For the same mailbox controller, there won't be multiple channels
-> > simultaneously requesting the same IRQ, so there won't be an issue
-> > here. As you mentioned, if we need to handle multiple channels working
-> > concurrently in the future, we would need to modify cix_mbox_isr.
-> > However, that is not required at the moment.
-> >
-> Is it too hard to do it right already?
->
-We haven't set the IRQF_SHARED flag here because there is no scenario 
-where a single mailbox controller supports multiple channel clients simultaneously.
-And, the ISR still requires the channel as an argument. 
-While this approach does not support multiple clients in parallel, it does allow 
-for better sequential support of multiple clients.
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+ MAINTAINERS | 3 +++
+ 1 file changed, 3 insertions(+)
 
-So we have placed it in the client's startup/shutdown lifecycle rather than in the
-probe function.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c3f7fbd0d67a..0f4e99716183 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9234,15 +9234,18 @@ FILESYSTEMS (VFS and infrastructure)
+ FILESYSTEMS (VFS and infrastructure)
+ M:	Alexander Viro <viro@zeniv.linux.org.uk>
+ M:	Christian Brauner <brauner@kernel.org>
+ R:	Jan Kara <jack@suse.cz>
+ L:	linux-fsdevel@vger.kernel.org
+ S:	Maintained
+ T:	git https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+ F:	fs/*
+ F:	include/linux/fs.h
+ F:	include/linux/fs_types.h
+ F:	include/uapi/linux/fs.h
+ F:	include/uapi/linux/openat2.h
++F:	rust/kernel/fs.rs
++F:	rust/kernel/fs/
++F:	rust/kernel/seq_file.rs
+ F:	Documentation/driver-api/early-userspace/buffer-format.rst
+ F:	init/do_mounts*
+ F:	init/*initramfs*
+-- 
+2.50.0.727.gbf7dc18ff4-goog
 
-Thanks
-Guomin Chen
 
