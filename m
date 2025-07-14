@@ -1,127 +1,116 @@
-Return-Path: <linux-kernel+bounces-730456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CDDCB044CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:54:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99B9B044D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13EFF4A59C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:53:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901B51883B8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D1925A640;
-	Mon, 14 Jul 2025 15:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F87225A645;
+	Mon, 14 Jul 2025 15:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HQ7RCpJ9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ToQWeWnz"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3AE2AD32
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0728C23BF9B
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752508460; cv=none; b=AlksmL8JDqDpxcExOGDsb26WXQeoJh4FKZ8PmtB2LCUMa1bmK62OJ9E5T/RK49wRkgVAwaXYOIZtHB8BRN6MneDE0oIak71xuMwPV8GF0kWjupkYAv5FjThFR6+z8kJhyzeEsEAEDdDTL4cnQMxiKBrz+bo/RJZMsBNayAkOHGU=
+	t=1752508492; cv=none; b=mAniVv8Yd4Kle6/t9xOqqXnqM2M4SDX0uzyhgWdAPX0SSg/vOr3EyAKvfEei6cuZ88V0ZZwefho0TlsJ1xpVr+arEMUVRAKA1dr3YFCn2lYv5HwiI/ay9tgtPY+VYUOYDQkuaFGdRHkFSk8yoz61WghLwUmPhygeVbczWZPhPYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752508460; c=relaxed/simple;
-	bh=xom1hiROMVoy31v8NMzvv1RMs9VUBOjI5tx8PtHgbo4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=H+qkWzJ3IuAq056d9u2tXx5zbmzo+6cKUZ0S3hp089hP9kN6HG+f6TyzQ4+Ra6j6r36jY6wENq8sXqk6ioA+wz6dlVy0Hfra+C7ykJEaPpCzpc0oR/T1yUO0K7Q8jUqupYu8MKlp/i/ORw1QOGhOeiBHWmx9oDKj0r6+bXwlUEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HQ7RCpJ9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752508458;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fafrMpU6qWwGQeEh/ZULn8SQLSmZiDDyM4ZSSsSMLQM=;
-	b=HQ7RCpJ9eSB4CfCegb6KIjtIP5aDKX6ARLamJNhvyjvk0etI0UIwvJh+9JaPfJ/h8x+T/j
-	lN3RLKo5M1PIEC4D/Cfzie8INi4Yaf84JXhQTJZCdX68JZlUwO7vV+PP4CIbtmp/KEInPm
-	eNu3w2u2tO4h/OhNHz9N6XbOrQkYtCs=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-102-2l1xNBe7MFubcxkGWlPc5Q-1; Mon, 14 Jul 2025 11:54:11 -0400
-X-MC-Unique: 2l1xNBe7MFubcxkGWlPc5Q-1
-X-Mimecast-MFC-AGG-ID: 2l1xNBe7MFubcxkGWlPc5Q_1752508451
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4561a196f70so6724405e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:54:11 -0700 (PDT)
+	s=arc-20240116; t=1752508492; c=relaxed/simple;
+	bh=7urBbC1NysPMXQOqJYTgImAU6AMJ8gvAIZARt1v7K54=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A4FZg1Q97AbnmqVQ8A8CFwNgJauDzAMtmDWwLsh1Gk4PHncyR1FJ6is9kQiV9wGeexvxrKFgZJTcqjHkUW2EWlScnvl0CGMR+gpKVvpUjd657ETu/NJ3bRlluUiNjbzs9My60wtT3Q7LLdxgSnC6E6Yir/7X+gNbAt2WDYlW7cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ToQWeWnz; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5561ab55c4dso4734499e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:54:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752508489; x=1753113289; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vl+T2liedzRtoZmf1zhQsu14QQt2+MQ88BOC/gvd+Sg=;
+        b=ToQWeWnz7xM/WODc7uABJWkZ1tQYOsy38BdEAsCmpKo7iK5Ik8u1cX0YSIIsBQVGah
+         9B3uOgkrNSKGCXUj/0JhF1+M9OhA1nawBAgxnQjaD5iENWqLWbDaj+2L7xm+AFMVRPso
+         r2iaps1x+RdywSJ6kELIWa6ZAeDtySN00Vuhq8OHi7ougkwRCBo9BF+o2KBh/FinmaA3
+         jTf0ApjAHQdqF3AeWlRr54hN+fSWWDMQmmBJ/JVkDQfx2UaWKW8iHgrLq2XZyCFZCkm+
+         twJgj5ss0DWz+mBNlSFHhfoPoyecFS0KrYPsu1AbU0HcvqxFWPHs4i9U/7BEHf0rrTyt
+         WPQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752508450; x=1753113250;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fafrMpU6qWwGQeEh/ZULn8SQLSmZiDDyM4ZSSsSMLQM=;
-        b=MUXzke8ElvduCddnZt9VCvoXlUCF0x4oNEZX4gtzFfq8x87kw57oXeE6AYIM+2I2Ac
-         dV+knXGnSIO0LYW/+mfKI8T9IK1g4FsysqOza9lHZWfSEC5ZOcEqUmpWSyCLH6dJjpAS
-         jRYnHzR+Nm/nwn+Z8nJOSVbJg/wAtoGj6v4CPvmXO19WLNr/FN0h68+ipo4Z0g/oPhvt
-         m/YwVyddCYLgoipb+7SnGV+7E6j8M2EAopbKU3v3G8xpEIytJH2fz70bnAnH7qgZabYC
-         9icBKcI5SRnel/hRwX1GHTfYSm6fhzTHuB2IrMZxcFSg7hPD6h066TQlRX1nmxpgizNn
-         /7GQ==
-X-Gm-Message-State: AOJu0YxQLIxpMJniJ+VtlijH9yf9C1GrnNEzFyrRmBIPoEiYTryZJEJa
-	zpAj7gsIJxKYRED025en41gP8yco+9hCbkhIhGyO+ZvwQMu6VHoGOzSu1i2sDQOMt5boSR75HGN
-	qMSbJq5Gqg5ii2CH2Ri9M6acjIeciJyY/leZrspxbg84ZTxP3gwYxgWG3Z4M4qOH79Q==
-X-Gm-Gg: ASbGncs4zbJVCQrId7rS6yWnaxcHxRHBG2DLafmXBZp55aj1+0nd8VY/ksONDmQGe2o
-	v46cj4fAT+Y2cx/41gVoe/mMtGUW5T5YeF4DvzWYIBOABCeJI0hk8CxFEhsH2iA93Z1UMingfNu
-	LKAb4VFUH9qiBrw8MFjy7RHKZ8Oqhe9pH42Mbk7AVxy4AZEMjId9i885gMccrqJsVcrqZJnAV1j
-	kk3mBXjWE2wW8VeEw+RU9DihG1ov9ntTVCp4eWXuOFfNXThdhn1ciGJp2oEisioCxYM7B1el3vs
-	VzG0TqTgJsjLaYaKC5atC1pqQIMuls1njgK3H3tun2OscZ1fJkj4iJion+zVfa/RSQ==
-X-Received: by 2002:a05:600c:4e03:b0:456:2142:7fa6 with SMTP id 5b1f17b1804b1-45621428198mr29093855e9.12.1752508450415;
-        Mon, 14 Jul 2025 08:54:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGCHe6mq8+XZn09BZU3bdrlf7cL8nFRYa64ZMeYLY281d4Q1xY8HGui6z7vV3S6rkcrDKdxyw==
-X-Received: by 2002:a05:600c:4e03:b0:456:2142:7fa6 with SMTP id 5b1f17b1804b1-45621428198mr29093445e9.12.1752508449939;
-        Mon, 14 Jul 2025 08:54:09 -0700 (PDT)
-Received: from localhost ([89.128.88.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4560ddf5e0esm70962005e9.18.2025.07.14.08.54.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 08:54:09 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: linux-kernel@vger.kernel.org, ipedrosa@redhat.com, David Airlie
- <airlied@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
- dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 1/5] drm/sitronix/st7571-i2c: Fix encoder callbacks
- function names
-In-Reply-To: <aHTy3tbDKA0QVqBt@gmail.com>
-References: <20250714104421.323753-1-javierm@redhat.com>
- <20250714104421.323753-2-javierm@redhat.com> <aHTy3tbDKA0QVqBt@gmail.com>
-Date: Mon, 14 Jul 2025 17:54:07 +0200
-Message-ID: <877c0a22g0.fsf@minerva.mail-host-address-is-not-set>
+        d=1e100.net; s=20230601; t=1752508489; x=1753113289;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vl+T2liedzRtoZmf1zhQsu14QQt2+MQ88BOC/gvd+Sg=;
+        b=sUJfjVbth37qL18RMiBOhz5nxi6yZunqXeb/KM/AdA8OduAVn7i/4Iitn23hbj07tY
+         AO8xYgasmYQTP2fVS1pVDvFHukraiciB/cK9SdXihbbnbVDbnRoAwONpxssBY6l+7XX7
+         KjEAh/rb4oYsMmDtnFIgRSJmeqPM7Xs9hfJN5rQFaP+oqsoWafB5TV/Dco58Gc5YzZwq
+         YxXch5XHxP+hw2VDZDj7onGzr3VBP83khj/2VNPOt9wzLvtGuBTu2HQavOjty9GMqDtF
+         MQA0kE6eAV+Dt616rhKCDjXAxfRKm6z2MPM2dBEwUHuUsnHSx9s/73u5MEXtpZ3JB3zT
+         sx6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWHgHRMMr0GxMYs1S/8uJe+1/3feacPH1rNWFzTC7uCFQJVYGWX5pGhiY3EwuncOtvubJFpJzmk37p+5Wg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm5D+j++FKcIsKDyakU82C+RECMIQ4G6qjUtic2wBmOcfPJk+b
+	2LnEEW1beRqLWEGoAu362ImnMEUgm3UceuXtKwjONlysBb8u6x04XN2wuKhWH8Fvbx7ra0/cCpc
+	OKe1oOaXG80uSLBZgoqePEuRzM8plEQIdCMRIl/7btw==
+X-Gm-Gg: ASbGncsLgoFdGrPG93ViYIHsfG8zhwf8YEC1FHtCRdxzEtvyj93REpWmL5Su17wWrVU
+	aVnqa5hrVS+YdUOCuUHvZcmrG0W+dO65fvbWhF9IZea4M+UOHTp0ZLssgcie/DRMeFpQ+QDY5i2
+	SzxImhyQv8wiMFum8kki1wvrInRrt4c1BTBxqxtatSpBTXRnsffwpH/P4RB7vGNkFPfTQ9+ulJ6
+	LoKVW8=
+X-Google-Smtp-Source: AGHT+IHaLn3+Udwsa8sFc8d/9/aHQq6wB9mzYzABB1MIG5NegxyR63z0rfh4I5QsjPYZbiAIbQq3zUht3HuZnxGcUFs=
+X-Received: by 2002:a05:6512:220b:b0:553:a456:a0d4 with SMTP id
+ 2adb3069b0e04-55a044f0096mr4449856e87.15.1752508489020; Mon, 14 Jul 2025
+ 08:54:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250714170848.0fb46353@canb.auug.org.au> <DBBN42KD0D2L.10BGEGJJ5XH0J@fairphone.com>
+In-Reply-To: <DBBN42KD0D2L.10BGEGJJ5XH0J@fairphone.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 14 Jul 2025 17:54:37 +0200
+X-Gm-Features: Ac12FXx1I8rP_VVQDL4JOaDWYJ2npnkK3d0_UajlkfvmD0v0z0SiJw_Z43iS2BE
+Message-ID: <CACRpkdbED6fi_XupJimEBwhiNoon109wYPtranmCPdx9wBpiJA@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the pinctrl tree
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Marcus Folkesson <marcus.folkesson@gmail.com> writes:
+On Mon, Jul 14, 2025 at 10:37=E2=80=AFAM Luca Weiss <luca.weiss@fairphone.c=
+om> wrote:
 
-Hello Marcus,
-
-> On Mon, Jul 14, 2025 at 12:44:00PM +0200, Javier Martinez Canillas wrote:
->> It seems the driver took some inspiration from ssd130x and some of the
->> functions (encoder callbacks) were not renamed to use a st7571_ prefix.
+> > drivers/pinctrl/qcom/pinctrl-milos.c:1323:19: error: 'msm_pinctrl_remov=
+e' undeclared here (not in a function); did you mean 'msm_pinctrl_probe'?
+> >  1323 |         .remove =3D msm_pinctrl_remove,
+> >       |                   ^~~~~~~~~~~~~~~~~~
+> >       |                   msm_pinctrl_probe
+> >
+> > Caused by commit
+> >
+> >   b614f176b308 ("pinctrl: qcom: Add Milos pinctrl driver")
+> >
+> > I have used the pinctrl tree from next-20250711 for today.
 >
-> Outch, shame on me.
+> This seems to be the for-next/devel branch not containing a commit from
+> fixes. I'll let Linus sort this out, just needs one line to be removed
+> from pinctrl-milos.c as per
+> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/=
+commit/?h=3D56ec63a6e107e724619e61c7e605b49d365dfa07
 
-On the contrary, I'm glad to know that the ssd130x driver was useful :)
+I went in and patched out that line, thanks!
 
->> 
->> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
->
-> Reviewed-by: Marcus Folkesson <marcus.folkesson@gmail.com>
->
-
-Thanks for your review!
-
--- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
-
+Yours,
+Linus Walleij
 
