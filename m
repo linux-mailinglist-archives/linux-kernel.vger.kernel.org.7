@@ -1,233 +1,174 @@
-Return-Path: <linux-kernel+bounces-729504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 647F0B03799
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:10:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 692D3B037A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 743EA188866F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:11:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84B41896BAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF4122F772;
-	Mon, 14 Jul 2025 07:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F4C230BD9;
+	Mon, 14 Jul 2025 07:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DgFsN2Ub";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Zf8deLod";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DgFsN2Ub";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a2Zb+RwN"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PNMbBLV4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25BF22DA1F
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 07:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11AC22F76E
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 07:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752477048; cv=none; b=WBOKJrIl8n3BGt/vxL+lUnIkV7sYAMge/9wrdS2OomT4ZJOVhIaCydvl+lDh6NTM/XrOGewjXYzQ+A7eBVeBfJxsH/cpg+08Zxcegu0p6uPRDT7wxqjfpMZJ9ndMdWi0agy/MGEsLXbpdkdczF2H6qvmuKvOJTevehk7Ce25J+w=
+	t=1752477230; cv=none; b=dheQgOFQt0qwU/B6sct7CQZ36e3YHWIOee/fupVoKgb82crTgH4PUcLy6bLpDUnznP3GU8q99jejuAaUFGd6mD0lSfzkITG8dxEXlgf5zahRcVd23aBTHFkzcsALevHIIPPTIAyNdDyI4qJ+IA1vc4BwgV8XSQBd7ps/KWRbxVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752477048; c=relaxed/simple;
-	bh=mEax5iRy/rGn7hOAThT3F33fOWhqRmdP23NetB5s1q0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iVjiFRcvgT55/rFT+seLxEvEVtAsLrpYXwGtrZj2u3rrBrL5RR5gsNtERMKP5K8knA4k51knb/J9X5ZLsLHFIP4+mHClDQKIp4yAfCVuYVMk0rGsWAJ9nsyMDFuPnkuF3gryWB1q8AEk3pcXRw2uRvvZvFrmheTV4yZHTW7HxFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DgFsN2Ub; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Zf8deLod; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DgFsN2Ub; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a2Zb+RwN; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1752477230; c=relaxed/simple;
+	bh=YOtU6TIjf7Gil2q/VUkmDd0rXOtqnwYAk0X6u5BgunI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U/JakmFLQhVxeKsZVc5cxLK6a4wfJA38lvRJsMgTJD4Sk8Dr0gtGdYNnnv2VFaA6wVrNyMijbqDD2aTvhcxYUNg2tPuMzdSbmWGWMW6Aq0J62pKhFcZhTxgC8Opb4kCBvmGf1B8oWdog8S/BCnaCy7aPA55F1KmZzo1ckCDiA3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PNMbBLV4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752477226;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Pnu5TDThDFnIUlSczVqFdKvx391LQqv8l2bFaqO43+8=;
+	b=PNMbBLV4TyV6Zj7W2EdXjWgQJvsZ2eV1gv/yL/xRvdZsFYdRpoiTQQq8O5YsNXRZ9mj943
+	+cfoSMf/FaHw8890O/KW+YDS7DmDKh/QrT6TwRUfzoo1U8x2UYU6y87OgUHI+6n4txCsyH
+	l/GXK0qEFq7+Qr2WaJYd3v8LcELroAU=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-684-RhNUQeLeNASIxM-bcKZm8Q-1; Mon,
+ 14 Jul 2025 03:13:43 -0400
+X-MC-Unique: RhNUQeLeNASIxM-bcKZm8Q-1
+X-Mimecast-MFC-AGG-ID: RhNUQeLeNASIxM-bcKZm8Q_1752477222
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C65271F387;
-	Mon, 14 Jul 2025 07:10:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752477043; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nV30D+VfU5j1NAaoXB3qy11bPVIJyZxJpUsJqK+jc5s=;
-	b=DgFsN2Ub5tvbXDghQZO+wzPiA6UESldwW48wBv0XJOjoepAiD5UBrSHl5VVhDk80ltUtZl
-	gCYzyvChj7AXXf9B737wn+PBixptufglpuWaUmSie6IYcLlYAglSScSxF6zmcjjggGGhTh
-	mEo+KELwaMkt7V8DC+PqKABg2VvWj+c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752477044;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nV30D+VfU5j1NAaoXB3qy11bPVIJyZxJpUsJqK+jc5s=;
-	b=Zf8deLod293tErZgRRh8JIt7Vjqhb+FvgP2zSRRi495OajvHSCMnOKipptUIvuG3mVA/1X
-	0R2z+ReFdHik0qDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752477043; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nV30D+VfU5j1NAaoXB3qy11bPVIJyZxJpUsJqK+jc5s=;
-	b=DgFsN2Ub5tvbXDghQZO+wzPiA6UESldwW48wBv0XJOjoepAiD5UBrSHl5VVhDk80ltUtZl
-	gCYzyvChj7AXXf9B737wn+PBixptufglpuWaUmSie6IYcLlYAglSScSxF6zmcjjggGGhTh
-	mEo+KELwaMkt7V8DC+PqKABg2VvWj+c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752477043;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nV30D+VfU5j1NAaoXB3qy11bPVIJyZxJpUsJqK+jc5s=;
-	b=a2Zb+RwNPWGAjkj76VPfg/8dnXYhGELiW3lqFnpVfMnXbfvZeku9AR05E7vanRw6UymvgP
-	GF+5kWl/Kn6SqsBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AFB3E138A1;
-	Mon, 14 Jul 2025 07:10:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8QSOKnOtdGhtFAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 14 Jul 2025 07:10:43 +0000
-Message-ID: <e717c028-eb87-4414-a967-f1144ae0fb0b@suse.cz>
-Date: Mon, 14 Jul 2025 09:10:43 +0200
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D66AF18002EC;
+	Mon, 14 Jul 2025 07:13:41 +0000 (UTC)
+Received: from server.redhat.com (unknown [10.72.112.34])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 644B4180045B;
+	Mon, 14 Jul 2025 07:13:37 +0000 (UTC)
+From: Cindy Lu <lulu@redhat.com>
+To: lulu@redhat.com,
+	jasowang@redhat.com,
+	mst@redhat.com,
+	michael.christie@oracle.com,
+	sgarzare@redhat.com,
+	nicolas.dichtel@6wind.com,
+	linux-kernel@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v13 0/1]vhost: Add support of kthread API
+Date: Mon, 14 Jul 2025 15:12:31 +0800
+Message-ID: <20250714071333.59794-1-lulu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm/percpu: prevent concurrency problem for
- pcpu_nr_populated read with spin lock
-Content-Language: en-US
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jeongjun Park <aha310510@gmail.com>, dennis@kernel.org, tj@kernel.org,
- cl@gentwo.org, roman.gushchin@linux.dev, rientjes@google.com,
- shakeel.butt@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- syzbot+e5bd32b79413e86f389e@syzkaller.appspotmail.com
-References: <20250703065600.132221-1-aha310510@gmail.com>
- <b272ce4a-a20c-43de-8080-db8ad14abaff@suse.cz>
- <20250712152846.58adeea972a6c9caac8003d1@linux-foundation.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
- AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
- jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
- 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
- Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
- QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
- 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
- M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
- r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
- Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
- uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
- lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
- zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
- rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
- khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
- xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
- AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
- Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
- rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
- dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
- m6M14QORSWTLRg==
-In-Reply-To: <20250712152846.58adeea972a6c9caac8003d1@linux-foundation.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TAGGED_RCPT(0.00)[e5bd32b79413e86f389e];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.org,gentwo.org,linux.dev,google.com,kvack.org,vger.kernel.org,syzkaller.appspotmail.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.80
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 7/13/25 00:28, Andrew Morton wrote:
-> On Fri, 11 Jul 2025 17:56:34 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
-> 
->> On 7/3/25 08:56, Jeongjun Park wrote:
->> > pcpu_nr_pages() reads pcpu_nr_populated without any protection, which
->> > causes a data race between read/write.
->> > 
->> > However, since this is an intended race, we should add a data_race
->> > annotation instead of add a spin lock.
->> > 
->> > Reported-by: syzbot+e5bd32b79413e86f389e@syzkaller.appspotmail.com
->> > Fixes: 7e8a6304d541 ("/proc/meminfo: add percpu populated pages count")
->> > Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
->> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
->> > ---
->> > v2: Change it as suggested by Shakeel Butt
->> > - Link to v1: https://lore.kernel.org/all/20250702082749.141616-1-aha310510@gmail.com/
->> > ---
->> >  mm/percpu.c | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> > 
->> > diff --git a/mm/percpu.c b/mm/percpu.c
->> > index b35494c8ede2..782cc148b39c 100644
->> > --- a/mm/percpu.c
->> > +++ b/mm/percpu.c
->> > @@ -3355,7 +3355,7 @@ void __init setup_per_cpu_areas(void)
->> >   */
->> >  unsigned long pcpu_nr_pages(void)
->> >  {
->> > -	return pcpu_nr_populated * pcpu_nr_units;
->> > +	return data_race(READ_ONCE(pcpu_nr_populated) * pcpu_nr_units);
->> 
->> Nit: pcpu_nr_units should be excluded from the scope of data_race() as no
->> race can happen there.
-> 
-> This?
-> 
-> --- a/mm/percpu.c~mm-percpu-prevent-concurrency-problem-for-pcpu_nr_populated-read-with-spin-lock-fix
-> +++ a/mm/percpu.c
-> @@ -3355,7 +3355,7 @@ void __init setup_per_cpu_areas(void)
->   */
->  unsigned long pcpu_nr_pages(void)
->  {
-> -	return data_race(READ_ONCE(pcpu_nr_populated) * pcpu_nr_units);
-> +	return data_race(READ_ONCE(pcpu_nr_populated)) * pcpu_nr_units;
+In commit 6e890c5d5021 ("vhost: use vhost_tasks for worker threads"),   
+the vhost now uses vhost_task and operates as a child of the   
+owner thread. This aligns with containerization principles.   
+However, this change has caused confusion for some legacy   
+userspace applications. Therefore, we are reintroducing   
+support for the kthread API. 
 
-Yes, thanks!
+In this series, a new UAPI is implemented to allow   
+userspace applications to configure their thread mode.
 
->  }
->  
->  /*
-> _
-> 
+Changelog v2:
+ 1. Change the module_param's name to enforce_inherit_owner, and the default value is true.
+ 2. Change the UAPI's name to VHOST_SET_INHERIT_FROM_OWNER.
+
+Changelog v3:
+ 1. Change the module_param's name to inherit_owner_default, and the default value is true.
+ 2. Add a structure for task function; the worker will select a different mode based on the value inherit_owner.
+ 3. device will have their own inherit_owner in struct vhost_dev
+ 4. Address other comments
+
+Changelog v4:
+ 1. remove the module_param, only keep the UAPI
+ 2. remove the structure for task function; change to use the function pointer in vhost_worker
+ 3. fix the issue in vhost_worker_create and vhost_dev_ioctl
+ 4. Address other comments
+
+Changelog v5:
+ 1. Change wakeup and stop function pointers in struct vhost_worker to void.
+ 2. merging patches 4, 5, 6 in a single patch
+ 3. Fix spelling issues and address other comments.
+
+Changelog v6:
+ 1. move the check of VHOST_NEW_WORKER from vhost_scsi to vhost
+ 2. Change the ioctl name VHOST_SET_INHERIT_FROM_OWNER to VHOST_FORK_FROM_OWNER
+ 3. reuse the function __vhost_worker_flush
+ 4. use a ops sturct to support worker relates function
+ 5. reset the value of inherit_owner in vhost_dev_reset_owner.
+ 
+Changelog v7: 
+ 1. add a KConfig knob to disable legacy app support
+ 2. Split the changes into two patches to separately introduce the ops and add kthread support.
+ 3. Utilized INX_MAX to avoid modifications in __vhost_worker_flush
+ 4. Rebased on the latest kernel
+ 5. Address other comments
+ 
+Changelog v8: 
+ 1. Rebased on the latest kernel
+ 2. Address some other comments 
+ 
+Changelog v9:
+ 1. Rebased on the latest kernel. 
+ 2. Squashed patches 6‑7. 
+ 3. Squashed patches 2‑4. 
+ 4. Minor fixes in commit log
+ 
+ 
+Changelog v10:
+ 1.Add support for the module_param.
+ 2.Squash patches 3 and 4.
+ 3.Make minor fixes in the commit log.
+ 4.Fix the mismatched tabs in Kconfig.
+ 5.Rebase on the latest kernel.
+
+Changelog v11:
+ 1.make the module_param under Kconfig
+ 2.Make minor fixes in the commit log.
+ 3.change the name inherit_owner to fork_owner
+ 4.add NEW ioctl VHOST_GET_FORK_FROM_OWNER
+ 5.Rebase on the latest kernel
+
+Changelog v12:
+1.Squash all patches to 1.
+2.Add define for task mode and kthread mode
+3.Address some other comments
+4.Rebase on the latest kernel
+
+Changelog v13:
+ 1.enable the kconfig by default
+ 2.Rebase on the latest kernel
+      
+Tested with QEMU with kthread mode/task mode/kthread+task mode
+
+Cindy Lu (1):
+  vhost: Reintroduces support of kthread API and adds mode selection
+
+ drivers/vhost/Kconfig      |  18 +++
+ drivers/vhost/vhost.c      | 244 ++++++++++++++++++++++++++++++++++---
+ drivers/vhost/vhost.h      |  22 ++++
+ include/uapi/linux/vhost.h |  29 +++++
+ 4 files changed, 295 insertions(+), 18 deletions(-)
+
+-- 
+2.45.0
 
 
