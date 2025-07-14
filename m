@@ -1,150 +1,198 @@
-Return-Path: <linux-kernel+bounces-729750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCBACB03B17
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:42:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E0CBB03AFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:39:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E17C1A60655
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:42:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D56133A5F3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34C024678B;
-	Mon, 14 Jul 2025 09:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D143B24167B;
+	Mon, 14 Jul 2025 09:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="nNmdLz41"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lg9+S2UT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EC1245029
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4C91D63E6
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752486055; cv=none; b=NPLjPi25T9PS156YNlvAp5qvBlUFheCbMTkAc8AWaGAY9zk9Z7U0LeAWc0Y8ikS2btScBHbhUxbHTDECWBH8JhLzPuthLQ1M+tn+huzsXn5Vd61vVA6jfcZQfeh4PA1zon+X4EmRz+ESmFUZhhY7SQsIamaU4cnj6dQppi4B23A=
+	t=1752485982; cv=none; b=V0KrtLa96xSQ3HTb7bbGhqV4ac32Rx0KrO+xO/8Qoi7e4Pefp3hESxnshhhdTqHlKIgdaMVTYYDPc5fv2D0SFWaIf++OkUyh3YIClLfXr1M6y9ok3tp2ZzVCvQPJorBsu7VfbxgmP8vaM/KypZ7KiV1Ui7plg64CHEEQu8+7Awk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752486055; c=relaxed/simple;
-	bh=hAq0x+oX9cbcJkUs7e6ehMKp0TSf4ywLJDhNt9d1ea4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jbiI+i5pocW5HVuyGP+9wH9YOkZL4GoLKKgwohT/sZU0j0bW25FH8qJLxd40m0ZtjwB05msGc+en3efnv0b/0LG0ntt4maeQ4pAthkn7M/8xa5jQdWWllDOKv6Lck7t6xad8pZK76jTLA/5FaAT8F26ZChPUvinOwtu7n75k5YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=nNmdLz41; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-455b00339c8so18047055e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 02:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1752486052; x=1753090852; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ldfd3zKYA1234Y8Fp1Vc0yI6IvJCQoMDmBQmNhJG3pA=;
-        b=nNmdLz41H8PnCrgZhp5DlEMlVvXH+4TAOfkkMuR+5co7OTUnLGN9Chl9iVwVbQ7B0V
-         EaHof10Ix5INsTxkEKlCsQbhky1i7qlZBvkUWZj6bJF+siyodOJperHDJEGg5z66vtBe
-         ZTE3QWgkj0EyAoH0WLkSqJrqrt6mmz1G5qgpjRgOynJXgIaERh/iW4JOsJKr4ApWIgGx
-         s/6BPQ2XUg/uBwVgGVSYcm30c+nNqbO/hannt60xVyCzWn2BLbS7qTRhOZyvOwOverK2
-         9KwEfQLy6QCHOr8751EIMGgtWGKDMSHuF628C9xJ/B2dAew9LzBxVI8y9yPjBH2Ozscl
-         FRxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752486052; x=1753090852;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ldfd3zKYA1234Y8Fp1Vc0yI6IvJCQoMDmBQmNhJG3pA=;
-        b=n8pLj63/oa2bxm/+zMoOGifGF2onoMUyDW9wXEi0CRicVdzqaYskJG5EvYBeLpVHPw
-         TU/6AVlN1C4xqXahixNX4ZT/oNkeEPENePdoFTrLZOvVbCPXqH0+Mrt0wmWFsZCh8Uzr
-         2QImt/KBTihwpW8629p+GMyVaIdHsD1AIvWhIfyjztBpOEKBbq52udTS4rd1Oibu7Z+Q
-         ive/NyCTijww1mxuI/0QkDi1yeOQLOlGjs/ttleveutACQqe1xRafWkZ+kakDJyyz5xl
-         4UISBylQnT4NB0l0Rt0RuFNQ/OygYrglzuJmH47KCQS/hroTEsVvo+7+nWML2acX7JzK
-         Jv5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVSCDs0wCi3/jfb8HDfbMLArURYEztQRyaRyVGz02+h2HwNBPmzXW3qjoQbQNNm3Jd0iUoy5dW/z1rlvl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztSBOmpHrV7PJwnkGXHQarO2dsL22tL4SBkhByJj1QqLScYP4H
-	WgyJoDpcK56SJ7DWTgHXiCTwczzBHJzAdaL69jmCZeFaW6Ltxr+KfUWuZM8rPvvvLqg=
-X-Gm-Gg: ASbGncsteruJzhb406X3wD0Yvt9+mNG4+E+XVTSZZbGfUe4GFzK1Inpk0B/lZyeHOTr
-	4r6pzL0YoER6X1ZnWWb7MSKFhYmyTtQvpEhQHs4QiHipxiCkh7oEB2V7lLhINPVBoc0WhJ0L9z2
-	546kFwcMiyw2sFXCytOiK4BuWa3BvnuuFZlFdQq407bDuuVF2ayAWyCnBqFzMS4E9j9nr7cF24n
-	Ry7rwa5tBtt+mJhkijSpoLBeJppLmGFUCGB7YcYcExYmBzrqahm7tmZdtlHcSjKoaLNsxSemUei
-	drybJNVhHWMfrucm+zf4jYI4wcedEsC1DwlYV5bVg4mLDt20LfIivGyYuF09BuLfXlqbDATDgw=
-	=
-X-Google-Smtp-Source: AGHT+IHBUTHXXfV/sAbab2DTdMAgIRdSFUuzZnhKWqGYxvLkdc88i2Qw/Sud4EEPv8EFPz7tb3aRDQ==
-X-Received: by 2002:a05:6000:270b:b0:3a5:3b93:be4b with SMTP id ffacd0b85a97d-3b5f189621cmr8029790f8f.25.1752486051776;
-        Mon, 14 Jul 2025 02:40:51 -0700 (PDT)
-Received: from [127.0.1.1] ([2a09:0:1:2::3035])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4561b25a948sm24989035e9.35.2025.07.14.02.40.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 02:40:51 -0700 (PDT)
-From: Guodong Xu <guodong@riscstar.com>
-Date: Mon, 14 Jul 2025 17:39:34 +0800
-Subject: [PATCH v3 7/8] riscv: dts: spacemit: Enable PDMA0 on Banana Pi F3
- and Milkv Jupiter
+	s=arc-20240116; t=1752485982; c=relaxed/simple;
+	bh=cQ0TpDO9ZCOEo8C3OLkJivTCTe9XM5S/iXQQdJiXaQ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jpagr+dj2PedLrMb5FPXlrkGO2aA2ZjeBGCAZ2bS2MfqtMUNYFQoCqANAis8q24CMUzv4DCbwUvwarMQe+JTewib+2lKDoq5DcQy8bAEkgeg/cQJyMBcddl98kPQblf80AFmKvYKEqBQquEbmJ/rvwhVmRfGhs8GxoetdVlcUDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lg9+S2UT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 955BFC4CEED;
+	Mon, 14 Jul 2025 09:39:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752485982;
+	bh=cQ0TpDO9ZCOEo8C3OLkJivTCTe9XM5S/iXQQdJiXaQ4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lg9+S2UTu8r1DfSFfWgiSttKR4mGPbsogToufb1yH4UYTqHgfmYM9qgSiH/PSlm6a
+	 dkCWpi/Hkc5RN8oOgA5LDiLXurN5oe7L2XLFhjfF/Wt5B5sE0ugbs/pulsTSpigeGV
+	 YGLu3ncijh/24AMqk6fR9eZkG4V5u3qqKPXrWzSmEIhX8i5QD59VEsUONHEEcbZwHt
+	 lV20tOG4xqyargOpayFDiH9RU2RbcpQt099Q1P0VPDUc5dogsnXlgGw1M28G1tN/Rc
+	 ZAM3bjysKI88DmYLq/kWCZyyoSD5ajtARtVl6eqgtA9GSC8L/XbzthdoYxbyO3S8wB
+	 J4l92Nm7UfOEw==
+From: Chao Yu <chao@kernel.org>
+To: xiang@kernel.org
+Cc: linux-erofs@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Yue Hu <zbestahu@gmail.com>,
+	Jeffle Xu <jefflexu@linux.alibaba.com>,
+	Sandeep Dhavale <dhavale@google.com>,
+	Hongbo Li <lihongbo22@huawei.com>,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH v3] erofs: support to readahead dirent blocks in erofs_readdir()
+Date: Mon, 14 Jul 2025 17:39:35 +0800
+Message-ID: <20250714093935.200749-1-chao@kernel.org>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250714-working_dma_0701_v2-v3-7-8b0f5cd71595@riscstar.com>
-References: <20250714-working_dma_0701_v2-v3-0-8b0f5cd71595@riscstar.com>
-In-Reply-To: <20250714-working_dma_0701_v2-v3-0-8b0f5cd71595@riscstar.com>
-To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
- =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: Alex Elder <elder@riscstar.com>, Vivian Wang <wangruikang@iscas.ac.cn>, 
- dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, Guodong Xu <guodong@riscstar.com>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-Enable the PDMA0 on the SpacemiT K1-based Banana Pi F3 and Milkv Jupiter
-boards by setting its status to "okay".
+This patch supports to readahead more blocks in erofs_readdir(), it can
+enhance readdir performance in large direcotry.
 
-Signed-off-by: Guodong Xu <guodong@riscstar.com>
+readdir test in a large directory which contains 12000 sub-files.
+
+		files_per_second
+Before:		926385.54
+After:		2380435.562
+
+Meanwhile, let's introduces a new sysfs entry to control readahead
+bytes to provide more flexible policy for readahead of readdir().
+- location: /sys/fs/erofs/<disk>/dir_ra_bytes
+- default value: 16384
+- disable readahead: set the value to 0
+
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
-v3: adjust pdma0 position, ordering by name alphabetic
-v2: added pdma0 enablement on Milkv Jupiter
----
- arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts   | 4 ++++
- arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts | 4 ++++
- 2 files changed, 8 insertions(+)
+v3:
+- add EROFS prefix for macro
+- update new sysfs interface to 1) use bytes instead of pages
+2) remove upper boundary limitation
+- fix bug of pageidx calculation
+ Documentation/ABI/testing/sysfs-fs-erofs |  8 ++++++++
+ fs/erofs/dir.c                           | 13 +++++++++++++
+ fs/erofs/internal.h                      |  4 ++++
+ fs/erofs/super.c                         |  2 ++
+ fs/erofs/sysfs.c                         |  2 ++
+ 5 files changed, 29 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-index fe22c747c5012fe56d42ac8a7efdbbdb694f31b6..310dbd42d99f2ac150356c2128a6e16d1723d19f 100644
---- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-+++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-@@ -40,6 +40,10 @@ &emmc {
- 	status = "okay";
- };
- 
-+&pdma0 {
-+	status = "okay";
-+};
+diff --git a/Documentation/ABI/testing/sysfs-fs-erofs b/Documentation/ABI/testing/sysfs-fs-erofs
+index bf3b6299c15e..85fa56ca092c 100644
+--- a/Documentation/ABI/testing/sysfs-fs-erofs
++++ b/Documentation/ABI/testing/sysfs-fs-erofs
+@@ -35,3 +35,11 @@ Description:	Used to set or show hardware accelerators in effect
+ 		and multiple accelerators are separated by '\n'.
+ 		Supported accelerator(s): qat_deflate.
+ 		Disable all accelerators with an empty string (echo > accel).
 +
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_2_cfg>;
-diff --git a/arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts b/arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts
-index 4483192141049caa201c093fb206b6134a064f42..15b814aabe10c0a21ece9f0d42264c775b505bb5 100644
---- a/arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts
-+++ b/arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts
-@@ -20,6 +20,10 @@ chosen {
- 	};
- };
- 
-+&pdma0 {
-+	status = "okay";
-+};
++What:		/sys/fs/erofs/<disk>/dir_ra_bytes
++Date:		July 2025
++Contact:	"Chao Yu" <chao@kernel.org>
++Description:	Used to set or show readahead bytes during readdir(), by
++		default the value is 16384.
 +
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_2_cfg>;
-
++		- 0: disable readahead.
+diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
+index 3e4b38bec0aa..950d6b0046f4 100644
+--- a/fs/erofs/dir.c
++++ b/fs/erofs/dir.c
+@@ -47,8 +47,10 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
+ 	struct inode *dir = file_inode(f);
+ 	struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+ 	struct super_block *sb = dir->i_sb;
++	struct file_ra_state *ra = &f->f_ra;
+ 	unsigned long bsz = sb->s_blocksize;
+ 	unsigned int ofs = erofs_blkoff(sb, ctx->pos);
++	unsigned long nr_pages = DIV_ROUND_UP_POW2(dir->i_size, PAGE_SIZE);
+ 	int err = 0;
+ 	bool initial = true;
+ 
+@@ -63,6 +65,17 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
+ 			break;
+ 		}
+ 
++		/* readahead blocks to enhance performance in large directory */
++		if (EROFS_I_SB(dir)->dir_ra_bytes) {
++			unsigned long idx = DIV_ROUND_UP(ctx->pos, PAGE_SIZE);
++			pgoff_t ra_pages = DIV_ROUND_UP(
++				EROFS_I_SB(dir)->dir_ra_bytes, PAGE_SIZE);
++
++			if (nr_pages - idx > 1 && !ra_has_index(ra, idx))
++				page_cache_sync_readahead(dir->i_mapping, ra,
++					f, idx, min(nr_pages - idx, ra_pages));
++		}
++
+ 		de = erofs_bread(&buf, dbstart, true);
+ 		if (IS_ERR(de)) {
+ 			erofs_err(sb, "failed to readdir of logical block %llu of nid %llu",
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 0d19bde8c094..4399b9332307 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -157,6 +157,7 @@ struct erofs_sb_info {
+ 	/* sysfs support */
+ 	struct kobject s_kobj;		/* /sys/fs/erofs/<devname> */
+ 	struct completion s_kobj_unregister;
++	erofs_off_t dir_ra_bytes;
+ 
+ 	/* fscache support */
+ 	struct fscache_volume *volume;
+@@ -238,6 +239,9 @@ EROFS_FEATURE_FUNCS(xattr_filter, compat, COMPAT_XATTR_FILTER)
+ #define EROFS_I_BL_XATTR_BIT	(BITS_PER_LONG - 1)
+ #define EROFS_I_BL_Z_BIT	(BITS_PER_LONG - 2)
+ 
++/* default readahead size of directory */
++#define EROFS_DIR_RA_BYTES	16384
++
+ struct erofs_inode {
+ 	erofs_nid_t nid;
+ 
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index e1e9f06e8342..38fc4813a896 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -715,6 +715,8 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	if (err)
+ 		return err;
+ 
++	sbi->dir_ra_bytes = EROFS_DIR_RA_BYTES;
++
+ 	erofs_info(sb, "mounted with root inode @ nid %llu.", sbi->root_nid);
+ 	return 0;
+ }
+diff --git a/fs/erofs/sysfs.c b/fs/erofs/sysfs.c
+index eed8797a193f..9d9f820a5621 100644
+--- a/fs/erofs/sysfs.c
++++ b/fs/erofs/sysfs.c
+@@ -65,12 +65,14 @@ EROFS_ATTR_FUNC(drop_caches, 0200);
+ #ifdef CONFIG_EROFS_FS_ZIP_ACCEL
+ EROFS_ATTR_FUNC(accel, 0644);
+ #endif
++EROFS_ATTR_RW_UI(dir_ra_bytes, erofs_sb_info);
+ 
+ static struct attribute *erofs_sb_attrs[] = {
+ #ifdef CONFIG_EROFS_FS_ZIP
+ 	ATTR_LIST(sync_decompress),
+ 	ATTR_LIST(drop_caches),
+ #endif
++	ATTR_LIST(dir_ra_bytes),
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(erofs_sb);
 -- 
-2.43.0
+2.49.0
 
 
