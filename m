@@ -1,355 +1,186 @@
-Return-Path: <linux-kernel+bounces-729901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0AE0B03D49
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:23:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8933DB03D4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:25:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4D3E3B68AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:23:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE8671734ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C249246BAC;
-	Mon, 14 Jul 2025 11:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01ECC246BA9;
+	Mon, 14 Jul 2025 11:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Or0BSdYV"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JXqzOilt"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809B71E47A8;
-	Mon, 14 Jul 2025 11:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C69B23BF9F
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752492225; cv=none; b=gmVQUkiMZ05DYIBvREWD1RKrB6PtJdmzvm4S5+DcKDUA0e5BohKOCMoqWNsIiM5Qcq/YVnXT12ewCe2bMobphCEAJeED6ZhaYUZuYZOx8y+WqzkEJoz3m6sgIqETGCHjqxYzy/aUGcddHrG7muTRtA2iHsHVKzf+OPCp7+UYjTA=
+	t=1752492293; cv=none; b=WZ+xCFKetmGdoyYmXOgAX6cH8TzBkGkWzKWc1AXlJohQBqkRlfSK8F4xgkVmdDaqmSwoD621kJPXC5GMqYaXzK5QbZQ78wkHMV1xjXPoMB/RdlUJen8bwRAUewJ32X58yw2NWgGO3xEE9Wgo+PTJYoTnPCLUYBC2INhnXQ7EWUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752492225; c=relaxed/simple;
-	bh=m3E70ApMJxywn92yP6/ojE3gOo2Vb63rGmxyh3SG3lw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oneY7VETAyHRDIeDhJDgu9/0Sbr5zIS8qI48OgxYDuFFUi1z+izqwcHBQxGwk6TC7wLPl2rMxF+08j+1vyru2VzF46kWI5/DY9g6IdSSK+HtDPIIRx2LRvdpJesvCJqj00TX1DFfZFvKWuMF2mjJagR3v8gWreiMxT3xs9JPWls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Or0BSdYV; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45526dec171so29017015e9.2;
-        Mon, 14 Jul 2025 04:23:43 -0700 (PDT)
+	s=arc-20240116; t=1752492293; c=relaxed/simple;
+	bh=iYT44WElK5mienuaO/HbMHbwDQsz8DHTN4KSmVPDCUY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K6OXD0E+ovE05H8dqWOKwCvofFLO5sVVtXPkSWu5QoQzlFlLLnBwMbWAZ9R7TsIaNOl+O4d86rowqLChgo2YCqoH+81Ta48uZQs7BaRszMscMrEl0dkmsSFZRSnWSDZvstJXF/SUh0tjY9lpzT3LLZKyRcthEeSfADAU8ke9T0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JXqzOilt; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae3b37207easo867111466b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 04:24:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752492222; x=1753097022; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZtasMFa0JRNmoRbnP05IbZgeIoacI2y5DYrNOA36/OE=;
-        b=Or0BSdYV8PcSA9SkjhPOJouwdVElUVHEpSIQuLtjlzz/7SElzKm4PF0MsMWZK6w9vE
-         ts3TF5b9i+1ksJnQZ4h9NyTjdALBlHTTCWSlFwHFjRwesAE79xNk1ZWm6nBSr7fJZGLY
-         dqI2gJ346x5/HalzJn/6mKIyihtP/j7OKEOQGzCByjBO4r1VjFPFX2K5wYMkJ9T9nVX7
-         EulSgg6eK74ZbK//oPvu4HAdjZG9A+qiWvk7djjJRpmmXZIoibK+4FqXqpY+TF2RgRfi
-         Ozo8cEZOiYGRe/G9gXST5NIdXwzwwjwQHEqX+uJOoVWSvsGEGmxwS/va/zTbyx7/m7wz
-         JdIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752492222; x=1753097022;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=suse.com; s=google; t=1752492289; x=1753097089; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZtasMFa0JRNmoRbnP05IbZgeIoacI2y5DYrNOA36/OE=;
-        b=nMMMWJIOorvgQ9SV8fn7ZXinkrxx2uNEZTFP5ejwAwY70B+lpbVhpgk6Oz1NWhPL5A
-         K3O0ioFVOfpg05+oFkULEEArvJZwPymRT+N8Ug22ItWaaGMZokDwp1fj7mEbvZgA4vVu
-         6hXu0a9ZWokMWml9BCVLSSXDiATVed14FImiKX8zQPqlRUTLBxs5XPuWJOwRgwJdlbi9
-         XXplj5CLlRma5mm0A3TZ7EuCiV8BxDJKsgYWKbhX00TJ6Dgwbrt/3oq+7UPRX7KtY18u
-         fpjWoLt0K9r8VPegWousV7HojAsPsIwCHT3UGcawctQwgqytRVw86hHpS3rtDJLQAHbr
-         g69w==
-X-Forwarded-Encrypted: i=1; AJvYcCUMnui/g3U4L+QNMfK35wZuZtxYAHfE+87D0ZDN5JLMfSgbRgZpD6jCcAb56A43xV7L6ivzBJN2DcY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrLayQX2KH/HJPQKJ344OG2FY8Z/CTpn3rY259Ef9urQ52OgRY
-	MPIs+pVLEkyw1nnQfTBaSWj+hgHboUVtBtqrw3NAK0fgoo7wZkhmRjKB
-X-Gm-Gg: ASbGnct9LsbjN0B2SQ7wt4TDf3UOKvgGRAHVwN50Z6WO8/7p3dLPBDbmj+bgKPkBWlw
-	9Q8XMrMTGbspIl8R7K8izMJocOcL57w/vzat8jbUVvc+73YJYmM88f/qhSrYgAPZNoBneuv6w+Y
-	sKVcCkvdDMFc0iFNUyhZ2X9iUU8/8W8jSs8G5BgWBECZ59jiPeKUCt8PMnxfTfFRyXIDTr4GHOh
-	nThvpy8VErdodOg3hsOEjf0BW77CuJUgzdMwjf9BsS93Q+vBol1fl6X+L1/r1jqXHTJ3qAutji0
-	2xKEstnRVkV+73IV+cgS7+WTqSzaEL8V10NHz4+3FvhJkOQ4Dgrw3Wm5+wAnfLCI6CdAeFw4fod
-	jj9AAv3DcrQEaXr3zsZ1+bZJhmznh7g==
-X-Google-Smtp-Source: AGHT+IFn8boaaSSg/ljEPLJH57JxYDicIgWuG7EKgxtplBHnbXMEt3BRc1Ogf7H6HI9rSZdy4g8/zQ==
-X-Received: by 2002:a05:6000:4025:b0:3b4:9721:2b2d with SMTP id ffacd0b85a97d-3b5f2db1723mr9680632f8f.9.1752492221386;
-        Mon, 14 Jul 2025 04:23:41 -0700 (PDT)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4560be645a9sm68611225e9.40.2025.07.14.04.23.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 04:23:41 -0700 (PDT)
-Message-ID: <d6364e8cf280acd7d4cce0c084ea3325bb2b7fde.camel@gmail.com>
-Subject: Re: [PATCH] iio: ABI: fix correctness of I and Q modifiers
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
- <jic23@kernel.org>,  Nuno =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Date: Mon, 14 Jul 2025 12:23:54 +0100
-In-Reply-To: <20250711-iio-abi-fix-i-and-q-modifiers-v1-1-35963c9c8c01@baylibre.com>
-References: 
-	<20250711-iio-abi-fix-i-and-q-modifiers-v1-1-35963c9c8c01@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+        bh=SJSCkH8SXulB8gzjVSl7ssENLumIeAgZx3lJnpZRwXA=;
+        b=JXqzOiltTEZYwe7MXvGM27DzyF8fO9VGbZK9k2Wed5CpYT/tqzQWXMyCY4xox9dtFT
+         FSfbPM7FvH+zHCOtWleAKcp2blpAf5g+n+0Ne0dMVNC2oBBF3jYt+M7Dicl14Q+Lo8ri
+         iNWZ2s7K6Y65SRG8pd6sneUxh+L2omVYa8xLoonF6iZGDc2VGvc2ijOTczw2N0Zyf9MX
+         kVA81ZD7p7rPAXVNdolxfmwBSM7rMiVEKWPnKeDA43nAQ0MyUjhN2Q9iZpp6lqlcX+pR
+         tfHnZQrh1n/bZelwNIFCDGSfOk0F9HviD9+Z7IKTyK90OyfWbJx+vpcazUSpiE740DKV
+         50jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752492289; x=1753097089;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SJSCkH8SXulB8gzjVSl7ssENLumIeAgZx3lJnpZRwXA=;
+        b=MPwl6jncI7oiGMNaL4Xgc6hUYUarhfij1SrSjoKk2BovpirtCMnjahKvm80hhmb/+s
+         EtOKF4ziQkNYhNcs7EG2gcADjTl70nDI3xx+TI7GcHNWuUrvJq+EHEHHioX92LrnfqWt
+         eNs1mCcHRdhaa39G1OhtweJ0wzjbjoQ8J3a8q4mGd+3PFE4DodTDNnoJGmEtEYZ/HGnt
+         0JFsdqJF3aJq1GKatwEffA9ApUxcntbwjkl1K7euNPfvRPPzIpmjUeHyfCFQycKCusir
+         qkwAPP4GiUCWjaoS3f7vawiR5BGvlXjufLk+dti3U8GktdOnDcj1qWBjEd9125MnFoVt
+         5NPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaFa0zrHxvx0K7tvb2syEG9LGNV2oS6sdlCpS4A0T8HoMTjm9LheOaOurzh8gm2ClfWDFrebYZK93zv1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVA58RcZwxylWuEnszgmk8NBFf5mEN0JxVDFyYAPfOoW6grRWu
+	rF85cO2yQU/84TkQWz85IgTMJEKM4q/v6krKMbk7tosPCo6geA6GiOyTTb6o0lHKdKs=
+X-Gm-Gg: ASbGncvoiU29rT5Zy910PxW/jHC/y+ayXk6mk3Ap68YHHzp6aSYTs98QuGmxY2bulBC
+	pfzZla9cDvxPwV/kLKoYtXHo3EuphfgTcS5exDz9TfDoE+7A695ULWqq2uqW3DYsZ+hjjM7vTT2
+	2tKWLee2W0Yb9OTzk1TkGCQQ3DmELpZVVVqjKZd2fb7cRf8Di3WhIvDGpM+Me0TchRawC3+uvMS
+	Y2VV/0rw5gmrSo9BN6Tw1IYTgGZKcbZ6lpHvdpjhH3e9Uuo3gOmWFfwmGTE0CdA3x10LgaMJVeh
+	PzH2+8Y1yO7ZcJZHfOGPqRJpLt+pcPEIysyH9XpD5qIZ/7p9foW/vlLqeA9vgHoN4fsRODkJX4Q
+	2ys5BlHz5LNi0f0jJiVXLHfg=
+X-Google-Smtp-Source: AGHT+IF3OdEhLF0fZL6hcJiMrcz+5YZmdSpgfvxDQhaRSMdHTHJDqIPKAzb8nI/Qck+gtO90Oq46SA==
+X-Received: by 2002:a17:907:1c13:b0:ad5:7bc4:84b5 with SMTP id a640c23a62f3a-ae6fc0f4e38mr1399528866b.57.1752492289444;
+        Mon, 14 Jul 2025 04:24:49 -0700 (PDT)
+Received: from [10.20.4.146] ([149.62.209.4])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8293fe7sm794929866b.123.2025.07.14.04.24.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 04:24:49 -0700 (PDT)
+Message-ID: <4acfa729-e0ad-4dc7-8958-ececfae8ab80@suse.com>
+Date: Mon, 14 Jul 2025 14:24:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] x86/kvm: Force legacy PCI hole as WB under SNP/TDX
+To: Binbin Wu <binbin.wu@linux.intel.com>, Jianxiong Gao <jxgao@google.com>,
+ Sean Christopherson <seanjc@google.com>
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Dionna Glaze <dionnaglaze@google.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ jgross@suse.com, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ingo Molnar <mingo@redhat.com>, pbonzini@redhat.com,
+ Peter Gonda <pgonda@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Tom Lendacky <thomas.lendacky@amd.com>,
+ Vitaly Kuznetsov <vkuznets@redhat.com>, x86@kernel.org,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>
+References: <CAMGD6P1Q9tK89AjaPXAVvVNKtD77-zkDr0Kmrm29+e=i+R+33w@mail.gmail.com>
+ <0dc2b8d2-6e1d-4530-898b-3cb4220b5d42@linux.intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <0dc2b8d2-6e1d-4530-898b-3cb4220b5d42@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2025-07-11 at 15:44 -0500, David Lechner wrote:
-> Update the IIO ABI documentation to reflect the actual usage of channels
-> with I and Q modifiers. These are currently only used in a few drivers:
->=20
-> frequency/admv1013 (kernel v5.17):
-> - in_altvoltageY-altvoltageZ_i_calibphase
-> - in_altvoltageY-altvoltageZ_q_calibphase
-> - in_altvoltageY_i_calibbias
-> - in_altvoltageY_q_calibbias
-> frequency/admv1014 (kernel v5.18):
-> - in_altvoltageY_i_phase
-> - in_altvoltageY_q_phase
-> - in_altvoltageY_i_offset
-> - in_altvoltageY_q_offset
-> - in_altvoltageY_i_calibscale_course
-> - in_altvoltageY_i_calibscale_fine
-> - in_altvoltageY_q_calibscale_course
-> - in_altvoltageY_q_calibscale_fine
-> frequency/adrf6780 (kernel v5.16):
-> - out_altvoltageY_i_phase
-> - out_altvoltageY_q_phase
->=20
-> There are no _raw or _scale attributes in use, so those are all removed.
-> There are no currentY attributes in use with these modifiers, so those
-> are also removed. All of the voltageY are changed to altvoltageY since
-> that is how they are actually used. None of these channels are used
-> with scan buffers, so all of those attributes are removed as well. And
-> the {in,out}_altvoltageY_{i,q}_phase attributes were missing so those
-> are added.
->=20
-> The differential channel names for admv1013 are fixed.
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
 
-LGTM
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+On 14.07.25 г. 12:06 ч., Binbin Wu wrote:
+> 
+> 
+> On 7/10/2025 12:54 AM, Jianxiong Gao wrote:
+>> I tested this patch on top of commit 8e690b817e38, however we are
+>> still experiencing the same failure.
+>>
+> I didn't reproduce the issue with QEMU.
+> After some comparison on how QEMU building the ACPI tables for HPET and 
+> TPM,
+> 
+> - For HPET, the HPET range is added as Operation Region:
+>      aml_append(dev,
+>          aml_operation_region("HPTM", AML_SYSTEM_MEMORY, 
+> aml_int(HPET_BASE),
+>                               HPET_LEN));
+> 
+> - For TPM, the range is added as 32-Bit Fixed Memory Range:
+>      if (TPM_IS_TIS_ISA(tpm_find())) {
+>          aml_append(crs, aml_memory32_fixed(TPM_TIS_ADDR_BASE,
+>                     TPM_TIS_ADDR_SIZE, AML_READ_WRITE));
+>      }
+> 
+> So, in KVM, the code patch of TPM is different from the trace for HPET 
+> in the
+> patch 
+> https://lore.kernel.org/kvm/20250201005048.657470-3-seanjc@google.com/,
+> HPET will trigger the code path acpi_os_map_iomem(), but TPM doesn't.
+> 
+> I tried to hack the code to map the region to WB first in tpm_tis driver to
+> trigger the error.
+> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+> index 9aa230a63616..62d303f88041 100644
+> --- a/drivers/char/tpm/tpm_tis.c
+> +++ b/drivers/char/tpm/tpm_tis.c
+> @@ -232,6 +232,7 @@ static int tpm_tis_init(struct device *dev, struct 
+> tpm_info *tpm_info)
+>          if (phy == NULL)
+>                  return -ENOMEM;
+> 
+> +       ioremap_cache(tpm_info->res.start, resource_size(&tpm_info->res));
+>          phy->iobase = devm_ioremap_resource(dev, &tpm_info->res);
+>          if (IS_ERR(phy->iobase))
+>                  return PTR_ERR(phy->iobase);
+> Then I got the same error
+> [ 4.606075] ioremap error for 0xfed40000-0xfed45000, requested 0x2, got 0x0
+> [ 4.607728] tpm_tis MSFT0101:00: probe with driver tpm_tis failed with 
+> error -12
 
-> Note: the admv1013 calibscale_{course,fine} attributes are already
-> documented in a device-specific file as they should be since we don't
-> want to make those standard attributes.
-> ---
-> =C2=A0Documentation/ABI/obsolete/sysfs-bus-iio=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 12 -------
-> =C2=A0Documentation/ABI/testing/sysfs-bus-iio=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 38 ++++-----------------
-> -
-> =C2=A0.../ABI/testing/sysfs-bus-iio-frequency-admv1013=C2=A0=C2=A0 |=C2=
-=A0 4 +--
-> =C2=A03 files changed, 8 insertions(+), 46 deletions(-)
->=20
-> diff --git a/Documentation/ABI/obsolete/sysfs-bus-iio
-> b/Documentation/ABI/obsolete/sysfs-bus-iio
-> index
-> b64394b0b374f2479bab69218f6ad17c6ac651f2..a13523561958b7faf85ac42d965f78b=
-99993
-> ffda 100644
-> --- a/Documentation/ABI/obsolete/sysfs-bus-iio
-> +++ b/Documentation/ABI/obsolete/sysfs-bus-iio
-> @@ -48,10 +48,6 @@
-> What:		/sys/.../iio:deviceX/scan_elements/in_timestamp_en
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_voltageY_supply_en
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_voltageY_en
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_voltageY-voltageZ_en
-> -What:		/sys/.../iio:deviceX/scan_elements/in_voltageY_i_en
-> -What:		/sys/.../iio:deviceX/scan_elements/in_voltageY_q_en
-> -What:		/sys/.../iio:deviceX/scan_elements/in_voltage_i_en
-> -What:		/sys/.../iio:deviceX/scan_elements/in_voltage_q_en
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_incli_x_en
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_incli_y_en
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_pressureY_en
-> @@ -73,10 +69,6 @@
-> What:		/sys/.../iio:deviceX/scan_elements/in_incli_type
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_voltageY_type
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_voltage_type
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_voltageY_supply_type
-> -What:		/sys/.../iio:deviceX/scan_elements/in_voltageY_i_type
-> -What:		/sys/.../iio:deviceX/scan_elements/in_voltageY_q_type
-> -What:		/sys/.../iio:deviceX/scan_elements/in_voltage_i_type
-> -What:		/sys/.../iio:deviceX/scan_elements/in_voltage_q_type
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_timestamp_type
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_pressureY_type
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_pressure_type
-> @@ -110,10 +102,6 @@ Description:
-> =C2=A0
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_voltageY_index
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_voltageY_supply_index
-> -What:		/sys/.../iio:deviceX/scan_elements/in_voltageY_i_index
-> -What:		/sys/.../iio:deviceX/scan_elements/in_voltageY_q_index
-> -What:		/sys/.../iio:deviceX/scan_elements/in_voltage_i_index
-> -What:		/sys/.../iio:deviceX/scan_elements/in_voltage_q_index
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_accel_x_index
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_accel_y_index
-> =C2=A0What:		/sys/.../iio:deviceX/scan_elements/in_accel_z_index
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio
-> b/Documentation/ABI/testing/sysfs-bus-iio
-> index
-> fcc40d211ddf388ad70f489177ba2fcebdb9f8dc..7e31b8cd49b32ea5b58bd99afc2e810=
-5314d
-> 7a39 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-iio
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio
-> @@ -141,8 +141,6 @@ Description:
-> =C2=A0
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_raw
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_supply_raw
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_i_raw
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_q_raw
-> =C2=A0KernelVersion:	2.6.35
-> =C2=A0Contact:	linux-iio@vger.kernel.org
-> =C2=A0Description:
-> @@ -417,18 +415,14 @@
-> What:		/sys/bus/iio/devices/iio:deviceX/in_accel_offset
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_accel_x_offset
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_accel_y_offset
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_accel_z_offset
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_altvoltage_q_offset
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_altvoltage_i_offset
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_offset
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_voltage_offset
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_i_offset
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_q_offset
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltage_q_offset
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltage_i_offset
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_offset
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_current_offset
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_i_offset
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_q_offset
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_current_q_offset
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_current_i_offset
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_tempY_offset
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_temp_offset
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_pressureY_offset
-> @@ -456,21 +450,15 @@ Description:
-> =C2=A0		to the _raw output.
-> =C2=A0
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_scale
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_i_scale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_q_scale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_supply_scale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_voltage_scale
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltage_i_scale
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltage_q_scale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_voltage-voltage_scale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/out_voltageY_scale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/out_altvoltageY_scale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_scale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_supply_scale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_current_scale
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_i_scale
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_q_scale
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_current_i_scale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_current_q_scale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_accel_scale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_accel_peak_scale
-> @@ -603,11 +591,7 @@
-> What:		/sys/bus/iio/devices/iio:deviceX/in_pressure_calibscale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_pressureY_calibscale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_proximity0_calibscale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_voltage_calibscale
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltage_i_calibscale
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltage_q_calibscale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_calibscale
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_i_calibscale
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_q_calibscale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_supply_calibsca=
-l
-> e
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_calibscale
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/out_voltageY_calibscale
-> @@ -829,7 +813,11 @@ Description:
-> =C2=A0		all the other channels, since it involves changing the VCO
-> =C2=A0		fundamental output frequency.
-> =C2=A0
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_altvoltageY_i_phase
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_altvoltageY_q_phase
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/out_altvoltageY_phase
-> +What:		/sys/bus/iio/devices/iio:deviceX/out_altvoltageY_i_phase
-> +What:		/sys/bus/iio/devices/iio:deviceX/out_altvoltageY_q_phase
-> =C2=A0KernelVersion:	3.4.0
-> =C2=A0Contact:	linux-iio@vger.kernel.org
-> =C2=A0Description:
-> @@ -1458,10 +1446,6 @@
-> What:		/sys/.../iio:deviceX/bufferY/in_timestamp_en
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_voltageY_supply_en
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_voltageY_en
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_voltageY-voltageZ_en
-> -What:		/sys/.../iio:deviceX/bufferY/in_voltageY_i_en
-> -What:		/sys/.../iio:deviceX/bufferY/in_voltageY_q_en
-> -What:		/sys/.../iio:deviceX/bufferY/in_voltage_i_en
-> -What:		/sys/.../iio:deviceX/bufferY/in_voltage_q_en
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_incli_x_en
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_incli_y_en
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_pressureY_en
-> @@ -1482,10 +1466,6 @@
-> What:		/sys/.../iio:deviceX/bufferY/in_incli_type
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_voltageY_type
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_voltage_type
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_voltageY_supply_type
-> -What:		/sys/.../iio:deviceX/bufferY/in_voltageY_i_type
-> -What:		/sys/.../iio:deviceX/bufferY/in_voltageY_q_type
-> -What:		/sys/.../iio:deviceX/bufferY/in_voltage_i_type
-> -What:		/sys/.../iio:deviceX/bufferY/in_voltage_q_type
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_timestamp_type
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_pressureY_type
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_pressure_type
-> @@ -1523,10 +1503,6 @@ Description:
-> =C2=A0
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_voltageY_index
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_voltageY_supply_index
-> -What:		/sys/.../iio:deviceX/bufferY/in_voltageY_i_index
-> -What:		/sys/.../iio:deviceX/bufferY/in_voltageY_q_index
-> -What:		/sys/.../iio:deviceX/bufferY/in_voltage_i_index
-> -What:		/sys/.../iio:deviceX/bufferY/in_voltage_q_index
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_accel_x_index
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_accel_y_index
-> =C2=A0What:		/sys/.../iio:deviceX/bufferY/in_accel_z_index
-> @@ -1716,8 +1692,6 @@ Description:
-> =C2=A0
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_raw
-> =C2=A0What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_supply_raw
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_i_raw
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_q_raw
-> =C2=A0KernelVersion:	3.17
-> =C2=A0Contact:	linux-iio@vger.kernel.org
-> =C2=A0Description:
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-frequency-admv1013
-> b/Documentation/ABI/testing/sysfs-bus-iio-frequency-admv1013
-> index
-> de1e323e5d4741177e58a8c4058fa00271ea3b29..9cf8cd0dd2dfd5b0b67b5dbf28bbdb6=
-bb4a4
-> ce7f 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-iio-frequency-admv1013
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio-frequency-admv1013
-> @@ -1,10 +1,10 @@
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_altvoltage0-
-> 1_i_calibphase
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_altvoltage0-
-> altvoltage1_i_calibphase
-> =C2=A0KernelVersion:
-> =C2=A0Contact:	linux-iio@vger.kernel.org
-> =C2=A0Description:
-> =C2=A0		Read/write unscaled value for the Local Oscillatior path
-> quadrature I phase shift.
-> =C2=A0
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_altvoltage0-
-> 1_q_calibphase
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_altvoltage0-
-> altvoltage1_q_calibphase
-> =C2=A0KernelVersion:
-> =C2=A0Contact:	linux-iio@vger.kernel.org
-> =C2=A0Description:
->=20
-> ---
-> base-commit: f8f559752d573a051a984adda8d2d1464f92f954
-> change-id: 20250711-iio-abi-fix-i-and-q-modifiers-b1e46ddd8d67
->=20
-> Best regards,
+
+The thing is we don't really want to get into the if (pcm != new_pcm) { 
+branch, because even if it succeeds there then the mapping will be 
+wrong, because we want accesses to the TPM to be uncached since that's 
+an iomem region, whereas this error shows that the new_pcm is WB.
+
+Also looking at memtype_reserve in it there is the following piece of code:
+
+if (x86_platform.is_untracked_pat_range(start, end)) {
+      7                 if (new_type) 
+
+      6                         *new_type = _PAGE_CACHE_MODE_WB; 
+
+      5                 return 0; 
+
+      4         }
+
+
+So if is_untracked_pat_range returns true then the cache mode will 
+always be WB.
+
+
+> 
+> And with Sean's patch set, the issue can be resolved.
+> 
+> I guess google's VMM has built different ACPI table for TPM.
+> But according to my experiment, the issue should be able to be fixed by 
+> this
+> patch set, though I am not sure whether it will be the final solution or 
+> not.
 
