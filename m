@@ -1,204 +1,131 @@
-Return-Path: <linux-kernel+bounces-730470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E1CB044FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:05:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD921B0450A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89DE2172F51
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:05:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E312216F390
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F317125F7A5;
-	Mon, 14 Jul 2025 16:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3344325E471;
+	Mon, 14 Jul 2025 16:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GfLm4AqL"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SodZEKdQ"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2812561D1
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 16:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2A51F94A
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 16:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752509108; cv=none; b=rqyK8bpckfOR/xjxTvFD+k7oKdvGYbCGzBZPKXcctgr6O5q57eu4zgtw7HDX8oyUcVbVNTQXOsSA0CPIHWT/XMeqT25ckdspUt1QnAw5IACCaN50mNL2A5QO2JNxuCQdAeWyUukWKOVhd2Kr5nNfYmvcONDDpzuoFS1dRrhLI/o=
+	t=1752509228; cv=none; b=m2N+tjIbw44P5PRf8zsb7it1g3mVD0NQqmfe5otyincJnFHOHWH3mI5sllcog6IM1RRjbEjso41qBNmfhaLhDsbH8FFtpJSXVWCGRkI2mnqGFC2WrIXkByQ12doPhyR/L+YoGKrstGB7jl/srSb5yXWlOkTAIV+68OHXde+ELbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752509108; c=relaxed/simple;
-	bh=JxBVcWXOzrC+pQuiz7DoBffwFHlGca0wC939BUa4mlM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YofmCkfB7+XjXjcftO+VzI4diwmVNhbrmGmCEN8NoEsxcC8KR+PiqcrflFjBrmTnNqmfQjdlTOEXdj6XvRYuPN0j4E02/16Y0hx5wp66kf2oIuzrSgImSi+1+Z8omWfLCl2AecR1lc51TPZ02gxxVWX7nIpA9DjGoazmziWJ7vM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GfLm4AqL; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-558f7472d64so4344845e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:05:06 -0700 (PDT)
+	s=arc-20240116; t=1752509228; c=relaxed/simple;
+	bh=1f5iDYyg7pFvvJ/f+ZcV3C9Q8NHQkvJ8PD/thQfBxmI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CwdLMvhABqAEVm/1yewCa511hkAtbThZmVqOiJY6NKUlJSIG02hbCBg3GNcqDq92xEkcR+y1AL99FFkE3sRjrLUdpOXbbSpYf+LuWRvo3oFvwN8Bnv0E5hxHG9P0LK1XbmcxmewPn5YKvkQXqwag4/Ca7ngY7MKSGXaPKlw9rJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SodZEKdQ; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3132c1942a1so7504373a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:07:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1752509104; x=1753113904; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CDahj8/rNyyq5vqGI+SiuXe8oo3E19xokCP/r0ki8Vk=;
-        b=GfLm4AqLdAYMmIdsZmkS3MDXEffjkrDEMVR6tZs3khBTyJrnQZFOnMFkHRU4TMgO8j
-         icyFMoP5wWkmp3DwfyvHad2DsNtWv1uvOX44ruTe57bvqIbKE6zl4XhNXoZhJdUe+nzX
-         ffCabjgfgaVrbomI80mnayTzEZrPsZnvhkAqE=
+        d=google.com; s=20230601; t=1752509227; x=1753114027; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rFzCpjpnT5pu45+vfCTcQUDn2FG9971MD381M8S0XxI=;
+        b=SodZEKdQE0GWHn6ffjUAxgXa1zKkxMA1lzlhe/sxrDzi4aqd/ZVOVjXst0EgW5jRxq
+         5O73Gh3cySRT6GRqoDihumtbSsuhOjrFbo4vfkuOzt5oisRThVHPk5UOnQVsEGQnVQ8H
+         CF1CUnHi5rVLY8/EZpAYfx/OgbGSpmEtU01UcEVUmG49U7JOcu5Zh2yGgmagntaAP/QK
+         dz+L84fwo0KgMREHFIkWm4KZqWewkKrZQvGBBU6mRGlNlZuPntGzZrKZ2Ypzj/qWjFLr
+         Pi4Er8+TpTjsn9xXFv77bEtf+vOY3h/A2sLEnxcAHqRfajyO+dFcWO8D280h2x69O9GQ
+         zMuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752509104; x=1753113904;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CDahj8/rNyyq5vqGI+SiuXe8oo3E19xokCP/r0ki8Vk=;
-        b=A74rQDVFXQPOjlpFcOxXuY8vub23yIy6Nrk8xMf8CxSxP3LMy2WcoC3GPgaCytRiJI
-         ULv5KVPEqv1SfqT39IM07/fSXBEV27eQv5swxHjCZGIzCj5WlwiY9wUGEJ1dRbnHmaZ7
-         WiHihLHj3vesCsteaSPF5EHBhMXJMOGuSLfKVy3J2l20SGxQrfRuHLvmc7UbCfgf/gMR
-         m9JH8xDEuCoBbvvHWwB4yRMs6fKatoxJOevjZHH11B2hbDEujL5/zIQUZFZ9qJfGYgI+
-         Fle+KpDtNj0o/IN2Vdfadyu+qYNvnPfEBcLG0wD552xcVTzT4q3Hav1HHty42KTdxqdU
-         xsSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVe/HHAPItvV90pMqOlpKWWaJNW6jDN3ngI/PDdjGYM1v/HvRaXczeFT76Br4vR2KSX3wM0Ha4lCSia/NU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy26cK68jvWaR7Il4WFaU1J/zN7B5MEY6kb8zpnQDr8IY5cvnY4
-	YluBmePcKhoojjX64fRPxXPp8oLseHi0kAUZwu99QvNGOQ8JHaTVa1p9QO5LFNhA3ShrzykWekc
-	EyQVzhg==
-X-Gm-Gg: ASbGncvb8GZMMb2xMZwuGJX3qHPwEdaCrn82UTUmus94nouDifsdCFrCeLMViDFYCFC
-	q2ixwBU38/tn0UffhNP3g+ZTecfqdNxZa9Btr7az0NboGIdJpskduSRNtuWrXj84kH3pNoe312g
-	jjWBxSa4FCd+d7VeLZB2GOaHIb6YvzBRtCgZyb64XYlPF5enP+2S3DQDR1vTj8Cu0rMhnmQoQs3
-	tAafmThF607X0c9+K2OLiyW1OJYOEG4x9+z52kNinzQgzp0jbiD1wqwKEmgp11S1LdP11oxyhPV
-	CU4ExWDLZG6VPCgz3K59PINJALCQRm6ZTcRuJoXS0R5x1zkp94deEUUV335NQwoV0ftuf0wbr7t
-	Ue22vIRb5wf3B4GBaQHXLcwBbWk5iPfCGfgqGEfStgP3VIgOY/sm+oHt54B6G
-X-Google-Smtp-Source: AGHT+IESV3hKxuoBIbtso7TpcBMx9zFTRjX2/cWsBnokhIpgY953AgGheXzfjA2A1eMNh4OBf37L+A==
-X-Received: by 2002:a05:6512:23f0:b0:553:2411:b4fc with SMTP id 2adb3069b0e04-55a1c45621amr44776e87.10.1752509104057;
-        Mon, 14 Jul 2025 09:05:04 -0700 (PDT)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c7bbd1esm1991336e87.42.2025.07.14.09.05.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 09:05:03 -0700 (PDT)
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-558f7472d64so4344813e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:05:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXrjyxfDERvbw060I91etBdPsaS6DSS9HiMZxR4TLb3DnIdNT76r1Xjm6/pYsnenw88L8S6c1t1OU55ejk=@vger.kernel.org
-X-Received: by 2002:a05:6512:3b9e:b0:553:2884:5fb3 with SMTP id
- 2adb3069b0e04-55a1c467663mr45477e87.12.1752509103021; Mon, 14 Jul 2025
- 09:05:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752509227; x=1753114027;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rFzCpjpnT5pu45+vfCTcQUDn2FG9971MD381M8S0XxI=;
+        b=ku9fElsn0TulhZHmXlsrt1mmNrrAKLF/UhcunkJBuEW/C6HAgS4+bK4rpzCzHk8VAG
+         7ys26WrikPK/eriLhszPbGF0WtfcvDMdULfn5yS8hyDj1A8qwcIkF9KbTfEXtJ88eZU8
+         c68SIv2/Qt/fD4AxMWgAlz2A/cUMDe8do30yjJatkkC/6YQzpz20Cznaww/ty9VmY/l6
+         EuiSup8pc9vC92j6hb4dXXE2nVeVQxrh1E/S5d76aR83GaOXyX0EKhHKX4PbJCLLVxXT
+         fy8rYhetAAoJG23rfMrH3CEJoDq8LXBDD9MI9Y8b0mv8AaLS61LbPwO5JAN0ualhEvkt
+         arhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXF47oeNo8nbWCjiqtMo2G4IBTIwKFnYTpXhjGR9LMbo5mj7mTP0gK3gJr+YT/0SF42rhxoOr44pZu3FM4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxnUcykLGDAeXgB2ZIqyIwwpdskq4KZGVLxKD9vz8pL45UR7rJ
+	PCQ46dSdn2/pymO05hZebh6tul10arMGFJ7iM0YJDbALgAGDE+02rp+ald+KGp3VngEIxT+v+uD
+	kuGiqpw==
+X-Google-Smtp-Source: AGHT+IHCYeit5S+pWxOmcaU6ohQE+H1ByFTKj1agLfLUmaNctvSV0h1usGNpUPqkAAVw0zRAi41zSasIzbc=
+X-Received: from pjq11.prod.google.com ([2002:a17:90b:560b:b0:2ff:84e6:b2bd])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4acf:b0:314:2a2e:9da9
+ with SMTP id 98e67ed59e1d1-31c4f5922b7mr18899944a91.25.1752509226579; Mon, 14
+ Jul 2025 09:07:06 -0700 (PDT)
+Date: Mon, 14 Jul 2025 09:07:05 -0700
+In-Reply-To: <c5c964cd-947e-43ff-9c79-18c1555aea8e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
- <20250605-uvc-orientation-v2-12-5710f9d030aa@chromium.org>
- <20250629180534.GN24912@pendragon.ideasonboard.com> <CANiDSCvcQ9MA+WBMQTpUzSxDLNiKpvaHsb-pDHTuiUQekgXvQA@mail.gmail.com>
- <CANiDSCtq0cr1LgFCgvdBtWcE3z1MWZEjc0e1wTH_BYPETC+s4Q@mail.gmail.com> <20250714143617.GK8243@pendragon.ideasonboard.com>
-In-Reply-To: <20250714143617.GK8243@pendragon.ideasonboard.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 14 Jul 2025 18:04:50 +0200
-X-Gmail-Original-Message-ID: <CANiDSCud66tcaODuVA1TreEQ3k8u4k-6ghzRQedTPFcT3j+9VQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxJPvBJAM528bNZN02Nhk1iZCMcKXmyshIGKqYKQPEJihw9v-tpgzFvPcg
-Message-ID: <CANiDSCud66tcaODuVA1TreEQ3k8u4k-6ghzRQedTPFcT3j+9VQ@mail.gmail.com>
-Subject: Re: [PATCH v2 12/12] media: uvcvideo: Do not create MC entities for
- virtual entities
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hdegoede@redhat.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250703062641.3247-1-yan.y.zhao@intel.com> <20250709232103.zwmufocd3l7sqk7y@amd.com>
+ <aG_pLUlHdYIZ2luh@google.com> <aHCUyKJ4I4BQnfFP@yzhao56-desk>
+ <20250711151719.goee7eqti4xyhsqr@amd.com> <aHEwT4X0RcfZzHlt@google.com>
+ <aHSgdEJpY/JF+a1f@yzhao56-desk> <aHUmcxuh0a6WfiVr@google.com> <c5c964cd-947e-43ff-9c79-18c1555aea8e@redhat.com>
+Message-ID: <aHUrKWaixqJyhsUU@google.com>
+Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from kvm_gmem_populate()
+From: Sean Christopherson <seanjc@google.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Yan Zhao <yan.y.zhao@intel.com>, Michael Roth <michael.roth@amd.com>, pbonzini@redhat.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com, 
+	kai.huang@intel.com, adrian.hunter@intel.com, reinette.chatre@intel.com, 
+	xiaoyao.li@intel.com, tony.lindgren@intel.com, binbin.wu@linux.intel.com, 
+	dmatlack@google.com, isaku.yamahata@intel.com, ira.weiny@intel.com, 
+	vannapurve@google.com, ackerleytng@google.com, tabba@google.com, 
+	chao.p.peng@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, 14 Jul 2025 at 16:36, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> On Tue, Jul 08, 2025 at 08:28:21AM +0200, Ricardo Ribalda wrote:
-> > On Tue, 1 Jul 2025 at 13:20, Ricardo Ribalda wrote:
-> > > On Sun, 29 Jun 2025 at 20:06, Laurent Pinchart wrote:
-> > > > Hi Ricardo,
-> > > >
-> > > > Thank you for the patch.
-> > > >
-> > > > I would use "software entities" and not "virtual entities" in the
-> > > > subject line and everywhere else, as those entities are not virtual.
-> > > >
-> > > > On Thu, Jun 05, 2025 at 05:53:05PM +0000, Ricardo Ribalda wrote:
-> > > > > Neither the GPIO nor the SWENTITY entities form part of the device
-> > > > > pipeline. We just create them to hold emulated uvc controls.
-> > > > >
-> > > > > When the device initializes, a warning is thrown by the v4l2 core:
-> > > > > uvcvideo 1-1:1.0: Entity type for entity SWENTITY was not initialized!
-> > > > >
-> > > > > There are no entity function that matches what we are doing here, and
-> > > > > it does not make to much sense to create a function for entities that
-> > > > > do not really exist.
-> > > >
-> > > > I don't agree with this. The purpose of reporting entities to userspace
-> > > > through the MC API is to let application enumerate what entities a
-> > > > device contains. Being able to enumerate software entities seems as
-> > > > useful as being able to enumerate hardware entities.
-> > >
-> > > What function shall we use in this case? Nothing here seems to match a
-> > > software entity
-> > > https://www.kernel.org/doc/html/latest/userspace-api/media/mediactl/media-types.html
-> > >
-> > > Any suggestion for name?
-> > > Shall we just live with the warning in dmesg?
-> >
-> >  I just realised that if/when we move to the control framework, the
-> > software entity will be gone.... So to avoid introducing a uAPI change
-> > that will be reverted later I think that we should keep this patch.
->
-> You know my opinion about moving to the control framework, so that's not
-> a very compelling argument :-)
+On Mon, Jul 14, 2025, David Hildenbrand wrote:
+> On 14.07.25 17:46, Sean Christopherson wrote:
+> > On Mon, Jul 14, 2025, Yan Zhao wrote:
+> > > On Fri, Jul 11, 2025 at 08:39:59AM -0700, Sean Christopherson wrote:
+> > > > The below could be tweaked to batch get_user_pages() into an array of pointers,
+> > > > but given that both SNP and TDX can only operate on one 4KiB page at a time, and
+> > > > that hugepage support doesn't yet exist, trying to super optimize the hugepage
+> > > > case straightaway doesn't seem like a pressing concern.
+> > > 
+> > > > static long __kvm_gmem_populate(struct kvm *kvm, struct kvm_memory_slot *slot,
+> > > > 				struct file *file, gfn_t gfn, void __user *src,
+> > > > 				kvm_gmem_populate_cb post_populate, void *opaque)
+> > > > {
+> > > > 	pgoff_t index = kvm_gmem_get_index(slot, gfn);
+> > > > 	struct page *src_page = NULL;
+> > > > 	bool is_prepared = false;
+> > > > 	struct folio *folio;
+> > > > 	int ret, max_order;
+> > > > 	kvm_pfn_t pfn;
+> > > > 
+> > > > 	if (src) {
+> > > > 		ret = get_user_pages((unsigned long)src, 1, 0, &src_page);
+> > > get_user_pages_fast()?
+> > > 
+> > > get_user_pages() can't pass the assertion of mmap_assert_locked().
+> > 
+> > Oh, I forgot get_user_pages() requires mmap_lock to already be held.  I would
+> > prefer to not use a fast variant, so that userspace isn't required to prefault
+> > (and pin?) the source.
+> > 
+> > So get_user_pages_unlocked()?
+> 
+> Yes, but likely we really want get_user_pages_fast(), which will fallback to
+> GUP-slow (+take the lock) in case it doesn't find what it needs in the page
+> tables.
+> 
+> get_user_pages_fast_only() would be the variant that doesn't fallback to
+> GUP-slow.
 
-Correct me if I am wrong, your opinion is that it will take too much
-work, not that it can't be done or that it is a bad idea.
-
-Will send a patch using MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER, but
-when/if we use the control framework, please let me drop the swentity.
-
-Thanks!
-
-
->
-> We could use MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER, as that's the
-> function already used by XUs, and the SWENTITY fulfills the same role as
-> XUs in some devices.
->
-> > > > > Do not create MC entities for them and pretend nothing happened here.
-> > > > >
-> > > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > > > ---
-> > > > >  drivers/media/usb/uvc/uvc_entity.c | 10 ++++++++++
-> > > > >  1 file changed, 10 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/media/usb/uvc/uvc_entity.c b/drivers/media/usb/uvc/uvc_entity.c
-> > > > > index d1a652ef35ec34801bd39a5124b834edf838a79e..2dbeb4ab0c4c8cc763ff2dcd2d836a50f3c6a040 100644
-> > > > > --- a/drivers/media/usb/uvc/uvc_entity.c
-> > > > > +++ b/drivers/media/usb/uvc/uvc_entity.c
-> > > > > @@ -72,6 +72,16 @@ static int uvc_mc_init_entity(struct uvc_video_chain *chain,
-> > > > >  {
-> > > > >       int ret;
-> > > > >
-> > > > > +     /*
-> > > > > +      * Do not initialize virtual entities, they do not really exist
-> > > > > +      * and are not connected to any other entities.
-> > > > > +      */
-> > > > > +     switch (UVC_ENTITY_TYPE(entity)) {
-> > > > > +     case UVC_EXT_GPIO_UNIT:
-> > > > > +     case UVC_SWENTITY_UNIT:
-> > > > > +             return 0;
-> > > > > +     }
-> > > > > +
-> > > > >       if (UVC_ENTITY_TYPE(entity) != UVC_TT_STREAMING) {
-> > > > >               u32 function;
-> > > > >
->
-> --
-> Regards,
->
-> Laurent Pinchart
-
-
-
--- 
-Ricardo Ribalda
+Doh, right, that's indeed what I want.
 
