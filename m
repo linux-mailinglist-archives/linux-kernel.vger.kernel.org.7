@@ -1,197 +1,136 @@
-Return-Path: <linux-kernel+bounces-730275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C06CAB04236
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:53:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCDE7B0423D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 892CF3AB1DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:52:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D69F116AE04
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F86125A2AE;
-	Mon, 14 Jul 2025 14:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4B2246BC5;
+	Mon, 14 Jul 2025 14:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IRagxvKU"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BCWGotm9"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB5D2594AA;
-	Mon, 14 Jul 2025 14:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC9F25393C
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752504787; cv=none; b=Ve717bSpwyNKjsQLbozXgQN2jPUn0iIgz+IVDxd/WpAZiERBDOmxfMFAIDmuaEe4XNkly6HgVfJBONf8ZR4B9et0y04dr3ht+8jGzHWlqFn3bRotUszLZnVbdlzqzGhDG1veDmBB3voEHbjS6UkqK6hn3eb0lgFLqM/QFVrGjE0=
+	t=1752504827; cv=none; b=I5PIRW19V7nhnp9TLEbiKhVsQj0Cu1OhG7H1lVN0Fbzrw5pYq+xCHl+/C3VqHwRvMDZpEuMeXcWI6ioDIYQkkLgudi1Y4wCCFsXuLKI8xTtiqqRjuyu7/o6IoYO6DOIPVyuIcQrHLSXIJAPKKf8bTR7vNkBC710dXEgdG5yEfOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752504787; c=relaxed/simple;
-	bh=Xi87K1n3E3/9eEQwywuM1RQ8TuihTQgkIKzC4BoyTEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jB128lIaz6HVjsXizx9mv3hZIoOfks3j2yhLBUjg9a/jxnbBgoXhPMxK9mAum2S4GPqIvvvKGuBb9CaemC5050PbLqremBVP78BaEeyzOAh8OW/ZqnNmvf4uSjoAf6inTwExrYqsnbIctk1DVY7Xg9NkUBhuuBOKajAnHxM7kG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IRagxvKU; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7dfd667e539so318344285a.2;
-        Mon, 14 Jul 2025 07:53:05 -0700 (PDT)
+	s=arc-20240116; t=1752504827; c=relaxed/simple;
+	bh=dmCH8nLpuvbR8C1ZmHGLNHxmpbcr2QrDgRWychPUdOQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MrXSRXBhieLRMXw1mS4Kouske+udFVwyX546tkk5K76EwaPRY5ud+M+XXka14Q4ph5uPlyyDN/JRgWcKheoct1tcV0HpXZ8oGiwMVDWIgmJ2LtC1/WxWeJQThYXYogvAhK/SX8SNFsyR/vslsyeAMbltL4Dh+Nk16663GIE1C50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BCWGotm9; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-311e2cc157bso3806400a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 07:53:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752504785; x=1753109585; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=6qnE2JyrBpFNh6aD4UkpO19Juwdqz7o/U9HH2b1z+dI=;
-        b=IRagxvKU+dRwnsfCgTfXzFTE4/vhWnsAS34nq0tWGH6X9d0kNXPJzi1p/oiKcgAxIX
-         1w5S37sAa6aYr1Avvddi3KPY+uzKEPQJsKnZLtO2TFV12/oPl6nWrxYhPfrxETlAPELg
-         VI2RFwWApEaii0Ud3VlPZaVej3Oh5sATpoIBkFfxYI7KGPM+CKrindwm+knv8EOGXNHs
-         eldjyuPLk4A9efZfDQIoSvH7m/uyshltD6q1bUHIIqbkGn59e1SJmu3s7X9b0tLQVIB4
-         zOwZ+GGOLnJjlnZoS/+b35+o1vlfBxr/cLhqHSp94J8jj/dEuLsDOr+UKB8f0FsXgdGz
-         3l8A==
+        d=google.com; s=20230601; t=1752504825; x=1753109625; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eRS7KVxRS0W+fx13p1N+pmmO7RXDwXvW5xZaAlDLlWI=;
+        b=BCWGotm9/T7J/RJNrsSOt+cioBpvjoHY+diYRA2Ta72r6UREQAoXwB/QksiVzjUx9i
+         y4ucwzyXG6sti0xwVP1GrTnDFSMK9ap76rkj23IwN39BaOKrazMIw80YAv1E5qvMABXw
+         aGWl5Yb7sLLjKOoUv/c4Ci4tbVnjt0KadVPEjFvg28Oq5DXwM0krD5qBErjtUCeQg/74
+         eoa9T2EdXI1s7ZyT9/AQMo32vBvW41dh/ukzSwcmEA+sIDaWcl0bcLj76neHwtN/LTVb
+         xRahxkFGekmVE7s+p1sh9qqEPAoYeOPWZVnbKR9hCfHE65bZ58sL8hcYK00e8Yu67RzG
+         tyNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752504785; x=1753109585;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6qnE2JyrBpFNh6aD4UkpO19Juwdqz7o/U9HH2b1z+dI=;
-        b=FEKW8lGmxkW/c4amv/o4Ldqh/weuBVLQXe4EvguLRdfIr/DNeeiUAQ+J5i8X9QtVlb
-         hiGSoRKHLQW++KAHegJd+22FWaraiviWF3WpFir19TdzQSyW2vo6ZtBG8j+zXVJq+4vW
-         /wxuVud+wf7Oae9hOXr00ASYNsSu4oxg/pleShzBJTnMQTqz6CkMC8OxKjhqwLMya11R
-         6qRgN4el7iiGlsSk7e+A4A+ZX6CpVXnWerTPYBMKK/xTVyBjry8lUTM45mxmQE5B9QKc
-         9pj/SIvDif0wX+16NiMnLpzfUvPgYUDaJNgqFkA1MzPPAYysG43RK5z/8hzSESWG8r4Z
-         yyRg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4oHSF7o9CiujoHq2IBL+PKWjHw85uURzWY/TqPOquFRcZM7py4m9KLkhTBSyFnb3MwBY0ZRWMSv31IJhHdV8=@vger.kernel.org, AJvYcCVoksUcZTF5RhzltRIQd7Rseme1GqNEIqJymXlE/0EuSyaQLdPcj1meSv0Or8T91fh1PKTOEYOdn2cPzL/N@vger.kernel.org, AJvYcCXbaJ526yJuIkVh3fitWeVOzabropsYymANCvn1j2jeT8q3Z0n0/lo2Vp3AYfuZ1nLC7KZvFURa22xQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX560tqRcAVwFvmMPuuaZYx7bstrzxlLnkI5Pjk/iotxpmrk/L
-	TLnVsOFEGl/03KZXhZJ7+ptbvcAPwvIwAkvo37GExnaDAr5Lav7ysGpY
-X-Gm-Gg: ASbGncui3m+NQM30EANhxv8JGqxOUPzH7wO2lec7FW20kfq0BW+xtn9mzZZPtWBhqGS
-	mUWlUPKotYe1ftbBYGXsqOTC+Ug8v/gZh2lXyJkl7P1lKBFLrYHqsZAMeFLDP2rw5ECjG0LVOdl
-	DuADh1Pq6ir7pdHusFxa/E1f4JeIvUt0lX0qd64Jry0AhKOqpT1UnMZL9dS2j08L035yogwQPC0
-	7WZ4yohGcyRPhqz4HwHZjkCJhmOA5wCwOgdeT61wTj049K4SIy5OhdB96dQ6p2MghonRunDJ/kP
-	uRCzGNNZkQQFF/31FcdajBQJQslo6S+LrSFrssGLVR9ffvWnIuT+YMdlQXfD+hLAoxiLWFq0r3K
-	eKh1Gut+7qY7DBZvH2320MFl5l9yCbI+wbEbMfOprUc4G2iNi0lSi6rkZ3i153UDKX5YH34Ps0H
-	HziiW/9NJ+0zxm
-X-Google-Smtp-Source: AGHT+IGypP/MybZIZ90NbN1IElm2htDIEQjwnBX1LF2MTvz7nWTRAhC3SjCrLmKlr166NWslnLCaUA==
-X-Received: by 2002:a05:620a:40cc:b0:7e2:3a27:a117 with SMTP id af79cd13be357-7e23a27a4d6mr866347785a.55.1752504784611;
-        Mon, 14 Jul 2025 07:53:04 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e332a794c3sm41568185a.10.2025.07.14.07.53.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 07:53:04 -0700 (PDT)
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 6B252F40066;
-	Mon, 14 Jul 2025 10:53:03 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Mon, 14 Jul 2025 10:53:03 -0400
-X-ME-Sender: <xms:zxl1aOuAotqCyuRmLoGEdbhMkdl8aLt6jHiBOrbXuFpeznCkxfR3rQ>
-    <xme:zxl1aEvnVbdWlAjpjOdQlaV6MyHbzHmaErNVa4l_BMs8ymIgojh_YwJHw3yRmKRpF
-    KNA90czcWDs346V5Q>
-X-ME-Received: <xmr:zxl1aCowqL3TpmwqvoZqBx-iY4ltN_LVzHO_jw8FI0tDTtNtqlZYywfZyQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehvddvgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
-    gvrhhnpedtieevkeejffffueehleethedtjeduieekgffhveeugeejjeeihfekvdegvdev
-    gfenucffohhmrghinhepsggvlhhofidrshgrfhgvthihnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhh
-    phgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunh
-    drfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphht
-    thhopedvkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhighhuvghlrdhojh
-    gvuggrrdhsrghnughonhhishesghhmrghilhdrtghomhdprhgtphhtthhopehlohhsshhi
-    nheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhig
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhkmhhmsehlihhsthhsrd
-    hlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehg
-    rghrhiesghgrrhihghhuohdrnhgvth
-X-ME-Proxy: <xmx:zxl1aAMoVZOSJsH5MKPLSnVoiQEIatbmb3aNLMoNXig-JJnkiPkD7w>
-    <xmx:zxl1aAk_RDbPnpZE-0AIOWtxvASesWcpQeOIbI372bBB4Ac6g2BzsA>
-    <xmx:zxl1aKtUYoJlOcATb67oqfITdqaNY7l_BMcW6KPaNXq4Ha5fYafZ5w>
-    <xmx:zxl1aPmOm6FYkArE_XREcCUknIo2lB7rB9STHOBwqK7FdzIt4A25Lw>
-    <xmx:zxl1aDn0EUhwvjQ906NDPDBfpr3v4TCYHigKgfSyBfkuHRWbFbcGxNhM>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 14 Jul 2025 10:53:02 -0400 (EDT)
-Date: Mon, 14 Jul 2025 07:53:01 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, lkmm@lists.linux.dev,
-	linux-arch@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,	Lyude Paul <lyude@redhat.com>,
- Ingo Molnar <mingo@kernel.org>,	Mitchell Levy <levymitchell0@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v7 4/9] rust: sync: atomic: Add generic atomics
-Message-ID: <aHUZzdbUSkN_4v2G@Mac.home>
-References: <20250714053656.66712-1-boqun.feng@gmail.com>
- <20250714053656.66712-5-boqun.feng@gmail.com>
- <DBBPI9ZJVO64.3A83G118BMVLI@kernel.org>
- <aHUSgXW9A6LzjBIS@Mac.home>
- <CANiq72mFa0bM_DZV2tHViU0SKqNG_tX6AxBWz4AQ=2UmBrt=nQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1752504825; x=1753109625;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eRS7KVxRS0W+fx13p1N+pmmO7RXDwXvW5xZaAlDLlWI=;
+        b=OWgoKwSQ0ZsnA+ybC0gEVVZ+xuIvA1QVuRnNQw3VvP3zJSigIhmx6gP6DBXD7luGE/
+         ihV87yDTI7gqfcnr5vufYjR7pqGNcp/jkSDErWxrQDvwy7vET13bgI3XChBqtnWcGhIV
+         b2PX8wPD7t79vK6CtNd0peWTpHwGxV1NTSCviCjx862hZO/MS5j/zte6mkeXx5pdKycr
+         8BEhTrTKCgAH86ytziP81/sD2dWROnnnGcB1wk8QebI++Ro/ZhvHTco8zuA1Yl/zEFRt
+         b08UAiuWEosgocYma0tG9f81Y4XV/BqkNXXWN9KW2DUm9LVqqniUghjRRTRi9bKdVCoE
+         fKFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqoivAJCOjBBu5zqCclNBGD26+gCpOSLfBa3Sx24/V9wXSBhZUKbYN7m5ZPKmJP4WJ+xkDtymUcqKMvL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybP1/WrmvQ5LQbOe275qsJjCm6FXXeJSjplednFdCEPOl+n9FX
+	z1m4ffUHcN4Xc9+rHgTuyAZhcsPBEkaPyAbGHsOWwwqaA7jpr+Whpct5/UZhztC9lvaS/p5OOEZ
+	koogcrbV4IEHfTnpW+Y8bNy/xzHCAJTFmNb9+h2yx
+X-Gm-Gg: ASbGncvA3EofkyNlB10hJ+wriXAzhHR68aDwrrCvk9rqMLTYtEaWqk2kqy8kDYf7kA3
+	kWX/fLVwdvHnudtVJjSvcH3RvlHlK/qse5ShyFBL/xqa+aIUKx7IOgeLE4jk77/sgfSSAUTc19L
+	tVyJAWPOtepY2qUgf55H1PMFEM/tNfJ2lkv7Fo2nS1GTeDq+CaHXDirkfrHPZWOcORFF/qtch//
+	a8Ap/Q4HbYafDovCTBPrVPw4EtJX6UsLOxvfA==
+X-Google-Smtp-Source: AGHT+IEmImtWKne0fXh/9EoZheSYc9ViDZzryJZ8eda866NF14PYMINb7G149CT3MobK1jQkkMisymqVEAyEM83YC5M=
+X-Received: by 2002:a17:90b:54cd:b0:313:d6d9:8891 with SMTP id
+ 98e67ed59e1d1-31c4cca42e0mr19743605a91.3.1752504824807; Mon, 14 Jul 2025
+ 07:53:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72mFa0bM_DZV2tHViU0SKqNG_tX6AxBWz4AQ=2UmBrt=nQ@mail.gmail.com>
+References: <20250714110229.141221-1-krakow20@gmail.com> <20250714144837.GA2996266@joelnvbox>
+In-Reply-To: <20250714144837.GA2996266@joelnvbox>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 14 Jul 2025 16:53:28 +0200
+X-Gm-Features: Ac12FXyf7w4PNNBTUqz17dhSkzaXwGCVMM7xX5_IyWW7AMetiwQzySVecf0ZfGo
+Message-ID: <CAH5fLgiFOFm+Lh0K_PDZ2eCFa0EAOMk9GRh0Cgh2sm8fay=qnA@mail.gmail.com>
+Subject: Re: [PATCH v2] gpu: nova-core: vbios: change PmuLookupTableEntry to
+ relax alignment
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Rhys Lloyd <krakow20@gmail.com>, acourbot@nvidia.com, dakr@kernel.org, 
+	rust-for-linux@vger.kernel.org, airlied@gmail.com, simona@ffwll.ch, 
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 14, 2025 at 04:34:39PM +0200, Miguel Ojeda wrote:
-> On Mon, Jul 14, 2025 at 4:22 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+On Mon, Jul 14, 2025 at 4:49=E2=80=AFPM Joel Fernandes <joelagnelf@nvidia.c=
+om> wrote:
+>
+> Hello, Rhys,
+>
+> On Mon, Jul 14, 2025 at 04:02:23AM -0700, Rhys Lloyd wrote:
+> > Instead of the data field containing a u32 and changing the alignment,
+> > change data to [u8; 4] and convert to u32 with a helper function.
+> > Removes another magic number by making the struct the same size as
+> > the data it needs to read, allowing the use of
+> > `size_of::<PmuLookupTableEntry>()`
 > >
-> > Hmm.. why? This is the further information about what the above
-> > "Examples" section just mentioned?
-> 
-> I think Benno may be trying to point out is may be confusing what
-> "this" may be referring to, i.e. is it referring to something concrete
-> about the example, or about `from_ptr` as a whole / in all cases?
-> 
+> > Signed-off-by: Rhys Lloyd <krakow20@gmail.com>
+> > ---
+> > Changes in v2:
+> > - get_data helper function renamed to data
+> >
+> > ---
+> >  drivers/gpu/nova-core/vbios.rs | 13 +++++++++----
+> >  1 file changed, 9 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/gpu/nova-core/vbios.rs b/drivers/gpu/nova-core/vbi=
+os.rs
+> > index 5b5d9f38cbb3..339c66e63c7e 100644
+> > --- a/drivers/gpu/nova-core/vbios.rs
+> > +++ b/drivers/gpu/nova-core/vbios.rs
+> > @@ -896,21 +896,26 @@ fn try_from(base: BiosImageBase) -> Result<Self> =
+{
+> >  struct PmuLookupTableEntry {
+> >      application_id: u8,
+> >      target_id: u8,
+> > -    data: u32,
+> > +    data: [u8; 4],
+>
+> Instead of this, could we make the struct as #repr[(C, packed)] or does t=
+hat
+> not work for some reason?
 
-Ok, how about I do this:
+It would probably, but packed structs aren't very nice to work with
+because Rust has to be really careful to never generate a reference to
+unaligned fields.
 
-diff --git a/rust/kernel/sync/atomic/generic.rs b/rust/kernel/sync/atomic/generic.rs
-index 26d9ff3f7c35..e40010394536 100644
---- a/rust/kernel/sync/atomic/generic.rs
-+++ b/rust/kernel/sync/atomic/generic.rs
-@@ -135,6 +135,9 @@ pub const fn new(v: T) -> Self {
-
-     /// Creates a reference to an atomic `T` from a pointer of `T`.
-     ///
-+    /// This usually is used when when communicating with C side or manipulating a C struct, see
-+    /// examples below.
-+    ///
-     /// # Safety
-     ///
-     /// - `ptr` is aligned to `align_of::<T>()`.
-@@ -185,9 +188,6 @@ pub const fn new(v: T) -> Self {
-     /// // no data race.
-     /// unsafe { Atomic::from_ptr(foo_a_ptr) }.store(2, Release);
-     /// ```
--    ///
--    /// However, this should be only used when communicating with C side or manipulating a C
--    /// struct.
-     pub unsafe fn from_ptr<'a>(ptr: *mut T) -> &'a Self
-     where
-         T: Sync,
-
-?
-
-Regards,
-Boqun
-
-> Cheers,
-> Miguel
+Alice
 
