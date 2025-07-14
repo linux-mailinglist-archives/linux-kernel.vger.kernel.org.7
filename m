@@ -1,204 +1,211 @@
-Return-Path: <linux-kernel+bounces-729865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE4FB03C9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:54:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF260B03CA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 12:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51987162A74
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:54:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEAC21887B1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EBE24729A;
-	Mon, 14 Jul 2025 10:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fetCA905017.onmicrosoft.com header.i=@fetCA905017.onmicrosoft.com header.b="I44LpH3d"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023127.outbound.protection.outlook.com [40.107.44.127])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEE624502D;
-	Mon, 14 Jul 2025 10:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.127
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752490336; cv=fail; b=Eu7m8P5zH4hZs8XP579mgJJ+aHDuluy5kUwXHmnrgQgPSXnXq+FJaNyxxL8aHc5RrtrP2PTv3z1jgenr3+xaFnke1YQASV4TvV02U2SyG6OAh2bHRsQOzyDRW94sj5RPQupywtEorDxSMH9pY4sjftAFCsstYecwpCl3qQ2QJNU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752490336; c=relaxed/simple;
-	bh=w24qVf2FrvvmsSC3bAhBxTY7XcwpKm8W1mSuJ0bkDxc=;
-	h=Message-ID:Date:From:Subject:To:Cc:Content-Type:MIME-Version; b=Jc6wXzxvMznrZEOrOnRYRpSanpJMozVX3tSQ8uIYpseTLugD84MfvELacikV7AMJBl9TSNY9xHT6aNPuYbjgjp8c1NbP0mVIhZhRF7uc8M4Az1wqlb4fgOt0AMIu1617UGAuO46cnsNV62Ln3/VFQ4BE19lEhMkLf7EJECT+2aQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=portwell.com.tw; spf=pass smtp.mailfrom=portwell.com.tw; dkim=pass (2048-bit key) header.d=fetCA905017.onmicrosoft.com header.i=@fetCA905017.onmicrosoft.com header.b=I44LpH3d; arc=fail smtp.client-ip=40.107.44.127
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=portwell.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=portwell.com.tw
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aWP2Bj3W/TaT2gwEyMOSDQ2md5X37wAftKq1z/YYOXr7phM8ZGjdvDLz9Ub4coG/61TXAlasKCp7RLunwZT7lKGi7RmbWF0nA9rtaGixKAgww8pkX0yuc3JpRNutwt5e1jVB4j6cvgROzkWoNy8ZhT/FNMOEv8h8dGkGSpkA9yJ0lgi2RWGiEiM9XoyPmMQWe5AH9JH1VfmtJbBJd807Wse+Mn0TXQCMr8A4ojOHAy059dmif23/XOhwScM+U4rij+UYuWW0+SA++pmA2nL6wnlGwNbBrV8hR3+5h33Th2EDUkT7mq9qBgOQ9fiqRj7tqGJZWxLPNWTOBjuKznabQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JSgCHhds5Yn8cxsZqCRrXw+3++IH9zJdZGX16cQl38U=;
- b=r4nvoizgJZTZ4WEZqUmITLVLEfFCmI12yjBeffETv/FT/4xduNRZdbeBFczMgyeYbuw3T0kmQ3znuqbEn6eQP4rHWvBtLgKKkFPnbEz9zWZKetdmd599A4lvVdJE7hmMTJIObDhSxugn5nLkYaTOWKQJ965yAB2DBjJvWMEInUBXdngyEFQnLF5uWsIOHo2hUcQT1qmIEZFtopjrQESU23fIX7vvobtgV94ibHA0+DmftKt61PBd3u9Nx6CKuGKbpSyoxw1c3TPVSPMrE3x6HXG1udZGvijdENSvNYMgOLtbyfTLDfxCXjKkiIsJ8occ5CF4F+DUv7djmsxNubLwCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=portwell.com.tw; dmarc=pass action=none
- header.from=portwell.com.tw; dkim=pass header.d=portwell.com.tw; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fetCA905017.onmicrosoft.com; s=selector1-fetCA905017-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JSgCHhds5Yn8cxsZqCRrXw+3++IH9zJdZGX16cQl38U=;
- b=I44LpH3dSxew2t2DiiPOSKVSQ2XQXD+I2ID96kdQCokqeApq9ASuenDPZcom0QnOuK5Q/si5uZ2O753NGXhLghEkEk3F7gpIdtqJMcDj6kyDemyW3EI681MIvIu33sCW5PeL9GghNcFfjG3oHE+LxdcafKpDDrpJm4d7+DWbHHtrliP7JoXArrsVGvPnKSNr0kUvUyrD/yYokpSLxuIttYXN1/CYD1tt6NxMuvfxvwzQwpGneYlM/DtY8ptuenBDXiUWC+Qt2C0QbHfEfjBV94HfPSjrmkrnCiBcK5G3hX7nF4ZelkfPEi0l1f5z+LzuntyGv4kKI7Ad6hPmLMZ7BQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=portwell.com.tw;
-Received: from KL1PR06MB6395.apcprd06.prod.outlook.com (2603:1096:820:e7::10)
- by JH0PR06MB7293.apcprd06.prod.outlook.com (2603:1096:990:a4::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Mon, 14 Jul
- 2025 10:52:09 +0000
-Received: from KL1PR06MB6395.apcprd06.prod.outlook.com
- ([fe80::9235:5570:71b3:224]) by KL1PR06MB6395.apcprd06.prod.outlook.com
- ([fe80::9235:5570:71b3:224%4]) with mapi id 15.20.8922.028; Mon, 14 Jul 2025
- 10:52:09 +0000
-Message-ID: <a07d8764-ee23-4d21-a7b5-121cb8a576b9@portwell.com.tw>
-Date: Mon, 14 Jul 2025 18:52:05 +0800
-User-Agent: Mozilla Thunderbird
-From: Yen-Chi Huang <jesse.huang@portwell.com.tw>
-Subject: [PATCH v2 0/2] platform/x86: portwell-ec: Add watchdog suspend/resume
- and hwmon
-To: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, jdelvare@suse.com,
- linux@roeck-us.net, wim@linux-watchdog.org
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-watchdog@vger.kernel.org,
- jay.chen@canonical.com, jesse.huang@portwell.com.tw
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TPYP295CA0010.TWNP295.PROD.OUTLOOK.COM
- (2603:1096:7d0:9::19) To KL1PR06MB6395.apcprd06.prod.outlook.com
- (2603:1096:820:e7::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8332E1FDA94;
+	Mon, 14 Jul 2025 10:52:49 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEF81DD0C7;
+	Mon, 14 Jul 2025 10:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752490369; cv=none; b=glktZQhF4e+9oZ5c8TlIM/WBZASZ7H2ham1xvt+H5HrT/kUBWSV7lRNt/tpFVDUnZvUMA2cgoMXI/5+gvvTHVJMs3ttd2t5jmHtTlCvr+BLtceZ/vVCgtPGKc1mi/ygrg3seijaS/PXZZ7UkhPQWaoe4TEK2sdyaALKJQspMwzI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752490369; c=relaxed/simple;
+	bh=8XPSpfcnpA5YhqSdHS4f5gHFRWQZ1wZOSNp8AjlFrcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uId4sFbLAEm6rLK7zXUi9LUa2ZTb0FjyOB5PYgquQtfZXdHRThcmV3xIVj88j0jUOOCygZnFh3TDvEydAt8zH/YhusCpvMM5sEpds0s7RJ2ecth3gk7xfDe+dHs0yM88wVJRh7BYhzg/xYT+DRQkGrK0kIkhUCH8kLtLCk5QbYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 687071BC0;
+	Mon, 14 Jul 2025 03:52:36 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F6DE3F694;
+	Mon, 14 Jul 2025 03:52:45 -0700 (PDT)
+Date: Mon, 14 Jul 2025 11:52:43 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, ankita@nvidia.com,
+	bwicaksono@nvidia.com, rmk+kernel@armlinux.org.uk,
+	catalin.marinas@arm.com, linux-serial@vger.kernel.org,
+	rmikey@meta.com, linux-arm-kernel@lists.infradead.org,
+	usamaarif642@gmail.com, linux-kernel@vger.kernel.org,
+	paulmck@kernel.org
+Subject: Re: arm64: csdlock at early boot due to slow serial (?)
+Message-ID: <20250714105243.GD1093654@e132581.arm.com>
+References: <aGVn/SnOvwWewkOW@gmail.com>
+ <aGZbYmV26kUKJwu_@J2N7QTR9R3>
+ <aGaQBghdAl8VGWmV@gmail.com>
+ <aGawTd8N2i8MDCmL@J2N7QTR9R3>
+ <aG0kYjl/sphGqd4r@gmail.com>
+ <juiog3337iozva23zpf4apdydegj4z7jibqykfvcgnkabemw4w@z5g5hhwrqr2w>
+ <20250710133557.GA1093654@e132581.arm.com>
+ <jlhgtwkeezoca34wbqipvsgr4muxov5wmgrswleo2k7zqitzfr@4ngriyb2udra>
+ <20250711095023.GB1093654@e132581.arm.com>
+ <cno3lsprrz36gqu27omvwrw27d2ubqtshac3cahfgkhcm2rla7@bpnulcmsyx2u>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB6395:EE_|JH0PR06MB7293:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9c7aa7bf-4ea5-4c25-c846-08ddc2c47b06
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T1BIOS9zOUxOQkVaTytzWm1VVHR1anJTQUNRbXA1eDZCS1lHVDR1SE4yd0Nn?=
- =?utf-8?B?TUNVZnNjT0hhN2FFc1FkQUdWdzVhK1UzZlkrYnpUMmlEU0svWjB6K0dGeHlK?=
- =?utf-8?B?VEIzSnlzK3RPSll3U0hhbGZlK3lQK3hCTGQ4R2xpczNZNnc4dFk2L3lqS0tX?=
- =?utf-8?B?VVhrY05wTmNLM09yUEFkSEIxZGJjYjdlM1RuNGwyV2tkL3Rqa05EWGlpQkJ0?=
- =?utf-8?B?NlNuOWo1cnQ5OUQxSkdwZVB5dEhtS0dabzhIYlZVdjNpcmtML1pUbC9JQzh4?=
- =?utf-8?B?dVp5T1l0Q2tOV3YwdEhiV2xYNmNPRGhsbnRFa09NUTlhRlZZUHNJVVpSS0ZD?=
- =?utf-8?B?ZzBSYzlKektqVzJsSzBWVHkrU0ZPQzFZUHNoTUZWenVLK0ROajVaZ2V1aEVw?=
- =?utf-8?B?b2NEd1M2aGJhc203SlJQZTg3WDVwL3RWV1VCejFaZkUyNXFkam83b0hEYjBS?=
- =?utf-8?B?YTJvZWllcUxBa0wrSUxEYVVtU0FqY2g1ZXMrSDlIMDVsU2RRYkpMOTNTeXI1?=
- =?utf-8?B?SzR0b2JiWTM3WHVQckIvTi9SM3JrSFFUdzRRazgzd21LR2hWL0pZWWRoNm93?=
- =?utf-8?B?WXRqZFFQbzdpL0t6QmRFSlJRSHdRbTcvTytBRWhySTR1dDhrWjJ6YTdhbDZ5?=
- =?utf-8?B?OS9sd3JqSlJpUTBXYlFyZGtiL09wdFpaMldXbGdwNUZoTjBZRHVvKy9zSWt4?=
- =?utf-8?B?ZGMzVVNnOE5vMS9LV0xSWnB6Um1YOTZCY2NJbXc5cXlkUVcrc2xGc1Zab1Nt?=
- =?utf-8?B?dzFTMFpubE90M3dMWXh1dVBFS2tyYUNsbDh1bWJFK2M2TUh4R0ZocS93L3k3?=
- =?utf-8?B?Y3FLMERqdWkrbWoxSE01aWt6c1JoVmpBa0l3Zjd1YmxjTXcvQ3VFTXdndnI0?=
- =?utf-8?B?ekppWkZUSjV0T2E3NVMxcVF0dTI3RThjVktMN0ZidDZXaENWVXFsNFZGeUlK?=
- =?utf-8?B?c1huRkduQjVsWHVpSFEwU3h0WTJ0bG9iR2cwRjJabldYR3Y3TWVNSXNTaThu?=
- =?utf-8?B?bzM2dFcvTmplOXRnWXh4M1o3cnNxY2RVa0pXR2haVVo4ZDcxVlVXbzlVN3pn?=
- =?utf-8?B?akYwTmtFbEE0cUNlNHRKMy9EWHFia0VYM1J2SGhIdXRrMnRVcSs4bEhaK1JY?=
- =?utf-8?B?eUkxLy9CTjRweERLV2tIS3pPdVpucE5lVDNwQXk2NXI1YVYvT0FBUjB4b3VF?=
- =?utf-8?B?QkRJYUw3TGJuOGIrTFo1SnQzYzBOc2dxY1BlNFBZZWFuUjYwOVA0TWxkUktE?=
- =?utf-8?B?TkV5YnRodGgrVGFDR1BRQWFKcW1qNjJxVC9kRU5Na0JKc1BkeEtSS0FOVDEv?=
- =?utf-8?B?Tmt0VnVOdkhESHhENXlxM3ZBbXQrQnN3NG1tbzVPdm1EcFpqOVRFUWFIRjhB?=
- =?utf-8?B?ZjJqY1FqdHlhaHJTV21mZWNUVjRuYk9iNUd4VFN0TUNmZmFBVFpWbWcxbFZp?=
- =?utf-8?B?WWc4RTcwNDlYVXg1QXFLRWFRZ3BjbU55ZUM4VnhHelpNWE9QQ3JzSS9MV1Zv?=
- =?utf-8?B?ZFBrdEpmK3F2TEFpdS95emRnRVNXMDk4Y2pJdXZzQnU0bXl2Z0Q0U2tpNUti?=
- =?utf-8?B?RU5LOEdWaE5sWWZxQ2NycVVHcWlDUnppOXBFQXBpaW5iRTBxZ256djRsRkdR?=
- =?utf-8?B?b2ZnK0hMR1pUVDBZR2dnbTE4WXViVTlHSzhFOUFVOXNzbWNBemFqUnIwMnEx?=
- =?utf-8?B?TU03eXpWTDVhYk4xUzBQZWxicVFOcmNydlNZa3pDS2JlelBLamlVSjlkNUJC?=
- =?utf-8?B?OTZBMWRROTNmYmRIKy9VSmlrNVF2Mm1KbjFEa0diNkhNNkVtT0RicmhLb29K?=
- =?utf-8?B?Q2FoQWVRYW9XMHdCTjNScEdkM3I5UjlSVEIzeDRlSWY4RjN6WTJUYXJHUEZX?=
- =?utf-8?B?ZHc2ZENiN1ZOZG1SN1BkcDJmTWlWVklmdjBGa2dJS1Awcmc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6395.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YXY1djVBWkF5bmNMQXV1MmhsOXhTM24vY2hORFJwYUVaRUVXSG1zYW5rNG9R?=
- =?utf-8?B?WmNONUhoelJ2TVM5MDZVejI2NWFtS3R6bi8vYTNIUENlamlQY2w3b3ltTDVE?=
- =?utf-8?B?bjNzMHdvVUFrcWo1Z2owYTdFYWxORjdtRzFUbHRKOHBiMjVlWkUrUGY4OERa?=
- =?utf-8?B?bWVGS1lWODVxMHdJS1cwNmlaa21TOHhkT2I4dVl2NmphSWR6WU0zUWwvalVG?=
- =?utf-8?B?cjZPQ1VvQmFaaHhKcTFiZFFXUzlGdTIxWDJKNzd1RjIrMUd6b3ZvTm03cSt0?=
- =?utf-8?B?aGF2by9yQ3AwYlhaMTR3SE52VEpySEQ3UzZ5RDJTY0MyV2VTQzFpQ3pabkN5?=
- =?utf-8?B?WGRlelczYS9HSWpSSUgzR3VNQkFCUGw5YWhTbXkvODN2a201cktERDN5ZE1V?=
- =?utf-8?B?VnBoK3dWQ2ppSFhtR2laWjJORDRzbm1DNVc2RHNaTVZsc2NhaDZ5eEhzSk5x?=
- =?utf-8?B?RTUvRUlFTkJBbGZXN2pZMWhTcUJ0OWh3WnNGancyU1o4Q2FMbHl3VFVucys1?=
- =?utf-8?B?NWNsK3paRGNZd2tudGJTbDNGdVA5S3BJN2JRSHFjU2Z3NVR3WWt2Q2F0cWR6?=
- =?utf-8?B?MkRiY2MvUkFZbVVhbTdZZ3ZTQ2IrZkVSUXJMRGttb2w5TEY0SDNpenNaTklv?=
- =?utf-8?B?aHhaVGVGUU9ndDBHdmJRaVNaWHZxc21Odmc1SXdTYThNZTVYZVFjQVJWd0VI?=
- =?utf-8?B?dWhKS2xRcURIOHRPT3EyZzFaeDJ5VVdIa1dTT0hrUCtaVkNzQ1FTMmhBazUy?=
- =?utf-8?B?YThWTjROSTdha1dFbEJnMHhMY2hRaGVFQ3Q3Y1VTR0xuNXorTUEwWWpkTS9I?=
- =?utf-8?B?ci8zZ2RIVklFNEZ5K2ZXcWNQM080dWJyaHFOemVsVGw4KzJvRHhudzAybzli?=
- =?utf-8?B?NElMbFJPcFpVT0ppM1RLUmVPcDRycTBnazdtODNxamdHNzFNNm5nNklOQU5r?=
- =?utf-8?B?b0NNMmUzbkRPYUZ3dlB6RlBpUit0RTVyYkpnKys3VDhvcGZkdzhpMGdCejlp?=
- =?utf-8?B?ZzVQTmtQS0tEZVNCeG85R3A5VTV3V0E1RVBCMGUrYTZNSHFPUEFHeUEzVUVr?=
- =?utf-8?B?NUpMNHYrSVRHcldubFZRTlB3c1lFd1paYXBsa3lVaFpPNkcvTlBYQmE4RGpo?=
- =?utf-8?B?RFFTMmpqYXVIRkdkY0RNS0NSSjlFQ2VDd2swVUdYcCtaSG1lelkyOEZkVEho?=
- =?utf-8?B?UzhoRmRDUHJmMWxPQ3VybWRGOEdxVzkyUUVndGM0SFJZVXVWK2RkTklzMVpw?=
- =?utf-8?B?QTdrRUtSKzB0WnZKZU9QZWx1L1gyOG1zN25jVnQraXZGQXNMcHFlSTIwdFJt?=
- =?utf-8?B?ZHFFZG5QbFljZHpZMktzL0srQmRwemJIM3BueUpuVXA0WWJoMEJFL0JYT2d2?=
- =?utf-8?B?ZjI2K09EYnRlTitLM0VOa3cwRCsrSFNqWjZEWmxBUFMyY2VLbksyZG5SL0xk?=
- =?utf-8?B?cTQxUzNNWHBGYkxRT1c2dzhKYnBGd1h4cEV1MHcwUkhWeGdPK2ZYakZVaDVB?=
- =?utf-8?B?R0t1cGJXb2d6dEJjb3Y4eEFyT0FxQVduOFlMdlFqRHZIQUJ4R1lrM1RIZ3hh?=
- =?utf-8?B?YVJwdUtyR0pQUmx1YTB6OE0wdkJUaFR5LzRGUFUxazNONzNsbHNheGthNENm?=
- =?utf-8?B?bHNJa2s4UmRwWUlYZmc3TC9EZ3ZoUkRZZW1ydWxBRnJrZUcrS0FPNG5iSVRE?=
- =?utf-8?B?WjZTbWlTcXpFL2VMQ2EzaDFTaWsyNTlwYmxzeU9jM0pJUG1rWHphejVWTU55?=
- =?utf-8?B?bGVEUURMVS9hRklDSkgya2RhaEN3akFOODlEd0RRN2tXanFwVVkvd3g2aVlU?=
- =?utf-8?B?aWR3VW5ROXhyS2dTQml0VmN0K0w0V1dEb29DVDZ0TDRqS2dMNURMWmJ3WWh2?=
- =?utf-8?B?REdzNEF3QVJPS1BQS3NhYkNVcllDR0RwcHNVY24xd0dpdnAzS2lER0pNRUFv?=
- =?utf-8?B?R0psS0kxVm1jZTBjVGNaQkRrdVBza3N1RDZrVkhMeWtUWjBnbVF1dDNJam51?=
- =?utf-8?B?WEFjZ1RaSzVFdzVKMmc5RVZUR3piVXZrU2pjWXgzandNSzdIRWV5dE0xV2J2?=
- =?utf-8?B?SUNHci9QTUtOdUJlQURYRGNodkhhRFlBUzFMdDdZbURxUjRWUmVCSjErOVBn?=
- =?utf-8?B?bURUR1NnZG83N1NyVGJMYURSYklob2lodzdma3Fod3crc0FQSFVuc1BaM2Mv?=
- =?utf-8?B?dUE9PQ==?=
-X-OriginatorOrg: portwell.com.tw
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c7aa7bf-4ea5-4c25-c846-08ddc2c47b06
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6395.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2025 10:52:09.2724
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e309f7e-c3ee-443b-8668-97701d998b2c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /LrtHk1s7TblfZKs4ZFiQ6sYkLeWpi8Bzg/pk99y44IPHEn2VjkFNbhv2Xrw+Y8f80sf7cTPtSOKKEhQpWroIkt9vAjcU4lMXY0J4E+D3sI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB7293
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cno3lsprrz36gqu27omvwrw27d2ubqtshac3cahfgkhcm2rla7@bpnulcmsyx2u>
 
-Add suspend/resume support for watchdog and hwmon monitoring functionality
-to the Portwell EC driver, enabling better power management and sensor
-reporting.
+On Fri, Jul 11, 2025 at 03:45:03AM -0700, Breno Leitao wrote:
+> On Fri, Jul 11, 2025 at 10:50:23AM +0100, Leo Yan wrote:
+> > > I've reverted commit 2eb2608618ce ("serial: amba-pl011: Implement nbcon
+> > > console"), and I don't see the CSD locks anymoer. The serial speed is
+> > > the same and continue to be slow, but, the CSD lock is not there. Here
+> > > is the time spent on the serial flush when reverting the commit above
+> > > 
+> > > 	[    0.309561] printk: legacy console [ttyAMA0] enabled
+> > > 	[    8.657938] ACPI: PCI Root Bridge [PCI2] (domain 0002 [bus 00-ff])
+> > 
+> > From this result, we can know both the atomic path and the thread path
+> > take a long time polling.
+>
+> I am wondering if this slowdown is by design, or, if there is a bug
+> somewhere.
 
-Tested on Portwell NANO-6064.
+Polling for over 5 seconds (5,001,000,000 ns) seems too long; it
+should not be by design.
 
---
-V2:
+> > Since both paths configure the UART clock, I'm curious about the
+> > behaviour if the UART clock is untouched. The relevant code is shown
+> > below.
+> 
+> Is this the clock frequency that is connected to pl011 coming from AMBA?
 
-- Added watchdog mailing list to Cc.
+The programming clock is for programming registers, my understanding is
+the clock is not provided by bus.
 
-Patch 1/2:
-  - unchanged
+> > I may seem a bit stubborn in suspecting a clock issue :) But if you
+> > have confirmed that a standard pl011 UART IP is being used.
+> 
+> How do I double check this is a pl011 UART IP or if this is being
+> emulated by firmware/ACPI.
 
-Patch 2/2:
-  - Removed `msb_reg` from `struct pwec_hwmon_data`
-  - Updated `pwec_read16_stable()` to assume MSB follows LSB
-  - Moved `hwmon_channel_info` to per-board data and assigned it to `.info` at runtime
-  - Replaced the `pwec_board_data[]` array with a standalone struct
-  - Replaced literal `1000` with `MILLIDEGREE_PER_DEGREE`
-  - Removed unused include and sorted header includes
+The log shows:
 
-Yen-Chi Huang (2):
-  platform/x86: portwell-ec: Add suspend/resume support for watchdog
-  platform/x86: portwell-ec: Add hwmon support for voltage and temperature
+  ARMH0011:00: ttyAMA0 at MMIO 0xc280000 (irq = 66, base_baud = 0) is a SBSA
 
- drivers/platform/x86/portwell-ec.c | 196 ++++++++++++++++++++++++++++-
- 1 file changed, 194 insertions(+), 2 deletions(-)
+This should be emulated by firmware by reading Peripheral Identification
+Registers (see [1]).
 
--- 
-2.34.1
+The most reliable way is to confirm with SoC vendor if the IP is
+standard or includes any modification.
+
+[1] https://developer.arm.com/documentation/ddi0183/g/programmers-model/register-descriptions/peripheral-identification-registers--uartperiphid0-3
+
+> > diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
+> > index 71482d639a6d..b04773ba2602 100644
+> > --- a/drivers/amba/bus.c
+> > +++ b/drivers/amba/bus.c
+> >
+> I've tested it, but, it seems it didnt' help much. here is the full log
+
+[...]
+
+> [    0.307809] ARMH0011:00: ttyAMA0 at MMIO 0xc280000 (irq = 66, base_baud = 0) is a SBSA
+> [    0.307816] printk: console [ttyAMA0] enabled
+
+Based on this log and followed OOPS, the issue happens just after
+enabling console. It is a bit tricky that it prints logs during
+console registration (and configuration).
+
+Seems to me, it is good to check pl011_console_setup() or
+sbsa_uart_set_termios() has any impaction on the long waiting. For
+example, the flow below will configure pin control and which might
+impact the data transaction:
+
+  pl011_console_setup()
+   `> pinctrl_pm_select_default_state()
+
+Based on the information shared earlier, the UART FIFO appears to be
+stalled, which is causing the long wait times.
+
+Apologies if my suggestion was unreliable or misled anything, and
+welcome others to freely correct me.
+
+Thanks,
+Leo
+
+> [    5.414515] smp: csd: Detected non-responsive CSD lock (#1) on CPU#0, waiting 5001000000 ns for CPU#01 do_nothing+0x0/0x10(0x0).
+> [    5.414532] smp: 	csd: CSD lock (#1) unresponsive.
+> [    5.414535] Sending NMI from CPU 0 to CPUs 1:
+> [    5.414541] NMI backtrace for cpu 1
+> [    5.414545] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.16.0-rc5-00056-gd7753fd13f9e #86 NONE 
+> [    5.414548] Hardware name: Quanta JAVA ISLAND PVT 29F0EMAZ049/Java Island, BIOS F0EJ3A13 06/04/2025
+> [    5.414550] pstate: 61400009 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+> [    5.414552] pc : pl011_console_write_atomic+0x94/0x170
+> [    5.414559] lr : pl011_console_write_atomic+0x84/0x170
+> [    5.414562] sp : ffff80008492f1a0
+> [    5.414564] pmr: 000000c0
+> [    5.414565] x29: ffff80008492f1a0 x28: 0000000000000000 x27: 00000000000000e0
+> [    5.414572] x26: 0000000000000190 x25: 0000000000000000 x24: 0000000000000000
+> [    5.414578] x23: 0000000000000001 x22: 0000000000000000 x21: ffff800080c38ea8
+> [    5.414584] x20: ffff80008492f288 x19: ffff0000b2060080 x18: 00000000ffffffff
+> [    5.414590] x17: 6362323230303030 x16: 3030303078303a30 x15: 206e6f6967657220
+> [    5.414595] x14: 3030303064322072 x13: 3030303063623232 x12: 3030303030303030
+> [    5.414601] x11: 78303a30206e6f69 x10: 6765722030303030 x9 : ffff800080c390e4
+> [    5.414607] x8 : 6964657220646e75 x7 : 205d313533383630 x6 : 302e30202020205b
+> [    5.414612] x5 : ffff0000ad10200f x4 : 0000000000000000 x3 : 0000000000000008
+> [    5.414618] x2 : ffff8000816336c0 x1 : 0000000000000018 x0 : 0000000000000018
+> [    5.414624] Call trace:
+> [    5.414626]  pl011_console_write_atomic+0x94/0x170 (P)
+> [    5.414630]  nbcon_emit_next_record+0x234/0x388
+> [    5.414634]  __nbcon_atomic_flush_pending_con+0x88/0x108
+> [    5.414637]  __nbcon_atomic_flush_pending+0x108/0x198
+> [    5.414640]  nbcon_atomic_flush_pending+0x24/0x38
+> [    5.414643]  vprintk_emit+0x200/0x348
+> [    5.414645]  vprintk_default+0x3c/0x50
+> [    5.414647]  vprintk+0x2c/0x40
+> [    5.414650]  _printk+0x50/0x60
+> [    5.414652]  register_console+0x424/0x560
+> [    5.414654]  serial_core_register_port+0x878/0x898
+> [    5.414659]  serial_ctrl_register_port+0x14/0x28
+> [    5.414661]  uart_add_one_port+0x14/0x28
+> [    5.414664]  pl011_register_port+0x74/0x130
+> [    5.414667]  sbsa_uart_probe+0x164/0x1b8
+> [    5.414670]  platform_probe+0x8c/0x100
+> [    5.414674]  really_probe+0xc4/0x398
+> [    5.414676]  __driver_probe_device+0x80/0x1a8
+> [    5.414679]  driver_probe_device+0x44/0x120
+> [    5.414681]  __device_attach_driver+0xb8/0x158
+> [    5.414683]  bus_for_each_drv+0x74/0xc0
+> [    5.414685]  __device_attach+0xac/0x1e0
+> [    5.414687]  device_initial_probe+0x18/0x28
+> [    5.414690]  bus_probe_device+0xa8/0xb8
+> [    5.414692]  device_add+0x648/0x830
+> [    5.414697]  platform_device_add+0x114/0x280
+> [    5.414700]  platform_device_register_full+0x148/0x1b8
+> [    5.414702]  acpi_create_platform_device+0x264/0x388
+> [    5.414706]  acpi_bus_attach+0x2c8/0x2e8
+> [    5.414709]  acpi_dev_for_one_check+0x38/0x48
+> [    5.414711]  device_for_each_child+0x54/0xa0
+> [    5.414714]  acpi_dev_for_each_child+0x30/0x40
+> [    5.414716]  acpi_bus_attach+0x6c/0x2e8
+> [    5.414718]  acpi_dev_for_one_check+0x38/0x48
+> [    5.414720]  device_for_each_child+0x54/0xa0
+> [    5.414723]  acpi_dev_for_each_child+0x30/0x40
+> [    5.414725]  acpi_bus_attach+0x6c/0x2e8
+> [    5.414727]  acpi_bus_scan+0x5c/0x1b0
+> [    5.414730]  acpi_scan_init+0xa0/0x288
+> [    5.414737]  acpi_init+0x1e8/0x4b8
+> [    5.414740]  do_one_initcall+0x3c/0x2a0
+> [    5.414743]  kernel_init_freeable+0x22c/0x460
+> [    5.414746]  kernel_init+0x28/0x1f0
+> [    5.414750]  ret_from_fork+0x10/0x20
 
