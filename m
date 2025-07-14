@@ -1,154 +1,178 @@
-Return-Path: <linux-kernel+bounces-729673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2067B03A29
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:58:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FADAB03A2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 10:59:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479AB3BCD05
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:58:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 703E83BCD05
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A2620D4FF;
-	Mon, 14 Jul 2025 08:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oVE8o/6b"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07D823A989
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79A623C511;
+	Mon, 14 Jul 2025 08:58:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8310723BD1D;
+	Mon, 14 Jul 2025 08:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752483522; cv=none; b=sunaW3l00jrgukj1VsReNTK4cVNygAkvHIJ67e61heaDLgenDA5NBKzMI4c9hU4uLRmuz+BaiucbPorhYINuFgYatlbt+SEwge1ln1AI7zCxkf7GUdx3NjCtVg2PvCpMX3NwQ0hEK6rmsvtBEf2LI2jS8vS4KvWUa16ideBhWVE=
+	t=1752483534; cv=none; b=h7nKHAt0QJdLnsu+YGchLFiPMcVym12oop75dFwBurdWUnUSKi3lajx1bVHZNUt0EkkWKcxxsCHuQaO636f98LF71l7dN+wu045x+0sMDADifWAi76LT0E99123DYvP1IN5OivqbLnRyhLbeZRgXwqKxPLb/dE7hLDcbjRHZ+Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752483522; c=relaxed/simple;
-	bh=QiVcEFWR3A0fEZp/JWzDxq5uuw1b/SjZBvKgRWUUwHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=deKdlSi1DrxwJAy17p7RZquVtgpa08TWZ9JFk7blCi39UdKs/P3q2iRoIjlDJO4O09kpeZ1J//f7sfKEtaCzNvJjqlxjkCnqbLs4k2oDt9S8AoIZGpzZA5vnC0cvMpFR944JEQzB+bLqgrNFEc027zcoGeO1Ht1GnBkz7nI0suo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oVE8o/6b; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56DLfG99004879
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:58:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eVFSQFBFf/hmbWz5fQBJA1oBoM/6k55vueTBlZ5GRIw=; b=oVE8o/6bscuHKq7J
-	IW5N6KHrzpEo/H6P8ELGcZQbbiL/AvZtwBHw+hZnrkiaVs6CDSybdof1Tt/ogY+C
-	Eezy6RrDjflRxkIfFH2ZJMarw81pvItkKYS4GI97axTyl4nirCjqA0qLR0vKfAsa
-	Dwb1fHLhntSzm6edej+Tdn/Lqh4mAoMwUbg3ImwCtjCcNypowPEaWQt/0y5lPFbp
-	2k0vs7IkYhlm/VpFdj+7CF01Np+dMlUiPiaC6ZZJMjZLt8zIkBeUOc+ZmneBQpku
-	3F4KADkHtv8y/usjqruPzuoglpNo9fWJ0oDktIgm4oxI1n2d0p3iEbLB6Y5xQ1Sg
-	OtT84A==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufxauxtc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 08:58:39 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ab7a01c38cso125321cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 01:58:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752483518; x=1753088318;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eVFSQFBFf/hmbWz5fQBJA1oBoM/6k55vueTBlZ5GRIw=;
-        b=EAuMpicdBVqZR0CtvKHCY30ne7dFfA2W58Z/867HSok7L2/gsChSxvj7b8NtKuk5f+
-         BsiafAYTrrEtHi4BrtcUJUhNKUFSPXfM1gAVtmzJ/g9qU6bnyrfi66fmO097FEiRPUIz
-         6Fdf12A+7esGo46kLA+YAnec1HBBhgyxqAVWQ0YMp5aN7k+n8RXPctjjCBDKsPzVjgxT
-         GFjL928UK0BZaEYjs6iBAvKnK2wE8YGVLWHolKQvXKgjbk6CuTbtKgl5B1g9QOodg+CX
-         QtGY5LAMCnivILDlA8aG2kyYwofOq1th5i3Kan6Bj36G1hzPWRYE9th6O168wCBrTUD/
-         +0FA==
-X-Gm-Message-State: AOJu0Yz8S5CTTToGd63x0sJMnjTMyPUv3s8pvMMsEy6XQCZpWbudG+kr
-	LX2Q5fV6LehcGBx6WTfeC+iS2/r2h8U8v3OIsm4eY+HEFRErK+gjnLEq+8z6EdlOsNHYMQXjrqc
-	h3A4yUYX2jUD3STV0QSzoBEsyEZV6u2zkdtOdFs2PSW/LEsZ0wnFFUelpsOGff6BJEMjiCrVQef
-	E=
-X-Gm-Gg: ASbGncvSWtaDbufjjDCOoEIKf7EyF4xVviBa88nzVOC8RRrM5T1Yh78SGl5H1/9CVmH
-	Kd0ks/FZF4hSEOuUA2/1DSk85J3ZD3RvTfn/lcPB2WjSDdRPwvYQIIWfYHErBXD7JK9MixK/7nZ
-	2VG60UOnZatQfLlP7aDyxZjdS1lcxiV6SeLMzsCdTtEuI03EjYBkfuxj5AvGAlHc4n1UknUw24p
-	Zp7+2mC7Kms4BKuedZLNgw8QwGkbKvXBPw85uFo/SJJDJvlT3lHECrsrlxi5Jj5bdndInb9/oP7
-	i2IhNI06s8gGtXYjfGPm+Jvn7sBH32ZCgFYwZj5hh9QZN4VCMMZirsfvbAjLSQuGHS6afRqo/wV
-	31+fqcHNLEBno7BB3BkLz
-X-Received: by 2002:a05:622a:6a04:b0:4ab:533c:109f with SMTP id d75a77b69052e-4ab533c1d38mr33202211cf.15.1752483518552;
-        Mon, 14 Jul 2025 01:58:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFyWKteUj8o5VODQK+2BJ0/X/YeuYekA6dRnqZzX1W2y2SY55bcGHUGGjZdrZb6seu9rPe14A==
-X-Received: by 2002:a05:622a:6a04:b0:4ab:533c:109f with SMTP id d75a77b69052e-4ab533c1d38mr33202141cf.15.1752483518093;
-        Mon, 14 Jul 2025 01:58:38 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee48f6sm802041966b.55.2025.07.14.01.58.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 01:58:37 -0700 (PDT)
-Message-ID: <55048b4e-6c80-4f4e-ac05-e2b8cb48203b@oss.qualcomm.com>
-Date: Mon, 14 Jul 2025 10:58:35 +0200
+	s=arc-20240116; t=1752483534; c=relaxed/simple;
+	bh=Pbra00ApgwHXEuR8gnZIa2ZhDS08TIfHcQUZpvP/4JU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dYOvNhmH+3HMMkY/ajg/yTxc/9/vVxJf/t5b0UaIpmnaKfhBy6H+nK6+AGmVwRj51tcBOOO22stJyaFIqiUgaWLHYqL4oalaGxBrHzjKvcyPajJ1scOgiQCHXnCNs6zVydvIQoz7p7C4RqV8EvtFhl7YUCLDaae3owZicWUYJVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35E5C1764;
+	Mon, 14 Jul 2025 01:58:42 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1528E3F694;
+	Mon, 14 Jul 2025 01:58:50 -0700 (PDT)
+Date: Mon, 14 Jul 2025 09:58:49 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Alexandru Elisei <alexandru.elisei@arm.com>
+Cc: James Clark <james.clark@linaro.org>, Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Anshuman Khandual <Anshuman.Khandual@arm.com>,
+	Rob Herring <Rob.Herring@arm.com>,
+	Suzuki Poulose <Suzuki.Poulose@arm.com>,
+	Robin Murphy <Robin.Murphy@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] perf: arm_spe: Disable buffer before writing to
+ PMBPTR_EL1 or PMBSR_EL1
+Message-ID: <20250714085849.GC1093654@e132581.arm.com>
+References: <20250701-james-spe-vm-interface-v1-0-52a2cd223d00@linaro.org>
+ <20250701-james-spe-vm-interface-v1-2-52a2cd223d00@linaro.org>
+ <20250704155016.GI1039028@e132581.arm.com>
+ <b77f12e7-ea3f-4c57-9706-ff8e32721cc8@linaro.org>
+ <20250707153710.GB2182465@e132581.arm.com>
+ <aG4_uYJgpMXo3QHQ@raptor>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: sm8450-qrd: add pmic glink node
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, neil.armstrong@linaro.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20250714045310.2092385-1-krishna.kurapati@oss.qualcomm.com>
- <20250714045310.2092385-2-krishna.kurapati@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250714045310.2092385-2-krishna.kurapati@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: o3c-_zKN23Xs-HRUa4VFdnFAMeIv-vY0
-X-Proofpoint-ORIG-GUID: o3c-_zKN23Xs-HRUa4VFdnFAMeIv-vY0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA1MSBTYWx0ZWRfX2/xCpiy85uHB
- X/rPu9DqlN5Bgvh7v2x94iA7xjrp/M5k/TmROVNlbMlSIAgTDfE0bUNBiuYWqTnQ1suyTJ4+Crc
- XUxDaxj3IWJxiShH0k0yK9mox1sQUEekyoXvyqNs93tnshPfTY59s9DjonBh5OTmKXa/1IJ2WG1
- N7V8GFNSQfDO51J72rmlPEaxtFQ2pZnq2RyE4UJIOZxbQlGggTqTsuaHh7a2/45lXUo639ulNHU
- 6wsjFMn1IWyXJ8qGJdUSUFiMtc5Y0PPYALK7yKQPdBOyLrK9VTgfBa3+fndWziuKxEx61DCDBBK
- zScwu8+hyNq4V8+RvHYvVFHhIMCRXT5SsH115qNd6CApnU1pGFq51qu29ZkfB5cs0MAyB76kuqH
- k9mXiIS+glxnXzDgES4TgKBcEyfx+FVEL78DxBmcs5XYTkeOPFRcfVCvX8NzoFah+94wRR+z
-X-Authority-Analysis: v=2.4 cv=Xc2JzJ55 c=1 sm=1 tr=0 ts=6874c6bf cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=GY1l66hMsWQi9t9MqZEA:9
- a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-14_01,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 mlxscore=0 priorityscore=1501 adultscore=0 mlxlogscore=900
- phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
- clxscore=1015 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507140051
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aG4_uYJgpMXo3QHQ@raptor>
 
-On 7/14/25 6:53 AM, Krishna Kurapati wrote:
-> Add the pmic glink node linked with the DWC3 USB controller
-> switched to OTG mode and tagged with usb-role-switch.
+Hi Alexandru,
+
+On Wed, Jul 09, 2025 at 11:08:57AM +0100, Alexandru Elisei wrote:
+
+[...]
+
+> > > > >   	case SPE_PMU_BUF_FAULT_ACT_OK:
+> > > > >   		/*
+> > > > > @@ -679,18 +692,14 @@ static irqreturn_t arm_spe_pmu_irq_handler(int irq, void *dev)
+> > > > >   		 * PMBPTR might be misaligned, but we'll burn that bridge
+> > > > >   		 * when we get to it.
+> > > > >   		 */
+> > > > > -		if (!(handle->aux_flags & PERF_AUX_FLAG_TRUNCATED)) {
+> > > > > +		if (!(handle->aux_flags & PERF_AUX_FLAG_TRUNCATED))
+> > > > >   			arm_spe_perf_aux_output_begin(handle, event);
+> > > > > -			isb();
+> > > > 
+> > > > I am a bit suspecious we can remove this isb().
+> > > > 
+> > > > As a reference to the software usage PKLXF in Arm ARM (DDI 0487 L.a),
+> > > > after enable TRBE trace unit, an ISB is mandatory. Maybe check a bit
+> > > > for this?
+> > >
+> > > Wasn't this isb() to separate the programming of the registers with the
+> > > status register clear at the end of this function to enable profiling?
+> > 
+> > Enabling profiling buffer followed an isb() is not only for separating
+> > other register programming.
+> > 
+> > As described in section D17.9, Synchronization and Statistical Profiling
+> > in Arm ARM:
+> > 
+> >   "A Context Synchronization event guarantees that a direct write to a
+> >   System register made by the PE in program order before the Context
+> >   synchronization event are observable by indirect reads and indirect
+> >   writes of the same System register made by a profiling operation
+> >   relating to a sampled operation in program order after the Context
+> >   synchronization event."
+> > 
+> > My understanding is: after the ARM SPE profiling is enabled, the
+> > followed ISB is a Synchronization to make sure the system register
+> > values are observed by SPE. And we cannot rely on ERET, especially if
+> > we are tracing the kernel mode.
 > 
-> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/sm8450-qrd.dts | 51 ++++++++++++++++++++++++-
->  1 file changed, 49 insertions(+), 2 deletions(-)
+> Thought about this some more.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8450-qrd.dts b/arch/arm64/boot/dts/qcom/sm8450-qrd.dts
-> index 8c39fbcaad80..a5093eee3dea 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8450-qrd.dts
-> +++ b/arch/arm64/boot/dts/qcom/sm8450-qrd.dts
-> @@ -37,6 +37,49 @@ vph_pwr: vph-pwr-regulator {
->  		regulator-always-on;
->  		regulator-boot-on;
->  	};
-> +
-> +	pmic-glink {
+> Before:
+> 
+> arm_spe_pmu_buf_get_fault_act:
+>   <drain buffer>
+>   ISB
+> arm_spe_perf_aux_output_begin:
+>   PMBLIMITR_EL1.E = 1
+> ISB
+> PMBSR_EL1.S = 0
+> ERET
+> 
+> Now:
+> 
+> PMBLIMITR_EL1 = 0
+> ISB
+> 
+> PMBSR_EL1.S = 0
+> arm_spe_perf_aux_output_begin:
+>   ISB
+>   PMBLIMITR_EL1.E = 1
+> ERET
+> 
+> I don't see much of a difference between the two sequences - the point after
+> which we can be sure that profiling is enabled remains the ERET from the
+> exception return.  The only difference is that, before this change, the ERET
+> synchronized clearing the PMBSR_EL1.S bit, now it synchronizes setting the
+> PMBLIMITR_EL1.E bit.
+> 
+> Thoughts?
 
-Please move pmic-glink above vph-pwr-regulator (so it's alphabetically
-sorted). The rest looks good
+To make the discussion easier, I'll focus on the trace enabling flow
+in this reply.
 
-Konrad
+My understanding of a sane flow would be:
+
+  arm_spe_pmu_irq_handler() {
+    arm_spe_perf_aux_output_begin() {
+          SYS_PMBPTR_EL1 = base;
+
+          ISB // Synchronization between SPE register setting and
+              // enabling profiling buffer.
+          PMBLIMITR_EL1.E = 1;
+    }
+    ISB // Context synchronization event to ensure visibility to SPE
+  }
+
+  ... start trace ... (Bottom half, e.g., softirq, etc)
+
+  ERET
+
+In the current code, arm_spe_perf_aux_output_begin() is followed by an
+ISB, which serves as a context synchronization event to ensure
+visibility to the SPE. After that, it ensures that the trace unit will
+function correctly.
+
+I understand that the Software Usage PKLXF recommends using an ERET as
+the synchronization point. However, between enabling the profiling
+buffer and the ERET, the kernel might execute other operations (e.g.,
+softirqs, tasklets, etc.).
+
+Therefore, it seems to me that using ERET as the synchronization point
+may be too late. This is why I think we should keep an ISB after
+arm_spe_perf_aux_output_begin().
+
+Thanks,
+Leo
 
