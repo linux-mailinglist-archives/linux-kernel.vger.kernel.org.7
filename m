@@ -1,173 +1,143 @@
-Return-Path: <linux-kernel+bounces-729431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9621BB0368A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C90A8B03690
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6CC01742CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:08:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 225E717485D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C2C21882B;
-	Mon, 14 Jul 2025 06:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D6D217F55;
+	Mon, 14 Jul 2025 06:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="aDQRSUNA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NMOIB9oI"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eNtZT1UZ"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F05E17736;
-	Mon, 14 Jul 2025 06:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F59218AA0
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 06:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752473328; cv=none; b=KqN1gdTR6K3yTi8L5FqNRy786Esgr/kNBX6jpG+KMSWWCyxl2IsfqKi+uER3Jw91Icv2yHq9ynHRdpe3eNhLI8r5IxYwyepMZ7jhCckdzOO6fWD52WVIptHh8Q+yaISZRTSRhekK28gUEuQ866xOB+CXmjh9Cxaaizk3G5edVH4=
+	t=1752473458; cv=none; b=RmFxmtPQ8fKfFOXHFNxvDqf5qKYt73Hh0uZDMqWJHUs3SZpA35Fg1GLPbpxvL6+H69OHCoxahI9iZv0W5yAu9ZjIFKTSB3S0rFCST+fdKja7gdoqTZq9vhFDS9eRdLscHvfhgKNwL5g/SzQXBFCnxALkZxTPP8UnnmzY7v6CudM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752473328; c=relaxed/simple;
-	bh=IT52CMMNQVZe/JpsyeRDyVjFNpZ1hXZyOCPsnriWGuY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=hQeTcZ/KiF3ujRi3wVOfAdtXCxUu78/FQqg112QL9Vngr6Fqsi4/Zyjeriw0uIRoO2wDhf0d9CAbeTKsnWvvm+1WeDaeHWRyqTJ/QztsTObAFC+d6K0a5QFHigy67n2DHx8ZuMlSTMjcVlJR5sAu6C+hLrRyzigWvbXe/fWRoI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=aDQRSUNA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NMOIB9oI; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 75D78EC0453;
-	Mon, 14 Jul 2025 02:08:45 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Mon, 14 Jul 2025 02:08:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752473325;
-	 x=1752559725; bh=RC+CFVWd/VWYy7402scfBHaFNOZ1+z4P3lAFBCgGdWQ=; b=
-	aDQRSUNAXm+/DcRr8JHFpYax0uaM0MtbIvLQBkPE0LGP414DcT3gKnoamV8T8SEN
-	xYDBlC2feBCzsPE8RIOl9gJX/ikFb2POYxKMPEA05S+M8ypfatJ8ALGNrb5cALTL
-	KDCKokVRPEcA/wH7mmkvLR21BSJnfsWKsmCPIHbSqW3OM967bPW7ofJ0SSVIqSJx
-	3LMnM/KApSyk04F8E1kcEeNy8Yh8Bz3/lpnj04X5uLq2XaQLMgFVQdx3k352jNpu
-	6MHc13Lzk98yPzAMgNkUOlqeSsAqcThKlOyCRgE+3WdAUM9G2skt5RrdeoJrr4+v
-	WcchmnE45GeMCekZhRbOAw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752473325; x=
-	1752559725; bh=RC+CFVWd/VWYy7402scfBHaFNOZ1+z4P3lAFBCgGdWQ=; b=N
-	MOIB9oIK4aFGz/MAFD2nsL3q6bVhYxOa+1rkg2f7yWSgVHnNep35yY+c0xwQzgsP
-	vMRwxeJnGvzwwxmEaQjimrah2ANgib3/waRIs7J0MBff5JWK2BuRG3V/gs48X2mH
-	vlSX0MrI8YV61X2YvowWrBpkGbPwwZgKMONU56Du0DBDjQ5pvBmdCMh/Ak6cISlM
-	7YxINbF6R4HK3hpbeP6adI/ZbzcjdrSk1IZzjIJr2ToCdWjW9MBjV3kknOLRcbC1
-	bAbloGmDZcko0XSzOVQtxTfXl9rd+Dx5DcSZgsIirq7CM+sIpLRzc9Enub5Y6Rzk
-	eo+eEwiVAq6EJ3fdKbTeg==
-X-ME-Sender: <xms:6550aNISqkL_c_gKSI1GS6zwoONBMO-j0aQrHirsA-Dx9-qhip8wJw>
-    <xme:6550aJLL4Ox0N4jUEaYXAg0enHEgZ0Hvj03HUlMKvtRESzvOZlCtNu5UrKmGPZXjZ
-    N-Z2U0G_l8VX-cujzE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehuddulecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeefuddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepjhhorhhoseeksgihthgvshdrohhrghdprhgtphhtthhopehvrghsrg
-    hnthdrhhgvghguvgesrghmugdrtghomhdprhgtphhtthhopehrohgsihhnrdhmuhhrphhh
-    hiesrghrmhdrtghomhdprhgtphhtthhopegsrghgrghsughothhmvgesghhmrghilhdrtg
-    homhdprhgtphhtthhopehthhhivghrrhihrdhrvgguihhnghesghhmrghilhdrtghomhdp
-    rhgtphhtthhopehmshhhrghvihhtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprh
-    grrghnsehgohhoghhlvgdrtghomhdprhgtphhtthhopeiihhgrnhhgiigvkhhunhduudes
-    hhhurgifvghirdgtohhmpdhrtghpthhtohepugifmhifvdesihhnfhhrrgguvggrugdroh
-    hrgh
-X-ME-Proxy: <xmx:6550aCsD6On8GiPFBuhmhjg2cQ8kX7cKAjv83xfvNnNf8nYQRggg1w>
-    <xmx:6550aKpYGV3_6_Cw9r9zZqL9Q_5umAHi98hyl4oNeTYJZsfFeuThwA>
-    <xmx:6550aEmSWAshMXkV1Pf880BQ9xBOxPKTnOyiXYTu6frVsoV0UZLpTA>
-    <xmx:6550aCT8AC-3Qk2ejJ1a-d5tfh-z3Z7Ik7HcexIq2X1piS7MnP9Efw>
-    <xmx:7Z50aC55r5eujMz0Dvb8Ej99ArwfSU_zftLIRLdUgHJFaXhmzaUc6tH4>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id AB571700068; Mon, 14 Jul 2025 02:08:43 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1752473458; c=relaxed/simple;
+	bh=r3qINUs4GQGQK0KeSYb9XwtihHPTH4GAfxB3icQZeXg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=e06h/CbCERxDHz7LjWMYzTnIdpkkEgSux1l8CKNfwXveiMcxb09rBN9NHuby5G/YCgzDSl266f1PrGaxaORkekQDY7ZsC19maRqys8OzdQnz0vqdkHc1Nis+1I7HKy3s7Qiu0ZyHHMXhH1XeRofU48zozbL9GrkFEbjeZ9jcT5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eNtZT1UZ; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-60995aa5417so3138274a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 23:10:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752473455; x=1753078255; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=G9Tn70FKTpBDzek73ufnJv469R3NOa6ous5bCCu5m1U=;
+        b=eNtZT1UZ0eiZxwKJ8uZzWGaSrR0nesz10REqhmGhVD5wNc+S8L1ekleKDIjcrnQBHA
+         EY30DbjQVoxVN/CjBXSTksDPZTR6ii1UU1IuvTARMPhjOBGH+VhABB1jN7aDGpDE9X+c
+         L8oz8yY7hmo0fZDNTcgJm5IhDEzR89BlNGzSJp9gau3MxWhQsMcTbAqTacHmwEyzN1X1
+         2FhXL02y+9thkEAxMi5egp29Vpvdp83R1A5DNsX+8/MgwoNVBtR2GH+Yj53AyNMzw0Ur
+         tllDgmjl9EusdA9/Hgd1nINcruUR78y4O2LzV9d7cgmJC6nzjWYv1tNrgV6EYOf5+WXt
+         eUMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752473455; x=1753078255;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=G9Tn70FKTpBDzek73ufnJv469R3NOa6ous5bCCu5m1U=;
+        b=VgQ1Ro0DBrEj5co3tl77zJ4CDtRIVvR7D7S83raASyl6bvYAcHPVp4CgcxHhfwt4Ox
+         7VoMZGb3BIsm79B2tdLT0U+gXgFxKLnqS/6D1pYWN3PnIfg3gLqYwxB9jC4c18IM5Lsy
+         pr8u08WMZVXbKqOZ/kyZg3pqsfRNUUa0KE2FnSn1zeoAbUNu3zPTdUDKFoGtGeR2gApW
+         Rr5AUy2AzXcQmZcxEau0bIUlV79XgKIdB+E8qGGeQqOKO1fUKaD0UbUIPPax8CgXIfFL
+         4QNVXF1zGLQ9ym2aIKaxNbIrf2XGY9CTSIIa9paAQulF5jipp3PWgMOfwTM+/FQJjZ3w
+         DDIA==
+X-Gm-Message-State: AOJu0YxmLXgHcG1wjoeewUSX2jI+LUQBMDoquV6vVpbU5Suge/v+3LKl
+	8eEY123bTyfn/OJioZ2DsiWIhP+XaTUXshabYTJvOtHjtWStUIvNafhFKnAOHFrGKUhE0s33T5q
+	gPr+hiaGjhEOok0qK5EQ5pfY+4i4ENXcHnDZkWnWrI0Zale00DYwbI+71CTX1wwJPZmF8kEe+Am
+	2la2ufsD4NO4XAyyMmf4S6YRpWsXdNkDeZQA==
+X-Google-Smtp-Source: AGHT+IHnMYU1tdLUgCWCMkDHtV2ofJo8Kj1jhtO5SeCzNxOoPrZb9dQJqddWyqsdiNjGgTivJJ6PBrvn
+X-Received: from edbec48.prod.google.com ([2002:a05:6402:d70:b0:612:b2a:492f])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:2551:b0:60c:6c85:48dd
+ with SMTP id 4fb4d7f45d1cf-611e84d5ce0mr9692143a12.23.1752473454949; Sun, 13
+ Jul 2025 23:10:54 -0700 (PDT)
+Date: Mon, 14 Jul 2025 08:08:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-ThreadId: T0ce86a4a9bc2801a
-Date: Mon, 14 Jul 2025 08:08:21 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Nicolin Chen" <nicolinc@nvidia.com>, "Jason Gunthorpe" <jgg@nvidia.com>
-Cc: "Kevin Tian" <kevin.tian@intel.com>, "Jonathan Corbet" <corbet@lwn.net>,
- "Bagas Sanjaya" <bagasdotme@gmail.com>, "Will Deacon" <will@kernel.org>,
- "Robin Murphy" <robin.murphy@arm.com>, "Joerg Roedel" <joro@8bytes.org>,
- "Thierry Reding" <thierry.reding@gmail.com>, vdumpa@nvidia.com,
- "Jon Hunter" <jonathanh@nvidia.com>, shuah <shuah@kernel.org>,
- jsnitsel@redhat.com, "Nathan Chancellor" <nathan@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Yi Liu" <yi.l.liu@intel.com>,
- mshavit@google.com, praan@google.com, zhangzekun11@huawei.com,
- iommu@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
- patches@lists.linux.dev, mochs@nvidia.com,
- "ALOK TIWARI" <alok.a.tiwari@oracle.com>, vasant.hegde@amd.com,
- "David Woodhouse" <dwmw2@infradead.org>,
- "Baolu Lu" <baolu.lu@linux.intel.com>
-Message-Id: <db221336-2694-4fcf-a2b2-8fcb46ba3c9e@app.fastmail.com>
-In-Reply-To: 
- <9a888a326b12aa5fe940083eae1156304e210fe0.1752126748.git.nicolinc@nvidia.com>
-References: <cover.1752126748.git.nicolinc@nvidia.com>
- <9a888a326b12aa5fe940083eae1156304e210fe0.1752126748.git.nicolinc@nvidia.com>
-Subject: Re: [PATCH v9 17/29] iommufd: Add mmap interface
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2042; i=ardb@kernel.org;
+ h=from:subject; bh=lBZw99MDLRGQYnmUAEaW8S2w5GuCP7F3IekTWgHFi6g=;
+ b=owGbwMvMwCVmkMcZplerG8N4Wi2JIaNk3vvT+9Y9uuM3TXFJnJtsxIyzqcz/eR/PsPqzeEKNP
+ R/foYsSHaUsDGJcDLJiiiwCs/++23l6olSt8yxZmDmsTCBDGLg4BWAiJ5gZGS5KK9wuT5s0Q+Ja
+ CftM/4wbF554nvlzf3ftBpG1fNZ/k0QY/nDa+K/0XKev99bz53mu6oadcpenx9Ud4TpWE21YcXy aJQ8A
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250714060843.4029171-5-ardb+git@google.com>
+Subject: [RFC PATCH 0/3] Remove unused EFI runtime APIs
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Ard Biesheuvel <ardb@kernel.org>, 
+	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>, Feng Tang <feng.tang@linux.alibaba.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Juergen Gross <jgross@suse.com>, 
+	Stefano Stabellini <sstabellini@kernel.org>, 
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Bibo Mao <maobibo@loongson.cn>, linux-rtc@vger.kernel.org, linux-efi@vger.kernel.org, 
+	xen-devel@lists.xenproject.org, x86@kernel.org, 
+	linux-riscv@lists.infradead.org, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 10, 2025, at 07:59, Nicolin Chen wrote:
->  EXPORT_SYMBOL_NS_GPL(_iommufd_object_undepend, "IOMMUFD");
-> 
-> +/*
-> + * Allocate an @offset to return to user space to use for an mmap() 
-> syscall
-> + *
-> + * Driver should use a per-structure helper in include/linux/iommufd.h
-> + */
-> +int _iommufd_alloc_mmap(struct iommufd_ctx *ictx, struct 
-> iommufd_object *owner,
-> +			phys_addr_t mmio_addr, size_t length,
-> +			unsigned long *offset)
-> +{
-...
-> +
-> +	/* Skip the first page to ease caller identifying the returned offset 
-> */
-> +	rc = mtree_alloc_range(&ictx->mt_mmap, &startp, immap, immap->length,
-> +			       PAGE_SIZE, PHYS_ADDR_MAX, GFP_KERNEL);
+From: Ard Biesheuvel <ardb@kernel.org>
 
+Using EFI runtime services to program the RTC to wake up the system is
+supported in theory, but rarely works in practice. Fortunately, this
+functionality is rarely [if ever] used to begin with so we can just drop
+it. (Note that the EFI rtc driver is not used by x86, which programs the
+CMOS rtc directly)
 
-This produces a warning on 32-bit targets with a 64-bit phys_addr_t,
-in practice this would be ARM Cortex-A15 or -A17 systems:
+The same applies to GetNextHighMonoCount(), which, if implemented,
+usually relies on SetVariable() under the hood *, which is often not
+supported at runtime by non-x86 platforms. But it has no known users
+either so let's drop support for it as well.
 
-In file included from include/linux/overflow.h:6,
-                 ...
-                 from drivers/iommu/iommufd/driver.c:4:
-drivers/iommu/iommufd/driver.c: In function '_iommufd_alloc_mmap':
-include/linux/limits.h:11:25: error: conversion from 'long long unsigned int' to 'long unsigned int' changes value from '18446744073709551615' to '4294967295' [-Werror=overflow]
-   11 | #define PHYS_ADDR_MAX   (~(phys_addr_t)0)
-      |                         ^~~~~~~~~~~~~~~~~
-drivers/iommu/iommufd/driver.c:61:43: note: in expansion of macro 'PHYS_ADDR_MAX'
-   61 |                                PAGE_SIZE, PHYS_ADDR_MAX, GFP_KERNEL);
-      |                                           ^~~~~~~~~~~~~
+This means we need to drop the slightly pointless tests for it too.
 
+* EDK2 based EFI implementations usually have a MTC variable carrying
+  the monotonic counter variable, which is therefore not truly
+  monotonic, given that SetVariable() will happily overwrite it. 
 
-The mtree_alloc_range() interface explicitly operates on 'unsigned long'
-address values, so I don't see an immediate workaround for this that would
-make it work on these machines. On the other hand, 
+Cc: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+Cc: Feng Tang <feng.tang@linux.alibaba.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>
+Cc: Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com> 
+Cc: Sunil V L <sunilvl@ventanamicro.com>
+Cc: Bibo Mao <maobibo@loongson.cn>
+Cc: linux-rtc@vger.kernel.org
+Cc: linux-efi@vger.kernel.org
+Cc: xen-devel@lists.xenproject.org
+Cc: x86@kernel.org
+Cc: linux-riscv@lists.infradead.org
+Cc: loongarch@lists.linux.dev
 
-At the moment, the only drivers that select CONFIG_IOMMUFD_DRIVER
-on 32-bit Arm systems are CONFIG_PDS_VFIO_PCI and CONFIG_MLX5_VFIO_PCI.
-It's probably fine to make all three symbols "depends on 64BIT" for
-now, but I don't know if there may be more drivers like this in the
-future that actually could make sense on embedded systems.
+Ard Biesheuvel (3):
+  efi-rtc: Remove wakeup functionality
+  efi/test: Don't bother pseudo-testing unused EFI services
+  efi: Remove support for pointless, unused EFI services
 
-     Arnd
+ arch/x86/platform/efi/efi_64.c          |  22 ----
+ drivers/firmware/efi/runtime-wrappers.c |  68 ------------
+ drivers/firmware/efi/test/efi_test.c    | 108 +-------------------
+ drivers/rtc/rtc-efi.c                   |  76 +-------------
+ drivers/xen/efi.c                       |  56 ----------
+ include/linux/efi.h                     |   6 --
+ 6 files changed, 4 insertions(+), 332 deletions(-)
+
+-- 
+2.50.0.727.gbf7dc18ff4-goog
+
 
