@@ -1,201 +1,205 @@
-Return-Path: <linux-kernel+bounces-730504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B507EB045B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:43:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 847ADB045A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 18:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 788647AE8A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:38:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA6AA4A7498
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3D9264A76;
-	Mon, 14 Jul 2025 16:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jj9Uat1g"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE263263F52;
+	Mon, 14 Jul 2025 16:38:36 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915AC263F38
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 16:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85502263F4A
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 16:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752511117; cv=none; b=XzTh3lK7hX69JTOn/iWp+dfnIb+jk+i0LVRyXbLydlYvXMTnDaPnkyiLTCRX2LLQPk2xIk1yxsfRo41ctT8yNmpe4hkIo8o4T99hrTH20E1d2/q/AP1Xnyn5pY5Z3523NT26soNB1Mv6nLAhOUiqXUCzGHp5fKgMWdNPRMYGofQ=
+	t=1752511116; cv=none; b=oDq7kHjmWOz+Q67/ZqACSHrYNTY0XvUNEmo0O9GHWypyxdFpi191YbUu497UPJh1FIRdXMMLlwSlJIm1lNkzbmCxxX91Q3snQ5DlGZ+3+Um6St5sGDg4rmM/huOUD9GfP00c8fJY0ICpWRmF+fDxUKwaPQ/goQzWMuUpXoqDhD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752511117; c=relaxed/simple;
-	bh=OvX1o4Xe0KwoA95UmnLfFc9oEE9tei1n0VStVxlruSw=;
-	h=From:Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:To:
-	 References:In-Reply-To; b=A2bzhF3Q11hRM2W/KKIk/DQNStqiVEa3wVKr2a9VuuatLC6IVFu93zDF07IRKQA6rBbYurWqPKtrvYlimobEtCYPrskF0G6DyVaGF4iZRfXDV2uCC1w5yAUeXr0yUYn+2Gbn1SXDMI9lc4BOeVLzJtaFYRTAnVk3w17Ltc9V9kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jj9Uat1g; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-455b00339c8so21591825e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:38:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752511114; x=1753115914; darn=vger.kernel.org;
-        h=in-reply-to:references:to:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nA6MOwgCp6FTYVinfvEZJR7VSvHLCjeqeD7Gs1ZsFHc=;
-        b=jj9Uat1gz8e2NKSHUyou8bGNYx63vdd8GaRvjM2Z+BQBcOoPSbksG8xSPWS9RwmIKv
-         YVN+Cs513SW+iuouW5i0RNOOkKdh5iWi0YQIIBrnQCiA9AK2n1QYgq8nF+ssJGNQdwKJ
-         srAYt1Zy1LRCMNt0g3uasbF3vUh8MZOLM5geXnJABVpZPd2/22XxotxuUZpWkSNd/gZI
-         RDk2pID+hZCxEBKIloG4Pnpw+tZU4hLPkg4VsPWrQL9KMtntZQA460c/QW1ZFn59tsID
-         gBOMAMthZPWU9b9Fdmhf8NXrSaoN0yw33sE1V6Zaxfh+jICJEUKrPnYd7l8jgVXPX3Gq
-         cx3A==
+	s=arc-20240116; t=1752511116; c=relaxed/simple;
+	bh=zBcoPsPVLXUVDmBKtl9p8Vx+6vuSy7PSVLfQjMQGkck=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rhrvR3Crk1FRhxRD0k7JpeSaSOdAL67eeEUKJgKuOoq2Xh/WravYPQ7SsWcsyZT2n5c1jxXF2SqwC556CiexG78UTYnOWQXCMxDgN5FoL21SZ46/wjQYN9C/vKtAolHxQZ4zRzBQtbTCFL2joPslap6h2lmOJ7khnypFwjZ3RWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-87313ccba79so894536639f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 09:38:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752511114; x=1753115914;
-        h=in-reply-to:references:to:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=nA6MOwgCp6FTYVinfvEZJR7VSvHLCjeqeD7Gs1ZsFHc=;
-        b=qhTl/0rw60uT9iC8AyAHOpdYrii2JZCnoxlq+CPZeFKZMYEi5UMOtICBLMe5Poilew
-         EIZEWZYEBPs4xX+5MbVANk4WFeq/WCtDBTFMiet2DiYJ9BUUWq7bdFEn5rsDo4mNUfxB
-         iaqvxv882dtiDSID48YDDQs8lhxp0yWrPZCmBkFY+0KDSD6aHx32xEf7QwNQPbf6LVhX
-         BG2kBv1DbtdeCFftR5OLTTPL4L0x5GXj8euey+kLN1p0BE8oasjAagHcyE8YB0DXV5zH
-         Gnd2y2Ix31vXyFgXqItZB5A27QYPRN/18wrWMhMlvPUeKC7lIxiiHjXYh87C32nz6SuC
-         I1WA==
-X-Forwarded-Encrypted: i=1; AJvYcCX2QP7wM/zTK+KjOQowWhxAkU/Fh2wKCqsoZbdeUGiowxJo5da8b5RJ836ijxVR34jaOyTfP8GnXcHvZ5E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxow6jouCmmVyjxEiWsxCkv1WEd9SG2PxYq/mZcsLYqaXwpP9uq
-	PgZCqNduRjLuh3TGECeoWF2ZncDhr/UzIfuLRX7YUxkxeHYvtMqwJ+yV
-X-Gm-Gg: ASbGncs83sasIHRakfCLXi4pJAK8qogRjsxroUVy8D797CfBfpePtFHFz+0uoG38XXr
-	ClgW2Pqh0zVhAsucOlS7ngC4/NmzuUFmoNdRI0V8Xub/jIYeddGC/FiLH3bOhxJMTmxB102pi7D
-	Ox2WCuFN/wSHN2biXMNMjDMJFuZ29dyRPcgPweQFvD1Da6NJ6QKN+NXgmdDr4qPHtFClB76O6n4
-	ep89zjilmrNUsnwhLtVN0DbDvLdmogtG8IhZc2CPrWIucgj3imJqxgLQDRvXsZ9arzyfC1gmeNr
-	vPGJn1dzxYNZ8xUI4zCDspyq2T2rdmg/uG8nN2JtKLHRTlRvHjQND3gZQDcQZsN2bEr/vgH5Z8B
-	iQJ/XOzpa0do2Hozh/9MrVFhLidVO4XC/p+kL7GwyMTs5E5PjTA==
-X-Google-Smtp-Source: AGHT+IH3FzHWgfO64SorIO2LSrTeSaITLBr9pADAESGyIjq06fDfQg9wHeJoPO/Fp0S4R0e2GAEolg==
-X-Received: by 2002:a05:600c:5304:b0:456:207e:fd83 with SMTP id 5b1f17b1804b1-456207efef8mr27541745e9.4.1752511113555;
-        Mon, 14 Jul 2025 09:38:33 -0700 (PDT)
-Received: from localhost (a95-94-245-170.cpe.netcabo.pt. [95.94.245.170])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4560538da14sm80523135e9.23.2025.07.14.09.38.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 09:38:32 -0700 (PDT)
-From: Rui Miguel Silva <rmfrfs@gmail.com>
-X-Google-Original-From: "Rui Miguel Silva" <rui.silva@linaro.com>
+        d=1e100.net; s=20230601; t=1752511113; x=1753115913;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8vECSHC5HZApOKK3p2sozzKgFWuRc6UShB6Spwxs7Ok=;
+        b=dZbIP1Bd1FYjRDLKZDshXAbPCKvf/2nkD2VKxQ+oyB1wk9/P2c2M8B/BwEXWgRSXFV
+         fuz+jtTDCjs0R8wPqyqKzKT3c2jK+rm9OfRwfFbLu+wUWE/WAhye6bJ3IhOM2nnbbqQ4
+         wRpMCMSooCGtlUk+z+x9GqRS97mKLkGdvd62/0S47OIx6npKzgnloorFGznWc8+cqtvp
+         ENv/Sj6748moScDQsEAiiH4gRrp62wgaFRuyCklby3xQq9NDphJo3scAE4oZkmjL2h+k
+         EGrfGyIl77RONq0L4g5osrAxPcwGpUOP5MrQc6NKPMK0KxpIPYeGMLTLujd8o/ONynHC
+         CGHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWC8sdHqvMleFyGSD0wc+Xa89A8Xw+eYdBOlNeR6UIXdP5yKiEOwEH27hLhP/yss7/r4fHXutpa3hMHmb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGS4RYiYxcXlW8z8RmKqCcxUPF2MPQGSC6oUR1/t1n29fiKXQv
+	U1Srjw7c7TPftC4glUqTEOT04AK/4fbjuWEgy2T6FkDvrqRpxbqf/vbf31Ls1mZ2GEi76SIwslR
+	pivup9Cooi4Y7c75K+GttIOm4Cp+5ewdpXACmudfaDX90V5N5E4PUkyVQt/c=
+X-Google-Smtp-Source: AGHT+IGxv3OKeAhsNMGG3ZcxHHqsJgQMLneAUR/N4UE0K0dxGV3pqhz/YTgQNtSoCHuX7519tj9SUygrQSglFclpzxXQ6Y1SP5Qt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 14 Jul 2025 17:38:31 +0100
-Message-Id: <DBBXCAEMM5ZO.GTKVMMR2XDJ7@linaro.com>
-Cc: <~lkcamp/patches@lists.sr.ht>, <koike@igalia.com>
-Subject: Re: [PATCH] staging: greybus: power_supply fix alignment
-To: "Akhil Varkey" <akhilvarkey@disroot.org>,
- <greybus-dev@lists.linaro.org>, <linux-staging@lists.linux.dev>,
- <linux-kernel@vger.kernel.org>, <rmfrfs@gmail.com>, <johan@kernel.org>,
- <elder@kernel.org>, <gregkh@linuxfoundation.org>
-References: <20250714135606.41671-1-akhilvarkey@disroot.org>
-In-Reply-To: <20250714135606.41671-1-akhilvarkey@disroot.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:6b0d:b0:876:8bf2:e4d2 with SMTP id
+ ca18e2360f4ac-879787a2806mr1578319039f.2.1752511113633; Mon, 14 Jul 2025
+ 09:38:33 -0700 (PDT)
+Date: Mon, 14 Jul 2025 09:38:33 -0700
+In-Reply-To: <6871f94b.a00a0220.26a83e.0070.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68753289.a70a0220.18f9d4.0003.GAE@google.com>
+Subject: Re: [syzbot] [mm?] possible deadlock in lock_next_vma
+From: syzbot <syzbot+159a3ef1894076a6a6e9@syzkaller.appspotmail.com>
+To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
+	liam.howlett@oracle.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	lorenzo.stoakes@oracle.com, shakeel.butt@linux.dev, surenb@google.com, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
-Hey Akhil,
-Thanks for your patch.
+syzbot has found a reproducer for the following issue on:
 
-All looks good with the exception of a small nit...
+HEAD commit:    0be23810e32e Add linux-next specific files for 20250714
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15cfb0f0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=be9e2082003f81ff
+dashboard link: https://syzkaller.appspot.com/bug?extid=159a3ef1894076a6a6e9
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1003b18c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11437d82580000
 
-On Mon Jul 14, 2025 at 2:56 PM WEST, Akhil Varkey wrote:
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/69e6cc49d526/disk-0be23810.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/71d1bab88eaa/vmlinux-0be23810.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5a516dc7bb0d/bzImage-0be23810.xz
 
-> Fix checkpatch check "CHECK:Alignment should match open parenthesis"
->
-> Signed-off-by: Akhil Varkey <akhilvarkey@disroot.org>
-> ---
->
-> Hello, This is my first patch, I appreciate any feedbacks. Thanks!!
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+159a3ef1894076a6a6e9@syzkaller.appspotmail.com
 
-Welcome, and continue...
+======================================================
+WARNING: possible circular locking dependency detected
+6.16.0-rc6-next-20250714-syzkaller #0 Not tainted
+------------------------------------------------------
+syz.2.103/6308 is trying to acquire lock:
+ffff88807d33bde0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_read_lock_killable include/linux/mmap_lock.h:432 [inline]
+ffff88807d33bde0 (&mm->mmap_lock){++++}-{4:4}, at: lock_vma_under_mmap_lock mm/mmap_lock.c:189 [inline]
+ffff88807d33bde0 (&mm->mmap_lock){++++}-{4:4}, at: lock_next_vma+0x802/0xdc0 mm/mmap_lock.c:264
 
-> ---
->  drivers/staging/greybus/power_supply.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/staging/greybus/power_supply.c b/drivers/staging/gre=
-ybus/power_supply.c
-> index 2ef46822f676..a484c0ca058d 100644
-> --- a/drivers/staging/greybus/power_supply.c
-> +++ b/drivers/staging/greybus/power_supply.c
-> @@ -324,7 +324,7 @@ static struct gb_power_supply_prop *get_psy_prop(stru=
-ct gb_power_supply *gbpsy,
->  }
-> =20
->  static int is_psy_prop_writeable(struct gb_power_supply *gbpsy,
-> -				     enum power_supply_property psp)
-> +				 enum power_supply_property psp)
->  {
->  	struct gb_power_supply_prop *prop;
-> =20
-> @@ -493,7 +493,7 @@ static int gb_power_supply_description_get(struct gb_=
-power_supply *gbpsy)
->  	if (!gbpsy->model_name)
->  		return -ENOMEM;
->  	gbpsy->serial_number =3D kstrndup(resp.serial_number, PROP_MAX,
-> -				       GFP_KERNEL);
-> +					GFP_KERNEL);
->  	if (!gbpsy->serial_number)
->  		return -ENOMEM;
-> =20
-> @@ -546,7 +546,7 @@ static int gb_power_supply_prop_descriptors_get(struc=
-t gb_power_supply *gbpsy)
->  	}
-> =20
->  	gbpsy->props =3D kcalloc(gbpsy->properties_count, sizeof(*gbpsy->props)=
-,
-> -			      GFP_KERNEL);
-> +			       GFP_KERNEL);
->  	if (!gbpsy->props) {
->  		ret =3D -ENOMEM;
->  		goto out_put_operation;
-> @@ -634,8 +634,8 @@ static int __gb_power_supply_property_get(struct gb_p=
-ower_supply *gbpsy,
->  }
-> =20
->  static int __gb_power_supply_property_strval_get(struct gb_power_supply =
-*gbpsy,
-> -						enum power_supply_property psp,
-> -						union power_supply_propval *val)
-> +						 enum power_supply_property psp,
-> +						 union power_supply_propval *val)
+but task is already holding lock:
+ffff8880338c6948 (vm_lock){++++}-{0:0}, at: lock_next_vma+0x146/0xdc0 mm/mmap_lock.c:220
 
-Here you fix the alignment, but the last line goes over column 81, even
-though 80 is not really one hard requirement anymore, all code
-(strings is ok to go over to be easier to grep for messages) is on that
-register.
-
-So, to be coherent, if you could please send a V2 without this specific cha=
-nge
-would be great, Or even better, if you could get rid of all the _ and __
-prefixes in functions names that would be great, and will give more
-space for function paramethers.
-Your call.
-
-Also, gives you also the chance to practice to send a new
-version ;).
-
-Cheers,
-    Rui
-
->  {
->  	switch (psp) {
->  	case POWER_SUPPLY_PROP_MODEL_NAME:
-> @@ -943,8 +943,8 @@ static int gb_power_supplies_setup(struct gb_power_su=
-pplies *supplies)
->  		goto out;
-> =20
->  	supplies->supply =3D kcalloc(supplies->supplies_count,
-> -				     sizeof(struct gb_power_supply),
-> -				     GFP_KERNEL);
-> +				   sizeof(struct gb_power_supply),
-> +				   GFP_KERNEL);
-> =20
->  	if (!supplies->supply) {
->  		ret =3D -ENOMEM;
-> --=20
-> 2.47.2
+which lock already depends on the new lock.
 
 
+the existing dependency chain (in reverse order) is:
 
+-> #1 (vm_lock){++++}-{0:0}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
+       __vma_enter_locked+0x182/0x380 mm/mmap_lock.c:63
+       __vma_start_write+0x1e/0x120 mm/mmap_lock.c:87
+       vma_start_write include/linux/mmap_lock.h:267 [inline]
+       mprotect_fixup+0x571/0x9b0 mm/mprotect.c:670
+       setup_arg_pages+0x53a/0xaa0 fs/exec.c:670
+       load_elf_binary+0xb9f/0x2730 fs/binfmt_elf.c:1013
+       search_binary_handler fs/exec.c:1670 [inline]
+       exec_binprm fs/exec.c:1702 [inline]
+       bprm_execve+0x999/0x1450 fs/exec.c:1754
+       kernel_execve+0x8f0/0x9f0 fs/exec.c:1920
+       try_to_run_init_process+0x13/0x60 init/main.c:1397
+       kernel_init+0xad/0x1d0 init/main.c:1525
+       ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+-> #0 (&mm->mmap_lock){++++}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3168 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3287 [inline]
+       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3911
+       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
+       down_read_killable+0x50/0x350 kernel/locking/rwsem.c:1562
+       mmap_read_lock_killable include/linux/mmap_lock.h:432 [inline]
+       lock_vma_under_mmap_lock mm/mmap_lock.c:189 [inline]
+       lock_next_vma+0x802/0xdc0 mm/mmap_lock.c:264
+       get_next_vma fs/proc/task_mmu.c:182 [inline]
+       query_vma_find_by_addr fs/proc/task_mmu.c:512 [inline]
+       query_matching_vma+0x319/0x5c0 fs/proc/task_mmu.c:544
+       do_procmap_query fs/proc/task_mmu.c:629 [inline]
+       procfs_procmap_ioctl+0x3f9/0xd50 fs/proc/task_mmu.c:747
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:598 [inline]
+       __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  rlock(vm_lock);
+                               lock(&mm->mmap_lock);
+                               lock(vm_lock);
+  rlock(&mm->mmap_lock);
+
+ *** DEADLOCK ***
+
+1 lock held by syz.2.103/6308:
+ #0: ffff8880338c6948 (vm_lock){++++}-{0:0}, at: lock_next_vma+0x146/0xdc0 mm/mmap_lock.c:220
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 6308 Comm: syz.2.103 Not tainted 6.16.0-rc6-next-20250714-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2046
+ check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2178
+ check_prev_add kernel/locking/lockdep.c:3168 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3287 [inline]
+ validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3911
+ __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
+ down_read_killable+0x50/0x350 kernel/locking/rwsem.c:1562
+ mmap_read_lock_killable include/linux/mmap_lock.h:432 [inline]
+ lock_vma_under_mmap_lock mm/mmap_lock.c:189 [inline]
+ lock_next_vma+0x802/0xdc0 mm/mmap_lock.c:264
+ get_next_vma fs/proc/task_mmu.c:182 [inline]
+ query_vma_find_by_addr fs/proc/task_mmu.c:512 [inline]
+ query_matching_vma+0x319/0x5c0 fs/proc/task_mmu.c:544
+ do_procmap_query fs/proc/task_mmu.c:629 [inline]
+ procfs_procmap_ioctl+0x3f9/0xd50 fs/proc/task_mmu.c:747
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa51ab8e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fa51b99b038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fa51adb5fa0 RCX: 00007fa51ab8e929
+RDX: 0000200000000180 RSI: 00000000c0686611 RDI: 0000000000000003
+RBP: 00007fa51ac10b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fa51adb5fa0 R15: 00007ffdecbd3a88
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
