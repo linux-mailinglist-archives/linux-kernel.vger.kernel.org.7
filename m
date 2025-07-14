@@ -1,420 +1,197 @@
-Return-Path: <linux-kernel+bounces-730224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE307B0418A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:26:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E06E5B0418E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 773AC4A6629
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:24:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DBBB4A6BDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CC225CC42;
-	Mon, 14 Jul 2025 14:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FC725BF1B;
+	Mon, 14 Jul 2025 14:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IP1zEGgU"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="U9e52en3"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5DC255F5E;
-	Mon, 14 Jul 2025 14:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48E82571A0
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752502922; cv=none; b=b8At/fVaI1eDP7otzTseGGv04BrMe9pPvBCJ14tAGLCHgHVMogi18D6eCDAdUUxlw6cItBTuYrV56L1upqGDcy3WNutshcnahmFZ4IHgDiy9aRqsb6kETXsA0lD/EJz4Zr8pdMmH4X0Azn0Av2sCLlzH1j34wQ4yYa17NxvWNKs=
+	t=1752502938; cv=none; b=WHx9M4KsiwaIBn+gjhJQJDf7cdkrfh8azsex8wheAZLu+PnNTshOaZCAJG3rqwQ1pzdPM7Q0rScDeLrm+Q8So529VjaU48aTHiRcjWotEZTM88+DD2whmoS/a0WrV3sezZsjlOxPU6BD4PGAiEn/ULd3nMBDFuzhOOStWEbKlSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752502922; c=relaxed/simple;
-	bh=LXYASdYs274xH5+7ZkutHgLnsf8arGwEpqGBiT9kquk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Djq5y3hcNdaqL3QlMdIuDibZ7oqdGIMm2c7JDl0rUDE4jOGFTxQsN9n2vlI9jDjPNYinOaIEBx8wbwvLzgmgq8ged3q1wGIaTHSr22/1N2Y9ipEPkppEtCkPS/t0nnvFEkdf3gbZWODPpGhlH646R6HbNUZ/RAFVpkdNEo0Wm78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IP1zEGgU; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4ab60e97cf8so16608991cf.0;
-        Mon, 14 Jul 2025 07:21:59 -0700 (PDT)
+	s=arc-20240116; t=1752502938; c=relaxed/simple;
+	bh=0HQ77LdRNnlNhPQKaWi0+fFU7Gijmj2y1aEGnVzzmUs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pfv1l8naa49MdEVJxeBRr28TJHFWCsFKw0omQU0GhSsDIoZ1uiRUMi0V38I5hYc/9eyMX5aaP09g9C+R7ajjab/t9lq90VYyhJpDUYbVFB/yo2nmOf8lezXeLMPOVaUSCGAFhD86ZydFJ6GTJeWdiddavwbD+YFygdzr5i1ULUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=U9e52en3; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3df210930f7so17505695ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 07:22:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752502919; x=1753107719; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eZ3UA4OiThrfJUfCAJnJai+VvM5KDOnLQOCMjU2eyNU=;
-        b=IP1zEGgUzvGTRynisyIGuoK8q+xSDHeMq9Ss7YRrFxIzf+LjDZuOAbHLrcTjQMLX4s
-         lt4472rtE1ckJ9w1T7T+1hfwFFMPH0qBw0FOzOkr0z1/Nzsp5B0D90J/hEQtcEaaxonO
-         YwJk5nmB8i1mxI9cerayfnfqQxrRppIxiv7IH812/QAz66ZodYhFvRmy4OpVHnNroAnP
-         kQmWi57TZo+heCTdvdFotvSqb5nbMUiOEkaKM/D4PSM7VHNmt1ELiU1klUYscPIblEZJ
-         qdgc59obtojykh438Q09NGjmbAnIj8KZebVlgSia1JOaZ4JEWb6NpyDQTtCeHaaGBvDd
-         9FXw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1752502933; x=1753107733; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OWi05X1JOxVzj2y8x/vxdLKOgX15Q9WfZ2Zm0wkXnCY=;
+        b=U9e52en3nFVgce9SF8tc1V0V4VZ4vTrUGv5LsgMPG946f3v9wo6jVTxC1O1n8a8Rs8
+         7s/ZaBBAVz99UEsAya/lZVsRde73Hq+S8vmYXOfnoEJjUMVFMRxOSZsHBblXHxFKNqh3
+         9sFMf09p8so7UOLg3QdoRb14UAXYR1gvk4aUk4BcAX2lN24jWWZu5qvm1upnMB8O5yR6
+         gLLFwnGIe4IfdnI3GSuHOK4w5VCHaijiB1UqqDb1Gs8j+tMmI7cFd2LI88nS8qX6JV9j
+         ZBryQnn2KCQoWuDzUEIUoesykJuIAsoh3peCYI5l1pnYYr6lvylhapSLPECEhgf+Bz3w
+         yWAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752502919; x=1753107719;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eZ3UA4OiThrfJUfCAJnJai+VvM5KDOnLQOCMjU2eyNU=;
-        b=p1/fd08fKtDsl5LEWKDIgX7LMfxs2mCyL3Qxk2Ccmef5PdUwKkz7qIkoqkAqjGzIDO
-         UdJf7MxtLEi0TeUSOinPHwiVMMfyaBuUw5C1xykgNotvLR+3vB+G9LLqyZBKmp+zwgbO
-         ATAJ3e+wqk2187KmS8tyGw5MGkhoxBQV3ResaN2oCSTTUcJal8GDO7TBj0wXP72cXgoX
-         MqfZJbxlBWD0F/dL3kvY9n1VtTDyN76txeDrfAdfzPXARvI5sfcHfo5EPmG4XEZFHJkQ
-         ggmAWUEWfSlY8aizG8FazGNIvDS10CzzBo7u9wn6J8IvdNRzN39POQpAl/zUvpN3Axqb
-         gIeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUupV/K9/5eEY4bX8Ro5FEnHeT/wZ3qv5qWV1EJkSpUHp/7xC0tA3dSV3c89TWGuH0G49V2dEavkRx/@vger.kernel.org, AJvYcCWRwIm/w9nvKtVgXVSioZJoyhFEh1BB8+rkyf1qFNG9XXQwx3HxkZCZrm/T6IBzJQqvbg6Y/tv6M2B9+nKnSbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdJzw6GoCEW9I4JzNBxb+zfmbzvFWkPITntvVf8+cp0bPSba9U
-	vBxQ9U+PlBFj0wmqrCX5w7smxx5X+YIACYZwVRhgWwVcGBQeywzAAUBa
-X-Gm-Gg: ASbGncvrWENeR/UjZeiQ4LL/7UFPA65lvNA46oHCC62H1HpPELo+tSwZd4KAzjevlcb
-	pGoPQ8PLBlH8Reb9swP9mzxL3ovxr/dhrmDKFNiOSBvYOBILh2UIYNw4uwBel9bsPHr8CN0D0e2
-	s4kNAuL/AekTy29pMoXZrONVu3oPETpJ8mPRptyaPWtnlkR5XKWFNotPU3M1aLEtcK5ljD0Pdkz
-	i84mk60K+lyjGoawlYFb4fr0QZE8lrKbd4ea2R/h855V923kbIfPfpnXH6/2mACiEzRu21toR1l
-	842vOHyo6vjStCE3IUUNfm+Ckl/x/QAp7oqxQN3WseKrBlMSVX41n6ecqYdNoyytw6WtXu8cA4J
-	JFOiFkMV23YDVJ7MoCRfHP11d+/fYDAcSvyItTEddmXHVzqANZRoZHKc/BhnbY5F6+B0oVJKBsi
-	zhJmBWUbHUM7hn6S2ZFqduAW0=
-X-Google-Smtp-Source: AGHT+IFPSGvNAkBdeHK89MtoMem4TLxdLXh4OZGGwdCkz7tqSOs4eBK5tCKfiDABlgF9UHT6wbjqjg==
-X-Received: by 2002:a05:6214:4105:b0:702:c042:82a2 with SMTP id 6a1803df08f44-704a4083bb6mr199236616d6.4.1752502918367;
-        Mon, 14 Jul 2025 07:21:58 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70497d8eee2sm47343296d6.97.2025.07.14.07.21.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 07:21:57 -0700 (PDT)
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id D378CF40067;
-	Mon, 14 Jul 2025 10:21:56 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Mon, 14 Jul 2025 10:21:56 -0400
-X-ME-Sender: <xms:hBJ1aDGuMY4nwS1IWHR7fsftsJRHhMspcIAyaV49ruNh0A8EqV3-EA>
-    <xme:hBJ1aB2apIqJlvd7uisnShqZRnfAgRRo9lEIe_UWpebKA7zbN8f9hSM7r38rqdN2e
-    AWHtY9sDnR7xV3GvQ>
-X-ME-Received: <xmr:hBJ1aJsLV2dd0SYLg3aM5c2jMCI89X5WjnkG49b8Hqtv_UmZv_oM6e1QRQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehvddukecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
-    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
-    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
-    drnhgrmhgvpdhnsggprhgtphhtthhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtoheplhhoshhsihhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdq
-    fhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlkh
-    hmmheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhgt
-    hhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjoh
-    hrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:hBJ1aAndUvXSTDtoRLanYeY1GLPCqR9APm1iHJI0MFcl_YNxQc7tlw>
-    <xmx:hBJ1aHWKITGNp-uMHqPnwN9rk93WfIw-L4A70STwhCLMbRvktUJcAQ>
-    <xmx:hBJ1aEsoLbEjTFVdP6DzVJIRMBlG9go7R2XjZiOaCa1WyZDeVoV1Ag>
-    <xmx:hBJ1aKqTQoFr0MJuj9KJ8W9_41WszoJ3OB9Y5eFDXo2C_bnagj24tg>
-    <xmx:hBJ1aJ58aWRW3w5DIuJshZtXpvwPTg1gN-OQnnB0OBJKPOm6DifSEz2w>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 14 Jul 2025 10:21:54 -0400 (EDT)
-Date: Mon, 14 Jul 2025 07:21:53 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v7 4/9] rust: sync: atomic: Add generic atomics
-Message-ID: <aHUSgXW9A6LzjBIS@Mac.home>
-References: <20250714053656.66712-1-boqun.feng@gmail.com>
- <20250714053656.66712-5-boqun.feng@gmail.com>
- <DBBPI9ZJVO64.3A83G118BMVLI@kernel.org>
+        d=1e100.net; s=20230601; t=1752502933; x=1753107733;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OWi05X1JOxVzj2y8x/vxdLKOgX15Q9WfZ2Zm0wkXnCY=;
+        b=F8/rjiW0X8CqzNy+2H45Nt4uZWkoZcR+mL6tWaEBQ7JoqCzRD0pvtxE/vQ07aC1o8K
+         Ss8msCFR2T0LoPM/L1/CG9n3azlR23YDdHd8OySx02gnZFdj2kxgzFsXI2PUp10nJz6e
+         wzsQf6RYMm815iJMH/y0wpRKmF/NhvEA5FirM8B1bibO3kAnWxXZjQm6UnfX7RhAds+S
+         Y6KR0GgJXUQwQGNotDHugMcRbmyrxwb1B6hJ8P3k+8Eyb+7cfjeBgRNQDoAOPnVuyAaE
+         3rsMLO31evQfCouSNg891qcD3Q6lYoaQdTFdCGNs75b9CK2hTkeRh155XuF5tQJ2x+dl
+         R+2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVJljAeHjlk2phVMEEVciTWh/wXCooYxFYPY64ltT14vAAuPmCT3+rsx8AerNEqv6xB7oxrR1msOQNv+ms=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/noh4TY6eyeaG5zLIG+xTpDN09d7D2Vd95EEaRUfsjGpKaojw
+	WegbTlBwkwsOr9x5eizHMSIDpt1ySywTSq5v7SnDhX6FK+xhBDSFnSMKBCa3YI/hvFA=
+X-Gm-Gg: ASbGncvjZVxfR9RKuVmU7uUaBWR1AEiOkTx8KmOushxfJWjhyg/XRbpue/y3I5DPfLq
+	l1UqMRXQICkWPd3USf20MFWw2nZaMHVlo8vUsQWxON4c1+vFJ+T/3dw2u5oSCSr5RAMu5unpJGH
+	UeJTU/gibwy7PsrN3wqjsF+GM89iAqen6BaayFXmjBDWnhN6RW6kk3AA8V5B+j4HuuOrzzaezqC
+	jZeN4KSARQOH3kz8A43VHFdCKQZjvhg5AfHB7ICsXPlZrw0eKHQ4rqdfRDvqdBkcid7cKuofi22
+	E5P6988SuzgmBTrESx6Msc0rCXzhVCSs0E60nn0O7OZcUMOJK1/Q38t8fwWtED5mu8cdn0YxGt0
+	Sz0UjNP2+qB93E535cmU=
+X-Google-Smtp-Source: AGHT+IEX6hWLQtPd+BFrv53++vduZ3F8Mjg6zNJVMSXtw53CFyHFeYWki6RypUmrb8oKiZfANHiaag==
+X-Received: by 2002:a05:6e02:dc4:b0:3d9:2992:671b with SMTP id e9e14a558f8ab-3e244642b0bmr120890725ab.4.1752502932840;
+        Mon, 14 Jul 2025 07:22:12 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50556532a2fsm2118885173.19.2025.07.14.07.22.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 07:22:12 -0700 (PDT)
+Message-ID: <6686fe78-a050-4a1d-aa27-b7bf7ca6e912@kernel.dk>
+Date: Mon, 14 Jul 2025 08:22:11 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DBBPI9ZJVO64.3A83G118BMVLI@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: cdrom: cdrom_mrw_exit() NULL ptr deref
+To: Phillip Potter <phil@philpotter.co.uk>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Chris Rankin <rankincj@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+References: <uxgzea5ibqxygv3x7i4ojbpvcpv2wziorvb3ns5cdtyvobyn7h@y4g4l5ezv2ec>
+ <aHF4GRvXhM6TnROz@equinox>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <aHF4GRvXhM6TnROz@equinox>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 14, 2025 at 12:30:12PM +0200, Benno Lossin wrote:
-> On Mon Jul 14, 2025 at 7:36 AM CEST, Boqun Feng wrote:
-> > To provide using LKMM atomics for Rust code, a generic `Atomic<T>` is
-> > added, currently `T` needs to be Send + Copy because these are the
-> > straightforward usages and all basic types support this.
-> >
-> > Implement `AllowAtomic` for `i32` and `i64`, and so far only basic
-> > operations load() and store() are introduced.
-> >
-> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> > ---
-> >  rust/kernel/sync/atomic.rs         |  14 ++
-> >  rust/kernel/sync/atomic/generic.rs | 285 +++++++++++++++++++++++++++++
-> >  2 files changed, 299 insertions(+)
-> >  create mode 100644 rust/kernel/sync/atomic/generic.rs
-> >
-> > diff --git a/rust/kernel/sync/atomic.rs b/rust/kernel/sync/atomic.rs
-> > index e80ac049f36b..c5193c1c90fe 100644
-> > --- a/rust/kernel/sync/atomic.rs
-> > +++ b/rust/kernel/sync/atomic.rs
-> > @@ -16,7 +16,21 @@
-> >  //!
-> >  //! [`LKMM`]: srctree/tools/memory-model/
-> >  
-> > +pub mod generic;
-> 
-> Hmm, maybe just re-export the stuff? I don't think there's an advantage
-> to having the generic module be public.
-> 
+On 7/11/25 2:46 PM, Phillip Potter wrote:
+>> <1>[335443.339244] BUG: kernel NULL pointer dereference, address: 0000000000000010
+>> <1>[335443.339262] #PF: supervisor read access in kernel mode
+>> <1>[335443.339268] #PF: error_code(0x0000) - not-present page
+>> <6>[335443.339273] PGD 0 P4D 0
+>> <4>[335443.339279] Oops: 0000 [#1] PREEMPT SMP NOPTI
+>> <4>[335443.339287] CPU: 1 PID: 1988 Comm: cros-disks Not tainted 6.6.76-07501-gd42535a678fb #1 (HASH:7d84 1)
+>> <4>[335443.339301] RIP: 0010:blk_queue_enter+0x5a/0x250
+>> <4>[335443.339312] Code: 03 00 00 4c 8d 6d a8 eb 1c 4c 89 e7 4c 89 ee e8 8c 62 be ff 49 f7 86 88 00 00 00 02 00 00 00 0f 85 ce 01 00 00 e8 86 10 bd ff <49> 8b 07 a8 03 0f 85 85 01 00 00 65 48 ff 00 41 83 be 90 00 00 00
+>> <4>[335443.339318] RSP: 0018:ffff9be08ab03b00 EFLAGS: 00010202
+>> <4>[335443.339324] RAX: ffff8903aa366300 RBX: 0000000000000000 RCX: ffff9be08ab03cd0
+>> <4>[335443.339330] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+>> <4>[335443.339333] RBP: ffff9be08ab03b58 R08: 0000000000000002 R09: 0000000000001b58
+>> <4>[335443.339338] R10: ffffffff00000000 R11: ffffffffc0ccd030 R12: 0000000000000328
+>> <4>[335443.339344] R13: ffff9be08ab03b00 R14: 0000000000000000 R15: 0000000000000010
+>> <4>[335443.339348] FS: 00007d52be81e900(0000) GS:ffff8904b6040000(0000) knlGS:0000000000000000
+>> <4>[335443.339357] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> <4>[335443.339362] CR2: 0000000000000010 CR3: 0000000140ac6000 CR4: 0000000000350ee0
+>> <4>[335443.339367] Call Trace:
+>> <4>[335443.339372] <TASK>
+>> <4>[335443.339379] ? __die_body+0xae/0xb0
+>> <4>[335443.339389] ? page_fault_oops+0x381/0x3e0
+>> <4>[335443.339398] ? exc_page_fault+0x4f/0xa0
+>> <4>[335443.339404] ? asm_exc_page_fault+0x22/0x30
+>> <4>[335443.339416] ? sr_check_events+0x290/0x290 [sr_mod (HASH:ab3e 2)]
+>> <4>[335443.339432] ? blk_queue_enter+0x5a/0x250
+>> <4>[335443.339439] blk_mq_alloc_request+0x16a/0x220
+>> <4>[335443.339450] scsi_execute_cmd+0x65/0x240
+>> <4>[335443.339458] sr_do_ioctl+0xe3/0x210 [sr_mod (HASH:ab3e 2)]
+>> <4>[335443.339471] sr_packet+0x3d/0x50 [sr_mod (HASH:ab3e 2)]
+>> <4>[335443.339482] cdrom_mrw_exit+0xc1/0x240 [cdrom (HASH:9d9a 3)]
+>> <4>[335443.339497] sr_free_disk+0x45/0x60 [sr_mod (HASH:ab3e 2)]
+>> <4>[335443.339506] disk_release+0xc8/0xe0
+>> <4>[335443.339515] device_release+0x39/0x90
+>> <4>[335443.339523] kobject_release+0x49/0xb0
+>> <4>[335443.339533] bdev_release+0x19/0x30
+>> <4>[335443.339540] deactivate_locked_super+0x3b/0x100
+>> <4>[335443.339548] cleanup_mnt+0xaa/0x160
+>> <4>[335443.339557] task_work_run+0x6c/0xb0
+>> <4>[335443.339563] exit_to_user_mode_prepare+0x102/0x120
+>> <4>[335443.339571] syscall_exit_to_user_mode+0x1a/0x30
+>> <4>[335443.339577] do_syscall_64+0x7e/0xa0
+>> <4>[335443.339582] ? exit_to_user_mode_prepare+0x44/0x120
+>> <4>[335443.339588] entry_SYSCALL_64_after_hwframe+0x55/0xbf
+>> <4>[335443.339595] RIP: 0033:0x7d52bea41f07
 
-If `generic` is not public, then in the kernel::sync::atomic page, it
-won't should up, and there is no mentioning of struct `Atomic` either.
+This just looks totally broken, the cdrom layer trying to issue block
+layer commands at exit time. Perhaps something like the below (utterly
+untested) patch would be an improvement. Also gets rid of the silly
+->exit() hook which exists just for mrw.
 
-If I made it public and also re-export the `Atomic`, there would be a
-"Re-export" section mentioning all the re-exports, so I will keep
-`generic` unless you have some tricks that I don't know.
 
-Also I feel it's a bit naturally that `AllowAtomic` and `AllowAtomicAdd`
-stay under `generic` (instead of re-export them at `atomic` mod level)
-because they are about the generic part of `Atomic`, right?
+diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
+index 21a10552da61..31ba1f8c1f78 100644
+--- a/drivers/cdrom/cdrom.c
++++ b/drivers/cdrom/cdrom.c
+@@ -624,9 +624,6 @@ int register_cdrom(struct gendisk *disk, struct cdrom_device_info *cdi)
+ 	if (check_media_type == 1)
+ 		cdi->options |= (int) CDO_CHECK_TYPE;
+ 
+-	if (CDROM_CAN(CDC_MRW_W))
+-		cdi->exit = cdrom_mrw_exit;
+-
+ 	if (cdi->ops->read_cdda_bpc)
+ 		cdi->cdda_method = CDDA_BPC_FULL;
+ 	else
+@@ -651,9 +648,6 @@ void unregister_cdrom(struct cdrom_device_info *cdi)
+ 	list_del(&cdi->list);
+ 	mutex_unlock(&cdrom_mutex);
+ 
+-	if (cdi->exit)
+-		cdi->exit(cdi);
+-
+ 	cd_dbg(CD_REG_UNREG, "drive \"/dev/%s\" unregistered\n", cdi->name);
+ }
+ EXPORT_SYMBOL(unregister_cdrom);
+@@ -1264,6 +1258,8 @@ void cdrom_release(struct cdrom_device_info *cdi)
+ 		cd_dbg(CD_CLOSE, "Use count for \"/dev/%s\" now zero\n",
+ 		       cdi->name);
+ 		cdrom_dvd_rw_close_write(cdi);
++		if (CDROM_CAN(CDC_MRW_W))
++			cdrom_mrw_exit(cdi);
+ 
+ 		if ((cdo->capability & CDC_LOCK) && !cdi->keeplocked) {
+ 			cd_dbg(CD_CLOSE, "Unlocking door!\n");
+diff --git a/include/linux/cdrom.h b/include/linux/cdrom.h
+index fdfb61ccf55a..b907e6c2307d 100644
+--- a/include/linux/cdrom.h
++++ b/include/linux/cdrom.h
+@@ -62,7 +62,6 @@ struct cdrom_device_info {
+ 	__u8 last_sense;
+ 	__u8 media_written;		/* dirty flag, DVD+RW bookkeeping */
+ 	unsigned short mmc3_profile;	/* current MMC3 profile */
+-	int (*exit)(struct cdrom_device_info *);
+ 	int mrw_mode_page;
+ 	bool opened_for_data;
+ 	__s64 last_media_change_ms;
 
-> >  pub mod ops;
-> >  pub mod ordering;
-> >  
-> > +pub use generic::Atomic;
-> >  pub use ordering::{Acquire, Full, Relaxed, Release};
-> > +
-[...]
-> > +/// A memory location which can be safely modified from multiple execution contexts.
-> > +///
-> > +/// This has the same size, alignment and bit validity as the underlying type `T`.
-> 
-> Let's also mention that this disables any niche optimizations (due to
-> the unsafe cell).
-> 
-
-Done
-
-> > +///
-> > +/// The atomic operations are implemented in a way that is fully compatible with the [Linux Kernel
-> > +/// Memory (Consistency) Model][LKMM], hence they should be modeled as the corresponding
-> > +/// [`LKMM`][LKMM] atomic primitives. With the help of [`Atomic::from_ptr()`] and
-> > +/// [`Atomic::as_ptr()`], this provides a way to interact with [C-side atomic operations]
-> > +/// (including those without the `atomic` prefix, e.g. `READ_ONCE()`, `WRITE_ONCE()`,
-> > +/// `smp_load_acquire()` and `smp_store_release()`).
-> > +///
-> > +/// [LKMM]: srctree/tools/memory-model/
-> > +/// [C-side atomic operations]: srctree/Documentation/atomic_t.txt
-> 
-> Did you check that these links looks good in rustdoc?
-> 
-
-Yep.
-
-> > +#[repr(transparent)]
-> > +pub struct Atomic<T: AllowAtomic>(UnsafeCell<T>);
-> > +
-> > +// SAFETY: `Atomic<T>` is safe to share among execution contexts because all accesses are atomic.
-> > +unsafe impl<T: AllowAtomic> Sync for Atomic<T> {}
-> > +
-> > +/// Types that support basic atomic operations.
-> > +///
-> > +/// # Round-trip transmutability
-> > +///
-> > +/// `T` is round-trip transmutable to `U` if and only if both of these properties hold:
-> > +///
-> > +/// - Any valid bit pattern for `T` is also a valid bit pattern for `U`.
-> > +/// - Transmuting (e.g. using [`transmute()`]) a value of type `T` to `U` and then to `T` again
-> > +///   yields a value that is in all aspects equivalent to the original value.
-> > +///
-> > +/// # Safety
-> > +///
-> > +/// - [`Self`] must have the same size and alignment as [`Self::Repr`].
-> > +/// - [`Self`] must be [round-trip transmutable] to  [`Self::Repr`].
-> > +///
-> > +/// Note that this is more relaxed than requiring the bi-directional transmutability (i.e.
-> > +/// [`transmute()`] is always sound between `U` to `T`) because of the support for atomic variables
-> 
-> s/ to / and /
-> 
-
-Fixed.
-
-> > +/// over unit-only enums, see [Examples].
-> > +///
-> > +/// # Limitations
-> > +///
-> > +/// Because C primitives are used to implement the atomic operations, and a C function requires a
-> > +/// valid object of a type to operate on (i.e. no `MaybeUninit<_>`), hence at the Rust <-> C
-> > +/// surface, only types with no uninitialized bits can be passed. As a result, types like `(u8,
-> 
-> s/no uninitialized/initialized/
-> 
-
-hmm.. "with initialized bits" seems to me saying "it's OK as long as
-some bits are initialized", how about "with all the bits initialized"?
-
-> > +/// u16)` (a tuple with a `MaybeUninit` hole in it) are currently not supported. Note that
-> 
-> s/a tuple with a `MaybeUninit` hole in it/padding bytes are uninitialized/
-> 
-
-Done.
-
-[...]
-> > +
-> > +#[inline(always)]
-> > +const fn into_repr<T: AllowAtomic>(v: T) -> T::Repr {
-> > +    // SAFETY: Per the safety requirement of `AllowAtomic`, the transmute operation is sound.
-> 
-> Please explain the concrete parts of the safety requirements that you
-> are using here (ie round-trip-transmutability).
-> 
-
-Done.
-
-> > +    unsafe { core::mem::transmute_copy(&v) }
-> > +}
-> > +
-> > +/// # Safety
-> > +///
-> > +/// `r` must be a valid bit pattern of `T`.
-> > +#[inline(always)]
-> > +const unsafe fn from_repr<T: AllowAtomic>(r: T::Repr) -> T {
-> > +    // SAFETY: Per the safety requirement of the function, the transmute operation is sound.
-> > +    unsafe { core::mem::transmute_copy(&r) }
-> > +}
-> > +
-> > +impl<T: AllowAtomic> Atomic<T> {
-> > +    /// Creates a new atomic `T`.
-> > +    pub const fn new(v: T) -> Self {
-> > +        Self(UnsafeCell::new(v))
-> > +    }
-> > +
-> > +    /// Creates a reference to an atomic `T` from a pointer of `T`.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// - `ptr` is aligned to `align_of::<T>()`.
-> > +    /// - `ptr` is valid for reads and writes for `'a`.
-> > +    /// - For the duration of `'a`, other accesses to `*ptr` must not cause data races (defined
-> > +    ///   by [`LKMM`]) against atomic operations on the returned reference. Note that if all other
-> > +    ///   accesses are atomic, then this safety requirement is trivially fulfilled.
-> > +    ///
-> > +    /// [`LKMM`]: srctree/tools/memory-model
-> > +    ///
-> > +    /// # Examples
-> > +    ///
-> > +    /// Using [`Atomic::from_ptr()`] combined with [`Atomic::load()`] or [`Atomic::store()`] can
-> > +    /// achieve the same functionality as `READ_ONCE()`/`smp_load_acquire()` or
-> > +    /// `WRITE_ONCE()`/`smp_store_release()` in C side:
-> > +    ///
-> > +    /// ```
-> > +    /// # use kernel::types::Opaque;
-> > +    /// use kernel::sync::atomic::{Atomic, Relaxed, Release};
-> > +    ///
-> > +    /// // Assume there is a C struct `foo`.
-> > +    /// mod cbindings {
-> > +    ///     #[repr(C)]
-> > +    ///     pub(crate) struct foo {
-> > +    ///         pub(crate) a: i32,
-> > +    ///         pub(crate) b: i32
-> > +    ///     }
-> > +    /// }
-> > +    ///
-> > +    /// let tmp = Opaque::new(cbindings::foo { a: 1, b: 2 });
-> > +    ///
-> > +    /// // struct foo *foo_ptr = ..;
-> > +    /// let foo_ptr = tmp.get();
-> > +    ///
-> > +    /// // SAFETY: `foo_ptr` is valid, and `.a` is in bounds.
-> > +    /// let foo_a_ptr = unsafe { &raw mut (*foo_ptr).a };
-> > +    ///
-> > +    /// // a = READ_ONCE(foo_ptr->a);
-> > +    /// //
-> > +    /// // SAFETY: `foo_a_ptr` is valid for read, and all other accesses on it is atomic, so no
-> > +    /// // data race.
-> > +    /// let a = unsafe { Atomic::from_ptr(foo_a_ptr) }.load(Relaxed);
-> > +    /// # assert_eq!(a, 1);
-> > +    ///
-> > +    /// // smp_store_release(&foo_ptr->a, 2);
-> > +    /// //
-> > +    /// // SAFETY: `foo_a_ptr` is valid for writes, and all other accesses on it is atomic, so
-> > +    /// // no data race.
-> > +    /// unsafe { Atomic::from_ptr(foo_a_ptr) }.store(2, Release);
-> > +    /// ```
-> > +    ///
-> > +    /// However, this should be only used when communicating with C side or manipulating a C
-> > +    /// struct.
-> 
-> This sentence should be above the `Safety` section.
-> 
-
-Hmm.. why? This is the further information about what the above
-"Examples" section just mentioned?
-
-> > +    pub unsafe fn from_ptr<'a>(ptr: *mut T) -> &'a Self
-> > +    where
-> > +        T: Sync,
-> > +    {
-> > +        // CAST: `T` is transparent to `Atomic<T>`.
-> > +        // SAFETY: Per function safety requirement, `ptr` is a valid pointer and the object will
-> > +        // live long enough. It's safe to return a `&Atomic<T>` because function safety requirement
-> > +        // guarantees other accesses won't cause data races.
-> > +        unsafe { &*ptr.cast::<Self>() }
-> > +    }
-> > +
-> > +    /// Returns a pointer to the underlying atomic `T`.
-> > +    ///
-> > +    /// Note that use of the return pointer must not cause data races defined by [`LKMM`].
-> > +    ///
-> > +    /// # Guarantees
-> > +    ///
-> > +    /// The returned pointer is properly aligned (i.e. aligned to [`align_of::<T>()`])
-> 
-> You really only need this guarantee? Not validity etc?
-> 
-
-Nice find, I changed it to also guarantee the pointer is valid.
-
-> > +    ///
-> > +    /// [`LKMM`]: srctree/tools/memory-model
-> > +    /// [`align_of::<T>()`]: core::mem::align_of
-> > +    pub const fn as_ptr(&self) -> *mut T {
-> > +        // GUARANTEE: `self.0` has the same alignment of `T`.
-> > +        self.0.get()
-> > +    }
-> > +
-> > +    /// Returns a mutable reference to the underlying atomic `T`.
-> > +    ///
-> > +    /// This is safe because the mutable reference of the atomic `T` guarantees the exclusive
-> 
-> s/the exclusive/exclusive/
-> 
-
-Done.
-
-Regards,
-Boqun
-
-> ---
-> Cheers,
-> Benno
-> 
-> > +    /// access.
-> > +    pub fn get_mut(&mut self) -> &mut T {
-> > +        // SAFETY: `self.as_ptr()` is a valid pointer to `T`. `&mut self` guarantees the exclusive
-> > +        // access, so it's safe to reborrow mutably.
-> > +        unsafe { &mut *self.as_ptr() }
-> > +    }
-> > +}
+-- 
+Jens Axboe
 
