@@ -1,183 +1,108 @@
-Return-Path: <linux-kernel+bounces-730091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 336BAB04023
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:37:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0807B04026
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 606583B55DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:32:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA7A03A3D62
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0AE256C6D;
-	Mon, 14 Jul 2025 13:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D911F2571C2;
+	Mon, 14 Jul 2025 13:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ubuntu.com header.i=@ubuntu.com header.b="UJsfbsV0"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="Nxns75rw"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B73724EA9D
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE7325229C
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 13:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752499921; cv=none; b=SprgrHuh8M07TkoLrs2QA5EHs0VjZ41wKDGwsehTHrIjzDalWgey/PNwAfpW5CjHCdNfAXB/H+UuWoeRaWlGagpBSDc2rRkv0XmkK8/6apsrvZ1PvKA6PWAPD8ucojCW1q2WPAurZXjok+wc+0/4NttxZPXM+WU6Ni7yoKx189g=
+	t=1752499929; cv=none; b=bsETeNtNrQwRjEb3PqmKJUESgndnDjTwsjlhlYeVTHbXgwgnTYE4zhfxnLD+r1lk41OhZnX4G7QesFaKUVn+ndgCqQgnLcvxKGRzwD2Y87w9Qvc66n6cAu2ZvaunrAHBuSYNVJIvcirDJGeJVRGtgsBrP6c2/XfZDrQH+r4XqIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752499921; c=relaxed/simple;
-	bh=+NdcW4brtmmXfHJrbIWAdZQSmcJK1gkNBsuYeS6Cqvo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rTGXheYORxkWizZFgg6rkGcT8ICp9uV5FdN4FLiyD3x6QGhvKolZPY4t94qWGkcWAM+b2NiQGuO7XvzzLLvkaGKXE9ja3BQWIE4g1Xb1esf3IGBlPylmBUqWh4bq9kCAiFW4//RnxLJ6tSvx0v1X4LelVKDd5txm8EJu1/yQLCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ubuntu.com; spf=pass smtp.mailfrom=fe-bounces.ubuntu.com; dkim=pass (2048-bit key) header.d=ubuntu.com header.i=@ubuntu.com header.b=UJsfbsV0; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ubuntu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.ubuntu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ubuntu.com;
- h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
- To: From; q=dns/txt; s=fe-953a8a3ca9; t=1752499917;
- bh=EUP3YEzDD6Id6ZhB1Y6hZ/zaBctkExpb8qNgPN1Ya60=;
- b=UJsfbsV0uZ/rPDAIfj+oRUB38S6gFZ+UybNfe8otILmgpQX7PrxjlBzHyAjIfP5beZoYz+twL
- vkTM6jJD3YyUXK2LstEHHQJStuWBzcmSHiVgxD6p8qO6gt9iHh9X1/zrhiVke6FjF0zLyri6KlZ
- oNpwWnyD7OKRFOOCb54d7h/qmLEwYWBycgS17A1z9r5Qi82BIxm8FIAN+BcDjuNt5YhqOFNSiN4
- sBxVzAhk0O6AljLDJxnD0oV61agebGFo8PLX9GE8TW4bLZRjBxCFWlK4QoOK8HqxAEF9pwFy7ls
- SXfd32wAeIU80TaQ4xjXjo+kUy1tyeAByASK7Fv33c2w==
-X-Forward-Email-ID: 687506cb85526031a5bfa407
-X-Forward-Email-Sender: rfc822; schopin@ubuntu.com, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.1.6
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-From: Simon Chopin <schopin@ubuntu.com>
-To: greybus-dev@lists.linaro.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>,
-	Alex Elder <elder@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: ~lkcamp/patches@lists.sr.ht,
-	koike@igalia.com,
-	Simon Chopin <schopin@ubuntu.com>
-Subject: [PATCH v2] staging: greybus: Documentation: firmware.c: fix whitespace alignments
-Date: Mon, 14 Jul 2025 15:31:33 +0200
-Message-ID: <20250714133148.442401-1-schopin@ubuntu.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1752499929; c=relaxed/simple;
+	bh=o6gSA4iRI17tVBKBvXibBGdjFo1+iPIqRviexnz/ZOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KQR52Ozpui930qjVaJtPsZ9ZExVpcnZLYQX75m6O65kyNdAdXLg2KIF4N+z4dUA1Ro1BscLCn1kqLjhEJmrPDFG7zAKKicoClbsYYG3TRjYg7O1SI7BGSJMm5tz724eIN82v34wexnyXf2ItnW74OgkkZVAG7sIwf7115WAyxFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=Nxns75rw; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6facc3b9559so57065896d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 06:32:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1752499926; x=1753104726; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6xBkPh8bpRDbDE/rpTA1xUCWQKllGijDoGG0L7obvbI=;
+        b=Nxns75rwscfW0S3/9Op6Vv/x8D7p6l3jJ1KqrpadOQB6E248W/JsKFOnIal2CMAGz/
+         QLl2yEdVqyf7ysXBaXWRBo6QLo3zb8/7eLWDXMl7HHZgvjiushOUDAiMcxcT5Gsv2yNp
+         zVQFZ+Kk5KGikOMnH68u9chbAPNueHconi9LAEvgSll7iXHFGpA8OSxZRc1S0jyy6pfE
+         JyKFHupn0/5b8ngeJVAbbHhj+qPSJMbKLOAYPfxHA6hUNIY4+GN6culNc+re9+OXXN2A
+         b61wYZaQWg4Ok/HHpy9FdKG3hCkD14x76btNf+9qdObz7EgyarwbsjH82fFfTgj8B8jM
+         QmGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752499926; x=1753104726;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6xBkPh8bpRDbDE/rpTA1xUCWQKllGijDoGG0L7obvbI=;
+        b=gvI3osGb1KoI/1ifDJs4aoIVzq7/23PkatlUbPUq/8kbb5PA/nendnGv6A+iIgfB8q
+         kTJbow9IrTqEGqaEI+/LkyMMWa2RkKwbOp3+TZU0zY06cYpl5rHRKKiyg8bSugMC3/t8
+         px1ut+64MoWEY/CtjeHpwvqHM3aJZhJg77BqyyxzqmZcqS//cAt5ejqI41qsmg7bowtJ
+         viCuUTD/vbSXnePNmPCV/DK9D+OBrFHreYETsVBdEqAbJHbPlFQVj9R9qMMLauKVp+BJ
+         +yq3THU6ctwQ+iDW83BpfAp9UxinM+16XTLASeZw+43vfOQ1fWPsiV56wNw202QKzGvr
+         CS5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWFK6ug6aKUNITCc658QgFiTXiohllv0P+2LU12SYHFrreiUSHazS0mP2ojNfO6G7MhxVJhh/+zZ9Sok3s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPNLUyNkxyelE9x98uXw+2f+Zls1KBytJoh2cEh3lpDMDzthPC
+	wQd+3kOP6VzAJd2SAvHc3RCWL4k5rCxQTpgGarkJF8GzSq05Gp2aVAK9RDjr9BVUaQ==
+X-Gm-Gg: ASbGnctqDVlQoX4m4Ucz+Zh1W9gKNCGtEK8gCtehjSZ7kQ5LXxcgguEnEy2HJEgQeoo
+	qS5r1/lqq15WSmph08l85dRSOl5U09B2GIPstTpzqYIfyqy28kJDzzEWfttkoxSP44dLsMlkvS9
+	pRxJjykVsgkn0dfyfJA1Qd3pSuGWGZpKTu+dFX0I4fW0R7oDxrw3+VWqedV9MVsMIe/ZpsmzpRr
+	/FD/1nLborV2fwcOk9qA6QTwIFU5LX3KToXEaoqdCTtavlbuYyPBM0lRgghgr1Dblr1NqUdbU26
+	e/ULlvnZ9kZRXm41G/8bxupBSg92Gi0g6QRTzylJcgKrTNf9KBi+XkpaGY3CDvQltJxPyXayaCa
+	xYp94ELjbJ043zmeAsUal2Wk=
+X-Google-Smtp-Source: AGHT+IHcDlRJdgLbWczO/0oWQhJ09a+Chve/NcLaTIVCSDBaS66RcroV2AomQZA/4l33Q7BCJCQN+w==
+X-Received: by 2002:ad4:4eaa:0:b0:704:89de:f2c3 with SMTP id 6a1803df08f44-704a3a86501mr196941696d6.39.1752499926309;
+        Mon, 14 Jul 2025 06:32:06 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::401d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70497dd4a06sm46959806d6.123.2025.07.14.06.32.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 06:32:05 -0700 (PDT)
+Date: Mon, 14 Jul 2025 09:32:03 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Hillf Danton <hdanton@sina.com>
+Cc: syzbot <syzbot+fbe9fff1374eefadffb9@syzkaller.appspotmail.com>,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbhid_raw_request
+Message-ID: <a8129780-de7c-47bf-a491-0d71afd60c21@rowland.harvard.edu>
+References: <e8fe21fa-9a2f-4def-b659-063d55a40f3d@rowland.harvard.edu>
+ <20250714024903.3965-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714024903.3965-1-hdanton@sina.com>
 
-This addresses all instances of the checkpatch.pl warning
-"CHECK: Alignment should match open parenthesis"
-in this file.
+On Mon, Jul 14, 2025 at 10:49:00AM +0800, Hillf Danton wrote:
+> On Sun, 13 Jul 2025 15:19:34 -0400 Alan Stern wrote:
+> > 
+> > Try again, but with Benjamin Tissoires's recent patches.
+> > 
+> > #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/hid c2ca42f190b6
+> >
+> #syz test:   git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git  c2ca42f190b6
 
-Signed-off-by: Simon Chopin <schopin@ubuntu.com>
+Thanks, Hillf!
 
----
+Syzbot is a great tool, but it still has a few rough edges.
 
-This patch was created as part of the "Submit your first
-contribution to the Linux kernel" workshop at Debconf 25.
-
-changed in v2:
-* commit title amended to mention Documentation
----
- .../greybus/Documentation/firmware/firmware.c | 24 +++++++++----------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/staging/greybus/Documentation/firmware/firmware.c b/drivers/staging/greybus/Documentation/firmware/firmware.c
-index 765d69faa9cc..b27d425c5c06 100644
---- a/drivers/staging/greybus/Documentation/firmware/firmware.c
-+++ b/drivers/staging/greybus/Documentation/firmware/firmware.c
-@@ -47,12 +47,12 @@ static int update_intf_firmware(int fd)
- 	ret = ioctl(fd, FW_MGMT_IOC_GET_INTF_FW, &intf_fw_info);
- 	if (ret < 0) {
- 		printf("Failed to get interface firmware version: %s (%d)\n",
--			fwdev, ret);
-+		       fwdev, ret);
- 		return -1;
- 	}
- 
- 	printf("Interface Firmware tag (%s), major (%d), minor (%d)\n",
--		intf_fw_info.firmware_tag, intf_fw_info.major,
-+	       intf_fw_info.firmware_tag, intf_fw_info.major,
- 		intf_fw_info.minor);
- 
- 	/* Try Interface Firmware load over Unipro */
-@@ -69,20 +69,20 @@ static int update_intf_firmware(int fd)
- 	ret = ioctl(fd, FW_MGMT_IOC_INTF_LOAD_AND_VALIDATE, &intf_load);
- 	if (ret < 0) {
- 		printf("Failed to load interface firmware: %s (%d)\n", fwdev,
--			ret);
-+		       ret);
- 		return -1;
- 	}
- 
- 	if (intf_load.status != GB_FW_U_LOAD_STATUS_VALIDATED &&
- 	    intf_load.status != GB_FW_U_LOAD_STATUS_UNVALIDATED) {
- 		printf("Load status says loading failed: %d\n",
--			intf_load.status);
-+		       intf_load.status);
- 		return -1;
- 	}
- 
- 	printf("Interface Firmware (%s) Load done: major: %d, minor: %d, status: %d\n",
--		firmware_tag, intf_load.major, intf_load.minor,
--		intf_load.status);
-+	       firmware_tag, intf_load.major, intf_load.minor,
-+	       intf_load.status);
- 
- 	/* Initiate Mode-switch to the newly loaded firmware */
- 	printf("Initiate Mode switch\n");
-@@ -108,12 +108,12 @@ static int update_backend_firmware(int fd)
- 	ret = ioctl(fd, FW_MGMT_IOC_GET_BACKEND_FW, &backend_fw_info);
- 	if (ret < 0) {
- 		printf("Failed to get backend firmware version: %s (%d)\n",
--			fwdev, ret);
-+		       fwdev, ret);
- 		return -1;
- 	}
- 
- 	printf("Backend Firmware tag (%s), major (%d), minor (%d), status (%d)\n",
--		backend_fw_info.firmware_tag, backend_fw_info.major,
-+	       backend_fw_info.firmware_tag, backend_fw_info.major,
- 		backend_fw_info.minor, backend_fw_info.status);
- 
- 	if (backend_fw_info.status == GB_FW_U_BACKEND_VERSION_STATUS_RETRY)
-@@ -122,7 +122,7 @@ static int update_backend_firmware(int fd)
- 	if ((backend_fw_info.status != GB_FW_U_BACKEND_VERSION_STATUS_SUCCESS)
- 	    && (backend_fw_info.status != GB_FW_U_BACKEND_VERSION_STATUS_NOT_AVAILABLE)) {
- 		printf("Failed to get backend firmware version: %s (%d)\n",
--			fwdev, backend_fw_info.status);
-+		       fwdev, backend_fw_info.status);
- 		return -1;
- 	}
- 
-@@ -148,10 +148,10 @@ static int update_backend_firmware(int fd)
- 
- 	if (backend_update.status != GB_FW_U_BACKEND_FW_STATUS_SUCCESS) {
- 		printf("Load status says loading failed: %d\n",
--			backend_update.status);
-+		       backend_update.status);
- 	} else {
- 		printf("Backend Firmware (%s) Load done: status: %d\n",
--				firmware_tag, backend_update.status);
-+		       firmware_tag, backend_update.status);
- 	}
- 
- 	return 0;
-@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
- 		fw_timeout = strtoul(argv[4], &endptr, 10);
- 
- 	printf("Trying Firmware update: fwdev: %s, type: %s, tag: %s, timeout: %u\n",
--		fwdev, fw_update_type == 0 ? "interface" : "backend",
-+	       fwdev, fw_update_type == 0 ? "interface" : "backend",
- 		firmware_tag, fw_timeout);
- 
- 	printf("Opening %s firmware management device\n", fwdev);
-
-base-commit: 1b0ee85ee7967a4d7a68080c3f6a66af69e4e0b4
--- 
-2.48.1
-
+Alan Stern
 
