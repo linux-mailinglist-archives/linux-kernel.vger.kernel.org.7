@@ -1,140 +1,356 @@
-Return-Path: <linux-kernel+bounces-729914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F2AEB03D83
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:42:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9515B03D87
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEB18189B550
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:42:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1A24189B3B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A47246BA8;
-	Mon, 14 Jul 2025 11:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813E0246BD1;
+	Mon, 14 Jul 2025 11:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YEUTrbVJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Wzd1H7JS"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8E2243369
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661F12459C5;
+	Mon, 14 Jul 2025 11:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752493329; cv=none; b=PcSg+oJ+Kj51XOA/qtOUqiAxkrivKr7O67DpeyvCZfg7ZQ8ycrS9uAVz6Ithl+A7j0y9O19GrKdOdvsj6I8tVLurKMfUOrHz9fUDbjpnp+UB9ORe4WsVp6d9o+Enh2ln66NHqWNAslvwU3lS+mQBeWdMR+lx1n77xeI2N6vNwSw=
+	t=1752493355; cv=none; b=TV6U09yq0hK1m30htpyp2szQDB+7vGQDrCuDew+0/bxNbxzElwcAk7pIhfDD2EHasFkj4iK/NF/pLH/cvG9IFhZI+w7fvy82E8IeW7ytO5gtQ1WCAueTmqnDbPP+JHMClr4fo+2QCXgfIp4fPj85XD0osSTndkld1iHuDfoCDms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752493329; c=relaxed/simple;
-	bh=FYgST6pQFD9uW71/0fSwDSrVyJfCLOXNbI+aU9yF7H4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i3p/z56iqLk7ZIC6vu4hccW4JU8jXsxIl8ewxPTSK0jHWOlgN1FB6vBMFOnacuD8/f4YjntpPCk87J2f0ZffgzYriNUfMZTffRWUhIlcK43koRAe52yBGk3yiKCst+rMON2J4FmJPk0e+viryC7ZJdhaOTB0+90QRBQhNQM6PVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YEUTrbVJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752493327;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y731NRnwNIgogYJawkSk0h9B9WtguA4mG+59dmJ2OSE=;
-	b=YEUTrbVJNQBSHKPjUOGATImgirQRYiM67WnNckPiHBvdhvhtEKOhIWgYYqog1NTsCB83kG
-	UFJT4Kd1MejkipQs55CLAwRB3AjZnzLsvSZzJ54THKBowyjHygG+3nnlHGAdfk6rExt1/K
-	S4KFjxF/VWCPnEo9G0QlsXPm7PNVSGI=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-321-Z5JsUmPcMcS-ZE-M3BH0Ww-1; Mon, 14 Jul 2025 07:42:05 -0400
-X-MC-Unique: Z5JsUmPcMcS-ZE-M3BH0Ww-1
-X-Mimecast-MFC-AGG-ID: Z5JsUmPcMcS-ZE-M3BH0Ww_1752493324
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4f6ba526eso2191143f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 04:42:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752493324; x=1753098124;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y731NRnwNIgogYJawkSk0h9B9WtguA4mG+59dmJ2OSE=;
-        b=h3MRuXL4/Bqewf8Os138d2pu9U+QqLP+ZT9TPC9WERPGZ9dmqmyy7g9wMb/V+wuph9
-         mDqXTWhsN83UA2gzkOuylw9OxOk9VhcUojWDnPFvjQaLdN/1kcamZ5357o5XZHYn1LJy
-         hpSDlhsmSUU8D5lqlqubvL/bM/UI3wfaSXQa7UaBp03rRC/6FuWFKoMeTeQOdMeJcg6K
-         EaN03ax0ktoUSChMXo7mN+KF92tJyGmUD9gboBOTTQa1iFrWVnc487mtBVh8BP9/nzIS
-         FMoIx1MgsanMGefhDw10IvTzkOY4Gqr0GbiMmtCE6+6BVtgtmMuSVuq66GtQq78KWRjy
-         YaYA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/j4E77ZvcJ9OhXtXYOIb+ImfqpcsNK1Fqcr4P6nUbNg6UkDQyfBIUNSLVMGKDd/Z8S82SAUvod26P4yM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDmqR69ee0sPKfvL0plGGD1ZFWqmMalZmqFSAg2AHX6AtQNmbP
-	xNFp89PN55KM+7QfrevSDrO8wP0mvE6pGxRuaT55xk4q/FA5pmP35wDg0rkysDJ/Ewv0Tb9QkjO
-	sXFSeLT9ijty8BMshO+WGY0Kj+PYQOSGH1dVe2+NFEhnhVFC6ylbylRAFdpIRHqvg7g==
-X-Gm-Gg: ASbGncsuVM0RY9A02nCMa6Km7IcjH8xf5UATRtUuwWcBXoiEpyuTm5zjgQhyA1sxeIP
-	K6YnKsD/gYzWnOrZWR2lmXnfAjA5nGo5ApNfa/2VoZZ/i5kjUv8Gsxjyld2apUWdmEahcWsrYVj
-	9zFFTnc5EgZHhgkFhBuK4Q+ebURTK7aW1V3xkDDpEgTAoyKwAYKQoBNji8jNI96DapHvYNgCNlZ
-	rQHZUMS/9yysN2GqfFBUVBdfvoq8u7wyhav3Lif/NiLQWcIFDf8ihZE2KlZNF8tKED05gMTAO34
-	cLmdEN4LRPJCR9lg+OR87ixKWyE=
-X-Received: by 2002:a05:6000:26ca:b0:3a4:fc3f:ed28 with SMTP id ffacd0b85a97d-3b5f18d99a9mr10479316f8f.29.1752493324338;
-        Mon, 14 Jul 2025 04:42:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGQH0V/iMOxtMz9uQz0A7Zu8CheLlThnVAI8whDJVkBgC2ZF166O9rwFbccdktxmhQ3vNNKlg==
-X-Received: by 2002:a05:6000:26ca:b0:3a4:fc3f:ed28 with SMTP id ffacd0b85a97d-3b5f18d99a9mr10479295f8f.29.1752493323904;
-        Mon, 14 Jul 2025 04:42:03 -0700 (PDT)
-Received: from debian ([2001:4649:f075:0:a45e:6b9:73fc:f9aa])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e26ff9sm12194718f8f.93.2025.07.14.04.42.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 04:42:03 -0700 (PDT)
-Date: Mon, 14 Jul 2025 13:42:00 +0200
-From: Guillaume Nault <gnault@redhat.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Paolo Abeni <pabeni@redhat.com>, Ido Schimmel <idosch@nvidia.com>,
-	Petr Machata <petrm@nvidia.com>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] tracing: ipv6: Replace deprecated strcpy() with
- strscpy()
-Message-ID: <aHTtCGGlrvOZvnsW@debian>
-References: <20250714075436.226197-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1752493355; c=relaxed/simple;
+	bh=fd9+qREBoXX6esb6iegrR6YDFkU5Ngt0lA8t+uxVkZ4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BiDIGTOtJO7BGibMlg44GMMQt3g+d2UzQglr/lw5qEW4MYIj9XO/vW/P2QnFhZNnxEbQlIaS+fnNkYhxYCjgMNoWqgpZRuSt3N834Ba7+iTir3laghgBePmHJrrJYoEcWiG7Am/Lf0Im72DjUzdftLh5Mb3gyDsOcu5vHdMBojA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Wzd1H7JS; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752493349; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=D93xzyjmfQmm8z/uIH/ZXHR+jhRjJ3+GEatzpkvlF9o=;
+	b=Wzd1H7JSxVM4PR2KASHCRx5OadgAMqTPjQhU1EOoFjMSP1l0zo+1BdqdKYYMoTcpRH3mPU6d8yKDSZeuNsNt3X+xQjy92RMxKjw5FczjY/VP4UGuFBmcjbQrRuaZlP9twxQQq971tGWPW4EU3BNvMglzdrEQn4rUCVz4CSaYk6I=
+Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WiufzqZ_1752493333 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 14 Jul 2025 19:42:27 +0800
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+To: catalin.marinas@arm.com,
+	sudeep.holla@arm.com,
+	guohanjun@huawei.com,
+	lpieralisi@kernel.org,
+	linux-acpi@vger.kernel.org,
+	yazen.ghannam@amd.com,
+	mark.rutland@arm.com,
+	mingo@redhat.com,
+	robin.murphy@arm.com,
+	Jonathan.Cameron@Huawei.com,
+	bp@alien8.de,
+	rafael@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	wangkefeng.wang@huawei.com,
+	tanxiaofei@huawei.com,
+	mawupeng1@huawei.com,
+	tony.luck@intel.com,
+	linmiaohe@huawei.com,
+	naoya.horiguchi@nec.com,
+	james.morse@arm.com,
+	tongtiangen@huawei.com,
+	gregkh@linuxfoundation.org,
+	will@kernel.org,
+	jarkko@kernel.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	linux-edac@vger.kernel.org,
+	x86@kernel.org,
+	xueshuai@linux.alibaba.com,
+	justin.he@arm.com,
+	ardb@kernel.org,
+	ying.huang@linux.alibaba.com,
+	ashish.kalra@amd.com,
+	baolin.wang@linux.alibaba.com,
+	tglx@linutronix.de,
+	dave.hansen@linux.intel.com,
+	lenb@kernel.org,
+	hpa@zytor.com,
+	robert.moore@intel.com,
+	lvying6@huawei.com,
+	xiexiuqi@huawei.com,
+	zhuo.song@linux.alibaba.com
+Subject: [PATCH v19 0/2] ACPI: APEI: fix potential hardlockup due to infinite SEA excepction loop
+Date: Mon, 14 Jul 2025 19:42:10 +0800
+Message-Id: <20250714114212.31660-1-xueshuai@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714075436.226197-2-thorsten.blum@linux.dev>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 14, 2025 at 09:54:33AM +0200, Thorsten Blum wrote:
-> strcpy() is deprecated; use strscpy() instead.
-> 
-> Since the destination buffer has a fixed length, strscpy() automatically
-> determines its size using sizeof() when the size argument is omitted.
-> This makes the explicit size argument unnecessary - remove it.
-> 
-> Now, combine both if-else branches using strscpy() and the same buffer
-> into a single statement to simplify the code.
-> 
-> No functional changes intended.
-> 
-> Link: https://github.com/KSPP/linux/issues/88
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  include/trace/events/fib6.h | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/trace/events/fib6.h b/include/trace/events/fib6.h
-> index 8d22b2e98d48..903a18836bc6 100644
-> --- a/include/trace/events/fib6.h
-> +++ b/include/trace/events/fib6.h
-> @@ -64,11 +64,9 @@ TRACE_EVENT(fib6_table_lookup,
->  			__entry->dport = 0;
->  		}
->  
-> -		if (res->nh && res->nh->fib_nh_dev) {
-> -			strscpy(__entry->name, res->nh->fib_nh_dev->name, IFNAMSIZ);
-> -		} else {
-> -			strcpy(__entry->name, "-");
-> -		}
-> +		strscpy(__entry->name, res->nh && res->nh->fib_nh_dev ?
-> +				       res->nh->fib_nh_dev->name : "-");
-> +
+Dear maintainer:
 
-Acked-by: Guillaume Nault <gnault@redhat.com>
+I am writing to respectfully request your review and consideration for merging
+this patch series, which addresses potential hardlockup due to infinite
+SEA excepction loop ( see bellow for details).
+
+As noted by @Catalin, 
+
+> James Morse is listed as reviewer of the ACPI APEI code but he's busy
+> with resctrl/MPAM. Adding Lorenzo, Sudeep and Hanjun as arm64 ACPI
+> maintainers, hopefully they can help. 
+
+This patch series has undergone extensive review through 19 iterations Received
+13 'Reviewed-by' tags from various reviewers. Notably includes review approval
+from arm64 ACPI maintainer Hanjun Guo.
+
+The patches have been thoroughly tested and refined based on community feedback.
+I believe they are ready for integration into the mainline kernel. 
+
+I would greatly appreciate your time in reviewing these changes and
+providing your ack if you find them acceptable for merging.  
+
+Thank you for your continued support and maintenance of the kernel.
+
+changes since last v18:
+- add reviewed-by tag for patch 1-2 from Hanjun 
+
+no code changes since last v18:
+- drop a mm/hwpoison patch which is merged into mainline
+
+changes singce v17:
+- rebase to Linux 6.13-rc7 with no functional changes
+- add reviewed-by tag for patch 1-3 from Jane Chu
+- add reviewed-by tag for patch 3 from Yazen
+
+changes singce v16:
+- add reviewed-by tag for patch 1 and patch 2 from Yazen
+- rewrite warning message for force kill (per Yazen)
+- warn with dev_err in ghes (per Jarkko)
+- add return value -ENXIO in memory_failure comments  (per Yazen)
+- Link: https://lore.kernel.org/lkml/20241104015430.98599-1-xueshuai@linux.alibaba.com/
+
+changes singce v15:
+- add HW_ERR and GHES_PFX prefix per Yazen 
+
+changes since v14:
+- add reviewed-by tags from Jarkko and Jonathan
+- remove local variable and use twcb->pfn
+
+changes since v13:
+- add reviewed-by tag from Jarkko
+- rename task_work to ghes_task_work (per Jarkko)
+
+changes since v12:
+- tweak error message for force kill (per Jarkko)
+- fix comments style (per Jarkko)
+- fix commit log typo (per Jarko)
+
+changes since v11:
+- rebase to Linux 6.11-rc6
+- fix grammer and typo in commit log (per Borislav)
+- remove `sync_` perfix of `sync_task_work`  (per Borislav)
+- comments flags and description of `task_work`  (per Borislav)
+
+changes since v10:
+- rebase to v6.8-rc2
+
+changes since v9:
+- split patch 2 to address exactly one issue in one patch (per Borislav)
+- rewrite commit log according to template (per Borislav)
+- pickup reviewed-by tag of patch 1 from James Morse
+- alloc and free twcb through gen_pool_{alloc, free) (Per James)
+- rewrite cover letter
+
+changes since v8:
+- remove the bug fix tag of patch 2 (per Jarkko Sakkinen)
+- remove the declaration of memory_failure_queue_kick (per Naoya Horiguchi)
+- rewrite the return value comments of memory_failure (per Naoya Horiguchi)
+
+changes since v7:
+- rebase to Linux v6.6-rc2 (no code changed)
+- rewritten the cover letter to explain the motivation of this patchset
+
+changes since v6:
+- add more explicty error message suggested by Xiaofei
+- pick up reviewed-by tag from Xiaofei
+- pick up internal reviewed-by tag from Baolin
+
+changes since v5 by addressing comments from Kefeng:
+- document return value of memory_failure()
+- drop redundant comments in call site of memory_failure() 
+- make ghes_do_proc void and handle abnormal case within it
+- pick up reviewed-by tag from Kefeng Wang 
+
+changes since v4 by addressing comments from Xiaofei:
+- do a force kill only for abnormal sync errors
+
+changes since v3 by addressing comments from Xiaofei:
+- do a force kill for abnormal memory failure error such as invalid PA,
+unexpected severity, OOM, etc
+- pcik up tested-by tag from Ma Wupeng
+
+changes since v2 by addressing comments from Naoya:
+- rename mce_task_work to sync_task_work
+- drop ACPI_HEST_NOTIFY_MCE case in is_hest_sync_notify()
+- add steps to reproduce this problem in cover letter
+
+changes since v1:
+- synchronous events by notify type
+- Link: https://lore.kernel.org/lkml/20221206153354.92394-3-xueshuai@linux.alibaba.com/
+
+## Cover Letter
+
+There are two major types of uncorrected recoverable (UCR) errors :
+
+- Synchronous error: The error is detected and raised at the point of the
+  consumption in the execution flow, e.g. when a CPU tries to access
+  a poisoned cache line. The CPU will take a synchronous error exception
+  such as Synchronous External Abort (SEA) on Arm64 and Machine Check
+  Exception (MCE) on X86. OS requires to take action (for example, offline
+  failure page/kill failure thread) to recover this uncorrectable error.
+
+- Asynchronous error: The error is detected out of processor execution
+  context, e.g. when an error is detected by a background scrubber. Some data
+  in the memory are corrupted. But the data have not been consumed. OS is
+  optional to take action to recover this uncorrectable error.
+
+Currently, both synchronous and asynchronous error use
+memory_failure_queue() to schedule memory_failure() exectute in kworker
+context. As a result, when a user-space process is accessing a poisoned
+data, a data abort is taken and the memory_failure() is executed in the
+kworker context:
+
+  - will send wrong si_code by SIGBUS signal in early_kill mode, and
+  - can not kill the user-space in some cases resulting a synchronous
+    error infinite loop
+
+Issue 1: send wrong si_code in early_kill mode
+
+Since commit a70297d22132 ("ACPI: APEI: set memory failure flags as
+MF_ACTION_REQUIRED on synchronous events")', the flag MF_ACTION_REQUIRED
+could be used to determine whether a synchronous exception occurs on
+ARM64 platform.  When a synchronous exception is detected, the kernel is
+expected to terminate the current process which has accessed poisoned
+page. This is done by sending a SIGBUS signal with an error code
+BUS_MCEERR_AR, indicating an action-required machine check error on
+read.
+
+However, when kill_proc() is called to terminate the processes who have
+the poisoned page mapped, it sends the incorrect SIGBUS error code
+BUS_MCEERR_AO because the context in which it operates is not the one
+where the error was triggered.
+
+To reproduce this problem:
+
+  # STEP1: enable early kill mode
+  #sysctl -w vm.memory_failure_early_kill=1
+  vm.memory_failure_early_kill = 1
+
+  # STEP2: inject an UCE error and consume it to trigger a synchronous error
+  #einj_mem_uc single
+  0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+  injecting ...
+  triggering ...
+  signal 7 code 5 addr 0xffffb0d75000
+  page not present
+  Test passed
+
+The si_code (code 5) from einj_mem_uc indicates that it is BUS_MCEERR_AO
+error and it is not fact.
+
+To fix it, queue memory_failure() as a task_work so that it runs in
+the context of the process that is actually consuming the poisoned data.
+
+After this patch set:
+
+  # STEP1: enable early kill mode
+  #sysctl -w vm.memory_failure_early_kill=1
+  vm.memory_failure_early_kill = 1
+
+  # STEP2: inject an UCE error and consume it to trigger a synchronous error
+  #einj_mem_uc single
+  0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+  injecting ...
+  triggering ...
+  signal 7 code 4 addr 0xffffb0d75000
+  page not present
+  Test passed
+
+The si_code (code 4) from einj_mem_uc indicates that it is BUS_MCEERR_AR
+error as we expected.
+
+Issue 2: a synchronous error infinite loop due to memory_failure() failed
+
+If a user-space process, e.g. devmem, a poisoned page which has been set
+HWPosion flag, kill_accessing_process() is called to send SIGBUS to the
+current processs with error info. Because the memory_failure() is
+executed in the kworker contex, it will just do nothing but return
+EFAULT. So, devmem will access the posioned page and trigger an
+excepction again, resulting in a synchronous error infinite loop. Such
+loop may cause platform firmware to exceed some threshold and reboot
+when Linux could have recovered from this error.
+
+To reproduce this problem:
+
+  # STEP 1: inject an UCE error, and kernel will set HWPosion flag for related page
+  #einj_mem_uc single
+  0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+  injecting ...
+  triggering ...
+  signal 7 code 4 addr 0xffffb0d75000
+  page not present
+  Test passed
+
+  # STEP 2: access the same page and it will trigger a synchronous error infinite loop
+  devmem 0x4092d55b400
+
+To fix it, if memory_failure() failed, perform a force kill to current process.
+
+Issue 3: a synchronous error infinite loop due to no memory_failure() queued
+
+No memory_failure() work is queued unless all bellow preconditions check passed:
+
+- `if (!(mem_err->validation_bits & CPER_MEM_VALID_PA))` in ghes_handle_memory_failure()
+- `if (flags == -1)` in ghes_handle_memory_failure()
+- `if (!IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE))` in ghes_do_memory_failure()
+- `if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) ` in ghes_do_memory_failure()
+
+If the preconditions are not passed, the user-space process will trigger SEA again.
+This loop can potentially exceed the platform firmware threshold or even
+trigger a kernel hard lockup, leading to a system reboot.
+
+To fix it, if no memory_failure() queued, perform a force kill to current process.
+
+And the the memory errors triggered in kernel-mode[5], also relies on this
+patchset to kill the failure thread.
+
+Lv Ying and XiuQi from Huawei also proposed to address similar problem[2][4].
+Acknowledge to discussion with them.
+
+[1] Add ARMv8 RAS virtualization support in QEMU https://patchew.org/QEMU/20200512030609.19593-1-gengdongjiu@huawei.com/
+[2] https://lore.kernel.org/lkml/20221205115111.131568-3-lvying6@huawei.com/
+[3] https://lkml.kernel.org/r/20220914064935.7851-1-xueshuai@linux.alibaba.com
+[4] https://lore.kernel.org/lkml/20221209095407.383211-1-lvying6@huawei.com/
+[5] https://patchwork.kernel.org/project/linux-arm-kernel/cover/20240528085915.1955987-1-tongtiangen@huawei.com/
+
+Shuai Xue (2):
+  ACPI: APEI: send SIGBUS to current task if synchronous memory error
+    not recovered
+  ACPI: APEI: handle synchronous exceptions in task work
+
+ drivers/acpi/apei/ghes.c | 88 +++++++++++++++++++++++++---------------
+ include/acpi/ghes.h      |  3 --
+ include/linux/mm.h       |  1 -
+ mm/memory-failure.c      | 13 ------
+ 4 files changed, 55 insertions(+), 50 deletions(-)
+
+-- 
+2.39.3
 
 
