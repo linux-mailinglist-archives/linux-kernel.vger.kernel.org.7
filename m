@@ -1,177 +1,119 @@
-Return-Path: <linux-kernel+bounces-730905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3468B04C2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:24:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92676B04C25
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:22:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2011C3AD9A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:23:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B06C01A66B58
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB096242D99;
-	Mon, 14 Jul 2025 23:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6134023956A;
+	Mon, 14 Jul 2025 23:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b="N3VRZgBP"
-Received: from mail17.out.titan.email (mail17.out.titan.email [3.64.226.211])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pu46AHoJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C65D1662E7
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 23:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.64.226.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E691662E7
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 23:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752535451; cv=none; b=KFNw8dBfTedyvs3/na2VGZj53b7dlWSe4UAtgSafY9MUXAYJ/KRYh+gRwLct7JlGGkFkh7ywhu8EAXQsg37+MZZ+/52U2bBUseKsisEe1lT8lkzRxRBMrt6VWMq+S+Pi18jRqFyyuXJVLzsPanx09sW0g5ryDqEaO3atxqP5CRI=
+	t=1752535342; cv=none; b=K3cNdgmVbumIgm6R0ZwtnF42s8gzlQRXVICR59fwPV9lR2hCoxEOaTo1WumpplEOwqUd0eMZreOcF8dfIdvD4gvTBj2OWFLmkW7gR2ZCr13v21bdF/cuFtZ4o5+UIP0+W5YmalzVqHHykXJX6JoQW318c8o/MW3tEr5gGCWqLo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752535451; c=relaxed/simple;
-	bh=w/njO+Eio19jojpm3LOUc6VAGrzjCD/N9jpa95dSiN8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XZXMHrMlZ/Q9K996QxYLlg9xYGLlnmtKCvBXjbyydqbiu1tMKkSlwc9C9Av9MLYZdQ1m7pRNEGFwrjTQC0qZhjlBs9h05ARugwY+dSddE4/GBITLzpHcCxrCq6ROKKXYVNE7iDRBZ1ECvgoY2GoKDQX9UgGyosQpGEwYwt6ePzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net; spf=pass smtp.mailfrom=techsingularity.net; dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b=N3VRZgBP; arc=none smtp.client-ip=3.64.226.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=techsingularity.net
-Received: from localhost (localhost [127.0.0.1])
-	by smtp-out0101.titan.email (Postfix) with ESMTP id 9DE78A0006;
-	Mon, 14 Jul 2025 23:14:54 +0000 (UTC)
-DKIM-Signature: a=rsa-sha256; bh=IZEkWRPWmtJUxnmSXF7VAq23VNGGw/RoGxJV/hfIDTg=;
-	c=relaxed/relaxed; d=techsingularity.net;
-	h=to:message-id:date:from:cc:subject:references:mime-version:in-reply-to:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
-	q=dns/txt; s=titan1; t=1752534894; v=1;
-	b=N3VRZgBPEIp9DETNkM7oN7lGHYv8y2O2btGPK/ZE6VCHA3pIi+/XGg4kiwDmLsrlLRLjDyu5
-	gDQkG9M9mEOWwrUDPTpDUENUPGzpghAJBk0biI1sarRnCEnKtD9NWtOPh6izs2fJbfpRklx7mgR
-	P5EyTAakwv/kflWf4KTCFrZc=
-Received: from mail.blacknight.com (ip-84-203-196-90.broadband.digiweb.ie [84.203.196.90])
-	by smtp-out0101.titan.email (Postfix) with ESMTPA id C1CCEA0002;
-	Mon, 14 Jul 2025 23:14:53 +0000 (UTC)
-Date: Tue, 15 Jul 2025 00:14:52 +0100
-Feedback-ID: :mgorman@techsingularity.net:techsingularity.net:flockmailId
-From: Mel Gorman <mgorman@techsingularity.net>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, 
-	vschneid@redhat.com, clm@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/12] sched: Add ttwu_queue controls
-Message-ID: <yz42ivo4lgdmn2ikmfagzzmtj2iodz2rq6jw2og5n4yddsi5az@x2i7zypbh7xt>
-References: <20250702114924.091581796@infradead.org>
- <20250702121158.817814031@infradead.org>
+	s=arc-20240116; t=1752535342; c=relaxed/simple;
+	bh=mEw3GM8lHz2Em3DYj6xxTGIj0HXcd2ADn7uo7fN8MmU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VVhafL+LIA081QlNAf4/3s6ib49jXO9CtkRksA3MzGDAHOc1kVSkHXEHFWpQUu0+kSnMbJylydAZcu/BivhK0JIC19AdJD6S+65N9V9/Pd4ze2Lopep6yaUjj8MyYyaj6UBos10r7WFnXTrNDDV0QmpZ5FagD+eUh6mjZ2vbDHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pu46AHoJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 517D3C4CEF6
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 23:22:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752535342;
+	bh=mEw3GM8lHz2Em3DYj6xxTGIj0HXcd2ADn7uo7fN8MmU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pu46AHoJLKDPpNZK0nIZXcx1czbZEb9Pp2MQXvgUexnEqMRSMhRDh0X3xFrD4WLtw
+	 +c4FWZnD4RtUOIE9RL9wyuBFLSw+npp70q1Ce9UdGSKi5sLJTAIf7Nsg0/6Rorq8yL
+	 DkX55nNAHOXlLI4hngu1Ow6d8w4JdxdbfOfW+unOfuL7bSKrkaFtew+4dugn0VOmUo
+	 PCtyPKzD76BSZSffOyuGPQF/IcwtwZri38VdkyugZE2lq3+GpN5t5w9f6zZVuEs2vP
+	 SStKn3wWPLv80DjSgBPPQOsLeIjwwhdykrHbBFzHlb14GCVEtqqck0CY46/rvuvc6q
+	 Tefy1E7HnDc9Q==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32e14ce168eso43729651fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 16:22:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX9dvpVJ2ZCsm32K+QugzugNfQA/Nm0UlIWx0leS3LtbALspAJeAniPKNzlrgiWJxb+Nwvs2/IGlq+jITs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB40AAJ8RJf3BwJ3WDzr4RI63NBj6V1ZgpCIwrKVhNc6w+9m9z
+	/wCdqrrefeZLq11uPLGqm75gtH5+R/nnpPbLFpcdgobe9rHmsVsUytYeHXh1tMG8sXgy6md2AVY
+	ckTHMQP03Eze7Yxqof6HivE6nKB9BYUw=
+X-Google-Smtp-Source: AGHT+IGkIXLkChFWnn9tShZXlbFyK7ip+TzarIXhJK63dD2BYzNlFgNyqGgA3oVuYAFzIdxh53YxZ87eACnkNvDke34=
+X-Received: by 2002:a2e:a588:0:b0:32c:bc69:e926 with SMTP id
+ 38308e7fff4ca-33053292f8bmr39835811fa.7.1752535340645; Mon, 14 Jul 2025
+ 16:22:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20250702121158.817814031@infradead.org>
-X-F-Verdict: SPFVALID
-X-Titan-Src-Out: 1752534894450122467.2206.2939698480240242390@prod-euc1-smtp-out1002.
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.4 cv=FN3hx/os c=1 sm=1 tr=0 ts=68758f6e
-	a=+XWPlUOTt03IZrtNKHUAqA==:117 a=+XWPlUOTt03IZrtNKHUAqA==:17
-	a=Q9fys5e9bTEA:10 a=CEWIc4RMnpUA:10 a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8
-	a=bbLQEv47hkCM5Bk10OkA:9 a=PUjeQqilurYA:10 a=1CNFftbPRP8L7MoqJWF3:22
+References: <20250714073402.4107091-2-ardb+git@google.com> <20250714102729.GDaHTbkRSLA61z7vPz@fat_crate.local>
+In-Reply-To: <20250714102729.GDaHTbkRSLA61z7vPz@fat_crate.local>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 15 Jul 2025 09:22:08 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXEBCYaPtupH67Gf3tHwoFiL7xKXbPpWbVV9zD0=bQg0Hg@mail.gmail.com>
+X-Gm-Features: Ac12FXz1VF-L443_XRzu3rn-DUT4G6Px2xgGhcaXqRnOcoUuCa8GprYLolRqZYI
+Message-ID: <CAMj1kXEBCYaPtupH67Gf3tHwoFiL7xKXbPpWbVV9zD0=bQg0Hg@mail.gmail.com>
+Subject: Re: [PATCH] x86/sev: Work around broken noinstr on GCC
+To: Borislav Petkov <bp@alien8.de>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Randy Dunlap <rdunlap@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 02, 2025 at 01:49:29PM +0200, Peter Zijlstra wrote:
-> There are two (soon three) callers of ttwu_queue_wakelist(),
-> distinguish them with their own WF_ and add some knobs on.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Link: https://lkml.kernel.org/r/20250520101727.874587738@infradead.org
-> ---
->  kernel/sched/core.c     |   22 ++++++++++++----------
->  kernel/sched/features.h |    2 ++
->  kernel/sched/sched.h    |    2 ++
->  3 files changed, 16 insertions(+), 10 deletions(-)
-> 
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -3888,7 +3888,7 @@ bool cpus_share_resources(int this_cpu,
->  	return per_cpu(sd_share_id, this_cpu) == per_cpu(sd_share_id, that_cpu);
->  }
->  
-> -static inline bool ttwu_queue_cond(struct task_struct *p, int cpu)
-> +static inline bool ttwu_queue_cond(struct task_struct *p, int cpu, bool def)
->  {
->  	/* See SCX_OPS_ALLOW_QUEUED_WAKEUP. */
->  	if (!scx_allow_ttwu_queue(p))
-> @@ -3929,18 +3929,19 @@ static inline bool ttwu_queue_cond(struc
->  	if (!cpu_rq(cpu)->nr_running)
->  		return true;
->  
-> -	return false;
-> +	return def;
->  }
->  
->  static bool ttwu_queue_wakelist(struct task_struct *p, int cpu, int wake_flags)
->  {
-> -	if (sched_feat(TTWU_QUEUE) && ttwu_queue_cond(p, cpu)) {
-> -		sched_clock_cpu(cpu); /* Sync clocks across CPUs */
-> -		__ttwu_queue_wakelist(p, cpu, wake_flags);
-> -		return true;
-> -	}
-> +	bool def = sched_feat(TTWU_QUEUE_DEFAULT);
-> +
-> +	if (!ttwu_queue_cond(p, cpu, def))
-> +		return false;
->  
-> -	return false;
-> +	sched_clock_cpu(cpu); /* Sync clocks across CPUs */
-> +	__ttwu_queue_wakelist(p, cpu, wake_flags);
-> +	return true;
->  }
->  
+On Mon, 14 Jul 2025 at 20:27, Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Mon, Jul 14, 2025 at 09:34:03AM +0200, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > Forcibly disable KCSAN for the sev-nmi.c source file, which only
+> > contains functions annotated as 'noinstr' but is emitted with calls to
+> > KCSAN instrumentation nonetheless. E.g.,
+> >
+> >   vmlinux.o: error: objtool: __sev_es_nmi_complete+0x58: call to __kcsan_check_access() leaves .noinstr.text section
+> >   make[2]: *** [/usr/local/google/home/ardb/linux/scripts/Makefile.vmlinux_o:72: vmlinux.o] Error 1
+> >
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > ---
+> >  arch/x86/coco/sev/Makefile | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/x86/coco/sev/Makefile b/arch/x86/coco/sev/Makefile
+> > index db3255b979bd..342d79f0ab6a 100644
+> > --- a/arch/x86/coco/sev/Makefile
+> > +++ b/arch/x86/coco/sev/Makefile
+> > @@ -5,5 +5,6 @@ obj-y += core.o sev-nmi.o vc-handle.o
+> >  # Clang 14 and older may fail to respect __no_sanitize_undefined when inlining
+> >  UBSAN_SANITIZE_sev-nmi.o     := n
+> >
+> > -# GCC may fail to respect __no_sanitize_address when inlining
+> > +# GCC may fail to respect __no_sanitize_address or __no_kcsan when inlining
+> >  KASAN_SANITIZE_sev-nmi.o     := n
+> > +KCSAN_SANITIZE_sev-nmi.o     := n
+> > --
+>
+> Hmm, so this points to the carve out:
+>
+> b66fcee1574e ("x86/sev: Move noinstr NMI handling code into separate source file")
+>
+> but then we didn't do any KCSAN exclusion to SEV code before either.
+>
 
-I get that you're moving the feature checks into the callers but it's
-unclear what the intent behind TTWU_QUEUE_DEFAULT is. It's somewhat
-preserving existing behaviour and is probably preparation for a later
-patch but it's less clear why it's necessary or what changing it would
-reveal while debugging.
+This is actually an oversight on my part,
 
->  static void ttwu_queue(struct task_struct *p, int cpu, int wake_flags)
-> @@ -3948,7 +3949,7 @@ static void ttwu_queue(struct task_struc
->  	struct rq *rq = cpu_rq(cpu);
->  	struct rq_flags rf;
->  
-> -	if (ttwu_queue_wakelist(p, cpu, wake_flags))
-> +	if (sched_feat(TTWU_QUEUE) && ttwu_queue_wakelist(p, cpu, wake_flags))
->  		return;
->  
->  	rq_lock(rq, &rf);
-> @@ -4251,7 +4252,8 @@ int try_to_wake_up(struct task_struct *p
->  		 * scheduling.
->  		 */
->  		if (smp_load_acquire(&p->on_cpu) &&
-> -		    ttwu_queue_wakelist(p, task_cpu(p), wake_flags))
-> +		    sched_feat(TTWU_QUEUE_ON_CPU) &&
-> +		    ttwu_queue_wakelist(p, task_cpu(p), wake_flags | WF_ON_CPU))
->  			break;
->  
->  		cpu = select_task_rq(p, p->wake_cpu, &wake_flags);
-> --- a/kernel/sched/features.h
-> +++ b/kernel/sched/features.h
-> @@ -81,6 +81,8 @@ SCHED_FEAT(TTWU_QUEUE, false)
->   */
->  SCHED_FEAT(TTWU_QUEUE, true)
->  #endif
-> +SCHED_FEAT(TTWU_QUEUE_ON_CPU, true)
-> +SCHED_FEAT(TTWU_QUEUE_DEFAULT, false)
->  
->  /*
->   * When doing wakeups, attempt to limit superfluous scans of the LLC domain.
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -2279,6 +2279,8 @@ static inline int task_on_rq_migrating(s
->  #define WF_CURRENT_CPU		0x40 /* Prefer to move the wakee to the current CPU. */
->  #define WF_RQ_SELECTED		0x80 /* ->select_task_rq() was called */
->  
-> +#define WF_ON_CPU		0x0100
-> +
->  static_assert(WF_EXEC == SD_BALANCE_EXEC);
->  static_assert(WF_FORK == SD_BALANCE_FORK);
->  static_assert(WF_TTWU == SD_BALANCE_WAKE);
-> 
+Fixes: a3cbbb4717e1 ("x86/boot: Move SEV startup code into startup/")
 
--- 
-Mel Gorman
-SUSE Labs
+> I guess send this to Linus now so that it is in 6.16?
+>
+
+Yes.
 
