@@ -1,89 +1,144 @@
-Return-Path: <linux-kernel+bounces-729933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB79DB03DCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:55:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0E07B03DDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 370871A60366
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:56:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D0D73A782F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582C3248193;
-	Mon, 14 Jul 2025 11:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9628F2472A0;
+	Mon, 14 Jul 2025 11:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVeGyHp4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="ZRjhVP93"
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C702472B9;
-	Mon, 14 Jul 2025 11:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038DA24728A;
+	Mon, 14 Jul 2025 11:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752494095; cv=none; b=S+iP7xOmaiKDbe5g/H5IeTdtfMfQaAyZpkaDkaqipuOrYeZ5CM0KI4mN2FZdgVpa09vVkgid+71e+/wfd1j6yJT4PTMsX5/tVZXqV87jw/nnNnddFT3D0XBLWvyltY5BvAJ7X6Sn3WjkFEdrqfkbSxdGzDJoz2DhrZ0Ci0vSIac=
+	t=1752494161; cv=none; b=NqYLFMcJ2vHP/kdZO7KO1wOt370uLScFK1Go9T+yK1mX1PrAclAaYUczKgbWTIchtkO7JgrYIR4kZWGveeOUvQNjDqkDE7jXqSAETqvZsTNzs9zR1bL/8ujS0isfyL3hrZ3nj1wzIpBt45v/U1v1lX4WJbOTT+/MWbzejP0Ke04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752494095; c=relaxed/simple;
-	bh=9etceTQrDiG/4TwcUBP2A5qBFbh1SJbzXRtcmAbMXfs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M6Ew71uJWsNifDPxgNkfssFtwTaVjrZ+AoJIzomLfeBwbR06xBjNs5Rd7q4DiZpUYtXx1s9eO+g4YxIWIzrIw94hOKUv+C4bita09PNxwNIPzIiLEBU/ZyCMBEyY+57Co7SgBblETn1H5sgDg4qjE3tl82C/7WcbLJOOt9/omu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVeGyHp4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AE31C4CEF6;
-	Mon, 14 Jul 2025 11:54:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752494094;
-	bh=9etceTQrDiG/4TwcUBP2A5qBFbh1SJbzXRtcmAbMXfs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VVeGyHp4je8igGVFU4cjlFwF287zWb61XRApApIO3BlqVgL4IOklbt6CxHwcJ5NoQ
-	 B4Xk1Qb8YJbg+kaHi0yNW23wvpAdTvl0AnTOcd2nrPTHVvjZZi6Q5bpggB8fZE42rg
-	 MsGWouFDqiXRkLlZF0cbJOFyRtTZfkD9zvi+cxnDeywS3N6PywkSmNcBqHq4hy/zWm
-	 oeT8V7gHCRjMy5YuWZNHOeWz36IUvH1sOxPabDchjZ6Ci3kpgpaf6D2qZSFHkOOIkt
-	 qGwGfsIQGkvAtiMqwz6pMt6Hg7+NV7eGYEfAiEkT9+VG2qhiqEQZTY1vG5N+HABZpD
-	 KGUhIhZN1+RMg==
-From: Will Deacon <will@kernel.org>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	robin.murphy@arm.com,
-	joro@8bytes.org,
-	praan@google.com,
-	baolu.lu@linux.intel.com,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH rc v2] iommu/arm-smmu-v3: Revert vmaster in the error path
-Date: Mon, 14 Jul 2025 12:54:32 +0100
-Message-Id: <175249171897.1454370.6706876035622030720.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250711204020.1677884-1-nicolinc@nvidia.com>
-References: <20250711204020.1677884-1-nicolinc@nvidia.com>
+	s=arc-20240116; t=1752494161; c=relaxed/simple;
+	bh=Cm6YzKm//JNXfOzgNh0nJtI+oglXVJjSAUrrNto/YP8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XhyND8eZ1WBI+V1hgWMJwzDTdDuRK9hyZzaL74BPShPdCySvmGVGef/csrkARgrdFSwS1pq3o1EXFxHmccFuvwXA8j52ieMxpsxdF8Qen/6iOhLrmLVrrE9Esz0QLzDQx3lzTeWfUeWwjZ+jmn6RpSG4ImcXadrEzMBT2rLmSxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=ZRjhVP93; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=uEaMeaKe2woigzgc+/lPc6No3aXg9fhiN7bOQHOaDMI=; b=ZRjhVP93T+UwvSXx6irfyT3WJa
+	UmczJCdh551T5xTcztt3rg8rTH9hd2iVJYlRj4Y+twXyC2xr+/YlVfcZkxhP1QuQc4f5CYSlZ7Jp7
+	oFW1K8BwP4wE8ylM4mavlMLoeFrAcRvmT8egMnZLYpQhbKQc/bSNu+FmkqDQAJhGauCtHjU44SaLq
+	H4lhnF3Ic7ALdJxXzNxZhrZ6SZvdtToR6D0C2jeeU84loAZf9QMJHuH/GwJPy6zyN1e1VgMoaepez
+	+Dof4/hoSRqFNDTOs5VXsd+b2jsLF/XpwAkdH1k8fNFxRd2blC9OpxDMtFW3TwtmtE5AKxkIgkB/M
+	NoOoq5mA==;
+Received: from [89.212.21.243] (port=37122 helo=[192.168.69.116])
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <primoz.fiser@norik.com>)
+	id 1ubHmn-001QUg-0K;
+	Mon, 14 Jul 2025 13:55:57 +0200
+Message-ID: <ca5c6c3d-3053-415f-8b16-05cbdf530797@norik.com>
+Date: Mon, 14 Jul 2025 13:55:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] i2c: lpi2c: implement master_xfer_atomic callback
+To: Francesco Dolcini <francesco@dolcini.it>,
+ Dong Aisheng <aisheng.dong@nxp.com>, Andi Shyti <andi.shyti@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+ linux-i2c@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250523082931.23170-1-francesco@dolcini.it>
+ <20250626075837.GA9216@francesco-nb>
+Content-Language: en-US
+From: Primoz Fiser <primoz.fiser@norik.com>
+Autocrypt: addr=primoz.fiser@norik.com; keydata=
+ xjMEZrROOxYJKwYBBAHaRw8BAQdAADVOb5tiLVTUAC9nu/FUl4gj/+4fDLqbc3mk0Vz8riTN
+ JVByaW1veiBGaXNlciA8cHJpbW96LmZpc2VyQG5vcmlrLmNvbT7CiQQTFggAMRYhBK2YFSAH
+ ExsBZLCwJGoLbQEHbnBPBQJmtE47AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQagttAQducE+T
+ gAD+K4fKlIuvH75fAFwGYG/HT3F9mN64majvqJqvp3gTB9YBAL12gu+cm11m9JMyOyN0l6Os
+ jStsQFghPkzBSDWSDN0NzjgEZrROPBIKKwYBBAGXVQEFAQEHQP2xtEOhbgA+rfzvvcFkV1zK
+ 6ym3/c/OUQObCp50BocdAwEIB8J4BBgWCAAgFiEErZgVIAcTGwFksLAkagttAQducE8FAma0
+ TjwCGwwACgkQagttAQducE8ucAD9F1sXtQD4iA7Qu+SwNUAp/9x7Cqr37CSb2p6hbRmPJP8B
+ AMYR91JYlFmOJ+ScPhQ8/MgFO+V6pa7K2ebk5xYqsCgA
+Organization: Norik systems d.o.o.
+In-Reply-To: <20250626075837.GA9216@francesco-nb>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
+X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Fri, 11 Jul 2025 13:40:20 -0700, Nicolin Chen wrote:
-> The error path for err_free_master_domain leaks the vmaster. Move all
-> the kfrees for vmaster into the goto error section.
-> 
-> 
+On 26. 06. 25 09:58, Francesco Dolcini wrote:
+> Hello,
+>
+> On Fri, May 23, 2025 at 10:29:29AM +0200, Francesco Dolcini wrote:
+>> From: Francesco Dolcini <francesco.dolcini@toradex.com>
+>>
+>> This series adds atomic operations support to the imx-lpi2c driver and split
+>> the previous v3 patch into two separate patches.
+>>
+>> The first patch replaces the open-coded polling loops with readl_poll_timeout.
+>> This improves readability and consistency, and prepares the code for
+>> integration of the second patch, while maintaining the same functionality.
+>>
+>> The second patch implements the .master_xfer_atomic() callback, enabling
+>> support for atomic I2C transfers.
+> Just a gentle ping to not forget about this.
+>
+> Francesco
+>
+Hi Francesco,
 
-Applied to iommu (arm/smmu/updates), thanks!
+just a heads-up that this needs rebase on latest linux-next due to
+commit 614b1c3cbfb0 ("i2c: use inclusive callbacks in struct
+i2c_algorithm").
 
-[1/1] iommu/arm-smmu-v3: Revert vmaster in the error path
-      https://git.kernel.org/iommu/c/49f42634e805
+Afterwards, I was able to test functionality on PHYTEC
+phyBOARD-Nash-i.MX93 and you can add my:
 
-Cheers,
+Tested-by: Primoz Fiser <primoz.fiser@norik.com>
+
+for your v5 if you want.
+
+BR,
+
+Primoz
+
 -- 
-Will
+Primoz Fiser
+phone: +386-41-390-545
+email: primoz.fiser@norik.com
+--
+Norik systems d.o.o.
+Your embedded software partner
+Slovenia, EU
+phone: +386-41-540-545
+email: info@norik.com
 
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
 
