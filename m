@@ -1,140 +1,120 @@
-Return-Path: <linux-kernel+bounces-730174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA853B04102
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:08:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB61CB04105
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21CB83B3C54
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:07:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08B483A6A55
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C8C24FC09;
-	Mon, 14 Jul 2025 14:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C462550DD;
+	Mon, 14 Jul 2025 14:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z6woiXXR"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="HIOJx1ie"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E29F25394C;
-	Mon, 14 Jul 2025 14:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752502023; cv=none; b=p/EzU3OtAal1H4cGxmFoLZna+PoXdSLZzDKLu8Fi+LybL/PmD2xd9S3myNtoeU2BDH0HGf8RbFRS/1Odz0j7hhmCUlIHWLZ9OnWKBBDsPSkja9daaQ3yJ+DKPzGvAtCJ3SCfwZIcDIGKyMzDweKkfdP+EU5ntaWd7wlE/ciISF0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752502023; c=relaxed/simple;
-	bh=+04pRfrMC5bnxVH1z1JDJ55WhOxbPv/wMsPDtKE/wug=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kPbCVbvcX7IOJuuUsCSRdrvuwyN9LeyLHLjRia356Y/+JlGygaGSPHxWLX5klgETnYqrBovv9lg8k034ISiTSP2OKmyiaxPJ4BeVta34AfC9HbhSbizpxG0Fvy7nicj+SZfMEoPOAFBWuSjHBhVEb1yYtI808qaR5GdmurUt7J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z6woiXXR; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4ab554fd8fbso18763721cf.1;
-        Mon, 14 Jul 2025 07:07:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752502021; x=1753106821; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=A11jZ3IWs915tX3jAt6nejExoHwEI3hR6vxjjTJTwmY=;
-        b=Z6woiXXROcxMTu0OCh715y0mKYkyuMa5vDDW6gSURLB2teIUiFXCzqMqmoSPWiIj6G
-         mwz19fFcD7uIeIYC3fqeRk3TApIpUhrrK7Ezm4C/Yx/tG/GGoqO1De23VGXp16gZh2O9
-         Wc/Y53mi16GB97V6brw4rfhHsSb3YC6OFWWP1JW48AWWSdhh76Thlpjj2u5lpwX7qYnF
-         UJ+S/psiR+gAdWTJ0QXs4Y9Af5OYDa5dKYBy32Sep7AcgLo1YSKWdIsNF/R45gLcSQlx
-         Y97h6rk+B2nEBP5qk63dIYr7n7yDGZAHC2bEpz7ojdE0W+GN+i4JQLsR5Gqj1FubcsGJ
-         Bcfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752502021; x=1753106821;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A11jZ3IWs915tX3jAt6nejExoHwEI3hR6vxjjTJTwmY=;
-        b=sqeTsxspdlCAVcmlkTEJ80EIu6oESfzxtXcCK5+wwwHs7I+AFygSkgUmmUWk+T93Tk
-         QLWgLktYSeKiBFYXm+sOP4APSVNBCr7la3xM2IZcRD81obhLBqHePunXYhHHJJo7gASy
-         XE2r7YK4ngtznXBoSL1WdU9RPyVcdsxL0BXnVtHmomZO+vXf3p/2Mda4uTluvklTSZ4i
-         wFaroOjYl/vTcGBKXsaaBLrpFY/mHpYKGqJ6dOzQdWtGU2sDcRIzW2Kj0RfocfECcAHH
-         lMqkskgCvPgkppMqf5/uOv2oQLJSJY0KRErRLYHKHOZscvnjS6reLqqw3hFBCYya4lY8
-         Bzqw==
-X-Forwarded-Encrypted: i=1; AJvYcCU//aebNWYCA8S2xF63IoBmeacbTO1wulivHpERnrPKBafzHu39AsPSPIFVgeRwkTpqa/2JMMECMuFDDG8=@vger.kernel.org, AJvYcCWjilyyVxgFQGvZMnGn4vS4IJemDy6OKnewfNclWAgn052zmVKw9dtlc4Fnek5yvs268Fq13ol55dlwFPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB4qfhv7TQnVSHhxxz9fdu9G6+6LXrov39ts7DiM7/pXRYVLIb
-	1PXHoWpXArIJqWKaAVapAc3cuDnt5GiE+huKjpoLt+B+blHtmKZXrY8x
-X-Gm-Gg: ASbGncuTUCryAuzneG7vLFwseD/saUsiXe8FqXU1I2HtdbYHJ65uuXfay7ACu46U4vi
-	AZJVJthRPRGzT40inYtPADQyTerpNVNh8/pkmEZyXEmUTAMUHkkMxBKxilAh0RWLgt6uaCdynim
-	6co7qkZaWkzEu+YBFQET7DxUhroLXoAece3xgXizrcVAazdrR88YXDM7Nl0byljT0n4DVn0CEfU
-	gIEr1R1sPOlNlfujKbU3w2oZuaaoI2oN6nphZFVB40sebT+xuJz9ls2PUUCMgcEGNsOpjIPby9W
-	PZpClIsUsAd4r2Q+MViSILl0gPEKonP+Vb7U0ksmYxPzAhlqMNeDLaMgdLfYEUwN8w8a8qQKX6b
-	SYbcnh2IEuLoN0nY3zMeDJhs5TFSf0naprLWFbWCX
-X-Google-Smtp-Source: AGHT+IEv313TLhURVuJV2ZjFg7WZOUSA5K8QH3+VOSOLnS1GhFcpirLmcVMiUuQvO1TRBLf2PHw96g==
-X-Received: by 2002:a05:622a:5c05:b0:49a:4fc0:56ff with SMTP id d75a77b69052e-4a9e9ca5040mr311134641cf.12.1752502021073;
-        Mon, 14 Jul 2025 07:07:01 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:5881:3041:2700:bc8c:6e13:ff9d:5355])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8b7ae2a91bsm2940614276.1.2025.07.14.07.06.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 07:07:00 -0700 (PDT)
-From: Woohee Yang <woohee9527@gmail.com>
-To: Andy Shevchenko <andy@kernel.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Cc: ~lkcamp/patches@lists.sr.ht,
-	koike@igalia.com,
-	Woohee Yang <woohee9527@gmail.com>
-Subject: [PATCH v2] stating: media: atomisp: fix open brace placement
-Date: Mon, 14 Jul 2025 16:06:47 +0200
-Message-ID: <20250714140651.213850-1-woohee9527@gmail.com>
-X-Mailer: git-send-email 2.47.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F4F220F37;
+	Mon, 14 Jul 2025 14:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752502135; cv=pass; b=lheG8HFMuppSH3YDe1VCeRJgrw8vU0rny0GK2FI7yxOwH/fZhwnzok6PoX6f+SMCHnzMofb0yh83vZ2kPHEdw2chKUe3BrEA3vP++pAB2D5GH9NF65OnPscIgKkrnRRcqWmCPVyFHDcpwESFZJDa2bbVnHqcr+/+m1i2j6cYt/s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752502135; c=relaxed/simple;
+	bh=xLFbyTFCTxrCXZ95YPjgu/bL8oOLmSYGE/MNEiwAZds=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kF3laAE/w234PRHGmCBGXeAPLP9TIGxqdaAeHTMIC/+vvD2sWjhCTHXgrDk0MqEp9r+hqsxsU37qusL8SPbD8Ri1g+KTq1LbT3Ds/5v39lObfDAAFGN/7Q8zbxwxo0Q9EEU8oa7b7wVj3ddbhJzG+FiadOD7xXM42M0Sc5VJERw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=HIOJx1ie; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752502113; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=isFHrMBvNV2bj1Umer9yVPRNpy9byQsWJMwa1C+2rh98ZgJ+TOGyXF7chB4W7PyrBKSg52TOY3mOKm0ujaLe9Ctc7jL6VUifuuQa6K/oaZHB55ZY4YOTEBTY7+1VUCv+VGH8A8tuPX1SbZbJLNC6589xu64h6+CwcbeE2w0Z2Ik=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752502113; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=4enJ+FUcyrsek9i62JQgGkkGMLGdyoOHqn7yVutegJQ=; 
+	b=gWSdNNNe5QyHlQJy7ENFYoAeH8fVaBG9Ru3taDUGh3Tt+VaTG/OwA7HRCiGJWZKQvYwsrZnoqVwqd5Dsxk2jMdMka/pDmmRix3LhT766Zvph7x5GMFq5YxVJWGNwlw+ao2PMsaluFVgt2HaYzaKzC/RFp7wFh7ty0Hoq81pDvuA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752502113;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=4enJ+FUcyrsek9i62JQgGkkGMLGdyoOHqn7yVutegJQ=;
+	b=HIOJx1ie34UXkUT/sJJDncuOWRfy8Jd+rEnzybLTRsOGiZfPIHJ25yBCdVMGu495
+	kFnWcPxnkW8hgnqY6ES+1sEWMBS2agb9ECGQEbL07TME62CDPYBelSuEPqNYkN/846b
+	6TSHllXEP3SrGjzDc4UHXegA/sMhTElfEeJZdsrM=
+Received: by mx.zohomail.com with SMTPS id 1752502108974683.0687269745556;
+	Mon, 14 Jul 2025 07:08:28 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: [PATCH v2 0/4] MT8196 CPUFreq Support
+Date: Mon, 14 Jul 2025 16:08:13 +0200
+Message-Id: <20250714-mt8196-cpufreq-v2-0-cc85e78855c7@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE0PdWgC/3WOQQ6CMBBFr0JmbU2nKAIr72FYtGWQJkCxLQRDu
+ LsV4tLl/5n3/qzgyRnyUCYrOJqNN3aIQZwS0K0cnsRMHTMILq78hsj6kGORMT1OjaMXy7O6yJB
+ EyrmCCI2OGrPswkd15Hg2RW84SlDSE9O2700ok4GWwH5u+AKt8cG69/7QjDvxb3tGxhmh4jJVF
+ 6kzvGvbdVJZJ89xAKpt2z6xL5So4QAAAA==
+X-Change-ID: 20250711-mt8196-cpufreq-86d961e2300b
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: kernel@collabora.com, linux-pm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-Fix checkpatch error "ERROR: that open brace { should be on the previous
-line" in isp_param.c
+This series adds the necessary bindings and driver changes to integrate
+MT8196 CPUFreq into the existing mediatek-cpufreq-hw driver. This
+necessitated two preparatory cleanup patches to the driver.
 
-Signed-off-by: Woohee Yang <woohee9527@gmail.com>
+The CPU frequency was verified to actually be changing by comparing
+sysbench cpu numbers between fdvfs being enabled and it not being
+enabled.
+
+Enablement in the DT will be done once the MT8196 DT lands, so don't be
+surprised that no node uses these new compatibles so far.
+
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+Changes in v2:
+- Split off mt8196-cpufreq-hw into a new binding.
+- Made the fdvfs register regions part of the cpufreq "performance"
+  node, instead of using syscons for this.
+- Adjusted the driver to iomap those, and use the per-variant struct to
+  add an offset for the domains index.
+- Link to v1: https://lore.kernel.org/r/20250711-mt8196-cpufreq-v1-0-e1b0a3b4ac61@collabora.com
 
 ---
+Nicolas Frattaroli (4):
+      dt-bindings: cpufreq: Add mediatek,mt8196-cpufreq-hw binding
+      cpufreq: mediatek-hw: Refactor match data into struct
+      cpufreq: mediatek-hw: Separate per-domain and per-instance data
+      cpufreq: mediatek-hw: Add support for MT8196
 
-Hey, this is my first patch, I appreciate any feedback, thank you!
-
-Changelog:
-v2: modified commit message
-v1: https://lore.kernel.org/linux-media/20250714135014.212067-1-woohee9527@gmail.com/
+ .../cpufreq/mediatek,mt8196-cpufreq-hw.yaml        |  86 +++++++++++++
+ drivers/cpufreq/mediatek-cpufreq-hw.c              | 139 +++++++++++++++++----
+ 2 files changed, 200 insertions(+), 25 deletions(-)
 ---
- .../media/atomisp/pci/runtime/isp_param/src/isp_param.c     | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+base-commit: 42f78243e0c6fe42f2710f98513a55c102347ff0
+change-id: 20250711-mt8196-cpufreq-86d961e2300b
 
-diff --git a/drivers/staging/media/atomisp/pci/runtime/isp_param/src/isp_param.c b/drivers/staging/media/atomisp/pci/runtime/isp_param/src/isp_param.c
-index 251dd75a7613..b4aac76c2ed5 100644
---- a/drivers/staging/media/atomisp/pci/runtime/isp_param/src/isp_param.c
-+++ b/drivers/staging/media/atomisp/pci/runtime/isp_param/src/isp_param.c
-@@ -102,8 +102,7 @@ ia_css_isp_param_allocate_isp_parameters(
- 	unsigned int mem, pclass;
- 
- 	pclass = IA_CSS_PARAM_CLASS_PARAM;
--	for (mem = 0; mem < IA_CSS_NUM_MEMORIES; mem++)
--	{
-+	for (mem = 0; mem < IA_CSS_NUM_MEMORIES; mem++) {
- 		for (pclass = 0; pclass < IA_CSS_NUM_PARAM_CLASSES; pclass++) {
- 			u32 size = 0;
- 
-@@ -178,8 +177,7 @@ ia_css_isp_param_copy_isp_mem_if_to_ddr(
-     enum ia_css_param_class pclass) {
- 	unsigned int mem;
- 
--	for (mem = 0; mem < N_IA_CSS_ISP_MEMORIES; mem++)
--	{
-+	for (mem = 0; mem < N_IA_CSS_ISP_MEMORIES; mem++) {
- 		size_t       size	  = host->params[pclass][mem].size;
- 		ia_css_ptr ddr_mem_ptr  = ddr->params[pclass][mem].address;
- 		char	    *host_mem_ptr = host->params[pclass][mem].address;
+Best regards,
 -- 
-2.47.2
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
 
