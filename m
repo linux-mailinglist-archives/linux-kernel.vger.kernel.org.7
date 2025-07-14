@@ -1,80 +1,103 @@
-Return-Path: <linux-kernel+bounces-730412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8120CB0448E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:47:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D553B04429
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 17:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE87D7BB56C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:36:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF180162663
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178F2253F30;
-	Mon, 14 Jul 2025 15:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F27725BF00;
+	Mon, 14 Jul 2025 15:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y1OMjNen"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lYIZf8LW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XE60fYGa";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HfSDwdtf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GG/1xn3x"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABF625A640
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF5A25D540
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 15:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752507091; cv=none; b=YxpQSrTov6UcMJh97EbJWazkAJicUBt7bSajOveMzz/VTE4Jpppdpc40tcSA9pzIrrZ+p4+lORr9JGQzQxWL48x4WNa+jFaiGK87VzMHLSCRosL4vES2P0T1uwuVhahD4KZmpmwBTi6rFUD9DCAfNFzJJxO4PYDA322uhlQJ8xw=
+	t=1752507126; cv=none; b=rGrDBKQtFGUk2AJM1vNln+9YfDVyN7YLpLR/tdDabmyG82nLSwDihDwEMRviqtn6StfXmXLEMOe4P+lu+W2k1i4EYDniqbxNMkGky/nXGqkFRuxgqz7e9nb7rUIH5K7GldPFs2b1pkqkDu4flfswH7TiVtEI5VRIRRSDNpVFJco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752507091; c=relaxed/simple;
-	bh=GyIGOOq0yekY5kYlEYIUN1prHtw6vCNxDk5GHeLMFVA=;
+	s=arc-20240116; t=1752507126; c=relaxed/simple;
+	bh=0sDXg9ihTAbqeLMgCAzibka9DJM22adnuxaexrpHDyQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ASDk5LDj4/Epm4GRd9GjS2lvkCYS7pfbKImV7cnwLm5g7anGqMadu3ZkXob3MJ0mbrrU221uGYToEjkMuq0gDyjXsc7/V5RcGYLBBkyC7/vo3N5+Qe30BJYuwfxzo+CfkpcMYoJmtANo3pis1qXyUWzNyOosF+Fv97fNtNAsbKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y1OMjNen; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752507090; x=1784043090;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GyIGOOq0yekY5kYlEYIUN1prHtw6vCNxDk5GHeLMFVA=;
-  b=Y1OMjNenQOVsJxwRpPUeBFwVexJcnx8xZhc0R7yKZ6SKpXW/tW26vYbD
-   dIdHMdBgrDd6aZssYWN+sSR0sYPXKG08yDsrg3X2PpVrtd840AQJpOuBn
-   UWwE7vH5pVaN/rcv7SnrPI4FqTDbPsRPo6ee7givN+3b7oJmDqF4r6uE6
-   e/1T4aCH3h6YFDB4n18xQ5vOdZt8vZTXTyw/2f58sLf3K61ZJD/jT8/R9
-   iEujeu0I4uZi3m5N2TiEIKTqVIMhWkeW7Yq11v861ti16oaLEhw6ZZpNX
-   BKKPJjzmCRmlzSaoEt5sFVFVagjcCHSXs/GlOlVaZXIEyvojAJsJZxlDd
-   A==;
-X-CSE-ConnectionGUID: /gT1nvKAStm1Yz1/4UPQ8Q==
-X-CSE-MsgGUID: 6yhQgdsuRVCBnHcONnZXJA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54851147"
-X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
-   d="scan'208";a="54851147"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 08:31:30 -0700
-X-CSE-ConnectionGUID: kPpFxqLaTnyr+gR6CypAqg==
-X-CSE-MsgGUID: EPjy9iPuTQacdh3KRcArXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
-   d="scan'208";a="162517661"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 08:31:26 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ubL9H-0000000FOvW-2xre;
-	Mon, 14 Jul 2025 18:31:23 +0300
-Date: Mon, 14 Jul 2025 18:31:23 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v2 1/1] x86/defconfigs: Explicitly unset CONFIG_64BIT in
- i386_defconfig
-Message-ID: <aHUiy79B7aMnpXW_@smile.fi.intel.com>
-References: <20250626150118.318836-1-andriy.shevchenko@linux.intel.com>
- <aG_0K7Zx5WpQHGJE@smile.fi.intel.com>
- <20250714142957.GIaHUUZTHu9zoGEaNg@fat_crate.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Slk8nPJ/dhQCmaLYhBfkNrPVc9ffmmhNugTqMeNEE8yBoqorYui7xt8r8hxe9PXVrwCQBE/k6xMYGOgeWhXCLGEpHP+/jfCkrowQw1F/Hjs/4I539oqZsPF9SbNuFl7qgWtG+w/jngIA4WHd2F/gDsxpMUUb5yAxbaBF+NSm/3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lYIZf8LW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XE60fYGa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HfSDwdtf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GG/1xn3x; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D19871F38F;
+	Mon, 14 Jul 2025 15:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752507122; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ldlagw0+7olXaG0GAUl5tIjnHmh26MDvg9oChVTsBBE=;
+	b=lYIZf8LWZ/YALrk/M9bYOoLyNaRaxgIY7LqkzYf+AuNohRTjKlC+PiITyGBWe3KAPSyMnP
+	XqUzStPAsVJ/ibl/OMTZCdgGoF+KQLvcXtWi4RV2ADWz7LQwLT3xKRA5zhl2saHlDr3fb0
+	rtWkav/ggYqAaCwUWd7SI22Rzl9Mygs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752507122;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ldlagw0+7olXaG0GAUl5tIjnHmh26MDvg9oChVTsBBE=;
+	b=XE60fYGa3q77Ey/sQPnX7Aqp0FkqvDrFew+WYyVrmSpnqBKQjkmZYwwv2Hq9BX6sWBRZqs
+	wd0BoVDFnOiWUJBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=HfSDwdtf;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="GG/1xn3x"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752507121; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ldlagw0+7olXaG0GAUl5tIjnHmh26MDvg9oChVTsBBE=;
+	b=HfSDwdtfXgYXWWFbGWgDDu8MpkKH1ytTcYSTfw0+Cska5ISz9xx1fwMJDsrYJL9WiRc8ws
+	Y0oLFbtX3ZQAwH4vQm4JAQjII7WjvJR7Jz/XP5W3MKZUB59UB1ldbXp+PZrvcH2Kmoxvw/
+	g87rUeyH+ayfe5hdXAkLWkaoO3+1vuQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752507121;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ldlagw0+7olXaG0GAUl5tIjnHmh26MDvg9oChVTsBBE=;
+	b=GG/1xn3xwQ1+1XPOEDCmqkwPkf7uouB8wsHtOpckVmJDrhnNgkvrxKAr3W0YrowzV2uqGj
+	W+jwYy9KdKNJ7zAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1CA4B138A1;
+	Mon, 14 Jul 2025 15:32:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id uj8zA/EidWiCNwAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Mon, 14 Jul 2025 15:32:01 +0000
+Date: Mon, 14 Jul 2025 16:31:59 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
+Subject: Re: [PATCH 2/5] mm/mseal: move madvise() logic to mm/madvise.c
+Message-ID: <nnm4cmygbeyzwxfwqduo5lq3d5cthuic5irof2l3tb5x43n2hz@mmjklktcfk2o>
+References: <cover.1752497324.git.lorenzo.stoakes@oracle.com>
+ <5d932ec1f9d0ea115aac65067e4cb8241a06e791.1752497324.git.lorenzo.stoakes@oracle.com>
+ <5e21df9f-7f75-412b-a173-fe6da49952e5@redhat.com>
+ <b9bb8416-24a0-4bd2-97c1-055460cece23@lucifer.local>
+ <0925c64b-c721-4dc5-913a-c43a94dc64a3@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,23 +106,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250714142957.GIaHUUZTHu9zoGEaNg@fat_crate.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <0925c64b-c721-4dc5-913a-c43a94dc64a3@redhat.com>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: D19871F38F
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
 
-On Mon, Jul 14, 2025 at 04:29:57PM +0200, Borislav Petkov wrote:
-> On Thu, Jul 10, 2025 at 08:11:07PM +0300, Andy Shevchenko wrote:
-> > Can it be applied now?
+On Mon, Jul 14, 2025 at 05:03:03PM +0200, David Hildenbrand wrote:
+> [...] 
 > 
-> I've merged it into the commit in Fixes:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=x86/kconfig&id=6453e7cc32d1fd69344311224dbd00692eadc592
+> But now I wonder, why is it okay to discard anon pages in a MAP_PRIVATE file
+> mapping?
 
-Thank you!
+IIRC this was originally suggested by Linus, on one of the versions introducing
+mseal. But the gist is that discarding pages is okay if you could already zero
+them manually, using e.g memset. Hence the writeability checks.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Pedro
 
