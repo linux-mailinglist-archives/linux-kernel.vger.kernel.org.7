@@ -1,100 +1,123 @@
-Return-Path: <linux-kernel+bounces-730097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8365DB0400F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:34:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26E52B04039
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 15:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09CA87A9647
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:33:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3834C1A65F67
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C962E36E5;
-	Mon, 14 Jul 2025 13:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCEE21171B;
+	Mon, 14 Jul 2025 13:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="LMB9TRQc"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qPYqJaoS"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153CD24A054;
-	Mon, 14 Jul 2025 13:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511BE2F22;
+	Mon, 14 Jul 2025 13:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752500020; cv=none; b=h5r53QaSMd13qCL49Ram3HiYpybFHdgKG/KtC8VyVTr2pG8e3uemln6t5zYHbEicM0IeLDTgQJgFmxj6UZByIjAvAMWpmaDFtbo/vBwe77B2c1b10pc63T4VXr5+aY8AxOn+s0wCGyUJEII0Owl4UnWzCskcpxIhbbss6wp3ffc=
+	t=1752500100; cv=none; b=k0ClVnX5bI62Mkc1XEc7Jjaqbs/k/mbDUKxJ5mTnBtp8ujpweCTXzfKNmBJLxumwvhPgS8ulyFEO3OZsT3zWJF5wavF8yyT0153SA1rZpJfSnax8NBpXscYp5UMSBtSqCjNDFut3qXGysNf+uhZR+iaYAMOZaA6FFD/PGAMWYI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752500020; c=relaxed/simple;
-	bh=CN7meXqcjOQl8Q5QLFDMsdkb5s/t5q/RVkICRRAqXxk=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=MCJif94/2NsuAdR/6BOYKWsmwuFU1Xnhz6EhIZ9cH/mnwAat9zKt4znGP2EPHw8w7z7AIeUS5K3bfPao/AegxIWqAZ4zaRGAsVysf8/OdDEtTpcS/TowCSfQJZTnpW6YOL+9vDWqzVzSa2k6oZ+2O2+aqHpShzISAxkjLeIkz0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=LMB9TRQc; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=lLXoJeyxFBMFgfiUZIb4L0UR3mTeCKQZPxkrChu09mY=; b=LMB9TRQcR3UgTSCrnCjkXER1rv
-	D4pSz81iFNg/8m6ofnxT8hkoa3ca/fji0uo4ZNfBuqMfl63i+cWOg47pBMe1WxGQwyXmhh1e1R3X9
-	qT+G7V+K3bDlLl0hWAnFS8mYqzG1DlwKWKqfsxUW1MnZg8O2yEfzIdjpJLn1wLIbpyP8=;
-Received: from [184.161.19.61] (port=36668 helo=pettiford.lan)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1ubJJA-0002Rb-Uy; Mon, 14 Jul 2025 09:33:30 -0400
-Date: Mon, 14 Jul 2025 09:33:28 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Hugo Villeneuve
- <hvilleneuve@dimonoff.com>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-Id: <20250714093328.4aad6ae61a6eda364b7b7738@hugovil.com>
-In-Reply-To: <CAMRc=MeJh2H0zYg5mfkuZreNoRAOWar9oR68+xrAar+-W2gJqg@mail.gmail.com>
-References: <20250709201028.2175903-1-hugo@hugovil.com>
-	<CAMRc=MeJh2H0zYg5mfkuZreNoRAOWar9oR68+xrAar+-W2gJqg@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752500100; c=relaxed/simple;
+	bh=CEkKa/aikU/CDzdfcPAjOT99jNpHypxstJjnFfoQF3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m5VF5/nClZzIYxlJba8mqM+mGtULo4d9jEqZ8IsOB47QZWqc6EK1g1gy4DAc4KfZ8PiQrRSJXW91a8QPZBmK5JZIdRKEgpt6HaiBI2tyfAouFNSqy7I3q04Bzvtihi4cqUTfAIxw2pmhaHxPrO1s/icfBKMMuF9c82QFHvoL7kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qPYqJaoS; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=rkKA5JFXkaqeIgKnZeTRvq/H+eMfFQ7tSAFHadzv+i4=; b=qPYqJaoStTW6WZY8E3xsfppAcV
+	GciwfhUoAIxtaUx5hRVyOQZL595Nutl12IeZGQ+2QwMLot/GFSllOAsMkFzzwfSJiTKTwqNREFIWM
+	u1tdKdG9gNKJ9cvGzr99Z+DlXIe3rzBruOF4Hcro7UHi3k4oDscE48rIsYpUmNuaWcqU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ubJKR-001SkI-Ao; Mon, 14 Jul 2025 15:34:47 +0200
+Date: Mon, 14 Jul 2025 15:34:47 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: rohan.g.thomas@altera.com
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Romain Gantois <romain.gantois@bootlin.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Matthew Gerlach <matthew.gerlach@altera.com>
+Subject: Re: [PATCH net-next 1/3] net: stmmac: xgmac: Disable RX FIFO
+ Overflow interrupts
+Message-ID: <bef4d761-8909-4f90-8822-8c344291cb93@lunn.ch>
+References: <20250714-xgmac-minor-fixes-v1-0-c34092a88a72@altera.com>
+ <20250714-xgmac-minor-fixes-v1-1-c34092a88a72@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 184.161.19.61
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -2.9 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH] gpio: pca953x: use regmap_update_bits() to improve
- efficiency
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714-xgmac-minor-fixes-v1-1-c34092a88a72@altera.com>
 
-On Fri, 11 Jul 2025 12:22:40 +0200
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-
-Hi Bart,
-
-
-> On Wed, Jul 9, 2025 at 10:10 PM Hugo Villeneuve <hugo@hugovil.com> wrote:
-> >
-> > From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> >
-> > Using regmap_update_bits() allows to reduce the number of I2C transfers
-> > when updating bits that haven't changed on non-volatile registers.
-> >
-> > For example on a PCAL6416, when changing a GPIO direction from input to
-> > output, the number of I2C transfers can be reduced from 4 to just 1 if
-> > the pull resistors configuration hasn't changed and the output value
-> > is the same as before.
-> >
-> > Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> > ---
+On Mon, Jul 14, 2025 at 03:59:17PM +0800, Rohan G Thomas via B4 Relay wrote:
+> From: Rohan G Thomas <rohan.g.thomas@altera.com>
 > 
-> Nice! Can you rebase it on top of gpio/for-next, it doesn't apply
-> after recent changes to the driver.
+> Enabling RX FIFO Overflow interrupts is counterproductive
+> and causes an interrupt storm when RX FIFO overflows.
+> Disabling this interrupt has no side effect and eliminates
+> interrupt storms when the RX FIFO overflows.
+> 
+> Commit 8a7cb245cf28 ("net: stmmac: Do not enable RX FIFO
+> overflow interrupts") disables RX FIFO overflow interrupts
+> for DWMAC4 IP and removes the corresponding handling of
+> this interrupt. This patch is doing the same thing for
+> XGMAC IP.
+> 
+> Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
+> Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
 
-Sure, I will send a V2 shortly.
+Please take a read of:
 
-Hugo.
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+
+This appears to be a fixed, so the Subject: line should indicate this.
+Please also include a Fixes: tag, and Cc: stable.
+
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+> index 5dcc95bc0ad28b756accf9670c5fa00aa94fcfe3..7201a38842651a865493fce0cefe757d6ae9bafa 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+> @@ -203,10 +203,6 @@ static void dwxgmac2_dma_rx_mode(struct stmmac_priv *priv, void __iomem *ioaddr,
+>  	}
+>  
+>  	writel(value, ioaddr + XGMAC_MTL_RXQ_OPMODE(channel));
+> -
+> -	/* Enable MTL RX overflow */
+> -	value = readl(ioaddr + XGMAC_MTL_QINTEN(channel));
+> -	writel(value | XGMAC_RXOIE, ioaddr + XGMAC_MTL_QINTEN(channel));
+
+What is the reset default? Would it make sense to explicitly disable
+it, rather than never enable it? What does 8a7cb245cf28 do?
+
+    Andrew
+
+---
+pw-bot: cr
+
+
 
