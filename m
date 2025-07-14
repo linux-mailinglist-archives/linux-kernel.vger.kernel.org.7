@@ -1,98 +1,75 @@
-Return-Path: <linux-kernel+bounces-730190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6FCB0412D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:15:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AADFB04131
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AD96179DFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:15:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8522317903C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627A8258CED;
-	Mon, 14 Jul 2025 14:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4E725484A;
+	Mon, 14 Jul 2025 14:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="QPunpGWS"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011040.outbound.protection.outlook.com [52.101.65.40])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="eHzR6jEc"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010033.outbound.protection.outlook.com [52.101.84.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A667A257AC8;
-	Mon, 14 Jul 2025 14:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A742E36F5
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.33
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752502494; cv=fail; b=O7Q9ykks1LgFYuT6k3rw5M8daaU/YM2o9UlqJTrQTAdRmjydbGZmGtt30yBSSHNddy5dbucUrd2/w8o0hX6nMM7BfEqFrImGymBZlcZGSwLhNl9NHEES2dSa17yUiL2y5MZMQ7XPJGFH2MdF2pLCPbBiaMBWd8IsIBPOmmuufDQ=
+	t=1752502519; cv=fail; b=skGF7VQagdD0GRu3io9Fsn9yuneb2PhTDIOhKgIRK34Q6zpgayMRGKvktoO3Fcm38v8ZBrbWz7PqnctLiL+N+Odsz2QHWm1rJqci9JVRcG7FnrRnMQ+oF56WUeIryfIUqJkZoutVSPoaGObzUChkClzUpdIGIJ00gsFJgifhDz8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752502494; c=relaxed/simple;
-	bh=CEez+32NsI0cgfoc/IEfybxVWDAYPvjIlLDZv65+Ksg=;
+	s=arc-20240116; t=1752502519; c=relaxed/simple;
+	bh=bXzVznNe58tzdCVTWVe013Pn6W5wE/bXPbn2sVH0Gu8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Gx3LJC7rcFXwY6pRZLZ9zOZDOIKl9OuJiN0g0yqxUR5r8U6UjCmhabi0J22VlkU6cnHRKc6Liee2mIXazRvaI/pJcq16kLXVNKNuBxrTV+B3OMReQIRQJJu/SykTuuNBvr6db8H10aJpmRbcQcdPEfwJS1RoY0mPK42k8whul3I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=QPunpGWS; arc=fail smtp.client-ip=52.101.65.40
+	 Content-Disposition:In-Reply-To:MIME-Version; b=FYclSN82WMiZTaMZQyW+cG4NKqk7JpeC6XIbmKEAV23n/K6WTWtD+nvYNPU08OTm1rFf09/uQ2Hf92Z3ceiGY4JIHIFdXfJfT+hikEWpd/ApGOzVA0CiJ3nfCK1Onks1/V4jQoEQeKYeNg8JdaTIROOV+n/5I62MsoDoEavEqKw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=eHzR6jEc; arc=fail smtp.client-ip=52.101.84.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ITWmMrmIBejRaI5HfP7FdGXNVsw8cxeviII42FDzvI4rXSe4MI1CFXv5G4wWyVr5N29k8jHnEXQHC1Ne9o4efDP74us1It+SyeATgK1VrijmZp4WZSitNNFaKdQVWtdfbaQC/E0xdH2rspvtgn80T1J4MNBMDRkTaEux+GAiZ8dfv5BqMdFgtjS735sW2PCklSv7PeuffZimZ1ulgWIHUhD5B8BmzovTJ5SqX7miWBrb77TCHn7G5pldyd5ghJSewpjZ+RHVyz8o6cGdqRgg1bRRKGhL/ZvBburU0/4m282zJth5t66fV6xrJsod5jWPWjmFRKy4hHEk5KdSniPwQg==
+ b=uqTYEPZA5l3R9zDoqmzdljgt/L8NTVwVUdl8Cgih8YF1Ag6Z6HhcJDKSrcwhQ7na0nuTx0GbPsOIaBxEoyxHiotrsJDzib5vT/zEae2B8djAlx/PwuyXZXzeUZeKfmDxdl4bxy9si4pSI6LmUyp5ARzKUN7YMGhUSMfZNkk4f24wsPajxZrORd8YKjgWD/zQGHkVk+LcSKjv8L13sM9XIYp8jsAKmy2mGrIJWvUdQH2Swnn+oO45w2NA6dlHyVK8FsecvBV5mlY6Q3ONaKKTksCU+RNRboB60Tzkv9biBj6QIhjnY26ykmkdg4ynwFLWfXe1fvTeGLDL7UUCI8lOEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fC0Km0vBhIqB3OH24EGG0gEEZ+IGZwqVeOkQmzdnl5Y=;
- b=hj1v82F+v2K7WwTQc8mDlKe/Db6glxONem/wWYrdVluSO5Cfa1gRcYtucNs+UzMpRmuitAKYz0ofHZ6RPQIsQ6G63mRxhQNOU2MF3zHAoLON11t0WQeJdsGmSr0kd9q36A5WxWWVWZUBnMPb+XZbZIVXINxxQKFHiUgGo6Kn0HvGTQBG7TFIVkp33/ZXrEauGBAuVfMZ8yhPDvROsUuB3L6tnk0DGAw9eXBzHPfFhOXbmFTii8qaKt8O9Cb9yLa6fggYS7sJFY/QCH3OlMd3i3WqYV1AjaA3WzhPAvCUIqw+XiRarKtwjnzLAX+wCcA8mngGI6sTm9wBULsnPlq4Pg==
+ bh=AapsZSL3u9Xx2kZlb+wUXOdn1faFzVX92WCDsWBAIlA=;
+ b=PdjGdjRNR8lhVcHhVdTlKC6bV0dQDvMXAk7GOD+L0lRpqWANnsUVono24pEF9LzSE/WSEEvQsH8+KTk6NxugEOjKLhYjd/2auB3WmJdMjAyOkd6/1MciWra3P13l0tr3IkaapiBssT3x8iB0y6HKTD+GS4SYxkrjXs+R9a/ms1KVPXDcfxw9u7/VQUw3wWw9y/Eh07BPyoQ+dSsCDOUXRxp9GDNWl9+J0INyAvgeCCMIMK9dyEm0qpPPnK5/XsTF3RGOMhPQvAyORdvha/VC6/I6EpcBZHTUeVB5W+DGHMFytfsoUQLV6+NwMw0mU1SdFvC1vhHpcqHmkWpkpmiEiQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fC0Km0vBhIqB3OH24EGG0gEEZ+IGZwqVeOkQmzdnl5Y=;
- b=QPunpGWSuRGDenUJ+965gHVm3DHqNHNIpfLHb2Ze60kipNj5PttYjKsQnmXj+9YPITDNrlZhT9K2keUfs7nuQiwc/VVAK78nWEto5570RfjwjWJ+YI+W7aw3BlDyjyd3PTqUrA1SGQ8bnAjXyMWC3oWpuSEu4LYsFKJTz3lB8W32xAujZMjQ3BK2wDQnvTNYcmMGbzyCKBPEIZyy/ulGL//cgpr55U1gZuv2tM4kBXKx37/UvvPDFmCGSNP4lMD19J2bVRdVltr0QQjbLv1ZruExoTIZrWhSqnFTCjfFKm4EkDik/nAWq1G8dVDv30sa77Asjdn5ypfScFtrxnkPUg==
+ bh=AapsZSL3u9Xx2kZlb+wUXOdn1faFzVX92WCDsWBAIlA=;
+ b=eHzR6jEcC6IjDsiPBhN2NCQcVXRb4NHYEIg0Noib5xeELS2Z2YgQelDL5YMxfdPYjbap4JwgytPygp5GLGm91Jn1vcpYhk4f/UyJb7lWfg80fGBsZCpXD+z/teEqsIL/gjAo/X3Yt0g2k5ZUQe2SMzO9wFp+DY2uQAT18jrlhHkXkL3iimjaryc6pAFbu8nJsmFhji9Kk7/UdbAkbRl72Ej+JAWfgl3Ro1wWpkVZKRrNfsHBb6cdBtpXRYShJCzIqz81tQU/l/tCXbz9TmptZ3EG7KcpIZ+mWETKsT/kf0Yp6dKp9xE1/TQ5JtUkVX6MAM/+B6mXYE3oMo6RuOtvaA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by AS4PR04MB9484.eurprd04.prod.outlook.com (2603:10a6:20b:4ed::16) with
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PA4PR04MB7645.eurprd04.prod.outlook.com (2603:10a6:102:eb::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Mon, 14 Jul
- 2025 14:14:48 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%4]) with mapi id 15.20.8922.028; Mon, 14 Jul 2025
- 14:14:48 +0000
-Date: Mon, 14 Jul 2025 17:14:45 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, "F.S. Peng" <fushi.peng@nxp.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"richardcochran@gmail.com" <richardcochran@gmail.com>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>
-Subject: Re: [PATCH net-next 01/12] dt-bindings: ptp: add bindings for NETC
- Timer
-Message-ID: <20250714141445.yykvzxmmdeicsmsl@skbuf>
-References: <PAXPR04MB85109EE6F29A1D80CF3F367A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <169e742f-778e-4d42-b301-c954ecec170a@kernel.org>
- <PAXPR04MB85107A7E7EB7141BC8F2518A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <836c9f0b-2b73-4b36-8105-db1ae59b799c@kernel.org>
- <PAXPR04MB8510CCEA719F8A6DADB8566A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20250714103104.vyrkxke7cmknxvqj@skbuf>
- <PAXPR04MB85105A933CBD5BE38F08EB018854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20250714113736.cegd3jh5tsb5rprf@skbuf>
- <PAXPR04MB851072E7E1C9F7D5E54440EC8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20250714135641.uwe3jlcv7hcjyep2@skbuf>
+ 2025 14:15:14 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8922.028; Mon, 14 Jul 2025
+ 14:15:14 +0000
+Date: Mon, 14 Jul 2025 10:15:08 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: =?utf-8?Q?Przemys=C5=82aw?= Gaj <pgaj@cadence.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i3c: master: cdns: Simplify handling clocks in probe()
+Message-ID: <aHUQ7Ge97/glY+s7@lizhi-Precision-Tower-5810>
+References: <20250713152411.74917-2-krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250714135641.uwe3jlcv7hcjyep2@skbuf>
-X-ClientProxiedBy: VI1P190CA0039.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:800:1bb::20) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+In-Reply-To: <20250713152411.74917-2-krzysztof.kozlowski@linaro.org>
+X-ClientProxiedBy: AM8P191CA0020.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21a::25) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,160 +77,208 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AS4PR04MB9484:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1a99cc5b-a0d2-49d3-17a5-08ddc2e0ca8d
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA4PR04MB7645:EE_
+X-MS-Office365-Filtering-Correlation-Id: 59a08a2a-1c9e-4aec-1547-08ddc2e0d9c4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|19092799006|10070799003|1800799024;
+	BCL:0;ARA:13230040|366016|52116014|376014|19092799006|1800799024|38350700014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?chZK5WjGtB6XtgiJHrq81pEvTfTTDCccjk29JAVgPz8HvwlIeMDaSS4xQKWX?=
- =?us-ascii?Q?YvzJEnXLcQ+6NUOicv0T1iWCBigaK+xYjqZVkgS284r41uM6oEmuPXoR3lj+?=
- =?us-ascii?Q?UYGo8hqpBswFpAdVqA2quXvx1hheOByn0EIZLl+W2mcRSnSJUMWQeFhYTcG/?=
- =?us-ascii?Q?EiGx+pMsRU5x2Al6KjexJ97kqplJYni8jvkirdY/Wo7O/SO292HXPGAAb4p3?=
- =?us-ascii?Q?DvIyu3rngPKYmQQ3VM1Vv7WH7+qf3+KeQkXYsTTrGwzjJGWj3mgRoswlT2up?=
- =?us-ascii?Q?4HQ2uecPh3O2pWaqL159m+B1NX3A6ftxdodFSca2ie04WDb5dq/8uy1MH2l9?=
- =?us-ascii?Q?x35vhferz4N0p2aJrjsP/aCsjWt/Fq//r0RqIFL1Zr1nElSmbqhEcgLglyib?=
- =?us-ascii?Q?FZL1Jid3WYpyWa33m2hf+padfV/VFmwPjE86WpZ+EkrImFnHTR+3UWYb5RNr?=
- =?us-ascii?Q?pMjU2RPdTeNg1Q8YV658M6/GK3cHJK8j7o4ZS5SX5ZmEhKWqShwLF+eez37c?=
- =?us-ascii?Q?KmtRyLTikwkTvNGCDfStGc4Sjiuzsc1z2PEBXHZcbQWQfYSbR3sYpqTUcZA3?=
- =?us-ascii?Q?rmChyPCXbAYaAQdHBpa3uf6wx2B1O1/89NmLvC49XCiU5aJeT2wig+kk5H5S?=
- =?us-ascii?Q?yvegubisTEp3wPmyqztEb8ioPsgihRCAdP4DMOm5E+A3YW0utUzm+cx5uP9O?=
- =?us-ascii?Q?wc5cJBCR8WF0NbL+AShfGHIA3Pm77tt/E2k9YG69XSdZ3VKvM2Otwtv22MR6?=
- =?us-ascii?Q?n3xPVE8wK8axRB0LTuon8Z8i5zKsKMR/+K5+3KrCUqYZUcEf7TLcuClYZtoT?=
- =?us-ascii?Q?mukJfPxgCX05psM10OF8Bg2jPJZ7Q5PYyvz/XFcyKZdWXmjBfPpFHF9hKxfq?=
- =?us-ascii?Q?np/SjJEJUK1viIN0b5hE9/IsOUZ3hO1BPdhhGkBFfj3fHTamyNERPhMq08Bw?=
- =?us-ascii?Q?uqIkLPYZJcM9TbTYxWJ2VG/e21CdGSTB4bOUXxgmsVZWiNsSORBsOT/zCwzn?=
- =?us-ascii?Q?XZ9ppIiaTFXKL8FtBZd3BqpgwbtGZIqSEz8IMUIOWv/1p8O+UeChS+OcUGKJ?=
- =?us-ascii?Q?jQ+f1jrd3sS74K3+HLBOBK/ohhQeW1181SZkd2XnEVuKmFZBIi/6mONhED2E?=
- =?us-ascii?Q?eTK4T0q/uDFMrOrGL7NLfDtpqP0Rf7yQamWJNZIuH0cfDLd7mvFubTU27wom?=
- =?us-ascii?Q?HhfUe5zSNJRMJ4a+eFH9sBiuiRf6K8xkisFd3+jVv5ZR0bFJ8kxxqhGqlZnM?=
- =?us-ascii?Q?jkX9M1ciuaX8kYVcvUsECSQ7SUUCx9mp37ooe4FFvFZ7sEqAvgDdgyIP60fV?=
- =?us-ascii?Q?SWYmt8dzkLVC7agPEr4UofZ20Gjx+KZqKhxCDn1vUdF4lURx/Ius0Z0Nt9my?=
- =?us-ascii?Q?WNRGi4abed/2ymImi6jEcQRPsVqMar2qj+gpRMrygrGzClyR7Pm6coCeFrYH?=
- =?us-ascii?Q?bpLuefig1eo=3D?=
+	=?us-ascii?Q?pvadOAPk1MMFxp5g9ccli7B7u+KVBSaGTwjGwGXzQadSxGuRCMpldsZ+iaX2?=
+ =?us-ascii?Q?/reUDCf/Hvzx4Ve+esTD7mSPqSj7o+KswxjcA40lGeBvLiFaTNZRIgRb1Z0f?=
+ =?us-ascii?Q?SGFG5lopft3ZAmY8h73SrmABt0+G/rNhZArfzhK5tSmtSP/qbdbC3RJ1jyMT?=
+ =?us-ascii?Q?866CmqbU1W8+7ztbsy/UDpZqR+T6LaO66sZ9vCmat9QyjIqb2I3OCClP205R?=
+ =?us-ascii?Q?e3ppmn5Ps8JzsbioO/ddpNwvwIc5J1hyg/VZBXpQCuqyko/NVuHnkoOz0FBU?=
+ =?us-ascii?Q?znvJW1S4UBK+5AXaLnQLuH08rnrzawSsgloiWm1ReBWOlO8B/XDj/9foy8jz?=
+ =?us-ascii?Q?2bHiGr9Wp2L76ZvMcKxgcOkBhKoVt5XnftbHV251Oa6KpbYnAxmjs114mCNz?=
+ =?us-ascii?Q?PcJBNhEKVxj3d+ar8MAMqHdK0YNXmNWFd3OIMfKNg3P/qA6ZIwzYK/krarnx?=
+ =?us-ascii?Q?G9oHu/lFNeUtPTl3wVyuEN/2RGc5B2l7uDwdXbtEXJGF2NOjzyKXljevjHSq?=
+ =?us-ascii?Q?m3ojKfVIYILCTVAq2LhbDkJ10oO+LRDNTJUc7KD2FSTSTaCxgK3ekQJFtVBm?=
+ =?us-ascii?Q?PGfM7wAP75U/ftSrAf4p9daEWB+a1UyqG/viU0a44IvyGsl1gaknUU3J0QXG?=
+ =?us-ascii?Q?jT3JtLfL4RdIWeQIdsCf4ERP4oamtTU8DevT+aCTlFmnexGasIam775QVQk+?=
+ =?us-ascii?Q?F+YzkC04y76ZNHqbBR+C9KJ4WcuTvaT5yPHcBQ63KeY774c8XuKOntuuYGHh?=
+ =?us-ascii?Q?k8CahYmAw8SJYrCleEWNOjL/cRS61SBByIb5I5hPx6E0iXw9SGy6rjIK4mth?=
+ =?us-ascii?Q?MShsytK9soxga1xdmMG74QfTkjqxAvkVFN8vuWl/5ptp1cJfknmVeGYhi3op?=
+ =?us-ascii?Q?L5eioP9zipD96+8hP9Cx4uwtMfFZpyP5K7BcRT/0ORv8ScUK4IzmS8BsZj5e?=
+ =?us-ascii?Q?oWo+OZVAEwWoa+bwlPE8K8U28EtpPI01fi5AEkB/ZrFF05oYVjbff0gcSYv4?=
+ =?us-ascii?Q?i0MIT/9p+0SGyZdUx8m+kiWp4bPJyv478FAZpGAIOPag+h9rCN5a9CCeIwfc?=
+ =?us-ascii?Q?9Wn0BQ7vqHBFNibdJPAh1I7Oud3Ze6JsAh5tFoU9refZoeAZ05M1H/fjUGsC?=
+ =?us-ascii?Q?8tVLuHVn1JRKYsA5j6PRdaVVtVtt6KY8t6uBv4QrMSZ5LC622w1NGMtiIRqr?=
+ =?us-ascii?Q?F5WM6IJK9WtPqzT0RD1kcjt4g4+Y5YT5faXIM42zgB63hjre4zPht7raOiHG?=
+ =?us-ascii?Q?Dh6hfRF4JcjSF+kLztZYL9xgVHuTitLMiPLwIzSh0zWnHNCwVbdwQ23vNThN?=
+ =?us-ascii?Q?eOVrzBI37CzZw8Gv4dkOaFL6kuqc59ZHlLQpSILanIgDP35bH8rw7AmySQp3?=
+ =?us-ascii?Q?U5SqAaO8Fu8fjpiV12xSNdNyyW6bagF3RkSRsc387sUUgyTbcwJhxSR6ZrqZ?=
+ =?us-ascii?Q?eaCn0SXMmMb54Q5k/3s6nFzHd4xreJEbVwZRtrYgnf3q+Z4aoXGWOg=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(19092799006)(10070799003)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(19092799006)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gxDKJQUutZaNk3dqiBj9EmCBrWPPcReoYbCyQAhXsAVU/TnaCVPwY8zQ13We?=
- =?us-ascii?Q?oUDfX7tzHqFrscJUfi4p+nutWDeaS5KAZxFLQAkQSTyZGoCXvcnbkJg3Udnj?=
- =?us-ascii?Q?aM1wSlEC3PlAOPvD9pRqaYfsjoi7sMmFT/oemtNjbGGntVuA2NowsmRI3YdD?=
- =?us-ascii?Q?rJRUrOXhCukyxUDwl19KiGGujX+tuGkrjiHqK1uOeKP7SUOJvce+nt55kU7V?=
- =?us-ascii?Q?KYMSB1QLqvge7kDRHNX4c5vt7YoRDVY493y8LAzXBvq2QA7e0H0IrLPKklao?=
- =?us-ascii?Q?oTzAO9QO9A0f3Elk6uleD503F9++sFf/ALzwltSvTrsEqgoVDSTfGXiwW0Ze?=
- =?us-ascii?Q?A97BHbFHEEDDTxAiBNjhzmXjgUmiEotXAZidid8vU8c6kgU7WQlEkGLDMqEC?=
- =?us-ascii?Q?YObCUEl95Lk0dLQFuXyx2zEyFbEmIpqFIQCnUfBDIOhqKsRvj+QVGecqwN/4?=
- =?us-ascii?Q?pv9S4iUBNPiH91JjZmQTvJe6nb4CAF08XUjGu6THTNZEWLD6wUVYbeltJSvx?=
- =?us-ascii?Q?A/48gshFPvU0cD8Rya4cxaMtQbuBO0rSfNOMQz9Un0kBPJSKwxa+ZYD2ygNg?=
- =?us-ascii?Q?0EggxroHE+De2Zur/ngqDbI3f2rJDuT3dBFoaCPv4/aqLbs+Vxk05/LZOCLj?=
- =?us-ascii?Q?wLB7PD2U/aOuVZWni84Th8paj3qai+TD1c89VKTt4AJTSgb/7dC7Jf2VWX/M?=
- =?us-ascii?Q?yjl8W7KY1G8VOxSuXUibcwZotYDu3aKQHM2PtPLFBnIK08p8hMEE/gw/CEbu?=
- =?us-ascii?Q?pal1u++hSHq22gwhhUuDmKTx88Mm79DfkYN0o6DsnWs6lql8FWEbeoMaY5Oj?=
- =?us-ascii?Q?9xubA2GEabrZFqRlFsUIyunjTpmui24MQ8QwmgwUfqYDfFRqmsaMpuLedxQO?=
- =?us-ascii?Q?gmEq+/tGPc48r+ZYLugI7RCgZeLGhUfVTOkvXdHtZxX17qNbmHcCyPSNiDJW?=
- =?us-ascii?Q?n2Iz1rnjgP0lR2RqmwAJnT7wsB3EHUA/HPnX+Jc3Hy9AfxHdWQ3O9fFymRPx?=
- =?us-ascii?Q?MhD7/0sL84XJ/xFr6LXsXuJMwGVlblYmYjFAmdwsntVyrXGli3SN6zzcChMn?=
- =?us-ascii?Q?YJ8IdDI/A4t0MjmDaWMcQsBKt+gF8+GxoN4i4eBMw0+RL41dwhshreIrNbaM?=
- =?us-ascii?Q?tyt/XT5+Zfkc4YNuBSGrKNVfgWYh7KMo44Cb4IyRiryeXXipofylStqe3XLk?=
- =?us-ascii?Q?apkF4GfySUNcxGZbX41m2tObqT+iTjUlx1WL746TCGKW1YB0PshWieE92llD?=
- =?us-ascii?Q?w4K5HZsTU3zfMMekGKKqLEYsnj7XNLwiOZPQLPcKRNKpNiz1gYhpzWlrKwVZ?=
- =?us-ascii?Q?YE1be+VIvEK16I4uiTvWiWDfNEzHduUsBtdTxW7PzLEPddB3F0PFbw1KGHLA?=
- =?us-ascii?Q?fU2Xv7YCXYuBJOX/DOHah5myf90AUMzsyir7wtu0CE/qRKOb/d5LbSCB17fd?=
- =?us-ascii?Q?t2qfuzfcUQKEXHtIb1VqNcJFNqJKS6ivW/8u3pb2WMgRKMtV1OUYeSVaRfaj?=
- =?us-ascii?Q?zADTUDIZ0fb4cJ4YZLX9nqHqFo+Xu8bcuxp62T5sv1kHLCQqiEZxqtNQiMLd?=
- =?us-ascii?Q?Cqs5cVinSYAwTlt9YW228k9AcEIIyAS8nAsSruOrcaQZhxW3W9hMuNb03FWL?=
- =?us-ascii?Q?BBnv62tetwbx15A9y6MqQagHDh0lNGZiqYTFzDI2nP2rpH7iof0wKJ97iLAt?=
- =?us-ascii?Q?1GvMPQ=3D=3D?=
+	=?us-ascii?Q?v7F2EAdRVAiGhiM4rrzQykRA8vJtXCl+xUqB0yximrXff1mbLrWCBjLVVVQL?=
+ =?us-ascii?Q?mWYf+eMlfocK4lLboW5hiSWBOe2w7ueuO8GZsfAq9Y7q4nqbod+dJaCW1nB5?=
+ =?us-ascii?Q?gE+p10K0d4g5wFltgo3SsW+uQuiFcXSybV37YBmS7aF6XgwXM9CP09vJYoty?=
+ =?us-ascii?Q?k0bylwY/niacQeDoq6EaNmYjhzGsSsRDeouQe6+B37+uAcpmLkrbsTWrqUbf?=
+ =?us-ascii?Q?pYAMqDiasrZOQT63scKqK1jG8rxkjhgtW86OWeanZszTFBcBqIIkoIvJrNF9?=
+ =?us-ascii?Q?/G4+j9x9BFSvANCARAsNzW0+zPTpy6BEV9BGSyTBiEMuiFmR/Of74VR8RCz6?=
+ =?us-ascii?Q?1nJ7bTvJCHb6kNgySY5gFJaiVRdSWi0MSGGF4GozrGp+uPpXq4Z/P57KB1N7?=
+ =?us-ascii?Q?8WqTdrNMsiZwi2kBQit8db8KPO7VVzeg7kBYHUI8m8AoHxz9Xxxcbz8DQjy9?=
+ =?us-ascii?Q?bprwbchEm0IC5n4DMidfIHLLmRGlXUcgqu0XH53bM/dRyhMnUs5R+2UTc0vA?=
+ =?us-ascii?Q?bewPkzB5B9/U8hYP8JnVcrxkm28umXyrHrtbv1Haw2RApEGYVIR7gR+Q9zMy?=
+ =?us-ascii?Q?s9Dx2riOeqccB/GlvoVfAFTrYC/VaiIv8gomuLaw/O9MWlsbc9AaTti+mOuu?=
+ =?us-ascii?Q?+U6D/67FVJ2tXocesX0n1Bv8KIvtNbJ0Mng1SVF8Uo5gAqXAkjr+Xz+msZTF?=
+ =?us-ascii?Q?WU6nycWrsIgBeIu+mTjCg6KGrrRiCK0vghPZ9wiDa/eSqrkQjbTwDz31Jf3E?=
+ =?us-ascii?Q?Zn1J8J9DGkVtm7NbzaVcAJUEYNf/+YZnzaz1GbVqxRAgrvFOTeJiH96w1JY9?=
+ =?us-ascii?Q?dGvbVx5HvS/Ea/teXKb9Xx+kKp6KFJV1uG2bQfBcLEpUp0e9cXlmuXhB1JmP?=
+ =?us-ascii?Q?t7jf5h7U80JvK3ZEhtQ5qUgthG8lMuRXj81pgKwjCg8TWtp7TjAjmCdgg7vk?=
+ =?us-ascii?Q?yeCUXDTmJxO6PTSzeOVrmgu52o+NLtOk6+IyBJU/+hdyTW2iJMldKpEhYH94?=
+ =?us-ascii?Q?GXSzEZ09//VmmPbF6W1OuUdHXEdcIX5/9PEPd2dd4h/aw47ivhk8tWbjVVr6?=
+ =?us-ascii?Q?ssefahYPEUmHkBPGS+xNFyRZnTl2zE2py8ttDunzrhOL5r+q1Rfz+PT42i7M?=
+ =?us-ascii?Q?wacQO0RyDtXtLgMMEbr0EYwSwqirQo71Vajx2cZDu0XkKrFpz9PcL11jGEpu?=
+ =?us-ascii?Q?7Mcdd2tYEhbfcdZ0S5FIdwjlKKa1HWKYMQpLkyKmV/EQvVnDJ6sapGP11cF+?=
+ =?us-ascii?Q?v98gjxA3ruqRvh/k+ycd2XjpLiGpw4PkpyJSEbYLj9fCML+JpLCYkhnVX79W?=
+ =?us-ascii?Q?XrEgNHEfTiGe/jrr+wGF1m9ccgAf6AvgfS4t3AfplppHgEh9OBX58kmu9mop?=
+ =?us-ascii?Q?Z/A8oFDvl9j/2rrLDzrUFCugsrJj6Lov3OIMOXCXmguz/qoNHy2wxE4Mj6AN?=
+ =?us-ascii?Q?Az6hc5YYE4zliXv9q0P0RiDIO8JuXV6JVkumLX+PTeoSNWt2tuP06Pf737uE?=
+ =?us-ascii?Q?6g1GX21p5XTjEDTzTKW7IpzRtSizpiYE/UgZiiBXF8jUr3icydUVBiSr9sLE?=
+ =?us-ascii?Q?nelTdvUqcl0ZfppKs90=3D?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a99cc5b-a0d2-49d3-17a5-08ddc2e0ca8d
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59a08a2a-1c9e-4aec-1547-08ddc2e0d9c4
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2025 14:14:48.4755
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2025 14:15:14.0627
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 61Q+fRmXscdDwmM7AnVzoOIKStrfnKQCbDM8dls/Kh8Hh3XAHM4XPuBki4bTS+62HPLjfOBBAIthbyl61Cx2ig==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9484
+X-MS-Exchange-CrossTenant-UserPrincipalName: WKgxzF796cXYNCbskqvpyBlJKw0Cwt/FtPcNOZx5c0pYv9tYHKo+tNhKz/6NleVKNbt3pA+L7LPmA3578ZlYug==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7645
 
-On Mon, Jul 14, 2025 at 04:56:41PM +0300, Vladimir Oltean wrote:
-> On Mon, Jul 14, 2025 at 04:22:51PM +0300, Wei Fang wrote:
-> > > On Mon, Jul 14, 2025 at 01:43:49PM +0300, Wei Fang wrote:
-> > > > > On Mon, Jul 14, 2025 at 01:28:04PM +0300, Wei Fang wrote:
-> > > > > > I do not understand, the property is to indicate which pin the board is
-> > > > > > used to out PPS signal, as I said earlier, these pins are multiplexed with
-> > > > > > other devices, so different board design may use different pins to out
-> > > > > > this PPS signal.
-> > > > >
-> > > > > Did you look at the 'pins' API in ptp, as used by other drivers, to set
-> > > > > a function per pin?
-> > > >
-> > > > ptp_set_pinfunc()?
-> > > 
-> > > You're in the right area, but ptp_set_pinfunc() is an internal function.
-> > > I was specifically referring to struct ptp_clock_info :: pin_config, the
-> > > verify() function, etc.
-> > 
-> > I don't think these can meet customer's requirement, the PPS pin depends
-> > on the board design. If I understand correctly, these can only indicate
-> > whether the specified pin index is in range, or whether the pin is already
-> > occupied by another PTP function.
-> > 
-> > However, these pins are multiplexed with other devices, such as FLEXIO,
-> > CAN, etc. If the board is designed to assign this pin to other devices, then
-> > this pin cannot output the PPS signal. For for this use case, we need to
-> > specify a PPS pin which can output PPS signal.
-> 
-> Ok, apologies if I misunderstood the purpose of this device tree property
-> as affecting the function of the NETC 1588 timer IP pins. You gave me
-> this impression because I followed the code and I saw that "nxp,pps-channel"
-> is used to select in the PTP driver which FIPER block gets configured to
-> emit PPS. And I commented that maybe you don't need "nxp,pps-channel" at all,
-> because:
-> - PTP_CLK_REQ_PPS doesn't do what you think it does
-> - PTP_CLK_REQ_PEROUT does use the pin API to describe that one of the
->   1588 timer block's pins can be used for the periodic output function
+On Sun, Jul 13, 2025 at 05:24:12PM +0200, Krzysztof Kozlowski wrote:
+> The two clocks, driver is getting, are not being disabled/re-enabled
+> during runtime of the device.  Eliminate one variable in state struct,
+> all error paths and a lot of code from probe() and remove() by using
+> devm_clk_get_enabled().
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/i3c/master/i3c-master-cdns.c | 51 +++++++---------------------
+>  1 file changed, 12 insertions(+), 39 deletions(-)
+>
+> diff --git a/drivers/i3c/master/i3c-master-cdns.c b/drivers/i3c/master/i3c-master-cdns.c
+> index 449e85d7ba87..cc504b58013a 100644
+> --- a/drivers/i3c/master/i3c-master-cdns.c
+> +++ b/drivers/i3c/master/i3c-master-cdns.c
+> @@ -412,7 +412,6 @@ struct cdns_i3c_master {
+>  	} xferqueue;
+>  	void __iomem *regs;
+>  	struct clk *sysclk;
+> -	struct clk *pclk;
+>  	struct cdns_i3c_master_caps caps;
+>  	unsigned long i3c_scl_lim;
+>  	const struct cdns_i3c_data *devdata;
+> @@ -1566,6 +1565,7 @@ MODULE_DEVICE_TABLE(of, cdns_i3c_master_of_ids);
+>  static int cdns_i3c_master_probe(struct platform_device *pdev)
+>  {
+>  	struct cdns_i3c_master *master;
+> +	struct clk *pclk;
+>  	int ret, irq;
+>  	u32 val;
+>
+> @@ -1581,11 +1581,11 @@ static int cdns_i3c_master_probe(struct platform_device *pdev)
+>  	if (IS_ERR(master->regs))
+>  		return PTR_ERR(master->regs);
+>
+> -	master->pclk = devm_clk_get(&pdev->dev, "pclk");
+> -	if (IS_ERR(master->pclk))
+> -		return PTR_ERR(master->pclk);
+> +	pclk = devm_clk_get_enabled(&pdev->dev, "pclk");
+> +	if (IS_ERR(pclk))
+> +		return PTR_ERR(pclk);
+>
+> -	master->sysclk = devm_clk_get(&pdev->dev, "sysclk");
+> +	master->sysclk = devm_clk_get_enabled(&pdev->dev, "sysclk");
 
-Just to expand on the last point, maybe it's not clear enough.
+Can you use devm_clk_bulk_get_all_enabled() to simpilfy futher?
 
-This is how the Felix/Ocelot switch presents itself on LS1028A. There
-are four pins with unspecified functions at boot time.
+Frank
 
-$ ls -la /sys/class/ptp/ptp1/pins/
-total 0
-drwxr-xr-x 2 root root    0 Mar  6 16:56 .
-drwxr-xr-x 4 root root    0 Mar  6 16:56 ..
--rw-r--r-- 1 root root 4096 Mar  6 16:56 switch_1588_dat0
--rw-r--r-- 1 root root 4096 Mar  6 16:56 switch_1588_dat1
--rw-r--r-- 1 root root 4096 Mar  6 16:56 switch_1588_dat2
--rw-r--r-- 1 root root 4096 Mar  6 16:56 switch_1588_dat3
-
-And this is how we configure one of the pins (here, 1588_dat0) for
-periodic output:
-
-# enum ptp_pin_function
-PTP_PF_NONE=0
-PTP_PF_EXTTS=1
-PTP_PF_PEROUT=2
-PTP_PF_PHYSYNC=2
-
-PTP1_CHANNEL0=0
-PTP1_PEROUT_START="0 0"
-PTP1_PEROUT_PERIOD="1 1"
-
-PTP2_CHANNEL0=0
-
-PTP3_CHANNEL0=0
-
-echo "$PTP_PF_PEROUT $PTP1_CHANNEL0" > /sys/class/ptp/ptp1/pins/switch_1588_dat0
-echo "$PTP1_CHANNEL0 $PTP1_PEROUT_START $PTP1_PEROUT_PERIOD" > /sys/class/ptp/ptp1/period
-
-In the case above, it still depends upon system pinmuxing (on LS1028A,
-that is handled by the RCW) how/whether switch_1588_dat0 is connected to
-an SoC pad or not.
-
-I was just saying that _if_ you were to eliminate the use of PTP_CLK_REQ_PPS
-from your driver, _then_ the pins API should be sufficiently flexible
-for the user to select which pin is configured for periodic output.
+>  	if (IS_ERR(master->sysclk))
+>  		return PTR_ERR(master->sysclk);
+>
+> @@ -1593,18 +1593,8 @@ static int cdns_i3c_master_probe(struct platform_device *pdev)
+>  	if (irq < 0)
+>  		return irq;
+>
+> -	ret = clk_prepare_enable(master->pclk);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = clk_prepare_enable(master->sysclk);
+> -	if (ret)
+> -		goto err_disable_pclk;
+> -
+> -	if (readl(master->regs + DEV_ID) != DEV_ID_I3C_MASTER) {
+> -		ret = -EINVAL;
+> -		goto err_disable_sysclk;
+> -	}
+> +	if (readl(master->regs + DEV_ID) != DEV_ID_I3C_MASTER)
+> +		return -EINVAL;
+>
+>  	spin_lock_init(&master->xferqueue.lock);
+>  	INIT_LIST_HEAD(&master->xferqueue.list);
+> @@ -1615,7 +1605,7 @@ static int cdns_i3c_master_probe(struct platform_device *pdev)
+>  	ret = devm_request_irq(&pdev->dev, irq, cdns_i3c_master_interrupt, 0,
+>  			       dev_name(&pdev->dev), master);
+>  	if (ret)
+> -		goto err_disable_sysclk;
+> +		return ret;
+>
+>  	platform_set_drvdata(pdev, master);
+>
+> @@ -1637,29 +1627,15 @@ static int cdns_i3c_master_probe(struct platform_device *pdev)
+>  	master->ibi.slots = devm_kcalloc(&pdev->dev, master->ibi.num_slots,
+>  					 sizeof(*master->ibi.slots),
+>  					 GFP_KERNEL);
+> -	if (!master->ibi.slots) {
+> -		ret = -ENOMEM;
+> -		goto err_disable_sysclk;
+> -	}
+> +	if (!master->ibi.slots)
+> +		return -ENOMEM;
+>
+>  	writel(IBIR_THR(1), master->regs + CMD_IBI_THR_CTRL);
+>  	writel(MST_INT_IBIR_THR, master->regs + MST_IER);
+>  	writel(DEVS_CTRL_DEV_CLR_ALL, master->regs + DEVS_CTRL);
+>
+> -	ret = i3c_master_register(&master->base, &pdev->dev,
+> -				  &cdns_i3c_master_ops, false);
+> -	if (ret)
+> -		goto err_disable_sysclk;
+> -
+> -	return 0;
+> -
+> -err_disable_sysclk:
+> -	clk_disable_unprepare(master->sysclk);
+> -
+> -err_disable_pclk:
+> -	clk_disable_unprepare(master->pclk);
+> -
+> -	return ret;
+> +	return i3c_master_register(&master->base, &pdev->dev,
+> +				   &cdns_i3c_master_ops, false);
+>  }
+>
+>  static void cdns_i3c_master_remove(struct platform_device *pdev)
+> @@ -1668,9 +1644,6 @@ static void cdns_i3c_master_remove(struct platform_device *pdev)
+>
+>  	cancel_work_sync(&master->hj_work);
+>  	i3c_master_unregister(&master->base);
+> -
+> -	clk_disable_unprepare(master->sysclk);
+> -	clk_disable_unprepare(master->pclk);
+>  }
+>
+>  static struct platform_driver cdns_i3c_master = {
+> --
+> 2.43.0
+>
 
