@@ -1,125 +1,81 @@
-Return-Path: <linux-kernel+bounces-729424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E847DB03666
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:00:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2FEAB0364D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 07:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 812B9189B2F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:00:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 714A516A5F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 05:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACD0223DEF;
-	Mon, 14 Jul 2025 05:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4854820B7EC;
+	Mon, 14 Jul 2025 05:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TxYw3JIN"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WRqQL6V4"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D49C218596
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 05:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70E1C13B;
+	Mon, 14 Jul 2025 05:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752472746; cv=none; b=WT8KiGa5Ai8Iup2bwJz68cRKoOvnWn3NJQRhEFmVZMU2ZoMjQP1OvDb8E+7+GEo1tf24yXyjlaMc5hWA1jeI5+xbC4MVSJPr3q5wdcmFw6zZPoyWz+dSmBzr44DBL5DBg3ACwou5Os5W3Llc203O290UqGgDpGACQZNRKw5NK/k=
+	t=1752472506; cv=none; b=RiIg5TnKD75RY6/Dmp178dGLNUpnOYdzjF3A6cgrSM6+1TsGswDZkjCNC95M5tu33EGz9etr5Ml/goAPfsRehpPSJ/pgbfZo2ZnCpAV5zIdkhNIqmzK8aRFvz2LayCsBgfr2gjCWz3cHrwyBbDMQyqG/8Xuqk8JNGF6dT36yMKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752472746; c=relaxed/simple;
-	bh=BuK9AgGz3K1/91ucm58BdOscU11kgcU6T0WLXn9wyWw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=YxR2PLXGwszsFPhTzb5J5t+K2Yxz21xDhr0XxDExSUHfaUqC7Pfuf1+NRJV9hl9Xvu0KXDSF7Xd07Jy1n6ubcnsgX4JIAAn7vi+vKkifIC2FzEfXFFkClW4y0DQ0CeyKxr79WexeA9b8sJ69cRtIEbZRS02eIbeYpTQGlD3jRtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TxYw3JIN; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250714055902epoutp040bfe8fac5ff214681670d5a89d3a9eae~SCKyUsQIN1315913159epoutp04g
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 05:59:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250714055902epoutp040bfe8fac5ff214681670d5a89d3a9eae~SCKyUsQIN1315913159epoutp04g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1752472742;
-	bh=wLWqbeQHERoMsuo11ugHMN7yWlMf/OrKcNa6r4ulJTo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TxYw3JINzCEcGDrPM2LVvPpZwTuIpiiGmw0set2CopSyVAldNOSHixGtw53GEEuxV
-	 so/GOgpciH8eBFnGOahoF1CAAGFVVDjRnwAEXbqvQ7av6broBtOfoqZQmWuut1R47p
-	 0v2Hf3pHCMjll5KN5Cfn8e1DqXxorZFF7rTNDp9M=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250714055901epcas2p21ffc6309e8371432412bc29fa5966fe2~SCKx7OdBU1842718427epcas2p2N;
-	Mon, 14 Jul 2025 05:59:01 +0000 (GMT)
-Received: from epcas2p1.samsung.com (unknown [182.195.36.68]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4bgWps212Qz3hhTD; Mon, 14 Jul
-	2025 05:59:01 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250714055900epcas2p1f082e73f1f30f7b3ec8e38c6f6501d61~SCKw32m5B1936819368epcas2p1d;
-	Mon, 14 Jul 2025 05:59:00 +0000 (GMT)
-Received: from localhost.localdomain (unknown [10.229.9.126]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250714055900epsmtip107e682ee25a4c2ff4ca80ff03fe1ce7a~SCKw0lmzG0355503555epsmtip1g;
-	Mon, 14 Jul 2025 05:59:00 +0000 (GMT)
-From: Sangwook Shin <sw617.shin@samsung.com>
-To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
-	linux@roeck-us.net
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Sangwook Shin
-	<sw617.shin@samsung.com>
-Subject: [PATCH v3 RESEND 5/5] watchdog: s3c2410_wdt: exynosautov9: Enable
- supported features
-Date: Mon, 14 Jul 2025 14:54:40 +0900
-Message-Id: <20250714055440.3138135-6-sw617.shin@samsung.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250714055440.3138135-1-sw617.shin@samsung.com>
+	s=arc-20240116; t=1752472506; c=relaxed/simple;
+	bh=mk34GIyH4yJUe9oiK58Yqndh2OPckjxtiftZuXychkw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ov0xGcGNkpjosrCZwkPco3oYuVU69B25MCEO/taNlCMt3PMqRx1JH8WwRp5pTy1Mw6WVZHPzMW+4a9er5y77+6FznFQ+JXiC3hSchyRbZhM8o7ppbjtb1RkIvEANyiInwAOwjeph3YDKP9nY+yUx1VONNDbyv4Vg5t9e+GoLjMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WRqQL6V4; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mk34GIyH4yJUe9oiK58Yqndh2OPckjxtiftZuXychkw=; b=WRqQL6V4ApLOIlDwNX9kvQNOL4
+	yEiafI9yz9BPOscGrZeLFab5IjIuLxYdldTCsPTUrZthMO9M97CJnuj708P50KZRBsvi8PJu/Hx/V
+	42iI+3rR70iPXUTNYS2Ys+aasErd958mjz+Z1Q0Nody4CTosW+B3fJcnXO6HTkZnaK4lMCsKW2Q0p
+	gxduMX9GaBtWuNXjOHKuQA5OB99qP4ci6UzuSGScYYyz248JlCxKa0aCn0ebA0CJ1lYoc30uKPMtX
+	dvAFLtqwwOvU/VPTGMCgDeFRPjzKNgNJsH1RIz4ASrUjvgZnTd/KBs6BfVZyKrZwE/AbJ6HDGLZsC
+	EUK/Vmng==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ubC9V-00000001Frn-0OIv;
+	Mon, 14 Jul 2025 05:55:01 +0000
+Date: Sun, 13 Jul 2025 22:55:01 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: George Hu <integral@archlinux.org>
+Cc: Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xfs: replace min & max with clamp() in
+ xfs_max_open_zones()
+Message-ID: <aHSbtRNhuU9p1NEt@infradead.org>
+References: <20250712145741.41433-1-integral@archlinux.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250714055900epcas2p1f082e73f1f30f7b3ec8e38c6f6501d61
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,N
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250714055900epcas2p1f082e73f1f30f7b3ec8e38c6f6501d61
-References: <20250714055440.3138135-1-sw617.shin@samsung.com>
-	<CGME20250714055900epcas2p1f082e73f1f30f7b3ec8e38c6f6501d61@epcas2p1.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250712145741.41433-1-integral@archlinux.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Enable supported features for ExynosAutov9 SoC.
-- QUIRK_HAS_DBGACK_BIT
-- QUIRK_HAS_32BIT_MAXCNT
+On Sat, Jul 12, 2025 at 10:57:41PM +0800, George Hu wrote:
+> Refactor the xfs_max_open_zones() function by replacing the usage
+> of min() and max() macro with clamp() to simplify the code and
+> improve readability.
 
-Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
----
- drivers/watchdog/s3c2410_wdt.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Nit: you can use up to 73 characters in each commit message line:
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 184b1ad46ca6..16a845f41e74 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -305,7 +305,8 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl0 = {
- 	.cnt_en_reg = EXYNOS850_CLUSTER0_NONCPU_OUT,
- 	.cnt_en_bit = 7,
- 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
--		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
-+		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-+		  QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_MAXCNT,
- };
- 
- static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl1 = {
-@@ -317,7 +318,8 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl1 = {
- 	.cnt_en_reg = EXYNOSAUTOV9_CLUSTER1_NONCPU_OUT,
- 	.cnt_en_bit = 7,
- 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
--		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
-+		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-+		  QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_MAXCNT,
- };
- 
- static const struct s3c2410_wdt_variant drv_data_gs101_cl0 = {
--- 
-2.25.1
+Refactor the xfs_max_open_zones() function by replacing the usage of
+min() and max() macro with clamp() to simplify the code and improve
+readability.
+
+Otherwise looks good:
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
 
