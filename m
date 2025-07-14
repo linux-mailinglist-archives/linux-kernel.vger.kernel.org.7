@@ -1,185 +1,117 @@
-Return-Path: <linux-kernel+bounces-729457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 885B7B036F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:22:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2CBCB036F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1947217B9B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:21:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D277189DD35
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FA222422F;
-	Mon, 14 Jul 2025 06:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4FB2264BB;
+	Mon, 14 Jul 2025 06:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KD9Vli0A"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uli+yctb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB76C194A60
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 06:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25F115B971;
+	Mon, 14 Jul 2025 06:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752473937; cv=none; b=brcbsyWmFKFbYsTATn1QHcIOZ4XNfQb2GO4qy1mRPi8R96rpJm28muNwExp9ye9ubCcF1mMeD2e56+npJfql03xcK7l302qPDx020jMtt8gX8PU2X0QWZGbLCjxxqAhxLR1nC4HhvJlIEhw8t3+ZL1GFAGuYyu1nzZj6yAPtBok=
+	t=1752474005; cv=none; b=O2FlVrIGLqguWI4o6tUeUC2/adbmhAMrFOj6Ai6dFfasJPVJnKHx3qILm1ymVzsEuPR5RjOfOeU2Oz0XH/ubZO14Z1ltGscgzDhPsApDG29CV5BhbnrVUlbysHBcpoKkLzV7NUtixtlToSL2IAn6nXFTe5GIo/9eu6oGrhll+Ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752473937; c=relaxed/simple;
-	bh=VHG1aIFrPJUNQ533qITRdf+7pKjRccdsFYN0w/Nahjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WxDXpE1QKtPGlk+cdyz3Y5sSsTTeW7WhRhFpTIEoH6K1+IEeksK+z9nLjZEunt/BDJoE68HrQv4PVq1xlRFtJeX/LBuRGyMD4voq8/9XaYLVO5t109ATagz7pPXbPtG2QPumCTVGSE+n/ww22zAHCwTmBsLKGYeYX8KcZbHoo6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KD9Vli0A; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752473934;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HaLtarIqWAh+adH9k5nWd36ANmOKF2pw7KpXjXJAWkI=;
-	b=KD9Vli0A9yaC+c/o90rw9IUQ8dDcurZ3oTg1i5vr5oE0AlnJsPikmXc/lfFYCTSXH1Nzda
-	0CFuBkHjFVyiGkBRFQCeI12h9riIYPfwSa1nAvFaTcsir1303Y4xQPKY51ErAdicz3sT8E
-	nw2pRyVGk2tNTokoDp4RSSVaWdP1O8g=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-137-NLpM2b0jP1OYfPY0XLhaPQ-1; Mon, 14 Jul 2025 02:18:53 -0400
-X-MC-Unique: NLpM2b0jP1OYfPY0XLhaPQ-1
-X-Mimecast-MFC-AGG-ID: NLpM2b0jP1OYfPY0XLhaPQ_1752473932
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4f6ff23ccso2031914f8f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 23:18:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752473932; x=1753078732;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HaLtarIqWAh+adH9k5nWd36ANmOKF2pw7KpXjXJAWkI=;
-        b=pKiYIMuA5xAyVRavCOGIjyblpIy9o/Ds4dLY8uF8WTVNNcPGuehjG3eMDa96ETJf6M
-         AeeHbmSJx7KXQ16jZxKmDn1KYJnxxawx+HvEY0vq7YkJIFbClSD0HRq8RtbmaoXNlMGz
-         W1PENJVrRGZgZzp6vHvaWoodXq0TbqLZsXRlQjE+/4nzFBJXdZ/iKsFzDrxzGeb7rnJt
-         IGIq+b+UnlR9z40ScG13QFtbMUmwthoDWDl4+5lAVcu/Xu8AevIhjx2us7pkiZVBTVzM
-         1qT2M3U4zdQxDbxt7gtVtU2NeVEGjC+SE4lT7XJfh18Blv5cBpOdHUKPGoeZWg7PRY5t
-         NLXQ==
-X-Gm-Message-State: AOJu0YwtioWHiL9I9bRBhdt3VWbGLL9dMHaEH0orC7X3vIIqXoSQNrB7
-	JpI6uES4MbbDNcoFR3jI3cZPl37rXHK/Lxun32Y0+Ij8MYBshKR0IpwHe8cXwcy7nEkSL7MsXBX
-	+08rI/aKEvQtpQh7/30xRJpCQFVHseVUG/oGMAYV/FUXRVOhWVKw8e2scFNsedQa2AQ==
-X-Gm-Gg: ASbGncvW730GtmPzLP3WHG+1n4n6q6TlTP+SPMJfodx2q0RFvd1Lkr/Xv/YO4GzkoiK
-	il1IW8nMOGkE7r5Ny7ieDTz97yZOudWQFr9OR3DR790kMDYn8CNyeCNoByEpT1cI9o3fkfL3dQk
-	5aM1s8D4yIrIE8356DJvYYMhZLvHwyyqdoZGMgciGYtNdrOq3z6webRoAf24ioGGtxFAZsmHWhY
-	AgEEe8KV/pq2DSNNv3JwhJc+NJN19DPiiqcQSBmXG8TWtLPWc5oofhlSDA6APINIyVt9atTTEk/
-	KfW+PRS5v51u70nT66kS3DN3/mgcAiUA
-X-Received: by 2002:a05:6000:210f:b0:3b1:8db7:d1fc with SMTP id ffacd0b85a97d-3b5f1868fabmr7767202f8f.21.1752473932019;
-        Sun, 13 Jul 2025 23:18:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGMb84z873pnVV/n6jQQxSrdFm4nCG9iSlLegUH4ZMFaaB/j4zesmp3EvIUrK0S9tmMwnXgsw==
-X-Received: by 2002:a05:6000:210f:b0:3b1:8db7:d1fc with SMTP id ffacd0b85a97d-3b5f1868fabmr7767181f8f.21.1752473931613;
-        Sun, 13 Jul 2025 23:18:51 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:150d:fc00:de3:4725:47c6:6809])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e285e0sm11260714f8f.101.2025.07.13.23.18.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jul 2025 23:18:51 -0700 (PDT)
-Date: Mon, 14 Jul 2025 02:18:48 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Parav Pandit <parav@nvidia.com>, virtualization@lists.linux.dev,
-	stefanha@redhat.com, alok.a.tiwari@oracle.com,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH RFC v5 1/5] pci: report surprise removal event
-Message-ID: <20250714021751-mutt-send-email-mst@kernel.org>
-References: <cover.1752094439.git.mst@redhat.com>
- <fba3d235e38c1c6fcef2a30ed083ad9e25b20fa3.1752094439.git.mst@redhat.com>
- <aHSfeNhpocI4nmQk@wunner.de>
+	s=arc-20240116; t=1752474005; c=relaxed/simple;
+	bh=606fsEOf3GOJX8AxMnc5SbWlI62YxfGkSD/kQ0qCCvc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MMb3QGGO76WL5+5A0pEPcjaG3ZkdTvJxYdoat6E1K6j8STtIYyI5lfxbLhNg9ilo49tDa9oyZ7ASN0Qkz5iEEBHdfD25/rVca1Fgnd4XQhhLY1phsKcMpmM93DiMe3RK5jYTe0E04TAhdh/voGfK8dt/k7n+ZpRHdyV7XSJosTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uli+yctb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59805C4CEFC;
+	Mon, 14 Jul 2025 06:20:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752474005;
+	bh=606fsEOf3GOJX8AxMnc5SbWlI62YxfGkSD/kQ0qCCvc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uli+yctbio2KJL40Z0sJCpobKSwWMS/q9w1hC7hZxQO+Y+Yg03V3qCxrNzGbmBH/k
+	 xDHWt/WbWnRin3S1wBbDlOUnsd1qGPShPPfsRnU8gPpt5m+va+KWqTlPxVHkID+bA5
+	 MPc/KMYSYYLOnAEyZp5ltOLX3deIij8UmOcLkDBpSom6eSqy6g9GV93wcRbjUuKmvN
+	 Cisa9PX+i5dXi81XjVqFnQr/GkDJjE0ePHxWYAS/Jb3ioh613e2GxXXC45UvWqxRRI
+	 24MWxqdO6M6ayoJpoGGkhfi+RvhPDuunG/Mj3Dv4sHw+1DTDFTfKpJ6xsFQllw8/N6
+	 e/WJNUS9XoO8w==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-553b584ac96so3974943e87.1;
+        Sun, 13 Jul 2025 23:20:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVg7DoSZEqSmOl8FKJMFnazefNaj9KgaQXMByGmsLbfLkU8RyBwqz4/A2BNccC8yXhY2NU5L6qrQu0=@vger.kernel.org, AJvYcCVzqQVRe97vHs7ytoY0g29srmCsAv1tau6kJsZgp89rV7DJgbk2dNp4zIujtSlj4/L+4vyN4O0XpepU@vger.kernel.org, AJvYcCXoMIhqL8PbiebjMAaoaLcNEjCaSAvDIvWcPm+KoWMtV7FiNl+CM5w87dX8rtr4L/+tqNjR3or4ewEnDbjm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGsreTDzPb9dsxL6f9L6Xv+j67nWD/UkIQofZ2gvhXsOBOcLvp
+	MgRem4l6Zj6QHRONUWuFKQCol6k8Vqn3WoNwNAAN7rnJEfAE2OSV1CIEBb+1iUBP7+K05aA/hNg
+	HwAY7OVVd1RdhwNtnxMo2daFSlG/Pk50=
+X-Google-Smtp-Source: AGHT+IE2y+mnn6gRDYyvRcFjRA9M/TcvC+Yv7itcf8PEq8SUCnfludPIC0L+2CId0IaAy39lcVu+VQplF3E0k6RCiek=
+X-Received: by 2002:a05:6512:3048:b0:553:5135:6a0e with SMTP id
+ 2adb3069b0e04-55a057c3971mr3597796e87.4.1752474003585; Sun, 13 Jul 2025
+ 23:20:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHSfeNhpocI4nmQk@wunner.de>
+References: <20250714060843.4029171-5-ardb+git@google.com> <20250714060843.4029171-6-ardb+git@google.com>
+ <dade7d17-d45d-455e-a43c-01e9ea95c3b4@gmail.com>
+In-Reply-To: <dade7d17-d45d-455e-a43c-01e9ea95c3b4@gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 14 Jul 2025 16:19:52 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXETDd+19i+awMx1v1sE4RXhF-r2a-mTa3rWfus5s4HMmw@mail.gmail.com>
+X-Gm-Features: Ac12FXyqdPXKdPkXKcrHisnGj_9A8qao-_Ean6Zn-muhfOH0lpX7Li9QylqqJXw
+Message-ID: <CAMj1kXETDd+19i+awMx1v1sE4RXhF-r2a-mTa3rWfus5s4HMmw@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/3] efi-rtc: Remove wakeup functionality
+To: Demi Marie Obenour <demiobenour@gmail.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>, Feng Tang <feng.tang@linux.alibaba.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Juergen Gross <jgross@suse.com>, 
+	Stefano Stabellini <sstabellini@kernel.org>, 
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Bibo Mao <maobibo@loongson.cn>, linux-rtc@vger.kernel.org, linux-efi@vger.kernel.org, 
+	xen-devel@lists.xenproject.org, x86@kernel.org, 
+	linux-riscv@lists.infradead.org, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 14, 2025 at 08:11:04AM +0200, Lukas Wunner wrote:
-> On Wed, Jul 09, 2025 at 04:55:26PM -0400, Michael S. Tsirkin wrote:
-> > At the moment, in case of a surprise removal, the regular remove
-> > callback is invoked, exclusively.  This works well, because mostly, the
-> > cleanup would be the same.
-> > 
-> > However, there's a race: imagine device removal was initiated by a user
-> > action, such as driver unbind, and it in turn initiated some cleanup and
-> > is now waiting for an interrupt from the device. If the device is now
-> > surprise-removed, that never arrives and the remove callback hangs
-> > forever.
-> 
-> For PCI devices in a hotplug slot, user space can initiate "safe removal"
-> by writing "0" to the hotplug slot's "power" file in sysfs.
-> 
-> If the PCI device is yanked from the slot while safe removal is ongoing,
-> there is likewise no way for the driver to know that the device is
-> suddenly gone.  That's because pciehp_unconfigure_device() only calls
-> pci_dev_set_disconnected() in the surprise removal case, not for
-> safe removal.
-> 
-> The solution proposed here is thus not a complete one:  It may work
-> if user space initiated *driver* removal, but not if it initiated *safe*
-> removal of the entire device.  For virtio, that may be sufficient.
-> 
-> > +++ b/drivers/pci/pci.h
-> > @@ -553,6 +553,12 @@ static inline int pci_dev_set_disconnected(struct pci_dev *dev, void *unused)
-> >  	pci_dev_set_io_state(dev, pci_channel_io_perm_failure);
-> >  	pci_doe_disconnected(dev);
-> >  
-> > +	if (READ_ONCE(dev->disconnect_work_enable)) {
-> > +		/* Make sure work is up to date. */
-> > +		smp_rmb();
-> > +		schedule_work(&dev->disconnect_work);
-> > +	}
-> > +
-> >  	return 0;
-> >  }
-> 
-> Going through all the callers of pci_dev_set_disconnected(),
-> I suppose the (only) one you're interested in is
-> pciehp_unconfigure_device().
-> 
-> The other callers are related to runtime resume, resume from
-> system sleep and ACPI slots.
-> 
-> Instead of amending pci_dev_set_disconnected(), I'd prefer
-> an approach where pciehp_unconfigure_device() first marks
-> all devices disconnected, then wakes up some global waitqueue, e.g.:
-> 
-> -	if (!presence)
-> +	if (!presence) {
-> 		pci_walk_bus(parent, pci_dev_set_disconnected, NULL);
-> +		wake_up_all(&pci_disconnected_wq);
-> +	}
-> 
-> The benefit is that there's no delay when marking devices disconnected.
-> (Granted, the delay is small for smp_rmb() + schedule_work().)
-> And just having a global waitqueue is simpler and may be useful
-> for other use cases.
-> 
-> So instead of adding timeouts when waiting for interrupts, drivers would
-> be woken via the waitqueue.
-> 
-> But again, it's not a complete solution as it doesn't cover the
-> "surprise removal during safe removal" case.
+On Mon, 14 Jul 2025 at 16:13, Demi Marie Obenour <demiobenour@gmail.com> wrote:
+>
+> On 7/14/25 02:08, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > The EFI rtc driver is used by non-x86 architectures only, and exposes
+> > the get/set wakeup time functionality provided by the underlying
+> > platform. This is usually broken on most platforms, and not widely used
+> > to begin with [if at all], so let's just remove it.
+> systemd uses the underlying functionality: a timer can wake the system up.
+> I have no idea if that is implemented in terms of this function, though.
 
-Did not realize. Will look into addressing this, thanks!
+To be clear, you are referring to wake from poweroff at some date/time
+in the future, right?
+
+This change does not remove this functionality from the RTC subsystem,
+it just ceases to expose it on non-x86 EFI platforms that claim to
+support it.
+
+For reference (which I should have included in the cover letter) [0],
+there are arm64 server systems which always return an error when
+calling this API, and most non-server arm64 systems do not implement
+it to begin with.
+
+The patch in question implements one of the workarounds that was
+considered, which is to invoke GetWakeupTime() when registering the
+RTC, and disable the wakeup functionality if that fails. However, that
+call by itself could easily regress other platforms, where
+GetWakeupTime() was simply never called before, and where calling it
+may tickle other bugs.
+
+Hence this RFC: if nobody uses this API on non-x86 EFI platforms, then
+I'd rather not support it to begin with.
 
 
-> I also agree with Bjorn's and Keith's comments that the driver should
-> use timeouts for robustness, but still wanted to provide additional
-> (hopefully constructive) thoughts.
-> 
-> Thanks!
-> 
-> Lukas
 
-I'll address these comments in the next version.
-
--- 
-MST
-
+[0] https://lore.kernel.org/all/20250710084151.55003-1-feng.tang@linux.alibaba.com/T/#u
 
