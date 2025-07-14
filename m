@@ -1,125 +1,120 @@
-Return-Path: <linux-kernel+bounces-729739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F232B03AF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:37:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB00B03AF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6C0317C390
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:37:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A1BB1768D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 09:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3921E04AD;
-	Mon, 14 Jul 2025 09:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E8D24169E;
+	Mon, 14 Jul 2025 09:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtM+4Utu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BgUpScsw"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8242B23DEB6;
-	Mon, 14 Jul 2025 09:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211E91D63E6;
+	Mon, 14 Jul 2025 09:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752485820; cv=none; b=gGM3+wAk3bLrQOQ5VJBwtbQkdJw5bL5sJkKnv2vnMxvAvfNYjQGrCwtWcSsB/BLymbBDS1CBEDzQiCKbfkJXi9nxndnC66COXTXJ2PT0ZGkqkyx40zTltdo/BQoDxmxeu5DOVMXcown9VIbeQixotnQaShgTGqePzb2S2w/KjO8=
+	t=1752485956; cv=none; b=qAMFwROJ7Q1bch5j5siAB5wqy59YyDTu05KCk+3fOutfs1kqm0uDwN5nGmjIFGXZ7p7T6QYfDGKMSCuu67N9pvluwdy2Ptz7GBau9e2pcpa4SkLbtr2HEg85xtL2W6QAQ+gYOKTtIneDaAvEltcMQAbYRVx/tXU+RhePHq/9Sks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752485820; c=relaxed/simple;
-	bh=q3gecb1dMcXk5bvZjsbtwWdjzJ+eURwjQLKaDhIg7UY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VsvYXE7WtbaDWsthDwb3lCcbpNc7FTU+XB053zxdkVspYPq9g82u5P5IK13wxlMls8WzpEjugMkNLcF7RcucPeh3dSEyEXRRCwX52PgYaE2POtJs4aDecHlTbEabiRu3gZRcmTzvSThBufvTQeLqM9aQSs+GLVPRtRUlP8Yh8aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtM+4Utu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F07C4CEF8;
-	Mon, 14 Jul 2025 09:36:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752485820;
-	bh=q3gecb1dMcXk5bvZjsbtwWdjzJ+eURwjQLKaDhIg7UY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YtM+4UtuvrkSC4DopkEPxCqpam/FB0InHStxd9z79pPNOqwJEnmGVeuzfOtkeVgpW
-	 X0WxZMXV/P3jvqhKQnXgumqxpfcH1uEzsZR/PipU2RwDQExaK9jhpQPAOMWDGCWlCu
-	 sda53ercJvoquL7ai0TC9jhlT4qoJOV/kLD8gNVZEcu2HTprI/LXmjpOhGD2qhBqs0
-	 aQAHH3HUIu7kpHDIVfP7W3sFY73eheh9aTJ3j//PHEqYIc/fpULnHd3GdvPUF+QcoI
-	 iY/SfYqHtO3r4PCq4oSuG4UPcgqGOeQvg93ELyhM5lLgytsvwmeTCDKZmOTp/YKFYL
-	 rTsw4oFh8F3Mw==
-Message-ID: <a6ac728d-783a-4916-8a94-6c182f32f358@kernel.org>
-Date: Mon, 14 Jul 2025 11:36:55 +0200
+	s=arc-20240116; t=1752485956; c=relaxed/simple;
+	bh=QvgqyqI/2e3vh73jqS9rVOu/+alucobeVAg8wWEq7Lk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LJPH0rqy/E0ddVTxxVdLJX4jgFc3HDgCeOdgg16eOq+zXTi6CbJk2CNMzYp/Xs6cgJ1BUo08Bh2VV4lUoY7jgsPuneY4/CB/5UmSquKWA+mtvkiJwVhJSSTAnxgiL4XU+CyxXw0BHmZX5MrjVRFl7Fvxs/nibJFWc9tJgy0t2mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BgUpScsw; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3++uAiHE4dUTcjWQO8Rw5mELn141xV8QyvzG/GiDdnA=; b=BgUpScswDlu1T5aShhumrPUi3I
+	d6Gy/j7og8KYXxuLi7KafgU075SXzFz+5zefYVrPAF2DquglxxbDBHzCIt3EhU5X9ZY7tPUWD7uRX
+	zeumm+eTiJLMX+TiQNUrBzAkxSGLxfiCogTGxMbp79AE6L5vhafTr+h7yT93I4byOZR8wapWB7LFv
+	W0jOqvtZfLs4HY+7Kv8AqegtZZN2B1l9Wkv8rJRCQg3qmgIcijU2EYzZSI2vUJmhfqibGafH9s72p
+	uZQIDpMkFydGL68Jne7rR0JNTOk5WS/s7yLRLFVG8T6AO7VglGmhtbG9D1a/+AmgjfGoW1y11/rfi
+	BS20n2mA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ubFeK-00000006hbD-2KWo;
+	Mon, 14 Jul 2025 09:39:04 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6AE11300186; Mon, 14 Jul 2025 11:39:03 +0200 (CEST)
+Date: Mon, 14 Jul 2025 11:39:03 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCHv5 perf/core 09/22] uprobes/x86: Add uprobe syscall to
+ speed up uprobe
+Message-ID: <20250714093903.GP905792@noisy.programming.kicks-ass.net>
+References: <20250711082931.3398027-1-jolsa@kernel.org>
+ <20250711082931.3398027-10-jolsa@kernel.org>
+ <20250714173915.b9edd474742de46bcbe9c617@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] dt-bindings: leds: is31fl32xx: convert the binding
- to yaml
-To: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
- linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
- devicetree@vger.kernel.org, Lucca Fachinetti <luccafachinetti@gmail.com>
-References: <20250708-leds-is31fl3236a-v3-0-d68979b042dd@thegoodpenguin.co.uk>
- <20250708-leds-is31fl3236a-v3-2-d68979b042dd@thegoodpenguin.co.uk>
- <20250709-happy-gazelle-of-fascination-fe0fd4@krzk-bin>
- <CAA6zWZKRA2Qn3ajN9f9o_oBTZAgrx22gP28A5CHgx=+0jFrOKg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAA6zWZKRA2Qn3ajN9f9o_oBTZAgrx22gP28A5CHgx=+0jFrOKg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714173915.b9edd474742de46bcbe9c617@kernel.org>
 
-On 14/07/2025 11:16, Pawel Zalewski wrote:
+On Mon, Jul 14, 2025 at 05:39:15PM +0900, Masami Hiramatsu wrote:
+
+> > +	/*
+> > +	 * Some of the uprobe consumers has changed sp, we can do nothing,
+> > +	 * just return via iret.
+> > +	 */
 > 
->> Pattern does not match entirely the reg constraints. 36 is 0x24.
+> Do we allow consumers to change the `sp`? It seems dangerous
+> because consumer needs to know whether it is called from
+> breakpoint or syscall. Note that it has to set up ax, r11
+> and cx on the stack correctly only if it is called from syscall,
+> that is not compatible with breakpoint mode.
 > 
-> Pattern allows for one or more hexadecimal values starting from 1,
-> so the second number should start from zero is the second error here.
+> > +	if (regs->sp != sp)
+> > +		return regs->ax;
+> 
+> Shouldn't we recover regs->ip? Or in this case does consumer has
+> to change ip (== return address from trampline) too?
+> 
+> IMHO, it should not allow to change the `sp` and `ip` directly
+> in syscall mode. In case of kprobes, kprobe jump optimization
+> must be disabled explicitly (e.g. setting dummy post_handler)
+> if the handler changes `ip`.
+> 
+> Or, even if allowing to modify `sp` and `ip`, it should be helped
+> by this function, e.g. stack up the dummy regs->ax/r11/cx on the
+> new stack at the new `regs->sp`. This will allow modifying those
+> registries transparently as same as breakpoint mode.
+> In this case, I think we just need to remove above 2 lines.
 
-You cut entire context so I really do not know how the code looks like.
-Anyway, they do not match and this needs to be fixed.
+There are two syscall return paths; the 'normal' is sysret and for that
+you need to undo all things just right.
 
-Best regards,
-Krzysztof
+The other is IRET. At which point we can have whatever state we want,
+including modified SP.
+
+See arch/x86/entry/syscall_64.c:do_syscall_64() and
+arch/x86/entry/entry_64.S:entry_SYSCALL_64
+
+The IRET path should return pt_regs as is from an interrupt/exception
+very much like INT3.
 
