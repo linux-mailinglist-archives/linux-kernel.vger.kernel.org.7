@@ -1,70 +1,77 @@
-Return-Path: <linux-kernel+bounces-730235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74327B041AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:30:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC8DB041AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 16:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2DE33BB24E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:29:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8AAC1888098
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 14:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30826257AC8;
-	Mon, 14 Jul 2025 14:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D06D23F26A;
+	Mon, 14 Jul 2025 14:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nIiB3A07"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="F13G9CCk"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1961EC014;
-	Mon, 14 Jul 2025 14:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB801922F4
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 14:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752503401; cv=none; b=l3/2Y84oUPvsIl65KeJ/5/IiJNHKiN9Og8SCtq6h+yO5LGDV/FEp7tuAN5ngL2Dum6mzDvMNoHwz4cWG+pgh1kO+YwAxaq8KnfYng8q244MyWAL0PDDRx1AGfhZHSqWwjHZUDEjlDPKqS1kU3H4CCHPHyN1Sn7bZtejcEDygSmY=
+	t=1752503420; cv=none; b=AbP4FrpWxKmQouczuNC17nzrGiY0HTi6fogIufuynuBFNjjedGLBPeEfbrPkFIKMetFc2X5vTN3J5LwDUh6fR15KgR8BOs7bzT+iiZ7tzKTKDyns5H049aaxx3Pd/f/g8uj2Xmg8dXUwTPCwViXXf6uPXD9SG9l4sTRVC6uRhp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752503401; c=relaxed/simple;
-	bh=wPDtCI6xegXtln2Eh4yv/iYqoEEGtGwFMY5S/0Xr5MM=;
+	s=arc-20240116; t=1752503420; c=relaxed/simple;
+	bh=1VPQhoLDMlVFg7pZpEo+CtAKsWfkwzBnZH36CE0ZCXc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hhrt9Xl6QmP3tmG31zwcahaV2aYuqoeeuhIYqysRTP/7QyINtnL8LIrQuf3WEslbDSUSnRH9s7kdbp6vM1tGjc73/vY8nVnfmZjv9Y27d7JmSgmH4aMzw70AmcOazdJ8QdBaH6xF6bcUYbePrYTi+oE/kykRKyFMdbq0O5fpvl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=nIiB3A07; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id D543A166D;
-	Mon, 14 Jul 2025 16:29:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752503366;
-	bh=wPDtCI6xegXtln2Eh4yv/iYqoEEGtGwFMY5S/0Xr5MM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=YZMtGi+iSsoxMBiCdjiovJBV3qdSXg1I9QNFis7BkvKvh5ej9uv+7vEBVqbRjkHTwB3MriDpzUK1Tk80HmFM/QOVUO9Dw3ENEXV/9T/+XPg+6vYx/sPrdVtsD/eYmgeCTMSwwsNNzJii/xyLseSky198xYUV8tN0rRqbNXKeEPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=F13G9CCk; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B6F6540E0213;
+	Mon, 14 Jul 2025 14:30:14 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id vCTv2vemB3CA; Mon, 14 Jul 2025 14:30:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1752503411; bh=/o6rJU1/XBKHMMjVQZ91sA78JP/uqP9BJWvRglGBqcQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nIiB3A07vGOX/XzlIRB05tOOWCHIoNND22IwaFcC02uI7jX/Rrwc7EV2po2oUct7o
-	 ILtKbEMHt546i3+1qM3uSLi/E4QaWapauf4TCJhW4Vlgyg8AIZrCQEQyLfkK7EVy7n
-	 FWgcpxo0LLwJZJlRdSVV4et+UjxnefeC4cTiddwg=
-Date: Mon, 14 Jul 2025 17:29:26 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v2 10/12] media: uvcvideo: Add get_* functions to
- uvc_entity
-Message-ID: <20250714142926.GI8243@pendragon.ideasonboard.com>
-References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
- <20250605-uvc-orientation-v2-10-5710f9d030aa@chromium.org>
- <20250629181246.GE6260@pendragon.ideasonboard.com>
- <CANiDSCsu0RT4dcGyBJRutP=9HTe+niUoohxTZE=qJ8O_9ez=+A@mail.gmail.com>
+	b=F13G9CCk7fqG/93C0L6g3TBTI+SrR7R0/T5cwC9Aum/9tQJPzIMJ7B4/Egi7xywvk
+	 Mf+SciKm0JWUyOneOLlmcz2bNu2rRiLg7ZhOSwYQIusyqpN2KL0Wc7eUJNXfGg2Pp3
+	 jp4gnI3Pf1lqnpOULMPDd6PLdK2phns5ZmHiq3q7E2Cexz5bonUvJQiuSioQ6xWRY9
+	 kt/wwrV7q6O/fYtlPSbhn8cA4SKEbRikxUcBOCI1vEEIKuKvq4LG4us24dhupEWYQ/
+	 SOHwFyr4/faiUdNcT8eKNqJuTt1eXq6fnEW2jYJ9vA3s9/D1d7ShR8Ulj4muf6BLmB
+	 vNR+6JCCHqkT3kGHkwrYSFVTmLKcMwmVDHsYnQw05dNn6Xp34Td0Ggh+nHZKit934V
+	 ZyCq2d8gkIIms4n1/h9MXFf9CI1X5MAYmY9DpxPEXAUignOVvLHEW31Jl9HZHOljYl
+	 upYDUIaSmUtdd+hB7jzfajovx227aYWKtoIX4m4oJcsy/ZD11pm0ApPN+bAx3g0HXg
+	 HZPoJSYqSh/A/SwKcgks6+5Fiih/5gcH90/I54Cx5A7GXQCxmXSj0AYycRP2+3iZ/N
+	 549wRkpSfttWtvZRgUPrLAoTO/3rgO1tgmrnP1lqJHiatCW/O2KeLBUup9i4NLLY4k
+	 G37fAv8C2FUtWYOdKIpwhQLQ=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5BF1C40E0208;
+	Mon, 14 Jul 2025 14:30:03 +0000 (UTC)
+Date: Mon, 14 Jul 2025 16:29:57 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v2 1/1] x86/defconfigs: Explicitly unset CONFIG_64BIT in
+ i386_defconfig
+Message-ID: <20250714142957.GIaHUUZTHu9zoGEaNg@fat_crate.local>
+References: <20250626150118.318836-1-andriy.shevchenko@linux.intel.com>
+ <aG_0K7Zx5WpQHGJE@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,90 +80,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CANiDSCsu0RT4dcGyBJRutP=9HTe+niUoohxTZE=qJ8O_9ez=+A@mail.gmail.com>
+In-Reply-To: <aG_0K7Zx5WpQHGJE@smile.fi.intel.com>
 
-On Tue, Jul 01, 2025 at 01:13:10PM +0200, Ricardo Ribalda wrote:
-> On Sun, 29 Jun 2025 at 20:13, Laurent Pinchart wrote:
-> > On Thu, Jun 05, 2025 at 05:53:03PM +0000, Ricardo Ribalda wrote:
-> > > Virtual entities need to provide more values than get_cur and get_cur
-> >
-> > I think you meant "get_info and get_cur".
-> >
-> > > for their controls. Add support for get_def, get_min, get_max and
-> > > get_res.
-> >
-> > Do they ? The UVC specification defines controls that don't list
-> > GET_DEF, GET_MIN, GET_MAX and GET_RES as mandatory requests. Can't we do
-> > the same for the software controls ? This patch is meant to support the
-> > UVC_SWENTITY_ORIENTATION and UVC_SWENTITY_ROTATION control in the next
-> > patch, and those are read-only controls. Aren't GET_INFO and GET_CUR
-> > enough ?
-> 
-> V4L2_CID_CAMERA_ROTATION has the type UVC_CTRL_DATA_TYPE_UNSIGNED,
-> that time requires get_min and get_max.
+On Thu, Jul 10, 2025 at 08:11:07PM +0300, Andy Shevchenko wrote:
+> Can it be applied now?
 
-Where does that requirement come from ? Is it because how the
-corresponding V4L2 type (V4L2_CTRL_TYPE_INTEGER) is handled in
-uvc_ctrl_clamp() ? uvc_ctrl_clamp() is only called when setting a
-control, from uvc_ctrl_set(), and V4L2_CID_CAMERA_ROTATION should be
-read-only.
+I've merged it into the commit in Fixes:
 
-> We can create a new type UVC_CTRL_DATA_TYPE_UNSIGNED_READ_ONLY that
-> fakes min, max and res, but I think that it is cleaner this approach.
-> 
-> > > This is a preparation patch.
-> > >
-> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > ---
-> > >  drivers/media/usb/uvc/uvc_ctrl.c | 12 ++++++++++++
-> > >  drivers/media/usb/uvc/uvcvideo.h |  8 ++++++++
-> > >  2 files changed, 20 insertions(+)
-> > >
-> > > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> > > index 21ec7b978bc7aca21db7cb8fd5d135d876f3330c..59be62ae24a4219fa9d7aacf2ae7382c95362178 100644
-> > > --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> > > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> > > @@ -596,6 +596,18 @@ static int uvc_ctrl_query_entity(struct uvc_device *dev,
-> > >       if (query == UVC_GET_CUR && ctrl->entity->get_cur)
-> > >               return ctrl->entity->get_cur(dev, ctrl->entity,
-> > >                                            ctrl->info.selector, data, len);
-> > > +     if (query == UVC_GET_DEF && ctrl->entity->get_def)
-> > > +             return ctrl->entity->get_def(dev, ctrl->entity,
-> > > +                                          ctrl->info.selector, data, len);
-> > > +     if (query == UVC_GET_MIN && ctrl->entity->get_min)
-> > > +             return ctrl->entity->get_min(dev, ctrl->entity,
-> > > +                                          ctrl->info.selector, data, len);
-> > > +     if (query == UVC_GET_MAX && ctrl->entity->get_max)
-> > > +             return ctrl->entity->get_max(dev, ctrl->entity,
-> > > +                                          ctrl->info.selector, data, len);
-> > > +     if (query == UVC_GET_RES && ctrl->entity->get_res)
-> > > +             return ctrl->entity->get_res(dev, ctrl->entity,
-> > > +                                          ctrl->info.selector, data, len);
-> > >       if (query == UVC_GET_INFO && ctrl->entity->get_info)
-> > >               return ctrl->entity->get_info(dev, ctrl->entity,
-> > >                                             ctrl->info.selector, data);
-> > > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> > > index a931750bdea25b9062dcc7644bf5f2ed89c1cb4c..d6da8ed3ad4cf3377df49923e051fe04d83d2e38 100644
-> > > --- a/drivers/media/usb/uvc/uvcvideo.h
-> > > +++ b/drivers/media/usb/uvc/uvcvideo.h
-> > > @@ -261,6 +261,14 @@ struct uvc_entity {
-> > >                       u8 cs, u8 *caps);
-> > >       int (*get_cur)(struct uvc_device *dev, struct uvc_entity *entity,
-> > >                      u8 cs, void *data, u16 size);
-> > > +     int (*get_def)(struct uvc_device *dev, struct uvc_entity *entity,
-> > > +                    u8 cs, void *data, u16 size);
-> > > +     int (*get_min)(struct uvc_device *dev, struct uvc_entity *entity,
-> > > +                    u8 cs, void *data, u16 size);
-> > > +     int (*get_max)(struct uvc_device *dev, struct uvc_entity *entity,
-> > > +                    u8 cs, void *data, u16 size);
-> > > +     int (*get_res)(struct uvc_device *dev, struct uvc_entity *entity,
-> > > +                    u8 cs, void *data, u16 size);
-> > >
-> > >       unsigned int ncontrols;
-> > >       struct uvc_control *controls;
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=x86/kconfig&id=6453e7cc32d1fd69344311224dbd00692eadc592
+
+Thx.
 
 -- 
-Regards,
+Regards/Gruss,
+    Boris.
 
-Laurent Pinchart
+https://people.kernel.org/tglx/notes-about-netiquette
 
