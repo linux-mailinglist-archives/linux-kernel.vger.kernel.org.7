@@ -1,87 +1,56 @@
-Return-Path: <linux-kernel+bounces-729887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E30B03CE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:07:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA66EB03CE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 13:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B64683A994C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:06:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3539417E28C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 11:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C2424728E;
-	Mon, 14 Jul 2025 11:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52832459F9;
+	Mon, 14 Jul 2025 11:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mPs0cIJe"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YUsSXX4X"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD55246BAF
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B25239E69
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752491186; cv=none; b=D//envrIHWX+8/7WKrhBGB8NrIHTNldS7+ZnsNL1WsdTH+p84XlHlW7gl2fFUOVo37M5s7Gug/X3ijIMzf882hyNYkyEIZw6Ox1CvZx6JYpAe0yOeMSivr1dsQIe9hZY/WT3hulKscFe9Kz1+yOrPLMTa0yAF+XDkNGNY9B/SZA=
+	t=1752491263; cv=none; b=g8e4E68hSpfsLOh7+mJA+djaYSxHT4AcuNoRjlZU/Qr2/qowhvIlTbgxIfwcNPeDQsN/IBj9IqGSfz93oiV1iZY/tYqdCzRfDCjNWg3/BIfSDD8W144sRQc3ttuLm7KPkorrpIw1qpl1PLAzzTpZA7eun8ltxUV25pPSA9TiMok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752491186; c=relaxed/simple;
-	bh=TbeXNfFoP3vxZUzqcnSVxTS+nA/kiLeewg++BaGQMWQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YcTL0EA3ExPx4UP/aqaOIlsdLJg1Q9KzgxrTZdcqB4EpUdMtt/qZx7s3NhEbVlqNnadILbRbIsTOgMFOqjFq1VaFvcXshXmNLri1rtZKsmUnAglBkDZIpqRlKgMxaEGVKun/pmM/+lJsNUW+qQoGwllsHd3/Hpq0MS03PxT0blM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mPs0cIJe; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56E9whmK023898
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:06:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4YKrSFv1YGAiQMcAg6nzwovM4HAC9RQMF+xyu/4Z080=; b=mPs0cIJe8pzhvbW4
-	bObewQAZcRH06g6c74+oGoGrkHgfEh4KU/ZGgajSBxDEpWByVjm2kt8KwLQjItrR
-	/pcJwNXZdQt2SGahNizWFFQyoJC8rDYnbY4XKonXGS/1KD1UH4yV2QMdkzjPz2xX
-	rl+PhceJGJFodOSxTzHnip6XGH0CXO1WegyDK1b8rbSsDuAAtOaXC/Kxhpbzmyv+
-	6FXFbHeOwX7YCsrd3JBTfsHVy7aGkDpzkd5j6NgofOTA+qc+qh8RGZY/JfstRiCK
-	DkNv93rjqrHj4iaz79EJ0JHxVIvumqEqI96XmKU1NVYVyGm7SUF9O6+8xGXhQbE4
-	LWQJIw==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufu84d9w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:06:23 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ab61b91608so2791681cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 04:06:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752491183; x=1753095983;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4YKrSFv1YGAiQMcAg6nzwovM4HAC9RQMF+xyu/4Z080=;
-        b=FSNcwFrEBas+hduOnHgxTgYU+TKnob6+VofdAwa1A7GRydbS+0+YuQbxRAHqNK+nTA
-         hnW7tuPRR6PTTextk0lIdaseKJ3L+vz98y5w+NZrT0MA+JgL5wzk4ETWinfFODtOLB8g
-         QcBssH6RLqTQjC6BNjgrBkQaOqXU8G++w/FeWjRqWrjxMxFUymkGHpnjegZwlhpdmLiS
-         IEY5zNeaSaM8E2VZDuXQ9TYMzFsmx7wYqWk20ymw8R7FAcTFdg8R/GNroD5Qi0gfP8Rh
-         2s/KTcDLbalRb+ARJm/k/AZDARfkPve9evnWEy7yk7ihL60TnW/9syq6qSb08qfEdAG4
-         1EBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXR5qKdN/NMdzTgAURAWqEdpOz94gUMpBbc/hrCNsyNSe4YDFjv/f7G+jCEDIZaNiOw4wVrl/kS1QOavvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwUL0Wj44AcnWS6jPXTsbGz0KSTrAL0zXPHM9Z5rUYoRXKpGMv
-	kc2dwMmTPA6g0XOh6vi8UIg5QpTpWnOVW+++D8POGRZ5XhtIOXGuYRRE+xYLfwL6Gg7XQs3oPqA
-	uvIwMqy8JnFr6W1kFx3MKlzZhzM/JIDbGJXRch1kgviLaaHZlB4ALLxTO3NGmqjYGHbI=
-X-Gm-Gg: ASbGnctQke76ZCfpgAw/tmiMsFPnzPsZpvEXyF/P1xKotMpZkDh1I9oJ+ANzL7EnwoB
-	fIq/SCs//VLFemA0ih6AvMXT1joLlBBgbKVCCIl2VoWNOGiMwcoQs0T7va/DKjKYaB26+smD3cQ
-	Awgt1wouc8NXSK+ls7chQS7fARiSLjeKAdY563ZO/Mtj1Xq8cEwvBQHewEbCQTD9YXo5nQlWROy
-	SjppxZVY0G+lf9TDcXQlsMvjATce+NIPaVXfoFbNcRPxLM39sJwf03xEbWO5P/PdU7hYFYAA/hv
-	YLyKLp8io0wTBFxDi9A+KVYk8zwU7pF3GiV0OEKYE4bxt2+UQe4CIZlZ1oEhFUk+vaJHPQ0BW2a
-	cMq+MwFwvNgTxeCtyVJIm
-X-Received: by 2002:a05:620a:4310:b0:7e3:2c0d:dbf8 with SMTP id af79cd13be357-7e32c0ddfc4mr149314785a.2.1752491182437;
-        Mon, 14 Jul 2025 04:06:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhTZ0DLTBSSXPn3zW9zJaHv3/h9yak2ZP6Mp/ZJM1SbXkpqrQko6k3sUc726RTE5VQHh5bkw==
-X-Received: by 2002:a05:620a:4310:b0:7e3:2c0d:dbf8 with SMTP id af79cd13be357-7e32c0ddfc4mr149310085a.2.1752491181555;
-        Mon, 14 Jul 2025 04:06:21 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee46cdsm819147066b.60.2025.07.14.04.06.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 04:06:20 -0700 (PDT)
-Message-ID: <3e0299ad-766a-4876-912e-438fe2cc856d@oss.qualcomm.com>
-Date: Mon, 14 Jul 2025 13:06:17 +0200
+	s=arc-20240116; t=1752491263; c=relaxed/simple;
+	bh=PuiFWBC57YuWDCIy/nrsIgmRYL6D5cjT2AqU6mr1Dbw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
+	 Content-Type:References; b=sWH8dA0gYkqvViRnf/B0aRTw4VmkRqox9JvCPxq2VtbZiOkvETaELbF/2yEB+f8ODvBlCQtCoUFYxpijeWBkUXbzpWqXGVu1tzLpnWMYCZzcYvus5rMCtAbJNRys9UzHMlyBJwGaaCQjTlFC48QKVbrEnYZ1z75HbHh0y0/y1vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YUsSXX4X; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250714110732euoutp023d8203b858bb405a4701e1876ebe3405~SGYJfduyt2265422654euoutp02h
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 11:07:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250714110732euoutp023d8203b858bb405a4701e1876ebe3405~SGYJfduyt2265422654euoutp02h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1752491252;
+	bh=+cH1AagOLxRaP9OS6I3NvlMV9oNEy792Og/AFphHVSY=;
+	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+	b=YUsSXX4X1+KjPXjsXVONyLaXQwyN7k7TEJ0nSJb9/pastTcDa8yhUvxywTSIR+1MB
+	 YtPzGs1xdcEdtWezuN0UBqH553GlvNUXRIrAX/SGWevx8EHoFZKQ044N/ShMWf9pTW
+	 0IqaplYHTNcqWq3jxrf94tPNYM68OKMXNhykKl4Y=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250714110732eucas1p1c0c47358492d6b115b74c0d702bd4a1c~SGYI6A4zX1349413494eucas1p1l;
+	Mon, 14 Jul 2025 11:07:32 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250714110730eusmtip1d440d37697b95bbfc6a074f6ce94fe19~SGYH0S8mA3118931189eusmtip1h;
+	Mon, 14 Jul 2025 11:07:30 +0000 (GMT)
+Message-ID: <1245a8c2-ca23-4faa-bceb-3354e92aca2c@samsung.com>
+Date: Mon, 14 Jul 2025 13:07:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,314 +58,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 14/15] arm64: dts: qcom: Add initial Milos dtsi
-To: Luca Weiss <luca.weiss@fairphone.com>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, Vinod Koul <vkoul@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Robert Marko <robimarko@gmail.com>,
-        Das Srinagesh <quic_gurus@quicinc.com>,
-        Thomas Gleixner
- <tglx@linutronix.de>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-mmc@vger.kernel.org
-References: <20250713-sm7635-fp6-initial-v2-0-e8f9a789505b@fairphone.com>
- <20250713-sm7635-fp6-initial-v2-14-e8f9a789505b@fairphone.com>
+Subject: Re: [PATCH v7 1/5] drm/imagination: Use pwrseq for TH1520 GPU power
+ management
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+To: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Frank Binns <frank.binns@imgtec.com>, Matt Coster
+	<matt.coster@imgtec.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>, Marek
+	Szyprowski <m.szyprowski@samsung.com>, Drew Fustini <fustini@kernel.org>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250713-sm7635-fp6-initial-v2-14-e8f9a789505b@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <fa235fa1-d5ad-44b7-bf52-068ea41fc9ea@samsung.com>
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA2MyBTYWx0ZWRfX1wkwpOCAAFCI
- IcFsyw7+oS2BG1FXay41uy9ziVmTDaCRWxz0247yfjxa4S+FxeDskSvC5m8quLtrlaTrm0lV2uG
- XsyJwDAmXaPpRJmV2r6zyWVhLY5BRe51IT7DnqaKT0GYQWtMLoq4Xix1efMPFldZQ4wDM0/H2a1
- RDx1DEyGQBVbESpEary/9/uWGGI6UJGACPJODCw9hIY8YFQA/7rv0TOFUj9JZeTNWnZrXHAhhyA
- Edn9aawNn/b+G15ls3Sw/tyII+OHsBBIM8US8ZinTXBuHreqd1GC8I1skNKbzmvwaIEGZRFJ7tW
- 3SmuhgnRHWIipTT8V6KTYF6vYKJkSBsR9niNQcnSmoGuK1w+6XGR9PKDBhRNtv4rAZzZKJGxyHX
- D1TXVhLL3ENxta4v7uuJ73By05VgOS4MK/3iXsXPh5kK8UfQnLWatUbvuDP8EoJ60AN5Ow7A
-X-Proofpoint-ORIG-GUID: 1la3LgdYh3bpH9qE40Jm4OapbWDsyvzM
-X-Proofpoint-GUID: 1la3LgdYh3bpH9qE40Jm4OapbWDsyvzM
-X-Authority-Analysis: v=2.4 cv=f59IBPyM c=1 sm=1 tr=0 ts=6874e4af cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=6H0WHjuAAAAA:8 a=N13MPgUakCYYuvbLhsgA:9
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-14_01,2025-07-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
- bulkscore=0 suspectscore=0 impostorscore=0 adultscore=0 priorityscore=1501
- mlxlogscore=999 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507140063
+X-CMS-MailID: 20250714110732eucas1p1c0c47358492d6b115b74c0d702bd4a1c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250626093356eucas1p1adfcd565173d939f82e15252189c316f
+X-EPHeader: CA
+X-CMS-RootMailID: 20250626093356eucas1p1adfcd565173d939f82e15252189c316f
+References: <20250626-apr_14_for_sending-v7-0-6593722e0217@samsung.com>
+	<CGME20250626093356eucas1p1adfcd565173d939f82e15252189c316f@eucas1p1.samsung.com>
+	<20250626-apr_14_for_sending-v7-1-6593722e0217@samsung.com>
+	<fa235fa1-d5ad-44b7-bf52-068ea41fc9ea@samsung.com>
 
-On 7/13/25 10:05 AM, Luca Weiss wrote:
-> Add a devicetree description for the Milos SoC, which is for example
-> Snapdragon 7s Gen 3 (SM7635).
+
+
+On 7/3/25 12:21, Michal Wilczynski wrote:
 > 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
+> 
+> On 6/26/25 11:33, Michal Wilczynski wrote:
+>> Update the Imagination PVR DRM driver to leverage the pwrseq framework
+>> for managing the complex power sequence of the GPU on the T-HEAD TH1520
+>> SoC.
+>>
+>> To cleanly separate platform specific logic from the generic driver,
+>> this patch introduces a `pwr_power_sequence_ops` struct containing
+>> function pointers for power_on and power_off operations. This allows for
+>> different power management strategies to be selected at probe time based
+>> on the device's compatible string.
+>>
+>> A `pvr_device_data` struct, associated with each compatible in the
+>> of_device_id table, points to the appropriate ops table (manual or
+>> pwrseq).
+>>
+>> At probe time, the driver inspects the assigned ops struct. If the
+>> pwrseq variant is detected, the driver calls
+>> devm_pwrseq_get("gpu-power"), deferring probe if the sequencer is not
+>> yet available. Otherwise, it falls back to the existing manual clock and
+>> reset handling. The runtime PM callbacks now call the appropriate
+>> functions via the ops table.
+>>
+>> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>> ---
+>>  drivers/gpu/drm/imagination/pvr_device.c |  36 +++++++-
+>>  drivers/gpu/drm/imagination/pvr_device.h |  17 ++++
+>>  drivers/gpu/drm/imagination/pvr_drv.c    |  27 +++++-
+>>  drivers/gpu/drm/imagination/pvr_power.c  | 139 ++++++++++++++++++++++---------
+>>  drivers/gpu/drm/imagination/pvr_power.h  |  13 +++
+>>  5 files changed, 185 insertions(+), 47 deletions(-)
+>>
+> 
+> Hi,
+> 
+> I'm checking in on the status of my pwrseq patch above. Is this on track
+> for the next merge window?
+> 
+> Please let me know if there's anything else needed from my end to help
+> get it ready.
+> 
+> Best regards,
 
-[...]
 
-> +		cpu-map {
-> +			cluster0 {
-> +				core0 {
-> +					cpu = <&cpu0>;
-> +				};
-> +
-> +				core1 {
-> +					cpu = <&cpu1>;
-> +				};
-> +
-> +				core2 {
-> +					cpu = <&cpu2>;
-> +				};
-> +
-> +				core3 {
-> +					cpu = <&cpu3>;
-> +				};
-> +			};
-> +
-> +			cluster1 {
-> +				core0 {
-> +					cpu = <&cpu4>;
-> +				};
-> +
-> +				core1 {
-> +					cpu = <&cpu5>;
-> +				};
-> +
-> +				core2 {
-> +					cpu = <&cpu6>;
-> +				};
-> +			};
-> +
-> +			cluster2 {
-> +				core0 {
-> +					cpu = <&cpu7>;
-> +				};
-> +			};
-> +		};
+Hi Matt,
 
-I'm getting mixed information about the core topology.. 
+I was very happy to see the recent "pvr: various enablement changes" get
+merged in Mesa [1]. Congratulations to the team on that progress.
 
-What does dmesg say wrt this line?
+I just wanted to check in and see if you have any more requests for this
+series ?
 
-CPU%u: Booted secondary processor 0x%010lx [0x%08x]\n
+[1] - https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33998
 
-> +	pmu-a520 {
-> +		compatible = "arm,cortex-a520-pmu";
-> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-> +	};
-> +
-> +	pmu-a720 {
-> +		compatible = "arm,cortex-a720-pmu";
-> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-> +	};
-
-See:
-
-9ce52e908bd5 ("arm64: dts: qcom: sm8650: switch to interrupt-cells 4 to add PPI partitions")
-2c06e0797c32 ("arm64: dts: qcom: sm8650: add PPI interrupt partitions for the ARM PMUs")
-
-[...]
-
-> +		gcc: clock-controller@100000 {
-> +			compatible = "qcom,milos-gcc";
-> +			reg = <0x0 0x00100000 0x0 0x1f4200>;
-> +
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&sleep_clk>,
-> +				 <0>, /* pcie_0_pipe_clk */
-> +				 <0>, /* pcie_1_pipe_clk */
-> +				 <0>, /* ufs_phy_rx_symbol_0_clk */
-> +				 <0>, /* ufs_phy_rx_symbol_1_clk */
-> +				 <0>, /* ufs_phy_tx_symbol_0_clk */
-> +				 <0>; /* usb3_phy_wrapper_gcc_usb30_pipe_clk */
-> +			protected-clocks = <GCC_PCIE_1_AUX_CLK>, <GCC_PCIE_1_AUX_CLK_SRC>,
-> +					<GCC_PCIE_1_CFG_AHB_CLK>, <GCC_PCIE_1_MSTR_AXI_CLK>,
-> +					<GCC_PCIE_1_PHY_RCHNG_CLK>, <GCC_PCIE_1_PHY_RCHNG_CLK_SRC>,
-> +					<GCC_PCIE_1_PIPE_CLK>, <GCC_PCIE_1_PIPE_CLK_SRC>,
-> +					<GCC_PCIE_1_PIPE_DIV2_CLK>, <GCC_PCIE_1_PIPE_DIV2_CLK_SRC>,
-> +					<GCC_PCIE_1_SLV_AXI_CLK>, <GCC_PCIE_1_SLV_Q2A_AXI_CLK>;
-
-Does access control disallow accessing these on your prod-fused
-device?
-
-[...]
-
-> +		usb_1: usb@a600000 {
-> +			compatible = "qcom,milos-dwc3", "qcom,snps-dwc3";
-> +			reg = <0x0 0x0a600000 0x0 0x10000>;
-
-size = 0xfc_000
-
-[...]
-
-> +
-> +			clocks = <&gcc GCC_CFG_NOC_USB3_PRIM_AXI_CLK>,
-> +				 <&gcc GCC_USB30_PRIM_MASTER_CLK>,
-> +				 <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
-> +				 <&gcc GCC_USB30_PRIM_SLEEP_CLK>,
-> +				 <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
-> +				 <&rpmhcc RPMH_CXO_CLK>;
-> +			clock-names = "cfg_noc",
-> +				      "core",
-> +				      "iface",
-> +				      "sleep",
-> +				      "mock_utmi",
-> +				      "xo";
-> +
-> +			assigned-clocks = <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
-> +					  <&gcc GCC_USB30_PRIM_MASTER_CLK>;
-> +			assigned-clock-rates = <19200000>, <133333333>;
-
-Set the latter to 200000000 - your device doesn't have USB3, but the
-next person may lose their hair about tracking down why it doesn't
-work on theirs
-
-[...]
-
-> +		pdc: interrupt-controller@b220000 {
-> +			compatible = "qcom,milos-pdc", "qcom,pdc";
-> +			reg = <0x0 0x0b220000 0x0 0x30000>, <0x0 0x174000f0 0x0 0x64>;
-
-1 per line, please
-
-> +			interrupt-parent = <&intc>;
-> +
-> +			qcom,pdc-ranges = <0 480 40>, <40 140 11>, <51 527 47>,
-> +					  <98 609 31>, <129 63 1>, <130 716 12>,
-> +					  <142 251 5>;
-> +
-> +			#interrupt-cells = <2>;
-> +			interrupt-controller;
-> +		};
-> +
-> +		tsens0: thermal-sensor@c228000 {
-> +			compatible = "qcom,milos-tsens", "qcom,tsens-v2";
-> +			reg = <0x0 0x0c228000 0x0 0x1ff>, /* TM */
-> +			      <0x0 0x0c222000 0x0 0x1ff>; /* SROT */
-
-drop the comments
-
-the sizes are 0x1000 for both regions for both controllers
-
-> +
-> +			interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>,
-
-pdc 26
-
-> +				     <GIC_SPI 640 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "uplow",
-> +					  "critical";
-> +
-> +			#qcom,sensors = <15>;
-> +
-> +			#thermal-sensor-cells = <1>;
-> +		};
-> +
-> +		tsens1: thermal-sensor@c229000 {
-> +			compatible = "qcom,milos-tsens", "qcom,tsens-v2";
-> +			reg = <0x0 0x0c229000 0x0 0x1ff>, /* TM */
-> +			      <0x0 0x0c223000 0x0 0x1ff>; /* SROT */
-> +
-> +			interrupts = <GIC_SPI 507 IRQ_TYPE_LEVEL_HIGH>,
-
-pdc 27
-
-> +				     <GIC_SPI 641 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "uplow",
-> +					  "critical";
-> +
-> +			#qcom,sensors = <14>;
-> +
-> +			#thermal-sensor-cells = <1>;
-> +		};
-> +
-> +		aoss_qmp: power-management@c300000 {
-> +			compatible = "qcom,milos-aoss-qmp", "qcom,aoss-qmp";
-> +			reg = <0x0 0x0c300000 0x0 0x400>;
-> +
-> +			interrupt-parent = <&ipcc>;
-> +			interrupts-extended = <&ipcc IPCC_CLIENT_AOP IPCC_MPROC_SIGNAL_GLINK_QMP
-> +						     IRQ_TYPE_EDGE_RISING>;
-> +
-> +			mboxes = <&ipcc IPCC_CLIENT_AOP IPCC_MPROC_SIGNAL_GLINK_QMP>;
-> +
-> +			#clock-cells = <0>;
-> +		};
-> +
-> +		sram@c3f0000 {
-> +			compatible = "qcom,rpmh-stats";
-> +			reg = <0x0 0x0c3f0000 0x0 0x400>;
-> +		};
-> +
-> +		spmi_bus: spmi@c400000 {
-> +			compatible = "qcom,spmi-pmic-arb";
-
-There's two bus instances on this platform, check out the x1e binding
-
-[...]
-
-> +		intc: interrupt-controller@17100000 {
-> +			compatible = "arm,gic-v3";
-> +			reg = <0x0 0x17100000 0x0 0x10000>,	/* GICD */
-> +			      <0x0 0x17180000 0x0 0x200000>;	/* GICR * 8 */
-
-drop the comments please
-
-[...]
-
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>, <&gcc GCC_GPLL0>;
-> +			clock-names = "xo", "alternate";
-
-1 a line, please
-
-[...]
-
-> +		cpuss0-thermal {
-> +			thermal-sensors = <&tsens0 1>;
-> +
-> +			trips {
-> +				cpuss0-hot {
-> +					temperature = <110000>;
-> +					hysteresis = <1000>;
-> +					type = "hot";
-> +				};
-> +
-> +				cpuss0-critical {
-> +					temperature = <115000>;
-> +					hysteresis = <0>;
-> +					type = "critical";
-> +				};
-> +			};
-> +		};
-
-See:
-
-06eadce93697 ("arm64: dts: qcom: x1e80100: Drop unused passive thermal trip points for CPU")
-
-(tldr drop non-critical trips for CPU)
-
-Konrad
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
