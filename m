@@ -1,90 +1,126 @@
-Return-Path: <linux-kernel+bounces-729474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7021BB03736
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:34:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A51C7B0373A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F31E33BCC02
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:33:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10E4E167564
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E0D22B8AB;
-	Mon, 14 Jul 2025 06:32:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3991B21B192;
+	Mon, 14 Jul 2025 06:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kEJvLVQk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC3823505E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 06:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92131BE4A;
+	Mon, 14 Jul 2025 06:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752474726; cv=none; b=OnNNkwukQ1ok+G5Scmf+6Fs4W0gk/XKznUIezwS2dC118Q8sFseA4o2iFus2mt1OaFGa8hh+wBu03Z3mLW0Q6Dy9QWw+YOu7DtaYpIIKu0wet7hOs6fL40j6uaIQjd6ZBYxmbMVv6+z0+aFOU4q0OEp6wDgK0GTIEkT67eL0Fx8=
+	t=1752474861; cv=none; b=qc6tJmpXn/36LW+PYFf7P23J4jnVWUWSoI2+69nGXvADNqbCgHTVNk/TqUtBsKyx9zkNu2vrjAkEEK43piyLv8+6ieerHZ8FlqyIjfX9RckSqKtq6h1zoZOTil3ulCZQ1a2jsWjk2HkaxsH0qvUFNt23wk1R+PANue3O+fV4kGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752474726; c=relaxed/simple;
-	bh=va153gw+DLc+V8l0wOCuiPpTlHZUFObs6dMNjRWNt6s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MAvVertxkgIr78JmsPgOnTNGecYarEhkI006NYFMBBjOKB6BfalNzlL4oJmH4KGEYP7W2Wcb1vtjh5Iwli5OEmFqNUlfD5Z5CTeD92GJJ2rHWqjbSJqAoo8aR9JlA1NPH/UmonqCbB8wit5kBYhwcGsNew7+ofgphfMz0UIz9Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3df4d2a8b5eso40231225ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jul 2025 23:32:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752474724; x=1753079524;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Drjl5++96nBjNy31ORv6VBMFXWnYYE09eZaGN9HQRaU=;
-        b=J/zSDUGPe0UaSwMG+/Jf+/OPfOqz/LTIiMvjuz4xELN5Khkip9oKk5gK81MFaByj32
-         fUT3QWGtYfBLvszCJROaMigArXGaMoHHrqH3UJfJKdceFcPWoHRwp7VjqVdTyWS4HDda
-         7c0BuLbxjG+0q+hqAV6umZqaeFV9GneRtM9oLDfzf+JGA9OacRJ6EJTn2HmpljueuUq5
-         bLMLxXrEhsULH2VT4tJBpnH46xfQPD40kKQGSupcgGwHc71nzhjLcdZOgse5MPjf6Qlg
-         JZePVFfMCKwF5y5xVONB+QFFAPKtfFbOJHuVc1Q2v21rMBR3IF1Ixat4K6Ivue49etoN
-         RkKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHs+/7plEzyBi+SGVkskOtR940UqDtrRLRXRyHROJe5Z2ZpGck9GDDoWgjsO0vwxspmh3cv2F6Z4oa1hE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAqO/VJS+Y51kfZF9wnZwXcBNiDHdbx2ANXkfcGloRcBztd+JJ
-	bKvWTCP5UbYlFToWRCgdElfQFv+RO0CY4o3f8IVlaaPt67om1yF6agG87EHoqIVthJHMdehjUCT
-	0wHbiKn0ORiGmE75imTzI/fMGmIwoaRutFRTC5Hb/Ze3mu9cJNGVvLOcD2p4=
-X-Google-Smtp-Source: AGHT+IEzxbUzQ1NTjarPnNyh4tFQY4wQ80X1LiRAI+n3VkX1EtGFzpIRe4XCQY+Dp3HrM9KhAoJdpBn6DB0IMUY4abY91XljYtQu
+	s=arc-20240116; t=1752474861; c=relaxed/simple;
+	bh=ynfzJ9dsAps2aTd6f/tPXnxcet4bhZr25ybz3JfD7/o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZN+RsKju3clmFmITox9EOV57K+rXtVajyeLf0Ux5YzmQWJ/zZMLfqmFQByoNN7CYmI0iy5Jx54hizodbS2/rClQn7o2aPWoT+uXrUPoLfXBn3CDb9VXXy9FQr7qQxo5y9++ymUkLiZQ1PciJWgHdk8vGtNKIdtZmMb04UHvD8u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kEJvLVQk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44105C4CEF9;
+	Mon, 14 Jul 2025 06:34:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752474861;
+	bh=ynfzJ9dsAps2aTd6f/tPXnxcet4bhZr25ybz3JfD7/o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kEJvLVQkjY7hRn/K87feYU0o9wfLcoFoQapbEzji/H3oVgosLIR+n/zpshU8j5xPx
+	 cnTymersGd/N+1mHqJ3BKGWRQrcT85aRPAwcP/faI8e5poEh4ZkWHMwaVBKocHO+rc
+	 dLlEMs5vxTbWhanxYLW+okfeFmBQsBMdx563LZdcvTyj2iv+aiVsVXtnqPaTwDI3J5
+	 Ad4wSY0s6HRoT9uqxSgF5lXh8e2IN8+z1k96CRC4nfbcNwzS/6YDJxQqc+sBU8hMEi
+	 vOLX3wP8hDRXfWv7ELSL3IU03zRlrE1pWJntsOZb60EXxyqcIuI5/EbVfSlwDO+8oX
+	 OGL6/yKjUUb0A==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-32b49ac6431so30674891fa.1;
+        Sun, 13 Jul 2025 23:34:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVcPzKbbCyVeY/6m+9F2wcdWeAcBfbEeFO3Y29Z5vA+3+O8edoT5vUdEfAYa2Cjo/njnBWlSgZOj/w=@vger.kernel.org, AJvYcCXQFQEATWOLoPwoWF/3oGJZLHWRNutHERaDYaI4RUGJOyQk/lqnSfrDgCHxptRB0Icg4YOHeJ5c5zz5AdI4@vger.kernel.org, AJvYcCXyFgK3VKhyvGqKs5ugBb5h7TQVwIDEf3cwr8hWwUScwK9pK8uP7LjIcnWBWFGsRN0jRsgFv1EnU1VN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7FPBqzqh0OCl8JQGmCIIeHI1Xb8XcWQPGoh5tVjiM0F7FHL+l
+	ClxC6M+uU+N23ft5vbsTpDc9yAYPPzJ64UECNl4f91obL6aH9vzRSFhyAX06hi3F3Kq0jHnFcGR
+	pgZvrS4BlPf7BIiyEcOInBXcb7qjiSlw=
+X-Google-Smtp-Source: AGHT+IEy4x7iRPRFME+dpdQyQI1jtmLIqNYRLMk1ojNaRg715rzBCM8Q86llYRAXa+twgNvvkR8qSO1icXiwfjuZzv0=
+X-Received: by 2002:a2e:a7ca:0:b0:32b:80e1:300d with SMTP id
+ 38308e7fff4ca-33053186d88mr35999851fa.0.1752474859585; Sun, 13 Jul 2025
+ 23:34:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2513:b0:3dd:ceb0:f603 with SMTP id
- e9e14a558f8ab-3e2541dc6d6mr120908775ab.2.1752474724219; Sun, 13 Jul 2025
- 23:32:04 -0700 (PDT)
-Date: Sun, 13 Jul 2025 23:32:04 -0700
-In-Reply-To: <684c57c4.a00a0220.279073.0015.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6874a464.a70a0220.3b380f.004a.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in __bch2_bkey_compat
-From: syzbot <syzbot+4908f37148402680dfec@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20250714060843.4029171-5-ardb+git@google.com> <20250714060843.4029171-6-ardb+git@google.com>
+ <dade7d17-d45d-455e-a43c-01e9ea95c3b4@gmail.com> <CAMj1kXETDd+19i+awMx1v1sE4RXhF-r2a-mTa3rWfus5s4HMmw@mail.gmail.com>
+ <f538a1b9-6a7c-474f-af2a-d87c35b82fc5@gmail.com>
+In-Reply-To: <f538a1b9-6a7c-474f-af2a-d87c35b82fc5@gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 14 Jul 2025 16:34:08 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXGG0Mi+AT7ZeoHLTDhVbbahP-PLRgY1=aSZMVQEgWz5sQ@mail.gmail.com>
+X-Gm-Features: Ac12FXzYFywZb16ZKDUVBGm4_KFbnsnrDO10Xk4vWwqGRcRLn5B3XWIM87WiCT4
+Message-ID: <CAMj1kXGG0Mi+AT7ZeoHLTDhVbbahP-PLRgY1=aSZMVQEgWz5sQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/3] efi-rtc: Remove wakeup functionality
+To: Demi Marie Obenour <demiobenour@gmail.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>, Feng Tang <feng.tang@linux.alibaba.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Juergen Gross <jgross@suse.com>, 
+	Stefano Stabellini <sstabellini@kernel.org>, 
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Bibo Mao <maobibo@loongson.cn>, linux-rtc@vger.kernel.org, linux-efi@vger.kernel.org, 
+	xen-devel@lists.xenproject.org, x86@kernel.org, 
+	linux-riscv@lists.infradead.org, loongarch@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot suspects this issue was fixed by commit:
+On Mon, 14 Jul 2025 at 16:22, Demi Marie Obenour <demiobenour@gmail.com> wrote:
+>
+> On 7/14/25 02:19, Ard Biesheuvel wrote:
+> > On Mon, 14 Jul 2025 at 16:13, Demi Marie Obenour <demiobenour@gmail.com> wrote:
+> >>
+> >> On 7/14/25 02:08, Ard Biesheuvel wrote:
+> >>> From: Ard Biesheuvel <ardb@kernel.org>
+> >>>
+> >>> The EFI rtc driver is used by non-x86 architectures only, and exposes
+> >>> the get/set wakeup time functionality provided by the underlying
+> >>> platform. This is usually broken on most platforms, and not widely used
+> >>> to begin with [if at all], so let's just remove it.
+> >> systemd uses the underlying functionality: a timer can wake the system up.
+> >> I have no idea if that is implemented in terms of this function, though.
+> >
+> > To be clear, you are referring to wake from poweroff at some date/time
+> > in the future, right?
+>
+> Yes.
+>
+> > This change does not remove this functionality from the RTC subsystem,
+> > it just ceases to expose it on non-x86 EFI platforms that claim to
+> > support it.
+>
+> Do these platforms generally expose the functionality in a different way?
 
-commit 263561649ee5875a922f4358e96d3deb17a91021
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sat Jun 7 18:27:35 2025 +0000
+On x86, the CMOS rtc is manipulated directly (and this is officially
+condoned by the EFI spec).
 
-    bcachefs: Don't persistently run scan_for_btree_nodes
+On non-x86, this functionality rarely works, which is really the point
+of this series.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14a0c18c580000
-start commit:   27605c8c0f69 Merge tag 'net-6.16-rc2' of git://git.kernel...
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=162faeb2d1eaefb4
-dashboard link: https://syzkaller.appspot.com/bug?extid=4908f37148402680dfec
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10f9f682580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ecb9d4580000
+> If not, systemd should probably document that the functionality is
+> non-portable if it doesn't do that already.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Not sure what you mean by non-portable. This functionality should be
+exposed in a generic manner (using the RTC subsystem interfaces), but
+only if it can be relied upon. On x86, the RTC subsystem will use the
+rtc-cmos driver, which implements the wakeup routines in terms of port
+I/O.
 
-#syz fix: bcachefs: Don't persistently run scan_for_btree_nodes
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+If removing this functionality altogether from the EFI rtc driver is a
+problem, perhaps it would be better to implement an allowlist based
+solution that does not attempt to access the runtime services by
+default.
 
