@@ -1,79 +1,82 @@
-Return-Path: <linux-kernel+bounces-729488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-729490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F375B03766
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:50:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6988BB0376F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 08:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDF4F7A6994
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:49:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1D6316DFF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 06:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FCD22A1C5;
-	Mon, 14 Jul 2025 06:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E6C229B21;
+	Mon, 14 Jul 2025 06:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SJhHypb/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sAAjEShL"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC0A218827;
-	Mon, 14 Jul 2025 06:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F03BE65;
+	Mon, 14 Jul 2025 06:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752475840; cv=none; b=c5p8F0lmCgQrNR3VGKmhNa4o+iUYN0erRDykX31fymf14STuonNOmmIaNQQrB+G5Tpr1SjAFm7FBRKX12ZFyMBP7gnQMe4/JVB7ho0SRYeuS2vmS+sm2NdsO2IgxkM0cAYf0k+QdLT2EQN+XM2KoYxk8ZaGUL3368Bw4C2ZiWK4=
+	t=1752476048; cv=none; b=RZp15AIdeJ0Uqsz+EsOTkkyg1Cq6ET4flc/Eq8/Atvx9RMbH+xvZiR2jqLPBf56NjqIOy+XmvG1xacmB+k2k+Zv/UEdU84bRKUFyQI4MAEUDwAWfSTWGRTt3eJQ9Y38bExOLGT5sQ7G0mKrOVmvjmbFFBaRQS/QQanII1yzCQs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752475840; c=relaxed/simple;
-	bh=K4mc5x/W9JtBv/fhS4Ws9JbTJwyveuJyLnrexcFHoMY=;
+	s=arc-20240116; t=1752476048; c=relaxed/simple;
+	bh=trVG2f4buu2+4oM+u59GKmTkk9pA0hGNzYqTR3u3D8Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YVSncizkF3nfd1vKlOSaEY35VNGfE1PX9RJUMxzTDodhWWIv8OaIVY9DbUG+7AG5seLOK7KzKWp/oBwD8svggWLqelvQPMjmd9xnO8cXjwhkO70Z5fxQyvWizJH+K0eDIlG1TzWXYBKxJwloBMZmiMrKmPGJRSH0RXrrIkB4800=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SJhHypb/; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752475838; x=1784011838;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=K4mc5x/W9JtBv/fhS4Ws9JbTJwyveuJyLnrexcFHoMY=;
-  b=SJhHypb/wpAaC2gpC5StgdZ4//JCKPlRxyqIxzOh+TmFOUKuENsjgEoP
-   Oh/sfQD4PM5RSARpUIhd6bWNSoNGiwOTVn8rstQSOkmbNXLKPvmdV2WMU
-   RnwGVNYNSLf6wg+U3E/2BRuFXqv0u4IrmtGi6/yCSDnyvlc6MXQH5VBBh
-   5mirWh5fM8dTcpz2wExSvt42P3xjpj0WBIwwqnicnLCEKC9dbNuRHxGc0
-   yXR5V66QFTaqnArDrh2ZKrBrTW/kyDHn5+HsbTgMyoSewHfpH7WNJu5yr
-   dfNDYtvK5UJVbdqqyuh2x2WyIkYDesJ+riOuT2lPqKgkGXUQ0nEAaqU95
-   Q==;
-X-CSE-ConnectionGUID: BNx1ffXiQpuQnUxXRw5liw==
-X-CSE-MsgGUID: JGlkgn+MSWCS+0jlv2EbMw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="58319973"
-X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
-   d="scan'208";a="58319973"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2025 23:50:38 -0700
-X-CSE-ConnectionGUID: Mr8VClpdTVmoWQpu7FNLHQ==
-X-CSE-MsgGUID: HCV3t0icRR++xmWnzTOKkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
-   d="scan'208";a="157596729"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2025 23:50:34 -0700
-Date: Mon, 14 Jul 2025 08:49:29 +0200
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Saeed Mahameed <saeed@kernel.org>, Gal Pressman <gal@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Leon Romanovsky <leonro@nvidia.com>
-Subject: Re: [PATCH net-next 3/6] net/mlx5e: Properly access RCU protected
- qdisc_sleeping variable
-Message-ID: <aHSocHfM6IRFHneZ@mev-dev.igk.intel.com>
-References: <1752471585-18053-1-git-send-email-tariqt@nvidia.com>
- <1752471585-18053-4-git-send-email-tariqt@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d7EoMtePgDRCewharGtM08wSPnNLAQ7RGRRVfLQh/CuvL6Oi0Fh09rTPnIgjvSqU3PtdVBsQ6KkMDRFpvgafxDTNevg9Zxci534jpjGoheYpN5rCLIZhJNEp+ZdVN7TROjJ+QT1zAHzztaIWn6XAVef/vWI8CDKiDO3uMybYUwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sAAjEShL; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56DNtlhM002849;
+	Mon, 14 Jul 2025 06:53:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=5IEIgTExw2nSrI0cq1DIj0kuY0Gjph
+	8sAgtMBsqnDCo=; b=sAAjEShLBljMyMl8i6KR2ou0URliyg/4y0i9Rm7jX64o9y
+	FiSak/xLEz/F0FA0B3rMsewTdc5C4D+QD433F2I22tZtdbJGL4MkhALRyYV2maLw
+	NgHF4BNS7PJMKi/XWD6csKAdru4+jq7UyQTdRg+DAIjTfZfVeG71NvMV3igPg5xa
+	NaqTDs8KA/CwNK304E+9PL6mKmVuKzMyCiFP1RY6ERxZMbSpKTlJTCkYOAuGMo8h
+	f/YTCDfC1MKp6L1Wha8/Jju+LUNCozDqsv2q4owbMK1YtZmuUtnHh7Mglnj4s1W/
+	dqbp7ezMdKd/itCO/JhrjnJ6PaNFBeY3AJfLvNPQ==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47uf7cr3tb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Jul 2025 06:53:52 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56E6kJXd021906;
+	Mon, 14 Jul 2025 06:53:51 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47v4r2vdmp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Jul 2025 06:53:51 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56E6rngV50594296
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 14 Jul 2025 06:53:49 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 92CE520043;
+	Mon, 14 Jul 2025 06:53:49 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B8FEB20040;
+	Mon, 14 Jul 2025 06:53:47 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 14 Jul 2025 06:53:47 +0000 (GMT)
+Date: Mon, 14 Jul 2025 12:23:45 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, jack@suse.cz,
+        adilger.kernel@dilger.ca, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v2 01/16] ext4: add ext4_try_lock_group() to skip busy
+ groups
+Message-ID: <aHSpeVzn1Bhxd2YO@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <20250623073304.3275702-1-libaokun1@huawei.com>
+ <20250623073304.3275702-2-libaokun1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,47 +85,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1752471585-18053-4-git-send-email-tariqt@nvidia.com>
+In-Reply-To: <20250623073304.3275702-2-libaokun1@huawei.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: xoInn4410jql_Z_YsNNwsKoDP0BQeOmp
+X-Authority-Analysis: v=2.4 cv=LoGSymdc c=1 sm=1 tr=0 ts=6874a980 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8 a=G4Sw1XTuHnxZOQXlz7YA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: xoInn4410jql_Z_YsNNwsKoDP0BQeOmp
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDAzOSBTYWx0ZWRfX3JLgSIHK5sj6 atIty4JwCceSsDmWdNOD2Zyx1V00ddtv3lXEX3zMKe6KPld0GuZTqKssyuLGxGNYc4qK7z+wRtG 2jH4mZZxN7aXzFA5jFoaetHVtLrtG/d6+KEO2sJnobEhRfSQRQxf87D3pFGQSQlFwWq4DGaN78l
+ 1wiJvIowkLXA1QV1wQxYXpg5DpIEm5pw4hjWk6hy4iHZl5wPwxw/jTjgZPO6QREFHCD6RbTzjFb df7B9P+lz+DeDckBFdw7wxhEJINMvnVMTVvHe2Ah5/37bzEgCtVWkpO6jFdOYv8t5a8bWadCgFl QvcveCu3K/+b97fMWXx7WPeHg+BWHKuCMVOHAdgt/IDOkSQB30/QXXejqyA6TFCEEnUQC+yfE6Q
+ GkxfwgyjLloMi1zLArZwunFVpYcDVmWBje3O4t1ZbetTAkV5SprCmZFBXX/LgKKC4iclB7d6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-14_01,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 spamscore=0 malwarescore=0 impostorscore=0
+ clxscore=1015 phishscore=0 mlxlogscore=693 priorityscore=1501
+ suspectscore=0 mlxscore=0 adultscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507140039
 
-On Mon, Jul 14, 2025 at 08:39:42AM +0300, Tariq Toukan wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
+On Mon, Jun 23, 2025 at 03:32:49PM +0800, Baokun Li wrote:
+> When ext4 allocates blocks, we used to just go through the block groups
+> one by one to find a good one. But when there are tons of block groups
+> (like hundreds of thousands or even millions) and not many have free space
+> (meaning they're mostly full), it takes a really long time to check them
+> all, and performance gets bad. So, we added the "mb_optimize_scan" mount
+> option (which is on by default now). It keeps track of some group lists,
+> so when we need a free block, we can just grab a likely group from the
+> right list. This saves time and makes block allocation much faster.
 > 
-> qdisc_sleeping variable is declared as "struct Qdisc __rcu" and
-> as such needs proper annotation while accessing it.
+> But when multiple processes or containers are doing similar things, like
+> constantly allocating 8k blocks, they all try to use the same block group
+> in the same list. Even just two processes doing this can cut the IOPS in
+> half. For example, one container might do 300,000 IOPS, but if you run two
+> at the same time, the total is only 150,000.
 > 
-> Without rtnl_dereference(), the following error is generated by sparse:
+> Since we can already look at block groups in a non-linear way, the first
+> and last groups in the same list are basically the same for finding a block
+> right now. Therefore, add an ext4_try_lock_group() helper function to skip
+> the current group when it is locked by another process, thereby avoiding
+> contention with other processes. This helps ext4 make better use of having
+> multiple block groups.
 > 
-> drivers/net/ethernet/mellanox/mlx5/core/en/qos.c:377:40: warning:
->   incorrect type in initializer (different address spaces)
-> drivers/net/ethernet/mellanox/mlx5/core/en/qos.c:377:40:    expected
->   struct Qdisc *qdisc
-> drivers/net/ethernet/mellanox/mlx5/core/en/qos.c:377:40:    got struct
->   Qdisc [noderef] __rcu *qdisc_sleeping
+> Also, to make sure we don't skip all the groups that have free space
+> when allocating blocks, we won't try to skip busy groups anymore when
+> ac_criteria is CR_ANY_FREE.
 > 
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/en/qos.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Performance test data follows:
 > 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/qos.c b/drivers/net/ethernet/mellanox/mlx5/core/en/qos.c
-> index f0744a45db92..4e461cb03b83 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en/qos.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en/qos.c
-> @@ -374,7 +374,7 @@ void mlx5e_reactivate_qos_sq(struct mlx5e_priv *priv, u16 qid, struct netdev_que
->  void mlx5e_reset_qdisc(struct net_device *dev, u16 qid)
->  {
->  	struct netdev_queue *dev_queue = netdev_get_tx_queue(dev, qid);
-> -	struct Qdisc *qdisc = dev_queue->qdisc_sleeping;
-> +	struct Qdisc *qdisc = rtnl_dereference(dev_queue->qdisc_sleeping);
->  
->  	if (!qdisc)
->  		return;
+> Test: Running will-it-scale/fallocate2 on CPU-bound containers.
+> Observation: Average fallocate operations per container per second.
+> 
+>                    | Kunpeng 920 / 512GB -P80| AMD 9654 / 1536GB -P96  |
+>  Disk: 960GB SSD   |-------------------------|-------------------------|
+>                    | base  |    patched      | base  |    patched      |
+> -------------------|-------|-----------------|-------|-----------------|
+> mb_optimize_scan=0 | 2667  | 4821  (+80.7%)  | 3450  | 15371 (+345%)   |
+> mb_optimize_scan=1 | 2643  | 4784  (+81.0%)  | 3209  | 6101  (+90.0%)  |
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-Good catch, other acesses to the qdisc_sleeping are fine.
+Hey Baokun, sorry I'm a bit late to the review, been caught up with a
+few things last couple weeks.
 
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+The patch itself looks good, thanks for the changes.
 
-> -- 
-> 2.40.1
+Feel free to add:
+
+ Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+
+
+Regards,
+ojaswin
+
 
