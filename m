@@ -1,187 +1,93 @@
-Return-Path: <linux-kernel+bounces-731564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AF97B05648
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:25:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B30CB05649
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 712203AF222
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:25:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AC6F562593
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB82C2D5A18;
-	Tue, 15 Jul 2025 09:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EoZd1grT"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B636D2D5C62;
+	Tue, 15 Jul 2025 09:26:33 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941E227876E
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515EB22D78A
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752571545; cv=none; b=u+cnDuGTMf/oyqT3hkeG1vJbz+iZTJ4Yfble8U6AiZxjKek0zlx1Aqrx7GfEt9St81m6nA1S030scG1J7JAf3dNscVql3cqqqMG7nfV08s9o1javzw6yfsaahEepzpc9/uqvTlc8DfYglSJNoAn1IKjjwzPQRmoiZYOUv5KluMw=
+	t=1752571593; cv=none; b=ClG3OttRJedzsl2glvmTUJDPEhdFTKsvRpsQSbJYYFtEm3MSG3OICG0HZTjGYK1OgfKE1uF/wMor8+/v6ffSXhc1FqHCKI89LYT7jqsbgKHG2/n+zvexvBSjgi7BdyIlrpY4bCgRWJ1uoEM7Im54Ct9T6Cv+UVsDiOIsgX9SfGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752571545; c=relaxed/simple;
-	bh=PFfpxVQeyUxYYxcdfqls8AqhMPmq1RJ55yv3O0fRkI4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 Cc:Content-Type; b=DYRjHkLAxDBnMfuxy5uyAr2DblLHNjSOAyiiicB86Is7+mrChwZLkrSZr2KtjuXE2U+e0krU4zJpeY/BzRk7lnl0M3dB8x8xT5dJQP3JYqdaURszIUkD3Sm2xTfFOPAClM2pFCQrxh6gSz/hE0UkhyQa0h5OQ1NOPRVg9iofC5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EoZd1grT; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-70e75f30452so37320977b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:25:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752571542; x=1753176342; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m6iuHSGE/vZuISt3qNIpWnKcZ1D4onmuE4rPXHbKh0s=;
-        b=EoZd1grT8i/Re27VmLjiKZQ9Sf/vZXT3VA5h+x0Xi/XAI1lIJybyN/Eg4jQFSnhNhl
-         RA87e1Ke9n+EJmpBSyc/nllEDGJEbQlYx66NKFh5WTx+VnAW/wBtQsNTRyjNIY0EHv3+
-         cT9Q+UnK1Ogjk6OgbWC7CAqCR5EwWtKaY+0KQpo5Lysb3BoGGfM4qae81n2D1NhcOrnZ
-         74D31p0qh4OllWJpwIN1aXByN4rt+wmKmWj00AX8s/9AmbtogIgiXak+/5S5MswO8zU5
-         rJKY7oxR3PN7XZNq4YtdDhE3Sg3d3snX0KNEkw/RundaU8TdAaex3qnFnwxKR5PqYupz
-         uMsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752571542; x=1753176342;
-        h=content-transfer-encoding:cc:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m6iuHSGE/vZuISt3qNIpWnKcZ1D4onmuE4rPXHbKh0s=;
-        b=qzpye8ykm+jJQFUKxCbDr/Z/sxxps3DPicI8v8DhHxauVw3pYoyxPJFpgYhOus5zs+
-         p+n+faO6Vrp08269/9xD+a7sBCpBu7LpZCAmDdiEspmouIhHJDX/iuCT224PflxH1bC7
-         8tsU+O14+0SR9H2GQ21EiMERKefEwq+NvurRcBWqFwkKLwmBTZXKYX9zmQGgWwTfnlna
-         TvmC8eKJ1SxmPCNqs3i372WJXYhU3I2DHqROKoy/WhC4DMYUZURKiQdyg+VM7cBmcWzD
-         MyqkEOwm0me7gSfCCNGe9D1ICb/MQUsUGfoV+eDYvV1u8xM73tg1vxzwSgjV4SLm9XZR
-         UyrA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+jsochG+RbIGl1uNZKdYw7as3oVEsOX/KEHpn+XMe0EOEPkbSSkeYzN9iV5wnd8+GGhhCqqKQJCCneoI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH9Zra0E+bUrazwikWIv3bTJd01WX4uJKjNxWnyVd5cUVd68KO
-	owau7M0W3hNq4Q9Tgl3dFI7kU7VfsGDJ8/sWacJYDo64Tu5emzvOqHPT7WCmvtyEkwYnzEq9a8r
-	CnsrCYzkJDFYU/VebSEwv+VlAk9EA8OM=
-X-Gm-Gg: ASbGncu8xM4HBKtJ35dgXkJDXSd70KDCo43sFKEtqrmFi+WAeLdKVWA0AaZIjS2h2KS
-	RI84fy7G0fsUF22YjDu6NA/xoKtKEfEXbQqEdnaIhNhXYKSrOv82UqxSVf4AN7YzknFvuidcrPo
-	zk27fO5ts6rncMCR7YrFuEC0X3lnjSBXd5UePZ69RjDbmtNLrj1gzWj5ZOHr8/X/rbmBuKtv+cX
-	lAux+/tceSZb/3ELbi/WqlCiSFcwo5sYKJAajvEm62vLac9zw==
-X-Received: by 2002:a05:690c:9c10:b0:718:113b:a5c with SMTP id
- 00721157ae682-71824af6ed1mt29005427b3.10.1752571542361; Tue, 15 Jul 2025
- 02:25:42 -0700 (PDT)
+	s=arc-20240116; t=1752571593; c=relaxed/simple;
+	bh=slpGwSdYfjT4mQWLMWsK+wKd8ciwm+usWuZFAMlQu0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tcAkIdOS285QnAeXXxuDDQRgeV8xQEbzNypX0ePkgVPRLBqYHyDVlvoK+ETkS0O36By2Y4cLTsNDR+2DLT/b8HWjuDWJnsSvroHmBfM9U2/gjMEmoWH3wUB8Deqo8SGNyDnZ+hZNsXDgUM9hUuqiL0a6Mv2zzZ4u1h6JGPgm7UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id EBC5B1D9F7E;
+	Tue, 15 Jul 2025 09:26:28 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id 532B430;
+	Tue, 15 Jul 2025 09:26:25 +0000 (UTC)
+Date: Tue, 15 Jul 2025 05:26:41 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
+ <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
+ Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
+ E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
+ tech-board-discuss@lists.linuxfoundation.org
+Subject: Re: [RFC PATCH 2/5] unwind: Export unwind_user symbol to GPL
+ modules
+Message-ID: <20250715052641.1ceb958c@gandalf.local.home>
+In-Reply-To: <aHYA9IPs5QiX-QLs@infradead.org>
+References: <20250709212556.32777-1-mathieu.desnoyers@efficios.com>
+	<20250709212556.32777-3-mathieu.desnoyers@efficios.com>
+	<aHC-_HWR2L5kTYU5@infradead.org>
+	<20250711065742.00d6668b@gandalf.local.home>
+	<aHSmIa3uffj5vW-m@infradead.org>
+	<20250714062724.6febd9fb@gandalf.local.home>
+	<aHTsOcIUs0ObXCo1@infradead.org>
+	<20250714075426.36bdda0b@gandalf.local.home>
+	<aHYA9IPs5QiX-QLs@infradead.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715091826.3970789-1-rick.wertenbroek@gmail.com>
-In-Reply-To: <20250715091826.3970789-1-rick.wertenbroek@gmail.com>
-From: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Date: Tue, 15 Jul 2025 11:25:04 +0200
-X-Gm-Features: Ac12FXzA95YgXoxLQ6f74t0E_Gn3zhZLRnGtrisY8g0SjgFtHHFg3IEcz3eTn5U
-Message-ID: <CAAEEuhrtDcKfFF9NuME89tziuqYz4Y5fwepKE0kjSQD_6fzb2g@mail.gmail.com>
-Subject: Re: [PATCH] nvmet: pci-epf: Do not complete commands twice if
- nvmet_req_init() fails
-Cc: rick.wertenbroek@heig-vd.ch, dlemoal@kernel.org, 
-	alberto.dassatti@heig-vd.ch, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	Chaitanya Kulkarni <kch@nvidia.com>, linux-nvme@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 36tdjip6t34a9pg4wwtwp8pixmhgmn61
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 532B430
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1//T8zPQLXZBwI/an/qjdBgfQ9JkxnPbrA=
+X-HE-Tag: 1752571585-357310
+X-HE-Meta: U2FsdGVkX1+abi9f0XP4/m50ESB6j0w37LP6NDYmqgWObwRz5210WIa1ZuDswwTddpSXqaa25NIWNeTSIQQPDnsmt5rQTN+Qud4GVFJ6jqTF/HshasrH84pItG5atOgHo6vb5caRqaKP3M7HSczBxXY6dOO3lpjrWx4AQgHrs7tZSlibLN0GDlXuoNK/CalNM3SEuvxNUItoEkPQrYgM1pARMDcmh7NARe7hU1vMt0njTlfa0JBy/lTzMFaCbNgXdxIcoJliW7ni4kyA44/Yl5MZcJN8wXDS3FxAEA9FKwJG1Y4opsGrTlI6LZNUay7Q5qFt/6RQRKHKVMGCZ7SfC3WeLodkFmvWM2QcnV8SKG9Dbvs4Ikvf08+a+yiCiHdnLjbP69ySgJUUxZu4TnwlTQ==
 
-On Tue, Jul 15, 2025 at 11:18=E2=80=AFAM Rick Wertenbroek
-<rick.wertenbroek@gmail.com> wrote:
->
-> Have nvmet_req_init() and req->execute() complete failed commands.
->
-> Description of the problem:
-> nvmet_req_init() calls __nvmet_req_complete() internally upon failure,
-> e.g., unsupported opcode, which calls the "queue_response" callback,
-> this results in nvmet_pci_epf_queue_response() being called, which will
-> call nvmet_pci_epf_complete_iod() if data_len is 0 or if dma_dir is
-> different than DMA_TO_DEVICE. This results in a double completion as
-> nvmet_pci_epf_exec_iod_work() also calls nvmet_pci_epf_complete_iod()
-> when nvmet_req_init() fails.
->
-> Steps to reproduce:
-> On the host send a command with an unsupported opcode with nvme-cli,
-> For example the admin command "security receive"
-> $ sudo nvme security-recv /dev/nvme0n1 -n1 -x4096
->
-> This triggers a double completion as nvmet_req_init() fails and
-> nvmet_pci_epf_queue_response() is called, here iod->dma_dir is still
-> in the default state of "DMA_NONE" as set by default in
-> nvmet_pci_epf_alloc_iod(), so nvmet_pci_epf_complete_iod() is called.
-> Because nvmet_req_init() failed nvmet_pci_epf_complete_iod() is also
-> called in nvmet_pci_epf_exec_iod_work() leading to a doubple completion.
->
+On Tue, 15 Jul 2025 00:19:16 -0700
+Christoph Hellwig <hch@infradead.org> wrote:
 
-s/doubple/double/
+> I honestly don't care.  Not my business.  And you're probably also
+> asking the wrong question, as those giant old out of tree projects
+> tend to be a mess because of that.  The right question is really what
+> functionality does LTTng have that we want in the kernel and work on
+> that.
 
-> This patch lets nvmet_req_init() and req->execute() complete all failed
-> commands, and removes the double completion case in
-> nvmet_pci_epf_exec_iod_work() therefore fixing the edge cases where
-> double completions occurred.
->
-> Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-> ---
->  drivers/nvme/target/pci-epf.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/nvme/target/pci-epf.c b/drivers/nvme/target/pci-epf.=
-c
-> index a4295a5b8d28..aad828eb72d6 100644
-> --- a/drivers/nvme/target/pci-epf.c
-> +++ b/drivers/nvme/target/pci-epf.c
-> @@ -1243,7 +1243,7 @@ static void nvmet_pci_epf_queue_response(struct nvm=
-et_req *req)
->         iod->status =3D le16_to_cpu(req->cqe->status) >> 1;
->
->         /* If we have no data to transfer, directly complete the command.=
- */
-> -       if (!iod->data_len || iod->dma_dir !=3D DMA_TO_DEVICE) {
-> +       if (iod->status || !iod->data_len || iod->dma_dir !=3D DMA_TO_DEV=
-ICE) {
->                 nvmet_pci_epf_complete_iod(iod);
->                 return;
->         }
-> @@ -1604,8 +1604,13 @@ static void nvmet_pci_epf_exec_iod_work(struct wor=
-k_struct *work)
->                 goto complete;
->         }
->
-> +       /*
-> +        * If nvmet_req_init() fails (e.g., unsupported opcode) it will c=
-all
-> +        * __nvmet_req_complete() internally which will call
-> +        * nvmet_pci_epf_queue_response() and will complete the command d=
-irectly.
-> +        */
->         if (!nvmet_req_init(req, &iod->sq->nvme_sq, &nvmet_pci_epf_fabric=
-s_ops))
-> -               goto complete;
-> +               return;
->
->         iod->data_len =3D nvmet_req_transfer_len(req);
->         if (iod->data_len) {
-> @@ -1643,10 +1648,11 @@ static void nvmet_pci_epf_exec_iod_work(struct wo=
-rk_struct *work)
->
->         wait_for_completion(&iod->done);
->
-> -       if (iod->status =3D=3D NVME_SC_SUCCESS) {
-> -               WARN_ON_ONCE(!iod->data_len || iod->dma_dir !=3D DMA_TO_D=
-EVICE);
-> -               nvmet_pci_epf_transfer_iod_data(iod);
-> -       }
-> +       if (iod->status !=3D NVME_SC_SUCCESS)
-> +               return;
-> +
-> +       WARN_ON_ONCE(!iod->data_len || iod->dma_dir !=3D DMA_TO_DEVICE);
-> +       nvmet_pci_epf_transfer_iod_data(iod);
->
->  complete:
->         nvmet_pci_epf_complete_iod(iod);
-> --
-> 2.25.1
->
+See my reply to Linus in the other thread you were Cc'd on.
+
+https://lore.kernel.org/all/20250715052459.0000e119@gandalf.local.home/
+
+-- Steve
 
