@@ -1,237 +1,337 @@
-Return-Path: <linux-kernel+bounces-732389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A34B06618
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:33:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8BC1B0661E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDCFA7A39E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:32:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A27274E8201
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFE22BE057;
-	Tue, 15 Jul 2025 18:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B04A2BE63D;
+	Tue, 15 Jul 2025 18:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="YhRe1Ytb"
-Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011028.outbound.protection.outlook.com [52.103.68.28])
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="T3Sde3Jt"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010041.outbound.protection.outlook.com [52.101.69.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A299B14286;
-	Tue, 15 Jul 2025 18:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38051F0E24;
+	Tue, 15 Jul 2025 18:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.41
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752604416; cv=fail; b=bvBdFViEfvAmBzBTDQ7IXj75Ju5LC03aFi6LBcWHRSWQQPnk1n8AklERXWdRzlyDJMuRbPkRtHb9UYgqgQb9xuAl3NzM1l5T+K4JE7bQyvmRK+RhKThxzqD/Msa6P8j7/rGjADUgr0n849/FcBZ137v3KpkoPNJ8kwhpV/nlK0U=
+	t=1752604556; cv=fail; b=G8vRDWV6nVNtoNmPETtb/A9ZPBqhn3LDTti3wLKu1N3oi2OPojQMnIoz0sYsg28M1RESEqJrCJVxXQixBfyNWoHNvwdXlBwDETwfY4M8R4UHVJmcYKnGKTwWAuRgN3Dij0dJBb5QGfeibBe0zAB3AKDSuuggxh0NXeKfY8H1t8Y=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752604416; c=relaxed/simple;
-	bh=fBkml7GnRCR0qYRJIL/jzK/Kevjle3E46L+beC13yO0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=QuYp63QfO4wz/Z9PqBOE+7q/3ObY9KYyNaWvOv15DKtnLI1wGDUt9VzQm0LCY3TKFbGI2qp+iDumaJnXZZgjUpD7uy1ehdby6KpyXAzXox3SzC/TDWxs9X3koaKVkhnEYWwoDdPFqCCO/IoEkiMq0dEgBg5gZhGwXyfE8frW12Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=YhRe1Ytb; arc=fail smtp.client-ip=52.103.68.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+	s=arc-20240116; t=1752604556; c=relaxed/simple;
+	bh=50yxcJKuGOcwad8thYGdNaJO9HlghbksIImbX86NblI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=PnhLMyEpcIhqyuB8SOh82F0XlqgEOUbYvN/v0xpLkaxeI3S+Km5ka5jp6RIn12yQ/8/lFPjSQWQjSOfju9IXeoJ01o++f/mEG/H9P7VSOg/2LsyV234NaTiSdKqX7/lCxXUSElsicEAU7dChJArgOnkXpUFvEdA0OHp0Q6gm8Qk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=T3Sde3Jt; arc=fail smtp.client-ip=52.101.69.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UjFlxju5EZVJX9kqVq/QfUwDG9t8d+7fI4cZEidOg9w1gaQ0D+FRYMgS8/mukls07+1Qu2F9MxmExpP9efrfF7p5eO0FXtwjzHnox3e21Mm3DGGvUkeyjN6tKoHQAVCpDuzZuHLS/tBwMad0ztzkTS3o6PentNXGPs82kIEFnBl9BQ8lNf1anDTue66Na50p6gG3o6r1pm6JHtLPOcKwzj3Uc/xuQW6mOVX5DJvWLMTDWupyt48cNZNd7dDuJuuf/R5uha6PeR8Hy+UdQ2UpkhJUgnUQJGsB3mx092vxMvFgPTbsT7GXe7BIs/m43lMbVgEwGtNnu+BQKtmHm+bu+A==
+ b=sVSHMVrZLbR46zEMkcAkSJSWQvjQvxPcmP0N+GDmNOV82AM61PxxSqKprkCAzaqnDu1mar1llL/cHXVb7My9h5C7ETa3y+p/Ik/64kkcJzwcN10+G+JgVsluHzcJkeDfHIAwV1mOgfH7gY+gb3S8bUMOZ8PPfW+ytcjmsAOcbYRmkkrHSGexpruoWJA7ksJOJa5KYiHM8C4JrBsbV9a2trgqaQPPrhvwSdkR9LxyC45GrOz42qnm3GuHyuBIsdwUN8yd5mtA2NIiW4YgB5J8xK8pS5aPMt/i2fvoAZt5FNxuKb52qwVIFb2qb9crrJdSmzEA0m2h+Zk5pGYWcVH2iQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZQy8uC1ZB4gPM7rSuQbuHezTijV0Mnj5zEfd0fbsG7Y=;
- b=rfOe6twmu5pXZvUj7otPHt8IH23+ZYGyG66pmVakXIxIFTkEgQMY68b+NKuaOOBnV7Ul610h5STF687yOpLcqinMG97O1tqp7pBjxSk7ALXNZSgOdMhrF/MIX7dFXS1XU53XAoCBsnl9kLHPbvUjDvOEWsP4/yjMdJgEuB75Kst/PmFy/er44ibpGiiaUvJruX2vP16BJ+mFaVGf3aexAaMSoi9THYg0mpigxeVd2nwImEk043ri0My5oLNsXr5w61JAjqZrThLRS6oR3wu2IpznnsUiNkpfpa9eKb96Hnr20Wb4saXKptH6L4rNiouex3DYIVOGvCOWyvlL0CEFJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ bh=hw7SGhiIf2bCKlwpSjStzKeyabV9WU2OGuxmdh5MmOg=;
+ b=njUf3VGWy9afQvroiqX3TlYJncYZTPkPUCLRvAuzgX70d8hpmIKH4VsXDiLCe9Bp9K0rrcBC5FVsAIxY0N4iezez5aOtSokGmOrd7TdgkaKy0v1i9f7atYKG1fDL2Vd8Y9NkmTR9sznuj7nXSVSNMk3BATrseZaWYGKol3liheMLDFTA2XiV4aAlo7vVGGPN6Mscposee6to7AUCx6GytVvQDF+d0+nPNT9P7yAwSICWrzajjw2ywCQvbSF7VBKcQguROkwC/oHJdLqiN8EIur5DFuJqPysNVbMbHvE9x++qYTO0Sh55DXRqfm/TzdCGICv00SJZz0UkHBqhuEeaAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=de.bosch.com; dmarc=pass action=none header.from=de.bosch.com;
+ dkim=pass header.d=de.bosch.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZQy8uC1ZB4gPM7rSuQbuHezTijV0Mnj5zEfd0fbsG7Y=;
- b=YhRe1YtbCe9yGP5TLv7EwVqhmLjUtneLlEOcqkf2tP5W2YBRZSwuW3ZvidhWC52eZ+43FfrQ55LWBkM/gm00MhJ/shEtFM+xqQNd6SmKGgRz/yIQ1pw/qlkBYNXdAPVVXlX1JVIH5om8aPhs1QtuuBjj5bW0v+4Qi7z/LH3xujNH1WHVorMEIdEkEpsX8BaiY+y79zLBbS5niPMpPWyonaYbyxbcOJsPHDFHEf+Q7UG3hk2Gpxf7SwLpM1O/oyQTjYqzmZVXAtcnvvWO5tvBrS+tdhnEk/LIudS+vE61fEiMXWB44WSgKvC+c+geBsgf/I/ev5yRziSL6aDGzEgsyw==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by MA0PR01MB7555.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:2d::13) with
+ bh=hw7SGhiIf2bCKlwpSjStzKeyabV9WU2OGuxmdh5MmOg=;
+ b=T3Sde3JtHJxsThs9prhmq8x92K2CkwlkdyCWGBVZ9sE4k3TOIko//7i/i4y8deKBLe4ebO2l671olA9MV/gK/bQ76rCoseqeN6TEEbvT/0UEmhOdpH06O8VGBlQcuJp7+AUM+v1HMmJCur1i1Eb+sS1K4cDVVKQyLbYzBaIKVdbQqYrSZyM4Gk21Iw4B+6gKflvNZdgZ8l61DtV4Xef1t8c5bBlHmS7OTjgFUd1j0XI521gMaWoRDrHEV/uigd3btOXSQrUi+tQM055lFcwXVo+duCGZioHBZDhsY26p6SvxWEKZp6Ydh44YKaao1EEnrHhqrJtc7nmSXcp0Mns3Lg==
+Received: from AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:315::22)
+ by DBAPR10MB4012.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:1b4::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Tue, 15 Jul
- 2025 18:33:29 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%5]) with mapi id 15.20.8922.028; Tue, 15 Jul 2025
- 18:33:29 +0000
+ 2025 18:35:48 +0000
+Received: from AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::c75f:604a:ce59:8114]) by AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::c75f:604a:ce59:8114%6]) with mapi id 15.20.8922.028; Tue, 15 Jul 2025
+ 18:35:48 +0000
+From: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
+To: Jonathan Cameron <jic23@kernel.org>
+CC: "lars@metafoo.de" <lars@metafoo.de>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "dima.fedrau@gmail.com" <dima.fedrau@gmail.com>,
+	"marcelo.schmitt1@gmail.com" <marcelo.schmitt1@gmail.com>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Lorenz
+ Christian (ME-SE/EAD2)" <Christian.Lorenz3@de.bosch.com>, "Frauendorf Ulrike
+ (ME/PJ-SW3)" <Ulrike.Frauendorf@de.bosch.com>, "Dolde Kai (ME-SE/PAE-A3)"
+	<Kai.Dolde@de.bosch.com>
+Subject: AW: [PATCH v3 2/2] iio: imu: smi330: Add driver
+Thread-Topic: [PATCH v3 2/2] iio: imu: smi330: Add driver
+Thread-Index: AQHb7DCnxFfdguezA0CMBsJ2vkpDJrQlVJwAgATVpeCABfU/AIADa+ZQ
+Date: Tue, 15 Jul 2025 18:35:48 +0000
 Message-ID:
- <PN3PR01MB9597593E4F7B8147FCC13EA5B857A@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-Date: Wed, 16 Jul 2025 00:03:25 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] HID: apple: validate feature-report field count to
- prevent NULL pointer dereference
-To: Qasim Ijaz <qasdev00@gmail.com>, jikos@kernel.org, bentiss@kernel.org
-Cc: orlandoch.dev@gmail.com, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250713233008.15131-1-qasdev00@gmail.com>
-Content-Language: en-US
-From: Aditya Garg <gargaditya08@live.com>
-In-Reply-To: <20250713233008.15131-1-qasdev00@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MAXPR01CA0111.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:5d::29) To PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:f7::14)
-X-Microsoft-Original-Message-ID:
- <702f8339-fbd1-4128-9c34-578aadf09f1c@live.com>
+ <AM8PR10MB4721BAD5BD78B8FD0F5C9798CD57A@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
+References: <20250703153823.806073-1-Jianping.Shen@de.bosch.com>
+	<20250703153823.806073-3-Jianping.Shen@de.bosch.com>
+	<20250706175328.7207d847@jic23-huawei>
+	<AM8PR10MB47217D838CA7DDACBE162D15CD49A@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
+ <20250713144214.6ee02f59@jic23-huawei>
+In-Reply-To: <20250713144214.6ee02f59@jic23-huawei>
+Accept-Language: en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=de.bosch.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM8PR10MB4721:EE_|DBAPR10MB4012:EE_
+x-ms-office365-filtering-correlation-id: 2655f13f-705d-45ed-42db-08ddc3ce6b1b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?hnfB5x1iQgVn+TBIm0oreQ7TPTr3bn0Hml6bXKvFAFzLW+Z3fF88XmFLdZxM?=
+ =?us-ascii?Q?UXz9Sm13N1YVIjMDk+42CiBt0eDGJKCUXVmZqvJ7mkC8KnK4XNbeQH6mQIdq?=
+ =?us-ascii?Q?FdD/OuI9IA8g8L0Jj02uUomvtYRytKmsVh/TY/9IF4xsB71hOUIGXxhdLF4V?=
+ =?us-ascii?Q?i1N+TvBia1w+RIFbfpkL1yaWvK8A2/bFNI5/K2r1vetRSkcFakKlitBGD4U5?=
+ =?us-ascii?Q?+aIXgPZRUgRCk/XoglMw439KdTbB3pyyDlKW2ehIttjPowD/QEqfB0zOPCQO?=
+ =?us-ascii?Q?G7XvATL1rgfGuXFeVyDbo5GJiX71z0lmdWqIZinsO79U7lmkizLxiMotvuS+?=
+ =?us-ascii?Q?P4JGqgES/iSbJCLGEFymlQ+uQtH4Aj5rxoZaKwqTbXGu4gdYxwzKpc+bV2m4?=
+ =?us-ascii?Q?em2fmia6QgsdTYoK2jo6qcsRvoMR3sJ5NNxIagKWHojwRugknIOkw2l/WXOm?=
+ =?us-ascii?Q?BGcORe6+LV+1WWf5VQ9C6TYJLCcqarYSirF46TdNaPE+OfjPuUYOKzQttanu?=
+ =?us-ascii?Q?tmmZZ/WC1Zg6MObHi0XKW+xPAtNml9Sx25ITFxS2ULB9O2Kzurv9Wylc52tW?=
+ =?us-ascii?Q?JONGc4nvidh/8xS4XDgALBQP5UO0oDmzsCkaIj1btnBdbQhLleUaYDA1BNBF?=
+ =?us-ascii?Q?4G1poKZuoT2Y/p1SVAqZPptJ3f7s15bU1ooWhCxkT+SwAWXPoHfejpV3p9RW?=
+ =?us-ascii?Q?jXZ+lYn7Dr1zBsEYbU9PPAkaqVUf2CQhaccgVphTsprU3jKuvi/b/M6/IxIA?=
+ =?us-ascii?Q?mi6vbVJRiBzvJJKyiopLwG0LmbT539Wwl+1RzS9BTlJiRtg5lxBZLMiRUV0v?=
+ =?us-ascii?Q?Lsw0eeuDkqQMSDKpjKkBl12oU9dmKtoDth1YqU7twoUgOeUR0YnzzYtKyO+e?=
+ =?us-ascii?Q?BI8mE/lQFiAK55TmNuH9m5NLB9J8rZ6LdnSZBKYgbS87zddbXBAfuFUH7Zrn?=
+ =?us-ascii?Q?D6IqHEjxZEJuJaYj9rCDYD5kduqrruw2hCXwopZ44hFjfEnUg9Yika95iapy?=
+ =?us-ascii?Q?rNfEFmQCB9jKccmDHdVCWzunT3N6JjXB2r+xA69gmfLJhYIUawsFOmuLGQIA?=
+ =?us-ascii?Q?Ikghhze3ap/FnR6B/zSY9cNMp6KDa1LxCsZNUUrjqrDn6e64uQHT23dJ0njd?=
+ =?us-ascii?Q?b7EyTlT7FhR0Od1lAaEV4RCV2bvsqesMztJM6hpS3zoyGxuB6F0lvI5KVaJt?=
+ =?us-ascii?Q?/yucHPkqb5PQVwVCg1NoqgCLKqEU35ShMV8DpCI21KXyWRU2meUa2tp4ec1t?=
+ =?us-ascii?Q?tEG6yuRhYkw5l4cA0KTRlbseAVLOOFp50AZGlZM0hPUsx24Vv6PLnE/uZXoS?=
+ =?us-ascii?Q?EaPZXMFZJ9b1Wj5VUAcjp5RJedxLtggS4CP+D4pi8erADdBVGAAlqqgyGFxj?=
+ =?us-ascii?Q?Nu5P1EtFregXdjKfAe5+ZaAzr5CGJkyB8l5vR75JASEjob/5AoQfAiLTNoMh?=
+ =?us-ascii?Q?Mym7nW8P3UNPEIpZ/eut2cCQGKYKMQwkx8xjJ/0qVlptzHTDfyA8dg=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?C4wtx01vhVxpbVToRXd0yWx5zwcl+WAtfUKWzsVcpsD+UJAHsasCYHXPUm7p?=
+ =?us-ascii?Q?N2EMssnwmplszg4NgMq3VUQO2cehBEr+o57xslt32uOwWjuaoY6/Zd9BD1DM?=
+ =?us-ascii?Q?InGuux6GzSCVo/qVe3Zmt+ljbVjyRc0QZbsDNEgQfeCmfSfAVchfj/r6HM26?=
+ =?us-ascii?Q?HZd84UEoXI2jApsG9xf6IXaoSreT3diTqMXTyai9saQB80pyD5FpUlD6MiM3?=
+ =?us-ascii?Q?iNbhNlhkFIzII+40RWQ/u+Qv4H5/oPZyOHJswRf5JTsBzRvXcYWUlFGDRTAq?=
+ =?us-ascii?Q?eCEsYDu2jjZJ8QkyVwUpBpCbKMdmgPtjvDsonRV6fyxCEL2Ofv4/7m1x5dm+?=
+ =?us-ascii?Q?nDRbtyVTkh84UggDz+6TFDEkBQ+a11kw8uPJAB8LkDBwUp0P2v87s7ejwxjO?=
+ =?us-ascii?Q?t9c/LH0r9PWUHP14ui7x5a5mw3TfBiTImt/LGvitWl/zEC78NmPslpV2abIb?=
+ =?us-ascii?Q?cax7v+39tCA/sriPjdnmd4RS0WBpm+GTpCh2m/egMfGIxLovGBVEpfcwlniG?=
+ =?us-ascii?Q?ApNhcFz0+l5DWVXDlHyLTpiVIzQKwgW9ZHA6D3tZY5LMNnnnrK+1q1FBFX+3?=
+ =?us-ascii?Q?FBKrEVsT/pjs8fsPPTZqPyKFU+2jcy7KAlexg+d2RRbHsC4R7R3LxjtYKr2l?=
+ =?us-ascii?Q?pxhpPqJh/MdSfzIeM6CE6LYZp7Uyu0cJ2Go+nUR+6sA4dfawTnvD/fFQEwQ7?=
+ =?us-ascii?Q?GBSNQ9u7ZYQCo8yLtuMDEZ4as/59nctu2zHWTSqWK7D0tn/XFgFH4I9L8tp1?=
+ =?us-ascii?Q?Yjei34dCqZSaWzwcB4jaMXpLG3Y+QQ7g3JHzqYGaTqqC+KBPe99a5UJSHFmK?=
+ =?us-ascii?Q?LeTl4E4sw9UjrA0eoVJD5LateRly2Eil0eGGhWZjfjwQ4Fm7A5RiHyRwoX5N?=
+ =?us-ascii?Q?Y6xmbtVqEMcZ31zjC0cpgK/3zqCTXFDDTM6d/HwQKe54BiiQ4yWZrWj2wkNM?=
+ =?us-ascii?Q?/U4cIddIrC4Qkvgd0FYZvyHHyfkbc7A6d82CaLQpU8wvYh7SXYWZbrV5NCVR?=
+ =?us-ascii?Q?yjNrJh/6aeMx++3gcgVWYxtZIAWOVHLYQmEYOqKbw25t+FWuLgdk2Yxo61SF?=
+ =?us-ascii?Q?pZ1hx4VzENRe6xy5CYGvAdm/8onRSIi3NsrAUX+Ls2sPOtX9wNegGOK1KwGC?=
+ =?us-ascii?Q?pEhbu6GLuSWe2maUQOt6XyGQ4iXIidpA7nxNBUFS/wI8VdOoUXlxyTMJcKfm?=
+ =?us-ascii?Q?9oyC+4hUcL4BTy1hWhrz6taDZNNepTlPzxzFo+RdFhUysj2fyuMXQ25glCwi?=
+ =?us-ascii?Q?5FUGpmFTCex2InBSOZJqhbDjeky3uMBNFWDwTzfCewSFzQPiS9iplrPjBI3k?=
+ =?us-ascii?Q?uy8HtEIW1+Asfi10OUNVlRdMpqUsgz3Tsm4b5jGeoDmdj8UQYN4hIdasT5Wq?=
+ =?us-ascii?Q?ZbOz/+x0ZMjB635gG3K1XHvaJU9ZiuO9Er9iJCDb12xEV3HOvMYFsBq02Tfx?=
+ =?us-ascii?Q?LhUpHP71G8Fl9c0XkdMItWqOAgfKtRsc7gx8GlZ8TEZ7Ff4u5a9vXfVW/0ap?=
+ =?us-ascii?Q?SakcNnxxwfKvdWr1VZioWwbBgFNd4/Wl3b1U2bY3CKouXp4C6eOKF1YAk8W9?=
+ =?us-ascii?Q?NeHM2j/ECk4x++AMiRM=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN3PR01MB9597:EE_|MA0PR01MB7555:EE_
-X-MS-Office365-Filtering-Correlation-Id: d44cb8cd-4d00-4e14-95b5-08ddc3ce17f1
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|6090799003|41001999006|5072599009|15080799012|461199028|40105399003|440099028|51005399003|3412199025;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MitCRmRVeEhUc3FUUVZzSmRzKzFHSWlSWGE5djlhMTRkbjAwN1NUV3psQm0r?=
- =?utf-8?B?REZ2dDJJNkFOeEZTSnZoV05DSzY5SmtqRElZYXVIb0g0eGFhTHFVOWxVZkJ5?=
- =?utf-8?B?YWZjNjJmQ1pxZG9YU29mb3hzdlJVZmtuU0p2SmZWbVJUT0xObVBhcks4eHRN?=
- =?utf-8?B?eHh2ZDBvS1k0bE1kQ2FIejJOazh3cFltNXBVTGZrMGlJVmJpejhSTEQ5U1F2?=
- =?utf-8?B?cVBpblEzMStxcXdrUkRCV29pMlJTd1EranV5dDI4NEVBOHhzWXJFeC9GT3RW?=
- =?utf-8?B?b3U0V1BxVjRtc3dCSUltYUxHdjhHMXF1cDlSK3FHTDlBZFVwWFBOcXljazEr?=
- =?utf-8?B?M0tiLzQ0ZW1KUThlblZvZlYyZUZOeGFyUGNhZGsxOHBkN1IzczNWOTRMNzN0?=
- =?utf-8?B?bUFENlVKVko0QVJIbHBFM29KallZZ2MvUmNCT2lTUWVNaTNxc3pWbHFQNHlL?=
- =?utf-8?B?eGxrQUdmdU5MTXNMWWYwNElqbW12WktCT2ZoMThCN2Y5OW16cWVUUmhIUEsv?=
- =?utf-8?B?cDl5Z210dzhkWmF4WHVLc1pEa040bWR3b2J1R2hZYldQVHBreTg5YXpwcmdZ?=
- =?utf-8?B?SVdiMzFYZVo4VzhETjFscWRIRkh2c2FPMUlZb1BmOUx2QzNLUC9TWnUrR2U3?=
- =?utf-8?B?QTlmYTFDdnVLR01FbXFKTXlBejZzaTFtYkpsaStubVVZSjFhQ05oaEZzZUUr?=
- =?utf-8?B?S2ZPT1dXNkdiUTV5WkEyUzVzbjVjYUZQR09rTHRBS254KzFMVHkwekFoOGJa?=
- =?utf-8?B?N2VnMW5ha3J2K0gxcXAwbytOUVBxTDZ0SzA2Y3pIQVdHZDlkT0U0bjNrR09o?=
- =?utf-8?B?dCtYZjJ4Ykladk5LNDNUdzhjQVZDeXE3RDlVbTdTblFRRWlITmFHWUllVFRu?=
- =?utf-8?B?akUrSFpiSVlPbjk1TWJyVi9ZRkJJUHZmZ2tULzdONVh1ZlBLcE8xcjZWd3Fi?=
- =?utf-8?B?TjlZNW02cytwd2NTNTd6aFpKTi9ySit0RzkxYmZlWVZEakh4TTA2TnN1U0FW?=
- =?utf-8?B?Umx2U091S1FJMUduWDRXSWg3U0tSMGsvUHgyZ1ZoSktWSklLQVhmbTZvSnA1?=
- =?utf-8?B?Uk9aZ2F4WUJZdHVQa2JFUkh5dnU3Yk9QbkNkeHBkNWVpUG9XNEdJSkpOMUVO?=
- =?utf-8?B?aXVMMWVMT3UremFnbFROWnBNWVhQYXJkL3FjQThBT2xLWWZsK0JnOXAyaXdJ?=
- =?utf-8?B?UTNvajVXOGZHOWJTdlNIK0NiRFF2YUpHU2RtdGxWSmdMVkF4eHhjSk9TK0Rk?=
- =?utf-8?B?WjhUVWNzclh4dWVpcjkxVk96cS9Yd1pXTS82OGpiVDBwOFNMb2luRkFqRGQ4?=
- =?utf-8?B?TWVwL29wMldWYWdsMmp2d2NEeGc4Rk9pb0J4ck5KQlBkcHJ3VlY3UjVTemxi?=
- =?utf-8?B?Q0ZkK3d6SlVGb0hQUUpTZk16UmtaZDlzZDlKZ25BblhWQ0RodzN1VVVSWGhJ?=
- =?utf-8?B?YmZNNHN3TXg1N0EwSUh6NktFS29Sa1g5YUs4dlh3bzI4Tk1GRHp5TzJuT2ph?=
- =?utf-8?B?NmlwZ3ZqWWptZWJSQ3ErT0VQckVQYS9iaEk2emliRGo3cjJCTkJONldDRXA1?=
- =?utf-8?B?SE55QT09?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WHFkWVBhSXFtVk80QUpGRy9CK2dwTDkxUmpLMWpkSkhoNXNuazIzM1dBa28r?=
- =?utf-8?B?Nm5qK0hwTGxjODhRQzk5d00rWjVzS0F6VzhuOXBOaVROakF0dVVneTd6cXN0?=
- =?utf-8?B?cnlUNGQrTmxBN2VMbWpwUHRpWno2eUVOMVZrVkIwZkhNZW5rTzI0SHZLZE5y?=
- =?utf-8?B?T2RTZHRNUk5zMEpqUUxsVGdGT29QKzMvb09BalB6cVZGc05DOXVEdkgxaERJ?=
- =?utf-8?B?S0d3a0JXNDhQK2R3ZDBvbTRtaisvRHp4bHdEMkFjM2ZvMVBQL1E4RXRZNzl4?=
- =?utf-8?B?Ulc5alBwTHBkS0c0eXJzYnBwOFdzeGdpVGE0VVVHZ3pZVDNMOSt6KzNFMjJL?=
- =?utf-8?B?amVlSTk2dEZ2c1F0UnI2ZXBrWDloUjRzQThoQkwyajdZR2VRZXVNeDNad1Vq?=
- =?utf-8?B?VnJZU3BPUFhITkVBbGgwNWp1WVVJY3JYeFBtdGsrMmx5RTNZWEs0andMa2tQ?=
- =?utf-8?B?ZENHZU0vQUppN2M3cTJXRnJaZEZjRkRZUHFUbEtiRlp4bktvNHBkbzRkOUVY?=
- =?utf-8?B?NDlBdTJiWnliaXBZTGR3NGFtcG9taEFkci9FUVBaQ2xJOTduYWtWRXFSdE16?=
- =?utf-8?B?dEorZGZreE5jaDQ4ak9QNVdMUHhKMm5JRnplWUMxVFQvbk0zSTQzSHY0eTJN?=
- =?utf-8?B?OU55a1Eva1RNVmM0SlBLNXhnN3V1NVQ2MlRzTCtOV0kzRDZWSlBSYjV5bUgy?=
- =?utf-8?B?a1JUVjdUWFdYUFgwRE4wMUVOcU9OeXI5MHluYTZSbUE1aTUrMEl6ZS9tQ0lv?=
- =?utf-8?B?WHhmcmI4REo3TXBwYklJbkhhYXM4RjZma3FPdXFabkJqaWRRMUlmRG9HTlhs?=
- =?utf-8?B?RmxuOGNIai96YUoxQ1grVWR2bkJDTGV2S1M5UE5USWlrYUcyNkMzUzhJMFBI?=
- =?utf-8?B?L1NsODIxTHlKd3gyU1lvUEhiY0RRRlQ4Ni93dUd5cWJzYzUvVmdQdCtVWG95?=
- =?utf-8?B?MjJ0UzFsWmpGTG00VnhTZFZXaGt4aUkwYmQwMTRMN29JUGF2N1c1K0pFR1pl?=
- =?utf-8?B?S3AzWUFHZWwwZXQ2QXBvUnQ3RFI3ZE1qN3hWL0dGU2xPVkJOU2w5dVRnVFQ4?=
- =?utf-8?B?OGkrREZDU0NaMGRaL0haVFhKZDdWVXF4dytSM011bHpYeXUwWXpTQ0l1Z0hH?=
- =?utf-8?B?UzJ6N2FQUkd3ajkxanBScVFuSWdYbVB2WmJLa29nOXRzZ0x0WUs4VmNLNEZB?=
- =?utf-8?B?YW9rZkROYW5IalRnOEZFQ2Z3b28zWVdGeFhnbDFWZXV0eENPeWdOTjEyRUV2?=
- =?utf-8?B?WWE0a3pnU3JxWUE1Q3AvZWdxdUtqV0NCRzE1QlZsM2NvdjBsZUpmV3pIbXQ1?=
- =?utf-8?B?Mk01dlVBaHY1cjBQenJzMklmNi80aUo3UW1OekE3OVZJV2RWV1BNZTRibndM?=
- =?utf-8?B?WWYxSVF3KzB1dm9QaXpZUm5xYlMwRnZEOEttc05mUUt5UUZ1TW5nQU02UXBn?=
- =?utf-8?B?WDByeVZtOGFuWm9MUVlTS0l6c1lyNk9MZzg0K1dRclJtSWdDdnZOWUpjQVF3?=
- =?utf-8?B?OEJFaVFTVlllWjFhRU4wcUxvSm5JVTVwQkJxeU1Cb3dtcnE1aHZLVUxhYjY1?=
- =?utf-8?B?TXhibUVvNlo4Tzc0R2t5WmJIL251dDFOMnlzemNlMzcvK2ZCZ21HTlhvTjB5?=
- =?utf-8?B?bnRuUkdmY2JYSjlhQ05CRU5HSXlWN0xtb1hDOHV3SmRrdXI5bEJnOXkwZ0V2?=
- =?utf-8?B?NGhCR0VmZDl3emwzRzZUNjVKc2lJaVh4S2w4SGswbmpZdlVBRkprRnVFQlVE?=
- =?utf-8?Q?D1Ij9VaH6/NRHBnAZBCHZ/2ujLp/0SsNJi1NLo7?=
-X-OriginatorOrg: sct-15-20-8813-0-msonline-outlook-f2c18.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: d44cb8cd-4d00-4e14-95b5-08ddc3ce17f1
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-OriginatorOrg: de.bosch.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 18:33:29.2549
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2655f13f-705d-45ed-42db-08ddc3ce6b1b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2025 18:35:48.3556
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0PR01MB7555
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yaAIlPQKuXzul8Ykof7lCSgIg85q0+pdbjrM6vXxp4TZ9sAfbMQZFtVS+17GC+UtnyCkiehP3VR71/VWkp4hQw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR10MB4012
 
+Hi Jonathan,
 
+as you suggested we just set available_scan_masks =3D {  SMI330_ALL_CHAN_MS=
+K, 0 }; and push the whole buffer every time.
+We enable a subset (3 channels) from user space. This time the channel data=
+ is correct in iio buffer, nevertheless invalid timestamp.
+See test result inline
 
-On 14/07/25 5:00 am, Qasim Ijaz wrote:
-> A malicious HID device with quirk APPLE_MAGIC_BACKLIGHT can trigger a NULL
-> pointer dereference whilst the power feature-report is toggled and sent to
-> the device in apple_magic_backlight_report_set(). The power feature-report
-> is expected to have two data fields, but if the descriptor declares one
-> field then accessing field[1] and dereferencing it in
-> apple_magic_backlight_report_set() becomes invalid
-> since field[1] will be NULL.
-> 
-> An example of a minimal descriptor which can cause the crash is something
-> like the following where the report with ID 3 (power report) only
-> references a single 1-byte field. When hid core parses the descriptor it
-> will encounter the final feature tag, allocate a hid_report (all members
-> of field[] will be zeroed out), create field structure and populate it,
-> increasing the maxfield to 1. The subsequent field[1] access and
-> dereference causes the crash.
-> 
->   Usage Page (Vendor Defined 0xFF00)
->   Usage (0x0F)
->   Collection (Application)
->     Report ID (1)
->     Usage (0x01)
->     Logical Minimum (0)
->     Logical Maximum (255)
->     Report Size (8)
->     Report Count (1)
->     Feature (Data,Var,Abs)
-> 
->     Usage (0x02)
->     Logical Maximum (32767)
->     Report Size (16)
->     Report Count (1)
->     Feature (Data,Var,Abs)
-> 
->     Report ID (3)
->     Usage (0x03)
->     Logical Minimum (0)
->     Logical Maximum (1)
->     Report Size (8)
->     Report Count (1)
->     Feature (Data,Var,Abs)
->   End Collection
-> 
-> Here we see the KASAN splat when the kernel dereferences the
-> NULL pointer and crashes:
-> 
->   [   15.164723] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] SMP KASAN NOPTI
->   [   15.165691] KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
->   [   15.165691] CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.15.0 #31 PREEMPT(voluntary) 
->   [   15.165691] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
->   [   15.165691] RIP: 0010:apple_magic_backlight_report_set+0xbf/0x210
->   [   15.165691] Call Trace:
->   [   15.165691]  <TASK>
->   [   15.165691]  apple_probe+0x571/0xa20
->   [   15.165691]  hid_device_probe+0x2e2/0x6f0
->   [   15.165691]  really_probe+0x1ca/0x5c0
->   [   15.165691]  __driver_probe_device+0x24f/0x310
->   [   15.165691]  driver_probe_device+0x4a/0xd0
->   [   15.165691]  __device_attach_driver+0x169/0x220
->   [   15.165691]  bus_for_each_drv+0x118/0x1b0
->   [   15.165691]  __device_attach+0x1d5/0x380
->   [   15.165691]  device_initial_probe+0x12/0x20
->   [   15.165691]  bus_probe_device+0x13d/0x180
->   [   15.165691]  device_add+0xd87/0x1510
->   [...]
-> 
-> To fix this issue we should validate the number of fields that the
-> backlight and power reports have and if they do not have the required
-> number of fields then bail.
-> 
-> Fixes: 394ba612f941 ("HID: apple: Add support for magic keyboard backlight on T2 Macs")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
-> ---
+Best Regards
+Jianping
 
-Tested-by: Aditya Garg <gargaditya08@live.com>
+>>
+>> >> +
+>> >> +static irqreturn_t smi330_trigger_handler(int irq, void *p) {
+>> >> +	struct iio_poll_func *pf =3D p;
+>> >> +	struct iio_dev *indio_dev =3D pf->indio_dev;
+>> >> +	struct smi330_data *data =3D iio_priv(indio_dev);
+>> >> +	int ret, chan;
+>> >> +	int i =3D 0;
+>> >> +
+>> >> +	ret =3D regmap_bulk_read(data->regmap, SMI330_ACCEL_X_REG, data-
+>> >>buf,
+>> >> +			       ARRAY_SIZE(smi330_channels));
+>> >> +	if (ret)
+>> >> +		goto out;
+>> >> +
+>> >> +	if (*indio_dev->active_scan_mask !=3D SMI330_ALL_CHAN_MSK) {
+>> >> +		iio_for_each_active_channel(indio_dev, chan)
+>> >> +			data->buf[i++] =3D data->buf[chan];
+>> >
+>> >If I follow this correctly you are reading all the channels and just
+>> >copying out the ones you want.  Just let the IIO core do that for you
+>> >by setting iio_dev-
+>> >>available_scan_masks =3D {  SMI330_ALL_CHAN_MSK, 0 }; and push the
+>> >>whole
+>> >buffer every time.
+>>
+>> For the most frequent use cases, we define available_scan_masks =3D {
+>SMI330_ALL_CHAN_MSK, SMI330_ACC_XYZ_MSK, SMI330_GYRO_XYZ_MSK,
+>0 }; and push the whole buffer every time.
+>> From the user space we just enable 3 channels gyro_x, gyro_y, and gyro_z=
+.
+>Then we enable buffer and expect that only the gyro values and timestamp i=
+n
+>iio_buffer. Nevertheless, we have 3 accelerometer values and the timestamp=
+ in
+>iio_buffer.
+>
+>> It seems that the iio core does not take care which channel is enabled, =
+ just
+>copy the first 3 values (acc x,y,z) into iio_buffer.  Our driver code stil=
+l needs to
+>take care and just copy the enabled channel value to buffer.
+>
+>Look again at how it works.  If you provide ACC_XYZ_MSK, then your driver =
+has
+>to handle it.
+>available_scan_masks is saying what your driver supports. The driver can c=
+heck
+>active_scan_mask to find out what is enabled.  So right option here is onl=
+y {
+>SMI330_ALL_CHAN_MSK, 0, }  In that case the driver never needs to check as
+>there is only one option.
+>
+>Then if any subset of channels is enabled the IIO core copy out just the d=
+ata
+>that is relevant.
+>
+>
+>>
+>> Another side effect after using available_scan_masks is that the
+>active_scan_masks sometimes does not reflect current channel activation
+>status.
+>>
+>> Is some step missing to properly use available_scan_masks ?  How can a u=
+ser
+>find out from user space which channel combination is defined in
+>available_scan_masks ?
+>
+>Why would userspace want to?  Userspace requested a subset of channels and
+>it gets that subset.  So it if asks for the channels that make up
+>SMI330_ACC_XYZ_MSK, if available_scan_mask =3D=3D { SMI330_ALL_CHAN_MSK,
+>0 } then the IIO core handling selects SMI330_ALL_CHAN_MSK (smallest
+>available mask that is superset of what we asked for) and sets
+>active_scan_mask to that.  The driver follows what active_scan_mask specif=
+ies
+>and passes all channel data via the iio_push_to_buffers*() call. The demux=
+ in
+>the IIO core than takes that 'scan' and repacks it so that userspace recei=
+ves just
+>the data it asked for formatting exactly as the driver would have done it =
+if you
+>had handled each channels separately in the driver.
+>
+
+Set available_scan_masks =3D {  SMI330_ALL_CHAN_MSK, 0 } and push the whole=
+ buffer. iio_push_to_buffers_with_timestamp (indio_dev, data->buf, pf->time=
+stamp);
+We enable the accX, accY, and accZ from userspace. And expect 3 acc values =
+and the timestamp in iio buffer.
+
+Raw iio buffer data:
+00000000: 3c00 d6ff 7510 0000 6100 f3ff 0000 0000  <...u...a.......
+00000010: 3f00 d2ff 8910 0000 0300 f6ff 0000 0000  ?...............
+00000020: 4900 dcff 7a10 0000 caff 0100 0000 0000  I...z...........
+00000030: 4c00 d9ff 7910 0000 2f00 f8ff 0000 0000  L...y.../.......
+00000040: 4b00 d9ff 8410 0000 1f00 0800 0000 0000  K...............
+00000050: 4700 daff 7f10 0000 3b00 eeff 0000 0000  G.......;.......
+00000060: 3f00 d8ff 8410 0000 0c00 0900 0000 0000  ?...............
+00000070: 4600 d9ff 8010 0000 0e00 0800 0000 0000  F...............
+00000080: 4700 d7ff 7d10 0000 3400 feff 0000 0000  G...}...4.......
+00000090: 4b00 d4ff 8010 0000 3e00 1200 0000 0000  K.......>.......
+000000a0: 4600 d6ff 8d10 0000 4300 0000 0000 0000  F.......C.......
+000000b0: 4900 d6ff 7710 0000 2500 f0ff 0000 0000  I...w...%.......
+
+Converted value
+0.015625 -0.009277 1.024411 589929
+0.015869 -0.009521 1.040769 4294901719
+0.020508 -0.008301 1.025632 458712
+0.018799 -0.006836 1.032956 851960
+0.019287 -0.009521 1.033201 4294836275
+0.015625 -0.010498 1.031003 4293328982
+0.015137 -0.010498 1.031980 4293853176
+0.015869 -0.009521 1.031492 4293722141
+0.018555 -0.011475 1.033445 4294311886
+
+The 3 acc values is correct in buffer.  Nevertheless, invalid timestamp. Th=
+e timestamp is actually the value of the gyroscope, which directly followed=
+ by acc values.
+If we enable the gyroX, gyroY, and gyroZ from userspace, then all the data =
+is correct. Since the gyro values are the last 3 values and flowed by times=
+tamp.
+
+Conclusion: Setting available_scan_masks =3D {  SMI330_ALL_CHAN_MSK, 0 }, t=
+he iio core is able to correct handle the enabled channel data, but not the=
+ timestamp.
+The working solution for now is that our driver takes care and just copys t=
+he enabled channel value to buffer without using available_scan_masks.
+
+>So the aim is that userspace never knows anything about this.  Just set wh=
+at
+>channels you want and get that data.
+>
+>Jonathan
+>
+>
+>>
+>> >
+>> >The handling the core code is reasonably sophisticated and will use
+>> >bulk copying where appropriate.
+>> >
+>> >If there is a strong reason to not use that, add a comment here so we
+>> >don't have anyone 'fix' this code in future.
+>> >
+>> >> +	}
+>> >> +
+>> >> +	iio_push_to_buffers_with_timestamp(indio_dev, data->buf,
+>> >> +pf->timestamp);
+>> >> +
+>> >> +out:
+>> >> +	iio_trigger_notify_done(indio_dev->trig);
+>> >> +
+>> >> +	return IRQ_HANDLED;
+>> >> +}
+>>
+
 
