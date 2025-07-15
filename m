@@ -1,118 +1,153 @@
-Return-Path: <linux-kernel+bounces-731411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3406CB053DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:57:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2AAB053DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68348170CFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:57:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B35A16B99C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8991927280A;
-	Tue, 15 Jul 2025 07:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567D32737F3;
+	Tue, 15 Jul 2025 07:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TPGbNa1e";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DYK2Chfs"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KxJW6iWY"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F6D1E868
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EC6262FD2;
+	Tue, 15 Jul 2025 07:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752566266; cv=none; b=gk1zJ9/ghFgwnTL5RIH13UZmoUr+/zW//j56L816vTDHQsSQJ7YC4aZtazSNsGjP5zK3eRcflRjG9+6CX7AocrMFHWd7qQYehb+UFvfZ73Na+0rvlISI/FtzqDW2p21iK3j3tHI/d1abTvi2hZy1bxn7BYHxwUhLvxm1dLuP8IE=
+	t=1752566293; cv=none; b=P3ZyX4+wFCwNAydGxvJL6JDN8otLXVtWxxsdeE8fOMsoCv7NhYNxgShVAv3RuXFbGxv75QyuL8CC3BgJWVvXytHVQeySHf6XNZc7qsvR/5FZ9OE42+6lt9BE8Sq0zZD/sbi1FS73XZrXAdnUpG+fM00Zt+MRCxVRL2YluvVqaqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752566266; c=relaxed/simple;
-	bh=fTkn3eXAD0eJYXRekYRqa3rDNvdGjNspToUupDCBuso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bYxXD7oXMWQfY4O6yihAS8qubUhjSu9x3MFOZlQw/D5Mh7AP6Uzqohe4Y7g7QRQOf1XrGh0k0VENKpnUwyq+6dgnQ0+o/iFNNISWYag7PrJmG9aL6H5nmeLbnb5PV3zUS6oXmz8WsepyZaB2sAGYjox83sXcz3USHtqBfnY3sZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TPGbNa1e; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DYK2Chfs; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Jul 2025 09:57:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752566257;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dPVzqmxRxYsGvSv+hkg4vDC8LGHJ5NfLqt0LazWIkK8=;
-	b=TPGbNa1eTH70Ut+vDtjiB4yxUN0RD+IhXcF5pOOK1oUL+inqbKJ6fFR98cUVDYx7eM3wTK
-	cV/9EBKupQTCadBbsVJvRCP9BsX5D1NQKKFyOl5lpWHAhCSorfigbxRR+1wZuGcDKLAVqE
-	RTym9W7vKSu3E2AoBHN7zS8uMrsBK9QT6DGiprrWyZjnz8TkuoPo7L36hWV6OAwHfIaAj3
-	R0+9d+0DCT0/7WnJPp++iLmeNmkvGrrGSuqNolVBXCAXaH/+tK/6HqdDCiyCX1vdNeUz8r
-	ggYeeXEdxwjavlyeaypgmXb4XLrcFU+kv6OqeL0wPo7pv5KsZ+JzS39732N8fA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752566257;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dPVzqmxRxYsGvSv+hkg4vDC8LGHJ5NfLqt0LazWIkK8=;
-	b=DYK2ChfsKMSCDBa1GXVH88w2zgE/5LTywtDCrkogBFFV6dGkRhBgBCy8Gotjoic8KDakHK
-	bMu/t9Z5A6gCMzDg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [linus:master] [selftests/futex]  0ecb4232fc:
- kernel-selftests.futex/functional.make.fail
-Message-ID: <20250715075735.tdXLHcEA@linutronix.de>
-References: <202507150858.bedaf012-lkp@intel.com>
+	s=arc-20240116; t=1752566293; c=relaxed/simple;
+	bh=FJzNQx/PfEYrXvefUo7trGqMuioZ9428uG9BUnZUMaw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Pp9TMpWZz8/zjv59VVypiCuvJeuU7iOERZNmGbQWl7ThXA96rDijLviDBGnIhQKONZvTN/6I4/X05YsZuA4aL1ORJ8zNH2kzsm9X5hErVzJQLEaQgqaFrg+vKtuXyWAUzBVRy4untc8NgrWD0Y9vCKnv03H3BXrknphLtpLOE/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KxJW6iWY; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-748e81d37a7so3083268b3a.1;
+        Tue, 15 Jul 2025 00:58:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752566291; x=1753171091; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jIxv/EnwjEjq2Jpcv/lH1TRbWc7C3rgHmzItEdMwwZk=;
+        b=KxJW6iWYWe2x8kqog7jLgpl2sS1kxgjuUBpMEyMFtoqvT3zUn/WH16dCWwaQERNjgZ
+         P6ilGJi+qxoLbhqgsXNFORU3c2UMibvcc68KahEsoqT3NtDXBXmP1Z2RSjO0pZ3C26Sp
+         Vo9WmHqHzvUs7rbWlUuHoXsSIyNvPW16nXFK8Ff4yrItWNtpVZWgMjk97DFh/9nCg+TS
+         +zJEWSzvr7GXkXZuXHifVVwsOjlu++PIVdAhYx2SPOKqTurmsthfxJZ3e1VwXF/SoTku
+         OQbDNMbqgZzWMr+ombYXwIPjkFvLj2raAHfSx8IGEeT7XwJR/UtO/fCn6YD30SavE/PL
+         Nxnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752566291; x=1753171091;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jIxv/EnwjEjq2Jpcv/lH1TRbWc7C3rgHmzItEdMwwZk=;
+        b=uDBtDG/yWG8sokOJcB5VB9SaxZFpwltvDzeAML2L+30g/z5/ss7ztmo1rHZj4ncynX
+         vh1Ataie8BH3kPGKJ1iUQ0+oieuRDvPPylNOg2f+ZfBDjbDjFeXk/qCbaio0ncyR2Ztj
+         ADov6sjbWTKLAps1sGokC+DWjAvwjem1DnmaSYwSgMDFDuckT3einND7gp0+0gl4lv2i
+         yiV758xS2F3/ivWOqrhmLjH/xD04vZ9ZKJg8elxgqyx/KVDzPKpj/i0x3gtexxZ6G9qZ
+         h0shBcxi9QzSqJDYiAo+WXhZgsrhizuWMudIpcKISwV4ksX3zVbtpqAlhUso8/RHqk7a
+         rJ5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWBmWp6QgWEWPFWxGhoZl/MJj7uLtFy4S7qwcRvMlZgr9WqnuIM/Bf9JjlhIM3NQnwAIGupIf9lu3A7kNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyEadji8u9WpzKOOjt9JJu+Xr7Si4pRBEOfCj0YFzENYiAW/YD
+	nzFl0F0w7ejqxOKB7ObgEMjb7MhXSCq+XPCLvVg8T2jRdvqZj7NLK/Eo2nwAW963
+X-Gm-Gg: ASbGncs1sIA4gjmYGzmjkuGItXvxh2JPQ3OmYv06bezMJVGfpGAooQfKbI4j7gl3tbt
+	KqFDHbUmWfI0r5i6o0x6rxEJB4WHxInOcl8GS4ezOl16ntMEMI+opTcJJr/jth02eHQJSQpibIa
+	c+cLU/OUFS4rLsgcrw98ESFJT2G2ATLGNk7H8JCSKm7poZNsteIttgnwGl0Cg5m/B9ZNEAOsNp7
+	N7/3DkTGlBbQ9kLvZlTTEqAcmpg7714RBWW7GoI0Fw3JuDxD+t2q2KUigi1Rg7OHxSoeYq3KZfA
+	lVnvG+8LJoQn0foafG+MpiCtEokQy3sKgTzbDY+V4g1w0t6xZNm05SKs2sXPhPYRuFOBJN+iEge
+	Sv74+ky63n76jUG/GmczlfrKSsMD/w92qt0dqj/lXAw==
+X-Google-Smtp-Source: AGHT+IGy7rmN2/mlNm71HEquJe8mUQLan4jD9pEbCd1RurIVv3DqVTi67WBvQBfUN6aBqTbjonFJow==
+X-Received: by 2002:a05:6a00:2394:b0:736:50d1:fc84 with SMTP id d2e1a72fcca58-74ee3728e72mr20913259b3a.21.1752566291264;
+        Tue, 15 Jul 2025 00:58:11 -0700 (PDT)
+Received: from shankari-IdeaPad.. ([2409:4080:410:5eb2:ca2d:5448:aece:73e1])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f1d337sm11264953b3a.73.2025.07.15.00.58.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 00:58:10 -0700 (PDT)
+From: Shankari Anand <shankari.ak0208@gmail.com>
+To: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Shankari Anand <shankari.ak0208@gmail.com>,
+	syzbot+ad4661d6ca888ce7fe11@syzkaller.appspotmail.com
+Subject: [PATCH] bpf: restrict verifier access to bpf_lru_node.ref
+Date: Tue, 15 Jul 2025 13:27:55 +0530
+Message-Id: <20250715075755.114339-1-shankari.ak0208@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <202507150858.bedaf012-lkp@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On 2025-07-15 15:36:13 [+0800], kernel test robot wrote:
->=20
->=20
-> Hello,
->=20
-> kernel test robot noticed "kernel-selftests.futex/functional.make.fail" o=
-n:
->=20
-> commit: 0ecb4232fc65e659ca7020f8bb2e0fc347acfb7d ("selftests/futex: Set t=
-he home_node in futex_numa_mpol")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
->=20
-> [test failed on linus/master      bc9ff192a6c940d9a26e21a0a82f2667067aaf5=
-f]
-> [test failed on linux-next/master b551c4e2a98a177a06148cf16505643cd210838=
-6]
->=20
-> in testcase: kernel-selftests
-> version: kernel-selftests-x86_64-7ff71e6d9239-1_20250215
-> with following parameters:
->=20
-> 	group: futex
-=E2=80=A6
-> make[1]: Entering directory '/usr/src/perf_selftests-x86_64-rhel-9.4-ksel=
-ftests-0ecb4232fc65e659ca7020f8bb2e0fc347acfb7d/tools/testing/selftests/fut=
-ex/functional'
-=E2=80=A6
-> futex_numa_mpol.c: In function =E2=80=98main=E2=80=99:
-> futex_numa_mpol.c:213:31: warning: implicit declaration of function =E2=
-=80=98numa_set_mempolicy_home_node=E2=80=99; did you mean =E2=80=98SYS_set_=
-mempolicy_home_node=E2=80=99? [-Wimplicit-function-declaration]
->   213 |                         ret =3D numa_set_mempolicy_home_node(fute=
-x_ptr, mem_size, i, 0);
->       |                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       |                               SYS_set_mempolicy_home_node
+syzbot reported a data race on the `ref` field of `struct bpf_lru_node`:
+https://syzkaller.appspot.com/bug?extid=ad4661d6ca888ce7fe11
 
-I assume libnuma-dev is around because there are not any other warnings.
-That is unfortunate but it seems that numa_set_mempolicy_home_node() is
-only around since v2.0.18.
-Is and update doable? Otherwise I would have to disable the test.
+This race arises when user programs read the `.ref` field from a BPF map
+that uses LRU logic, potentially exposing unprotected state.
 
-Sebastian
+Accesses to `ref` are already wrapped with READ_ONCE() and WRITE_ONCE().
+However, the BPF verifier currently allows unprivileged programs to
+read this field via BTF-enabled pointer, bypassing internal assumptions.
+
+To mitigate this, the verifier is updated to disallow access
+to the `.ref` field in `struct bpf_lru_node`.
+This is done by checking both the base type and field name
+in `check_ptr_to_btf_access()` and returning -EACCES if matched.
+
+Reported-by: syzbot+ad4661d6ca888ce7fe11@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/6847e661.a70a0220.27c366.005d.GAE@google.com/T/
+Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+---
+ kernel/bpf/verifier.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 169845710c7e..775ce454268c 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -7159,6 +7159,19 @@ static int check_ptr_to_btf_access(struct bpf_verifier_env *env,
+ 		}
+ 
+ 		ret = btf_struct_access(&env->log, reg, off, size, atype, &btf_id, &flag, &field_name);
++
++		/* Block access to sensitive kernel-internal fields */
++		if (field_name && reg->btf && btf_is_kernel(reg->btf)) {
++			const struct btf_type *base_type = btf_type_by_id(reg->btf, reg->btf_id);
++			const char *type_name = btf_name_by_offset(reg->btf, base_type->name_off);
++
++			if (strcmp(type_name, "bpf_lru_node") == 0 &&
++				strcmp(field_name, "ref") == 0) {
++				verbose(env,
++					"access to field 'ref' in struct bpf_lru_node is not allowed\n");
++				return -EACCES;
++			}
++		}
+ 	}
+ 
+ 	if (ret < 0)
+
+base-commit: 155a3c003e555a7300d156a5252c004c392ec6b0
+-- 
+2.34.1
+
 
