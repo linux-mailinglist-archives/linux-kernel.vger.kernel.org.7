@@ -1,112 +1,118 @@
-Return-Path: <linux-kernel+bounces-732394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 889A6B0662A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:43:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D67CB0662E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E998161983
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:43:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 022E54A466F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85772BE644;
-	Tue, 15 Jul 2025 18:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02C22BE653;
+	Tue, 15 Jul 2025 18:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LpY6pURJ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jJbhMDqn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44E1298984;
-	Tue, 15 Jul 2025 18:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16BAE1DE2BF;
+	Tue, 15 Jul 2025 18:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752604982; cv=none; b=KYF73B361CCOk07WZU8xgME8Hgm0q+Cc3K9VP5cUgr7Z2aUkt8DQ/umGJV26xKax9vNratE1Iq5thzwipQ74PuYwGd2GaV95/A++pQahy/mYKA2GVVUnBrc6BpVjC1FyRSh7pW4QYpLTtj0R3D9sHvMyhLDcw2v/QGwbYyrNsrk=
+	t=1752605025; cv=none; b=elq/EdMlCm9bFqA9oOHeRWauwPZ0PL+vC7DL2yPc1N+/HbPAudomxoKh9TxeABe9Z0iA5Z6Y71T22hq8sF8HrOs/xwgzS7DT71umHhgXmr/zwEEW/kYoHrwkgHpsXGw6ZK3SSSd8hoR++Cu9Dgm3K9XpAVSZMDireDYfmzjWCf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752604982; c=relaxed/simple;
-	bh=3Sk8OD1GPqm014HeEtd4jh5A62bNxih3I2406/Aru7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Glf5MzlAFSXuRHNTfSz1/PfnMkw2I3pzRmtWl8UOV1zf4R0TIiObaAWTbu5pzA4TxBdJCvMrGWxg0N6ulidgHnKLGMOnQoJW5TF/n0ZokGDP+WYOLEwufS/btjw0qsMKFBtyd8D+Z6U/cP8XA5afhPzXrQpeRIO0Xo6m3hwrtPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LpY6pURJ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 604B578E;
-	Tue, 15 Jul 2025 20:42:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752604946;
-	bh=3Sk8OD1GPqm014HeEtd4jh5A62bNxih3I2406/Aru7A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LpY6pURJoVzQ3RyVwnojcld6jswGontVdnJOuUPiIyk5T89kBkemJjRdCYy7L3Q45
-	 G1I2kdZ4d4WAv4hIcC0ZHPjXnXWGNV1O9iw/K99tffQGWNIoiVc/Z/Hg98rGZetswa
-	 r99MzFp+kJoToaGGjDa+SAIi2u2XweSE90HhQw6Y=
-Date: Tue, 15 Jul 2025 21:42:57 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Darshan Rathod <darshanrathod475@gmail.com>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: uvcvideo: Fix assignment in if condition
-Message-ID: <20250715184257.GM20231@pendragon.ideasonboard.com>
-References: <20250715113056.2519-1-darshanrathod475@gmail.com>
+	s=arc-20240116; t=1752605025; c=relaxed/simple;
+	bh=hnwA/Cl94G/uuXZ1hoCLu04p0joBovLqTgYpqqTRKGQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CneSrd/R/md5eDs6S2jopMMzUpRtztk9Gxz0aaeq+UuRmOr3Tkfui7dXgKQYBio7sq31DghoMfL+g/5WO0Gf1btMS94Q1LWPtBPUe74nSmL5RaTsIJsAoytBMZeijVO81w4p7p3/t9U5o7uFj6ijflfyvYxhzBF0rk1EezhSL/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jJbhMDqn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 928DDC4CEE3;
+	Tue, 15 Jul 2025 18:43:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752605024;
+	bh=hnwA/Cl94G/uuXZ1hoCLu04p0joBovLqTgYpqqTRKGQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=jJbhMDqn4U5Gp9wyAsC8aGRzjq6bXIFKvNCXMrOiVH/YzQJft8dvtlBdsiZCJDVkJ
+	 kMXmO2W0q4IYsPDh8FGHA2T2D6HnoKoqPNwoudFz35UKFFy1W79+rYcqoYGH5zPgsN
+	 MT+eOYLYWtLx9yDjzgI9pJNgJyDrZRA1TSopUXYJ8JICpKslmMTiJRW/s5IoyYVT0G
+	 ro8DJWFEsbhxVIwpAUT02soKuUhXfy2CqMYftgrGAKfMT1rhS6HswURzz35woUXt7m
+	 YPeWzVfPsX51st98KyN0DDOPqYmVtGOCePrzM/5KI5EttGmKWqAe3/XTqArL4BmUST
+	 CpN3W8ZJmmxCA==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net v2 0/2] selftests: mptcp: connect: cover alt modes
+Date: Tue, 15 Jul 2025 20:43:27 +0200
+Message-Id: <20250715-net-mptcp-sft-connect-alt-v2-0-8230ddd82454@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250715113056.2519-1-darshanrathod475@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFChdmgC/42NQQrDIBRErxL+ur+ojQS66j1KFsZ+E2mq4SuSE
+ rx7JSfobt4MM3NAIvaU4N4dwFR88jE0UJcO7GLCTOhfjUEJpcUgewyU8bNlu2FyGW0MgWxGszY
+ tjXFiuJHrCVp/Y3J+P7ef0GowNnPxKUf+nn9FntEf00WiwMlJq800kR70400caL1GnmGstf4An
+ AUV3cgAAAA=
+X-Change-ID: 20250714-net-mptcp-sft-connect-alt-c1aaf073ef4e
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Shuah Khan <shuah@kernel.org>, Christoph Paasch <cpaasch@openai.com>, 
+ Davide Caratti <dcaratti@redhat.com>
+Cc: Florian Westphal <fw@strlen.de>, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1651; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=hnwA/Cl94G/uuXZ1hoCLu04p0joBovLqTgYpqqTRKGQ=;
+ b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDLKFkadUrrUPXOiTVhTyaIT+rqyklab7u9xTM9fYuzH8
+ +iclzdHRykLgxgXg6yYIot0W2T+zOdVvCVefhYwc1iZQIYwcHEKwESsTjP8FTu3WUx65cr8fdZS
+ l3sOLJBVvbt6i8BNY7svJ9forj4qeZzhf+5GzncPp/dt+fYj97jml3cKeyZ5Xyifv5xHlUkyubI
+ 3iRcA
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-Hi Darshan,
+mptcp_connect.sh can be executed manually with "-m <MODE>" and "-C" to
+make sure everything works as expected when using "mmap" and "sendfile"
+modes instead of "poll", and with the MPTCP checksum support.
 
-Thank you for the patch.
+These modes should be validated, but they are not when the selftests are
+executed via the kselftest helpers. It means that most CIs validating
+these selftests, like NIPA for the net development trees and LKFT for
+the stable ones, are not covering these modes.
 
-On Tue, Jul 15, 2025 at 11:30:56AM +0000, Darshan Rathod wrote:
-> The function uvc_input_init() used an assignment of the return value
+To fix that, new test programs have been added, simply calling
+mptcp_connect.sh with the right parameters.
 
-s/used/uses/
+The first patch can be backported up to v5.6, and the second one up to
+v5.14.
 
-> of input_register_device() within the condition of an if statement.
-> 
-> This coding style is discouraged by the Linux kernel coding style guide
-> as it can be confused with a comparison and hide potential bugs.
-> The checkpatch.pl script flags this as an error:
-> "ERROR: do not use assignment in if condition"
-> 
-> Separate the assignment into its own statement before the conditional
-> check to improve code readability and adhere to the kernel's
-> coding standards.
-> 
-> Signed-off-by: Darshan Rathod <darshanrathod475@gmail.com>
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Changes in v2:
+- force using a different prefix in the subtests to avoid having the
+  same test names in all mptcp_connect*.sh selftests.
+- Link to v1: https://lore.kernel.org/r/20250714-net-mptcp-sft-connect-alt-v1-0-bf1c5abbe575@kernel.org
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+Matthieu Baerts (NGI0) (2):
+      selftests: mptcp: connect: also cover alt modes
+      selftests: mptcp: connect: also cover checksum
 
-I'll update the commit message as mentioned above when applying, no need
-for a v2.
+ tools/testing/selftests/net/mptcp/Makefile                  | 3 ++-
+ tools/testing/selftests/net/mptcp/mptcp_connect_checksum.sh | 5 +++++
+ tools/testing/selftests/net/mptcp/mptcp_connect_mmap.sh     | 5 +++++
+ tools/testing/selftests/net/mptcp/mptcp_connect_sendfile.sh | 5 +++++
+ 4 files changed, 17 insertions(+), 1 deletion(-)
+---
+base-commit: b640daa2822a39ff76e70200cb2b7b892b896dce
+change-id: 20250714-net-mptcp-sft-connect-alt-c1aaf073ef4e
 
-> ---
->  drivers/media/usb/uvc/uvc_status.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
-> index ee01dce4b783..3c29c0bb3f7c 100644
-> --- a/drivers/media/usb/uvc/uvc_status.c
-> +++ b/drivers/media/usb/uvc/uvc_status.c
-> @@ -62,7 +62,8 @@ static int uvc_input_init(struct uvc_device *dev)
->  	__set_bit(EV_KEY, input->evbit);
->  	__set_bit(KEY_CAMERA, input->keybit);
->  
-> -	if ((ret = input_register_device(input)) < 0)
-> +	ret = input_register_device(input);
-> +	if (ret < 0)
->  		goto error;
->  
->  	dev->input = input;
-
+Best regards,
 -- 
-Regards,
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
-Laurent Pinchart
 
