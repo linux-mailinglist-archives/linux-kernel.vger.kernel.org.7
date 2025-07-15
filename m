@@ -1,122 +1,189 @@
-Return-Path: <linux-kernel+bounces-732188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B0BBB06331
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:40:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29DB5B06334
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C76BA176BCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:40:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71465567039
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FF324337B;
-	Tue, 15 Jul 2025 15:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121FA246BBE;
+	Tue, 15 Jul 2025 15:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Gjg2LBOX"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQyysHlf"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971DD1FF7C5
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA0F2AD2D;
+	Tue, 15 Jul 2025 15:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752594049; cv=none; b=F7f7U12mficUDidl+XXbkG1LQLwC8kHB6IxbWKxwf6FuWEeM/5glzhm+TGRQi+Q4Lrn448+s8yd9fQrgCdPf6obPl5Smhjxo+LbGK/wyG8x+KZk1HkbNzEaMahAnvsThyG2d6J+kY21vdyNnkiOwj58IZmxnfAPqA0/nGA9krh0=
+	t=1752594076; cv=none; b=IblhCEzSUrtD9EjWoc6KKH6HoCxRdOLyPEDqfQmjVg34OGhtLuUt3ScBN5bTo8KRGZaIEdy71/KY5ULoFfM+Uy33kOz465wAk6nEPIYheuJfxKo2nrTWM152Q4h6aFrEvHp5BlwyPuXXmhcBjJECHCFq++VPdgf9CK6LpZSyIiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752594049; c=relaxed/simple;
-	bh=KZXOlBZn/rmUm1Q4aIgSZSGz9T7kc7vaJG2a74RKDmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W9EhaFWmPjYAjKHptJ7sVvTjOuyGExIjAzxlrJpdEzD2rb0G0pIpjBACwfnMc4bqevMxmDSTebPFqC2WVBOOOVz8H1bWxxA82fNxuH116U3Eswl0Mnz1bf5O0cEbtg3UKn5CrJkZN1M5bXHYopXIhd0TPk3eP9MpkGC4sLNdSNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Gjg2LBOX; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2eb6c422828so3529129fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:40:47 -0700 (PDT)
+	s=arc-20240116; t=1752594076; c=relaxed/simple;
+	bh=nsrtnQIEqo/9toTmS791NZyWW4l5LXFWwuQd8lEs75E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=inTCba7cGEQCYzEvKgmtUcrHredoscvCtiMJpRPsMmOHZqclCGSEG0c7YC6M16/FHpX2zgOahtlKZ8I8rb5W65pGS7/Q7HfYiDO4jz4Ya2FwhUJgXjPrYwIjwdq/TNvtBjTkxXhKoYC4f1OHfIC6et5sE4m1beD7VNzqtU5WZrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TQyysHlf; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-455b00283a5so24871995e9.0;
+        Tue, 15 Jul 2025 08:41:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1752594046; x=1753198846; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kvoEjUb/iWQIWBM9X6EO9p+HH0rv8UIyY+iGcZ9kt2g=;
-        b=Gjg2LBOXDvYHYLuI4ei0Y7pHoaK34UtmcLWbz+s6EnPLA1HBD7iCz8eBFO41NOVYFG
-         n46QP5FdKrxojxk1Dt4fexaZ4PZOx2zZEyGfi6e1u6RkPhgKDCUDh024hQnAjH568yCM
-         FqEG+gziZOrF7vBfas9lPYELBCy6fCtBAJbL/KflU6XfOHIWRED6/1utedCfvtv869hC
-         aaZambSEmCa7Ks18vSgQoV0PAPSZlWYm9tDXokjaakbZKWhB/LFeFaojyUrc7j0i2HEM
-         mQbw8HJ/bQOL1664Cuia+f9q144gnE5OD5FREE53AOb/By/37uRoiIo7kV3wGIHfo+0s
-         ndnw==
+        d=gmail.com; s=20230601; t=1752594073; x=1753198873; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vP/jid/lwTMuSUYEVvS3TKkMNboILXns6WgZgd7cJYQ=;
+        b=TQyysHlfyd+MY/H0hig/TyBlHx85Z2r6n4J9g1EVlFNLwO6AOSBVqUwJ/N/Va/upUt
+         sxrbl/SHsF0Ukk+3eGyyKqIOaCr6wqqIpJwjFyc3ZPVXOKa6to/BW9HfvyggA8xqmvip
+         BEUNwlYPr7BE9RZx1w4+PfCDypLVv6qLw1rjvetQf4F6e0n7JsZwBV9qJKhXH4V6YQyf
+         eWqmmVdLlFqGr2Bv9A+W4t8o5cp4ghzfO1Nla1TvpL00ZEOAlF5+z5fx4cOk8mdRLi3D
+         s7oglV6m6nODrtrIcZoMgn1OSdhlAASP6KyhdZExfOqugZiJMm5r2DKBCmnTS0cV8H5b
+         mHKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752594046; x=1753198846;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kvoEjUb/iWQIWBM9X6EO9p+HH0rv8UIyY+iGcZ9kt2g=;
-        b=Nv45SvZcegz2WqZxP7LFUyjZitVtNEcf6bs4hf2b1wj8xX9KOCL5TPG/8TbCSrixIt
-         KxHV3UExIB4GM5GLJqKLWqM56IszuaG6Wb0/Fvrw4UnU+4NwsqV+boyOt+ewN8RKxleN
-         4j7ROR9kjxW4IxswRFA61DkGyipL6YF2gPDXKxSpoaQNR1Wb0OnNsykuh71ZOD79na6l
-         bP5on8C1GFN2cSaSXeOLMvzJfZWKRrh1YRPYxzjaFQeIA/QgOjbC3jEcZaRYAdly5uxi
-         VUhJ2SqXNnRtQ/5xi2tgkEo1WbP2+bUT/izRvnIpPV8Y1maoAnjWfHemb8CsM7jRo5K/
-         lBvg==
-X-Forwarded-Encrypted: i=1; AJvYcCULscW8Mz1NSYloPmJWkbxp1ndeuWxCZOJe9M5s7U98zai7RvsvTwNFnQfsuCSICWpUXq+D3k2Cm/FcQno=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9zNSRe8d5F+skT2sz3wneuk/DUonM9LTMcatfNN/WJh73FgET
-	tqwv308QSqpLVs+06LCPVKJToZRjA01SNKH54cTBXunCrkAZKHqFBr5YCJuz72U+GxY=
-X-Gm-Gg: ASbGncvMW0U8iy2jsOxq8vV2A+Ypd3JD/iJcea/irJHUVkGZtZ5fUDI7nyIi5Jsg1DV
-	2gtXlNUXLLt/nlPBVIA4thFXNYUqZtEshfk5iKTyxUP9yopX3OgyxPdEOOV7/pXKdfUxfbDuNl9
-	bqJ+KW7bQn8KIDD/GYqzIEGHdWJcVecfWd5HI1Y7zUILL+vd0zvaNXDxnhrvUEoTf+0GdRvN+S3
-	UGGO6DWxBqVFOSxZnlgDdr0Ik+WDoVBckfSOhXZ1iDrxwIcQ1nHDFCvHAXW9Zogzmau1b1s5Deu
-	DEiKfKcUTREuIOAxumIrXdSd7rsYss6cYzAeKsP6+6zX/RmLM/ZmFEZkZJwkGo0rT5bnPnKmDg/
-	PKBN1noBBbO0Is/g8cSzH6+YwgonzdR4aG6w1t+mNnkwp7mQ7vr5oi4PSEAN5qkVxPkRrqe1GeN
-	E=
-X-Google-Smtp-Source: AGHT+IFKnhFNmq0KlawFl9i9Ft4HVwBOdlLXRHqle59J+ZLR6M7llrLVhScKC1ZYnIt69xEPFqu6Tg==
-X-Received: by 2002:a05:6871:3143:b0:2eb:a01a:11b1 with SMTP id 586e51a60fabf-2ff8fb90c48mr3711951fac.9.1752594046499;
-        Tue, 15 Jul 2025 08:40:46 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:1e73:344d:50e5:ce0b? ([2600:8803:e7e4:1d00:1e73:344d:50e5:ce0b])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ff11236266sm2668611fac.11.2025.07.15.08.40.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 08:40:46 -0700 (PDT)
-Message-ID: <764c464e-a45e-4d19-b9d4-a238f1ca84c0@baylibre.com>
-Date: Tue, 15 Jul 2025 10:40:45 -0500
+        d=1e100.net; s=20230601; t=1752594073; x=1753198873;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vP/jid/lwTMuSUYEVvS3TKkMNboILXns6WgZgd7cJYQ=;
+        b=QtzJuVx0SJSHPlUAocN3izv0MNCmWA4qH/0U7iv7KhpvSQ5QvulACbiHHAwv+e2jWR
+         x0ZDdEwnjzXWS6IIUVZvu3lJOLoCFLz1tAyMU1nHmEmpRnqJRMswQW2Lgl3nhDp+VVnn
+         xMpOgA98iO/uvBR8x1TNJQ9vVK1/htaAMR6NQKuMeZ/H29KStrOm9J4raViFOq6gTrTD
+         LafYKqKaxeuTMC3TgJMpqkcfmRaea8rVd68in4GVXV6W7Dezx4BAQ5AJd9TPTrqRNcOO
+         JTMMPPS8AfSwK+YINsYiFgSQUFFieqV0NbB1tszuqUxgXYoUv07KRUd9JXNaE46YUpUZ
+         oW6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVvMoPGcGC2Ccrf8vYF+6mGrORoJsMb6HaAhLwY6CFYVOhoo+thyBjd+lQY6pjtW0p55fM=@vger.kernel.org, AJvYcCW//1SbJXfe3KZEHAz1kG+QwR5N3ml4JyzrDS7x9qRbVbU+JoCTvCQK7vbYIdYLbRDNEOrk2TkmfxqmrbCW@vger.kernel.org, AJvYcCWWNZZjqHVnPZSE/m29e+FmqfvYr9JGVDFR/jG8o0vPOHwoi6ZEsD0dKaHwkKtzmI17mvOwXTnxfbDKREVDgum1@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR0x1AqT9J2+2+CqkVAt3hbTcQ/WQS8s6gRXomIKQbVpRBr82g
+	RoQp24ourFLnCzZtmeco0K5Q853hXGKtV4IlMduQKBglRX4M6+mSXgFE1njvmofHScOavjj3Khd
+	pLqE8Iw6Lz7wr0cuggxn6xPlBBsILMuM=
+X-Gm-Gg: ASbGncsVM02FPFnkFJu85MNZ6gF5mFsJVrfJB5qvSTud1/yb8vaxI1JAqLnMGUcjEPT
+	9ZL7d39rjKgqVxaKVlu/u6oNwgopGjKs9VbXknJj6qJLEkN/C+6E7csBBDEw9FOzI2nDgye7id/
+	WWXbloOuNi2mLwses9/+oo261VIY3cUzRA+mC9AtgRJel3f8tU7UgTZjtaXhNQchqatRyhjtJVC
+	JeMClFsaOtlMONS7MejMtc=
+X-Google-Smtp-Source: AGHT+IHUe55CPlfoXQFNA46EX3tD2L+zAmA4ABcayvzkZKklLjj2akBlQVEyroKE2ImpxzjeHZRCNGen3/yjsDKdInE=
+X-Received: by 2002:adf:edd0:0:b0:3a5:2cb5:6429 with SMTP id
+ ffacd0b85a97d-3b5f18d96camr13102332f8f.43.1752594072711; Tue, 15 Jul 2025
+ 08:41:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: adc: ad_sigma_delta: Select IIO_BUFFER_DMAENGINE and
- SPI_OFFLOAD
-To: Nathan Chancellor <nathan@kernel.org>, Jonathan Cameron <jic23@kernel.org>
-Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250714-iio-ad_sigma_delta-fix-kconfig-selects-v1-1-32e0d6da0423@kernel.org>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250714-iio-ad_sigma_delta-fix-kconfig-selects-v1-1-32e0d6da0423@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250709-arm64_relax_jit_comp-v1-0-3850fe189092@bootlin.com>
+ <20250709-arm64_relax_jit_comp-v1-1-3850fe189092@bootlin.com>
+ <aHZYcY_9JtK8so3C@willie-the-truck> <DBCONB7XHN7E.2UQMMG6RICMFY@bootlin.com> <aHZmOVpcoyTvGY1u@willie-the-truck>
+In-Reply-To: <aHZmOVpcoyTvGY1u@willie-the-truck>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 15 Jul 2025 08:40:59 -0700
+X-Gm-Features: Ac12FXzvpz_ddy7GAzzzXQfSfZjOu2uIdytRA66-cTwOPYu3QFq5bNb__jBKM6M
+Message-ID: <CAADnVQK=x7p6zjvNbv0iqOfE73DM3j0nGSGrFX+pVExLMkJb=w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] bpf, arm64: remove structs on stack constraint
+To: Will Deacon <will@kernel.org>
+Cc: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Puranjay Mohan <puranjay@kernel.org>, 
+	Xu Kuohai <xukuohai@huaweicloud.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, ebpf@linuxfoundation.org, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Bastien Curutchet <bastien.curutchet@bootlin.com>, Ihor Solodrai <ihor.solodrai@linux.dev>, 
+	bpf <bpf@vger.kernel.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/14/25 1:30 PM, Nathan Chancellor wrote:
-> CONFIG_AD_SIGMA_DELTA uses several symbols that it does not explicitly
-> select. If no other enabled driver selects them, the build fails with
-> either a linker failure if the driver is built in or a modpost failure
-> if the driver is a module.
-> 
->   ld.lld: error: undefined symbol: devm_spi_offload_rx_stream_request_dma_chan
->   ld.lld: error: undefined symbol: devm_iio_dmaengine_buffer_setup_with_handle
->   ld.lld: error: undefined symbol: devm_spi_offload_trigger_get
->   ld.lld: error: undefined symbol: devm_spi_offload_get
->   ld.lld: error: undefined symbol: spi_offload_trigger_enable
->   ld.lld: error: undefined symbol: spi_offload_trigger_disable
-> 
-> Select the necessary Kconfig symbols to include these functions in the
-> build to clear up the errors.
-> 
-> Fixes: 219da3ea842a ("iio: adc: ad_sigma_delta: add SPI offload support")
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
+On Tue, Jul 15, 2025 at 7:31=E2=80=AFAM Will Deacon <will@kernel.org> wrote=
+:
+>
+> On Tue, Jul 15, 2025 at 04:02:25PM +0200, Alexis Lothor=C3=A9 wrote:
+> > On Tue Jul 15, 2025 at 3:32 PM CEST, Will Deacon wrote:
+> > > On Wed, Jul 09, 2025 at 10:36:55AM +0200, Alexis Lothor=C3=A9 (eBPF F=
+oundation) wrote:
+> > >> While introducing support for 9+ arguments for tracing programs on
+> > >> ARM64, commit 9014cf56f13d ("bpf, arm64: Support up to 12 function
+> > >> arguments") has also introduced a constraint preventing BPF trampoli=
+nes
+> > >> from being generated if the target function consumes a struct argume=
+nt
+> > >> passed on stack, because of uncertainties around the exact struct
+> > >> location: if the struct has been marked as packed or with a custom
+> > >> alignment, this info is not reflected in BTF data, and so generated
+> > >> tracing trampolines could read the target function arguments at wron=
+g
+> > >> offsets.
+> > >>
+> > >> This issue is not specific to ARM64: there has been an attempt (see =
+[1])
+> > >> to bring the same constraint to other architectures JIT compilers. B=
+ut
+> > >> discussions following this attempt led to the move of this constrain=
+t
+> > >> out of the kernel (see [2]): instead of preventing the kernel from
+> > >> generating trampolines for those functions consuming structs on stac=
+k,
+> > >> it is simpler to just make sure that those functions with uncertain
+> > >> struct arguments location are not encoded in BTF information, and so
+> > >> that one can not even attempt to attach a tracing program to such
+> > >> function. The task is then deferred to pahole (see [3]).
+> > >>
+> > >> Now that the constraint is handled by pahole, remove it from the arm=
+64
+> > >> JIT compiler to keep it simple.
+> > >>
+> > >> [1] https://lore.kernel.org/bpf/20250613-deny_trampoline_structs_on_=
+stack-v1-0-5be9211768c3@bootlin.com/
+> > >> [2] https://lore.kernel.org/bpf/CAADnVQ+sj9XhscN9PdmTzjVa7Eif21noAUH=
+3y1K6x5bWcL-5pg@mail.gmail.com/
+> > >> [3] https://lore.kernel.org/bpf/20250707-btf_skip_structs_on_stack-v=
+3-0-29569e086c12@bootlin.com/
+> > >>
+> > >> Signed-off-by: Alexis Lothor=C3=A9 (eBPF Foundation) <alexis.lothore=
+@bootlin.com>
+> > >> ---
+> > >>  arch/arm64/net/bpf_jit_comp.c | 5 -----
+> > >>  1 file changed, 5 deletions(-)
+> > >
+> > > This is a question born more out of ignorance that insight, but how d=
+o
+> > > we ensure that the version of pahole being used is sufficiently
+> > > up-to-date that the in-kernel check is not required?
+> >
+> > Based on earlier discussions, I am not convinced it is worth maintainin=
+g
+> > the check depending on the pahole version used in BTF. Other architectu=
+res
+> > exposing a JIT compiler don't have the in-kernel check and so are alrea=
+dy
+> > exposed to this very specific case, but discussions around my attempt t=
+o
+> > enforce the check on other JIT comp showed that the rarity of this case=
+ do
+> > not justify protecting it on kernel side (see [1]).
+>
+> I can understand why doing this in pahole rather than in each individual
+> JIT is preferable, but I don't think there's any harm leaving the
+> existing two line check in arm64 as long as older versions of pahole
+> might be used, is there? I wouldn't say that removing it really
+> simplifies the JIT compiler when you consider the rest of the
+> implementation.
+>
+> Of course, once the kernel requires a version of pahole recent enough
+> to contain [3], we should drop the check in the JIT compiler as the
+> one in pahole looks like it's more selective about the functions it
+> rejects.
 
-Thanks for the fix.
-
-Reviewed-by: David Lechner <dlechner@baylibre.com>
-
+I frankly don't see the point in adding and maintaining such checks
+and code in the kernel for hypothetical cases that are not present
+in the kernel and highly unlikely ever be.
+The arm64 jit check was added out of abundance of caution.
+There was way too much "caution".
 
