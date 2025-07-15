@@ -1,85 +1,115 @@
-Return-Path: <linux-kernel+bounces-731992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33330B060AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:20:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD562B06100
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FDAB5071C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:13:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C9645A08D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A409B1F473C;
-	Tue, 15 Jul 2025 14:01:37 +0000 (UTC)
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCD01EF38F;
+	Tue, 15 Jul 2025 14:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QvY0BD7k"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EC91D7E5B;
-	Tue, 15 Jul 2025 14:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894CB1EA7CF
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752588097; cv=none; b=lAtISxj4G49rHGJy18CHqES1u4PgrknekDx+K26lMK4mqLDXcMM4mbBDgORo9Kru5F9h/v0Gx3Eoqj9PnnfOzaCRi+by5/kuqtTO9iT7yslf0wNOQny2638VN5ieFNAVPqNrp36xSmiWUMlGxyRvluTML/6KD+Uo+qbpDeORCCs=
+	t=1752588096; cv=none; b=g2juJFZgDlb25lIvavpjhCcn23RhyekNPyPsOISC3o+7aWv4/vsPHfE8DhgrJHDq/BcLUFGGpTp3/Y+zHzyldvU0Vad8mCuy8T/sJRrkgYvc9CSQdzUW0U9+2J6xUacuQs1MthKaGwZ1OhneqTwL+jTQUG2L2N5b5aX3tHSs+NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752588097; c=relaxed/simple;
-	bh=UaT/5tbfotpns3fiZwVdxou9arFCEkj/zQROG99z+K8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=taxSjI5en5F4O6sQkKGPcDKoAJCD8AwzXZqAcx5f5t65oAqvPIWuljPJ2/25GyOmEh81gXPtQoMZ/9jPiXrAno0Nc5/V5JWsA0vfhb0idaUUFT2n2oEsx5paXvRJiJliN/VO2L5pQiBfBO9llW+W03WLxhqFqz6Mb84mXJ1mdhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from amadeus-Vostro-3710.lan (unknown [119.122.214.181])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1c1690188;
-	Tue, 15 Jul 2025 22:01:22 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: jonas@kwiboo.se
-Cc: amadeus@jmu.edu.cn,
-	devicetree@vger.kernel.org,
-	heiko@sntech.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	ziyao@disroot.org
-Subject: Re: [PATCH v3 4/6] arm64: dts: rockchip: Add ArmSoM Sige1
-Date: Tue, 15 Jul 2025 22:01:15 +0800
-Message-Id: <20250715140115.1925358-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250712173805.584586-5-jonas@kwiboo.se>
-References: <20250712173805.584586-5-jonas@kwiboo.se>
+	s=arc-20240116; t=1752588096; c=relaxed/simple;
+	bh=ZehdloQEUsP88pigCl64ebfictbezAWEu62Zt8m49sM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=in3738IZz3cje74Nys62a6MqZiYu7X8MYRBuipL0OiukdJrgSbaPeXedgfB6holnexpHWDrs3Ki1IovCDComo4sr4gaazD9eIHIhvAUYDg5451nbpOxuhqqytFepoxdWk0vxvLIJOAlXyXETj8nGZKGkJF+fqGCKTDxQz2kBzQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QvY0BD7k; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-558fa0b2cc8so4332674e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:01:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752588092; x=1753192892; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bMq+z0lTQ5uqzjIe7ORBXN+DvvALIfquyp6XwhodWKg=;
+        b=QvY0BD7kEfcCud+y9Vn9la4Fhw8+G1Pj7wEoK8gDPvkl4zKp9bl7iqOzj782EBceI8
+         ccReZhCWcgz0U+kk/Fz3fe1AHdpnmsgU7vg9D6uqH4g/knnOoFg/QohesoucuXWobWZE
+         Jfwfkv9ACztJIR0ezHVsQKmI2K+lR5LrDCdZjl7NSSpRbbn9vfYxIHCqhMBSgUSUfE+S
+         5Bu0psetYdQjfc43FYJ6ctq3aboaPPhqRn+LVVOAumjl7iXH89p73036RDWBPpKFqjX0
+         A5JwvrfnOwiJYCkBU8dOenOH4BFru8Ww70tQzbkf6cNWTXcY78PSVDyOTVH6hrbviHrn
+         FPYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752588092; x=1753192892;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bMq+z0lTQ5uqzjIe7ORBXN+DvvALIfquyp6XwhodWKg=;
+        b=eIuqOFKZFvuog010+YntZi76DOfF90PiV5uON73XClSJyg5gzG1pMoxc8IK7TNgyG9
+         YHFTS4XynzuqUBJY6NE8Aufoo0LOGTrGsbA/wefRcpSFrA/cXcivWjtxQOyTD6qBz/W7
+         2liCOepX5RykYC11UP+6H8w2qA5lz58bZbOy+CIz+uP23qRL6IlXKoxTcS63qL1Isdvd
+         6Z1ZyE1wdClIFHaOFKtp78VhVeeC1jtYoCYETJorXm2E211+1LSoDk9/oKIG2DpdWWUX
+         pffLC2asYJnBp1WuD9Z5mfdXh5898zM3egaDc5bI/ryLJfDiGMoFb3YU8f5RGnY/KB7D
+         6ziw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0AsDuE/TpiJM7eg7su7SS0RqXcIH0jSGRMZOcJP8xL4VyKAw1nkQLsg0DSLYcYqWL1Q4mYPpcbf/pakg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTlfNjaWPIuKbbwDDyPjTDnfPCuykh7OBJT3wBNiihxaxt0vdj
+	G6/OmxdVSnT6rvQPXDfdb51b0r8JQvrlcbcfJEYA/mZ+nLhAsqApraSkORAzZzt3pR/pSXR43cg
+	987nG9PjyQHM6zMrWAHmN1CSQNEh8tbnb3AvxPTFcvQ==
+X-Gm-Gg: ASbGncvQgxJr5RQNrg5+DxRSFHSJxc84qqumJgfGxFKFhpwZZc1DKe1sft0E1OAZOnZ
+	LNTrvcltZzRb/qryUQa2bkuqID4l2H+k4X13xilnfLVYItNQMt9Atuf0Y6KO3ja9zJGJyo2zEAe
+	5F4KRzxRbRI7esSbQSsJcAEhdfihSUGKtsKjHv0b646lOF4y7JJ7PnWKwiv0AMzBkKU+v8UgTTd
+	/GNiKneba58/9R4CA==
+X-Google-Smtp-Source: AGHT+IF13ylGotB5yILT4bHb/RqmaS522PnGXIijvb1MELLLon8vaTv/g4ADQmp0eDqrLOLp5d2POnBSPsqQfLVeuyg=
+X-Received: by 2002:a05:6512:3d0f:b0:553:2f47:ed21 with SMTP id
+ 2adb3069b0e04-55a0460950fmr5418782e87.41.1752588090141; Tue, 15 Jul 2025
+ 07:01:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCSh5PVk5MH0JLSk0YTkwaGVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKT1VKQ0pZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0tVSktLVU
-	tZBg++
-X-HM-Tid: 0a980e63dc5103a2kunm929f6807810238
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PUk6Myo*LTExNwpKIS8xQjhJ
-	TR4KCQ9VSlVKTE5JTkNDS0NISktOVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
-	QlVKSUlVSUpPVUpDSllXWQgBWUFCSkI3Bg++
+References: <20250715100415.60487-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250715100415.60487-2-krzysztof.kozlowski@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 15 Jul 2025 16:01:18 +0200
+X-Gm-Features: Ac12FXxwgG17tM0pR7Wbn7eqRk8ggfOlZMUUBSReGExBS5bLfNdm4fWxeml3fXM
+Message-ID: <CACRpkdZn9ePtwBnxNoy+nijc-oqu5zWoKc2O9QDe=MsgZpRdKg@mail.gmail.com>
+Subject: Re: [GIT PULL] pinctrl: samsung: drivers for v6.17
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, Jul 15, 2025 at 12:04=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3528-armsom-sige1.dts
-> ...
-> +&sdio0 {
-> +	bus-width = <4>;
-> +	cap-sd-highspeed;
-> +	cap-sdio-irq;
-> +	disable-wp;
+> The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd13544=
+94:
+>
+>   Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+>
+> are available in the Git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tag=
+s/samsung-pinctrl-6.17
+>
+> for you to fetch changes up to 683d532dfc9657ab8aae25204f378352ed144646:
+>
+>   pinctrl: samsung: Fix gs101 irq chip (2025-07-05 09:35:22 +0200)
 
-I don't think sdio needs disable-wp?
+Pulled in!
 
-Thanks,
-Chukun
+Thanks Krzysztof, excellent work as always.
 
---
-2.25.1
-
+Yours,
+Linus Walleij
 
