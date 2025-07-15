@@ -1,81 +1,120 @@
-Return-Path: <linux-kernel+bounces-731827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E898B05A57
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:35:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7674FB05A55
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 414771780B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:35:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B40C17E338
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D692E0403;
-	Tue, 15 Jul 2025 12:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="JIovepZd"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCF12E0401;
+	Tue, 15 Jul 2025 12:35:01 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4985D2E03F5
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 12:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737AC274670;
+	Tue, 15 Jul 2025 12:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752582922; cv=none; b=lY4mACbg7blKXWuob5e1TCOdh+7V23E16V1ak0Y70+9xgqZMc07vxO4/jQ28k8abH5K4/7SmZfjC1DMagS5D23kgErfFVeDQAWrPe5vLHknqIM1BcaHuX+2RWGlhUcxmnVBRkKCjzRFB6vXk/6ZlPsvJKucBSr+tHcBHeHuR2hI=
+	t=1752582901; cv=none; b=Vq6iJMj128HoiG+kh85bnvJOdVUiEEfEUfx4DCXxzKbvC+xTVHXtsYbWvEmGNlDVxqd29AI5KOCHtqErIhhIq5rXsUkLminYngWLgmIXxCpalmxVH3+aSOm5ZtmuK+6nz4rDVkGPEroZ5k01+mnDOZdu8NCGaoP0Gm+m/EHyL/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752582922; c=relaxed/simple;
-	bh=QLo89csj3kq3EH40mhgTDCdEVSZgVt+rpcBpJXUGG/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V8vA+B+ZtXVzKOLmxnwKlQ9I+4saWHRckyy1TNOOcQlOUOclZuW4fwzl4GVH/3+YVR8PFMX8hlh4Ks9WT96ZcKUVyNOPq8UMfNH4GDH2B1L7EIdw06MzcOBh3Z5JSsiKWY1brzqGtOp5cfB7XlWI1zchJUu4Z9dqusNHO6P1DKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=JIovepZd; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-108-26-156-131.bstnma.fios.verizon.net [108.26.156.131])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 56FCYsKf005184
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Jul 2025 08:34:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1752582898; bh=JEmCrzAwkf+pL0BE8Ts9Gq27U59HE+yr1Fpegkv0wnE=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=JIovepZdZp+sq9wxOa24YaAKQWfwpYH1SYaeUwfRXHpK8nJQkO+8vCn3RYRiEtTH3
-	 81C2l7YkvrB2um8E9Ww1eKXO09w9gg2VjLHpt7VOP/tf3Fnyo7y8wakIpKjiXoqmE3
-	 ny4+aiCsgMFiPiAnlQ7HD+BttBiuKBFqUv6ImjvFWlOFEIAVXu43o6Uyg+98AxaAWB
-	 IwSyazeqUSQA7u9akobfmwYqAD4I6hFXQiju5tH2AXKgGYMBBckwqIFtkdo1YmhaS7
-	 cpwMV5SoyXWzxLnyFnBQe+ELxfkaK7HRwGiaSAQeHTArXiox4HFBTccDNCrWOzIIpY
-	 ate9EOnTdKBzQ==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 98FA12E00D5; Tue, 15 Jul 2025 08:34:54 -0400 (EDT)
-Date: Tue, 15 Jul 2025 08:34:54 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: chuguangqing <chuguangqing@inspur.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] ext4: add FALLOC_FL_ALLOCATE_RANGE to supported
- flags mask
-Message-ID: <20250715123454.GD74698@mit.edu>
-References: <20250715043808.5808-2-chuguangqing@inspur.com>
- <20250715064536.12053-1-chuguangqing@inspur.com>
+	s=arc-20240116; t=1752582901; c=relaxed/simple;
+	bh=+BZrdO9qK8EyMXdnS9svcH8zWBpti9CiTn7FyoJYg7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L9uAS5lq4TLfHfRSYg7fANnFiUKQeC96qiBhurqlw+mVa6NFYVvQdJVd0mugK2tY3WdCf/5afSFtk0STLBP/RZYqSheOSNKgxRk5HU2BQLbgSF74e1dwMz6sO4CfVPf5bA+VqElXVRP2c9CVumi/JMBQ7M0GKzD4SF5HUxIXcjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id 3E78F12DD02;
+	Tue, 15 Jul 2025 12:34:55 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 9379420032;
+	Tue, 15 Jul 2025 12:34:50 +0000 (UTC)
+Date: Tue, 15 Jul 2025 08:35:06 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
+ <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
+ Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
+ E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Sam
+ James <sam@gentoo.org>
+Subject: Re: [PATCH v13 07/14] unwind_user/deferred: Make unwind deferral
+ requests NMI-safe
+Message-ID: <20250715083506.01458000@gandalf.local.home>
+In-Reply-To: <20250715090955.GP1613200@noisy.programming.kicks-ass.net>
+References: <20250708012239.268642741@kernel.org>
+	<20250708012358.831631671@kernel.org>
+	<20250714132936.GB4105545@noisy.programming.kicks-ass.net>
+	<20250714101919.1ea7f323@batman.local.home>
+	<20250714150516.GE4105545@noisy.programming.kicks-ass.net>
+	<20250714111158.41219a86@batman.local.home>
+	<20250715090955.GP1613200@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715064536.12053-1-chuguangqing@inspur.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: ct31gh6ghco7w9n1i68kjeconey74mg5
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 9379420032
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+owfZCLFT0H27JDc0RpGDEM9MNHAUJVLU=
+X-HE-Tag: 1752582890-436053
+X-HE-Meta: U2FsdGVkX1/b+myhqa8kmYE2rBGF4M/NqgI07kl1Bila8O+AqF1RD6ppUI6loRMxrqoU+Y1NgSHLx49SY2kbAkNorGE5zIZSUezJ5OVwhtGMUHAFeUeGB+O9eazvlB7IrCgP1gYdEdEfZv+jdCZnZys2hZLMBgxrnhQnUNwfbFWb5KUbAXx/S3nHIf+NjwHgena/inUELnViQ+AwZnjQNAXavjOqNhLD/Glbs8nxLqcBHC27omqej/8B8I+7+pf1yV5/ZMxStTgRlmwsJSKK5HKKtYLmD+i8f+PBpofeqaDt9TRAeLTgLrYwlIwraWvZZlHbaR0WXytfQ+QjUhjGw9hlE8LOT6yQj1fZC7XDE9xd/2JHnHIEckrh2IEsFPiV
 
-On Tue, Jul 15, 2025 at 02:45:18PM +0800, chuguangqing wrote:
-> Note that since FALLOC_FL_ALLOCATE_RANGE is defined as 0x00, this addition
-> has no functional modifications.
+On Tue, 15 Jul 2025 11:09:55 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> On Mon, Jul 14, 2025 at 11:11:58AM -0400, Steven Rostedt wrote:
+> > On Mon, 14 Jul 2025 17:05:16 +0200
+> > Peter Zijlstra <peterz@infradead.org> wrote:
+> >   
+> > > Urgh; so I hate reviewing code you're ripping out in the next patch :-(  
+> > 
+> > Sorry. It just happened to be developed that way. Patch 10 came about
+> > to fix a bug that was triggered with the current method.  
 > 
-> Signed-off-by: chuguangqing <chuguangqing@inspur.com>
+> Sure; but then you rework the series such that the bug never happened
+> and reviewers don't go insane from the back and forth and possibly
+> stumbling over the same bug you then fix later.
+> 
+> You should know this.
 
-I'll note that this isn't something which any of the other file
-systems (btrfs, xfs, etc.) is doing.
+The bug was with actually with the next patch (#8) that uses the bitmask to
+know which tracer requested a callback. Patch 8 cleared the bit after the
+callbacks were called. The bug that was triggered was when the tracer set
+an event to do a user space stack trace on an event that is called between
+the task_work and going back to user space. It triggered an infinite loop
+because the bit would get set again and trigger another task_work!
 
-				- Ted
-				
+I can merge patch 8 and 10, but it still would not have affected this
+patch, and would have likely led to the same confusion.
+
+> 
+> I'm going to not stare at email for some 3 weeks soon; I strongly
+> suggest you take this time to fix up this series to not suffer nonsense
+> like this.
+> 
+
+Sure, I'll take a deep look at your review and work on the next series to
+hopefully address each of your concerns.
+
+Thanks!
+
+-- Steve
+
 
