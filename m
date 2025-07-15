@@ -1,252 +1,252 @@
-Return-Path: <linux-kernel+bounces-732293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5439B064A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:51:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1CEB064A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2097F566ECE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:51:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ACFC566EE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557DE279DAD;
-	Tue, 15 Jul 2025 16:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95A0279785;
+	Tue, 15 Jul 2025 16:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPLcD8G7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cE6kgVqM"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CC7186E2E;
-	Tue, 15 Jul 2025 16:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A654F26B769
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 16:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752598287; cv=none; b=bwhDdSd3V8O6sUdTrzeGgHhKppqitMdKnZmrAlDUZNYM/thtWAOv0/Tz2u1Jtgd9zrpsUulhaSauiEXIh7gUS9xFurpN6txA3sDc+9se9Gd/J3MG01ucqXBtYvcPmt5bQD6v+RrW8tviCD/getYMvS4lHk5JRtGEk1xlovYYrkc=
+	t=1752598360; cv=none; b=dDH0z3obRbaOQjpqxI8nR1xhAPr8ZgRg83zz2Q0p+hRlUt4zAnDUw3FNeJUj73z64HJNn6m0m9zo0phnnpiqQDrbstKCdf77Mmx5MSGA93+B9/z2xMpSXn8wmcZu3EbmGvpbJ6fYbjtGvUaRsV5jpSNehPVa5LCvnpiEZC1n2Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752598287; c=relaxed/simple;
-	bh=QuDBPInlpwUSmQnRa356s40FHT7mdzjlze1wJQAFCMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oxBJo8C0otgMXYqWfV8Ljk+rqKyNrZAcLgAJw6gPh0aPpSkq3eOLkFY5XdEj4C3IC87QjCr30dpjtDgugVGcgTunjeQrKk9A0Sp0Sf7zrKOwBuCAhbo/z/Uw+twYtBnWV0BO8EQvYKx0el7nsgUWMFZimStBmd23JKy35O4LHnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPLcD8G7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1161C4CEE3;
-	Tue, 15 Jul 2025 16:51:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752598287;
-	bh=QuDBPInlpwUSmQnRa356s40FHT7mdzjlze1wJQAFCMo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FPLcD8G7MNGk/dz2KDumhfYrwMlPJUwqokkHYRL3S8oc44w7hTIVuHzfjy1acjRU4
-	 E4FWoVB407lIX+rv+28pkXS1F26XdzUTSjhdfScexBuF8cJAlgTVXBkZDnT0Erbtd0
-	 qfSWuUAz4EaELBi8vUO9Ghypn6a6AjiV+aux85SE6bkvyLkh+wUk0/BXtTIouksmCv
-	 QGi9YEwTmCbcMY5Q4cXl79sdN0XgrJFboXCYQa8Le5AiRpEtHPrx7QL7tmUE5BZbcM
-	 QwtQcvj2fgK6nArAFeiLo8EdfC1lPkJVLqfuGP7nFjgF8Gg5fG50/65Z5ZNyUv27QB
-	 kKU6JepqO3cvw==
-Date: Tue, 15 Jul 2025 17:51:22 +0100
-From: Simon Horman <horms@kernel.org>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: ioana.ciornei@nxp.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org, stable@vger.kernel.org
-Subject: Re: [PATCH] net: dpaa2: Fix device reference count leak in MAC
- endpoint handling
-Message-ID: <20250715165122.GF721198@horms.kernel.org>
-References: <20250715120056.3274056-1-make24@iscas.ac.cn>
+	s=arc-20240116; t=1752598360; c=relaxed/simple;
+	bh=l2q0cNcmaBiUPTwW4hVxutVcZbj6qnkal5ois0b5IzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nzb2lBXC7p4Zdn8E0y3prcalP3ZYGVrdNNvVXX2bs27IgHagjbds2BUHWSKHa5OgnRGJKuI8fh6A2C2z/3pLmXzc9GEweL5/TcCwqqSZ/tgz28kbbcwtA8FtLgvGmwTnKsJHUqWSCtgPQjE/L5yM3vtQXnw5NASpguA4YSZcX+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cE6kgVqM; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <9b187e7f-a116-4aea-a9a6-b9222562868d@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752598343;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PSDwHOwwirTu+5GG5v8MghYDm/bHlnyZneE8eaAnzRo=;
+	b=cE6kgVqMqkYNmdqNY7FAcyrYM4YPAbu6khOmp9RxfojkKLRD4vi7QcIbQtTp4SJkNypQZk
+	5fCWyX3cxZHrzLVFoAiakRNx6ealXhLA6q3JQcTpVdKYUK+G4vpnDzOWs+vv85a1baus+5
+	+iQ+t0NMZWA5ATN1j7kcXbrpUoJDMao=
+Date: Tue, 15 Jul 2025 12:52:19 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715120056.3274056-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH 3/7] iio: Add in-kernel API for events
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, linux-iio@vger.kernel.org,
+ linux-hwmon@vger.kernel.org
+Cc: Andy Shevchenko <andy@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, linux-kernel@vger.kernel.org,
+ David Lechner <dlechner@baylibre.com>
+References: <20250715012023.2050178-1-sean.anderson@linux.dev>
+ <20250715012023.2050178-4-sean.anderson@linux.dev>
+ <d8e5c8fbeaee42e9e0708460c47bd68053cd8710.camel@gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <d8e5c8fbeaee42e9e0708460c47bd68053cd8710.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 15, 2025 at 08:00:56PM +0800, Ma Ke wrote:
-> The fsl_mc_get_endpoint() function uses device_find_child() for
-> localization, which implicitly calls get_device() to increment the
-> device's reference count before returning the pointer. However, the
-> caller dpaa2_switch_port_connect_mac() and dpaa2_eth_connect_mac()
-> fails to properly release this reference in multiple scenarios. We
-> should call put_device() to decrement reference count properly.
+On 7/15/25 07:09, Nuno Sá wrote:
+> On Mon, 2025-07-14 at 21:20 -0400, Sean Anderson wrote:
+>> Add an API to notify consumers about events. Events still need to be
+>> enabled using the iio_read_event/iio_write_event functions. Of course,
+>> userspace can also manipulate the enabled events. I don't think this is
+>> too much of an issue, since userspace can also manipulate the event
+>> thresholds. But enabling events may cause existing programs to be
+>> surprised when they get something unexpected. Maybe we should set the
+>> interface as busy when there are any in-kernel listeners?
+>> 
 > 
-> As comment of device_find_child() says, 'NOTE: you will need to drop
-> the reference with put_device() after use'.
-> 
-> Found by code review.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 719479230893 ("dpaa2-eth: add MAC/PHY support through phylink")
-> Fixes: 84cba72956fd ("dpaa2-switch: integrate the MAC endpoint support")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> Sensible question. I'm not that familiar with events but I suspect is not
+> trivial (if doable) to do a similar approach as with buffers? With buffers, an
+> inkernal consumer get's it's own buffer object (that goes into a list of active
+> buffers in the iio device) with all channels enabled and then we demux the
+> appropriate channels for each consumer.
 
-As a fix for Networking code this should be targeted at the net tree.
-That can be done like this:
+For in-kernel consumers I think it's reasonable to expect them to handle
+events they didn't explicitly enable. I'm not sure about userspace
+consumers.
 
-Please also make sure that the patch compiles against the main branch
-of the net tree. That doesn't appear to be the case with this patch.
+> Independent of the above, we can argue that having both inkernel and userspace
+> changing thresholds is ok (I mean, there's nothing stopping two userspace apps
+> doing that) but we should likely be careful with enabling/disabling. If multiple
+> consumers enable the same event, one of them disabling it should not disable it
+> for all the consumers, right?
 
-> ---
->  drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c | 15 ++++++++++++---
->  .../net/ethernet/freescale/dpaa2/dpaa2-switch.c  | 15 ++++++++++++---
+Right now the HWMON consumer never permanently disable events to avoid this
+issue. It does toggle the enable to determine if an alarm should stay
+enabled:
+             ________
+condition __/        \________
+          _____    ____    ___
+enable         \__/    \__/
 
-As this updates two drivers I have a week preference for two patches.
-One with the prefix dpaa2-eth and the other with the prefix dpaa2-switch.
+event       |     |
+             __    ____
+alarm     __/  \__/    \_____
 
-Subject: [PATCH net v2 1/2] dpaa2-eth: ...
-Subject: [PATCH net v2 2/2] dpaa2-switch: ...
+read           1       1    0
 
->  2 files changed, 25 insertions(+), 6 deletions(-)
+I suppose this could also be done by comparing the raw threshold to the
+channel.
 
-I looked over fsl_mc_get_endpoint. I see that that it calls
-device_find_child() indirectly via fsl_mc_device_lookup(). And I agree that
-leaking references is a concern.
-
-But if so, is it not also a concern that fsl_mc_get_endpoint()
-can make two successful calls to to_fsl_mc_bus(). That is, the
-reference count may be taken twice.
-
-So I wonder if something like the following is appropriate.
-(Compile tested only).
-
-diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
-index 7671bd158545..c1c0a4759c7e 100644
---- a/drivers/bus/fsl-mc/fsl-mc-bus.c
-+++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
-@@ -943,6 +943,7 @@ struct fsl_mc_device *fsl_mc_get_endpoint(struct fsl_mc_device *mc_dev,
- 	struct fsl_mc_obj_desc endpoint_desc = {{ 0 }};
- 	struct dprc_endpoint endpoint1 = {{ 0 }};
- 	struct dprc_endpoint endpoint2 = {{ 0 }};
-+	struct fsl_mc_bus *mc_bus;
- 	int state, err;
- 
- 	mc_bus_dev = to_fsl_mc_device(mc_dev->dev.parent);
-@@ -966,6 +967,8 @@ struct fsl_mc_device *fsl_mc_get_endpoint(struct fsl_mc_device *mc_dev,
- 	strcpy(endpoint_desc.type, endpoint2.type);
- 	endpoint_desc.id = endpoint2.id;
- 	endpoint = fsl_mc_device_lookup(&endpoint_desc, mc_bus_dev);
-+	if (endpoint)
-+		return endpoint;
- 
- 	/*
- 	 * We know that the device has an endpoint because we verified by
-@@ -973,17 +976,13 @@ struct fsl_mc_device *fsl_mc_get_endpoint(struct fsl_mc_device *mc_dev,
- 	 * yet discovered by the fsl-mc bus, thus the lookup returned NULL.
- 	 * Force a rescan of the devices in this container and retry the lookup.
- 	 */
--	if (!endpoint) {
--		struct fsl_mc_bus *mc_bus = to_fsl_mc_bus(mc_bus_dev);
--
--		if (mutex_trylock(&mc_bus->scan_mutex)) {
--			err = dprc_scan_objects(mc_bus_dev, true);
--			mutex_unlock(&mc_bus->scan_mutex);
--		}
--
--		if (err < 0)
--			return ERR_PTR(err);
-+	mc_bus = to_fsl_mc_bus(mc_bus_dev);
-+	if (mutex_trylock(&mc_bus->scan_mutex)) {
-+		err = dprc_scan_objects(mc_bus_dev, true);
-+		mutex_unlock(&mc_bus->scan_mutex);
- 	}
-+	if (err < 0)
-+		return ERR_PTR(err);
- 
- 	endpoint = fsl_mc_device_lookup(&endpoint_desc, mc_bus_dev);
- 	/*
-
+--Sean
 
 > 
-> diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-> index b82f121cadad..f1543039a5b6 100644
-> --- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-> +++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-> @@ -4666,12 +4666,19 @@ static int dpaa2_eth_connect_mac(struct dpaa2_eth_priv *priv)
->  		return PTR_ERR(dpmac_dev);
->  	}
->  
-> -	if (IS_ERR(dpmac_dev) || dpmac_dev->dev.type != &fsl_mc_bus_dpmac_type)
-> +	if (IS_ERR(dpmac_dev))
->  		return 0;
->  
-> +	if (dpmac_dev->dev.type != &fsl_mc_bus_dpmac_type) {
-> +		put_device(&dpmac_dev->dev);
-> +		return 0;
-> +	}
-> +
->  	mac = kzalloc(sizeof(struct dpaa2_mac), GFP_KERNEL);
-> -	if (!mac)
-> +	if (!mac) {
-> +		put_device(&dpmac_dev->dev);
->  		return -ENOMEM;
-> +	}
->  
->  	mac->mc_dev = dpmac_dev;
->  	mac->mc_io = priv->mc_io;
-> @@ -4679,7 +4686,7 @@ static int dpaa2_eth_connect_mac(struct dpaa2_eth_priv *priv)
->  
->  	err = dpaa2_mac_open(mac);
->  	if (err)
-> -		goto err_free_mac;
-> +		goto err_put_device;
->  
->  	if (dpaa2_mac_is_type_phy(mac)) {
->  		err = dpaa2_mac_connect(mac);
-> @@ -4703,6 +4710,8 @@ static int dpaa2_eth_connect_mac(struct dpaa2_eth_priv *priv)
->  
->  err_close_mac:
->  	dpaa2_mac_close(mac);
-> +err_put_device:
-> +	put_device(&dpmac_dev->dev);
->  err_free_mac:
->  	kfree(mac);
->  	return err;
-
-I think it would be best to construct the lader of unwind labels
-such that they release resources in the reverse order to which
-they were taken. This allows the ladder to be used consistently
-to release the reources for all cases where that is needed.
-
-E.g. (compile tested only!)
-
-diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-index b82f121cadad..2f553336b02f 100644
---- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-@@ -4666,12 +4666,20 @@ static int dpaa2_eth_connect_mac(struct dpaa2_eth_priv *priv)
- 		return PTR_ERR(dpmac_dev);
- 	}
- 
--	if (IS_ERR(dpmac_dev) || dpmac_dev->dev.type != &fsl_mc_bus_dpmac_type)
-+
-+	if (IS_ERR(dpmac_dev))
- 		return 0;
- 
-+	if (dpmac_dev->dev.type != &fsl_mc_bus_dpmac_type) {
-+		err = 0;
-+		goto out_put_device;
-+	}
-+
- 	mac = kzalloc(sizeof(struct dpaa2_mac), GFP_KERNEL);
--	if (!mac)
--		return -ENOMEM;
-+	if (!mac) {
-+		err = -ENOMEM;
-+		goto out_put_device;
-+	}
- 
- 	mac->mc_dev = dpmac_dev;
- 	mac->mc_io = priv->mc_io;
-@@ -4705,6 +4713,8 @@ static int dpaa2_eth_connect_mac(struct dpaa2_eth_priv *priv)
- 	dpaa2_mac_close(mac);
- err_free_mac:
- 	kfree(mac);
-+out_put_device:
-+	put_device(&dpmac_dev->dev);
- 	return err;
- }
- 
-...
-
--- 
-pw-bot: changes-requested
+>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>> ---
+>> 
+>>  drivers/iio/industrialio-event.c | 34 +++++++++++++++++++++++++++-----
+>>  include/linux/iio/consumer.h     | 30 ++++++++++++++++++++++++++++
+>>  2 files changed, 59 insertions(+), 5 deletions(-)
+>> 
+>> diff --git a/drivers/iio/industrialio-event.c b/drivers/iio/industrialio-
+>> event.c
+>> index 06295cfc2da8..b9e3ff1cd5c9 100644
+>> --- a/drivers/iio/industrialio-event.c
+>> +++ b/drivers/iio/industrialio-event.c
+>> @@ -12,11 +12,13 @@
+>>  #include <linux/kernel.h>
+>>  #include <linux/kfifo.h>
+>>  #include <linux/module.h>
+>> +#include <linux/notifier.h>
+>>  #include <linux/poll.h>
+>>  #include <linux/sched.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/uaccess.h>
+>>  #include <linux/wait.h>
+>> +#include <linux/iio/consumer.h>
+>>  #include <linux/iio/iio.h>
+>>  #include <linux/iio/iio-opaque.h>
+>>  #include "iio_core.h"
+>> @@ -26,6 +28,7 @@
+>>  /**
+>>   * struct iio_event_interface - chrdev interface for an event line
+>>   * @wait:		wait queue to allow blocking reads of events
+>> + * @notifier:		notifier head for in-kernel event listeners
+>>   * @det_events:		list of detected events
+>>   * @dev_attr_list:	list of event interface sysfs attribute
+>>   * @flags:		file operations related flags including busy flag.
+>> @@ -35,6 +38,7 @@
+>>   */
+>>  struct iio_event_interface {
+>>  	wait_queue_head_t	wait;
+>> +	struct atomic_notifier_head notifier;
+>>  	DECLARE_KFIFO(det_events, struct iio_event_data, 16);
+>>  
+>>  	struct list_head	dev_attr_list;
+>> @@ -67,18 +71,19 @@ int iio_push_event(struct iio_dev *indio_dev, u64 ev_code,
+>> s64 timestamp)
+>>  {
+>>  	struct iio_dev_opaque *iio_dev_opaque = to_iio_dev_opaque(indio_dev);
+>>  	struct iio_event_interface *ev_int = iio_dev_opaque->event_interface;
+>> -	struct iio_event_data ev;
+>> +	struct iio_event_data ev = {
+>> +		.id = ev_code,
+>> +		.timestamp = timestamp,
+>> +	};
+>>  	int copied;
+>>  
+>>  	if (!ev_int)
+>>  		return 0;
+>>  
+>> +	atomic_notifier_call_chain(&ev_int->notifier, IIO_NOTIFY_EVENT, &ev);
+>> +
+>>  	/* Does anyone care? */
+>>  	if (iio_event_enabled(ev_int)) {
+>> -
+>> -		ev.id = ev_code;
+>> -		ev.timestamp = timestamp;
+>> -
+>>  		copied = kfifo_put(&ev_int->det_events, ev);
+>>  		if (copied != 0)
+>>  			wake_up_poll(&ev_int->wait, EPOLLIN);
+>> @@ -223,6 +228,25 @@ static int iio_event_getfd(struct iio_dev *indio_dev)
+>>  	return fd;
+>>  }
+>>  
+>> +int iio_event_register(struct iio_dev *indio_dev, struct notifier_block
+>> *block)
+>> +{
+>> +	struct iio_dev_opaque *iio_dev_opaque = to_iio_dev_opaque(indio_dev);
+>> +	struct iio_event_interface *ev_int = iio_dev_opaque->event_interface;
+>> +
+>> +	return atomic_notifier_chain_register(&ev_int->notifier, block);
+>> +}
+>> +EXPORT_SYMBOL_GPL(iio_event_register);
+>> +
+>> +void iio_event_unregister(struct iio_dev *indio_dev,
+>> +			  struct notifier_block *block)
+>> +{
+>> +	struct iio_dev_opaque *iio_dev_opaque = to_iio_dev_opaque(indio_dev);
+>> +	struct iio_event_interface *ev_int = iio_dev_opaque->event_interface;
+>> +
+>> +	WARN_ON(atomic_notifier_chain_unregister(&ev_int->notifier, block));
+>> +}
+>> +EXPORT_SYMBOL_GPL(iio_event_unregister);
+>> +
+>>  static const char * const iio_ev_type_text[] = {
+>>  	[IIO_EV_TYPE_THRESH] = "thresh",
+>>  	[IIO_EV_TYPE_MAG] = "mag",
+>> diff --git a/include/linux/iio/consumer.h b/include/linux/iio/consumer.h
+>> index 16e7682474f3..9918e3f7af3d 100644
+>> --- a/include/linux/iio/consumer.h
+>> +++ b/include/linux/iio/consumer.h
+>> @@ -507,4 +507,34 @@ int iio_write_event_processed_scale(struct iio_channel
+>> *chan,
+>>  				    enum iio_event_info info, int processed,
+>>  				    unsigned int scale);
+>>  
+>> +struct notifier_block;
+>> +enum iio_notifier_val {
+>> +	/** IIO_NOTIFY_EVENT: v is a pointer to &struct iio_event_data */
+>> +	IIO_NOTIFY_EVENT,
+>> +};
+>> +
+>> +/**
+>> + * iio_event_register() - Register a notifier for events
+>> + * @indio_dev: Device to be notified of events on
+>> + * @block: Notifier block to register
+>> + *
+>> + * Register a notifier for events on @indio_dev. @v will be a member of &enum
+>> + * iio_notifier_val. Notifiers will be called in atomic context. @indio_dev
+>> + * must stay valid until you call iio_event_unregister().
+>> + *
+>> + * Return: 0 on success, or -EEXIST if @block has already been registered
+>> + */
+>> +int iio_event_register(struct iio_dev *indio_dev,
+>> +		       struct notifier_block *block);
+>> +
+>> +/**
+>> + * iio_event_unregister() - Remove a previously-added notifier
+>> + * @indio_dev: Device to be notified of events on
+>> + * @block: Notifier previously-registered with iio_event_register()
+>> + *
+>> + * Remove a previously-added notifier.
+>> + */
+>> +void iio_event_unregister(struct iio_dev *indio_dev,
+>> +			  struct notifier_block *block);
+>> +
+>>  #endif
 
