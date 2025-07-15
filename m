@@ -1,113 +1,173 @@
-Return-Path: <linux-kernel+bounces-731851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D535B05A91
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:49:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B4C8B05AAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1CD2743418
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:48:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B65223A8C89
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFAF22D793;
-	Tue, 15 Jul 2025 12:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BD62DCC11;
+	Tue, 15 Jul 2025 12:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j1KanH5D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdeMibKp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23F81E1A31;
-	Tue, 15 Jul 2025 12:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBE51B043A;
+	Tue, 15 Jul 2025 12:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752583717; cv=none; b=E9tYuHhrO8aq9X9JIvwwvS8MAiv0Bm2QyLMusjK3rAos798fgUgojZpOSUxJigK3iXjwhsDZz02PUna2LngW4JwyIWqJ/D0YifkPYatVgjDULDSJC1IIP5QJRvWuBLp0M7ItXpE8i3C2MGxb4eu+Oe6wfJ+gKixx4upy3WDTTfs=
+	t=1752584091; cv=none; b=gKVd5dClLUjRmwDZb5F6gMRfuI45gwr/JJYhS18brzgIS1/TPtqKHjR/ADYviFYT+0tO41ya3w5qMgTV9jIlPhA6I68+Yt/5OZMqbmcin57uyLHbkvgKWMq0GmRYcAE5K5afjKEbGkCTKlLeMJ8puk7OUaA+Il9SYJwb7Vj14Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752583717; c=relaxed/simple;
-	bh=t3kRF9DW//cxgAY4RwJrfGg5IU+PW+muRgdn6txGjfg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DXbCqQEnsc5UqC+Dmxy8p6AMJHu4/Xaz1lLxHcjU8EIOkZXooKDK86i/3MxmXAUX4XaEzuoSRyuHkd+1vmkR9XY8kghxapeC3lPNYdUrZz/WpTP6AqJ/0okflaXCr0eH+xhL8LjuqK65YEZLwP1VAF14b/56b5a8BjQT4FlN7mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j1KanH5D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E77C4CEE3;
-	Tue, 15 Jul 2025 12:48:36 +0000 (UTC)
+	s=arc-20240116; t=1752584091; c=relaxed/simple;
+	bh=5O2Y0BxfJj/Qqa+KlWHCOfUSGCTb2wf1Q/PPcxWsLNQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aezfhPoeGdUWpWrVygZ7xhNYEtQlX2kOkFmwdagFdxvPxOc9iAPyR9l3ioj5Vuda+qVjTCnVSfs9IhuNojVGeBO/GidoJNDYjgKoY/INu6ol70RDq7IUm33pYnXJEqOdSfNlmMx22UOpA4co6VS6WiY71SdLJ/dmn0o/t4S5UUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdeMibKp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA3D2C4CEE3;
+	Tue, 15 Jul 2025 12:54:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752583716;
-	bh=t3kRF9DW//cxgAY4RwJrfGg5IU+PW+muRgdn6txGjfg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=j1KanH5DHsTwgGabasl0v7Rou73MdkyulAGDLAekcCyGJG50MBUZUQCtXs8uVUPT3
-	 7DhO5PcOpbFkVfIYIVvJPdF8vqlsGLIiApUc6aoLJqfgnj177s0E++dVYZa2XhwlFt
-	 0HzDM5md9tIlEeur4ExcxZ/k6p9k+AqVZ5xEtAudP0MYsCV2tSXw64FY6Vd6jitqJJ
-	 BxidI88dFl1j9330GiIHynMS+rFAhY9uJuD1pGrL1Un2BwPcNj/wwT3OLeSOVTHx34
-	 6c8/K+4xYU6wOgwWGXCjYRbhmCJcOBvx1j7wweJ3XzNj2vOxg3Oe+iK4qUMMQl0D6P
-	 zU2t0oERP4dCg==
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-40aef72f252so1495290b6e.0;
-        Tue, 15 Jul 2025 05:48:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVXMSpHrDKH//ToJmlxd69rXqhfG1j3ARaQothoPrV8FCjr3f2YjQLwCNZEKp3ZWLU/8RsTE4d8F/yyGV4=@vger.kernel.org, AJvYcCX7yZmF7GKMxA6nUdYCSQmwXBtv8BEeBcm1CSxeH98B0eg7YDNu4sSrIEuiD1KpGVr7qSmpkGxhp1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyjQFmMcveBH5RIMNjyxOqNASHoBkb/9xegxpUAVwXBp6wnEy7
-	e9gk8wH1unsi6R5UuebYOtyZc7nr6M7jnqZwN4mL90dp49bYi+i/zoJyrI6BVnHTv3M7xJmvhLg
-	l7R0E4Q40ePO/Q/TjIsqHmzKBzP2Z+e0=
-X-Google-Smtp-Source: AGHT+IGU/g8i3nzaWagW3UcONVPpebwZNNz8b1J1UQh5Qc53tVe2lFSz557yyTokDlXBx82gXWYabIklMKSwv+/rOtI=
-X-Received: by 2002:a05:6808:4f62:b0:3fa:daa:dd8e with SMTP id
- 5614622812f47-41bab41f1damr1984869b6e.35.1752583715652; Tue, 15 Jul 2025
- 05:48:35 -0700 (PDT)
+	s=k20201202; t=1752584091;
+	bh=5O2Y0BxfJj/Qqa+KlWHCOfUSGCTb2wf1Q/PPcxWsLNQ=;
+	h=From:Date:Subject:To:Cc:From;
+	b=fdeMibKpUPuMEbjx+PEeY1R4c9jWFe4K7jkPjT8DBRXAuDpuJ8ytPLwG8z9HAsGJY
+	 N9X8S8Oevdse7sq4rOiSOHyHlOzv+tuTudJ6iqVrhsl4Go/ngGGWsWPrxEasPUzA10
+	 AeNGE7cRocUJGamAPTr8ID60gm52hiObYOEdS0+SuGIOmbPSrWF8iaatp66j6nJxdX
+	 pXRqIBBNZCzlvI0n/CEEy4pn6o9G69vEbD7E3pIxOj1jmvmVLlEAqq1wKOKU/IvY5o
+	 RbBpapAzRFc/AqOpIX7AbdzFCUCoIQ+zptMzJFzNxWhQFRI8Y1luHqGQyW2tChzPm0
+	 O/53OfPAu7mpA==
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 15 Jul 2025 13:49:23 +0100
+Subject: [PATCH 6.12.y] arm64: Filter out SME hwcaps when FEAT_SME isn't
+ implemented
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250712030824.81474-1-zhangzihuan@kylinos.cn>
- <9d35035d-c63e-4d11-a403-54c50e8b35c1@kylinos.cn> <CAJZ5v0g22fMDc21yV2svePf_4BWZRrcy+b3-efpbfAGLpa2=Lw@mail.gmail.com>
- <76a87abf-8fc9-445b-83d5-0daa33746014@kylinos.cn>
-In-Reply-To: <76a87abf-8fc9-445b-83d5-0daa33746014@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 15 Jul 2025 14:48:24 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jKwHZUpsYLzUkcL4=FDnewXoTeJo5e+ccyHw2bZ+ghTg@mail.gmail.com>
-X-Gm-Features: Ac12FXwUoA_bQtKEdmFpzn8lu7PEpyAPa1OoMBnFbIMFyvcKAZjHOanxwdvdfDY
-Message-ID: <CAJZ5v0jKwHZUpsYLzUkcL4=FDnewXoTeJo5e+ccyHw2bZ+ghTg@mail.gmail.com>
-Subject: Re: [PATCH v1] PM: suspend: clean up redundant filesystems_freeze/thaw
- handling
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250715-stable-6-12-sme-feat-filt-v1-1-4c1d9c0336f6@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAFJOdmgC/x3MywqDMBBG4VeRWXckCV5CX6W4SPVPHbC2ZIJYx
+ Hc3dPktzjlIkQRK9+qghE1UPmuBvVU0zmF9gWUqJmdca3rbsObwXMAdW8f6BkeEzFGWzB6tjyb
+ 40fiJSv9NiLL/3w/qauvqHw3neQHrmRN/cwAAAA==
+X-Change-ID: 20250714-stable-6-12-sme-feat-filt-8e58f0a8c08d
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, stable@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Yury Khrustalev <yury.khrustalev@arm.com>, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-cff91
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6158; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=5O2Y0BxfJj/Qqa+KlWHCOfUSGCTb2wf1Q/PPcxWsLNQ=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBodk+YkBXzyFKccbuiUAxu1S/zl9ZiQCEz6djVo
+ nGb2kewGs2JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaHZPmAAKCRAk1otyXVSH
+ 0PWZB/4g+LvxhS1jnDuGNU/QzflvEeUEy4YKtQenEQ2k/wJh5b7rAorEKXu9JSku7z0bPWsD7ay
+ omzfSzB3tqFTZgICGHB/uOAJ8fimjUrZ/Fkj8dJiPUOmxZOyhclviGfnklOhZC8OSxhf5/Vs6AK
+ q7tsAW+fxRXcfkoP0hUrxW1mh/yBgvQDiHe6OGWiA8hf2Rki2Mf6vKlQ1lmdHhfVeEb+OdFNz78
+ uMRw4/lBRXG69kmaP7kdziOCWg38tGwjGm+rel4rUIREkBaMNxcSdwyRfRlCqaqe4gGoX7BSQPy
+ 4GAbu5HepHKXWGfWpOBnNsfxhIwpNYwH4VCdnTgxBj4BwkyE
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Tue, Jul 15, 2025 at 8:12=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylinos.c=
-n> wrote:
->
-> Hi Rafael,
->
-> =E5=9C=A8 2025/7/15 01:57, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> > Hi,
-> >
-> > On Mon, Jul 14, 2025 at 10:44=E2=80=AFAM Zihuan Zhang <zhangzihuan@kyli=
-nos.cn> wrote:
-> >> Hi Rafael,
-> >>
-> >> Just a gentle ping on this patch.
-> > I've lost track of it for some reason, sorry.
-> >
-> >> I realized I forgot to mention an important motivation in the changelo=
-g:
-> >> calling filesystems_freeze() twice (from both suspend_prepare() and
-> >> enter_state()) lead to a black screen and make the system unable to re=
-sume..
-> >>
-> >> This patch avoids the duplicate call and resolves that issue.
-> > Now applied as a fix for 6.16-rc7, thank you!
->
->
-> Thanks for the reply!
->
-> Just a quick follow-up question =E2=80=94 we noticed that even when the =
-=E2=80=9Cfreeze
-> filesystems=E2=80=9D feature is not enabled, the current code still calls
-> filesystems_thaw().
->
-> Do you think it would make sense to guard this with a static key (or
-> another mechanism) to avoid unnecessary overhead?
+[ Upstream commit a75ad2fc76a2ab70817c7eed3163b66ea84ca6ac ]
 
-Possibly, if this overhead is significant, but is it?
+We have a number of hwcaps for various SME subfeatures enumerated via
+ID_AA64SMFR0_EL1. Currently we advertise these without cross checking
+against the main SME feature, advertised in ID_AA64PFR1_EL1.SME which
+means that if the two are out of sync userspace can see a confusing
+situation where SME subfeatures are advertised without the base SME
+hwcap. This can be readily triggered by using the arm64.nosme override
+which only masks out ID_AA64PFR1_EL1.SME, and there have also been
+reports of VMMs which do the same thing.
+
+Fix this as we did previously for SVE in 064737920bdb ("arm64: Filter
+out SVE hwcaps when FEAT_SVE isn't implemented") by filtering out the
+SME subfeature hwcaps when FEAT_SME is not present.
+
+Fixes: 5e64b862c482 ("arm64/sme: Basic enumeration support")
+Reported-by: Yury Khrustalev <yury.khrustalev@arm.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20250620-arm64-sme-filter-hwcaps-v1-1-02b9d3c2d8ef@kernel.org
+Signed-off-by: Will Deacon <will@kernel.org>
+---
+ arch/arm64/kernel/cpufeature.c | 45 ++++++++++++++++++++++++------------------
+ 1 file changed, 26 insertions(+), 19 deletions(-)
+
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 05ccf4ec278f..9ca5ffd8d817 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -2959,6 +2959,13 @@ static bool has_sve_feature(const struct arm64_cpu_capabilities *cap, int scope)
+ }
+ #endif
+ 
++#ifdef CONFIG_ARM64_SME
++static bool has_sme_feature(const struct arm64_cpu_capabilities *cap, int scope)
++{
++	return system_supports_sme() && has_user_cpuid_feature(cap, scope);
++}
++#endif
++
+ static const struct arm64_cpu_capabilities arm64_elf_hwcaps[] = {
+ 	HWCAP_CAP(ID_AA64ISAR0_EL1, AES, PMULL, CAP_HWCAP, KERNEL_HWCAP_PMULL),
+ 	HWCAP_CAP(ID_AA64ISAR0_EL1, AES, AES, CAP_HWCAP, KERNEL_HWCAP_AES),
+@@ -3037,25 +3044,25 @@ static const struct arm64_cpu_capabilities arm64_elf_hwcaps[] = {
+ 	HWCAP_CAP(ID_AA64ISAR2_EL1, BC, IMP, CAP_HWCAP, KERNEL_HWCAP_HBC),
+ #ifdef CONFIG_ARM64_SME
+ 	HWCAP_CAP(ID_AA64PFR1_EL1, SME, IMP, CAP_HWCAP, KERNEL_HWCAP_SME),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, FA64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_FA64),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, LUTv2, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_LUTV2),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, SMEver, SME2p1, CAP_HWCAP, KERNEL_HWCAP_SME2P1),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, SMEver, SME2, CAP_HWCAP, KERNEL_HWCAP_SME2),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, I16I64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I16I64),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, F64F64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F64F64),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, I16I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I16I32),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, B16B16, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_B16B16),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, F16F16, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F16F16),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, F8F16, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F8F16),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, F8F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F8F32),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, I8I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I8I32),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, F16F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F16F32),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, B16F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_B16F32),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, BI32I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_BI32I32),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, F32F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F32F32),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, SF8FMA, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_SF8FMA),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, SF8DP4, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_SF8DP4),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, SF8DP2, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_SF8DP2),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, FA64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_FA64),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, LUTv2, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_LUTV2),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, SMEver, SME2p1, CAP_HWCAP, KERNEL_HWCAP_SME2P1),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, SMEver, SME2, CAP_HWCAP, KERNEL_HWCAP_SME2),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, I16I64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I16I64),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, F64F64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F64F64),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, I16I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I16I32),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, B16B16, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_B16B16),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, F16F16, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F16F16),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, F8F16, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F8F16),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, F8F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F8F32),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, I8I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I8I32),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, F16F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F16F32),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, B16F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_B16F32),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, BI32I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_BI32I32),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, F32F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F32F32),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, SF8FMA, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_SF8FMA),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, SF8DP4, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_SF8DP4),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, SF8DP2, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_SF8DP2),
+ #endif /* CONFIG_ARM64_SME */
+ 	HWCAP_CAP(ID_AA64FPFR0_EL1, F8CVT, IMP, CAP_HWCAP, KERNEL_HWCAP_F8CVT),
+ 	HWCAP_CAP(ID_AA64FPFR0_EL1, F8FMA, IMP, CAP_HWCAP, KERNEL_HWCAP_F8FMA),
+
+---
+base-commit: fbad404f04d758c52bae79ca20d0e7fe5fef91d3
+change-id: 20250714-stable-6-12-sme-feat-filt-8e58f0a8c08d
+
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
+
 
