@@ -1,237 +1,181 @@
-Return-Path: <linux-kernel+bounces-732491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC909B06798
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:14:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7602BB067A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1FB81C2060F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:14:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D522D7B191C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A052BE7AB;
-	Tue, 15 Jul 2025 20:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8269F263C8E;
+	Tue, 15 Jul 2025 20:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BxQGQwt3"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mvSMAu9v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F8326E70F;
-	Tue, 15 Jul 2025 20:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DDE20485B
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752610443; cv=none; b=ZsNbD08vhsLZKeVuhBgTEwKAZt/1d3ozkXZV+TFiEIzSMm5l8xuSwkNU0HpvRsR0m6AvmAgfpe5cAMBrRnDgiio2A43psezwIL/72OxE18Wfr/szXKUu7hvMm+UAYNl0nG27U9+gOFcke2CE0/D/qZH/kENmTIG48PsuDnxzNRE=
+	t=1752610649; cv=none; b=u/vVX1v08+vPe9qyukwyMAfXEyP+ABG9rg373juhLt8hvnmAW+zuq1jR09RVeyqWlGuZVDfAan6oVyCwZj7CurDcigxvbFM59TKH+CyeTymVLMPNW972dpmpS8UeLNEtL9NqyTJJmoUFfQVsJQz3vy9MymjxPtRG8rIouE64JFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752610443; c=relaxed/simple;
-	bh=tUKIxIa3CaOakXSITwT1h1ZlJa811sXdettoWNZ629U=;
+	s=arc-20240116; t=1752610649; c=relaxed/simple;
+	bh=ZVUoEHrFKDa2T3shxXnxjvESjxznAX/XpvM1/FjZYA0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DuaHhCCEYYuKxGsV/PtdhMPuehtLBUqikGDpk53qNlIC9GF7eifw5uammK5PxumH2/tthT/I2b3ZhJFBb7sVmrqh9pcy3TwvY5lxv1A8+w/5teS18kAr5ch91M7gtzj0mJRihbyJMOb3ir9VC1vCdm1u0u3HJrvGs2Npfv9fiX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BxQGQwt3; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-700c7e4c048so96556946d6.3;
-        Tue, 15 Jul 2025 13:14:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752610440; x=1753215240; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W7xFafhakUM1HbJhSYPMWQX2H9PQ7AUwvEZGQtQZ7k0=;
-        b=BxQGQwt3Lvgnz0itbNEh7Z4Gsuf95KuW8k/9IuYYs7QCBfZ7xDtKV0t2KTUWqGolwc
-         vwpJO2/6Enf7ZsX1/Xdg8RjkbRwerV/RWxitG87qDzxC1Du2OJp2D9v/CmWi27Cx4CI5
-         32EVKsTBPtniEyO+c6r9RQmRfJBOxbFrqJBd9BpuNWMvKiSYf2L59QMqO0/ICGn+xcG5
-         6oli9trFrx2tBLic3wCBcNqH3U940ic+Pzk9VXVkuIJnedVZMwa3fQDrUoF9F5qbRCNG
-         R0KFeuB+CFjgPrufkGIZ2XEe//FCCucIpjOjaDVlSDF4tGANNiFGqgga7EKw6m83uW4l
-         qp0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752610440; x=1753215240;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W7xFafhakUM1HbJhSYPMWQX2H9PQ7AUwvEZGQtQZ7k0=;
-        b=BeR1NxlGSoUu7e7jwDVfshbf4ekMthvr/ozFTGM4KmlswgZ8v4bsCrYWh9+G+UAZjh
-         2TfyPbqa0Wbc8+E07p+yDA3+GL1qdUKW3rne6J2SRvIIPpkN2dpA3BFPfvpMAHpHGIVg
-         sUSMvD6LZQwyUyzt4pftCu+ii9sGG6OvSPr3sBI46Psb8YhwyFWJcNKnf/7amQ8pq31j
-         vyV/yYLc96hf2unVppGQ0zbFHdEA+tPxZgNi/9df3NTx7KTJXuKAJUoqaKEKujjcRCNu
-         7sMUMa8ym8G9VPcrh1POI99DGWVBk/VcR3u/gXPM2ZQHV85cM/9FnNam64o8EkRd2Hkr
-         4m7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVGLPi50w+GNsB5K1nPShM3KMR5Ecc+pf/aS47NtR5pQlsnfK9CWkiZJrKkZVQNTq8gk7WIi6RoY4YM@vger.kernel.org, AJvYcCXr3sd+HbFxllSMBLrbofUFcUDBYX1GnrVfx7OkH4UWJ+58Ai/hJ+NXZ+nba3zoep23T4P8nuNcmlDErsLCaVE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBhUwFvDRwqfy3Q66q4YS8txQ65coaMxBQD7T4ps1uodEHy5YD
-	sbg8QdPYztz5ga37W40WN6xVMDNzLOfMlLCKVy4jqYqetLuv+1OpDYnB
-X-Gm-Gg: ASbGnctUaSloGfs801V41NotY1xblNGuFXUx/RW9LX9lBwSJsHEK6MiyCzAWGECvm5O
-	yw7JHln9pyCUdj1lz4WCXWLkm3sGcbJAUg/keEERLhNYgmJ36HaFy9qhq0z5WThID2UWxnsVGaZ
-	M337QkDyAG+wATjQFGVHmWeafP4U89TX5BDaJpBxwAzeP8V053MuOMJ31g3ab2Ha0iuToq/pR72
-	o7adnBKeALtFKJiUa2hm0TU/V5M9pl6gTQKY1oKTI93whFHxdD5eBnBK7TLz7kIXQ/hjPW5Wr1C
-	AaTIlUeWlwkp4sjKVkriFLt7ZMi8TIsfbIoQWRXhNMyLGuTgqM9hLb5UEeQUC4oNE8WtkpbzuNM
-	Tp9FO2TrFpt2ezr4GSBbcsP4V/FFhGu+M26Vy9sSzQEYH+z59I8uSmSP5ujKsIaYV1+krvotnU0
-	QdO8VRk11CXsmB83wsvwE6ZoI=
-X-Google-Smtp-Source: AGHT+IHrRn1XRiDw/2DyKdGpKsc5IOMs7BMfn8mm3TPOI8x/zXqt8VKyWJgjpZf3JENfhaBRucNqDQ==
-X-Received: by 2002:a05:6214:3108:b0:6f5:38a2:52dd with SMTP id 6a1803df08f44-704f4ae09b3mr14680306d6.31.1752610440141;
-        Tue, 15 Jul 2025 13:14:00 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70497d5bb30sm61431486d6.81.2025.07.15.13.13.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 13:13:59 -0700 (PDT)
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id DE456F4006A;
-	Tue, 15 Jul 2025 16:13:58 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Tue, 15 Jul 2025 16:13:58 -0400
-X-ME-Sender: <xms:hrZ2aOQguYBXCYizaoVh_Mdfktc64JY-qla5uQzihAIcsmn4VJuo4g>
-    <xme:hrZ2aFRCYXZF_m5gyZBUzl32IIprvgIHmZOKsvsJS07eMn4NG_1kBOHPpfrpqawyK
-    r-bQz9oT5e12j35cg>
-X-ME-Received: <xmr:hrZ2aAYVgAoIF8GfhOOgZ1tIlsNhzL7Q5PTPwzqhKpVxgvO9q12jqzu7>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehheejiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
-    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
-    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
-    drnhgrmhgvpdhnsggprhgtphhtthhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtoheplhhoshhsihhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdq
-    fhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlkh
-    hmmheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhgt
-    hhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjoh
-    hrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:hrZ2aJgB5sSi041ryIYq-gU1d_POGyWNLM_6wC6wHezuv96sf4OD-Q>
-    <xmx:hrZ2aFiVdHs4FKDuQO2lB7M6xJnVVjWgfcDUKUiyL67hbnrQDrfDKw>
-    <xmx:hrZ2aPK8lNUOlcQNfk6yu80aGvui298V_azJ5IUmFGxRjDnWFpagIQ>
-    <xmx:hrZ2aMXo3uwPapl6ZtLUT263SCHYrwnRdSMK-aYwOdXEMLJTGX2BoA>
-    <xmx:hrZ2aB37U4kCta5eSQqRGpgMmr28HUYMGgU0WMHea8rCWctUAMCGcXld>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 15 Jul 2025 16:13:58 -0400 (EDT)
-Date: Tue, 15 Jul 2025 13:13:57 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v7 6/9] rust: sync: atomic: Add the framework of
- arithmetic operations
-Message-ID: <aHa2he81nBDgvA5u@tardis-2.local>
-References: <20250714053656.66712-1-boqun.feng@gmail.com>
- <20250714053656.66712-7-boqun.feng@gmail.com>
- <DBCL7YUSRMXR.22SMO1P7D5G60@kernel.org>
- <aHZYt3Csy29GF2HM@Mac.home>
- <DBCQUAA42DHH.23BNUVOKS38UI@kernel.org>
- <aHZ-HP1ErzlERfpI@Mac.home>
- <DBCUJ4RNRNHP.W4QH5QM3TBHU@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sKUvYwMpzTyqhxWsK6d0UuGmQfdTwRqRtSqN1PLz7yecpjZJfOZraa6rzlhkP/x+z8167yVfvk5lPO4Ak/RBdyT4UHR+JgGowEUpGFTKwU2Xwaey1XEZbNPEJeGGPbNVz9b6xHpdHbKaK7KFIU0Ht18npnsbjqZavCrHWE+Frto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mvSMAu9v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C10BFC4CEE3;
+	Tue, 15 Jul 2025 20:17:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752610648;
+	bh=ZVUoEHrFKDa2T3shxXnxjvESjxznAX/XpvM1/FjZYA0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mvSMAu9vM0iQjcTZ9SHZVG63bWX1lFYImGLv//AYGYoW82ayxFKbXMiv0HROtHpq3
+	 b9RS03k6aIp9kyVjyZu3Z2PuUaSqFxY2Z6EVv/gZhO7oIbuT6+OnD3E25IqJ9fQ1mj
+	 KK2+Y06NzWi9ndMYwlXjGcOnztH1JOrIM1udOxRBURsFPp7BP0RJqOKCVUKqpU30cC
+	 UyQ6f/ndVvwJ6LGJP87k/EOuDOcCczT91gUDcUP6fD4Vey6KyLlKybZw1SmeOCQScS
+	 XYE732hQWpiu41qPPEMD6wPrJcJovDgzuotnjPSHtAFI798wQ3uCLbc2gIgXyXPCgc
+	 GSJsMSUVOambQ==
+Date: Tue, 15 Jul 2025 13:17:26 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+	akpm@linux-foundation.org, david@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com,
+	mjguzik@gmail.com, luto@kernel.org, peterz@infradead.org,
+	acme@kernel.org, tglx@linutronix.de, willy@infradead.org,
+	raghavendra.kt@amd.com, boris.ostrovsky@oracle.com,
+	konrad.wilk@oracle.com
+Subject: Re: [PATCH v5 07/14] perf bench mem: Allow chunking on a memory
+ region
+Message-ID: <aHa3VgRA8qm8U9my@google.com>
+References: <20250710005926.1159009-1-ankur.a.arora@oracle.com>
+ <20250710005926.1159009-8-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <DBCUJ4RNRNHP.W4QH5QM3TBHU@kernel.org>
+In-Reply-To: <20250710005926.1159009-8-ankur.a.arora@oracle.com>
 
-On Tue, Jul 15, 2025 at 08:39:04PM +0200, Benno Lossin wrote:
-[...]
-> >> > Hmm.. the CAST comment should explain why a pointer of `T` can be a
-> >> > valid pointer of `T::Repr` because the atomic_add() below is going to
-> >> > read through the pointer and write value back. The comment starting with
-> >> > "`*self`" explains the value written is a valid `T`, therefore
-> >> > conceptually atomic_add() below writes a valid `T` in form of `T::Repr`
-> >> > into `a`.
-> >> 
-> >> I see, my interpretation was that if we put it on the cast, then the
-> >> operation that `atomic_add` does also is valid.
-> >> 
-> >> But I think this comment should either be part of the `CAST` or the
-> >> `SAFETY` comment. Going by your interpretation, it would make more sense
-> >> in the SAFETY one, since there you justify that you're actually writing
-> >> a value of type `T`.
-> >> 
-> >
-> > Hmm.. you're probably right. There are two safety things about
-> > atomic_add():
-> >
-> > - Whether calling it is safe
-> > - Whether the operation on `a` (a pointer to `T` essentially) is safe.
+On Wed, Jul 09, 2025 at 05:59:19PM -0700, Ankur Arora wrote:
+> There can be a significant gap in memset/memcpy performance depending
+> on the size of the region being operated on.
 > 
-> Well part of calling `T::Repr::atomic_add` is that the pointer is valid.
-
-Here by saying "calling `T::Repr::atomic_add`", I think you mean the
-whole operation, so yeah, we have to consider the validy for `T` of the
-result. But what I'm trying to do is reasoning this in 2 steps:
-
-First, let's treat it as an `atomic_add(*mut i32, i32)`, then as long as
-we provide a valid `*mut i32`, it's safe to call. 
-
-And second assume we call it with a valid pointer to `T::Repr`, and a
-delta from `rhs_into_delta()`, then per the safety guarantee of
-`AllowAtomicAdd`, the value written at the pointer is a valid `T`.
-
-Based on these, we can prove the whole operation is safe for the given
-input.
-
-> But it actually isn't valid for all operations, only for the specific
-> one you have here. If we want to be 100% correct, we actually need to
-> change the safety comment of `atomic_add` to say that it only requires
-> the result of `*a + v` to be writable... But that is most likely very
-> annoying... (note that we also have this issue for `store`)
+> With chunk-size=4kb:
 > 
-> I'm not too sure on what the right way to do this is. The formal answer
-> is to "just do it right", but then safety comments really just devolve
-> into formally proving the correctness of the program. I think -- for now
-> at least :) -- that we shouldn't do this here & now (since we also have
-> a lot of other code that isn't using normal good safety comments, let
-> alone formally correct ones).
+>   $ echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
 > 
-> > How about the following:
-> >
-> >         let v = T::rhs_into_delta(v);
-> >         // CAST: Per the safety requirement of `AllowAtomic`, a valid pointer of `T` is a valid
-> >         // pointer of `T::Repr` for reads and valid for writes of values transmutable to `T`.
-> >         let a = self.as_ptr().cast::<T::Repr>();
-> >
-> >         // `*self` remains valid after `atomic_add()` because of the safety requirement of
-> >         // `AllowAtomicAdd`.
-> >         //
-> >         // SAFETY:
-> >         // - For calling `atomic_add()`:
-> >         //   - `a` is aligned to `align_of::<T::Repr>()` because of the safety requirement of
-> >         //   `AllowAtomic` and the guarantee of `Atomic::as_ptr()`.
-> >         //   - `a` is a valid pointer per the CAST justification above.
-> >         // - For accessing `*a`: the value written is transmutable to `T`
-> >         //   due to the safety requirement of `AllowAtomicAdd`.
-> >         unsafe { T::Repr::atomic_add(a, v) };
+>   $ perf bench mem memset -p 4kb -k 4kb -s 4gb -l 10 -f x86-64-stosq
+>   # Running 'mem/memset' benchmark:
+>   # function 'x86-64-stosq' (movsq-based memset() in arch/x86/lib/memset_64.S)
+>   # Copying 4gb bytes ...
 > 
-> That looks fine for now. But isn't this duplicating the sentence
-> starting with `*self`?
-
-Oh sorry, I meant to remove the sentence starting with `*self`. :(
-
-Regards,
-Boqun
-
+>       13.011655 GB/sec
 > 
+> With chunk-size=1gb:
+> 
+>   $ echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
+> 
+>   $ perf bench mem memset -p 4kb -k 1gb -s 4gb -l 10 -f x86-64-stosq
+>   # Running 'mem/memset' benchmark:
+>   # function 'x86-64-stosq' (movsq-based memset() in arch/x86/lib/memset_64.S)
+>   # Copying 4gb bytes ...
+> 
+>       21.936355 GB/sec
+> 
+> So, allow the user to specify the chunk-size.
+> 
+> The default value is identical to the total size of the region, which
+> preserves current behaviour.
+> 
+> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+
+Again, please update the documentation.  With that,
+
+Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+
+Thanks,
+Namhyung
+
 > ---
-> Cheers,
-> Benno
+>  tools/perf/bench/mem-functions.c | 20 ++++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/bench/mem-functions.c b/tools/perf/bench/mem-functions.c
+> index e4d713587d45..412d18f2cb2e 100644
+> --- a/tools/perf/bench/mem-functions.c
+> +++ b/tools/perf/bench/mem-functions.c
+> @@ -36,6 +36,7 @@
+>  static const char	*size_str	= "1MB";
+>  static const char	*function_str	= "all";
+>  static const char	*page_size_str	= "4KB";
+> +static const char	*chunk_size_str	= "0";
+>  static unsigned int	nr_loops	= 1;
+>  static bool		use_cycles;
+>  static int		cycles_fd;
+> @@ -49,6 +50,10 @@ static const struct option options[] = {
+>  		    "Specify page-size for mapping memory buffers. "
+>  		    "Available sizes: 4KB, 2MB, 1GB (case insensitive)"),
+>  
+> +	OPT_STRING('k', "chunk", &chunk_size_str, "0",
+> +		    "Specify the chunk-size for each invocation. "
+> +		    "Available units: B, KB, MB, GB and TB (case insensitive)"),
+> +
+>  	OPT_STRING('f', "function", &function_str, "all",
+>  		    "Specify the function to run, \"all\" runs all available functions, \"help\" lists them"),
+>  
+> @@ -69,6 +74,7 @@ union bench_clock {
+>  struct bench_params {
+>  	size_t		size;
+>  	size_t		size_total;
+> +	size_t		chunk_size;
+>  	unsigned int	nr_loops;
+>  	unsigned int	page_shift;
+>  };
+> @@ -242,6 +248,14 @@ static int bench_mem_common(int argc, const char **argv, struct bench_mem_info *
+>  	}
+>  	p.size_total = (size_t)p.size * p.nr_loops;
+>  
+> +	p.chunk_size = (size_t)perf_atoll((char *)chunk_size_str);
+> +	if ((s64)p.chunk_size < 0 || (s64)p.chunk_size > (s64)p.size) {
+> +		fprintf(stderr, "Invalid chunk_size:%s\n", chunk_size_str);
+> +		return 1;
+> +	}
+> +	if (!p.chunk_size)
+> +		p.chunk_size = p.size;
+> +
+>  	page_size = (unsigned int)perf_atoll((char *)page_size_str);
+>  	if (page_size != (1 << PAGE_SHIFT_4KB) &&
+>  	    page_size != (1 << PAGE_SHIFT_2MB) &&
+> @@ -299,7 +313,8 @@ static int do_memcpy(const struct function *r, struct bench_params *p,
+>  
+>  	clock_get(&start);
+>  	for (unsigned int i = 0; i < p->nr_loops; ++i)
+> -		fn(dst, src, p->size);
+> +		for (size_t off = 0; off < p->size; off += p->chunk_size)
+> +			fn(dst + off, src + off, min(p->chunk_size, p->size - off));
+>  	clock_get(&end);
+>  
+>  	*rt = clock_diff(&start, &end);
+> @@ -401,7 +416,8 @@ static int do_memset(const struct function *r, struct bench_params *p,
+>  
+>  	clock_get(&start);
+>  	for (unsigned int i = 0; i < p->nr_loops; ++i)
+> -		fn(dst, i, p->size);
+> +		for (size_t off = 0; off < p->size; off += p->chunk_size)
+> +			fn(dst + off, i, min(p->chunk_size, p->size - off));
+>  	clock_get(&end);
+>  
+>  	*rt = clock_diff(&start, &end);
+> -- 
+> 2.43.5
+> 
 
