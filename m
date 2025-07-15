@@ -1,47 +1,53 @@
-Return-Path: <linux-kernel+bounces-731751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5246B058FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:38:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 464D3B05900
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FCE83A57EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:37:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 989061899177
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A062D8DC2;
-	Tue, 15 Jul 2025 11:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A45126AA94;
+	Tue, 15 Jul 2025 11:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHCY5xQj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="fWVVcABg"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECCB27147E;
-	Tue, 15 Jul 2025 11:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB31D19CC37
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752579486; cv=none; b=AP6+fPirwogq+IUm96SUAwMf4PHNUI0rQE/few1xQqxkObwcp57FJ3bndCrsFIsu01RYbKXT9gRypmoBqQXvZDF9ZPtlydOX86Z2ev/D7rnLV9YKkWdZDzYXvZROGRc7iJEFbbjseDIRO5D0+/YM2yGReUdDXb69YNgopRESKk0=
+	t=1752579489; cv=none; b=AZU/FgORmZ+VKboLVZlbbKlt8m0mJIgyIyhVS01l6VMN1ZJRXdPHJIk772fMElQPMNftJ7SHBiCJ6/OBf0nZYCM4Gi0qAe6HetUgcFcny9YhsQu/TuFayyET3k1SFXPs5jB7AjnshlWhKA4NhWgMRtJlYgY/5Wec141Pft45L0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752579486; c=relaxed/simple;
-	bh=k3Pt22s3urH1ffPht49H+gTfknzAhbGPucTExEY/I64=;
+	s=arc-20240116; t=1752579489; c=relaxed/simple;
+	bh=d2e+1AfbwM8V7xMaHjfjAHW4oTYLAlJH5EMpKSwCC/Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RR4iauRsMHMx6EmUVJYaVHmhRNaTHLYhFUhj6SST08OupkyGn/7vl67WzhipFAT30rCTXfUT6ton/wJU8ziRE3IA7sWyX0XRxZ2/VkUld2gWCAyI3RbzLhoOiR2qiW49UZDwoPKTqVuoHiuEskZGfdAqRedNbRiSl9GuGlJWHGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHCY5xQj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44BEDC4CEF1;
-	Tue, 15 Jul 2025 11:38:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752579486;
-	bh=k3Pt22s3urH1ffPht49H+gTfknzAhbGPucTExEY/I64=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DHCY5xQjmFJX69MUX4vYWPw8P17yNMGOpFFR35NcdrKuCa9bNGljgInX7Iyvks0BV
-	 g2BdCE6bEtcWQXKsPR3t76G6LNF3oBVrxIB7RGS4faIf0EOemPNRYmhferOp7sna+9
-	 7ZBskGv1Eb8CRRcPEuIxwaDgLA/44hkbaVxt9OyJg8CBZ0923dNyBJRGGzmF88JuKn
-	 11U7XL3MwiZ4w7diF5Om0zFOdkDkyE2KfJwdPr9JTMJqCGxumd2phg+jKqzu+Xx7Y7
-	 ZHeLSRMMa++3DCWGk1W7CpFAy0HWWlRK6y+PDRFv8VTl5OnAdqlmBURUpIhDYPEVMR
-	 ctzEdSx3SPj8A==
-Message-ID: <c62d168b-92b5-44a2-9a9a-402d7f4815a2@kernel.org>
-Date: Tue, 15 Jul 2025 13:37:58 +0200
+	 In-Reply-To:Content-Type; b=O8uX27wL1IgeJ2pJvqUDLJ5znWPlbfs0gYVKnO+K3UDbyC4/B8VIr5PGrYbnObwjPNgSvQtFvyJn4Se9AFHFdEEBKxLtdNTenfzObvjv4UM/yqTYxbiBJ/guzsg2shUNRK0ODxvBEwBlJL+16S2hJQxfefi9pcp0jT8MKvlTfe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=fWVVcABg; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 32092207B6;
+	Tue, 15 Jul 2025 13:38:04 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id ohWm7pHh7jh5; Tue, 15 Jul 2025 13:38:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1752579483; bh=d2e+1AfbwM8V7xMaHjfjAHW4oTYLAlJH5EMpKSwCC/Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=fWVVcABgKZBpNCbPrDvWaLGMRySibU7tKiVVO61TXU5I04TtAOHw5JNNbqCVnZ1gB
+	 h7/UgiSUs6UJtUPaczqTZ0JtpLX0m5YxQ6jtbNlzB0f56yG9UuGOMber9U4DmpBTq6
+	 5+SSCSXwrdgPAiWOgYuSRRwqh6hNJVxH11UGkRH61tBOYC21I01ne/2aVh1gNRz2tn
+	 IBgXV+C+PSTChASsBr3wF2nXzqU40dxeR/afTem3YHJfpXyiuNYKrtq58Z7gLjgX3h
+	 9Fz+faod+9aMhW1NG43B/E44hWN2OjAEVRsFlafybN6GjKKTboz4uUp9QEWqc8Er/+
+	 iQ+ELT7ZPmifw==
+Message-ID: <af2103a0-f9d0-4980-9ec7-e4ce512ea59a@disroot.org>
+Date: Tue, 15 Jul 2025 13:38:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,151 +55,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] arm64: dts: rockchip: rk3399-evb-ind: Add support for
- DisplayPort
-To: Chaoyi Chen <kernel@airkyi.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Yubing Zhang <yubing.zhang@rock-chips.com>,
- Frank Wang <frank.wang@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Amit Sunil Dhamne <amitsd@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Chaoyi Chen <chaoyi.chen@rock-chips.com>, Dragan Simic <dsimic@manjaro.org>,
- Johan Jonker <jbx6244@gmail.com>, Diederik de Haas <didi.debian@cknow.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-References: <20250715112456.101-1-kernel@airkyi.com>
- <20250715112456.101-6-kernel@airkyi.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] staging: greybus: power_supply fix alignment
+To: Rui Miguel Silva <rmfrfs@gmail.com>, Greg KH <gregkh@linuxfoundation.org>
+Cc: greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, johan@kernel.org, elder@kernel.org,
+ ~lkcamp/patches@lists.sr.ht, koike@igalia.com
+References: <20250714135606.41671-1-akhilvarkey@disroot.org>
+ <DBBXCAEMM5ZO.GTKVMMR2XDJ7@linaro.com> <2025071540-sepia-amuck-c757@gregkh>
+ <DBCIG2AHAZHR.31GUITYRTUZXJ@linaro.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250715112456.101-6-kernel@airkyi.com>
-Content-Type: text/plain; charset=UTF-8
+From: Akhil <akhilvarkey@disroot.org>
+In-Reply-To: <DBCIG2AHAZHR.31GUITYRTUZXJ@linaro.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 15/07/2025 13:24, Chaoyi Chen wrote:
->  /dts-v1/;
-> +#include <dt-bindings/usb/pd.h>
->  #include "rk3399.dtsi"
->  
->  / {
-> @@ -19,6 +20,16 @@ chosen {
->  		stdout-path = "serial2:1500000n8";
->  	};
->  
-> +	vbus_typec: vbus-typec-regulator {
+Hi Rui and Greg,
 
-use consistent naming. How other regulators are called? foo-regulator?
+On 15/07/25 11:10, Rui Miguel Silva wrote:
+> Hey Greg,
+> On Tue Jul 15, 2025 at 9:05 AM WEST, Greg KH wrote:
+> 
+>> On Mon, Jul 14, 2025 at 05:38:31PM +0100, Rui Miguel Silva wrote:
+>>> Hey Akhil,
+>>> Thanks for your patch.
+>>>
+>>> All looks good with the exception of a small nit...
+>>>
+>>> On Mon Jul 14, 2025 at 2:56 PM WEST, Akhil Varkey wrote:
+>>>
+>>>> Fix checkpatch check "CHECK:Alignment should match open parenthesis"
+>>>>
+>>>> Signed-off-by: Akhil Varkey <akhilvarkey@disroot.org>
+>>>> ---
+>>>>
+>>>> Hello, This is my first patch, I appreciate any feedbacks. Thanks!!
+>>>
+>>> Welcome, and continue...
+>>>
+>>>> ---
+>>>>   drivers/staging/greybus/power_supply.c | 14 +++++++-------
+>>>>   1 file changed, 7 insertions(+), 7 deletions(-)
+>>>>
+>>>> diff --git a/drivers/staging/greybus/power_supply.c b/drivers/staging/greybus/power_supply.c
+>>>> index 2ef46822f676..a484c0ca058d 100644
+>>>> --- a/drivers/staging/greybus/power_supply.c
+>>>> +++ b/drivers/staging/greybus/power_supply.c
+>>>> @@ -324,7 +324,7 @@ static struct gb_power_supply_prop *get_psy_prop(struct gb_power_supply *gbpsy,
+>>>>   }
+>>>>   
+>>>>   static int is_psy_prop_writeable(struct gb_power_supply *gbpsy,
+>>>> -				     enum power_supply_property psp)
+>>>> +				 enum power_supply_property psp)
+>>>>   {
+>>>>   	struct gb_power_supply_prop *prop;
+>>>>   
+>>>> @@ -493,7 +493,7 @@ static int gb_power_supply_description_get(struct gb_power_supply *gbpsy)
+>>>>   	if (!gbpsy->model_name)
+>>>>   		return -ENOMEM;
+>>>>   	gbpsy->serial_number = kstrndup(resp.serial_number, PROP_MAX,
+>>>> -				       GFP_KERNEL);
+>>>> +					GFP_KERNEL);
+>>>>   	if (!gbpsy->serial_number)
+>>>>   		return -ENOMEM;
+>>>>   
+>>>> @@ -546,7 +546,7 @@ static int gb_power_supply_prop_descriptors_get(struct gb_power_supply *gbpsy)
+>>>>   	}
+>>>>   
+>>>>   	gbpsy->props = kcalloc(gbpsy->properties_count, sizeof(*gbpsy->props),
+>>>> -			      GFP_KERNEL);
+>>>> +			       GFP_KERNEL);
+>>>>   	if (!gbpsy->props) {
+>>>>   		ret = -ENOMEM;
+>>>>   		goto out_put_operation;
+>>>> @@ -634,8 +634,8 @@ static int __gb_power_supply_property_get(struct gb_power_supply *gbpsy,
+>>>>   }
+>>>>   
+>>>>   static int __gb_power_supply_property_strval_get(struct gb_power_supply *gbpsy,
+>>>> -						enum power_supply_property psp,
+>>>> -						union power_supply_propval *val)
+>>>> +						 enum power_supply_property psp,
+>>>> +						 union power_supply_propval *val)
+>>>
+>>> Here you fix the alignment, but the last line goes over column 81, even
+>>> though 80 is not really one hard requirement anymore, all code
+>>> (strings is ok to go over to be easier to grep for messages) is on that
+>>> register.
+>>>
+>>> So, to be coherent, if you could please send a V2 without this specific change
+>>> would be great, Or even better, if you could get rid of all the _ and __
+>>> prefixes in functions names that would be great, and will give more
+>>> space for function paramethers.
+>>> Your call.
+>>
+>> Nah, this is fine as-is, we can go over the limit to 100 for tiny stuff
+>> like this.
+>>
+>> And the __ prefixes should be there to show no locking, or "internal"
+>> functions, right?  So changing the name needs to happen very carefully.
+> 
+> Yup, we can go either way here. I do not have strong feelings about
+> this.
+> 
+> So, LGTM, Thanks Akhil.
+> Reviewed-by: Rui Miguel Silva <rui.silva@linaro.org>
+> 
+> Cheers,
+>      Rui
+> 
+>>
+>> thanks,
+>>
+>> greg k-h
+> 
+> 
+> 
 
-> +		compatible = "regulator-fixed";
-> +		enable-active-high;
-> +		gpio = <&gpio1 RK_PC2 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vcc5v0_typec0_en>;
-> +		regulator-name = "vbus_typec";
-> +		vin-supply = <&vcc5v0_sys>;
-> +	};
-> +
->  	vcc5v0_sys: regulator-vcc5v0-sys {
->  		compatible = "regulator-fixed";
->  		enable-active-high;
-> @@ -29,6 +40,16 @@ vcc5v0_sys: regulator-vcc5v0-sys {
->  		regulator-max-microvolt = <5000000>;
->  		regulator-min-microvolt = <5000000>;
->  	};
-> +
-> +	sound: sound {
-> +		compatible = "rockchip,rk3399-gru-sound";
-> +		rockchip,cpu = <&i2s0 &spdif>;
-> +	};
-> +};
-> +
-> +&cdn_dp {
-> +	status = "okay";
-> +	phys = <&tcphy0_dp>;
->  };
->  
->  &cpu_b0 {
-> @@ -341,6 +362,66 @@ regulator-state-mem {
->  	};
->  };
->  
-> +&i2c4 {
-> +	i2c-scl-rising-time-ns = <475>;
-> +	i2c-scl-falling-time-ns = <26>;
-> +	status = "okay";
-> +
-> +	usbc0: fusb302@22 {
+Thanks accepting my patches and for the suggestions on what could be 
+done better.
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-
-> +		compatible = "fcs,fusb302";
-> +		reg = <0x22>;
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <RK_PA2 IRQ_TYPE_LEVEL_LOW>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&usbc0_int>;
-> +		vbus-supply = <&vbus_typec>;
-> +		status = "okay";
-
-Why? What disabled it?
-
-> +
-> +		usb_con: connector {
-> +			compatible = "usb-c-connector";
-> +			label = "USB-C";
-Best regards,
-Krzysztof
+Best Regards,
+Akhil Varkey
 
