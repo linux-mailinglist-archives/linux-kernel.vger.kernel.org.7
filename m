@@ -1,528 +1,231 @@
-Return-Path: <linux-kernel+bounces-732454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A3FEB066C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:26:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFECBB066C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8455A3A1392
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:26:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31592565B1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BF72BE65E;
-	Tue, 15 Jul 2025 19:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AEF2BEC53;
+	Tue, 15 Jul 2025 19:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TI6kB94R"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Z1usRd1/"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2051.outbound.protection.outlook.com [40.107.220.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC19F15E5BB;
-	Tue, 15 Jul 2025 19:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752607586; cv=none; b=XiJcXU89JYiQk/b72Wa2VMdqD3GNbLC3QrNPFyqPnKGurAmwN55UOMoVRRplJ9+PZMGYAu0W1ieQs2VSo2q4mlAgsGuuKfL4Ht+OTxyhY+CLfv+eYoaM5s4z8/scmpiq7jwsmxJgTBHoo7zSChKx+tSFN5FSiIJti5AI4Hnc6Uo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752607586; c=relaxed/simple;
-	bh=wT/Fhi+ym+HXx2S7FKEScQlUAvOb9WvpfXv0bbf9vIQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cj1aA0Sa9BjvfQf+e8eyYMtFBTH18z5yTVOLKBYJRWxTVC/Wr8azBXHbx8DYURvoohsAjC3Ejc4QVq2frbKtguSM8fKz6VLcdhyfrfc8EpX3RJ88MPWbOq7BWQmBpmlk2k/RC/+8KvCI6TDGpXnoAJdIRyYG8de8KoSbAShXlac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TI6kB94R; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-311e2cc157bso4993748a91.2;
-        Tue, 15 Jul 2025 12:26:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752607584; x=1753212384; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=BWQ2RBHNtHKJE2BWuvIB0wzlCpMkv7aGAQWg/7WIA9g=;
-        b=TI6kB94Rjb76GdUn7Qo1Fq2hpQTegkUa/5jY9b4IAa1uzS/ELbxK9ydSD5T41l4RKa
-         r/FAgRjFuMWFgnzmEARNQnzbxc8r+O+3twmiw6LJrkq29vjHLFdwK4QA2z1STyWJFnvc
-         tCeZILn223bXC5hx1fkuaQ5JvjY6kZFQl+Msk0iyRT4CYaR4/ZFjSzJzxk1Pe3CKba4I
-         t2X6JexbOR0mSKH1uRVpA8iBLalxnAiFS58/GkaZVUA7ckqKSIWM5oB0LFfKhbDDAUe0
-         ylLXwRM7R8mKFltw19SwqpCOuN2b56S9884cmN9yyslWql7YqPJXOVoohpBkGgDj/Q8F
-         fqLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752607584; x=1753212384;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BWQ2RBHNtHKJE2BWuvIB0wzlCpMkv7aGAQWg/7WIA9g=;
-        b=nf9teloHOT7SXXhcMq8LJdiKC490D/aOtZ1XlYR3oWY1QYDO5oa5lIuBSSuKjzkpVX
-         Cx/vos5FIvKjGb+jirGTmBlA8vIqURbdUPgqj8rjmthLcyOR4e3IqH6eXuhxxT2NfG/V
-         OZO5mMOUphXXDUYFGaYrYINNZiuupMDU8ylXx1T7U6gZyI1VdI0craGwgbv092ANMsvj
-         8mLMAMLH0/b8ijMpZabt/rjDqmYPyCGU38YlEy5syKkBYxPYk5G4GsUKgOf0sSL5hB2u
-         Ax4irYzfxvSxIIpnyHMKsV0LfIEMM+fu6TpaMAlnjxdszhQSSIRK2E3qfnm3kLFTODft
-         RuCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAyf87hBibqDkN7U/fPre0bue8lNMKeFMw30S6PvDgUwWP5XTWRtPxbRsxJho7L/pe0joaR0skDJkpLA==@vger.kernel.org, AJvYcCW9JHdfLr0ijA82nLxNYuzTCMr6P5v+ZmXqidtw0rLgzkjd81l9CI1KXvrU/HfEjL48LZ+Z1TAY4ucNi+KG@vger.kernel.org, AJvYcCXcUgHhCcPSr5Jpypo44+heY+UKzHLdZp161CgH86rqktt8IVa+FR1hAhQtBy5iAckiFcmRNLy5C5Xt@vger.kernel.org
-X-Gm-Message-State: AOJu0YxytXz5fANZoL4TBSX+0N0IwCSTpWq22pPsKcWYWu+d37L0jxiH
-	aoZFslQRCl1/Juz1ElxJf0Upe2pqPsAA7wfZAeO4WPmf8kkwSZEub0h0bTCAQQ==
-X-Gm-Gg: ASbGncu9749bwzJN/y9WsD6xA/ViT1yybRIaIdFK7oMzwhCKI66vSyV0CL/edV9LzGo
-	cWDWIR7IONKOQDWJqn0LHAWvRckbRy+O7c9ts8XoIH7w9gixCOzYsOcvaKkUxH57OHFW2/pLKp7
-	tddNHvE8d9mEUn9uqIIuGlSRcb03A7sV4gpGKT32CsuWjOw+kKriDyUFfCCyuZEI7Ytk0xT9uxT
-	cke+OimNcFBmvzE0gQo1rC23GnTwq55FBBp1WTZqVE6KahO0sk+2lnAt6M4Of4zOlWg/GAQEEdX
-	zCsVZEetGw2G3rGbbWSdRM6HrzFI3t6U5JTocoLs0VT7ImwadcYFqGIrbEMqClHd0q4yaOoqHOs
-	ZNEG97sSLy8rLhUehYCp0/W50zIAqyZG7C69Sopt02Dj5T9c79AG0uqEQwkcNBa8xbwAZRD4=
-X-Google-Smtp-Source: AGHT+IHZiBjIQ/xv/I49UZD6Wx3aJWmouC/jvCsEziKQfmgnScYXTUqTJAFU/JrAgCTLNeyvLFqh8A==
-X-Received: by 2002:a17:90b:5281:b0:310:8d4a:a246 with SMTP id 98e67ed59e1d1-31c9e6e515cmr437572a91.1.1752607583571;
-        Tue, 15 Jul 2025 12:26:23 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c368240ccsm14743769a91.30.2025.07.15.12.26.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 12:26:23 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <9faeea8d-98b7-476e-9b4c-ed5be0a48913@roeck-us.net>
-Date: Tue, 15 Jul 2025 12:26:21 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E522BDC26;
+	Tue, 15 Jul 2025 19:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752607610; cv=fail; b=Mm9jIQSRXUzA5pBMVTxSFwNSpaYg1LAZVSynu39QgJOGVMjSU+NZCL4Ugk0ZzCSKoCPt344BAKiLhwRZyI8la9ee475jbf38MJUZn+G0REKNuHDHbLrDYft9at4KNnWC/78yQPQ4W9Eie/WawMoXflEpZZlvT1sYsCpxU1bfPh0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752607610; c=relaxed/simple;
+	bh=7lruqxkuR/sjZuUg6gJ5/Ei7Kt1luItR4buLB+aKnLw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fI9MFX9eW1O/6YFhCosOb4cDWXYQmMPLB0w+S4TAvX9Z1xK/6FbMOydQXVJ4jdhe4nSrR6EFpDsnYC26iRp8g+3LlCyxPv21AerwAlBkmMb5NmW4nsVvzmgd5jQBo7pxctbK5mitDRCiSpDZa07tFLanRN9YBQlhtkLY5PVYqnI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Z1usRd1/; arc=fail smtp.client-ip=40.107.220.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jtF/q9S0dyh7/LoU8KdEhlOT1ngQ5+7pdvyuCWIxIqrL+5qwvVZZFrUoRhrG6fkSjvAh445Fw4ca9E2lqhU+9uLFE2J0lnx4/lqrerjxP7Lg94E0Rfwk92wLmWYSxdvYWJk0q19OKmN5Q+QEIcLdRyZJUw3ljSrHqiy80HRvgOGZMn8CvWPRnRZyUgX/6g8QATUiuv/krBbAdUki1F7D9c5Ki/p7rX3cxJhNqVn87veScCn8ZLGm3+5oxWifkAUuEVp87cdq+sjSAuDD2MEjei6KjWIqbLgXrWqyC/kwP8J1fNy9FbFav5FVzgZiY9T8AJWWObkjq2qNnvB+0YPgSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iKicoRhPorw+MC5TXp1Ro8vrZmkPZfbC+gzmvGgUMwo=;
+ b=KtRp/zrn7emSkiaROYNMDBGl1UhHIym622owYDKp4lfdw5ZSIwf2OGInIZLdeObSsHtrvii3LWLCf7c2tCdDiZmwKH6e4fUW5/TkcT223A8yV/f9/q9XEsqhjNZAaQNTFZ4pl55iPlLEiHvWIvSEgmsFHZ4+yf3FQhrGxTzsNfxF0U3EtaXFD1+atMmN7+p2ZegJfpsRV3/J6nDdEXwf9bEL31NYlMEx1eulj5ptloTbWvOn9346vKZsn9KPnuDg829xfJ3nBTM5AfblycQxacMW8ZQAiiSTBdiaGzdGflDcEsQlmVpIgqMF8PdELQ7FTozOMm41h3GZ6R3cCiPzkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=8bytes.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iKicoRhPorw+MC5TXp1Ro8vrZmkPZfbC+gzmvGgUMwo=;
+ b=Z1usRd1/5H+DNavngmVEXIjzBY3H0mAcYCmTHymMpw/ZI3fa1EmgWC1rpXN9R2w/Op3ROKAlm7ziaVSWOjUq77RSTCXLSw4thA3T9DQXky74710gw8QtOzvKTnWMykMyDK4Nhw6GebRt1IzUpEwpXdHc2UveQ8sU1zIrZkMIhvY=
+Received: from BY3PR05CA0060.namprd05.prod.outlook.com (2603:10b6:a03:39b::35)
+ by LV8PR12MB9270.namprd12.prod.outlook.com (2603:10b6:408:205::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.27; Tue, 15 Jul
+ 2025 19:26:46 +0000
+Received: from SJ1PEPF00001CEA.namprd03.prod.outlook.com
+ (2603:10b6:a03:39b:cafe::c3) by BY3PR05CA0060.outlook.office365.com
+ (2603:10b6:a03:39b::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.16 via Frontend Transport; Tue,
+ 15 Jul 2025 19:26:45 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF00001CEA.mail.protection.outlook.com (10.167.242.26) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8922.22 via Frontend Transport; Tue, 15 Jul 2025 19:26:45 +0000
+Received: from ethanolx7e2ehost.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Jul
+ 2025 14:26:44 -0500
+From: Ashish Kalra <Ashish.Kalra@amd.com>
+To: <joro@8bytes.org>, <suravee.suthikulpanit@amd.com>,
+	<thomas.lendacky@amd.com>, <Sairaj.ArunKodilkar@amd.com>,
+	<Vasant.Hegde@amd.com>, <herbert@gondor.apana.org.au>
+CC: <seanjc@google.com>, <pbonzini@redhat.com>, <will@kernel.org>,
+	<robin.murphy@arm.com>, <john.allen@amd.com>, <davem@davemloft.net>,
+	<bp@alien8.de>, <michael.roth@amd.com>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+	<kvm@vger.kernel.org>
+Subject: [PATCH v3 0/4] iommu/amd: Fix host kdump support for SNP
+Date: Tue, 15 Jul 2025 19:26:34 +0000
+Message-ID: <cover.1752605725.git.ashish.kalra@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] hwmon: iio: Add alarm support
-To: Sean Anderson <sean.anderson@linux.dev>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <noname.nuno@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
- Jean Delvare <jdelvare@suse.com>, linux-iio@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-Cc: Andy Shevchenko <andy@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, linux-kernel@vger.kernel.org,
- David Lechner <dlechner@baylibre.com>
-References: <20250715012023.2050178-1-sean.anderson@linux.dev>
- <20250715012023.2050178-8-sean.anderson@linux.dev>
- <afc6aa6ad4b633f9d834acf933734985f14c5563.camel@gmail.com>
- <6455be16-d287-4d5e-9556-e1789d43708c@linux.dev>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <6455be16-d287-4d5e-9556-e1789d43708c@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CEA:EE_|LV8PR12MB9270:EE_
+X-MS-Office365-Filtering-Correlation-Id: d72736b0-50dc-4429-3eda-08ddc3d58969
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QWQvRm1Jb1FlQUF4TXRiZVZob1hzbnE1YUFCVlhaWVp2SEtEMTZadlVZQ0Uv?=
+ =?utf-8?B?QWZoRHF3NXBmOEhrN1FHNUYvc01oTFZjTnBMNVdWTWYzeUJoK2JabHFCTU83?=
+ =?utf-8?B?M2R6TTBiOWtyZkpJUDA3WExwNExsM1NNRWdUNHJFWEJIKy9KNElydGtid01u?=
+ =?utf-8?B?SVlWWURZei9HS2k4K0dJY0R6U0JPMWFTWVVRcEhJMXkrQ0R2emVjdXcwSXJR?=
+ =?utf-8?B?Z0YyOTU1ZmF5VWwra2tOYk1MbmZCVUJkNEllU1hHUlp3aHdQWGl2TWQzblI1?=
+ =?utf-8?B?NUJkTUtvL2FsQXluSTczZ2ZVMnhaQ2owcnRNdmFvQzBqY2dzNjRuSGF5c0ZQ?=
+ =?utf-8?B?R09ZUjJweHdROXQwOE9ZdzMyWXhOQlN0YW90bEgrcHRuRnUyOVk5VVNzQ3NC?=
+ =?utf-8?B?a0NyTTBtbUFqaFhlbThrRHJaRlg3K0dGRnUxaGY3WUd0YXc1S2gxYWlNbnpM?=
+ =?utf-8?B?VTVRUlJIRVloVVpFcXJlNW05RDRZYUZxemp4MzNkVUdXUFRhQVE0Y1FuU20x?=
+ =?utf-8?B?QW5CcnQ2ODVnQ3FoUEx3SjVzd2tWR3A2NDRMVm8zOHJqeGJNMmdnUkFoalc0?=
+ =?utf-8?B?b0wxcEREdFFpQzJuZno1ZWc1S2pDUHdaN21NbkM4WW12aWZXWDNkajJzOTJT?=
+ =?utf-8?B?M09hZERmOTZzQ21sdC9MaCtwdnU3VEYrZkF2WWlvU2llYnEyNUg5alhLYmpI?=
+ =?utf-8?B?bHFtSmJLdmJSTEE5dXFtcitxRUN2dzVtRW1BVkZFWDI5NFIwTWZSMERGQTBo?=
+ =?utf-8?B?OXRqditCTnROLzB5a054ZW54REVaN1FybU9qWUJ1SzN5NllLLzM5ZjJqUUhz?=
+ =?utf-8?B?cks4N2ZOcW1CazZPQTZzdkU1eUNPZzh5NDgzZ3ZMaHdXN0NaYmtuMW4rR00r?=
+ =?utf-8?B?cTZYNE1uaEtSZm1MK21iUlQvYUd6aXgwelEyRVFZOEJuWmNyN2FlOXBPbU5J?=
+ =?utf-8?B?dGVtZ2JoNzFpRXNTYVQrNndLNXBRQnRJeHJBcEFIeXdvWlRuSUNyM0lDSUht?=
+ =?utf-8?B?ME11Z1gyZUc1QlRJSmVTL2l5UG55RXdLQ2cxMnFNRmRPMG5mL2V6NWxZYzFW?=
+ =?utf-8?B?VVlSRFRzZUJUWDNRMFpZcGZzaENIZnpISUpVSzlWRldLNjc4ZFdCTDV0V3Fr?=
+ =?utf-8?B?WktTRm16M3NvRnh0MXVQbnAwaFk5eHAvc2ozZmt2Wit4T01IMTRoWWJtUlpO?=
+ =?utf-8?B?dnhuanpCNGRDTktScGd0RDBaRkt6L2NtZ2xWNXM5WTlaMjBnV3YrNHpaZE9a?=
+ =?utf-8?B?UVNVRlNPUlVTVjlWSVNzNVVTaEovTDZHNGhUeDkwODFpc3NycFJKcXRpQ2lE?=
+ =?utf-8?B?UnVUMjhVci9qL004Q0hjVHFacXc0MjJiTUsxbXZmR1JOeVlTak5rb2FKbU9u?=
+ =?utf-8?B?L01sRUhDclV3Mm1ycmZjNFc0a2NwSGtNMlgwb2tMaTJ4NmEyTTN5d2FRR2NN?=
+ =?utf-8?B?NktzNnk3aEFINURPOGFUOEN5SUFoZjZOcWNMRFA0cTdPc1pndjNzVGUxSWFz?=
+ =?utf-8?B?L3BFdVh1L0x3b0tud09XSVBZdlkyektob3g0b1FkZ29ZcGtnMVhTaDFJWVZZ?=
+ =?utf-8?B?blhMeHdpLzlFNzNoTGtCUTVmSUMrQkVXOGJzM2Y1RnZjZzlXb0wzWlVhRlVH?=
+ =?utf-8?B?Q1VUNVlTS3JTYUVuN3RCa2pPS2ppNkFyQ25jT1dNNUlRalB5Q2JVcTF0Qm9a?=
+ =?utf-8?B?Ym5ENyt4YjZFdFJiS2VJdWE5ZmlYV0F5ZnJzNGZHUnZ5cit5N2s1anh0dFNK?=
+ =?utf-8?B?TGxFTmFSbVJhZEV0MTgzY1FLK3puTTI5Y0pQNVlaZGtzSVdMbzdHNks5cWlu?=
+ =?utf-8?B?MTM1ZmM3Wk5mM0hMMTBLWm5OWXZ3UFRMU3BkaTJrWll4blRKLzdCUWlhNzRy?=
+ =?utf-8?B?UTJ5bXRTZmR5SEFoSFBpTk1VbjNJMFFBTDFiRVZPd1R2MnpjUDhYRXdNWkVV?=
+ =?utf-8?B?MXd5NFlRcFk3dmo5UWFYMnFiMFkxTTlBbTFqNkF5ODFGOGhSV3I0NXlhSTNZ?=
+ =?utf-8?B?dURxV3hUVGd1SzhOYWpSS1EzS085Y25FdVpnMERpOUVSMmJORVRuZEVZSlJp?=
+ =?utf-8?Q?+fRZJx?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 19:26:45.5961
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d72736b0-50dc-4429-3eda-08ddc3d58969
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CEA.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9270
 
-On 7/15/25 10:02, Sean Anderson wrote:
-> On 7/15/25 07:28, Nuno Sá wrote:
->> On Mon, 2025-07-14 at 21:20 -0400, Sean Anderson wrote:
->>> Add alarm support based on IIO threshold events. The alarm is cleared on
->>> read, but will be set again if the condition is still present. This is
->>> detected by disabling and re-enabling the event. The same trick is done
->>> when creating the attribute to detect already-triggered events.
->>>
->>> The alarms are updated by an event listener. To keep the notifier call
->>> chain short, we create one listener per iio device, shared across all
->>> hwmon devices.
->>>
->>> To avoid dynamic creation of alarms, alarms for all possible events are
->>> allocated at creation. Lookup is done by a linear scan, as I expect
->>> events to occur rarely. If performance becomes an issue, a binary search
->>> could be done instead (or some kind of hash lookup).
->>>
->>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->>> ---
->>>
->>>   drivers/hwmon/iio_hwmon.c | 322 +++++++++++++++++++++++++++++++++++++-
->>>   1 file changed, 321 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/hwmon/iio_hwmon.c b/drivers/hwmon/iio_hwmon.c
->>> index 3db4d4b30022..c963bc5452ba 100644
->>> --- a/drivers/hwmon/iio_hwmon.c
->>> +++ b/drivers/hwmon/iio_hwmon.c
->>> @@ -8,6 +8,7 @@
->>>   #include <linux/slab.h>
->>>   #include <linux/mod_devicetable.h>
->>>   #include <linux/module.h>
->>> +#include <linux/notifier.h>
->>>   #include <linux/err.h>
->>>   #include <linux/platform_device.h>
->>>   #include <linux/property.h>
->>> @@ -15,7 +16,192 @@
->>>   #include <linux/hwmon.h>
->>>   #include <linux/hwmon-sysfs.h>
->>>   #include <linux/iio/consumer.h>
->>> +#include <linux/iio/events.h>
->>> +#include <linux/iio/iio.h>
->>>   #include <linux/iio/types.h>
->>> +#include <uapi/linux/iio/events.h>
->>> +
->>> +/* Protects iio_hwmon_listeners and listeners' refcnt */
->>> +DEFINE_MUTEX(iio_hwmon_listener_lock);
->>> +LIST_HEAD(iio_hwmon_listeners);
->>> +
->>> +/**
->>> + * struct iio_hwmon_listener - Listener for IIO events
->>> + * @block: Notifier for events
->>> + * @ids: Array of IIO event ids, one per alarm
->>> + * @alarms: Bitmap of alarms
->>> + * @num_alarms: Length of @ids and @alarms
->>> + * @indio_dev: Device we are listening to
->>> + * @list: List of all listeners
->>> + * @refcnt: Reference count
->>> + */
->>> +struct iio_hwmon_listener {
->>> +	struct notifier_block block;
->>> +	u64 *ids;
->>> +	unsigned long *alarms;
->>> +	size_t num_alarms;
->>> +
->>> +	struct iio_dev *indio_dev;
->>> +	struct list_head list;
->>> +	unsigned int refcnt;
->>> +};
->>> +
->>> +/**
->>> + * iio_hwmon_lookup_alarm() - Find an alarm by id
->>> + * @listener: Event listener
->>> + * @id: IIO event id
->>> + *
->>> + * Return: index of @id in @listener->ids, or -1 if not found
->>> + */
->>> +static ssize_t iio_hwmon_lookup_alarm(struct iio_hwmon_listener *listener,
->>> +				      u64 id)
->>> +{
->>> +	ssize_t i;
->>> +
->>> +	for (i = 0; i < listener->num_alarms; i++)
->>> +		if (listener->ids[i] == id)
->>> +			return i;
->>> +
->>> +	return -1;
->>> +}
->>> +
->>> +static int iio_hwmon_listener_callback(struct notifier_block *block,
->>> +				       unsigned long action, void *data)
->>> +{
->>> +	struct iio_hwmon_listener *listener =
->>> +		container_of(block, struct iio_hwmon_listener, block);
->>> +	struct iio_event_data *ev = data;
->>> +	ssize_t i;
->>> +
->>> +	if (action != IIO_NOTIFY_EVENT)
->>> +		return NOTIFY_DONE;
->>> +
->>> +	i = iio_hwmon_lookup_alarm(listener, ev->id);
->>> +	if (i >= 0)
->>> +		set_bit(i, listener->alarms);
->>> +	else
->>> +		dev_warn_once(&listener->indio_dev->dev,
->>> +			      "unknown event %016llx\n", ev->id);
->>> +
->>> +	return NOTIFY_DONE;
->>> +}
->>> +
->>> +/**
->>> + * iio_event_id() - Calculate an IIO event id
->>> + * @channel: IIO channel for this event
->>> + * @type: Event type (theshold, rate-of-change, etc.)
->>> + * @dir: Event direction (rising, falling, etc.)
->>> + *
->>> + * Return: IIO event id corresponding to this event's IIO id
->>> + */
->>> +static u64 iio_event_id(struct iio_chan_spec const *chan,
->>> +			enum iio_event_type type,
->>> +			enum iio_event_direction dir)
->>> +{
->>> +	if (chan->differential)
->>> +		return IIO_DIFF_EVENT_CODE(chan->type, chan->channel,
->>> +					   chan->channel2, type, dir);
->>> +	if (chan->modified)
->>> +		return IIO_MOD_EVENT_CODE(chan->type, chan->channel,
->>> +					  chan->channel2, type, dir);
->>> +	return IIO_UNMOD_EVENT_CODE(chan->type, chan->channel, type, dir);
->>> +}
->>> +
->>> +/**
->>> + * iio_hwmon_listener_get() - Get a listener for an IIO device
->>> + * @indio_dev: IIO device to listen to
->>> + *
->>> + * Look up or create a new listener for @indio_dev. The returned listener is
->>> + * registered with @indio_dev, but events still need to be manually enabled.
->>> + * You must call iio_hwmon_listener_put() when you are done.
->>> + *
->>> + * Return: Listener for @indio_dev, or an error pointer
->>> + */
->>> +static struct iio_hwmon_listener *iio_hwmon_listener_get(struct iio_dev
->>> *indio_dev)
->>> +{
->>> +	struct iio_hwmon_listener *listener;
->>> +	int err = -ENOMEM;
->>> +	size_t i, j;
->>> +
->>> +	guard(mutex)(&iio_hwmon_listener_lock);
->>> +	list_for_each_entry(listener, &iio_hwmon_listeners, list) {
->>> +		if (listener->indio_dev == indio_dev) {
->>> +			if (likely(listener->refcnt != UINT_MAX))
->>> +				listener->refcnt++;
->>
->> I dunno for the above to ever happen :).
-> 
-> Well, I can remove it if you like.
-> 
->> And as Andy stated, let's just use proper refcount APIs.
-> 
-> No point in using atomic ops if they are only accessed under a mutex.
-> 
->>> +			return listener;
->>> +		}
->>> +	}
->>> +
->>> +	listener = kzalloc(sizeof(*listener), GFP_KERNEL);
->>> +	if (!listener)
->>> +		goto err_unlock;
->>> +
->>> +	listener->refcnt = 1;
->>> +	listener->indio_dev = indio_dev;
->>> +	listener->block.notifier_call = iio_hwmon_listener_callback;
->>> +	for (i = 0; i < indio_dev->num_channels; i++)
->>> +		listener->num_alarms += indio_dev-
->>>> channels[i].num_event_specs;
->>> +
->>> +	listener->ids = kcalloc(listener->num_alarms, sizeof(*listener->ids),
->>> +				GFP_KERNEL);
->>> +	listener->alarms = bitmap_zalloc(listener->num_alarms, GFP_KERNEL);
->>> +	if (!listener->ids || !listener->alarms)
->>> +		goto err_listener;
->>> +
->>> +	i = 0;
->>> +	for (j = 0; j < indio_dev->num_channels; j++) {
->>> +		struct iio_chan_spec const *chan = &indio_dev->channels[j];
->>> +		size_t k;
->>> +
->>> +		for (k = 0; k < chan->num_event_specs; k++)
->>> +			listener->ids[i++] =
->>> +				iio_event_id(chan, chan->event_spec[k].type,
->>> +					     chan->event_spec[k].dir);
->>> +	}
->>> +
->>> +	err = iio_event_register(indio_dev, &listener->block);
->>> +	if (err)
->>> +		goto err_alarms;
->>> +
->>> +	list_add(&listener->list, &iio_hwmon_listeners);
->>> +	mutex_unlock(&iio_hwmon_listener_lock);
->>> +	return listener;
->>> +
->>> +err_alarms:
->>> +	kfree(listener->alarms);
->>> +	kfree(listener->ids);
->>> +err_listener:
->>> +	kfree(listener);
->>> +err_unlock:
->>> +	mutex_unlock(&iio_hwmon_listener_lock);
->>> +	return ERR_PTR(err);
->>> +}
->>> +
->>> +/**
->>> + * iio_hwmon_listener_put() - Release a listener
->>> + * @data: &struct iio_hwmon_listener to release
->>> + *
->>> + * For convenience, @data is void.
->>> + */
->>> +static void iio_hwmon_listener_put(void *data)
->>> +{
->>> +	struct iio_hwmon_listener *listener = data;
->>> +
->>> +	scoped_guard(mutex, &iio_hwmon_listener_lock) {
->>> +		if (unlikely(listener->refcnt == UINT_MAX))
->>> +			return;
->>> +
->>> +		if (--listener->refcnt)
->>> +			return;
->>> +
->>> +		list_del(&listener->list);
->>> +		iio_event_unregister(listener->indio_dev, &listener->block);
->>> +	}
->>> +
->>> +	kfree(listener->alarms);
->>> +	kfree(listener->ids);
->>> +	kfree(listener);
->>> +}
->>>   
->>>   /**
->>>    * struct iio_hwmon_state - device instance state
->>> @@ -143,6 +329,68 @@ static ssize_t iio_hwmon_write_event(struct device *dev,
->>>   	return count;
->>>   }
->>>   
->>> +/**
->>> + * struct iio_hwmon_alarm_attribute - IIO HWMON alarm attribute
->>> + * @dev_attr: Base device attribute
->>> + * @listener: Listener for this alarm
->>> + * @index: Index of the channel in the IIO HWMON
->>> + * @alarm: Index of the alarm within @listener
->>> + */
->>> +struct iio_hwmon_alarm_attribute {
->>> +	struct device_attribute dev_attr;
->>> +	struct iio_hwmon_listener *listener;
->>> +	size_t index;
->>> +	size_t alarm;
->>> +};
->>> +#define to_alarm_attr(_dev_attr) \
->>> +	container_of(_dev_attr, struct iio_hwmon_alarm_attribute, dev_attr)
->>> +
->>> +/**
->>> + * iio_hwmon_alarm_toggle() - Turn an event off and back on again
->>> + * @chan: Channel of the event
->>> + * @dir: Event direction (rising, falling, etc.)
->>> + *
->>> + * Toggle an event's enable so we get notified if the alarm is already
->>> + * triggered. We use this to convert IIO's event-triggered events into
->>> + * level-triggered alarms.
->>> + *
->>> + * Return: 0 on success or negative error on failure
->>> + */
->>> +static int iio_hwmon_alarm_toggle(struct iio_channel *chan,
->>> +				  enum iio_event_direction dir)
->>> +{
->>> +	int ret;
->>> +
->>> +	ret = iio_write_event_processed_scale(chan, IIO_EV_TYPE_THRESH, dir,
->>> +					      IIO_EV_INFO_ENABLE, 0, 1);
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	return iio_write_event_processed_scale(chan, IIO_EV_TYPE_THRESH, dir,
->>> +					       IIO_EV_INFO_ENABLE, 1, 1);
->>> +}
->>> +
->>> +static ssize_t iio_hwmon_read_alarm(struct device *dev,
->>> +				    struct device_attribute *attr,
->>> +				    char *buf)
->>> +{
->>> +	struct iio_hwmon_alarm_attribute *sattr = to_alarm_attr(attr);
->>> +	struct iio_hwmon_state *state = dev_get_drvdata(dev);
->>> +	struct iio_channel *chan = &state->channels[sattr->index];
->>> +
->>> +	if (test_and_clear_bit(sattr->alarm, sattr->listener->alarms)) {
->>> +		u64 id = sattr->listener->ids[sattr->alarm];
->>> +		enum iio_event_direction dir =
->>> IIO_EVENT_CODE_EXTRACT_DIR(id);
->>> +
->>> +		WARN_ON(iio_hwmon_alarm_toggle(chan, dir));
->>
->> WARN_ON() is highly discouraged... Also do we really need a "scary" splat in
->> this case?
-> 
-> OK, maybe dev_warn then. I don't want to propagate the error because I think
-> it's more important to tell userspace that the alarm went off than if there
-> was a problem determining if the alarm is still active.
-> 
+From: Ashish Kalra <ashish.kalra@amd.com>
 
-Sorry, I will neither accept backtraces not warning messages in hwmon code.
-That risks polluting the kernel log. Propagate the error. I fail to see
-the problem with that.
+When a crash is triggered the kernel attempts to shut down SEV-SNP
+using the SNP_SHUTDOWN_EX command. If active SNP VMs are present,
+SNP_SHUTDOWN_EX fails as firmware checks all encryption-capable ASIDs
+to ensure none are in use and that a DF_FLUSH is not required. 
 
->>> +		strcpy(buf, "1\n");
->>> +		return 2;
->>> +	}
->>> +
->>> +	strcpy(buf, "0\n");
->>> +	return 2;
->>
->> As stated, sysfs_emit()
->>
->>> +}
->>> +
->>>   static int add_device_attr(struct device *dev, struct iio_hwmon_state *st,
->>>   			   ssize_t (*show)(struct device *dev,
->>>   					   struct device_attribute *attr,
->>> @@ -205,6 +453,63 @@ static int add_event_attr(struct device *dev, struct
->>> iio_hwmon_state *st,
->>>   	return 0;
->>>   }
->>>   
->>> +static int add_alarm_attr(struct device *dev, struct iio_hwmon_state *st,
->>> +			  int i, enum iio_event_direction dir,
->>> +			  const char *fmt, ...)
->>> +{
->>> +	struct iio_hwmon_alarm_attribute *a;
->>> +	struct iio_hwmon_listener *listener;
->>> +	ssize_t alarm;
->>> +	umode_t mode;
->>> +	va_list ap;
->>> +	int ret;
->>> +
->>> +	mode = iio_event_mode(&st->channels[i], IIO_EV_TYPE_THRESH, dir,
->>> +			      IIO_EV_INFO_ENABLE);
->>> +	if (!(mode & 0200))
->>> +		return 0;
->>> +
->>> +	listener = iio_hwmon_listener_get(st->channels[i].indio_dev);
->>> +	if (listener == ERR_PTR(-EBUSY))
->>> +		return 0;
->>
->> Maybe I missed something, where can we get -EBUSY? And should we ignore it?
-> 
-> Oh, this was from before I refactored the notification API to allow kernel
-> consumers to co-exist with userspace ones. So this can't occur.
-> 
->>> +	if (IS_ERR(listener))
->>> +		return PTR_ERR(listener);
->>> +
->>> +	ret = devm_add_action_or_reset(dev, iio_hwmon_listener_put,
->>> listener);
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	alarm = iio_hwmon_lookup_alarm(listener,
->>> +				       iio_event_id(st->channels[i].channel,
->>> +						    IIO_EV_TYPE_THRESH,
->>> dir));
->>> +	if (WARN_ON_ONCE(alarm < 0))
->>> +		return -ENOENT;
->>> +
->>
->> Again, I would drop WARN_ON_ONCE()
-> 
-> This can only occur if there is a bug in the kernel. We should have returned
-> 0 from iio_event_mode() before we get to this point.
-> 
+This casues the kdump kernel to boot with IOMMU SNP enforcement still
+enabled and IOMMU completion wait buffers (CWBs), command buffers,
+device tables and event buffer registers remain locked and exclusive
+to the previous kernel. Attempts to allocate and use new buffers in
+the kdump kernel fail, as the hardware ignores writes to the locked
+MMIO registers (per AMD IOMMU spec Section 2.12.2.1).
 
-Just return the error to the caller (without replacing the error).
+As a result, the kdump kernel cannot initialize the IOMMU or enable IRQ
+remapping which is required for proper operation.
 
-Guenter
+This results in repeated "Completion-Wait loop timed out" errors and a
+second kernel panic: "Kernel panic - not syncing: timer doesn't work
+through Interrupt-remapped IO-APIC"
+
+The following MMIO registers are locked and ignore writes after failed
+SNP shutdown:
+Device Table Base Address Register
+Command Buffer Base Address Register
+Event Buffer Base Address Register
+Completion Store Base Register/Exclusion Base Register
+Completion Store Limit Register/Exclusion Range Limit Register
+
+Instead of allocating new buffers, re-use the previous kernel’s pages
+for completion wait buffers, command buffers, event buffers and device
+tables and operate with the already enabled SNP configuration and
+existing data structures.
+
+This approach is now used for kdump boot regardless of whether SNP is
+enabled during kdump.
+
+The fix enables successful crashkernel/kdump operation on SNP hosts
+even when SNP_SHUTDOWN_EX fails.
+
+Fixes: c3b86e61b756 ("x86/cpufeatures: Enable/unmask SEV-SNP CPU feature")
+
+v3:
+- Moving to AMD IOMMU driver fix so that there is no need to do SNP_DECOMMISSION
+during panic() and kdump kernel boot will be more agnostic to 
+whether or not SNP_SHUTDOWN is done properly (or even done at all),
+i.e., even with active SNP guests. Fixing crashkernel/kdump boot with IOMMU SNP/RMP
+enforcement still enabled prior to kdump boot by reusing the pages of the previous 
+kernel for IOMMU completion wait buffers, command buffer and device table and
+memremap them during kdump boot.
+- Rebased on linux-next.
+- Split the original patch into smaller patches and prepare separate
+patches for adding iommu_memremap() helper and remapping/unmapping of 
+IOMMU buffers for kdump, Reusing device table for kdump and skip the
+enabling of IOMMU buffers for kdump.
+- Add new functions for remapping/unmapping IOMMU buffers and call
+them from alloc_iommu_buffers/free_iommu_buffers in case of kdump boot
+else call the exisiting alloc/free variants of CWB, command and event buffers.
+- Skip SNP INIT in case of kdump boot.
+- The final patch skips enabling IOMMU command buffer and event buffer
+for kdump boot which fixes kdump on SNP host.
+- Add comment that completion wait buffers are only re-used when SNP is
+enabled.
+
+Ashish Kalra (4):
+  iommu/amd: Add support to remap/unmap IOMMU buffers for kdump
+  iommu/amd: Reuse device table for kdump
+  crypto: ccp: Skip SNP INIT for kdump boot
+  iommu/amd: Fix host kdump support for SNP
+
+ drivers/crypto/ccp/sev-dev.c        |   8 +
+ drivers/iommu/amd/amd_iommu_types.h |   5 +
+ drivers/iommu/amd/init.c            | 288 +++++++++++++++++++---------
+ drivers/iommu/amd/iommu.c           |   2 +-
+ 4 files changed, 212 insertions(+), 91 deletions(-)
+
+-- 
+2.34.1
 
 
