@@ -1,186 +1,210 @@
-Return-Path: <linux-kernel+bounces-731313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46167B05286
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:16:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A370B05289
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:16:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF294A701D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:16:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5476A7B2C5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE74272806;
-	Tue, 15 Jul 2025 07:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l5bWZrNa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65AA27380C;
+	Tue, 15 Jul 2025 07:15:44 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC76626F478;
-	Tue, 15 Jul 2025 07:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A53426FA6A;
+	Tue, 15 Jul 2025 07:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752563741; cv=none; b=kpXW3UxySfinsoUGjR78q7bulE1f1DZH+t0qB1LeRU8b+uhdf+YrcK32IXhlVCrl9oeCHOd36zWC4iR8py0/1O430oanVknIcsQ0DOqAllKu8j9RLW0andlhy2f7aV6rPXpMNlJwQzAsEzoNCZLZQLS5XjFbOu3K8EhP9W/1T/4=
+	t=1752563744; cv=none; b=iHZq4motWqf20IWpWrnAJZtHMlHgx4SeWT02aCFkVRMkC4iHl8h0WIsp0KuGdti1/pySo00ZXb4Fv1JFjw19Fkj7XoPQ0X4I4IgvkUfnv5LuagcYDx3wQ3+hNfl43T7Q7PQM+jbs89P1vvG/IfDWf23rZYg28A7ntzIjdblyB0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752563741; c=relaxed/simple;
-	bh=66XFHTlp/vLtCpVft2/nBl04cFbKoI8kcWKDesGdOEQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lTy/ggFCXmbCGXKOZXW3xJeqsOH/RtjEKAhkUxIbtm+PXMYW5/EuLxshyLtsIgli+DiarqMGB0jI8HooRUFtegpAOCtP1k7v76yn2MJlGEcD2+CblgptLdGU8gVGvNwofiIxJ6gqFWhB9+vyV4442vH9vCD1FekNOfvD1MBWwBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l5bWZrNa; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752563740; x=1784099740;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=66XFHTlp/vLtCpVft2/nBl04cFbKoI8kcWKDesGdOEQ=;
-  b=l5bWZrNa0njdriL2m/+9rSIR/4fq6BVyvF293cGYIRATyuj6cypdDcUn
-   Tl2tqV0/hnk7Wyj0oK4J1bWbrrAs+ZY4D/WZ4yQqiCr7aKgnJNqJ8N2qV
-   TQY/bp2dnrkUmfxmWW+mqwuiSHkFdGc0LIGF0laBQ/T0S9WQyyQiev2eG
-   RSA0Y0MpXWq/YEzEGOpjONx+COp6VPiAcj37rBX89uqe7gAK1YvOeuVsJ
-   S4VWpaG5BbcVnN3DERjwLiiXtX8/I/dRmkM/Zdcs8azK8x9rkXMHH4SyN
-   tTUx0vUxzqyovWrN2MbHd71H5N7b4g2w7jV/mf5wdAw7UZnm8q/LEMel7
-   g==;
-X-CSE-ConnectionGUID: dgq2UFbaTx2XxRaw9v5qyg==
-X-CSE-MsgGUID: vrWH766zSq2CD5X/dZz7bA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="58427976"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="58427976"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 00:15:36 -0700
-X-CSE-ConnectionGUID: Pv1ZxgCOTJONF08bK+CveQ==
-X-CSE-MsgGUID: j90nGgMtTZuXn4FtKbEdaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="188155495"
-Received: from p12ill20yoongsia.png.intel.com ([10.88.227.38])
-  by fmviesa001.fm.intel.com with ESMTP; 15 Jul 2025 00:15:32 -0700
-From: Song Yoong Siang <yoong.siang.song@intel.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@fomichev.me>
-Cc: netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH bpf-next,v4 1/1] doc: clarify XDP Rx metadata handling and driver requirements
-Date: Tue, 15 Jul 2025 15:15:02 +0800
-Message-Id: <20250715071502.3503440-1-yoong.siang.song@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1752563744; c=relaxed/simple;
+	bh=659K2a+RVej/0E/JVasPDdOXxmtJmIlt1/h05SIk5TE=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=gXdlK1eDZ0Rs2jpS+ygUf2Zev0/tG8Da49mFtiaxWuhzdehNYEQYQygVg5Uyjn/Gxy1eldK6hH2W1RPTHCNn2nVTln287RjTaxO2hDrctwQ/G9EmDAb9Dl0afU+dp7mcKypq8dol5nLwCUjvkXGrbfCK/M150A7pjro60pmdaDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bh9Sm2p1Wz5F2lq;
+	Tue, 15 Jul 2025 15:15:36 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl1.zte.com.cn with SMTP id 56F7FHiZ002069;
+	Tue, 15 Jul 2025 15:15:17 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 15 Jul 2025 15:15:19 +0800 (CST)
+Date: Tue, 15 Jul 2025 15:15:19 +0800 (CST)
+X-Zmail-TransId: 2afa68760007ffffffffd15-679fc
+X-Mailer: Zmail v1.0
+Message-ID: <202507151515190926U70E2Wb3ud2PtF5l19ku@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <alexs@kernel.org>
+Cc: <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>, <corbet@lwn.net>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
+        <yang.tao172@zte.com.cn>, <ye.xingchen@zte.com.cn>,
+        <wang.yaxin@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIXSBEb2NzL3poX0NOOiBUcmFuc2xhdGUgdWJpZnMucnN0IHRvIFNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 56F7FHiZ002069
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68760018.000/4bh9Sm2p1Wz5F2lq
 
-Improves the documentation for XDP Rx metadata handling, especially for
-AF_XDP use cases. It clarifies that drivers must remove any device-reserved
-metadata from the data_meta area before passing the frame to the XDP
-program.
+From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-Besides, expand the explanation of how userspace and BPF programs should
-coordinate the use of METADATA_SIZE, and adds a detailed diagram to
-illustrate pointer adjustments and metadata layout.
+translate the "ubifs.rst" into Simplified Chinese.
 
-Additional, describe the requirements and constraints enforced by
-bpf_xdp_adjust_meta().
+Update to commit 5f5cae9b0e81("Documentation: ubifs: Fix
+compression idiom")
 
-Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+Signed-off-by: yang tao <yang.tao172@zte.com.cn>
 ---
+ .../translations/zh_CN/filesystems/index.rst  |   1 +
+ .../translations/zh_CN/filesystems/ubifs.rst  | 111 ++++++++++++++++++
+ 2 files changed, 112 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/filesystems/ubifs.rst
 
-V4:
-  - update the documentation to indicate that drivers are expected to copy
-    any device-reserved metadata from the metadata area (Jakub)
-  - remove selftest tool changes.
+diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
+index 9f2a8b003778..faaa0f097223 100644
+--- a/Documentation/translations/zh_CN/filesystems/index.rst
++++ b/Documentation/translations/zh_CN/filesystems/index.rst
+@@ -26,4 +26,5 @@ Linux Kernel中的文件系统
+    virtiofs
+    debugfs
+    tmpfs
++   ubifs
 
-V3: https://lore.kernel.org/netdev/20250702165757.3278625-1-yoong.siang.song@intel.com/
-  - update doc and commit msg accordingly.
-
-V2: https://lore.kernel.org/netdev/20250702030349.3275368-1-yoong.siang.song@intel.com/
-  - unconditionally do bpf_xdp_adjust_meta with -XDP_METADATA_SIZE (Stanislav)
-
-V1: https://lore.kernel.org/netdev/20250701042940.3272325-1-yoong.siang.song@intel.com/
----
- Documentation/networking/xdp-rx-metadata.rst | 47 ++++++++++++++------
- 1 file changed, 34 insertions(+), 13 deletions(-)
-
-diff --git a/Documentation/networking/xdp-rx-metadata.rst b/Documentation/networking/xdp-rx-metadata.rst
-index a6e0ece18be5..2e067eb6c5d6 100644
---- a/Documentation/networking/xdp-rx-metadata.rst
-+++ b/Documentation/networking/xdp-rx-metadata.rst
-@@ -49,7 +49,10 @@ as follows::
-              |                 |
-    xdp_buff->data_meta   xdp_buff->data
- 
--An XDP program can store individual metadata items into this ``data_meta``
-+Certain devices may utilize the ``data_meta`` area for specific purposes.
-+Drivers for these devices must move any hardware-related metadata out from the
-+``data_meta`` area before presenting the frame to the XDP program. This ensures
-+that the XDP program can store individual metadata items into this ``data_meta``
- area in whichever format it chooses. Later consumers of the metadata
- will have to agree on the format by some out of band contract (like for
- the AF_XDP use case, see below).
-@@ -63,18 +66,36 @@ the final consumer. Thus the BPF program manually allocates a fixed number of
- bytes out of metadata via ``bpf_xdp_adjust_meta`` and calls a subset
- of kfuncs to populate it. The userspace ``XSK`` consumer computes
- ``xsk_umem__get_data() - METADATA_SIZE`` to locate that metadata.
--Note, ``xsk_umem__get_data`` is defined in ``libxdp`` and
--``METADATA_SIZE`` is an application-specific constant (``AF_XDP`` receive
--descriptor does _not_ explicitly carry the size of the metadata).
--
--Here is the ``AF_XDP`` consumer layout (note missing ``data_meta`` pointer)::
--
--  +----------+-----------------+------+
--  | headroom | custom metadata | data |
--  +----------+-----------------+------+
--                               ^
--                               |
--                        rx_desc->address
-+Note, ``xsk_umem__get_data`` is defined in ``libxdp`` and ``METADATA_SIZE`` is
-+an application-specific constant. Since the ``AF_XDP`` receive descriptor does
-+_not_ explicitly carry the size of the metadata, it is the responsibility of the
-+driver to copy any device-reserved metadata out from the metadata area and
-+ensure that ``xdp_buff->data_meta`` is set equal to ``xdp_buff->data`` before a
-+BPF program is executed. This is necessary so that, after the BPF program
-+adjusts the metadata area, the consumer can reliably retrieve the metadata
-+address using ``METADATA_SIZE`` offset.
+diff --git a/Documentation/translations/zh_CN/filesystems/ubifs.rst b/Documentation/translations/zh_CN/filesystems/ubifs.rst
+new file mode 100644
+index 000000000000..27997777f4ea
+--- /dev/null
++++ b/Documentation/translations/zh_CN/filesystems/ubifs.rst
+@@ -0,0 +1,111 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+The following diagram shows how custom metadata is positioned relative to the
-+packet data and how pointers are adjusted for metadata access (note the absence
-+of the ``data_meta`` pointer in ``xdp_desc``)::
++.. include:: ../disclaimer-zh_CN.rst
 +
-+              |<-- bpf_xdp_adjust_meta(xdp_buff, -METADATA_SIZE) --|
-+  new xdp_buff->data_meta                              old xdp_buff->data_meta
-+              |                                                    |
-+              |                                            xdp_buff->data
-+              |                                                    |
-+   +----------+----------------------------------------------------+------+
-+   | headroom |                  custom metadata                   | data |
-+   +----------+----------------------------------------------------+------+
-+              |                                                    |
-+              |                                            xdp_desc->addr
-+              |<------ xsk_umem__get_data() - METADATA_SIZE -------|
++:Original: Documentation/filesystems/ubifs.rst
 +
-+``bpf_xdp_adjust_meta`` ensures that ``METADATA_SIZE`` is aligned to 4 bytes,
-+does not exceed 252 bytes, and leaves sufficient space for building the
-+xdp_frame. If these conditions are not met, it returns a negative error. In this
-+case, the BPF program should not proceed to populate data into the ``data_meta``
-+area.
- 
- XDP_PASS
- ========
++:翻译:
++
++   邵明寅 Shao Mingyin <shao.mingyin@zte.com.cn>
++
++:校译:
++
++   - 杨涛 yang tao <yang.tao172@zte.com.cn>
++
++===============
++UBI 文件系统
++===============
++
++简介
++============
++
++UBIFS 文件系统全称为 UBI 文件系统（UBI File System）。UBI 代表无序块镜像（Unsorted
++Block Images）。UBIFS 是一种闪存文件系统，这意味着它专为闪存设备设计。需要理解的是，UBIFS
++与 Linux 中任何传统文件系统（如 Ext2、XFS、JFS 等）完全不同。UBIFS 代表一类特殊的文件系统，
++它们工作在 MTD 设备而非块设备上。该类别的另一个 Linux 文件系统是 JFFS2。
++
++为更清晰说明，以下是 MTD 设备与块设备的简要比较：
++
++1. MTD 设备代表闪存设备，由较大尺寸的擦除块组成，通常约 128KiB。块设备由小块组成，通常 512
++   字节。
++2. MTD 设备支持 3 种主要操作：在擦除块内偏移位置读取、在擦除块内偏移位置写入、以及擦除整个擦除
++   块。块设备支持 2 种主要操作：读取整个块和写入整个块。
++3. 整个擦除块必须先擦除才能重写内容。块可直接重写。
++4. 擦除块在经历一定次数的擦写周期后会磨损，通常 SLC NAND 和 NOR 闪存为 100K-1G 次，MLC
++   NAND 闪存为 1K-10K 次。块设备不具备磨损特性。
++5. 擦除块可能损坏（仅限 NAND 闪存），软件需处理此问题。硬盘上的块通常不会损坏，因为硬件有坏块
++   替换机制（至少现代 LBA 硬盘如此）。
++
++这充分说明了 UBIFS 与传统文件系统的本质差异。
++
++UBIFS 工作在 UBI 层之上。UBI 是一个独立的软件层（位于 drivers/mtd/ubi），本质上是卷管理和
++磨损均衡层。它提供称为 UBI 卷的高级抽象，比 MTD 设备更上层。UBI 设备的编程模型与 MTD 设备非
++常相似，仍由大容量擦除块组成，支持读/写/擦除操作，但 UBI 设备消除了磨损和坏块限制（上述列表的第
++4 和第 5 项）。
++
++某种意义上，UBIFS 是 JFFS2 文件系统的下一代产品，但它与 JFFS2 差异巨大且不兼容。主要区别如下：
++
++* JFFS2 工作在 MTD 设备之上，UBIFS 依赖于 UBI 并工作在 UBI 卷之上。
++* JFFS2 没有介质索引，需在挂载时构建索引，这要求全介质扫描。UBIFS 在闪存介质上维护文件系统索引
++  信息，无需全介质扫描，因此挂载速度远快于 JFFS2。
++* JFFS2 是直写（write-through）文件系统，而 UBIFS 支持回写（write-back），这使得 UBIFS
++  写入速度快得多。
++
++与 JFFS2 类似，UBIFS 支持实时压缩，可将大量数据存入闪存。
++
++与 JFFS2 类似，UBIFS 能容忍异常重启和断电。它不需要类似 fsck.ext2 的工具。UBIFS 会自动重放日
++志并从崩溃中恢复，确保闪存数据结构的一致性。
++
++UBIFS 具有对数级扩展性（其使用的数据结构多为树形），因此挂载时间和内存消耗不像 JFFS2 那样线性依
++赖于闪存容量。这是因为 UBIFS 在闪存介质上维护文件系统索引。但 UBIFS 依赖于线性扩展的 UBI 层，
++因此整体 UBI/UBIFS 栈仍是线性扩展。尽管如此，UBIFS/UBI 的扩展性仍显著优于 JFFS2。
++
++UBIFS 开发者认为，未来可开发同样具备对数级扩展性的 UBI2。UBI2 将支持与 UBI 相同的 API，但二进
++制不兼容。因此 UBIFS 无需修改即可使用 UBI2。
++
++挂载选项
++=============
++
++(*) 表示默认选项。
++
++====================    =======================================================
++bulk_read               批量读取以利用闪存介质的顺序读取加速特性
++no_bulk_read (*)        禁用批量读取
++no_chk_data_crc (*)     跳过数据节点的 CRC 校验以提高读取性能。 仅在闪存
++                        介质高度可靠时使用此选项。 此选项可能导致文件内容损坏无法被
++                        察觉。
++chk_data_crc            强制校验数据节点的 CRC
++compr=none              覆盖默认压缩器，设置为"none"
++compr=lzo               覆盖默认压缩器，设置为"LZO"
++compr=zlib              覆盖默认压缩器，设置为"zlib"
++auth_key=               指定用于文件系统身份验证的密钥。
++                        使用此选项将强制启用身份验证。
++                        传入的密钥必须存在于内核密钥环中， 且类型必须是'logon'
++auth_hash_name=         用于身份验证的哈希算法。同时用于哈希计算和 HMAC
++                        生成。典型值包括"sha256"或"sha512"
++====================    =======================================================
++
++快速使用指南
++========================
++
++挂载的 UBI 卷通过 "ubiX_Y" 或 "ubiX:NAME" 语法指定，其中 "X" 是 UBI 设备编号，"Y" 是 UBI
++卷编号，"NAME" 是 UBI 卷名称。
++
++将 UBI 设备 0 的卷 0 挂载到 /mnt/ubifs::
++
++    $ mount -t ubifs ubi0_0 /mnt/ubifs
++
++将 UBI 设备 0 的 "rootfs" 卷挂载到 /mnt/ubifs（"rootfs" 是卷名）::
++
++    $ mount -t ubifs ubi0:rootfs /mnt/ubifs
++
++以下是内核启动参数的示例，用于将 mtd0 附加到 UBI 并挂载 "rootfs" 卷：
++ubi.mtd=0 root=ubi0:rootfs rootfstype=ubifs
++
++参考资料
++==========
++
++UBIFS 文档及常见问题解答/操作指南请访问 MTD 官网：
++
++- http://www.linux-mtd.infradead.org/doc/ubifs.html
++- http://www.linux-mtd.infradead.org/faq/ubifs.html
 -- 
-2.34.1
-
+2.25.1
 
