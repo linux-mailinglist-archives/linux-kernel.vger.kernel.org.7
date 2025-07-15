@@ -1,82 +1,107 @@
-Return-Path: <linux-kernel+bounces-731173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6297CB05067
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:40:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08B7DB05064
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3F737A8A2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:38:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 842153A3061
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981B12D1913;
-	Tue, 15 Jul 2025 04:39:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCA32D12E1
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63EF2D238B;
+	Tue, 15 Jul 2025 04:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xs6k6/Pk"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B0322129E;
+	Tue, 15 Jul 2025 04:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752554385; cv=none; b=JNFo3dy/dlyY9CX3ty9hdxX2MwRKT8TZs8H9PnjbXAMsEAId/7C08TsM4NwK3cF3l+MDB49kQsrGjtAXX1jqJxtwZud3t2DkOIacwRAHujg2Ur5l1TB/VA9crcV073jb6EWrnFszm/obxauvWdNBYMV2BNAIwnkIDAvHcm7uzxk=
+	t=1752554377; cv=none; b=b146jhdP89orn9V6VYZ7oolXRwb7WcqPXpb3EOd9fCRjnk4pfc++han7l8a4/m9hVDorEqN0Zq9FM5p5ycRrPiC07PY1gp2g6kzhjGOV5ftydkLKhyAnrjYaXrH6Ka0Lz4T9fvxVfnlAab/uLSc6a2V4pdySBre19w+JOCBM2Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752554385; c=relaxed/simple;
-	bh=n10kQxDbIIcMFCsSBSOBIt0O5HebwKLVYb0lHAYy3m0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QlSqV63LOcEsPmRaqQKPY3wePShytizM25WAf0IJD4Yf/VImjs/tnKbYQAnpgA+UY3jFe4ewsMRahgGStBmlzMDeHPgBDqZskEqO/xwcborxEjdF+ucQGoaSlIn/Rg+JfV16fDJQG5AQBJq0E8i0iFj3MueyMWI2EGKGgcvU9ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD3551515;
-	Mon, 14 Jul 2025 21:39:26 -0700 (PDT)
-Received: from ergosum.cambridge.arm.com (ergosum.cambridge.arm.com [10.1.196.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 84E993F6A8;
-	Mon, 14 Jul 2025 21:39:34 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64/mm: Drop redundant addr increment in set_huge_pte_at()
-Date: Tue, 15 Jul 2025 05:39:22 +0100
-Message-Id: <20250715043922.57195-1-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1752554377; c=relaxed/simple;
+	bh=lJw8vz1SW2vDWE1YFZRy4dIq8k+EPE779FMC38M1vHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZiI0zZ4TfyWXcX14OpPbSA3YQIXb8lm7/VNs1v/pH/0Ttn3J6SeppjU8PVOzu/rlHtJsJJSs9zfbgNzkUWoSwodBCCR4/6NL60nd4jaiVJbnGSaLWfZqYDwFS/5IYq98uIsgQHDV/OagKjolA1ELOt0r1z/qTE1xztLYLZm1TmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xs6k6/Pk; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=J+GVUJovTGLheWJo9RsseTUzw5AT5FZdGzH9Pyx6H7A=; b=xs6k6/PkChQ1ZJIV/Y6jeq3dST
+	qJwzZ9uUHFnkjewyujcASeULgV/YCcryRGLbz2PlNu8uvbMT8rIfGRlLqfziq6/q4OB5+qXeqclOW
+	pFi95+NlN5SSZoat5aMIoeN+R+WZZZLpMgKxokw5Q7v26FXN/cdChyYK/uB9YdhcuGD9AggyZF8db
+	KIPBXizi0wowtmKD7gNintVz1kuR+X9emvt6UyNreBwZ7FGDxE0MahpoecPDg4alFEdcJFUlGhuZ/
+	jhGXnnUFqszTXaAfSA1oDM2wBd0SQxXHQhA8FIvOHCaq/jRDM9WQ0ZU3SkFun+X+to9roA3DMKC1Z
+	RsUfTeUw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ubXRy-000000041rO-1Ac2;
+	Tue, 15 Jul 2025 04:39:30 +0000
+Date: Mon, 14 Jul 2025 21:39:30 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Dragos Tatulea <dtatulea@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, Jens Axboe <axboe@kernel.dk>,
+	parav@nvidia.com, Cosmin Ratio <cratiu@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH v2 net-next] net: Allow SF devices to be used for ZC DMA
+Message-ID: <aHXbgr67d1l5atW8@infradead.org>
+References: <20250711092634.2733340-2-dtatulea@nvidia.com>
+ <20250714181136.7fd53312@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714181136.7fd53312@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-The 'addr' need not be incremented while operating on single entry basis as
-BBM is not required for such updates.
+On Mon, Jul 14, 2025 at 06:11:36PM -0700, Jakub Kicinski wrote:
+> > +static inline struct device *netdev_get_dma_dev(const struct net_device *dev)
+> > +{
+> > +	struct device *dma_dev = dev->dev.parent;
+> > +
+> > +	if (!dma_dev)
+> > +		return NULL;
+> > +
+> > +	/* Common case: dma device is parent device of netdev. */
+> > +	if (dma_dev->dma_mask)
+> > +		return dma_dev;
+> > +
+> > +	/* SF netdevs have an auxdev device as parent, the dma device being the
+> > +	 * grandparent.
+> > +	 */
+> > +	dma_dev = dma_dev->parent;
+> > +	if (dma_dev && dma_dev->dma_mask)
+> > +		return dma_dev;
+> > +
+> > +	return NULL;
+> > +}
+> 
+> LGTM, but we need a better place for this function. netdevice.h is
+> included directly by 1.5k files, and indirectly by probably another 5k.
+> It's not a great place to put random helpers with 2 callers. 
+> Maybe net/netdev_rx_queue.h and net/core/netdev_rx_queue.c?
+> I don't think it needs to be a static inline either.
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- arch/arm64/mm/hugetlbpage.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
-index 0c8737f4f2ce..1d90a7e75333 100644
---- a/arch/arm64/mm/hugetlbpage.c
-+++ b/arch/arm64/mm/hugetlbpage.c
-@@ -225,7 +225,7 @@ void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 	ncontig = num_contig_ptes(sz, &pgsize);
- 
- 	if (!pte_present(pte)) {
--		for (i = 0; i < ncontig; i++, ptep++, addr += pgsize)
-+		for (i = 0; i < ncontig; i++, ptep++)
- 			__set_ptes_anysz(mm, ptep, pte, 1, pgsize);
- 		return;
- 	}
--- 
-2.30.2
+The whole concept is also buggy.  Trying to get a dma-able device by
+walking down from an upper level construct like the netdevice can't work
+reliably.  You'll need to explicitly provide the dma_device using either
+a method or a pointer to it instead of this guesswork.
 
 
