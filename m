@@ -1,93 +1,147 @@
-Return-Path: <linux-kernel+bounces-731565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B30CB05649
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:26:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D3BB05658
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AC6F562593
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:26:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6D1B7AC3F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B636D2D5C62;
-	Tue, 15 Jul 2025 09:26:33 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9A02472AE;
+	Tue, 15 Jul 2025 09:31:46 +0000 (UTC)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515EB22D78A
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70AC242D67;
+	Tue, 15 Jul 2025 09:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752571593; cv=none; b=ClG3OttRJedzsl2glvmTUJDPEhdFTKsvRpsQSbJYYFtEm3MSG3OICG0HZTjGYK1OgfKE1uF/wMor8+/v6ffSXhc1FqHCKI89LYT7jqsbgKHG2/n+zvexvBSjgi7BdyIlrpY4bCgRWJ1uoEM7Im54Ct9T6Cv+UVsDiOIsgX9SfGg=
+	t=1752571906; cv=none; b=NYbvuQbxsws2LECmen0qbsaxiqjlSP2osNtZ/cXaew5wDtJUewodLiQruGsp6r2yVTSKdVi94LJDeMJhPy1/A5PLu5t3y2FwOuqsBLwQARRlvv2CCzqzEhOr0c6IUz2Ex9KKnU3ziST8zKX/DVHmMSJ16GrZCgKj1qj5jDb6Vmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752571593; c=relaxed/simple;
-	bh=slpGwSdYfjT4mQWLMWsK+wKd8ciwm+usWuZFAMlQu0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tcAkIdOS285QnAeXXxuDDQRgeV8xQEbzNypX0ePkgVPRLBqYHyDVlvoK+ETkS0O36By2Y4cLTsNDR+2DLT/b8HWjuDWJnsSvroHmBfM9U2/gjMEmoWH3wUB8Deqo8SGNyDnZ+hZNsXDgUM9hUuqiL0a6Mv2zzZ4u1h6JGPgm7UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id EBC5B1D9F7E;
-	Tue, 15 Jul 2025 09:26:28 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id 532B430;
-	Tue, 15 Jul 2025 09:26:25 +0000 (UTC)
-Date: Tue, 15 Jul 2025 05:26:41 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
- <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
- Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
- E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
- Jens Remus <jremus@linux.ibm.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
- tech-board-discuss@lists.linuxfoundation.org
-Subject: Re: [RFC PATCH 2/5] unwind: Export unwind_user symbol to GPL
- modules
-Message-ID: <20250715052641.1ceb958c@gandalf.local.home>
-In-Reply-To: <aHYA9IPs5QiX-QLs@infradead.org>
-References: <20250709212556.32777-1-mathieu.desnoyers@efficios.com>
-	<20250709212556.32777-3-mathieu.desnoyers@efficios.com>
-	<aHC-_HWR2L5kTYU5@infradead.org>
-	<20250711065742.00d6668b@gandalf.local.home>
-	<aHSmIa3uffj5vW-m@infradead.org>
-	<20250714062724.6febd9fb@gandalf.local.home>
-	<aHTsOcIUs0ObXCo1@infradead.org>
-	<20250714075426.36bdda0b@gandalf.local.home>
-	<aHYA9IPs5QiX-QLs@infradead.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752571906; c=relaxed/simple;
+	bh=Enm+5lj1/ZB8kwu0P++RJOLus7cmUggLHCtHYqUrHzI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rypsxIZRlHpC6Ge6EZYD/+7yt0M8VRUHOogQ4sOOvOkc+j1sbRaggrMouRBmOj9+9AMiP8nGZ+QNFRV1S3xZ5F4yWYhBl2dU5z3yGoUrcCgHiuJuqIdXhTUJ7JA3YZymgS3+4W34SCJMB+d+TONJ1f0ODBYUfEzot2/ZWgmGr1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae9be1697easo50577566b.1;
+        Tue, 15 Jul 2025 02:31:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752571903; x=1753176703;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/NEvrnN1Iem52usWD5YMVmiNdwL79bzkTw6CkM01FJs=;
+        b=e65junnM93gqKxFZevdcxgn8ICCXdH/8FVYYlVnYbyTc1Lli5rl44myctAf95ZNEwo
+         Ia0W/AKyzwP+01aEf2r7H5+4gSJcNNoGUzC1dFjgEsFR6Nf2VB3sWt1C5weK+eAVRX8M
+         Q4rF/3h7WDN9XE/Fy5TEf3Xa0LqFoYF5xruE0wSeIcTeteNlVF5gUSREamtHnDM1pF+4
+         SKQOj383bkuy+GMHDRI3SmlWrSys3RDoYZ19jHWNwEkW5PTbRq6CLJTitc4s9eRC7iQI
+         bn2h79dEyOBT3Pe8AVfrVvEe4se1aIkuNOkGPK3vQf69uYW2gPqQaL6CuernhTP57zEc
+         JhYw==
+X-Forwarded-Encrypted: i=1; AJvYcCU64gOam9hItyMJQSdX+rzYFmBr6o/PXNBhIhJTLyt2iaHG90V353cXwlVHa6ZjeKUdI07rRdyJBYbYeSo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1ULbRKfjRZubEBqCIPXHFXjJaXjO/XWUS4tnrxeXc3XG2Pr19
+	ECCdClRDJb1qilo1vUwvEP5KPiGf4FBqQlgzkbY1Q+FVs4quNEE5GjoY
+X-Gm-Gg: ASbGncsuuxCQoqAbPPbvu/MC75C1JzB+HR43EKBpTVSPWbMsR+vaMeIhG+kpXbjIarj
+	oeE98hFXYNUOHPb+uKOAKztZQRVf4lzzi226dCZWBu3S/OAlv5Rybj5LQvewy++gmEa8G2CEoHY
+	j9TfTgiu+rppgMwDdGGH2GpCogoUhtn3951B3//TbaVwwGvH3n69238/qE28NhGTWMHJb5YsL7+
+	lSpXgvcn+nmZt286dwYyx1xDPKZYVhRuvLtVZY033jNOtRk+9p/FS0F2uds9kVxWbRcaoONIYSW
+	8FBokzHUFe/bx67keL9qdG2xkpiDD1SnVLrxt4vaMfb70WZEhzQAypVkqJKH4B0tYciZBo6TLz5
+	XiigRkvmUjSCC
+X-Google-Smtp-Source: AGHT+IEgfYhUiqAFXqjOjJsoxyl3hh/BsBBaqN0B3m9m28JMb/J8aEhA/ASIWj8brBldbnf+X40lYA==
+X-Received: by 2002:a17:907:3d8f:b0:ae3:eab4:21ed with SMTP id a640c23a62f3a-ae9b5bfbc5bmr275577166b.11.1752571902673;
+        Tue, 15 Jul 2025 02:31:42 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:1::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee8d9fsm953060666b.46.2025.07.15.02.31.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 02:31:42 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Date: Tue, 15 Jul 2025 02:28:19 -0700
+Subject: [PATCH] efivarfs: Suppress false-positive kmemleak warning for sfi
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 36tdjip6t34a9pg4wwtwp8pixmhgmn61
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 532B430
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1//T8zPQLXZBwI/an/qjdBgfQ9JkxnPbrA=
-X-HE-Tag: 1752571585-357310
-X-HE-Meta: U2FsdGVkX1+abi9f0XP4/m50ESB6j0w37LP6NDYmqgWObwRz5210WIa1ZuDswwTddpSXqaa25NIWNeTSIQQPDnsmt5rQTN+Qud4GVFJ6jqTF/HshasrH84pItG5atOgHo6vb5caRqaKP3M7HSczBxXY6dOO3lpjrWx4AQgHrs7tZSlibLN0GDlXuoNK/CalNM3SEuvxNUItoEkPQrYgM1pARMDcmh7NARe7hU1vMt0njTlfa0JBy/lTzMFaCbNgXdxIcoJliW7ni4kyA44/Yl5MZcJN8wXDS3FxAEA9FKwJG1Y4opsGrTlI6LZNUay7Q5qFt/6RQRKHKVMGCZ7SfC3WeLodkFmvWM2QcnV8SKG9Dbvs4Ikvf08+a+yiCiHdnLjbP69ySgJUUxZu4TnwlTQ==
+Message-Id: <20250715-kmemleak_efi-v1-1-c07e68c76ae8@debian.org>
+X-B4-Tracking: v=1; b=H4sIADIfdmgC/x3MWwqDMBQFwK1czreBaCOVbKVISc2JvfioJCAFc
+ e+Cs4A5UJiVBV4OZO5a9LfCS10Jhm9YRxqN8ILGNq191s5MC5eZYXozqfkwJrouPKyLqARbZtL
+ /3b3687wAnMmrCl4AAAA=
+X-Change-ID: 20250714-kmemleak_efi-bedfe48a304d
+To: Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@meta.com, Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1481; i=leitao@debian.org;
+ h=from:subject:message-id; bh=Enm+5lj1/ZB8kwu0P++RJOLus7cmUggLHCtHYqUrHzI=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBodh/90G2Ll6Fc9Cq7iQPkQeZyYayJ1fjcZ0Xg3
+ HQRjZpj9YyJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaHYf/QAKCRA1o5Of/Hh3
+ bTlUD/498CUujYZVG8HJT5z62Jq9OJNJ2jypGgKS82BWDwiZVx5JALUc6MUbaN+pFqSZcAMbGZR
+ Tw7sKNvZsIFpILL6RE07yMlUI+2Mejf+ckyICxTfGcIzpW7/mnZ7COdiQHMfyoS5r30OeZwMYrg
+ SR0w7noqc+//dkK5sk5hq5FuDgrR2q4N45UkIRHvQ2Hv1kS/kEf14JGZWQDckoX+B2pnIJwxP68
+ 7N/EZzbXIfqmiTv8uULOrppN8enmIx0pDMiInlBW7TDumtXoNNCRhy/o4l6R9g5iHWyGE3W7gLE
+ YhiRb0qmlflpjvaBp7s14B6OKoYOte5pdURMdvnNDdX2X94k03segaHW42rBHiRLIEnSh2dnhp5
+ 2cvlTnPMH5OxgPEXkO6G0cQeRzabDA3WFy9mOFvgFFnTLddRQMtW6WO19TOlFy9uXhQ5Lx47OPK
+ 5qawikrzWrfSIBKuFYl0mA43r6+u6YcPOGd8wT7tf9sckz3ZuBKNNZlAwe+q4e2Sec/vEdGNaKr
+ DyKjWpyYZ6scN00q6SkLBXZfCR7fuxID+qAVQNZL1EAZpnZBz3os/S9aBFctl9nEXXYqIjFKxV3
+ Um/MQHUFBVaSu/fKyD/6nFgzzwyQ+Y1eMSFJVJnjd2yu3apJNpuJTG4qZuumQI44/xUUv86cDYY
+ 98ryaAqOOhxSmAg==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On Tue, 15 Jul 2025 00:19:16 -0700
-Christoph Hellwig <hch@infradead.org> wrote:
+When kmemleak is enabled, it incorrectly reports the sfi structure
+allocated during efivarfs_init_fs_context() as leaked:
 
-> I honestly don't care.  Not my business.  And you're probably also
-> asking the wrong question, as those giant old out of tree projects
-> tend to be a mess because of that.  The right question is really what
-> functionality does LTTng have that we want in the kernel and work on
-> that.
+    unreferenced object 0xffff888146250b80 (size 64):
+    __kmalloc_cache_noprof
+    efivarfs_init_fs_context
+    ...
 
-See my reply to Linus in the other thread you were Cc'd on.
+On module unload, this object is freed in efivarfs_kill_sb(), confirming
+no actual leak. Also, kfree(sfi) is called at efivarfs_kill_sb(). I am
+not able to explain why kmemleak detected it as a leak. To silence this
+false-positive, mark the sfi allocation as ignored by kmemleak right
+after allocation.
 
-https://lore.kernel.org/all/20250715052459.0000e119@gandalf.local.home/
+This ensures clearer leak diagnostics for this allocation path.
 
--- Steve
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ fs/efivarfs/super.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+index c900d98bf4945..5f867ad2005ae 100644
+--- a/fs/efivarfs/super.c
++++ b/fs/efivarfs/super.c
+@@ -19,6 +19,7 @@
+ #include <linux/notifier.h>
+ #include <linux/printk.h>
+ #include <linux/namei.h>
++#include <linux/kmemleak.h>
+ 
+ #include "internal.h"
+ #include "../internal.h"
+@@ -498,6 +499,7 @@ static int efivarfs_init_fs_context(struct fs_context *fc)
+ 	if (!sfi)
+ 		return -ENOMEM;
+ 
++	kmemleak_ignore(sfi);
+ 	sfi->mount_opts.uid = GLOBAL_ROOT_UID;
+ 	sfi->mount_opts.gid = GLOBAL_ROOT_GID;
+ 
+
+---
+base-commit: 8c2e52ebbe885c7eeaabd3b7ddcdc1246fc400d2
+change-id: 20250714-kmemleak_efi-bedfe48a304d
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
+
 
