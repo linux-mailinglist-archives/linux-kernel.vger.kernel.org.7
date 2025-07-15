@@ -1,124 +1,96 @@
-Return-Path: <linux-kernel+bounces-731052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FD1EB04DF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:46:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B47E9B04DFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 208A93AACF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:46:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 023D41AA4844
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF692D028F;
-	Tue, 15 Jul 2025 02:46:35 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361DF2D0281;
+	Tue, 15 Jul 2025 02:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="Y0ne9vgn"
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB32725A651;
-	Tue, 15 Jul 2025 02:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752547595; cv=none; b=Fp0I7ppyWXkHlkR9A/HgYxm5I8oap2I+b7z71DbLESvco2XObm8EJbfNPPWBVL6ha8yiZ/FXsTKcTJGLSTqsNkyxPraRVQE22AD5rKa4Ddev3GdoktAcMg0NcaDBBDzoC2GctJ3+ZFZ0Ullqg8aPLg+ZODU7FuBbMPx59PMowAU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752547595; c=relaxed/simple;
-	bh=pKUSNer9kB1rFcvKfygUN7XQqkLKWyZGNl4PNvl8iBw=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Le7RBaUsDxZq+1AZxW5Cq1PNJ6G4igh37DAk7CCQzQv+iRbgIW+7QqxsWgsND0OziqSfe6YxxEXZJ2ola4pqP/0GRORX+vMkB2izBoQS2JGa2NM5a4UqWMUXqWt9Uzg314uC6zZmpnrjZpnPkhlG6GL8vYyqTPJoQ2ZDcWg0DQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bh3Qr2ddqz29drF;
-	Tue, 15 Jul 2025 10:43:32 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 24EF31400CB;
-	Tue, 15 Jul 2025 10:46:09 +0800 (CST)
-Received: from [10.174.178.247] (10.174.178.247) by
- dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 15 Jul 2025 10:46:06 +0800
-Subject: Re: [RESEND PATCH v18 1/2] ACPI: APEI: send SIGBUS to current task if
- synchronous memory error not recovered
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Shuai Xue
-	<xueshuai@linux.alibaba.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-	"Luck, Tony" <tony.luck@intel.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>,
-	<linux-edac@vger.kernel.org>, <x86@kernel.org>, <justin.he@arm.com>,
-	<ardb@kernel.org>, <ying.huang@linux.alibaba.com>, <ashish.kalra@amd.com>,
-	<baolin.wang@linux.alibaba.com>, <tglx@linutronix.de>,
-	<dave.hansen@linux.intel.com>, <lenb@kernel.org>, <hpa@zytor.com>,
-	<robert.moore@intel.com>, <lvying6@huawei.com>, <xiexiuqi@huawei.com>,
-	<zhuo.song@linux.alibaba.com>, <sudeep.holla@arm.com>,
-	<lpieralisi@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<yazen.ghannam@amd.com>, <mark.rutland@arm.com>, <mingo@redhat.com>,
-	<robin.murphy@arm.com>, <Jonathan.Cameron@huawei.com>, <bp@alien8.de>,
-	<linux-arm-kernel@lists.infradead.org>, <wangkefeng.wang@huawei.com>,
-	<tanxiaofei@huawei.com>, <mawupeng1@huawei.com>, <linmiaohe@huawei.com>,
-	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <tongtiangen@huawei.com>,
-	<gregkh@linuxfoundation.org>, <jarkko@kernel.org>
-References: <20250404112050.42040-1-xueshuai@linux.alibaba.com>
- <20250404112050.42040-2-xueshuai@linux.alibaba.com>
- <0c0bc332-0323-4e43-a96b-dd5f5957ecc9@huawei.com>
- <709ee8d2-8969-424c-b32b-101c6a8220fb@linux.alibaba.com>
- <353809e7-5373-0d54-6ddb-767bc5af9e5f@huawei.com>
- <653abdd4-46d2-4956-b49c-8f9c309af34d@linux.alibaba.com>
- <de5d2417-dc92-b276-1125-4feb5151de7f@huawei.com>
- <f60f1128-0d42-48e5-9a06-6ed7ca10767f@linux.alibaba.com>
- <20250428152350.GA23615@willie-the-truck>
- <6671c3cc-5119-4544-bcb5-17e8cc2d7057@linux.alibaba.com>
- <CAJZ5v0j3NC2ki1XPXfznxZRBLaReDBJ+nzHFgvqMx5+MgERL-A@mail.gmail.com>
- <3a465782-a8ff-4be8-9c15-e46f39196757@linux.alibaba.com>
- <CAJZ5v0gfFHCvE2Uu8=GRb9=ueK51s1-0BDBkJbbDG0tQvD5pLA@mail.gmail.com>
-From: Hanjun Guo <guohanjun@huawei.com>
-Message-ID: <9457d09d-20da-e645-3f3a-2be0c0101c71@huawei.com>
-Date: Tue, 15 Jul 2025 10:46:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316CE18C008
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752547762; cv=pass; b=RlzSwR6RvEPpmTKpdyMAO2xgxISa+MPfC0Capu8uZ2ZicfKSurnnv/QQayLapGw0etzQFcCP4+iDq95WZiO9onMmRVPrexRiNgvFzSFlTiQCdoYbliM5+ZXY5gl4PK+laG/8on1h0VR3+YoqwbRMiti59qODyOiLuCR2za52O18=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752547762; c=relaxed/simple;
+	bh=oYc1X0zpP3iCx3Ysoc32BzZsufvumAgaFAwXY1GqbMQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=lnQOzNJr3piPoUu1yg5DVuHJhZE1yYEFTcEOcYVWSihEQHFvtoNMglkBFqDAyTyeg12bKrA2yLD4EnRhLbcwo7AOG/FZRV4Yu4/8JUeI3m09pF9Jlg0SJgbULo0XNPWQ6L/tDkibg2mBv12dbKhJ1+ek55mrWT0vD0QKk00MnXA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=Y0ne9vgn; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752547728; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=jIMzXuJMRZ+1KghrMBC1Cb0tt9UQC1QUDnFC2bO5D4GDG3J/P2uuycgYPLEk8jdiRDZrgo2hNYNhSLbV6GkhjAALlUSFLKLzMHnTtC/aweqyoHmw/koJxLmJquQmll7VP0WO3jm5FmIxsnNj3Mq6LgOvIPzA1jfxQarF2MdDbKo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752547728; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=+MgDqwqQwBOoR7bK8vOjG7Euu2X7RqGSoU+BG4Eb53o=; 
+	b=Hmuz+OWenzPQAVzb+x/bLNvTjfJmTOpkUSBwJt5wSfeVsGqTJdz2+5GRqSnhRBp9Qh1/J34mhXLZovEEiSysLxmfVoW8KinQwEvNXynf7R8mdiRTYfAqyIL0dl6oOik95oiNPZqVqGyDhHbwKQfl+Sbzsi6Q2FN7W1tP7w87O30=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752547728;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=+MgDqwqQwBOoR7bK8vOjG7Euu2X7RqGSoU+BG4Eb53o=;
+	b=Y0ne9vgnMb5MsMuTYNdBYWnJyNo9h8uhhyppp+LP2rKnsLnSkZF6ktwY9GZwbmei
+	+0QGVQVgNCdxPwJgw+2U/8sMQFbflnmre75rQviRMv3AxyOv60ndM0CyWPNsKp1oA8h
+	DqHFBim/O6uNvBhKtWabbtUQyZH4UIli6VMM6ICc=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1752547727358849.2634328225116; Mon, 14 Jul 2025 19:48:47 -0700 (PDT)
+Received: from  [212.73.77.104] by mail.zoho.com
+	with HTTP;Mon, 14 Jul 2025 19:48:47 -0700 (PDT)
+Date: Tue, 15 Jul 2025 06:48:47 +0400
+From: Askar Safin <safinaskar@zohomail.com>
+To: "Feng Tang" <feng.tang@linux.alibaba.com>
+Cc: "akpm" <akpm@linux-foundation.org>, "corbet" <corbet@lwn.net>,
+	"john.ogness" <john.ogness@linutronix.de>,
+	"lance.yang" <lance.yang@linux.dev>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"paulmck" <paulmck@kernel.org>, "pmladek" <pmladek@suse.com>,
+	"rostedt" <rostedt@goodmis.org>
+Message-ID: <1980bfc17f1.122b80ffe36544.5266293070616137570@zohomail.com>
+In-Reply-To: <aHWwL7TdabnGna3D@U-2FWC9VHC-2323.local>
+References: <20250703021004.42328-2-feng.tang@linux.alibaba.com>
+ <20250714210940.12-1-safinaskar@zohomail.com>
+ <aHWliJhyIZnq97Mm@U-2FWC9VHC-2323.local>
+ <1980ba9224c.11f5e5a9635585.8635674808464045994@zohomail.com> <aHWwL7TdabnGna3D@U-2FWC9VHC-2323.local>
+Subject: Re: [PATCH v3 1/5] panic: clean up code for console replay
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0gfFHCvE2Uu8=GRb9=ueK51s1-0BDBkJbbDG0tQvD5pLA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-GB
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
+Feedback-ID: rr08011227bd8c9109aa455c9f1b3f9597000003b665c105d8ef2941bd84fb88f2fc99af22b3c3bf00b494be:zu08011227b31be5f31691515d02de013400000536c14eae528b2dc0c7356559cb0ebe2308fe20df0a1f3876:rf0801122bfdbab67235d367eb76eb8dff0000bcd10bf5c8c60368c0a8e9c0c71b63833409e6d78ec8cecfe194b79930:ZohoMail
 
-On 2025/7/15 1:30, Rafael J. Wysocki wrote:
->>> For APEI changes, you need an ACK from one of the reviewers listed in
->>> the MAINTAINERS entry for APEI.
->>>
->>> Thanks!
->> Hi, Rafael
->>
->> Sorry, I missed your email which goes in span (:
->>
->> ARM maintain @Catalin points that:
->>
->>   > James Morse is listed as reviewer of the ACPI APEI code but he's busy
->>   > with resctrl/MPAM. Adding Lorenzo, Sudeep and Hanjun as arm64 ACPI
->>   > maintainers, hopefully they can help.
->>
->> And Hanjun explictly gived his Reviewed-by tag in this thread, is that
->> happy for you for merge?
-> Not really.
-> 
-> I need an ACK or R-by from a reviewer listed in the APEI entry in MAINTAINERS.
-> 
-> If James Morse is not able to fill that role (and AFAICS he's not been
-> for quite some time now), I'd expect someone else to step up.
 
-Please count me in. I have been working in ACPI for years, and RAS 
-feature development for both x86 and arm64 architectures.
+ ---- On Tue, 15 Jul 2025 05:34:39 +0400  Feng Tang <feng.tang@linux.alibaba.com> wrote --- 
+ > I see. How about changing the patch to: 
+ > 
+ > -            bit 5: print all printk messages in buffer
+ > +            bit 5: replay all kernel messages on consoles at the end of panic
 
-I'm pretty familiar with ACPI spec including APEI, it will help me
-to do the review work.
+Yes, I agree!
+--
+Askar Safin
+https://types.pl/@safinaskar
 
-Thanks
-Hanjun
 
