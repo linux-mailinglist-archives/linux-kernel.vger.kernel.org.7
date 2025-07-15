@@ -1,223 +1,282 @@
-Return-Path: <linux-kernel+bounces-731886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C2DB05AFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:14:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABBFAB05AFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D248A561927
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:14:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60A733A6DAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7218E2E2EE8;
-	Tue, 15 Jul 2025 13:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEF319066B;
+	Tue, 15 Jul 2025 13:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="chUIkvnJ"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gWkj1UC1"
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B35B2E1C54;
-	Tue, 15 Jul 2025 13:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003232E2EE9
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752585281; cv=none; b=llxC4tMSBBdCbZKoYLE9kNflM7BQpCGh/XaTde3VZIg0AjEzw5BXK+L2g2MpjB1H7ZlDliIf7cejpe7BmbHGxgu9aJ+6E9mAwcvuzrkp4LKcq2JVYddYMLGelbGUSpOaJRtIwf2OCY4LktZUXpr/ytjckzQPXsENj1sB7NkNWwA=
+	t=1752585307; cv=none; b=VfOpURTRlvdsdlDA7YqRNEf9UDPU+P0iaJVjfzn9RiWz+C45/7foRI205cXAh58evtKF8/AFP25c3OL4X2DVfrm2VCXfoPtzVL21UWVgOVI9p0GAQpWQfiS5E/QXeHhOKAETvBUsB0mDubrclJZKhLHPXs2Xl7ElrRU9los6Y1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752585281; c=relaxed/simple;
-	bh=JSYN4ycsig9LZivmXVfWGvMoxfcpvAh4wdr8Ygxo/AM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sp8V0T3oVIBIOTs1jDgaBun5FNxRJs+puComjSMP+CNMNf4aUVlcPof8yHu12z0z56OyoGe+TM9Whl18Zeis8C+DSjPlHZXsig4sznIBT/MsRRs8dawWYyilD5oqe55Oh/QU8WE5NZzfgzD/8FCnmF8YQODqEzF4zR76mMcBf6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=chUIkvnJ; arc=none smtp.client-ip=209.85.160.172
+	s=arc-20240116; t=1752585307; c=relaxed/simple;
+	bh=yGuWdLHZ4ewsvIla/efowtUUShlq8SpzRz/Aax++gXU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RHT/U5Eo5MCYQHBR06+vRJ9VKU9FwTd7gWumGOxo9l7LNNHlNEPtwTNEMpWaI6eMWAoN3DIMs5Ehp1DjQ20DfQsxzrG7YmSK2S8Mk0Tt86a9hnizhUlypBnbi7nDR+Qdg5SvqZQbUjKB+VMSpXCBgoKtyTlIOpRMmYp4jzDtRhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gWkj1UC1; arc=none smtp.client-ip=209.85.221.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4ab5953f5dcso26324361cf.0;
-        Tue, 15 Jul 2025 06:14:39 -0700 (PDT)
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-531acaddd5eso2111586e0c.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:15:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752585279; x=1753190079; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1752585305; x=1753190105; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=S68UebDyVH4yE1aPLvT0iYbS3AgRqZmN5s1wid2jJYo=;
-        b=chUIkvnJwjO8FCXNmQ7xaqUBvQq5A0OSespK+thY0wR6eziw6yxzXvJVrIZQ5XxOlv
-         OG17ANJBvtgzWGx5hfNpJdrpkWKSB1eGFdGmsDnoNUioZmNciEhALSozYloLWwFWFrEi
-         RH0aM6ArBLUWLMVUrDZRCPQi6Hj3jU0tji3I0LYM9oRh4D6wa0ngYxUJTubIHKVLP6tb
-         pcfwN8li/WV+AXP2GP+5XIqOAMkVqgjb5T+6m+V1Uich5TuxdF16MAr+wrgln4ZtTjih
-         igq8dm+pAymZ/heXzQF9XGZbyLyE6fdZV5QG61WbyySuw3k0Bb5Bqd51L4nvm2grNGAj
-         EdRA==
+        bh=1cgF9DS/V+rxy/obM05rwE0HVOognW5I2G+NnmxDN3Q=;
+        b=gWkj1UC1HV0jAHLBvqpSEKM2kY4YqOQy66/AJjxLmQrgUw7PfPzM3iSeY7SVgKy0uq
+         n9RCJPxp4bb3R1WGX15NB+u29bPNC2exm2BgtJMz2KmBzMN8sl5pOjOZDzYnpT3vuCq9
+         YAvPlRH/om2lKb+J1fE+abTeKQTugJdgM9PfGjFbOizqO6r9SLzSFlPQATOFMUDk4Mej
+         uPI8UCRHGYZYTt/BPmLXXtnxHIsA6/fJeGm5nXtj0FPpLBG3J4g88QUFiVoJrUHW5DId
+         IEgVuAAMnuWsKyRFjFHP9C3zmmOxma10F585aQC8pM1HO+uZjBjHSbDjgxCFcAXLpshD
+         oTpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752585279; x=1753190079;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1752585305; x=1753190105;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=S68UebDyVH4yE1aPLvT0iYbS3AgRqZmN5s1wid2jJYo=;
-        b=g0pq6XVlbij6aAnELkUzl0L+bZrQWlnpVprhmn0iR7/Mz5aF2lYeQzsG7R7ocOMqS3
-         uIfWIegqY4wM2HJHtH5zKyCIJDOz66ynpI43g2mxXHXDTwpzV5kXSRwSC0ghWU9LLwbv
-         LQ2fl5VNqZLAxeB5aq/uBMLmQsgirgDJls5mEJoyERPNAKgLMj0o2rFc4JCFVJ3v3Ixy
-         LRZTz/ZtgwAL9jOKoRQWEHd2PQANGbsZuEBIVxffec1B3hAdWm7RVuYyiVc0tX5fI1Rf
-         07EqGMkUTxlpvVpFeg7E3X7LzTgkvTBFs2W9OKmwI91EJHwVjTTcl3gXwM+1yda+GMk2
-         pA1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUuZNrKRRsRg3vVC5u7sj4sF6RaT1rGa4NMHkXrAjdibEXRPmN2wPAY6/a1xZpjfy17wAnGt9V778zG@vger.kernel.org, AJvYcCXM6mBA345O5+fxbLy6KLwI5E4INHxXIVl004comzBBQmLSEY10h7lp6mobP+w3g/QGL+HweQ7NIfKUloFrjJw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yydn90dga8maIGEYXDIM2KEElMVgihF7Y0oS1/fCQ+3ZW8na5jt
-	Clo4ZlwwnVdhFdjh5N6K/nUqJw/po6h+75aYg0ZgC61mCplI9QqwNsrd
-X-Gm-Gg: ASbGncuBsoTjhfnX0qzxHaWRPjd4ZzpmMk1cUT/fH7F6RWADV/98D66SU1OtsRrfFuQ
-	uLQQ+quGs/bnyD1bwHPqT9D+ynui7Ekz3Zq++MR1sjQZrJAOdt55qYXJ0juH02m8VhAQIWheYpO
-	y7d9PxRZ8YG8WIS0G59rCqBZVVIwO7ZYVHj8GNRUwjm/tN2Mk1+xnJma+DJLb4TLuFlJavnslOi
-	uVnJhUoMvq88x+AsIwdAG+pFJe8NlEB3rPTSpgifAnwXkjbPsqYShtEwoW/BUJfvWXLh7qf18W7
-	YjyrRYJXcYdB87qnaPbTmcZhGfuRFvcQadudyQr/nGIgZR3nCX3mikP52+o1y9S24X4v1Pv/wVz
-	fRy0m6qzL48TsCAyp7zmTQH7SS0lncl0gWscUA7zQwofVBee9GiKYp2QA+N5K98YP2GIilb3nXt
-	Tw4rHg9a+yr3TP
-X-Google-Smtp-Source: AGHT+IHaP3XKGWTcZQS+qEIbRFFCyc1LSl3VeqAfWuxEd35LiJVIw2wW0os2Ca4eE+HV+lsnnnL/lw==
-X-Received: by 2002:a05:622a:646:b0:4ab:5fde:fb86 with SMTP id d75a77b69052e-4ab5fdf012emr142744101cf.48.1752585278813;
-        Tue, 15 Jul 2025 06:14:38 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9edcaf939sm59682111cf.33.2025.07.15.06.14.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 06:14:38 -0700 (PDT)
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 43FECF40067;
-	Tue, 15 Jul 2025 09:14:37 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Tue, 15 Jul 2025 09:14:37 -0400
-X-ME-Sender: <xms:PVR2aNLiU7K7sxfWhcmA7iYKN6y-LO2pTfQt0ylzdpXsP3lTymLKIw>
-    <xme:PVR2aKqo6cr1Ps7xWht2ISl2jz3-2RKj3UscPaS1Mt-nlixL6GIukWVzzRWx1SVdD
-    Oea_R_vPEc7jvJlCg>
-X-ME-Received: <xmr:PVR2aKTrzH-5KPNLlcx3LkpDW2Y2NilZHTV_XsWBbqUN2Ir2X6pRqSfbzw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehgeelvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhepjeeihfdtuedvgedvtddufffggeefhefgtdeivdevveelvefhkeehffdtkeeihedv
-    necuffhomhgrihhnpehruhhsthdqlhgrnhhgrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhh
-    phgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunh
-    drfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphht
-    thhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhoshhsihhnsehkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlkhhmmheslhhishhtshdrlhhinhhu
-    gidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihse
-    hgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhn
-    mhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:PVR2aN5WF52i8brHqvF3hn0daqOolm6dmEDyD-j_CwaEXyys_eVtCw>
-    <xmx:PVR2aCbImitqL7xcqjJ8w2FcybdAvho6K3HkXt7mXm2bB0AzS20EjA>
-    <xmx:PVR2aKhyZaG1YRTF9vA26VXSX_-YOBneVDADb9WLlBS18mdGprZWtw>
-    <xmx:PVR2aEPLxY9XdrtN-3YhZDBc7tGvrEf-pVI5jiknz3w66wvkzQoqTw>
-    <xmx:PVR2aMOeR2UC1SmeWK6q-zGZ82MfkoNUMrtsAhmyFJqPmfrBly9R7GO4>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 15 Jul 2025 09:14:36 -0400 (EDT)
-Date: Tue, 15 Jul 2025 06:14:35 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v7 4/9] rust: sync: atomic: Add generic atomics
-Message-ID: <aHZUO4NwMlw-FsnZ@Mac.home>
-References: <20250714053656.66712-1-boqun.feng@gmail.com>
- <20250714053656.66712-5-boqun.feng@gmail.com>
- <DBBPI9ZJVO64.3A83G118BMVLI@kernel.org>
- <aHUSgXW9A6LzjBIS@Mac.home>
- <DBBVD70MASPW.2LUTJ51Y6SGMI@kernel.org>
- <aHUjIQlqphtgVP2g@Mac.home>
- <DBCIZY29JWTD.1G6AKZ08ZWBQG@kernel.org>
+        bh=1cgF9DS/V+rxy/obM05rwE0HVOognW5I2G+NnmxDN3Q=;
+        b=k16CRyyCRTWwu2lQjT9yfAnk7iZ5Hu/0Oo6BfPevF+ROFEnmyjR6fN0UJouVWKwWRy
+         EH5ohwIvclnF/DVt2CoIyFD0+hOnf4u3LUl/MotZpwW4Q9oeibRUgHxw7XWI7xJxg+u7
+         rDcAv/TLQhummt8ouEEAQccotk5cV6x6VLx+TKGXSv0ilukJZhaPTCm3ljU3tBsratyJ
+         rFOlCxs38QZoFWXc/0CRs1gh0s8LZ4D+fxbf2CDEgBLcK50QEgoRyNRPVHryqBQqM2db
+         n0aTAFNOqwSC8r8O5FowuzRFWEIsqaWXTshgN+BTpjzhA0G9a5boXfJUhAd6OrxHuF0B
+         873A==
+X-Forwarded-Encrypted: i=1; AJvYcCWro79X+xYOhUS3oRbKIldGF3IHIDm2t+Pdw9OA/k98f1XR74FXt8pJp8773qi2HU52S/QQUv4NrYaGJiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyou1iHEEraG+eOfzSr7UFylDgEmPFzzEbNOFzwr8iY+ivrMK3L
+	guoimvfwzV7nJzht04gTb6DybwB77Kdsk5s44lcZpGYNDKU7OGvQuplrw+O3O2kz16wKsv4gjmm
+	P5jyTDZEjh+5WUn3FouvwcHE97l/9hos=
+X-Gm-Gg: ASbGncu4coLWuuKG+93ipgZrmLMRGKXwL0NPZGkBhGR+lKr58qRu6v2akLcSviEq8f3
+	kJ2sCahSALXtJA0iVXNg/pkoU8R3BRflusGq8A0GWKvX9S+KxkCEo6L2TqJ+3c5VpoRm8eKVmO/
+	2oDc1kxuLxBe7tUeGGAe7ZGnTtVBo6m7HLL/2BY886AvXSbFYv04SBeWi0seWE67FMnErntiGCl
+	UjS7hoJcw==
+X-Google-Smtp-Source: AGHT+IH2hTRSG8rOzWYW/wz0g4lXEaIxK8jKZt9GoukMcyUB+nAfPo7gUvfYuzfJTeqf1hpGdG0xLNq6NqE6BXPfz5U=
+X-Received: by 2002:a05:6122:4f8a:b0:535:aea0:7a30 with SMTP id
+ 71dfb90a1353d-535f46cf742mr10401471e0c.2.1752585304260; Tue, 15 Jul 2025
+ 06:15:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DBCIZY29JWTD.1G6AKZ08ZWBQG@kernel.org>
+References: <20250713155321.2064856-1-guoren@kernel.org> <20250713155321.2064856-3-guoren@kernel.org>
+In-Reply-To: <20250713155321.2064856-3-guoren@kernel.org>
+From: Han Gao <rabenda.cn@gmail.com>
+Date: Tue, 15 Jul 2025 21:14:52 +0800
+X-Gm-Features: Ac12FXxem7DUcO6jp_jeS7knLRXTB5hzLLX-DYGIj_Cx8cW7_b9Y5QnwcfV6Srw
+Message-ID: <CAAT7Ki9i5gyvituHsDpeq_-z6=e42MdLEULwqCGJ768-XbVxrQ@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] riscv: errata: Add ERRATA_THEAD_WRITE_ONCE fixup
+To: guoren@kernel.org
+Cc: palmer@dabbelt.com, conor@kernel.org, alexghiti@rivosinc.com, 
+	paul.walmsley@sifive.com, bjorn@rivosinc.com, eobras@redhat.com, 
+	corbet@lwn.net, peterlin@andestech.com, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Leonardo Bras <leobras@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 15, 2025 at 11:36:49AM +0200, Benno Lossin wrote:
-> On Mon Jul 14, 2025 at 5:32 PM CEST, Boqun Feng wrote:
-> > On Mon, Jul 14, 2025 at 05:05:40PM +0200, Benno Lossin wrote:
-> > [...]
-> >> >> >  //!
-> >> >> >  //! [`LKMM`]: srctree/tools/memory-model/
-> >> >> >  
-> >> >> > +pub mod generic;
-> >> >> 
-> >> >> Hmm, maybe just re-export the stuff? I don't think there's an advantage
-> >> >> to having the generic module be public.
-> >> >> 
-> >> >
-> >> > If `generic` is not public, then in the kernel::sync::atomic page, it
-> >> > won't should up, and there is no mentioning of struct `Atomic` either.
-> >> >
-> >> > If I made it public and also re-export the `Atomic`, there would be a
-> >> > "Re-export" section mentioning all the re-exports, so I will keep
-> >> > `generic` unless you have some tricks that I don't know.
-> >> 
-> >> Just use `#[doc(inline)]` :)
-> >> 
-> >>     https://doc.rust-lang.org/rustdoc/write-documentation/the-doc-attribute.html#inline-and-no_inline
-> >> 
-> >> > Also I feel it's a bit naturally that `AllowAtomic` and `AllowAtomicAdd`
-> >> > stay under `generic` (instead of re-export them at `atomic` mod level)
-> >> > because they are about the generic part of `Atomic`, right?
-> >> 
-> >> Why is that more natural? It only adds an extra path layer in any import
-> >> for atomics.
-> >> 
-> >
-> > Exactly, users need to go through extra steps if they want to use the
-> > "generic" part of the atomic, and I think that makes user more aware of
-> > what they are essentially doing:
-> >
-> > - If you want to use the predefined types for atomic, just
-> >
-> >   use kernel::sync::atomic::Atomic;
-> >
-> >   and just operate on an `Atomic<_>`.
-> >
-> > - If you want to bring your own type for atomic operations, you need to
-> >
-> >   use kernel::sync::atomic::generic::AllowAtomic;
-> >
-> >   (essentially you go into the "generic" part of the atomic)
-> >
-> >   and provide your own implementation for `AllowAtomic` and then you
-> >   could use it for your own type.
-> >
-> > I feel it's natural because for extra features you fetch more modules
-> > in.
-> 
-> The same would apply if you had to import `AllowAtomic` from atomic
-> directly? I don't really see the value in this.
-> 
-
-Because generic::AllowAtomic is more clear that the user is using the
-generic part of the API, or the user is extending the Atomic type with
-the generic ability. Grouping functionality with a namespace is
-basically what I want to achieve here. It's similar to why do we put
-`atomic` (and `lock`) under `sync`.
-
-Regards,
-Boqun
-
+On Sun, Jul 13, 2025 at 11:53=E2=80=AFPM <guoren@kernel.org> wrote:
+>
+> From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
+>
+> The early version of XuanTie C910 core has a store merge buffer
+> delay problem. The store merge buffer could improve the store queue
+> performance by merging multi-store requests, but when there are not
+> continued store requests, the prior single store request would be
+> waiting in the store queue for a long time. That would cause
+> significant problems for communication between multi-cores. This
+> problem was found on sg2042 & th1520 platforms with the qspinlock
+> lock torture test.
+>
+> So appending a fence w.o could immediately flush the store merge
+> buffer and let other cores see the write result.
+>
+> This will apply the WRITE_ONCE errata to handle the non-standard
+> behavior via appending a fence w.o instruction for WRITE_ONCE().
+>
+> This problem is only observed on the sg2042 hardware platform by
+> running the lock_torture test program for half an hour. The problem
+> was not found in the user space application, because interrupt can
+> break the livelock.
+>
+> Reviewed-by: Leonardo Bras <leobras@redhat.com>
+> Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
 > ---
-> Cheers,
-> Benno
+>  arch/riscv/Kconfig.errata                    | 17 ++++++++++
+>  arch/riscv/errata/thead/errata.c             | 20 ++++++++++++
+>  arch/riscv/include/asm/errata_list_vendors.h |  3 +-
+>  arch/riscv/include/asm/rwonce.h              | 34 ++++++++++++++++++++
+>  include/asm-generic/rwonce.h                 |  2 ++
+>  5 files changed, 75 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/riscv/include/asm/rwonce.h
+>
+> diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
+> index e318119d570d..d2c982ba5373 100644
+> --- a/arch/riscv/Kconfig.errata
+> +++ b/arch/riscv/Kconfig.errata
+> @@ -130,4 +130,21 @@ config ERRATA_THEAD_GHOSTWRITE
+>
+>           If you don't know what to do here, say "Y".
+>
+> +config ERRATA_THEAD_WRITE_ONCE
+> +       bool "Apply T-Head WRITE_ONCE errata"
+> +       depends on ERRATA_THEAD
+> +       default y
+> +       help
+> +         The early version of T-Head C9xx cores of sg2042 & th1520 have =
+a store
+> +         merge buffer delay problem. The store merge buffer could improv=
+e the
+> +         store queue performance by merging multi-store requests, but wh=
+en there
+> +         are no continued store requests, the prior single store request=
+ would be
+> +         waiting in the store queue for a long time. That would cause si=
+gnifi-
+> +         cant problems for communication between multi-cores. Appending =
+a
+> +         fence w.o could immediately flush the store merge buffer and le=
+t other
+> +         cores see the write result.
+> +
+> +         This will apply the WRITE_ONCE errata to handle the non-standar=
+d beh-
+> +         avior via appending a fence w.o instruction for WRITE_ONCE().
+> +
+>  endmenu # "CPU errata selection"
+> diff --git a/arch/riscv/errata/thead/errata.c b/arch/riscv/errata/thead/e=
+rrata.c
+> index 0b942183f708..fbe46f2fa8fb 100644
+> --- a/arch/riscv/errata/thead/errata.c
+> +++ b/arch/riscv/errata/thead/errata.c
+> @@ -168,6 +168,23 @@ static bool errata_probe_ghostwrite(unsigned int sta=
+ge,
+>         return true;
+>  }
+>
+> +static bool errata_probe_write_once(unsigned int stage,
+> +                                   unsigned long arch_id, unsigned long =
+impid)
+> +{
+> +       if (!IS_ENABLED(CONFIG_ERRATA_THEAD_WRITE_ONCE))
+> +               return false;
+> +
+> +       /* target-c9xx cores report arch_id and impid as 0 */
+> +       if (arch_id !=3D 0 || impid !=3D 0)
+> +               return false;
+> +
+> +       if (stage =3D=3D RISCV_ALTERNATIVES_BOOT ||
+> +           stage =3D=3D RISCV_ALTERNATIVES_MODULE)
+> +               return true;
+> +
+> +       return false;
+> +}
+> +
+>  static u32 thead_errata_probe(unsigned int stage,
+>                               unsigned long archid, unsigned long impid)
+>  {
+> @@ -183,6 +200,9 @@ static u32 thead_errata_probe(unsigned int stage,
+>
+>         errata_probe_ghostwrite(stage, archid, impid);
+>
+> +       if (errata_probe_write_once(stage, archid, impid))
+> +               cpu_req_errata |=3D BIT(ERRATA_THEAD_WRITE_ONCE);
+> +
+>         return cpu_req_errata;
+>  }
+>
+> diff --git a/arch/riscv/include/asm/errata_list_vendors.h b/arch/riscv/in=
+clude/asm/errata_list_vendors.h
+> index a37d1558f39f..a7473cb8874d 100644
+> --- a/arch/riscv/include/asm/errata_list_vendors.h
+> +++ b/arch/riscv/include/asm/errata_list_vendors.h
+> @@ -18,7 +18,8 @@
+>  #define        ERRATA_THEAD_MAE 0
+>  #define        ERRATA_THEAD_PMU 1
+>  #define        ERRATA_THEAD_GHOSTWRITE 2
+> -#define        ERRATA_THEAD_NUMBER 3
+> +#define        ERRATA_THEAD_WRITE_ONCE 3
+> +#define        ERRATA_THEAD_NUMBER 4
+>  #endif
+>
+>  #endif
+> diff --git a/arch/riscv/include/asm/rwonce.h b/arch/riscv/include/asm/rwo=
+nce.h
+> new file mode 100644
+> index 000000000000..081793d4d772
+> --- /dev/null
+> +++ b/arch/riscv/include/asm/rwonce.h
+> @@ -0,0 +1,34 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifndef __ASM_RWONCE_H
+> +#define __ASM_RWONCE_H
+> +
+> +#include <linux/compiler_types.h>
+> +#include <asm/alternative-macros.h>
+> +#include <asm/vendorid_list.h>
+> +#include <asm/errata_list_vendors.h>
+> +
+> +#if defined(CONFIG_ERRATA_THEAD_WRITE_ONCE) && !defined(NO_ALTERNATIVE)
+> +
+> +#define write_once_fence()                             \
+> +do {                                                   \
+> +       asm volatile(ALTERNATIVE(                       \
+> +               "nop",                                  \
+> +               "fence w, o",                           \
+> +               THEAD_VENDOR_ID,                        \
+> +               ERRATA_THEAD_WRITE_ONCE,                \
+> +               CONFIG_ERRATA_THEAD_WRITE_ONCE)         \
+> +               : : : "memory");                        \
+> +} while (0)
+> +
+> +#define __WRITE_ONCE(x, val)                           \
+> +do {                                                   \
+> +       *(volatile typeof(x) *)&(x) =3D (val);            \
+> +       write_once_fence();                             \
+> +} while (0)
+> +
+> +#endif /* defined(CONFIG_ERRATA_THEAD_WRITE_ONCE) && !defined(NO_ALTERNA=
+TIVE) */
+> +
+> +#include <asm-generic/rwonce.h>
+> +
+> +#endif /* __ASM_RWONCE_H */
+> diff --git a/include/asm-generic/rwonce.h b/include/asm-generic/rwonce.h
+> index 52b969c7cef9..4e2d941f15a1 100644
+> --- a/include/asm-generic/rwonce.h
+> +++ b/include/asm-generic/rwonce.h
+> @@ -50,10 +50,12 @@
+>         __READ_ONCE(x);                                                 \
+>  })
+>
+> +#ifndef __WRITE_ONCE
+>  #define __WRITE_ONCE(x, val)                                           \
+>  do {                                                                   \
+>         *(volatile typeof(x) *)&(x) =3D (val);                           =
+ \
+>  } while (0)
+> +#endif
+>
+>  #define WRITE_ONCE(x, val)                                             \
+>  do {                                                                   \
+> --
+> 2.40.1
+>
+
+Tested-by: Han Gao <rabenda.cn@gmail.com>
 
