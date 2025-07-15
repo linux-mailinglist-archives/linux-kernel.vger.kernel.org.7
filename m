@@ -1,101 +1,141 @@
-Return-Path: <linux-kernel+bounces-731396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA5A3B053B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:52:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24DE8B053B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 355C25609B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:52:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D12211C21916
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1992737E1;
-	Tue, 15 Jul 2025 07:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8E82741A3;
+	Tue, 15 Jul 2025 07:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4PiMWDx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UDQG1zWM"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B4A272E44;
-	Tue, 15 Jul 2025 07:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1948C272E43
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752565906; cv=none; b=dhbqrIO7XxQU5UFdx0T6jbObHRBebA1rlP+nGhI2nHG+SFHiB0UoxZcRAPPzVapJwe8x1Vij/UdIwMis3cKVtO/EnTaJtxb/newH8qjjKBPQUxeHaxbVPpOM07hdHI1x/JZI5tzWcXXZjhsYUc+klzg9Y3qtGbOpC4RYLTDZP/c=
+	t=1752565908; cv=none; b=JaXRD2SMSzH5pNoQL5aAouM8wDr80EzT2j9qm/zWRyuGW7dhFiaPrOV6w9GD7e7Dxpif88SDRXiyhevHYsQDUoCtX0d6lroNzKBtjPN/VD7D9bly1m7CzYwkH0knbssjjyv8yEjHuMHfZI+UTkqcC91NSg6qHueqAdXS0PzOOIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752565906; c=relaxed/simple;
-	bh=6x1KRSzdomSDsRyshFJ77N8rRIUyIQmJlOGqX3b1hTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DEsCJNoOhOJ1GnJK0Pr9GxdQbjHH2O1hRBuaqQLzVSLYQYjx09oO4JRgzoQK83n6OG2JAf3YVoTNVP4WfpRZJHOcWmNR5DDl/zUFUECPa2mD8jWpleN4M/VHPeiIxV+/I8amMDmFbGXHqoLdwqgMobCDGBmKhY7MDYTJNSQeuUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4PiMWDx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AA46C4CEE3;
-	Tue, 15 Jul 2025 07:51:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752565905;
-	bh=6x1KRSzdomSDsRyshFJ77N8rRIUyIQmJlOGqX3b1hTQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M4PiMWDxDPbEANW2afC+ina1KFhv5pLN87srpE1+AcX8LvVvz2DlIZ5Di0W/qanT0
-	 QpIk/qvksHcmNd8FKPk6cET5mXgNoai45vTAf16XQVSPsGS4I5zrL/SGOnbnSM84rV
-	 BlzQndx8nwG8izYMoZCeJBb6QcJ+bxzMTqWjKpoBVx9vh/9x1bDtNo1/Ui08TVxufr
-	 /5cSw4D/CAqS4nOFKNPr5WmKbOGjJ42VYpHxENoo+ek+3lL5+YoSnXj1IUn3M482vE
-	 iB5JBkWZfpH8TzbOy4t3+ogMt/kcWEkmbjXO/WFZRQyHtwAFwx+iel38V+l8QwoC+E
-	 NqgunYITYtKDw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1ubaRw-000000002do-3OyH;
-	Tue, 15 Jul 2025 09:51:40 +0200
-Date: Tue, 15 Jul 2025 09:51:40 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Subject: Re: [PATCH 2/2] PCI: qcom: Move qcom_pcie_icc_opp_update() to
- notifier callback
-Message-ID: <aHYIjEbOhM4xvavJ@hovoldconsulting.com>
-References: <20250714-aspm_fix-v1-0-7d04b8c140c8@oss.qualcomm.com>
- <20250714-aspm_fix-v1-2-7d04b8c140c8@oss.qualcomm.com>
+	s=arc-20240116; t=1752565908; c=relaxed/simple;
+	bh=5R5dZnbiyygZdlZtK7nNk0eY27z3EajEBJy5SPvfPCk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=K7i4pAOE75eK1TyyRrhClL8QWOHEv1E7eHEaBHoHCe+wDl0VuQljsyKmAXGVBlY1IQEalt0gkbnu6A09dCRRMTJBBLz4e6U2fakjIy1222KC4Y1oQR55n1w35Ej32VQNWqXMRFcPkxCA4qY7bc2NKWS+n/3i1vhoahCnaY6EMH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UDQG1zWM; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-453817323afso32150145e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:51:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752565904; x=1753170704; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NS9O2ujWL6LsDQQoap8xTVW/1qCTR4S7H1M7ty6BGnE=;
+        b=UDQG1zWMkrXKL6sgMqq3YR/eIz6WPTlow6b4hyYPahzXaOB1qwMCwO1pfgssMh0c8A
+         Q+1F52vBePz5yTCV3QlKJ97GWDLDnTQHjYKzCc0PgvCfG+c7C/ShnI16KkE5RidRwxrw
+         YUnaZOoiY0/uBf4hghBSXHwHf/KSIkSCOE5zP28GQryoMsHZm1pcEEtmg8AA1747mQQd
+         b/G+Mx0VJwM3LGV4Iiz6jzCX9Pe1pBLAqRS1hEijKzix9yBX9WSmbvz25nL8mhOXRgxv
+         4blpcMH4HS11+mdHf+nhIX3v4PBzyANcHAPIi+9DIguOdpLZRYHBEwY4hSVMz9RmvGYt
+         9iuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752565904; x=1753170704;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NS9O2ujWL6LsDQQoap8xTVW/1qCTR4S7H1M7ty6BGnE=;
+        b=qwaO9fZQhrfT9lFemlR2/fhHhbhyNUROhsUoBj0I66qQl42MV3EmPqILoNgku85FEp
+         YUd64Ylz4Y0M9Dkcqm+dvYyMNANXOmvizWFPTEQHYniTvDvTvI1XS/Oxzem17Y8m9iwH
+         Xk/aX3NAO5zboDkXkhOhOeSNPmAsPJyHquq4ywApXEWTTKAJzlmrLvTkjn13NheN7aV/
+         gDjkNQ6OraeEZG4eUeynWbMw/7yHAKNrEHjKOIVZfqhKJuXrm9ko4V1/kZD/jLSKjXKs
+         vAghUp2NFrJj+SGBpi3bQsXUqKENOygWfBONNi+pzdzNCGemsSGbRyhvUpNGqCY+k1Rv
+         4mcg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4yGRrBsTb2lH+sQ5D7oq97JjUlq5JaOMdfEa6vJ+/b+JvJ1nVOJlN7xE8e5GOfdzYuIZVo+LFUDHkVi4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaY0AK6on2Ua1Vdeo7/uZ85X/FaAEhtGBJPi7aDOa2Bf5G3sll
+	hwZM1gNAbRWibP/AMHhygv6Po5y02+I6ZZzVNVOgKiCaLoKMjG8rQoeBUfgdMy4DgMspb1MzDMP
+	rTi7RRAOIxZ1miSaL7g==
+X-Google-Smtp-Source: AGHT+IHo8SnWntfu2R42F6ufX2/J1nwq5gsZlwYTZG9xHFsa46eGg3Q6cheAw7jV7hH6yBZ51dQ1IlJEMs13sSo=
+X-Received: from wmth21.prod.google.com ([2002:a05:600c:8b75:b0:455:76a8:b3a])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:8b25:b0:456:18cf:66b5 with SMTP id 5b1f17b1804b1-45618cf6c49mr59096405e9.22.1752565904488;
+ Tue, 15 Jul 2025 00:51:44 -0700 (PDT)
+Date: Tue, 15 Jul 2025 07:51:40 +0000
+In-Reply-To: <CAH5fLgh=kGj2shvChkPD4LHyHrmJ7ZCeWVpM-ZE3dG5NRMLWXA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714-aspm_fix-v1-2-7d04b8c140c8@oss.qualcomm.com>
+Mime-Version: 1.0
+References: <CAH5fLgh=kGj2shvChkPD4LHyHrmJ7ZCeWVpM-ZE3dG5NRMLWXA@mail.gmail.com>
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1211; i=aliceryhl@google.com;
+ h=from:subject; bh=5R5dZnbiyygZdlZtK7nNk0eY27z3EajEBJy5SPvfPCk=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBodgglRMZ5OWcL8gY6qg+0UHkzCyoOQUs6U7R4j
+ fRuONq3tm2JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaHYIJQAKCRAEWL7uWMY5
+ RppTD/0YAVKJ3KoY8JTW/pD7ajYZdrPoNyFfdO1zodYb1zB4hDtbhn5Js3qQxnK1N8BEHA0zZIj
+ pYekEAmeNNl4Snzl1lMbcP2PC3uZcS/6hFvndiPyXDrR57b9AvptAmYaHXF/BAQiPo8Ix483UzW
+ cpdB/6zuY3++Tpxj74kQL8FT1LBRGKCg3aoCSOqruUgrPIbH4AWzYAQn7+l1tQUnNnPS5if+1rO
+ 3DLDJnUtHBZ2Sc4pwfYWg9M4GbdMivekW0f0aR31ExnH0DQAO2gYAGxZNoz//jUL7fSCH+dbC5u
+ Oajzxse7F0TAL9gR5P35Y6MudxWkqUwHElemAT5X0VFlI0TJTQ6q7QUSn264ZYKbjzJZe2b2H1a
+ 9TYbFKHqrp2zdlgzpp+59D4N8zoUN7NII1v2EEqMVUCM7E6ir157vBQFosbbXfCAZayJcERfyGC
+ sx7UbRbUK8oBrnlwdjG8Kn5XhJCRL0LQVxUOso6+0ieqOjVGSKDJxOs8q/MGHyJk3KZaUqt+vfe
+ O3UsHKrs7GsxaVllX/nsrLBCoAa9AQkAI4AYTSBD1RkYpZd/lcAWAj8uWyYYdHL3Z8RwFEo4xfR
+ oF58hV3rjMvJxjRYalcX8364rxQ6nEo3p2JrOJiXSkkZhHzZCo5P3nXCuUDF6Dxavze/wBq253I 9JcxoDfNWEhgkmQ==
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250715075140.3174832-1-aliceryhl@google.com>
+Subject: [PATCH v2] vfs: add Rust files to MAINTAINERS
+From: Alice Ryhl <aliceryhl@google.com>
+To: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 14, 2025 at 11:31:05PM +0530, Manivannan Sadhasivam wrote:
-> It allows us to group all the settings that need to be done when a PCI
-> device is attached to the bus in a single place.
+These files are maintained by the VFS subsystem, thus add them to the
+relevant MAINTAINERS entry to ensure that the maintainers are ccd on
+relevant changes.
 
-This commit message should be amended so that it makes sense on its own
-(e.g. without Subject).
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Christian, please use this version if you agree that `struct poll_table`
+also goes under this entry.
 
-> @@ -1616,8 +1616,6 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
->  		pci_lock_rescan_remove();
->  		pci_rescan_bus(pp->bridge->bus);
->  		pci_unlock_rescan_remove();
-> -
-> -		qcom_pcie_icc_opp_update(pcie);
->  	} else {
->  		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
->  			      status);
-> @@ -1765,6 +1763,7 @@ static int pcie_qcom_notify(struct notifier_block *nb, unsigned long action,
->  	switch (action) {
->  	case BUS_NOTIFY_BIND_DRIVER:
->  		qcom_pcie_enable_aspm(pdev);
-> +		qcom_pcie_icc_opp_update(pcie);
+ MAINTAINERS | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-I guess you should also drop the now redundant
-qcom_pcie_icc_opp_update() call from probe()?
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c3f7fbd0d67a..3833ac2b58d9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9234,15 +9234,19 @@ FILESYSTEMS (VFS and infrastructure)
+ FILESYSTEMS (VFS and infrastructure)
+ M:	Alexander Viro <viro@zeniv.linux.org.uk>
+ M:	Christian Brauner <brauner@kernel.org>
+ R:	Jan Kara <jack@suse.cz>
+ L:	linux-fsdevel@vger.kernel.org
+ S:	Maintained
+ T:	git https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+ F:	fs/*
+ F:	include/linux/fs.h
+ F:	include/linux/fs_types.h
+ F:	include/uapi/linux/fs.h
+ F:	include/uapi/linux/openat2.h
++F:	rust/kernel/fs.rs
++F:	rust/kernel/fs/
++F:	rust/kernel/seq_file.rs
++F:	rust/kernel/sync/poll.rs
+ F:	Documentation/driver-api/early-userspace/buffer-format.rst
+ F:	init/do_mounts*
+ F:	init/*initramfs*
+-- 
+2.50.0.727.gbf7dc18ff4-goog
 
->  		break;
->  	}
-
-Johan
 
