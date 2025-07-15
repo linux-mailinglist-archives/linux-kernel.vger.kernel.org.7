@@ -1,79 +1,124 @@
-Return-Path: <linux-kernel+bounces-731187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78EDCB05090
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:58:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74591B0509A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:07:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A263117CBC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:58:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B0367ADDD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1402D29CA;
-	Tue, 15 Jul 2025 04:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C902D4B5E;
+	Tue, 15 Jul 2025 05:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LECdqNPS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="qU0gJoOX"
+Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CE51A2398;
-	Tue, 15 Jul 2025 04:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390B82D3A96;
+	Tue, 15 Jul 2025 05:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752555512; cv=none; b=rfSbyZxXVUY9LiAeOu3jUOOQdGSAtJPvFkL+ULsSPNFGlXjgWZiBhOAuIQBPsWTgMgzPadn3TroBeIXvgREIFg0EniRfj1OZs4Cm5G3B2KfQ8C7rLwMc4xBboHN3s6KoJy30YAYcErr1xYKbSNZWlZ7h7aiNHjp9K4DGVees9F4=
+	t=1752556008; cv=none; b=FFpAEvy+JFDLYi4//yDedUXzCvmTZ+BnaFbHZSIEQL/gKaImlKKaWunjjCzLuISSR3fpa5YIKClQjdKSMtPSB9vxPinUO6aZSRBglpAw6lPVShCEyhsSsqMkLm9GbC/vMfK7FZeH+cL23uaL5CwGG52qdDyTjDO6HVmvRGHZoE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752555512; c=relaxed/simple;
-	bh=FHKGOBJTjZ8cy/P8/7A1PUYTFL1hiYO7R7bupkTGdOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u/zzoo2VYBAUcDE5y9OBQU6lkL00YX9idiRP8NBC7RipF7iftWhHHg2cZ/P5RqH4QhcceLRcvuIP8e/nFPWF/LGVE0L12rqkxluOkLrf+GsbM8XgjLoAVq1U1hHjwy+sxCyj5uutfiD+hNyPpymjoR48Ed0Wgfmz9XZlbQdQ39Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LECdqNPS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FC7AC4CEE3;
-	Tue, 15 Jul 2025 04:58:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752555511;
-	bh=FHKGOBJTjZ8cy/P8/7A1PUYTFL1hiYO7R7bupkTGdOs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LECdqNPSRntZJBjAZem78ERpFtfSabtt0cVMPu18sV47S4IL/qkGuPGqb6jtATN1i
-	 lYUnFE3KHK4O+RbXwu4VyAwxhmK0jn2QdeToYn9c8yBGR6yhe5LiWXa5bl9+JQRFZV
-	 +srZkJCiCxFvASJQ/zvwjAEqloW3Edf0yL17fioggFc3iMmCrRiSms1yjwe7Cy0Dwu
-	 3CAammIPpUVOJ0Ad3Y0JhxEfA1eR6rudsZUUU+Klqu8gG22xuDz3kfaZRGdmuUF/Ff
-	 90ltU747m90qW+L6OfNIUdOo6xpgAd77StzD48tAPsndB7Ti1Fp9WH85oumMXY3oNl
-	 VasnPmUHNEbrA==
-Date: Tue, 15 Jul 2025 04:58:29 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
-	wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com,
-	ardb@kernel.org, kees@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	gregkh@linuxfoundation.org, jpoimboe@kernel.org,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, linux-efi@vger.kernel.org,
-	samitolvanen@google.com, ojeda@kernel.org,
-	Michael Kelley <mhklinux@outlook.com>
-Subject: Re: [PATCH v3 12/16] x86_64,hyperv: Use direct call to hypercall-page
-Message-ID: <aHXf9TZIAS2u5AP8@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-References: <20250714102011.758008629@infradead.org>
- <20250714103441.011387946@infradead.org>
+	s=arc-20240116; t=1752556008; c=relaxed/simple;
+	bh=S9Nifo+zeP1i54N1mcfIBp1n44Ci3FJEM3PPIzaBq1A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KGiilMUafB7bPvqmOHVuaeVXssj6qWKDAqy0qZ2n6paFc4bj4pWo9CONt7rWM1IhA2O3T5ysEa9NvHTdrnS5peOhwaKTJ8BnEzS/VBdbmFloKRDLLt8UvOFT6xUhwe9YIS2hibfSqykmo4f0g7p+jgzeml7gmuZYUNxaiHqPTB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=qU0gJoOX; arc=none smtp.client-ip=89.58.62.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=default; t=1752555996;
+	bh=S9Nifo+zeP1i54N1mcfIBp1n44Ci3FJEM3PPIzaBq1A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:
+	 Content-Transfer-Encoding:Message-ID:Date:From:Reply-To:Subject:To:
+	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
+	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
+	b=qU0gJoOXIAat5+J3/NYl4gLxiaoDsYu8CreZKAabTsE9uF5vsc3Kbh72PCvVH71dk
+	 P8xWJsLbLv+romXTDSk3aOggBAacT16g6QNWUwjOTw0CvOX5nAHaOBUY1F1110yGWc
+	 mx18LtceUrovy2aIcpaRFjm+4iItPulguD++QQO2y0vfBbLnFHGTXkeSTAe8+oU9RI
+	 zYkakgfdRDL88LvkgiIgTPJymZLKd2LLLbEu3NEO3353Sqxxdf1Xyr49a7S7rTSC8A
+	 la2xftc900U5YAxPh0bDhb9rrQqRVH/LsYUQ5ZJ5LQ3RRnCnQ+a1lvbJAaNWVTJTcd
+	 12RS/28buu7Ow==
+Received: from server-vie001.gnuweeb.org (unknown [192.168.57.1])
+	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 180852109A34;
+	Tue, 15 Jul 2025 05:06:36 +0000 (UTC)
+From: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	io-uring Mailing List <io-uring@vger.kernel.org>,
+	GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
+	Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Subject: [PATCH liburing 0/3] Bring back `CONFIG_HAVE_MEMFD_CREATE` to fix Android build error
+X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
+Date: Tue, 15 Jul 2025 12:06:26 +0700
+Message-Id: <20250715050629.1513826-1-alviro.iskandar@gnuweeb.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714103441.011387946@infradead.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 14, 2025 at 12:20:23PM +0200, Peter Zijlstra wrote:
-> Instead of using an indirect call to the hypercall page, use a direct
-> call instead. This avoids all CFI problems, including the one where
-> the hypercall page doesn't have IBT on.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+Hello,
 
-Acked-by: Wei Liu <wei.liu@kernel.org>
+There are three patches in this series to address Android build
+error related to `memfd_create()`. The changes are as follows:
+
+1) Bring back `CONFIG_HAVE_MEMFD_CREATE` and the associated memfd test
+to resolve Android build failures caused by:
+
+  93d3a7a70b4a ("examples/zcrx: udmabuf backed areas")
+
+It added a call to `memfd_create()`, which is unavailable on some
+Android toolchains, leading to the following build error:
+```
+  zcrx.c:111:10: error: call to undeclared function 'memfd_create'; ISO C99 and \
+  later do not support implicit function declarations \
+  [-Wimplicit-function-declaration]
+    111 |         memfd = memfd_create("udmabuf-test", MFD_ALLOW_SEALING);
+        |                 ^
+```
+This reversion is a preparation step for a proper fix by ensuring
+`memfd_create()` usage is guarded and portable. Issue #620 was
+initially unclear, but we now suspect it stemmed from improper
+compiler/linker flag combinations.
+
+2) In test dir, relocate `memfd_create()` to helpers.c for broader
+test access. Previously, the static definition of `memfd_create()` was
+limited to io_uring_register.c. Now, promote it to a shared location
+accessible to all test cases, ensuring that future tests using
+`memfd_create()` do not trigger build failures on Android targets where
+the syscall is undefined in the standard headers. It improves
+portability and prevents regressions across test builds.
+
+3) Last, in example dir, add `memfd_create()` helper to fix the
+build error in zcrx example.
+
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+---
+
+Alviro Iskandar Setiawan (3):
+  Revert "test/io_uring_register: kill old memfd test"
+  test: Move `memfd_create()` to helpers.c, make it accessible for all tests
+  examples: Add `memfd_create()` helper
+
+ configure                |  19 +++++++
+ examples/helpers.c       |   8 +++
+ examples/helpers.h       |   5 ++
+ test/helpers.c           |   8 +++
+ test/helpers.h           |   5 ++
+ test/io_uring_register.c | 108 +++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 153 insertions(+)
+
+
+base-commit: 0272bfa96f02cc47c024ec510a764ef7e37b76bf
+-- 
+Alviro Iskandar Setiawan
 
