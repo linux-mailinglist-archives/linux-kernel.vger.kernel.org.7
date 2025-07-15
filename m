@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-731965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBBDEB05F3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:03:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01833B05F43
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:03:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 510784A31C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:56:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F41A54A3CCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF642F002E;
-	Tue, 15 Jul 2025 13:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337F42F0C43;
+	Tue, 15 Jul 2025 13:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qc9TXKlv"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ijwj7khZ"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4BF2ED145
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93092EFD97
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752587206; cv=none; b=CEPjisXqtJ+ikjKCL7S1AqtYp1SfGP9FtIwANIxoYvJ0y/LPv0oe6eVobgMUCTVdD7G9rylRkH1o1fNlVMcLQGaMDKALu3+UTdCJb90JMXz66ITArxOI4K0ylt9pZrk4ffNg6p0LeIWmYfxSfcbr4hEj9nog6OcmmXm6WNlxBZA=
+	t=1752587207; cv=none; b=n80L46eg24CJdqrmiO+ezoXVvMpaU8DC4Ng6J0jXQ4aKx3kkqGzG5DODCXrxRLItwdulkB9sG1fQW3h5Mq0qBDIWv1YthXpQO7nWSGwapCwBCyKGBo5aT2PqBaZ6jTq+J4WvJc/3Z5oiXT7Pn1COQOv+s45SJNKWXcCmWAhFiWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752587206; c=relaxed/simple;
-	bh=hm+QQVA6P62r4L8yRa8/F/rPQxTQzaWcqgojZ/rjEUg=;
+	s=arc-20240116; t=1752587207; c=relaxed/simple;
+	bh=HCwawN0YyQsKejL+XoDR9LPJoThO5UjHqKypm6OsTj4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZIpNYifRVivOFvDr3tDlIh5nug1F206ilOEpzwrpwLxiaokM4pcXeeLIemSoSkY3CGS7fSTynobgiK8B6+s6wmARwfhaWluwAmG0UguoLT3yilb8mLa+RkPDn/oEDGsjTB+kApXCSrc5nznmahdTqN7WMpYQMsOHwV2sTCskWgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qc9TXKlv; arc=none smtp.client-ip=209.85.221.73
+	 To:Cc:Content-Type; b=cMtob6vtJVq3lXoOMZucmf1ECPaUhkAXBj7/U4RdiKLDiordJUmvcBIH/52+3GToITF6jXH2+XNw4HcQ/9s2K9v5F4F66ufZa3aF/MTOF6UTF2fmpwN5RDtOMhNLynHUsKW0iB8SgzRGoIK/eF4E1sAuY4Uz6GDtKTYH6+xTI1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ijwj7khZ; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a4f8fd1847so2114284f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:46:44 -0700 (PDT)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-454dee17a91so42358135e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:46:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752587203; x=1753192003; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1752587204; x=1753192004; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ACo1fjYAZDXTqvJRVHRKHNWe7uZbNAFM49VRqGLnxa4=;
-        b=qc9TXKlvEEY43glSYvriJcRJCfVG0lFuHYSSj3E3JsN2STJM0rxARxh0ZtsYiKoJNi
-         EV2fFvBL59rjgH2R/b5acAIpegWgYIv0iOqW1rtmp0o3TK7mlgIizJvoxFiSHY/J/cZq
-         DBFwdZsOMYHpMM/jdhIedlmLXOpnoR7WHQj9L9wDVm0qfD1Z1VfF8FAeMYf/pJLjZSXT
-         40hPEb51Ws9AbAp+u6pB7iq2PJZEYgnl15dSyN1fAZmCNBW+OzWDlxBO8irIGaFQgvUm
-         uIChhF6qo7gqffk5NP34sDwqZyvfLGA/hlElpIzoSvpWdUvUNA9ogWx6SoZvr2BFjndW
-         5QEQ==
+        bh=oAn9sAZ8EZsg3ucGTZ/4Am850EAhLwSfcOwCMtHhu60=;
+        b=Ijwj7khZmNto8Jvri8/BwZzcc+4sDIqZngqRLMAeT3kW9HmwogCbnELFyBuIEwxw5y
+         mLolHNBemyn1GVhwU9UrvnL8y6M3b/hJNuRix6UtHpQnHtBXtQVuA0HXDS9Tk5E3LXl3
+         /eTTBhTG+eR8QL9lDGhhqa3Ky9hDeYJXsz6S4JwJ0bw5EMjQJNRvETqgK3lAos+GxnZ6
+         zPdkHbOF6nbHatMdOK2RVTBt21NSReDIYydk2LSGB5uXHpcAgHcgT5pPYU6GPVFfOR+V
+         kVJoWbeMVgX2By+yw38y+2/kI7w9yD7lMiT9JvvYTSKha8BjqVz4mOMcPRN6pVkqR4dE
+         slVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752587203; x=1753192003;
+        d=1e100.net; s=20230601; t=1752587204; x=1753192004;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ACo1fjYAZDXTqvJRVHRKHNWe7uZbNAFM49VRqGLnxa4=;
-        b=RbPvxfDTYX/pxkVwgrGmgjMsGWMRN7gQ4G4buMqSSjb8ztY6CwQKvSgv6QlvO5NYcc
-         C3RAI+fUqysa4N+SzorcymcEt2XE6ghXA7nj4l9zEygUNKYaqgUdTSQeshSqMb0wx6OF
-         89nSNHA3CmmwFpspjDjQeiPOz75zd6XadjCceqXFaMqg5BwqhSsxJlKGnaXSC0OKUWgZ
-         gf37tjcjs4q4GI46rnKqx3cjf9WzoyMtCKkupKh18IonbsxLQV1/iXuTnE5Epnw3ELs8
-         HE1w94cuhAfwl/8RruPnE1Ndg0GtBe9C40SUP9PHDaNjQX8m0/iSf32isu0+qoIWY7Bf
-         wWdw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3HETir7ckCxa38690L4ZE5shFcHthsr7MWy86/mO0uCIvZhkMd+eKUH9WGY19YGEKBtr0GfGpkMiUVRo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yydxq//676N7sCz+hq5JUbODV4L2eBD7ZfWZ8aSGidPJrTQ/+Z7
-	4gzyuqos7RWmnaw9zJPya9SRfTblVv5PNBk8sjfd3UXy1/Qpn/ml+n4WjjZVEhvcPCLvdRouFqI
-	4UnEyLpwpSmMEQZrN5A==
-X-Google-Smtp-Source: AGHT+IGBq3R9luEQdDGUT+ehdyASOxOv6YZaQeET7ZAo5DpnvtF4ybFvvtKpEyvlFqi5avs2rWm3frsM24DgRxc=
-X-Received: from wruz15.prod.google.com ([2002:a5d:640f:0:b0:3a4:d770:e74f])
+        bh=oAn9sAZ8EZsg3ucGTZ/4Am850EAhLwSfcOwCMtHhu60=;
+        b=safiK7yyq7114Q8uE4gymr/c0oZOOeMGo5iLgAeGkYuKplAfR0eK+GJvERaBMk5kXq
+         p9h1OmTfWrD7h1EDoy/bFPlIkxIpcXqPz4oTEVIbhuL2jiS0RKcCV7aBjx8WudV7L0qh
+         r+Gp0AqpixljxODFzuK9KBVO3gVOKvmzLOvg8IaApv2dK+BqsEHGZYUq+0BGal6IjLA0
+         JYD+ABTv1EGHOTZ3BD1PQbJ2lUFH98Deg+FZJBxW7U/R39GR+y3j86y6Xg0CsgXAvexw
+         PHIivO4/hXHve7bZViluoV+ZckVBpgZMHj8c+1oyCWVy4Ra7buzGmMCirnfC+5AkgA3D
+         aSRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWvb+iefaLengRWl22uGsrh9tYX0CWovAG8ds42TeC8sRsxNJkaLNCKLYyikEwSPAtz0PpW3uWe/8hH0wo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyOvbYZQ+hE+kQrKIN4Vhh2z76OaRQiVLrUygv6Jv60SA+UhEN
+	jsp59wSYgYzOJzNMk/TmjvBfrlPLkggZrEurYZ+peM7K5rzechDt0FoET7+mdNyieOE8HFvPd+t
+	8XawfwJS9XKLlQjtc7g==
+X-Google-Smtp-Source: AGHT+IHoGckLvWDzkowkR6ET5+sYI+3T5P/yl3EGQk6HDQYDmQOtjc6slluNfepxqCpjmwkDzVqlDNegBJVJLnA=
+X-Received: from wmcq23.prod.google.com ([2002:a05:600c:c117:b0:453:b96:8ef9])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:adf:e186:0:b0:3a5:2653:7308 with SMTP id ffacd0b85a97d-3b5f18debd5mr16710074f8f.57.1752587202941;
- Tue, 15 Jul 2025 06:46:42 -0700 (PDT)
-Date: Tue, 15 Jul 2025 13:46:34 +0000
+ 2002:a05:600c:6387:b0:441:b3eb:574e with SMTP id 5b1f17b1804b1-455fffb208fmr111920755e9.5.1752587204158;
+ Tue, 15 Jul 2025 06:46:44 -0700 (PDT)
+Date: Tue, 15 Jul 2025 13:46:35 +0000
 In-Reply-To: <20250715-align-min-allocator-v1-0-3e1b2a5516c0@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,22 +73,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250715-align-min-allocator-v1-0-3e1b2a5516c0@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3170; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=hm+QQVA6P62r4L8yRa8/F/rPQxTQzaWcqgojZ/rjEUg=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBodlvAXD7jigSPg9pSkftUrz+P7iBYlXollyaEL
- i0weeZAJxSJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaHZbwAAKCRAEWL7uWMY5
- RgWNEACObqQ81a9TVudRRgk/RKfwO4T/cIHYyu/eu6p3lZsOHdCSR9F4jZ9sE7np7W501HA+Kky
- 4e7gim/kZqfXXbE5beTOqB2QwcAN0IwNql4HiqEzlE/76NUMo2ZEfszAs/QqCTc/+8bUb0MFaBD
- wbRo4oMU0ig4KPILmY6btYspJoJtFE43XfAIKmDspYTLmqqaadjYcooO7So5lzo1uAVcGmAnEzM
- W+WQb0dyEq+Q5LXJaIFKOAgVjos4a4RAjSRnrjSC26MBTIVJJ6Ftdxyi9F/wiIvk8IX/EEDZAWS
- I1LpQ3XrF33mJ5mqGvS2UXWDQ29nDuyU4DtkM8yZq7L3tmq4pha+Bkpp799IZE2fky/k/06XTez
- BlwxsFs4aD7pPaEeFi2tiie/10QRIvH8Y6ZuxE4Lvs/bSNaJgbFl0Q8IFEMfzns0WhNCAVE2mmf
- iyeQAod6UF2/UlbtAOcYO2as35v+5owOmUIqJp8RzgiFtq4L8YXFyG2o93+vHw3qATYv10ybtKV
- uO1Ta3KpJQNH4k9ykCXIPJKr6591OvcRrwGQLJW2Onk3P1CyJb+/893rfu9PhBfgK9+vES0CTqw
- dkbPcrIPpMkoua1OmLBVdtNUlg7yeL1D1lTBdabUp4LA1LQEHtG3+iusPKtNQpcJoTCTXdS5Wvd /v7VSjaqrfl3BeQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3033; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=HCwawN0YyQsKejL+XoDR9LPJoThO5UjHqKypm6OsTj4=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBodlvAMOKwdRZUEmkjEvHfadcX8KT55zoaKkjtB
+ 8/E2YVNvsSJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaHZbwAAKCRAEWL7uWMY5
+ RvWlEACVwTf3LaGWPdZzVjA0VxARZTMPfXdATCnuEUEOTxoZQ9YNo/+fR2zxY86i5WPXNkWRED/
+ E9zSgm9BzC2iJNlaeJ38MOO/SOIAnJgU1NNfG6G2wwEFw0I6e5iud6Z7kD+SZhB+SSsZg+sUlOZ
+ EilR3I1gZVm/+Pz5bYlQ5/tBL/dSJaFmf1FmQpPjiiMcoJZN7gQZ3imMHoLecxbODebe4WsEFq4
+ BHYymGqRHX3Gi6eMXpXcnUzho1V9+9wV0yS1PyBJjffvfiuI4+u/GGM+SYnT+y0VbxxsB9uvE+c
+ DYA8egDnAUwf8cIq7k9SSnbrKUOZgkwS/a66kDtfHowzCWXddpKXX0OQENhf+yhHNH7IsPp+W0J
+ qpkQisawgO209fpixKZcKxSYm96Fv9NyG/YVZPTvVyAmVC27YNI8O/2YVKW386GUPUWvzEgnHUo
+ F7pVrw6TTgCz/n42Ihabs5tZBR1mvE9kuynH810aMz6qv1X0OOXE2cDYvCU3MqpsuSofl9q98/r
+ VVUnc5j7DXrG3dY7jonuZTsJnhqmPBgg6a4qm16/epTuJzhmoAZZwaUVaFLKQ1Y4iX3kCjnf+Mq
+ iG/9DMVwaxiY3Cv/IXjY7HFtYL/P2vpNJevbhyt2gKEEmDAqoMWQ864rou6xqqVhy6Z9qu5aC/4 2ll/WoFLWAg2wjg==
 X-Mailer: b4 0.14.2
-Message-ID: <20250715-align-min-allocator-v1-1-3e1b2a5516c0@google.com>
-Subject: [PATCH 1/2] rust: alloc: specify the minimum alignment of each allocator
+Message-ID: <20250715-align-min-allocator-v1-2-3e1b2a5516c0@google.com>
+Subject: [PATCH 2/2] rust: alloc: take the allocator into account for FOREIGN_ALIGN
 From: Alice Ryhl <aliceryhl@google.com>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
 	Andrew Morton <akpm@linux-foundation.org>, Danilo Krummrich <dakr@kernel.org>, 
@@ -100,80 +100,80 @@ Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
 	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-The kernel's allocators sometimes provide a higher alignment than the
-end-user requested, so add a new constant on the Allocator trait to let
-the allocator specify what its minimum guaranteed alignment is.
+When converting a Box<T> into a void pointer, the allocator might
+guarantee a higher alignment than the type itself does, and in that case
+it is guaranteed that the void pointer has that higher alignment.
 
-This allows the ForeignOwnable trait to provide a more accurate value of
-FOREIGN_ALIGN when using a pointer type such as Box, which will be
-useful with certain collections such as XArray that store its own data
-in the low bits of pointers.
+This is quite useful when combined with the XArray, which you can only
+create using a ForeignOwnable whose FOREIGN_ALIGN is at least 4. This
+means that you can now always use a Box<T> with the XArray no matter the
+alignment of T.
 
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/kernel/alloc.rs           | 8 ++++++++
- rust/kernel/alloc/allocator.rs | 8 ++++++++
- 2 files changed, 16 insertions(+)
+ rust/kernel/alloc/kbox.rs | 15 +++++++++++----
+ rust/kernel/sync/arc.rs   |  6 +++---
+ 2 files changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-index a2c49e5494d334bfde67328464dafcdb31052947..c12753a5fb1c7423a4063553674b537a775c860e 100644
---- a/rust/kernel/alloc.rs
-+++ b/rust/kernel/alloc.rs
-@@ -137,6 +137,14 @@ pub mod flags {
- /// - Implementers must ensure that all trait functions abide by the guarantees documented in the
- ///   `# Guarantees` sections.
- pub unsafe trait Allocator {
-+    /// The minimum alignment satisfied by all allocations from this allocator.
-+    ///
-+    /// # Guarantees
-+    ///
-+    /// Any pointer allocated by this allocator must be aligned to `MIN_ALIGN` even if the
-+    /// requested layout has a smaller alignment.
-+    const MIN_ALIGN: usize;
-+
-     /// Allocate memory based on `layout` and `flags`.
-     ///
-     /// On success, returns a buffer represented as `NonNull<[u8]>` that satisfies the layout
-diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
-index aa2dfa9dca4c309e5a9eafc7da6a8a9bd7b54b11..25fc9f9ae3b4e471a08d77130b374bd1397f7384 100644
---- a/rust/kernel/alloc/allocator.rs
-+++ b/rust/kernel/alloc/allocator.rs
-@@ -17,6 +17,8 @@
- use crate::bindings;
- use crate::pr_warn;
+diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
+index bffe72f44cb33a265018e67d92d9f0abe82f8e22..fd3f1e0b9c3b3437fb50d8f1b28c92bc7cefd565 100644
+--- a/rust/kernel/alloc/kbox.rs
++++ b/rust/kernel/alloc/kbox.rs
+@@ -400,12 +400,19 @@ fn try_init<E>(init: impl Init<T, E>, flags: Flags) -> Result<Self, E>
+ }
  
-+const ARCH_KMALLOC_MINALIGN: usize = bindings::ARCH_KMALLOC_MINALIGN as usize;
+ // SAFETY: The pointer returned by `into_foreign` comes from a well aligned
+-// pointer to `T`.
++// pointer to `T` allocated by `A`.
+ unsafe impl<T: 'static, A> ForeignOwnable for Box<T, A>
+ where
+     A: Allocator,
+ {
+-    const FOREIGN_ALIGN: usize = core::mem::align_of::<T>();
++    const FOREIGN_ALIGN: usize = {
++        let mut align = core::mem::align_of::<T>();
++        if align < A::MIN_ALIGN {
++            align = A::MIN_ALIGN;
++        }
++        align
++    };
 +
- /// The contiguous kernel allocator.
- ///
- /// `Kmalloc` is typically used for physically contiguous allocations up to page size, but also
-@@ -128,6 +130,8 @@ unsafe fn call(
- // - passing a pointer to a valid memory allocation is OK,
- // - `realloc` satisfies the guarantees, since `ReallocFunc::call` has the same.
- unsafe impl Allocator for Kmalloc {
-+    const MIN_ALIGN: usize = ARCH_KMALLOC_MINALIGN;
-+
-     #[inline]
-     unsafe fn realloc(
-         ptr: Option<NonNull<u8>>,
-@@ -145,6 +149,8 @@ unsafe fn realloc(
- // - passing a pointer to a valid memory allocation is OK,
- // - `realloc` satisfies the guarantees, since `ReallocFunc::call` has the same.
- unsafe impl Allocator for Vmalloc {
-+    const MIN_ALIGN: usize = kernel::page::PAGE_SIZE;
-+
-     #[inline]
-     unsafe fn realloc(
-         ptr: Option<NonNull<u8>>,
-@@ -169,6 +175,8 @@ unsafe fn realloc(
- // - passing a pointer to a valid memory allocation is OK,
- // - `realloc` satisfies the guarantees, since `ReallocFunc::call` has the same.
- unsafe impl Allocator for KVmalloc {
-+    const MIN_ALIGN: usize = ARCH_KMALLOC_MINALIGN;
-+
-     #[inline]
-     unsafe fn realloc(
-         ptr: Option<NonNull<u8>>,
+     type Borrowed<'a> = &'a T;
+     type BorrowedMut<'a> = &'a mut T;
+ 
+@@ -434,12 +441,12 @@ unsafe fn borrow_mut<'a>(ptr: *mut c_void) -> &'a mut T {
+ }
+ 
+ // SAFETY: The pointer returned by `into_foreign` comes from a well aligned
+-// pointer to `T`.
++// pointer to `T` allocated by `A`.
+ unsafe impl<T: 'static, A> ForeignOwnable for Pin<Box<T, A>>
+ where
+     A: Allocator,
+ {
+-    const FOREIGN_ALIGN: usize = core::mem::align_of::<T>();
++    const FOREIGN_ALIGN: usize = <Box<T, A> as ForeignOwnable>::FOREIGN_ALIGN;
+     type Borrowed<'a> = Pin<&'a T>;
+     type BorrowedMut<'a> = Pin<&'a mut T>;
+ 
+diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+index 63a66761d0c7d752e09ce7372bc230661b2f7c6d..74121cf935f364c16799b5c31cc88714dfd6b702 100644
+--- a/rust/kernel/sync/arc.rs
++++ b/rust/kernel/sync/arc.rs
+@@ -373,10 +373,10 @@ pub fn into_unique_or_drop(self) -> Option<Pin<UniqueArc<T>>> {
+     }
+ }
+ 
+-// SAFETY: The pointer returned by `into_foreign` comes from a well aligned
+-// pointer to `ArcInner<T>`.
++// SAFETY: The pointer returned by `into_foreign` was originally allocated as an
++// `KBox<ArcInner<T>>`, so that type is what determines the alignment.
+ unsafe impl<T: 'static> ForeignOwnable for Arc<T> {
+-    const FOREIGN_ALIGN: usize = core::mem::align_of::<ArcInner<T>>();
++    const FOREIGN_ALIGN: usize = <KBox<ArcInner<T>> as ForeignOwnable>::FOREIGN_ALIGN;
+ 
+     type Borrowed<'a> = ArcBorrow<'a, T>;
+     type BorrowedMut<'a> = Self::Borrowed<'a>;
 
 -- 
 2.50.0.727.gbf7dc18ff4-goog
