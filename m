@@ -1,125 +1,116 @@
-Return-Path: <linux-kernel+bounces-731001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B524B04D61
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:22:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22725B04D46
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D39964A5D04
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:22:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F4AB3A3D7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F821D63C2;
-	Tue, 15 Jul 2025 01:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1F21C84BD;
+	Tue, 15 Jul 2025 01:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TDJluRDr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="HBzph/Wu"
+Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561B11C862F;
-	Tue, 15 Jul 2025 01:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510E717C21B;
+	Tue, 15 Jul 2025 01:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752542468; cv=none; b=Oufo2lgo7OO/wtYRPa7t/u4ocTiZCmAFdQ7JH5WERNqyl+AUX7ws5/6efzHWtEaiy5GpEuui4YVhN269EwtOmqc2b4rqOgV3enFYlEx7WUtkKBAU4dsffJVEFgGcITt4ysbIp/DMfmHjiW7iGZQYZjVpYlrzLt2eZ7umcXoZHAo=
+	t=1752542368; cv=none; b=l/qoL903pH0iSr9Kh8W6QlJycbeFs/wHnpLEgXspWZf81Z2EaYwO3f4FXie3pmUx7OI+xa/jxHM4/q8QfFTO3swxhE4MvkPMGYIa6uTDffHFzTnc41hXEZx5MAgbOCySDMo3JktRqxIBvnDcBqOjVYJzMp6KNwwoY/uI4Ew4DgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752542468; c=relaxed/simple;
-	bh=1NoS/lqGTXCj1KTV5hwu6EGc0wLTF8DtWwPpJd/GL0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YbyIsncdKDHz/xNNEkDL8QTXnxidBlPFrc22HwdSI+xKcHlHWdxpo7PGR9+IdiRXt/bwQE8VDm2TcI5XThHwosnsgqthDL6gXTNmCkMTX7NrS5PEjXjswFeEW/utL7551HKuy6Tl2PMOhSxPAjwlnFIok4nEJWR/NtAbDdnEv8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TDJluRDr; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752542467; x=1784078467;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=1NoS/lqGTXCj1KTV5hwu6EGc0wLTF8DtWwPpJd/GL0M=;
-  b=TDJluRDryDX1lRDdij79Lvph5bngrAtiRSW15GdPFaOgGFB5fIhjcXv9
-   vG8bY6OmRiyDhtLn+U4+oAaSlytREanalcJVZh4AgwhBjc7oTCK1Qm+dN
-   sPoit4anyIGIgGwC6JR0H8+xql6xqMDBYb4NPyIRAUchYXuuBrlIG9Z9y
-   qsg5WmWQavaS6EXhaIQz6/dN5MqBzNjkiSDKXjUIhggPwEN5HPYNkBiqQ
-   SlvFG5ADwM5LhH1JPwyD+zSjzbZf+Erv4vcxTYpk2bKib7Zcsva/7wVvB
-   lY+DldffY+CFn9zTK1M88Rl8/BO3948RUDUbc15P7aq8sOd7rxTFtjzp1
-   A==;
-X-CSE-ConnectionGUID: H3hLJD2sRIW/V8gTlfQHug==
-X-CSE-MsgGUID: ei+Yke0AQ7K7wt3TOixZgQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="58555878"
-X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
-   d="scan'208";a="58555878"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 18:21:03 -0700
-X-CSE-ConnectionGUID: wARs0erJRAGR8mChmTR8Ag==
-X-CSE-MsgGUID: vClZwxRhQd+g/NCe2+JDrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
-   d="scan'208";a="161401611"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 18:20:57 -0700
-Message-ID: <9d289b97-570d-49af-aa6e-acc98df41015@linux.intel.com>
-Date: Tue, 15 Jul 2025 09:19:07 +0800
+	s=arc-20240116; t=1752542368; c=relaxed/simple;
+	bh=5oeepojmBcNgggJVtg0k5VSLGo5qe1E2+hYtB3Eyj34=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ihPchWL8vCc5/L/xcqRq0o2Q+jD3C5CfcTUwFqS2KlQfkVxBJLvKenvlP5cXhoI04tow0j3AmefhHcDYhCxGpMkE+QdYglWaKbBmbQzkUpJkc37xI0pXU4v01J/K/bbnWYfU7Nx5bM7SgbHxcu29f3uiayeOK3sfli9lEJbHSAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=HBzph/Wu; arc=none smtp.client-ip=220.130.44.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
+X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
+	s=richtek; t=1752542356;
+	bh=nFc7sXSxrxXrn9CbhO94nNCIuL9JOjq3fHd1XbxNFLE=; l=1888;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=HBzph/WuA8cLgQDpZoE2w4LfTP2epfCOlVcGC94BMYegXUmrYEXYMZgWnrLSduaSL
+	 Rvn5Gh189VNU078dOpXd1rfMqS+zfzE1pnhtX+u7r5WIPchzGgNQJZkx3qDOHIaxhi
+	 U4nPegYOcDtJbF4WUrlHHJ/YRB0YYVtDt36sMZ5TDyE5V4s5SBwNPHsvINhMAhpCym
+	 fzp94lWsWdJvgIr5D8od4dURjjxbOrV3s5bjffEds4fri0OgoLHMe9lxMgyi7wiljK
+	 LkAzTCHEMQdsTwy6SXQc+s5EUU93dVK3JPKeNLnsgRSFGgPFxS4sOTIIW1eakfwz8m
+	 1MjtFGU2LqjfA==
+Received: from 192.168.10.47
+	by mg.richtek.com with MailGates ESMTPS Server V6.0(244604:0:AUTH_RELAY)
+	(envelope-from <cy_huang@richtek.com>)
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Tue, 15 Jul 2025 09:19:05 +0800 (CST)
+Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 15 Jul
+ 2025 09:19:05 +0800
+Received: from git-send.richtek.com (192.168.10.154) by ex3.rt.l
+ (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
+ Transport; Tue, 15 Jul 2025 09:19:05 +0800
+From: <cy_huang@richtek.com>
+To: Sebastian Reichel <sre@kernel.org>
+CC: ChiYuan Huang <cy_huang@richtek.com>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] power: supply: rt9467: Add properties for VBUS and IBUS reading
+Date: Tue, 15 Jul 2025 09:19:38 +0800
+Message-ID: <54fd32fc23fd959da8aa6508d572ee96de5f6eec.1752542001.git.cy_huang@richtek.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] iommu/sva: Invalidate KVA range on kernel TLB flush
-To: Mike Rapoport <rppt@kernel.org>, Uladzislau Rezki <urezki@gmail.com>
-Cc: David Laight <david.laight.linux@gmail.com>,
- Dave Hansen <dave.hansen@intel.com>, jacob.pan@linux.microsoft.com,
- Jason Gunthorpe <jgg@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>,
- Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, iommu@lists.linux.dev,
- security@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250704133056.4023816-1-baolu.lu@linux.intel.com>
- <20250709085158.0f050630@DESKTOP-0403QTC.>
- <20250709162724.GE1599700@nvidia.com>
- <20250709111527.5ba9bc31@DESKTOP-0403QTC.>
- <42c500b8-6ffb-4793-85c0-d3fbae0116f1@intel.com>
- <20250714133920.55fde0f5@pumpkin> <aHUD1cklhydR-gE5@pc636>
- <aHUZIVbLV9KAoZ3H@kernel.org>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <aHUZIVbLV9KAoZ3H@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 7/14/25 22:50, Mike Rapoport wrote:
-> On Mon, Jul 14, 2025 at 03:19:17PM +0200, Uladzislau Rezki wrote:
->> On Mon, Jul 14, 2025 at 01:39:20PM +0100, David Laight wrote:
->>> On Wed, 9 Jul 2025 11:22:34 -0700
->>> Dave Hansen<dave.hansen@intel.com> wrote:
->>>
->>>> On 7/9/25 11:15, Jacob Pan wrote:
->>>>>>> Is there a use case where a SVA user can access kernel memory in the
->>>>>>> first place?
->>>>>> No. It should be fully blocked.
->>>>>>   
->>>>> Then I don't understand what is the "vulnerability condition" being
->>>>> addressed here. We are talking about KVA range here.
->>>> SVA users can't access kernel memory, but they can compel walks of
->>>> kernel page tables, which the IOMMU caches. The trouble starts if the
->>>> kernel happens to free that page table page and the IOMMU is using the
->>>> cache after the page is freed.
->>>>
->>>> That was covered in the changelog, but I guess it could be made a bit
->>>> more succinct.
-> But does this really mean that every flush_tlb_kernel_range() should flush
-> the IOMMU page tables as well? AFAIU, set_memory flushes TLB even when bits
-> in pte change and it seems like an overkill...
+From: ChiYuan Huang <cy_huang@richtek.com>
 
-As far as I can see, only the next-level page table pointer in the
-middle-level entry matters. SVA is not allowed to access kernel
-addresses, which has been ensured by the U/S bit in the leaf PTEs, so
-other bit changes don't matter here.
+Since there's the existing ADC function, add properties 'VOLTAGE_NOW'
+and 'CURRENT_NOW' to report the current VBUS and IBUS value, respectively.
 
-Thanks,
-baolu
+Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
+---
+ drivers/power/supply/rt9467-charger.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/power/supply/rt9467-charger.c b/drivers/power/supply/rt9467-charger.c
+index e9aba9ad393c..998b56e81cd7 100644
+--- a/drivers/power/supply/rt9467-charger.c
++++ b/drivers/power/supply/rt9467-charger.c
+@@ -633,7 +633,9 @@ static int rt9467_psy_set_ieoc(struct rt9467_chg_data *data, int microamp)
+ static const enum power_supply_property rt9467_chg_properties[] = {
+ 	POWER_SUPPLY_PROP_STATUS,
+ 	POWER_SUPPLY_PROP_ONLINE,
++	POWER_SUPPLY_PROP_VOLTAGE_NOW,
+ 	POWER_SUPPLY_PROP_CURRENT_MAX,
++	POWER_SUPPLY_PROP_CURRENT_NOW,
+ 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT,
+ 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX,
+ 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
+@@ -656,6 +658,8 @@ static int rt9467_psy_get_property(struct power_supply *psy,
+ 		return rt9467_psy_get_status(data, &val->intval);
+ 	case POWER_SUPPLY_PROP_ONLINE:
+ 		return regmap_field_read(data->rm_field[F_PWR_RDY], &val->intval);
++	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
++		return rt9467_get_adc(data, RT9467_ADC_VBUS_DIV5, &val->intval);
+ 	case POWER_SUPPLY_PROP_CURRENT_MAX:
+ 		mutex_lock(&data->attach_lock);
+ 		if (data->psy_usb_type == POWER_SUPPLY_USB_TYPE_UNKNOWN ||
+@@ -665,6 +669,8 @@ static int rt9467_psy_get_property(struct power_supply *psy,
+ 			val->intval = 1500000;
+ 		mutex_unlock(&data->attach_lock);
+ 		return 0;
++	case POWER_SUPPLY_PROP_CURRENT_NOW:
++		return rt9467_get_adc(data, RT9467_ADC_IBUS, &val->intval);
+ 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
+ 		mutex_lock(&data->ichg_ieoc_lock);
+ 		val->intval = data->ichg_ua;
+-- 
+2.34.1
+
 
