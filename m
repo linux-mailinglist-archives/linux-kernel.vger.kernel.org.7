@@ -1,120 +1,109 @@
-Return-Path: <linux-kernel+bounces-731826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7674FB05A55
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:35:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1C3B05A5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B40C17E338
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:35:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 172B27AF2C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCF12E0401;
-	Tue, 15 Jul 2025 12:35:01 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1972D2E040F;
+	Tue, 15 Jul 2025 12:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YoAptYmF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737AC274670;
-	Tue, 15 Jul 2025 12:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708641EDA09;
+	Tue, 15 Jul 2025 12:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752582901; cv=none; b=Vq6iJMj128HoiG+kh85bnvJOdVUiEEfEUfx4DCXxzKbvC+xTVHXtsYbWvEmGNlDVxqd29AI5KOCHtqErIhhIq5rXsUkLminYngWLgmIXxCpalmxVH3+aSOm5ZtmuK+6nz4rDVkGPEroZ5k01+mnDOZdu8NCGaoP0Gm+m/EHyL/k=
+	t=1752583043; cv=none; b=UkuQ39j/fGA1//m7scASPuQDOaYsz8NPuXzsHRvoAYD32TXbgriQWnMGfJ0Rr5llDoyDHQOdO0h3HRrmc+M81j/4OZ0/X0x2DDL+zEexXPLY/t6LC1xafJsVi7CilBo9NfAtokVYUIr83eKSKDAS/Lh/k7Ur32sKdoJXpfU9E8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752582901; c=relaxed/simple;
-	bh=+BZrdO9qK8EyMXdnS9svcH8zWBpti9CiTn7FyoJYg7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L9uAS5lq4TLfHfRSYg7fANnFiUKQeC96qiBhurqlw+mVa6NFYVvQdJVd0mugK2tY3WdCf/5afSFtk0STLBP/RZYqSheOSNKgxRk5HU2BQLbgSF74e1dwMz6sO4CfVPf5bA+VqElXVRP2c9CVumi/JMBQ7M0GKzD4SF5HUxIXcjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 3E78F12DD02;
-	Tue, 15 Jul 2025 12:34:55 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 9379420032;
-	Tue, 15 Jul 2025 12:34:50 +0000 (UTC)
-Date: Tue, 15 Jul 2025 08:35:06 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
- <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
- Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
- E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
- Jens Remus <jremus@linux.ibm.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
- Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Sam
- James <sam@gentoo.org>
-Subject: Re: [PATCH v13 07/14] unwind_user/deferred: Make unwind deferral
- requests NMI-safe
-Message-ID: <20250715083506.01458000@gandalf.local.home>
-In-Reply-To: <20250715090955.GP1613200@noisy.programming.kicks-ass.net>
-References: <20250708012239.268642741@kernel.org>
-	<20250708012358.831631671@kernel.org>
-	<20250714132936.GB4105545@noisy.programming.kicks-ass.net>
-	<20250714101919.1ea7f323@batman.local.home>
-	<20250714150516.GE4105545@noisy.programming.kicks-ass.net>
-	<20250714111158.41219a86@batman.local.home>
-	<20250715090955.GP1613200@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752583043; c=relaxed/simple;
+	bh=4H+aBzxKOxX4fKGY9phd6BfYevXHiHL6VFDuZqqNKCs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=iy8dHi7+NvnOFjn0XfyxqC48f0iDMZ3VCG9dPyHRaMIP5tApSwwNKa74Hh7kdpShfIq+0RGdu1qhVNS1569BvHqsKwgdyiVI31eN3TX29V+f+EDFwwTI0zYlbjG+1c+Ec7EfSQh2tAu+UXidXLZcQFstKevX5WzVOo4ouCaGVaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YoAptYmF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6479DC4CEE3;
+	Tue, 15 Jul 2025 12:37:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752583042;
+	bh=4H+aBzxKOxX4fKGY9phd6BfYevXHiHL6VFDuZqqNKCs=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=YoAptYmFnHkB8l8z5+wd8IuAvgyVyt66ThExmXk01SrG0IKbi7aVoi/Wv37kGXaLM
+	 tdNIaqmJscgbyaCVS+GQ/WQfVLWUTn2uv0USEFIPXmarBlXNqCx8vNicuXDj2fDo4T
+	 8oFxcsJciX64VINjE/wPExoSczVs2pCkENZwbV2K7qYr43Gxy/NQbVprltcTykbiMO
+	 8ys18LLUlEGM5mPDFTEWX/RZJ7++R1NV8phrLhM5p/9voJURlSwz5g7+kvfjl0vbMl
+	 4Kt0xTlVLKZAGTVS/k7omgaBGDyfanjn/rmBG7EiY7FUAHY3mRXHLwu2WIvSY502zl
+	 hXxoSDy7H+hcw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: ct31gh6ghco7w9n1i68kjeconey74mg5
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 9379420032
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+owfZCLFT0H27JDc0RpGDEM9MNHAUJVLU=
-X-HE-Tag: 1752582890-436053
-X-HE-Meta: U2FsdGVkX1/b+myhqa8kmYE2rBGF4M/NqgI07kl1Bila8O+AqF1RD6ppUI6loRMxrqoU+Y1NgSHLx49SY2kbAkNorGE5zIZSUezJ5OVwhtGMUHAFeUeGB+O9eazvlB7IrCgP1gYdEdEfZv+jdCZnZys2hZLMBgxrnhQnUNwfbFWb5KUbAXx/S3nHIf+NjwHgena/inUELnViQ+AwZnjQNAXavjOqNhLD/Glbs8nxLqcBHC27omqej/8B8I+7+pf1yV5/ZMxStTgRlmwsJSKK5HKKtYLmD+i8f+PBpofeqaDt9TRAeLTgLrYwlIwraWvZZlHbaR0WXytfQ+QjUhjGw9hlE8LOT6yQj1fZC7XDE9xd/2JHnHIEckrh2IEsFPiV
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 14:37:17 +0200
+Message-Id: <DBCMU4L9I666.BQSFUQGO18TF@kernel.org>
+Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
+ handlers
+Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn Helgaas"
+ <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com> <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org> <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com> <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org> <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org> <DBAWQG1PX5TO.6I2ARFGLX88N@kernel.org> <DBAX59YKO0FV.ANLOWRHDDS92@kernel.org> <DBAXP68U809C.2G8DMB52M3UZ7@kernel.org> <C72C6915-3BB2-431F-89ED-7743D8A62B7E@collabora.com> <CAH5fLgibCtmgFpKNrC+jcSEqSUctyVMuYwEC0QSo+vzyDXK0zg@mail.gmail.com>
+In-Reply-To: <CAH5fLgibCtmgFpKNrC+jcSEqSUctyVMuYwEC0QSo+vzyDXK0zg@mail.gmail.com>
 
-On Tue, 15 Jul 2025 11:09:55 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On Tue Jul 15, 2025 at 2:33 PM CEST, Alice Ryhl wrote:
+> On Mon, Jul 14, 2025 at 5:13=E2=80=AFPM Daniel Almeida
+> <daniel.almeida@collabora.com> wrote:
+>>
+>> Hi,
+>>
+>> >
+>> >>>
+>> >>>  (2) It is guaranteed that the device pointer is valid because (1) g=
+uarantees
+>> >>>      it's even bound and because Devres<RegistrationInner> itself ha=
+s a
+>> >>>      reference count.
+>> >>
+>> >> Yeah but I would find it much more natural (and also useful in other
+>> >> circumstances) if `Devres<T>` would give you access to `Device` (at
+>> >> least the `Normal` type state).
+>> >
+>> > If we use container_of!() instead or just pass the address of Self (i.=
+e.
+>> > Registration) to request_irq() instead,
+>>
+>>
+>> Boqun, Benno, are you ok with passing the address of Registration<T> as =
+the cookie?
+>>
+>> Recall that this was a change requested in v4, so I am checking whether =
+we are
+>> all on the same page before going back to that.
+>>
+>> See [0], i.e.:
+>> [0] https://lore.kernel.org/all/aFq3P_4XgP0dUrAS@Mac.home/
+>
+> After discussing this, Daniel and I agreed that I will implement the
+> change adding a Device<Bound> argument to the callback. I will be
+> sending a patch adding it separately as a follow-up to Daniel's work.
 
-> On Mon, Jul 14, 2025 at 11:11:58AM -0400, Steven Rostedt wrote:
-> > On Mon, 14 Jul 2025 17:05:16 +0200
-> > Peter Zijlstra <peterz@infradead.org> wrote:
-> >   
-> > > Urgh; so I hate reviewing code you're ripping out in the next patch :-(  
-> > 
-> > Sorry. It just happened to be developed that way. Patch 10 came about
-> > to fix a bug that was triggered with the current method.  
-> 
-> Sure; but then you rework the series such that the bug never happened
-> and reviewers don't go insane from the back and forth and possibly
-> stumbling over the same bug you then fix later.
-> 
-> You should know this.
-
-The bug was with actually with the next patch (#8) that uses the bitmask to
-know which tracer requested a callback. Patch 8 cleared the bit after the
-callbacks were called. The bug that was triggered was when the tracer set
-an event to do a user space stack trace on an event that is called between
-the task_work and going back to user space. It triggered an infinite loop
-because the bit would get set again and trigger another task_work!
-
-I can merge patch 8 and 10, but it still would not have affected this
-patch, and would have likely led to the same confusion.
-
-> 
-> I'm going to not stare at email for some 3 weeks soon; I strongly
-> suggest you take this time to fix up this series to not suffer nonsense
-> like this.
-> 
-
-Sure, I'll take a deep look at your review and work on the next series to
-hopefully address each of your concerns.
-
-Thanks!
-
--- Steve
-
+That works for me, thanks!
 
