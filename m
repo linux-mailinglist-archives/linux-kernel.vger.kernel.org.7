@@ -1,88 +1,138 @@
-Return-Path: <linux-kernel+bounces-732573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90472B068E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE322B068E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB0697A5289
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:57:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BB8B7ACCB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8DF2C1593;
-	Tue, 15 Jul 2025 21:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D212C15A2;
+	Tue, 15 Jul 2025 21:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hRKHUwWs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kIChHQip"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C991C54A9;
-	Tue, 15 Jul 2025 21:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9604E2BEC59;
+	Tue, 15 Jul 2025 21:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752616734; cv=none; b=JiAlQwqOlGkuoK3X2wvcJ5Vtj1eDeHei6Hypm2/eYrayxO1U9SeiquszW21f0a76n/zHqPwCZjWGx29viOtaEbhx5+mP6BuqKfhFrBn8pCGpn0rE27mcgS0bW8LQl3WI2S+hJ5GE4/Ky9J97pmA3U1cKad1yUY6X0ku73iRJZdM=
+	t=1752616766; cv=none; b=Y+C18sxogYgVAeoWtoXlk6M1dA0iNQgTSm7Qghq+eI0XrLOWHSLY6j9aWivKRFhLQxkMMBxntWfJg6IT65Gml9rTcYKBobagESYaJ6vrbKY/0u1tLgS1b9cedWMrYu/32m/03UAz4gstRRgHkXCo4A9CDYDloEdh3Vm9V1BWVfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752616734; c=relaxed/simple;
-	bh=Al5kTu9Lb20vAaMzt40O4A44pcAsNVuFu/MblkMyb8M=;
+	s=arc-20240116; t=1752616766; c=relaxed/simple;
+	bh=N9jjdpE0NCKGhFiG+0EPBEYGW5wRusUBEHZWfy3k6IQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=so1Sj6Mx7P2wjW5f6hj9TNR+fp4/vrDWjKl8qmFNkXVFBagSZ46hip6dkZ1MWZdUg1rSUlTbwXmAnQG7kK12mSlunvOCvjQTysPPrMiFKtXsRtdVV1W6lcpE4zVtNyycU2JXTYxplAz4ndhlVvGwZ3hPeDRy31TqWV7pFJdE+8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hRKHUwWs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0828BC4CEE3;
-	Tue, 15 Jul 2025 21:58:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=RLwKtUtzhtXnK6Uhn8LZa7XQd07+y5EAIPUk+VU1R4KRCy7uf4cK9nzHi//gZm4DZrAJG51LQekNAe7CasT1tZekp0I/8nXI5GKkq9c2J6/68P11mSxaEG29xWGkAOMcZS2CLUAOZLrpSYEikfVJ839KwnBtguPLubaN93OwKaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kIChHQip; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 121ECC4CEE3;
+	Tue, 15 Jul 2025 21:59:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752616733;
-	bh=Al5kTu9Lb20vAaMzt40O4A44pcAsNVuFu/MblkMyb8M=;
+	s=k20201202; t=1752616766;
+	bh=N9jjdpE0NCKGhFiG+0EPBEYGW5wRusUBEHZWfy3k6IQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hRKHUwWsDZfT1cr9LLqWHAGI8/kk6IWN2osmRUqW1jZPUziDpH6lBVTtVtRKZoBes
-	 GoTfuSUHSJzfuwN9MrcleKx6N2DdNTtB43kXBuSFVRxLDJjWW8C90XeztmIJBnilBJ
-	 ev1ZBgF4PU25HgyeuK4CwqRx57hZ9khwdOsX0DObxC/KEvrbvTasZsrbhTVW5FIWBd
-	 w0Sx9E0kpK02iRA4D9h+74ut6KuaClygsi0kZ0+x0dscDAdBhp6YeotyFdf+tyYmeM
-	 +jgo31hXtR5IiQzfnwR9xJL/uCP3TC1kJRRGfAYdtnMrxlFrU2i0l7/OfVOhgcA5Sv
-	 VPysWZuFfb+7A==
-Date: Tue, 15 Jul 2025 23:58:49 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Alex Guo <alexguo1023@gmail.com>, conor.dooley@microchip.com, 
-	daire.mcnamara@microchip.com, linux-riscv@lists.infradead.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: busses: Fix out-of-bounds bug in
- mchp_corei2c_smbus_xfer
-Message-ID: <6r6vbagr23kf5qyfmnmy7hkdljvu73sgakalqmbmdodf5rf4e2@fld6reoqfz5p>
-References: <20250615234919.525431-1-alexguo1023@gmail.com>
- <aGBMDFLH7aJGFyQ2@shikoro>
+	b=kIChHQip3Umr7rsQsoecE/9m8ciNv9ay1Y/DEufvNkCNYnXGm5dJCMFWpHjZZ28/2
+	 YgRTIOyeximpUzRK2z/8olSuAFQoyc4Ze//SPTEFVpyaHJqc4dwrZ9IaXO/0LV90jZ
+	 tATnqAK5aQ/RH8POJToVQQA7q8edMB7rtug/5SgrlOPrw9cvBCiPNqzAxywK2Ahusj
+	 T/tY+PdnczBJEVD0tN29ACKbWOW53wRgeupn1UQP8xUjdi3Rbm9tPaTVKkaSH6me/9
+	 v0dNdVq4o5wnOLbjFbuQhYco20MhrloY+efRZ3njXSMUVtnkCk+UfhYmfQhmYYMzPb
+	 Tm74VwxWaUsnQ==
+Date: Tue, 15 Jul 2025 16:59:25 -0500
+From: Rob Herring <robh@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/21] arm64: dts: qcom: sm8250: Add PCIe bridge node
+Message-ID: <20250715215925.GA2084021-robh@kernel.org>
+References: <20240321-pcie-qcom-bridge-dts-v2-1-1eb790c53e43@linaro.org>
+ <20250103210531.GA3252@bhelgaas>
+ <20250105101612.t6c4pw5uxhb5rdde@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aGBMDFLH7aJGFyQ2@shikoro>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250105101612.t6c4pw5uxhb5rdde@thinkpad>
 
-Hi Wolfram,
-
-On Sat, Jun 28, 2025 at 10:09:48PM +0200, Wolfram Sang wrote:
-> On Sun, Jun 15, 2025 at 07:49:19PM -0400, Alex Guo wrote:
-> > The data->block[0] variable comes from user. Without proper check,
-> > the variable may be very large to cause an out-of-bounds bug.
+On Sun, Jan 05, 2025 at 03:46:12PM +0530, Manivannan Sadhasivam wrote:
+> Hi Bjorn,
 > 
-> Okay, okay, instead of adding these limits to all these drivers, let me
-> start adding SMBus3 support to the kernel which allows for bigger block
-> sizes. I probably won't have time to export this to user space yet, but
-> let's at least make sure the kernel, and thus the drivers, won't suffer
-> from buffer overflows anymore.
+> On Fri, Jan 03, 2025 at 03:05:31PM -0600, Bjorn Helgaas wrote:
+> > On Thu, Mar 21, 2024 at 04:46:21PM +0530, Manivannan Sadhasivam wrote:
+> > > On Qcom SoCs, the PCIe host bridge is connected to a single PCIe bridge
+> > > for each controller instance. Hence, add a node to represent the bridge.
+> > > 
+> > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > ---
+> > >  arch/arm64/boot/dts/qcom/sm8250.dtsi | 30 ++++++++++++++++++++++++++++++
+> > >  1 file changed, 30 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/sm8250.dtsi b/arch/arm64/boot/dts/qcom/sm8250.dtsi
+> > > index 39bd8f0eba1e..fe5485256b22 100644
+> > > --- a/arch/arm64/boot/dts/qcom/sm8250.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/sm8250.dtsi
+> > > @@ -2203,6 +2203,16 @@ pcie0: pcie@1c00000 {
+> > >  			dma-coherent;
+> > >  
+> > >  			status = "disabled";
+> > > +
+> > > +			pcie@0 {
+> > > +				device_type = "pci";
+> > > +				reg = <0x0 0x0 0x0 0x0 0x0>;
+> > > +				bus-range = <0x01 0xff>;
+> > 
+> > Hi Mani, most or all of the patches in this series add this
+> > "bus-range" property.  IIUC, these are all Root Ports and hence the
+> > secondary/subordinate bus numbers should be programmable.
+> > 
+> 
+> Right. It is not a functional dependency.
+> 
+> > If that's the case, I don't think we need to include "bus-range" in DT
+> > for them, do we?
+> > 
+> 
+> We mostly include it to silence the below bindings check for the endpoint device
+> node:
+> 
+> Warning (pci_device_bus_num): /soc@0/pcie@1c00000/pcie@0/wifi@0: PCI bus number 1 out of range, expected (0 - 0)
 
-in the meantime, what should i do with all these patches? They
-are not wrong and I agree that we need to work on the i2c core.
-Besides having something like this might help all those drivers
-using i2c by removing the need for their own specific
-i2c_read/write methods.
+The mistake is using bus number 1 instead of 0.
 
-Some times ago I started working on this and I have it still
-laying around in one of my branches. If you haven'd done much
-progress, i can bring it to life.
+> DTC check is happy if the 'bus-range' property is absent in the bridge node. But
+> while validating the endpoint node (if defined), it currently relies on the
+> parent 'bus-range' property to verify the bus number provided in the endpoint
+> 'reg' property.
+> 
+> I don't know else the check can verify the correctness of the endpoint bus
+> number. So deferring to Rob here.
 
-Andi
+Sorry I'm late to the party, but found this from another thread 
+today[1]. More details there.
+
+You should not have 'bus-range' at all in your DT and the bus for every 
+BDF address should be 0. You only need 'bus-range' if your h/w is 
+broken.
+
+Rob
+
+[1] https://lore.kernel.org/all/CAL_Jsq+z+5_=YXiyCW1sbKDe0cjGNG7Qk=uRQ3efAFTd1J2ayQ@mail.gmail.com/
+
+> 
+> - Mani
+> 
+> -- 
+> மணிவண்ணன் சதாசிவம்
 
