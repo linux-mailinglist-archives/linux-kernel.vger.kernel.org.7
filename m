@@ -1,96 +1,138 @@
-Return-Path: <linux-kernel+bounces-732552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB892B06887
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:27:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6356EB0688A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D209E3BA77C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:26:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D3464E0A43
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3224D2BE628;
-	Tue, 15 Jul 2025 21:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5F02C08DD;
+	Tue, 15 Jul 2025 21:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="u8Nu9TKP"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b="cBO8R3Uw"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D765334545
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 21:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8316C2C08CE
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 21:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752614832; cv=none; b=cA14ucjWc3m+PGeHZ3jdBTun7ag96RLfM2VVtaAUh6lo9amRpHm+5J4KzEVrQZ9BkSYnIdhjDfse92Z5EEuF18hppcncqRY0U34yLJkBMqhW+wOu/EgOOkxquUAIVZC7xU+6e+2s3d8OtOH4Da46T1Nsga05FNYz/RL98A9S88w=
+	t=1752614849; cv=none; b=JJDkev+KoKNimpGb11UDPkhd48Mpczn02XxuebkvS2iaSRmd3HMiteDLp+Ix31RDjYsM6goXyn9Z+2lwt1LukUjeeYnHYfxct/9pgHM90VVon/g8l7x8wjf1zTpWeD3ONCI5y0v32fEzM4v/VVphcVSdwSuK2FvHLkf8bwHKEgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752614832; c=relaxed/simple;
-	bh=VjpNf35OKcnhkXnLzTF/gK68gYHm7BJ+ugctx3uQ9Uo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=loCLMW0NB3wT3CxGKVQAgqOUxjT4RhGPMN3DdH1hbpryPIMo8yJIdaKbp4PJlzQGLO3YzIq/q6xyaLZza82yQcAVnySnFNcjPj9BKV0aLeg9J/WBKjMz/Z/u768Ft+zISSbxZlxdj+cWr8bILiy8Eo1w99TP97um7rKX0ZeIuhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=u8Nu9TKP; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <27c7c76c-becf-47b1-812b-05f260a8cd85@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752614826;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TEA/2zAXePybJDFAxaDLpMM9vm6sWfj9MGiKkmagMtg=;
-	b=u8Nu9TKPospipBgfTFv9o4Tgfk0N3dRsFKn0cXx/l1STx1pHu3MUdBOyYvX/LGW8NhDJ5d
-	EVRN1+35e7poQW7ktf+qgaMeoHTqoaN6uA1HR71eLkcXYHGC3t7rnmsWgSSpON2dZ47+gB
-	MEu5EAHwE6b9/NByeWjUbriQ3hH/NC8=
-Date: Tue, 15 Jul 2025 14:26:56 -0700
+	s=arc-20240116; t=1752614849; c=relaxed/simple;
+	bh=D9HEnKpqxTaHq5dlDfw7mwWkvcUfEgMavo2bCfMr8us=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sRoatp6Ff0eFPyG43TRp4dFKffN9Ib0afwUeMC8jzOM1Vrxr1YvtAg2WRxMIR2KeWT9PfS9DsRDCdz0ABFJlaStScE2dXrcFYSqRgOOs7H1XvdIpAiyoMu9s4zkBnN1B0DSUfYgvWv0bHDLEeTU2oOsyU5XoqyN5Clcff2qWc5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b=cBO8R3Uw; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-315b0050bb5so4172800a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:27:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=futuring-girl.com; s=google; t=1752614847; x=1753219647; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SOELzqJhc/ryZF/a1QLEL+CHjG5U4uGeHFM65aS5DO4=;
+        b=cBO8R3Uw5COKIqDiWuGdutCVaP+AazI9h5iMBKlMYQnEokN4IFYhVNZ+nVHWoqN6q0
+         x+JK8FRF+YtJNV41RGo+GOl9xHQmb7vRScJTfEhM/sA9gkAihDqBQVR9FINz0cPiIDu5
+         bT0o9+u5vJo6jD4If3STi61q7HkfYTcLN3aVHZ/GVDifkD0b7hcI7FYOpAPKpVs5Rb1K
+         SuQqK6bkrYce7NsF4ltc5BvbPy8LuAh8yWZLNswJbbcWX9U87fhAACZSUWvQgyqrBmQh
+         viUovU/9l9TngI2XdUGakudUJNSHeNO9yskbM+0QkdRYWzgxC0CfOEllecmGIgMqUE+u
+         hGQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752614847; x=1753219647;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SOELzqJhc/ryZF/a1QLEL+CHjG5U4uGeHFM65aS5DO4=;
+        b=J6ArRMe93ui5E4IOw6OggbzYw5WQeM2qAi26Eat49zIwphts40eaPape7L1nYKLm0w
+         Hzc2aYwUPCsVXCL1Qbg99KNjUsC0YJ+sfqYTb+E0S59jHkAYyxQu2q9xk05FENwmryxQ
+         GvbJZYscjJbobxPlMoazupWoAlSYj8ITf+etPQjXKMjzkqDbbfEiOpb+KZblIaFBNljT
+         n/DSndniYZsuHJHOQTdW+RO3C8j4Wm2cq/ZOmBBFXOMYvX9kjOftBwGiYqHeTi4Lb6PQ
+         52jv0r3TXBOiREGasL8hBYpldZZJlXi3WutpMfObZDiFgg+7xBSqzzpsNbn14oibI5O7
+         W6IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcpTXCCZowaIQCtucF3awC1hBsuwg/OlNQfW8scn6OEaBnjdVp8Jml58r6HSIt151Kxh+v6JJR84On6e0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/hJz0BxJOodMj1QdLYBmPXB7TnXII386AnxTTzHz8cJSEZ4U6
+	z/LVr1fmFZjsJy88I9fE1W/f7n7yu2JhD3sxBoNlF9AZebz29t5Xtt0gOnX/GEacLwR/uXB6WLr
+	dMkmB8KyRG6SN8jLWeLP1jv9JduVWO53Rnp+iIMiJ+Q==
+X-Gm-Gg: ASbGncs1Lu1XtXOrR6pY1UkQjFj43A15YlvR+jHyR4SVf1j/ng604hK5nl9TzgLD/eN
+	yethtV/RqPUftxZ8GV8jN93ZoNdNWHcr+0+jLTtErgR5BNixMwVVSScZ1ETC6ttJwcWdYTG0pYU
+	0og1e6be91sAR2HPIrFuEVIso0ImcHkiMv1DofVlBUIiTxEcm8IlxM5dE/DorpAa/0ZwmvTQxAn
+	rBYtxhEFEweAVaxvg==
+X-Google-Smtp-Source: AGHT+IHIMG5AOIEO7NWtr7b7qQXOwUwyu++a7MBGcUjFW29Fo09J23bRD+O0k/Yj4fz9s6Q9Ys+GEoOzZBuXDt2FQCs=
+X-Received: by 2002:a17:90b:4fcc:b0:312:e1ec:de44 with SMTP id
+ 98e67ed59e1d1-31c9e77050fmr1014801a91.27.1752614846758; Tue, 15 Jul 2025
+ 14:27:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] bpf: restrict verifier access to bpf_lru_node.ref
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Shankari Anand <shankari.ak0208@gmail.com>
-Cc: bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Martin KaFai Lau <martin.lau@kernel.org>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- syzbot+ad4661d6ca888ce7fe11@syzkaller.appspotmail.com
-References: <20250715075755.114339-1-shankari.ak0208@gmail.com>
- <CAADnVQJ6_pB8ZU2Cw5S6nB4J-6s7bw5Fp-Hst9M_EE9=HxN8+g@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-Content-Language: en-US
-In-Reply-To: <CAADnVQJ6_pB8ZU2Cw5S6nB4J-6s7bw5Fp-Hst9M_EE9=HxN8+g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250715130814.854109770@linuxfoundation.org>
+In-Reply-To: <20250715130814.854109770@linuxfoundation.org>
+From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Date: Wed, 16 Jul 2025 06:27:08 +0900
+X-Gm-Features: Ac12FXw_zO_5hI65OrUKo80Jj8hMmAumQxAUZ4aSIH3foYyd6ktRTVpXkyDcl4k
+Message-ID: <CAKL4bV5npxPDCt6dsmJLSjVxTTnDn7GyJ05AgPF3Qh2M3NDY_A@mail.gmail.com>
+Subject: Re: [PATCH 6.15 000/192] 6.15.7-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/15/25 7:49 AM, Alexei Starovoitov wrote:
-> Also you misread the kcsan report.
-> 
-> It says that 'read' comes from:
-> 
-> read to 0xffff888118f3d568 of 4 bytes by task 4719 on cpu 1:
->   lookup_nulls_elem_raw kernel/bpf/hashtab.c:643 [inline]
-> 
-> which is reading hash and key of htab_elem while
-> write side actually writes hash too:
-> *(u32 *)((void *)node + lru->hash_offset) = hash;
-> 
-> Martin,
-> is it really possible for these read/write to race ?
+Hi Greg
 
-I think it is possible. The elem in the lru's freelist currently does not wait 
-for a rcu gp before reuse. There is a chance that the rcu reader is still 
-reading the hash value that was put in the freelist, while the writer is reusing 
-and updating it.
+On Tue, Jul 15, 2025 at 10:50=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.15.7 release.
+> There are 192 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 17 Jul 2025 13:07:32 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.15.7-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-I think the percpu_freelist used in the regular hashmap should have similar 
-behavior, so may be worth finding a common solution, such as waiting for a rcu 
-gp before reusing it.
+6.15.7-rc1 tested.
+
+Build successfully completed.
+Boot successfully completed.
+No dmesg regressions.
+Video output normal.
+Sound output normal.
+
+Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+
+[    0.000000] Linux version 6.15.7-rc1rv-ge6001d5f7944
+(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 15.1.1 20250425, GNU ld (GNU
+Binutils) 2.44.0) #1 SMP PREEMPT_DYNAMIC Wed Jul 16 05:56:57 JST 2025
+
+Thanks
+
+Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
