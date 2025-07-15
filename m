@@ -1,140 +1,293 @@
-Return-Path: <linux-kernel+bounces-731607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05C9EB0571A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C199B05732
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FA083BDE49
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:51:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B02BF3AF1EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0855A2D63EF;
-	Tue, 15 Jul 2025 09:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC69C2D63ED;
+	Tue, 15 Jul 2025 09:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNved4Uu"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nYIDa0s9"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE46C23C50C;
-	Tue, 15 Jul 2025 09:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B08E2D542A
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752573120; cv=none; b=LOXexVnxlHXnPhKwH77AgibCeZcbpZltnO/US3SCbgXY62hlrtTDPByKHKD+mtsiz4DXNyhLno/e4oetN45BOlmkEslStK/gZW09pahB3fIhCq1+YcnpUzXnB0pNK/LnC/qZoQv4TfuhojEaFN/an+dzEVB4DfrjnpoIc9i1nHw=
+	t=1752573252; cv=none; b=PbImaCdcCm7+XigAX5Vejy+sVxQ/6Ihq7crBb8KKI8oIzxLbVjd+JPPBc5grjtKBQhoCKeuhwKzA3Jjt4868sJUZkDMqmh7gO4pzq5hGa5WaoaqzBdU9UqFn7RTI04NGiZFPdn4PuctR6iOdY1b5/KczIpJgPbsC/819jy4LnNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752573120; c=relaxed/simple;
-	bh=k3CNpSgw96RBK8czQPmVQadqD4U/8VJrNaiW2Cv3fEM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GbQbN5NQmvIg7PVHmBCfsYuKYk2vInC6hRZ3erkDEDJ8U3S0ARWNnQuMNEz/bhrvZayYafEjL029P61JuqsNVKmLCtnrW38JnBTXq2nWvWzdlMXvbFig52Hrj8SJkvrvCTzc35FUkG3CPa6T29W9YGStigjVHjsss5JXYC3gF2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eNved4Uu; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-60707b740a6so8066138a12.0;
-        Tue, 15 Jul 2025 02:51:58 -0700 (PDT)
+	s=arc-20240116; t=1752573252; c=relaxed/simple;
+	bh=FItGyW8nimCshTyrVdStcZ8wr8/YBuniLgbjSo3h7WQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uIEGwWj4LCZLTCqCWrGgoo5ttg/rbjvHhrEHQ7is1abOSi2Ri7fKDAog9Wmb+m0IMLjtMfFPGAoRQkpVlxY0h2IXxAejMk5R/yxtKvgDEfxB5p5sO9YIGK7AJsSHJFyMqWOC1NBvtarn8+mp49mF8K9/sExhsuE2GyW20aiW5ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nYIDa0s9; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45624f0be48so4947715e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:54:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752573117; x=1753177917; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+JfCVmz7dmcyIZuFeXL/VPi/f+vUofPTsyu4Vo/HNV8=;
-        b=eNved4Uu3gpthM18zIQOnbgo+JH8BygfgQjFTzmafl7Y8nA4oRTgQksKLCnTnFKlII
-         mmIBx2ndZxI4Ep1K9rxXSx7wOg3uLfEvzBeZpQZwbPCguGUg7U6fP7Ml0DPTREKplowe
-         KnPZNTo0g8xp2slnNlLWN9vZqZpiM1PYWFi0ywbO6YexEm9tJB4k/jeWyb6nxQP5bsWl
-         n+IRsS7fvyChdxWtK7Hfq9y3+hU3r8MUiZeqCWQK+Baq9+bSlpgUzHMJCkkVnT50xlBV
-         MHSU+0dpMkqZeBoG88pWesjSweBM33FwXBVBjjy2dKwp5Nkrk7WoiyE157Lo55Mx6JHN
-         8ecw==
+        d=google.com; s=20230601; t=1752573248; x=1753178048; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cp5GBgsM/GT6S6VKbK948jD04WLTfcMDMRyGqwJi5HU=;
+        b=nYIDa0s9EPbv0SG1k5u2P0TbXAv6RPl0uXt9Fdwu9THSi8axcq5BwtzzjO502tmBQG
+         94ZrOHG+fmKr96JMF2DMrZqjhSaw6Kbg4Kbui/ZVE2WXAy+OhEMT1dG5I8/K406T9Rwa
+         qqE37onECrJ3xuZ3qFkw6cwTcAczRJ+Jvb3kU09kZ0jF+6h8F3XSxNxEXE5gX1gAs06Q
+         MrOFiv3H6cyGHXNKkiBnd04SC0jfUkbPu02mgfFSf/ueGlSU+oR1ZsJp+azlk6pulHMc
+         j1rxdnbEPPn5zR9y85F5R86kYxtS+ba1rhTxLdJd/8bMMJig5iLgF1Xs4/wLAXyeRO4B
+         BlpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752573117; x=1753177917;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+JfCVmz7dmcyIZuFeXL/VPi/f+vUofPTsyu4Vo/HNV8=;
-        b=s+aSh21xvIxxbFEWZaOs/joj9goQdOFIxPutVi24gWFKyDEvlbN0bKMPLzDBqsOCkI
-         2kmJbl/gOEk5qNh1OmGABXWQKOC0wYSUtvtz25FGc6CyqlMVrTvfOb9hOkt/vyi6YxBj
-         om+92LAahAozX5236wRzny+jhGaviUQpRxwDl+McI06StHfg1/uNR6IpwbMUTch7XX9V
-         UzoJbhOnjCHon0jvSfUxBW5cOFC2e5NrWRiOz8pXjf9U6IcNLxGVjIa0Ot6BPju4cDRr
-         t9GL/gjTf3lWNvyEnVkWZrTelnTQ7tSbGkKIGaGqCJ5buhVVwFeGSJlKKjNicwhDaMPU
-         lRNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlh9e5Y5hZZH6XiJR5ahXNfgrRgKVpaKoVRvZSzn8MMWmRL9+mXJOnKOH69Trq2HeRzFc=@vger.kernel.org, AJvYcCWbUG+/TyQ2G7JNdk8LMFV7EYTTzntBa8yQf0BOtUem3RFfVvPzs+dPbQfkgsWBTx7nhdz0ILskr73Jyg==@vger.kernel.org, AJvYcCXctGl2Fs4eZAyfD/dqrSExkO9xh9OPVROUVUVVN3NczQh33UM6zZtyftvIrG1VvkGu/ieaOtawMp1O93vv@vger.kernel.org, AJvYcCXomE5DZjDdOCiqZLT5C/Q0OIaep/22Dk2I2seoP7369Ap6uLl27/zv8ER3JvIOXFqJwDGkxEM2@vger.kernel.org
-X-Gm-Message-State: AOJu0YzabtnDN+tujhk7wJbI8/SFoaQsfhqBSwyCeBgZF90irsQuFXxP
-	wZuDTtJEgmTCprm1P06klZQp3dD0drED11OFXAttJ1nDphM68tddxkB4+WjTqCad
-X-Gm-Gg: ASbGncsmae6QB14m7LOw1dH4LwStfCEUszMMQ7rpaubkQ3nVmap1uWmyDKGvGPebefn
-	N0fzIJ9x4aFz0MT1Son/tWHG/dg+vnJGYioArwm4m8Pd7nt2GHuldGy2DXGYg+ThN7WfDFtw2c7
-	jGKTSHWP5tSeVtcyckxz62NgbYUb4exxdSgRDhqGe12kVOk7mHtKb0bf4o64XGknSf5ey97SAMe
-	ayD/iXRHoZrRIN4GW3qMklnF4Z7BXYkZXQWuFw3GojbgFhxSYkWzFZ3AZTkvXOvhu0UZsRCtT3X
-	DmsNJ6yr/S61/osIMcLiv6KG13YmjI2+rBxhPvHdfVJWC7/T0bOnW9/mnOnKYDZeiFGbIrhDupu
-	FQ4To4VWyXMSCECTKNbgRbjVx/4CmBCLOe7B97PO4r9adMQ==
-X-Google-Smtp-Source: AGHT+IFtyv+behObgwuhkDzO4fwWTfcA9W4Bzf00R+XfXl6ZnDUgjY9rXODXpIsVAPEVnRVB4STm/Q==
-X-Received: by 2002:a50:cd87:0:b0:5f3:857f:2b38 with SMTP id 4fb4d7f45d1cf-611e84aa0e9mr10404889a12.17.1752573116791;
-        Tue, 15 Jul 2025 02:51:56 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:a4c1])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c94f3753sm7018754a12.16.2025.07.15.02.51.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 02:51:55 -0700 (PDT)
-Message-ID: <ecb71c6f-9a9e-439f-b64c-2779ee5afdd8@gmail.com>
-Date: Tue, 15 Jul 2025 10:53:24 +0100
+        d=1e100.net; s=20230601; t=1752573248; x=1753178048;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cp5GBgsM/GT6S6VKbK948jD04WLTfcMDMRyGqwJi5HU=;
+        b=Lr6TCpMpthM/PbZaWXlAmbnSVuY/x9CZQwVG+/pgRlPFp7LWSFPISfib1Aat4C+lwM
+         1Z9xbERIkPOK821e7PqgbHxXzQ7KdnTVC41k/aHgJ4Ndl18Z/bSjAdafdFNg7QTfEiDT
+         Vv3KtKKha4ZOO7tMQolUS5njGVR9Jqvfq/Bu8IZnfafolEuVy8ZWYoT2xuVBh8PJHNmS
+         6cgbt+mrQgeqitm7M+VhHN9YgFiPOTcvk4QS5tBxAofY04qALQ3Ezd/RxGpk2oYNpDTV
+         PAgLsuxcypOkV9L/9oDQXKX2Zn0HV/JmfB5xdLLKEo9jY43Jb8B2Kve7pLMefX/6qMac
+         sSbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9qHgYWmLyKjKS8HuqFYuZofNFegIwG6ka2SPVngrx1aG9fh96wyRS0YZDGQUeqQxUj6glEQUOA8sKWx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCaLNPi3Hjs3DuUu+p2nsVQy09idSHoK3iF7zBq5eSF5IY5sCD
+	D9/ETxdi0xQGEBjIf0PEJUs+RqEwN/9vZbmHFdjJdBskTcC4kDaYeROOUbrkO0CZXJSuZNYINeH
+	nOd75WUFBK45osVIwSg==
+X-Google-Smtp-Source: AGHT+IGGxjE3JPjoWX6iYc3kdOka7g4M+LKkBFbtVuyY2sgGCBGSXjsN0V1abh1tiQmQYxqqwxXDiLdFIZRicAk=
+X-Received: from wmqb20.prod.google.com ([2002:a05:600c:4e14:b0:456:25e7:be1])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:34c5:b0:43c:fe5e:f040 with SMTP id 5b1f17b1804b1-45565edc8f4mr130514075e9.23.1752573247648;
+ Tue, 15 Jul 2025 02:54:07 -0700 (PDT)
+Date: Tue, 15 Jul 2025 09:54:06 +0000
+In-Reply-To: <20250711-rnull-up-v6-16-v3-16-3a262b4e2921@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 3/8] page_pool: access ->pp_magic through
- struct netmem_desc in page_pool_page_is_pp()
-To: Mina Almasry <almasrymina@google.com>, Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel_team@skhynix.com,
- kuba@kernel.org, ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
- hawk@kernel.org, akpm@linux-foundation.org, davem@davemloft.net,
- john.fastabend@gmail.com, andrew+netdev@lunn.ch, toke@redhat.com,
- tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
- saeedm@nvidia.com, leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
- david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
- horms@kernel.org, linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
- vishal.moola@gmail.com, hannes@cmpxchg.org, ziy@nvidia.com,
- jackmanb@google.com
-References: <20250710082807.27402-1-byungchul@sk.com>
- <20250710082807.27402-4-byungchul@sk.com>
- <CAHS8izMXkyGvYmf1u6r_kMY_QGSOoSCECkF0QJC4pdKx+DOq0A@mail.gmail.com>
- <20250711011435.GC40145@system.software.com>
- <CAHS8izNbE+sb8U2Ws2_0C9H6Tf2DzJjh2beu04uyzxk7xFw4ng@mail.gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAHS8izNbE+sb8U2Ws2_0C9H6Tf2DzJjh2beu04uyzxk7xFw4ng@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org> <20250711-rnull-up-v6-16-v3-16-3a262b4e2921@kernel.org>
+Message-ID: <aHYlPkFKTafRypNu@google.com>
+Subject: Re: [PATCH v3 16/16] rnull: add soft-irq completion support
+From: Alice Ryhl <aliceryhl@google.com>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On 7/14/25 20:09, Mina Almasry wrote:
-> On Thu, Jul 10, 2025 at 6:14 PM Byungchul Park <byungchul@sk.com> wrote:
-...>> Both the mainline code and this patch can make sense *only if* it's
->> actually a pp page.  It's unevitable until mm provides a way to identify
->> the type of page for page pool.  Thoughts?
+On Fri, Jul 11, 2025 at 01:43:17PM +0200, Andreas Hindborg wrote:
+> rnull currently only supports direct completion. Add option for completing
+> requests across CPU nodes via soft IRQ or IPI.
 > 
-> I don't see mainline having a problem. Mainline checks that the page
-> is a pp page via the magic before using any of the pp fields. This is
-> because a page* can be a pp page or a non-pp page.
-> 
-> With netmem_desc, having a netmem_desc* should imply that the
-> underlying memory is a pp page. Having a netmem_desc* that is not
-> valid because the pp_magic is not correct complicates the code for no
-> reason. Every user of netmem_desc has to check pp_magic before
-> actually using the fields. page_to_nmdesc should just refuse to return
-> a netmem_desc* if the page is not a pp page.
-> 
-> Also, this patch has my Reviewed-by, even though I honestly don't see
-> it as acceptable and I clearly have feedback (and Pavel seems too?).
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-I was fine with it as a transitory solution, but there is nothing
-to argue about anymore since mm already got a nice way to type
-check pages and we can use that.
-  > __please__, when you make significant changes to a patch, you have to
-> reset the Reviewed-by tags.
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+
+>  drivers/block/rnull/configfs.rs | 61 +++++++++++++++++++++++++++++++++++++++--
+>  drivers/block/rnull/rnull.rs    | 32 +++++++++++++--------
+>  2 files changed, 80 insertions(+), 13 deletions(-)
 > 
+> diff --git a/drivers/block/rnull/configfs.rs b/drivers/block/rnull/configfs.rs
+> index 6c0e3bbb36ec..3ae84dfc8d62 100644
+> --- a/drivers/block/rnull/configfs.rs
+> +++ b/drivers/block/rnull/configfs.rs
+> @@ -1,7 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+>  use super::{NullBlkDevice, THIS_MODULE};
+> -use core::fmt::Write;
+> +use core::fmt::{Display, Write};
+>  use kernel::{
+>      block::mq::gen_disk::{GenDisk, GenDiskBuilder},
+>      c_str,
+> @@ -36,7 +36,7 @@ impl AttributeOperations<0> for Config {
+>  
+>      fn show(_this: &Config, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
+>          let mut writer = kernel::str::Formatter::new(page);
+> -        writer.write_str("blocksize,size,rotational\n")?;
+> +        writer.write_str("blocksize,size,rotational,irqmode\n")?;
+>          Ok(writer.bytes_written())
+>      }
+>  }
+> @@ -58,6 +58,7 @@ fn make_group(
+>                  blocksize: 1,
+>                  rotational: 2,
+>                  size: 3,
+> +                irqmode: 4,
+>              ],
+>          };
+>  
+> @@ -72,6 +73,7 @@ fn make_group(
+>                      rotational: false,
+>                      disk: None,
+>                      capacity_mib: 4096,
+> +                    irq_mode: IRQMode::None,
+>                      name: name.try_into()?,
+>                  }),
+>              }),
+> @@ -79,6 +81,34 @@ fn make_group(
+>      }
+>  }
+>  
+> +#[derive(Debug, Clone, Copy)]
+> +pub(crate) enum IRQMode {
+> +    None,
+> +    Soft,
+> +}
+> +
+> +impl TryFrom<u8> for IRQMode {
+> +    type Error = kernel::error::Error;
+> +
+> +    fn try_from(value: u8) -> Result<Self> {
+> +        match value {
+> +            0 => Ok(Self::None),
+> +            1 => Ok(Self::Soft),
+> +            _ => Err(kernel::error::code::EINVAL),
+> +        }
+> +    }
+> +}
+> +
+> +impl Display for IRQMode {
+> +    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+> +        match self {
+> +            Self::None => f.write_str("0")?,
+> +            Self::Soft => f.write_str("1")?,
+> +        }
+> +        Ok(())
+> +    }
+> +}
+> +
+>  #[pin_data]
+>  pub(crate) struct DeviceConfig {
+>      #[pin]
+> @@ -92,6 +122,7 @@ struct DeviceConfigInner {
+>      block_size: u32,
+>      rotational: bool,
+>      capacity_mib: u64,
+> +    irq_mode: IRQMode,
+>      disk: Option<GenDisk<NullBlkDevice>>,
+>  }
+>  
+> @@ -126,6 +157,7 @@ fn store(this: &DeviceConfig, page: &[u8]) -> Result {
+>                  guard.block_size,
+>                  guard.rotational,
+>                  guard.capacity_mib,
+> +                guard.irq_mode,
+>              )?);
+>              guard.powered = true;
+>          } else if guard.powered && !power_op {
+> @@ -218,3 +250,28 @@ fn store(this: &DeviceConfig, page: &[u8]) -> Result {
+>          Ok(())
+>      }
+>  }
+> +
+> +#[vtable]
+> +impl configfs::AttributeOperations<4> for DeviceConfig {
+> +    type Data = DeviceConfig;
+> +
+> +    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
+> +        let mut writer = kernel::str::Formatter::new(page);
+> +        writer.write_fmt(fmt!("{}\n", this.data.lock().irq_mode))?;
+> +        Ok(writer.bytes_written())
+> +    }
+> +
+> +    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
+> +        if this.data.lock().powered {
+> +            return Err(EBUSY);
+> +        }
+> +
+> +        let text = core::str::from_utf8(page)?.trim();
+> +        let value = text
+> +            .parse::<u8>()
+> +            .map_err(|_| kernel::error::code::EINVAL)?;
 
--- 
-Pavel Begunkov
+EINVAL is in the prelude.
 
+> +
+> +        this.data.lock().irq_mode = IRQMode::try_from(value)?;
+> +        Ok(())
+> +    }
+> +}
+> diff --git a/drivers/block/rnull/rnull.rs b/drivers/block/rnull/rnull.rs
+> index 371786be7f47..85b1509a3106 100644
+> --- a/drivers/block/rnull/rnull.rs
+> +++ b/drivers/block/rnull/rnull.rs
+> @@ -4,6 +4,7 @@
+>  
+>  mod configfs;
+>  
+> +use configfs::IRQMode;
+>  use kernel::{
+>      alloc::flags,
+>      block::{
+> @@ -54,35 +55,44 @@ fn new(
+>          block_size: u32,
+>          rotational: bool,
+>          capacity_mib: u64,
+> +        irq_mode: IRQMode,
+>      ) -> Result<GenDisk<Self>> {
+>          let tagset = Arc::pin_init(TagSet::new(1, 256, 1), flags::GFP_KERNEL)?;
+>  
+> +        let queue_data = Box::new(QueueData { irq_mode }, flags::GFP_KERNEL)?;
+> +
+>          gen_disk::GenDiskBuilder::new()
+>              .capacity_sectors(capacity_mib << (20 - block::SECTOR_SHIFT))
+>              .logical_block_size(block_size)?
+>              .physical_block_size(block_size)?
+>              .rotational(rotational)
+> -            .build(fmt!("{}", name.to_str()?), tagset, ())
+> +            .build(fmt!("{}", name.to_str()?), tagset, queue_data)
+>      }
+>  }
+>  
+> +struct QueueData {
+> +    irq_mode: IRQMode,
+> +}
+> +
+>  #[vtable]
+>  impl Operations for NullBlkDevice {
+> -    type QueueData = ();
+> +    type QueueData = KBox<QueueData>;
+>  
+>      #[inline(always)]
+> -    fn queue_rq(_queue_data: (), rq: ARef<mq::Request<Self>>, _is_last: bool) -> Result {
+> -        mq::Request::end_ok(rq)
+> -            .map_err(|_e| kernel::error::code::EIO)
+> -            // We take no refcounts on the request, so we expect to be able to
+> -            // end the request. The request reference must be unique at this
+> -            // point, and so `end_ok` cannot fail.
+> -            .expect("Fatal error - expected to be able to end request");
+> -
+> +    fn queue_rq(queue_data: &QueueData, rq: ARef<mq::Request<Self>>, _is_last: bool) -> Result {
+> +        match queue_data.irq_mode {
+> +            IRQMode::None => mq::Request::end_ok(rq)
+> +                .map_err(|_e| kernel::error::code::EIO)
+> +                // We take no refcounts on the request, so we expect to be able to
+> +                // end the request. The request reference must be unique at this
+> +                // point, and so `end_ok` cannot fail.
+> +                .expect("Fatal error - expected to be able to end request"),
+> +            IRQMode::Soft => mq::Request::complete(rq),
+> +        }
+>          Ok(())
+>      }
+>  
+> -    fn commit_rqs(_queue_data: ()) {}
+> +    fn commit_rqs(_queue_data: &QueueData) {}
+>  
+>      fn complete(rq: ARef<mq::Request<Self>>) {
+>          mq::Request::end_ok(rq)
+> 
+> -- 
+> 2.47.2
+> 
+> 
 
