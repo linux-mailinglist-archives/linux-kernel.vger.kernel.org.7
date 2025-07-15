@@ -1,181 +1,142 @@
-Return-Path: <linux-kernel+bounces-732586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75357B06924
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:15:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D17BB0692B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC99F16EA97
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:15:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E11625674A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8791B2459FA;
-	Tue, 15 Jul 2025 22:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CF82C08DD;
+	Tue, 15 Jul 2025 22:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuax+szX"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Of8lTmrQ"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FA61953BB
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 22:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E672253FE;
+	Tue, 15 Jul 2025 22:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752617749; cv=none; b=Bm4VLj3BZUcwsE12KTlVSUys2eaRnrZ8kBPv/prriqp5EjHTK5CxkBe84/8SS7n0Wph7/MjXN3qPm/WaTlVHbAzWLFz20c+xISxF6HpfQYHzgZuG3ql8qbTxa+fzduPSD36TGujlOkwFv9koZhvcJ64F/LJXtsqaxlsxnE9XZbE=
+	t=1752617834; cv=none; b=hf+eLQ5ZF6tdQn9tBfNG42Xuw6yRtn/+Jb2sQlXEusvtjJiBWNJZuvtBbgfosO7Iddn/iBYLmB/ckTiBAJa8680MylbiJsDfD5qsZtyXNu6pMjlBv8ifEWl77MagWRolr+etfJZkcg+zzIlwud3egAYKyTPFOr2sgH6r6Jx0OiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752617749; c=relaxed/simple;
-	bh=RO6DymqDttAzfSCmCcd7S0ukcT3GLumPAtUq1OLOWt4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ncOI1iHz7dTJJwPIP0NytlF3S+iTV1wim9Q7RsHkP7A4lwdTlUeHz2D1QAPh0UWUZT9s16RhK6ychc4bLMv3D9Zb6MZY47DHNuKwxq6OAmVWWQovpVkExT4sf18Z28uvVFP2JY22JTNCEd3jP2PbktZBXDqAZt7dqSCDHRQ3gKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kuax+szX; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1752617834; c=relaxed/simple;
+	bh=pBasewOutybSgPeTnnFJ9TF1ZtaNHDhit9tLEZUO1C8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MVstmZ8s2DPC0rxJ4w41av78DmDjXlL2P/zxIkhYhx6PrxH+WvkEXNztkZazhTamuSMQgn38gyAZR7WO1zJkXoSCKvPLSOURWe+RPo4ej+4ACSS6F1nASv7YPQ12/zIGhRLxCCElfZbCU1oLirbf3T1GAb6C+87AT44/avyCJNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Of8lTmrQ; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a57ae5cb17so3392894f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:15:41 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-608acb0a27fso8359595a12.0;
+        Tue, 15 Jul 2025 15:17:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752617740; x=1753222540; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hM+65DlZuMtswqqV8Qae3QMSQW7h28+G8WpIhXyY6to=;
-        b=kuax+szXrztMfRmKJgRbHFI5SqhP9i+c15FI+MbFJXVmBo2SoM5uc2SL7bIep39D2a
-         wKKAKn5+QVCgjUzift8ZcNL1PqQf9+ouRRZFopIWsvwcijkMr3X1h5XisoZ2hQcErISu
-         D3PScbx+Q6xosNTM3PANPxHNlQytWW8MPlzBTBiZm0Qe61PgWmNlxtASTkz+RyO3BYSV
-         AXbDgskzj+vFk8XfGWzq4eRZWJGo6Nj3vWUBzeWl4ekyUOPjjdNhXKiAF8dVXNT3NtaI
-         PuME6z6TkKkO0p/6wPecPI5h3mKXUj9oSc8gTxivzO6YrKzI79Wm8dqEGtJXFyXamCs9
-         Ua1A==
+        d=gmail.com; s=20230601; t=1752617831; x=1753222631; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IlpREsArsA65Wjnvz7fR13JpUjf3JpRjm5gzm/gRDbs=;
+        b=Of8lTmrQv+ktSWQtOL6D4lFxCWadtgbJeIG29aEl7hwZAuaynGQj2O3rDZQKa7IO2O
+         hg0s4jrsE53c2mPwlsKxYMFk+CgFJfL2ECJhMxt1GWSxKM/wQ/UvJzz8gDtTxNy1X3/Y
+         BbNi2NSLd4HRSCsvmKgusLAUu+ZX/7qCFHUxsgXBojgQD2CAnSUR+ckfQDujob8vCt9h
+         72D4mnp280pt+349kkOTkXd9JXzOUm2X4c3Y99SlIhrC0C70oDlC195E/TxeKNj3xOv9
+         7SOaf0R8DnUtoWngQcPV1H7Szc3JHBe13aDdpyY8QlbdS4yBjAab5OEBnFU7MLT52ESN
+         ZBEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752617740; x=1753222540;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hM+65DlZuMtswqqV8Qae3QMSQW7h28+G8WpIhXyY6to=;
-        b=J+uZppTG2vbeRkIpZPJRyDRXdc3F9SV+EY0crc4n/pvpgfBkM1KpdY6YmucMGy+/Wp
-         V/O+AQlhPvX/2m/lUqrl+cWHlCcSpYgRFEY2++rH4sbeMv7slmtEbTf9+1P6DhTKAKn2
-         zUIIRHMwXc3Kq4cu9gtkXB87JHIhuQg8t10jbrHSGSAolBpP22FEhwGFWBRE+P1VUxKG
-         zXHuE3KhW6ivG7vvFw6TSekCnzmfRTKXjT9JNWkR02fU1+sx/O8mbFzutt5dbnptRcN1
-         OYnrpOgb1m30T2fohef/dX40YAs11kZIs/A1+RIkxojqlE9aIKzkci5aMsoujfweW7U2
-         wUwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVHGdRcxGA6Xr27+UbiwhfY6jpIP0rRWPb9Ml91a1qO56UN+Z891LGlKDTdHQvR8edyMz2a6smhOhDFPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw3vE/jKNiZ2ihwRKndwZltRV0J+fvhVEVonYKHsvXn3YhmeoD
-	bKgPOYGOB+SB1kiZsciX+xB/xSruTVtO86oeudlu/2r/fznBk6fasrklTdt4PYOX0/590u3Klh1
-	w3jF5NJHSXHmFrHqpsdMdiscx5uiUt58=
-X-Gm-Gg: ASbGncvCBKtsOvkGfkpaqKRJexDQZDEsiC4jF0pFjkDQKeJeVaigljVqxKip8R0mMjG
-	x/T3K9wz63DIDiuVfVkGnRddL04mJu8U2YuUCgyQG038XoWZNlO0Qs7U+xV8KY5OaNKvKQAEly2
-	9r1NZ3/uB4kpurkau3RbjnEbC1oWJX6w7LEoH7McuWb9lS1SYQ+H7llaF5RssyZ1qsK0cBtwrdL
-	owtfGaB
-X-Google-Smtp-Source: AGHT+IHIg/11IOI1UvwDXrQrF9FvmKDQpmWNgXnUiQo6BHAbAVnO7D1M71U5c0urqNVSgXdTQuX71SwkiXwvr2Drbm8=
-X-Received: by 2002:a5d:64ee:0:b0:3aa:c9a8:a387 with SMTP id
- ffacd0b85a97d-3b60e446e70mr158604f8f.0.1752617739844; Tue, 15 Jul 2025
- 15:15:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752617831; x=1753222631;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IlpREsArsA65Wjnvz7fR13JpUjf3JpRjm5gzm/gRDbs=;
+        b=n9S46nmlTXimN8jzJgFnwHaD6CB7ZWnJK49XUN+dTwsbAtKF9SWoN706kL8BMXIhca
+         HZv+vlSo6g091q/nLcwNessVN8X6taV2aA8BWrA+ZiT3YIvFYu9atV24txz3Th9wIoa+
+         CkMikmJF5iKoXnMD6oKJJDruUla6q4U83PkYQUAqbJdD+3OaAvDdimMPnEZJjA94Fc2K
+         fvW92SvDe9+XpQq1u+VK4bCjCGGZm8D/b7L+sqy9I4GKzNWsJi2Wf+iMKa9EByOSptbV
+         MycNmwMZyXLivahg1r9qrxdmgIV9+RgADhw2iBWKGNu2RGq2D6JtOjmwTq+cu+ZYUjtv
+         OJdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU20ljxgq6BykxAk6dHmRuwypPH7BdCPMbOqHiAo7r5nSyrQ6KZdH30VQouS/JnC0bd3KnUmCNT+qmYYco=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAgcNKHzfmWhvugKA0Zf0EREjagSf1Ocv7NxI1GG3aF+WqrHAw
+	TVBdVthQQI6GJfDaUsBISB59JpIUJZAdp40uROR0loYXjUM10viIpcJv
+X-Gm-Gg: ASbGncvtJoby0AfVNrP9JGRJnjtvUvUmglAn78o+juNZB8QlHMYH+VQ7620lPxdfgXA
+	dZujECX7m9vWTj0N4w9QmR+s8USdeT4fCCpfD7bOiNqUxZtQSQVK1CQa4JY0s6/Gl6S/Wb9sFRk
+	nXLoW+zLLuqrzVWXSPfOJ6qzj52q8TO2kiiEIv9KijNS2c8vuhpsNx4/nB3FiM1ph/JrZ1904eZ
+	C+N/4mPeSgdMNGfxjQ4P4qjhEchKD4kBmhIjcGkguy6E2elYKKoNedJGz2vTgH4tWPeYfPRMUWi
+	Df2X8AfbjQkOYZaENSxdXSO7v+3UDlwZZc21SN6Ig4vjbv2LF+KAHF/ZB/rn8X0EZtY9uKzzjMW
+	z+MSXq5dSg8a5CUkfMKGtF6RBmWrn4oUM/7Ith5J/mN4=
+X-Google-Smtp-Source: AGHT+IFS1FOWt2Mu8j9kFCRNXMuFJFrO5X2nsF/JgZHo3UNGWsUzJOoz0tkKgDtKz4i/peCv+xWi9w==
+X-Received: by 2002:a05:6402:2756:b0:604:e33f:e5c0 with SMTP id 4fb4d7f45d1cf-61285dfbc42mr291122a12.30.1752617831067;
+        Tue, 15 Jul 2025 15:17:11 -0700 (PDT)
+Received: from giga-mm-11.home ([2a02:1210:8608:9200:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61274d50d06sm1084048a12.8.2025.07.15.15.17.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 15:17:10 -0700 (PDT)
+Message-ID: <ce6c909d9d6724dd36a2b35ff19faa93b5152a0c.camel@gmail.com>
+Subject: Re: [PATCH] riscv: dts: sophgo: fix mdio node name for CV180X
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Inochi Amaoto <inochiama@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen Wang	 <unicorn_wang@outlook.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,  Ze Huang
+ <huangze@whut.edu.cn>, Yu Yuan <yu.yuan@sjtu.edu.cn>, Thomas Bonnefille	
+ <thomas.bonnefille@bootlin.com>
+Cc: devicetree@vger.kernel.org, sophgo@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Yixun Lan
+	 <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>, kernel test robot
+	 <lkp@intel.com>
+Date: Wed, 16 Jul 2025 00:17:07 +0200
+In-Reply-To: <20250715221349.11034-1-inochiama@gmail.com>
+References: <20250715221349.11034-1-inochiama@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250623231536.1120282-1-Mr.Bossman075@gmail.com> <aHY0mWEx8_z_nJoU@mai.linaro.org>
-In-Reply-To: <aHY0mWEx8_z_nJoU@mai.linaro.org>
-From: Jesse T <mr.bossman075@gmail.com>
-Date: Tue, 15 Jul 2025 18:15:03 -0400
-X-Gm-Features: Ac12FXzBzUkaCQ2uspQJV8eldICbB0xAjArutA46vBdfRIUXxrzha0-2-ATwUG8
-Message-ID: <CAJFTR8S=EKRG93sGYDr4tKTdmiEMdC+tyaDGh1e_n28fKr6+kg@mail.gmail.com>
-Subject: Re: [PATCH v6] clocksource/drivers/timer-clint: Add T-Head C9xx clint
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-riscv@lists.infradead.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Thomas Gleixner <tglx@linutronix.de>, 
-	Samuel Holland <samuel.holland@sifive.com>, Conor Dooley <conor@kernel.org>, 
-	Icenowy Zheng <uwu@icenowy.me>, Jisheng Zhang <jszhang@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 15, 2025 at 6:59=E2=80=AFAM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On Mon, Jun 23, 2025 at 07:15:36PM -0400, Jesse Taube wrote:
-> > From: Jisheng Zhang <jszhang@kernel.org>
-> >
-> > To use the T-HEAD C9xx clint in RISCV-M NOMMU env, we need to take
-> > care two points:
-> >
-> > 1.The mtimecmp in T-Head C9xx clint only supports 32bit read/write,
-> > implement such support.
-> >
-> > 2. As pointed out by commit ca7810aecdba ("lib: utils/timer: mtimer:
-> > add a quirk for lacking mtime register") of opensbi:
-> >
-> > "T-Head developers surely have a different understanding of time CSR an=
-d
-> > CLINT's mtime register with SiFive ones, that they did not implement
-> > the mtime register at all -- as shown in openC906 source code, their
-> > time CSR value is just exposed at the top of their processor IP block
-> > and expects an external continous counter, which makes it not
-> > overrideable, and thus mtime register is not implemented, even not for
-> > reading. However, if CLINTEE is not enabled in T-Head's MXSTATUS
-> > extended CSR, these systems still rely on the mtimecmp registers to
-> > generate timer interrupts. This makes it necessary to implement T-Head
-> > C9xx CLINT support in OpenSBI MTIMER driver, which skips implementing
-> > reading mtime register and falls back to default code that reads time
-> > CSR."
-> >
-> > So, we need to fall back to read time CSR instead of mtime register.
-> > Add riscv_csr_time_available static key for this purpose.
-> >
-> > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> > Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> > ---
-> > Treat this as a completely new patch, as it is mostly rewritten.
->
-> [ ... ]
-Yes, Jisheng Zhang was the original author, but the patch serves the same g=
-oal.
-I used their code as a starting point, so I kept the sign-off and
-commit description.
+On Wed, 2025-07-16 at 06:13 +0800, Inochi Amaoto wrote:
+> As the mdio multipledxer is marked as mdio device, the check complains
+> the mdio bus number exceed the maximum.
+>=20
+> Change the node name to mdio-mux to remove the following warnings:
+> mdio@3009800 (mdio-mux-mmioreg): mdio@80:reg:0:0: 128 is greater than
+> the maximum of 31
+>=20
+> Fixes: b7945143bc33 ("riscv: dts: sophgo: Add mdio multiplexer device for=
+ cv18xx")
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202507140738.XRjv3G8i-lkp@i=
+ntel.com/
+> Closes: https://lore.kernel.org/oe-kbuild-all/202507121830.POx2KDVi-lkp@i=
+ntel.com/
 
->
-> > V5 -> V6:
-> >  - Add csr_clock_next_event
-> >  - Add csr_get_cycles64 to sched_clock_register
-> >  - Break get_cycles64 into csr_get_cycles64 and clint_get_cycles64
-> >  - Change default behavior to use CSR time register
->
-> [ ... ]
->
-> Any comments for these changes from the arch maintainer ?
+Reviewed-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 
-I don't understand? Are you asking Jisheng Zhang?
+> ---
+> =C2=A0arch/riscv/boot/dts/sophgo/cv180x.dtsi | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/arch/riscv/boot/dts/sophgo/cv180x.dtsi b/arch/riscv/boot/dts=
+/sophgo/cv180x.dtsi
+> index 5f094c6085cb..27056ef70ce4 100644
+> --- a/arch/riscv/boot/dts/sophgo/cv180x.dtsi
+> +++ b/arch/riscv/boot/dts/sophgo/cv180x.dtsi
+> @@ -57,7 +57,7 @@ rst: reset-controller@3003000 {
+> =C2=A0			#reset-cells =3D <1>;
+> =C2=A0		};
+>=20
+> -		mdio: mdio@3009800 {
+> +		mdio: mdio-mux@3009800 {
+> =C2=A0			compatible =3D "mdio-mux-mmioreg", "mdio-mux";
+> =C2=A0			reg =3D <0x3009800 0x4>;
+> =C2=A0			#address-cells =3D <1>;
 
->
-> Thanks
->
-> --
->
->  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
-RM SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
-
-> > +static int c900_clint_clock_next_event(unsigned long delta,
-> > + struct clock_event_device *ce)
-> > +{
-> > + void __iomem *r =3D clint_timer_cmp +
-> > + cpuid_to_hartid_map(smp_processor_id());
-> > + u64 val =3D clint_get_cycles64() + delta;
-
-This line should be:
-u64 val =3D csr_get_cycles64() + delta;
-I messed up when splitting csr_get_cycles64 and clint_get_cycles64
-
-Thanks,
-Jesse Taube
-> > +
-> > + csr_set(CSR_IE, IE_TIE);
-> > + writel_relaxed(val, r);
-> > + writel_relaxed(val >> 32, r + 4);
-> > + return 0;
-> > +}
-> > +
+--=20
+Alexander Sverdlin.
 
