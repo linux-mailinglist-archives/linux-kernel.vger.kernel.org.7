@@ -1,80 +1,83 @@
-Return-Path: <linux-kernel+bounces-732251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 040CBB0640F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:14:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B0AAB06419
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CC495811BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:14:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A7205820A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96E625A651;
-	Tue, 15 Jul 2025 16:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SyBoEuAo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED5C277C96;
+	Tue, 15 Jul 2025 16:14:57 +0000 (UTC)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2AF22E3F0;
-	Tue, 15 Jul 2025 16:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACEC274FE7;
+	Tue, 15 Jul 2025 16:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752596058; cv=none; b=n5tjjKA1DJe3hwVYsW1W6ggDsvgEPhWX3XNyAhr+o60bZ91pyss6zfFUXfZJUVu2+c5JxaMHl/38Jaa1D9h9Ze/EgCWXoabca1fsP9mk4kb+QF0Eb0VoIYxQxFCpAAkAeZZWrRkbL3JUmPmhilis90H/stRvX6r0gegPt4oMBy8=
+	t=1752596097; cv=none; b=oeUgLNo/bLs6eOa4g4+5TM4EBxVhRYTm7gGeTWs9wyn4tTqmZLefiTDSrcnlCQUGJ4DGhjqwUr6WQf33UGdtDpKqgnxGwTFDWg39AfD9g+05/Sh9Ev46nJWQGPAj0Oz4bm8kROLdJ5OXZXtIDq5RcHc7eo1uTAg9E8/C/hq1MxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752596058; c=relaxed/simple;
-	bh=c/uHX5dNSLCv40QvGTh68kxFNXhn1inqbbQG/CLL6/E=;
+	s=arc-20240116; t=1752596097; c=relaxed/simple;
+	bh=iIyYfpgrKOknNnGK/+bP3mYgAK/Ir55T/njOFK0stMg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=beZNg/WSjQJxnpIcr/tT20yzgSMpMun0iMh6ag/5W0EKSK0DYsbDK3n7MorsSqNrvI65/Kv9xYk5dB4ZUZkwSNNvKwIQk6NBHNOPt+byMF/Wv9MHeiR+HaPwYdRvAgZ3dnRKWqIuakriTqWuO6AQc4wYync1/rM4REXZP5cerdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SyBoEuAo; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752596056; x=1784132056;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=c/uHX5dNSLCv40QvGTh68kxFNXhn1inqbbQG/CLL6/E=;
-  b=SyBoEuAo3S450xuuoIzNoxkoqbbiXVCI0G4kT0oHHknSq+ZHVRmtzhG1
-   MH8RxB+C+R1LTP2GIYT/irXOTT6AQCclnR7wp2xqfdWrLEjajulcYLzhX
-   t2t7+O+IrcCdOqmaQiwqcV/8nR9BwnR+asDe5cxLoBzBUl4oQ29YGt78Y
-   sOn9waFMj52hRXv6HcjCRfZHTXs/g0nGngw+0flbf+RtcM2RO74PR5H+4
-   ah0xuCpouhg+FF9yFWaQMIDthmtIkx7VqDcvvaHD6fUQEQWjcHe1i1GSS
-   cfGN92xAveygkRY6lCYJELj0XVhvUyAHr7o/61I+38/oUXxWZTgJC1mLO
-   g==;
-X-CSE-ConnectionGUID: PMuI3iRQSxiqEVOGnH1EKg==
-X-CSE-MsgGUID: Dcs0F1W7Q7OpU8LEk4yLjQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="57433583"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="57433583"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 09:14:16 -0700
-X-CSE-ConnectionGUID: 2XikLn99QieeIZZx1LAO9Q==
-X-CSE-MsgGUID: ajXpIngUTg6t9OjHuWOQnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="157989128"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 15 Jul 2025 09:14:13 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ubiIE-000BJP-2O;
-	Tue, 15 Jul 2025 16:14:10 +0000
-Date: Wed, 16 Jul 2025 00:13:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sean Anderson <sean.anderson@linux.dev>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-iio@vger.kernel.org,
-	linux-hwmon@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Andy Shevchenko <andy@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: Re: [PATCH 7/7] hwmon: iio: Add alarm support
-Message-ID: <202507152309.wBE1wHwM-lkp@intel.com>
-References: <20250715012023.2050178-8-sean.anderson@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g1R+Suv3RqVufp40w3hinytnxyIWchQ6739qiHkVe1NUhhkkle9rkFvSsDMwDBhRMrsmaPhtO6mzH8fFzEU3CzPGDuw9JVqqLwhSgyYl8q48w97py8bfc7lEKS0SDc5adHX5aZcuX5TE6T9McPdnjCoQGIwuLnwEs9frndd3F/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae0c4945c76so909597566b.3;
+        Tue, 15 Jul 2025 09:14:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752596093; x=1753200893;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T/BWaekXetU83aXLszdrOHzTcPZ86/9kj05RU+QM+Og=;
+        b=F7FCMRg1XHvG3JwRg0Kmnda4LmoI3dyDW+rC5UPc7P5Jfdy8OUJ5x7FZV05N74RkI9
+         3w/dRQPajxC+m6z4uc+tMrMfnbEA/UUss4HVozStB1Jf8lA+I1dg2LfesJltw1WX/GEd
+         +HS4TUypKDMG6wR0yZXU26YRG4FNZ6kQNgA01UL6xwYccC4O+IDvLvL3tRna14274RAH
+         alF+d+WW0MPg+sf4OraBqEGH4/vC0I1OMBMFNiZaZQwc3jM1f9Lt8oqnZtm4ain85rCd
+         wqYbrn3cRXc7YbQrKCLZGFD1Xak1+bEfL+pverSrB2HElNhZKuE1aG91yqKbH7Pkmt3H
+         PaxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8E8EsnzTWwmyAAb0QH5QVk6dt/bzvQUd7W3fDsmlehwG8ETpgoNoKDzTrNCMAqEAuhKf+KHlF5AUfjxF1@vger.kernel.org, AJvYcCVSNgwO9FMYdhR3KHxn8axio+dyzloJ0dzM06NoRwPwH9kLdcBRLw4MharWi9blWsuD0kOoXqfmDoQ3@vger.kernel.org, AJvYcCWuvZxS9Q0jIGtkRDv/Om3gUPzdkWXUPnV1SH3p4WF6g7Y+g2O7b2pXXjq2FOM7SZMas6jZS+LD1eV4@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRN7qwqaUn6w6N+KVsIvE7kLDwmzjgJKqLK9wYJHZ4u6gEtPP/
+	RkT4LUObiq2BIguPkbcm9SnafokTaXoQ3brKIJ81an16/LdLF8wSXqRO
+X-Gm-Gg: ASbGncuS+S+g3aPDcC0D+nyoL2JvSECmFfXyXzQ4SgZncXzq0WRNu+sAboorV13tCn0
+	i6nvdAdzaVIYozEtVPXdi0kt8EdWuoz6rgyz/WbX2Zly9OTU7/KdJMMjUcdFUKdscGRB3Acgtku
+	J1LCEWymh8pHneXg+RpqPfeHkiA4IJihiRumOmYwefeXNBPfHBuH8mQrSL1niq/dcv4UHqbTdmV
+	1aKH3YoHsYVT6yvE8gI1fCvgcew9vmCHdzA45+BXvbGaB3M3tVbPLR8BPT+W+XzkDQVbemH5cL8
+	FS4Bh9Bzu/6JBbbvJDLT8j1jKYG4ll0w/WeAQcevchNOuhuZd/qBynRx6/bnl1ZUK0G3VFzT94M
+	SQgtTvAWXWiw5
+X-Google-Smtp-Source: AGHT+IEvOc8+OszJCyE/oEuX+OBcQTQBoSLU9a3OzY1TExv2Ip6GqBTNIFxBnwqU31lZn7voNTRXjQ==
+X-Received: by 2002:a17:907:7f26:b0:ade:3dc4:e67f with SMTP id a640c23a62f3a-ae9c995530amr10284866b.9.1752596092658;
+        Tue, 15 Jul 2025 09:14:52 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:2::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e826651csm1026354766b.101.2025.07.15.09.14.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 09:14:52 -0700 (PDT)
+Date: Tue, 15 Jul 2025 09:14:49 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Sascha Bischoff <sascha.bischoff@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Timothy Hayes <timothy.hayes@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Peter Maydell <peter.maydell@linaro.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Jiri Slaby <jirislaby@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v7 18/31] arm64: smp: Support non-SGIs for IPIs
+Message-ID: <sy2u3iyyfqk7ynccsb4lpbkto6pmkhamnlkkhf3mmh5dr47iyf@wmygyxypb26v>
+References: <20250703-gicv5-host-v7-0-12e71f1b3528@kernel.org>
+ <20250703-gicv5-host-v7-18-12e71f1b3528@kernel.org>
+ <7mhnql75p3l4vaeaipge6m76bw4wivskkpvzy5vx3she3wogk4@k62f5hzgx5wr>
+ <aHZm8BsqV1ighJ+2@lpieralisi>
+ <aHZ81Kah1Uaa184N@lpieralisi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,37 +86,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250715012023.2050178-8-sean.anderson@linux.dev>
+In-Reply-To: <aHZ81Kah1Uaa184N@lpieralisi>
 
-Hi Sean,
+Hello Lorenzo,
 
-kernel test robot noticed the following build warnings:
+On Tue, Jul 15, 2025 at 06:07:48PM +0200, Lorenzo Pieralisi wrote:
+> On Tue, Jul 15, 2025 at 04:34:24PM +0200, Lorenzo Pieralisi wrote:
+> > Thank you for reporting it.
+> > 
+> > Does this patch below fix it ?
+> 
+> FWIW it does for me. I think you are booting with pseudo-nmi enabled and
 
-[auto build test WARNING on jic23-iio/togreg]
-[also build test WARNING on groeck-staging/hwmon-next akpm-mm/mm-nonmm-unstable linus/master v6.16-rc6 next-20250715]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> the below is a silly thinko (mea culpa) that is causing the IPI IRQ descs not
+> to be set-up correctly for NMI and the prepare_percpu_nmi() call rightly
+> screams on them.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sean-Anderson/math64-Add-div64_s64_rem/20250715-092337
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20250715012023.2050178-8-sean.anderson%40linux.dev
-patch subject: [PATCH 7/7] hwmon: iio: Add alarm support
-config: i386-buildonly-randconfig-001-20250715 (https://download.01.org/0day-ci/archive/20250715/202507152309.wBE1wHwM-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250715/202507152309.wBE1wHwM-lkp@intel.com/reproduce)
+Thanks for the quick reply. I don't see that warning anymore once this
+patch is applied, so, the patch fixes the warning.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507152309.wBE1wHwM-lkp@intel.com/
+Regarding NMI, you are correct, I am using `CONFIG_ARM64_PSEUDO_NMI=y`
+and `irqchip.gicv3_pseudo_nmi=1`
 
-All warnings (new ones prefixed by >>):
+> If you confirm I hope it can be folded into the relevant patch.
 
->> Warning: drivers/hwmon/iio_hwmon.c:99 function parameter 'chan' not described in 'iio_event_id'
->> Warning: drivers/hwmon/iio_hwmon.c:99 Excess function parameter 'channel' description in 'iio_event_id'
+Feel free to add "Tested-by: Breno Leitao <leitao@debian.org>", if
+pertinent.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks for the quick fix,
+--breno
 
