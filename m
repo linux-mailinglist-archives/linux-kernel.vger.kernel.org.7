@@ -1,180 +1,133 @@
-Return-Path: <linux-kernel+bounces-732597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 887E2B06951
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:32:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70DDCB06955
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA4731C2084D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:32:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC1FA4A36A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F24E2C15AC;
-	Tue, 15 Jul 2025 22:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFBD2C375F;
+	Tue, 15 Jul 2025 22:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GoCbTlGR"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8LHvr61"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548EB2D1F7B
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 22:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F5F1C2DB2;
+	Tue, 15 Jul 2025 22:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752618711; cv=none; b=chVzE1ceKZPDchkEX8TGgKz8eTn3P+ppcZL3lILs7FgFNIMdRz1Y8VnDDdtcmSJVZQ7VcQqUuKPC55Q/khajUCuMVIC7S6ykWvqlKJ0rlP+yQhSfoZKQpCIav7TTUseSGNW01PW0RrpDEAr2AAPzK9Yz6ajHWy/jQpIbfh8OhwQ=
+	t=1752618813; cv=none; b=VhgeEGHZTsr8mJ67dBn6tQDmGvkKyZ3c6q2ryHIWPvHPPlyfPicZjvDQld0BXh0aEC5E4Qmu/WV+MjDgDIRt4BS0NOjN+8TGcbX/x3G6t6WdgfuOgV264Wbwoo1PV2hCoJmE1j/7nIzCtb74/mU2AMEcW4coFGS9Nkz8TU+h5yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752618711; c=relaxed/simple;
-	bh=EGo71pGB25aRe+dzBTxG5hUAh1TU9qUWx5DqyUNZDD0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UikGk9EbH3yHrAHIGVa0aETuN2SlrlBSiZSkvv0Rwp5CruGmOhKYUYO/E/Z/6NBwVrwtWzz2BvH/7tDPCjdB4q5bDG27lbsfKHNw6mb4RZe35bafjHZQ/pSP2GdywgRznLWpzJ1Hx0zFJbKPD7zVnysfigIwIjbVk/uIolKBa24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GoCbTlGR; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3138e65efe2so5765413a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:31:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752618710; x=1753223510; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EGo71pGB25aRe+dzBTxG5hUAh1TU9qUWx5DqyUNZDD0=;
-        b=GoCbTlGRhMnyFft9cjqn8cZJEmwTtHZ3RUte1tyR8MwBojoBhYBqdMKzeceSQOMERR
-         uK54YmSpA5Nb5OvCdlRpL1tThb/F7qOLz3T/6ziaqRcXbcSqVF0cH9D5yxrVNlKkDpaS
-         oeawh/DBTrVRMbZcHipIx3ZS87EurMp+E1/KuVLhV+FdAXouhwRhHepaJmD794P8g0H4
-         gVzU2Q3aL7gUR/5rCLlPfJbKW8ZRWW+hhkV8TA9O7R8MvDCwbRYdrAdmQVMevDwE+B5X
-         242A4QijoU3/Yq24HsZ/okwd7NRKvbibPtOdt1AhqeDhVJftC937W7laDHEfUZyVbwD7
-         SEjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752618710; x=1753223510;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EGo71pGB25aRe+dzBTxG5hUAh1TU9qUWx5DqyUNZDD0=;
-        b=TNiJ6g4gVzK/24eh6stU5zRoUaugcU9ATOq/2KDSRjIJOX6smgGOd68FwT1F8cQXUI
-         6CGFFO/MWOP2jdcJA0bBwNOaDcMGGqSF+v3qp5HaT7df3HPoZBAuPJQq0enDOcjNyeMA
-         83gwE96UXb2pv1dJuj3F1FeF4DJCRNRJozoqPZ4OXxAM73X1WxTqd9oRPJl2krAudutr
-         Xu9GF18KBtEVL+IS01HTd5lEcnTM6n6hHUxRlGO8qhePMsCOOZUd8a2e4FXojcmwJTMY
-         00PR66ADElUq/PMaAa1DmvW5WSxbX2qBU7pB0q8HS7em9tMPLYc42jyXD8vr9PdIlcR6
-         BwMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/a84+UTQMelwfqzHggCUPodoQqu0RBWGZxTKJqclkH4LtPj9jXVhiZJMPJmOKDgxOhdGi1KU8cuA+xH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLyY2sAAdVupW/uyFz+KHdXK2vxsqB8soo1007QtLmUCxTwQf3
-	YwIisPlpwtE9IKkVZ3uhoCagOtUu8YxY0397dBWeeMompz+Mrv0PwY8DhIGlbIYyT3Ksc0qb4ng
-	F/CEnWnDMYGe3UxM4Spi4uUN2BQ==
-X-Google-Smtp-Source: AGHT+IEJmk08WJfnlzLLoLwdM9qLMEEvMBr3WhmfjtruDn3UecOESho2SIVbYJkbM8TfrUrOHaIdkcaEyzEJ1IOF4g==
-X-Received: from pjtu13.prod.google.com ([2002:a17:90a:c88d:b0:312:e266:f849])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:57ed:b0:311:a314:c2dc with SMTP id 98e67ed59e1d1-31c9e6f11camr1291163a91.14.1752618709635;
- Tue, 15 Jul 2025 15:31:49 -0700 (PDT)
-Date: Tue, 15 Jul 2025 15:31:48 -0700
-In-Reply-To: <345e890e65907e03674e8f1850f5c73f707d5a36.camel@intel.com>
+	s=arc-20240116; t=1752618813; c=relaxed/simple;
+	bh=dyGcpzNngBMQ2YV4Wi/gcf3C7b7anIslY6CBRkZ6gEE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=n84BMLfHeAc8A5/nXzGwEfcFkGbl66CCDNSWjYQJ3SMH57yg2V/qWn7AcXlBgy+3nRuIaMyoz0+ATE5+EO7UYOJXI5ubXzAcoXTK3sF9RASoDMzIv64H94gXA5uEi756IBAtpmG05EmGt8valSRar/e1HRLvEL6VyXOL8UAtkRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8LHvr61; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C871AC4CEF5;
+	Tue, 15 Jul 2025 22:33:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752618813;
+	bh=dyGcpzNngBMQ2YV4Wi/gcf3C7b7anIslY6CBRkZ6gEE=;
+	h=From:Date:Subject:To:Cc:From;
+	b=P8LHvr61VPq1o/fizrHXVI4ZPQCeIcgDWWg9nU8IuyP9DkmCIuOYg33Kk3u9D8uHW
+	 hjg99qwKbp9Lx5zRv+WcOV1qP5UqE2vz4MfiiBJDmILiyi00XkSLcYV86mLF+mCFj5
+	 PG+MrGH3YwscS65wzsYMYvVT4hsCg6fR1mzlHUZIFJk1siRg+znhFrF0jcpWNlF/gF
+	 +POYE3XwtpXRXVmqxqeDR6zMfesXb6gnhU6kNg9JjFtoyuy0QlwZYWg3S8PDPmI7LU
+	 kYwV0QPt5BqsjMFt3T2/jDlB4f2JRun+PaIc23D/YkgvrnuTD4TLKxvnL1NboxaXln
+	 K9EVa3xRC0NtQ==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Tue, 15 Jul 2025 15:33:25 -0700
+Subject: [PATCH] wifi: mt76: mt7996: Initialize hdr before passing to
+ skb_put_data()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <diqzms9pjaki.fsf@ackerleytng-ctop.c.googlers.com>
- <fe6de7e7d72d0eed6c7a8df4ebff5f79259bd008.camel@intel.com>
- <aGNrlWw1K6nkWdmg@yzhao56-desk.sh.intel.com> <cd806e9a190c6915cde16a6d411c32df133a265b.camel@intel.com>
- <diqzy0t74m61.fsf@ackerleytng-ctop.c.googlers.com> <04d3e455d07042a0ab8e244e6462d9011c914581.camel@intel.com>
- <diqz7c0q48g7.fsf@ackerleytng-ctop.c.googlers.com> <a9affa03c7cdc8109d0ed6b5ca30ec69269e2f34.camel@intel.com>
- <diqz1pqq5qio.fsf@ackerleytng-ctop.c.googlers.com> <53ea5239f8ef9d8df9af593647243c10435fd219.camel@intel.com>
- <aHCdRF10S0fU/EY2@yzhao56-desk> <4c70424ab8bc076142e5f6e8423f207539602ff1.camel@intel.com>
- <diqzikju4ko7.fsf@ackerleytng-ctop.c.googlers.com> <345e890e65907e03674e8f1850f5c73f707d5a36.camel@intel.com>
-Message-ID: <diqzcya13x2j.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH 08/21] KVM: TDX: Increase/decrease folio ref for huge pages
-From: Ackerley Tng <ackerleytng@google.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>
-Cc: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>, 
-	"kirill.shutemov@intel.com" <kirill.shutemov@intel.com>, "Hansen, Dave" <dave.hansen@intel.com>, 
-	"david@redhat.com" <david@redhat.com>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
-	"vbabka@suse.cz" <vbabka@suse.cz>, "Li, Zhiquan1" <zhiquan1.li@intel.com>, "Du, Fan" <fan.du@intel.com>, 
-	"tabba@google.com" <tabba@google.com>, "seanjc@google.com" <seanjc@google.com>, "Weiny, Ira" <ira.weiny@intel.com>, 
-	"Peng, Chao P" <chao.p.peng@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Annapurve, Vishal" <vannapurve@google.com>, 
-	"jroedel@suse.de" <jroedel@suse.de>, "Miao, Jun" <jun.miao@intel.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pgonda@google.com" <pgonda@google.com>, 
-	"x86@kernel.org" <x86@kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250715-mt7996-fix-uninit-const-pointer-v1-1-b5d8d11d7b78@kernel.org>
+X-B4-Tracking: v=1; b=H4sIADTXdmgC/x2NQQqAIBAAvxJ7bkHLivpKdIjcag+toRaB9Pek4
+ 8AwkyCQZwowFAk83RzYSQZdFrDss2yEbDNDpapGdbrBI3Z93+LKD17CwhEXJyHi6VgieVSatLW
+ qtsYYyJXTU3b/wzi97wfbvvL3cQAAAA==
+X-Change-ID: 20250715-mt7996-fix-uninit-const-pointer-01e1dd03d444
+To: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+ Ryder Lee <ryder.lee@mediatek.com>
+Cc: Shayne Chen <shayne.chen@mediatek.com>, 
+ Sean Wang <sean.wang@mediatek.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ llvm@lists.linux.dev, stable@vger.kernel.org, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2306; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=dyGcpzNngBMQ2YV4Wi/gcf3C7b7anIslY6CBRkZ6gEE=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDBll1624BTtKdzdwrLrW6+cz6019Vte06mtHtylMNdKU/
+ 7D7lNTSjlIWBjEuBlkxRZbqx6rHDQ3nnGW8cWoSzBxWJpAhDFycAjCRtfmMDLOlHf62PTyYUm0q
+ tuKShooYa4bf/6J9Fr/9l7o0bV56fg/D/yr38kR/+wMs/x7lBqxxW+cW5hvCfeUFx6GS0KgVR+P
+ 8OAE=
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> writes:
+A new warning in clang [1] points out a couple of places where a hdr
+variable is not initialized then passed along to skb_put_data().
 
-> On Mon, 2025-07-14 at 12:49 -0700, Ackerley Tng wrote:
->> I'm onboard here. So "do nothing" means if there is a TDX unmap failure,
->>=20
->> + KVM_BUG_ON() and hence the TD in question stops running,
->> =C2=A0=C2=A0=C2=A0 + No more conversions will be possible for this TD si=
-nce the TD
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 stops running.
->> =C2=A0=C2=A0=C2=A0 + Other TDs can continue running?
->> + No refcounts will be taken for the folio/page where the memory failure
->> =C2=A0 happened.
->> + No other indication (including HWpoison) anywhere in folio/page to
->> =C2=A0 indicate this happened.
->
-> Yea.
->
->> + To round this topic up, do we do anything else as part of "do nothing"
->> =C2=A0 that I missed? Is there any record in the TDX module (TDX module
->> =C2=A0 itself, not within the kernel)?
->
-> We should keep this as an option for how to change the TDX module to make=
- this
-> solution safer. For future arch things, we should maybe pursue something =
-that
-> works for TDX connect too, which could be more complicated.
->
->>=20
->> I'll probably be okay with an answer like "won't know what will happen",
->
-> I have not exhaustively looked at that there won't be cascading failures.=
- I
-> think it's reasonable given this is a bug case which we already have a wa=
-y to
-> catch with a warning.
->
->> but just checking - what might happen if this page that had an unmap
->> failure gets reused?=C2=A0
->>=20
->
-> The TDX module has this thing called the PAMT which records how each phys=
-ical
-> page is in use. If KVM tries to re-add the page, the SEAMCALL will check =
-PAMT,
-> see it is not in the NDA (Not directly assigned) state, and give an error
-> (TDX_OPERAND_PAGE_METADATA_INCORRECT). This is part of the security enfor=
-cement.
->
->> Suppose the KVM_BUG_ON() is noted but somehow we
->> couldn't get to the machine in time and the machine continues to serve,
->> and the memory is used by=20
->>=20
->> 1. Some other non-VM user, something else entirely, say a database?
->
-> We are in a "there is a bug" state at this point, which means stability s=
-hould
-> not be expected to be as good. But it should be optimistically ok to re-u=
-se the
-> page as long as the TD is not re-entered, or otherwise actuated via SEAMC=
-ALL.
->
->> 2. Some new non-TDX VM?
->
-> Same as (1)
->
->> 3. Some new TD?
->
-> As above, the TDX module should prevent this.
+  drivers/net/wireless/mediatek/mt76/mt7996/mcu.c:1894:21: warning: variable 'hdr' is uninitialized when passed as a const pointer argument here [-Wuninitialized-const-pointer]
+   1894 |         skb_put_data(skb, &hdr, sizeof(hdr));
+        |                            ^~~
+  drivers/net/wireless/mediatek/mt76/mt7996/mcu.c:3386:21: warning: variable 'hdr' is uninitialized when passed as a const pointer argument here [-Wuninitialized-const-pointer]
+   3386 |         skb_put_data(skb, &hdr, sizeof(hdr));
+        |                            ^~~
 
-Thanks for clarifying! SGTM!
+Zero initialize these headers as done in other places in the driver when
+there is nothing stored in the header.
 
-Btw, after some more work on handling memory failures for guest_memfd,
-it now seems like it's better for guest_memfd to not use the HWpoison
-flag internally either.
+Cc: stable@vger.kernel.org
+Fixes: 98686cd21624 ("wifi: mt76: mt7996: add driver for MediaTek Wi-Fi 7 (802.11be) devices")
+Link: https://github.com/llvm/llvm-project/commit/00dacf8c22f065cb52efb14cd091d441f19b319e [1]
+Closes: https://github.com/ClangBuiltLinux/linux/issues/2104
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ drivers/net/wireless/mediatek/mt76/mt7996/mcu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-So it turns out well that for TDX unmap failures we're aligned on not
-using HWpoison :)
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
+index 994526c65bfc..640abb4dce7f 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
+@@ -1879,8 +1879,8 @@ mt7996_mcu_get_mmps_mode(enum ieee80211_smps_mode smps)
+ int mt7996_mcu_set_fixed_rate_ctrl(struct mt7996_dev *dev,
+ 				   void *data, u16 version)
+ {
++	struct uni_header hdr = {};
+ 	struct ra_fixed_rate *req;
+-	struct uni_header hdr;
+ 	struct sk_buff *skb;
+ 	struct tlv *tlv;
+ 	int len;
+@@ -3373,7 +3373,7 @@ int mt7996_mcu_set_hdr_trans(struct mt7996_dev *dev, bool hdr_trans)
+ {
+ 	struct {
+ 		u8 __rsv[4];
+-	} __packed hdr;
++	} __packed hdr = {};
+ 	struct hdr_trans_blacklist *req_blacklist;
+ 	struct hdr_trans_en *req_en;
+ 	struct sk_buff *skb;
+
+---
+base-commit: eb8352ee2d1e70f916fac02094dca2b435076fa4
+change-id: 20250715-mt7996-fix-uninit-const-pointer-01e1dd03d444
+
+Best regards,
+--  
+Nathan Chancellor <nathan@kernel.org>
+
 
