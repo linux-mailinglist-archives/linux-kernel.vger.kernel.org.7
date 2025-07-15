@@ -1,174 +1,119 @@
-Return-Path: <linux-kernel+bounces-730985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BDBB04D34
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:08:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AABD0B04D35
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E3923BBC43
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:08:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 019A2165B83
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346581A83F8;
-	Tue, 15 Jul 2025 01:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446C01A83F8;
+	Tue, 15 Jul 2025 01:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="HcLN9Hwl"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="dlVJAYmh"
+Received: from r3-21.sinamail.sina.com.cn (r3-21.sinamail.sina.com.cn [202.108.3.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEC3B67F;
-	Tue, 15 Jul 2025 01:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9A022083
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 01:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752541702; cv=none; b=GZiSHPqumOfEtWnBhaTm3HCdxQU/JTw6tqoM70RcYEkYus3kM/9eYcJN3yA9dNMy1FIDrpoUfzt0kf0bcPthcII1zxvPhh95vMOnIpV2d8qWpsqxxJgmKhZG4xHYuLSJ4Uk0apIJYY5HrypobvglkF3JxmpkgXZPDzGmphOG79M=
+	t=1752541782; cv=none; b=X4800oSM9m/W4PhA5zpYMGZy7o7e4pv3AuOAdaWMHqWIWiURz2nuSAhw8HUaZDPIcWjxtqgun21jwqO3Ny4tZJSuQqtkwq6i+lR/EW3uJG58qNWqefj/7hiu7vWc371MtjM/hSiLQ5vAnfemDiF0vgM/8sipBBIne72pQ7fWbnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752541702; c=relaxed/simple;
-	bh=ojrv6DJfXjklr/E0fZqpqhsV0atMlJMyXmZtdKiYlPQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YNMVi/MC4GPzfEbXjEwUhPsn9tQ2UiAlqJYo4DR2/emP0V/BcEQyvzRu3SOszfbN1Zapz/4CfbhWg0NBWfEvwI9uajGrRyMwAySZIPbn9nKT0HxKt/vLIUOvhcmtnwrMLJ/t/Z1k/mMLAOjJ8b25pr9nom2wlR+C1lxusC49AuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=HcLN9Hwl; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1752541697;
-	bh=ojrv6DJfXjklr/E0fZqpqhsV0atMlJMyXmZtdKiYlPQ=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=HcLN9HwlQSJy468mVAXckRgEKJUzHfeAzRiYM5tur9AtCOgBN/Pdcb+3okPGklKYj
-	 t0OYQD5jo0iKWnLuWktQbVDiWiMSLqY3NDsJ9DmV34IEK1B2tG5cegIsnofsmQ2pgb
-	 YpAw3V8BoIzlyES3jb1+QfMKH+XQbnyfVuZd5/nY3y5Y0B+pG/dgkqBXDpYS7IbAiQ
-	 NEYAo9XD8uuN0z8xuiaB4r8t0BMlfEBaqss7WMq09wcR7xiY/IiFq744TfKxAz5zdn
-	 OXBIYebGHkGRDnSBQ/HgLpMOhVbHo1k27Abv5u3irX0e3smRAjPRlqEVPxkawQkNu6
-	 3BOzqhdpka0eg==
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id A1DCF6B68A;
-	Tue, 15 Jul 2025 09:08:16 +0800 (AWST)
-Message-ID: <27c18b26e7de5e184245e610b456a497e717365d.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] net: mctp: Add MCTP PCIe VDM transport driver
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: YH Chung <yh_chung@aspeedtech.com>, "matt@codeconstruct.com.au"
- <matt@codeconstruct.com.au>, "andrew+netdev@lunn.ch"
- <andrew+netdev@lunn.ch>,  "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>,  "kuba@kernel.org"
- <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, 
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>, BMC-SW
- <BMC-SW@aspeedtech.com>
-Cc: Khang D Nguyen <khangng@amperemail.onmicrosoft.com>
-Date: Tue, 15 Jul 2025 09:08:16 +0800
-In-Reply-To: <SEZPR06MB57635C8B59C4B0C6053BC1C99054A@SEZPR06MB5763.apcprd06.prod.outlook.com>
-References: <20250714062544.2612693-1-yh_chung@aspeedtech.com>
-	 <a01f2ed55c69fc22dac9c8e5c2e84b557346aa4d.camel@codeconstruct.com.au>
-	 <SEZPR06MB57635C8B59C4B0C6053BC1C99054A@SEZPR06MB5763.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1752541782; c=relaxed/simple;
+	bh=PGlEYxwgv2rtInCLTo1w/lgNgstzN7WabOujKrHt+pg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fo1L8DAHbnH12dPJXhEOUiTb3KL3Br7JFxhEvgHdurnglO/HI2AT1ajOrakzrimnYXmS+09Elq8OmbqPimNBZXU8T2iycQcL9X7IA0JIl9ewi003wriUOWM+RfqGct8jdVIJEXQzP5m94ymAKe7qp6DbrV6RsL/NbAmDFtK/ujE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=dlVJAYmh; arc=none smtp.client-ip=202.108.3.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752541777;
+	bh=QAiMzgJ21Eitzv6jzSmPWnPDYWM6piL2Il7vFeR5bj8=;
+	h=From:Subject:Date:Message-ID;
+	b=dlVJAYmhrT5heqqi914vyKDrmRfyVCaRfwIVWGIhimbdUejfcw3Zw6NOZ3W8hN62h
+	 x8z8qBVhoh1CkbW4jT+OKLDcmYfXw3eHbY0cJyFPdD2knnFBSMgo+qAnjHM5mt74St
+	 xAFnI2oEn6tftESeclxiDVPy60wS+E2KYpJWsLOE=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 6875AA4B000011D5; Tue, 15 Jul 2025 09:09:33 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 5650976685335
+X-SMAIL-UIID: 2A6E96229BE34251B5CDF4057FBF1E60-20250715-090933-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+fde6bd779f78e6e0992e@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bluetooth?] [bcachefs?] KASAN: slab-use-after-free Read in hci_uart_write_work
+Date: Tue, 15 Jul 2025 09:09:22 +0800
+Message-ID: <20250715010923.4075-1-hdanton@sina.com>
+In-Reply-To: <687539cb.a70a0220.18f9d4.0005.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi YH,
+> Date: Mon, 14 Jul 2025 10:09:31 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    3f31a806a62e Merge tag 'mm-hotfixes-stable-2025-07-11-16-1..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=174b07d4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=b309c907eaab29da
+> dashboard link: https://syzkaller.appspot.com/bug?extid=fde6bd779f78e6e0992e
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=127ece8c580000
 
-> > Do we really need an abstraction for MCTP VDM drivers? How many are you
-> > expecting? Can you point us to a client of the VDM abstraction?
-> >=20
-> > There is some value in keeping consistency for the MCTP lladdr formats =
-across
-> > PCIe transports, but I'm not convinced we need a whole abstraction laye=
-r for
-> > this.
-> >=20
-> We plan to follow existing upstream MCTP transports=E2=80=94such as I=C2=
-=B2C, I=C2=B3C,
-> and USB=E2=80=94by abstracting the hardware-specific details into a commo=
-n
-> interface and focus on the transport binding protocol in this patch.
-> This driver has been tested by our AST2600 and AST2700 MCTP driver.
+#syz test
 
-Is that one driver (for both 2600 and 2700) or two?
-
-I'm still not convinced you need an abstraction layer specifically for
-VDM transports, especially as you're forcing a specific driver model
-with the deferral of TX to a separate thread.
-
-Even if this abstraction layer is a valid approach, it would not be
-merged until you also have an in-kernel user of it.
-
-> > > TX path uses a dedicated kernel thread and ptr_ring: skbs queued by
-> > > the MCTP stack are enqueued on the ring and processed in-thread conte=
-xt.
-> >=20
-> > Is this somehow more suitable than the existing netdev queues?
-> >=20
-> Our current implementation has two operations that take time: 1)
-> Configure the PCIe VDM routing type as DSP0238 requested if we are
-> sending certain ctrl message command codes like Discovery Notify
-> request or Endpoint Discovery response. 2) Update the BDF/EID routing
-> table.
-
-More on this below, but: you don't need to handle either of those in
-a transport driver.
-
-> > > +struct mctp_pcie_vdm_route_info {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u8 eid;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u8 dirty;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u16 bdf_addr;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct hlist_node hnode;
-> > > +};
-> >=20
-> > Why are you keeping your own routing table in the transport driver? We =
-already
-> > have the route and neighbour tables in the MCTP core code.
-> >=20
-> > Your assumption that you can intercept MCTP control messages to keep a
-> > separate routing table will not work.
-> >=20
-> We maintain a routing table in the transport driver to record the
-> mapping between BDFs and EIDs, as the BDF is only present in the PCIe
-> VDM header of received Endpoint Discovery Responses. This information
-> is not forwarded to the MCTP core in the MCTP payload. We update the
-> table with this mapping before forwarding the MCTP message to the
-> core.
-
-There is already support for this in the MCTP core - the neighbour table
-maintains mappings between EID and link-layer addresses. In the case of
-a PCIe VDM transport, those link-layer addresses contain the bdf data.
-
-The transport driver only needs to be involved in packet transmit and
-receive. Your bdf data is provided to the driver through the
-header_ops->create() op.
-
-Any management of the neighbour table is performed by userspace, which
-has visibility of the link-layer addresses of incoming skbs - assuming
-your drivers are properly setting the cb->haddr data on receive.
-
-This has already been established through the existing transports that
-consume lladdr data (i2c and i3c). You should not be handling the
-lladdr-to-EID mapping *at all* in the transport driver.
-
-> Additionally, if the MCTP Bus Owner operates in Endpoint (EP) role on
-> the PCIe bus, it cannot obtain the physical addresses of other devices
-> from the PCIe bus.
-
-Sure it can, there are mechanisms for discovery. However, that's
-entirely handled by userspace, which can update the existing neighbour
-table.
-
-> Agreed. In our implement, we always fill in the "Route By ID" type
-> when core asks us to create the header, since we don't know the
-> correct type to fill at that time.=C2=A0 And later we update the Route ty=
-pe
-> based on the ctrl message code when doing TX. I think it would be nice
-> if we can have a uniformed address format to get the actual Route type
-> by passed-in lladdr when creating the header.
-
-OK, so we'd include the routing type in the lladdr data then.
-
-Cheers,
-
-
-Jeremy
+--- x/drivers/bluetooth/hci_uart.h
++++ y/drivers/bluetooth/hci_uart.h
+@@ -69,6 +69,7 @@ struct hci_uart {
+ 	unsigned long		hdev_flags;
+ 
+ 	struct work_struct	init_ready;
++	struct mutex 		write_mutex;
+ 	struct work_struct	write_work;
+ 
+ 	const struct hci_uart_proto *proto;
+--- x/drivers/bluetooth/hci_ldisc.c
++++ y/drivers/bluetooth/hci_ldisc.c
+@@ -154,6 +154,7 @@ static void hci_uart_write_work(struct w
+ 	/* REVISIT: should we cope with bad skbs or ->write() returning
+ 	 * and error value ?
+ 	 */
++	mutex_lock(&hu->write_mutex);
+ 
+ restart:
+ 	clear_bit(HCI_UART_TX_WAKEUP, &hu->tx_state);
+@@ -180,6 +181,7 @@ restart:
+ 		goto restart;
+ 
+ 	wake_up_bit(&hu->tx_state, HCI_UART_SENDING);
++	mutex_unlock(&hu->write_mutex);
+ }
+ 
+ void hci_uart_init_work(struct work_struct *work)
+@@ -515,6 +517,7 @@ static int hci_uart_tty_open(struct tty_
+ 
+ 	INIT_WORK(&hu->init_ready, hci_uart_init_work);
+ 	INIT_WORK(&hu->write_work, hci_uart_write_work);
++	mutex_init(&hu->write_mutex);
+ 
+ 	/* Flush any pending characters in the driver */
+ 	tty_driver_flush_buffer(tty);
+--
 
