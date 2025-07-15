@@ -1,134 +1,351 @@
-Return-Path: <linux-kernel+bounces-732485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60200B06785
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:08:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 293E6B06786
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83F3C174A32
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:08:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E526500AE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A1829E117;
-	Tue, 15 Jul 2025 20:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9515029B220;
+	Tue, 15 Jul 2025 20:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WNcbD5IY"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TU2D23OA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31DB286D75;
-	Tue, 15 Jul 2025 20:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F7E25392B
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752610112; cv=none; b=QNbVSb1JkQfN44CC/FBxDB4rQYze6yOBcpJ41kogOFgKcl6DKMDNFR9KVGjx7y2DPMimDntxsiOLx7hhGeZRidMEEoLT6WRlPlP38OdqxrRZZ/keMW8lRqxDFfg+d5KLdF05FKTd/gWRr9jISWCZqeDKIAfeAAIL4J+Pte0pz/Q=
+	t=1752610159; cv=none; b=uH1FFk6XiYAox413dbwytogql+RVHA+u8pVbpCBF45o+DiUOz94VNzw+ZMHzYYfjXJtf7p+qfiT7zAosCQKIurpg6sWPBig0jyadpadKic+YxCu9J0tQFw67TplFncoJwJX2+fIQCGSVa9LYB81MXkINvCY9OQpsD3nUnG3QuWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752610112; c=relaxed/simple;
-	bh=TFPHAYC2KV+LZgs6UfGifLqRkJfkyNBs/xIs9+BnA4c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BCUvIEIm5iJJ2Fr5jumR4Ebe+F0CCk2Zr9kArxt6bM0/O2paQWoSe8KtfAVKGEHd1Q3lTMQSbEhFIBYIZD5W6nA/5PgOTQwt4dKU7iyajYziRpIYjC3/HjszAve8oLtdfeZ2410uPWwpaHk04bACyhZgO+QismRj3644vk1DHQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WNcbD5IY; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <52340e28-0ad4-4e67-adee-3c08b1c98b10@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752610097;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tJEb6T0GNLELePzDF5Y/eNum6e1uiWl2oXlgfzcvKLw=;
-	b=WNcbD5IYRyL4NEn6TGgmNVxwWUmOVOzcNtV/2F3GcH2vzOyCNn1dhXQE8crOwhySKn4Cil
-	j6ebEc2ISiDSJI1cxvpjtGiNQjBRxgCvs4TnvC3VZgX5R10Ec3aapxHkzvaCjS+dnhIIhh
-	2h0YpApYnqogIdTlzpKbPTD9EhfAIlA=
-Date: Tue, 15 Jul 2025 16:08:13 -0400
+	s=arc-20240116; t=1752610159; c=relaxed/simple;
+	bh=pTKBkYQxvCJDM7hqD1VYZUb+zcoxH0Ug4ny+3/JvRhc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NZWadQraaeBAgfivP0UuK425qIXmlSgOEfs7bOHmBN7jpvBlFTFXi2EWuTuLy5WmukJlcpk9cZ6Ap7PXIxLl/5i+X0skSeGVh+B3pIjoStFtNgKgoCo5o2ObjQnxN29DBa7W0dfyrX66ZMkemMLzODATf1VkjP15WJ3eBfctNTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TU2D23OA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91BD7C4CEE3;
+	Tue, 15 Jul 2025 20:09:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752610156;
+	bh=pTKBkYQxvCJDM7hqD1VYZUb+zcoxH0Ug4ny+3/JvRhc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TU2D23OAqudCoNC4V8XWPYNNIjzy6FGC8nqR25Kxg7VgDawOAK1O3lfmWdLC30Wp5
+	 BKTqCdbpmLyDzha6pYAFXZX/7in3ZLjRsHM+GyamQL1Bb7Wn1XcCoYmGW8yneXQAW6
+	 +yHXSlJGCqUYSHtb5akY2bQXjhNrEGZJO+iCBuwRNukU2shBv5BaeIbhrfAu+X5WSj
+	 3ayHxiUyZJ8KycRteji/XFpcX05vyj0O/TB3oA4y79M9z4JwoLxL3VvuqQ7W1eoo6Y
+	 esa5xXwSW4HQMajyD0A8k3NTDCreyD7A1JxfXTDF3zyzr4x6PliWx73pzU56hce9UE
+	 q73YunaeeSZhg==
+Date: Tue, 15 Jul 2025 13:09:14 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+	akpm@linux-foundation.org, david@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com,
+	mjguzik@gmail.com, luto@kernel.org, peterz@infradead.org,
+	acme@kernel.org, tglx@linutronix.de, willy@infradead.org,
+	raghavendra.kt@amd.com, boris.ostrovsky@oracle.com,
+	konrad.wilk@oracle.com
+Subject: Re: [PATCH v5 04/14] perf bench mem: Pull out init/fini logic
+Message-ID: <aHa1avFkfdqoo69S@google.com>
+References: <20250710005926.1159009-1-ankur.a.arora@oracle.com>
+ <20250710005926.1159009-5-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 7/7] hwmon: iio: Add alarm support
-To: Guenter Roeck <linux@roeck-us.net>, Jonathan Cameron <jic23@kernel.org>,
- Jean Delvare <jdelvare@suse.com>, linux-iio@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-Cc: Andy Shevchenko <andy@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, linux-kernel@vger.kernel.org,
- David Lechner <dlechner@baylibre.com>
-References: <20250715012023.2050178-1-sean.anderson@linux.dev>
- <20250715012023.2050178-8-sean.anderson@linux.dev>
- <759e8070-de3e-41fd-8e81-05e22c32209e@roeck-us.net>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <759e8070-de3e-41fd-8e81-05e22c32209e@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250710005926.1159009-5-ankur.a.arora@oracle.com>
 
-On 7/15/25 15:34, Guenter Roeck wrote:
-> On 7/14/25 18:20, Sean Anderson wrote:
->> Add alarm support based on IIO threshold events. The alarm is cleared on
->> read, but will be set again if the condition is still present. This is
->> detected by disabling and re-enabling the event. The same trick is done
->> when creating the attribute to detect already-triggered events.
->>
->> The alarms are updated by an event listener. To keep the notifier call
->> chain short, we create one listener per iio device, shared across all
->> hwmon devices.
->>
->> To avoid dynamic creation of alarms, alarms for all possible events are
->> allocated at creation. Lookup is done by a linear scan, as I expect
->> events to occur rarely. If performance becomes an issue, a binary search
->> could be done instead (or some kind of hash lookup).
->>
+On Wed, Jul 09, 2025 at 05:59:16PM -0700, Ankur Arora wrote:
+> No functional change.
 > 
-> I am very concerned about this. The context suggests that the iio events
-> are just that - events without specific association to hardware or system
-> limits. Hardware monitoring limits are system specific limits, which are not
-> supposed to change at runtime. A high voltage or temperature warning is
-> just that - it is not supposed to trigger a change in the event limit.
-> If anything, it is supposed to trigger some action to bring the observed
-> value back to normal.
+> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
 
-If the system integrator has instantiated this driver, then the associated
-IIO channels correspond to physical values related to the health of the
-system. Other IIO channels should not be attached to the iio-hwmon driver.
+Reviewed-by: Namhyung Kim <namhyung@kernel.org>
 
-For example, in my use case the Xilinx AMS was implemented as an IIO
-device because it's a generic ADC, and several of the channels can
-monitor arbitrary analog voltages. However, many channels are
-permanently connected to the SoC's power rails and to internal
-temperature probes. These channels are best exposed as an hwmon device
-to take advantage of existing userspace tooling (e.g. lm-sensors).
+A nitpick below.
 
-The above paragraph in the commit message specifically refers to the
-approach taken to handle IIO events for a given device. As we process
-the hwmon's IIO channels, we create alarm attributes for the
-corresponding events. Because we don't know which IIO events we are
-interested in when we create the IIO listener, there are two general
-approaches:
+> ---
+>  tools/perf/bench/mem-functions.c             | 103 +++++++++++++------
+>  tools/perf/bench/mem-memcpy-arch.h           |   2 +-
+>  tools/perf/bench/mem-memcpy-x86-64-asm-def.h |   4 +
+>  tools/perf/bench/mem-memset-arch.h           |   2 +-
+>  tools/perf/bench/mem-memset-x86-64-asm-def.h |   4 +
+>  5 files changed, 81 insertions(+), 34 deletions(-)
+> 
+> diff --git a/tools/perf/bench/mem-functions.c b/tools/perf/bench/mem-functions.c
+> index fb17d36a6f6c..06d3ee6f5d69 100644
+> --- a/tools/perf/bench/mem-functions.c
+> +++ b/tools/perf/bench/mem-functions.c
+> @@ -62,15 +62,31 @@ struct bench_params {
+>  	unsigned int	nr_loops;
+>  };
+>  
+> +struct bench_mem_info {
+> +	const struct function *functions;
+> +	int (*do_op)(const struct function *r, struct bench_params *p,
+> +		     void *src, void *dst, union bench_clock *rt);
+> +	const char *const *usage;
+> +	bool alloc_src;
+> +};
+> +
+> +typedef bool (*mem_init_t)(struct bench_mem_info *, struct bench_params *,
+> +			   void **, void **);
+> +typedef void (*mem_fini_t)(struct bench_mem_info *, struct bench_params *,
+> +			   void **, void **);
+>  typedef void *(*memcpy_t)(void *, const void *, size_t);
+>  typedef void *(*memset_t)(void *, int, size_t);
+>  
+>  struct function {
+>  	const char *name;
+>  	const char *desc;
+> -	union {
+> -		memcpy_t memcpy;
+> -		memset_t memset;
+> +	struct {
+> +		mem_init_t init;
+> +		mem_fini_t fini;
+> +		union {
+> +			memcpy_t memcpy;
+> +			memset_t memset;
+> +		};
+>  	} fn;
+>  };
+>  
+> @@ -138,37 +154,24 @@ static double timeval2double(struct timeval *ts)
+>  			printf(" %14lf GB/sec\n", x / K / K / K);	\
+>  	} while (0)
+>  
+> -struct bench_mem_info {
+> -	const struct function *functions;
+> -	union bench_clock (*do_op)(const struct function *r, struct bench_params *p,
+> -				   void *src, void *dst);
+> -	const char *const *usage;
+> -	bool alloc_src;
+> -};
+> -
+>  static void __bench_mem_function(struct bench_mem_info *info, struct bench_params *p,
+>  				 int r_idx)
+>  {
+>  	const struct function *r = &info->functions[r_idx];
+>  	double result_bps = 0.0;
+>  	union bench_clock rt = { 0 };
+> -	void *src = NULL, *dst = zalloc(p->size);
+> +	void *src = NULL, *dst = NULL;
+>  
+>  	printf("# function '%s' (%s)\n", r->name, r->desc);
+>  
+> -	if (dst == NULL)
+> -		goto out_alloc_failed;
+> -
+> -	if (info->alloc_src) {
+> -		src = zalloc(p->size);
+> -		if (src == NULL)
+> -			goto out_alloc_failed;
+> -	}
+> +	if (r->fn.init && r->fn.init(info, p, &src, &dst))
+> +		goto out_init_failed;
+>  
+>  	if (bench_format == BENCH_FORMAT_DEFAULT)
+>  		printf("# Copying %s bytes ...\n\n", size_str);
+>  
+> -	rt = info->do_op(r, p, src, dst);
+> +	if (info->do_op(r, p, src, dst, &rt))
+> +		goto out_test_failed;
+>  
+>  	switch (bench_format) {
+>  	case BENCH_FORMAT_DEFAULT:
+> @@ -194,11 +197,11 @@ static void __bench_mem_function(struct bench_mem_info *info, struct bench_param
+>  		break;
+>  	}
+>  
+> +out_test_failed:
+>  out_free:
+> -	free(src);
+> -	free(dst);
+> +	if (r->fn.fini) r->fn.fini(info, p, &src, &dst);
+>  	return;
+> -out_alloc_failed:
+> +out_init_failed:
+>  	printf("# Memory allocation failed - maybe size (%s) is too large?\n", size_str);
+>  	goto out_free;
+>  }
+> @@ -264,8 +267,8 @@ static void memcpy_prefault(memcpy_t fn, size_t size, void *src, void *dst)
+>  	fn(dst, src, size);
+>  }
+>  
+> -static union bench_clock do_memcpy(const struct function *r, struct bench_params *p,
+> -				   void *src, void *dst)
+> +static int do_memcpy(const struct function *r, struct bench_params *p,
+> +		     void *src, void *dst, union bench_clock *rt)
+>  {
+>  	union bench_clock start, end;
+>  	memcpy_t fn = r->fn.memcpy;
+> @@ -277,16 +280,47 @@ static union bench_clock do_memcpy(const struct function *r, struct bench_params
+>  		fn(dst, src, p->size);
+>  	clock_get(&end);
+>  
+> -	return clock_diff(&start, &end);
+> +	*rt = clock_diff(&start, &end);
+> +
+> +	return 0;
+> +}
+> +
+> +static bool mem_alloc(struct bench_mem_info *info, struct bench_params *p,
+> +		      void **src, void **dst)
+> +{
+> +	bool failed;
+> +
+> +	*dst = zalloc(p->size);
+> +	failed = *dst == NULL;
+> +
+> +	if (info->alloc_src) {
+> +		*src = zalloc(p->size);
+> +		failed = failed || *src == NULL;
+> +	}
+> +
+> +	return failed;
+> +}
+> +
+> +static void mem_free(struct bench_mem_info *info __maybe_unused,
+> +		     struct bench_params *p __maybe_unused,
+> +		     void **src, void **dst)
+> +{
+> +	free(*dst);
+> +	free(*src);
+> +
+> +	*dst = *src = NULL;
 
-- We could allocate some memory for the alarm and then add it to a list
-  or hash table in the listener. When the listener gets an event it
-  would then search the list or hash table for the appropriate alarm.
-- We can allocate memory for all possible events up front. When we want
-  to create an alarm we look up the appropriate event.
+There's zfree() to handle free and reset together.  But probably not
+needed as you want to convert it to mmap later.
 
-I chose the latter approach because I believe that there are typically
-not too many events on a given IIO device (i.e. dozens) and it makes the
-lookup simpler, since we can just iterate through an array (or do a
-binary search).
+Thanks,
+Namhyung
 
-> For this series to move forward, there needs to be some guarantee that
-> the limits are used and usable only as intended, and can not be used for
-> random thresholds. The idea of "if a temperature alarm is triggered, do
-> something and change the threshold temperature" is not an acceptable use
-> for hardware monitoring alarms.
-
-What userspace sets the limits to or does in response to an alarm is not
-the kernel's concern. That said, I suspect the most-likely userspace response
-is to log the alarm, possibly to some remote system.
-
---Sean
+>  }
+>  
+>  struct function memcpy_functions[] = {
+>  	{ .name		= "default",
+>  	  .desc		= "Default memcpy() provided by glibc",
+> +	  .fn.init	= mem_alloc,
+> +	  .fn.fini	= mem_free,
+>  	  .fn.memcpy	= memcpy },
+>  
+>  #ifdef HAVE_ARCH_X86_64_SUPPORT
+> -# define MEMCPY_FN(_fn, _name, _desc) {.name = _name, .desc = _desc, .fn.memcpy = _fn},
+> +# define MEMCPY_FN(_fn, _init, _fini, _name, _desc)	\
+> +	{.name = _name, .desc = _desc, .fn.memcpy = _fn, .fn.init = _init, .fn.fini = _fini },
+>  # include "mem-memcpy-x86-64-asm-def.h"
+>  # undef MEMCPY_FN
+>  #endif
+> @@ -311,8 +345,8 @@ int bench_mem_memcpy(int argc, const char **argv)
+>  	return bench_mem_common(argc, argv, &info);
+>  }
+>  
+> -static union bench_clock do_memset(const struct function *r, struct bench_params *p,
+> -				   void *src __maybe_unused, void *dst)
+> +static int do_memset(const struct function *r, struct bench_params *p,
+> +		     void *src __maybe_unused, void *dst, union bench_clock *rt)
+>  {
+>  	union bench_clock start, end;
+>  	memset_t fn = r->fn.memset;
+> @@ -328,7 +362,9 @@ static union bench_clock do_memset(const struct function *r, struct bench_params
+>  		fn(dst, i, p->size);
+>  	clock_get(&end);
+>  
+> -	return clock_diff(&start, &end);
+> +	*rt = clock_diff(&start, &end);
+> +
+> +	return 0;
+>  }
+>  
+>  static const char * const bench_mem_memset_usage[] = {
+> @@ -339,10 +375,13 @@ static const char * const bench_mem_memset_usage[] = {
+>  static const struct function memset_functions[] = {
+>  	{ .name		= "default",
+>  	  .desc		= "Default memset() provided by glibc",
+> +	  .fn.init	= mem_alloc,
+> +	  .fn.fini	= mem_free,
+>  	  .fn.memset	= memset },
+>  
+>  #ifdef HAVE_ARCH_X86_64_SUPPORT
+> -# define MEMSET_FN(_fn, _name, _desc) { .name = _name, .desc = _desc, .fn.memset = _fn },
+> +# define MEMSET_FN(_fn, _init, _fini, _name, _desc) \
+> +	{.name = _name, .desc = _desc, .fn.memset = _fn, .fn.init = _init, .fn.fini = _fini },
+>  # include "mem-memset-x86-64-asm-def.h"
+>  # undef MEMSET_FN
+>  #endif
+> diff --git a/tools/perf/bench/mem-memcpy-arch.h b/tools/perf/bench/mem-memcpy-arch.h
+> index 5bcaec5601a8..852e48cfd8fe 100644
+> --- a/tools/perf/bench/mem-memcpy-arch.h
+> +++ b/tools/perf/bench/mem-memcpy-arch.h
+> @@ -2,7 +2,7 @@
+>  
+>  #ifdef HAVE_ARCH_X86_64_SUPPORT
+>  
+> -#define MEMCPY_FN(fn, name, desc)		\
+> +#define MEMCPY_FN(fn, init, fini, name, desc)		\
+>  	void *fn(void *, const void *, size_t);
+>  
+>  #include "mem-memcpy-x86-64-asm-def.h"
+> diff --git a/tools/perf/bench/mem-memcpy-x86-64-asm-def.h b/tools/perf/bench/mem-memcpy-x86-64-asm-def.h
+> index 6188e19d3129..f43038f4448b 100644
+> --- a/tools/perf/bench/mem-memcpy-x86-64-asm-def.h
+> +++ b/tools/perf/bench/mem-memcpy-x86-64-asm-def.h
+> @@ -1,9 +1,13 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+>  
+>  MEMCPY_FN(memcpy_orig,
+> +	mem_alloc,
+> +	mem_free,
+>  	"x86-64-unrolled",
+>  	"unrolled memcpy() in arch/x86/lib/memcpy_64.S")
+>  
+>  MEMCPY_FN(__memcpy,
+> +	mem_alloc,
+> +	mem_free,
+>  	"x86-64-movsq",
+>  	"movsq-based memcpy() in arch/x86/lib/memcpy_64.S")
+> diff --git a/tools/perf/bench/mem-memset-arch.h b/tools/perf/bench/mem-memset-arch.h
+> index 53f45482663f..278c5da12d63 100644
+> --- a/tools/perf/bench/mem-memset-arch.h
+> +++ b/tools/perf/bench/mem-memset-arch.h
+> @@ -2,7 +2,7 @@
+>  
+>  #ifdef HAVE_ARCH_X86_64_SUPPORT
+>  
+> -#define MEMSET_FN(fn, name, desc)		\
+> +#define MEMSET_FN(fn, init, fini, name, desc)	\
+>  	void *fn(void *, int, size_t);
+>  
+>  #include "mem-memset-x86-64-asm-def.h"
+> diff --git a/tools/perf/bench/mem-memset-x86-64-asm-def.h b/tools/perf/bench/mem-memset-x86-64-asm-def.h
+> index 247c72fdfb9d..80ad1b7ea770 100644
+> --- a/tools/perf/bench/mem-memset-x86-64-asm-def.h
+> +++ b/tools/perf/bench/mem-memset-x86-64-asm-def.h
+> @@ -1,9 +1,13 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+>  
+>  MEMSET_FN(memset_orig,
+> +	mem_alloc,
+> +	mem_free,
+>  	"x86-64-unrolled",
+>  	"unrolled memset() in arch/x86/lib/memset_64.S")
+>  
+>  MEMSET_FN(__memset,
+> +	mem_alloc,
+> +	mem_free,
+>  	"x86-64-stosq",
+>  	"movsq-based memset() in arch/x86/lib/memset_64.S")
+> -- 
+> 2.43.5
+> 
 
