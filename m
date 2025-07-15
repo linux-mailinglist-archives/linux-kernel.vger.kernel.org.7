@@ -1,176 +1,181 @@
-Return-Path: <linux-kernel+bounces-731815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18415B059DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:21:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE451B059E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:24:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 961E0741D5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:20:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3854E06AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2622E03E6;
-	Tue, 15 Jul 2025 12:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2522F2DE6E9;
+	Tue, 15 Jul 2025 12:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="LDfYTX16"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011059.outbound.protection.outlook.com [52.101.70.59])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z80kQLT3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F32C2DE6E7;
-	Tue, 15 Jul 2025 12:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752582000; cv=fail; b=l8v1Z3E7+430U04kPofC1b9CJJFsppvFW2poGOUeKErHC8m5YBT3Cps3a+D6l2qMg5I2L2M8mf6IHUrv4pL0XsuemOLzNXxtu8x4Q6emdOeDKTI4/K4wia1AiQwYFwyiA/VEhc3g5Rw82xLv/rXZTNETuSaQ+7viG90zNzbmtXU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752582000; c=relaxed/simple;
-	bh=5ZmJddqzdJnHeEkm5oCwv86pNMaOwc6SSSj3eFAXRCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eV1j8UnIsiIsMMzsoL34pgzE5AHvf3IF9evlHiWYZZxIizWr5uSgjc07HFtBejQe/QTiTF6V/9NEd4s95t9b0YiTrnL4xKEBNBPbjZpFN7nxEWA6JaO0nMqC57Z0ocXfS+FxodC33JDUAWk+2F0oZJOI6QumWknTgWt7DuNeekY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=LDfYTX16; arc=fail smtp.client-ip=52.101.70.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a0h8mzc9c8qrX7ehbusMYSBp5NJLwlWtXo3BL1Mo8UJdm9MsUNq6tMU9rLkMBdHnr5XZi44yeqq+lQ7mFuII3zfWffHfRbprextxfVyJDyNuoNRXkb1GUxOUimPCti31ypIdZRFB8oRy/1Y0ODsep9FVmS8pYLTJ1phWbSJlZYG8Ljhp3u5P+Afzp/K2mdMUFU4OIqqV21V1vvjUS0tXCV9UhJFVoOZxQ+XvbOryMu0mmELqa4QklUHKD4qnxgPMcOSvLyjuWNImtqt3RRyGgM1WLGW1V/Eg05iKzPQmYMFuDuLtSLPPaz3i24wGS8oLhejM3CzQGNiAd59VImv2Kw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eZZ51n7cf09L4ID6YFk0rWW8hwvrGiybfbo5R6DyPyw=;
- b=pwaT076GG7A+Z+8P8We0E6Ym/DO02KoqrPxBi+WgAOwJ5OMiPgW0pMWasklRwK5f6F2QWE97fXF1vGw6LvR04HXnhWkpBQmyk07PhuY5uzFEjGXqqZTbQlDGlOH7+sLBKHaTUbZSb4kjarWqOUjEasQFpjCrqDeTU1WhbMJ2xRY1YDtpPRdFNz9tSP3exSOJbY8mXzXbA7WfHAe/PaWVT9sLAlgV9AZ5PeXUS+sdtOFMTh/V1sgD+Fa9XGtrolGyC3xNAvFZs9PRgAda7/+va5o3f1zhpQqpI/7zNoRs1+XeWXwweJBQG4brpRJ/YDqvUlIs80e+JIPLYTxbRsJPiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eZZ51n7cf09L4ID6YFk0rWW8hwvrGiybfbo5R6DyPyw=;
- b=LDfYTX16meCWp9kq85E/w9YIwx8v3YXQ2tF9Cbfu2kXmqmn5maLnJTuUMXiJHitJ2hFxhgYCqfbuHZup4UM3ZCZRPteKvEDFpek4iKQlHdYfBuwKURs1mRNW8R4HSoKza11qMEUyiryxbAVbEi+RjMy9Rr+tcFlJv+COAw4ubbvaIVyv9aBXfOu6/mAGz8jw4+DW7zP7VSS5tCieAPvubSByp7HBKYp6Cyes3QDfmseIBEkFwdzdew//gUCxBEJoNY4GZ+OMCJbUKgENEjmoNY3pk5oYyG33oV5WX+yf5XkYDtxn+GJGO52CaACw3CwzX1KbPKQa4tHras1LvuBBFQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
- by DU2PR04MB9179.eurprd04.prod.outlook.com (2603:10a6:10:2f6::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Tue, 15 Jul
- 2025 12:19:53 +0000
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b317:9c26:147f:c06e]) by AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b317:9c26:147f:c06e%5]) with mapi id 15.20.8880.030; Tue, 15 Jul 2025
- 12:19:53 +0000
-Date: Tue, 15 Jul 2025 15:19:49 +0300
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
-To: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH 1/9] dt-bindings: gpio: add bindings for the QIXIS FPGA
- based GPIO controller
-Message-ID: <n3wlp7pncug3gta2raignhvubqpzqk76dmvewg5bosu4spx4h2@hr5r73tsxip5>
-References: <20250709112658.1987608-1-ioana.ciornei@nxp.com>
- <20250709112658.1987608-2-ioana.ciornei@nxp.com>
- <20250710220132.GA4038128-robh@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710220132.GA4038128-robh@kernel.org>
-X-ClientProxiedBy: FR4P281CA0293.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e7::6) To AS8PR04MB8868.eurprd04.prod.outlook.com
- (2603:10a6:20b:42f::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F1E2DA748
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 12:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752582267; cv=none; b=cggt9xxTM3MzS+zjw2ljCag6y9ezdB5gJqPUCVIvBFJ2gXa5KOIxkc973OK5pIMuN9eX7As6mAmHvtlOm3iqN52bOgduCkVeD+z3pWjUf1WyqFQG6qYV7SSvvmjSymC1TH6W/HHgVAe6nxdUqCiJoFbs/SIUt/98zg8H1sfV8AA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752582267; c=relaxed/simple;
+	bh=rEiRHG6HAIbV2ucrb6G23Zk+2pFp866wDOUcKdTyO7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=LmJpme/R0KY+trSWDxFfl0zgrdeGcL3PCr3XCq6XMsruHHB1sYWx6jvJqv6IGMV8yEWQZSCLlvDTygzSIzWnLYXCfLGHl0E2zfrL1FpdAAamAF9IEhmq7D6WY/vWxBNtJ/1KAvtz5btgfyC67nQFwJjCMg2itFYUserwgAemtpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z80kQLT3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752582264;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vMV0xsqHJ0j7LmZPmZF2apPJfGJJxrjk32U1PoKgpWk=;
+	b=Z80kQLT3kEUr2UiK33Ngv3iR01eUvGjj4+97DoKXKpwGi0w+F2JdyNikwARacuOzbFyxuU
+	4R8HJKxgvg8DSGjkuqJQA5iRAZJ7dNRn+zgebAZKt5PirEGTlV1kXTbwrAiiTUScLea0Ej
+	ECBulu7DVoyEMiG3qrT8n33w0PlJsOk=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-654-osuw2bU6NwiPzIezmLzTIg-1; Tue, 15 Jul 2025 08:24:23 -0400
+X-MC-Unique: osuw2bU6NwiPzIezmLzTIg-1
+X-Mimecast-MFC-AGG-ID: osuw2bU6NwiPzIezmLzTIg_1752582262
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43e9b0fd00cso31976235e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 05:24:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752582262; x=1753187062;
+        h=content-transfer-encoding:in-reply-to:from:cc:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vMV0xsqHJ0j7LmZPmZF2apPJfGJJxrjk32U1PoKgpWk=;
+        b=Bng/fo7oVYo/HhGJHCF4qKauBN8KT73yGNLj4NrKyfxhxFN0w0ZvcSe+R9B5baENXq
+         2Mz5sT5HQzAzwICqdxbfiTZ6fVSXo2eerLsx3XhZlUvzdSQJ1NnNhi6+G6UIxCgFX5YR
+         ByktPwUdY5TcqkiOtdVF5Bx7u+LPXTZOoZCsNFJOtulIHQWSZaPfFtSIeighPcZnEDxP
+         GvCqBdMzUxtNKT5SW4RwYZsw0esWaDVTbh5smaynXwXLcRxj8/g3yJKtfq1hSHPBdRAL
+         e7BfkViS4nnePYOVYbiFjvbyvVU8jS6y2zwVOSodUfNbfH6NUMWJ7OP7Pl2/RNA8PXdr
+         hoRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRfb5SHipogL9uhgXnnXK5uFvSBbRZ1zvIjXfqt2yssYENdqQlMPIN0k8pV3lQJhX/f+zzFTrsI8rbv+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf8Av+JtsG7kX92MmruIvaXVpqy+HxvlZ83Hn3WSY9JSlayLen
+	takJNJVLspdBrvi0lwRaOJlVu6jD0Xp+ZDOj9USsno+FLxzzjjN7CKE2quiHxEpz3br7ds9EwgM
+	tjvErBAGXVJSmFovbn6e9IfUR42Xyyo6FGYh5wUKCF7wMwkecEaLAVCzCoI7wUUV4wg==
+X-Gm-Gg: ASbGncs81f4iob7tsnYv+oSZBefhPcTQhs5tT1KCDSGTv9cW9YohI+GIUyqsBoFq2rH
+	PHiZsFMgu64JbXMVhPyYzugNBe8NfkkHlg23JjxB55LYRCSV21JGBRkvcNYgzr63xn9AxHdVm/f
+	T+/M9Tf5m6GvGaB9MRXiRrPOFsNUKA9Ajj80/N1aWGVOh/vEsmDyr4HU6di2xbdPR+RDhFKtura
+	z2wE4SYJHVUS6snZnwoE8U3px18O5eHTuUwE5L6qXc2yqkhS5gppZCYo2tctot/+VD8tmvpOmIs
+	dcwFvcArsgVzOfjoxw0uxOYNBHUmal7uUx7d/xhtc0VvCxHQQ8NJY5uGEtW2rvep5qC5EkIZvOG
+	WGm843jTLoa63ljphPFgipTM=
+X-Received: by 2002:a05:600d:108:20b0:456:12ad:ec3d with SMTP id 5b1f17b1804b1-45625e79ac3mr20290435e9.14.1752582261833;
+        Tue, 15 Jul 2025 05:24:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEOecdjNw5cygsLqVU0X3EgZ+tzI9ZGCUAttic2DhZnOH00RJdRSeI42fAVJ674raEM/LllZg==
+X-Received: by 2002:a05:600d:108:20b0:456:12ad:ec3d with SMTP id 5b1f17b1804b1-45625e79ac3mr20290235e9.14.1752582261350;
+        Tue, 15 Jul 2025 05:24:21 -0700 (PDT)
+Received: from [192.168.1.167] (cpc76484-cwma10-2-0-cust967.7-3.cable.virginm.net. [82.31.203.200])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4560eb98a40sm90807825e9.27.2025.07.15.05.24.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 05:24:20 -0700 (PDT)
+Message-ID: <76704579-e2a1-4000-8d0c-b3ccd429870d@redhat.com>
+Date: Tue, 15 Jul 2025 13:24:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|DU2PR04MB9179:EE_
-X-MS-Office365-Filtering-Correlation-Id: b545593e-0a2c-47dc-482e-08ddc399e718
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|19092799006|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0MVd77/kR7xkISiP5ZrInnGoObsUN+kf6EnD+vuZavJvXmPRYV3roMwrdWGf?=
- =?us-ascii?Q?NDBZ5TozKjduSPy3ZlXtwDynd8nl65Uu3tPwKkby7SkzQfCpRRS8DNY10Z+r?=
- =?us-ascii?Q?qjNiUTfvlRs2HIw2TkvAIN+dmDELPcMCllqMLyLEwRSjOU0oX4hrTBW7OqYP?=
- =?us-ascii?Q?v0h5S3ES9x8xK8ZDA6JxDmbwv/O5xGvcRvC9dpq+LtM1g7iMRQqiJ4ngTsY+?=
- =?us-ascii?Q?/zk+dfDBuImNXg85japAqlqEhkZQ+0VV8pmnuwa/u8SUEgXXUiZj2XbhwTdl?=
- =?us-ascii?Q?oPuQQRfPNmexX77OsSq6pJcleSmvfBcJiIBuEj64dsgAL9CpGNVnpmFXFUlE?=
- =?us-ascii?Q?MsdXb9+zSuHGamdRbdHaLEMeAzqOLej0vNqabXOupovhNg3rH+0VMMNc4Nyq?=
- =?us-ascii?Q?1AiwJ7bTgs0JWu4mPtUPLL1NBx4DPUO+OXycjCEDnQrVqYQv4EJ8tAHqJECF?=
- =?us-ascii?Q?iYfxGXcdrzIkrw9EO9hWO8V+NXcDMyGyTVQgmMjTu4muW01pT3wWj78W5wSR?=
- =?us-ascii?Q?3ftKjfFLJ8urfpJtcU9i3swOx2qFTp1c75T2WjU7//H2b/xNstnbaIZatjGv?=
- =?us-ascii?Q?KlXepuKyslgKar5xKpZ+4kjj760YRKoxZdMAxa0lXGFX9/u6HI3lp7z2v+W/?=
- =?us-ascii?Q?9Fi3ZdWX5iM1sChf7UYtpNfyfJHBoDpO3aDzA/PH14GuLpb2ea5COxWONNUg?=
- =?us-ascii?Q?jyQpy0b21l25jYWQ21JnKRp75GKRneWiEM8jmI627jDBS5C+Y6SMuBEHBLQT?=
- =?us-ascii?Q?FeZ1BWHDX5RtGfycLf+8HKiYuFkPgtabIUaNnkkhjrw17jnbsVRZqFWib1u2?=
- =?us-ascii?Q?0eNbd8HP2ALFA17WVeJRNVWn+oC+qZ3M5ei6DQdiN506ysXv1TXO3/a2TjV6?=
- =?us-ascii?Q?w9SHLe6D5AGnQYe466HUUQ4iuYTttPAL7G5vx4Sv6bk3mrgCjD7/wek1vytZ?=
- =?us-ascii?Q?CJjy2Chwts6GMEN2SAQ8ChZ/DMdP+44Jo2Rl1x5yApHcXdcYGxTNETOSAhO0?=
- =?us-ascii?Q?FzyZgPUgzD5Dci0rVQheyfj/VoHMwNsg4RaHDhQjRFk7nEyuy9pLEMYZJQrV?=
- =?us-ascii?Q?5IXDYx+gxVdLSo3UpF6KvzLfWJEa64nekQBt4qOJzAY3TDu/sdYkWqMELtfT?=
- =?us-ascii?Q?G/DHVnY1N+WlMfNQ4Bh6iwJw8JAsHC+7bSyWcMCFQC74J0+vvxcwmBdYdhS2?=
- =?us-ascii?Q?Wgr7y59N72E9PWr+6DdGVyKSfYrJ1UmxCFoyOgdYK6aImWDbGTT/udZS7VO6?=
- =?us-ascii?Q?u20o7zg2tNSWi2dlFB3wgixVrVcmRkOyK/ilp0EC2xpNE8cO4beeTuYYlrUX?=
- =?us-ascii?Q?l2r9eCSasAyvrTSj1f1NJ8UXRCJyUZyYqNiomWh8UjfSm07oFmPikIVa0H/l?=
- =?us-ascii?Q?DDdijfllhOzbwqLeEk8xhvZDu1e2N0XzSfp9NSmdmaB0680Shw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(19092799006)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?jdQOFFyxi+LnGrdIG7mxROYIUokaTQ2iGhkon6jOmS2In8rZbOHmiNH3dVvX?=
- =?us-ascii?Q?i3Y8mZzaQtvlTgNt/4RIT6+ZY+l5GPb5ob7ez9jbfnPXE08DKQ+S6nFNFzwY?=
- =?us-ascii?Q?lrnCX7toYMx8i3fCA0w4N7GFmKGVz+ynpgwKDWAzvKcGYyB7OTpHnRXh9iJJ?=
- =?us-ascii?Q?b+LrzpL5ILsOHkg/LVqJJAJaZ0VaTHRN+/zrPEZQXvgB70vFOlURgwzj0GLh?=
- =?us-ascii?Q?SqLbJjRmO4DRptRbmTpznlpn1RjKFfQft0K5udE9mQUaa+/WhIuCd9xOBb3v?=
- =?us-ascii?Q?3lge6k760lY/VRboeqIy7BBUdmACtD4XThMiv565d+0all4Haf6jSdo1IJ0y?=
- =?us-ascii?Q?M+Oj/7M2xMWZwBvV4DmJVCqRL1G8ESKRvpn6kWc+FgNHZQ9n3wjU500O/CqZ?=
- =?us-ascii?Q?+ncbwTHBnmfXI/36zOLF8RMYkNRrGOXqFchpdRyYxOKHNS5N46lEqZ+wEqnc?=
- =?us-ascii?Q?oTIbffYuow7tBGmZHdmxMgr5HwF/yYymxe7h3cQasb3CNibOYzojxr5D4UE+?=
- =?us-ascii?Q?QZPRVLRU27Lf/0KuP3uBHJF3sg5WS7taEz8/prFu9TicbOYoz75sSoDNG2L4?=
- =?us-ascii?Q?z/3pNEmVnfK5pUz1dYPJ7dTSuwrMu9hXwCAI7hUIGV20oBKV0W2Fn9emHIqO?=
- =?us-ascii?Q?eq7n6JZbXJCYCgfQhIZhkIjsOzJd8nnIOjKWQW99nN0yUlGl43vOZ+nkVaV4?=
- =?us-ascii?Q?bc0XYi2QryfedkLV1Wi8qOGr6kgfSfGQqc6OLk9BLZyKl51ufk/oxEfAr/Xr?=
- =?us-ascii?Q?Wv2FwwdjcMFfAWNfoDvSMovrbcF6Bletpo1LJer7YNx6i5zBG7BeNZYky7SZ?=
- =?us-ascii?Q?A9xNsHmto/G6RR8iNcgUyAWeVPjK4huvtr6/aDz0ohJ0zO72no+fVJMof0P6?=
- =?us-ascii?Q?sJpgVymJhhjey3VaNoFoHCrd8NS07kFJnlYdAmAuTpAPb9mNXH06v4Vp3Of5?=
- =?us-ascii?Q?WnJD0MubxI9LAh/jLTlzcefoCLHa6NjN5FzhCFl003LjPXNckUer1QTYpm/q?=
- =?us-ascii?Q?T6n2Z5NWCJBXsL5cvDFbpILIp2onCr/IgZnQUZhQ41NzzZ9UF9r/cc5jZk2C?=
- =?us-ascii?Q?MidkGTWCIzAp7LvL4O4LjQXwGJ7XGYCk1gJx5PQKTZXqjUVobY5o9TVdp2jA?=
- =?us-ascii?Q?Jujgk5OpdNc4ps11527VfWhN5XaKRjTCQHi3ivzyZGgvcZMM+S2xWktTq1w5?=
- =?us-ascii?Q?lvd4ldYD6UOu7lobc5K2z/KR7J+1Tb/Ql1GP+sfF6xAiC1rlmXkwF98nVeWc?=
- =?us-ascii?Q?Ie/LN7+6K7AmD9cYydK+f12qAXHYqXOoWoa+v4iO3vYdea7lKnquNAH2wSm7?=
- =?us-ascii?Q?8NGP+RkmC0g0iKh9WtRWmFXDXVzH9HAF5/HOSYF/U1mohJWx6ImdQrin6IA6?=
- =?us-ascii?Q?/8pk+INzbMtKaN/dALsLJhsc/My4mdGiHjkPl3ZFxOFlMMMcHRfTcFcgSFNj?=
- =?us-ascii?Q?HxOTVf/ti9h29+G0LgIs6HZSLdDWkZ76h7crvL07C5pA3+lmV4gSfQbPNWes?=
- =?us-ascii?Q?mtbO5iVNY7iCZ49Nwbj4P430+lj0cPCzD6a/APxLt8ZXR6ioAjQ7QG+cKcqT?=
- =?us-ascii?Q?oHm9JADobP6fZu0O+j2tejZnA6N/NKDLaS2J3IR2?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b545593e-0a2c-47dc-482e-08ddc399e718
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 12:19:53.6133
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: e64+i/vTEUZsnWL/hNWDEBc2mE5gGLJz3TW+IqWUJhRhVkS93T5UyHrrCYuDIkepfACmGVC2r+PMNCJscZPc6Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB9179
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [gfs2?] UBSAN: shift-out-of-bounds in gfs2_dir_read (2)
+Content-Language: en-US
+To: syzbot <syzbot+4708579bb230a0582a57@syzkaller.appspotmail.com>
+References: <68754d09.a70a0220.5f69f.0001.GAE@google.com>
+Cc: syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
+ gfs2@lists.linux.dev, agruenba@redhat.com
+From: Andrew Price <anprice@redhat.com>
+In-Reply-To: <68754d09.a70a0220.5f69f.0001.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 10, 2025 at 05:01:32PM -0500, Rob Herring wrote:
-> On Wed, Jul 09, 2025 at 02:26:50PM +0300, Ioana Ciornei wrote:
-> > Add a device tree binding for the QIXIS FPGA based GPIO controller.
-> > Depending on the board, the QIXIS FPGA exposes registers which act as a
-> > GPIO controller, each with 8 GPIO lines of fixed direction.
-> > 
-> > Since each QIXIS FPGA layout has its particularities, add a separate
-> > compatible string for each board/GPIO register combination supported.
+On 14/07/2025 19:31, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
 > 
-> This could be covered in my proposed trivial gpio schema[1].
+> HEAD commit:    347e9f5043c8 Linux 6.16-rc6
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11afb18c580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f62a2ef17395702a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=4708579bb230a0582a57
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172470f0580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d0fd82580000
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-347e9f50.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/49ae91eb36e0/vmlinux-347e9f50.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/78497f74bd6b/bzImage-347e9f50.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/2445b7dba270/mount_0.gz
+>   fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=15d7918c580000)
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+4708579bb230a0582a57@syzkaller.appspotmail.com
+> 
+> gfs2: fsid=syz:syz: Now mounting FS (format 1801)...
+> gfs2: fsid=syz:syz.s: journal 0 mapped with 5 extents in 0ms
+> gfs2: fsid=syz:syz.s: first mount done, others may mount
+> ------------[ cut here ]------------
+> UBSAN: shift-out-of-bounds in fs/gfs2/dir.c:1544:15
+> shift exponent 32 is too large for 32-bit type 'u32' (aka 'unsigned int')
+> CPU: 0 UID: 0 PID: 5508 Comm: syz.0.16 Not tainted 6.16.0-rc6-syzkaller #0 PREEMPT(full) 
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+>  ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
+>  __ubsan_handle_shift_out_of_bounds+0x386/0x410 lib/ubsan.c:494
+>  dir_e_read fs/gfs2/dir.c:1544 [inline]
+>  gfs2_dir_read+0x1730/0x1780 fs/gfs2/dir.c:1585
+>  gfs2_readdir+0x14c/0x1b0 fs/gfs2/file.c:116
+>  iterate_dir+0x5ac/0x770 fs/readdir.c:108
+>  __do_sys_getdents64 fs/readdir.c:410 [inline]
+>  __se_sys_getdents64+0xe4/0x260 fs/readdir.c:396
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f9672d8e929
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffd2be2c848 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
+> RAX: ffffffffffffffda RBX: 00007f9672fb5fa0 RCX: 00007f9672d8e929
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+> RBP: 00007f9672e10b39 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007f9672fb5fa0 R14: 00007f9672fb5fa0 R15: 0000000000000003
+>  </TASK>
+> ---[ end trace ]---
+> 
+> 
+> ---
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
 
-Indeed. I will update the trivial-gpio.yaml schema (once that gets
-merged) with these new compatible strings.
+#syz test
 
-Thanks,
-Ioana
+--- a/fs/gfs2/glops.c
++++ b/fs/gfs2/glops.c
+@@ -450,6 +450,10 @@ static int gfs2_dinode_in(struct gfs2_inode *ip, const void *buf)
+                gfs2_consist_inode(ip);
+                return -EIO;
+        }
++       if ((ip->i_diskflags & GFS2_DIF_EXHASH) && depth < ilog2(sdp->sd_hash_ptrs)) {
++               gfs2_consist_inode(ip);
++               return -EIO;
++       }
+        ip->i_depth = (u8)depth;
+        ip->i_entries = be32_to_cpu(str->di_entries);
+ 
+
+
 
