@@ -1,116 +1,121 @@
-Return-Path: <linux-kernel+bounces-732370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76073B065CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:13:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE8ACB065D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6897A5047A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:12:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A479D1AA57BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613E029B213;
-	Tue, 15 Jul 2025 18:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6319329B22D;
+	Tue, 15 Jul 2025 18:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="p726jWpe"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="La8sp7w6"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AC529A9E4
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 18:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155E325A331;
+	Tue, 15 Jul 2025 18:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752603185; cv=none; b=RRpcQZRbm2rsfS1hnbAEPjq5HyrivusjOVHw3ks22kHIOaHdLwj/5wT3uENYT6VJM7gOdS1o6EOveNcEFWaLSthtrLxrA+9K0fRZt7aW8y1aZEfwLZITyBNaptwuvOFsSHtY73D89ngogs6mMz9nJF3gyfJ95ibi/sTb3kIcG+8=
+	t=1752603245; cv=none; b=gtpsXOF5StM+xVx9WP1QVITawAodcALRBzp1VKkm3ydWi3gmdskq98HknnRJrxKwOgFhS0mWdttvOUVfnXdbxI4iNVm2Xk8jmTOl+y2jbvwiy4Rqf4Q2xmJq9jv52ENELbPqY+Irgp1Ci2UVKjdrfwf6BdE/Sfv4xT0pvRB/q+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752603185; c=relaxed/simple;
-	bh=EX9IJIBE07MrxbjNekDEu4Bys7YOOtxBGSxYZ5KqQ6g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=W2z2vYlmUOb5798m3iNkW0XySAWoBxUdh/YKra5LNN4G1US6lEfKHVvyOM72YIvbiAmm+qI+X95B+TjQupZZmaKQ+J6fXqzn6sWkwVJVJ/KWpfo7KuDDxssBj+WB4rFkBesnvBVjnUAMiiTUYAcr09OItEwp03A0Lucssinn3Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=p726jWpe; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-86cfc1b6dcaso198439039f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:13:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1752603183; x=1753207983; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QD0vJ10NkjciUlBMfv/7NTn82Nio+gQ7e7sXbXu83co=;
-        b=p726jWpe5VN5//j8xoDpI8DqEmjurbXosNFytWunlBovxFmm47TgX+8/WStOMS6mlv
-         v8sLWU8E3r4NraMW8c7prvso8UucLrTrLVeaXUaJ9REBmRwfmgFSpo92qyeFReEMWi8v
-         6EP0Su7ijnQMn+L0a/DzO7cy+qwwjiZCRY4EYmFq9kC+1tHXqKiH9IMig8mXwyMRvOC1
-         VYs6IhdvUgeo2stGRBLzue9G+TfciZoPtfdzqmm6wd0q9a6Dem9vvaQshAY8ekoJ4/xk
-         aVITGImBGCfSJN/Ta0eQdGoLFlf3X0HogiQbIdh2mtGQrNkWsCTolFSbG52RWbY4NPXR
-         m7lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752603183; x=1753207983;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QD0vJ10NkjciUlBMfv/7NTn82Nio+gQ7e7sXbXu83co=;
-        b=T/F8NcnVyYPcsCF4Y46vB0yi0zpSaFpKA7216AEqwPPCBnhEbmix9BYrzs1Op+4tL6
-         Q87ILDCNEsVkZ52blJosEOLX0gG8Yf/8ICzz2vW7+nm5W2Rst/PSeyPTpprccm/ZPmnl
-         i0mKc4vnXhimC1xw/8LRJYnLD+hEyWvEZ0WcWRihWB07VdF5Rua2/OYj3iu2nG46Pau6
-         ilf+bUqzFgRBqvYpkF/mvi6BxdXZIPO/mNTklEnUIM8U7YVPiXQ7c4D4Lzj1LIZP2kRq
-         l5OiBOWz+xf0Ih21GnXvtJqSckhQL6K/bcaPklE2PjdKjOxIUSQlnqfd+rY8L531QU8I
-         pcAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXH2WGye7RJN9T47GkIsLdpXLLRCZzZDaqE7WkxkC58yneGuVMzwStgCpmHUJeHqJg55/tIT/VVoaWwq7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB3JLa1alJmnAIi5qUoZsm0bECWj+vpyWefV/nHzOUodxKC5xT
-	3MSPF703MK8zvAfvEm7tZZCxgL11TyqSOs61qVcYK84Sk0xgpjwioY89WmR5XeTkIVcxUHieV35
-	jmFDM
-X-Gm-Gg: ASbGncsjp2DB0Vf/gFI1qvUdR7r7ihEnmzf++wIgQNWEPWKTEqZPxxI9E+7IOek08oj
-	gdwBjPXI0yoP7bU9kKTsJgGcI1CWbxXMSEvb7KCGgfK5bq9wwH2jl6+XQDZnkbWdneXpAo60/LZ
-	RhmewpoQ7A6EAYE8GGq+/N9V4aoaJBktPDWeg4EfZUzFHxgPxjQiDv2I9EqS+A9jtz9XrEGVCdr
-	zC5/W4bNbBYIGRK4ixGCfKIjZ/PzYlWkiZxD4SCMYywbbA77SODBmSvuP4daZrbQNn0qehRGUEs
-	xer6BcY2qO1XNZYpYDHjgLbzlm4V5xGu7oTXPpo77qFHzTzqBoPCSzv/wizPuVQZMNsdyKkWmR/
-	EYu3TDruatOnq
-X-Google-Smtp-Source: AGHT+IG552JG7n4td8lyOkEY2AdLnq++1FllxqUqpHx566DhENpB4MIn3derfPlgLwY/V4STyhuYIw==
-X-Received: by 2002:a05:6602:14c5:b0:879:66fe:8d1e with SMTP id ca18e2360f4ac-879c088b6d9mr51206239f.8.1752603182765;
-        Tue, 15 Jul 2025 11:13:02 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8796bc1313asm318097639f.28.2025.07.15.11.13.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 11:13:02 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Ming Lei <ming.lei@redhat.com>, 
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250715154244.1626810-1-csander@purestorage.com>
-References: <20250715154244.1626810-1-csander@purestorage.com>
-Subject: Re: [PATCH] ublk: remove unused req argument from
- ublk_sub_req_ref()
-Message-Id: <175260318198.192467.13750945616516417106.b4-ty@kernel.dk>
-Date: Tue, 15 Jul 2025 12:13:01 -0600
+	s=arc-20240116; t=1752603245; c=relaxed/simple;
+	bh=UUc+1Uxt/NGdwKaSudHaVfxUE1XasUS3kZXNx6+A4wE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZOuClYzmdvx3cS5qpoGGwDklc028MpkkXu2Zgt8EoLNEGlnkpdkzf6g1KIqBqr/4oyDL/XJpKkkApD9wYm33UK/F2I3xPL38FD4KuOq3yJXVdH0yyrjo4XosWdPIwa5L+g9YEQQqwqh7hNOkxXlD1BYWcE7KRq+ilRBy6LWnM68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=La8sp7w6; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id A5E226A8;
+	Tue, 15 Jul 2025 20:13:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1752603207;
+	bh=UUc+1Uxt/NGdwKaSudHaVfxUE1XasUS3kZXNx6+A4wE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=La8sp7w64DnRhFJslCklYTYleM2y1ghpHzZqnlQ8iwbzRKCKSnS4SdF9NqRVzJo/Z
+	 GbSYgaPQEl37HQJz6WR9hd1beGAT9pDJTQxXJw+hxIsgjAHORkwbM4R3KEQq+I2zXG
+	 lmwqtIBC4P/4uPFKwo3yKRAP7GsOFImghE5jb9eA=
+Date: Tue, 15 Jul 2025 21:13:58 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Bryan O'Donoghue <bod@kernel.org>
+Cc: Pratap Nirujogi <pratap.nirujogi@amd.com>, mchehab@kernel.org,
+	sakari.ailus@linux.intel.com, kieran.bingham@ideasonboard.com,
+	hao.yao@intel.com, mehdi.djait@linux.intel.com,
+	dongcheng.yan@linux.intel.com, hverkuil@xs4all.nl, krzk@kernel.org,
+	dave.stevenson@raspberrypi.com, hdegoede@redhat.com,
+	jai.luthra@ideasonboard.com, tomi.valkeinen@ideasonboard.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	benjamin.chan@amd.com, bin.du@amd.com, grosikop@amd.com,
+	king.li@amd.com, dantony@amd.com, vengutta@amd.com,
+	Phil.Jawich@amd.com
+Subject: Re: [PATCH v4] media: i2c: Add OV05C10 camera sensor driver
+Message-ID: <20250715181358.GI20231@pendragon.ideasonboard.com>
+References: <20250714205805.1329403-1-pratap.nirujogi@amd.com>
+ <60cf7590-4fd8-419b-a782-8bc89fb5395a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <60cf7590-4fd8-419b-a782-8bc89fb5395a@kernel.org>
 
-
-On Tue, 15 Jul 2025 09:42:43 -0600, Caleb Sander Mateos wrote:
-> Since commit b749965edda8 ("ublk: remove ublk_commit_and_fetch()"),
-> ublk_sub_req_ref() no longer uses its struct request *req argument.
-> So drop the argument from ublk_sub_req_ref(), and from
-> ublk_need_complete_req(), which only passes it to ublk_sub_req_ref().
+On Tue, Jul 15, 2025 at 12:54:30PM +0100, Bryan O'Donoghue wrote:
+> On 14/07/2025 21:51, Pratap Nirujogi wrote:
 > 
+> > +	ret = ov05c10_init_controls(ov05c10);
+> > +	if (ret) {
+> > +		dev_err(ov05c10->dev, "fail to init ov05c10 ctl %d\n", ret);
+> > +		goto err_pm;
+> > +	}
 > 
+> I would expect to see an "identify_module()" function here, something 
+> similar to ov02c10.
+> 
+> ret = ov02c10_power_on(&client->dev);
+> if (ret) {
+>          dev_err_probe(&client->dev, ret, "failed to power on\n");
+>          return ret;
+> }
+> 
+> ret = ov02c10_identify_module(ov02c10);
+> if (ret) {
+>         dev_err(&client->dev, "failed to find sensor: %d", ret);
+>          goto probe_error_power_off;
+> }
+> 
+> ret = ov02c10_init_controls(ov02c10);
+> if (ret) {
+>         dev_err(&client->dev, "failed to init controls: %d", ret);
+>          goto probe_error_v4l2_ctrl_handler_free;
+> }
+> 
+> Standard practice is to try to talk to the sensor in probe() and bug out 
+> if you can't.
 
-Applied, thanks!
+It's actually not that standard, and is a frowned upon behaviour when
+the sensor has a privacy LED GPIO connected to the power rail instead of
+a hardware streaming signal. It would cause the privacy GPIO to flash at
+boot time, which is considered a worrying behaviour for users. That's
+why a few sensor drivers make runtime identification optional. We should
+try to handle that in a standard way across all drivers, likely based on
+a device property..
 
-[1/1] ublk: remove unused req argument from ublk_sub_req_ref()
-      commit: 01ceec076ba10cb6c9f5642f996203170412cd78
+> With your current logic, the first time you'd realise no sensor was 
+> present or is in reset etc is the first time you try to stream I think..
+> 
+> Definitely a good idea to probe for your sensor in probe failing the 
+> probe if you can't find the hardware.
 
-Best regards,
 -- 
-Jens Axboe
+Regards,
 
-
-
+Laurent Pinchart
 
