@@ -1,280 +1,126 @@
-Return-Path: <linux-kernel+bounces-731852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 683A2B05A93
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:49:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 695BAB05A94
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E39811AA600A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:49:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96B4516B228
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05AF822A1C5;
-	Tue, 15 Jul 2025 12:49:33 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F23A212B1E;
+	Tue, 15 Jul 2025 12:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="jUtyGAhb"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA231EF09D;
-	Tue, 15 Jul 2025 12:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E8A19E971
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 12:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752583772; cv=none; b=NAVEGRQWLheSAkAxaK/nGqbcMih87FRlVr6kBTXBkpwFn5sKnmYkTJWAi+8wHcV08U5oWa4eRLMrv2AcCnufjqFYUXVPMg1xgLJ8u5pqthT4aYip+gTKPkMF3rr0YQnmJtqd/QhmYSlbNESYItr0JgEYP6XqZrn45WtbH3ZrDaI=
+	t=1752583813; cv=none; b=YjQP+J3AxHxLvXgBvkZ8dfkeRuvaqaDTxI9JrCq0sCMxbUgnNvGpvzIhRAmXYDXZ4Kwq+taY+GpuCs+WesJvT/0o4kfQam9O09fcsXVG9KLMzUpqNOUagPIBLrtOmBC39xrledL/n2ac6oMZ92vnNZSX0FVZ6qmhnrfct38mwJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752583772; c=relaxed/simple;
-	bh=v4S/Fj4BA1B8viFWJqUTH7JyIKCD1bp3x1HwshUmh5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sl1nJIbOo69nTCULldGzW4XSZ47c/GBKCywIuAR5ZLUH30jl2YgWs0l7pRDvnSj5bMjhga3P592NZt+w52UUTkw36rvZwOg+Ly/Wb74B07XCtzTh5fYmKaVSr37Bd6hetpw71yDEwGfIQq1rRFNVUXu6E61Fep47xyzPnxIFe60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id E51E814048D;
-	Tue, 15 Jul 2025 12:49:20 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id 6CF6F2E;
-	Tue, 15 Jul 2025 12:49:16 +0000 (UTC)
-Date: Tue, 15 Jul 2025 08:49:32 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
- <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
- Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
- E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
- Jens Remus <jremus@linux.ibm.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
- Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Sam
- James <sam@gentoo.org>
-Subject: Re: [PATCH v13 10/14] unwind: Clear unwind_mask on exit back to
- user space
-Message-ID: <20250715084932.0563f532@gandalf.local.home>
-In-Reply-To: <20250715102912.GQ1613200@noisy.programming.kicks-ass.net>
-References: <20250708012239.268642741@kernel.org>
-	<20250708012359.345060579@kernel.org>
-	<20250715102912.GQ1613200@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752583813; c=relaxed/simple;
+	bh=di0ohBHfH5sSiIWcky5I5MaBF2e0L1BAjcaSUbvknF8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oMcf6O9SEwiii/VlJdBO1KyjRWt+0HzRmKvorkhiFKcSl70qrIkgI0buwhIe6ELNdYwLamsZQNILBTS6zHzQ0ZQcjcIg6tqj5ykkJj5XJuen8W0mecz+AcwCvXz8qcf7GNOevyTN3jXR7Mr+6zyvH3M0KDlhidPimqTS6vCWcQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=jUtyGAhb; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1752583809;
+	bh=di0ohBHfH5sSiIWcky5I5MaBF2e0L1BAjcaSUbvknF8=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=jUtyGAhbQ3zqPwaLTznc70INSfnIQmQI+FsGQLP+LdQr9/ixOlqtENq4NNJntcNBA
+	 ZRcy3v5gZX5jnDQxqNWsetgigE1Mundn9Z3FLWdOD+cB7gfGBC7RMtNRE2OXl5MiSG
+	 Cxd4mNFaSUl3FBd7p00LwJ03MxqoL0qt0UPh7ka8=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 9B3891C012D;
+	Tue, 15 Jul 2025 08:50:09 -0400 (EDT)
+Message-ID: <9f6700d1fb62da8ce633f755b0c9e2d5c2704825.camel@HansenPartnership.com>
+Subject: Re: [RFC] LTTng upstreaming next steps
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Steven Rostedt
+ <rostedt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Christoph Hellwig <hch@infradead.org>, "Masami Hiramatsu (Google)"
+ <mhiramat@kernel.org>,  Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
+ <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,  linux-kernel
+ <linux-kernel@vger.kernel.org>
+Date: Tue, 15 Jul 2025 08:50:08 -0400
+In-Reply-To: <20250715052459.0000e119@gandalf.local.home>
+References: <b554bfa3-d710-4671-945b-5d6ec49e52cd@efficios.com>
+	 <CAHk-=wiT9Cz+EbbuKozqiu7DnZQ7ftAWSmGf-xy_CdhJPCsNSg@mail.gmail.com>
+	 <20250714162750.45b12314@gandalf.local.home>
+	 <20250714163755.1de132e9@gandalf.local.home>
+	 <CAHk-=wgZ=Ssx4qoeuaHet1vx+8M36j0a3q2aw5ePapWm=KnSfQ@mail.gmail.com>
+	 <20250715052459.0000e119@gandalf.local.home>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 6CF6F2E
-X-Stat-Signature: yexnwodxqt8ue8qfospadikka56s95yg
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/5/yy+laR4mZJUfsHY6UE/+evDZ7yBUf0=
-X-HE-Tag: 1752583756-570069
-X-HE-Meta: U2FsdGVkX18fnfS/TIlTqvL0E56yXq4ZGQ0F2sReWnZxhLcuy1yIV/H05NVLJWnU8vpPUs0HnzYeoh0U9gZ58X8dP4xI4zBA+8Br1N/Ly7TiLMFS5cSFrbZJBmPd/m1SDhMpqhPzGZrNZqA8LanxDYWAPaV3swXW8UMfsqOhD9ZDQVyhbc/lYf4dLxZFiqqHQEpyafUDvpON44zdzVPAqjUqwD05syVrERn1HPadhi7oyFl41oegTfk99eqYWqYKIKLbP8SE8gJV+Bu7cs3oWCRqAyxnufqP16QCFQHMI7zhsxb4U5WsKlXGEAWaREcdM4e8dGCsWWlEcxoHXHD3GIs9MfAV60QbNbL5LhMeLJnJ+nUV1g3holoyV6IujN4n
 
-On Tue, 15 Jul 2025 12:29:12 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On Tue, 2025-07-15 at 05:24 -0400, Steven Rostedt wrote:
+> On Mon, 14 Jul 2025 14:04:38 -0700
+> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+[...]
+> > If people can unify this and merge it incrementally, that's one
+> > thing.
+> >=20
+> > Until then, you're just making stuff up.
+> >=20
+> > "Show me the code", in other words.
+>=20
+> We'd love to, but how is one to merge code in incremental steps when
+> they are not allowed to use the current infrastructure?
+>=20
+> LTTng being out of tree means it is only allowed to use
+> EXPORT_SYMBOL_GPL() functions as it must be a module. Perf, ftrace
+> and BPF are all 100% in-tree and has no modules so they do not
+> require any EXPORT_SYMBOL_GPL() to use the current infrastructure.
+>=20
+> This is the main difference between an external tracer and an
+> external driver. That's because other in-tree drivers and file
+> systems all have a module component. If ftrace, perf and BPF were
+> modules, it would require the infrastructure they use to all be
+> defined as EXPORT_SYMBOL_GPL().  This makes LTTng have a huge
+> disadvantage as those are not modules and the interface they use are
+> not exported.  This makes LTTng have a huge disadvantage as those are
+> not modules and the interface they use are not exported.
 
-> On Mon, Jul 07, 2025 at 09:22:49PM -0400, Steven Rostedt wrote:
-> > diff --git a/include/linux/unwind_deferred.h b/include/linux/unwind_deferred.h
-> > index 12bffdb0648e..587e120c0fd6 100644
-> > --- a/include/linux/unwind_deferred.h
-> > +++ b/include/linux/unwind_deferred.h
-> > @@ -18,6 +18,14 @@ struct unwind_work {
-> >  
-> >  #ifdef CONFIG_UNWIND_USER
-> >  
-> > +#define UNWIND_PENDING_BIT	(BITS_PER_LONG - 1)
-> > +#define UNWIND_PENDING		BIT(UNWIND_PENDING_BIT)  
-> 
-> Since it really didn't matter what bit you took, why not take bit 0?
+What's wrong with doing this the other way around?  i.e. making ftrace
+and perf modules?  That way you could legitimately export the symbol
+you're asking about and there would be way less out-of-tree
+disadvantage to LTTng?  I know a lot of cloud people who would be
+really happy if the tracing infrastructure were modular because it
+would save us from having to boot different kernels to do in depth
+problem analysis for otherwise locked down environments, so they might
+be willing to invest in upstream development to help you achieve this.
 
-I was worried about it affecting the global unwind_mask test, but I guess
-bit zero works too. In fact, I think I could just set the PENDING and USED
-(see next patch) bits in the global unwind mask as being already "used" and
-then change:
+Regards,
 
-	/* See if there's a bit in the mask available */
-	if (unwind_mask == ~(UNWIND_PENDING|UNWIND_USED))
-		return -EBUSY;
+James
 
-Back to:
-
-	/* See if there's a bit in the mask available */
-	if (unwind_mask == ~0UL)
-		return -EBUSY;
-
-> 
-
-
-> >  /*
-> >   * This is a unique percpu identifier for a given task entry context.
-> >   * Conceptually, it's incremented every time the CPU enters the kernel from
-> > @@ -143,14 +148,17 @@ static void unwind_deferred_task_work(struct callback_head *head)
-> >  	struct unwind_task_info *info = container_of(head, struct unwind_task_info, work);
-> >  	struct unwind_stacktrace trace;
-> >  	struct unwind_work *work;
-> > +	unsigned long bits;
-> >  	u64 cookie;
-> >  	int idx;
-> >  
-> > -	if (WARN_ON_ONCE(!local_read(&info->pending)))
-> > +	if (WARN_ON_ONCE(!unwind_pending(info)))
-> >  		return;
-> >  
-> > -	/* Allow work to come in again */
-> > -	local_set(&info->pending, 0);
-> > +	/* Clear pending bit but make sure to have the current bits */
-> > +	bits = READ_ONCE(info->unwind_mask);
-> > +	while (!try_cmpxchg(&info->unwind_mask, &bits, bits & ~UNWIND_PENDING))
-> > +		;  
-> 
-> We have:
-> 
-> 	bits = atomic_long_fetch_andnot(UNWIND_PENDING, &info->unwind_mask);
-> 
-> for that. A fair number of architecture can actually do this better than
-> a cmpxchg loop.
-
-Thanks, I didn't know about that one.
-
-> 
-> >  
-> >  	/*
-> >  	 * From here on out, the callback must always be called, even if it's
-> > @@ -166,10 +174,8 @@ static void unwind_deferred_task_work(struct callback_head *head)
-> >  	idx = srcu_read_lock(&unwind_srcu);
-> >  	list_for_each_entry_srcu(work, &callbacks, list,
-> >  				 srcu_read_lock_held(&unwind_srcu)) {
-> > -		if (test_bit(work->bit, &info->unwind_mask)) {
-> > +		if (test_bit(work->bit, &bits))
-> >  			work->func(work, &trace, cookie);
-> > -			clear_bit(work->bit, &info->unwind_mask);
-> > -		}
-> >  	}
-> >  	srcu_read_unlock(&unwind_srcu, idx);
-> >  }
-> > @@ -194,15 +200,17 @@ static void unwind_deferred_task_work(struct callback_head *head)
-> >   * because it has already been previously called for the same entry context,
-> >   * it will be called again with the same stack trace and cookie.
-> >   *
-> > - * Return: 1 if the the callback was already queued.
-> > - *         0 if the callback successfully was queued.
-> > + * Return: 0 if the callback successfully was queued.
-> > + *         UNWIND_ALREADY_PENDING if the the callback was already queued.
-> > + *         UNWIND_ALREADY_EXECUTED if the callback was already called
-> > + *                (and will not be called again)
-> >   *         Negative if there's an error.
-> >   *         @cookie holds the cookie of the first request by any user
-> >   */  
-> 
-> Lots of babbling in the Changelog, but no real elucidation as to why you
-> need this second return value.
-> 
-> AFAICT it serves no real purpose; the users of this function should not
-> care. The only difference is that the unwind reference (your cookie)
-> becomes a backward reference instead of a forward reference. But why
-> would anybody care?
-
-Older versions of the code required it. I think I can remove it now.
-
-> 
-> Whatever tool is ultimately in charge of gluing humpty^Wstacktraces back
-> together again should have no problem with this.
-> 
-> >  int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
-> >  {
-> >  	struct unwind_task_info *info = &current->unwind_info;
-> > -	long pending;
-> > +	unsigned long old, bits;
-> >  	int bit;
-> >  	int ret;
-> >  
-> > @@ -225,32 +233,52 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
-> >  
-> >  	*cookie = get_cookie(info);
-> >  
-> > -	/* This is already queued */
-> > -	if (test_bit(bit, &info->unwind_mask))
-> > -		return 1;
-> > +	old = READ_ONCE(info->unwind_mask);
-> > +
-> > +	/* Is this already queued */
-> > +	if (test_bit(bit, &old)) {
-> > +		/*
-> > +		 * If pending is not set, it means this work's callback
-> > +		 * was already called.
-> > +		 */
-> > +		return old & UNWIND_PENDING ? UNWIND_ALREADY_PENDING :
-> > +			UNWIND_ALREADY_EXECUTED;
-> > +	}
-> >  
-> > -	/* callback already pending? */
-> > -	pending = local_read(&info->pending);
-> > -	if (pending)
-> > +	if (unwind_pending(info))
-> >  		goto out;
-> >  
-> > +	/*
-> > +	 * This is the first to enable another task_work for this task since
-> > +	 * the task entered the kernel, or had already called the callbacks.
-> > +	 * Set only the bit for this work and clear all others as they have
-> > +	 * already had their callbacks called, and do not need to call them
-> > +	 * again because of this work.
-> > +	 */
-> > +	bits = UNWIND_PENDING | BIT(bit);
-> > +
-> > +	/*
-> > +	 * If the cmpxchg() fails, it means that an NMI came in and set
-> > +	 * the pending bit as well as cleared the other bits. Just
-> > +	 * jump to setting the bit for this work.
-> > +	 */
-> >  	if (CAN_USE_IN_NMI) {
-> > -		/* Claim the work unless an NMI just now swooped in to do so. */
-> > -		if (!local_try_cmpxchg(&info->pending, &pending, 1))
-> > +		if (!try_cmpxchg(&info->unwind_mask, &old, bits))
-> >  			goto out;
-> >  	} else {
-> > -		local_set(&info->pending, 1);
-> > +		info->unwind_mask = bits;
-> >  	}
-> >  
-> >  	/* The work has been claimed, now schedule it. */
-> >  	ret = task_work_add(current, &info->work, TWA_RESUME);
-> > -	if (WARN_ON_ONCE(ret)) {
-> > -		local_set(&info->pending, 0);
-> > -		return ret;
-> > -	}
-> >  
-> > +	if (WARN_ON_ONCE(ret))
-> > +		WRITE_ONCE(info->unwind_mask, 0);
-> > +
-> > +	return ret;
-> >   out:
-> > -	return test_and_set_bit(bit, &info->unwind_mask);
-> > +	return test_and_set_bit(bit, &info->unwind_mask) ?
-> > +		UNWIND_ALREADY_PENDING : 0;
-> >  }  
-> 
-> This is some of the most horrifyingly confused code I've seen in a
-> while.
-> 
-> Please just slow down and think for a minute.
-> 
-> The below is the last four patches rolled into one. Not been near a
-> compiler.
-
-Are you recommending that I fold those patches into one?
-
-I'm fine with that. Note, part of the way things are broken up is because I
-took Josh's code and built on top of his work. I tend to try not to modify
-someone else's code when doing that and make building blocks of each stage.
-
-Also, it follows the way I tend to review code. Which is to take the entire
-patch set, apply it, then look at each patch compared to the final result.
-
-That probably explains why my patch series is confusing for you, as it was
-written more for the way I review. Sorry about that.
-
--- Steve
 
