@@ -1,150 +1,121 @@
-Return-Path: <linux-kernel+bounces-731900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D191DB05BFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:26:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38904B05C3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4216740017
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:23:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D27853A16AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41BE2E3395;
-	Tue, 15 Jul 2025 13:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A6A2E62CE;
+	Tue, 15 Jul 2025 13:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ylZ6l0lR"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W3hrbTAd"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FBFD2E2F0F;
-	Tue, 15 Jul 2025 13:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B282E5B06;
+	Tue, 15 Jul 2025 13:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752585803; cv=none; b=BhCdFFMyKYA4K+VT5wX5Y2xWdGka4KBYa/TTsXRglL4b6H4jv57m89ZXedxlvak5HhthLRTQzag2j4lyZREym6sGS+btQc4jdQN1fRYX58lfY6QLwWVUMZAizhDf2arJzR1vna3JS56//LRsBoxfgXle94wCEFIddhgWowsaVk4=
+	t=1752585852; cv=none; b=ElyShK543CIBMcyJUhpNMUdMOyY6ebuG+HTk7v24pbVUoWjDpw5tTTvDsZfI+0qVlI4GXxPa60FkoOla56awtkcq9kZACuzihYhNx0r712HG81Q99b9LaeXJ70wq9dcmI7Xnt6IFSKZMLPFl7NdHndWso4im9GiFygOQ1KWeRPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752585803; c=relaxed/simple;
-	bh=aY6ZaG5WJYdCxl0AClIrPZMwSFXEQcXvsxkGjAF8aAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QeVEW7zehNd5DdIF2CfPLsuORKiqT5DLFbwDrs2Hr9+xriidl3r1yx/4XsHsdI9VaEG+B96bAvV1oPqsrE2MclyNMqV0BOJtg/typSCbWk947dYw4cjpQUb3BS4wUPNLxbaF8Z0KY46/ctFiX0MS58kBkl4IKw5t4CPPR8LvZL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ylZ6l0lR; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ViDPxI/KxGr7NADEG4gWhmQ263UIueGoq3NzkFo2Nl0=; b=ylZ6l0lRmi2YdHKCYUYwpbUh3a
-	jcbZcCpnHItIyk68/FBkomJjoLU9j7mpQ82fcYzswPIaVP7Lnj512tVWd7mNMQuexziaoJVHJ0fVh
-	oUQD3aVqd5e1nfI3SvxDeglHIE8n7iKVCkL1fnMmpnyu9lG8zZpmVjxHfy4qVEtxcpGA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ubfck-001a8I-Ub; Tue, 15 Jul 2025 15:23:10 +0200
-Date: Tue, 15 Jul 2025 15:23:10 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v3 1/3] net: netdevsim: Add PHY support in
- netdevsim
-Message-ID: <9c30b1ab-95fe-4238-950e-23bbd1bb1632@lunn.ch>
-References: <20250710062248.378459-1-maxime.chevallier@bootlin.com>
- <20250710062248.378459-2-maxime.chevallier@bootlin.com>
- <560e7969-b859-45ed-b368-350a62cec678@lunn.ch>
- <20250715080532.07883d74@fedora.home>
+	s=arc-20240116; t=1752585852; c=relaxed/simple;
+	bh=hJs2Tx12AhStRuVCGZs1ahFFxS9sjYhF28qp/H8h42Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H6d2htuudNypqCS15vMoScomm7XB3ETxQgU4FdZEaGnQ0EJqK7K334QaTePh/phCcyJZ5HXyPj1FBY7HkGnlx3Xh5dpcTHE9WWlydWswmobs6i+O/y7SGXlH++aferkGr9j34w2qKOB9oSsferZ6J3DNM2KoMRfIN+CalfBE+4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W3hrbTAd; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32b4876dfecso65278351fa.1;
+        Tue, 15 Jul 2025 06:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752585849; x=1753190649; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=puBkZe6ZLP/QGTaKOMgF9k4UNRq2jZxxdkE9m753KvA=;
+        b=W3hrbTAdetq9OnVfXCUQegBshcKRgEtF4wRL9D0pheIV6r/2/DbXrF0gOMcZxTFKw8
+         1d51EcmahvWQcHhddnkYmCdFPF/GiVv2wQkFVYDgFdKPoQiF+0ELKAGbBXvkm30fkbJ+
+         tIImGdlAKJT6FIZvkheGk++590SXB/on8yI4UN8LhycJIl5fgKnK2bQAVn9SYhLE0P2f
+         aPTrwjoaVROPOogXs8B5/gbouEJW6TWczEcrers4O56yhabTwuKqiC+lXI6y9K6mmnCe
+         cMMjHw+lg2LUDu6tIkHbAOJ/ENPouCQrPxoWal5Mi07PF/apceWOwyhRU8YJyOCmfJgi
+         0FBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752585849; x=1753190649;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=puBkZe6ZLP/QGTaKOMgF9k4UNRq2jZxxdkE9m753KvA=;
+        b=g/N1NRtOj6zlK0V2EIcbOOPpczdgJUVl+oueb2498bDmGgw3LmsXenmJ1f/j3vJWy4
+         Xu6xp9ApeoBgUTfjPLzDujX2xfZRFxF5mgwol3PVN3DFsjvcwwaKreQv5MnarbKc5OMs
+         MM5bGA4fVSHnuLRc7g/zzHi2bWbduz/yt5s+2uVbrweShuK2qteN+Y8JA1HB0012CZFk
+         5ou/ZVOnj7RAuyqmisxfc3fLOSK+HY2Q1zcwy2Lwl/eE8hY0BquZgZcrColICwy/tUxB
+         szX+Y2T+Pp/Zvnh6O3W94BAnzomQymS1FUMF9q6iaRpmi9+j6mD8/QfHUIqZlC2G5QfX
+         cPbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUX1kw5HjTaszHdCCHA5tSNszNo2XTzlUjItDtC8OMwhj+U3keq0deaDBwD8Wb5yAxUFZCtlW2B01LCjOw=@vger.kernel.org, AJvYcCWQCfB0UzFk/TDBHk8uaJdlFRpXWdWoZBrYxOr2zOT/w3KRQmMR+ZGHvY+HwmsA7p0AEABkcf3Jcy8URK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPW+rlCSiHygZdFdR0pKRSYx0hCnAXx1BX2wbM6Jv5O8rCbHNW
+	/tW/0sYNGZoeytk/dlOTINoKE8Nzsd0hlr3vC6QlzSIBc64Y3Azj0n/Zx8FnF4NHFzL0WxPIL2U
+	Qmpsw4DVHo/KCCDebeyGDZGf28RYoPRo=
+X-Gm-Gg: ASbGncvvxNFWZ3yRqhjkBsXGYp5+xWkUQlm7d5/+93Q+v7FP356CGsrcWai5ZvDLBEi
+	11PNxQfkPszmTttf3n3VkWNrkshEmno/tHeelHvtvUmHyAK5wKbdq+5GdlWBAbUM4cHg73JEdqJ
+	S5fudZtRpuWy0hp7Z+Ir+b100+9diPbE+sWmzQbKglNm3dUca7xnyiaR2SKfCxLNxDq7bs53Lyn
+	7GHVIJsYQ==
+X-Google-Smtp-Source: AGHT+IHyhgM9GTkj6ufKA4ysSb28NiNtRNmpxfHePlNkbW+SDylrwHOU1wSPErQE40fSVHRPCwqv5mVSW0wvtXQD2qo=
+X-Received: by 2002:a2e:a984:0:b0:329:136e:300f with SMTP id
+ 38308e7fff4ca-330811fd7ddmr10104531fa.13.1752585848880; Tue, 15 Jul 2025
+ 06:24:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715080532.07883d74@fedora.home>
+References: <20250715121839.12987-1-shjy180909@gmail.com> <PN3P287MB1829790FCBF0CFF1F06585728B57A@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+In-Reply-To: <PN3P287MB1829790FCBF0CFF1F06585728B57A@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 15 Jul 2025 16:23:31 +0300
+X-Gm-Features: Ac12FXw4aZaN7rnjjlU4zPnr7LEkkyd1A8yPGqxz66xL1FgOMiNDSbYD9CZrEbs
+Message-ID: <CAHp75VcxKhz_+Kb4Y1qdrYKLrSBEEC0n77ptddSe4TVVtk18-g@mail.gmail.com>
+Subject: Re: [PATCH] media: atomisp: fix trailing block comment style
+To: Tarang Raval <tarang.raval@siliconsignals.io>
+Cc: Michelle Jin <shjy180909@gmail.com>, "andy@kernel.org" <andy@kernel.org>, 
+	"hansg@kernel.org" <hansg@kernel.org>, "mchehab@kernel.org" <mchehab@kernel.org>, 
+	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>, 
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>, 
+	"lkcamp/patches@lists.sr.ht" <lkcamp/patches@lists.sr.ht>, "koike@igalia.com" <koike@igalia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 15, 2025 at 08:05:32AM +0200, Maxime Chevallier wrote:
-> On Sat, 12 Jul 2025 18:54:38 +0200
-> Andrew Lunn <andrew@lunn.ch> wrote:
-> 
-> > > +static int nsim_mdio_read(struct mii_bus *bus, int phy_addr, int reg_num)
-> > > +{
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int nsim_mdio_write(struct mii_bus *bus, int phy_addr, int reg_num,
-> > > +			   u16 val)
-> > > +{
-> > > +	return 0;
-> > > +}  
-> > 
-> > If i'm reading the code correctly, each PHY has its own MDIO bus? And
-> > the PHY is always at address 0?
-> 
-> Yes indeed. 
-> 
-> > Maybe for address != 0, these should return -ENODEV?
-> 
-> That could be done yes, but I don't think this will ever happen as this
-> is only ever going to be used in netdevsim, which also controls the PHY
-> instantiation. I'm OK to add the ENODEV though :)
+On Tue, Jul 15, 2025 at 4:11=E2=80=AFPM Tarang Raval
+<tarang.raval@siliconsignals.io> wrote:
 
-It makes the simulation more realistic. The other option is to return
-0xffff on read, which is what a real MDIO bus would do when you access
-an address without a device.
+...
 
-It currently should not happen, but this is the sort of framework
-which will get expanded with time. So this low hanging fruit could
-avoid issues later.
-
-> For the record, the first draft implementation I had locally used a
-> single MDIO bus on which we could register up to 32 netdevsim PHYs, but
-> that wasn't enough. At some point Jakub pointed me to the case of
-> netlink DUMP requests that would be too large to fit in a single
-> netlink message (default threshold for that is > 4K messages), so to
-> test that with the phy_link_topology stuff, I had to add around 150
-> PHYs...
-
-I'm happy with an MDIO bus per PHY, for the reasons you give.
-
-> > I'm guessing the PHY core is going to perform reads/writes for things
-> > like EEE? And if the MAC driver has an IOCTL handler, it could also do
-> > reads/writes. So something is needed here, but i do wounder if hard
-> > coded 0 is going to work out O.K? Have you looked at what accesses the
-> > core actually does?
-> 
-> I don't see that driver being useful outside of netdevsim, so at
-> least we have a good idea of what the MAC driver will do.
+> >         /* Sensor driver fills ch_id with the id
+> > -          of the virtual channel. */
+> > +        * of the virtual channel.
+> > +        */
 >
-> There'e no ioctl, but we can be on the safe side and stub it a bit more.
-> 
-> From the tests I've been running, I didn't encounter any side-effect
-> but I only tested very simple cases (set link up, run ethtool, etc.)
+> Preferred line length is 80 columns, so I guess.
 
-It is hard to say where this will lead. We have seen bugs with EEE, so
-being able to test that might be interesting to someone. Given that is
-all in the core, that would require implementing the C45 over C22 and
-the EEE registers.
+Yes.
 
-> I've considered re-using swphy for example, and using an emulated MDIO
-> bus for netdevsim PHY, but my fear was that this would in the end get
-> too complex.
+> you can write it in a single line.
 
-Yes, i thought about that too. But i agree, that is the wrong way to
-go. We would end up adding a lot of features to swphy which never get
-used in real system, and potentially had bugs to real systems. An
-emulated PHY for netdevsim might start as a copy/paste of swphy, but i
-would then expect it to quickly diverge.
+/*
+ * Also note that the correct
+ * multi-line comment style is
+ * in this example (with wider lines, of course).
+ */
 
-	Andrew
+--=20
+With Best Regards,
+Andy Shevchenko
 
