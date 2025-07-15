@@ -1,116 +1,139 @@
-Return-Path: <linux-kernel+bounces-731083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25FE8B04EA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:21:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39883B04F17
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AD251AA04B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:21:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCF9F3BF244
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A680F25CC64;
-	Tue, 15 Jul 2025 03:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jtNyAYps"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00C62D0C88;
+	Tue, 15 Jul 2025 03:33:05 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBAE80B;
-	Tue, 15 Jul 2025 03:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136001487F4;
+	Tue, 15 Jul 2025 03:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752549658; cv=none; b=L99j1chjnNOSBeuzab49vmRR3jA+yoQw6Ka7E4cQPYyuEWBEKGko95GGADlDiteC2r0SUVUKakOva50xnqMZL9j98fnzIYw4TGLM+88sw6z3kUrdaUHCFNQ74YLhW7ugy6ZPTkHWFhU7+r7em1FR+sltDdrC0iPvxPHOTQi16EU=
+	t=1752550385; cv=none; b=OITE2h3ugvnwUioPrLch9zhHB9aMVvRbFbujPRw5/Ilwydp8vDKeZi0rj52phH1KlM0QY/ruFVZQUshy01mjr+/wi9tKNmDe6McE9njlPMgr0wQC45I+zxZXdc6cnLh1XNNZh+WVtmpeQCpEpXHR0+lWy3se+Z4Klot5myviAFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752549658; c=relaxed/simple;
-	bh=M6zzaEdA7Yoaj1wVjRWHjo1L/FJpqf9aLpUQOpDIhvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nzhX4Uf1ew9Q6P5MGCTrz+6JzOeJsWlfLQ99jQ8N2fwZpZe04H9J7L7D141Id4zroPJnkaXzMHd08rhWCTe7dWwDaB0yG2R9B819K+nPLUctTLWlEiXxNuLhSCP+ir2+kULueAKeZZJhwhV+nZjLtjIaDeblxgQ3gINcNPSHg04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=jtNyAYps; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752549545;
-	bh=U/ahC+c5V1A9bMBBbUoGlEVMsa+F2/kjHGLLn9AOLWo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=jtNyAYpsFHAV8aOaOVOhpmgitFunB8Mww541v87vvKhSrusWMt5a2m9RuOp10Tysz
-	 4ArdeoSr139Wzqsix27jKIJgOcA7mXGpOHTswf9I4ozkd7YL900bJCCV1bEtIn3WmE
-	 J6KYGxIKiogWQKQXnPlsY9bhymXq2o/2MiGiDgPoCq9NfM5hvKhWsnp7yPLW98ls6G
-	 EuuEoqr9v4StNRRQepyCoFdAQsEI62WBR1jHJXg9GsY/ImHZNS/IGGzArrdCYA3Zbq
-	 T+s1ZUSQCaYJPD6XA0p2h0xMLyVMBxtSO8eJk9VGhL2qlohT71N0MyBNF2dOY0elmA
-	 xgoe3I79XS0QQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bh4Cr4Y2lz4wb0;
-	Tue, 15 Jul 2025 13:19:04 +1000 (AEST)
-Date: Tue, 15 Jul 2025 13:20:51 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Eric Biggers <ebiggers@kernel.org>, "Jason A. Donenfeld"
- <Jason@zx2c4.com>, Ard Biesheuvel <ardb@kernel.org>, Linux Crypto List
- <linux-crypto@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the libcrypto tree with Linus' tree
-Message-ID: <20250715132051.4b4ce028@canb.auug.org.au>
+	s=arc-20240116; t=1752550385; c=relaxed/simple;
+	bh=UJ+ui+6YpbQeBXRY8FDN7OeI2IwWSgW+6ApfXKdlyAE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B94uOa8opq4N16gm481LKSGohmkq3bvZMNL3OtUe26Ir23qEvapOtOnsko6n9SBWyE+QIYCCGFalAxXf3uQTpKsgF+ct23e6tjeJVCrN5iTWXC5wSjSC2S9zrZUPT192QITGqEUn8mvcbnC6wQaXeN9TUnsOgT1wviWmSFRrfSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bh4T84DfTz2TSvn;
+	Tue, 15 Jul 2025 11:30:36 +0800 (CST)
+Received: from kwepemo200008.china.huawei.com (unknown [7.202.195.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 461411400CB;
+	Tue, 15 Jul 2025 11:32:39 +0800 (CST)
+Received: from huawei.com (10.67.175.28) by kwepemo200008.china.huawei.com
+ (7.202.195.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 15 Jul
+ 2025 11:32:38 +0800
+From: Xinyu Zheng <zhengxinyu6@huawei.com>
+To: <mst@redhat.com>, <jasowang@redhat.com>, <pbonzini@redhat.com>,
+	<stefanha@redhat.com>, <virtualization@lists.linux-foundation.org>,
+	<kvm@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <gregkh@linuxfoundation.org>,
+	<stable@vger.kernel.org>
+CC: <zhengxinyu6@huawei.com>
+Subject: [PATCH v5.10 v2] vhost-scsi: protect vq->log_used with vq->mutex
+Date: Tue, 15 Jul 2025 03:21:03 +0000
+Message-ID: <20250715032103.1624084-1-zhengxinyu6@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/yeHmtDZi3DL4jT0QFGbocQw";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemo200008.china.huawei.com (7.202.195.61)
 
---Sig_/yeHmtDZi3DL4jT0QFGbocQw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Dongli Zhang <dongli.zhang@oracle.com>
 
-Hi all,
+[ Upstream commit f591cf9fce724e5075cc67488c43c6e39e8cbe27 ]
 
-Today's linux-next merge of the libcrypto tree got a conflict in:
+The vhost-scsi completion path may access vq->log_base when vq->log_used is
+already set to false.
 
-  arch/s390/crypto/sha1_s390.c
+    vhost-thread                       QEMU-thread
 
-between commit:
+vhost_scsi_complete_cmd_work()
+-> vhost_add_used()
+   -> vhost_add_used_n()
+      if (unlikely(vq->log_used))
+                                      QEMU disables vq->log_used
+                                      via VHOST_SET_VRING_ADDR.
+                                      mutex_lock(&vq->mutex);
+                                      vq->log_used = false now!
+                                      mutex_unlock(&vq->mutex);
 
-  68279380266a ("crypto: s390/sha - Fix uninitialized variable in SHA-1 and=
- SHA-2")
+				      QEMU gfree(vq->log_base)
+        log_used()
+        -> log_write(vq->log_base)
 
-from Linus' tree and commit:
+Assuming the VMM is QEMU. The vq->log_base is from QEMU userpace and can be
+reclaimed via gfree(). As a result, this causes invalid memory writes to
+QEMU userspace.
 
-  377982d5618a ("lib/crypto: s390/sha1: Migrate optimized code into library=
-")
+The control queue path has the same issue.
 
-from the libcrypto tree.
+Cc: stable@vger.kernel.org#5.10.x
+Cc: gregkh@linuxfoundation.org
+Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
+Reviewed-by: Mike Christie <michael.christie@oracle.com>
+Message-Id: <20250403063028.16045-2-dongli.zhang@oracle.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+[ Conflicts in drivers/vhost/scsi.c
+  bacause vhost_scsi_complete_cmd_work() has been refactored. ]
+Signed-off-by: Xinyu Zheng <zhengxinyu6@huawei.com>
+---
+V1 -> V2: Remove unnecessary CVE tag
+ 
+ drivers/vhost/scsi.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
+index a23a65e7d828..fcde3752b4f1 100644
+--- a/drivers/vhost/scsi.c
++++ b/drivers/vhost/scsi.c
+@@ -579,8 +579,10 @@ static void vhost_scsi_complete_cmd_work(struct vhost_work *work)
+ 		ret = copy_to_iter(&v_rsp, sizeof(v_rsp), &iov_iter);
+ 		if (likely(ret == sizeof(v_rsp))) {
+ 			struct vhost_scsi_virtqueue *q;
+-			vhost_add_used(cmd->tvc_vq, cmd->tvc_vq_desc, 0);
+ 			q = container_of(cmd->tvc_vq, struct vhost_scsi_virtqueue, vq);
++			mutex_lock(&q->vq.mutex);
++			vhost_add_used(cmd->tvc_vq, cmd->tvc_vq_desc, 0);
++			mutex_unlock(&q->vq.mutex);
+ 			vq = q - vs->vqs;
+ 			__set_bit(vq, signal);
+ 		} else
+@@ -1193,8 +1195,11 @@ static void vhost_scsi_tmf_resp_work(struct vhost_work *work)
+ 	else
+ 		resp_code = VIRTIO_SCSI_S_FUNCTION_REJECTED;
+ 
++	mutex_lock(&tmf->svq->vq.mutex);
+ 	vhost_scsi_send_tmf_resp(tmf->vhost, &tmf->svq->vq, tmf->in_iovs,
+ 				 tmf->vq_desc, &tmf->resp_iov, resp_code);
++	mutex_unlock(&tmf->svq->vq.mutex);
++
+ 	vhost_scsi_release_tmf_res(tmf);
+ }
+ 
+-- 
+2.34.1
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/yeHmtDZi3DL4jT0QFGbocQw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh1yRMACgkQAVBC80lX
-0Gz8YQf+Lc0kbHvsXNgmk9e/BdVXxff4M5cY1sdAq5uUtjpibKXlMY/rTHA5vyoC
-ewgs8jfiM6OqEQjUqVtyur7Dg2YyTIhvhObc1UQ/vYN9eQfA+IRuE6KCW1eP8lTj
-ILoLy/1nG/r8TfE1Jqkt8EYuwBBC+7A8ExnZ3DfTRPZFeKPYjMtgmT9+4mX9OuQ1
-gZQgfcYElPDQ0jt7so3fchm1eMqjqtlkdu/mNKN7vCc1g5ZPziA/XHRYCXyvvyPt
-tDDd7fHd0FPeMsXs+H4NdsaNhlP7ujWOTI5TM6vTmWVP9WQl9ull6lPPyS7kqamn
-OwF0h2mE39EtqfWbef43SHMP+veueA==
-=jtEL
------END PGP SIGNATURE-----
-
---Sig_/yeHmtDZi3DL4jT0QFGbocQw--
 
