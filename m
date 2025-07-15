@@ -1,128 +1,118 @@
-Return-Path: <linux-kernel+bounces-732120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56032B06252
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:07:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 336C7B06244
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FCA017148D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:02:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BAB53A37B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C606C1FDE09;
-	Tue, 15 Jul 2025 15:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B16201032;
+	Tue, 15 Jul 2025 15:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bpLD4pJf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tBZ9aDzi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u3nVs5JA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658DA1E9919;
-	Tue, 15 Jul 2025 15:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5ED41E9919;
+	Tue, 15 Jul 2025 15:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752591721; cv=none; b=Fq2e9TZABd7VYIASh6fVWUfR4mZ0mh0a99R94LNY5eVT/AYEZSAiBBPyUGGPXtyx1zn3WDsJtcilALjQTpqy9/JsS1OJwq6KWgQ8CmAbebN52WQqpAYONJujUObSi3ZXPdv1BrFmaTcpkJN2pdFOrdz7twWNDSRiUkeOuETno+U=
+	t=1752591746; cv=none; b=RukhKOyPwEDS8k5weBMScdeyZXQ6vxvdP7ho7afFeRksXKw0qO/L+KFo9c8XNOovFVnNYM7hTKhMpjDsVjE1qXgybIpyD91HUaYIQ180RDxc2U7iLMKsNQ/vQIpDqd7rI5YZOFp5r0+gB8+dkkzhviZHf6VI8kUYq+CbQMZzokw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752591721; c=relaxed/simple;
-	bh=PRvkD8XVZv1RvZqERZNXA2sjtIt0PfIn1JIiotXt9JI=;
+	s=arc-20240116; t=1752591746; c=relaxed/simple;
+	bh=exdnCy6Q0C3xztw8Y5wA0w4YeM3tO9kw+ROGW6J34Ko=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CWjHLur3iqhrIdPj21JcTPOL3wtjjLSYdIQKkFI9GWWFZbeiPIO6rRm99/eUaepKmY0mWzyCMM3WTThfsJCFpfl5U55CNGcOl9tUuohdtiveUI3wS28araDlp8UsaCHmOShXQ+ygNDJvZ0+o8+oo7Wv+hKC8KIT6sWVoR/t9BAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bpLD4pJf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tBZ9aDzi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Jul 2025 17:01:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752591717;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wRUwhx3/O+f9RFnLnKg1E1i1cjkfzjTWs1h01zmf0fo=;
-	b=bpLD4pJfc5EQiK9rQ0hId+EfUWeAR8TSXkTmwWrZNaoR0IfKEQOzAUQuTDZ2Ixt/RzqDDM
-	5lNWTvKrIhTb0WM3J1ql9i7LMT+NMVyIe6NrqU69V8uSmiicqHqn7OaC7k59bBBNfnxA94
-	C3geNwX6xQxnaGlG/BL+LWeP2jmAtivaxoVdJKTXHd6FjWLn/MleZjvDI9MqOlAC7Yh2X9
-	PbaU56Eg0qHZ2Ub+0BVhMjf+vwkBM0n5nPs/hkugP2JKboHNfpxnQHqkchuyZ+oTPok34J
-	2HhWrqv2uYhyUHavjUay4DKrQuBwYcmBNAomF0wKgI5UONmZxZym98ZhpKm2yA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752591717;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wRUwhx3/O+f9RFnLnKg1E1i1cjkfzjTWs1h01zmf0fo=;
-	b=tBZ9aDzilEg1BSc7YzrTjS16MgykLcAud6I6R5cIihhZVN73cBJm69EotHnN9zjQjOpELE
-	auTSrfZP6p0jBZCQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v3 09/17] tools/dot2c: Fix generated files going over 100
- column limit
-Message-ID: <20250715150156.QXAD4dZl@linutronix.de>
-References: <20250715071434.22508-1-gmonaco@redhat.com>
- <20250715071434.22508-10-gmonaco@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=j62E4IzItlB0YzpWZ8vYjpbLz4ppI3rsTwHlIscwJVprhMMLsfxTdIzFygGD2S9Qk9U8rx7K+61aybqfHFmL0d3gI4UTaTfxI0doZkFKu+hkeg4JYmbubCLR+rhSBAIOdjNumG4g4CQOSfQ1qawNQvjtOOY5cJNNlQa1CI6DgmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u3nVs5JA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A969C4CEE3;
+	Tue, 15 Jul 2025 15:02:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752591745;
+	bh=exdnCy6Q0C3xztw8Y5wA0w4YeM3tO9kw+ROGW6J34Ko=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u3nVs5JArxYZr5IH2Ok+/K4hHyHoWBVdGIoU6WY8tNh0eZVhrimCIIocOoTFKgPJd
+	 ZY8KvLnsN9tFCaasqmMFKfi17RPbEEOvbvE1XJIf72g/np8VLh7I+KENFzR+c6mJ1/
+	 lREjBaJpi3lTbwvoKrglymKwsd2cFD6hR2i+eNWA11UDOgOzp+dBD2/d1FHvGiZMOO
+	 7smub8SEg4+w2NOnrTOBV8tyvOb5iUl/7hAf/J63avI/ml4S8tKpDgM6GIPX8N/Qqe
+	 0PRTfmcpzkLp+wV/p2hKVJhMhgdC9QZH8kjTRduAUoGsgh6ImOHdA7WFvZKdPrx1Pm
+	 mBI+wFd67+pHw==
+Date: Tue, 15 Jul 2025 10:02:24 -0500
+From: Rob Herring <robh@kernel.org>
+To: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Gatien Chevallier <gatien.chevallier@foss.st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Le Goffic <legoffic.clement@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 06/16] arm64: dts: st: add LPDDR channel to
+ stm32mp257f-dk board
+Message-ID: <20250715150224.GA1319886-robh@kernel.org>
+References: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
+ <20250711-ddrperfm-upstream-v2-6-cdece720348f@foss.st.com>
+ <20250715032020.GB4144523-robh@kernel.org>
+ <ae960a16-65ad-4b22-b9fb-89efbffacd3e@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250715071434.22508-10-gmonaco@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ae960a16-65ad-4b22-b9fb-89efbffacd3e@foss.st.com>
 
-On Tue, Jul 15, 2025 at 09:14:26AM +0200, Gabriele Monaco wrote:
-> From: Nam Cao <namcao@linutronix.de>
-
-You seem to take a slightly different solution. Feel free to take my name
-off the author field, Co-developed-by: or Suggested-by: would be fine. It's
-up to you, doesn't really matter to me.
-
-> The dot2c.py script generates all states in a single line. This breaks the
-> 100 column limit when the state machines are non-trivial.
+On Tue, Jul 15, 2025 at 10:32:09AM +0200, Clement LE GOFFIC wrote:
+> Hi Rob,
 > 
-> Change dot2c.py to generate the states in separate lines in case the
-> generated line is going to be too long.
+> Thanks for the review !
 > 
-> Co-authored-by: Gabriele Monaco <gmonaco@redhat.com>
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> ---
->  tools/verification/rvgen/rvgen/dot2c.py | 19 ++++++++++---------
->  1 file changed, 10 insertions(+), 9 deletions(-)
+> On 7/15/25 05:20, Rob Herring wrote:
+> > On Fri, Jul 11, 2025 at 04:48:58PM +0200, Clément Le Goffic wrote:
+> > > Add 32bits LPDDR4 channel to the stm32mp257f-dk board.
+> > > 
+> > > Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+> > > ---
+> > >   arch/arm64/boot/dts/st/stm32mp257f-dk.dts | 7 +++++++
+> > >   1 file changed, 7 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/st/stm32mp257f-dk.dts b/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
+> > > index a278a1e3ce03..a97b41f14ecc 100644
+> > > --- a/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
+> > > +++ b/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
+> > > @@ -54,6 +54,13 @@ led-blue {
+> > >   		};
+> > >   	};
+> > > +	lpddr_channel: lpddr4-channel {
+> > > +		#address-cells = <1>;
+> > > +		#size-cells = <0>;
+> > > +		compatible = "jedec,lpddr4-channel";
+> > 
+> > Not tested because this doesn't match the binding.
 > 
-> diff --git a/tools/verification/rvgen/rvgen/dot2c.py b/tools/verification/rvgen/rvgen/dot2c.py
-> index 6009caf568d92..5216d98ae21c8 100644
-> --- a/tools/verification/rvgen/rvgen/dot2c.py
-> +++ b/tools/verification/rvgen/rvgen/dot2c.py
-> @@ -152,28 +152,29 @@ class Dot2c(Automata):
->          max_state_name = max(self.states, key = len).__len__()
->          return max(max_state_name, self.invalid_state_str.__len__())
->  
-> -    def __get_state_string_length(self):
-> -        maxlen = self.__get_max_strlen_of_states() + self.enum_suffix.__len__()
-> -        return "%" + str(maxlen) + "s"
-> -
->      def get_aut_init_function(self):
->          nr_states = self.states.__len__()
->          nr_events = self.events.__len__()
->          buff = []
->  
-> -        strformat = self.__get_state_string_length()
-> -
-> +        maxlen = self.__get_max_strlen_of_states() + len(self.enum_suffix)
-> +        # account for tabs and spaces/punctuation for each event
-> +        linetoolong = 16 + (maxlen + 3) * nr_events >= self.line_length
+> Hmm, I've tested with make dtbs_check and dt_binding_check and it didn't
+> complain on my side.
+> What I have miss ?
 
-I managed to figure out 16 is the indentation. But I failed to understand
-where is this '3' from.
+Oh wait, we already have a binding for that. I was confused with your 
+adding "jedec,ddr4-channel". Sorry for the noise.
 
-Can you please add some comments for these magic numbers? Or better, assign
-them to variables with self-explanatory names.
-
-Best regards,
-Nam
+Rob
 
