@@ -1,113 +1,133 @@
-Return-Path: <linux-kernel+bounces-731492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD907B05521
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:40:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53AF7B054FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49F573A6AE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:39:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A2EB4A6CE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E632C3277;
-	Tue, 15 Jul 2025 08:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486C2275B07;
+	Tue, 15 Jul 2025 08:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=czerwinskis.de header.i=@czerwinskis.de header.b="taQo9BVx";
-	dkim=pass (1024-bit key) header.d=czerwinskis.de header.i=@czerwinskis.de header.b="hUIJ8oau"
-Received: from magratgarlick.emantor.de (magratgarlick.emantor.de [78.46.208.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="JbZT+DzJ"
+Received: from r3-17.sinamail.sina.com.cn (r3-17.sinamail.sina.com.cn [202.108.3.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB88275B13;
-	Tue, 15 Jul 2025 08:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.208.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E61231A30
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752568806; cv=none; b=uQ3286iat5yNc70ENFbmXxSmgX/v9Hi84LiOP/FYZFKbax5HSwJEDAltO7xPhhVsiVpHHJ/rsfqCSk0wLBOjIxhcVlkKK2RMzMM9ioHYHtO4JKzegMs65bPRqvBLd8vrn9/6fgjM+QRThizXThGyqiqhxHBYWB7hQOkwSTANuOQ=
+	t=1752568343; cv=none; b=ks/k9iBchCV9TnKws8SVB9PiforMtY90+MW4pb3oUplaurxXUoZCNm1jSFTq1ZXKube3LmQpKHRAHoGmd1uDZh5QEkRbLNe8S7xjQ5nNFAE2ycnbg6TTpQjscwtuFRFv7m2iATVeM5uuhA9UfF/p9BsIbVAnSq4o4DG5inshap4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752568806; c=relaxed/simple;
-	bh=c2ZEHMeZfe6fEzZ6fh4sObpArfyz/YrkzC7XMHsOx5A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=H9G4C/tgVo8K9GmjU0QT/1023jIO5qdDgQm/4SC40zrelSXKXXggXziKvV3WVMRqer0lD7ZQykXourk6keCKZKuijL7njmDxVotwvRAYO8V6Zcjganm14/8vE31I5Tdo1k907Viio6N0ySjslqKK2jqlzKgeySa/zyzZa+1WZB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=czerwinskis.de; spf=pass smtp.mailfrom=czerwinskis.de; dkim=pass (1024-bit key) header.d=czerwinskis.de header.i=@czerwinskis.de header.b=taQo9BVx; dkim=pass (1024-bit key) header.d=czerwinskis.de header.i=@czerwinskis.de header.b=hUIJ8oau; arc=none smtp.client-ip=78.46.208.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=czerwinskis.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=czerwinskis.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=czerwinskis.de;
-	s=mail; t=1752568238;
-	bh=c2ZEHMeZfe6fEzZ6fh4sObpArfyz/YrkzC7XMHsOx5A=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=taQo9BVxoyuM803H0JTTxnLID0RKV5apUSbDpBxSoUa1+2NEZjS1xJWawZ7dy45yg
-	 3FwP+cJKZBZFZ2Pse1MpDy93GdGlS3FtKKIUBn/0mZP0RMSvj2HiXa36MPWAaBB6zK
-	 B3AWSwnv114PeHjOWVJ8H9PUNz+Iyk29NoWQUn1E=
-Received: by magratgarlick.emantor.de (Postfix, from userid 114)
-	id BB6D598507; Tue, 15 Jul 2025 10:30:38 +0200 (CEST)
-X-Spam-Level: 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=czerwinskis.de;
-	s=mail; t=1752568237;
-	bh=c2ZEHMeZfe6fEzZ6fh4sObpArfyz/YrkzC7XMHsOx5A=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=hUIJ8oaupDj/pg8SMu9UEqJffK/2JFQcvFbzSJBsGH/Lrj1nEFpy3woDlm2olZRTM
-	 Sz7CKuu9gppuzzEMQAoxYUJmCVsUFmW7s0Hbw0cktF5OkMGoE+PmXIvHkvM1ookpan
-	 COUh8Tl3YktWvDfGWTdnhQP4RPnEWqACXp0uV3VY=
-Received: from [IPv6:2001:9e8:6964:2e01:36bc:e97d:1177:d80c] (unknown [IPv6:2001:9e8:6964:2e01:36bc:e97d:1177:d80c])
-	by magratgarlick.emantor.de (Postfix) with ESMTPSA id 2EFD5984F8;
-	Tue, 15 Jul 2025 10:30:37 +0200 (CEST)
-Message-ID: <8862907338725d48e4966993e639f680d59156ad.camel@czerwinskis.de>
-Subject: Re: [PATCH 1/2] brcmfmac: remove unreachable poll mode for sdio
-From: Rouven Czerwinski <rouven@czerwinskis.de>
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Cc: kernel@pengutronix.de, linux-wireless@vger.kernel.org, 
-	brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 15 Jul 2025 10:30:36 +0200
-In-Reply-To: <197eae1ad60.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-References: <20250621112912.180436-1-rouven@czerwinskis.de>
-	 <197eae1ad60.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 
+	s=arc-20240116; t=1752568343; c=relaxed/simple;
+	bh=tmiGnu0O8rYD6Z496eKDdB/Wlu16erEn+MOul+XC1T4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=i7e0NATVn+3IhnmAUSekPQxO4+AhHho+TjQIqSnmvmhEtBeMUKIQPel7mUfbcgtpc57guve18k6zVDCda+NMPbHCiYHhZL+TTTpk/KWuIZ03hF6pbuTHzFdScjxk1/wX6WGdbgBKcdGxPC/REaY8iaNW6DlWpUa8It8aEqYaUxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=JbZT+DzJ; arc=none smtp.client-ip=202.108.3.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752568337;
+	bh=TY7vP3lmomv//3V00HDQytvYzTOMjfQoAAeS1EExswY=;
+	h=From:Subject:Date:Message-ID;
+	b=JbZT+DzJSlCpxrJWOpKXC0Q0Ab2tK6Cy8RcuJsCDHsn07ZXnaWuWZaGWSPB/X65lz
+	 D41OEoOYnY8qfVBAN+vZonq0ZOLxGzMJNmxiPx9nzsdP9/f5K5KISMCzH0MhX5cPi4
+	 /Tr0rzJlX+G9VRXSg1cPRXUnyo2U8LCQpQ2OzLiE=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 6876120600003B88; Tue, 15 Jul 2025 16:32:08 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 1967206292042
+X-SMAIL-UIID: DB56772CB597499F8EF1BEF8389F31AF-20250715-163208-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+fde6bd779f78e6e0992e@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bluetooth?] [bcachefs?] KASAN: slab-use-after-free Read in hci_uart_write_work
+Date: Tue, 15 Jul 2025 16:31:56 +0800
+Message-ID: <20250715083157.2117-1-hdanton@sina.com>
+In-Reply-To: <687539cb.a70a0220.18f9d4.0005.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Arend,
+> Date: Mon, 14 Jul 2025 10:09:31 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    3f31a806a62e Merge tag 'mm-hotfixes-stable-2025-07-11-16-1..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=174b07d4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=b309c907eaab29da
+> dashboard link: https://syzkaller.appspot.com/bug?extid=fde6bd779f78e6e0992e
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=127ece8c580000
 
-On Tue, 2025-07-08 at 18:32 +0200, Arend Van Spriel wrote:
-> On June 21, 2025 1:29:17 PM Rouven Czerwinski <rouven@czerwinskis.de>
-> wrote:
->=20
-> > The sdio interface implements an unreachable poll mode. Remove it
-> > since
-> > the code can't be reached, if the poll mode needs to be implemented
-> > it
-> > can simply be resurrected using the usual git means.
->=20
-> Thanks, Rouven
->=20
-> This functionality has been/can be useful so instead of ripping it
-> out I=20
-> would prefer to have a proper knob for it in debugfs.
+#syz test
 
-It's probably easier to make this a module parameter instead, I think
-that live switching may be harder to implement.
-
-That said, I no longer have access to the hardware where this can be
-tested, so I can't continue with this suggestion.
-
-Thanks for the input and Regards,
-Rouven
-
->=20
-> Regards,
-> Arend
->=20
-> > Signed-off-by: Rouven Czerwinski <rouven@czerwinskis.de>
-> > ---
-> > .../broadcom/brcm80211/brcmfmac/sdio.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 48 +---------------
-> > ---
-> > 1 file changed, 2 insertions(+), 46 deletions(-)
->=20
+--- x/drivers/bluetooth/hci_ldisc.c
++++ y/drivers/bluetooth/hci_ldisc.c
+@@ -100,13 +100,9 @@ static inline struct sk_buff *hci_uart_d
+ 	struct sk_buff *skb = hu->tx_skb;
+ 
+ 	if (!skb) {
+-		percpu_down_read(&hu->proto_lock);
+-
+ 		if (test_bit(HCI_UART_PROTO_READY, &hu->flags) ||
+ 		    test_bit(HCI_UART_PROTO_INIT, &hu->flags))
+ 			skb = hu->proto->dequeue(hu);
+-
+-		percpu_up_read(&hu->proto_lock);
+ 	} else {
+ 		hu->tx_skb = NULL;
+ 	}
+@@ -154,6 +150,11 @@ static void hci_uart_write_work(struct w
+ 	/* REVISIT: should we cope with bad skbs or ->write() returning
+ 	 * and error value ?
+ 	 */
++	percpu_down_read(&hu->proto_lock);
++	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags)) {
++		percpu_up_read(&hu->proto_lock);
++		return;
++	}
+ 
+ restart:
+ 	clear_bit(HCI_UART_TX_WAKEUP, &hu->tx_state);
+@@ -179,6 +180,7 @@ restart:
+ 	if (test_bit(HCI_UART_TX_WAKEUP, &hu->tx_state))
+ 		goto restart;
+ 
++	percpu_up_read(&hu->proto_lock);
+ 	wake_up_bit(&hu->tx_state, HCI_UART_SENDING);
+ }
+ 
+@@ -231,9 +233,12 @@ static int hci_uart_flush(struct hci_dev
+ 
+ 	BT_DBG("hdev %p tty %p", hdev, tty);
+ 
++	percpu_down_write(&hu->proto_lock);
+ 	if (hu->tx_skb) {
+-		kfree_skb(hu->tx_skb); hu->tx_skb = NULL;
++		kfree_skb(hu->tx_skb);
++		hu->tx_skb = NULL;
+ 	}
++	percpu_up_write(&hu->proto_lock);
+ 
+ 	/* Flush any pending characters in the driver and discipline. */
+ 	tty_ldisc_flush(tty);
+--
 
