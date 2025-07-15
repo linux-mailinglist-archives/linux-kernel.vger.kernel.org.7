@@ -1,179 +1,178 @@
-Return-Path: <linux-kernel+bounces-732471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1AE5B0674E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:56:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86888B06765
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14B664E0483
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:55:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB3611AA080D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D68F270ECB;
-	Tue, 15 Jul 2025 19:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56C7285CAF;
+	Tue, 15 Jul 2025 20:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oD1gVVFn"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DM849Jji"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2073.outbound.protection.outlook.com [40.107.94.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FD0B672
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 19:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752609359; cv=none; b=JzukflfjXFHyNaqFIp6huGLPVWHo7NKdX9fw/Djw6dAOEkoRER3u0BKZWjHg9Eddy6UcNUISI/9YdSUR/mu6vbbj1sLfKOOBUbTDXfu0CN6O0IxGyVSZtstw+wRvEozB9B+oyr3Zh3KYjo8BQRNsXoCMmFGNBX9Tw4Yjq/vjnBg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752609359; c=relaxed/simple;
-	bh=12q3VCBZrNOc2nq+dHbl5NnMmeNaOvVfPA3h3X1cfRg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=tJ7i1C2f7Xz4LaVGGbmtWK8eM2Z+uKyA4pWPlDHqMRSX6l1twVCU2/plGf/i4rVujXbHsYwOqw6fIyDcpuhvOxuRVIRBmcI36NpbympL1pP8yXMhdT/GjFFkrTxYwMmlA4C8aS/Yj4b9V59YDgh2bZ0mL/RnMKjjvyYDvshX8h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oD1gVVFn; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3ddc99e0b77so46835ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 12:55:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752609357; x=1753214157; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H8NGzdL+oq3HRN7zaWJJ87MC6Pv7VHTg9tCKEmTKJZY=;
-        b=oD1gVVFnku0DcBVPrLxKsCOF1nJAenNORJ2oOkMzXTOQxW5doJvgHRi2kAfcZMUeC6
-         w3NWuLy643LRLaEz+rkNO5aKY2KsWf75MPIRsd1FHHX86AJnTLPyKr2A7wXG2VDYiTu9
-         eLKaOUBOTTQ9N7iSAn8okzvnaaktdjx6bvncFatA2s3gNlQCSBh3LEOdDbQ0F4uS751B
-         S2SA+WLb3t7Asi7Q2Vn1FKa8jb2oy2yEvJ2hoS4FWsnOXTKrPkWD7JCs0hfOe7NqyJfz
-         o+ApMnj9KJlv/asqNXu71lH6i0NjlLj9Kafvh6KPjIViExnFBZ/4+jSH+I6CdfR0ub5Z
-         CnUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752609357; x=1753214157;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H8NGzdL+oq3HRN7zaWJJ87MC6Pv7VHTg9tCKEmTKJZY=;
-        b=Z4iEHvcGZu9xBx5gmS7TfPkPcTrnKy8b1iB6r3orksylqUYqH+Bm3fVWKYg8oLrLOp
-         Pa/IfnZd9LK4Qn+aPorekPLw5G5ZTkqB+IAhx8T4ZwE2WH8KaIt7cg3i8e3FY5/+Z4oS
-         tljv5BTrjCJfgAyvLhyLFQjdf5zrVpCW9oxlzdry2Q1wZMGS+dWlia2GjlQd/8PzMsf+
-         MmqcK3UKkxFBKyX0tiAZuHAHxnjs/wPzUsU0IunXUNkq8i4QAEi8/MA7HFSRkln4PcBl
-         9l0dnRsbPL2fHbVPBeeJUYX2Y2Ozut6jhGsTW6VYrjV43PXktQaoeQcv6xc6Ouj9ceVt
-         O/xA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBwaSNapozMyUl+CTbSW+HDpNVHTDi0nxPbEcS6YDpTjjBsWTQPQ0nFBKnuEURffs7aJYa/4JkuVQF0NE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSAY0Q0q9WgmJsUnp4W+FFLwWJsYxCDKFoF7eGF6kDnu6+OOjt
-	6LpRB9EVHqrZ3WV6pP716b0dAiBEA3AyymlUarPsjoz1VhyRFKqhkphXx5nTMJMfv05igM2RsxM
-	/+QxF1RZF77T6b7U8DeUOnHVEj6FxTc8KALhxS8MK
-X-Gm-Gg: ASbGnctojBQF9ot9AjaG4VTn/cnJdABrVP5DAmv2Lz8JAlMQANgMllm7zNW5cmi/PuV
-	4NEqGooCCeR/afbVdL4jkk+jtpthErbI7vsX+Lhstyb39LUS+2hdtHoXemc21As5VY4GJAS/vK4
-	qFPgnJkZw1oGft8fnw93hO6KC0XlJftOE+WMLzbeSJEM62UuLoeRZ5W52Vtplr7LJvI48FIJLMy
-	FD6kIuD+eZJlcFqA9IWmTVu7zFajOZkzIS6fng0AnM6kR8=
-X-Google-Smtp-Source: AGHT+IEMaV3yeSFiMGvf4PnpbpG4ighbGc4V9C9Mlt98DW7OT44WBnEtK5ZInX/eQq32VHLE0L0Xn9gxQYIhun7fjis=
-X-Received: by 2002:a05:6e02:2290:b0:3dd:c526:434f with SMTP id
- e9e14a558f8ab-3e282e478femr90005ab.9.1752609357070; Tue, 15 Jul 2025 12:55:57
- -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECEADF76;
+	Tue, 15 Jul 2025 20:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752609742; cv=fail; b=JBQCJ1XnNZpruJefgP035+oqArrN3QtvI4XoHGEWpKtFcaYp2gGVmhrX+Z763Sy7SUIfG8FZz3AT7KISkIwbzpDI8IEcdtP15ASw5vv35603iOSZ1WZynbRubVmg3CaRJ8T++ULbbXiH1y0CE1Y90C15nlThjKJEu4uIZ6rXvVA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752609742; c=relaxed/simple;
+	bh=PKLAwT01HIbIi1cSQaMnYJJNAaq+z6+fxpp9Zgg7sP8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=YfxHFc/7VaeCJFkzSJqxtFwYHajcZDy1+jt1uAnh4KGYQ+AaVrVuwT29yX0/RuI3+742P2zvgRRHAbx4jtsJc8/IdHi/VRkd5ATwZs/j3OVpAYtmmHwtaOqChm4GNKlyJgc5Rl2Nc4b2JCbyPPcse9hwmMe4jsfDubGUOcnpRDQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DM849Jji; arc=fail smtp.client-ip=40.107.94.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iV3wYR1cjBHRl29TuT+IyxMcNfxmSNVX4Tkxu6X+81AVD7QyCPsDaFEAUJQYY+UdfrnyD9mju50TVnPcxmeKUK5QSnduidYYWF1pwloufjCUpcHkyCchR8x9V/fqCVEMJdvIKmYwNfz+6tPOTluJIKRzhzPLymF6J9WqiepJttjsm7gvkSuH8TZnTn+eT2KX3z0bUpclrsIWS1bzOECcePtRQCe0caldzaOah2S2tykoMFCsndpv4iVctscNuQ9/viSlVZF5N+AQkjlI0VpCymG1VhLc/WdwzsOpxihp06U49covZnmBIG0VSjjrLar2hJMuyFR21cFOwHOTRGtdFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ubSdWKZekMAftX3yfRhXACeXcWKGEzdkz2xjQ51cVRE=;
+ b=wedkrjBgeD7Ip8HKbdtFam5kOwebtNkNt4oZRK22omEk3zR7W/2VKPATPTQJvGsYJbc1a8K/uFW6R03G5pUdL5Az/ilhvQUiAXJqqJswrnM/bAtR/AcjCfq6VNov8DRYDEKHWbVE0jpEaAggzKzF6FIHuIQ5mCPe6jZukzIIVUxfi/1NcqHHF03RoMBJOrkOIJLBQV8vfchzc8VIGDegOi49IrLm7DCG1U5dA0bflB2+tFim6L0WogH6GHr2R4Te3+9vbKA9tj+0LUCnQ5w5xLzWNqNvhWgNCaYtbxWJr/QCl4ufYzNoGjxUKpPUqQkTHuhfIBxbPMrrCReglH/16w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ubSdWKZekMAftX3yfRhXACeXcWKGEzdkz2xjQ51cVRE=;
+ b=DM849JjiKqwz8dcILhdap61tKRPUZJMvXSG/QHKKeyu+I9S6I1wR+tN+IW3n6vvDLjemyeEBtgYhmgi1XdL/8UkY15UL+LxJPBKRjJLCrEFTognc79rvsmSbnflaWn8sKDKI43klvSCLZcQldP67/rq8m36K9ak7H02TNRRAZJhmGAoues6HS+SL7rfyZsT7SZScHHtQzbH/6s1496nhWrn/LgvkQb4EsB5RAGjbdQp8VtmtrmivN4H+htNKqTzopLpFC+S8pQOWe4iS6ps08touLiIqw/UQnKpVfOftoQdBjzOYWHiCDn80SsyqEWcPIG6//BTfsHDA4KRUoy2MoQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by PH0PR12MB7009.namprd12.prod.outlook.com (2603:10b6:510:21c::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.33; Tue, 15 Jul
+ 2025 20:02:16 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%7]) with mapi id 15.20.8901.018; Tue, 15 Jul 2025
+ 20:02:15 +0000
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: linux-kernel@vger.kernel.org
+Cc: rcu@vger.kernel.org,
+	neeraj.iitr10@gmail.com,
+	paulmck@kernel.org,
+	Joel Fernandes <joelagnelf@nvidia.com>
+Subject: [PATCH -next 0/6] Patches for v6.17
+Date: Tue, 15 Jul 2025 16:01:50 -0400
+Message-Id: <20250715200156.2852484-1-joelagnelf@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MN2PR05CA0038.namprd05.prod.outlook.com
+ (2603:10b6:208:236::7) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250627192417.1157736-1-irogers@google.com>
-In-Reply-To: <20250627192417.1157736-1-irogers@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 15 Jul 2025 12:55:45 -0700
-X-Gm-Features: Ac12FXzzPScp-mVL9bARhLKOMJXjxqb02Nbekgkj01rdRvZZwU0lmA8JhBTzNh4
-Message-ID: <CAP-5=fUu6_gOD8=5pNc2XbWc6ueHR_FpM6XF51=mdf9L0V0X2w@mail.gmail.com>
-Subject: Re: [PATCH v1 00/12] CPU mask improvements/fixes particularly for hybrid
-To: Thomas Falcon <thomas.falcon@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Ben Gainey <ben.gainey@arm.com>, 
-	James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Levi Yun <yeoreum.yun@arm.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Zhongqiu Han <quic_zhonhan@quicinc.com>, 
-	Blake Jones <blakejones@google.com>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Anubhav Shelat <ashelat@redhat.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, Song Liu <song@kernel.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|PH0PR12MB7009:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67e1dde3-3f38-43a8-6516-08ddc3da7ec8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Z57R/aMeKZqYn35tW0ieXcnpOG9aDWCTiKqC5ToYzg5tfG+GJr3F2CAi4bbO?=
+ =?us-ascii?Q?5B/coLBl+NoKhLeDIC6vdE3FltsJWCtbZk/a/6NVxcO7c1+GSldEGKC2VkhI?=
+ =?us-ascii?Q?8Wtr7IcKuNbmthISCdIWF2dcd+xuq3yjxGhHsVjPsrE+kZcwRD8o+eqO+16T?=
+ =?us-ascii?Q?KmJ7Ey45pfwJXhyssTJAgpbd6Mj5gXeeaWwD93keM2EkYeHC72fs3mWZfVNe?=
+ =?us-ascii?Q?NXsFpnpxsBXZwj76pVw/fBdaAJHk0Ji1kDyyfocuy4SmgHCBmlwDArv7oPP5?=
+ =?us-ascii?Q?6Z7Es8CICBuTWSTdqrp0yMV2HyR7YacIIiGRKPIvV/owyqqgD+DQzKZ5SFYH?=
+ =?us-ascii?Q?TJqLsEhnIc2cFFDuVSRNqnOh5ataAUdYdIXaD6JRgXlVHoy/SodF3vTE/hvY?=
+ =?us-ascii?Q?ywZMAz2ucHsp8RDnHpuMGlKnAD3aKsmmtQUpeXhJyg0xs5OSe2rQxGX6YMZE?=
+ =?us-ascii?Q?CtdtXLpeWoC+fqafgFWzRISIGaCk6NtqguQK4z4FAZ+0c4Z8K4s1O4e0GYp7?=
+ =?us-ascii?Q?ENITEaYLWOuVSd1eUwT9ZrHyxNHHDAsFnd1dt+gszLmvGCu+Yv3hsw23eHce?=
+ =?us-ascii?Q?c5/wsRrr4E5sghWUrtPC4ed51SsMY8xQoWsi8wsgADiyPhy1kEQNNKuzqyqz?=
+ =?us-ascii?Q?bxtuICzUu3EHekpnGCCjg5w1cW+PRRc6mxRlyyMGcceXcdhsp5hRmjYLuNw8?=
+ =?us-ascii?Q?4m/nEerGaJleEbyClEHhy09XpaUd3i9sUloSKSpS/lmbIobKPod1fgUC34dk?=
+ =?us-ascii?Q?A/UnvOLVykCEz+F1Wt9YmH1NNItZlHxd8o7NASwejbsw8Tqj7Q44z8njqTOS?=
+ =?us-ascii?Q?W6TL2f6EmsvKkycA1sZHmyYsig1WGvp29/SJRUqr8P7/MwoEvunUinqt6lEr?=
+ =?us-ascii?Q?LpmsgZArfe9FP/NIqXZlGayd1jQlbw06YENISN//oPSO4muojOHIyb1Iq8K3?=
+ =?us-ascii?Q?M1zmBmQ9w21AIxG6EouIzDt1J4AYNAUNXTRkUQx6f8G9REK0Yxb1enqp9BTx?=
+ =?us-ascii?Q?L6nyLikY99H3t10hHt2GFpXOnvhE4HtRRK7xEqzZ5xLg9B8b+f6wfIzwJap1?=
+ =?us-ascii?Q?IWoDIjJ0/JZlnq/bXtSoH/qYngkFGStj73dnEvTFKwTbUhfUDdAwyfAli29N?=
+ =?us-ascii?Q?iddvv6RYw/0FkUQUYJvidpfnKMALNx4ntL0yurmBt7RlwW0Ox0zRfyAC38xH?=
+ =?us-ascii?Q?fEoqbIQEpmiArvUTXexVLeDV1X9vEQ5IeNMNKULPadzpfhYhM4ECWQVw0don?=
+ =?us-ascii?Q?Gmhjzhv4Qc2HOTm1NuCgwtnUUEExqhOWWaH5fu1IyIh/LRW4DBJjCcRlfhQD?=
+ =?us-ascii?Q?MI+S5V9s+zZCw3Sj076A78SJpk6j2dlHY/qdC0VeMpvaH+Vdg9eBYBAERnUC?=
+ =?us-ascii?Q?CmAQJLJsM7vG/YJPWihV76IafXz9JX8pk58LxHXs4AydFbONhQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?wzBoANJsX/txlP/najKIWnNxMAUpFkwdKJBj928mzO96npTrP88Tff5uui+g?=
+ =?us-ascii?Q?kZeXpPsDE9lhNlX+dcKN6p4pOBEihQOLKuliPUDccadrArMEKKMHHAJQ6qH+?=
+ =?us-ascii?Q?SKVrfazI3Xl0NUGK5Ty98jQWpIepSRGAJ1tt3EoQe3hSLjlcpZdpHoh0blfa?=
+ =?us-ascii?Q?GfpnB5ZsXas/lJGzwobowSOj7UMsa2azXM/9ghZRg5GM9c6SDkBZKPS5+3uE?=
+ =?us-ascii?Q?Zuj/jPGPWFIA1elwjD51/CoHobFpK/ILkLs1gg/qqrx1Z0j2aEFwqOeiasF9?=
+ =?us-ascii?Q?SsVXpJji8KwYsbxOTmKrKBi9GD09s+i0gUHMT+2MoB1YauNDyIGSbdHaWjb0?=
+ =?us-ascii?Q?zqmykjuHCr9nnElcxARapeIsh5ZosQ4ljcTxW+P6bvAEbipv96KgKtElFywG?=
+ =?us-ascii?Q?FU67YteC2XJcLQrzBjThz2Odm02WXh2MwR5GUq7HooZb4PDwi+nCLCw2uHQx?=
+ =?us-ascii?Q?N5Pp3OUPrFejv7AeRuLV2tGcOiRd4zMFUnq9S5eF3iNiSZy/RSCpsCYF7xCA?=
+ =?us-ascii?Q?k3w3HjOvrmsdCvpEl1/FEYFYyEjM6yzPS7YDieZthssIsX1nVrTT4uKWKuhi?=
+ =?us-ascii?Q?iB+baNLBudi2E/q4YxnVWzK9EYOuYgCh1WfgKng0FP8cee70fIU+XEI0Letp?=
+ =?us-ascii?Q?eVm1bExN3ANu9uL1bMzyAygG6PyYfAI+qHOQ228CtsJ0EUFwOJKiOth/x6/f?=
+ =?us-ascii?Q?uA90Kb1ceQsEuuRkKM/wd3fvXxTXMeIekIWElEyEsSUBS9f4sdkCX+EhUUjT?=
+ =?us-ascii?Q?5is1EGsBvzP89CHwAentZARo6yZwhmq8aJzYVsXMR7DBxZ9qe5OSJ13wMM2n?=
+ =?us-ascii?Q?oXzojghJGvSdktCfsjXayUp/AjzlpEKkubpTFEuvUxJTyVPyDQET7uTY1YTb?=
+ =?us-ascii?Q?ZQ0p11zd814EQ10XsS/w163EEHieVWRwAB/pRBvm5kyaZpEEO4DbrB5y6ehw?=
+ =?us-ascii?Q?c/68sDyw1UYii9q5zvnTbiFQ9FpOtM+ebBhL2qIeYBHmUzarRCTtGEiQqHew?=
+ =?us-ascii?Q?IP+fGIbA7MMFoJJb2Np8pak395e5VMdQXSCk6dJikl4og8RF4l26akT4+tFs?=
+ =?us-ascii?Q?D18pf25TcRprkbzgjtn7Tubv4KmVCanlA2XeJ2iWIHy87mqMNun3hsZVFRn1?=
+ =?us-ascii?Q?FHPAo82PaCHkz0iyxnrIwXPKoYDAyO0fz+LtWAay13rdImnu3E8aB02DijtT?=
+ =?us-ascii?Q?gqHiXxq8mNr/hpHd7dMWF6wE2vKvKYIDEW6IRCTXV0uWvKZyzdvKDKZfniNi?=
+ =?us-ascii?Q?jXDfFHLQqjWKV1SM09h9Duz1ceMYs9c89gwmbzvuSqbWgoAzRqGB53wwNZZI?=
+ =?us-ascii?Q?PQWbqC4M+LAL0hwBiaUiqQq1sZLzkJjL4xM6Kod4HMWTP/7FP9kttvoqUfZM?=
+ =?us-ascii?Q?ARAfoSXxZjiIKkMAfaptEBHXX8cz6/xyWVcGIiujCn5zQQ5NpF+Cp9W9QE95?=
+ =?us-ascii?Q?2nGsGNZikwofEWjHqJwYt0sx61+2hvOWlEL8fYA4I6o/SAzvYccGdjSEUMzP?=
+ =?us-ascii?Q?Dpa3cyIVhXndfZvtFAfe7idS8dNzDfX+ruAgxW/c5mRgst/du8BDQYeqeH9G?=
+ =?us-ascii?Q?GorylTSBlmapWRre/smvrzG3f24Q7PqpmjUVBccE?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67e1dde3-3f38-43a8-6516-08ddc3da7ec8
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 20:02:15.4907
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lmThjnwR9n1lTg5OAynBfXOXuCmROemQsrTopRLvyPL6wgoXrQHuc2uB2zJvRON/6jg/yN9IAfF5nNnrZCYeXA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7009
 
-On Fri, Jun 27, 2025 at 12:24=E2=80=AFPM Ian Rogers <irogers@google.com> wr=
-ote:
->
-> On hybrid systems some PMUs apply to all core types, particularly for
-> metrics the msr PMU and the tsc event. The metrics often only want the
-> values of the counter for their specific core type. These patches
-> allow the cpu term in an event to give a PMU name to take the cpumask
-> from. For example:
->
->   $ perf stat -e msr/tsc,cpu=3Dcpu_atom/ ...
->
-> will aggregate the msr/tsc/ value but only for atom cores. In doing
-> this problems were identified in how cpumasks are handled by parsing
-> and event setup when cpumasks are specified along with a task to
-> profile. The event parsing, cpumask evlist propagation code and perf
-> stat code are updated accordingly.
->
-> The final result of the patch series is to be able to run:
-> ```
-> $ perf stat --no-scale -e 'msr/tsc/,msr/tsc,cpu=3Dcpu_core/,msr/tsc,cpu=
-=3Dcpu_atom/' perf test -F 10
->  10.1: Basic parsing test                                            : Ok
->  10.2: Parsing without PMU name                                      : Ok
->  10.3: Parsing with PMU name                                         : Ok
->
->  Performance counter stats for 'perf test -F 10':
->
->         63,704,975      msr/tsc/
->         47,060,704      msr/tsc,cpu=3Dcpu_core/                        (4=
-.62%)
->         16,640,591      msr/tsc,cpu=3Dcpu_atom/                        (2=
-.18%)
-> ```
->
-> This has (further) identified a kernel bug for task events around the
-> enabled time being too large leading to invalid scaling (hence the
->  --no-scale in the command line above).
->
-> Ian Rogers (12):
->   perf parse-events: Warn if a cpu term is unsupported by a CPU
->   perf stat: Avoid buffer overflow to the aggregation map
->   perf stat: Don't size aggregation ids from user_requested_cpus
->   perf parse-events: Allow the cpu term to be a PMU
->   perf tool_pmu: Allow num_cpus(_online) to be specific to a cpumask
->   libperf evsel: Rename own_cpus to pmu_cpus
->   libperf evsel: Factor perf_evsel__exit out of perf_evsel__delete
->   perf evsel: Use libperf perf_evsel__exit
->   perf pmus: Factor perf_pmus__find_by_attr out of evsel__find_pmu
->   perf parse-events: Minor __add_event refactoring
->   perf evsel: Add evsel__open_per_cpu_and_thread
->   perf parse-events: Support user CPUs mixed with threads/processes
+Just a repost of patches with tags, for our consideration into v6.17.
 
-Ping.
+All have tags, and the last commit is a fixup for the deadloop patch which can
+be squashed into the original patch.
 
-Thanks,
-Ian
+Joel Fernandes (6):
+  smp: Document preemption and stop_machine() mutual exclusion
+  rcu: Refactor expedited handling check in rcu_read_unlock_special()
+  rcu: Document GP init vs hotplug-scan ordering requirements
+  rcu: Document separation of rcu_state and rnp's gp_seq
+  rcu: Document concurrent quiescent state reporting for offline CPUs
+  [please squash] fixup! rcu: Fix rcu_read_unlock() deadloop due to IRQ
+    work
 
->  tools/lib/perf/evlist.c                 | 118 ++++++++++++++++--------
->  tools/lib/perf/evsel.c                  |   9 +-
->  tools/lib/perf/include/internal/evsel.h |   3 +-
->  tools/perf/builtin-stat.c               |   9 +-
->  tools/perf/tests/event_update.c         |   4 +-
->  tools/perf/util/evlist.c                |  15 +--
->  tools/perf/util/evsel.c                 |  55 +++++++++--
->  tools/perf/util/evsel.h                 |   5 +
->  tools/perf/util/expr.c                  |   2 +-
->  tools/perf/util/header.c                |   4 +-
->  tools/perf/util/parse-events.c          | 102 ++++++++++++++------
->  tools/perf/util/pmus.c                  |  29 +++---
->  tools/perf/util/pmus.h                  |   2 +
->  tools/perf/util/stat.c                  |   6 +-
->  tools/perf/util/synthetic-events.c      |   4 +-
->  tools/perf/util/tool_pmu.c              |  56 +++++++++--
->  tools/perf/util/tool_pmu.h              |   2 +-
->  17 files changed, 297 insertions(+), 128 deletions(-)
->
-> --
-> 2.50.0.727.gbf7dc18ff4-goog
->
+ .../Data-Structures/Data-Structures.rst       |  32 +++++
+ .../RCU/Design/Requirements/Requirements.rst  | 128 ++++++++++++++++++
+ kernel/rcu/tree.c                             |  31 ++++-
+ kernel/rcu/tree.h                             |  10 +-
+ kernel/rcu/tree_plugin.h                      |  90 ++++++++++--
+ kernel/smp.c                                  |  26 ++--
+ 6 files changed, 293 insertions(+), 24 deletions(-)
+
+-- 
+2.34.1
+
 
