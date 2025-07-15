@@ -1,87 +1,116 @@
-Return-Path: <linux-kernel+bounces-731914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CCB2B05C91
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:33:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BEDEB05CAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92D5E7BCA8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:26:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B52B4A4BD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D932E49AD;
-	Tue, 15 Jul 2025 13:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CDB2E7628;
+	Tue, 15 Jul 2025 13:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="OmnU90SQ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="CyUPqMmX"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0231F2E49A2;
-	Tue, 15 Jul 2025 13:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752585902; cv=none; b=tGKknPCQ8jOklzAoKFTNBANq3G7u4eQtYRw5XYvulnnp/wh8rX6H6famIorwXFxnZuZxU4NFxUx2lWWzEZ5eoqMM46N06qsCHSvQORP4QEgukSEyj6/+VcafPwIT7tUQBM1Eb3zRdVMelwW+Yc/spSenmcBhnb/34qaUHd8PxSs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752585902; c=relaxed/simple;
-	bh=m3DHASIkA8xKervtSWzCWs/rmNGNYcvXNTqN9riIcxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=blzK0KPINZiz+d3kawVcbAuQdyWnrKjXlW5fc3wA67mnR8QMYTGnJKeEidHgkjUf13oCpYfnQ33oWM1l28DDHwy+zPLidcZb1rIFSKmT0jCWUwo1RRBvVceOeNWM4WJ9Wm9QtEF4hncaKEskXIst3fiuXXfMHA5xUhqWHbznuXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=OmnU90SQ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=wNlaWSamDFSq/Jqem+yHh7sXr1BP0uqXoeYgV7dAIAg=; b=OmnU90SQmj6FYkOolhCcdTrR+o
-	zyKw9OqcgK/AZU1z3tng3XVyXdC1fDwNb+2EEM8PxBntc/ZLiklywaoyGmU9kQaxlXj1jwqgpBwhV
-	lbJjDSe9EZHrgwWZOeYbUOev4o86kKFn606iI4J8s5+mvllfv+fqaX+qMUL3ZVVv9osE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ubfeM-001a9h-W6; Tue, 15 Jul 2025 15:24:50 +0200
-Date: Tue, 15 Jul 2025 15:24:50 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Romain Gantois <romain.gantois@bootlin.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Matthew Gerlach <matthew.gerlach@altera.com>
-Subject: Re: [PATCH net-next 1/3] net: stmmac: xgmac: Disable RX FIFO
- Overflow interrupts
-Message-ID: <b38cad0b-c2b1-44fc-847c-140066a12652@lunn.ch>
-References: <20250714-xgmac-minor-fixes-v1-0-c34092a88a72@altera.com>
- <20250714-xgmac-minor-fixes-v1-1-c34092a88a72@altera.com>
- <bef4d761-8909-4f90-8822-8c344291cb93@lunn.ch>
- <21a0e265-6b2c-4bcb-b0ac-5fd47503f909@altera.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CF72E3364;
+	Tue, 15 Jul 2025 13:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752586012; cv=pass; b=U+uIEf/Znmu1BjKSIEGgCHrsTyNgBBz5wOsqDbAY7FlBq7/rX6B98UPGcXvZQTzXSR4bqS9CfllEQfxYv5xBT+aGZt7e+QEH/sNm3cD26lCTGAnnqDt42wK2GsN24ByQqnz/cuk/Wy2sXkf92v9tFTQCpXlyIXdQjWz03pEB30A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752586012; c=relaxed/simple;
+	bh=3kV3XK4Oj/NFgw926XIllBN71d9KEP+3WCn+SQ5Oa0U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qPhP/Y1p7ssab2Bu5J2FAbRtPwNNzoGptpAS4ETw+AjAer4PRbJuQaS7RYTKM4JHb//0A7UJmbBPj5/S3je0vESgZCD9kpCGlEVKi7ND/LsQn0HCynUSR2a7hBKh9IC/KjL5/gCpTEZlZmDzHnhxd+wNOC20k1bhoYiqgcF5ru8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=CyUPqMmX; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752585914; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=As7fPfOdRy6Kcm4Y/vwNxdgIzeHGVQxX8kS4/1ZTQSteNGjDiKGzejCMh8iCzxis3Ud/6RgaTgu8EQ7Oj8c6QSOMByabJH4rpKt+RGAdU/twOdTbdyEUEMRHhKHt2xzxHFDzZYZAd8nKWeKamabZjSJXbPQRzMDopkWMp6/5wLg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752585914; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=P0+2t2yk4whi7yM40d6rNBhp8wlUr7VSL4U50D3zsIo=; 
+	b=WgBMU5fpQCBFiZjTieTIpx1OjPUn0Tqd3T0dvErB0DdKYGMFJvixPVtDsPRNrWXYqMC0JfEcwdpp0JJE/dMVCwZEjOzR/p/F7xSb6S+ppKcbpgN6yjPp9ffKeiIh/iBvbhur85uR5JzjKeikF9i5E3N+SsynamQbP5px3zURhvA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752585914;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
+	bh=P0+2t2yk4whi7yM40d6rNBhp8wlUr7VSL4U50D3zsIo=;
+	b=CyUPqMmXADK9mIMg7Ao3abWEy+a+YpBB02dmhd9mFfSjS29TOAevA2UI8Ig6HcEE
+	SBo8ZTvIiCxFVQSiNMu+wVHSTlnF5XmorFAFs+2+SjOGWZG3y7X/AEtvyz+qIcYQN8z
+	k0eTKcCiQOOIwadtydntEvW2DuZI3i2Qb1qzgiZ0=
+Received: by mx.zohomail.com with SMTPS id 175258591140265.3635130996754;
+	Tue, 15 Jul 2025 06:25:11 -0700 (PDT)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Manivannan Sadhasivam <mani@kernel.org>,
+	Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Youssef Samir <quic_yabdulra@quicinc.com>,
+	Matthew Leung <quic_mattleun@quicinc.com>,
+	Alexander Wilhelm <alexander.wilhelm@westermo.com>,
+	Kunwu Chan <chentao@kylinos.cn>,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+	Yan Zhen <yanzhen@vivo.com>,
+	Sujeev Dias <sdias@codeaurora.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Siddartha Mohanadoss <smohanad@codeaurora.org>,
+	mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: kernel@collabora.com
+Subject: [PATCH v2 0/3] bus: mhi: keep dma buffers through suspend/hibernation cycles
+Date: Tue, 15 Jul 2025 18:25:06 +0500
+Message-Id: <20250715132509.2643305-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <21a0e265-6b2c-4bcb-b0ac-5fd47503f909@altera.com>
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-> > What is the reset default? Would it make sense to explicitly disable
-> > it, rather than never enable it? What does 8a7cb245cf28 do?
-> 
-> The RX FIFO Overflow interrupt is disabled by default on reset. Commit
-> 8a7cb245cf28 also avoids enabling the interrupt rather than disabling
-> it. This commit mirrors the same thing for the XGMAC IP.
+When there is memory pressure during resume and no DMA memory is
+available, the ath11k driver fails to resume. The driver currently
+frees its DMA memory during suspend or hibernate, and attempts to
+re-allocate it during resume. However, if the DMA memory has been
+consumed by other software in the meantime, these allocations can
+fail, leading to critical failures in the WiFi driver. It has been
+reported [1].
 
-So same as 8a7cb245cf28 is good.
+Although I have recently fixed several instances [2] [3] to ensure
+DMA memory is not freed once allocated, we continue to receive
+reports of new failures.
 
-When you resubmit with the correct Subject: please add Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+In this series, 3 more such cases are being fixed. There are still
+some cases which I'm trying to fix. They can be discussed separately.
 
-    Andrew
+[1] https://lore.kernel.org/all/ead32f5b-730a-4b81-b38f-93d822f990c6@collabora.com
+[2] https://lore.kernel.org/all/20250428080242.466901-1-usama.anjum@collabora.com
+[3] https://lore.kernel.org/all/20250516184952.878726-1-usama.anjum@collabora.com
+
+Muhammad Usama Anjum (3):
+  bus: mhi: host: keep bhi buffer through suspend cycle
+  bus: mhi: host: keep bhie buffer through suspend cycle
+  bus: mhi: keep device context through suspend cycles
+
+ drivers/bus/mhi/host/boot.c     | 44 ++++++++++++++++++++-------------
+ drivers/bus/mhi/host/init.c     | 41 ++++++++++++++++++++++++++----
+ drivers/bus/mhi/host/internal.h |  2 ++
+ include/linux/mhi.h             |  2 ++
+ 4 files changed, 67 insertions(+), 22 deletions(-)
+
+-- 
+2.39.5
+
 
