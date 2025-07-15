@@ -1,207 +1,129 @@
-Return-Path: <linux-kernel+bounces-731331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70513B052AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:21:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11B21B052AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96BE24E3990
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:20:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 042227B4AD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A82E262D0B;
-	Tue, 15 Jul 2025 07:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6748F272800;
+	Tue, 15 Jul 2025 07:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="fJgtAhtY"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="qZOEzaiW"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3484E2749C0
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967D017C77;
+	Tue, 15 Jul 2025 07:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752563850; cv=none; b=HRKAoz0/hOM+iPBHxTiiomfw74efIl0yopbHtLlZjiTQ2glq0Vdwmyw/aJ9rE0/7Q4hpq2N8Al+nZekqvz4G/dQgECUSCIQR/lmAnCerFgylrSUdqUFgcdHU2nHdblbE8MHqK4R62aJONnhRPdxaDTXSX7oTozNWZq/4AscUUnI=
+	t=1752563842; cv=none; b=ioRmyys3my3AhkhmK2/JfEmIJBu/px/ajXGeOdpCPlcOJAyqP1c+qWL85qlUz8QcQPRjMz2169YL8/Jp4cBoMs8FnRPFtJ95Mmvg+MywKKN+Q58ltO+EfxfD78WYTC0LbkkI9T1CC+WZmPPxto4FYVIIH8PDdpDxlpLc4SYvDKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752563850; c=relaxed/simple;
-	bh=rptweIyw/NRNiRqKRKKVpvw+BcWwy7ff0JBJo9uuJTo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cCkeWyzWgR4RXCTa6djE5M0tDPGykZLaQmveaPw1rZA47DrGJYmMzPqV3qGEBVNj26S/Sle6H8gxmpooIRLITnFJdsgLTDFiF25s8MULZLXzu0V+pMe1FHNEBW0QtP98sEbUp0pNXozBQDfQV/NHMpGLe/mOJzDHKRvXhKgLnXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=fJgtAhtY; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b31d578e774so5149021a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:17:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1752563848; x=1753168648; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D6ciipY/2CcI3D5MilhNzIQovP73zwUUwEnia6Ju3vQ=;
-        b=fJgtAhtYgKpsyAbGkHRp65guXx05qXk2c4E8mK9F2piGqWGQcjdxm7yc5NSj7TXrRm
-         q9iRbyFpjA+dep7ffsubaQRyGfjgvRnSAIW5YvQ4pZMzCDwTONPEE5vFGvttz9NmOt0S
-         xSYVAhI7QY38/1SGRwtiK7nCss10pVeOQTwB+RpO27VpaUzpZuOnEofBl2MNn41Q39L2
-         rwjn+1XOn8+5GR0CnboUReVlqzysuwx0R+RCYqlbx9w1BG6ntx7GZeUiWJljk5rzRqkc
-         EsyG/axzivC7EDWNvliHD3HtzH7NHMlEsamqTpAKk+bF2kICODECKVto7PnxDMBkUfU3
-         XG2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752563848; x=1753168648;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D6ciipY/2CcI3D5MilhNzIQovP73zwUUwEnia6Ju3vQ=;
-        b=SJb5WaE7t9dXVQX251sJoEV070d673/YsjpFdR0HQqSGtwOdY4chZ0yH4qK5XijYR3
-         mLdMPq5WZC2tzLGRssXXeHCw0Ro50V+a9LtYY9zRfUXTiANAM7i8Vj2QZvscyYy3wNVC
-         Xiy6hbR9NqWGs+M5t/SnDZe+kFyeeHJGARJ1GX1SakXWSPd0FITEm21Kwmkeg1ofpujP
-         mLLMAS53A8TWYf+kJiA0v5dMDRhBz4xOQWbjXBr8FCgzKdR6Hmk72gTDkGQmdz2DR5cj
-         gXvSe/BPNNXFBSthjMQAcm89r6KmsdvTAcsuaOt7a+gUVzfP/V6k4BuK4AYGjsQ7NGA/
-         yMJg==
-X-Gm-Message-State: AOJu0Yy3T4OAACkxOEj8Gpn7a7fo7WwGPDUc0u8TIlXvQVJa8WJ3nBRW
-	fVbuueOtdrYweE6jZONQnZdYpd8Y2l1HLSA2E+4EARtJvAcjF7yMHIS7D94DYd+bvA==
-X-Gm-Gg: ASbGncvlsk/9rvcw6KxEo1lHS1WwhXvFWRwKilifpYhWr/POnKxg0MIkGdCS2/oKz/W
-	s3ab4ufLkpI+8Ftv9D0uTtagNp4rrILaarR0v2+jricawXX3nX+H0ysKZ0D4JP9zx6kic7CtPMp
-	JcppZrHWR+Gnrh3ShValFudg9n3maR6v5w4jl1LNhbXbs7TZnri1Dq8/fH1RE5HFbnkHvbf7V1N
-	E0SHbY36XPrdqocLA+EZnos71s97KONcDaRxHuD+7cMahhUFGj0wnaVwMBhgfbL+M7CHecZ4N5r
-	JpCEMFRLsspEY77r0CUvlFQUWbmFfd9dn+BsLuBgLl+zeREe6V0cqy3L6g5WYLE3sQQgO+ssUIH
-	A+g1IH4Jn3d/BaN/1WvCnvXtNDEf3OvlSS6idquOI4TFIPqNn7wCR+23X4X45+DMl9Gsb
-X-Google-Smtp-Source: AGHT+IFedT46DgA5ze04v+deQqrmROgZV3DFwKIlx5WfmpHKQ7zMe9WnqNhy/1b7VP+7NhOOjx6AGA==
-X-Received: by 2002:a17:90b:4c8f:b0:313:d361:73d7 with SMTP id 98e67ed59e1d1-31c8f88e440mr4456583a91.13.1752563848169;
-        Tue, 15 Jul 2025 00:17:28 -0700 (PDT)
-Received: from 5CG4011XCS-JQI.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3017c9dasm15013418a91.25.2025.07.15.00.17.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 00:17:27 -0700 (PDT)
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>
-Subject: [PATCH v3 1/5] sched/fair: Add related data structure for task based throttle
-Date: Tue, 15 Jul 2025 15:16:54 +0800
-Message-Id: <20250715071658.267-2-ziqianlu@bytedance.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250715071658.267-1-ziqianlu@bytedance.com>
-References: <20250715071658.267-1-ziqianlu@bytedance.com>
+	s=arc-20240116; t=1752563842; c=relaxed/simple;
+	bh=f3tKDEJQbfvcpAsYLw5PvWMKHixA9FoCDMEIKGH5mZM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g77e4jGW7KCoD/RpXcCNhKJRkJFyAonPmKwPcJvsbFbacW1XkXSPWxnazIe9UJcz5RbN+ibyKKbI4bhDDodTkmKIygX0b5np8wUS0ZdTXlK13xGmkHXQjE2hPiK9qVnnvCaY38IbAALSBtr2IbKvJOVSN1fyOzSa3vACV2gdcmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=qZOEzaiW; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=uR07AKA03taQYzX+ZjGzS07Lzyba1XHHLaGn40KNnHo=; b=qZOEzaiWmPfGWbRrPXsJ9vJzT4
+	wljB0WDCO0YXn6h+/tmgdcbGXlRe1hMX9zA27p8Gym3SkdnxJKn2QupLQFxCktjGoqZvMcdKU42f+
+	BsFB+pDz0IGQRuyxRvqeh6jlXf3x1RqylAGiJLUZnTpJPuYNu9HX/Iscl+O5OMKgr9mujgIBBUWW+
+	a4x8f9oPy8vriFLcdu8Nx0YRY55GgS4khKiaE3E8nc7QcsnseALYo5VYeUs0itRPcAEv4Cy0UQxeJ
+	/zVtCyUvAkqaMe1BrmAfVRNMpbBZWYlUC0U5ZbxpwoVUz+KXdRQSD3dB9Oj7g1mgeMdPJcyIUS72t
+	lSogO6qA==;
+Received: from i53875a5c.versanet.de ([83.135.90.92] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1ubZuN-0006t0-D6; Tue, 15 Jul 2025 09:16:59 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject:
+ Re: [PATCH] MAINTAINERS: merge sections for ROCKCHIP VIDEO DECODER DRIVER
+Date: Tue, 15 Jul 2025 09:16:55 +0200
+Message-ID: <3261271.ElGaqSPkdT@diego>
+In-Reply-To: <20250715063134.100733-1-lukas.bulwahn@redhat.com>
+References: <20250715063134.100733-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-From: Valentin Schneider <vschneid@redhat.com>
+Am Dienstag, 15. Juli 2025, 08:31:34 Mitteleurop=C3=A4ische Sommerzeit schr=
+ieb Lukas Bulwahn:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>=20
+> Commit d968e50b5c26 ("media: rkvdec: Unstage the driver") moves the driver
+> from staging/media/ to media/platform/rockchip/ and adds a new section
+> ROCKCHIP RKVDEC VIDEO DECODER DRIVER in MAINTAINERS. It seems that it was
+> overlooked that the section ROCKCHIP VIDEO DECODER DRIVER in MAINTAINERS
+> already existed, referring to the same files before the driver was moved
+> as the new section refers to after the driver was moved.
+>=20
+> So, merge the information from the two sections for ROCKCHIP (RKVDEC) VID=
+EO
+> DECODER DRIVER into one. This essentially results in adding the maintainer
+> of the previously existing section in the new section and then removing
+> that previously existing section.
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Add related data structures for this new throttle functionality.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-Tesed-by: K Prateek Nayak <kprateek.nayak@amd.com>
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
-Signed-off-by: Valentin Schneider <vschneid@redhat.com>
-Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
----
- include/linux/sched.h |  5 +++++
- kernel/sched/core.c   |  3 +++
- kernel/sched/fair.c   | 13 +++++++++++++
- kernel/sched/sched.h  |  3 +++
- 4 files changed, 24 insertions(+)
+> ---
+>  MAINTAINERS | 9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 5efcdb5537f5..d044e4f71ae5 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21673,6 +21673,7 @@ F:	drivers/media/platform/rockchip/rga/
+> =20
+>  ROCKCHIP RKVDEC VIDEO DECODER DRIVER
+>  M:	Detlev Casanova <detlev.casanova@collabora.com>
+> +M:	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+>  L:	linux-media@vger.kernel.org
+>  L:	linux-rockchip@lists.infradead.org
+>  S:	Maintained
+> @@ -21693,14 +21694,6 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/sound/rockchip,rk3576-sai.yaml
+>  F:	sound/soc/rockchip/rockchip_sai.*
+> =20
+> -ROCKCHIP VIDEO DECODER DRIVER
+> -M:	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+> -L:	linux-media@vger.kernel.org
+> -L:	linux-rockchip@lists.infradead.org
+> -S:	Maintained
+> -F:	Documentation/devicetree/bindings/media/rockchip,vdec.yaml
+> -F:	drivers/staging/media/rkvdec/
+> -
+>  ROCKER DRIVER
+>  M:	Jiri Pirko <jiri@resnulli.us>
+>  L:	netdev@vger.kernel.org
+>=20
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 55921385927d8..ec4b54540c244 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -883,6 +883,11 @@ struct task_struct {
- 
- #ifdef CONFIG_CGROUP_SCHED
- 	struct task_group		*sched_task_group;
-+#ifdef CONFIG_CFS_BANDWIDTH
-+	struct callback_head		sched_throttle_work;
-+	struct list_head		throttle_node;
-+	bool				throttled;
-+#endif
- #endif
- 
- 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 2f8caa9db78d5..410acc7435e86 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4446,6 +4446,9 @@ static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 	p->se.cfs_rq			= NULL;
-+#ifdef CONFIG_CFS_BANDWIDTH
-+	init_cfs_throttle_work(p);
-+#endif
- #endif
- 
- #ifdef CONFIG_SCHEDSTATS
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 20a845697c1dc..c072e87c5bd9f 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5742,6 +5742,18 @@ static inline int throttled_lb_pair(struct task_group *tg,
- 	       throttled_hierarchy(dest_cfs_rq);
- }
- 
-+static void throttle_cfs_rq_work(struct callback_head *work)
-+{
-+}
-+
-+void init_cfs_throttle_work(struct task_struct *p)
-+{
-+	init_task_work(&p->sched_throttle_work, throttle_cfs_rq_work);
-+	/* Protect against double add, see throttle_cfs_rq() and throttle_cfs_rq_work() */
-+	p->sched_throttle_work.next = &p->sched_throttle_work;
-+	INIT_LIST_HEAD(&p->throttle_node);
-+}
-+
- static int tg_unthrottle_up(struct task_group *tg, void *data)
- {
- 	struct rq *rq = data;
-@@ -6466,6 +6478,7 @@ static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- 	cfs_rq->runtime_enabled = 0;
- 	INIT_LIST_HEAD(&cfs_rq->throttled_list);
- 	INIT_LIST_HEAD(&cfs_rq->throttled_csd_list);
-+	INIT_LIST_HEAD(&cfs_rq->throttled_limbo_list);
- }
- 
- void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 105190b180203..b0c9559992d8a 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -741,6 +741,7 @@ struct cfs_rq {
- 	int			throttle_count;
- 	struct list_head	throttled_list;
- 	struct list_head	throttled_csd_list;
-+	struct list_head        throttled_limbo_list;
- #endif /* CONFIG_CFS_BANDWIDTH */
- #endif /* CONFIG_FAIR_GROUP_SCHED */
- };
-@@ -2640,6 +2641,8 @@ extern bool sched_rt_bandwidth_account(struct rt_rq *rt_rq);
- 
- extern void init_dl_entity(struct sched_dl_entity *dl_se);
- 
-+extern void init_cfs_throttle_work(struct task_struct *p);
-+
- #define BW_SHIFT		20
- #define BW_UNIT			(1 << BW_SHIFT)
- #define RATIO_SHIFT		8
--- 
-2.39.5
+
+
 
 
