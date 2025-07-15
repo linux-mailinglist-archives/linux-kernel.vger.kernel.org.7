@@ -1,137 +1,90 @@
-Return-Path: <linux-kernel+bounces-732223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF6CAB0639E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:58:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DD81B063A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45C3B1AA5586
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:58:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D06D0580EFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93203248F75;
-	Tue, 15 Jul 2025 15:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAA624BBEE;
+	Tue, 15 Jul 2025 15:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JQrq+/hc"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Eyrex+6t"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A27231845
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DA02AD2D
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752595112; cv=none; b=OF3/9EVuLe4zWWSw1VsGSvFwU5H/aMk5+8VKGLL7MSApvUTqv9cFz6Di3nACw2hk6irTf0Q7Z2G/AdTNGPuTS7C2G6PkLXMbiuzN8R5alx5jXOi3Usu0k4y6LSZRZJRY0hhnQSRi69RWQCuNDcrmzPI7/CJiE2RVjZZDfcjIXZE=
+	t=1752595182; cv=none; b=V1EZBZ3Ho+Qs9CAFfNxpB7dDjwbxI6QJxXxyvBDSY+rNwbyXKVTzy+esljZbxxPF+ZdEH6d/sgLgUo4BBIFNu2yOcrFTgE4daI9C6yZO5y0DlgpNqr66L4KZg3RbVpPrdJ5CpRATQvYXIL8YL7mmftiL3Y+vwmVuRsSAGHIxs8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752595112; c=relaxed/simple;
-	bh=cKMlPCMr8z+Kl0EsCyLFR5dI/wqk1vQV8i2gO4zqriA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QxhtAyQuUN+8ZZdimnuuBD/yJRpBJqMW3Komp/kHPMgsQ6YMynrw5d8H3FeveHuoBuJcmm9QMZr+qPq8nCpo1V9Bp71Cd5pMOrf9zW+ViRWY8GHXKEdY9u1Ar85mNrWN3JhNQG6JVQ5c8TL3TwWXRVg8xhPDz4wyTaUUmc7/9bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JQrq+/hc; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1752595182; c=relaxed/simple;
+	bh=fdO5VfW6X60MkvIII8cRamu7Sgs5twFB5WytZ9oeUao=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=fpvJCdf+ZNbMer67I7mCcRe271crzpYfKSDmaLYgTrnwu8OoPdfLtr5mtmVAZTSxEX05x2mshb1Dd5UISt2oEVwWMp7j860VPXJQqyibZ7RXJ61Ay2NhBlsE/otiZ3p5SLluZYOLfVgZcTm7sIytRYv2kYggXuV4CpTX8YbyDPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Eyrex+6t; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752595109;
+	s=mimecast20190719; t=1752595180;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OADDMNuAq8J8y+2fwgXMkukxv4NImbyH1LzAofLT2gg=;
-	b=JQrq+/hclIT6JeqdYCYUW1vs+T2WiX2zwW8T3XNgXC/ovWkluBy8L3DhSLpt+776L56ah5
-	lwn5LP4vcevhUFf6Pvcue3z86U8JN+VLTCpXZ5bvwioJaVps/CGRXnzTkPsd9WXY3cj2Xi
-	dWgEzeISpbgL7yCPyYn82PJAn0JcP5I=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VQ6VLvXQFvvpoa4OU5x7ISX5suRFkKwL8aobTGgqAAc=;
+	b=Eyrex+6t4GBAKRQ0PnJCGO7eZBb1nb16FtBcnKc16JZbDu6WDU7ritebxIrcTUHBBGrGz0
+	zXit3io2gK8IvMRcHzcx1z+GUBL84MGo/0yeSN56n8k0rYC1q2KIYodi3KHbkrJM7W8AbP
+	iEvC8cB7t0+r4yhzCSXSVijT6VcJDAc=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-145-aE1RnelJMY2EGeYBE8J14A-1; Tue,
- 15 Jul 2025 11:58:25 -0400
-X-MC-Unique: aE1RnelJMY2EGeYBE8J14A-1
-X-Mimecast-MFC-AGG-ID: aE1RnelJMY2EGeYBE8J14A_1752595104
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-223-5W-uSxY4OsSiYOOSwvsaUA-1; Tue,
+ 15 Jul 2025 11:59:37 -0400
+X-MC-Unique: 5W-uSxY4OsSiYOOSwvsaUA-1
+X-Mimecast-MFC-AGG-ID: 5W-uSxY4OsSiYOOSwvsaUA_1752595175
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CC79F19560B2;
-	Tue, 15 Jul 2025 15:58:22 +0000 (UTC)
-Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.66.97])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 39D921956096;
-	Tue, 15 Jul 2025 15:58:18 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	Chen Ridong <chenridong@huaweicloud.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH] sched/core: Mask out offline CPUs when user_cpus_ptr is used
-Date: Tue, 15 Jul 2025 11:58:10 -0400
-Message-ID: <20250715155810.514141-1-longman@redhat.com>
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 879581956096;
+	Tue, 15 Jul 2025 15:59:35 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.2])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8576B30001A1;
+	Tue, 15 Jul 2025 15:59:33 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <3457636.1752593748@warthog.procyon.org.uk>
+References: <3457636.1752593748@warthog.procyon.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] afs: Add support for RENAME_NOREPLACE and RENAME_EXCHANGE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3458631.1752595171.1@warthog.procyon.org.uk>
+Date: Tue, 15 Jul 2025 16:59:31 +0100
+Message-ID: <3458632.1752595171@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Chen Ridong reported that cpuset could report a kernel warning for a task
-due to set_cpus_allowed_ptr() returning failure in the corner case that:
+David Howells <dhowells@redhat.com> wrote:
 
-1) the task used sched_setaffinity(2) to set its CPU affinity mask to
-   be the same as the cpuset.cpus of its cpuset,
-2) all the CPUs assigned to that cpuset were taken offline, and
-3) cpuset v1 is in use and the task had to be migrated to the top cpuset.
+> +	kenter("%u", YFSRENAME_REPLACE);
 
-Due to the fact that CPU affinity of the tasks in the top cpuset are
-not updated when a CPU hotplug online/offline event happens, offline
-CPUs are included in CPU affinity of those tasks. It is possible
-that further masking with user_cpus_ptr set by sched_setaffinity(2)
-in __set_cpus_allowed_ptr() will leave only offline CPUs in the new
-mask causing the subsequent call to __set_cpus_allowed_ptr_locked()
-to return failure with an empty CPU affinity.
+Meh.  I forgot to remove a debugging line.
 
-Fix this failure by masking out offline CPUs when user_cpus_ptr masking
-has to be done and fall back to ignoring user_cpus_ptr if the resulting
-cpumask is empty.
-
-Reported-by: Chen Ridong <chenridong@huaweicloud.com>
-Closes: https://lore.kernel.org/lkml/20250714032311.3570157-1-chenridong@huaweicloud.com/
-Fixes: da019032819a ("sched: Enforce user requested affinity")
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/sched/core.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 81c6df746df1..4cf25dd8827f 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3172,10 +3172,15 @@ int __set_cpus_allowed_ptr(struct task_struct *p, struct affinity_context *ctx)
- 	/*
- 	 * Masking should be skipped if SCA_USER or any of the SCA_MIGRATE_*
- 	 * flags are set.
-+	 *
-+	 * Even though the given new_mask must have at least one online CPU,
-+	 * masking with user_cpus_ptr may strip out all online CPUs causing
-+	 * failure. So offline CPUs have to be masked out too.
- 	 */
- 	if (p->user_cpus_ptr &&
- 	    !(ctx->flags & (SCA_USER | SCA_MIGRATE_ENABLE | SCA_MIGRATE_DISABLE)) &&
--	    cpumask_and(rq->scratch_mask, ctx->new_mask, p->user_cpus_ptr))
-+	    cpumask_and(rq->scratch_mask, ctx->new_mask, p->user_cpus_ptr) &&
-+	    cpumask_and(rq->scratch_mask, rq->scratch_mask, cpu_active_mask))
- 		ctx->new_mask = rq->scratch_mask;
- 
- 	return __set_cpus_allowed_ptr_locked(p, ctx, rq, &rf);
--- 
-2.50.0
+David
 
 
