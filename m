@@ -1,110 +1,79 @@
-Return-Path: <linux-kernel+bounces-732500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95316B067B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:28:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 750B6B067B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E07851C20AA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:29:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F4A81C20A70
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB7B28BA8C;
-	Tue, 15 Jul 2025 20:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD6528000A;
+	Tue, 15 Jul 2025 20:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/z7rxYX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dNILsdsS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828B717BA1;
-	Tue, 15 Jul 2025 20:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0727617BA1;
+	Tue, 15 Jul 2025 20:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752611316; cv=none; b=eYgrcCSsiI2K42IeEvDOmXpnkfsN9uL7dWjxLcnGjtzGXSYtvFBDF9OH2jlHuXMcCz/WSQzt4tUePRJTZkDed4y7Wq1d1vQk8d541cDCZcuYCuPUX5me63Z/GzlGYx3lDpSwuC6rvM10puongyPWhn9ej0WdGVtxZyERPIm6XDo=
+	t=1752611375; cv=none; b=p9EfPOxYgD+f4AqXlMmq/Rlih3S4lY6AOoLZ1rxqS/+J3dzHX9Vh7VDEKiO07dF2sdnHhwVZXv9JZny6gNdhNNA3M9aeePakuaoItihC8TfPAfZB7BkBk13xhdJMh3O837i9xOrgxud8Y/A8CCZXpL3dYoeqzJ5Crun9/kl2dDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752611316; c=relaxed/simple;
-	bh=wfJw4ZawJHcyOeoZQw3I2gM6CAlT+SrszZtN/nJhL+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=NdLyVbAMKZySjvXONx+etD7jWnp0HR52Vv22Cj8DpzN1/D9eadteTay0rJRIatx7LcgbNRoQRl39LiobJ4HdzcPZJGjHZb0gyGREu0gIoqqR/yD67UnYGpq9hmFEgvRPF/b5Q4E6dBXZhQoZuFNoFwag9fYqEalQEXhLMhu7rVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/z7rxYX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA3DCC4CEE3;
-	Tue, 15 Jul 2025 20:28:35 +0000 (UTC)
+	s=arc-20240116; t=1752611375; c=relaxed/simple;
+	bh=dWV0AOGFfsNzLSm694vzHVb8NS/g7l9T2ZgoYSgKYR0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=dsjhMcWH8irfFvj3n6zINZ6Fc+Y0DeZf6uOw3tHxc7zGE0LKIMWQcIpYo5ScOULNsXnFDZX/5xIvvoKAAZz7Ej/c6V3pyXRLupmCeEvG+SYBnCQIS5G2tu7rCqPJlcvTCIacXtyKDqVR1PQVtvuwvT3Y7nJj88JkR84fw4Dkh9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dNILsdsS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92867C4CEE3;
+	Tue, 15 Jul 2025 20:29:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752611316;
-	bh=wfJw4ZawJHcyOeoZQw3I2gM6CAlT+SrszZtN/nJhL+w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=d/z7rxYXVHulxt/xJx7HKX+5wtc9sE4aJmGooG+0QkVhjlS/Z4Iy6xnWUnpngjBkw
-	 qXlryX38/mt39VC8HUOu30Bo2sjRPilczXGGHYFqC2Df328tdocdH0N7WCaWfSIEV2
-	 rA4R3C3W9+Vvm/oUi2m7Ttng3nM/w8Ss4r+5LUGivwW2Rr2qpyGKz+dtriv1bl7YIt
-	 35g46DlMmD5ydvnKxaVGJ85KtdP/MOXeM6QWtzzBxdEi0dt3BZ/tLiHRWdRfJygib/
-	 SsnKgbY8rvjiKwPt7mA0Z9v7ZbUA4pgWCjpa3orwoj8eaDtDiS36Kp4MrTzhe4rJwy
-	 e0DscbUsAzS8A==
-Date: Tue, 15 Jul 2025 15:28:34 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: joro@8bytes.org, will@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, Will McVicker <willmcvicker@google.com>
-Subject: Re: [PATCH] PCI: Fix driver_managed_dma check
-Message-ID: <20250715202834.GA2498403@bhelgaas>
+	s=k20201202; t=1752611374;
+	bh=dWV0AOGFfsNzLSm694vzHVb8NS/g7l9T2ZgoYSgKYR0=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=dNILsdsShfcJucSIJZt5B7bPM3kYv7DhMqm7dBg73FqStGPvULwZG7mQFxCY2YAYo
+	 9zyLum1XNeIHRbAKU7Ca0IpufeZlU17Bmjh1g1Z6jHRXwD+cu9xLQM0f/1FdSJQx27
+	 vaHeuyNCBCVBTQ8U3NfofoAugId+gCPOWsmGYwVjxcbqDtS4w50n3hUKmCt7G0ToPl
+	 TNEiMFTiP1Puwxpf9DgnM2GcnSVmROYzkqBIcndxIx9NiIlq89pO2QBiQmIpFC57la
+	 93ltivouyWhGtk9LAISC/vL81ndpbulqz1c0OssJHwdE6T0bBaX/cl2notwVNe66TR
+	 jW0AAZstgQI0g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250425133929.646493-4-robin.murphy@arm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 22:29:29 +0200
+Message-Id: <DBCWVO6JLS7R.2U9HD1LH0JNO@kernel.org>
+Subject: Re: [PATCH] rust: devres: initialize Devres::inner::data last
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>,
+ <daniel.almeida@collabora.com>, <m.wilczynski@samsung.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250714113712.22158-1-dakr@kernel.org>
+In-Reply-To: <20250714113712.22158-1-dakr@kernel.org>
 
-On Fri, Apr 25, 2025 at 02:39:29PM +0100, Robin Murphy wrote:
-> Since it's not currently safe to take device_lock() in the IOMMU probe
-> path, that can race against really_probe() setting dev->driver before
-> attempting to bind. The race itself isn't so bad, since we're only
-> concerned with dereferencing dev->driver itself anyway, but sadly my
-> attempt to implement the check with minimal churn leads to a kind of
-> TOCTOU issue, where dev->driver becomes valid after to_pci_driver(NULL)
-> is already computed, and thus the check fails to work as intended.
-> 
-> Will and I both hit this with the platform bus, but the pattern here is
-> the same, so fix it for correctness too.
-> 
-> Reported-by: Will McVicker <willmcvicker@google.com>
-> Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe path")
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+On Mon Jul 14, 2025 at 1:32 PM CEST, Danilo Krummrich wrote:
+> Users may want to access the Devres object from callbacks registered
+> through the initialization of Devres::inner::data.
+>
+> For those accesses to be valid, Devres::inner::data must be initialized
+> last [1].
+>
+> Credit to Boqun for spotting this [2].
+>
+> Link: https://lore.kernel.org/lkml/DBBPHO26CPBS.2OVI1OERCB2J5@kernel.org/=
+ [1]
+> Link: https://lore.kernel.org/lkml/aHSmxWeIy3L-AKIV@Mac.home/ [2]
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Applied to pci/iommu for v6.17, thanks!
-
-> ---
->  drivers/pci/pci-driver.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> index c8bd71a739f7..66e3bea7dc1a 100644
-> --- a/drivers/pci/pci-driver.c
-> +++ b/drivers/pci/pci-driver.c
-> @@ -1634,7 +1634,7 @@ static int pci_bus_num_vf(struct device *dev)
->   */
->  static int pci_dma_configure(struct device *dev)
->  {
-> -	struct pci_driver *driver = to_pci_driver(dev->driver);
-> +	const struct device_driver *drv = READ_ONCE(dev->driver);
->  	struct device *bridge;
->  	int ret = 0;
->  
-> @@ -1651,8 +1651,8 @@ static int pci_dma_configure(struct device *dev)
->  
->  	pci_put_host_bridge_device(bridge);
->  
-> -	/* @driver may not be valid when we're called from the IOMMU layer */
-> -	if (!ret && dev->driver && !driver->driver_managed_dma) {
-> +	/* @drv may not be valid when we're called from the IOMMU layer */
-> +	if (!ret && drv && !to_pci_driver(drv)->driver_managed_dma) {
->  		ret = iommu_device_use_default_domain(dev);
->  		if (ret)
->  			arch_teardown_dma_ops(dev);
-> -- 
-> 2.39.2.101.g768bb238c484.dirty
-> 
+Applied to driver-core-testing, thanks!
 
