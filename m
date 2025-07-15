@@ -1,121 +1,165 @@
-Return-Path: <linux-kernel+bounces-731975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B8BB0600E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:12:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3FA1B0604A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:15:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FCB44A7F67
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:06:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FC115A1B6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A402EE5F0;
-	Tue, 15 Jul 2025 13:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB802EE981;
+	Tue, 15 Jul 2025 13:56:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pcZTnaij"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZyyESEX+"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D562ECE9A;
-	Tue, 15 Jul 2025 13:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D2A26D4F2;
+	Tue, 15 Jul 2025 13:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752587752; cv=none; b=rSVh0tranKALIC7OpSLqNd6X8TAc+hQx6yYvD0OX8kHbd8AQma6a6xi6bnv+YHsRlT7U/eWhSWdaVv+nx7X9lE/TfPsnUy/PnWmkFz1CIYQJch1GFfv119muMvFasdcJm8nTOzZ8vLIvJ/3j3z5Jk+VJNAkZYXOqcQeSETzHivE=
+	t=1752587796; cv=none; b=qE80pI5T9aylvr8ZndICzdsM0T+TTUTeC01ZaDMtNtd8E/lij7sDSPHqQT13YOjCmRC1PMTcgCSYNfjr5hu7L73PQEz62FPJYjM5RrazZFfGq+HCq/ITVSY1kouhEWO/zS784g5zFnR4iF0dihQDnCrVtIZe/ZIo3u/tSNoah4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752587752; c=relaxed/simple;
-	bh=3ngcOIaOr9/kn0rm9Ep+Y5YgUFsEHXd3c3S/Dc4U5dA=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=XHKh9uxRcahdaNNNsuUaZPDNTQ10Z1PiYw5oLm08mQHwGgXZe+kChNBwgc7B6JSZ4N47yyE5Z0sIIJHr+l8RnE4O0gfUelDQ8cMW/2+AroLYa9C+dXauRQDPAGCVf4ppX1H6SV6qfvWtk6QdVFqhAa4lDRwni1ZGLP5Wi2FgBNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pcZTnaij; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C196C4CEE3;
-	Tue, 15 Jul 2025 13:55:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752587752;
-	bh=3ngcOIaOr9/kn0rm9Ep+Y5YgUFsEHXd3c3S/Dc4U5dA=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=pcZTnaijwnzxsqNvjW31Zb/n4Zn1KlEf4LpAz8yjo/tmZ2LlVlrWeg5tEyHIkSXTO
-	 MzLaStAI+DuPken0YzpgxcGJW5+wnyS4Jg0oakKJWBs+MA1a5XQ1NFB6J9enJUQk+f
-	 UbjawoubJuNasGZyQpn5iM0jakFoKZkgyBp7Tf873GGX9hoLuNhF4QKuwW8Uq44USf
-	 tcIYS30jlZmJ5fWc/y1+nF1cV/hTfysuofJSvUyzURPvpilnQMwfrLAb39x34LycbT
-	 vKhAKDiqABo4yzuI8fjW1cpjMMMg+LT6/uaACrTm5bLTO7/876lX86cLrr5zhZBWLK
-	 O2w0mCnlWyzqA==
-Date: Tue, 15 Jul 2025 08:55:51 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1752587796; c=relaxed/simple;
+	bh=Uh3hup0gyT8O7gjxDRHFs/RGrrn3/M3E0Umu7GLkyQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fuXcTtF9Wska349cC0+A9MUjk0FvNyDfnX+Ph1FvIlYiv0wtscrBSHaIibskYSnsBU9gEL2vgEaUtTsUb4XqMrS0cUq6/Mm1ZwEYCE+7iDvWNkY/4hl0qMekf6iKeQsdd/pFNCvXRA6BIESIICGQlHww0ImYJ1Qzeg3bj6lOFbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZyyESEX+; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1021141D02;
+	Tue, 15 Jul 2025 13:56:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1752587786;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=43FRh/i1G09dO+5AcP8rK/l3vtnkO9GEUpWV7yM7c1c=;
+	b=ZyyESEX+s8cQH35ATLn0ouNsfMbn4NozOqS93qCkYrmI7omzqQqjMKXIvN/L6mizGXJV3B
+	YduC2vfw9NeVTdQ6oYkUkg+sZ+IIWMMMTgAW/ng0OBy3KSntqUzZYiVHn1UGHYmmY3Gcxz
+	mPUUAOE/FFw/GiWtQr/tAJzafmzVl8tyYWCY3kQ7WppikfIiBGN7JE6XtWZmNKF0MDn23T
+	ZW1gs/JdsI/mJ2Lt6WXNAmTKf4i+ezkdgofrtiGJ9XIzGnm/DGXeAUbnvqNFjM8C9yHGOz
+	JV/pGKc0LpEdzGAIMGDzZ/tVss5peFJhH/fkE5ywisBUGvCJnOstQ3yT3Bgfcw==
+Date: Tue, 15 Jul 2025 15:56:23 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Florian Fainelli
+ <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, Vladimir
+ Oltean <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
+ <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v3 1/3] net: netdevsim: Add PHY support in
+ netdevsim
+Message-ID: <20250715155623.59fbc2c9@fedora.home>
+In-Reply-To: <9c30b1ab-95fe-4238-950e-23bbd1bb1632@lunn.ch>
+References: <20250710062248.378459-1-maxime.chevallier@bootlin.com>
+	<20250710062248.378459-2-maxime.chevallier@bootlin.com>
+	<560e7969-b859-45ed-b368-350a62cec678@lunn.ch>
+	<20250715080532.07883d74@fedora.home>
+	<9c30b1ab-95fe-4238-950e-23bbd1bb1632@lunn.ch>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: broonie@kernel.org, lee@kernel.org, 
- linux-arm-kernel@lists.infradead.org, matthias.bgg@gmail.com, 
- conor+dt@kernel.org, wenst@chromium.org, devicetree@vger.kernel.org, 
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kernel@collabora.com, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- krzk+dt@kernel.org, lgirdwood@gmail.com
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20250715115718.176495-8-angelogioacchino.delregno@collabora.com>
-References: <20250715115718.176495-1-angelogioacchino.delregno@collabora.com>
- <20250715115718.176495-8-angelogioacchino.delregno@collabora.com>
-Message-Id: <175258775126.1133153.9935401889666941502.robh@kernel.org>
-Subject: Re: [PATCH v4 7/8] dt-bindings: mfd: Add binding for MediaTek
- MT6363 series SPMI PMIC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehhedttdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedujedprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpt
+ hhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-
-On Tue, 15 Jul 2025 13:57:17 +0200, AngeloGioacchino Del Regno wrote:
-> Add a binding for the MediaTek MT6363/6373 (and similar) multi
-> function PMICs connected over SPMI.
+> > On Sat, 12 Jul 2025 18:54:38 +0200
+> > Andrew Lunn <andrew@lunn.ch> wrote:
+> >   
+> > > > +static int nsim_mdio_read(struct mii_bus *bus, int phy_addr, int reg_num)
+> > > > +{
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +static int nsim_mdio_write(struct mii_bus *bus, int phy_addr, int reg_num,
+> > > > +			   u16 val)
+> > > > +{
+> > > > +	return 0;
+> > > > +}    
+> > > 
+> > > If i'm reading the code correctly, each PHY has its own MDIO bus? And
+> > > the PHY is always at address 0?  
+> > 
+> > Yes indeed. 
+> >   
+> > > Maybe for address != 0, these should return -ENODEV?  
+> > 
+> > That could be done yes, but I don't think this will ever happen as this
+> > is only ever going to be used in netdevsim, which also controls the PHY
+> > instantiation. I'm OK to add the ENODEV though :)  
 > 
-> These PMICs are found on board designs using newer MediaTek SoCs,
-> such as the Dimensity 9400 Smartphone chip, or the Chromebook
-> MT8196 chip.
+> It makes the simulation more realistic. The other option is to return
+> 0xffff on read, which is what a real MDIO bus would do when you access
+> an address without a device.
 > 
-> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> Link: https://lore.kernel.org/r/20250623120038.108891-2-angelogioacchino.delregno@collabora.com
-> Link: https://lore.kernel.org/r/20250707134451.154346-8-angelogioacchino.delregno@collabora.com
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  .../bindings/mfd/mediatek,mt6363.yaml         | 110 ++++++++++++++++++
->  1 file changed, 110 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml
+> It currently should not happen, but this is the sort of framework
+> which will get expanded with time. So this low hanging fruit could
+> avoid issues later.
+
+True, I'm fine with the 0xffff return on address != 0
+
+> > For the record, the first draft implementation I had locally used a
+> > single MDIO bus on which we could register up to 32 netdevsim PHYs, but
+> > that wasn't enough. At some point Jakub pointed me to the case of
+> > netlink DUMP requests that would be too large to fit in a single
+> > netlink message (default threshold for that is > 4K messages), so to
+> > test that with the phy_link_topology stuff, I had to add around 150
+> > PHYs...  
 > 
+> I'm happy with an MDIO bus per PHY, for the reasons you give.
+> 
+> > > I'm guessing the PHY core is going to perform reads/writes for things
+> > > like EEE? And if the MAC driver has an IOCTL handler, it could also do
+> > > reads/writes. So something is needed here, but i do wounder if hard
+> > > coded 0 is going to work out O.K? Have you looked at what accesses the
+> > > core actually does?  
+> > 
+> > I don't see that driver being useful outside of netdevsim, so at
+> > least we have a good idea of what the MAC driver will do.
+> >
+> > There'e no ioctl, but we can be on the safe side and stub it a bit more.
+> > 
+> > From the tests I've been running, I didn't encounter any side-effect
+> > but I only tested very simple cases (set link up, run ethtool, etc.)  
+> 
+> It is hard to say where this will lead. We have seen bugs with EEE, so
+> being able to test that might be interesting to someone. Given that is
+> all in the core, that would require implementing the C45 over C22 and
+> the EEE registers.
+> 
+> > I've considered re-using swphy for example, and using an emulated MDIO
+> > bus for netdevsim PHY, but my fear was that this would in the end get
+> > too complex.  
+> 
+> Yes, i thought about that too. But i agree, that is the wrong way to
+> go. We would end up adding a lot of features to swphy which never get
+> used in real system, and potentially had bugs to real systems. An
+> emulated PHY for netdevsim might start as a copy/paste of swphy, but i
+> would then expect it to quickly diverge.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+So should we instead move to a netdevsim PHY model where we would
+emulate an mdio bus and use a pure genphy driver instead ?
 
-yamllint warnings/errors:
+If you see some future for nsim PHY as a testing ground for phylib (and
+not only for ethnl), that would make sense :)
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/mediatek,mt6363.example.dtb: pmic@4 (mediatek,mt6363): adc@1000: 'reg' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6363.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/mediatek,mt6363.example.dtb: pmic@4 (mediatek,mt6363): regulators@30: 'oneOf' conditional failed, one must be fixed:
-	'reg' does not match any of the regexes: '^buck-(sshub[124]|vb[1-7]|vs[1-3])$', '^ldo-v(aux|m|rf-io|tref)18$', '^ldo-va(12-1|12-2|15)$', '^ldo-vcn(13|15)$', '^ldo-vio(0p75|18)$', '^ldo-vrf(0p9|12|13|18)$', '^ldo-vsram-(apu|cpub|cpum|cpul|digrf|mdfe|modem)$', '^ldo-vufs(12|18)$', '^pinctrl-[0-9]+$'
-	'reg' does not match any of the regexes: '^pinctrl-[0-9]+$', '^v(ant|aud|aux)18$', '^v(cn18io|efuse|ibr|io28|sram-digrf-aif|usb)', '^v(f|t)p', '^vbuck([0123456789]|4-ufs)$', '^vbuck4(-ufs)?$', '^vcn33-[123]$', '^vmc(h)?$', '^vmch-(eint-low|eint-high)?$', '^vrf(09|12|13|18|io18)-aif$', '^vsim[12]$'
-	'mediatek,mt6373-regulator' was expected
-	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6363.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/mediatek,mt6363.example.dtb: regulators@30 (mediatek,mt6363-regulator): 'reg' does not match any of the regexes: '^buck-(sshub[124]|vb[1-7]|vs[1-3])$', '^ldo-v(aux|m|rf-io|tref)18$', '^ldo-va(12-1|12-2|15)$', '^ldo-vcn(13|15)$', '^ldo-vio(0p75|18)$', '^ldo-vrf(0p9|12|13|18)$', '^ldo-vsram-(apu|cpub|cpum|cpul|digrf|mdfe|modem)$', '^ldo-vufs(12|18)$', '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6363-regulator.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/mediatek,mt6363.example.dtb: adc@1000 (mediatek,mt6363-auxadc): 'reg' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/iio/adc/mediatek,mt6359-auxadc.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250715115718.176495-8-angelogioacchino.delregno@collabora.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Maxime
 
