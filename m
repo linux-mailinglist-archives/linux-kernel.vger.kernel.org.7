@@ -1,173 +1,280 @@
-Return-Path: <linux-kernel+bounces-731862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B4C8B05AAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:54:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 683A2B05A93
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:49:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B65223A8C89
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:54:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E39811AA600A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BD62DCC11;
-	Tue, 15 Jul 2025 12:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdeMibKp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05AF822A1C5;
+	Tue, 15 Jul 2025 12:49:33 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBE51B043A;
-	Tue, 15 Jul 2025 12:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA231EF09D;
+	Tue, 15 Jul 2025 12:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752584091; cv=none; b=gKVd5dClLUjRmwDZb5F6gMRfuI45gwr/JJYhS18brzgIS1/TPtqKHjR/ADYviFYT+0tO41ya3w5qMgTV9jIlPhA6I68+Yt/5OZMqbmcin57uyLHbkvgKWMq0GmRYcAE5K5afjKEbGkCTKlLeMJ8puk7OUaA+Il9SYJwb7Vj14Oc=
+	t=1752583772; cv=none; b=NAVEGRQWLheSAkAxaK/nGqbcMih87FRlVr6kBTXBkpwFn5sKnmYkTJWAi+8wHcV08U5oWa4eRLMrv2AcCnufjqFYUXVPMg1xgLJ8u5pqthT4aYip+gTKPkMF3rr0YQnmJtqd/QhmYSlbNESYItr0JgEYP6XqZrn45WtbH3ZrDaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752584091; c=relaxed/simple;
-	bh=5O2Y0BxfJj/Qqa+KlWHCOfUSGCTb2wf1Q/PPcxWsLNQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aezfhPoeGdUWpWrVygZ7xhNYEtQlX2kOkFmwdagFdxvPxOc9iAPyR9l3ioj5Vuda+qVjTCnVSfs9IhuNojVGeBO/GidoJNDYjgKoY/INu6ol70RDq7IUm33pYnXJEqOdSfNlmMx22UOpA4co6VS6WiY71SdLJ/dmn0o/t4S5UUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdeMibKp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA3D2C4CEE3;
-	Tue, 15 Jul 2025 12:54:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752584091;
-	bh=5O2Y0BxfJj/Qqa+KlWHCOfUSGCTb2wf1Q/PPcxWsLNQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=fdeMibKpUPuMEbjx+PEeY1R4c9jWFe4K7jkPjT8DBRXAuDpuJ8ytPLwG8z9HAsGJY
-	 N9X8S8Oevdse7sq4rOiSOHyHlOzv+tuTudJ6iqVrhsl4Go/ngGGWsWPrxEasPUzA10
-	 AeNGE7cRocUJGamAPTr8ID60gm52hiObYOEdS0+SuGIOmbPSrWF8iaatp66j6nJxdX
-	 pXRqIBBNZCzlvI0n/CEEy4pn6o9G69vEbD7E3pIxOj1jmvmVLlEAqq1wKOKU/IvY5o
-	 RbBpapAzRFc/AqOpIX7AbdzFCUCoIQ+zptMzJFzNxWhQFRI8Y1luHqGQyW2tChzPm0
-	 O/53OfPAu7mpA==
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 15 Jul 2025 13:49:23 +0100
-Subject: [PATCH 6.12.y] arm64: Filter out SME hwcaps when FEAT_SME isn't
- implemented
+	s=arc-20240116; t=1752583772; c=relaxed/simple;
+	bh=v4S/Fj4BA1B8viFWJqUTH7JyIKCD1bp3x1HwshUmh5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sl1nJIbOo69nTCULldGzW4XSZ47c/GBKCywIuAR5ZLUH30jl2YgWs0l7pRDvnSj5bMjhga3P592NZt+w52UUTkw36rvZwOg+Ly/Wb74B07XCtzTh5fYmKaVSr37Bd6hetpw71yDEwGfIQq1rRFNVUXu6E61Fep47xyzPnxIFe60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id E51E814048D;
+	Tue, 15 Jul 2025 12:49:20 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id 6CF6F2E;
+	Tue, 15 Jul 2025 12:49:16 +0000 (UTC)
+Date: Tue, 15 Jul 2025 08:49:32 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
+ <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
+ Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
+ E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Sam
+ James <sam@gentoo.org>
+Subject: Re: [PATCH v13 10/14] unwind: Clear unwind_mask on exit back to
+ user space
+Message-ID: <20250715084932.0563f532@gandalf.local.home>
+In-Reply-To: <20250715102912.GQ1613200@noisy.programming.kicks-ass.net>
+References: <20250708012239.268642741@kernel.org>
+	<20250708012359.345060579@kernel.org>
+	<20250715102912.GQ1613200@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250715-stable-6-12-sme-feat-filt-v1-1-4c1d9c0336f6@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAFJOdmgC/x3MywqDMBBG4VeRWXckCV5CX6W4SPVPHbC2ZIJYx
- Hc3dPktzjlIkQRK9+qghE1UPmuBvVU0zmF9gWUqJmdca3rbsObwXMAdW8f6BkeEzFGWzB6tjyb
- 40fiJSv9NiLL/3w/qauvqHw3neQHrmRN/cwAAAA==
-X-Change-ID: 20250714-stable-6-12-sme-feat-filt-8e58f0a8c08d
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, stable@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Yury Khrustalev <yury.khrustalev@arm.com>, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-cff91
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6158; i=broonie@kernel.org;
- h=from:subject:message-id; bh=5O2Y0BxfJj/Qqa+KlWHCOfUSGCTb2wf1Q/PPcxWsLNQ=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBodk+YkBXzyFKccbuiUAxu1S/zl9ZiQCEz6djVo
- nGb2kewGs2JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaHZPmAAKCRAk1otyXVSH
- 0PWZB/4g+LvxhS1jnDuGNU/QzflvEeUEy4YKtQenEQ2k/wJh5b7rAorEKXu9JSku7z0bPWsD7ay
- omzfSzB3tqFTZgICGHB/uOAJ8fimjUrZ/Fkj8dJiPUOmxZOyhclviGfnklOhZC8OSxhf5/Vs6AK
- q7tsAW+fxRXcfkoP0hUrxW1mh/yBgvQDiHe6OGWiA8hf2Rki2Mf6vKlQ1lmdHhfVeEb+OdFNz78
- uMRw4/lBRXG69kmaP7kdziOCWg38tGwjGm+rel4rUIREkBaMNxcSdwyRfRlCqaqe4gGoX7BSQPy
- 4GAbu5HepHKXWGfWpOBnNsfxhIwpNYwH4VCdnTgxBj4BwkyE
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+X-Rspamd-Queue-Id: 6CF6F2E
+X-Stat-Signature: yexnwodxqt8ue8qfospadikka56s95yg
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/5/yy+laR4mZJUfsHY6UE/+evDZ7yBUf0=
+X-HE-Tag: 1752583756-570069
+X-HE-Meta: U2FsdGVkX18fnfS/TIlTqvL0E56yXq4ZGQ0F2sReWnZxhLcuy1yIV/H05NVLJWnU8vpPUs0HnzYeoh0U9gZ58X8dP4xI4zBA+8Br1N/Ly7TiLMFS5cSFrbZJBmPd/m1SDhMpqhPzGZrNZqA8LanxDYWAPaV3swXW8UMfsqOhD9ZDQVyhbc/lYf4dLxZFiqqHQEpyafUDvpON44zdzVPAqjUqwD05syVrERn1HPadhi7oyFl41oegTfk99eqYWqYKIKLbP8SE8gJV+Bu7cs3oWCRqAyxnufqP16QCFQHMI7zhsxb4U5WsKlXGEAWaREcdM4e8dGCsWWlEcxoHXHD3GIs9MfAV60QbNbL5LhMeLJnJ+nUV1g3holoyV6IujN4n
 
-[ Upstream commit a75ad2fc76a2ab70817c7eed3163b66ea84ca6ac ]
+On Tue, 15 Jul 2025 12:29:12 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-We have a number of hwcaps for various SME subfeatures enumerated via
-ID_AA64SMFR0_EL1. Currently we advertise these without cross checking
-against the main SME feature, advertised in ID_AA64PFR1_EL1.SME which
-means that if the two are out of sync userspace can see a confusing
-situation where SME subfeatures are advertised without the base SME
-hwcap. This can be readily triggered by using the arm64.nosme override
-which only masks out ID_AA64PFR1_EL1.SME, and there have also been
-reports of VMMs which do the same thing.
+> On Mon, Jul 07, 2025 at 09:22:49PM -0400, Steven Rostedt wrote:
+> > diff --git a/include/linux/unwind_deferred.h b/include/linux/unwind_deferred.h
+> > index 12bffdb0648e..587e120c0fd6 100644
+> > --- a/include/linux/unwind_deferred.h
+> > +++ b/include/linux/unwind_deferred.h
+> > @@ -18,6 +18,14 @@ struct unwind_work {
+> >  
+> >  #ifdef CONFIG_UNWIND_USER
+> >  
+> > +#define UNWIND_PENDING_BIT	(BITS_PER_LONG - 1)
+> > +#define UNWIND_PENDING		BIT(UNWIND_PENDING_BIT)  
+> 
+> Since it really didn't matter what bit you took, why not take bit 0?
 
-Fix this as we did previously for SVE in 064737920bdb ("arm64: Filter
-out SVE hwcaps when FEAT_SVE isn't implemented") by filtering out the
-SME subfeature hwcaps when FEAT_SME is not present.
+I was worried about it affecting the global unwind_mask test, but I guess
+bit zero works too. In fact, I think I could just set the PENDING and USED
+(see next patch) bits in the global unwind mask as being already "used" and
+then change:
 
-Fixes: 5e64b862c482 ("arm64/sme: Basic enumeration support")
-Reported-by: Yury Khrustalev <yury.khrustalev@arm.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20250620-arm64-sme-filter-hwcaps-v1-1-02b9d3c2d8ef@kernel.org
-Signed-off-by: Will Deacon <will@kernel.org>
----
- arch/arm64/kernel/cpufeature.c | 45 ++++++++++++++++++++++++------------------
- 1 file changed, 26 insertions(+), 19 deletions(-)
+	/* See if there's a bit in the mask available */
+	if (unwind_mask == ~(UNWIND_PENDING|UNWIND_USED))
+		return -EBUSY;
 
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 05ccf4ec278f..9ca5ffd8d817 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -2959,6 +2959,13 @@ static bool has_sve_feature(const struct arm64_cpu_capabilities *cap, int scope)
- }
- #endif
- 
-+#ifdef CONFIG_ARM64_SME
-+static bool has_sme_feature(const struct arm64_cpu_capabilities *cap, int scope)
-+{
-+	return system_supports_sme() && has_user_cpuid_feature(cap, scope);
-+}
-+#endif
-+
- static const struct arm64_cpu_capabilities arm64_elf_hwcaps[] = {
- 	HWCAP_CAP(ID_AA64ISAR0_EL1, AES, PMULL, CAP_HWCAP, KERNEL_HWCAP_PMULL),
- 	HWCAP_CAP(ID_AA64ISAR0_EL1, AES, AES, CAP_HWCAP, KERNEL_HWCAP_AES),
-@@ -3037,25 +3044,25 @@ static const struct arm64_cpu_capabilities arm64_elf_hwcaps[] = {
- 	HWCAP_CAP(ID_AA64ISAR2_EL1, BC, IMP, CAP_HWCAP, KERNEL_HWCAP_HBC),
- #ifdef CONFIG_ARM64_SME
- 	HWCAP_CAP(ID_AA64PFR1_EL1, SME, IMP, CAP_HWCAP, KERNEL_HWCAP_SME),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, FA64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_FA64),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, LUTv2, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_LUTV2),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, SMEver, SME2p1, CAP_HWCAP, KERNEL_HWCAP_SME2P1),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, SMEver, SME2, CAP_HWCAP, KERNEL_HWCAP_SME2),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, I16I64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I16I64),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, F64F64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F64F64),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, I16I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I16I32),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, B16B16, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_B16B16),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, F16F16, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F16F16),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, F8F16, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F8F16),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, F8F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F8F32),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, I8I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I8I32),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, F16F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F16F32),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, B16F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_B16F32),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, BI32I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_BI32I32),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, F32F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F32F32),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, SF8FMA, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_SF8FMA),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, SF8DP4, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_SF8DP4),
--	HWCAP_CAP(ID_AA64SMFR0_EL1, SF8DP2, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_SF8DP2),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, FA64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_FA64),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, LUTv2, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_LUTV2),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, SMEver, SME2p1, CAP_HWCAP, KERNEL_HWCAP_SME2P1),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, SMEver, SME2, CAP_HWCAP, KERNEL_HWCAP_SME2),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, I16I64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I16I64),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, F64F64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F64F64),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, I16I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I16I32),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, B16B16, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_B16B16),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, F16F16, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F16F16),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, F8F16, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F8F16),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, F8F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F8F32),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, I8I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I8I32),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, F16F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F16F32),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, B16F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_B16F32),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, BI32I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_BI32I32),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, F32F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F32F32),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, SF8FMA, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_SF8FMA),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, SF8DP4, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_SF8DP4),
-+	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, SF8DP2, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_SF8DP2),
- #endif /* CONFIG_ARM64_SME */
- 	HWCAP_CAP(ID_AA64FPFR0_EL1, F8CVT, IMP, CAP_HWCAP, KERNEL_HWCAP_F8CVT),
- 	HWCAP_CAP(ID_AA64FPFR0_EL1, F8FMA, IMP, CAP_HWCAP, KERNEL_HWCAP_F8FMA),
+Back to:
 
----
-base-commit: fbad404f04d758c52bae79ca20d0e7fe5fef91d3
-change-id: 20250714-stable-6-12-sme-feat-filt-8e58f0a8c08d
+	/* See if there's a bit in the mask available */
+	if (unwind_mask == ~0UL)
+		return -EBUSY;
 
-Best regards,
---  
-Mark Brown <broonie@kernel.org>
+> 
 
+
+> >  /*
+> >   * This is a unique percpu identifier for a given task entry context.
+> >   * Conceptually, it's incremented every time the CPU enters the kernel from
+> > @@ -143,14 +148,17 @@ static void unwind_deferred_task_work(struct callback_head *head)
+> >  	struct unwind_task_info *info = container_of(head, struct unwind_task_info, work);
+> >  	struct unwind_stacktrace trace;
+> >  	struct unwind_work *work;
+> > +	unsigned long bits;
+> >  	u64 cookie;
+> >  	int idx;
+> >  
+> > -	if (WARN_ON_ONCE(!local_read(&info->pending)))
+> > +	if (WARN_ON_ONCE(!unwind_pending(info)))
+> >  		return;
+> >  
+> > -	/* Allow work to come in again */
+> > -	local_set(&info->pending, 0);
+> > +	/* Clear pending bit but make sure to have the current bits */
+> > +	bits = READ_ONCE(info->unwind_mask);
+> > +	while (!try_cmpxchg(&info->unwind_mask, &bits, bits & ~UNWIND_PENDING))
+> > +		;  
+> 
+> We have:
+> 
+> 	bits = atomic_long_fetch_andnot(UNWIND_PENDING, &info->unwind_mask);
+> 
+> for that. A fair number of architecture can actually do this better than
+> a cmpxchg loop.
+
+Thanks, I didn't know about that one.
+
+> 
+> >  
+> >  	/*
+> >  	 * From here on out, the callback must always be called, even if it's
+> > @@ -166,10 +174,8 @@ static void unwind_deferred_task_work(struct callback_head *head)
+> >  	idx = srcu_read_lock(&unwind_srcu);
+> >  	list_for_each_entry_srcu(work, &callbacks, list,
+> >  				 srcu_read_lock_held(&unwind_srcu)) {
+> > -		if (test_bit(work->bit, &info->unwind_mask)) {
+> > +		if (test_bit(work->bit, &bits))
+> >  			work->func(work, &trace, cookie);
+> > -			clear_bit(work->bit, &info->unwind_mask);
+> > -		}
+> >  	}
+> >  	srcu_read_unlock(&unwind_srcu, idx);
+> >  }
+> > @@ -194,15 +200,17 @@ static void unwind_deferred_task_work(struct callback_head *head)
+> >   * because it has already been previously called for the same entry context,
+> >   * it will be called again with the same stack trace and cookie.
+> >   *
+> > - * Return: 1 if the the callback was already queued.
+> > - *         0 if the callback successfully was queued.
+> > + * Return: 0 if the callback successfully was queued.
+> > + *         UNWIND_ALREADY_PENDING if the the callback was already queued.
+> > + *         UNWIND_ALREADY_EXECUTED if the callback was already called
+> > + *                (and will not be called again)
+> >   *         Negative if there's an error.
+> >   *         @cookie holds the cookie of the first request by any user
+> >   */  
+> 
+> Lots of babbling in the Changelog, but no real elucidation as to why you
+> need this second return value.
+> 
+> AFAICT it serves no real purpose; the users of this function should not
+> care. The only difference is that the unwind reference (your cookie)
+> becomes a backward reference instead of a forward reference. But why
+> would anybody care?
+
+Older versions of the code required it. I think I can remove it now.
+
+> 
+> Whatever tool is ultimately in charge of gluing humpty^Wstacktraces back
+> together again should have no problem with this.
+> 
+> >  int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
+> >  {
+> >  	struct unwind_task_info *info = &current->unwind_info;
+> > -	long pending;
+> > +	unsigned long old, bits;
+> >  	int bit;
+> >  	int ret;
+> >  
+> > @@ -225,32 +233,52 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
+> >  
+> >  	*cookie = get_cookie(info);
+> >  
+> > -	/* This is already queued */
+> > -	if (test_bit(bit, &info->unwind_mask))
+> > -		return 1;
+> > +	old = READ_ONCE(info->unwind_mask);
+> > +
+> > +	/* Is this already queued */
+> > +	if (test_bit(bit, &old)) {
+> > +		/*
+> > +		 * If pending is not set, it means this work's callback
+> > +		 * was already called.
+> > +		 */
+> > +		return old & UNWIND_PENDING ? UNWIND_ALREADY_PENDING :
+> > +			UNWIND_ALREADY_EXECUTED;
+> > +	}
+> >  
+> > -	/* callback already pending? */
+> > -	pending = local_read(&info->pending);
+> > -	if (pending)
+> > +	if (unwind_pending(info))
+> >  		goto out;
+> >  
+> > +	/*
+> > +	 * This is the first to enable another task_work for this task since
+> > +	 * the task entered the kernel, or had already called the callbacks.
+> > +	 * Set only the bit for this work and clear all others as they have
+> > +	 * already had their callbacks called, and do not need to call them
+> > +	 * again because of this work.
+> > +	 */
+> > +	bits = UNWIND_PENDING | BIT(bit);
+> > +
+> > +	/*
+> > +	 * If the cmpxchg() fails, it means that an NMI came in and set
+> > +	 * the pending bit as well as cleared the other bits. Just
+> > +	 * jump to setting the bit for this work.
+> > +	 */
+> >  	if (CAN_USE_IN_NMI) {
+> > -		/* Claim the work unless an NMI just now swooped in to do so. */
+> > -		if (!local_try_cmpxchg(&info->pending, &pending, 1))
+> > +		if (!try_cmpxchg(&info->unwind_mask, &old, bits))
+> >  			goto out;
+> >  	} else {
+> > -		local_set(&info->pending, 1);
+> > +		info->unwind_mask = bits;
+> >  	}
+> >  
+> >  	/* The work has been claimed, now schedule it. */
+> >  	ret = task_work_add(current, &info->work, TWA_RESUME);
+> > -	if (WARN_ON_ONCE(ret)) {
+> > -		local_set(&info->pending, 0);
+> > -		return ret;
+> > -	}
+> >  
+> > +	if (WARN_ON_ONCE(ret))
+> > +		WRITE_ONCE(info->unwind_mask, 0);
+> > +
+> > +	return ret;
+> >   out:
+> > -	return test_and_set_bit(bit, &info->unwind_mask);
+> > +	return test_and_set_bit(bit, &info->unwind_mask) ?
+> > +		UNWIND_ALREADY_PENDING : 0;
+> >  }  
+> 
+> This is some of the most horrifyingly confused code I've seen in a
+> while.
+> 
+> Please just slow down and think for a minute.
+> 
+> The below is the last four patches rolled into one. Not been near a
+> compiler.
+
+Are you recommending that I fold those patches into one?
+
+I'm fine with that. Note, part of the way things are broken up is because I
+took Josh's code and built on top of his work. I tend to try not to modify
+someone else's code when doing that and make building blocks of each stage.
+
+Also, it follows the way I tend to review code. Which is to take the entire
+patch set, apply it, then look at each patch compared to the final result.
+
+That probably explains why my patch series is confusing for you, as it was
+written more for the way I review. Sorry about that.
+
+-- Steve
 
