@@ -1,177 +1,115 @@
-Return-Path: <linux-kernel+bounces-731667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E806FB057F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:36:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54AAAB057FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:38:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C4BC4A4FAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:36:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 494F04E4D43
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5092D8793;
-	Tue, 15 Jul 2025 10:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6114D2D837B;
+	Tue, 15 Jul 2025 10:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jLRq7Wkd"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sg9BVJUE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC8826FA5C;
-	Tue, 15 Jul 2025 10:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C025E2CA9;
+	Tue, 15 Jul 2025 10:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752575782; cv=none; b=mbPM6+EgmJngvIxPjTV3ZzEA9K604hWOuKvQkQLLXS/3OsAOjP3ObqoagA8hg4mjzWP55hgtOypAdSUBiXvdABCT1pmWBoxeWZyqug1vmTUzd97ta44l9uYUnjWVtSNuPCQpyGHxPZ9d2Ficl/Qa616M1Z0xIeMlfIb0c2rF+jI=
+	t=1752575877; cv=none; b=rrh//UtvBRgXa8RWNT92qHTuVjK//GMtWcLWYhtqq8ti/nB7DJHP+K68m4MHkW5PwdvDx4Oj4zxgowsXCAU7bJcslIFmobVeMDxY7DJPeaUbV5Gjr0jXtPoUtGqJJg/OGwxISPcBWXFBQDOx2OIuxN7Xds9bf/dq8YGoO1k11mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752575782; c=relaxed/simple;
-	bh=F+tYOXJ8hjiy2s7ICd+QbNKS1sdyZsQBpGzRhNcc6jw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VvS0HmwWN4rpr06EATS+0a/HqWTKmvT4x5yFePkxdrl2HasSO2Z1jdkjF6KfTt2U4dA6KftBGeX3hlIo9UIZ1HXt+Hfa5Kx684lAadfTM8jdr8Il40Q6S4cYVB3j+P/g6uLfm2z1rSF99TxZWoY9m8g+2kGawystLagAClQJuVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jLRq7Wkd; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so8828084a12.3;
-        Tue, 15 Jul 2025 03:36:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752575779; x=1753180579; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RwJj2XW0Xtg7vWbGRjw0IzVQ1p4FfGBNG+AO9cOWVHY=;
-        b=jLRq7WkdZMcSiLTaLVo7wsMRPJhu8Vi22rCcac22t1+fk9PVHtmbbebj7bFJYtEsj3
-         YXawYvu3CGGetIn/4FPdpUFhTc0HE7aGDO92BvrzCbPM4YQJljtis07+KKJXHM1ipEq1
-         TEKJrMwGfiYZ6zXjdFmK74Uy1O5ajGflD7JLCKbGRnYY1abTUmreKlXHJuwCFycuDmvh
-         jXHpyQd1I/sWmfzpOiMpgFnXf2aGn+TKz7H2Ilrac9oEWnIK2/wENKSSkTYf1W7JkNHC
-         TjDfrYWlw672+tyk0aA5tEOQ7l0n/l0FxN0LSdeEw/DD9h4RW71cWPitgwSxOZkJuL9Y
-         5eaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752575779; x=1753180579;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RwJj2XW0Xtg7vWbGRjw0IzVQ1p4FfGBNG+AO9cOWVHY=;
-        b=fRX/gvWiP7kNG0x/Tou2BwWsyQGD7FmbeCN3nhjQrmzTsR/tLIiJwDixcYovTFAxqB
-         96aHcgAsLV+SxQvnOR1g4BqwCSzICyBWjkfFBjhhDhlaPa2aAIghIXRdSWyedAXhGUs0
-         nEkxr/JwfbTuKnxGj7iRIfJzf0giePzfE3/in7/hskj7exFTCfaEiL4rWbQq/gtIVIPy
-         Qra4NdMV67KaDuZr8Wi2ayuIgsBXWd9GuVC28lVbinge2GPbXzHlkKW0OwLaVUfXdb8A
-         xBILe0sRpkhzzdY1IsdgVapSOHFoZhVHeCUFo3B8Of2FOv8bpw1gRVI8ngX2REv1rWsP
-         9Kyw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9fiQqqiDjpOj+Kig2Q87XSpJuhWG0qBZIMPLe6U9ET8yH4uw9T+ClUaOznlrYvA2xMIOHKfaOi78ra3G1@vger.kernel.org, AJvYcCVZsnhDbiyE/JgAah3tzPW2f+IQZjpMi4Hhz3et+UtOugLx4t78bDjM5nRJs6bmqx28poY=@vger.kernel.org, AJvYcCWhavnj3O1PTKR8zI9QqXyoHXmtaZWLzPLTEtxtT0Qx5GtxzazpofwNq9Tg/aCB4TAIbGT1Iu0G@vger.kernel.org, AJvYcCXazEYsKl7jAoKhtxP35zuL0x2hOTmN7amcCte9N7aWsiZFmOHYxML6TcOQ/jYowugySxCu/X0dq0V3x7SkAgA=@vger.kernel.org, AJvYcCXpeKODxpGM2n1jjr6eqi6EvZ16iUVKvQUYP4I/hvWoK6YMxaXYwsNN/jwqAOeG4IvJzdqKXRavaoEHHQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyteToK/UTJ/hBhdG31uTCfny/IppUCtdnAPOwA84yr/M+/vQf
-	tp9UIW2JtVkdcF25ESyoSnZeiLbJi+Wyz94Wf3InBToNa1LMmVZzG+Ic
-X-Gm-Gg: ASbGncu2a/IUk7obcDeeAYwrV6+/LBvFNWTUt/AEE5tJpevr7bq39I4osD2lLd0Hq6W
-	Ei7E3Fnojp7r3pQF9PcNFJREBhxTy7XVPJnWfooWshbz2gKSONe6hRyb3poGZYb9d1mUzDCudI0
-	S0LQ7AeuWHESjUAvpJ74DMopQhYY8VOSYZQmnjTALXJftMVdSWQjQ9pP5VS7VvxrgjaDsqeq7Yk
-	+z5O41JWFwkPRRPEqpZxfNwivMNt3lRajAZXbANIg74+cvkVqeQHOv/8hPl8x2mvdWiJ+mlunK2
-	e0kuVsWmkzy+7spl34zvx20PALOMWNEzdz/LKb7s6GUTPVyc6Elg/TZDb9ngp8+5V8qOrPSnfaN
-	R2VjyLk3dFjWdjabm2VZCDQoLbHrFVxJaaB/qEJIjrAmauQ==
-X-Google-Smtp-Source: AGHT+IGaK5G3wNkKd0FQXTFLEb3wcMNGQ8G+9vcipY4gHF5O0bM0XfRnvGt5TQBO6UmtOz1kGEnKVw==
-X-Received: by 2002:a17:907:930c:b0:ae6:a8c1:c633 with SMTP id a640c23a62f3a-ae6fc1fae79mr1633481566b.34.1752575779007;
-        Tue, 15 Jul 2025 03:36:19 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:a4c1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82dedd3sm976790966b.150.2025.07.15.03.36.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 03:36:18 -0700 (PDT)
-Message-ID: <9bed2f6e-6251-4d0c-ad1e-f1b8625a0a10@gmail.com>
-Date: Tue, 15 Jul 2025 11:37:45 +0100
+	s=arc-20240116; t=1752575877; c=relaxed/simple;
+	bh=nvxs4JefX2Fe4yKb5WKZ7M6l9ON2bv8gKISzvr7j2i4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=KB4X9bJNPLOyVX6zZhJ80xmJu8X/l+/8JnXKlyB5x7G3VruL3bEzByRHWBWZnk81T0hquTqLOL4VzBLkM86e1kiT/qmtdab/bOQegI0XmtwNAapxh7glq6dk6Lqr3f1LtTec/zDi2x1Qs1bfN/uTxR5TSjsIpgyYV8ExnygPJgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sg9BVJUE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4FC4C4CEF1;
+	Tue, 15 Jul 2025 10:37:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752575877;
+	bh=nvxs4JefX2Fe4yKb5WKZ7M6l9ON2bv8gKISzvr7j2i4=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=sg9BVJUEjWs0T11lxnAPKFTb5iCEvHqTj6KKLXpyKytQ/mQER+vjv2fmRR6ACiJLO
+	 2SVYf2uLn3nM8483OjsXGrxbXD87wLFC4cdhVQmIHDZJogP/DcPiJ32zks10sYS1km
+	 dylH8vRsKifhYMF9u5KQw0AX+ssSLXTdv2YcchVagpRIxtUeJxOrRSGe0mxskM12es
+	 n7Z+322O01Cll8G+IlSihqBD2Hn2zj2RSDrYi2502JB2XTcHXtPfZSeg1CuegxTOwt
+	 ts/JHVlcRmnNRI1CCPSqxpGtVd8PR64ByCtbyV0XLBqPftKzyPt3XrxjLV7USldrok
+	 Dhw0+bN+ZI86w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v10 02/12] netmem: use netmem_desc instead of
- page to access ->pp in __netmem_get_pp()
-To: Mina Almasry <almasrymina@google.com>, Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel_team@skhynix.com,
- ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
- akpm@linux-foundation.org, andrew+netdev@lunn.ch, toke@redhat.com,
- david@redhat.com, Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, linux-rdma@vger.kernel.org,
- bpf@vger.kernel.org, vishal.moola@gmail.com, hannes@cmpxchg.org,
- ziy@nvidia.com, jackmanb@google.com, wei.fang@nxp.com, shenwei.wang@nxp.com,
- xiaoning.wang@nxp.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, anthony.l.nguyen@intel.com,
- przemyslaw.kitszel@intel.com, sgoutham@marvell.com, gakula@marvell.com,
- sbhatta@marvell.com, hkelam@marvell.com, bbhushan2@marvell.com,
- tariqt@nvidia.com, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
- john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
- leon@kernel.org, mbloch@nvidia.com, danishanwar@ti.com, rogerq@kernel.org,
- nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com,
- shayne.chen@mediatek.com, sean.wang@mediatek.com, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, aleksander.lobakin@intel.com,
- horms@kernel.org, m-malladi@ti.com, krzysztof.kozlowski@linaro.org,
- matthias.schiffer@ew.tq-group.com, robh@kernel.org, imx@lists.linux.dev,
- intel-wired-lan@lists.osuosl.org, linux-arm-kernel@lists.infradead.org,
- linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20250714120047.35901-1-byungchul@sk.com>
- <20250714120047.35901-3-byungchul@sk.com>
- <CAHS8izO393X_BDJxnX2d-auhTwrUZK5wYdoAh_tJc0GBf0AqcQ@mail.gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAHS8izO393X_BDJxnX2d-auhTwrUZK5wYdoAh_tJc0GBf0AqcQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 12:37:52 +0200
+Message-Id: <DBCKAOSOMXHB.3IEHVGIH7ZANN@kernel.org>
+Subject: Re: [PATCH 3/3] rust: add a sample allocator usage
+Cc: "Andrew Morton" <akpm@linux-foundation.org>, "Uladzislau Rezki"
+ <urezki@gmail.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Geliang
+ Tang" <geliang@kernel.org>, "Hui Zhu" <zhuhui@kylinos.cn>,
+ <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+ <rust-for-linux@vger.kernel.org>
+To: "Hui Zhu" <hui.zhu@linux.dev>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <cover.1752573305.git.zhuhui@kylinos.cn>
+ <ea067b4df1cef7f724a9e8ef0d345087f06ad6a7.1752573305.git.zhuhui@kylinos.cn>
+In-Reply-To: <ea067b4df1cef7f724a9e8ef0d345087f06ad6a7.1752573305.git.zhuhui@kylinos.cn>
 
-On 7/14/25 20:37, Mina Almasry wrote:
-> On Mon, Jul 14, 2025 at 5:01 AM Byungchul Park <byungchul@sk.com> wrote:
-...>> +static inline struct netmem_desc *pp_page_to_nmdesc(struct page *page)
->> +{
->> +       DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(page));
->> +
->> +       /* XXX: How to extract netmem_desc from page must be changed,
->> +        * once netmem_desc no longer overlays on page and will be
->> +        * allocated through slab.
->> +        */
->> +       return (struct netmem_desc *)page;
->> +}
->> +
-> 
-> Same thing. Do not create a generic looking pp_page_to_nmdesc helper
-> which does not check that the page is the correct type. The
-> DEBUG_NET... is not good enough.
-> 
-> You don't need to add a generic helper here. There is only one call
-> site. Open code this in the callsite. The one callsite is marked as
-> unsafe, only called by code that knows that the netmem is specifically
-> a pp page. Open code this in the unsafe callsite, instead of creating
-> a generic looking unsafe helper and not even documenting it's unsafe.
-> 
->>   /**
->>    * __netmem_get_pp - unsafely get pointer to the &page_pool backing @netmem
->>    * @netmem: netmem reference to get the pointer from
->> @@ -280,7 +291,7 @@ static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
->>    */
->>   static inline struct page_pool *__netmem_get_pp(netmem_ref netmem)
->>   {
->> -       return __netmem_to_page(netmem)->pp;
->> +       return pp_page_to_nmdesc(__netmem_to_page(netmem))->pp;
->>   }
-> 
-> This makes me very sad. Casting from netmem -> page -> nmdesc...
+On Tue Jul 15, 2025 at 11:59 AM CEST, Hui Zhu wrote:
+> +impl kernel::Module for RustAllocator {
+> +    fn init(_module: &'static ThisModule) -> Result<Self> {
+> +        pr_info!("Rust allocator sample (init)\n");
+> +
+> +        let mut vmalloc_vec =3D KVec::new();
+> +        for (size, align) in VMALLOC_ARG {
+> +            let (ptr, layout) =3D vmalloc_align(size, align)?;
 
-The function is not used, and I don't think the series adds any
-new users? It can be killed then. It's a horrible function anyway,
-would be much better to have a variant taking struct page * if
-necessary.
+Ok, I think I get the idea, you want to demonstrate how to use the Allocato=
+r
+trait for raw memory allocations.
 
-> Instead, we should be able to go from netmem directly to nmdesc. I
-> would suggest rename __netmem_clear_lsb to netmem_to_nmdesc and have
-> it return netmem_desc instead of net_iov. Then use it here.
+However, doing so is discouraged unless there's really no other way. One ob=
+vious
+example are Rust's own memory allocation primitives, such as Box and Vec.
 
-Glad you liked the diff I suggested :) In either case, seems
-like it's not strictly necessary for this iteration as
-__netmem_get_pp() should be killed, and the rest of patches work
-directly with pages.
+So, instead of this raw allocation, you can just use VBox::new() or
+VBox::new_uninit() in the following way.
 
-  
-> We could have an unsafe version of netmem_to_nmdesc which converts the
-> netmem to netmem_desc without clearing the lsb and mark it unsafe.
-> 
+	[repr(align(ALIGN))]
+	struct Blob([u8; SIZE]);
 
--- 
-Pavel Begunkov
+	// Creates a vmalloc allocation of size `SIZE` with an alignment of
+	// `ALIGN`. The allocation is freed once `b` is dropped.
+	let b =3D VBox::<Blob>::new_uninit(GFP_KERNEL)?;
 
+This way you don't have to handle the layout and the Allocator type yoursel=
+f and
+you also don't have to care about explicitly calling vfree(), VBox does all=
+ this
+for you.
+
+> +
+> +            let (addr, is_ok) =3D check_ptr(ptr, size, align);
+> +            if !is_ok {
+> +                clear_vmalloc_vec(&vmalloc_vec);
+> +                return Err(EINVAL);
+> +            }
+> +
+> +            vmalloc_vec.push((addr, layout), GFP_KERNEL)?;
+> +        }
+> +
+> +        Ok(RustAllocator { vmalloc_vec })
+> +    }
+> +}
 
