@@ -1,121 +1,125 @@
-Return-Path: <linux-kernel+bounces-731873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31B4DB05ACF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:07:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27739B05ACB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D08AC7B3CB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:05:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D8547A363C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BABD2E2F10;
-	Tue, 15 Jul 2025 13:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC87B2E173A;
+	Tue, 15 Jul 2025 13:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b9T7JbZy"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="CTLIsoKD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B9e4GcnF"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BC72E041E;
-	Tue, 15 Jul 2025 13:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BF91C860A;
+	Tue, 15 Jul 2025 13:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752584820; cv=none; b=Jz9CiFSRw9JAX5Qd3z269Vpu3q/9AxNKvyHw+gDkZNFyK/Y+TEpVFgZGoIhJic7Y3jr2oGOc+uwPEDIsdIolk2lkRPc43NQirNvkUR69UJyGpCMMxzd/13eaC/AfenISkOOLEj99qVJ6C0TGb8V8iolqYmMbDqbrAuaQszNfclo=
+	t=1752584807; cv=none; b=tHvwmwzgG66xVAtawXiWz7Rmxrgds9gcPZ9JkcVAwrJYAK+TUpc2/DrBNKqwa38BeMNzklsjkWEskjyrHArOUXquMxRfyNescwBnhzro1QS2aaNR8KOy6r45/MmYeDARsdVyoY5Y/TTuYf5OwTMoWDkgota4oA0DSVADPe0ARC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752584820; c=relaxed/simple;
-	bh=+4BPq8Ag7u6VS3ATK8+Mqx9MTCxg3lq+5av2VYhAJvo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I1knAFGOoEieTIgwFUKqZ+HoaAa1QWBZhNemt273R4UVLib5Ujh+jus/AsMAAy0hsz976UtSKU/hIV5C13qBfH4luIAdenR86ZT8vRfJC1Ge3CywViFhDVw2oKvTI9cQtrbGFXyZj9itL68co0bN9JhHX/ogPFfuu359Mf+ZVMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b9T7JbZy; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a522224582so2757020f8f.3;
-        Tue, 15 Jul 2025 06:06:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752584817; x=1753189617; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xYAnqRvooyPTpqznSq8Nwhoicrxrtb7Od8bN3VBbdQY=;
-        b=b9T7JbZyKW2uTi8NTvYDN5YZ+E2N6C/KdV0mOukwIaaFrL1tON+kIZNRvuHdXG5ESf
-         lTlqICA23WGzk6qzVNyYclrB+5Nf93hS100wLXx2fUtdcUtUWVmbwRYH9hUE14rg9n68
-         8UbnLm9LolzDgyRZhwKGesVH4tsk/DbllYFUGmMj2WqQQjn/9DAzLMT3sW+8rs0a6TfR
-         KMsFKcAfO25CKpmXiIdCqbUF3dU4U0ZzYF58OH1Jf4lXzjY9dYBxAkkCXcce/gD752ip
-         4svP+3G5i8CBvAYzvabuPbSEYBR6KMIcxpzCZQFFQUJRbMUNiBHqJ56MxmPX/7CMui0W
-         Wkng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752584817; x=1753189617;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xYAnqRvooyPTpqznSq8Nwhoicrxrtb7Od8bN3VBbdQY=;
-        b=U1p/89E2OcWEuyf+fCIoT1gb8pfmi86srxX8UyTTj8OLwKSweG9NnHb4sdJxt3pS8h
-         q/yr92KJW8Uwmq0FYtv1fjuEilLKo6R+pwC5wqQIX1h9KXztgh9jdwFIWej1yLSQSr+S
-         uV25mDC54AOdwmAiyxThtWDVXO66y+ygXUHEr6COGVsBsAdDUjAXXt5b/NwOHP6nBYCD
-         ZKPBujxT/4wCDJccTgxPH4iUm4yhYg/1O7awOsuFRF1L9mewpN/EvQbhZcr/Y0ClbBiW
-         rxTyXCS7nKroqL1Z3ux2Q3Muw+sBT0JOgealKyVi9+r3HDtSPXdWpKcjm0iNb2pG4or8
-         HQMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZA+gZSj4jELsGaKHQwiobuPi7BtAjzmoneT4zc1ThtCwhghPb1xnJ0oVOr8IKRRX4HbbV3JaA+gXWVOk=@vger.kernel.org, AJvYcCXoGNsqpnaVa3MkL2GLrITVF0yWqGlLN76SPDhc/irKYRD1qUnN5rcHVEsjsrfPoQkVi4gM8DcY5R3eOe1ZvHiV@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH/icDS12FGH3thxt1e5jQXjqVG4wFrPWR8HvTHvnRXX5DN2+t
-	4Ur5M/5KMkS0jfeU7jBX6Df5k0oZ1rF/kUOVM39weJsQvcr6MjGv8XSj
-X-Gm-Gg: ASbGncu6+0LjLvJs7PV8ymOC2xXIkKG+da/Hbi3g//XxedxxfwITwiJvGwrc4iBFCEK
-	y3xaYP7A7Rr7mQIBN2igVcU95ltQDWRNYkSuqxH4XlXqugfo9eq3Ue6XgFd9PxLD2ZgFBYvrz7Z
-	OvokSsQHg69G6WgLaAWNkkXCSWW3SpiWBRk6TeWG2P87WtopwDjHnbmfRghWqhwtItWE/o1fUqa
-	nwLsWLTiJFztCkRdCYqGEpFqkSVXb4UgHlya6yyDBn2Xf3MrH9/h+BNAgI/+zsOccuau9E0Rpdn
-	nwKcpur52mc7TsCEZjNUVJD3Uqm5gjT+x04Nogx3HdF5DHJ2iQkTV5xXo2YYAhtuVNftjEogIgU
-	+SMWcNDYBA9NWoe57ABaR
-X-Google-Smtp-Source: AGHT+IFT4HKoMD6ksFU61owSdxSR7HkGowoofRdIoqF/Y7IIpvsS/v01MDu6B2/BRiHPFTciAUcNKw==
-X-Received: by 2002:a05:6000:3103:b0:3b5:e6c0:1241 with SMTP id ffacd0b85a97d-3b5f351dd51mr12523792f8f.9.1752584816206;
-        Tue, 15 Jul 2025 06:06:56 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b5e8e14d12sm15233822f8f.70.2025.07.15.06.06.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 06:06:55 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests/futex: Fix spelling mistake "Succeffuly" -> "Successfully"
-Date: Tue, 15 Jul 2025 14:06:26 +0100
-Message-ID: <20250715130627.1907017-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1752584807; c=relaxed/simple;
+	bh=YYU9Nk/kU2fq6MsmdudsVJc6RLty5J5tmPiB6zDg980=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ucorZG/rM+88d447CHL0CppjBnk/3INpYDB3ydlZp6syk1kih7KIb1bChOGVi12W6PCMGxilb9YySu3BpySSo+uDE4sZe0/Hw+TJz4RS7xpnaKESssAsTbjCYUJNOTPt26s9QFVpc1moHrVF4a9Km3GlQDSeXOt92oGbxI2gJHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=CTLIsoKD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B9e4GcnF; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 30061EC0DB1;
+	Tue, 15 Jul 2025 09:06:43 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Tue, 15 Jul 2025 09:06:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1752584803; x=1752671203; bh=CftjyjJduW
+	MdmlidiqFXIPvup6Qz4bYRSzSv1UpRW/4=; b=CTLIsoKDs+AAcNGwt+v6mr0SJY
+	xWvc+WKJK9r8mQuqjRxzO4M34aLWMJTbFOdWUMJY6L0Sd52kvYOeLD1C7FlyEZex
+	qlLMqTlIXlMjB4yncl3qfY6c8eU7xkjCh4k4tVobi2YCYvi/MSpv7adKGrikBt5i
+	Ju5xG8MtGXc/QE1LLZD+O1dXtwm7ubXZsFFKtnMy0EqS79c+qtT2SaQWVjVxki8k
+	9jo68/A0ep1+XdZbA4Et+LE66NkKvSLG8Yt8e2SkCx8cirsSRy1bTsLH8JyhXfn3
+	ZBN0dN692X7sxH2oQ/3tdUA4uAiIm2CPnYi1suLkqAKOVPkoUz+VYljMQQDw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1752584803; x=1752671203; bh=CftjyjJduWMdmlidiqFXIPvup6Qz4bYRSzS
+	v1UpRW/4=; b=B9e4GcnFexx8b72tNto8IVC1CXGB/qm59j9Oq0uQdRp+6VafIfL
+	LgGL8Ij2sjcwfLRpx1VN5cYJaneVJ6ZwWYQPbDtTx3x0Y9/tpMdWpS7aNhDyc1kt
+	vXizlT0bGavVqHYBf1qOd0Extti9P2/1QNqp4+LVOC949uG4zm16nZh9JKh2uem6
+	HUauNkcHqgYZs4xfbVXkp4U0szdOqgY2u6Otus8rlV1zeVeaASfnMEYTKanmx5bx
+	PkdCKwspflNdCOvjHELa8VAFVzoyf/p+qR7AmCWw5nXfK3arQYDiUiePFhen2A2y
+	GlBIuxzedme2a8lFSauYGAVGWNzIL++ngMg==
+X-ME-Sender: <xms:YlJ2aN6BBlbE0iacXOHFHzreSa5b8pVwWfrlVbuSaeNoh8hO-VCpHg>
+    <xme:YlJ2aJ3ERUq7FQQWFGHyK6AcSY67S29KZFkrYJzA3cWD7F2quijlQzHbxi3Kb3vox
+    OHhC1BAO4s5NQ>
+X-ME-Received: <xmr:YlJ2aAg4wOiB49r8Xy1uQXeBYEhIxLnlNays0F9uspyGCyJiiGv4QN__nIrY4lvsMwLhFtkdiJmHkMASWgPM2-2tilV4qzY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehgeeludcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcumffj
+    uceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeegheeuhefgtd
+    eluddtleekfeegjeetgeeikeehfeduieffvddufeefleevtddtvdenucffohhmrghinhep
+    khgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopedugedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdp
+    rhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtrggslh
+    gvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdq
+    khgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    hihurhihrdhkhhhruhhsthgrlhgvvhesrghrmhdrtghomh
+X-ME-Proxy: <xmx:YlJ2aJp7csQT0g_yv6xtcMJj2EDFX55R1OwjTHIdFt9Jtbj8JZ-EHQ>
+    <xmx:YlJ2aDPMVFRG3LgRL_In43BGgiW7ZzbCXbpibsh7TYx7L2Lh_dngFA>
+    <xmx:YlJ2aF3OP6upFexbcEBSnxyZ5MT-rDQ-1TW-oSaw_mYMvkepzPwyDw>
+    <xmx:YlJ2aBrLAdUS59nrSAOOvdCr1Rft4aCzln6YMvJmrY2v5WlYgAoDLg>
+    <xmx:Y1J2aNPymyR4oO4LxkEczI08VZKHDzO3o6knKqXXHlWOJkhuCKEIpslo>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 15 Jul 2025 09:06:42 -0400 (EDT)
+Date: Tue, 15 Jul 2025 15:06:40 +0200
+From: Greg KH <greg@kroah.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, stable@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Yury Khrustalev <yury.khrustalev@arm.com>
+Subject: Re: [PATCH 6.12.y] arm64: Filter out SME hwcaps when FEAT_SME isn't
+ implemented
+Message-ID: <2025071526-overblown-portion-5f5d@gregkh>
+References: <20250715-stable-6-12-sme-feat-filt-v1-1-4c1d9c0336f6@kernel.org>
+ <c586f05c-a077-4865-8529-08aaf16b8bd6@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c586f05c-a077-4865-8529-08aaf16b8bd6@sirena.org.uk>
 
-There is a spelling mistake in a ksft_exit_fail_msg message. Fix it.
+On Tue, Jul 15, 2025 at 02:02:08PM +0100, Mark Brown wrote:
+> On Tue, Jul 15, 2025 at 01:49:23PM +0100, Mark Brown wrote:
+> 
+> > Fixes: 5e64b862c482 ("arm64/sme: Basic enumeration support")
+> > Reported-by: Yury Khrustalev <yury.khrustalev@arm.com>
+> > Signed-off-by: Mark Brown <broonie@kernel.org>
+> > Cc: stable@vger.kernel.org
+> > Link: https://lore.kernel.org/r/20250620-arm64-sme-filter-hwcaps-v1-1-02b9d3c2d8ef@kernel.org
+> > Signed-off-by: Will Deacon <will@kernel.org>
+> > ---
+> 
+> This needs an additional signoff from me, sorry - I didn't register due
+> there being a signoff from me further up the chain.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/futex/functional/futex_priv_hash.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/futex/functional/futex_priv_hash.c b/tools/testing/selftests/futex/functional/futex_priv_hash.c
-index a9cedc365102..aea001ac4946 100644
---- a/tools/testing/selftests/futex/functional/futex_priv_hash.c
-+++ b/tools/testing/selftests/futex/functional/futex_priv_hash.c
-@@ -122,7 +122,7 @@ static void futex_dummy_op(void)
- 	}
- 	ret = pthread_mutex_timedlock(&lock, &timeout);
- 	if (ret == 0)
--		ksft_exit_fail_msg("Succeffuly locked an already locked mutex.\n");
-+		ksft_exit_fail_msg("Successfully locked an already locked mutex.\n");
- 
- 	if (ret != ETIMEDOUT)
- 		ksft_exit_fail_msg("pthread_mutex_timedlock() did not timeout: %d.\n", ret);
--- 
-2.50.0
-
+That's ok, being the original author of the change makes this "ok" :)
 
