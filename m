@@ -1,148 +1,111 @@
-Return-Path: <linux-kernel+bounces-732089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA5E7B061EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:54:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3811FB06201
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA7814A0E15
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:46:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03CAF586530
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479F11E8335;
-	Tue, 15 Jul 2025 14:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5A91FA178;
+	Tue, 15 Jul 2025 14:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nhOI4oOc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WsiyGR8F"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8378C17B425;
-	Tue, 15 Jul 2025 14:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF741EB182
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752590778; cv=none; b=oIsgVK+PkQp35W7/T6IOb+7tjntXPjtmQi+sZzw6hr4tagyaKS3SNjPN4Vbi+aJzg0YCvBVFLmfP9XLmAFvqmp5jChfIhiXSt5AlUanAx83252qFKUchiKVawJ9wqgDjxvEUXwxhDyhFHsagwQw4J05oBPnuGrOo6zyjU7ApN8M=
+	t=1752590812; cv=none; b=HUzoRdQbqHQrrcCkXHpOZXa61Xhjo1CM1ubR2KyI5U488ujur5TZ9oee2EIbmyffXGDwccE0iZ2To46RE59Q5tBG9vjJOC3p1MGYutPm9HxewrlxbyCznaduOgEd92zIZfw5l3NP+SED7qh4gvz2VCQj0djOUaBEkpE1eGqve3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752590778; c=relaxed/simple;
-	bh=KZ1W7mzel2tzyENmIY/KyfG+sQOyLDK8atG59n7g34U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=g0c9EwCV6Sy199W37aG0IpkDavxAGlHDAIXgHJWTElUa7K6i5KqvhwIRSYz33hAm9fNHl+4aC988p/J6r+bH8m6DfD+8hw1yL9TWK2P3bb2QoufPEqtQTChFl2b3wiSNojuJLr9OmgpUxfR/d8YkeFIQqqELDnZH8OodCiUn3AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nhOI4oOc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3826DC4CEE3;
-	Tue, 15 Jul 2025 14:46:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752590778;
-	bh=KZ1W7mzel2tzyENmIY/KyfG+sQOyLDK8atG59n7g34U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=nhOI4oOcjdEd81/BA+chqSa9l8uanzEnEhr+bgfqoi60EpD0cwakUJpbZX2fvZD9c
-	 h0r1Tl3SHdyGUqyNniLCPaRBLWnhR4Mw4wlI0b9cxK2s7FO/4PCh/z68CLf37uqsbN
-	 Ss57RFtoC1bv1VmoENClwao3WYlFrjJ6yC7SIvm9bi5akXlS/Oy+9OsgqHLoZsWQN+
-	 aOS+cqX7rXhgqW0olOrGTZRfSSAUFdUoXJJXA1aV5LA9A12qLH5D2M+l2ZRGSowLbs
-	 FUNKbLBEz/i0hS2tpLxxlwcQJOY2rIHFi2EcPvKl2lBHzOWGB1F27V57vVQ2nL9Xb7
-	 ZNVpaMdVZGo+Q==
-Date: Tue, 15 Jul 2025 09:46:16 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>,
-	Manivannan Sadhasivam <mani@kernel.org>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	geert+renesas@glider.be, magnus.damm@gmail.com,
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	john.madieu.xa@bp.renesas.com,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v2 0/8] PCI: rzg3s-host: Add PCIe driver for Renesas
- RZ/G3S SoC
-Message-ID: <20250715144616.GA2458869@bhelgaas>
+	s=arc-20240116; t=1752590812; c=relaxed/simple;
+	bh=BHNFsVJgp3UXOwLMO63md6+vLI8302/jTGy35SCXoSE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NANuyzFA9bLImuE7qk8HyGdTi2lKGDk4cuSN9nYWNVV2oq9+IR/0+wGN09uM5sSDHoFieP24Pfym6xprrVkYbvMr5O2YbUceFHS1zMe6uhAd6TCzEeqR837FrocGs16/62F9pO3/bdmHbpQLzgcHzKh9QgA3RrQyB/r9k6TD6QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WsiyGR8F; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752590809;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZeZIBHa9w6zHlOJ9URR1VQUp7AWpbsTzT7CBAvQ9n3I=;
+	b=WsiyGR8FMu0IYSJihhnapETTiok9VcPqLXDnb6K4V3FxbHDacS4kAhogSKjnR0Jb7nLzi0
+	uouiURmIX5eBHUrQGL4zqmCdKpNmEoKBzO65ijSMXU9GTUmXQ8HFy/IRrn4ZIVXdnvMTUL
+	I/tR+x2/Og/2IDPbeQhs8QV8KttMYpQ=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-554-Lfnve5iDO1WlyWPh0VbE-g-1; Tue,
+ 15 Jul 2025 10:46:45 -0400
+X-MC-Unique: Lfnve5iDO1WlyWPh0VbE-g-1
+X-Mimecast-MFC-AGG-ID: Lfnve5iDO1WlyWPh0VbE-g_1752590803
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9082F195604F;
+	Tue, 15 Jul 2025 14:46:42 +0000 (UTC)
+Received: from p16v.redhat.com (unknown [10.45.225.30])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1D85F19560A7;
+	Tue, 15 Jul 2025 14:46:38 +0000 (UTC)
+From: Ivan Vecera <ivecera@redhat.com>
+To: netdev@vger.kernel.org
+Cc: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Michal Schmidt <mschmidt@redhat.com>,
+	Petr Oros <poros@redhat.com>
+Subject: [PATCH net-next v2 0/5] dpll: zl3073x: Add misc features
+Date: Tue, 15 Jul 2025 16:46:28 +0200
+Message-ID: <20250715144633.149156-1-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250530111917.1495023-1-claudiu.beznea.uj@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Fri, May 30, 2025 at 02:19:09PM +0300, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Hi,
-> 
-> Series adds a PCIe driver for the Renesas RZ/G3S SoC.
-> It is split as follows:
-> - patch 1/8:		updates the max register offset for RZ/G3S SYSC;
-> 			this is necessary as the PCIe need to setup the
-> 			SYSC for proper functioning
-> - patch 2/8:		adds clock, reset and power domain support for
-> 			the PCIe IP
-> - patches 3-4/8:	add PCIe support for the RZ/G3S SoC
-> - patches 5-8/8:	add device tree support and defconfig flag
-> 
-> Please provide your feedback.
-> 
-> Merge strategy, if any:
-> - patches 1-2,5-8/8 can go through the Renesas tree
-> - patches 3-4/8 can go through the PCI tree
-> 
-> Thank you,
-> Claudiu Beznea
-> 
-> Changes in v2:
-> - dropped "of/irq: Export of_irq_count()" as it is not needed anymore
->   in this version
-> - added "arm64: dts: renesas: rzg3s-smarc-som: Update dma-ranges for PCIe"
->   to reflect the board specific memory constraints
-> - addressed review comments
-> - updated patch "soc: renesas: rz-sysc: Add syscon/regmap support"
-> - per-patch changes are described in each individual patch
-> 
-> Claudiu Beznea (7):
->   clk: renesas: r9a08g045: Add clocks, resets and power domain support
->     for the PCIe
->   dt-bindings: PCI: renesas,r9a08g045s33-pcie: Add documentation for the
->     PCIe IP on Renesas RZ/G3S
->   PCI: rzg3s-host: Add Initial PCIe Host Driver for Renesas RZ/G3S SoC
->   arm64: dts: renesas: r9a08g045s33: Add PCIe node
->   arm64: dts: renesas: rzg3s-smarc-som: Update dma-ranges for PCIe
->   arm64: dts: renesas: rzg3s-smarc: Enable PCIe
->   arm64: defconfig: Enable PCIe for the Renesas RZ/G3S SoC
-> 
-> John Madieu (1):
->   soc: renesas: rz-sysc: Add syscon/regmap support
-> 
->  .../pci/renesas,r9a08g045s33-pcie.yaml        |  202 ++
->  MAINTAINERS                                   |    8 +
->  arch/arm64/boot/dts/renesas/r9a08g045s33.dtsi |   60 +
->  .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |    5 +
->  arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  |   11 +
->  arch/arm64/configs/defconfig                  |    1 +
->  drivers/clk/renesas/r9a08g045-cpg.c           |   19 +
->  drivers/pci/controller/Kconfig                |    7 +
->  drivers/pci/controller/Makefile               |    1 +
->  drivers/pci/controller/pcie-rzg3s-host.c      | 1686 +++++++++++++++++
->  drivers/soc/renesas/Kconfig                   |    1 +
->  drivers/soc/renesas/r9a08g045-sysc.c          |   10 +
->  drivers/soc/renesas/r9a09g047-sys.c           |   10 +
->  drivers/soc/renesas/r9a09g057-sys.c           |   10 +
->  drivers/soc/renesas/rz-sysc.c                 |   17 +-
->  drivers/soc/renesas/rz-sysc.h                 |    3 +
->  16 files changed, 2050 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/pci/renesas,r9a08g045s33-pcie.yaml
->  create mode 100644 drivers/pci/controller/pcie-rzg3s-host.c
+Add several new features missing in initial submission:
 
-Where are we at with this series?
+* Embedded sync for both pin types
+* Phase offset reporting for connected input pin
+* Selectable phase offset monitoring (aka all inputs phase monitor)
+* Phase adjustments for both pin types
+* Fractional frequency offset reporting for input pins
 
-I see
-https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/dwc-stm32&id=5a972a01e24b278f7302a834c6eaee5bdac12843,
-but also this kernel robot report at that commit:
-https://lore.kernel.org/all/202506270620.sf6EApJY-lkp@intel.com/
+Everything was tested on Microchip EVB-LAN9668 EDS2 development board.
 
-I normally don't include branches in pci/next until we get a
-"BUILD SUCCESS" report from the robot, so this branch is in limbo at
-the moment.
+Ivan Vecera (5):
+  dpll: zl3073x: Add support to get/set esync on pins
+  dpll: zl3073x: Add support to get phase offset on connected input pin
+  dpll: zl3073x: Implement phase offset monitor feature
+  dpll: zl3073x: Add support to adjust phase
+  dpll: zl3073x: Add support to get fractional frequency offset
 
-Bjorn
+ drivers/dpll/zl3073x/core.c | 171 ++++++++
+ drivers/dpll/zl3073x/core.h |  16 +
+ drivers/dpll/zl3073x/dpll.c | 818 +++++++++++++++++++++++++++++++++++-
+ drivers/dpll/zl3073x/dpll.h |   4 +
+ drivers/dpll/zl3073x/regs.h |  55 +++
+ 5 files changed, 1062 insertions(+), 2 deletions(-)
+
+---
+v2:
+* fixed Paolo's findings (see changelog in the patches)
+
+-- 
+2.49.1
+
 
