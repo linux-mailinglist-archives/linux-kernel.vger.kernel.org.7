@@ -1,120 +1,123 @@
-Return-Path: <linux-kernel+bounces-731493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C21CB05526
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:40:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F81FB05529
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A364A6CC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:40:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E336A1C20B18
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2577B275118;
-	Tue, 15 Jul 2025 08:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB24275B06;
+	Tue, 15 Jul 2025 08:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P80H432C"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mHdhSE0Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9D6157493
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BEB22CBEC;
+	Tue, 15 Jul 2025 08:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752568852; cv=none; b=HD7ARVNyySnVRiV08yjBbAuGJL+XRvsJeq+fJN/QCHuqi+q3OvXEz87jm697Wol0+6yH54FG/6/zIHBmU3iSr81mqKKlv1cNSGm+IYuCbzCeSqj2fjifTF65yzskydLVPP/anqX3XSUIlhv4io1dwRHvHqFKrYVl2+WCXVu5W4U=
+	t=1752568893; cv=none; b=szHfKoaCn3eC0EqVTl87y1F/zuafDaVBi/8aKCziZbYEIZNbicdWwSWbgZS4tZOrW7B2+x6nfGw3kQ9CNB5u3FF8od5No24YINLQH081Pf/9vaj+THairL7M9dy5uFkL8pfaX+GIfYGOh2hCruNdr6Y91xtr3NawvvOPO8aOe+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752568852; c=relaxed/simple;
-	bh=IbM+eUjzHCYDt0mwG9cAosSZhoRTho08UIqSvtUjti0=;
+	s=arc-20240116; t=1752568893; c=relaxed/simple;
+	bh=it5bcb7P/86igKa4ZM+4PpjhFToNWvbyGywblQFSY8A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BzNJ5hRMipaKUS6hqsnDFCCtdMY5/N49I5lZK+im+G1IOaW1eWL9R6l/TViFoU+nBOF4lzkdM4P97o62oxeaNfVIQLD/khypOGKP6UEI8erlJKW+8YY/2OAv95rhClVrWeZplCKMM6AoCXJGnlTn+GAGiOSy06507Hv8jZQDUO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=P80H432C; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=28ph/RzSy25ewBI0wqF/jCQTm9yjZs8CnD+4nyCq5TA=; b=P80H432CdGRjzFxiqKPZYRSj+r
-	OFDnjlZezbom+fNf5FBgF6ztat+/p6acfDUXJ3bHBNDFvUUGwrXemJvq/aWxIeW77aBhnAgxkZ1sE
-	51kFINAxfLcRVodoBx44YJxdUu4iliTJ1dtWiMh08R+DoG0AlWTaxLZ7EKtpjl6PspOl2KuXdoIQ2
-	pqCcXYQVer7nPkX+t3tnma32FMOhW8ceWxXXMAbATNDXuXwR2ARsBsnv4Oyf6SB31WefGkuP2I4Db
-	3f1aKr/mz78psn5GeLvhL27+5R3y1qSpYzjbYs7keLG/0nFTZQ7Qbzra0kZ6H4AmBzFjFMfgse90l
-	SSlljuKg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubbDH-0000000Bb0Y-1gmW;
-	Tue, 15 Jul 2025 08:40:35 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 306553001AA; Tue, 15 Jul 2025 10:40:34 +0200 (CEST)
-Date: Tue, 15 Jul 2025 10:40:34 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Xin Li <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, luto@kernel.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, jmill@asu.edu,
-	andrew.cooper3@citrix.com
-Subject: Re: [PATCH v1 1/1] x86/fred: Remove ENDBR64 from FRED entry points
-Message-ID: <20250715084034.GO1613200@noisy.programming.kicks-ass.net>
-References: <20250715064437.807569-1-xin@zytor.com>
- <bb77f5f9-231a-4640-91b7-bca42e9654f3@zytor.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fL9/O7SyGVg0Dh2YiTQzSAacOuu2V43vZ4adZqA/tn/XuPqbhiFcgr+MMT8usYtA5cQ0YnAQ45v8G+6wCXf4aztugDVLeXQOcULfkmndA8RFVVWxdsJfkhLvmI6RKyz3x11c2W0kpTzxS1VNdAzLuHqpvY+Z1nrKgn1qCSCZExc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mHdhSE0Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9B03C4CEE3;
+	Tue, 15 Jul 2025 08:41:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752568893;
+	bh=it5bcb7P/86igKa4ZM+4PpjhFToNWvbyGywblQFSY8A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mHdhSE0ZD4u52G5NgHZJ1Ui3tB/8/Y/IBU2XbHFiFnEtk38HmTH796BLA5Jt629ve
+	 DGsn7AtBbaChShOGrrpX2l+O6fh2tqwwpz/MYi70++/TfvJtKWjSrD+aDosMqh3tZb
+	 nzNvTmF4KMHkWk8oVPejCPnkQahGaCz9Y1kGirYQT9OpM3DaohpRWHGJ9GKX8qhJ9o
+	 o/wyIyENWZAzpCZsIP4R1lC/0gLrNkfZnUMKbrKmfy/vQduwhYSJ2mk56pebJYzIW5
+	 VK2bsTGLDwnVJIM2X1z78EQHdHMgbpNXL3xI+hyH4dxYAaWQW/DNQFjaTbYirP683y
+	 epTfBXDGYEpSQ==
+Date: Tue, 15 Jul 2025 10:41:28 +0200
+From: Carlos Maiolino <cem@kernel.org>
+To: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	djwong@kernel.org, skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH v2] fs/xfs: replace strncpy with memtostr_pad()
+Message-ID: <5cwrwinj6j6nqhk2gc6aj4th3csls5ga3noydzykj6fkk2v4zi@qvboar3cyh7x>
+References: <20250704101250.24629-1-pranav.tyagi03@gmail.com>
+ <K5x4H41jqElESRuxXyh2MqE-igMg5PS77kCZOTtYzKuSMeRMHVp8VJC2eTQqblSYtoWkt6KGDsHr2g-S-zGbPg==@protonmail.internalid>
+ <CAH4c4jLCyb3kF0G25GU2JpPVkOXrgMTtMF+NTWgJpXBoEUaA5w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <bb77f5f9-231a-4640-91b7-bca42e9654f3@zytor.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH4c4jLCyb3kF0G25GU2JpPVkOXrgMTtMF+NTWgJpXBoEUaA5w@mail.gmail.com>
 
-On Mon, Jul 14, 2025 at 11:50:57PM -0700, Xin Li wrote:
-> On 7/14/2025 11:44 PM, Xin Li (Intel) wrote:
-> > The FRED specification v9.0 states that there is no need for FRED
-> > event handlers to begin with ENDBR64, because in the presence of
-> > supervisor indirect branch tracking, FRED event delivery does not
-> > enter the WAIT_FOR_ENDBRANCH state.
-> > 
-> > As a result, remove ENDBR64 from FRED entry points.
-> > 
-> > Then add ANNOTATE_NOENDBR to indicate that FRED entry points will
-> > never be used for indirect calls to suppress an objtool warning.
-> > 
-> > This change implies that any indirect CALL/JMP to FRED entry points
-> > causes #CP in the presence of supervisor indirect branch tracking.
-> > 
-> > Credit goes to Jennifer Miller <jmill@asu.edu> and other contributors
-> > from Arizona State University whose work led to this change.
-> > 
-> > Link: https://lore.kernel.org/linux-hardening/Z60NwR4w%2F28Z7XUa@ubun/
-> > Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-> > Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-> > Cc: Jennifer Miller <jmill@asu.edu>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-> > Cc: H. Peter Anvin <hpa@zytor.com>
-> 
-> Sorry, forgot to put CC stable.
-
-Fixes: 14619d912b65 ("x86/fred: FRED entry/exit and dispatch code")
-
-Right?
-
-> 
+On Thu, Jul 10, 2025 at 03:56:01PM +0530, Pranav Tyagi wrote:
+> On Fri, Jul 4, 2025 at 3:42 PM Pranav Tyagi <pranav.tyagi03@gmail.com> wrote:
+> >
+> > Replace the deprecated strncpy() with memtostr_pad(). This also avoids
+> > the need for separate zeroing using memset(). Mark sb_fname buffer with
+> > __nonstring as its size is XFSLABEL_MAX and so no terminating NULL for
+> > sb_fname.
+> >
+> > Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
 > > ---
-> >   arch/x86/entry/entry_64_fred.S | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/x86/entry/entry_64_fred.S b/arch/x86/entry/entry_64_fred.S
-> > index 29c5c32c16c3..907bd233c6c1 100644
-> > --- a/arch/x86/entry/entry_64_fred.S
-> > +++ b/arch/x86/entry/entry_64_fred.S
-> > @@ -16,7 +16,7 @@
-> >   .macro FRED_ENTER
-> >   	UNWIND_HINT_END_OF_STACK
-> > -	ENDBR
-> > +	ANNOTATE_NOENDBR
-> >   	PUSH_AND_CLEAR_REGS
-> >   	movq	%rsp, %rdi	/* %rdi -> pt_regs */
-> >   .endm
+> >  fs/xfs/libxfs/xfs_format.h | 2 +-
+> >  fs/xfs/xfs_ioctl.c         | 3 +--
+> >  2 files changed, 2 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
+> > index 9566a7623365..779dac59b1f3 100644
+> > --- a/fs/xfs/libxfs/xfs_format.h
+> > +++ b/fs/xfs/libxfs/xfs_format.h
+> > @@ -112,7 +112,7 @@ typedef struct xfs_sb {
+> >         uint16_t        sb_sectsize;    /* volume sector size, bytes */
+> >         uint16_t        sb_inodesize;   /* inode size, bytes */
+> >         uint16_t        sb_inopblock;   /* inodes per block */
+> > -       char            sb_fname[XFSLABEL_MAX]; /* file system name */
+> > +       char            sb_fname[XFSLABEL_MAX] __nonstring; /* file system name */
+> >         uint8_t         sb_blocklog;    /* log2 of sb_blocksize */
+> >         uint8_t         sb_sectlog;     /* log2 of sb_sectsize */
+> >         uint8_t         sb_inodelog;    /* log2 of sb_inodesize */
+> > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> > index d250f7f74e3b..c3e8c5c1084f 100644
+> > --- a/fs/xfs/xfs_ioctl.c
+> > +++ b/fs/xfs/xfs_ioctl.c
+> > @@ -990,9 +990,8 @@ xfs_ioc_getlabel(
+> >         BUILD_BUG_ON(sizeof(sbp->sb_fname) > FSLABEL_MAX);
+> >
+> >         /* 1 larger than sb_fname, so this ensures a trailing NUL char */
+> > -       memset(label, 0, sizeof(label));
+> >         spin_lock(&mp->m_sb_lock);
+> > -       strncpy(label, sbp->sb_fname, XFSLABEL_MAX);
+> > +       memtostr_pad(label, sbp->sb_fname);
+> >         spin_unlock(&mp->m_sb_lock);
+> >
+> >         if (copy_to_user(user_label, label, sizeof(label)))
+> > --
+> > 2.49.0
+> >
+> Hi,
+> 
+> This is a gentle follow-up on this patch. I would like to
+> know if there is any update on its state.
+
+Looks fine to me:
+
+Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
+
+
+> 
+> Regards
+> Pranav Tyagi
 > 
 
