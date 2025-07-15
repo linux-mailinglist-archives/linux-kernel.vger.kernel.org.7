@@ -1,157 +1,138 @@
-Return-Path: <linux-kernel+bounces-731978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0018B060A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:19:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A18EB06047
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBCF51C47C19
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:08:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5BAE5005D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260BC2EF2AF;
-	Tue, 15 Jul 2025 13:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE922EF9AE;
+	Tue, 15 Jul 2025 13:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="DinSq7vC";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="mS9lXsTQ"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RQlBVBSM"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574842EF2AD
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768D727470;
+	Tue, 15 Jul 2025 13:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752587822; cv=none; b=JJ/EOtkuwSxUjJ+CtUB1eYEdzHin4Xyp82IBuOc3gz0swfWuzNuAKOMEW9KQBz/vKRO0uLGNQHXN76N9BhjfNyOpC1wtR86paMmTVwSnZLlTRTfSwI7AWqWoSoYbZDLTG8dXlWsDyIeSE6zDMIbwLpGB7sjPUIbX0KcUbcB+8zw=
+	t=1752587834; cv=none; b=arnBr3jdpwdGC5Ij3NkN/nh/vnMksIItX+Ng5I2BB7bL+MpkL2NLXAOpOLLmoz0Rj0+Imcq4OpwnpRXySqPARqrb9AomTjf7IFcinnf/8zONP5IFu5N9puZjofJEBWb+wwuSQPPU5ghGyuJRZfyHW/TG87/6DDroLzmUGiYmK7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752587822; c=relaxed/simple;
-	bh=2SUEHRJ69Z2HmP4/9Xtfk6X7RiIJOF+5FTo9wOtE6yw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YNCz17u3q4Q0ze2KjkfIQdXQ3m8edLZpet4xy4IHnQKnC98uh7qVwrC4qDmJetejYeyvgE9JZPJmdBYaNLhZlzfA7Qx0EgdzaIAEcTJrEj8RTOvtDCK0PZcoX9YLAnrNiGIG/XTPkFZPLAG1Ga1Ep0XxihugMOGSAUHi9qBba1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=DinSq7vC; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=mS9lXsTQ; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1752587816; x=1753192616;
-	d=konsulko.se; s=rsa1;
-	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
-	 from;
-	bh=FZ3JHSKCAp61LgEDvUcR1KnuzzUfFsyQiR8khxy1tAQ=;
-	b=DinSq7vCV9C/C9FpUNRVuJURAMXMn3XkqMfkqI44nxC41B3bkeuWYSyjya03kyOc2nBTc4CzlmK/v
-	 XZBcOgyq9rTgmZBoESKcEI7lDuuKL3LO6PHH+rHQ9KRQdc6EGfzNHLk9d1GFdK7ohLc6oLV8bxEMCm
-	 Fq03cVQw9pKxycNcQwUnhjINI/7GA8KHHLPQEh+6lDkeweHgx2Wc+XHd097QY+FK1ku/Uy475TtyWz
-	 tqVU8L3gzh4nWcYeXnq0qSkFYzLxfZbWtIiwCOjYniXyGO5HYPcJkLa3PNOjWS2LaWMlCY59aBcAbw
-	 /0ddspZ5CvVWwza/samsVMDnMnTVlPw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1752587816; x=1753192616;
-	d=konsulko.se; s=ed1;
-	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
-	 from;
-	bh=FZ3JHSKCAp61LgEDvUcR1KnuzzUfFsyQiR8khxy1tAQ=;
-	b=mS9lXsTQiKfFsm0bDu7xIyhiQH7dtER94VVDAh0BOQhcSju2SVtHFXb9isz7p5aiBKYiydg0Tm6KG
-	 VzbvISBDg==
-X-HalOne-ID: 9096aaa2-6183-11f0-8921-e90f2b8e16ca
-Received: from slottsdator.home (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
-	by mailrelay2.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id 9096aaa2-6183-11f0-8921-e90f2b8e16ca;
-	Tue, 15 Jul 2025 13:56:55 +0000 (UTC)
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	rust-for-linux@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-bcachefs@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: [PATCH v13 0/4] support large align and nid in Rust allocators
-Date: Tue, 15 Jul 2025 15:56:45 +0200
-Message-Id: <20250715135645.2230065-1-vitaly.wool@konsulko.se>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1752587834; c=relaxed/simple;
+	bh=VcoITfCDsF67h3hBQmDuBarBljyPQh2YV8UKRsZfVmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L8sb8w/uRhOtZHU9HRe8Fdrkusj4YMq7ZDJVGOdtVnOE9x45sTVqFkH/+TZlmnRcrO1bI1p7vPMjX7EUwCAggtJu2q7nbEqf6xNpE6o4MulYB6JEj6f2QaLDTuo8H5PnMxPyeqi2noPTnp8I9cAi6dadBUhQ3YzSIyZm4BqjBfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RQlBVBSM; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1752587830;
+	bh=VcoITfCDsF67h3hBQmDuBarBljyPQh2YV8UKRsZfVmo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RQlBVBSMdmKKKX3dY5vPWcDUMiXRwa8DBqYjx2o5An3IXCbDXsBri6CUZUaaDSCT1
+	 D6afaCOZhejdPJyj6mKp1UKMgF3rUX70AUNYmS8PcqTEtfgjjzlgUM08C+yy/o/Riq
+	 w7bVG+lg6xbtaZ4N3JMWsGWoXupNJomHfFG+Ry5cRZjCI99eQVEBGSxF8OZ7fEghcW
+	 YWDueW5aCWEhItpy+8luatBmaqdCMmnfSMu75gominLtK4KUOinCy1rcPa2VVXtglS
+	 JryzLWDVyKCFdIkfGDNTDyMgCfRVs9t6G7oi1ZQkdB4XULWLzlfMo/U23SNp85E8ot
+	 tBCXuotie9wYA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0962317E1293;
+	Tue, 15 Jul 2025 15:57:09 +0200 (CEST)
+Message-ID: <4facd10a-f46f-4cb9-bdef-71cc88ebc059@collabora.com>
+Date: Tue, 15 Jul 2025 15:57:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 7/8] dt-bindings: mfd: Add binding for MediaTek MT6363
+ series SPMI PMIC
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: broonie@kernel.org, lee@kernel.org, linux-arm-kernel@lists.infradead.org,
+ matthias.bgg@gmail.com, conor+dt@kernel.org, wenst@chromium.org,
+ devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kernel@collabora.com,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ krzk+dt@kernel.org, lgirdwood@gmail.com
+References: <20250715115718.176495-1-angelogioacchino.delregno@collabora.com>
+ <20250715115718.176495-8-angelogioacchino.delregno@collabora.com>
+ <175258775126.1133153.9935401889666941502.robh@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <175258775126.1133153.9935401889666941502.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The coming patches provide the ability for Rust allocators to set
-NUMA node and large alignment.
+Il 15/07/25 15:55, Rob Herring (Arm) ha scritto:
+> 
+> On Tue, 15 Jul 2025 13:57:17 +0200, AngeloGioacchino Del Regno wrote:
+>> Add a binding for the MediaTek MT6363/6373 (and similar) multi
+>> function PMICs connected over SPMI.
+>>
+>> These PMICs are found on board designs using newer MediaTek SoCs,
+>> such as the Dimensity 9400 Smartphone chip, or the Chromebook
+>> MT8196 chip.
+>>
+>> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+>> Link: https://lore.kernel.org/r/20250623120038.108891-2-angelogioacchino.delregno@collabora.com
+>> Link: https://lore.kernel.org/r/20250707134451.154346-8-angelogioacchino.delregno@collabora.com
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   .../bindings/mfd/mediatek,mt6363.yaml         | 110 ++++++++++++++++++
+>>   1 file changed, 110 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml
+>>
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/mediatek,mt6363.example.dtb: pmic@4 (mediatek,mt6363): adc@1000: 'reg' does not match any of the regexes: '^pinctrl-[0-9]+$'
+> 	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6363.yaml#
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/mediatek,mt6363.example.dtb: pmic@4 (mediatek,mt6363): regulators@30: 'oneOf' conditional failed, one must be fixed:
+> 	'reg' does not match any of the regexes: '^buck-(sshub[124]|vb[1-7]|vs[1-3])$', '^ldo-v(aux|m|rf-io|tref)18$', '^ldo-va(12-1|12-2|15)$', '^ldo-vcn(13|15)$', '^ldo-vio(0p75|18)$', '^ldo-vrf(0p9|12|13|18)$', '^ldo-vsram-(apu|cpub|cpum|cpul|digrf|mdfe|modem)$', '^ldo-vufs(12|18)$', '^pinctrl-[0-9]+$'
+> 	'reg' does not match any of the regexes: '^pinctrl-[0-9]+$', '^v(ant|aud|aux)18$', '^v(cn18io|efuse|ibr|io28|sram-digrf-aif|usb)', '^v(f|t)p', '^vbuck([0123456789]|4-ufs)$', '^vbuck4(-ufs)?$', '^vcn33-[123]$', '^vmc(h)?$', '^vmch-(eint-low|eint-high)?$', '^vrf(09|12|13|18|io18)-aif$', '^vsim[12]$'
+> 	'mediatek,mt6373-regulator' was expected
+> 	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6363.yaml#
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/mediatek,mt6363.example.dtb: regulators@30 (mediatek,mt6363-regulator): 'reg' does not match any of the regexes: '^buck-(sshub[124]|vb[1-7]|vs[1-3])$', '^ldo-v(aux|m|rf-io|tref)18$', '^ldo-va(12-1|12-2|15)$', '^ldo-vcn(13|15)$', '^ldo-vio(0p75|18)$', '^ldo-vrf(0p9|12|13|18)$', '^ldo-vsram-(apu|cpub|cpum|cpul|digrf|mdfe|modem)$', '^ldo-vufs(12|18)$', '^pinctrl-[0-9]+$'
+> 	from schema $id: http://devicetree.org/schemas/regulator/mediatek,mt6363-regulator.yaml#
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/mediatek,mt6363.example.dtb: adc@1000 (mediatek,mt6363-auxadc): 'reg' does not match any of the regexes: '^pinctrl-[0-9]+$'
+> 	from schema $id: http://devicetree.org/schemas/iio/adc/mediatek,mt6359-auxadc.yaml#
+> 
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250715115718.176495-8-angelogioacchino.delregno@collabora.com
+> 
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
+> 
 
-Changelog:
-v2 -> v3:
-* fixed the build breakage for non-MMU configs
-v3 -> v4:
-* added NUMA node support for k[v]realloc (patch #2)
-* removed extra logic in Rust helpers
-* patch for Rust allocators split into 2 (align: patch #3 and
-  NUMA ids: patch #4)
-v4 -> v5:
-* reworked NUMA node support for k[v]realloc for all 3 <alloc>_node
-  functions to have the same signature
-* all 3 <alloc>_node slab/vmalloc functions now support alignment
-  specification
-* Rust helpers are extended with new functions, the old ones are left
-  intact
-* Rust support for NUMA nodes comes first now (as patch #3)
-v5 -> v6:
-* added <alloc>_node_align functions to keep the existing interfaces
-  intact
-* clearer separation for Rust support of MUNA ids and large alignments
-v6 -> v7:
-* NUMA identifier as a new Rust type (NumaNode)
-* better documentation for changed and new functions and constants
-v7 -> v8:
-* removed NumaError
-* small cleanups per reviewers' comments
-v8 -> v9:
-* realloc functions can now reallocate memory for a different NUMA
-  node
-* better comments/explanations in the Rust part
-v9 -> v10:
-* refined behavior when memory is being reallocated for a different
-  NUMA node, comments added
-* cleanups in the Rust part, rustfmt ran
-* typos corrected
-v10 -> v11:
-* added documentation for the NO_NODE constant
-* added node parameter to Allocator's alloc/realloc instead of adding
-  separate alloc_node resp. realloc_node functions, modified users of
-  alloc/realloc in accordance with that
-v11 -> v12:
-* some redundant _noprof functions removed in patch 2/4
-* c'n'p error fixed in patch 2/4 (vmalloc_to_page -> virt_to_page)
-* some typo corrections and documentation updates, primarily in patch
-  3/4
-v12 -> v13:
-* fixed wording in comments (patches 1, 3)
-* fixed bigger alignment handling in krealloc (patch 2)
-* removed pr_warn import (patch 4)
+Uff. I've sent the wrong series. Sorry for the noise.
 
-Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
---
- fs/bcachefs/darray.c           |    2 -
- fs/bcachefs/util.h             |    2 -
- include/linux/bpfptr.h         |    2 -
- include/linux/slab.h           |   39 ++++++++++++++++++++++---------------
- include/linux/vmalloc.h        |   12 ++++++++---
- lib/rhashtable.c               |    4 +--
- mm/nommu.c                     |    3 +-
- mm/slub.c                      |   64 +++++++++++++++++++++++++++++++++++++++++--------------------
- mm/vmalloc.c                   |   29 ++++++++++++++++++++++-----
- rust/helpers/slab.c            |   10 +++++----
- rust/helpers/vmalloc.c         |    5 ++--
- rust/kernel/alloc.rs           |   54 ++++++++++++++++++++++++++++++++++++++++++++++-----
- rust/kernel/alloc/allocator.rs |   49 +++++++++++++++++++++-------------------------
- rust/kernel/alloc/kbox.rs      |    4 +--
- rust/kernel/alloc/kvec.rs      |   11 ++++++++--
- 15 files changed, 200 insertions(+), 90 deletions(-)
+Sending v5 asap.
 
+Sorry again,
+Angelo
 
