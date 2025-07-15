@@ -1,125 +1,115 @@
-Return-Path: <linux-kernel+bounces-731451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D95B0B05498
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:19:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42814B0549F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:20:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04F127B238B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:18:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C3BD18947D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E293274B31;
-	Tue, 15 Jul 2025 08:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC26C2749C3;
+	Tue, 15 Jul 2025 08:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dIJyN1Uq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VQpJQdZ9"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F3B26C396;
-	Tue, 15 Jul 2025 08:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59E425CC64;
+	Tue, 15 Jul 2025 08:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752567556; cv=none; b=lVxTILTopS4ZzSiJjIWPxJzVY9JtqQ8aJqlQZcZogxeyWqLkJKlJqqQ1uo6nMlcZYba4T9T2FlOO76rrU3IHL9JknL5Sjc+4LJgd9cwBJqnqt5xfTklCxTzJZHV0agn/28HMD1w7scxTCRfppVO36t3nxvAkVtFLRPb/gD9WFPM=
+	t=1752567589; cv=none; b=k2JaOw8m9iyBECbH3qFvyka/ze7by7ZV6k+74d1UCQpz7+65m2jsY4K6tr3/TS9NNZJnhoKep3WmISgMhg5CZRmsmj8E1vmHplEQyQY5RW5Pw38JruBEDbwa3d+VaI/CreGm2GWWnZztMP/8c3Zge3s1A3U1mwsUhym+m1llE8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752567556; c=relaxed/simple;
-	bh=xYYx8zlxp5oa3pFs+0lI4y+5Yub7dz7/WicSltLdFB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GLczCTnKPMFbg1lwGyPGWFdczSsNIfs8i80HiZiK4foO7HKgXIC2VtGVr6qvMRQbh9RErAbnXaO2K+cy2+ga+Ke10l4OpefyJzfD5i7GGPLim9SaJVZl0klksEYSB3asxnUTHPH11yph9nAe3x5yBPk1od2gyl+8+igTZeyv6os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dIJyN1Uq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68501C4CEF5;
-	Tue, 15 Jul 2025 08:19:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752567555;
-	bh=xYYx8zlxp5oa3pFs+0lI4y+5Yub7dz7/WicSltLdFB4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dIJyN1UqwTFT2l3WIYPcaJ2HLY8C7gsyXFuC6mvHTCA+fWxSG0xRSLEuHqSSkxA0p
-	 FfOgGnnUlI7kqgH7kveKZHLVxYAvw98MQn/IOuSFvKbPnrYzZeAsydZMS3iBzSMWO3
-	 dhA2C/NuR98H0BokdAb6bLWVcQWzl4x3fbGnHxtM=
-Date: Tue, 15 Jul 2025 10:19:13 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Cc: john.fastabend@gmail.com, jakub@cloudflare.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	ast@kernel.org, cong.wang@bytedance.com, netdev@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
-	syzbot+b18872ea9631b5dcef3b@syzkaller.appspotmail.com
-Subject: Re: [PATCH] net: skmsg: fix NULL pointer dereference in
- sk_msg_recvmsg()
-Message-ID: <2025071555-august-deskwork-e162@gregkh>
-References: <20250715081158.7651-1-pranav.tyagi03@gmail.com>
+	s=arc-20240116; t=1752567589; c=relaxed/simple;
+	bh=i+Cmub0UhfsbSvX2WeZeJNXshxEeR0Ut06hjAGnLJQA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RzLYWJtRfhdfO0w44C2ddtZORYSkziibkugELMRRotPEpFxyldA3RV5fG17m5tp+5TggOAxl8OTUB4ndi2hWA6KxOYU9FNaz9GY/CqLzgbj+fCiZM4sozWwcNhxvnqAu4MS3vxrGAWkvWrzdyEVxuH7I8vJ+m3W7TWN+VgrEos4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VQpJQdZ9; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b31e076f714so4942084a12.0;
+        Tue, 15 Jul 2025 01:19:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752567587; x=1753172387; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qd3Q7e8yxSyHuD7DdiU5ycutPk9NojNxmVh9qMkLmQ8=;
+        b=VQpJQdZ9kYpLJLvnQzqd6nhMRahAmDWcEqf6s9X+JqctwfOwtdRJ+1ZNCMfAzlxNHj
+         2t8rLKHu8SETtf2QGUhnCn1klXeFRUbpxhrJKYWpnILTOi6tnG8f0xj9XGUyyS36+24o
+         vf1HFDRZlGychWQpE5F6oy2FGYpvyJUSIAahL9a0FIHOQwjCbcIHhsGk59WHzy6cRDN7
+         GLDtifn13kVFBaHA+E3xVcEyQgp6R0whHy3JZm8N9z2Z+uN8xLUVs/PyG6sMRi++SfiY
+         kzIAlT/4EaWOgWUkF74Rpw8fyQ8O4v9V9F9XWz7gMXjWQ4ImMPTGEpjB/jAFbdbI7jT7
+         fLHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752567587; x=1753172387;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qd3Q7e8yxSyHuD7DdiU5ycutPk9NojNxmVh9qMkLmQ8=;
+        b=TWiTQ/TLHEy7vzEzKV/yy3uK14na+nJ6mAHpnzxD+i9JclTb4x6ctZyVFujOMs8At2
+         Ph3zqe6hLp3Q6UGNgLNxrWz66QgxGYMJskkDNBRN+5600OHnINH6v7G519ijKpvbxQvP
+         Y/+RdG2bQXb8XxrARNnAg09qPbgUuFdi/Uz6U9E4iR8IfolzjrK6Az0IJbKU5AvB4b+2
+         2wXcP2q60TwpDA8WVHG7rbsOJHPzhphlwmDgNS25zhRqwAQ5x7ZKleDMYXVqKkfu7qdO
+         ILuEKTC4IgQwCRns804qAxpD9m003GbjgXnn8VdSIgqnR8iE5bZMAZqELHiHlZnbQLGj
+         l2ag==
+X-Forwarded-Encrypted: i=1; AJvYcCU8XoHIMyhoB+/v9Qocm+5IuaudfKwlFpZ4mVH8uY0SBfslrEUyZUqujH66jCxFP6lj7gCYTgvDsSZKL5GW@vger.kernel.org, AJvYcCVct1ZHbBR0XD2Z+hICKER8z+45ZGuV0PsDDhahRAARJbGfL3k3k8TRsjTGYjI0hEnZowlqzBH0KkTq@vger.kernel.org, AJvYcCXZrS+5CDuBRKnlI0BaeVTg4d0K+ue3NDSMtP9oVvmxXoLn1UTD2paLNdszFYoGo0Wcdp8MjwLQIG5v/w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXkGe3yQ+D6FRuMmbYL4JqavZgjV2CzqnXfIcs4AFZuC80AEwJ
+	we2IHc+Jm1COEX9kqBJx0FvDyrZIFyieqC3gx1/jST6RERPYA6q6QrklOmxgRRq5Nzg87+V/U78
+	NdInO/8SsTY7nqwmL3nw60m9UdU4NDDE=
+X-Gm-Gg: ASbGncvCtRpTjw/HiSbMmM6k94W/adS93Hj/JqCOpMrW6ozrik8P+bxaWwptZ3/XPEe
+	9WhXfpwDcxtEyS/hIHVNeIccPup+ya+rtsMKwU+wlAcNhs9ONgALiMxkpO7DSl+gGOT3QQPp+Kv
+	DKHmWM75hggrqqUAp7WxOowN8xh1xZTi3RMuWjoC7RrjgXAq0RR++vtSY59S123Hul2/lWtXFDN
+	1Ck
+X-Google-Smtp-Source: AGHT+IGWXqaNFBkxVhxjoAh37jIlv8IOlz+RFpSYTmKmB9oiEiFNbWlyvsTEKG4zuAWGwP4uJ+VRZLGBGphF2VcEpBY=
+X-Received: by 2002:a17:90b:17ca:b0:30a:3e8e:ea30 with SMTP id
+ 98e67ed59e1d1-31c8f9ba0f7mr4097681a91.11.1752567586749; Tue, 15 Jul 2025
+ 01:19:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715081158.7651-1-pranav.tyagi03@gmail.com>
+References: <20250712210448.429318-1-rosenp@gmail.com> <20250712210448.429318-2-rosenp@gmail.com>
+In-Reply-To: <20250712210448.429318-2-rosenp@gmail.com>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Tue, 15 Jul 2025 10:19:34 +0200
+X-Gm-Features: Ac12FXxwU_5cXPbe6k9-QU1wlgWyLzCeGzXcdBi-Vlkd5rOu3WF_rrVJJ5NIIf4
+Message-ID: <CAMhs-H9NuX6m0zOM+6ZcX5r0aq_oxbYkbpCTAB4sT6sea4=Osg@mail.gmail.com>
+Subject: Re: [PATCHv4 wireless-next 1/7] wifi: rt2x00: add COMPILE_TEST
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-wireless@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Stanislaw Gruszka <stf_xl@wp.pl>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:MIPS" <linux-mips@vger.kernel.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 15, 2025 at 01:41:58PM +0530, Pranav Tyagi wrote:
-> A NULL page from sg_page() in sk_msg_recvmsg() can reach
-> __kmap_local_page_prot() and crash the kernel. Add a check for the page
-> before calling copy_page_to_iter() and fail early with -EFAULT to
-> prevent the crash.
-> 
-> Reported-by: syzbot+b18872ea9631b5dcef3b@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=b18872ea9631b5dcef3b
-> Fixes: 2bc793e3272a ("skmsg: Extract __tcp_bpf_recvmsg() and tcp_bpf_wait_data()")
-> Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+On Sat, Jul 12, 2025 at 11:05=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wro=
+te:
+>
+> While this driver is for a specific arch, there is nothing preventing it
+> from being compiled on other platforms.
+>
+> Allows the various bots to test compilation and complain if a patch is
+> bad.
+>
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
 > ---
->  net/core/skmsg.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/net/core/skmsg.c b/net/core/skmsg.c
-> index 4d75ef9d24bf..f5367356a483 100644
-> --- a/net/core/skmsg.c
-> +++ b/net/core/skmsg.c
-> @@ -432,6 +432,10 @@ int sk_msg_recvmsg(struct sock *sk, struct sk_psock *psock, struct msghdr *msg,
->  			sge = sk_msg_elem(msg_rx, i);
->  			copy = sge->length;
->  			page = sg_page(sge);
-> +			if (!page) {
-> +				copied = copied ? copied : -EFAULT;
-> +				goto out;
-> +			}
->  			if (copied + copy > len)
->  				copy = len - copied;
->  			copy = copy_page_to_iter(page, sge->offset, copy, iter);
-> -- 
-> 2.49.0
-> 
-> 
+>  drivers/net/wireless/ralink/rt2x00/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 
-Hi,
-
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+Thanks,
+    Sergio Paracuellos
 
