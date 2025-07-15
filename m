@@ -1,167 +1,93 @@
-Return-Path: <linux-kernel+bounces-731553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D277B05626
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:20:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E15B9B05621
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC7EA3BDADC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:19:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32F861892246
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320822D63E8;
-	Tue, 15 Jul 2025 09:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031C32D5C73;
+	Tue, 15 Jul 2025 09:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fgoy+s79"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFYemaIU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58D72D5A08
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDE6231A30;
+	Tue, 15 Jul 2025 09:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752571206; cv=none; b=l/9I/RtnwMJv6ywicck/cSFRVeUJfwm+cGa1epJtoWixyPx2RGoS/2PxqIQu82hZoTcMraVHr/o2kmJlRyfJyRtTjMY7uqUE+qg1UliP8VRyFR30HNAgilUFRgTYtSRRoTN7IIUOymjir49oN50foxt7d6U6b1TMlf7VrvriAJ8=
+	t=1752571189; cv=none; b=uj1hN7VbUaez+PDvRrDC3ZBW4bsXeDddkNTy/5ftttorpg5HHx6D+Ptk1YhIKk1n1Qon0usyD7hti6T0RSfwV1h7eYklGNraqJTC6Bf0qNn0tF4P4v3z8wMNqSQ9SJ4FqLXcDoQp3bpGVbNcjp5qgBeRXVgqS/uLlyNObFJKdiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752571206; c=relaxed/simple;
-	bh=WJ0yyfeuefaQ3urFYkT/IqHAzlcYqFbbdEzN9k3/XAY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZFJorvVR6q73uTqpnBHo/pVzhnZnylEfzqC//xID0N+U7Nap9uCYSAYiSwb26w9isQ52R9aWBER3xNt+LtFp2t0L7VZ5nAFV7+rC8I/0Pl6BPz4V/aZyDJ/upkgxKZ2NBeK7fsDNz6DCPapwhfLVBMuozFI1SHGFklcKJ11XjDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fgoy+s79; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55a1eced1abso12700e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:20:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752571203; x=1753176003; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7HNruVe4qBBDUZL0Lbc5vbGw4m9jJzAK3Orw+77L13s=;
-        b=fgoy+s79h3rlWgIIY40XSBpLTYu/D+042IdparMa7BxPt1oZjqvcuLPoeuk68FRyH8
-         oEUFxiHeinWZTWMKBXv0ls50+UitReQw9t+KQyQckvFTZZxqwOmnKgEKpVNRlcU4A/hO
-         cp+1DM6rFrISUhwTo3szQWTZDMKbINkiovoaUeVdF39FAK9wSfIhbCossVlIzZLRM/62
-         fqFICLiObWg+7+/qr8bMZ6x/pIXDPxabk9qDJXstehF1m4NwCZADOlR+/OpYOeLYthK6
-         sWdBvf7w8sHHL/JAkMReVFPYwoVI0YwiaGTC4rEd3qk1u9DYgZ9TS7hYm1H8Tky7f5t0
-         XmhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752571203; x=1753176003;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7HNruVe4qBBDUZL0Lbc5vbGw4m9jJzAK3Orw+77L13s=;
-        b=YeBPJ+SHSvABXSCINNPIhBjFs2HQCCRJ7QJ9+NXSW8XQvXk2qQR+TkWUQgy8vfyvV8
-         WepP4onSAxpzVuFhFs1Z3XlO6gCVJp6eHzjvJNAsNPkKYLS86alskfVkWB5Q7GL9J84t
-         SL3I+SOgRrvyq7z7u5YTucE6SNpQtSNg1jOWUIgqTxS16dY2reTL3zYZArdGY6mFhEZp
-         VFCyiyduJLASktzjZB8L535yXP3U0vQmBZU0vOQtTTuA/pJCLg4xUhPVvf3Frqe4SiIF
-         OGOSKLv2u/zreY0NmAZwX98idh4aBNOKOTCf3ONu1h1I0nJqSdL4pevYHRr4CXB5vhgS
-         /nMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFqhFEq7e2eFYX3cTICCwA8az851EUDj03yhPP8Sd1rlQaFV9Ohz6OKIj46vjEtM3DKrNKnA61eSNB+J0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyhsz19e+Po5i+HoljkKSTXmCb0UkEOUYIjUhb7jj9CVZk5FRjO
-	g2eySZD9G8NciVBMqzHf8uyzrgd4QsQpFj7eMwSgf+EoNLWrzO1Ln63u6SE0YJ82nv4=
-X-Gm-Gg: ASbGncv1SZrEpJbzQbOZprE8XXe15RQOs61ErF7MIKamcJXedQR2jJ4TCMbNOIfVfZp
-	tCE3pTdz6WFO3ZQ1uv1aMl0quC5+5l8sKN2x+jco74OwCCClNIxwvnE/XW6f2ilDEZUi1XKnuvO
-	8sjKeGmJVWXm+nu/EeBhZOxzDO34VBg8QHeU7Hlz3woBvk4dsUCcOAiImp8JwfiPTCJA+l4zbKu
-	2zsgpf2iCXvPvEubytzwZhlYt8++HJYGeOQoH/yJrPp4JDnffJ4ynT6eAiNO+C+SIuqYbnnM81y
-	3YQNTQaaog3i/hjiDu0wQK0XRSoEFmfXa/7tNNaEbE2HZCGSsofLRrprguuIjc16WvxUL5Xjthm
-	v7MvjxL+6u41kbkM3vMj3J5TbZtJsjbRwZOoMEOeJwwsxB1L4jxWNxiZzb41uBq07Wq3i/nm+lO
-	ZcEL+kZClBJM4=
-X-Google-Smtp-Source: AGHT+IEtlBg+zNyCSrOBvHI33+JpaeCaJB/UDUCJntM9+i8ejxLCPtnoDTFHXY1bC6tD2cE1QVQIRA==
-X-Received: by 2002:a05:6512:3b1f:b0:553:2421:f5e5 with SMTP id 2adb3069b0e04-55a1fdd2b75mr99165e87.9.1752571202789;
-        Tue, 15 Jul 2025 02:20:02 -0700 (PDT)
-Received: from [192.168.1.100] (88-112-128-43.elisa-laajakaista.fi. [88.112.128.43])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55943b6f497sm2192227e87.188.2025.07.15.02.20.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 02:20:02 -0700 (PDT)
-Message-ID: <94b75177-9401-4e0c-966b-5847a29cb6f7@linaro.org>
-Date: Tue, 15 Jul 2025 12:20:01 +0300
+	s=arc-20240116; t=1752571189; c=relaxed/simple;
+	bh=icE/day+g6/mFQP4EzLECOQ6Ku7rwKD0ZHKFcA1F8po=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=W46ESNwpvgjgpSm3vXcL2XYm5EuOWNCyLjA+sQte+fdzPK0DgJqQQrCyYB9TpxSr8o7FX/jHHuV/q4fTa8Kw4iYM8LhywOXXt9eMxGxtNoB6jjYmyqaLIlJkFfIzVzl0aPNHo3FDcE+Ngr7f33M12rmMQKVfMF+zqGHEfHsD7gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IFYemaIU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAC69C4CEF5;
+	Tue, 15 Jul 2025 09:19:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752571188;
+	bh=icE/day+g6/mFQP4EzLECOQ6Ku7rwKD0ZHKFcA1F8po=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=IFYemaIUbetI8+7ysY790W59mDa8HlMDuZoJZitus7BQCdzb7ZdEMpwayU53eJgPl
+	 NmOVEtC0OMPNQanfkWrvV/lV+Es+ecce+p0PTzHRphnowSUi1BlOYh2zmzkIfT6BIS
+	 yDA5pPqdnK21YPYpIwdYQpYuDhTZT1Bt1Udq3g6Uh6BAWsI3O1VeaImwTCNo3tliBS
+	 EUIy6Fv+X9fh6AOKdLQLQSddZWxnhBgZgBCihb9bA7iHtm8saXm+JaWiD8+rAo2Mu/
+	 FAQPYpqrHYrin9PkTQdrq77yTJh6Tk87ooONyR8V92SV+YU/OzbjgZ9O/MmZABZwKl
+	 r5ryxQk3Qu4TQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AC3F7383BA08;
+	Tue, 15 Jul 2025 09:20:10 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] phy: qcom-mipi-csi2: Add a CSI2 MIPI D-PHY driver
-Content-Language: ru-RU
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Vinod Koul
- <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Bryan O'Donoghue <bod@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org>
- <20250710-x1e-csi2-phy-v1-2-74acbb5b162b@linaro.org>
- <11b573d5-ce4d-476c-b94c-216d427cd838@linaro.org>
- <08261aa4-689b-4d6b-bfd2-221c1976d254@linaro.org>
- <a7f64b31-4767-4281-b452-a2bc5351d745@mleia.com>
- <c93624bb-ee7b-45ac-8b53-b5391f11c9c9@linaro.org>
- <eac3a877-a4aa-4789-9013-ab8b6c91e0f3@linaro.org>
- <0a12879f-dc4a-47fb-87a0-ac4b8bcd4d75@linaro.org>
- <53a19b1d-5665-4937-a07c-5dd1fcde06c5@linaro.org>
- <3b760685-97db-46e3-80a3-7fad69ad31cd@oss.qualcomm.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <3b760685-97db-46e3-80a3-7fad69ad31cd@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 net-next] ipv6: mcast: Avoid a duplicate pointer check
+ in
+ mld_del_delrec()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175257120949.4175211.2185798893217859855.git-patchwork-notify@kernel.org>
+Date: Tue, 15 Jul 2025 09:20:09 +0000
+References: <20250714081949.3109947-1-yuehaibing@huawei.com>
+In-Reply-To: <20250714081949.3109947-1-yuehaibing@huawei.com>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kuniyu@google.com, Markus.Elfring@web.de
 
-On 7/15/25 12:01, Konrad Dybcio wrote:
-> On 7/15/25 8:35 AM, Vladimir Zapolskiy wrote:
->> On 7/15/25 03:13, Bryan O'Donoghue wrote:
->>> On 14/07/2025 16:30, Vladimir Zapolskiy wrote:
->>>>>
->>>>> I think that is genuinely something we should handle in camss-csid.c
->>>>> maybe with some meta-data inside of the ports/endpoints..
->>>>>
->>>>
->>>> This is a CSIPHY property, a CSIPHY hardware configuration and a wiring
->>>> of sensors to a CSIPHY. Where is the relation to CSID here? There is no.
->>>
->>> All the PHY really needs to know is the # of lanes in aggregate, which
->>> physical lanes to map to which logical lanes and the pixel clock.
->>>
->>> We should add additional support to the Kernel's D-PHY API parameters
->>> mechanism to support that physical-to-logical mapping but, that's not
->>> required for this series or for any currently know upstream user of CAMSS.
->>>
->>>> Please share at least a device tree node description, which supports
->>>> a connection of two sensors to a single CSIPHY, like it shall be done
->>>> expectedly.
->>> &camss {
->>>        port@0 {
->>>            csiphy0_lanes01_ep: endpoint0 {
->>>                data-lanes = <0 1>;
->>>                remote-endpoint = <&sensor0_ep>;
->>>            };
->>>
->>>            csiphy0_lanes23_ep: endpoint0 {
->>>                data-lanes = <2 3>;
->>>                remote-endpoint = <&sensor1_ep>;
->>>            };
->>>         };
->>> };
->>
->> Don't you understand that this is broken?.. That's no good.
->>
->> Please listen and reread the messages given to you above, your proposed
->> "solution" does not support by design a valid hardware setup of two
->> sensors connected to the same CSIPHY.
->>
->> I would propose to stop force pushing an uncorrectable dt scheme, it
->> makes no sense.
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Mon, 14 Jul 2025 16:19:49 +0800 you wrote:
+> Avoid duplicate non-null pointer check for pmc in mld_del_delrec().
+> No functional changes.
 > 
-> If all you're asking for is an ability to grab an of_graph reference
-> from the camss (v4l2) driver, you can simply do something along the
-> lines of of_graph_get_remote_port(phy->dev->of_node)
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> ---
+> v2: early return if (!pcm) true as Kuniyuki Iwashima suggested, also revise title
 > 
+> [...]
 
-It's not about the driver specifics, my comment is about a proper
-hardware description in dts notation, please see the device tree node
-names.
+Here is the summary with links:
+  - [v2,net-next] ipv6: mcast: Avoid a duplicate pointer check in mld_del_delrec()
+    https://git.kernel.org/netdev/net-next/c/a8594c956cc9
 
+You are awesome, thank you!
 -- 
-Best wishes,
-Vladimir
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
