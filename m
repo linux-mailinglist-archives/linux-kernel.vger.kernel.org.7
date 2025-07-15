@@ -1,97 +1,101 @@
-Return-Path: <linux-kernel+bounces-731701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4362BB05867
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:06:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0D86B0586B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B3A74A4F76
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:05:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D9C01894372
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324452DCF52;
-	Tue, 15 Jul 2025 11:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1672DCF40;
+	Tue, 15 Jul 2025 11:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PtHt7Gj6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AAqEyWc/"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F452DC322
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D812DCF6F
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752577502; cv=none; b=bnPmSYsE2MGQrGn8+QhQy9sypAJGnRE/jYG+BaRWk7i5C+paLmDCy4+VFwFj1dJZAm9FAMJxbxdsXjlenNqg5mo5QIif/KF0ygUGTRCvFiaqSs135V8qnkbZuXn6Gi9bJGVXz69IJSbDOU56HdNNZtn+feAnKxIA2QAqbSXBCDY=
+	t=1752577505; cv=none; b=AmDfsYNCj3rpVB0hKZY/fFnvLeR1NEG959KsQ1h+CAsKh9J/8gP7Es7ErvsM8gO4kqNhnhIbC8etVjpsRNvfBUsM2VGgohNMNBsEt95DeJfYGr8QJzzQhSt7KgVFN5yGuubrOaTHdNGTRt4jdYmMcvQwqWtIQVVxqCECx0rGTWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752577502; c=relaxed/simple;
-	bh=LB6UAY93QcW6Zc2/G/xKm8r8te+hEdJX+mR6vMH3XAU=;
+	s=arc-20240116; t=1752577505; c=relaxed/simple;
+	bh=2WLJKOVAuaJt4QnmoXL1k44Atj4Pe1QbpaUPyStODjM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EfVobbYJWiFbjwiB32CY3cBVKP7WlxW6bGI/k5qF+5xcdLD7Gip96ViS073oVvh4jWzGRvrzM0n4zS6RtsMWSoL8OwQjSLxR91hzCq2rUoic+V4ZeNWZueu91qGUKIMTtM5kGTLMgF7uqaoMz8h30UwtVHqoTXB+stFCpeJ7Jv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PtHt7Gj6; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=VFuyro/WGLV6gmb2SaG+rMaNVSvJvQNinoQeRMWJHScxlrOOmFUVSWurLdtQBa3aZnjw68NNBEAnbm9faCoWuvtsmRCDZYvhTVP+N22SIWxrUPqV4H8fhl2nMaskrBC/pvSKaCFM1Lg/+c1CN/AR+uZ4jCaAw5n0bqi4fPttbE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AAqEyWc/; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752577500;
+	s=mimecast20190719; t=1752577502;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RZ6F2xwZmJTchnY/FGJYtWyfDOS8jid6Za74XWNHMg4=;
-	b=PtHt7Gj62/ZFCAYqMef+hiTaCrgco78ri2KqN1Oo0jsnqEn+SzYcvZGI3I2XRVj6h2d1Kd
-	EUtKB/NqC2/b5mhNgBTKP+pwrCwtx/2EWfUnbs/AOs76MUX0BIaZ2c30dlUcF1ZuTJg7oL
-	U05Hh10RCB0g4XcuK2dS/EaeKpO/VO0=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=UXL9y7xBlAhc4AXFCXGCZMpy7EHZFtBhXWeACly5wqo=;
+	b=AAqEyWc/H96YMs1SmLtBI9l/OSoI6zJYVS5KCncsuUJ4TD9BFm8fdkLkljhOJwKgNfS2EJ
+	x4nbb6LOJlr/gtPeKYb9bMMOXI4N3xK7Mr2IIYUOnQM3aN1Atpvr6ybhokB9C6xCZjMH3q
+	3A8ZVtRT++rMsIylcBFlFIcNWTdFITw=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-213-k9usgzRxP1ay15zFwulBLw-1; Tue, 15 Jul 2025 07:04:58 -0400
-X-MC-Unique: k9usgzRxP1ay15zFwulBLw-1
-X-Mimecast-MFC-AGG-ID: k9usgzRxP1ay15zFwulBLw_1752577498
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-455eda09c57so27204415e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:04:58 -0700 (PDT)
+ us-mta-619-zkUScSCENxGlU059sTqKRg-1; Tue, 15 Jul 2025 07:05:01 -0400
+X-MC-Unique: zkUScSCENxGlU059sTqKRg-1
+X-Mimecast-MFC-AGG-ID: zkUScSCENxGlU059sTqKRg_1752577500
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-455f79a2a16so30555405e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:05:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752577497; x=1753182297;
+        d=1e100.net; s=20230601; t=1752577499; x=1753182299;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RZ6F2xwZmJTchnY/FGJYtWyfDOS8jid6Za74XWNHMg4=;
-        b=vU3x3kfm3Z+e+ftti2SuuYp2ukSc9YDAe+TYHPue52FOMFEmQoGsQTIgUaqqOWVzcI
-         gqiNl7+2fRRYEdJcfRRPlJG/GErx8dIxech1OdZdk5Fb9ufvXoANKfO9WLMC7lYsjS/f
-         qgKWJ0hJxSkOGrB27wWrE/WOQop5ql57udA8nBGt1mNwLPRp7VmHboyko4CVGxqz9Cts
-         iv44/w7yOHz+mIB/5JjpMf+R0gy0cXWi91NYsaTP/VlUejsOdQ4WSmvDFdJeNupKkE3P
-         2FBVZ7BCU7+YOr88ATePBKg1AUgJxpJh+0WCbi9rLhf9fegdD+Ba8OyIx6Ube9U4Y+YB
-         xpHg==
-X-Gm-Message-State: AOJu0Yy/jp99KH3iuGEAMJcI0FCIqKeJ+Q7rCLZRvjtGLdKuq+/gp4Hp
-	aYf/jjRmb88pnJfKJ5ppSYFy55dvx0Fhssi6HIsR/DNEj9Cuqa5u/EDUX/giPMTYkBTLpBLn6+E
-	D5PYv0BkxIIdg3yyFjln/USY5YbLaZCmFHrJVamd8sVpi/ouESO3n0axvkYjneQEh5JPYox1UQn
-	Do1HntXHfbTble8o6xc5sD92fKs88gm9rEGbYkwMRgwY9aSnx2
-X-Gm-Gg: ASbGncstji36s1Vpob3Xz28C189Q0UdPwA65nyhwSOKbtL9nmkkM2UF20NKmx++q7bR
-	8DqNpSkDMYfBWE+6ALHgk4qWRsxSKHyWvkngoRTHABa5YqiP4aYerIWJVAMkwILmv+yoOZO2dTi
-	wmLXEf3I8vAZquytB56HS5+roNtdCl7oacct8WXkbpkmZNE5FEEjmbfmHmDW3y/nX+Brx+grT+q
-	NSkDUroX7iPWVgC0gW4mlFOjOjzv/sDk/JDXBGsueSRdQcknZxfeTYzwVnYa+D49t/4sK3u838b
-	+g+GHJ5cjNKbC9mspRQ/ZSoQTR0KzBWf
-X-Received: by 2002:a05:600c:4f91:b0:453:62e9:125a with SMTP id 5b1f17b1804b1-454ec27dc91mr164885055e9.18.1752577496834;
-        Tue, 15 Jul 2025 04:04:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGy/03rj+uvyxo8odjmdiUaAYAi/Dr5jnAKGatQgTP0VjrCmZ8kxYj+ayZXaZnc3r+nddecYg==
-X-Received: by 2002:a05:600c:4f91:b0:453:62e9:125a with SMTP id 5b1f17b1804b1-454ec27dc91mr164884735e9.18.1752577496390;
-        Tue, 15 Jul 2025 04:04:56 -0700 (PDT)
+        bh=UXL9y7xBlAhc4AXFCXGCZMpy7EHZFtBhXWeACly5wqo=;
+        b=Xanuna8qShEMIPQxEg61BSd/zVOamD9OkbrdknhH6zzM/PR+Qx6eXX9lR4N60+X7/0
+         d/z7Zbl0v9+xBE4qxH2MqNIHmsasbv/soXR2JkjJneODXAHDbWsQvA1ZbP6bqtGSgP4v
+         GD5YPqpL6qWjWS47NVPNhacJ4VNG3ezIyfpFBEodSR1MGtwFZUW8FejVBQCBry7gSWX/
+         xzVrg6P7AONhYlDJt3uRUTvi/xPEUbcV0rm3A0cDo0OeYYFxDSh4Lol0XAqgn8SkL/uD
+         +h7jENlNsgRsU5VXWtxu3wFzuPOukOZRYWvp74rPPZrKyHg2423/nN5WJKIrX2dzhUL3
+         s6rw==
+X-Gm-Message-State: AOJu0YwAuNkvj19h/HarGXZkHFthLvJKEQFtwrxZIbXdKcsZjLT4/jOJ
+	wbVqCefPzye/tHL5qZv+mYA5CudQl72gvyFI62KdA8C65Nc7s7V1rFRtSiJ3DG/RNXEI6xiyCRR
+	2WagxukRN1FaouiZkSJBcgAj+epbpC+zxM0bOH7LVTWb2rXdcCXHWD0BIa5wP1M8zXiCae9MRDE
+	2OULLs5v8b5iUN/Vs7wH4JdkQVclOrySwHuF4eTAZIM4Pa7zII
+X-Gm-Gg: ASbGncveoUqv5s7JDuBDjt9imqK98yAJ2R9LotHHSM48FEwGIWMgpMJ7e0mkcuACQQE
+	dOiuOwFNqfXNPmLEKVe05g0FDvrPEWA3/KO3w05H0XJ18syssQHI3KZyoad4GluEE1tb+PWyZnb
+	fbVXysXoZMQtUuYsT2tCdjDmjSBsiK3m4nx/mj+TpokTuYcneeQHF58hNVCtBc4QUwogOWQt0+h
+	vSePh+wNucPo1EVeNziaUMEhh/SBTixhLTt1n9Qk+efx5CFuu90ESOkbaUvo2Bph9VZma07utiz
+	SB2tM1YD6FkMxnPTMkFhK8GtBw4rc6n9
+X-Received: by 2002:a05:600c:3481:b0:456:1752:2b39 with SMTP id 5b1f17b1804b1-45627727ef0mr18693715e9.33.1752577499362;
+        Tue, 15 Jul 2025 04:04:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHX6q3lHTErOrCKqaTuVDGblbpeMy+KjGYJg/6IvgcpsrwPUGu+4zqypinlqXvEhZwLlzkaZg==
+X-Received: by 2002:a05:600c:3481:b0:456:1752:2b39 with SMTP id 5b1f17b1804b1-45627727ef0mr18693195e9.33.1752577498799;
+        Tue, 15 Jul 2025 04:04:58 -0700 (PDT)
 Received: from localhost ([89.128.88.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45613c2d84dsm75109595e9.5.2025.07.15.04.04.55
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4560f22cd29sm87905185e9.34.2025.07.15.04.04.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 04:04:55 -0700 (PDT)
+        Tue, 15 Jul 2025 04:04:58 -0700 (PDT)
 From: Javier Martinez Canillas <javierm@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: ipedrosa@redhat.com,
 	Javier Martinez Canillas <javierm@redhat.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
+	"Rob Herring (Arm)" <robh@kernel.org>,
 	Marcus Folkesson <marcus.folkesson@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>,
 	David Airlie <airlied@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	devicetree@vger.kernel.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH v3 3/5] drm/sitronix/st7571-i2c: Add an indirection level to parse DT
-Date: Tue, 15 Jul 2025 13:03:52 +0200
-Message-ID: <20250715110411.448343-4-javierm@redhat.com>
+Subject: [PATCH v3 4/5] dt-bindings: display: Add Sitronix ST7567 LCD Controller
+Date: Tue, 15 Jul 2025 13:03:53 +0200
+Message-ID: <20250715110411.448343-5-javierm@redhat.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250715110411.448343-1-javierm@redhat.com>
 References: <20250715110411.448343-1-javierm@redhat.com>
@@ -103,48 +107,101 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Other Sitronix display controllers might need a different parsing DT
-logic, so lets add a .parse_dt callback to struct st7571_panel_data.
+Sitronix ST7567 is a monochrome Dot Matrix LCD Controller.
 
-Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
 Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 Reviewed-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 ---
 
 (no changes since v1)
 
- drivers/gpu/drm/sitronix/st7571-i2c.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ .../bindings/display/sitronix,st7567.yaml     | 63 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ 2 files changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/sitronix,st7567.yaml
 
-diff --git a/drivers/gpu/drm/sitronix/st7571-i2c.c b/drivers/gpu/drm/sitronix/st7571-i2c.c
-index fd9d6c701cc4..f9c4fedb3cca 100644
---- a/drivers/gpu/drm/sitronix/st7571-i2c.c
-+++ b/drivers/gpu/drm/sitronix/st7571-i2c.c
-@@ -92,6 +92,7 @@ struct st7571_panel_constraints {
+diff --git a/Documentation/devicetree/bindings/display/sitronix,st7567.yaml b/Documentation/devicetree/bindings/display/sitronix,st7567.yaml
+new file mode 100644
+index 000000000000..e8a5b8ad18fe
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/sitronix,st7567.yaml
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/sitronix,st7567.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Sitronix ST7567 Display Controller
++
++maintainers:
++  - Javier Martinez Canillas <javierm@redhat.com>
++
++description:
++  Sitronix ST7567 is a driver and controller for monochrome
++  dot matrix LCD panels.
++
++allOf:
++  - $ref: panel/panel-common.yaml#
++
++properties:
++  compatible:
++    const: sitronix,st7567
++
++  reg:
++    maxItems: 1
++
++  width-mm: true
++  height-mm: true
++  panel-timing: true
++
++required:
++  - compatible
++  - reg
++  - width-mm
++  - height-mm
++  - panel-timing
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        display@3f {
++            compatible = "sitronix,st7567";
++            reg = <0x3f>;
++            width-mm = <37>;
++            height-mm = <27>;
++
++            panel-timing {
++                hactive = <128>;
++                vactive = <64>;
++                hback-porch = <0>;
++                vback-porch = <0>;
++                clock-frequency = <0>;
++                hfront-porch = <0>;
++                hsync-len = <0>;
++                vfront-porch = <0>;
++                vsync-len = <0>;
++            };
++          };
++     };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ee2ef9d9db2a..d97e091b1742 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7835,6 +7835,7 @@ F:	drivers/gpu/drm/sitronix/st7586.c
+ DRM DRIVER FOR SITRONIX ST7571 PANELS
+ M:	Marcus Folkesson <marcus.folkesson@gmail.com>
+ S:	Maintained
++F:	Documentation/devicetree/bindings/display/sitronix,st7567.yaml
+ F:	Documentation/devicetree/bindings/display/sitronix,st7571.yaml
+ F:	drivers/gpu/drm/sitronix/st7571-i2c.c
  
- struct st7571_panel_data {
- 	int (*init)(struct st7571_device *st7571);
-+	int (*parse_dt)(struct st7571_device *st7571);
- 	struct st7571_panel_constraints constraints;
- };
- 
-@@ -881,7 +882,7 @@ static int st7571_probe(struct i2c_client *client)
- 	i2c_set_clientdata(client, st7571);
- 	st7571->pdata = device_get_match_data(&client->dev);
- 
--	ret = st7571_parse_dt(st7571);
-+	ret = st7571->pdata->parse_dt(st7571);
- 	if (ret)
- 		return ret;
- 
-@@ -964,6 +965,7 @@ static void st7571_remove(struct i2c_client *client)
- 
- struct st7571_panel_data st7571_config = {
- 	.init = st7571_lcd_init,
-+	.parse_dt = st7571_parse_dt,
- 	.constraints = {
- 		.min_nlines = 1,
- 		.max_nlines = 128,
 -- 
 2.49.0
 
