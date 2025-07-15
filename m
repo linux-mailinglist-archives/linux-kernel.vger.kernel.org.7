@@ -1,193 +1,81 @@
-Return-Path: <linux-kernel+bounces-731238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD50B05187
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:08:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B46A5B05188
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FF524A5EB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:08:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B23BD165F04
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2B12D3EC1;
-	Tue, 15 Jul 2025 06:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCFE2D3A93;
+	Tue, 15 Jul 2025 06:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FL3YtFnb"
-Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vlsoBRYW"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26EA12D29CD;
-	Tue, 15 Jul 2025 06:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0C325C81F
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752559725; cv=none; b=oPvrweweZvUeO7CZrpA5XOZaM2Dtx3LEz9N8fjLShVPmjeMVZNl9/8wXuLrTB6865idhE8GT+ySG5kKWUMHsGkcJGg66CngR2z+61UcJcQFgyBXohrUq3kde88G8x7/0MFEkyv9w8Dl3WphtMdbi/O0ZlgcHhzhaG9WfKeegWcQ=
+	t=1752559746; cv=none; b=hhwLcjVsbvG5a5+3si0X7WVojBqOedm7F2PcEn+scvA0AkGRg3AmxxyGEQlaWSEno95Wsh4S3XPQnxO5MEVA4bfAjtLYKMSa2KFpNPSYiX+cnTo+Jb/9rTwxxNBXHYttCSpL0fAVd1RNu1R2xnUGHqm3Tao48nUdGZrvT58jlR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752559725; c=relaxed/simple;
-	bh=sHNNy41ZchjJYhjkgZlkZaOxhThztJMGb/eo2DxdCqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MLyUvfEhHlub53dQl9oQ/HJ7YLxPNQWLklkD9TFzci5jDyQ6RF0gU+kVMwSAWStJXJ9lqh2X/0Z9VNDokt5j+ldUWSIz4WYLUA8RKDKKUOJBd9pbdz50Xxg2xGN+IIeIsIHfjhqtuDR62gHdz/4c3QkbUUzuwPtzA/Fm2AKNhos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FL3YtFnb; arc=none smtp.client-ip=217.70.178.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A220C44A1C;
-	Tue, 15 Jul 2025 06:08:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1752559720;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0tOZktrYT4fpzyCPv7EqQuQ/zV//e8X9GJdSl7TB5LE=;
-	b=FL3YtFnbN1gjy9855J0Qbii5j3/f3m9kN0wV4K/I9bvgSG4cJwsDcaKZrM8H4P2xWIVTuw
-	/PFKDz4wConScqL1Cv/3kUhiIbLHQYkrhQHxMjYeecubgGW4x2pBsl28cxmePEq9DC9kIo
-	MCh+Pknl1cJlb+G+MEFWcRMT9LRP/VEuwST716f6Vqo+USktaZ+M+20/H96wkmYNb5E+Kk
-	QTnScV97ODulv7dHlsVBfL5UF0cDn+01fEAxBGVwMm3pOinstlwkJsfJ9VD/t4RtwgMjbt
-	Sq75sPbfYdW2sYp4w3SgQ2mYulyfUsKFeW8hI/LtFA76gyu+Ih1J0KQoVrZ/OA==
-Date: Tue, 15 Jul 2025 08:08:37 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
- <andrew@lunn.ch>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Florian Fainelli
- <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, Vladimir
- Oltean <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
- <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
- Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v3 1/3] net: netdevsim: Add PHY support in
- netdevsim
-Message-ID: <20250715080837.1aa0e9dd@fedora.home>
-In-Reply-To: <20250711165541.586f51e8@kernel.org>
-References: <20250710062248.378459-1-maxime.chevallier@bootlin.com>
-	<20250710062248.378459-2-maxime.chevallier@bootlin.com>
-	<20250711165541.586f51e8@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1752559746; c=relaxed/simple;
+	bh=cUfZaH7K5rkON72wYTsEjzlkkxKAzps92VniQYTWdUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cFw6Bm68UlZdRQwnDQhcqOtpqa/4EPIDC2icwCyUjd1XVxka3lXrRZXSRojfY3omkFtwUFdoGiIpYAcX4nauc1K7Zj5W37HPyPloHLCa6xGXUuFTlJiNpuSNf1npEhSQXUcTKOwIkr7H1mYSDU3C7aDhpOi2j/2HhSUDPOUXTLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vlsoBRYW; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oG+tyInimIZAVic5TXi1PtfzVcuPNgx1Yy0cLCu24Io=; b=vlsoBRYWJGQJjIzLLNCxAEfme4
+	n8jzJ/IfgWna6bThp/UxjBWeKwhTbapQQM53Fy2b4IPtoBwHzQbvOYyxOSJTXJ3a+6MPWO51E6qx3
+	KtI0FJ3mBdPHCekHahD1icIjHGivq2lbNv4+3f2lWI5w0XLmbm0AlR+J7pejv7YhNODujjR9ECwTT
+	Jg9W1V18EpPjpQXNk1pwe5lJhkck8i8LIFw6OTeqcPweO5Ak3bxFJVy3yXIHH73/0pQ0QPNUQbmiG
+	X6FAXqg2/1ZpC2JXGdOowxwIkvEa+LP4PlAA+jb9CIUw6lHkVWRvozNFRx6+7Vd9/Z9mkcIC5jI/G
+	ZdZ5aUDw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ubYqd-00000004BGK-3dTn;
+	Tue, 15 Jul 2025 06:09:04 +0000
+Date: Mon, 14 Jul 2025 23:09:03 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: linux@treblig.org
+Cc: akpm@linux-foundation.org, terrelln@fb.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib/xxhash: Comment out unused functions
+Message-ID: <aHXwfyKRvXi5AZZT@infradead.org>
+References: <20250714000927.294767-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehgedtjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedujedprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtp
- hhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714000927.294767-1-linux@treblig.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, 11 Jul 2025 16:55:41 -0700
-Jakub Kicinski <kuba@kernel.org> wrote:
-
-> On Thu, 10 Jul 2025 08:22:45 +0200 Maxime Chevallier wrote:
-> > @@ -1098,6 +1101,10 @@ static int __init nsim_module_init(void)
-> >  {
-> >  	int err;
-> >  
-> > +	err = nsim_phy_drv_register();
-> > +	if (err)
-> > +		return err;
-> > +
-> >  	err = nsim_dev_init();
-> >  	if (err)
-> >  		return err;  
+On Mon, Jul 14, 2025 at 01:09:27AM +0100, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> I think you're missing error handling in this function if something
-> after drv_register fails.
-
-Ah true... Thanks
-
-> > @@ -1124,6 +1131,7 @@ static void __exit nsim_module_exit(void)
-> >  	rtnl_link_unregister(&nsim_link_ops);
-> >  	nsim_bus_exit();
-> >  	nsim_dev_exit();
-> > +	nsim_phy_drv_unregister();
-> >  }  
+> xxh32_digest() and xxh32_update() were added in 2017 in the original
+> xxhash commit, but have remained unused.
 > 
-> > +free_mdiobus:
-> > +	atomic_dec(&bus_num);
-> > +	mdiobus_free(mb->mii);
-> > +free_pdev:
-> > +	platform_device_unregister(mb->pdev);
-> > +free_mb:  
+> While I've mostly been deleting unused functions, this is a general
+> library and I see erofs is using other bits of xxh32, so it didn't
+> seem right just to delete them.
 > 
-> Others have added netdevsim code so the entire code base doesn't follow
-> what I'm about to say, but if you dont mind indulging my personal coding
-> style - error handling labels on a path disjoint from the success path
-> should be prefixed with err_$first-undo-action. If the error handling
-> shares the path with success the label prefix should be exit_$..
-> You can look at drivers/net/netdevsim/bpf.c for examples
+> Comment them out with #if 0.
+> (Which checkpatch rightly warns about)
 
-That's totally fine by me, it makes sense :)
-
-> > +	kfree(mb);
-> > +
-> > +	return NULL;
-> > +}
-> > +
-> > +static ssize_t
-> > +nsim_phy_add_write(struct file *file, const char __user *data,
-> > +		   size_t count, loff_t *ppos)
-> > +{
-> > +	struct net_device *dev = file->private_data;
-> > +	struct netdevsim *ns = netdev_priv(dev);
-> > +	struct nsim_phy_device *ns_phy;
-> > +	struct phy_device *pphy;
-> > +	u32 parent_id;
-> > +	char buf[10];
-> > +	ssize_t ret;
-> > +	int err;
-> > +
-> > +	if (*ppos != 0)
-> > +		return 0;
-> > +
-> > +	if (count >= sizeof(buf))
-> > +		return -ENOSPC;
-> > +
-> > +	ret = copy_from_user(buf, data, count);
-> > +	if (ret)
-> > +		return -EFAULT;
-> > +	buf[count] = '\0';
-> > +
-> > +	ret = kstrtouint(buf, 10, &parent_id);
-> > +	if (ret)
-> > +		return -EINVAL;
-> > +
-> > +	ns_phy = nsim_phy_register();
-> > +	if (IS_ERR(ns_phy))
-> > +		return PTR_ERR(ns_phy);
-> > +
-> > +	if (!parent_id) {
-> > +		if (!dev->phydev) {
-> > +			err = phy_connect_direct(dev, ns_phy->phy, nsim_adjust_link,
-> > +						 PHY_INTERFACE_MODE_NA);
-> > +			if (err)
-> > +				return err;
-> > +
-> > +			phy_attached_info(ns_phy->phy);
-> > +
-> > +			phy_start(ns_phy->phy);
-> > +		} else {
-> > +			phy_link_topo_add_phy(dev, ns_phy->phy, PHY_UPSTREAM_MAC, dev);
-> > +		}
-> > +	} else {
-> > +		pphy = phy_link_topo_get_phy(dev, parent_id);
-> > +		if (!pphy)
-> > +			return -EINVAL;
-> > +
-> > +		phy_link_topo_add_phy(dev, ns_phy->phy, PHY_UPSTREAM_PHY, pphy);
-> > +	}
-> > +
-> > +	nsim_phy_debugfs_create(ns->nsim_dev_port, ns_phy);
-> > +
-> > +	list_add(&ns_phy->node, &ns->nsim_dev->phy_list);  
-> 
-> No locks needed.. for any of this.. ?
-
-Heh I guess some locking is needed indeed... Let me add that in the
-next round...
-
-Maxime
+Please just remove it like all other dead code.  The same argument
+that folks can easily look at the git history to resurrect it applies
+here as everywhere else.
 
