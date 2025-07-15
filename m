@@ -1,118 +1,153 @@
-Return-Path: <linux-kernel+bounces-731930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 828F6B05D72
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:44:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F4C2B05D77
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 385073A6183
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:38:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB0074A120A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26002E49A5;
-	Tue, 15 Jul 2025 13:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21E92E7BD3;
+	Tue, 15 Jul 2025 13:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZI7SwqgD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMSztChe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0313E2E4980;
-	Tue, 15 Jul 2025 13:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB642E4991;
+	Tue, 15 Jul 2025 13:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752586361; cv=none; b=Hc36RFoUNCPUbKf/r1urJb6ptWNJSllAfGiOEqztlErRJymUauefsEWuC/Gb48tnK1KbYW95d7W18dkrBAiaAYUs8sEx9tJd9FZS9zfOcfw5QEbINsv1vaSovtiMugWrbsqLeof9IbbJcgPqHCsCvUxQ4zPqKYhF33DEoTrvVmI=
+	t=1752586369; cv=none; b=eC74ZVEUEjus7cyWIpf1bRIyQhtGt63ip/anQ8RMVA33x5gJGovp2pxG4u2VROw3srGnXdPJ5wIf/JFUv0EfFoBdjCZ1ppj55zhL0H5BKLTuuDotD14dgks9NM8pAetFXDm5BccRIoChU63835ZpSgAOr2UNEtcLsSc8OUgTui4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752586361; c=relaxed/simple;
-	bh=SKALgTAWbYSqaPqfyTvDFdr5s2YmxkBpet4kPaBBqXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LuoSAwHG+MAJcdSg1PsWLA/Jh0jTUsgpLZupBQgaWkM4OBsicIiDiUnrgSm18oumwfi0AAUrTVaPXnBWCqFrwU76ZQKGiggGqIq4Y1NCt3Hyk8mNJ4NlIMy1k0wk+09xth/ryJNgIJCzjLurLvmlDru7iClXKjgj/fjBkSoq/kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZI7SwqgD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FEEEC4CEF1;
-	Tue, 15 Jul 2025 13:32:36 +0000 (UTC)
+	s=arc-20240116; t=1752586369; c=relaxed/simple;
+	bh=Z+gZfl6gp7rtHC+Srr8siWFBIRE/edCp3oceobQTq4Q=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From; b=pg07MEuFYeWr2rbQqvM6Bbkv0d08qzvatFsTwf3XiPwyhhSKqO0AwXSlVPjmnEYYRD+50Tp4P1O+6Kr3RMc4B1VAIQzvKmRm9s+dxPlvgXyby4WWULa3TyvIVXvmMVAWxM1Vc/rtsC16uPLld3mJznDHY9jCMVL7FT+BrYjdfdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMSztChe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFEE7C4CEE3;
+	Tue, 15 Jul 2025 13:32:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752586360;
-	bh=SKALgTAWbYSqaPqfyTvDFdr5s2YmxkBpet4kPaBBqXM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZI7SwqgD8TbMTdcjaid36j2VW68WCjsz6IphHoD3L8oj7yvvv8AVD0gXb47xBudX9
-	 Pc5lIOST05zZnar4sTA8GcsqOT1JDsnL6BxC/stKQJL/tIwrZMPyNSbLFrq1ZQzNk/
-	 AcksIGBQR73ls1IkuW+NHqxXCWT2tqkJS8RocH3HegHVAjZJr6RpHFjIPS++afsXRc
-	 OIAdcf/IUjuB3QHTojwD6oJ0tX+m2fDKAn4dlKbu0D8toI79/Oam/t1l6tWJ9LUqD9
-	 kuYAWoTjxyYhsu7y8434uE0H1khF6wORrOc60BtaenKWXshOiwxkqAvXPvO1K94W49
-	 l+sd2izuEvAug==
-Date: Tue, 15 Jul 2025 14:32:33 +0100
-From: Will Deacon <will@kernel.org>
-To: Alexis =?iso-8859-1?Q?Lothor=E9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Xu Kuohai <xukuohai@huaweicloud.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	ebpf@linuxfoundation.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>,
-	Ihor Solodrai <ihor.solodrai@linux.dev>, bpf@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 1/2] bpf, arm64: remove structs on stack constraint
-Message-ID: <aHZYcY_9JtK8so3C@willie-the-truck>
-References: <20250709-arm64_relax_jit_comp-v1-0-3850fe189092@bootlin.com>
- <20250709-arm64_relax_jit_comp-v1-1-3850fe189092@bootlin.com>
+	s=k20201202; t=1752586368;
+	bh=Z+gZfl6gp7rtHC+Srr8siWFBIRE/edCp3oceobQTq4Q=;
+	h=Date:Subject:Cc:To:From:From;
+	b=TMSztCheFvZFsnv/Rwcw09SFMupU7BiI8zntI6y84Pea+uCjFuDcuu/Ij1NzII9ZJ
+	 Ypzb/PCaxcdzXJSyrUXnmjdDIRZu5BXYbLM1XS6nc8B+WPqDbfw0UyqB+bE2AqOJ3y
+	 kQ02r3s+gGxb+9A+kt8Um+uGYfqWctb/41qqc+AyMgixvbXbRTGNuTx2vcZ+fJDaQ6
+	 BkR9tMGTY89wmREpxYSThmrHAbORB7O7lkDN/dahulGfQS6sikuIwVPiKyhviqKNpO
+	 wTeRt+oDk8oJqn8q9P5kYotxmtA4TRJfRrUNM8/v6neFg0B4kpgnbVRA9GNzezNIKK
+	 I20B7lZYg84/w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250709-arm64_relax_jit_comp-v1-1-3850fe189092@bootlin.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 15:32:44 +0200
+Message-Id: <DBCO0KQERIT5.GS89BZ9LY4TM@kernel.org>
+Subject: [GIT PULL] Rust ALLOC & DMA for v6.17
+Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Vlastimil Babka"
+ <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, "Uladzislau
+ Rezki" <urezki@gmail.com>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: "Miguel Ojeda" <ojeda@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+X-Mailer: aerc 0.20.1
 
-On Wed, Jul 09, 2025 at 10:36:55AM +0200, Alexis Lothoré (eBPF Foundation) wrote:
-> While introducing support for 9+ arguments for tracing programs on
-> ARM64, commit 9014cf56f13d ("bpf, arm64: Support up to 12 function
-> arguments") has also introduced a constraint preventing BPF trampolines
-> from being generated if the target function consumes a struct argument
-> passed on stack, because of uncertainties around the exact struct
-> location: if the struct has been marked as packed or with a custom
-> alignment, this info is not reflected in BTF data, and so generated
-> tracing trampolines could read the target function arguments at wrong
-> offsets.
-> 
-> This issue is not specific to ARM64: there has been an attempt (see [1])
-> to bring the same constraint to other architectures JIT compilers. But
-> discussions following this attempt led to the move of this constraint
-> out of the kernel (see [2]): instead of preventing the kernel from
-> generating trampolines for those functions consuming structs on stack,
-> it is simpler to just make sure that those functions with uncertain
-> struct arguments location are not encoded in BTF information, and so
-> that one can not even attempt to attach a tracing program to such
-> function. The task is then deferred to pahole (see [3]).
-> 
-> Now that the constraint is handled by pahole, remove it from the arm64
-> JIT compiler to keep it simple.
-> 
-> [1] https://lore.kernel.org/bpf/20250613-deny_trampoline_structs_on_stack-v1-0-5be9211768c3@bootlin.com/
-> [2] https://lore.kernel.org/bpf/CAADnVQ+sj9XhscN9PdmTzjVa7Eif21noAUH3y1K6x5bWcL-5pg@mail.gmail.com/
-> [3] https://lore.kernel.org/bpf/20250707-btf_skip_structs_on_stack-v3-0-29569e086c12@bootlin.com/
-> 
-> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
-> ---
->  arch/arm64/net/bpf_jit_comp.c | 5 -----
->  1 file changed, 5 deletions(-)
+Hi Miguel,
 
-This is a question born more out of ignorance that insight, but how do
-we ensure that the version of pahole being used is sufficiently
-up-to-date that the in-kernel check is not required?
+Please pull the following ALLOC & DMA changes.
 
-Will
+All commits have been in linux-next for a couple of weeks. I did a test mer=
+ge
+without any conflicts.
+
+- Danilo
+
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494=
+:
+
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+
+are available in the Git repository at:
+
+  https://github.com/Rust-for-Linux/linux.git tags/alloc-next-v6.17-2025-07=
+-15
+
+for you to fetch changes up to d49ac7744f578bcc8708a845cce24d3b91f86260:
+
+  MAINTAINERS: add mm folks as reviewers to rust alloc (2025-07-09 16:01:17=
+ +0200)
+
+----------------------------------------------------------------
+Alloc & DMA changes for v6.17
+
+Box:
+  - Implement Borrow / BorrowMut for Box<T, A>.
+
+Vec:
+  - Implement Default for Vec<T, A>.
+
+  - Implement Borrow / BorrowMut for Vec<T, A>.
+
+DMA:
+  - Clarify wording and be consistent in 'coherent' nomenclature.
+
+  - Convert the read!() / write!() macros to return a Result.
+
+  - Add as_slice() / write() methods in CoherentAllocation.
+
+  - Fix doc-comment of dma_handle().
+
+  - Expose count() and size() in CoherentAllocation and add the
+    corresponding type invariants.
+
+  - Implement CoherentAllocation::dma_handle_with_offset().
+
+  - Require mutable reference for as_slice_mut() and write().
+
+- Add Vlastimil Babka, Liam R. Howlett, Uladzislau Rezki and Lorenzo Stoake=
+s
+  as reviewers (thanks everyone).
+
+----------------------------------------------------------------
+Abdiel Janulgue (3):
+      rust: dma: clarify wording and be consistent in `coherent` nomenclatu=
+re
+      rust: dma: convert the read/write macros to return Result
+      rust: dma: add as_slice/write functions for CoherentAllocation
+
+Alexandre Courbot (5):
+      rust: alloc: implement `Borrow` and `BorrowMut` for `Vec`
+      rust: alloc: implement `Borrow` and `BorrowMut` for `KBox`
+      rust: dma: fix doc-comment of dma_handle()
+      rust: dma: expose the count and size of CoherentAllocation
+      rust: dma: add dma_handle_with_offset method to CoherentAllocation
+
+Alice Ryhl (1):
+      rust: vec: impl Default for Vec with any allocator
+
+Danilo Krummrich (2):
+      Merge tag 'topic/dma-features-2025-06-23' into alloc-next
+      rust: dma: require mutable reference for as_slice_mut() and write()
+
+Lorenzo Stoakes (1):
+      MAINTAINERS: add mm folks as reviewers to rust alloc
+
+ MAINTAINERS               |   4 +++
+ rust/kernel/alloc/kbox.rs |  57 +++++++++++++++++++++++++++++++++++++
+ rust/kernel/alloc/kvec.rs |  55 ++++++++++++++++++++++++++++++++++-
+ rust/kernel/dma.rs        | 199 ++++++++++++++++++++++++++++++++++++++++++=
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------------=
+----------
+ samples/rust/rust_dma.rs  |  28 +++++++++---------
+ 5 files changed, 295 insertions(+), 48 deletions(-)
 
