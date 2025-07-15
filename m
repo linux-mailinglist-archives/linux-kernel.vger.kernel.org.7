@@ -1,93 +1,139 @@
-Return-Path: <linux-kernel+bounces-731248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2329B051B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:26:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F758B051C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66DF57A8031
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:24:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A9607A8075
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3BB2D375B;
-	Tue, 15 Jul 2025 06:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X/OWgLwc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE312CA8;
-	Tue, 15 Jul 2025 06:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2912D5425;
+	Tue, 15 Jul 2025 06:28:37 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DC82D0283;
+	Tue, 15 Jul 2025 06:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752560756; cv=none; b=oa5rOwNKT5uW3fRBGS+YbBVItc1DUy5in5E/kE/o4k1rB/ebfyYvDPSeBq2OAHTOJ26nJ5EoyaUxAAwOLmVh1LxfynYqnvueWVEkMfXk/O3Qc2Jlwj6i01MrH1NQmNsmdUt/EguI28pokmFymIlmEsg+AC3IdLHCdFoTDqU/wmg=
+	t=1752560916; cv=none; b=mfeb9Tkp6Bm6O5Wuxq8Zu96oalp2/1wb4HugiOFuYc8oXjSuMd2cJ8rRqVTomZnc42hDnNB6LlF2KgqBITtibFqHx28dCwSRTr40JEMWSYrowKgxDPqbissmCmudOiAvHaxhiTZbsBa9vBC5uUsm+/V5ZUpfMbwnIMDTMcVMAGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752560756; c=relaxed/simple;
-	bh=53zv7yITO/rILAd5sYXsVnpiloVw8QyX+s8kmTGatiY=;
+	s=arc-20240116; t=1752560916; c=relaxed/simple;
+	bh=NRAKPipTn7XBaLaJuYTXRaaKr7Jvhummy7DyQx9NvCQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b+wbgO/odGWUblX2fqAxAchwkiQVQtLjQxlY2VufdpIR2GpSIyJsWIKFGsreIS5vWtgpbxd6Y9AGAxSFhH3aFnIoT5+KT/SFk3o4P6vqrX+ZXL1A9FP72ZHTXbLoPzmzCb/s6JHo4kRrQaJoECo7Iei9MqiWZHBvI4zy64Axy18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X/OWgLwc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74F55C4CEE3;
-	Tue, 15 Jul 2025 06:25:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752560756;
-	bh=53zv7yITO/rILAd5sYXsVnpiloVw8QyX+s8kmTGatiY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X/OWgLwckAYDLS6OI6lCYOKJ8ZWSSOt903Pjls54XDOiIvtisj5pJzfPHOz8nAhWz
-	 YfE8/eOXuohsi1Gl08NbSPtjkJxZUjHyU0dQ93xn90MeaVOwC7drLHh7ytKAKvlOXi
-	 v6JxbLC/hdP9S+Ej+XiWnpgJ1Ay36FC29jY356ecv+zzDu2GOA8ZVJpMhP3gH58Ia6
-	 s0hZ78Fx4wxQCoI4tDQvzLgog+lHk5dFum5FtV1kOo/Am5IeNRhnz72XC43Li8jZAD
-	 TmRR6ePUSbupJMQ6MhKk2OtIkCLDxsDqDuceTYX5/00a2+9fro8TShfk88RSynZbzY
-	 vWn82UrDzJfEQ==
-Date: Tue, 15 Jul 2025 06:25:55 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Long Li <longli@microsoft.com>
-Cc: Naman Jain <namjain@linux.microsoft.com>,
-	KY Srinivasan <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Olaf Hering <olaf@aepfle.de>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>
-Subject: Re: [PATCH v4] tools/hv: fcopy: Fix irregularities with size of ring
- buffer
-Message-ID: <aHX0c0VsCIwR27K7@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-References: <20250711060846.9168-1-namjain@linux.microsoft.com>
- <326fcccb-1563-4cb7-a137-993d4ce3cedc@linux.microsoft.com>
- <DS2PR21MB51816F322B9D204B75D9A4B6CE4AA@DS2PR21MB5181.namprd21.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o217fExosq3ywXOuQMinrVCXpb9eVgF4feCfueiL0smlr2BtiiDfaCYSbkqH5boDFNlAaIKmh+bcA90VLv+dzna1mw5ik2g0aQ3vTkOxy6o+DNqU76yUv09ybc1ljaH5yOZBD3aJZwM3G97FlDZGzvDCggN8ITOmzcRGg7lmhqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 56F6S9eY028621;
+	Tue, 15 Jul 2025 08:28:09 +0200
+Date: Tue, 15 Jul 2025 08:28:09 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Richard Henderson <richard.henderson@linaro.org>,
+        Shuah Khan <shuah@kernel.org>, Matt Turner <mattst88@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-alpha@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Subject: Re: [PATCH] tools/nolibc: add support for Alpha
+Message-ID: <20250715062809.GA28609@1wt.eu>
+References: <20250713-nolibc-alpha-v1-1-10216333d308@weissschuh.net>
+ <ceef9e43-5591-4c03-ba51-af1ccc68a05b@linaro.org>
+ <6cb31334-8b39-4920-810e-de123898a2e0@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <DS2PR21MB51816F322B9D204B75D9A4B6CE4AA@DS2PR21MB5181.namprd21.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6cb31334-8b39-4920-810e-de123898a2e0@t-8ch.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Sat, Jul 12, 2025 at 08:00:35PM +0000, Long Li wrote:
-> > Subject: Re: [PATCH v4] tools/hv: fcopy: Fix irregularities with size of ring buffer
-> >
-> >
-> >
-> > On 7/11/2025 11:38 AM, Naman Jain wrote:
-> > > Size of ring buffer, as defined in uio_hv_generic driver, is no longer
-> > > fixed to 16 KB. This creates a problem in fcopy, since this size was
-> > > hardcoded. With the change in place to make ring sysfs node actually
-> > > reflect the size of underlying ring buffer, it is safe to get the size
-> > > of ring sysfs file and use it for ring buffer size in fcopy daemon.
-> > > Fix the issue of disparity in ring buffer size, by making it dynamic
-> > > in fcopy uio daemon.
-> > >
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: 0315fef2aff9 ("uio_hv_generic: Align ring size to system page")
-> > > Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
-> > > Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+Hi,
+
+On Mon, Jul 14, 2025 at 07:21:38AM +0200, Thomas Weißschuh wrote:
+> Hi Richard,
 > 
-> Reviewed-by: Long Li <longli@microsoft.com>
+> On 2025-07-13 16:21:58-0600, Richard Henderson wrote:
+> > On 7/13/25 14:08, Thomas Weißschuh wrote:
+> > > +++ b/tools/testing/selftests/nolibc/nolibc-test.c
+> > > @@ -709,6 +709,10 @@ int run_startup(int min, int max)
+> > >   	/* checking NULL for argv/argv0, environ and _auxv is not enough, let's compare with sbrk(0) or &end */
+> > >   	extern char end;
+> > >   	char *brk = sbrk(0) != (void *)-1 ? sbrk(0) : &end;
+> > > +#if defined(__alpha__)
+> > > +	/* the ordering above does not work on an alpha kernel */
+> > > +	brk = NULL;
+> > > +#endif
+> > 
+> > The syscall api is different for brk on alpha.
+> > A change to sys_brk or brk in include/nolibc/sys.h is required.
+> 
+> You are referring to osf_brk, right?
+> I think that should work as-is with the current wrappers.
 
-Applied to hyperv-fixes. Thanks.
+I finally managed to reinstall my DS10 to build and test this and FWIW
+the test passes:
+
+  $ ./nolibc-test 
+  Running test 'startup'
+  0 argc = 1                                                        [OK]
+  1 argv_addr = <0x11fc7b428>                                       [OK]
+  2 argv_environ = <0x11fc7b428>                                    [OK]
+  3 argv_total = 1                                                  [OK]
+  4 argv0_addr = <0x11fc7b665>                                      [OK]
+  5 argv0_str = <./nolibc-test>                                     [OK]
+  6 argv0_len = 13                                                  [OK]
+  7 environ_addr = <0x11fc7b438>                                    [OK]
+  8 environ_envp = <0x11fc7b438>                                    [OK]
+  9 environ_auxv = <0x11fc7b438>                                    [OK]
+  10 environ_total = 175                                            [OK]
+  11 environ_HOME = <0x11fc7b6f4>                                   [OK]
+  12 auxv_addr = <0x11fc7b4e8>                                      [OK]
+  13 auxv_AT_UID = 509                                              [OK]
+  14 constructor = 3                                                [OK]
+  15 linkage_errno = <0x1200200f8>                                  [OK]
+  16 linkage_constr = 3                                             [OK]
+  Errors during this test: 0
+  
+  Running test 'syscall'
+  0 access = 0                                                      [OK]
+  1 access_bad = -1 EPERM                                           [OK]
+  2 clock_getres = 0                                                [OK]
+  3 clock_gettime = 0                                               [OK]
+  4 clock_settime = -1 EINVAL                                       [OK]
+  5 getpid = 9201                                                   [OK]
+  6 getppid = 419                                                   [OK]
+  7 gettid = 9201                                                   [OK]
+  8 getpgid_self = 9201                                             [OK]
+  9 getpgid_bad = -1 ESRCH                                          [OK]
+  10 kill_0 = 0                                                     [OK]
+  11 kill_CONT = 0                                                  [OK]
+  12 kill_BADPID = -1 ESRCH                                         [OK]
+  13 sbrk_0 = <0x120024000>                                         [OK]
+  14 sbrk = 0                                                       [OK]
+  15 brk = 0                                                        [OK]
+  (...)
+  Total number of errors: 0
+  Exiting with status 0
+
+The result is exactly the same if I comment that line that resets brk,
+as brk was apparently already NULL:
+
+  13 sbrk_0 = <0x120024000>                                         [OK]
+  14 sbrk = 0                                                       [OK]
+  15 brk = 0                                                        [OK]
+
+> On alpha, mm->brk and mm->arg_start are ordered differently from other
+> architectures. Personally I think the nolibc tests are a bit bogus here.
+
+I seem to remember that these are among the older minimal consistency
+tests and that it could be time to revisit this :-/
+
+Willy
 
