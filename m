@@ -1,58 +1,79 @@
-Return-Path: <linux-kernel+bounces-731086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F97B04EAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:25:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E87B04EB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EE211AA352B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:26:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3F8A4A4266
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB262D0C92;
-	Tue, 15 Jul 2025 03:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE63E2D1308;
+	Tue, 15 Jul 2025 03:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I7PuSuWT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LYTpsc1I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051006FBF;
-	Tue, 15 Jul 2025 03:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179556FBF;
+	Tue, 15 Jul 2025 03:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752549940; cv=none; b=K4TxC7HQWorBIts1JaoKjjxENVjgJbkLWuCZ3ZdH44EC8rOsdAZPLZrXQ1Dako3dSddSw2Ls4P30stuM/lJ3N5Sdlgcqse1MD6ZNbj2QiYkELZDs7ODaLUP0AhYARNkLfq03G/hsZ9ALJbmsTIOXCLwR2I5jrR0T80UwiHC0O/I=
+	t=1752549961; cv=none; b=gUVFjpCl5VhCm2lQoUdRRvM1Lh0hJXzg1cQkndT22cgdXCoErm2hy9K7lmpHYuN3eoPYqiYrGFgwygS5+cKl0u1kIWYPb40lR6ACyPbtRs3UuTc7SKTe1rSHlKIcrHlIneD3x3k1QW7K8neRt0/Fqk3Cs6LTHsx6CxAxzD6ZfJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752549940; c=relaxed/simple;
-	bh=lrzxwWtwZkNCjGp2yhM/QISkZjt3HFGiOPAd5Hqt0KQ=;
+	s=arc-20240116; t=1752549961; c=relaxed/simple;
+	bh=U6uuaEVc+vahHf8s9S/yRKRjutpaUY5aXn+/TSZmWOw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mhbnCdX10xbDMhHbZ3i91xR4X2wipzrBhdDI+5ngDYGmLrTGOYjDkpIBLOI5qaI+79TSuECFCEmAr5KMBeimiKXQq/IYc1AA6DIUEnw456FNUut/RQCJqY8FEq85bWYlY0/tPRKJmc6c6Ecwae/BqPnZi01F0vJ/a8ETlY6xa5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I7PuSuWT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42430C4CEED;
-	Tue, 15 Jul 2025 03:25:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dc8ZVaNMLN2ccNRV0IOWdNS1WP8xPDGfcMTjQxFwn0xhBbHLUGrqI0RY1ToB0imo7kOCC5L97gP9K6jAtKRK3isex2QKUp+HQCkq8VAOYIh4mCgISdn/vueXJGGE53H2qQc4g8XYzqePlomnrMu9OHUcJxabx5Ms7zEEv2AByjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LYTpsc1I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 658CFC4CEED;
+	Tue, 15 Jul 2025 03:26:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752549937;
-	bh=lrzxwWtwZkNCjGp2yhM/QISkZjt3HFGiOPAd5Hqt0KQ=;
+	s=k20201202; t=1752549960;
+	bh=U6uuaEVc+vahHf8s9S/yRKRjutpaUY5aXn+/TSZmWOw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I7PuSuWTWcQFMmtXjLrtDpl0Wtf8yAEkG/+jxgWUPWVdfVewQhkYPINJWaZeJnGkL
-	 IJlfTX36KVei4CWgJEPFO5NdUlNSSP9L4bxSUpEIlXmmXPH+jkdfMPSArdC16a+eAp
-	 xMWYqKLUl7L41VtuTvD92OsktDQQ86qlL6DPGm9ZJgMV7z9SfynC3u0TN+T1VuDrLX
-	 bcyUk2yIwJAODrgjDSTwm3g8Wn6LJRVHZxJItRhHOkLTVeyXax+rUuvV0PxZNXXi9W
-	 Q6/BhBB2bP17M9NSWxohunwAX8SzzQs6Jbes5g5c1676g6CoFP5Xf2ubOwMagP7cBf
-	 eD3V9ig8YRrTg==
-Date: Mon, 14 Jul 2025 22:25:36 -0500
+	b=LYTpsc1Ic2OccNFYTOQE00RdS9a99NWuVmPGyujUKqop36anWgxpBFr/jewBjZ8jM
+	 AW7snBrQvHtZnQNbi9hFvySphrh5JvpQAkvYMu8JFcjCZ3MKOJ7F6RlShve4VnQEwF
+	 3rxc650pSb1cRF7oZGfESX7S+Ut6MXBBusRHIyMxKPOqVL2bv8OoSzDLQiBr564tja
+	 gvcDdq+E7tQ/yeQ6wSRO6udFwck7TpsrMaIjTyCdQH7+x10m9ilyZ+LZz+FpZg7jH1
+	 OsAUAtxq0JJhorTqsh08nSCYD+y/VXQDHUkVR5jGwka7zDSPueFliKxZG8ExbOZctI
+	 MMxbhJmwDvcPg==
+Date: Mon, 14 Jul 2025 22:25:59 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-Cc: palmer@dabbelt.com, spacemit@lists.linux.dev, krzk+dt@kernel.org,
-	linux-kernel@vger.kernel.org, alex@ghiti.fr, dlan@gentoo.org,
-	skhan@linuxfoundation.org, devicetree@vger.kernel.org,
-	paul.walmsley@sifive.com, aou@eecs.berkeley.edu,
-	linux-riscv@lists.infradead.org, conor+dt@kernel.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH 1/2] dt-bindings: riscv: spacemit: Add OrangePi RV2 board
-Message-ID: <175254993587.4165390.1905297422239367623.robh@kernel.org>
-References: <20250711183245.256683-1-hendrik.hamerlinck@hammernet.be>
- <20250711183245.256683-2-hendrik.hamerlinck@hammernet.be>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+	Thara Gopinath <thara.gopinath@gmail.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	linux-arm-kernel@lists.infradead.org, Will Deacon <will@kernel.org>,
+	linux-crypto@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>, linux-kernel@vger.kernel.org,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Robert Marko <robimarko@gmail.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Manivannan Sadhasivam <mani@kernel.org>, iommu@lists.linux.dev,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Vinod Koul <vkoul@kernel.org>, linux-pm@vger.kernel.org,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Amit Kucheria <amitk@kernel.org>,
+	linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org
+Subject: Re: [PATCH v2 01/15] dt-bindings: arm-smmu: document the support on
+ Milos
+Message-ID: <175254995898.4166029.3581738288398276719.robh@kernel.org>
+References: <20250713-sm7635-fp6-initial-v2-0-e8f9a789505b@fairphone.com>
+ <20250713-sm7635-fp6-initial-v2-1-e8f9a789505b@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,20 +82,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250711183245.256683-2-hendrik.hamerlinck@hammernet.be>
+In-Reply-To: <20250713-sm7635-fp6-initial-v2-1-e8f9a789505b@fairphone.com>
 
 
-On Fri, 11 Jul 2025 20:32:44 +0200, Hendrik Hamerlinck wrote:
-> Document the compatible string for the OrangePi RV2 board [1], which
-> is marketed as using the Ky X1 SoC but is in fact identical to
-> the SpacemiT K1 SoC [2].
+On Sun, 13 Jul 2025 10:05:23 +0200, Luca Weiss wrote:
+> Add compatible for smmu representing support on the Milos SoC.
 > 
-> Link: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-RV2.html [1]
-> Link: https://www.spacemit.com/en/key-stone-k1 [2]
-> Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 > ---
->  Documentation/devicetree/bindings/riscv/spacemit.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
