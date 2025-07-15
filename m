@@ -1,161 +1,128 @@
-Return-Path: <linux-kernel+bounces-731650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4688B057BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:25:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C12BB057BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1651F1AA76EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:26:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADFAB1AA7890
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBD52D781A;
-	Tue, 15 Jul 2025 10:25:42 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FB72D8377;
+	Tue, 15 Jul 2025 10:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="te+v2f++"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E7E28F4;
-	Tue, 15 Jul 2025 10:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998332E370F;
+	Tue, 15 Jul 2025 10:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752575141; cv=none; b=RVVjWFFQ4xQ32GkY4FxnEy062/IuDVCRBza9pErfTN3gzRg44I3cL0+LTho/D1bKCRdzPFHu2Ovr7VtjMo0NIBq++IgTbmuQOpLEuyoUx03wICSm/PwWR8wL+ldtW2dNhON2c3TLccGxfWY9yc2Kyb/cpDxMZIBL6BjMih2o6t0=
+	t=1752575242; cv=none; b=hjuV8XIC5uuEerkvcbvhd310qIhoSpcPbnWtQDE650JacK/0/djnyxwjHoqaPVCdSxdfTKNr7wB2XiUZ4eTlQs4vM/dRZqCUwifYNoNaj4pQ3QUHyFt1SiW753/C3zL29vwU+M9u0Mr7r/HhlFqNg0FbrrbtrfzsCiqyTM0t20Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752575141; c=relaxed/simple;
-	bh=wwa8tOAdGrPcbMj0Jsm5cHaAzQEuyKFmUHesGXCUd7k=;
+	s=arc-20240116; t=1752575242; c=relaxed/simple;
+	bh=0wa00danfxhilqqW7ORhpic0CJmnGdelkPvBsuXWTeM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V/Jr62Tt+iWFyn66sEDcg0UmrAmwYigN30ZZaPqhcc5bVCrqi6d8rFTinMs58NZ9RNWR63zTE+kE5cFqtnXqncpNIbN51/yvKMOZyJUPSk6SHrvMOw3AyHfQ8KdHzkhAfkga3vp+93LPoXEf5k9u53L6vfv7dTkBmy7j/9vbgTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 2900F340DB0;
-	Tue, 15 Jul 2025 10:25:38 +0000 (UTC)
-Date: Tue, 15 Jul 2025 18:25:34 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	paul.walmsley@sifive.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	palmer@dabbelt.com, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] riscv: dts: spacemit: Add OrangePi RV2 board device
- tree
-Message-ID: <20250715102534-GYA542593@gentoo>
-References: <20250711183245.256683-1-hendrik.hamerlinck@hammernet.be>
- <20250711183245.256683-3-hendrik.hamerlinck@hammernet.be>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gzFeGaprIeQLS9fOsy1vLDbvvFNgvyI+RCxvinJRRdMokUZ/kuvkkAwJ6tSwCt9dxJgga5qT14fxpR85LYslAO6eXQJ65Mu9VSluwNGxtMNDxm3dlhKN9fpeItYspQNHhF/Z3cM5C9yWALw5Ye1W3Y3xFOMHNIn2jrvL2zWxJ3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=te+v2f++; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 082DBC4CEF1;
+	Tue, 15 Jul 2025 10:27:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752575242;
+	bh=0wa00danfxhilqqW7ORhpic0CJmnGdelkPvBsuXWTeM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=te+v2f++OblDnKdezVznEeZqlcQCmodlkynonZlbsHD0BZ7xZESJVqHQ1cvOGCqf2
+	 YC3OFuFsOroFCDiTpTB3WA3J52NmwIRTse0TfGfo1QvvphQ8a6L5WSNFNVl802toVy
+	 rpVo82yCx8lwCOjFq+UdGwI9Sw3zWbCLeOTTiJF3+3f9ux/wCVNTOT6lTWqRz+6Sh9
+	 qiNhqO16ElmJ/Pv67UAk4DySZzPf12OaPAOqvPve0KE9rZR4HgFZi6Es3QUybpJcVT
+	 SRxfs4kilN5IzqYAa2H5D9/zCWSxTFYAy5DNCU/RrNreLvr+tLTnEMwgYP3DbrXWsw
+	 AEhrdSRGJUzhQ==
+Date: Tue, 15 Jul 2025 15:57:12 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] PCI: qcom: Switch to bus notifier for enabling ASPM
+ of PCI devices
+Message-ID: <jmj2aeuguitas75xxos4wbhqjoaniur7psoccfxqniask7yxcu@3azibftfflch>
+References: <20250714-aspm_fix-v1-0-7d04b8c140c8@oss.qualcomm.com>
+ <20250714-aspm_fix-v1-1-7d04b8c140c8@oss.qualcomm.com>
+ <aHYHzrl0DE2HV86S@hovoldconsulting.com>
+ <yqot334mqik74bb7rmoj27kfppwfb4fvfk2ziuczwsylsff4ll@oqaozypwpwa2>
+ <aHYgXKkoYbdIYCOE@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250711183245.256683-3-hendrik.hamerlinck@hammernet.be>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aHYgXKkoYbdIYCOE@hovoldconsulting.com>
 
+On Tue, Jul 15, 2025 at 11:33:16AM GMT, Johan Hovold wrote:
+> On Tue, Jul 15, 2025 at 02:41:23PM +0530, Manivannan Sadhasivam wrote:
+> > On Tue, Jul 15, 2025 at 09:48:30AM GMT, Johan Hovold wrote:
+> > > On Mon, Jul 14, 2025 at 11:31:04PM +0530, Manivannan Sadhasivam wrote:
+> 
+> > > > Obviously, it is the pwrctrl change that caused regression, but it
+> > > > ultimately uncovered a flaw in the ASPM enablement logic of the controller
+> > > > driver. So to address the actual issue, switch to the bus notifier for
+> > > > enabling ASPM of the PCI devices. The notifier will notify the controller
+> > > > driver when a PCI device is attached to the bus, thereby allowing it to
+> > > > enable ASPM more reliably. It should be noted that the
+> > > > 'pci_dev::link_state', which is required for enabling ASPM by the
+> > > > pci_enable_link_state_locked() API, is only set by the time of
+> > > > BUS_NOTIFY_BIND_DRIVER stage of the notification. So we cannot enable ASPM
+> > > > during BUS_NOTIFY_ADD_DEVICE stage.
+> > > 
+> > > A problem with this approach is that ASPM will never be enabled (and
+> > > power consumption will be higher) in case an endpoint driver is missing.
+> > 
+> > I'm aware of this limiation. But I don't think we should really worry about that
+> > scenario. No one is going to run an OS intentionally with a PCI device and
+> > without the relevant driver. If that happens, it might be due to some issue in
+> > driver loading or the user is doing it intentionally. Such scenarios are short
+> > lived IMO.
+> 
+> There may not even be a driver (yet). A user could plug in whatever
+> device in a free slot. I can also imagine someone wanting to blacklist
+> a driver temporarily for whatever reason.
+> 
 
-On 20:32 Fri 11 Jul     , Hendrik Hamerlinck wrote:
-> Add initial device tree support for the OrangePi RV2 board [1], which is
-> marketed as using the Ky X1 SoC but has been confirmed to be 
-> identical to the SpacemiT K1 [2].
-> 
-> The device tree is adapted from the OrangePi vendor tree [3], and similar
-> integration can be found in the Banana Pi kernel tree [4], confirming SoC
-> compatibility.
-> 
-> This minimal device tree enables booting into a serial console with UART
-> output and a blinking LED.
-> 
-> Link: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-RV2.html [1]
-> Link: https://www.spacemit.com/en/key-stone-k1 [2]
-> Link: https://github.com/BPI-SINOVOIP/pi-linux/blob/linux-6.6.63-k1/arch/riscv/boot/dts/spacemit/k1-x_orangepi-rv2.dts [3]
-> Link: https://github.com/orangepi-xunlong/linux-orangepi/tree/orange-pi-6.6-ky [4]
-> Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-> ---
->  arch/riscv/boot/dts/spacemit/Makefile         |  1 +
->  .../boot/dts/spacemit/k1-orangepi-rv2.dts     | 43 +++++++++++++++++++
->  2 files changed, 44 insertions(+)
->  create mode 100644 arch/riscv/boot/dts/spacemit/k1-orangepi-rv2.dts
-> 
-> diff --git a/arch/riscv/boot/dts/spacemit/Makefile b/arch/riscv/boot/dts/spacemit/Makefile
-> index 92e13ce1c16d..152832644870 100644
-> --- a/arch/riscv/boot/dts/spacemit/Makefile
-> +++ b/arch/riscv/boot/dts/spacemit/Makefile
-> @@ -1,3 +1,4 @@
->  # SPDX-License-Identifier: GPL-2.0
->  dtb-$(CONFIG_ARCH_SPACEMIT) += k1-bananapi-f3.dtb
->  dtb-$(CONFIG_ARCH_SPACEMIT) += k1-milkv-jupiter.dtb
-> +dtb-$(CONFIG_ARCH_SPACEMIT) += k1-orangepi-rv2.dtb
-> diff --git a/arch/riscv/boot/dts/spacemit/k1-orangepi-rv2.dts b/arch/riscv/boot/dts/spacemit/k1-orangepi-rv2.dts
-> new file mode 100644
-> index 000000000000..8313f9589cd2
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/spacemit/k1-orangepi-rv2.dts
-> @@ -0,0 +1,43 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-..
-> +/* Copyright (c) 2023 Ky, Inc */
-Copyright should cover current year, which is 2025..
-what's "Ky" stand for? Can you give a full description here
+Yes, that's why I said these scenarios are 'shortlived'.
 
-> +
-> +/dts-v1/;
-> +
-> +#include "k1.dtsi"
-> +#include "k1-pinctrl.dtsi"
-> +
-> +/ {
-> +	model = "OrangePi RV2";
-> +	compatible = "xunlong,orangepi-rv2", "spacemit,k1";
-> +
-..
-> +	memory@0 {
-> +		device_type = "memory";
-> +		reg = <0x0 0x00000000 0x0 0x80000000>;
-> +	};
-> +
-> +	memory@100000000 {
-> +		device_type = "memory";
-> +		reg = <0x1 0x00000000 0x0 0x80000000>;
-> +	};
-> +
-for the memory nodes, there are 2/4/8GB variants from the Link [1], and
-you couldn't cover all of them in one dt
-
-besides, I thought bootloader (u-boot) will populate these info, right?
-so the above nodes isn't really necessary
-
-> +	chosen {
-> +		stdout-path = "serial0";
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +
-> +		led1 {
-> +			label = "sys-led";
-> +			gpios = <&gpio K1_GPIO(96) GPIO_ACTIVE_LOW>;
-> +			linux,default-trigger = "heartbeat";
-> +			default-state = "on";
-> +		};
-> +	};
-> +};
-> +
-> +&uart0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&uart0_2_cfg>;
-> +	status = "okay";
-> +};
-> -- 
-> 2.43.0
+> How would this work on x86? Would the BIOS typically enable ASPM for
+> each EP? Then that's what we should do here too, even if the EP driver
+> happens to be disabled.
 > 
+
+There is no guarantee that BIOS would enable ASPM for all the devices in x86
+world. Usually, BIOS would enable ASPM for devices that it makes use of (like
+NVMe SSD or WLAN) and don't touch the rest, AFAIK.
+
+> > > Note that the patch fails to apply to 6.16-rc6 due to changes in
+> > > linux-next. Depending on how fast we can come up with a fix it may be
+> > > better to target 6.16.
+> > 
+> > I rebased this series on top of pci/controller/qcom branch, where we have some
+> > dependency. But I could spin an independent fix if Bjorn is OK to take it for
+> > the 6.16-rcS.
+> 
+> Or we can just backport manually as we are indeed already at rc6.
+> 
+
+I'll leave it up to Bjorn to decide.
+
+- Mani
 
 -- 
-Yixun Lan (dlan)
+மணிவண்ணன் சதாசிவம்
 
