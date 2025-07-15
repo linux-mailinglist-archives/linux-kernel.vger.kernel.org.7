@@ -1,79 +1,54 @@
-Return-Path: <linux-kernel+bounces-731924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3570EB05CA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:34:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AAEDB05CD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFDA2188242B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:33:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B284E188AA84
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7606E2E4984;
-	Tue, 15 Jul 2025 13:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF312E54CB;
+	Tue, 15 Jul 2025 13:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s4BvB3MG"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kRcBlPPv"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9941F2E7F02
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864832EAB63;
+	Tue, 15 Jul 2025 13:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752586104; cv=none; b=mvKJCznr8c7J8tGXGSx65R+NVhrzl8oPwFtqGvGQBJp/aR5qwn7WSzLMhzcpCxHgksph6ImCLI/StbtOCib2ZGg4J6fXl4+YXKm9cSwRZsS4/mQGpJvIAs0bEtxc7kVo4FIHJ77AVDfJZNFFNiGlIEBnfMYq10AO6kEb/QcrKGk=
+	t=1752586138; cv=none; b=cCe6Mta3sOTvjp0T1BH+XVfybnOCYE72YOJnh431WH/qcN4Zd52VSTNY+xrTjpjpwqMQGLtFibFI73P5md9H4rH9Ij/Wj7EwX64XlbPxuJsQ0UFEYGStiynyNYJgNy0qY7RwHWicw3elIRCNik6xYkschgA+yjzKR/HFGlbN8V4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752586104; c=relaxed/simple;
-	bh=YvW4jirI2u/zHSYKM94R24WsGr7Kz4QvYaY5H8NCEfc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=iYobdeD4UJuZbyE2nKxQdjaOtJX+xMbwxJMOrsnShMgqXUVHofT5AnMbxvnk2Twg+w7WBPqBgAuw79l8FLAeYR7vdlUe8GJZzIEEIx8ePmVMv3NtptU59w8lW+SDH56TnI8bNOP3++uoxdA1mMfvoguooOTRpfMoiTWquCw3LaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s4BvB3MG; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4538bc52a8dso40073275e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:28:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752586101; x=1753190901; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zw74VlTE+k1LGKzfAzB+538GU13x3ojR1l0lw7GXER0=;
-        b=s4BvB3MGfQf0Jv6yGqNrE2o8Q7SUcpcQUoMob/JRgtBD6OuWS7ouoL1Bod9ehBzgNZ
-         iGKDK+Qi+OkIHdAeQEZDO2eNc3HApps2qfIjhG6U2rR/dvoUAeB3q1OFo4w0IoNB3IlH
-         PFD70VRX4fZ9AGBYztakAug7IRFl8fImBS/R4vZRkuV53rZM5PtTKpt7G5CJNTHoFMDa
-         ckL3WPSJBX0YElPQZXgtzqNON9MYGWIpB1R05dd6jI9XsKamox1wiuAueL/GUGA6aW6r
-         nuwh7eOoWqk7KDUeJERoGSwxt04rN991CAbeH21ATKZT61MWhq2ykk48F9AIEBQYkKY/
-         RLIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752586101; x=1753190901;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zw74VlTE+k1LGKzfAzB+538GU13x3ojR1l0lw7GXER0=;
-        b=LN+GSqZ7cEyYACsg0Ds/rkFMNvOMsURFtCBQ6JYCPgYUNnbhuMUq0hy8RqWj55dVqi
-         00Cie1TLiKVR1kV5zMn7vlJ4FtMBcNnRsMm0rOfVDGionnBp7iNQtbXPVPjml3kTDK7l
-         eWoBX3/Yy377iQ2STnbIdP1F0+VdAChWC2FHTQ0D1CK76KjJS2gFxXo1Ez5fFWl4hYwF
-         G1nMXQOR+QCyVbCMuUaZoFDqo1mNxoEX/U+tpku7MFsndpMyh2osg1gB/yq0rgZZVMZR
-         43C/VpoXwX6tlESPUJM+9uOA145n7Um2osACaSotERUGasUeqUiVB1lCheJAr9o3Llka
-         KfWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVB53P57eBGhauSDTCWWLy/WZrJDb+XA/cUGE8v1+7SV8YQTiRO1kc1KJAH3KhnsAhu/+ncD4xIVQXnxu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+MKH0MB/Kgo0KjsrnZ6MMdJViIDxGm50Eahj8kdNMVJonFG/7
-	63qaEf0VHXzn2xtN/SjLodpSGY4ASDNQ6VQFhgQ/pAIw4IyB8bTk2f8G8o2xP29pbBc=
-X-Gm-Gg: ASbGncucaZADW49LTu4iDhTVCWZgCyFPmSSNREmv7/YPOCMzbMIKCoH7anfvRzPikCy
-	8LPK5tvF2nOILbluyRhHLMdch83KefQEgitJxEIuAn7uZy4g5RwhkQDM7/InoV5Z8BwHZbx3egO
-	EEek2M5gAUGwwfihOcHmVOircRABfLNg3PN9oXwtoBMPnRnGbnz790BSNsE253RXOsU1Xjo825s
-	Ls+BbtmC5MwSYrWFKKLxdjpmrRQavCPNTfwmOkyAMulgbkejVwqqomlUW5ZIHjc3mwuc2rEN4Y0
-	YC+p3ganiR1j+AUh0TP677sCZRXNWdyD5jjgR9baIyoY90l3LmAMUJUFK4e01Eqffy8DVib8csU
-	pRZci0EzWFc2YMKLTFQ6sECLCxyU=
-X-Google-Smtp-Source: AGHT+IEwYlVhkOTzgfZvBe2oJ6/DRqksM/2DDeWWAHWtXNUNAJyWtZXeDWpFZAMAarhRitTCjZMLeA==
-X-Received: by 2002:a05:600c:4695:b0:450:d4a6:799e with SMTP id 5b1f17b1804b1-454f4259c7cmr140093315e9.20.1752586100864;
-        Tue, 15 Jul 2025 06:28:20 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd540b52sm161683955e9.28.2025.07.15.06.28.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 06:28:20 -0700 (PDT)
-Message-ID: <80b7c29e-83b9-46a4-826e-d252ad425d4d@linaro.org>
-Date: Tue, 15 Jul 2025 14:28:19 +0100
+	s=arc-20240116; t=1752586138; c=relaxed/simple;
+	bh=NZtHYSOuQbNspfyKqTqQMOVejME6k8PRvnKr3a2/2D4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bQ//WoOFWCCPt+XcJ/Eclk6VpjAwcTMZZ6x/XqIe44nTlXfgZ8f4DmobRlw+sgJC054clTiyOiVdyZ9iu0VL2LLgtd4uIq4V4S+hnA+09aiQoNR3+wNgijEEsFEEZVu49UI/KWyZtGxY3QOluAhGLOpsSzNN8NY5mzyqMFImcwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kRcBlPPv; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1752586134;
+	bh=NZtHYSOuQbNspfyKqTqQMOVejME6k8PRvnKr3a2/2D4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kRcBlPPvRe+bzW3i/349S6j/Q0Rd1pBOiZHegxlcV54u6jnCdI+WmwWxjRsBnqbKK
+	 Au2xhiZsjApGtuJuHrWtOYpaqh21zUnqY8YdL8P4zsa+8PXLxYA6j9HwHHJB/inQfL
+	 43PVMiO+tuTGwHkJD61oUmSWKNQUtjJEx3YjViwqRGQCLZCfN1hazHIy7IHjdNVqYn
+	 SORvTVefSQNSiWbYSmLfFOVhyiSbdoCDMlFMPG0t9GsYZYJVLiROZQsyKwrpNHUMxS
+	 dR3BGWoXJlJJqf3CS0cM7yfcAx/6LndJV1j9GbRe6RCRyKQavMar0okFkpeAv4kiLM
+	 cViUNU5zai9SA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id F30D517E05F0;
+	Tue, 15 Jul 2025 15:28:53 +0200 (CEST)
+Message-ID: <bf5638c9-e49a-4482-9796-ddd3a010d162@collabora.com>
+Date: Tue, 15 Jul 2025 15:28:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,141 +56,202 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/10] arm64/boot: Enable EL2 requirements for
- SPE_FEAT_FDS
-From: James Clark <james.clark@linaro.org>
-To: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
- Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>,
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
- Zenghui Yu <yuzenghui@huawei.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, leo.yan@arm.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
- kvmarm@lists.linux.dev
-References: <20250605-james-perf-feat_spe_eft-v3-0-71b0c9f98093@linaro.org>
- <20250605-james-perf-feat_spe_eft-v3-4-71b0c9f98093@linaro.org>
- <aHUMMk9JUdK6luLN@willie-the-truck>
- <04d52182-6043-4eaf-a898-9f8ccc893e5f@linaro.org>
- <aHZQH7QGhi5pbXU8@willie-the-truck>
- <e1210c84-69d1-4fb2-88c2-a6a1bcb179c5@linaro.org>
+Subject: Re: [PATCH v4 1/8] dt-bindings: regulator: Document MediaTek MT6316
+ PMIC Regulators
+To: linux-mediatek@lists.infradead.org
+Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kernel@collabora.com,
+ wenst@chromium.org
+References: <20250715115718.176495-1-angelogioacchino.delregno@collabora.com>
+ <20250715115718.176495-2-angelogioacchino.delregno@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <e1210c84-69d1-4fb2-88c2-a6a1bcb179c5@linaro.org>
+In-Reply-To: <20250715115718.176495-2-angelogioacchino.delregno@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+Il 15/07/25 13:57, AngeloGioacchino Del Regno ha scritto:
+> Add bindings for the regulators found in the MediaTek MT6316 PMIC,
+> usually found in board designs using the MT6991 Dimensity 9400 and
+> on MT8196 Kompanio SoC for Chromebooks.
+> 
+> This chip is fully controlled by SPMI and has multiple variants
+> providing different phase configurations.
+> 
+> Link: https://lore.kernel.org/r/20250624073548.29732-2-angelogioacchino.delregno@collabora.com
+> Link: https://lore.kernel.org/r/20250707134451.154346-2-angelogioacchino.delregno@collabora.com
 
+Btw, sorry about those Link: tags, those were completely unwanted... they
+slipped through while using b4 and I forgot to remove them.
 
-On 15/07/2025 2:10 pm, James Clark wrote:
-> 
-> 
-> On 15/07/2025 1:57 pm, Will Deacon wrote:
->> On Tue, Jul 15, 2025 at 01:48:03PM +0100, James Clark wrote:
->>>
->>>
->>> On 14/07/2025 2:54 pm, Will Deacon wrote:
->>>> On Thu, Jun 05, 2025 at 11:49:02AM +0100, James Clark wrote:
->>>>> SPE data source filtering (optional from Armv8.8) requires that 
->>>>> traps to
->>>>> the filter register PMSDSFR be disabled. Document the requirements and
->>>>> disable the traps if the feature is present.
->>>>>
->>>>> Tested-by: Leo Yan <leo.yan@arm.com>
->>>>> Signed-off-by: James Clark <james.clark@linaro.org>
->>>>> ---
->>>>>    Documentation/arch/arm64/booting.rst | 11 +++++++++++
->>>>>    arch/arm64/include/asm/el2_setup.h   | 14 ++++++++++++++
->>>>>    2 files changed, 25 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/arch/arm64/booting.rst b/Documentation/ 
->>>>> arch/arm64/booting.rst
->>>>> index dee7b6de864f..abd75085a239 100644
->>>>> --- a/Documentation/arch/arm64/booting.rst
->>>>> +++ b/Documentation/arch/arm64/booting.rst
->>>>> @@ -404,6 +404,17 @@ Before jumping into the kernel, the following 
->>>>> conditions must be met:
->>>>>        - HDFGWTR2_EL2.nPMICFILTR_EL0 (bit 3) must be initialised to 
->>>>> 0b1.
->>>>>        - HDFGWTR2_EL2.nPMUACR_EL1 (bit 4) must be initialised to 0b1.
->>>>> +  For CPUs with SPE data source filtering (FEAT_SPE_FDS):
->>>>> +
->>>>> +  - If EL3 is present:
->>>>> +
->>>>> +    - MDCR_EL3.EnPMS3 (bit 42) must be initialised to 0b1.
->>>>> +
->>>>> +  - If the kernel is entered at EL1 and EL2 is present:
->>>>> +
->>>>> +    - HDFGRTR2_EL2.nPMSDSFR_EL1 (bit 19) must be initialised to 0b1.
->>>>> +    - HDFGWTR2_EL2.nPMSDSFR_EL1 (bit 19) must be initialised to 0b1.
->>>>> +
->>>>>      For CPUs with Memory Copy and Memory Set instructions 
->>>>> (FEAT_MOPS):
->>>>>      - If the kernel is entered at EL1 and EL2 is present:
->>>>> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/ 
->>>>> include/asm/el2_setup.h
->>>>> index 1e7c7475e43f..02b4a7fc016e 100644
->>>>> --- a/arch/arm64/include/asm/el2_setup.h
->>>>> +++ b/arch/arm64/include/asm/el2_setup.h
->>>>> @@ -279,6 +279,20 @@
->>>>>        orr    x0, x0, #HDFGRTR2_EL2_nPMICFILTR_EL0
->>>>>        orr    x0, x0, #HDFGRTR2_EL2_nPMUACR_EL1
->>>>>    .Lskip_pmuv3p9_\@:
->>>>> +    mrs    x1, id_aa64dfr0_el1
->>>>> +    ubfx    x1, x1, #ID_AA64DFR0_EL1_PMSVer_SHIFT, #4
->>>>> +    /* If SPE is implemented, */
->>>>> +    cmp    x1, #ID_AA64DFR0_EL1_PMSVer_IMP
->>>>> +    b.lt    .Lskip_spefds_\@
->>>>> +    /* we can read PMSIDR and */
->>>>> +    mrs_s    x1, SYS_PMSIDR_EL1
->>>>> +    and    x1, x1,  #PMSIDR_EL1_FDS
->>>>> +    /* if FEAT_SPE_FDS is implemented, */
->>>>> +    cbz    x1, .Lskip_spefds_\@
->>>>> +    /* disable traps to PMSDSFR. */
->>>>> +    orr    x0, x0, #HDFGRTR2_EL2_nPMSDSFR_EL1
->>>>
->>>> Why is this being done here rather than alongside the existing SPE
->>>> configuration of HDFGRTR_EL2 and HDFGWTR_EL2 near the start of
->>>> __init_el2_fgt?
->>>>
->>> I thought everything was separated by which trap configs it writes to,
->>> rather than the feature. This SPE feature is in HDFGRTR2 so I put it in
->>> __init_el2_fgt2 rather than __init_el2_fgt.
->>
->> That's fair; __init_el2_fgt isn't the right place. But the redundancy of
->> re-reading PMSVer from DFR0 is a little jarring.
->>
->>> I suppose we could have a single __init_el2_spe that writes to both 
->>> HDFGRTR
->>> and HDFGRTR2 but we'd have to be careful to not overwrite what was 
->>> already
->>> done in the other sections.
->>
->> Right, perhaps it would be clearer to have trap-preserving macros for
->> features in a specific ID register rather than per-trap configuration
->> register macros.
->>
->> In other words, we have something like __init_fgt_aa64dfr0 which would
->> configure the FGT and FGT2 registers based on features in aa64dfr0. I
->> think you'd need to have a play to see how it ends up looking but the
->> main thing to avoid is having duplicate ID register parsing code for
->> setting up FGT and FGT2 traps.
->>
->> Will
-> 
-> I'll give it a go but that could end up being fragile to something that 
-> is dependent on two different ID registers in the future. Then we'd end 
-> up in the same situation for a different reason.
-> 
+I'll wait for any feedback or tags and will resend the series with those
+tags removed.
 
-I think I've run into it already. Wouldn't checking for FGT and FGT2 
-have to be repeated when doing each ID register? Now we only do that 
-once at the start of __init_el2_fgt and __init_el2_fgt2, even if we 
-might sometimes check a different ID register twice. But if we flipped 
-it we'd always have to repeat those.
+Thanks,
+Angelo
+
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>   .../regulator/mediatek,mt6316b-regulator.yaml | 46 +++++++++++++++++++
+>   .../regulator/mediatek,mt6316c-regulator.yaml | 46 +++++++++++++++++++
+>   .../regulator/mediatek,mt6316d-regulator.yaml | 41 +++++++++++++++++
+>   3 files changed, 133 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,mt6316b-regulator.yaml
+>   create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,mt6316c-regulator.yaml
+>   create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,mt6316d-regulator.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/regulator/mediatek,mt6316b-regulator.yaml b/Documentation/devicetree/bindings/regulator/mediatek,mt6316b-regulator.yaml
+> new file mode 100644
+> index 000000000000..e7a6b70cdab2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/mediatek,mt6316b-regulator.yaml
+> @@ -0,0 +1,46 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/regulator/mediatek,mt6316b-regulator.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek MT6316 BP/VP SPMI PMIC Regulators
+> +
+> +maintainers:
+> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> +
+> +description:
+> +  The MediaTek MT6316BP/VP PMICs are fully controlled by SPMI interface, both
+> +  feature four step-down DC/DC (buck) converters, and provides 2+2 Phases,
+> +  joining Buck 1+2 for the first phase, and Buck 3+4 for the second phase.
+> +
+> +properties:
+> +  compatible:
+> +    const: mediatek,mt6316b-regulator
+> +
+> +  vbuck12:
+> +    type: object
+> +    $ref: regulator.yaml#
+> +    unevaluatedProperties: false
+> +
+> +  vbuck34:
+> +    type: object
+> +    $ref: regulator.yaml#
+> +    unevaluatedProperties: false
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    pmic {
+> +      regulators {
+> +        compatible = "mediatek,mt6316b-regulator";
+> +
+> +        vbuck12 {
+> +          regulator-min-microvolt = <450000>;
+> +          regulator-max-microvolt = <965000>;
+> +          regulator-always-on;
+> +        };
+> +      };
+> +    };
+> +...
+> diff --git a/Documentation/devicetree/bindings/regulator/mediatek,mt6316c-regulator.yaml b/Documentation/devicetree/bindings/regulator/mediatek,mt6316c-regulator.yaml
+> new file mode 100644
+> index 000000000000..0b9239a595ed
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/mediatek,mt6316c-regulator.yaml
+> @@ -0,0 +1,46 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/regulator/mediatek,mt6316c-regulator.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek MT6316 CP/HP/KP SPMI PMIC Regulators
+> +
+> +maintainers:
+> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> +
+> +description:
+> +  The MediaTek MT6316CP/HP/KP PMICs are fully controlled by SPMI interface,
+> +  features four step-down DC/DC (buck) converters, and provides 3+1 Phases,
+> +  joining Buck 1+2+4 for the first phase, and uses Buck 3 for the second.
+> +
+> +properties:
+> +  compatible:
+> +    const: mediatek,mt6316c-regulator
+> +
+> +  vbuck124:
+> +    type: object
+> +    $ref: regulator.yaml#
+> +    unevaluatedProperties: false
+> +
+> +  vbuck3:
+> +    type: object
+> +    $ref: regulator.yaml#
+> +    unevaluatedProperties: false
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    pmic {
+> +      regulators {
+> +        compatible = "mediatek,mt6316c-regulator";
+> +
+> +        vbuck124 {
+> +          regulator-min-microvolt = <450000>;
+> +          regulator-max-microvolt = <1277500>;
+> +          regulator-always-on;
+> +        };
+> +      };
+> +    };
+> +...
+> diff --git a/Documentation/devicetree/bindings/regulator/mediatek,mt6316d-regulator.yaml b/Documentation/devicetree/bindings/regulator/mediatek,mt6316d-regulator.yaml
+> new file mode 100644
+> index 000000000000..460c02bf69de
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/mediatek,mt6316d-regulator.yaml
+> @@ -0,0 +1,41 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/regulator/mediatek,mt6316d-regulator.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek MT6316 DP/TP SPMI PMIC Regulators
+> +
+> +maintainers:
+> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> +
+> +description:
+> +  The MediaTek MT6316DP/TP PMICs are fully controlled by SPMI interface, both
+> +  feature four step-down DC/DC (buck) converters, and provides a single Phase,
+> +  joining Buck 1+2+3+4.
+> +
+> +properties:
+> +  compatible:
+> +    const: mediatek,mt6316d-regulator
+> +
+> +  vbuck1234:
+> +    type: object
+> +    $ref: regulator.yaml#
+> +    unevaluatedProperties: false
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    pmic {
+> +      regulators {
+> +        compatible = "mediatek,mt6316d-regulator";
+> +
+> +        vbuck1234 {
+> +          regulator-min-microvolt = <400000>;
+> +          regulator-max-microvolt = <1277500>;
+> +          regulator-always-on;
+> +        };
+> +      };
+> +    };
+> +...
 
 
