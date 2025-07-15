@@ -1,210 +1,155 @@
-Return-Path: <linux-kernel+bounces-732608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07926B06978
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:56:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C0D3B0697B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 425401C20B9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:56:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 534AC1C20C17
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4181A2D1931;
-	Tue, 15 Jul 2025 22:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C21C2D1920;
+	Tue, 15 Jul 2025 22:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="DwcLe2S7"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2088.outbound.protection.outlook.com [40.107.102.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ykAuxHoz"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B4945945;
-	Tue, 15 Jul 2025 22:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752620188; cv=fail; b=hS55n1NrMgFCh/LmdC44mxwRFU7IXMjIFOIibv+O6OlolBJl8PH0KDmthPE+uXH1DWdhFp9IOr94SsxTV0nw+uvpvuv4avfnDAFioTBYECdiidDLhVmN36bGo+P1XfOX1rz8iF1ecL7KkPg5sK149OTJPHlLEI04cv4GP5/E5Qk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752620188; c=relaxed/simple;
-	bh=Du7X2dc42RYNqmuJ6CqWqJqmgNnzObopKmfFxjNTZ2Y=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W1ZEX3RS5xH/U94CR3Sgdpc/D2V4kV6eNDLOM/zs/PhkmA/+tVxF5HrmWkAAc+Ty2N08gwHpzm5nN6qd7ebxKoeUpvulYWeY8Ttjrkej9Pj+gDFnZszTMuS/ySMvIrKEn/fowFDKa4X4NBzcbvsluEOlWMIn1bzbiYGGnSJTqoQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=DwcLe2S7; arc=fail smtp.client-ip=40.107.102.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F33cYPUk7ltE6y6/X4t9eF7d6Cj4lpMHwytQoql0ejBDQl08OlPdZ38zg9Ls61Rmustn4ZcOWXpxfe4SeQ/RfIYo7WmLxtkLv7VmxtY7xpZB/VdbRcCykM6L9DORCKR3EKme2O3Z45PcN+FhSac0EKhRvR56k9ycbQQmbsLGHXx8+e5Vdv0boyfE6UPQoDVLxQMlbYj/N+dL1+m2k3/PAEFyHbFfKvxLAZEtVkAp4qN+OUYrQft6qNkKp3mmcGrqT5yjbvsU8o4DlCs040VR8Ydk6pMkYzpp0mf6RJ1em2yfMjGqEC1P7aCldMnSYbfZ8wggA39net/bFW51qtBMGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EgaJgzjhfii8WeXLuQ32oWUkapATGNZrzZ7aaHqGtGw=;
- b=GIYgAqfxMUXrG2TBQme1MI8Fc+jB+zvxmc5fhWGvJOd0WmlyoM5bohwbkImiOWqNcF5iVr6vwRaN8H2DTK8lAkAcZHVV080mU5dSgq0ghAQBO0lzfLZ1EvpBU3fnOcwfEHFdcODbQ+rXcJFcDXfUIjztdipagYim3syO2U3nLM1tDIgxf95FbHk449dW9VZWs9UIvuNWxMWENDTdnNlmT4eDUlDJ4h97SUQudBrfEeSDKgS1daUQqVRWMkDXl66HZdzVrZVXd1UpShmJKb3wPVcMGbHIPigqcV4ltpioq8ypmA1BbqTRLshDBB3X9d2aC6sTfZqHNdE35ML0Us7OEg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EgaJgzjhfii8WeXLuQ32oWUkapATGNZrzZ7aaHqGtGw=;
- b=DwcLe2S7S1vPckiKwT7yeWb7Nyqsa3BRxm7d434imISGAXAqwwW08Tdl/sqaOSzFLMV+TiJoVOoa6WiXBaWNFFMWRTAgyCTUk2ozClyWlGpScBGwlf709zqC75bCH6hXTL2mTFfPBDtjAsNTD/2qr8qN/Kegxn+W9ERqp+8NMm4=
-Received: from CP3P284CA0067.BRAP284.PROD.OUTLOOK.COM (2603:10d6:103:6e::12)
- by DM4PR12MB6085.namprd12.prod.outlook.com (2603:10b6:8:b3::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Tue, 15 Jul
- 2025 22:56:23 +0000
-Received: from CY4PEPF0000EDD1.namprd03.prod.outlook.com
- (2603:10d6:103:6e:cafe::4c) by CP3P284CA0067.outlook.office365.com
- (2603:10d6:103:6e::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.17 via Frontend Transport; Tue,
- 15 Jul 2025 22:56:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000EDD1.mail.protection.outlook.com (10.167.241.197) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8922.22 via Frontend Transport; Tue, 15 Jul 2025 22:56:20 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Jul
- 2025 17:56:19 -0500
-Date: Tue, 15 Jul 2025 17:55:23 -0500
-From: Michael Roth <michael.roth@amd.com>
-To: Vishal Annapurve <vannapurve@google.com>
-CC: <kvm@vger.kernel.org>, <linux-coco@lists.linux.dev>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <david@redhat.com>, <tabba@google.com>,
-	<ackerleytng@google.com>, <ira.weiny@intel.com>, <thomas.lendacky@amd.com>,
-	<pbonzini@redhat.com>, <seanjc@google.com>, <vbabka@suse.cz>,
-	<joro@8bytes.org>, <pratikrajesh.sampat@amd.com>, <liam.merwick@oracle.com>,
-	<yan.y.zhao@intel.com>, <aik@amd.com>
-Subject: Re: [PATCH RFC v1 1/5] KVM: guest_memfd: Remove preparation tracking
-Message-ID: <20250715225523.yzmrwghbhi56tqux@amd.com>
-References: <20250613005400.3694904-1-michael.roth@amd.com>
- <20250613005400.3694904-2-michael.roth@amd.com>
- <CAGtprH-vSjkNyQkdqjgnqkK7w0CM2CbewxTwq0XBOXkE8C1WvA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735C217BA1
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 22:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752620265; cv=none; b=oojpWrf9Jbuin180Skfqp3+BHRmLjeCOB0hG9r+m0pWhJP0dqDRpOxYNxkqFB3NMgSXbC3deWVI4slDgra2rG6JAn+L8kefsplfrz1Aa4gKX4ZhxhpB6HCYz83e+4FkS8EAjvAhotEWfAXbhJ3rPrlP9z08PKf3rooCAHcrAeeM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752620265; c=relaxed/simple;
+	bh=G1ncFmWqHiHwP7omxWzFU6wr0dg9BZPf3WQI0K2rUeM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=VTuE66xPQAJKQbGonTnepUlOoDHRc6t6K9XJtx1nyCg72NfeyvyUm7cormTXlDbzJGm13vOryFNUyau1PeFOluQysutz4FUX3LuMGO5YB3zyXaRU5GtFP2WG82O3Gm1RIljS8MTR73LhTi9IHwGE/OE0vE9ZRBCsMS+G9bT0bGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ykAuxHoz; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b2c37558eccso5341989a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:57:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752620264; x=1753225064; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=02v14PG2SlJYKfKrfbG12osm5mwtOvoFMeYGogboA68=;
+        b=ykAuxHozP6AdbLAH2fgdG/BIE42mvqrmgVWrjjCB3mMI1tnfJJrcDLRaFsCtggd9o9
+         czPqwujiLSoBoWmEP0DW0k7zk7bg76l+tojNhea0/BVsngIwCiG070D/9uJJxVaZIi/e
+         80TCjVarihp+2eASoCiZ6Ir5lJycDKj1JUmao0R3hzk3gie5VKDpUwMFtDOTgdNkX8pM
+         6Gq5HnR9UfIz7u/AXWLGxyJ5GpV6BaI2Pln00W0nOMcUocnjLSa0T944Vp1Wg++VYmoe
+         QiO/71PfzQGkFZODThrhlGmBlpt0fXehAKHjdu+YldbvxlE1MTw9UUfZ+mdCkeT5Vv0v
+         2CqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752620264; x=1753225064;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=02v14PG2SlJYKfKrfbG12osm5mwtOvoFMeYGogboA68=;
+        b=WXa/MdQQzfMwo511OIdoIE93R1LzObDv8DCuAOevrn6i8gMgVD8iAOliTfGFHBEHve
+         biWGsNh0/NXpSKQ/YEnsEHIIYcYLrrFxXun21pR0/PkjIGaa4gUMM8hqhKruJGuCgoYe
+         TGKD6lDhCNnPH+euJXgkuqV/geyz/Oi8sHTHqBSR82K7gGrg4BN264k7tX+2GLFXWMBu
+         Sj5l1Q1DswcFtrzgnuFC95QaPHnJKW66+ZNhkezgT2wDP5zFZBhYB9wSwNh5oit0+okI
+         LBeegHgjXQK9W4v4is/DEyYAmuegPV2XdzcspQWP8AplQ2An3dKQTTcIDs9kwSuG0ClL
+         Ua6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUGG9/z+mbA5+xbkm/lCSC4YG8z8iTfmckJkEE+KAZ3PRhaG2GBiiZ6iX8Ps/ti6OEWPWA3TuRDnmXUGBM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3XmAvHcPgyMkPYjYOrCF86ACdUaUCo6+C6l3ammrvocvOVx1N
+	AMUWzvcY2WG438FIEQj/cOhmqGJ2nLA7j9lqxjg82MKFxGMwyHHa41vL1ojDucQ03gmtwaSrq0y
+	FgmiQv/EzTQiqkqDSDSHtSTZF2k0Mhw==
+X-Google-Smtp-Source: AGHT+IFmKJQBRdaQUFmCTWk9rJ+t8UKoGImBBOF3tHsLyMLW5hYcabvIQuRaVHMmT0fhN+zjD/JrNn7PN0vOapR7eAc=
+X-Received: from pjq16.prod.google.com ([2002:a17:90b:5610:b0:311:485b:d057])
+ (user=samitolvanen job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:57c7:b0:311:eb85:96df with SMTP id 98e67ed59e1d1-31c9e75b966mr1351563a91.17.1752620263599;
+ Tue, 15 Jul 2025 15:57:43 -0700 (PDT)
+Date: Tue, 15 Jul 2025 22:57:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGtprH-vSjkNyQkdqjgnqkK7w0CM2CbewxTwq0XBOXkE8C1WvA@mail.gmail.com>
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD1:EE_|DM4PR12MB6085:EE_
-X-MS-Office365-Filtering-Correlation-Id: f2d0497a-cae5-440a-a674-08ddc3f2d0e5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|7416014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?d3hWLzVRakVVYzhZM0J4OFRBaDIwK2txcjZrQ2h0ZERaakJIRjJvY2lhQlcz?=
- =?utf-8?B?di9pR2kzQ1l6VitpRlpiUmZQQ1BLN09RTGl6elorbm1ERHNlVkF5NnMray9V?=
- =?utf-8?B?aWlLU1NPV2dpQXBneEpEM3VaeU1Zbi8xMVhGandBOWJucHpLRHJ6U0llL25n?=
- =?utf-8?B?R1BLTjBpenpzNURVUEFkYVlTb0F5WGkySVVrTjV1NExYODUrUkJEMFVNclVZ?=
- =?utf-8?B?ZTVvOHFoTHJhckhMSlNoOURidmpiemUxVlRJckxBZWRGdGlkdGdRZUl5ZTFm?=
- =?utf-8?B?ZWthQVJZOGlwOW41MEtTb1Y2V3NYWkJ1S3cwWGdVU0pwSjNtOFp3VnQrcWkv?=
- =?utf-8?B?UGt6UGc3cnNRakxOYUpWa1FBUm1KZXNaR0dXSjNZc1RoanlxR05pVHltRVZT?=
- =?utf-8?B?a21Vamt3Z0pheC9kdHlkNm9kdHFUK1lHK2pHV2ZSM3d4RW9JTmdaQUFLbUJW?=
- =?utf-8?B?aDNPbVlFQjFRS1dTQVFNbGVjcEkzd0pmRURhcTFNRGdmUkxETWpyWnMyd3kw?=
- =?utf-8?B?b0pPa042RFhHTEovYzFRT3VhTEJDelZiN0Q3cnE0RDZtYzh3Y2l4dzZ3ZmNQ?=
- =?utf-8?B?NUN0ZFhNR2VjRmVLMEpJUXVSRUdnU1I3SXdFaGpmZ3NoalRhYVJ5bmZmZisv?=
- =?utf-8?B?Mkp4MUdzckhmSDZ3ZlhseGZ3Rk83ekgraHZNZG5QSVo0SWFLSDVqSStJMVkv?=
- =?utf-8?B?ckRkSlVmZFBpN3ZTYTZWdGFVSGNPdFIxUjdwQjJjTmJ5M0VoRStEOFovcDRj?=
- =?utf-8?B?ODZBcVpJN2pBZ3pPYVpEempXYXhGOW9LS3FVRVR1RFdkaTBaM2tXc1c4T1VH?=
- =?utf-8?B?TUdWcVlPR2dJM21GaGs0SU1OUldvYUp3U0pLL2ZSSVBKTjk5d0ZtbzNpOVRa?=
- =?utf-8?B?QkVDNlB5YlBCZURGYWF4WnpIemlhWHl3c0g5VGlWOUlveU1CbVp0ZmxvN0pw?=
- =?utf-8?B?OVlmeGhOWmUycjNvRXNXZjlNSUdLQ3cvODRDejd0SnlYMzBXbFRaRVBDOU1n?=
- =?utf-8?B?MGRPTmJDSXVCUHY2MXp0Q0VncWhndGRSemszUHNBdGsyekRkWTgyR3I1cE1o?=
- =?utf-8?B?Z2poeFBMSyttQU81Ym1KVXFmNURwTHBFRjR2OG5ielZRYVA4dzJYeFNQTzJP?=
- =?utf-8?B?cHhjRXpRYW8rN01EaFRsWkRvZTExQ2h2NFNOMXdPRlVIbmd5VTJaSXc2blFo?=
- =?utf-8?B?djR4c2xOOU94ZERMUVN0OVlqZ3ZGRzk2cWFyb3JGOGtScTBMYW83WjFPZG9m?=
- =?utf-8?B?cmJ2VExzdGNaZHYzcFErSnNvOVVHb2NxZi9vbHppNkU3Vytuc05qK3hSaVor?=
- =?utf-8?B?K2doZys0a2NtUUhqb3U2QlpWZUt4cGgrNm9CK3RWMk9GbGxmODg2ekFvaFdt?=
- =?utf-8?B?M0Z3OHhrYkhEWmRpSk9pZXlvRDVoMmh2bXlTaWUzb0RRQndnQ0MremNoOTRn?=
- =?utf-8?B?M1NYeFZndEJ4YUQ2VHVyaFI4NDlKZ0hoRGd2K094QjRncDIxYjRqMFNadWtH?=
- =?utf-8?B?MHBkL3dGaFl4dDFKVk16NTc5aHNnK0VRV0VEaG5lZlRQTUNFeHpBSDRsMzJX?=
- =?utf-8?B?Q295RmJVbDhPVDg4T29vdzhiUXRtbzl6UHFQUWFObEpoK3FqVUVWZk1WSkhx?=
- =?utf-8?B?Q2g5bkgyQVdzUVFLT0l2cm5KUXBjSUFtc21BbDhEaGl5UHk4TVNtYk1hRlls?=
- =?utf-8?B?eGV3Zm5UdER2YnFHUzJjdDJaZ1BHRVNPdmlhU0FMZjV5U3dmaFpOR2p5Z0tX?=
- =?utf-8?B?Z2hMM044NHJJVGNEOXZFdXhwRFpLVVpSZnVpb1VGcnhxRExGS0ZSL012MG1Q?=
- =?utf-8?B?ZUxpNWVUaG8zaDdsajdoTGhmdldjNXdCL0cyaTFqTXJoZktYdENGUzh1STdr?=
- =?utf-8?B?TVFnQ2poVDQ4QkJiZk1vL21Dd1orelg0T2hPb2hWUlh2ZmY2cVBhRzIyK1Zl?=
- =?utf-8?B?d2V2aTlHcU1VM3l5SGJEN29BLytTWE00T01VRjVMRzZKdy9kRkEvYXUxRkhE?=
- =?utf-8?B?QWtnaXRQa2JZRVZ4TmZuVWZrTURISFpmcXdTcklsUkw3aUpIMXIyYitkamoz?=
- =?utf-8?B?MnJNVzVkMVRDbVROTlEvdzduYlQ4ak1NVHU5UT09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(7416014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 22:56:20.9814
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2d0497a-cae5-440a-a674-08ddc3f2d0e5
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EDD1.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6085
+Mime-Version: 1.0
+X-Developer-Key: i=samitolvanen@google.com; a=openpgp; fpr=35CCFB63B283D6D3AEB783944CB5F6848BBC56EE
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2546; i=samitolvanen@google.com;
+ h=from:subject; bh=G1ncFmWqHiHwP7omxWzFU6wr0dg9BZPf3WQI0K2rUeM=;
+ b=owGbwMvMwCUWxa662nLh8irG02pJDBlld+59uP5AfIa1edjR3s1vD+T5vwsrP5j1IL9s+9WT4
+ evlvafu7ChlYRDjYpAVU2Rp+bp66+7vTqmvPhdJwMxhZQIZwsDFKQAT0U1hZJi2ZtrNywfe7dZc
+ +775SuDe+ROv3bz+v7Lij5f9v88RsZuPMjJ8zEndNHVF9Wudz1NKQx9Mrtt2busPpVmHBfJjIix qj/zkBgA=
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250715225733.3921432-5-samitolvanen@google.com>
+Subject: [PATCH bpf-next v10 0/3] Support kCFI + BPF on arm64
+From: Sami Tolvanen <samitolvanen@google.com>
+To: bpf@vger.kernel.org, Puranjay Mohan <puranjay@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Maxwell Bland <mbland@motorola.com>, Sami Tolvanen <samitolvanen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 15, 2025 at 05:47:31AM -0700, Vishal Annapurve wrote:
-> On Thu, Jun 12, 2025 at 5:55 PM Michael Roth <michael.roth@amd.com> wrote:
-> >
-> > guest_memfd currently uses the folio uptodate flag to track:
-> >
-> >   1) whether or not a page had been cleared before initial usage
-> >   2) whether or not the architecture hooks have been issued to put the
-> >      page in a private state as defined by the architecture
-> >
-> > In practice, 2) is only actually being tracked for SEV-SNP VMs, and
-> > there do not seem to be any plans/reasons that would suggest this will
-> > change in the future, so this additional tracking/complexity is not
-> > really providing any general benefit to guest_memfd users. Future plans
-> > around in-place conversion and hugepage support, where the per-folio
-> > uptodate flag is planned to be used purely to track the initial clearing
-> > of folios, whereas conversion operations could trigger multiple
-> > transitions between 'prepared' and 'unprepared' and thus need separate
-> > tracking, will make the burden of tracking this information within
-> > guest_memfd even more complex, since preparation generally happens
-> > during fault time, on the "read-side" of any global locks that might
-> > protect state tracked by guest_memfd, and so may require more complex
-> > locking schemes to allow for concurrent handling of page faults for
-> > multiple vCPUs where the "preparedness" state tracked by guest_memfd
-> > might need to be updated as part of handling the fault.
-> >
-> > Instead of keeping this current/future complexity within guest_memfd for
-> > what is essentially just SEV-SNP, just drop the tracking for 2) and have
-> > the arch-specific preparation hooks get triggered unconditionally on
-> > every fault so the arch-specific hooks can check the preparation state
-> > directly and decide whether or not a folio still needs additional
-> > preparation. In the case of SEV-SNP, the preparation state is already
-> > checked again via the preparation hooks to avoid double-preparation, so
-> > nothing extra needs to be done to update the handling of things there.
-> >
-> 
-> I believe this patch doesn't need to depend on stage1/stage2 and can
-> be sent directly for review on kvm tip, is that right?
+Hi folks,
 
-Yes, this was actually tested initially against kvm/next and should not
-cause issues. I wanted to post the change in the context of in-place
-conversion/hugetlb work to help motivate why we're considering the
-change, but ideally we'd get this one applied soon-ish since the question
-of "how to track preparation state" seems to be throwing a wrench into all
-the planning activities and at the end of the day only SNP is making use
-of it so it seems to be becoming more trouble than it's worth at a
-fairly fast pace.
+These patches add KCFI types to arm64 BPF JIT output. Puranjay and
+Maxwell have been working on this for some time now, but I haven't
+seen any progress since June 2024, so I decided to pick up the latest
+version[1] posted by Maxwell and fix the few remaining issues I
+noticed. I confirmed that with these patches applied, I no longer see
+CFI failures in jitted code when running BPF self-tests on arm64.
 
--Mike
+[1] https://lore.kernel.org/linux-arm-kernel/ptrugmna4xb5o5lo4xislf4rlz7avdmd4pfho5fjwtjj7v422u@iqrwfrbwuxrq/
 
-> 
-> This update paired with zeroing modifications[1] will make uptodate
-> flag redundant for guest_memfd memory.
-> 
-> [1] https://lore.kernel.org/lkml/CAGtprH-+gPN8J_RaEit=M_ErHWTmFHeCipC6viT6PHhG3ELg6A@mail.gmail.com/
+Note that in order to enable CFI for jitted code, we need to define
+__bpfcall in a file included by include/linux/bpf.h. In v10, I'm still
+adding an include/asm/cfi.h header file for consistency with other
+architectures, even though the file no longer contains anything else.
+If you'd prefer to move this to another header file, I'm certainly
+open to suggestions.
+
+Sami
+
+---
+v10:
+- Rebased to bpf-next/master again.
+- Added a patch to moved duplicate type hash variables and helper
+  functions to common CFI code.
+
+v9: https://lore.kernel.org/bpf/20250505223437.3722164-4-samitolvanen@google.com/
+- Rebased to bpf-next/master to fix merge x86 merge conflicts.
+- Fixed checkpatch warnings about Co-developed-by tags and including
+  <asm/cfi.h>.
+- Picked up Tested-by tags.
+
+v8: https://lore.kernel.org/bpf/20250310222942.1988975-4-samitolvanen@google.com/
+- Changed DEFINE_CFI_TYPE to use .4byte to match __CFI_TYPE.
+- Changed cfi_get_func_hash() to again use get_kernel_nofault().
+- Fixed a panic in bpf_jit_free() by resetting prog->bpf_func before
+  calling bpf_jit_binary_pack_hdr().
+
+---
+Mark Rutland (1):
+  cfi: add C CFI type macro
+
+Puranjay Mohan (1):
+  arm64/cfi,bpf: Support kCFI + BPF on arm64
+
+Sami Tolvanen (1):
+  cfi: Move BPF CFI types and helpers to generic code
+
+ arch/arm64/include/asm/cfi.h  |  7 +++++
+ arch/arm64/net/bpf_jit_comp.c | 22 +++++++++++++--
+ arch/riscv/include/asm/cfi.h  | 16 -----------
+ arch/riscv/kernel/cfi.c       | 53 -----------------------------------
+ arch/x86/include/asm/cfi.h    |  9 ------
+ arch/x86/kernel/alternative.c | 37 ------------------------
+ include/linux/cfi.h           | 37 ++++++++++++++++++------
+ include/linux/cfi_types.h     | 23 +++++++++++++++
+ kernel/cfi.c                  | 25 +++++++++++++++++
+ 9 files changed, 103 insertions(+), 126 deletions(-)
+ create mode 100644 arch/arm64/include/asm/cfi.h
+
+
+base-commit: e860a98c8aebd8de82c0ee901acf5a759acd4570
+-- 
+2.50.0.727.gbf7dc18ff4-goog
+
 
