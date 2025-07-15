@@ -1,141 +1,161 @@
-Return-Path: <linux-kernel+bounces-731648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A81B057AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:22:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4688B057BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60DDB189D13F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:22:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1651F1AA76EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC66F2D8380;
-	Tue, 15 Jul 2025 10:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I9Ovq6zU"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBD52D781A;
+	Tue, 15 Jul 2025 10:25:42 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728972D661D;
-	Tue, 15 Jul 2025 10:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E7E28F4;
+	Tue, 15 Jul 2025 10:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752574944; cv=none; b=rmZomX8n2gbOuN8oMnLp63kl7x2l6PFkrxTU+wFGjPNBw9Bnm77sUsjcBYhcgkpVZcWXSglpn8+XVNEro/z9Jh6xRWzWKRRRhfVJnwNtXKw4gzxEuGhuC9p2uSuM+o2/JnveAZQ1NpyRtXYx4HUhOMh92x8ooSB7oF6/lulyo2M=
+	t=1752575141; cv=none; b=RVVjWFFQ4xQ32GkY4FxnEy062/IuDVCRBza9pErfTN3gzRg44I3cL0+LTho/D1bKCRdzPFHu2Ovr7VtjMo0NIBq++IgTbmuQOpLEuyoUx03wICSm/PwWR8wL+ldtW2dNhON2c3TLccGxfWY9yc2Kyb/cpDxMZIBL6BjMih2o6t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752574944; c=relaxed/simple;
-	bh=yEBbCY9oUZbDlS3ZBBT7sSaX45VBbabpp8PPuahDIIU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ae6/9vhWNpioF8pBVldo3h4oVm+N5fiVqjtuioqBplAATSmHaxUlilCUDsSlTT4H/s9JC1xznpI8pWaRwQbEzSjUcsVewkSLV0jFE6fgdbYiBchI1mvBmxS2EUK4is7KCpyJfJoob/kA8Wm6O+3/xX51LbCVswzqBoaTmB3Rqps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I9Ovq6zU; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-60c6fea6742so10323969a12.1;
-        Tue, 15 Jul 2025 03:22:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752574941; x=1753179741; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2crJGfvy9Jnr87YgMI4zA0rz0NIO2gRU/WUVx+zJOAU=;
-        b=I9Ovq6zU8PyywlNtcZKeu522Iq4CSqvOamQ6l0+9ymjytS01NS3H5ZP7lmOn3AoL8A
-         gFYRyPySLzCDTtaG52g8vKYq0bpIsAHnMYoWQldeEzyZauZ13hLwPrOYWBjO2YuFFcdb
-         PQLnXZ09jvzz15QktraKLiFqJ4xbmbAbnQsKA8oDDDmrCdeU2TplDWjHzuRMED+U8YEp
-         BeHqqR7JXCYAJMiA7fGpHkNFdO5nPeHJgXYguBt5vxLLH1l/hWRHzliQ/iXDRGVtmZUX
-         D4KdLtcss+YDJiD7h42AHo9SQNGactBX+4T8aZAWUERsbDnCRaNcM1iqcK9SZxudfAmx
-         fK+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752574941; x=1753179741;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2crJGfvy9Jnr87YgMI4zA0rz0NIO2gRU/WUVx+zJOAU=;
-        b=D8aPLHaNojJKBjWZo+Tk56CjH5H3gCIfB0tiPzCXWxIIxKoGC70aQHpGuAbLF4Swpz
-         c+pjQzf1WR91EOQBQL7XPFyfKH5itaT1FI5MEwgv1bLHriF72zboEGVOD2TpA5ToDeJ9
-         pqN/fwRFd70lo6M8X7c/0gEHUtAjkg8TV7kWqeierENcHUMSxgUwEflJBKdLfiacCctR
-         YJwo/GZv3/JUeZ8DWYQ8lcvHy/RgLh39XLWvjspJJ2ZJ+N6Ol4QPHtNwm1v9hml2hU+o
-         SH3CbV9cAO72zpwpGcJ7D/zj3MSKyB+47BNHagX2ugHtdplBGAWaNslyiJvAfoFDi2T7
-         4Ang==
-X-Forwarded-Encrypted: i=1; AJvYcCUDWI8toIMszEGriUcVM03KbOtrocl47NVA3la+ybXIPWfVFvHzbXWzV5EAmFWXLEEvz2k=@vger.kernel.org, AJvYcCUaQMO8pWpai8r8clDNoiU8vxvk7utW2WzBV6p7uEaXgrDfFFde9eIG+W0a1PF072RfJkg/KsV4@vger.kernel.org, AJvYcCVKp+DuoxI2YDALvIy8i9GQCtYhZDPIqPtFASbmPxrghebiYOJF6k+OZ4K7kZr3bKXIataQpibtpn+N7ZVU@vger.kernel.org, AJvYcCXrofpzRYgeG8NkQmXqFLf8sI/vLDqdeYUIb+FulTHQloOITypmbhP8kDTAuDsH2noS2NtPuGG52flBMA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXs8CfVM6qduixTYQpJLtCIBeFCXA837cCrcL4n64Ci4HfSpjY
-	fzkgKxNrvJB8y/jrY4jBaWYbEC3xMV3Hh5RzW6scJ9ZFqeecwXx3BWwL
-X-Gm-Gg: ASbGncu/DNidOI1z9OgZm7X7Hs/Uq2cbzEv8aJniynWKmYqfbxZixgeWxvRcgukdypO
-	yvdiTaIAfNKq7XHEI4nmSsiDFeMzPc1wjy992GjPzXweN8SV9Ve6KPzWjO+X+5m8knlL8oSb5b3
-	0ywRBEGh2dIg/GH8M/kxMw9HbmGxS3PdO9YbUq3YMhcKukjmJp9aOpO1AXMLRANSO+TUXLVWUw3
-	ndbNQQazPI0mXWLC0R1fbQ9pflOqEakRuz1BhlN/O3/rZI6Etxi5GvW2OD32TaBMhd9nHzBNnYE
-	U1qxCY1ugni8jCMlzt5kADY/YtblFQdGuLOI262Ms+yTLqvCu0Wby7/Fzvs7+5ruMnZYcjVVvxX
-	AUTR29dBf3h49Nnj/wVMVyXqzrZld0nyqBmw=
-X-Google-Smtp-Source: AGHT+IH2Fp/Hb7ISJckZNbpE6kxbt03ub1njSzKQw/Kjz/TN3XGfF0/RC3z3jw0kIXpvnI8LNZUctg==
-X-Received: by 2002:a05:6402:3485:b0:608:64ff:c9b5 with SMTP id 4fb4d7f45d1cf-611e76580bbmr14606034a12.8.1752574940393;
-        Tue, 15 Jul 2025 03:22:20 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:a4c1])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611d8d54112sm6292085a12.1.2025.07.15.03.22.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 03:22:19 -0700 (PDT)
-Message-ID: <839d5486-a92a-4ae8-a536-b4a0e3d595ea@gmail.com>
-Date: Tue, 15 Jul 2025 11:23:47 +0100
+	s=arc-20240116; t=1752575141; c=relaxed/simple;
+	bh=wwa8tOAdGrPcbMj0Jsm5cHaAzQEuyKFmUHesGXCUd7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V/Jr62Tt+iWFyn66sEDcg0UmrAmwYigN30ZZaPqhcc5bVCrqi6d8rFTinMs58NZ9RNWR63zTE+kE5cFqtnXqncpNIbN51/yvKMOZyJUPSk6SHrvMOw3AyHfQ8KdHzkhAfkga3vp+93LPoXEf5k9u53L6vfv7dTkBmy7j/9vbgTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.207])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 2900F340DB0;
+	Tue, 15 Jul 2025 10:25:38 +0000 (UTC)
+Date: Tue, 15 Jul 2025 18:25:34 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	paul.walmsley@sifive.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	palmer@dabbelt.com, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] riscv: dts: spacemit: Add OrangePi RV2 board device
+ tree
+Message-ID: <20250715102534-GYA542593@gentoo>
+References: <20250711183245.256683-1-hendrik.hamerlinck@hammernet.be>
+ <20250711183245.256683-3-hendrik.hamerlinck@hammernet.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v7 1/7] netmem: introduce struct netmem_desc
- mirroring struct page
-To: Jakub Kicinski <kuba@kernel.org>, Harry Yoo <harry.yoo@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Byungchul Park <byungchul@sk.com>,
- willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, kernel_team@skhynix.com, almasrymina@google.com,
- ilias.apalodimas@linaro.org, hawk@kernel.org, akpm@linux-foundation.org,
- davem@davemloft.net, john.fastabend@gmail.com, andrew+netdev@lunn.ch,
- toke@redhat.com, tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
- saeedm@nvidia.com, leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
- david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
- linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com,
- hannes@cmpxchg.org, ziy@nvidia.com, jackmanb@google.com
-References: <20250625043350.7939-1-byungchul@sk.com>
- <20250625043350.7939-2-byungchul@sk.com> <20250626174904.4a6125c9@kernel.org>
- <20250627035405.GA4276@system.software.com>
- <20250627173730.15b25a8c@kernel.org> <aGHNmKRng9H6kTqz@hyeyoo>
- <20250701164508.0738f00f@kernel.org> <aHTQrso2Klvcwasf@hyeyoo>
- <92073822-ab60-40ca-9ff5-a41119c0ad3d@suse.cz> <aHUMwHft71cB8PFY@hyeyoo>
- <20250714184743.4acd7ead@kernel.org>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250714184743.4acd7ead@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711183245.256683-3-hendrik.hamerlinck@hammernet.be>
 
-On 7/15/25 02:47, Jakub Kicinski wrote:
-> On Mon, 14 Jul 2025 22:58:31 +0900 Harry Yoo wrote:
->>>> Could you please share your thoughts on why it's hard to judge them and
->>>> what's missing from the series, such as in the comments, changelog, or
->>>> the cover letter?
+
+On 20:32 Fri 11 Jul     , Hendrik Hamerlinck wrote:
+> Add initial device tree support for the OrangePi RV2 board [1], which is
+> marketed as using the Ky X1 SoC but has been confirmed to be 
+> identical to the SpacemiT K1 [2].
 > 
-> My main concern (as shared on earlier revisions) is the type hierarchy
+> The device tree is adapted from the OrangePi vendor tree [3], and similar
+> integration can be found in the Banana Pi kernel tree [4], confirming SoC
+> compatibility.
+> 
+> This minimal device tree enables booting into a serial console with UART
+> output and a blinking LED.
+> 
+> Link: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-RV2.html [1]
+> Link: https://www.spacemit.com/en/key-stone-k1 [2]
+> Link: https://github.com/BPI-SINOVOIP/pi-linux/blob/linux-6.6.63-k1/arch/riscv/boot/dts/spacemit/k1-x_orangepi-rv2.dts [3]
+> Link: https://github.com/orangepi-xunlong/linux-orangepi/tree/orange-pi-6.6-ky [4]
+> Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+> ---
+>  arch/riscv/boot/dts/spacemit/Makefile         |  1 +
+>  .../boot/dts/spacemit/k1-orangepi-rv2.dts     | 43 +++++++++++++++++++
+>  2 files changed, 44 insertions(+)
+>  create mode 100644 arch/riscv/boot/dts/spacemit/k1-orangepi-rv2.dts
+> 
+> diff --git a/arch/riscv/boot/dts/spacemit/Makefile b/arch/riscv/boot/dts/spacemit/Makefile
+> index 92e13ce1c16d..152832644870 100644
+> --- a/arch/riscv/boot/dts/spacemit/Makefile
+> +++ b/arch/riscv/boot/dts/spacemit/Makefile
+> @@ -1,3 +1,4 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  dtb-$(CONFIG_ARCH_SPACEMIT) += k1-bananapi-f3.dtb
+>  dtb-$(CONFIG_ARCH_SPACEMIT) += k1-milkv-jupiter.dtb
+> +dtb-$(CONFIG_ARCH_SPACEMIT) += k1-orangepi-rv2.dtb
+> diff --git a/arch/riscv/boot/dts/spacemit/k1-orangepi-rv2.dts b/arch/riscv/boot/dts/spacemit/k1-orangepi-rv2.dts
+> new file mode 100644
+> index 000000000000..8313f9589cd2
+> --- /dev/null
+> +++ b/arch/riscv/boot/dts/spacemit/k1-orangepi-rv2.dts
+> @@ -0,0 +1,43 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+..
+> +/* Copyright (c) 2023 Ky, Inc */
+Copyright should cover current year, which is 2025..
+what's "Ky" stand for? Can you give a full description here
 
-Quick overview. struct netmem_desc is a common denominator b/w pp pages
-and net_iov, and contains fields used by the pp generic path, e.g.
-refcount, dma_addr. Before, pp was using type casting hacks to keep
-code generic with some overhead on bit masking, now it'll be able to
-look up netmem_desc from a netmem and use it directly.
+> +
+> +/dts-v1/;
+> +
+> +#include "k1.dtsi"
+> +#include "k1-pinctrl.dtsi"
+> +
+> +/ {
+> +	model = "OrangePi RV2";
+> +	compatible = "xunlong,orangepi-rv2", "spacemit,k1";
+> +
+..
+> +	memory@0 {
+> +		device_type = "memory";
+> +		reg = <0x0 0x00000000 0x0 0x80000000>;
+> +	};
+> +
+> +	memory@100000000 {
+> +		device_type = "memory";
+> +		reg = <0x1 0x00000000 0x0 0x80000000>;
+> +	};
+> +
+for the memory nodes, there are 2/4/8GB variants from the Link [1], and
+you couldn't cover all of them in one dt
 
-That's pretty much what I was suggesting niov / page aliasing to be
-1+ years ago, but unfortunately that didn't happen. It definitely
-removes some type casting hackiness.
+besides, I thought bootloader (u-boot) will populate these info, right?
+so the above nodes isn't really necessary
 
-> exposed to the drivers. 
-
-v10 adds a bunch of "pp_page_to_nmdesc(page)->pp" in the drivers,
-Not sure I have a strong opinion, but it can be turned into a helper.
-
-Converting things back and forth or blindly
-> downcasting to netmem and upcasting back to the CPU-readable type is
-> no good.
+> +	chosen {
+> +		stdout-path = "serial0";
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +
+> +		led1 {
+> +			label = "sys-led";
+> +			gpios = <&gpio K1_GPIO(96) GPIO_ACTIVE_LOW>;
+> +			linux,default-trigger = "heartbeat";
+> +			default-state = "on";
+> +		};
+> +	};
+> +};
+> +
+> +&uart0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&uart0_2_cfg>;
+> +	status = "okay";
+> +};
+> -- 
+> 2.43.0
+> 
 
 -- 
-Pavel Begunkov
-
+Yixun Lan (dlan)
 
