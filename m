@@ -1,141 +1,163 @@
-Return-Path: <linux-kernel+bounces-732177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048E1B06317
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:36:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A11A9B0631C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BD2058039A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:35:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E02F7AF61D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6764B2264A9;
-	Tue, 15 Jul 2025 15:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2496922DFB5;
+	Tue, 15 Jul 2025 15:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="E7qVkR2y"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UC7JbDzL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232D01922FB
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECC324337B;
+	Tue, 15 Jul 2025 15:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752593727; cv=none; b=cntOAKncH8+RX9QlnlCpSHhKGz9oGpglMdZJ4Tw6oxwBbw3Nzl/5gd2770zy07ZZJ5uQVrLD3PlwDxra3GA4SF8QeKIU9C2eydzpgEvQxpkQ+EEqGCiKQhz7WDmy0CHhK9KxIKWHyMYrtNeVTazEg4z3QQ2AEEi2sUBiVw+XTQA=
+	t=1752593729; cv=none; b=qjyw5AifJVCdp20xmyWikSfs+aVV5glQFqgLf2mLfsJTXMJSBUYNjvcjg1tpINYLCzDBgX9BKGAyNKl0njQCPAPCvf8yXlPgmZrRJVHresT/k9YiEc8vGFX9uU9NJcabmcNiU0P5XGMQGWIeQnpcWr/d28/5p2JfxCeJSgzg53o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752593727; c=relaxed/simple;
-	bh=1Os82t3UH4xxEkIYAOAU8VzCGx6w1OSDILXxwdCWBQI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PR9cyAxiCRKY0eSZ3H2gCnEpqbKtYMXtiJM7eIJxFhLfufCDYvSB0LVUWBfiQiwqwe4sQpzwa4t+jkOY+ut1aNRKRxZv1p/DjZ4aJixHXE3S9JQCZAQmZcJL5QVxlwAHZ0Vv90KRkkwq1FW+4tWjAyvBwqt4dTYOc7Zz4gbdJzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=E7qVkR2y; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56FFYqXJ1029553
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 15 Jul 2025 08:34:52 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56FFYqXJ1029553
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1752593693;
-	bh=Ip3qBo5YXx2BHORJ0EPgiUIw2in1Xz9KKFl+J8c4qpI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=E7qVkR2yRzyO9NlR59set1lElucQm0FxobGL7ZKB2qomRXETP6I1XuNyck29IiD4E
-	 d6kLC8UShFjSqHi2zwww2DXhef3gVzEMUsUe0RVe6cE0OqsJV4vMMfq4KfmMhBGbXN
-	 IEq7AnJYygcE3vJuVCg8l5cRRCV6Bos882QEQAYxJOrE7FL1SrPxxt/hO+NGmsC6dE
-	 fq1y6WGWd9+bhCcvRxNj6Tm9+5PIDLsXniy2M8VImkVAkONoVSb8busxtOZ1n25Rsi
-	 lXhuwiFopQ+T33zQinE5ZBTjuNIwP2c+4DJkNl5sfb/vSSKbJqxRRWrGMDlA1j8c9f
-	 lGQ9lO9tm95dg==
-Message-ID: <025501f2-5122-44c2-ae20-0cce86e8c426@zytor.com>
-Date: Tue, 15 Jul 2025 08:34:51 -0700
+	s=arc-20240116; t=1752593729; c=relaxed/simple;
+	bh=Ds3Unjbza1/cF66Vf+z3ZVebDx1X4MC2m4XT4rnZRac=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=L5/D2+PBzE1TdpJU9JpJPElAAB4td7aBz1vZzhpC3IStvBownR5iXTb7AjvSzfYA6Qind99oHVVo8nVGV+0FAvHFkIkAKFrVowYbz9ciDGEe1W94f9fqqhYffDuQbibhG+hdHNKXp/i4wZA0zvOWUpnX17OBX/HY3Iu4j1V7A0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UC7JbDzL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AFA3C4CEE3;
+	Tue, 15 Jul 2025 15:35:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752593728;
+	bh=Ds3Unjbza1/cF66Vf+z3ZVebDx1X4MC2m4XT4rnZRac=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=UC7JbDzL5ZgPsIPM7YbSe+BaJGdh9ax6k4XUrRb/Hd/hHEgjMZYYE6A3nq1J1+F1t
+	 +hbGAkS9cK9gq4CqMMdDo7arspwQcfVBMXDKLQNA628uYovpFUYLI34Ez0rWKXlV7/
+	 5y8JcVNlWytqJ4+KnOa6165vZQC5exD1YnbgssA61CMWuuwbiVSuJHkiXhFkeMEgFt
+	 fYXJgoinpU9hnSGXjVNrxndd3bvEaxZ4pGLGxhtGR9HZuCbZv9AtLdJdqXQw/TqmzS
+	 Lvc2vUCj8tQabLc+8Td78xVnSMh1q10JuQujFhfiiTXAE/992h3GyiQwqlD6D7H+lQ
+	 S2bZ+1lrglZtw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] x86/fred: Remove ENDBR64 from FRED entry points
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, luto@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, jmill@asu.edu,
-        andrew.cooper3@citrix.com
-References: <20250715064437.807569-1-xin@zytor.com>
- <bb77f5f9-231a-4640-91b7-bca42e9654f3@zytor.com>
- <20250715084034.GO1613200@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20250715084034.GO1613200@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 17:35:22 +0200
+Message-Id: <DBCQMGZUV0GY.1D2U4FQT6E2PF@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
+ <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
+ "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
+ "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
+ <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
+ <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Alan Stern" <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v7 4/9] rust: sync: atomic: Add generic atomics
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250714053656.66712-1-boqun.feng@gmail.com>
+ <20250714053656.66712-5-boqun.feng@gmail.com>
+ <DBBPI9ZJVO64.3A83G118BMVLI@kernel.org> <aHUSgXW9A6LzjBIS@Mac.home>
+ <DBBVD70MASPW.2LUTJ51Y6SGMI@kernel.org> <aHUjIQlqphtgVP2g@Mac.home>
+ <DBCIZY29JWTD.1G6AKZ08ZWBQG@kernel.org> <aHZUO4NwMlw-FsnZ@Mac.home>
+In-Reply-To: <aHZUO4NwMlw-FsnZ@Mac.home>
 
-On 7/15/2025 1:40 AM, Peter Zijlstra wrote:
-> On Mon, Jul 14, 2025 at 11:50:57PM -0700, Xin Li wrote:
->> On 7/14/2025 11:44 PM, Xin Li (Intel) wrote:
->>> The FRED specification v9.0 states that there is no need for FRED
->>> event handlers to begin with ENDBR64, because in the presence of
->>> supervisor indirect branch tracking, FRED event delivery does not
->>> enter the WAIT_FOR_ENDBRANCH state.
->>>
->>> As a result, remove ENDBR64 from FRED entry points.
->>>
->>> Then add ANNOTATE_NOENDBR to indicate that FRED entry points will
->>> never be used for indirect calls to suppress an objtool warning.
->>>
->>> This change implies that any indirect CALL/JMP to FRED entry points
->>> causes #CP in the presence of supervisor indirect branch tracking.
->>>
->>> Credit goes to Jennifer Miller<jmill@asu.edu> and other contributors
->>> from Arizona State University whose work led to this change.
->>>
->>> Link:https://lore.kernel.org/linux-hardening/Z60NwR4w%2F28Z7XUa@ubun/
->>> Reviewed-by: H. Peter Anvin (Intel)<hpa@zytor.com>
->>> Signed-off-by: Xin Li (Intel)<xin@zytor.com>
->>> Cc: Jennifer Miller<jmill@asu.edu>
->>> Cc: Peter Zijlstra<peterz@infradead.org>
->>> Cc: Andrew Cooper<andrew.cooper3@citrix.com>
->>> Cc: H. Peter Anvin<hpa@zytor.com>
->> Sorry, forgot to put CC stable.
-> Fixes: 14619d912b65 ("x86/fred: FRED entry/exit and dispatch code")
-> 
-> Right?
+On Tue Jul 15, 2025 at 3:14 PM CEST, Boqun Feng wrote:
+> On Tue, Jul 15, 2025 at 11:36:49AM +0200, Benno Lossin wrote:
+>> On Mon Jul 14, 2025 at 5:32 PM CEST, Boqun Feng wrote:
+>> > On Mon, Jul 14, 2025 at 05:05:40PM +0200, Benno Lossin wrote:
+>> > [...]
+>> >> >> >  //!
+>> >> >> >  //! [`LKMM`]: srctree/tools/memory-model/
+>> >> >> > =20
+>> >> >> > +pub mod generic;
+>> >> >>=20
+>> >> >> Hmm, maybe just re-export the stuff? I don't think there's an adva=
+ntage
+>> >> >> to having the generic module be public.
+>> >> >>=20
+>> >> >
+>> >> > If `generic` is not public, then in the kernel::sync::atomic page, =
+it
+>> >> > won't should up, and there is no mentioning of struct `Atomic` eith=
+er.
+>> >> >
+>> >> > If I made it public and also re-export the `Atomic`, there would be=
+ a
+>> >> > "Re-export" section mentioning all the re-exports, so I will keep
+>> >> > `generic` unless you have some tricks that I don't know.
+>> >>=20
+>> >> Just use `#[doc(inline)]` :)
+>> >>=20
+>> >>     https://doc.rust-lang.org/rustdoc/write-documentation/the-doc-att=
+ribute.html#inline-and-no_inline
+>> >>=20
+>> >> > Also I feel it's a bit naturally that `AllowAtomic` and `AllowAtomi=
+cAdd`
+>> >> > stay under `generic` (instead of re-export them at `atomic` mod lev=
+el)
+>> >> > because they are about the generic part of `Atomic`, right?
+>> >>=20
+>> >> Why is that more natural? It only adds an extra path layer in any imp=
+ort
+>> >> for atomics.
+>> >>=20
+>> >
+>> > Exactly, users need to go through extra steps if they want to use the
+>> > "generic" part of the atomic, and I think that makes user more aware o=
+f
+>> > what they are essentially doing:
+>> >
+>> > - If you want to use the predefined types for atomic, just
+>> >
+>> >   use kernel::sync::atomic::Atomic;
+>> >
+>> >   and just operate on an `Atomic<_>`.
+>> >
+>> > - If you want to bring your own type for atomic operations, you need t=
+o
+>> >
+>> >   use kernel::sync::atomic::generic::AllowAtomic;
+>> >
+>> >   (essentially you go into the "generic" part of the atomic)
+>> >
+>> >   and provide your own implementation for `AllowAtomic` and then you
+>> >   could use it for your own type.
+>> >
+>> > I feel it's natural because for extra features you fetch more modules
+>> > in.
+>>=20
+>> The same would apply if you had to import `AllowAtomic` from atomic
+>> directly? I don't really see the value in this.
+>>=20
+>
+> Because generic::AllowAtomic is more clear that the user is using the
+> generic part of the API, or the user is extending the Atomic type with
+> the generic ability. Grouping functionality with a namespace is
+> basically what I want to achieve here. It's similar to why do we put
+> `atomic` (and `lock`) under `sync`.
 
-You bet!
+For `sync::{atomic, lock}` this makes sense, because `sync` might get
+other submodules in the future (eg `once`). But for atomics, I don't see
+any new modules similar to `generic` and even if, `AllowAtomic` still
+makes sense in the top-level atomic module. I don't think the
+namespacing argument makes sense in this case.
 
-Will send v2 to address it soon.
+---
+Cheers,
+Benno
 
