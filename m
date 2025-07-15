@@ -1,203 +1,176 @@
-Return-Path: <linux-kernel+bounces-731538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 825E0B055EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:11:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9CA4B055F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A82AD3AD269
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:10:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FD727B2A51
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51002D5420;
-	Tue, 15 Jul 2025 09:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3032D5A18;
+	Tue, 15 Jul 2025 09:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/0Jf5N7"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IxebXu42"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3972D3A7D
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C530526F45D;
+	Tue, 15 Jul 2025 09:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752570656; cv=none; b=iDgzpWyGSPr91rkJsKaGqFCzBHa9lW7H0s78BJ6bi5MqaSEtHzId0JWa4r06EuoYoy/vuBYSOi7oV8L4Pm7MkIxibGvmzDQyneRWOC6by/2LEU/5KjvEeSaZ1s4mB79ni58/cIUjJIHgufKvTUsN6WnPK76Kw7/BG8ca9hxtvd4=
+	t=1752570692; cv=none; b=OpVdcjouVFmNWdQXIS1THF2uyfF/ObvCdFgmrr1mamx0h2zh8ZsxgbnqvfKO0zZ/NXZILS4XA7j7BUUQfyBBIJVnRqMEyyjVaatjeWaZ9JZcXrawxfb+uU7iDn4hRXmnwguoDFwHbEhH3wmDgDbJ7XrtLsJHNZZxMtjssL1Ds6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752570656; c=relaxed/simple;
-	bh=N3v6yre1w59ynmHLJIPCSWSZrxzyqtlDbvmNV1Ort1U=;
-	h=From:Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:To:
-	 References:In-Reply-To; b=otJLG5PAMNRkKSU/Wc6utL11QHrO6xpbGhicI44ZHCgQt5LqXenrkKLPcQlS3XFrCwX8eMpe/7jX0raof/WCQxLESRMfN+0+aOw8Fdi40fpJjf+j9eA46fE+9fc7KY69RXfJtnmN72y4AMerbDDAOIyKrDduwZle/pKDbguAQts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b/0Jf5N7; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4561a4a8bf2so19295345e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:10:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752570653; x=1753175453; darn=vger.kernel.org;
-        h=in-reply-to:references:to:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o1h5Pc6jSMg8b1cL/wTGNUWLlJ8UBTATqjvEdBDjUk0=;
-        b=b/0Jf5N7XsX3RD37tc7HZyATcszBoOyURksjHu9+EcVK0KvBOTc+QzBuKsWb+wVZtG
-         6TJkvvv/jCuz7OuaZ4EFKO2cZ4upuCCfu6sC0Ou2hoIiQ02v+HxE3IeYQgytLireEw0R
-         5xuXgpHHeSpl0OdmcSJ0H1sak9UrXaO7cwFVlX8R8QtUs2srLeccfnPrRRDXzYWPYUsL
-         o8wOZB/gsZMid1HBpZnkLz2VEqm1/z2IlH46WTIiDCgk3aWT++ctHvQicdXUu2GQRnTI
-         OpRGLi8K8l08mL9t/NLULa5jgCin9Ryl5+bU0ewRs2T/fEBmsJqpVp6M00ScibbRedfQ
-         VtlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752570653; x=1753175453;
-        h=in-reply-to:references:to:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=o1h5Pc6jSMg8b1cL/wTGNUWLlJ8UBTATqjvEdBDjUk0=;
-        b=SYVtMYC92OC2fQBj2mAdTYnL+l636Q1a3ppYZYhVQw6LJlhIgU+UmD+fkjML+7KBAq
-         pXBvB2u5C3CqyM99OkMTh2YdxCkLQ4fFbfE8/ry+PF5OZgAkR/uMmGA6DTkoiuinNuho
-         04a4W2uJ8Lg4PZiObEC1nDaZkiy8znBpwiqMr5rMJ0sL8zIuEEtOatCPENZM8IRcSxcm
-         kvu2V2Tb9a53RrJJZJwbB3lxHHOH5tlQS1G5xYMuXAbEkpg/uD578BkpwRDf++F9CVO4
-         HpEjdzvZ/JvHP3Nr9xVzV/PydkGDsm5k34tUZPSogPOpXjg4N/ktvd7gK9ZZZqON1nQn
-         gdLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAUA0RbM5tXbjgRh8yx+k+ObDG6FWdlbUxA/vsc4o42K9VfLwVdDGI8RgRcDBUUWbHSbNZUiNn0VyBRCE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ3GtiIlDKMjfwRecGfQtw3nceAp0UVGPEGKEPOVuQpx+1SzLI
-	I4X1jmIZHvodiy9IVTpuZ/OMd4YTCeBY0b/bYRXxTi3Ky3a/d3E62m+w
-X-Gm-Gg: ASbGncthRrDlYz68mmcQUzsSQMVIZEP/Ds9xDA1MPKDdW57Jai1J2Glmjn6t94NrfLO
-	j0KWeici4jS2IWBM/NW0z9GlrnohX6L68rx03x97bYh3OKfYZ5+5/odtMxt8IFO7HOLHzzyng8u
-	qzYgbo6oZZ6GbVpghtMfGRLupmEtv56QQg4WlE8+20ze1YESG9URGceQGxlRbQKYf+L6abLmi8z
-	r2y8m+E9upkwvgBiIDSQVH/GGNpVk3aNHn091nSgvJhgEN7J7ADpuoAjdyMpnztG/ISX5f69hIM
-	64e2v/hV6uYdLqMDCCa/0j5sf9Iu6k0QQl+ukeL26aRKUHAz3UDJOuTPkMMbUdc21XbmB3bLBmh
-	oqJGtqi/CVfaLjhnsajclEveq3mINqXR02rqOdK2bAPy8zf4W1g==
-X-Google-Smtp-Source: AGHT+IG8LxAVomRTxHB3htRD5s0m3l9g2VSOjPHXCnIu+z0xdDALWIcnXTdVY9yN2PnTDlOwgoRERg==
-X-Received: by 2002:a05:600c:3589:b0:456:1c4a:82b2 with SMTP id 5b1f17b1804b1-4561c4a856amr67890905e9.10.1752570652494;
-        Tue, 15 Jul 2025 02:10:52 -0700 (PDT)
-Received: from localhost (a95-94-245-170.cpe.netcabo.pt. [95.94.245.170])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454dd538b63sm156999395e9.19.2025.07.15.02.10.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 02:10:52 -0700 (PDT)
-From: Rui Miguel Silva <rmfrfs@gmail.com>
-X-Google-Original-From: "Rui Miguel Silva" <rui.silva@linaro.com>
+	s=arc-20240116; t=1752570692; c=relaxed/simple;
+	bh=dA3vtbmlttdZvCGMv8d9ESUIzy2yXosr7aHy1zK5CiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KonOQQZWtGSu/aDLr8numxXhbAX+0E9aYp+PY2DSW8CWArsBbUZmY3RAK+3UJYhBlrmym7mwnysJbTzC940UDIeeW3CKl8JjfacXlZ/n+bYRaeZ3YohajvagrnObHtcGkHndn5GTczGa17spbLIqBh3JlgzfQLRMACcMec0NI1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IxebXu42; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FF63C4CEE3;
+	Tue, 15 Jul 2025 09:11:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752570692;
+	bh=dA3vtbmlttdZvCGMv8d9ESUIzy2yXosr7aHy1zK5CiI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IxebXu42e3BWhhhayhaKwQypECLIVDfNz7bzt+rMxXn5vd1IjB70gu+oeaX+E53XG
+	 vUs9V6AX94CB2DdMzehafN/x8JDjQWKJRtxNLH/ilzY5pDwai5XdzwniJYUQT4wCdf
+	 OxC0gyYTeecm7ockLqzOfuhqwFG4gBDMaZB3zL8myuTxOVUs+CCHBCXJR6xlpcGQHV
+	 Pm8swbFx7m5BZ7m6m/+qDykTrscJjhpgu/SqLUZethNpdXAOINRaGrKJd/RHXDjGLn
+	 DSJpiM7M3k46J2biwOVMgZqLN79ddZdjZtzF26ZKBFEQONQgpMN9Yub3TfWqlokCJO
+	 vJqx/qPCeTFIw==
+Date: Tue, 15 Jul 2025 14:41:23 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] PCI: qcom: Switch to bus notifier for enabling ASPM
+ of PCI devices
+Message-ID: <yqot334mqik74bb7rmoj27kfppwfb4fvfk2ziuczwsylsff4ll@oqaozypwpwa2>
+References: <20250714-aspm_fix-v1-0-7d04b8c140c8@oss.qualcomm.com>
+ <20250714-aspm_fix-v1-1-7d04b8c140c8@oss.qualcomm.com>
+ <aHYHzrl0DE2HV86S@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 15 Jul 2025 10:10:51 +0100
-Message-Id: <DBCIG2AHAZHR.31GUITYRTUZXJ@linaro.com>
-Cc: "Akhil Varkey" <akhilvarkey@disroot.org>,
- <greybus-dev@lists.linaro.org>, <linux-staging@lists.linux.dev>,
- <linux-kernel@vger.kernel.org>, <johan@kernel.org>, <elder@kernel.org>,
- <~lkcamp/patches@lists.sr.ht>, <koike@igalia.com>
-Subject: Re: [PATCH] staging: greybus: power_supply fix alignment
-To: "Greg KH" <gregkh@linuxfoundation.org>, "Rui Miguel Silva"
- <rmfrfs@gmail.com>
-References: <20250714135606.41671-1-akhilvarkey@disroot.org>
- <DBBXCAEMM5ZO.GTKVMMR2XDJ7@linaro.com> <2025071540-sepia-amuck-c757@gregkh>
-In-Reply-To: <2025071540-sepia-amuck-c757@gregkh>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aHYHzrl0DE2HV86S@hovoldconsulting.com>
 
-Hey Greg,
-On Tue Jul 15, 2025 at 9:05 AM WEST, Greg KH wrote:
+On Tue, Jul 15, 2025 at 09:48:30AM GMT, Johan Hovold wrote:
+> On Mon, Jul 14, 2025 at 11:31:04PM +0530, Manivannan Sadhasivam wrote:
+> > Commit 9f4f3dfad8cf ("PCI: qcom: Enable ASPM for platforms supporting 1.9.0
+> > ops") allowed the Qcom controller driver to enable ASPM for all PCI devices
+> > enumerated at the time of the controller driver probe. It proved to be
+> > useful for devices already powered on by the bootloader as it allowed
+> > devices to enter ASPM without user intervention.
+> > 
+> > However, it could not enable ASPM for the hotplug capable devices i.e.,
+> > devices enumerated *after* the controller driver probe. This limitation
+> > mostly went unnoticed as the Qcom PCI controllers are not hotplug capable
+> > and also the bootloader has been enabling the PCI devices before Linux
+> > Kernel boots (mostly on the Qcom compute platforms which users use on a
+> > daily basis).
+> > 
+> > But with the advent of the commit b458ff7e8176 ("PCI/pwrctl: Ensure that
+> > pwrctl drivers are probed before PCI client drivers"), the pwrctrl driver
+> > started to block the PCI device enumeration until it had been probed.
+> > Though, the intention of the commit was to avoid race between the pwrctrl
+> > driver and PCI client driver, it also meant that the pwrctrl controlled PCI
+> > devices may get probed after the controller driver and will no longer have
+> > ASPM enabled. So users started noticing high runtime power consumption with
+> > WLAN chipsets on Qcom compute platforms like Thinkpad X13s, and Thinkpad
+> > T14s, etc...
+> > 
+> > Obviously, it is the pwrctrl change that caused regression, but it
+> > ultimately uncovered a flaw in the ASPM enablement logic of the controller
+> > driver. So to address the actual issue, switch to the bus notifier for
+> > enabling ASPM of the PCI devices. The notifier will notify the controller
+> > driver when a PCI device is attached to the bus, thereby allowing it to
+> > enable ASPM more reliably. It should be noted that the
+> > 'pci_dev::link_state', which is required for enabling ASPM by the
+> > pci_enable_link_state_locked() API, is only set by the time of
+> > BUS_NOTIFY_BIND_DRIVER stage of the notification. So we cannot enable ASPM
+> > during BUS_NOTIFY_ADD_DEVICE stage.
+> 
+> A problem with this approach is that ASPM will never be enabled (and
+> power consumption will be higher) in case an endpoint driver is missing.
+> 
 
-> On Mon, Jul 14, 2025 at 05:38:31PM +0100, Rui Miguel Silva wrote:
->> Hey Akhil,
->> Thanks for your patch.
->>=20
->> All looks good with the exception of a small nit...
->>=20
->> On Mon Jul 14, 2025 at 2:56 PM WEST, Akhil Varkey wrote:
->>=20
->> > Fix checkpatch check "CHECK:Alignment should match open parenthesis"
->> >
->> > Signed-off-by: Akhil Varkey <akhilvarkey@disroot.org>
->> > ---
->> >
->> > Hello, This is my first patch, I appreciate any feedbacks. Thanks!!
->>=20
->> Welcome, and continue...
->>=20
->> > ---
->> >  drivers/staging/greybus/power_supply.c | 14 +++++++-------
->> >  1 file changed, 7 insertions(+), 7 deletions(-)
->> >
->> > diff --git a/drivers/staging/greybus/power_supply.c b/drivers/staging/=
-greybus/power_supply.c
->> > index 2ef46822f676..a484c0ca058d 100644
->> > --- a/drivers/staging/greybus/power_supply.c
->> > +++ b/drivers/staging/greybus/power_supply.c
->> > @@ -324,7 +324,7 @@ static struct gb_power_supply_prop *get_psy_prop(s=
-truct gb_power_supply *gbpsy,
->> >  }
->> > =20
->> >  static int is_psy_prop_writeable(struct gb_power_supply *gbpsy,
->> > -				     enum power_supply_property psp)
->> > +				 enum power_supply_property psp)
->> >  {
->> >  	struct gb_power_supply_prop *prop;
->> > =20
->> > @@ -493,7 +493,7 @@ static int gb_power_supply_description_get(struct =
-gb_power_supply *gbpsy)
->> >  	if (!gbpsy->model_name)
->> >  		return -ENOMEM;
->> >  	gbpsy->serial_number =3D kstrndup(resp.serial_number, PROP_MAX,
->> > -				       GFP_KERNEL);
->> > +					GFP_KERNEL);
->> >  	if (!gbpsy->serial_number)
->> >  		return -ENOMEM;
->> > =20
->> > @@ -546,7 +546,7 @@ static int gb_power_supply_prop_descriptors_get(st=
-ruct gb_power_supply *gbpsy)
->> >  	}
->> > =20
->> >  	gbpsy->props =3D kcalloc(gbpsy->properties_count, sizeof(*gbpsy->pro=
-ps),
->> > -			      GFP_KERNEL);
->> > +			       GFP_KERNEL);
->> >  	if (!gbpsy->props) {
->> >  		ret =3D -ENOMEM;
->> >  		goto out_put_operation;
->> > @@ -634,8 +634,8 @@ static int __gb_power_supply_property_get(struct g=
-b_power_supply *gbpsy,
->> >  }
->> > =20
->> >  static int __gb_power_supply_property_strval_get(struct gb_power_supp=
-ly *gbpsy,
->> > -						enum power_supply_property psp,
->> > -						union power_supply_propval *val)
->> > +						 enum power_supply_property psp,
->> > +						 union power_supply_propval *val)
->>=20
->> Here you fix the alignment, but the last line goes over column 81, even
->> though 80 is not really one hard requirement anymore, all code
->> (strings is ok to go over to be easier to grep for messages) is on that
->> register.
->>=20
->> So, to be coherent, if you could please send a V2 without this specific =
-change
->> would be great, Or even better, if you could get rid of all the _ and __
->> prefixes in functions names that would be great, and will give more
->> space for function paramethers.
->> Your call.
->
-> Nah, this is fine as-is, we can go over the limit to 100 for tiny stuff
-> like this.
->
-> And the __ prefixes should be there to show no locking, or "internal"
-> functions, right?  So changing the name needs to happen very carefully.
+I'm aware of this limiation. But I don't think we should really worry about that
+scenario. No one is going to run an OS intentionally with a PCI device and
+without the relevant driver. If that happens, it might be due to some issue in
+driver loading or the user is doing it intentionally. Such scenarios are short
+lived IMO.
 
-Yup, we can go either way here. I do not have strong feelings about
-this.
+> I think that's something we should try to avoid.
+> 
 
-So, LGTM, Thanks Akhil.
-Reviewed-by: Rui Miguel Silva <rui.silva@linaro.org>
+I would've fancied a bus notifier post device addition, but there is none
+available and I don't see a real incentive in adding one. The other option
+would be to add an ops to 'struct pci_host_bridge', but I really try not to
+introduce such thing unless really manadatory.
 
-Cheers,
-    Rui
+> > So with this, we can also get rid of the controller driver specific
+> > 'qcom_pcie_ops::host_post_init' callback.
+> > 
+> > Cc: stable@vger.kernel.org # v6.7
+> > Fixes: 9f4f3dfad8cf ("PCI: qcom: Enable ASPM for platforms supporting 1.9.0 ops")
+> > Reported-by: Johan Hovold <johan@kernel.org>
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> 
+> Note that the patch fails to apply to 6.16-rc6 due to changes in
+> linux-next. Depending on how fast we can come up with a fix it may be
+> better to target 6.16.
+> 
 
->
-> thanks,
->
-> greg k-h
+I rebased this series on top of pci/controller/qcom branch, where we have some
+dependency. But I could spin an independent fix if Bjorn is OK to take it for
+the 6.16-rcS.
 
+> > -static int qcom_pcie_enable_aspm(struct pci_dev *pdev, void *userdata)
+> > -{
+> > -	/*
+> > -	 * Downstream devices need to be in D0 state before enabling PCI PM
+> > -	 * substates.
+> > -	 */
+> > -	pci_set_power_state_locked(pdev, PCI_D0);
+> > -	pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
+> > -
+> > -	return 0;
+> > -}
+> 
+> I think you should consider leaving this helper in place here to keep
+> the size of the diff down (e.g. as you intend to backport this).
+> 
 
+Ok.
 
+> > +static int qcom_pcie_enable_aspm(struct pci_dev *pdev)
+> > +{
+> > +	/*
+> > +	 * Downstream devices need to be in D0 state before enabling PCI PM
+> > +	 * substates.
+> > +	 */
+> > +	pci_set_power_state_locked(pdev, PCI_D0);
+> > +	pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
+> 
+> You need to use the non-locked helpers here since you no longer hold the
+> bus semaphore (e.g. as reported by lockdep).
+> 
+
+Good catch!
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
