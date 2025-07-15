@@ -1,243 +1,94 @@
-Return-Path: <linux-kernel+bounces-732166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A20FCB062FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:32:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D4A7B06304
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFC0818903D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:33:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 985F41894DCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CCE24677B;
-	Tue, 15 Jul 2025 15:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AFB253F35;
+	Tue, 15 Jul 2025 15:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LpER6Ywk"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdmZKQuO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0F324111D
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FA124E4C3;
+	Tue, 15 Jul 2025 15:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752593571; cv=none; b=MoqoaaRyjRdO1jQfTV0H9nUgmXXgt+j7vVnQZm/BzHlnMcbH8iQiRGjBH5kHRlKFgJY/z0mzk8AGcdLFZizydq1gPhamlxMt5GTDjaaTFtrqJYe/cv1/LihpOZezsu95d1FDQmU5Lt5CG0TFD5rzd6dTBx6yj+RcWEMqoNeF/y4=
+	t=1752593576; cv=none; b=YrEGMptK3VppEiCsoiMXW10kI/dTjMIWeE/ucqHYZFlEB7edRxCOLoxR4Kb3NEAMOpMZz56SfUpZvEq/3XldUmfAa8kbcZJV+Xui8dFZAGxrdePfTYsDB0nGXfcSKW1Q4WoMse+e8p/iXYN40pzTvM8DMoF/RZ0PI62osxxgaZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752593571; c=relaxed/simple;
-	bh=qUHDQT2XageAU0kIkbMdtj4nwVZk54055G83360ZEYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mo9dwIMmeIESobBMFl2MjelkYml+s/Re0gnE2VXXFvKl+GB14+nD51qjjabtOgA2YRJ3NJ2rdyA4Si4G0ZHXX+2K/CA1cdb2Wtysd27RhJe+FMP+brLlx1OxBpfWZac3qOWP45xdqmbZpdrCNuIkuicutqTC8hJ/lz6r16LBW6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LpER6Ywk; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2350b1b9129so38729905ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:32:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752593568; x=1753198368; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=33yHY0U8ND4bNjhKpzusNE0usrblN+UAP92ijnAvwrA=;
-        b=LpER6Ywkpzp3odZ3jSD6Ze2ve5LNucUm756K7LtGKO7RvKcBz9fvsZ5cFfDUIEynW4
-         6mH+k3mm4KyOW/TGChu3rQUzDpD7RTXnVAYnWeKpjxJnTeilkcrHwsvgAvIEscmrHgQl
-         mZnf7y9d/P/UcK+l2ZRwMoGmhfhVPh3M3NgFr7x5H5m2bE7loEiUKmSx0RxqxCK6LRMM
-         j4NwIONNl24iAD5D15Ph9ij3WG4neTgIDnucbvRlCh4GZE/7eWpNvNxCRyUDYutCqk9b
-         /FQsQgLLv36+iniId5VUULJPoc/Q74J9i7tCYnifkgsfNLOWmq2Rs25FA+Vc1M7PjlVY
-         Pu1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752593568; x=1753198368;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=33yHY0U8ND4bNjhKpzusNE0usrblN+UAP92ijnAvwrA=;
-        b=sKD1ZL18oBAPu5BvYygOi1KZDduC6WXj22pCnfTQ6yikO/gXqX8+AApmE+O21R77kx
-         fDkqHGASrtxA1yR5hrWRYEFdRBDxtBqIhQwZpCSN5AtbWp5Bp8xId2omTIUGcU3dSYuh
-         PQaIL2BzSJ/wP0Zoei6Kt5R5qnyI1t3CbahfCNCsXzKQtjdBRtp/VqDybnVRDaKi0Kr1
-         cdQeQaQBhaWwkEJg7LiCJLES56UZfz40ViRDlqW9QvsG6lxYbaFPKOzHAFV3HrtjSCOL
-         BJFQeq9Az8N9Pu6GvlUwbqH8em06CjcQsQPvhqzY9UfH3Q/eBJv9AXln8CLmIvyiP0Gk
-         Q2QA==
-X-Forwarded-Encrypted: i=1; AJvYcCW014BQ152faHq/0ULxq9fwQn8qVzvOs5hrQSB+cNURGaWAzFxSD6501Gwwu9qzReqZqzr7zWG2APR62XI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwylCtKNy327XpJ9D1gAuHgZfVDCdF+zoq7eBSekL3mbEMjz9wc
-	AG7V6GERW0rSLTASAkEuIil40/EZtVCBNCFNfEK6n5Yob9fkqIjdbQp1Eor2STQnYYA=
-X-Gm-Gg: ASbGnctoERIqzjGz9iXFoa0bXQIyQCd+CXF34yPr6bzsWJbt3Caoco5rUGLrBZ4P69J
-	JziCCZmigimrOCzKRuOogmTrWAWZ4BeM2keQOHvq44oganQ1Ugjvk0S2SnLULnR4+FVVi2aDrKT
-	XfjitkCLnRCT6WNDB21rOsRevzVgAned6UL/WkHpC6/YkqdbNdwIuo/oAutMw4bkmkm9R9Eakb6
-	6r2CGLKxxsagmByXS67fGYzG6xY755RVcSGL3Rcjo46zF9yID25ra/8d+wz2uEUGVlIx8nzDLTj
-	1xZHt4m8q4ABgmyLifL/KErV747fa4ONG73Db6JScGEozjUpmwYwksr/f3anUSs5D0tkoBb5dQu
-	ABoDTle+Fx2VEk8te2huSlAjF
-X-Google-Smtp-Source: AGHT+IHkJUK5ENBeylJNtS4qtHpCbavXcR17LDaafdWZuI5joLSCqs8sTEoGsBj18ccUt3gtd70HMA==
-X-Received: by 2002:a17:903:2c8:b0:237:d25b:8f07 with SMTP id d9443c01a7336-23dee0d7c54mr275182995ad.44.1752593567667;
-        Tue, 15 Jul 2025 08:32:47 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:3f17:6d67:cf82:708])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4323cd5sm110969645ad.126.2025.07.15.08.32.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 08:32:47 -0700 (PDT)
-Date: Tue, 15 Jul 2025 09:32:44 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Hiago De Franco <hiagofranco@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com,
-	iuliana.prodan@oss.nxp.com,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v7 3/3] remoteproc: imx_rproc: detect and attach to
- pre-booted remote cores
-Message-ID: <aHZ0nK4ZZShAr6Xz@p14s>
-References: <20250629172512.14857-1-hiagofranco@gmail.com>
- <20250629172512.14857-4-hiagofranco@gmail.com>
+	s=arc-20240116; t=1752593576; c=relaxed/simple;
+	bh=32I7tnE+Uw3PWlSmbWar4pOlDB7Z9GNHzzfr9Z4D6Ss=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=iqEGK/mnh8Fv2nUtzail7kNTLtG2x104kwZDSdJh2ow868yOP3dEmuhGEAbN4UXaRXVfIcY7mPK0C7pGwhA7MomdLpMVRP9HhJvWsvWWtbFNVFlMTgZbmICxWXuzibzsOHYxk+3NKuTqrTxlOcA+dgOv6iBahlnqDUteRd9GIjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EdmZKQuO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B57ADC4CEE3;
+	Tue, 15 Jul 2025 15:32:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752593576;
+	bh=32I7tnE+Uw3PWlSmbWar4pOlDB7Z9GNHzzfr9Z4D6Ss=;
+	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
+	b=EdmZKQuOpN7GjSENUy6Q+gNMKYOjP+LnWERg4OrDwl7PtJxHYkHhVhzkwo2uM8MF0
+	 NJaDccg0itWhn5ax+1A3DVYEv0EHUHMMblYEUqCdosrMb0vZZmdCMKaYfn+lgKo5gy
+	 N5V1nD7k8JEyeWgdVRZMfVeLZAMgQVkXh+EcHGKI7wj6GftMHfSNw743Qc/WvW3O7U
+	 iZan/9pJLMNxbFVKSKXPGznTWsG95sVaMbKnpZZ1l9dthrddB34Flcdd9UUkt8/CuJ
+	 vLXDVG9FoMCY3fXuZbW+TWZ5WfevDtdjmyqETo+Wj8MvhXbaxzNF7XZhVNdN3gk9ya
+	 0rDl+nWMrtdEA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250629172512.14857-4-hiagofranco@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 17:32:50 +0200
+Message-Id: <DBCQKJIBVGGM.1R0QNKO3TE4N0@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v7 0/6] rust: add support for request_irq
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Benno
+ Lossin" <lossin@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>
+To: "Thomas Gleixner" <tglx@linutronix.de>
+References: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com>
+In-Reply-To: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com>
 
-On Sun, Jun 29, 2025 at 02:25:12PM -0300, Hiago De Franco wrote:
-> From: Hiago De Franco <hiago.franco@toradex.com>
-> 
-> When the Cortex-M remote core is started and already running before
-> Linux boots (typically by the Cortex-A bootloader using a command like
-> bootaux), the current driver is unable to attach to it. This is because
-> the driver only checks for remote cores running in different SCFW
-> partitions. However in this case, the M-core is in the same partition as
-> Linux and is already powered up and running by the bootloader.
-> 
-> This patch adds a check using dev_pm_genpd_is_on() to verify whether the
-> M-core's power domains are already on. If all power domain devices are
-> on, the driver assumes the M-core is running and proceed to attach to
-> it.
-> 
-> To accomplish this, we need to avoid passing any attach_data or flags to
-> dev_pm_domain_attach_list(), allowing the platform device become a
-> consumer of the power domain provider without changing its current
-> state.
-> 
-> During probe, also enable and sync the device runtime PM to make sure
-> the power domains are correctly managed when the core is controlled by
-> the kernel.
-> 
-> Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
-> ---
-> v6 -> v7:
->  - Added Peng reviewed-by.
-> v5 -> v6:
->  - Commit description improved, as suggested. Added Ulf Hansson reviewed
->    by. Comment on imx-rproc.c improved.
-> v4 -> v5:
->  - pm_runtime_get_sync() removed in favor of
->    pm_runtime_resume_and_get(). Now it also checks the return value of
->    this function.
->  - Added pm_runtime_disable() and pm_runtime_put() to imx_rproc_remove()
->    function.
-> v3 -> v4:
->  - Changed to use the new dev_pm_genpd_is_on() function instead, as
->    suggested by Ulf. This will now get the power status of the two
->    remote cores power domains to decided if imx_rpoc needs to attach or
->    not. In order to do that, pm_runtime_enable() and
->    pm_runtime_get_sync() were introduced and pd_data was removed.
-> v2 -> v3:
->  - Unchanged.
-> v1 -> v2:
->  - Dropped unecessary include. Removed the imx_rproc_is_on function, as
->    suggested.
-> ---
->  drivers/remoteproc/imx_rproc.c | 37 +++++++++++++++++++++++++++++-----
->  1 file changed, 32 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 627e57a88db2..24597b60c5b0 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -18,6 +18,7 @@
->  #include <linux/of_reserved_mem.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_domain.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/reboot.h>
->  #include <linux/regmap.h>
->  #include <linux/remoteproc.h>
-> @@ -890,10 +891,8 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
->  static int imx_rproc_attach_pd(struct imx_rproc *priv)
->  {
->  	struct device *dev = priv->dev;
-> -	int ret;
-> -	struct dev_pm_domain_attach_data pd_data = {
-> -		.pd_flags = PD_FLAG_DEV_LINK_ON,
-> -	};
-> +	int ret, i;
-> +	bool detached = true;
->  
->  	/*
->  	 * If there is only one power-domain entry, the platform driver framework
-> @@ -902,7 +901,22 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
->  	if (dev->pm_domain)
->  		return 0;
->  
-> -	ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
-> +	ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
-> +	/*
-> +	 * If all the power domain devices are already turned on, the remote
-> +	 * core is already powered up and running when the kernel booted (e.g.,
-> +	 * started by U-Boot's bootaux command). In this case attach to it.
-> +	 */
-> +	for (i = 0; i < ret; i++) {
-> +		if (!dev_pm_genpd_is_on(priv->pd_list->pd_devs[i])) {
-> +			detached = false;
-> +			break;
-> +		}
-> +	}
+On Tue Jul 15, 2025 at 5:16 PM CEST, Daniel Almeida wrote:
+> Daniel Almeida (6):
+>       rust: irq: add irq module
+>       rust: irq: add flags module
+>       rust: irq: add support for non-threaded IRQs and handlers
+>       rust: irq: add support for threaded IRQs and handlers
+>       rust: platform: add irq accessors
+>       rust: pci: add irq accessors
 
-I was doing one final review of this work when I noticed the return code for
-dev_pm_domain_attach_list() is never checked for error. 
+(Mostly copy-paste from v6 [1].)
 
-Thanks,
-Mathieu
+What's the intended merge path for this series? Should I take it through
+driver-core, in case we make it for the upcoming merge window? I'd assume s=
+o,
+given that, besides the series also containing platform and PCI patches, it
+depends on patches that are in driver-core-next.
 
-> +
-> +	if (detached)
-> +		priv->rproc->state = RPROC_DETACHED;
-> +
->  	return ret < 0 ? ret : 0;
->  }
->  
-> @@ -1146,6 +1160,15 @@ static int imx_rproc_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> +	if (dcfg->method == IMX_RPROC_SCU_API) {
-> +		pm_runtime_enable(dev);
-> +		ret = pm_runtime_resume_and_get(dev);
-> +		if (ret) {
-> +			dev_err(dev, "pm_runtime get failed: %d\n", ret);
-> +			goto err_put_clk;
-> +		}
-> +	}
-> +
->  	ret = rproc_add(rproc);
->  	if (ret) {
->  		dev_err(dev, "rproc_add failed\n");
-> @@ -1171,6 +1194,10 @@ static void imx_rproc_remove(struct platform_device *pdev)
->  	struct rproc *rproc = platform_get_drvdata(pdev);
->  	struct imx_rproc *priv = rproc->priv;
->  
-> +	if (priv->dcfg->method == IMX_RPROC_SCU_API) {
-> +		pm_runtime_disable(priv->dev);
-> +		pm_runtime_put(priv->dev);
-> +	}
->  	clk_disable_unprepare(priv->clk);
->  	rproc_del(rproc);
->  	imx_rproc_put_scu(rproc);
-> -- 
-> 2.39.5
-> 
+@Thomas: Is there any agreement on how the IRQ Rust code should be maintain=
+ed?
+What's your preference?
+
+- Danilo
+
+[1] https://lore.kernel.org/lkml/aGbkfa57bDa1mzI7@pollux/
 
