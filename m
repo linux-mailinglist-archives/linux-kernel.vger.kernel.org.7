@@ -1,109 +1,97 @@
-Return-Path: <linux-kernel+bounces-731831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1768B05A67
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:40:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0BFFB05A69
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC9AA1898842
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:40:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 765F27B090F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48E42E0415;
-	Tue, 15 Jul 2025 12:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86092E0415;
+	Tue, 15 Jul 2025 12:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/WMW3aj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="uL4Fdflv"
+Received: from outbound.pv.icloud.com (p-west1-cluster6-host1-snip4-7.eps.apple.com [57.103.67.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114AE2D836A;
-	Tue, 15 Jul 2025 12:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEAC2E03FC
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 12:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.67.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752583199; cv=none; b=k3BqvNIU2P8jrzhSt30P2umlgr0P1aK+tkMTjV6ZjCsKgCctOrMxOVaRhi72M4i0lHo3Ar/Sl9zPBzWlCO/LuQmBndgIFUSv9IPwfGvRcBM4O1XgXneobk+QlnInVPRnKMS7RIebzfhjes1CHsjE43b5RfVsDbEyF/JfpJhbyig=
+	t=1752583234; cv=none; b=Mb4PCH+5Q/gMwXO84A3u6+vB9bzSseyQco4AiHh4pZUukOGvR4R0JUg6cMYf4l8oag3qJ2I/YEwL8fuAZU9ZKfevjoo9AjEwEY4Zpb1KtjXRCzwIRkn5Da773TjmLaABjDI7m554LkHdTXPNqy34m28BKrRx/AUzHaQ0IXC2Pr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752583199; c=relaxed/simple;
-	bh=+pu90pMOXbQaEW9Hm/kqWZt7Rsk1N7XL4gsFDUuXDgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j52FALudz+9qrUJdAZqmM/4aY9F+/q+A8SF84vbmvAxZLrBYw67uuC4tmKH699CdARh9W3h3kj4H8iPd4lpbUnKSCzs1QV2dgj/iSC++w6vcHqkBjQNKb0LTCGFFXr4OCdzRT9kWOvj2XXQ0/MYWDWV3RAV15aqzMx2Y4GDxGUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t/WMW3aj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3954EC4CEE3;
-	Tue, 15 Jul 2025 12:39:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752583198;
-	bh=+pu90pMOXbQaEW9Hm/kqWZt7Rsk1N7XL4gsFDUuXDgo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t/WMW3ajNFuEcGUS5cLW97Lm53LVFFJGyl6fCTT6uNS0KVjzfi73bLTLwGMrtIqbd
-	 2PD7zzl5wx41pkiTd4E1MbCoFbyq6mYN3ZMrbph1XW/ogXdlYh6BhAPgbe7Q8370IR
-	 QKKBvE9KcMVo7ez+Q61Lzj4C2+Wwdpj6EPFzjelBoTzO9VLP0NncA/0T4XLsnaNRC8
-	 QYa33a6PxhIwcQAh6jnQMFtto5x9qx43OsmRQTlDbjSrz1E0l7StRXb1ihPod8JFl7
-	 V+ZEtH41mxOGUgbsh+sZfjco3/H7VWG5NALXVHS/aWhARrQUp7PWLIA9WePeMzJel7
-	 N9m+GRxBcgPDg==
-Date: Tue, 15 Jul 2025 18:09:55 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Joris Verhaegen <verhaegen@google.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Cezary Rojewski <cezary.rojewski@intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>, kernel-team@android.com,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com, linux-arm-msm@vger.kernel.org,
-	sound-open-firmware@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/4] ALSA: compress_offload: Add 64-bit safe timestamp
- API
-Message-ID: <aHZMG2XnCLoBuf9T@vaman>
-References: <20250711093636.28204-1-verhaegen@google.com>
- <aHD7/9MZbcOmn+08@opensource.cirrus.com>
- <8734b2hpcu.wl-tiwai@suse.de>
+	s=arc-20240116; t=1752583234; c=relaxed/simple;
+	bh=7UX3x/MHm8ZjEhi614uxqFA/BFt2lbZMabMPCyvqYC8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RHfzF7vUvUBcyldk+enXYizOUL6wqqSr1G5rokuuwondr+O3VGcrVFVSsEYj/gLmpvbskHq+hEwVXVYYKCpsbJLPhmp/nnlnWT0OpTxVWafn0Sjkev2324VA2lzueuNtEWXyaMX/+D+4/0yWGOxouUI/gKYk5kIwuCcozS+tfnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=uL4Fdflv; arc=none smtp.client-ip=57.103.67.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
+	by outbound.pv.icloud.com (Postfix) with ESMTPS id 2805D18002DA;
+	Tue, 15 Jul 2025 12:40:31 +0000 (UTC)
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=Dw3ZIYMTrBoGuRyeavT9Yda8JQaDT00t/bCnCZ4BBVA=; h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:x-icloud-hme; b=uL4FdflvoSA7DzAZbknWEh5PYleiTxNLrRQGA03K275gTNIoxlGrv0p4bpZ6t8tpumfAzwNFzmtyhnQ3HMvK4tXWfGc4f2F7U2etWlcHiSkqI8qFC5cJL99sdNl8MU11/dnW/Y+ISMPYrXumcyhFY6Z4IbVJrLj8t5wGQ8W6DWx9qH/Rp46H2hRTiCY5OQz1qcj3lQzGBuYOlPSEIbExstsRC03VDz3DoxpzJzB7w0oi6P9ET7yaNamZZuw0sHFmJV2htHpn8ocV25onp61Tyyr5LFreeqY5FGEE/dVkJYHppRB+veuOfGFHOdeiPGNYGUbT3FztbgNarUOsRmhjPw==
+Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 0BFF018002E4;
+	Tue, 15 Jul 2025 12:40:28 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Subject: [PATCH 0/2] Bluetooth: btusb: QCA: Fix bug and support downloading
+ custom firmwares
+Date: Tue, 15 Jul 2025 20:40:12 +0800
+Message-Id: <20250715-bt_quec-v1-0-c519cf7a0e16@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8734b2hpcu.wl-tiwai@suse.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACxMdmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDc0NT3aSS+MLS1GRd01TD5DQTg7REQ9NEJaDqgqLUtMwKsEnRsbW1AMo
+ 5xn1ZAAAA
+X-Change-ID: 20250715-bt_quec-5e1cf40fa15a
+To: Marcel Holtmann <marcel@holtmann.org>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+ Matthias Kaehlcke <mka@chromium.org>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-bluetooth@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Zijun Hu <zijun.hu@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-ORIG-GUID: u8f0fj4FADDj7nPwDL99JEKDPLzhnxSR
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDExNiBTYWx0ZWRfX6mbJcuxB4kRH
+ Dla9Yw6lbxVcvhyXjlLz5nAAGkixiC9yX3tUcqYV/rFz6Yyu7C9JGBvtfoabJTVnO4gO77CxTXz
+ HZ0LvWY6sKqfVzUsONv2GG5RMebaocS60ZKyL5tps5BVrdi/NRATcSnyP05L/hP3UkJuQmm6WvO
+ CcQ8Lxk7Cy007SUQ5CkRPYQpj5/kBOO1PRsfKqSrX4MO2yXIe23j3S4mqOThMSXIkcVXFIiLj1A
+ /uEKDoZXCMlD2rDi4GR+6ItetGZ4CBi3X6v2SbA8PfmLzwQ1fkjeOR3eCkg+i10V8aGWJ27II=
+X-Proofpoint-GUID: u8f0fj4FADDj7nPwDL99JEKDPLzhnxSR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-15_03,2025-07-15_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0
+ phishscore=0 bulkscore=0 mlxscore=0 suspectscore=0 malwarescore=0 spamscore=0
+ clxscore=1011 mlxlogscore=776 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.22.0-2506270000 definitions=main-2507150116
 
-On 11-07-25, 14:41, Takashi Iwai wrote:
-> On Fri, 11 Jul 2025 13:56:47 +0200,
+This patch series is to:
+1) Fix a bug
+2) Support downloading custom-made firmwares
 
-> > Would it not be slightly simpler to just update all the in kernel
-> > bits to use 64-bit and then only convert to 32-bit for the
-> > existing 32-bit IOCTLs? Why do we need 32-bit callbacks into the
-> > drivers for example?
-> 
-> Right, it's a usual pattern to have only the 64bit ops in the kernel
-> driver side while providing the 32bit stuff converted in the core
-> layer.  Having two different ops are rather confusing and
-> superfluous after conversions.
-> 
-> If there are tons of users for this API, it'd be needed to convert
-> gradually, and eventually drop the 32bit ops at the end.  But in this
-> case, there doesn't seem so many relevant drivers, hence the
-> conversion can be done in a shot as done in your patch 4.
+Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
+---
+Zijun Hu (2):
+      Bluetooth: btusb: QCA: Fix downloading wrong NVM for WCN6855 GF variant without board ID
+      Bluetooth: btusb: QCA: Support downloading custom-made firmwares
 
-I agree we should do that. Kernel can be 64bit only while we keep
-maintaining the 32bit ioctls, cant drop that one
+ drivers/bluetooth/btusb.c | 128 ++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 91 insertions(+), 37 deletions(-)
+---
+base-commit: be736f5f89d519e58057ee40c3e09fbfc711d4dc
+change-id: 20250715-bt_quec-5e1cf40fa15a
 
+Best regards,
 -- 
-~Vinod
+Zijun Hu <zijun.hu@oss.qualcomm.com>
+
 
