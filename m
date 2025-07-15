@@ -1,164 +1,100 @@
-Return-Path: <linux-kernel+bounces-731422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 459B2B05406
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:03:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6FAB05409
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38AE2179E1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:03:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E1204A2973
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891002737FF;
-	Tue, 15 Jul 2025 08:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC2B273D67;
+	Tue, 15 Jul 2025 08:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jDNxy/st"
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U7aud48H"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FE522CBEC
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4344818CC13;
+	Tue, 15 Jul 2025 08:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752566621; cv=none; b=nDqfzQXUdCS67BW9xlOfix4FIq1Ee+0RaOvg4QhFwPAXvT/8bj1myp34R89b0fFBWMNCRhGdyafuxOUzSJ/j5wb5ELscz90bH1B1TGdQvarr3j1YAD0EU27QOLFIpDeIwRuXGlW9Db8/X05ovsK945BnuPDH+/7S121mI67ju5w=
+	t=1752566633; cv=none; b=isN2SykURTZXOhCjrIbfEd4K7qeo3aDmebqrd556kP30Vk4TvCY2pNiIVrodF2Wyr8kbXZsv+G3jedxUaSQy5vnxvId39mSuhXGNALXYaOdoOs+8VFm0OIxxpxJGCcfKt58nykbBxQZ6DMrcyLtpUk4bBFErsiI8F6Fn6rwDbz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752566621; c=relaxed/simple;
-	bh=UZBwZ59CPBLYFwNPeLfjUvXYkBJQ3D4WxtoV2nfUiVk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HbX5IlGEzWB3yUvjJ63p7Hb/N8aJRB9vBreTLv381/l8jS3Nyh8GO8TUWGCjZMVIc26lO+TS21G2Dufe2QCrghkZCoyVqGioA/0HxN1cRY/jQcBEI30rVk5wwuShuDQndh3qzzKt3mMYhhXdVmDJh7PilbykKDsTZoCHdZjuK/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jDNxy/st; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-ae98864f488so269200966b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 01:03:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752566618; x=1753171418; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ALgOJfM7Oe3hti1pkSfdPY9FKknayko8OLCQL/Qg9dU=;
-        b=jDNxy/stG7kCCyAmSAPCxxk85DfC1aN6UV5oR7hvFswiVpC11kzyFxzu6Vnwq3b4SK
-         7ji3SMtzIKLFnRSWJyqCIl736MS70tmQ8KCnM2TsOIDb4RdTC7fANdbGHkIRLQY+cJeL
-         b4/kSfRCULRal/1A6XMnx3PyBkAPUWNpGGG0JnDa9EAOSbT6NRT7sq5yuQ8lP1/R5gOx
-         +0I1HhsdG5Yll1MQJCt2FO9lMDYFXce96uHkzkoUznWVd41/JnX3yPqBRzG4CINbWKbp
-         Wt+k9qUvY1uzAyPGRYET4Nwwwj1Qhte/GPBc13K2qQ4AWgwP6w2mAsHd1GL9FFyB148z
-         xn5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752566618; x=1753171418;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ALgOJfM7Oe3hti1pkSfdPY9FKknayko8OLCQL/Qg9dU=;
-        b=qQ2oQ2thgB5PcAcu8+Lb6S/mPS1iwHg8TPiBNInZE9UBzzUKyDu2PaoVuCoz54Y7S6
-         x3GtT3CNnkVA1pE96brj1Wlc4RZ4SeBPy4m0Bl0ic/v2jlm6ICCIl9cqZOldWmCKqBqG
-         jaJfg8PyA+DCv5TA4r1bZKp9RAOki21PZdsGBCDdUGy62EbHq8kc4QxQulqeh7tqXmSz
-         cso+D42q4r20eoEbBCXF9ISje6UwoSZrm2QTS7DeMnAHmmC/4wKWEhsTjPHCBedmEZqv
-         O3SOrEmAUUZO6dtR19dKqpnjvpFbcDWVZY0x6cW8Zwo4XXwSTTtOX6RC8IvBGjbD8Ear
-         MXQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWt2gNYiFEsNh7LM3OWDRs//732FHRl1WRVx0YM8tOuzT+5M9vuoBbNueLuzfPEp2bBp1Ye1LGOYxo+mEQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmEzBSzHv8Tx2qCf71C81QGGiOy+wA+at0LjWfxi7rG0HIQF9g
-	sPJ/N9nnIRCHO047GU7QCFh37rucwLwXc9tXpMuJ6zIIRe8d4k39DAG+jg96Te7IpX0I3XFqat2
-	ZMLvbufA/fo3r7Dqdiw==
-X-Google-Smtp-Source: AGHT+IGXzCEeRLbwNqRQm5Ckx3fjlOe92BzWH43/qO1crcM1pk5L1WvDjbrrOCtG1P4K3A1uiO+4F3W14czD0ws=
-X-Received: from ejbce10.prod.google.com ([2002:a17:906:b24a:b0:ae0:cf75:d79c])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:906:c144:b0:ae0:d8f2:9065 with SMTP id a640c23a62f3a-ae701268ec3mr1498857866b.39.1752566618681;
- Tue, 15 Jul 2025 01:03:38 -0700 (PDT)
-Date: Tue, 15 Jul 2025 08:03:37 +0000
-In-Reply-To: <20250711-topics-tyr-platform_iomem-v13-1-06328b514db3@collabora.com>
+	s=arc-20240116; t=1752566633; c=relaxed/simple;
+	bh=ccB3g1i+FlT6Refbk3kbcc1DCT4Lzxwfp0JaKJHF5Ew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ub8qNPbVN0dVLhqAlpp7Wn4al5YwhHUh2QfFZbPWAP9DzCqMfwyu6+0E3riepwgFewBFpX2cytBHSLD2ffNoAUNZ7wEhh8kFibs+3qtCf3WGPDljgvrTv5uz+skpV32v+3czMwf2DYq/vPX26CWDL4r80xZoFmEwM6HlqSj0DhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U7aud48H; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752566632; x=1784102632;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ccB3g1i+FlT6Refbk3kbcc1DCT4Lzxwfp0JaKJHF5Ew=;
+  b=U7aud48HZ1iQ/aogQ/Et5aGNEFZq/41/7UxlIa4NLxAv2puxBzsFB1yl
+   6aqrHg6aOxoZiXC/hzKhjUNAZvVVrZEvwq9YilzT81Vi1l+KuIAxjSzyo
+   V++b5qPjNmnKuSfoNw18SM4nE3dG+9aGwPlvUbnsxAxubJKAa6PNGDdOV
+   mueUsYZOhqnmWpZxuF31SJvR/7zwOy2vkgB8HFetXWUx4cHRe6gEScpRH
+   516/CAs2zTAW648Zdccsa29E0RAevH7ANhsuHmfhPlvYsvecdqqTZupSO
+   44RAMW/VfhWtRzm4XNJ9X+k5Lk6SPnea3QWTJWS8aVuJwOTCw9gr7ZGMn
+   g==;
+X-CSE-ConnectionGUID: IaMx8ktFTlqT5dNEZNYgiQ==
+X-CSE-MsgGUID: bGmL7oZHR0CVHLyBYM0FyQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="57386373"
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="57386373"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 01:03:51 -0700
+X-CSE-ConnectionGUID: ebpOT1OfQk64zDmY82ECKg==
+X-CSE-MsgGUID: N+wbQ80uT8SLCep1GK2cKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="161179286"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 01:03:49 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ubade-0000000Fai5-0CiP;
+	Tue, 15 Jul 2025 11:03:46 +0300
+Date: Tue, 15 Jul 2025 11:03:45 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-iio@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH 1/7] math64: Add div64_s64_rem
+Message-ID: <aHYLYT57eF6UhLvC@smile.fi.intel.com>
+References: <20250715012023.2050178-1-sean.anderson@linux.dev>
+ <20250715012023.2050178-2-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250711-topics-tyr-platform_iomem-v13-0-06328b514db3@collabora.com>
- <20250711-topics-tyr-platform_iomem-v13-1-06328b514db3@collabora.com>
-Message-ID: <aHYLWc_KkMHj_jF-@google.com>
-Subject: Re: [PATCH v13 1/3] rust: io: add resource abstraction
-From: Alice Ryhl <aliceryhl@google.com>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Fiona Behrens <me@kloenk.dev>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715012023.2050178-2-sean.anderson@linux.dev>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Jul 11, 2025 at 07:32:27PM -0300, Daniel Almeida wrote:
-> In preparation for ioremap support, add a Rust abstraction for struct
-> resource.
-> 
-> A future commit will introduce the Rust API to ioremap a resource from a
-> platform device. The current abstraction, therefore, adds only the
-> minimum API needed to get that done.
-> 
-> Co-developed-by: Fiona Behrens <me@kloenk.dev>
-> Signed-off-by: Fiona Behrens <me@kloenk.dev>
-> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+On Mon, Jul 14, 2025 at 09:20:17PM -0400, Sean Anderson wrote:
+> Add a function to do signed 64-bit division with remainder. This is
+> implemented using div64_u64_rem in the same way that div_s64_rem is
+> implemented using div_u64_rem.
 
-Some nits below, but overall LGTM. With those fixed:
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+LGTM, but one important Q. Can we (start to) add the test cases, please?
 
-> +    /// Requests a resource region.
-> +    ///
-> +    /// Exclusive access will be given and the region will be marked as busy.
-> +    /// Further calls to [`Self::request_region`] will return [`None`] if
-> +    /// the region, or a part of it, is already in use.
-> +    pub fn request_region(
-> +        &self,
-> +        start: ResourceSize,
-> +        size: ResourceSize,
-> +        name: &'static CStr,
-> +        flags: Flags,
-> +    ) -> Option<Region> {
-> +        // SAFETY:
-> +        // - Safe as per the invariant of `Resource`.
-> +        // - `__request_region` will store a reference to the name, but that is
-> +        // safe as the name is 'static.
-> +        let region = unsafe {
-> +            bindings::__request_region(
-> +                self.0.get(),
-> +                start,
-> +                size,
-> +                name.as_char_ptr(),
-> +                flags.0 as c_int,
-> +            )
-> +        };
-> +
-> +        Some(Region(NonNull::new(region)?))
-> +    }
-> +
-> +    /// Returns the size of the resource.
-> +    pub fn size(&self) -> ResourceSize {
-> +        let inner = self.0.get();
-> +        // SAFETY: safe as per the invariants of `Resource`.
-> +        unsafe { bindings::resource_size(inner) }
-> +    }
-> +
-> +    /// Returns the start address of the resource.
-> +    pub fn start(&self) -> u64 {
+-- 
+With Best Regards,
+Andy Shevchenko
 
-This should be a ResourceSize, right? You use the ResourceSize type for
-the `start` when calling `request_region`.
 
-Or ... should we have another PhysAddr typedef that we can use here?
-
-> +        let inner = self.0.get();
-> +        // SAFETY: safe as per the invariants of `Resource`.
-> +        unsafe { (*inner).start }
-> +    }
-> +
-> +    /// Returns the name of the resource.
-> +    pub fn name(&self) -> &'static CStr {
-> +        let inner = self.0.get();
-> +        // SAFETY: safe as per the invariants of `Resource`
-> +        unsafe { CStr::from_char_ptr((*inner).name) }
-
-This is 'static? I would like this safety comment to explicitly say that
-the string always lives forever no matter what resource you call this
-on.
-
-Alice
 
