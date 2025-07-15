@@ -1,164 +1,153 @@
-Return-Path: <linux-kernel+bounces-731720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 408E8B0589D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:21:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51564B058A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 995D71A64C57
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:21:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85EFA7B3A1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0902D9482;
-	Tue, 15 Jul 2025 11:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE042D948C;
+	Tue, 15 Jul 2025 11:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="geI67ajN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LT1+Hunb"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBADF26E6F1;
-	Tue, 15 Jul 2025 11:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09921547C9
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752578487; cv=none; b=anu6/SMuDRIkJGF9AY9gbD818vxfWmyvip0cr5JOqWwrlaoOICsJ+geBJQTNbLKIykrBHkbT4cyegOKXIqYdjYXUCCnsnTslbHka9H0sHIqu/o1hGonS6ROFzQaOefs/6NXm3tuxkuK0RyBEnZpb6xDHW07jCrHl6kk55q4Dj0E=
+	t=1752578599; cv=none; b=EuCegQGwkdoT4GgYJpm6AlLD0mLdnJkkMoan2YmcdlPI4QPdqj6Q/qVkIWQcHCnwjwv+1UgAK0kb1fIs9jXT6BZCvSAJU7ttg7YIbmT9O4dgoGCOAtcCXpQe9aBh2HlD3R2VrcDL+1ftXnLMmzAHK9hfRg7VWMi3qZEc8VpnMMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752578487; c=relaxed/simple;
-	bh=/VY8qNuYt4dNinHnUlxo11M1DqWGCBPY/iGLGM4TX0k=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=D2IhTjX4hirzSDvpLYSDl1gsrlTp3RSsY47LOtd0qtBvVQkTSn+zOsLjUX9e5eAoqZ8Pb0fSF/RVzJlkc0GTK3e+gA4+IoBsBnVDGKcff2yrJu7cPT7GwHjugCU41dZzSfBM/bBmEaTQD7ppHrO1jGXlbeW7WQf4SKsHzZlRsKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=geI67ajN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7550EC4CEE3;
-	Tue, 15 Jul 2025 11:21:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752578487;
-	bh=/VY8qNuYt4dNinHnUlxo11M1DqWGCBPY/iGLGM4TX0k=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=geI67ajNzB1NnjNM/Kwwkcn9Ae6O+GY2Ul7aE+Z1d9tQ+l9tnkhCAsMo/SYmVNpyv
-	 bjvx4daHrY606Gl/qiv/VxeAdZbayYx+2qLmgrVm9IHJXAziicrI805w0dtCrGYC1v
-	 WYtJMEWL0suCEfbwYr2otZM0/gjJ4uCI9jtEW8+ipdw0Zyq+0EXYGa0k02xjJheR+M
-	 oBWYLkz3bu0Q5UJR3UPsBuDZqRq4/HAF7+gPAH7iYv9W01G4yHLgW0vZLlQieu9CFp
-	 10uKjM0nYVgHLQYJDqIle2bpXR67J21LBfmHaUYtQF45Kt86/YC15Y+fs2i1zKTY7c
-	 elWpMfeCpOYWg==
+	s=arc-20240116; t=1752578599; c=relaxed/simple;
+	bh=IY0RYliD52Wg81NkyznsIfbLs+A8l+WlswZeYFbvDtU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=uCfsms7HAuqgc6sUTkSeNKUKJFupVlHBYQwxOPMPZ8bK28AWNuEGF917egNybKgLcsRNdIcsgCACqK+2OH3SSTIWlMu7J0+SfsSA8BTli3POouRFKAE6t7/JwcGzDJe0CF2Z/fhdkIG1nnQtioF4ohCxoME169JwrvMRxG/l6/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LT1+Hunb; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3138b2f0249so4337826a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:23:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752578597; x=1753183397; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4NcnVHT6qn7BJ6Ec3gjN6DJVTr3Q8w/Kv+WVRHHdtL8=;
+        b=LT1+HunbmHPmfaBZkk0c6U0u0nY2XMys8P+ish4ovpjEtMU5+qpsSfZ8Z8Fmg0+85o
+         f/alJDM81uA1EfywJYJpG+YMCKyYOwy6iJU8aoPritUulmFir6JKKXYlSA5uJC2fT+1z
+         gMgxWLn4i0BSN98p0wb65+YXGCh6eWPXIDl4a6E0Zu5oHQr6y3fwMBIbyjmI8lvdaIeS
+         K2DKF565O2iV7Y0Jr/vmYQwmB7kHczDMIEZPJcFqMwIMe0sLJ6sctM21mmtSWb/h1EZP
+         4LvIw87V6jAjHZ9q4WpAoZDneOoSi86NC3RyRdylx0l7ZP2fKMEayui2VupGSsQvfQ0/
+         QPqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752578597; x=1753183397;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4NcnVHT6qn7BJ6Ec3gjN6DJVTr3Q8w/Kv+WVRHHdtL8=;
+        b=sBdqyxjIKX1k+M1Lh/wEAzjGwuGfjdgyJTm3FjiyYvYihr4Dc7bc80JORv1nvAAT+A
+         Evdwdmi7LDlfoYdHRifOASHMATBWQTOuaGtyLMyqxYQbYH3KaEYkWgplvxvwevKOKn06
+         ZEY6Y8+kNbpRZBH5sJU/DQFJmS5/pdZPsu/0aeqoreLjL5tjIevHfjw1dcwfaZb77Fis
+         V9uUpTwdelyFAcyZIO1BPufoHFCic6+gIGVp/bOQXrGYMWgomKa2f3WaixPetZg/vCpO
+         QLRjnzIuQG6pghiTlQpTGQ30+4hLSPk+oom5feKVUymYbpBsE1oKhHAdbsSXNgpFJwdt
+         bNwA==
+X-Gm-Message-State: AOJu0YxfNaKy0BYi9QKkHAJ4y7i7JkpbwnHHB/kwdNfO95mJHg+LVpSx
+	UEUwuUkX7wUr81r3pPXcJ0fbv5N/waZOIXylJqhMO0zxUdeSzwgezrRJg9VLqTMOZZ4CG08lFzW
+	V+D/KG6dP25bEHvKj7GW4OTGaYk3PeWDL5vzwba/ZJHB8Wq8LeWDUmqw=
+X-Gm-Gg: ASbGncu42jX+LRJuMYe5NAOXCbpetYqJNfyvJteJ4dvxev9gcDkzYiV1xe0T6ZcCNPe
+	WJ36aYuRHNeyruRAg6uz0X68YQ73HnbZwiqA9cUx9dMPGwHWt4LsDiVeDsb8TY9EnkwkuFbw+s1
+	m/l9Gv94AVFZ49hgDWdRlu4EBQzq7AxdTHIlrAzt7vC6hNihhWDNk4uaK+rPmA0YLkz4XXDeu2+
+	XLy0SDc1Y9iVV/SlyOi58Zebc5Jfr8+7E+2+4HhLdVE7L+hyx4=
+X-Google-Smtp-Source: AGHT+IELZ4SimOBJO6yrghuVWIOvvAedlzL4IeD6zPpIQjSz8JGeh7uFbZ7kG0dhBVgjaSWgYEdK7o4EE+MZnbE6CoQ=
+X-Received: by 2002:a17:90b:4c0d:b0:315:af43:12ee with SMTP id
+ 98e67ed59e1d1-31c50e1763cmr20865064a91.16.1752578596648; Tue, 15 Jul 2025
+ 04:23:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 15 Jul 2025 13:21:20 +0200
-Message-Id: <DBCL7YUSRMXR.22SMO1P7D5G60@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <lkmm@lists.linux.dev>,
- <linux-arch@vger.kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "Will Deacon" <will@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
- "Mark Rutland" <mark.rutland@arm.com>, "Wedson Almeida Filho"
- <wedsonaf@gmail.com>, "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude
- Paul" <lyude@redhat.com>, "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
- <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Alan Stern" <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v7 6/9] rust: sync: atomic: Add the framework of
- arithmetic operations
-From: "Benno Lossin" <lossin@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250714053656.66712-1-boqun.feng@gmail.com>
- <20250714053656.66712-7-boqun.feng@gmail.com>
-In-Reply-To: <20250714053656.66712-7-boqun.feng@gmail.com>
+MIME-Version: 1.0
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 15 Jul 2025 16:53:04 +0530
+X-Gm-Features: Ac12FXw5_VIt4EBOG5y1_FGQ9hbqKjaE3fl3SBQ4AiBXr0z1r7gqAHncSjssGvY
+Message-ID: <CA+G9fYusqGejrepNPCR-7ZZDPeQQfZgf2z=_aUz_03QHm7Ccaw@mail.gmail.com>
+Subject: selftests: arm64: mte: check_prctl.c:72:17: error: use of undeclared
+ identifier 'AT_HWCAP3'
+To: open list <linux-kernel@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>
+Cc: Yeoreum Yun <yeoreum.yun@arm.com>, Mark Brown <broonie@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Shuah Khan <shuah@kernel.org>, Benjamin Copeland <ben.copeland@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon Jul 14, 2025 at 7:36 AM CEST, Boqun Feng wrote:
-> +/// Types that support atomic add operations.
-> +///
-> +/// # Safety
-> +///
-> +/// Wrapping adding any value of type `Self::Repr::Delta` obtained by [`=
-Self::rhs_into_delta()`] to
+The selftests arm64 mte build failed on the Linux next-20250703 onwards
+with clang-20 toolchain. still seen on today's tag next-20250714.
 
-I don't like "wrapping adding", either we use "`wrapping_add`" or we use
-some other phrasing.
+First seen on the tag next-20250703
+Good: next-20250702
+Bad:  next-20250703 (next-20250714)
 
-> +/// any value of type `Self::Repr` obtained through transmuting a value =
-of type `Self` to must
-> +/// yield a value with a bit pattern also valid for `Self`.
-> +pub unsafe trait AllowAtomicAdd<Rhs =3D Self>: AllowAtomic {
+Regression Analysis:
+- New regression? Yes
+- Reproducibility? Yes
 
-Why `Allow*`? I think `AtomicAdd` is better?
+Boot regression: next-20250703 check_prctl.c error use of undeclared
+identifier 'AT_HWCAP3'
 
-> +    /// Converts `Rhs` into the `Delta` type of the atomic implementatio=
-n.
-> +    fn rhs_into_delta(rhs: Rhs) -> <Self::Repr as AtomicImpl>::Delta;
-> +}
-> +
->  impl<T: AllowAtomic> Atomic<T> {
->      /// Creates a new atomic `T`.
->      pub const fn new(v: T) -> Self {
-> @@ -462,3 +474,100 @@ fn try_cmpxchg<Ordering: ordering::Any>(&self, old:=
- &mut T, new: T, _: Ordering)
->          ret
->      }
->  }
-> +
-> +impl<T: AllowAtomic> Atomic<T>
-> +where
-> +    T::Repr: AtomicHasArithmeticOps,
-> +{
-> +    /// Atomic add.
-> +    ///
-> +    /// Atomically updates `*self` to `(*self).wrapping_add(v)`.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// use kernel::sync::atomic::{Atomic, Relaxed};
-> +    ///
-> +    /// let x =3D Atomic::new(42);
-> +    ///
-> +    /// assert_eq!(42, x.load(Relaxed));
-> +    ///
-> +    /// x.add(12, Relaxed);
-> +    ///
-> +    /// assert_eq!(54, x.load(Relaxed));
-> +    /// ```
-> +    #[inline(always)]
-> +    pub fn add<Rhs, Ordering: ordering::RelaxedOnly>(&self, v: Rhs, _: O=
-rdering)
-> +    where
-> +        T: AllowAtomicAdd<Rhs>,
-> +    {
-> +        let v =3D T::rhs_into_delta(v);
-> +        // CAST: Per the safety requirement of `AllowAtomic`, a valid po=
-inter of `T` is a valid
-> +        // pointer of `T::Repr` for reads and valid for writes of values=
- transmutable to `T`.
-> +        let a =3D self.as_ptr().cast::<T::Repr>();
-> +
-> +        // `*self` remains valid after `atomic_add()` because of the saf=
-ety requirement of
-> +        // `AllowAtomicAdd`.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-This part should be moved to the CAST comment above, since we're not
-only writing a value transmuted from `T` into `*self`.
+## Build log
+make[5]: Entering directory '/builds/linux/tools/testing/selftests/arm64/mte'
+  CC       check_buffer_fill
+  CC       check_child_memory
+  CC       check_gcr_el1_cswitch
+  CC       check_hugetlb_options
+  CC       check_ksm_options
+  CC       check_mmap_options
+  CC       check_prctl
+check_prctl.c:72:17: error: use of undeclared identifier 'AT_HWCAP3'
+   72 |         if ((getauxval(AT_HWCAP3) & hwcap3) != hwcap3) {
+      |                        ^
+1 error generated.
+make[5]: *** [../../lib.mk:222: selftest/arm64/mte/check_prctl] Error 1
+make[5]: Leaving directory 'tools/testing/selftests/arm64/mte'
 
----
-Cheers,
-Benno
+## Git Changes
+git log --oneline   next-20250702..next-20250703
+tools/testing/selftests/arm64/mte/
+1f488fb91378e kselftest/arm64/mte: Add MTE_STORE_ONLY testcases
+391ca7c81b85c kselftest/arm64/mte: Preparation for mte store only test
+d09674f98cdbf kselftest/arm64/mte: Add mtefar tests on check_mmap_options
+64a64e5d12f07 kselftest/arm64/mte: Refactor check_mmap_option test
+49cee364c8665 kselftest/arm64/mte: Add verification for address tag in
+signal handler
+ed434c6e08132 kselftest/arm64/mte: Add address tag related macro and function
+2e3e356560ef5 kselftest/arm64/mte: Check MTE_FAR feature is supported
+cfafa517c9e65 kselftest/arm64/mte: Register mte signal handler with
+SA_EXPOSE_TAGBITS
 
-> +        //
-> +        // SAFETY:
-> +        // - `a` is aligned to `align_of::<T::Repr>()` because of the sa=
-fety requirement of
-> +        //   `AllowAtomic` and the guarantee of `Atomic::as_ptr()`.
-> +        // - `a` is a valid pointer per the CAST justification above.
-> +        unsafe {
-> +            T::Repr::atomic_add(a, v);
-> +        }
-> +    }
+## Source
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Project: https://regressions.linaro.org/lkft/linux-next-master/next-20250714/
+* Architectures: arm64
+* Toolchains: clang-20
+* Kconfigs: defconfig
+
+## Build
+* Test details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250714/kselftest-arm64/arm64_check_ksm_options/
+* Test run: https://regressions.linaro.org/lkft/linux-next-master/next-20250714/testruns/1615508/
+* Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2zrW3Ut4mYWOxPVnJTOY5qrft0P
+* Build link: https://storage.tuxsuite.com/public/ampere/ci/builds/2zrZgjFum1wBbTRrsvDGnHC9JMt/
+* Kernel config:
+https://storage.tuxsuite.com/public/ampere/ci/builds/2zrZgjFum1wBbTRrsvDGnHC9JMt/config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
