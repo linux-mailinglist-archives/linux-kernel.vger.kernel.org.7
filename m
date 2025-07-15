@@ -1,85 +1,92 @@
-Return-Path: <linux-kernel+bounces-732338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79BD4B0654B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:38:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11216B06561
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:49:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26F0C189A9D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:38:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1DE8500B43
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24474286413;
-	Tue, 15 Jul 2025 17:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152B2287504;
+	Tue, 15 Jul 2025 17:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ebpZ0Ha1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="kT4Ewi0g"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1C32CCC0;
-	Tue, 15 Jul 2025 17:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010AD186E2E;
+	Tue, 15 Jul 2025 17:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752601102; cv=none; b=MCNgH0O61MjW0u3+nGBWYVmNILsQCmgZrwLg9tATzSWXX8XsR+4jim7V30wUes2xYGbT/E0292TMlMf1MjNQk7V3YOhJ9aBBiiXACzgtVnqZNGuN+TcgDqsp+jYqRtuNeLRgavCGCYvIGKRWGPRizXXMX5v8NgKksA+pP6WB4Zs=
+	t=1752601747; cv=none; b=KmLFZeHLKlE1VS+uq0MYBSbaBLypFtaN1/KOiHCUv3Rr/Ob5RMZ+Dv0Ta7pwHYb9eyLswhtqgSyv24rDahZWOTSnEt+UMlakb3MrmrK59dO5ceIe311RPxUIsNnle18HncvkQ9Dgx/NY2ClKF8fa4/nblyOsLKEEqmmFWobPMdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752601102; c=relaxed/simple;
-	bh=7qOz6bO8oow6/lj2V2t39LS5oFJRjWFbm4P2eTmWqE8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Q3wLJ2mUxss6TlPWp0X+oRnis3v9G72Dwaj7aRlwx86M/wITi4H+RtowIijeSEFZI0eGOJjQrfT9dS95h1jU6eFAR5HIptPz/ZGsRglD72GCudBSATC78lgzuJ3KJEc64cZwZOTBAvgf0Kzu8r6H9RPz+jIvQv3YwobWm6EiGtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ebpZ0Ha1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA4C8C4CEF4;
-	Tue, 15 Jul 2025 17:38:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752601101;
-	bh=7qOz6bO8oow6/lj2V2t39LS5oFJRjWFbm4P2eTmWqE8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ebpZ0Ha17SLFFqZl7HcgzPyO/dW7XJTYJEf82O7beE4LGJOvErYHU+7IF0CzGD9/Z
-	 FKbC1eWfgloojN5sIz59hOxtjN2U41T2BcEt9+fESGvW/L7sslSX5pu9VIwMuIC5kR
-	 1ljv3IQ1SM+9h67akl/5mTOia34oJYnFVc/f16RhUp/o3RsptcOlLtTLrMNx3jOHJp
-	 8pJMGkxHzLpZOAI5ITPDxuxHivJTw5XQm3ePNdMOXIFiOiXvOAk4HtS+yG5KRpqkTR
-	 LM8XPvTAeB16Pf02eZ3q9BOV4ESiOj9QIw8kVud6J9qXISF7jhNM9MRcSPhiFDaU/m
-	 cRaccjIdatc0A==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
- Namhyung Kim <namhyung@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
- Song Liu <song@kernel.org>, bpf@vger.kernel.org
-In-Reply-To: <20250714052143.342851-1-namhyung@kernel.org>
-References: <20250714052143.342851-1-namhyung@kernel.org>
-Subject: Re: [PATCH v2] perf ftrace latency: Add -e option to measure time
- between two events
-Message-Id: <175260110062.3546942.14666650771483286173.b4-ty@kernel.org>
-Date: Tue, 15 Jul 2025 10:38:20 -0700
+	s=arc-20240116; t=1752601747; c=relaxed/simple;
+	bh=szoPdU8t5HxV3+qu49EKJRl2lJmf68LJg4pDte/fGFI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NSXHrKKO4nrWGStkya2K32JqeT+nSPE2+YRsazpvfobHtUF11VNv6IZR8TZgbX8ToXl6jy2gdL7y0gC8hB7mcbo1S4PSgQIxz4aiTGE7xpkcvW976uqMTdD+PskM/cQVXwAnY4DZVw+ZlfePc6+VmZq3PXrBGt3bAaBuPK6y0lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=kT4Ewi0g; arc=none smtp.client-ip=192.19.144.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id C1414C0005E0;
+	Tue, 15 Jul 2025 10:42:20 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com C1414C0005E0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1752601340;
+	bh=szoPdU8t5HxV3+qu49EKJRl2lJmf68LJg4pDte/fGFI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=kT4Ewi0gvW8Ipq8NdA8VUvem2aII/sgJ6l8dGH1wH92aJnwlEqh+22j3tNHNJfUNz
+	 LdM4clMG0Vd1AlGgKOEnFdeNdgH2hPN8XyzcB6pmIxHGZU6/GgzBGRK60uVnKy5vVh
+	 NvivarNrIm9TTzeF1vSMwnkZ8YlD6NISJv2AAUbs=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 56FB218000847;
+	Tue, 15 Jul 2025 10:42:20 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: bcm-kernel-feedback-list@broadcom.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	linux-arm-kernel@lists.infradead.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	kernel test robot <lkp@intel.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: broadcom: Fix bcm7445 memory controller compatible
+Date: Tue, 15 Jul 2025 10:42:19 -0700
+Message-ID: <20250715174219.2421220-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250701175538.1633435-1-florian.fainelli@broadcom.com>
+References: <20250701175538.1633435-1-florian.fainelli@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c04d2
+Content-Transfer-Encoding: 8bit
 
-On Sun, 13 Jul 2025 22:21:43 -0700, Namhyung Kim wrote:
-> In addition to the function latency, it can measure events latencies.
-> Some kernel tracepoints are paired and it's menningful to measure how
-> long it takes between the two events.  The latency is tracked for the
-> same thread.
+From: Florian Fainelli <f.fainelli@gmail.com>
+
+On Tue,  1 Jul 2025 10:55:38 -0700, Florian Fainelli <florian.fainelli@broadcom.com> wrote:
+> The memory controller node compatible string was incompletely specified
+> and used the fallback compatible. After commit 501be7cecec9
+> ("dt-bindings: memory-controller: Define fallback compatible") however,
+> we need to fully specify the compatible string.
 > 
-> Currently it only uses BPF to do the work but it can be lifted later.
-> Instead of having separate a BPF program for each tracepoint, it only
-> uses generic 'event_begin' and 'event_end' programs to attach to any
-> (raw) tracepoints.
-> 
-> [...]
-Applied to perf-tools-next, thanks!
+> Fixes: 501be7cecec9 ("dt-bindings: memory-controller: Define fallback compatible")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202507011302.ZqNlBKWX-lkp@intel.com/
+> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> ---
 
-Best regards,
-Namhyung
-
-
+Applied to https://github.com/Broadcom/stblinux/commits/devicetree/fixes, thanks!
+--
+Florian
 
