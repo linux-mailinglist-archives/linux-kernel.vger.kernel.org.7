@@ -1,116 +1,158 @@
-Return-Path: <linux-kernel+bounces-732468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E10CB0671A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:43:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11CA1B06743
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33DE14E7ACB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:43:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E27A3A4345
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478D62BE7DF;
-	Tue, 15 Jul 2025 19:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NrUZv1pk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B46426FA62;
+	Tue, 15 Jul 2025 19:50:07 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBB28633F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 19:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A8726D4F6
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 19:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752608613; cv=none; b=Nswu5rb9V/Y8a8PN6YtOFvsqLvsKTMX6OHxwqmmm2d9dNUmErok+arcsCz+Ncju4Imog6POm4C1oiuafd4avaUl1WOJbG/Bo443i7Lfbte/K4k9Qzx44wPqPsku342KYSBZ2+MGhKYWAQ4oO93kzk1o8xMz9LP/isMt5DSFityc=
+	t=1752609006; cv=none; b=pjkzwvLnj/+tskxFKwuVMBoplY5Nip7XJlTpFBgVwMTLMh0Zn0II1aJcTQsv/5VyLRDAah1lMObOevPrHdpX9EK3/131yygNl2NQyHLy0txuGjLvxX04oQ98jw/Nbdg4CQz0LCAVHzRSsgIKfz4bFVh2g4od26z0R0oqGgYc2Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752608613; c=relaxed/simple;
-	bh=/sgVpb/dNcZJDSjr3jnNaUZfH0ZhHlTTgWwp6dw5A9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZND0T7UlhwARHqo+JVPCB8Iyjqv0Y+hejpQulWID1JZJRj6kx4hPP+/d/jtduQcHyovNx4Pk+fZbn+vF0exGty9fKeWYEK2iRKuZ6UkfXq0mpCqoGFyMXyM1x65L2EoQnKiWdR+8aYpF4ReQ81j+AbunXeSnb3HbUetVPG2cC+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NrUZv1pk; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752608612; x=1784144612;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=/sgVpb/dNcZJDSjr3jnNaUZfH0ZhHlTTgWwp6dw5A9Q=;
-  b=NrUZv1pkoQF3t+aUpG+cCXT8anwDykRsuPVMukFHP32HByLpSXOVfnyH
-   SsxmTJ21/80tqusUH1hG1wzebEgNe2su7MEORYTXKqDGAkVcaQcI2yfO8
-   MR2YWmFChizZ1EP3b9aqCS60sKHI3ZdYyk6kpfIMoR/83ExjXjt0UTXWv
-   Ab1CtI0846zxudjeQw7meH7/3rwdfQmhO4PabE4G6hqJIfYHF9mN4DpdZ
-   hLKQkJbuNnyNNnVB/dQFqmOejz9UDKeHzA3gg6d4IlPPj3AVBD1q52y/n
-   uwtqoWGI8K3rOf/kpPvHwz6vOHG2nR/73kTdOWY4Dd8XkBsA2i3lOXlHS
-   g==;
-X-CSE-ConnectionGUID: 6uAm2472RzutoPEitleP0g==
-X-CSE-MsgGUID: tqzdaY/fTZKfJBfey8JZKg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="65103234"
-X-IronPort-AV: E=Sophos;i="6.16,314,1744095600"; 
-   d="scan'208";a="65103234"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 12:43:32 -0700
-X-CSE-ConnectionGUID: Lugcj4Y4T+WdN387dk2/wQ==
-X-CSE-MsgGUID: CimoqXWpTOype68qOE5ssw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,314,1744095600"; 
-   d="scan'208";a="157400477"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 15 Jul 2025 12:43:30 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ublYm-000BUt-0V;
-	Tue, 15 Jul 2025 19:43:28 +0000
-Date: Wed, 16 Jul 2025 03:43:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alex Elder <elder@riscstar.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	"Rob Herring (Arm)" <robh@kernel.org>
-Subject: arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dtb: uart@18020000
- (ns8250): clock-names:0: 'core' was expected
-Message-ID: <202507160314.wrC51lXX-lkp@intel.com>
+	s=arc-20240116; t=1752609006; c=relaxed/simple;
+	bh=+uEuU7AB6TR+kdqzjELhd9Bdue8Bb7TZZ9tF9e8LmEk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=kK1GLoi43jSuLyj4N5R4XZ6VWp3tWXRFNTNly28wA1w0lH+9Kbn8D1BMvooQ1K4LsM9qDKzNN6HekXUPQPYQjurRrdz8oCURjd2r3TZsupu9/palZAkYBlaz5YV3ujA+jFzXvkhnk+V7PCtAqZSmG4tBbcPhUTmxp06aiiQjFoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-87313ccba79so1129820039f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 12:50:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752609004; x=1753213804;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vQ3D5M5JxcaGWNBRgjpMcegMV7DZqvWfaA/890sSWL0=;
+        b=XV7yKWBnoRRs+cB0bQf1Ng0XDsSgmz7lWHpymwnQBWyzB2ovkapAvsfRypr8AGrseV
+         pK8dlf27Lyr1Ehw+mnTh/1ciT1qzDLv3U7uXDCw2QsCeHYeMudRlNk/psCVtTSQSvrCR
+         g7/iVrugIyhm+u34R7oS5nXYfRIvzkoO+bZVmqOH1ILQKR0hBiFq0hrBExWtTftkGCOa
+         FM+AmX0g0bbzMmMs+0PbXO0QYwLZzpSbtj+P3uuhHAhgycaRHZap7BRXhU5UWZO6EuA8
+         WpfuwDcjCGlAGhamgCnGkLlnmOOQQ0VDC/WW4f8YhBkXbCQD6FNLCzcRJp3nFhah3Tvu
+         9Waw==
+X-Forwarded-Encrypted: i=1; AJvYcCWE/FT8rnNEbKhaNgovD7D99mvwyyOIh9tV1BR0fHuTgKqB59CEsV8OAgqW5mxarl79TiRY7UP/zy4QmS8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmzwWmy9MnmEUeZ6HR+PC2yjSUeauNUhK2OI3HyuMK26ZXI9+4
+	/MsNBwPrfHjD9oySfTsQ6aY6n39XZLVOX0DoJEyXhT+aXwieLlI+vp/pzSSR9O+ZZLKV/lJP8px
+	jVRVkNkyA+o0C24KiDfyXcIpZE0QPWPo28dl7EQnZDaBdPJ9hEnZRiXUx+68=
+X-Google-Smtp-Source: AGHT+IEWiMhv4z+y4mOvwDxT8I8T07EbqKF1ZqN7fiGc7selz2EIw9tnvYUA+QJJmi/9xI+xfSvs2LLDvozk+Gmwa6K0RH0fPVX5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Received: by 2002:a05:6602:6a8e:b0:85b:3f06:1fd4 with SMTP id
+ ca18e2360f4ac-879c08aa6d9mr89064939f.9.1752609004301; Tue, 15 Jul 2025
+ 12:50:04 -0700 (PDT)
+Date: Tue, 15 Jul 2025 12:50:04 -0700
+In-Reply-To: <8bec1698-5008-428f-8e71-ec002def0c54@rowland.harvard.edu>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6876b0ec.a70a0220.693ce.0019.GAE@google.com>
+Subject: Re: [syzbot] [input?] [usb?] UBSAN: shift-out-of-bounds in s32ton (2)
+From: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>
+To: bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   155a3c003e555a7300d156a5252c004c392ec6b0
-commit: 2c0594f9f0629a8b4d46e7e1bd069a0bafc2e350 dt-bindings: serial: 8250: support an optional second clock
-date:   3 months ago
-config: mips-randconfig-051-20250716 (https://download.01.org/0day-ci/archive/20250716/202507160314.wrC51lXX-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-dtschema version: 2025.6.2.dev4+g8f79ddd
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250716/202507160314.wrC51lXX-lkp@intel.com/reproduce)
+Hello,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507160314.wrC51lXX-lkp@intel.com/
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+UBSAN: shift-out-of-bounds in s32ton
 
-dtcheck warnings: (new ones prefixed by >>)
-   arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dtb: /: failed to match any schema with compatible: ['tplink,tl-wr1043nd-v1', 'qca,ar9132']
-   arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dtb: /: failed to match any schema with compatible: ['tplink,tl-wr1043nd-v1', 'qca,ar9132']
-   arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dtb: /interrupt-controller: failed to match any schema with compatible: ['qca,ar9132-cpu-intc', 'qca,ar7100-cpu-intc']
-   arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dtb: /interrupt-controller: failed to match any schema with compatible: ['qca,ar9132-cpu-intc', 'qca,ar7100-cpu-intc']
-   arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dtb: uart@18020000 (ns8250): $nodename:0: 'uart@18020000' does not match '^serial(@.*)?$'
-   	from schema $id: http://devicetree.org/schemas/serial/8250.yaml#
->> arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dtb: uart@18020000 (ns8250): clock-names:0: 'core' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250.yaml#
-   arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dtb: /ahb/apb/gpio@18040000: failed to match any schema with compatible: ['qca,ar9132-gpio', 'qca,ar7100-gpio']
-   arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dtb: /ahb/apb/gpio@18040000: failed to match any schema with compatible: ['qca,ar9132-gpio', 'qca,ar7100-gpio']
-   arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dtb: /ahb/apb/pll-controller@18050000: failed to match any schema with compatible: ['qca,ar9132-pll', 'qca,ar9130-pll']
-   arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dtb: /ahb/apb/pll-controller@18050000: failed to match any schema with compatible: ['qca,ar9132-pll', 'qca,ar9130-pll']
-   arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dtb: wdt@18060008 (qca,ar7130-wdt): $nodename:0: 'wdt@18060008' does not match '^(timer|watchdog)(@.*|-([0-9]|[1-9][0-9]+))?$'
-   	from schema $id: http://devicetree.org/schemas/watchdog/qca,ar7130-wdt.yaml#
-   arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dtb: wdt@18060008 (qca,ar7130-wdt): Unevaluated properties are not allowed ('clock-names', 'clocks', 'interrupts' were unexpected)
-   	from schema $id: http://devicetree.org/schemas/watchdog/qca,ar7130-wdt.yaml#
-   arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dtb: /ahb/apb/interrupt-controller@18060010: failed to match any schema with compatible: ['qca,ar9132-misc-intc', 'qca,ar7100-misc-intc']
+microsoft 0003:045E:07DA.0001: ignoring exceeding usage max
+microsoft 0003:045E:07DA.0001: unsupported Resolution Multiplier 0
+hid: s32ton: n 0 val 0 size 0x0
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in drivers/hid/hid-core.c:69:16
+shift exponent 4294967295 is too large for 32-bit type '__s32' (aka 'int')
+CPU: 0 UID: 0 PID: 5987 Comm: kworker/0:4 Not tainted 6.15.0-syzkaller-11339-gc2ca42f190b6-dirty #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
+ __ubsan_handle_shift_out_of_bounds+0x386/0x410 lib/ubsan.c:494
+ s32ton+0xde/0x140 drivers/hid/hid-core.c:69
+ hid_output_field drivers/hid/hid-core.c:1845 [inline]
+ hid_output_report+0x3a2/0x5c0 drivers/hid/hid-core.c:1877
+ __hid_request+0x14a/0x420 drivers/hid/hid-core.c:2000
+ hidinput_change_resolution_multipliers drivers/hid/hid-input.c:1950 [inline]
+ hidinput_connect+0x218a/0x3030 drivers/hid/hid-input.c:2327
+ hid_connect+0x499/0x1980 drivers/hid/hid-core.c:2251
+ hid_hw_start+0xa8/0x120 drivers/hid/hid-core.c:2366
+ ms_probe+0x180/0x430 drivers/hid/hid-microsoft.c:391
+ __hid_device_probe drivers/hid/hid-core.c:2736 [inline]
+ hid_device_probe+0x3a0/0x710 drivers/hid/hid-core.c:2773
+ call_driver_probe drivers/base/dd.c:-1 [inline]
+ really_probe+0x26a/0x9a0 drivers/base/dd.c:657
+ __driver_probe_device+0x18c/0x2f0 drivers/base/dd.c:799
+ driver_probe_device+0x4f/0x430 drivers/base/dd.c:829
+ __device_attach_driver+0x2ce/0x530 drivers/base/dd.c:957
+ bus_for_each_drv+0x251/0x2e0 drivers/base/bus.c:462
+ __device_attach+0x2b8/0x400 drivers/base/dd.c:1029
+ bus_probe_device+0x185/0x260 drivers/base/bus.c:537
+ device_add+0x7b6/0xb50 drivers/base/core.c:3692
+ hid_add_device+0x398/0x540 drivers/hid/hid-core.c:2919
+ usbhid_probe+0xe13/0x12a0 drivers/hid/usbhid/hid-core.c:1435
+ usb_probe_interface+0x644/0xbc0 drivers/usb/core/driver.c:396
+ call_driver_probe drivers/base/dd.c:-1 [inline]
+ really_probe+0x26a/0x9a0 drivers/base/dd.c:657
+ __driver_probe_device+0x18c/0x2f0 drivers/base/dd.c:799
+ driver_probe_device+0x4f/0x430 drivers/base/dd.c:829
+ __device_attach_driver+0x2ce/0x530 drivers/base/dd.c:957
+ bus_for_each_drv+0x251/0x2e0 drivers/base/bus.c:462
+ __device_attach+0x2b8/0x400 drivers/base/dd.c:1029
+ bus_probe_device+0x185/0x260 drivers/base/bus.c:537
+ device_add+0x7b6/0xb50 drivers/base/core.c:3692
+ usb_set_configuration+0x1a87/0x20e0 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0x8d/0x150 drivers/usb/core/generic.c:250
+ usb_probe_device+0x1c4/0x390 drivers/usb/core/driver.c:291
+ call_driver_probe drivers/base/dd.c:-1 [inline]
+ really_probe+0x26a/0x9a0 drivers/base/dd.c:657
+ __driver_probe_device+0x18c/0x2f0 drivers/base/dd.c:799
+ driver_probe_device+0x4f/0x430 drivers/base/dd.c:829
+ __device_attach_driver+0x2ce/0x530 drivers/base/dd.c:957
+ bus_for_each_drv+0x251/0x2e0 drivers/base/bus.c:462
+ __device_attach+0x2b8/0x400 drivers/base/dd.c:1029
+ bus_probe_device+0x185/0x260 drivers/base/bus.c:537
+ device_add+0x7b6/0xb50 drivers/base/core.c:3692
+ usb_new_device+0xa39/0x16c0 drivers/usb/core/hub.c:2663
+ hub_port_connect drivers/usb/core/hub.c:5531 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5671 [inline]
+ port_event drivers/usb/core/hub.c:5831 [inline]
+ hub_event+0x2941/0x4a00 drivers/usb/core/hub.c:5913
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3321
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+---[ end trace ]---
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+Tested on:
+
+commit:         c2ca42f1 HID: core: do not bypass hid_hw_raw_request
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=152e098c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ec692dfd475747ff
+dashboard link: https://syzkaller.appspot.com/bug?extid=b63d677d63bcac06cf90
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13b6098c580000
+
 
