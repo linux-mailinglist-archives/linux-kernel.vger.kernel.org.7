@@ -1,88 +1,228 @@
-Return-Path: <linux-kernel+bounces-732139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40ECAB062AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:19:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1947DB062B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DD1D165D44
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:16:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D43BF1886433
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FC62264DC;
-	Tue, 15 Jul 2025 15:16:19 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627B22248B5;
+	Tue, 15 Jul 2025 15:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kV0CjkH7"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110571C862F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5CC1E833D;
+	Tue, 15 Jul 2025 15:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752592579; cv=none; b=dd9zxBJ3rXsQuRb4e6vTdmXr3Wqt2M+DUQ2ekoASR1Ivaujaq4XXwMAjcuXE+QqxKzJJ9OLpCFkZ0Jy/x486ngI+zhBlZx95fABCLVK8AxOkV50lM5T4Ei6Q56kCRx16ZQfgnNhBinqcINYLtST/Q2fvRmowkJe3FLWYLLXJa14=
+	t=1752592620; cv=none; b=tJuCbVQxACdKogu8Qzv5T7yxz57ukMRg2j8M/iQVwpeik7FZTn6iA0pW87S0DHVTttUB+p45AU13L7920AbfUUMwboDybIdpCgARxEcrthZnDi9B4KnGDZOI+gdwL1upfATYghRRYQ+Ux/qLQH2icq2bwnaEZDwQhgzdyiobMKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752592579; c=relaxed/simple;
-	bh=4Wk8Ogik6K4uX4O85PR1o17+usrq0ofsrGAhuQeadmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YNhFFpbWNs6ZyOnr4tE9nNQVnWjOK6GrkGQEJQ2H7puO9kTannlCGa0MGYrNmpSnrPuvUWi71pciS6KhAddmWP+8EjMpkI7AH8iPT2xdbtjzIiv4iXtw0k6r6rSGnRdowiZ3U+8LssDG1hrPNzl/bV96QLtBCgGeD7oXVXS59J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 2D4FA1A04A2;
-	Tue, 15 Jul 2025 15:16:15 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id B1CE22F;
-	Tue, 15 Jul 2025 15:16:12 +0000 (UTC)
-Date: Tue, 15 Jul 2025 11:16:11 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Steven Rostedt <rostedt@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Christoph Hellwig
- <hch@infradead.org>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, linux-kernel
- <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] LTTng upstreaming next steps
-Message-ID: <20250715111611.1bdba041@batman.local.home>
-In-Reply-To: <699bcae748cbb9663029542f93c9c83bc8a2c029.camel@HansenPartnership.com>
-References: <b554bfa3-d710-4671-945b-5d6ec49e52cd@efficios.com>
-	<CAHk-=wiT9Cz+EbbuKozqiu7DnZQ7ftAWSmGf-xy_CdhJPCsNSg@mail.gmail.com>
-	<20250714162750.45b12314@gandalf.local.home>
-	<20250714163755.1de132e9@gandalf.local.home>
-	<CAHk-=wgZ=Ssx4qoeuaHet1vx+8M36j0a3q2aw5ePapWm=KnSfQ@mail.gmail.com>
-	<20250715052459.0000e119@gandalf.local.home>
-	<9f6700d1fb62da8ce633f755b0c9e2d5c2704825.camel@HansenPartnership.com>
-	<20250715091649.3cc933fa@gandalf.local.home>
-	<ccd1ace31a0fd27f033a1ec70df7c93aefebff3d.camel@HansenPartnership.com>
-	<20250715105041.6f63f4a5@batman.local.home>
-	<699bcae748cbb9663029542f93c9c83bc8a2c029.camel@HansenPartnership.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752592620; c=relaxed/simple;
+	bh=EST4cYesXMZbGywqKbNK6S9GKuXaukO6MiLR4YmxNL0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZkIEVjrruLh5HVQucq6MX0G4c2JiAVWoxOwQjOciKWgP5FRDqUkPkgYJltSSLvRQqc2xOM0oV6vrfl4bPcQVHiBzEep4Nukrqww3cCbOPAqFzV9WwpV+yMujvDnvvUIx2ApRDIuWr6Z/PBcZBMF4ZSkc5pWQVRohgUnMliHuo8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kV0CjkH7; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1752592616;
+	bh=EST4cYesXMZbGywqKbNK6S9GKuXaukO6MiLR4YmxNL0=;
+	h=From:Subject:Date:To:Cc:From;
+	b=kV0CjkH79oF3626XgMSysu56sox8sbBHhIjrV9w2EaSBS0fBxxoc4K11IPSXqMPZg
+	 t12tlaw//cCWi+l8LlQ8vtyOMPcx2ZhaBO+AXVTM/bL+evf9eL9AP/YNXxMKXC7AV+
+	 BRLS9Zgn7p6ucIWTQcpBI8d9e3wK5+giGtfno+kgbEjuqOK5K9JwYJefey35Qa44Bo
+	 8R99d6Qja+BNArO9UJEf/lapzVak+gv4z8nN5Jy513qlUZ1hwHdh+KDR/Oaf05r6g7
+	 yTYrGJpLJBxvfXiEiOEXjQ4h9WhBlOF0tX2UNCe2jj2KqdZVZYrtdpUVMulDihGXGT
+	 XXmsP9qcJCBwA==
+Received: from [192.168.0.2] (unknown [IPv6:2804:14d:72b4:82f6:67c:16ff:fe57:b5a3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dwlsalmeida)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9F92617E0188;
+	Tue, 15 Jul 2025 17:16:53 +0200 (CEST)
+From: Daniel Almeida <daniel.almeida@collabora.com>
+Subject: [PATCH v7 0/6] rust: add support for request_irq
+Date: Tue, 15 Jul 2025 12:16:37 -0300
+Message-Id: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: B1CE22F
-X-Stat-Signature: ux69zxoto7coa5ppwmm18yrj1b5pwb4w
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/hRKkzsiKCXlnrOCrz5zY0G/d21aevZPg=
-X-HE-Tag: 1752592572-694931
-X-HE-Meta: U2FsdGVkX18vGEtD/FFrzj1EP13uw7iIGgmjqDJSC1d1sB4KGwXtBn0qQ3hNspKoYFUjxmA/5JU2dymjMQx4nnhfnIRhZU0FI3+eoP2Y4C0b1j0T8JBJp8Gviv8URsV283dXbpxki17o592oUhXBPyrifnPPJkj71Y+wx6oQCAGW9/do/VT22fLqJd1IXZFjsaSF+cq2ue4yqeYI9zA4nEOTFXr6DdTnImRkywV+Gp8PZoJtX+g5XhgOfmn1ZGhFYstOcHWINSmn/eb4JiefexZ7Eg5XYGnO76FMMd5u3FWu0PJTLTDZPmqg0+Ia5B72PZIkEuP6QmUWLHxg+BngLSNic+ArPGFGGZ7rouxzR7CUBqpQngXzS0XFZK0Ao757
+X-B4-Tracking: v=1; b=H4sIANVwdmgC/x3MSwqDQBBF0a1IjS0wjU2rWwkSjD6TmvipaoNB3
+ LuNwzO49yCDCoya7CDFT0zmKSHkGfXfbvqAZUgmVzhfhIfjOC/SG8e/smLdYPElujruEID6Xfn
+ Kl5TqRTHKfp+f7Xle6GMtoGkAAAA=
+X-Change-ID: 20250712-topics-tyr-request_irq2-ae7ee9b85854
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Benno Lossin <lossin@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ linux-pci@vger.kernel.org, Daniel Almeida <daniel.almeida@collabora.com>
+X-Mailer: b4 0.14.2
 
-On Tue, 15 Jul 2025 11:10:43 -0400
-James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+Changes in v7:
+- Rebased on top of driver-core-next
+- Added Flags::new(), which is a const fn. This lets us use build_assert!()
+  to verify the casts (hopefully this is what you meant, Alice?)
+- Changed the Flags inner type to take c_ulong directly, to minimize casts
+  (Thanks, Alice)
+- Moved the flag constants into Impl Flags, instead of using a separate
+  module (Alice)
+- Reverted to using #[repr(u32)] in Threaded/IrqReturn (Thanks Alice,
+  Benno)
+- Fixed all instances where the full path was specified for types in the
+  prelude (Alice)
+- Removed 'static from the CStr used to perform the lookup in the platform
+  accessor (Alice)
+- Renamed the PCI accessors, as asked by Danilo
+- Added more docs to Flags, going into more detail on what they do and how
+  to use them (Miguel)
+- Fixed the indentation in some of the docs (Alice)
+- Added Alice's r-b as appropriate
+- Link to v6: https://lore.kernel.org/rust-for-linux/20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com/
 
-> Well, if you've no interest in thinking outside the box, by all means
-> continue banging your head against it until you think your payback has
-> been achieved ...  I'll go and get the popcorn.
+Changes in v6:
+- Fixed some typos in the docs (thanks, Dirk!)
+- Reordered the arguments for the accessors in platform.rs (Danilo)
+- Renamed handle_on_thread() to handle_threaded() (Danilo)
+- Changed the documentation for Handler and ThreadedHandler to what
+  Danilo suggested
+- Link to v5: https://lore.kernel.org/r/20250627-topics-tyr-request_irq-v5-0-0545ee4dadf6@collabora.com
 
-I didn't say that. I have no time to give on this. I don't have the
-time to finish the things I am responsible for :-p
+Changes in v5:
 
--- Steve
+Thanks, Danilo {
+  - Removed extra scope in the examples.
+  - Renamed Registration::register() to Registration::new(),
+  - Switched to try_pin_init! in Registration::new() (thanks for the
+    code and the help, Boqun and Benno)
+  - Renamed the trait functions to handle() and handle_on_thread().
+  - Introduced IrqRequest with an unsafe pub(crate) constructor
+  - Made both register() and the accessors that return IrqRequest public
+    the idea is to allow both of these to work:
+	// `irq` is an `irq::Registration`
+	let irq = pdev.threaded_irq_by_name()?
+  and
+	// `req` is an `IrqRequest`.
+	let req = pdev.irq_by_name()?;
+	// `irq` is an `irq::Registration`
+	let irq = irq::ThreadedRegistration::new(req)?;
+
+  - Added another name in the byname variants. There's now one for the
+    request part and the other one to register()
+  - Reworked the examples in request.rs
+  - Implemented the irq accessors in place for pci.rs
+  - Split the platform accessor macros into two
+}
+
+- Added a rust helper for pci_irq_vectors if !CONFIG_PCI_MSI (thanks,
+Intel 0day bot)
+- Link to v4: https://lore.kernel.org/r/20250608-topics-tyr-request_irq-v4-0-81cb81fb8073@collabora.com
+
+Changes in v4:
+
+Thanks, Benno {
+  - Split series into more patches (see patches 1-4)
+  - Use cast() where possible
+  - Merge pub use statements.
+  - Add {Threaded}IrqReturn::into_inner() instead of #[repr(u32)]
+  - Used AtomicU32 instead of SpinLock to add interior mutability to the
+    handler's data. SpinLockIrq did not land yet.
+  - Mention that `&self` is !Unpin and was initialized using pin_init in
+    drop()
+  - Fix the docs slightly
+}
+
+- Add {try_}synchronize_irq().
+- Use Devres for the irq registration (see RegistrationInner). This idea
+  was suggested by Danilo and Alice.
+- Added PCI accessors (as asked by Joel Fernandez)
+- Fix a major oversight: we were passing in a pointer to Registration
+  in register_{threaded}_irq() but casting it to Handler/ThreadedHandler in
+  the callbacks.
+- Make register() pub(crate) so drivers can only retrieve registrations
+  through device-specific accessors. This forbids drivers from trying to
+  register an invalid irq.
+- I think this will still go through a few rounds, so I'll defer the
+  patch to update MAINTAINERS for now.
+
+- Link to v3: https://lore.kernel.org/r/20250514-topics-tyr-request_irq-v3-0-d6fcc2591a88@collabora.com
+
+Changes in v3:
+- Rebased on driver-core-next
+- Added patch to get the irq numbers from a platform device (thanks,
+  Christian!)
+- Split flags into its own file.
+- Change iff to "if and only if"
+- Implement PartialEq and Eq for Flags
+- Fix some broken docs/markdown
+- Reexport most things so users can elide ::request from the path
+- Add a blanket implementation of ThreadedHandler and Handler for
+  Arc/Box<T: Handler> that just forwards the call to the T. This lets us
+  have Arc<Foo> and Box<Foo> as handlers if Foo: Handler.
+- Rework the examples a bit.
+- Remove "as _" casts in favor of "as u64" for flags. This is needed to
+  cast the individual flags into u64.
+- Use #[repr(u32)] for ThreadedIrqReturn and IrqReturn.
+- Wrapped commit messages to < 75 characters
+
+- Link to v2: https://lore.kernel.org/r/20250122163932.46697-1-daniel.almeida@collabora.com
+
+Changes in v2:
+- Added Co-developed-by tag to account for the work that Alice did in order to
+figure out how to do this without Opaque<T> (Thanks!)
+- Removed Opaque<T> in favor of plain T
+- Fixed the examples
+- Made sure that the invariants sections are the last entry in the docs
+- Switched to slot.cast() where applicable,
+- Mentioned in the safety comments that we require that T: Sync,
+- Removed ThreadedFnReturn in favor of IrqReturn,
+- Improved the commit message
+
+Link to v1: https://lore.kernel.org/rust-for-linux/20241024-topic-panthor-rs-request_irq-v1-1-7cbc51c182ca@collabora.com/
+
+---
+Daniel Almeida (6):
+      rust: irq: add irq module
+      rust: irq: add flags module
+      rust: irq: add support for non-threaded IRQs and handlers
+      rust: irq: add support for threaded IRQs and handlers
+      rust: platform: add irq accessors
+      rust: pci: add irq accessors
+
+ rust/bindings/bindings_helper.h |   1 +
+ rust/helpers/helpers.c          |   1 +
+ rust/helpers/irq.c              |   9 +
+ rust/helpers/pci.c              |   8 +
+ rust/kernel/irq.rs              |  22 ++
+ rust/kernel/irq/flags.rs        | 124 ++++++++++
+ rust/kernel/irq/request.rs      | 490 ++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs              |   1 +
+ rust/kernel/pci.rs              |  45 +++-
+ rust/kernel/platform.rs         | 146 +++++++++++-
+ 10 files changed, 844 insertions(+), 3 deletions(-)
+---
+base-commit: 3964d07dd821efe9680e90c51c86661a98e60a0f
+change-id: 20250712-topics-tyr-request_irq2-ae7ee9b85854
+
+Best regards,
+-- 
+Daniel Almeida <daniel.almeida@collabora.com>
+
 
