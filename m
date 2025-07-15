@@ -1,117 +1,121 @@
-Return-Path: <linux-kernel+bounces-731020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0151B04D9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:54:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D6BB04D9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B03D4E0B96
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:54:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB61D4E17F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4188623AB88;
-	Tue, 15 Jul 2025 01:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93882C08B3;
+	Tue, 15 Jul 2025 01:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="g4vwiEmo"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VBlh4Rno"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5442A1AA;
-	Tue, 15 Jul 2025 01:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9466D1553A3;
+	Tue, 15 Jul 2025 01:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752544472; cv=none; b=gJiJH0OBQHqrO9mYV8P0jlrZG6DduCTZq6cV4drJ2WsJnGdPBaUcVvl45Nq6JmozwtINy/org0eIa4uq4UzOZmejp8gak+SqhGDX1Fuj+Etk3oWdo2N9aYY/2tg4yVoqYU2rC57s9VSnhdGkHMv7d3FTlQnPhkP8Fe2WzOK5HS4=
+	t=1752544520; cv=none; b=YSXZRtlxOfrCeUyrbIEknuBknk7R16hgv4fGur2PMfB+hhpQ1QFaQB54ijobaOQAc0ODGN8ihQCT0LcxIpcGksn1BQySLJR3veYN6VkSRQdvrXzK/QU2GzEh/A0zwXot38X1Ru3uy5VxuRAJnkm4SM6++2WHGU9eS3xYCFQxTto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752544472; c=relaxed/simple;
-	bh=CfdxPuaJdedPFMgoKUCNWuv06skj6ZxzQjnR5/nZFb8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tsItsPsd1Ib3VUgtalvEVL53b8AYAzAhk3lEl2dcuneaoRPoJvPXENoBOgD1Sq5WX0IpkIb9qN++mHADQkR2HloPRiinMqUkUHtdUBNHLnZy8wQw8iEw6y3JDaprevQIpzl+MZ1gzi6FMxL6xOshSixFl5pF+tOAgQs73YXCSpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=g4vwiEmo; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56F1YsQ2019620;
-	Tue, 15 Jul 2025 01:54:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=oGpyF5dLYHf7qyxaXF2jBuRt14tdLM4npCR0yXxSNZI=; b=
-	g4vwiEmonR8MYIDUDwAkUTCSdnuyIrsPLQnmG+WLIeJUIx+qI/URi6E31yHZPvsa
-	mzEjsNfOg8oQvHlB5edq4pFL6TZuhDEpdj+3RUiXlNRrpBTknUjArluMywJtXRLn
-	0UjttbmwD7D7ydvXBL+lVIntqvC2xhKnoaPYr/KntPU2C/SqLjxPMzZsDNYlXHJW
-	GVi1xc8sYHz4y0d7/Ji2QlUbkUP/PvZd8IEVUWB8NwOUXbwHMokDjDB/mmBtxCMA
-	QmpVEapdzNUsvzPOl+BHsG5EgFCDyeTEEZ2x+4TX2UGqxzgz5coQTcVtGIudEwLM
-	HJ6IJXVP0CZRjOi+KfHeFQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47ujy4nhwu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Jul 2025 01:54:27 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56F18OEF028990;
-	Tue, 15 Jul 2025 01:54:26 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47ue592dyh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Jul 2025 01:54:26 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56F1sM6c002175;
-	Tue, 15 Jul 2025 01:54:25 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 47ue592dxd-4;
-	Tue, 15 Jul 2025 01:54:25 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: Jack Wang <jinpu.wang@cloud.ionos.com>,
-        "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Salomon Dushimirimana <salomondush@google.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] scsi: pm80xx: add controller scsi host fatal error uevents
-Date: Mon, 14 Jul 2025 21:53:51 -0400
-Message-ID: <175193808966.2586181.3862011561872712301.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250616190018.2136260-1-salomondush@google.com>
-References: <20250612212504.512786-1-salomondush@google.com> <20250616190018.2136260-1-salomondush@google.com>
+	s=arc-20240116; t=1752544520; c=relaxed/simple;
+	bh=DImRPRvxDgWbeCAzhaTtT7PrVBbubCPYG8h/cRXEM5w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=may2rGL6z1hqwApBZtI3BurOzZaQMNuPhnCui50fCkKvPAW39jWetpU2g0CwH8JYdvPBxHrDCIxWKho9eaSKm356zJnt7ACaZWLr01PFbhq7hlqNaV09pN6u8nnGyANkW5ht+FG2szILwPAYx4/DorfWIu0oufdzBWsTwroP+Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VBlh4Rno; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4538bc52a8dso35404605e9.2;
+        Mon, 14 Jul 2025 18:55:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752544515; x=1753149315; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DImRPRvxDgWbeCAzhaTtT7PrVBbubCPYG8h/cRXEM5w=;
+        b=VBlh4RnoD3RyMzxfOeys3xd+xQLaXZTJ5wmlsR9c8mJmYsrMZDxAMWn9FOxVli4oAP
+         m7+itQ1GJlmVLLW2FkvBeB2OlRb9LU0koGASDLwfx0Q2QgkJRNsOveVhFbLfO58jKNga
+         1UfTo93eJ52RHUCdzZxv2pk1vRK0XCEDGSTLll+ug3NXEVHe9QnS9wGA6l4jQjsTtWGP
+         NKnaMbWL1OAbSce1Jp7SziMaNrUs38qqgJkdWz9OwHVakajO465lyxbL0TAp/JSuVN/i
+         6bq39B454NGFKPo59kfvbsqOPwiIgRu/4ejsrQnf3ZO+m7nlJGImVRwpURT1dsMz/BP6
+         TbUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752544515; x=1753149315;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DImRPRvxDgWbeCAzhaTtT7PrVBbubCPYG8h/cRXEM5w=;
+        b=d8ocBhMNj2hZ4iaBIo9/6IoSFjQOFOq696yCFj/yfDHcbLL4v5AKRFatgWC03vcEop
+         6UzmiJLwX4kawwJ4svIugKG4/0Qt73mC6GFgYXtrv//Dkz3HPj+GNRY8/oxYqPSmxx+Q
+         ZLI/1rBtNmKSoB13071EJA5gPLToW/UBMB7R/dZWgkTnVX7y1OUzO1t/2/nixxxW+1nI
+         qo0LZ4D+jHsOviKHCAAmog1HYw/Fj28jQEn4kyEDyL4TB7tEWKsFpLQ2pxgYvihZFn1c
+         y4T5gvi2lBT4NKUQJGtsDsAMyMG+XsXv2znpSkpYemtQ7j/V+0nHFV3xKmwqMLPJAGaO
+         Q3qA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZfgZGRYb1xOuAoRqdhSd3WiGgd+NikzFRjott4TAC6Bpr64R80M+ZLUq5pOzAsYG6Deg=@vger.kernel.org, AJvYcCVAaybQ4zs9wo7aq24dkQMOhY5PZvlWd6p+hMDSTzuqZGc+pu2GX9dLrnhPKE2mx7d5K1IWQa0oG/ZvDj7B@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsrxwubIIMyW/X+pxU0F92DnqTVnxUdO4FErcxBTAzENee8mBA
+	ftQGIaVhVJC2liPF06aGUv+2Y1k/PnPPTfyoP+oPx49GyNDTLZ1Muc7fg8bLPX1CPd6XJEUiLk1
+	743Cl8kXwAtcdS92F3k+ebFRyLPF4dyE=
+X-Gm-Gg: ASbGncufMUfbPTJbQwmnHGik1MTArftvUwDIVLyfms1descGVjtWvSVnFsUkYV965zQ
+	HAgjAEa8372C+4XM8VIIpCHnOfUuBWN2zF7/OMfRgSU67hFDhHDB8YFx4Br+JoBjGEad2xd7Ggf
+	+/xrMVIFwbD2qkv9Q8GCyN1s5dwj7Ej8q+mTeHb/xFNjzZGrUl1nx5dmhO9GVEcgkrBZvGww6Zh
+	v2AQ3tGHgaAfYSJKu7Q/rmaMX7Mh+e6iTipEtOUDcJ71lk=
+X-Google-Smtp-Source: AGHT+IFLTddzqT4inSm+V4/Hitukugy3+0Ab3ec/Aoqe4dKEpEIBSQOMzT1lUy+egTARhVv6e3Gw2etp174yCmVKqWY=
+X-Received: by 2002:a05:600c:4f94:b0:456:43c:dcdc with SMTP id
+ 5b1f17b1804b1-456043ce1f3mr86853735e9.33.1752544514366; Mon, 14 Jul 2025
+ 18:55:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-14_03,2025-07-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 spamscore=0
- suspectscore=0 adultscore=0 mlxlogscore=987 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507150016
-X-Proofpoint-ORIG-GUID: feh93WjaadBogxyN-oU3FXu4oItl4kMj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDAxNiBTYWx0ZWRfXyS5gNi6qivEE V621ebckbRFLqomP2KHQq4wM/S1Dq3XUjaKtwoV6Qem5a8rKDjJsOiA//ViLkanbmVw1l4tGizG pUR/IFuxbQd8mEYYYMmIs8TJdAjGDsyIWZKN4yGTGejnzGp7VQDSi7HjuMUhUKJGXg06MuTKx6X
- xa10EPgo8ceDpIUCypj0tk29hhwRqUbijElh5AjAI5uGLIJJ8wmVH8j0q/36qydD0cEapI3AzoE Z6F4rm7Ov7YBf1izQi8KF4iuLOQbA62mZsY+DG5VgvIYaJW1M4yNZe3ZbCjfIBqVCakvCwHOdGB GnPwLu4yvdKD+ZC2Gy3eomQFv+UynVFJ5fDVdTXsj0NB6IcdwnrklFLXp7DiIUJoNuZArA48wAI
- m5Y+1eJgrJ1oS23tFnzk/TNyGQEMaqGDKF6c8NpMC4c2ljFiM0Iz1Z16A0npTUXEYZfh/xbR
-X-Authority-Analysis: v=2.4 cv=Xtr6OUF9 c=1 sm=1 tr=0 ts=6875b4d3 cx=c_pps a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=ryvppczj7JKekirGujcA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: feh93WjaadBogxyN-oU3FXu4oItl4kMj
+References: <20250703121521.1874196-1-dongml2@chinatelecom.cn> <20250703121521.1874196-2-dongml2@chinatelecom.cn>
+In-Reply-To: <20250703121521.1874196-2-dongml2@chinatelecom.cn>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 14 Jul 2025 18:55:03 -0700
+X-Gm-Features: Ac12FXx_6JpR6UsqCbv8yKOCCE76HvgTTyK0ylrYchmBKjXP0_8q6HyDzUpsYxc
+Message-ID: <CAADnVQ+zkS9RMpB70HEtNK1pXuwRZcjgeQjryAY6zfxSQLVV3A@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 01/18] bpf: add function hash table for tracing-multi
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Menglong Dong <dongml2@chinatelecom.cn>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 16 Jun 2025 19:00:18 +0000, Salomon Dushimirimana wrote:
+On Thu, Jul 3, 2025 at 5:17=E2=80=AFAM Menglong Dong <menglong8.dong@gmail.=
+com> wrote:
+>
+> We don't use rhashtable here, as the compiler is not clever enough and it
+> refused to inline the hash lookup for me, which bring in addition overhea=
+d
+> in the following BPF global trampoline.
 
-> Adds pm80xx_fatal_error_uevent_emit(), called when the pm80xx driver
-> encouters a fatal error. The uevent has the following additional custom
-> key/value pair sets:
-> 
-> - DRIVER: driver name, pm80xx in this case
-> - HBA_NUM: the scsi host id of the device
-> - EVENT_TYPE: to indicate a fatal error
-> - REPORTED_BY: either driver or firmware
-> 
-> [...]
+That's not good enough justification.
+rhashtable is used in many performance critical components.
+You need to figure out what was causing compiler not to inline lookup
+in your case.
+Did you make sure that params are constant as I suggested earlier?
+If 'static inline' wasn't enough, have you tried always_inline ?
 
-Applied to 6.17/scsi-queue, thanks!
+> The release of the metadata is controlled by the percpu ref and RCU
+> together, and have similar logic to the release of bpf trampoline image i=
+n
+> bpf_tramp_image_put().
 
-[1/1] scsi: pm80xx: add controller scsi host fatal error uevents
-      https://git.kernel.org/mkp/scsi/c/c7ee6c8f2f1e
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+tbh the locking complexity in this patch is through the roof.
+rcu, rcu_tasks, rcu_task_trace, percpu_ref, ...
+all that look questionable.
+kfunc_mds looks to be rcu protected, but md-s are percpu_ref.
+Why? There were choices made that I don't understand the reasons for.
+I don't think we should start in depth review of rhashtable-wanne-be
+when rhashtable should just work.
 
