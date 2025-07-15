@@ -1,112 +1,118 @@
-Return-Path: <linux-kernel+bounces-731929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D12B05D3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:42:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 828F6B05D72
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9550E1C274A8
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 385073A6183
 	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB902E8E1A;
-	Tue, 15 Jul 2025 13:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26002E49A5;
+	Tue, 15 Jul 2025 13:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SviX5acN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GGv12Rg2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZI7SwqgD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D27BA42;
-	Tue, 15 Jul 2025 13:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0313E2E4980;
+	Tue, 15 Jul 2025 13:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752586297; cv=none; b=nfnlcQpEOZguorrJ9WzX3yrzyykoWXCVh3ZQGJiwjJ87zhQaU2d52ED48R3aSVVl4sioNdb7fLpb1Dijwlypm2u74loDP44ZoW96QlYg2St9w2iiVneJwzxZ2ZPt/YUCfdlXWrg93DTuslv0vcaje6DtFZeiEPbYZ/xsshqfODY=
+	t=1752586361; cv=none; b=Hc36RFoUNCPUbKf/r1urJb6ptWNJSllAfGiOEqztlErRJymUauefsEWuC/Gb48tnK1KbYW95d7W18dkrBAiaAYUs8sEx9tJd9FZS9zfOcfw5QEbINsv1vaSovtiMugWrbsqLeof9IbbJcgPqHCsCvUxQ4zPqKYhF33DEoTrvVmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752586297; c=relaxed/simple;
-	bh=3qlg0SCNcg8nKs+ycOKHvY064/ex0vaLBe/HisISSaU=;
+	s=arc-20240116; t=1752586361; c=relaxed/simple;
+	bh=SKALgTAWbYSqaPqfyTvDFdr5s2YmxkBpet4kPaBBqXM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kmmeaLo9zi7davCIJorEhLXTUt8ttLzJrjtCwrJXZyKrsl2UMjBBUe+XZXnEqa3p0cj16y2b6/t/42wRmvInvWf+vA9q82q9WhOamIDKJldYR2rRLGSBYiuVVai4Arj6zPgReaDvdPENXPGSRzk8q3/KALxf+Smm62uvd2zhxPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SviX5acN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GGv12Rg2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Jul 2025 15:31:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752586294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=joOFFAAY8AYV/4LY8627HFskz6QEGnW/9xaT8auIfuo=;
-	b=SviX5acNSqCWkmpRxHMexOAoIu9URZfsVbTsQI3SRxptnXwXmArcprncFBz7Ig76QH3QSH
-	gZKk7ALmkGj5GHAICMMBFtO/px50l5T2I/6NAx0hXqabMYYLfMiiBlDA75q+KakwkmNh1A
-	85oy+RsfJcQNYFDXJdwUP22houo6rdzpK5KRnFvIE/yK9+4h1YeqOb8CMABziNzD0MFd3s
-	rS/neYrkdwmbgwzSC1ngmw5Gp7H/XAYmUOCDXlj5kmVA8OGO7IdVh63UmRe+5M6Gct79fY
-	7jyxoF88HfwtNqwrTtiKr01O5CmsifSokJ1JjWEms69+D/Yc9N0a4dJAeeEnUQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752586294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=joOFFAAY8AYV/4LY8627HFskz6QEGnW/9xaT8auIfuo=;
-	b=GGv12Rg2+mLFhFwugX+3vHNk4RRbpwu/P5RqOZBT75BAVDK4nV/yOJUpYeIIhbeUSkL39W
-	1ndNqBMvAf7PazDg==
-From: Nam Cao <namcao@linutronix.de>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	linux-trace-kernel@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH 2/2] panic: Fix up description of vpanic()
-Message-ID: <20250715133133.XyZEBK7y@linutronix.de>
-References: <cover.1752232374.git.namcao@linutronix.de>
- <23a7e8add6546b155371b7e0fbb37bb1def13d6e.1752232374.git.namcao@linutronix.de>
- <20250715145601.2489a701c86ae48a75d1995f@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LuoSAwHG+MAJcdSg1PsWLA/Jh0jTUsgpLZupBQgaWkM4OBsicIiDiUnrgSm18oumwfi0AAUrTVaPXnBWCqFrwU76ZQKGiggGqIq4Y1NCt3Hyk8mNJ4NlIMy1k0wk+09xth/ryJNgIJCzjLurLvmlDru7iClXKjgj/fjBkSoq/kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZI7SwqgD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FEEEC4CEF1;
+	Tue, 15 Jul 2025 13:32:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752586360;
+	bh=SKALgTAWbYSqaPqfyTvDFdr5s2YmxkBpet4kPaBBqXM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZI7SwqgD8TbMTdcjaid36j2VW68WCjsz6IphHoD3L8oj7yvvv8AVD0gXb47xBudX9
+	 Pc5lIOST05zZnar4sTA8GcsqOT1JDsnL6BxC/stKQJL/tIwrZMPyNSbLFrq1ZQzNk/
+	 AcksIGBQR73ls1IkuW+NHqxXCWT2tqkJS8RocH3HegHVAjZJr6RpHFjIPS++afsXRc
+	 OIAdcf/IUjuB3QHTojwD6oJ0tX+m2fDKAn4dlKbu0D8toI79/Oam/t1l6tWJ9LUqD9
+	 kuYAWoTjxyYhsu7y8434uE0H1khF6wORrOc60BtaenKWXshOiwxkqAvXPvO1K94W49
+	 l+sd2izuEvAug==
+Date: Tue, 15 Jul 2025 14:32:33 +0100
+From: Will Deacon <will@kernel.org>
+To: Alexis =?iso-8859-1?Q?Lothor=E9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Xu Kuohai <xukuohai@huaweicloud.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+	ebpf@linuxfoundation.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>,
+	Ihor Solodrai <ihor.solodrai@linux.dev>, bpf@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 1/2] bpf, arm64: remove structs on stack constraint
+Message-ID: <aHZYcY_9JtK8so3C@willie-the-truck>
+References: <20250709-arm64_relax_jit_comp-v1-0-3850fe189092@bootlin.com>
+ <20250709-arm64_relax_jit_comp-v1-1-3850fe189092@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250715145601.2489a701c86ae48a75d1995f@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250709-arm64_relax_jit_comp-v1-1-3850fe189092@bootlin.com>
 
-On Tue, Jul 15, 2025 at 02:56:01PM +0900, Masami Hiramatsu wrote:
-> On Fri, 11 Jul 2025 13:20:43 +0200
-> Nam Cao <namcao@linutronix.de> wrote:
-> >  /**
-> > - * panic - halt the system
-> > + * vpanic - halt the system
+On Wed, Jul 09, 2025 at 10:36:55AM +0200, Alexis Lothoré (eBPF Foundation) wrote:
+> While introducing support for 9+ arguments for tracing programs on
+> ARM64, commit 9014cf56f13d ("bpf, arm64: Support up to 12 function
+> arguments") has also introduced a constraint preventing BPF trampolines
+> from being generated if the target function consumes a struct argument
+> passed on stack, because of uncertainties around the exact struct
+> location: if the struct has been marked as packed or with a custom
+> alignment, this info is not reflected in BTF data, and so generated
+> tracing trampolines could read the target function arguments at wrong
+> offsets.
 > 
-> Shouldn't we make a copy the doc for the panic() (keep the text as it is)
-> and change the short explanation?
+> This issue is not specific to ARM64: there has been an attempt (see [1])
+> to bring the same constraint to other architectures JIT compilers. But
+> discussions following this attempt led to the move of this constraint
+> out of the kernel (see [2]): instead of preventing the kernel from
+> generating trampolines for those functions consuming structs on stack,
+> it is simpler to just make sure that those functions with uncertain
+> struct arguments location are not encoded in BTF information, and so
+> that one can not even attempt to attach a tracing program to such
+> function. The task is then deferred to pahole (see [3]).
 > 
-> panic - halt the system
-> @fmt: ...
+> Now that the constraint is handled by pahole, remove it from the arm64
+> JIT compiler to keep it simple.
 > 
-> vpanic - halt the system with va_list
-> @fmt: ...
-> @args: ...
+> [1] https://lore.kernel.org/bpf/20250613-deny_trampoline_structs_on_stack-v1-0-5be9211768c3@bootlin.com/
+> [2] https://lore.kernel.org/bpf/CAADnVQ+sj9XhscN9PdmTzjVa7Eif21noAUH3y1K6x5bWcL-5pg@mail.gmail.com/
+> [3] https://lore.kernel.org/bpf/20250707-btf_skip_structs_on_stack-v3-0-29569e086c12@bootlin.com/
 > 
->  From the newbie's viewpoint, as far as we keep providing the same
-> function, it is better to keep the same document to avoid confusion.
+> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+> ---
+>  arch/arm64/net/bpf_jit_comp.c | 5 -----
+>  1 file changed, 5 deletions(-)
 
-That would be nice for sure. But I think the counter arguments are
-stronger:
+This is a question born more out of ignorance that insight, but how do
+we ensure that the version of pahole being used is sufficiently
+up-to-date that the in-kernel check is not required?
 
-  - Two copies need to be maintained
-
-  - panic() is only a few lines, and it is obvious at first glance that it
-    is simply a thin wrapper around vpanic()
-
-So I think it is better to leave it as is.
-
-Best regards,
-Nam
+Will
 
