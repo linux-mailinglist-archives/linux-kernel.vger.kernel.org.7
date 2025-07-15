@@ -1,115 +1,333 @@
-Return-Path: <linux-kernel+bounces-732213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED51B06386
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:54:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17BC1B06380
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 344817B5110
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:52:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F0374A83EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716B22528F7;
-	Tue, 15 Jul 2025 15:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="m3HV9td4"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A295A264A6E;
+	Tue, 15 Jul 2025 15:53:03 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188CE247DF9;
-	Tue, 15 Jul 2025 15:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804F4257452;
+	Tue, 15 Jul 2025 15:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752594798; cv=none; b=OXuZxz6FOxJT8Q+N0W0+ZEs1W+KoMlT4B23yDEjeYM8tYULuhesggVd3AXaXR5ak1tJBY7AMkIC/EedIdriol29MxmrJ6pN2rg/Py8cwUB5XPTFRVQtOKc0amqRqSOYTM4jDNaECLy6YG5HMoGzDeIWmIHfX6Z51Aark4bV817w=
+	t=1752594783; cv=none; b=pq9JiQBo/osGk73pXLw7mAPzueVgk89cf04Fp8m9rbB0Mrw4IjPtRkrvr9v6b42jupZuXiy9i31e1HWLRNhnG/GlOMMs4teGS8pBeE41Kvji0v55dUkBMzdrFSV2oRCSQUo6Z7khuqWPc72F9/Ew61IW/q7M02mXO6+U390ZQJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752594798; c=relaxed/simple;
-	bh=wU3e9HJeH/DY7sTOVhInQNEvtGjh+kj5oo/xKVxRTfU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ahzh7U75ceZQQ66QLs4h6Au+pRXurGHaotZKymEqTlpH4msHd9+xITTOgB+5bkYYqNbAkEx+HhdGLTa1i7VXkLeayir1uxZpT/u+Yof2iN9xU64iWpe7D9VTu4unbwTeDUn4WQToDXA4YsCrCApYKbUF+JT5tsPhUJ2760j0xew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=m3HV9td4; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56FFqgiW1035906
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Tue, 15 Jul 2025 08:52:45 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56FFqgiW1035906
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1752594766;
-	bh=SEcCsOO82E/DNVVnYdIJVwGaG0aOw/9Zah1U8zubMuc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=m3HV9td4PvA3VbMqe5VpDebvtgVYxf93FH1D9Ot/x3sxdkoWp3hEONsWsvzyFsSQA
-	 hcC8uV1mZDzn1A9uiciZf24GTfe46DuOQDXJnq+KyJjN4oWn7FkxhiGgAjE6Enb9ii
-	 rT3vaX9kKRBR4K/9jH3yGIClQa3xydfYFV273pVh8NmsJjffCrJZ2NfE7XVSZLfgBz
-	 lV5rU8H4TlpqP/CWRHSdpCAeMsSotw88JK4QeJXBqm6OZdzjgQ5YPRGC1tAnPfYd/c
-	 wpqmpyVvJMShVaBgVwHPK3l9FQEdaDkuRiyad9Rz7q9cuDlf+PnhG3Dip/XWAwkydQ
-	 ofB/cJQDla3qQ==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org
-Cc: luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        jmill@asu.edu, peterz@infradead.org, andrew.cooper3@citrix.com,
-        stable@vger.kernel.org
-Subject: [PATCH v2 1/1] x86/fred: Remove ENDBR64 from FRED entry points
-Date: Tue, 15 Jul 2025 08:52:42 -0700
-Message-ID: <20250715155242.1035896-1-xin@zytor.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1752594783; c=relaxed/simple;
+	bh=hpah6/rE5DqZh8G1bxYLjWz7PdoI4oZdrcR4eeIx4Mc=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=X+8Nk/0P/UsXXG3rFxpUgu8vyzgYTRWTZN5l6WY5iOd38jgd+5hGB/VOqEx6u+oWJ7SKr47j0MCiSw6/xQthilg/v+jt+FmPktzAAP28SHHGimqI9D1n+DPjBEEH2glSRExryG5DjSEzaX+HjNDs+/IPJe1XBlWzMjcUajD/YwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bhNxc62Kbz8R048;
+	Tue, 15 Jul 2025 23:52:52 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl1.zte.com.cn with SMTP id 56FFqkdV061208;
+	Tue, 15 Jul 2025 23:52:46 +0800 (+08)
+	(envelope-from fan.yu9@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 15 Jul 2025 23:52:49 +0800 (CST)
+Date: Tue, 15 Jul 2025 23:52:49 +0800 (CST)
+X-Zmail-TransId: 2afa68767951ffffffff8b8-f3315
+X-Mailer: Zmail v1.0
+Message-ID: <20250715235249811YJbb1y6_zOrLbsh6PTlXv@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <fan.yu9@zte.com.cn>
+To: <kuba@kernel.org>, <edumazet@google.com>, <kuniyu@amazon.com>,
+        <ncardwell@google.com>, <davem@davemloft.net>, <dsahern@kernel.org>,
+        <pabeni@redhat.com>, <horms@kernel.org>
+Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-trace-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
+        <xu.xin16@zte.com.cn>, <tu.qiang35@zte.com.cn>,
+        <jiang.kun2@zte.com.cn>, <qiu.yutan@zte.com.cn>,
+        <wang.yaxin@zte.com.cn>, <he.peilin@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIG5ldC1uZXh0IHY1XSB0Y3A6IHRyYWNlIHJldHJhbnNtaXQgZmFpbHVyZXMgaW4gdGNwX3JldHJhbnNtaXRfc2ti?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 56FFqkdV061208
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68767954.001/4bhNxc62Kbz8R048
 
-The FRED specification v9.0 states that there is no need for FRED
-event handlers to begin with ENDBR64, because in the presence of
-supervisor indirect branch tracking, FRED event delivery does not
-enter the WAIT_FOR_ENDBRANCH state.
+From: Fan Yu <fan.yu9@zte.com.cn>
 
-As a result, remove ENDBR64 from FRED entry points.
+Background
+==========
+When TCP retransmits a packet due to missing ACKs, the
+retransmission may fail for various reasons (e.g., packets
+stuck in driver queues, receiver zero windows, or routing issues).
 
-Then add ANNOTATE_NOENDBR to indicate that FRED entry points will
-never be used for indirect calls to suppress an objtool warning.
+The original tcp_retransmit_skb tracepoint:
+&apos;commit e086101b150a ("tcp: add a tracepoint for tcp retransmission")&apos;
+lacks visibility into these failure causes, making production
+diagnostics difficult.
 
-This change implies that any indirect CALL/JMP to FRED entry points
-causes #CP in the presence of supervisor indirect branch tracking.
+Solution
+========
+Adds the retval("err") to the tcp_retransmit_skb tracepoint.
+Enables users to know why some tcp retransmission failed and
+users can filter retransmission failures by retval.
 
-Credit goes to Jennifer Miller <jmill@asu.edu> and other contributors
-from Arizona State University whose work led to this change.
+Compatibility description
+=========================
+This patch extends the tcp_retransmit_skb tracepoint
+by adding a new "err" field at the end of its
+existing structure (within TP_STRUCT__entry). The
+compatibility implications are detailed as follows:
 
-Fixes: 14619d912b65 ("x86/fred: FRED entry/exit and dispatch code")
-Link: https://lore.kernel.org/linux-hardening/Z60NwR4w%2F28Z7XUa@ubun/
-Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-Cc: Jennifer Miller <jmill@asu.edu>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: stable@vger.kernel.org # v6.9+
+1) Structural compatibility for legacy user-space tools
+
+Legacy tools/BPF programs accessing existing fields
+(by offset or name) can still work without modification
+or recompilation.The new field is appended to the end,
+preserving original memory layout.
+
+2) Note: semantic changes
+
+The original tracepoint primarily only focused on
+successfully retransmitted packets. With this patch,
+the tracepoint now can figure out packets that may
+terminate early due to specific reasons. For accurate
+statistics, users should filter using "err" to
+distinguish outcomes.
+
+Before patched:
+# cat /sys/kernel/debug/tracing/events/tcp/tcp_retransmit_skb/format
+field:const void * skbaddr; offset:8; size:8; signed:0;
+field:const void * skaddr; offset:16; size:8; signed:0;
+field:int state; offset:24; size:4; signed:1;
+field:__u16 sport; offset:28; size:2; signed:0;
+field:__u16 dport; offset:30; size:2; signed:0;
+field:__u16 family; offset:32; size:2; signed:0;
+field:__u8 saddr[4]; offset:34; size:4; signed:0;
+field:__u8 daddr[4]; offset:38; size:4; signed:0;
+field:__u8 saddr_v6[16]; offset:42; size:16; signed:0;
+field:__u8 daddr_v6[16]; offset:58; size:16; signed:0;
+
+print fmt: "skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s"
+
+After patched:
+# cat /sys/kernel/debug/tracing/events/tcp/tcp_retransmit_skb/format
+field:const void * skbaddr; offset:8; size:8; signed:0;
+field:const void * skaddr; offset:16; size:8; signed:0;
+field:int state; offset:24; size:4; signed:1;
+field:__u16 sport; offset:28; size:2; signed:0;
+field:__u16 dport; offset:30; size:2; signed:0;
+field:__u16 family; offset:32; size:2; signed:0;
+field:__u8 saddr[4]; offset:34; size:4; signed:0;
+field:__u8 daddr[4]; offset:38; size:4; signed:0;
+field:__u8 saddr_v6[16]; offset:42; size:16; signed:0;
+field:__u8 daddr_v6[16]; offset:58; size:16; signed:0;
+field:int err;  offset:76;      size:4; signed:1;
+
+print fmt: "skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s err=%d"
+
+Change Log
+=========
+v4->v5:
+Some fixes according to
+https://lore.kernel.org/all/20250715072058.12f343bb@kernel.org/
+1. Instead of introducing new TCP_RETRANS_* enums, directly
+passing the retval to the tracepoint.
+
+v3->v4:
+Some fixes according to
+https://lore.kernel.org/all/CANn89i+JGSt=_CtWfhDXypWW-34a6SoP3RAzWQ9B9VL4+PHjDw@mail.gmail.com/
+1. Consolidate ENOMEMs into a unified TCP_RETRANS_NOMEM.
+
+v2->v3:
+Some fixes according to
+https://lore.kernel.org/all/CANn89iJvyYjiweCESQL8E-Si7M=gosYvh1BAVWwAWycXW8GSdg@mail.gmail.com/
+1. Rename "quit_reason" to "result". Also, keep "key=val" format concise(no space in vals).
+
+v1->v2:
+Some fixes according to
+https://lore.kernel.org/all/CANn89iK-6kT-ZUpNRMjPY9_TkQj-dLuKrDQtvO1140q4EUsjFg@mail.gmail.com/
+1.Rename TCP_RETRANS_QUIT_UNDEFINED to TCP_RETRANS_ERR_DEFAULT.
+2.Added detailed compatibility consequences section.
+
+Suggested-by: Jakub Kicinski <kuba@kernel.org>
+Suggested-by: Eric Dumazet <edumazet@google.com>
+Co-developed-by: xu xin <xu.xin16@zte.com.cn>
+Signed-off-by: xu xin <xu.xin16@zte.com.cn>
+Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
 ---
+include/trace/events/tcp.h | 27 ++++++++--------------
+net/ipv4/tcp_output.c      | 46 ++++++++++++++++++++++++--------------
+2 files changed, 38 insertions(+), 35 deletions(-)
 
-Change in v2:
-*) CC stable and add a fixes tag (PeterZ).
----
- arch/x86/entry/entry_64_fred.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
+index 54e60c6009e3..9d2c36c6a0ed 100644
+--- a/include/trace/events/tcp.h
++++ b/include/trace/events/tcp.h
+@@ -13,17 +13,11 @@
+#include <linux/sock_diag.h>
+#include <net/rstreason.h>
 
-diff --git a/arch/x86/entry/entry_64_fred.S b/arch/x86/entry/entry_64_fred.S
-index 29c5c32c16c3..907bd233c6c1 100644
---- a/arch/x86/entry/entry_64_fred.S
-+++ b/arch/x86/entry/entry_64_fred.S
-@@ -16,7 +16,7 @@
- 
- .macro FRED_ENTER
- 	UNWIND_HINT_END_OF_STACK
--	ENDBR
-+	ANNOTATE_NOENDBR
- 	PUSH_AND_CLEAR_REGS
- 	movq	%rsp, %rdi	/* %rdi -> pt_regs */
- .endm
--- 
-2.50.1
+-/*
+- * tcp event with arguments sk and skb
+- *
+- * Note: this class requires a valid sk pointer; while skb pointer could
+- *       be NULL.
+- */
+-DECLARE_EVENT_CLASS(tcp_event_sk_skb,
++TRACE_EVENT(tcp_retransmit_skb,
 
+-	TP_PROTO(const struct sock *sk, const struct sk_buff *skb),
++	TP_PROTO(const struct sock *sk, const struct sk_buff *skb, int err),
+
+-	TP_ARGS(sk, skb),
++	TP_ARGS(sk, skb, err),
+
+ 	TP_STRUCT__entry(
+ 		__field(const void *, skbaddr)
+@@ -36,6 +30,7 @@ DECLARE_EVENT_CLASS(tcp_event_sk_skb,
+ 		__array(__u8, daddr, 4)
+ 		__array(__u8, saddr_v6, 16)
+ 		__array(__u8, daddr_v6, 16)
++		__field(int, err)
+ 	),
+
+ 	TP_fast_assign(
+@@ -58,21 +53,17 @@ DECLARE_EVENT_CLASS(tcp_event_sk_skb,
+
+ 		TP_STORE_ADDRS(__entry, inet->inet_saddr, inet->inet_daddr,
+ 			sk->sk_v6_rcv_saddr, sk->sk_v6_daddr);
++
++		__entry->err = err;
+ 	),
+
+-	TP_printk("skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s",
++	TP_printk("skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s err=%d",
+ 		__entry->skbaddr, __entry->skaddr,
+ 		show_family_name(__entry->family),
+ 		__entry->sport, __entry->dport, __entry->saddr, __entry->daddr,
+ 		__entry->saddr_v6, __entry->daddr_v6,
+-		  show_tcp_state_name(__entry->state))
+-);
+-
+-DEFINE_EVENT(tcp_event_sk_skb, tcp_retransmit_skb,
+-
+-	TP_PROTO(const struct sock *sk, const struct sk_buff *skb),
+-
+-	TP_ARGS(sk, skb)
++		  show_tcp_state_name(__entry->state),
++		  __entry->err)
+);
+
+#undef FN
+diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+index b616776e3354..c31e164693d5 100644
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -3330,8 +3330,10 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 	if (icsk->icsk_mtup.probe_size)
+ 		icsk->icsk_mtup.probe_size = 0;
+
+-	if (skb_still_in_host_queue(sk, skb))
+-		return -EBUSY;
++	if (skb_still_in_host_queue(sk, skb)) {
++		err = -EBUSY;
++		goto out;
++	}
+
+start:
+ 	if (before(TCP_SKB_CB(skb)->seq, tp->snd_una)) {
+@@ -3342,14 +3344,19 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 		}
+ 		if (unlikely(before(TCP_SKB_CB(skb)->end_seq, tp->snd_una))) {
+ 			WARN_ON_ONCE(1);
+-			return -EINVAL;
++			err = -EINVAL;
++			goto out;
++		}
++		if (tcp_trim_head(sk, skb, tp->snd_una - TCP_SKB_CB(skb)->seq)) {
++			err = -ENOMEM;
++			goto out;
+ 		}
+-		if (tcp_trim_head(sk, skb, tp->snd_una - TCP_SKB_CB(skb)->seq))
+-			return -ENOMEM;
+ 	}
+
+-	if (inet_csk(sk)->icsk_af_ops->rebuild_header(sk))
+-		return -EHOSTUNREACH; /* Routing failure or similar. */
++	if (inet_csk(sk)->icsk_af_ops->rebuild_header(sk)) {
++		err = -EHOSTUNREACH; /* Routing failure or similar. */
++		goto out;
++	}
+
+ 	cur_mss = tcp_current_mss(sk);
+ 	avail_wnd = tcp_wnd_end(tp) - TCP_SKB_CB(skb)->seq;
+@@ -3360,8 +3367,10 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 	* our retransmit of one segment serves as a zero window probe.
+ 	*/
+ 	if (avail_wnd <= 0) {
+-		if (TCP_SKB_CB(skb)->seq != tp->snd_una)
+-			return -EAGAIN;
++		if (TCP_SKB_CB(skb)->seq != tp->snd_una) {
++			err = -EAGAIN;
++			goto out;
++		}
+ 		avail_wnd = cur_mss;
+ 	}
+
+@@ -3373,11 +3382,15 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 	}
+ 	if (skb->len > len) {
+ 		if (tcp_fragment(sk, TCP_FRAG_IN_RTX_QUEUE, skb, len,
+-				 cur_mss, GFP_ATOMIC))
+-			return -ENOMEM; /* We&apos;ll try again later. */
++				 cur_mss, GFP_ATOMIC)) {
++			err = -ENOMEM;  /* We&apos;ll try again later. */
++			goto out;
++		}
+ 	} else {
+-		if (skb_unclone_keeptruesize(skb, GFP_ATOMIC))
+-			return -ENOMEM;
++		if (skb_unclone_keeptruesize(skb, GFP_ATOMIC)) {
++			err = -ENOMEM;
++			goto out;
++		}
+
+ 		diff = tcp_skb_pcount(skb);
+ 		tcp_set_skb_tso_segs(skb, cur_mss);
+@@ -3431,17 +3444,16 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 		tcp_call_bpf_3arg(sk, BPF_SOCK_OPS_RETRANS_CB,
+ 				TCP_SKB_CB(skb)->seq, segs, err);
+
+-	if (likely(!err)) {
+-		trace_tcp_retransmit_skb(sk, skb);
+-	} else if (err != -EBUSY) {
++	if (err != -EBUSY)
+ 		NET_ADD_STATS(sock_net(sk), LINUX_MIB_TCPRETRANSFAIL, segs);
+-	}
+
+ 	/* To avoid taking spuriously low RTT samples based on a timestamp
+ 	* for a transmit that never happened, always mark EVER_RETRANS
+ 	*/
+ 	TCP_SKB_CB(skb)->sacked |= TCPCB_EVER_RETRANS;
+
++out:
++	trace_tcp_retransmit_skb(sk, skb, err);
+ 	return err;
+}
+
+--
+2.25.1
 
