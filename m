@@ -1,195 +1,134 @@
-Return-Path: <linux-kernel+bounces-731693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F91B05858
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:04:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C685BB05864
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F47E171105
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:04:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9131B564939
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0946B2DE6F2;
-	Tue, 15 Jul 2025 11:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3404F2D94AF;
+	Tue, 15 Jul 2025 11:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NBEy4Tsx"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="SYHyOvtK"
+Received: from out.smtpout.orange.fr (out-69.smtpout.orange.fr [193.252.22.69])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FC12DA748;
-	Tue, 15 Jul 2025 11:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40302D9482;
+	Tue, 15 Jul 2025 11:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752577390; cv=none; b=XfD/F9evOJQe+aRqdiozNfu2ukeIXLcuYlZsGxoojduXZT5apQw3+FzY55bZp2hXjBrJceVgck+0h7XyvmChuIsMoJVOvKEbBmqk5xqqHXzOpyOj7ShpWXWn/DqcImJwMF4JDfBPaEY2d2gdpN9wew/R3h7fWUfbf4QYdhLQROs=
+	t=1752577454; cv=none; b=l7rP4DfxqIufRd6KMNCW/OC83fsKlpphu47WqrAQVHizSjKX0doFRE9rOqjh0iRqooO5Zla2BDd+IUKE5YMy/YrWC5tpJZvGCLNZFcBusH0ir4CeV+rYIK13BjwGVY0vBjLJ5AV0F0eoiBwiFkMjxRoEpljVdBMRAn+R0PC+O4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752577390; c=relaxed/simple;
-	bh=Sf+4eY2bRsCMo0zv2ROC1H3bQJQUZwTqapVWUaGcPyI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=k2POc9FtoVQFZvdJQwnTMFqwT0d7xbfO+OlcEAUK+cNbYujxTXlQ4nuZNEdlofldTuF28Iunp694gIjaMj040/1CWcAly2asg+IrOf7z5ERXZeX2a56EeWJI11RF9xYgFaGRTBlDknn7IKGfn11S1BVXrqYKrRji+4FAzrqeGuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NBEy4Tsx; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56F3kJw3004376;
-	Tue, 15 Jul 2025 11:02:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	aze+Cds7D/XOCL4YrNJPzNJdEgywaovIlQABSpTXB/c=; b=NBEy4TsxxXLG6Knm
-	pi1JfQDXc7R0AgOq98yGnW4tLefmWjC1fMpg6qSL42zoIv18je4dNjW7r7O2K6Xx
-	tJaZsleTorjbd27MEifabTnHq6MBQ+iy7d2g9DPxBB0Trug5hR8KFHuhRuh0bifX
-	1nBv0dFKpjALr+BfD3Gp/u1GVED3o9JJC37RAaulQk925Td7GtIjNI2vAoLAwkIu
-	27oMOeWwJKhcfik6dpAiDyJKsA0Z2Xl12pQWbd4Du4O6qcvCuNu3N0wFdPpzrWcD
-	6FpEA7VqZEpFItcQEX+ozaMQTbd3+i8HefbO2CPfliikK5wBgpCgF1LYqV+SoUfa
-	AfjOcQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wfca174k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Jul 2025 11:02:49 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56FB2m9B004036
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Jul 2025 11:02:48 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Tue, 15 Jul 2025 04:02:45 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Tue, 15 Jul 2025 19:02:28 +0800
-Subject: [PATCH net-next v3 3/3] net: phy: qcom: qca807x: Support PHY
- counter
+	s=arc-20240116; t=1752577454; c=relaxed/simple;
+	bh=/mQu7gzdB58wKM9heJDELyytO4aB7yrtrprnY+O6HuU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l5O6t1NcSvDuc3oqigB0Tw4K/bLlxJpX61Q8BqVLkm0UzYyoza4Ed2vvO4OT3uW0It/RF+2Guv7ZMMDgV5b7kfi0RgxguAtAfej7mwu68EA3nqjpQlYASDZMDXoVDfgk/Hpxsq5vO3z9bdY0OInMMf8Zwlcbq6lNNcfhXm9jtlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=SYHyOvtK; arc=none smtp.client-ip=193.252.22.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id bdQzuifUMRBz4bdR1unSQS; Tue, 15 Jul 2025 13:02:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1752577376;
+	bh=/HX/emQQpG8/RU30kxSdFLOLv5c8doI4KfW62GN5gSo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=SYHyOvtK2HX4aAMRmok5POmmhWG7ybjqPjvzlw4BzJ9osbdLsFN9okeSt7w44ZLuA
+	 8w2MKg9YeT1mQOam2xvuOJyXjQcHEGMDAA6sU4IBQPbCVzcj6zLUzIFhlkLGuBsdIx
+	 ZvCLyG0b1l2n04vAYsXcs92ZOalAnCMena4qxtDVPuXAaxs5TkS1jzHAOmo4qa5jTn
+	 yjsMDd6/ADIwW4WMsPPNBgtQzhH5Pt4NbPM8cAgS2mX/cLPVKZTeKuT56ELr8Jdj1i
+	 XURHKnGIrQEm6GRT5j5v8dbxd6b6qPWGSQ3IhiDZEfi8PPmBXBFOTkWF1gaOfTyRCZ
+	 5VtEDI3sbl2Gw==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 15 Jul 2025 13:02:56 +0200
+X-ME-IP: 124.33.176.97
+Message-ID: <e25e9ad6-592d-47f5-bf8b-ac3f0bfde46c@wanadoo.fr>
+Date: Tue, 15 Jul 2025 20:02:53 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250715-qcom_phy_counter-v3-3-8b0e460a527b@quicinc.com>
-References: <20250715-qcom_phy_counter-v3-0-8b0e460a527b@quicinc.com>
-In-Reply-To: <20250715-qcom_phy_counter-v3-0-8b0e460a527b@quicinc.com>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Luo Jie <quic_luoj@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752577357; l=2565;
- i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
- bh=Sf+4eY2bRsCMo0zv2ROC1H3bQJQUZwTqapVWUaGcPyI=;
- b=e2kqQpb8QEJ8Mz3v3ZX0gatUwTbnWfVKkg60/fMKvwW+mEN2RyfeKZarMhoroA0IJ4E4yFsBq
- zVN5xZptfkIB2SEjiRzrWqnoOgMHh5u5g5U5SMST5K9Du92fp6SuqeL
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDEwMCBTYWx0ZWRfXxMIXnoxa7arK
- LzTV4fFYhRvKhBeyCEk5oEYXA202zSg8LNwwOW4ob1ic2Gqd/Uhni+TlmYYWq9FSfC7a7W0iN37
- vOJVa2LmjNVFCjNIQQkSQumqOpVS1I8GVnr7xIMG1Z59qymcDxOKB6bX84u3Nj/enxnlY4hChXD
- uCPZ58L+vAWCogqqQPifVrWsgAMm9P/d36lNj+McTHVk5BOINRj9jWn6GsUUwEO7SHa8l30dWGD
- xRrrHbDseFJJqiFo2G0GVe+4Ev0JqkIWGU3GBBmOE/g8XMHAa/NStuxgRBZ4uCySCcElWUb0DeH
- 5A780DhgNAiT9C/e2KHPe2tFpUkNUEagsns+Cg127lZNg19C1QwSu3uYj9PRXntEQ3QUM2bIk9L
- 5SM1Romc4jO8KMCvPiLKrxoE01XHHI1JN9xao4WoIy7xq7RBKksynmXaVZX0vs0Ugh+yOOyj
-X-Proofpoint-GUID: jrHqGPJ8yxOx94DszffTTYYr4D4HubzM
-X-Authority-Analysis: v=2.4 cv=SeX3duRu c=1 sm=1 tr=0 ts=68763559 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=uQsTNyxmMXL8gVczaX4A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: jrHqGPJ8yxOx94DszffTTYYr4D4HubzM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-15_01,2025-07-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 mlxscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- lowpriorityscore=0 mlxlogscore=999 impostorscore=0 clxscore=1015 adultscore=0
- suspectscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507150100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] can: tscan1: Kconfig: add COMPILE_TEST
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250713-can-compile-test-v1-0-b4485e057375@wanadoo.fr>
+ <20250713-can-compile-test-v1-3-b4485e057375@wanadoo.fr>
+ <20250715-mindful-terrestrial-kangaroo-fc81a1-mkl@pengutronix.de>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <20250715-mindful-terrestrial-kangaroo-fc81a1-mkl@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Within the QCA807X PHY operation's config_init() function, enable CRC
-checking for received and transmitted frames and configure counter to
-clear after being read to support counter recording. Additionally, add
-support for PHY counter operations.
+On 15/07/2025 at 18:13, Marc Kleine-Budde wrote:
+> On 13.07.2025 17:02:45, Vincent Mailhol wrote:
+>> tscan1 depends on ISA. Add COMPILE_TEST so that this driver can also be
+>> built on other platforms.
+>>
+>> Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+>> ---
+>>  drivers/net/can/sja1000/Kconfig | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/can/sja1000/Kconfig b/drivers/net/can/sja1000/Kconfig
+>> index 2f516cc6d22c4028b1de383baa6b3d3a7605b791..fee9d6f84f5fb9d6a81df00be9d216219723a854 100644
+>> --- a/drivers/net/can/sja1000/Kconfig
+>> +++ b/drivers/net/can/sja1000/Kconfig
+>> @@ -105,7 +105,7 @@ config CAN_SJA1000_PLATFORM
+>>  
+>>  config CAN_TSCAN1
+>>  	tristate "TS-CAN1 PC104 boards"
+>> -	depends on ISA
+>> +	depends on ISA || COMPILE_TEST
+>>  	help
+>>  	  This driver is for Technologic Systems' TSCAN-1 PC104 boards.
+>>  	  https://www.embeddedts.com/products/TS-CAN1
+>>
+> 
+> What about making it:
+> 
+> --- a/drivers/net/can/sja1000/Kconfig
+> +++ b/drivers/net/can/sja1000/Kconfig
+> @@ -105,7 +105,7 @@ config CAN_SJA1000_PLATFORM
+>  
+>  config CAN_TSCAN1
+>          tristate "TS-CAN1 PC104 boards"
+> -        depends on ISA
+> +        depends on ISA || (COMPILE_TEST && HAS_IOPORT)
+>          help
+>            This driver is for Technologic Systems' TSCAN-1 PC104 boards.
+>            https://www.embeddedts.com/products/TS-CAN1
 
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
- drivers/net/phy/qcom/qca807x.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Yes, I was thinking of the exact same thing after seeing the bot's error
+message. I just did not yet find some time to test.
 
-diff --git a/drivers/net/phy/qcom/qca807x.c b/drivers/net/phy/qcom/qca807x.c
-index 6d10ef7e9a8a..291f052ea53c 100644
---- a/drivers/net/phy/qcom/qca807x.c
-+++ b/drivers/net/phy/qcom/qca807x.c
-@@ -124,6 +124,7 @@ struct qca807x_priv {
- 	bool dac_full_amplitude;
- 	bool dac_full_bias_current;
- 	bool dac_disable_bias_current_tweak;
-+	struct qcom_phy_hw_stats hw_stats;
- };
- 
- static int qca807x_cable_test_start(struct phy_device *phydev)
-@@ -768,6 +769,10 @@ static int qca807x_config_init(struct phy_device *phydev)
- 			return ret;
- 	}
- 
-+	ret = qcom_phy_counter_config(phydev);
-+	if (ret)
-+		return ret;
-+
- 	control_dac = phy_read_mmd(phydev, MDIO_MMD_AN,
- 				   QCA807X_MMD7_1000BASE_T_POWER_SAVE_PER_CABLE_LENGTH);
- 	control_dac &= ~QCA807X_CONTROL_DAC_MASK;
-@@ -782,6 +787,22 @@ static int qca807x_config_init(struct phy_device *phydev)
- 			     control_dac);
- }
- 
-+static int qca807x_update_stats(struct phy_device *phydev)
-+{
-+	struct qca807x_priv *priv = phydev->priv;
-+
-+	return qcom_phy_update_stats(phydev, &priv->hw_stats);
-+}
-+
-+static void qca807x_get_phy_stats(struct phy_device *phydev,
-+				  struct ethtool_eth_phy_stats *eth_stats,
-+				  struct ethtool_phy_stats *stats)
-+{
-+	struct qca807x_priv *priv = phydev->priv;
-+
-+	qcom_phy_get_stats(stats, priv->hw_stats);
-+}
-+
- static struct phy_driver qca807x_drivers[] = {
- 	{
- 		PHY_ID_MATCH_EXACT(PHY_ID_QCA8072),
-@@ -800,6 +821,8 @@ static struct phy_driver qca807x_drivers[] = {
- 		.suspend	= genphy_suspend,
- 		.cable_test_start	= qca807x_cable_test_start,
- 		.cable_test_get_status	= qca808x_cable_test_get_status,
-+		.update_stats		= qca807x_update_stats,
-+		.get_phy_stats		= qca807x_get_phy_stats,
- 	},
- 	{
- 		PHY_ID_MATCH_EXACT(PHY_ID_QCA8075),
-@@ -823,6 +846,8 @@ static struct phy_driver qca807x_drivers[] = {
- 		.led_hw_is_supported = qca807x_led_hw_is_supported,
- 		.led_hw_control_set = qca807x_led_hw_control_set,
- 		.led_hw_control_get = qca807x_led_hw_control_get,
-+		.update_stats		= qca807x_update_stats,
-+		.get_phy_stats		= qca807x_get_phy_stats,
- 	},
- };
- module_phy_driver(qca807x_drivers);
+The kernel test robot actually gives instructions on how to reproduce, but for
+some reasons which I have not yet troubleshot, it did not work on first try on
+my machine.
 
--- 
-2.34.1
+Well, you know what, because we reached the same conclusion, allow me to be a
+bit lazy here. I will just send the v2 and let the bot test it for me.
+
+
+Yours sincerely,
+Vincent Mailhol
 
 
