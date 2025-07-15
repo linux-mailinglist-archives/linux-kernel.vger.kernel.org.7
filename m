@@ -1,144 +1,80 @@
-Return-Path: <linux-kernel+bounces-732114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4CEBB0622E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:00:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BAC9B061F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F37D1893EDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:56:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 846187A59E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA4B1FC7E7;
-	Tue, 15 Jul 2025 14:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70DF1EF38F;
+	Tue, 15 Jul 2025 14:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="nehBQBhg"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575161DF26B;
-	Tue, 15 Jul 2025 14:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2CCGnG4p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0137719D093
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752591335; cv=none; b=KsGY/onODa4v7rNmK5Q/IcF3gEwvOV0ztEiN1/fcpvbijM5PRHhpi79O0sVXeAgHK8SZbvcbhLpcySPRA+2igByxtv22diEYtMtpLrP++Voccgo7Wnx+0t03+Lbsw2/hB9MdzE/kRds7+LvurfVs3hGsO3F5zyOPN3x3EHTn61A=
+	t=1752591242; cv=none; b=GXBwfu9aI1SU6Z8tjJIY6Q2WgK9iz+UvspqiVHAyiyqKlf5tfSzWbFNfnWG6ME5ZuuzS5/yZ/TVlDVqBnASGssJx+6x1anGKE4LL6kRIzJL8cf7bCgCYs1UzSC5nHasf0CmBm0RIWYJLjLFtoRzr8o92D8aC0a27Wb6pu1vDDJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752591335; c=relaxed/simple;
-	bh=txUfSwjyOVKeDzlPKIBEVTgZb3j/w8eAWl4cWJAms9Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UI4p0iJixg0K5HIc9P/EeBuu5GdBGWmm6PAcvh66hx6zBBvjXTPxKXOq7BHwyM302YYX8inJi51+MHAOZ50RqEipwmoQ+NtU32q+RITWqYuABOcZ8CGESdsOC4n0mJ/5xtHI44HPZZVY5yCwM654A+dgdgTqxIufmWAWvJOn35g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=nehBQBhg; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=SP7dE1bKFm+Zk1R9d8gy12/jTWzAHbDIeWSSV5I0Ffw=;
-	b=nehBQBhggmGzsVClzFYyo3YKVar9NmcrCXQKH8/hXqk5TfLczz5c1ul8b+/3Md
-	Gi6wgadAcqQOQ3nTTgkOj1J6DmC5lmBoBBWwQ4MzVcGoj70yWjogVitdw/yXdeiT
-	W/lcliVaXiL2IhxP/n8ycjonrgMtKRzJdTYd4i0BLSrKk=
-Received: from [IPV6:240e:b8f:919b:3100:7981:39b4:a847:709a] (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wCHnzWFa3ZoCeijFA--.44532S2;
-	Tue, 15 Jul 2025 22:53:58 +0800 (CST)
-Message-ID: <64e0809b-b931-4820-8f61-377db0dbfc49@163.com>
-Date: Tue, 15 Jul 2025 22:53:56 +0800
+	s=arc-20240116; t=1752591242; c=relaxed/simple;
+	bh=En50aEqJNzpuh1WEs+Fp6uoiU6AmCKf+RDL/VzWszt4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A9rKs8/uJEsBdylztR22M5pIc60jRD4T5iUf2VsfSxxm0OIqpoeNzsNoF1o893weHLWYHC41Qm94fLc9i0mhwVCskCq/u4ncaH+gGJzS5w8OD31rcIM3zcH/DZQsD+zfJZcfx+miHp9V+ambtF641wRneYdPCJlGo5MbamKvfR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2CCGnG4p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1610AC4CEE3;
+	Tue, 15 Jul 2025 14:54:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752591241;
+	bh=En50aEqJNzpuh1WEs+Fp6uoiU6AmCKf+RDL/VzWszt4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=2CCGnG4pFrOpGuNSJIEU1hjlLcOM5o574G+KnNbRNF/zoe3wnJwKEyzIRarpDU6yJ
+	 yLcvcbK2wbIxwK5s/o+nsU6qbXgqGzSE1XM8TsG6vfgNHAEsPMK1FirLRzZmYkBYlZ
+	 iPqamrhByiPXcTSZr/4K7tvMVRAjqqCTZ65G23qs=
+Date: Tue, 15 Jul 2025 16:53:59 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: "Meng-Shao.Liu" <sau525@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] samples/kobject: fix path comment
+Message-ID: <2025071548-spectator-driller-0dae@gregkh>
+References: <20250715143001.27407-1-sau525@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/11] PCI/ASPM: Clear aspm_disable as part of
- __pci_enable_link_state()
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>,
- Jeff Johnson <jjohnson@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
- linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
- qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com,
- quic_vpernami@quicinc.com, quic_mrana@quicinc.com,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-References: <604ffae3-1bfc-0922-b001-f3338880eb21@linux.intel.com>
- <20250711230013.GA2309106@bhelgaas>
- <qay63njqf7z7mchizt5sm66i67rvxxxicikxmfuvllmmxfy7ek@mulnjvde5q7w>
- <470742a6-861e-498e-9da4-1fa213969c7e@163.com>
- <drj7qm65bfu7irnfyy2cfhzkqlrkvd2tuvlxrlpxyohhpjbs3x@ecgooujjynmx>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <drj7qm65bfu7irnfyy2cfhzkqlrkvd2tuvlxrlpxyohhpjbs3x@ecgooujjynmx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wCHnzWFa3ZoCeijFA--.44532S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxArWrZw1kuF45Gr4rZFykGrg_yoW5Gr43pF
-	WFyFySka1kArn7Cw12qw1UJFyYyw4Syry5W34Fqw1UAFs093s7Jr47trWruF9xWr4xZw1j
-	vrWYgF9rXFyq9aDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UizVbUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQwOLo2h2Y3mlqwAAsi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715143001.27407-1-sau525@gmail.com>
 
-
-
-On 2025/7/13 01:02, Manivannan Sadhasivam wrote:
-> On Sun, Jul 13, 2025 at 12:05:18AM GMT, Hans Zhang wrote:
->>
->>
->> On 2025/7/12 17:35, Manivannan Sadhasivam wrote:
->>>> We only have two callers of this (pcie-qcom.c and vmd.c, both in
->>>> drivers/pci/), so it's not clear to me that it needs to be in
->>>> include/linux/pci.h.
->>>>
->>>> I'm a little dubious about it in the first place since I don't think
->>>> drivers should be enabling ASPM states on their own, but pcie-qcom.c
->>>> and vmd.c are PCIe controller drivers, not PCI device drivers, so I
->>>> guess we can live with them for now.
->>>>
->>>> IMO the "someday" goal should be that we get rid of aspm_policy and
->>>> enable all the available power saving states by default.  We have
->>>> sysfs knobs that administrators can use if necessary, and drivers or
->>>> quirks can disable states if they need to work around hardware
->>>> defects.
->>>>
->>>
->>> Yeah, I think the default should be powersave and let the users disable it for
->>> performance if they want.
->>>
->>
->> Dear Bjorn and Mani,
->>
->> Perhaps I don't think so. At present, our company's testing team has tested
->> quite a few NVMe SSDS. As far as I can remember, the SSDS from two companies
->> have encountered problems and will hang directly when turned on. We have set
->> CONFIG_PCIEASPM_POWERSAVE=y by default. When encountering SSDS from these
->> two companies, we had to add "pcie_aspm.policy=default" in the cmdline, and
->> then the boot worked normally. Currently, we do not have a PCIe protocol
->> analyzer to analyze such issues. The current approach is to modify the
->> cmdline. So I can't prove whether it's a problem with the Root Port of our
->> SOC or the SSD device.
->>
->> Here I agree with Bjorn's statement that sometimes the EP is not necessarily
->> very standard and there are no hardware issues. Personally, I think the
->> default is default or performance. When users need to save power, they
->> should then decide whether to configure it as powersave or powersupersave.
->> Sometimes, if the EP device connected by the customer is perfect, they can
->> turn it on to save power. But if the EP is not perfect, at least they will
->> immediately know what caused the problem.
->>
+On Tue, Jul 15, 2025 at 10:30:01PM +0800, Meng-Shao.Liu wrote:
+> The introductory comment still says the example creates
+> /sys/kernel/kobject-example, but the code actually creates
+> /sys/kernel/kobject_example.
 > 
-> We all agree that not all endpoints are standards compliant. So if they have any
-> issues with ASPM, then ASPM for those devices should be disabled in the quirks
-> or in the device driver.
+> Update both comments to reflect the actual sysfs paths. Also,
+> fix "tree"->"three" typo in kset-example.c.
 > 
-> That said, the change that Bjorn proposed is not going to happen in the
-> immediate future.
+> Signed-off-by: Meng-Shao.Liu <sau525@gmail.com>
 
-Dear Mani,
+Please use your name correctly, I doubt it has a '.' in it :)
 
-Ok, I will keep an eye on the changes of ASPM.
+> ---
+>  samples/kobject/kobject-example.c | 2 +-
+>  samples/kobject/kset-example.c    | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 
-Best regards,
-Hans
+Your patch series was not threaded, what happened?  When you resend, try
+to use something like git send-email to have that work properly.
 
+thanks,
+
+greg k-h
 
