@@ -1,247 +1,193 @@
-Return-Path: <linux-kernel+bounces-731058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21449B04E02
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:52:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64497B04E03
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05AEE3BC444
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:52:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 762884E0C7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1832D0C6E;
-	Tue, 15 Jul 2025 02:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD6C2D0C70;
+	Tue, 15 Jul 2025 02:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="btC3buht"
-Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012002.outbound.protection.outlook.com [52.101.71.2])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OayyatsQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CB32C08BE;
-	Tue, 15 Jul 2025 02:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.2
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752547960; cv=fail; b=DsbJT/o6hAf1FiEHajJRtNs+cpb1j6xPtC1ka/VZwRZxQb02WpbvqW87Gw8dcK6C7ZsWmeZ/CZazPzFYFmwnoUYMwlfb1PRzw6+/im7Mmabc/mYqC+/TThTo5fhyOhb7eHlwalG+j9jEAKfY8S6BJIJ+8/9GfrkHQcI3rpWkOlE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752547960; c=relaxed/simple;
-	bh=wMQMKA1MEWOhX9+XuSDDH06+0M1ZY/kFOq3wKSlAX/4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=teeFXft02ALBRicms0BpQZeSsxAdMtYJlLH+iJlMicDIw9JupxsfGXwcFNVIVzbJwCmNg5O8GPJV1Q1vRiw7+zS0oID0Iarer0YZ3uTxsrDdUBBFvUh5FjAD9mRFbZAjV9H4vaa7qEDmFRQcyxuiDytIFbA/ay9PEnH5QALYyPc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=btC3buht; arc=fail smtp.client-ip=52.101.71.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mkYRHsIAmXtZpjbhDpH4WJurzD1TgT5LqUJvxPjbpw3CHU5l48DEQ1Zqju2xKp0CVC2nGF2cQBtqG2pWIVWaPNaz1cY5YWq0B6nd8g6EU4PL0qacaJrA83jBzp6/w+YHBSI46D2/JDrSfJcDyMZsqdExCCVwG0NuVq0oJWe0fkDSGYbOR+tDc5qLhDMCdakoOembcQ/eHcM4eglhvMaocTas0Fj2gtrlVFMZyjaghO/NXwnrqevrIlw4jwLs3uqXuAPA2QnyKBk0deMqv7HBAiNCwjtpey1awpZmg4wQq50u39jgGDRpdJu4uthx9i8J6hGbSpf0HW3UUhxQcoZ+/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ehb6NlibqJ/MMoOvWTWC9rF41eQgZUOhlCYIXreqbU8=;
- b=WN24RvhaBJpS+bq67PfjgkZtetQaHm0LFUv7fiikM25aWOQm0KyxTccdBcvoJPzWprxR/JeAkxezomuH18Tu0RzJ7PhF9vO3PUqKQazV2XZmCwl6lxXakGsu+IA7SnyunnhVIROUltlIcre2Veqom/u1h4fQ3LuhbTVsHCi+NliFsDdTlK2PxV+LfXrRn0zbomUZm8K/hEfxoCl4vxR9gocYv3dFSNUPlkZJckr7d2nEF2YtqUtuQ0lbaeZlfFG1ftgLwzp5/Cb3Ce+Jd2gRtEZLXYDNUmYkeLC3l4m/6FApu9MFwkMzRcNcpx8oWHEbxNpqhffFQczTBBgGQ3X+fA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ehb6NlibqJ/MMoOvWTWC9rF41eQgZUOhlCYIXreqbU8=;
- b=btC3buhtuN1sV/mTLSn8hwuJ52ArEgiiB8q7oNGjsFcXQYbVpp8I2yMfl7RqnMigYWuE5OEXoNaCmRgk4Khb2enHYhNVKs55+ps4+Ae9q/vAVROQr9tuZWLxJ/bjktFicM2aBt3ixGu9w8VmTSVYj2+y2bWmZh8dcGewWYnvLhLGBioXwe6heX1POKYkcb3yTAmuOpuDFRENmrt+/jjennKrzsE0+A3D/UahoJxZvYRT0IUDyYRYRYex4fhoZTk6YG6RN0mOLBX6Xgl4frSh1gYOL+tUwAcLkpr5Qoom/9/ma2YM9zodsW1pd5hpm4mpXX3AprcWNNtGjdUSEUUuTA==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by VI2PR04MB10545.eurprd04.prod.outlook.com (2603:10a6:800:270::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Tue, 15 Jul
- 2025 02:52:34 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8922.028; Tue, 15 Jul 2025
- 02:52:33 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, "F.S. Peng" <fushi.peng@nxp.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "richardcochran@gmail.com"
-	<richardcochran@gmail.com>, Claudiu Manoil <claudiu.manoil@nxp.com>, Clark
- Wang <xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch"
-	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>
-Subject: RE: [PATCH net-next 01/12] dt-bindings: ptp: add bindings for NETC
- Timer
-Thread-Topic: [PATCH net-next 01/12] dt-bindings: ptp: add bindings for NETC
- Timer
-Thread-Index:
- AQHb8jPWk5neHXUn3Eeo02nqDOVTYbQxImMAgAATMMCAAAm6gIAAFX1wgAAGKwCAAAFaQIAADfuAgAACM8CAAAPoAIAAAqbQgAAP8QCAABcf0IAAD72AgADTHvA=
-Date: Tue, 15 Jul 2025 02:52:33 +0000
-Message-ID:
- <PAXPR04MB8510FFE0A5DA2F3A94E9CB7E8857A@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <61e6c90d-3811-41c2-853d-d93d9db38f21@kernel.org>
- <PAXPR04MB85109EE6F29A1D80CF3F367A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <169e742f-778e-4d42-b301-c954ecec170a@kernel.org>
- <PAXPR04MB85107A7E7EB7141BC8F2518A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <836c9f0b-2b73-4b36-8105-db1ae59b799c@kernel.org>
- <PAXPR04MB8510CCEA719F8A6DADB8566A8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20250714103104.vyrkxke7cmknxvqj@skbuf>
- <PAXPR04MB85105A933CBD5BE38F08EB018854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20250714113736.cegd3jh5tsb5rprf@skbuf>
- <PAXPR04MB851072E7E1C9F7D5E54440EC8854A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20250714135641.uwe3jlcv7hcjyep2@skbuf>
-In-Reply-To: <20250714135641.uwe3jlcv7hcjyep2@skbuf>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|VI2PR04MB10545:EE_
-x-ms-office365-filtering-correlation-id: 2f087046-6c22-4987-7640-08ddc34aa613
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|19092799006|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?Yc/FI0hEU2fROTbMuRh9wlmXlB3X1kRkHqVnj05eis4xtaWLfrLzxwBRYe5x?=
- =?us-ascii?Q?YHMgaTsZByaqveJn+2dHY3Mo5hnj6LZqd4bswpz0YSy3GUV4rHSbe74uy1KZ?=
- =?us-ascii?Q?q2UJJH1IihfWPiCpoURPZioRGUSXsU+xVLzZjwermv9Q60qzqUs9G9ihQ0ag?=
- =?us-ascii?Q?p8GgCLBZ6CofRDEQ2be7wa8CUa0x/vsQNA02/rMt47Q0Go9YjVi+HrHlYeLH?=
- =?us-ascii?Q?wexTxsYUGHWL/fFVyxZnafeFhdSruab4FEMKcVB6IRFoXzRWqEKe6pbamex/?=
- =?us-ascii?Q?qvVHatvLkUrroy/+7JnjXh0nrj2c+n8CO0jwIkbShaGRssG3nsdRn5uBuBhT?=
- =?us-ascii?Q?XSS1GZuxDaztz9K6KgQq6iXKRJDuP75YOg4ncDPvKduGdAlelay0l0vvNhIU?=
- =?us-ascii?Q?8LvFIq/w8o8Cjwxunyo/tDTapX11QDMXExTbfUEmupAsqV1EjN5l8vwhsi+3?=
- =?us-ascii?Q?W5jLNRW5hU0M4leacl16Q3RMw2XdjgXEeNbDXtPnAMz49zHYlk9cQnl4P/dv?=
- =?us-ascii?Q?eHDLDPYK5HWFyfYf9zDM6rqfP9x2B2ZyaAMDZFa5KEzzNEV30b2lKqC8xNWI?=
- =?us-ascii?Q?pKk3E3d5l/xGQi8O5qXMwEQigbO7QEGm6a/19zhTyyl1S/MnkahLDvL149Dt?=
- =?us-ascii?Q?R9QePox01Dt4wfhJN4pF8fjUi2F4NOpaR7AK+snQ+n+zC44Ak9SmYg6pwsft?=
- =?us-ascii?Q?fgIayc9xaNnBf27kIDbLAKAfi2Fryaj76GimQQ16pksrznEQVzMrZUv6v2xO?=
- =?us-ascii?Q?2sqidoJ3qKf7kOLgOMjAbm9dljCvOGsoePxps4TzDjBya7x0IIwTALtbWbPu?=
- =?us-ascii?Q?9QJh4mN7cjxDyNLObqmglwilaG9BeU+6c3bvJRA9QUIYvVXIg3rNcNtFSiG2?=
- =?us-ascii?Q?yNhvlNdkgw3GXkxgZPLeMm+Vk5stASQsRIvFeRmCbua3s94w8Zf3j/WgW+SK?=
- =?us-ascii?Q?Fz9uD3WNEpiTjV1R8yrSoyBj82Cpl+EsDG/8p+EEg+0iXAHx2tsUCc/lo4KE?=
- =?us-ascii?Q?ote7OWnBhSk1cHyt4Pl2DXx13VMsYuIHEhRnffdIrnoYzUMtxHlotOkvwGZG?=
- =?us-ascii?Q?w3SQkchH7vKKcRYCVCNjoUfwvD9kzgad5Lm0VBxRrLnEN8pIpPN4WVj88NVK?=
- =?us-ascii?Q?lhSZT5Zgte4vNokL9P6rKMbnUecawWaksiPB4WInyojfYkCvnxKC8WZetREK?=
- =?us-ascii?Q?CNuUYIW0u2HxadjfpmdeZSf2dqUN162lVno8OSHIG9HrCtLP5gyaYsgPo6S6?=
- =?us-ascii?Q?HtyMqfxRfRx2Fu+XGNMUnNDb8Io6JeK6LdXzKUDeDtWfhiBAxD3G2aY/acbR?=
- =?us-ascii?Q?9CUcW1bjtghX+0qQYf5RqkuG2pvwWH+s1Q4lpGJ5wp9n6V5HTgQpTAQF9ocy?=
- =?us-ascii?Q?Lj9pv+Ne6d8O7tppltvIiq/EKlMfMxFKjqbqK9rFnquUeGswMcai71CJ/Lbg?=
- =?us-ascii?Q?q1GyvH6jc81JnfzT/cbaTjSBIdGYRbCx38queHNOehjOJFpb1MF0rA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?70uI2aW56bNULwsiL/9E7S5R5E0IxxfCDAPCIx5O0K9+OXUP9bLxQDwGFJq3?=
- =?us-ascii?Q?bJmCVVvDa1r+dOSafAo81WMESkEqVL5mHW5nBNhnH8BaOsi1eVFWQweYF21k?=
- =?us-ascii?Q?OYdVUuz4Q/RdHxyy/a42k/5DRDYtc9LTwHGk9CFeKy4lMSO0fie6Gk4dhgyS?=
- =?us-ascii?Q?5zB1eysWWxkEHnGP10klCsZQZZalORhcNDYAFXVvQH7wPWSa9a6zBSUMVYtJ?=
- =?us-ascii?Q?duA/2ve/6aZJTttumjBoEzaa4T1AXQa0OQq7wHIBd3kX6DgqqagtExZiIrck?=
- =?us-ascii?Q?vrErdqLHjFBEHBB1VdkrPeDwEguXaUXWTXyZefWHV6aMe9J2YfZIYSwUtvSi?=
- =?us-ascii?Q?38DWmCcsPWgkY1Ehy6fkREYWqqIh19hFAeZThZAPyqAMR6H8sPr+EPLSQ/BB?=
- =?us-ascii?Q?z7EULRl45V10EnHGTWPH6uTetkGonbgdZ5ohPW7ex6cY6wjXJnlFQEaicvWk?=
- =?us-ascii?Q?htFnYikTI1a/34shnC3OuxcGJmDCAu/jvt/uAH68UOyqRRjBQOZlzOjSDLCJ?=
- =?us-ascii?Q?QrT60zwjSM3ixLvFInRCcrZIWwxtzygUvc+HqAnctPO0feGNid0GMGlY2rwJ?=
- =?us-ascii?Q?lUZu5MYRywBksJss2ERpSFI6tsAanZefjiW90m1nVnqSCAyQYM/c7LLfbBTJ?=
- =?us-ascii?Q?oM9qASNbSRnvrHEviqXyly86Bkx6SAQUFBSHseitEafPFdZCnIiowsUbq6Dj?=
- =?us-ascii?Q?4Xt10Wlj/IkpT8k6Ba7a/WChE9nJLmIyf8YFA5HudUkfgymy0pMBFufahEuk?=
- =?us-ascii?Q?6ZsoazhxZocgvFcuLMlS8SDsckzU91jZ/Bnfg/8hDv9wQR5IasWPT5p8T6tK?=
- =?us-ascii?Q?cCHrx0p3r7PQeDKYke//ZMl1IzeKjJ5XPDkvBUb/X5+o98aBbNP5WnTGkt0+?=
- =?us-ascii?Q?tzt3dI4C0+v0oQlXt2r7jwXWBozpveG+fM5HgdtukIXB0n3uyn1Dq3dK8N0y?=
- =?us-ascii?Q?Y044YA4oIFy1WKdhWZbgYthlzZNLDz9zpr0amVglh1G8YkyauB1uJ2wSZ92X?=
- =?us-ascii?Q?Q6OxKJ74w/ofMgsWpeGwztJJFRTWsyiUvYIoeHe/nDGwM8Gb+yGsl3d1nYt3?=
- =?us-ascii?Q?+SfkDIiZ3/irxDaKIbG7QN9l8aJ29jjW3cTMpKizJzwj/yaTrQnkuVWN9Ltl?=
- =?us-ascii?Q?lgMOyuDBi8LS1E6oelF6+kbLRZU6cZsUf5vKP2HUnYDCXApijyTCKSyYa6n6?=
- =?us-ascii?Q?H1dvbTmB/jD2RV0phKDGIl51kaqspRE1JeTzWPsXTdj08eiONa+Kf91O7+YF?=
- =?us-ascii?Q?/lbnF0ioKym5ZZMM9iapjEJgL/MjoXbCaoC9siQZ4YYQgY5TsNg+3vLvgmE1?=
- =?us-ascii?Q?RICrJEBOTY3/JOLNJ4sGEYfXAjuSXha9Zt86H6roVK2p6eiVrORdNp+xaUgk?=
- =?us-ascii?Q?TjdiCkTSpSVw/OSDNPUkVkAMJlugxTYCFvuiFxUGEZRCu05HtABPiYXsKR0H?=
- =?us-ascii?Q?N9BNEyVG3HQ6saTIjO8YEde1cXU48phj6+ln/ChiUaKDi08RH30u666/WNZ6?=
- =?us-ascii?Q?7Wcux0l2HfzjFX9+mqbBu1wQr3LBr7zL1h2jGCM7R9jWu0NKspdsj2pM27Rx?=
- =?us-ascii?Q?oV7lFRdESYn9TOJw8Qg=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101881A5B84;
+	Tue, 15 Jul 2025 02:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752547996; cv=none; b=AoTHmd8mGZjD9gOuwwTdwLmiRPytMqqiRwU3Qy1+Rjn1m+v+jB4Tjv6LUwlUiNw5OQEzebFU0RPgc5XjZqVr5Yrci9iNsUYIn+Dbiygv4IkFW4SUeEfLanBnLmlciYKiAkBvVpmNZ0Z3yKnBuysI1hH6LWCwE3d1ZSYt4l3dO7M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752547996; c=relaxed/simple;
+	bh=J3tdY+zXYeG6ZJJovx/ZvkZlfYqF3Z47aosAbptPIPo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hBbdyrAIBt7geFBrp7CileD+/EqcgJb2TTE0/50a4g+9qZMIB+jUvrWArd2A9KDqbw+wUWEjB6rtTzZmeOStbhmpK3I16HEH7vx9EtvpvJXpAwrPIHZfwo2QnUiHGTiMvar9AqcChdWf4BR8WwgQ4LtELtqYdYXNdaxztxBcNUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OayyatsQ; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752547994; x=1784083994;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=J3tdY+zXYeG6ZJJovx/ZvkZlfYqF3Z47aosAbptPIPo=;
+  b=OayyatsQMwc1ULx+nn+mkyVe+Y/+1nljM8BKEo6DDeWDV7FUkxpuWn3j
+   YCYUa8zrWFrJYEFnva1KKrQzMLPaoLK4KOV1lP7p0BAPpKsaqH7ZcPksr
+   H0B8UHm75Ok63MfyxitzNUTwEfOQKFdOsFTaV6qVXiuKrHYbgp+0MkLaw
+   yQHqPYwo/3qWuDQat55VYnPPqbqYNoMImXoD5/5dD5aym+sipiWirVIKt
+   Yg7U4l9y/9duWBl4Zm22Gybntzk4Pe+9h3S+5K+ksyv4HIRZV7Ju5JvAt
+   brK+lMfuM3JdWeiKsEjLs4toTOYQ3Nx93zk1JXML4fUS/lHEtgVnOfdG8
+   w==;
+X-CSE-ConnectionGUID: xcRJMWkGTa2bz7XvaevRgg==
+X-CSE-MsgGUID: OfMjM/y7SPig/y1nQV0KSQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54608076"
+X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
+   d="scan'208";a="54608076"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 19:53:13 -0700
+X-CSE-ConnectionGUID: NnaJ/l+zSBG6lpiZgEmL3Q==
+X-CSE-MsgGUID: S6FZIWGYQg+vnSOtfLoiIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
+   d="scan'208";a="188099069"
+Received: from unknown (HELO [10.238.11.128]) ([10.238.11.128])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 19:53:09 -0700
+Message-ID: <8137d98e-8825-415b-9282-1d2a115bb51a@linux.intel.com>
+Date: Tue, 15 Jul 2025 10:53:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f087046-6c22-4987-7640-08ddc34aa613
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2025 02:52:33.7571
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JFdkWvV6cUKj4x/NZSY7UgIg7FX/UcXj3jDqBAPI/TWF/D9AkO1HhRjQ2oArXVtyMFRhwS+qzkJxCu8+wjWmag==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10545
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] x86/kvm: Force legacy PCI hole as WB under SNP/TDX
+To: Sean Christopherson <seanjc@google.com>,
+ Nikolay Borisov <nik.borisov@suse.com>, Jianxiong Gao <jxgao@google.com>
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Dionna Glaze <dionnaglaze@google.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ jgross@suse.com, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ingo Molnar <mingo@redhat.com>, pbonzini@redhat.com,
+ Peter Gonda <pgonda@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Tom Lendacky <thomas.lendacky@amd.com>,
+ Vitaly Kuznetsov <vkuznets@redhat.com>, x86@kernel.org,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, kas@kernel.org,
+ "Xu, Min M" <min.m.xu@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>
+References: <CAMGD6P1Q9tK89AjaPXAVvVNKtD77-zkDr0Kmrm29+e=i+R+33w@mail.gmail.com>
+ <0dc2b8d2-6e1d-4530-898b-3cb4220b5d42@linux.intel.com>
+ <4acfa729-e0ad-4dc7-8958-ececfae8ab80@suse.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <4acfa729-e0ad-4dc7-8958-ececfae8ab80@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> > I don't think these can meet customer's requirement, the PPS pin depend=
-s
-> > on the board design. If I understand correctly, these can only indicate
-> > whether the specified pin index is in range, or whether the pin is alre=
-ady
-> > occupied by another PTP function.
-> >
-> > However, these pins are multiplexed with other devices, such as FLEXIO,
-> > CAN, etc. If the board is designed to assign this pin to other devices,=
- then
-> > this pin cannot output the PPS signal. For for this use case, we need t=
-o
-> > specify a PPS pin which can output PPS signal.
->=20
-> Ok, apologies if I misunderstood the purpose of this device tree property
-> as affecting the function of the NETC 1588 timer IP pins. You gave me
-> this impression because I followed the code and I saw that "nxp,pps-chann=
-el"
-> is used to select in the PTP driver which FIPER block gets configured to
-> emit PPS. And I commented that maybe you don't need "nxp,pps-channel" at =
-all,
-> because:
-> - PTP_CLK_REQ_PPS doesn't do what you think it does
-> - PTP_CLK_REQ_PEROUT does use the pin API to describe that one of the
->   1588 timer block's pins can be used for the periodic output function
->=20
 
-Yes, you are right, PTP_CLK_REQ_PPS is input into the kernel PPS subsystem,
-is not used to out PPS signal on external pins. I have found the kernel doc=
-.
-I thought PTP_CLK_REQ_PPS can be used to output PPS signal, but now it
-seems that many people use it wrongly.
 
-commit d04a53b1c48766665806eb75b73137734abdaa95
-Author: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Date:   Tue Nov 17 22:38:26 2020 +0100
+On 7/14/2025 7:24 PM, Nikolay Borisov wrote:
+>
+>
+> On 14.07.25 г. 12:06 ч., Binbin Wu wrote:
+>>
+>>
+>> On 7/10/2025 12:54 AM, Jianxiong Gao wrote:
+>>> I tested this patch on top of commit 8e690b817e38, however we are
+>>> still experiencing the same failure.
+>>>
+>> I didn't reproduce the issue with QEMU.
+>> After some comparison on how QEMU building the ACPI tables for HPET and TPM,
+>>
+>> - For HPET, the HPET range is added as Operation Region:
+>>      aml_append(dev,
+>>          aml_operation_region("HPTM", AML_SYSTEM_MEMORY, aml_int(HPET_BASE),
+>>                               HPET_LEN));
+>>
+>> - For TPM, the range is added as 32-Bit Fixed Memory Range:
+>>      if (TPM_IS_TIS_ISA(tpm_find())) {
+>>          aml_append(crs, aml_memory32_fixed(TPM_TIS_ADDR_BASE,
+>>                     TPM_TIS_ADDR_SIZE, AML_READ_WRITE));
+>>      }
+>>
+>> So, in KVM, the code patch of TPM is different from the trace for HPET in the
+>> patch https://lore.kernel.org/kvm/20250201005048.657470-3-seanjc@google.com/,
+>> HPET will trigger the code path acpi_os_map_iomem(), but TPM doesn't.
+>>
+>> I tried to hack the code to map the region to WB first in tpm_tis driver to
+>> trigger the error.
+>> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+>> index 9aa230a63616..62d303f88041 100644
+>> --- a/drivers/char/tpm/tpm_tis.c
+>> +++ b/drivers/char/tpm/tpm_tis.c
+>> @@ -232,6 +232,7 @@ static int tpm_tis_init(struct device *dev, struct tpm_info *tpm_info)
+>>          if (phy == NULL)
+>>                  return -ENOMEM;
+>>
+>> +       ioremap_cache(tpm_info->res.start, resource_size(&tpm_info->res));
+>>          phy->iobase = devm_ioremap_resource(dev, &tpm_info->res);
+>>          if (IS_ERR(phy->iobase))
+>>                  return PTR_ERR(phy->iobase);
+>> Then I got the same error
+>> [ 4.606075] ioremap error for 0xfed40000-0xfed45000, requested 0x2, got 0x0
+>> [ 4.607728] tpm_tis MSFT0101:00: probe with driver tpm_tis failed with error -12
+>
+>
+> The thing is we don't really want to get into the if (pcm != new_pcm) { branch, because even if it succeeds there then the mapping will be wrong, because we want accesses to the TPM to be uncached since that's an iomem region, whereas this error shows that the new_pcm is WB.
+>
+> Also looking at memtype_reserve in it there is the following piece of code:
+>
+> if (x86_platform.is_untracked_pat_range(start, end)) {
+>      7                 if (new_type)
+>      6                         *new_type = _PAGE_CACHE_MODE_WB;
+>      5                 return 0;
+>      4         }
+>
+>
+> So if is_untracked_pat_range returns true then the cache mode will always be WB.
+So there are two different things per my understanding:
+1. The patch set https://lore.kernel.org/all/20250201005048.657470-3-seanjc@google.com/
+     applied to "Guest" kernel should be able to dismiss the error message.
+     In __ioremap_caller(), when branch "pcm != new_pcm" is triggered, since
+     is_new_memtype_allowed() returns true for TPM range, the error message
+     shouldn NOT be printed.
+     Otherwise, it really confuses me.
 
-ptp: document struct ptp_clock_request members
+2. Setting the PAT to WB for iomem region of TPM is not desired the target type.
+    Per my understanding, it should be safe to program the "iomem" to WB.
+    - If the iomem region is emulated, it's OK since the accesses will be
+      trapped.
+    - If the iomem region is passed-through, the EPT will use UC and the
+      effective memory type will be UC.
 
-It's arguable most people interested in configuring a PPS signal
-want it as external output, not as kernel input. PTP_CLK_REQ_PPS
-is for input though. Add documentation to nudge readers into
-the correct direction.
 
-> You seem to imply that the "nxp,pps-channel" property affects the
-> function of the SoC pads, which may be connected to the NETC 1588 timer
-> block or to some other IP. Nothing in the code I saw suggested this
-> would be the case, and I still don't see how this is the case - but
-> anyway, my bad.
->=20
-> In this case, echoing Krzysztof's comments: How come it isn't the system
-> pinmux driver the one concerned with connecting the SoC pads to the NETC
-> 1588 timer or to FlexIO, CAN etc? The pinmux driver controls the pads,
-> the NETC timer controls its block's pins, regardless of how they are
-> routed further.
->=20
+Another solution is using MTRR MSRs as the communication channel b/t guest BIOS
+and guest kernel, probably need to do the following things:
+For guest BIOS (i.e, OVMF), allow it to program the MTRR MSRs
+- Revert 071d2cfab8 ("OvmfPkg/Sec: Skip setup MTRR early in TD-Guest")
+- Revert 3a3b12cbda ("UefiCpuPkg/MtrrLib: MtrrLibIsMtrrSupported always return
+   FALSE in TD-Guest")
+- Make sure OVMF doesn't toggle CR0.CD, which will trigger #VE.
+For guest linux kernel
+- Revert 8e690b817e38 ("x86/kvm: Override default caching mode for SEV-SNP and
+   TDX")
+- Make sure guest kernel doesn't toggle CR0.CD, which will trigger #VE.
 
-pinmux can select which device to use this pin for, but this is the
-configuration inside SoC. For the outside, depending on the design
-of the board, for example, pin0 is connected to a CAN-related device,
-then in fact this pin can only be used by CAN.
+Sean, do you think this solution is the direction to go?
 
-> (reductio ad absurdum) Among the other devices which are muxed to these
-> SoC pads, why is the NETC 1588 timer responsible of controlling the
-> muxing, and not FlexIO or CAN? Something is illogical.
+>
+>
+>>
+>> And with Sean's patch set, the issue can be resolved.
+>>
+>> I guess google's VMM has built different ACPI table for TPM.
+>> But according to my experiment, the issue should be able to be fixed by this
+>> patch set, though I am not sure whether it will be the final solution or not.
+>
 
 
