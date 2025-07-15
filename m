@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-732202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70ABDB06362
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:46:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C33A0B06365
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C498580F4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:46:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF71A4E4EAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760D924BCE8;
-	Tue, 15 Jul 2025 15:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB282230BD5;
+	Tue, 15 Jul 2025 15:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rUsfWUs5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgQEr4xT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA19D224F6;
-	Tue, 15 Jul 2025 15:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9801F95C;
+	Tue, 15 Jul 2025 15:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752594360; cv=none; b=DG+dvNHMpFLupsPhIyeKgUDaS6btCmgInqFkslP9MFbvXgpGShDf1qDe6zrm6cv8CAs+9xgwiXOvtDYsBC7BoMNbgDXZAO+pv2lWLHCU+MqHw4ynAH0obCpo2QObNLkipABOVuKwbekBr1La2ufOi2gA/OQM7U+Sm3FPVupN/LY=
+	t=1752594430; cv=none; b=nRWgNKEpYXd1k/AsxDDgF88pnw9xuQXGQLfJzitEjirXoB+QHFUmmOuNH4Y2sC7wOnNxJMZHEYDz3UhFhlKxgEJobJSKSrrqowj/NK4DGPsq673nof1vWjALK83/H3bIBypY50vp14bDzhROeSt1Z8B+Pk4hiA2643Ip0ljNbxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752594360; c=relaxed/simple;
-	bh=KY4UxgFLKxX/JaJycNQHiOkF3p/e01MVSDyrqmdbemM=;
+	s=arc-20240116; t=1752594430; c=relaxed/simple;
+	bh=KutCgZs2dYfKaxNlqtqXKdiAKj3482NswG9E26z9CZg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WHiQYs5qoXNiNaQPhYYQsLPwctJIdmOfoEQO5skq0uHwB4J9d+cgzGYFiesYo9V7W/1oH5IpAtQ6fb6+e4GukL/hP/9V3wFNNn3gZhr/19VmYB0vijTiq9gZHsh/dI7W2mJDWNgIE2duJP+Z4Buigq13A0kbCKU0TZDgaSky4k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rUsfWUs5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 887E2C4CEF1;
-	Tue, 15 Jul 2025 15:45:57 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Pn3yMxNvWM6FC+rOqD86PYlB48zVnpGk7z5Z99xI9p9dzEsK1ifG1egnpcybKQsFPYYuy3aIz2orU6yqyCNraOIJZPDyW0Tkpu5sap6oUtI0E0g0osRYYGYJzQ83qM/q4ND/utLiIseTTgPP0KUr3AWw9hfaYrL7waF2gt4RFt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgQEr4xT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87AFDC4CEE3;
+	Tue, 15 Jul 2025 15:47:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752594360;
-	bh=KY4UxgFLKxX/JaJycNQHiOkF3p/e01MVSDyrqmdbemM=;
+	s=k20201202; t=1752594429;
+	bh=KutCgZs2dYfKaxNlqtqXKdiAKj3482NswG9E26z9CZg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rUsfWUs5P6bU9WLL7LWgSQYtPzteeEhfRlqETGsg9HeOh9GZfj686CUYU9d79+7qj
-	 B9l8JE+rajWcfmBfuE7hnNVhwtvDDGm84rYPNjVUNIU90am+lKWqrkm+xwmLryucaT
-	 V3yqAJgp+QcX7lTDsp5i3uRGjfCKRHjSsmoReFM9iUrcw5pC/qz9jUjFnFyh5+Sf8a
-	 CMSeSwfb8AnRQElwgO/OihrPVIAqRDxLS4AiFoJy2D8+io1ykHxSk1DCkKfZenbEgT
-	 q16SJvj8BK/Vnoajr1RLzz2ZHwiqLj3fzdp1Pc8DxmvhzAyssKgzgMwnWQ22eY8qjj
-	 HrQPT+zuqk0Sw==
-Message-ID: <b0e229db-0fc5-46e0-a6d9-876ba77a8b0f@kernel.org>
-Date: Tue, 15 Jul 2025 17:45:55 +0200
+	b=qgQEr4xThAS0eDnKTisfKFB3saJUJCW/qn5F+nZ0i7el16KzUZ0l50UVokP7ggDek
+	 8gRUb1QAwQs6BAheb5qovH+vF3VYM2ZOrtGxA50pT6p8q//k8Fwspv8Ln3d3I9NuZB
+	 cO9meIotIs9WgmFDgz/AU/Wvnd/N2o/jvJBwJnz8JYBrPMj8NuVEsRNLEOnxRT/bDi
+	 9Xmg4Kf2eZAnRLhN8ovStY/BxN2Fr9+uHb8OZ33F9wKl/1pQE1RZ3MVDBBKCkNiIud
+	 GRFSYHNAh1WE54/ZRMarnXEyM+wvWKThpg6UO8pmEsnCVPrOGgOjzIFjlXwigVnGSb
+	 7DNZILGMHqnMQ==
+Message-ID: <56192a5d-406a-494a-9f32-409e2c1d69bc@kernel.org>
+Date: Tue, 15 Jul 2025 17:47:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: Remove sdm845-cheza boards
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Rob Clark <robin.clark@oss.qualcomm.com>
-References: <20250715-topic-goodnight_cheza-v1-1-68b67d60c272@oss.qualcomm.com>
- <f6fb3492-7e92-4893-8088-8e1353905ad3@kernel.org>
- <6220dea5-32e6-4ee3-ae83-96405362783e@oss.qualcomm.com>
+Subject: Re: [PATCH v4 0/2] Add driver support for ESWIN eic7700 SoC reset
+ controller
+To: dongxuyang@eswincomputing.com, p.zabel@pengutronix.de, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+ huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
+References: <20250715121427.1466-1-dongxuyang@eswincomputing.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,30 +102,28 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <6220dea5-32e6-4ee3-ae83-96405362783e@oss.qualcomm.com>
+In-Reply-To: <20250715121427.1466-1-dongxuyang@eswincomputing.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/07/2025 16:28, Konrad Dybcio wrote:
->>>
->>> Link: https://lore.kernel.org/linux-arm-msm/5567e441-055d-443a-b117-ec16b53dc059@oss.qualcomm.com/
->>> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>> ---
->>>  arch/arm64/boot/dts/qcom/Makefile            |    3 -
->>>  arch/arm64/boot/dts/qcom/sdm845-cheza-r1.dts |  238 -----
->>>  arch/arm64/boot/dts/qcom/sdm845-cheza-r2.dts |  238 -----
->>>  arch/arm64/boot/dts/qcom/sdm845-cheza-r3.dts |  174 ----
->>>  arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi   | 1330 --------------------------
->>>  5 files changed, 1983 deletions(-)
->>
->> What about compatible bindings? If this is the last user, it should be
->> dropped as well (second patch).
+On 15/07/2025 14:14, dongxuyang@eswincomputing.com wrote:
+> From: Xuyang Dong <dongxuyang@eswincomputing.com>
 > 
-> My understanding was that bindings are generally good to stay..
+> Updates:
+> 
+>   dt-bindings: reset: eswin: Documentation for eic7700 SoC
+>   v3 -> v4:
+>     1. Remove register offsets in dt-bindings.
+>     2. Changed the const value of "#reset-cells" from 2 to 1.
+>        Because the offsets were removed from dt-bindings. There are
+>        only IDs. And removed the description of it.
+>     3. Modify copyright year from 2024 to 2025.
+>     4. Redefined the IDs in the dt-bindings and used these to build a
+>        reset array in reset driver. Ensure that the reset register and
+>        reset value corresponding to the IDs are correct.
+>     Link to v3: https://lore.kernel.org/all/20250624103212.287-1-dongxuyang@eswincomputing.com/
 
-
-Is there another user, like other projects? If not, we don't need them.
-There is no benefit in documenting something if no one uses it.
+This leads to clock patchset, not reset.
 
 Best regards,
 Krzysztof
