@@ -1,130 +1,119 @@
-Return-Path: <linux-kernel+bounces-731339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91422B052C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:23:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60808B052C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64B8F4A6D87
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:22:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCC974A6CA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928772777F3;
-	Tue, 15 Jul 2025 07:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AD5272804;
+	Tue, 15 Jul 2025 07:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IL2rJNoA"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XBY3Z/Fe"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E375271458
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC15226F471
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752563960; cv=none; b=KF7xPLoLVglnnk4prowd59yrFtHbeqQvpvJX+b1ogfZ830jYYTzMVPGquwyotEt3InUmKQ+VKIUAf0xvT6PkaallgiUB7epwdUAHcSMLzbyy9T82vjk3t7tqREgOzZHEYlyqDdI1cIhXOjKVHY4LBrdtQLzAeuOdSuEBDd2AABY=
+	t=1752563961; cv=none; b=f4Ob1z4WQDxXLajfEC5mV4qom+2grMlD24lghPkIQ0i9PBp+LZ+6KpA/WCVGlyjw6hXyliNSSyLOQvTYgRtAU3vG3jxXPx8LDVsHBX5COEeC9cqWOg3yyb3QurVug6IUZVK9ZwY6ajEb0kCbrsIaOU0FT2uFvHBEsMo2bEVgy3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752563960; c=relaxed/simple;
-	bh=dOb9Epf/TTGBkZ5gyzcRhX8nkY6+Xl8serOtV4krvFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ug5xFgEjBSPSZXvSCEb63MrDjzv1gx1yO8ZSiwYPH9ZuiGn0zIbKYQKi23As8Qu6RAMNq58LOsWsGgtxR4km6ozsXEiJpQDHoeSPRCjkbfyC9nELCLd3MB7jYc9028kqCrM2cEweO+rnUPaphoQU5lw9ztVdo99oCwBZF+LvFF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IL2rJNoA; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-553cbe3e77dso1048848e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:19:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752563956; x=1753168756; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/RSJvNlWoWjahN3C/yzd7QKoGlsR79XtnIfFExv1q1o=;
-        b=IL2rJNoAuObhJpOEXDT3LhkNDxmMhFUZ7SNrXTUXbt4B9rRH9lFxisWwpr8rdpCiNa
-         8Csr/zifh477uqmedPTsrXXIXE7ccOJGq8zKr64UaI+rD7LfXsBKoNTuTq9MWRz8slBa
-         wZEWkyetyjLKsMawGfOMjY6mLKtr9Os3f9mbs06g36XiJL5NBiKPwLLkDAD5Xlb2QUyA
-         zf0CCiahELywgUIWfzdZ90jX1k8NUAg0SwspWRijGPQomLIxsqwn3wLm8opWpJTkXSIf
-         FPi9IKN4yxMCrG/9lCgq1IX4AOkvYr/lRflj4s75DZWgg8JMzctiitEBQDdWX4q19rJ4
-         reqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752563956; x=1753168756;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/RSJvNlWoWjahN3C/yzd7QKoGlsR79XtnIfFExv1q1o=;
-        b=C0BBJrUdxhLBn/Ov5suwaZSRqSbvRQWSkF6XPxB3YwQwnROAbA8JWoSlePMR7PWJL7
-         uX6aP6kbKT+KBxNzdhLObT0vhMmgfXR7cPqMwJ7YU1TICBKpj/nGNO1ycMXNyLppdE16
-         KvHWlIaN3p2dhR2iIF45uwIj2n6gtX8nzxD2oYy3HQFGRPNdp1vpjOX0QAktjAYYS3Id
-         0dc0Uy6S62FD0j5hWV3UNldj/HSat43ZIswXLWUKkeuRb3paDZGM+IC2JpjuG1vYhdyJ
-         1WkWIaPeN8Of6kBptcEO4uJXb1Hm/HJSQRnj5epuKf4T027bkmcY7Pd3I19reKDwLF8I
-         vLGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjmTLVXayYwJixGsY7OfLexZcE6u8bKaaFqhpKmSp4InyElFf8gxHB0PHdPs+C4ZXWIAgXxbhp288tSt0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLPobGs0iban3pJWExq+e1LkPij/akjDkrQjCQvA2j2DdMxyUU
-	UmsrxRN4l9Uht3KDvzwXivy7Lbe/7h2eaZwD45p/JcXPgOksF+/8ZVqof5Goov7UbOc=
-X-Gm-Gg: ASbGncu3i3yKuoJnbtTAT1FbSCIZWfYoTbsxlHlIWM95OrGLoRHua72HDP6nT20b31b
-	zB5lKaGicMJW1Co6hPmCUd+G0DnRCYSvi8/d3W64WQ9TNMWFeTooKY8t94fGvt5RBIe8jKg9x3C
-	r8/FwmRWNW8JIv6i3/RphGWSgUs7Y+C8uKC93kRD2y8dV8xVpnJoPX7oqi0etgDtlnaGybroUFI
-	FretGGwViS6M1F7gp1LUAqYYpiVwQIRlvpGjP8rsOAlgejwKq9zlwOywGlaFIZ6n7wyXXv3DPCE
-	xhvHuATCl3CNTtUs6f5JsZuEiJoA34rRg5prQ5+TSAkxAgcJxPfVETp24VHDcnEW2bW6lTRApsZ
-	SDy4U3tErrAYbLdRZ++h8wnKu316wz154eJFwx66YWOyoeq1Ku+nvpe6znMDr3zdOVXXaaUM+iK
-	XD
-X-Google-Smtp-Source: AGHT+IFIHphgOuWL4hHbYQo8BUYKQWMRs2PJ8O0o5nTLr+EyV7m9/xz8o904WRm6rWfLBy+6fENRug==
-X-Received: by 2002:a05:6512:4027:b0:556:2764:d207 with SMTP id 2adb3069b0e04-55a1fdce413mr78512e87.11.1752563956166;
-        Tue, 15 Jul 2025 00:19:16 -0700 (PDT)
-Received: from [192.168.1.100] (88-112-128-43.elisa-laajakaista.fi. [88.112.128.43])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a05daa619sm1688569e87.41.2025.07.15.00.19.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 00:19:15 -0700 (PDT)
-Message-ID: <bd7cab62-f0ba-440d-8dc2-3304afe884df@linaro.org>
-Date: Tue, 15 Jul 2025 10:19:14 +0300
+	s=arc-20240116; t=1752563961; c=relaxed/simple;
+	bh=Aj5SxkP3pbJtiSAJWgrM03m/j1mRYKafX3o4uGhsOrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X/a7gyrjgby16LKUknVzRDaizCHmyDDuvuMyHO0w9ovh21wOk0Cu9OvfyXbT1ka0kE/otC7wmDrQ1haDdjO1dLUdsE078ibsMgtxEGZwTI8QOtT4ljC1VqjPy0IPCCUH7LNdDZ8D1o1v9Ly3BHhM+eXWFeFkSmjtR60hK3gBOMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XBY3Z/Fe; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=OFtDJohQGlOhGcPgxY5jVmvQrgNWThXXIGfuiBYm42Y=; b=XBY3Z/Fe4tZp8l2NH9Mae0Qs2Z
+	XMEYhlDmlFXmTmMmEDGFIAlKUmDndlnNKhdiuEPn4g/V799fEqvLtltqtS3c3bmRYWFhGZzEtxkFn
+	L8OVWSLYviiANNlCfV09iVJQv/i8j86Qnrm1HpLko1e9VFhtcfCcXlv4qSKw34zy1a8ZaggAb8Z5k
+	t28em/bbscgVKNjY+H0i9OKZG9SAI5KLcXfICUVB27vawQ3l/0Jc1ToKK4hVOwr6cqPVfE1dT40k/
+	kFBPGLF5f2psKn86Ns0QW8zVYkTsaNgRN3UHFMbNDBkrOzImBdHUd+qkBQQgpMUHzpY5O4hI5cqq2
+	B8LA5IJQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ubZwa-00000004JJB-3Ozc;
+	Tue, 15 Jul 2025 07:19:16 +0000
+Date: Tue, 15 Jul 2025 00:19:16 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	tech-board-discuss@lists.linuxfoundation.org
+Subject: Re: [RFC PATCH 2/5] unwind: Export unwind_user symbol to GPL modules
+Message-ID: <aHYA9IPs5QiX-QLs@infradead.org>
+References: <20250709212556.32777-1-mathieu.desnoyers@efficios.com>
+ <20250709212556.32777-3-mathieu.desnoyers@efficios.com>
+ <aHC-_HWR2L5kTYU5@infradead.org>
+ <20250711065742.00d6668b@gandalf.local.home>
+ <aHSmIa3uffj5vW-m@infradead.org>
+ <20250714062724.6febd9fb@gandalf.local.home>
+ <aHTsOcIUs0ObXCo1@infradead.org>
+ <20250714075426.36bdda0b@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/15] Add dt-bindings and dtsi changes for CAMSS on
- x1e80100 silicon
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
- <9361e954-e2c9-41c6-be4c-12b0e4f367f5@linaro.org>
- <5f3b2bda-92f9-479a-9af7-5d08e420121d@kernel.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <5f3b2bda-92f9-479a-9af7-5d08e420121d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714075426.36bdda0b@gandalf.local.home>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 7/15/25 10:01, Krzysztof Kozlowski wrote:
-> On 15/07/2025 08:53, Vladimir Zapolskiy wrote:
->>
->> 2. The whole new changes for legacy/new CSIPHY support is not present
->> in v1-v6 of this changeset, it just appears out of nowhere in the v7,
->> and since it is broken it should be removed from v8 expectedly.
+On Mon, Jul 14, 2025 at 07:54:26AM -0400, Steven Rostedt wrote:
+> On Mon, 14 Jul 2025 04:38:33 -0700
+> Christoph Hellwig <hch@infradead.org> wrote:
 > 
+> > On Mon, Jul 14, 2025 at 06:27:24AM -0400, Steven Rostedt wrote:
+> > > This has nothing to do with Mathieu being a friend. He's a long time Linux
+> > > kernel contributor and has played a key role in developing a new feature
+> > > that will help both perf and ftrace, but without the EXPORT_SYMBOL_GPL(),
+> > > LTTng can't use it. It's basically saying "thank you Mathieu for helping us
+> > > with this new feature, now go F*** off!"  
+> > 
+> > You don't have to be as explicit, but otherwise that's exactly how
+> > it works.  No one gets a free ride just because they are nice and/or
+> > contributed something.
 > 
-> Why? If it is broken, should be fixed in v8, not dropped from v8.
+> Why is that?
 
-There is a conflict between these new v7 changes and another old and
-still unreviewed/uncommented changeset, which provides quite a similar
-functionality, but it has slightly different CSIPHY device tree node
-descriptions and their connections to CAMSS.
+Why would it be any different?  We have a clear reason both for technical
+reasons, and to get code upstream.  Making exceptions for vaguely defined
+friends and family defeats the entire purpose.
 
-This technical conflict should be resolved before making a bet which
-one of two CHIPHY series is better and should be fixed in the next
-version.
+If you want to help Mathieu or others do that by putting your effort
+behind the cause instead of making up exceptions.
 
--- 
-Best wishes,
-Vladimir
+> How would you recommend getting LTTng into the kernel? It's a relatively
+> large project that has 75K of lines of code with development that lasted
+> around 20 years.
+
+I honestly don't care.  Not my business.  And you're probably also
+asking the wrong question, as those giant old out of tree projects
+tend to be a mess because of that.  The right question is really what
+functionality does LTTng have that we want in the kernel and work on
+that.
 
