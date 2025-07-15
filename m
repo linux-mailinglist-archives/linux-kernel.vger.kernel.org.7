@@ -1,133 +1,90 @@
-Return-Path: <linux-kernel+bounces-732598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70DDCB06955
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:33:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA22B06958
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC1FA4A36A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:33:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F22294A4251
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFBD2C375F;
-	Tue, 15 Jul 2025 22:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04902C325F;
+	Tue, 15 Jul 2025 22:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8LHvr61"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ftvChQR/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F5F1C2DB2;
-	Tue, 15 Jul 2025 22:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A911225E834
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 22:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752618813; cv=none; b=VhgeEGHZTsr8mJ67dBn6tQDmGvkKyZ3c6q2ryHIWPvHPPlyfPicZjvDQld0BXh0aEC5E4Qmu/WV+MjDgDIRt4BS0NOjN+8TGcbX/x3G6t6WdgfuOgV264Wbwoo1PV2hCoJmE1j/7nIzCtb74/mU2AMEcW4coFGS9Nkz8TU+h5yw=
+	t=1752619100; cv=none; b=Mafe4msly85BD45nrjbdVjRLX4qA2oUovUWvM6oLVT4pDHxkaV0mBS/WkQGGB45Ns/PAKXKXbK3jNS4Qm3eSZ9GGV1pyBeTcINMl63X4HJ6I9wvB4oC5+kagnoz/B14Bp782iOhrgvQfEEIEnHI9mIBVdJL41voukQVEYdfmkgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752618813; c=relaxed/simple;
-	bh=dyGcpzNngBMQ2YV4Wi/gcf3C7b7anIslY6CBRkZ6gEE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=n84BMLfHeAc8A5/nXzGwEfcFkGbl66CCDNSWjYQJ3SMH57yg2V/qWn7AcXlBgy+3nRuIaMyoz0+ATE5+EO7UYOJXI5ubXzAcoXTK3sF9RASoDMzIv64H94gXA5uEi756IBAtpmG05EmGt8valSRar/e1HRLvEL6VyXOL8UAtkRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8LHvr61; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C871AC4CEF5;
-	Tue, 15 Jul 2025 22:33:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752618813;
-	bh=dyGcpzNngBMQ2YV4Wi/gcf3C7b7anIslY6CBRkZ6gEE=;
-	h=From:Date:Subject:To:Cc:From;
-	b=P8LHvr61VPq1o/fizrHXVI4ZPQCeIcgDWWg9nU8IuyP9DkmCIuOYg33Kk3u9D8uHW
-	 hjg99qwKbp9Lx5zRv+WcOV1qP5UqE2vz4MfiiBJDmILiyi00XkSLcYV86mLF+mCFj5
-	 PG+MrGH3YwscS65wzsYMYvVT4hsCg6fR1mzlHUZIFJk1siRg+znhFrF0jcpWNlF/gF
-	 +POYE3XwtpXRXVmqxqeDR6zMfesXb6gnhU6kNg9JjFtoyuy0QlwZYWg3S8PDPmI7LU
-	 kYwV0QPt5BqsjMFt3T2/jDlB4f2JRun+PaIc23D/YkgvrnuTD4TLKxvnL1NboxaXln
-	 K9EVa3xRC0NtQ==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Tue, 15 Jul 2025 15:33:25 -0700
-Subject: [PATCH] wifi: mt76: mt7996: Initialize hdr before passing to
- skb_put_data()
+	s=arc-20240116; t=1752619100; c=relaxed/simple;
+	bh=m0EXv/giwwP0LsGLNE2kAtNFVh4aq00jvuG7BH6iKhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MRWId60H+oeySoBtkSBrmDu4Ta8NinQTC1aNF+MusRgUph2SjV6zUjq7Y3zMqTxgF+jsOJ8+j8ZN8uE0V3jBmREg7xjZQAmLljcOn7t08tT7MuW1cOMyRwiY2PSjuS60NzepFczjNaKtNw/cOumt3b2y694PwOyfL8C0qatfYbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ftvChQR/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752619097;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YWauv4FuNsiIruk4vJlAJ3hxfktkhyn2XBOo/YagwlQ=;
+	b=ftvChQR/oI8AK3CGhtPd9P/2/V4ukwKF1jpauJ7ZA40u0gUGv4z6FqVTtZZP0476YFDPQZ
+	pgX8r3fa8k/6D1nJqK+j67ZVtq9LJbxoJUhkzA0O5tNXs2HbnnDQj018Q7q9meNcZKRTeV
+	qxWhiHVe94TXcbtyY7EGGXd9oEYlPbY=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-68-4DzBAuIhPbqeWUggQAPjSw-1; Tue,
+ 15 Jul 2025 18:38:14 -0400
+X-MC-Unique: 4DzBAuIhPbqeWUggQAPjSw-1
+X-Mimecast-MFC-AGG-ID: 4DzBAuIhPbqeWUggQAPjSw_1752619093
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CB2391956096;
+	Tue, 15 Jul 2025 22:38:12 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.8])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 91D07180045B;
+	Tue, 15 Jul 2025 22:38:09 +0000 (UTC)
+Date: Wed, 16 Jul 2025 06:38:04 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ublk: remove unused req argument from ublk_sub_req_ref()
+Message-ID: <aHbYTI2g7RTmqBSO@fedora>
+References: <20250715154244.1626810-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250715-mt7996-fix-uninit-const-pointer-v1-1-b5d8d11d7b78@kernel.org>
-X-B4-Tracking: v=1; b=H4sIADTXdmgC/x2NQQqAIBAAvxJ7bkHLivpKdIjcag+toRaB9Pek4
- 8AwkyCQZwowFAk83RzYSQZdFrDss2yEbDNDpapGdbrBI3Z93+LKD17CwhEXJyHi6VgieVSatLW
- qtsYYyJXTU3b/wzi97wfbvvL3cQAAAA==
-X-Change-ID: 20250715-mt7996-fix-uninit-const-pointer-01e1dd03d444
-To: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>, 
- Ryder Lee <ryder.lee@mediatek.com>
-Cc: Shayne Chen <shayne.chen@mediatek.com>, 
- Sean Wang <sean.wang@mediatek.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- llvm@lists.linux.dev, stable@vger.kernel.org, 
- Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2306; i=nathan@kernel.org;
- h=from:subject:message-id; bh=dyGcpzNngBMQ2YV4Wi/gcf3C7b7anIslY6CBRkZ6gEE=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDBll1624BTtKdzdwrLrW6+cz6019Vte06mtHtylMNdKU/
- 7D7lNTSjlIWBjEuBlkxRZbqx6rHDQ3nnGW8cWoSzBxWJpAhDFycAjCRtfmMDLOlHf62PTyYUm0q
- tuKShooYa4bf/6J9Fr/9l7o0bV56fg/D/yr38kR/+wMs/x7lBqxxW+cW5hvCfeUFx6GS0KgVR+P
- 8OAE=
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715154244.1626810-1-csander@purestorage.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-A new warning in clang [1] points out a couple of places where a hdr
-variable is not initialized then passed along to skb_put_data().
+On Tue, Jul 15, 2025 at 09:42:43AM -0600, Caleb Sander Mateos wrote:
+> Since commit b749965edda8 ("ublk: remove ublk_commit_and_fetch()"),
+> ublk_sub_req_ref() no longer uses its struct request *req argument.
+> So drop the argument from ublk_sub_req_ref(), and from
+> ublk_need_complete_req(), which only passes it to ublk_sub_req_ref().
+> 
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 
-  drivers/net/wireless/mediatek/mt76/mt7996/mcu.c:1894:21: warning: variable 'hdr' is uninitialized when passed as a const pointer argument here [-Wuninitialized-const-pointer]
-   1894 |         skb_put_data(skb, &hdr, sizeof(hdr));
-        |                            ^~~
-  drivers/net/wireless/mediatek/mt76/mt7996/mcu.c:3386:21: warning: variable 'hdr' is uninitialized when passed as a const pointer argument here [-Wuninitialized-const-pointer]
-   3386 |         skb_put_data(skb, &hdr, sizeof(hdr));
-        |                            ^~~
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-Zero initialize these headers as done in other places in the driver when
-there is nothing stored in the header.
-
-Cc: stable@vger.kernel.org
-Fixes: 98686cd21624 ("wifi: mt76: mt7996: add driver for MediaTek Wi-Fi 7 (802.11be) devices")
-Link: https://github.com/llvm/llvm-project/commit/00dacf8c22f065cb52efb14cd091d441f19b319e [1]
-Closes: https://github.com/ClangBuiltLinux/linux/issues/2104
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- drivers/net/wireless/mediatek/mt76/mt7996/mcu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
-index 994526c65bfc..640abb4dce7f 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
-@@ -1879,8 +1879,8 @@ mt7996_mcu_get_mmps_mode(enum ieee80211_smps_mode smps)
- int mt7996_mcu_set_fixed_rate_ctrl(struct mt7996_dev *dev,
- 				   void *data, u16 version)
- {
-+	struct uni_header hdr = {};
- 	struct ra_fixed_rate *req;
--	struct uni_header hdr;
- 	struct sk_buff *skb;
- 	struct tlv *tlv;
- 	int len;
-@@ -3373,7 +3373,7 @@ int mt7996_mcu_set_hdr_trans(struct mt7996_dev *dev, bool hdr_trans)
- {
- 	struct {
- 		u8 __rsv[4];
--	} __packed hdr;
-+	} __packed hdr = {};
- 	struct hdr_trans_blacklist *req_blacklist;
- 	struct hdr_trans_en *req_en;
- 	struct sk_buff *skb;
-
----
-base-commit: eb8352ee2d1e70f916fac02094dca2b435076fa4
-change-id: 20250715-mt7996-fix-uninit-const-pointer-01e1dd03d444
-
-Best regards,
---  
-Nathan Chancellor <nathan@kernel.org>
+Thanks, 
+Ming
 
 
