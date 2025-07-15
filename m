@@ -1,167 +1,192 @@
-Return-Path: <linux-kernel+bounces-731947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443DEB05E49
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:52:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D736B05E8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAFE3501D6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:46:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72C56188D2F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A142ECEBC;
-	Tue, 15 Jul 2025 13:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702822E9749;
+	Tue, 15 Jul 2025 13:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Soq+l7x0"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="umryAZhV"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2074.outbound.protection.outlook.com [40.107.220.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD2C2ECEA5;
-	Tue, 15 Jul 2025 13:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752586710; cv=none; b=tTNwpNRDGjlS5ADSnu+DSvpkOZL1GjYEzlLpno4DOjhxdsIxJ7M5P5s2SPdEvMXlsv4qD4NJyLBxn0bSVbFe7Z4AuVyaume3Aj+kzPw67rQCX3BqmFSHmRO13CPmyI2Mcz67FEJMSrdGb9qsNpTFJ1yVjAkvuBHH3hPmrSrDenk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752586710; c=relaxed/simple;
-	bh=DMKIf8aWEIGOaSziFnfi3lGFRGwvJS/wmrcYpsZO8SM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ovlR7b6ID5iJDFK5BBTQ7KgsLhY8Dtq5J7qRGFiVF+D+DClxBf00+niUOlreJA2JzIDzwOVmC2/X1cV8wK+8UXwRoTn6fbL/V4SA4UKMcAsaMX32DTlX6Bn9oPD0RqkfNEmSABnRjBj0O2RkeNWyE1IJacUFKmblUMb54oqbKFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Soq+l7x0; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7e33fa45065so25996885a.1;
-        Tue, 15 Jul 2025 06:38:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752586708; x=1753191508; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GQi1T6NwkTeZfxo29WdZM32LKwWG4+C0TAJA/JztXec=;
-        b=Soq+l7x04dAdwIAB/4VNT4bVrCaq01uMuRuQd3X1yLDtokYe/nuQc/3jVaHKjesl55
-         1jQQNXvlwZw79skeDTtUaJ7GzT1DEYtXgqdO1nd+sU3sdhdbyLzsPBtZp+cKNjgHjh2i
-         kRD82M2api9Xg5t48Zl1FnUj61OZin3NUuQCtnLPcFoELBFpcILonhaEZjD/jrPjILj/
-         KVYhhE7N2M3n/QK4cD3jJudGR49Xxi1s1ZMFEAP4jml1/jvZATDNgPmAcgg3ki+TI8ot
-         9rWd9Tqu40PmpxHxNhdWXiatBxPo1Nys79ncVa6FWYRpDyDd1fjoSpIcSQZBkDCtUQNw
-         gbaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752586708; x=1753191508;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GQi1T6NwkTeZfxo29WdZM32LKwWG4+C0TAJA/JztXec=;
-        b=uKYBBv+FCbSzIDeV/gQCzEgnZeZcIG7AQa+wc1cXndolZztfZF/cDEXJWPFF/9EpNz
-         CpX+Xma0FSPMVaFnCTJIxJyjzMhbldhnFxB2ubBD6P/07N75dgwW8e7i5BT8aqnZ0Hrf
-         0udjzzVMcJlU3pTTe4XA2lNBUb+N/sY3YSXfaR1zGG6J0i9P/MT2eBbVPFn+vM0NJQL2
-         yHJ5lsBlwsidH5sLD9+7wWPZX3RCkQ+wmQO4n+dZ3PH4755YoFcw2MrJbG/8nr+rO4De
-         aXF7rgRRAw401LOsqSjgGfIPYYaehW4p/8+SF9DYnMlWluL9egYnSFuLUqLeal4zi2Pu
-         NxdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSXQkPQlcKqCvcDrQgtpXEM6q3q2IOcMWBJhHIOOYBj1sVnRQWU5fBjq5Co/d3xCssQocsmS8OVrlquTk=@vger.kernel.org, AJvYcCWBALj1WmFoQQay8mKnGsmzg7lWqzJScMOhzVjEZJMAgHeHbjCX0Isqsb5D6tpoHpBUZg+ViiuB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2veCIAw0aN+iaAWt/Tiogd0ZjJdLBWNd6mi5BbjuIffZTyLpt
-	dJp5am79/mX446SLbspSgjLdNPH7YpgFLkeTxa4MCaYVk1Wnhn/tyciYgYqgyV/qS/i6VN4NxWr
-	t+I0MmzCZc5sVhfTk9TuMGUdSqkAROj8=
-X-Gm-Gg: ASbGncuepiZ4t4KsrS8yWbOyKQT2LslgHaD+jHDQfnpE9kd3F2abuODyZ7875CwH5uS
-	NRaVMQRfcZoCrDdu0yecsnopOYSgkdrBBu5fUtInuxQFmhJnpq8XJMXpFEID08ptFkWxaBIc2wu
-	u94TwsvHAmX1BV3nvAoXqIWT8Ko68PsCN7IjVC/6qBZ72Yb/GF/QJKcvsKGh0W1pqZCkEe2s4vg
-	pz9pQ==
-X-Google-Smtp-Source: AGHT+IHjynnQLckw4oi7+qn+5RKS+0q+ovWs1yb2i3TtOQjxqFzMNv30VLwUR0Z8x+NFVm75a2J8FWKhUJ3NCqqtKug=
-X-Received: by 2002:ad4:5f0b:0:b0:6fd:609d:e924 with SMTP id
- 6a1803df08f44-704a7047431mr347735046d6.36.1752586705013; Tue, 15 Jul 2025
- 06:38:25 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FEB2E7F14
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752586768; cv=fail; b=UedQDf0QqQMyTdOQNakBNLhbpqlVus+5x0nSLfAJ5QSMx9/E8j8H2mfUb6pmI2x7zQ3xF50wNyMKo1AfOb3nGuydFZHuYWvZNQU2S8xw8iFdf5d4W0EO9oxrHIUHcLYfQpx+BXVgF+BBdvJkqlIw/WRbhpVisw7tboXJTVfeOYI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752586768; c=relaxed/simple;
+	bh=kohWxW/4+Hz08AvbRWH20IWkZ2kYyyfa8S9RzDv/ZhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jQtpxdAc0FhFKvkQHRu/jqfWdmOSsAvRITmJAuwBEaKMBssJhOYeJQi46/fhH7Upp6b3Jnvjph/488JNzNUzj5Jg4axgYhh24XXMNbDcEXNxbBOGd+lRdSju+YvhFNSuItowNb4gERlslj1OezTzetEkyJKNQWgdmIETYbPGxSQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=umryAZhV; arc=fail smtp.client-ip=40.107.220.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X5Sgq5GRUD37M9N5Umj1RcwSjho8aQChR1f2iCDUSm5xGUme6AxgFdXlSpl5Kvga2cKVm0rKrHqbgJ1MkvzkrDNoIylGXkUELw1RpUyZLp5UiW7/5lCz/Wr0Svae58aUo3aMCaP0/DazswG0m5xOQVXWvSGZYTSDACJz5CxLUf1FT59AYn8uHWYDtRRXnI6vtMF38lH3VNcVZ/8kq1c7WPxX8S+IRm9HUCXS0eatGb3eXngxJRrX4BQCJTsVfeXedB07HRk3kqkN1wv3+V/F+ivfGfMtEiG0Xop5qqvkYnc4DcNBnac1/3UItIdWOYYDaxxAFdSGXZHi5D0qtGhfBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ntv1XM9tqcLKgMqN6uj29t1t2VfoqwCQg7+d+BFvayU=;
+ b=HazJA3cM1TflCxAoekbV4LtSqLt2fzvHuYHKzYwtvDTGgH1JnZPaH5T61RDwcup0XLok+7e9M20EwcOlb5zIZ2wnzIJJk1/1LHrFWJiGOo4ICULFWLNUpfIRXIMNOJsn1186uXA/2uGXrPZzKg+7KAwwc2F7skK2ctl8+0W3NF4Y0vcvuHHw9Q1G2AWTKH0lj+CZ2zs5hZ0LCRP2b7o2VjpQiHubHaibsatvrWXIu5RW7+ZNQ7An0llxPzyrlO1OkWuiluLo5RuyvBBJx5lg891LNZ5c/Lu8k+VKDhEAAoN0EUr8t8+PXDJxGl/c0zSTrkBxDqkMPuWws8g9h+CzJg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ntv1XM9tqcLKgMqN6uj29t1t2VfoqwCQg7+d+BFvayU=;
+ b=umryAZhVSyQjQb/jqghd/7Go5udjLIaLD5WRpZLOQFx/w6lJoeJFZKMAA72nbq2X6BSZmka5AuMBh7v5jRddI+qpeVleS1HQkAUKxEiejaGh90fg3PAv9mCk7vEctte1vOdfqOfQQVPtNtvErMbQmQFLavplgycR/GGBRvW48xEIHPZfkv/1jPAbhmhLpye/1Xi6T7S11CnZB27vRc/ZTebJLcqff74+oQJ2GqlOWvIJOnASj3rdFgVUW9+rR+N7HxIc2mofJe3t0hwxXpWVHElP8YzlMfhZH8prmmhk+7B5bCpBYdUc3vaIObakdKHriaVd5tCCEejUBIHQxS9qGQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by SA3PR12MB8440.namprd12.prod.outlook.com (2603:10b6:806:2f8::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.27; Tue, 15 Jul
+ 2025 13:39:22 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8901.033; Tue, 15 Jul 2025
+ 13:39:22 +0000
+Date: Tue, 15 Jul 2025 10:39:21 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>
+Cc: kevin.tian@intel.com, will@kernel.org, aneesh.kumar@kernel.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	joro@8bytes.org, robin.murphy@arm.com, shuah@kernel.org,
+	nicolinc@nvidia.com, aik@amd.com, dan.j.williams@intel.com,
+	baolu.lu@linux.intel.com, yilun.xu@intel.com
+Subject: Re: [PATCH v5 8/8] iommufd: Rename some shortterm-related identifiers
+Message-ID: <20250715133921.GQ2067380@nvidia.com>
+References: <20250715063245.1799534-1-yilun.xu@linux.intel.com>
+ <20250715063245.1799534-9-yilun.xu@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715063245.1799534-9-yilun.xu@linux.intel.com>
+X-ClientProxiedBy: BL1PR13CA0223.namprd13.prod.outlook.com
+ (2603:10b6:208:2bf::18) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANZ3JQRRiOdtfQJoP9QM=6LS1Jto8PGBGw6y7-TL=BcnzHQn1Q@mail.gmail.com>
- <20250714181032.GS721198@horms.kernel.org>
-In-Reply-To: <20250714181032.GS721198@horms.kernel.org>
-From: Wang Haoran <haoranwangsec@gmail.com>
-Date: Tue, 15 Jul 2025 21:38:11 +0800
-X-Gm-Features: Ac12FXyAi6q58E5yk-hrfOil0SX6R5fhR2UitDOMIIisELNeKoalCEdt2-Sj3WU
-Message-ID: <CANZ3JQQtC1ytmaqGR3xx6eDVyV-ZJp=hCZDcAJV-ktA2RHvTYA@mail.gmail.com>
-Subject: Re: We found a bug in i40e_debugfs.c for the latest linux
-To: Simon Horman <horms@kernel.org>
-Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SA3PR12MB8440:EE_
+X-MS-Office365-Filtering-Correlation-Id: ad0fb7e6-90c4-4ec9-1109-08ddc3a501e4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Zz1lQ1OZU6b0P6D2RWMBIF58PWXdr8S74Uscu/XTBCwAQulXh5xYm6almex5?=
+ =?us-ascii?Q?RjC1XUr4Urvgr5zipODnoy06xcRiSrNsDQv4/85SGOOByyi8YE8UjJNvcr6Z?=
+ =?us-ascii?Q?UlVsRxoJW6IsfZLIkIZ8lRAnlRVZAwCURCQDYYWpEDpCTI1jkx7rVRUum3NT?=
+ =?us-ascii?Q?Xm7syCIGXY7KkkoaBJ6XKxwZa90TjoPKzRgbtYZ1pIE4vLoCvWFDUcMU+s/r?=
+ =?us-ascii?Q?bt0JO3C0Vdl3ulywynVNvQsgyEedMjRUvJ3a9cJ+hrXiuY2F3y7Ef1SA0vQw?=
+ =?us-ascii?Q?kNRHJfCSP42xujqGb8sNxmsYQDFAURzcHuEqGyBnTwOKw+WHwHvNo9CCkfch?=
+ =?us-ascii?Q?Al3URFUif4IeTpcAa6UU8ArwSCjfSFYNm4Xac4DUSygHCGAWWFnmuyak5iCl?=
+ =?us-ascii?Q?S7LqKG67Pn2eWzWrYpKOftzh5KuBpetxhOA4NAKwcr7u/eXMrMA9NGCqbklL?=
+ =?us-ascii?Q?RW2/MmNNCWMn7xSjfb3Av+9vaDOrNiThsPEcy5Tzw8p40/CmtiC4bT7S34QN?=
+ =?us-ascii?Q?JWPQ8FB88Tu7E7esWC+ojmSSodYvBfkdqA3iQ1ilgm6P+I17rOD0AaKdy3Hq?=
+ =?us-ascii?Q?sFcKzdyfo7dTglUv95CX15B1FpdeeKowAFWQeSqxg8hleFgJdJZVsXR+f+r1?=
+ =?us-ascii?Q?PcXBo1cN233vTY4bLQff//Y/oX5d3XzjyLvqW1QbfTE3kqBHriLu/pFYQsYV?=
+ =?us-ascii?Q?tZe6suarwCS+lNCm9DlhCVFACbSA7VgyHLFtIA7PIfNVdgmr6wEuKJOOEBWM?=
+ =?us-ascii?Q?DCLCP+5syu/mIrBmiSgeweZioFiN/nYLGA0HNhVCa7Iu3MMlXJMYAzqyd0Zd?=
+ =?us-ascii?Q?Ik3in8gbi7n+sRQFqGCY6j2JbM2//PJmI6etySswiY8uK4x8HrSXKwXz2fx9?=
+ =?us-ascii?Q?5EAAtPUxa6vhh5BV7GQJ0IajInqKHlRUcuEmAoY58v1StVqNbaYXghdGWwwb?=
+ =?us-ascii?Q?Bcv1qlZq3Tyy2z7/R2CU1XNJ9KHMc9rH72v+41N/cqhF2apx2oGwqhtxu5lG?=
+ =?us-ascii?Q?zJBJISBnQAVoK0OcYpmeon9UYkfbXvXLGqJ+tG1MW/G7UQCRuYq3SeZ76CDI?=
+ =?us-ascii?Q?zdKAZeY9iruRSFFRRUd4P3b+8oeaQ6d8Kmap0Djy7Ms/WhahR0XrJGjPgvIV?=
+ =?us-ascii?Q?aw4dKXH1v6oq3Q2toRW7DvkVBIAQ331Ngnf07oI9DxzDOE8Tfp7rt07Ryhky?=
+ =?us-ascii?Q?BVWo+Qqk6+Sh2K8y5E2mKJIl9gX5IvqjsYLd5SkpABlNoHuQs4Y7Lz9RpSxr?=
+ =?us-ascii?Q?0e8Nl9Uf3PyZcRxao7KQVf88i3sKpUxtagjQzJf+kwE8DQSB8aDjFEBhN11n?=
+ =?us-ascii?Q?APvvuYzU1QLnEdrbE8nt1A8Vkgj7/OdvbQU5PLqKVrHQoaYpgVbP+2DubCJd?=
+ =?us-ascii?Q?RJ0bv9eH/XRnna93n0d57w9TBuN93t9IiTt7TpzLpQoD+o3m08Ca6sT7cXMX?=
+ =?us-ascii?Q?IoDKVoijT/s=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?iw1a3m5/81W/wy5cMk5Ch4d+XUkF9GVGQkuph7E03rV87AiDeZd3wPTK5AGs?=
+ =?us-ascii?Q?jBkfeMtTMt8GrtDKYkQ75e2aMAWLzz6mXUDe4PAedbY2Xq4PCsYXwdEqWK8G?=
+ =?us-ascii?Q?Zn6CpkDDX+/NyZ4Qi2qR28RgG5hmPLrDYHyIwIcMKYRO3F0olTe6p+Ib5Vwn?=
+ =?us-ascii?Q?SCw8lalQ91jyWtoH8dBVPFri9xDcnzn0xMD4ejU6x2xTV6duzt/8yW8qT06B?=
+ =?us-ascii?Q?3mlVLZ2tvPUlRFq4MjzybtAdOMno3U4eppLH/EUC8HcPdPU+oFR/h3maobKi?=
+ =?us-ascii?Q?zLMcaSYXw488YLf3e873b8aQRRm3uwUzXEtwQTOh4wkhuDzbp62KG94wZAGC?=
+ =?us-ascii?Q?iyK2WO2fNBQC8Qt+7CEzsgmTrlS248gEeB2OEnc9/+0UXY+P+gGWY8bs8b+V?=
+ =?us-ascii?Q?eHq7JyF49OodEpCvfd8wB1iOHIExg8BIh4Tb+aOryYsA6Rzl6jwm4FSNjjs9?=
+ =?us-ascii?Q?MCsj4yiks6l67W1lj86hsF7+pQbJ0EqVRvRRUwxscuVZKT20DkGKYhGXPN8b?=
+ =?us-ascii?Q?cTBNd/FZ6wbYntbhSAbG1z6kf+5kfe6Ff96FiX0+Su2K4fkrqTV5jGcYT08v?=
+ =?us-ascii?Q?pdd1Z1LY/DRWL3AwqS0Sgj0oK9O7A+OavFMHqeR1vxUj4dIs95aNaHjH4arf?=
+ =?us-ascii?Q?C+S3IA9nyjmZKL0TpH6d8cDT+TVoanRP0btWAvqy2SHXVbmGmsFAaj+EkqsG?=
+ =?us-ascii?Q?ZJEf2XfyHyet8TjGz2GU1Q7fGrYN1XQgIu0ARV6CmSXEQHJ7lMnfgkeCFs0z?=
+ =?us-ascii?Q?eZDZk7+Zu/LnOPsRKGsfmtNy8Ud3r5IPVgDiUShMeKbqQOQ3UZLPTMdgjhjl?=
+ =?us-ascii?Q?2rbA7uBAnAARznRMxLcp1hpNnEw6Ctdr1+llXYG7JDTtzAH5Xz3KellMmcCq?=
+ =?us-ascii?Q?viDsH6imcblfoq6c7Qn4hqioEZAI2IDniYr6g4XAIoqw5qAq01NA8z/yUtH1?=
+ =?us-ascii?Q?QDH8aVzLgkPAed33dhy3KHFD/yqX4OGDYYxY316WUNOM/kMlqCVXIDXayISH?=
+ =?us-ascii?Q?U4SQJ06SIQqOe5vaps7pcIWryFdkGxbFB1zwlmo9ScGzKiKccSG1WSzXRv5t?=
+ =?us-ascii?Q?ZrMccrBVBxT3IxSQ705146Lbenz2rv7duKTrujYMiQ8WTNwvQnwFu8ssBhqZ?=
+ =?us-ascii?Q?GW9DFPQn9nSSsL6BPwhlca6rW0jaMe8hRcK8k0KYJ9Btgwyg3QunetQHUjTf?=
+ =?us-ascii?Q?JLLTfeNpv2DUrRZHAxJP/2Wfi2AyjSTc5ADEdaYG4x8o8YSTvbLC4NJdXrR6?=
+ =?us-ascii?Q?pqlkKtH/azjzyXHdXUL+qjXbcXT3eR49PRZWUlb/RaoJ+HcDriFUo08V5Z/g?=
+ =?us-ascii?Q?bh3ebOIO5KGV3ZTz6AZbDWgMQXcOUJ+7a2NWv2FNnntDinz0c2U+ieB4TuJX?=
+ =?us-ascii?Q?gORX2k20K+qsaeTaFSlCwOpai1cHW5TkSNY82v/2wwn5zY+nByiBM3gCK8s5?=
+ =?us-ascii?Q?hxN08+zBrjWxhpBDMcvVJCaM2KnGOQZ5TzcRkzsWMuwSQvnjX/1JsuM+9sOO?=
+ =?us-ascii?Q?Gp8XS9SoAZqrbljR3G8BcAzWZnkVWaBWcFnaKXj4Mhce87RmcRgCNTa8YmPS?=
+ =?us-ascii?Q?L9Uj+7uwa1L2dL3ijDSocWAL/cjLCwGle46GgLYu?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad0fb7e6-90c4-4ec9-1109-08ddc3a501e4
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 13:39:22.7588
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zeI6ecilXUe1Hb6teaTR532fS9o4XrlIx88Wtl3fEbeOZbiloFZsRjmYSYQxJ3iM
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8440
 
-Hi Simon,
+On Tue, Jul 15, 2025 at 02:32:45PM +0800, Xu Yilun wrote:
+> Rename the shortterm-related identifiers to wait-related.
+> 
+> The usage of shortterm_users refcount is now beyond its name.  It is
+> also used for references which live longer than an ioctl execution.
+> E.g. vdev holds idev's shortterm_users refcount on vdev allocation,
+> releases it during idev's pre_destroy(). Rename the refcount as
+> wait_cnt, since it is always used to sync the referencing & the
+> destruction of the object by waiting for it to go to zero.
+> 
+> List all changed identifiers:
+> 
+>   iommufd_object::shortterm_users -> iommufd_object::wait_cnt
+>   REMOVE_WAIT_SHORTTERM -> REMOVE_WAIT
+>   iommufd_object_dec_wait_shortterm() -> iommufd_object_dec_wait()
+>   zerod_shortterm -> zerod_wait_cnt
+> 
+> No functional change intended.
+> 
+> Suggested-by: Kevin Tian <kevin.tian@intel.com>
+> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Xu Yilun <yilun.xu@linux.intel.com>
+> ---
+>  drivers/iommu/iommufd/device.c          |  6 ++--
+>  drivers/iommu/iommufd/iommufd_private.h | 18 ++++++------
+>  drivers/iommu/iommufd/main.c            | 39 +++++++++++++------------
+>  drivers/iommu/iommufd/viommu.c          |  4 +--
+>  include/linux/iommufd.h                 |  8 ++++-
+>  5 files changed, 41 insertions(+), 34 deletions(-)
 
-Thanks for the clarification.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-We=E2=80=99ve observed that i40e_dbg_command_buf is
-initialized with a fixed size of 256 bytes, but we
-didn=E2=80=99t find any assignment statements updating
-its contents elsewhere in the kernel source code.
-
-We=E2=80=99re unsure whether this buffer could potentially
-be used or modified in other contexts that we
-might have missed.
-
-If the buffer is indeed isolated and only used
-as currently observed, then the current use of
-snprintf() should be safe.
-
-We=E2=80=99d appreciate your confirmation on whether
-this buffer could potentially be used beyond its
-current scope.
-
-Regards,
-Wang Haoran
-
-Simon Horman <horms@kernel.org> =E4=BA=8E2025=E5=B9=B47=E6=9C=8815=E6=97=A5=
-=E5=91=A8=E4=BA=8C 02:10=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Thu, Jul 10, 2025 at 10:14:18AM +0800, Wang Haoran wrote:
-> > Hi, my name is Wang Haoran. We found a bug in the
-> > i40e_dbg_command_read function located in
-> > drivers/net/ethernet/intel/i40e/i40e_debugfs.c in the latest Linux
-> > kernel (version 6.15.5).
-> > The buffer "i40e_dbg_command_buf" has a size of 256. When formatted
-> > together with the network device name (name), a newline character, and
-> > a null terminator, the total formatted string length may exceed the
-> > buffer size of 256 bytes.
-> > Since "snprintf" returns the total number of bytes that would have
-> > been written (the length of  "%s: %s\n" ), this value may exceed the
-> > buffer length passed to copy_to_user(), this will ultimatly cause
-> > function "copy_to_user" report a buffer overflow error.
-> > Replacing snprintf with scnprintf ensures the return value never
-> > exceeds the specified buffer size, preventing such issues.
->
-> Thanks Wang Haoran.
->
-> I agree that using scnprintf() is a better choice here than snprintf().
->
-> But it is not clear to me that this is a bug.
->
-> I see that i40e_dbg_command_buf is initialised to be the
-> empty string. And I don't see it's contents being updated.
->
-> While ->name should be no longer than IFNAMSIZ - 1 (=3D15) bytes long,
-> excluding the trailing '\0'.
->
-> If so, the string formatted by the line below should always
-> comfortably fit within buf_size (256 bytes).
->
-> >
-> > --- i40e_debugfs.c 2025-07-06 17:04:26.000000000 +0800
-> > +++ i40e_debugfs.c 2025-07-09 15:51:47.259130500 +0800
-> > @@ -70,7 +70,7 @@
-> >   return -ENOSPC;
-> >
-> >   main_vsi =3D i40e_pf_get_main_vsi(pf);
-> > - len =3D snprintf(buf, buf_size, "%s: %s\n", main_vsi->netdev->name,
-> > + len =3D scnprintf(buf, buf_size, "%s: %s\n", main_vsi->netdev->name,
-> >         i40e_dbg_command_buf);
-> >
-> >   bytes_not_copied =3D copy_to_user(buffer, buf, len);
-> >
-> > Best regards,
-> > Wang Haoran
-> >
+Jason
 
