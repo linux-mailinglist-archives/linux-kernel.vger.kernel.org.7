@@ -1,173 +1,247 @@
-Return-Path: <linux-kernel+bounces-731746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC04B058ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:35:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1851B058F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB541188DC55
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:35:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89883A795F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E662D8395;
-	Tue, 15 Jul 2025 11:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A972D7807;
+	Tue, 15 Jul 2025 11:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KyKm831a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K0ixwoYa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317E2D2FB;
-	Tue, 15 Jul 2025 11:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674A92D6401;
+	Tue, 15 Jul 2025 11:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752579303; cv=none; b=eyS+hJ8MypOAyBHGFl7PQA9+O8QKLit4CVuny4vrmlN+41qeXxxVVI4iYi3VQfJvI3l3s9QrMvulwX6T+sFjQm6oILVRE14rX/1sZMVc2jN09Qg1MPLRFzb5TqysHhCkrmQOAmGjkBJvjiiOgill3Tx6M1CsKdKSz/Vr/r7i1MM=
+	t=1752579366; cv=none; b=O9qnNmWGJm/lzX3T+STWGVerOo1zQCiZzOx3+d3ixXlf9/wyn97zqjdphTYRCzkVpX8Bwqxm4dZzGKBu+u/65caxH/RKdJHHlBdC+finHInjb8sRYZU9YxqTA+dlT37o5DlNcq7vjU4DuuurE5drjxwbx2dIAiIpLuLx3wcScdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752579303; c=relaxed/simple;
-	bh=1uGKmWWiwvicpa4TMcg7RSuKjBjr5n7fBm5dAiA0GBw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=COrvVuom+xrqib9OCqavlRZ3u61t50mJpV+8SGMYHIb/c1mv/B+5awaSaoxee8BLp7cW5fycU8/TnwmvPR3cJ1Q6yqDH2otjyoBCMRb7rOIvfiopEEQFf3G7FH/SqBSOAEGHAdS12qfMph45qyrQIFWL1O7+61oLRsuKi7fcSx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KyKm831a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E44C4CEE3;
-	Tue, 15 Jul 2025 11:34:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752579302;
-	bh=1uGKmWWiwvicpa4TMcg7RSuKjBjr5n7fBm5dAiA0GBw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KyKm831aWmUAhJ8zOZ5/4azrxZzz5R/2NkhTuCZ4HeM/HPSFYjMK1XINCo4ZUJ4Lr
-	 tbX/0iUCbZet0ZGdKSnmDRhx8KIf9IhAcEJenOn8a1unue0nIdPpchvlZNgG7LvzoY
-	 2mqg+R9TIIPFkad/J2Z19gH+5qKmIPr4VZgP8fuggaPc/xp2nJoqOr/ZM048OOY51k
-	 NASCBk9QRy60+WKrv+0vpYBsHTce7Bs+6KTr89hXTvQ53UcViheA3ZzHXffxvW86W5
-	 smTqBNFibClpYwrsvdcoXhPBtGkvIZ49qiO4CCAAWVqE5d2SkC1R/7ViPchYo5W3Wz
-	 Qb2uSh2y+p0fg==
-Message-ID: <4dfed94c-665d-4e04-b527-ddd34fd3db8f@kernel.org>
-Date: Tue, 15 Jul 2025 13:34:54 +0200
+	s=arc-20240116; t=1752579366; c=relaxed/simple;
+	bh=n3+8jPGXx9X89AAiNO3h7+WiVtND0rGd3wOyQ93Uc1g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LN51DFLlrwJnhGFsFYqCj3H76GSr9DwQqMksWevUDJgxKPlMElYRjodmtZOfkdSHmHcYuxl5ybo31QOfd3Irpac0RMmXRINGWVbYhflG1nvqq1OysC/XZKMPHTYoxeyXSSC5R49FEG3IOy8DTMHu77ASwd/NeTo6gkEo2I7A27Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K0ixwoYa; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752579364; x=1784115364;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=n3+8jPGXx9X89AAiNO3h7+WiVtND0rGd3wOyQ93Uc1g=;
+  b=K0ixwoYaRuT6bxreH/6w6nkEINdqbbLQo7gQU3bXT2pm9mMB9zwcZeEv
+   oY9FV0w2xV+P3LCMmTBaNvB0Tw2tGdVqAe8lGJnPVVeKZ4dZ5cek3YfF1
+   IDxxaPES/Wj8pVwRVsuR93fWBeK8sw/5nQDoyMahNA/0NnGlGvai8FFx7
+   QmJ9n4Hbvbzp4YJVFXhNHcyNC09fYAP3BONlxTyvhYeyR8woTk9yPQIo9
+   Ub7SwfYUjPJQgtjDIpdQA3WGr0q7a5JvXuKnIlyX4zEs+cgCPLVN2U9iu
+   LbBBlqL6kwg+OYxpwvHbgzud/+VCayDpjH0NY1F+o6WqhFhUo634GyZxm
+   g==;
+X-CSE-ConnectionGUID: C1K6eRIuQzGB3uiEk/eBoQ==
+X-CSE-MsgGUID: SC/l5Uo/R4WRPbUSLWpSyw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="42422876"
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="42422876"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 04:36:03 -0700
+X-CSE-ConnectionGUID: irnYdiHMRh+1301yIAE6hA==
+X-CSE-MsgGUID: 9uVKpICBQuSBR9yg6PLlAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="188210056"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 15 Jul 2025 04:36:00 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ubdwz-000A0l-2i;
+	Tue, 15 Jul 2025 11:35:57 +0000
+Date: Tue, 15 Jul 2025 19:35:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jonathan Denose <jdenose@google.com>, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Henrik Rydberg <rydberg@bitmath.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Angela Czubak <aczubak@google.com>,
+	Sean O'Brien <seobrien@google.com>,
+	Jonathan Denose <jdenose@google.com>
+Subject: Re: [PATCH 11/11] HID: multitouch: add haptic multitouch support
+Message-ID: <202507151942.94dhYylY-lkp@intel.com>
+References: <20250714-support-forcepads-v1-11-71c7c05748c9@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] dt-bindings: phy: rockchip: rk3399-typec-phy: Support
- mode/orientation switch
-To: Chaoyi Chen <kernel@airkyi.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Yubing Zhang <yubing.zhang@rock-chips.com>,
- Frank Wang <frank.wang@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Amit Sunil Dhamne <amitsd@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Chaoyi Chen <chaoyi.chen@rock-chips.com>, Dragan Simic <dsimic@manjaro.org>,
- Johan Jonker <jbx6244@gmail.com>, Diederik de Haas <didi.debian@cknow.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-References: <20250715112456.101-1-kernel@airkyi.com>
- <20250715112456.101-3-kernel@airkyi.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250715112456.101-3-kernel@airkyi.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714-support-forcepads-v1-11-71c7c05748c9@google.com>
 
-On 15/07/2025 13:24, Chaoyi Chen wrote:
-> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> 
-> Add support for Type-C orientation and altmode switch.
-> The Type-C controller can be specified to handling switching.
+Hi Jonathan,
 
-Please describe the hardware in details. Above sentences don't help me
-to understand this.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on 86731a2a651e58953fc949573895f2fa6d456841]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Jonathan-Denose/HID-add-haptics-page-defines/20250714-231444
+base:   86731a2a651e58953fc949573895f2fa6d456841
+patch link:    https://lore.kernel.org/r/20250714-support-forcepads-v1-11-71c7c05748c9%40google.com
+patch subject: [PATCH 11/11] HID: multitouch: add haptic multitouch support
+config: hexagon-randconfig-r112-20250715 (https://download.01.org/0day-ci/archive/20250715/202507151942.94dhYylY-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce: (https://download.01.org/0day-ci/archive/20250715/202507151942.94dhYylY-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507151942.94dhYylY-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/hid/hid-haptic.c:13:6: error: redefinition of 'hid_haptic_feature_mapping'
+      13 | void hid_haptic_feature_mapping(struct hid_device *hdev,
+         |      ^
+   drivers/hid/hid-haptic.h:83:6: note: previous definition is here
+      83 | void hid_haptic_feature_mapping(struct hid_device *hdev,
+         |      ^
+>> drivers/hid/hid-haptic.c:51:6: error: redefinition of 'hid_haptic_check_pressure_unit'
+      51 | bool hid_haptic_check_pressure_unit(struct hid_haptic_device *haptic,
+         |      ^
+   drivers/hid/hid-haptic.h:89:6: note: previous definition is here
+      89 | bool hid_haptic_check_pressure_unit(struct hid_haptic_device *haptic,
+         |      ^
+>> drivers/hid/hid-haptic.c:65:5: error: redefinition of 'hid_haptic_input_mapping'
+      65 | int hid_haptic_input_mapping(struct hid_device *hdev,
+         |     ^
+   drivers/hid/hid-haptic.h:95:5: note: previous definition is here
+      95 | int hid_haptic_input_mapping(struct hid_device *hdev,
+         |     ^
+>> drivers/hid/hid-haptic.c:81:5: error: redefinition of 'hid_haptic_input_configured'
+      81 | int hid_haptic_input_configured(struct hid_device *hdev,
+         |     ^
+   drivers/hid/hid-haptic.h:104:5: note: previous definition is here
+     104 | int hid_haptic_input_configured(struct hid_device *hdev,
+         |     ^
+>> drivers/hid/hid-haptic.c:403:5: error: redefinition of 'hid_haptic_init'
+     403 | int hid_haptic_init(struct hid_device *hdev,
+         |     ^
+   drivers/hid/hid-haptic.h:114:5: note: previous definition is here
+     114 | int hid_haptic_init(struct hid_device *hdev, struct hid_haptic_device **haptic_ptr)
+         |     ^
+>> drivers/hid/hid-haptic.c:569:6: error: redefinition of 'hid_haptic_pressure_reset'
+     569 | void hid_haptic_pressure_reset(struct hid_haptic_device *haptic)
+         |      ^
+   drivers/hid/hid-haptic.h:126:6: note: previous definition is here
+     126 | void hid_haptic_pressure_reset(struct hid_haptic_device *haptic) {}
+         |      ^
+>> drivers/hid/hid-haptic.c:575:6: error: redefinition of 'hid_haptic_pressure_increase'
+     575 | void hid_haptic_pressure_increase(struct hid_haptic_device *haptic,
+         |      ^
+   drivers/hid/hid-haptic.h:128:6: note: previous definition is here
+     128 | void hid_haptic_pressure_increase(struct hid_haptic_device *haptic,
+         |      ^
+   7 errors generated.
 
 
-> 
-> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> ---
->  .../bindings/phy/rockchip,rk3399-typec-phy.yaml    | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml
-> index 91c011f68cd0..a885c6893a90 100644
-> --- a/Documentation/devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml
-> @@ -43,6 +43,20 @@ properties:
->      description:
->        Phandle to the syscon managing the "general register files" (GRF).
->  
-> +  orientation-switch:
-> +    description: Flag the port as possible handler of orientation switching
-> +    type: boolean
-> +
-> +  mode-switch:
-> +    description: Flag the port as possible handler of altmode switching
-> +    type: boolean
-> +
-> +  port:
-> +    $ref: /schemas/graph.yaml#/properties/port
-> +    description:
-> +      A port node to link the PHY to a TypeC controller for the purpose of
-> +      handling orientation switching.
+vim +/hid_haptic_feature_mapping +13 drivers/hid/hid-haptic.c
 
+783df9659b1cddf Angela Czubak 2025-07-14  12  
+783df9659b1cddf Angela Czubak 2025-07-14 @13  void hid_haptic_feature_mapping(struct hid_device *hdev,
+783df9659b1cddf Angela Czubak 2025-07-14  14  				struct hid_haptic_device *haptic,
+783df9659b1cddf Angela Czubak 2025-07-14  15  				struct hid_field *field, struct hid_usage *usage)
+783df9659b1cddf Angela Czubak 2025-07-14  16  {
+59b86a929daae04 Angela Czubak 2025-07-14  17  	u16 usage_hid;
+59b86a929daae04 Angela Czubak 2025-07-14  18  
+783df9659b1cddf Angela Czubak 2025-07-14  19  	if (usage->hid == HID_HP_AUTOTRIGGER) {
+783df9659b1cddf Angela Czubak 2025-07-14  20  		if (usage->usage_index >= field->report_count) {
+783df9659b1cddf Angela Czubak 2025-07-14  21  			dev_err(&hdev->dev,
+783df9659b1cddf Angela Czubak 2025-07-14  22  				"HID_HP_AUTOTRIGGER out of range\n");
+783df9659b1cddf Angela Czubak 2025-07-14  23  			return;
+783df9659b1cddf Angela Czubak 2025-07-14  24  		}
+783df9659b1cddf Angela Czubak 2025-07-14  25  
+783df9659b1cddf Angela Czubak 2025-07-14  26  		hid_device_io_start(hdev);
+783df9659b1cddf Angela Czubak 2025-07-14  27  		hid_hw_request(hdev, field->report, HID_REQ_GET_REPORT);
+783df9659b1cddf Angela Czubak 2025-07-14  28  		hid_hw_wait(hdev);
+783df9659b1cddf Angela Czubak 2025-07-14  29  		hid_device_io_stop(hdev);
+783df9659b1cddf Angela Czubak 2025-07-14  30  		haptic->default_auto_trigger =
+783df9659b1cddf Angela Czubak 2025-07-14  31  			field->value[usage->usage_index];
+783df9659b1cddf Angela Czubak 2025-07-14  32  		haptic->auto_trigger_report = field->report;
+59b86a929daae04 Angela Czubak 2025-07-14  33  	} else if ((usage->hid & HID_USAGE_PAGE) == HID_UP_ORDINAL) {
+59b86a929daae04 Angela Czubak 2025-07-14  34  		usage_hid = usage->hid & HID_USAGE;
+59b86a929daae04 Angela Czubak 2025-07-14  35  		switch (field->logical) {
+59b86a929daae04 Angela Czubak 2025-07-14  36  		case HID_HP_WAVEFORMLIST:
+59b86a929daae04 Angela Czubak 2025-07-14  37  			if (usage_hid > haptic->max_waveform_id)
+59b86a929daae04 Angela Czubak 2025-07-14  38  				haptic->max_waveform_id = usage_hid;
+59b86a929daae04 Angela Czubak 2025-07-14  39  			break;
+59b86a929daae04 Angela Czubak 2025-07-14  40  		case HID_HP_DURATIONLIST:
+59b86a929daae04 Angela Czubak 2025-07-14  41  			if (usage_hid > haptic->max_duration_id)
+59b86a929daae04 Angela Czubak 2025-07-14  42  				haptic->max_duration_id = usage_hid;
+59b86a929daae04 Angela Czubak 2025-07-14  43  			break;
+59b86a929daae04 Angela Czubak 2025-07-14  44  		default:
+59b86a929daae04 Angela Czubak 2025-07-14  45  			break;
+59b86a929daae04 Angela Czubak 2025-07-14  46  		}
+783df9659b1cddf Angela Czubak 2025-07-14  47  	}
+783df9659b1cddf Angela Czubak 2025-07-14  48  }
+783df9659b1cddf Angela Czubak 2025-07-14  49  EXPORT_SYMBOL_GPL(hid_haptic_feature_mapping);
+783df9659b1cddf Angela Czubak 2025-07-14  50  
+783df9659b1cddf Angela Czubak 2025-07-14 @51  bool hid_haptic_check_pressure_unit(struct hid_haptic_device *haptic,
+783df9659b1cddf Angela Czubak 2025-07-14  52  				    struct hid_input *hi, struct hid_field *field)
+783df9659b1cddf Angela Czubak 2025-07-14  53  {
+f96e0cf76b31615 Angela Czubak 2025-07-14  54  	if (field->unit == HID_UNIT_GRAM || field->unit == HID_UNIT_NEWTON) {
+f96e0cf76b31615 Angela Czubak 2025-07-14  55  		haptic->force_logical_minimum = field->logical_minimum;
+f96e0cf76b31615 Angela Czubak 2025-07-14  56  		haptic->force_physical_minimum = field->physical_minimum;
+f96e0cf76b31615 Angela Czubak 2025-07-14  57  		haptic->force_resolution = input_abs_get_res(hi->input,
+f96e0cf76b31615 Angela Czubak 2025-07-14  58  							     ABS_MT_PRESSURE);
+783df9659b1cddf Angela Czubak 2025-07-14  59  		return true;
+f96e0cf76b31615 Angela Czubak 2025-07-14  60  	}
+783df9659b1cddf Angela Czubak 2025-07-14  61  	return false;
+783df9659b1cddf Angela Czubak 2025-07-14  62  }
+783df9659b1cddf Angela Czubak 2025-07-14  63  EXPORT_SYMBOL_GPL(hid_haptic_check_pressure_unit);
+783df9659b1cddf Angela Czubak 2025-07-14  64  
+783df9659b1cddf Angela Czubak 2025-07-14 @65  int hid_haptic_input_mapping(struct hid_device *hdev,
+783df9659b1cddf Angela Czubak 2025-07-14  66  			     struct hid_haptic_device *haptic,
+783df9659b1cddf Angela Czubak 2025-07-14  67  			     struct hid_input *hi,
+783df9659b1cddf Angela Czubak 2025-07-14  68  			     struct hid_field *field, struct hid_usage *usage,
+783df9659b1cddf Angela Czubak 2025-07-14  69  			     unsigned long **bit, int *max)
+783df9659b1cddf Angela Czubak 2025-07-14  70  {
+783df9659b1cddf Angela Czubak 2025-07-14  71  	if (usage->hid == HID_HP_MANUALTRIGGER) {
+783df9659b1cddf Angela Czubak 2025-07-14  72  		haptic->manual_trigger_report = field->report;
+783df9659b1cddf Angela Czubak 2025-07-14  73  		/* we don't really want to map these fields */
+783df9659b1cddf Angela Czubak 2025-07-14  74  		return -1;
+783df9659b1cddf Angela Czubak 2025-07-14  75  	}
+783df9659b1cddf Angela Czubak 2025-07-14  76  
+783df9659b1cddf Angela Czubak 2025-07-14  77  	return 0;
+783df9659b1cddf Angela Czubak 2025-07-14  78  }
+783df9659b1cddf Angela Czubak 2025-07-14  79  EXPORT_SYMBOL_GPL(hid_haptic_input_mapping);
+783df9659b1cddf Angela Czubak 2025-07-14  80  
+783df9659b1cddf Angela Czubak 2025-07-14 @81  int hid_haptic_input_configured(struct hid_device *hdev,
+783df9659b1cddf Angela Czubak 2025-07-14  82  				struct hid_haptic_device *haptic,
+783df9659b1cddf Angela Czubak 2025-07-14  83  				struct hid_input *hi)
+783df9659b1cddf Angela Czubak 2025-07-14  84  {
+783df9659b1cddf Angela Czubak 2025-07-14  85  
+783df9659b1cddf Angela Czubak 2025-07-14  86  	if (hi->application == HID_DG_TOUCHPAD) {
+783df9659b1cddf Angela Czubak 2025-07-14  87  		if (haptic->auto_trigger_report &&
+783df9659b1cddf Angela Czubak 2025-07-14  88  		    haptic->manual_trigger_report) {
+783df9659b1cddf Angela Czubak 2025-07-14  89  			__set_bit(INPUT_PROP_HAPTIC_TOUCHPAD, hi->input->propbit);
+783df9659b1cddf Angela Czubak 2025-07-14  90  			return 1;
+783df9659b1cddf Angela Czubak 2025-07-14  91  		}
+783df9659b1cddf Angela Czubak 2025-07-14  92  		return 0;
+783df9659b1cddf Angela Czubak 2025-07-14  93  	}
+783df9659b1cddf Angela Czubak 2025-07-14  94  	return -1;
+783df9659b1cddf Angela Czubak 2025-07-14  95  }
+783df9659b1cddf Angela Czubak 2025-07-14  96  EXPORT_SYMBOL_GPL(hid_haptic_input_configured);
+59b86a929daae04 Angela Czubak 2025-07-14  97  
 
-You are using usb-switch.yaml properties in phy node, which raises
-questions whether this is actually complete. It might be, but commit msg
-is so vague that I have doubts.
-
-Also, why only one port?
-
-Or wait... you already have ports! two of them. This needs to stop, why
-are you adding more?
-
-Best regards,
-Krzysztof
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
