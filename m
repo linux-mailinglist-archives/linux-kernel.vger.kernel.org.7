@@ -1,72 +1,77 @@
-Return-Path: <linux-kernel+bounces-731863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B23B05AAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:57:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB12B05AB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A95E11889B97
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:57:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91DD51AA5CB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479B22D8363;
-	Tue, 15 Jul 2025 12:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EC92E03F5;
+	Tue, 15 Jul 2025 12:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="arXTtqQU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sf7bZYQ9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eSMLzsEO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D33D23D281;
-	Tue, 15 Jul 2025 12:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F082627FC;
+	Tue, 15 Jul 2025 12:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752584231; cv=none; b=tVm/BqySc6tTItOgT8VGUVyITBNOCrYsrE+wOJDGHpAez9PIZoZVsiopHQMSmbNbn/11XL7OqPFDkYaxlf/o07LDSED/2fMkAXwB4f0g9ZyccHhBkeJGb2rFCUafE5twyxNYxiJzi5KvlWAbnaEwHqqpSnM7i777tYqhv3egZGs=
+	t=1752584312; cv=none; b=ScWMAoxiP7vwH3HLwJZsxuVf/MAArt8y231qSdZIGSPkW2eWabJ5R9ggfj9GIqjdXUeBMGmpx4aWw+2DiCXob46oNV4ZIxgmBU5NNBwryPZvgJVJ+jBIALRsxdukKdZ0KpKGNKrjWFmXqYWl2ct/ipkh8oocHKlvLZJjcRYt/bQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752584231; c=relaxed/simple;
-	bh=z5wyTPXmVEd1ZYkkyrXr7DhOnKLOMu2j6kn1bYNNu2g=;
+	s=arc-20240116; t=1752584312; c=relaxed/simple;
+	bh=6SCddfOTDHHGObCBwebbZIS9WbD3aNhWQRhtOi2Ux8g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eLB5RtKM42kSb6cRXAkKWG/H/VL9Vs7jC6eDyEuQ9lmHyEzGLY6zO98EQK+NbnSdnAcV+V5HaPc7uMg+zIuMSWxk2zXuOYd+PjjTijuUQ2+1SLTcsWp34e/d8yZrcg8zxUvbCCFreeHNH/LqXIxf4EtVZ63G6+QkF2j4IreTUbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=arXTtqQU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33325C4CEE3;
-	Tue, 15 Jul 2025 12:57:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752584231;
-	bh=z5wyTPXmVEd1ZYkkyrXr7DhOnKLOMu2j6kn1bYNNu2g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=arXTtqQU+QSnwZtSgZFQUCRyEQe28EGJJWhN7GEFpPYP4LLlxjVqDlko/aH5ciQih
-	 BJUm0djMUY9NLb2aHxpjqmV5efA2Zwtf7wPQJwJcVI+k5CinIK41kze1nNNu19fWd7
-	 RLzpIUBjYsoNK3/UnFmcQahWeijRO5uuPY6L8gtAxUEFjwyVWpQBxFIJ/CZAAU45tl
-	 ImaCL9/wM+2rG8Yk0As9LpjxmLXXQrhrUdlJQrLnw/0i2wHky4ym3U1jHHnXsRphLR
-	 X6dVR1HCdjYkTidS0Aqj+2qK/8nuDV9hjBVkty62m0m6tvZ/PZ7OUV5rWNwqKlEnuj
-	 ECohc5Eqn9d4g==
-Date: Tue, 15 Jul 2025 13:57:03 +0100
-From: Will Deacon <will@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>, leo.yan@arm.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v3 04/10] arm64/boot: Enable EL2 requirements for
- SPE_FEAT_FDS
-Message-ID: <aHZQH7QGhi5pbXU8@willie-the-truck>
-References: <20250605-james-perf-feat_spe_eft-v3-0-71b0c9f98093@linaro.org>
- <20250605-james-perf-feat_spe_eft-v3-4-71b0c9f98093@linaro.org>
- <aHUMMk9JUdK6luLN@willie-the-truck>
- <04d52182-6043-4eaf-a898-9f8ccc893e5f@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rD3TtzwdrV6fCBoYf1jedyoOVBNjsng2FQf7JdX+sGed2+Q2Win5H0ljZjj4vRsXQhqbK+VsEDG+Y2xpmhJ7lmFTk9/rJO3ac4VW/YzoF3I/PO94TaEf03j5u7Ux5htboVddbyls3yU1zUJKM2Fc51rHfBLt1VwPbmUhLlZhlyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sf7bZYQ9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eSMLzsEO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 15 Jul 2025 14:58:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752584308;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/B9TLRBtxUDCJxsWBE7GcJCQaPVHwv80Fiu3ht2Nt6I=;
+	b=sf7bZYQ9ZiWk8RvGDCHDL5F8ixwxhN0UkvRoxyuTukIbBSsEU5PzrZOjeWZQYp48EFpWkg
+	2MAY3rRSagVDoMRaqQnLWkcV+KBXWbfiLIXodnP4cSabUINmn/LdWr5WCB0XkAPhHim+yc
+	wYyoC4xYPDTXbKQNr8l29WxulcFT1ro2IgYZ9tiyUH397IvTxTjpXM8nuA5oVZKywjewOH
+	ECsLT2IXIEaRXeuhPaZLf9SvyA+dsHd9Zryu42MjCjReF68glSLY3u/CaW59YUn5t0n713
+	YaoDdwkyDwSusJtCHbB77Nh12PYJTArvZDMAMY2d/B8VzFIqeHNaXNCek7KU4A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752584308;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/B9TLRBtxUDCJxsWBE7GcJCQaPVHwv80Fiu3ht2Nt6I=;
+	b=eSMLzsEOm6CDkh/rn6rfN0u0+4XWy5ZXnYN77a0NBMn1Yx6NruYwZ37rJqm2+2cocS5fjg
+	eItyNbeObWf/6VCg==
+From: Nam Cao <namcao@linutronix.de>
+To: Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Xi Ruoyao <xry111@xry111.site>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/1] eventpoll: Replace rwlock with spinlock
+Message-ID: <20250715125827.SpZa8hHS@linutronix.de>
+References: <cover.1752581388.git.namcao@linutronix.de>
+ <ec92458ea357ec503c737ead0f10b2c6e4c37d47.1752581388.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,89 +80,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <04d52182-6043-4eaf-a898-9f8ccc893e5f@linaro.org>
+In-Reply-To: <ec92458ea357ec503c737ead0f10b2c6e4c37d47.1752581388.git.namcao@linutronix.de>
 
-On Tue, Jul 15, 2025 at 01:48:03PM +0100, James Clark wrote:
+On Tue, Jul 15, 2025 at 02:46:34PM +0200, Nam Cao wrote:
+> The ready event list of an epoll object is protected by read-write
+> semaphore:
 > 
+>   - The consumer (waiter) acquires the write lock and takes items.
+>   - the producer (waker) takes the read lock and adds items.
 > 
-> On 14/07/2025 2:54 pm, Will Deacon wrote:
-> > On Thu, Jun 05, 2025 at 11:49:02AM +0100, James Clark wrote:
-> > > SPE data source filtering (optional from Armv8.8) requires that traps to
-> > > the filter register PMSDSFR be disabled. Document the requirements and
-> > > disable the traps if the feature is present.
-> > > 
-> > > Tested-by: Leo Yan <leo.yan@arm.com>
-> > > Signed-off-by: James Clark <james.clark@linaro.org>
-> > > ---
-> > >   Documentation/arch/arm64/booting.rst | 11 +++++++++++
-> > >   arch/arm64/include/asm/el2_setup.h   | 14 ++++++++++++++
-> > >   2 files changed, 25 insertions(+)
-> > > 
-> > > diff --git a/Documentation/arch/arm64/booting.rst b/Documentation/arch/arm64/booting.rst
-> > > index dee7b6de864f..abd75085a239 100644
-> > > --- a/Documentation/arch/arm64/booting.rst
-> > > +++ b/Documentation/arch/arm64/booting.rst
-> > > @@ -404,6 +404,17 @@ Before jumping into the kernel, the following conditions must be met:
-> > >       - HDFGWTR2_EL2.nPMICFILTR_EL0 (bit 3) must be initialised to 0b1.
-> > >       - HDFGWTR2_EL2.nPMUACR_EL1 (bit 4) must be initialised to 0b1.
-> > > +  For CPUs with SPE data source filtering (FEAT_SPE_FDS):
-> > > +
-> > > +  - If EL3 is present:
-> > > +
-> > > +    - MDCR_EL3.EnPMS3 (bit 42) must be initialised to 0b1.
-> > > +
-> > > +  - If the kernel is entered at EL1 and EL2 is present:
-> > > +
-> > > +    - HDFGRTR2_EL2.nPMSDSFR_EL1 (bit 19) must be initialised to 0b1.
-> > > +    - HDFGWTR2_EL2.nPMSDSFR_EL1 (bit 19) must be initialised to 0b1.
-> > > +
-> > >     For CPUs with Memory Copy and Memory Set instructions (FEAT_MOPS):
-> > >     - If the kernel is entered at EL1 and EL2 is present:
-> > > diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
-> > > index 1e7c7475e43f..02b4a7fc016e 100644
-> > > --- a/arch/arm64/include/asm/el2_setup.h
-> > > +++ b/arch/arm64/include/asm/el2_setup.h
-> > > @@ -279,6 +279,20 @@
-> > >   	orr	x0, x0, #HDFGRTR2_EL2_nPMICFILTR_EL0
-> > >   	orr	x0, x0, #HDFGRTR2_EL2_nPMUACR_EL1
-> > >   .Lskip_pmuv3p9_\@:
-> > > +	mrs	x1, id_aa64dfr0_el1
-> > > +	ubfx	x1, x1, #ID_AA64DFR0_EL1_PMSVer_SHIFT, #4
-> > > +	/* If SPE is implemented, */
-> > > +	cmp	x1, #ID_AA64DFR0_EL1_PMSVer_IMP
-> > > +	b.lt	.Lskip_spefds_\@
-> > > +	/* we can read PMSIDR and */
-> > > +	mrs_s	x1, SYS_PMSIDR_EL1
-> > > +	and	x1, x1,  #PMSIDR_EL1_FDS
-> > > +	/* if FEAT_SPE_FDS is implemented, */
-> > > +	cbz	x1, .Lskip_spefds_\@
-> > > +	/* disable traps to PMSDSFR. */
-> > > +	orr	x0, x0, #HDFGRTR2_EL2_nPMSDSFR_EL1
-> > 
-> > Why is this being done here rather than alongside the existing SPE
-> > configuration of HDFGRTR_EL2 and HDFGWTR_EL2 near the start of
-> > __init_el2_fgt?
-> > 
-> I thought everything was separated by which trap configs it writes to,
-> rather than the feature. This SPE feature is in HDFGRTR2 so I put it in
-> __init_el2_fgt2 rather than __init_el2_fgt.
+> The point of this design is enabling epoll to scale well with large number
+> of producers, as multiple producers can hold the read lock at the same
+> time.
+> 
+> Unfortunately, this implementation may cause scheduling priority inversion
+> problem. Suppose the consumer has higher scheduling priority than the
+> producer. The consumer needs to acquire the write lock, but may be blocked
+> by the producer holding the read lock. Since read-write semaphore does not
+> support priority-boosting for the readers (even with CONFIG_PREEMPT_RT=y),
+> we have a case of priority inversion: a higher priority consumer is blocked
+> by a lower priority producer. This problem was reported in [1].
+> 
+> Furthermore, this could also cause stall problem, as described in [2].
+> 
+> Fix this problem by replacing rwlock with spinlock.
+> 
+> This reduces the event bandwidth, as the producers now have to contend with
+> each other for the spinlock. According to the benchmark from
+> https://github.com/rouming/test-tools/blob/master/stress-epoll.c:
+> 
+>     On 12 x86 CPUs:
+>                   Before     After        Diff
+>         threads  events/ms  events/ms
+>               8       7162       4956     -31%
+>              16       8733       5383     -38%
+>              32       7968       5572     -30%
+>              64      10652       5739     -46%
+>             128      11236       5931     -47%
+> 
+>     On 4 riscv CPUs:
+>                   Before     After        Diff
+>         threads  events/ms  events/ms
+>               8       2958       2833      -4%
+>              16       3323       3097      -7%
+>              32       3451       3240      -6%
+>              64       3554       3178     -11%
+>             128       3601       3235     -10%
+> 
+> Although the numbers look bad, it should be noted that this benchmark
+> creates multiple threads who do nothing except constantly generating new
+> epoll events, thus contention on the spinlock is high. For real workload,
+> the event rate is likely much lower, and the performance drop is not as
+> bad.
+> 
+> Using another benchmark (perf bench epoll wait) where spinlock contention
+> is lower, improvement is even observed on x86:
+> 
+>     On 12 x86 CPUs:
+>         Before: Averaged 110279 operations/sec (+- 1.09%), total secs = 8
+>         After:  Averaged 114577 operations/sec (+- 2.25%), total secs = 8
+> 
+>     On 4 riscv CPUs:
+>         Before: Averaged 175767 operations/sec (+- 0.62%), total secs = 8
+>         After:  Averaged 167396 operations/sec (+- 0.23%), total secs = 8
+> 
+> In conclusion, no one is likely to be upset over this change. After all,
+> spinlock was used originally for years, and the commit which converted to
+> rwlock didn't mention a real workload, just that the benchmark numbers are
+> nice.
+> 
+> This patch is not exactly the revert of commit a218cc491420 ("epoll: use
+> rwlock in order to reduce ep_poll_callback() contention"), because git
+> revert conflicts in some places which are not obvious on the resolution.
+> This patch is intended to be backported, therefore go with the obvious
+> approach:
+> 
+>   - Replace rwlock_t with spinlock_t one to one
+> 
+>   - Delete list_add_tail_lockless() and chain_epi_lockless(). These were
+>     introduced to allow producers to concurrently add items to the list.
+>     But now that spinlock no longer allows producers to touch the event
+>     list concurrently, these two functions are not necessary anymore.
+> 
+> Fixes: a218cc491420 ("epoll: use rwlock in order to reduce ep_poll_callback() contention")
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> Cc: stable@vger.kernel.org
 
-That's fair; __init_el2_fgt isn't the right place. But the redundancy of
-re-reading PMSVer from DFR0 is a little jarring.
+I forgot to add:
 
-> I suppose we could have a single __init_el2_spe that writes to both HDFGRTR
-> and HDFGRTR2 but we'd have to be careful to not overwrite what was already
-> done in the other sections.
+Reported-by: Frederic Weisbecker <frederic@kernel.org>
+Closes: https://lore.kernel.org/linux-rt-users/20210825132754.GA895675@lothringen/ [1]
+Reported-by: Valentin Schneider <vschneid@redhat.com>
+Closes: https://lore.kernel.org/linux-rt-users/xhsmhttqvnall.mognet@vschneid.remote.csb/ [2]
 
-Right, perhaps it would be clearer to have trap-preserving macros for
-features in a specific ID register rather than per-trap configuration
-register macros.
+Christian, do you mind adding those for me, if/when you apply the patch?
 
-In other words, we have something like __init_fgt_aa64dfr0 which would
-configure the FGT and FGT2 registers based on features in aa64dfr0. I
-think you'd need to have a play to see how it ends up looking but the
-main thing to avoid is having duplicate ID register parsing code for
-setting up FGT and FGT2 traps.
-
-Will
+Nam
 
