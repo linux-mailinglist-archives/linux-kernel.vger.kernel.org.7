@@ -1,132 +1,147 @@
-Return-Path: <linux-kernel+bounces-731439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64858B0543C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:12:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6CA1B0543D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E93153B7168
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:11:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00B504A2EBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E90274B29;
-	Tue, 15 Jul 2025 08:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F504274659;
+	Tue, 15 Jul 2025 08:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XLGg6JGi"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HIzDG21g"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF2126D4E9;
-	Tue, 15 Jul 2025 08:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5DF26D4E9
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752567132; cv=none; b=iUf2a/dtxo0+7ddnxKNm11hEDBJ462EVhevXonk4sLC6c2F2NfNqPyL60F6WJkFjKjyHsoLRwJzYGYvT0MQGeWlY7cfjdrMSMjCvd+PPo4NU2FZ/an7ZV8I2Gxne8bHP/X5K1OL1SVJWm1sqPL+HiVLFo9yM79GWB7QZiiKXEtg=
+	t=1752567165; cv=none; b=O5L4Flyl1TQHdiPBCtQ6xc/ROH1Xb8mgck/HSrS1bt2aTcpOHP903AtV67AWjLNGj/uerFXyxnh4kBWippN2pNJmbXR/6rv7lAor8QxxU9r0v42ltNyS3LnlmoMr6eLIhgpqIPtH4hKAn76m71hiNl+4aHWQpAhSojRTnjuq1MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752567132; c=relaxed/simple;
-	bh=A42hZ1CXXzEmtAuN3Oh4U+HhEO00ifH9+iMTus1OfLM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IUxfrtm2TGGH1LovzJ+CrtgoXZMuh75tZa+uH3V5daiLALSha8cWlGzNWQawCZaDgxZ/3BiidVvuZr++DsTcOiPpvYo8KAZbcphARk3drjr8xIdHa1J95GZuPtRm4owz/sgTK8Pg4LtD/ZWCYHkIu4T8YQ0g6V4ceq0E7WveZPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XLGg6JGi; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3134c67a173so5363652a91.1;
-        Tue, 15 Jul 2025 01:12:11 -0700 (PDT)
+	s=arc-20240116; t=1752567165; c=relaxed/simple;
+	bh=Ky4Avv0QnrWzPEmQKUX5pAFkfgAzrZy6gHmih3m8Kqw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=La6aF+tfHtDb6VamZ+WfophhSeSs9wl3EcrLnD60AiAtNOSIE0fBhA6v7hL5p9ykZZdhiqvV3RsZwPev+0cucndD3K9YHNwlUIlqixHgOqhf++qN3miEEzXwp0Qen134TOnXO+x3zf0FxzduKeYg0N8m8y0sjj7T/FkC1IIkgkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HIzDG21g; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-455eda09c57so25920585e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 01:12:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752567131; x=1753171931; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=J9cZzIxfvxK1Q11zfJm7mjrfAiqzGoJPBeFUMFwlPyY=;
-        b=XLGg6JGi4DKHsaBDMBomYu7kgK8vsYLIPEaOSOuTPEw4qIeQ4/WGHqbfW8hBgw67Ql
-         XmTLvSbUioR6Si/qiGhUrPU5PgL6lnFJ7leYqtgu+wgKL5lK+Nkx/gkWr+CpSMOFNEyt
-         NA/IEipe13IUsUKiVfWrkei/+vE1O2uKZ5RDorbqFX7D4pBnHy3dnQtUZM+2ROXLWiMf
-         sR8XZ4SwG5Yiin51EPIm3gEZFKK659KUrQkPTDEdVTzNY6a3KiA18chp6ax5tRsoa1J2
-         p69LSRtq1RphSXE4qw6GdBdKWNmjdb6uD0Ys7G18k4+dQ2zRMdo8ebpjct0D475y5+ES
-         vUZw==
+        d=google.com; s=20230601; t=1752567162; x=1753171962; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/h14E8vRIbubQT7Jkof5NhlHyroE40msmuI9PnRR/fc=;
+        b=HIzDG21gG2UpBDxswcfGimN6XbLffJML0H2MBIjOg4M/b93QQp090Bo/UoVDdMlNvM
+         SRJm+CR7w9vWKIhpyNMreG/Y8jOpn/kMLayjTppoFggCgYCHrssq8y7g1XS+fUcPWDu7
+         Pt1597f5tmMruVMSPmDD5JdReNu4Eu7HBCl7wW8Qb5FgZEoAQx7Pn1CiUmkt30xrLSj+
+         U35qfawUW96prUQ0gPSyVFIhwzLxcYcfxTZ3fzBgZrwU1i0WAp9o9GxdZkwNHjpqLjiJ
+         DggbcT37kwxoTKZhGdq9QOsGxWnaNj3673/Hh1Kn/r6kVFdST0Vic9CF+s+mWlsRA6Ma
+         aVdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752567131; x=1753171931;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J9cZzIxfvxK1Q11zfJm7mjrfAiqzGoJPBeFUMFwlPyY=;
-        b=fEDnJkBCLEiSxRk7eFFMChoViWqjy9clvqG5czS4+l7o4StqTss4CAe756ixMIPrVd
-         9LIWNIZlbNYEBhC3nqHBtFm0Lz4sG4bhKtaAG77NTOVtZE2Vkt1eVzHpYC5Va8ysuN6R
-         nfXiV/7Whz5zf3kA5Iu0E+DD5lmYrU6/HIK9yMjWRRDhu2Dwhz7649Sc3174Dc9dsQLX
-         geV3fJ/2/kRkDz8qLiBfWjv6qpiQ2UViUmLpn43S+dZABN8r8WPB7IoxlXGiqoZZaU3E
-         GoMBWxAFV7/Ltq2ev9JebD1p5vOiVoCFe/iskomQQy7m6PcyFdIF98XHw7870v3KHhLh
-         1eCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+ByCqzn2ZawVyw1bQDHSIJu6SJzGdi74cs0Mxg3X69yckGCZyh+fmSrFWeMLe5EUQDME=@vger.kernel.org, AJvYcCWWYbakaQHUAP/8PHmHIeC4wNNp3gFbH4wdvX7tqfq+koroocWJZyX1UTblNWUhKjoXwkwyPm0W@vger.kernel.org, AJvYcCX7xspcH7bEkOF/Oaoo4BYYuOUKVrSvdoOmyhEgnfi+tAql44X9G/P5qo1ouXuXJAK51apeJiCQPXVnoJg/@vger.kernel.org
-X-Gm-Message-State: AOJu0YywIDJVJkq4E+PZHAF/5huIQU1MuQo8C4nLG2ZpG8Ar10ScSHlk
-	emoJpf0UGJnbK6xSPYGgJkggKo5eyp9AL0cK/D0RGYnub87TL/ZlGJ0Q
-X-Gm-Gg: ASbGncs7xuH7ScbpnkthrdqqBExuExlrx/Ep4ORxf4OfV6e/CcWU6VrmoTrhq7Cy24S
-	VOovyOhk35amIoow4EAAT+QWOCS1Pn1YTL4EVXYB+ra0og64j8tFsNm0B9Jd7jgLZ0DIduDjAle
-	71c3SNPurebzdMFesD2pm/2Isz4mwltYBGLIw+P7SrFsnPd26FJTona+mM3e+FA7QnsF2c1bk3/
-	AyYHcWH3vsPcO6S00U6iTs5E3rf6pMiB2wW2hM+fWWO+Onu10NJIQ7L/VGO2X0GALTgGIDvY71l
-	iW35b1sXxklw+aCsim1r2Ei9qz3ZKEET6uKVPnv/c4VJ7k6Pt6UaW7maLb2aXVGwsWeDJcSJEPc
-	RXCGg/a0jK2Ypxea+kQLsar3asn4NFvn+PZSamWEd/BE=
-X-Google-Smtp-Source: AGHT+IFs5trgbTAyKft18DYDReY5ltyl88fzCm7ptR0K9hii4EwznJNonE1VzgHtlmmcLfwXRMVL9g==
-X-Received: by 2002:a17:90b:3b90:b0:312:25dd:1c99 with SMTP id 98e67ed59e1d1-31c4ccd99d8mr25949761a91.19.1752567130634;
-        Tue, 15 Jul 2025 01:12:10 -0700 (PDT)
-Received: from manjaro.domain.name ([2401:4900:1c68:e0ce:6703:6e3f:3a79:d2e6])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3017ca4csm14236712a91.31.2025.07.15.01.12.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 01:12:10 -0700 (PDT)
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-To: john.fastabend@gmail.com,
-	jakub@cloudflare.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	ast@kernel.org,
-	cong.wang@bytedance.com,
-	netdev@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Pranav Tyagi <pranav.tyagi03@gmail.com>,
-	syzbot+b18872ea9631b5dcef3b@syzkaller.appspotmail.com
-Subject: [PATCH] net: skmsg: fix NULL pointer dereference in sk_msg_recvmsg()
-Date: Tue, 15 Jul 2025 13:41:58 +0530
-Message-ID: <20250715081158.7651-1-pranav.tyagi03@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1752567162; x=1753171962;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/h14E8vRIbubQT7Jkof5NhlHyroE40msmuI9PnRR/fc=;
+        b=AG+vUWUnStseZMJfa9Mpjp1/lbxnddWT6CjIjnAZaAdDv5zC+S6T28IwMqZpS5Us7g
+         Aduf0MT79DxW2qQcrqwdrR8ihzDqoaxkhejMpoO2gQqLtSlNsvC0F2hx/3RQJSYCBla4
+         iY+1u67MItyHSnZ51F9sm0TmzE82sn/rECHVayPPTTpazSUYTKlU5xbBlWf3usry9cTX
+         JZPSMcJncgwJQ/hNsrYccnY95ZUyVOlE9Hp1jOqZe9CGzJWBBi6ZTjkbsRC22LdKzgy1
+         jzC0jen3pwNRaMtinkrikAl1vN5+etzAQjV2gkdCCb0oDrssv0agNqOty31AdBP8QtVH
+         3i8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWNdrTmfCrUzgJC0XDr9ap1WxiQlyKCvgTAZrryKhEfnpO/ErAIvml1jFL/5/MUFOKtOUgNhi76EXTKCEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWnVsENyKjcIWahWFMnk7RwwQ+GC1wfZuNVfsO4vOW3f4vc7Nw
+	YcYUXANOQgVk3SBBz/5v1AUhjJwZ/sJL/2IWb/StBphaap3VfPfy4JgNiVoCQwM/Fgymofl1JcL
+	zAG0zlStXUl31FeXDyA==
+X-Google-Smtp-Source: AGHT+IF5afMDfNleNN0oQTuKDP0mH+C5i7ePz0OsDjlhLql04CRpkA94+03Bwy7p3WyMeG49jSaSPmuZgQSU3II=
+X-Received: from wmbhe12.prod.google.com ([2002:a05:600c:540c:b0:456:245b:44bf])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:8909:b0:450:d3b9:4ba4 with SMTP id 5b1f17b1804b1-455bd87a4c6mr114642955e9.2.1752567162502;
+ Tue, 15 Jul 2025 01:12:42 -0700 (PDT)
+Date: Tue, 15 Jul 2025 08:12:40 +0000
+In-Reply-To: <20250711-topics-tyr-platform_iomem-v13-2-06328b514db3@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250711-topics-tyr-platform_iomem-v13-0-06328b514db3@collabora.com>
+ <20250711-topics-tyr-platform_iomem-v13-2-06328b514db3@collabora.com>
+Message-ID: <aHYNeEjQXz3CxfEM@google.com>
+Subject: Re: [PATCH v13 2/3] rust: io: mem: add a generic iomem abstraction
+From: Alice Ryhl <aliceryhl@google.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-A NULL page from sg_page() in sk_msg_recvmsg() can reach
-__kmap_local_page_prot() and crash the kernel. Add a check for the page
-before calling copy_page_to_iter() and fail early with -EFAULT to
-prevent the crash.
+On Fri, Jul 11, 2025 at 07:32:28PM -0300, Daniel Almeida wrote:
+> Add a generic iomem abstraction to safely read and write ioremapped
+> regions. This abstraction requires a previously acquired IoRequest
+> instance. This makes it so that both the resource and the device match,
+> or, in other words, that the resource is indeed a valid resource for a
+> given bound device.
+> 
+> A subsequent patch will add the ability to retrieve IoRequest instances
+> from platform devices.
+> 
+> The reads and writes are done through IoRaw, and are thus checked either
+> at compile-time, if the size of the region is known at that point, or at
+> runtime otherwise.
+> 
+> Non-exclusive access to the underlying memory region is made possible to
+> cater to cases where overlapped regions are unavoidable.
+> 
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-Reported-by: syzbot+b18872ea9631b5dcef3b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=b18872ea9631b5dcef3b
-Fixes: 2bc793e3272a ("skmsg: Extract __tcp_bpf_recvmsg() and tcp_bpf_wait_data()")
-Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
----
- net/core/skmsg.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-diff --git a/net/core/skmsg.c b/net/core/skmsg.c
-index 4d75ef9d24bf..f5367356a483 100644
---- a/net/core/skmsg.c
-+++ b/net/core/skmsg.c
-@@ -432,6 +432,10 @@ int sk_msg_recvmsg(struct sock *sk, struct sk_psock *psock, struct msghdr *msg,
- 			sge = sk_msg_elem(msg_rx, i);
- 			copy = sge->length;
- 			page = sg_page(sge);
-+			if (!page) {
-+				copied = copied ? copied : -EFAULT;
-+				goto out;
-+			}
- 			if (copied + copy > len)
- 				copy = len - copied;
- 			copy = copy_page_to_iter(page, sge->offset, copy, iter);
--- 
-2.49.0
+> +impl<const SIZE: usize> IoMem<SIZE> {
+> +    fn ioremap(resource: &Resource) -> Result<Self> {
+> +        let size = resource.size();
+> +        if size == 0 {
+> +            return Err(EINVAL);
+> +        }
+> +
+> +        let res_start = resource.start();
+> +
+> +        let addr = if resource
+> +            .flags()
+> +            .contains(io::resource::Flags::IORESOURCE_MEM_NONPOSTED)
+> +        {
+> +            // SAFETY:
+> +            // - `res_start` and `size` are read from a presumably valid `struct resource`.
+> +            // - `size` is known not to be zero at this point.
+> +            unsafe { bindings::ioremap_np(res_start, size.try_into()?) }
+> +        } else {
+> +            // SAFETY:
+> +            // - `res_start` and `size` are read from a presumably valid `struct resource`.
+> +            // - `size` is known not to be zero at this point.
+> +            unsafe { bindings::ioremap(res_start, size.try_into()?) }
 
+I thought a bit more about this, and I think it's fine for these sizes to
+be converted with try_into()?.
+
+> +        };
+> +
+> +        if addr.is_null() {
+> +            return Err(ENOMEM);
+> +        }
+> +
+> +        let io = IoRaw::new(addr as usize, size.try_into()?)?;
+
+Though may we could avoid converting it twice?
+
+Alice
 
