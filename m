@@ -1,132 +1,144 @@
-Return-Path: <linux-kernel+bounces-731506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 293D9B05563
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:50:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6E65B05573
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7107A169C54
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:50:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96776168EED
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804932D46C7;
-	Tue, 15 Jul 2025 08:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A8C2D23B5;
+	Tue, 15 Jul 2025 08:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WybPOzXk"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WzS+1AZU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3DB2D29CF
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96331917F0;
+	Tue, 15 Jul 2025 08:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752569417; cv=none; b=mH0+feJ7UQC1P9rExwEcm6YrXg0PHmHsKZItfU3krYO9i493ABSunZ52Dhby9AgqlfCyPbZQ+hMg/FJr6HcFSicRmHPX8LDivn+eFUOAsBzY3pF9dgBL9dnCd4r2yZj9l2JJYQjcqLXyGL5k30NorCiG8P9kDWjSrPuIUTJuibI=
+	t=1752569585; cv=none; b=lMreSWChHHM9X8Z4d/HvLcWo5srk+pGOB/176jYSa4oOTkF5PZ4IXdhC7Sg9ApcST115Um7djqdkJe5qC09yplNZo4TI5mGDLTVTIlp52Rg3njhWQHGSSLd/SspNtTTg1nVxlsCht7VKyxfG4XV42Ygjl0fDrd0u5ePbQlyWhy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752569417; c=relaxed/simple;
-	bh=d0lPW1A5fBB4fVKDhlkux6p6Ga7DYrMc9g8pnwepm44=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=W6n4amYrUhZaQwsCG+UoLVRYc5rZTtCqL9nuJZIQhHyn13jQJULDWBEERXNmy1vsq5PCTUE4z+gydwNCOV+OshZAxWKbK+nwiH58zIVNQlJ9MkPQW2DQb0Qmg+2DeoNbziTYKEp1GwmT8ZNH1g/Phc5LiqOF+s3LLzr9FPHmqeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WybPOzXk; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-455b00339c8so26179735e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 01:50:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1752569412; x=1753174212; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C+nh6JxemvhPIP24kZ/vb+SGxVcCnNFMlQjgWa9fn3A=;
-        b=WybPOzXkd2lXNZCmVvfeQPhPO+EcMmgh8ij+cE2OAA/KZlMvZAAxswihN9UrOv88GW
-         Suyxy0ncyVNFlJU7gLE/4VQsWsPpKmYLNvAp/vkkWvcJm0yedAjC1EaWxKC48+Rot2Ky
-         pSWFWTVe8w3ldkbrVFrazmOYhRRn4ihdJW1rrKHLQfOiplX1MbMgC4hZTZt/LOZnnlQT
-         dJRWkeXlaXMaa7oqwcfvOUGlBAW9G566zerjSH7pJQuhNo7RdFRF9vWweimaWo0JUpGI
-         eEFCdr6d9lcUOwVJQQWxfvnTvgpFyZa3wsJP3+CcubYS9N+ekT5YGVvmGKqkUOOsOCk9
-         wQNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752569412; x=1753174212;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C+nh6JxemvhPIP24kZ/vb+SGxVcCnNFMlQjgWa9fn3A=;
-        b=TFZxiTbqsPKDucKoH6PgsQPnLg3ZkFpKluk7sV8quadncVBCa9+e3bj5n3mol0ucAq
-         PyDEOEB3A1k5JFo42iacfzmapNUoHq8oAlyy2os3zuEzEuzcGOht2zyhfdNVuTgen+2p
-         I2UMXQB9Whs2hREQJyo06g/GQwzbNCP7FBEpzPA7e8QddG5B5Pv+CGNwnsjKqLHWRBr3
-         fW9jUFoIFL6DQJMibU3YwTl43VOLa647tPeCHfv19FrfN5MQit7YnugLgX6BsOsLyUp6
-         6VlvBeG3b8iipLv0FY1G0qys4aFMs13n7g+lILW5oKxp77yUvb+pdX5Xhs94Dc6MpIml
-         G6LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5Y2Sg7RMAUraU1LC2Zjrwkmz9JbcG8O2e7Dp4SoNloyKATIRijlLsZRxwxPWH6Ys0YCY9u78qtgQJsXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT7qC5Kn7FOoRceQbFVV2cIveCLxLkt1lrdSum4dxJhki+qNJk
-	B2yvKdSQ6NZgefq/TJjn5ciRWWzzfFJhRE9rQE4r9OG2AJCj/kzRwTt1Yn/c0Xd4VAw=
-X-Gm-Gg: ASbGncvjB+QutXmGa974hpKezheTQLyMqZqELBp0c/waefwgNN8U78h/+wHYJsWFzuj
-	ZGwE7owOoxr/h+ore8eL2pUhtWskmTz8uC2a46wd6skI/Cmkdtv1jCIFdzmCS/Rehnn/CH1bTc4
-	c2axrwOlWsj4DydYzPu85tHH8PGd++GueZSmcewJEVwcZaL3QilH+HhYiFiCNA55SoiMYYteoaY
-	IL3PNT1BZaEjwpmM51ZFZ0qNSmGGjlDhsdtlTAnqcoyXqWxTXdfPbLtFKcj9/GSdNxc3zbHYqg/
-	/ShHzE2nOQlYVZyN42SAO76LED5YaQsMuE97WSiI8j6E75t9PlTOJ5KSiLnyUTgOnzwp6+b6yqG
-	6GKhYMS/u7RbLGYW8Vn/Kc3znaw==
-X-Google-Smtp-Source: AGHT+IFMmk/5rfMV1ctfylvB0nED4z6hP+M5t84uEkTcCAMiiEw2CTJ7Qjv4i3vnDPZtivHARzAKVA==
-X-Received: by 2002:a05:600c:a301:b0:455:f187:6203 with SMTP id 5b1f17b1804b1-455f187666bmr101086915e9.27.1752569412556;
-        Tue, 15 Jul 2025 01:50:12 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:e0a:e50:3860:9f6b:776d:f95a:bf2f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4560ceb1337sm92280065e9.13.2025.07.15.01.50.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 01:50:12 -0700 (PDT)
-From: Guillaume La Roque <glaroque@baylibre.com>
-Date: Tue, 15 Jul 2025 10:50:08 +0200
-Subject: [PATCH v2] pmdomain: ti: Select PM_GENERIC_DOMAINS
+	s=arc-20240116; t=1752569585; c=relaxed/simple;
+	bh=KmAry4CSdzPdx/Tu3BX0MEqrvWM3YHGxVWi+1QSyT2Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LrbOdgrlxOCrvZAz1380ZPFkTFW5RW13FAoPdI5FmzOUSAIiBsPWvra1gCviNtP6arWqpN13ogdjawfZPK7AKRVpRvS9V6DXvAqDiOV+ekWvBW/bDP8i2Hl7CoT4HrHP5H1+f0wwBh5CQkhKkfTb4HQpUjKyMTjdzVANdD/pshs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WzS+1AZU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56F7TqCa027348;
+	Tue, 15 Jul 2025 08:52:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=QpdPCQ/XE46ygp0N+SiJtr
+	IAznAakRxbWwVqYLrlpQ4=; b=WzS+1AZU4eXoz+I4PvmbXYlmPDlASQltlyf4Hp
+	FdFZxd9YmoYQXC2u8R6P/VhkfCZD8sgQh2MD3FTkCu9jUAMcoiShbang3ncALakr
+	UhIHCK3wuPC44DWfQ4sxtyvF1et/8NBtiqY6T8oMyjofipNYeVFo2DbDrq/MA6em
+	n/WE9PXNQ5lIU/MLhOjHCC1Qkq433pHSDAEgnP6zvlu+RqQdkwQmTFywbfUaCawi
+	JxqMSG0gPD/jDlGQRCTOPF+0b5EVDTBxvkwQocH/vdMkvA4JjYhY/ZXdXx2oZFhW
+	rQTaf+nmNN0ws3H27kLl9Dn6Yo3ZsqFlzli++KhbuqboncWw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ug37ymka-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Jul 2025 08:52:56 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56F8qtrO031113
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Jul 2025 08:52:55 GMT
+Received: from hu-lxu5-sha.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Tue, 15 Jul 2025 01:52:52 -0700
+From: Ling Xu <quic_lxu5@quicinc.com>
+To: <srini@kernel.org>, <amahesh@qti.qualcomm.com>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>
+CC: <quic_kuiw@quicinc.com>, <ekansh.gupta@oss.qualcomm.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Ling Xu
+	<quic_lxu5@quicinc.com>
+Subject: [PATCH v8 0/5] Add support for gdsp remoteproc on sa8775p
+Date: Tue, 15 Jul 2025 14:22:22 +0530
+Message-ID: <20250715085227.224661-1-quic_lxu5@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250715-depspmdomain-v2-1-6f0eda3ce824@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAD8WdmgC/3XMQQ6DIBCF4auYWZcGJqKmq96jcYEw1kkqEGhIj
- fHupe67/F/yvh0yJaYMt2aHRIUzB18DLw3YxfgnCXa1ASVq2ctWOIo5ri6shr1Aq4e2b7WzZoB
- 6iYlm/pzcY6y9cH6HtJ16Ub/1D1SUUIJm7JXUuqMO75PZXjwlutqwwngcxxfkdejKqwAAAA==
-To: vigneshr@ti.com, nm@ti.com, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, vishalm@ti.com, 
- matthias.schiffer@ew.tq-group.com, 
- Guillaume La Roque <glaroque@baylibre.com>
-X-Mailer: b4 0.14.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDA3OSBTYWx0ZWRfX+O76VQcs+B4D
+ wisftXoXEsYRTJobfPBj457b83div0sPNH8uYYshubEtnuXMStQTptIf1LqcSdU1njWFlji/EcU
+ Y4IdQOYIvCg5ldxZGO1GsXNWNGWuyPtuUb/7r/fNPkjOTbhpyCHw9T69OrHKPQUcJc5NIDjngdR
+ nLbq/BUfzjNyvQnOFiCM0nZxi7daZyyDcXqLrduHVPw0wFo+qSio5QRAySVXZC2Zhjhe+Db8VVP
+ P8AhSEIuZ6NxNTAyhwb/ai31hZoR/lWEUqPTVrjtjXtAm2eNu3xFBLIAuorcDwZJbdIPkMeabOj
+ xz3YlHtk+CFSsLenE9y9SGTovl4IwS+xEgfyw94JCyl0TZ6j1qm6AbHm1kw9mxQab2CYXIlaH1y
+ nJiPeuc+QKPZlDpvBND6UkMZ3dmrqs5OKq97Iv5BhClyt9xZWnksd45+VAQPr0fUiHDREz/b
+X-Proofpoint-GUID: ndAc7ZNun4lqAjJ5xjPAxwgkMATtuxx7
+X-Authority-Analysis: v=2.4 cv=SZT3duRu c=1 sm=1 tr=0 ts=687616e8 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=qgJfyGv91k1fQCYRv54A:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: ndAc7ZNun4lqAjJ5xjPAxwgkMATtuxx7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-14_03,2025-07-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 mlxlogscore=573 mlxscore=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ phishscore=0 spamscore=0 suspectscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507150079
 
-Select PM_GENERIC_DOMAINS instead of depending on it to ensure
-it is always enabled when TI_SCI_PM_DOMAINS is selected.
-Since PM_GENERIC_DOMAINS is an implicit symbol, it can only be enabled
-through 'select' and cannot be explicitly enabled in configuration.
-This simplifies the dependency chain and prevents build issues
+The fastrpc driver has support for 5 types of remoteprocs. There are
+some products which support GDSP remoteprocs. GDSP is General Purpose
+DSP where tasks can be offloaded. Add fastrpc nodes and task offload
+support for GDSP. Also strict domain IDs for domain.
+Patch [v8]: https://lore.kernel.org/linux-arm-msm/20250714054133.3769967-1-quic_lxu5@quicinc.com/
 
-Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
----
+Changes in v8:
+  - Split patch.
+Changes in v7:
+  - Edit commit message.
+Changes in v6:
+  - Edit commit message.
+  - Remove unused definition.
+Changes in v5:
+  - Edit commit message and add sapce before comment end.
+  - Move domain definitions back to driver.
+Changes in v4:
+  - Split patch and change to common syntax.
+Changes in v3:
+  - Restrict domain IDs to represent a domain.
 Changes in v2:
-- update commit message
-- fix select rules
-- Link to v1: https://lore.kernel.org/r/20250704-depspmdomain-v1-1-ef2710556e62@baylibre.com
----
- drivers/pmdomain/ti/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  - Add GPDSP labels in dt-bindings.
 
-diff --git a/drivers/pmdomain/ti/Kconfig b/drivers/pmdomain/ti/Kconfig
-index 67c608bf7ed0..5386b362a7ab 100644
---- a/drivers/pmdomain/ti/Kconfig
-+++ b/drivers/pmdomain/ti/Kconfig
-@@ -10,7 +10,7 @@ if SOC_TI
- config TI_SCI_PM_DOMAINS
- 	tristate "TI SCI PM Domains Driver"
- 	depends on TI_SCI_PROTOCOL
--	depends on PM_GENERIC_DOMAINS
-+	select PM_GENERIC_DOMAINS if PM
- 	help
- 	  Generic power domain implementation for TI device implementing
- 	  the TI SCI protocol.
+Ling Xu (5):
+  dt-bindings: misc: qcom,fastrpc: Add GDSP label
+  arm64: dts: qcom: sa8775p: add GDSP fastrpc-compute-cb nodes
+  misc: fastrpc: Cleanup the domain names
+  misc: fastrpc: Remove kernel-side domain checks from capability ioctl
+  misc: fastrpc: add support for gdsp remoteproc
 
----
-base-commit: 8d6c58332c7a8ba025fcfa76888b6c37dbce9633
-change-id: 20250704-depspmdomain-2c584745dca8
+ .../bindings/misc/qcom,fastrpc.yaml           |  2 +
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 57 +++++++++++++++++++
+ drivers/misc/fastrpc.c                        | 54 ++++++++----------
+ include/uapi/misc/fastrpc.h                   |  2 +-
+ 4 files changed, 85 insertions(+), 30 deletions(-)
 
-Best regards,
 -- 
-Guillaume La Roque <glaroque@baylibre.com>
+2.34.1
 
 
