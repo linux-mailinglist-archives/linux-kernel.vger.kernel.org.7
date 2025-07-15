@@ -1,184 +1,314 @@
-Return-Path: <linux-kernel+bounces-730963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB690B04D06
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:39:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29348B04D08
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 585581887125
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:39:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ED917A40E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6145118E025;
-	Tue, 15 Jul 2025 00:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AD618E025;
+	Tue, 15 Jul 2025 00:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Sg6YfY7c"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S/ij6bxq"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE978F6E
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063461684B4
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752539940; cv=none; b=C+0VrBP4SPATGpjvkwl35uPXpqSHsAt7nRJwKAy6nu5sxrsYMVu5MzQiPKZIle95mQ5mUHIlfll5JlZB7RQF/mMXQEqGAJjD4Sa7iZrLWRGgkE5NocLKu229OKrVqs/AvBW/ou+OzqYAUXhoR3L5uq4jitLjg1tjFNAZbjtrqng=
+	t=1752539969; cv=none; b=P7igbjygBkl+arPlW3ekwRo56pa3pCfGrxwkMOhn40qrW5J+vR7SrSkLMnMcXSpG894odigxp82AFd/aHGkOjVWcqYNZOV5Jpb+/h6NuLMBSoIPM/41vLIfzJH696rqqrI6uoRwVzozhXiuLBE+zQfv4CE+8d8FVY7hiHnKi6y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752539940; c=relaxed/simple;
-	bh=c63CxCap64qcRtfZM2TY323KDbTANRLbCrd4PJ8AIN4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tCUZuMHvTFMXUoxB6hlbknysVep6VhLm25Sp6f9eBaqqink2K8WYSglcCx/19Tsa0InOQUl5DRMqOlV6DJnnbpW/Jp8r8TRGHv2nHum2yPM5TJXiG1iGJjVjhyEhEhmV/v6fnGUndymCCgHdFXtWS7PZawpJBDUZbQt79BL8/D4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Sg6YfY7c; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56EKWD4F000421
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:38:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	U4J2fuae3WtqCQsD2Ch5uOcNOvcZ88vUrJULIKtoGLw=; b=Sg6YfY7cEcPwyjdY
-	j7+HmzlNxRlH2VT+HNZGcOsEnDWajo425i72yFUI3zrbStmtdDAQ0BLpxfwSr/iV
-	dbLxJeUOqYDL6JxjrUjeKHTjVobzSuZgDmWOS5xMqDwUC3e6NMaREdKpbdvf5RaP
-	y53boJhuXuSKF6ZR8OJruUWD/n2KICnvyH9GiNjOqU1ll1f3EQKISmwFEMnG5sYT
-	ezbLy8XHWKEAkNrWsKcf0de/Nzc5KPkuqLiOit4a66TOUt3Qwhx+dgOcXAfb2LOz
-	tCIibojLKJPgcLgKQjs3jnoAy8GtG6vYx6LVCLqwMyxgmKGNMwOVpg9NlKWF5Uh2
-	c95pew==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufu868ch-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:38:58 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b31cc625817so4796412a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 17:38:57 -0700 (PDT)
+	s=arc-20240116; t=1752539969; c=relaxed/simple;
+	bh=SZ+ako+Md6V3DmitMn3KsodeFoTVI/klO+48PAiJDpE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=hxTK4a/y560Cvu5YFz7WcrTSXRMSQQi8hZVhmUSCBJZb0gjcncgKgUyMVqvxZK+rm7QjeLe0sbiWnhYPxejjwRdpOA6ksiJAUTF6YC8bMltcEA9abfzbxZy/cVj5AZ11qPY8UEpNr9IJH4F/n6sl0BV2vO+bW5k+r3wMxQM58YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S/ij6bxq; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b39280167fdso3871323a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 17:39:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752539967; x=1753144767; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ckvgkztw5PsR0nrJW0AaWbazC5ZmdDbzOlFi73gHwFY=;
+        b=S/ij6bxq07KyvhGKsR8LJmNopXoaSeC4XjTLMxOu0OzGsAv68GLjm2+5+zBzkWLtZn
+         6bv94T7ICSdV6yg/fwSSs9vtW7teySa+6fbZlzcSjM/0xyF8EjhvrEaEt3oQJnqMtEha
+         gl19eW7/E9RqY+z1dCLiRcdMXfgFazwJE+xzMiyxVZz/pWxGn9Yhig2KbkG2UINw4dOE
+         rDPzz0ZyljWWsT0GNIS2tG4tkK9gvmVvYWDGHuVSKAkaZKM4JRHQOH4hpoRnXtrN3yNo
+         VTHS9gqSbkGL7GhDvfK1TaR32JFBTedSyJYb7VjjxLDPm6mtGwBao2aou/3OmZGzQFJW
+         vdaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752539937; x=1753144737;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U4J2fuae3WtqCQsD2Ch5uOcNOvcZ88vUrJULIKtoGLw=;
-        b=L2qXA2cpVRBssEfwiIo3B99Wf5CYkzGjoGsmkjwAxoFOfc+TKwaZIFihl42LoqkKVS
-         k+gPdjDajTsZ1azGOR5E986Yro57OsDL+Is2kWf4buVe7tZT9T/AMFzjyeXAO+5Hkezf
-         Xr8VQuLzohkzdNuF0o/ywWIkYbC9IAX+sgqsQY8yHgRUefr+wv821Nf5hTV71C9WSF+M
-         Gzg+N3izDiOLDhasy6qfRXqXYBBZfwsr1/LsZFY7wweqLTEuailiWp89qUkTv8OMTuqI
-         +TatXs+qQz/5sMtXPD2+M1+nBAjCcJHOA22etnK/17mfaXCD86y9z1TwJ871vKoPkBg4
-         Eeug==
-X-Forwarded-Encrypted: i=1; AJvYcCW5gcrI46EXaP0h8EjPs4SUB4EHVN0y0JUeqBr0U8u/hWV0A8JOWquHoBtNoPaCNg3DIkzcVpXXrAizS44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsLwZMlDFB1jIZrDnAFhsmJfYGz1BVYb1z15wu4tCfXIVCsXbq
-	pKD/7Zte+YVndwJbmjcWAgL4dcj1SE1qmgtZYBMRQs9ajJuskaF7wP8+swjKoc6VqY7SoLYtTdN
-	6XhpZd5V+Zq/CMKXN5LZPXfIgueoA26/C6g/q+m9Zm2lUc4tJsluvMZp7pC2XrbYE9SU=
-X-Gm-Gg: ASbGncsw9qodBReUsr0TdwV9PuoOEk/kwq1FuzTtcKk8Vj3me32TgaJhhCps1cJM+8y
-	TrD8tiATE8I807cIZ4FavSOssuCymxgy0zVnBadyT5TApPIduG8QyE0MjJcqLn+uRj5jMLMvGZx
-	8FzojNs8RvhuzvvKzQusGNp3pALA5uAk/kXqlDtftTrBSkxAPFR4hvQtVs+hqXPGEvRuGp2p/O0
-	9480DlAEjrvN3W0sBuYmiMJdl/dsUpdqnCbHK/6BNjmP7kgvGNV0mPIlknT4muC354842RIYRaJ
-	FkcqZ7rKr2848AhNeihuIpeNIUx3zKIH1d8+kCmGhVti4WU//hDuMXEYaJY387ewdVIjc65k5lp
-	TY4bTTgjiUhpg7NKlB+lEcZod
-X-Received: by 2002:a17:90b:3c8f:b0:30e:9b31:9495 with SMTP id 98e67ed59e1d1-31c8f9bab10mr1778269a91.9.1752539936784;
-        Mon, 14 Jul 2025 17:38:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGDza662yRgiFSwwfp7ca/WsrZ50+RlnfoSXKRcgI8DgPoMrM2ZRqD6pgfsoivNJPe+/C8jWA==
-X-Received: by 2002:a17:90b:3c8f:b0:30e:9b31:9495 with SMTP id 98e67ed59e1d1-31c8f9bab10mr1778237a91.9.1752539936298;
-        Mon, 14 Jul 2025 17:38:56 -0700 (PDT)
-Received: from [10.133.33.236] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4322b22sm97642945ad.98.2025.07.14.17.38.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 17:38:55 -0700 (PDT)
-Message-ID: <a2136746-a9fc-4bb2-a7af-7e7cde5068bc@oss.qualcomm.com>
-Date: Tue, 15 Jul 2025 08:38:51 +0800
+        d=1e100.net; s=20230601; t=1752539967; x=1753144767;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ckvgkztw5PsR0nrJW0AaWbazC5ZmdDbzOlFi73gHwFY=;
+        b=PZsfIM+FPgZBGgBTkR3BPhpsPL/bCVR3Im33kA6fZlwdJcRAfpAKTqeG8QGWwlkiYI
+         h5od9RuPn8r/p3/FsZSqF28IOsgCVsIlEVP2vpHZBHdUYQs9J5y0L7vZ4JIA72jkntaU
+         FmhhmE5B4A/pDQjGEP9uXasiXfdxl72WpAKEFUPaouaFW5sflxgRJ3fjFpI2PxSB+x9G
+         fHs+vgrwcK7Zyugnu/69tmf3uIHb+w7qXNs9Yxo5ykd6Yiopy6ojgIRGPB5ouIBO/gvY
+         yVPG87OQNLT/xbUf+gEMSXBehHjEjYqHRlCVlhkzvOUWu2YRCq5ZbyayQ3+GpElz3J1i
+         Mg2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXMVslEGyvSjo/yl4CCjP2rFckmB6cAME/wcIfpjMcO4+hx45GkLkRDTSqzDb63Z66H5Q8wlKynSstB94I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWYLs6WWuvQUFpn5TqlQkGALQIZkEHCFQ45Im4lJGU4dNZEXEb
+	YlZasqLmhnQ7Bv6c7apxCf71CSnY89g6ulKf5chRiPD5R6Bykt4YNJgN9PdfGuDrUGPLmpVFhuX
+	KoOaTPw==
+X-Google-Smtp-Source: AGHT+IFTKeboxMBeGguF7GWa2Og0RV2Q3w2SRSWGsp9FUhWgJFz+qbsRa/1nhK14F1KmTA+K1KVR+HUj9fw=
+X-Received: from pfay34.prod.google.com ([2002:a05:6a00:1822:b0:748:ed01:df48])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:748b:b0:235:3eaf:8979
+ with SMTP id adf61e73a8af0-2353eaf8995mr8615192637.15.1752539967153; Mon, 14
+ Jul 2025 17:39:27 -0700 (PDT)
+Date: Mon, 14 Jul 2025 17:39:25 -0700
+In-Reply-To: <87o6tttliq.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Enable CTCU device for QCS8300
-To: Krzysztof Kozlowski <krzk@kernel.org>, Jie Gan
- <jie.gan@oss.qualcomm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250624095905.7609-1-jie.gan@oss.qualcomm.com>
- <338a9ee1-10aa-4bd2-9b0a-5006ed571bb9@quicinc.com>
- <3551dba1-0c5f-4000-8b95-6a04cd81a027@kernel.org>
- <2e8366b3-c060-4bb8-9704-0a8f41901706@quicinc.com>
- <9c11bd92-ff2e-493f-8e71-fd8d3f8b32e6@kernel.org>
- <cbfb9159-1c80-4db4-b5d7-036980a1a44a@quicinc.com>
-Content-Language: en-US
-From: Jie Gan <jie.gan@oss.qualcomm.com>
-In-Reply-To: <cbfb9159-1c80-4db4-b5d7-036980a1a44a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDAwMyBTYWx0ZWRfX6dcgvk/EVil+
- qqbPQkq1MjgYEIycoa24oLkijOp6FG3Db/3Io02Ss6jrRB1gF137QfWK5iMFgStliZKfr/RM56D
- y0vtW6dW/0vdjCvdImfzZjX5AiEIj7Vcy4iEgLt2OboDdblZBZKCULDg1111V6fWIoQHZhqZcPb
- Rl44Si2DU51LeJN8yrJzNMx3UUj30l2zQyrTv1tP8xJpMvo1I7pHBYwlw/U1yJ0j6VpBUqYVsg1
- KeeJp/AWswRpcNmaq6k3Jg52JNBCLV3ZUzyUA9jgFH08hDrOiMafY5zsJReQPVzHG6pTfLGEtuW
- GdbYvcd8BDI1TVFpBkXzh2ZM90Gr7eYBtPRYlw2nmM9suGqrfBAn1LTRqen3hUpYaEVJUe+pu2Q
- ZnKSmLxREh2vHFIlNy+3czd1KSr3zZ6rb9M+BHVK8SG88rBNuNgUp4uRBsDqyvyj+ztEsLag
-X-Proofpoint-ORIG-GUID: rsxjuEB7t7wEIbULUIWQjsdAkwf7TjKK
-X-Proofpoint-GUID: rsxjuEB7t7wEIbULUIWQjsdAkwf7TjKK
-X-Authority-Analysis: v=2.4 cv=f59IBPyM c=1 sm=1 tr=0 ts=6875a322 cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=jiYdY7Ay7elLp-qxoG0A:9
- a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10 a=3WC7DwWrALyhR5TkjVHa:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-14_03,2025-07-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
- bulkscore=0 suspectscore=0 impostorscore=0 adultscore=0 priorityscore=1501
- mlxlogscore=999 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507150003
+Mime-Version: 1.0
+References: <cover.1750432368.git.jpiotrowski@linux.microsoft.com>
+ <4266fc8f76c152a3ffcbb2d2ebafd608aa0fb949.1750432368.git.jpiotrowski@linux.microsoft.com>
+ <875xghoaac.fsf@redhat.com> <ca26fba1-c2bb-40a1-bb5e-92811c4a6fc6@linux.microsoft.com>
+ <87o6tttliq.fsf@redhat.com>
+Message-ID: <aHWjPSIdp5B-2UBl@google.com>
+Subject: Re: [RFC PATCH 1/1] KVM: VMX: Use Hyper-V EPT flush for local TLB flushes
+From: Sean Christopherson <seanjc@google.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Jeremi Piotrowski <jpiotrowski@linux.microsoft.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	alanjiang@microsoft.com, chinang.ma@microsoft.com, 
+	andrea.pellegrini@microsoft.com, Kevin Tian <kevin.tian@intel.com>, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-
-
-On 7/4/2025 4:14 PM, Jie Gan wrote:
+On Wed, Jul 09, 2025, Vitaly Kuznetsov wrote:
+> Jeremi Piotrowski <jpiotrowski@linux.microsoft.com> writes:
 > 
-> 
-> On 7/4/2025 4:10 PM, Krzysztof Kozlowski wrote:
->> On 04/07/2025 10:07, Jie Gan wrote:
->>>
->>>>
->>>>> offsets for the ATID and IRQ registers, because they integrate the 
->>>>> same
->>>>> version of the CTCU hardware.
->>>>>
->>>>> So I propose introducing a common compatible string,
->>>>> "coresight-ctcu-v2", to simplify the device tree configuration for 
->>>>> these
->>>>> platforms.
->>>>
->>>> This is explained in writing bindings.
->>>
->>> Yeah, explained in the code lines..
->> I meant explained in writing bindings document. Please read writing
->> bindings first.
-> 
-> OK, will check, sorry for the misunderstanding.
+> > On 27/06/2025 10:31, Vitaly Kuznetsov wrote:
+> >> Jeremi Piotrowski <jpiotrowski@linux.microsoft.com> writes:
+> >> 
+> >>> Use Hyper-V's HvCallFlushGuestPhysicalAddressSpace for local TLB flushes.
+> >>> This makes any KVM_REQ_TLB_FLUSH_CURRENT (such as on root alloc) visible to
+> >>> all CPUs which means we no longer need to do a KVM_REQ_TLB_FLUSH on CPU
+> >>> migration.
+> >>>
+> >>> The goal is to avoid invept-global in KVM_REQ_TLB_FLUSH. Hyper-V uses a
+> >>> shadow page table for the nested hypervisor (KVM) and has to invalidate all
+> >>> EPT roots when invept-global is issued.
 
-Hi Krzysztof
+What all does "invalidate" mean here?  E.g. is this "just" a hardware TLB flush,
+or is Hyper-V blasting away and rebuilding page tables?  If it's the latter, that
+seems like a Hyper-V bug/problem.
 
-I checked previous comments and document.
-Can you plz help to confirm that we prefer a board specific compatible 
-instead of a generic compatible, am right?
+> >>> This has a performance impact on all nested VMs.  KVM issues
+> >>> KVM_REQ_TLB_FLUSH on CPU migration, and under load the performance hit
+> >>> causes vCPUs to use up more of their slice of CPU time, leading to more
+> >>> CPU migrations. This has a snowball effect and causes CPU usage spikes.
 
-Thanks,
-Jie
+Is the performance hit due to flushing *hardware* TLBs, or due to Hyper-V needing
+to rebuilding shadow page tables?
 
+> >>> By issuing the hypercall we are now guaranteed that any root modification
+> >>> that requires a local TLB flush becomes visible to all CPUs. The same
+> >>> hypercall is already used in kvm_arch_flush_remote_tlbs and
+> >>> kvm_arch_flush_remote_tlbs_range.  The KVM expectation is that roots are
+> >>> flushed locally on alloc and we achieve consistency on migration by
+> >>> flushing all roots - the new behavior of achieving consistency on alloc on
+> >>> Hyper-V is a superset of the expected guarantees. This makes the
+> >>> KVM_REQ_TLB_FLUSH on CPU migration no longer necessary on Hyper-V.
+> >> 
+> >> Sounds reasonable overall, my only concern (not sure if valid or not) is
+> >> that using the hypercall for local flushes is going to be more expensive
+> >> than invept-context we do today and thus while the performance is
+> >> improved for the scenario when vCPUs are migrating a lot, we will take a
+> >> hit in other cases.
+> >> 
+> >
 > 
-> Thanks,
-> Jie
+> Sorry for delayed reply!
 > 
->>
->> Best regards,
->> Krzysztof
+> ....
 > 
-> 
+> >>>  		return;
+> >>>  
+> >>> -	if (enable_ept)
+> >>> +	if (enable_ept) {
+> >>> +		/*
+> >>> +		 * hyperv_flush_guest_mapping() has the semantics of
+> >>> +		 * invept-single across all pCPUs. This makes root
+> >>> +		 * modifications consistent across pCPUs, so an invept-global
+> >>> +		 * on migration is no longer required.
 
+Unfortunately, this isn't quite right.  If vCPU0 and vCPU1 share an EPT root,
+APIC virtualization is enabled, and vCPU0 is running with x2APIC but vCPU1 is
+running with xAPIC, then KVM needs to flush TLBs if vCPU1 is loaded on a "new"
+pCPU, because vCPU0 could have inserted non-vAPIC TLB entries for that pCPU.
+
+Hrm, but KVM doesn't actually handle that properly.  KVM only forces a TLB flush
+if the vCPU wasn't already loaded, so if vCPU0 and vCPU1 are running on the same
+pCPU, i.e. vCPU1 isn't being migrated to the pCPU that was previously running
+vCPU0, then I believe vCPU1 could consume stale TLB entries.
+
+Setting that aside for the moment, I would much prefer to elide this TLB flush
+whenver possible, irrespective of whether KVM is running on bare metal or in a
+VM, and irrespective of the host hypervisor.  And then if/when SVM is converted
+to use per-vCPU ASIDs[*], give SVM the exact same treatment.  More below.
+
+[*] https://lore.kernel.org/all/aFXrFKvZcJ3dN4k_@google.com
+
+> >> HvCallFlushGuestPhysicalAddressSpace sounds like a heavy operation as it
+> >> affects all processors. Is there any visible perfomance impact of this
+> >> change when there are no migrations (e.g. with vCPU pinning)? Or do we
+> >> believe that Hyper-V actually handles invept-context the exact same way?
+> >> 
+> > I'm going to have to do some more investigation to answer that - do you have an
+> > idea of a workload that would be sensitive to tlb flushes that I could compare
+> > this on?
+> >
+> > In terms of cost, Hyper-V needs to invalidate the VMs shadow page table for a root
+> > and do the tlb flush. The first part is CPU intensive but is the same in both cases
+> > (hypercall and invept-single). The tlb flush part will require a bit more work for
+> > the hypercall as it needs to happen on all cores, and the tlb will now be empty
+> > for that root.
+> >
+> > My assumption is that these local tlb flushes are rather rare as they will
+> > only happen when:
+> > - new root is allocated
+> > - we need to switch to a special root
+> >
+> 
+> KVM's MMU is an amazing maze so I'd appreciate if someone more
+> knowledgeble corrects me;t my understanding is that we call
+> *_flush_tlb_current() from two places:
+> 
+> kvm_mmu_load() and this covers the two cases above. These should not be
+> common under normal circumstances but can be frequent in some special
+> cases, e.g. when running a nested setup. Given that we're already
+> running on top of Hyper-V, this means 3+ level nesting which I don't
+> believe anyone really cares about.
+
+Heh, don't be too sure about that.  People just love running "containers" inside
+VMs, without thinking too hard about what they're doing :-)
+
+In general, I don't like effectively turning KVM_REQ_TLB_FLUSH_CURRENT into
+kvm_flush_remote_tlbs(), and I *really* don't like doing so for one specific
+setup.  It's hard enough to capture the differences between KVM's various TLB
+flushes hooks/requests, and special casing KVM-on-Hyper-V is just asking for
+unique bugs.
+
+Conceptually, I _think_ this is pretty straightforward: when a root is allocated,
+flush the root on all *pCPUs*.  KVM currently flushes the root when a vCPU first
+uses a root, which necessitates flushing on migration.
+
+Alternatively, KVM could track which pCPUs a vCPU has run on, but that would get
+expensive, and blasting a flush on alloc should be much simpler.
+
+The two wrinkles I can think of are the x2APIC vs. xAPIC problem above (which I
+think needs to be handled no matter what), and CPU hotplug (which is easy enough
+to handle, I just didn't type it up).
+
+It'll take more work than the below, e.g. to have VMX's construct_eptp() pull the
+level and A/D bits from kvm_mmu_page (vendor code can get at the kvm_mmu_page with
+root_to_sp()), but for the core concept/skeleton, I think this is it?
+
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 6e838cb6c9e1..298130445182 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -3839,6 +3839,37 @@ void kvm_mmu_free_guest_mode_roots(struct kvm *kvm, struct kvm_mmu *mmu)
+ }
+ EXPORT_SYMBOL_GPL(kvm_mmu_free_guest_mode_roots);
+ 
++struct kvm_tlb_flush_root {
++       struct kvm *kvm;
++       hpa_t root;
++};
++
++static void kvm_flush_tlb_root(void *__data)
++{
++       struct kvm_tlb_flush_root *data = __data;
++
++       kvm_x86_call(flush_tlb_root)(data->kvm, data->root);
++}
++
++void kvm_mmu_flush_all_tlbs_root(struct kvm *kvm, struct kvm_mmu_page *root)
++{
++       struct kvm_tlb_flush_root data = {
++               .kvm = kvm,
++               .root = __pa(root->spt),
++       };
++
++       /*
++        * Flush any TLB entries for the new root, the provenance of the root
++        * is unknown.  Even if KVM ensures there are no stale TLB entries
++        * for a freed root, in theory another hypervisor could have left
++        * stale entries.  Flushing on alloc also allows KVM to skip the TLB
++        * flush when freeing a root (see kvm_tdp_mmu_put_root()), and flushing
++        * TLBs on all CPUs allows KVM to elide TLB flushes when a vCPU is
++        * migrated to a different pCPU.
++        */
++       on_each_cpu(kvm_flush_tlb_root, &data, 1);
++}
++
+ static hpa_t mmu_alloc_root(struct kvm_vcpu *vcpu, gfn_t gfn, int quadrant,
+                            u8 level)
+ {
+@@ -3852,7 +3883,8 @@ static hpa_t mmu_alloc_root(struct kvm_vcpu *vcpu, gfn_t gfn, int quadrant,
+        WARN_ON_ONCE(role.direct && role.has_4_byte_gpte);
+ 
+        sp = kvm_mmu_get_shadow_page(vcpu, gfn, role);
+-       ++sp->root_count;
++       if (!sp->root_count++)
++               kvm_mmu_flush_all_tlbs_root(vcpu->kvm, sp);
+ 
+        return __pa(sp->spt);
+ }
+@@ -5961,15 +5993,6 @@ int kvm_mmu_load(struct kvm_vcpu *vcpu)
+        kvm_mmu_sync_roots(vcpu);
+ 
+        kvm_mmu_load_pgd(vcpu);
+-
+-       /*
+-        * Flush any TLB entries for the new root, the provenance of the root
+-        * is unknown.  Even if KVM ensures there are no stale TLB entries
+-        * for a freed root, in theory another hypervisor could have left
+-        * stale entries.  Flushing on alloc also allows KVM to skip the TLB
+-        * flush when freeing a root (see kvm_tdp_mmu_put_root()).
+-        */
+-       kvm_x86_call(flush_tlb_current)(vcpu);
+ out:
+        return r;
+ }
+diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
+index 65f3c89d7c5d..3cbf0d612f5e 100644
+--- a/arch/x86/kvm/mmu/mmu_internal.h
++++ b/arch/x86/kvm/mmu/mmu_internal.h
+@@ -167,6 +167,8 @@ static inline bool is_mirror_sp(const struct kvm_mmu_page *sp)
+        return sp->role.is_mirror;
+ }
+ 
++void kvm_mmu_flush_all_tlbs_root(struct kvm *kvm, struct kvm_mmu_page *root);
++
+ static inline void kvm_mmu_alloc_external_spt(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp)
+ {
+        /*
+diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+index 7f3d7229b2c1..3ff36d09b4fa 100644
+--- a/arch/x86/kvm/mmu/tdp_mmu.c
++++ b/arch/x86/kvm/mmu/tdp_mmu.c
+@@ -302,6 +302,7 @@ void kvm_tdp_mmu_alloc_root(struct kvm_vcpu *vcpu, bool mirror)
+         */
+        refcount_set(&root->tdp_mmu_root_count, 2);
+        list_add_rcu(&root->link, &kvm->arch.tdp_mmu_roots);
++       kvm_mmu_flush_all_tlbs_root(vcpu->kvm, root);
+ 
+ out_spin_unlock:
+        spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
 
