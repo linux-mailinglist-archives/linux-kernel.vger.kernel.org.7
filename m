@@ -1,105 +1,283 @@
-Return-Path: <linux-kernel+bounces-732498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 149BFB067AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:20:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F7AB067AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86CBC7A9733
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:19:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C329E4E17E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3802727EC;
-	Tue, 15 Jul 2025 20:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4222BE64E;
+	Tue, 15 Jul 2025 20:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="XdNnf+kk"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cnj5i1Mh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48FC26C39E;
-	Tue, 15 Jul 2025 20:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7255E277CBD
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752610819; cv=none; b=DUOaVyZ6qEM60nVcsnqmIcpWB4pNF0cizqaTmoJEliePpyMZ7fY8Zgw+Z0cZ/jnpG/ppFSz+tPkaUGqjkHk5PwOY9vFJ3xlCkjwCX1TAKhDR9z+bl/xCPpH6oVEdEUjV+I+ocJmatYVxtOaQvXftlbycUO/03aJSh/6rptQgSkE=
+	t=1752610820; cv=none; b=aKbkDJ1hL7djKuwO2HO49N43lARNOWzXyylJR39o6YlP65ESHt1yWxItdQqWX6Bx3v2SViYWUtohoaKEMPhm1o78odLSBgot4PrcCk3UnMmg+CLea3Fdsl5LbgQFes4hHGvJ7seKkY3ql5SvS5tPrgNXuUcplY5Zm+AqJnQIjCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752610819; c=relaxed/simple;
-	bh=82dh6mXxzgool741Tp2b9ID7hUl6Ys+rldzp0+2gDog=;
+	s=arc-20240116; t=1752610820; c=relaxed/simple;
+	bh=VDjHAjEESu5pACeK6VWZE2soOFSvFsRrQ2uQNbZDJ7E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l97EOYlJdT0E+8a5B6INz7SGDBj01ZLDTfEtWl1O8cHEukIXIA4xOX8s6Dzm0H4RwjRzxdyfrsmW+CZ2SVyv+hn/EetRIrDwNwsJH3Pdh/RpAOGC4RB5ET3D62wQQjw2timnq8mTwh9271KeTEBUmPJUEjVUNsqKvk6IOH+uJfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=XdNnf+kk; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C02F71027235A;
-	Tue, 15 Jul 2025 22:20:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1752610815; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=hLScYj7rME9Eh39h5hkrPBR1W+hf/KGmj340jGhaQSU=;
-	b=XdNnf+kkAdLHA3kZo13rvzYOgARJuwMBNcMvIVLg99N7pj0KOZpzqKkcYcV2xhrdGCsZqc
-	wjbZrnZWl/JHqjrzzRMxW4C4WAjl9OJiKs7MKr+2nu1iAvu1jQ2jAUmhWtE0Sw1GAeJEVg
-	sC0ypP8M0j8vsKceVfUU6kUEKWTtlcateZ+PGqhM6UIzVgzbsyDc1mhicdgeGNTg9aOWOV
-	whjifib1lC8g4ydo6FH3MwPRYPIqLMb+v5XO2jd0djBP7ZdUWsnW/D/IIVnSctTdAdRKGI
-	JiQS4dpEzLyHdxWuD+REjAewirwoPhf4UaXe37F6XwjQ4VRcKcT3M7scQuhAWw==
-Date: Tue, 15 Jul 2025 22:20:09 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.12 000/163] 6.12.39-rc1 review
-Message-ID: <aHa3+VT3RkEmuTc+@duo.ucw.cz>
-References: <20250715130808.777350091@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uz/Jg6d7p2zKb6lt70T9Rmc59zrE5eDIhUuB9e1SpY3nUyMtLsjtOc7+5zWBlYH8F3xkuI/GRJxZuDH9efq8zdOdUyL17l3hrFfO0jYVEoOXjZFvDzN6mdfevjBoQkD6nSRXimDvP1e++5QYVCodkognAHNAN7IfBiHmafDKqg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cnj5i1Mh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45BB3C4CEE3;
+	Tue, 15 Jul 2025 20:20:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752610818;
+	bh=VDjHAjEESu5pACeK6VWZE2soOFSvFsRrQ2uQNbZDJ7E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cnj5i1MhTWs2rFnzlbhjXQX5rr74QpEWOkAvyZHnxVt3uXPO/EapOeoxjGk0Deumx
+	 XV0SijHYXCXsm51ZIEmco6LeXKq3hKTJaxjTMpwZ/b3IMRFqacZajluxMND8dkeYoS
+	 Lz2INE6t9b/j2AnAwiv5WPshSJPMlHqAIM+HLXxo3yCtOi/wbYahRA5jUcpHIBhaj/
+	 xLU+8zQFSkV5TxPFpateKiHB/WNeoJGm5LwQGFB0pFcHoQEN5nVfx3jQ/FqJYaHupc
+	 HEEXbpzBMBGh+RCkBom9smRDL5mAwwXj4s+UzdDaz4IfHkhkeUY/sSEtja7ZEY/a6Z
+	 MPPJZ/Oerzg1g==
+Date: Tue, 15 Jul 2025 13:20:15 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+	akpm@linux-foundation.org, david@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com,
+	mjguzik@gmail.com, luto@kernel.org, peterz@infradead.org,
+	acme@kernel.org, tglx@linutronix.de, willy@infradead.org,
+	raghavendra.kt@amd.com, boris.ostrovsky@oracle.com,
+	konrad.wilk@oracle.com
+Subject: Re: [PATCH v5 09/14] perf bench mem: Add mmap() workloads
+Message-ID: <aHa3_9ijsm3FC6_8@google.com>
+References: <20250710005926.1159009-1-ankur.a.arora@oracle.com>
+ <20250710005926.1159009-10-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Xhbr9jlV77XkysF3"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250715130808.777350091@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <20250710005926.1159009-10-ankur.a.arora@oracle.com>
+
+On Wed, Jul 09, 2025 at 05:59:21PM -0700, Ankur Arora wrote:
+> Add two mmap() workloads: one that eagerly populates a region and
+> another that demand faults it in.
+> 
+> The intent is to probe the memory subsytem performance incurred
+> by mmap().
+
+Maybe better to name 'mmap' as other tests named after the actual
+function.  Also please update the documentation.
+
+Thanks,
+Namhyung
 
 
---Xhbr9jlV77XkysF3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> This is the start of the stable review cycle for the 6.12.39 release.
-> There are 163 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.12.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---Xhbr9jlV77XkysF3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaHa3+QAKCRAw5/Bqldv6
-8sV8AJ9tplw+7ZqQfENBgdsrqFBSJ2heEACaA+vLTgTQGIeh3F4+Nho2QuTBa1M=
-=muUO
------END PGP SIGNATURE-----
-
---Xhbr9jlV77XkysF3--
+> 
+>   $ perf bench mem map -s 4gb -p 4kb -l 10 -f populate
+>   # Running 'mem/map' benchmark:
+>   # function 'populate' (Eagerly populated map)
+>   # Copying 4gb bytes ...
+> 
+>        1.811691 GB/sec
+> 
+>   $ perf bench mem map -s 4gb -p 2mb -l 10 -f populate
+>   # Running 'mem/map' benchmark:
+>   # function 'populate' (Eagerly populated map)
+>   # Copying 4gb bytes ...
+> 
+>       12.272017 GB/sec
+> 
+>   $ perf bench mem map -s 4gb -p 1gb -l 10 -f populate
+>   # Running 'mem/map' benchmark:
+>   # function 'populate' (Eagerly populated map)
+>   # Copying 4gb bytes ...
+> 
+>       17.085927 GB/sec
+> 
+> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+> ---
+>  tools/perf/bench/bench.h         |  1 +
+>  tools/perf/bench/mem-functions.c | 96 ++++++++++++++++++++++++++++++++
+>  tools/perf/builtin-bench.c       |  1 +
+>  3 files changed, 98 insertions(+)
+> 
+> diff --git a/tools/perf/bench/bench.h b/tools/perf/bench/bench.h
+> index 9f736423af53..46484bb0eefb 100644
+> --- a/tools/perf/bench/bench.h
+> +++ b/tools/perf/bench/bench.h
+> @@ -28,6 +28,7 @@ int bench_syscall_fork(int argc, const char **argv);
+>  int bench_syscall_execve(int argc, const char **argv);
+>  int bench_mem_memcpy(int argc, const char **argv);
+>  int bench_mem_memset(int argc, const char **argv);
+> +int bench_mem_map(int argc, const char **argv);
+>  int bench_mem_find_bit(int argc, const char **argv);
+>  int bench_futex_hash(int argc, const char **argv);
+>  int bench_futex_wake(int argc, const char **argv);
+> diff --git a/tools/perf/bench/mem-functions.c b/tools/perf/bench/mem-functions.c
+> index 8a37da149327..ea62e3583a70 100644
+> --- a/tools/perf/bench/mem-functions.c
+> +++ b/tools/perf/bench/mem-functions.c
+> @@ -40,6 +40,7 @@ static const char	*chunk_size_str	= "0";
+>  static unsigned int	nr_loops	= 1;
+>  static bool		use_cycles;
+>  static int		cycles_fd;
+> +static unsigned int	seed;
+>  
+>  static const struct option bench_common_options[] = {
+>  	OPT_STRING('s', "size", &size_str, "1MB",
+> @@ -81,6 +82,7 @@ struct bench_params {
+>  	size_t		chunk_size;
+>  	unsigned int	nr_loops;
+>  	unsigned int	page_shift;
+> +	unsigned int	seed;
+>  };
+>  
+>  struct bench_mem_info {
+> @@ -98,6 +100,7 @@ typedef void (*mem_fini_t)(struct bench_mem_info *, struct bench_params *,
+>  			   void **, void **);
+>  typedef void *(*memcpy_t)(void *, const void *, size_t);
+>  typedef void *(*memset_t)(void *, int, size_t);
+> +typedef void (*map_op_t)(void *, size_t, unsigned int, bool);
+>  
+>  struct function {
+>  	const char *name;
+> @@ -108,6 +111,7 @@ struct function {
+>  		union {
+>  			memcpy_t memcpy;
+>  			memset_t memset;
+> +			map_op_t map_op;
+>  		};
+>  	} fn;
+>  };
+> @@ -160,6 +164,14 @@ static union bench_clock clock_diff(union bench_clock *s, union bench_clock *e)
+>  	return t;
+>  }
+>  
+> +static void clock_accum(union bench_clock *a, union bench_clock *b)
+> +{
+> +	if (use_cycles)
+> +		a->cycles += b->cycles;
+> +	else
+> +		timeradd(&a->tv, &b->tv, &a->tv);
+> +}
+> +
+>  static double timeval2double(struct timeval *ts)
+>  {
+>  	return (double)ts->tv_sec + (double)ts->tv_usec / (double)USEC_PER_SEC;
+> @@ -270,6 +282,8 @@ static int bench_mem_common(int argc, const char **argv, struct bench_mem_info *
+>  	}
+>  	p.page_shift = ilog2(page_size);
+>  
+> +	p.seed = seed;
+> +
+>  	if (!strncmp(function_str, "all", 3)) {
+>  		for (i = 0; info->functions[i].name; i++)
+>  			__bench_mem_function(info, &p, i);
+> @@ -464,3 +478,85 @@ int bench_mem_memset(int argc, const char **argv)
+>  
+>  	return bench_mem_common(argc, argv, &info);
+>  }
+> +
+> +static void map_page_touch(void *dst, size_t size, unsigned int page_shift, bool random)
+> +{
+> +	unsigned long npages = size / (1 << page_shift);
+> +	unsigned long offset = 0, r = 0;
+> +
+> +	for (unsigned long i = 0; i < npages; i++) {
+> +		if (random)
+> +			r = rand() % (1 << page_shift);
+> +
+> +		*((char *)dst + offset + r) = *(char *)(dst + offset + r) + i;
+> +		offset += 1 << page_shift;
+> +	}
+> +}
+> +
+> +static int do_map(const struct function *r, struct bench_params *p,
+> +		  void *src __maybe_unused, void *dst __maybe_unused,
+> +		  union bench_clock *accum)
+> +{
+> +	union bench_clock start, end, diff;
+> +	map_op_t fn = r->fn.map_op;
+> +	bool populate = strcmp(r->name, "populate") == 0;
+> +
+> +	if (p->seed)
+> +		srand(p->seed);
+> +
+> +	for (unsigned int i = 0; i < p->nr_loops; i++) {
+> +		clock_get(&start);
+> +		dst = bench_mmap(p->size, populate, p->page_shift);
+> +		if (!dst)
+> +			goto out;
+> +
+> +		fn(dst, p->size, p->page_shift, p->seed);
+> +		clock_get(&end);
+> +		diff = clock_diff(&start, &end);
+> +		clock_accum(accum, &diff);
+> +
+> +		bench_munmap(dst, p->size);
+> +	}
+> +
+> +	return 0;
+> +out:
+> +	printf("# Memory allocation failed - maybe size (%s) %s?\n", size_str,
+> +			p->page_shift != PAGE_SHIFT_4KB ? "has insufficient hugepages" : "is too large");
+> +	return -1;
+> +}
+> +
+> +static const char * const bench_mem_map_usage[] = {
+> +	"perf bench mem map <options>",
+> +	NULL
+> +};
+> +
+> +static const struct function map_functions[] = {
+> +	{ .name		= "populate",
+> +	  .desc		= "Eagerly populated map",
+> +	  .fn.map_op	= map_page_touch },
+> +
+> +	{ .name		= "demand",
+> +	  .desc		= "Demand loaded map",
+> +	  .fn.map_op	= map_page_touch },
+> +
+> +	{ .name = NULL, }
+> +};
+> +
+> +int bench_mem_map(int argc, const char **argv)
+> +{
+> +	static const struct option bench_map_options[] = {
+> +		OPT_UINTEGER('r', "randomize", &seed,
+> +			    "Seed to randomize page RW offset with."),
+> +		OPT_PARENT(bench_common_options),
+> +		OPT_END()
+> +	};
+> +
+> +	struct bench_mem_info info = {
+> +		.functions		= map_functions,
+> +		.do_op			= do_map,
+> +		.usage			= bench_mem_map_usage,
+> +		.options		= bench_map_options,
+> +	};
+> +
+> +	return bench_mem_common(argc, argv, &info);
+> +}
+> diff --git a/tools/perf/builtin-bench.c b/tools/perf/builtin-bench.c
+> index 2c1a9f3d847a..a20bd9882f0a 100644
+> --- a/tools/perf/builtin-bench.c
+> +++ b/tools/perf/builtin-bench.c
+> @@ -65,6 +65,7 @@ static struct bench mem_benchmarks[] = {
+>  	{ "memcpy",	"Benchmark for memcpy() functions",		bench_mem_memcpy	},
+>  	{ "memset",	"Benchmark for memset() functions",		bench_mem_memset	},
+>  	{ "find_bit",	"Benchmark for find_bit() functions",		bench_mem_find_bit	},
+> +	{ "map",	"Benchmark for mmap() mappings",		bench_mem_map		},
+>  	{ "all",	"Run all memory access benchmarks",		NULL			},
+>  	{ NULL,		NULL,						NULL			}
+>  };
+> -- 
+> 2.43.5
+> 
 
