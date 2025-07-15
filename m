@@ -1,302 +1,138 @@
-Return-Path: <linux-kernel+bounces-731023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0669BB04DA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:59:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF46B04DA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 370A14E0A69
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:58:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14E021A66A05
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAB82C08B1;
-	Tue, 15 Jul 2025 01:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157772512EE;
+	Tue, 15 Jul 2025 02:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mPru4TY1"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K7/dp4aj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0641BCA07
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 01:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60772BAF7
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752544757; cv=none; b=gnbpmthDpDn37Ppqu2IGH0lx7CwroiCLMKGGoZ2NHVw8F1jOoEtW6kb2NHElxDU6wBr7XyNu0IVeVeqnGT17zlXtdpe+FNYa065HzXGaIBUqPgpC57bRdMSCoDEFvhoBkzh4lJg62Va5PTscH1jwTf/tLpxXdE/R2GLzwJrAVMg=
+	t=1752544943; cv=none; b=RAH9X84RsUGdG8sVSeocVDa5f9ZK46u2apKBNW0vwpc7Wg5dkjF8JRLamtQMATT55PzWtoOWDR6ZmBQGjy06Bg93yb2h0bi/5X7f8OGWdXAErdJxxVaFHuUCZ1Z5zqG2H63TLCr7I1evjDxaneqf+yJxwQNzjQPVbhILs4dV1lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752544757; c=relaxed/simple;
-	bh=52llm/pOyBBDJ4Yj7bRTPWY5JNVbouMuMXcgo4Rr6Mg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uMaFvGtbJ06RlWJfliFhdcSgjhGooY6PHdEK+KzzSVi/vhLhDWKyo8XaoEJpqCOI+cEYLyqXuPhz/E/pLMjvpAfTrbcR11UUxTqhzCN6mdbUG98miKPAoPiSjITi5A36PgEK+Mu85nvh58Cs8oPn7hGScsyTh04S4p4efYlxj7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mPru4TY1; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <3c389877-eafe-497a-a73e-720a3fcbcadb@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752544743;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lwp3/NoM78qCE149XodCLZTW0PqWElenRwRdEttt5YI=;
-	b=mPru4TY1ftzvs92Uj0AjUssnIn5oIA+Uida09XK/c/8EluCwKuRKvC+pE3ihh1m663hrvr
-	0aFY2o4RcYn4Jomb4D18H/g6Mbqyr4sELsci+5BaFR5aJwgsWgFACHksy59bzbV2Y0pT9x
-	1IX9UO3I9JVstvBqKE8k7MQhmTJwtxY=
-Date: Tue, 15 Jul 2025 09:58:00 +0800
+	s=arc-20240116; t=1752544943; c=relaxed/simple;
+	bh=omrlqKN8GKgfvgr2GGpF8lOlfA82nKNr0uCBtekIesQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J5HNk6gHXLAowHk1N/OHzIorR79RWrvx41RRV+73dXoMUaSpAR6RTc17yU7VDBViqvyE3RclSFJHLc4Tqf5SHDcM4Vq8Pyvgsho8JhQswf2oLCsgOTMZQuwY+bRR31zxJKkR+305+bUoKxep8o4RtpxeGfc+If2gAURVfdo2SjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K7/dp4aj; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752544942; x=1784080942;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=omrlqKN8GKgfvgr2GGpF8lOlfA82nKNr0uCBtekIesQ=;
+  b=K7/dp4ajXhmlBYmemhAa6HpN91Osnh3xsFjD50MLvjndWo7HXR4p670+
+   qm7q6W8cidoJh6yN61WuzDS8yPax3V1SH1kdTWelsierCM7tyTefLc13Y
+   bPtiGJf8eBKRUL7EmrJw/N2KbVKmMk+q/fCODYJR6rfTwwa+OQlnb1yWs
+   2sqttdyuhQwy8TpE/kk7iP1aoZjz+HOPRWOOyGBHTpGrKKJxFUKX/lc+7
+   wAlDof6VTrGKSsNJR7rYeeKlrRv9oTHdh4w59uDFd59XrCXbPbsO/uViW
+   jtyb/ywDL9CmUUtRC4O5mp5SQjIHvshxupDGdylMO77YWroMQhUWBVsQK
+   w==;
+X-CSE-ConnectionGUID: tA3i6TmBTAuGHEXm7rgXVg==
+X-CSE-MsgGUID: ekxVQybuRd2vSLwkP6CXhA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="65013094"
+X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
+   d="scan'208";a="65013094"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 19:02:21 -0700
+X-CSE-ConnectionGUID: yQmSKiMrTuiVU4OTuZz//g==
+X-CSE-MsgGUID: DhIffj4PQnazamS+Cug+2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
+   d="scan'208";a="157447397"
+Received: from sohilmeh.sc.intel.com ([172.25.103.65])
+  by fmviesa009.fm.intel.com with ESMTP; 14 Jul 2025 19:02:21 -0700
+From: Sohil Mehta <sohil.mehta@intel.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org
+Cc: Borislav Petkov <bp@alien8.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/cpu: Sort the Intel microcode defines by Family-model-stepping
+Date: Mon, 14 Jul 2025 19:00:57 -0700
+Message-ID: <20250715020057.47880-1-sohil.mehta@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v2 13/18] libbpf: support tracing_multi
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Menglong Dong <menglong8.dong@gmail.com>
-Cc: alexei.starovoitov@gmail.com, rostedt@goodmis.org, jolsa@kernel.org,
- bpf@vger.kernel.org, Menglong Dong <dongml2@chinatelecom.cn>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- linux-kernel@vger.kernel.org
-References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
- <20250703121521.1874196-14-dongml2@chinatelecom.cn>
- <CAEf4BzaxLm1qm-WxFKDWO0rHqUrvfg8sC0737MMKKQb77cRe7Q@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Menglong Dong <menglong.dong@linux.dev>
-In-Reply-To: <CAEf4BzaxLm1qm-WxFKDWO0rHqUrvfg8sC0737MMKKQb77cRe7Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
+Keeping the Intel microcode defines sorted by Family-model-stepping is
+crucial to its long-term maintainability. This would prevent unnecessary
+changes and duplicate entries whenever they are updated.
 
-On 7/15/25 06:07, Andrii Nakryiko wrote:
-> On Thu, Jul 3, 2025 at 5:24 AM Menglong Dong <menglong8.dong@gmail.com> wrote:
->> Add supporting for the attach types of:
->>
->> BPF_TRACE_FENTRY_MULTI
->> BPF_TRACE_FEXIT_MULTI
->> BPF_MODIFY_RETURN_MULTI
->>
->> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
->> ---
->>   tools/bpf/bpftool/common.c |   3 +
->>   tools/lib/bpf/bpf.c        |  10 +++
->>   tools/lib/bpf/bpf.h        |   6 ++
->>   tools/lib/bpf/libbpf.c     | 168 ++++++++++++++++++++++++++++++++++++-
->>   tools/lib/bpf/libbpf.h     |  19 +++++
->>   tools/lib/bpf/libbpf.map   |   1 +
->>   6 files changed, 204 insertions(+), 3 deletions(-)
->>
-> [...]
->
->> diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
->> index 1342564214c8..5c97acec643d 100644
->> --- a/tools/lib/bpf/bpf.h
->> +++ b/tools/lib/bpf/bpf.h
->> @@ -422,6 +422,12 @@ struct bpf_link_create_opts {
->>                  struct {
->>                          __u64 cookie;
->>                  } tracing;
->> +               struct {
->> +                       __u32 cnt;
->> +                       const __u32 *btf_ids;
->> +                       const __u32 *tgt_fds;
-> tgt_fds are always BTF FDs, right? Do we intend to support
-> freplace-style multi attachment at all? If not, I'd name them btf_fds,
-> and btf_ids -> btf_type_ids (because BTF ID can also refer to kernel
-> ID of BTF object, so ambiguous and somewhat confusing)
+Thankfully, most of the entries are already sorted, with only a few
+exceptions. Move the outliers to their correct positions.
 
+Include a Fixes tag, since future changes to the file are likely to be
+backported to stable kernels.
 
-For now, freplace is not supported. And I'm not sure if we will support
+No functional change.
 
-it in the feature.
+Fixes: 4e2c719782a8 ("x86/cpu: Help users notice when running old Intel microcode")
+Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+---
+ arch/x86/kernel/cpu/microcode/intel-ucode-defs.h | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
+diff --git a/arch/x86/kernel/cpu/microcode/intel-ucode-defs.h b/arch/x86/kernel/cpu/microcode/intel-ucode-defs.h
+index cb6e601701ab..e780d611f02e 100644
+--- a/arch/x86/kernel/cpu/microcode/intel-ucode-defs.h
++++ b/arch/x86/kernel/cpu/microcode/intel-ucode-defs.h
+@@ -94,16 +94,14 @@
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x8e, .steppings = 0x0400, .driver_data = 0xf6 },
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x8e, .steppings = 0x0800, .driver_data = 0xf6 },
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x8e, .steppings = 0x1000, .driver_data = 0xfc },
+-{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x8f, .steppings = 0x0100, .driver_data = 0x2c000390 },
+-{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x8f, .steppings = 0x0080, .driver_data = 0x2b000603 },
+-{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x8f, .steppings = 0x0040, .driver_data = 0x2c000390 },
+-{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x8f, .steppings = 0x0020, .driver_data = 0x2c000390 },
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x8f, .steppings = 0x0010, .driver_data = 0x2c000390 },
++{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x8f, .steppings = 0x0020, .driver_data = 0x2c000390 },
++{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x8f, .steppings = 0x0040, .driver_data = 0x2c000390 },
++{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x8f, .steppings = 0x0080, .driver_data = 0x2b000603 },
++{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x8f, .steppings = 0x0100, .driver_data = 0x2c000390 },
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x96, .steppings = 0x0002, .driver_data = 0x1a },
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x97, .steppings = 0x0004, .driver_data = 0x37 },
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x97, .steppings = 0x0020, .driver_data = 0x37 },
+-{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0xbf, .steppings = 0x0004, .driver_data = 0x37 },
+-{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0xbf, .steppings = 0x0020, .driver_data = 0x37 },
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x9a, .steppings = 0x0008, .driver_data = 0x435 },
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x9a, .steppings = 0x0010, .driver_data = 0x435 },
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x9c, .steppings = 0x0001, .driver_data = 0x24000026 },
+@@ -124,8 +122,10 @@
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0xba, .steppings = 0x0008, .driver_data = 0x4123 },
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0xba, .steppings = 0x0100, .driver_data = 0x4123 },
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0xbe, .steppings = 0x0001, .driver_data = 0x1a },
+-{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0xcf, .steppings = 0x0004, .driver_data = 0x21000283 },
++{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0xbf, .steppings = 0x0004, .driver_data = 0x37 },
++{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0xbf, .steppings = 0x0020, .driver_data = 0x37 },
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0xcf, .steppings = 0x0002, .driver_data = 0x21000283 },
++{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0xcf, .steppings = 0x0004, .driver_data = 0x21000283 },
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0xf,  .model = 0x00, .steppings = 0x0080, .driver_data = 0x12 },
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0xf,  .model = 0x00, .steppings = 0x0400, .driver_data = 0x15 },
+ { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0xf,  .model = 0x01, .steppings = 0x0004, .driver_data = 0x2e },
+-- 
+2.43.0
 
-I think that there should be no need to use freplace in large quantities,
-
-so we don't need to support the multi attachment for it in the feature.
-
-
-Yeah, I'll follow your advice in the next version.
-
-
->
->> +                       const __u64 *cookies;
->> +               } tracing_multi;
->>                  struct {
->>                          __u32 pf;
->>                          __u32 hooknum;
->> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
->> index 530c29f2f5fc..ae38b3ab84c7 100644
->> --- a/tools/lib/bpf/libbpf.c
->> +++ b/tools/lib/bpf/libbpf.c
->> @@ -136,6 +136,9 @@ static const char * const attach_type_name[] = {
->>          [BPF_NETKIT_PEER]               = "netkit_peer",
->>          [BPF_TRACE_KPROBE_SESSION]      = "trace_kprobe_session",
->>          [BPF_TRACE_UPROBE_SESSION]      = "trace_uprobe_session",
->> +       [BPF_TRACE_FENTRY_MULTI]        = "trace_fentry_multi",
->> +       [BPF_TRACE_FEXIT_MULTI]         = "trace_fexit_multi",
->> +       [BPF_MODIFY_RETURN_MULTI]       = "modify_return_multi",
->>   };
->>
->>   static const char * const link_type_name[] = {
->> @@ -410,6 +413,8 @@ enum sec_def_flags {
->>          SEC_XDP_FRAGS = 16,
->>          /* Setup proper attach type for usdt probes. */
->>          SEC_USDT = 32,
->> +       /* attachment target is multi-link */
->> +       SEC_ATTACH_BTF_MULTI = 64,
->>   };
->>
->>   struct bpf_sec_def {
->> @@ -7419,9 +7424,9 @@ static int libbpf_prepare_prog_load(struct bpf_program *prog,
->>                  opts->expected_attach_type = BPF_TRACE_UPROBE_MULTI;
->>          }
->>
->> -       if ((def & SEC_ATTACH_BTF) && !prog->attach_btf_id) {
->> +       if ((def & (SEC_ATTACH_BTF | SEC_ATTACH_BTF_MULTI)) && !prog->attach_btf_id) {
->>                  int btf_obj_fd = 0, btf_type_id = 0, err;
->> -               const char *attach_name;
->> +               const char *attach_name, *name_end;
->>
->>                  attach_name = strchr(prog->sec_name, '/');
->>                  if (!attach_name) {
->> @@ -7440,7 +7445,27 @@ static int libbpf_prepare_prog_load(struct bpf_program *prog,
->>                  }
->>                  attach_name++; /* skip over / */
->>
->> -               err = libbpf_find_attach_btf_id(prog, attach_name, &btf_obj_fd, &btf_type_id);
->> +               name_end = strchr(attach_name, ',');
->> +               /* for multi-link tracing, use the first target symbol during
->> +                * loading.
->> +                */
->> +               if ((def & SEC_ATTACH_BTF_MULTI) && name_end) {
->> +                       int len = name_end - attach_name + 1;
-> for multi-kprobe we decided to only support a single glob  as a target
-> in declarative SEC() definition. If a user needs more control, they
-> can always fallback to the programmatic bpf_program__attach_..._opts()
-> variant. Let's do the same here, glob is good enough for declarative
-> use cases, and for complicated cases programmatic is the way to go
-> anyways. You'll avoid unnecessary complications like this one then.
-
-
-In fact, this is to make the BPF code in the selftests simple. With such
-
-control, I can test different combination of the target functions easily,
-
-just like this:
-
-
-SEC("fentry.multi/bpf_testmod_test_struct_arg_1,bpf_testmod_test_struct_arg_13")
-int BPF_PROG2(fentry_success_test1, struct bpf_testmod_struct_arg_2, a)
-{
-     test_result = a.a + a.b;
-     return 0;
-}
-
-SEC("fentry.multi/bpf_testmod_test_struct_arg_2,bpf_testmod_test_struct_arg_10")
-int BPF_PROG2(fentry_success_test2, int, a, struct 
-bpf_testmod_struct_arg_2, b)
-{
-     test_result = a + b.a + b.b;
-     return 0;
-}
-
-
-And you are right, we should design it for the users, and a single glob is
-
-much better. Instead, I'll implement the combination testings in the
-
-loader with bpf_program__attach_trace_multi_opts().
-
-
->
-> BTW, it's not trivial to figure this out from earlier patches, but
-> does BPF verifier need to know all these BTF type IDs during program
-> verification time? If yes, why and then why do we need to specify them
-> during LINK_CREATE time. And if not, then great, and we don't need to
-> parse all this during load time.
-
-
-It doesn't need to know all the BTF type IDs, but it need to know one
-
-of them(the first one), which means that we still need to do the parse
-
-during load time.
-
-
-Of course, we can split it:
-
-step 1: parse the glob and get the first BTF type ID during load time
-
-step 2: parse the glob and get all the BTF type IDs during attachment
-
-
-But it will make the code a little more complex. Shoud I do it this way?
-
-I'd appreciate it to hear some advice here :/
-
-
->
->> +                       char *first_tgt;
->> +
->> +                       first_tgt = malloc(len);
->> +                       if (!first_tgt)
->> +                               return -ENOMEM;
->> +                       libbpf_strlcpy(first_tgt, attach_name, len);
->> +                       first_tgt[len - 1] = '\0';
->> +                       err = libbpf_find_attach_btf_id(prog, first_tgt, &btf_obj_fd,
->> +                                                       &btf_type_id);
->> +                       free(first_tgt);
->> +               } else {
->> +                       err = libbpf_find_attach_btf_id(prog, attach_name, &btf_obj_fd,
->> +                                                       &btf_type_id);
->> +               }
->> +
->>                  if (err)
->>                          return err;
->>
->> @@ -9519,6 +9544,7 @@ static int attach_kprobe_session(const struct bpf_program *prog, long cookie, st
->>   static int attach_uprobe_multi(const struct bpf_program *prog, long cookie, struct bpf_link **link);
->>   static int attach_lsm(const struct bpf_program *prog, long cookie, struct bpf_link **link);
->>   static int attach_iter(const struct bpf_program *prog, long cookie, struct bpf_link **link);
->> +static int attach_trace_multi(const struct bpf_program *prog, long cookie, struct bpf_link **link);
->>
->>   static const struct bpf_sec_def section_defs[] = {
->>          SEC_DEF("socket",               SOCKET_FILTER, 0, SEC_NONE),
->> @@ -9565,6 +9591,13 @@ static const struct bpf_sec_def section_defs[] = {
->>          SEC_DEF("fentry.s+",            TRACING, BPF_TRACE_FENTRY, SEC_ATTACH_BTF | SEC_SLEEPABLE, attach_trace),
->>          SEC_DEF("fmod_ret.s+",          TRACING, BPF_MODIFY_RETURN, SEC_ATTACH_BTF | SEC_SLEEPABLE, attach_trace),
->>          SEC_DEF("fexit.s+",             TRACING, BPF_TRACE_FEXIT, SEC_ATTACH_BTF | SEC_SLEEPABLE, attach_trace),
->> +       SEC_DEF("tp_btf+",              TRACING, BPF_TRACE_RAW_TP, SEC_ATTACH_BTF, attach_trace),
-> duplicate
-
-
-Get it :/
-
-
-Thanks!
-
-Menglong Dong
-
-
->
->
->> +       SEC_DEF("fentry.multi+",        TRACING, BPF_TRACE_FENTRY_MULTI, SEC_ATTACH_BTF_MULTI, attach_trace_multi),
->> +       SEC_DEF("fmod_ret.multi+",      TRACING, BPF_MODIFY_RETURN_MULTI, SEC_ATTACH_BTF_MULTI, attach_trace_multi),
->> +       SEC_DEF("fexit.multi+",         TRACING, BPF_TRACE_FEXIT_MULTI, SEC_ATTACH_BTF_MULTI, attach_trace_multi),
->> +       SEC_DEF("fentry.multi.s+",      TRACING, BPF_TRACE_FENTRY_MULTI, SEC_ATTACH_BTF_MULTI | SEC_SLEEPABLE, attach_trace_multi),
->> +       SEC_DEF("fmod_ret.multi.s+",    TRACING, BPF_MODIFY_RETURN_MULTI, SEC_ATTACH_BTF_MULTI | SEC_SLEEPABLE, attach_trace_multi),
->> +       SEC_DEF("fexit.multi.s+",       TRACING, BPF_TRACE_FEXIT_MULTI, SEC_ATTACH_BTF_MULTI | SEC_SLEEPABLE, attach_trace_multi),
->>          SEC_DEF("freplace+",            EXT, 0, SEC_ATTACH_BTF, attach_trace),
->>          SEC_DEF("lsm+",                 LSM, BPF_LSM_MAC, SEC_ATTACH_BTF, attach_lsm),
->>          SEC_DEF("lsm.s+",               LSM, BPF_LSM_MAC, SEC_ATTACH_BTF | SEC_SLEEPABLE, attach_lsm),
->> @@ -12799,6 +12832,135 @@ static int attach_trace(const struct bpf_program *prog, long cookie, struct bpf_
->>          return libbpf_get_error(*link);
->>   }
->>
-> [...]
->
 
