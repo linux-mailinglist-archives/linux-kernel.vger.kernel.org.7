@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-731997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC45FB06108
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:29:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D880B060DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A1AD587433
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:15:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4F141C46BA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F52A23D2B1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB7B243964;
 	Tue, 15 Jul 2025 14:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LQclsLJw"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qRCcEAxl"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C943B2222A6;
-	Tue, 15 Jul 2025 14:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF13822837F;
+	Tue, 15 Jul 2025 14:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752588203; cv=none; b=RCDKbUhNsR74evzVgkM6b1HdRN2Xz6a0Gi1zUQcsXYWW913kXR8/TLCb9JKkiin7JmEzzpS3hd5FqXhGGFU1HqcHb4JfllXLwqke0CwoL9MGR1D2clysZiOsIcHuW1RZyXEhJhJT/qSFGJET1akpq8gt9n9D4n05Y8ECcAAX7YI=
+	t=1752588203; cv=none; b=BZz6sQjA1Av1y8MS0TmaDWK9QogdoH1wl/g+EEmS16cp4EcSsvupBepcyOJwA/OES9ti6izsss8sZKZuTSm99H6MMsvQupIJs0dy/UsyYCYn4pKH7vtRAKu6b4XetVB/9UXNmLqpOlMoJZ+kgydIupj1GkG9YyXOM3kzd9q4ZBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752588203; c=relaxed/simple;
-	bh=miE62TOHkymAaF9mClhi/T/UKTPsK7Q5wm77ydOkP8Y=;
+	bh=0T78hHqBP46sG3iZ6YmlVmz4JbgNfG24m+8uNL7+1UE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mg7gVpIYzJZNG4U4aydf05IjhG3C8bLyO/ZYzjYsBJeErvDAe2yLe6Jx5amTurKyhI8bT3CHpu2oAMRdv7z0pvhLFlTRoeuK8cnmFCo3386jVe+5GJUTeTmmq3wxgKpe3PrBE6NBk8dQqwa/0jCk1qVzsvIorrYk6xRetQaxPKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LQclsLJw; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version; b=nFg0kW4STYvHRPyMW53VrWEpsYOQsOOTPGI8C5k7oy2+KoACCky+oeZddO0u/91v8sFD4lJZftU/ezB8ok5mA3n7Oj/VwjLR73aA23ChWwZkFmkzM1HV4hOj3YIn5SjKmP99Ppr4QS9ozyPaOj2jMmwN0nxEdju/BCTc00nzzbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qRCcEAxl; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1752588199;
-	bh=miE62TOHkymAaF9mClhi/T/UKTPsK7Q5wm77ydOkP8Y=;
+	s=mail; t=1752588200;
+	bh=0T78hHqBP46sG3iZ6YmlVmz4JbgNfG24m+8uNL7+1UE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LQclsLJwKtnV/s18HsCxC4eLVcWyXYkSE830jC1VdRdr/3bQWjp1U62U4eodMSTkY
-	 4B3IsWyMaLKxtY5joGVxcOfAL5UL+iGArQJ/2Nd2eAtvvSvpNetXpjfOBJq38vialj
-	 JUlGVga6ZQyAgdsOn04yIumkt1ElxdgxaQyFugHKgiSYaDYgYJP7rTQS7vumT8OdZv
-	 EarrMzOzjAC0mgsJL5S5f8LUjAqAJlhPNnQNBfK4DsyH5ljtQW0TTlJvLb/1+13tBJ
-	 ZdYhYjahZ429vSALGTiZWNCucdDUDzRymRUxL3KJ++Cf0IGIeznuQLECmm/JrgoqtO
-	 QbHttZy/Rnbvg==
+	b=qRCcEAxl9Af92A5tc94dbW8Y5jSat+ZpinET9OR0wSFlwcZ5zsAgVBWwZDwbQROKy
+	 NnCE8DlLVixyFYAGnjJ4vP9mXekQzn9S60ttS8aDWoa+2FcBA3+1l87ZTIwS+TPP4y
+	 4+3qbxzFtq6gJwjFtM9OikNWg0p1c2EAwPY/saQOZTs+1tII/t2oOISGSaJj8cY3a9
+	 /EupXyPfhrr9kI34EkqWFQGGOHjZAeQsFxEmqk7tI6jWvmXOKFvFXwBt71fDrTru0m
+	 GIo+S8T9aZhpQ5k52LqpKz2YAXoo8nDPDKaL/VTDo/dv8VKqHwc+HVjluhqVlVPnrN
+	 Y7xfEoirp4Pvg==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5123417E097F;
-	Tue, 15 Jul 2025 16:03:18 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3B92B17E1293;
+	Tue, 15 Jul 2025 16:03:19 +0200 (CEST)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 To: linux-mediatek@lists.infradead.org
 Cc: lee@kernel.org,
@@ -62,9 +62,9 @@ Cc: lee@kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	kernel@collabora.com,
 	wenst@chromium.org
-Subject: [PATCH v5 2/8] regulator: Add support for MediaTek MT6316 SPMI PMIC Regulators
-Date: Tue, 15 Jul 2025 16:02:18 +0200
-Message-ID: <20250715140224.206329-3-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v5 3/8] dt-bindings: regulator: Document MediaTek MT6363 PMIC Regulators
+Date: Tue, 15 Jul 2025 16:02:19 +0200
+Message-ID: <20250715140224.206329-4-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250715140224.206329-1-angelogioacchino.delregno@collabora.com>
 References: <20250715140224.206329-1-angelogioacchino.delregno@collabora.com>
@@ -76,406 +76,216 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a driver for the regulators found on all types of the MediaTek
-MT6316 SPMI PMIC, fully controlled by SPMI interface and featuring
-four step down DCDC (buck) converters.
-
-In particular, this includes support for:
- - MT6316(BP/VP):    2+2 Phase (Phase 1: buck1+2, Phase 2: buck3+4)
- - MT6316(CP/HP/KP): 3+1 Phase (Phase 1: buck1+2+4, Phase 2: buck3)
- - MT6316(DP/TP):    4+0 Phase (Single phase, buck1+2+3+4)
+Add bindings for the regulators found in the MediaTek MT6363 PMIC,
+usually found in board designs using the MT6991 Dimensity 9400 and
+on MT8196 Kompanio SoC for Chromebooks, along with the MT6316 and
+MT6373 PMICs.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/regulator/Kconfig            |   9 +
- drivers/regulator/Makefile           |   1 +
- drivers/regulator/mt6316-regulator.c | 345 +++++++++++++++++++++++++++
- 3 files changed, 355 insertions(+)
- create mode 100644 drivers/regulator/mt6316-regulator.c
+ .../regulator/mediatek,mt6363-regulator.yaml  | 193 ++++++++++++++++++
+ 1 file changed, 193 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,mt6363-regulator.yaml
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 7423954153b0..81f2acd0f960 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -864,6 +864,15 @@ config REGULATOR_MT6315
- 	  This driver supports the control of different power rails of device
- 	  through regulator interface.
- 
-+config REGULATOR_MT6316
-+	tristate "MT6316 SPMI PMIC regulator driver"
-+	depends on SPMI || COMPILE_TEST
-+	help
-+          Say Y here to enable support for 2+2, 3+1 and 4 phase regulators
-+          found in the MediaTek MT6316 BP, CP, DP, HP, VP and TP SPMI PMICs.
-+	  This driver supports the control of different power rails of device
-+	  through regulator interface.
-+
- config REGULATOR_MT6323
- 	tristate "MediaTek MT6323 PMIC"
- 	depends on MFD_MT6397
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index be98b29d6675..46c0e75f6107 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -103,6 +103,7 @@ obj-$(CONFIG_REGULATOR_MP886X) += mp886x.o
- obj-$(CONFIG_REGULATOR_MPQ7920) += mpq7920.o
- obj-$(CONFIG_REGULATOR_MT6311) += mt6311-regulator.o
- obj-$(CONFIG_REGULATOR_MT6315) += mt6315-regulator.o
-+obj-$(CONFIG_REGULATOR_MT6315)  += mt6316-regulator.o
- obj-$(CONFIG_REGULATOR_MT6323)	+= mt6323-regulator.o
- obj-$(CONFIG_REGULATOR_MT6331)	+= mt6331-regulator.o
- obj-$(CONFIG_REGULATOR_MT6332)	+= mt6332-regulator.o
-diff --git a/drivers/regulator/mt6316-regulator.c b/drivers/regulator/mt6316-regulator.c
+diff --git a/Documentation/devicetree/bindings/regulator/mediatek,mt6363-regulator.yaml b/Documentation/devicetree/bindings/regulator/mediatek,mt6363-regulator.yaml
 new file mode 100644
-index 000000000000..952852bbe923
+index 000000000000..ea1f6c92cffc
 --- /dev/null
-+++ b/drivers/regulator/mt6316-regulator.c
-@@ -0,0 +1,345 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (c) 2024 MediaTek Inc.
-+// Copyright (c) 2025 Collabora Ltd
-+//                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
++++ b/Documentation/devicetree/bindings/regulator/mediatek,mt6363-regulator.yaml
+@@ -0,0 +1,193 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/regulator/mediatek,mt6363-regulator.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+#include <linux/spmi.h>
++title: MediaTek MT6363 PMIC Regulators
 +
-+#include <linux/regulator/driver.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/of_regulator.h>
++maintainers:
++  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 +
-+#define MT6316_BUCK_MODE_AUTO			0
-+#define MT6316_BUCK_MODE_FORCE_PWM		1
-+#define MT6316_BUCK_MODE_LP			2
++description:
++  The MT6363 SPMI PMIC provides 10 BUCK and 25 LDO (Low DropOut) regulators
++  and can optionally provide overcurrent warnings with one ocp interrupt
++  for each voltage regulator.
 +
-+#define MT6316_CHIP_ID				0x20b
-+#define MT6316_BUCK_TOP_CON0			0x1440
-+#define EN_SET_OFFSET				0x1
-+#define EN_CLR_OFFSET				0x2
++properties:
++  compatible:
++    const: mediatek,mt6363-regulator
 +
-+#define MT6316_BUCK_TOP_CON1			0x1443
++  reg:
++    maxItems: 1
 +
-+#define MT6316_BUCK_TOP_ELR0			0x1448
-+#define MT6316_BUCK_TOP_ELR2			0x144a
-+#define MT6316_BUCK_TOP_ELR4			0x144c
-+#define MT6316_BUCK_TOP_ELR6			0x144e
-+#define MT6316_VSEL_MASK			GENMASK(8, 0)
++  vsys-vbuck1-supply:
++    description: Input supply for vbuck1
++  vsys-vbuck2-supply:
++    description: Input supply for vbuck2
++  vsys-vbuck3-supply:
++    description: Input supply for vbuck3
++  vsys-vbuck4-supply:
++    description: Input supply for vbuck4
++  vsys-vbuck5-supply:
++    description: Input supply for vbuck5
++  vsys-vbuck6-supply:
++    description: Input supply for vbuck6
++  vsys-vbuck7-supply:
++    description: Input supply for vbuck7
++  vsys-vs1-supply:
++    description: Input supply for vs1
++  vsys-vs2-supply:
++    description: Input supply for vs2
++  vsys-vs3-supply:
++    description: Input supply for vs3
++  vs1-ldo1-supply:
++    description: Input supply for va15, vio0p75, vm18, vrf18, vrf-io18
++  vs1-ldo2-supply:
++    description: Input supply for vcn15, vio18, vufs18
++  vs2-ldo1-supply:
++    description: Input supply for vsram-cpub, vsram-cpum, vrf12, vrf13, vufs12
++  vs2-ldo2-supply:
++    description: Input supply for va12-1, va12-2, vcn13, vsram-cpul
++  vs3-ldo1-supply:
++    description: Input supply for vsram-apu, vsram-digrf, vsram-mdfe
++  vs3-ldo2-supply:
++    description: Input supply for vsram-modem, vrf0p9
++  vsys-ldo1-supply:
++    description: Input supply for vaux18, vemc, vtref18
 +
-+#define MT6316_VBUCK1_DBG			0x14a8
-+#define MT6316_VBUCK2_DBG			0x1528
-+#define MT6316_VBUCK3_DBG			0x15a8
-+#define MT6316_VBUCK4_DBG			0x1628
-+#define MT6316_BUCK_QI				BIT(0)
++patternProperties:
++  "^v(buck[1-7]|s[1-3])$":
++    description: Buck regulators
++    type: object
++    $ref: regulator.yaml#
++    properties:
++      regulator-allowed-modes:
++        description: |
++          Allowed Buck regulator operating modes allowed. Valid values below.
++            0 - Normal mode with automatic power saving, reducing the switching
++                frequency when light load conditions are detected
++            1 - Forced Continuous Conduction mode (FCCM) for improved voltage
++                regulation accuracy with constant switching frequency but lower
++                regulator efficiency
++            2 - Forced Low Power mode for improved regulator efficiency, used
++                when no heavy load is expected, does not limit the maximum out
++                current but unless only a light load is applied, there will be
++                regulation accuracy and efficiency losses.
++            3 - Forced Ultra Low Power mode for ultra low load, this greatly
++                reduces the maximum output power, makes the regulator to be
++                efficient only for ultra light load, and greatly reduces the
++                quiescent current (Iq) of the buck.
++        maxItems: 3
++        items:
++          enum: [ 0, 1, 2, 3 ]
++    unevaluatedProperties: false
 +
-+#define MT6316_BUCK_TOP_4PHASE_TOP_ANA_CON0	0x1688
-+#define MT6316_BUCK_TOP_4PHASE_TOP_ELR_0	0x1690
++  "^va(12-1|12-2|15)$":
++    type: object
++    $ref: regulator.yaml#
++    properties:
++      regulator-allowed-modes:
++        description: |
++          Allowed LDO regulator operating modes allowed. Valid values below.
++            0 - Normal mode with automatic power saving, reducing the switching
++                frequency when light load conditions are detected
++            2 - Forced Low Power mode for improved regulator efficiency, used
++                when no heavy load is expected, does not limit the maximum out
++                current but unless only a light load is applied, there will be
++                regulation accuracy and efficiency losses.
++        maxItems: 2
++        items:
++          enum: [ 0, 2 ]
++    unevaluatedProperties: false
 +
-+enum mt6316_type {
-+	MT6316_TYPE_2PHASE,
-+	MT6316_TYPE_3PHASE,
-+	MT6316_TYPE_4PHASE
-+};
++  "^v(aux|m|rf-io|tref)18$":
++    type: object
++    $ref: regulator.yaml#
++    properties:
++      regulator-allowed-modes:
++        maxItems: 2
++        items:
++          enum: [ 0, 2 ]
++    unevaluatedProperties: false
 +
-+/**
-+ * struct mt6316_regulator_info - MT6316 regulators information
-+ * @desc: Regulator description structure
-+ * @debug_reg: Debug register for regulator status
-+ * @lp_mode_reg: Low Power mode register (normal/idle)
-+ * @lp_mode_mask: Low Power mode regulator mask
-+ * @modeset_reg: AUTO/PWM mode register
-+ * @modeset_mask: AUTO/PWM regulator mask
-+ */
-+struct mt6316_regulator_info {
-+	struct regulator_desc desc;
-+	u16 debug_reg;
-+	u16 lp_mode_reg;
-+	u16 lp_mode_mask;
-+	u16 modeset_reg;
-+	u16 modeset_mask;
-+};
++  "^v(cn13|cn15|emc)$":
++    type: object
++    $ref: regulator.yaml#
++    properties:
++      regulator-allowed-modes:
++        maxItems: 2
++        items:
++          enum: [ 0, 2 ]
++    unevaluatedProperties: false
 +
-+#define MT6316_BUCK(match, vreg_id, min, max, step, vs_reg)		\
-+{									\
-+	.desc = {							\
-+		.name = match,						\
-+		.of_match = of_match_ptr(match),			\
-+		.ops = &mt6316_vreg_setclr_ops,				\
-+		.type = REGULATOR_VOLTAGE,				\
-+		.owner = THIS_MODULE,					\
-+		.n_voltages = (max - min) / step + 1,			\
-+		.min_uV = min,						\
-+		.uV_step = step,					\
-+		.enable_reg = MT6316_BUCK_TOP_CON0,			\
-+		.enable_mask = BIT(vreg_id - 1),			\
-+		.vsel_reg = vs_reg,					\
-+		.vsel_mask = MT6316_VSEL_MASK,				\
-+		.of_map_mode = mt6316_map_mode,				\
-+	},								\
-+	.lp_mode_reg = MT6316_BUCK_TOP_CON1,				\
-+	.lp_mode_mask = BIT(vreg_id - 1),				\
-+	.modeset_reg = MT6316_BUCK_TOP_4PHASE_TOP_ANA_CON0,		\
-+	.modeset_mask = BIT(vreg_id - 1),				\
-+	.debug_reg = MT6316_VBUCK##vreg_id##_DBG,			\
-+}
++  "^vio(0p75|18)$":
++    type: object
++    $ref: regulator.yaml#
++    properties:
++      regulator-allowed-modes:
++        maxItems: 2
++        items:
++          enum: [ 0, 2 ]
++    unevaluatedProperties: false
 +
-+/* Values in some MT6316 registers are big endian, 9 bits long... */
-+static inline u16 mt6316_be9_to_cpu(u16 val)
-+{
-+	return ((val >> 8) & BIT(0)) | ((val & GENMASK(7, 0)) << 1);
-+}
++  "^vrf(0p9|12|13|18)$":
++    type: object
++    $ref: regulator.yaml#
++    properties:
++      regulator-allowed-modes:
++        maxItems: 2
++        items:
++          enum: [ 0, 2 ]
++    unevaluatedProperties: false
 +
-+static inline u16 mt6316_cpu_to_be9(u16 val)
-+{
-+	return ((val & BIT(0)) << 8) | (val >> 1);
-+}
++  "^vsram-(apu|cpub|cpum|cpul|digrf|mdfe|modem)$":
++    type: object
++    $ref: regulator.yaml#
++    properties:
++      regulator-allowed-modes:
++        maxItems: 2
++        items:
++          enum: [ 0, 2 ]
++    unevaluatedProperties: false
 +
-+static unsigned int mt6316_map_mode(u32 mode)
-+{
-+	switch (mode) {
-+	case MT6316_BUCK_MODE_AUTO:
-+		return REGULATOR_MODE_NORMAL;
-+	case MT6316_BUCK_MODE_FORCE_PWM:
-+		return REGULATOR_MODE_FAST;
-+	case MT6316_BUCK_MODE_LP:
-+		return REGULATOR_MODE_IDLE;
-+	default:
-+		return REGULATOR_MODE_INVALID;
-+	}
-+}
++  "^vufs(12|18)$":
++    type: object
++    $ref: regulator.yaml#
++    properties:
++      regulator-allowed-modes:
++        maxItems: 2
++        items:
++          enum: [ 0, 2 ]
++    unevaluatedProperties: false
 +
-+static int mt6316_vreg_enable_setclr(struct regulator_dev *rdev)
-+{
-+	return regmap_write(rdev->regmap, rdev->desc->enable_reg + EN_SET_OFFSET,
-+			    rdev->desc->enable_mask);
-+}
++required:
++  - compatible
++  - reg
 +
-+static int mt6316_vreg_disable_setclr(struct regulator_dev *rdev)
-+{
-+	return regmap_write(rdev->regmap, rdev->desc->enable_reg + EN_CLR_OFFSET,
-+			    rdev->desc->enable_mask);
-+}
++additionalProperties: false
 +
-+static int mt6316_regulator_set_voltage_sel(struct regulator_dev *rdev, unsigned int selector)
-+{
-+	u16 val = mt6316_cpu_to_be9(selector);
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
 +
-+	return regmap_bulk_write(rdev->regmap, rdev->desc->vsel_reg, &val, sizeof(val));
-+}
++    pmic {
++      interrupt-controller;
++      #address-cells = <1>;
++      #interrupt-cells = <3>;
 +
-+static int mt6316_regulator_get_voltage_sel(struct regulator_dev *rdev)
-+{
-+	u16 val;
-+	int ret;
++      regulators@30 {
++        compatible = "mediatek,mt6363-regulator";
++        reg = <0x
 +
-+	ret = regmap_bulk_read(rdev->regmap, rdev->desc->vsel_reg, &val, sizeof(val));
-+	if (ret)
-+		return ret;
-+
-+	return mt6316_be9_to_cpu(val & rdev->desc->vsel_mask);
-+}
-+
-+static int mt6316_regulator_get_status(struct regulator_dev *rdev)
-+{
-+	struct mt6316_regulator_info *info = rdev_get_drvdata(rdev);
-+	u32 val;
-+	int ret;
-+
-+	ret = regmap_read(rdev->regmap, info->debug_reg, &val);
-+	if (ret)
-+		return ret;
-+
-+	return val & MT6316_BUCK_QI ? REGULATOR_STATUS_ON : REGULATOR_STATUS_OFF;
-+}
-+
-+static unsigned int mt6316_regulator_get_mode(struct regulator_dev *rdev)
-+{
-+	struct mt6316_regulator_info *info = rdev_get_drvdata(rdev);
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(rdev->regmap, info->modeset_reg, &val);
-+	if (ret) {
-+		dev_err(&rdev->dev, "Failed to get mode: %d\n", ret);
-+		return ret;
-+	}
-+
-+	if ((val & info->modeset_mask) == info->modeset_mask)
-+		return REGULATOR_MODE_FAST;
-+
-+	ret = regmap_read(rdev->regmap, info->lp_mode_reg, &val);
-+	val &= info->lp_mode_mask;
-+	if (ret) {
-+		dev_err(&rdev->dev, "Failed to get lp mode: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return val ? REGULATOR_MODE_IDLE : REGULATOR_MODE_NORMAL;
-+}
-+
-+static int mt6316_regulator_set_mode(struct regulator_dev *rdev,
-+				     unsigned int mode)
-+{
-+	struct mt6316_regulator_info *info = rdev_get_drvdata(rdev);
-+	struct regmap *regmap = rdev->regmap;
-+	int cur_mode, ret;
-+
-+	switch (mode) {
-+	case REGULATOR_MODE_FAST:
-+		ret = regmap_set_bits(regmap, info->modeset_reg, info->modeset_mask);
-+		break;
-+	case REGULATOR_MODE_NORMAL:
-+		cur_mode = mt6316_regulator_get_mode(rdev);
-+		if (cur_mode < 0) {
-+			ret = cur_mode;
-+			break;
-+		}
-+
-+		if (cur_mode == REGULATOR_MODE_FAST) {
-+			ret = regmap_clear_bits(regmap, info->modeset_reg, info->modeset_mask);
-+			break;
-+		} else if (cur_mode == REGULATOR_MODE_IDLE) {
-+			ret = regmap_clear_bits(regmap, info->lp_mode_reg, info->lp_mode_mask);
-+			if (ret == 0)
-+				usleep_range(100, 200);
-+		} else {
-+			ret = 0;
-+		}
-+		break;
-+	case REGULATOR_MODE_IDLE:
-+		ret = regmap_set_bits(regmap, info->lp_mode_reg, info->lp_mode_mask);
-+		break;
-+	default:
-+		ret = -EINVAL;
-+	}
-+
-+	if (ret) {
-+		dev_err(&rdev->dev, "Failed to set mode %u: %d\n", mode, ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct regulator_ops mt6316_vreg_setclr_ops = {
-+	.list_voltage = regulator_list_voltage_linear,
-+	.map_voltage = regulator_map_voltage_linear,
-+	.set_voltage_sel = mt6316_regulator_set_voltage_sel,
-+	.get_voltage_sel = mt6316_regulator_get_voltage_sel,
-+	.set_voltage_time_sel = regulator_set_voltage_time_sel,
-+	.enable = mt6316_vreg_enable_setclr,
-+	.disable = mt6316_vreg_disable_setclr,
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.get_status = mt6316_regulator_get_status,
-+	.set_mode = mt6316_regulator_set_mode,
-+	.get_mode = mt6316_regulator_get_mode,
-+};
-+
-+/* MT6316BP/VP - 2+2 phase buck */
-+static struct mt6316_regulator_info mt6316bv_regulators[] = {
-+	MT6316_BUCK("vbuck12", 1, 0, 1277500, 2500, MT6316_BUCK_TOP_ELR0),
-+	MT6316_BUCK("vbuck34", 3, 0, 1277500, 2500, MT6316_BUCK_TOP_ELR4),
-+};
-+
-+/* MT6316CP/HP/KP - 3+1 phase buck */
-+static struct mt6316_regulator_info mt6316chk_regulators[] = {
-+	MT6316_BUCK("vbuck124", 1, 0, 1277500, 2500, MT6316_BUCK_TOP_ELR0),
-+	MT6316_BUCK("vbuck3", 3, 0, 1277500, 2500, MT6316_BUCK_TOP_ELR4),
-+};
-+
-+/* MT6316DP/TP - 4 phase buck */
-+static struct mt6316_regulator_info mt6316dt_regulators[] = {
-+	MT6316_BUCK("vbuck1234", 1, 0, 1277500, 2500, MT6316_BUCK_TOP_ELR0),
-+};
-+
-+static const struct regmap_config mt6316_spmi_regmap_config = {
-+	.reg_bits	= 16,
-+	.val_bits	= 8,
-+	.max_register	= 0x1700,
-+	.fast_io	= true,
-+};
-+
-+static int mt6316_regulator_probe(struct spmi_device *sdev)
-+{
-+	struct regulator_config config = {};
-+	struct mt6316_regulator_info *info;
-+	struct regulator_dev *rdev;
-+	enum mt6316_type type;
-+	int num_vregs, ret;
-+	unsigned int i;
-+	u32 chip_id;
-+
-+	config.regmap = devm_regmap_init_spmi_ext(sdev, &mt6316_spmi_regmap_config);
-+	if (IS_ERR(config.regmap))
-+		return PTR_ERR(config.regmap);
-+
-+	/*
-+	 * The first read is expected to fail: this PMIC needs to be woken up
-+	 * and that can be done with any activity over the SPMI bus.
-+	 */
-+	regmap_read(config.regmap, MT6316_CHIP_ID, &chip_id);
-+
-+	/* The second read, instead, shall not fail! */
-+	ret = regmap_read(config.regmap, MT6316_CHIP_ID, &chip_id);
-+	if (ret) {
-+		dev_err(&sdev->dev, "Cannot read Chip ID!\n");
-+		return ret;
-+	}
-+	dev_dbg(&sdev->dev, "Chip ID: 0x%x\n", chip_id);
-+
-+	config.dev = &sdev->dev;
-+
-+	type = (uintptr_t)device_get_match_data(&sdev->dev);
-+	switch (type) {
-+	case MT6316_TYPE_2PHASE:
-+		info = mt6316bv_regulators;
-+		num_vregs = ARRAY_SIZE(mt6316bv_regulators);
-+		break;
-+	case MT6316_TYPE_3PHASE:
-+		info = mt6316chk_regulators;
-+		num_vregs = ARRAY_SIZE(mt6316chk_regulators);
-+		break;
-+	case MT6316_TYPE_4PHASE:
-+		info = mt6316dt_regulators;
-+		num_vregs = ARRAY_SIZE(mt6316dt_regulators);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < num_vregs; i++) {
-+		config.driver_data = &info[i];
-+
-+		rdev = devm_regulator_register(&sdev->dev, &info[i].desc, &config);
-+		if (IS_ERR(rdev))
-+			return dev_err_probe(&sdev->dev, PTR_ERR(rdev),
-+					     "failed to register %s\n", info[i].desc.name);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id mt6316_regulator_match[] = {
-+	{ .compatible = "mediatek,mt6316b-regulator", .data = (void *)MT6316_TYPE_2PHASE },
-+	{ .compatible = "mediatek,mt6316c-regulator", .data = (void *)MT6316_TYPE_3PHASE },
-+	{ .compatible = "mediatek,mt6316d-regulator", .data = (void *)MT6316_TYPE_4PHASE },
-+	{ /* sentinel */ }
-+};
-+
-+static struct spmi_driver mt6316_regulator_driver = {
-+	.driver = {
-+		.name = "mt6316-regulator",
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-+		.of_match_table = mt6316_regulator_match,
-+	},
-+	.probe = mt6316_regulator_probe,
-+};
-+module_spmi_driver(mt6316_regulator_driver);
-+
-+MODULE_AUTHOR("AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>");
-+MODULE_DESCRIPTION("Regulator Driver for MediaTek MT6316 PMIC");
-+MODULE_LICENSE("GPL");
++        vio18 {
++          regulator-name = "pp1800-vio18-s3";
++          regulator-min-microvolt = <1800000>;
++          regulator-max-microvolt = <1800000>;
++          regulator-allowed-modes = <0 2>;
++          regulator-allow-set-load;
++          regulator-over-current-protection;
++        };
++      };
++    };
++...
 -- 
 2.50.1
 
