@@ -1,246 +1,208 @@
-Return-Path: <linux-kernel+bounces-731744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C92B058E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:34:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 163B0B058F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C3FE188DA92
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:34:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED0437AF504
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699AD2D878C;
-	Tue, 15 Jul 2025 11:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D14B2DAFB0;
+	Tue, 15 Jul 2025 11:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I3lgC5x4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iFe3xm34"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E31D2FB;
-	Tue, 15 Jul 2025 11:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595A32D9EE1
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752579253; cv=none; b=fZ8YSDaB/84qRahZ7yV3H6X8lxAybRCyiKWr4fJHPciyabimWmC6Z/TT5EiJppb9bDV5fdsgkEjrjG+Zk62Dm6qvcsYmqaWMsbWIVv52nE6Tmdy+KGb70eeLVsZRjMt8WSkxqPQuC32UeHxW/2Gni4n4wQOWjZmAhMZ6iUY5IIk=
+	t=1752579327; cv=none; b=eyop5/ddmQRg2uhoRgfkL9Ez9UwjAP12op4Ge/V+TqWduQ1v8CPe7Ba1u9/9s/YEiiARQjZhBlTkzT9LgtSKBFzyAHypK3qapu5bIiNnq9OCGBqJPKDtKmpt4Z2uYlpihHhaxO+iO2uljCVKHqyYVdfOiwWJ430R03eSfFpSgMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752579253; c=relaxed/simple;
-	bh=VoCKJg3aglPoXGmYCQF7UL2bstbcwOkJVWtLwxYKV0c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iupihh3ZJ27spAuW0L/D5zcYUcbzIv61cYfetxzG6Ti/Kks597sh0fh4HW0TzgUeVuMWr+WhskS+BoiPo+MeINlNyAAjQ1knIML0RMN/40bbpN3Rg4SH0xVMo2w9Sq8klspW4iPsPh1Nqz//iOKldrV01GMmp6O/fCeypVDJFuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I3lgC5x4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82D79C4CEE3;
-	Tue, 15 Jul 2025 11:34:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752579253;
-	bh=VoCKJg3aglPoXGmYCQF7UL2bstbcwOkJVWtLwxYKV0c=;
-	h=From:Date:Subject:To:Cc:From;
-	b=I3lgC5x4mPnfAQ0c3rbpkWDSqPod8sD26yfu/CYb2guG0bYKjCTQYsRBSspapHLAS
-	 SpXSsKoL1/g0xrTRMRI2C8Z/2vz6d9Fxkp58bmbFoDKbu92uA3JcRG03y3jMUzL+8S
-	 dRPd90RhTcDJP0Ejs37r++nn/El6oWFqL2S/djzk22UbKWDGLfTKkZilCGP/k449nv
-	 Ei4k5jGPfxlIbMYyGEA6b8WPowNF0efhncU7QSppkjD5n/5GY25SNsbz9V4C/ny2vm
-	 d2t/cbF2vc7NYzwW82c80ew09w6L8yHiVrIsyO1LdTyFdY0/Fqwa7MQH1VVHYldCf5
-	 dMfd2I/veDxZQ==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 15 Jul 2025 07:34:10 -0400
-Subject: [PATCH] nfsd: don't set the ctime on delegated atime updates
+	s=arc-20240116; t=1752579327; c=relaxed/simple;
+	bh=cTflvjFePLQxgKie4eKSTOOZevSjP8T8WicglUvKhQU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R/LBmeo0ppQyY79dFhoAhklJr6GpYkaUB6quK0du5LLBwCi6c/yJLo3cX2WJ2ZTQqClUsbiUMbiTRA2HvfEzTY8yvgGO6iVKwhXvuHdOGSUtOYhxzuA5O3fsbgp63OmuCRnO9MT1Ij7Zu2dRrQVc0PBbusPP3kkXwVnYmDbjoEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iFe3xm34; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e8bb69cdb90so679602276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:35:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752579324; x=1753184124; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cTflvjFePLQxgKie4eKSTOOZevSjP8T8WicglUvKhQU=;
+        b=iFe3xm34o1P7aisfwOISpuflN8teXe+tqF5/2ugnBELlt/uV/fSdig4v7FpO0mVVYh
+         tVKFJgoet+cPV1weniH0Xv+jMVEKnlahnrGwZVOvEPqY9mVc/kSbDM/fxd2CkAWhll5P
+         UagJX937yAyWqgANAeV4K4HBLzIYSUBlU1SxDFQop74ZNEpoOXn+TuvDUzwdpYY7dBCW
+         V4SKLuulcRmeXp+ty4WTtgmR7a6noGyooIMvui/5VDp5diYDQE/S3nQBC6/BrDkKxsbU
+         MSsa8cVukZvmFHzTt28x0acTnt74g80Pzsr5JTTRft6UaUAknBKKIjQnIM9CRzTySDl/
+         fwDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752579324; x=1753184124;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cTflvjFePLQxgKie4eKSTOOZevSjP8T8WicglUvKhQU=;
+        b=CEyKKcxyVkEwXTl+fIxrF+IByuMyPKv35hsOv7drSpQt/Ke0DmndFKN2D3IFw3rWXY
+         pXtxOP5HPdS41fJv8DsvmSi63umDYWlPX1GWWh8PNxmxmvVFpuJisHkh1RPMN+K2IjGD
+         1pfjVPV9NXLPy75rx6bVnL1t9QboanFVd2B6bnllkIJ9w/9qsE01yBrSfdV5V2ueY6eS
+         BMJQWPUHeMSTUX8O1hecaL5HWlnADbOjd0KPvhi+f6T5LLtBI0rYbpOZEQWj9yS9zE3i
+         boHyS6Yt2bE+Tb9N/gqgbdYhtPmcjvZ58J5g1OtgYaXLggejNPDU+fMO5pF0ZMxSMNG6
+         ffaA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7d6RaUs8EBmZrAnzPqRI5S7a43JebnU4kfJCpAZ5NZTbnMkzfgHSoBMcKVTmc2JyJZeq787b6V2nHUwE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEXsFDqOM+/Fa1zSKc/LKYpaGkowP/xj/h9Sgz0i77bS2DtBRY
+	gIGPASgSVeJMkNEh0z/nGoDRkE+K9FEr4Uzer+4K2q+36MhkFr8iutdkmpTTShSg7EvCM1IcRYG
+	ruKrcLJj5WRPMMQlSu8Eh3JUiJRpSpvQCWA3gfbTiGQ==
+X-Gm-Gg: ASbGncsgKGBuNsrTQS6iy74qbFrgs1dt6TMBRiH1uEgjH/qO06K57MJQTfg+cW+OhDx
+	xQyuHMNc3jBimpai1m2msCJqKi+UGUW1bc4fyDecX2VuGf/YRmdwQJqAIGl+ePLHdpAnUq82MyO
+	fvbozn2TmMdMPc7cY+h3vOs9bjInsw+R7yeJ0odtf7vvMjzP3uOP1gBJG7Hw1WLJfsjyBr6CASy
+	mXLudGBdF99Kn/LN8I=
+X-Google-Smtp-Source: AGHT+IHfjHxIt9nZkak6zCnhG7sn8uSPBfYsxEtsb2a6mcbcWZf8ySh+73e1WwlnP3JuKOMwe35Yu94PqLxFVbjU1Uc=
+X-Received: by 2002:a05:690c:6a08:b0:716:6a18:1740 with SMTP id
+ 00721157ae682-717d5e30ff5mr244148587b3.33.1752579324012; Tue, 15 Jul 2025
+ 04:35:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250715-tsfix-v1-1-da21665d4626@kernel.org>
-X-B4-Tracking: v=1; b=H4sIALI8dmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDc0NT3ZLitMwKXXMLAyMTM0sDk0QDQyWg2oKiVKAw2Jzo2NpaAFAgewZ
- XAAAA
-X-Change-ID: 20250715-tsfix-780246904a01
-To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5986; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=VoCKJg3aglPoXGmYCQF7UL2bstbcwOkJVWtLwxYKV0c=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBodjy0qIcFlPaUFRGlYK9bRl83a+rpITi4FQzWt
- jVksrJhIlaJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaHY8tAAKCRAADmhBGVaC
- FQKJEADSH7zGxPYXcitdceOD52SBKZqXW6slRxvfFJeFaFgMgm/N02wau2Dro9MzrCCwec4mdHO
- FMHn+PnZE2W3ILpErLDlC0XD3Bj0gvVOcylyO79RAyZno4zPJF5W57H6MdQey/7yFbvf66Am/7h
- bTPIzXKr4RAfF3sH+ASCcl2mDfrSlcXND9UJ/BUH3zPBU/KNN09xSjD5QE7UIIVCkkSeu+J7VnI
- 9y53I2/umT3pFh3rMMsmdmh5oHBaX4wgycHGnr4D+MqkkvJJJx6Gf3XwUn/PVC6lkyN27pU6262
- ZxZ5h5lQvFlhsbf59PAsmfQ29deOaLD/883aGSRJC36Kc4dRr6Un/2b4iKAodo2ehvkKKKuICEw
- GdUSKFl1rksjBOl9BJv0QeANKLoKhWAQQdsL+4aqko6DPXGTen7pLhBErLqOtaYmBxJUb10bQRC
- stTKgcejhmRihZBPfin56OiYyrq4HlnlYf7gAClhiBC7iI0SheVZtV78G7wJcr8jANrR9KskWmW
- rwTmLQ5t230849Dn4zVk/GZHagALVPW+56NMyHcFZlu18LZVSDtrtvA1UDkB/+brHbX40tCl95U
- W6ODpeCrOJ4dbcHru1Gye1xMbwNxI85CTgQ3+wnbPJ0+51gVVes2cdyxqBmkQDZOgEJ7hmnGTfd
- cH2g1mDU8g8bDAg==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+References: <20250701114733.636510-1-ulf.hansson@linaro.org>
+ <CGME20250710122654eucas1p20f1179a9ff22d562d89252f924d34dae@eucas1p2.samsung.com>
+ <20250701114733.636510-22-ulf.hansson@linaro.org> <212a1a56-08a5-48a5-9e98-23de632168d0@samsung.com>
+ <CAPDyKFrPOgWW_=ehCjtqAUR97HoLKmgFNO3bRT50-w6A1LgGFw@mail.gmail.com>
+ <01646690-8964-49c8-bbed-556380844b14@nvidia.com> <CAPDyKFooYFVrzLEqOtwb02iyEf+c6qPB8+Us1--Y-oXbJVG+SQ@mail.gmail.com>
+In-Reply-To: <CAPDyKFooYFVrzLEqOtwb02iyEf+c6qPB8+Us1--Y-oXbJVG+SQ@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 15 Jul 2025 13:34:47 +0200
+X-Gm-Features: Ac12FXw0mZPGQfTep1pMZhaIh1PE21HNet-YtWTUWTNvcL1vhGLnVaD4aB7xFiQ
+Message-ID: <CAPDyKFq=6vZ4xbuduE9TvGB-NtCMpBKProYNRv-=c3cBZdTuPw@mail.gmail.com>
+Subject: Re: [PATCH v3 21/24] pmdomain: core: Leave powered-on genpds on until late_initcall_sync
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Saravana Kannan <saravanak@google.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
+	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Hiago De Franco <hiago.franco@toradex.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Clients will typically precede a DELEGRETURN for a delegation with
-delegated timestamp with a SETATTR to set the timestamps on the server
-to match what the client has.
+On Tue, 15 Jul 2025 at 13:32, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Tue, 15 Jul 2025 at 12:28, Jon Hunter <jonathanh@nvidia.com> wrote:
+> >
+> > Hi Ulf,
+> >
+> > On 10/07/2025 15:54, Ulf Hansson wrote:
+> > > On Thu, 10 Jul 2025 at 14:26, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> > >>
+> > >> On 01.07.2025 13:47, Ulf Hansson wrote:
+> > >>> Powering-off a genpd that was on during boot, before all of its consumer
+> > >>> devices have been probed, is certainly prone to problems.
+> > >>>
+> > >>> As a step to improve this situation, let's prevent these genpds from being
+> > >>> powered-off until genpd_power_off_unused() gets called, which is a
+> > >>> late_initcall_sync().
+> > >>>
+> > >>> Note that, this still doesn't guarantee that all the consumer devices has
+> > >>> been probed before we allow to power-off the genpds. Yet, this should be a
+> > >>> step in the right direction.
+> > >>>
+> > >>> Suggested-by: Saravana Kannan <saravanak@google.com>
+> > >>> Tested-by: Hiago De Franco <hiago.franco@toradex.com> # Colibri iMX8X
+> > >>> Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> # TI AM62A,Xilinx ZynqMP ZCU106
+> > >>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > >>
+> > >> This change has a side effect on some Exynos based boards, which have
+> > >> display and bootloader is configured to setup a splash screen on it.
+> > >> Since today's linux-next, those boards fails to boot, because of the
+> > >> IOMMU page fault.
+> > >
+> > > Thanks for reporting, let's try to fix this as soon as possible then.
+> > >
+> > >>
+> > >> This happens because the display controller is enabled and configured to
+> > >> perform the scanout from the spash-screen buffer until the respective
+> > >> driver will reset it in driver probe() function. This however doesn't
+> > >> work with IOMMU, which is being probed earlier than the display
+> > >> controller driver, what in turn causes IOMMU page fault once the IOMMU
+> > >> driver gets attached. This worked before applying this patch, because
+> > >> the power domain of display controller was simply turned off early
+> > >> effectively reseting the display controller.
+> > >
+> > > I can certainly try to help to find a solution, but I believe I need
+> > > some more details of what is happening.
+> > >
+> > > Perhaps you can point me to some relevant DTS file to start with?
+> > >
+> > >>
+> > >> This has been discussed a bit recently:
+> > >> https://lore.kernel.org/all/544ad69cba52a9b87447e3ac1c7fa8c3@disroot.org/
+> > >> and I can add a workaround for this issue in the bootloaders of those
+> > >> boards, but this is something that has to be somehow addressed in a
+> > >> generic way.
+> > >
+> > > It kind of sounds like there is a missing power-domain not being
+> > > described in DT for the IOMMU, but I might have understood the whole
+> > > thing wrong.
+> > >
+> > > Let's see if we can work something out in the next few days, otherwise
+> > > we need to find another way to let some genpds for these platforms to
+> > > opt out from this new behaviour.
+> >
+> > Have you found any resolution for this? I have also noticed a boot
+> > regression on one of our Tegra210 boards and bisect is pointing to this
+> > commit. I don't see any particular crash, but a hang on boot.
+>
+> Thanks for reporting!
+>
+> For Exynos we opt-out from the behaviour by enforcing a sync_state of
+> all PM domains upfront [1], which means before any devices get
+> attached.
+>
+> Even if that defeats the purpose of the $subject series, this was one
+> way forward that solved the problem. When the boot-ordering problem
+> (that's how I understood the issue) for Exynos gets resolved, we
+> should be able to drop the hack, at least that's the idea.
+>
+> >
+> > If there is any debug we can enable to see which pmdomain is the problem
+> > let me know.
+>
+> There aren't many debug prints in genpd that I think makes much sense
+> to enable, but you can always give it a try. Since you are hanging,
+> obviously you can't look at the genpd debugfs data...
+>
+> Note that, the interesting PM domains are those that are powered-on
+> when calling pm_genpd_init(). As a start, I would add some debug
+> prints in () to see which PM domains that are relevant to track.
 
-knfsd implements this by using the nfsd_setattr() infrastructure, which
-will set ATTR_CTIME on any update that goes to notify_change(). This is
-problematic as it means that the client will get a spurious ctime
-updates when updating the atime.
+/s/()/tegra_powergate_add()
 
-Fix this by pushing the handling of ATTR_CTIME down into the decoder
-functions so that they are set earlier and more deliberately, and stop
-nfsd_setattr() from implicitly adding it to every notify_change() call.
-
-Fixes: 7e13f4f8d27d ("nfsd: handle delegated timestamps in SETATTR")
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-I finally was able to spend some time on the gitr failures with
-delegated timestamps and found this. With this patch I was able to run
-the gitr suite in the "stress" configuration under kdevops and it
-passed.
----
- fs/nfsd/nfs3xdr.c   |  3 +++
- fs/nfsd/nfs4state.c |  2 +-
- fs/nfsd/nfs4xdr.c   | 18 +++++++++---------
- fs/nfsd/nfsxdr.c    |  3 +++
- fs/nfsd/vfs.c       |  1 -
- 5 files changed, 16 insertions(+), 11 deletions(-)
-
-diff --git a/fs/nfsd/nfs3xdr.c b/fs/nfsd/nfs3xdr.c
-index ef4971d71ac4bfee5171537eda80dec6e367060d..3058c73fe2d204131c33e31e76f7ca15c2545d36 100644
---- a/fs/nfsd/nfs3xdr.c
-+++ b/fs/nfsd/nfs3xdr.c
-@@ -289,6 +289,9 @@ svcxdr_decode_sattr3(struct svc_rqst *rqstp, struct xdr_stream *xdr,
- 		return false;
- 	}
- 
-+	if (iap->ia_valid)
-+		iap->ia_valid |= ATTR_CTIME;
-+
- 	return true;
- }
- 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index d5694987f86fadab985e55cce6261ad680e83b69..3aa430c8d941570840fc482efc750daa5df3ae84 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -5690,7 +5690,7 @@ nfsd4_truncate(struct svc_rqst *rqstp, struct svc_fh *fh,
- 		struct nfsd4_open *open)
- {
- 	struct iattr iattr = {
--		.ia_valid = ATTR_SIZE,
-+		.ia_valid = ATTR_SIZE | ATTR_CTIME,
- 		.ia_size = 0,
- 	};
- 	struct nfsd_attrs attrs = {
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index 3afcdbed6e1465929ec7da67593243a8bf97b3f4..568b30619c79a857429113015b2ff7081557681f 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -409,7 +409,7 @@ nfsd4_decode_fattr4(struct nfsd4_compoundargs *argp, u32 *bmval, u32 bmlen,
- 		if (xdr_stream_decode_u64(argp->xdr, &size) < 0)
- 			return nfserr_bad_xdr;
- 		iattr->ia_size = size;
--		iattr->ia_valid |= ATTR_SIZE;
-+		iattr->ia_valid |= ATTR_SIZE | ATTR_CTIME;
- 	}
- 	if (bmval[0] & FATTR4_WORD0_ACL) {
- 		status = nfsd4_decode_acl(argp, acl);
-@@ -424,7 +424,7 @@ nfsd4_decode_fattr4(struct nfsd4_compoundargs *argp, u32 *bmval, u32 bmlen,
- 			return nfserr_bad_xdr;
- 		iattr->ia_mode = mode;
- 		iattr->ia_mode &= (S_IFMT | S_IALLUGO);
--		iattr->ia_valid |= ATTR_MODE;
-+		iattr->ia_valid |= ATTR_MODE | ATTR_CTIME;
- 	}
- 	if (bmval[1] & FATTR4_WORD1_OWNER) {
- 		u32 length;
-@@ -438,7 +438,7 @@ nfsd4_decode_fattr4(struct nfsd4_compoundargs *argp, u32 *bmval, u32 bmlen,
- 					      &iattr->ia_uid);
- 		if (status)
- 			return status;
--		iattr->ia_valid |= ATTR_UID;
-+		iattr->ia_valid |= ATTR_UID | ATTR_CTIME;
- 	}
- 	if (bmval[1] & FATTR4_WORD1_OWNER_GROUP) {
- 		u32 length;
-@@ -452,7 +452,7 @@ nfsd4_decode_fattr4(struct nfsd4_compoundargs *argp, u32 *bmval, u32 bmlen,
- 					      &iattr->ia_gid);
- 		if (status)
- 			return status;
--		iattr->ia_valid |= ATTR_GID;
-+		iattr->ia_valid |= ATTR_GID | ATTR_CTIME;
- 	}
- 	if (bmval[1] & FATTR4_WORD1_TIME_ACCESS_SET) {
- 		u32 set_it;
-@@ -464,10 +464,10 @@ nfsd4_decode_fattr4(struct nfsd4_compoundargs *argp, u32 *bmval, u32 bmlen,
- 			status = nfsd4_decode_nfstime4(argp, &iattr->ia_atime);
- 			if (status)
- 				return status;
--			iattr->ia_valid |= (ATTR_ATIME | ATTR_ATIME_SET);
-+			iattr->ia_valid |= ATTR_ATIME | ATTR_ATIME_SET | ATTR_CTIME;
- 			break;
- 		case NFS4_SET_TO_SERVER_TIME:
--			iattr->ia_valid |= ATTR_ATIME;
-+			iattr->ia_valid |= ATTR_ATIME | ATTR_CTIME;
- 			break;
- 		default:
- 			return nfserr_bad_xdr;
-@@ -492,10 +492,10 @@ nfsd4_decode_fattr4(struct nfsd4_compoundargs *argp, u32 *bmval, u32 bmlen,
- 			status = nfsd4_decode_nfstime4(argp, &iattr->ia_mtime);
- 			if (status)
- 				return status;
--			iattr->ia_valid |= (ATTR_MTIME | ATTR_MTIME_SET);
-+			iattr->ia_valid |= ATTR_MTIME | ATTR_MTIME_SET | ATTR_CTIME;
- 			break;
- 		case NFS4_SET_TO_SERVER_TIME:
--			iattr->ia_valid |= ATTR_MTIME;
-+			iattr->ia_valid |= ATTR_MTIME | ATTR_CTIME;
- 			break;
- 		default:
- 			return nfserr_bad_xdr;
-@@ -519,7 +519,7 @@ nfsd4_decode_fattr4(struct nfsd4_compoundargs *argp, u32 *bmval, u32 bmlen,
- 		if (xdr_stream_decode_u32(argp->xdr, &mask) < 0)
- 			return nfserr_bad_xdr;
- 		*umask = mask & S_IRWXUGO;
--		iattr->ia_valid |= ATTR_MODE;
-+		iattr->ia_valid |= ATTR_MODE | ATTR_CTIME;
- 	}
- 	if (bmval[2] & FATTR4_WORD2_TIME_DELEG_ACCESS) {
- 		fattr4_time_deleg_access access;
-diff --git a/fs/nfsd/nfsxdr.c b/fs/nfsd/nfsxdr.c
-index fc262ceafca972df353a389eea2d7e99fd6bc1d2..8372a374623a5d98fff7c0227a73a9b562da407d 100644
---- a/fs/nfsd/nfsxdr.c
-+++ b/fs/nfsd/nfsxdr.c
-@@ -196,6 +196,9 @@ svcxdr_decode_sattr(struct svc_rqst *rqstp, struct xdr_stream *xdr,
- 			iap->ia_valid &= ~(ATTR_ATIME_SET|ATTR_MTIME_SET);
- 	}
- 
-+	if (iap->ia_valid)
-+		iap->ia_valid |= ATTR_CTIME;
-+
- 	return true;
- }
- 
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index cd689df2ca5d7396cffb5ed9dc14f774a8f3881c..383a724e9aa20a4c6a71a563281fc8a618dd36d3 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -470,7 +470,6 @@ static int __nfsd_setattr(struct dentry *dentry, struct iattr *iap)
- 	if (!iap->ia_valid)
- 		return 0;
- 
--	iap->ia_valid |= ATTR_CTIME;
- 	return notify_change(&nop_mnt_idmap, dentry, iap, NULL);
- }
- 
-
----
-base-commit: 347e9f5043c89695b01e66b3ed111755afcf1911
-change-id: 20250715-tsfix-780246904a01
-
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+> Potentially you could then try to power them off and register them
+> accordingly with genpd. One by one, to see which of them is causing
+> the problem.
+>
+> Another option could be to add a new genpd config flag
+> (GENPD_FLAG_DONT_STAY_ON or something along those lines), that informs
+> genpd to not set the genpd->stay_on in pm_genpd_init(). Then
+> tegra_powergate_add() would have to set GENPD_FLAG_DONT_STAY_ON for
+> those genpds that really need it.
+>
+> Kind regards
+> Uffe
+>
+> [1]
+> https://lore.kernel.org/all/20250711114719.189441-1-ulf.hansson@linaro.org/
 
