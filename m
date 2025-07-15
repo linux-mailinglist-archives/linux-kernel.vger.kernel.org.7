@@ -1,333 +1,100 @@
-Return-Path: <linux-kernel+bounces-731374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8343B05359
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:34:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86923B0535D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 251A3189F68A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:34:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 203F0189FA32
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DC226E717;
-	Tue, 15 Jul 2025 07:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B7C1EEE0;
+	Tue, 15 Jul 2025 07:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kAujl5YG"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QxJTX6cn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803A125CC64
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A2125CC64;
+	Tue, 15 Jul 2025 07:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752564868; cv=none; b=XXW8qSmGKOvrUQVUxqz8ZgxK3mbEwIaSWcWY769WRc1Uuld18GSDxpnKhpPBAE5CXdzBu6w3uZjZ191p7NEhWIP9A5O6gJqAnVO68ZEsYxxKgPtKrkbPbnqwqsT6/ZLhpmY1p3bD0Uxnh36HUBkAf0/78o7hr7vOESzfsmqseOw=
+	t=1752564880; cv=none; b=uKEL5qprynujc4mP0MB8CTA3HZjZDWwzLPyOV9LHXDATHfwTmLqMJQrCgPdBqyTAlUn13Azo1unrmKMqOIfW03Pfo3dTcrRwFn3ByqxzaGdEYYk8ePqEIiuLiRu2TbRIN02Oi/o6j8metFh1KH6Vjd+uwwzHG3agmYA1s65CScQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752564868; c=relaxed/simple;
-	bh=t6pg1iBfMU4PcTQly5LrIIzuwKQX0Al2mtxNiFpYb20=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=apHYMx89RyEGlX9w2OyPjeS5woDMqUjX+Kf5jGZsyCCe2sExBtr4fKfbdHQVp5l1yg+x3sJAVjvXPNrAPtpr+X6u18li7aTJ380GRsueyJAqQiCZxczQbzsyJuuOpqKxJ/RPJgwFFZFGPyCWgzQPgayHqGhIqaLgBGAZAzn6RdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kAujl5YG; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32b7cf56cacso48589691fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:34:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1752564864; x=1753169664; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gDP9Js2kzVuyXlUZIv8xGDhpQxOjQoCz2hrw5ui3thc=;
-        b=kAujl5YGTnoKx7OzkQCx6Pa05+lmvZdKns507Bk6GKOfEwF899MIGtuD95QKZAG5qm
-         5mmxwDtmqF1ZphZf4HedQMwgvv7H4eZtM8zhC6DqfC/LEiP9UHAVCfk8rQtFNcG54hlv
-         21RBe+POu6rMpuoxKPSWX9fC4HBF4hhhsotuY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752564864; x=1753169664;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gDP9Js2kzVuyXlUZIv8xGDhpQxOjQoCz2hrw5ui3thc=;
-        b=olFD7VzHa7RM9cjqU+f0YWJAZCJIcc05VE5q2+/iAmiUFr4mAXxKyoZBntUL3b1WDy
-         A2phJUFjU238mQEB2rxtTpIZibXexh0YOngmKrXv5jHKwBsNxHFToanUFMPSF3NbdAcJ
-         fEbEs20J8NMxS7bODYl1iIqruPrrPEGTjjawboTvKX7rRUU1fpmECXcwiHMPOTGtPS6T
-         5Iz2yUh7RagkWQ5t0WbA43Htc21IH+UXBKN9aqwBNJ1WABDR6pEiKWmFMueI2CxNdO5C
-         oWC2gpbVKEDKAQYhFmke7AdmuaZQJpADTQ2WyunD+EKUJ5d8Mee8EIzmnmR9kzV6TXDW
-         GPAA==
-X-Forwarded-Encrypted: i=1; AJvYcCXayjOK67KA4n6tnC9FHbaAvAotxv4a78hSWcZm37M7sSsdyVYNT6qJ/j3Pif1uoowydPHlYpY2fetZ52s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxANCuhZUpVLPXwSdg5VVCl9eKokSunbvdqiY6xQDv1AUq5Jda9
-	3pZu7LQ6baXWernuyIsbSGDRuN5Z6kcJBX7jWMfYU/k1TpNxLns4S3P9CLa0aw4d5G8b2Lqkm+0
-	Luj3Ao+VT5w7f7M2rYxFq8gfrZakfvHV46cLU+mWO
-X-Gm-Gg: ASbGncsBGyOdPDy4YHYLt5r85xa0Xex0C8OFvx4lyF1IXN64rsTYeb6VW5SFlAlioeQ
-	GdOC2htAMwoWokFORR+Zae2aLAaIXsvIMhUgGQii/CjWzDiuZNJcV33pnjAkFj7hpFtJMMuVNHs
-	KgN8qftFFXKKIBXh/cnzQq95IWc4FGoAWoQKyCe+sEe3i9jGfUMuUStYJm1opbJYOv90br2MLl5
-	y3CX884KzaEbdt6gvrtG+Xl8qgMK+w1z6c=
-X-Google-Smtp-Source: AGHT+IGyLQwS9wKi4gblzvO5qXko8LClZQ/7pERQ/cNbp9sboWxoQuuZ+SKFuMvHo+wECT4yBGDlAwSuCXvvVMsXsy8=
-X-Received: by 2002:a05:6512:1041:b0:553:a456:a0c1 with SMTP id
- 2adb3069b0e04-55a058a4cd2mr4180549e87.43.1752564863458; Tue, 15 Jul 2025
- 00:34:23 -0700 (PDT)
+	s=arc-20240116; t=1752564880; c=relaxed/simple;
+	bh=4CL6/hyrXntz5Jzf6q4KYnN4WXadq+OD4RoZk4/8EVw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FVhALUmWxGraYa6Lbxl34FAf7sVgEqPMQag960RT2S/AYkBScxjsKNJ1Nv0xepnaAc5FrgmWCFXbHobe6X0rmDgGeNxkqjDgoMn1RuMZ0O7lbfoXYZn5bGg4NzEf/aXXOCY8lcSiKdRga5muwd+FdqykazDw5br8292NoJxxUSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QxJTX6cn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA7D7C4CEE3;
+	Tue, 15 Jul 2025 07:34:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752564878;
+	bh=4CL6/hyrXntz5Jzf6q4KYnN4WXadq+OD4RoZk4/8EVw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=QxJTX6cn9ikSbIL+Mbheq/UHXcecoYI7JnYpd6bLAxFnhA9ycbbcpbLefRiHGecX2
+	 lalzHadVfbsb2W6mwhjfXT8enIcbpM/DznclNr7PfXPy6QwfrI3crLj7uVJmOXSlf4
+	 4+3qxcCaigdsjBL8b70q5s5/85ckxuNSjzWNT47FnjxCihe1kn8/eDOeUXaQeGYubl
+	 V9xsKBHF03TUYtHIqxA6j23+QOSkG6ld9jdFOYMJBSaQh176oSq3Gw97eQv9DTPMAD
+	 g8AwFRmdXs4aF7TVnaeFLoVtzWV7+T0YPownhQ86oKevGdSe2UMUx9gpgBBKPP/2Uc
+	 qnMfLuJfOM9dg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+Cc: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,  "Maxime
+ Ripard" <mripard@kernel.org>,  "Thomas Zimmermann" <tzimmermann@suse.de>,
+  "David Airlie" <airlied@gmail.com>,  "Simona Vetter" <simona@ffwll.ch>,
+  "Miguel Ojeda" <ojeda@kernel.org>,  "Danilo Krummrich" <dakr@kernel.org>,
+  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
+  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin"
+ <lossin@kernel.org>,  "Trevor Gross" <tmgross@umich.edu>,
+  <dri-devel@lists.freedesktop.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/2] Add Opaque::cast_from
+In-Reply-To: <20250624-opaque-from-raw-v2-0-e4da40bdc59c@google.com> (Alice
+	Ryhl's message of "Tue, 24 Jun 2025 15:27:54 +0000")
+References: <OeCi_sbX1kfHFfD5rJSghX6nJ6nZA25Ak9sBH6PvR8BqWfBDlxdB0ejBjYgqbzD_m18QNDU4BdjsKdtdSq4lrA==@protonmail.internalid>
+	<20250624-opaque-from-raw-v2-0-e4da40bdc59c@google.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Tue, 15 Jul 2025 09:34:27 +0200
+Message-ID: <8734axj4ak.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708111806.3992-1-darren.ye@mediatek.com> <20250708111806.3992-9-darren.ye@mediatek.com>
- <CAGXv+5EufDuxLMnwMaCqtWFZpVMNMxi-5OwCyO4a+KD2T+2NYA@mail.gmail.com>
-In-Reply-To: <CAGXv+5EufDuxLMnwMaCqtWFZpVMNMxi-5OwCyO4a+KD2T+2NYA@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Tue, 15 Jul 2025 15:34:12 +0800
-X-Gm-Features: Ac12FXwLri21evCxtuWTPMRxjTUULLUjQETvR-4GzmqmkL7Am8Zi1o5cvxLE7BY
-Message-ID: <CAGXv+5EMjfrdLX49M9514uwzaTzc2G3kpQNw8BdJaZ4AaexBKg@mail.gmail.com>
-Subject: Re: [PATCH v6 08/10] ASoC: dt-bindings: mediatek,mt8196-afe: add
- audio AFE
-To: "Darren.Ye" <darren.ye@mediatek.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Jul 15, 2025 at 1:09=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> w=
-rote:
->
-> Hi,
->
-> On Tue, Jul 8, 2025 at 7:35=E2=80=AFPM Darren.Ye <darren.ye@mediatek.com>=
- wrote:
-> >
-> > From: Darren Ye <darren.ye@mediatek.com>
-> >
-> > Add mt8196 audio AFE.
-> >
-> > Signed-off-by: Darren Ye <darren.ye@mediatek.com>
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > ---
-> >  .../bindings/sound/mediatek,mt8196-afe.yaml   | 157 ++++++++++++++++++
-> >  1 file changed, 157 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/sound/mediatek,mt=
-8196-afe.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8196-af=
-e.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8196-afe.yaml
-> > new file mode 100644
-> > index 000000000000..fe147eddf5e7
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/sound/mediatek,mt8196-afe.yaml
-> > @@ -0,0 +1,157 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/sound/mediatek,mt8196-afe.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: MediaTek Audio Front End PCM controller for MT8196
-> > +
-> > +maintainers:
-> > +  - Darren Ye <darren.ye@mediatek.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: mediatek,mt8196-afe
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  memory-region:
-> > +    maxItems: 1
-> > +
-> > +  mediatek,vlpcksys:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description: To set up the apll12 tuner
->
-> Looking at the implementation, the configuration is just a fixed value.
-> Can this be moved to the VLP clock driver instead?
->
-> > +
-> > +  power-domains:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: mux for audio intbus
-> > +      - description: mux for audio engen1
-> > +      - description: mux for audio engen2
-> > +      - description: mux for audio h
-> > +      - description: vlp 26m clock
-> > +      - description: audio apll1 clock
-> > +      - description: audio apll2 clock
-> > +      - description: audio apll1 divide4
-> > +      - description: audio apll2 divide4
-> > +      - description: audio apll12 divide for i2sin0
-> > +      - description: audio apll12 divide for i2sin1
-> > +      - description: audio apll12 divide for fmi2s
-> > +      - description: audio apll12 divide for tdmout mck
-> > +      - description: audio apll12 divide for tdmout bck
-> > +      - description: mux for audio apll1
-> > +      - description: mux for audio apll2
-> > +      - description: mux for i2sin0 mck
-> > +      - description: mux for i2sin1 mck
-> > +      - description: mux for fmi2s mck
-> > +      - description: mux for tdmout mck
-> > +      - description: mux for adsp clock
-> > +      - description: 26m clock
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: top_aud_intbus
-> > +      - const: top_aud_eng1
-> > +      - const: top_aud_eng2
-> > +      - const: top_aud_h
-> > +      - const: vlp_clk26m
->
-> > +      - const: apll1
-> > +      - const: apll2
-> > +      - const: apll1_d4
-> > +      - const: apll2_d4
->
-> These are parents of the top_apll[12]. They do not feed into the
-> hardware directly, so you should not be including them here.
->
-> > +      - const: apll12_div_i2sin0
-> > +      - const: apll12_div_i2sin1
-> > +      - const: apll12_div_fmi2s
-> > +      - const: apll12_div_tdmout_m
-> > +      - const: apll12_div_tdmout_b
->
-> In the clock bindings sent by Collabora, these dividers are no longer
-> separately modeled; they have been combined with their respective
-> top_* clocks.
->
-> > +      - const: top_apll1
-> > +      - const: top_apll2
->
-> These two are parents to apll12_div_*, do not feed into the hardware
-> directly, so you should not be including them here.
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-Slight correction: looking at the submitted AFE clk driver, these two
-feed into some clock gate in the AFE block, so these two are probably
-needed.
+> Since commit b20fbbc08a36 ("rust: check type of `$ptr` in
+> `container_of!`") we have enforced that the field pointer passed to
+> container_of! must match the declared field. This caused mismatches when
+> using a pointer to bindings::x for fields of type Opaque<bindings::x>.
+>
+> This situation encourages the user to simply pass field.cast() to the
+> container_of! macro, but this is not great because you might
+> accidentally pass a *mut bindings::y when the field type is
+> Opaque<bindings::x>, which would be wrong.
+>
+> To help catch this kind of mistake, add a new Opaque::cast_from that
+> wraps a raw pointer in Opaque without changing the inner type. Also
+> rename raw_get() to cast_into() for naming consistency.
+>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-ChenYu
+I think your search/replace was a bit too general in hrtimer.rs. When
+you fix that:
 
-> The clock tree for each audio interface clock looks like the following:
->
->     apll1 -> apll1_d4 -> top_apll1 --
->                      /               \
->               clk26m                  --> top_fmi2s -> apll12_div_fmi2s
->                      \               /
->     apll2 -> apll2_d4 -> top_apll2 --
->
-> Only the final "apll12_div_fmi2s" should be referenced.
->
-> On the implementation side, it should simply be a matter of setting the
-> required rate (24.576 MHz or 22.5792 MHz, or some multiple) on this leaf
-> clock, and let the clock framework figure out the PLL and dividers to
-> use. Same thing for enabling the clock.
->
-> > +      - const: top_i2sin0
-> > +      - const: top_i2sin1
-> > +      - const: top_fmi2s
-> > +      - const: top_tdmout
-> > +      - const: top_adsp
->
-> > +      - const: clk26m
->
-> Is this one directly needed? It is similar to vlp_clk26m, and I suspect
-> only that one is needed.
->
->
-> ChenYu
->
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts
-> > +  - memory-region
-> > +  - mediatek,vlpcksys
-> > +  - power-domains
-> > +  - clocks
-> > +  - clock-names
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +
-> > +    soc {
-> > +        #address-cells =3D <2>;
-> > +        #size-cells =3D <2>;
-> > +
-> > +        afe@1a110000 {
-> > +            compatible =3D "mediatek,mt8196-afe";
-> > +            reg =3D <0 0x1a110000 0 0x9000>;
-> > +            interrupts =3D <GIC_SPI 351 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +            memory-region =3D <&afe_dma_mem_reserved>;
-> > +            mediatek,vlpcksys =3D <&vlp_cksys_clk>;
-> > +            power-domains =3D <&scpsys 14>; //MT8196_POWER_DOMAIN_AUDI=
-O
-> > +            clocks =3D <&vlp_cksys_clk 40>, //CLK_VLP_CK_AUD_INTBUS_SE=
-L
-> > +                     <&vlp_cksys_clk 38>, //CLK_VLP_CK_AUD_ENGEN1_SEL
-> > +                     <&vlp_cksys_clk 39>, //CLK_VLP_CK_AUD_ENGEN2_SEL
-> > +                     <&vlp_cksys_clk 37>, //CLK_VLP_CK_AUDIO_H_SEL
-> > +                     <&vlp_cksys_clk 45>, //CLK_VLP_CK_CLKSQ
-> > +                     <&cksys_clk 129>, //CLK_CK_APLL1
-> > +                     <&cksys_clk 132>, //CLK_CK_APLL2
-> > +                     <&cksys_clk 130>, //CLK_CK_APLL1_D4
-> > +                     <&cksys_clk 133>, //CLK_CK_APLL2_D4
-> > +                     <&cksys_clk 80>, //CLK_CK_APLL12_CK_DIV_I2SIN0
-> > +                     <&cksys_clk 81>, //CLK_CK_APLL12_CK_DIV_I2SIN1
-> > +                     <&cksys_clk 92>, //CLK_CK_APLL12_CK_DIV_FMI2S
-> > +                     <&cksys_clk 93>, //CLK_CK_APLL12_CK_DIV_TDMOUT_M
-> > +                     <&cksys_clk 94>, //CLK_CK_APLL12_CK_DIV_TDMOUT_B
-> > +                     <&cksys_clk 43>, //CLK_CK_AUD_1_SEL
-> > +                     <&cksys_clk 44>, //CLK_CK_AUD_2_SEL
-> > +                     <&cksys_clk 66>, //CLK_CK_APLL_I2SIN0_MCK_SEL
-> > +                     <&cksys_clk 67>, //CLK_CK_APLL_I2SIN1_MCK_SEL
-> > +                     <&cksys_clk 78>, //CLK_CK_APLL_FMI2S_MCK_SEL
-> > +                     <&cksys_clk 79>, //CLK_CK_APLL_TDMOUT_MCK_SEL
-> > +                     <&cksys_clk 45>, //CLK_CK_ADSP_SEL
-> > +                     <&cksys_clk 140>; //CLK_CK_TCK_26M_MX9
-> > +            clock-names =3D "top_aud_intbus",
-> > +                          "top_aud_eng1",
-> > +                          "top_aud_eng2",
-> > +                          "top_aud_h",
-> > +                          "vlp_clk26m",
-> > +                          "apll1",
-> > +                          "apll2",
-> > +                          "apll1_d4",
-> > +                          "apll2_d4",
-> > +                          "apll12_div_i2sin0",
-> > +                          "apll12_div_i2sin1",
-> > +                          "apll12_div_fmi2s",
-> > +                          "apll12_div_tdmout_m",
-> > +                          "apll12_div_tdmout_b",
-> > +                          "top_apll1",
-> > +                          "top_apll2",
-> > +                          "top_i2sin0",
-> > +                          "top_i2sin1",
-> > +                          "top_fmi2s",
-> > +                          "top_tdmout",
-> > +                          "top_adsp",
-> > +                          "clk26m";
-> > +        };
-> > +    };
-> > +
-> > +...
-> > --
-> > 2.45.2
-> >
-> >
+Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
+
+
+Best regards,
+Andreas Hindborg
+
+
+
 
