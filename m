@@ -1,155 +1,297 @@
-Return-Path: <linux-kernel+bounces-731705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09AA1B05872
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:07:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73129B05870
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBF08564944
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:06:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 102887B0402
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E48B6BB5B;
-	Tue, 15 Jul 2025 11:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACEE2DE71B;
+	Tue, 15 Jul 2025 11:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="enerStJq"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sN75/hiS"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2088.outbound.protection.outlook.com [40.107.94.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC0A2DFA2D;
-	Tue, 15 Jul 2025 11:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752577521; cv=none; b=WlT4Tt8NNYyPxJC3UOhq02bSDUMJ0bqLIEcbsU/TetEcs0oMZGPMYX/pO1xu7Ao2EOKX8wsUSpD9IL07NLiqtGMzdYldCkFxvamDJBn8fFVsYTrwdHm7D9nvDWD2UfnPi0v2XHZgrCmoJIFVZ7fR/XxySdk7nzrW/OLA0GparBk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752577521; c=relaxed/simple;
-	bh=HAoF2sUWyT3T91Zxpuepmt97am3f7ctQ7EPIkg8OWm0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pLMA6nfxUzKanYRdfWaPAegi2WDPUa7LiUe4x5n1gyFumFcnzvrScrj1Xv3Wcr7U7rBew8b+jF2zxHkRUp3m5zdXeRln87K3w4u3FlSP9IGCae0KeU+8HQj1lYjrv5O4TTP8gmzru7S1V1fLks9YcmNs20DDyQ5QNxkVSHeJs/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=enerStJq; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-74b54cead6cso3606946b3a.1;
-        Tue, 15 Jul 2025 04:05:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752577518; x=1753182318; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PdyrYF2somcJWeVef/fvp9prs0ptIROm/PEHLAtgGIQ=;
-        b=enerStJqaezAy7KgamCRYiVOi0MU97R8oNT9+zDlTVFuAS0ANZ9J05gA5VlHGOgw8A
-         1NTU1Me615h6c3DOD7Pa+UicHxHmAh0kcO6H1h1mglSJcIQoiWC5yXjRIm+VTf6/aIwI
-         n/cXeyzhnQ0BUO8oeRD0riHLnLpg7iYVD1MluIWdmg5yRlntFZPPW0yT+vqnRv1ox0HN
-         zk++x5kDQx5YC4Ld5jj3Ghm/ymsgfxESYQr82f5/W0eD1P2OKSyLMqv/ciCkKD3C7R2g
-         Qkqf16ZTulBfGvVfOXxihJeRg6YYw4M6SI1jgtFJWoBxpjR8z7sMIEpRbUOjnlsAvoki
-         n7+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752577518; x=1753182318;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PdyrYF2somcJWeVef/fvp9prs0ptIROm/PEHLAtgGIQ=;
-        b=BqDI7JFVyBt7jY0/kJrNCUm7TSLCtWwV6ibfThpO1nGJYbOaGwjtnv6Ssk01zpdAGn
-         w7adL/eTt0ksGuNMacuwbS9AF5GJoPl+RcZVWuqXYnC+Gu+nxUNdtDQ7En+JasfGN9Pi
-         olmPmwLlncqC/EgEP5V5QSS1P2iInJpUtijArDCDefgww0c+fWDdYFpVpsLXWulZL5RP
-         d0L+LSZ7RvVhJhsRdJz6lMl+IsNRUnKYFRqKvb/B65tRbQCtRT61sWCcd2KRjHFp25T1
-         P2SMsAl9AAEkWC6j0SorlZmhtITwb6ejOUjDVnH17Wf7hfBKL0I+5I1SGYDp6/aSI4Rn
-         +YLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUd+5xr9rdyo7m9iRmSvTQH0b5Uc01j4HUpM1wagOPObOo8jHmmBdavkEZ0CR2fw1ClKcMS62Lpyb22kOKbFj71@vger.kernel.org, AJvYcCXWadCt8+HALKVQZQup6yQjS6m7gWMXudeBIx7nYr0tLjhP3gJ3xGjPD8Bm9YwVL2iKvoQ+CnSDqITJzTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzqitakf06r4b6semMNu+4ObeUmFntUm1D+R/XhBDKW6HAzOnpb
-	cD220Uwuf0EDFSu7+rFicraB67ve7k5KWzvPbcBSjSWlA82jmMBD26X8
-X-Gm-Gg: ASbGncv2otU1cMFvOyQm4lG0wH1hoMZU0RS9xS6t86H7FiLhuA07mj9Jro4HFxGFwnG
-	TZF1nIFqSOZuugQYG1SfRxWukGVGSfHLg9fphYHru/MRtZbrNbH6LD19wog40SW9adtP5FpbIDO
-	IyRJRYQKGAQtpenPLxkWUYAd914zjA9Nofc3qzkoiM0j48ZVawx7y4bNuZyYjlszvA82c2ci75A
-	GG7UTWzCLNElqzUbHFxto37dO6zWqBLSSxx9JJOxEsJ+YWvFCcWKS4gtexw7sZMcXdRI6FsmeXD
-	7p6KSY7A5LGZPESeM9huHyBuxaZ4vYzCXAuLR1Xvj69f9nEc66bUpryWINfkw5PH9qeBPDB1AbX
-	tRAEJZZBBhDbz8jjOGmd43EFX17F8PQtLSWMev/GCSBvV
-X-Google-Smtp-Source: AGHT+IHvaoN5oYUSaPoNNV8wa34UYow1jV/wQynQyE+HDVIwE4uylcfESipjeICXNaldk8QQGezczQ==
-X-Received: by 2002:a05:6a00:810:b0:748:e0ee:dcff with SMTP id d2e1a72fcca58-74ee295d75cmr22942281b3a.11.1752577518294;
-        Tue, 15 Jul 2025 04:05:18 -0700 (PDT)
-Received: from DESKTOP-GIED850.localdomain ([114.247.113.178])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f4a050sm11802421b3a.119.2025.07.15.04.05.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 04:05:18 -0700 (PDT)
-From: wang lian <lianux.mm@gmail.com>
-To: lorenzo.stoakes@oracle.com
-Cc: Liam.Howlett@oracle.com,
-	akpm@linux-foundation.org,
-	brauner@kernel.org,
-	broonie@kernel.org,
-	david@redhat.com,
-	gkwang@linx-info.com,
-	jannh@google.com,
-	lianux.mm@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org,
-	p1ucky0923@gmail.com,
-	ryncsn@gmail.com,
-	shuah@kernel.org,
-	sj@kernel.org,
-	vbabka@suse.cz,
-	zijing.zhang@proton.me,
-	ziy@nvidia.com
-Subject: Re: [PATCH] selftests/mm: refactor common code and improve test skipping in guard_region
-Date: Tue, 15 Jul 2025 19:05:07 +0800
-Message-ID: <20250715110507.5383-1-lianux.mm@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <5e2b88e0-84ef-4870-b472-bd2aa7e88c78@lucifer.local>
-References: <5e2b88e0-84ef-4870-b472-bd2aa7e88c78@lucifer.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878A42D9783;
+	Tue, 15 Jul 2025 11:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752577516; cv=fail; b=DcQaP6CWK/4O89qSdeJNsqu4Me9mghdBzjKb0b+IDaw2z70FZdsCJ2YXoIMw9MGwKODFw4eWUUAk4J2MOgUX3w47A2XfjRnM+mC3dWdFqbGg1IKegJrqCKAmnhyCvOpUOQqd+xLU0xsaQM0mjncNeFJFY3lHT8g0vCSwrZGtndg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752577516; c=relaxed/simple;
+	bh=zOCRuZ9cjjlc+M9m04cg3cKMVYLWafd1024dfuWNWN8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HCyakkY5C+XC/u/M4FG/VS3ercGwiLptv2MRrPnAX2SToS1hIO5drMtyqLPI25wAOXNtjFMRVv6HZgJqWaKkTCyrTbLHwEtIrmKCS6wkOMgnCCwULU78+Mekg0eTeWuZAixb5zDoWzm9Z3ZghT6G6HPycSmWjGtTR+0DJede384=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sN75/hiS; arc=fail smtp.client-ip=40.107.94.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ASeTrjhj3yek0Iv+KOuyHJHFaTxpLg8uA5f2vse7oi2w8WQLbx0KYCM1Vo9hHhF582UBqXhlyEUn/36DCFwvfVELFrHBlRHqtvJHrVhqbzKYNXnT2Bg6XVidCOQP8p+mNAvQfepx/FN+b0bQAEQynZM5oAlG7SGjVeng1Oq6lFSiZ/rrXYZmk/KNhry2CfOrwYsirqO4tCpqz8FdFCtibgbvZxFLpAkz7vWuH2jME01yTW0cA/T7QjHmkj5CK6sEPcXoRPjf3RUC6DOZ0ZA7gOQtQAL7SPmNQMtxPK5Sc2HWE45qu8Us3hCu9p73CRMOQkj/Z9YMAd9UXx+HJ6//gQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m9A7rNPRGDbtOu9cPg+iFatugdgfrOR0BKYq3YHejIA=;
+ b=iX8o8DLrZJm0ovBUvr28iSMq8LPXEraL9mHDBVC7EeGcVOt7UYk8sbReI7usEXHD09wknNjsy4DuF5JYlWujI/DCwo47Jyu5cTG5yVlA2Va3dEIycugVSAHD9T6eqI9xxTmV7m+FRsxh6McP1J+aMrYJvZ3eFHxOO2VPKVETqxYrWNAnQY6ZVWKsTvNwubdBncR/bU4p0SNDRWFUxHxi1YTnHKmcv0f4DyNxcGDI9dEJmbMrmTQRSsW1rpnRwfb1jj4yJdfJQO33c2164CGFQfG2PZQotmGCj/SXzeUC+0bpVcbMEZ3Xh6v65lGaGznKB3m644WK/A8WMaTQ9LkfWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m9A7rNPRGDbtOu9cPg+iFatugdgfrOR0BKYq3YHejIA=;
+ b=sN75/hiSyRXBV+tFcxZ7R91hHrtG6EHTiHQKs75MShOGz6lk4CobNc+rSj02RN/uHDW0AHnOSb1mBcSR7093SaiU91l3+rKJIddF0NxWu3d3AImbco9zHSYnKxYsj5O6RcseP1Q2OCOB9p5X+oJQPTf3I2FUWVjUZsMbRHHG87c=
+Received: from MN0PR12MB5953.namprd12.prod.outlook.com (2603:10b6:208:37c::15)
+ by SA0PR12MB4448.namprd12.prod.outlook.com (2603:10b6:806:94::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Tue, 15 Jul
+ 2025 11:05:12 +0000
+Received: from MN0PR12MB5953.namprd12.prod.outlook.com
+ ([fe80::6798:13c6:d7ba:e01c]) by MN0PR12MB5953.namprd12.prod.outlook.com
+ ([fe80::6798:13c6:d7ba:e01c%6]) with mapi id 15.20.8922.028; Tue, 15 Jul 2025
+ 11:05:12 +0000
+From: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>
+To: "Gupta, Suraj" <Suraj.Gupta2@amd.com>, "andrew+netdev@lunn.ch"
+	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
+	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"Simek, Michal" <michal.simek@amd.com>, "vkoul@kernel.org" <vkoul@kernel.org>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "dmaengine@vger.kernel.org"
+	<dmaengine@vger.kernel.org>, "Katakam, Harini" <harini.katakam@amd.com>
+Subject: RE: [PATCH V2 2/4] dmaengine: xilinx_dma: Fix irq handler and start
+ transfer path for AXI DMA
+Thread-Topic: [PATCH V2 2/4] dmaengine: xilinx_dma: Fix irq handler and start
+ transfer path for AXI DMA
+Thread-Index: AQHb8YMykbpgUPq1XEK0FsQwY210P7QzAOuw
+Date: Tue, 15 Jul 2025 11:05:12 +0000
+Message-ID:
+ <MN0PR12MB595348322834F80697B4B806B757A@MN0PR12MB5953.namprd12.prod.outlook.com>
+References: <20250710101229.804183-1-suraj.gupta2@amd.com>
+ <20250710101229.804183-3-suraj.gupta2@amd.com>
+In-Reply-To: <20250710101229.804183-3-suraj.gupta2@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-07-15T10:19:39.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR12MB5953:EE_|SA0PR12MB4448:EE_
+x-ms-office365-filtering-correlation-id: bf9df34d-3f73-479b-0c7c-08ddc38f786b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|366016|7053199007|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?cbtgOY6jzlWY7eNrCWFV69p3otGPn/oI0lxOU+fx59zLhLafEyNLnGID6emt?=
+ =?us-ascii?Q?e/4wyTlUHV0IDGI1PP5LwpiWW47kv1rGqicMHuWdKHbG9mvEIAyuMX3Qlk+q?=
+ =?us-ascii?Q?8ibJyFW7IDii77o+LM42sSy3rkahtIsas50HFw9zQFzx1Xa5iQNRpTAZboG4?=
+ =?us-ascii?Q?XWSVvP82bXaFZWVUzlJwChLv6/UageIVRVV04RSopEa3+UtLp7QSa+bGKGAQ?=
+ =?us-ascii?Q?KJfqPxSQ5DpZAgLwHZyZab0krt/OmFoeuf2jvq4ctGxtyS+0virpwR1Q82md?=
+ =?us-ascii?Q?ce6SUB89gbPKOma6g9BJjHdteZreK2vJHNGiTGpflTqL6R2uyWWlV0zrOdmI?=
+ =?us-ascii?Q?aNFnT3162XJ9zyBvZ/FYgjeBSjmNg2yFmucvJoIQcOWsbOX/r7uF9X1DznXY?=
+ =?us-ascii?Q?iu6TSECR3/0TKae1GJwFeJHLEQ+sN1Ky4LCK1/jmkh2jqBaBzkPnL2zck4Nx?=
+ =?us-ascii?Q?PsC/cr8eDe6dVzyV08HMznZqITZKKwSUVPA2GIcmGqzcLAtib9FzKS3iyAe8?=
+ =?us-ascii?Q?cDki9MJQDnGfo4wMlcdLx/EvIMHt0sAG85HRI3wRYWwEcvm3xSDriMT9v1Kg?=
+ =?us-ascii?Q?gktDzIN7kmSs4LGbv19/kzTQyckuTtkaTdw9/eaHq0dMaQH8uCyQLMH/aiun?=
+ =?us-ascii?Q?1iureODbRR4pR6vCaZKA1uM2RZ87vW5xPet5FNw/6B2pThwb3PgOBFKbrXAS?=
+ =?us-ascii?Q?YUb4OKWFZi4p09JmBmtbWS29fGOCgCJEwOGE4W+cF1edGmvxlpQb2Ygf+7DD?=
+ =?us-ascii?Q?WY7G4O9xcqNJeNJb7hbdcnyHISgc8/NRPypqGNXnFz9HeVeeXoOIfPl8aS1Q?=
+ =?us-ascii?Q?AAsKA3pLUH8/7FyVpUTG9IVAvn7kp7HnACJaxIz5PyHFPffKcldl9NObCksX?=
+ =?us-ascii?Q?ps1JsUPlmtmTn2NkjyYipLDUxKoCdlR47pzGdFBP2FFQTRRPfuyCFzT3rya/?=
+ =?us-ascii?Q?XIQYVZcMZ+5T3+3O6Bw7m0JF6LilJFUxooUZp9GxpHKjxvL1Q8aHSnpbWJS+?=
+ =?us-ascii?Q?8j5wkC9dqlEpByHkvI1+LDoP4fk1WIjCZEozezYpJP7MC0RUfIeIF7APxfr4?=
+ =?us-ascii?Q?SpuqJKAWKFkzjZ1oD2IIH2HW8AtaKbxOQooqXjc/K5CQB495Qm86hlS/F2yu?=
+ =?us-ascii?Q?7YB2f0BltFS4XJfm3P8kqKW3oPw7ytnfL0Yck6TzuEuwkWSWlhSFZZcd1hd/?=
+ =?us-ascii?Q?2Fw3tl7Lr3H/sx+DgmUyEqGg8ovULca/KDe9Mpit+DGFbLbJ9tT3ppAOyXIE?=
+ =?us-ascii?Q?JukKflPsM7DnjDVV1lSqtyhC4GXR9WeET73K1VYF/EgTswfzszdXpzD7fq+c?=
+ =?us-ascii?Q?TwcLzkuQ5lJMBTCps6/lk1m9Vxp3JyThcPXYjPqC4Glnq7XcGJUPSDTKrI0g?=
+ =?us-ascii?Q?wDk+09hZ5pc01njiT/J4UHUQZIiHSQZJZWVfvRaXWTcQ6DWFLM6+yFyhUZJp?=
+ =?us-ascii?Q?H1Tt+wrGk89alMKwjO4eVFOwyDRT348p7Sx/MBBYBr+5zfhJziI0Ew=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5953.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?QEz6cOtcSMP5DtJRYlozoOE8etenR0RNI3IxeeTwYQ5wQuq4NuqJnF44/ZJ8?=
+ =?us-ascii?Q?ieE0Z2mvDNdxILG62W8zbg8+I8vwkj/CDMjzq66CPJurJE4+wTzonQQDNtyF?=
+ =?us-ascii?Q?aRvnBDXO5z88YrLlMjkIumhbiHcB6TFng0ZiZzAEVBFS3sldxQGjcz+d9Nt8?=
+ =?us-ascii?Q?o/T2oxrwRXulQpbTF5DmrlkMnEcLMyFtKmcHQmpCbqQwUdPmdmLspbPLgNBR?=
+ =?us-ascii?Q?oLx/qK++vFbNwBEkosjB8KI1xXcLZm3x2gEHk1OWbvE9uMKdJhAL2jAf58Mh?=
+ =?us-ascii?Q?s+uzW0YS9tU4pWjP3rc27R7A+S/c5Zm8H91rAsYQ5AGsFbSRJ3yMydJ36AF/?=
+ =?us-ascii?Q?ndnZGlH09aPrGNMnpKGVE+Rofh7IVIm02awKk0Q04vO3Goe2/CEM0a12VXRG?=
+ =?us-ascii?Q?QrJZ3BDKQsZppS5lhIpoEoLbUqLeilJYViVifdqL8LowH4SauIektH09Ct2g?=
+ =?us-ascii?Q?j3xcP71oMmuEfgJhnA69AKo+e0LBO78n8Drh2dLNr9IwfQ5vvZPRXwaSlpj8?=
+ =?us-ascii?Q?W6H3r/1P4JLVcg62XRftAsEhpcvxks84PoxUNvivfnlBTh90Xk4MZgYN6roj?=
+ =?us-ascii?Q?MXbLmJVv7QdCNfAfa01PUZgiHsgr/I5YclN2YTb/gDHgZq0aOul5Y4ZY3Il6?=
+ =?us-ascii?Q?qHTt48RJi/4ZaYZPVGXRgI63yr7WX4mHdj/wcS/49nVmlw5Nd+WSuB22aLN6?=
+ =?us-ascii?Q?1i+mxJtrU58/lWju2us8KNHaa+IrSICMbvCErCPzzbT5DwArnSZs53dwwBi9?=
+ =?us-ascii?Q?lVd6eQXudX9/FZAhDA8/NCHZIM9revfQbQF43wojWMUXTrs4/aGZO8puOv8C?=
+ =?us-ascii?Q?ItJcPv0xHTSoEnyMuspTliPZAh3YjIYa46QeLlQuMidZ61oZeg6EZ579rwa+?=
+ =?us-ascii?Q?ypQp+JJegP0miJroKJHfU1kJXeEWlmm5lIMovaKQLzDkc+wC7b26xcb51Wkx?=
+ =?us-ascii?Q?na9u4zIUjPK6ndFTEEImlsU44yCUjVWtqAIDL6vzl8DAbDaHXNZEeq62BuRk?=
+ =?us-ascii?Q?iruOHGTpOKlFBLr1Ei4vJq3W3C2jFPwpayIL46+4YQEg0mb0kaWBhco+IdRY?=
+ =?us-ascii?Q?LH3ySGze22s0RIh1abI64/X56Loww/nqGuUytDyh00fOneiVTXSZ392ezx9F?=
+ =?us-ascii?Q?obYABRLCdu+Sxi53MH8W6ma+FM0fvvpdVqnN/govbagS+YoPxpH4+yv9w0kO?=
+ =?us-ascii?Q?6hUvAGZlb1G0jrOaojCMIbRz1C2/zoz7Olnfevrg7hYnlrdVH2N7q7qg7Iw8?=
+ =?us-ascii?Q?lELbHZB2ittsc4OczGgSAlLrLR7KhT/dB9m1vLLlb/QPDGmrQfLMztfNIhAF?=
+ =?us-ascii?Q?ODsZTeuikJThbOVUpe1dqMX7OOEwBkFKBpOjvpbPGafXKFlUWmAp8gPLeZz+?=
+ =?us-ascii?Q?DmmPenCBk4JqYl55/Ndl6O6dQ0jn11+Y8+7qPXRm1KCzg/LkLF/uNd+k9jVu?=
+ =?us-ascii?Q?eD4VfE7JN969eZwtFN0alHaMFPU5HjCNjbCJmZEurTJwbk6zeJrvF6L4hqXl?=
+ =?us-ascii?Q?wcmoMW8UpaNIvolJ+kB0a50rNzMTFn3Co2RTPTScRySqYQxF/Gpf9Rd7J6v7?=
+ =?us-ascii?Q?X5bOU6UgTmc87WxNnTA=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5953.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf9df34d-3f73-479b-0c7c-08ddc38f786b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2025 11:05:12.4326
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: j0hku0B9Gw/U94cs4iDBAvrdeSNtKVnGx7z1a7SyY9Lgn8YS2le5qNFUG7lH8e9S
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4448
 
-> On Mon, Jul 14, 2025 at 03:44:28PM +0200, David Hildenbrand wrote:
-> > On 14.07.25 15:39, Mark Brown wrote:
-> > > On Mon, Jul 14, 2025 at 09:00:09PM +0800, wang lian wrote:
-> > >
-> > > > Move the generic `FORCE_READ` macro from `guard-regions.c` to the shared
-> > > > `vm_util.h` header to promote code reuse.
-> > > >
-> > > > In `guard-regions.c`, replace `ksft_exit_skip()` with the `SKIP()` macro
-> > > > to ensure only the current test is skipped on permission failure, instead
-> > > > of terminating the entire test binary.
-> > >
-> > > These two changes look fine but they're not really related so should be
-> > > separate patches.  Looking briefly at guard-regions.c I see a bunch more
-> > > use of ksft_exit_ functions that ought to be fixed as well, but your fix
-> > > is good.
-> >
-> > The FORCE_READ() could be factored out separately, and as part of the same
-> > patch, replace the "asm volatile("" : "+r" (XXX));" usage in
-> >
-> > * cow.c
-> > * hugetlb-madvise.c
-> > * migration.c
-> > * pagemap_ioctl.c
-> > * split_huge_page_test.c
+[AMD Official Use Only - AMD Internal Distribution Only]
 
-> Wang - Feel free to put my Reviewed-by in any such series assuming you do a
-> straight up replace.
+> -----Original Message-----
+> From: Suraj Gupta <suraj.gupta2@amd.com>
+> Sent: Thursday, July 10, 2025 3:42 PM
+> To: andrew+netdev@lunn.ch; davem@davemloft.net; kuba@kernel.org;
+> pabeni@redhat.com; Simek, Michal <michal.simek@amd.com>; vkoul@kernel.org=
+;
+> Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>
+> Cc: netdev@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> kernel@vger.kernel.org; dmaengine@vger.kernel.org; Katakam, Harini
+> <harini.katakam@amd.com>
+> Subject: [PATCH V2 2/4] dmaengine: xilinx_dma: Fix irq handler and start =
+transfer
+> path for AXI DMA
 
-> >
-> > --
-> > Cheers,
-> >
-> > David / dhildenb
-> > 
+Mention - a short summary of what you are fixing. i.e allow queuing up mult=
+iple
+DMA transaction in running state or something like that.
 
-> Cheers, Lorenzo
+>
+> AXI DMA driver incorrectly assumes complete transfer completion upon IRQ
+> reception, particularly problematic when IRQ coalescing is active.
+> Updating the tail pointer dynamically fixes it.
+> Remove existing idle state validation in the beginning of
+> xilinx_dma_start_transfer() as it blocks valid transfer initiation on bus=
+y channels with
+> queued descriptors.
+> Additionally, refactor xilinx_dma_start_transfer() to consolidate coalesc=
+e and delay
+> configurations while conditionally starting channels only when idle.
 
-Thanks all for the helpful feedback and encouragement!
+These two refactor should be in separate patch and as it in optimizing exis=
+ting flow.
+>
+> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
+> Fixes: Fixes: c0bba3a99f07 ("dmaengine: vdma: Add Support for Xilinx AXI =
+Direct
+> Memory Access Engine")
 
-I'll prepare  include the straightforward replacements in the other tests as suggested.
+Not a real bug but an implementation from the start and subsequent queue
+we're not allowed on running DMA. Same is the case for other DMA variants.
+
+> ---
+>  drivers/dma/xilinx/xilinx_dma.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_=
+dma.c index
+> a34d8f0ceed8..187749b7b8a6 100644
+> --- a/drivers/dma/xilinx/xilinx_dma.c
+> +++ b/drivers/dma/xilinx/xilinx_dma.c
+> @@ -1548,9 +1548,6 @@ static void xilinx_dma_start_transfer(struct
+> xilinx_dma_chan *chan)
+>       if (list_empty(&chan->pending_list))
+>               return;
+>
+> -     if (!chan->idle)
+> -             return;
+> -
+>       head_desc =3D list_first_entry(&chan->pending_list,
+>                                    struct xilinx_dma_tx_descriptor, node)=
+;
+>       tail_desc =3D list_last_entry(&chan->pending_list,
+> @@ -1558,23 +1555,24 @@ static void xilinx_dma_start_transfer(struct
+> xilinx_dma_chan *chan)
+>       tail_segment =3D list_last_entry(&tail_desc->segments,
+>                                      struct xilinx_axidma_tx_segment, nod=
+e);
+>
+> +     if (chan->has_sg && list_empty(&chan->active_list))
+
+Can also use chan-> idle equivalent of empty active list?
+But is fine as is also.
 
 
-Thanks again!
+> +             xilinx_write(chan, XILINX_DMA_REG_CURDESC,
+> +                          head_desc->async_tx.phys);
+> +
+>       reg =3D dma_ctrl_read(chan, XILINX_DMA_REG_DMACR);
+>
+>       if (chan->desc_pendingcount <=3D XILINX_DMA_COALESCE_MAX) {
+>               reg &=3D ~XILINX_DMA_CR_COALESCE_MAX;
+>               reg |=3D chan->desc_pendingcount <<
+>                                 XILINX_DMA_CR_COALESCE_SHIFT;
+> -             dma_ctrl_write(chan, XILINX_DMA_REG_DMACR, reg);
 
-Best regards,
-wang lian
+This seems to unrelated change. Please consider optimization to separate
+patch.
+
+>       }
+>
+> -     if (chan->has_sg)
+> -             xilinx_write(chan, XILINX_DMA_REG_CURDESC,
+> -                          head_desc->async_tx.phys);
+>       reg  &=3D ~XILINX_DMA_CR_DELAY_MAX;
+>       reg  |=3D chan->irq_delay << XILINX_DMA_CR_DELAY_SHIFT;
+>       dma_ctrl_write(chan, XILINX_DMA_REG_DMACR, reg);
+>
+> -     xilinx_dma_start(chan);
+> +     if (chan->idle)
+> +             xilinx_dma_start(chan);
+
+Same as above.
+
+>
+>       if (chan->err)
+>               return;
+> @@ -1914,8 +1912,10 @@ static irqreturn_t xilinx_dma_irq_handler(int irq,=
+ void
+> *data)
+>                     XILINX_DMA_DMASR_DLY_CNT_IRQ)) {
+>               spin_lock(&chan->lock);
+>               xilinx_dma_complete_descriptor(chan);
+> -             chan->idle =3D true;
+> -             chan->start_transfer(chan);
+> +             if (list_empty(&chan->active_list)) {
+> +                     chan->idle =3D true;
+> +                     chan->start_transfer(chan);
+> +             }
+>               spin_unlock(&chan->lock);
+>       }
+>
+> --
+> 2.25.1
+
 
