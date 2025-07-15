@@ -1,128 +1,129 @@
-Return-Path: <linux-kernel+bounces-732019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A193AB06147
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:35:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 680D2B06105
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 746385A6C52
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:21:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 342325074C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C10D298CB6;
-	Tue, 15 Jul 2025 14:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="uhj6iLb8"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B57E29B767;
+	Tue, 15 Jul 2025 14:10:37 +0000 (UTC)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A27D24DD0C
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E14F29AB09;
+	Tue, 15 Jul 2025 14:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752588622; cv=none; b=rpWqsWadPmYnHhLsvx2cajJrOwUq4vMOdqNZMvyCJCGOlDu3leDwy0eooueJ8sCuqFz68eh9yWlWSeAizduWGpLNoRFsvJ9ne6ThFb9b/6HMlwDdKqsGM+ogYt0c3sypyjjMOHK1gUIdvVwQ78YpxSmQk85YCD1Sf3EA95TR9wI=
+	t=1752588636; cv=none; b=FU0AjIO7N/76XXlcHgy9ShrRuIk/kWb4JDyn1QL4tjYUVZYUuwKSNg57OzFtw7/1aIKgBrhOfzXeyFWta3CZP9E2EDp91yIw4n7obxHFdH3g1FQQslV330F4odRachexXLHPxEb/+YzhmSV0SBehi+HX/J1/ZnkdFrkMUB0eojM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752588622; c=relaxed/simple;
-	bh=+bManZoJ7DUc7PE7xd7pJIQtqW11gJZQd7GwUTQc7J0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tis9/1Av8nV4IQn6TZBt93/qL4WEvOCp0sgv0BZ7OA4jJXXKTSIVFe9l4ysa9gPqOP4uxEwquF5/BbP8YvNsqOAwT0RtXgoXJlqzcg7iUtUEzx8HuEmnYWLGp3h2Y1nN9gtLbNfajql+g1WTCoQ1KDugomd24BOGIXfNbMktj0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=uhj6iLb8; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3e058e82584so50079995ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:10:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1752588619; x=1753193419; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gz6M9A3kNVymngWUbjHxUUeWvWwN2Oe7xxlyyy1otJk=;
-        b=uhj6iLb8jUGuO8NvGeCz6/X7zB+qHasRR5W6nO74xGZWuefIEdHWhFlM+zdo378KnG
-         QemLJ9FwwbS3B178uWI0VUZfJP0Wf9qMe75XoltTbvBTz/YHaTSIBPPHnDEruTjYAeS+
-         7A0HewDXbnlHIqURfXp5J8DdfK0gXZUoWu4xV5dRkV6uSYWTFJjvAybZTdKWb+ue+t41
-         t3ljdq45hfdD5T2QkKHeCE80Gzc7IcVfj0Pu7d6rIoKV5v/ViHBN9ebxwElPwM0DoKoR
-         cmsOAfKOmDmVrU99kJI/P664Lj7DI+TpZ+LhfQ8BgIQTywdOWjyXQKC4w8DQNA95Gz2C
-         y+Jg==
+	s=arc-20240116; t=1752588636; c=relaxed/simple;
+	bh=iD/43DSr/7nxLqoPW/jtBDYANh3C1sCegNgMfFUNBTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OKDx35YMQ2FcjgxPO76SnW26rCCiTleMy34NjAbDo23tSzUD14OY6KzatkD0BAdbCb+jwBGwR24B7NI9kHudQ9GtrCXa+3tLXBrRF2D18xWCHU4yb3KGj6RRDrHs82OuthbwXHYhmcZETG/TJIkYYQabKyyeaUhLD/ow+Ncjnq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ae3a604b43bso916376066b.0;
+        Tue, 15 Jul 2025 07:10:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752588619; x=1753193419;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gz6M9A3kNVymngWUbjHxUUeWvWwN2Oe7xxlyyy1otJk=;
-        b=s2aSWEDItQPszR9gbs0lloShqG6NbS0oXZAqVeWOb0j/mKpY44mPUuIC1YNyORuqQw
-         AZTu0MOgZDK5G/Ka3CUAg+qzEsi7tjSS+J3D4YhikYWvlmUmLCTrbbxNbstDOL76DlCA
-         lF0TYghr5bjJax5dri+naU7GKso+kluwe+wZEHqFt2cNNWVozM/Tp5ZpiEmt3cACmAUD
-         lORdQPi9idfC2F6+CFFt24OkrPn85FtlytF+SO3fBfDvNveIhI2OHC8B9IgZPt8LuhAV
-         IgJWFtaM0TuitEFi3iHngm0+IVsBmp1dGfdSIQlGgc8HwEUYNmjzz+bVoMZUZKkJxgx6
-         5fuA==
-X-Gm-Message-State: AOJu0YwPO9Y8Wpx0w9K4Hk+WYyHBxeD1AIAskhuGauB+nzQqnaBboFFO
-	0oQASW0pKziyoFX+mQt1tuGgMCDACTWqH1ufv+hZEcyPSkYS/49OnbL67SD/UNPl/VY=
-X-Gm-Gg: ASbGncsUUhHaDtSUYCFVzTByUrJMK7WYzkBnovUJQ3bNKdFRXqhcXNqQHSjmt+hv5MJ
-	jcBdgnyGLm8Mmv1ififQvsFKzrZBwaJUpn6IpBRj6OMSIEZTUhKfjC1GhmulfLEtDg2kO081rFe
-	F34YmNE5UL8e6roLfDmN7zYcXvz+ZweFMN7PnfgCe7WzvLL9AplUVAvXYRd4X4cqSQG2cJogERV
-	qCMCs9Yl/W1BBGINrDoh4O8nvlw6Ve7QQ3B2k/0j7FEwv7PiWNd0zfW2x9igvEN4udOqOKbQRFw
-	Fx/6kwh5tOma2LPNbDrc2HuQqLCjSAEcpSoFOVxlIHI0pPxaOfswI+3j+WRbUUTX67taUsNhklY
-	ceO6V9xThvKRP1A6GJLI=
-X-Google-Smtp-Source: AGHT+IE1jSl0+Ol461G6fZrpoKwEDGHayubqoEeTwWls/gtKYdvp4zX/qFJoj8BP/4ShuOwARvbT3w==
-X-Received: by 2002:a05:6e02:188b:b0:3dd:d189:6511 with SMTP id e9e14a558f8ab-3e2556d42ddmr182511335ab.21.1752588618466;
-        Tue, 15 Jul 2025 07:10:18 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e276c97460sm7269955ab.70.2025.07.15.07.10.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 07:10:17 -0700 (PDT)
-Message-ID: <4bc75566-9cb5-42ec-a6b7-16e04062e0c6@kernel.dk>
-Date: Tue, 15 Jul 2025 08:10:16 -0600
+        d=1e100.net; s=20230601; t=1752588633; x=1753193433;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tELAcnZVNd8b1stwXqZxFS8cE4bNgApGcuDGoeyxKzk=;
+        b=P2lrGf27P+hpLqESTREm/PTApBd+tR9UuP48KExVIsCGhXahoF7lNlneFRR/674LqU
+         qTVGLBpe9eFgKjEggCMG5SkItDFbImtYFOZtucaZAutJ0lg+bOVqfuassqJbT8BU4eF8
+         M0O/j8M7AHbZVNLee4ndUw5I2+d03YpMlDRyoUC/kySUB3rAWiUhUi8X/3X3fjVdiqoT
+         e6OBwF/Jd7JkmW0I4U4sOBRQHZJ07CL2u/FjcEE2Epuv1EY/c1bnYPCfWDSrP0hz9qdU
+         0atwJOLtC68BObVYMXLcQC8dFNi/Nvjms0x2MJMfEsavl1CX3bOYZ+lyIkP42ovAzj8k
+         ++AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWE3gCwh5hcvvFDWGkaTNyhPHv+X85pTIn3QgdkLZ694f3GsWIgJTRCw1wdufSxh9GY4GVkjlvwOh8m@vger.kernel.org, AJvYcCX30yeo2+SLcrjUKi6+s8tEVnNm9vykys7vkXWA3axLwNp6d7Z9MjKG9TEPBUPpHX3ATYbogX8R1Aol@vger.kernel.org, AJvYcCXlNi8F7mzazk6oBwltw7rYCrtB7I2UMp6SH5wgJ5JUurh9tRNmZcC81dVB5KJOw8IVcKcblZ4qZC5IIiTn@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ0PmT6thJ2io4+Z+GGsrVhX5cMhcjMTros1ER0i2bRu83StpJ
+	ZsYy6yQ1Y4VAQu4m2nNaof0w41v/DuGzm5++hjrTzQVoQw0P00vTb3hvumpylg==
+X-Gm-Gg: ASbGnctVRCetTfr6k9xuisOa5wK6S4EtlVwlYRDlvEYX3vvxYpTw8W1fbM8Bf9SlmP9
+	rGE9rgMdRgL6yMXSdRkdFfGJ80jNbPe0JYOXdQKMg6eA+uBFSFqIc5m8+mk/pA7qmfWsbCBEwAc
+	Wur9G67LpiSgtaak/4QnbKoaqeGJ6z96Dhe4L5wu0ZYuAkK11XLNWWrMG4FH9WDfN3Ps+nGYsRk
+	vxVZULUBmyGfdq7Uhd+ymX57m5xYwldHsyStQOpQCDp56ZZO9qQJAuAg0RIxx341DCbzqgSC4Im
+	pJdHH8YNLILh0NXv6vk00IaUMm6I243c0ujUIOcWcU+SJ/2YyowCqAv9rubefBg1l219oF/Y4wm
+	jIsQZvNwDI7wKfsfR6r1z1iM3
+X-Google-Smtp-Source: AGHT+IEbyl1a/QSsIQLOHzGok9IQBsWgH6iuwWhFnpACxKR9fLabguJ1GjnLGBVzOQT1BEOKFXRITA==
+X-Received: by 2002:a17:907:1b0b:b0:ae3:5e70:330d with SMTP id a640c23a62f3a-ae6fbc109bamr1654095266b.12.1752588632995;
+        Tue, 15 Jul 2025 07:10:32 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:70::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7eeae5fsm1014433766b.64.2025.07.15.07.10.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 07:10:32 -0700 (PDT)
+Date: Tue, 15 Jul 2025 07:10:29 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Sascha Bischoff <sascha.bischoff@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Timothy Hayes <timothy.hayes@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Peter Maydell <peter.maydell@linaro.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Jiri Slaby <jirislaby@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v7 18/31] arm64: smp: Support non-SGIs for IPIs
+Message-ID: <7mhnql75p3l4vaeaipge6m76bw4wivskkpvzy5vx3she3wogk4@k62f5hzgx5wr>
+References: <20250703-gicv5-host-v7-0-12e71f1b3528@kernel.org>
+ <20250703-gicv5-host-v7-18-12e71f1b3528@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing 1/3] Revert "test/io_uring_register: kill old
- memfd test"
-To: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- io-uring Mailing List <io-uring@vger.kernel.org>,
- GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
- Ammar Faizi <ammarfaizi2@gnuweeb.org>
-References: <20250715050629.1513826-1-alviro.iskandar@gnuweeb.org>
- <20250715050629.1513826-2-alviro.iskandar@gnuweeb.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250715050629.1513826-2-alviro.iskandar@gnuweeb.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250703-gicv5-host-v7-18-12e71f1b3528@kernel.org>
 
-On 7/14/25 11:06 PM, Alviro Iskandar Setiawan wrote:
-> This reverts commit 732bf609b670631731765a585a68d14ed3fdc9b7.
-> 
-> Bring back `CONFIG_HAVE_MEMFD_CREATE` and the associated memfd test
-> to resolve Android build failures caused by:
-> 
->   93d3a7a70b4a ("examples/zcrx: udmabuf backed areas")
-> 
-> It added a call to `memfd_create()`, which is unavailable on some
-> Android toolchains, leading to the following build error:
-> 
-> ```
->   zcrx.c:111:10: error: call to undeclared function 'memfd_create'; ISO C99 and \
->   later do not support implicit function declarations \
->   [-Wimplicit-function-declaration]
->     111 |         memfd = memfd_create("udmabuf-test", MFD_ALLOW_SEALING);
->         |                 ^
-> ```
-> 
-> This reversion is a preparation step for a proper fix by ensuring
-> `memfd_create()` usage is guarded and portable. Issue #620 was
-> initially unclear, but we now suspect it stemmed from improper
-> compiler/linker flag combinations.
+Hello Lorenzo, Marc,
 
-Maybe just bring back the configure parts? The test, as mentioned in
-that commit, is pretty useless.
+On Thu, Jul 03, 2025 at 12:25:08PM +0200, Lorenzo Pieralisi wrote:
+> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+> index 3b3f6b56e733..2c501e917d38 100644
 
--- 
-Jens Axboe
+> @@ -1046,11 +1068,15 @@ static void ipi_setup(int cpu)
+>  		return;
+>  
+>  	for (i = 0; i < nr_ipi; i++) {
+> -		if (ipi_should_be_nmi(i)) {
+> -			prepare_percpu_nmi(ipi_irq_base + i);
+> -			enable_percpu_nmi(ipi_irq_base + i, 0);
+> +		if (!percpu_ipi_descs) {
+> +			if (ipi_should_be_nmi(i)) {
+> +				prepare_percpu_nmi(ipi_irq_base + i);
 
+I am testing linux-next on commit 0be23810e32e6d0 ("Add linux-next
+specific files for 20250714") on a Grace (GiCv3), and I am getting
+a bunch of those:
+
+	[    0.007992] WARNING: kernel/irq/manage.c:2599 at prepare_percpu_nmi+0x178/0x1b0, CPU#2: swapper/2/0
+
+	[    0.007996] pstate: 600003c9 (nZCv DAIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+	[    0.007997] pc : prepare_percpu_nmi (kernel/irq/manage.c:2599 (discriminator 1))
+	[    0.007998] lr : prepare_percpu_nmi (kernel/irq/manage.c:2599 (discriminator 1))
+
+	[    0.008011] Call trace:
+	[    0.008011] prepare_percpu_nmi (kernel/irq/manage.c:2599 (discriminator 1)) (P)
+	[    0.008012] ipi_setup (arch/arm64/kernel/smp.c:1057)
+	[    0.008014] secondary_start_kernel (arch/arm64/kernel/smp.c:245)
+	[    0.008016] __secondary_switched (arch/arm64/kernel/head.S:405)
+
+I haven't bissected the problem to this patch specifically, but
+I decided to share in case this is a known issue, given you are touching
+this code.
+
+I would be happy to bissect it, in case it doesn't ring a bell.
+
+Thanks
+--breno
 
