@@ -1,97 +1,157 @@
-Return-Path: <linux-kernel+bounces-731976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E459BB0608E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:18:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0018B060A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:19:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 885551C4240E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:07:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBCF51C47C19
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE552EE610;
-	Tue, 15 Jul 2025 13:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260BC2EF2AF;
+	Tue, 15 Jul 2025 13:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i3NGqv8d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="DinSq7vC";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="mS9lXsTQ"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF99026D4F2
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574842EF2AD
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752587790; cv=none; b=Vf93Ss30Sr0OVPEEsMHYq+EKdFh9ZxnefpSGAZIlEZ3mB0d5sJ5dFufnJ+mFOPDgUOezOTZ5dwa4D+WT4ViX6SS9rVecMdFO1qS6BHH1AMRalufatcI8CpLO1uLYw98E9P6hG2snVOgHXe2DeaG3QGbfoUR15iylxSAMpiwTKXo=
+	t=1752587822; cv=none; b=JJ/EOtkuwSxUjJ+CtUB1eYEdzHin4Xyp82IBuOc3gz0swfWuzNuAKOMEW9KQBz/vKRO0uLGNQHXN76N9BhjfNyOpC1wtR86paMmTVwSnZLlTRTfSwI7AWqWoSoYbZDLTG8dXlWsDyIeSE6zDMIbwLpGB7sjPUIbX0KcUbcB+8zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752587790; c=relaxed/simple;
-	bh=lxGBZXNmhK90ryWWn0M7PYKuPCR44PJj8beihaNQ+Ew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ed1BqRyfHXcWfFlYV3bCxzFzX8l4+MhyOz2CHcZDFD9stz5tcN3U9opvwWMkAApIJwqk+eGx0O+fi4xtv44wateejJ7lS2SHx4/VEjJjeYfwtekRe8ifK9igq1mWpa5nw/a594HFU+0Gx8NU2GXTFVamr2Tc4TJluixEUOUTEFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i3NGqv8d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E40BC4CEF4;
-	Tue, 15 Jul 2025 13:56:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752587789;
-	bh=lxGBZXNmhK90ryWWn0M7PYKuPCR44PJj8beihaNQ+Ew=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i3NGqv8dP/JBoVgVbxCCriGVEnXIwsXQfxcVZH2gydseuhgM9yWEXUVeD3GCL3mkw
-	 TtY4K48KM5pXNdqg905NST600zSShNNGVZO7c0gTifOhgkNTbQZzr5auV7gqM5vibo
-	 pYDGkhc5+HyRCBcXnhdN10vOoQMH9jMglQBISlSzYrYaZU5WR12tMtDIYUZ9X/d3cS
-	 Mzohib4qA6a3F2hukyo8bJ8aKvK3F0JyuRca3v2pJbkK8U2iPbCx2A8txLIVyjRYfX
-	 IsTjmXL47ylLpM8pmseKsqNdXXiQCaCSWYq6mqaZ+8eMh2jt4nXA89Zw70cEYa5zW1
-	 Gwp2cu3KywxRA==
-Date: Tue, 15 Jul 2025 14:56:24 +0100
-From: Will Deacon <will@kernel.org>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-	sami.mujawar@arm.com, aneesh.kumar@kernel.org, steven.price@arm.com,
-	linux-kernel@vger.kernel.org, sudeep.holla@arm.com
-Subject: Re: [PATCH 3/3] arm64: acpi: Enable ACPI CCEL support
-Message-ID: <aHZeCKNyDeZEsuCt@willie-the-truck>
-References: <20250613111153.1548928-1-suzuki.poulose@arm.com>
- <20250613111153.1548928-4-suzuki.poulose@arm.com>
+	s=arc-20240116; t=1752587822; c=relaxed/simple;
+	bh=2SUEHRJ69Z2HmP4/9Xtfk6X7RiIJOF+5FTo9wOtE6yw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YNCz17u3q4Q0ze2KjkfIQdXQ3m8edLZpet4xy4IHnQKnC98uh7qVwrC4qDmJetejYeyvgE9JZPJmdBYaNLhZlzfA7Qx0EgdzaIAEcTJrEj8RTOvtDCK0PZcoX9YLAnrNiGIG/XTPkFZPLAG1Ga1Ep0XxihugMOGSAUHi9qBba1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=DinSq7vC; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=mS9lXsTQ; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1752587816; x=1753192616;
+	d=konsulko.se; s=rsa1;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=FZ3JHSKCAp61LgEDvUcR1KnuzzUfFsyQiR8khxy1tAQ=;
+	b=DinSq7vCV9C/C9FpUNRVuJURAMXMn3XkqMfkqI44nxC41B3bkeuWYSyjya03kyOc2nBTc4CzlmK/v
+	 XZBcOgyq9rTgmZBoESKcEI7lDuuKL3LO6PHH+rHQ9KRQdc6EGfzNHLk9d1GFdK7ohLc6oLV8bxEMCm
+	 Fq03cVQw9pKxycNcQwUnhjINI/7GA8KHHLPQEh+6lDkeweHgx2Wc+XHd097QY+FK1ku/Uy475TtyWz
+	 tqVU8L3gzh4nWcYeXnq0qSkFYzLxfZbWtIiwCOjYniXyGO5HYPcJkLa3PNOjWS2LaWMlCY59aBcAbw
+	 /0ddspZ5CvVWwza/samsVMDnMnTVlPw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1752587816; x=1753192616;
+	d=konsulko.se; s=ed1;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=FZ3JHSKCAp61LgEDvUcR1KnuzzUfFsyQiR8khxy1tAQ=;
+	b=mS9lXsTQiKfFsm0bDu7xIyhiQH7dtER94VVDAh0BOQhcSju2SVtHFXb9isz7p5aiBKYiydg0Tm6KG
+	 VzbvISBDg==
+X-HalOne-ID: 9096aaa2-6183-11f0-8921-e90f2b8e16ca
+Received: from slottsdator.home (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
+	by mailrelay2.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id 9096aaa2-6183-11f0-8921-e90f2b8e16ca;
+	Tue, 15 Jul 2025 13:56:55 +0000 (UTC)
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+To: linux-mm@kvack.org
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	rust-for-linux@vger.kernel.org,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-bcachefs@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: [PATCH v13 0/4] support large align and nid in Rust allocators
+Date: Tue, 15 Jul 2025 15:56:45 +0200
+Message-Id: <20250715135645.2230065-1-vitaly.wool@konsulko.se>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250613111153.1548928-4-suzuki.poulose@arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 13, 2025 at 12:11:53PM +0100, Suzuki K Poulose wrote:
-> ACPI CCEL memory area is reported as Non-Volatile storage area. Map it as
-> PAGE_KERNEL.
+The coming patches provide the ability for Rust allocators to set
+NUMA node and large alignment.
 
-It would be helpful to have a citation for that. I've tried digging it
-out of the ACPI spec, but that pointed me to the Intel TDX site and I
-got lost in whitepapers :/
+Changelog:
+v2 -> v3:
+* fixed the build breakage for non-MMU configs
+v3 -> v4:
+* added NUMA node support for k[v]realloc (patch #2)
+* removed extra logic in Rust helpers
+* patch for Rust allocators split into 2 (align: patch #3 and
+  NUMA ids: patch #4)
+v4 -> v5:
+* reworked NUMA node support for k[v]realloc for all 3 <alloc>_node
+  functions to have the same signature
+* all 3 <alloc>_node slab/vmalloc functions now support alignment
+  specification
+* Rust helpers are extended with new functions, the old ones are left
+  intact
+* Rust support for NUMA nodes comes first now (as patch #3)
+v5 -> v6:
+* added <alloc>_node_align functions to keep the existing interfaces
+  intact
+* clearer separation for Rust support of MUNA ids and large alignments
+v6 -> v7:
+* NUMA identifier as a new Rust type (NumaNode)
+* better documentation for changed and new functions and constants
+v7 -> v8:
+* removed NumaError
+* small cleanups per reviewers' comments
+v8 -> v9:
+* realloc functions can now reallocate memory for a different NUMA
+  node
+* better comments/explanations in the Rust part
+v9 -> v10:
+* refined behavior when memory is being reallocated for a different
+  NUMA node, comments added
+* cleanups in the Rust part, rustfmt ran
+* typos corrected
+v10 -> v11:
+* added documentation for the NO_NODE constant
+* added node parameter to Allocator's alloc/realloc instead of adding
+  separate alloc_node resp. realloc_node functions, modified users of
+  alloc/realloc in accordance with that
+v11 -> v12:
+* some redundant _noprof functions removed in patch 2/4
+* c'n'p error fixed in patch 2/4 (vmalloc_to_page -> virt_to_page)
+* some typo corrections and documentation updates, primarily in patch
+  3/4
+v12 -> v13:
+* fixed wording in comments (patches 1, 3)
+* fixed bigger alignment handling in krealloc (patch 2)
+* removed pr_warn import (patch 4)
 
-> Cc: Sami Mujawar <sami.mujawar@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
-> Cc: Steven Price <steven.price@arm.com>
-> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  arch/arm64/kernel/acpi.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
-> index b9a66fc146c9..f52439d411a0 100644
-> --- a/arch/arm64/kernel/acpi.c
-> +++ b/arch/arm64/kernel/acpi.c
-> @@ -356,6 +356,11 @@ void __iomem *acpi_os_ioremap(acpi_physical_address phys, acpi_size size)
->  			prot = PAGE_KERNEL_RO;
->  			break;
->  
-> +		case EFI_ACPI_MEMORY_NVS:
-> +			/* Non-volatile storage, required for CCEL */
-> +			prot = PAGE_KERNEL;
+Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+--
+ fs/bcachefs/darray.c           |    2 -
+ fs/bcachefs/util.h             |    2 -
+ include/linux/bpfptr.h         |    2 -
+ include/linux/slab.h           |   39 ++++++++++++++++++++++---------------
+ include/linux/vmalloc.h        |   12 ++++++++---
+ lib/rhashtable.c               |    4 +--
+ mm/nommu.c                     |    3 +-
+ mm/slub.c                      |   64 +++++++++++++++++++++++++++++++++++++++++--------------------
+ mm/vmalloc.c                   |   29 ++++++++++++++++++++++-----
+ rust/helpers/slab.c            |   10 +++++----
+ rust/helpers/vmalloc.c         |    5 ++--
+ rust/kernel/alloc.rs           |   54 ++++++++++++++++++++++++++++++++++++++++++++++-----
+ rust/kernel/alloc/allocator.rs |   49 +++++++++++++++++++++-------------------------
+ rust/kernel/alloc/kbox.rs      |    4 +--
+ rust/kernel/alloc/kvec.rs      |   11 ++++++++--
+ 15 files changed, 200 insertions(+), 90 deletions(-)
 
-By "storage" you just mean memory, right?
-
-Will
 
