@@ -1,250 +1,179 @@
-Return-Path: <linux-kernel+bounces-730988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A76D6B04D3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:12:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8064CB04D3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13EB37AB46C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:10:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D765217F920
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45C01B043C;
-	Tue, 15 Jul 2025 01:12:08 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF2817C21B;
+	Tue, 15 Jul 2025 01:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QeCyX4pO"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501FB1A83ED;
-	Tue, 15 Jul 2025 01:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1154211F
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 01:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752541928; cv=none; b=j1Xw84FG6tILTUotd2OU2t5vCfWacHKJW1aLcMOBvLbrqlTC1YmdQ2rUPLpoDp9ThuU6Ozl70/39TvwGbrWQE1+Ef6gQzy6DAmV2esO6qiU0Ra+aQ1SFfeCMkHh6C9yNT3uVy+LuhFcv/CelduvG0cTJN8twsPihonfjUzgQHvQ=
+	t=1752542189; cv=none; b=CnUNHtRe6+8PTr33n9rG7GlTZ4Om4EZigm7PRtwkckaqIv+81Js8jdDa6O8E/kqJCy8ffnKZt1zo0XWAvf8uGKfKNAUL7IG3QjeOjWGvtJr1dY127FLbWp4f/hjiCZn9h0gxtlbxagg73c2YoZXOrtQYYTkN0tBH7L1evxCMXOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752541928; c=relaxed/simple;
-	bh=Yezu9BqmWiIJ5dC2G9z4hnVe9zQIi4zcKg/Eu58ieCY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WXa9Vc9FHb3TzWI7FuqJnWAGjWEhkg3t2hWj7OF3qppFAziXuopFIgrah6dfG2aOiTPjfcZWIc3TsekSfZvX02qjJiPcjR8msLEsofTAh6U1/0B6cs5pWk+ZBsP8LxXtpKKzazf+XM3bTEszhf7jkv5f5A23ybcPv7ypWdAdnMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bh1JV33Lpz2Cfqk;
-	Tue, 15 Jul 2025 09:07:54 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id C7D5F14011F;
-	Tue, 15 Jul 2025 09:12:00 +0800 (CST)
-Received: from [10.174.179.80] (10.174.179.80) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 15 Jul 2025 09:11:59 +0800
-Message-ID: <277b45e3-173d-4cf4-b044-7c25cd42e41b@huawei.com>
-Date: Tue, 15 Jul 2025 09:11:59 +0800
+	s=arc-20240116; t=1752542189; c=relaxed/simple;
+	bh=9k92YKaptooa+VBpByWXJfvSKO0YKIDW9HKV5jRCgw0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WF5J3WCF4S24HuBuZwYyX5GZKkHk3Rvlu/yIFH8N72/KCBuAD0wS/eDdm5/H1SaG6hL7rHwnkoQaVEvY8Y0eLIsrEwsbZUGWro0oZqOPt96rDLPnYz33wXdRxgojKoUvd1ybx8pmrk10smbc1ux0CdVZXlnW9xp49+rmZJSnQP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QeCyX4pO; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <d49172ce-c0d8-43df-bba9-d88a681228c7@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752542184;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eI4+Uj5ZHVWz4/NaIet5nhFdtjuYqT3loM5WDkPMnQ8=;
+	b=QeCyX4pOW+TVla4xi3+UbJxvIQFXlYpvof+nKNpjIWzeMka0G+4rLE9S6XDYHxdrpYy7nL
+	e8qd3xN6BsmO8fZkRCeOhD9PMN6iAIBDTDaNWOv067a7kTl/zzAUgiQ9VwcBg295nPd9u0
+	PaCbe+n9FtLkyZFF2/mBGxEROZnJyWA=
+Date: Tue, 15 Jul 2025 09:15:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/17] ext4: better scalability for ext4 block
- allocation
-To: Baokun Li <libaokun1@huawei.com>, <linux-ext4@vger.kernel.org>
-CC: <tytso@mit.edu>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
-	<linux-kernel@vger.kernel.org>, <ojaswin@linux.ibm.com>,
-	<julia.lawall@inria.fr>, <yangerkun@huawei.com>, <libaokun@huaweicloud.com>
-References: <20250714130327.1830534-1-libaokun1@huawei.com>
+Subject: Re: [PATCH bpf-next v2 12/18] libbpf: don't free btf if tracing_multi
+ progs existing
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+ Menglong Dong <menglong8.dong@gmail.com>
+Cc: alexei.starovoitov@gmail.com, rostedt@goodmis.org, jolsa@kernel.org,
+ bpf@vger.kernel.org, Menglong Dong <dongml2@chinatelecom.cn>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ linux-kernel@vger.kernel.org
+References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
+ <20250703121521.1874196-13-dongml2@chinatelecom.cn>
+ <CAEf4Bza9mRvjwXU5gbOmOg_Ns=5OAX7-ybE=_wh79i7dwL=ZEw@mail.gmail.com>
 Content-Language: en-US
-From: Zhang Yi <yi.zhang@huawei.com>
-In-Reply-To: <20250714130327.1830534-1-libaokun1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Menglong Dong <menglong.dong@linux.dev>
+In-Reply-To: <CAEf4Bza9mRvjwXU5gbOmOg_Ns=5OAX7-ybE=_wh79i7dwL=ZEw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+X-Migadu-Flow: FLOW_OUT
 
-On 2025/7/14 21:03, Baokun Li wrote:
-> Changes since v2:
->  * Collect RVB from Jan Kara. (Thanks for your review!)
->  * Add patch 2.
->  * Patch 4: Switching to READ_ONCE/WRITE_ONCE (great for single-process)
->         over smp_load_acquire/smp_store_release (only slight multi-process
->         gain). (Suggested by Jan Kara)
->  * Patch 5: The number of global goals is now set to the lesser of the CPU
->         count or one-fourth of the group count. This prevents setting too
->         many goals for small filesystems, which lead to file dispersion.
->         (Suggested by Jan Kara)
->  * Patch 5: Directly use kfree() to release s_mb_last_groups instead of
->         kvfree(). (Suggested by Julia Lawall)
->  * Patch 11: Even without mb_optimize_scan enabled, we now always attempt
->         to remove the group from the old order list.(Suggested by Jan Kara)
->  * Patch 14-16: Added comments for clarity, refined logic, and removed
->         obsolete variables.
->  * Update performance test results and indicate raw disk write bandwidth. 
-> 
-> Thanks to Honza for your suggestions!
 
-This is a nice improvement! Overall, the series looks good to me!
+On 7/15/25 06:07, Andrii Nakryiko wrote:
+> On Thu, Jul 3, 2025 at 5:21 AM Menglong Dong <menglong8.dong@gmail.com> wrote:
+>> By default, the kernel btf that we load during loading program will be
+>> freed after the programs are loaded in bpf_object_load(). However, we
+>> still need to use these btf for tracing of multi-link during attaching.
+>> Therefore, we don't free the btfs until the bpf object is closed if any
+>> bpf programs of the type multi-link tracing exist.
+>>
+>> Meanwhile, introduce the new api bpf_object__free_btf() to manually free
+>> the btfs after attaching.
+>>
+>> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+>> ---
+>>   tools/lib/bpf/libbpf.c   | 24 +++++++++++++++++++++++-
+>>   tools/lib/bpf/libbpf.h   |  2 ++
+>>   tools/lib/bpf/libbpf.map |  1 +
+>>   3 files changed, 26 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+>> index aee36402f0a3..530c29f2f5fc 100644
+>> --- a/tools/lib/bpf/libbpf.c
+>> +++ b/tools/lib/bpf/libbpf.c
+>> @@ -8583,6 +8583,28 @@ static void bpf_object_post_load_cleanup(struct bpf_object *obj)
+>>          obj->btf_vmlinux = NULL;
+>>   }
+>>
+>> +void bpf_object__free_btfs(struct bpf_object *obj)
+> let's not add this as a new API. We'll keep BTF fds open, if
+> necessary, but not (yet) give user full control of when those FDs will
+> be closed, I'm not convinced yet we need that much user control over
+> this
 
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
 
-> 
-> v2: https://lore.kernel.org/r/20250623073304.3275702-1-libaokun1@huawei.com
-> 
-> Changes since v1:
->  * Patch 1: Prioritize checking if a group is busy to avoid unnecessary
->        checks and buddy loading. (Thanks to Ojaswin for the suggestion!)
->  * Patch 4: Using multiple global goals instead of moving the goal to the
->        inode level. (Thanks to Honza for the suggestion!)
->  * Collect RVB from Jan Kara and Ojaswin Mujoo.(Thanks for your review!)
->  * Add patch 2,3,7-16.
->  * Due to the change of test server, the relevant test data was refreshed.
-> 
-> v1: https://lore.kernel.org/r/20250523085821.1329392-1-libaokun@huaweicloud.com
-> 
-> Since servers have more and more CPUs, and we're running more containers
-> on them, we've been using will-it-scale to test how well ext4 scales. The
-> fallocate2 test (append 8KB to 1MB, truncate to 0, repeat) run concurrently
-> on 64 containers revealed significant contention in block allocation/free,
-> leading to much lower average fallocate OPS compared to a single
-> container (see below).
-> 
->    1   |    2   |    4   |    8   |   16   |   32   |   64
-> -------|--------|--------|--------|--------|--------|-------
-> 295287 | 70665  | 33865  | 19387  | 10104  |  5588  |  3588
-> 
-> Under this test scenario, the primary operations are block allocation
-> (fallocate) and block deallocation (truncate). The main bottlenecks for
-> these operations are the group lock and s_md_lock. Therefore, this patch
-> series primarily focuses on optimizing the code related to these two locks.
-> 
-> The following is a brief overview of the patches, see the patches for
-> more details.
-> 
-> Patch 1: Add ext4_try_lock_group() to skip busy groups to take advantage
-> of the large number of ext4 groups.
-> 
-> Patch 2: Separates stream goal hits from s_bal_goals in preparation for
-> cleanup of s_mb_last_start.
-> 
-> Patches 3-5: Split stream allocation's global goal into multiple goals and
-> remove the unnecessary and expensive s_md_lock.
-> 
-> Patches 6-7: minor cleanups
-> 
-> Patches 8: Converted s_mb_free_pending to atomic_t and used memory barriers
-> for consistency, instead of relying on the expensive s_md_lock.
-> 
-> Patches 9: When inserting free extents, we now attempt to merge them with
-> already inserted extents first, to reduce s_md_lock contention.
-> 
-> Patches 10: Updates bb_avg_fragment_size_order to -1 when a group is out of
-> free blocks, eliminating efficiency-impacting "zombie groups."
-> 
-> Patches 11: Fix potential largest free orders lists corruption when the
-> mb_optimize_scan mount option is switched on or off.
-> 
-> Patches 12-17: Convert mb_optimize_scan's existing unordered list traversal
-> to ordered xarrays, thereby reducing contention between block allocation
-> and freeing, similar to linear traversal.
-> 
-> "kvm-xfstests -c ext4/all -g auto" has been executed with no new failures.
-> 
-> Here are some performance test data for your reference:
-> 
-> Test: Running will-it-scale/fallocate2 on CPU-bound containers.
-> Observation: Average fallocate operations per container per second.
-> 
-> |CPU: Kunpeng 920   |          P80           |            P1           |
-> |Memory: 512GB      |------------------------|-------------------------|
-> |960GB SSD (0.5GB/s)| base  |    patched     | base   |    patched     |
-> |-------------------|-------|----------------|--------|----------------|
-> |mb_optimize_scan=0 | 2667  | 20049 (+651%)  | 314065 | 316724 (+0.8%) |
-> |mb_optimize_scan=1 | 2643  | 19342 (+631%)  | 316344 | 328324 (+3.7%) |
-> 
-> |CPU: AMD 9654 * 2  |          P96           |             P1          |
-> |Memory: 1536GB     |------------------------|-------------------------|
-> |960GB SSD (1GB/s)  | base  |    patched     | base   |    patched     |
-> |-------------------|-------|----------------|--------|----------------|
-> |mb_optimize_scan=0 | 3450  | 52125 (+1410%) | 205851 | 215136 (+4.5%) |
-> |mb_optimize_scan=1 | 3209  | 50331 (+1468%) | 207373 | 209431 (+0.9%) |
-> 
-> Tests also evaluated this patch set's impact on fragmentation: a minor
-> increase in free space fragmentation for multi-process workloads, but a
-> significant decrease in file fragmentation:
-> 
-> Test Script：
-> ```shell
-> #!/bin/bash
-> 
-> dir="/tmp/test"
-> disk="/dev/sda"
-> 
-> mkdir -p $dir
-> 
-> for scan in 0 1 ; do
->     mkfs.ext4 -F -E lazy_itable_init=0,lazy_journal_init=0 \
->               -O orphan_file $disk 200G
->     mount -o mb_optimize_scan=$scan $disk $dir
-> 
->     fio -directory=$dir -direct=1 -iodepth 128 -thread -ioengine=falloc \
->         -rw=write -bs=4k -fallocate=none -numjobs=64 -file_append=1 \
->         -size=1G -group_reporting -name=job1 -cpus_allowed_policy=split
-> 
->     e2freefrag $disk
->     e4defrag -c $dir # Without the patch, this could take 5-6 hours.
->     filefrag ${dir}/job* | awk '{print $2}' | \
->                            awk '{sum+=$1} END {print sum/NR}'
->     umount $dir
-> done
-> ```
-> 
-> Test results:
-> -------------------------------------------------------------|
->                          |       base      |      patched    |
-> -------------------------|--------|--------|--------|--------|
-> mb_optimize_scan         | linear |opt_scan| linear |opt_scan|
-> -------------------------|--------|--------|--------|--------|
-> bw(MiB/s)                | 217    | 217    | 5718   | 5626   |
-> -------------------------|-----------------------------------|
-> Avg. free extent size(KB)| 1943732| 1943732| 1316212| 1171208|
-> Num. free extent         | 71     | 71     | 105    | 118    |
-> -------------------------------------------------------------|
-> Avg. extents per file    | 261967 | 261973 | 588    | 570    |
-> Avg. size per extent(KB) | 4      | 4      | 1780   | 1837   |
-> Fragmentation score      | 100    | 100    | 2      | 2      |
-> -------------------------------------------------------------|
-> 
-> Comments and questions are, as always, welcome.
-> 
-> Thanks,
-> Baokun
-> 
-> Baokun Li (17):
->   ext4: add ext4_try_lock_group() to skip busy groups
->   ext4: separate stream goal hits from s_bal_goals for better tracking
->   ext4: remove unnecessary s_mb_last_start
->   ext4: remove unnecessary s_md_lock on update s_mb_last_group
->   ext4: utilize multiple global goals to reduce contention
->   ext4: get rid of some obsolete EXT4_MB_HINT flags
->   ext4: fix typo in CR_GOAL_LEN_SLOW comment
->   ext4: convert sbi->s_mb_free_pending to atomic_t
->   ext4: merge freed extent with existing extents before insertion
->   ext4: fix zombie groups in average fragment size lists
->   ext4: fix largest free orders lists corruption on mb_optimize_scan
->     switch
->   ext4: factor out __ext4_mb_scan_group()
->   ext4: factor out ext4_mb_might_prefetch()
->   ext4: factor out ext4_mb_scan_group()
->   ext4: convert free groups order lists to xarrays
->   ext4: refactor choose group to scan group
->   ext4: implement linear-like traversal across order xarrays
-> 
->  fs/ext4/balloc.c            |   2 +-
->  fs/ext4/ext4.h              |  61 +--
->  fs/ext4/mballoc.c           | 895 ++++++++++++++++++++----------------
->  fs/ext4/mballoc.h           |   9 +-
->  include/trace/events/ext4.h |   3 -
->  5 files changed, 534 insertions(+), 436 deletions(-)
-> 
+Okay! I previously thought that this would take up a certain amount of
+memory, but it seems I was overthinking :/
 
+I'll remove this API in the next version.
+
+Thanks!
+Menglong Dong
+
+
+>
+>
+>> +{
+>> +       if (!obj->btf_vmlinux || obj->state != OBJ_LOADED)
+>> +               return;
+>> +
+>> +       bpf_object_post_load_cleanup(obj);
+>> +}
+>> +
+>> +static void bpf_object_early_free_btf(struct bpf_object *obj)
+>> +{
+>> +       struct bpf_program *prog;
+>> +
+>> +       bpf_object__for_each_program(prog, obj) {
+>> +               if (prog->expected_attach_type == BPF_TRACE_FENTRY_MULTI ||
+>> +                   prog->expected_attach_type == BPF_TRACE_FEXIT_MULTI ||
+>> +                   prog->expected_attach_type == BPF_MODIFY_RETURN_MULTI)
+>> +                       return;
+>> +       }
+>> +
+>> +       bpf_object_post_load_cleanup(obj);
+>> +}
+>> +
+>>   static int bpf_object_prepare(struct bpf_object *obj, const char *target_btf_path)
+>>   {
+>>          int err;
+>> @@ -8654,7 +8676,7 @@ static int bpf_object_load(struct bpf_object *obj, int extra_log_level, const ch
+>>                          err = bpf_gen__finish(obj->gen_loader, obj->nr_programs, obj->nr_maps);
+>>          }
+>>
+>> -       bpf_object_post_load_cleanup(obj);
+>> +       bpf_object_early_free_btf(obj);
+>>          obj->state = OBJ_LOADED; /* doesn't matter if successfully or not */
+>>
+>>          if (err) {
+>> diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
+>> index d1cf813a057b..7cc810aa7967 100644
+>> --- a/tools/lib/bpf/libbpf.h
+>> +++ b/tools/lib/bpf/libbpf.h
+>> @@ -323,6 +323,8 @@ LIBBPF_API struct bpf_program *
+>>   bpf_object__find_program_by_name(const struct bpf_object *obj,
+>>                                   const char *name);
+>>
+>> +LIBBPF_API void bpf_object__free_btfs(struct bpf_object *obj);
+>> +
+>>   LIBBPF_API int
+>>   libbpf_prog_type_by_name(const char *name, enum bpf_prog_type *prog_type,
+>>                           enum bpf_attach_type *expected_attach_type);
+>> diff --git a/tools/lib/bpf/libbpf.map b/tools/lib/bpf/libbpf.map
+>> index c7fc0bde5648..4a0c993221a5 100644
+>> --- a/tools/lib/bpf/libbpf.map
+>> +++ b/tools/lib/bpf/libbpf.map
+>> @@ -444,4 +444,5 @@ LIBBPF_1.6.0 {
+>>                  bpf_program__line_info_cnt;
+>>                  btf__add_decl_attr;
+>>                  btf__add_type_attr;
+>> +               bpf_object__free_btfs;
+>>   } LIBBPF_1.5.0;
+>> --
+>> 2.39.5
+>>
+>>
 
