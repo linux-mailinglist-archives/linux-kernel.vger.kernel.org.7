@@ -1,123 +1,158 @@
-Return-Path: <linux-kernel+bounces-731494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F81FB05529
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:41:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDFEBB0552C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E336A1C20B18
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:41:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24C043A654D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB24275B06;
-	Tue, 15 Jul 2025 08:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7C02D1925;
+	Tue, 15 Jul 2025 08:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mHdhSE0Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SHFRIPHv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BEB22CBEC;
-	Tue, 15 Jul 2025 08:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4D822CBEC;
+	Tue, 15 Jul 2025 08:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752568893; cv=none; b=szHfKoaCn3eC0EqVTl87y1F/zuafDaVBi/8aKCziZbYEIZNbicdWwSWbgZS4tZOrW7B2+x6nfGw3kQ9CNB5u3FF8od5No24YINLQH081Pf/9vaj+THairL7M9dy5uFkL8pfaX+GIfYGOh2hCruNdr6Y91xtr3NawvvOPO8aOe+U=
+	t=1752568899; cv=none; b=dml58p1YPvWZGt9jqNFMKebG+yzV7IXXnTfkoFyCq/Ibz4xoPobNRPYLRFuXmW3d8hlmNHsFJrlbrlW+sP5X/84M8NKiiqXP9ZXjPkNrIRwpDvbla32gKDwvan9FIanz2Ebe37GNPBum3OtRFaRNioHeG4bFThBWkwbm0WfVJxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752568893; c=relaxed/simple;
-	bh=it5bcb7P/86igKa4ZM+4PpjhFToNWvbyGywblQFSY8A=;
+	s=arc-20240116; t=1752568899; c=relaxed/simple;
+	bh=2+vHupeCvDOSe3a9ueRnyyvrWqFflIDyuvTvIJ3aJbY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fL9/O7SyGVg0Dh2YiTQzSAacOuu2V43vZ4adZqA/tn/XuPqbhiFcgr+MMT8usYtA5cQ0YnAQ45v8G+6wCXf4aztugDVLeXQOcULfkmndA8RFVVWxdsJfkhLvmI6RKyz3x11c2W0kpTzxS1VNdAzLuHqpvY+Z1nrKgn1qCSCZExc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mHdhSE0Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9B03C4CEE3;
-	Tue, 15 Jul 2025 08:41:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752568893;
-	bh=it5bcb7P/86igKa4ZM+4PpjhFToNWvbyGywblQFSY8A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mHdhSE0ZD4u52G5NgHZJ1Ui3tB/8/Y/IBU2XbHFiFnEtk38HmTH796BLA5Jt629ve
-	 DGsn7AtBbaChShOGrrpX2l+O6fh2tqwwpz/MYi70++/TfvJtKWjSrD+aDosMqh3tZb
-	 nzNvTmF4KMHkWk8oVPejCPnkQahGaCz9Y1kGirYQT9OpM3DaohpRWHGJ9GKX8qhJ9o
-	 o/wyIyENWZAzpCZsIP4R1lC/0gLrNkfZnUMKbrKmfy/vQduwhYSJ2mk56pebJYzIW5
-	 VK2bsTGLDwnVJIM2X1z78EQHdHMgbpNXL3xI+hyH4dxYAaWQW/DNQFjaTbYirP683y
-	 epTfBXDGYEpSQ==
-Date: Tue, 15 Jul 2025 10:41:28 +0200
-From: Carlos Maiolino <cem@kernel.org>
-To: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	djwong@kernel.org, skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH v2] fs/xfs: replace strncpy with memtostr_pad()
-Message-ID: <5cwrwinj6j6nqhk2gc6aj4th3csls5ga3noydzykj6fkk2v4zi@qvboar3cyh7x>
-References: <20250704101250.24629-1-pranav.tyagi03@gmail.com>
- <K5x4H41jqElESRuxXyh2MqE-igMg5PS77kCZOTtYzKuSMeRMHVp8VJC2eTQqblSYtoWkt6KGDsHr2g-S-zGbPg==@protonmail.internalid>
- <CAH4c4jLCyb3kF0G25GU2JpPVkOXrgMTtMF+NTWgJpXBoEUaA5w@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KBOkqXOVPkG2rj305j75oTsdhrBC3U+ymoZpwLECYFdVp98CqKuzy4qTwEFgXSlny3iwVU59+LtashJqdr0Y5YtFmRQ4fcSvnOm1HAMf2BTuwBS2RAVnBRL1ND4diaZWxcxXUiP7tFrzFlWM3JHA6EfsYLGBPqCkrGqYn+8Qx/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SHFRIPHv; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752568897; x=1784104897;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2+vHupeCvDOSe3a9ueRnyyvrWqFflIDyuvTvIJ3aJbY=;
+  b=SHFRIPHv926HSyr52fc3LqrdPj7BG4oMyZ106KxjKYzvrtfOvMtppBCc
+   xszcvjDXMJ6aT2Ny0SHgxftDTyklDuQO3i41sMu/2LCP4GEzerQHlDcFP
+   EoGSDej5X2gpOHdEtO7Hk2m2qGrNabrPMI68Nxe4ADHFT+KUXvN94lD7Z
+   7gyXAtuKJOZDyFqyXdx0xsf/niknOzpg4mJdbmY0SRWEGiyeZMdbqBNdo
+   +RLY65TfavwDzERgLFnbOi9D1BOXg/38I7hM+XJL31Qw70iJXBdzIJBQP
+   Twzez1p6RtkUEo7GVXbs2A9KYyrzOcqmOyf+/2RuIv+swb6lzQjW47gm2
+   w==;
+X-CSE-ConnectionGUID: m3o3qyC+Qou//DglImWLCg==
+X-CSE-MsgGUID: QkaccdRaTheuhSWAVoZKUQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="58543905"
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="58543905"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 01:41:37 -0700
+X-CSE-ConnectionGUID: rKVQKqdeQYOZ6n7Cee0VqA==
+X-CSE-MsgGUID: JUNE1Tt6TVaxnsVMvpQNSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="157257430"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 01:41:34 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ubbEB-0000000FbHQ-0pJ7;
+	Tue, 15 Jul 2025 11:41:31 +0300
+Date: Tue, 15 Jul 2025 11:41:30 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-iio@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH 6/7] hwmon: iio: Add min/max support
+Message-ID: <aHYUOs25SrUb4BtD@smile.fi.intel.com>
+References: <20250715012023.2050178-1-sean.anderson@linux.dev>
+ <20250715012023.2050178-7-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH4c4jLCyb3kF0G25GU2JpPVkOXrgMTtMF+NTWgJpXBoEUaA5w@mail.gmail.com>
+In-Reply-To: <20250715012023.2050178-7-sean.anderson@linux.dev>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Jul 10, 2025 at 03:56:01PM +0530, Pranav Tyagi wrote:
-> On Fri, Jul 4, 2025 at 3:42 PM Pranav Tyagi <pranav.tyagi03@gmail.com> wrote:
-> >
-> > Replace the deprecated strncpy() with memtostr_pad(). This also avoids
-> > the need for separate zeroing using memset(). Mark sb_fname buffer with
-> > __nonstring as its size is XFSLABEL_MAX and so no terminating NULL for
-> > sb_fname.
-> >
-> > Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
-> > ---
-> >  fs/xfs/libxfs/xfs_format.h | 2 +-
-> >  fs/xfs/xfs_ioctl.c         | 3 +--
-> >  2 files changed, 2 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
-> > index 9566a7623365..779dac59b1f3 100644
-> > --- a/fs/xfs/libxfs/xfs_format.h
-> > +++ b/fs/xfs/libxfs/xfs_format.h
-> > @@ -112,7 +112,7 @@ typedef struct xfs_sb {
-> >         uint16_t        sb_sectsize;    /* volume sector size, bytes */
-> >         uint16_t        sb_inodesize;   /* inode size, bytes */
-> >         uint16_t        sb_inopblock;   /* inodes per block */
-> > -       char            sb_fname[XFSLABEL_MAX]; /* file system name */
-> > +       char            sb_fname[XFSLABEL_MAX] __nonstring; /* file system name */
-> >         uint8_t         sb_blocklog;    /* log2 of sb_blocksize */
-> >         uint8_t         sb_sectlog;     /* log2 of sb_sectsize */
-> >         uint8_t         sb_inodelog;    /* log2 of sb_inodesize */
-> > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> > index d250f7f74e3b..c3e8c5c1084f 100644
-> > --- a/fs/xfs/xfs_ioctl.c
-> > +++ b/fs/xfs/xfs_ioctl.c
-> > @@ -990,9 +990,8 @@ xfs_ioc_getlabel(
-> >         BUILD_BUG_ON(sizeof(sbp->sb_fname) > FSLABEL_MAX);
-> >
-> >         /* 1 larger than sb_fname, so this ensures a trailing NUL char */
-> > -       memset(label, 0, sizeof(label));
-> >         spin_lock(&mp->m_sb_lock);
-> > -       strncpy(label, sbp->sb_fname, XFSLABEL_MAX);
-> > +       memtostr_pad(label, sbp->sb_fname);
-> >         spin_unlock(&mp->m_sb_lock);
-> >
-> >         if (copy_to_user(user_label, label, sizeof(label)))
-> > --
-> > 2.49.0
-> >
-> Hi,
-> 
-> This is a gentle follow-up on this patch. I would like to
-> know if there is any update on its state.
+On Mon, Jul 14, 2025 at 09:20:22PM -0400, Sean Anderson wrote:
+> Add support for minimum/maximum attributes. Like the _input attribute,
+> we just need to call into the IIO API.
 
-Looks fine to me:
+...
 
-Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
+> +static ssize_t iio_hwmon_read_event(struct device *dev,
+> +				    struct device_attribute *attr,
+> +				    char *buf)
+> +{
+> +	struct sensor_device_attribute_2 *sattr = to_sensor_dev_attr_2(attr);
+> +	struct iio_hwmon_state *state = dev_get_drvdata(dev);
+> +	struct iio_channel *chan = &state->channels[sattr->index];
+> +	int ret, result, scale;
+> +
+> +	scale = iio_hwmon_scale(chan);
+
+> +	if (scale < 0)
+
+This part is definitely missed in the respective description.
+
+> +		return scale;
+> +
+> +	ret = iio_read_event_processed_scale(chan, IIO_EV_TYPE_THRESH,
+> +					     sattr->nr, IIO_EV_INFO_VALUE,
+> +					     &result, scale);
+> +	if (ret < 0)
+
+Why ' < 0' here?
+
+> +		return ret;
+> +
+> +	return sprintf(buf, "%d\n", result);
+
+Mustn't be sysfs_emit() ?
+
+> +}
+
+...
+
+> +	ret = iio_write_event_processed_scale(chan, IIO_EV_TYPE_THRESH,
+> +					      sattr->nr, IIO_EV_INFO_VALUE,
+> +					      val, scale);
+> +	if (ret < 0)
+
+< 0 ?
+
+> +		return ret;
+
+...
+
+> +static int add_event_attr(struct device *dev, struct iio_hwmon_state *st,
+> +			  int i, enum iio_event_direction dir,
+> +			  const char *fmt, ...)
+
+Same comments as per previous patch adding another attribute API.
+
+...
+
+> +	va_start(ap, fmt);
+> +	a->dev_attr.attr.name = devm_kvasprintf(dev, GFP_KERNEL, fmt, ap);
+> +	va_end(ap);
+
+Can't %pV be used?
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-> 
-> Regards
-> Pranav Tyagi
-> 
 
