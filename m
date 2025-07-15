@@ -1,161 +1,118 @@
-Return-Path: <linux-kernel+bounces-731081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 337D9B04E99
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:19:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E91B4B04E9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33D1718939F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:19:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FF234A43AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF822D0C77;
-	Tue, 15 Jul 2025 03:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF202D0C91;
+	Tue, 15 Jul 2025 03:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vyclr5wc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mhnvEVxT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31B280B
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 03:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4E280B;
+	Tue, 15 Jul 2025 03:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752549542; cv=none; b=YfQqJT+9u9w5dTio82To03E/M+qpNyTTanYSSP17cNDmZFtbUw07CKZydAUobkaffcrFGhzDQwQvcVuYLwNt9JDQR4im+oCz40EV3LTaU9tkZ9iX60rWOnzxeUw9KSFWQNT+tvSQUIOCEDTMV3f394bepgIi4CBgiw7uosEQZpg=
+	t=1752549621; cv=none; b=C/XVzWqcBGuIZBWPy3s6Mf4ncBODzx51B0MafzoqE8yGvUhOAcU4EDEXX6X9KdeG9/VPagXKKUu8hMEx10L3DaaiP9FOtonpFrO2bskFtYBUDGc38ETMIk1vKH+a1y+rk7mXbItAGwHW9OuE/JrTe6P2ageFu9M+zGHE9AIaCcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752549542; c=relaxed/simple;
-	bh=naB+miAqX+hMvmE/fJR/EZeqBHJG4sztQZOoxW3+l7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PfKTdwtl925ECoUIkc2lGYeanlNspYjNzHs9eYJYJJ2bbMTweUd5jarpFydWNQPc5aR0urjvcHK1l3JLTkQzhwVHhAWfJttPuhH+2j7JDg/Ns5vUEQAn04MJj9Xl0HbcR4CeTITP7kTLYzJFiPM4dr+jQW/AXGsvhNzk5xW5FMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vyclr5wc; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752549541; x=1784085541;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=naB+miAqX+hMvmE/fJR/EZeqBHJG4sztQZOoxW3+l7E=;
-  b=Vyclr5wcIYx2OEngUADjWTjB6jzK7//YuQdcrIHnr/NSZGmlBJ30IzFw
-   PEYaCvLKJGqTgHURQoxmIk2kmeRk8uat3C65A0xjnFGNiDhEL/wEIQ0eB
-   bps4eZoPHlaVaStwZwox7NY1wFSvkJmnYeXtN3mksVjwhj+AG4kXIBiyF
-   k+TLhWLdX2xJxjjT+XCo6yuw9noPuqvEBdONmx47vVL3o45zxbIPjTvqU
-   PcFpRNnATy8x74UG+q06UKLZMn5TVTeBnny87EReVjN3y8Ws9XpMXEmVz
-   lg8MnDVcaEwtAUcExjcBWhG5mMQXaRKUDuCfKVX36TEpmmre7bPqJKW/x
-   Q==;
-X-CSE-ConnectionGUID: ZnaKgV2fQDSmXnAKxuL8rQ==
-X-CSE-MsgGUID: /JYNwjaeSYGbzQ4agzsTlQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="72333632"
-X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
-   d="scan'208";a="72333632"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 20:19:00 -0700
-X-CSE-ConnectionGUID: 1+UjZz4uQnqe/C33hUAgBA==
-X-CSE-MsgGUID: aJBGP5/tSkW5aBiE4uB/Bg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
-   d="scan'208";a="161126104"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 14 Jul 2025 20:18:59 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ubWC0-0009ay-3A;
-	Tue, 15 Jul 2025 03:18:56 +0000
-Date: Tue, 15 Jul 2025 11:18:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alex Deucher <alexander.deucher@amd.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Prike Liang <Prike.Liang@amd.com>
-Subject: drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c:505:6-22: duplicated
- argument to && or ||
-Message-ID: <202507151101.012avOrF-lkp@intel.com>
+	s=arc-20240116; t=1752549621; c=relaxed/simple;
+	bh=TDYuRWmFZrwnvk8qMS3AlGvkZ3xUWYu930vi3adDEoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lCqaYP5nxrM1X9ra+vZftmt3pgMMpm8pvWBSMsTXiD00pnK6fN6m3R/F6TgdGrqotxDCh/pC+7EO2eNvfS+/qsqw7CPeJV41syb1G5dMM9fle5tBe/dm7fx9pLZ0rXDY3zh0tJx7WtrEy45mTQRBfwvxkEOTzTKL8RJqSRPplQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mhnvEVxT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D5B9C4CEED;
+	Tue, 15 Jul 2025 03:20:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752549621;
+	bh=TDYuRWmFZrwnvk8qMS3AlGvkZ3xUWYu930vi3adDEoY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mhnvEVxTxd7nbP4JvA3c5oAI7v4Uh1XECXIYdE/N/qy0huEeZvo77oD3clb4yTeWg
+	 ymcvNK/OWxZiNy8QB28n853qDQu5Onfy2QbNM99FmG7C495d6/1pBwDdOtioibMSSr
+	 /rlMD2bWz/hqVqcD18knvPH4J8lLajX/kcQ2Ilm7eWdWbm7ZGc4Q/ZTnOWmINuwNNe
+	 BxX9zMQoXhN+gpCMRRtNwTSi0RuN0t+Gkpq8fEib5xKs3IOxjBmVBIpaSmzbYDP8qg
+	 xOWvSr5FiKi9K5beUealNgIeVFiD9nCqjoctx0r+oRvwk+1p8VUoHmrFlNxs9LXyT7
+	 106sWikoj8ffw==
+Date: Mon, 14 Jul 2025 22:20:20 -0500
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Gatien Chevallier <gatien.chevallier@foss.st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Le Goffic <legoffic.clement@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 06/16] arm64: dts: st: add LPDDR channel to
+ stm32mp257f-dk board
+Message-ID: <20250715032020.GB4144523-robh@kernel.org>
+References: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
+ <20250711-ddrperfm-upstream-v2-6-cdece720348f@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250711-ddrperfm-upstream-v2-6-cdece720348f@foss.st.com>
 
-Hi Alex,
+On Fri, Jul 11, 2025 at 04:48:58PM +0200, Clément Le Goffic wrote:
+> Add 32bits LPDDR4 channel to the stm32mp257f-dk board.
+> 
+> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+> ---
+>  arch/arm64/boot/dts/st/stm32mp257f-dk.dts | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/st/stm32mp257f-dk.dts b/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
+> index a278a1e3ce03..a97b41f14ecc 100644
+> --- a/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
+> +++ b/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
+> @@ -54,6 +54,13 @@ led-blue {
+>  		};
+>  	};
+>  
+> +	lpddr_channel: lpddr4-channel {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		compatible = "jedec,lpddr4-channel";
 
-First bad commit (maybe != root cause):
+Not tested because this doesn't match the binding.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   347e9f5043c89695b01e66b3ed111755afcf1911
-commit: 42a66677805d03df9e2600fab82d0cbe855500e1 drm/amdgpu/userq: use consistent function naming
-date:   3 months ago
-config: arm-randconfig-r064-20250714 (https://download.01.org/0day-ci/archive/20250715/202507151101.012avOrF-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 01c97b4953e87ae455bd4c41e3de3f0f0f29c61c)
+> +		io-width = <32>;
+> +	};
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507151101.012avOrF-lkp@intel.com/
+What would multiple channels look like? I think this needs some work. 
+Like it should perhaps be within the memory node. It's a lot to just say 
+32-bit LPDDR4 x1.
 
-cocci warnings: (new ones prefixed by >>)
->> drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c:505:6-22: duplicated argument to && or ||
-
-vim +505 drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  480  
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  481  int amdgpu_userq_ioctl(struct drm_device *dev, void *data,
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  482  		       struct drm_file *filp)
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  483  {
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  484  	union drm_amdgpu_userq *args = data;
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  485  	int r;
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  486  
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  487  	switch (args->in.op) {
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  488  	case AMDGPU_USERQ_OP_CREATE:
-4ec2141d23d3bb drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Alex Deucher    2025-02-26  489  		if (args->in.flags & ~(AMDGPU_USERQ_CREATE_FLAGS_QUEUE_PRIORITY_MASK |
-4ec2141d23d3bb drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Alex Deucher    2025-02-26  490  				       AMDGPU_USERQ_CREATE_FLAGS_QUEUE_SECURE))
-158bfbc72c5d76 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Alex Deucher    2025-02-26  491  			return -EINVAL;
-42a66677805d03 drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c     Alex Deucher    2025-04-16  492  		r = amdgpu_userq_create(filp, args);
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  493  		if (r)
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  494  			DRM_ERROR("Failed to create usermode queue\n");
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  495  		break;
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  496  
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  497  	case AMDGPU_USERQ_OP_FREE:
-158bfbc72c5d76 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Alex Deucher    2025-02-26  498  		if (args->in.ip_type ||
-158bfbc72c5d76 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Alex Deucher    2025-02-26  499  		    args->in.doorbell_handle ||
-158bfbc72c5d76 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Alex Deucher    2025-02-26  500  		    args->in.doorbell_offset ||
-fced8e7d2ddeba drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Alex Deucher    2025-02-26  501  		    args->in.flags ||
-158bfbc72c5d76 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Alex Deucher    2025-02-26  502  		    args->in.queue_va ||
-158bfbc72c5d76 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Alex Deucher    2025-02-26  503  		    args->in.queue_size ||
-158bfbc72c5d76 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Alex Deucher    2025-02-26  504  		    args->in.rptr_va ||
-158bfbc72c5d76 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Alex Deucher    2025-02-26 @505  		    args->in.wptr_va ||
-158bfbc72c5d76 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Alex Deucher    2025-02-26  506  		    args->in.wptr_va ||
-158bfbc72c5d76 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Alex Deucher    2025-02-26  507  		    args->in.mqd ||
-158bfbc72c5d76 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Alex Deucher    2025-02-26  508  		    args->in.mqd_size)
-158bfbc72c5d76 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Alex Deucher    2025-02-26  509  			return -EINVAL;
-42a66677805d03 drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c     Alex Deucher    2025-04-16  510  		r = amdgpu_userq_destroy(filp, args->in.queue_id);
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  511  		if (r)
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  512  			DRM_ERROR("Failed to destroy usermode queue\n");
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  513  		break;
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  514  
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  515  	default:
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  516  		DRM_DEBUG_DRIVER("Invalid user queue op specified: %d\n", args->in.op);
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  517  		return -EINVAL;
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  518  	}
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  519  
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  520  	return r;
-5501117d24a38d drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2023-10-10  521  }
-f540f69256a3a0 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2024-08-27  522  #else
-f540f69256a3a0 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2024-08-27  523  int amdgpu_userq_ioctl(struct drm_device *dev, void *data,
-f540f69256a3a0 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2024-08-27  524  		       struct drm_file *filp)
-f540f69256a3a0 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2024-08-27  525  {
-df85baa767ca39 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Alex Deucher    2025-02-28  526  	return -ENOTSUPP;
-f540f69256a3a0 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2024-08-27  527  }
-f540f69256a3a0 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2024-08-27  528  #endif
-bf33cb6551a8c5 drivers/gpu/drm/amd/amdgpu/amdgpu_userqueue.c Shashank Sharma 2024-08-26  529  
-
-:::::: The code at line 505 was first introduced by commit
-:::::: 158bfbc72c5d7675039df540b120ccdd37bca5f0 drm/amdgpu: validate user queue parameters
-
-:::::: TO: Alex Deucher <alexander.deucher@amd.com>
-:::::: CC: Alex Deucher <alexander.deucher@amd.com>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +
+>  	memory@80000000 {
+>  		device_type = "memory";
+>  		reg = <0x0 0x80000000 0x1 0x0>;
+> 
+> -- 
+> 2.43.0
+> 
 
