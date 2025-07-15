@@ -1,106 +1,109 @@
-Return-Path: <linux-kernel+bounces-732079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E869AB061A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:46:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 869EEB061B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B5B1504BBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:38:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7153D507BCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F671E9B04;
-	Tue, 15 Jul 2025 14:38:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5FC533D6
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31D01BD9D3;
+	Tue, 15 Jul 2025 14:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h14/s75y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274AA533D6;
+	Tue, 15 Jul 2025 14:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752590326; cv=none; b=azibnDNGPzEWHvSSRVhCwTZAnbkSWFyBZ/HvCYhE8mtbDPPxYyHbZ1nZWpP13mnuRPVVmczbtik41nyScjjiSIta6lrRtxuP6PWo3P2h6Gtjm6z5lbaLtXZf6ZlZQQ6MpzzQR3qQ9D+T0XH7jk0Vq13iVZDcoLM+WkrGVC5xwSk=
+	t=1752590349; cv=none; b=HXAVVxPgav/RTZd4AvfsF123C88bqUzrp+29Vyz9n2F8FYA38b6bZjH5Rg0lQbMQAi5RDkOcvza+AnacLMhG35wfJslg3iSNPZuA5MrazTtWOyi9BZXoG0pU1yi3/9loHnW5+PoQ08EBPKQOYDkAaJLBiqIKyjECrxNO8pPjrm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752590326; c=relaxed/simple;
-	bh=P3j1E9KS66ASSlCoDWZJbpV0GTjtVplMundCobaQwhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cd7/sZ9XzXjJOw+4jAVIjCHp+gHbZ5D/vCSYD/CH+dM59X05+2phTWxtFIauZRTwAL54OVk1a728Tl5dKy7aElMoqqXsoFpn1IVwH/Iu0vP95IQm/BJvRiiPmKuOCWB28lgxeLtqVPrKp7zQNPrHuRu7Xe5A4WSJs93GxnXhzfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B38112FC;
-	Tue, 15 Jul 2025 07:38:34 -0700 (PDT)
-Received: from [10.57.0.241] (unknown [10.57.0.241])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D52943F694;
-	Tue, 15 Jul 2025 07:38:41 -0700 (PDT)
-Message-ID: <bf56dab4-8a11-4e91-b330-2a8126c94acc@arm.com>
-Date: Tue, 15 Jul 2025 15:38:41 +0100
+	s=arc-20240116; t=1752590349; c=relaxed/simple;
+	bh=+F/FjcZLhdGEesSXP7Ra2Rc/6WNyx2PgrAKBD0xPUa4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=U5n9yFqZ6C/E3O0FNR8gGGfwmgVgTta4mqeK5m37A6tkcI5stO1OEA6R8MKr+8CFw1cBXCtnVy5S2BfVfCZPJl460q0t+csX1lWjHk6YKYI1LUVj610E09ihI4XmnnPldbevtFddKF7yQKN2IJL9AbYKOHXOykPGcSOj2u3xyj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h14/s75y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1929C4CEE3;
+	Tue, 15 Jul 2025 14:39:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752590348;
+	bh=+F/FjcZLhdGEesSXP7Ra2Rc/6WNyx2PgrAKBD0xPUa4=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=h14/s75yEDLrwnjwdYL0Ago3PwmzhA/EX2HI54r1hms3qzFjQw7ApOQfT6qwLBtD6
+	 G1Wt2mUm+aPGWFcOzTMNW8vFqcmN5tXQsKuy/f/ZCB7zGk9lMsVVYhnWScpRIeHfSp
+	 2Gb3yYDhpyBeHVT2ZBQvfUN4/relEN6LIZgTUDR0JP2JcBAYf4oysCBDL0i8SEXRKr
+	 SnauiJ/E+vtimf1gZHC2tcD1D5/WlO7FLOZGZz7/p6guSlYDd4DBd4C7rRDExDFN1W
+	 w3Ugpuf314Tlafms1fW9NBSN2/h3LtKQFG0Om8TgtzLDxhLvMDi9WapjUC34ZPMZdU
+	 RYEqRsr/4/iMA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: acpi: Enable ACPI CCEL support
-Content-Language: en-GB
-To: Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
- sami.mujawar@arm.com, aneesh.kumar@kernel.org, steven.price@arm.com,
- linux-kernel@vger.kernel.org, sudeep.holla@arm.com
-References: <20250613111153.1548928-1-suzuki.poulose@arm.com>
- <20250613111153.1548928-4-suzuki.poulose@arm.com>
- <aHZeCKNyDeZEsuCt@willie-the-truck>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <aHZeCKNyDeZEsuCt@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 16:39:04 +0200
+Message-Id: <DBCPFD7LPG5R.1J7HDRK2CQHG5@kernel.org>
+Subject: Re: [PATCH 1/2] rust: alloc: specify the minimum alignment of each
+ allocator
+Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, "Andrew Morton" <akpm@linux-foundation.org>,
+ "Matthew Wilcox" <willy@infradead.org>, "Tamir Duberstein"
+ <tamird@gmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Trevor
+ Gross" <tmgross@umich.edu>, <linux-mm@kvack.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250715-align-min-allocator-v1-0-3e1b2a5516c0@google.com>
+ <20250715-align-min-allocator-v1-1-3e1b2a5516c0@google.com>
+ <DBCOPL040H7H.2MZO6ZBIR0Z2T@kernel.org>
+ <CAH5fLgi+6Ahh_mKrdxyfc+SBKymEhqQhgg=6MxxG7MSvpJjveg@mail.gmail.com>
+In-Reply-To: <CAH5fLgi+6Ahh_mKrdxyfc+SBKymEhqQhgg=6MxxG7MSvpJjveg@mail.gmail.com>
 
-On 15/07/2025 14:56, Will Deacon wrote:
-> On Fri, Jun 13, 2025 at 12:11:53PM +0100, Suzuki K Poulose wrote:
->> ACPI CCEL memory area is reported as Non-Volatile storage area. Map it as
->> PAGE_KERNEL.
-> 
-> It would be helpful to have a citation for that. I've tried digging it
-> out of the ACPI spec, but that pointed me to the Intel TDX site and I
-> got lost in whitepapers :/
-> 
-
-https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.html#cc-event-log-acpi-table
-
->> Cc: Sami Mujawar <sami.mujawar@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
->> Cc: Steven Price <steven.price@arm.com>
->> Cc: Sudeep Holla <sudeep.holla@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   arch/arm64/kernel/acpi.c | 5 +++++
->>   1 file changed, 5 insertions(+)
+On Tue Jul 15, 2025 at 4:35 PM CEST, Alice Ryhl wrote:
+> On Tue, Jul 15, 2025 at 4:05=E2=80=AFPM Danilo Krummrich <dakr@kernel.org=
+> wrote:
 >>
->> diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
->> index b9a66fc146c9..f52439d411a0 100644
->> --- a/arch/arm64/kernel/acpi.c
->> +++ b/arch/arm64/kernel/acpi.c
->> @@ -356,6 +356,11 @@ void __iomem *acpi_os_ioremap(acpi_physical_address phys, acpi_size size)
->>   			prot = PAGE_KERNEL_RO;
->>   			break;
->>   
->> +		case EFI_ACPI_MEMORY_NVS:
->> +			/* Non-volatile storage, required for CCEL */
->> +			prot = PAGE_KERNEL;
-> 
-> By "storage" you just mean memory, right?
+>> On Tue Jul 15, 2025 at 3:46 PM CEST, Alice Ryhl wrote:
+>> > diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+>> > index a2c49e5494d334bfde67328464dafcdb31052947..c12753a5fb1c7423a40635=
+53674b537a775c860e 100644
+>> > --- a/rust/kernel/alloc.rs
+>> > +++ b/rust/kernel/alloc.rs
+>> > @@ -137,6 +137,14 @@ pub mod flags {
+>> >  /// - Implementers must ensure that all trait functions abide by the =
+guarantees documented in the
+>> >  ///   `# Guarantees` sections.
+>> >  pub unsafe trait Allocator {
+>> > +    /// The minimum alignment satisfied by all allocations from this =
+allocator.
+>> > +    ///
+>> > +    /// # Guarantees
+>> > +    ///
+>> > +    /// Any pointer allocated by this allocator must be aligned to `M=
+IN_ALIGN` even if the
+>> > +    /// requested layout has a smaller alignment.
+>>
+>> I'd say "is guaranteed to be aligned to" instead, "must be" reads like a
+>> requirement.
+>
+> Yes I agree that sounds better.
+>
+>> Speaking of which, I think this also needs to be expressed as a safety
+>> requirement of the Allocator trait itself, which the specific allocator
+>> implementations need to justify.
+>
+> The trait safety requirements already says that the implementation
+> must provide the guarantee listed on each item in the trait.
 
-Yep, it is just memory. I will drop the "NV storage" and simply mention, 
-CCEL.
-
-Thanks!
-
-Suzuki
-
-
-> 
-> Will
-
+Oh, indeed, that's fine then. :)
 
