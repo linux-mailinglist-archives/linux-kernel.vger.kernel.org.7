@@ -1,127 +1,171 @@
-Return-Path: <linux-kernel+bounces-731137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CDFFB04FA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:02:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D79FAB04FD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1638B7AF594
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:00:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D7EA1890A89
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF262D1F44;
-	Tue, 15 Jul 2025 04:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F682D4B7E;
+	Tue, 15 Jul 2025 04:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9hfz6KU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ruyyNqaf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6610F946A;
-	Tue, 15 Jul 2025 04:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4A22D0C7E;
+	Tue, 15 Jul 2025 04:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752552136; cv=none; b=s4LCGNcM8sgO2abHaqraMIIPqc3R2p1wvnNTVMbde7+NW5AXOu3XErVZCVxOWTgN4q/VwcjpVwCi4sJhXGQTMul8vYc7riuXiL64mxpqcv//DVxPdTg/r0FpQStJDa5N5f3kaEN4+LEhCw6weW05ezHnwS2WHoMnO05Js6zyBPk=
+	t=1752552231; cv=none; b=mlT1y7H490t0ktsQc6JdLjUcfWz9FA9a3gzox7V1ramm1DVeykO1uzdvaNI8Qbi+6X/gpDZrls4If+sQ8a66X/tt1oG33GAkKIPWcUJm5MkHBvVdj1idFxQJw3l8sIc9ORWmN+FZRE0eDhuYlEeDhDJWCaDObjbsFBfp1MCUcsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752552136; c=relaxed/simple;
-	bh=XTpTiYZCt+831D8WJ+GyCYjH/IxQRruB1cTTUcZo054=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SCjZDV+vd124ZSpJqBJA+/Z0JgTZSKuiOwqbvbC+x250ZZ4F8/wNnmm+TbyVsp2TdidO2aAXa2WSyiOs7aka8sgz6Gc06ujtxygVUsQpKi26kJA0KOGHsUlzrjUdF2g+8ymJwAn9ztr/yXgzie4TwAxWzGRjexO4XPqhkZ9KaSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9hfz6KU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E05AFC4CEE3;
-	Tue, 15 Jul 2025 04:02:15 +0000 (UTC)
+	s=arc-20240116; t=1752552231; c=relaxed/simple;
+	bh=lJMnWbcy+KGskhz7uaYT1aihHLwVRIM23Hj82ckJ5Po=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BOOKzSihUDA+d87usliQA1sTCkg7x0QVZBQkGeirUA0TFme0KzAbXYoE8zUoNjcy50NG+Jzxn3vz0bosDareJKL//zUtQ4fG3/u2SxqD6xBS2plucToBNs/UTsYL1RPqsc83jg1zipv2OdJ+8/IVxHewGkPhPY2SUwq6R+7mIs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ruyyNqaf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9303AC4CEE3;
+	Tue, 15 Jul 2025 04:03:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752552136;
-	bh=XTpTiYZCt+831D8WJ+GyCYjH/IxQRruB1cTTUcZo054=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g9hfz6KULY0Fap/fLlLOyRyIzj1Nakml0N8IWzcDYZXAhYbIWyUEubLZC7UwkF/Z2
-	 Q6quDzNAJgUiG0z6HmPtLEuYL62Kdl4HTAs1t5XvnvRwsnHilPrNLcyibFVGi0JXWY
-	 Jd59fRfZ4tyEblo4wBLXnPhFS3Zk4uOoss6IkeGXX/Llf7u6Kj7ntsr2YioodItpCe
-	 KbUFOUMT76nuXnhhUrRLuTIUOPzNSZ17Mh1/zDItfUfzpMeL1WJi0rV16NoZoR5Ofg
-	 j7x3eWdNBsJ4EDhnvydnCOIKjQy68PjiCUZGHeYmLYkqEpvwNVYUJT0Bvg1q8Hp69y
-	 6nqsL1nGSth/g==
-Date: Mon, 14 Jul 2025 23:02:15 -0500
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?B?Suly9G1l?= de Bretagne <jerome.debretagne@gmail.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Dale Whinham <daleyo@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
-	ath12k@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Lingbo Kong <quic_lingbok@quicinc.com>
-Subject: Re: [PATCH 7/9 RFC] dt-bindings: wireless: ath12k: Add
- disable-rfkill property
-Message-ID: <20250715040215.GA20887-robh@kernel.org>
-References: <20250714173554.14223-1-daleyo@gmail.com>
- <20250714173554.14223-8-daleyo@gmail.com>
- <prrra3lon2p4pugkgeytf5ow5wls62lfdnwcdykztw3qzwity2@d26aqh6wdyln>
- <CA+kEDGFR3FB=ead50kFBAL23-1dXo-LOMqhT7f=WecNMf_MaNg@mail.gmail.com>
+	s=k20201202; t=1752552230;
+	bh=lJMnWbcy+KGskhz7uaYT1aihHLwVRIM23Hj82ckJ5Po=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ruyyNqafKzOGp8V3DxpibLRSDryzwhZkIMQnrvd+cLPU2P6Hk8rWTc9oTChJce9s+
+	 I0UxkSczIfTDHuKV4of4HSi5B8aWuxitjD/KaNZ6aqivVMe0ENdvVZiTveqKSy+I+2
+	 tkMC3Z2TZ24xAR94bGJp+rOpbtETLwdr7blf7g41I6d4A0b0TdYp8amLZs4gcGvfZz
+	 yuHkPi6993gIR/e6RyVwar68GlIcL4muSNTi/xI3cpGkyIamNkxDbIBcrkRT2birJo
+	 FNAIO86EhempjYNvZ/vEhFgWseLLV290acjteEzpA3DKurDVvcaQmqPS40ZWta/FIF
+	 RmTmhbL7Z7sAA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82569C83F1D;
+	Tue, 15 Jul 2025 04:03:50 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH 00/17] arm64: tegra: Add Tegra210B01 support
+Date: Mon, 14 Jul 2025 23:02:43 -0500
+Message-Id: <20250714-t210b01-v1-0-e3f5f7de5dce@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+kEDGFR3FB=ead50kFBAL23-1dXo-LOMqhT7f=WecNMf_MaNg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOPSdWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDUwNL3RIjQ4MkA0PdZENTk+REgzQLS0sTJaDqgqLUtMwKsEnRsbW1AM3
+ FRUtZAAAA
+X-Change-ID: 20250509-t210b01-c154ca0f8994
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Nagarjuna Kristam <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Mathias Nyman <mathias.nyman@intel.com>, 
+ Peter De Schrijver <pdeschrijver@nvidia.com>, 
+ Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-usb@vger.kernel.org, Thierry Reding <treding@nvidia.com>, 
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>, Azkali Manad <a.ffcc7@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752552229; l=3831;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=lJMnWbcy+KGskhz7uaYT1aihHLwVRIM23Hj82ckJ5Po=;
+ b=ad6asFcWywsWGTUc+VsSSdWsJa0QLq14/57QoeJylGYnViVg/FccIfLjDNpPN9eHX4spILcBd
+ kfyTmQg6dL7CVt4Y1+GTPik2zSOUh4Ifu30qdNy0JjH2kvJRTIYPTD2
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On Tue, Jul 15, 2025 at 01:26:48AM +0200, Jérôme de Bretagne wrote:
-> On Mon. Jul 15, 2025 at 00:33, Dmitry Baryshkov
-> <dmitry.baryshkov@oss.qualcomm.com> wrote :
-> >
-> > On Mon, Jul 14, 2025 at 06:35:43PM +0100, Dale Whinham wrote:
-> > > From: Jérôme de Bretagne <jerome.debretagne@gmail.com>
-> > >
-> > > Document the disable-rfkill property.
-> >
-> > Why? What does it mean? Why are you describing Linux driver firmware in
-> > the DT?
-> 
-> rfkill should be disabled according to the Surface Pro 11's DSDT.
-> 
-> https://lore.kernel.org/all/20250113074810.29729-3-quic_lingbok@quicinc.com/
-> has added support to read the ACPI bitflag when ACPI is supported.
-> 
-> The idea was to expose one specific feature (DISABLE_RFKILL_BIT) for
-> devices described with a DT, so that the feature can be disabled.
+Also known as Tegra X1+, the Tegra210B01 has higher CPU and GPU clocks
+than the original Tegra210.
 
-The commit msg should answer all this. That was the purpose of the 
-questions.
+This series adds Tegra210B01 support to several drivers, as a slight
+extension to the existing Tegra210 support. Then adds a generic soc dtsi
+in the same vein as other tegra archs. And finally adds a barebones
+device dts to be used for dt checks. Further device support will be
+submitted in later series.
 
-Assuming it belongs in DT, why is this ath12k specific? Could be for any 
-wireless chip...
+Earlier internal revisions of this series included changes to the dfll
+driver to support Tegra210B01, but those did not work in testing, thus
+was dropped from the series. A bindings update to match is still in the
+series so the soc dtsi can declare a separate compatible from Tegra210,
+preventing the driver from attempting incorrect initialization on
+Tegra210B01.
 
-> > > Signed-off-by: Jérôme de Bretagne <jerome.debretagne@gmail.com>
-> > > Signed-off-by: Dale Whinham <daleyo@gmail.com>
-> > > ---
-> > >  .../devicetree/bindings/net/wireless/qcom,ath12k.yaml          | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-> > > index 9e557cb838c7..f15b630fb034 100644
-> > > --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-> > > +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-> > > @@ -48,6 +48,9 @@ properties:
-> > >    vddpcie1p8-supply:
-> > >      description: VDD_PCIE_1P8 supply regulator handle
-> > >
-> > > +  disable-rfkill:
-> > > +    type: boolean
-> > > +
-> > >  required:
-> > >    - compatible
-> > >    - reg
-> > > --
-> > > 2.50.1
-> > >
-> >
-> > --
-> > With best wishes
-> > Dmitry
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Aaron Kling (16):
+      dt-bindings: arm: tegra: pmc: Document Tegra210B01
+      dt-bindings: phy: tegra-xusb: Document Tegra210B01
+      dt-bindings: usb: tegra-xusb: Document Tegra210B01
+      dt-bindings: usb: tegra-xudc: Document Tegra210B01
+      dt-bindings: thermal: tegra: Document Tegra210B01
+      dt-bindings: clock: tegra: Document Tegra210B01
+      dt-bindings: clock: tegra124-dfll: Document Tegra210B01
+      dt-bindings: tegra: Document Shield TV 2019
+      phy: tegra: xusb: Add Tegra201B01 Support
+      usb: xhci: tegra: Add Tegra210B01 support
+      usb: gadget: tegra-xudc: Add Tegra210B01 Support
+      thermal: tegra: Add Tegra210B01 Support
+      clk: tegra: Add Tegra210B01 support
+      arm64: tegra: Add BPMP node for Tegra210
+      arm64: tegra: Add Tegra210B01 support
+      arm64: tegra: Add support for NVIDIA Shield TV Pro 2019
+
+Azkali Manad (1):
+      soc/tegra: pmc: Add Tegra210B01 support
+
+ Documentation/devicetree/bindings/arm/tegra.yaml   |    5 +
+ .../bindings/clock/nvidia,tegra124-dfll.txt        |    1 +
+ .../bindings/clock/nvidia,tegra20-car.yaml         |    1 +
+ .../bindings/phy/nvidia,tegra210-xusb-padctl.yaml  |    4 +-
+ .../bindings/soc/tegra/nvidia,tegra20-pmc.yaml     |    5 +-
+ .../bindings/thermal/nvidia,tegra124-soctherm.yaml |    2 +
+ .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml |    2 +
+ .../bindings/usb/nvidia,tegra210-xusb.yaml         |    4 +-
+ arch/arm64/boot/dts/nvidia/Makefile                |    1 +
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   11 +
+ .../boot/dts/nvidia/tegra210b01-p2894-0050-a08.dts |   10 +
+ arch/arm64/boot/dts/nvidia/tegra210b01-p2894.dtsi  |   70 +
+ arch/arm64/boot/dts/nvidia/tegra210b01.dtsi        |   64 +
+ drivers/clk/tegra/Makefile                         |    1 +
+ drivers/clk/tegra/clk-tegra-periph.c               |    3 +
+ drivers/clk/tegra/clk-tegra210b01.c                | 3758 ++++++++++++++++++++
+ drivers/clk/tegra/clk-utils.c                      |    5 +-
+ drivers/clk/tegra/clk.c                            |   19 +-
+ drivers/clk/tegra/clk.h                            |    6 +
+ drivers/phy/tegra/xusb-tegra210.c                  |   41 +
+ drivers/phy/tegra/xusb.c                           |    4 +
+ drivers/phy/tegra/xusb.h                           |    1 +
+ drivers/soc/tegra/pmc.c                            |  117 +
+ drivers/thermal/tegra/soctherm.c                   |    4 +
+ drivers/thermal/tegra/soctherm.h                   |    1 +
+ drivers/thermal/tegra/tegra210-soctherm.c          |   78 +
+ drivers/usb/gadget/udc/tegra-xudc.c                |   20 +
+ drivers/usb/host/xhci-tegra.c                      |   25 +
+ include/dt-bindings/clock/tegra210-car.h           |    5 +-
+ 29 files changed, 4261 insertions(+), 7 deletions(-)
+---
+base-commit: 347e9f5043c89695b01e66b3ed111755afcf1911
+change-id: 20250509-t210b01-c154ca0f8994
+
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
+
+
 
