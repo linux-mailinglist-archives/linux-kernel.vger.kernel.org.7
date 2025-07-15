@@ -1,77 +1,79 @@
-Return-Path: <linux-kernel+bounces-731340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60808B052C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:23:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0980B05314
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCC974A6CA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:22:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECC7D5614FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AD5272804;
-	Tue, 15 Jul 2025 07:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F76273D7C;
+	Tue, 15 Jul 2025 07:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XBY3Z/Fe"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="elt+2Xm6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC15226F471
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8255526E717;
+	Tue, 15 Jul 2025 07:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752563961; cv=none; b=f4Ob1z4WQDxXLajfEC5mV4qom+2grMlD24lghPkIQ0i9PBp+LZ+6KpA/WCVGlyjw6hXyliNSSyLOQvTYgRtAU3vG3jxXPx8LDVsHBX5COEeC9cqWOg3yyb3QurVug6IUZVK9ZwY6ajEb0kCbrsIaOU0FT2uFvHBEsMo2bEVgy3w=
+	t=1752564050; cv=none; b=WfO8AS63iGVzvEfLTC+oVxnBrvMKyM40iTnBT4GOIGLn/HXlUYzHqgontPpC69yiPO0YhnDGwZZOl5okHsMmIh+CQRu+VKN//fyTu6nXHuf087hbhRkUO1iE6xLT2EB5hTCHX6S0cCxhU3wQn4dijtLjuFetonb0NssBWBzkmGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752563961; c=relaxed/simple;
-	bh=Aj5SxkP3pbJtiSAJWgrM03m/j1mRYKafX3o4uGhsOrM=;
+	s=arc-20240116; t=1752564050; c=relaxed/simple;
+	bh=Ppuj0YnhCgF5zqOKQXUOZ7Q3+Bjzdmw1GnEY8EnTnjA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X/a7gyrjgby16LKUknVzRDaizCHmyDDuvuMyHO0w9ovh21wOk0Cu9OvfyXbT1ka0kE/otC7wmDrQ1haDdjO1dLUdsE078ibsMgtxEGZwTI8QOtT4ljC1VqjPy0IPCCUH7LNdDZ8D1o1v9Ly3BHhM+eXWFeFkSmjtR60hK3gBOMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XBY3Z/Fe; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OFtDJohQGlOhGcPgxY5jVmvQrgNWThXXIGfuiBYm42Y=; b=XBY3Z/Fe4tZp8l2NH9Mae0Qs2Z
-	XMEYhlDmlFXmTmMmEDGFIAlKUmDndlnNKhdiuEPn4g/V799fEqvLtltqtS3c3bmRYWFhGZzEtxkFn
-	L8OVWSLYviiANNlCfV09iVJQv/i8j86Qnrm1HpLko1e9VFhtcfCcXlv4qSKw34zy1a8ZaggAb8Z5k
-	t28em/bbscgVKNjY+H0i9OKZG9SAI5KLcXfICUVB27vawQ3l/0Jc1ToKK4hVOwr6cqPVfE1dT40k/
-	kFBPGLF5f2psKn86Ns0QW8zVYkTsaNgRN3UHFMbNDBkrOzImBdHUd+qkBQQgpMUHzpY5O4hI5cqq2
-	B8LA5IJQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubZwa-00000004JJB-3Ozc;
-	Tue, 15 Jul 2025 07:19:16 +0000
-Date: Tue, 15 Jul 2025 00:19:16 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	tech-board-discuss@lists.linuxfoundation.org
-Subject: Re: [RFC PATCH 2/5] unwind: Export unwind_user symbol to GPL modules
-Message-ID: <aHYA9IPs5QiX-QLs@infradead.org>
-References: <20250709212556.32777-1-mathieu.desnoyers@efficios.com>
- <20250709212556.32777-3-mathieu.desnoyers@efficios.com>
- <aHC-_HWR2L5kTYU5@infradead.org>
- <20250711065742.00d6668b@gandalf.local.home>
- <aHSmIa3uffj5vW-m@infradead.org>
- <20250714062724.6febd9fb@gandalf.local.home>
- <aHTsOcIUs0ObXCo1@infradead.org>
- <20250714075426.36bdda0b@gandalf.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XKI2paO21WdlMA4tPsar6LLxs3ZhtLVh/9b9pS83U2U/sNisIrkfIbLbly7TPXrYeBE93oDMsIVV1CPJYMshRt4ukjaL3eP9fBz+uxYQFcYRndS6UGgEg6CsB9zTbACC2qYYFcQ8oHRLHKSD7p1AZJxp27xrcf2yxStt+Wi7Jls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=elt+2Xm6; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752564048; x=1784100048;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ppuj0YnhCgF5zqOKQXUOZ7Q3+Bjzdmw1GnEY8EnTnjA=;
+  b=elt+2Xm6MhLVL0j7YWaXcmUKR/onm04flHXe2lLDZm+o7ipryjx1S3Ky
+   v+JSixi+cJPC/gGzlbv0lWpZS1ylPQQ/j1VBjSeCuA23AA3W9QDQ9EItO
+   2ONa2KNVt6IWuHBGvu8SbPAESggUKzO9tuk+v/vQ1MAg44BJWR3U+NXq0
+   3yusYrUfP/o2/LMutgZ2teDPQMS86ZMGwPUsFL/fPmIU8HqKzCIcb1HjK
+   K/JaBpXh7egre5LFaa8C1Ts+1yWnNcz4X1c8Ru2rY1QHXyPdoTjTduypU
+   QJ4/bn0PWqT1IVnz4PZ+yOFQo9Em8QbgzGwVn49RaDW0GBLI5K3gVznwM
+   Q==;
+X-CSE-ConnectionGUID: AHiX0WULS1egCZwWtCReBw==
+X-CSE-MsgGUID: D8bc15Q1STei1QRfLgqrQg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="72222957"
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="72222957"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 00:20:48 -0700
+X-CSE-ConnectionGUID: 8nQrrZa7SjSh5n+8L/DcPA==
+X-CSE-MsgGUID: nsnlIOacTIW5SgLxfcCMFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="161171117"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 00:20:44 -0700
+Date: Tue, 15 Jul 2025 09:19:18 +0200
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Saeed Mahameed <saeed@kernel.org>, Gal Pressman <gal@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Lama Kayal <lkayal@nvidia.com>
+Subject: Re: [PATCH net-next 5/6] net/mlx5e: SHAMPO, Remove
+ mlx5e_shampo_get_log_hd_entry_size()
+Message-ID: <aHYA563HefYzTxkt@mev-dev.igk.intel.com>
+References: <1752471585-18053-1-git-send-email-tariqt@nvidia.com>
+ <1752471585-18053-6-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,40 +82,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250714075426.36bdda0b@gandalf.local.home>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <1752471585-18053-6-git-send-email-tariqt@nvidia.com>
 
-On Mon, Jul 14, 2025 at 07:54:26AM -0400, Steven Rostedt wrote:
-> On Mon, 14 Jul 2025 04:38:33 -0700
-> Christoph Hellwig <hch@infradead.org> wrote:
+On Mon, Jul 14, 2025 at 08:39:44AM +0300, Tariq Toukan wrote:
+> From: Lama Kayal <lkayal@nvidia.com>
 > 
-> > On Mon, Jul 14, 2025 at 06:27:24AM -0400, Steven Rostedt wrote:
-> > > This has nothing to do with Mathieu being a friend. He's a long time Linux
-> > > kernel contributor and has played a key role in developing a new feature
-> > > that will help both perf and ftrace, but without the EXPORT_SYMBOL_GPL(),
-> > > LTTng can't use it. It's basically saying "thank you Mathieu for helping us
-> > > with this new feature, now go F*** off!"  
-> > 
-> > You don't have to be as explicit, but otherwise that's exactly how
-> > it works.  No one gets a free ride just because they are nice and/or
-> > contributed something.
+> Refactor mlx5e_shampo_get_log_hd_entry_size() as macro, for more
+> simplicity.
 > 
-> Why is that?
+> Signed-off-by: Lama Kayal <lkayal@nvidia.com>
+> Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+> ---
+>  drivers/net/ethernet/mellanox/mlx5/core/en.h        | 2 +-
+>  drivers/net/ethernet/mellanox/mlx5/core/en/params.c | 9 ++-------
+>  drivers/net/ethernet/mellanox/mlx5/core/en/params.h | 2 --
+>  3 files changed, 3 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en.h b/drivers/net/ethernet/mellanox/mlx5/core/en.h
+> index 019bc6ca4455..22098c852570 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en.h
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en.h
+> @@ -84,7 +84,7 @@ struct page_pool;
+>  #define MLX5E_SHAMPO_LOG_MAX_HEADER_ENTRY_SIZE (9)
+>  #define MLX5E_SHAMPO_WQ_HEADER_PER_PAGE (PAGE_SIZE >> MLX5E_SHAMPO_LOG_MAX_HEADER_ENTRY_SIZE)
+>  #define MLX5E_SHAMPO_LOG_WQ_HEADER_PER_PAGE (PAGE_SHIFT - MLX5E_SHAMPO_LOG_MAX_HEADER_ENTRY_SIZE)
+> -#define MLX5E_SHAMPO_WQ_BASE_HEAD_ENTRY_SIZE (64)
+> +#define MLX5E_SHAMPO_WQ_BASE_HEAD_ENTRY_SIZE_SHIFT (6)
+>  #define MLX5E_SHAMPO_WQ_RESRV_SIZE_BASE_SHIFT (12)
+>  #define MLX5E_SHAMPO_WQ_LOG_RESRV_SIZE (16)
+>  #define MLX5E_SHAMPO_WQ_RESRV_SIZE BIT(MLX5E_SHAMPO_WQ_LOG_RESRV_SIZE)
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/params.c b/drivers/net/ethernet/mellanox/mlx5/core/en/params.c
+> index 616251ec6d69..de5c97ea4dd8 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en/params.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en/params.c
+> @@ -414,12 +414,6 @@ u8 mlx5e_mpwqe_get_log_rq_size(struct mlx5_core_dev *mdev,
+>  	return params->log_rq_mtu_frames - log_pkts_per_wqe;
+>  }
+>  
+> -u8 mlx5e_shampo_get_log_hd_entry_size(struct mlx5_core_dev *mdev,
+> -				      struct mlx5e_params *params)
+> -{
+> -	return order_base_2(DIV_ROUND_UP(MLX5E_RX_MAX_HEAD, MLX5E_SHAMPO_WQ_BASE_HEAD_ENTRY_SIZE));
+> -}
+> -
+>  static u8 mlx5e_shampo_get_log_pkt_per_rsrv(struct mlx5e_params *params)
+>  {
+>  	return order_base_2(DIV_ROUND_UP(MLX5E_SHAMPO_WQ_RESRV_SIZE,
+> @@ -928,7 +922,8 @@ int mlx5e_build_rq_param(struct mlx5_core_dev *mdev,
+>  			 log_max_num_of_packets_per_reservation,
+>  			 mlx5e_shampo_get_log_pkt_per_rsrv(params));
+>  		MLX5_SET(wq, wq, log_headers_entry_size,
+> -			 mlx5e_shampo_get_log_hd_entry_size(mdev, params));
+> +			 MLX5E_SHAMPO_LOG_HEADER_ENTRY_SIZE -
+> +			 MLX5E_SHAMPO_WQ_BASE_HEAD_ENTRY_SIZE_SHIFT);
 
-Why would it be any different?  We have a clear reason both for technical
-reasons, and to get code upstream.  Making exceptions for vaguely defined
-friends and family defeats the entire purpose.
+We had 2 here, now it is 8 - 6, so it is fine, it wasn't obvious for me.
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
 
-If you want to help Mathieu or others do that by putting your effort
-behind the cause instead of making up exceptions.
-
-> How would you recommend getting LTTng into the kernel? It's a relatively
-> large project that has 75K of lines of code with development that lasted
-> around 20 years.
-
-I honestly don't care.  Not my business.  And you're probably also
-asking the wrong question, as those giant old out of tree projects
-tend to be a mess because of that.  The right question is really what
-functionality does LTTng have that we want in the kernel and work on
-that.
+>  		lro_timeout =
+>  			mlx5e_choose_lro_timeout(mdev,
+>  						 MLX5E_DEFAULT_SHAMPO_TIMEOUT);
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/params.h b/drivers/net/ethernet/mellanox/mlx5/core/en/params.h
+> index 919895f64dcd..488ccdbc1e2c 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en/params.h
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en/params.h
+> @@ -95,8 +95,6 @@ bool mlx5e_rx_mpwqe_is_linear_skb(struct mlx5_core_dev *mdev,
+>  u8 mlx5e_mpwqe_get_log_rq_size(struct mlx5_core_dev *mdev,
+>  			       struct mlx5e_params *params,
+>  			       struct mlx5e_xsk_param *xsk);
+> -u8 mlx5e_shampo_get_log_hd_entry_size(struct mlx5_core_dev *mdev,
+> -				      struct mlx5e_params *params);
+>  u32 mlx5e_shampo_hd_per_wqe(struct mlx5_core_dev *mdev,
+>  			    struct mlx5e_params *params,
+>  			    struct mlx5e_rq_param *rq_param);
+> -- 
+> 2.40.1
+> 
 
