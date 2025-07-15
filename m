@@ -1,87 +1,124 @@
-Return-Path: <linux-kernel+bounces-732153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC65B062C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:22:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 439FCB062D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC6487A8661
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:21:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1A21175D1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F062C24DCEC;
-	Tue, 15 Jul 2025 15:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C981D90DD;
+	Tue, 15 Jul 2025 15:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DsK6yEdR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kvMgQdn1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qH91vFjX"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A03D248F60;
-	Tue, 15 Jul 2025 15:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64E229A5;
+	Tue, 15 Jul 2025 15:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752592928; cv=none; b=UzrI793YsITJafExI0uAaOgdqrun6v0GY9cJ16gm4HfSalc94Z1ssFORVt8fZ1cAnz9tCmDgdLucoDmwQk8/UUwTdxHCmEPnj+gvYCNip4LRTu8z8hFAMjW8I1ih9CVvrcYAMCCcpoO3KmThpl0T+P5acyTPwGUmqtTT0Cx8fwI=
+	t=1752593008; cv=none; b=QmT1kGGz0Msn4lsxIX4+NkQHMTqCj2WxN8rNOAv6ElxDnymUMSPCNodjY84L6Fz8unx81kaZeBKR9JSE5aUtgCfU1I0qTTm6r92CiGQuRuYacfOVg5flnj8yYK4flbA50ugFrt0MP0xaw4S0fAqeJJTEY+myKf6l+BMnux0hqWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752592928; c=relaxed/simple;
-	bh=s8z2gEmAsy45+Fv9f8lyhExZXqM5JzSnUHVuX1ptM/w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=IsshwUzBKgO+iz+YgcxqIr9NETzDLiqZfaoENJKvbQvB8Q/f78gDZNr/mTRdGNd/D7RlawTarKWxzVxacPOD4MQO3nZRHlTvBqHw4J0P3/lOqB5sE6J1sFp395ATDRZxY3hcOIZe6t4iOjTtzc38sc3XnMy+gcUP7WoV2UVOY3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DsK6yEdR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C923C4CEE3;
-	Tue, 15 Jul 2025 15:22:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752592928;
-	bh=s8z2gEmAsy45+Fv9f8lyhExZXqM5JzSnUHVuX1ptM/w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=DsK6yEdRRCYUtJpZtbuXBVKOQQ5nfSjviSXhRa7JmLQBhv/Lc48H/7r4XjowmRawI
-	 zJKayHN0pK58+Fqitx3L61bYddkqDWTgPp1+17LMqB3sgGlklktN+bVN2NLy4EjqAo
-	 WwayrWRf7/z8ztCbBKW/5+CuVouIIwcMAZ6OPU9RQFJ1I1jQf3X4c2Y5g4o28sZmiK
-	 ynRQsQ1mAw/8u+U3SsmCuBLkAF7sZd7Jrm80cunxzQSbzDvTXh/Bk9RCE6HI1wu+Zj
-	 nK3D/6shjhrLcq/0vi4n+La4EZ/pIFJdAdx0H3CpndmmqPlhO7UD7koNdfYtsn6Hhr
-	 spI/GgHEUR6Kg==
-From: Vinod Koul <vkoul@kernel.org>
-To: mani@kernel.org, Abinash Singh <abinashlalotra@gmail.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abinash Singh <abinashsinghlalotra@gmail.com>
-In-Reply-To: <20250705160055.808165-1-abinashsinghlalotra@gmail.com>
-References: <20250705160055.808165-1-abinashsinghlalotra@gmail.com>
-Subject: Re: [PATCH RFC] dma: dw-edma: Fix build warning in
- dw_edma_pcie_probe()
-Message-Id: <175259292621.543905.5838200154800264729.b4-ty@kernel.org>
-Date: Tue, 15 Jul 2025 20:52:06 +0530
+	s=arc-20240116; t=1752593008; c=relaxed/simple;
+	bh=+yL4ogP4Wz0Yje7FHM6qD6QqNRwtP+1HxDsWdBMXUE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CV2QB87WUT0S/zlaoWddjxKukxvjDFtyQttbjbLAsuHJW1i1o3hIkiOy1s8VCUVakW2c5AJfXe1Y95j4fRqcArKV8rVs8R+9Ecy1zD56Z8ziDh0eRJc/k3drTZckfWwpmESoj2W5LW86vSw71DwskQ2mPe5v/k2YVHFtPkGz64c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kvMgQdn1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qH91vFjX; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 15 Jul 2025 17:23:22 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752593004;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FnM7eSwbv+3Rg1wGrB5sgJ9RF8txXyxgxRZUjbAWnEE=;
+	b=kvMgQdn1Q1E2EGPsndz0rRF/MjmkhA9or9SpOr8b+ThpEAcw6+kfie9EVmAcQXentasC9d
+	TG1xoIaej3V18mk8pNVcEdGecWk/o1leTMTPpq2eGxV4KoNooQJSU9j2WkMXKC0EkVk887
+	Exvjq8i+xEGmrCc5PPFjtzHddSLakezaRr5j7cfE78gWAogM4cJESBCm4SR1Ch0g++c6eS
+	23KcxLW5KHep0jUMbJYt/bdYp9clahb8TuKDyuwmX0eyZVCVcrdydcI+juzrh9rX7S9DlR
+	tDUc3COiMB+K1CX/R3cmwg97T/oB1qNPtke2ucKRRYuQzmi33ocbLTWiMywRUQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752593004;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FnM7eSwbv+3Rg1wGrB5sgJ9RF8txXyxgxRZUjbAWnEE=;
+	b=qH91vFjX+eLZnKDEItJIWcAtN1a+1NoHkf09ubX4GSaJR6OU6fX0bMilGKdTcBgHkJEhmx
+	dtQo6JKqy1n35XAA==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v3 11/17] rv: Retry when da monitor detects race
+ conditions
+Message-ID: <20250715152322.Os4lDq_B@linutronix.de>
+References: <20250715071434.22508-1-gmonaco@redhat.com>
+ <20250715071434.22508-12-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715071434.22508-12-gmonaco@redhat.com>
 
+On Tue, Jul 15, 2025 at 09:14:28AM +0200, Gabriele Monaco wrote:
+>  static inline bool										\
+>  da_event_##name(struct da_monitor *da_mon, enum events_##name event)				\
+>  {												\
+> -	type curr_state = da_monitor_curr_state_##name(da_mon);					\
+> -	type next_state = model_get_next_state_##name(curr_state, event);			\
+> -												\
+> -	if (next_state != INVALID_STATE) {							\
+> -		da_monitor_set_state_##name(da_mon, next_state);				\
+> -												\
+> -		trace_event_##name(model_get_state_name_##name(curr_state),			\
+> -				   model_get_event_name_##name(event),				\
+> -				   model_get_state_name_##name(next_state),			\
+> -				   model_is_final_state_##name(next_state));			\
+> -												\
+> -		return true;									\
+> +	enum states_##name curr_state, next_state;						\
+> +												\
+> +	curr_state = READ_ONCE(da_mon->curr_state);						\
+> +	for (int i = 0; i < MAX_DA_RETRY_RACING_EVENTS; i++) {					\
+> +		next_state = model_get_next_state_##name(curr_state, event);			\
+> +		if (next_state == INVALID_STATE)						\
+> +			goto out_react;								\
+> +		if (likely(try_cmpxchg(&da_mon->curr_state, &curr_state, next_state)))		\
+> +			goto out_success;							\
+>  	}											\
+> +	/* Special invalid transition if we run out of retries. */				\
+> +	curr_state = INVALID_STATE;								\
+>  												\
+> +out_react:											\
+>  	cond_react_##name(curr_state, event);							\
+>  												\
+>  	trace_error_##name(model_get_state_name_##name(curr_state),				\
+>  			   model_get_event_name_##name(event));					\
 
-On Sat, 05 Jul 2025 21:30:55 +0530, Abinash Singh wrote:
-> The function dw_edma_pcie_probe() in dw-edma-pcie.c triggered a
-> frame size warning:
-> ld.lld:warning:
->   drivers/dma/dw-edma/dw-edma-pcie.c:162:0: stack frame size (1040) exceeds limit (1024) in function 'dw_edma_pcie_probe'
-> 
-> This patch reduces the stack usage by dynamically allocating the
-> `vsec_data` structure using kmalloc(), rather than placing it on
-> the stack. This eliminates the overflow warning and improves kernel
-> robustness.
-> 
-> [...]
+If I understand correctly, if after 3 tries and we still fail to change the
+state, we will invoke the reactor and trace_error? Doesn't that cause a
+false positive? Because it is not a violation of the model, it is just a
+race making us fail to change the state.
 
-Applied, thanks!
+Same below.
 
-[1/1] dma: dw-edma: Fix build warning in dw_edma_pcie_probe()
-      commit: 3df63fa8f2afd051848e37ef1b8299dee28d4f87
+Also, I wouldn't use goto unless necessary. Perhaps it is better to put the
+code at "out_react:" and "out_success:" into the loop. But that's just my
+personal preference, up to you.
 
-Best regards,
--- 
-~Vinod
-
-
+Nam
 
