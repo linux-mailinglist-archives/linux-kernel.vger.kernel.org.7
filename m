@@ -1,376 +1,157 @@
-Return-Path: <linux-kernel+bounces-732243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAEC0B063F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:10:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74EF4B063F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:11:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE41580642
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:10:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 529841891A4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A988324A046;
-	Tue, 15 Jul 2025 16:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4314A24EF76;
+	Tue, 15 Jul 2025 16:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=caterina.shablia@collabora.com header.b="V1tAqhh/"
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="lHxJQFmw"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255B222068F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 16:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752595828; cv=pass; b=Gtbs0dU9g31zdHMwX6KL09jD0KiXy5SVuJe0JcGkgrT13ZG9YJUjc80pOJ+19FtWCa2SThKo+xJW5B1GXXaK0C2G3zIjDu7eKJWP1xCWA91tlpgY1FcZj+MrcXiMWySn+RBqLuoh4tr6qmlfsTX557VeixC1rVsRCnPuWSN0VuU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752595828; c=relaxed/simple;
-	bh=o0LAekYoCNrywW57w97bz4WTELfdiDWNGgIb5es7IQ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fMmcbgag4KhkqavRlJKXuAVvHPhiNikOA9dS28C0T/BICt3XCHzlM2fMaHL9kZTvwBzry+qm8fBtQ89jW9bFaC5uNk1Fb8j0w/6n7NRf2syhKYIIRB0R4y81dBCAOfWy9f+Qw5Vi0FlqIW9tdxsf7KthvVagfryDBqKbU7NXxLc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=caterina.shablia@collabora.com header.b=V1tAqhh/; arc=pass smtp.client-ip=136.143.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752595791; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=hMs7rt7fwq+deDxTzWHHM3KT0wjYvXYpEyLXErVtqJpZByfdvAMw7V1VVB5pEKEHl3/BVPZwmf4jxB6zp27lNJIoGEJbD4ia5GRUyjlY87OeOC5IKg/fVkK+YPF/FNj0tgUiNIH13Ld4o1dw23uVHKOIvqmkM6ifXo7PcrQPbn4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752595791; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=+iqEtKvkAwh73uSzqqVRBHWDYwSTps8oog7d+PjLOco=; 
-	b=aSchnzNXDzXjkIAi/3eqxWGOOlA4RMn9TAQPz+1L/0a0WfGyHzbFCEot/8+3weCexGlJ8LT38k/y3i/bwMMW1TQgRYI0VCeozG1xjpDFCkwqfvFbWYxTGkUGk3nev3ijHAUpiIetzZg9fJSjFdR7DMcawG7b3sY+ATMWNjspLY0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=caterina.shablia@collabora.com;
-	dmarc=pass header.from=<caterina.shablia@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752595791;
-	s=zohomail; d=collabora.com; i=caterina.shablia@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=+iqEtKvkAwh73uSzqqVRBHWDYwSTps8oog7d+PjLOco=;
-	b=V1tAqhh/7RUMYodkc/f4IIDF+gaxetp7oGlc2rJtffpIdPTcuZpBGif+C9FtdyN+
-	ggMPdUJvCwb2fIRvTc9TNa5je9BEiuxMUrNYgjt8nk9z1sPmrwGCyAzHJdfnVnUeJBx
-	jhVoZ4xEVio+aJZLo5jGa0PiXgkPgsp6rdVAKPV4=
-Received: by mx.zohomail.com with SMTPS id 175259578890092.61537384124972;
-	Tue, 15 Jul 2025 09:09:48 -0700 (PDT)
-From: Caterina Shablia <caterina.shablia@collabora.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,
- Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Steven Price <steven.price@arm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- nouveau@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- asahi@lists.linux.dev, Asahi Lina <lina@asahilina.net>
-Subject:
- Re: [PATCH v4 1/7] drm/panthor: Add support for atomic page table updates
-Date: Tue, 15 Jul 2025 18:09:42 +0200
-Message-ID: <2150426.BFZWjSADLM@xps>
-In-Reply-To: <2813151.QOukoFCf94@xps>
-References:
- <20250707170442.1437009-1-caterina.shablia@collabora.com>
- <d4a6208b-a4a4-451f-9799-7b9f5fb20c37@arm.com> <2813151.QOukoFCf94@xps>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB79248F7E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 16:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752595889; cv=none; b=lvqAEiM5xw03mY5K0TdE9hPoskaRk0DgV3dUMNCNZjCWp9+DsuYDxYLFkYLIZT124VV5OXARNw0Fi+33YNzI4hHY4EfEAWeZ77r9/1kmbhc5B6Um+5opJml/9G3wtLBCSHJLy6ScGYe4vqjW0VCDYA03GrEHxaCAWiqd6fMHkrs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752595889; c=relaxed/simple;
+	bh=ssdzkYOAUzYoEPALj44lIJu8F+Ca3+q+UjlVLZtt3tU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EgklqpHLDMtIAXjevM5RRYGrwj4Z14xYyZYBXKJ5xQjBlPz8t5Vjs/lKertL8BnpS5DoqyIka+EpdrG1mf1wxwDsSKrSM8fRhDzbaEfc/d7O2vBQeg/Jeg0itjGUKLWDO1CRUg2rDOkM3djDng9ipqI3fF5UY9IY6KGQSp3goxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=lHxJQFmw; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56FGAxWh1042356
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 15 Jul 2025 09:10:59 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56FGAxWh1042356
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025062101; t=1752595860;
+	bh=brQuG4nZRJSmSdYffmuKdrFwKzUcmSqXav5RylRyZJs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lHxJQFmw86IyxetyVChXMmpD/qLgK5hdUfqrbD072AHH2w7f7XEqQkiwsT/A/bzK4
+	 VL5IGxOSdBGXnrNim3iBeSdFlwuvDzMVK7889oJLOVwplxycfKkseIp7vveehSf5Tv
+	 S8T/s8BpR5Zq/IgMz9uj6TqXAFpkyJIv9/E10jstC3qjpsPzZXzGMzWbGivN7vfEM1
+	 bSrOGJa0LUNtHpgCO534Ixma1uYGOd5tUI0HgBkVz9drj0i88DPsMNlOybW/GcF+dl
+	 n15oJXqruX9XmjupySlt3a4M7xrJfBu84eQb6pCHks17ZbYG9VWt2IfqP6mxC04eK4
+	 3zWQI6PVjR+zw==
+Message-ID: <e1999cba-5721-42d4-bbe3-11ecbe218946@zytor.com>
+Date: Tue, 15 Jul 2025 09:10:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] x86/fred: Remove ENDBR64 from FRED entry points
+To: Andrew Cooper <andrew.cooper3@citrix.com>, linux-kernel@vger.kernel.org
+Cc: luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        jmill@asu.edu, peterz@infradead.org
+References: <20250715064437.807569-1-xin@zytor.com>
+ <2e198fe6-c08a-4489-bb0e-aff6d2d5670b@citrix.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <2e198fe6-c08a-4489-bb0e-aff6d2d5670b@citrix.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-El martes, 15 de julio de 2025 17:08:09 (hora de verano de Europa central),=
-=20
-Caterina Shablia escribi=C3=B3:
-> El viernes, 11 de julio de 2025 15:30:21 (hora de verano de Europa centra=
-l),
-> Steven Price escribi=C3=B3:
-> > On 07/07/2025 18:04, Caterina Shablia wrote:
-> > > From: Boris Brezillon <boris.brezillon@collabora.com>
-> > >=20
-> > > Move the lock/flush_mem operations around the gpuvm_sm_map() calls so
-> > > we can implement true atomic page updates, where any access in the
-> > > locked range done by the GPU has to wait for the page table updates
-> > > to land before proceeding.
-> > >=20
-> > > This is needed for vkQueueBindSparse(), so we can replace the dummy
-> > > page mapped over the entire object by actual BO backed pages in an
-> > > atomic
-> > > way.
-> > >=20
-> > > Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-> > > Signed-off-by: Caterina Shablia <caterina.shablia@collabora.com>
-> > > ---
-> > >=20
-> > >  drivers/gpu/drm/panthor/panthor_mmu.c | 65 +++++++++++++++++++++++++=
-=2D-
-> > >  1 file changed, 62 insertions(+), 3 deletions(-)
-> > >=20
-> > > diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c
-> > > b/drivers/gpu/drm/panthor/panthor_mmu.c index b39ea6acc6a9..9caaba03c=
-5eb
-> > > 100644
-> > > --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> > > +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> > > @@ -387,6 +387,15 @@ struct panthor_vm {
-> > >=20
-> > >  	 * flagged as faulty as a result.
-> > >  	 */
-> > >  =09
-> > >  	bool unhandled_fault;
-> > >=20
-> > > +
-> > > +	/** @locked_region: Information about the currently locked region
-> > > currently. */ +	struct {
-> > > +		/** @locked_region.start: Start of the locked region.
->=20
-> */
->=20
-> > > +		u64 start;
-> > > +
-> > > +		/** @locked_region.size: Size of the locked region. */
-> > > +		u64 size;
-> > > +	} locked_region;
-> > >=20
-> > >  };
-> > > =20
-> > >  /**
-> > >=20
-> > > @@ -775,6 +784,10 @@ int panthor_vm_active(struct panthor_vm *vm)
-> > >=20
-> > >  	}
-> > >  =09
-> > >  	ret =3D panthor_mmu_as_enable(vm->ptdev, vm->as.id, transtab,
->=20
-> transcfg,
->=20
-> > >  	vm->memattr);>
-> > >=20
-> > > +	if (!ret && vm->locked_region.size) {
-> > > +		lock_region(ptdev, vm->as.id, vm->locked_region.start,
-> > > vm->locked_region.size); +		ret =3D wait_ready(ptdev, vm-
-> >
-> >as.id);
-> >
-> > > +	}
-> >=20
-> > Do we need to do this? It seems odd to restore a MMU context and
-> > immediately set a lock region. Is there a good reason we can't just
-> > WARN_ON if there's a lock region set in panthor_vm_idle()?
->=20
-> So IIUC, when things are otherwise idle and we do a vm_bind, the vm will =
-be
-> inactive, in which case we're not going to poke the mmu to inform it of t=
-he
-> locked region, because it literally is not aware of this vm. Now if in the
-> meanwhile something submits a job and activates the vm, we need to inform
-> the mmu of the locked region, as vm_bind job might still be going on. I
-> don't see why panthor_vm_idle while a region is locked would be a problem?
-> That can arise e.g. when a job completes but there's a concurrent vm_bind
-> going on?
-> > I think we need to briefly take vm->op_lock to ensure synchronisation
-> > but that doesn't seem a big issue. Or perhaps there's a good reason that
-> > I'm missing?
->=20
-> I think you're right, all other accesses to locked_region are guarded by
-> op_lock. GPU job submit poke vm_active concurrently with vm_bind jobs doi=
-ng
-> region {,un}locks.
->=20
-> > >  out_make_active:
-> > >  	if (!ret) {
-> > >=20
-> > > @@ -902,6 +915,9 @@ static int panthor_vm_unmap_pages(struct panthor_=
-vm
-> > > *vm, u64 iova, u64 size)>
-> > >=20
-> > >  	struct io_pgtable_ops *ops =3D vm->pgtbl_ops;
-> > >  	u64 offset =3D 0;
-> > >=20
-> > > +	drm_WARN_ON(&ptdev->base,
-> > > +		    (iova < vm->locked_region.start) ||
-> > > +		    (iova + size > vm->locked_region.start + vm-
-> >
-> >locked_region.size));
-> >
-> > >  	drm_dbg(&ptdev->base, "unmap: as=3D%d, iova=3D%llx, len=3D%llx", vm-
-> >
-> >as.id,
-> >
-> > >  	iova, size);
-> > >  =09
-> > >  	while (offset < size) {
-> > >=20
-> > > @@ -915,13 +931,12 @@ static int panthor_vm_unmap_pages(struct
-> > > panthor_vm
-> > > *vm, u64 iova, u64 size)>
-> > >=20
-> > >  				iova + offset + unmapped_sz,
-> > >  				iova + offset + pgsize * pgcount,
-> > >  				iova, iova + size);
-> > >=20
-> > > -			panthor_vm_flush_range(vm, iova, offset +
->=20
-> unmapped_sz);
->=20
-> > >  			return  -EINVAL;
-> > >  	=09
-> > >  		}
-> > >  		offset +=3D unmapped_sz;
-> > >  =09
-> > >  	}
-> > >=20
-> > > -	return panthor_vm_flush_range(vm, iova, size);
-> > > +	return 0;
-> > >=20
-> > >  }
-> > > =20
-> > >  static int
-> > >=20
-> > > @@ -938,6 +953,10 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64
-> > > iova,
-> > > int prot,>
-> > >=20
-> > >  	if (!size)
-> > >  =09
-> > >  		return 0;
-> > >=20
-> > > +	drm_WARN_ON(&ptdev->base,
-> > > +		    (iova < vm->locked_region.start) ||
-> > > +		    (iova + size > vm->locked_region.start + vm-
-> >
-> >locked_region.size));
-> >
-> > > +
-> > >=20
-> > >  	for_each_sgtable_dma_sg(sgt, sgl, count) {
-> > >  =09
-> > >  		dma_addr_t paddr =3D sg_dma_address(sgl);
-> > >  		size_t len =3D sg_dma_len(sgl);
-> > >=20
-> > > @@ -985,7 +1004,7 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64
-> > > iova,
-> > > int prot,>
-> > >=20
-> > >  		offset =3D 0;
-> > >  =09
-> > >  	}
-> > >=20
-> > > -	return panthor_vm_flush_range(vm, start_iova, iova - start_iova);
-> > > +	return 0;
-> > >=20
-> > >  }
-> > > =20
-> > >  static int flags_to_prot(u32 flags)
-> > >=20
-> > > @@ -1654,6 +1673,38 @@ static const char *access_type_name(struct
-> > > panthor_device *ptdev,>
-> > >=20
-> > >  	}
-> > > =20
-> > >  }
-> > >=20
-> > > +static int panthor_vm_lock_region(struct panthor_vm *vm, u64 start, =
-u64
-> > > size) +{
-> > > +	struct panthor_device *ptdev =3D vm->ptdev;
-> > > +	int ret =3D 0;
-> > > +
-> > > +	mutex_lock(&ptdev->mmu->as.slots_lock);
-> > > +	drm_WARN_ON(&ptdev->base, vm->locked_region.start ||
-> > > vm->locked_region.size); +	vm->locked_region.start =3D start;
-> > > +	vm->locked_region.size =3D size;
-> > > +	if (vm->as.id >=3D 0) {
-> > > +		lock_region(ptdev, vm->as.id, start, size);
-> > > +		ret =3D wait_ready(ptdev, vm->as.id);
-> > > +	}
-> > > +	mutex_unlock(&ptdev->mmu->as.slots_lock);
-> > > +
-> > > +	return ret;
-> > > +}
-> > > +
-> > > +static void panthor_vm_unlock_region(struct panthor_vm *vm)
-> > > +{
-> > > +	struct panthor_device *ptdev =3D vm->ptdev;
-> > > +
-> > > +	mutex_lock(&ptdev->mmu->as.slots_lock);
-> > > +	if (vm->as.id >=3D 0) {
-> > > +		write_cmd(ptdev, vm->as.id, AS_COMMAND_FLUSH_MEM);
-> > > +		drm_WARN_ON(&ptdev->base, wait_ready(ptdev, vm-
-> >
-> >as.id));
-> >
-> > > +	}
-> > > +	vm->locked_region.start =3D 0;
-> > > +	vm->locked_region.size =3D 0;
-> > > +	mutex_unlock(&ptdev->mmu->as.slots_lock);
-> > > +}
-> >=20
-> > Do we need to include a drm_dev_enter() somewhere here? I note that
-> > panthor_vm_flush_range() has one and you've effectively replaced that
-> > code with the above.
->=20
-> Looks like we should.
-Actually not sure. I think I'm either misunderstanding what drm_dev_enter i=
-s,=20
-or there's other things that should be doing it. Notably=20
-panthor_mmu_as_{en,dis}able or their callers aren't doing drm_dev_enter, ye=
-t=20
-are poking the hw, so that seems to me like that code also runs the risk of=
-=20
-poking the hw while/after it was unplugged, but I'm not confident in my=20
-understanding at all. I guess an extra drm_dev_enter here or there isn't go=
-ing=20
-to harm anyone as it's recurrent so I'll put one around the call to=20
-lock_region in panthor_vm_lock_region as well.
->=20
-> > Thanks,
-> > Steve
-> >=20
-> > > +
-> > >=20
-> > >  static void panthor_mmu_irq_handler(struct panthor_device *ptdev, u32
-> > >  status) {
-> > > =20
-> > >  	bool has_unhandled_faults =3D false;
-> > >=20
-> > > @@ -2179,6 +2230,11 @@ panthor_vm_exec_op(struct panthor_vm *vm, stru=
-ct
-> > > panthor_vm_op_ctx *op,>
-> > >=20
-> > >  	mutex_lock(&vm->op_lock);
-> > >  	vm->op_ctx =3D op;
-> > >=20
-> > > +
-> > > +	ret =3D panthor_vm_lock_region(vm, op->va.addr, op->va.range);
-> > > +	if (ret)
-> > > +		goto out;
-> > > +
-> > >=20
-> > >  	switch (op_type) {
-> > >  =09
-> > >  	case DRM_PANTHOR_VM_BIND_OP_TYPE_MAP:
-> > >  		if (vm->unusable) {
-> > >=20
-> > > @@ -2199,6 +2255,9 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct
-> > > panthor_vm_op_ctx *op,>
-> > >=20
-> > >  		break;
-> > >  =09
-> > >  	}
-> > >=20
-> > > +	panthor_vm_unlock_region(vm);
-> > > +
-> > >=20
-> > > +out:
-> > >  	if (ret && flag_vm_unusable_on_failure)
-> > >  =09
-> > >  		vm->unusable =3D true;
+On 7/15/2025 8:49 AM, Andrew Cooper wrote:
+> On 15/07/2025 7:44 am, Xin Li (Intel) wrote:
+>> The FRED specification v9.0 states that there is no need for FRED
+>> event handlers to begin with ENDBR64, because in the presence of
+>> supervisor indirect branch tracking, FRED event delivery does not
+>> enter the WAIT_FOR_ENDBRANCH state.
+> 
+> I would suggest phrasing this as "The FRED specification has been
+> changed in v9 to..."
+> 
+> Simply "v9 states" can be read as "we mistook what v8 said and did it
+> wrong".
+> 
+> After all, the change here is specifically as a result of new research
+> showing ENDBR on the entrypoints to be of negative value.
 
+Sure, that makes it more like a story ;)
 
+> 
+>>
+>> As a result, remove ENDBR64 from FRED entry points.
+>>
+>> Then add ANNOTATE_NOENDBR to indicate that FRED entry points will
+>> never be used for indirect calls to suppress an objtool warning.
+>>
+>> This change implies that any indirect CALL/JMP to FRED entry points
+>> causes #CP in the presence of supervisor indirect branch tracking.
+>>
+>> Credit goes to Jennifer Miller <jmill@asu.edu> and other contributors
+>> from Arizona State University whose work led to this change.
+>>
+>> Link: https://lore.kernel.org/linux-hardening/Z60NwR4w%2F28Z7XUa@ubun/
+>> Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+>> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+>> Cc: Jennifer Miller <jmill@asu.edu>
+>> Cc: Peter Zijlstra <peterz@infradead.org>
+>> Cc: Andrew Cooper <andrew.cooper3@citrix.com>
+>> Cc: H. Peter Anvin <hpa@zytor.com>
+> 
+> Preferably with an adjusted commit message, Reviewed-by Andrew Cooper
+> <andrew.cooper3@citrix.com>
+
+Thanks, will add in v3 later today (Sent out v2 just now).
+
+> 
+> Any idea when an updated SIMICS will be available?
+
+The FRED testing is more focused on hardware now :).
+
+Anyway, let me check here.
 
 
 
