@@ -1,116 +1,141 @@
-Return-Path: <linux-kernel+bounces-732064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65CD1B0615A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:37:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFBB2B06178
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B4C47BC838
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:32:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37B3A1C46FB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403FB1F5437;
-	Tue, 15 Jul 2025 14:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A771B286D57;
+	Tue, 15 Jul 2025 14:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhy52LwY"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kUjtLAfe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576721D5ADE
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075CC23A9AC;
+	Tue, 15 Jul 2025 14:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752589842; cv=none; b=qdKyv/s8hTuS+PrYLG4iVhomqiY+qqCOivISD8QU5NMCJ5SdSi9wJe7GcJTHKwNq+BLKK33JWoUG667EK3PtVjUceLoX+IopViRSaGYY8X397jnP+q4ufgrrqw0vP5p4eXJV0nJgexNqZk8FJzC24IfnqcBpQ58wvDjwmP+ib8w=
+	t=1752589890; cv=none; b=ARMxt5bcYP7STRfsrGtxMBmrL2uHQjBXrYFTAvjOao385gSCfQ1o+V6jnHhc85b5mNYHp+ClgLo14ZvHEWfcHSM0cF+pLOj90WLGcwj1U1nKgCxNV28+fS0R1sJ9dvfJIDlU57UB/J0XjvIP4fTdfH+5Kk297woXrLNUCoNbtcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752589842; c=relaxed/simple;
-	bh=Drm4yruRkxpBnloK/hD6xA/NzPWR71Wr8Q7SYQ9kym8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UVsM12XcbhaDXIiBgVkT1XqOo1CCGoiupIZaj7LovUSmMS4AsSGrmgum8ZiKmGX2TzpAavVoyar7k856qOutbia5ZUx03uiVhLQA3VBlDMoZWlna5D//HOdiP2O38+niOLt0TrY/3NqaZi3YyXpuH7s+68+WkFoZPoq4j6/io40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mhy52LwY; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7494999de5cso3478648b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:30:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752589840; x=1753194640; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EOmgKiLTp47jsfMu4jAIxpovRWBotnDPNT5k/Df0iEg=;
-        b=mhy52LwYEDGHbKgiZLXu9qLFI8pfEg9cNAcqeZfVrplBkn+PcEfFu3L+01HaPYN3k1
-         MyQiQW1l/XOatz3YfNugyjQc8+hCvGq/Le1LJp62f/3kXWfRhNqZBantAsVkfDCQTEwg
-         7cl8f3bGyMaRHRQmFg8/DrT7DPMCZChOMop0TmoNz9My3jjkCAa2PNUux/2+KrQBjp0D
-         7wOIlTCLfX/Orkoiwf2EIFoBlVBSLjrp6nzcD/CApJI13fNseyDQxQgmJ4l4iPfeS1FA
-         WyR7SN5SoYKnR+zz3Z0FDuQDmFL8ZaLE3RDwTUL9etUbfYA/mNoPE5Q4pkDv1gD9+75L
-         k/rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752589840; x=1753194640;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EOmgKiLTp47jsfMu4jAIxpovRWBotnDPNT5k/Df0iEg=;
-        b=fBaSrdKoWsOYR800gcnS7d4L52gC2VwiS/QyzYytJ6DSrplXORcRDncMbJk+nSYExs
-         zJ9tQW4fdjXMiVBF0WM7pn1t3OpGPG6RGUVVukSWPBomCBgLFfAnPFAO1mpD38xY/oqL
-         xm/FkzCS+qRKZrA8pit5azCWit2iDl8isAAzVKYGdAP8JW+SqK0FV3NuifMkv2phsIs/
-         7EBHNJv3mtegTAbOCOFWMupchM+OCRL2lv6Ta/6eIlxxjNQuCtNkwuPvgRxSuAkpzqTd
-         D81LjPSf7D/DqffH4bgBFaHf9L/P/s3OoxwY/lKR61V9D4RXnhwZPMIDSfY/YgLsMgm4
-         p1HQ==
-X-Gm-Message-State: AOJu0YyyBwIu9+hs/BygJvxlHkJofZt/cLgDHoKKLMXkyPR0wstBLDlO
-	zDMRxvjnIZgjQk2BoPKCcb9HwXuD7AKOwk9VLoQfyoikwwmHtUWZzLzEWA1rjLnS7w==
-X-Gm-Gg: ASbGncuCwVdMlVCYPV4V6ntQy91FyEhQjRDIDSBkv7TtjipJlmyHplxoaGjtExemFsF
-	DTiuzrgI56K82Ss1bHJT8EtS4HTtYVgsCOWWQCjD0uU0I4M6fNZ/H+jOcxIvGynn46raoM8B0K2
-	Nimul5wDscSPiEyhEYBntg1RzbpSUWR1JwTRw2wNbZA/m2brcbXAUoBGJD0Vffq4LeeUeUMENm/
-	dRm+i2eemzFpQvG+OdKh4JxqfjyHKNpbobKmMHB5t57mjzeL4AJF+fbd8XcqZbmTotIWl0Ob9CK
-	61bjvIcIaXz1NfWXzGsS8qhPSoPBkFZSSPmNMqu6/4RqYtT2Bv03he75rXGFXgYgx/nBBQdLpBr
-	2yeeuZ9n7i1XFIr5hiBFKzH3vblCgrugj4XFMBcjxw3vjtESLeXInV+PNqiyXEw==
-X-Google-Smtp-Source: AGHT+IHzGZsoN6zIDwNiVnC+SUmlID2r8sxiUKmBrvsF3j1N+ewSujxo5V7ddlzNDOanYkaVxlWXYA==
-X-Received: by 2002:a05:6300:6199:b0:233:927b:3ffa with SMTP id adf61e73a8af0-236b6218d4cmr4595670637.12.1752589840344;
-        Tue, 15 Jul 2025 07:30:40 -0700 (PDT)
-Received: from max-MacBookPro.. (36-237-135-199.dynamic-ip.hinet.net. [36.237.135.199])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe5776efsm12106894a12.23.2025.07.15.07.30.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 07:30:39 -0700 (PDT)
-From: "Meng-Shao.Liu" <sau525@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	"Meng-Shao.Liu" <sau525@gmail.com>
-Subject: [PATCH 2/2] samples/kobject: make attribute_group const
-Date: Tue, 15 Jul 2025 22:30:35 +0800
-Message-ID: <20250715143035.27437-1-sau525@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752589890; c=relaxed/simple;
+	bh=o6fjSBuD3MkNah5lZdAX/PPlNa0a+5q/uZrvW1HtmUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EFLTe7OppPOvmAzpi+jtP7H7ggg+rl2rFPb9W85HeQpSlKUFEoIKVAqJ0nFkRTfss7YVophLJdQEWgTVTmDfDU6OAI65AKqvBMKSSHOL7zgMgcZS8IB3HbqGX4G1HI3SZl9iTwsvSMNigmHYOw4bKvwIiWivIk1bWjwqgEY3N0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kUjtLAfe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 441E9C4CEF4;
+	Tue, 15 Jul 2025 14:31:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752589889;
+	bh=o6fjSBuD3MkNah5lZdAX/PPlNa0a+5q/uZrvW1HtmUo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kUjtLAfe1YB4nzGaZVRSAmE0eRFV3Syh4ljvj87kbr+p66u6CnYRfcPBASM86tVFS
+	 TfYVKeaSem01kTkoz03ibb6YGUbuaW4r+Xd7I3+Ial+CDNR3M3zjABD+gWDvDA8l55
+	 7ESr1Sh4LfDxsU28e44GLHdrasU/ji+nKgV7K3dElUl7C5FKEcl1L3bIaXxjk1hJCQ
+	 A9HdbABolc7poqU6y6EWBEZjsM+4ommaMLdlEXsbMSbMPs0FII+sCvJRM8KcGp3EqB
+	 e5zaJbL31SrR1HrqIaznwXJdFwLj+iogDb+gCZk06X04bMeGl9krLaYKmoPU+b8203
+	 DdFMyPKH78kmQ==
+Date: Tue, 15 Jul 2025 15:31:21 +0100
+From: Will Deacon <will@kernel.org>
+To: Alexis =?iso-8859-1?Q?Lothor=E9?= <alexis.lothore@bootlin.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Xu Kuohai <xukuohai@huaweicloud.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+	ebpf@linuxfoundation.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>,
+	Ihor Solodrai <ihor.solodrai@linux.dev>, bpf@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 1/2] bpf, arm64: remove structs on stack constraint
+Message-ID: <aHZmOVpcoyTvGY1u@willie-the-truck>
+References: <20250709-arm64_relax_jit_comp-v1-0-3850fe189092@bootlin.com>
+ <20250709-arm64_relax_jit_comp-v1-1-3850fe189092@bootlin.com>
+ <aHZYcY_9JtK8so3C@willie-the-truck>
+ <DBCONB7XHN7E.2UQMMG6RICMFY@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <DBCONB7XHN7E.2UQMMG6RICMFY@bootlin.com>
 
-The attr_group structures are allocated once and never modified at
-runtime.  Also to match the constâ€‘qualified parameter of
-sysfs_create_group().
+On Tue, Jul 15, 2025 at 04:02:25PM +0200, Alexis Lothoré wrote:
+> On Tue Jul 15, 2025 at 3:32 PM CEST, Will Deacon wrote:
+> > On Wed, Jul 09, 2025 at 10:36:55AM +0200, Alexis Lothoré (eBPF Foundation) wrote:
+> >> While introducing support for 9+ arguments for tracing programs on
+> >> ARM64, commit 9014cf56f13d ("bpf, arm64: Support up to 12 function
+> >> arguments") has also introduced a constraint preventing BPF trampolines
+> >> from being generated if the target function consumes a struct argument
+> >> passed on stack, because of uncertainties around the exact struct
+> >> location: if the struct has been marked as packed or with a custom
+> >> alignment, this info is not reflected in BTF data, and so generated
+> >> tracing trampolines could read the target function arguments at wrong
+> >> offsets.
+> >> 
+> >> This issue is not specific to ARM64: there has been an attempt (see [1])
+> >> to bring the same constraint to other architectures JIT compilers. But
+> >> discussions following this attempt led to the move of this constraint
+> >> out of the kernel (see [2]): instead of preventing the kernel from
+> >> generating trampolines for those functions consuming structs on stack,
+> >> it is simpler to just make sure that those functions with uncertain
+> >> struct arguments location are not encoded in BTF information, and so
+> >> that one can not even attempt to attach a tracing program to such
+> >> function. The task is then deferred to pahole (see [3]).
+> >> 
+> >> Now that the constraint is handled by pahole, remove it from the arm64
+> >> JIT compiler to keep it simple.
+> >> 
+> >> [1] https://lore.kernel.org/bpf/20250613-deny_trampoline_structs_on_stack-v1-0-5be9211768c3@bootlin.com/
+> >> [2] https://lore.kernel.org/bpf/CAADnVQ+sj9XhscN9PdmTzjVa7Eif21noAUH3y1K6x5bWcL-5pg@mail.gmail.com/
+> >> [3] https://lore.kernel.org/bpf/20250707-btf_skip_structs_on_stack-v3-0-29569e086c12@bootlin.com/
+> >> 
+> >> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+> >> ---
+> >>  arch/arm64/net/bpf_jit_comp.c | 5 -----
+> >>  1 file changed, 5 deletions(-)
+> >
+> > This is a question born more out of ignorance that insight, but how do
+> > we ensure that the version of pahole being used is sufficiently
+> > up-to-date that the in-kernel check is not required?
+> 
+> Based on earlier discussions, I am not convinced it is worth maintaining
+> the check depending on the pahole version used in BTF. Other architectures
+> exposing a JIT compiler don't have the in-kernel check and so are already
+> exposed to this very specific case, but discussions around my attempt to
+> enforce the check on other JIT comp showed that the rarity of this case do
+> not justify protecting it on kernel side (see [1]).
 
-No functional change.
+I can understand why doing this in pahole rather than in each individual
+JIT is preferable, but I don't think there's any harm leaving the
+existing two line check in arm64 as long as older versions of pahole
+might be used, is there? I wouldn't say that removing it really
+simplifies the JIT compiler when you consider the rest of the
+implementation.
 
-Signed-off-by: Meng-Shao.Liu <sau525@gmail.com>
----
- samples/kobject/kobject-example.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Of course, once the kernel requires a version of pahole recent enough
+to contain [3], we should drop the check in the JIT compiler as the
+one in pahole looks like it's more selective about the functions it
+rejects.
 
-diff --git a/samples/kobject/kobject-example.c b/samples/kobject/kobject-example.c
-index e6d7fc18e..36d87ca0b 100644
---- a/samples/kobject/kobject-example.c
-+++ b/samples/kobject/kobject-example.c
-@@ -102,7 +102,7 @@ static struct attribute *attrs[] = {
-  * created for the attributes with the directory being the name of the
-  * attribute group.
-  */
--static struct attribute_group attr_group = {
-+static const struct attribute_group attr_group = {
- 	.attrs = attrs,
- };
- 
--- 
-2.43.0
-
+Will
 
