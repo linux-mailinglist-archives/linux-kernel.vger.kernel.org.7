@@ -1,147 +1,152 @@
-Return-Path: <linux-kernel+bounces-731568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24D3BB05658
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:32:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E2DB0564E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6D1B7AC3F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:30:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 015FD1766BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9A02472AE;
-	Tue, 15 Jul 2025 09:31:46 +0000 (UTC)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70AC242D67;
-	Tue, 15 Jul 2025 09:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574472D63E2;
+	Tue, 15 Jul 2025 09:29:15 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A8417A31C;
+	Tue, 15 Jul 2025 09:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752571906; cv=none; b=NYbvuQbxsws2LECmen0qbsaxiqjlSP2osNtZ/cXaew5wDtJUewodLiQruGsp6r2yVTSKdVi94LJDeMJhPy1/A5PLu5t3y2FwOuqsBLwQARRlvv2CCzqzEhOr0c6IUz2Ex9KKnU3ziST8zKX/DVHmMSJ16GrZCgKj1qj5jDb6Vmw=
+	t=1752571754; cv=none; b=m5AhWBJ53+7J30CIWKiaWtZuPZefyc74gPSklyM1JjxZcg1XAqutPNCywYg/WOgH4p/HPywDCONk1lXUYo/YE3844pbdglqofryxMHIPuu6Kb7nnxm1bG3aCY+6XTJp4sZyi8WewHUBw1zcd6Ng0Jazw5k+dU/YN1vkWFa6HwQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752571906; c=relaxed/simple;
-	bh=Enm+5lj1/ZB8kwu0P++RJOLus7cmUggLHCtHYqUrHzI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rypsxIZRlHpC6Ge6EZYD/+7yt0M8VRUHOogQ4sOOvOkc+j1sbRaggrMouRBmOj9+9AMiP8nGZ+QNFRV1S3xZ5F4yWYhBl2dU5z3yGoUrcCgHiuJuqIdXhTUJ7JA3YZymgS3+4W34SCJMB+d+TONJ1f0ODBYUfEzot2/ZWgmGr1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae9be1697easo50577566b.1;
-        Tue, 15 Jul 2025 02:31:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752571903; x=1753176703;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/NEvrnN1Iem52usWD5YMVmiNdwL79bzkTw6CkM01FJs=;
-        b=e65junnM93gqKxFZevdcxgn8ICCXdH/8FVYYlVnYbyTc1Lli5rl44myctAf95ZNEwo
-         Ia0W/AKyzwP+01aEf2r7H5+4gSJcNNoGUzC1dFjgEsFR6Nf2VB3sWt1C5weK+eAVRX8M
-         Q4rF/3h7WDN9XE/Fy5TEf3Xa0LqFoYF5xruE0wSeIcTeteNlVF5gUSREamtHnDM1pF+4
-         SKQOj383bkuy+GMHDRI3SmlWrSys3RDoYZ19jHWNwEkW5PTbRq6CLJTitc4s9eRC7iQI
-         bn2h79dEyOBT3Pe8AVfrVvEe4se1aIkuNOkGPK3vQf69uYW2gPqQaL6CuernhTP57zEc
-         JhYw==
-X-Forwarded-Encrypted: i=1; AJvYcCU64gOam9hItyMJQSdX+rzYFmBr6o/PXNBhIhJTLyt2iaHG90V353cXwlVHa6ZjeKUdI07rRdyJBYbYeSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1ULbRKfjRZubEBqCIPXHFXjJaXjO/XWUS4tnrxeXc3XG2Pr19
-	ECCdClRDJb1qilo1vUwvEP5KPiGf4FBqQlgzkbY1Q+FVs4quNEE5GjoY
-X-Gm-Gg: ASbGncsuuxCQoqAbPPbvu/MC75C1JzB+HR43EKBpTVSPWbMsR+vaMeIhG+kpXbjIarj
-	oeE98hFXYNUOHPb+uKOAKztZQRVf4lzzi226dCZWBu3S/OAlv5Rybj5LQvewy++gmEa8G2CEoHY
-	j9TfTgiu+rppgMwDdGGH2GpCogoUhtn3951B3//TbaVwwGvH3n69238/qE28NhGTWMHJb5YsL7+
-	lSpXgvcn+nmZt286dwYyx1xDPKZYVhRuvLtVZY033jNOtRk+9p/FS0F2uds9kVxWbRcaoONIYSW
-	8FBokzHUFe/bx67keL9qdG2xkpiDD1SnVLrxt4vaMfb70WZEhzQAypVkqJKH4B0tYciZBo6TLz5
-	XiigRkvmUjSCC
-X-Google-Smtp-Source: AGHT+IEgfYhUiqAFXqjOjJsoxyl3hh/BsBBaqN0B3m9m28JMb/J8aEhA/ASIWj8brBldbnf+X40lYA==
-X-Received: by 2002:a17:907:3d8f:b0:ae3:eab4:21ed with SMTP id a640c23a62f3a-ae9b5bfbc5bmr275577166b.11.1752571902673;
-        Tue, 15 Jul 2025 02:31:42 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:1::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee8d9fsm953060666b.46.2025.07.15.02.31.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 02:31:42 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Tue, 15 Jul 2025 02:28:19 -0700
-Subject: [PATCH] efivarfs: Suppress false-positive kmemleak warning for sfi
+	s=arc-20240116; t=1752571754; c=relaxed/simple;
+	bh=5xB5EghpbSrv6Sqz4VyNO3FDlKrV5W1SVR1hsXpnBTI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=uZXwlDIqHOXwR8EoPSRSShSdCcWGj+EPUTrG+WB5DkGQJfVZxcovZpQVuWHdNoTezghSh+oRgMa9Fjd2uJPfsGPIf1N29CKDJGWbGnEgss7ueqerJYJ0+Mm1mdUsztGL2Y41xGVnkqE77PyKwHIdJMwhM2feG+JQ8psb5JCNc6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from lizhi2$eswincomputing.com ( [10.11.96.26] ) by
+ ajax-webmail-app1 (Coremail) ; Tue, 15 Jul 2025 17:28:37 +0800 (GMT+08:00)
+Date: Tue, 15 Jul 2025 17:28:37 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?5p2O5b+X?= <lizhi2@eswincomputing.com>
+To: "Andrew Lunn" <andrew@lunn.ch>
+Cc: weishangjuan@eswincomputing.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, rmk+kernel@armlinux.org.uk,
+	yong.liang.choong@linux.intel.com, vladimir.oltean@nxp.com,
+	jszhang@kernel.org, jan.petrous@oss.nxp.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
+	boon.khai.ng@altera.com, dfustini@tenstorrent.com, 0x1207@gmail.com,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, ningyu@eswincomputing.com,
+	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: Re: [PATCH v3 2/2] ethernet: eswin: Add eic7700 ethernet driver
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <c212c50e-52ae-4330-8e67-792e83ab29e4@lunn.ch>
+References: <20250703091808.1092-1-weishangjuan@eswincomputing.com>
+ <20250703092015.1200-1-weishangjuan@eswincomputing.com>
+ <c212c50e-52ae-4330-8e67-792e83ab29e4@lunn.ch>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250715-kmemleak_efi-v1-1-c07e68c76ae8@debian.org>
-X-B4-Tracking: v=1; b=H4sIADIfdmgC/x3MWwqDMBQFwK1czreBaCOVbKVISc2JvfioJCAFc
- e+Cs4A5UJiVBV4OZO5a9LfCS10Jhm9YRxqN8ILGNq191s5MC5eZYXozqfkwJrouPKyLqARbZtL
- /3b3687wAnMmrCl4AAAA=
-X-Change-ID: 20250714-kmemleak_efi-bedfe48a304d
-To: Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-team@meta.com, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1481; i=leitao@debian.org;
- h=from:subject:message-id; bh=Enm+5lj1/ZB8kwu0P++RJOLus7cmUggLHCtHYqUrHzI=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBodh/90G2Ll6Fc9Cq7iQPkQeZyYayJ1fjcZ0Xg3
- HQRjZpj9YyJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaHYf/QAKCRA1o5Of/Hh3
- bTlUD/498CUujYZVG8HJT5z62Jq9OJNJ2jypGgKS82BWDwiZVx5JALUc6MUbaN+pFqSZcAMbGZR
- Tw7sKNvZsIFpILL6RE07yMlUI+2Mejf+ckyICxTfGcIzpW7/mnZ7COdiQHMfyoS5r30OeZwMYrg
- SR0w7noqc+//dkK5sk5hq5FuDgrR2q4N45UkIRHvQ2Hv1kS/kEf14JGZWQDckoX+B2pnIJwxP68
- 7N/EZzbXIfqmiTv8uULOrppN8enmIx0pDMiInlBW7TDumtXoNNCRhy/o4l6R9g5iHWyGE3W7gLE
- YhiRb0qmlflpjvaBp7s14B6OKoYOte5pdURMdvnNDdX2X94k03segaHW42rBHiRLIEnSh2dnhp5
- 2cvlTnPMH5OxgPEXkO6G0cQeRzabDA3WFy9mOFvgFFnTLddRQMtW6WO19TOlFy9uXhQ5Lx47OPK
- 5qawikrzWrfSIBKuFYl0mA43r6+u6YcPOGd8wT7tf9sckz3ZuBKNNZlAwe+q4e2Sec/vEdGNaKr
- DyKjWpyYZ6scN00q6SkLBXZfCR7fuxID+qAVQNZL1EAZpnZBz3os/S9aBFctl9nEXXYqIjFKxV3
- Um/MQHUFBVaSu/fKyD/6nFgzzwyQ+Y1eMSFJVJnjd2yu3apJNpuJTG4qZuumQI44/xUUv86cDYY
- 98ryaAqOOhxSmAg==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Message-ID: <7ccc507d.34b1.1980d6a26c0.Coremail.lizhi2@eswincomputing.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:TAJkCgA3WxFFH3ZoVkCwAA--.12407W
+X-CM-SenderInfo: xol2xx2s6h245lqf0zpsxwx03jof0z/1tbiAQEEDGh1MO8nDwAAsi
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-When kmemleak is enabled, it incorrectly reports the sfi structure
-allocated during efivarfs_init_fs_context() as leaked:
-
-    unreferenced object 0xffff888146250b80 (size 64):
-    __kmalloc_cache_noprof
-    efivarfs_init_fs_context
-    ...
-
-On module unload, this object is freed in efivarfs_kill_sb(), confirming
-no actual leak. Also, kfree(sfi) is called at efivarfs_kill_sb(). I am
-not able to explain why kmemleak detected it as a leak. To silence this
-false-positive, mark the sfi allocation as ignored by kmemleak right
-after allocation.
-
-This ensures clearer leak diagnostics for this allocation path.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- fs/efivarfs/super.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-index c900d98bf4945..5f867ad2005ae 100644
---- a/fs/efivarfs/super.c
-+++ b/fs/efivarfs/super.c
-@@ -19,6 +19,7 @@
- #include <linux/notifier.h>
- #include <linux/printk.h>
- #include <linux/namei.h>
-+#include <linux/kmemleak.h>
- 
- #include "internal.h"
- #include "../internal.h"
-@@ -498,6 +499,7 @@ static int efivarfs_init_fs_context(struct fs_context *fc)
- 	if (!sfi)
- 		return -ENOMEM;
- 
-+	kmemleak_ignore(sfi);
- 	sfi->mount_opts.uid = GLOBAL_ROOT_UID;
- 	sfi->mount_opts.gid = GLOBAL_ROOT_GID;
- 
-
----
-base-commit: 8c2e52ebbe885c7eeaabd3b7ddcdc1246fc400d2
-change-id: 20250714-kmemleak_efi-bedfe48a304d
-
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
-
+RGVhciBBbmRyZXcgTHVubiwKVGhhbmsgeW91IGZvciB5b3VyIHByb2Zlc3Npb25hbCBhbmQgdmFs
+dWFibGUgc3VnZ2VzdGlvbnMuCk91ciBxdWVzdGlvbnMgYXJlIGVtYmVkZGVkIGJlbG93IHlvdXIg
+Y29tbWVudHMgaW4gdGhlIG9yaWdpbmFsIGVtYWlsIGJlbG93LgoKCkJlc3QgcmVnYXJkcywKCkxp
+IFpoaQpFc3dpbiBDb21wdXRpbmcKCgo+IC0tLS0t5Y6f5aeL6YKu5Lu2LS0tLS0KPiDlj5Hku7bk
+uro6ICJBbmRyZXcgTHVubiIgPGFuZHJld0BsdW5uLmNoPgo+IOWPkemAgeaXtumXtDoyMDI1LTA3
+LTA0IDAwOjEyOjI5ICjmmJ/mnJ/kupQpCj4g5pS25Lu25Lq6OiB3ZWlzaGFuZ2p1YW5AZXN3aW5j
+b21wdXRpbmcuY29tCj4g5oqE6YCBOiBhbmRyZXcrbmV0ZGV2QGx1bm4uY2gsIGRhdmVtQGRhdmVt
+bG9mdC5uZXQsIGVkdW1hemV0QGdvb2dsZS5jb20sIGt1YmFAa2VybmVsLm9yZywgcm9iaEBrZXJu
+ZWwub3JnLCBrcnprK2R0QGtlcm5lbC5vcmcsIGNvbm9yK2R0QGtlcm5lbC5vcmcsIG5ldGRldkB2
+Z2VyLmtlcm5lbC5vcmcsIGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnLCBsaW51eC1rZXJuZWxA
+dmdlci5rZXJuZWwub3JnLCBtY29xdWVsaW4uc3RtMzJAZ21haWwuY29tLCBhbGV4YW5kcmUudG9y
+Z3VlQGZvc3Muc3QuY29tLCBybWsra2VybmVsQGFybWxpbnV4Lm9yZy51aywgeW9uZy5saWFuZy5j
+aG9vbmdAbGludXguaW50ZWwuY29tLCB2bGFkaW1pci5vbHRlYW5AbnhwLmNvbSwganN6aGFuZ0Br
+ZXJuZWwub3JnLCBqYW4ucGV0cm91c0Bvc3MubnhwLmNvbSwgcHJhYmhha2FyLm1haGFkZXYtbGFk
+LnJqQGJwLnJlbmVzYXMuY29tLCBpbm9jaGlhbWFAZ21haWwuY29tLCBib29uLmtoYWkubmdAYWx0
+ZXJhLmNvbSwgZGZ1c3RpbmlAdGVuc3RvcnJlbnQuY29tLCAweDEyMDdAZ21haWwuY29tLCBsaW51
+eC1zdG0zMkBzdC1tZC1tYWlsbWFuLnN0b3JtcmVwbHkuY29tLCBsaW51eC1hcm0ta2VybmVsQGxp
+c3RzLmluZnJhZGVhZC5vcmcsIG5pbmd5dUBlc3dpbmNvbXB1dGluZy5jb20sIGxpbm1pbkBlc3dp
+bmNvbXB1dGluZy5jb20sIGxpemhpMkBlc3dpbmNvbXB1dGluZy5jb20KPiDkuLvpopg6IFJlOiBb
+UEFUQ0ggdjMgMi8yXSBldGhlcm5ldDogZXN3aW46IEFkZCBlaWM3NzAwIGV0aGVybmV0IGRyaXZl
+cgo+IAo+ID4gKy8qIERlZmF1bHQgZGVsYXkgdmFsdWUqLwo+ID4gKyNkZWZpbmUgRUlDNzcwMF9E
+RUxBWV9WQUxVRTAgMHgyMDIwMjAyMAo+ID4gKyNkZWZpbmUgRUlDNzcwMF9ERUxBWV9WQUxVRTEg
+MHg5NjIwNUEyMAo+IAo+IFdlIG5lZWQgYSBiZXR0ZXIgZXhwbGFuYXRpb24gb2Ygd2hhdCBpcyBn
+b2luZyBvbiBoZXJlLiBXaGF0IGRvIHRoZXNlCj4gbnVtYmVycyBtZWFuPwo+IAoKTGV0IG1lIGNs
+YXJpZnk6CiAgRUlDNzcwMF9ERUxBWV9WQUxVRTAgKDB4MjAyMDIwMjApIGlzIHVzZWQgdG8gY29u
+ZmlndXJlIGRlbGF5IHRhcHMgZm9yIFRYRFszOjBdIHNpZ25hbHMuIEVhY2ggYnl0ZSByZXByZXNl
+bnRzIHRoZSBkZWxheSB2YWx1ZSBmb3Igb25lIGRhdGEgbGluZS4KICBFSUM3NzAwX0RFTEFZX1ZB
+TFVFMSAoMHg5NjIwNUEyMCkgY29uZmlndXJlcyBjb250cm9sIHNpZ25hbCBkZWxheXMsIHN1Y2gg
+YXMgVFhfRU4sIFJYX0RWLCBhbmQgb3RoZXJzLiBBZ2FpbiwgZWFjaCBieXRlIGNvcnJlc3BvbmRz
+IHRvIGEgc3BlY2lmaWMgc2lnbmFsIGxpbmUuCk1vcmUgZGV0YWlsZWQgaW5saW5lIGNvbW1lbnRz
+IHdpbGwgYmUgYWRkZWQgaW4gdGhlIG5leHQgcGF0Y2jCoHRvIGV4cGxhaW4gdGhlIGJpdCBsYXlv
+dXQgYW5kIHB1cnBvc2Ugb2YgZWFjaCBieXRlIGluIHRoZXNlIGRlZmF1bHQgdmFsdWVzLiBJcyB0
+aGlzIHVuZGVyc3RhbmRpbmcgY29ycmVjdD8KCj4gPiArCWR3Y19wcml2LT5kbHlfcGFyYW1fMTAw
+MG1bMF0gPSBFSUM3NzAwX0RFTEFZX1ZBTFVFMDsKPiA+ICsJZHdjX3ByaXYtPmRseV9wYXJhbV8x
+MDAwbVsxXSA9IEVJQzc3MDBfREVMQVlfVkFMVUUxOwo+ID4gKwlkd2NfcHJpdi0+ZGx5X3BhcmFt
+XzEwMDBtWzJdID0gRUlDNzcwMF9ERUxBWV9WQUxVRTA7Cj4gPiArCWR3Y19wcml2LT5kbHlfcGFy
+YW1fMTAwbVswXSA9IEVJQzc3MDBfREVMQVlfVkFMVUUwOwo+ID4gKwlkd2NfcHJpdi0+ZGx5X3Bh
+cmFtXzEwMG1bMV0gPSBFSUM3NzAwX0RFTEFZX1ZBTFVFMTsKPiA+ICsJZHdjX3ByaXYtPmRseV9w
+YXJhbV8xMDBtWzJdID0gRUlDNzcwMF9ERUxBWV9WQUxVRTA7Cj4gPiArCWR3Y19wcml2LT5kbHlf
+cGFyYW1fMTBtWzBdID0gMHgwOwo+ID4gKwlkd2NfcHJpdi0+ZGx5X3BhcmFtXzEwbVsxXSA9IDB4
+MDsKPiA+ICsJZHdjX3ByaXYtPmRseV9wYXJhbV8xMG1bMl0gPSAweDA7Cj4gCj4gV2hhdCBhcmUg
+dGhlIHRocmVlIGRpZmZlcmVudCB2YWx1ZXMgZm9yPwo+IAoKTGV0IG1lIGNsYXJpZnkgdGhlIHB1
+cnBvc2Ugb2YgdGhlIHRocmVlIGVsZW1lbnRzIGluIGVhY2ggZGx5X3BhcmFtXyogYXJyYXk6CiAg
+ZGx5X3BhcmFtX1t4XVswXTogRGVsYXkgY29uZmlndXJhdGlvbiBmb3IgVFhEIHNpZ25hbHMKICBk
+bHlfcGFyYW1fW3hdWzFdOiBEZWxheSBjb25maWd1cmF0aW9uIGZvciBjb250cm9sIHNpZ25hbHMg
+KGUuZy4sIFRYX0VOLCBSWF9EViwgUlhfQ0xLKQogIGRseV9wYXJhbV9beF1bMl06IERlbGF5IGNv
+bmZpZ3VyYXRpb24gZm9yIFJYRCBzaWduYWxzClRoZXNlIHZhbHVlcyBhcmUgZGVmaW5lZCBzZXBh
+cmF0ZWx5IGZvciBkaWZmZXJlbnQgbGluayBzcGVlZHM6IDEwMDAgTWJwcywgMTAwIE1icHMsIGFu
+ZCAxMCBNYnBzLiBEdXJpbmcgUEhZIGluaXRpYWxpemF0aW9uIG9yIHdoZW4gdGhlIGxpbmsgc3Bl
+ZWQgY2hhbmdlcywgdGhlIGNvcnJlc3BvbmRpbmcgZGVsYXkgcGFyYW1ldGVycyBhcmUgc2VsZWN0
+ZWQgYW5kIGFwcGxpZWQgdG8gdGhlIGhhcmR3YXJlIHJlZ2lzdGVycy4KSW5saW5lIGNvbW1lbnRz
+IHdpbGwgYmUgYWRkZWQgaW4gdGhlIG5leHQgcGF0Y2ggdG8gY2xhcmlmeSB0aGUgbWVhbmluZyBh
+bmQgdXNhZ2Ugb2YgZWFjaCBlbGVtZW50LiBJcyB0aGlzIHVuZGVyc3RhbmRpbmcgY29ycmVjdD8K
+Cj4gPiArCj4gPiArCXJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKHBkZXYtPmRldi5vZl9ub2Rl
+LCAicngtaW50ZXJuYWwtZGVsYXktcHMiLAo+ID4gKwkJCQkgICAmZHdjX3ByaXYtPnJ4X2RlbGF5
+X3BzKTsKPiA+ICsJaWYgKHJldCkKPiA+ICsJCWRldl9kYmcoJnBkZXYtPmRldiwgImNhbid0IGdl
+dCByeC1pbnRlcm5hbC1kZWxheS1wcywgcmV0KCVkKS4iLCByZXQpOwo+ID4gKwllbHNlCj4gPiAr
+CQloYXNfcnhfZGx5ID0gdHJ1ZTsKPiA+ICsKPiA+ICsJcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91
+MzIocGRldi0+ZGV2Lm9mX25vZGUsICJ0eC1pbnRlcm5hbC1kZWxheS1wcyIsCj4gPiArCQkJCSAg
+ICZkd2NfcHJpdi0+dHhfZGVsYXlfcHMpOwo+ID4gKwlpZiAocmV0KQo+ID4gKwkJZGV2X2RiZygm
+cGRldi0+ZGV2LCAiY2FuJ3QgZ2V0IHR4LWludGVybmFsLWRlbGF5LXBzLCByZXQoJWQpLiIsIHJl
+dCk7Cj4gPiArCWVsc2UKPiA+ICsJCWhhc190eF9kbHkgPSB0cnVlOwo+ID4gKwlpZiAoaGFzX3J4
+X2RseSAmJiBoYXNfdHhfZGx5KQo+IAo+IFdoYXQgaWYgaSBvbmx5IHRvIHNldCBhIFRYIGRlbGF5
+PyBJIHdhbnQgdGhlIFJYIGRlbGF5IHRvIGRlZmF1bHQgdG8KPiAwcHMuCj4gCgpZZXMsIHRoaXMg
+Y2FuIGJlIGhhbmRsZWQgc2VwYXJhdGVseSBieSBjYWxsaW5nIGVpYzc3MDBfc2V0X3JnbWlpX3J4
+X2RseSgpIGFuZCBlaWM3NzAwX3NldF9yZ21paV90eF9kbHkoKSBpbiB0aGUgbmV4dCBwYXRjaC4g
+SXMgdGhpcyBjb3JyZWN0PwoKPiB7Cj4gPiArCQllaWM3NzAwX3NldF9kZWxheShkd2NfcHJpdi0+
+cnhfZGVsYXlfcHMsIGR3Y19wcml2LT50eF9kZWxheV9wcywKPiA+ICsJCQkJICAmZHdjX3ByaXYt
+PmRseV9wYXJhbV8xMDAwbVsxXSk7Cj4gPiArCQllaWM3NzAwX3NldF9kZWxheShkd2NfcHJpdi0+
+cnhfZGVsYXlfcHMsIGR3Y19wcml2LT50eF9kZWxheV9wcywKPiA+ICsJCQkJICAmZHdjX3ByaXYt
+PmRseV9wYXJhbV8xMDBtWzFdKTsKPiA+ICsJCWVpYzc3MDBfc2V0X2RlbGF5KGR3Y19wcml2LT5y
+eF9kZWxheV9wcywgZHdjX3ByaXYtPnR4X2RlbGF5X3BzLAo+ID4gKwkJCQkgICZkd2NfcHJpdi0+
+ZGx5X3BhcmFtXzEwbVsxXSk7Cj4gPiArCX0gZWxzZSB7Cj4gPiArCQlkZXZfZGJnKCZwZGV2LT5k
+ZXYsICIgdXNlIGRlZmF1bHQgZGx5XG4iKTsKPiAKPiBXaGF0IGlzIHRoZSBkZWZhdWx0PyBJdCBz
+aG91bGQgYmUgMHBzLiBTbyB0aGVyZSBpcyBubyBwb2ludCBwcmludGluZwo+IHRoaXMgbWVzc2Fn
+ZS4KPiAKClRoZSBkZWZhdWx0IHZhbHVlIGlzIEVJQzc3MDBfREVMQVlfVkFMVUUxLCB3aGljaCBp
+cyB1c2VkIGluIHRoZSBhYnNlbmNlIG9mIHRoZSBEVFMgYXR0cmlidXRlLiBUaGUgcHJpbnQgbWVz
+c2FnZSB3aWxsIGJlIHJlbW92ZWQgaW4gdGhlIG5leHQgcGF0Y2guIElzIHRoaXMgY29ycmVjdD8K
+Cj4gCUFuZHJldwo=
 
