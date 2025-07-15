@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-731134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E745B04F9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:58:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CDFFB04FA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85B9B3A73A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:58:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1638B7AF594
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833942D239B;
-	Tue, 15 Jul 2025 03:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF262D1F44;
+	Tue, 15 Jul 2025 04:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCwqJ8Ry"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9hfz6KU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6E12D1F72;
-	Tue, 15 Jul 2025 03:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6610F946A;
+	Tue, 15 Jul 2025 04:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752551926; cv=none; b=qtraYIBrMw+jlDiYyo9AmuCnaGDiRkE/9uTEs129Smx76e+bLg2aNn09sqnEjErmtkfKJZYyDink+87xHEYrYPrl70dAG+LnUZOHnzfLTpuchndF4yHCsvb9of5q6eXro2tqp63+A+dlrIfg9XKq7YknTN0IrS3fDw6rhCCo5LQ=
+	t=1752552136; cv=none; b=s4LCGNcM8sgO2abHaqraMIIPqc3R2p1wvnNTVMbde7+NW5AXOu3XErVZCVxOWTgN4q/VwcjpVwCi4sJhXGQTMul8vYc7riuXiL64mxpqcv//DVxPdTg/r0FpQStJDa5N5f3kaEN4+LEhCw6weW05ezHnwS2WHoMnO05Js6zyBPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752551926; c=relaxed/simple;
-	bh=E1bP2qyrdHOflkUNF5HIzZ1cwKCdQr2yzEaRreh3xcc=;
+	s=arc-20240116; t=1752552136; c=relaxed/simple;
+	bh=XTpTiYZCt+831D8WJ+GyCYjH/IxQRruB1cTTUcZo054=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l0FRq27TUXTubyIA507j/1efUVMZtsETQ8wvSEL15ziSG8r24QD22oBiVDeeITEGhlyjWsPNDk4pCAvPdaYb450wkHTqmiuihKFId3Kk1tSVnoiTB3C8Xa7w59wbmmyLIdwUxBaOQ6dFyNL1VyZ2OiTWmr4oSS9KGcyqQnC8318=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCwqJ8Ry; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52A22C4CEE3;
-	Tue, 15 Jul 2025 03:58:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SCjZDV+vd124ZSpJqBJA+/Z0JgTZSKuiOwqbvbC+x250ZZ4F8/wNnmm+TbyVsp2TdidO2aAXa2WSyiOs7aka8sgz6Gc06ujtxygVUsQpKi26kJA0KOGHsUlzrjUdF2g+8ymJwAn9ztr/yXgzie4TwAxWzGRjexO4XPqhkZ9KaSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9hfz6KU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E05AFC4CEE3;
+	Tue, 15 Jul 2025 04:02:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752551926;
-	bh=E1bP2qyrdHOflkUNF5HIzZ1cwKCdQr2yzEaRreh3xcc=;
+	s=k20201202; t=1752552136;
+	bh=XTpTiYZCt+831D8WJ+GyCYjH/IxQRruB1cTTUcZo054=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nCwqJ8RyiHOZpyii7xllAANTbVcSC47F0pmFvRK+AK2LUU/o24PyFHn03RqffxClA
-	 jJYlGYh0vlU8CBMSR74UZs+CxAhZb3SL5l6+FhXqDwjYt9a0kzM6HH6+SYh8L5e9nN
-	 6+feukmQHpnCic44wuNHjRY0WSmu0LhakmtKYhUbeZnCavbCAI4BHZqIaupVn28QCC
-	 vnGqb2ozc1dvBqEyWktYUjPy/g0KxBig6qUa3KcVOkJ4SqGui31Ovs4BrbEYJprnjY
-	 i1DAb9BoJ7EYqDALGC7elsaJTnpf7T36DUkDzG+M5Rq/dIWLJ9mayNzh4NQGz750Uo
-	 ErvL5OcBLjE5A==
-Date: Mon, 14 Jul 2025 22:58:45 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Dale Whinham <daleyo@gmail.com>
-Cc: Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	b=g9hfz6KULY0Fap/fLlLOyRyIzj1Nakml0N8IWzcDYZXAhYbIWyUEubLZC7UwkF/Z2
+	 Q6quDzNAJgUiG0z6HmPtLEuYL62Kdl4HTAs1t5XvnvRwsnHilPrNLcyibFVGi0JXWY
+	 Jd59fRfZ4tyEblo4wBLXnPhFS3Zk4uOoss6IkeGXX/Llf7u6Kj7ntsr2YioodItpCe
+	 KbUFOUMT76nuXnhhUrRLuTIUOPzNSZ17Mh1/zDItfUfzpMeL1WJi0rV16NoZoR5Ofg
+	 j7x3eWdNBsJ4EDhnvydnCOIKjQy68PjiCUZGHeYmLYkqEpvwNVYUJT0Bvg1q8Hp69y
+	 6nqsL1nGSth/g==
+Date: Mon, 14 Jul 2025 23:02:15 -0500
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?B?Suly9G1l?= de Bretagne <jerome.debretagne@gmail.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Dale Whinham <daleyo@gmail.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	=?iso-8859-1?B?Suly9G1l?= de Bretagne <jerome.debretagne@gmail.com>,
-	dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	devicetree@vger.kernel.org, David Airlie <airlied@gmail.com>
-Subject: Re: [PATCH 2/9] dt-bindings: display: panel: samsung,atna30dw01:
- document ATNA30DW01
-Message-ID: <175255192501.20738.16784196888105498389.robh@kernel.org>
+	Conor Dooley <conor+dt@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
+	ath12k@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Lingbo Kong <quic_lingbok@quicinc.com>
+Subject: Re: [PATCH 7/9 RFC] dt-bindings: wireless: ath12k: Add
+ disable-rfkill property
+Message-ID: <20250715040215.GA20887-robh@kernel.org>
 References: <20250714173554.14223-1-daleyo@gmail.com>
- <20250714173554.14223-3-daleyo@gmail.com>
+ <20250714173554.14223-8-daleyo@gmail.com>
+ <prrra3lon2p4pugkgeytf5ow5wls62lfdnwcdykztw3qzwity2@d26aqh6wdyln>
+ <CA+kEDGFR3FB=ead50kFBAL23-1dXo-LOMqhT7f=WecNMf_MaNg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,20 +69,59 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250714173554.14223-3-daleyo@gmail.com>
+In-Reply-To: <CA+kEDGFR3FB=ead50kFBAL23-1dXo-LOMqhT7f=WecNMf_MaNg@mail.gmail.com>
 
-
-On Mon, 14 Jul 2025 18:35:38 +0100, Dale Whinham wrote:
-> The Samsung ATNA30DW01 panel is a 13" AMOLED eDP panel. It is similar to
-> the ATNA33XC20 except that it is smaller and has a higher resolution.
+On Tue, Jul 15, 2025 at 01:26:48AM +0200, Jérôme de Bretagne wrote:
+> On Mon. Jul 15, 2025 at 00:33, Dmitry Baryshkov
+> <dmitry.baryshkov@oss.qualcomm.com> wrote :
+> >
+> > On Mon, Jul 14, 2025 at 06:35:43PM +0100, Dale Whinham wrote:
+> > > From: Jérôme de Bretagne <jerome.debretagne@gmail.com>
+> > >
+> > > Document the disable-rfkill property.
+> >
+> > Why? What does it mean? Why are you describing Linux driver firmware in
+> > the DT?
 > 
-> Tested-by: Jérôme de Bretagne <jerome.debretagne@gmail.com>
-> Signed-off-by: Dale Whinham <daleyo@gmail.com>
-> ---
->  .../devicetree/bindings/display/panel/samsung,atna33xc20.yaml   | 2 ++
->  1 file changed, 2 insertions(+)
+> rfkill should be disabled according to the Surface Pro 11's DSDT.
 > 
+> https://lore.kernel.org/all/20250113074810.29729-3-quic_lingbok@quicinc.com/
+> has added support to read the ACPI bitflag when ACPI is supported.
+> 
+> The idea was to expose one specific feature (DISABLE_RFKILL_BIT) for
+> devices described with a DT, so that the feature can be disabled.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+The commit msg should answer all this. That was the purpose of the 
+questions.
 
+Assuming it belongs in DT, why is this ath12k specific? Could be for any 
+wireless chip...
+
+> > > Signed-off-by: Jérôme de Bretagne <jerome.debretagne@gmail.com>
+> > > Signed-off-by: Dale Whinham <daleyo@gmail.com>
+> > > ---
+> > >  .../devicetree/bindings/net/wireless/qcom,ath12k.yaml          | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+> > > index 9e557cb838c7..f15b630fb034 100644
+> > > --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+> > > +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+> > > @@ -48,6 +48,9 @@ properties:
+> > >    vddpcie1p8-supply:
+> > >      description: VDD_PCIE_1P8 supply regulator handle
+> > >
+> > > +  disable-rfkill:
+> > > +    type: boolean
+> > > +
+> > >  required:
+> > >    - compatible
+> > >    - reg
+> > > --
+> > > 2.50.1
+> > >
+> >
+> > --
+> > With best wishes
+> > Dmitry
 
