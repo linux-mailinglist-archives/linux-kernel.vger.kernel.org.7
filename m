@@ -1,109 +1,134 @@
-Return-Path: <linux-kernel+bounces-732192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C986B06340
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:42:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D19FB06345
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A09041AA398C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:42:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8541E4E80CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97F8261574;
-	Tue, 15 Jul 2025 15:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8162248F75;
+	Tue, 15 Jul 2025 15:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7rdeNla"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="em5tJsih"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3702AD2D;
-	Tue, 15 Jul 2025 15:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314B1221F34;
+	Tue, 15 Jul 2025 15:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752594092; cv=none; b=FMBLJOodNCluZiDf5us1znGXbghod8/PAWhsFu4AFd6hovJ9uUwK1Iru0TpeUGy6cdfW9Z56fLXbFqSYoKQV/qCaJHQx4uVxV5HMfMfN7IbFJEmymOQC3JYI3VeX/4nry27A4baFa0ErmBPRFwU+V2nlLxXVGWeN6Lc/UZOr1XI=
+	t=1752594107; cv=none; b=TfEbG8VSLg0udzFWzcsLJk4BYwxRV216UjyJSa6CvrIlUAiNzetcArRX56WzF7DmQJoKTdHMctJkJie2TxFrxW9l05hKcA/avVuKDXUMEvEgEHDnRluegt8F1QdxUjwbDpoVz1fUTpFrwFi+xXjjSSXCTfHUJL1KW4c6TRRO4Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752594092; c=relaxed/simple;
-	bh=9R74i+8xUMSEjjizVKVHIpxeVkW6Fk9LHFlO/Fzc1DY=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=T6jp/2j+tcb2sm4Nq0WfKWdwokIhAnicqcm/82vZNgcB0+1LOJjsu5NPvoFr5use/GlfvdnrRUitcACzgNCAjfEsM+uHefteIJndNJRZqRe2c4TIx6dbBlOkmwjC8ThePxm6sAb3/jAYWRO8i9unY4miFzNECQEikF+KXik20C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h7rdeNla; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99037C4CEE3;
-	Tue, 15 Jul 2025 15:41:30 +0000 (UTC)
+	s=arc-20240116; t=1752594107; c=relaxed/simple;
+	bh=5b56qrNXj/OfNJ271j1G/qJdm0poMtreLVVNIaR5qWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=gM48KaU2cpQqu8LmJ14BauhpXTcts9I5TMEFxIKA+U5lQtD9J7ow+gkWcc9xAnso9VlL+xTUeSHJlHPxJLOj998Ib9YsLx26RdSX8D8+GCSxfLTYR1491553tkaHDJJXPd2D6ajFbwpuwgSsy2tKJWWLju/skZ/Sc2f4GNJ2PlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=em5tJsih; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9445C4CEE3;
+	Tue, 15 Jul 2025 15:41:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752594090;
-	bh=9R74i+8xUMSEjjizVKVHIpxeVkW6Fk9LHFlO/Fzc1DY=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=h7rdeNla7v//kuHuFZuZhCmbfC/JlVwD+QRkzlHdBkTDWMj2yVx997+Iqtc+vH4V4
-	 Vp55eUcGakznG/gRTl+odHHGcaK9hczJ+L0dqovQ+oD+R3MfbetTzKJZhsFmsULETg
-	 uRhCzF1AO4YJfHdmL3dBGPflX2H+Q3CtMwguq3QPTGccZx1lgDB1YMQPZcXQIb/O/L
-	 vju4rf+deiWvMNnFj8u6E33srhh7IVjZAKnRLJz3Jxc+ncleX1BSrh1V1I1mNHjaPV
-	 obJ/ycRijwV1+JDhktcu49H3B/4IQLP2dlEfo4aVkJMq9whUOrfe4+Ts/v/W+s2Y6q
-	 QysaB9nVdbUGw==
-Date: Tue, 15 Jul 2025 10:41:29 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1752594107;
+	bh=5b56qrNXj/OfNJ271j1G/qJdm0poMtreLVVNIaR5qWg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=em5tJsihWZBOan5zIsQ+cSPCgN/Rzp4PaCrte3ake8mi3AWxsjrrCK82IG5RHPyd3
+	 QNuI2jxfMyfWMgyviwYRD5CjVdfWzVtyF9fUoMjIPN4q8876pn6mtbVehydcJoUA4B
+	 WUwoUbvxn6ip1JsTZTzJce5dAE+IYh9+ZgOBl3XzUfOlprqkrzlFDRLdGyINL/cJX1
+	 KmGccngAWOPzR+MRfSAvKVgFTFM2L8FUVYtxkYAEds6vLp3H7gliyxIIQIfpYv8WY5
+	 J/mLGzM5se86kFo2Q8RqS4AxPDLGe37gOLscWUJNDFq1gzFiNI0OhvEEEohYvd6R73
+	 CSVVVH/eWhvNQ==
+Date: Tue, 15 Jul 2025 10:41:45 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+	linux-aspeed@lists.ozlabs.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+	linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+	p.zabel@pengutronix.de, BMC-SW@aspeedtech.com
+Subject: Re: [PATCH v2 08/10] PCI: Add FMT and TYPE definition for TLP header
+Message-ID: <20250715154145.GA2461632@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- matthias.bgg@gmail.com, linux-mediatek@lists.infradead.org, lee@kernel.org, 
- kernel@collabora.com, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- wenst@chromium.org, lgirdwood@gmail.com, broonie@kernel.org, 
- linux-arm-kernel@lists.infradead.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20250715140224.206329-8-angelogioacchino.delregno@collabora.com>
-References: <20250715140224.206329-1-angelogioacchino.delregno@collabora.com>
- <20250715140224.206329-8-angelogioacchino.delregno@collabora.com>
-Message-Id: <175259408775.1380012.11849397051967783374.robh@kernel.org>
-Subject: Re: [PATCH v5 7/8] dt-bindings: mfd: Add binding for MediaTek
- MT6363 series SPMI PMIC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715034320.2553837-9-jacky_chou@aspeedtech.com>
 
-
-On Tue, 15 Jul 2025 16:02:23 +0200, AngeloGioacchino Del Regno wrote:
-> Add a binding for the MediaTek MT6363/6373 (and similar) multi
-> function PMICs connected over SPMI.
+On Tue, Jul 15, 2025 at 11:43:18AM +0800, Jacky Chou wrote:
+> According to PCIe specification, add FMT and TYPE definition
+> for TLP header. And also add macro to combine FMT and TYPE to
+> 1 byte.
 > 
-> These PMICs are found on board designs using newer MediaTek SoCs,
-> such as the Dimensity 9400 Smartphone chip, or the Chromebook
-> MT8196 chip.
-> 
-> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
 > ---
->  .../bindings/mfd/mediatek,mt6363.yaml         | 110 ++++++++++++++++++
->  1 file changed, 110 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml
-> 
+>  include/uapi/linux/pci_regs.h | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
 
-My bot found errors running 'make dt_binding_check' on your patch:
+I don't think these definitions are relevant to uapi users, so they
+could go in drivers/pci/pci.h, similar to the existing PCIE_MSG_*
+definitions.
 
-yamllint warnings/errors:
+Please follow the style of PCIE_MSG_*, including the brief spec
+citations and /* */ comments.
 
-dtschema/dtc warnings/errors:
+Not sure we need *all* of these; it looks like you only use:
 
+  PCI_TLP_TYPE_CFG0_RD
+  PCI_TLP_TYPE_CFG0_WR
+  PCI_TLP_TYPE_CFG1_RD
+  PCI_TLP_TYPE_CFG1_WR
+  PCI_TLP_FMT_3DW_NO_DATA
+  PCI_TLP_FMT_3DW_DATA
 
-doc reference errors (make refcheckdocs):
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index a3a3e942dedf..700b915e00f5 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -1230,4 +1230,36 @@
+>  #define PCI_DVSEC_CXL_PORT_CTL				0x0c
+>  #define PCI_DVSEC_CXL_PORT_CTL_UNMASK_SBR		0x00000001
+>  
+> +/* Fmt[2:0] encoding for TLP Header */
+> +#define PCI_TLP_FMT_3DW_NO_DATA		0x0  // 3DW header, no data
+> +#define PCI_TLP_FMT_4DW_NO_DATA		0x1  // 4DW header, no data
+> +#define PCI_TLP_FMT_3DW_DATA		0x2  // 3DW header, with data
+> +#define PCI_TLP_FMT_4DW_DATA		0x3  // 4DW header, with data
+> +#define PCI_TLP_FMT_PREFIX		0x4  // Prefix header
+> +
+> +/* Type[4:0] encoding for TLP Header */
+> +#define PCI_TLP_TYPE_MEM_RD		0x00 // Memory Read Request
+> +#define PCI_TLP_TYPE_MEM_RDLK		0x01 // Memory Read Lock Request
+> +#define PCI_TLP_TYPE_MEM_WR		0x00 // Memory Write Request (Fmt must be with data)
+> +#define PCI_TLP_TYPE_IO_RD		0x02 // IO Read Request
+> +#define PCI_TLP_TYPE_IO_WR		0x02 // IO Write Request (Fmt must be with data)
+> +#define PCI_TLP_TYPE_CFG0_RD		0x04 // Config Type 0 Read Request
+> +#define PCI_TLP_TYPE_CFG0_WR		0x04 // Config Type 0 Write Request (Fmt must be with data)
+> +#define PCI_TLP_TYPE_CFG1_RD		0x05 // Config Type 1 Read Request
+> +#define PCI_TLP_TYPE_CFG1_WR		0x05 // Config Type 1 Write Request (Fmt must be with data)
+> +#define PCI_TLP_TYPE_MSG		0x10 // Message Request (see routing field)
+> +#define PCI_TLP_TYPE_MSGD		0x11 // Message Request with Data (see routing field)
+> +#define PCI_TLP_TYPE_CPL		0x0A // Completion without Data
+> +#define PCI_TLP_TYPE_CPLD		0x0A // Completion with Data (Fmt must be with data)
+> +#define PCI_TLP_TYPE_CPLLCK		0x0B // Completion Locked
+> +#define PCI_TLP_TYPE_CPLDLCK		0x0B // Completion with Data Locked (Fmt must be with data)
+> +#define PCI_TLP_TYPE_FETCH_ADD		0x0C // Fetch and Add AtomicOp Request
+> +#define PCI_TLP_TYPE_SWAP		0x0D // Unconditional Swap AtomicOp Request
+> +#define PCI_TLP_TYPE_CMP_SWAP		0x0E // Compare and Swap AtomicOp Request
+> +#define PCI_TLP_TYPE_LOCAL_PREFIX	0x00 // Local TLP Prefix (Fmt = 0x4)
+> +#define PCI_TLP_TYPE_E2E_PREFIX		0x10 // End-to-End TLP Prefix (Fmt = 0x4)
+> +
+> +/* Macro to combine Fmt and Type into the 8-bit field */
+> +#define PCIE_TLP_FMT_TYPE(fmt, type)   (((fmt) << 5) | ((type) & 0x1F))
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250715140224.206329-8-angelogioacchino.delregno@collabora.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+This looks like it might be controller-specific and could go in
+pcie-aspeed.c.
 
