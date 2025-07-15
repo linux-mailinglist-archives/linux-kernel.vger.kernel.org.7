@@ -1,104 +1,115 @@
-Return-Path: <linux-kernel+bounces-731462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2593CB054B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:22:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50525B054C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CA8F563089
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:22:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4D6F7B52FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F3A27A124;
-	Tue, 15 Jul 2025 08:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9582275B07;
+	Tue, 15 Jul 2025 08:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AoWH77Bh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GePK3R0h"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED21F275873;
-	Tue, 15 Jul 2025 08:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7611F274648;
+	Tue, 15 Jul 2025 08:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752567721; cv=none; b=iULBu1xz78QKuRHp1lyAa9REny8tfQnexhtgDsiT/ECCoVCg4KE1TW1OkSAz5nJzAI+9k3/DgVzA1jpPkmPV6y2NgXKhNnFvLzzQuEpJIer7NJSt1BfTsC0GZClZ+WOkCKPJcuLwsttq/u61DrpEC7iAkcwuROS8YiMFYlqKD40=
+	t=1752567720; cv=none; b=RD0Hq/ED+KagPgyD+e41lWioL53JKV9jqjTXb9PdIx2l+lrWeFjsCYh1AxxDFkqbNiptCVSykeH61p+72/jvs5Ns+0xEO3vXgAtlrGtHRr6cpnvCVdWdFpkDJllrhNXkkS4l0V1orN5SMsy7iHUxeXFDR/a2It4cVnGnhAfitpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752567721; c=relaxed/simple;
-	bh=qh3iKXB6e+tUcjfkW8kmUKXqJF2goUOYE8q4iC5PdoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DvyraBD7uzKbrcuDYMIYhsIvJxGSaOl24g/Wd9zUrt6p5C/TsLJG7lbHMaNc7kaBDa+OdE5HHpZiVfJaW2IC16XtzPjfSJYyrk2bf+9M90vluciz/QuX1R7aUtaFTPKHq2vJTg2RJXhu6GaksdiSjNsUqCnZcUHBVhFehcDjtpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AoWH77Bh; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752567720; x=1784103720;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qh3iKXB6e+tUcjfkW8kmUKXqJF2goUOYE8q4iC5PdoU=;
-  b=AoWH77BhoG8kaEs1ilRbHUlRfCI4RZn/hM5lFewr5NLzJ15xqyLhK6+n
-   cjkd8Y1uWPaq3VsgCP75mSKxy0NMBT7BePgv3x58/nkGLMZSjAvSMD0Uu
-   6j9//MbX3Pnm1xkFT3QdFdHSiSkepltfA7xtokRPlpeUBU3v388HcAdaF
-   7+VBEIxE5hy+CNkRE0P21m7JwYZDnG8W+bvQlh60lg5ABeT3J79/QD7Yy
-   2TnsX/RfibGo2aWi72L6SZMLnJZbHDtT7Ked3/qfjkkPbaycsJAmrBwz5
-   YlyCVhrXTve0DEX9UbYZ3QtCC6KJUGg6B7CbRyiPDYKfzohCNm8nz2R1Y
-   A==;
-X-CSE-ConnectionGUID: JqY+Ev5hTQSrvPExI60YDg==
-X-CSE-MsgGUID: hq8Vzd+DQ9yZJsbOX3LOZA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54649079"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="54649079"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 01:21:59 -0700
-X-CSE-ConnectionGUID: nmlhfCi9TxiaA30+CCz/Fw==
-X-CSE-MsgGUID: mXEYMokGT4m8tJAJYkTIlg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="180864367"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 01:21:56 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ubavB-0000000Favp-1Klz;
-	Tue, 15 Jul 2025 11:21:53 +0300
-Date: Tue, 15 Jul 2025 11:21:53 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	Srinivas Neeli <srinivas.neeli@amd.com>,
-	Michal Simek <michal.simek@amd.com>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-	linux-arm-kernel@lists.infradead.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 1/2] gpio: wcove: use regmap_assign_bits() in .set()
-Message-ID: <aHYPoR5JVP4OO0QZ@smile.fi.intel.com>
-References: <20250715-gpiochip-set-rv-gpio-remaining-v2-0-072b4cf06330@linaro.org>
- <20250715-gpiochip-set-rv-gpio-remaining-v2-1-072b4cf06330@linaro.org>
+	s=arc-20240116; t=1752567720; c=relaxed/simple;
+	bh=2qsD3tg7tnZHjedcUni9ZU8HZEvog6ja6aNLcM2kL3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=otuBMeKqQJIY8LHC2aWo7cF7+JkwLlR+BNxXBtKqYPPadxu0MaAEB7s8HSysrgH8Ir3LhRLW+TNoEtBOTFmuumUTFhzl8n7gMLgCFxcEEPW9jfltKhx7+jGi7/sa3GVfwbyILc80UmiHTlP4btg7l7Vl5iWNaPdePFiclF2WHAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=GePK3R0h; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752567607;
+	bh=VFd+HrP/xe5bH5c/XeWxcSwjs+fKsNF7dYytOAWt4jw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GePK3R0hxPqkZSe519Q7i67IrR5bwGVu/yD2vOQwYsQIfZjskq41X6Ie+PGhMzvtO
+	 WFMfr455VmqGvGJaguGefZPdbvo5qZhS9PSvayb00bPEFXlbI3nxzL89fxMJSU0Zo+
+	 DfLESmH6NCPOkqk91eAK1CkPR4w9hVapE+I2RxU2YsWpiEqlSHW5uDJcgDxGXA2uxs
+	 Z5v03ILGqlk+k63nY1j+HuglizvC//msKZUnewDzf5XvFAa3vcaAnF8eMVY7eqfW0i
+	 BE0x4GtMWyqr2nMYFEN8XRcWf6wIqiTFAwaP/KvCajGl2SLkYcOdpizRDtrmR9xtHd
+	 /vwGH4SdVtlxg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bhBvB6yTYz4x1t;
+	Tue, 15 Jul 2025 18:20:06 +1000 (AEST)
+Date: Tue, 15 Jul 2025 18:21:54 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, Danilo
+ Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Tamir Duberstein <tamird@gmail.com>
+Subject: linux-next: manual merge of the rust tree with the driver-core tree
+Message-ID: <20250715182154.2cca2f58@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715-gpiochip-set-rv-gpio-remaining-v2-1-072b4cf06330@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: multipart/signed; boundary="Sig_/rxB8dB8eAjQS17CzIesGYwH";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Jul 15, 2025 at 10:19:44AM +0200, Bartosz Golaszewski wrote:
-> 
-> Replace the if-else with a direct call to the regmap_assign_bits()
-> helper and save a couple lines of code.
+--Sig_/rxB8dB8eAjQS17CzIesGYwH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Hi all,
 
--- 
-With Best Regards,
-Andy Shevchenko
+Today's linux-next merge of the rust tree got a conflict in:
 
+  rust/kernel/pci.rs
 
+between commit:
+
+  4231712c8e98 ("rust: pci: use generic device drvdata accessors")
+
+from the driver-core tree and commits:
+
+  fcad9bbf9e1a ("rust: enable `clippy::ptr_as_ptr` lint")
+  12717ebeffcf ("rust: types: add FOREIGN_ALIGN to ForeignOwnable")
+
+from the rust tree.
+
+I fixed it up (I just used the former version) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/rxB8dB8eAjQS17CzIesGYwH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh2D6IACgkQAVBC80lX
+0GzHcQf/RLEOYHt7jfpWFSdWqayIHbc8zNe0zGFtB8CN4O9Xn82/vWQKk0ycbYLx
+xuLZ312BQrnMxi+RqNSLGa1wXENQFJqEVU0lO7dAeWkHPdLdjONHS488nUZSXyCF
+Q9ocM8NgjyH294nWFuiPFdAELJn4Wc/D/MEseJbHsBVdULo5FEbKfUnvuVg9K0Hr
+XEhCH9summE3gKTKc0Zgij0v5beFTqS4XVl8ICcQ3JozNSUpez07jY1/miTivywJ
+s0vRBpp2NRbtwdsoy1AEfdkTU698f9uwzJeEa3QD0TWqSK01bhE1D/AQ5ULGRVUf
+XX5Ps59JGroROWX71voBORxHqx8gfg==
+=rhTS
+-----END PGP SIGNATURE-----
+
+--Sig_/rxB8dB8eAjQS17CzIesGYwH--
 
