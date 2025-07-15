@@ -1,252 +1,324 @@
-Return-Path: <linux-kernel+bounces-732423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87786B06692
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:11:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1450DB06697
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A70091AA39DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:12:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 128604A823D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A352BEC52;
-	Tue, 15 Jul 2025 19:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415092BFC7F;
+	Tue, 15 Jul 2025 19:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DfjjRWej"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fTmQX4W8"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2050.outbound.protection.outlook.com [40.107.243.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B509423CEF8;
-	Tue, 15 Jul 2025 19:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752606700; cv=none; b=ksZndqtzh+VYfbonAKVi+RdNZKyQ/ZaGokzZEsM78QuV73+qeghIxlvg++gNYXUqnJGMFCSRQdPEExxvjcoAVMEQ9NqTiwEdzg/m6BgtscflzjXrF9Mv2uj9yOKtwUPigLvHqOFFQTCSwy4sjy8o2smIFzEcAsDp4A5304ww/TQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752606700; c=relaxed/simple;
-	bh=XI5xpPGglXhMr902qd36Jrl+GZMQWzyr9/fxOK1wbKk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EFu1Qb+AUY0vKOwu3SE29YNNmDROVt9Jny6YGO3d6WGAYW/cgIi8nSLmOQE+WJDOqTFgIxLchS3i6FszTFp63J1zVZcq8sZkbIeYRH1bUH9fc3f0WqoRqvFtOoG7Cfjs0zop+m0NtofAOgJUWU+IPyXpu+IBYeXGPGQyNAXeAhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DfjjRWej; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e82278e3889so4428841276.2;
-        Tue, 15 Jul 2025 12:11:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752606696; x=1753211496; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p2UmhCN1wKq7qPiM82CdVGcCOdWxK/9Xfu8BiSPLWas=;
-        b=DfjjRWejn5Np48ilo9gsYCsNK42POJcwd1Kgr11MxKsQgNXyUrfa1KRsbQfSFmLgB4
-         nQ4gpvVW0wHmaaJrkLyVU0dKGxR95XP+GZti8ug3hgK2Xij7wm9d7OyOA/Di4UZZJSxA
-         G28xGs7PpjNwyTw3EOt0Gq0PgIqS2p7MHXJG4Wl11v1ufnr3uEsqQutbTlOZ1W4fDZQO
-         Hfq4G83BX6PPBMucpth675gkbNsZVB5vBn0llC1SJC2U2RKQsYBPUwQRp8K82kQWelke
-         fwg5nS+L2+Q+r5UHI4qt3N0R77gOXdEb1DrC8xY/0ujhNQx55X/5sBJv72LAkHsXczG4
-         1+oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752606696; x=1753211496;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p2UmhCN1wKq7qPiM82CdVGcCOdWxK/9Xfu8BiSPLWas=;
-        b=xE+g5jgjhRNP6L4R5APuuPFtTSlc70OoQoroApYX3t/oP/P0MA7eC62RKtyuzubFfD
-         rZzcjI7c0wr9sO8a/NHCPsd/B79zKVAzZ2+3c+8UkS6ms4pvtGTtK9NXVDI2L7BgeYvG
-         e9INCAIoG5Q52sMmJ7WjHIKqBgBHzy5ZGXdVxVAzsJYobA7shBTwDSdIcR8xmCqTdvLT
-         OVISmtXHIh/a45oNQ4Tv5qXia8qQILSn/dUOrnQ+O7gCgjUtccMBok5hWR1IpF15K8LC
-         Y+Io3bblcTSxNlfUgq/UAwv0ItQz3+s07TpoUB/3o+w0/38/zK2bZm2018dCKHdagnH9
-         7s6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU//WZkLQLESTHoMiA11wSYoAfH2oaoPNo2dwe3sYiGW3sIw7mupj/CZA7bmgxfIKNRlSXLzCnzZo72jEpGRw==@vger.kernel.org, AJvYcCVArlSwpOnLVXDYihq2iV6CBDFTS+vcHQua5C+ZUfIuewvG2XofYSnUDbG0kaF+pFVVw7sJ25cDolv6@vger.kernel.org, AJvYcCXEvkZAeUa/MzpByzf2WPw0LmeINFLrF11+gAZ9HwsKM/qmCY/VgNGiu3A5G+6K2ZOMIk9gCKNZU9y4GWrb@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzaY/PjlTrYw3RXRslAk187k0nUdSw4PGSPr2xitx55EWDdsOO
-	QevoWv1Ucbb8+ahrCnAFKOpp4FJrKnXsqtURpmcasC0exYt6womxjhDI14wmuFYJ/eDXCRujZdA
-	eMrAYESB9goB3iK8TyksqSwp6pXpodnk=
-X-Gm-Gg: ASbGncsMYvlaa3HsxrHGtevr+hCff5fuEju57EoOGkhauZpjTZ32O7azid5vhb83cxi
-	NeiH+N8CFKPp68gm9DGH0aZsBWcxpazqhDKpKyIITdwJqO8DvzqFFJ+HCW3vjkfHGCcvXJ+GxHy
-	OgC2vp2smO8w1uPYUPjN/ftll1dQznn7Ld1oEEuAkrPTeMY+yh0t7zmV9EyKww1CVNeOu108Fi+
-	jpEYjjO
-X-Google-Smtp-Source: AGHT+IEmRbP5plw2JDZuT8QhpPEHx+ilC143a5wCn95870ZBEW4VPQeDKcfi15deTxRuznWqb8pD1AxALKEWGplBKow=
-X-Received: by 2002:a05:6902:1b0e:b0:e85:bf11:4992 with SMTP id
- 3f1490d57ef6-e8bc2484cc3mr68128276.31.1752606696400; Tue, 15 Jul 2025
- 12:11:36 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B197D2C033C;
+	Tue, 15 Jul 2025 19:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752606745; cv=fail; b=Tcv5TVFZEdDgNo06G2WJYHI1UeQx523/kOSjQMdGs1uhXEOr9Tnwyvd+QTjq4ZKOHVmEuFfe2b4juizFnqNiAPIydspUtI6yYaf52oMyOI6Jmkv7Vlnu47FQcdtigSwAsN3EGrOjKHK0u6DCbrp3GTKIA77sodIKX/FNBMUeTnc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752606745; c=relaxed/simple;
+	bh=ejHY0fkm+wbijd5VaRpiTXNwJgv6hb46AkMRP8SUVp4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R6Zz/5tHmlDYMNKcVyTRploOqoQoRArd+M67K2hy3vi6XGjidf12AtzCcycgAyscfc49j3JLQFtT3g6m4j2FrBykrkypvoMhEOi2q/ahRzwux3hWWywa6zqLXfVFGo9TXWO08RMk791bTUigZlW/dXmrElkFjg8mnNd+EShJ6Js=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fTmQX4W8; arc=fail smtp.client-ip=40.107.243.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NN8KHUh0B9BTtzBgxjOxkMxY2+SrKHtj5Sr3AeLHMRBavMy2YKbRerUUr//RBXspGa0lHHBK7BQbh7fRrNmGDTXRvKkTFNP1FdvKEqhncI0pDINGIpRAO19ekjs5g9F6kh5n3XiqVCIiVQJqYzJAtD1fKGlVHWbpwY799eNRaM39i88vFeEVbHC5GYSYPLv7ZDV54vIa0RBLsyWnNLqBf7VTeZka5PI0W+YM+z1exQqVzk69SJhA2Emqdxhir5eIszfsEpVk9TL7BmGcyHU/JHtoxs1foDSYRyE6NW4mD8KEC5qrhtdPadL5dhzXElzsZmGTHsb9JSfu+2RgADlD4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7m83iI6fl3+GwB0FSLDg5iv/NED2RUacVj32MwYPAR8=;
+ b=tu5gVyMW1lmbuHn3vM089xctIqHpYZf68uY/ZzvF99lqmycMW2z223H9Y0MvWyIXhc3J2RwKJRfl3ec8Yt8dnOrN6VQcbd+LCJMjiwIs8vjh8rrABkV14gCmT+QaocB0jtlRmZl4cAjNipcXMVklBWlJv6lOeAGqcQ6lFRFVmJrD2ZkOMg9YceC1VKhrAzF0zgOjZB3sXcKFxeK0g07S9pUZFK/lgp8er4JQGEkVa+X6LGnyPk2rW8b6a2Z/V9BU2jsdF0W88O/m8btxOJpfkRN1eW1v+h4JMcFIntumhxNm8hzoG0Rl5xgpcYED8eygXkWTbISmWa5ucZFCIdvHcw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7m83iI6fl3+GwB0FSLDg5iv/NED2RUacVj32MwYPAR8=;
+ b=fTmQX4W85laa2vdfzLBN1IAlnzZoOUu/8SzklvhtRrkffHh/BZG0s2gtq/F09ajGPyegUZHj1LfTgH+uFjETqxw5S8053QU302AzLkZuTasU33dS6j4N/PcCt5gqXSMvVeD06+ziC3PIcAz6E+nzUWcwAksPfcUoXF2kZDOSl+4=
+Received: from BN8PR15CA0037.namprd15.prod.outlook.com (2603:10b6:408:80::14)
+ by SJ5PPF0AEDE5C3D.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::989) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.26; Tue, 15 Jul
+ 2025 19:12:21 +0000
+Received: from MN1PEPF0000F0E5.namprd04.prod.outlook.com
+ (2603:10b6:408:80:cafe::2) by BN8PR15CA0037.outlook.office365.com
+ (2603:10b6:408:80::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.19 via Frontend Transport; Tue,
+ 15 Jul 2025 19:12:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MN1PEPF0000F0E5.mail.protection.outlook.com (10.167.242.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8922.22 via Frontend Transport; Tue, 15 Jul 2025 19:12:20 +0000
+Received: from rric.localdomain (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Jul
+ 2025 14:12:17 -0500
+From: Robert Richter <rrichter@amd.com>
+To: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gregory Price
+	<gourry@gourry.net>, "Fabio M. De Francesco"
+	<fabio.m.de.francesco@linux.intel.com>, Terry Bowman <terry.bowman@amd.com>,
+	Robert Richter <rrichter@amd.com>
+Subject: [PATCH v1 02/20] cxl/region: Store root decoder in struct cxl_region
+Date: Tue, 15 Jul 2025 21:11:25 +0200
+Message-ID: <20250715191143.1023512-3-rrichter@amd.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250715191143.1023512-1-rrichter@amd.com>
+References: <20250715191143.1023512-1-rrichter@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715185636.21758-1-me@adomerle.pw>
-In-Reply-To: <20250715185636.21758-1-me@adomerle.pw>
-From: Luka Panio <lukapanio@gmail.com>
-Date: Tue, 15 Jul 2025 21:11:25 +0200
-X-Gm-Features: Ac12FXzZwP0wg2XOsca0tmzCY-hknndg42Bhiqc9GRR2wQ9DnbCUMkYInG0f-zU
-Message-ID: <CACi=Ov7fe1WjzgWYeAZYGMfyOifVymdM6h+pHedLdbicsom9Xw@mail.gmail.com>
-Subject: Re: [PATCH v1] arm64: dts: qcom: sm8250-xiaomi-pipa: Drop nonexistent hardware
-To: Arseniy Velikanov <me@adomerle.pw>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E5:EE_|SJ5PPF0AEDE5C3D:EE_
+X-MS-Office365-Filtering-Correlation-Id: fdd2e6b4-76ee-477d-ed41-08ddc3d385b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dy6cU2cRuGe+QXJIN1+6AOZEQA8fF/oRNK81omiDLWqglZXLHeuM8ENuTSp7?=
+ =?us-ascii?Q?X9TLs9L2fGW7AJS/f4c6aj6U4638omS7LzC0vYiqy3H5o8loQnY/KXigHckC?=
+ =?us-ascii?Q?9XpPz4WOjScZECMdzx8LYIGVVibvIcGcIi6Ffamccf1jiTnyHqq411LxO52C?=
+ =?us-ascii?Q?YietKWIiTyB4WXMbEx+1iaxCMG7TrtTzsOxhsTsG047ILSgugobnPC4kPr8Y?=
+ =?us-ascii?Q?LNtlBf/nH+SzjPSuL/uS4wq76uEgTlABYGrATB3kzC2yS4OepJDKCPmV/KRQ?=
+ =?us-ascii?Q?XoRSKNKfCVOJh9KR0Lh2b9dWu6KMm6MW8PDw1IWDFu9St/P7TxKnmxT6QtaT?=
+ =?us-ascii?Q?mMBQUTl8ARpSlESX3co78xSBA9RmUOo24vI7eH7AihjhIGPzG9sqyxcxi2PI?=
+ =?us-ascii?Q?Nd2RQg+zPskKcUYxpQuWucGnykGMDCFBnLSLkDqWmyrWjXXFTASrZnBGmty0?=
+ =?us-ascii?Q?Jhu/6Sao9CcJSLiQ5R2qqqlrudDRsw+S/AHwg2ITpYh7Xa+GjtY0UrTUBdm2?=
+ =?us-ascii?Q?ZBtImKKQWd4M6N1n0qMub9eBGbiKkTnpW8fIaQELcNEx5y7tbPCh44LPG7Ur?=
+ =?us-ascii?Q?KjBP/qaC7VFOl/YolEwwfIrBMYWXvmc4G+qcA0BlL3G1pR1jCpSYnFrHaLtF?=
+ =?us-ascii?Q?L0yXUOl0sgKbwUZveenGiR//GSJFUxRqKH3im1DJHH1xsqbc+r3qZuvT/YYr?=
+ =?us-ascii?Q?lIF1AeRTkE0FoH4BBLI5I53AkId3W2whZ4AqrzzJCtqgDjrzQD7fo+LohPJJ?=
+ =?us-ascii?Q?nur38/TkHUppTu+G4UOh7hs6XJxf4e66TBOCBGmcrlBmp+iHqR7MZTd+R5r2?=
+ =?us-ascii?Q?CmZFtaE2hdKp3wK+PdsWsgqFyVz5EXyeH4F1D9y9bM1DvTfwxUPTI75t+uEF?=
+ =?us-ascii?Q?U47c4HBjl4Of9gy7vgrs51M1gc3nMxMvxjhtCfQDiDp8ySzdv43JffVkp728?=
+ =?us-ascii?Q?6lAGbRN3cMINFdz0MdcYEAKkh8ia9TLcwvztj6FwG4zidap7n6OXzyiTT+n0?=
+ =?us-ascii?Q?plFLigOvyRr+SaJq/3HhcehyrfYP76KoHzUmGgp4pQ2laYqOmeaHx72xNU0K?=
+ =?us-ascii?Q?rmfpvehLx9puxRpL4kNKZgzpuJfdRXUSdTfb5jvwIdRyy21jxG1Y3s6Pll7d?=
+ =?us-ascii?Q?63KXeJf3tmOYJmrgOC4CFyBoTLnUq/u8G6UX0lmuMeFs9Ww9W/N8j1TVZ1we?=
+ =?us-ascii?Q?Wz8UQe3H3BwOX40BS48nP7NgjsBAK3nARXP9z5C22YDnRR5jtWcq3UYXGUcp?=
+ =?us-ascii?Q?TOiyVTX5OfWcw2ZhuVE90tB99KT2up6TOMG+9zbgkR1uyRSUnm0g5Jn91QiW?=
+ =?us-ascii?Q?5BvozUYfeIDU+dy0y8fzHMJtYlEyoHoZKTUIDTRP4dXIFQj6JPyspEzTJtVd?=
+ =?us-ascii?Q?VUlIc2eWwhFyCCd8TSzp//COGkCPYysFbLQUmzuPCWUkJgOBPUykzbnZ4UVk?=
+ =?us-ascii?Q?ERxpioSWeE0tLTzqZ41F8O9guqwmLjDbiaTFyOyvDupQ5H7VhgEwEEsaNXCj?=
+ =?us-ascii?Q?Bs7dfd3g/qJZOaiCtpMlRjiMC0dYUGR6jtgy?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 19:12:20.4794
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdd2e6b4-76ee-477d-ed41-08ddc3d385b4
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000F0E5.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF0AEDE5C3D
 
-Reviewed-by: Luka Panio lukapanio@gmail.com
+A region is always bound to a root decoder. The region's associated
+root decoder is often needed. Add it to struct cxl_region.
 
-On Tue, Jul 15, 2025 at 9:02=E2=80=AFPM Arseniy Velikanov <me@adomerle.pw> =
-wrote:
->
-> PM8009 was erroneously added since this device doesn't actually have it.
-> It triggers a big critical error at boot, so we're drop it.
->
-> Also it looks like the fuel gauge is not connected to the battery,
-> it reports nonsense info. Downstream kernel uses pmic fg.
->
-> PMIC fuel-gauge driver uses mixed stats about dual-cell battery,
-> so I combined it into one.
->
-> Fixes: 264beb3cbd0d ("arm64: dts: qcom: sm8250-xiaomi-pipa: Add initial d=
-evice tree")
->
-> Signed-off-by: Arseniy Velikanov <me@adomerle.pw>
-> ---
->  .../boot/dts/qcom/sm8250-xiaomi-pipa.dts      | 95 +------------------
->  1 file changed, 5 insertions(+), 90 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts b/arch/arm64=
-/boot/dts/qcom/sm8250-xiaomi-pipa.dts
-> index 668078ea4f04..b74c3c9b4076 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts
-> +++ b/arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts
-> @@ -50,18 +50,12 @@ framebuffer: framebuffer@9c000000 {
->                 };
->         };
->
-> -       battery_l: battery-l {
-> +       battery: battery {
->                 compatible =3D "simple-battery";
-> -               voltage-min-design-microvolt =3D <3870000>;
-> -               energy-full-design-microwatt-hours =3D <16700000>;
-> -               charge-full-design-microamp-hours =3D <4420000>;
-> -       };
-> -
-> -       battery_r: battery-r {
-> -               compatible =3D "simple-battery";
-> -               voltage-min-design-microvolt =3D <3870000>;
-> -               energy-full-design-microwatt-hours =3D <16700000>;
-> -               charge-full-design-microamp-hours =3D <4420000>;
-> +               charge-full-design-microamp-hours =3D <8840000>;
-> +               energy-full-design-microwatt-hours =3D <34300000>;
-> +               voltage-min-design-microvolt =3D <3400000>;
-> +               voltage-max-design-microvolt =3D <4370000>;
->         };
->
->         bl_vddpos_5p5: bl-vddpos-regulator {
-> @@ -406,63 +400,6 @@ vreg_l11c_3p0: ldo11 {
->                         regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
-PM>;
->                 };
->         };
-> -
-> -       regulators-2 {
-> -               compatible =3D "qcom,pm8009-rpmh-regulators";
-> -               qcom,pmic-id =3D "f";
-> -
-> -               vdd-s1-supply =3D <&vph_pwr>;
-> -               vdd-s2-supply =3D <&vreg_bob>;
-> -               vdd-l2-supply =3D <&vreg_s8c_1p35>;
-> -               vdd-l5-l6-supply =3D <&vreg_bob>;
-> -               vdd-l7-supply =3D <&vreg_s4a_1p8>;
-> -
-> -               vreg_s1f_1p2: smps1 {
-> -                       regulator-name =3D "vreg_s1f_1p2";
-> -                       regulator-min-microvolt =3D <1200000>;
-> -                       regulator-max-microvolt =3D <1300000>;
-> -                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
-PM>;
-> -               };
-> -
-> -               vreg_s2f_0p5: smps2 {
-> -                       regulator-name =3D "vreg_s2f_0p5";
-> -                       regulator-min-microvolt =3D <512000>;
-> -                       regulator-max-microvolt =3D <1100000>;
-> -                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
-PM>;
-> -               };
-> -
-> -               /* L1 is unused. */
-> -
-> -               vreg_l2f_1p3: ldo2 {
-> -                       regulator-name =3D "vreg_l2f_1p3";
-> -                       regulator-min-microvolt =3D <1056000>;
-> -                       regulator-max-microvolt =3D <1200000>;
-> -                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
-PM>;
-> -               };
-> -
-> -               /* L3 & L4 are unused. */
-> -
-> -               vreg_l5f_2p8: ldo5 {
-> -                       regulator-name =3D "vreg_l5f_2p85";
-> -                       regulator-min-microvolt =3D <2800000>;
-> -                       regulator-max-microvolt =3D <3000000>;
-> -                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
-PM>;
-> -               };
-> -
-> -               vreg_l6f_2p8: ldo6 {
-> -                       regulator-name =3D "vreg_l6f_2p8";
-> -                       regulator-min-microvolt =3D <2800000>;
-> -                       regulator-max-microvolt =3D <3000000>;
-> -                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
-PM>;
-> -               };
-> -
-> -               vreg_l7f_1p8: ldo7 {
-> -                       regulator-name =3D "vreg_l7f_1p8";
-> -                       regulator-min-microvolt =3D <1800000>;
-> -                       regulator-max-microvolt =3D <1800000>;
-> -                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
-PM>;
-> -               };
-> -       };
->  };
->
->  &cdsp {
-> @@ -495,17 +432,6 @@ zap-shader {
->         };
->  };
->
-> -&i2c0 {
-> -       clock-frequency =3D <400000>;
-> -       status =3D "okay";
-> -
-> -       fuel-gauge@55 {
-> -               compatible =3D "ti,bq27z561";
-> -               reg =3D <0x55>;
-> -               monitored-battery =3D <&battery_r>;
-> -       };
-> -};
-> -
->  &i2c11 {
->         clock-frequency =3D <400000>;
->         status =3D "okay";
-> @@ -523,17 +449,6 @@ backlight: backlight@11 {
->         };
->  };
->
-> -&i2c13 {
-> -       clock-frequency =3D <400000>;
-> -       status =3D "okay";
-> -
-> -       fuel-gauge@55 {
-> -               compatible =3D "ti,bq27z561";
-> -               reg =3D <0x55>;
-> -               monitored-battery =3D <&battery_l>;
-> -       };
-> -};
-> -
->  &pcie0 {
->         status =3D "okay";
->  };
-> --
-> 2.50.0
+This simpifies code by removing dynamic lookups and removing the root
+decoder argument from the function argument list where possible.
+
+Signed-off-by: Robert Richter <rrichter@amd.com>
+---
+ drivers/cxl/core/region.c | 33 +++++++++++++++++----------------
+ drivers/cxl/cxl.h         |  2 ++
+ 2 files changed, 19 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+index f22ad20b0db9..a18ab5e30138 100644
+--- a/drivers/cxl/core/region.c
++++ b/drivers/cxl/core/region.c
+@@ -467,9 +467,9 @@ static ssize_t interleave_ways_store(struct device *dev,
+ 				     struct device_attribute *attr,
+ 				     const char *buf, size_t len)
+ {
+-	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(dev->parent);
+-	struct cxl_decoder *cxld = &cxlrd->cxlsd.cxld;
+ 	struct cxl_region *cxlr = to_cxl_region(dev);
++	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
++	struct cxl_decoder *cxld = &cxlrd->cxlsd.cxld;
+ 	struct cxl_region_params *p = &cxlr->params;
+ 	unsigned int val, save;
+ 	int rc;
+@@ -535,9 +535,9 @@ static ssize_t interleave_granularity_store(struct device *dev,
+ 					    struct device_attribute *attr,
+ 					    const char *buf, size_t len)
+ {
+-	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(dev->parent);
+-	struct cxl_decoder *cxld = &cxlrd->cxlsd.cxld;
+ 	struct cxl_region *cxlr = to_cxl_region(dev);
++	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
++	struct cxl_decoder *cxld = &cxlrd->cxlsd.cxld;
+ 	struct cxl_region_params *p = &cxlr->params;
+ 	int rc, val;
+ 	u16 ig;
+@@ -617,7 +617,7 @@ static DEVICE_ATTR_RO(mode);
+ 
+ static int alloc_hpa(struct cxl_region *cxlr, resource_size_t size)
+ {
+-	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
++	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
+ 	struct cxl_region_params *p = &cxlr->params;
+ 	struct resource *res;
+ 	u64 remainder = 0;
+@@ -1320,7 +1320,7 @@ static int cxl_port_setup_targets(struct cxl_port *port,
+ 				  struct cxl_region *cxlr,
+ 				  struct cxl_endpoint_decoder *cxled)
+ {
+-	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
++	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
+ 	int parent_iw, parent_ig, ig, iw, rc, inc = 0, pos = cxled->pos;
+ 	struct cxl_port *parent_port = to_cxl_port(port->dev.parent);
+ 	struct cxl_region_ref *cxl_rr = cxl_rr_load(port, cxlr);
+@@ -1679,10 +1679,10 @@ static int cxl_region_validate_position(struct cxl_region *cxlr,
+ }
+ 
+ static int cxl_region_attach_position(struct cxl_region *cxlr,
+-				      struct cxl_root_decoder *cxlrd,
+ 				      struct cxl_endpoint_decoder *cxled,
+ 				      const struct cxl_dport *dport, int pos)
+ {
++	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
+ 	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+ 	struct cxl_switch_decoder *cxlsd = &cxlrd->cxlsd;
+ 	struct cxl_decoder *cxld = &cxlsd->cxld;
+@@ -1919,7 +1919,7 @@ static int cxl_region_sort_targets(struct cxl_region *cxlr)
+ static int cxl_region_attach(struct cxl_region *cxlr,
+ 			     struct cxl_endpoint_decoder *cxled, int pos)
+ {
+-	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
++	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
+ 	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+ 	struct cxl_dev_state *cxlds = cxlmd->cxlds;
+ 	struct cxl_region_params *p = &cxlr->params;
+@@ -2024,8 +2024,7 @@ static int cxl_region_attach(struct cxl_region *cxlr,
+ 			ep_port = cxled_to_port(cxled);
+ 			dport = cxl_find_dport_by_dev(root_port,
+ 						      ep_port->host_bridge);
+-			rc = cxl_region_attach_position(cxlr, cxlrd, cxled,
+-							dport, i);
++			rc = cxl_region_attach_position(cxlr, cxled, dport, i);
+ 			if (rc)
+ 				return rc;
+ 		}
+@@ -2048,7 +2047,7 @@ static int cxl_region_attach(struct cxl_region *cxlr,
+ 	if (rc)
+ 		return rc;
+ 
+-	rc = cxl_region_attach_position(cxlr, cxlrd, cxled, dport, pos);
++	rc = cxl_region_attach_position(cxlr, cxled, dport, pos);
+ 	if (rc)
+ 		return rc;
+ 
+@@ -2323,8 +2322,8 @@ static const struct attribute_group *region_groups[] = {
+ 
+ static void cxl_region_release(struct device *dev)
+ {
+-	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(dev->parent);
+ 	struct cxl_region *cxlr = to_cxl_region(dev);
++	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
+ 	int id = atomic_read(&cxlrd->region_id);
+ 
+ 	/*
+@@ -2470,6 +2469,8 @@ static struct cxl_region *cxl_region_alloc(struct cxl_root_decoder *cxlrd, int i
+ 	 * region id allocations
+ 	 */
+ 	get_device(dev->parent);
++	cxlr->cxlrd = cxlrd;
++
+ 	device_set_pm_not_required(dev);
+ 	dev->bus = &cxl_bus_type;
+ 	dev->type = &cxl_region_type;
+@@ -2905,7 +2906,7 @@ static bool cxl_is_hpa_in_chunk(u64 hpa, struct cxl_region *cxlr, int pos)
+ u64 cxl_dpa_to_hpa(struct cxl_region *cxlr, const struct cxl_memdev *cxlmd,
+ 		   u64 dpa)
+ {
+-	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
++	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
+ 	u64 dpa_offset, hpa_offset, bits_upper, mask_upper, hpa;
+ 	struct cxl_region_params *p = &cxlr->params;
+ 	struct cxl_endpoint_decoder *cxled = NULL;
+@@ -3293,7 +3294,7 @@ cxl_find_region_by_range(struct cxl_root_decoder *cxlrd, struct range *hpa)
+ static int cxl_extended_linear_cache_resize(struct cxl_region *cxlr,
+ 					    struct resource *res)
+ {
+-	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
++	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
+ 	struct cxl_region_params *p = &cxlr->params;
+ 	resource_size_t size = resource_size(res);
+ 	resource_size_t cache_size, start;
+@@ -3329,9 +3330,9 @@ static int cxl_extended_linear_cache_resize(struct cxl_region *cxlr,
+ }
+ 
+ static int __construct_region(struct cxl_region *cxlr,
+-			      struct cxl_root_decoder *cxlrd,
+ 			      struct cxl_endpoint_decoder *cxled)
+ {
++	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
+ 	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+ 	struct range *hpa = &cxled->cxld.hpa_range;
+ 	struct cxl_region_params *p;
+@@ -3423,7 +3424,7 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
+ 		return cxlr;
+ 	}
+ 
+-	rc = __construct_region(cxlr, cxlrd, cxled);
++	rc = __construct_region(cxlr, cxled);
+ 	if (rc) {
+ 		devm_release_action(port->uport_dev, unregister_region, cxlr);
+ 		return ERR_PTR(rc);
+diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+index 0730f92df038..58c9db0bfb93 100644
+--- a/drivers/cxl/cxl.h
++++ b/drivers/cxl/cxl.h
+@@ -508,6 +508,7 @@ enum cxl_partition_mode {
+  * struct cxl_region - CXL region
+  * @dev: This region's device
+  * @id: This region's id. Id is globally unique across all regions
++ * @cxlrd: Region's root decoder
+  * @mode: Operational mode of the mapped capacity
+  * @type: Endpoint decoder target type
+  * @cxl_nvb: nvdimm bridge for coordinating @cxlr_pmem setup / shutdown
+@@ -521,6 +522,7 @@ enum cxl_partition_mode {
+ struct cxl_region {
+ 	struct device dev;
+ 	int id;
++	struct cxl_root_decoder *cxlrd;
+ 	enum cxl_partition_mode mode;
+ 	enum cxl_decoder_type type;
+ 	struct cxl_nvdimm_bridge *cxl_nvb;
+-- 
+2.39.5
+
 
