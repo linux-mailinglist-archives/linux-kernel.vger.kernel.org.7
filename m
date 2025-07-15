@@ -1,157 +1,252 @@
-Return-Path: <linux-kernel+bounces-732407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A84B06658
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:56:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCD2B0665C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C04041AA1A76
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:56:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7071A1AA1E0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139482BE7B5;
-	Tue, 15 Jul 2025 18:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F45F2BE7B8;
+	Tue, 15 Jul 2025 18:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bTNaMOOS"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Y773ZLIY"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2087.outbound.protection.outlook.com [40.107.220.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEEA17BA1;
-	Tue, 15 Jul 2025 18:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752605755; cv=none; b=AapKDiO6x499RHqexS/omnLQWeuO4VifbAM25yMubxRYRaCMMBePvSy61DqIuTkp0fGDnMKSk5/534E9wFIEqvL/VD8q/PonVdmc8w27ikFWBl+OiL9IO0JugccO9x8Pizxcl1gkVbPV0wdFkTSyb/zW54evir+pDY8Gl01dtRM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752605755; c=relaxed/simple;
-	bh=Q2MmTxPttrYwSbqFlJJnGw1CxKSnIIiq5Yk0wLXIyqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HcATgc6RYrD6fW+8fvdO1GwHgPD7UQ6YIxeZyY+PSWthtcrnpsCx9n6zvTPzbPtUMZ5vY0ty9ApcwKcttez61ZkbXJ6+A+4VcnOQvYL9uLBUU8TsR+Zmns8jDld41LbsJ4lRA4lvOS32XXJ7BZ0VzzveBBRQkD5PZrOW4L0p5Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bTNaMOOS; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 9541E78E;
-	Tue, 15 Jul 2025 20:55:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752605719;
-	bh=Q2MmTxPttrYwSbqFlJJnGw1CxKSnIIiq5Yk0wLXIyqw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bTNaMOOS1fVf864B9+ylYBpm4vJzrDckfHRTaF/vyat/jImb5zqBQjYO5bEXLeBKc
-	 Tp1H8BAwPk7gx1Nz3aGDHlxiF6C++jePYvlQt1rGs6ckaGlK2QD7NsSFaCr2eX6ynw
-	 u6ZVxtMAZliVROdASG7BrQSfPTsX3ekWrw5WNZlU=
-Date: Tue, 15 Jul 2025 21:55:50 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Mathis Foerst <mathis.foerst@mt.com>
-Cc: linux-kernel@vger.kernel.org,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, manuel.traut@mt.com,
-	mathis.foerst@zuehlke.com
-Subject: Re: [PATCH v8 0/2] MT9M114 driver bugfix and improvements
-Message-ID: <20250715185550.GA19299@pendragon.ideasonboard.com>
-References: <20250714075927.511610-1-mathis.foerst@mt.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCEF29C33D
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 18:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752605821; cv=fail; b=sL6QW1/lDFoFlvzwEENXzzOH3S0LkjuO3PaGKOHqzYif2gMp678F/BmphYjdkRnB1T8SYl3Jfd8AU2eeXn2dg3Dmw+kzp+iDZO4JJwb1In7AZSATH9/NbXuqIexm+5BDHpuS56QVXmf03qIiwZo319bmHR5+9VnJGxPq0SjbJ08=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752605821; c=relaxed/simple;
+	bh=9U2P25DrWdAC0flAsxi2aMJQCjbdVUCaCtlQ2+/KS+8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ou4oFvx5ztsKmPDM4QiWAbf5Jji+G5k2neL/WStS2AxSUYxXt5GrznzUJOENCN4Az9lmL4yxXftOKhBJysUkFMd7Gjskgn6KUfLhDn9JbF8z6NJp+Ql5SHn3QsPQoLAuunWqL3tOnAdU0dNvMzXatapEokpCOS6pU4xg7oxR4v4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Y773ZLIY; arc=fail smtp.client-ip=40.107.220.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kPZODD9w8Ju7mwGD6WkSp+ODHU91V7eAVl7hBwNhTV/4Q4S9PsQZ/244YqdmlJlXtU+wr459l5b8XYAQsHYzn+dz8iyXItjGHvgS2Znp5EREfyNvSUWYucnLZ4UaJgYAOmHFRsKCoJQo+sH7VVBdqhzNJ4DY3wEcyGOHg8XSDNkLmBkSNk7F6xnnQbUCaOIc8qqEPA69J/ZgPDo0G78m+OiDjD+nVtaTXsZwt29L4R8r4Jndkpwy1qJ9a/hWmlcT2mab8ZZiRnff2lggMOw6Xfs6SZ3AX6wOwGBQc+SukIKituuUBZRkAPQIiaKmrvDRLulZzujUdFXD3xgqEQlltQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4wIMjI1SlENBp4d8UEVdX/FYeDMzGjopkmMxAXXSjl8=;
+ b=LYzZMeb781uKb8FKPK18pLy2U3mc3pJKa6jbBowlZ/ftPAfdu++MZaRovRdpWO5YRrjDmIlbz1s35MHECtC3Ez91J6iX6MPAcZ4C1dibTjD6UFYO5CIGHbBVetr10EJ/EIU0+ulgHzI7a4lJMtmZVrrT9GorXuV2EWKCZsAdnZYw2T0WlrLSLjxgEP0UNIfQkoHJK/grcowyXy6e0RrJJo6xpjCktppd7DKViUksGUGrUlk5CITQ8t4LeEheeZEg7G4GlTqayJb9REiYIzyxSXIlwjrfIlDtOrkZanNcPJNZIMQ+4hU0owkxYZ4W3d/Hz8wCK6H9M3Vtagaoib9kOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4wIMjI1SlENBp4d8UEVdX/FYeDMzGjopkmMxAXXSjl8=;
+ b=Y773ZLIYxHRBCx9mmlRMAwQEl3zi7mCdXVT8uZA+KuYvsMgcs5/JuptGENC/n502kqeNGMxTe6kNLARDcIS/Kh5MCosKBdUJvIMrFtvYYk9eq4Xm0Vu2I6uZ84G3qZmGcXBLru17E9WPV79bCGMtEtv9Pq+VA7eCDkV8Iw0N7r8e+Ynf64b6Qlszh/+6lZkLH+pSPyPDjJ3hFBph41PzpxKlzYAq5fgu0ygqfL6Hpi2juEz5JfE21LvKCL4DlHO0cXWLcHnJhozpE/XZjD0vmooN5vdX9JK/OCxXDiDyXOV++d+zPhAARUq+vaWMR0MOwOp46C61eNJ9so2ulEp7Rw==
+Received: from MW3PR06CA0024.namprd06.prod.outlook.com (2603:10b6:303:2a::29)
+ by MN0PR12MB6104.namprd12.prod.outlook.com (2603:10b6:208:3c8::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Tue, 15 Jul
+ 2025 18:56:55 +0000
+Received: from SJ5PEPF000001C8.namprd05.prod.outlook.com
+ (2603:10b6:303:2a:cafe::a3) by MW3PR06CA0024.outlook.office365.com
+ (2603:10b6:303:2a::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.17 via Frontend Transport; Tue,
+ 15 Jul 2025 18:56:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ5PEPF000001C8.mail.protection.outlook.com (10.167.242.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8922.22 via Frontend Transport; Tue, 15 Jul 2025 18:56:54 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 15 Jul
+ 2025 11:56:34 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 15 Jul
+ 2025 11:56:33 -0700
+Received: from Asurada-Nvidia (10.127.8.10) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Tue, 15 Jul 2025 11:56:32 -0700
+Date: Tue, 15 Jul 2025 11:56:31 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>
+CC: <jgg@nvidia.com>, <jgg@ziepe.ca>, <kevin.tian@intel.com>,
+	<will@kernel.org>, <aneesh.kumar@kernel.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <joro@8bytes.org>, <robin.murphy@arm.com>,
+	<shuah@kernel.org>, <aik@amd.com>, <dan.j.williams@intel.com>,
+	<baolu.lu@linux.intel.com>, <yilun.xu@intel.com>
+Subject: Re: [PATCH v5 5/8] iommufd/vdevice: Remove struct device reference
+ from struct vdevice
+Message-ID: <aHakX0SzQ9/EX3AT@Asurada-Nvidia>
+References: <20250715063245.1799534-1-yilun.xu@linux.intel.com>
+ <20250715063245.1799534-6-yilun.xu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250714075927.511610-1-mathis.foerst@mt.com>
+In-Reply-To: <20250715063245.1799534-6-yilun.xu@linux.intel.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001C8:EE_|MN0PR12MB6104:EE_
+X-MS-Office365-Filtering-Correlation-Id: 241ff14f-655c-40f1-a783-08ddc3d15dd6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Z4D38xI9uCiItmtvqOynqgpR59z9bt0CqpY3grdK5h4cYsj+dKuEUe3sb099?=
+ =?us-ascii?Q?3E2nfR6RUyJVOJHcJiMT+08K1L4CEWshaForJRZpZ59yi5bQwP2QetYxJuGE?=
+ =?us-ascii?Q?OtqfE/Z0nAAc9QcRuwpALDPEfT4eP1HvmQd0Agr52CbT/BRNJG/p1BDtwGjI?=
+ =?us-ascii?Q?9+TO3DQeZMio9e04qu7RScrgXK74/j2oNy+U+nPwaSDX4adWUGuJo/4xOJvs?=
+ =?us-ascii?Q?mOQxapko/q4EHHe+g7JK34fH2mWABqlizJyUAOQsHYJP2ajRyTSd1W997jI/?=
+ =?us-ascii?Q?9GMp4NG2tvdWkO34cgpJF7wd2MtJSP4k6x/vmFBI1+dSqyn9VfD6L4Y8+OJl?=
+ =?us-ascii?Q?jI/vg8e2tHrWz+Y854gdAD1paeOd34hw+8APq2I8M+rUvG+h+55dtRQguiSI?=
+ =?us-ascii?Q?CeYiE/AkWC7S8dqWwnxkCDgG2RvDEBIJwqa2zeTQOP03u3V5zkEK5cHjW3Eo?=
+ =?us-ascii?Q?iJ8ShWK4dllMar38FHvAGmCdJQakko9QlucR4IcW6kWczjhg/VxVRtBMntnX?=
+ =?us-ascii?Q?Iw7GUb2b/XiQXaUjQRoF7ClZViz9MuGU7gOtsHWlONX+DRR3enZSA/pPtLNP?=
+ =?us-ascii?Q?N7vQHuZlPsPnKx9MP+qLUwQ6hVss97S97XqLsZmX8AYLjV+ucKdlLvs4ulqa?=
+ =?us-ascii?Q?IyJCnn3WlkHvIzIDRg5F0OKCt6Way7K6dTWBZwKjXaANP2sYrQBwK7vta3X2?=
+ =?us-ascii?Q?Kcq6GurtcX9TMXTyCNmrqdvf7Fb4XujJHDsIFNOF9OqdMCBHyNP8XXusp9hD?=
+ =?us-ascii?Q?wYZII3nbgp+5oZYuqhvlCfhfsx34MX+VDlCwgpRsjV8Mfxio4mUFxsWacF9t?=
+ =?us-ascii?Q?Lylzr+abghnR50ngIXUVfe68rI9toiOlLVCG9YMmYzdgMPmvwWCAkRsyPsbx?=
+ =?us-ascii?Q?120FwaE0fLdlumikgxuIU/Je9hjYWL7PFGTYySltaWkxro3voh26tqwte6Kv?=
+ =?us-ascii?Q?F3AR36/siiwLh+exr86NMzVVFzjk69+ZyJ07lZV+9l5zUkEC6kaZeUlqj2uS?=
+ =?us-ascii?Q?7XjoQ0Ku9qtW8TkEwI/MHIrUUWQEiJOEos4QvlPCpJP1sl/DLnGZrh/kproJ?=
+ =?us-ascii?Q?KLdHB18OSjddcfYJ606ke9EwwoqSleNdPpWLwSsb75x++i83eIOtZZLAfhvl?=
+ =?us-ascii?Q?KBcwd2VQ3h7jFgicCGCaPbRSdvXOdTgkEvdoyoB84OmrdqqFlu8sUI+HtH6n?=
+ =?us-ascii?Q?J/v8ZCMjEu4B5X/J7f/knu+9u/Gi23+od1K9EUmXLPU51C34sNWC+Zj6Eu+x?=
+ =?us-ascii?Q?jWxzBKHiH0KkhZMTfLm1dYvLUz8Cvk0Z+2XVHaEdW3WRfkply9Gc3k8/8sMe?=
+ =?us-ascii?Q?YWiLCr9LCkFPul1bOuKw1UJeMOhhoBVZmFW/MAf6Flk8nlgCVoGHURaQ3JIz?=
+ =?us-ascii?Q?tMMkvPAFSY1woYqAVXjd8zSwPHA8MdjVwghC5Jw3lAzyYl+s1kOzfO7kIYHa?=
+ =?us-ascii?Q?8BzJdDD3K8uRL9Ua5ARXU8JdDfdcGnkoRwDUCG9Zsy0/UZmxhEl1pzsHAVww?=
+ =?us-ascii?Q?5b/iFy9iOnJ8Mv1/0Dgqs12lyKHj1EdJhDpH?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 18:56:54.6013
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 241ff14f-655c-40f1-a783-08ddc3d15dd6
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001C8.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6104
 
-Hi Mathis,
+On Tue, Jul 15, 2025 at 02:32:42PM +0800, Xu Yilun wrote:
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> index eb90af5093d8..8a515987b948 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> @@ -1218,7 +1218,7 @@ static void tegra241_vintf_destroy_vsid(struct iommufd_vdevice *vdev)
+>  
+>  static int tegra241_vintf_init_vsid(struct iommufd_vdevice *vdev)
+>  {
+> -	struct arm_smmu_master *master = dev_iommu_priv_get(vdev->dev);
+> +	struct arm_smmu_master *master = dev_iommu_priv_get(vdev->idev->dev);
 
-Thank you for the patches.
+Hmm, this breaks :(
 
-The series is fully reviewed. It's unfortuantely a bit too late for
-v6.17, I expect Sakari will pick it up for v6.18.
+drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c: In function 'tegra241_vintf_init_vsid':
+drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:1230:71: error: invalid use of undefined type 'struct iommufd_device'
+ 1230 |         struct arm_smmu_master *master = dev_iommu_priv_get(vdev->idev->dev);
 
-On Mon, Jul 14, 2025 at 09:59:25AM +0200, Mathis Foerst wrote:
-> Hi,
-> 
-> this patch series contains the following bugfix and improvements
-> for the MT9M114 camera driver:
-> 
-> Changelog:
-> 
-> v7 -> v8:
-> - Add missing braces in 1.
-> - Fix formatting issues as suggested in review.
-> 
-> v6 -> v7:
-> - Remove already picked patches 1, 2, 3 and 6.
-> - Remove patch 4 as suggested in review.
-> - Fix formatting issues
-> - Return -EBUSY from mt9m114_pa_set_selection if the cropping size changes
->   while in streaming state.
-> 
-> v5 -> v6:
-> - Add 'Reviewed-By:' tags. Sorry for forgetting this in the previous versions
-> 
-> v4 -> v5:
-> - Apply reformatings and small refactorings as suggested in review comments
-> - Split PATCH 4 into two parts: One for applying HFLIP / VFLIP while 
->   streaming, one for applying set_selection while streaming.
-> - Add condition to apply set_selection immediately only if the size of the
->   cropping rectangle does not change in PATCH 5
-> - Use device_property_read_u32 instead of of_property_read_u32 in PATCH 7
-> 
-> v3 -> v4:
-> - Rename DT binding from "onnn,slew-rate" to "slew-rate" in PATCH 1 and 6 as
->   requested in the review comment.
-> 
-> v2 -> v3:
-> - Dropped PATCH 2 ("media: mt9m114: Add get_mbus_config").
->   Based on the comments, this issure won't be fixed in the MT9M114
->   driver but in "imx-media-csi.c" in a separate patch.
-> - Renumbered patches accordingly.
-> - Fix the incomplete renaming of the DT property from 'pad-slew-rate'
->   to 'onnn,slew-rate' in PATCH 1 and 6.
-> - Fix checkpatch formatting suggestions in PATCH 2 and 6.
-> 
-> v1 -> v2:
-> - Fix the subjects of the patches
-> - Dropped PATCH 1 ("Add bypass-pll DT-binding") as it can be automatically
->   detected if the PLL should be bypassed.
-> - Renumbered patches accordingly
-> - Switch to uint32, add default value and clarify documentation in PATCH 1
-> - Add 'Fixes' and 'Cc' tags as suggested in PATCH 6
-> 
-> Link to v1 discussion:
-> https://lore.kernel.org/linux-media/20250226153929.274562-1-mathis.foerst@mt.com/
-> Link to v2 discussion:
-> https://lore.kernel.org/linux-media/20250304103647.34235-1-mathis.foerst@mt.com/
-> Link to v3 discussion:
-> https://lore.kernel.org/linux-media/20250305101453.708270-1-mathis.foerst@mt.com/
-> Link to v4 discussion:
-> https://lore.kernel.org/linux-media/20250307093140.370061-1-mathis.foerst@mt.com/
-> 
-> Bugfixes:
-> - Fix a deadlock when using the V4L2 pad-ops get/set_frame_interval
-> 
-> New Features:
-> - Bypass the internal PLL if EXTCLK matches the configured link_frequency
-> - Make the slew-rate of the output pads configurable via DT
-> - Allow to change the cropping configuration while the sensor is in streaming 
->   state
-> 
-> Thanks,
-> Mathis
-> 
-> Mathis Foerst (2):
->   media: mt9m114: Allow set_selection while streaming
->   media: mt9m114: Set pad-slew-rate
-> 
->  drivers/media/i2c/mt9m114.c | 69 ++++++++++++++++++++++++++++---------
->  1 file changed, 53 insertions(+), 16 deletions(-)
-> 
-> 
-> base-commit: a8598c7de1bcd94461ca54c972efa9b4ea501fb9
+Unfortunately the iommufd_device structure is defined in the
+private header that's not shared with any IOMMU driver.
 
--- 
-Regards,
+So, we need in the driver.c a new helper that converts a vdev
+pointer to dev. Something like:
 
-Laurent Pinchart
+diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+index ff6bbd2137146..fd6b083535271 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
++++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+@@ -1227,7 +1227,8 @@ static void tegra241_vintf_destroy_vsid(struct iommufd_vdevice *vdev)
+ 
+ static int tegra241_vintf_init_vsid(struct iommufd_vdevice *vdev)
+ {
+-	struct arm_smmu_master *master = dev_iommu_priv_get(vdev->idev->dev);
++	struct device *dev = iommufd_vdevice_to_device(vdev);
++	struct arm_smmu_master *master = dev_iommu_priv_get(dev);
+ 	struct tegra241_vintf *vintf = viommu_to_vintf(vdev->viommu);
+ 	struct tegra241_vintf_sid *vsid = vdev_to_vsid(vdev);
+ 	struct arm_smmu_stream *stream = &master->streams[0];
+diff --git a/drivers/iommu/iommufd/driver.c b/drivers/iommu/iommufd/driver.c
+index df25db6d2eafc..6f1010da221c9 100644
+--- a/drivers/iommu/iommufd/driver.c
++++ b/drivers/iommu/iommufd/driver.c
+@@ -83,6 +83,12 @@ void _iommufd_destroy_mmap(struct iommufd_ctx *ictx,
+ }
+ EXPORT_SYMBOL_NS_GPL(_iommufd_destroy_mmap, "IOMMUFD");
+ 
++struct device *iommufd_vdevice_to_device(struct iommufd_vdevice *vdev)
++{
++	return vdev->idev->dev;
++}
++EXPORT_SYMBOL_NS_GPL(iommufd_vdevice_to_device, "IOMMUFD");
++
+ /* Caller should xa_lock(&viommu->vdevs) to protect the return value */
+ struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
+ 				       unsigned long vdev_id)
+@@ -92,7 +98,7 @@ struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
+ 	lockdep_assert_held(&viommu->vdevs.xa_lock);
+ 
+ 	vdev = xa_load(&viommu->vdevs, vdev_id);
+-	return vdev ? vdev->idev->dev : NULL;
++	return vdev ? iommufd_vdevice_to_device(vdev) : NULL;
+ }
+ EXPORT_SYMBOL_NS_GPL(iommufd_viommu_find_dev, "IOMMUFD");
+ 
+@@ -109,7 +115,7 @@ int iommufd_viommu_get_vdev_id(struct iommufd_viommu *viommu,
+ 
+ 	xa_lock(&viommu->vdevs);
+ 	xa_for_each(&viommu->vdevs, index, vdev) {
+-		if (vdev->idev->dev == dev) {
++		if (iommufd_vdevice_to_device(vdev) == dev) {
+ 			*vdev_id = vdev->virt_id;
+ 			rc = 0;
+ 			break;
+diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
+index 61410a78cbce7..ee88e90021870 100644
+--- a/include/linux/iommufd.h
++++ b/include/linux/iommufd.h
+@@ -266,6 +266,7 @@ int _iommufd_alloc_mmap(struct iommufd_ctx *ictx, struct iommufd_object *owner,
+ 			unsigned long *offset);
+ void _iommufd_destroy_mmap(struct iommufd_ctx *ictx,
+ 			   struct iommufd_object *owner, unsigned long offset);
++struct device *iommufd_vdevice_to_device(struct iommufd_vdevice *vdev);
+ struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
+ 				       unsigned long vdev_id);
+ int iommufd_viommu_get_vdev_id(struct iommufd_viommu *viommu,
+@@ -300,6 +301,12 @@ static inline void _iommufd_destroy_mmap(struct iommufd_ctx *ictx,
+ {
+ }
+ 
++static inline struct device *
++iommufd_vdevice_to_device(struct iommufd_vdevice *vdev)
++{
++	return ERR_PTR(-ENODEV);
++}
++
+ static inline struct device *
+ iommufd_viommu_find_dev(struct iommufd_viommu *viommu, unsigned long vdev_id)
+ {
+
 
