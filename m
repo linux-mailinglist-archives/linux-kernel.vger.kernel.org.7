@@ -1,372 +1,157 @@
-Return-Path: <linux-kernel+bounces-731683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C04DAB05837
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:56:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E579B0583C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07CDA1AA79E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:56:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 627591AA7834
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D81D2D77F3;
-	Tue, 15 Jul 2025 10:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F1A2D837E;
+	Tue, 15 Jul 2025 10:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPVy2jm8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jp1FxTpl"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E64A42A83;
-	Tue, 15 Jul 2025 10:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C499F223324;
+	Tue, 15 Jul 2025 10:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752576965; cv=none; b=MjLlnNZdjzZuZrKUfP5mCLZ2c3LtW9QfeI5GxyblyGzxt7hFgM08FgQwo1y0OSpYFFRegM06akKKDPb4qFCWoafmyFPiSN5yDHVgjkpP3VgacQNJq+Nu/13LTsslJgQZpGDS+M1d6yCgU8Ze7rAPu7CEuyax3tSxYrRly/jrLu0=
+	t=1752577110; cv=none; b=dEe/Xw0EXTUXaS8mcFOK/QPFROKt1K2FaF2rPek6ZHguPXWgdkpPBWH1Ksweu9flO7gt7vHqGqb3yMiGM6G9DtcU9KAN3ngDG5EsF6oeuHIBsF5uSLyxacu3QARS31Ko/rOzL4U5Zk7qgiAGggeru7LZsZqiZKxkAPZAKGDQVVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752576965; c=relaxed/simple;
-	bh=aaklRxaPTUR8EbW69n2ak7r+p6YjH7Y9zUA4a///7FY=;
+	s=arc-20240116; t=1752577110; c=relaxed/simple;
+	bh=YR/CAMidyDAoRBYeL5AbGJjR69wuwI0LVp+h3GpgAoA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H1v8gHOaPwqT+uPP3hANyTLmuD7GG/vsdxhBKJRtM+yRb4s0ke8E/PISaa3J7sOpCb7n5oE25+LHFf5Wk7WeuZOUQeiT4iplM6Rl3HRjuvwv8ed/RUhP/Mt1YZUquUSiUkKXgQE5pL/Od8j6El6hM5OJsfqu61veE6y4mRsrSig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPVy2jm8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05C7BC4CEE3;
-	Tue, 15 Jul 2025 10:56:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752576964;
-	bh=aaklRxaPTUR8EbW69n2ak7r+p6YjH7Y9zUA4a///7FY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mPVy2jm821I5bKjgXW6jkGAJZtaZUHDXPQaAETpGCUw7dxCvPwSA9IubwPnE4I5YX
-	 HwDfNkZilT2UBXglDp+ueKeaByFSCCmWvZtQJA06WDJ1K6CDMLaJDcqI4wu2hQqKzb
-	 PJIuL7FF4PhpT1OipdKXFzgzZZ6B1w4mpXlkdz7yhi1k7hofMopYEYrxwevkq4fJhr
-	 GOyy2atzPSALW96uP4G9AVR/v2SuQdKmnxrA0fsbH0XvEGD2P5EUBHD0ePdvJHiygJ
-	 pUCWzYFJCWGFYrEz2ShHASPpe0znigzyvF5f3QyOpxnpgYFPbDu6ON1XDwm/n0WS96
-	 msdmCgp+X+gHQ==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	 MIME-Version:Content-Type; b=a2ZrTp3pqAPXaTrtPIvoEDE5kKsS/4eViqtxnBgxa+wseDcSOO7Q1d0t0on9rPJu94jywkoceGXhAzqr7NlarYtljIwXYHuptTmF308etuZlIP0VqhnWCSaGC7kgTKWGSXuZjFLsranmPvAfzKqGC0pWHiCC/rSqGFo26eZAbu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jp1FxTpl; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-236377f00a1so49487115ad.3;
+        Tue, 15 Jul 2025 03:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752577108; x=1753181908; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ndUwURMf+U4OPYsflaAXYVKWP+i2ltXh1RMS/eDGRPY=;
+        b=jp1FxTplmQKM1bQHcvyl6eIGrqSk+m4vIuwEQTmqiydFijYKBdf4ejDvgE/nV2smrM
+         LBZxtVfL7Er4e+dD6dkQod8LOa0l3kiIGk1w0nnYlmHuIIDAcslxR0zubX8KBaYGa0Hh
+         1YV/iU5ANSFE8VE5y/e1X91QGJFCohg3lCAOwn1TuHlplYSJqcWklRCGRFJLhj/7sGuV
+         hrBmYZ4CxM58s8nlXF64uy6bg3RHS52HWGCSmQZcrt4ejgcLNMzqG8K8EvMc83ZS8TfN
+         dzEx0CSyx3Pnk1gJEY8TLqmLbNAGZdkkxXzbMR9eSLhZ12Ac2XoLiSk9WDVFMYLtU26V
+         VM3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752577108; x=1753181908;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ndUwURMf+U4OPYsflaAXYVKWP+i2ltXh1RMS/eDGRPY=;
+        b=oS4X3HEvSto+Y4XhyWAufgDxGK9ZoaS/AjGnwVPKroLZwaBTNT+kS8ogfckLBjD8gS
+         Zygn4clpgUcG1GMc/QerEBQ0GFJcTdILSf28AzrPZfOi3HWfdXFlNTyWsuKXxFIr5w3e
+         rXWvRsY+SUMwPT7JP5DmTxq2H8tSZneJjliSmPn7ccZWuzAgWnvWh+mhof8NK/fnbCNN
+         Ntajd9+ikQTV0eEuDdNtXfebe+NZoZFRV2cnwt4g9AFdltZjbSSBILbpTZiznNZWX9J7
+         lfN5IdRen+WUG9UeOCN3Bm24fz+bMNP4o9eEw7PjCdHbX2Y7k/zFIujFL0OELdR6RNaE
+         fSjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUG3XLcuYeiCNE4UqfDRoE1/S5RtftJ4TGdSTe7aWWDUZMWw7tL3qF0qaDT4wpa0P2lbjpKFnzI8K/inD0=@vger.kernel.org, AJvYcCVOGWeCLonLxZ9g8hWQFfKBBLQzLczX6jhAfwVb4ueuMdAVU3W1/5wv4nqhfn2GV89hiZMTVkMtrTpLVQ9QJQlH@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmqlJTHQRJlGvni2zUu9SLLnr7NPUGNyanCNBIyq48ZShji+D+
+	Wj4FcwduNjn5vWDKr+GCD5/T9D6tfdfna+8B/dCkrQTnPwkT2ROnrZc5
+X-Gm-Gg: ASbGncvbvugcimhIiVrnOmJSYP8OfJMfdtwjSjOLJFlTDjeGBGdHytHX7p6cNI/j/Zt
+	1O6mpFJqppq4G24x+JFtQTS5ez/5w6+pcp7AdUXSv1f/A76dFoIzgtdr1z+Stj4svswnJ0Rrx56
+	IOjzzlvysPGGzumqIBlZ+qrqzoTK8rVKAzrndxzCGLB6JItYl3lNvq+lgUIhl1Q5QK7AmbToHCP
+	Sm0ov5SjBm2CiaUcjDQX+z9d4Y7fF7DOT0eHDOg4oQQ/Oja4RLMdW4RZgAvPTRCtbVnJEqCZ99X
+	JhAQdbaPvSelsS6TaXt8OAUtWVRyNA/4JBxvd3nr685C732ST/YazyHYPoz9b4tEiufyQygfNq7
+	xurwjRj2G2HeKROZ0jBU/Ifppwh9fHQoFtotNTDaHFRzZj0T3ShjQ+7A30P4=
+X-Google-Smtp-Source: AGHT+IHZojJB4KCQsrcoAN7BT58wij39BFDsuKXOI/dCz++AseZJzBELnhlhFyg4t821B7aHJ1/pnQ==
+X-Received: by 2002:a17:902:ec87:b0:235:779:ede0 with SMTP id d9443c01a7336-23e1b191970mr34025165ad.35.1752577107918;
+        Tue, 15 Jul 2025 03:58:27 -0700 (PDT)
+Received: from DESKTOP-GIED850.localdomain ([114.247.113.178])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4322dbdsm110059255ad.127.2025.07.15.03.58.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 03:58:27 -0700 (PDT)
+From: wang lian <lianux.mm@gmail.com>
+To: broonie@kernel.org
+Cc: Liam.Howlett@oracle.com,
+	akpm@linux-foundation.org,
+	brauner@kernel.org,
+	david@redhat.com,
+	gkwang@linx-info.com,
+	jannh@google.com,
+	lianux.mm@gmail.com,
 	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v3 1/1] tracing: Remove "__attribute__()" from the type field of event format
-Date: Tue, 15 Jul 2025 19:56:02 +0900
-Message-ID:  <175257696222.1655692.4019049819386139160.stgit@mhiramat.tok.corp.google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-In-Reply-To:  <175257695307.1655692.4466186614215884669.stgit@mhiramat.tok.corp.google.com>
-References:  <175257695307.1655692.4466186614215884669.stgit@mhiramat.tok.corp.google.com>
-User-Agent: StGit/0.19
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com,
+	p1ucky0923@gmail.com,
+	ryncsn@gmail.com,
+	shuah@kernel.org,
+	sj@kernel.org,
+	vbabka@suse.cz,
+	zijing.zhang@proton.me,
+	ziy@nvidia.com
+Subject: Re: [PATCH v5] selftests/mm: add process_madvise() tests
+Date: Tue, 15 Jul 2025 18:58:05 +0800
+Message-ID: <20250715105808.3634-1-lianux.mm@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <b01d1d06-9d7c-4081-b3e3-c2c0fea06fad@sirena.org.uk>
+References: <b01d1d06-9d7c-4081-b3e3-c2c0fea06fad@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=yes
 Content-Transfer-Encoding: 8bit
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> On Mon, Jul 14, 2025 at 08:25:33PM +0800, wang lian wrote:
+> > +TEST_F(process_madvise, remote_collapse)
+> > +{
+> > +	self->child_pid = fork();
+> > +	ASSERT_NE(self->child_pid, -1);
+> > +
+> > +	ret = read(pipe_info[0], &info, sizeof(info));
+> > +	if (ret <= 0) {
+> > +		waitpid(self->child_pid, NULL, 0);
+> > +		SKIP(return, "Failed to read child info from pipe.\n");
+> > +	}
+> > +	ASSERT_EQ(ret, sizeof(info));
+> > +
+> > +cleanup:
+> > +	/* Cleanup */
+> > +	kill(self->child_pid, SIGKILL);
+> > +	waitpid(self->child_pid, NULL, 0);
+> > +	if (pidfd >= 0)
+> > +		close(pidfd);
 
-With CONFIG_DEBUG_INFO_BTF=y and PAHOLE_HAS_BTF_TAG=y, `__user` is
-converted to `__attribute__((btf_type_tag("user")))`. In this case,
-some syscall events have it for __user data, like below;
+> The cleanup here won't get run if we skip or assert, skipping will
+> return immediately (you could replace the return with a 'goto cleanup')
+> and the asserts will exit the test immediately.  This will mean we leak
+> the child.  This isn't an issue for things that are memory mapped or
+> tracked with file descriptors, the harness will for a new child for each
+> test so anything that's cleaned up with the process will be handled, but
+> that doesn't apply to child processes.
 
-/sys/kernel/tracing # cat events/syscalls/sys_enter_openat/format
-name: sys_enter_openat
-ID: 720
-format:
-        field:unsigned short common_type;       offset:0;       size:2; signed:0;
-        field:unsigned char common_flags;       offset:2;       size:1; signed:0;
-        field:unsigned char common_preempt_count;       offset:3;       size:1; signed:0;
-        field:int common_pid;   offset:4;       size:4; signed:1;
+> I think doing the child setup in a fixture should DTRT but I haven't
+> gone through in full detail to verify that this is the case.
 
-        field:int __syscall_nr; offset:8;       size:4; signed:1;
-        field:int dfd;  offset:16;      size:8; signed:0;
-        field:const char __attribute__((btf_type_tag("user"))) * filename;      offset:24;      size:8; signed:0;
-        field:int flags;        offset:32;      size:8; signed:0;
-        field:umode_t mode;     offset:40;      size:8; signed:0;
+Thanks a lot for pointing this out — it's a very reasonable concern.
 
+Fortunately, this situation is handled by FIXTURE_TEARDOWN_PARENT, 
+which reliably takes care of cleanup when the test exits early via ASSERT_* or SKIP(). 
 
-Then the trace event filter fails to set the string acceptable flag
-(FILTER_PTR_STRING) to the field and rejects setting string filter;
+During earlier testing (in v3), I did run into an issue where a missing cleanup 
+led to run_vmtests hanging,which prompted me to make sure that subsequent versions 
+correctly rely on the fixture teardown mechanism for child process termination.
 
- # echo 'filename.ustring ~ "*ftracetest-dir.wbx24v*"' \
-    >> events/syscalls/sys_enter_openat/filter
- sh: write error: Invalid argument
- # cat error_log
- [  723.743637] event filter parse error: error: Expecting numeric field
-   Command: filename.ustring ~ "*ftracetest-dir.wbx24v*"
+So while your concern definitely makes sense, this specific case should be 
+well-covered by the existing teardown logic.
 
-Since this __attribute__ makes format parsing complicated and not
-needed, remove the __attribute__(.*) from the type string.
+Thanks again for the careful review!
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
-Changes in v3:
- - Sanitize field in update_event_field() to avoid boottime performance
-   overhead.
- - Change the function names because those are not always require eval
-   maps.
- - Remove unneeded alloc_type flag.
-Changes in v2:
- - Add memory allocation check flag.
- - Check the flag in update_event_fields() to avoid memory leak.
- - Fix 'static const int ... strlen()' issue.
- - Fix to find 2nd __attribute__ correctly. (adjust next after strcpy)
----
- kernel/trace/trace.c        |   23 ++++-----
- kernel/trace/trace.h        |    4 +
- kernel/trace/trace_events.c |  115 +++++++++++++++++++++++++++++++++++++------
- 3 files changed, 112 insertions(+), 30 deletions(-)
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 95ae7c4e5835..37e930631ceb 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -5937,17 +5937,20 @@ static inline void trace_insert_eval_map_file(struct module *mod,
- 			      struct trace_eval_map **start, int len) { }
- #endif /* !CONFIG_TRACE_EVAL_MAP_FILE */
- 
--static void trace_insert_eval_map(struct module *mod,
--				  struct trace_eval_map **start, int len)
-+static void
-+trace_event_update_with_eval_map(struct module *mod,
-+				 struct trace_eval_map **start,
-+				 int len)
- {
- 	struct trace_eval_map **map;
- 
--	if (len <= 0)
--		return;
--
- 	map = start;
- 
--	trace_event_eval_update(map, len);
-+	/* This must run always for sanitizing. */
-+	trace_event_update_all(map, len);
-+
-+	if (len <= 0)
-+		return;
- 
- 	trace_insert_eval_map_file(mod, start, len);
- }
-@@ -10335,7 +10338,7 @@ static void __init eval_map_work_func(struct work_struct *work)
- 	int len;
- 
- 	len = __stop_ftrace_eval_maps - __start_ftrace_eval_maps;
--	trace_insert_eval_map(NULL, __start_ftrace_eval_maps, len);
-+	trace_event_update_with_eval_map(NULL, __start_ftrace_eval_maps, len);
- }
- 
- static int __init trace_eval_init(void)
-@@ -10388,9 +10391,6 @@ bool module_exists(const char *module)
- 
- static void trace_module_add_evals(struct module *mod)
- {
--	if (!mod->num_trace_evals)
--		return;
--
- 	/*
- 	 * Modules with bad taint do not have events created, do
- 	 * not bother with enums either.
-@@ -10398,7 +10398,8 @@ static void trace_module_add_evals(struct module *mod)
- 	if (trace_module_has_bad_taint(mod))
- 		return;
- 
--	trace_insert_eval_map(mod, mod->trace_evals, mod->num_trace_evals);
-+	/* Even if no trace_evals, this need to sanitize field types. */
-+	trace_event_update_with_eval_map(mod, mod->trace_evals, mod->num_trace_evals);
- }
- 
- #ifdef CONFIG_TRACE_EVAL_MAP_FILE
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index bd084953a98b..1dbf1d3cf2f1 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -2125,13 +2125,13 @@ static inline const char *get_syscall_name(int syscall)
- 
- #ifdef CONFIG_EVENT_TRACING
- void trace_event_init(void);
--void trace_event_eval_update(struct trace_eval_map **map, int len);
-+void trace_event_update_all(struct trace_eval_map **map, int len);
- /* Used from boot time tracer */
- extern int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set);
- extern int trigger_process_regex(struct trace_event_file *file, char *buff);
- #else
- static inline void __init trace_event_init(void) { }
--static inline void trace_event_eval_update(struct trace_eval_map **map, int len) { }
-+static inline void trace_event_update_all(struct trace_eval_map **map, int len) { }
- #endif
- 
- #ifdef CONFIG_TRACER_SNAPSHOT
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 120531268abf..5289e2032678 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -3264,41 +3264,115 @@ static void add_str_to_module(struct module *module, char *str)
- 	list_add(&modstr->next, &module_strings);
- }
- 
-+#define ATTRIBUTE_STR "__attribute__"
-+#define ATTRIBUTE_STR_LEN (sizeof(ATTRIBUTE_STR) - 1)
-+
-+/* Remove all __attribute__() from type */
-+static void sanitize_field_type(char *type)
-+{
-+	char *attr, *tmp, *next;
-+	int depth;
-+
-+	next = type;
-+	while ((attr = strstr(next, ATTRIBUTE_STR))) {
-+		next = attr + ATTRIBUTE_STR_LEN;
-+
-+		/* Retry if __attribute__ is a part of type name. */
-+		if ((attr != type && !isspace(attr[-1])) ||
-+		    *next != '(')
-+			continue;
-+
-+		depth = 0;
-+		while ((tmp = strpbrk(next, "()"))) {
-+			if (*tmp == '(')
-+				depth++;
-+			else
-+				depth--;
-+			next = tmp + 1;
-+			if (depth == 0)
-+				break;
-+		}
-+		next = skip_spaces(next);
-+		strcpy(attr, next);
-+		next = attr;
-+	}
-+}
-+
-+static bool need_sanitize_field_type(const char *type)
-+{
-+	return !!strstr(type, ATTRIBUTE_STR);
-+}
-+
-+static char *find_replacable_eval(const char *type, const char *eval_string,
-+				  int len)
-+{
-+	char *ptr;
-+
-+	if (!eval_string)
-+		return NULL;
-+
-+	ptr = strchr(type, '[');
-+	if (!ptr)
-+		return NULL;
-+	ptr++;
-+
-+	if (!isalpha(*ptr) && *ptr != '_')
-+		return NULL;
-+
-+	if (strncmp(eval_string, ptr, len) != 0)
-+		return NULL;
-+
-+	return ptr;
-+}
-+
- static void update_event_fields(struct trace_event_call *call,
- 				struct trace_eval_map *map)
- {
- 	struct ftrace_event_field *field;
-+	const char *eval_string = NULL;
- 	struct list_head *head;
-+	bool need_sanitize;
-+	int len = 0;
- 	char *ptr;
- 	char *str;
--	int len = strlen(map->eval_string);
- 
- 	/* Dynamic events should never have field maps */
--	if (WARN_ON_ONCE(call->flags & TRACE_EVENT_FL_DYNAMIC))
-+	if (call->flags & TRACE_EVENT_FL_DYNAMIC)
- 		return;
- 
-+	if (map) {
-+		eval_string = map->eval_string;
-+		len = strlen(map->eval_string);
-+	}
-+
- 	head = trace_get_fields(call);
- 	list_for_each_entry(field, head, link) {
--		ptr = strchr(field->type, '[');
--		if (!ptr)
--			continue;
--		ptr++;
- 
--		if (!isalpha(*ptr) && *ptr != '_')
--			continue;
--
--		if (strncmp(map->eval_string, ptr, len) != 0)
-+		/* Check the field has bad string or eval. */
-+		need_sanitize = need_sanitize_field_type(field->type);
-+		ptr = find_replacable_eval(field->type, eval_string, len);
-+		if (likely(!need_sanitize && !ptr))
- 			continue;
- 
- 		str = kstrdup(field->type, GFP_KERNEL);
- 		if (WARN_ON_ONCE(!str))
- 			return;
--		ptr = str + (ptr - field->type);
--		ptr = eval_replace(ptr, map, len);
--		/* enum/sizeof string smaller than value */
--		if (WARN_ON_ONCE(!ptr)) {
--			kfree(str);
--			continue;
-+
-+		if (ptr) {
-+			ptr = str + (ptr - field->type);
-+
-+			ptr = eval_replace(ptr, map, len);
-+			/* enum/sizeof string smaller than value */
-+			if (WARN_ON_ONCE(!ptr) && !need_sanitize) {
-+				kfree(str);
-+				continue;
-+			}
-+		}
-+		if (need_sanitize) {
-+			sanitize_field_type(str);
-+			/* Update field type */
-+			if (field->filter_type == FILTER_OTHER)
-+				field->filter_type = filter_assign_type(str);
- 		}
- 
- 		/*
-@@ -3313,11 +3387,13 @@ static void update_event_fields(struct trace_event_call *call,
- 	}
- }
- 
--void trace_event_eval_update(struct trace_eval_map **map, int len)
-+/* Update all events for replacing eval and sanitizing */
-+void trace_event_update_all(struct trace_eval_map **map, int len)
- {
- 	struct trace_event_call *call, *p;
- 	const char *last_system = NULL;
- 	bool first = false;
-+	bool updated;
- 	int last_i;
- 	int i;
- 
-@@ -3330,6 +3406,7 @@ void trace_event_eval_update(struct trace_eval_map **map, int len)
- 			last_system = call->class->system;
- 		}
- 
-+		updated = false;
- 		/*
- 		 * Since calls are grouped by systems, the likelihood that the
- 		 * next call in the iteration belongs to the same system as the
-@@ -3349,8 +3426,12 @@ void trace_event_eval_update(struct trace_eval_map **map, int len)
- 				}
- 				update_event_printk(call, map[i]);
- 				update_event_fields(call, map[i]);
-+				updated = true;
- 			}
- 		}
-+		/* If not updated yet, update field for sanitizing. */
-+		if (!updated)
-+			update_event_fields(call, NULL);
- 		cond_resched();
- 	}
- 	up_write(&trace_event_sem);
-
+Best regards,
+wang lian
 
