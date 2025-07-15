@@ -1,85 +1,88 @@
-Return-Path: <linux-kernel+bounces-732324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CA9DB06516
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:25:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE13B0651C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9E85567D79
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:25:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69DC1568040
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B9B285079;
-	Tue, 15 Jul 2025 17:25:53 +0000 (UTC)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C07B281513;
+	Tue, 15 Jul 2025 17:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ASIAXXDf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7A62B9A4;
-	Tue, 15 Jul 2025 17:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC58F284689;
+	Tue, 15 Jul 2025 17:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752600353; cv=none; b=JpQ04G31MVK6FKzOYr4IQcF7Up4UOV/VNF+asFidMUJ7QPwNs9CCwQqk0YX/bkVOGbxxwr3ODG1SKRn13RKU1CA1QaUfSaIP+OkSXJwQ13FC2BJlrmW3XgWm+HfvB0yrMX7GO3Qe5r+kuaAr7vhilQ1+n1CDhlUJTO1wSAHzHXg=
+	t=1752600443; cv=none; b=JROvAwj/GZgW8H74E9CqbMy0REx7U01A9nX9SVEJO9jf8xh/EklU2uKIM0HnyHZN194Q6BldFocPH2f8F2351x5MucXOD4GQ6sOKR6gliAwCCOsNJAC+vLgzk5/C+poW7sh7pfRS5P9xsZUW+5QVveKqiwb0UVhpUX+gaATccms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752600353; c=relaxed/simple;
-	bh=ObNJkp8w8dckS4HfYzBEO63j0fpZbJAJtHbLUzQTMHQ=;
+	s=arc-20240116; t=1752600443; c=relaxed/simple;
+	bh=ovPKG96PX8GRLMCJnscYphDbflIJz5ol2cbrtMEYKMU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uqzxqV1ycOq7NglZWJpqQHgXfv/uilYLE+o57hlAbbssO81ZoWR2kFUjoDWJu+AxiH/FIdjRjKdSoHtaEfxyQq0YbWM5bj0YyDRVXt3kdJ2jrPyl67MC4AgcfI0GKpJOoV6F7qtRoLaP4mMuKY9VWwOSN5mjSKP8bM/FZhTAriI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60c51860bf5so9507405a12.1;
-        Tue, 15 Jul 2025 10:25:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752600350; x=1753205150;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xf1dUxpG80FVASwwBORzwwbeN/v/ksSLNBI/P0k3Gcc=;
-        b=IcBGNv8T9C7+ohtu/n+CyrRthz00+QiAI4Zdk+wQ71R0CJFrT3ykadLzi81Mg9ED6k
-         0jE/TX8x71WVv09k/wEtaM83FVMTX86Xuv0YcqKcDJ/wlw+tV5dEySB/5MKaMGGYiMxx
-         bjhOpLyQBhEaay5R3nakH8PTAoefjR4QswvX96iuqeW642QWEIu3X9wzbL2IN16D2B95
-         qHDSColhSi774JA7JMEeoVcQWbD2OxLFHVmR6cNEuuULPuV6ErGGskDFs+bhjZRuwdqY
-         DIV+Yo8XbL1F32qkZn/2IsxYh4JtZaPijI+sSi2XMqm5BmoTYTssPXFp1lbdy6Jng8mg
-         0FIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlwwVwqvSyorKewkdPNStD1mKXUloySgcr2wQ5yFXXbX9s/884Tt2OSDC+07hPpMtg3Ugins09RYIT@vger.kernel.org, AJvYcCWcoNtLTQPT5O5I3jUVdQRFa5BMoOleKk8SPoGfmmMtbGm0Kc1icO6isX7yRgoqcWTpYIcG6nbvn+f9EOsK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTpBm2ZZXh16bBGesrUAuiXcwMxI6YKpF/UnsfjCrEYB+YV0ep
-	P9sr8RQQ2ODAIEZwT2vjKj9TjI7hC2sK2QpTLJMDcgYwXeTIpOJy38xx
-X-Gm-Gg: ASbGnctNvnYx+dZ92viKqfBRKoajQ7orfDZn+39yr4rgKtHPfF5PJsABVRoEQsgFQxw
-	wxTvatAmO/i2J6N6vWBMDi6X2YGo4hRbGEh4K8xGF327Xgn7uogQyPsdT+DhFA21nuDnIXeAqdo
-	cqZMY+uMwM8PS+QUKDpPI8pYFkLlCZXnpWer+xgZitWWNsZEqCjuGAFa0RtVHDtSiDK57sJ4qrM
-	M1u/IBq95K0lcj1YiovhQbkhC4FuPkyjcNQ8csTRgwkL3HO1HNq7/GxfdDJM45+C1WcIMRkRY4z
-	OUaON9vmWX2ap+kumRayvFQHJUoLfQJyk/yaJuwDsZOcx62Qz/NG16AuZQ/BJvnro/3XKKBnNeQ
-	twHRAOxNAZTGh
-X-Google-Smtp-Source: AGHT+IFeQYyxja+cmVPhs40k5Cb0GxRCsVCO/YLoPe8/dy4NpmE659Cs2eUBxOmp8tWCHkW96xjcFQ==
-X-Received: by 2002:a17:906:b212:b0:ae0:b7c8:d735 with SMTP id a640c23a62f3a-ae9c9b6c4dfmr25479566b.42.1752600349578;
-        Tue, 15 Jul 2025 10:25:49 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:8::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e826651csm1035756866b.101.2025.07.15.10.25.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 10:25:49 -0700 (PDT)
-Date: Tue, 15 Jul 2025 10:25:46 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: Borislav Petkov <bp@alien8.de>, Alexander Graf <graf@amazon.com>, 
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Peter Gonda <pgonda@google.com>, 
-	"Luck, Tony" <tony.luck@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>, 
-	"Moore, Robert" <robert.moore@intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "acpica-devel@lists.linux.dev" <acpica-devel@lists.linux.dev>, 
-	"kernel-team@meta.com" <kernel-team@meta.com>
-Subject: Re: [PATCH] ghes: Track number of recovered hardware errors
-Message-ID: <p2iytcdfvgm74zif6ihd7gs4kuaeza4b4p52cr5ya4upabiome@kr3yy7fjznwe>
-References: <20250714171040.GOaHU6EKH2xxSZFnZd@fat_crate.local>
- <SJ1PR11MB6083C38E6DA922E05E1748D6FC54A@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <20250714173556.GQaHU__LL6IUIPCDIW@fat_crate.local>
- <aHWC-J851eaHa_Au@agluck-desk3>
- <20250715082939.GAaHYRc3Yn49jyvYzc@fat_crate.local>
- <kyprjdilgyz3xgw3slnrsemptnpp6h75mipv6a3lgp2dmwqekg@s7azbepy7nu2>
- <20250715103125.GFaHYt_TnFQW6ti0ST@fat_crate.local>
- <vs5x5qvw2veurxdljmdiumqpseze2myx6quw3rmt7li7d3dbin@duoky4z44zzz>
- <20250715125327.GGaHZPRz9QLNNO-7q8@fat_crate.local>
- <68b6961c-4443-48a8-a7f7-ed94f3352d7d@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fBF9xyu4KnzrVCKIQJmq4gLyX5BJY9se5kwu0ORlE3/Jg+9DZhE0IDk5aKPMCnVF8kW2sri1h8ll5Q/hXPra5JBDT+URJ/qEgvgTdVXQkcd2h54Vkr7FQuilII3SQsI5uk3BdqlCc8bEJt9e08sWkUMFJ0XzJ3VQsjygO0/15mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ASIAXXDf; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752600442; x=1784136442;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ovPKG96PX8GRLMCJnscYphDbflIJz5ol2cbrtMEYKMU=;
+  b=ASIAXXDfR4dIAnnBg1lb50ru05ofyavLYWbf6KaHN66add6mxTtUP/JS
+   mKlIp9qTSfCeFoPFSbkc3JhHGsdhDwjDJ/MrYF9MKhHwbqrCiW9OgFgFb
+   QWjMYaqaxbhrZj/3BXU3ks0eJEK34QthKDb5yJ5YMr+27jNm+WMg2ZbZf
+   dRTdtjF5eifaDsv1GH993YRmZleTwrwAf3+4/UnOQ1FTCOnSX6EOS/Q1B
+   TD95Ce1lT1Ggdhg5m5bACj1Nc5NpTuSAfFn2YkWQ6/xK5XGJCfTt8N6zY
+   fa6x70wBE2l/OTk1YF8ogn/pTHtV7BK4exJRG1LfOb0V4ksmD28pdoe9k
+   w==;
+X-CSE-ConnectionGUID: 1r2pG4xBQnOcaVNyE0RhcQ==
+X-CSE-MsgGUID: VEMgzlk4RGShVg/1DTgXKw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54048313"
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="54048313"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 10:27:21 -0700
+X-CSE-ConnectionGUID: dJg+dbpVQYq+HakiiLMIUQ==
+X-CSE-MsgGUID: kn5/sUpZQIa1Yvs1bCgxAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="161605026"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 15 Jul 2025 10:27:15 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ubjQu-000BNn-1v;
+	Tue, 15 Jul 2025 17:27:12 +0000
+Date: Wed, 16 Jul 2025 01:26:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Colton Lewis <coltonlewis@google.com>, kvm@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Paolo Bonzini <pbonzini@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mingwei Zhang <mizhang@google.com>, Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Shuah Khan <skhan@linuxfoundation.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-perf-users@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Colton Lewis <coltonlewis@google.com>
+Subject: Re: [PATCH v4 22/23] KVM: arm64: Add ioctl to partition the PMU when
+ supported
+Message-ID: <202507160129.vrvWpdVu-lkp@intel.com>
+References: <20250714225917.1396543-23-coltonlewis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,35 +91,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <68b6961c-4443-48a8-a7f7-ed94f3352d7d@linux.alibaba.com>
+In-Reply-To: <20250714225917.1396543-23-coltonlewis@google.com>
 
-Hello Shuai,
+Hi Colton,
 
-On Tue, Jul 15, 2025 at 09:46:03PM +0800, Shuai Xue wrote:
-> > It would be really good to sync with other cloud providers here so that we can
-> > do this one solution which fits all. Lemme CC some other folks I know who do
-> > cloud gunk and leave the whole mail for their pleasure.
-> > 
-> > Newly CCed folks, you know how to find the whole discussion. :-)
-> > 
-> > Thx.
-> 
-> 
-> For the purpose of counting, how about using the cmdline of rasdaemon?
+kernel test robot noticed the following build errors:
 
-How do you manage it at a large fleet of hosts? Do you have rasdaemon
-logging always and how do you correlate with kernel crashes? At Meta, we
-have an a "clues" tag for each crash, and one of the tags is Machine
-Check Exception (MCE), which is parsed from dmesg right now (with the
-regexp I shared earlier).
+[auto build test ERROR on 79150772457f4d45e38b842d786240c36bb1f97f]
 
-My plan with this patch is to have a counter for hardware errors that
-would be exposed to the crashdump. So, post-morten analyzes tooling can
-easily query if there are hardware errors and query RAS information in
-the right databases, in case it seems a smoking gun.
+url:    https://github.com/intel-lab-lkp/linux/commits/Colton-Lewis/arm64-cpufeature-Add-cpucap-for-HPMN0/20250715-070741
+base:   79150772457f4d45e38b842d786240c36bb1f97f
+patch link:    https://lore.kernel.org/r/20250714225917.1396543-23-coltonlewis%40google.com
+patch subject: [PATCH v4 22/23] KVM: arm64: Add ioctl to partition the PMU when supported
+config: arm64-randconfig-003-20250715 (https://download.01.org/0day-ci/archive/20250716/202507160129.vrvWpdVu-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250716/202507160129.vrvWpdVu-lkp@intel.com/reproduce)
 
-Do you have any experience with this type of automatic correlation?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507160129.vrvWpdVu-lkp@intel.com/
 
-Thanks for your insights,
---breno
+All errors (new ones prefixed by >>):
+
+   In file included from arch/arm64/include/asm/kvm_host.h:31,
+                    from include/linux/kvm_host.h:45,
+                    from arch/arm64/kernel/asm-offsets.c:15:
+   arch/arm64/include/asm/kvm_pmu.h: In function 'kvm_pmu_is_partitioned':
+>> arch/arm64/include/asm/kvm_pmu.h:301:43: error: parameter name omitted
+    static inline bool kvm_pmu_is_partitioned(void *)
+                                              ^~~~~~
+   arch/arm64/include/asm/kvm_pmu.h: In function 'kvm_pmu_host_counter_mask':
+   arch/arm64/include/asm/kvm_pmu.h:306:45: error: parameter name omitted
+    static inline u64 kvm_pmu_host_counter_mask(void *)
+                                                ^~~~~~
+   arch/arm64/include/asm/kvm_pmu.h: In function 'kvm_pmu_guest_counter_mask':
+   arch/arm64/include/asm/kvm_pmu.h:311:46: error: parameter name omitted
+    static inline u64 kvm_pmu_guest_counter_mask(void *)
+                                                 ^~~~~~
+   make[3]: *** [scripts/Makefile.build:182: arch/arm64/kernel/asm-offsets.s] Error 1 shuffle=21662191
+   make[3]: Target 'prepare' not remade because of errors.
+   make[2]: *** [Makefile:1274: prepare0] Error 2 shuffle=21662191
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:248: __sub-make] Error 2 shuffle=21662191
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2 shuffle=21662191
+   make: Target 'prepare' not remade because of errors.
+
+
+vim +301 arch/arm64/include/asm/kvm_pmu.h
+
+   300	
+ > 301	static inline bool kvm_pmu_is_partitioned(void *)
+   302	{
+   303		return false;
+   304	}
+   305	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
