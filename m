@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-731675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC533B05816
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:44:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D68A3B0581A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9C403BFF95
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:44:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B20511C23312
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4B71494C3;
-	Tue, 15 Jul 2025 10:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4F22D8774;
+	Tue, 15 Jul 2025 10:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s1n5vuBe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6JRK1hg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137D52D6414
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 10:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E723328937D;
+	Tue, 15 Jul 2025 10:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752576287; cv=none; b=lNonnndoiNKs63LRO4ntyQ+qpTLtZwCygbRDAmwN7T0r8UMYibI+/p6B4vabNNo8ymA6lexjPFIjl2+fO0ss/yfo93LxNuxjwHEfsOLUwrjdz/eegcsplUtnwRBHbQ/b4A5/8jIJ0iE+gKWT5MkJzviSJnxt6Jgh9Njb0IPGzis=
+	t=1752576304; cv=none; b=PdDiyzgsYJTf6kkHypkznsAlryKCXyRuyotlKT5Zd38IMRKUQG6bsjqgeO/hRKPQQ9JpdrMAYnNTAmRTHS0st/z9+PmHV3BJ+aNjE8k4izJfHfK1wVTgO+6tzSZUaLO4w6xmlPC3ulQBfPXvgth3mUB15/om/KjBkO49AVrTWic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752576287; c=relaxed/simple;
-	bh=ij9HxtNtdiFFDc1xDDKCbWEvFhjS34y8qM/iHGZqTm0=;
+	s=arc-20240116; t=1752576304; c=relaxed/simple;
+	bh=7XJ1BRhn2lxSh/tzzzaszWDfsHbCVUNk0QDHz+C5wo0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Em5xFpBxwPMwemmzGPaA4gyxzZOQZFELAKeQ6xioXrHZLkEACr4BW8yYlikiXzRA7Wa6c2WZszUVWWyxedaoPDy/Io9EgrEwMmdpTx6GZPBlBkA777El4W8pbGWnKMCcAn63X6F9T1k2JYVAABo+u7gtXkKhDPKbPhUT7gRvQL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s1n5vuBe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EA60C4CEE3;
-	Tue, 15 Jul 2025 10:44:41 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Y7kICLlPZt3J/RLyR5uATRM/Jcuqu4UoL5A0JWbWlVAUg9eE4CrmczQdZJD3I2HEeZdJZAjMCw1zUdiTXdcZK5kOSqi3LsA+UYwmQFZpw06pwuWJwX2FzKQaL/KVqZR9DxlGE2DoaLWcFMcfrWsgvI9FeNh5kH0B8rN+0mglgwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6JRK1hg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0323C4CEE3;
+	Tue, 15 Jul 2025 10:45:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752576286;
-	bh=ij9HxtNtdiFFDc1xDDKCbWEvFhjS34y8qM/iHGZqTm0=;
+	s=k20201202; t=1752576303;
+	bh=7XJ1BRhn2lxSh/tzzzaszWDfsHbCVUNk0QDHz+C5wo0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=s1n5vuBea8a7piRN0B4vBg88lrZjktYoBOAbyDqLbhPQN0Zr4jxhbg5brFW/7AUiI
-	 ZfyRVZbh67QXU0F5v7A/tmCFaUdNXpyAq8G7Q1DtnHcQZ58nByRvhYErSZf1tWf67F
-	 LpVFwidoU1UZtoTRJhTCuqOh8NAjiW7Pwp3ZE+DO/jOuHk3RWO1L7OBePG+sFvOaX7
-	 9KrpFR9s4I/j2jz92n8ZfIE3tCxqEXQP3mai8qJvKyqiu8iwJS64gFlDmeLDsblfTn
-	 v2Lp7bAoSAjIVICzKPfihiYUiuFlOoKzs3FR3o9GZF0v2tGkfbqw/Giq7ZPRxL3Qkz
-	 /Kv4yDvAwTOdg==
-Message-ID: <12c6632b-65b7-43da-a954-7107ac8cb1b1@kernel.org>
-Date: Tue, 15 Jul 2025 12:44:40 +0200
+	b=U6JRK1hgUG2pBDtboXXdk90VT7VYgEKSJP2AGzgZ2Bcia3HyIUKIUWl5VDW+kGO7a
+	 rg9c/cb0OOS6uH3+FQ71ftH3Um0YqsvBE9BwS54pCiX7w+nMt7ZUWlizrVng6N4pBZ
+	 PGkzIKmv1GjrtMO0JVdYs7RGgdO9a3QIP13Tod31j8JOltT/rqQfEa/uArGHX9MAXq
+	 cdTl8yiTVF4gUDzh0T//6l72b53OYAaGi42Ny5yt2Ch0B9nEmQUH1nPCmwMiaS1U5k
+	 AYAE8pmwNWJSmOuQgAk7k8jllKNamMJ4O6GhZeA5Mz38cxlLy5shP63VJRTucsTfgv
+	 ryobmWWfKPoKQ==
+Message-ID: <f75182a8-90f9-466e-a96b-d454c770f0a5@kernel.org>
+Date: Tue, 15 Jul 2025 12:45:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/amd/display:fix a Null pointer dereference
- vulnerability
-To: jackysliu <1972843537@qq.com>, harry.wentland@amd.com
-Cc: Austin.Zheng@amd.com, Dillon.Varone@amd.com, Security@tencent.com,
- Sung.Lee@amd.com, Wayne.Lin@amd.com, airlied@gmail.com,
- alexander.deucher@amd.com, alvin.lee2@amd.com,
- amd-gfx@lists.freedesktop.org, aurabindo.pillai@amd.com,
- christian.koenig@amd.com, dri-devel@lists.freedesktop.org,
- joshua.aberback@amd.com, linux-kernel@vger.kernel.org, linux@treblig.org,
- mario.limonciello@amd.com, ryanseto@amd.com, simona@ffwll.ch,
- siqueira@igalia.com, sunpeng.li@amd.com
-References: <220f9fb4-45ad-4997-9572-564242737dd4@amd.com>
- <tencent_54FF4252EDFB6533090A491A25EEF3EDBF06@qq.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] [PATCH] scsi:bfa: Double-free vulnerability fix
+To: jackysliu <1972843537@qq.com>, anil.gurumurthy@qlogic.com
+Cc: sudarsana.kalluru@qlogic.com, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <tencent_3BB950D6D2D470976F55FC879206DE0B9A09@qq.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -107,26 +100,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <tencent_54FF4252EDFB6533090A491A25EEF3EDBF06@qq.com>
+In-Reply-To: <tencent_3BB950D6D2D470976F55FC879206DE0B9A09@qq.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/07/2025 05:16, jackysliu wrote:
-> From: jackysliu <Security@tencent.com>
+On 24/06/2025 13:58, jackysliu wrote:
+> In the QLogic BR-series Fibre Channel driver (bfad),
+> there exists a double-free vulnerability.
+> When the bfad_im_probe() function fails during initialization,
+> the memory pointed to by bfad->im is freed without
+>  setting bfad->im to NULL.
+> Subsequently, during driver uninstallation,
+> when the state machine enters the bfad_sm_stopping state
+> and calls the bfad_im_probe_undo() function,
+> it attempts to free the memory pointed to by bfad->im again,
+> thereby triggering a double-free vulnerability.
 > 
-> A null pointer dereference vulnerability exists in the AMD display driver's
->  (DC module) cleanup function dc_destruct().
->  When display control context (dc->ctx) construction fails
->  (due to memory allocation failure), this pointer remains NULL.
-> During subsequent error handling when dc_destruct() is called,
-> there's no NULL check before dereferencing the perf_trace member
->  (dc->ctx->perf_trace),
->  causing a kernel null pointer dereference crash
-> 
-> Signed-off-by: jackysliu <Security@tencent.com>
+> Signed-off-by: jackysliu <1972843537@qq.com>
 > ---
->  drivers/gpu/drm/amd/display/dc/core/dc.c | 20 ++++++++++++--------
->  1 file changed, 12 insertions(+), 8 deletions(-)
+>  drivers/scsi/bfa/bfad_im.c | 1 +
+>  1 file changed, 1 insertion(+)
+
 
 You should disclose that you used some AI tool for that... and that
 other report(s) was really fake finding.  People should know you
