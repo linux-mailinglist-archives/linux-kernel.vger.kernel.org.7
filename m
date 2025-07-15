@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-732384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B8BEB065FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:29:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A729BB065FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8394E1AA21E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:29:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9C54566C54
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7072C158D;
-	Tue, 15 Jul 2025 18:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E7A2C159C;
+	Tue, 15 Jul 2025 18:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XwmLnEnH"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B5KDeoWG"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D226A2BE7B4
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 18:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0F92BEC31
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 18:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752604117; cv=none; b=PWeksJn2F+2BTPJ9bxxPNA6S2X6KkhweWqtR/5gRQEFDL3lxdalTHd+CIbpvn3vZ6ROa5X4hoqB+N1hyAu9BRXFfTgtGnMUMEZHLbAq31u4/2whkgO+orsu3C0HVg8lBflqM1kvxRnJoUMatnmBW2P8wAoWxZTdOyJUb17vO7GA=
+	t=1752604118; cv=none; b=jU7d9JzZ8lXk1T+6HW5hO9fs6ML1KQAx9MCTqb3L6qEjcXRkcETnFA1jWVzbCp3y6qgOvOwCRlG+nnwzA1LRuG831bz6UBX3Nz6/BNBjaZQ7GYvxqWwVGWMkZmNCGxNLKnSe6Ea6DiEKF2nclU242ytEOBrSzyR8Cij3G0U1NxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752604117; c=relaxed/simple;
-	bh=ZndwHlsXoOEq87MYFPcyULLV959fWfCpTZu1ZS9F1Vk=;
+	s=arc-20240116; t=1752604118; c=relaxed/simple;
+	bh=jZXa93EnkKPsER3v2eQGqokw1yYueS1I2clvseSv5Kg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AO5p1+gC6swOzHd+UwMsV211cPg3dr5TLWQvnMV+X/BQ3WHRYpQY5Nk7Rs1Q5P2QfU02pKej7PeIZpSdNuL83w0JrYf51rYaXJgyU2dDWisnmcuLUjVWvcMB//iR2Nv2HeNaCixruK3oQtrGLe2wGYDV/ryVGd70CEnRPu+EXmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XwmLnEnH; arc=none smtp.client-ip=209.85.218.46
+	 MIME-Version; b=KPCtkbgqHCsHOTjdNguzjzKqOQOoBaWcfgr/0BR1U7jnRveRY7BztjubTykcdBzYUWVL2RSRERV/60igHflTpHu2oxSne4wECZhHnP4B7UcUkbZAJRg9T+WiMaxsEwD0tC44M6IkzD6HGluqBOU5BFWBl1ArPO8U7kCTyJlpPtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B5KDeoWG; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ae36e88a5daso1148531866b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:28:35 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae9be1697easo32031366b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:28:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752604114; x=1753208914; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752604115; x=1753208915; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HQldTtAKMIQtxzVD+5dWQI6iWAw10lsHzzaGm1uFOEE=;
-        b=XwmLnEnHEVRdeJdoryxkmTCgtHTdJsvX+f/cAsf05UMPZYJKSBTRL9zAle34DN/N9t
-         T/t/QWYv4TL+ub9Y+nlBDJxlrQNi31Hh6pDa9vMa3zfkrJdU9rNyug4SMq7mbd2vbw6p
-         Wg2FJ9jky5qcN14gSI9PpjCXC04CObYg/WLvnAqejVdoHHQpULgQgCyxJMuiCjJMv2SF
-         ZKpt4eUkMzpKiVOhC8pkzaKCwCTuHTEa4bEKSfdUpZSoutO+fegbxjQTsl9HHOmsU58/
-         CGjOHXFk1mZ4J/iNOyOzn/p3aXY8o52olU7fnLQ0NYMQFwjGGJLbpPBUg+RHrPakGTWV
-         FKYQ==
+        bh=/IA/PW/XrIS37fLIlQkAaqHqkiJ709xrEkI5utPy7XI=;
+        b=B5KDeoWG5inhZ71RSl02SYYAW1c9AgbUxamm2Kfl1f6FWZXBYRyaHAUY/C8jXu/ngY
+         TvOdUKBhtGJSztEb5FNrHMQWEhomP/RVBK8aF2hLI2WpbECsD13dm24JgLUFBrLYN1rX
+         NIFZRoKqLWoViYmY6Pvo7bBg8O6j7/V/Fw5bI7kl/xnACu5E3eciLHRgbqFv7/+EHK5Y
+         uX3kW7cLO09bUnKoQArCO2xIhryhiT10MAhLsx9L4O3nl+fjEGnTYP1bT80HZPBODTua
+         up6RZ5VZXkPG3wXwXt+AzclfwcpZKVorfr25QS9TRxtnNoHmD40IIUrQqQXJWVRzyLBc
+         a7sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752604114; x=1753208914;
+        d=1e100.net; s=20230601; t=1752604115; x=1753208915;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HQldTtAKMIQtxzVD+5dWQI6iWAw10lsHzzaGm1uFOEE=;
-        b=gL59/MNsPj7I/i1xdZ64YIugDlmfo0Y365EOhqwluKIA6J8vV47IGFvCqjVYaccHkf
-         GGnN45iDjQJT/VexNNRY22xVTIVGgVlQk5Tm369AP1p3QeIkRzrU3S93TZt/kdBXnMBK
-         Woz+rlzxLwP6cG+vXUz3lmJqaZS9RltpkbNCYVNmFSAH17n6XdxZOYGyOWDgPbC4G9yW
-         GSySWZl8yhcWqKDMNYEizyT3pnVppKeXAco4g4grx/uPdLcE3upw8E4C9xFtNw8ZCG/I
-         OQQ3udDa9oEIrGvSpRvX2B/zoBXHFR9JA5Mm8Q1/XP1Er6hiNGCJUZXnyEPzTbzjfgYT
-         FZ9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUybtvWq4RyBUUvZpf36hfKli4fFsMVMenQ04XFLhYXodoKmnlnek22yRgxSljpW6PrHWwFtfLOvLsc6EM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGLZkus90EpKbcFlTB3FSHrLxY1gcyV97qbFF9mzvB/0UA5+c3
-	O8Bvysp9bWNMEKYZ6oPV/1ontPxA7VhyZhoYxfxZf6eDvM9dlcKG4xa1
-X-Gm-Gg: ASbGncsZl/Pw1iURdCqpn9wc7sfB5dZPjsdk1KfM54/aGF0fZWJkCiftsGk2FHRxoSA
-	GGvXNVWtWskqyCewkh1UKe3QYg4GXDtZPnbLXy+xHtM2pOuH4RQbmf+I0kjyJxrep4tTKE1x/wt
-	6gXvFp93EMVcGNFD2IM8nOEhbklEM+n6NRkMQifYnLHm8J4j/tI/OL21ivgry5LNJwtNUKa4P3N
-	t9dpmRlTAfveq/GcUISXYIE0nVPDmUH9hvX7xWK592U/r0odXEbCNpS6uGy7ys8fpMqMrTioHQw
-	IsKcAuZMCjcI+BeWxS7yXRH69pOIhNNknFNpOQug1TC6EDZrxflhcnctmS3Ei5DLH4Nz7eonUxj
-	1I4PO0LDhQQ2LLAmIuwSdwhk=
-X-Google-Smtp-Source: AGHT+IH2IHr9Qgp69STi9QpDuKWBS9ethTg3YuTY5YBLmdKPPLj0dxlj0qG01IAXsoKFY27yZbY0lg==
-X-Received: by 2002:a17:907:72cf:b0:ae3:b22c:2ee8 with SMTP id a640c23a62f3a-ae9c9b161c0mr50161566b.37.1752604114000;
+        bh=/IA/PW/XrIS37fLIlQkAaqHqkiJ709xrEkI5utPy7XI=;
+        b=a19WquHGiWojKUzWI3nNF7nWmiSMYI8LtOeUd4zGR+wqpDF+cPLKv4Vv3wpV5WaXay
+         c+p8Z/3q/DRdjHSZlFOAqWug2ZOTNrj6P/JqrY3t3EuH5XGZvUJCMrYZz4n2sq/apFLg
+         3pjIkDAqh7nLLVHaywgFAib0M67X8BgJAecrGULJfdY6DstiHOWIp5q9ttbYI7OjSSO1
+         YUPBp99f0/XrZCtITR4BA4pDh9xfHJFeEHF+eFPbwGmJeYVbB0lNkmnx77M6quLh0Osf
+         3ZLBs4HwC41RT5hRIQx/mSTruHYaH21xCl0O1eLWU3xExIx+dqEaEuJcvKWeq10FHXb+
+         iYYA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7cuEAg6jOTA3kywrjsxdhuGOSo9wDyFwFQjxIu8vZcJjQXS65/nLNtC9hZmsQ+dhz6FejVosJL8MvtZo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX/CCFtGTK1vcMMSZl7CF3NZcq5CIUV/zYVHEsyf8gSq5PGjwm
+	lTZPZZdYFuj023247uOVxMDx/qw2372BQe5VfTG00nk/oUT24rtJZ6c5
+X-Gm-Gg: ASbGncvJ6IlMKf2mdUEsTuaCpykJlbVZB0F2wzJu1R0d8mq+HYAhp1divV4s0Y6lgg+
+	mJ3Z45dWJ0rDGwPtoGYpkjhU3ntAlwxm6sOXweGcVZIjhzg4xscaPFiR17HYSjhAyRmKC5vrB0W
+	NrMFqDEJWZUIE81HWYotwQBe8cDdeHnAGfwxr2ZFMzp328tolKvSFGxizeSZErdWZXjIj5k6Ttw
+	QW0v8Te/wfJsLV6DrRXwELYJys49yHihl5Qq5n1POk6SR0Dfg4eCtt1WwNSr9ZklxPOwtf2Q3AN
+	Y1IItlEjq25udFBjefFPsgt8I7n0sn4NVu6pRdakspYXy3C94h0frL3RcERk8sWvZVfIZeDiKdE
+	x4CFAPz/VTGW/EaUfFHALSbk=
+X-Google-Smtp-Source: AGHT+IH7BOifHjuscVWUuNkqokWkmiGzCh2TaQtOLAGddCuuQZlRz71WpuPCz6g5MZoRlm/6h/u/rQ==
+X-Received: by 2002:a17:907:3c92:b0:ae9:c8f6:bd3 with SMTP id a640c23a62f3a-ae9c8f61583mr78675166b.7.1752604114572;
         Tue, 15 Jul 2025 11:28:34 -0700 (PDT)
 Received: from tumbleweed ([95.90.185.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82df2fbsm1039562766b.158.2025.07.15.11.28.33
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82df2fbsm1039562766b.158.2025.07.15.11.28.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 11:28:33 -0700 (PDT)
+        Tue, 15 Jul 2025 11:28:34 -0700 (PDT)
 From: Michael Straube <straube.linux@gmail.com>
 To: gregkh@linuxfoundation.org
 Cc: hdegoede@redhat.com,
@@ -79,9 +79,9 @@ Cc: hdegoede@redhat.com,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 07/11] staging: rtl8723bs: remove macro hal_xmit_handler
-Date: Tue, 15 Jul 2025 20:28:10 +0200
-Message-ID: <20250715182814.212708-8-straube.linux@gmail.com>
+Subject: [PATCH 08/11] staging: rtl8723bs: remove function pointer xmit_thread_handler
+Date: Tue, 15 Jul 2025 20:28:11 +0200
+Message-ID: <20250715182814.212708-9-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250715182814.212708-1-straube.linux@gmail.com>
 References: <20250715182814.212708-1-straube.linux@gmail.com>
@@ -93,40 +93,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove the macro hal_xmit_handler and use rtl8723bs_xmit_buf_handler
-directly to reduce code complexity.
+Remove function pointer xmit_thread_handler and use
+rtl8723bs_xmit_buf_handler directly to reduce code complexity.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 2 +-
- drivers/staging/rtl8723bs/include/rtl8723b_xmit.h | 1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/rtl8723bs/hal/hal_intf.c          | 4 +---
+ drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 2 --
+ drivers/staging/rtl8723bs/include/hal_intf.h      | 1 -
+ 3 files changed, 1 insertion(+), 6 deletions(-)
 
+diff --git a/drivers/staging/rtl8723bs/hal/hal_intf.c b/drivers/staging/rtl8723bs/hal/hal_intf.c
+index d9791027a2f5..29e0610f72f1 100644
+--- a/drivers/staging/rtl8723bs/hal/hal_intf.c
++++ b/drivers/staging/rtl8723bs/hal/hal_intf.c
+@@ -285,9 +285,7 @@ void beacon_timing_control(struct adapter *padapter)
+ 
+ s32 rtw_hal_xmit_thread_handler(struct adapter *padapter)
+ {
+-	if (padapter->HalFunc.xmit_thread_handler)
+-		return padapter->HalFunc.xmit_thread_handler(padapter);
+-	return _FAIL;
++	return rtl8723bs_xmit_buf_handler(padapter);
+ }
+ 
+ void rtw_hal_notch_filter(struct adapter *adapter, bool enable)
 diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-index c6fda239d020..11d9b9031215 100644
+index 11d9b9031215..c35b0235d3c1 100644
 --- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
 +++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-@@ -1315,7 +1315,7 @@ void UpdateHalRAMask8723B(struct adapter *padapter, u32 mac_id, u8 rssi_level)
+@@ -1315,8 +1315,6 @@ void UpdateHalRAMask8723B(struct adapter *padapter, u32 mac_id, u8 rssi_level)
  
  void rtl8723b_set_hal_ops(struct hal_ops *pHalFunc)
  {
--	pHalFunc->xmit_thread_handler = &hal_xmit_handler;
-+	pHalFunc->xmit_thread_handler = &rtl8723bs_xmit_buf_handler;
- 
+-	pHalFunc->xmit_thread_handler = &rtl8723bs_xmit_buf_handler;
+-
  	pHalFunc->c2h_id_filter_ccx = c2h_id_filter_ccx_8723b;
  }
-diff --git a/drivers/staging/rtl8723bs/include/rtl8723b_xmit.h b/drivers/staging/rtl8723bs/include/rtl8723b_xmit.h
-index ac4ca7e05b9b..ddf868c7899b 100644
---- a/drivers/staging/rtl8723bs/include/rtl8723b_xmit.h
-+++ b/drivers/staging/rtl8723bs/include/rtl8723b_xmit.h
-@@ -414,7 +414,6 @@ s32 rtl8723bs_mgnt_xmit(struct adapter *padapter, struct xmit_frame *pmgntframe)
- s32	rtl8723bs_hal_xmitframe_enqueue(struct adapter *padapter, struct xmit_frame *pxmitframe);
- s32 rtl8723bs_xmit_buf_handler(struct adapter *padapter);
- int rtl8723bs_xmit_thread(void *context);
--#define hal_xmit_handler rtl8723bs_xmit_buf_handler
  
- u8 BWMapping_8723B(struct adapter *Adapter, struct pkt_attrib *pattrib);
- u8 SCMapping_8723B(struct adapter *Adapter, struct pkt_attrib *pattrib);
+diff --git a/drivers/staging/rtl8723bs/include/hal_intf.h b/drivers/staging/rtl8723bs/include/hal_intf.h
+index 7b634180c6c0..ce3c6de8a325 100644
+--- a/drivers/staging/rtl8723bs/include/hal_intf.h
++++ b/drivers/staging/rtl8723bs/include/hal_intf.h
+@@ -161,7 +161,6 @@ enum hal_intf_ps_func {
+ typedef s32 (*c2h_id_filter)(u8 *c2h_evt);
+ 
+ struct hal_ops {
+-	s32 (*xmit_thread_handler)(struct adapter *padapter);
+ 	void (*hal_reset_security_engine)(struct adapter *adapter);
+ 	c2h_id_filter c2h_id_filter_ccx;
+ };
 -- 
 2.50.1
 
