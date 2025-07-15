@@ -1,97 +1,101 @@
-Return-Path: <linux-kernel+bounces-731090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0DE8B04EC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:28:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDA82B04ECE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27EC11AA7147
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:28:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DC201AA712F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A512F2D191F;
-	Tue, 15 Jul 2025 03:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0016D2D0C9E;
+	Tue, 15 Jul 2025 03:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DyLfxnd5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="TnoAxYeE"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A912D0C8A;
-	Tue, 15 Jul 2025 03:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB1C2D0C80
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 03:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752550067; cv=none; b=AMN0F1JoA/r1r+6e66rJem1GkxKbpsWtYphoHSpmaz8FC5wTiQoT8XrcH0BN9QMRCWK2DepyEpo0iwbTQRvpcqZAIDn278eIZeNest3wbGNtzEh1BHlFLhcp/PCaFALBqkjW1ANLMNseqsp2bUtfqg66Hsg4d4ib4qw8OxEFlvI=
+	t=1752550089; cv=none; b=DZ1V1DUYazA588Lg0uwAM6IWIjaFwasEiUYx3vI5feddeQY6hKnNa2AN/NanFxM1FtknETIzJSDRKhwKXlSH+4F4138Mk2atH/LlwErvAeafoX1u9JIJYbu/2H91uOFbDZI9NzPDawOh5+b8apE4ftIGXuzaKmqHFiPMnujcBYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752550067; c=relaxed/simple;
-	bh=gpWphFRskOkWmdItx+4G3mN3kDgf9R0tX9A1e8ENaFg=;
+	s=arc-20240116; t=1752550089; c=relaxed/simple;
+	bh=7mgRibT/ZbIOVW2Gbk6Dm4nEtSF/6zwBcPbevZ+QDes=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KCCDqCLCMMnB11fv+UeQOZM88lh5nOS4PVboEZj6qCHYg3L867dKBURyvs/bob2ufJaCUkJWVqb7IA81WfWL1umfOmA4emnQ72nLNMzqaDjGDIxN9hAooWwPzgMxp+NQBvBse/0PNNAsJWk6zqKTGuJFyb3kKjVvszCfb2gcJ+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DyLfxnd5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 500C6C4CEED;
-	Tue, 15 Jul 2025 03:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752550066;
-	bh=gpWphFRskOkWmdItx+4G3mN3kDgf9R0tX9A1e8ENaFg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DyLfxnd5aRaciO4FC7A6nzSpnvTNxV6wZA2RMxaAwtfuE1Ntib1ESDGDJwSdlVqyc
-	 eHrXcR1sLHyblGIookDCwiNieMh5i/Xduwi15enCWC54vXagJPAERTM5BPt17cIXgl
-	 Ql8qRkXu1FCiMkz7ugxUojXAYyuS5cKSdvxwz+UNKpforJhYqeRWcd8g2PNhtkzsic
-	 5lElPzgBsP6bBg6ikVDHcUhuSvo89ESVaV47ntmXQmapC90ztACHlX03245IIGDTY6
-	 2vnAOQ6md0rAtLoo2Y29rzAm9bsAcpoSv8+LA+PYYqhBevhVTh7zYHIkdOrA/0YVhP
-	 7znnUnyBiRHTg==
-Date: Mon, 14 Jul 2025 22:27:45 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>, linux-pm@vger.kernel.org,
-	Amit Kucheria <amitk@kernel.org>,
-	Das Srinagesh <quic_gurus@quicinc.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Thara Gopinath <thara.gopinath@gmail.com>,
-	linux-crypto@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Robert Marko <robimarko@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, Lukasz Luba <lukasz.luba@arm.com>,
-	phone-devel@vger.kernel.org, linux-mmc@vger.kernel.org,
-	dmaengine@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	iommu@lists.linux.dev, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v2 03/15] dt-bindings: crypto: qcom,prng: document Milos
-Message-ID: <175255006480.4168742.250321076167127659.robh@kernel.org>
-References: <20250713-sm7635-fp6-initial-v2-0-e8f9a789505b@fairphone.com>
- <20250713-sm7635-fp6-initial-v2-3-e8f9a789505b@fairphone.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AI0W/FDshSyfcSoyaHH9FTqC93C4osfup9n7BRHy8rM2s3giaIkFApwisiu1mfhHbyZ7s6npqSwIZn7GCi7cWjjeU6mq0mcEQG8adM3xgl3GYieZMUEBCh+Wy+QhFbzlq3/VH6pWSb6KLwycO/KXdiigvO3PABSi0BqMk77viSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=TnoAxYeE; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752550076; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=onbajrNl7Mu5K2loRN3gLibZSvvla6ZkA3tMQGBrn70=;
+	b=TnoAxYeE91EDDySGuqECiVlQZP7AE+DxUyjCS9ZpJtRuX9IcrEvol56PhQ9mpH16cf1+aU+8z7yThcHMhHmTv88NXOx6VLQ/wstnwu99PfmhbAZUyTp+pe023XwuYFA9yB9HOEMuEcT4o5BnKSMiUXIG5PtnpaVZoeurYnv0x+g=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0Wj-pYY0_1752550075 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 15 Jul 2025 11:27:55 +0800
+Date: Tue, 15 Jul 2025 11:27:54 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Askar Safin <safinaskar@zohomail.com>, akpm <akpm@linux-foundation.org>
+Cc: corbet <corbet@lwn.net>, "john.ogness" <john.ogness@linutronix.de>,
+	"lance.yang" <lance.yang@linux.dev>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	paulmck <paulmck@kernel.org>, pmladek <pmladek@suse.com>,
+	rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v3 1/5] panic: clean up code for console replay
+Message-ID: <aHXKuiqELS1tmchE@U-2FWC9VHC-2323.local>
+References: <20250703021004.42328-2-feng.tang@linux.alibaba.com>
+ <20250714210940.12-1-safinaskar@zohomail.com>
+ <aHWliJhyIZnq97Mm@U-2FWC9VHC-2323.local>
+ <1980ba9224c.11f5e5a9635585.8635674808464045994@zohomail.com>
+ <aHWwL7TdabnGna3D@U-2FWC9VHC-2323.local>
+ <1980bfc17f1.122b80ffe36544.5266293070616137570@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250713-sm7635-fp6-initial-v2-3-e8f9a789505b@fairphone.com>
+In-Reply-To: <1980bfc17f1.122b80ffe36544.5266293070616137570@zohomail.com>
 
-
-On Sun, 13 Jul 2025 10:05:25 +0200, Luca Weiss wrote:
-> Document Milos SoC compatible for the True Random Number Generator.
+On Tue, Jul 15, 2025 at 06:48:47AM +0400, Askar Safin wrote:
 > 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  Documentation/devicetree/bindings/crypto/qcom,prng.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  ---- On Tue, 15 Jul 2025 05:34:39 +0400  Feng Tang <feng.tang@linux.alibaba.com> wrote --- 
+>  > I see. How about changing the patch to: 
+>  > 
+>  > -            bit 5: print all printk messages in buffer
+>  > +            bit 5: replay all kernel messages on consoles at the end of panic
 > 
+> Yes, I agree!
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Hi Andrew,
 
+Could you help to squash below patch to 1/5 patch "panic: clean up code
+for console replay" in the nonmmu-unstable branch? Thanks!
+
+- Feng
+
+---
+ Documentation/admin-guide/kernel-parameters.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index f34de9978a91..a84d3f7f5bbf 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4533,7 +4533,7 @@
+ 			bit 2: print timer info
+ 			bit 3: print locks info if CONFIG_LOCKDEP is on
+ 			bit 4: print ftrace buffer
+-			bit 5: replay all messages on consoles at the end of panic
++			bit 5: replay all kernel messages on consoles at the end of panic
+ 			bit 6: print all CPUs backtrace (if available in the arch)
+ 			bit 7: print only tasks in uninterruptible (blocked) state
+ 			*Be aware* that this option may print a _lot_ of lines,
 
