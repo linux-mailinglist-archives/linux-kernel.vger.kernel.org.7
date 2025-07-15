@@ -1,238 +1,217 @@
-Return-Path: <linux-kernel+bounces-731982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630E4B06064
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:16:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1FD8B06028
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 344C3504AEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:09:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0C107B0F39
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF652F0E51;
-	Tue, 15 Jul 2025 13:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318562E92BF;
+	Tue, 15 Jul 2025 13:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cNm3tN16"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="ZYkj/tH0";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="K7s/z8ke"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3072E3382;
-	Tue, 15 Jul 2025 13:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060F12E3382
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752587879; cv=none; b=HCXk/D9N3ggMzooQsUam0q2osElr6H45JYLCmWnDGssgjtpfRbbCwmWBicToZqNz6AA0tK0ozZ8zf+ysNDhxu8byYqmDsv068VJhFsHZYOLup6Gih6Okx2zfGRM6yPIqLy1R/jf+Aufk7iEwKqsP2yqX2l+piC+NCbvVEJFZRU8=
+	t=1752587891; cv=none; b=tRWLWK1uMobs2BdEMCZ8igyrIOVFJbcGSbdZmgzcoodz/yA5sLayI1NCkMWWcnD1WPUljwn5oqh5mEjMMJgQrRItMxA4Ts759psrnzRXLxI2pB1keFdAbbEju2kZAID8GnNVqvhdMWcJYGuJufg6clAQEqA4/0D7800aVASirpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752587879; c=relaxed/simple;
-	bh=GDhrTQL5TCFnlFDRs1KqKPt46EOEW/acwXmtRFdmZr8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HhvvyzSx0IP68SmOJETNCg6CreaF9wON37bWgSleIzVGlA6U4FADFKNje3asNNa1RMHHCKy65BzV6KkZr4BOcY/Qv25SPSIe/RJQ2R77G1teYn12E54JZeI4RdJBtzS44wKuo0Ij1ncvfQ6bzX7yESjiGqtdw2iU7F2O5omGz2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cNm3tN16; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-32ac42bb4e4so44864591fa.0;
-        Tue, 15 Jul 2025 06:57:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752587875; x=1753192675; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5wd3vZa0hBJt2XEf+/qd/yWCD7aOef+WZtT0Xwlp5EM=;
-        b=cNm3tN16nMzSp2NhYSMdPLp8v8iGOZRc/17OH8M2v3W+lcCAnTK7+hZZ0q5Q8hB44t
-         5EOUbsezzX8Dv++oalbsWLCJg0GInYX746gOL/h3GkYdu+ySu10EjcIohnfdqT/MgznK
-         IOXaNPfCrrdd+hBBmvuCgnpISPUdkAAW+muh0koS55GvdnsXVT+iUpFOdakdIIYl1/kF
-         HhhCEy9/m7UhNU6HtjojoKPpPB8W7tO3amGp1tnI/PpKQBOg3kbILSOI41/G2jhKZJuo
-         t8dM6myUsLiG1Kde/q/+xsMV+ASHnmgFm94qqCzjfprHD4yjpNfQ/VqfzKU/1BThLk2N
-         jzcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752587875; x=1753192675;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5wd3vZa0hBJt2XEf+/qd/yWCD7aOef+WZtT0Xwlp5EM=;
-        b=GfTZhB/3qMtO74fl9hFybXphU9ZVBJJfSVk5V4nb2BEbWEkoxYKiTi0uuBU9UieTXl
-         2JgLGjb3ItB9lH1MzSPvvDJxHQp0iQ6vKU9eHzM8TfWwBNzrTSCZ/D/faNB4lYJ/fIUW
-         BpYXj1YjaKReTGGCEXdBgoUSeva90tn/5KMmOcmUSt9CPMDKqlQmY05uGS0oPW0292xJ
-         BIMDuVbE6brq4l4QR+D32eHQMGugOlYOavZf4mkjzCPKKeGZpqPfuUu7gvEE1XTEoHG9
-         /vlrlGCTr2W81pFtIlTRtrNRYdk7J0UaoBnHP+3LgmKvQo/sbp/dlu9ICWJzFXi997cb
-         Bw9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUlVN6ESVGi/9BDmm0ZmrvDvRIlhOlrZsXi/Be55OXkQu7Bj6+eN2la8bpcCTP8qwFimPkVp/zfCU2hI/dWcqE=@vger.kernel.org, AJvYcCVjX6b+QlcQlnuzLlSHf0eITHCa0RCPXKjxJr3FejMAIM9m2rHT2ppO9BUox9661a87qeZjEyjuEwelYLNy@vger.kernel.org, AJvYcCWEaK7QUwVPS5JS/PptGAv0MSZ9TRjzVx7pvrhkXWUg73hX/qQf6/XdOurtBPdBwd8tZQufjDRu@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb9uAWVoEzpBy2cYzdWDUgJPhhjMW/iKh/phNgTEh8366b1zoP
-	4hGyR8ez8u4Tl0NTQZj9SL2yQyVacaId8K6Shi3XTflofpoUWMjAqyjqgHmIfpZ+r89X/hGkL++
-	4hoz5yAOCWIZekv3zG3whkt6L4TS+KPs=
-X-Gm-Gg: ASbGncsegktuFC0dvAElbfdsXemc5gEV9yfuo4CLvxaaa23ZfxDtYIyJOUl/I1824aL
-	3H6DG/1VB7vwCuS2G8KW5XpgVDVA2gybvGfsG/aZnFuJ3lvi8lfGLRwvWuDGPnYyRreyoLEOtxc
-	SNzD0qieZMloC0gq5qtn4BnSiC7Lgv+bHKuHETL2b1GJ/EItDyzbThjqoT0BqZjied95760DQkN
-	IoTSoggunL9kY9h
-X-Google-Smtp-Source: AGHT+IHrjPDlAh6yOR8TcwCHBt5GIJ+sm0Qq5QJRdLGApX1o9tf1uALm75s1vPQeoyoX4Xg8Ci6aSnoUpI9O+c49zNM=
-X-Received: by 2002:a2e:a585:0:b0:32a:6a85:f294 with SMTP id
- 38308e7fff4ca-3305346e497mr52038731fa.35.1752587875240; Tue, 15 Jul 2025
- 06:57:55 -0700 (PDT)
+	s=arc-20240116; t=1752587891; c=relaxed/simple;
+	bh=b11Dg6R/vlsqaqKkGCKON+PJNYHWYPrTti/tRvvl5Ps=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Msvwoa2ojLdAvwAnCEAU+2M2YiGSmkfGHmLu/S0wno8ah5C8Kb95AmX1u0kDWpG3MvVaPVFRh+e6Ouxrf3Hvs4oTp8DYuzdHtSCDCVFQpv46QIWcrwabOHNCXkmrJDj653cNQuS2yDkZ0S9Elo7/dqtX+77q5Vdrf986Kq6Ct4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=ZYkj/tH0; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=K7s/z8ke; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1752587886; x=1753192686;
+	d=konsulko.se; s=rsa1;
+	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
+	 subject:cc:to:from:from;
+	bh=RvpazCzVxvXnIveADtjt84U407dyEylMhRtOiCnmbUA=;
+	b=ZYkj/tH0/s0Co1qLPu9jhXAVZgLaM16V863OL7E+GKPk8A9exPRCUxW93Y1I9tNPVuS7PBk6ppW9b
+	 KGpn3f2TvWHpvpIxxhLVXunPZTyR/p58I7sdMBlQOpQM1wh1swpWRcmW2x8pYLEBo5KSz0NdpSuadb
+	 WD56pXT2bX4CDROy/8oa+iBijp/bCPKSevSHll86blURiM7fkCb92xCS4Br61Xy1EnXhn7VuASYESE
+	 JYStkaBCe18bu3jK3OfFEIffBrLxUxAOi31cEgQy1eMwicvLDcJFJFeWkP3XoaGqbiPd3Hef/a+B53
+	 phyA+TJ5I6o/F3LGLm6bUjO6lvMtRvg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1752587886; x=1753192686;
+	d=konsulko.se; s=ed1;
+	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
+	 subject:cc:to:from:from;
+	bh=RvpazCzVxvXnIveADtjt84U407dyEylMhRtOiCnmbUA=;
+	b=K7s/z8keFCDg2jxD/UnJCssqJywHAo1+Lm1JkRas/9lTcIvPj0eP5MtupCAWiBSiFDEoGzOqfGUrp
+	 iTJRct0CA==
+X-HalOne-ID: b99010bc-6183-11f0-8923-e90f2b8e16ca
+Received: from slottsdator.home (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
+	by mailrelay2.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id b99010bc-6183-11f0-8923-e90f2b8e16ca;
+	Tue, 15 Jul 2025 13:58:05 +0000 (UTC)
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+To: linux-mm@kvack.org
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	rust-for-linux@vger.kernel.org,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-bcachefs@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: [PATCH v13 1/4] mm/vmalloc: allow to set node and align in vrealloc
+Date: Tue, 15 Jul 2025 15:58:03 +0200
+Message-Id: <20250715135803.2230193-1-vitaly.wool@konsulko.se>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250715135645.2230065-1-vitaly.wool@konsulko.se>
+References: <20250715135645.2230065-1-vitaly.wool@konsulko.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707-iso_ts-v4-1-0f0bb162a182@amlogic.com>
- <dc9925eceb0abe78f7bafe2ed183b0f90bdb3ac5.camel@iki.fi> <CABBYNZLFnbfdXjRV0taeTNF5bsey-WFf4TFsf_ox0FNuJbEutw@mail.gmail.com>
-In-Reply-To: <CABBYNZLFnbfdXjRV0taeTNF5bsey-WFf4TFsf_ox0FNuJbEutw@mail.gmail.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Tue, 15 Jul 2025 09:57:42 -0400
-X-Gm-Features: Ac12FXz9AhULqH4a8J-A_3sZmWpMk2U8gWeHUwqOazDuZWQCCySLh9mXg6eAW-Q
-Message-ID: <CABBYNZL1Aicj15eYBgug4_KARK6xcd7eVKnzcE=vUK=mugUM4w@mail.gmail.com>
-Subject: Re: [PATCH v4] Bluetooth: ISO: Support SCM_TIMESTAMPING for ISO TS
-To: Pauli Virtanen <pav@iki.fi>
-Cc: yang.li@amlogic.com, Marcel Holtmann <marcel@holtmann.org>, 
-	Johan Hedberg <johan.hedberg@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Reimplement vrealloc() to be able to set node and alignment should
+a user need to do so. Rename the function to vrealloc_node_align()
+to better match what it actually does now and introduce macros for
+vrealloc() and friends for backward compatibility.
 
-On Tue, Jul 15, 2025 at 9:37=E2=80=AFAM Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> wrote:
->
-> Hi Pauli,
->
-> On Tue, Jul 15, 2025 at 9:30=E2=80=AFAM Pauli Virtanen <pav@iki.fi> wrote=
-:
-> >
-> > Hi Yang,
-> >
-> > ma, 2025-07-07 kello 10:38 +0800, Yang Li via B4 Relay kirjoitti:
-> > > From: Yang Li <yang.li@amlogic.com>
-> > >
-> > > User-space applications (e.g. PipeWire) depend on
-> > > ISO-formatted timestamps for precise audio sync.
-> > >
-> > > The ISO ts is based on the controller=E2=80=99s clock domain,
-> > > so hardware timestamping (hwtimestamp) must be used.
-> > >
-> > > Ref: Documentation/networking/timestamping.rst,
-> > > section 3.1 Hardware Timestamping.
-> > >
-> > > Signed-off-by: Yang Li <yang.li@amlogic.com>
-> > > ---
-> > > Changes in v4:
-> > > - Optimizing the code
-> > > - Link to v3: https://lore.kernel.org/r/20250704-iso_ts-v3-1-2328bc60=
-2961@amlogic.com
-> > >
-> > > Changes in v3:
-> > > - Change to use hwtimestamp
-> > > - Link to v2: https://lore.kernel.org/r/20250702-iso_ts-v2-1-723d199c=
-8068@amlogic.com
-> > >
-> > > Changes in v2:
-> > > - Support SOCK_RCVTSTAMPNS via CMSG for ISO sockets
-> > > - Link to v1: https://lore.kernel.org/r/20250429-iso_ts-v1-1-e586f30d=
-e6cb@amlogic.com
-> > > ---
-> > >  net/bluetooth/iso.c | 6 +++++-
-> > >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
-> > > index fc22782cbeeb..677144bb6b94 100644
-> > > --- a/net/bluetooth/iso.c
-> > > +++ b/net/bluetooth/iso.c
-> > > @@ -2278,6 +2278,7 @@ static void iso_disconn_cfm(struct hci_conn *hc=
-on, __u8 reason)
-> > >  void iso_recv(struct hci_conn *hcon, struct sk_buff *skb, u16 flags)
-> > >  {
-> > >       struct iso_conn *conn =3D hcon->iso_data;
-> > > +     struct skb_shared_hwtstamps *hwts;
-> > >       __u16 pb, ts, len;
-> > >
-> > >       if (!conn)
-> > > @@ -2301,13 +2302,16 @@ void iso_recv(struct hci_conn *hcon, struct s=
-k_buff *skb, u16 flags)
-> > >               if (ts) {
-> > >                       struct hci_iso_ts_data_hdr *hdr;
-> > >
-> > > -                     /* TODO: add timestamp to the packet? */
-> > >                       hdr =3D skb_pull_data(skb, HCI_ISO_TS_DATA_HDR_=
-SIZE);
-> > >                       if (!hdr) {
-> > >                               BT_ERR("Frame is too short (len %d)", s=
-kb->len);
-> > >                               goto drop;
-> > >                       }
-> > >
-> > > +                     /*  Record the timestamp to skb*/
-> > > +                     hwts =3D skb_hwtstamps(skb);
-> > > +                     hwts->hwtstamp =3D us_to_ktime(le32_to_cpu(hdr-=
->ts));
-> >
-> > Several lines below there is
-> >
-> >         conn->rx_skb =3D bt_skb_alloc(len, GFP_KERNEL);
-> >         skb_copy_from_linear_data(skb, skb_put(conn->rx_skb, skb-
-> > >len),
-> >                                                   skb->len);
-> >
-> > so timestamp should be copied explicitly also into conn->rx_skb,
-> > otherwise it gets lost when you have ACL-fragmented ISO packets.
->
-> Yep, it is not that the code is completely wrong but it is operating
-> on the original skb not in the rx_skb as you said, that said is only
-> the first fragment that contains the ts header so we only have to do
-> it once in case that was not clear.
+With that change we also provide the ability for the Rust part of
+the kernel to set node and alignment in its allocations.
 
-I might just do a fixup myself, something like the following:
+Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+---
+ include/linux/vmalloc.h | 12 +++++++++---
+ mm/nommu.c              |  3 ++-
+ mm/vmalloc.c            | 29 ++++++++++++++++++++++++-----
+ 3 files changed, 35 insertions(+), 9 deletions(-)
 
-diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
-index 0a951c6514af..f48fb62e640d 100644
---- a/net/bluetooth/iso.c
-+++ b/net/bluetooth/iso.c
-@@ -2374,6 +2374,13 @@ void iso_recv(struct hci_conn *hcon, struct
-sk_buff *skb, u16 flags)
-                skb_copy_from_linear_data(skb, skb_put(conn->rx_skb, skb->l=
-en),
-                                          skb->len);
-                conn->rx_len =3D len - skb->len;
+diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+index fdc9aeb74a44..68791f7cb3ba 100644
+--- a/include/linux/vmalloc.h
++++ b/include/linux/vmalloc.h
+@@ -197,9 +197,15 @@ extern void *__vcalloc_noprof(size_t n, size_t size, gfp_t flags) __alloc_size(1
+ extern void *vcalloc_noprof(size_t n, size_t size) __alloc_size(1, 2);
+ #define vcalloc(...)		alloc_hooks(vcalloc_noprof(__VA_ARGS__))
+ 
+-void * __must_check vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+-		__realloc_size(2);
+-#define vrealloc(...)		alloc_hooks(vrealloc_noprof(__VA_ARGS__))
++void *__must_check vrealloc_node_align_noprof(const void *p, size_t size,
++		unsigned long align, gfp_t flags, int nid) __realloc_size(2);
++#define vrealloc_node_noprof(_p, _s, _f, _nid)	\
++	vrealloc_node_align_noprof(_p, _s, 1, _f, _nid)
++#define vrealloc_noprof(_p, _s, _f)		\
++	vrealloc_node_align_noprof(_p, _s, 1, _f, NUMA_NO_NODE)
++#define vrealloc_node_align(...)		alloc_hooks(vrealloc_node_align_noprof(__VA_ARGS__))
++#define vrealloc_node(...)			alloc_hooks(vrealloc_node_noprof(__VA_ARGS__))
++#define vrealloc(...)				alloc_hooks(vrealloc_noprof(__VA_ARGS__))
+ 
+ extern void vfree(const void *addr);
+ extern void vfree_atomic(const void *addr);
+diff --git a/mm/nommu.c b/mm/nommu.c
+index b624acec6d2e..afde6c626b07 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -119,7 +119,8 @@ void *__vmalloc_noprof(unsigned long size, gfp_t gfp_mask)
+ }
+ EXPORT_SYMBOL(__vmalloc_noprof);
+ 
+-void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
++void *vrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
++				 gfp_t flags, int node)
+ {
+ 	return krealloc_noprof(p, size, (flags | __GFP_COMP) & ~__GFP_HIGHMEM);
+ }
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index ab986dd09b6a..e0a593651d96 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -4081,19 +4081,29 @@ void *vzalloc_node_noprof(unsigned long size, int node)
+ EXPORT_SYMBOL(vzalloc_node_noprof);
+ 
+ /**
+- * vrealloc - reallocate virtually contiguous memory; contents remain unchanged
++ * vrealloc_node_align_noprof - reallocate virtually contiguous memory; contents
++ * remain unchanged
+  * @p: object to reallocate memory for
+  * @size: the size to reallocate
++ * @align: requested alignment
+  * @flags: the flags for the page level allocator
++ * @nid: node number of the target node
++ *
++ * If @p is %NULL, vrealloc_XXX() behaves exactly like vmalloc_XXX(). If @size
++ * is 0 and @p is not a %NULL pointer, the object pointed to is freed.
+  *
+- * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If @size is 0 and
+- * @p is not a %NULL pointer, the object pointed to is freed.
++ * If the caller wants the new memory to be on specific node *only*,
++ * __GFP_THISNODE flag should be set, otherwise the function will try to avoid
++ * reallocation and possibly disregard the specified @nid.
+  *
+  * If __GFP_ZERO logic is requested, callers must ensure that, starting with the
+  * initial memory allocation, every subsequent call to this API for the same
+  * memory allocation is flagged with __GFP_ZERO. Otherwise, it is possible that
+  * __GFP_ZERO is not fully honored by this API.
+  *
++ * Requesting an alignment that is bigger than the alignment of the existing
++ * allocation will fail.
++ *
+  * In any case, the contents of the object pointed to are preserved up to the
+  * lesser of the new and old sizes.
+  *
+@@ -4103,7 +4113,8 @@ EXPORT_SYMBOL(vzalloc_node_noprof);
+  * Return: pointer to the allocated memory; %NULL if @size is zero or in case of
+  *         failure
+  */
+-void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
++void *vrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
++				 gfp_t flags, int nid)
+ {
+ 	struct vm_struct *vm = NULL;
+ 	size_t alloced_size = 0;
+@@ -4127,6 +4138,12 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+ 		if (WARN(alloced_size < old_size,
+ 			 "vrealloc() has mismatched area vs requested sizes (%p)\n", p))
+ 			return NULL;
++		if (WARN(!IS_ALIGNED((unsigned long)p, align),
++			 "will not reallocate with a bigger alignment (0x%lx)\n", align))
++			return NULL;
++		if (unlikely(flags & __GFP_THISNODE) && nid != NUMA_NO_NODE &&
++			     nid != page_to_nid(vmalloc_to_page(p)))
++			goto need_realloc;
+ 	}
+ 
+ 	/*
+@@ -4157,8 +4174,10 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+ 		return (void *)p;
+ 	}
+ 
++need_realloc:
+ 	/* TODO: Grow the vm_area, i.e. allocate and map additional pages. */
+-	n = __vmalloc_noprof(size, flags);
++	n = __vmalloc_node_noprof(size, align, flags, nid, __builtin_return_address(0));
 +
-+               /* Copy timestamp from skb to rx_skb if present */
-+               if (ts) {
-+                       hwts =3D skb_hwtstamps(conn->rx_skb);
-+                       hwts->hwtstamp =3D skb_hwtstamps(skb)->hwtstamp;
-+               }
-+
-                break;
+ 	if (!n)
+ 		return NULL;
+ 
+-- 
+2.39.2
 
-        case ISO_CONT:
-
-
-> > It could also be useful to write a simple test case that extracts the
-> > timestamp from CMSG, see for example how it was done for BT_PKT_SEQNUM:
-> > https://lore.kernel.org/linux-bluetooth/b98b7691e4ba06550bb8f275cad0635=
-bc9e4e8d2.1752511478.git.pav@iki.fi/
-> > bthost_send_iso() can take ts=3Dtrue and some timestamp value.
-> >
-> > > +
-> > >                       len =3D __le16_to_cpu(hdr->slen);
-> > >               } else {
-> > >                       struct hci_iso_data_hdr *hdr;
-> > >
-> > > ---
-> > > base-commit: b8db3a9d4daeb7ff6a56c605ad6eca24e4da78ed
-> > > change-id: 20250421-iso_ts-c82a300ae784
-> > >
-> > > Best regards,
-> >
-> > --
-> > Pauli Virtanen
->
->
->
-> --
-> Luiz Augusto von Dentz
-
-
-
---=20
-Luiz Augusto von Dentz
 
