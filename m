@@ -1,230 +1,138 @@
-Return-Path: <linux-kernel+bounces-731676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCEBBB05818
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:45:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC533B05816
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BDA97B478A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:43:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9C403BFF95
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5F62D8387;
-	Tue, 15 Jul 2025 10:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4B71494C3;
+	Tue, 15 Jul 2025 10:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="pGcYvD2F"
-Received: from nbd.name (nbd.name [46.4.11.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s1n5vuBe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B912D837E;
-	Tue, 15 Jul 2025 10:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137D52D6414
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 10:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752576290; cv=none; b=qfT8Z5tL+M7bUAYN3naMqBj+Pz28am5LL/ei4FoR0EucFkosPb6DX3843PPmomVNcJLlUlDI11vAswx3lNJT9GWYQO03szlQr7fdMGVK7xlFU120nBK0wuN8qpyXzVKByci1EoLwt/OTtDAcvjnS9tMsDryPwXILKgPrE4HrZ/I=
+	t=1752576287; cv=none; b=lNonnndoiNKs63LRO4ntyQ+qpTLtZwCygbRDAmwN7T0r8UMYibI+/p6B4vabNNo8ymA6lexjPFIjl2+fO0ss/yfo93LxNuxjwHEfsOLUwrjdz/eegcsplUtnwRBHbQ/b4A5/8jIJ0iE+gKWT5MkJzviSJnxt6Jgh9Njb0IPGzis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752576290; c=relaxed/simple;
-	bh=tAAyI6btdERrX7kxlEMiQsdnF9Ia2Q+2uiKMlGybJto=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MKbwiFgGm2vj5ude2xMVSVle6LHcxwPfY1LIZnEYJF3YCxVGUfzWhyhzUi7pz/fG0OWk3Q+1w3jGnMBdu/Nc9Ww8uZXww3D9xPjOJywg2vi/uSHwRDKhBcgzSJOe1kKUGIbU6vvm0eJyXXARNR/1BS/iCjpD1E0+cyzoa4+jWPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=pGcYvD2F; arc=none smtp.client-ip=46.4.11.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
-	s=20160729; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=i7fP8BcumApPjNSeUMxVqB2p8QkYDUChQH+pYPCBu/Y=; b=pGcYvD2FVp5ZZCcjNbSDGj0dyn
-	PBc8FaOmgTXGhfEg3yEFABbrdF2zBftBEkIemTa5gymhaOGp9Qez/Q8jowo4ypPFZYIxl911FOCMm
-	8g/grdjGZ/t4lo1Davy0nZagwXff8nRI5gmQuXHaRbTtif1jnbPkwPefie2NLrlhQmiw=;
-Received: from p5b2062ed.dip0.t-ipconnect.de ([91.32.98.237] helo=Maecks.lan)
-	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-	(Exim 4.96)
-	(envelope-from <nbd@nbd.name>)
-	id 1ubd9D-00C9uA-1j;
-	Tue, 15 Jul 2025 12:44:31 +0200
-From: Felix Fietkau <nbd@nbd.name>
-To: netdev@vger.kernel.org,
-	Michal Ostrowski <mostrows@earthlink.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] net: pppoe: implement GRO support
-Date: Tue, 15 Jul 2025 12:44:24 +0200
-Message-ID: <20250715104425.8688-1-nbd@nbd.name>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1752576287; c=relaxed/simple;
+	bh=ij9HxtNtdiFFDc1xDDKCbWEvFhjS34y8qM/iHGZqTm0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Em5xFpBxwPMwemmzGPaA4gyxzZOQZFELAKeQ6xioXrHZLkEACr4BW8yYlikiXzRA7Wa6c2WZszUVWWyxedaoPDy/Io9EgrEwMmdpTx6GZPBlBkA777El4W8pbGWnKMCcAn63X6F9T1k2JYVAABo+u7gtXkKhDPKbPhUT7gRvQL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s1n5vuBe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EA60C4CEE3;
+	Tue, 15 Jul 2025 10:44:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752576286;
+	bh=ij9HxtNtdiFFDc1xDDKCbWEvFhjS34y8qM/iHGZqTm0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=s1n5vuBea8a7piRN0B4vBg88lrZjktYoBOAbyDqLbhPQN0Zr4jxhbg5brFW/7AUiI
+	 ZfyRVZbh67QXU0F5v7A/tmCFaUdNXpyAq8G7Q1DtnHcQZ58nByRvhYErSZf1tWf67F
+	 LpVFwidoU1UZtoTRJhTCuqOh8NAjiW7Pwp3ZE+DO/jOuHk3RWO1L7OBePG+sFvOaX7
+	 9KrpFR9s4I/j2jz92n8ZfIE3tCxqEXQP3mai8qJvKyqiu8iwJS64gFlDmeLDsblfTn
+	 v2Lp7bAoSAjIVICzKPfihiYUiuFlOoKzs3FR3o9GZF0v2tGkfbqw/Giq7ZPRxL3Qkz
+	 /Kv4yDvAwTOdg==
+Message-ID: <12c6632b-65b7-43da-a954-7107ac8cb1b1@kernel.org>
+Date: Tue, 15 Jul 2025 12:44:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/amd/display:fix a Null pointer dereference
+ vulnerability
+To: jackysliu <1972843537@qq.com>, harry.wentland@amd.com
+Cc: Austin.Zheng@amd.com, Dillon.Varone@amd.com, Security@tencent.com,
+ Sung.Lee@amd.com, Wayne.Lin@amd.com, airlied@gmail.com,
+ alexander.deucher@amd.com, alvin.lee2@amd.com,
+ amd-gfx@lists.freedesktop.org, aurabindo.pillai@amd.com,
+ christian.koenig@amd.com, dri-devel@lists.freedesktop.org,
+ joshua.aberback@amd.com, linux-kernel@vger.kernel.org, linux@treblig.org,
+ mario.limonciello@amd.com, ryanseto@amd.com, simona@ffwll.ch,
+ siqueira@igalia.com, sunpeng.li@amd.com
+References: <220f9fb4-45ad-4997-9572-564242737dd4@amd.com>
+ <tencent_54FF4252EDFB6533090A491A25EEF3EDBF06@qq.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <tencent_54FF4252EDFB6533090A491A25EEF3EDBF06@qq.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Only handles packets where the pppoe header length field matches the exact
-packet length. Significantly improves rx throughput.
+On 04/07/2025 05:16, jackysliu wrote:
+> From: jackysliu <Security@tencent.com>
+> 
+> A null pointer dereference vulnerability exists in the AMD display driver's
+>  (DC module) cleanup function dc_destruct().
+>  When display control context (dc->ctx) construction fails
+>  (due to memory allocation failure), this pointer remains NULL.
+> During subsequent error handling when dc_destruct() is called,
+> there's no NULL check before dereferencing the perf_trace member
+>  (dc->ctx->perf_trace),
+>  causing a kernel null pointer dereference crash
+> 
+> Signed-off-by: jackysliu <Security@tencent.com>
+> ---
+>  drivers/gpu/drm/amd/display/dc/core/dc.c | 20 ++++++++++++--------
+>  1 file changed, 12 insertions(+), 8 deletions(-)
 
-When running NAT traffic through a MediaTek MT7621 devices from a host
-behind PPPoE to a host directly connected via ethernet, the TCP throughput
-that the device is able to handle improves from ~130 Mbit/s to ~630 Mbit/s,
-using fraglist GRO.
+You should disclose that you used some AI tool for that... and that
+other report(s) was really fake finding.  People should know you
+generated it with AI, so they could make informed decision whether to
+even allocate time here.
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
----
- drivers/net/ppp/pppoe.c | 107 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 106 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ppp/pppoe.c b/drivers/net/ppp/pppoe.c
-index 410effa42ade..3595f2d35de6 100644
---- a/drivers/net/ppp/pppoe.c
-+++ b/drivers/net/ppp/pppoe.c
-@@ -77,6 +77,7 @@
- #include <net/net_namespace.h>
- #include <net/netns/generic.h>
- #include <net/sock.h>
-+#include <net/gro.h>
- 
- #include <linux/uaccess.h>
- 
-@@ -435,7 +436,7 @@ static int pppoe_rcv(struct sk_buff *skb, struct net_device *dev,
- 	if (skb->len < len)
- 		goto drop;
- 
--	if (pskb_trim_rcsum(skb, len))
-+	if (!skb_is_gso(skb) && pskb_trim_rcsum(skb, len))
- 		goto drop;
- 
- 	ph = pppoe_hdr(skb);
-@@ -1173,6 +1174,108 @@ static struct pernet_operations pppoe_net_ops = {
- 	.size = sizeof(struct pppoe_net),
- };
- 
-+static u16
-+compare_pppoe_header(struct pppoe_hdr *phdr, struct pppoe_hdr *phdr2)
-+{
-+	return (__force __u16)((phdr->sid ^ phdr2->sid) |
-+			       (phdr->tag[0].tag_type ^ phdr2->tag[0].tag_type));
-+}
-+
-+static __be16 pppoe_hdr_proto(struct pppoe_hdr *phdr)
-+{
-+	switch (phdr->tag[0].tag_type) {
-+	case cpu_to_be16(PPP_IP):
-+		return cpu_to_be16(ETH_P_IP);
-+	case cpu_to_be16(PPP_IPV6):
-+		return cpu_to_be16(ETH_P_IPV6);
-+	default:
-+		return 0;
-+	}
-+
-+}
-+
-+static struct sk_buff *pppoe_gro_receive(struct list_head *head,
-+					 struct sk_buff *skb)
-+{
-+	const struct packet_offload *ptype;
-+	unsigned int hlen, off_pppoe;
-+	struct sk_buff *pp = NULL;
-+	struct pppoe_hdr *phdr;
-+	struct sk_buff *p;
-+	__be16 type;
-+	int flush = 1;
-+
-+	off_pppoe = skb_gro_offset(skb);
-+	hlen = off_pppoe + sizeof(*phdr) + 2;
-+	phdr = skb_gro_header(skb, hlen, off_pppoe);
-+	if (unlikely(!phdr))
-+		goto out;
-+
-+	/* ignore packets with padding or invalid length */
-+	if (skb_gro_len(skb) != be16_to_cpu(phdr->length) + hlen - 2)
-+		goto out;
-+
-+	NAPI_GRO_CB(skb)->network_offsets[NAPI_GRO_CB(skb)->encap_mark] = hlen;
-+
-+	type = pppoe_hdr_proto(phdr);
-+	if (!type)
-+		goto out;
-+
-+	ptype = gro_find_receive_by_type(type);
-+	if (!ptype)
-+		goto out;
-+
-+	flush = 0;
-+
-+	list_for_each_entry(p, head, list) {
-+		struct pppoe_hdr *phdr2;
-+
-+		if (!NAPI_GRO_CB(p)->same_flow)
-+			continue;
-+
-+		phdr2 = (struct pppoe_hdr *)(p->data + off_pppoe);
-+		if (compare_pppoe_header(phdr, phdr2))
-+			NAPI_GRO_CB(p)->same_flow = 0;
-+	}
-+
-+	skb_gro_pull(skb, sizeof(*phdr) + 2);
-+	skb_gro_postpull_rcsum(skb, phdr, sizeof(*phdr) + 2);
-+
-+	pp = indirect_call_gro_receive_inet(ptype->callbacks.gro_receive,
-+					    ipv6_gro_receive, inet_gro_receive,
-+					    head, skb);
-+
-+out:
-+	skb_gro_flush_final(skb, pp, flush);
-+
-+	return pp;
-+}
-+
-+static int pppoe_gro_complete(struct sk_buff *skb, int nhoff)
-+{
-+	struct pppoe_hdr *phdr = (struct pppoe_hdr *)(skb->data + nhoff);
-+	__be16 type = pppoe_hdr_proto(phdr);
-+	struct packet_offload *ptype;
-+	int err = -ENOENT;
-+
-+	ptype = gro_find_complete_by_type(type);
-+	if (ptype)
-+		err = INDIRECT_CALL_INET(ptype->callbacks.gro_complete,
-+					 ipv6_gro_complete, inet_gro_complete,
-+					 skb, nhoff + sizeof(*phdr) + 2);
-+
-+	return err;
-+}
-+
-+static struct packet_offload pppoe_packet_offload __read_mostly = {
-+	.type = cpu_to_be16(ETH_P_PPP_SES),
-+	.priority = 10,
-+	.callbacks = {
-+		.gro_receive = pppoe_gro_receive,
-+		.gro_complete = pppoe_gro_complete,
-+	},
-+};
-+
- static int __init pppoe_init(void)
- {
- 	int err;
-@@ -1189,6 +1292,7 @@ static int __init pppoe_init(void)
- 	if (err)
- 		goto out_unregister_pppoe_proto;
- 
-+	dev_add_offload(&pppoe_packet_offload);
- 	dev_add_pack(&pppoes_ptype);
- 	dev_add_pack(&pppoed_ptype);
- 	register_netdevice_notifier(&pppoe_notifier);
-@@ -1208,6 +1312,7 @@ static void __exit pppoe_exit(void)
- 	unregister_netdevice_notifier(&pppoe_notifier);
- 	dev_remove_pack(&pppoed_ptype);
- 	dev_remove_pack(&pppoes_ptype);
-+	dev_remove_offload(&pppoe_packet_offload);
- 	unregister_pppox_proto(PX_PROTO_OE);
- 	proto_unregister(&pppoe_sk_proto);
- 	unregister_pernet_device(&pppoe_net_ops);
--- 
-2.50.1
-
+Best regards,
+Krzysztof
 
