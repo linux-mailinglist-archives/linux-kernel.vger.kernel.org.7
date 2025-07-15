@@ -1,156 +1,105 @@
-Return-Path: <linux-kernel+bounces-732494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4822B067A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:18:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 995A0B067A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:19:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33EDD563C05
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:18:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EECF5563CE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EB1271440;
-	Tue, 15 Jul 2025 20:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB69D2727E5;
+	Tue, 15 Jul 2025 20:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jyVCCDuM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Vq4TlHUz"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEEC262FD4
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D3A17BA1;
+	Tue, 15 Jul 2025 20:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752610696; cv=none; b=WdQEh6qZQChQr0Y+qaFECbyAiTYRZyL11rsGL2MiR/bb0smsJNpaVE8tcsotQmzJtsIxqV4zlkzOkXV19I5QI+s7+AKoA0fkuhm70ReIuCKY9GME0vUzn6enpYscCZCuezoKmzmO7xZYMeUZezai9wkeC+GWGdoEhAqLfDTRDN4=
+	t=1752610755; cv=none; b=VnSQdQoZtSrmtNz5neH8YiN2cEaCASRBZ8oiMCvj4rlEyRqM/j5snu5WH9LpsvsjAptv5KBdRtPm+LqYugSvSz8BTl3zq3GuG5yF3eah7e1T1xDJibHDYvrVowPAfQjACHuNRhUQwjrdwAsuT5t6xMeQliIyo0eTB+Zwn+J7AfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752610696; c=relaxed/simple;
-	bh=PLfZVjiWCJ9WF14jCAJgKwD4VJ4Dt11gzQfmw+/2c3w=;
+	s=arc-20240116; t=1752610755; c=relaxed/simple;
+	bh=M21qr5y7Z0Wl+XEBa90r3aQQQKQmisfjLJQLPvhdlaQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SrJMyCaOCESt5DZU3Ad8XZTqDkcjFNI+5yru8KeUoYZN8UUIe+/uFp3LHjGDpPngqvJ0YUyxXyOQ+yVXVoJoBZ35Qf6YTDx37ShbtAJsIrt2rHy4g6wDsH+W95FXkKo549F1F5aaqyRQ0EXXSvKvFzKRsz5clVgc8uyAwhLPBuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jyVCCDuM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 867B8C4CEE3;
-	Tue, 15 Jul 2025 20:18:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752610696;
-	bh=PLfZVjiWCJ9WF14jCAJgKwD4VJ4Dt11gzQfmw+/2c3w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jyVCCDuMqPBzMTOlmzPDbdUwwqhOPgyLtx3ZhVBAuEnk9j+E2uv0m1iIg/M3X2T3P
-	 eRwvimDqdtiR5EoCNbTtsSgNZB/5bpE8BjcYO6vKZEvXPFNXcOZ/KNOJ8sbt/dxoUL
-	 jdraJ6hFFwOnEWhYdfO7uifUJS07RNmufbn0O50JCFAmasowEJIjWsMPR+QjB2kkOt
-	 TGTK+W8WAZaJNcY5SHJ7bqYYDIxnmMrm+F1p5DS/dlOWoqfbIDoc6qXFcqtzSISmSZ
-	 5NBaxlPvaTw3MxArqkDBWLig9VJbd7r0HE2VvIsaMCbqRQdFqyvVHrjmUGuN6wAWlM
-	 +oUxtlbQL1T5w==
-Date: Tue, 15 Jul 2025 13:18:14 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-	akpm@linux-foundation.org, david@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com,
-	mjguzik@gmail.com, luto@kernel.org, peterz@infradead.org,
-	acme@kernel.org, tglx@linutronix.de, willy@infradead.org,
-	raghavendra.kt@amd.com, boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com
-Subject: Re: [PATCH v5 08/14] perf bench mem: Refactor mem_options
-Message-ID: <aHa3hryUxeb62oBy@google.com>
-References: <20250710005926.1159009-1-ankur.a.arora@oracle.com>
- <20250710005926.1159009-9-ankur.a.arora@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IZxmxN7Qeu0bM3u4/lNRddmE0Gr1ukAarF0rXDLLodq0k9aLZDonE+bup7qS1U3pd8qKh/GMm2hfpHvEZa6+0uWAFIEcClsf4DV0FF056B/LF5voyPtGOs/b95r+mJ0yX3+CBx4T2nfVZQrnG9yUzEMKO1T0iMlnlcTa5oa3W84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Vq4TlHUz; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 66EF210397286;
+	Tue, 15 Jul 2025 22:18:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1752610744; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=VJAfMqyjyX37znxXL4xbV0iHrWclS8WxWXqLLY0rogU=;
+	b=Vq4TlHUz6f83RIH3m8HunDZ28nACuUQ7nKqUOPGohRnlADznGxgY8rgTLL1FCOv+dkwKAE
+	DdId97hPzk7lg1bbP+ke3dOj5MSGzoaD5FjAuzaHFhgqVZwR0GNzZ4ls3ROiX8zXpcDYCs
+	RW3lRQjYE9qIpaKcwEEzNWkrJ01Bm05M5mt+RO1cIyeNvZwozAWtPxaDeuiS2e7VtZb2V+
+	FVw/p7Q2ExUxpb5e0ZrjuSGajSlQRUdRb1Pg1ZUQ/vdvEFUndNhsBEcpJ3TV2MqegTDYzd
+	3fLqyB3GhZqISnpsj3FhSXuGmElllkh+vmxOcuczxtYN/mP/8Z2TV0t6eI7hWQ==
+Date: Tue, 15 Jul 2025 22:18:55 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 5.10 000/209] 5.10.240-rc3 review
+Message-ID: <aHa3r7rPD+Yllze4@duo.ucw.cz>
+References: <20250715163613.640534312@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Ge5yhp2dN5KI9qRk"
 Content-Disposition: inline
-In-Reply-To: <20250710005926.1159009-9-ankur.a.arora@oracle.com>
+In-Reply-To: <20250715163613.640534312@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Jul 09, 2025 at 05:59:20PM -0700, Ankur Arora wrote:
-> Split mem benchmark options into common and memset/memcpy specific.
-> 
-> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
 
-Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+--Ge5yhp2dN5KI9qRk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Namhyung
+Hi!
 
-> ---
->  tools/perf/bench/mem-functions.c | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
-> 
-> diff --git a/tools/perf/bench/mem-functions.c b/tools/perf/bench/mem-functions.c
-> index 412d18f2cb2e..8a37da149327 100644
-> --- a/tools/perf/bench/mem-functions.c
-> +++ b/tools/perf/bench/mem-functions.c
-> @@ -41,7 +41,7 @@ static unsigned int	nr_loops	= 1;
->  static bool		use_cycles;
->  static int		cycles_fd;
->  
-> -static const struct option options[] = {
-> +static const struct option bench_common_options[] = {
->  	OPT_STRING('s', "size", &size_str, "1MB",
->  		    "Specify the size of the memory buffers. "
->  		    "Available units: B, KB, MB, GB and TB (case insensitive)"),
-> @@ -50,10 +50,6 @@ static const struct option options[] = {
->  		    "Specify page-size for mapping memory buffers. "
->  		    "Available sizes: 4KB, 2MB, 1GB (case insensitive)"),
->  
-> -	OPT_STRING('k', "chunk", &chunk_size_str, "0",
-> -		    "Specify the chunk-size for each invocation. "
-> -		    "Available units: B, KB, MB, GB and TB (case insensitive)"),
-> -
->  	OPT_STRING('f', "function", &function_str, "all",
->  		    "Specify the function to run, \"all\" runs all available functions, \"help\" lists them"),
->  
-> @@ -66,6 +62,14 @@ static const struct option options[] = {
->  	OPT_END()
->  };
->  
-> +static const struct option bench_mem_options[] = {
-> +	OPT_STRING('k', "chunk", &chunk_size_str, "0",
-> +		    "Specify the chunk-size for each invocation. "
-> +		    "Available units: B, KB, MB, GB and TB (case insensitive)"),
-> +	OPT_PARENT(bench_common_options),
-> +	OPT_END()
-> +};
-> +
->  union bench_clock {
->  	u64		cycles;
->  	struct timeval	tv;
-> @@ -84,6 +88,7 @@ struct bench_mem_info {
->  	int (*do_op)(const struct function *r, struct bench_params *p,
->  		     void *src, void *dst, union bench_clock *rt);
->  	const char *const *usage;
-> +	const struct option *options;
->  	bool alloc_src;
->  };
->  
-> @@ -230,7 +235,7 @@ static int bench_mem_common(int argc, const char **argv, struct bench_mem_info *
->  	struct bench_params p = { 0 };
->  	unsigned int page_size;
->  
-> -	argc = parse_options(argc, argv, options, info->usage, 0);
-> +	argc = parse_options(argc, argv, info->options, info->usage, 0);
->  
->  	if (use_cycles) {
->  		i = init_cycles();
-> @@ -396,6 +401,7 @@ int bench_mem_memcpy(int argc, const char **argv)
->  		.functions		= memcpy_functions,
->  		.do_op			= do_memcpy,
->  		.usage			= bench_mem_memcpy_usage,
-> +		.options		= bench_mem_options,
->  		.alloc_src              = true,
->  	};
->  
-> @@ -453,6 +459,7 @@ int bench_mem_memset(int argc, const char **argv)
->  		.functions		= memset_functions,
->  		.do_op			= do_memset,
->  		.usage			= bench_mem_memset_usage,
-> +		.options		= bench_mem_options,
->  	};
->  
->  	return bench_mem_common(argc, argv, &info);
-> -- 
-> 2.43.5
-> 
+> This is the start of the stable review cycle for the 5.10.240 release.
+> There are 209 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+CIP testing did not find any problems here:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+5.10.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
+Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--Ge5yhp2dN5KI9qRk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaHa3rwAKCRAw5/Bqldv6
+8sDrAJ9FZUwMs5GHEIkZWPg8AgBNI/dm1QCgi9N1KUrswml1w/1yQjQlvlkN6X0=
+=aj6C
+-----END PGP SIGNATURE-----
+
+--Ge5yhp2dN5KI9qRk--
 
