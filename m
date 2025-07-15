@@ -1,100 +1,93 @@
-Return-Path: <linux-kernel+bounces-731703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEDF1B0586D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:06:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E2FB05865
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC5101A622F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:06:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0ED81889601
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E6C2DE70D;
-	Tue, 15 Jul 2025 11:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926378634C;
+	Tue, 15 Jul 2025 11:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P5HLHTbx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GeHatiwU"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57252DE6ED
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC322586C7;
+	Tue, 15 Jul 2025 11:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752577508; cv=none; b=dPe64NNHI+gwQ56BnBMYcovVS9zwEgkD2MWDkWi93/m1KcLS2xqOeCh4Y7qIU0Nw/XXZPQE5RKKy6m4wpzeVZK+FVvOJxP1BZWzttbdZ7IGT5M/o2bUuHBqyV5MtvIxY91m6+2A2vBvQoiadWFgJkLOVtn1ajV8z4MKOBgEY7Tg=
+	t=1752577479; cv=none; b=HUDWDZeukiIs05QTM8c81xbWeGS9XCx4GvZOyZbXexhhTs+hb/ci59P1iyieggkD8he940td0mQyuRQ+YgSH5EvZzCNtpHCj9yFusqDbi+0xJ4RYEZCMxQo3XCwKJKZk4wqoGLpxIuwusA7PooWZq/8juBh1EDylrCyzDxr+Qek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752577508; c=relaxed/simple;
-	bh=wvqMbbydNYHpf0fQgl6rIjSkCCYFZIBa8eEk6rht2a8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YlfER2MJVK33bLRJNimM9BmIsSfO293GW64PRMsP+DV312ERf+XKHUvpLpOxnftjlTzZDCHms1BoTZsQK7wg+yod6F2aQdHN4PfXfLpjwJmazKbKff7l57NTytFfNdqXlTxfLX+poAV6wdKfu/x08F7sSRVJC0WB1r2s3jXlC6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P5HLHTbx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752577505;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mXWJvgkysJAIYjhynSIqmAwCotshg97ykDbemk4MKVY=;
-	b=P5HLHTbxAG+2c21bIUnEIydDE6xy6qzBUKloK8PJD8OQg+iheR6hOVO6+WntuX5q1/hX1U
-	3NVVj9JqmiPrwQJElADBH7Ob8HtrvE5nA9vBVXQ8i0J5d3zHTlqq4tXTTs/+vziP0N6VSZ
-	MKV7mHXHJge88ddIojl25rn8e+I3lkY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-617--NSBrPVYMaGHs7cx3FY0Mw-1; Tue, 15 Jul 2025 07:05:03 -0400
-X-MC-Unique: -NSBrPVYMaGHs7cx3FY0Mw-1
-X-Mimecast-MFC-AGG-ID: -NSBrPVYMaGHs7cx3FY0Mw_1752577503
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4561611dc2aso18494215e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:05:03 -0700 (PDT)
+	s=arc-20240116; t=1752577479; c=relaxed/simple;
+	bh=trxZMc0YAsA/MYS+7XuNPO4qwb4PKoIe1//5birnoIk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q44b0Goqf1LImYxa51VS7Ws14YrCbIE1h4eQ6cWixEZcGr2hcjPI9YLCCS/BQOQ+52F8dQE6AtMTTlEQcfS0ga0m3e4qFR1qrK+GSNxMhpURTXbmgNFeN7neVSQ84TLXTv3lVF3p2WKDVM7Uz6dlX9SNVYuMsuytlDNLD2EYx64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GeHatiwU; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-748d982e92cso3457309b3a.1;
+        Tue, 15 Jul 2025 04:04:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752577476; x=1753182276; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GN/GA0HYuhYfjmgwvEl8615sxAOU2qYvspeazCxoj6I=;
+        b=GeHatiwU0rE7V5ZrhoWEVXoAYGXy/zbWyFyfcGBekvglBlXLq2CWQ5JWn8yoFgicSy
+         ZTmA/OrPhRzZmZfo/fGOoCUnqaEJcZM1A1GLLZv4JR1zNyZeFedt0MPAvg2vMHXjl7WX
+         6zQqAbjl88K7Jrp76cS5eIa9BTsjYnuO5+598HHbNUCqFiIClv3SZF7LPoRLP0lMdl/K
+         qxrHgrUqcjr4KQPnU/Q4LVRYEfBAbBfffwrPu45/d0qwS/jK+odcdtqDgsjoG74mWD+n
+         N+Q1mkxPOvYLLix/3DYElFLdQH/L6Nr2dyjZfDlCZOTeLkNv3xeFax1mVKxXIybuYjcu
+         vZow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752577502; x=1753182302;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mXWJvgkysJAIYjhynSIqmAwCotshg97ykDbemk4MKVY=;
-        b=Kf+SpphK0Z0qGPQJ16Vw4bbzi6Xi6QnZ/fvwIabg7nlSjS2jAOpNCG620RnByOC5O/
-         0dKUr484SmGfHjEDdWyY/AAx40YF+hnlwEBBiGcuvzLEDxLUPqU1B2I1NlfibrtJMsnJ
-         hjqt9bFMwgfXjC35Ff5eulqCpwlPebLOCr5TsvJi0MAnFeFeo1h+c6m/6FsRGqtEKAK8
-         I+peRHgTi6vesIaAEk2y0ffR0KzWSPSt8xibeBomrVTmuVPGsSf8tW8sk519A8Eln8/d
-         1Wfmt4mBJ76S9EFegZgmEjy+1hJrB0vfu+YzMGspBZK1qV0bhXhEXV0IU9gP2755Wp9E
-         DiHA==
-X-Gm-Message-State: AOJu0YwCiRCMSv0nwRSdJHXpU31yvfXZScAT38oaRcj5dDQa1REwF5Wm
-	AsojAJ9CsHgXFYEBCcEkcdKwvZ04d9ZYMfTafSHP7IjkUcVeFuU+0B/MjOZ3vexp6wyu+v4WpSW
-	VsQWZmfYyoumF2sqxkJwBMjYdcyyHB6jgjOexbCDkwquPcQ1pmQJCbZqOGqCJ/Uik0qYDH1U+Fu
-	9DmCtkEnpmrholBRM1hPKem8CY/YiHp5QjP9OypIYD90+N0eXs
-X-Gm-Gg: ASbGncuH07KdTrcOltakHL5gas7vY4/dceuAvByJuM8KMs0hRLTwlyGvtLSLsqD2eZc
-	sMcruJGYbYA9adnZ6Y5/074iTXdgEBSgADVn0PHa9dZL32kMnF248zuZRJHbrqI0eLM34UR4ees
-	DwbCJ1pGA/oqb8ulK/X8QlJd49ZhlrexyddfIa1JmQ3ZkbDIZZs49LeThkPYFbzs785XT/qdWu0
-	t3tQJGR0taNVtPUioQuz5YBheo4JJh/DcJDcosvKFJD93kpm5ugcRH+Xv1PB7+TAnrl70JlsU1b
-	pNUXALylVbl1yAQ3rQY8EnSmFmRlPW3W
-X-Received: by 2002:a05:600c:3b84:b0:442:e9eb:cba2 with SMTP id 5b1f17b1804b1-456270595f5mr25683055e9.0.1752577501707;
-        Tue, 15 Jul 2025 04:05:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFp+zFcABguTv2tVfluwznB62/qIMjIJQ+aN4JA01wqyr6F5mtu+/5NlUV3tbY8+UfZTV92gQ==
-X-Received: by 2002:a05:600c:3b84:b0:442:e9eb:cba2 with SMTP id 5b1f17b1804b1-456270595f5mr25682415e9.0.1752577501047;
-        Tue, 15 Jul 2025 04:05:01 -0700 (PDT)
-Received: from localhost ([89.128.88.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45614aeba29sm73112375e9.11.2025.07.15.04.05.00
+        d=1e100.net; s=20230601; t=1752577476; x=1753182276;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GN/GA0HYuhYfjmgwvEl8615sxAOU2qYvspeazCxoj6I=;
+        b=OT7M3rfKxl2b9y0TXK9vW9Azf26n2qj7P50um8K/7qa9S+8arJs1rSJe5YVuz5oGjc
+         7Ker+IFx93yCkYm6M0tA9U2P2HqvNZVhQ0HnbDe9TaZk/l2ZJqs4Q/tOOkRslYnIfztV
+         xInczazzeVB1NmG1HDqZk3rmnouhSGmBtJDc442Sa006vR9ZbL+11tU0XhM9WLWb+VJB
+         iCQ/lRtSbaAynJ/Na8+GAzXdaQCcsbH3oTD6B7gsT4ZF34O3RYhwR667hD1mHyClphtd
+         plrXbZlxU0DF/J4YaPETnf1Bd+SO83pybFANu3tTQaRwzDuTzK6YWZXYxF3s2N9Hrp/w
+         1pxw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9zXWKJk0e6bDiYOGZ6DFvVC5RyM0DIV2dcQP8GKzwT+ddf1tK3eq6Cn6T4kpGBCsmQtIUCPJI7ZQLG1AXbA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPdTNLNHBTgeHhHiUhf6Uf8LZHDajeSC3BM0xRTY+uoO9sDOh0
+	yugwOMx6KGJTVmf7VEBCPEx7zCEscIdnoxibwNN9d3CzlQwe0MnhfJel56rtzkbJ
+X-Gm-Gg: ASbGncuSnZMgJ0idiHQpQNlkyZMpksJn0JfvnRnz7oLLGDtVfRJgL9cJ3oY/XC/+T5v
+	1cLPScKyHKotU28ppj3Cbf4WcfAotIlQKBFjavRpnjYyZrttJxPqMnLRoNOSx299WAY9XMr5xN9
+	WZGNxl84bTYAMMv+k/MUjA38ErwBNJpZX6A5gnO2Gt0oQ8c3PKwD+B3bMGZr++GI8+v5znnlmxr
+	HfyKELMp7uh3B08w3zPHa5sZFsC5Jas6Yx4h9AvO4iX1BJi7yqdC+a82/wHuenBGvLuJ5h0K/uH
+	hdLauSoPyWHmDEfADQ8YKRFIrsQdIl0PLvdrHAF5KPD+txvjm92P/1/Z21hUfiNuY1bnb8ihFIl
+	zJyJMsyQx2n8xTgy48qOIgSgTB++UigjfbsV2GAsL8cmLt3GoBLAM
+X-Google-Smtp-Source: AGHT+IGbwNWSh9dfZ82pF5QEVs5RcwXR698Ky9JoFnmZIriQI3v+djqe8pzaepb2PukrfzQ01RG51A==
+X-Received: by 2002:a17:902:f687:b0:232:1daf:6f06 with SMTP id d9443c01a7336-23e1b1bcd70mr36099075ad.47.1752577476071;
+        Tue, 15 Jul 2025 04:04:36 -0700 (PDT)
+Received: from shankari-IdeaPad.. ([2409:4080:410:5eb2:ec3c:d341:faf0:a874])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3017cc3bsm15326340a91.24.2025.07.15.04.04.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 04:05:00 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: ipedrosa@redhat.com,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Marcus Folkesson <marcus.folkesson@gmail.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH v3 5/5] drm/sitronix/st7571-i2c: Add support for the ST7567 Controller
-Date: Tue, 15 Jul 2025 13:03:54 +0200
-Message-ID: <20250715110411.448343-6-javierm@redhat.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250715110411.448343-1-javierm@redhat.com>
-References: <20250715110411.448343-1-javierm@redhat.com>
+        Tue, 15 Jul 2025 04:04:35 -0700 (PDT)
+From: Shankari Anand <shankari.ak0208@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Shankari Anand <shankari.ak0208@gmail.com>
+Subject: [PATCH v4] rust: move ARef and AlwaysRefCounted to sync::aref
+Date: Tue, 15 Jul 2025 16:34:23 +0530
+Message-Id: <20250715110423.334744-1-shankari.ak0208@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,149 +96,381 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Sitronix ST7567 is a monochrome Dot Matrix LCD Controller that has SPI,
-I2C and parallel interfaces. The st7571-i2c driver only has support for I2C
-so displays using other transport interfaces are currently not supported.
+Move the definitions of `ARef` and `AlwaysRefCounted` from `types.rs`
+to a new file `sync/aref.rs`.
+Define the corresponding `aref` module under `rust/kernel/sync.rs`.
+These types are better grouped in `sync`.
 
-The DRM_FORMAT_R1 pixel format and data commands are the same than what
-is used by the ST7571 controller, so only is needed a different callback
-that implements the expected initialization sequence for the ST7567 chip.
+To avoid breaking existing imports, they are re-exported from `types.rs`.
+Drop unused imports `mem::ManuallyDrop`, `ptr::NonNull` from `types.rs`,
+they are now only used in `sync/aref.rs`, where they are already imported.
 
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-Reviewed-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+Suggested-by: Benno Lossin <lossin@kernel.org>
+Link: https://github.com/Rust-for-Linux/linux/issues/1173
+Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
 ---
+v3 -> v4: Changed the position of the use statement, 
+removed the either type that was pasted in aref.rs by mistake.
 
-Changes in v3:
-- Explicitly set ST7571_SET_REVERSE(0) instead of relying on defaults.
+I'll separate the patches for updation of call-sites subsystem-wise and send them subsequently.
+---
+ rust/kernel/sync.rs      |   1 +
+ rust/kernel/sync/aref.rs | 154 +++++++++++++++++++++++++++++++++++++++
+ rust/kernel/types.rs     | 154 +--------------------------------------
+ 3 files changed, 158 insertions(+), 151 deletions(-)
+ create mode 100644 rust/kernel/sync/aref.rs
 
-Changes in v2:
-- Use a different parse DT function (Thomas Zimmermann).
-
- drivers/gpu/drm/sitronix/st7571-i2c.c | 75 +++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
-
-diff --git a/drivers/gpu/drm/sitronix/st7571-i2c.c b/drivers/gpu/drm/sitronix/st7571-i2c.c
-index f9c4fedb3cca..453eb7e045e5 100644
---- a/drivers/gpu/drm/sitronix/st7571-i2c.c
-+++ b/drivers/gpu/drm/sitronix/st7571-i2c.c
-@@ -68,6 +68,9 @@
- #define ST7571_SET_COLOR_MODE(c)		(0x10 | FIELD_PREP(GENMASK(0, 0), (c)))
- #define ST7571_COMMAND_SET_NORMAL		(0x00)
+diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
+index 63c99e015ad6..8fd126788e02 100644
+--- a/rust/kernel/sync.rs
++++ b/rust/kernel/sync.rs
+@@ -10,6 +10,7 @@
+ use pin_init;
  
-+/* ST7567 commands */
-+#define ST7567_SET_LCD_BIAS(m) (0xa2 | FIELD_PREP(GENMASK(0, 0), (m)))
+ mod arc;
++pub mod aref;
+ pub mod completion;
+ mod condvar;
+ pub mod lock;
+diff --git a/rust/kernel/sync/aref.rs b/rust/kernel/sync/aref.rs
+new file mode 100644
+index 000000000000..752eef31d45e
+--- /dev/null
++++ b/rust/kernel/sync/aref.rs
+@@ -0,0 +1,154 @@
++// SPDX-License-Identifier: GPL-2.0
 +
- #define ST7571_PAGE_HEIGHT 8
- 
- #define DRIVER_NAME "st7571"
-@@ -774,6 +777,32 @@ static int st7571_validate_parameters(struct st7571_device *st7571)
- 	return 0;
- }
- 
-+static int st7567_parse_dt(struct st7571_device *st7567)
-+{
-+	struct device *dev = &st7567->client->dev;
-+	struct device_node *np = dev->of_node;
-+	struct display_timing dt;
-+	int ret;
++//! Built-in Reference Counting Support
 +
-+	ret = of_get_display_timing(np, "panel-timing", &dt);
-+	if (ret) {
-+		dev_err(dev, "Failed to get display timing from DT\n");
-+		return ret;
-+	}
++use core::{marker::PhantomData, mem::ManuallyDrop, ops::Deref, ptr::NonNull};
 +
-+	of_property_read_u32(np, "width-mm", &st7567->width_mm);
-+	of_property_read_u32(np, "height-mm", &st7567->height_mm);
++/// Types that are _always_ reference counted.
++///
++/// It allows such types to define their own custom ref increment and decrement functions.
++/// Additionally, it allows users to convert from a shared reference `&T` to an owned reference
++/// [`ARef<T>`].
++///
++/// This is usually implemented by wrappers to existing structures on the C side of the code. For
++/// Rust code, the recommendation is to use [`Arc`](crate::sync::Arc) to create reference-counted
++/// instances of a type.
 +
-+	st7567->pformat = &st7571_monochrome;
-+	st7567->bpp = 1;
++/// # Safety
++///
++/// Implementers must ensure that increments to the reference count keep the object alive in memory
++/// at least until matching decrements are performed.
++///
++/// Implementers must also ensure that all instances are reference-counted. (Otherwise they
++/// won't be able to honour the requirement that [`AlwaysRefCounted::inc_ref`] keep the object
++/// alive.)
++pub unsafe trait AlwaysRefCounted {
++    /// Increments the reference count on the object.
++    fn inc_ref(&self);
 +
-+	st7567->startline = dt.vfront_porch.typ;
-+	st7567->nlines = dt.vactive.typ;
-+	st7567->ncols = dt.hactive.typ;
-+
-+	return 0;
++    /// Decrements the reference count on the object.
++    ///
++    /// Frees the object when the count reaches zero.
++    ///
++    /// # Safety
++    ///
++    /// Callers must ensure that there was a previous matching increment to the reference count,
++    /// and that the object is no longer used after its reference count is decremented (as it may
++    /// result in the object being freed), unless the caller owns another increment on the refcount
++    /// (e.g., it calls [`AlwaysRefCounted::inc_ref`] twice, then calls
++    /// [`AlwaysRefCounted::dec_ref`] once).
++    unsafe fn dec_ref(obj: NonNull<Self>);
 +}
 +
- static int st7571_parse_dt(struct st7571_device *st7571)
- {
- 	struct device *dev = &st7571->client->dev;
-@@ -819,6 +848,38 @@ static void st7571_reset(struct st7571_device *st7571)
- 	gpiod_set_value_cansleep(st7571->reset, 0);
- }
- 
-+static int st7567_lcd_init(struct st7571_device *st7567)
-+{
-+	/*
-+	 * Most of the initialization sequence is taken directly from the
-+	 * referential initial code in the ST7567 datasheet.
-+	 */
-+	u8 commands[] = {
-+		ST7571_DISPLAY_OFF,
-+
-+		ST7567_SET_LCD_BIAS(1),
-+
-+		ST7571_SET_SEG_SCAN_DIR(0),
-+		ST7571_SET_COM_SCAN_DIR(1),
-+
-+		ST7571_SET_REGULATOR_REG(4),
-+		ST7571_SET_CONTRAST_MSB,
-+		ST7571_SET_CONTRAST_LSB(0x20),
-+
-+		ST7571_SET_START_LINE_MSB,
-+		ST7571_SET_START_LINE_LSB(st7567->startline),
-+
-+		ST7571_SET_POWER(0x4),	/* Power Control, VC: ON, VR: OFF, VF: OFF */
-+		ST7571_SET_POWER(0x6),	/* Power Control, VC: ON, VR: ON, VF: OFF */
-+		ST7571_SET_POWER(0x7),	/* Power Control, VC: ON, VR: ON, VF: ON */
-+
-+		ST7571_SET_REVERSE(0),
-+		ST7571_SET_ENTIRE_DISPLAY_ON(0),
-+	};
-+
-+	return st7571_send_command_list(st7567, commands, ARRAY_SIZE(commands));
++/// An owned reference to an always-reference-counted object.
++///
++/// The object's reference count is automatically decremented when an instance of [`ARef`] is
++/// dropped. It is also automatically incremented when a new instance is created via
++/// [`ARef::clone`].
++///
++/// # Invariants
++///
++/// The pointer stored in `ptr` is non-null and valid for the lifetime of the [`ARef`] instance. In
++/// particular, the [`ARef`] instance owns an increment on the underlying object's reference count.
++pub struct ARef<T: AlwaysRefCounted> {
++    ptr: NonNull<T>,
++    _p: PhantomData<T>,
 +}
 +
- static int st7571_lcd_init(struct st7571_device *st7571)
- {
- 	/*
-@@ -963,6 +1024,18 @@ static void st7571_remove(struct i2c_client *client)
- 	drm_dev_unplug(&st7571->dev);
++// SAFETY: It is safe to send `ARef<T>` to another thread when the underlying `T` is `Sync` because
++// it effectively means sharing `&T` (which is safe because `T` is `Sync`); additionally, it needs
++// `T` to be `Send` because any thread that has an `ARef<T>` may ultimately access `T` using a
++// mutable reference, for example, when the reference count reaches zero and `T` is dropped.
++unsafe impl<T: AlwaysRefCounted + Sync + Send> Send for ARef<T> {}
++
++// SAFETY: It is safe to send `&ARef<T>` to another thread when the underlying `T` is `Sync`
++// because it effectively means sharing `&T` (which is safe because `T` is `Sync`); additionally,
++// it needs `T` to be `Send` because any thread that has a `&ARef<T>` may clone it and get an
++// `ARef<T>` on that thread, so the thread may ultimately access `T` using a mutable reference, for
++// example, when the reference count reaches zero and `T` is dropped.
++unsafe impl<T: AlwaysRefCounted + Sync + Send> Sync for ARef<T> {}
++
++impl<T: AlwaysRefCounted> ARef<T> {
++    /// Creates a new instance of [`ARef`].
++    ///
++    /// It takes over an increment of the reference count on the underlying object.
++    ///
++    /// # Safety
++    ///
++    /// Callers must ensure that the reference count was incremented at least once, and that they
++    /// are properly relinquishing one increment. That is, if there is only one increment, callers
++    /// must not use the underlying object anymore -- it is only safe to do so via the newly
++    /// created [`ARef`].
++    pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
++        // INVARIANT: The safety requirements guarantee that the new instance now owns the
++        // increment on the refcount.
++        Self {
++            ptr,
++            _p: PhantomData,
++        }
++    }
++
++    /// Consumes the `ARef`, returning a raw pointer.
++    ///
++    /// This function does not change the refcount. After calling this function, the caller is
++    /// responsible for the refcount previously managed by the `ARef`.
++    ///
++    /// # Examples
++    ///
++    /// ```
++    /// use core::ptr::NonNull;
++    /// use kernel::types::{ARef, AlwaysRefCounted};
++    ///
++    /// struct Empty {}
++    ///
++    /// # // SAFETY: TODO.
++    /// unsafe impl AlwaysRefCounted for Empty {
++    ///     fn inc_ref(&self) {}
++    ///     unsafe fn dec_ref(_obj: NonNull<Self>) {}
++    /// }
++    ///
++    /// let mut data = Empty {};
++    /// let ptr = NonNull::<Empty>::new(&mut data).unwrap();
++    /// # // SAFETY: TODO.
++    /// let data_ref: ARef<Empty> = unsafe { ARef::from_raw(ptr) };
++    /// let raw_ptr: NonNull<Empty> = ARef::into_raw(data_ref);
++    ///
++    /// assert_eq!(ptr, raw_ptr);
++    /// ```
++    pub fn into_raw(me: Self) -> NonNull<T> {
++        ManuallyDrop::new(me).ptr
++    }
++}
++
++impl<T: AlwaysRefCounted> Clone for ARef<T> {
++    fn clone(&self) -> Self {
++        self.inc_ref();
++        // SAFETY: We just incremented the refcount above.
++        unsafe { Self::from_raw(self.ptr) }
++    }
++}
++
++impl<T: AlwaysRefCounted> Deref for ARef<T> {
++    type Target = T;
++
++    fn deref(&self) -> &Self::Target {
++        // SAFETY: The type invariants guarantee that the object is valid.
++        unsafe { self.ptr.as_ref() }
++    }
++}
++
++impl<T: AlwaysRefCounted> From<&T> for ARef<T> {
++    fn from(b: &T) -> Self {
++        b.inc_ref();
++        // SAFETY: We just incremented the refcount above.
++        unsafe { Self::from_raw(NonNull::from(b)) }
++    }
++}
++
++impl<T: AlwaysRefCounted> Drop for ARef<T> {
++    fn drop(&mut self) {
++        // SAFETY: The type invariants guarantee that the `ARef` owns the reference we're about to
++        // decrement.
++        unsafe { T::dec_ref(self.ptr) };
++    }
++}
+diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+index 22985b6f6982..60cb48285630 100644
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@ -5,12 +5,13 @@
+ use core::{
+     cell::UnsafeCell,
+     marker::{PhantomData, PhantomPinned},
+-    mem::{ManuallyDrop, MaybeUninit},
++    mem::MaybeUninit,
+     ops::{Deref, DerefMut},
+-    ptr::NonNull,
+ };
+ use pin_init::{PinInit, Zeroable};
+ 
++pub use crate::sync::aref::{ARef, AlwaysRefCounted};
++
+ /// Used to transfer ownership to and from foreign (non-Rust) languages.
+ ///
+ /// Ownership is transferred from Rust to a foreign language by calling [`Self::into_foreign`] and
+@@ -415,155 +416,6 @@ pub const fn raw_get(this: *const Self) -> *mut T {
+     }
  }
  
-+struct st7571_panel_data st7567_config = {
-+	.init = st7567_lcd_init,
-+	.parse_dt = st7567_parse_dt,
-+	.constraints = {
-+		.min_nlines = 1,
-+		.max_nlines = 64,
-+		.min_ncols = 128,
-+		.max_ncols = 128,
-+		.support_grayscale = false,
-+	},
-+};
-+
- struct st7571_panel_data st7571_config = {
- 	.init = st7571_lcd_init,
- 	.parse_dt = st7571_parse_dt,
-@@ -976,12 +1049,14 @@ struct st7571_panel_data st7571_config = {
- };
- 
- static const struct of_device_id st7571_of_match[] = {
-+	{ .compatible = "sitronix,st7567", .data = &st7567_config },
- 	{ .compatible = "sitronix,st7571", .data = &st7571_config },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, st7571_of_match);
- 
- static const struct i2c_device_id st7571_id[] = {
-+	{ "st7567", 0 },
- 	{ "st7571", 0 },
- 	{ }
- };
+-/// Types that are _always_ reference counted.
+-///
+-/// It allows such types to define their own custom ref increment and decrement functions.
+-/// Additionally, it allows users to convert from a shared reference `&T` to an owned reference
+-/// [`ARef<T>`].
+-///
+-/// This is usually implemented by wrappers to existing structures on the C side of the code. For
+-/// Rust code, the recommendation is to use [`Arc`](crate::sync::Arc) to create reference-counted
+-/// instances of a type.
+-///
+-/// # Safety
+-///
+-/// Implementers must ensure that increments to the reference count keep the object alive in memory
+-/// at least until matching decrements are performed.
+-///
+-/// Implementers must also ensure that all instances are reference-counted. (Otherwise they
+-/// won't be able to honour the requirement that [`AlwaysRefCounted::inc_ref`] keep the object
+-/// alive.)
+-pub unsafe trait AlwaysRefCounted {
+-    /// Increments the reference count on the object.
+-    fn inc_ref(&self);
+-
+-    /// Decrements the reference count on the object.
+-    ///
+-    /// Frees the object when the count reaches zero.
+-    ///
+-    /// # Safety
+-    ///
+-    /// Callers must ensure that there was a previous matching increment to the reference count,
+-    /// and that the object is no longer used after its reference count is decremented (as it may
+-    /// result in the object being freed), unless the caller owns another increment on the refcount
+-    /// (e.g., it calls [`AlwaysRefCounted::inc_ref`] twice, then calls
+-    /// [`AlwaysRefCounted::dec_ref`] once).
+-    unsafe fn dec_ref(obj: NonNull<Self>);
+-}
+-
+-/// An owned reference to an always-reference-counted object.
+-///
+-/// The object's reference count is automatically decremented when an instance of [`ARef`] is
+-/// dropped. It is also automatically incremented when a new instance is created via
+-/// [`ARef::clone`].
+-///
+-/// # Invariants
+-///
+-/// The pointer stored in `ptr` is non-null and valid for the lifetime of the [`ARef`] instance. In
+-/// particular, the [`ARef`] instance owns an increment on the underlying object's reference count.
+-pub struct ARef<T: AlwaysRefCounted> {
+-    ptr: NonNull<T>,
+-    _p: PhantomData<T>,
+-}
+-
+-// SAFETY: It is safe to send `ARef<T>` to another thread when the underlying `T` is `Sync` because
+-// it effectively means sharing `&T` (which is safe because `T` is `Sync`); additionally, it needs
+-// `T` to be `Send` because any thread that has an `ARef<T>` may ultimately access `T` using a
+-// mutable reference, for example, when the reference count reaches zero and `T` is dropped.
+-unsafe impl<T: AlwaysRefCounted + Sync + Send> Send for ARef<T> {}
+-
+-// SAFETY: It is safe to send `&ARef<T>` to another thread when the underlying `T` is `Sync`
+-// because it effectively means sharing `&T` (which is safe because `T` is `Sync`); additionally,
+-// it needs `T` to be `Send` because any thread that has a `&ARef<T>` may clone it and get an
+-// `ARef<T>` on that thread, so the thread may ultimately access `T` using a mutable reference, for
+-// example, when the reference count reaches zero and `T` is dropped.
+-unsafe impl<T: AlwaysRefCounted + Sync + Send> Sync for ARef<T> {}
+-
+-impl<T: AlwaysRefCounted> ARef<T> {
+-    /// Creates a new instance of [`ARef`].
+-    ///
+-    /// It takes over an increment of the reference count on the underlying object.
+-    ///
+-    /// # Safety
+-    ///
+-    /// Callers must ensure that the reference count was incremented at least once, and that they
+-    /// are properly relinquishing one increment. That is, if there is only one increment, callers
+-    /// must not use the underlying object anymore -- it is only safe to do so via the newly
+-    /// created [`ARef`].
+-    pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
+-        // INVARIANT: The safety requirements guarantee that the new instance now owns the
+-        // increment on the refcount.
+-        Self {
+-            ptr,
+-            _p: PhantomData,
+-        }
+-    }
+-
+-    /// Consumes the `ARef`, returning a raw pointer.
+-    ///
+-    /// This function does not change the refcount. After calling this function, the caller is
+-    /// responsible for the refcount previously managed by the `ARef`.
+-    ///
+-    /// # Examples
+-    ///
+-    /// ```
+-    /// use core::ptr::NonNull;
+-    /// use kernel::types::{ARef, AlwaysRefCounted};
+-    ///
+-    /// struct Empty {}
+-    ///
+-    /// # // SAFETY: TODO.
+-    /// unsafe impl AlwaysRefCounted for Empty {
+-    ///     fn inc_ref(&self) {}
+-    ///     unsafe fn dec_ref(_obj: NonNull<Self>) {}
+-    /// }
+-    ///
+-    /// let mut data = Empty {};
+-    /// let ptr = NonNull::<Empty>::new(&mut data).unwrap();
+-    /// # // SAFETY: TODO.
+-    /// let data_ref: ARef<Empty> = unsafe { ARef::from_raw(ptr) };
+-    /// let raw_ptr: NonNull<Empty> = ARef::into_raw(data_ref);
+-    ///
+-    /// assert_eq!(ptr, raw_ptr);
+-    /// ```
+-    pub fn into_raw(me: Self) -> NonNull<T> {
+-        ManuallyDrop::new(me).ptr
+-    }
+-}
+-
+-impl<T: AlwaysRefCounted> Clone for ARef<T> {
+-    fn clone(&self) -> Self {
+-        self.inc_ref();
+-        // SAFETY: We just incremented the refcount above.
+-        unsafe { Self::from_raw(self.ptr) }
+-    }
+-}
+-
+-impl<T: AlwaysRefCounted> Deref for ARef<T> {
+-    type Target = T;
+-
+-    fn deref(&self) -> &Self::Target {
+-        // SAFETY: The type invariants guarantee that the object is valid.
+-        unsafe { self.ptr.as_ref() }
+-    }
+-}
+-
+-impl<T: AlwaysRefCounted> From<&T> for ARef<T> {
+-    fn from(b: &T) -> Self {
+-        b.inc_ref();
+-        // SAFETY: We just incremented the refcount above.
+-        unsafe { Self::from_raw(NonNull::from(b)) }
+-    }
+-}
+-
+-impl<T: AlwaysRefCounted> Drop for ARef<T> {
+-    fn drop(&mut self) {
+-        // SAFETY: The type invariants guarantee that the `ARef` owns the reference we're about to
+-        // decrement.
+-        unsafe { T::dec_ref(self.ptr) };
+-    }
+-}
+-
+ /// A sum type that always holds either a value of type `L` or `R`.
+ ///
+ /// # Examples
+
+base-commit: 2009a2d5696944d85c34d75e691a6f3884e787c0
 -- 
-2.49.0
+2.34.1
 
 
