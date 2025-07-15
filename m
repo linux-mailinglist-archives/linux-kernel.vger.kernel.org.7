@@ -1,84 +1,129 @@
-Return-Path: <linux-kernel+bounces-731139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7A93B04FAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:03:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6869EB05019
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FBF23BD5AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:02:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496E61897846
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FB52D1F72;
-	Tue, 15 Jul 2025 04:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67092DECCA;
+	Tue, 15 Jul 2025 04:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/jWNrds"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3Cs58xy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37E8946A;
-	Tue, 15 Jul 2025 04:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7E52D46CE;
+	Tue, 15 Jul 2025 04:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752552187; cv=none; b=lflw9FRudCas1dhGZZbfWSqqikRpLmxC1ul3zsBKgIppw9bREpQpESMwPvHzH40Skh82iEuQw0Qy/E5pJz4PyvuL90KZb+9qtugYFBdyJAM2m04f2nUigieUngb9TWuHA1cDvDIj6FtY4VIA1v4fDIxAfiwPHFGf4znOJNWzqyo=
+	t=1752552232; cv=none; b=o/UenS91cVgKshCd8ybNOuRwM8jE+ajDY0gv6ZeOIAtixWBXNIpGm2F/YltvbwxxezR2Dok+bST1zGvjR2WoHsegzHQoAdcLy0BaVhfy7e2G9KrpOVYeLbFBQNcRJX5yQZ6c/n5f+xd53/JP2EhwENiCE/fq2JJg9y96Dqj7sg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752552187; c=relaxed/simple;
-	bh=RzbwxuJaFCbrVE5Vc09Rl3dqeW9ci/Csn6XWWJ2T4Pk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t9ub25AAaq/3opGJBNY4M74VUdCf0TopP6j1q1DGTCPibOFIllOPVk9lrfyQrF6KPIENV1GGXu7g/VD2NDy9JJtngIagfRzYuZTp0TrMUQS4pTEG6FgxjQNckV4JWGD4IkvfQsKUBWhJOuIxqojkWfejAksSAjkzJ7oLQitARNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/jWNrds; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F034C4CEE3;
-	Tue, 15 Jul 2025 04:03:07 +0000 (UTC)
+	s=arc-20240116; t=1752552232; c=relaxed/simple;
+	bh=DJu5S4IwJo18/zBTs5hjXsnqZFl0TuSdcXyF/MtV004=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=nhpIXk/yfj8f1FMtOwMAim+MCbBfBz5JJ00ry637tOEOY21s4HNEkfIjBUTAqPA4cfhhO++InsSwA4oXWZH7Qqx4DsGXI/zO/04v60dJ+HhG4K1gos/o6r8qUv+uEIYgB40GHYenrP+DTE3hOoT3l12umgdkPht/cEbo5ESOufM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3Cs58xy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A1660C19424;
+	Tue, 15 Jul 2025 04:03:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752552187;
-	bh=RzbwxuJaFCbrVE5Vc09Rl3dqeW9ci/Csn6XWWJ2T4Pk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k/jWNrdsUMdUNl6ZgaF3LGtr96yCcXOg7fBUu2BE0/25G+A+dRPSL9jR/Afj0SaAT
-	 RuA7/unR9MPxCSebKQhTv6AOv8KBK6F0tQxDhd31pCA1JQT5rUhFEDJbSotfmgPvpG
-	 YtO0wnjW4FkgoTc8aTV15ff3U7PKhbg73TX+RMunzYKx18E7yP31JmaJjwTE6wvq/U
-	 l22xRdvrc52lVpgbvt6H8Upm0z33WHD/G84RMAq54Xd4JIEVZtoIAR+/v/Apf2N20D
-	 +o+Da3spgbaQW7/81hJ6O6XjEPzPh10hbwP67+q6/kIL/rmxdYp3bAqpm+ZtC29aFa
-	 cRBD3HIG94RJg==
-Date: Mon, 14 Jul 2025 23:03:06 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Richard Yao <richard@scandent.com>
-Cc: devicetree@vger.kernel.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Simona Vetter <simona@ffwll.ch>, Conor Dooley <conor+dt@kernel.org>,
-	dri-devel@lists.freedesktop.org,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Akshay Athalye <akshay@scandent.com>
-Subject: Re: [PATCH 2/3] dt-bindings: ilitek-ili9881c: Add Tianxinwei
- TWX700100S0 support
-Message-ID: <175255218541.29438.10753274216810305494.robh@kernel.org>
-References: <20250714191729.2416-1-richard@scandent.com>
- <20250714191729.2416-3-richard@scandent.com>
+	s=k20201202; t=1752552231;
+	bh=DJu5S4IwJo18/zBTs5hjXsnqZFl0TuSdcXyF/MtV004=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=V3Cs58xy93Hb6rGfpE7MpIhsyYB8A7ZNsS8Tq/Vf6l2o7WRiGEK4lNEmiv6Ajewlb
+	 gbnvSynNYL0KJNOV1ms2VI7/M5jutInqVw83LdbGKNt/3vKeXg7gNhKeADI4StUYGn
+	 p4ii0he3kV0sBVJ2yyI51EFdh+327AURGHn/GcuYV4QJZsJ8esrrvEfxIXR7YAE729
+	 xwAYcNhN/I7DQgVasDaZBML/wLUH1fmjRxBq2rG8NEAqKpRrira6BTWXzmPV+NH1eo
+	 9A+xpB4wMYu9s6tkSeMh/q9RlAEdNVz/wE+NsFL9D/OMK7PZncP42tU3YwPvai/wTk
+	 uSZ/VbPRG3S3A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9238EC83F17;
+	Tue, 15 Jul 2025 04:03:50 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Mon, 14 Jul 2025 23:02:44 -0500
+Subject: [PATCH 01/17] dt-bindings: arm: tegra: pmc: Document Tegra210B01
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714191729.2416-3-richard@scandent.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250714-t210b01-v1-1-e3f5f7de5dce@gmail.com>
+References: <20250714-t210b01-v1-0-e3f5f7de5dce@gmail.com>
+In-Reply-To: <20250714-t210b01-v1-0-e3f5f7de5dce@gmail.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Nagarjuna Kristam <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Mathias Nyman <mathias.nyman@intel.com>, 
+ Peter De Schrijver <pdeschrijver@nvidia.com>, 
+ Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-usb@vger.kernel.org, Thierry Reding <treding@nvidia.com>, 
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752552229; l=1125;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=cgMpw5zuA5nEV4NkcEZ4qpIA/kC31MfIetXY4+pWRrc=;
+ b=kwDtUeynLZztzgV6Gshl/q8j63IovMWnSvwrd3YLif7L1wSA/cqLk3gNCrdSYbhROPsAo87P3
+ 7e5yZJp5bK+AcLPkRna/ltvB4dcls6TLZVYoeNL4plCZvMNt6e6biY+
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
+From: Aaron Kling <webgeek1234@gmail.com>
 
-On Mon, 14 Jul 2025 15:17:22 -0400, Richard Yao wrote:
-> Document the compatible value for Tianxinwei TWX700100S0 panel.
-> 
-> Signed-off-by: Richard Yao <richard@scandent.com>
-> ---
->  .../devicetree/bindings/display/panel/ilitek,ili9881c.yaml       | 1 +
->  1 file changed, 1 insertion(+)
-> 
+Add the PMC driver compatible strings for Tegra210B01
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
+index 7140c312d8986b0b733c519b1e89e360d9602add..eddcafc2f9398ad6fb4d2d46b3181ab91c89a229 100644
+--- a/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
++++ b/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
+@@ -18,6 +18,7 @@ properties:
+       - nvidia,tegra114-pmc
+       - nvidia,tegra124-pmc
+       - nvidia,tegra210-pmc
++      - nvidia,tegra210b01-pmc
+ 
+   reg:
+     maxItems: 1
+@@ -346,7 +347,9 @@ allOf:
+       properties:
+         compatible:
+           contains:
+-            const: nvidia,tegra210-pmc
++            enum:
++              - nvidia,tegra210-pmc
++              - nvidia,tegra210b01-pmc
+     then:
+       properties:
+         pinmux:
+
+-- 
+2.50.0
+
 
 
