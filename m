@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-731742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A74EB058E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:33:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC735B058EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:34:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C99FD170DE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:33:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 108D617029C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0062D63FF;
-	Tue, 15 Jul 2025 11:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j46ZgDXi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1909A2D9EE1;
+	Tue, 15 Jul 2025 11:34:17 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5CF19DF6A;
-	Tue, 15 Jul 2025 11:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212A5276046
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752579203; cv=none; b=sLoWbKjcl16h1b9Q0AvcQQYKsne78k2HYIlucfhFjpJMfEFE/tPbZx61FWeQzcSwEj6hiMauMkMinKnFPCDIKJ8RVoldwNVx7nGMCieuuAUN7zgaaRibVSEmIdkcKM//DzLvsufu9gXfkMBOiRNJ0IauwkItjTT6tKnw7uvTLDQ=
+	t=1752579256; cv=none; b=L6ODvANDO5tUavCkGz7MXcbokPWTNDIu7KRb3ietqIb1FfjpH5KeKlw9mwuqaZdWJ99IZITCgc8ymuF8EuhZDelpxAmet+WrtSJr89eAbPG0YTeDULgzmQ6wKka2vI1D1JhoysOPRepRJSdpMGGDlhAKfb5H81R1YGsvJS+3S+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752579203; c=relaxed/simple;
-	bh=NzCrCCIRiXzzXCYv2+YzYKUDPlKO09ruOW1F7aYjYLs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=RL9a0XEdZ4nzmdsLrEYwxPpG4VGcU2AZ8UnbhqHl2F1GZcGveiT+XEkeP64pMs556nn23il5UjNnvb+knpEroWXZw9NJDaZEshdpPdngg37i3Q4NJQRo0BskCLAB81ryxz1u3YaX5AQ80DBbtfaGwcyoaE84h95rlM5HfEShpnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j46ZgDXi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0947FC4CEE3;
-	Tue, 15 Jul 2025 11:33:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752579202;
-	bh=NzCrCCIRiXzzXCYv2+YzYKUDPlKO09ruOW1F7aYjYLs=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=j46ZgDXiRZfpxX5R7RQPn8zHxQCCPRgLc2OJAnsHHmOyXffxVpjwB86/xdaW7f9cw
-	 rh2pwCk99ahHNRST5JTvCI1WLejh4UrdQR6zzjLUMAH2FkOgMTiIaQn8i+V+wg6XhZ
-	 2F6oZGvY1HvERjih89nbnxE3eXLvkakdkUS0A+kiCMhJ2FkF9swg7GDGmp4pEyXXrk
-	 VUyOdZP7CgW5VRsWwqbjt5/zLxAGAInbgM2y8s+C+Z31msJhh4hlywzKu7/nUpuf0d
-	 Gq+V0JMLJZLhoFOliZiPWMsJnDtuk3GxtKECAbI+azp6B+f3LP1NXneKzrYrusnX9n
-	 y2Guxfk8/HLxQ==
+	s=arc-20240116; t=1752579256; c=relaxed/simple;
+	bh=xuUks+W/d6ssg1oq9GXSSz31kaiNVVYndaiq2TmGFIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JilC4bwLmaG1YUPliu5Gs3e/PqJ19gbyLmpP1qappFOFXJaHQWmOc+w+EtIXQWg/d5KrvPiS+qJ0Yyy6ppkFS5vbxRFoO7pi0SgbUwpFVMs94+qFuwqkv+sBtQP94OL5tyMK9LPorH3F7SX6Xq9coQodVq3bOVzc4zwS4ARw510=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1ubdvG-0003iF-Be; Tue, 15 Jul 2025 13:34:10 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1ubdvG-008ZSj-0R;
+	Tue, 15 Jul 2025 13:34:10 +0200
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id C58B74423D6;
+	Tue, 15 Jul 2025 11:34:09 +0000 (UTC)
+Date: Tue, 15 Jul 2025 13:34:09 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] can: Kconfig: add missing COMPILE_TEST
+Message-ID: <20250715-laughing-gazelle-of-nirvana-3502bd-mkl@pengutronix.de>
+References: <20250715-can-compile-test-v2-0-f7fd566db86f@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="53wy6ux2n6earrh7"
+Content-Disposition: inline
+In-Reply-To: <20250715-can-compile-test-v2-0-f7fd566db86f@wanadoo.fr>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--53wy6ux2n6earrh7
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 15 Jul 2025 13:33:18 +0200
-Message-Id: <DBCLH4WXYTJL.FDZ9B39OO3TY@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v4] rust: move ARef and AlwaysRefCounted to sync::aref
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Shankari Anand" <shankari.ak0208@gmail.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250715110423.334744-1-shankari.ak0208@gmail.com>
-In-Reply-To: <20250715110423.334744-1-shankari.ak0208@gmail.com>
+Subject: Re: [PATCH v2 0/3] can: Kconfig: add missing COMPILE_TEST
+MIME-Version: 1.0
 
-On Tue Jul 15, 2025 at 1:04 PM CEST, Shankari Anand wrote:
-> Move the definitions of `ARef` and `AlwaysRefCounted` from `types.rs`
-> to a new file `sync/aref.rs`.
-> Define the corresponding `aref` module under `rust/kernel/sync.rs`.
-> These types are better grouped in `sync`.
->
-> To avoid breaking existing imports, they are re-exported from `types.rs`.
-> Drop unused imports `mem::ManuallyDrop`, `ptr::NonNull` from `types.rs`,
-> they are now only used in `sync/aref.rs`, where they are already imported=
-.
->
-> Suggested-by: Benno Lossin <lossin@kernel.org>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1173
-> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+On 15.07.2025 20:28:10, Vincent Mailhol wrote:
+> The ti_hecc and tscan1 CAN drivers can not be built on an x86_64
+> platform. Add the COMPILE_TEST dependency to allow build testing.
+>=20
+> Doing that, a so far unnoticed W=3D0 warning showed up in ti_hecc. Fix
+> this warning. To prevent any potential noise in some future git
+> bisect, the warning is fixed before introducing COMPILE_TEST.
+>=20
+> Note that the mscan and mpc5xxx drivers have the same issue but those
+> two use some helper functions, such as in_8() and out_8(), which are
+> only available on the powerpc platform. Those two drivers would
+> require some deeper code refactor to be built on x86_64 and are thus
+> left out of scope.
 
-One comment below, but that can be fixed when applying the patch.
+Added to linux-can-next.
 
-Reviewed-by: Benno Lossin <lossin@kernel.org>
+Thanks,
+Marc
 
-> diff --git a/rust/kernel/sync/aref.rs b/rust/kernel/sync/aref.rs
-> new file mode 100644
-> index 000000000000..752eef31d45e
-> --- /dev/null
-> +++ b/rust/kernel/sync/aref.rs
-> @@ -0,0 +1,154 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Built-in Reference Counting Support
-> +
-> +use core::{marker::PhantomData, mem::ManuallyDrop, ops::Deref, ptr::NonN=
-ull};
-> +
-> +/// Types that are _always_ reference counted.
-> +///
-> +/// It allows such types to define their own custom ref increment and de=
-crement functions.
-> +/// Additionally, it allows users to convert from a shared reference `&T=
-` to an owned reference
-> +/// [`ARef<T>`].
-> +///
-> +/// This is usually implemented by wrappers to existing structures on th=
-e C side of the code. For
-> +/// Rust code, the recommendation is to use [`Arc`](crate::sync::Arc) to=
- create reference-counted
-> +/// instances of a type.
-> +
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-There is a missing `///` in this line, but Miguel can fix that when
-picking the patch.
+--53wy6ux2n6earrh7
+Content-Type: application/pgp-signature; name="signature.asc"
 
----
-Cheers,
-Benno
+-----BEGIN PGP SIGNATURE-----
 
-> +/// # Safety
-> +///
-> +/// Implementers must ensure that increments to the reference count keep=
- the object alive in memory
-> +/// at least until matching decrements are performed.
-> +///
-> +/// Implementers must also ensure that all instances are reference-count=
-ed. (Otherwise they
-> +/// won't be able to honour the requirement that [`AlwaysRefCounted::inc=
-_ref`] keep the object
-> +/// alive.)
-> +pub unsafe trait AlwaysRefCounted {
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmh2PK0ACgkQDHRl3/mQ
+kZxZMAf+MxOyHcgzN73V5oP1YTQXFFdZ1WH7+bwUaJc9ntiNLXAwyVukfbG/jEau
+tHet8OzfSyVnPTXFOqMujt5eBxj4sN+fcQlsbOPcw1JbZ7mvTvjJoKDEKlLxZme/
+OQwgNscBPoY9Sxuim14pXVQH5hCcsOvssv+SEVJNEvnWgBtAGVakZhh8xsE7Mq5Y
+mqb7o4r6g3MmXIijZWtRBuiBzdIjpbPg6eTz2GPQDeqoV7mwKUa5kHzvHtqBKqRS
+r5MEGBicM3Lt2SNH5nmvGy4M+UrTLN1UvStLwbJKA89bsg5Y2ugiUx015iKUa+Wv
+CLE5IFBG1mH8Oba2vc2ifNopc7u4eQ==
+=yzDW
+-----END PGP SIGNATURE-----
+
+--53wy6ux2n6earrh7--
 
