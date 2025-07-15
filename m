@@ -1,136 +1,104 @@
-Return-Path: <linux-kernel+bounces-732083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4495FB0617C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:42:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0212B061E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 495C57AA223
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:40:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F08DC586CEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F751E832A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90831EF36B;
 	Tue, 15 Jul 2025 14:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZM9hYZoI";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t1l+seC8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F5019CCF5;
-	Tue, 15 Jul 2025 14:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6EE2AE8E;
+	Tue, 15 Jul 2025 14:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752590496; cv=none; b=DIG8+OeNiDzVLOdjw/5Vl6YA8F6EVdSX8noElmy6aIy0wp3GummXh4S0KfmmVBSLMXQxqBksTogd65Qk+5uj219WHuUOV/KZzvGH7VflIHF54KdMtzIxiHCGX3dyEER/12bGaPhvHj1GWXN5ia1R/3wLxsV0jXayyEPFHDfyhTY=
+	t=1752590497; cv=none; b=qleiTw/AgnF/3AM9QJ2gcTP+bFuKDjrhIXbxGZ+i0n85YRXBfcgsQb0PWDeWa25qOgeXra5Liz+gGbE1Z5hybLaFsZrH4eGCTN5U+cn0FxBZdtUywIhdf6JR+7ylC2teE/bhle5Unzuf8lrW2M+/UpXbMRH5dRs6VREPP7clR14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752590496; c=relaxed/simple;
-	bh=f+UdcAGiBhzcRrLBexR8JxyBZ+p87Oq5cSZXCDfI05U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AbaWwv4xfOnC5JUDBd00xt+IWk36JUr/bm2nAjns60PQwgZpjjGTZCLkybJ08WWXAX6THki+VeQ8uvI9FQgIqRh2T0bzNnFN99BdO4gagjW7oE5V+snNrgtP2m87Yk5UpqrzS9/MAcB6tXj35Bj4YrSgKt2FL/YLXiN/x+BjD8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZM9hYZoI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t1l+seC8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752590492;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f+UdcAGiBhzcRrLBexR8JxyBZ+p87Oq5cSZXCDfI05U=;
-	b=ZM9hYZoI2yCx7OcML8cDVGCFIzx3fBIrQJyYj4RrLY4Z1B/VVkvYzOfedvgtmXLobQHlWk
-	ciiGWGyiCGV7G7w4Co7rCUUPq9eUnqddrZN/IZPwSFhHAfhhrDpz6e6Hvjujhjda5T4AjL
-	5G5RUwhF5nDo7YZ+wUSFeBoOFktL4YIBFBFsoQpjRRs8hqI3Nlolr9XJqQVnh8taM+rQI4
-	0BAVV0FGfSV+7HigrL8RpjfxfngmVz5srWptYLTS26qemyVQ6kLSoWClZJpu+uKIv6a4Ea
-	nSrodAufhy2KWHLqn7fwUpxrUr/dvEh/yuGYpLDWdqwFMLDqALoadEeg7NQueQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752590492;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f+UdcAGiBhzcRrLBexR8JxyBZ+p87Oq5cSZXCDfI05U=;
-	b=t1l+seC8FWD8GTwyVnHiJTZLlRMmW0v3/HWGFqJxExZswwcWk9sSft+I7azd+coGDXalCp
-	xKgTcnE8KoHgUMAg==
-To: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 2/3] Documentation: locking: Add local_lock_nested_bh() to locktypes
-Date: Tue, 15 Jul 2025 16:41:26 +0200
-Message-ID: <20250715144127.697787-3-bigeasy@linutronix.de>
-In-Reply-To: <20250715144127.697787-1-bigeasy@linutronix.de>
-References: <20250715144127.697787-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1752590497; c=relaxed/simple;
+	bh=HqGFg4SANcbYOi3xVkEVkOC2NHkznbBn5xdWEpv50To=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=MW1422KuATkmODRqwfkBNi6aHeuFN1ThCzZoFf0F0J5drJToFFRyGQNP+sSyoy1vnFX5zRx700Ij1zfUxxny3O15S6BHOQ4U3bAXYXmT3xEpWNt+Mu32Sg2IPgPlOsKnv6sGMogGisa77Cq+8dnp72Ak4CKijE6DwimhkezX4GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bhMGV526Yz2CfbG;
+	Tue, 15 Jul 2025 22:37:22 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 59A9F14022E;
+	Tue, 15 Jul 2025 22:41:29 +0800 (CST)
+Received: from [10.174.178.247] (10.174.178.247) by
+ dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 15 Jul 2025 22:41:28 +0800
+Subject: Re: [PATCH v1] ACPI: APEI: MAINTAINERS: Update reviewers for APEI
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Linux ACPI
+	<linux-acpi@vger.kernel.org>
+CC: LKML <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>, Len
+ Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>, James Morse
+	<james.morse@arm.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Shuai Xue
+	<xueshuai@linux.alibaba.com>
+References: <12722151.O9o76ZdvQC@rjwysocki.net>
+From: Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <b22f7a80-3219-00ce-8773-c3137fe6404f@huawei.com>
+Date: Tue, 15 Jul 2025 22:41:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <12722151.O9o76ZdvQC@rjwysocki.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-local_lock_nested_bh() is used within networking where applicable.
-Document why it is used and how it behaves.
+On 2025/7/15 21:20, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Update the ACPI APEI entry in MAINTAINERS by dropping the reviewers
+> who have not been responsive for over a year and adding a list of
+> new reviewers.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> The new people in the new APEI reviewers list, please send your ACKs for this
+> change, thanks!
+> 
+> ---
+>   MAINTAINERS |    5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -306,10 +306,11 @@
+>   
+>   ACPI APEI
+>   M:	"Rafael J. Wysocki" <rafael@kernel.org>
+> -R:	Len Brown <lenb@kernel.org>
+> -R:	James Morse <james.morse@arm.com>
+>   R:	Tony Luck <tony.luck@intel.com>
+>   R:	Borislav Petkov <bp@alien8.de>
+> +R:	Hanjun Guo <guohanjun@huawei.com>
+> +R:	Mauro Carvalho Chehab <mchehab@kernel.org>
+> +R:	Shuai Xue <xueshuai@linux.alibaba.com>
+>   L:	linux-acpi@vger.kernel.org
+>   F:	drivers/acpi/apei/
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- Documentation/locking/locktypes.rst | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Acked-by: Hanjun Guo <guohanjun@huawei.com>
 
-diff --git a/Documentation/locking/locktypes.rst b/Documentation/locking/lo=
-cktypes.rst
-index 80c914f6eae7a..4851ec1232058 100644
---- a/Documentation/locking/locktypes.rst
-+++ b/Documentation/locking/locktypes.rst
-@@ -204,6 +204,27 @@ per-CPU data structures on a non PREEMPT_RT kernel.
- local_lock is not suitable to protect against preemption or interrupts on a
- PREEMPT_RT kernel due to the PREEMPT_RT specific spinlock_t semantics.
-=20
-+CPU local scope and bottom-half
-+-------------------------------
-+
-+Per-CPU variables that are accessed only in softirq context should not rel=
-y on
-+the assumption that this context is implicitly protected due to being
-+non-preemptible. In a PREEMPT_RT kernel, softirq context is preemptible, a=
-nd
-+synchronizing every bottom-half-disabled section via implicit context resu=
-lts
-+in an implicit per-CPU "big kernel lock."
-+
-+A local_lock_t together with local_lock_nested_bh() and
-+local_unlock_nested_bh() for locking operations help to identify the locki=
-ng
-+scope.
-+
-+With lockdep is enabled, these functions verify that data structure access
-+occurs within softirq context.
-+Unlike local_lock(), local_unlock_nested_bh() does not disable preemption =
-and
-+does not add overhead when used without lockdep.
-+
-+On a PREEMPT_RT kernel, local_lock_t behaves as a real lock and
-+local_unlock_nested_bh() serializes access to the data structure, which al=
-lows
-+removal of serialization via local_bh_disable().
-=20
- raw_spinlock_t and spinlock_t
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
---=20
-2.50.0
-
+Thank you!
+Hanjun
 
