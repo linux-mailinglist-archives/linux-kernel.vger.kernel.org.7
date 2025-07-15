@@ -1,176 +1,138 @@
-Return-Path: <linux-kernel+bounces-731169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32552B05050
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:36:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBBC4B05052
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F8DC4A323C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:36:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05B454A4601
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0312D1913;
-	Tue, 15 Jul 2025 04:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59362D0C6E;
+	Tue, 15 Jul 2025 04:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arri.de header.i=@arri.de header.b="OqIQYMJI"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010023.outbound.protection.outlook.com [52.101.69.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A43henmj"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE1B2D0C6E;
-	Tue, 15 Jul 2025 04:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.23
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752554184; cv=fail; b=n4QbJLYRSIHHhKOopkwAe/GsPoqlrG9Z+omm6u4o0OoClt6NMgQosmf9tkjiPPkbKOYmAvMkVHYzmaCtHNe1XBPl2YOFdo/sMtv/593sVLpE0gAijHI/ja4e1ne8YU+HKVO5q4OYMhlgcmzuZuR4WBltKmZdHtEkSzetew+ImKs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752554184; c=relaxed/simple;
-	bh=Vwoew5PyTCJVcca+F8s4+TB//SbGAUoQcsSSM07HTtA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KGi6XtbkxHNQi5ZjQau4mu1WI2Rz1NFoCXu0d7ViVMC7FmZDTM7leAaKNwc2rc1W1VetcGUXiWIHCA+lR1zDtqqcZ1PeXl51rRHMsOSn4mOok7HVIBEu6N0xPG5YV+woO8TL1XIWaCARvKLNJq1Fwo7aq/c6Gpw1QTffONnuoHg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arri.de; spf=pass smtp.mailfrom=arri.de; dkim=pass (1024-bit key) header.d=arri.de header.i=@arri.de header.b=OqIQYMJI; arc=fail smtp.client-ip=52.101.69.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arri.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arri.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a7CL4lyLX//8P+tAs+r6VAmPTOhSmsAyvbiU7d0zIcCLiinwRjhAgakejO4KPVgZh8O4agvEgNkC0uZ4lS2tSW6WZ9o4L/EiBJQ3MuN/CXqA+IWdqq1EDrqOcQ8q8rn08DDMSWUZPjn+rombvhApspIDmJssSvzlgJ+MDPoGJSSGuEAfS+mg3ZKYO1KCnSJ/sPD/LiSDZ8EbqIeWLIWvGV4wa+1bZIwFDgH4DpU+GJ1OJj/d5WMKpr3ZD9H4sXspQxOxc/MuK8CcB4kkmQ5EfWhWkluXHMuASMX+2TyqUprye9ihMmafA1ugKsX15FAOi05VPwT05vmeA171PXiXog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tlRjEM0pzE11ERXe8Rahvw3ehFcRv73ESvQd5EAY0bI=;
- b=IFiQoOxUBaEPHjDIAxkp5hk4yhgGKAbgKWUc2Z9B8Xe+6xswgEosd2YrP5iAsdGhq/xw2vcUQz247aor8TCWw2FVtXOJ9Z3Lmu8+NNv85wSsI1yMOB6kMXbmCqtjjQ7w450gurvsbxxmV6+VOkY+HTrKAGgfSrCWPQZX7FPdt9CKRcj1S9uwaVABGsZ1mtRAK+7YmRYAlvt25n1XuZfP5WyzD47CUEBbJxXcw4mX4pwWTlg5cFaAlReVFPUvXevlidYTBEbTast8AymrrYSTE7lMpvkpxY/3K+X9BRpAjNv+oAGbrOkheSdEZvbJuiFkawOkIq3NEg5qSeEJ3XATZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 217.111.95.7) smtp.rcpttodomain=holtmann.org smtp.mailfrom=arri.de;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=arri.de;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arri.de; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tlRjEM0pzE11ERXe8Rahvw3ehFcRv73ESvQd5EAY0bI=;
- b=OqIQYMJIZbqriygLuetRAcciMZhcQFj0XtmNOt0pyaDIsVHIczCpAXsWI4fo3c64ozpW/6lmBjnBllHBG7HRi2kTuLKN3bipVZG88We/8zuGSM0ihjx3lgRLFc+U2xc/WMCGOQvvtzBudtsxaEOsHJGN6rk/W9JEKH3OFaWlkw0=
-Received: from DU6P191CA0042.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:53f::18)
- by PA4PR03MB7440.eurprd03.prod.outlook.com (2603:10a6:102:109::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Tue, 15 Jul
- 2025 04:36:13 +0000
-Received: from DB5PEPF00014B92.eurprd02.prod.outlook.com
- (2603:10a6:10:53f:cafe::e3) by DU6P191CA0042.outlook.office365.com
- (2603:10a6:10:53f::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.33 via Frontend Transport; Tue,
- 15 Jul 2025 04:36:12 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 217.111.95.7)
- smtp.mailfrom=arri.de; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=arri.de;
-Received-SPF: Fail (protection.outlook.com: domain of arri.de does not
- designate 217.111.95.7 as permitted sender) receiver=protection.outlook.com;
- client-ip=217.111.95.7; helo=mta.arri.de;
-Received: from mta.arri.de (217.111.95.7) by
- DB5PEPF00014B92.mail.protection.outlook.com (10.167.8.230) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8922.22 via Frontend Transport; Tue, 15 Jul 2025 04:36:11 +0000
-Received: from n9w6sw14.localnet (192.168.54.15) by mta.arri.de (10.10.18.5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.38; Tue, 15 Jul
- 2025 06:36:10 +0200
-From: Christian Eggers <ceggers@arri.de>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
-	<johan.hedberg@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-CC: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
-	<linux-next@vger.kernel.org>, Kiran K <kiran.k@intel.com>, Ivan Pravdin
-	<ipravdin.official@gmail.com>
-Subject: Re: linux-next: build failure after merge of the bluetooth tree
-Date: Tue, 15 Jul 2025 06:36:09 +0200
-Message-ID: <2198253.9o76ZdvQCi@n9w6sw14>
-Organization: Arnold & Richter Cine Technik GmbH & Co. Betriebs KG
-In-Reply-To: <20250715130932.5e13bfb3@canb.auug.org.au>
-References: <20250715130932.5e13bfb3@canb.auug.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FE825F99B
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752554228; cv=none; b=aWnNtTmTrvt42nx5VVTsm/Dp+cXCEDyioFDyyR7MV1wFD7qGze2r8ifmFYcEnjhB/5NPEF0G8rS0cyU1iddqBSWu8mkc49Xm+5y6bJyPn1O2dEBrRXyy/a8p3tI+odvYytUO5odrilfKsi2ImggxfZfawrxJgjKa7qMBzNm1rok=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752554228; c=relaxed/simple;
+	bh=HEym2MfRYDRe1WStyHMOT8vdThlsV2VAJ0myxALEAgk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kI0fB/3kMGgdE/XEMQfDtbb9Gv+hjl4uFd9TEzKgAs95h8mdzad7QbZj1QrB8jyzvAi9jJA2riiAgYsv/gBybfoiyYhOXjdchXtVhh5w1euCf0vBIYTMznQcU5dn/g9ADf4bYhBhLb8U4a1BK7exUAu+XK1FOVAqqID73nrFHLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=A43henmj; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b31d578e774so5061143a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 21:37:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1752554226; x=1753159026; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gqg4UcH4HOCD8WdGE4+ik0rgx/yjtc/u1ELlwLDaNkk=;
+        b=A43henmj4KmroWVbHwKFQPtrnX1jzu3bqWZrGcEcn43gimxYAkUn3PRoJ30w9fVUBQ
+         0HYPp4Ti/KOmPGMhBaqOsQ5R7qRKn3IxWkeMxxoAp9qwQb3xwAMy9nJYouryCge+thrA
+         5GkzURi4DmrwjmLYQ3JDfXVRm36S1Fs7MGY3Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752554226; x=1753159026;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Gqg4UcH4HOCD8WdGE4+ik0rgx/yjtc/u1ELlwLDaNkk=;
+        b=NbsgLXjmt4b9GSkdGJNhy25/Ev0bYOJdCg8kXXv/4Xp6IGzmOLEigWojQ+oGEBnqeo
+         reHhwJ+xhEWvIsG8Fst2eWKvH1YZiNTZtHFMMgfetE46iS/97KvzPMV1ady4p4EnPsYs
+         IyZVoT89F2J7s3l6tPITg+VL/6Z/HILzV6yt3Rq12UD+mtY9Ft4O366wygX2pMsSdif+
+         XFdL5nQT+dPS6XImqajWmyyHYQHPIIqcgRc2uJIG3a2zGn7YbF2FXvjS+oPJPMQhE2cJ
+         9qaeKzGf53l5pSpBckibRou2qjZdDRxONIzLw9r9L4edtVtcvlU200grvpCOjN5jDPyB
+         M0ag==
+X-Forwarded-Encrypted: i=1; AJvYcCV83fBfX5/THLUx0szVr3XqJE0E4U3cBpchQb5lIV1d44T1a08Xbo6u/MyMCA0Hih8xSD0mCaoImjtInUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysvGKD1Ej3jGR+U+lEEnNLN3jmRqaj1XPZHWqztdqab9FowDO4
+	fpXefOLKlNSgyVPqqVr4yXCZ2BkpqWTh97VpuA3Hbbnk/i7ICNjeDB4Rmtwrfu75RTObnOtBL2m
+	MN5C9EzUCHo2naf7DF4lxow0Gji6TwspTNpKOielS
+X-Gm-Gg: ASbGncvYjf6xuI0VCyC7o8dAwHoNudd857qwyIz3hR+Vn1r4ILMP/x1ZH78pr2vp0vG
+	asDiqpsZiN7LhLhfspyh4SARxGiQW3sWjGnYioU9E7fqJ1cDn4tfL3E1CwJJ+v6i5KUonNhxWUP
+	md1MA3QIFcVotthJUaDZVYknB5p8LJPcb5cZJTUR6PLENPorE2GmCXRKNwPokneDaR6jbjqn2sN
+	19yNVapQN5g8IigPDEiIvEutqDQsTgUs0pAl9YK0KHyIw==
+X-Google-Smtp-Source: AGHT+IHf1xc3dLDnNYF/fDC0d2YbPGxvPK9FwAjwgXDKEU1kkJL2K+WT5K+79jl9PQ6eV0yj7I0MMHxdLoUbmyObj2Y=
+X-Received: by 2002:a17:90b:57ef:b0:30e:6a9d:d78b with SMTP id
+ 98e67ed59e1d1-31c8f88d387mr3132859a91.12.1752554225889; Mon, 14 Jul 2025
+ 21:37:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB5PEPF00014B92:EE_|PA4PR03MB7440:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4c29fc3-5714-4b5e-730a-08ddc3591ff1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WYccwXhMRsAWWtuBJxuXJgL3NvjtFe/2iCeeIDj2h2aiqLhcOl3dbWpxOMnO?=
- =?us-ascii?Q?X/C9ycSdBtAy/4evc1HoVFV8GARhUy8H8MegfyNB6+ZNjixPnW2cx9+Sm3g0?=
- =?us-ascii?Q?pW2HKebiZDnPSqUY8tpHVhO2xY2AhfX6qP3URO6CWq6bHmmmUYIaV5Q6xQBG?=
- =?us-ascii?Q?YUnm3FMurm/zC6z83kw4jVTHKrM95K80SP3sxpsUj8twzRbJdwc6ipLl4/kp?=
- =?us-ascii?Q?YcaGWGJ2B5R6+KDvnOltFUolyNvgFaSeycdRPyMIuMvhtitpqLneQzLSDB6o?=
- =?us-ascii?Q?KW/znrIIbHg9PYeUZ3FGt1voqKH0SU7l2Yi1O4QrxNFfw2TsOKSJ1gZx0Vfh?=
- =?us-ascii?Q?0FWzeI+GbB+C0P6vEgQ4VHFFHzCZ9/LzH3wItpYn9EXgRHQwBxSpwV1kuXjt?=
- =?us-ascii?Q?tUiwMlRJeCOnblOi88J/cSOdE2DG/hq5qzCWRUl6rmf1J0E8HNXYveiQQ7FZ?=
- =?us-ascii?Q?wWYwfMtJTIiLL+WktSuXNyAe0aSO9sDrk1n5vtpkNtWeXyTgcR1f924Fmf5p?=
- =?us-ascii?Q?m60Fn/L2FkfN9HE8CJvthuEnW9MAIkRC0J9R5Vtxq2Y2vFAtufQtgq0kYzhO?=
- =?us-ascii?Q?/CL6rTz33RV7HTwzcQv2kg+MeFnUmzHCGi3fqj25nSrQnXRjri8gaSHCHETp?=
- =?us-ascii?Q?K2OVfUyln9h+jW06RjMRAk8QWEdSu5IoefbFpEJx19TwV/BfMUpkT/+OgfL9?=
- =?us-ascii?Q?ufmcOKTkgLGeu0bc90OWHrI4Kzw17g5QMq5kfBX0vhnEaaDv9ip6bL5tKaIS?=
- =?us-ascii?Q?F/GFo9fJIPkT10Lg8DdkQ+/d25dgd+Lq3fx/iuc55iYeXPG+/XBBzjhU9NOO?=
- =?us-ascii?Q?2v6X+9MJkk2lErNlrKoJrhSzKGsAEVz87dk+QkkEc8/Hl6NABQQvxlSs+Vg7?=
- =?us-ascii?Q?waYaFZejFmZRGoPc6IpJBDmUwArMeURe7V3Us4OcRaPeNYTxaeHBGF2vTl1h?=
- =?us-ascii?Q?pokEsFQTLzs/9iEJ4Ex+3lMFEje/5XvJ0Q0kNdUF6QwbSOd5TJnR72Ebzmi6?=
- =?us-ascii?Q?G80dYVCsEILMJIcFhMIxv547lJEsZqagaO5fuBZhWJ8CDp6X7xO5M9sYsv94?=
- =?us-ascii?Q?WP/70q7ZIcdKmO+ZMSa/stkSG2rHEyqV9mff/haLF9PNftti6pWzFnyLki7x?=
- =?us-ascii?Q?aKyaAGjTgYlo36VeP3RP7H+DhoEi2zLvVxOHfu7w7XXjp3BJ1lMnxwci9hUA?=
- =?us-ascii?Q?pEw+HM0n+7x3Vw5sdYOn8UD8fNDlWxuQGAt5h9RjHeQVA1jUzfmJt4RtJV4a?=
- =?us-ascii?Q?jE+mYIig3G+kZC/Wz/E74G1YTp/VzYuHQS3xEvZUq8mD94IjNxi2g/By4ZPE?=
- =?us-ascii?Q?Y9Pk0WGr7knYIopupdsvI/ZNVQglQmMo+ayR9VuFka05/jxhFf68SwzyP90Y?=
- =?us-ascii?Q?LQkAU+oLym2sKvflagb2EMouv7NYG4BP1cvMjQ6TvpAhI6CS9i14kho65UVG?=
- =?us-ascii?Q?E2Hm/Lugbu/crKNEm1YS65pmWOcjwRMLqoPWDBQYlUOGAHiY/Hw0Nw32W44Z?=
- =?us-ascii?Q?vI2P9fL7VuemE3attQMEkCivVW/yYL66UTK1rWvo5MA2hWjzAFysQwdxpQ?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:217.111.95.7;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mta.arri.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arri.de
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 04:36:11.1179
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4c29fc3-5714-4b5e-730a-08ddc3591ff1
-X-MS-Exchange-CrossTenant-Id: e6a73a5a-614d-4c51-b3e3-53b660a9433a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e6a73a5a-614d-4c51-b3e3-53b660a9433a;Ip=[217.111.95.7];Helo=[mta.arri.de]
-X-MS-Exchange-CrossTenant-AuthSource: DB5PEPF00014B92.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR03MB7440
+References: <20250624143220.244549-1-laura.nao@collabora.com> <20250624143220.244549-19-laura.nao@collabora.com>
+In-Reply-To: <20250624143220.244549-19-laura.nao@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Tue, 15 Jul 2025 12:36:52 +0800
+X-Gm-Features: Ac12FXyo_hm6-LevP76Ht3AHw10mSGdmwELcsNXs6PZZNLb0jYOFlkoLp35KGco
+Message-ID: <CAGXv+5ERCTTJVfgfY=LLTKasz7RpTdpPfHJDKtKiUfcYyrS8uQ@mail.gmail.com>
+Subject: Re: [PATCH v2 18/29] clk: mediatek: Add MT8196 adsp clock support
+To: Laura Nao <laura.nao@collabora.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de, 
+	richardcochran@gmail.com, guangjie.song@mediatek.com, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
+	kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tuesday, 15 July 2025, 05:09:32 CEST, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the bluetooth tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/bluetooth/hci_ll.c: In function 'll_setup':
-> drivers/bluetooth/hci_ll.c:652:60: error: 'struct hci_dev' has no member named 'quirks'
->   652 |                 set_bit(HCI_QUIRK_INVALID_BDADDR, &hu->hdev->quirks);
->       |                                                            ^~
-> drivers/bluetooth/hci_ll.c:656:68: error: 'struct hci_dev' has no member named 'quirks'
->   656 |                         set_bit(HCI_QUIRK_INVALID_BDADDR, &hu->hdev->quirks);
->       |                                                                    ^~
-> 
-> Caused by commit
-> 
->   be736f5f89d5 ("Bluetooth: hci_dev: replace 'quirks' integer by 'quirk_flags' bitmap")
-> 
-> I have used te bluetooth tree from next-20250714 fo today.
-> 
-> 
+Hi,
 
-Sorry for this, it was already too late yesterday...
+On Tue, Jun 24, 2025 at 10:33=E2=80=AFPM Laura Nao <laura.nao@collabora.com=
+> wrote:
+>
+> Add support for the MT8196 adsp clock controller, which provides clock
+> gate control for Audio DSP.
+>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+> ---
+>  drivers/clk/mediatek/Kconfig           |   7 +
+>  drivers/clk/mediatek/Makefile          |   1 +
+>  drivers/clk/mediatek/clk-mt8196-adsp.c | 193 +++++++++++++++++++++++++
+>  3 files changed, 201 insertions(+)
+>  create mode 100644 drivers/clk/mediatek/clk-mt8196-adsp.c
+>
+> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+> index cd12e7ff3e12..d4c97f64b42a 100644
+> --- a/drivers/clk/mediatek/Kconfig
+> +++ b/drivers/clk/mediatek/Kconfig
+> @@ -1068,6 +1068,13 @@ config COMMON_CLK_MT8196
+>         help
+>           This driver supports MediaTek MT8196 basic clocks.
+>
+> +config COMMON_CLK_MT8196_ADSP
+> +       tristate "Clock driver for MediaTek MT8196 adsp"
+> +       depends on COMMON_CLK_MT8196
+> +       default m
+> +       help
+> +         This driver supports MediaTek MT8196 adsp clocks
+> +
 
-Kiran K. already wrote a fix for this:
+This is part of the AFE block, and really should not be a separate
+device node nor driver. The AFE driver should internalize all these
+controls and ideally model some of them as ASoC widgets so that DAPM
+can handle sequencing altogether.
 
-https://lore.kernel.org/linux-bluetooth/20250715030318.1007009-1-kiran.k@intel.com/
+So please drop this patch, and also drop the entry from the binding.
 
-I hope that's all what I missed.
+I've mentioned this to MediaTek's audio and clock owners, though I
+assume this request was somehow lost in the process.
 
-regards,
-Christian
-
-
+ChenYu
 
