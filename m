@@ -1,143 +1,331 @@
-Return-Path: <linux-kernel+bounces-732220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E309B06393
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:56:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6A2B06396
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEBD54A8483
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:55:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA4A84A8514
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFB625486D;
-	Tue, 15 Jul 2025 15:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gGhDjYoJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BAA24DCF9;
+	Tue, 15 Jul 2025 15:56:17 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46569218589
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E5E1F30CC;
+	Tue, 15 Jul 2025 15:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752594942; cv=none; b=TsTBzY1uZ4Vq36Tjb02eP6YTqI/8m1QDH7oXJuUKhGfzqjhtr2lvGBhcDcVq62IJcks5rAs794jhvvr/PyqS3u8EywmJlMJK5icSXo72igAyf7nmxFSb3PfB072vj37jrhQqPfo80nX2NKt4hSab9KYs1999LfJWE4FuU3xnGIw=
+	t=1752594977; cv=none; b=aBhcT6NMH8roMo3aATroux4zV9fpc1HCujrSFzd+1eh5c8wquIPc5g37zQvYWVNwA/f2EFtTMZQhQ3YOG3MfbvfLMwuM8SME3Zfss6bSstxEP/Xm1CkTDVpyc1uwIo7zo+U6M+BBhBVZCp5ii9kwteRiwXRHgmf5cJyrmrbcIK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752594942; c=relaxed/simple;
-	bh=cfxm7upyQPAVQ+Uo2q1SRfof7gmygRtzj5suTyQ+ELE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hdoAPNXJ0HiYkQfYMS0+CkfFbKX/wpUK4t0hMYQitm7xfr+QdieY6piY2FnpcG4uvvV0B89M7fvrRPJ0+dGOZeauBjH8BDNOSaUsLm8zSdMq39iH7XA+wHifg3A8OIkFAC+FV4Nna+Ryt69YKvpBYhdVpuW4bnprNcZVCmG+PLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gGhDjYoJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752594940;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vw5r3Akmq7xXxayfvhNmSDNFarBdqUJD1u86wPfqyi0=;
-	b=gGhDjYoJ+FftzxxEHxEt65sdxxkjYaWCN+Y8XrynmkFkm3O3LoSi1QB5/eGJAGEFOXovoc
-	7u3Khya7ImR4uh3wBEN9cqPR43pwgypywJTCX5IlRl3EUiLxJbV4n09OgmLKv6d1cDWgYI
-	YPhwoMVwgiNKiS+89hwaftD6K9U3FHw=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-240-nkbuFX9HNO2jMR-24l_nnw-1; Tue, 15 Jul 2025 11:55:39 -0400
-X-MC-Unique: nkbuFX9HNO2jMR-24l_nnw-1
-X-Mimecast-MFC-AGG-ID: nkbuFX9HNO2jMR-24l_nnw_1752594938
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-453817323afso35209925e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:55:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752594938; x=1753199738;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Vw5r3Akmq7xXxayfvhNmSDNFarBdqUJD1u86wPfqyi0=;
-        b=YJQmxPodS2jd9E0vCb2sHeZMzC8pRh5pHqxEeHAjL4Xy9PAnuuPMME0MKR5smuq3V9
-         YQusOhyTRig4YryCwwVoeaYZcR6ZunNKtv50P3Q93U8pOvrJTbp1Rus2PprdXm3PUK4w
-         S1sPlHXXHgfYn3r7lAjKxHRlo7Ul8WmWPFs9GoKGNCHLz3BaeSq0OGpsQKX62lzL9T7J
-         4HXfitBf8NlpknbFtGWBlBWiEP5Ff8lM/TOjxPAO0I1O+YPOltd6qPsjPlEZsiBJLEwT
-         MGk2XysQJPjPggcUXsB/IuwDeaD66wUpkT5YhQzfUMvwJou8SKxN+vfB4oY2nI9n6IXc
-         bbsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVpPl4wcW6mSOw58LAyX0MXjuFsDzZCIh9JbyEhnThhlkrJo/lPZ768FHIjmutSk0892yyHkbMZSObU/H4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9hZY9M5vaJCnbQSHZamXY9klMEenhkDA0SfkfhUe6pHnndAXS
-	AMYdsZC33GSkBLlQwNCMJ8U6+ltghgdclmKdRUaitzbhGZAMc6hWhe3JjB7n3fIaqwGrZtmbRLD
-	AG6xLzvrMJShFMAiFvEZQwTGDBjybeynQqDxmKiMR6vN6gYs8occR12vuwtLytSHQxg==
-X-Gm-Gg: ASbGnctZHCsoUidao7SPTzf0PxKuG4zpogpOtmD87VDUYBwn9OiHmmz2oYBwbNLdnZ+
-	+REKqwPvl/BJ3hi4UjGVCQMEVSJB6R7dKMdFlh9Ya18PIdAmgSAy5N8/tds+9giRIYqj/ke2pTu
-	QVklhX4LGoOgDcsB3Tl9GOx7Lynwfax4YPV985RD/U6OqxvB31lN6EeQot8Kt0/RYYrUhCq5UU7
-	rK+D5SS9OhUzjge0CWbdgQhuT4TCsvDzwFOnPQ7HWuPq/+dn3A3Ry/QQXRS3K5omOcJPptb53mX
-	N9AH0wzBQp+bGjwGHRf6AEaKdsCc73h7ErXC984qv8ynEHo2gvoLZ3PWEipylgFXSk8XTfbxb97
-	EWSU28mhZwEtiRENhXZx1L2obkU63Wro1OkQvfZvbsjfVIzcABncMuWw9f3EDuJe3aM8=
-X-Received: by 2002:a05:600c:6304:b0:43d:46de:b0eb with SMTP id 5b1f17b1804b1-454ec16cb2emr185559795e9.12.1752594937751;
-        Tue, 15 Jul 2025 08:55:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFGLH6MyR+39m02QpxgDnQgYYuOtc5KV6pEpu//wpsb2B99jrq4K5jhW1A3aeu/+1h6XLLeFA==
-X-Received: by 2002:a05:600c:6304:b0:43d:46de:b0eb with SMTP id 5b1f17b1804b1-454ec16cb2emr185559125e9.12.1752594937251;
-        Tue, 15 Jul 2025 08:55:37 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f28:4900:2c24:4e20:1f21:9fbd? (p200300d82f2849002c244e201f219fbd.dip0.t-ipconnect.de. [2003:d8:2f28:4900:2c24:4e20:1f21:9fbd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45611651008sm87611505e9.9.2025.07.15.08.55.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 08:55:36 -0700 (PDT)
-Message-ID: <e70399bd-6aa0-4e65-8695-f45ae70dabbc@redhat.com>
-Date: Tue, 15 Jul 2025 17:55:34 +0200
+	s=arc-20240116; t=1752594977; c=relaxed/simple;
+	bh=LSC9fzMHwurl+Pf/1A3YvVM45khW2DBU4svSniV59hY=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O4AV28hpotf4kSLViXCPwHIpZB5VGEzfTOklkwwU9yu+hl9Uj3g80SysfU5YFHbyCYtawNnqfqrBFXSVPiqB8Z216qyNRrivG4LZOSfCxViu1+SVMLo7wJZkU2s3lzD9L7+RnYisUsQPMMLUWWDCJ9z/vZmELpXdDQEqXS1dl6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bhNxM2Wwvz6L4w7;
+	Tue, 15 Jul 2025 23:52:39 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 857061402ED;
+	Tue, 15 Jul 2025 23:56:09 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 15 Jul
+ 2025 17:56:08 +0200
+Date: Tue, 15 Jul 2025 16:56:07 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Dan Williams <dan.j.williams@intel.com>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Davidlohr
+ Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>, Alison
+ Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, "Ira Weiny" <ira.weiny@intel.com>, "Peter
+ Zijlstra (Intel)" <peterz@infradead.org>
+Subject: Re: [PATCH v3 7/8] cxl/region: Consolidate
+ cxl_decoder_kill_region() and cxl_region_detach()
+Message-ID: <20250715165607.000036c4@huawei.com>
+In-Reply-To: <20250711234932.671292-8-dan.j.williams@intel.com>
+References: <20250711234932.671292-1-dan.j.williams@intel.com>
+	<20250711234932.671292-8-dan.j.williams@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 03/14] khugepaged: generalize hugepage_vma_revalidate
- for mTHP support
-To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
- baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
- wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com,
- vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
- yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com,
- aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
- catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
- dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, hughd@google.com
-References: <20250714003207.113275-1-npache@redhat.com>
- <20250714003207.113275-4-npache@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Organization: Red Hat
-In-Reply-To: <20250714003207.113275-4-npache@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 14.07.25 02:31, Nico Pache wrote:
-> For khugepaged to support different mTHP orders, we must generalize this
-> to check if the PMD is not shared by another VMA and the order is enabled.
+On Fri, 11 Jul 2025 16:49:31 -0700
+Dan Williams <dan.j.williams@intel.com> wrote:
+
+> Both detach_target() and cxld_unregister() want to tear down a cxl_region
+> when an endpoint decoder is either detached or destroyed.
 > 
-> To ensure madvise_collapse can support working on mTHP orders without the
-> PMD order enabled, we need to convert hugepage_vma_revalidate to take a
-> bitmap of orders.
+> When a region is to be destroyed cxl_region_detach() releases
+> cxl_region_rwsem unbinds the cxl_region driver and re-acquires the rwsem.
 > 
-> No functional change in this patch.
+> This "reverse" locking pattern is difficult to reason about, not amenable
+> to scope-based cleanup, and the minor differences in the calling context of
+> detach_target() and cxld_unregister() currently results in the
+> cxl_decoder_kill_region() wrapper.
 > 
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Co-developed-by: Dev Jain <dev.jain@arm.com>
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> Signed-off-by: Nico Pache <npache@redhat.com>
+> Introduce cxl_decoder_detach() to wrap a core __cxl_decoder_detach() that
+> serves both cases. I.e. either detaching a known position in a region
+> (interruptible), or detaching an endpoint decoder if it is found to be a
+> member of a region (uninterruptible).
+> 
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Alison Schofield <alison.schofield@intel.com>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Acked-by: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+One query inline about what I think is a change in when a reference count is
+held on the region device.  I'm struggling to reason about whether that change
+would have always been safe or if there is another change here that makes
+it fine now?
+
+(or whether I'm just misreading the change).
+
+Jonathan
+
+
+
 > ---
+>  drivers/cxl/core/core.h   |  15 +++++-
+>  drivers/cxl/core/port.c   |   9 ++--
+>  drivers/cxl/core/region.c | 103 ++++++++++++++++++++++----------------
+>  3 files changed, 75 insertions(+), 52 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
+> index 29b61828a847..2be37084409f 100644
+> --- a/drivers/cxl/core/core.h
+> +++ b/drivers/cxl/core/core.h
+> @@ -12,6 +12,11 @@ extern const struct device_type cxl_pmu_type;
+>  
+>  extern struct attribute_group cxl_base_attribute_group;
+>  
+> +enum cxl_detach_mode {
+> +	DETACH_ONLY,
+> +	DETACH_INVALIDATE,
+> +};
+> +
+>  #ifdef CONFIG_CXL_REGION
+>  extern struct device_attribute dev_attr_create_pmem_region;
+>  extern struct device_attribute dev_attr_create_ram_region;
+> @@ -20,7 +25,11 @@ extern struct device_attribute dev_attr_region;
+>  extern const struct device_type cxl_pmem_region_type;
+>  extern const struct device_type cxl_dax_region_type;
+>  extern const struct device_type cxl_region_type;
+> -void cxl_decoder_kill_region(struct cxl_endpoint_decoder *cxled);
+> +
+> +int cxl_decoder_detach(struct cxl_region *cxlr,
+> +		       struct cxl_endpoint_decoder *cxled, int pos,
+> +		       enum cxl_detach_mode mode);
+> +
+>  #define CXL_REGION_ATTR(x) (&dev_attr_##x.attr)
+>  #define CXL_REGION_TYPE(x) (&cxl_region_type)
+>  #define SET_CXL_REGION_ATTR(x) (&dev_attr_##x.attr),
+> @@ -48,7 +57,9 @@ static inline int cxl_get_poison_by_endpoint(struct cxl_port *port)
+>  {
+>  	return 0;
+>  }
+> -static inline void cxl_decoder_kill_region(struct cxl_endpoint_decoder *cxled)
+> +static inline int cxl_decoder_detach(struct cxl_region *cxlr,
+> +				     struct cxl_endpoint_decoder *cxled,
+> +				     int pos, enum cxl_detach_mode mode)
+>  {
+>  }
+>  static inline int cxl_region_init(void)
+> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> index eb46c6764d20..087a20a9ee1c 100644
+> --- a/drivers/cxl/core/port.c
+> +++ b/drivers/cxl/core/port.c
+> @@ -2001,12 +2001,9 @@ EXPORT_SYMBOL_NS_GPL(cxl_decoder_add, "CXL");
+>  
+>  static void cxld_unregister(void *dev)
+>  {
+> -	struct cxl_endpoint_decoder *cxled;
+> -
+> -	if (is_endpoint_decoder(dev)) {
+> -		cxled = to_cxl_endpoint_decoder(dev);
+> -		cxl_decoder_kill_region(cxled);
+> -	}
+> +	if (is_endpoint_decoder(dev))
+> +		cxl_decoder_detach(NULL, to_cxl_endpoint_decoder(dev), -1,
+> +				   DETACH_INVALIDATE);
+>  
+>  	device_unregister(dev);
+>  }
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 2a97fa9a394f..4314aaed8ad8 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -2135,27 +2135,43 @@ static int cxl_region_attach(struct cxl_region *cxlr,
+>  	return 0;
+>  }
+>  
+> -static int cxl_region_detach(struct cxl_endpoint_decoder *cxled)
+> +static struct cxl_region *
+> +__cxl_decoder_detach(struct cxl_region *cxlr,
+> +		     struct cxl_endpoint_decoder *cxled, int pos,
+> +		     enum cxl_detach_mode mode)
+>  {
+> -	struct cxl_port *iter, *ep_port = cxled_to_port(cxled);
+> -	struct cxl_region *cxlr = cxled->cxld.region;
+>  	struct cxl_region_params *p;
+> -	int rc = 0;
+>  
+>  	lockdep_assert_held_write(&cxl_region_rwsem);
+>  
+> -	if (!cxlr)
+> -		return 0;
+> +	if (!cxled) {
+> +		p = &cxlr->params;
+>  
+> -	p = &cxlr->params;
+> -	get_device(&cxlr->dev);
 
-Acked-by: David Hildenbrand <david@redhat.com>
+This is a fairly nasty patch to unwind and fully understand but
+I'm nervous that in the existing we have a get_device(&cxlr->dev)
+before potential cxl_region_decode_reset(cxlr, ...)
+and now we don't.  I'm not sure if that is a real problem though,
+it just makes me nervous.
 
--- 
-Cheers,
 
-David / dhildenb
+> +		if (pos >= p->interleave_ways) {
+> +			dev_dbg(&cxlr->dev, "position %d out of range %d\n",
+> +				pos, p->interleave_ways);
+> +			return ERR_PTR(-ENXIO);
+> +		}
+> +
+> +		if (!p->targets[pos])
+> +			return NULL;
+> +		cxled = p->targets[pos];
+> +	} else {
+> +		cxlr = cxled->cxld.region;
+> +		if (!cxlr)
+> +			return NULL;
+> +		p = &cxlr->params;
+> +	}
+> +
+> +	if (mode == DETACH_INVALIDATE)
+> +		cxled->part = -1;
+>  
+>  	if (p->state > CXL_CONFIG_ACTIVE) {
+>  		cxl_region_decode_reset(cxlr, p->interleave_ways);
+>  		p->state = CXL_CONFIG_ACTIVE;
+>  	}
+>  
+> -	for (iter = ep_port; !is_cxl_root(iter);
+> +	for (struct cxl_port *iter = cxled_to_port(cxled); !is_cxl_root(iter);
+>  	     iter = to_cxl_port(iter->dev.parent))
+>  		cxl_port_detach_region(iter, cxlr, cxled);
+>  
+> @@ -2166,7 +2182,7 @@ static int cxl_region_detach(struct cxl_endpoint_decoder *cxled)
+>  		dev_WARN_ONCE(&cxlr->dev, 1, "expected %s:%s at position %d\n",
+>  			      dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev),
+>  			      cxled->pos);
+> -		goto out;
+> +		return NULL;
+>  	}
+>  
+>  	if (p->state == CXL_CONFIG_ACTIVE) {
+> @@ -2180,21 +2196,42 @@ static int cxl_region_detach(struct cxl_endpoint_decoder *cxled)
+>  		.end = -1,
+>  	};
+>  
+> -	/* notify the region driver that one of its targets has departed */
+> -	up_write(&cxl_region_rwsem);
+> -	device_release_driver(&cxlr->dev);
+> -	down_write(&cxl_region_rwsem);
+> -out:
+> -	put_device(&cxlr->dev);
+> -	return rc;
+> +	get_device(&cxlr->dev);
+> +	return cxlr;
+>  }
+>  
+> -void cxl_decoder_kill_region(struct cxl_endpoint_decoder *cxled)
+> +/*
+> + * Cleanup a decoder's interest in a region. There are 2 cases to
+> + * handle, removing an unknown @cxled from a known position in a region
+> + * (detach_target()) or removing a known @cxled from an unknown @cxlr
+> + * (cxld_unregister())
+> + *
+> + * When the detachment finds a region release the region driver.
+> + */
+> +int cxl_decoder_detach(struct cxl_region *cxlr,
+> +		       struct cxl_endpoint_decoder *cxled, int pos,
+> +		       enum cxl_detach_mode mode)
+>  {
+> -	down_write(&cxl_region_rwsem);
+> -	cxled->part = -1;
+> -	cxl_region_detach(cxled);
+> +	struct cxl_region *detach;
+> +
+> +	/* when the decoder is being destroyed lock unconditionally */
+> +	if (mode == DETACH_INVALIDATE)
+> +		down_write(&cxl_region_rwsem);
+> +	else {
+> +		int rc = down_write_killable(&cxl_region_rwsem);
+> +
+> +		if (rc)
+> +			return rc;
+> +	}
+> +
+> +	detach = __cxl_decoder_detach(cxlr, cxled, pos, mode);
+>  	up_write(&cxl_region_rwsem);
+> +
+> +	if (detach) {
+> +		device_release_driver(&detach->dev);
+> +		put_device(&detach->dev);
+> +	}
+> +	return 0;
+>  }
+>  
+>  static int attach_target(struct cxl_region *cxlr,
+> @@ -2225,29 +2262,7 @@ static int attach_target(struct cxl_region *cxlr,
+>  
+>  static int detach_target(struct cxl_region *cxlr, int pos)
+>  {
+> -	struct cxl_region_params *p = &cxlr->params;
+> -	int rc;
+> -
+> -	rc = down_write_killable(&cxl_region_rwsem);
+> -	if (rc)
+> -		return rc;
+> -
+> -	if (pos >= p->interleave_ways) {
+> -		dev_dbg(&cxlr->dev, "position %d out of range %d\n", pos,
+> -			p->interleave_ways);
+> -		rc = -ENXIO;
+> -		goto out;
+> -	}
+> -
+> -	if (!p->targets[pos]) {
+> -		rc = 0;
+> -		goto out;
+> -	}
+> -
+> -	rc = cxl_region_detach(p->targets[pos]);
+> -out:
+> -	up_write(&cxl_region_rwsem);
+> -	return rc;
+> +	return cxl_decoder_detach(cxlr, NULL, pos, DETACH_ONLY);
+>  }
+>  
+>  static size_t store_targetN(struct cxl_region *cxlr, const char *buf, int pos,
 
 
