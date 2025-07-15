@@ -1,83 +1,108 @@
-Return-Path: <linux-kernel+bounces-731718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC2BEB05896
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:16:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87FB8B0589A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1EA51A62626
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6D8A4A7982
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139432D948C;
-	Tue, 15 Jul 2025 11:16:49 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880442D8DC2;
+	Tue, 15 Jul 2025 11:19:35 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966F022D4FF;
-	Tue, 15 Jul 2025 11:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984B926E6F1;
+	Tue, 15 Jul 2025 11:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752578208; cv=none; b=YmtaEn4lIzloZ+j3tOg21By/r5Oh2RvnworZdjb8R3wziVpR7nFoKRRcMuKvgvRSTEy0ZbRcnqM2uCrmWWTby7CG3M56s5+o+Z9frrLH2Gy9mZYwnovhsCtOB/3FpkiaE9mTRDECB0umzthvBoiKG/F43Yx+iZR5HFtVoidRY/o=
+	t=1752578375; cv=none; b=D1U5vmT1eHaKXJOERAEXUg2lm5xqLnblcfsD1jiiA9nm4BrujorZuDy1EheaEOZ0mz3bunLj82d1GnU6oPXHsTahKXUVb4gxaiPHWoHySr9o45jD6+eFNE+YGCIHw1EEXnIC6JD1f2rToW+uniTmi1lMI7HlNbAPgxOlmEkP3/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752578208; c=relaxed/simple;
-	bh=HSYv+vlxOBi997Gjh5Q/4wPcP03GK86VIwNW6IKLr3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r7QXL7jDpUHTmzjKrSicnSVNZ5Gs2RV/C0Ym39QsjWozXCGQeqivRiTmxUMZxEg+m5sFUgyLjAUkns42rDuxLCV3fI8A+uYuWoqhuk2QIbfz8dEI2TQqVRe3jh5lSTLEA6nWJKiD2eb0vN+1CtemmPlDNVmtrtZgKhRNvIwYaOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E01CC4CEE3;
-	Tue, 15 Jul 2025 11:16:44 +0000 (UTC)
-Message-ID: <4281887a-e7c0-43bc-9e72-96f0e432c58f@nxsw.ie>
-Date: Tue, 15 Jul 2025 12:16:41 +0100
+	s=arc-20240116; t=1752578375; c=relaxed/simple;
+	bh=1fgdaPHSb+dz9sXfWTIUSKP3VavySoHBRLHJ7K9NoOs=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ukFfBdZrNu2OKrpV89AlcLMeRH86gRkTEdMs1ik/BrletGpy+Yer4ZqpbdFG1T1vGUaRwSAp1vXpHr6rgF1A0EWH7sqP8hl1Ldo83D6/Sw7NkojQnfCg2xyNkEi+8NinHFyxV8OZfQBXAsol4XTS8mNeD6k3PzgPFPnWuhfrWNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bhGrn0WBWz6M4PN;
+	Tue, 15 Jul 2025 19:18:17 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id CD9B2140275;
+	Tue, 15 Jul 2025 19:19:30 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 15 Jul
+ 2025 13:19:30 +0200
+Date: Tue, 15 Jul 2025 12:19:29 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Matthew Wood <thepacketgeek@gmail.com>
+CC: Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH pci-next v1 0/1] PCI/sysfs: Expose PCIe device serial
+ number
+Message-ID: <20250715121929.00007ef2@huawei.com>
+In-Reply-To: <20250713011714.384621-1-thepacketgeek@gmail.com>
+References: <20250713011714.384621-1-thepacketgeek@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/15] Add dt-bindings and dtsi changes for CAMSS on
- x1e80100 silicon
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
- <9361e954-e2c9-41c6-be4c-12b0e4f367f5@linaro.org>
- <ae0a309f-7e52-4d3c-8f26-989f22da5b07@linaro.org>
- <GbVC82h7wSXQsAJh8XybKorKYy9wupjQLndjf_uYNXOZnk1UqS_tT4Yg9gzf8X3Kn55Mt5bXfcFrHtyMoFZ4-A==@protonmail.internalid>
- <a4ebdf5c-8d4f-4994-afd9-22c8d889fe97@linaro.org>
-From: Bryan O'Donoghue <bod.linux@nxsw.ie>
-Content-Language: en-US
-In-Reply-To: <a4ebdf5c-8d4f-4994-afd9-22c8d889fe97@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 15/07/2025 11:27, Vladimir Zapolskiy wrote:
->>> 1. This is an incorrect assumption, unfortunately it was not discussed
->>> previously for whatever reason, good news now it gets a discussion under
->>> drivers/phy changeset.
->> Perhaps you can explain why ?
-> It's quite easy, sensors are not connected to CSIDs. Moreover data flows
-> from any sensor can be processed on any CSID, there is no static hardware
-> links, which are attempted to be introduced.
+On Sat, 12 Jul 2025 18:17:12 -0700
+Matthew Wood <thepacketgeek@gmail.com> wrote:
 
-This statement is not correct.
+> Add a single sysfs read-only interface for reading PCIe device serial
+> numbers from userspace in a programmatic way. This device attribute
+> uses the same 2-byte dashed formatting as lspci serial number capability
+> output:
+> 
+>     more /sys/devices/pci0000:c0/0000:c0:01.1/0000:c1:00.0/0000:c2:1f.0/0000:cc:00.0/device_serial_number
+>     00-80-ee-00-00-00-41-80
+> 
 
-The port@ in CAMSS pertains to the camss-csiphy device not to the 
-camss-csid device, so there is no hard link to any specific CSID in the 
-dts scheme here.
+What is the use case for this? I can think of some possibilities but good to
+see why you care here.
 
----
-bod
+
+> Accompanying lspci output:
+> 
+>     sudo lspci -vvv -s cc:00.0
+>         cc:00.0 Serial Attached SCSI controller: Broadcom / LSI PCIe Switch management endpoint (rev b0)
+>             Subsystem: Broadcom / LSI Device 0144
+>             ...
+>             Capabilities: [100 v1] Device Serial Number 00-80-ee-00-00-00-41-80
+>             ...
+> 
+> If a device doesn't support the serial number capability, userspace will receive
+> an empty read:
+
+Better if possible to not expose the sysfs attribute if no such capability.
+We already have pcie_dev_attrs_are_visible() so easy to extend that.
+
+
+> 
+>     more /sys/devices/pci0000:00/0000:00:07.1/device_serial_number
+>     echo $?
+>     0
+> 
+> 
+> Matthew Wood (1):
+>   PCI/sysfs: Expose PCIe device serial number
+> 
+>  drivers/pci/pci-sysfs.c | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+
 
