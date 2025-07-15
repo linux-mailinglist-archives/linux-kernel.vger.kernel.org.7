@@ -1,180 +1,201 @@
-Return-Path: <linux-kernel+bounces-732200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 452A8B0635B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:45:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C73AB0635E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09EEA1889254
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:46:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7951E4E56DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030B1187332;
-	Tue, 15 Jul 2025 15:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812E0261574;
+	Tue, 15 Jul 2025 15:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TKc0KITs";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0Ttg9INF";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TKc0KITs";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0Ttg9INF"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9tQs8nX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873951DE8A3
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C640E2561AE;
+	Tue, 15 Jul 2025 15:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752594337; cv=none; b=s7W6OYBUPEjUSuw7dRBkfjcQE2F4pO+1+UYpB2GLy3b1eWdN0JV5hQ+0mDeHQkVpjFPu7M8XcyLN3+nAv5qU95DTGITfuB4iZ8agSSaUvb6p0bBqmSzsRZ/oyHe8g2bUhK8zsmNIY/TtpbG1lNyCi7z/O4f50t2P9FUKNKbBBMw=
+	t=1752594341; cv=none; b=ttDvt80r0YNWLOmjg5Q1HYdwd6eowFHorsocNSdWdawwvs5eYzvWGPXGAKMbj6/ql5L2NnlsBZJry1DuYMkO73YwbC4FvndhGwtfHxnHXGSYYgJS9o8ZDK+zEC5oyO2hmhPX/5jvT5tVlbdb1+fzdYFOoaSmeYuwlh9B4hGyNaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752594337; c=relaxed/simple;
-	bh=LDpNTipuO5bRSqJl1m3c3YNQeDiHo/SOS4mTmQGmiwM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y7j03jPAaH36PGPMjh98l42tT/K25sNN1lRYz/9RRejVJYIipLuWXxcecigm3ZzgS9pGFC18bPrhckutCdl+tAIr+7cyFWlFyEF4gliB1heeBwXwia+CNVx+o9YkWMwnbBQ8JI8Fc4aDn+xzzvYRp8XGexBrm+PjuJztQg3+bHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TKc0KITs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0Ttg9INF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TKc0KITs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0Ttg9INF; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B25FF1F7D2;
-	Tue, 15 Jul 2025 15:45:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752594333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gZUtDa8Gu1XzlNh0JTUT8Vy6AJDYvm4awcDQs1w5mww=;
-	b=TKc0KITsE47uX6yHEkRMdU2n4mWxchQRES0Txba/MnT+KbZ+GIvVpwGcCYY0g63kK01jUK
-	QVR3cup0ErtqF8hyupN8NoHqwIIXwJqeroXjaCMd4Ydq/UcPomNTdj3OsyOMUetD4Qobd4
-	ceqlT5xhRfY7AmrZYrlw1dIHpdyoC14=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752594333;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gZUtDa8Gu1XzlNh0JTUT8Vy6AJDYvm4awcDQs1w5mww=;
-	b=0Ttg9INF+n5mGmRfO8oRH6bJWwQt+XKyEt4b42fVvLtFFQU91T3bk88HAxs+JeWOsZkbbW
-	PQIK5RSFIGiPh/AA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=TKc0KITs;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=0Ttg9INF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752594333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gZUtDa8Gu1XzlNh0JTUT8Vy6AJDYvm4awcDQs1w5mww=;
-	b=TKc0KITsE47uX6yHEkRMdU2n4mWxchQRES0Txba/MnT+KbZ+GIvVpwGcCYY0g63kK01jUK
-	QVR3cup0ErtqF8hyupN8NoHqwIIXwJqeroXjaCMd4Ydq/UcPomNTdj3OsyOMUetD4Qobd4
-	ceqlT5xhRfY7AmrZYrlw1dIHpdyoC14=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752594333;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gZUtDa8Gu1XzlNh0JTUT8Vy6AJDYvm4awcDQs1w5mww=;
-	b=0Ttg9INF+n5mGmRfO8oRH6bJWwQt+XKyEt4b42fVvLtFFQU91T3bk88HAxs+JeWOsZkbbW
-	PQIK5RSFIGiPh/AA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2F42213A68;
-	Tue, 15 Jul 2025 15:45:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cWt4Cp13dmgsZAAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 15 Jul 2025 15:45:33 +0000
-Message-ID: <0a33bc37-bb9e-4e70-afd8-59366d46b250@suse.de>
-Date: Tue, 15 Jul 2025 17:45:28 +0200
+	s=arc-20240116; t=1752594341; c=relaxed/simple;
+	bh=SoTTWR6ZYPVzO+P1szw9alpdHsgJzaMP2zOCwQgnPoE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=QFDkemJdLKz8/o/9rOtyJNr6OEjFjR+dXBCFl/iYL3vrmdQ/QZyYtX5CJSFl63nfzNPXLXi6FCXNt0H4Yc+2boOHZ0WtHmlnP/akhuQd0YS1UwcMirwsf4MGMKKF6ZtQrqWxPql+5Ysgdi71ovzTkgQ1qlD6rqr0GM9seN5Z818=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9tQs8nX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E437C4CEF4;
+	Tue, 15 Jul 2025 15:45:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752594341;
+	bh=SoTTWR6ZYPVzO+P1szw9alpdHsgJzaMP2zOCwQgnPoE=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=g9tQs8nXOZpSPTy6wTPYimiG85CQwvghEN6iP5B787Cu4JXppPymJre+V6+gVnuIa
+	 r0pObQgssRddUBt+DxVjVMSc5ycgTu9hyTJhwvLEsA+0ixJ69bjGcfaFZEfc8yDkWa
+	 PGars/6u9wVPBD2q6GrnWCjzrkAdQOl6re6/+2ydLYyJok543bDEQd7W+LuJmL0mrt
+	 PhqpCw4SZ0sN/gLRr3TSli0Fj1OjM6TN8qSF5js7FOelHQ/425f35YaI6Yen/IWlm1
+	 X9v7D8uA1sFJfozdtBZtuhN8WYeiL/7s8uF8wkbUMXjUz854NFdruXO9eBjKDpzXbR
+	 /TSca0p65vqCw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/6] block/md/dm: set chunk_sectors from stacked dev
- stripe size
-To: Christoph Hellwig <hch@lst.de>, Damien Le Moal <dlemoal@kernel.org>
-Cc: John Garry <john.g.garry@oracle.com>, agk@redhat.com, snitzer@kernel.org,
- mpatocka@redhat.com, song@kernel.org, yukuai3@huawei.com,
- nilay@linux.ibm.com, axboe@kernel.dk, cem@kernel.org,
- dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, linux-block@vger.kernel.org,
- ojaswin@linux.ibm.com, martin.petersen@oracle.com,
- akpm@linux-foundation.org, linux-xfs@vger.kernel.org, djwong@kernel.org
-References: <20250711080929.3091196-1-john.g.garry@oracle.com>
- <f80713ec-fef1-4a33-b7bf-820ca69cb6ce@kernel.org>
- <20250714055338.GA13470@lst.de>
- <c71ce330-d7b5-45ea-ba46-97598516e9fc@kernel.org>
- <20250714061300.GA13893@lst.de>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250714061300.GA13893@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: B25FF1F7D2
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.51
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 17:45:34 +0200
+Message-Id: <DBCQUAA42DHH.23BNUVOKS38UI@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
+ <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
+ "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
+ "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
+ <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
+ <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Alan Stern" <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v7 6/9] rust: sync: atomic: Add the framework of
+ arithmetic operations
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250714053656.66712-1-boqun.feng@gmail.com>
+ <20250714053656.66712-7-boqun.feng@gmail.com>
+ <DBCL7YUSRMXR.22SMO1P7D5G60@kernel.org> <aHZYt3Csy29GF2HM@Mac.home>
+In-Reply-To: <aHZYt3Csy29GF2HM@Mac.home>
 
-On 7/14/25 08:13, Christoph Hellwig wrote:
-> On Mon, Jul 14, 2025 at 03:00:57PM +0900, Damien Le Moal wrote:
->> Agreed, it would be nice to clean that up. BUT, the chunk_sectors sysfs
->> attribute file is reporting the zone size today. Changing that may break
->> applications. So I am not sure if we can actually do that, unless the sysfs
->> interface is considered as "unstable" ?
-> 
-> Good point.  I don't think it is considered unstable.
+On Tue Jul 15, 2025 at 3:33 PM CEST, Boqun Feng wrote:
+> On Tue, Jul 15, 2025 at 01:21:20PM +0200, Benno Lossin wrote:
+>> On Mon Jul 14, 2025 at 7:36 AM CEST, Boqun Feng wrote:
+>> > +/// Types that support atomic add operations.
+>> > +///
+>> > +/// # Safety
+>> > +///
+>> > +/// Wrapping adding any value of type `Self::Repr::Delta` obtained by=
+ [`Self::rhs_into_delta()`] to
+>>=20
+>> I don't like "wrapping adding", either we use "`wrapping_add`" or we use
+>> some other phrasing.
+>>=20
 >
-Hmm. It does, but really the meaning of 'chunk_sectors' (ie a boundary 
-which I/O requests may not cross) hasn't changed. And that's also
-the original use-case for the mapping of zone size to chunk_sectors,
-namely to ensure that the block layer generates valid I/O.
-So from that standpoint I guess we can change it; in the end, there may
-(and will) be setups where 'chunk_sectors' is smaller than the zone
-size.
-We would need to have another attribute for the zone size, though :-)
-But arguably we should have that even if we don't follow the above
-reasoning.
+> Let's use `wrapping_add` then.
+>
+>     /// `wrapping_add` any value of type `Self::Repr::Delta` obtained by =
+[`Self::rhs_into_delta()`] to
+>     /// any value of type `Self::Repr` obtained through transmuting a val=
+ue of type `Self` to must
+>     /// yield a value with a bit pattern also valid for `Self`.
+>
+>> > +pub unsafe trait AllowAtomicAdd<Rhs =3D Self>: AllowAtomic {
+>>=20
+>> Why `Allow*`? I think `AtomicAdd` is better?
+>>=20
+>
+> To be consistent with `AllowAtomic` (the super trait), if we use
+> `AtomicAdd` here, should we change `AllowAtomic` to `AtomicBase`?
 
+Ideally, we would name that trait just `Atomic` :) But it then
+conflicts with the `Atomic<T>` struct (this would be motivation to put
+them in different modules :). I like `AtomicBase` better than
+`AllowAtomic`, but maybe there is a better name, how about `AtomicType`?
+
+>> > +    /// Converts `Rhs` into the `Delta` type of the atomic implementa=
+tion.
+>> > +    fn rhs_into_delta(rhs: Rhs) -> <Self::Repr as AtomicImpl>::Delta;
+>> > +}
+>> > +
+>> >  impl<T: AllowAtomic> Atomic<T> {
+>> >      /// Creates a new atomic `T`.
+>> >      pub const fn new(v: T) -> Self {
+>> > @@ -462,3 +474,100 @@ fn try_cmpxchg<Ordering: ordering::Any>(&self, o=
+ld: &mut T, new: T, _: Ordering)
+>> >          ret
+>> >      }
+>> >  }
+>> > +
+>> > +impl<T: AllowAtomic> Atomic<T>
+>> > +where
+>> > +    T::Repr: AtomicHasArithmeticOps,
+>> > +{
+>> > +    /// Atomic add.
+>> > +    ///
+>> > +    /// Atomically updates `*self` to `(*self).wrapping_add(v)`.
+>> > +    ///
+>> > +    /// # Examples
+>> > +    ///
+>> > +    /// ```
+>> > +    /// use kernel::sync::atomic::{Atomic, Relaxed};
+>> > +    ///
+>> > +    /// let x =3D Atomic::new(42);
+>> > +    ///
+>> > +    /// assert_eq!(42, x.load(Relaxed));
+>> > +    ///
+>> > +    /// x.add(12, Relaxed);
+>> > +    ///
+>> > +    /// assert_eq!(54, x.load(Relaxed));
+>> > +    /// ```
+>> > +    #[inline(always)]
+>> > +    pub fn add<Rhs, Ordering: ordering::RelaxedOnly>(&self, v: Rhs, _=
+: Ordering)
+>> > +    where
+>> > +        T: AllowAtomicAdd<Rhs>,
+>> > +    {
+>> > +        let v =3D T::rhs_into_delta(v);
+>> > +        // CAST: Per the safety requirement of `AllowAtomic`, a valid=
+ pointer of `T` is a valid
+>> > +        // pointer of `T::Repr` for reads and valid for writes of val=
+ues transmutable to `T`.
+>> > +        let a =3D self.as_ptr().cast::<T::Repr>();
+>> > +
+>> > +        // `*self` remains valid after `atomic_add()` because of the =
+safety requirement of
+>> > +        // `AllowAtomicAdd`.
+>>=20
+>> This part should be moved to the CAST comment above, since we're not
+>> only writing a value transmuted from `T` into `*self`.
+>>=20
+>
+> Hmm.. the CAST comment should explain why a pointer of `T` can be a
+> valid pointer of `T::Repr` because the atomic_add() below is going to
+> read through the pointer and write value back. The comment starting with
+> "`*self`" explains the value written is a valid `T`, therefore
+> conceptually atomic_add() below writes a valid `T` in form of `T::Repr`
+> into `a`.
+
+I see, my interpretation was that if we put it on the cast, then the
+operation that `atomic_add` does also is valid.
+
+But I think this comment should either be part of the `CAST` or the
+`SAFETY` comment. Going by your interpretation, it would make more sense
+in the SAFETY one, since there you justify that you're actually writing
+a value of type `T`.
+
+---
 Cheers,
+Benno
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+> Basically
+>
+> // CAST
+> let a =3D ..
+>
+> ^ explains what `a` is a valid for and why it's valid.
+>
+> // `*self` remains
+>
+> ^ explains that we write a valid value to `a`.
+>
+>
+> So I don't think we need to move?
 
