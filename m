@@ -1,208 +1,373 @@
-Return-Path: <linux-kernel+bounces-731523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7DF7B055A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:59:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9BFDB055B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA1C43A45D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:58:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A8E21AA4D39
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45AB52D29BF;
-	Tue, 15 Jul 2025 08:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1b2lVzr6"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2066.outbound.protection.outlook.com [40.107.93.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E302D46BF;
+	Tue, 15 Jul 2025 08:59:37 +0000 (UTC)
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AE52741D4
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752569945; cv=fail; b=pfTqKW8saAQEC5K6u5cE16I/NFy4lhaFlLGqM6fPjdB7nlwQ5XwvwG5Jbwjih/MwA3NjwgBiIxxDtTOU24c1y8weJfytMu+Dm6WomJUt9vuKFyD3oLdMZY+NmryshiJvNg3v1BiQ1KPSZXqMRKaG9rrlDaXCLgjHELbWzzVpSX8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752569945; c=relaxed/simple;
-	bh=pyS3pMKVTsDJH3Ri1r9LoGP0aLi6YBOp6tMCbitukYM=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ewpzBlMJklJ7TK0VU61gudAQwwdIFf+nfVCSVMhw/xqi+/KrXUSWoQYW74SbpLRPV/seStKFv1TVGxY7avwcYirBSJWCrNQ8g4FZfPY5F2mfaqumItqSyMKzqRkar+UKFkxdXtkxfecHwBSuNA2z723Jb1FW26CuN4dS0fTgfZw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1b2lVzr6; arc=fail smtp.client-ip=40.107.93.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Q01RBVkwDBsimmrTvXP23p/35bilL2iRS64xKpcFij2NXOduKvTMkTBgiX4d3egj5kwfft+H1kkgVQmKGbpRbNAxlYJaTP8wKrg2TCJ2PjCA/glR6dyCZ4lVRK+0ADnDwzb7twYXezguVgzS2T64t5QPy9dMuy4x7ilyY0pJc3mAVZjivIkw4tSUS4bhgx0Bk6Fw4pmJFlVH2jvZv/RnyhC911whRq5wu3O8llINmFadbD0LSYqdJ5piW5bfsPyFcPg2nvtMtYSpHJ/tdr5s85kqS0uhUAJm8/MVpn3zzFhClf1zYwvUdUNwMwCDjSAHToriKrci/NsvJEMyVgyZrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lMIRJvbo3y5HzVWU8r+FHzCFIwKGtHoI1n+tM+tH9jc=;
- b=oriK2NUtmDset6He0IVOJ8vDZ6j0FS1+ZKxZt/GJUn/gBqKcibvEtHve00rW3psyTL1IkaVhGVemQ3pejLL+M6139YziDJ1bcy+v+Cz7coLYkM67D6NP1kP6U81+p3yu81B69I2XaZac/GuEiASjdzEP+e5+Ip0WNg6brCBlMdvphr1W8TYqxpxo6KGkUPREU66ca6usC2RapGCcezi/nL35CVMpMUZvwZY03B7TFifpVfEl+8wqru9XojvDbcFGvSHDJZ9ETDE5Nwn+mPpcnhhVKYH5/emIs4etmyPl7I97gziA4WXGbF5o95CWy5SAcIs193C/YACDYL67EQewMw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lMIRJvbo3y5HzVWU8r+FHzCFIwKGtHoI1n+tM+tH9jc=;
- b=1b2lVzr6bf9qOe8BYPxeI7NtxI3LBImgd3u0eJxBu8d3lf9Swm9Y3sfnG7K27H16HWdIMimfj8C9G5GRiCiON4uwaAMF+DnRIkYHLy1H8dBmPPYChxFrzO0Jr+l2IQKuShPBsSRii68jB0moTzuZuGdcr2X3QLcj2B3bO34Q3XA=
-Received: from CH0PR04CA0002.namprd04.prod.outlook.com (2603:10b6:610:76::7)
- by SA1PR12MB5670.namprd12.prod.outlook.com (2603:10b6:806:239::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Tue, 15 Jul
- 2025 08:59:00 +0000
-Received: from CH1PEPF0000A347.namprd04.prod.outlook.com
- (2603:10b6:610:76:cafe::be) by CH0PR04CA0002.outlook.office365.com
- (2603:10b6:610:76::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.33 via Frontend Transport; Tue,
- 15 Jul 2025 08:59:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH1PEPF0000A347.mail.protection.outlook.com (10.167.244.7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8922.22 via Frontend Transport; Tue, 15 Jul 2025 08:59:00 +0000
-Received: from BLR-L1-NDADHANI (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Jul
- 2025 03:58:57 -0500
-From: Nikunj A Dadhania <nikunj@amd.com>
-To: Borislav Petkov <bp@alien8.de>
-CC: Sean Christopherson <seanjc@google.com>, Tom Lendacky
-	<thomas.lendacky@amd.com>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <dave.hansen@linux.intel.com>,
-	<santosh.shukla@amd.com>
-Subject: Re: [PATCH] x86/sev: Improve handling of writes to intercepted
- GUEST_TSC_FREQ
-In-Reply-To: <20250715084357.GCaHYUzeqvBxJyGVsg@fat_crate.local>
-References: <20250711041200.87892-1-nikunj@amd.com>
- <20250714104424.GGaHTfiFxI_pf-vhRn@fat_crate.local>
- <aHUTMiEJ-nd76lxM@google.com>
- <76e0988d-279f-be58-51d9-621806dbb453@amd.com>
- <aHUfecs9UJPx0v_C@google.com>
- <20250714161639.GLaHUtZwleS3COfxxX@fat_crate.local>
- <aHUx9ILdUZJHefjZ@google.com> <85jz49x31p.fsf@amd.com>
- <20250715084357.GCaHYUzeqvBxJyGVsg@fat_crate.local>
-Date: Tue, 15 Jul 2025 08:58:49 +0000
-Message-ID: <85h5zdx22e.fsf@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28807273D67;
+	Tue, 15 Jul 2025 08:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752569976; cv=none; b=cDvZQBOyqd7+RJKJhvp1GlQ8iK0ja1TI1zKWnqPmuJ/lHQXINOqlYQMW+U0DaRCb2qb9CZWzQanNdyBRSotCsgJE/NlEYC/IIM9sYDOBLPLRpytJo6a+eOlS8QIAcEK8c3z5w07Lz1aTvGJGRhLpaZDCNu3yVHv8oDAAyB8Zyq0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752569976; c=relaxed/simple;
+	bh=DyQNjAPJJ8zgqmHLlgf82NXLYI682DSnE5Lg07ezSPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c8AE4u5cgIxGlLx7qlLmzP6DBOzzSi5bHpF0vHk6ZEhsz3mineGh3bslFZjE+MvqqgiyD4+HIo8Bwk1IAIiB0a+IcCekPYDadGvd44pM59z3q+wkns3emSfa06VOlqqBtuNfXxhllRkKkyAt8XnHEHVR2CJhLRnMtmoRjcwpAJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5D02E433B4;
+	Tue, 15 Jul 2025 08:59:25 +0000 (UTC)
+Message-ID: <6de8a8ed-f932-4b74-a0f7-6a117c36f1af@ghiti.fr>
+Date: Tue, 15 Jul 2025 10:59:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A347:EE_|SA1PR12MB5670:EE_
-X-MS-Office365-Filtering-Correlation-Id: 385202b7-8a39-4d14-a84d-08ddc37dd737
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?b5oNPjlQDfBbjriohWkGeAkDh8le6JoU71b6KN/cIfXcslnzGMk5eNvt+eCI?=
- =?us-ascii?Q?ZBvSFoBnqorfQpd4iKLoKS8NJNpl1ZsbUH5kcpaiAl0SU4sCt385IN7yQ0u/?=
- =?us-ascii?Q?QBPkBXXEqfqSae8/C19NNXyrWf8PGrzyVTBH14N9Bks1H4bMRm7aRIt1OBsF?=
- =?us-ascii?Q?CPT/EBbFMU51V4bdUd5TMew3BGjxHlgGrp1a14gDRJ5VSZM2TMdA2U21x0gq?=
- =?us-ascii?Q?RBNvTmLodXoQHVfInUs6HNEV+e339vj8hX2hgQ8UvyV7glDETf0O3Hndov7S?=
- =?us-ascii?Q?lCTioCVvK1dlut7xRzluDX+vEvof5mKWv1cXRcRK9egt4jI6AjITJSwnkQHG?=
- =?us-ascii?Q?CV0athMwWXu7AuPfcdwFgMeZDcC3GhvtV9/6Hd0ZIXWtspPmPTedfJfws0Kr?=
- =?us-ascii?Q?Q4Bnb1lgMkEQ5k6HAjMzQ2e/I6g2GpZsBi90ku3ltIcy0KIAys5ngzOi1Ao2?=
- =?us-ascii?Q?qpYE6Qt80YMLb+vtUjIjsG74cWpiL6t15Rw1iUYtTGd3DPNMzYxQW5nywGmd?=
- =?us-ascii?Q?Q94cA5OF90VeantM/OjUjEmu11gtu6LBDB/+Jo6VGYIx26og0qgKkMbAuXDI?=
- =?us-ascii?Q?rS9CHKdHRWZNjHxTPEf6Y1+KNylD6mz8eyWtFebxfPmpxLkS9J34RjRdUKLw?=
- =?us-ascii?Q?PhJcaL47iRNoBlgLa5PifMP1Pq0BccOuQyWu6orl0C+7t/ug0GnCtfgXsXGr?=
- =?us-ascii?Q?VpEaZESlO4pI7NPoZk4PfadQksK5KQcJQgtiaVzIUNCq4kW1/TTAUHOHbjtJ?=
- =?us-ascii?Q?wnndoeiSBhpOLQ5bah5n45peHXd9nCJBA8u8dqeXpwZfAkX1/FmOqZiW9gEl?=
- =?us-ascii?Q?2Z+32pInUY/ooAN2TXqZ7nbkevzK5zrMVOiACUmIy1l62K8g3thwWVvlg3VD?=
- =?us-ascii?Q?N64oSSWeaziYSHB8GtAdpJafWLEoDJM/t4YGOROXXJtnCpwoGOjGrTzXjrJY?=
- =?us-ascii?Q?519XmoI7k/hCU0T+C56+zhGZv+76kjJqRu2hc/gXzs7nuRPaWM80wqbaiazi?=
- =?us-ascii?Q?NrXn3KkKjzfddrBBYjyrsWSX8xIPbUWqAcMKQN2nLgxODTEggFR/QSlvtu/P?=
- =?us-ascii?Q?h7T+Gtmp9cY6ModwO0ZXSJUTxOjmkmBpvyDFGehrRp8xXgjwKJt0VPZWfUEO?=
- =?us-ascii?Q?qEfik2Hwbx9+DLyfQ2rg4t6mj+/p2ez2GCDbomTtKiXepDEpZ2lXFDmEH8NT?=
- =?us-ascii?Q?5wp3W1wc4sR02GcQALUl9w+qOtWH1wubYgKzPfeKICrkOAiGRHvXLwHe70hA?=
- =?us-ascii?Q?PPkVS8ab7qH5kSFj0t1YSCf25NT616DejDgyE7TXwV6IY0MYie1B6CeI0eLb?=
- =?us-ascii?Q?nuRPKZXlvzowhWjUrG61pVVboPx/5fWLp7o5M7X7mycUVKbJxRljDHyUEUMi?=
- =?us-ascii?Q?bV8Si8ZOox3b86ZJuY+s7pOJqQO4dOdLvGnNAYZLtrYuSKM7aRZ7Ful9IZ28?=
- =?us-ascii?Q?VrQhi51zLa7zBvwTornRIftd0+J1uFm0c8TiUwJjjw2zvaLRkdMfBXkxAPZI?=
- =?us-ascii?Q?Ic/cAIOxcJKbWxBqru7itY0dbuSGfaWNkaeJ3oeIg9bzEM7s4k+s+b50aA?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 08:59:00.4895
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 385202b7-8a39-4d14-a84d-08ddc37dd737
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000A347.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB5670
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] riscv: ftrace: Fix the logic issue in DYNAMIC_FTRACE
+ selection
+To: Miao Chen <chenmiao.ku@gmail.com>
+Cc: kernel test robot <lkp@intel.com>,
+ Linux RISCV <linux-riscv@lists.infradead.org>,
+ oe-kbuild-all@lists.linux.dev, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Pu Lehui <pulehui@huawei.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <aG3A8Jirg+TxNza/@rli9-mobl>
+ <f5b1fc77-d180-4df7-b8f6-0cb0ca4a187a@ghiti.fr>
+ <CAKxVwge4=cagaVDesKWe0BE88U0YmNn5LLDJvJG=F7EEP2=-LQ@mail.gmail.com>
+ <7204f633-5b35-41ce-b847-7dfbaedbac47@ghiti.fr>
+ <CAKxVwgdoK6wSt-1LNZ8Tn3MPaETR58RThbcdydijrKPbfpE68g@mail.gmail.com>
+ <b6dbdcbc-08b5-4de0-9955-cf2b048dbb38@ghiti.fr>
+ <CAKxVwgdMBfzfU04WMOALsi7sqPdj1vsv_kt+ZK=32aWASF1XXw@mail.gmail.com>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <CAKxVwgdMBfzfU04WMOALsi7sqPdj1vsv_kt+ZK=32aWASF1XXw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehgeegudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepfeeujedtgeekvdehhfduhfegfeeiveehueegheegvdfgjefhteejieduledvfeetnecuffhomhgrihhnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgpdhinhhfrhgruggvrggurdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemudeljehfmedufeehtgemjegurghfmegsfhgujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemudeljehfmedufeehtgemjegurghfmegsfhgujedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemudeljehfmedufeehtgemjegurghfmegsfhgujegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepudehpdhrtghpthhtoheptghhvghnmhhirghordhkuhesghhmrghilhdrtghomhdprhgtphhtthhopehlkhhpsehin
+ hhtvghlrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehovgdqkhgsuhhilhguqdgrlhhlsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehrohhsthgvughtsehgohhoughmihhsrdhorhhg
+X-GND-Sasl: alex@ghiti.fr
 
-Borislav Petkov <bp@alien8.de> writes:
+Hi,
 
-> On Tue, Jul 15, 2025 at 08:37:38AM +0000, Nikunj A Dadhania wrote:
->>   Currently, when a Secure TSC enabled SNP guest attempts to write to
->>   the intercepted GUEST_TSC_FREQ MSR (a read-only MSR), the guest kernel
->>   #VC handler terminates the SNP guest by returning ES_VMM_ERROR. This
->>   response incorrectly implies a VMM configuration error, when in fact
->>   it's a valid VMM configuration to intercept writes to read-only MSRs,
+On 7/11/25 10:24, Miao Chen wrote:
+> Hi,
 >
-> Not only valid - it is the usual thing the HV does with MSRs IMHO.
-
-Right, will update
-
+> I rechecked the .config file. I configured it using
 >
->>   unless explicitly documented.
->> 
->>   Modify the intercepted GUEST_TSC_FREQ MSR #VC handler to ignore writes
->>   instead of terminating the guest. Since GUEST_TSC_FREQ is a guest-only
->>   MSR, ignoring writes directly (rather than forwarding to the VMM and
->>   handling the resulting #GP) eliminates a round trip to the VMM.
+> make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu-
+> CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__ -fmax-errors=unlimited
+> -fmax-warnings=unlimited' O=build_dir olddefconfig,
 >
-> Probably.
->
-> But I think the main point here is that this is the default action the HV
-> does.
+> and obtained the following configuration. If NONPORTABLE is disabled,
+> the MMU will be enabled. I did not find any other settings that would
+> affect the enabling of NONPORTABLE—it is set to 'y' by default.
 
-Correct, to adhere to that behaviour, I had sent the following patch
-earlier [1]. If GUEST_TSC_FREQ is intercepted by VMM:
 
-MSR read will terminate the guest, same behavior as earlier.
+NONPORTABLE being set does not prevent MMU to be enabled. I see that in 
+your config MMU is disabled and then HAVE_DYNAMIC_FTRACE is disabled, I 
+don't see anything wrong with this configuration so there is no need to 
+try to enable MMU.
 
-MSR write will be passed to the VMM and VMM will inject the GP# back.
+This configuration shows that we need to check that HAVE_DYNAMIC_FTRACE 
+is set to enable DYNAMIC_FTRACE, otherwise we encounter the build errors 
+reported by kernel test robot.
+
+Can you send a v3 with this change?
+
+Also, can you change the patch title and patch log to something like this:
+
+     riscv: Stop supporting static ftrace
+
+     Now that DYNAMIC_FTRACE was introduced, there is no need to support
+     static ftrace as it is way less performant. This simplifies the 
+code and
+     prevents build failures as reported by kernel test robot when
+     !DYNAMIC_FTRACE.
+
+Thanks,
+
+Alex
+
 
 >
->> Add a
->>   WARN_ONCE to log the incident, as well-behaved guest kernels should
->>   never attempt to write to this read-only MSR.
->> 
->>   However, continue to terminate the guest(via ES_VMM_ERROR) when
 >
-> ES_EXCEPTION
-
-Are you suggesting to change the intercepted GUEST_TSC_FREQ MSR read
-behaviour from panic to ES_EXCEPTION?
-
+> --------- CONFIG ---------------------
 >
->>   reading from intercepted GUEST_TSC_FREQ MSR with Secure TSC enabled,
->>   as intercepted reads indicate an improper VMM configuration for Secure
->>   TSC enabled SNP guests.
+> config NONPORTABLE
+> bool "Allow configurations that result in non-portable kernels"
 >
-> It is getting close to the gist of what we talked yesterday tho.
-
-Ack
-
-Regards,
-Nikunj
-
-1. https://lore.kernel.org/kvm/85h5zkuxa2.fsf@amd.com/
+> Symbol: HAVE_DYNAMIC_FTRACE [=n]
+> Type  : bool
+> Defined at kernel/trace/Kconfig:42
+> Selected by [n]:
+>      - RISCV [=y] && !XIP_KERNEL [=n] && MMU [=n] &&
+> (CLANG_SUPPORTS_DYNAMIC_FTRACE [=n] || GCC_SUPPORTS_DYNAMIC_FTRACE
+> [=y])
+>
+> Symbol: MMU [=n]
+> Type  : bool
+> Defined at arch/riscv/Kconfig:298
+> Prompt: MMU-based Paged Memory Management Support
+> Location:
+>    (1) -> MMU-based Paged Memory Management Support (MMU [=n])
+>    Selected by [n]:
+>        - PORTABLE [=n]
+>
+> Symbol: PORTABLE [=n]
+>      Type  : bool
+>      Defined at arch/riscv/Kconfig:1344
+>      Selects: EFI [=n] && MMU [=n] && OF [=y]
+>
+> Symbol: NONPORTABLE [=y]
+>    │ Type  : bool
+>    │ Defined at arch/riscv/Kconfig:389
+>    │   Prompt: Allow configurations that result in non-portable kernels
+>    │   Location:
+>    │     -> Platform type
+>    │ (1)   -> Allow configurations that result in non-portable kernels
+> (NONPORTABLE [=y])
+>
+> Thanks,
+>
+> Chen Miao
+>
+> Alexandre Ghiti <alex@ghiti.fr> 于2025年7月11日周五 15:55写道：
+>> Hi,
+>>
+>> On 7/10/25 17:56, Miao Chen wrote:
+>>> Hello Alex,
+>>>
+>>> I found where the error is, but there's a problem here:
+>>>
+>>> config PORTABLE
+>>>     bool
+>>>     default !NONPORTABLE
+>>>     select EFI
+>>>     select MMU
+>>>     select OF
+>>>
+>>> select HAVE_DYNAMIC_FTRACE if !XIP_KERNEL && MMU &&
+>>> (CLANG_SUPPORTS_DYNAMIC_FTRACE || GCC_SUPPORTS_DYNAMIC_FTRACE)
+>>>
+>>> Because HAVE_DYNAMIC_FTRACE depends on the MMU—of course, it's
+>>> reasonable for DYNAMIC_FTRACE to depend on the MMU—*but since
+>>> NONPORTABLE is enabled by default, this causes PORTABLE to default to
+>>> n, thereby preventing the MMU from being enabled*. So, should I change
+>>> NONPORTABLE to default to n?
+>>
+>> NONPORTABLE is not enabled by default and PORTABLE=n does not prevent
+>> MMU from being enabled.
+>>
+>> IIUC, it seems like you don't have HAVE_DYNAMIC_FTRACE enabled but
+>> that's probably because of your toolchain, not !MMU, can you check that
+>> in your .config?
+>>
+>> Thanks,
+>>
+>> Alex
+>>
+>>
+>>> Thanks,
+>>>
+>>> Alex
+>>>
+>>> Alexandre Ghiti <alex@ghiti.fr> 于2025年7月10日周四 22:33写道：
+>>>> On 7/10/25 14:34, Miao Chen wrote:
+>>>>> Hello Alex,
+>>>>>
+>>>>> Sure, I'll checkout it. Btw, this is my first commit, so can u tell
+>>>>> how to reproduce failed case? Using the reproduce and .config.gz gived
+>>>>> by build-bot?
+>>>> Yes exactly!
+>>>>
+>>>>
+>>>>> Thanks,
+>>>>>
+>>>>> Chen Miao
+>>>>>
+>>>>> Alexandre Ghiti <alex@ghiti.fr> 于2025年7月10日周四 19:53写道：
+>>>>>> Hi ChenMiao,
+>>>>>>
+>>>>>> On 7/9/25 03:08, kernel test robot wrote:
+>>>>>>> Hi ChenMiao,
+>>>>>>>
+>>>>>>> kernel test robot noticed the following build errors:
+>>>>>>>
+>>>>>>> [auto build test ERROR on fda589c286040d9ba2d72a0eaf0a13945fc48026]
+>>>>>>>
+>>>>>>> url:    https://github.com/intel-lab-lkp/linux/commits/ChenMiao/riscv-ftrace-Fix-the-logic-issue-in-DYNAMIC_FTRACE-selection/20250706-231907
+>>>>>>> base:   fda589c286040d9ba2d72a0eaf0a13945fc48026
+>>>>>>> patch link:    https://lore.kernel.org/r/20250706151830.25091-1-chenmiao.ku%40gmail.com
+>>>>>>> patch subject: [PATCH V2] riscv: ftrace: Fix the logic issue in DYNAMIC_FTRACE selection
+>>>>>>> :::::: branch date: 2 days ago
+>>>>>>> :::::: commit date: 2 days ago
+>>>>>>> config: riscv-randconfig-r112-20250708 (attached as .config)
+>>>>>>> compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+>>>>>>> reproduce: (attached as reproduce)
+>>>>>>>
+>>>>>>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>>>>>>> the same patch/commit), kindly add following tags
+>>>>>>> | Reported-by: kernel test robot <lkp@intel.com>
+>>>>>>> | Closes: https://lore.kernel.org/oe-kbuild-all/202507090650.YGY56SIA-lkp@intel.com/
+>>>>>>>
+>>>>>>> All errors (new ones prefixed by >>):
+>>>>>>>
+>>>>>>>>> <instantiation>:1:14: error: operand must be a symbol with %lo/%pcrel_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
+>>>>>>>        addi sp, sp, -FREGS_SIZE_ON_STACK
+>>>>>>>                     ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>>> <instantiation>:2:18: error: unexpected token
+>>>>>>>         sw t0, FREGS_EPC(sp)
+>>>>>>>                         ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>        <instantiation>:3:17: error: unexpected token
+>>>>>>>         sw x1, FREGS_RA(sp)
+>>>>>>>                        ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>        <instantiation>:7:17: error: unexpected token
+>>>>>>>         sw x6, FREGS_T1(sp)
+>>>>>>>                        ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>        <instantiation>:9:17: error: unexpected token
+>>>>>>>         sw x7, FREGS_T2(sp)
+>>>>>>>                        ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>        <instantiation>:10:18: error: unexpected token
+>>>>>>>         sw x28, FREGS_T3(sp)
+>>>>>>>                         ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>        <instantiation>:11:18: error: unexpected token
+>>>>>>>         sw x29, FREGS_T4(sp)
+>>>>>>>                         ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>        <instantiation>:12:18: error: unexpected token
+>>>>>>>         sw x30, FREGS_T5(sp)
+>>>>>>>                         ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>        <instantiation>:13:18: error: unexpected token
+>>>>>>>         sw x31, FREGS_T6(sp)
+>>>>>>>                         ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>        <instantiation>:16:18: error: unexpected token
+>>>>>>>         sw x10, FREGS_A0(sp)
+>>>>>>>                         ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>        <instantiation>:17:18: error: unexpected token
+>>>>>>>         sw x11, FREGS_A1(sp)
+>>>>>>>                         ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>        <instantiation>:18:18: error: unexpected token
+>>>>>>>         sw x12, FREGS_A2(sp)
+>>>>>>>                         ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>        <instantiation>:19:18: error: unexpected token
+>>>>>>>         sw x13, FREGS_A3(sp)
+>>>>>>>                         ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>        <instantiation>:20:18: error: unexpected token
+>>>>>>>         sw x14, FREGS_A4(sp)
+>>>>>>>                         ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>        <instantiation>:21:18: error: unexpected token
+>>>>>>>         sw x15, FREGS_A5(sp)
+>>>>>>>                         ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>        <instantiation>:22:18: error: unexpected token
+>>>>>>>         sw x16, FREGS_A6(sp)
+>>>>>>>                         ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>        <instantiation>:23:18: error: unexpected token
+>>>>>>>         sw x17, FREGS_A7(sp)
+>>>>>>>                         ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>         ^
+>>>>>>>        <instantiation>:25:15: error: operand must be a symbol with %lo/%pcrel_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
+>>>>>>>         addi a0, a0, FREGS_SIZE_ON_STACK
+>>>>>>>                      ^
+>>>>>>>        arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>>>>>         SAVE_ABI_REGS
+>>>>>>>
+>>>>>>> Kconfig warnings: (for reference only)
+>>>>>>>        WARNING: unmet direct dependencies detected for DYNAMIC_FTRACE
+>>>>>>>        Depends on [n]: FTRACE [=y] && FUNCTION_TRACER [=y] && HAVE_DYNAMIC_FTRACE [=n]
+>>>>>>>        Selected by [y]:
+>>>>>>>        - RISCV [=y] && FUNCTION_TRACER [=y]
+>>>>>> To avoid that, we should check HAVE_DYNAMIC_FTRACE too:
+>>>>>>
+>>>>>> select DYNAMIC_FTRACE if FUNCTION_TRACER && HAVE_DYNAMIC_FTRACE
+>>>>>>
+>>>>>> That fixes the build error for me. Can you send a v3 with this change?
+>>>>>>
+>>>>>> Thanks,
+>>>>>>
+>>>>>> Alex
+>>>>>>
+>>>>>>
+>>>>> _______________________________________________
+>>>>> linux-riscv mailing list
+>>>>> linux-riscv@lists.infradead.org
+>>>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
+>>> _______________________________________________
+>>> linux-riscv mailing list
+>>> linux-riscv@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
