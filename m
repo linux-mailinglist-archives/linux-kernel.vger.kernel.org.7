@@ -1,120 +1,130 @@
-Return-Path: <linux-kernel+bounces-732124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D796B06274
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:10:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E676B0629A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04E36188CDFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:08:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14C3C1891346
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8630C205502;
-	Tue, 15 Jul 2025 15:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13554218EBA;
+	Tue, 15 Jul 2025 15:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MmWkrXNQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BjB05N8f"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q0ndQ6mS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00259201113;
-	Tue, 15 Jul 2025 15:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0DC4C83;
+	Tue, 15 Jul 2025 15:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752592114; cv=none; b=D89WDiMMa0EnWI5XgGpTwQ+6AQw0oRVNFyrRxpYEsUrflAgLVRaKTU/0p4AL4A7TvKDSA6V5KJ5ycL3lMFTx8qm/NX+/YgYo7lWg0QTkq0pS56ztRdTNCC+hdyjU+x2bnhIuJONbPu6EsXenQPIQHZ15AcQ9/o5KS3rsNVs+JJc=
+	t=1752592316; cv=none; b=Tn80zKzIgoUxgSppROpoWp8SIHnO1bCx2gpjmU6+DrmzoJvOcFZGn7k4sUGRsjckeQdQsDM2Df9BgSO4QJAgXL71Z8D1CPv0gmRG49Vj53NmS8DDh8dRs6wqmRlDFDlbThb+h8g4ARtwF8cuRSz1SAHQM32XgpGkhs52gZS62LU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752592114; c=relaxed/simple;
-	bh=jhWYuzHfSU/QzFc5tJJbM9T7jtpb9Mt03OPW3Rb3VI0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HQfljodYDq2DrgjhYnJ4oHunxB0CZI8T4YMsN0odXqbCbObtDFCNSclEHb97D96s0EnAGBJlxFXVKCG1hTlAKa59/LtkD2ljaUP5BTdHiU/wKu3tIemeL/yV84kQuqDtGHyhvN8RBe90KEwQBi0DAiLpUVt+3XYtO5DUfpRBgvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MmWkrXNQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BjB05N8f; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Jul 2025 17:08:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752592110;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1Kfo8oVzTYkqVbJzdcwk8CX5HRxjKm+62hOY8rE1oEM=;
-	b=MmWkrXNQUMIrLsa2dSguMAuofh47D7zYnseR8/ASK4MfnFWc3wMBgQp1k4JCifPUSRftUw
-	O9MWj41jj0rRKQ+w25nfvIdHx971cI3EuNgpJ41lREjVeIoTib9hWj0yFPLa6G08dJS9Sv
-	fJLkbFC3uWYVTmMojJHhenOv4er1Y8rbgr+37pYN61FC/Eii+qj4455F9V1IMbpvja/44S
-	k3lfPWhf/5porjvSj847xdjwDCXajXQdHY9eDAN38kT1A/rYY3HCpdusHBQrA48n7agXyT
-	RsSNJ6JOyh5Rqt0vlH/TfJWtBeyjusQekeO3m4VF9wCDkqebdfwi8J80K22FbA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752592110;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1Kfo8oVzTYkqVbJzdcwk8CX5HRxjKm+62hOY8rE1oEM=;
-	b=BjB05N8f11C0F0CjcqUtJsm8gX45Gsj3isd0fXdBqKBgtg1B+zwDn8xDYOHARcuKrKplMg
-	0IWeDXEkp17WugCg==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v3 10/17] rv: Fix generated files going over 100 column
- limit
-Message-ID: <20250715150828.BNdFfB8h@linutronix.de>
-References: <20250715071434.22508-1-gmonaco@redhat.com>
- <20250715071434.22508-11-gmonaco@redhat.com>
+	s=arc-20240116; t=1752592316; c=relaxed/simple;
+	bh=GT9YCMpmO/oGbAXwtofhY5F7e46WJk2TBT21YGNxioQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dlmFh192/alda5xZXKqeBHgfRxdwWIzLeMza3dupvtlqs8FFMyB3hrPSVi0/hv3X7G3R1ga6Gr77CXxLeZd44glUGDFaxZGWAh2DVzWuwYtj/JyP8M5W/e2/2x2aM0iDqLKtuI0wwkadALXhW4hOhUk9wYuR7tOefsISSmCyeWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q0ndQ6mS; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752592315; x=1784128315;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GT9YCMpmO/oGbAXwtofhY5F7e46WJk2TBT21YGNxioQ=;
+  b=Q0ndQ6mSMIuQOLDINHH5prIeJmLF8CE1RMrncLNEZorDHJMwsB5k2UGx
+   ppy5y8Te1J+hDDTGm8OhLFziwgLr1iNJFK+4t08kEsswbgKeCnEcRvTmk
+   DmksVl3dM1rgQhFw3QaO9pnJpQ0IOagiK4OwOcI055ZxtCEU584dPq6E7
+   wd49OylARGVDaBVphLwWGdUq47vqHJaXlQS67P679iR8OLKVIk+9eNu8H
+   tKdx2ymhVp59Iby8RtNlHBX4zMPd+ozL4GHwhLzVUeT3AY+N6raphXxnr
+   vmqJpAFZ8GOyMenp5cTFEeQPdptb2Ih9ThG/1KmkqIx9z6QwctcuJEnPa
+   g==;
+X-CSE-ConnectionGUID: sk9lAPRSSH+je3lRNl9JQQ==
+X-CSE-MsgGUID: E79l3cX5Sx2XYzLQSlAIdQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54907821"
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="54907821"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 08:09:24 -0700
+X-CSE-ConnectionGUID: kRlxMx3/SPu8BGSVLj+Ezg==
+X-CSE-MsgGUID: VgyJUB25RxeWdk6pmX7cWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="157354678"
+Received: from tcingleb-desk1.amr.corp.intel.com (HELO [10.125.111.148]) ([10.125.111.148])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 08:09:19 -0700
+Message-ID: <841e6d14-e3cc-4c23-9256-96f0c4e2d761@intel.com>
+Date: Tue, 15 Jul 2025 08:09:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715071434.22508-11-gmonaco@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] cxl: mce: Fix typo "notifer"
+To: WangYuli <wangyuli@uniontech.com>
+Cc: airlied@gmail.com, akpm@linux-foundation.org, alison.schofield@intel.com,
+ andrew+netdev@lunn.ch, andriy.shevchenko@linux.intel.com,
+ arend.vanspriel@broadcom.com, bp@alien8.de,
+ brcm80211-dev-list.pdl@broadcom.com, brcm80211@lists.linux.dev,
+ colin.i.king@gmail.com, cvam0000@gmail.com, dan.j.williams@intel.com,
+ dave.hansen@linux.intel.com, dave@stgolabs.net, davem@davemloft.net,
+ dri-devel@lists.freedesktop.org, edumazet@google.com,
+ gregkh@linuxfoundation.org, guanwentao@uniontech.com, hpa@zytor.com,
+ ilpo.jarvinen@linux.intel.com, intel-xe@lists.freedesktop.org,
+ ira.weiny@intel.com, j@jannau.net, jeff.johnson@oss.qualcomm.com,
+ jgross@suse.com, jirislaby@kernel.org, johannes.berg@intel.com,
+ jonathan.cameron@huawei.com, kuba@kernel.org, kvalo@kernel.org,
+ kvm@vger.kernel.org, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-wireless@vger.kernel.org, linux@treblig.org, lucas.demarchi@intel.com,
+ marcin.s.wojtas@gmail.com, ming.li@zohomail.com, mingo@kernel.org,
+ mingo@redhat.com, netdev@vger.kernel.org, niecheng1@uniontech.com,
+ oleksandr_tyshchenko@epam.com, pabeni@redhat.com, pbonzini@redhat.com,
+ quic_ramess@quicinc.com, ragazenta@gmail.com, rodrigo.vivi@intel.com,
+ seanjc@google.com, shenlichuan@vivo.com, simona@ffwll.ch,
+ sstabellini@kernel.org, tglx@linutronix.de,
+ thomas.hellstrom@linux.intel.com, vishal.l.verma@intel.com, x86@kernel.org,
+ xen-devel@lists.xenproject.org, yujiaoliang@vivo.com, zhanjun@uniontech.com
+References: <BD5C52D2838AEA48+20250715134050.539234-1-wangyuli@uniontech.com>
+ <65FC7B96ECBDB052+20250715134407.540483-2-wangyuli@uniontech.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <65FC7B96ECBDB052+20250715134407.540483-2-wangyuli@uniontech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 15, 2025 at 09:14:27AM +0200, Gabriele Monaco wrote:
-> The dot2c.py script generates all states in a single line. This breaks the
-> 100 column limit when the state machines are non-trivial.
-> Recent changes allow it to print states over multiple lines if the
-> resulting line would have been too long.
+
+
+On 7/15/25 6:44 AM, WangYuli wrote:
+> According to the context, "mce_notifer" should be "mce_notifier".
 > 
-> Adapt existing monitors with line length over the limit.
-> 
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+> Link: https://lore.kernel.org/all/B3C019B63C93846F+20250715071245.398846-1-wangyuli@uniontech.com/
+> Fixes: 516e5bd0b6bf ("cxl: Add mce notifier to emit aliased address for extended linear cache")
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 > ---
->  kernel/trace/rv/monitors/sco/sco.h     | 12 ++++++++++--
->  kernel/trace/rv/monitors/snep/snep.h   | 14 ++++++++++++--
->  kernel/trace/rv/monitors/snroc/snroc.h | 12 ++++++++++--
->  3 files changed, 32 insertions(+), 6 deletions(-)
+>  drivers/cxl/core/mce.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/kernel/trace/rv/monitors/sco/sco.h b/kernel/trace/rv/monitors/sco/sco.h
-> index 7a4c1f2d5ca1c..83ca9a03331af 100644
-> --- a/kernel/trace/rv/monitors/sco/sco.h
-> +++ b/kernel/trace/rv/monitors/sco/sco.h
-> @@ -39,8 +39,16 @@ static const struct automaton_sco automaton_sco = {
->  		"schedule_exit"
->  	},
->  	.function = {
-> -		{     thread_context_sco, scheduling_context_sco,          INVALID_STATE },
-> -		{          INVALID_STATE,          INVALID_STATE,     thread_context_sco },
-> +		{
-> +			thread_context_sco,
-> +			scheduling_context_sco,
-> +			INVALID_STATE
-> +		},
-> +		{
-> +			INVALID_STATE,
-> +			INVALID_STATE,
-> +			thread_context_sco
-> +		},
+> diff --git a/drivers/cxl/core/mce.h b/drivers/cxl/core/mce.h
+> index ace73424eeb6..ca272e8db6c7 100644
+> --- a/drivers/cxl/core/mce.h
+> +++ b/drivers/cxl/core/mce.h
+> @@ -7,7 +7,7 @@
+>  
+>  #ifdef CONFIG_CXL_MCE
+>  int devm_cxl_register_mce_notifier(struct device *dev,
+> -				   struct notifier_block *mce_notifer);
+> +				   struct notifier_block *mce_notifier);
+>  #else
+>  static inline int
+>  devm_cxl_register_mce_notifier(struct device *dev,
 
-I'm confused, these lines were not over 100 columns. Same for snroc.
-
-From my understanding of the previous patch, the script does not break
-lines which are not over the limit. Did I miss something?
-
-Nam
 
