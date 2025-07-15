@@ -1,110 +1,133 @@
-Return-Path: <linux-kernel+bounces-731522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58803B055A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:58:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F4DEB055AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63DB016971C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:58:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 011B816AB98
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB492D4B44;
-	Tue, 15 Jul 2025 08:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076F92D46CD;
+	Tue, 15 Jul 2025 08:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KkX8lgxQ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=it-klinger.de header.i=@it-klinger.de header.b="Zq87e/iS"
+Received: from www571.your-server.de (www571.your-server.de [78.46.3.230])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090DE2D1925;
-	Tue, 15 Jul 2025 08:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8F31917F0;
+	Tue, 15 Jul 2025 08:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.3.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752569862; cv=none; b=gUJGs4YdwyqObrpHvxkBIYbfj1NuzFwvNy9iDsGTRLeAt0AEqtDGcTkp+MClFZQGpfBkQft+dsj0vqzbfqVCas31bM5ufuQFL4KPjhqY0gCwu7D5QQ+QeHnhEQYaTa2Cr+oZeL88c1GWkakaUG0SdZJvTfMX5XUlM4Nvxjj4V+s=
+	t=1752569946; cv=none; b=BKAVk+AoDo5hlqqm7NIrzk4Zkblcu6ndmNM94ZDv/tNk1ERLSSLKU0wLy6FTcwDfHtXknoPVtCHEoWWyVUWK+HxZLlC+MwX+X2MA2oejRsgdLEHcbiMDAq6OFShBwwanXAYnRJzonBlT0egsrmM9+Madcs3DbGaqmhtYxnc2Rok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752569862; c=relaxed/simple;
-	bh=cHmMF1S1bpAEBQWZ/nneLvQGzfcIYdGHO6/cDM+kLj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PMlhfz7j/nDTjVDCDYWlpBoWnSUnG69o1yxUualxoF2ZHVgSq7f0u4wfpOsZOAejOSYES2Bb8e/TBeiVlR137ijgyLTlL0ZzzXomQhKJVVXcsacQX581lrvyUH6k+/N2+a/iBijWxdDwi+Y7qDCZx13Jn9/00LmCk80KwXc8k0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=KkX8lgxQ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752569749;
-	bh=sUlVi2BYX271i4cx/EwcVDe5v4OqF0o0Pd540J1c70w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KkX8lgxQE5srcrwUbV+TVycrALaCOiZylPoBk7L8dyJ9Jy9FNE3QpPBEr9ZnU3tC5
-	 h7B1inYy4Fxc1Yf3X4Oa2sjRmKbZOcxl/UA2a+f/IUNGeU6W4FA3nLpeuNIII6KyYK
-	 ZmNW1VrAPX5WUCR4K3ckNPRdE+sFnEPQiy15lqke6ngnqOFl3lFOYcy+MV5uaHkFlN
-	 kZ3PitqWxapmxESBhcsBUFAGBh6bK8f9/LMyomIZR5YZ4fggD/CcGtIIK15ewGguUz
-	 GrOvWlM1PQ6jglxA/wdu/fjhpf/LoaXxyZXWFS3fgjlcXUFN/OJRCOx16S//J/7b8+
-	 pQjBzZT2/zLZg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bhChP2dmJz4x11;
-	Tue, 15 Jul 2025 18:55:49 +1000 (AEST)
-Date: Tue, 15 Jul 2025 18:57:37 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>, Robert Richter <rrichter@amd.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the cxl tree
-Message-ID: <20250715185737.5d9c75e4@canb.auug.org.au>
-In-Reply-To: <20250715184935.7e7c75c0@canb.auug.org.au>
-References: <20250715184935.7e7c75c0@canb.auug.org.au>
+	s=arc-20240116; t=1752569946; c=relaxed/simple;
+	bh=iKMUAmtCdb7rPKw4eZtTd6lyT0NyYrxjSniJ3kxQU1M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HuYXMaEcFduOYqhmUJyVawXbGqXpMZPvbF76CZtgq4XM0oOBUQJicSDqiXezzOM3utP3VMApdLVLewk+x77OBPmy6wBw4XLZ+Ag1wseUQM5Fy/HpErD3tVKJC0ueXDQ2V/wDFzLp8CV8+95VlsC5/+1C1EXObxpywXIPo7batMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de; spf=pass smtp.mailfrom=it-klinger.de; dkim=pass (2048-bit key) header.d=it-klinger.de header.i=@it-klinger.de header.b=Zq87e/iS; arc=none smtp.client-ip=78.46.3.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=it-klinger.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=it-klinger.de; s=default2502; h=Content-Transfer-Encoding:MIME-Version:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=9RXJXruNUCau64eqsnbcwp67ROSKsLP30uYqLfMi3TM=; b=Zq87e/iSpFlF/f7A0gRsaIpCBz
+	nXaaXhYmEi5sDXFaJ9rqovnMTB2Qz4cFLakPHOjkip3fgqO4SdrvALeju+yaEq+IjeoyAuWajnsiQ
+	+/uVX9/eNh3EqLas7yObWoWKJ4tgVpHQuwAa1wt9RDHW9LB8Dzk98TWuvqnT0rJtB/FWku1c8T9Dr
+	UmUmV7Ucj3kCLHQmUaf+Rm5C5k9a5aUZqrMVpTz25clM1fmznR+LiA6UcdjWohKHEnUacb6iDcgIb
+	g+urh0lgsDl8Bet+WN1dwWuPqf/RJxaSCHISLT+fMaeZukFgNPcXE2PgGUVLrikOM+NBumi/ccV0I
+	aeDrrZPQ==;
+Received: from sslproxy02.your-server.de ([78.47.166.47])
+	by www571.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <ak@it-klinger.de>)
+	id 1ubbUx-000HgA-1z;
+	Tue, 15 Jul 2025 10:58:51 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ak@it-klinger.de>)
+	id 1ubbUw-000AWe-1b;
+	Tue, 15 Jul 2025 10:58:51 +0200
+From: Andreas Klinger <ak@it-klinger.de>
+To: jic23@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: lars@metafoo.de,
+	javier.carrasco.cruz@gmail.com,
+	mazziesaccount@gmail.com,
+	andriy.shevchenko@linux.intel.com,
+	arthur.becker@sentec.com,
+	perdaniel.olsson@axis.com,
+	mgonellabolduc@dimonoff.com,
+	muditsharma.info@gmail.com,
+	clamor95@gmail.com,
+	emil.gedenryd@axis.com,
+	ak@it-klinger.de,
+	devicetree@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/3] iio:light: add driver for veml6046x00 RGBIR color sensor
+Date: Tue, 15 Jul 2025 10:58:07 +0200
+Message-Id: <20250715085810.7679-1-ak@it-klinger.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/VFxzMnXAjSjTkjCG./n=Gvs";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27699/Mon Jul 14 10:54:31 2025)
 
---Sig_/VFxzMnXAjSjTkjCG./n=Gvs
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This patchset adds an IIO driver for Vishay veml6046x00 RGBIR color sensor
 
-Hi all,
+Changes in v6:
+- Thanks to the in-depth review of Andy many datatype improvements were
+  realized.
+- According to Jonathans review change the channel types from IIO_LIGHT to
+  IIO_INTENSITY.
 
-On Tue, 15 Jul 2025 18:49:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the cxl tree, today's linux-next build (htmldocs) failed
-> like this:
->=20
-> drivers/cxl/cxl.h:443: warning: Function parameter or struct member 'cach=
-e_size' not described in 'cxl_root_decoder'
->=20
-> Caused by commit
->=20
->   8d41af0d378d ("cxl: Remove core/acpi.c and cxl core dependency on ACPI")
+Changes in v5:
+- Thanks to the feedback of Andy and further explanations of Jonathan many
+  improvements could be implemented.
+- add documentation in kernel-doc format
+- iio_push_to_buffers_with_ts() is not used as also testing against
+  linux-stable where it is not available so far.
 
-This is only a warning (I ran the wrong helper script :-) ).
+Changes in v4:
+- implement feedback from Andy and Jonathan
+- implement feedback from vendor (reading interrupt register as bulk read)
 
---=20
-Cheers,
-Stephen Rothwell
+Changes in v3:
+- implement a lot of feedback from Jonathan
+- change scale value to real factor of lux per raw count instead of hardware
+  gain
+- optimize code by using more lookup tables
+- remove unimplemented threshold functionality
 
---Sig_/VFxzMnXAjSjTkjCG./n=Gvs
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Changes in v2:
+- fix missing include for example in vishay,veml6046x00.yaml
 
------BEGIN PGP SIGNATURE-----
+Andreas Klinger (3):
+  dt-bindings: iio: light: veml6046x00: add color sensor
+  iio: light: add support for veml6046x00 RGBIR color sensor
+  MAINTAINER: add maintainer for veml6046x00
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh2GAEACgkQAVBC80lX
-0GwuJAf7BCswE79vfDD1SEVsePqfhu2QjuDfOHgij9Xc/e4Wy/AbU6HcUitpUThL
-9gXHHR77bSdkAcmPTnKZ+rBM9lgX2aQSR4rCIS2CDEE7jIkPv3RRmre5uW3xoE1X
-GJSI55el0Pt4bjPcO5jAyAicrT8gSE5T/qqZqWrQWE7gcRXRLVBEhPbfv0D9BI2i
-b2xAe1yQpHXAr9ZipMuKP8wBZeK9eSyWa09u7riNmF2wFVgnEpMpzSSiQ0GRxata
-cQ0POkYi31e6FGy07v/agffhAtZofIIWiG4FfhVyM+MnD9QtcixxPIKF+p2j6gqP
-0o327V2JXnkKYSb7dt3swzlMMGEBeQ==
-=vzT1
------END PGP SIGNATURE-----
+ .../iio/light/vishay,veml6046x00.yaml         |   51 +
+ MAINTAINERS                                   |    6 +
+ drivers/iio/light/Kconfig                     |   13 +
+ drivers/iio/light/Makefile                    |    1 +
+ drivers/iio/light/veml6046x00.c               | 1037 +++++++++++++++++
+ 5 files changed, 1108 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/light/vishay,veml6046x00.yaml
+ create mode 100644 drivers/iio/light/veml6046x00.c
 
---Sig_/VFxzMnXAjSjTkjCG./n=Gvs--
+-- 
+2.39.5
+
 
