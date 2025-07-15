@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-732640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15028B069F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:39:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E3BB069F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0F577A661F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:38:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4991A4A430E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55DA2D6401;
-	Tue, 15 Jul 2025 23:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21842DC339;
+	Tue, 15 Jul 2025 23:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EotaRwYU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/61GWtx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D47F2D3A93;
-	Tue, 15 Jul 2025 23:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0242DAFB0;
+	Tue, 15 Jul 2025 23:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752622786; cv=none; b=CltHJUCHaTCibwlDe/muOTWn9uJ4i8+el1AWWtPv2wqhiHQzLN7J+q1q3rFCCjinY7aEPNAq5FftZfRPe99sKb3kLF3DzZvnVo4lABkanTv4w5hkwr3awIShSUo1cKqApNIavvVSOLHsZ9DvsCcdR2oINmRp3+Ms+0phDsPn93Q=
+	t=1752622794; cv=none; b=M4d3MwIIL8VPmJC6B2RRu63IQ/C6D0jjBzswH8/AQ6ujtCtIVWWAdzUxop6oScn87GeE0OCPVyOISHxb/kPSbc0LEOEwAwIUcV9PP+WTpKy941C3VY7BSN6UEYqnPKJ8HoOQ/e3f6v1idX5WhGcZ3Mf4pQXVS3RVbQdAtR9/kZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752622786; c=relaxed/simple;
-	bh=q3QIBc/TsdXBWirwIMIHxwp+8kRlnWdwqh1CRlQ82NU=;
+	s=arc-20240116; t=1752622794; c=relaxed/simple;
+	bh=RKoLZjYjMewwzYDaxldtjmdIVQTQjGHg+KTdm9LFeUE=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=L3mRDxtTriBXW85Drtl7HYO00hH9NN9OII18wVRJ7TQ6hZyDLaAOxEVVXvds8/2sDd7q45R6eY9IPugTn7trSvNUeW1fI4CyLXTR85slXPoOswVyzjYJt72x41m2mCozU4RGZsbPD5FyP79hy+xdgP5u8GOE/Ttf0qyNjhdUDQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EotaRwYU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9497C4CEE3;
-	Tue, 15 Jul 2025 23:39:45 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=jBs8MTr2nOq4L7aBXBdI1vwCKxvUEy5KzIitCskfVqPZniE/tAzuYc8cS9YrOn9CgcKE5Mmqr3DlEPjqKo8Rua1459ahz8eD2UxbHZAnYYV4LFDYt/ONK++LzzydG7eOf3dizUSEg4iSJtF9s7nrMUZHBAE+1RjJoBlM3ML1jK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/61GWtx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1584C4CEF6;
+	Tue, 15 Jul 2025 23:39:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752622785;
-	bh=q3QIBc/TsdXBWirwIMIHxwp+8kRlnWdwqh1CRlQ82NU=;
+	s=k20201202; t=1752622793;
+	bh=RKoLZjYjMewwzYDaxldtjmdIVQTQjGHg+KTdm9LFeUE=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=EotaRwYUI7AAtHpn69V6T63FUu/TQgcsEuWQOrGJo5F/IWGf/z8IHUenYw8Wive+q
-	 SW+2AYdXXZnmnd1P07d86pJso5KevSYAytDeXBV8yKUD8jzz8mYgCQGDyf91U4sHFq
-	 P6IMnFoISHnRqz3EQjKoshItmjaTR2ckZ6hVNdApnhi06fRk7/SC1Ug8Fzsqatr2IY
-	 Dx9rJYvDkp/2iyFt4NSFObtVDPvbC0Wy40Fs2/gScMSVKTw2qrM83nX406DfumOpWO
-	 fDyy21UbuPE1UQBOdAlXT8ewL0TuaC6fcxGrIBpcfh3CdnUH2vzUnPkpaADF5HJmS1
-	 w9ZyS9PBNsmhg==
+	b=Z/61GWtxD/bbdTIRxSM6181aRcpKXGNTEC6goSDq17ouabluS1LdfQ61ibiCq0Q9L
+	 75G8T7GJDLZRUVnxViFNP0H/LcVf7z8cesJS9D6wJrdSf1FI/OSNRbPDDrR16dT67V
+	 FWCrciIv6ad84TYMqUr92bSzyrAP7oPBEzrG1A1658/TuUQi15KkPfuF75gPUhhD4a
+	 hNAb3g24MjhLIRDoCE9hRvxbSTSZbsZDPSRN6xu9vq42b4H5HxL1M2MBeOyMWm97Yd
+	 40iqtFkYRUz+SbEtaQAhJg+MgLfk9fj+qOf/mCAs/kpwCaSk1i5+Nqco1r26R2uXsB
+	 tma7TRm+CSb1g==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7167E383BA30;
-	Tue, 15 Jul 2025 23:40:07 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D76383BA30;
+	Tue, 15 Jul 2025 23:40:15 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,42 +51,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: stmmac: intel: populate entire
- system_counterval_t in get_time_fn() callback
+Subject: Re: [PATCH net-next] ipv6: mcast: Remove unnecessary null check in
+ ip6_mc_find_dev()
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175262280626.617203.5242260114409933910.git-patchwork-notify@kernel.org>
-Date: Tue, 15 Jul 2025 23:40:06 +0000
-References: <20250713-stmmac_crossts-v1-1-31bfe051b5cb@blochl.de>
-In-Reply-To: <20250713-stmmac_crossts-v1-1-31bfe051b5cb@blochl.de>
-To: =?utf-8?b?TWFya3VzIEJsw7ZjaGwgPG1hcmt1c0BibG9jaGwuZGU+?=@codeaurora.org
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, tglx@linutronix.de,
- lakshmi.sowjanya.d@intel.com, richardcochran@gmail.com, jstultz@google.com,
- netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- markus.bloechl@ipetronik.com
+ <175262281425.617203.12056812500600130761.git-patchwork-notify@kernel.org>
+Date: Tue, 15 Jul 2025 23:40:14 +0000
+References: <20250714081732.3109764-1-yuehaibing@huawei.com>
+In-Reply-To: <20250714081732.3109764-1-yuehaibing@huawei.com>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Sun, 13 Jul 2025 22:21:41 +0200 you wrote:
-> get_time_fn() callback implementations are expected to fill out the
-> entire system_counterval_t struct as it may be initially uninitialized.
+On Mon, 14 Jul 2025 16:17:32 +0800 you wrote:
+> These is no need to check null for idev before return NULL.
 > 
-> This broke with the removal of convert_art_to_tsc() helper functions
-> which left use_nsecs uninitialized.
-> 
-> Initially assign the entire struct with default values.
-> 
-> [...]
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> ---
+>  net/ipv6/mcast.c | 3 ---
+>  1 file changed, 3 deletions(-)
 
 Here is the summary with links:
-  - [net] net: stmmac: intel: populate entire system_counterval_t in get_time_fn() callback
-    https://git.kernel.org/netdev/net/c/e6176ab107ec
+  - [net-next] ipv6: mcast: Remove unnecessary null check in ip6_mc_find_dev()
+    https://git.kernel.org/netdev/net-next/c/ce6030afe459
 
 You are awesome, thank you!
 -- 
